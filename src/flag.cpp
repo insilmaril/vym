@@ -1,6 +1,7 @@
 #include "flag.h"
 
 #include "file.h"
+#include "image-container.h"
 
 #include <QDebug>
 
@@ -24,19 +25,19 @@ Flag::Flag(const QString &fname)
 Flag::~Flag()
 {
     // qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "
-    // image=" << image;
-    if (image)
-        delete image;
+    // imageContainer=" << imageContainer;
+    if (imageContainer)
+        delete imageContainer;
 }
 
 void Flag::init()
 {
-    action = NULL;
+    action = nullptr;
     name = "undefined";
     visible = true;
     unsetGroup();
 
-    image = NULL;
+    imageContainer = nullptr;
 
     state = false;
     used = false;
@@ -47,14 +48,14 @@ void Flag::init()
 
 bool Flag::load(const QString &fn)
 {
-    if (!image)
-        image = new ImageObj();
+    if (!imageContainer)
+        imageContainer = new ImageContainer();
 
-    if (!image->load(fn))
+    if (!imageContainer->load(fn))
         return false;
 
     if (fn.contains("svg")) {
-        image->setWidth(32); // FIXME-3 scale svg of flags
+        imageContainer->setWidth(32); // FIXME-3 scale svg of flags
     }
 
     path = fn;
@@ -89,12 +90,12 @@ void Flag::setToolTip(const QString &n) { tooltip = n; }
 
 const QString Flag::getToolTip() { return tooltip; }
 
-ImageObj *Flag::getImageObj()
+ImageContainer *Flag::getImageContainer()
 {
-    if (image)
-        return image;
+    if (imageContainer)
+        return imageContainer;
     else
-        return NULL;
+        return nullptr;
 }
 
 void Flag::setAction(QAction *a) { action = a; }
@@ -117,7 +118,7 @@ QString Flag::getDefinition(const QString &prefix)
 {
     if (type == Flag::UserFlag) {
         QString url = "flags/" + prefix + uuid.toString() + "-" + name +
-                      image->getExtension();
+                      imageContainer->getExtension();
         QStringList attributes;
         attributes << attribut("name", name);
         attributes << attribut("href", QString("file:%1").arg(url));
@@ -130,10 +131,10 @@ QString Flag::getDefinition(const QString &prefix)
 
 void Flag::saveDataToDir(const QString &dirPath)
 {
-    if (image) {
+    if (imageContainer) {
         path = dirPath + "/" + uuid.toString() + "-" + name +
-               image->getExtension();
-        image->save(path);
+               imageContainer->getExtension();
+        imageContainer->save(path);
     }
 }
 

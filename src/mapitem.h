@@ -6,7 +6,6 @@
 #include "treeitem.h"
 
 class Container;
-class LinkableMapObj;
 class MapObj;
 
 /*! /brief MapItem is used to maintain geometrical information of images and branches
@@ -45,17 +44,12 @@ class MapItem : public TreeItem {
     virtual QString getLinkableAttr();  //! Get attributes shared by Images and Branches
 
     virtual QRectF getBBoxURLFlag(); //! g   // FIXME-2 Refactor to use container layoutset bbox of url flag
-    virtual void setRotation(const qreal &a);
 
   protected:
     MapObj *mo;
     qreal angle;    // FIXME-2 should be removed and retrieved directly from container
 
   public:
-    /*! Returns pointer to related LinkableMapObj in QGraphicsView */
-    virtual MapObj *getMO();
-    virtual LinkableMapObj *getLMO();
-
     /*! Return path to highlight currently selected items in scene coordinates */
     virtual QPainterPath getSelectionPath();
 

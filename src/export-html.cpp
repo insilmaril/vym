@@ -2,7 +2,6 @@
 
 #include <QMessageBox>
 
-#include "branchobj.h"
 #include "mainwindow.h"
 #include "warningdialog.h"
 
@@ -30,11 +29,13 @@ QString ExportHTML::getBranchText(BranchItem *current)
     if (current) {
         bool vis = false;
         QRectF hr;
+        /*
         LinkableMapObj *lmo = current->getLMO();
         if (lmo) {
-            hr = ((BranchObj *)lmo)->getBBoxHeading();
+            hr = ((BranchObj *)lmo)->getBBoxHeading(); // FIXME-2 check bbox for imagemap
             vis = lmo->isVisibleObj();
         }
+        */
         QString col;
         QString id = model->getSelectString(current);
         if (dia.useTextColor)
@@ -80,7 +81,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                                              "Alt tag in HTML export")
                                      .arg(f->getName()))
                             .arg(uid.toString() +
-                                 f->getImageObj()->getExtension());
+                                 f->getImageContainer()->getExtension());
             }
         }
 
@@ -436,7 +437,7 @@ void ExportHTML::doExport(bool useDialog)
             f = userFlagsMaster->findFlagByUid(uid);
 
         if (f) {
-            ImageObj *io = f->getImageObj();
+            ImageContainer *io = f->getImageContainer();
             if (io)
                 io->save(flagsBasePath + "/" + uid.toString() +
                          io->getExtension());

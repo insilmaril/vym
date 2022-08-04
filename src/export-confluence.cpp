@@ -3,7 +3,6 @@
 #include <QMessageBox>
 
 #include "attributeitem.h"
-#include "branchobj.h"
 #include "confluence-agent.h"
 #include "mainwindow.h"
 #include "settings.h"
@@ -42,10 +41,12 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 {
     if (current) {
         QRectF hr;
+        /* 
         LinkableMapObj *lmo = current->getLMO();
         if (lmo) {
-            hr = ((BranchObj *)lmo)->getBBoxHeading();
+            hr = ((BranchObj *)lmo)->getBBoxHeading();  // FIXME-2 export bbox for imagemap?
         }
+        */
         QString id = model->getSelectString(current);
         QString heading = quoteMeta(current->getHeadingPlain());
 

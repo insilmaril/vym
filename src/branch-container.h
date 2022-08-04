@@ -6,6 +6,7 @@
 #include "container.h"
 
 class BranchItem;
+class FlagRowContainer;
 class HeadingContainer;
 class LinkContainer;
 
@@ -141,6 +142,9 @@ class BranchContainer : public Container {
     Container *ornamentsContainer;      // Flags and heading
     Container *innerContainer;          // Ornaments (see above) and children branches
     Container *outerContainer;          // Used only with FloatingBounded images and vertical branches
+
+    FlagRowContainer *standardFlagRowContainer;
+    FlagRowContainer *systemFlagRowContainer;
 
   private:
     Orientation orientation;

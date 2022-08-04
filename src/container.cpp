@@ -73,6 +73,12 @@ QString Container::getName()    // FIXME-4 debugging only
         case BranchesContainer:
             t = "BranchesContainer";
             break;
+        case FlagCont:
+            t = "FlagCont";
+            break;
+        case FlagRowCont:
+            t = "FlagRowCont";
+            break;
         case FloatingContent:
             t = "FloatingContent";
             break;
@@ -204,7 +210,7 @@ bool Container::isVisibleContainer()
     return visible;
 }
 
-void Container::setVisibility(bool v)
+void Container::setVisibility(bool v)   // FIXME-1 children visibility?
 {
     visible = v;
 }

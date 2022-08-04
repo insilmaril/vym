@@ -14,19 +14,21 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 ImageContainer::ImageContainer()
 {
-    //qDebug() << "Const ImageContainer ()  this=" << this;
+    qDebug() << "Const ImageContainer ()  this=" << this;
     init();
 }
 
 ImageContainer::~ImageContainer()   // FIXME-1 remove imagesContainer from branch-container, if no longer needed
 {
-    //qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
-    imageItem->unlinkImageContainer();
+    qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
+    if (imageItem) imageItem->unlinkImageContainer();
 }
 
 void ImageContainer::copy(ImageContainer *other)
 {
     qDebug() << "IC::copy"; // FIXME-2 testing only
+    qDebug() << "  type="  << other->imageType;
+    qDebug() << "  vis ="  << isVisible();
     prepareGeometryChange();
     if (imageType != ImageContainer::Undefined)
         qWarning() << "ImageContainer::copy into existing image of type "

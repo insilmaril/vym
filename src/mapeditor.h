@@ -7,7 +7,6 @@
 #include <QPropertyAnimation>
 
 #include "attribute.h"
-#include "ornamentedobj.h"
 #include "settings.h"
 #include "vymmodel.h"
 #include "xlink.h"

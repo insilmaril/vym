@@ -57,7 +57,7 @@ bool ImageItem::load(const QString &fname)
     return true;
 }
 
-ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene)
+ImageContainer *ImageItem::createImageContainer(QGraphicsScene *scene) // FIXME-0 scene not used!
 {
     imageContainer = new ImageContainer();
     imageContainer->setImageItem(this);

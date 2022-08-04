@@ -30,6 +30,8 @@ class Container : public QGraphicsRectItem {
     enum ContainerType {
         Branch,
         BranchesContainer,
+        FlagCont,
+        FlagRowCont,
         FloatingContent,
         Heading,
         Image,

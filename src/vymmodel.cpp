@@ -36,6 +36,7 @@
 #include "file.h"
 #include "findresultmodel.h"
 #include "jira-agent.h"
+#include "linkablemapobj.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -182,8 +183,8 @@ void VymModel::init()
     // View - map
     defaultFont.setPointSizeF(16);
     defLinkColor = QColor(0, 0, 255);
-    linkcolorhint = LinkableMapObj::DefaultColor;
-    linkstyle = LinkableMapObj::PolyParabel;
+    //FIXME-2 linkcolorhint = LMO::DefaultColor;
+    //FIXME-2 linkstyle = LMO::PolyParabel;
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
     defXLinkPen.setStyle(Qt::DashLine);
@@ -274,25 +275,27 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     // Save Header
     QString ls;
     switch (linkstyle) {
-    case LinkableMapObj::Line:
-        ls = "StyleLine";
-        break;
-    case LinkableMapObj::Parabel:
-        ls = "StyleParabel";
-        break;
-    case LinkableMapObj::PolyLine:
-        ls = "StylePolyLine";
-        break;
-    default:
-        ls = "StylePolyParabel";
-        break;
+        /* FIXME-2 saving linkstyles not ported yet
+        case LMO::Line:
+            ls = "StyleLine";
+            break;
+        case LMO::Parabel:
+            ls = "StyleParabel";
+            break;
+        case LMO::PolyLine:
+            ls = "StylePolyLine";
+            */
+            break;
+        default:
+            ls = "StylePolyParabel";
+            break;
     }
 
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint = "";
-    if (linkcolorhint == LinkableMapObj::HeadingColor)
-        colhint = xml.attribut("linkColorHint", "HeadingColor");
+    // FIXME-2 if (linkcolorhint == LMO::HeadingColor)
+    //    colhint = xml.attribut("linkColorHint", "HeadingColor");
 
     QString mapAttr = xml.attribut("version", vymVersion);
     if (!saveSel)
@@ -1224,18 +1227,11 @@ void VymModel::setChanged()
     updateActions();
 }
 
-QString VymModel::getObjectName(LinkableMapObj *lmo)
-{
-    if (!lmo || !lmo->getTreeItem())
-        return QString();
-    return getObjectName(lmo->getTreeItem());
-}
-
 QString VymModel::getObjectName(TreeItem *ti)
 {
     QString s;
     if (!ti)
-        return QString("Error: NULL has no name!");
+        return QString("Error: nullptr has no name!");
     s = ti->getHeadingPlain();
     if (s == "")
         s = "unnamed";
@@ -3616,9 +3612,11 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/
             return;
         }
 
+        /*
         QPointF p;
-        if (selbi->getLMO())    // FIXME
+        if (selbi->getLMO())    // FIXME-0
             p = selbi->getLMO()->getRelPos();
+        */
         if (saveStateFlag)
             saveStateChangingPart(pi, pi, "removeKeepChildren ()",
                                   QString("Remove %1 and keep its children")

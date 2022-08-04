@@ -9,7 +9,6 @@ using namespace std;
 #include "findresultwidget.h"
 #include "findwidget.h"
 #include "flagrow.h"
-#include "flagrowobj.h"
 #include "headingeditor.h"
 #include "macros.h"
 #include "mainwindow.h"

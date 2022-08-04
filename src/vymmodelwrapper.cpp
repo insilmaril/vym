@@ -1,7 +1,6 @@
 #include "vymmodelwrapper.h"
 
 #include "branchitem.h"
-#include "branchobj.h"
 #include "imageitem.h"
 #include "misc.h"
 #include "scripting.h"
@@ -405,12 +404,14 @@ QString VymModelWrapper::getFrameType()
     QString r;
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
+        /*
         BranchObj *bo = (BranchObj *)(selbi->getLMO());
         if (!bo)
             logError(context(), QScriptContext::UnknownError,
                      QString("No BranchObj available"));
         else
-            r = bo->getFrame()->getFrameTypeName();
+            r = bo->getFrame()->getFrameTypeName(); // FIXME-1
+        */
     }
     return setResult(r);
 }

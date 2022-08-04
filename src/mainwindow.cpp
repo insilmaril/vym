@@ -2816,8 +2816,8 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
     QAction *a;
 
     // Set icon for action
-    ImageObj *image = flag->getImageObj();
-    a = new QAction(image->getIcon(), flag->getUuid().toString(), this);
+    ImageContainer *ic = flag->getImageContainer();
+    a = new QAction(ic->getIcon(), flag->getUuid().toString(), this);
 
     flag->setAction(a);
     a->setCheckable(true);
@@ -3637,7 +3637,7 @@ void Main::fileNew()
     else {
         vm = currentModel();
     }
-    
+
     // Switch to new tab    
     tabWidget->setCurrentIndex(tabWidget->count() - 1);
 }

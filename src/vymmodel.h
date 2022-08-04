@@ -12,7 +12,9 @@
 
 #include "branchitem.h"
 #include "file.h"
+#include "frameobj.h"
 #include "imageitem.h"
+#include "linkablemapobj.h"
 #include "mapeditor.h"
 #include "treeitem.h"
 #include "treemodel.h"
@@ -227,7 +229,6 @@ class VymModel : public TreeModel {
       Returns heading of a branch or name of an object for use in comment
       of undo/redo history
     */
-    QString getObjectName(LinkableMapObj *);
     QString getObjectName(TreeItem *);
 
     void redo();            //!< Redo last action

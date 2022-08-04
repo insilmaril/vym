@@ -12,7 +12,6 @@ class QString;
 
 class BranchItem;
 class MapObj;
-class LinkableMapObj;
 class VymModel;
 class XLinkItem;
 class XLinkObj;

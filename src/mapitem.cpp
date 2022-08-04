@@ -4,7 +4,6 @@
 #include "image-container.h"
 #include "imageitem.h"
 #include "linkablemapobj.h"
-#include "ornamentedobj.h"
 
 #include <QDebug>
 
@@ -27,11 +26,11 @@ void MapItem::appendChild(TreeItem *item) // FIXME-2 no longer used
 {
     TreeItem::appendChild(item);
 
-    // If lmo exists, also set parObj there
+    // If lmo exists, also set parObj there // FIXME-2 remove
     /*
-    LinkableMapObj *lmo = getLMO();
+    LMbj *lmo = getLMO();
     if (lmo) {
-        LinkableMapObj *itemLMO = ((MapItem *)item)->getLMO();
+        LMObj *itemLMO = ((MapItem *)item)->getLMO();
         if (itemLMO)
             itemLMO->setParObj(lmo);
     }
@@ -50,22 +49,24 @@ Container* MapItem::getContainer()
 
 void MapItem::setPos(const QPointF &p)   // FIXME-2 add image containers
 {
-    if (hasTypeBranch()) 
+    if (hasTypeBranch())
         ((BranchItem*)this)->getBranchContainer()->setPos(p);
 
-    if (hasTypeImage()) 
+    if (hasTypeImage())
         ((ImageItem*)this)->getImageContainer()->setPos(p);
 }
 
 void MapItem::setHideLinkUnselected(bool b) // FIXME-2 not working yet with containers
 {
     hideLinkUnselected = b;
-    LinkableMapObj *lmo = getLMO();
+    /*
+    LMO *lmo = getLMO();
     if (lmo) {
         // lmo->setHideLinkUnselected();
         lmo->setVisibility(lmo->isVisibleObj());
         lmo->updateLinkGeometry();
     }
+    */
 }
 
 bool MapItem::getHideLinkUnselected() { return hideLinkUnselected; }
@@ -99,7 +100,7 @@ QString MapItem::getLinkableAttr()
     return s;
 }
 
-QRectF MapItem::getBBoxURLFlag()
+QRectF MapItem::getBBoxURLFlag()    // FIXME-2 not ported yet to containers
 {
     QString s = "system-url";
     QStringList list = systemFlags.activeFlagNames().filter(s);
@@ -111,29 +112,13 @@ QRectF MapItem::getBBoxURLFlag()
     Flag *f = systemFlagsMaster->findFlagByName(s);
     if (f) {
         QUuid u = f->getUuid();
-        LinkableMapObj *lmo = getLMO();
+        /*
+        LMO *lmo = getLMO();
         if (lmo)
             return ((OrnamentedObj *)lmo)->getBBoxSystemFlagByUid(u);
+            */
     }
     return QRectF();
-}
-
-void MapItem::setRotation(const qreal &a)
-{
-    angle = a;
-    MapObj *mo = getMO();
-    if (mo)
-        mo->setRotation(a);
-}
-
-MapObj *MapItem::getMO() { return mo; }   // FIXME-2 remove completely
-
-LinkableMapObj *MapItem::getLMO()   // FIXME-2 remove completely
-{
-    if (hasTypeBranch() || type == Image)
-        return (LinkableMapObj *)mo;
-    else
-        return nullptr;
 }
 
 #include "heading-container.h"

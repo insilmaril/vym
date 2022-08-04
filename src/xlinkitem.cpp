@@ -2,7 +2,6 @@
 #include <QGraphicsScene>
 
 #include "branchitem.h"
-#include "linkablemapobj.h"
 #include "vymmodel.h"
 #include "xlinkobj.h"
 

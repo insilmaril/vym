@@ -16,7 +16,6 @@ class BranchObj;
 class BranchItem;
 class FloatImageObj;
 class ImageItem;
-class LinkableMapObj;
 class QModelIndex;
 class VymModel;
 class XLinkItem;

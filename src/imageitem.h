@@ -4,6 +4,7 @@
 #include "mapitem.h"
 
 class ImageContainer;
+class QGraphicsScene;
 
 bool isImage(const QString &fname);
 

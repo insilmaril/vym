@@ -1,10 +1,7 @@
-#include <iostream>
-#include <math.h>
-
 #include "link-container.h"
-#include "vymmodel.h"
 
-extern bool debug;
+#include <math.h>
+#include <QDebug>
 
 /////////////////////////////////////////////////////////////////
 // LinkContainer
@@ -44,22 +41,27 @@ void LinkContainer::init()
 
 void LinkContainer::createBottomLine()
 {
+    /*
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
     bottomLine->setZValue(dZ_LINK);
     bottomLine->setVisible(true); // FIXME-2 testing
+  */
 }
 
 void LinkContainer::deleteBottomLine()
 {
+    /*
     if (bottomLine) {
         delete bottomLine;
         bottomLine = nullptr;
     }
+    */
 }
 
 void LinkContainer::delLink()
 {
+    /*
     deleteBottomLine();
 
     switch (style) {
@@ -79,13 +81,7 @@ void LinkContainer::delLink()
     default:
         break;
     }
-}
-
-void LinkContainer::copy(LinkContainer *other)
-{
-    Container::copy(other);
-    setLinkStyle(other->style);
-    setLinkColor(other->linkcolor);
+    */
 }
 
 void LinkContainer::setLinkStyle(Style newstyle)
@@ -101,7 +97,7 @@ void LinkContainer::setLinkStyle(Style newstyle)
         case Line:
             l = new QGraphicsLineItem(this);
             l->setPen(pen);
-            //l->setZValue(dZ_LINK);
+            //l->setZValue(dZ_LINK);    // FIXME-2 check, needed?
             //if (visible)
                 l->show();
             //else
@@ -109,7 +105,9 @@ void LinkContainer::setLinkStyle(Style newstyle)
             break;
         case Parabel:
             for (int i = 0; i < arcsegs; i++) {
-                cl = scene()->addLine(QLineF(i * 5, 0, i * 10, 100), pen);
+                cl = new QGraphicsLineItem(this);
+                cl->setLine(QLineF(i * 5, 0, i * 10, 100));
+                cl->setPen(pen);
                 cl->setZValue(dZ_LINK);
                 if (visible)
                     cl->show();
@@ -120,7 +118,8 @@ void LinkContainer::setLinkStyle(Style newstyle)
             pa0.resize(arcsegs + 1);
             break;
         case PolyLine:
-            p = scene()->addPolygon(QPolygonF(), pen, linkcolor);
+            p = new QGraphicsPolygonItem(this);
+            p->setPen(pen);
             p->setZValue(dZ_LINK);
             if (visible)
                 p->show();
@@ -129,7 +128,8 @@ void LinkContainer::setLinkStyle(Style newstyle)
             pa0.resize(3);
             break;
         case PolyParabel:
-            p = scene()->addPolygon(QPolygonF(), pen, linkcolor);
+            p = new QGraphicsPolygonItem(this);
+            p->setPen(pen);
             p->setZValue(dZ_LINK);
             if (visible)
                 p->show();
@@ -194,7 +194,7 @@ void LinkContainer::updateVisibility()
     */
 
     if (visnow) {
-        if (bottomLine) 
+        if (bottomLine)
             bottomLine->show();
 
         switch (style) {

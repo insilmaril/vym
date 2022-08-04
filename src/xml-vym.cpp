@@ -636,7 +636,8 @@ bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
 bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
 {
     if (lastMI) {
-        OrnamentedObj *oo = (OrnamentedObj *)(lastMI->getLMO());
+        /*
+        OrnamentedObj *oo = (OrnamentedObj *)(lastMI->getLMO());    // FIXME-1 frames not supported yet
         if (oo) {
             bool ok;
             int x;
@@ -668,6 +669,7 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
             }
             return true;
         }
+        */
     }
     return true;        // FIXME-2 use container instead of OrnamentedObj in readFrameAttr
 }
@@ -725,13 +727,6 @@ bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
         if (!a.value("localTarget").isEmpty())
             if (a.value("localTarget") == "true")
                 lastMI->toggleTarget();
-        if (!a.value("rotation").isEmpty()) {
-            x = a.value("rotation").toFloat(&okx);
-            if (okx)
-                lastMI->setRotation(x);
-            else
-                return false; // Couldn't read rotation
-        }
 
         if (!a.value("uuid").isEmpty()) {
             // While pasting, check for existing UUID

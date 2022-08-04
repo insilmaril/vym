@@ -253,12 +253,15 @@ QString Link::saveToDir()
 
 XLinkObj *Link::getXLinkObj() { return xlo; }
 
-XLinkObj *Link::createMapObj()
+XLinkObj *Link::createMapObj()  // FIXME-1 not ported yet
 {
+    /*
     if (!xlo)
         xlo = new XLinkObj(beginBranch->getLMO(), this);
     xlo->setVisibility();
     return xlo;
+    */
+    return nullptr;
 }
 
 MapObj *Link::getMO() { return xlo; }

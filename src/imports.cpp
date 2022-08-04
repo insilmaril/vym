@@ -3,7 +3,6 @@
 #include "attributeitem.h"
 #include "branchitem.h"
 #include "file.h"
-#include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "vymmodel.h"
@@ -32,7 +31,7 @@ ImportBase::~ImportBase()
     removeDir(tmpDir);
 }
 
-void ImportBase::init() 
+void ImportBase::init()
 {
     bool ok;
     tmpDir.setPath(makeTmpDir(ok, "vym-import"));

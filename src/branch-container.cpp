@@ -4,9 +4,14 @@
 #include "branch-container.h"
 
 #include "branchitem.h"
+#include "flagrow-container.h"
 #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
+
+extern FlagRowMaster *standardFlagsMaster;
+extern FlagRowMaster *userFlagsMaster;
+extern FlagRowMaster *systemFlagsMaster;
 
 qreal BranchContainer::linkWidth = 20;  // FIXME-2 testing
 
@@ -51,13 +56,17 @@ void BranchContainer::init()
     innerContainer = new Container ();
     innerContainer->type = InnerContent;
 
-
     // Adding the containers will reparent them and thus set scene
     // FIXME-2 ornamentsContainer->addContainer(systemFlagsContainer);
     // FIXME-2 ornamentsContainer->addContainer(userFlagsContainer);
     ornamentsContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
 
+    standardFlagRowContainer = new FlagRowContainer;
+    systemFlagRowContainer = new FlagRowContainer;
+
+    innerContainer->addContainer(standardFlagRowContainer);
+    innerContainer->addContainer(systemFlagRowContainer);
     innerContainer->addContainer(ornamentsContainer);
 
     branchesContainer = nullptr;
@@ -382,6 +391,20 @@ void BranchContainer::showStructure()
         for (int i=0; i < c->childItems().count(); i++)
             qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
     }
+
+
+    c = standardFlagRowContainer;
+    if (c) {
+        qDebug() << "Standard flags: " << c;
+        for (int i=0; i < c->childItems().count(); i++)
+            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
+    }
+    c = systemFlagRowContainer;
+    if (c) {
+        qDebug() << "System flags: " << c;
+        for (int i=0; i < c->childItems().count(); i++)
+            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
+    }
 }
 
 int BranchContainer::imageCount()
@@ -412,11 +435,11 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
         createImagesContainer();
     }
 
-    QPointF sp = c->scenePos();
     c->setParentItem(imagesContainer);
+
+    QPointF sp = c->scenePos();
     if (keepScenePos)
         c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
-
 }
 
 Container* BranchContainer::getImagesContainer()
@@ -690,6 +713,17 @@ void BranchContainer::updateVisuals() // FIXME-2 missing: standardFlags, systemF
 {
     if (branchItem)
         headingContainer->setHeading(branchItem->getHeadingText());
+
+    // Update standard flags active in TreeItem
+
+    QList<QUuid> TIactiveFlagUids = branchItem->activeFlagUids();
+    standardFlagRowContainer->updateActiveFlagContainers(
+        TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
+
+    // Add missing system flags active in TreeItem
+    TIactiveFlagUids = branchItem->activeSystemFlagUids();
+    systemFlagRowContainer->updateActiveFlagContainers(TIactiveFlagUids, systemFlagsMaster);
+
 }
 
 Container::Layout BranchContainer::getDefaultBranchesContainerLayout()
