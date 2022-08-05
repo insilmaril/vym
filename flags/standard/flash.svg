@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 0 266.67 266.67"
+   viewBox="0 0 127.99999 127.99999"
    version="1.1"
    id="svg33"
-   sodipodi:docname="flash.svg"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+   width="128"
+   height="128"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata37">
     <rdf:RDF>
@@ -21,30 +19,9 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1000"
-     id="namedview35"
-     showgrid="false"
-     inkscape:zoom="2.3549704"
-     inkscape:cx="77.345804"
-     inkscape:cy="124.48896"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g27" />
   <defs
      id="defs19">
     <linearGradient
@@ -52,7 +29,7 @@
        x1="26.876591"
        x2="26.876591"
        y1="12.408267"
-       y2="38.765516"
+       y2="38.765514"
        xlink:href="#a"
        gradientTransform="scale(1.3950728,0.71680845)"
        gradientUnits="userSpaceOnUse" />
@@ -68,10 +45,10 @@
     <linearGradient
        id="i"
        x1="34.408985"
-       x2="45.797273"
+       x2="45.797272"
        y1="30.736107"
-       y2="36.857786"
-       gradientTransform="matrix(0.96367011,0,0.30622253,1.0376995,-11.457376,0)"
+       y2="36.857784"
+       gradientTransform="matrix(0.48918901,0,0.1554481,0.52676864,-6.2035373,1.3307194)"
        gradientUnits="userSpaceOnUse">
       <stop
          stop-color="#eefb11"
@@ -84,10 +61,10 @@
     </linearGradient>
     <linearGradient
        id="f"
-       x1="6.2393189"
-       x2="73.291276"
-       y1="7.4548145"
-       y2="65.99685"
+       x1="6.2393188"
+       x2="73.291275"
+       y1="7.4548144"
+       y2="65.996849"
        gradientTransform="scale(0.96029911,1.0413422)"
        gradientUnits="userSpaceOnUse">
       <stop
@@ -111,15 +88,13 @@
          id="stop16" />
     </linearGradient>
     <filter
-       inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
        id="filter1227"
-       x="-0.016368525"
-       width="1.0327371"
-       y="-0.011533046"
+       x="-0.012506367"
+       width="1.0250127"
+       y="-0.011533053"
        height="1.0230661">
       <feGaussianBlur
-         inkscape:collect="always"
          stdDeviation="0.3472235"
          id="feGaussianBlur1229" />
     </filter>
@@ -141,14 +116,13 @@
          stroke="#ff8600"
          id="path23"
          style="display:inline;fill:url(#f);stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1227)"
-         inkscape:label="bolt shadow" />
+         transform="matrix(0.50763118,0,0,0.50763118,4.0799766,1.3307194)" />
     </g>
     <path
-       d="m 40.378544,3.4901 -19.551328,28.481 15.22428,0.5262 -16.897893,23.762 10.182744,0.1889 L 18.026864,74.9862 51.90112,52.3742 36.855099,52.5334 60.207901,28.1374 43.66992,28.0968 63.337182,2.7298 40.379544,3.4901 Z"
+       d="m 20.109992,3.102403 -9.924864,14.457844 7.728319,0.267115 -8.5778968,12.062332 5.1690778,0.09589 -5.7410456,9.410468 17.1956286,-11.478556 -7.63783,0.08081 11.85461,-12.38417 -8.395194,-0.02061 L 31.764513,2.716451 20.1105,3.102403 Z"
        fill="url(#i)"
        stroke="#ff8600"
        id="path29"
-       style="display:inline;fill:url(#i);stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:fill markers stroke"
-       inkscape:label="bolt" />
+       style="display:inline;fill:url(#i);stroke-width:1.52289;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:fill markers stroke" />
   </g>
 </svg>
