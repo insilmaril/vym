@@ -24,7 +24,7 @@ ImageContainer::~ImageContainer()   // FIXME-1 remove imagesContainer from branc
     if (imageItem) imageItem->unlinkImageContainer();
 }
 
-void ImageContainer::copy(ImageContainer *other)
+void ImageContainer::copy(ImageContainer *other)    // FIXME-00000 copy rect!
 {
     qDebug() << "IC::copy"; // FIXME-2 testing only
     qDebug() << "  type="  << other->imageType;
@@ -38,24 +38,28 @@ void ImageContainer::copy(ImageContainer *other)
         case ImageContainer::SVG:
         case ImageContainer::ClonedSVG:
             if (!other->svgCashPath.isEmpty()) {
+                // Loading here will also set imageType
                 load(other->svgCashPath, true);
             }
             else
                 qWarning() << "ImgObj::copy svg: no svgCashPath available.";
 
             svgItem->setVisible(isVisible());
+            svgItem->setParentItem(this);
+            setRect(svgItem->boundingRect());
             break;
         case ImageContainer::Pixmap:
             pixmapItem = new QGraphicsPixmapItem();
             pixmapItem->setPixmap(other->pixmapItem->pixmap());
-            pixmapItem->setParentItem(parentItem());
+            pixmapItem->setParentItem(this); // FIXMEe-2 check...
             pixmapItem->setVisible(isVisible());
             imageType = ImageContainer::Pixmap;
+            setRect(pixmapItem->boundingRect());
             break;
         case ImageContainer::ModifiedPixmap:
             // create new pixmap?
             pixmapItem->setPixmap(other->pixmapItem->pixmap());
-            pixmapItem->setParentItem(parentItem());
+            pixmapItem->setParentItem(this);
             pixmapItem->setVisible(isVisible());
             imageType = ImageContainer::Pixmap;
             break;
@@ -64,6 +68,7 @@ void ImageContainer::copy(ImageContainer *other)
             return;
             break;
     }
+    qDebug() << "  r ="  << rect();
     setScaleFactor(other->scaleFactor);
 }
 
@@ -84,6 +89,9 @@ void ImageContainer::init()
     pixmapItem = nullptr;
     originalPixmap = nullptr;
     scaleFactor = 1;
+
+    // Debugging only
+    setPen(QPen(Qt::red));  // FIXME-2
 }
 
 void ImageContainer::setZValue(qreal z)
@@ -118,10 +126,12 @@ void ImageContainer::setVisibility(bool v)
     }
 }
 
-void ImageContainer::setWidth(qreal w)
+void ImageContainer::setWidth(qreal w)  // FIXME-000
 {
     if (boundingRect().width() == 0)
         return;
+
+    qDebug() << "IC::setWidth w=" << w << "bR.w=" << boundingRect().width() << " sf=" << w/boundingRect().width();
 
     setScaleFactor(w / boundingRect().width());
 }
@@ -158,7 +168,7 @@ void ImageContainer::setScaleFactor(qreal f)
 
 qreal ImageContainer::getScaleFactor() { return scaleFactor; }
 
-void ImageContainer::updateRect()
+void ImageContainer::updateRect()   // FIXME-2 never called
 {
     QRectF r;
     switch (imageType) {

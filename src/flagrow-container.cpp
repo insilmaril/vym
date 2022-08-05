@@ -14,7 +14,7 @@ extern FlagRowMaster *systemFlagsMaster;
 /////////////////////////////////////////////////////////////////
 FlagRowContainer::FlagRowContainer()
 {
-    qDebug() << "Const FlagRowContainer ()";
+    // qDebug() << "Const FlagRowContainer ()";
     type = FlagRowCont;
     layout = Horizontal;
     horizontalDirection = LeftToRight;
@@ -22,7 +22,7 @@ FlagRowContainer::FlagRowContainer()
 
 FlagRowContainer::~FlagRowContainer()
 {
-    qDebug() << "Destr FlagRowContainer";
+    // qDebug() << "Destr FlagRowContainer";
 }
 
 void FlagRowContainer::setZValue(double z)  // FIXME-2 z value of children? in base class?

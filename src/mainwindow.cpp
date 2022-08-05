@@ -3452,20 +3452,20 @@ void Main::setupToolbars()
     modModesToolbar->addAction(actionModModeXLink);
     modModesToolbar->addAction(actionModModeMoveObject);
     modModesToolbar->addAction(actionModModeMoveView);
-    
+
     // Create flag toolbars (initialized later in setupFlagActions() )
     addToolBarBreak();
     standardFlagsToolbar =
         addToolBar(tr("Standard Flags toolbar", "Standard Flag Toolbar"));
     standardFlagsToolbar->setObjectName("standardFlagTB");
     standardFlagsMaster->setToolBar(standardFlagsToolbar);
-    
+
     userFlagsToolbar =
         addToolBar(tr("User Flags toolbar", "user Flags Toolbar"));
     userFlagsToolbar->setObjectName("userFlagsTB");
     userFlagsMaster->setToolBar(userFlagsToolbar);
     userFlagsMaster->createConfigureAction();
-    
+
     // Add all toolbars to View menu
     toolbarsMenu->addAction(fileToolbar->toggleViewAction());
     toolbarsMenu->addAction(clipboardToolbar->toggleViewAction());

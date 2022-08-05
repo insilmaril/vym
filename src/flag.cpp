@@ -16,7 +16,7 @@ Flag::Flag()
 
 Flag::Flag(const QString &fname)
 {
-    // qDebug() << "Const Flag (fname)" << fname;
+    qDebug() << "Const Flag (fname)" << fname;
     init();
     if (!load(fname))
         qWarning() << "Flag::Flag  Failed to load " << fname;
