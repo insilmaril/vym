@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   viewBox="0 0 127.99999 127.99999"
+   viewBox="0 0 47.999996 47.999996"
    version="1.1"
    id="svg33"
-   width="128"
-   height="128"
+   width="48"
+   height="48"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@
        x2="45.797272"
        y1="30.736107"
        y2="36.857784"
-       gradientTransform="matrix(0.48918901,0,0.1554481,0.52676864,-6.2035373,1.3307194)"
+       gradientTransform="matrix(0.08984068,0,0.02854835,0.19249089,5.0771671,2.0512801)"
        gradientUnits="userSpaceOnUse">
       <stop
          stop-color="#eefb11"
@@ -116,13 +116,13 @@
          stroke="#ff8600"
          id="path23"
          style="display:inline;fill:url(#f);stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter1227)"
-         transform="matrix(0.50763118,0,0,0.50763118,4.0799766,1.3307194)" />
+         transform="matrix(0.09322758,0,-0.02178224,0.18549785,14.46702,2.051281)" />
     </g>
     <path
-       d="m 20.109992,3.102403 -9.924864,14.457844 7.728319,0.267115 -8.5778968,12.062332 5.1690778,0.09589 -5.7410456,9.410468 17.1956286,-11.478556 -7.63783,0.08081 11.85461,-12.38417 -8.395194,-0.02061 L 31.764513,2.716451 20.1105,3.102403 Z"
+       d="M 9.9097023,2.6986887 8.0869791,7.9818488 9.5062935,8.0794528 7.9309376,12.487249 8.8802394,12.522059 7.8258917,15.960814 10.983883,11.766342 9.5811753,11.795702 11.758309,7.2702982 10.216508,7.2628582 12.050077,2.557339 9.9097983,2.6983627 Z"
        fill="url(#i)"
        stroke="#ff8600"
        id="path29"
-       style="display:inline;fill:url(#i);stroke-width:1.52289;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:fill markers stroke" />
+       style="display:inline;fill:url(#i);stroke-width:0.394517;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:fill markers stroke" />
   </g>
 </svg>
