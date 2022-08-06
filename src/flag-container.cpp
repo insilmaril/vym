@@ -3,7 +3,7 @@
 #include "flag.h"
 #include "flag-container.h"
 
-FlagContainer::FlagContainer():ImageContainer()
+FlagContainer::FlagContainer()
 {
     qDebug() << "Const FlagContainer  this=" << info();
     init();
@@ -24,6 +24,7 @@ void FlagContainer::loadImage(ImageContainer *ic) // FIXME-000 maybe just use co
 {
     // FIXME-2 needed? prepareGeometryChange();
 
+    qDebug() << "FC::loadImage";
     ImageContainer::copy(ic); // Creates deep copy of pixmap or svg!
 }
 

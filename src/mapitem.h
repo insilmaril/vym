@@ -14,7 +14,7 @@ class MapObj;
 
 class MapItem : public TreeItem {
   protected:
-    QPointF pos;    // FIXME-2 should be removed and retrieved directly from container
+    QPointF pos;    // FIXME-2 should be removed and position retrieved directly from container - if needed after all
 
   public:
     MapItem(TreeItem *parent = nullptr);

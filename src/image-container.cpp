@@ -29,6 +29,7 @@ void ImageContainer::copy(ImageContainer *other)    // FIXME-00000 copy rect!
     qDebug() << "IC::copy"; // FIXME-2 testing only
     qDebug() << "  type="  << other->imageType;
     qDebug() << "  vis ="  << isVisible();
+    qDebug() << "  other->r ="  << other->rect();
     prepareGeometryChange();
     if (imageType != ImageContainer::Undefined)
         qWarning() << "ImageContainer::copy into existing image of type "
@@ -141,9 +142,14 @@ void ImageContainer::setScaleFactor(qreal f)
     scaleFactor = f;
         switch (imageType) {
             case ImageContainer::SVG:
-            case ImageContainer::ClonedSVG:
+            case ImageContainer::ClonedSVG: {
                 svgItem->setScale(f);
+                QRectF r = rect();
+                r.setWidth(r.width() * f);
+                r.setHeight(r.height() * f);
+                setRect(r);
                 break;
+            }
             case ImageContainer::Pixmap:
                 if (f != 1) {
                     // create ModifiedPixmap
