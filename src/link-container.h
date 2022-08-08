@@ -48,7 +48,7 @@ class LinkContainer : public Container {
 
     void setLinkColor(QColor);
     QColor getLinkColor();
-    void setVisibility(bool);
+    virtual void setVisibility(bool);
     void updateVisibility(); //! hides/unhides link depending on selection
 
     /*! update parPos, childRefPos depending on pos redraw link with given style */

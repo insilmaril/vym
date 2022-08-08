@@ -38,8 +38,8 @@ void FlagRowContainer::setZValue(double z)  // FIXME-2 z value of children? in b
 
 void FlagRowContainer::setVisibility(bool v)    // FIXME-1 children visibility?
 {
+    Container::setVisibility(v);
     /*
-    MapObj::setVisibility(v);
     foreach (QGraphicsItem *child, childItems()) {
         Container* c = (Container*) child;
         c->setVisibility(v);
@@ -114,12 +114,12 @@ FlagContainer *FlagRowContainer::findFlagContainerByUid(const QUuid &uid)
 
 QUuid FlagRowContainer::findFlagUidByPos(const QPointF &p)
 {
-    //FIXME-00 if (!clickPoly.boundingRect().contains(p))
-    //    return QUuid();
+    if (!boundingRect().contains(p))
+        return QUuid();
     foreach (QGraphicsItem *child, childItems()) {
         FlagContainer* fc = (FlagContainer*) child;
-    //FIXME-00    if (fc->getClickPoly().boundingRect().contains(p))
-    //        return fc;
+        if (fc->boundingRect().contains(p))
+        return fc->getUuid();
     }
     return QUuid();
 }

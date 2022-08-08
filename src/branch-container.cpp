@@ -65,8 +65,8 @@ void BranchContainer::init()
     standardFlagRowContainer = new FlagRowContainer;
     systemFlagRowContainer = new FlagRowContainer;
 
-    innerContainer->addContainer(standardFlagRowContainer);
-    innerContainer->addContainer(systemFlagRowContainer);
+    ornamentsContainer->addContainer(standardFlagRowContainer);
+    ornamentsContainer->addContainer(systemFlagRowContainer);
     innerContainer->addContainer(ornamentsContainer);
 
     branchesContainer = nullptr;
@@ -558,7 +558,7 @@ void BranchContainer::updateUpLink()
     if (branchItem->depth() == 0) return;
 
     if (temporaryLinked) {
-    /* FIXME-00 cont here to update link for tempLinked branches
+    /* FIXME-1 cont here to update link for tempLinked branches
         BranchItem *pbi = branchItem->parentBranch();
         pbi 
     */

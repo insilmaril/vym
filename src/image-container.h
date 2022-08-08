@@ -31,9 +31,6 @@ class ImageContainer : public Container {
     void setScaleFactor(qreal f);
     qreal getScaleFactor();
 
-  private:
-    void updateRect();
-
   public:
     bool load(const QString &, bool createClone = false);
     bool save(const QString &);

@@ -210,9 +210,17 @@ bool Container::isVisibleContainer()
     return visible;
 }
 
-void Container::setVisibility(bool v)   // FIXME-1 children visibility?
+void Container::setVisibility(bool v)
 {
+    qDebug() << "C:setVis v=" << v << info ();
     visible = v;
+    setVisible(visible);
+    Container *c;
+    foreach (QGraphicsItem *child, childItems()) {
+        c = (Container*) child;
+        qDebug() << "  c=" << c->info();
+        c->setVisibility(v);
+    }
 }
 
 void Container::addContainer(Container *c)

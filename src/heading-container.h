@@ -17,6 +17,7 @@ class HeadingContainer : public Container {
     QGraphicsTextItem *newLine(QString); // generate new textline
 
   public:
+    virtual void setVisibility(bool);
     void setHeading(QString);
     QString getHeading();
     void clearHeading();

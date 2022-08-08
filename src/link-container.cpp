@@ -178,7 +178,7 @@ QColor LinkContainer::getLinkColor() { return linkcolor; }
 
 void LinkContainer::setVisibility(bool v)
 {
-    Container::setVisibility(v);
+    visible = v;
     updateVisibility();
 }
 

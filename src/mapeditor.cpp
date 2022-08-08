@@ -2346,6 +2346,8 @@ void MapEditor::setState(EditorState s)
 
 MapEditor::EditorState MapEditor::state() { return editorState; }
 
+// FIXME-0 New setting (maybe with key to toggle) autorotation to adapt view to selection
+
 void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 {
     Q_UNUSED(nsel);

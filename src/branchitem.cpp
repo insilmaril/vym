@@ -11,8 +11,6 @@
 
 extern TaskModel *taskModel;
 
-//#include <QDir>
-
 BranchItem::BranchItem(TreeItem *parent)
     : MapItem(parent)
 {
@@ -33,18 +31,12 @@ BranchItem::BranchItem(TreeItem *parent)
 
     task = nullptr;
 
-
     branchContainer = nullptr;
 }
 
 BranchItem::~BranchItem()
 {
     //qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain() << "branchContainer=" << branchContainer;
-    if (mo) {   // FIXME-2 remove MapObj completely...
-        delete mo;
-        mo = NULL;
-    }
-
     if (branchContainer) {
         // This deletes only the first container here.
         // All other containers deeper down in tree will unlink themselves 
@@ -267,22 +259,21 @@ void BranchItem::unScroll()
         toggleScroll();
 }
 
-bool BranchItem::toggleScroll() // FIXME-2 not ported yet
+bool BranchItem::toggleScroll()
 {
     // MapCenters are not scrollable
     if (depth() == 0)
         return false;
 
-    /*
-    BranchObj *bo;
+    BranchContainer *bc;
     if (scrolled) {
         scrolled = false;
         systemFlags.deactivate(QString("system-scrolledright"));
         if (branchCounter > 0)
             for (int i = 0; i < branchCounter; ++i) {
-                bo = (BranchObj *)(getBranchNum(i)->getMO());
-                if (bo)
-                    bo->setVisibility(true); // Recursively!
+                bc = getBranchNum(i)->getBranchContainer();
+                if (bc)
+                    bc->setVisibility(true); // Recursively!
             }
     }
     else {
@@ -290,12 +281,12 @@ bool BranchItem::toggleScroll() // FIXME-2 not ported yet
         systemFlags.activate(QString("system-scrolledright"));
         if (branchCounter > 0)
             for (int i = 0; i < branchCounter; ++i) {
-                bo = (BranchObj *)(getBranchNum(i)->getMO());
-                if (bo)
-                    bo->setVisibility(false); // Recursively!
+                bc = getBranchNum(i)->getBranchContainer();
+                if (bc)
+                    bc->setVisibility(false); // Recursively!
             }
     }
-    */
+
     return true;
 }
 

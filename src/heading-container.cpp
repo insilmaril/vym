@@ -27,6 +27,13 @@ void HeadingContainer::init()
     horizontalAlignment = AlignedLeft;
 }
 
+void HeadingContainer::setVisibility(bool v)
+{
+    visible = v;
+    qDebug() << "HC::setVis  v=" << v;
+    setVisible(visible);
+}
+
 QGraphicsTextItem *HeadingContainer::newLine(QString s)  // FIXME-3 use vertical container layout for the lines: Each line it's own container?
 {
     QGraphicsTextItem *t = new QGraphicsTextItem(s, this);
@@ -79,7 +86,7 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
         int j = 0;  // index of last ws
         int k = 0;  // index of "<br>" or similar linebreak
         int br = 0; // width of found break, e.g. for <br> it is 4
-        
+
         QRegExp re("<br.*/>");
         re.setMinimal(true);
 
@@ -161,7 +168,7 @@ void HeadingContainer::clearHeading()
     setRect(0,0,0,0);
 }
 
-void HeadingContainer::setHeadingColor(const QColor &col) 
+void HeadingContainer::setHeadingColor(const QColor &col)
 {
     if (headingColor != col) {
         headingColor = col;

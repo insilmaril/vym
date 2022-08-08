@@ -14,22 +14,18 @@ extern ulong imageLastID;
 /////////////////////////////////////////////////////////////////
 ImageContainer::ImageContainer()
 {
-    qDebug() << "Const ImageContainer ()  this=" << this;
+    //qDebug() << "Const ImageContainer ()  this=" << this;
     init();
 }
 
 ImageContainer::~ImageContainer()   // FIXME-1 remove imagesContainer from branch-container, if no longer needed
 {
-    qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
+    //qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
     if (imageItem) imageItem->unlinkImageContainer();
 }
 
-void ImageContainer::copy(ImageContainer *other)    // FIXME-00000 copy rect!
+void ImageContainer::copy(ImageContainer *other)
 {
-    qDebug() << "IC::copy"; // FIXME-2 testing only
-    qDebug() << "  type="  << other->imageType;
-    qDebug() << "  vis ="  << isVisible();
-    qDebug() << "  other->r ="  << other->rect();
     prepareGeometryChange();
     if (imageType != ImageContainer::Undefined)
         qWarning() << "ImageContainer::copy into existing image of type "
@@ -69,7 +65,6 @@ void ImageContainer::copy(ImageContainer *other)    // FIXME-00000 copy rect!
             return;
             break;
     }
-    qDebug() << "  r ="  << rect();
     setScaleFactor(other->scaleFactor);
 }
 
@@ -90,9 +85,6 @@ void ImageContainer::init()
     pixmapItem = nullptr;
     originalPixmap = nullptr;
     scaleFactor = 1;
-
-    // Debugging only
-    setPen(QPen(Qt::red));  // FIXME-2
 }
 
 void ImageContainer::setZValue(qreal z)
@@ -127,12 +119,10 @@ void ImageContainer::setVisibility(bool v)
     }
 }
 
-void ImageContainer::setWidth(qreal w)  // FIXME-000
+void ImageContainer::setWidth(qreal w)
 {
     if (boundingRect().width() == 0)
         return;
-
-    qDebug() << "IC::setWidth w=" << w << "bR.w=" << boundingRect().width() << " sf=" << w/boundingRect().width();
 
     setScaleFactor(w / boundingRect().width());
 }
@@ -173,29 +163,6 @@ void ImageContainer::setScaleFactor(qreal f)
 }
 
 qreal ImageContainer::getScaleFactor() { return scaleFactor; }
-
-void ImageContainer::updateRect()   // FIXME-2 never called
-{
-    QRectF r;
-    switch (imageType) {
-        case ImageContainer::SVG:
-        case ImageContainer::ClonedSVG:
-            r = QRectF(0, 0, svgItem->boundingRect().width() * scaleFactor,
-                             svgItem->boundingRect().height() * scaleFactor);
-            break;
-        case ImageContainer::Pixmap:
-            r = pixmapItem->boundingRect();
-            break;
-        case ImageContainer::ModifiedPixmap:
-            r = pixmapItem->boundingRect();
-            break;
-        default:
-            qWarning() << "ImageContainer::updateRect unknown imageType";
-            break;
-    }
-    qDebug() << "IC::updateRect  r= " << r;
-    setRect(r);
-}
 
 bool ImageContainer::load(const QString &fn, bool createClone)
 {
