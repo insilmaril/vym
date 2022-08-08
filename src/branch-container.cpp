@@ -147,7 +147,7 @@ QPointF BranchContainer::getOriginalParentPos()
     return originalParentPos;
 }
 
-void BranchContainer::setRealScenePos(const QPointF &sp)
+void BranchContainer::setRealScenePos(const QPointF &sp)    // FIXME-1 still needed?
 {
     // Move my self in a way, that finally center of ornamentsContainer
     // will be at scenePos sp
@@ -161,21 +161,52 @@ void BranchContainer::setRealScenePos(const QPointF &sp)
         //setPos(scenePos() + t_oc);
         QPointF q = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
         QPointF r = sp - q;
-        qDebug() << "BC::sRSP " << info() << 
-            " sp=" << sp << 
-            " o_cntr=" << q << 
-            " t_oc=" << t_oc << 
-            " r=" << r << 
+        qDebug() << "BC::sRSP " << info() <<
+            " sp=" << sp <<
+            " o_cntr=" << q <<
+            " t_oc=" << t_oc <<
+            " r=" << r <<
             "o=" << orientation;
         setPos(pos() + r);
     }
 }
 
-QPointF BranchContainer::getRealScenePos()
+QPointF BranchContainer::getRealScenePos()  // FIXME-1 still needed?
 {
     QPointF r = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
     qDebug() << "BC::gRSP " << info() << " o_cntr=" << r << "o=" << orientation ;
     return r;
+}
+
+void BranchContainer::moveToRefPos(const QPointF &rp) // FIXME-000 cont here
+{
+    // Move my self in a way, that finally the refrence position
+    // (center of ornamentsContainer) will be at rp
+    QPointF t_oc = mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
+    QPointF p_new = rp - t_oc;
+
+    if (branchItem->depth() == 0)
+        setPos(p_new);
+    else {
+        //QPointF p_new = sceneTransform().inverted().map(scenePos() + t_oc);
+        //setPos(scenePos() + t_oc);
+        QPointF q = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
+        QPointF r = rp - q;
+        qDebug() << "BC::sRP " << info() <<
+            " rp=" << rp <<
+            " o_cntr=" << q <<
+            " t_oc=" << t_oc <<
+            " r=" << r <<
+            "o=" << orientation;
+        setPos(pos() + r);
+    }
+}
+
+QPointF BranchContainer::getRefPos() // FIXME-000 cont here
+{
+    QPointF rp = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
+    qDebug() << "BC::gRP " << info() << " rp=" << rp << "o=";
+    return rp;
 }
 
 bool BranchContainer::isOriginalFloating()
@@ -268,14 +299,14 @@ void BranchContainer::updateBranchesContainer()
         if (!branchesContainer)
             createBranchesContainer();
 
-        // Space for links depends on layout:
+        // Space for links depends on layout and scrolled state:
         if (linkSpaceContainer) {
-            if (hasFloatingBranchesLayout()) {
+            if (hasFloatingBranchesLayout() || branchItem->isScrolled()) {
                 delete linkSpaceContainer;
                 linkSpaceContainer = nullptr;
             }
         } else {
-            if (!hasFloatingBranchesLayout()) {
+            if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
                 linkSpaceContainer = new HeadingContainer ();
                 linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here
 
@@ -560,7 +591,7 @@ void BranchContainer::updateUpLink()
     if (temporaryLinked) {
     /* FIXME-1 cont here to update link for tempLinked branches
         BranchItem *pbi = branchItem->parentBranch();
-        pbi 
+        pbi
     */
     } else {
         // Get "real" parentBranchContainer, not tmpParentContainer (!)
@@ -596,7 +627,7 @@ void BranchContainer::updateUpLink()
 
 void BranchContainer::setLayout(const Layout &l)
 {
-    if (type != Branch && type != TmpParent) 
+    if (type != Branch && type != TmpParent)
         qWarning() << "BranchContainer::setLayout (...) called for non-branch: " << info();
     Container::setLayout(l);
 }
@@ -610,7 +641,7 @@ void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go 
         return;
     }
 
-    // If we have children, we want to preserve positions 
+    // If we have children, we want to preserve positions
     // before changing layout to floating
     qDebug() << "BC::switchLayout, preserving positions";
     Container::setLayout(l);
@@ -754,7 +785,7 @@ void BranchContainer::reposition()
         // tmpParentContainer has no branchItem
         depth = 0;
 
-    // Set orientation based on depth and if we are floating around or 
+    // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
 

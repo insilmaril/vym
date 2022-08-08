@@ -34,7 +34,7 @@ void HeadingContainer::setVisibility(bool v)
     setVisible(visible);
 }
 
-QGraphicsTextItem *HeadingContainer::newLine(QString s)  // FIXME-3 use vertical container layout for the lines: Each line it's own container?
+QGraphicsTextItem *HeadingContainer::newLine(QString s)
 {
     QGraphicsTextItem *t = new QGraphicsTextItem(s, this);
     t->setFont(headingFont);

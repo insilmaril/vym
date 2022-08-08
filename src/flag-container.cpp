@@ -5,13 +5,13 @@
 
 FlagContainer::FlagContainer()
 {
-    qDebug() << "Const FlagContainer  this=" << info();
+    // qDebug() << "Const FlagContainer  this=" << info();
     init();
 }
 
 FlagContainer::~FlagContainer()
 {
-    qDebug() << "Destr FlagContainer  this=" << info() << "  " << name;
+    // qDebug() << "Destr FlagContainer  this=" << info() << "  " << name;
 }
 
 void FlagContainer::init()

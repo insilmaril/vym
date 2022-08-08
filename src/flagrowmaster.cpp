@@ -18,7 +18,7 @@ FlagRowMaster::FlagRowMaster()
 
 FlagRowMaster::~FlagRowMaster()
 {
-    qDebug()<< "Destr FlagRowMaster    toolbar=" << toolbar;
+    // qDebug()<< "Destr FlagRowMaster    toolbar=" << toolbar;
     while (!flags.isEmpty())
         delete (flags.takeLast());
 }

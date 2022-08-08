@@ -22,21 +22,6 @@ void MapItem::init()
     hideLinkUnselected = false;
 }
 
-void MapItem::appendChild(TreeItem *item) // FIXME-2 no longer used
-{
-    TreeItem::appendChild(item);
-
-    // If lmo exists, also set parObj there // FIXME-2 remove
-    /*
-    LMbj *lmo = getLMO();
-    if (lmo) {
-        LMObj *itemLMO = ((MapItem *)item)->getLMO();
-        if (itemLMO)
-            itemLMO->setParObj(lmo);
-    }
-    */
-}
-
 Container* MapItem::getContainer()
 {
     if (hasTypeBranch())

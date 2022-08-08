@@ -39,6 +39,9 @@ class BranchContainer : public Container {
     void setRealScenePos(const QPointF &);  //! Move ornaments container to scenePos
     QPointF getRealScenePos();              //! scenePos of ornamentsContainer
 
+    void moveToRefPos(const QPointF &);
+    QPointF getRefPos();
+
     bool isOriginalFloating();
 
   private:

@@ -21,9 +21,6 @@ class MapItem : public TreeItem {
 
     void init();
 
-    /*! Overloaded from TreeItem. Used to set parObj in LinkableMapObj */
-    virtual void appendChild(TreeItem *item);
-
     /*! Overloaded in BranchItem and ImageItem to retrieve the related container */
     virtual Container* getContainer();
 

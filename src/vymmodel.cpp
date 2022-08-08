@@ -3750,9 +3750,9 @@ bool VymModel::scrollBranch(BranchItem *bi)
             u = "unscroll";
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
+            reposition();
             emitDataChanged(bi);
             emitSelectionChanged();
-            reposition();
             mapEditor->getScene()
                 ->update(); // Needed for _quick_ update,  even in 1.13.x
             return true;
@@ -3772,9 +3772,9 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             r = "unscroll";
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
-            emitDataChanged(bi);
             emitSelectionChanged();
             reposition();
+            emitDataChanged(bi);
             mapEditor->getScene()
                 ->update(); // Needed for _quick_ update,  even in 1.13.x
             return true;
@@ -5302,7 +5302,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         }
     }
     reposition();
-    
+
     emitSelectionChanged();
 }
 
@@ -5322,7 +5322,7 @@ void VymModel::newServer()
         QMessageBox::critical(NULL, "vym server",
                               QString("Unable to start the server: %1.")
                                   .arg(tcpServer->errorString()));
-        // FIXME-3 needed? we are no widget any longer... close();
+        // FIXME needed? we are no widget any longer... close();
         return;
     }
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newClient()));

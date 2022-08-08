@@ -58,12 +58,12 @@ void Container::setType(const Container::ContainerType &t)
     type = t;
 }
 
-void Container::setName(const QString &n)   // FIXME-4 debugging only
+void Container::setName(const QString &n)   // FIXME-2 debugging only
 {
     name = n;
 }
 
-QString Container::getName()    // FIXME-4 debugging only
+QString Container::getName()    // FIXME-2 debugging only
 {
     QString t;
     switch (type) {
@@ -301,8 +301,6 @@ void Container::reposition()
 {
     // qDebug() << QString("#### Reposition of %1").arg(getName()) << "Layout: " << getLayoutString() << horizontalDirection;
 
-    QRectF r;
-
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
     // Container::reposition is overloaded, so for example HeadingContainer
@@ -311,9 +309,9 @@ void Container::reposition()
     // Then the subcontainers are positioned.
     //
     // a) Do we have any chilrden after all?
-    if (childItems().count() == 0)
+    if (!isVisible() || childItems().count() == 0)
     {
-        setRect(r);
+        setRect(QRect());
         return;
     }
 
@@ -327,6 +325,8 @@ void Container::reposition()
     }
 
     // c) Align my own containers
+
+    QRectF r;
 
     switch (layout) {
         case BoundingFloats:
