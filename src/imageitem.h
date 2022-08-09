@@ -21,7 +21,7 @@ class ImageItem : public MapItem {
   public:
     BranchItem* parentBranch();
     virtual bool load(const QString &fname);
-    ImageContainer* createImageContainer(QGraphicsScene*); //! Create container for this image
+    ImageContainer* createImageContainer();
     ImageContainer* getImageContainer();
     void unlinkImageContainer();
 

@@ -2990,7 +2990,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
 
         emit(layoutChanged());
 
-        dst->addToImagesContainer(newii->createImageContainer(getScene()));
+        dst->addToImagesContainer(newii->createImageContainer());
 
         latestAddedItem = newii;
         reposition();
@@ -3612,11 +3612,6 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/
             return;
         }
 
-        /*
-        QPointF p;
-        if (selbi->getLMO())    // FIXME-0
-            p = selbi->getLMO()->getRelPos();
-        */
         if (saveStateFlag)
             saveStateChangingPart(pi, pi, "removeKeepChildren ()",
                                   QString("Remove %1 and keep its children")
@@ -3638,7 +3633,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/
         emitDataChanged(pi);
         select(sel);
         /*
-        BranchObj *bo = getSelectedBranchObj(); // FIXME
+        BranchObj *bo = getSelectedBranchObj(); // FIXME not ported yet to containers
         if (bo) {
             bo->move2RelPos(p);
             reposition();

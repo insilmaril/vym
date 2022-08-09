@@ -86,6 +86,8 @@ void BranchContainer::init()
 
     temporaryLinked = false;
 
+    refPos = QPointF();
+
     scrollOpacity = 1;
 }
 
@@ -202,31 +204,12 @@ qreal BranchContainer::getScrollOpacity()
     return scrollOpacity;
 }
 
-void BranchContainer::moveToRefPos(const QPointF &rp) // FIXME-000 cont here
+void BranchContainer::setRefPos(const QPointF &p)
 {
-    // Move my self in a way, that finally the refrence position
-    // (center of ornamentsContainer) will be at rp
-    QPointF t_oc = mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
-    QPointF p_new = rp - t_oc;
-
-    if (branchItem->depth() == 0)
-        setPos(p_new);
-    else {
-        //QPointF p_new = sceneTransform().inverted().map(scenePos() + t_oc);
-        //setPos(scenePos() + t_oc);
-        QPointF q = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
-        QPointF r = rp - q;
-        qDebug() << "BC::sRP " << info() <<
-            " rp=" << rp <<
-            " o_cntr=" << q <<
-            " t_oc=" << t_oc <<
-            " r=" << r <<
-            "o=" << orientation;
-        setPos(pos() + r);
-    }
+    refPos = p;
 }
 
-QPointF BranchContainer::getRefPos() // FIXME-000 cont here
+QPointF BranchContainer::getRefPos()
 {
     // Return the reference position.
     //
@@ -247,6 +230,49 @@ QPointF BranchContainer::getRefPos() // FIXME-000 cont here
 
     QPointF r = p_own - p_parent;
     return r;
+}
+
+void BranchContainer::moveToRefPos()
+{
+    // Move my self in a way, that finally the refrence position
+    // (center of headingContainer) will be at p - relative to parents center of hC
+
+    BranchContainer *pbc = parentBranchContainer();
+
+    QPointF p_own;
+
+    if (!pbc) {
+        // I am the mapcenter, move in a way, that center of hC is at scene position p
+        p_own = headingContainer->mapToScene(headingContainer->rect().center());
+
+        qDebug() << "BC::mtRP refPos="
+            << qpointFToString(refPos, 0)
+            << "getRefPos=" << qpointFToString(getRefPos(), 0)
+            //<< "p_own=" << qpointFToString(p_own,0);
+            << "pos=" << qpointFToString(pos(),0);
+
+        QPointF p_new = refPos - getRefPos() + pos();
+        setPos(p_new);
+
+        qDebug() << "     new refPos="
+            << qpointFToString(p_new, 0);
+            setPos(p_new);
+            return;
+    }
+
+    p_own = headingContainer->mapToItem(pbc, headingContainer->rect().center());
+    HeadingContainer *phc = pbc->getHeadingContainer();
+    QPointF p_parent = phc->mapToItem(pbc, phc->rect().center());
+
+    QPointF p_new = getRefPos() - refPos + p_parent;
+    setPos(p_new);
+
+    qDebug() << "BC::mtRP refPos="
+        << qpointFToString(refPos, 0)
+        << "p_own=" << qpointFToString(p_own,0)
+        << " p_parent=" << qpointFToString(p_parent,0);
+    qDebug() << "     new refPos="
+        << qpointFToString(p_new, 0);
 }
 
 bool BranchContainer::isOriginalFloating()

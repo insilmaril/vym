@@ -34,8 +34,11 @@ Container* MapItem::getContainer()
 
 void MapItem::setPos(const QPointF &p)   // FIXME-2 add image containers
 {
-    if (hasTypeBranch())
+    if (hasTypeBranch()) {
         ((BranchItem*)this)->getBranchContainer()->setPos(p);
+        //((BranchItem*)this)->getBranchContainer()->setToRefPos(p);
+        //((BranchItem*)this)->getBranchContainer()->moveToRefPos();
+    }
 
     if (hasTypeImage())
         ((ImageItem*)this)->getImageContainer()->setPos(p);

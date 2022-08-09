@@ -842,7 +842,7 @@ BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &exc
         return nullptr;
 }
 
-void MapEditor::testFunction1()
+void MapEditor::testFunction2()
 {
     TreeItem *selti = model->getSelectedItem();
     if (selti)
@@ -860,11 +860,12 @@ void MapEditor::testFunction1()
         qWarning() << "Nothing selected";
 }
 
-void MapEditor::testFunction2()
+void MapEditor::testFunction1()
 {
     BranchItem *selbi = model->getSelectedBranch();
     if (selbi) {
-        selbi->getBranchContainer()->moveToRefPos(QPointF(123,456));
+        selbi->getBranchContainer()->setRefPos(QPointF(0,0));
+        selbi->getBranchContainer()->moveToRefPos();
     }
     //autoLayout();
 }
