@@ -6754,6 +6754,7 @@ void Main::testFunction2()
     VymModel *m = currentModel();
     if (m) {
         //m->repeatLastCommand();
+        currentMapEditor()->testFunction2();
     }
 }
 

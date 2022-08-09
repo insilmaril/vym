@@ -10,6 +10,7 @@
 #include "animpoint.h"
 #include "branchitem.h"
 #include "geometry.h"
+#include "heading-container.h"
 #include "link-container.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -859,34 +860,41 @@ void MapEditor::testFunction1()
         qWarning() << "Nothing selected";
 }
 
-void MapEditor::testFunction2() { autoLayout(); }
-
-void MapEditor::toggleWinter() // FIXME-2 Not working yet with containers (also shaking snow from branch!)
+void MapEditor::testFunction2()
 {
-    /*
+    BranchItem *selbi = model->getSelectedBranch();
+    if (selbi) {
+        selbi->getBranchContainer()->moveToRefPos(QPointF(123,456));
+    }
+    //autoLayout();
+}
+
+void MapEditor::toggleWinter()
+{
     if (winter) {
         delete winter;
-        winter = NULL;
+        winter = nullptr;
     }
     else {
         winter = new Winter(this);
         QList<QRectF> obstacles;
-        BranchObj *bo;
-        BranchItem *cur = NULL;
-        BranchItem *prev = NULL;
+        BranchContainer *bc;
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
         model->nextBranch(cur, prev);
         while (cur) {
             if (!cur->hasHiddenExportParent()) {
                 // Branches
-                bo = (BranchObj *)(cur->getLMO());
-                if (bo && bo->isVisibleObj())
-                    obstacles.append(bo->getBBox());
+                bc = cur->getBranchContainer();
+                if (bc->isVisible()) {
+                    HeadingContainer *hc = bc->getHeadingContainer();
+                    obstacles.append(hc->mapRectToScene(hc->boundingRect()));
+                }
             }
             model->nextBranch(cur, prev);
         }
         winter->setObstacles(obstacles);
     }
-    */
 }
 
 BranchItem *MapEditor::getBranchDirectAbove(BranchItem *bi)
@@ -2029,7 +2037,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 */
 
                 // Save current scene position for redo or if moved to floating layout
-                QPointF sp = bc->scenePos();    // FIXME-00 use realPos instead?
+                QPointF sp = bc->scenePos();    // FIXME-00 use refPos instead?
 
                 // Relink
                 model->relinkBranch(bi, dst_branch, dst_num, true); // FIXME-00 saving positions should be done in VymModel completely...
@@ -2347,7 +2355,7 @@ void MapEditor::setState(EditorState s)
 
 MapEditor::EditorState MapEditor::state() { return editorState; }
 
-// FIXME-0 New setting (maybe with key to toggle) autorotation to adapt view to selection
+// FIXME-2 Feature: New setting (maybe with key to toggle) autorotation to adapt view to selection
 
 void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 {
@@ -2435,25 +2443,25 @@ void MapEditor::updateData(const QModelIndex &sel)
     if (ti && ti->hasTypeBranch())
         ((BranchItem*)ti)->updateVisuals();
 
-    /*
-    if (winter) { // FIXME-2 not yet ported to containers
+    if (winter) {
         QList<QRectF> obstacles;
-        BranchObj *bo;
+        BranchContainer *bc;
         BranchItem *cur = nullptr;
         BranchItem *prev = nullptr;
         model->nextBranch(cur, prev);
         while (cur) {
             if (!cur->hasHiddenExportParent()) {
                 // Branches
-                bo = (BranchObj *)(cur->getLMO());
-                if (bo && bo->isVisibleObj())
-                    obstacles.append(bo->getBBox());
+                bc = cur->getBranchContainer();
+                if (bc && bc->isVisible()) {
+                    HeadingContainer *hc = bc->getHeadingContainer();
+                    obstacles.append(hc->mapRectToScene(hc->boundingRect()));
+                }
             }
             model->nextBranch(cur, prev);
         }
         winter->setObstacles(obstacles);
     }
-    */
 }
 
 void MapEditor::togglePresentationMode()

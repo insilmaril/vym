@@ -56,7 +56,6 @@ class Winter : public QObject {
     SnowFlake::SnowType type;
     int maxFalling;
     int maxUnfreeze;
-    // QGraphicsRectItem *test;
 
     QRectF viewRect;
 };
