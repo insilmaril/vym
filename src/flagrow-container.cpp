@@ -97,7 +97,7 @@ void FlagRowContainer::activateFlag(Flag *flag)
         fc->setUuid(flag->getUuid());
         fc->setZValue(QGraphicsItem::zValue());
         fc->setVisibility(visible);
-        qDebug() << "FRC::activateFlag  vis="<< visible;
+        qDebug() << "FRC::activateFlag  visible="<< visible << "  Qtvis=" << isVisible();
         fc->setVisibility(true);
     }
 }

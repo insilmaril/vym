@@ -228,9 +228,25 @@ void BranchContainer::moveToRefPos(const QPointF &rp) // FIXME-000 cont here
 
 QPointF BranchContainer::getRefPos() // FIXME-000 cont here
 {
-    QPointF rp = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
-    qDebug() << "BC::gRP " << info() << " rp=" << rp << "o=";
-    return rp;
+    // Return the reference position.
+    //
+    // The refpos is the center of the heading container relative to my parents
+    // center of heading container (or origin in case of mapcenter). 
+    // The coordinate system used here is the one of the parent branch container (!)
+
+    BranchContainer *pbc = parentBranchContainer();
+
+    if (!pbc)
+        // I am the mapcenter, return scene position
+        return headingContainer->mapToScene(headingContainer->rect().center());
+
+    QPointF p_own = headingContainer->mapToItem(pbc, headingContainer->rect().center());
+
+    HeadingContainer *phc = pbc->getHeadingContainer();
+    QPointF p_parent = phc->mapToItem(pbc, phc->rect().center());
+
+    QPointF r = p_own - p_parent;
+    return r;
 }
 
 bool BranchContainer::isOriginalFloating()
@@ -426,7 +442,7 @@ void BranchContainer::updateChildrenStructure()
 
 void BranchContainer::showStructure()
 {
-    qDebug() << info();
+    qDebug() << info() << " refPos=" << qpointFToString(getRefPos(), 0);
     Container *c = getBranchesContainer();
     if (outerContainer)
         qDebug() << "outerContainer:" << outerContainer;

@@ -118,9 +118,9 @@ QString Container::info (const QString &prefix)
     return prefix +
         getName() +
         QString(" Layout: %1").arg(getLayoutString()) +
-        QString(" scenePos: %1").arg(qpointFToString(scenePos())) +
-        QString(" pos: %1").arg(qpointFToString(pos())) +
-        QString(" rect: (%1, %2  %3x%4)").arg(rect().x()).arg(rect().y()).arg(rect().width()).arg(rect().height());
+        QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0)) +
+        QString(" pos: %1").arg(qpointFToString(pos(), 0)) +
+        QString(" rect: %1").arg(qrectFToString(rect(), 0));
 }
 
 void Container::setLayout(const Layout &l)

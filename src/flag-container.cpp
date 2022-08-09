@@ -22,9 +22,7 @@ void FlagContainer::init()
 
 void FlagContainer::loadImage(ImageContainer *ic) // FIXME-000 maybe just use copy directly in FlagRowContainer?
 {
-    // FIXME-2 needed? prepareGeometryChange();
-
-    qDebug() << "FC::loadImage";
+    //qDebug() << "FC::loadImage";
     ImageContainer::copy(ic); // Creates deep copy of pixmap or svg!
 }
 
