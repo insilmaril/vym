@@ -215,6 +215,17 @@ QString HeadingContainer::getName() {
     return Container::getName() + " '" + headingText;
 }
 
+void HeadingContainer::setScrollOpacity(qreal o) // FIXME-2 needed?
+{
+    qDebug() << "HC::setScrollOpacity o=" << o;
+    foreach (QGraphicsTextItem *ti, headingLines)
+        ti->setOpacity(o);
+}
+
+qreal HeadingContainer::getScrollOpacity() // FIXME-2 needed?
+{
+}
+
 void HeadingContainer::reposition()
 {
     // qDebug() << "HC::reposition " + info();

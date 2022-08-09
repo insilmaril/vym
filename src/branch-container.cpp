@@ -8,6 +8,7 @@
 #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
+#include "misc.h"
 
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
@@ -84,6 +85,8 @@ void BranchContainer::init()
     branchesContainerAutoLayout = true;
 
     temporaryLinked = false;
+
+    scrollOpacity = 1;
 }
 
 BranchContainer* BranchContainer::parentBranchContainer()
@@ -176,6 +179,27 @@ QPointF BranchContainer::getRealScenePos()  // FIXME-1 still needed?
     QPointF r = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
     qDebug() << "BC::gRSP " << info() << " o_cntr=" << r << "o=" << orientation ;
     return r;
+}
+
+#include <QTransform>
+void BranchContainer::setScrollOpacity(qreal o)   // FIXME-2 testing for potential later animation
+{
+    scrollOpacity = o;
+    //headingContainer->setScrollOpacity(a);
+    headingContainer->setOpacity(o);
+    if (standardFlagRowContainer)
+        standardFlagRowContainer->setOpacity(o);
+    QTransform t;
+    t.scale (1, o);
+    setTransform(t);
+
+    qDebug() << "BC::sSO  o=" << o << " flags=" << flags();
+    setOpacity(o);
+}
+
+qreal BranchContainer::getScrollOpacity()
+{
+    return scrollOpacity;
 }
 
 void BranchContainer::moveToRefPos(const QPointF &rp) // FIXME-000 cont here

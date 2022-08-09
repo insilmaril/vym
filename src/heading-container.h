@@ -29,6 +29,10 @@ class HeadingContainer : public Container {
     QColor getColor();
 
     virtual QString getName();
+
+    void setScrollOpacity(qreal);
+    qreal getScrollOpacity();
+
     virtual void reposition();
 
   protected:

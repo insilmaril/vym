@@ -846,10 +846,11 @@ void MapEditor::testFunction1()
     TreeItem *selti = model->getSelectedItem();
     if (selti)
     {
-        qDebug() << "selti=" << selti;
-        if (selti->hasTypeBranch())
-            ((BranchItem*)selti)->getBranchContainer()->showStructure();
-        else if (selti->hasTypeImage()) {
+        if (selti->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
+            bc->showStructure();
+            bc->setScrollOpacity(bc->getScrollOpacity() * 0.9);   // FIXME-2 animation test
+        } else if (selti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)selti)->getImageContainer();
             qDebug() << ic->info() << ic;
         } else

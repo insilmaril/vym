@@ -39,6 +39,12 @@ class BranchContainer : public Container {
     void setRealScenePos(const QPointF &);  //! Move ornaments container to scenePos
     QPointF getRealScenePos();              //! scenePos of ornamentsContainer
 
+    void setScrollOpacity(qreal a);
+    qreal getScrollOpacity();
+  private:
+    qreal scrollOpacity;
+
+  public:
     void moveToRefPos(const QPointF &);
     QPointF getRefPos();
 
