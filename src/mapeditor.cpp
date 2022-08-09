@@ -1664,9 +1664,9 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-1  Shift to only move M
     // Show mouse position for debugging in statusBar
     if (debug && e->modifiers() & Qt::ControlModifier)
         mainWindow->statusMessage(
-            QString("ME::mouseMoveEvent  Scene coord: %1  viewport coord: %2")
-                .arg(qpointFToString(p_event))
-                .arg(qpointFToString(e->pos())));
+            QString("ME::mouseMoveEvent  Scene: %1 - Viewport: %2")
+                .arg(qpointFToString(p_event, 0))
+                .arg(qpointToString(e->pos())));
 
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {

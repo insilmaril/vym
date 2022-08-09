@@ -63,28 +63,39 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
 
 QString qpointToString(const QPoint &p)
 {
-    return QString("(%1,%2)").arg(p.y()).arg(p.y());
+    return QString("(%1, %2)").arg(p.y()).arg(p.y());
 }
 
-QString qpointFToString(const QPointF &p)
+QString qpointFToString(const QPointF &p, int d)
 {
-    return QString("(%1,%2)").arg(p.x()).arg(p.y());
+    return QString("(%1, %2)")
+        .arg(QString::number(p.x(),'f', d))
+        .arg(QString::number(p.y(),'f', d));
+}
+
+QString qrectFToString(const QRectF &r, int d)
+{
+    return QString("(%1, %2  %3x%4)")
+        .arg(QString::number(r.x(),'f', d))
+        .arg(QString::number(r.y(),'f', d))
+        .arg(QString::number(r.width(),'f', d))
+        .arg(QString::number(r.height(),'f', d));
 }
 
 QString VectorToString(const Vector &p)
 {
-    return QString("(%1,%2)").arg(p.x()).arg(p.y());
+    return QString("(%1, %2)").arg(p.x()).arg(p.y());
 }
 
 ostream &operator<<(ostream &stream, QPoint const &p)
 {
-    stream << "(" << p.x() << "," << p.y() << ")";
+    stream << "(" << p.x() << ", " << p.y() << ")";
     return stream;
 }
 
 ostream &operator<<(ostream &stream, QPointF const &p)
 {
-    stream << "(" << p.x() << "," << p.y() << ")";
+    stream << "(" << p.x() << ", " << p.y() << ")";
     return stream;
 }
 
