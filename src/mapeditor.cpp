@@ -864,7 +864,7 @@ void MapEditor::testFunction1()
 {
     BranchItem *selbi = model->getSelectedBranch();
     if (selbi) {
-        selbi->getBranchContainer()->setRefPos(QPointF(0,0));
+        selbi->getBranchContainer()->setRefPos(QPointF(0,20));
         selbi->getBranchContainer()->moveToRefPos();
     }
     //autoLayout();

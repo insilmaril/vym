@@ -240,39 +240,37 @@ void BranchContainer::moveToRefPos()
     BranchContainer *pbc = parentBranchContainer();
 
     QPointF p_own;
+    QPointF p_new;
 
     if (!pbc) {
         // I am the mapcenter, move in a way, that center of hC is at scene position p
         p_own = headingContainer->mapToScene(headingContainer->rect().center());
+        p_new = refPos - getRefPos() + pos();
 
         qDebug() << "BC::mtRP refPos="
             << qpointFToString(refPos, 0)
             << "getRefPos=" << qpointFToString(getRefPos(), 0)
-            //<< "p_own=" << qpointFToString(p_own,0);
+            << "p_new=" << qpointFToString(p_new,0)
             << "pos=" << qpointFToString(pos(),0);
 
-        QPointF p_new = refPos - getRefPos() + pos();
-        setPos(p_new);
+    } else {
+        p_own = headingContainer->mapToItem(this, headingContainer->rect().center());
+        HeadingContainer *phc = pbc->getHeadingContainer();
+        QPointF p_parent = phc->mapToItem(pbc, phc->rect().center());
 
-        qDebug() << "     new refPos="
-            << qpointFToString(p_new, 0);
-            setPos(p_new);
-            return;
+        p_new = refPos - getRefPos() + pos();
+
+        qDebug() << "BC::mtRP refPos="
+            << qpointFToString(refPos, 0)
+            << "getRefPos=" << qpointFToString(getRefPos(), 0)
+            << " p_own=" << qpointFToString(p_own,0)
+            << " p_new=" << qpointFToString(p_new,0)
+            << " p_parent=" << qpointFToString(p_parent,0)
+            << " pos=" << qpointFToString(pos(),0);
     }
-
-    p_own = headingContainer->mapToItem(pbc, headingContainer->rect().center());
-    HeadingContainer *phc = pbc->getHeadingContainer();
-    QPointF p_parent = phc->mapToItem(pbc, phc->rect().center());
-
-    QPointF p_new = getRefPos() - refPos + p_parent;
-    setPos(p_new);
-
-    qDebug() << "BC::mtRP refPos="
-        << qpointFToString(refPos, 0)
-        << "p_own=" << qpointFToString(p_own,0)
-        << " p_parent=" << qpointFToString(p_parent,0);
     qDebug() << "     new refPos="
         << qpointFToString(p_new, 0);
+    setPos(p_new);
 }
 
 bool BranchContainer::isOriginalFloating()
