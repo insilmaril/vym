@@ -20,7 +20,6 @@ class FlagContainer : public ImageContainer {
     FlagContainer();
     ~FlagContainer();
     virtual void init();
-    void loadImage(ImageContainer *ic);
     void setUuid(const QUuid &uid);
     const QUuid getUuid();
     QPixmap getPixmap();

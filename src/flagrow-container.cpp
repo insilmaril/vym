@@ -93,7 +93,7 @@ void FlagRowContainer::activateFlag(Flag *flag)
 
         // Loading an image  will *copy* it
         // and thus read the flag from cash
-        fc->loadImage(flag->getImageContainer());
+        fc->copy(flag->getImageContainer());
         fc->setUuid(flag->getUuid());
         fc->setZValue(QGraphicsItem::zValue());
         fc->setVisibility(visible);
