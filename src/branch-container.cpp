@@ -917,18 +917,6 @@ void BranchContainer::reposition()
         }
     }
 
-    // After children have been positioned, now we can set reference position
-//    qDebug () << info();
-/*
-    if (branchesContainer) {
-        foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
-            BranchContainer *bc = (BranchContainer*) g_item;
-            if (bc->getBranchItem()->depth() == 1)
-                bc->moveToRefPos(); // FIXME-0000 review, if this is good approach
-        }
-    }
-*/
-
     // FIXME-3 for testing we do some coloring and additional drawing
     /*
     */

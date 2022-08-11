@@ -3237,7 +3237,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Create TreeItem
     BranchItem *parbi = dst;
     int n;
-    BranchItem *newbi = new BranchItem();
+    BranchItem *newbi = new BranchItem;
 
     emit(layoutAboutToBeChanged());
 
@@ -3247,9 +3247,10 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
         parbi->appendChild(newbi);
         endInsertRows();
     }
-    else if (pos == -1 || pos == -3) {  // FIXME-00 crashes if there is no parent (MC)
+    else if (pos == -1 || pos == -3) {
         // insert below selection
-        parbi = (BranchItem *)dst->parent();
+        parbi = dst->parentBranch();
+
         n = dst->childNumber() + (3 + pos) / 2; //-1 |-> 1;-3 |-> 0
         beginInsertRows(index(parbi), n, n);
         parbi->insertBranch(n, newbi);
@@ -3266,11 +3267,13 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Create Container
     newbi->createBranchContainer(getScene());
 
-    // Add newbi also into Container of parent
-    parbi->addToBranchesContainer(newbi->getBranchContainer() );
+    if (parbi && parbi != rootItem) {
+        // Add newbi also into Container of parent
+        parbi->addToBranchesContainer(newbi->getBranchContainer() );
 
-    // Set color of heading to that of parent
-    newbi->setHeadingColor(parbi->getHeadingColor());
+        // Set color of heading to that of parent
+        newbi->setHeadingColor(parbi->getHeadingColor());
+    }
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();

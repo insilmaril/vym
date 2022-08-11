@@ -68,7 +68,7 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     connectSignals();
 }
 
-BranchPropertyEditor::~BranchPropertyEditor()   // FIXME-0 might crash on close
+BranchPropertyEditor::~BranchPropertyEditor()
 {
     settings.setValue("/satellite/propertywindow/geometry/size", size());
     settings.setValue("/satellite/propertywindow/geometry/pos", pos());
