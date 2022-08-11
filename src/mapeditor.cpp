@@ -2025,7 +2025,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 /*
                 BranchItem *pbi = bc->getBranchItem()->parentBranch();
                 if (pbi) {
-                    Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-00 MC will have no parentBranch and crash
+                    Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-00 Relinking MC: will have no parentBranch and crash
                     if (originalParentContainer->hasFloatingLayout()) {
                         model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly
                                 bc->getBranchItem(),
@@ -2038,10 +2038,10 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 */
 
                 // Save current scene position for redo or if moved to floating layout
-                QPointF sp = bc->scenePos();    // FIXME-00 use refPos instead?
+                QPointF sp = bc->scenePos();    // FIXME-2 Relinking MC: use refPos instead?
 
                 // Relink
-                model->relinkBranch(bi, dst_branch, dst_num, true); // FIXME-00 saving positions should be done in VymModel completely...
+                model->relinkBranch(bi, dst_branch, dst_num, true); // FIXME-2 saving positions should be done in VymModel completely...
 
                 // After relinking: Save new position for redo, if required
                 if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {
@@ -2119,7 +2119,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         } // Branches moved, but not relinked
 
         // Let's see if we moved images with tmpParentContainer
-        if (tmpParentContainer->childImages().count() > 0 ) repositionNeeded = true;
+        if (tmpParentContainer->childImages().count() > 0 )
+            repositionNeeded = true;
 
         foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
             ImageItem *ii = ic->getImageItem();
