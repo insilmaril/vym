@@ -32,13 +32,10 @@ Container* MapItem::getContainer()
     return nullptr;
 }
 
-void MapItem::setPos(const QPointF &p)   // FIXME-2 add image containers
+void MapItem::setPos(const QPointF &p)
 {
-    if (hasTypeBranch()) {
+    if (hasTypeBranch())
         ((BranchItem*)this)->getBranchContainer()->setPos(p);
-        //((BranchItem*)this)->getBranchContainer()->setToRefPos(p);
-        //((BranchItem*)this)->getBranchContainer()->moveToRefPos();
-    }
 
     if (hasTypeImage())
         ((ImageItem*)this)->getImageContainer()->setPos(p);
@@ -121,7 +118,7 @@ QPainterPath MapItem::getSelectionPath() // FIXME-1 should be in BranchContainer
     } else if (hasTypeImage()) {
         ImageContainer *ic =((ImageItem*)this)->getImageContainer();
         polygon = ic->mapToScene(ic->rect().marginsAdded(QMarginsF(d, d, d, d)));
-    } else 
+    } else
         qWarning() << "MapITem::getSelectionPath - unknown item type!";
 
     QPainterPath path;

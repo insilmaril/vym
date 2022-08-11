@@ -3247,7 +3247,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
         parbi->appendChild(newbi);
         endInsertRows();
     }
-    else if (pos == -1 || pos == -3) {
+    else if (pos == -1 || pos == -3) {  // FIXME-00 crashes if there is no parent (MC)
         // insert below selection
         parbi = (BranchItem *)dst->parent();
         n = dst->childNumber() + (3 + pos) / 2; //-1 |-> 1;-3 |-> 0
@@ -3422,7 +3422,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             for (int i = 0; i < branch->branchCount(); i++)
             {
                 bc = branch->getBranchNum(i)->getBranchContainer();
-                bc->setRealScenePos(positions[i]);  // FIXME-0 check if really required?
+                bc->setRealScenePos(positions[i]);
             }
         }
         */

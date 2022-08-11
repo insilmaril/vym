@@ -152,37 +152,6 @@ QPointF BranchContainer::getOriginalParentPos()
     return originalParentPos;
 }
 
-void BranchContainer::setRealScenePos(const QPointF &sp)    // FIXME-1 still needed?
-{
-    // Move my self in a way, that finally center of ornamentsContainer
-    // will be at scenePos sp
-    QPointF t_oc = mapFromItem(ornamentsContainer, ornamentsContainer->rect().center());
-    QPointF p_new = sp - t_oc;
-
-    if (branchItem->depth() == 0)
-        setPos(p_new);
-    else {
-        //QPointF p_new = sceneTransform().inverted().map(scenePos() + t_oc);
-        //setPos(scenePos() + t_oc);
-        QPointF q = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
-        QPointF r = sp - q;
-        qDebug() << "BC::sRSP " << info() <<
-            " sp=" << sp <<
-            " o_cntr=" << q <<
-            " t_oc=" << t_oc <<
-            " r=" << r <<
-            "o=" << orientation;
-        setPos(pos() + r);
-    }
-}
-
-QPointF BranchContainer::getRealScenePos()  // FIXME-1 still needed?
-{
-    QPointF r = ornamentsContainer->mapToScene(ornamentsContainer->rect().center());
-    qDebug() << "BC::gRSP " << info() << " o_cntr=" << r << "o=" << orientation ;
-    return r;
-}
-
 #include <QTransform>
 void BranchContainer::setScrollOpacity(qreal o)   // FIXME-2 testing for potential later animation
 {
@@ -206,6 +175,7 @@ qreal BranchContainer::getScrollOpacity()
 
 void BranchContainer::setRefPos(const QPointF &p)
 {
+    qDebug() << "BC setRefPos p=" << qpointFToString(p, 0);
     refPos = p;
 }
 
@@ -898,7 +868,7 @@ void BranchContainer::reposition()
     // Settings depending on depth
     if (depth == 0)
     {
-        // MapCenter or TmpParent
+        // MapCenter or TmpParent?
         if (type != TmpParent) {
             setHorizontalDirection(LeftToRight);
             innerContainer->setHorizontalDirection(RightToLeft);
@@ -947,6 +917,18 @@ void BranchContainer::reposition()
         }
     }
 
+    // After children have been positioned, now we can set reference position
+//    qDebug () << info();
+/*
+    if (branchesContainer) {
+        foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
+            BranchContainer *bc = (BranchContainer*) g_item;
+            if (bc->getBranchItem()->depth() == 1)
+                bc->moveToRefPos(); // FIXME-0000 review, if this is good approach
+        }
+    }
+*/
+
     // FIXME-3 for testing we do some coloring and additional drawing
     /*
     */
@@ -977,6 +959,5 @@ void BranchContainer::reposition()
             setBrush(Qt::NoBrush);
             if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
         }
-    }
-
+    }   // Debug visualizations
 }
