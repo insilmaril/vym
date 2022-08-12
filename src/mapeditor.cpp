@@ -1785,7 +1785,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // Since moved containers are relative to tmpParentContainer anyway, just move
         // tmpParentContainer to pointer position:
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
-
+        qDebug() << "tPC setPos " << tmpParentContainer->pos();
 
         if (tmpParentContainer->isTemporaryLinked()) {
             tmpParentContainer->unsetTemporaryLinked();
@@ -1827,6 +1827,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             } else if (ti->hasTypeImage()) {
                 ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
                 if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
+                    qDebug() << "ic pos=" << ic->pos() << "tPC=" << tmpParentContainer->pos();
                     ic->setOriginalPos();
                     tmpParentContainer->addToImagesContainer(ic, true);
                 }
@@ -2119,8 +2120,10 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         } // Branches moved, but not relinked
 
         // Let's see if we moved images with tmpParentContainer
-        if (tmpParentContainer->childImages().count() > 0 )
+        if (tmpParentContainer->childImages().count() > 0 ) {
             repositionNeeded = true;
+            qDebug() << "ME::imagesMoved";
+        }
 
         foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
             ImageItem *ii = ic->getImageItem();
@@ -2129,6 +2132,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // Update parent of moved container to original imageContainer
             // in parent branch
             pi->addToImagesContainer(ic);
+            qDebug() << " img moved: " << ic->info() << "orgPos:" << ic->getOriginalPos() << " newPos:" << ic->pos();   // FIXME-0000 moving images fails atm
 
             QString pold = qpointFToString(ic->getOriginalPos());
             QString pnow = qpointFToString(ic->pos());
