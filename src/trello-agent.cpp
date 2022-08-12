@@ -61,7 +61,7 @@ void TrelloAgent::init()
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
-    // Read credentials    
+    // Read credentials
     apiKey = settings.value("/atlassian/trello/apiKey", "undefined").toString();
     token = settings.value("/atlassian/trello/token", "undefined").toString();
     auth = QString("key=%1&token=%2").arg(apiKey).arg(token);
@@ -124,7 +124,7 @@ void TrelloAgent::continueJob()
                 case 2: {
                     // Insert references to original branch and model
                     // FIXME-0 jsobj["vymBranchID"] = QJsonValue(branchID);
-                    
+
                     emit (trelloBoardDataReady(jsdoc));
                     finishJob();
                     }
@@ -176,7 +176,7 @@ void TrelloAgent::continueJob()
                 case 2:
                     updateListsOfBranch();
                     break;
-                case 3: 
+                case 3:
                     finishJob();
                     break;
                 default:
@@ -196,8 +196,8 @@ void TrelloAgent::finishJob()
 
 void TrelloAgent::unknownStepWarning()
 {
-    qWarning() << "TrelloAgent::contJob  unknow step in jobType = " 
-        << jobType 
+    qWarning() << "TrelloAgent::contJob  unknow step in jobType = "
+        << jobType
         << "jobStep = " << jobStep;
 }
 
@@ -261,7 +261,7 @@ void TrelloAgent::dataReceived(QNetworkReply *reply)
     continueJob();
 }
 
-void TrelloAgent::timeout() 
+void TrelloAgent::timeout()
 {
     qWarning() << "TrelloAgent timeout!!   jobType = " << jobType;
 }
@@ -282,7 +282,7 @@ void TrelloAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors
 }
 #endif
 
-void TrelloAgent::updateListsOfBranch() 
+void TrelloAgent::updateListsOfBranch()
 {
     qDebug() << "TA::updateListsOnBoard";
     vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
