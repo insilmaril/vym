@@ -107,7 +107,7 @@ QRectF MapItem::getBBoxURLFlag()    // FIXME-2 not ported yet to containers
 }
 
 #include "heading-container.h"
-QPainterPath MapItem::getSelectionPath() // FIXME-1 should be in BranchContainer or ImageContainer
+QPainterPath MapItem::getSelectionPath() // FIXME-2 could be in BranchContainer or ImageContainer
 {
     qreal d = 3;    // Margins around rectangle of item
     QPolygonF polygon;

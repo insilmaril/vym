@@ -18,7 +18,7 @@ ImageContainer::ImageContainer()
     init();
 }
 
-ImageContainer::~ImageContainer()   // FIXME-1 remove imagesContainer from branch-container, if no longer needed
+ImageContainer::~ImageContainer()
 {
     //qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
     if (imageItem) imageItem->unlinkImageContainer();

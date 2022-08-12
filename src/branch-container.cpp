@@ -480,7 +480,7 @@ int BranchContainer::imageCount()
         return imagesContainer->childItems().count();
 }
 
-void BranchContainer::createImagesContainer()
+void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not deleted, when no longer used
 {
     imagesContainer = new Container ();
     if (imagesContainerAutoLayout)
@@ -666,21 +666,6 @@ void BranchContainer::setLayout(const Layout &l)
     Container::setLayout(l);
 }
 
-void BranchContainer::switchLayout(const Layout &l) // FIXME-0 testing, will go to above setLayout later Also needs to be renamed to switchBranchesContainerLayout
-{
-    if (l == layout) return;
-
-    if (branchCount() == 0 || (l != FloatingFree && l != FloatingBounded )) {
-        Container::setLayout(l);
-        return;
-    }
-
-    // If we have children, we want to preserve positions
-    // before changing layout to floating
-    qDebug() << "BC::switchLayout, preserving positions";
-    Container::setLayout(l);
-}
-
 void BranchContainer::setImagesContainerLayout(const Layout &ltype)
 {
     if (imagesContainerLayout == ltype)
@@ -704,7 +689,7 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 
     branchesContainerLayout = ltype;
 
-    if (branchesContainer) { // FIXME-0 only use this if switching to floating*
+    if (branchesContainer) { // FIXME-1 only use this if switching to floating*
         // Keep current positions
         QPointF oc_pos = ornamentsContainer->pos();
         QPointF bcc_pos = branchesContainer->pos() - oc_pos;
@@ -774,7 +759,7 @@ bool BranchContainer::isInClickBox(const QPointF &p)
     return headingContainer->rect().contains(headingContainer->mapFromScene(p));
 }
 
-void BranchContainer::updateVisuals() // FIXME-2 missing: standardFlags, systemFlags
+void BranchContainer::updateVisuals()
 {
     if (branchItem)
         headingContainer->setHeading(branchItem->getHeadingText());
@@ -863,7 +848,7 @@ void BranchContainer::reposition()
         // then my orientation is already set in MapEditor, so ignore here
     }
 
-    setLayout(Horizontal);
+    setLayout(Horizontal);  // FIXME-2 always needed here?
 
     // Settings depending on depth
     if (depth == 0)

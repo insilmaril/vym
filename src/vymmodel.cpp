@@ -2417,7 +2417,7 @@ void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        if (selbi) {    // FIXME-0 think, if this makes sense also for mapcenters
+        if (selbi) {    // FIXME-2 think, if this makes sense also for mapcenters
             bc = selbi->getBranchContainer();
             if (s == "Auto")
                 bc->branchesContainerAutoLayout = true;
@@ -2429,7 +2429,7 @@ void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
                 }
             }
         }
-        //emitDataChanged(bi);    // FIXME-0 expensive, needed?
+        //emitDataChanged(bi);    // FIXME-2 expensive, needed?
     }
     reposition();
 }
@@ -2448,7 +2448,7 @@ void VymModel::setImagesLayout(const QString &s)  // FIXME-1 no savestate yet
                 bc->imagesContainerAutoLayout = false;
             }
         }
-        //emitDataChanged(bi);    // FIXME-0 expensive, needed?
+        //emitDataChanged(bi);    // FIXME-2 expensive, needed?
     }
     reposition();
 }
@@ -2908,6 +2908,7 @@ void VymModel::moveDownDiagonally()
 }
 
 
+#include "heading-container.h"
 void VymModel::detach() // FIXME-0 savestate missing
 {
     QList<BranchItem *> selbis = getSelectedBranches();
@@ -2915,21 +2916,24 @@ void VymModel::detach() // FIXME-0 savestate missing
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
+            HeadingContainer *hc = bc->getHeadingContainer();
+            QPointF rp = hc->mapToScene(hc->rect().center());
 
             /*
             QString old_sel = getSelectString();
-            int n = selbi->num();
-            QPointF p;
-            if (bc)
-                p = bc->scenePos();
+            // int n = selbi->num();
 
             QString parent_sel = getSelectString(selbi->parent());
             */
 
-            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 detach: hardcoded for now, could already be FloatingFree or something else
+            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-2 detach: hardcoded for now, could already be FloatingFree or something else
             reposition();
 
             relinkBranch(selbi, rootItem, -1, true);
+
+            // Restore original scene position
+            bc->setRefPos(rp);
+            bc->moveToRefPos();
         }
     }
     emitSelectionChanged();
@@ -3434,7 +3438,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStyles(keepFrame);
+        branch->updateStyles(keepFrame);    // FIXME-0 not implemented yet. Where should e.g. links etc be adapted to relinked branches? Example: detach. Idea: Update styles for subtree (Which is changed when relinking)
 
         emitDataChanged(branch);
 

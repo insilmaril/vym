@@ -637,7 +637,7 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
 {
     if (lastMI) {
         /*
-        OrnamentedObj *oo = (OrnamentedObj *)(lastMI->getLMO());    // FIXME-1 frames not supported yet
+        OrnamentedObj *oo = (OrnamentedObj *)(lastMI->getLMO());    // FIXME-2 frames not supported yet
         if (oo) {
             bool ok;
             int x;

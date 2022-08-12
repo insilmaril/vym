@@ -61,16 +61,7 @@ ImageContainer *ImageItem::createImageContainer()
 {
     imageContainer = new ImageContainer();
     imageContainer->setImageItem(this);
-    qDebug() << "II::createImageContainer for " << this << "IC=" << imageContainer;
-    /* FIXME-00 check visibility of new image when creating img container
-    if (((BranchItem *)parentItem)->isScrolled() ||
-        !((MapItem *)parentItem)->getMO()->isVisibleObj())
-        imageContainer->setVisibility(false);
-    imageContainer->setZValue(zValue);
-    imageContainer->setPos(pos);
-    imageContainer->updateVisibility();
-    imageContainer->setLinkColor();
-    */
+    // qDebug() << "II::createImageContainer for " << this << "IC=" << imageContainer;
     return imageContainer;
 }
 

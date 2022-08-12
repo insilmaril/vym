@@ -73,9 +73,9 @@ class BranchContainer : public Container {
     void createBranchesContainer();
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
-    void updateBranchesContainer();    //! Remove unused containers and add needed ones
 
   private:
+    void updateBranchesContainer();    //! Remove unused containers and add needed ones
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
@@ -104,7 +104,6 @@ class BranchContainer : public Container {
     void updateUpLink();
 
     void setLayout(const Layout &l);
-    void switchLayout(const Layout &l);
 
     bool imagesContainerAutoLayout;
     void setImagesContainerLayout(const Layout &l);
@@ -160,7 +159,7 @@ class BranchContainer : public Container {
     Orientation orientation;
     Orientation originalOrientation;            //! Save orientation before move for undo
     bool originalFloating;                      //! Save, if floating before linked temporary
-    QPointF originalParentPos;  // FIXME-0 Currently used in ME to determine orientation during move: scene coord of orig, parent
+    QPointF originalParentPos;                  // used in ME to determine orientation during move: scene coord of orig, parent
 
 };
 

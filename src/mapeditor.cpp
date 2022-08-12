@@ -516,12 +516,12 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
     }
 }
 
-void MapEditor::setViewCenterTarget()// FIXME-1 add ImageItem and -Container
+void MapEditor::setViewCenterTarget()// FIXME-2 add ImageItem and -Container (center on image)
 {
     MapItem *selti = (MapItem *)(model->getSelectedItem());
     if (selti) {
         if (selti->hasTypeBranch())
-            setViewCenterTarget(((BranchItem*)selti)->getBranchContainer()->rect().center(), 1, 0);
+            setViewCenterTarget(((BranchItem*)selti)->getBranchContainer()->getHeadingContainer()->rect().center(), 1, 0);
     }
 }
 
@@ -1772,7 +1772,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
         int d_pos;
-        if (e->modifiers() & Qt::ShiftModifier) // FIXME-0 should also change targetBranchContainer
+        if (e->modifiers() & Qt::ShiftModifier) // FIXME-1 should also change targetBranchContainer
             d_pos = 1;
         else if (e->modifiers() & Qt::ControlModifier)
             d_pos = -1;
@@ -1862,29 +1862,21 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     } else {
         //tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
-        /* FIXME-1 orientation while moving
+        /* FIXME-1 Review orientation while moving
          */
         // Try to set orientation for not relinked tmpParentContainer by checking the
         // layout and "original" parent
         Container *c = tmpParentContainer->getBranchesContainer();
         if (c && !c->childItems().isEmpty()) {
-            // Consider orientation of *last* selected branch   // FIXME-1 meanwhile use *first* branch of movingItems
+            // Consider orientation of *last* selected branch
             BranchContainer *bc = (BranchContainer*)(c->childItems().last());
             if (bc->isOriginalFloating())  {
                 if (tmpParentContainer->pos().x() > bc->getOriginalParentPos().x())
-                {
-                    // FIXME-1 qDebug() << "  rop";
                     newOrientation = BranchContainer::RightOfParent;
-                }
                 else
-                {
-                    // FIXME-1 qDebug() << "  lop";
                     newOrientation = BranchContainer::LeftOfParent;
-                }
-            } else {
-                // FIXME-1 qDebug() << "ok2";
+            } else
                 newOrientation = bc->getOriginalOrientation();
-            }
         }
     }
 

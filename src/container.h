@@ -7,8 +7,6 @@
 
 class BranchContainer;
 class ImageContainer;
-class MapObj;   // FIXME-1 should no longer be necessary
-
 #define dZ_BBOX 0 // testing
 #define dZ_SELBOX 5
 #define dZ_FRAME_LOW 10
