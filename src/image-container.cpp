@@ -85,6 +85,9 @@ void ImageContainer::init()
     pixmapItem = nullptr;
     originalPixmap = nullptr;
     scaleFactor = 1;
+
+     // FIXME-3 for testing we do some coloring and additional drawing
+    setPen(QPen(Qt::red));
 }
 
 void ImageContainer::setZValue(qreal z)
