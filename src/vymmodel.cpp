@@ -4510,7 +4510,7 @@ QPointF VymModel::exportSVG(QString fname, bool askName)
             return offset;
         }
 
-        fname = lastImageDir.absolutePath() + "/" + getMapName() + ".png";
+        fname = lastImageDir.absolutePath() + "/" + getMapName() + ".svg";
     }
 
     ExportBase ex;
@@ -4858,7 +4858,7 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
         settings.localValue(filePath, "/export/last/command", "").toString());
 
     if (fname == "")
-        ex.setFilePath(mapName + ".org");
+        ex.setFilePath(mapName + ".md");
     else
         ex.setFilePath(fname);
 
