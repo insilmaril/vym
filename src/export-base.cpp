@@ -111,7 +111,7 @@ void ExportBase::setListTasks(bool b) { listTasks = b; }
 bool ExportBase::execDialog()
 {
     QString fn =
-        QFileDialog::getSaveFileName(NULL, caption, dirPath, filter, NULL,
+        QFileDialog::getSaveFileName(nullptr, caption, filePath, filter, nullptr,
                                      QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty()) {
