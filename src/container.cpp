@@ -509,7 +509,8 @@ void Container::reposition()
 			    c->setPos (x + w_last / 2, y);
 			else {   // FIXME-0 review rotation
 			    // move rotated container to my origin
-			    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+			    // original: c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
+			    c->setPos (x + w_last / 2, y);
 			}
                         qdbg() << ind() << " *            after: c=" << c->info();
 			x += w_last;
