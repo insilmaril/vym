@@ -58,6 +58,8 @@ class Container : public QGraphicsRectItem {
     virtual QString getName();
 
     virtual QString info (const QString &prefix = "");
+    int containerDepth();
+    QString ind();
 
     void setLayout(const Layout &ltype);
 
@@ -69,14 +71,8 @@ class Container : public QGraphicsRectItem {
     bool isFloating();          //! returns true, if parent container has Floating layout
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout
 
-    /*! Floating content can cause translating this container, this is used
-     *  for InnerContainer. But mapCenters need to keep the position of
-     *  InnerContainer and heading, and move the parent BranchContainer
-     *  instead in opposite direction, when total bbox of
-     *  floating children changes
-     */
-    void setMovableByFloats(bool);
-
+    void setCentralContainer(Container *);   //! Set the given container to be the central one
+    bool isCentralContainer();               //! Returns true, if I am the central container
     void setMinimumWidth();         //! Minimum dimensions of container. Used for linkSpaceContainer
     qreal getMinimumWidth();
 
@@ -118,6 +114,7 @@ class Container : public QGraphicsRectItem {
     QPointF originalPos;    //! Save position before move for undo
     AnimPoint animatedPos;  //! animated position to let e.g. a branch "snap back"
 
+    bool centralContainer;  //! true, if center of container should be in origin of a set of containers 
     QString name;
 
     Layout layout;

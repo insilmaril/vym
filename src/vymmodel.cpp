@@ -3737,7 +3737,7 @@ void VymModel::clearItem(TreeItem *ti)
     return;
 }
 
-bool VymModel::scrollBranch(BranchItem *bi)
+bool VymModel::scrollBranch(BranchItem *bi) // FIXME-1 scroll icon not at right place
 {
     if (bi) {
         if (bi->isScrolled())
@@ -3763,7 +3763,7 @@ bool VymModel::scrollBranch(BranchItem *bi)
     return false;
 }
 
-bool VymModel::unscrollBranch(BranchItem *bi)
+bool VymModel::unscrollBranch(BranchItem *bi) // FIXME-1 scroll icon still there, even after reposition
 {
     if (bi) {
         if (!bi->isScrolled())

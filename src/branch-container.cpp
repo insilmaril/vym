@@ -16,6 +16,8 @@ extern FlagRowMaster *systemFlagsMaster;
 
 qreal BranchContainer::linkWidth = 20;  // FIXME-2 testing
 
+#define qdbg() qDebug().nospace().noquote()
+
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
     //qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
@@ -57,17 +59,16 @@ void BranchContainer::init()
     innerContainer = new Container ();
     innerContainer->type = InnerContent;
 
-    // Adding the containers will reparent them and thus set scene
-    // FIXME-2 ornamentsContainer->addContainer(systemFlagsContainer);
-    // FIXME-2 ornamentsContainer->addContainer(userFlagsContainer);
     ornamentsContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
 
     standardFlagRowContainer = new FlagRowContainer;
     systemFlagRowContainer = new FlagRowContainer;
 
+    // Adding the containers will reparent them and thus set scene
     ornamentsContainer->addContainer(standardFlagRowContainer);
     ornamentsContainer->addContainer(systemFlagRowContainer);
+    ornamentsContainer->setCentralContainer(headingContainer);
     innerContainer->addContainer(ornamentsContainer);
 
     branchesContainer = nullptr;
@@ -202,8 +203,9 @@ QPointF BranchContainer::getRefPos()
     return r;
 }
 
-void BranchContainer::moveToRefPos()
+void BranchContainer::moveToRefPos() // FIXME-1 used at all?
 {
+    qDebug() << "BC::moveToRefPos " << info() ;
     // Move my self in a way, that finally the refrence position
     // (center of headingContainer) will be at p - relative to parents center of hC
 
@@ -353,9 +355,11 @@ void BranchContainer::updateBranchesContainer()
 
 void BranchContainer::createOuterContainer()
 {
+    qDebug() << "BC::createOuterContainer";
     if (!outerContainer) {
         outerContainer = new Container (this);
-        outerContainer->setLayout(BoundingFloats);
+        //outerContainer->setLayout(BoundingFloats);  // FIXME-000 disabled temporarily
+        outerContainer->setLayout(Horizontal);
         outerContainer->type = InnerContent;
         outerContainer->addContainer(innerContainer);
         if (imagesContainer)
@@ -833,10 +837,21 @@ void BranchContainer::reposition()
                     if (pbc->orientation == UndefinedOrientation) {
                         // Parent is tmpParentContainer or mapCenter
                         // use relative position to determine orientation
-                        if (pos().x() > 0)
+
+                        if (!parentContainer()->hasFloatingLayout()) {
+                            // Special case: Horizontal or vertical layout, but child of MC
+                            // Should only occur in testing
+                            qdbg() << "Setting hardcoded RoP for " << info();
+                            qdbg() << "                       pc=" << parentContainer()->info();
                             orientation = RightOfParent;
-                        else
-                            orientation = LeftOfParent;
+                        } else {
+                            qdbg() << "Setting neworient for " << info();
+                            qdbg() << "                       pc=" << parentContainer()->info();
+                            if (pos().x() > 0)
+                                orientation = RightOfParent;
+                            else
+                                orientation = LeftOfParent;
+                        }
                     } else {
                         // Set same orientation as parent
                         setOrientation(pbc->orientation);
@@ -850,25 +865,33 @@ void BranchContainer::reposition()
 
     setLayout(Horizontal);  // FIXME-2 always needed here?
 
+        linkContainer->setLinkStyle(LinkContainer::NoLink);
+
     // Settings depending on depth
     if (depth == 0)
     {
         // MapCenter or TmpParent?
         if (type != TmpParent) {
             setHorizontalDirection(LeftToRight);
-            innerContainer->setHorizontalDirection(RightToLeft);
+            innerContainer->setHorizontalDirection(LeftToRight);    // FIXME-2 initially R2L. But: why R2L?
         }
 
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
         innerContainer->setLayout(BoundingFloats);
         setBranchesContainerLayout(FloatingBounded);    // FIXME-2 think, if autolayout should be used for mapcenter
+
+        // FIXME-0 testing only layouts
+        //innerContainer->setLayout(Horizontal);
+        //setBranchesContainerLayout(Horizontal);
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
 
         if (branchesContainerAutoLayout)
             setBranchesContainerLayout(Vertical);
+
+        qdbg() << ind() << "curorient=" << orientation << " " << info();
         switch (orientation) {
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
@@ -910,7 +933,8 @@ void BranchContainer::reposition()
         setPen(QPen(Qt::green));
 
         // OrnamentsContainer
-        ornamentsContainer->setPen(QPen(Qt::blue));
+        //ornamentsContainer->setPen(QPen(Qt::blue));
+        ornamentsContainer->setPen(Qt::NoPen);
 
         // InnerContainer
         innerContainer->setPen(QPen(Qt::cyan));

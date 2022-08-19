@@ -51,8 +51,10 @@ MapEditor::MapEditor(VymModel *vm)
 
     if (debug) {
         // Add origin for debugging
-        QGraphicsRectItem *x_axis = new QGraphicsRectItem(-100, 0, 200, 1 );
-        QGraphicsRectItem *y_axis = new QGraphicsRectItem(0, -100, 1, 200 );
+        QPointF p;
+        qreal size = 100;
+        QGraphicsRectItem *x_axis = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
+        QGraphicsRectItem *y_axis = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
         x_axis->setBrush(Qt::NoBrush);
         y_axis->setBrush(Qt::NoBrush);
         x_axis->setPen(QColor(Qt::blue));
@@ -60,6 +62,19 @@ MapEditor::MapEditor(VymModel *vm)
 
         mapScene->addItem(x_axis);
         mapScene->addItem(y_axis);
+
+        // Add another cross
+        p = QPointF(140,0);
+        size = 20;
+        QGraphicsRectItem *x_axis2 = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
+        QGraphicsRectItem *y_axis2 = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
+        x_axis2->setBrush(Qt::NoBrush);
+        y_axis2->setBrush(Qt::NoBrush);
+        x_axis2->setPen(QColor(Qt::gray));
+        y_axis2->setPen(QColor(Qt::gray));
+
+        mapScene->addItem(x_axis2);
+        mapScene->addItem(y_axis2);
     }
 
     zoomFactor = zoomFactorTarget = 1;

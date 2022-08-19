@@ -6,6 +6,7 @@
 using namespace std;
 
 #include "command.h"
+//#include "definitions.h"
 #include "findresultwidget.h"
 #include "findwidget.h"
 #include "flagrow.h"
@@ -120,30 +121,36 @@ QScriptValue scriptPrint(QScriptContext *ctx, QScriptEngine *eng);
 void msgHandler(QtMsgType type, const QMessageLogContext &context,
                 const QString &msg)
 {
-    QByteArray localMsg = msg.toLocal8Bit();
+    QByteArray localMsg;
+    /*
+    if (msg.startsWith("\"") && msg.endsWith("\"")) {
+        QString s = msg;
+        localMsg = s.remove(s.length() - 1, 1).remove(0,1).toLocal8Bit();
+    } else
+    */
+        localMsg = msg.toLocal8Bit();
+
     switch (type) {
-    case QtDebugMsg:
-        fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file,
-                context.line, context.function);
-        break;
-    case QtWarningMsg:
-        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
-        warningCount++;
-        break;
-    case QtCriticalMsg:
-        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
-        criticalCount++;
-        break;
-    case QtFatalMsg:
-        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
-        fatalCount++;
-        break;
-    default:
-        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
+        case QtDebugMsg:
+            fprintf(stderr, "%s\n", localMsg.constData());
+            break;
+        case QtWarningMsg:
+            fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(),
+                    context.file, context.line, context.function);
+            warningCount++;
+            break;
+        case QtCriticalMsg:
+            fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(),
+                    context.file, context.line, context.function);
+            criticalCount++;
+            break;
+        case QtFatalMsg:
+            fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(),
+                    context.file, context.line, context.function);
+            fatalCount++;
+            break;
+        default:
+            fprintf(stderr, "Info: %s\n", localMsg.constData());
     }
 }
 
@@ -163,7 +170,8 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(msgHandler);
 
     // Testing for now
-    vout.setCodec("UTF-8");
+    vout.setCodec("UTF-8");  //FIXME-2
+    //dbg << QString("foobar") << 123;
 
     // Reading and initializing options commandline options
     options.add("batch", Option::Switch, "b", "batch");

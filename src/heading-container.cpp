@@ -43,11 +43,6 @@ QGraphicsTextItem *HeadingContainer::newLine(QString s)
 
     headingLines.append(t);
 
-    QRectF r = rect();
-    t->setPos(0, r.height());
-    r.setHeight(r.height() + t->boundingRect().height());
-    if (r.width() < t->boundingRect().width()) r.setWidth(t->boundingRect().width());
-    setRect(r);
     return t;
 }
 
@@ -74,6 +69,9 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
         t->setHtml(s);
         t->setDefaultTextColor(headingColor);
         headingLines.append(t);
+
+       // Translate line to move center to origin
+        t->setPos(-t->boundingRect().center());
         setRect(t->boundingRect());
     }
     else {
@@ -156,6 +154,24 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
     } // ASCII heading with multiple lines
     // setVisibility(visible); FIXME-1  no visibility yet with containers
 
+    // Align headingLines vertically and find center
+    qreal h = 0;
+    qreal w = 0;
+    qreal w_max = 0;
+    foreach (QGraphicsTextItem *ti, headingLines) {
+        ti->setPos(0, h);
+        h += ti->boundingRect().height();
+        w = ti->boundingRect().width();
+        w_max = (w_max < w) ? w : w_max;
+    }
+    // Translate all lines to move center to origin
+    QPointF v(-w_max / 2, - h / 2);
+
+    foreach (QGraphicsTextItem *ti, headingLines)
+        ti->setPos(pos() + v);
+
+    setRect(v.x(), v.y(), w_max, h);
+
     setName(QString("HC (%1)").arg(s));
 }
 
@@ -212,7 +228,7 @@ QColor HeadingContainer::getColor()
 }
 
 QString HeadingContainer::getName() {
-    return Container::getName() + " '" + headingText;
+    return Container::getName() + QString(" '%1'").arg(headingText);
 }
 
 void HeadingContainer::setScrollOpacity(qreal o) // FIXME-2 needed?
