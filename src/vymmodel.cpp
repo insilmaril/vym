@@ -2457,7 +2457,7 @@ void VymModel::setImagesLayout(const QString &s)  // FIXME-1 no savestate yet
                 bc->imagesContainerAutoLayout = false;
             }
         }
-        //emitDataChanged(bi);    // FIXME-2 expensive, needed?
+        //emitDataChanged(bi);    // FIXME-2 expensive, needed for changing layout?
     }
     reposition();
 }
