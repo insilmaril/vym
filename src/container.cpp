@@ -188,9 +188,12 @@ QString Container::getLayoutString(const Layout &l)
         case FloatingFree:
             r = "FloatingFree";
             break;
+        case UndefinedLayout:
+            r = "UndefinedLayout";
+            break;
         default:
             r = QString("Unknown: %1").arg(l);
-            qWarning () << "Container::getLayoutString unknown layout";
+            qWarning () << QString("Container::getLayoutString unknown layout: %1").arg(l);
     }
     return r;
 }
@@ -556,7 +559,7 @@ void Container::reposition()
                     }
                 }
 
-                // FIXME-00 Finally set rect
+                // FIXME-00 review: Finally set rect
                 setRect(r);
                 qdbg() << ind() << " * Finished: " << info();
 

@@ -2031,7 +2031,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 /*
                 BranchItem *pbi = bc->getBranchItem()->parentBranch();
                 if (pbi) {
-                    Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-00 Relinking MC: will have no parentBranch and crash
+                    //Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-0 savestate when relinking MC: will have no parentBranch and crash
                     if (originalParentContainer->hasFloatingLayout()) {
                         model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly
                                 bc->getBranchItem(),

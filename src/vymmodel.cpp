@@ -2422,14 +2422,18 @@ void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
             if (s == "Auto")
                 bc->branchesContainerAutoLayout = true;
             else {
-                Container::Layout layout = Container::getLayoutFromString(s);
+                Container::Layout layout;
+                if (s == "Default")
+                    layout = bc->getDefaultBranchesContainerLayout();
+                else
+                    layout = Container::getLayoutFromString(s);
                 if (layout != Container::UndefinedLayout) {
                     bc->setBranchesContainerLayout(layout);
                     bc->branchesContainerAutoLayout = false;
                 }
             }
         }
-        //emitDataChanged(bi);    // FIXME-2 expensive, needed?
+        //emitDataChanged(bi);    // FIXME-2 expensive, needed for changing layout?
     }
     reposition();
 }
@@ -2444,6 +2448,11 @@ void VymModel::setImagesLayout(const QString &s)  // FIXME-1 no savestate yet
             if (s == "Auto")
                 bc->imagesContainerAutoLayout = true;
             else {
+                Container::Layout layout;
+                if (s == "Default")
+                    layout = bc->getDefaultImagesContainerLayout();
+                else
+                    layout = Container::getLayoutFromString(s);
                 bc->setImagesContainerLayout(Container::getLayoutFromString(s));
                 bc->imagesContainerAutoLayout = false;
             }

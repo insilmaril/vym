@@ -51,37 +51,33 @@ void LinkContainer::createBottomLine()
 
 void LinkContainer::deleteBottomLine()
 {
-    /*
     if (bottomLine) {
         delete bottomLine;
         bottomLine = nullptr;
     }
-    */
 }
 
 void LinkContainer::delLink()
 {
-    /*
     deleteBottomLine();
 
     switch (style) {
-    case Line:
-        delete (l);
-        break;
-    case Parabel:
-        while (!segment.isEmpty())
-            delete segment.takeFirst();
-        break;
-    case PolyLine:
-        delete (p);
-        break;
-    case PolyParabel:
-        delete (p);
-        break;
-    default:
-        break;
+        case Line:
+            delete (l);
+            break;
+        case Parabel:
+            while (!segment.isEmpty())
+                delete segment.takeFirst();
+            break;
+        case PolyLine:
+            delete (p);
+            break;
+        case PolyParabel:
+            delete (p);
+            break;
+        default:
+            break;
     }
-    */
 }
 
 void LinkContainer::setLinkStyle(Style newstyle)
@@ -261,7 +257,7 @@ void LinkContainer::updateLinkGeometry()
     //  bottomlineY
     //	drawing of the link itself
 
-    if (style == NoLink) 
+    if (style == NoLink)
         return;
 
     double p1x = upLinkPosParent.x(); // Link is drawn from P1 to P2

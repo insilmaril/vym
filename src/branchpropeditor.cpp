@@ -68,6 +68,60 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     connectSignals();
 }
 
+void BranchPropertyEditor::updateContainerLayoutButtons()
+{
+    BranchContainer *bc = branchItem->getBranchContainer();
+
+    if (bc->branchesContainerAutoLayout) {
+        ui.branchesAutoLayoutCheckBox->setChecked(true);
+        ui.branchesLayoutsFrame->setEnabled(false);
+    } else {
+        ui.branchesAutoLayoutCheckBox->setChecked(false);
+        ui.branchesLayoutsFrame->setEnabled(true);
+    }
+    switch (bc->getBranchesContainerLayout()) {
+        case Container::Vertical:
+            ui.branchesLayoutVerticalButton->setChecked(true);
+            break;
+        case Container::Horizontal:
+            ui.branchesLayoutHorizontalButton->setChecked(true);
+            break;
+        case Container::FloatingBounded:
+            ui.branchesLayoutBoundedButton->setChecked(true);
+            break;
+        case Container::FloatingFree:
+            ui.branchesLayoutFreeButton->setChecked(true);
+            break;
+        default:
+            qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(bc->getLayoutString(bc->getBranchesContainerLayout()));
+    }
+
+    // Layout images
+    if (bc->imagesContainerAutoLayout) {
+        ui.imagesAutoLayoutCheckBox->setChecked(true);
+        ui.imagesLayoutsFrame->setEnabled(false);
+    } else {
+        ui.imagesAutoLayoutCheckBox->setChecked(false);
+        ui.imagesLayoutsFrame->setEnabled(true);
+    }
+    switch (bc->getImagesContainerLayout()) {
+        case Container::Vertical:
+            ui.imagesLayoutVerticalButton->setChecked(true);
+            break;
+        case Container::Horizontal:
+            ui.imagesLayoutHorizontalButton->setChecked(true);
+            break;
+        case Container::FloatingBounded:
+            ui.imagesLayoutBoundedButton->setChecked(true);
+            break;
+        case Container::FloatingFree:
+            ui.imagesLayoutFreeButton->setChecked(true);
+            break;
+        default:
+            qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(bc->getLayoutString(bc->getImagesContainerLayout()));
+    }
+}
+
 BranchPropertyEditor::~BranchPropertyEditor()
 {
     settings.setValue("/satellite/propertywindow/geometry/size", size());
@@ -154,49 +208,9 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         else
             ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
 
-        // Layout
+        // Layout branches
         BranchContainer *bc = branchItem->getBranchContainer();
-
-        if (bc->branchesContainerAutoLayout)
-            ui.branchesLayoutAutoButton->setChecked(true);
-        else {
-            switch (bc->getBranchesContainerLayout()) {
-                case Container::Vertical:
-                    ui.branchesLayoutVerticalButton->setChecked(true);
-                    break;
-                case Container::Horizontal:
-                    ui.branchesLayoutHorizontalButton->setChecked(true);
-                    break;
-                case Container::FloatingBounded:
-                    ui.branchesLayoutBoundedButton->setChecked(true);
-                    break;
-                case Container::FloatingFree:
-                    ui.branchesLayoutFreeButton->setChecked(true);
-                    break;
-                default:
-                    ui.branchesLayoutAutoButton->setChecked(true);
-            }
-        }
-        if (bc->imagesContainerAutoLayout)
-            ui.imagesLayoutAutoButton->setChecked(true);
-        else {
-            switch (bc->getBranchesContainerLayout()) {
-                case Container::Vertical:
-                    ui.imagesLayoutVerticalButton->setChecked(true);
-                    break;
-                case Container::Horizontal:
-                    ui.imagesLayoutHorizontalButton->setChecked(true);
-                    break;
-                case Container::FloatingBounded:
-                    ui.imagesLayoutBoundedButton->setChecked(true);
-                    break;
-                case Container::FloatingFree:
-                    ui.imagesLayoutFreeButton->setChecked(true);
-                    break;
-                default:
-                    ui.imagesLayoutAutoButton->setChecked(true);
-            }
-        }
+        updateContainerLayoutButtons();
         ui.rotationHeadingSlider->setValue(bc->getRotationHeading());
         ui.rotationInnerContentSlider->setValue(bc->getRotationInnerContent());
         ui.rotationHeadingSpinBox->setValue(bc->getRotationHeading());
@@ -367,13 +381,16 @@ void BranchPropertyEditor::linkHideUnselectedChanged(int i)
     model->setHideLinkUnselected(i);
 }
 
-void BranchPropertyEditor::childrenLayoutChanged()
+void BranchPropertyEditor::childrenLayoutChanged()  // FIXME-00 rework! compare ::setTreeItem
 {
     if (!model) return;
 
-    if (sender() == ui.branchesLayoutAutoButton)
-        model->setBranchesLayout("Auto");
-    else if (sender() == ui.branchesLayoutVerticalButton)
+    if (sender() == ui.branchesAutoLayoutCheckBox) {
+        if ( ui.branchesAutoLayoutCheckBox->isChecked())
+            model->setBranchesLayout("Auto");
+        else
+            model->setBranchesLayout("Default");
+    } else if (sender() == ui.branchesLayoutVerticalButton)
         model->setBranchesLayout("Vertical");
     else if (sender() == ui.branchesLayoutHorizontalButton)
         model->setBranchesLayout("Horizontal");
@@ -381,9 +398,13 @@ void BranchPropertyEditor::childrenLayoutChanged()
         model->setBranchesLayout("FloatingBounded");
     else if (sender() == ui.branchesLayoutFreeButton)
         model->setBranchesLayout("FloatingFree");
-    if (sender() == ui.imagesLayoutAutoButton)
-        model->setImagesLayout("Auto");
-    else if (sender() == ui.imagesLayoutVerticalButton)
+
+    if (sender() == ui.imagesAutoLayoutCheckBox) {
+        if (ui.imagesAutoLayoutCheckBox->isChecked())
+            model->setImagesLayout("Auto");
+        else
+            model->setImagesLayout("Default");
+    } else if (sender() == ui.imagesLayoutVerticalButton)
         model->setImagesLayout("Vertical");
     else if (sender() == ui.imagesLayoutHorizontalButton)
         model->setImagesLayout("Horizontal");
@@ -391,6 +412,8 @@ void BranchPropertyEditor::childrenLayoutChanged()
         model->setImagesLayout("FloatingBounded");
     else if (sender() == ui.imagesLayoutFreeButton)
         model->setImagesLayout("FloatingFree");
+
+    updateContainerLayoutButtons();
 }
 
 void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-2 Create custom class to sync slider and spinbox and avoid double calls to models
@@ -480,7 +503,7 @@ void BranchPropertyEditor::connectSignals()
             SLOT(linkHideUnselectedChanged(int)));
 
     // Layout
-    connect(ui.branchesLayoutAutoButton, SIGNAL(clicked()),
+    connect(ui.branchesAutoLayoutCheckBox, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
     connect(ui.branchesLayoutVerticalButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
@@ -490,7 +513,7 @@ void BranchPropertyEditor::connectSignals()
             this, SLOT(childrenLayoutChanged()));
     connect(ui.branchesLayoutFreeButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
-    connect(ui.imagesLayoutAutoButton, SIGNAL(clicked()),
+    connect(ui.imagesAutoLayoutCheckBox, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
     connect(ui.imagesLayoutVerticalButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
@@ -547,12 +570,12 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.hideLinkIfUnselected, 0, 0, 0);
 
     // Layout
-    disconnect(ui.branchesLayoutAutoButton, 0, 0, 0);
+    disconnect(ui.branchesAutoLayoutCheckBox, 0, 0, 0);
     disconnect(ui.branchesLayoutVerticalButton, 0, 0, 0);
     disconnect(ui.branchesLayoutHorizontalButton, 0, 0, 0);
     disconnect(ui.branchesLayoutBoundedButton, 0, 0, 0);
     disconnect(ui.branchesLayoutFreeButton, 0, 0, 0);
-    disconnect(ui.imagesLayoutAutoButton, 0, 0, 0);
+    disconnect(ui.imagesAutoLayoutCheckBox, 0, 0, 0);
     disconnect(ui.imagesLayoutVerticalButton, 0, 0, 0);
     disconnect(ui.imagesLayoutHorizontalButton, 0, 0, 0);
     disconnect(ui.imagesLayoutBoundedButton, 0, 0, 0);

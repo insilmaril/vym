@@ -84,6 +84,8 @@ void BranchContainer::init()
     // Use layout defaults
     imagesContainerAutoLayout = true;
     branchesContainerAutoLayout = true;
+    imagesContainerLayout = FloatingFree;
+    branchesContainerLayout = Vertical;
 
     temporaryLinked = false;
 
@@ -865,7 +867,7 @@ void BranchContainer::reposition()
 
     setLayout(Horizontal);  // FIXME-2 always needed here?
 
-        linkContainer->setLinkStyle(LinkContainer::NoLink);
+    linkContainer->setLinkStyle(LinkContainer::NoLink);
 
     // Settings depending on depth
     if (depth == 0)
@@ -873,7 +875,7 @@ void BranchContainer::reposition()
         // MapCenter or TmpParent?
         if (type != TmpParent) {
             setHorizontalDirection(LeftToRight);
-            innerContainer->setHorizontalDirection(LeftToRight);    // FIXME-2 initially R2L. But: why R2L?
+            innerContainer->setHorizontalDirection(LeftToRight);
         }
 
         linkContainer->setLinkStyle(LinkContainer::NoLink);

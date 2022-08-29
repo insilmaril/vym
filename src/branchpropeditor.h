@@ -20,6 +20,9 @@ class BranchPropertyEditor : public QDialog {
   public:
     BranchPropertyEditor(QWidget *parent = 0);
     ~BranchPropertyEditor();
+  private:
+    void updateContainerLayoutButtons();
+  public:
     void setItem(TreeItem *);
     void setModel(VymModel *);
 
