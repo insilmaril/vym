@@ -412,7 +412,7 @@ void Container::reposition()
                 Container *oc = (Container*)(childItems().first());
                 QPointF t = oc->rect().center();
                 //QPointF t = - bbox.center() / 2;
-                qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << "  t=" << t << getName();
+                qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << "  t= " << qpointFToString(t) << " " << getName();
                 bbox.translate(t);
                 foreach (QGraphicsItem *child, childItems()) {
                     Container *c = (Container*) child;
@@ -532,7 +532,7 @@ void Container::reposition()
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
                 if (centralContainer) {
-                    // FIXME-0000 v_central = centralContainer->pos();
+                    v_central = centralContainer->pos();    // FIXME-0 really required? Usuall (0,0)
 
                     qdbg() << ind() << " * central container, moving everything by " << qpointFToString(v_central, 0);
                 /*

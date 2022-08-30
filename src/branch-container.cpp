@@ -84,7 +84,7 @@ void BranchContainer::init()
     // Use layout defaults
     imagesContainerAutoLayout = true;
     branchesContainerAutoLayout = true;
-    imagesContainerLayout = FloatingFree;
+    imagesContainerLayout = getDefaultImagesContainerLayout();
     branchesContainerLayout = Vertical;
 
     temporaryLinked = false;
@@ -357,11 +357,11 @@ void BranchContainer::updateBranchesContainer()
 
 void BranchContainer::createOuterContainer()
 {
-    qDebug() << "BC::createOuterContainer";
+    qDebug() << "BC::createOuterContainer in " << info();
     if (!outerContainer) {
         outerContainer = new Container (this);
-        //outerContainer->setLayout(BoundingFloats);  // FIXME-000 disabled temporarily
-        outerContainer->setLayout(Horizontal);
+        //outerContainer->setLayout(Horizontal);
+        outerContainer->setLayout(BoundingFloats);  // FIXME-000 disabled temporarily?
         outerContainer->type = InnerContent;
         outerContainer->addContainer(innerContainer);
         if (imagesContainer)
@@ -752,7 +752,7 @@ int BranchContainer::getRotationHeading()
 
 void BranchContainer::setRotationInnerContent(const int &a)
 {
-    innerContainer->setRotation(a);
+    innerContainer->setRotation(a);    // FIXME-1 outer container is not rotated (only images BoundingFloats)
 }
 
 int BranchContainer::getRotationInnerContent()
