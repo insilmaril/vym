@@ -510,8 +510,11 @@ void Container::reposition()
 			x += c->rect().right();
 		    else
 			x += c->rect().left();
-                }
 
+                    qdbg() << ind() << " * Done positioning: " << c->info();
+                }
+ // FIXME-00 make MCs keep their position: Maybe use v_central? rel positions use *center* of children, maybe should be center of heading (central(!) container)
+ 
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
                 if (centralContainer) {
@@ -526,7 +529,7 @@ void Container::reposition()
                 */
                 r = QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.x(), w_total, h_max);
                 } else {
-                    // FIXME-0 No central container, center whole set of horizontal containers
+                    // FIXME-0 Review: No central container, center whole set of horizontal containers
                     // E.g. flagrow
                     //    v_central = QPointF(0, 0); //QPointF(- w_total / 2, - h_max / 2);
                     //qdbg() << "   * No central container, using unite of horizontal containers";
@@ -544,6 +547,7 @@ void Container::reposition()
 
                 setRect(r);
 
+                qdbg() << ind() << " * Finished HL for " << info();
             } // Horizontal layout
             break;
 
