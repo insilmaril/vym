@@ -361,7 +361,7 @@ void BranchContainer::createOuterContainer()
     if (!outerContainer) {
         outerContainer = new Container (this);
         //outerContainer->setLayout(Horizontal);
-        outerContainer->setLayout(BoundingFloats);  // FIXME-000 disabled temporarily?
+        outerContainer->setLayout(BoundingFloats);  // FIXME-000 check again esp with images (was disabled temp)
         outerContainer->type = InnerContent;
         outerContainer->addContainer(innerContainer);
         if (imagesContainer)
@@ -902,7 +902,7 @@ void BranchContainer::reposition()
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerHorizontalAlignment(AlignedCentered);
+                setBranchesContainerHorizontalAlignment(AlignedLeft);
                 break;
             default:
                 break;

@@ -192,8 +192,8 @@ QString Container::getLayoutString(const Layout &l)
             r = "UndefinedLayout";
             break;
         default:
-            r = QString("Unknown: %1").arg(l);
-            qWarning () << QString("Container::getLayoutString unknown layout: %1").arg(l);
+            r = QString("Container::getLayoutString unknown layout: %1").arg(l);
+            qWarning () << r;
     }
     return r;
 }
@@ -498,31 +498,18 @@ void Container::reposition()
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
 		    w_last = c_bbox.width();
 
-                    // Center vertically
+                    // Center vertically    // FIXME-00 does not work, if children are not centered!
 		    qreal y = 0;
 
 		    // To align to bottom: qreal y = (h_max - c_bbox.height() ) / 2;
 
 		    if (horizontalDirection == LeftToRight)
 		    {
-			if (c->rotation() == 0)
-			    //c->setPos (x + c->rect().width() / 2, y);
-			    c->setPos (x + w_last / 2, y);
-			else {   // FIXME-0 review rotation
-			    // move rotated container to my origin
-			    // original: c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
-			    c->setPos (x + w_last / 2, y);
-			}
-                        //qdbg() << ind() << " *            after: c=" << c->info();
+                        c->setPos (x + w_last / 2, y);
 			x += w_last;
 		    } else
 		    {
-			//if (c->rotation() == 0)   // FIXME-0 review rotation
-			    c->setPos (x - c_bbox.width() / 2, y);
-			//else {
-			    // move rotated container to my origin
-			//    c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
-			//}
+                        c->setPos (x - c_bbox.width() / 2, y);
 			x -= w_last;
 		    }
                 }
@@ -557,9 +544,7 @@ void Container::reposition()
                     }
                 }
 
-                // FIXME-00 review: Finally set rect
                 setRect(r);
-                qdbg() << ind() << " * Finished: " << info();
 
             } // Horizontal layout
             break;
@@ -578,25 +563,6 @@ void Container::reposition()
                     qreal w = c_bbox.width();
                     w_max = (w_max < w) ? w : w_max;
                     h_total += c_bbox.height();
-                }
-
-                //qdbg() << ind() << " ~ Starting to reposition: " << info();
-                QPointF rp; // Reference point // FIXME-00 unused!
-                switch (horizontalAlignment) {
-                    case AlignedLeft:
-                        rp = QPointF(-w_max / 2, -h_total / 2);
-                        qdbg() << ind() << " ~ AlignedLeft rp=" << qpointFToString(rp, 0);
-                        break;
-                    case AlignedRight:
-                        rp = QPointF( w_max / 2, -h_total / 2);
-                        qdbg() << ind() << " ~ AlignedRight rp=" << qpointFToString(rp, 0);
-                        break;
-                    case AlignedCentered:
-                        rp = QPointF( 0, -h_total / 2);
-                        qdbg() << ind() << " ~ AlignedCentered rp=" << qpointFToString(rp, 0);
-                        break;
-                    default:
-                        qWarning() << ind() << " ~ Alignment undefined";
                 }
 
                 // Top line, where next children will be aligned to
@@ -620,14 +586,12 @@ void Container::reposition()
                             qWarning() << "Container::reposition vertically - Alignment undefined" << horizontalAlignment;
 		    }
 
-                    QRectF c_bbox = mapRectFromItem(c, c->rect());
-		    rp.setY(rp.y() + c_bbox.height());
                     y += c->rect().bottom();
                 }
 
                 // Set rect
                 setRect(-w_max / 2, -h_total / 2, w_max, h_total);
-                //qdbg() << ind() << " ~ Finished: " << info();
+
             } // Vertical layout
             break;
         default:
