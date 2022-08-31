@@ -381,7 +381,7 @@ void BranchPropertyEditor::linkHideUnselectedChanged(int i)
     model->setHideLinkUnselected(i);
 }
 
-void BranchPropertyEditor::childrenLayoutChanged()  // FIXME-0 rework! compare ::setTreeItem
+void BranchPropertyEditor::childrenLayoutChanged()
 {
     if (!model) return;
 

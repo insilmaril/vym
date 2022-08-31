@@ -2918,7 +2918,7 @@ void VymModel::moveDownDiagonally()
 
 
 #include "heading-container.h"
-void VymModel::detach() // FIXME-0 savestate missing
+void VymModel::detach() // FIXME-2 savestate missing
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
@@ -3447,7 +3447,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStyles(keepFrame);    // FIXME-0 not implemented yet. Where should e.g. links etc be adapted to relinked branches? Example: detach. Idea: Update styles for subtree (Which is changed when relinking)
+        branch->updateStyles(keepFrame);    // FIXME-1 not implemented yet. Where should e.g. links etc be adapted to relinked branches? Example: detach. Idea: Update styles for subtree (Which is changed when relinking)
 
         emitDataChanged(branch);
 

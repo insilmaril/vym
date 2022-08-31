@@ -10,7 +10,7 @@
 LinkContainer::LinkContainer(QGraphicsItem *parent)
     : Container(parent)
 {
-    //qDebug() << "Const LinkContainer this=" << this;  // FIXME-0 more LCs are created when moving branches
+    //qDebug() << "Const LinkContainer this=" << this;
     init();
 }
 

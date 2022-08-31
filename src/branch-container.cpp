@@ -357,11 +357,9 @@ void BranchContainer::updateBranchesContainer()
 
 void BranchContainer::createOuterContainer()
 {
-    qDebug() << "BC::createOuterContainer in " << info();
     if (!outerContainer) {
         outerContainer = new Container (this);
-        //outerContainer->setLayout(Horizontal);
-        outerContainer->setLayout(BoundingFloats);  // FIXME-000 check again esp with images (was disabled temp)
+        outerContainer->setLayout(BoundingFloats);
         outerContainer->type = InnerContent;
         outerContainer->addContainer(innerContainer);
         if (imagesContainer)
@@ -882,10 +880,6 @@ void BranchContainer::reposition()
 
         innerContainer->setLayout(BoundingFloats);
         setBranchesContainerLayout(FloatingBounded);    // FIXME-2 think, if autolayout should be used for mapcenter
-
-        // FIXME-0 testing only layouts
-        //innerContainer->setLayout(Horizontal);
-        //setBranchesContainerLayout(Horizontal);
     } else {
         // Branch or mainbranch
         linkContainer->setLinkStyle(LinkContainer::Line);
