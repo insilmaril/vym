@@ -379,7 +379,8 @@ void Container::reposition()
     switch (layout) {
         case BoundingFloats:
             {
-                qdbg() << ind() << " - BF a) info=" << info();
+                //qdbg() << ind() << " - BF a) info=" << info();
+
                 // BoundingFloats is special case:
                 // Only used for innerContainer or outerContainer
                 // First child container is ornamentsContainer (or innerContainer),
@@ -403,7 +404,7 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     Container *c = (Container*) child;
                     c_bbox = mapRectFromItem(c, c->rect());
-                    qdbg() << ind() << " - BF c=" << c->info();
+                    //qdbg() << ind() << " - BF c=" << c->info();
                     bbox = bbox.united(c_bbox);
                 }
 
@@ -412,7 +413,7 @@ void Container::reposition()
                 Container *oc = (Container*)(childItems().first());
                 QPointF t = oc->rect().center();
                 //QPointF t = - bbox.center() / 2;
-                qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << "  t= " << qpointFToString(t) << " " << getName();
+                //qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << "  t= " << qpointFToString(t) << " " << getName();
                 bbox.translate(t);
                 foreach (QGraphicsItem *child, childItems()) {
                     Container *c = (Container*) child;
@@ -421,9 +422,7 @@ void Container::reposition()
 
                 setRect(bbox);
 
-                qdbg() << ind() << " - BF b) info=" << info();
-                //setPos(0, 0);  // Center, not really required
-                //qdbg() << " - BF c) info=" << info();
+                //qdbg() << ind() << " - BF b) info=" << info();
             } // BoundingFloats layout
             break;
 
@@ -447,7 +446,7 @@ void Container::reposition()
                 }
 
                 setRect(r);
-                qdbg() << ind() << " + FloatingBounded r=" << qrectFToString(r) << "  pos=" << pos() << getName();
+                //qdbg() << ind() << " + FloatingBounded r=" << qrectFToString(r) << "  pos=" << pos() << getName();
             }
             break;
 
@@ -483,10 +482,9 @@ void Container::reposition()
                     qreal h = c_bbox.height();
                     h_max = (h_max < h) ? h : h_max;
                 }
-                qdbg() << ind() << " * Required space: w=" << w_total << " h=" << h_max << " for " << getName() << " dir=" << horizontalDirection;
-                if (centralContainer)
-
-                    qdbg() << ind() << " * Found central container: " << centralContainer->info();
+                //qdbg() << ind() << " * Required space: w=" << w_total << " h=" << h_max << " for " << getName() << " dir=" << horizontalDirection;
+                //if (centralContainer)
+                //    qdbg() << ind() << " * Found central container: " << centralContainer->info();
 
                 qreal w_last;   // last width before adding current container width to bbox later
                 qreal x = - w_total / 2;
@@ -515,7 +513,7 @@ void Container::reposition()
 			    // original: c->setPos (- mapRectFromItem(c, c->rect()).topLeft());
 			    c->setPos (x + w_last / 2, y);
 			}
-                        qdbg() << ind() << " *            after: c=" << c->info();
+                        //qdbg() << ind() << " *            after: c=" << c->info();
 			x += w_last;
 		    } else
 		    {
@@ -546,7 +544,7 @@ void Container::reposition()
                     // FIXME-0 No central container, center whole set of horizontal containers
                     // E.g. flagrow
                     //    v_central = QPointF(0, 0); //QPointF(- w_total / 2, - h_max / 2);
-                    qdbg() << "   * No central container, using unite of horizontal containers";
+                    //qdbg() << "   * No central container, using unite of horizontal containers";
                     bool first_iteration = true;
                     foreach (QGraphicsItem *child, childItems()) {
                         Container *c = (Container*) child;
@@ -569,7 +567,6 @@ void Container::reposition()
         case Vertical: {
                 qreal h_total = 0;
                 qreal w_max = 0;
-                qreal w;
 
                 // Calc space required
                 foreach (QGraphicsItem *child, childItems()) {
@@ -578,15 +575,13 @@ void Container::reposition()
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
 
                     // For width and height we can use the already mapped dimensions
-                    w = c_bbox.width();
+                    qreal w = c_bbox.width();
                     w_max = (w_max < w) ? w : w_max;
                     h_total += c_bbox.height();
                 }
 
-                qreal y = 0;
-
-                qdbg() << ind() << " ~ Starting to reposition: " << info();
-                QPointF rp; // Reference point
+                //qdbg() << ind() << " ~ Starting to reposition: " << info();
+                QPointF rp; // Reference point // FIXME-00 unused!
                 switch (horizontalAlignment) {
                     case AlignedLeft:
                         rp = QPointF(-w_max / 2, -h_total / 2);
@@ -604,38 +599,35 @@ void Container::reposition()
                         qWarning() << ind() << " ~ Alignment undefined";
                 }
 
+                // Top line, where next children will be aligned to
+                qreal y = - h_total / 2;
+
                 // Position children initially
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    QRectF c_bbox = mapRectFromItem(c, c->rect());
-                    qdbg() << ind() << " ~ Initial positioning: "
-                        << c->info()
-                        << " y=" << y
-                        << " cbbox=" << qrectFToString(c_bbox,0)
-                        << " rp=" << qpointFToString(rp,0)
-                        << " left=" << c_bbox.left();
-
+                    y += - c->rect().top();
 		    switch (horizontalAlignment) {
 			case AlignedLeft:
-			    c->setPos (c_bbox.width() / 2 + rp.x(), rp.y() + c_bbox.height() / 2);
-                            qdbg() << ind() << " ~               after: " << c->info();
+                            c->setPos(- w_max / 2 - c->rect().left(), y);
 			    break;
 			case AlignedRight:
-			    c->setPos (rp.x() - c_bbox.width() / 2, rp.y() + c_bbox.height() / 2);
-                            qdbg() << ind() << " ~               after: " << c->info();
+                            c->setPos(w_max / 2 - c->rect().right(), y);
 			    break;
 			case AlignedCentered:
-			    c->setPos (0, rp.y() + c_bbox.height() / 2);
-                            qdbg() << ind() << " ~               after: " << c->info();
+			    c->setPos (- c->rect().width() / 2 - c->rect().left(), y);
 			    break;
+                        default:
+                            qWarning() << "Container::reposition vertically - Alignment undefined" << horizontalAlignment;
 		    }
 
+                    QRectF c_bbox = mapRectFromItem(c, c->rect());
 		    rp.setY(rp.y() + c_bbox.height());
+                    y += c->rect().bottom();
                 }
 
-                // Set rect to the non-floating containers we have so far
+                // Set rect
                 setRect(-w_max / 2, -h_total / 2, w_max, h_total);
-                qdbg() << ind() << " ~ rect=" << qrectFToString(rect(),0) << info();
+                //qdbg() << ind() << " ~ Finished: " << info();
             } // Vertical layout
             break;
         default:

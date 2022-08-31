@@ -62,7 +62,7 @@ void BranchContainer::init()
     ornamentsContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
 
-    standardFlagRowContainer = new FlagRowContainer;
+    standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
     systemFlagRowContainer = new FlagRowContainer;
 
     // Adding the containers will reparent them and thus set scene
@@ -893,7 +893,6 @@ void BranchContainer::reposition()
         if (branchesContainerAutoLayout)
             setBranchesContainerLayout(Vertical);
 
-        qdbg() << ind() << "curorient=" << orientation << " " << info();
         switch (orientation) {
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
@@ -903,7 +902,7 @@ void BranchContainer::reposition()
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerHorizontalAlignment(AlignedLeft);
+                setBranchesContainerHorizontalAlignment(AlignedCentered);
                 break;
             default:
                 break;
