@@ -347,7 +347,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()
 {
-    qdbg() << ind() << QString("### Reposition of %1").arg(info());
+    //qdbg() << ind() << QString("### Reposition of %1").arg(info());
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -469,20 +469,10 @@ void Container::reposition()
                     if (c->isCentralContainer())
                         centralContainer = c;
 
-                    /*
-                    if (c->rotation() != 0) {// FIXME-0 review rotation
-                        // Move rotated container, so that upperLeft corner is in (0,0)
-                        // Required to get correct pos bbox of rotated containers.
-                        c->setPos(0, 0);
-                        c_bbox.moveTopLeft(QPointF(0,0));
-                    }
-                    */
-
                     w_total += c_bbox.width();
                     qreal h = c_bbox.height();
                     h_max = (h_max < h) ? h : h_max;
                 }
-                //qdbg() << ind() << " * Required space: w=" << w_total << " h=" << h_max << " for " << getName() << " dir=" << horizontalDirection;
                 //if (centralContainer)
                 //    qdbg() << ind() << " * Found central container: " << centralContainer->info();
 
@@ -520,8 +510,6 @@ void Container::reposition()
 			x += c->rect().right();
 		    else
 			x += c->rect().left();
-
-                    qdbg() << ind() << " * Done with aligning vertically: " << c->info();
                 }
 
                 // Move everything, so that center of central container will be in origin
