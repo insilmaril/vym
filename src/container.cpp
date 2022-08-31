@@ -461,7 +461,7 @@ void Container::reposition()
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                qdbg() << ind() << " * Starting to reposition " << info();
+                qdbg() << ind() << " * Starting HL for " << info();
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -486,38 +486,48 @@ void Container::reposition()
                 //if (centralContainer)
                 //    qdbg() << ind() << " * Found central container: " << centralContainer->info();
 
-                qreal w_last;   // last width before adding current container width to bbox later
+                // Left (or right) line, where next children will be aligned to
                 qreal x = - w_total / 2;
-
                 if (horizontalDirection == RightToLeft)
                     x = -x;
 
                 // Position children initially. (So far only centered vertically)
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    QRectF c_bbox = mapRectFromItem(c, c->rect());
-		    w_last = c_bbox.width();
 
-                    // Center vertically    // FIXME-00 does not work, if children are not centered!
-		    qreal y = 0;
+                    // Center vertically
+		    qreal y = - h_max / 2 - c->rect().top();
 
 		    // To align to bottom: qreal y = (h_max - c_bbox.height() ) / 2;
 
+                    // Pre alignment
 		    if (horizontalDirection == LeftToRight)
-		    {
-                        c->setPos (x + w_last / 2, y);
-			x += w_last;
-		    } else
-		    {
-                        c->setPos (x - c_bbox.width() / 2, y);
-			x -= w_last;
-		    }
+			x += - c->rect().left();
+                    else
+			x += - c->rect().right();
+
+                    // Align vertically centered
+                    c->setPos (x, - c->rect().height() / 2 - c->rect().top());
+
+                    // Align vertically to top
+                    // c->setPos (x, - h_max / 2 - c->rect().top());
+
+                    // Align vertically to bottom
+                    // c->setPos (x, h_max / 2 - c->rect().bottom());
+
+                    // Post alignment
+		    if (horizontalDirection == LeftToRight)
+			x += c->rect().right();
+		    else
+			x += c->rect().left();
+
+                    qdbg() << ind() << " * Done with aligning vertically: " << c->info();
                 }
 
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
                 if (centralContainer) {
-                    v_central = centralContainer->pos();    // FIXME-0 really required? Usuall (0,0)
+                    v_central = centralContainer->pos();    // FIXME-0 really required? Usually (0,0)
 
                     qdbg() << ind() << " * central container, moving everything by " << qpointFToString(v_central, 0);
                 /*
