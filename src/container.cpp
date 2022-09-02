@@ -370,7 +370,7 @@ void Container::reposition()
     switch (layout) {
         case BoundingFloats:
             {
-                qdbg() << ind() << " - BF a) info=" << info();
+                //qdbg() << ind() << " - BF a) info=" << info();
 
                 // BoundingFloats is special case:
                 // Only used for innerContainer or outerContainer
@@ -404,7 +404,7 @@ void Container::reposition()
                 // first container (ornaments container) is centered in origin  // FIXME-00 This could also be Innercont. within Outercont. :-(
                 Container *oc = (Container*)(childItems().first());
                 QPointF t = oc->rect().center();    // FIXME-0 This seems to be always (0,0) ?!?  Check again with flags!
-                qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << " oc.pos=" << qpointFToString(oc->pos()) << "  t_oc= " << qpointFToString(t,0) << " oc=" << oc->info();
+                //qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << " oc.pos=" << qpointFToString(oc->pos()) << "  t_oc= " << qpointFToString(t,0) << " oc=" << oc->info();
                 bbox.translate(t);
                 foreach (QGraphicsItem *child, childItems()) {
                     Container *c = (Container*) child;
@@ -497,20 +497,8 @@ void Container::reposition()
 		    else
 			x += c->rect().left();
 
-                    qdbg() << ind() << " * Done positioning: " << c->info();
+                    //qdbg() << ind() << " * Done positioning: " << c->info();
                 }
-                // FIXME-00 make MCs keep their position: Maybe use v_central? 
-                // rel positions use *center* of children, maybe should be center of 
-                // heading (central(!) container)
-
-                // FIXME-0 hack for testing MC
-                /*
-                qdbg() << ind() << " * getName=" << getName();
-                if (getName().contains("'CX")) {
-                    centralContainer = (Container*)(childItems().first());
-                    qdbg() << ind() << " * Using as central container:=" << centralContainer->info();
-                }
-                */
 
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
@@ -519,11 +507,9 @@ void Container::reposition()
                     v_central = mapFromItem(centralContainer, centralContainer->rect().center());
 
                     qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
-                    /*
-                    */
                     foreach (QGraphicsItem *child, childItems()) {
                         child->setPos(child->pos() - v_central);
-                        qdbg() << "   * After repositioning: c=" << ((Container*)child)->info();
+                        //qdbg() << ind() << " * After repositioning: c=" << ((Container*)child)->info();
                     }
                     r = QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max);
                 } else {
@@ -584,6 +570,8 @@ void Container::reposition()
 			    break;
                         default:
                             qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignment << " in " << info();
+                            if (type == BranchesContainer)
+                                qWarning() << "  orient=" << ((BranchContainer*)this)->getOrientation();
 		    }
 
                     y += c->rect().bottom();

@@ -66,8 +66,8 @@ void BranchContainer::init()
     systemFlagRowContainer = new FlagRowContainer;
 
     // Adding the containers will reparent them and thus set scene
-    // FIXME-0 ornamentsContainer->addContainer(standardFlagRowContainer);
-    // FIXME-0 ornamentsContainer->addContainer(systemFlagRowContainer);
+    ornamentsContainer->addContainer(standardFlagRowContainer);
+    ornamentsContainer->addContainer(systemFlagRowContainer);
     ornamentsContainer->setCentralContainer(headingContainer);
     innerContainer->addContainer(ornamentsContainer);
 
@@ -106,10 +106,17 @@ BranchContainer* BranchContainer::parentBranchContainer()
     if (p->type != BranchesContainer) return nullptr;
 
     p = p->parentContainer();
+    if (!p) return nullptr;;
 
     if (p->type != InnerContent) return nullptr;
 
     p = p->parentContainer();
+    if (!p) return nullptr;;
+
+    if (p->type == OuterContainer) {
+        p = p->parentContainer();
+        if (!p) return nullptr;;
+    }
 
     if (! (p->type == Branch || p->type == TmpParent)) return nullptr;
 
@@ -127,9 +134,9 @@ QString BranchContainer::getName() {
         return Container::getName() + " - ?";
 }
 
-void BranchContainer::setOrientation(const Orientation &m)
+void BranchContainer::setOrientation(const Orientation &o)
 {
-    orientation = m;
+    orientation = o;
 }
 
 void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original parent, should be part of setOriginalPos, which should be in LinkContainer
@@ -720,9 +727,9 @@ Container::Layout BranchContainer::getBranchesContainerLayout()
     return branchesContainerLayout;
 }
 
-void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign)
+void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &a)
 {
-    branchesContainerHorizontalAlignment = valign;
+    branchesContainerHorizontalAlignment = a;
     if (branchesContainer)
         branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
 }
@@ -820,47 +827,44 @@ void BranchContainer::reposition()
         orientation = UndefinedOrientation;
     } else {
         if (type != TmpParent) {
-            // I am not the tmpParentContainer
-            if (pbc->type == TmpParent) {
-                // I am currently moved around in MapEditor
-                if (pbc->isTemporaryLinked()) {
-                    // tmpParentContainer is currently tmpLinked
-                    // use orientation from temporaryTarget, which is als in tmpParentContainer
-                    orientation = pbc->orientation;
-                } else {
-                    // tmpParentContainer moved around, but no target yet
-                    // use originalOrientation
-                    orientation = originalOrientation;
-                }
-            } else {
-                // "regular repositioning", not currently moved in MapEditor
-                if (depth == 0)
-                    orientation = UndefinedOrientation;
-                else {
-                    if (pbc->orientation == UndefinedOrientation) {
-                        // Parent is tmpParentContainer or mapCenter
-                        // use relative position to determine orientation
+            // "regular repositioning", not currently moved in MapEditor
+            if (!pbc)
+                orientation = UndefinedOrientation;
+            else {
+                /*
+                qdbg() << ind() << "BC::repos pbc=" << pbc->info();
+                qdbg() << ind() << "BC::repos pbc->orientation=" << pbc->orientation;
+                */
 
-                        if (!parentContainer()->hasFloatingLayout()) {
-                            // Special case: Horizontal or vertical layout, but child of MC
-                            // Should only occur in testing
-                            //qdbg() << ind() << "BC: Setting hardcoded RoP in: " << info();
-                            //qdbg() << ind() << "                          pc: " << parentContainer()->info();
+                if (pbc->orientation == UndefinedOrientation) {
+                    // Parent is tmpParentContainer or mapCenter
+                    // use relative position to determine orientation
+
+                    if (parentContainer()->hasFloatingLayout()) {
+                        if (pos().x() >= 0)
                             orientation = RightOfParent;
-                        } else {
-                            //qdbg() << ind() << "BC: Setting neworient in: " << info();
-                            //qdbg() << ind() << "                      pc: " << parentContainer()->info();
-                            if (pos().x() > 0)
-                                orientation = RightOfParent;
-                            else
-                                orientation = LeftOfParent;
-                        }
+                        else
+                            orientation = LeftOfParent;
+                        /*
+                        qdbg() << ind() << "BC: Setting neworient " << orientation << " in: " << info();
+                        qdbg() << ind() << "    pc: " << parentContainer()->info();
+                        */
                     } else {
-                        // Set same orientation as parent
-                        setOrientation(pbc->orientation);
+                        // Special case: Horizontal or vertical layout, but child of MC
+                        // Should only occur in testing // FIXME-0 not necessarily: could also be set manually to Horizontal!
+                        /*
+                        qdbg() << ind() << "BC: Setting hardcoded RoP in: " << info();
+                        qdbg() << ind() << "    pc: " << parentContainer()->info();
+                        qdbg() << ind() << "   pbc: " << pbc->info();
+                        */
+                        orientation = RightOfParent;
                     }
+                } else {
+                    // Set same orientation as parent
+                    setOrientation(pbc->orientation);
+                    //qdbg() << ind() << "BC: Setting parentorient " << orientation << " in: " << info();
                 }
-            }   // regular repositioning
+            }
         } // else:
         // The "else" here would be that I'm the tmpParentContainer, but
         // then my orientation is already set in MapEditor, so ignore here
@@ -907,7 +911,11 @@ void BranchContainer::reposition()
                 innerContainer->setHorizontalDirection(LeftToRight);
                 setBranchesContainerHorizontalAlignment(AlignedLeft);
                 break;
+            case UndefinedOrientation:
+                qWarning() << "BC::reposition - UndefinedOrientation in " << info();
+                break;
             default:
+                qWarning() << "BC::reposition - Unknown orientation " << orientation << " in " << info();
                 break;
         }
     }
