@@ -1264,6 +1264,7 @@ void MapEditor::editHeading()
         lineEdit = new QLineEdit;
         QGraphicsProxyWidget *pw = mapScene->addWidget(lineEdit);
         pw->setZValue(Z_LINEEDIT);
+        // FIXME-2 get total rotation XXX for BC in scene and do "pw->setRotation(XXX);
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
 
