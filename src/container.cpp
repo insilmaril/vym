@@ -104,6 +104,9 @@ QString Container::getName()    // FIXME-2 debugging only
         case OrnamentsContainer:
             t = "OrnamentsContainer";
             break;
+        case OuterContainer:
+            t = "OuterContainer";
+            break;
         case TmpParent:
             t = "TmpParent";
             break;
@@ -347,7 +350,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()
 {
-    //qdbg() << ind() << QString("### Reposition of %1").arg(info());
+    qdbg() << ind() << QString("### Reposition of %1").arg(info());
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -379,7 +382,7 @@ void Container::reposition()
     switch (layout) {
         case BoundingFloats:
             {
-                //qdbg() << ind() << " - BF a) info=" << info();
+                qdbg() << ind() << " - BF a) info=" << info();
 
                 // BoundingFloats is special case:
                 // Only used for innerContainer or outerContainer
@@ -408,12 +411,20 @@ void Container::reposition()
                     bbox = bbox.united(c_bbox);
                 }
 
+
                 // Translate, so that total bbox and contents move, so that
-                // first container (ornaments container) is centered in origin
+                // first container (ornaments container) is centered in origin  // FIXME-00 This could also be Innercont. within Outercont. :-(
                 Container *oc = (Container*)(childItems().first());
                 QPointF t = oc->rect().center();
                 //QPointF t = - bbox.center() / 2;
-                //qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << "  t= " << qpointFToString(t) << " " << getName();
+                // FIXME-0 hack for testing MC
+                //qdbg() << ind() << " - getName=" << getName();
+                if (getName().contains("'C")) {
+                    // Mainbranches within MapCenters must not be moved around!
+                    t=QPointF(0,0);
+                    qdbg() << ind() << " - Resetting t...";
+                }
+                qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << "oc.pos=" << qpointFToString(oc->pos()) << "  t= " << qpointFToString(t) << " oc=" << oc->info();
                 bbox.translate(t);
                 foreach (QGraphicsItem *child, childItems()) {
                     Container *c = (Container*) child;
@@ -428,6 +439,10 @@ void Container::reposition()
 
         case FloatingBounded:
             {
+                // Creates rect from unite of all children
+                // Will not move any children, but keep their
+                // (relative) positions
+
                 // Calc bbox of all children to prepare calculating rect()
                 if (childItems().count() > 0) {
                     bool first_iteration = true;
@@ -473,8 +488,9 @@ void Container::reposition()
                     qreal h = c_bbox.height();
                     h_max = (h_max < h) ? h : h_max;
                 }
-                //if (centralContainer)
-                //    qdbg() << ind() << " * Found central container: " << centralContainer->info();
+
+                if (centralContainer)
+                    qdbg() << ind() << " * Found central container: " << centralContainer->info();
 
                 // Left (or right) line, where next children will be aligned to
                 qreal x = - w_total / 2;
@@ -513,10 +529,22 @@ void Container::reposition()
 
                     qdbg() << ind() << " * Done positioning: " << c->info();
                 }
- // FIXME-00 make MCs keep their position: Maybe use v_central? rel positions use *center* of children, maybe should be center of heading (central(!) container)
- 
+                // FIXME-00 make MCs keep their position: Maybe use v_central? 
+                // rel positions use *center* of children, maybe should be center of 
+                // heading (central(!) container)
+
+                // FIXME-0 hack for testing MC
+                /*
+                qdbg() << ind() << " * getName=" << getName();
+                if (getName().contains("'CX")) {
+                    centralContainer = (Container*)(childItems().first());
+                    qdbg() << ind() << " * Using as central container:=" << centralContainer->info();
+                }
+                */
+
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
+
                 if (centralContainer) {
                     v_central = centralContainer->pos();    // FIXME-0 really required? Usually (0,0)
 

@@ -50,7 +50,7 @@ MapEditor::MapEditor(VymModel *vm)
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
 
     if (debug) {
-        // Add origin for debugging
+        // Add cross in origin for debugging
         QPointF p;
         qreal size = 100;
         QGraphicsRectItem *x_axis = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
@@ -64,7 +64,7 @@ MapEditor::MapEditor(VymModel *vm)
         mapScene->addItem(y_axis);
 
         // Add another cross
-        p = QPointF(140,0);
+        p = QPointF(130,0);
         size = 20;
         QGraphicsRectItem *x_axis2 = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
         QGraphicsRectItem *y_axis2 = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);

@@ -66,8 +66,8 @@ void BranchContainer::init()
     systemFlagRowContainer = new FlagRowContainer;
 
     // Adding the containers will reparent them and thus set scene
-    ornamentsContainer->addContainer(standardFlagRowContainer);
-    ornamentsContainer->addContainer(systemFlagRowContainer);
+    // FIXME-0 ornamentsContainer->addContainer(standardFlagRowContainer);
+    // FIXME-0 ornamentsContainer->addContainer(systemFlagRowContainer);
     ornamentsContainer->setCentralContainer(headingContainer);
     innerContainer->addContainer(ornamentsContainer);
 
@@ -360,7 +360,7 @@ void BranchContainer::createOuterContainer()
     if (!outerContainer) {
         outerContainer = new Container (this);
         outerContainer->setLayout(BoundingFloats);
-        outerContainer->type = InnerContent;
+        outerContainer->type = OuterContainer;
         outerContainer->addContainer(innerContainer);
         if (imagesContainer)
             outerContainer->addContainer(imagesContainer);
@@ -386,9 +386,9 @@ void BranchContainer::updateChildrenStructure()
     // The structure of subcontainers within a BranchContainer
     // depends on layouts of imagesContainer and branchesContainer:
     //
-    // Usually both iC and bC are children of innerContainer.
-    // The layout of innerContainer is either Horizontal or BoundingFloats
-    // outerContainer is only needed in corner case d)
+    // Usually both inagesContainer and branchesContainer are children of
+    // innerContainer.  The layout of innerContainer is either Horizontal or
+    // BoundingFloats outerContainer is only needed in corner case d)
     //
     // a) No FloatingBounded children
     //    - No outerContainer
@@ -841,12 +841,12 @@ void BranchContainer::reposition()
                         if (!parentContainer()->hasFloatingLayout()) {
                             // Special case: Horizontal or vertical layout, but child of MC
                             // Should only occur in testing
-                            qdbg() << "Setting hardcoded RoP for " << info();
-                            qdbg() << "                       pc=" << parentContainer()->info();
+                            //qdbg() << ind() << "BC: Setting hardcoded RoP in: " << info();
+                            //qdbg() << ind() << "                          pc: " << parentContainer()->info();
                             orientation = RightOfParent;
                         } else {
-                            qdbg() << "Setting neworient for " << info();
-                            qdbg() << "                       pc=" << parentContainer()->info();
+                            //qdbg() << ind() << "BC: Setting neworient in: " << info();
+                            //qdbg() << ind() << "                      pc: " << parentContainer()->info();
                             if (pos().x() > 0)
                                 orientation = RightOfParent;
                             else
@@ -863,9 +863,13 @@ void BranchContainer::reposition()
         // then my orientation is already set in MapEditor, so ignore here
     }
 
-    setLayout(Horizontal);  // FIXME-2 always needed here?
-
     linkContainer->setLinkStyle(LinkContainer::NoLink);
+
+    if (branchesContainerAutoLayout)
+        setBranchesContainerLayout(getDefaultBranchesContainerLayout() );
+
+    if (imagesContainerAutoLayout)
+        setImagesContainerLayout(getDefaultImagesContainerLayout() );
 
     // Settings depending on depth
     if (depth == 0)
@@ -874,18 +878,20 @@ void BranchContainer::reposition()
         if (type != TmpParent) {
             setHorizontalDirection(LeftToRight);
             innerContainer->setHorizontalDirection(LeftToRight);
+            setLayout(FloatingBounded);
+        } else {
+            // TmpParent
+            setLayout(Horizontal);  // FIXME-2 needed?
         }
 
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
         innerContainer->setLayout(BoundingFloats);
-        setBranchesContainerLayout(FloatingBounded);    // FIXME-2 think, if autolayout should be used for mapcenter
     } else {
         // Branch or mainbranch
-        linkContainer->setLinkStyle(LinkContainer::Line);
+        setLayout(Horizontal);
 
-        if (branchesContainerAutoLayout)
-            setBranchesContainerLayout(Vertical);
+        linkContainer->setLinkStyle(LinkContainer::Line);
 
         switch (orientation) {
             case LeftOfParent:

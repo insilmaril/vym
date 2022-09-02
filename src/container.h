@@ -37,6 +37,7 @@ class Container : public QGraphicsRectItem {
         InnerContent,
         Link,
         OrnamentsContainer,
+        OuterContainer,
         TmpParent,
         UndefinedType
     };
