@@ -518,7 +518,7 @@ void Container::reposition()
                 if (centralContainer) {
                     v_central = mapFromItem(centralContainer, centralContainer->rect().center());
 
-                    qdbg() << ind() << " * central container:  => t=" << qpointFToString(v_central, 0);
+                    qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                     /*
                     */
                     foreach (QGraphicsItem *child, childItems()) {
