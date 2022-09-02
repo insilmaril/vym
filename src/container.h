@@ -73,7 +73,6 @@ class Container : public QGraphicsRectItem {
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout
 
     void setCentralContainer(Container *);   //! Set the given container to be the central one
-    bool isCentralContainer();               //! Returns true, if I am the central container
     void setMinimumWidth();         //! Minimum dimensions of container. Used for linkSpaceContainer
     qreal getMinimumWidth();
 
@@ -115,7 +114,7 @@ class Container : public QGraphicsRectItem {
     QPointF originalPos;    //! Save position before move for undo
     AnimPoint animatedPos;  //! animated position to let e.g. a branch "snap back"
 
-    bool centralContainer;  //! true, if center of container should be in origin of a set of containers 
+    Container* centralContainer;  //! Center of this container should be in origin of a set of containers 
     QString name;
 
     Layout layout;

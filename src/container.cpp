@@ -42,7 +42,7 @@ void Container::init()
 
     horizontalDirection = LeftToRight;
 
-    centralContainer = false;
+    centralContainer = nullptr;
 
     // Not visible usually
     setBrush(Qt::NoBrush);
@@ -224,19 +224,7 @@ bool Container::hasFloatingLayout() {
 
 void Container::setCentralContainer(Container *cc)
 {
-    Container *c;
-    foreach (QGraphicsItem *child, childItems()) {
-        c = (Container*) child;
-	if (c == cc)
-	    c->centralContainer = true;
-	else
-	    c->centralContainer = false;
-    }
-}
-
-bool Container::isCentralContainer()
-{
-    return centralContainer;
+    centralContainer = cc;
 }
 
 void Container::setHorizontalDirection(const HorizontalDirection &hdir)
@@ -415,16 +403,8 @@ void Container::reposition()
                 // Translate, so that total bbox and contents move, so that
                 // first container (ornaments container) is centered in origin  // FIXME-00 This could also be Innercont. within Outercont. :-(
                 Container *oc = (Container*)(childItems().first());
-                QPointF t = oc->rect().center();
-                //QPointF t = - bbox.center() / 2;
-                // FIXME-0 hack for testing MC
-                //qdbg() << ind() << " - getName=" << getName();
-                if (getName().contains("'C")) {
-                    // Mainbranches within MapCenters must not be moved around!
-                    t=QPointF(0,0);
-                    qdbg() << ind() << " - Resetting t...";
-                }
-                qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << "oc.pos=" << qpointFToString(oc->pos()) << "  t= " << qpointFToString(t) << " oc=" << oc->info();
+                QPointF t = oc->rect().center();    // FIXME-0 This seems to be always (0,0) ?!?  Check again with flags!
+                qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << " oc.pos=" << qpointFToString(oc->pos()) << "  t_oc= " << qpointFToString(t,0) << " oc=" << oc->info();
                 bbox.translate(t);
                 foreach (QGraphicsItem *child, childItems()) {
                     Container *c = (Container*) child;
@@ -470,8 +450,6 @@ void Container::reposition()
             break;
 
         case Horizontal: {
-                Container *centralContainer = nullptr;
-
                 // Calc space required
                 qreal h_max = 0;
                 qreal w_total = 0;
@@ -480,9 +458,6 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
-
-                    if (c->isCentralContainer())
-                        centralContainer = c;
 
                     w_total += c_bbox.width();
                     qreal h = c_bbox.height();
@@ -500,11 +475,6 @@ void Container::reposition()
                 // Position children initially. (So far only centered vertically)
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-
-                    // Center vertically
-		    qreal y = - h_max / 2 - c->rect().top();
-
-		    // To align to bottom: qreal y = (h_max - c_bbox.height() ) / 2;
 
                     // Pre alignment
 		    if (horizontalDirection == LeftToRight)
@@ -546,16 +516,16 @@ void Container::reposition()
                 QPointF v_central;
 
                 if (centralContainer) {
-                    v_central = centralContainer->pos();    // FIXME-0 really required? Usually (0,0)
+                    v_central = mapFromItem(centralContainer, centralContainer->rect().center());
 
-                    qdbg() << ind() << " * central container, moving everything by " << qpointFToString(v_central, 0);
-                /*
-                foreach (QGraphicsItem *child, childItems()) {
-                    child->setPos(child->pos() - v_central);
-                    qdbg() << "   * After repositioning: c=" << ((Container*)child)->info();
-                }
-                */
-                r = QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.x(), w_total, h_max);
+                    qdbg() << ind() << " * central container:  => t=" << qpointFToString(v_central, 0);
+                    /*
+                    */
+                    foreach (QGraphicsItem *child, childItems()) {
+                        child->setPos(child->pos() - v_central);
+                        qdbg() << "   * After repositioning: c=" << ((Container*)child)->info();
+                    }
+                    r = QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max);
                 } else {
                     // FIXME-0 Review: No central container, center whole set of horizontal containers
                     // E.g. flagrow
@@ -613,7 +583,7 @@ void Container::reposition()
 			    c->setPos (- c->rect().width() / 2 - c->rect().left(), y);
 			    break;
                         default:
-                            qWarning() << "Container::reposition vertically - Alignment undefined" << horizontalAlignment;
+                            qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignment << " in " << info();
 		    }
 
                     y += c->rect().bottom();

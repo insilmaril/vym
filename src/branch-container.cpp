@@ -81,6 +81,9 @@ void BranchContainer::init()
     setLayout(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 
+    // Center of whole mainBranches should be the heading
+    setCentralContainer(headingContainer);
+
     // Use layout defaults
     imagesContainerAutoLayout = true;
     branchesContainerAutoLayout = true;
