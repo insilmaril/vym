@@ -372,7 +372,7 @@ class VymModel : public TreeModel {
     void setBranchesLayout(const QString &);
     void setImagesLayout(const QString &);
     void setRotationHeading(const int &);
-    void setRotationInnerContent(const int &);
+    void setRotationContent(const int &);
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */

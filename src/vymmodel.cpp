@@ -2396,7 +2396,7 @@ void VymModel::setRotationHeading (const int &i) // FIXME-2 no savestate
     }
 }
 
-void VymModel::setRotationInnerContent (const int &i) // FIXME-2 no savestate
+void VymModel::setRotationContent (const int &i) // FIXME-2 no savestate
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
@@ -2406,7 +2406,7 @@ void VymModel::setRotationInnerContent (const int &i) // FIXME-2 no savestate
 	    // Go home.
 	    return;
 	}
-        bc->setRotationInnerContent(i);
+        bc->setRotationContent(i);
 	reposition();
         emitSelectionChanged();
     }
@@ -2417,8 +2417,11 @@ void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        if (selbi) {    // FIXME-2 think, if this makes sense also for mapcenters
+        if (selbi) {
             bc = selbi->getBranchContainer();
+
+            // FIXME-1 Save current positions, we might change to floating layout
+
             if (s == "Auto")
                 bc->branchesContainerAutoLayout = true;
             else {

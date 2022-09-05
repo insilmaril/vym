@@ -439,7 +439,7 @@
        <item>
         <widget class="QLabel" name="rotationInnerContentLabel">
          <property name="text">
-          <string>Rotation inner content:</string>
+          <string>Rotation content:</string>
          </property>
         </widget>
        </item>

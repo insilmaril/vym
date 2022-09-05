@@ -758,9 +758,13 @@ int BranchContainer::getRotationHeading()
     return std::round(headingContainer->rotation());
 }
 
-void BranchContainer::setRotationInnerContent(const int &a)
+void BranchContainer::setRotationContent(const int &a)
 {
-    innerContainer->setRotation(a);    // FIXME-1 outer container is not rotated (only images BoundingFloats)
+    if (outerContainer) {
+        outerContainer->setRotation(a);
+        innerContainer->setRotation(0);
+    } else
+        innerContainer->setRotation(a);    // FIXME-1 centre is far off, if itself is FloatingBounded, e.g. surrended by images
 }
 
 int BranchContainer::getRotationInnerContent()

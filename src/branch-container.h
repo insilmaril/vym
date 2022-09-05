@@ -119,7 +119,7 @@ class BranchContainer : public Container {
 
     void setRotationHeading(const int &);
     int getRotationHeading();
-    void setRotationInnerContent(const int &);
+    void setRotationContent(const int &);
     int getRotationInnerContent();
 
 

@@ -428,7 +428,7 @@ void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-2 Create cu
 void BranchPropertyEditor::rotationInnerContentChanged(int i)
 {
     if (model)
-        model->setRotationInnerContent(i);
+        model->setRotationContent(i);
 
     ui.rotationInnerContentSlider->setValue(i);
     ui.rotationInnerContentSpinBox->setValue(i);
