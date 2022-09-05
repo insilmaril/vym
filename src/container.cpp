@@ -249,17 +249,9 @@ bool Container::isVisibleContainer()
 
 void Container::setVisibility(bool v)
 {
-    qDebug() << "C:setVis v=" << v << info ();
+    // FIXME-1 qDebug() << "C:setVis v=" << v << info ();
     visible = v;
     setVisible(visible);
-    /* FIXME-0 setVis not required recursively, but is inherited to children
-    Container *c;
-    foreach (QGraphicsItem *child, childItems()) {
-        c = (Container*) child;
-        qDebug() << "  c=" << c->info();
-        c->setVisibility(v);
-    }
-    */
 }
 
 void Container::addContainer(Container *c)
@@ -350,7 +342,7 @@ void Container::reposition()
     // a) Do we have any chilrden after all?
     if (!isVisible() || childItems().count() == 0)
     {
-        setRect(QRect());
+        setRect(QRectF());
         return;
     }
 
@@ -364,8 +356,6 @@ void Container::reposition()
     }
 
     // c) Align my own containers
-
-    QRectF r;
 
     switch (layout) {
         case BoundingFloats:
@@ -401,14 +391,21 @@ void Container::reposition()
 
 
                 // Translate, so that total bbox and contents move, so that
-                // first container (ornaments container) is centered in origin  // FIXME-00 This could also be Innercont. within Outercont. :-(
+                // first container (ornaments container) is centered in origin
+                // (could also be Innercont. within Outercontainer )
                 Container *oc = (Container*)(childItems().first());
-                QPointF t = oc->rect().center();    // FIXME-0 This seems to be always (0,0) ?!?  Check again with flags!
-                //qdbg() << ind() << " - BF bbox=" << qrectFToString(bbox, 0) << " oc.pos=" << qpointFToString(oc->pos()) << "  t_oc= " << qpointFToString(t,0) << " oc=" << oc->info();
-                bbox.translate(t);
-                foreach (QGraphicsItem *child, childItems()) {
-                    Container *c = (Container*) child;
-                    c->setPos(c->pos() + t);
+                QPointF t = oc->rect().center();    // FIXME-1 t seems to be always (0,0) ?!?  Check again with flags!
+                if (t != QPointF(0,0)) {
+                    qdbg() << ind()
+                        << " - BF bbox=" << qrectFToString(bbox, 0)
+                        << " oc.pos=" << qpointFToString(oc->pos())
+                        << " t_oc= " << qpointFToString(t,0)
+                        << " oc=" << oc->info();
+                    bbox.translate(t);
+                    foreach (QGraphicsItem *child, childItems()) {
+                        Container *c = (Container*) child;
+                        c->setPos(c->pos() + t);
+                    }
                 }
 
                 setRect(bbox);
@@ -424,6 +421,7 @@ void Container::reposition()
                 // (relative) positions
 
                 // Calc bbox of all children to prepare calculating rect()
+                QRectF r;
                 if (childItems().count() > 0) {
                     bool first_iteration = true;
 
@@ -446,7 +444,7 @@ void Container::reposition()
             break;
 
         case FloatingFree:
-            setRect(r); // Empty rectangle
+            setRect(QRectF()); // Empty rectangle
             break;
 
         case Horizontal: {
@@ -511,25 +509,9 @@ void Container::reposition()
                         child->setPos(child->pos() - v_central);
                         //qdbg() << ind() << " * After repositioning: c=" << ((Container*)child)->info();
                     }
-                    r = QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max);
-                } else {
-                    // FIXME-0 Review: No central container, center whole set of horizontal containers
-                    // E.g. flagrow
-                    //    v_central = QPointF(0, 0); //QPointF(- w_total / 2, - h_max / 2);
-                    //qdbg() << "   * No central container, using unite of horizontal containers";
-                    bool first_iteration = true;
-                    foreach (QGraphicsItem *child, childItems()) {
-                        Container *c = (Container*) child;
-                        QRectF c_bbox = mapRectFromItem(c, c->rect());
-                        if (first_iteration) {
-                            first_iteration = false;
-                            r = c_bbox;
-                        } else
-                            r = r.united(c_bbox);
-                    }
                 }
 
-                setRect(r);
+                setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
 
                 qdbg() << ind() << " * Finished HL for " << info();
             } // Horizontal layout

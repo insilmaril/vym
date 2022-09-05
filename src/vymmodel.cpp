@@ -4595,8 +4595,8 @@ void VymModel::exportPDF(QString fname, bool askName)
     pdfPrinter.setOutputFormat(QPrinter::PdfFormat);
     pdfPrinter.setOutputFileName(fname);
     pdfPrinter.setPageSize(QPageSize(QPageSize::A3));
-
     QRectF bbox = mapEditor->getTotalBBox();
+
     if (bbox.width() > bbox.height())
         // recommend landscape
         pdfPrinter.setPageOrientation(QPageLayout::Landscape);
@@ -5051,6 +5051,7 @@ void VymModel::reposition()
         bi = rootItem->getBranchNum(i);
         bi->repositionContainers();
     }
+    mapEditor->minimizeView();
 }
 
 bool VymModel::setMapLinkStyle(const QString &s)   // FIXME-2 not ported yet to containers

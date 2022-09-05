@@ -850,13 +850,7 @@ void BranchContainer::reposition()
                         qdbg() << ind() << "    pc: " << parentContainer()->info();
                         */
                     } else {
-                        // Special case: Horizontal or vertical layout, but child of MC
-                        // Should only occur in testing // FIXME-0 not necessarily: could also be set manually to Horizontal!
-                        /*
-                        qdbg() << ind() << "BC: Setting hardcoded RoP in: " << info();
-                        qdbg() << ind() << "    pc: " << parentContainer()->info();
-                        qdbg() << ind() << "   pbc: " << pbc->info();
-                        */
+                        // Special case: Mainbranch in horizontal or vertical layout
                         orientation = RightOfParent;
                     }
                 } else {
