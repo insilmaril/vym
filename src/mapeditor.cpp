@@ -2025,41 +2025,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     dst_num = destinationBranch->num() +  1;
                 }
 
-                // Prepare relinking: Save old position for undo, if required
-                //
-                // tmpParentContainer always has floating layout,
-                // check original parent instead:
-                /*
-                BranchItem *pbi = bc->getBranchItem()->parentBranch();
-                if (pbi) {
-                    //Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-0 savestate when relinking MC: will have no parentBranch and crash
-                    if (originalParentContainer->hasFloatingLayout()) {
-                        model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly
-                                bc->getBranchItem(),
-                                QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
-                                nullptr,
-                                "",
-                                QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
-                    }
-                }
-                */
-
-                // Save current scene position for redo or if moved to floating layout
-                QPointF sp = bc->scenePos();    // FIXME-2 Relinking MC: use refPos instead?
-
                 // Relink
-                model->relinkBranch(bi, dst_branch, dst_num, true); // FIXME-2 saving positions should be done in VymModel completely...
+                model->relinkBranch(bi, dst_branch, dst_num, true);
 
-                // After relinking: Save new position for redo, if required
-                if (dst_branch->getBranchesContainer()->hasFloatingLayout()) {
-                    bc->setPos(dst_branch->getBranchesContainer()->sceneTransform().inverted().map(sp));
-                    model->saveState(
-                            nullptr,
-                            "",
-                            bc->getBranchItem(),
-                            QString("setPos %1;").arg(qpointFToString(bc->pos())),
-                            QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
-                }
             }   // Loop to relink branches
 
             // Loop over images

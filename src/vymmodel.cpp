@@ -3414,6 +3414,28 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             keepFrame = false;
         }
 
+        // Save current own position for undo // FIXME-1
+        // Save current children positions for undo // FIXME-1
+
+        // Prepare relinking: Save old position for undo, if required
+        //
+        // tmpParentContainer always has floating layout,
+        // check original parent instead:
+        /*
+        BranchItem *pbi = bc->getBranchItem()->parentBranch();
+        if (pbi) {
+            //Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-1 savestate when relinking MC: will have no parentBranch and crash
+            if (originalParentContainer->hasFloatingLayout()) {
+                model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly
+                        bc->getBranchItem(),
+                        QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
+                        nullptr,
+                        "",
+                        QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
+            }
+        }
+        */
+
         /*
         // If branch becomes mapcenter, preserve current positions and update type
         if (branch->depth() == 0) {
