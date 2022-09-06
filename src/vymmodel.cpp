@@ -2919,33 +2919,17 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-
-#include "heading-container.h"
-void VymModel::detach() // FIXME-2 savestate missing
+void VymModel::detach() // FIXME-1 savestate missing
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
-            HeadingContainer *hc = bc->getHeadingContainer();
-            QPointF rp = hc->mapToScene(hc->rect().center());
-
-            /*
-            QString old_sel = getSelectString();
-            // int n = selbi->num();
-
-            QString parent_sel = getSelectString(selbi->parent());
-            */
-
-            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-2 detach: hardcoded for now, could already be FloatingFree or something else
+            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-1 detach: hardcoded for now, could already be FloatingFree or something else
             reposition();
 
             relinkBranch(selbi, rootItem, -1, true);
-
-            // Restore original scene position
-            bc->setRefPos(rp);
-            bc->moveToRefPos();
         }
     }
     emitSelectionChanged();

@@ -42,13 +42,6 @@ class BranchContainer : public Container {
     qreal scrollOpacity;
 
   public:
-    void setRefPos(const QPointF &);
-    QPointF getRefPos();
-    void moveToRefPos();
-  private:
-    QPointF refPos;
-
-  public:
     bool isOriginalFloating();
 
   private:
