@@ -360,7 +360,7 @@ void Container::reposition()
     switch (layout) {
         case BoundingFloats:
             {
-                qdbg() << ind() << " - BF a) info=" << info();
+                //qdbg() << ind() << " - BF a) info=" << info();
 
                 // BoundingFloats is special case:
                 // Only used for innerContainer or outerContainer
@@ -396,11 +396,13 @@ void Container::reposition()
                 Container *oc = (Container*)(childItems().first());
                 QPointF t = oc->rect().center();    // FIXME-0 t seems to be always (0,0) ?!?  Check again with flags!
                 if (t != QPointF(0,0)) {
+                    /*
                     qdbg() << ind()
                         << " - BF bbox=" << qrectFToString(bbox, 0)
                         << " oc.pos=" << qpointFToString(oc->pos()) // FIXME-0 with outerContent rotating, oc.pos becomes bigger and bigger. Compare Screenshot_broken-bounding-layout.png
                         << " t_oc= " << qpointFToString(t,0)
                         << " oc=" << oc->info();
+                    */
                     /* FIXME innerContainer now correctly rotates around headingContainer, but with images the corners might go outside of bounding OuterContainer...
                     bbox.translate(t);
                     foreach (QGraphicsItem *child, childItems()) {
@@ -412,7 +414,7 @@ void Container::reposition()
 
                 setRect(bbox);
 
-                qdbg() << ind() << " - BF b) info=" << info();
+                //qdbg() << ind() << " - BF b) info=" << info();
             } // BoundingFloats layout
             break;
 
@@ -454,7 +456,7 @@ void Container::reposition()
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                qdbg() << ind() << " * Starting HL for " << info();
+                //qdbg() << ind() << " * Starting HL for " << info();
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -463,9 +465,10 @@ void Container::reposition()
                     qreal h = c_bbox.height();
                     h_max = (h_max < h) ? h : h_max;
                 }
-
+/*
                 if (centralContainer)
                     qdbg() << ind() << " * Found central container: " << centralContainer->info();
+*/
 
                 // Left (or right) line, where next children will be aligned to
                 qreal x = - w_total / 2;
@@ -475,12 +478,13 @@ void Container::reposition()
                 // Position children initially. (So far only centered vertically)
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
+                    QRectF c_bbox = mapRectFromItem(c, c->rect());  // FIXME-1 duplicate mapping, see above loop
 
                     // Pre alignment
 		    if (horizontalDirection == LeftToRight)
-			x += - c->rect().left();
+                        x +=  c_bbox.center().x() - c_bbox.left();
                     else
-			x += - c->rect().right();
+                        x +=  - (c_bbox.right() - c_bbox.center().x());
 
                     // Align vertically centered
                     c->setPos (x, - c->rect().height() / 2 - c->rect().top());
@@ -492,10 +496,12 @@ void Container::reposition()
                     // c->setPos (x, h_max / 2 - c->rect().bottom());
 
                     // Post alignment
-		    if (horizontalDirection == LeftToRight)
-			x += c->rect().right();
-		    else
-			x += c->rect().left();
+		    if (horizontalDirection == LeftToRight) {
+			//x += c->rect().right();
+                        x +=  c_bbox.right() - c_bbox.center().x();
+                    } else
+			//x += c->rect().left();
+                        x +=  - (c_bbox.center().x() - c_bbox.left());
 
                     //qdbg() << ind() << " * Done positioning: " << c->info();
                 }
