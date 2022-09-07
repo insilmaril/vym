@@ -283,7 +283,7 @@ void BranchContainer::updateBranchesContainer()
         } else {
             if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
                 linkSpaceContainer = new HeadingContainer ();
-                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here
+                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
 
                 innerContainer->addContainer(linkSpaceContainer);
                 linkSpaceContainer->stackBefore(branchesContainer);
@@ -687,10 +687,13 @@ int BranchContainer::getRotationHeading()
 void BranchContainer::setRotationContent(const int &a)
 {
     if (outerContainer) {
+        outerContainer->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
         outerContainer->setRotation(a);
         innerContainer->setRotation(0);
-    } else
-        innerContainer->setRotation(a);    // FIXME-1 centre is far off, if itself is FloatingBounded, e.g. surrended by images
+    } else {
+        innerContainer->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
+        innerContainer->setRotation(a);    // FIXME-1 centre is far off or even moves, if branchesContainer is FloatingBounded, and bc has images and flags
+   }
 }
 
 int BranchContainer::getRotationInnerContent()

@@ -273,7 +273,7 @@ bool BranchItem::toggleScroll()
             for (int i = 0; i < branchCounter; ++i) {
                 bc = getBranchNum(i)->getBranchContainer();
                 if (bc)
-                    bc->setVisibility(true); // Recursively!
+                    bc->setVisibility(true);
             }
     }
     else {
@@ -283,7 +283,7 @@ bool BranchItem::toggleScroll()
             for (int i = 0; i < branchCounter; ++i) {
                 bc = getBranchNum(i)->getBranchContainer();
                 if (bc)
-                    bc->setVisibility(false); // Recursively!
+                    bc->setVisibility(false);
             }
     }
 

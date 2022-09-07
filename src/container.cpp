@@ -360,7 +360,7 @@ void Container::reposition()
     switch (layout) {
         case BoundingFloats:
             {
-                //qdbg() << ind() << " - BF a) info=" << info();
+                qdbg() << ind() << " - BF a) info=" << info();
 
                 // BoundingFloats is special case:
                 // Only used for innerContainer or outerContainer
@@ -394,23 +394,25 @@ void Container::reposition()
                 // first container (ornaments container) is centered in origin
                 // (could also be Innercont. within Outercontainer )
                 Container *oc = (Container*)(childItems().first());
-                QPointF t = oc->rect().center();    // FIXME-1 t seems to be always (0,0) ?!?  Check again with flags!
+                QPointF t = oc->rect().center();    // FIXME-0 t seems to be always (0,0) ?!?  Check again with flags!
                 if (t != QPointF(0,0)) {
                     qdbg() << ind()
                         << " - BF bbox=" << qrectFToString(bbox, 0)
-                        << " oc.pos=" << qpointFToString(oc->pos())
+                        << " oc.pos=" << qpointFToString(oc->pos()) // FIXME-0 with outerContent rotating, oc.pos becomes bigger and bigger. Compare Screenshot_broken-bounding-layout.png
                         << " t_oc= " << qpointFToString(t,0)
                         << " oc=" << oc->info();
+                    /* FIXME innerContainer now correctly rotates around headingContainer, but with images the corners might go outside of bounding OuterContainer...
                     bbox.translate(t);
                     foreach (QGraphicsItem *child, childItems()) {
                         Container *c = (Container*) child;
                         c->setPos(c->pos() + t);
                     }
+                    */
                 }
 
                 setRect(bbox);
 
-                //qdbg() << ind() << " - BF b) info=" << info();
+                qdbg() << ind() << " - BF b) info=" << info();
             } // BoundingFloats layout
             break;
 

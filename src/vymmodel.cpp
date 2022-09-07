@@ -3770,7 +3770,7 @@ bool VymModel::scrollBranch(BranchItem *bi) // FIXME-1 scroll icon not at right 
             u = "unscroll";
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
-            reposition();
+            reposition();   // FIXME-2 scroll flag is a bit off in the beginning, needs 2nd reposition
             emitDataChanged(bi);
             emitSelectionChanged();
             mapEditor->getScene()
