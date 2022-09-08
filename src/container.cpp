@@ -479,15 +479,19 @@ void Container::reposition()
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     QRectF c_bbox = mapRectFromItem(c, c->rect());  // FIXME-1 duplicate mapping, see above loop
+                    QPointF origin_mapped = mapFromItem(c, QPointF());
+                    qreal offset;
 
                     // Pre alignment
 		    if (horizontalDirection == LeftToRight)
-                        x +=  c_bbox.center().x() - c_bbox.left();
+                        offset = - (c_bbox.left() - origin_mapped.x());
                     else
-                        x +=  - (c_bbox.right() - c_bbox.center().x());
+                        offset = - (c_bbox.right() - origin_mapped.x());
+
+                    //qdbg() << ind() << " * * " << c->info() << " x=" << x << "  offset=" << offset;
 
                     // Align vertically centered
-                    c->setPos (x, - c->rect().height() / 2 - c->rect().top());
+                    c->setPos (x + offset, - c->rect().height() / 2 - c->rect().top());
 
                     // Align vertically to top
                     // c->setPos (x, - h_max / 2 - c->rect().top());
@@ -497,13 +501,11 @@ void Container::reposition()
 
                     // Post alignment
 		    if (horizontalDirection == LeftToRight) {
-			//x += c->rect().right();
-                        x +=  c_bbox.right() - c_bbox.center().x();
+                        x += c_bbox.width();
                     } else
-			//x += c->rect().left();
-                        x +=  - (c_bbox.center().x() - c_bbox.left());
+                        x -= c_bbox.width();
 
-                    qdbg() << ind() << " * Done positioning: " << c->info();
+                    //qdbg() << ind() << " * Done positioning: " << c->info();
                 }
 
                 // Move everything, so that center of central container will be in origin
@@ -513,6 +515,7 @@ void Container::reposition()
                     //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                     if (parentContainer() && parentContainer()->hasFloatingLayout())  {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
+                        //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                         foreach (QGraphicsItem *child, childItems())
                             child->setPos(child->pos() - v_central);
                     }
@@ -520,7 +523,7 @@ void Container::reposition()
 
                 setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
 
-                qdbg() << ind() << " * Finished HL for " << info();
+                // qdbg() << ind() << " * Finished HL for " << info();
             } // Horizontal layout
             break;
 

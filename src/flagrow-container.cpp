@@ -18,6 +18,8 @@ FlagRowContainer::FlagRowContainer()
     type = FlagRowCont;
     layout = Horizontal;
     horizontalDirection = LeftToRight;
+
+    setPen(QPen(Qt::gray));
 }
 
 FlagRowContainer::~FlagRowContainer()
