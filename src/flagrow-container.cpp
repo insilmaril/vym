@@ -18,8 +18,6 @@ FlagRowContainer::FlagRowContainer()
     type = FlagRowCont;
     layout = Horizontal;
     horizontalDirection = LeftToRight;
-
-    setPen(QPen(Qt::gray));
 }
 
 FlagRowContainer::~FlagRowContainer()
@@ -99,7 +97,7 @@ void FlagRowContainer::activateFlag(Flag *flag)
         fc->setUuid(flag->getUuid());
         fc->setZValue(QGraphicsItem::zValue());
         fc->setVisibility(visible);
-        qDebug() << "FRC::activateFlag  visible="<< visible << "  Qtvis=" << isVisible();
+        // qDebug() << "FRC::activateFlag  visible="<< visible << "  Qtvis=" << isVisible();  FIXME-2 testing only
         fc->setVisibility(true);
     }
 }

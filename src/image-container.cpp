@@ -88,18 +88,7 @@ void ImageContainer::init()
     scaleFactor = 1;
 
      // FIXME-3 for testing we do some coloring and additional drawing
-    setPen(QPen(Qt::red));
-
-    QPointF p;
-    qreal size = 20;
-    QGraphicsRectItem *x_axis = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
-    QGraphicsRectItem *y_axis = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
-    x_axis->setBrush(Qt::NoBrush);
-    y_axis->setBrush(Qt::NoBrush);
-    x_axis->setPen(QColor(Qt::blue));
-    y_axis->setPen(QColor(Qt::blue));
-    x_axis->setParentItem(this);
-    y_axis->setParentItem(this);
+    //setPen(QPen(Qt::red));
 }
 
 void ImageContainer::setZValue(qreal z)
