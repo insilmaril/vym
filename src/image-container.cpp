@@ -48,9 +48,10 @@ void ImageContainer::copy(ImageContainer *other)
         case ImageContainer::Pixmap:
             pixmapItem = new QGraphicsPixmapItem();
             pixmapItem->setPixmap(other->pixmapItem->pixmap());
-            pixmapItem->setParentItem(this); // FIXMEe-2 check...
+            pixmapItem->setParentItem(this); // FIXME-2 check...
             pixmapItem->setVisible(isVisible());
-            pixmapItem->setOffset(-20,-20);
+            //pixmapItem->setOffset(-20,-20);  // FIXME-2 testing
+            setRect(pixmapItem->boundingRect());
             imageType = ImageContainer::Pixmap;
             break;
         case ImageContainer::ModifiedPixmap:
@@ -90,7 +91,7 @@ void ImageContainer::init()
     setPen(QPen(Qt::red));
 
     QPointF p;
-    qreal size = 100;
+    qreal size = 20;
     QGraphicsRectItem *x_axis = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
     QGraphicsRectItem *y_axis = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
     x_axis->setBrush(Qt::NoBrush);
