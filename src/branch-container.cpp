@@ -736,7 +736,7 @@ Container::Layout BranchContainer::getDefaultBranchesContainerLayout()
 
 Container::Layout BranchContainer::getDefaultImagesContainerLayout()
 {
-    return FloatingBounded;
+    return FloatingFree;
 }
 
 void BranchContainer::reposition()

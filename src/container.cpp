@@ -414,7 +414,7 @@ void Container::reposition()
 
                 setRect(bbox);
 
-                //qdbg() << ind() << " - BF b) info=" << info();
+                qdbg() << ind() << " - BF b) info=" << info();
             } // BoundingFloats layout
             break;
 
@@ -509,10 +509,15 @@ void Container::reposition()
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
 
-                if (centralContainer) {
+                if (centralContainer) { // FIXME-00 position is wrong with flags
                     v_central = mapFromItem(centralContainer, centralContainer->rect().center());
 
-                    qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
+                    //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
+                    if (parentContainer())  {
+                        //qdbg() << ind() << " * parent container: " << parentContainer()->info();
+                        if (!parentContainer()->hasFloatingLayout())
+                            v_central = QPointF();
+                    }
                     foreach (QGraphicsItem *child, childItems()) {
                         child->setPos(child->pos() - v_central);
                         //qdbg() << ind() << " * After repositioning: c=" << ((Container*)child)->info();
