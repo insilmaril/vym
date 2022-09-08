@@ -50,8 +50,8 @@ void ImageContainer::copy(ImageContainer *other)
             pixmapItem->setPixmap(other->pixmapItem->pixmap());
             pixmapItem->setParentItem(this); // FIXMEe-2 check...
             pixmapItem->setVisible(isVisible());
+            pixmapItem->setOffset(-20,-20);
             imageType = ImageContainer::Pixmap;
-            setRect(pixmapItem->boundingRect());
             break;
         case ImageContainer::ModifiedPixmap:
             // create new pixmap?
@@ -88,6 +88,17 @@ void ImageContainer::init()
 
      // FIXME-3 for testing we do some coloring and additional drawing
     setPen(QPen(Qt::red));
+
+    QPointF p;
+    qreal size = 100;
+    QGraphicsRectItem *x_axis = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
+    QGraphicsRectItem *y_axis = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
+    x_axis->setBrush(Qt::NoBrush);
+    y_axis->setBrush(Qt::NoBrush);
+    x_axis->setPen(QColor(Qt::blue));
+    y_axis->setPen(QColor(Qt::blue));
+    x_axis->setParentItem(this);
+    y_axis->setParentItem(this);
 }
 
 void ImageContainer::setZValue(qreal z)
@@ -286,4 +297,4 @@ void ImageContainer::setImageItem(ImageItem* ii) {
 
 ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
-void ImageContainer::reposition() {}    // No action necessary
+void ImageContainer::reposition() {}    // No action necessary  // FIXME-2 remove then?

@@ -456,7 +456,7 @@ void Container::reposition()
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                //qdbg() << ind() << " * Starting HL for " << info();
+                qdbg() << ind() << " * Starting HL for " << info();
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -503,24 +503,18 @@ void Container::reposition()
 			//x += c->rect().left();
                         x +=  - (c_bbox.center().x() - c_bbox.left());
 
-                    //qdbg() << ind() << " * Done positioning: " << c->info();
+                    qdbg() << ind() << " * Done positioning: " << c->info();
                 }
 
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
 
-                if (centralContainer) { // FIXME-00 position is wrong with flags
-                    v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-
+                if (centralContainer) {
                     //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
-                    if (parentContainer())  {
-                        //qdbg() << ind() << " * parent container: " << parentContainer()->info();
-                        if (!parentContainer()->hasFloatingLayout())
-                            v_central = QPointF();
-                    }
-                    foreach (QGraphicsItem *child, childItems()) {
-                        child->setPos(child->pos() - v_central);
-                        //qdbg() << ind() << " * After repositioning: c=" << ((Container*)child)->info();
+                    if (parentContainer() && parentContainer()->hasFloatingLayout())  {
+                        v_central = mapFromItem(centralContainer, centralContainer->rect().center());
+                        foreach (QGraphicsItem *child, childItems())
+                            child->setPos(child->pos() - v_central);
                     }
                 }
 
