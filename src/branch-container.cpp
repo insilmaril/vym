@@ -876,7 +876,7 @@ void BranchContainer::reposition()
         ornamentsContainer->setPen(Qt::NoPen);
 
         // InnerContainer
-        innerContainer->setPen(QPen(Qt::cyan));
+        //innerContainer->setPen(QPen(Qt::cyan));
 
         QColor col;
         if (branchesContainerLayout == FloatingBounded && depth > 0) {
