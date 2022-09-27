@@ -394,16 +394,14 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // first container (ornaments container) is centered in origin
                 // (could also be Innercont. within Outercontainer )
                 Container *oc = (Container*)(childItems().first());
-                QPointF t = oc->rect().center();    // FIXME-0 t seems to be always (0,0) ?!?  Check again with flags!
+                QPointF t = oc->rect().center();    // FIXME-3 t seems to be always (0,0) ?!?  Check again with flags!
                 if (t != QPointF(0,0)) {
-                    /*
                     qdbg() << ind()
                         << " - BF bbox=" << qrectFToString(bbox, 0)
-                        << " oc.pos=" << qpointFToString(oc->pos()) // FIXME-0 with outerContent rotating, oc.pos becomes bigger and bigger. Compare Screenshot_broken-bounding-layout.png
+                        << " oc.pos=" << qpointFToString(oc->pos())
                         << " t_oc= " << qpointFToString(t,0)
                         << " oc=" << oc->info();
-                    */
-                    /* FIXME innerContainer now correctly rotates around headingContainer, but with images the corners might go outside of bounding OuterContainer...
+                    /* FIXME-3 innerContainer now correctly rotates around headingContainer, but with images the corners might go outside of bounding OuterContainer...
                     bbox.translate(t);
                     foreach (QGraphicsItem *child, childItems()) {
                         Container *c = (Container*) child;
