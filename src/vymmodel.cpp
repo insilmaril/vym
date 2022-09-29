@@ -3924,7 +3924,7 @@ void VymModel::toggleFlagByName(const QString &name, bool useGroups)
 
 void VymModel::toggleFlagByUid(
     const QUuid &uid,
-    bool useGroups) 
+    bool useGroups)
     // FIXME-2  saveState not correct when toggling flags in groups
     // (previous flags not saved!)
 {
@@ -5657,7 +5657,7 @@ void VymModel::setSelectionBlocked(bool b) { selectionBlocked = b; }
 
 bool VymModel::isSelectionBlocked() { return selectionBlocked; }
 
-bool VymModel::select(const QString &s)
+bool VymModel::select(const QString &s) // FIXME-2 Does not support multiple selections yet
 {
     if (s.isEmpty())
         return false;

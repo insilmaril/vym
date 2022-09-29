@@ -4904,7 +4904,7 @@ void Main::editCycleTaskStatus()
         m->cycleTaskStatus();
 }
 
-void Main::editTaskResetDeltaPrio()
+void Main::editTaskResetDeltaPrio() // FIXME-2 With multiple selections enabled, old selection should be restored
 {
     QList <Task*> tasks;
     QList <VymModel*> models;
