@@ -2620,13 +2620,25 @@ bool VymModel::setTaskSleep(const QString &s)
     return ok;
 }
 
-void VymModel::setTaskPriorityDelta(const int &n)
+void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    QList<BranchItem *> selbis;
+    if (bi)
+        selbis << bi;
+    else
+        selbis = getSelectedBranches();
+
+    foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            task->setPriorityDelta(n);
+            saveState(selbi,
+                      QString("setTaskPriorityDelta (%1)")
+                          .arg(task->getPriorityDelta()),
+                      selbi,
+                      QString("setTaskPriorityDelta (%1)")
+                          .arg(pd),
+                      "Set delta for priority of task");
+            task->setPriorityDelta(pd);
             emitDataChanged(selbi);
         }
     }
