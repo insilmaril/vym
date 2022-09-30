@@ -5,6 +5,7 @@
 
 #include "branchitem.h"
 #include "flagrow-container.h"
+#include "frame-container.h"
 #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
@@ -46,6 +47,7 @@ void BranchContainer::init()
 
     orientation = UndefinedOrientation;
 
+    frameContainer = nullptr;
     imagesContainer = nullptr;
 
     headingContainer = new HeadingContainer ();
@@ -460,6 +462,18 @@ HeadingContainer* BranchContainer::getHeadingContainer()
 LinkContainer* BranchContainer::getLinkContainer()
 {
     return linkContainer;
+}
+
+FrameContainer* BranchContainer::createFrameContainer()
+{
+    frameContainer = new FrameContainer (this);
+    frameContainer->stackBefore(childItems().first());
+    return frameContainer;
+}
+
+FrameContainer* BranchContainer::getFrameContainer()
+{
+    return frameContainer;
 }
 
 QList <BranchContainer*> BranchContainer::childBranches()

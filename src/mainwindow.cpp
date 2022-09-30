@@ -6222,7 +6222,9 @@ void Main::updateDockWidgetTitles(VymModel *model)
 
         noteEditor->setEditorTitle(s);
         noteEditorDW->setWindowTitle(noteEditor->getEditorTitle());
-        branchPropertyEditor->setModel(model);
+        //qDebug() << "Main::updateDockWidgetTitles";
+        // FIXME-2 review. Also already called in MW::changeSelection, not necessary, right?
+        // branchPropertyEditor->setModel(model);
     }
 }
 

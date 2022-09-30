@@ -4,7 +4,6 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "frameobj.h"
 #include "settings.h"
 #include "vymmodel.h"
 
@@ -140,14 +139,20 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     else if (ti->hasTypeBranch()) {
         branchItem = (BranchItem *)ti;
 
-        ui.tabWidget->setEnabled(true);
+        ui.tabWidget->setEnabled(true); // FIXME-0 Don't disable complete tab, but just contents
         for (int i = 0; i < 4; ++i)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
 
         // Frame
-        /* FIXME-2 not ported yet FrameObj::FrameType t = branchObj->getFrameType();
-        if (t == FrameObj::NoFrame) // FIXME-3 Check if all below depends on
+        FrameContainer *fc = branchItem->getBranchContainer()->getFrameContainer();
+        FrameContainer::FrameType t = FrameContainer::NoFrame;
+        if  (fc)
+            t = fc->getFrameType();
+
+        qDebug() << "BPE::setItem t=" << t << "  bi=" << branchItem->getHeadingPlain();
+
+        if (t == FrameContainer::NoFrame) // FIXME-3 Check if all below depends on
                                     // frame type???
         {
             ui.frameTypeCombo->setCurrentIndex(0);
@@ -162,34 +167,36 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.includeChildrenCheckBox->setEnabled(false);
         }
         else {
-            penColor = branchObj->getFramePenColor();
+            /*
+            penColor = branchObj->getFramePenColor();   // FIXME-0
             brushColor = branchObj->getFrameBrushColor();
             QPixmap pix(16, 16);
             pix.fill(penColor);
             ui.framePenColorButton->setIcon(pix);
             pix.fill(brushColor);
-            ui.frameBrushColorButton->setIcon(pix);
+            */
+            //ui.frameBrushColorButton->setIcon(pix);   // FIXME-0
             ui.colorGroupBox->setEnabled(true);
             ui.framePaddingSpinBox->setEnabled(true);
-            ui.framePaddingSpinBox->setValue(branchObj->getFramePadding());
+            //ui.framePaddingSpinBox->setValue(branchObj->getFramePadding()); // FIXME-0
             ui.frameWidthSpinBox->setEnabled(true);
-            ui.frameWidthSpinBox->setValue(
-                branchObj->getFrameBorderWidth());
+            // ui.frameWidthSpinBox->setValue( // FIXME-0
+                //branchObj->getFrameBorderWidth());
             ui.framePaddingLabel->setEnabled(true);
             ui.frameBorderLabel->setEnabled(true);
             ui.includeChildrenCheckBox->setEnabled(true);
 
             switch (t) {
-            case FrameObj::Rectangle:
+            case FrameContainer::Rectangle:
                 ui.frameTypeCombo->setCurrentIndex(1);
                 break;
-            case FrameObj::RoundedRectangle:
+            case FrameContainer::RoundedRectangle:
                 ui.frameTypeCombo->setCurrentIndex(2);
                 break;
-            case FrameObj::Ellipse:
+            case FrameContainer::Ellipse:
                 ui.frameTypeCombo->setCurrentIndex(3);
                 break;
-            case FrameObj::Cloud:
+            case FrameContainer::Cloud:
                 ui.frameTypeCombo->setCurrentIndex(4);
                 break;
             default:
@@ -200,7 +207,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             else
                 ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
         }
-        */
 
         // Link
         if (branchItem->getHideLinkUnselected())
@@ -317,21 +323,22 @@ void BranchPropertyEditor::frameTypeChanged(int i)
     if (model) {
         switch (i) {
         case 0:
-            model->setFrameType(FrameObj::NoFrame);
+            model->setFrameType(FrameContainer::NoFrame);
             break;
         case 1:
-            model->setFrameType(FrameObj::Rectangle);
+            model->setFrameType(FrameContainer::Rectangle);
             break;
         case 2:
-            model->setFrameType(FrameObj::RoundedRectangle);
+            model->setFrameType(FrameContainer::RoundedRectangle);
             break;
         case 3:
-            model->setFrameType(FrameObj::Ellipse);
+            model->setFrameType(FrameContainer::Ellipse);
             break;
         case 4:
-            model->setFrameType(FrameObj::Cloud);
+            model->setFrameType(FrameContainer::Cloud);
             break;
         }
+        qDebug() << "BPE::frameTypeChanged";
         setItem(branchItem);
     }
 }

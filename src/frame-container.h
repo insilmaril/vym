@@ -1,24 +1,24 @@
-#ifndef FRAMEOBJ_H
-#define FRAMEOBJ_H
+#ifndef FRAME_CONTAINER_H
+#define FRAME_CONTAINER_H
 
-#include "mapobj.h"
+#include "container.h"
 
-/*! \brief This class adds a frame to a MapObj.
+#include "xmlobj.h"
+#include <QPen>
+
+/*! \brief This class adds a frame to a Container.
  */
 
-class FrameObj : public MapObj {
+class FrameContainer : public XMLObj, public Container {
   public:
     /*! \brief Supported frame types */
     enum FrameType { NoFrame, Rectangle, RoundedRectangle, Ellipse, Cloud };
 
-    FrameObj(QGraphicsItem *parent);
-    ~FrameObj();
+    FrameContainer(Container *parent);
+    ~FrameContainer();
     void init();
     void clear();
-    void move(double x, double y);   // move to absolute Position
-    void moveBy(double x, double y); // move to relative Position
-    void positionBBox();
-    void calcBBoxSize();
+    void setPos(double x, double y);   // move to absolute Position
     void setRect(const QRectF &); // set dimensions
     void setPadding(const int &);
     int getPadding();
@@ -27,7 +27,7 @@ class FrameObj : public MapObj {
     void setBorderWidth(const int &);
     int getBorderWidth();
     FrameType getFrameType();
-    FrameType getFrameType(const QString &);
+    FrameType getFrameTypeFromString(const QString &);
     QString getFrameTypeName();
     void setFrameType(const FrameType &);
     void setFrameType(const QString &);
@@ -35,23 +35,24 @@ class FrameObj : public MapObj {
     QColor getPenColor();
     void setBrushColor(QColor);
     QColor getBrushColor();
-    void setFrameIncludeChildren(bool);
-    bool getFrameIncludeChildren();
+    void setIncludeChildren(bool);
+    bool getIncludeChildren();
     void repaint();
     void setZValue(double z);
     void setVisibility(bool);
     QString saveToDir();
+    virtual void reposition();
 
   private:
     FrameType type; //!< Frame type
+    QRectF frameSize;
     QGraphicsRectItem *rectFrame;
     QGraphicsEllipseItem *ellipseFrame;
     QGraphicsPathItem *pathFrame;
     int padding; // distance text - frame
-    int borderWidth;
     qreal xsize; //! Extra size caused e.g. by cloud geometry
-    QColor penColor;
-    QColor brushColor;
+    QPen pen;
+    QBrush brush;
     bool includeChildren;
 };
 #endif

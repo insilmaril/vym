@@ -12,7 +12,6 @@
 
 #include "branchitem.h"
 #include "file.h"
-#include "frameobj.h"
 #include "imageitem.h"
 #include "linkablemapobj.h"
 #include "mapeditor.h"
@@ -361,7 +360,7 @@ class VymModel : public TreeModel {
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 
-    void setFrameType(const FrameObj::FrameType &);
+    void setFrameType(const FrameContainer::FrameType &);
     void setFrameType(const QString &);
     void toggleFrameIncludeChildren();
     void setFrameIncludeChildren(bool);

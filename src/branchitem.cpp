@@ -161,15 +161,19 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (!note.isEmpty())
         s += note.saveToDir();
 
-    // Save frame  // not saved if there is no MO   // FIXME-2 not ported yet
-    /*
-    if (mo) {
-        // Avoid saving NoFrame for objects other than MapCenter
-        if (depth() == 0 || ((OrnamentedObj *)mo)->getFrame()->getFrameType() !=
-                                FrameObj::NoFrame)
-            s += ((OrnamentedObj *)mo)->getFrame()->saveToDir();
+    // Save frame
+    FrameContainer *fc = branchContainer->getFrameContainer();
+    if (!fc) {
+        if (depth() == 0)   {
+            // MapCenters will get frames by default, note this exception here
+            incIndent();
+            s += singleElement("frame", attribut("frameType", "NoFrame"));
+            decIndent();
+        }
+    } else {
+        if (fc->getFrameType() != FrameContainer::NoFrame)
+            s += fc->saveToDir();
     }
-    */
 
     // save names of flags set
     s += standardFlags.saveState();

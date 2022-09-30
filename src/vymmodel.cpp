@@ -2232,24 +2232,29 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     return urls;
 }
 
-void VymModel::setFrameType(const FrameObj::FrameType &t)// FIXME-2 not ported yet to containers
+void VymModel::setFrameType(const FrameContainer::FrameType &t)// FIXME-0 currently being ported to Container 
 {
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            QString s = bo->getFrameTypeName();
-            bo->setFrameType(t);
+    qDebug() << "VM::setFrameType t=" << t;
+    QList<BranchItem *> selbis = getSelectedBranches();
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        FrameContainer *fc = bc->getFrameContainer();
+        if (!fc && t != FrameContainer::NoFrame) {
+            fc = bc->createFrameContainer();
+            fc->setFrameType(t);
+
+            // QString s = bc->getFrameTypeName();
+            /* FIXME-2 No savestate for frame yet
             saveState(
                 bi, QString("setFrameType (\"%1\")").arg(s), bi,
-                QString("setFrameType (\"%1\")").arg(bo->getFrameTypeName()),
+                QString("setFrameType (\"%1\")").arg(bc->getFrameTypeName()),
                 QString("set type of frame to %1").arg(s));
+            */
             reposition();
-            bo->updateLinkGeometry();
+            //bo->updateLinkGeometry();
         }
     }
-    */
 }
 
 void VymModel::setFrameType(const QString &s)// FIXME-2 not ported yet to containers
@@ -6108,7 +6113,7 @@ QString VymModel::getSelectString()
     return getSelectString(getSelectedItem());
 }
 
-QString VymModel::getSelectString(
+QString VymModel::getSelectString(  // FIXME-2 Not ported yet to containers...
     LinkableMapObj *lmo) // only for convenience. Used in MapEditor
 {
     if (!lmo)
@@ -6116,7 +6121,7 @@ QString VymModel::getSelectString(
     return getSelectString(lmo->getTreeItem());
 }
 
-QString VymModel::getSelectString(TreeItem *ti)
+QString VymModel::getSelectString(TreeItem *ti) // FIXME-2 maybe replace bo -> bi, fi -> ii, ...
 {
     QString s;
     if (!ti || ti->depth() < 0)

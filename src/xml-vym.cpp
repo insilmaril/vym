@@ -635,43 +635,41 @@ bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
 
 bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
 {
-    if (lastMI) {
-        /*
-        OrnamentedObj *oo = (OrnamentedObj *)(lastMI->getLMO());    // FIXME-2 frames not supported yet
-        if (oo) {
-            bool ok;
-            int x;
-            {
-                if (!a.value("frameType").isEmpty())
-                    oo->setFrameType(a.value("frameType"));
-                if (!a.value("penColor").isEmpty())
-                    oo->setFramePenColor(a.value("penColor"));
-                if (!a.value("brushColor").isEmpty()) {
-                    oo->setFrameBrushColor(a.value("brushColor"));
-                    lastMI->setBackgroundColor(a.value("brushColor"));
-                }
-                if (!a.value("padding").isEmpty()) {
-                    x = a.value("padding").toInt(&ok);
-                    if (ok)
-                        oo->setFramePadding(x);
-                }
-                if (!a.value("borderWidth").isEmpty()) {
-                    x = a.value("borderWidth").toInt(&ok);
-                    if (ok)
-                        oo->setFrameBorderWidth(x);
-                }
-                if (!a.value("includeChildren").isEmpty()) {
-                    if (a.value("includeChildren") == "true")
-                        oo->setFrameIncludeChildren(true);
-                    else
-                        oo->setFrameIncludeChildren(false);
-                }
-            }
-            return true;
+    if (lastBranch) {
+        BranchContainer *bc = lastBranch->getBranchContainer();
+        FrameContainer *fc = bc->getFrameContainer();
+        if (!fc)
+            fc = bc->createFrameContainer();
+
+        bool ok;
+        int x;
+        if (!a.value("frameType").isEmpty())
+            fc->setFrameType(a.value("frameType"));
+        if (!a.value("penColor").isEmpty())
+            fc->setPenColor(a.value("penColor"));
+        if (!a.value("brushColor").isEmpty()) {
+            fc->setBrushColor(a.value("brushColor"));
+            lastMI->setBackgroundColor(a.value("brushColor"));
         }
-        */
+        if (!a.value("padding").isEmpty()) {
+            x = a.value("padding").toInt(&ok);
+            if (ok)
+                fc->setPadding(x);
+        }
+        if (!a.value("borderWidth").isEmpty()) {
+            x = a.value("borderWidth").toInt(&ok);
+            if (ok)
+                fc->setBorderWidth(x);
+        }
+        if (!a.value("includeChildren").isEmpty()) {
+            if (a.value("includeChildren") == "true")
+                fc->setIncludeChildren(true);
+            else
+                fc->setIncludeChildren(false);
+        }
+        return true;
     }
-    return true;        // FIXME-2 use container instead of OrnamentedObj in readFrameAttr
+    return true;
 }
 
 bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)

@@ -4,9 +4,11 @@
 #include <QBrush>
 
 #include "container.h"
+#include "frame-container.h"
 
 class BranchItem;
 class FlagRowContainer;
+// class FrameContainer;
 class HeadingContainer;
 class LinkContainer;
 
@@ -19,7 +21,10 @@ class BranchContainer : public Container {
         RightOfParent
     };
 
-    BranchContainer (QGraphicsScene *scene, QGraphicsItem *parent = NULL, BranchItem *bi = NULL);
+    BranchContainer (
+            QGraphicsScene *scene,
+            QGraphicsItem *parent = nullptr,
+            BranchItem *bi = nullptr);
     virtual ~BranchContainer();
     virtual void init();
 
@@ -83,6 +88,9 @@ class BranchContainer : public Container {
     HeadingContainer* getHeadingContainer();
     LinkContainer* getLinkContainer();
 
+    FrameContainer* createFrameContainer();
+    FrameContainer* getFrameContainer();
+
     // Convenience functions to access children
     QList <BranchContainer*> childBranches();
     QList <ImageContainer*> childImages();
@@ -115,7 +123,6 @@ class BranchContainer : public Container {
     void setRotationContent(const int &);
     int getRotationInnerContent();
 
-
     bool isInClickBox(const QPointF &p);
 
     void updateVisuals();
@@ -139,6 +146,7 @@ class BranchContainer : public Container {
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent
+    FrameContainer *frameContainer;
     Container *branchesContainer;       // Container with children branches
     Container *imagesContainer;         // Container with children images
     Container *ornamentsContainer;      // Flags and heading

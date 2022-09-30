@@ -31,6 +31,7 @@ class Container : public QGraphicsRectItem {
         FlagCont,
         FlagRowCont,
         FloatingContent,
+        Frame,
         Heading,
         Image,
         ImagesContainer,
