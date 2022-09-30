@@ -21,52 +21,59 @@ void TaskFilterModel::setFilterFlags2(bool b) { filterFlags2 = b; }
 
 void TaskFilterModel::setFilterFlags3(bool b) { filterFlags3 = b; }
 
-bool TaskFilterModel::filterAcceptsRow(int sourceRow,
-                                       const QModelIndex &sourceParent) const
+bool TaskFilterModel::taskVisible(Task* task) const
 {
-    QModelIndex ix = sourceModel()->index(sourceRow, 0, sourceParent);
-
     // Filter by mapname
-    QString mapname = taskModel->getTask(ix)->getMapName();
+    QString mapname = task->getMapName();
     if (mapname.isEmpty())
         mapname = "justSomePseudoMapNameForFiltering";
     if (!mapFilter.isEmpty() && mapname != mapFilter)
         return false;
 
     // Filter new tasks
-    if (filterNew && taskModel->getTask(ix)->getAwake() != Task::Morning)
+    if (filterNew && task->getAwake() != Task::Morning)
         return false;
 
+    BranchItem *bi = task->getBranch();
+
     // Filter blocker tasks (stopsign)
-    if (filterBlocker && !taskModel->getTask(ix)->getBranch()->hasActiveFlag("stopsign") ) 
+    if (filterBlocker && !bi->hasActiveFlag("stopsign") )
         return false;
 
     // Filter active tasks
-    if (useFilter && ((taskModel->getTask(ix)->getSecsSleep() > 0) ||
-                      (taskModel->getTask(ix)->getStatus() == Task::Finished)))
+    if (useFilter && ((task->getSecsSleep() > 0) ||
+                      (task->getStatus() == Task::Finished)))
         return false;
 
     // Filter arrow flags
     if (filterFlags1 && filterFlags2) {
-        if (taskModel->getTask(ix)->getBranch()->hasActiveFlag("arrow-up") ||
-            taskModel->getTask(ix)->getBranch()->hasActiveFlag("2arrow-up"))
+        if (bi->hasActiveFlag("arrow-up") ||
+            bi->hasActiveFlag("2arrow-up"))
             return true;
         else
             return false;
     }
 
     if (filterFlags1 &&
-        !taskModel->getTask(ix)->getBranch()->hasActiveFlag("arrow-up"))
+        !bi->hasActiveFlag("arrow-up"))
         return false;
 
     if (filterFlags2 &&
-        !taskModel->getTask(ix)->getBranch()->hasActiveFlag("2arrow-up"))
+        !bi->hasActiveFlag("2arrow-up"))
         return false;
 
     // Filter flags: Flags, which have neither arrow-up nor 2arrow-up
     if (filterFlags3 &&
-        (taskModel->getTask(ix)->getBranch()->hasActiveFlag("arrow-up") ||
-         taskModel->getTask(ix)->getBranch()->hasActiveFlag("2arrow-up")))
+        (bi->hasActiveFlag("arrow-up") ||
+         bi->hasActiveFlag("2arrow-up")))
         return false;
     return true;
+}
+
+bool TaskFilterModel::filterAcceptsRow(int sourceRow,
+                                       const QModelIndex &sourceParent) const
+{
+    QModelIndex ix = sourceModel()->index(sourceRow, 0, sourceParent);
+
+    return taskVisible(taskModel->getTask(ix));
 }

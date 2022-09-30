@@ -1782,6 +1782,16 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionCycleTaskStatus = a;
 
+    a = new QAction(QPixmap(), tr("Reset delta priority for visible tasks", "Reset delta"), this);
+    a->setShortcutContext(Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled(false);
+    addAction(a);
+    switchboard.addSwitch("mapResetTaskDeltaPrio", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editTaskResetDeltaPrio()));
+    actionListBranches.append(a);
+    actionTaskResetDeltaPrio = a;
+
     a = new QAction(QPixmap(), tr("Reset sleep", "Task sleep"), this);
     a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
@@ -3162,6 +3172,7 @@ void Main::setupContextMenus()
     taskContextMenu = branchContextMenu->addMenu(tr("Tasks", "Context menu"));
     taskContextMenu->addAction(actionToggleTask);
     taskContextMenu->addAction(actionCycleTaskStatus);
+    taskContextMenu->addAction(actionTaskResetDeltaPrio);
     taskContextMenu->addSeparator();
     taskContextMenu->addAction(actionTaskSleep0);
     taskContextMenu->addAction(actionTaskSleepN);
@@ -4881,6 +4892,38 @@ void Main::editCycleTaskStatus()
     VymModel *m = currentModel();
     if (m)
         m->cycleTaskStatus();
+}
+
+void Main::editTaskResetDeltaPrio() // FIXME-2 With multiple selections enabled, old selection should be restored
+{
+    QList <Task*> tasks;
+    QList <VymModel*> models;
+    for (int i = 0; i < taskModel->count(); i++)
+    {
+        Task *task = taskModel->getTask(i);
+        if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0) {
+            tasks << task;
+            VymModel *m = task->getBranch()->getModel();
+            if (!models.contains(m))
+                models << m;
+        }
+    }
+
+    foreach (VymModel *model, models) {
+        // Unselect everything
+        model->unselectAll();
+
+        // Select all branches, where tasks whill be updated
+        foreach (Task *task, tasks) {
+            BranchItem *bi = task->getBranch();
+            if (bi->getModel() == model) {
+                model->selectToggle(bi);
+            }
+        }
+
+        // Bulk update all branches in this model
+        model->setTaskPriorityDelta(0);
+    }
 }
 
 void Main::editTaskSleepN()

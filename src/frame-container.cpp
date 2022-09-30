@@ -28,6 +28,7 @@ void FrameContainer::init()
     pen.setColor(Qt::black);
     pen.setWidth(1);
     brush.setColor(Qt::white);
+    brush.setStyle(Qt::SolidPattern);
     includeChildren = false;
 
     setVisible(true);

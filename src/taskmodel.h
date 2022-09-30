@@ -18,7 +18,7 @@ class TaskModel : public QAbstractTableModel {
     QModelIndex index(Task *t) const;
     QModelIndex indexRowEnd(Task *t);
     Task *getTask(const QModelIndex &ix) const;
-    Task *getTask(const int i);
+    Task *getTask(const int i) const;
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
@@ -31,11 +31,11 @@ class TaskModel : public QAbstractTableModel {
     //    role=Qt::EditRole);
     void emitDataChanged(Task *t);
     bool insertRows(int position, int rows,
-                    const QModelIndex &index = QModelIndex(), Task *t = NULL);
+                    const QModelIndex &index = QModelIndex(), Task *t = nullptr);
     bool removeRows(int position, int rows,
                     const QModelIndex &index = QModelIndex());
 
-    int count(VymModel *model = NULL);
+    int count(VymModel *model = nullptr) const;
     Task *createTask(BranchItem *bi);
     void deleteTask(Task *t);
     bool updateAwake(bool force = false);

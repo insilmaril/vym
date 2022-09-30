@@ -71,7 +71,7 @@ Task *TaskModel::getTask(const QModelIndex &ix) const
         return NULL;
 }
 
-Task *TaskModel::getTask(const int i)
+Task *TaskModel::getTask(const int i) const
 {
     if (i >= 0 && i < count())
         return getTask(createIndex(i, 0));
@@ -133,7 +133,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
     }
     else if (role == Qt::DecorationRole && index.column() == 2) {
-        QString s = t->getIconString(); 
+        QString s = t->getIconString();
         if (s == "task-new")
             return task_new_icon;
         else if (s == "task-new-morning")
@@ -270,7 +270,9 @@ bool TaskModel::setData(const QModelIndex &index, const QVariant &value,
 
         if (index.column() == 1) // set Delta Priority
         {
-            t->setPriorityDelta(value.toInt());
+            BranchItem *bi = t->getBranch();
+            VymModel *m = bi->getModel();
+            m->setTaskPriorityDelta(value.toInt(), bi);
             recalcPriorities();
             emit(dataChanged(index, index));
             return true;
@@ -312,7 +314,7 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const
            Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
 }
 
-int TaskModel::count(VymModel *model)
+int TaskModel::count(VymModel *model) const
 {
     if (!model)
         return tasks.size();

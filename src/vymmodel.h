@@ -390,7 +390,7 @@ class VymModel : public TreeModel {
     bool setTaskSleep(const QString &s);
 
     /*! Set manual delta for priority of task */
-    void setTaskPriorityDelta(const int &n);
+    void setTaskPriorityDelta(const int &n, BranchItem *bi = nullptr);
 
     /*! Get manual delta for priority of task */
     int getTaskPriorityDelta();
