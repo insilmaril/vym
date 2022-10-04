@@ -90,6 +90,7 @@ class BranchContainer : public Container {
 
     FrameContainer* createFrameContainer();
     FrameContainer* getFrameContainer();
+    void deleteFrameContainer();
 
     // Convenience functions to access children
     QList <BranchContainer*> childBranches();

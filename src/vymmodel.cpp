@@ -2237,44 +2237,42 @@ void VymModel::setFrameType(const FrameContainer::FrameType &t)// FIXME-0 curren
     qDebug() << "VM::setFrameType t=" << t;
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
+    QString oldName;
+    QString newName;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
         FrameContainer *fc = bc->getFrameContainer();
-        if (!fc && t != FrameContainer::NoFrame) {
+        if (fc)  {
+            // Frame available
+            oldName = fc->getFrameTypeName();
+            if ( t == FrameContainer::NoFrame) {
+                newName = "NoFrame";
+                bc->deleteFrameContainer();
+            } else {
+                fc->setFrameType(t);
+                newName = fc->getFrameTypeName();
+            }
+        } else {
+            // No frame available
             fc = bc->createFrameContainer();
             fc->setFrameType(t);
-
-            // QString s = bc->getFrameTypeName();
-            /* FIXME-2 No savestate for frame yet
-            saveState(
-                bi, QString("setFrameType (\"%1\")").arg(s), bi,
-                QString("setFrameType (\"%1\")").arg(bc->getFrameTypeName()),
-                QString("set type of frame to %1").arg(s));
-            */
-            reposition();
-            //bo->updateLinkGeometry();
+            oldName = "NoFrame";
+            newName = fc->getFrameTypeName();
         }
+
+        // QString s = bc->getFrameTypeName();
+        saveState(
+            selbi, QString("setFrameType (\"%1\")").arg(oldName),
+            selbi, QString("setFrameType (\"%1\")").arg(newName),
+            QString("set type of frame to %1").arg(newName));
+        reposition();
+        //bo->updateLinkGeometry(); // FIXME-2 update links for frame container
     }
 }
 
-void VymModel::setFrameType(const QString &s)// FIXME-2 not ported yet to containers
+void VymModel::setFrameType(const QString &s)
 {
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(
-                bi,
-                QString("setFrameType (\"%1\")").arg(bo->getFrameTypeName()),
-                bi, QString("setFrameType (\"%1\")").arg(s),
-                QString("set type of frame to %1").arg(s));
-            bo->setFrameType(s);
-            reposition();
-            bo->updateLinkGeometry();
-        }
-    }
-    */
+    setFrameType(FrameContainer::getFrameTypeFromString(s));
 }
 
 void VymModel::toggleFrameIncludeChildren()// FIXME-2 not ported yet to containers

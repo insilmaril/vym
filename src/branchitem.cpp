@@ -163,17 +163,8 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 
     // Save frame
     FrameContainer *fc = branchContainer->getFrameContainer();
-    if (!fc) {
-        if (depth() == 0)   {
-            // MapCenters will get frames by default, note this exception here
-            incIndent();
-            s += singleElement("frame", attribut("frameType", "NoFrame"));
-            decIndent();
-        }
-    } else {
-        if (fc->getFrameType() != FrameContainer::NoFrame)
+    if (fc && fc->getFrameType() != FrameContainer::NoFrame)
             s += fc->saveToDir();
-    }
 
     // save names of flags set
     s += standardFlags.saveState();

@@ -150,8 +150,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         if  (fc)
             t = fc->getFrameType();
 
-        qDebug() << "BPE::setItem t=" << t << "  bi=" << branchItem->getHeadingPlain();
-
         if (t == FrameContainer::NoFrame) // FIXME-3 Check if all below depends on
                                     // frame type???
         {
@@ -322,21 +320,21 @@ void BranchPropertyEditor::frameTypeChanged(int i)
 {
     if (model) {
         switch (i) {
-        case 0:
-            model->setFrameType(FrameContainer::NoFrame);
-            break;
-        case 1:
-            model->setFrameType(FrameContainer::Rectangle);
-            break;
-        case 2:
-            model->setFrameType(FrameContainer::RoundedRectangle);
-            break;
-        case 3:
-            model->setFrameType(FrameContainer::Ellipse);
-            break;
-        case 4:
-            model->setFrameType(FrameContainer::Cloud);
-            break;
+            case 0:
+                model->setFrameType(FrameContainer::NoFrame);
+                break;
+            case 1:
+                model->setFrameType(FrameContainer::Rectangle);
+                break;
+            case 2:
+                model->setFrameType(FrameContainer::RoundedRectangle);
+                break;
+            case 3:
+                model->setFrameType(FrameContainer::Ellipse);
+                break;
+            case 4:
+                model->setFrameType(FrameContainer::Cloud);
+                break;
         }
         qDebug() << "BPE::frameTypeChanged";
         setItem(branchItem);

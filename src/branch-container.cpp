@@ -476,6 +476,12 @@ FrameContainer* BranchContainer::getFrameContainer()
     return frameContainer;
 }
 
+void BranchContainer::deleteFrameContainer()
+{
+    delete frameContainer;
+    frameContainer = nullptr;
+}
+
 QList <BranchContainer*> BranchContainer::childBranches()
 {
     QList <BranchContainer*> list;
@@ -878,6 +884,10 @@ void BranchContainer::reposition()
         }
     }
 
+    // Frame depends on dimensions calculated so far
+    if (frameContainer)
+        frameContainer->setRect(rect());
+
     // FIXME-3 for testing we do some coloring and additional drawing
     /*
     */
@@ -909,5 +919,5 @@ void BranchContainer::reposition()
             setBrush(Qt::NoBrush);
             if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
         }
-    }   // Debug visualizations
+    }   // Visualizations for testing
 }

@@ -44,6 +44,9 @@ void Container::init()
 
     centralContainer = nullptr;
 
+    // Overlay is used for frames: Don't consider for sizes or repositioning
+    overlay = false;
+
     // Not visible usually
     setBrush(Qt::NoBrush);
     setPen(Qt::NoPen);
@@ -460,11 +463,13 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 //qdbg() << ind() << " * Starting HL for " << info();
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    QRectF c_bbox = mapRectFromItem(c, c->rect());
+                    if (!c->overlay) {
+                        QRectF c_bbox = mapRectFromItem(c, c->rect());
 
-                    w_total += c_bbox.width();
-                    qreal h = c_bbox.height();
-                    h_max = (h_max < h) ? h : h_max;
+                        w_total += c_bbox.width();
+                        qreal h = c_bbox.height();
+                        h_max = (h_max < h) ? h : h_max;
+                    }
                 }
 /*
                 if (centralContainer)
@@ -479,35 +484,37 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // Position children initially. (So far only centered vertically)
                 foreach (QGraphicsItem *child, childItems()) {
                     c = (Container*) child;
-                    QRectF c_bbox = mapRectFromItem(c, c->rect());  // FIXME-1 duplicate mapping, see above loop
-                    QPointF origin_mapped = mapFromItem(c, QPointF());
-                    qreal offset;
+                    if (!c->overlay) {
+                        QRectF c_bbox = mapRectFromItem(c, c->rect());
+                        QPointF origin_mapped = mapFromItem(c, QPointF());
+                        qreal offset;
 
-                    // Pre alignment
-		    if (horizontalDirection == LeftToRight)
-                        offset = - (c_bbox.left() - origin_mapped.x());
-                    else
-                        offset = - (c_bbox.right() - origin_mapped.x());
+                        // Pre alignment
+                        if (horizontalDirection == LeftToRight)
+                            offset = - (c_bbox.left() - origin_mapped.x());
+                        else
+                            offset = - (c_bbox.right() - origin_mapped.x());
 
-                    //qdbg() << ind() << " * * " << c->info() << " x=" << x << "  offset=" << offset;
+                        //qdbg() << ind() << " * * " << c->info() << " x=" << x << "  offset=" << offset;
 
-                    // Align vertically centered
-                    c->setPos (x + offset, - c->rect().height() / 2 - c->rect().top());
+                        // Align vertically centered
+                        c->setPos (x + offset, - c->rect().height() / 2 - c->rect().top());
 
-                    // Align vertically to top
-                    // c->setPos (x + offset, - h_max / 2 - c->rect().top());
+                        // Align vertically to top
+                        // c->setPos (x + offset, - h_max / 2 - c->rect().top());
 
-                    // Align vertically to bottom
-                    // c->setPos (x + offset, h_max / 2 - c->rect().bottom());
+                        // Align vertically to bottom
+                        // c->setPos (x + offset, h_max / 2 - c->rect().bottom());
 
-                    // Post alignment
-		    if (horizontalDirection == LeftToRight) {
-                        x += c_bbox.width();
-                    } else
-                        x -= c_bbox.width();
+                        // Post alignment
+                        if (horizontalDirection == LeftToRight) {
+                            x += c_bbox.width();
+                        } else
+                            x -= c_bbox.width();
 
-                    //qdbg() << ind() << " * Done positioning: " << c->info();
-                }
+                        //qdbg() << ind() << " * Done positioning: " << c->info();
+                    }   // No overlay container
+                }   // Position children 
 
                 // Move everything, so that center of central container will be in origin
                 QPointF v_central;
@@ -517,8 +524,11 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                     if (parentContainer() && parentContainer()->hasFloatingLayout())  {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
                         //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
-                        foreach (QGraphicsItem *child, childItems())
-                            child->setPos(child->pos() - v_central);
+                        foreach (QGraphicsItem *child, childItems()) {
+                            c = (Container*) child;
+                            if (!c->overlay)
+                                c->setPos(child->pos() - v_central);
+                        }
                     }
                 }
 

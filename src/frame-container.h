@@ -26,7 +26,7 @@ class FrameContainer : public XMLObj, public Container {
     void setBorderWidth(const int &);
     int getBorderWidth();
     FrameType getFrameType();
-    FrameType getFrameTypeFromString(const QString &);
+    static FrameType getFrameTypeFromString(const QString &);
     QString getFrameTypeName();
     void setFrameType(const FrameType &);
     void setFrameType(const QString &);
@@ -40,10 +40,10 @@ class FrameContainer : public XMLObj, public Container {
     void setZValue(double z);
     void setVisibility(bool);
     QString saveToDir();
-    virtual void reposition();
+    void reposition();
 
   private:
-    FrameType type; //!< Frame type
+    FrameType frameType; //!< Frame type
     QRectF frameSize;
     QGraphicsRectItem *rectFrame;
     QGraphicsEllipseItem *ellipseFrame;

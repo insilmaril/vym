@@ -11,19 +11,20 @@
 /////////////////////////////////////////////////////////////////
 FrameContainer::FrameContainer(Container *parent) : Container(parent)
 {
-    qDebug() << "Constr FrameContainer";
+    //qDebug() << "Constr FrameContainer";
     init();
 }
 
 FrameContainer::~FrameContainer()
 {
-    qDebug() << "Destr FrameContainer";
+    //qDebug() << "Destr FrameContainer";
     clear();
 }
 
 void FrameContainer::init()
 {
-    type = NoFrame;
+    type = Frame;
+    frameType = NoFrame;
     clear();
     pen.setColor(Qt::black);
     pen.setWidth(1);
@@ -32,11 +33,14 @@ void FrameContainer::init()
     includeChildren = false;
 
     setVisible(true);
+
+    // Don't consider for sizes or repositioning
+    overlay = true;
 }
 
 void FrameContainer::clear()
 {
-    switch (type) {
+    switch (frameType) {
         case NoFrame:
             break;
         case Rectangle:
@@ -52,16 +56,16 @@ void FrameContainer::clear()
             delete pathFrame;
             break;
     }
-    type = NoFrame;
+    frameType = NoFrame;
     padding = 0; // No frame requires also no padding
     xsize = 0;
 }
 
-void FrameContainer::setRect(const QRectF &r)
+void FrameContainer::setRect(const QRectF &r)   // FIXME-0 use real rect() again. Is ignored in reposition as overlay!
 {
-    qDebug() << "FC::setRect t=" << type << " r=" << qrectFToString(r, 0);
+    qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(r, 0);
     frameSize = r;
-    switch (type) {
+    switch (frameType) {
         case NoFrame:
             break;
 
@@ -155,7 +159,7 @@ void FrameContainer::setPadding(const int &i) { padding = i; }
 
 int FrameContainer::getPadding()
 {
-    if (type == NoFrame)
+    if (frameType == NoFrame)
         return 0;
     else
         return padding;
@@ -173,9 +177,9 @@ void FrameContainer::setBorderWidth(const int &i)
 
 int FrameContainer::getBorderWidth() { return pen.width(); }
 
-FrameContainer::FrameType FrameContainer::getFrameType() { return type; }
+FrameContainer::FrameType FrameContainer::getFrameType() { return frameType; }
 
-FrameContainer::FrameType FrameContainer::getFrameTypeFromString(const QString &s)  // FIXME-2 not used, but should in script and undo!
+FrameContainer::FrameType FrameContainer::getFrameTypeFromString(const QString &s)
 {
     if (s == "Rectangle")
         return Rectangle;
@@ -190,7 +194,7 @@ FrameContainer::FrameType FrameContainer::getFrameTypeFromString(const QString &
 
 QString FrameContainer::getFrameTypeName()
 {
-    switch (type) {
+    switch (frameType) {
     case Rectangle:
         return "Rectangle";
         break;
@@ -210,10 +214,10 @@ QString FrameContainer::getFrameTypeName()
 
 void FrameContainer::setFrameType(const FrameType &t)
 {
-    if (t != type) {
+    if (t != frameType) {
         clear();
-        type = t;
-        switch (type) {
+        frameType = t;
+        switch (frameType) {
             case NoFrame:
                 break;
             case Rectangle:
@@ -296,7 +300,7 @@ void FrameContainer::repaint()
 {
     // Repaint, when e.g. borderWidth has changed or a color
     qDebug() << "FC::repaint  bc=" << parentContainer()->getName();
-    switch (type) {
+    switch (frameType) {
         case Rectangle:
             rectFrame->setPen(pen);
             rectFrame->setBrush(brush);
@@ -320,7 +324,7 @@ void FrameContainer::repaint()
 
 void FrameContainer::setZValue(double z)
 {
-    switch (type) {
+    switch (frameType) {
     case NoFrame:
         break;
     case Rectangle:
@@ -343,7 +347,7 @@ void FrameContainer::setVisibility(bool v)
     // FIXME-0 MapObj::setVisibility(v);
     qDebug() << "FC::setVis " << v;
     return; // FIXME-0 all children will be handled automatically
-    switch (type) {
+    switch (frameType) {
     case NoFrame:
         break;
     case Rectangle:
@@ -375,10 +379,10 @@ void FrameContainer::setVisibility(bool v)
 
 QString FrameContainer::saveToDir()
 {
-    QString frameTypeAttr = attribut("frameType", getFrameTypeName());
-    if (type == NoFrame)
-        return singleElement("frame", frameTypeAttr);
+    if (frameType == NoFrame)
+        return QString();
 
+    QString frameTypeAttr = attribut("frameType", getFrameTypeName());
     QString penColAttr = attribut("penColor", pen.color().name());
     QString brushColAttr = attribut("brushColor", brush.color().name());
     QString paddingAttr = attribut("padding", QString::number(padding));
@@ -394,7 +398,5 @@ QString FrameContainer::saveToDir()
 
 void FrameContainer::reposition()
 {
-    setVisible(true);     // FIXME-0 testing
-    setRect(parentContainer()->rect());
-    qDebug() << "FC::reposition " + info() + qrectFToString(parentContainer()->rect(),0) << "vis=" << isVisible();
+    //qDebug() << "FC::reposition()";
 }

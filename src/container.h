@@ -111,6 +111,7 @@ class Container : public QGraphicsRectItem {
     ContainerType type;
 
     bool visible;
+    bool overlay;
 
     QPointF originalPos;    //! Save position before move for undo
     AnimPoint animatedPos;  //! animated position to let e.g. a branch "snap back"
