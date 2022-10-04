@@ -57,29 +57,6 @@ void FrameContainer::clear()
     xsize = 0;
 }
 
-void FrameContainer::setPos(double x, double y) // FIXME-0 needed?
-{
-    qDebug() << "FC::setPos" << qpointFToString(QPointF(x,y), 0);
-    /*
-    switch (type) {
-    case NoFrame:
-        break;
-    case Rectangle:
-        rectFrame->setPos(x, y);
-        break;
-    case RoundedRectangle:
-        pathFrame->setPos(x, y);
-        break;
-    case Ellipse:
-        ellipseFrame->setPos(x, y);
-        break;
-    case Cloud:
-        pathFrame->setPos(x, y);
-        break;
-    }
-    */
-}
-
 void FrameContainer::setRect(const QRectF &r)
 {
     qDebug() << "FC::setRect t=" << type << " r=" << qrectFToString(r, 0);
@@ -318,7 +295,7 @@ bool FrameContainer::getIncludeChildren() { return includeChildren; }
 void FrameContainer::repaint()
 {
     // Repaint, when e.g. borderWidth has changed or a color
-    qDebug() << "FC::repaint";
+    qDebug() << "FC::repaint  bc=" << parentContainer()->getName();
     switch (type) {
         case Rectangle:
             rectFrame->setPen(pen);

@@ -18,7 +18,6 @@ class FrameContainer : public XMLObj, public Container {
     ~FrameContainer();
     void init();
     void clear();
-    void setPos(double x, double y);   // move to absolute Position
     void setRect(const QRectF &); // set dimensions
     void setPadding(const int &);
     int getPadding();
