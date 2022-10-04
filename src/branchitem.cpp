@@ -403,29 +403,7 @@ BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)    // FIXME-2 U
         return nullptr;
 }
 
-void BranchItem::setFrameIncludeChildren(bool b) // FIXME-2 rework frames
-{
-    /*
-    includeChildren = b; // FIXME-4 ugly: same information stored in FrameObj
-    BranchObj *bo = getBranchObj();
-    if (bo)
-        bo->getFrame()->setFrameIncludeChildren(b);
-        */
-}
-
-bool BranchItem::getFrameIncludeChildren() // FIXME-2 rework frames
-{
-    /*
-    BranchObj *bo = getBranchObj();
-    if (bo)
-        return bo->getFrame()->getFrameIncludeChildren();
-    else
-        return includeChildren;
-        */
-    return false;
-}
-
-void BranchItem::setLastSelectedBranch() // FIXME-1 rework navigating the tree
+void BranchItem::setLastSelectedBranch() // FIXME-0 rework navigating the tree
 {
     /*
     int d = depth();

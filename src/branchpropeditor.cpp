@@ -150,8 +150,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         if  (fc)
             t = fc->getFrameType();
 
-        if (t == FrameContainer::NoFrame) // FIXME-3 Check if all below depends on
-                                    // frame type???
+        if (t == FrameContainer::NoFrame)
         {
             ui.frameTypeCombo->setCurrentIndex(0);
             penColor = Qt::white;
@@ -165,42 +164,40 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.includeChildrenCheckBox->setEnabled(false);
         }
         else {
-            /*
-            penColor = branchObj->getFramePenColor();   // FIXME-0
-            brushColor = branchObj->getFrameBrushColor();
+            penColor = fc->getPenColor();
+            brushColor = fc->getBrushColor();
             QPixmap pix(16, 16);
             pix.fill(penColor);
             ui.framePenColorButton->setIcon(pix);
             pix.fill(brushColor);
-            */
-            //ui.frameBrushColorButton->setIcon(pix);   // FIXME-0
+            ui.frameBrushColorButton->setIcon(pix);   // FIXME-0
             ui.colorGroupBox->setEnabled(true);
             ui.framePaddingSpinBox->setEnabled(true);
-            //ui.framePaddingSpinBox->setValue(branchObj->getFramePadding()); // FIXME-0
+            ui.framePaddingSpinBox->setValue(fc->getPadding()); // FIXME-0
             ui.frameWidthSpinBox->setEnabled(true);
-            // ui.frameWidthSpinBox->setValue( // FIXME-0
-                //branchObj->getFrameBorderWidth());
+            ui.frameWidthSpinBox->setValue( // FIXME-0
+                fc->getBorderWidth());
             ui.framePaddingLabel->setEnabled(true);
             ui.frameBorderLabel->setEnabled(true);
             ui.includeChildrenCheckBox->setEnabled(true);
 
             switch (t) {
-            case FrameContainer::Rectangle:
-                ui.frameTypeCombo->setCurrentIndex(1);
-                break;
-            case FrameContainer::RoundedRectangle:
-                ui.frameTypeCombo->setCurrentIndex(2);
-                break;
-            case FrameContainer::Ellipse:
-                ui.frameTypeCombo->setCurrentIndex(3);
-                break;
-            case FrameContainer::Cloud:
-                ui.frameTypeCombo->setCurrentIndex(4);
-                break;
-            default:
-                break;
+                case FrameContainer::Rectangle:
+                    ui.frameTypeCombo->setCurrentIndex(1);
+                    break;
+                case FrameContainer::RoundedRectangle:
+                    ui.frameTypeCombo->setCurrentIndex(2);
+                    break;
+                case FrameContainer::Ellipse:
+                    ui.frameTypeCombo->setCurrentIndex(3);
+                    break;
+                case FrameContainer::Cloud:
+                    ui.frameTypeCombo->setCurrentIndex(4);
+                    break;
+                default:
+                    break;
             }
-            if (branchItem->getFrameIncludeChildren())
+            if (fc->getIncludeChildren())
                 ui.includeChildrenCheckBox->setCheckState(Qt::Checked);
             else
                 ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
@@ -377,8 +374,9 @@ void BranchPropertyEditor::frameBorderWidthChanged(int i)
 
 void BranchPropertyEditor::frameIncludeChildrenChanged(int i)
 {
+    qDebug() << "BPE::fICC i=" << i;
     if (model)
-        model->setFrameIncludeChildren(i);
+        model->setFrameIncludeChildren(i, branchItem);
 }
 
 void BranchPropertyEditor::linkHideUnselectedChanged(int i)

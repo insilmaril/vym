@@ -466,8 +466,13 @@ LinkContainer* BranchContainer::getLinkContainer()
 
 FrameContainer* BranchContainer::createFrameContainer()
 {
-    frameContainer = new FrameContainer (this);
-    frameContainer->stackBefore(childItems().first());
+    Container *pc;
+    if (outerContainer)
+        pc = outerContainer;
+    else
+        pc = innerContainer;
+    frameContainer = new FrameContainer (pc);
+    frameContainer->stackBefore(pc->childItems().first()); // FIXME-0 check ordering
     return frameContainer;
 }
 
@@ -885,8 +890,12 @@ void BranchContainer::reposition()
     }
 
     // Frame depends on dimensions calculated so far
-    if (frameContainer)
-        frameContainer->setRect(rect());
+    if (frameContainer) {
+        if (frameContainer->getIncludeChildren())
+            frameContainer->setRect(frameContainer->parentContainer()->rect());
+        else
+            frameContainer->setRect(ornamentsContainer->rect());    // FIXME-0 check...
+    }
 
     // FIXME-3 for testing we do some coloring and additional drawing
     /*

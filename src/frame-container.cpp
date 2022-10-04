@@ -61,10 +61,10 @@ void FrameContainer::clear()
     xsize = 0;
 }
 
-void FrameContainer::setRect(const QRectF &r)   // FIXME-0 use real rect() again. Is ignored in reposition as overlay!
+void FrameContainer::setRect(const QRectF &frameSize)
 {
-    qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(r, 0);
-    frameSize = r;
+    qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(frameSize, 0);
+    QGraphicsRectItem::setRect(frameSize);
     switch (frameType) {
         case NoFrame:
             break;
@@ -292,7 +292,11 @@ void FrameContainer::setBrushColor(QColor col)
 
 QColor FrameContainer::getBrushColor() { return brush.color(); }
 
-void FrameContainer::setIncludeChildren(bool b) { includeChildren = b; }
+void FrameContainer::setIncludeChildren(bool b)
+{
+    qDebug() << "FC::setIncChildren b=" << b;
+    includeChildren = b;
+}
 
 bool FrameContainer::getIncludeChildren() { return includeChildren; }
 

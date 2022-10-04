@@ -63,8 +63,6 @@ class BranchItem : public MapItem {
     void setBranchesLayout(const QString &);
     void setImagesLayout(const QString &);
     BranchItem *getFramedParentBranch(BranchItem *start);
-    void setFrameIncludeChildren(bool);
-    bool getFrameIncludeChildren();
 
   protected:
     int lastSelectedBranchNum;

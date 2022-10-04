@@ -44,7 +44,6 @@ class FrameContainer : public XMLObj, public Container {
 
   private:
     FrameType frameType; //!< Frame type
-    QRectF frameSize;
     QGraphicsRectItem *rectFrame;
     QGraphicsEllipseItem *ellipseFrame;
     QGraphicsPathItem *pathFrame;
