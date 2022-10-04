@@ -333,8 +333,6 @@ void BranchPropertyEditor::frameTypeChanged(int i)
                 model->setFrameType(FrameContainer::Cloud);
                 break;
         }
-        qDebug() << "BPE::frameTypeChanged";
-        setItem(branchItem);
     }
 }
 
