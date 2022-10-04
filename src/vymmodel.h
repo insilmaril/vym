@@ -360,16 +360,16 @@ class VymModel : public TreeModel {
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 
-    void setFrameType(const FrameContainer::FrameType &);
+    void setFrameType(const FrameContainer::FrameType &, BranchItem *bi = nullptr);
     void setFrameType(const QString &);
-    void toggleFrameIncludeChildren();
-    void setFrameIncludeChildren(bool);
+    void toggleFrameIncludeChildren(BranchItem *bi = nullptr);
+    void setFrameIncludeChildren(bool, BranchItem *bi = nullptr);
     void setFramePenColor(const QColor &);
     void setFrameBrushColor(const QColor &);
     void setFramePadding(const int &);
     void setFrameBorderWidth(const int &);
-    void setBranchesLayout(const QString &);
-    void setImagesLayout(const QString &);
+    void setBranchesLayout(const QString &, BranchItem *bi = nullptr);
+    void setImagesLayout(const QString &, BranchItem *bi = nullptr);
     void setRotationHeading(const int &);
     void setRotationContent(const int &);
     void setHideLinkUnselected(bool);
@@ -805,7 +805,7 @@ class VymModel : public TreeModel {
   public:
     TreeItem::Type selectionType();
     BranchItem *getSelectedBranch();
-    QList<BranchItem *> getSelectedBranches();
+    QList<BranchItem *> getSelectedBranches(BranchItem *bi = nullptr);
     ImageItem *getSelectedImage();
     Task *getSelectedTask();
     XLinkItem *getSelectedXLinkItem();

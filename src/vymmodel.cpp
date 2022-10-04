@@ -2232,10 +2232,9 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     return urls;
 }
 
-void VymModel::setFrameType(const FrameContainer::FrameType &t)// FIXME-0 currently being ported to Container 
+void VymModel::setFrameType(const FrameContainer::FrameType &t, BranchItem *bi)
 {
-    qDebug() << "VM::setFrameType t=" << t;
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     QString oldName;
     QString newName;
@@ -2275,31 +2274,43 @@ void VymModel::setFrameType(const QString &s)
     setFrameType(FrameContainer::getFrameTypeFromString(s));
 }
 
-void VymModel::toggleFrameIncludeChildren()// FIXME-2 not ported yet to containers
+void VymModel::toggleFrameIncludeChildren(BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        bool b = bi->getFrameIncludeChildren();
-        setFrameIncludeChildren(!b);
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    BranchContainer *bc;
+    bool oldInclude;
+    bool newInclude;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        FrameContainer *fc = bc->getFrameContainer();
+        if (fc)  {
+            oldInclude = fc->getIncludeChildren();
+            newInclude = !oldInclude;
+            fc->setIncludeChildren(newInclude);
+        }
     }
 }
 
-void VymModel::setFrameIncludeChildren(bool b)// FIXME-2 not ported yet to containers
+void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
 {
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    qDebug() << "VM::setFIC  b=" << b << "bi=" << bi << selbis;
 
-        saveState(bi, QString("setFrameIncludeChildren(%1)").arg(u), bi,
-                  QString("setFrameIncludeChildren(%1)").arg(r),
-                  QString("Include children in %1").arg(getObjectName(bi)));
-        bi->setFrameIncludeChildren(b);
-        emitDataChanged(bi);
-        reposition();
+    foreach (BranchItem *selbi, selbis) {
+        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
+        if (fc)  {
+            QString u = b ? "false" : "true";
+            QString r = !b ? "false" : "true";
+
+            saveState(
+                    selbi, QString("setFrameIncludeChildren(%1)").arg(u),
+                    selbi, QString("setFrameIncludeChildren(%1)").arg(r),
+                    QString("Include children in %1").arg(getObjectName(selbi)));
+            fc->setIncludeChildren(b);
+            emitDataChanged(selbi);
+            reposition();
+        }
     }
-    */
 }
 
 void VymModel::setFramePenColor(const QColor &c) // FIXME-2 not ported yet to containers
@@ -2415,9 +2426,9 @@ void VymModel::setRotationContent (const int &i) // FIXME-2 no savestate
     }
 }
 
-void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-1 no savestate yet
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi) {
@@ -2444,9 +2455,9 @@ void VymModel::setBranchesLayout(const QString &s)  // FIXME-1 no savestate yet
     reposition();
 }
 
-void VymModel::setImagesLayout(const QString &s)  // FIXME-1 no savestate yet
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-1 no savestate yet
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi) {
@@ -2699,11 +2710,7 @@ bool VymModel::setTaskSleep(const QString &s)
 
 void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
 {
-    QList<BranchItem *> selbis;
-    if (bi)
-        selbis << bi;
-    else
-        selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
@@ -4116,13 +4123,9 @@ void VymModel::colorBranch(QColor c)
     mapEditor->getScene()->update();
 }
 
-void VymModel::colorSubtree(QColor c, BranchItem *b)
+void VymModel::colorSubtree(QColor c, BranchItem *bi)
 {
-    QList<BranchItem *> selbis;
-    if (b)
-        selbis.append(b);
-    else
-        selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *bi, selbis) {
         saveStateChangingPart(bi, bi,
@@ -6011,9 +6014,17 @@ BranchItem *VymModel::getSelectedBranch()
     return bis.last();
 }
 
-QList<BranchItem *> VymModel::getSelectedBranches()
+QList<BranchItem *> VymModel::getSelectedBranches(BranchItem *bi)
 {
+    // Return list of selected branches.
+    // If bi != nullptr, return only this branch
     QList<BranchItem *> bis;
+
+    if (bi) {
+        bis << bi;
+        return bis;
+    }
+
     foreach (TreeItem *ti, getSelectedItems()) {
         TreeItem::Type type = ti->getType();
         if (type == TreeItem::Branch || type == TreeItem::MapCenter)
