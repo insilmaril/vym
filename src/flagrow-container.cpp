@@ -36,17 +36,6 @@ void FlagRowContainer::setZValue(double z)  // FIXME-2 z value of children? in b
     */
 }
 
-void FlagRowContainer::setVisibility(bool v)    // FIXME-1 children visibility?
-{
-    Container::setVisibility(v);
-    /*
-    foreach (QGraphicsItem *child, childItems()) {
-        Container* c = (Container*) child;
-        c->setVisibility(v);
-    }
-    */
-}
-
 void FlagRowContainer::updateActiveFlagContainers(const QList<QUuid> activeFlagUids,
                                       FlagRowMaster *masterRowMain,
                                       FlagRowMaster *masterRowOptional)

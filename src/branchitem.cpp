@@ -385,7 +385,7 @@ void BranchItem::setImagesLayout(const QString &s)
     branchContainer->setImagesContainerLayout(Container::getLayoutFromString(s));
 }
 
-BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)    // FIXME-2 Used to determine background color in taskEditor
+BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)    // FIXME-0 Used to determine background color in taskEditor
 {
     /*
     BranchObj *bo = getBranchObj();
@@ -403,25 +403,25 @@ BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)    // FIXME-2 U
         return nullptr;
 }
 
-void BranchItem::setLastSelectedBranch() // FIXME-0 rework navigating the tree
+void BranchItem::setLastSelectedBranch()
 {
-    /*
     int d = depth();
     if (d >= 0) {
         if (d == 1)
             // Hack to save an additional lastSelected for mapcenters in
             // MapEditor depending on orientation this allows to go both left
             // and right from there
-            if (mo && ((BranchObj *)mo)->getOrientation() ==
-                          LinkableMapObj::LeftOfCenter) {
+
+            if (branchContainer->getOrientation() ==
+                          BranchContainer::LeftOfParent) {
                 ((BranchItem *)parentItem)->lastSelectedBranchNumAlt =
                     parentItem->num(this);
                 return;
             }
+
         ((BranchItem *)parentItem)->lastSelectedBranchNum =
             parentItem->num(this);
     }
-    */
 }
 
 void BranchItem::setLastSelectedBranch(int i) { lastSelectedBranchNum = i; }

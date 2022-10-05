@@ -301,7 +301,6 @@ bool FrameContainer::getIncludeChildren() { return includeChildren; }
 void FrameContainer::repaint()
 {
     // Repaint, when e.g. borderWidth has changed or a color
-    qDebug() << "FC::repaint  bc=" << parentContainer()->getName();
     switch (frameType) {
         case Rectangle:
             rectFrame->setPen(pen);

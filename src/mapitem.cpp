@@ -3,7 +3,6 @@
 #include "branchitem.h"
 #include "image-container.h"
 #include "imageitem.h"
-#include "linkablemapobj.h"
 
 #include <QDebug>
 

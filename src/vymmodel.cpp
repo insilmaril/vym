@@ -36,7 +36,6 @@
 #include "file.h"
 #include "findresultmodel.h"
 #include "jira-agent.h"
-#include "linkablemapobj.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "misc.h"

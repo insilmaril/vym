@@ -152,7 +152,6 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
             }
         }
     } // ASCII heading with multiple lines
-    // setVisibility(visible); FIXME-1  no visibility yet with containers
 
     // Align headingLines vertically and find center
     qreal h = 0;

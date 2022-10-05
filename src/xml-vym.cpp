@@ -8,7 +8,6 @@
 #include "attributeitem.h"
 #include "branchitem.h"
 #include "flag.h"
-#include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "settings.h"

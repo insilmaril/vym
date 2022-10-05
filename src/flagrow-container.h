@@ -17,7 +17,6 @@ class FlagRowContainer : public Container {
     FlagRowContainer();
     ~FlagRowContainer();
     virtual void setZValue(double z);
-    virtual void setVisibility(bool);
     void updateActiveFlagContainers(const QList<QUuid>, FlagRowMaster *masterRowMain,
                               FlagRowMaster *masterRowOptional = nullptr);
     bool isFlagActive(const QUuid &);
