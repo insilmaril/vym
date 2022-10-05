@@ -3,6 +3,8 @@
 
 #include <QSortFilterProxyModel>
 
+class Task;
+
 class TaskFilterModel : public QSortFilterProxyModel {
   public:
     void setFilter(bool b);
@@ -12,6 +14,7 @@ class TaskFilterModel : public QSortFilterProxyModel {
     void setFilterFlags1(bool b);
     void setFilterFlags2(bool b);
     void setFilterFlags3(bool b);
+    bool taskVisible(Task*) const;
 
   protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;

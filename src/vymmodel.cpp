@@ -2621,13 +2621,25 @@ bool VymModel::setTaskSleep(const QString &s)
     return ok;
 }
 
-void VymModel::setTaskPriorityDelta(const int &n)
+void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    QList<BranchItem *> selbis;
+    if (bi)
+        selbis << bi;
+    else
+        selbis = getSelectedBranches();
+
+    foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            task->setPriorityDelta(n);
+            saveState(selbi,
+                      QString("setTaskPriorityDelta (%1)")
+                          .arg(task->getPriorityDelta()),
+                      selbi,
+                      QString("setTaskPriorityDelta (%1)")
+                          .arg(pd),
+                      "Set delta for priority of task");
+            task->setPriorityDelta(pd);
             emitDataChanged(selbi);
         }
     }
@@ -3913,7 +3925,7 @@ void VymModel::toggleFlagByName(const QString &name, bool useGroups)
 
 void VymModel::toggleFlagByUid(
     const QUuid &uid,
-    bool useGroups) 
+    bool useGroups)
     // FIXME-2  saveState not correct when toggling flags in groups
     // (previous flags not saved!)
 {
@@ -4557,7 +4569,7 @@ QPointF VymModel::exportSVG(QString fname, bool askName)
             return offset;
         }
 
-        fname = lastImageDir.absolutePath() + "/" + getMapName() + ".png";
+        fname = lastImageDir.absolutePath() + "/" + getMapName() + ".svg";
     }
 
     ExportBase ex;
@@ -4905,7 +4917,7 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
         settings.localValue(filePath, "/export/last/command", "").toString());
 
     if (fname == "")
-        ex.setFilePath(mapName + ".org");
+        ex.setFilePath(mapName + ".md");
     else
         ex.setFilePath(fname);
 
@@ -5692,7 +5704,7 @@ void VymModel::setSelectionBlocked(bool b) { selectionBlocked = b; }
 
 bool VymModel::isSelectionBlocked() { return selectionBlocked; }
 
-bool VymModel::select(const QString &s)
+bool VymModel::select(const QString &s) // FIXME-2 Does not support multiple selections yet
 {
     if (s.isEmpty())
         return false;

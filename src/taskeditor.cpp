@@ -278,9 +278,14 @@ void TaskEditor::setFilterFlags3()
 
 void TaskEditor::updateFilters()
 {
+    // ugly, but calling twice updates rows as expected  // FIXME-3 review...
     filterActiveModel->invalidate();
-    filterActiveModel
-        ->invalidate(); // ugly, but calling twice updates rows as expected
+    filterActiveModel->invalidate();
+}
+
+bool TaskEditor::taskVisible(Task *task)
+{
+    return filterActiveModel->taskVisible(task);
 }
 
 void TaskEditor::showSelection()
@@ -317,7 +322,7 @@ void TaskEditor::clearSelection() { view->selectionModel()->clearSelection(); }
 void TaskEditor::cellClicked(QModelIndex ix_unmapped)
 {
     QModelIndex ix = filterActiveModel->mapToSource(ix_unmapped);
-    if (ix.isValid() && ix.column() == 2) 
+    if (ix.isValid() && ix.column() == 2)
         taskModel->getTask(ix)->getBranch()->getModel()->cycleTaskStatus();
 }
 

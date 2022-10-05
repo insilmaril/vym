@@ -196,6 +196,7 @@ class Main : public QMainWindow {
     void editToggleHideExport();
     void editToggleTask();
     void editCycleTaskStatus();
+    void editTaskResetDeltaPrio();
     void editTaskSleepN();
     void editAddTimestamp();
     void editMapProperties();
@@ -491,6 +492,7 @@ class Main : public QMainWindow {
     QAction *actionToggleTask;
     QAction *actionTogglePresentationMode;
     QAction *actionCycleTaskStatus;
+    QAction *actionTaskResetDeltaPrio;
     QAction *actionTaskSleep0;
     QAction *actionTaskSleepN;
     QAction *actionTaskSleep1;
