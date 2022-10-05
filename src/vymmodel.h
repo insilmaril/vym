@@ -364,10 +364,10 @@ class VymModel : public TreeModel {
     void setFrameType(const QString &);
     void toggleFrameIncludeChildren(BranchItem *bi = nullptr);
     void setFrameIncludeChildren(bool, BranchItem *bi = nullptr);
-    void setFramePenColor(const QColor &);
-    void setFrameBrushColor(const QColor &);
-    void setFramePadding(const int &);
-    void setFrameBorderWidth(const int &);
+    void setFramePenColor(const QColor &, BranchItem *bi = nullptr);
+    void setFrameBrushColor(const QColor &, BranchItem *bi = nullptr);
+    void setFramePadding(const int &, BranchItem *bi = nullptr);
+    void setFrameBorderWidth(const int &, BranchItem *bi = nullptr);
     void setBranchesLayout(const QString &, BranchItem *bi = nullptr);
     void setImagesLayout(const QString &, BranchItem *bi = nullptr);
     void setRotationHeading(const int &);

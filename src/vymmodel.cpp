@@ -2312,7 +2312,7 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
     }
 }
 
-void VymModel::setFramePenColor(const QColor &c) // FIXME-2 not ported yet to containers
+void VymModel::setFramePenColor(const QColor &c, BranchItem *bi) // FIXME-0 not ported yet to containers
 
 {
     /*
@@ -2331,28 +2331,26 @@ void VymModel::setFramePenColor(const QColor &c) // FIXME-2 not ported yet to co
     */
 }
 
-void VymModel::setFrameBrushColor(// FIXME-2 not ported yet to containers
-    const QColor &c) // FIXME-4 not saved if there is no LMO
+void VymModel::setFrameBrushColor(
+    const QColor &col, BranchItem *bi)
 {
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(bi,
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
+        if (fc) {
+            saveState(selbi,
                       QString("setFrameBrushColor (\"%1\")")
-                          .arg(bo->getFrameBrushColor().name()),
-                      bi, QString("setFrameBrushColor (\"%1\")").arg(c.name()),
-                      QString("set brush color of frame to %1").arg(c.name()));
-            bo->setFrameBrushColor(c);
-            bi->setBackgroundColor(c); // FIXME-4 redundant with above
+                          .arg(fc->getBrushColor().name()),
+                      selbi, QString("setFrameBrushColor (\"%1\")").arg(col.name()),
+                      QString("set brush color of frame to %1").arg(col.name()));
+            fc->setBrushColor(col);
         }
     }
-    */
 }
 
 void VymModel::setFramePadding(// FIXME-2 not ported yet to containers
-    const int &i)
+    const int &i, BranchItem *bi)
 {
     /*
     BranchItem *bi = getSelectedBranch();
@@ -2372,8 +2370,8 @@ void VymModel::setFramePadding(// FIXME-2 not ported yet to containers
     */
 }
 
-void VymModel::setFrameBorderWidth(// FIXME-2 not ported yet to containers
-    const int &i)
+void VymModel::setFrameBorderWidth(// FIXME-0 not ported yet to containers
+    const int &i, BranchItem *bi)
 {
     /*
     BranchItem *bi = getSelectedBranch();

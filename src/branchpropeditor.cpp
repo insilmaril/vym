@@ -342,7 +342,7 @@ void BranchPropertyEditor::framePenColorClicked()
         QColor col = QColorDialog::getColor(penColor, this);
         if (col.isValid()) {
             penColor = col;
-            model->setFramePenColor(penColor);
+            model->setFramePenColor(penColor, branchItem);
         }
     }
 }
@@ -353,7 +353,7 @@ void BranchPropertyEditor::frameBrushColorClicked()
         QColor col = QColorDialog::getColor(brushColor, this);
         if (col.isValid()) {
             brushColor = col;
-            model->setFrameBrushColor(brushColor);
+            model->setFrameBrushColor(brushColor, branchItem);
         }
     }
 }
@@ -361,18 +361,17 @@ void BranchPropertyEditor::frameBrushColorClicked()
 void BranchPropertyEditor::framePaddingChanged(int i)
 {
     if (model)
-        model->setFramePadding(i);
+        model->setFramePadding(i, branchItem);
 }
 
 void BranchPropertyEditor::frameBorderWidthChanged(int i)
 {
     if (model)
-        model->setFrameBorderWidth(i);
+        model->setFrameBorderWidth(i, branchItem);
 }
 
 void BranchPropertyEditor::frameIncludeChildrenChanged(int i)
 {
-    qDebug() << "BPE::fICC i=" << i;
     if (model)
         model->setFrameIncludeChildren(i, branchItem);
 }
