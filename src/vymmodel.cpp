@@ -4213,8 +4213,8 @@ void VymModel::syncTrello()
 
         agent->setBoard("627a201d7d74b04fba065a07");    // FIXME-2 still hardcoded
         //agent->setJobType(TrelloAgent::GetMyBoards);
-        agent->setJobType(TrelloAgent::GetBoardActions);
         //agent->setJobType(TrelloAgent::GetBoardLists);
+        agent->setJobType(TrelloAgent::GetBoardActions);
         //agent->setJobType(TrelloAgent::SyncBoardToBranch);
 
         connect(agent, &TrelloAgent::trelloBoardDataReady, this, &VymModel::receivedTrelloData);
