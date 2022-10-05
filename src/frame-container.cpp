@@ -258,7 +258,6 @@ void FrameContainer::setFrameType(const FrameType &t)
             break;
         }
     }
-    setVisibility(visible);
     reposition();
 }
 
@@ -294,7 +293,6 @@ QColor FrameContainer::getBrushColor() { return brush.color(); }
 
 void FrameContainer::setIncludeChildren(bool b)
 {
-    qDebug() << "FC::setIncChildren b=" << b;
     includeChildren = b;
 }
 
@@ -342,41 +340,6 @@ void FrameContainer::setZValue(double z)
         break;
     case Cloud:
         pathFrame->setZValue(z);
-        break;
-    }
-}
-
-void FrameContainer::setVisibility(bool v)
-{
-    // FIXME-0 MapObj::setVisibility(v);
-    qDebug() << "FC::setVis " << v;
-    return; // FIXME-0 all children will be handled automatically
-    switch (frameType) {
-    case NoFrame:
-        break;
-    case Rectangle:
-        if (visible)
-            rectFrame->show();
-        else
-            rectFrame->hide();
-        break;
-    case RoundedRectangle:
-        if (visible)
-            pathFrame->show();
-        else
-            pathFrame->hide();
-        break;
-    case Ellipse:
-        if (visible)
-            ellipseFrame->show();
-        else
-            ellipseFrame->hide();
-        break;
-    case Cloud:
-        if (visible)
-            pathFrame->show();
-        else
-            pathFrame->hide();
         break;
     }
 }

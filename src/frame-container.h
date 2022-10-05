@@ -38,7 +38,6 @@ class FrameContainer : public XMLObj, public Container {
     bool getIncludeChildren();
     void repaint();
     void setZValue(double z);
-    void setVisibility(bool);
     QString saveToDir();
     void reposition();
 
