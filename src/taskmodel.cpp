@@ -178,22 +178,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         if (role == Qt::ForegroundRole && bi)
             return bi->getHeadingColor();
         if (role == Qt::BackgroundRole && bi) {
-
-            // FIXME-2 return map background col for now
-            return bi->getModel()->getMapBackgroundColor();
-            /*
-            BranchItem *frameBI = bi->getFramedParentBranch(bi);   // FIXME-2 stubbed in BI !
-            if (frameBI && index.column() != 5) {
-                BranchObj *bo = frameBI->getBranchObj();
-                if (bo)
-                    // Return frame background
-                    return bo->getFrameBrushColor();
-            }
-            else {
-                // Return map background
-                return bi->getModel()->getMapBackgroundColor();
-            }
-            */
+            return bi->getBackgroundColor(bi);
         }
     }
 

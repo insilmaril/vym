@@ -1,6 +1,7 @@
 #include "branchitem.h"
 
 #include "attributeitem.h"
+#include "frame-container.h"
 #include "heading-container.h"
 #include "image-container.h"
 #include "task.h"
@@ -385,22 +386,22 @@ void BranchItem::setImagesLayout(const QString &s)
     branchContainer->setImagesContainerLayout(Container::getLayoutFromString(s));
 }
 
-BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)    // FIXME-0 Used to determine background color in taskEditor
+QColor BranchItem::getBackgroundColor(BranchItem *start)
 {
-    /*
-    BranchObj *bo = getBranchObj();
-    if (bo && bo->getFrameType() != FrameObj::NoFrame) {
-        if (bo->getFrame()->getFrameIncludeChildren())
-            return this;
-        if (this == start)
-            return this;
+    // Determine background color in taskEditor
+    FrameContainer *fc = branchContainer->getFrameContainer();
+
+    if (fc && fc->getFrameType() != FrameContainer::NoFrame) {
+        // Don't return color of parent branches, which do not include me as child
+        if (fc->getIncludeChildren() || this == start)
+            return fc->getBrushColor();
     }
-    BranchItem *bi = (BranchItem *)parentItem;
-    if (bi && bi != rootItem)
-        return bi->getFramedParentBranch(start);
+
+    BranchItem *pb = parentBranch();
+    if (pb && pb != rootItem)
+        return pb->getBackgroundColor(start);
     else
-    */
-        return nullptr;
+        return model->getMapBackgroundColor();
 }
 
 void BranchItem::setLastSelectedBranch()

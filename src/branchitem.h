@@ -62,7 +62,7 @@ class BranchItem : public MapItem {
   public:
     void setBranchesLayout(const QString &);
     void setImagesLayout(const QString &);
-    BranchItem *getFramedParentBranch(BranchItem *start);
+    QColor getBackgroundColor(BranchItem *start);
 
   protected:
     int lastSelectedBranchNum;
