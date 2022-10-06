@@ -472,7 +472,7 @@ FrameContainer* BranchContainer::createFrameContainer()
     else
         pc = innerContainer;
     frameContainer = new FrameContainer (pc);
-    frameContainer->stackBefore(pc->childItems().first()); // FIXME-0 check ordering
+    frameContainer->stackBefore(pc->childItems().first()); // FIXME-0 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
     return frameContainer;
 }
 

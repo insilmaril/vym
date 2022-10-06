@@ -255,7 +255,7 @@ bool Container::isVisibleContainer()
 
 void Container::setVisibility(bool v)
 {
-    // FIXME-1 qDebug() << "C:setVis v=" << v << info ();
+    // qDebug() << "C:setVis v=" << v << info ();
     visible = v;
     setVisible(visible);
 }

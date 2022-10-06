@@ -182,7 +182,7 @@ void LinkContainer::updateVisibility()
 {
     bool visnow = visible;
 
-    // FIXME-1 Hide links of unselected objects (if wanted)
+    // FIXME-2 Hide links of unselected objects (if wanted)
     /*
     if (((MapItem *)treeItem)->getHideLinkUnselected() &&
         !treeItem->getModel()->isSelected(treeItem))
