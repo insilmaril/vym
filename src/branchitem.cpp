@@ -459,7 +459,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
         if (!excludedItems.contains(ii) && ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
     }
 
-    // Search my container     // FIXME-2   Check if container is visible!!
+    // Search my container     // FIXME-2   Check if container is visible!! (Maybe done automatically)
     if (branchContainer->isInClickBox(p) && !excludedItems.contains(this) ) //   &&
         //getBranchObj()->isVisibleObj())
         return this;

@@ -726,9 +726,19 @@ int BranchContainer::getRotationInnerContent()
     return std::round(innerContainer->rotation());
 }
 
+QUuid BranchContainer::findFlagByPos(const QPointF &p)
+{
+    QUuid uid = systemFlagRowContainer->findFlagByPos(p);
+    if (!uid.isNull())
+        return uid;
+
+    uid = standardFlagRowContainer->findFlagByPos(p);
+    return uid;
+}
+
 bool BranchContainer::isInClickBox(const QPointF &p)
 {
-    return headingContainer->rect().contains(headingContainer->mapFromScene(p));
+    return ornamentsContainer->rect().contains(ornamentsContainer->mapFromScene(p));
 }
 
 void BranchContainer::updateVisuals()

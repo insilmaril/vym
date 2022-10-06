@@ -124,6 +124,7 @@ class BranchContainer : public Container {
     void setRotationContent(const int &);
     int getRotationInnerContent();
 
+    QUuid findFlagByPos(const QPointF &p);
     bool isInClickBox(const QPointF &p);
 
     void updateVisuals();

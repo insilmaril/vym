@@ -1343,7 +1343,7 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
     QPointF p = mapToScene(e->pos());
     TreeItem *ti = findMapItem(p);
 
-    if (ti) { // MapObj was found
+    if (ti) {
         model->select(ti);
 
         BranchItem *selbi = model->getSelectedBranch();
@@ -1352,13 +1352,14 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
         if (selbi) {
             QString sysFlagName;
             /* FIXME-1 context menu not working yet with task flag
-            QUuid uid = ((BranchObj *)lmo)->findSystemFlagUidByPos(p);
+             * */
+
+            QUuid uid = selbi->getBranchContainer()->findFlagByPos(p);
             if (!uid.isNull()) {
                 Flag *flag = systemFlagsMaster->findFlagByUid(uid);
                 if (flag)
                     sysFlagName = flag->getName();
             }
-            */
 
             if (sysFlagName.startsWith("system-task"))
                 taskContextMenu->popup(e->globalPos());

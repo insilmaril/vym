@@ -404,14 +404,12 @@ QString VymModelWrapper::getFrameType()
     QString r;
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        /*
-        BranchObj *bo = (BranchObj *)(selbi->getLMO());
-        if (!bo)
-            logError(context(), QScriptContext::UnknownError,
-                     QString("No BranchObj available"));
+        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
+        if (fc)
+            r = fc->getFrameTypeName();
         else
-            r = bo->getFrame()->getFrameTypeName(); // FIXME-1
-        */
+            logError(context(), QScriptContext::UnknownError,
+                     QString("Branch has no frame"));
     }
     return setResult(r);
 }

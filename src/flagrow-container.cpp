@@ -101,13 +101,14 @@ FlagContainer *FlagRowContainer::findFlagContainerByUid(const QUuid &uid)
     return nullptr;
 }
 
-QUuid FlagRowContainer::findFlagUidByPos(const QPointF &p)
+QUuid FlagRowContainer::findFlagByPos(const QPointF &p)
 {
-    if (!boundingRect().contains(p))
+    if (!boundingRect().contains(mapFromScene(p)))
         return QUuid();
+
     foreach (QGraphicsItem *child, childItems()) {
         FlagContainer* fc = (FlagContainer*) child;
-        if (fc->boundingRect().contains(p))
+        if (fc->boundingRect().contains(fc->mapFromScene(p)))
         return fc->getUuid();
     }
     return QUuid();
