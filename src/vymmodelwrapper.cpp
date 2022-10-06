@@ -890,9 +890,9 @@ void VymModelWrapper::setPos(qreal x, qreal y)
     model->setPos(QPointF(x, y));
 }
 
-void VymModelWrapper::setFrameBorderWidth(int width)
+void VymModelWrapper::setFramePenWidth(int width)
 {
-    model->setFrameBorderWidth(width);
+    model->setFramePenWidth(width);
 }
 
 void VymModelWrapper::setFrameBrushColor(const QString &color)

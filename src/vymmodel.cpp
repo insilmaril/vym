@@ -2312,23 +2312,22 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
     }
 }
 
-void VymModel::setFramePenColor(const QColor &c, BranchItem *bi) // FIXME-0 not ported yet to containers
+void VymModel::setFramePenColor(const QColor &col, BranchItem *bi)
 
 {
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(bi,
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
+        if (fc) {
+            saveState(selbi,
                       QString("setFramePenColor (\"%1\")")
-                          .arg(bo->getFramePenColor().name()),
-                      bi, QString("setFramePenColor (\"%1\")").arg(c.name()),
-                      QString("set pen color of frame to %1").arg(c.name()));
-            bo->setFramePenColor(c);
+                          .arg(fc->getPenColor().name()),
+                      selbi, QString("setFramePenColor (\"%1\")").arg(col.name()),
+                      QString("set pen color of frame to %1").arg(col.name()));
+            fc->setPenColor(col);
         }
     }
-    */
 }
 
 void VymModel::setFrameBrushColor(
@@ -2349,46 +2348,41 @@ void VymModel::setFrameBrushColor(
     }
 }
 
-void VymModel::setFramePadding(// FIXME-2 not ported yet to containers
+void VymModel::setFramePadding(
     const int &i, BranchItem *bi)
 {
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
+        if (fc) {
             saveState(
-                bi,
-                QString("setFramePadding (\"%1\")").arg(bo->getFramePadding()),
-                bi, QString("setFramePadding (\"%1\")").arg(i),
-                QString("set brush color of frame to %1").arg(i));
-            bo->setFramePadding(i);
-            reposition();
-            bo->updateLinkGeometry();
+                selbi,
+                QString("setFramePadding (\"%1\")").arg(fc->getPadding()),
+                selbi, QString("setFramePadding (\"%1\")").arg(i),
+                QString("set padding of frame to %1").arg(i));
+            fc->setPadding(i);
         }
     }
-    */
+    reposition();
 }
-
-void VymModel::setFrameBorderWidth(// FIXME-0 not ported yet to containers
+void VymModel::setFramePenWidth(
     const int &i, BranchItem *bi)
 {
-    /*
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(bi,
-                      QString("setFrameBorderWidth (\"%1\")")
-                          .arg(bo->getFrameBorderWidth()),
-                      bi, QString("setFrameBorderWidth (\"%1\")").arg(i),
-                      QString("set border width of frame to %1").arg(i));
-            bo->setFrameBorderWidth(i);
-            reposition();
-            bo->updateLinkGeometry();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
+        if (fc) {
+            saveState(selbi,
+                      QString("setFramePenWidth (\"%1\")")
+                          .arg(fc->getPenWidth()),
+                      selbi, QString("setFramePenWidth (\"%1\")").arg(i),
+                      QString("set pen width of frame to %1").arg(i));
+            fc->setPenWidth(i);
         }
     }
-    */
+    reposition();
 }
 
 void VymModel::setRotationHeading (const int &i) // FIXME-2 no savestate

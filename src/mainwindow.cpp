@@ -830,8 +830,8 @@ void Main::setupAPI()
     c->addPar(Command::Int, false, "Padding around frame");
     modelCommands.append(c);
 
-    c = new Command("setFrameBorderWidth", Command::BranchOrImage);
-    c->addPar(Command::Int, false, "Width of frame borderline");
+    c = new Command("setFramePenWidth", Command::BranchOrImage);
+    c->addPar(Command::Int, false, "Width of frame pen");
     modelCommands.append(c);
 
     c = new Command("setHeadingConfluencePageName", Command::Branch);

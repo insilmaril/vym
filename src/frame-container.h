@@ -21,10 +21,10 @@ class FrameContainer : public XMLObj, public Container {
     void setRect(const QRectF &); // set dimensions
     void setPadding(const int &);
     int getPadding();
-    qreal getTotalPadding(); // padding + borderwidth + xsize (e.g. cloud)
+    qreal getTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
     qreal getXPadding();
-    void setBorderWidth(const int &);
-    int getBorderWidth();
+    void setPenWidth(const int &);
+    int getPenWidth();
     FrameType getFrameType();
     static FrameType getFrameTypeFromString(const QString &);
     QString getFrameTypeName();

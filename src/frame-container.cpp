@@ -155,7 +155,7 @@ void FrameContainer::setRect(const QRectF &frameSize)
     }
 }
 
-void FrameContainer::setPadding(const int &i) { padding = i; }
+void FrameContainer::setPadding(const int &i) { padding = i; }  // FIXME-2 not supported yet
 
 int FrameContainer::getPadding()
 {
@@ -169,13 +169,13 @@ qreal FrameContainer::getTotalPadding() { return xsize + padding + pen.width(); 
 
 qreal FrameContainer::getXPadding() { return xsize; }
 
-void FrameContainer::setBorderWidth(const int &i)
+void FrameContainer::setPenWidth(const int &i)
 {
     pen.setWidth(i);
     repaint();
 }
 
-int FrameContainer::getBorderWidth() { return pen.width(); }
+int FrameContainer::getPenWidth() { return pen.width(); }
 
 FrameContainer::FrameType FrameContainer::getFrameType() { return frameType; }
 
@@ -352,13 +352,13 @@ QString FrameContainer::saveToDir()
     QString penColAttr = attribut("penColor", pen.color().name());
     QString brushColAttr = attribut("brushColor", brush.color().name());
     QString paddingAttr = attribut("padding", QString::number(padding));
-    QString borderWidthAttr =
-        attribut("borderWidth", QString::number(pen.width()));
+    QString penWidthAttr =
+        attribut("penWidth", QString::number(pen.width()));
     QString incChildren;
     if (includeChildren)
         incChildren = attribut("includeChildren", "true");
     return singleElement("frame", frameTypeAttr + penColAttr + brushColAttr +
-                                      paddingAttr + borderWidthAttr +
+                                      paddingAttr + penWidthAttr +
                                       incChildren);
 }
 

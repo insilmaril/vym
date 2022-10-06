@@ -31,7 +31,7 @@ class BranchPropertyEditor : public QDialog {
     void framePenColorClicked();
     void frameBrushColorClicked();
     void framePaddingChanged(int);
-    void frameBorderWidthChanged(int);
+    void framePenWidthChanged(int);
     void frameIncludeChildrenChanged(int);
     void linkHideUnselectedChanged(int);
     void childrenLayoutChanged();

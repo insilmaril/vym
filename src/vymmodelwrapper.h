@@ -129,7 +129,7 @@ class VymModelWrapper : public VymScriptContext {
     void setMapZoom(float z); // tested: ok
     void setNotePlainText(const QString &s);
     void setPos(qreal x, qreal y);
-    void setFrameBorderWidth(int border);
+    void setFramePenWidth(int w);
     void setFrameBrushColor(const QString &color);
     void setFrameIncludeChildren(bool b);
     void setFramePadding(int padding);

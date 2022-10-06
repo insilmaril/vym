@@ -656,9 +656,16 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
                 fc->setPadding(x);
         }
         if (!a.value("borderWidth").isEmpty()) {
+            // Deprecated. 2.9.506 uses penWidth instead
             x = a.value("borderWidth").toInt(&ok);
             if (ok)
-                fc->setBorderWidth(x);
+                fc->setPenWidth(x);
+        }
+        if (!a.value("penWidth").isEmpty()) {
+            // Introduced in 2.9.506 uses penWidth instead
+            x = a.value("penWidth").toInt(&ok);
+            if (ok)
+                fc->setPenWidth(x);
         }
         if (!a.value("includeChildren").isEmpty()) {
             if (a.value("includeChildren") == "true")

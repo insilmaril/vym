@@ -170,13 +170,13 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             pix.fill(penColor);
             ui.framePenColorButton->setIcon(pix);
             pix.fill(brushColor);
-            ui.frameBrushColorButton->setIcon(pix);   // FIXME-0
+            ui.frameBrushColorButton->setIcon(pix);
             ui.colorGroupBox->setEnabled(true);
             ui.framePaddingSpinBox->setEnabled(true);
-            ui.framePaddingSpinBox->setValue(fc->getPadding()); // FIXME-0
+            ui.framePaddingSpinBox->setValue(fc->getPadding());
             ui.frameWidthSpinBox->setEnabled(true);
-            ui.frameWidthSpinBox->setValue( // FIXME-0
-                fc->getBorderWidth());
+            ui.frameWidthSpinBox->setValue(
+                fc->getPenWidth());
             ui.framePaddingLabel->setEnabled(true);
             ui.frameBorderLabel->setEnabled(true);
             ui.includeChildrenCheckBox->setEnabled(true);
@@ -364,10 +364,10 @@ void BranchPropertyEditor::framePaddingChanged(int i)
         model->setFramePadding(i, branchItem);
 }
 
-void BranchPropertyEditor::frameBorderWidthChanged(int i)
+void BranchPropertyEditor::framePenWidthChanged(int i)
 {
     if (model)
-        model->setFrameBorderWidth(i, branchItem);
+        model->setFramePenWidth(i, branchItem);
 }
 
 void BranchPropertyEditor::frameIncludeChildrenChanged(int i)
@@ -490,7 +490,7 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.framePaddingSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(framePaddingChanged(int)));
     connect(ui.frameWidthSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(frameBorderWidthChanged(int)));
+            SLOT(framePenWidthChanged(int)));
     connect(ui.frameBrushColorButton, SIGNAL(clicked()), this,
             SLOT(frameBrushColorClicked()));
     connect(ui.frameTypeCombo, SIGNAL(currentIndexChanged(int)), this,
