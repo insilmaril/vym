@@ -203,18 +203,13 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     return s;
 }
 
-void BranchItem::updateVisibility() // FIXME-2
+void BranchItem::updateVisibility()
 {
     // Needed to hide relinked branch, if parent is scrolled
-    qDebug() << "BI::updateVisibility";
-    /*
-    if (mo) {
-        if (hasScrolledParent(this) || hidden)
-            mo->setVisibility(false);
-        else
-            mo->setVisibility(true);
-    }
-    */
+    if (hasScrolledParent(this) || hidden)
+        branchContainer->setVisibility(false);
+    else
+        branchContainer->setVisibility(true);
 }
 
 void BranchItem::setHeadingColor(QColor color)
