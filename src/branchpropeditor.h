@@ -56,8 +56,7 @@ class BranchPropertyEditor : public QDialog {
     BranchItem *branchItem;
     VymModel *model;
 
-    QColor penColor;
-    QColor brushColor;
+    int lastSelectedBranchTab;
 
     QAbstractItemModel *attributeModel;
 

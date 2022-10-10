@@ -24,12 +24,13 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
 
     ui.tabWidget->setEnabled(false);
 
-    penColor = QColor(Qt::black);
-    brushColor = QColor(Qt::black);
     QPixmap pix(16, 16);
-    pix.fill(penColor);
+    pix.fill(QColor(Qt::black));
     ui.framePenColorButton->setIcon(pix);
     ui.frameBrushColorButton->setIcon(pix);
+
+    // Remember the last tab, which was used when a branch was selected
+    lastSelectedBranchTab = -1;
 
     if (!settings.value("/mainwindow/showTestMenu", false).toBool())
         ui.tabWidget->widget(3)->hide();
@@ -137,9 +138,15 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
+        if (lastSelectedBranchTab >= 0)
+            ui.tabWidget->setCurrentIndex(lastSelectedBranchTab);
+
+        lastSelectedBranchTab = ui.tabWidget->currentIndex();
+
         branchItem = (BranchItem *)ti;
 
-        ui.tabWidget->setEnabled(true); // FIXME-0 Don't disable complete tab, but just contents
+        // Activate the right tabs for this branch
+        ui.tabWidget->setEnabled(true);
         for (int i = 0; i < 4; ++i)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
@@ -153,8 +160,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         if (t == FrameContainer::NoFrame)
         {
             ui.frameTypeCombo->setCurrentIndex(0);
-            penColor = Qt::white;
-            brushColor = Qt::white;
             ui.colorGroupBox->setEnabled(false);
             ui.framePaddingSpinBox->setEnabled(false);
             ui.frameWidthSpinBox->setEnabled(false);
@@ -164,12 +169,10 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.includeChildrenCheckBox->setEnabled(false);
         }
         else {
-            penColor = fc->getPenColor();
-            brushColor = fc->getBrushColor();
             QPixmap pix(16, 16);
-            pix.fill(penColor);
+            pix.fill(fc->getPenColor());
             ui.framePenColorButton->setIcon(pix);
-            pix.fill(brushColor);
+            pix.fill(fc->getBrushColor());
             ui.frameBrushColorButton->setIcon(pix);
             ui.colorGroupBox->setEnabled(true);
             ui.framePaddingSpinBox->setEnabled(true);
@@ -339,10 +342,16 @@ void BranchPropertyEditor::frameTypeChanged(int i)
 void BranchPropertyEditor::framePenColorClicked()
 {
     if (model) {
-        QColor col = QColorDialog::getColor(penColor, this);
-        if (col.isValid()) {
-            penColor = col;
-            model->setFramePenColor(penColor, branchItem);
+        QColor col = Qt::white;
+        if (branchItem) {
+            FrameContainer *fc = branchItem->getBranchContainer()->getFrameContainer();
+            if (fc)
+                col = fc->getPenColor();
+
+            col = QColorDialog::getColor(col, this);
+            if (col.isValid()) {
+                model->setFramePenColor(col, branchItem);
+            }
         }
     }
 }
@@ -350,10 +359,16 @@ void BranchPropertyEditor::framePenColorClicked()
 void BranchPropertyEditor::frameBrushColorClicked()
 {
     if (model) {
-        QColor col = QColorDialog::getColor(brushColor, this);
-        if (col.isValid()) {
-            brushColor = col;
-            model->setFrameBrushColor(brushColor, branchItem);
+        QColor col = Qt::white;
+        if (branchItem) {
+            FrameContainer *fc = branchItem->getBranchContainer()->getFrameContainer();
+            if (fc)
+                col = fc->getBrushColor();
+
+            col = QColorDialog::getColor(col, this);
+            if (col.isValid()) {
+                model->setFrameBrushColor(col, branchItem);
+            }
         }
     }
 }
