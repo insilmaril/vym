@@ -167,7 +167,7 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
     QPointF v(-w_max / 2, - h / 2);
 
     foreach (QGraphicsTextItem *ti, headingLines)
-        ti->setPos(pos() + v);
+        ti->setPos(ti->pos() + v);
 
     setRect(v.x(), v.y(), w_max, h);
 
@@ -180,7 +180,7 @@ void HeadingContainer::clearHeading()
 {
     while (!headingLines.isEmpty())
         delete headingLines.takeFirst();
-    setRect(0,0,0,0);
+    setRect(QRectF());
 }
 
 void HeadingContainer::setHeadingColor(const QColor &col)
