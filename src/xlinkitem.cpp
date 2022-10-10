@@ -48,7 +48,7 @@ void XLinkItem::updateXLink()
         link->updateLink();
 }
 
-MapObj *XLinkItem::getMO()
+MapObj *XLinkItem::getMO()  // FIXME-2 remove/rewrite
 {
     if (link)
         return link->getMO();

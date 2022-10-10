@@ -17,7 +17,6 @@ MapItem::MapItem(TreeItem *parent)
 
 void MapItem::init()
 {
-    mo = nullptr;
     hideLinkUnselected = false;
 }
 

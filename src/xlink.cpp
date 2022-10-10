@@ -264,4 +264,4 @@ XLinkObj *Link::createMapObj()  // FIXME-2 not ported yet
     return nullptr;
 }
 
-MapObj *Link::getMO() { return xlo; }
+MapObj *Link::getMO() { return xlo; }   // FIXME-2 remove

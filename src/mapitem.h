@@ -42,10 +42,6 @@ class MapItem : public TreeItem {
 
     virtual QRectF getBBoxURLFlag(); //! g   // FIXME-2 Refactor to use container layoutset bbox of url flag
 
-  protected:
-    MapObj *mo;
-    qreal angle;    // FIXME-2 should be removed and retrieved directly from container
-
   public:
     /*! Return path to highlight currently selected items in scene coordinates */
     virtual QPainterPath getSelectionPath();
