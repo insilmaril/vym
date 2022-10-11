@@ -2397,7 +2397,15 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 
     // Reposition polygons
     for (int i = 0; i < itemsSelected.count(); ++i) {
-        //MapObj *mo = itemsSelected.at(i)->getMO();  // FIXME-2 remove MO here
+        // MapObj *mo = itemsSelected.at(i)->getMO();  // FIXME-2 remove MO here
+        // Ideas to remove MO: 
+        // - introduce SelectionContainer
+        // - Above SL has QGraphicsPathItem as children
+        // - SL can be parented to a Container
+        // - Destr of Container does NOT delete SLs, but unlinks them 
+        //   (parenting to nullptr), they are maintained in MapEditor
+        // - Advantage: No repositioning needed in MapEditor after initial adding :-)
+        // - Advantage: Always correct z-value
         sp = selPathList.at(i);
         sp->setPath(itemsSelected.at(i)->getSelectionPath());
         sp->setPen(selectionColor);
