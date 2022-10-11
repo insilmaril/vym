@@ -2360,7 +2360,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     /*
         lmo = mi->getLMO();
         if (lmo)
-            mi->getLMO()->updateVisibility(); // FIXME-1
+            mi->getLMO()->updateVisibility(); // FIXME-1 in updateSelection
     */
     }
 
@@ -2374,7 +2374,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
         /*
         lmo = mi->getLMO(); // FIXME-2 xlink does return nullptr
         if (lmo)
-            mi->getLMO()->updateVisibility(); // FIXME-1
+            mi->getLMO()->updateVisibility(); // FIXME-1 in updateSelection
       */
     }
 
