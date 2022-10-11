@@ -6,8 +6,6 @@
 
 #include <QDebug>
 
-extern FlagRowMaster *systemFlagsMaster;    // FIXME-2 used here?
-
 MapItem::MapItem(TreeItem *parent)
     : TreeItem(parent)
 {
@@ -77,31 +75,10 @@ QString MapItem::getLinkableAttr()
     if (mo && mo->getRotation() != 0)
         rotAttr = attribut("rotation", QString().setNum(mo->getRotation()));
     */
-    
+
     // FIXME-2 Also save scale factor?  
 
     return s;
-}
-
-QRectF MapItem::getBBoxURLFlag()    // FIXME-2 not ported yet to containers
-{
-    QString s = "system-url";
-    QStringList list = systemFlags.activeFlagNames().filter(s);
-    if (list.count() > 1) {
-        qWarning() << "MapItem::getBBoxURLFlag found more than one system-url*";
-        return QRectF();
-    }
-
-    Flag *f = systemFlagsMaster->findFlagByName(s);
-    if (f) {
-        QUuid u = f->getUuid();
-        /*
-        LMO *lmo = getLMO();
-        if (lmo)
-            return ((OrnamentedObj *)lmo)->getBBoxSystemFlagByUid(u);
-            */
-    }
-    return QRectF();
 }
 
 #include "heading-container.h"

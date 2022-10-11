@@ -2,6 +2,7 @@
 
 #include <QMessageBox>
 
+#include "heading-container.h"
 #include "mainwindow.h"
 #include "warningdialog.h"
 
@@ -29,13 +30,11 @@ QString ExportHTML::getBranchText(BranchItem *current)
     if (current) {
         bool vis = false;
         QRectF hr;
-        /*
-        LinkableMapObj *lmo = current->getLMO();
-        if (lmo) {
-            hr = ((BranchObj *)lmo)->getBBoxHeading(); // FIXME-2 check bbox for imagemap
-            vis = lmo->isVisibleObj();
-        }
-        */
+        BranchContainer *bc = current->getBranchContainer();
+        HeadingContainer *hc = bc->getHeadingContainer();
+        hr = hc->mapRectToScene(hc->rect());
+        vis = hc->isVisible();
+
         QString col;
         QString id = model->getSelectString(current);
         if (dia.useTextColor)
@@ -98,7 +97,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                      .arg(number + taskFlags + heading + flags)
                      .arg(QObject::tr("Flag: url", "Alt tag in HTML export"));
 
-            QRectF fbox = current->getBBoxURLFlag();
+            QRectF fbox = current->getBranchContainer()->getBBoxURLFlag();
             if (vis)
                 imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' "
                                     "href='%5' alt='External link: %6'>\n")
@@ -115,7 +114,8 @@ QString ExportHTML::getBranchText(BranchItem *current)
         s += "</span>";
 
         // Create imagemap
-        if (vis && dia.includeMapImage)
+        if (vis && dia.includeMapImage) // FIXME-3 maybe use polygons instead of QRectF for shapes
+                                        // shape = "poly" coords="x1,y1,x2,y2,..."
             imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' "
                                 "href='#%5' alt='%6'>\n")
                             .arg(hr.left() - offset.x())

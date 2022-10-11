@@ -4,6 +4,7 @@
 #include "branch-container.h"
 
 #include "branchitem.h"
+#include "flag-container.h"
 #include "flagrow-container.h"
 #include "frame-container.h"
 #include "geometry.h"
@@ -739,6 +740,18 @@ QUuid BranchContainer::findFlagByPos(const QPointF &p)
 bool BranchContainer::isInClickBox(const QPointF &p)
 {
     return ornamentsContainer->rect().contains(ornamentsContainer->mapFromScene(p));
+}
+
+QRectF BranchContainer::getBBoxURLFlag()
+{
+    Flag *f = systemFlagsMaster->findFlagByName("system-url");
+    if (f) {
+        QUuid u = f->getUuid();
+        FlagContainer *fc = systemFlagRowContainer->findFlagContainerByUid(u);
+        if (fc)
+            return fc->mapRectToScene(fc->rect());
+    }
+    return QRectF();
 }
 
 void BranchContainer::updateVisuals()

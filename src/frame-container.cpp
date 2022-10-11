@@ -63,7 +63,7 @@ void FrameContainer::clear()
 
 void FrameContainer::setRect(const QRectF &frameSize)
 {
-    qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(frameSize, 0);
+    //qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(frameSize, 0);
     QGraphicsRectItem::setRect(frameSize);
     switch (frameType) {
         case NoFrame:
@@ -71,7 +71,7 @@ void FrameContainer::setRect(const QRectF &frameSize)
 
         case Rectangle:
             rectFrame->setRect(frameSize);
-            qDebug() << "  FC  rect: " << rectFrame << "vis=" << rectFrame->isVisible();
+            //qDebug() << "  FC  rect: " << rectFrame << "vis=" << rectFrame->isVisible();
             break;
 
         case RoundedRectangle: {

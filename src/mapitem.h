@@ -40,8 +40,6 @@ class MapItem : public TreeItem {
     virtual QString getPosAttr();       //! Get position attributes shared by Images and Branches
     virtual QString getLinkableAttr();  //! Get attributes shared by Images and Branches
 
-    virtual QRectF getBBoxURLFlag(); //! g   // FIXME-2 Refactor to use container layoutset bbox of url flag
-
   public:
     /*! Return path to highlight currently selected items in scene coordinates */
     virtual QPainterPath getSelectionPath();

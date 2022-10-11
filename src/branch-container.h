@@ -126,6 +126,7 @@ class BranchContainer : public Container {
 
     QUuid findFlagByPos(const QPointF &p);
     bool isInClickBox(const QPointF &p);
+    QRectF getBBoxURLFlag();
 
     void updateVisuals();
 

@@ -5,10 +5,6 @@
 #include "flagrow-container.h"
 #include "flagrowmaster.h"  // FIXME-2 rename to flagrow-master
 
-extern FlagRowMaster *standardFlagsMaster;
-extern FlagRowMaster *userFlagsMaster;
-extern FlagRowMaster *systemFlagsMaster;
-
 /////////////////////////////////////////////////////////////////
 // FlagRowContainer
 /////////////////////////////////////////////////////////////////

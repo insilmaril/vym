@@ -555,7 +555,7 @@ void MapEditor::updateMatrix()
     setTransform(t_zoom * t_rot);
 }
 
-void MapEditor::minimizeView() {
+void MapEditor::minimizeView() {    // FIXME-2 review if "jumping" can be improved
     // If we only would set scene rectangle to existing items, then
     // view fould "jump", when Qt automatically tries to center.
     // Better consider the currently visible viewport (with slight offset)
@@ -647,7 +647,7 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    // FIXME-2 really needed? Overlaps with scene and VM...
+QRectF MapEditor::getTotalBBox()    // FIXME-2 really needed? Overlaps with scene and VM... (compare getImage)
 {
     minimizeView();
     return sceneRect();
@@ -655,20 +655,26 @@ QRectF MapEditor::getTotalBBox()    // FIXME-2 really needed? Overlaps with scen
 
 QImage MapEditor::getImage(QPointF &offset)
 {
-    QRectF mapRect = getTotalBBox(); // minimized sceneRect
+    QRectF sceneRect = scene()->itemsBoundingRect();
 
-    int d = 10; // border
-    offset = QPointF(mapRect.x() - d / 2, mapRect.y() - d / 2);
-    QImage pix(mapRect.width() + d, mapRect.height() + d, QImage::Format_RGB32);
+    int d = 0; // border around sceneRect
 
+    QRect imageRect;
+    imageRect.setWidth(sceneRect.width() + 2 * d - 2);
+    imageRect.setHeight(sceneRect.height() + 2 * d);
+
+    offset = QPointF(sceneRect.left() - d, sceneRect.top() - d);
+    QImage pix(imageRect.width(), imageRect.height(), QImage::Format_RGB32);
+
+    //qDebug() << "ME::getImage   offset="<< offset << " imageRect=" << qrectFToString(imageRect,0) << " sceneRect=" << qrectFToString(sceneRect,0);
     QPainter pp(&pix);
     pp.setRenderHints(renderHints());
     mapScene->render(&pp,
                      // Destination:
-                     QRectF(0, 0, mapRect.width() + d, mapRect.height() + d),
+                     QRectF(0, 0, imageRect.width(), imageRect.height()),
                      // Source in scene:
-                     QRectF(mapRect.x() - d / 2, mapRect.y() - d / 2,
-                            mapRect.width() + d, mapRect.height() + d));
+                     QRectF(sceneRect.x() - d, sceneRect.y() - d,
+                            sceneRect.width() + 2 * d, sceneRect.height() + 2 * d ));
     return pix;
 }
 
