@@ -358,7 +358,8 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         c = (Container*) child;
-        c->reposition();
+        if (c->type != FlagRowCont)   // FIXME-0 testing
+            c->reposition();
     }
 
     // c) Align my own containers

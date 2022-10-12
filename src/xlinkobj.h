@@ -4,7 +4,7 @@
 #include <QPen>
 
 #include "arrowobj.h"
-#include "linkablemapobj.h"
+#include "branch-container.h"
 #include "mapobj.h"
 #include "xlink.h"
 
@@ -18,6 +18,7 @@ class BranchItem;
 class XLinkObj : public MapObj {
   public:
     enum CurrentSelection { Unselected, Path, C0, C1 };
+    XLinkObj(Link*);
     XLinkObj(QGraphicsItem *, Link *l);
     virtual ~XLinkObj();
     virtual void init();
@@ -63,8 +64,8 @@ class XLinkObj : public MapObj {
     QPointF beginPos;
     QPointF endPos;
     QPointF c0, c1; // Controlpoints for Bezier path
-    LinkableMapObj::Orientation beginOrient;
-    LinkableMapObj::Orientation endOrient;
+    BranchContainer::Orientation beginOrient;
+    BranchContainer::Orientation endOrient;
     QGraphicsEllipseItem *ctrl_p0;
     QGraphicsEllipseItem *ctrl_p1;
 

@@ -1490,7 +1490,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     QString sysFlagName;    // FIXME-2 could be local to ti_found clause below?
 
-    /* FIXME-2 not supported yet // XLink modifier, create new XLink
+    // XLink modifier, create new XLink
     BranchItem *selbi = model->getSelectedBranch();
     if (selbi && mainWindow->getModMode() == Main::ModModeXLink &&
         (e->modifiers() & Qt::ShiftModifier)) {
@@ -1504,7 +1504,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         tmpLink->updateLink();
         return;
     }
-    */
 
     if (ti_found) {
         // Check modifier key (before selecting object!)
@@ -1522,7 +1521,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         }
 
         /*
-        // FIXME-2 check for flags
+        // FIXME-2 check for flags on MousePress
         QUuid uid = ((BranchObj *)lmo_found)->findSystemFlagUidByPos(p);
         if (!uid.isNull()) {
             Flag *flag = systemFlagsMaster->findFlagByUid(uid);
@@ -1556,9 +1555,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         }
         movingItems = model->getSelectedItems();
 
+        // Make sure currently clicked item is first in list
         int i = movingItems.indexOf(ti_found);
         if (i > 0)
-            // Make sure currently clicked item is first in list
             movingItems.move(i, 0);
 
         // Left Button	    Move Branches
@@ -1597,7 +1596,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     e->accept();
 
-    // Take care of  remaining system flags _or_ modifier modes // FIXME-2
+    // Take care of  remaining system flags _or_ modifier modes // FIXME-0
     /*
     if (lmo_found) {
         if (!sysFlagName.isEmpty()) {
@@ -1669,7 +1668,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     else { // No lmo found, check XLinks
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
-                // FIXME-2 xlink not supported yet with containers
+                // FIXME-0 xlink not supported yet with containers
                 XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();
                 if (xlo) {
                     setState(DrawingXLink);
@@ -1968,7 +1967,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     if (state() == DrawingLink) {
         setState(Neutral);
 
-        TreeItem *seli = movingItems.first();
+        TreeItem *seli;
+        if (movingItems.count() > 0)
+            seli = movingItems.first(); // FIXME-0 better use selectedBranch?
+        else
+            seli = nullptr;
 
         // Check if we are over another branch
         if (destinationBranch) {
@@ -1990,7 +1993,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 return;
             }
         }
+        qDebug() << "ME::relMouse del tmpLink a)";
         delete (tmpLink);
+        qDebug() << "ME::relMouse del tmpLink b)";
         tmpLink = nullptr;
         return;
     }

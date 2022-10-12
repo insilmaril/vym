@@ -253,15 +253,14 @@ QString Link::saveToDir()
 
 XLinkObj *Link::getXLinkObj() { return xlo; }
 
-XLinkObj *Link::createMapObj()  // FIXME-2 not ported yet
+XLinkObj *Link::createMapObj()
 {
-    /*
+    qDebug() << "XL::createMO  beginBranch=" << beginBranch;    // FIXME-2 beginBranch must exist!
     if (!xlo)
-        xlo = new XLinkObj(beginBranch->getLMO(), this);
+        //xlo = new XLinkObj(beginBranch->getBranchContainer(), this);  // FIXME-00 check
+        xlo = new XLinkObj(this);
     xlo->setVisibility();
     return xlo;
-    */
-    return nullptr;
 }
 
-MapObj *Link::getMO() { return xlo; }   // FIXME-2 remove
+MapObj *Link::getMO() { return xlo; }

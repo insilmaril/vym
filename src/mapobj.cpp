@@ -9,13 +9,13 @@
 /////////////////////////////////////////////////////////////////
 MapObj::MapObj(QGraphicsItem *parent, TreeItem *ti) : QGraphicsItem(parent)
 {
-    //qDebug() << "Const MapObj (this,ti)=(" << this << "," << ti << ")";
+    qDebug() << "Const MapObj (this,ti)=(" << this << "," << ti << ")";
     init();
 }
 
 MapObj::~MapObj()
 {
-    // qDebug() << "Destr MapObj "<<this;
+    qDebug() << "Destr MapObj "<<this;
     foreach (QGraphicsItem *i, childItems())
         // Avoid that QGraphicsScene deletes children
         i->setParentItem(NULL);

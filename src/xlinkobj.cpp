@@ -15,16 +15,23 @@ int XLinkObj::clickBorder = 8;
 int XLinkObj::pointRadius = 10;
 int XLinkObj::d_control = 300;
 
+XLinkObj::XLinkObj(Link *l)
+{
+    qDebug()<< "Const XLinkObj (link)";
+    link = l;
+    init();
+}
+
 XLinkObj::XLinkObj(QGraphicsItem *parent, Link *l) : MapObj(parent)
 {
-    // qDebug()<< "Const XLinkObj (parent,Link)";
+    qDebug()<< "Const XLinkObj (Link, parent)";
     link = l;
     init();
 }
 
 XLinkObj::~XLinkObj()
 {
-    // qDebug() << "Destr XLinkObj";
+    qDebug() << "Destr XLinkObj";
     delete (poly);
     delete (path);
     delete (ctrl_p0);
@@ -35,13 +42,16 @@ XLinkObj::~XLinkObj()
 
 void XLinkObj::init()
 {
-    visBranch = NULL;
+    visBranch = nullptr;
 
     stateVis = Hidden;
 
     QPen pen = link->getPen();
 
-    path = scene()->addPath(QPainterPath(), pen, Qt::NoBrush);
+    QGraphicsScene *scene = link->getBeginBranch()->getBranchContainer()->scene();
+    scene->addItem(this);
+
+    path = scene->addPath(QPainterPath(), pen, Qt::NoBrush);
     path->setZValue(dZ_XLINK);
 
     pointerBegin = new ArrowObj(this);
@@ -55,7 +65,7 @@ void XLinkObj::init()
     pointerEnd->setFixedLength(0);
 
     pen.setStyle(Qt::SolidLine);
-    poly = scene()->addPolygon(QPolygonF(), pen, pen.color());
+    poly = scene->addPolygon(QPolygonF(), pen, pen.color());
     poly->setZValue(dZ_XLINK);
 
     // Control points for bezier path
@@ -63,12 +73,12 @@ void XLinkObj::init()
     initC0();
     initC1();
 
-    ctrl_p0 = scene()->addEllipse(c0.x(), c0.y(), clickBorder * 2,
+    ctrl_p0 = scene->addEllipse(c0.x(), c0.y(), clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
-    ctrl_p1 = scene()->addEllipse(c1.x(), c1.y(), clickBorder * 2,
+    ctrl_p1 = scene->addEllipse(c1.x(), c1.y(), clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
 
-    beginOrient = endOrient = LinkableMapObj::UndefinedOrientation;
+    beginOrient = endOrient = BranchContainer::UndefinedOrientation;
     pen.setWidth(1);
     pen.setStyle(Qt::DashLine);
 
@@ -155,42 +165,41 @@ void XLinkObj::setSelection(int cp)
 
 void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
 {
-    /*
     QPointF a, b;
     QPolygonF pa;
 
-    BranchObj *beginBO = NULL;
-    BranchObj *endBO = NULL;
+    BranchContainer *beginBC = nullptr;
+    BranchContainer *endBC = nullptr;
     BranchItem *bi = link->getBeginBranch();
     if (bi)
-        beginBO = (BranchObj *)(bi->getLMO());
+        beginBC = bi->getBranchContainer();
     bi = link->getEndBranch();
     if (bi)
-        endBO = (BranchObj *)(bi->getLMO());
+        endBC = bi->getBranchContainer();
 
-    if (beginBO) {
-        if (beginOrient != LinkableMapObj::UndefinedOrientation &&
-            beginOrient != beginBO->getOrientation())
+    if (beginBC) {
+        if (beginOrient != BranchContainer::UndefinedOrientation &&
+            beginOrient != beginBC->getOrientation())
             c0.setX(-c0.x());
-        beginOrient = beginBO->getOrientation();
+        beginOrient = beginBC->getOrientation();
     }
-    if (endBO) {
-        if (endOrient != LinkableMapObj::UndefinedOrientation &&
-            endOrient != endBO->getOrientation())
+    if (endBC) {
+        if (endOrient != BranchContainer::UndefinedOrientation &&
+            endOrient != endBC->getOrientation())
             c1.setX(-c1.x());
-        endOrient = endBO->getOrientation();
+        endOrient = endBC->getOrientation();
     }
 
     if (visBranch) {
         // Only one of the linked branches is visible
         // Draw arrowhead   //FIXME-3 missing shaft of arrow
-        BranchObj *bo = (BranchObj *)(visBranch->getLMO());
-        if (!bo)
+        BranchContainer *bc = visBranch->getBranchContainer();
+        if (!bc)
             return;
 
-        a = b = bo->getChildRefPos();
+        a = b = bc->scenePos(); // FIXME-0 bc->getChildRefPos();   // FIXME-0
 
-        if (bo->getOrientation() == LinkableMapObj::RightOfCenter) {
+        if (bc->getOrientation() == BranchContainer::RightOfParent) {
             b.setX(b.x() + 2 * arrowSize);
             pa.clear();
             pa << a << b << QPointF(b.x(), b.y() - arrowSize)
@@ -212,16 +221,16 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
 
         // If a link is just drawn in the editor,
         // we have already a beginBranch
-        if (beginBO)
-            beginPos = beginBO->getChildRefPos();
-        if (endBO)
-            endPos = endBO->getChildRefPos();
+        if (beginBC)
+            beginPos = beginBC->scenePos(); // FIXME-0 beginBC->getChildRefPos();
+        if (endBC)
+            endPos = endBC->scenePos(); // FIXME-0 endBC->getChildRefPos();
 
-        if (beginBO && endBO) {
-            pointerBegin->move(beginPos + c0);
+        if (beginBC && endBC) {
+            pointerBegin->setPos(beginPos + c0);    // FIXME-0 pointerBegin->move(beginPos + c0);
             pointerBegin->setEndPoint(beginPos);
 
-            pointerEnd->move(endPos + c1);
+            pointerEnd->setPos(endPos + c1); // FIXME-0 pointerEnd->move(endPos + c1);
             pointerEnd->setEndPoint(endPos);
         }
     }
@@ -269,7 +278,6 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
         path->setZValue(dZ_XLINK);
 
     setVisibility();
-    */
 }
 
 void XLinkObj::setVisibility(bool b)
@@ -318,21 +326,20 @@ void XLinkObj::setVisibility(bool b)
     }
 }
 
-void XLinkObj::setVisibility() // FIXME-2 rewrite to containers
+void XLinkObj::setVisibility()
 {
-    /*
+    BranchContainer *beginBC = nullptr;
     BranchItem *beginBI = link->getBeginBranch();
-    BranchObj *beginBO = NULL;
     if (beginBI)
-        beginBO = (BranchObj *)(beginBI->getLMO());
+        beginBC = beginBI->getBranchContainer();
 
-    BranchObj *endBO = NULL;
     BranchItem *endBI = link->getEndBranch();
+    BranchContainer *endBC = nullptr;
     if (endBI)
-        endBO = (BranchObj *)(endBI->getLMO());
-    if (beginBO && endBO) {
-        if (beginBO->isVisibleObj() &&
-            endBO->isVisibleObj()) { // Both ends are visible
+        endBC = endBI->getBranchContainer();
+    if (beginBC && endBC) {
+        if (beginBC->isVisible() &&
+            endBC->isVisible()) { // Both ends are visible
             visBranch = NULL;
             if (curSelection != Unselected)
                 stateVis = FullShowControls;
@@ -341,15 +348,15 @@ void XLinkObj::setVisibility() // FIXME-2 rewrite to containers
             setVisibility(true);
         }
         else {
-            if (!beginBO->isVisibleObj() &&
-                !endBO->isVisibleObj()) { // None of the ends is visible
+            if (!beginBC->isVisible() &&
+                !endBC->isVisible()) { // None of the ends is visible
                 visBranch = NULL;
                 stateVis = Hidden;
                 setVisibility(false);
             }
             else { // Just one end is visible, draw a symbol that shows
                 // that there is a link to a scrolled branch
-                if (beginBO->isVisibleObj()) {
+                if (beginBC->isVisible()) {
                     stateVis = OnlyBegin;
                     visBranch = beginBI;
                 }
@@ -361,43 +368,38 @@ void XLinkObj::setVisibility() // FIXME-2 rewrite to containers
             }
         }
     }
-    */
 }
 
-void XLinkObj::initC0() // FIXME-2 rewrite to containers
+void XLinkObj::initC0()
 {
-    /*
     if (!link)
         return;
     BranchItem *beginBranch = link->getBeginBranch();
     if (!beginBranch)
         return;
-    BranchObj *bo = beginBranch->getBranchObj();
-    if (!bo)
+    BranchContainer *bc = beginBranch->getBranchContainer();
+    if (!bc)
         return;
-    if (bo->getOrientation() == LinkableMapObj::RightOfCenter)
+    if (bc->getOrientation() == BranchContainer::RightOfParent)
         c0 = QPointF(d_control, 0);
     else
         c0 = QPointF(-d_control, 0);
-    */
 }
 
-void XLinkObj::initC1() // FIXME-2 rewrite to containers
+void XLinkObj::initC1()
 {
-    /*
     if (!link)
         return;
     BranchItem *endBranch = link->getEndBranch();
     if (!endBranch)
         return;
-    BranchObj *bo = endBranch->getBranchObj();
-    if (!bo)
+    BranchContainer *bc =endBranch->getBranchContainer();
+    if (!bc)
         return;
-    if (bo->getOrientation() == LinkableMapObj::RightOfCenter)
+    if (bc->getOrientation() == BranchContainer::RightOfParent)
         c1 = QPointF(d_control, 0);
     else
         c1 = QPointF(-d_control, 0);
-    */
 }
 
 void XLinkObj::setC0(const QPointF &p) { c0 = p; }

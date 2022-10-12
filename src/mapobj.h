@@ -24,9 +24,9 @@ class ConvexPolygon;
 /*! \brief Base class for all objects visible on a map
  */
 
-class MapObj : public XMLObj, public QGraphicsItem {
+class MapObj : public QGraphicsItem {
   public:
-    MapObj(QGraphicsItem *parent = NULL, TreeItem *ti = NULL);
+    MapObj(QGraphicsItem *parent = nullptr, TreeItem *ti = nullptr);
     virtual ~MapObj();
     virtual void init();
     virtual void copy(MapObj *);

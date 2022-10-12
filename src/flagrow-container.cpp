@@ -109,3 +109,8 @@ QUuid FlagRowContainer::findFlagByPos(const QPointF &p)
     }
     return QUuid();
 }
+
+void FlagRowContainer::reposition()
+{
+    Container::reposition();
+}

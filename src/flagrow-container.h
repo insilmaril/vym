@@ -23,5 +23,6 @@ class FlagRowContainer : public Container {
     void activateFlag(Flag *flag);
     FlagContainer *findFlagContainerByUid(const QUuid &);
     QUuid findFlagByPos(const QPointF &p); // Find flag by position
+    virtual void reposition();
 };
 #endif
