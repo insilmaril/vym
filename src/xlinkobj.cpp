@@ -197,7 +197,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
         if (!bc)
             return;
 
-        a = b = bc->scenePos(); // FIXME-0 bc->getChildRefPos();   // FIXME-0
+        a = b = bc->scenePos(); // FIXME-0 bc->getChildRefPos();   // FIXME-2
 
         if (bc->getOrientation() == BranchContainer::RightOfParent) {
             b.setX(b.x() + 2 * arrowSize);
@@ -222,12 +222,12 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
         // If a link is just drawn in the editor,
         // we have already a beginBranch
         if (beginBC)
-            beginPos = beginBC->scenePos(); // FIXME-0 beginBC->getChildRefPos();
+            beginPos = beginBC->scenePos(); // FIXME-2 beginBC->getChildRefPos();
         if (endBC)
-            endPos = endBC->scenePos(); // FIXME-0 endBC->getChildRefPos();
+            endPos = endBC->scenePos(); // FIXME-2 endBC->getChildRefPos();
 
         if (beginBC && endBC) {
-            pointerBegin->setPos(beginPos + c0);    // FIXME-0 pointerBegin->move(beginPos + c0);
+            pointerBegin->setPos(beginPos + c0);    // FIXME-2 pointerBegin->move(beginPos + c0);
             pointerBegin->setEndPoint(beginPos);
 
             pointerEnd->setPos(endPos + c1); // FIXME-0 pointerEnd->move(endPos + c1);

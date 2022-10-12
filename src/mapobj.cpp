@@ -18,7 +18,7 @@ MapObj::~MapObj()
     qDebug() << "Destr MapObj "<<this;
     foreach (QGraphicsItem *i, childItems())
         // Avoid that QGraphicsScene deletes children
-        i->setParentItem(NULL);
+        i->setParentItem(nullptr);
 }
 
 void MapObj::init()

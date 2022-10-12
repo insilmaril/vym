@@ -908,9 +908,22 @@ void BranchContainer::reposition()
     if (branchesContainer && branchCount() > 0) {
         foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*) g_item;
-            bc->updateUpLink();
+            bc->updateUpLink(); // FIXME-0 not working properly yet, dangling positions
         }
     }
+
+    // And update XLinks    // FIXME-000
+    // Get Links from branchItem and
+    // call updateXLink
+    //
+    // BO::positionBBox:
+    //    XLinkObj *xlo;
+    //    for (int i = 0; i < treeItem->xlinkCount(); ++i) {
+    //      xlo = treeItem->getXLinkObjNum(i);
+    //      if (xlo)
+    //         xlo->updateXLink();
+
+    // ...
 
     // Frame depends on dimensions calculated so far
     if (frameContainer) {

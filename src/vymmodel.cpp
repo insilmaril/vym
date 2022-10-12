@@ -5069,7 +5069,7 @@ void VymModel::reposition()
         bi = rootItem->getBranchNum(i);
         bi->repositionContainers();
     }
-    mapEditor->minimizeView();
+    mapEditor->minimizeView();  // FIXME-2 review and check for "jumping"
 }
 
 bool VymModel::setMapLinkStyle(const QString &s)   // FIXME-2 not ported yet to containers
