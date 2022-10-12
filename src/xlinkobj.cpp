@@ -272,10 +272,6 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
     */
 }
 
-void XLinkObj::positionBBox() {}
-
-void XLinkObj::calcBBoxSize() {}
-
 void XLinkObj::setVisibility(bool b)
 {
     if (stateVis == FullShowControls) {

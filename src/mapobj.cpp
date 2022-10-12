@@ -10,7 +10,6 @@
 MapObj::MapObj(QGraphicsItem *parent, TreeItem *ti) : QGraphicsItem(parent)
 {
     //qDebug() << "Const MapObj (this,ti)=(" << this << "," << ti << ")";
-    treeItem = ti;
     init();
 }
 
@@ -18,7 +17,7 @@ MapObj::~MapObj()
 {
     // qDebug() << "Destr MapObj "<<this;
     foreach (QGraphicsItem *i, childItems())
-        // Avoid tha QGraphicsScene deletes children
+        // Avoid that QGraphicsScene deletes children
         i->setParentItem(NULL);
 }
 
@@ -36,10 +35,6 @@ void MapObj::copy(MapObj *other)
     bbox.setSize(QSizeF(other->bbox.width(), other->bbox.height()));
 }
 
-void MapObj::setTreeItem(TreeItem *ti) { treeItem = ti; }
-
-TreeItem *MapObj::getTreeItem() const { return treeItem; }
-
 qreal MapObj::x() { return getAbsPos().x(); }
 
 qreal MapObj::y() { return getAbsPos().y(); }
@@ -52,6 +47,7 @@ QPointF MapObj::getAbsPos() { return absPos; }
 
 QString MapObj::getPos() { return qpointFToString(absPos); }
 
+/*
 void MapObj::move(double x, double y) { MapObj::move(QPointF(x, y)); }
 
 void MapObj::move(QPointF p)
@@ -68,7 +64,7 @@ void MapObj::moveBy(double x, double y)
     bbox.moveTo(bbox.topLeft() + v);
     clickPoly.translate(v);
 }
-
+*/
 QRectF MapObj::boundingRect() const { return QRectF(); }
 
 void MapObj::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) {}
@@ -92,13 +88,6 @@ bool MapObj::isInClickBox(const QPointF &p)
 
 QSizeF MapObj::getSize() { return bbox.size(); }
 
-void MapObj::setRotation(const qreal &a) { angle = a; }
-
-qreal MapObj::getRotation() { return angle; }
-
 bool MapObj::isVisibleObj() { return visible; }
 
 void MapObj::setVisibility(bool v) { visible = v; }
-
-void MapObj::positionBBox() {}
-void MapObj::calcBBoxSize() {}

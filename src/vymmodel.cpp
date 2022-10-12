@@ -5710,16 +5710,6 @@ bool VymModel::selectID(const QString &s)
     return false;
 }
 
-bool VymModel::select(LinkableMapObj *lmo)
-{
-    QItemSelection oldsel = selModel->selection();
-
-    if (lmo)
-        return select(lmo->getTreeItem());
-    else
-        return false;
-}
-
 bool VymModel::selectToggle(TreeItem *ti)
 {
     if (ti) {
@@ -6123,14 +6113,6 @@ bool VymModel::isSelected(TreeItem *ti)
 QString VymModel::getSelectString()
 {
     return getSelectString(getSelectedItem());
-}
-
-QString VymModel::getSelectString(  // FIXME-2 Not ported yet to containers...
-    LinkableMapObj *lmo) // only for convenience. Used in MapEditor
-{
-    if (!lmo)
-        return QString();
-    return getSelectString(lmo->getTreeItem());
 }
 
 QString VymModel::getSelectString(TreeItem *ti) // FIXME-2 maybe replace bo -> bi, fi -> ii, ...

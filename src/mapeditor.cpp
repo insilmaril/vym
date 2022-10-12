@@ -2400,8 +2400,8 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
         // MapObj *mo = itemsSelected.at(i)->getMO();  // FIXME-2 remove MO here
         // Ideas to remove MO: 
         // - introduce SelectionContainer
-        // - Above SL has QGraphicsPathItem as children
-        // - SL can be parented to a Container
+        // - Above SC has QGraphicsPathItem as children
+        // - SC can be parented to a Container
         // - Destr of Container does NOT delete SLs, but unlinks them 
         //   (parenting to nullptr), they are maintained in MapEditor
         // - Advantage: No repositioning needed in MapEditor after initial adding :-)

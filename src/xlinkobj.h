@@ -35,8 +35,6 @@ class XLinkObj : public MapObj {
     void setSelection(int cp);
     void setSelection(CurrentSelection s);
     void updateXLink();
-    void positionBBox();
-    void calcBBoxSize();
     void setVisibility(bool);
     void setVisibility();
     void initC0();

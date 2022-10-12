@@ -772,7 +772,6 @@ class VymModel : public TreeModel {
 
     bool select(const QString &);          //! Select by string
     bool selectID(const QString &);        //! select by unique ID (QUuid)
-    bool select(LinkableMapObj *lmo);      //! Select by pointer to LMO
     bool selectToggle(TreeItem *ti);       //! Toggle select state
     bool selectToggle(const QString &selectString); //! Overloaded function to toggle select state
     bool select(TreeItem *ti);             //! Select by pointer to TreeItem
@@ -818,7 +817,6 @@ class VymModel : public TreeModel {
     QStringList getSelectedUUIDs();
     bool isSelected(TreeItem *);
     QString getSelectString();
-    QString getSelectString(LinkableMapObj *lmo);
     QString getSelectString(TreeItem *item);
     QString getSelectString(BranchItem *item);
     QString getSelectString(const uint &i);
