@@ -93,7 +93,7 @@
     <file alias="editsort.png">icons/editsort.png</file>
     <file alias="editsortback.png">icons/editsortback.png</file>
     <file alias="edittrash.png">icons/edittrash.png</file>
-    <file alias="exit.png">icons/exit.png</file>
+    <file alias="exit.png">icons/system-shutdown.svg</file>
     <file alias="file-document-export.png">icons/file-document-export.png</file>
     <file alias="fileclose.png">icons/fileclose.png</file>
     <file alias="filenew.png">icons/filenew.png</file>
