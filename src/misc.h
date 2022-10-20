@@ -15,8 +15,8 @@ class QDialog;
 /////////////////////////////////////////////////////////////////////////////
 QString richTextToPlain(QString r);
 QString qpointToString(const QPoint &p);
-QString qpointFToString(const QPointF &p, int d = 3);
-QString qrectFToString(const QRectF &r, int d = 3);
+QString qpointFToString(const QPointF &p, int d = 1);
+QString qrectFToString(const QRectF &r, int d = 1);
 QString VectorToString(const Vector &p);
 
 extern ostream &operator<<(ostream &stream, QPoint const &p);
