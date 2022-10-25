@@ -231,11 +231,11 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
             endPos = endBC->scenePos(); // FIXME-2 endBC->getChildRefPos();
 
         if (beginBC && endBC) {
-            beginArrow->setPos(beginPos + c0);
-            beginArrow->setEndPoint(beginPos);
+            beginArrow->setPos(beginPos);
+            beginArrow->setEndPoint(beginPos + c0);
 
-            endArrow->setPos(endPos + c1);
-            endArrow->setEndPoint(endPos);
+            endArrow->setPos(endPos);
+            endArrow->setEndPoint(endPos + c1);
         }
     }
 

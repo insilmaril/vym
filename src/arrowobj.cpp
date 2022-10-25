@@ -95,11 +95,9 @@ void ArrowObj::setEndPoint(QPointF p)
     endPoint = p;
 
     line->setLine(pos().x(), pos().y(), p.x(), p.y());
-    arrowEnd->setPos(pos());
 
-    qreal a = getAngle(endPoint - pos());
+    qreal a = getAngle(pos() - endPoint);
     arrowEnd->setRotation(-a / 6.28 * 360);
-    arrowEnd->setPos(endPoint);     // FIXME-000  duplicate line, see above
 }
 
 QPointF ArrowObj::getEndPoint() { return endPoint; }

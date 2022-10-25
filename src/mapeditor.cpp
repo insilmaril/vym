@@ -1481,9 +1481,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     if (state() == EditingHeading) editHeadingFinished();
 
     /*
-    */
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "   ti_found=" << ti_found;
+    */
     //if (ti_found) qDebug() << "   ti_found="<<ti_found->getHeading();
     //qDebug() << " flag=" << sysFlagName;
 
@@ -1685,8 +1685,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 if (xlo) {
                     setState(DrawingXLink); // FIXME-2 state correct? creating new xlink or editing existing?
                     int i = xlo->ctrlPointInClickBox(movingObj_initialScenePos);
-                    qDebug() << "ME::  move ctl points a)  i=" << i;     // FIXME-00
-                    qDebug() << "ME::  move ctl points couldSelect=" << xlo->couldSelect(movingObj_initialScenePos);
                     /*
                     if (i >= 0)
                         xlo->setSelection(i);   // FIXME-0 this could go directly to XLO
@@ -1697,8 +1695,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                     movingObj_initialScenePos.setY(xlo->y());
                     //movingObj_initialContainerOffset.setX(movingObj_initialScenePos.x() - xlo->x());
                     //movingObj_initialContainerOffset.setY(movingObj_initialScenePos.y() - xlo->y());
-                    /*
-                    */  // FIXME-0 check coord handling here and in dupl code
                 }
             }
         }
