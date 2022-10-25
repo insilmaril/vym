@@ -37,8 +37,8 @@ XLinkObj::~XLinkObj()
     delete (path);
     delete (ctrl_p0);
     delete (ctrl_p1);
-    delete (pointerEnd);
-    delete (pointerBegin);
+    delete (endArrow);
+    delete (beginArrow);
 }
 
 void XLinkObj::init()
@@ -55,15 +55,15 @@ void XLinkObj::init()
     path = scene->addPath(QPainterPath(), pen, Qt::NoBrush);
     path->setZValue(dZ_XLINK);
 
-    pointerBegin = new ArrowObj(this);
-    pointerBegin->setPen(pen);
-    pointerBegin->setUseFixedLength(true);
-    pointerBegin->setFixedLength(0);
+    beginArrow = new ArrowObj(this);
+    beginArrow->setPen(pen);
+    beginArrow->setUseFixedLength(true);
+    beginArrow->setFixedLength(0);
 
-    pointerEnd = new ArrowObj(this);
-    pointerEnd->setPen(pen);
-    pointerEnd->setUseFixedLength(true);
-    pointerEnd->setFixedLength(0);
+    endArrow = new ArrowObj(this);
+    endArrow->setPen(pen);
+    endArrow->setUseFixedLength(true);
+    endArrow->setFixedLength(0);
 
     pen.setStyle(Qt::SolidLine);
     poly = scene->addPolygon(QPolygonF(), pen, pen.color());
@@ -103,28 +103,28 @@ QPointF XLinkObj::getAbsPos()
     }
 }
 
-void XLinkObj::setStyleBegin(const QString &s) { pointerBegin->setStyleEnd(s); }
+void XLinkObj::setStyleBegin(const QString &s) { beginArrow->setStyleEnd(s); }
 
 void XLinkObj::setStyleBegin(ArrowObj::OrnamentStyle os)
 {
-    pointerBegin->setStyleEnd(os);
+    beginArrow->setStyleEnd(os);
 }
 
 ArrowObj::OrnamentStyle XLinkObj::getStyleBegin()
 {
-    return pointerBegin->getStyleEnd();
+    return beginArrow->getStyleEnd();
 }
 
-void XLinkObj::setStyleEnd(const QString &s) { pointerEnd->setStyleEnd(s); }
+void XLinkObj::setStyleEnd(const QString &s) { endArrow->setStyleEnd(s); }
 
 void XLinkObj::setStyleEnd(ArrowObj::OrnamentStyle os)
 {
-    pointerEnd->setStyleEnd(os);
+    endArrow->setStyleEnd(os);
 }
 
 ArrowObj::OrnamentStyle XLinkObj::getStyleEnd()
 {
-    return pointerEnd->getStyleEnd();
+    return endArrow->getStyleEnd();
 }
 
 QPointF XLinkObj::getBeginPos() { return beginPos; }
@@ -231,11 +231,11 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
             endPos = endBC->scenePos(); // FIXME-2 endBC->getChildRefPos();
 
         if (beginBC && endBC) {
-            pointerBegin->setPos(beginPos + c0);
-            pointerBegin->setEndPoint(beginPos);
+            beginArrow->setPos(beginPos + c0);
+            beginArrow->setEndPoint(beginPos);
 
-            pointerEnd->setPos(endPos + c1);
-            pointerEnd->setEndPoint(endPos);
+            endArrow->setPos(endPos + c1);
+            endArrow->setEndPoint(endPos);
         }
     }
 
@@ -254,9 +254,9 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
     path->setPen(pen);
     poly->setBrush(pen.color());
 
-    pointerBegin->setPen(pen);
-    //pointerEnd->setPen(pen);
-    pointerEnd->setPen(QPen(Qt::red));
+    beginArrow->setPen(pen);
+    //endArrow->setPen(pen);
+    endArrow->setPen(QPen(Qt::red));
 
     pen.setStyle(Qt::SolidLine);
 
@@ -288,16 +288,16 @@ void XLinkObj::setVisibility(bool b)
     if (stateVis == FullShowControls) {
         ctrl_p0->show();
         ctrl_p1->show();
-        pointerBegin->setUseFixedLength(false);
-        pointerEnd->setUseFixedLength(false);
+        beginArrow->setUseFixedLength(false);
+        endArrow->setUseFixedLength(false);
     }
     else {
         ctrl_p0->hide();
         ctrl_p1->hide();
-        pointerBegin->setUseFixedLength(true);
-        pointerBegin->setFixedLength(0);
-        pointerEnd->setUseFixedLength(true);
-        pointerEnd->setFixedLength(0);
+        beginArrow->setUseFixedLength(true);
+        beginArrow->setFixedLength(0);
+        endArrow->setUseFixedLength(true);
+        endArrow->setFixedLength(0);
     }
 
     MapObj::setVisibility(b);
@@ -305,27 +305,27 @@ void XLinkObj::setVisibility(bool b)
         if (stateVis == OnlyBegin) {
             path->hide();
             poly->show();
-            pointerBegin->hide();
-            pointerEnd->hide();
+            beginArrow->hide();
+            endArrow->hide();
         }
         else if (stateVis == OnlyEnd) {
             path->hide();
             poly->show();
-            pointerBegin->hide();
-            pointerEnd->hide();
+            beginArrow->hide();
+            endArrow->hide();
         }
         else {
             path->show();
             poly->hide();
-            pointerBegin->show();
-            pointerEnd->show();
+            beginArrow->show();
+            endArrow->show();
         }
     }
     else {
         poly->hide();
         path->hide();
-        pointerBegin->hide();
-        pointerEnd->hide();
+        beginArrow->hide();
+        endArrow->hide();
     }
 }
 

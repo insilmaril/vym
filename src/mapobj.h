@@ -29,25 +29,16 @@ class MapObj : public QGraphicsItem {
     MapObj(QGraphicsItem *parent = nullptr, TreeItem *ti = nullptr);
     virtual ~MapObj();
     virtual void init();
-    virtual void copy(MapObj *);
 
-    virtual qreal x();
-    virtual qreal y();
-    virtual qreal width();
-    virtual qreal height();
-    virtual QPointF getAbsPos();
-    virtual QString getPos();              //! Return position as string (x,y)
+    QRectF boundingRect() const;
 
-    virtual QRectF boundingRect() const;
-    virtual void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
+    void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
+    virtual QString getPosString();              //! Return position as string (x,y)
 
     virtual bool isVisibleObj();
     virtual void setVisibility(bool);
 
   protected:
-    QRectF bbox;         // bounding box of MO itself
-    QPolygonF clickPoly; // area where mouseclicks are found
-    QPointF absPos;      // Position on canvas      // FIXME-1 Obsolete. Use pos() instead.
     bool visible;
 };
 

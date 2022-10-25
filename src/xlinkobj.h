@@ -61,8 +61,8 @@ class XLinkObj : public MapObj {
     static int d_control;
     QPainterPath clickPath;
     QGraphicsPolygonItem *poly; // Arrowhead, when one end is not visible
-    ArrowObj *pointerBegin;     // Arrowhead
-    ArrowObj *pointerEnd;       // Arrowhead
+    ArrowObj *beginArrow;     // Arrowhead
+    ArrowObj *endArrow;       // Arrowhead
     QGraphicsPathItem *path;
 
     QPointF beginPos;

@@ -23,33 +23,14 @@ MapObj::~MapObj()
 
 void MapObj::init()
 {
-    absPos = QPointF(0, 0);
     visible = true;
 }
-
-void MapObj::copy(MapObj *other)
-{
-    absPos = other->absPos;
-    bbox.setX(other->bbox.x());
-    bbox.setY(other->bbox.y());
-    bbox.setSize(QSizeF(other->bbox.width(), other->bbox.height()));
-}
-
-qreal MapObj::x() { return getAbsPos().x(); }
-
-qreal MapObj::y() { return getAbsPos().y(); }
-
-qreal MapObj::width() { return bbox.width(); }
-
-qreal MapObj::height() { return bbox.height(); }
-
-QPointF MapObj::getAbsPos() { return absPos; }
-
-QString MapObj::getPos() { return qpointFToString(absPos); }
 
 QRectF MapObj::boundingRect() const { return QRectF(); }
 
 void MapObj::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) {}
+
+QString MapObj::getPosString() { return qpointFToString(pos()); }
 
 bool MapObj::isVisibleObj() { return visible; }
 

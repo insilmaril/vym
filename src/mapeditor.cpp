@@ -2432,7 +2432,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
         sp->setPen(selectionColor);
         sp->setBrush(selectionColor);
         //sp->setParentItem(mo);
-        //sp->setZValue(dZ_SELBOX); // which z to use?
+        //sp->setZValue(dZ_SELBOX); // which z to use?  // FIXME-1
     }
 
     scene()->update();
