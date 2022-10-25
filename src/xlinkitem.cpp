@@ -48,17 +48,17 @@ void XLinkItem::updateXLink()
         link->updateLink();
 }
 
-MapObj *XLinkItem::getMO()  // FIXME-2 remove/rewrite   returns xlo anyway!
+XLinkObj *XLinkItem::getXLinkObj()
 {
     if (link)
-        return link->getMO();
+        return link->getXLinkObj();
     return nullptr;
 }
 
 void XLinkItem::setSelection()
 {
     if (link) {
-        XLinkObj *xlo = (XLinkObj *)getMO();
+        XLinkObj *xlo = getXLinkObj();
         if (xlo) {
             if (parentItem == link->getBeginBranch())
                 xlo->setSelection(XLinkObj::C0);

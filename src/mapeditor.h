@@ -23,13 +23,13 @@ class MapEditor : public QGraphicsView {
     enum EditorState {
         Neutral,
         EditingHeading,
+        DrawingLink,
         DrawingXLink,
         MovingObject,
         MovingObjectTmpLinked,
         MovingObjectWithoutLinking,
         PanningView,
-        PickingColor,
-        DrawingLink
+        PickingColor
     };
 
     MapEditor(VymModel *vm);

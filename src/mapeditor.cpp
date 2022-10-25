@@ -1507,7 +1507,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             setState(DrawingLink);
             tmpLink = new Link(model);
             tmpLink->setBeginBranch(selbi);
-            tmpLink->createMapObj();
+            tmpLink->createXLinkObj();
             tmpLink->setStyleBegin("None");
             tmpLink->setStyleEnd("None");
             tmpLink->setEndPoint(movingObj_initialScenePos);
@@ -1678,30 +1678,18 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         }
     }   // system flags or modModes
     else { // No selbc found, check XLinks
-        // FIXME-000 cont here for XLinks  compare lines 1861 in moveObject
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
                 if (xlo) {
-                    setState(DrawingXLink); // FIXME-2 state correct? creating new xlink or editing existing?
-                    int i = xlo->ctrlPointInClickBox(movingObj_initialScenePos);
-                    /*
-                    if (i >= 0)
-                        xlo->setSelection(i);   // FIXME-0 this could go directly to XLO
-                    */
-                    // FIXME-2 remove variable (also in header)? still used when panning!
-                    // Note: movingObj_offset renamed to movingObj_PointerPos and QPoint instead of QPOintF meanwhile // FIXME-4
-                    movingObj_initialScenePos.setX(xlo->x());
-                    movingObj_initialScenePos.setY(xlo->y());
-                    //movingObj_initialContainerOffset.setX(movingObj_initialScenePos.x() - xlo->x());
-                    //movingObj_initialContainerOffset.setY(movingObj_initialScenePos.y() - xlo->y());
+                    setState(DrawingXLink); // FIXME-0 state correct? creating new xlink or editing existing?
                 }
             }
         }
     }
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-1  Shift to only move MC or floating parent not implemented yet
+void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-1  Shift modifier to only move MC or floating parent not implemented yet
 {
     QPointF p_event = mapToScene(e->pos());
 
@@ -1864,12 +1852,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     tmpParentContainer->addToImagesContainer(ic, true);
                 }
             }
-            // FIXME-00 check moving xlink control points
-                // Deleted above:  TreeItem *seli = model->getSelectedItem();
-
             else if (ti->getType() == TreeItem::XLink) {
                 // Move XLink control point
-                XLinkObj *xlo = (XLinkObj*)(((XLinkItem *)ti)->getMO());  // FIXME-2 ugly casting here
+                XLinkObj *xlo = ((XLinkItem *)ti)->getXLinkObj();
                 if (xlo) {
                     xlo->setSelectedCtrlPoint(p_event); // FIXME-3 Missing savestate
                     model->setChanged();
@@ -1877,7 +1862,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 }
             }
             else
-                qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");   // FIXME-2 shouldn't happen
+                qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");
         }
 
     } // add to tmpParentContainer

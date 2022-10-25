@@ -31,7 +31,6 @@ class XLinkObj : public MapObj {
     ArrowObj::OrnamentStyle getStyleEnd();
     QPointF getBeginPos();
     QPointF getEndPos();
-    virtual void move(QPointF p);
     virtual void setEnd(QPointF);
     void setSelection(int cp);
     void setSelection(SelectionType s);
@@ -45,11 +44,8 @@ class XLinkObj : public MapObj {
     void setC1(const QPointF &p);
     QPointF getC1();
     void setSelectedCtrlPoint(const QPointF &);
-    QPointF getSelectedCtrlPoint();
 
-    int ctrlPointInClickBox(const QPointF &p);
     SelectionType couldSelect(const QPointF &);
-    bool isInClickBox(const QPointF &p);
     QPainterPath getClickPath();
 
   private:

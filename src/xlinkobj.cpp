@@ -18,21 +18,21 @@ int XLinkObj::d_control = 300;
 
 XLinkObj::XLinkObj(Link *l)
 {
-    qDebug()<< "Const XLinkObj (link)";
+    //qDebug()<< "Const XLinkObj (link)";
     link = l;
     init();
 }
 
 XLinkObj::XLinkObj(QGraphicsItem *parent, Link *l) : MapObj(parent)
 {
-    qDebug()<< "Const XLinkObj (Link, parent)";
+    //qDebug()<< "Const XLinkObj (Link, parent)";
     link = l;
     init();
 }
 
 XLinkObj::~XLinkObj()
 {
-    qDebug() << "Destr XLinkObj";
+    //qDebug() << "Destr XLinkObj";
     delete (poly);
     delete (path);
     delete (ctrl_p0);
@@ -131,21 +131,6 @@ QPointF XLinkObj::getBeginPos() { return beginPos; }
 
 QPointF XLinkObj::getEndPos() { return endPos; }
 
-void XLinkObj::move(QPointF p) // FIXME-0 update ctrl points directly, not c0 and c1? // FIXME-0 make const FIXME-00 remove completely!!!!!
-{
-    switch (curSelection) {
-        case C0:
-            //c0 = ctrl_p0->sceneTransform().inverted().map(p);
-            c0 = p;
-
-            break;
-        case C1:
-            c1 = p;
-            break;
-        default:
-            break; }
-    updateXLink();
-}
 
 void XLinkObj::setEnd(QPointF p) { endPos = p; }
 
@@ -430,41 +415,6 @@ void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
     updateXLink();
 }
 
-QPointF XLinkObj::getSelectedCtrlPoint()    // FIXME-00 Really still used?
-{
-    switch (curSelection) {
-        case C0:
-            return c0;
-            break;
-        case C1:
-            return c1;
-        default:
-            return QPoint();
-    }
-}
-
-int XLinkObj::ctrlPointInClickBox(const QPointF &p) // Still needed? couldSelect instead?
-{
-    SelectionType oldSel = curSelection;
-    int ret = -1;
-
-    QRectF r(p.x() - clickBorder, p.y() - clickBorder, clickBorder * 2,
-             clickBorder * 2);
-
-    if (curSelection == C0 || curSelection == C1) {
-        // If Cx selected, check both ctrl points
-        curSelection = C0;
-        if (getClickPath().intersects(r))       // FIXME-00 this construct looks awkward
-            ret = 0;
-        curSelection = C1;
-        if (getClickPath().intersects(r))
-            ret = 1;
-    }
-    curSelection = oldSel;
-    qDebug() << "XLO::ctrlPointInClickBox  p=" << qpointFToString(p,0) << " ret=" << ret;    // FIXME-2 testing
-    return ret;
-}
-
 XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
 {
     QPointF v;
@@ -506,61 +456,3 @@ XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
     return XLinkObj::Empty;
 }
 
-bool XLinkObj::isInClickBox(const QPointF &p) // FIXME-00 remove, not needed
-{
-    // Return, if not visible at all...
-    if (stateVis == Hidden)
-        return false;
-
-    SelectionType oldSel = curSelection;
-    bool b = false;
-
-    QRectF r(p.x() - clickBorder, p.y() - clickBorder, clickBorder * 2,
-             clickBorder * 2);
-
-    switch (stateVis) {
-        case FullShowControls:
-            // If Cx selected, check both ctrl points
-            if (ctrlPointInClickBox(p) > -1)
-                b = true;
-
-            // Enable selecting the path, when a ctrl point is already selected
-            if (!b && curSelection != Empty && clickPath.intersects(r))
-                b = true;
-            break;
-        case OnlyBegin:
-        case OnlyEnd:
-            // not selected, only partially visible
-            if (poly->boundingRect().contains(p))
-                b = true;
-            break;
-        default:
-            // not selected, but path is fully visible
-            curSelection = Path;
-            if (getClickPath().intersects(r))
-                b = true;
-            break;
-    }
-    curSelection = oldSel;
-    return b;
-}
-
-QPainterPath
-XLinkObj::getClickPath() // also needs mirroring if oriented left. Create method
-                         // to generate the coordinates
-{
-    QPainterPath p;
-    switch (curSelection) {
-    case C0:
-        p.addEllipse(beginPos + c0, 15, 15);
-        return p;
-        break;
-    case C1:
-        p.addEllipse(endPos + c1, 15, 15);
-        return p;
-        break;
-    default:
-        return clickPath;
-        break;
-    }
-}

@@ -251,16 +251,12 @@ QString Link::saveToDir()
     return s;
 }
 
-XLinkObj *Link::getXLinkObj() { return xlo; }   // Do we need both xlo and mo here?
+XLinkObj *Link::getXLinkObj() { return xlo; }
 
-XLinkObj *Link::createMapObj()
+XLinkObj *Link::createXLinkObj()
 {
-    qDebug() << "XL::createMO  beginBranch=" << beginBranch;    // FIXME-2 beginBranch must exist!
     if (!xlo)
-        //xlo = new XLinkObj(beginBranch->getBranchContainer(), this);  // FIXME-00 check
         xlo = new XLinkObj(this);
     xlo->setVisibility();
     return xlo;
 }
-
-MapObj *Link::getMO() { return xlo; }

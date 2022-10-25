@@ -49,8 +49,7 @@ class Link : public XMLObj {
     void updateLink();
     QString saveToDir();
     XLinkObj *getXLinkObj();
-    XLinkObj *createMapObj();
-    MapObj *getMO();
+    XLinkObj *createXLinkObj();
 
   private:
     XLinkState xLinkState; // init during drawing or active

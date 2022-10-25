@@ -24,7 +24,7 @@ class XLinkItem : public MapItem {
     void setLink(Link *);
     Link *getLink();
     void updateXLink();
-    MapObj *getMO();
+    XLinkObj *getXLinkObj();
     void setSelection();
     BranchItem *getPartnerBranch();
 

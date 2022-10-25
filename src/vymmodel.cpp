@@ -3069,8 +3069,8 @@ bool VymModel::createLink(Link *link)
 
     latestAddedItem = newli;
 
-    if (!link->getMO()) {
-        link->createMapObj();
+    if (!link->getXLinkObj()) {
+        link->createXLinkObj();
         reposition();
     }
     else
