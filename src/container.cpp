@@ -336,7 +336,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    // qdbg() << ind() << QString("### Reposition of %1").arg(info());
+    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childItems().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -358,7 +358,6 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {
         c = (Container*) child;
-        if (c->type != FlagRowCont)   // FIXME-0 testing
             c->reposition();
     }
 

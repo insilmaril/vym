@@ -194,6 +194,7 @@ class TreeItem : public XMLObj {
     virtual AttributeItem *getAttributeByKey(const QString &k);
 
     virtual XLinkItem *getXLinkItemNum(const int &n);
+    virtual XLinkObj *getXLinkObjNum(const int &n);
 
   protected:
     bool hideExport; //! Hide this item in export

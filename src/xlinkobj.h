@@ -17,7 +17,7 @@ class BranchItem;
 /////////////////////////////////////////////////////////////////////////////
 class XLinkObj : public MapObj {
   public:
-    enum CurrentSelection { Unselected, Path, C0, C1 };
+    enum SelectionType { Empty, Path, C0, C1 };
     XLinkObj(Link*);
     XLinkObj(QGraphicsItem *, Link *l);
     virtual ~XLinkObj();
@@ -34,7 +34,7 @@ class XLinkObj : public MapObj {
     virtual void move(QPointF p);
     virtual void setEnd(QPointF);
     void setSelection(int cp);
-    void setSelection(CurrentSelection s);
+    void setSelection(SelectionType s);
     void updateXLink();
     void setVisibility(bool);
     void setVisibility();
@@ -44,8 +44,12 @@ class XLinkObj : public MapObj {
     void initC1();
     void setC1(const QPointF &p);
     QPointF getC1();
-    bool isInClickBox(const QPointF &p);
+    void setSelectedCtrlPoint(const QPointF &);
+    QPointF getSelectedCtrlPoint();
+
     int ctrlPointInClickBox(const QPointF &p);
+    SelectionType couldSelect(const QPointF &);
+    bool isInClickBox(const QPointF &p);
     QPainterPath getClickPath();
 
   private:
@@ -63,13 +67,15 @@ class XLinkObj : public MapObj {
 
     QPointF beginPos;
     QPointF endPos;
-    QPointF c0, c1; // Controlpoints for Bezier path
     BranchContainer::Orientation beginOrient;
     BranchContainer::Orientation endOrient;
+
+    // Controlpoints for Bezier path
+    QPointF c0, c1;
     QGraphicsEllipseItem *ctrl_p0;
     QGraphicsEllipseItem *ctrl_p1;
 
-    CurrentSelection curSelection;
+    SelectionType curSelection;
 
     BranchItem *visBranch; // the "visible" part of a partially scrolled li
     Link *link;

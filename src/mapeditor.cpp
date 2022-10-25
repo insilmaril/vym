@@ -18,6 +18,7 @@
 #include "warningdialog.h"
 #include "winter.h"
 #include "xlinkitem.h"
+#include "xlinkobj.h"
 
 extern Main *mainWindow;
 extern QString clipboardDir;
@@ -819,25 +820,31 @@ void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
 
 TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedItems)
 {
-    // Search XLinks    // FIXME-2 not ported yet
-    /*
+    // Search XLinks
     Link *link;
     for (int i = 0; i < model->xlinkCount(); i++) {
         link = model->getXLinkNum(i);
         if (link) {
             XLinkObj *xlo = link->getXLinkObj();
-            if (xlo && xlo->isInClickBox(p)) {
-                // Found XLink, now return the nearest XLinkItem of p
-                qreal d0 = Geometry::distance(p, xlo->getBeginPos());
-                qreal d1 = Geometry::distance(p, xlo->getEndPos());
-                if (d0 > d1)
+            if (xlo)
+            if (xlo) {
+                XLinkObj::SelectionType xlinkSelection = xlo->couldSelect(p);
+                if (xlinkSelection == XLinkObj::Path) {
+                    // Found path of XLink, now return the nearest XLinkItem of p
+                    qreal d0 = Geometry::distance(p, xlo->getBeginPos());
+                    qreal d1 = Geometry::distance(p, xlo->getEndPos());
+                    if (d0 < d1)
+                        return link->getBeginLinkItem();
+                    else
+                        return link->getEndLinkItem();
+                }
+                if (xlinkSelection == XLinkObj::C0)
                     return link->getBeginLinkItem();
-                else
+                if (xlinkSelection == XLinkObj::C1)
                     return link->getEndLinkItem();
             }
         }
     }
-    */
 
     // Search branches (and their childs, e.g. images
     // Start with mapcenter, no images allowed at rootItem
@@ -1474,11 +1481,11 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     if (state() == EditingHeading) editHeadingFinished();
 
     /*
+    */
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "   ti_found=" << ti_found;
     //if (ti_found) qDebug() << "   ti_found="<<ti_found->getHeading();
-    qDebug() << " flag=" << sysFlagName;
-    */
+    //qDebug() << " flag=" << sysFlagName;
 
     // If Modifier mode "view" is set, all other clicks can be ignored,
     // nothing will be selected
@@ -1492,17 +1499,21 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     // XLink modifier, create new XLink
     BranchItem *selbi = model->getSelectedBranch();
-    if (selbi && mainWindow->getModMode() == Main::ModModeXLink &&
-        (e->modifiers() & Qt::ShiftModifier)) {
-        setState(DrawingLink);
-        tmpLink = new Link(model);
-        tmpLink->setBeginBranch(selbi);
-        tmpLink->createMapObj();
-        tmpLink->setStyleBegin("None");
-        tmpLink->setStyleEnd("None");
-        tmpLink->setEndPoint(movingObj_initialScenePos);
-        tmpLink->updateLink();
-        return;
+    BranchContainer *selbc = nullptr;
+    if (selbi) {
+        selbc = selbi->getBranchContainer();
+        if (mainWindow->getModMode() == Main::ModModeXLink &&
+            (e->modifiers() & Qt::ShiftModifier)) {
+            setState(DrawingLink);
+            tmpLink = new Link(model);
+            tmpLink->setBeginBranch(selbi);
+            tmpLink->createMapObj();
+            tmpLink->setStyleBegin("None");
+            tmpLink->setStyleEnd("None");
+            tmpLink->setEndPoint(movingObj_initialScenePos);
+            tmpLink->updateLink();
+            return;
+        }
     }
 
     if (ti_found) {
@@ -1520,15 +1531,18 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
         }
 
-        /*
-        // FIXME-2 check for flags on MousePress
-        QUuid uid = ((BranchObj *)lmo_found)->findSystemFlagUidByPos(p);
-        if (!uid.isNull()) {
-            Flag *flag = systemFlagsMaster->findFlagByUid(uid);
-            if (flag)
-                sysFlagName = flag->getName();
+        // Check for flags on MousePress    // FIXME-1 check if working
+        if (selbc) {
+            QUuid uid = selbc->findFlagByPos(movingObj_initialScenePos);
+            if (!uid.isNull()) {
+                Flag *flag = systemFlagsMaster->findFlagByUid(uid); //FIXME-3 currently also would find standard flags
+                if (flag)
+                {
+                    sysFlagName = flag->getName();
+                    qDebug() << "ME::mousePress found flag " << sysFlagName;
+                }
+            }
         }
-        */
 
         // Check vymlink  modifier (before selecting object!)   // FIXME-2 why here and not below with other system flags? Why before selecting?
         if (sysFlagName == "system-vymLink") {
@@ -1596,9 +1610,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     e->accept();
 
-    // Take care of  remaining system flags _or_ modifier modes // FIXME-0
-    /*
-    if (lmo_found) {
+    // Take care of  remaining system flags _or_ modifier modes
+    if (selbc) {
         if (!sysFlagName.isEmpty()) {
             // systemFlag clicked
             if (sysFlagName.contains("system-url")) {
@@ -1626,6 +1639,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         else {
             // Take care of xLink: Open context menu with targets
             // if clicked near to begin of xlink
+            /* FIXME-0 context menu xlink
             if (ti_found->xlinkCount() > 0 &&
                 ti_found->getType() != TreeItem::MapCenter &&
                 lmo_found->getBBox().width() > 30) {
@@ -1660,32 +1674,35 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                     return;
                 }
             }
+            */
         }
     }   // system flags or modModes
-    */
-
-    /*
-    else { // No lmo found, check XLinks
+    else { // No selbc found, check XLinks
+        // FIXME-000 cont here for XLinks  compare lines 1861 in moveObject
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
-                // FIXME-0 xlink not supported yet with containers
-                XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();
+                XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
                 if (xlo) {
-                    setState(DrawingXLink);
-                    int i = xlo->ctrlPointInClickBox(p);
+                    setState(DrawingXLink); // FIXME-2 state correct? creating new xlink or editing existing?
+                    int i = xlo->ctrlPointInClickBox(movingObj_initialScenePos);
+                    qDebug() << "ME::  move ctl points a)  i=" << i;     // FIXME-00
+                    qDebug() << "ME::  move ctl points couldSelect=" << xlo->couldSelect(movingObj_initialScenePos);
+                    /*
                     if (i >= 0)
-                        xlo->setSelection(i);
+                        xlo->setSelection(i);   // FIXME-0 this could go directly to XLO
+                    */
                     // FIXME-2 remove variable (also in header)? still used when panning!
                     // Note: movingObj_offset renamed to movingObj_PointerPos and QPoint instead of QPOintF meanwhile // FIXME-4
-                    movingObj_offset.setX(p.x() - xlo->x());
-                    movingObj_offset.setY(p.y() - xlo->y());
-                    movingObj_orgPos.setX(xlo->x());
-                    movingObj_orgPos.setY(xlo->y());
+                    movingObj_initialScenePos.setX(xlo->x());
+                    movingObj_initialScenePos.setY(xlo->y());
+                    //movingObj_initialContainerOffset.setX(movingObj_initialScenePos.x() - xlo->x());
+                    //movingObj_initialContainerOffset.setY(movingObj_initialScenePos.y() - xlo->y());
+                    /*
+                    */  // FIXME-0 check coord handling here and in dupl code
                 }
             }
         }
     }
-    */
 }
 
 void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-1  Shift to only move MC or floating parent not implemented yet
@@ -1851,21 +1868,20 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     tmpParentContainer->addToImagesContainer(ic, true);
                 }
             }
-            /* FIXME-2 check xlinks later
+            // FIXME-00 check moving xlink control points
                 // Deleted above:  TreeItem *seli = model->getSelectedItem();
 
-            else if (seli && seli->getType() == TreeItem::XLink) {
+            else if (ti->getType() == TreeItem::XLink) {
                 // Move XLink control point
-                MapObj *mosel = ((MapItem *)seli)->getMO();
-                if (mosel) {
-                    mosel->move(p - movingObj_offset); // FIXME-3 Missing savestate
+                XLinkObj *xlo = (XLinkObj*)(((XLinkItem *)ti)->getMO());  // FIXME-2 ugly casting here
+                if (xlo) {
+                    xlo->setSelectedCtrlPoint(p_event); // FIXME-3 Missing savestate
                     model->setChanged();
                     model->emitSelectionChanged();
                 }
             }
             else
                 qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");   // FIXME-2 shouldn't happen
-            */
         }
 
     } // add to tmpParentContainer

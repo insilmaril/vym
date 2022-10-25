@@ -251,7 +251,7 @@ QString Link::saveToDir()
     return s;
 }
 
-XLinkObj *Link::getXLinkObj() { return xlo; }
+XLinkObj *Link::getXLinkObj() { return xlo; }   // Do we need both xlo and mo here?
 
 XLinkObj *Link::createMapObj()
 {

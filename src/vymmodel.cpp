@@ -5643,7 +5643,7 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
             Link *li = ((XLinkItem *)mi)->getLink();
             XLinkObj *xlo = li->getXLinkObj();
             if (xlo)
-                xlo->setSelection(XLinkObj::Unselected);
+                xlo->setSelection(XLinkObj::Empty);
 
             do_reposition =
                 do_reposition || li->getBeginBranch()->resetTmpUnscroll();

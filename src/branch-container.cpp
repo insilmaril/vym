@@ -11,6 +11,7 @@
 #include "heading-container.h"
 #include "link-container.h"
 #include "misc.h"
+#include "xlinkobj.h"
 
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
@@ -473,7 +474,7 @@ FrameContainer* BranchContainer::createFrameContainer()
     else
         pc = innerContainer;
     frameContainer = new FrameContainer (pc);
-    frameContainer->stackBefore(pc->childItems().first()); // FIXME-0 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
+    frameContainer->stackBefore(pc->childItems().first()); // FIXME-1 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
     return frameContainer;
 }
 
@@ -904,7 +905,7 @@ void BranchContainer::reposition()
 
     Container::reposition();
 
-    // Finally update links
+    // Update links
     if (branchesContainer && branchCount() > 0) {
         foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*) g_item;
@@ -912,25 +913,23 @@ void BranchContainer::reposition()
         }
     }
 
-    // And update XLinks    // FIXME-000
-    // Get Links from branchItem and
-    // call updateXLink
-    //
-    // BO::positionBBox:
-    //    XLinkObj *xlo;
-    //    for (int i = 0; i < treeItem->xlinkCount(); ++i) {
-    //      xlo = treeItem->getXLinkObjNum(i);
-    //      if (xlo)
-    //         xlo->updateXLink();
-
-    // ...
+    // Update XLinks // FIXME-0 not working properly, probably required after every global reposition
+    // (tmpParentContainer has no branchItem!)
+    if (branchItem) {
+        XLinkObj *xlo;
+        for (int i = 0; i < branchItem->xlinkCount(); ++i) {
+            xlo = branchItem->getXLinkObjNum(i);
+            if (xlo)
+                xlo->updateXLink();
+        }
+    }
 
     // Frame depends on dimensions calculated so far
     if (frameContainer) {
         if (frameContainer->getIncludeChildren())
             frameContainer->setRect(frameContainer->parentContainer()->rect());
         else
-            frameContainer->setRect(ornamentsContainer->rect());    // FIXME-0 check...
+            frameContainer->setRect(ornamentsContainer->rect());    // FIXME-1 check...
     }
 
     // FIXME-3 for testing we do some coloring and additional drawing
@@ -941,8 +940,8 @@ void BranchContainer::reposition()
         setPen(QPen(Qt::green));
 
         // OrnamentsContainer
-        //ornamentsContainer->setPen(QPen(Qt::blue));
-        ornamentsContainer->setPen(Qt::NoPen);
+        ornamentsContainer->setPen(QPen(Qt::blue));
+        //ornamentsContainer->setPen(Qt::NoPen);
 
         // InnerContainer
         //innerContainer->setPen(QPen(Qt::cyan));

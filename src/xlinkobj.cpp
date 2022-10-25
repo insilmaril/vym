@@ -3,6 +3,7 @@
 #include "xlinkobj.h"
 
 #include "branchitem.h"
+#include "geometry.h"
 #include "math.h" // atan
 #include "misc.h" // max
 
@@ -73,16 +74,16 @@ void XLinkObj::init()
     initC0();
     initC1();
 
-    ctrl_p0 = scene->addEllipse(c0.x(), c0.y(), clickBorder * 2,
+    ctrl_p0 = scene->addEllipse(0, 0, clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
-    ctrl_p1 = scene->addEllipse(c1.x(), c1.y(), clickBorder * 2,
+    ctrl_p1 = scene->addEllipse(0, 0, clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
 
     beginOrient = endOrient = BranchContainer::UndefinedOrientation;
     pen.setWidth(1);
     pen.setStyle(Qt::DashLine);
 
-    curSelection = Unselected;
+    curSelection = Empty;
 
     setVisibility(true);
 }
@@ -130,30 +131,31 @@ QPointF XLinkObj::getBeginPos() { return beginPos; }
 
 QPointF XLinkObj::getEndPos() { return endPos; }
 
-void XLinkObj::move(QPointF p)
+void XLinkObj::move(QPointF p) // FIXME-0 update ctrl points directly, not c0 and c1? // FIXME-0 make const FIXME-00 remove completely!!!!!
 {
     switch (curSelection) {
-    case C0:
-        c0 = p;
-        break;
-    case C1:
-        c1 = p;
-        break;
-    default:
-        break;
-    }
+        case C0:
+            //c0 = ctrl_p0->sceneTransform().inverted().map(p);
+            c0 = p;
+
+            break;
+        case C1:
+            c1 = p;
+            break;
+        default:
+            break; }
     updateXLink();
 }
 
 void XLinkObj::setEnd(QPointF p) { endPos = p; }
 
-void XLinkObj::setSelection(CurrentSelection s)
+void XLinkObj::setSelection(SelectionType s)
 {
     curSelection = s;
     setVisibility();
 }
 
-void XLinkObj::setSelection(int cp)
+void XLinkObj::setSelection(int cp) // FIXME-0 needed?
 {
     if (cp == 0)
         setSelection(C0);
@@ -177,6 +179,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
     if (bi)
         endBC = bi->getBranchContainer();
 
+    /* FIXME-000 check orientation
     if (beginBC) {
         if (beginOrient != BranchContainer::UndefinedOrientation &&
             beginOrient != beginBC->getOrientation())
@@ -189,6 +192,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
             c1.setX(-c1.x());
         endOrient = endBC->getOrientation();
     }
+    */
 
     if (visBranch) {
         // Only one of the linked branches is visible
@@ -227,10 +231,10 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
             endPos = endBC->scenePos(); // FIXME-2 endBC->getChildRefPos();
 
         if (beginBC && endBC) {
-            pointerBegin->setPos(beginPos + c0);    // FIXME-2 pointerBegin->move(beginPos + c0);
+            pointerBegin->setPos(beginPos + c0);
             pointerBegin->setEndPoint(beginPos);
 
-            pointerEnd->setPos(endPos + c1); // FIXME-0 pointerEnd->move(endPos + c1);
+            pointerEnd->setPos(endPos + c1);
             pointerEnd->setEndPoint(endPos);
         }
     }
@@ -251,19 +255,18 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
     poly->setBrush(pen.color());
 
     pointerBegin->setPen(pen);
-    pointerEnd->setPen(pen);
+    //pointerEnd->setPen(pen);
+    pointerEnd->setPen(QPen(Qt::red));
 
     pen.setStyle(Qt::SolidLine);
 
-    ctrl_p0->setRect(beginPos.x() + c0.x() - pointRadius / 2,
-                     beginPos.y() + c0.y() - pointRadius / 2, pointRadius,
-                     pointRadius);
+    ctrl_p0->setPos(beginPos + c0);
+    ctrl_p0->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
     ctrl_p0->setPen(pen);
     ctrl_p0->setBrush(pen.color());
 
-    ctrl_p1->setRect(endPos.x() + c1.x() - pointRadius / 2,
-                     endPos.y() + c1.y() - pointRadius / 2, pointRadius,
-                     pointRadius);
+    ctrl_p1->setPos(endPos + c1);
+    ctrl_p1->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
     ctrl_p1->setPen(pen);
     ctrl_p1->setBrush(pen.color());
 
@@ -341,7 +344,7 @@ void XLinkObj::setVisibility()
         if (beginBC->isVisible() &&
             endBC->isVisible()) { // Both ends are visible
             visBranch = NULL;
-            if (curSelection != Unselected)
+            if (curSelection != Empty)
                 stateVis = FullShowControls;
             else
                 stateVis = Full;
@@ -406,13 +409,43 @@ void XLinkObj::setC0(const QPointF &p) { c0 = p; }
 
 QPointF XLinkObj::getC0() { return c0; }
 
-void XLinkObj::setC1(const QPointF &p) { c1 = p; }
+void XLinkObj::setC1(const QPointF &p)
+{
+    c1 = p;
+}
 
 QPointF XLinkObj::getC1() { return c1; }
 
-int XLinkObj::ctrlPointInClickBox(const QPointF &p)
+void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
 {
-    CurrentSelection oldSel = curSelection;
+    switch (curSelection) {
+        case C0:
+            c0 = p - beginPos;
+            break;
+        case C1:
+            c1 = p - endPos;
+            break;
+        default:
+            break; }
+    updateXLink();
+}
+
+QPointF XLinkObj::getSelectedCtrlPoint()    // FIXME-00 Really still used?
+{
+    switch (curSelection) {
+        case C0:
+            return c0;
+            break;
+        case C1:
+            return c1;
+        default:
+            return QPoint();
+    }
+}
+
+int XLinkObj::ctrlPointInClickBox(const QPointF &p) // Still needed? couldSelect instead?
+{
+    SelectionType oldSel = curSelection;
     int ret = -1;
 
     QRectF r(p.x() - clickBorder, p.y() - clickBorder, clickBorder * 2,
@@ -421,50 +454,92 @@ int XLinkObj::ctrlPointInClickBox(const QPointF &p)
     if (curSelection == C0 || curSelection == C1) {
         // If Cx selected, check both ctrl points
         curSelection = C0;
-        if (getClickPath().intersects(r))
+        if (getClickPath().intersects(r))       // FIXME-00 this construct looks awkward
             ret = 0;
         curSelection = C1;
         if (getClickPath().intersects(r))
             ret = 1;
     }
     curSelection = oldSel;
+    qDebug() << "XLO::ctrlPointInClickBox  p=" << qpointFToString(p,0) << " ret=" << ret;    // FIXME-2 testing
     return ret;
 }
 
-bool XLinkObj::isInClickBox(const QPointF &p)
+XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
+{
+    QPointF v;
+    qreal d;
+    qreal d_max = 10;
+    switch (stateVis) {
+        case FullShowControls:
+            v = ctrl_p0->pos() - p;
+            d = Geometry::distance(ctrl_p0->pos(), p);
+            if (d < d_max) {
+                setSelection(C0);
+                return C0;
+            }
+
+            v = ctrl_p1->pos() - p;
+            d = Geometry::distance(ctrl_p1->pos(), p);
+            if (d < d_max) {
+                setSelection(C1);
+                return C1;
+            }
+            break;
+        case OnlyBegin:
+        case OnlyEnd:
+            // not selected, only partially visible
+            /*
+            if (poly->boundingRect().contains(p))
+                b = true;
+            */
+            break;
+        default:
+            // not selected, but path is fully visible
+            QRectF r(p.x() - clickBorder,
+                    p.y() - clickBorder,
+                    clickBorder * 2,
+                    clickBorder * 2);
+            if (clickPath.intersects(r))
+                return Path;
+    }
+    return XLinkObj::Empty;
+}
+
+bool XLinkObj::isInClickBox(const QPointF &p) // FIXME-00 remove, not needed
 {
     // Return, if not visible at all...
     if (stateVis == Hidden)
         return false;
 
-    CurrentSelection oldSel = curSelection;
+    SelectionType oldSel = curSelection;
     bool b = false;
 
     QRectF r(p.x() - clickBorder, p.y() - clickBorder, clickBorder * 2,
              clickBorder * 2);
 
     switch (stateVis) {
-    case FullShowControls:
-        // If Cx selected, check both ctrl points
-        if (ctrlPointInClickBox(p) > -1)
-            b = true;
+        case FullShowControls:
+            // If Cx selected, check both ctrl points
+            if (ctrlPointInClickBox(p) > -1)
+                b = true;
 
-        // Enable selecting the path, when a ctrl point is already selected
-        if (!b && curSelection != Unselected && clickPath.intersects(r))
-            b = true;
-        break;
-    case OnlyBegin:
-    case OnlyEnd:
-        // not selected, only partially visible
-        if (poly->boundingRect().contains(p))
-            b = true;
-        break;
-    default:
-        // not selected, but path is fully visible
-        curSelection = Path;
-        if (getClickPath().intersects(r))
-            b = true;
-        break;
+            // Enable selecting the path, when a ctrl point is already selected
+            if (!b && curSelection != Empty && clickPath.intersects(r))
+                b = true;
+            break;
+        case OnlyBegin:
+        case OnlyEnd:
+            // not selected, only partially visible
+            if (poly->boundingRect().contains(p))
+                b = true;
+            break;
+        default:
+            // not selected, but path is fully visible
+            curSelection = Path;
+            if (getClickPath().intersects(r))
+                b = true;
+            break;
     }
     curSelection = oldSel;
     return b;

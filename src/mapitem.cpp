@@ -93,8 +93,10 @@ QPainterPath MapItem::getSelectionPath() // FIXME-2 could be in BranchContainer 
     } else if (hasTypeImage()) {
         ImageContainer *ic =((ImageItem*)this)->getImageContainer();
         polygon = ic->mapToScene(ic->rect().marginsAdded(QMarginsF(d, d, d, d)));
+    } else if (type == XLink) {
+        return QPainterPath();
     } else
-        qWarning() << "MapITem::getSelectionPath - unknown item type!";
+        qWarning() << "MapItem::getSelectionPath - unknown item type = " << type;
 
     QPainterPath path;
     path.addPolygon(polygon);
@@ -108,7 +110,7 @@ QPointF MapItem::getEditPosition() // FIXME-2 should be directly in BranchContai
     if (hasTypeBranch() )
         p = ((BranchItem*)this)->getBranchContainer()->scenePos();
     else
-        qWarning() << "MapITem::getEditPosition - unknown item type!";
+        qWarning() << "MapItem::getEditPosition - unknown item type!";
 
     return p;
 }

@@ -41,20 +41,13 @@ class MapObj : public QGraphicsItem {
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
 
-    virtual QRectF getBBox(); //! returns bounding box
-    virtual ConvexPolygon
-    getBoundingPolygon();                    //! return bounding convex polygon
-    virtual QPolygonF getClickPoly();        //! returns polygon to click
-    virtual bool isInClickBox(const QPointF &p); //! Checks if p is in clickBox
-    virtual QSizeF getSize(); //! returns size of bounding box
-
     virtual bool isVisibleObj();
     virtual void setVisibility(bool);
 
   protected:
     QRectF bbox;         // bounding box of MO itself
     QPolygonF clickPoly; // area where mouseclicks are found
-    QPointF absPos;      // Position on canvas
+    QPointF absPos;      // Position on canvas      // FIXME-1 Obsolete. Use pos() instead.
     bool visible;
 };
 

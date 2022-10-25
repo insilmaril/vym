@@ -671,6 +671,19 @@ XLinkItem *TreeItem::getXLinkItemNum(const int &n)
         return nullptr;
 }
 
+XLinkObj *TreeItem::getXLinkObjNum(const int &n)
+{
+    if (xlinkCounter > 0) {
+        XLinkItem *xli = getXLinkItemNum(n);
+        if (xli) {
+            Link *l = xli->getLink();
+            if (l)
+                return l->getXLinkObj();
+        }
+    }
+    return nullptr;
+}
+
 void TreeItem::setHideTmp(HideTmpMode mode)
 {
     if (type == Image || type == Branch || type == MapCenter)
