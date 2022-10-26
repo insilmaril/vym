@@ -1636,46 +1636,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 model->cycleTaskStatus();
             return;
         }
-        else {
-            // Take care of xLink: Open context menu with targets
-            // if clicked near to begin of xlink
-            /* FIXME-0 context menu xlink
-            if (ti_found->xlinkCount() > 0 &&
-                ti_found->getType() != TreeItem::MapCenter &&
-                lmo_found->getBBox().width() > 30) {
-                if ((lmo_found->getOrientation() !=
-                         BranchContainer::RightOfParent && // FIXME-x already changed to Container here
-                     p.x() < lmo_found->getBBox().left() + 10) ||
-                    (lmo_found->getOrientation() !=
-                         BranchContainer::LeftOfParent && // FIXME-x already changed to Container here
-                     p.x() > lmo_found->getBBox().right() - 10)) {
-                    // FIXME-4 similar code in mainwindow::updateActions
-                    QMenu menu;
-                    QList<QAction *> alist;
-                    QList<BranchItem *> blist;
-                    for (int i = 0; i < ti_found->xlinkCount(); i++) {
-                        XLinkItem *xli = ti_found->getXLinkItemNum(i);
-                        BranchItem *bit = xli->getPartnerBranch();
-                        if (bit)
-                            alist.append(
-                                new QAction(ti_found->getXLinkItemNum(i)
-                                                ->getPartnerBranch()
-                                                ->getHeadingPlain(),
-                                            &menu));
-                    }
-                    menu.addActions(alist);
-                    QAction *ra = menu.exec(e->globalPos());
-                    if (ra)
-                        model->select(blist.at(alist.indexOf(ra)));
-                    while (!alist.isEmpty()) {
-                        QAction *a = alist.takeFirst();
-                        delete a;
-                    }
-                    return;
-                }
-            }
-            */
-        }
     }   // system flags or modModes
     else { // No selbc found, check XLinks
         if (ti_found) {
