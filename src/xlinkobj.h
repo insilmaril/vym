@@ -32,7 +32,6 @@ class XLinkObj : public MapObj {
     QPointF getBeginPos();
     QPointF getEndPos();
     virtual void setEnd(QPointF);
-    void setSelection(int cp);
     void setSelection(SelectionType s);
     void updateXLink();
     void setVisibility(bool);
@@ -68,8 +67,8 @@ class XLinkObj : public MapObj {
 
     // Controlpoints for Bezier path
     QPointF c0, c1;
-    QGraphicsEllipseItem *ctrl_p0;
-    QGraphicsEllipseItem *ctrl_p1;
+    QGraphicsEllipseItem *c0_ellipse;
+    QGraphicsEllipseItem *c1_ellipse;
 
     SelectionType curSelection;
 

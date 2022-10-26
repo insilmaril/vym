@@ -31,11 +31,11 @@ Link::~Link()
 
 void Link::init()
 {
-    xlo = NULL;
-    beginBranch = NULL;
-    endBranch = NULL;
-    beginLinkItem = NULL;
-    endLinkItem = NULL;
+    xlo = nullptr;
+    beginBranch = nullptr;
+    endBranch = nullptr;
+    beginLinkItem = nullptr;
+    endLinkItem = nullptr;
     xLinkState = Link::undefinedXLink;
 
     type = Bezier;
@@ -56,11 +56,8 @@ BranchItem *Link::getBeginBranch() { return beginBranch; }
 
 void Link::setEndBranch(BranchItem *bi)
 {
-    if (bi) {
+    if (bi)
         endBranch = bi;
-        if (xlo)
-            xlo->initC1();
-    }
 }
 
 BranchItem *Link::getEndBranch() { return endBranch; }

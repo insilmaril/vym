@@ -35,8 +35,8 @@ XLinkObj::~XLinkObj()
     //qDebug() << "Destr XLinkObj";
     delete (poly);
     delete (path);
-    delete (ctrl_p0);
-    delete (ctrl_p1);
+    delete (c0_ellipse);
+    delete (c1_ellipse);
     delete (endArrow);
     delete (beginArrow);
 }
@@ -74,9 +74,9 @@ void XLinkObj::init()
     initC0();
     initC1();
 
-    ctrl_p0 = scene->addEllipse(0, 0, clickBorder * 2,
+    c0_ellipse = scene->addEllipse(0, 0, clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
-    ctrl_p1 = scene->addEllipse(0, 0, clickBorder * 2,
+    c1_ellipse = scene->addEllipse(0, 0, clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
 
     beginOrient = endOrient = BranchContainer::UndefinedOrientation;
@@ -140,16 +140,6 @@ void XLinkObj::setSelection(SelectionType s)
     setVisibility();
 }
 
-void XLinkObj::setSelection(int cp) // FIXME-0 needed?
-{
-    if (cp == 0)
-        setSelection(C0);
-    else if (cp == 1)
-        setSelection(C1);
-    else
-        qWarning() << "XLO::setSelection cp=" << cp;
-}
-
 void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
 {
     QPointF a, b;
@@ -164,7 +154,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
     if (bi)
         endBC = bi->getBranchContainer();
 
-    /* FIXME-000 check orientation
+    /* FIXME-2 check orientation to position xlink ctrl point
     if (beginBC) {
         if (beginOrient != BranchContainer::UndefinedOrientation &&
             beginOrient != beginBC->getOrientation())
@@ -186,7 +176,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
         if (!bc)
             return;
 
-        a = b = bc->scenePos(); // FIXME-0 bc->getChildRefPos();   // FIXME-2
+        a = b = bc->scenePos(); // FIXME-2 get suggestion: bc->getChildRefPos();
 
         if (bc->getOrientation() == BranchContainer::RightOfParent) {
             b.setX(b.x() + 2 * arrowSize);
@@ -245,15 +235,15 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
 
     pen.setStyle(Qt::SolidLine);
 
-    ctrl_p0->setPos(beginPos + c0);
-    ctrl_p0->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
-    ctrl_p0->setPen(pen);
-    ctrl_p0->setBrush(pen.color());
+    c0_ellipse->setPos(beginPos + c0);
+    c0_ellipse->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
+    c0_ellipse->setPen(pen);
+    c0_ellipse->setBrush(pen.color());
 
-    ctrl_p1->setPos(endPos + c1);
-    ctrl_p1->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
-    ctrl_p1->setPen(pen);
-    ctrl_p1->setBrush(pen.color());
+    c1_ellipse->setPos(endPos + c1);
+    c1_ellipse->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
+    c1_ellipse->setPen(pen);
+    c1_ellipse->setBrush(pen.color());
 
     BranchItem *bi_begin = link->getBeginBranch();
     BranchItem *bi_end = link->getEndBranch();
@@ -271,14 +261,14 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
 void XLinkObj::setVisibility(bool b)
 {
     if (stateVis == FullShowControls) {
-        ctrl_p0->show();
-        ctrl_p1->show();
+        c0_ellipse->show();
+        c1_ellipse->show();
         beginArrow->setUseFixedLength(false);
         endArrow->setUseFixedLength(false);
     }
     else {
-        ctrl_p0->hide();
-        ctrl_p1->hide();
+        c0_ellipse->hide();
+        c1_ellipse->hide();
         beginArrow->setUseFixedLength(true);
         beginArrow->setFixedLength(0);
         endArrow->setUseFixedLength(true);
@@ -401,6 +391,7 @@ void XLinkObj::setC1(const QPointF &p)
 
 QPointF XLinkObj::getC1() { return c1; }
 
+// FIXME-3 XLO::setSelection only needed in VM and XLI to "update" selection  
 void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
 {
     switch (curSelection) {
@@ -422,15 +413,15 @@ XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
     qreal d_max = 10;
     switch (stateVis) {
         case FullShowControls:
-            v = ctrl_p0->pos() - p;
-            d = Geometry::distance(ctrl_p0->pos(), p);
+            v = c0_ellipse->pos() - p;
+            d = Geometry::distance(c0_ellipse->pos(), p);
             if (d < d_max) {
                 setSelection(C0);
                 return C0;
             }
 
-            v = ctrl_p1->pos() - p;
-            d = Geometry::distance(ctrl_p1->pos(), p);
+            v = c1_ellipse->pos() - p;
+            d = Geometry::distance(c1_ellipse->pos(), p);
             if (d < d_max) {
                 setSelection(C1);
                 return C1;
