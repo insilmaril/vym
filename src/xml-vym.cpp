@@ -15,6 +15,7 @@
 #include "task.h"
 #include "taskmodel.h"
 #include "xlinkitem.h"
+#include "xlinkobj.h"
 
 extern Main *mainWindow;
 extern Settings settings;
@@ -929,10 +930,11 @@ bool parseVYMHandler::readLinkNewAttr(const QXmlAttributes &a)
                 if (!a.value("styleEnd").isEmpty())
                     li->setStyleEnd(a.value("styleEnd"));
 
-                /* FIXME-2 Xlinks not ported to containers yet
-                 * ALso: better set control points via VymModel for saveState
+                /* FIXME-3 better set control points via VymModel for saveState
+                 * (no longer include XLO then...)
+                */
 
-                XLinkObj *xlo = (XLinkObj *)(li->getMO());
+                XLinkObj *xlo = li->getXLinkObj();
                 if (xlo && !a.value("c0").isEmpty()) {
                     QPointF p = point(a.value("c0"), okx);
                     if (okx)
@@ -943,7 +945,6 @@ bool parseVYMHandler::readLinkNewAttr(const QXmlAttributes &a)
                     if (okx)
                         xlo->setC1(p);
                 }
-                */
             }
         }
     }
