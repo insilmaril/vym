@@ -272,7 +272,8 @@ void MapEditor::scrollTo(const QModelIndex &index)  // FIXME-2 also consider ima
             scroll = true;
         }
 
-        // FIXME-2 Also check for images, not just branches
+        // FIXME-2 ME::scrollTo Also check for images, not just branches
+        // FIXME-2 Moving xlink ctrl point to upper edge of view can cause infinite scrolling
 
         if (scroll) {
             setScrollBarPosTarget(r);
