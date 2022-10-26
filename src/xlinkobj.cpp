@@ -230,8 +230,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
     poly->setBrush(pen.color());
 
     beginArrow->setPen(pen);
-    //endArrow->setPen(pen);
-    endArrow->setPen(QPen(Qt::red));
+    endArrow->setPen(pen);
 
     pen.setStyle(Qt::SolidLine);
 
