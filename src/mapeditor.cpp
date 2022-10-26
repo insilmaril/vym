@@ -1926,7 +1926,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         TreeItem *seli;
         if (movingItems.count() > 0)
-            seli = movingItems.first(); // FIXME-0 better use selectedBranch?
+            seli = movingItems.first();
         else
             seli = nullptr;
 
@@ -1950,9 +1950,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 return;
             }
         }
-        qDebug() << "ME::relMouse del tmpLink a)";
         delete (tmpLink);
-        qDebug() << "ME::relMouse del tmpLink b)";
         tmpLink = nullptr;
         return;
     }
@@ -2104,9 +2102,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     QGraphicsView::mouseReleaseEvent(e);
 }
 
-void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)   // FIXME-2 not ported yet to Containers
+void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 {
-    /*
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
         e->ignore();
@@ -2117,27 +2114,23 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)   // FIXME-2 not ported ye
     if (e->button() == Qt::LeftButton) {
         QPointF p = mapToScene(e->pos());
         TreeItem *ti = findMapItem(p);
-        LinkableMapObj *lmo;
         if (ti) {
             if (state() == EditingHeading)
                 editHeadingFinished();
             model->select(ti);
             BranchItem *selbi = model->getSelectedBranch();
             if (selbi) {
-                lmo = ((MapItem *)ti)->getLMO();
-                if (lmo) {
-                    QUuid uid = ((BranchObj *)lmo)->findSystemFlagUidByPos(p);
+                BranchContainer *bc = selbi->getBranchContainer();
+                QUuid uid = bc->findFlagByPos(p);
 
-                    // Don't edit heading when double clicking system flag:
-                    if (!uid.isNull())
-                        return;
-                }
+                // Don't edit heading when double clicking flag:
+                if (!uid.isNull())
+                    return;
             }
             e->accept();
             editHeading();
         }
     }
-    */
 }
 
 void MapEditor::wheelEvent(QWheelEvent *e)
