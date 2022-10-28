@@ -46,6 +46,9 @@ class LinkContainer : public Container {
     void setLinkStyle(Style);
     Style getLinkStyle();
 
+    void setLinkColorHint(ColorHint);
+    ColorHint getLinkColorHint();
+
     void setLinkColor(QColor);
     QColor getLinkColor();
     virtual void setVisibility(bool);
@@ -70,6 +73,7 @@ class LinkContainer : public Container {
     int thickness_start; // for StylePoly*
     Style style;         // Current style
     QColor linkcolor;    // Link color
+    ColorHint colorHint;
     QPen pen;
     QGraphicsLineItem *l;               // line style
     QGraphicsPolygonItem *p;            // poly styles

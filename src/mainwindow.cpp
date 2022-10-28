@@ -6359,16 +6359,16 @@ void Main::updateActions()
 
         // Link style in context menu
         switch (m->getMapLinkStyle()) {
-        case LinkableMapObj::Line:
+        case LinkContainer::Line:
             actionFormatLinkStyleLine->setChecked(true);
             break;
-        case LinkableMapObj::Parabel:
+        case LinkContainer::Parabel:
             actionFormatLinkStyleParabel->setChecked(true);
             break;
-        case LinkableMapObj::PolyLine:
+        case LinkContainer::PolyLine:
             actionFormatLinkStylePolyLine->setChecked(true);
             break;
-        case LinkableMapObj::PolyParabel:
+        case LinkContainer::PolyParabel:
             actionFormatLinkStylePolyParabel->setChecked(true);
             break;
         default:
@@ -6416,7 +6416,7 @@ void Main::updateActions()
         actionCollapseOneLevel->setEnabled(true);
         actionCollapseUnselected->setEnabled(true);
 
-        if (m->getMapLinkColorHint() == LinkableMapObj::HeadingColor)
+        if (m->getMapLinkColorHint() == LinkContainer::HeadingColor)
             actionFormatLinkColorHint->setChecked(true);
         else
             actionFormatLinkColorHint->setChecked(false);
@@ -6534,8 +6534,7 @@ void Main::updateActions()
                 if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
                     actionMoveDownDiagonally->setEnabled(false);
 
-                if (true)
-                // if (selbi && selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter) // FIXME-2 use container instead of LMO to get orientation
+                if (selbi && selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent) // FIXME-2 check if ok 
                 {
                     actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
                     actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-left.png"));

@@ -36,6 +36,7 @@
 #include "file.h"
 #include "findresultmodel.h"
 #include "jira-agent.h"
+#include "link-container.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -182,7 +183,7 @@ void VymModel::init()
     // View - map
     defaultFont.setPointSizeF(16);
     defLinkColor = QColor(0, 0, 255);
-    //FIXME-2 linkcolorhint = LMO::DefaultColor;
+    //FIXME-0 linkColorHint = LMO::DefaultColor;
     //FIXME-2 linkstyle = LMO::PolyParabel;
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
@@ -293,8 +294,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint = "";
-    // FIXME-2 if (linkcolorhint == LMO::HeadingColor)
-    //    colhint = xml.attribut("linkColorHint", "HeadingColor");
+    if (linkColorHint == LinkContainer::HeadingColor)
+        colhint = xml.attribut("linkColorHint", "HeadingColor");
 
     QString mapAttr = xml.attribut("version", vymVersion);
     if (!saveSel)
@@ -5126,7 +5127,7 @@ bool VymModel::setMapLinkStyle(const QString &s)   // FIXME-2 not ported yet to 
     return true;
 }
 
-LinkableMapObj::Style VymModel::getMapLinkStyle() { return linkstyle; }
+LinkContainer::Style VymModel::getMapLinkStyle() { return linkstyle; }
 
 uint VymModel::getModelID() { return modelID; }
 
@@ -5143,13 +5144,13 @@ void VymModel::setMapDefLinkColor(QColor col)  // FIXME-2 not ported yet to cont
         QString("Set map link color to %1").arg(col.name()));
 
     defLinkColor = col;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
-    BranchObj *bo;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    BranchContainer *bc;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO()); // FIXME
-        bo->setLinkColor();
+        bc = cur->getBranchContainer();
+        bc->getLinkContainer()->setLinkColor(); // FIXME-2   only def color here...
 
         for (int i = 0; i < cur->imageCount(); ++i)
             cur->getImageNum(i)->getLMO()->setLinkColor();
@@ -5160,7 +5161,7 @@ void VymModel::setMapDefLinkColor(QColor col)  // FIXME-2 not ported yet to cont
     */
 }
 
-void VymModel::setMapLinkColorHintInt()  // FIXME-2 not ported yet to containers
+void VymModel::setMapLinkColorHintInt()  // FIXME-0 not ported yet to containers
 {
     /*
     // called from setMapLinkColorHint(lch) or at end of parse
@@ -5180,33 +5181,31 @@ void VymModel::setMapLinkColorHintInt()  // FIXME-2 not ported yet to containers
     */
 }
 
-void VymModel::setMapLinkColorHint(LinkableMapObj::ColorHint lch)
+void VymModel::setMapLinkColorHint(LinkContainer::ColorHint lch)
 {
-    linkcolorhint = lch;
+    linkColorHint = lch;
     setMapLinkColorHintInt();
 }
 
-void VymModel::toggleMapLinkColorHint() // FIXME-2 not ported yet to containers
+void VymModel::toggleMapLinkColorHint() // FIXME-0 not ported yet to containers
 {
-    /*
-    if (linkcolorhint == LinkableMapObj::HeadingColor)
-        linkcolorhint = LinkableMapObj::DefaultColor;
+    if (linkColorHint == LinkContainer::HeadingColor)
+        linkColorHint = LinkContainer::DefaultColor;
     else
-        linkcolorhint = LinkableMapObj::HeadingColor;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
-    BranchObj *bo;
+        linkColorHint = LinkContainer::HeadingColor;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
-        bo->setLinkColor();
+        LinkContainer *lc = cur->getBranchContainer()->getLinkContainer();
+        lc->setLinkColorHint(linkColorHint);
 
+        /* FIXME-2 image link color not supported yet
         for (int i = 0; i < cur->imageCount(); ++i)
             cur->getImageNum(i)->getLMO()->setLinkColor();
-
+        */
         nextBranch(cur, prev);
     }
-    */
 }
 
 void VymModel::
@@ -5274,9 +5273,9 @@ QFont VymModel::getMapDefaultFont() { return defaultFont; }
 
 void VymModel::setMapDefaultFont(const QFont &f) { defaultFont = f; }
 
-LinkableMapObj::ColorHint VymModel::getMapLinkColorHint() // FIXME-4 move to ME
+LinkContainer::ColorHint VymModel::getMapLinkColorHint() // FIXME-0 still used?
 {
-    return linkcolorhint;
+    return linkColorHint;
 }
 
 QColor VymModel::getMapDefLinkColor() // FIXME-4 move to ME

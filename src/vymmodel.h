@@ -13,7 +13,7 @@
 #include "branchitem.h"
 #include "file.h"
 #include "imageitem.h"
-#include "linkablemapobj.h"
+#include "link-container.h"
 #include "mapeditor.h"
 #include "treeitem.h"
 #include "treemodel.h"
@@ -675,17 +675,17 @@ class VymModel : public TreeModel {
     QPen defXLinkPen;           // default pen for xlinks
     QString defXLinkStyleBegin; // default style begin
     QString defXLinkStyleEnd;
-    ;                                        // default style end
-    LinkableMapObj::ColorHint linkcolorhint; // use heading color or own color
-    LinkableMapObj::Style linkstyle;         // default style for links
+                                             // default style end
+    LinkContainer::ColorHint linkColorHint; // use heading color or own color
+    LinkContainer::Style linkstyle;         // default style for links
     QFont defaultFont;
 
   public:
     bool setMapLinkStyle(const QString &);   // Set style of link
-    LinkableMapObj::Style getMapLinkStyle(); // requested in LMO
+    LinkContainer::Style getMapLinkStyle();
     void setMapDefLinkColor(QColor);         // default color of links
     void setMapLinkColorHintInt();           // color of links
-    void setMapLinkColorHint(LinkableMapObj::ColorHint); // color of links
+    void setMapLinkColorHint(LinkContainer::ColorHint); // color of links
     void toggleMapLinkColorHint(); // after changing linkStyles
     void selectMapBackgroundImage();
     void setMapBackgroundImage(const QString &);
@@ -696,7 +696,7 @@ class VymModel : public TreeModel {
     QFont getMapDefaultFont();
     void setMapDefaultFont(const QFont &);
 
-    LinkableMapObj::ColorHint getMapLinkColorHint();
+    LinkContainer::ColorHint getMapLinkColorHint();
     QColor getMapDefLinkColor();
     void setMapDefXLinkPen(const QPen &p);
     QPen getMapDefXLinkPen();

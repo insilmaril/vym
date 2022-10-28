@@ -26,7 +26,7 @@ void LinkContainer::init()
 
     l = nullptr;
     p = nullptr;
-    linkcolor = Qt::red;
+    linkcolor = Qt::black;
     thickness_start = 8;
     style = NoLink;
     arcsegs = 13;
@@ -143,10 +143,23 @@ void LinkContainer::setLinkStyle(Style newstyle)
 
 LinkContainer::Style LinkContainer::getLinkStyle() { return style; }
 
+void LinkContainer::setLinkColorHint(ColorHint hint)
+{
+    colorHint = hint;
+}
+
+LinkContainer::ColorHint LinkContainer::getLinkColorHint()
+{
+    return colorHint;
+}
+
 void LinkContainer::setLinkColor(QColor col)
 {
+    if (linkcolor == col) return;
+
     linkcolor = col;
     pen.setColor(col);
+
     if (bottomLine)
         bottomLine->setPen(pen);
     switch (style) {
@@ -300,8 +313,7 @@ void LinkContainer::updateLinkGeometry()
         case Line:
             l->setLine(p1x, p1y, p2x, p2y);
             l->setZValue(z);
-            l->setPos(0,0);
-            setPos(0,0);
+            setPos(0,0);    // FIXME-2 needed!  Probably due to reposition()
             break;
         case Parabel:
             parabel(pa0, p1x, p1y, p2x, p2y);

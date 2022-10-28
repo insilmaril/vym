@@ -2004,7 +2004,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
             // Destination available and movingObject
 
-            model->reposition();
+            model->reposition();    // FIXME-2 required in general? or already implicit in VM::relink?
 
             model->saveStateEndBlock();
         } else {

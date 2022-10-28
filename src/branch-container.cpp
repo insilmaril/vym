@@ -590,10 +590,11 @@ void BranchContainer::updateUpLink()
     if (branchItem->depth() == 0) return;
 
     if (temporaryLinked) {
-    /* FIXME-1 cont here to update link for tempLinked branches
+    /* FIXME-2 BC::updateUpLink cont here to update link for tempLinked branches
         BranchItem *pbi = branchItem->parentBranch();
         pbi
     */
+        qDebug() << "BC::updateUpLink  tempLinked"; // FIXME-1 never called. temporaryLinked not needed?
     } else {
         // Get "real" parentBranchContainer, not tmpParentContainer (!)
         BranchContainer *pbc = branchItem->parentBranch()->getBranchContainer();
@@ -618,10 +619,16 @@ void BranchContainer::updateUpLink()
                 downLink = ornamentsContainer->rect().center();
                 break;
         }
-        linkContainer->setUpLinkPosParent(linkContainer->sceneTransform().inverted().map(upLinkParent_sp));
+        linkContainer->setUpLinkPosParent(ornamentsContainer->sceneTransform().inverted().map(upLinkParent_sp));
         linkContainer->setUpLinkPosSelf(upLinkSelf);
         linkContainer->setDownLinkPos(downLink);
     }
+
+    // Color of links
+    if (linkContainer->getLinkColorHint() == LinkContainer::DefaultColor)
+        linkContainer->setLinkColor(Qt::blue);  // FIXME-0 default for testing
+    else
+        linkContainer->setLinkColor(headingContainer->getColor());
 
     linkContainer->updateLinkGeometry();
 }
@@ -909,7 +916,7 @@ void BranchContainer::reposition()
     if (branchesContainer && branchCount() > 0) {
         foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*) g_item;
-            bc->updateUpLink(); // FIXME-0 not working properly yet, dangling positions
+            bc->updateUpLink();
         }
     }
 

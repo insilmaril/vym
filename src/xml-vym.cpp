@@ -556,9 +556,9 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
     }
     if (!a.value("linkColorHint").isEmpty()) {
         if (a.value("linkColorHint") == "HeadingColor")
-            model->setMapLinkColorHint(LinkableMapObj::HeadingColor);
+            model->setMapLinkColorHint(LinkContainer::HeadingColor);
         else
-            model->setMapLinkColorHint(LinkableMapObj::DefaultColor);
+            model->setMapLinkColorHint(LinkContainer::DefaultColor);
     }
     if (!a.value("linkStyle").isEmpty())
         model->setMapLinkStyle(a.value("linkStyle"));
