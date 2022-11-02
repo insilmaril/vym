@@ -762,8 +762,48 @@ QRectF BranchContainer::getBBoxURLFlag()
     return QRectF();
 }
 
+void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
+{
+    //qDebug() << "BC::udateStyles of " << getName() << " d=" << branchItem->depth();
+
+    // Set container layouts
+    if (branchesContainerAutoLayout)
+        setBranchesContainerLayout(getDefaultBranchesContainerLayout() );
+
+    if (imagesContainerAutoLayout)
+        setImagesContainerLayout(getDefaultImagesContainerLayout() );
+
+    if (type == TmpParent)  // FIXME-2 Should not be called for tmpParent anyway! (Would have already crashed due to BI->depth above)
+        return;
+
+    uint depth = branchItem->depth();
+
+    // Example rules for testing
+    /*
+    if (depth == 0) {
+        qDebug() << " d=0";
+        headingContainer->setHeadingColor(Qt::blue);
+    } else if (depth == 1) {
+        headingContainer->setHeadingColor(Qt::green);
+        qDebug() << " d=1";
+    } else {
+        qDebug() << " d>1";
+        headingContainer->setHeadingColor(Qt::black);
+    }
+    */
+
+    /* Conditions
+     - styleUpdateMode: Relink or new branch?
+     - depth "equal" or "greater than"
+     - frame set? (different link points then)
+     - map design
+    */
+
+}
+
 void BranchContainer::updateVisuals()
 {
+    // Update heading
     if (branchItem)
         headingContainer->setHeading(branchItem->getHeadingText());
 
@@ -853,15 +893,9 @@ void BranchContainer::reposition()
         // then my orientation is already set in MapEditor, so ignore here
     }
 
-    linkContainer->setLinkStyle(LinkContainer::NoLink);
+    // linkContainer->setLinkStyle(LinkContainer::NoLink); // FIXME-0 remove here?
 
-    if (branchesContainerAutoLayout)
-        setBranchesContainerLayout(getDefaultBranchesContainerLayout() );
-
-    if (imagesContainerAutoLayout)
-        setImagesContainerLayout(getDefaultImagesContainerLayout() );
-
-    // Settings depending on depth
+    // Settings depending on depth  // FIXME-1 should go to BC::updateStyles
     if (depth == 0)
     {
         // MapCenter or TmpParent?
@@ -933,15 +967,14 @@ void BranchContainer::reposition()
 
     // Frame depends on dimensions calculated so far
     if (frameContainer) {
-        if (frameContainer->getIncludeChildren())
+        if (frameContainer->getIncludeChildren())   // FIXME-0 not working yet
             frameContainer->setRect(frameContainer->parentContainer()->rect());
         else
-            frameContainer->setRect(ornamentsContainer->rect());    // FIXME-1 check...
+            frameContainer->setRect(ornamentsContainer->rect());    // FIXME-0 check...
     }
 
     // FIXME-3 for testing we do some coloring and additional drawing
     /*
-    */
     if (type != TmpParent) {
         // BranchContainer
         setPen(QPen(Qt::green));
@@ -971,4 +1004,5 @@ void BranchContainer::reposition()
             if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
         }
     }   // Visualizations for testing
+    */
 }

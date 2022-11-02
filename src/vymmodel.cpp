@@ -3282,11 +3282,11 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     newbi->createBranchContainer(getScene());
 
     if (parbi && parbi != rootItem) {
-        // Add newbi also into Container of parent
+        // Add newbi also into Container of parent  // FIXME-0 not automatically in BI::updateContainerStackingORder later?
         parbi->addToBranchesContainer(newbi->getBranchContainer() );
 
-        // Set color of heading to that of parent
-        newbi->setHeadingColor(parbi->getHeadingColor());
+        // Set color of heading to that of parent   // FIXME-0 should be done in style
+        // newbi->setHeadingColor(parbi->getHeadingColor());
     }
 
     // Update parent item and stacking order of container to match order in model
@@ -3345,8 +3345,8 @@ BranchItem *VymModel::addNewBranchBefore()
             // Move selection to new branch
             relinkBranch(selbi, newbi, 0, true);
 
-            // Use color of child instead of parent
-            newbi->setHeadingColor(selbi->getHeadingColor());
+            // Use color of child instead of parent // FIXME-2 should be done via style
+            //newbi->setHeadingColor(selbi->getHeadingColor());
             emitDataChanged(newbi);
         }
     }
@@ -3369,9 +3369,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         if (updateSelection)
             unselectAll();
-
-        // Do we need to update frame type? 
-        bool keepFrame = true;          // FIXME-2 should go to map layout later
 
         // Save old selection for savestate
         QString preSelStr = getSelectString(branch);
@@ -3405,12 +3402,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         beginInsertRows(index(dst), n + num_dst, n + num_dst);
         dst->insertBranch(num_dst, branch);
         endInsertRows();
-
-        // Correct type if necessesary
-        if (branch->getType() == TreeItem::MapCenter && branch->depth() > 0) {
-            branch->setType(TreeItem::Branch);
-            keepFrame = false;
-        }
 
         // RelinkBranch: Save current own position for undo // FIXME-1
         // and save current children positions for undo 
@@ -3470,7 +3461,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStyles(keepFrame);    // FIXME-0 not implemented yet. Where should e.g. links etc be adapted to relinked branches? Example: detach. Idea: Update styles for subtree (Which is changed when relinking)
+        branch->updateStyles(BranchContainer::RelinkBranch);
 
         emitDataChanged(branch);
 
@@ -3836,8 +3827,8 @@ void VymModel::unscrollChildren()
         saveStateChangingPart(
             selbi, selbi, QString("unscrollChildren ()"),
             QString("unscroll all children of %1").arg(getObjectName(selbi)));
-        BranchItem *prev = NULL;
-        BranchItem *cur = NULL;
+        BranchItem *prev = nullptr;
+        BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, selbi);
         while (cur) {
             if (cur->isScrolled()) {

@@ -85,12 +85,10 @@ class BranchItem : public MapItem {
         QList <TreeItem*> excludedItems); //! search map for branches or images. Ignore
                               //! excludeItems, where search is started or which are selected
 
-    virtual void
-        updateStyles(const bool &keepFrame =
-                     false); //! update related fonts, parObjects, links, ...
-    virtual void updateVisuals();
+    void updateStyles(BranchContainer::StyleUpdateMode styleUpdateMode);
+    void updateVisuals();
 
-    virtual BranchContainer *createBranchContainer(
+    BranchContainer *createBranchContainer(
         QGraphicsScene *scene); //! Create classic object in GraphicsView
 
     BranchContainer* getBranchContainer();

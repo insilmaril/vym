@@ -465,19 +465,17 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     return NULL;
 }
 
-void BranchItem::updateStyles(const bool &keepFrame)    // FIXME-0 not really required. Create BC::updateStyles or similar...
+void BranchItem::updateStyles(BranchContainer::StyleUpdateMode styleUpdateMode)
 {
-    // Update styles when relinking branches  // FIXME-1 review, maybe done with layout in reposition automatically?
-    /*
-    if (mo) {
-        BranchObj *bo = getBranchObj();
-        if (parentItem != rootItem)
-            bo->setParObj((LinkableMapObj *)(((MapItem *)parentItem)->getMO()));
-        else
-            bo->setParObj(NULL);
-        bo->setDefAttr(BranchObj::MovedBranch, keepFrame);
+    qDebug() << "BI::updateStyles of " << getHeadingPlain();
+
+    // Update my own container
+    branchContainer->updateStyles(styleUpdateMode);
+
+    // Recurively update subtree
+    for (int i = 0; i < branchCounter; i++) {
+        getBranchNum(i)->updateStyles(styleUpdateMode);
     }
-    */
 }
 
 void BranchItem::updateVisuals()
@@ -496,11 +494,14 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
          !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
         newbo->setVisibility(false);
     */
+
+    // For mainbranches get a position hint
     if (depth() == 1)
         branchContainer->setPos(parentBranch()->getBranchContainer()->getPositionHintNewChild(branchContainer));
 
     // FIXME-2 for new branch set default font, color, link, frame, children styles
     // newbo->setDefAttr(BranchObj::NewBranch);
+    branchContainer->updateStyles(BranchContainer::NewBranch);
 
     if (!getHeading().isEmpty()) {  // FIXME-2 updateVisuals new container and color
         /*

@@ -21,6 +21,12 @@ class BranchContainer : public Container {
         RightOfParent
     };
 
+    /*! Control which styles will be updated */
+    enum StyleUpdateMode {
+        UpdateAll,
+        NewBranch,
+        RelinkBranch};
+
     BranchContainer (
             QGraphicsScene *scene,
             QGraphicsItem *parent = nullptr,
@@ -128,6 +134,10 @@ class BranchContainer : public Container {
     bool isInClickBox(const QPointF &p);
     QRectF getBBoxURLFlag();
 
+    /*! Update styles (frame, links, fonts, colors, ...) */
+    void updateStyles(StyleUpdateMode styleUpdateMode);
+
+    /*! Update flags and heading */
     void updateVisuals();
 
     Container::Layout getDefaultBranchesContainerLayout();
