@@ -317,7 +317,7 @@ void XLinkObj::setVisibility()
     if (beginBC && endBC) {
         if (beginBC->isVisible() &&
             endBC->isVisible()) { // Both ends are visible
-            visBranch = NULL;
+            visBranch = nullptr;
             if (curSelection != Empty)
                 stateVis = FullShowControls;
             else
@@ -327,7 +327,7 @@ void XLinkObj::setVisibility()
         else {
             if (!beginBC->isVisible() &&
                 !endBC->isVisible()) { // None of the ends is visible
-                visBranch = NULL;
+                visBranch = nullptr;
                 stateVis = Hidden;
                 setVisibility(false);
             }

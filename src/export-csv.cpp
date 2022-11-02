@@ -33,8 +33,8 @@ void ExportCSV::doExport()
     QString s;
     QString curIndent("");
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
         if (!cur->hasHiddenExportParent()) {

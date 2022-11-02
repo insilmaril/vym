@@ -12,7 +12,7 @@ extern Main *mainWindow;
 FlagRow::FlagRow()
 {
     //qDebug()<< "Const FlagRow ()";
-    masterRow = NULL;
+    masterRow = nullptr;
 }
 
 FlagRow::~FlagRow()

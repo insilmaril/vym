@@ -6,11 +6,11 @@
 #include <QDebug>
 #include <QItemSelectionModel>
 
-SlideModel::SlideModel(VymModel *vm) : QAbstractItemModel(NULL)
+SlideModel::SlideModel(VymModel *vm) : QAbstractItemModel(nullptr)
 {
     QVector<QVariant> rootData;
     rootData << "Slide";
-    rootItem = new SlideItem(rootData, NULL, this);
+    rootItem = new SlideItem(rootData, nullptr, this);
     vymModel = vm;
 }
 
@@ -188,7 +188,7 @@ bool SlideModel::setHeaderData(int section, Qt::Orientation orientation,
 
 SlideItem *SlideModel::addSlide(SlideItem *dst, int n)
 {
-    SlideItem *si = NULL;
+    SlideItem *si = nullptr;
     if (!dst)
         dst = rootItem;
 
@@ -261,7 +261,7 @@ SlideItem *SlideModel::getItem(const QModelIndex &index) const
 SlideItem *SlideModel::getSlide(int n)
 {
     if (n >= count() || n < 0)
-        return NULL;
+        return nullptr;
     return getItem(index(n, 0, QModelIndex()));
 }
 
@@ -270,7 +270,7 @@ SlideItem *SlideModel::findSlideID(uint n)
     for (int i = 0; i < rootItem->childCount(); i++)
         if (rootItem->child(i)->getID() == n)
             return rootItem->child(i);
-    return NULL;
+    return nullptr;
 }
 
 QString SlideModel::saveToDir()
@@ -310,5 +310,5 @@ SlideItem *SlideModel::getSelectedItem()
     QModelIndex ix = getSelectedIndex();
     if (ix.isValid())
         return getItem(ix);
-    return NULL;
+    return nullptr;
 }

@@ -217,7 +217,7 @@ MapEditor::~MapEditor()
 
     if (winter) {
         delete winter;
-        winter = NULL;
+        winter = nullptr;
     }
 
     stopAllAnimation();

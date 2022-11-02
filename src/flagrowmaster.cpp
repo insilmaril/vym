@@ -12,8 +12,8 @@ extern Main *mainWindow;
 FlagRowMaster::FlagRowMaster()
 {
     // qDebug()<< "Const FlagRowMaster ()";
-    toolbar = NULL;
-    configureAction = NULL;
+    toolbar = nullptr;
+    configureAction = nullptr;
 }
 
 FlagRowMaster::~FlagRowMaster()
@@ -65,7 +65,7 @@ Flag *FlagRowMaster::findFlagByUid(const QUuid &uid)
             return flags.at(i);
         i++;
     }
-    return NULL;
+    return nullptr;
 }
 
 Flag *FlagRowMaster::findFlagByName(const QString &name)
@@ -77,7 +77,7 @@ Flag *FlagRowMaster::findFlagByName(const QString &name)
         i++;
     }
     qDebug() << "FR::findFlagByName failed for name " << name;
-    return NULL;
+    return nullptr;
 }
 
 void FlagRowMaster::resetUsedCounter()

@@ -68,7 +68,7 @@ Task *TaskModel::getTask(const QModelIndex &ix) const
     if (ix.isValid())
         return tasks.at(ix.row());
     else
-        return NULL;
+        return nullptr;
 }
 
 Task *TaskModel::getTask(const int i) const
@@ -76,7 +76,7 @@ Task *TaskModel::getTask(const int i) const
     if (i >= 0 && i < count())
         return getTask(createIndex(i, 0));
     else
-        return NULL;
+        return nullptr;
 }
 
 int TaskModel::rowCount(const QModelIndex &parent) const
@@ -316,7 +316,7 @@ Task *TaskModel::createTask(BranchItem *bi)
         foreach (Task *t, tasks) {
             if (t->getBranch() == bi) {
                 qWarning() << "TaskModel::createTask Branch exists already!";
-                return NULL;
+                return nullptr;
             }
         }
         Task *task = new Task(this);
@@ -329,7 +329,7 @@ Task *TaskModel::createTask(BranchItem *bi)
         return task;
     }
     qWarning() << "TaskEditor::addItem - item exists";
-    return NULL;
+    return nullptr;
 }
 
 void TaskModel::deleteTask(Task *t)

@@ -9,8 +9,8 @@ extern bool debug;
 
 Attribute::Attribute()
 {
-    table = NULL;
-    definition = NULL;
+    table = nullptr;
+    definition = nullptr;
 }
 
 void Attribute::setKey(const QString &k, const AttributeType &t)
@@ -121,7 +121,7 @@ void Attribute::setTable(AttributeTable *at)
     if (at)
         table = at;
     else
-        qWarning() << "Attribute::setTable  table==NULL";
+        qWarning() << "Attribute::setTable  table==nullptr";
 }
 
 AttributeTable *Attribute::getTable() { return table; }
@@ -198,7 +198,7 @@ AttributeDef *AttributeTable::addKey(const QString &k, const AttributeType &t)
                               "AttributeTable::addKey (%1) already in table\n")
                               .arg(k)
                               .toUtf8();
-            return NULL;
+            return nullptr;
         }
     }
     AttributeDef *ad = new AttributeDef;
@@ -231,7 +231,7 @@ AttributeDef *AttributeTable::getDef(const QString &key)
     qWarning() << QString("AttributeTable::getDef (%1) key not in table\n")
                       .arg(key)
                       .toUtf8();
-    return NULL;
+    return nullptr;
 }
 
 int AttributeTable::countKeys() { return attdefs.count(); }

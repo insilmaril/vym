@@ -75,8 +75,8 @@ void ExportLaTeX::doExport()
 
     // Main loop over all branches
     QString s;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
         if (!cur->hasHiddenExportParent()) {

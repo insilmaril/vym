@@ -132,7 +132,7 @@ void VymWrapper::saveFile(
 QString VymWrapper::version() { return setResult(vymVersion); }
 
 // See also http://doc.qt.io/qt-5/qscriptengine.html#newFunction
-Selection::Selection() { modelWrapper = NULL; }
+Selection::Selection() { modelWrapper = nullptr; }
 
 void Selection::test()
 {

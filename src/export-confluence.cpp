@@ -300,8 +300,8 @@ QString ExportConfluence::createTOC()
     toc += "\n";
     toc += "</td></tr>\n";
     toc += "<tr><td>\n";
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
         if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent()) {

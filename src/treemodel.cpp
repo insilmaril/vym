@@ -128,7 +128,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
 {
     if (deepLevelsFirst) {
         // Walk through map beginning at current with previous==0
-        // Start at root, if current==NULL
+        // Start at root, if current==nullptr
         if (!current) {
             if (start) {
                 current = start;
@@ -146,7 +146,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
         if (current == previous) {
             // Had leaf before, go up again.
             if (start && start == current) {
-                current = NULL;
+                current = nullptr;
                 return;
             }
             current = current->parentBranch();
@@ -182,7 +182,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
             else {
                 // and go further up
                 if (current == rootItem)
-                    current = NULL;
+                    current = nullptr;
                 previous = current;
                 return;
             }
@@ -190,7 +190,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
     }
     else {
         // Walk through map beginning at current with previous==0
-        // Start at root, if current==NULL
+        // Start at root, if current==nullptr
         if (!current) {
             if (start) {
                 current = start;
@@ -221,7 +221,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
         }
         else {
             if (start && previous == start) {
-                current = NULL;
+                current = nullptr;
                 return;
             }
 
@@ -237,7 +237,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
                 previous = current;
                 current = current->parentBranch();
                 if (!current) {
-                    current = NULL;
+                    current = nullptr;
                     return;
                 }
                 else {
@@ -274,7 +274,7 @@ TreeItem *TreeModel::getItem(const QModelIndex &index) const
         if (item)
             return item;
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *TreeModel::getRootItem() { return rootItem; }
@@ -286,5 +286,5 @@ Link *TreeModel::getXLinkNum(const int &n)
     if (n >= 0 && n < xlinks.count())
         return xlinks.at(n);
     else
-        return NULL;
+        return nullptr;
 }

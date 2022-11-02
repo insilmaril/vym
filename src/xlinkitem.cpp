@@ -76,5 +76,5 @@ BranchItem *XLinkItem::getPartnerBranch()
         else
             return link->getBeginBranch();
     }
-    return NULL;
+    return nullptr;
 }

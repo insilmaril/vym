@@ -65,7 +65,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (loadMode == NewMap) {
             // Create mapCenter
             model->clear();
-            lastBranch = NULL;
+            lastBranch = nullptr;
 
             readMapAttr(atts);
         }
@@ -261,7 +261,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         TreeItem *ti = model->getSelectedItem();
         if (!ti) {
             // If a vym part is _loaded_ (not imported),
-            // selection==lmo==NULL
+            // selection==lmo==nullptr
             // Treat it like ImportAdd then...
             loadMode = ImportAdd;
             // we really have no MCO at this time
@@ -431,7 +431,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         lastBranch->setNote(vymtext);
         break;
     case StateMapSlide:
-        lastSlide = NULL;
+        lastSlide = nullptr;
         break;
     case StateNote:
         // version < 1.4.6
@@ -788,7 +788,7 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
             QMessageBox::warning(0, "Warning: ",
                                  "Couldn't load image\n" +
                                      parseHREF(a.value("href")));
-            lastImage = NULL;
+            lastImage = nullptr;
             return true;
         }
     }

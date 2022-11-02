@@ -31,8 +31,8 @@ void ExportMarkdown::doExport()
     QString curIndent;
     QString dashIndent;
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
 
     QString curHeading;
 

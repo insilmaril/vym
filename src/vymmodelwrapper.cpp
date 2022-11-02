@@ -664,7 +664,7 @@ QVariant VymModelWrapper::repeatLastCommand()
 
 void VymModelWrapper::saveImage(const QString &filename)
 {
-    model->saveImage(NULL, filename);
+    model->saveImage(nullptr, filename);
 }
 
 void VymModelWrapper::saveNote(const QString &filename)

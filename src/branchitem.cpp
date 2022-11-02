@@ -462,7 +462,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
         //getBranchObj()->isVisibleObj())
         return this;
 
-    return NULL;
+    return nullptr;
 }
 
 void BranchItem::updateStyles(BranchContainer::StyleUpdateMode styleUpdateMode)

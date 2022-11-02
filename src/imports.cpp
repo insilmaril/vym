@@ -15,7 +15,7 @@ extern QDir vymBaseDir;
 
 ImportBase::ImportBase()
 {
-    model = NULL;
+    model = nullptr;
     init();
 }
 
@@ -63,7 +63,7 @@ bool ImportFirefoxBookmarks::transform()
     progressDialog.setAutoReset(false);
     progressDialog.setAutoClose(false);
     progressDialog.setMinimumWidth(600);
-    progressDialog.setCancelButton(NULL);
+    progressDialog.setCancelButton(nullptr);
     progressDialog.setWindowTitle(QObject::tr("Import Firefox bookmarks","Import dialog"));
     progressDialog.setLabelText(
         QObject::tr("Loading bookmarks:", "Progress dialog while importing bookmarks"));

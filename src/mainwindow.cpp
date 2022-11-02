@@ -60,7 +60,7 @@ using namespace std;
 #include "xlinkitem.h"
 #include "zip-settings-dialog.h"
 
-QPrinter *printer = NULL;
+QPrinter *printer = nullptr;
 
 //#include <modeltest.h>
 
@@ -369,7 +369,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     progressDialog.setMinimumWidth(600);
     // progressDialog.setWindowModality (Qt::WindowModal);   // That forces
     // mainwindo to update and slows down
-    progressDialog.setCancelButton(NULL);
+    progressDialog.setCancelButton(nullptr);
 
     restoreState(settings.value("/mainwindow/state", 0).toByteArray());
 
@@ -2780,7 +2780,7 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
                       const QString &name, const QString &tooltip,
                       const QUuid &uid, const QKeySequence &keyseq)
 {
-    Flag *flag = NULL;
+    Flag *flag = nullptr;
 
     // Create flag in toolbar
     switch (type) {
@@ -3542,19 +3542,19 @@ VymModel *Main::currentModel() const
     if (vv)
         return vv->getModel();
     else
-        return NULL;
+        return nullptr;
 }
 
 VymModel *Main::getModel(uint id) // Used in BugAgent
 {
     if (id <= 0)
-        return NULL;
+        return nullptr;
 
     for (int i = 0; i < tabWidget->count(); i++) {
         if (view(i)->getModel()->getModelID() == id)
             return view(i)->getModel();
     }
-    return NULL;
+    return nullptr;
 }
 
 void Main::gotoModel(VymModel *m)
@@ -3583,7 +3583,7 @@ int Main::modelCount() { return tabWidget->count(); }
 void Main::updateTabName(VymModel *vm)
 {
     if (!vm) {
-        qWarning() << "Main::updateTabName   vm == NULL";
+        qWarning() << "Main::updateTabName   vm == nullptr";
         return;
     }
 
@@ -4006,7 +4006,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
         filter += ";;All (* *.*)";
 
         QString fn = QFileDialog::getSaveFileName(
-            this, tr("Save map as"), lastMapDir.path(), filter, NULL,
+            this, tr("Save map as"), lastMapDir.path(), filter, nullptr,
             QFileDialog::DontConfirmOverwrite);
         if (!fn.isEmpty()) {
             // Check for existing file
@@ -4102,7 +4102,7 @@ void Main::fileSaveAsDefault()
 
         QString fn = QFileDialog::getSaveFileName(
             this, tr("Save map as new default map"), defaultPath,
-            "VYM map (*.vym)", NULL, QFileDialog::DontConfirmOverwrite);
+            "VYM map (*.vym)", nullptr, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
             // Check for existing file
@@ -5008,8 +5008,8 @@ void Main::editMapProperties()
     uint f = 0;
     uint n = 0;
     uint xl = 0;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     m->nextBranch(cur, prev);
     while (cur) {
         if (!cur->getNote().isEmpty())
@@ -6237,7 +6237,7 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
             headingEditor->setVymText(ti->getHeading());
 
             // Select in TaskEditor, if necessary
-            Task *t = NULL;
+            Task *t = nullptr;
             if (ti->hasTypeBranch())
                 t = ((BranchItem *)ti)->getTask();
 
@@ -6737,7 +6737,7 @@ QObject *Main::getCurrentModelWrapper()
     if (m)
         return m->getWrapper();
     else
-        return NULL;
+        return nullptr;
 }
 
 bool Main::gotoWindow(const int &n)

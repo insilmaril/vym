@@ -133,7 +133,7 @@ void VymModel::clear()
 void VymModel::init()
 {
     // No MapEditor yet
-    mapEditor = NULL;
+    mapEditor = nullptr;
 
     // Use default author
     author =
@@ -151,7 +151,7 @@ void VymModel::init()
     buildingUndoBlock = false;
 
     // Selection history
-    selModel = NULL;
+    selModel = nullptr;
     selectionBlocked = false;
     resetSelectionHistory();
 
@@ -774,10 +774,10 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
             // Use defined name for map within zipfile to avoid problems
             // with zip library and umlauts (see #98)
             saveFile =
-                saveToDir(fileDir, "", FlagRowMaster::UsedFlags, QPointF(), NULL);
+                saveToDir(fileDir, "", FlagRowMaster::UsedFlags, QPointF(), nullptr);
         else
             saveFile = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
-                                 QPointF(), NULL);
+                                 QPointF(), nullptr);
         mapChanged = false;
         mapUnsaved = false;
         autosaveTimer->stop();
@@ -834,7 +834,7 @@ void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)
         QStringList fns;
         if (fn.isEmpty())
             fns = QFileDialog::getOpenFileNames(
-                NULL, vymName + " - " + tr("Load image"), lastImageDir.path(),
+                nullptr, vymName + " - " + tr("Load image"), lastImageDir.path(),
                 filter);
         else
             fns.append(fn);
@@ -882,8 +882,8 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
             tr("All", "Filedialog") + " (*.*)");
         if (fn.isEmpty())
             fn = QFileDialog::getSaveFileName(
-                NULL, vymName + " - " + tr("Save image"), lastImageDir.path(),
-                filter, NULL, QFileDialog::DontConfirmOverwrite);
+                nullptr, vymName + " - " + tr("Save image"), lastImageDir.path(),
+                filter, nullptr, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
             lastImageDir.setPath(fn.left(fn.lastIndexOf("/")));
@@ -1698,7 +1698,7 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, NULL);
+    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &undoSel, const QString &uc,
@@ -1768,7 +1768,7 @@ void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-3 make bloc
 void VymModel::saveStateEndBlock()
 {
     buildingUndoBlock = false;
-    
+
     // Drop whole block, if empty
     if (undoBlock.isEmpty() && redoBlock.isEmpty()) return;
 
@@ -1780,7 +1780,7 @@ QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }
 TreeItem *VymModel::findBySelectString(QString s)
 {
     if (s.isEmpty())
-        return NULL;
+        return nullptr;
 
     // Old maps don't have multiple mapcenters and don't save full path
     if (s.left(2) != "mc")
@@ -1804,15 +1804,15 @@ TreeItem *VymModel::findBySelectString(QString s)
         else if (typ == "xl")
             ti = ti->getXLinkItemNum(n);
         if (!ti)
-            return NULL;
+            return nullptr;
     }
     return ti;
 }
 
 TreeItem *VymModel::findID(const uint &id)
 {
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
         if (id == cur->getID())
@@ -1833,13 +1833,13 @@ TreeItem *VymModel::findID(const uint &id)
         }
         nextBranch(cur, prev);
     }
-    return NULL;
+    return nullptr;
 }
 
 TreeItem *VymModel::findUuid(const QUuid &id)
 {
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
         if (id == cur->getUuid())
@@ -1860,7 +1860,7 @@ TreeItem *VymModel::findUuid(const QUuid &id)
         }
         nextBranch(cur, prev);
     }
-    return NULL;
+    return nullptr;
 }
 
 //////////////////////////////////////////////
@@ -1908,8 +1908,8 @@ QString VymModel::getDate()
 int VymModel::branchCount()
 {
     int c = 0;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
         c++;
@@ -2094,8 +2094,8 @@ void VymModel::findDuplicateURLs() // FIXME-3 needs GUI
     // Generate map containing _all_ URLs and branches
     QString u;
     QMultiMap<QString, BranchItem *> map;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
         u = cur->getURL();
@@ -2134,13 +2134,13 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
                                // QTextDocument::FindFlag
     bool hit = false;
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
 
-    FindResultItem *lastParent = NULL;
+    FindResultItem *lastParent = nullptr;
     while (cur) {
-        lastParent = NULL;
+        lastParent = nullptr;
         if (cur->getHeading().getTextASCII().contains(s, cs)) {
             lastParent = rmodel->addItem(cur);
             hit = true;
@@ -2220,8 +2220,8 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
 {
     QStringList urls;
     BranchItem *selbi = getSelectedBranch();
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
         if (!cur->getURL().isEmpty() &&
@@ -2981,7 +2981,7 @@ BranchItem *VymModel::createBranch(BranchItem *dst)
     if (dst)
         return addNewBranchInt(dst, -2);
     else
-        return NULL;
+        return nullptr;
 }
 
 ImageItem *VymModel::createImage(BranchItem *dst)
@@ -3010,7 +3010,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
         reposition();
         return newii;
     }
-    return NULL;
+    return nullptr;
 }
 
 bool VymModel::createLink(Link *link)
@@ -3019,7 +3019,7 @@ bool VymModel::createLink(Link *link)
     BranchItem *end = link->getEndBranch();
 
     if (!begin || !end) {
-        qWarning() << "VM::createXLinkNew part of XLink is NULL";
+        qWarning() << "VM::createXLinkNew part of XLink is nullptr";
         return false;
     }
 
@@ -3176,7 +3176,7 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
         emitDataChanged(dst);
         return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *VymModel::addMapCenter(bool saveStateFlag)
@@ -3202,7 +3202,7 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag)
     updateActions();
     emitShowSelection();
     if (saveStateFlag)
-        saveState(bi, "remove()", NULL,
+        saveState(bi, "remove()", nullptr,
                   QString("addMapCenter (%1,%2)")
                       .arg(contextPos.x())
                       .arg(contextPos.y()),
@@ -3298,7 +3298,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
 
 BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos)
 {
-    BranchItem *newbi = NULL;
+    BranchItem *newbi = nullptr;
     if (!bi)
         bi = getSelectedBranch();
 
@@ -3327,7 +3327,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos)
 
 BranchItem *VymModel::addNewBranchBefore()
 {
-    BranchItem *newbi = NULL;
+    BranchItem *newbi = nullptr;
     BranchItem *selbi = getSelectedBranch();
     if (selbi && selbi->getType() == TreeItem::Branch)
     // We accept no MapCenter here, so we _have_ a parent
@@ -3597,7 +3597,7 @@ void VymModel::deleteSelection()
                 }
                 else
                     emitDataChanged(rootItem);
-                ti = NULL;
+                ti = nullptr;
             }
             else {
                 // Delete other item
@@ -3909,8 +3909,8 @@ ItemList VymModel::getLinkedMaps()
 
     // rmodel->setSearchString (s);
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
 
     QString s;
@@ -3940,8 +3940,8 @@ ItemList VymModel::getTargets()
 
     // rmodel->setSearchString (s);
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
 
     QString s;
@@ -4116,8 +4116,8 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
                               QString("Set color of %1 and children to %2")
                                   .arg(getObjectName(bi))
                                   .arg(c.name()));
-        BranchItem *prev = NULL;
-        BranchItem *cur = NULL;
+        BranchItem *prev = nullptr;
+        BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, bi);
         while (cur) {
             cur->setHeadingColor(c); // color links, color children
@@ -4194,8 +4194,8 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
 
     if (selbi) {
         QString url;
-        BranchItem *prev = NULL;
-        BranchItem *cur = NULL;
+        BranchItem *prev = nullptr;
+        BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, selbi);
         while (cur) {
             QString heading = cur->getHeadingPlain();
@@ -4228,7 +4228,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
             if (subtree)
                 nextBranch(cur, prev, true, selbi);
             else
-                cur = NULL;
+                cur = nullptr;
         }
     }
 }
@@ -4372,8 +4372,8 @@ QStringList VymModel::getVymLinks()
 {
     QStringList links;
     BranchItem *selbi = getSelectedBranch();
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
         if (!cur->getVymLink().isEmpty())
@@ -4723,7 +4723,7 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
 
     // write to directory   //FIXME-3 check totalBBox here...
     QString saveFile =
-        saveToDir(dpath, mname + "-", FlagRowMaster::NoFlags, offset, NULL);
+        saveToDir(dpath, mname + "-", FlagRowMaster::NoFlags, offset, nullptr);
     QFile file;
 
     file.setFileName(fpath);
@@ -5004,7 +5004,7 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
 
 void VymModel::registerEditor(QWidget *me) { mapEditor = (MapEditor *)me; }
 
-void VymModel::unregisterEditor(QWidget *) { mapEditor = NULL; }
+void VymModel::unregisterEditor(QWidget *) { mapEditor = nullptr; }
 
 void VymModel::setMapZoomFactor(const double &d)
 {
@@ -5102,8 +5102,8 @@ bool VymModel::setMapLinkStyle(const QString &s)   // FIXME-2 not ported yet to 
     else
         linkstyle = LinkableMapObj::UndefinedStyle;
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
@@ -5156,8 +5156,8 @@ void VymModel::setMapLinkColorHintInt()  // FIXME-0 not ported yet to containers
 {
     /*
     // called from setMapLinkColorHint(lch) or at end of parse
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
@@ -5240,7 +5240,7 @@ void VymModel::setMapBackgroundImage(
 void VymModel::selectMapBackgroundColor()
 {
     QColor col = QColorDialog::getColor(
-        mapEditor->getScene()->backgroundBrush().color(), NULL);
+        mapEditor->getScene()->backgroundBrush().color(), nullptr);
     if (!col.isValid())
         return;
     setMapBackgroundColor(col);
@@ -5339,7 +5339,7 @@ void VymModel::newServer()
     sendCounter = 0;
     tcpServer = new QTcpServer(this);
     if (!tcpServer->listen(QHostAddress::Any, port)) {
-        QMessageBox::critical(NULL, "vym server",
+        QMessageBox::critical(nullptr, "vym server",
                               QString("Unable to start the server: %1.")
                                   .arg(tcpServer->errorString()));
         // FIXME needed? we are no widget any longer... close();
@@ -5443,19 +5443,19 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
     case QAbstractSocket::RemoteHostClosedError:
         break;
     case QAbstractSocket::HostNotFoundError:
-        QMessageBox::information(NULL, vymName + " Network client",
+        QMessageBox::information(nullptr, vymName + " Network client",
                                  "The host was not found. Please check the "
                                  "host name and port settings.");
         break;
     case QAbstractSocket::ConnectionRefusedError:
-        QMessageBox::information(NULL, vymName + " Network client",
+        QMessageBox::information(nullptr, vymName + " Network client",
                                  "The connection was refused by the peer. "
                                  "Make sure the fortune server is running, "
                                  "and check that the host name and port "
                                  "settings are correct.");
         break;
     default:
-        QMessageBox::information(NULL, vymName + " Network client",
+        QMessageBox::information(nullptr, vymName + " Network client",
                                  QString("The following error occurred: %1.")
                                      .arg(clientSocket->errorString()));
     }
@@ -5466,7 +5466,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     if (!bi)
         bi = getSelectedBranch();
     if (!bi) {
-        qWarning("VM::download bi==NULL");
+        qWarning("VM::download bi==nullptr");
         return;
     }
 
@@ -5486,7 +5486,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
 
 void VymModel::selectMapSelectionColor()
 {
-    QColor col = QColorDialog::getColor(defLinkColor, NULL);
+    QColor col = QColorDialog::getColor(defLinkColor, nullptr);
     setSelectionColor(col);
 }
 
@@ -5537,8 +5537,8 @@ bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst)
     QList<BranchItem *> selbis;
     selbis = getSelectedBranches();
     if (selbis.count() == 1) {
-        BranchItem *prev = NULL;
-        BranchItem *cur = NULL;
+        BranchItem *prev = nullptr;
+        BranchItem *cur = nullptr;
         nextBranch(cur, prev, false, selbis.first());
         if (cur) {
             selIterCur.insert(iname, cur->getUuid());
@@ -6010,7 +6010,7 @@ ImageItem *VymModel::getSelectedImage()
     if (ti && ti->getType() == TreeItem::Image)
         return (ImageItem *)ti;
     else
-        return NULL;
+        return nullptr;
 }
 
 Task *VymModel::getSelectedTask()
@@ -6019,7 +6019,7 @@ Task *VymModel::getSelectedTask()
     if (selbi)
         return selbi->getTask();
     else
-        return NULL;
+        return nullptr;
 }
 
 Link *VymModel::getSelectedXLink()
@@ -6027,7 +6027,7 @@ Link *VymModel::getSelectedXLink()
     XLinkItem *xli = getSelectedXLinkItem();
     if (xli)
         return xli->getLink();
-    return NULL;
+    return nullptr;
 }
 
 XLinkItem *VymModel::getSelectedXLinkItem()
@@ -6036,7 +6036,7 @@ XLinkItem *VymModel::getSelectedXLinkItem()
     if (ti && ti->getType() == TreeItem::XLink)
         return (XLinkItem *)ti;
     else
-        return NULL;
+        return nullptr;
 }
 
 AttributeItem *VymModel::getSelectedAttribute()
@@ -6045,18 +6045,18 @@ AttributeItem *VymModel::getSelectedAttribute()
     if (ti && ti->getType() == TreeItem::Attribute)
         return (AttributeItem *)ti;
     else
-        return NULL;
+        return nullptr;
 }
 
 TreeItem *VymModel::getSelectedItem()
 {
     if (!selModel)
-        return NULL;
+        return nullptr;
     QModelIndexList list = selModel->selectedIndexes();
     if (list.count() == 1)
         return getItem(list.first());
     else
-        return NULL;
+        return nullptr;
 }
 
 QList<TreeItem *> VymModel::getSelectedItems()
@@ -6159,7 +6159,7 @@ SlideItem *VymModel::addSlide()
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)
-        si = slideModel->addSlide(NULL, si->childNumber() + 1);
+        si = slideModel->addSlide(nullptr, si->childNumber() + 1);
     else
         si = slideModel->addSlide();
 
@@ -6172,7 +6172,7 @@ SlideItem *VymModel::addSlide()
                                 inScript)) {
             qWarning() << "VymModel::addSlide couldn't load template for "
                           "taking snapshot";
-            return NULL;
+            return nullptr;
         }
 
         inScript.replace(
@@ -6190,7 +6190,7 @@ SlideItem *VymModel::addSlide()
     int pos = si->childNumber();
     saveState(PartOfMap, getSelectString(),
               QString("removeSlide (%1)").arg(pos), getSelectString(),
-              QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", NULL,
+              QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
               s);
     return si;
 }
@@ -6203,7 +6203,7 @@ void VymModel::deleteSlide(SlideItem *si)
         saveState(PartOfMap, getSelectString(),
                   QString("addMapInsert (\"PATH\",%1)").arg(pos),
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
-                  "Remove slide", NULL, s);
+                  "Remove slide", nullptr, s);
         slideModel->deleteSlide(si);
     }
 }
@@ -6218,7 +6218,7 @@ void VymModel::relinkSlide(SlideItem *si, int pos)
 
 bool VymModel::moveSlideDown(int n)
 {
-    SlideItem *si = NULL;
+    SlideItem *si = nullptr;
     if (n < 0) // default if called without parameters
     {
         si = slideModel->getSelectedItem();
@@ -6244,7 +6244,7 @@ bool VymModel::moveSlideDown(int n)
 
 bool VymModel::moveSlideUp(int n)
 {
-    SlideItem *si = NULL;
+    SlideItem *si = nullptr;
     if (n < 0) // default if called without parameters
     {
         si = slideModel->getSelectedItem();

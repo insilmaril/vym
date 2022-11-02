@@ -95,7 +95,7 @@ XLinkItem *Link::getOtherEnd(XLinkItem *xli)
         return endLinkItem;
     if (xli == endLinkItem)
         return beginLinkItem;
-    return NULL;
+    return nullptr;
 }
 
 void Link::setPen(const QPen &p)
@@ -170,12 +170,12 @@ void Link::deactivate()
     //    qDebug()<<"Link::deactivate ******************************";
     xLinkState = deleteXLink;
     if (beginLinkItem)
-        beginLinkItem->setLink(NULL);
+        beginLinkItem->setLink(nullptr);
     if (endLinkItem)
-        endLinkItem->setLink(NULL);
+        endLinkItem->setLink(nullptr);
     if (xlo) {
         delete (xlo);
-        xlo = NULL;
+        xlo = nullptr;
     }
 }
 
@@ -185,9 +185,9 @@ void Link::removeXLinkItem(XLinkItem *xli)
 {
     // Only mark _one_ end for removal here!
     if (xli == beginLinkItem)
-        beginLinkItem = NULL;
+        beginLinkItem = nullptr;
     if (xli == endLinkItem)
-        endLinkItem = NULL;
+        endLinkItem = nullptr;
     xLinkState = deleteXLink;
 }
 
