@@ -1,4 +1,3 @@
-    VYM - View Your Mind
     Copyright (C) 2004-2021 Uwe Drechsel  
 
     This program is free software; you can redistribute it and/or modify
