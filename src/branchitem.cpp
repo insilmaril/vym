@@ -43,6 +43,9 @@ BranchItem::~BranchItem()
         // All other containers deeper down in tree will unlink themselves 
         // by calling BranchItem::unlinkContainer, which will set 
         // the branchContainer == nullptr;
+        //
+        // QGraphicsItems such as BranchContainer will delete all their children 
+        // themselves
         delete branchContainer;
     }
 
