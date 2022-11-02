@@ -538,7 +538,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
             } // Horizontal layout
             break;
 
-        case Vertical: {
+        case Vertical: {    // FIXME-2 Does not support overlay (FrameContainer) yet
                 qreal h_total = 0;
                 qreal w_max = 0;
 

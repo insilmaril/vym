@@ -468,13 +468,8 @@ LinkContainer* BranchContainer::getLinkContainer()
 
 FrameContainer* BranchContainer::createFrameContainer()
 {
-    Container *pc;
-    if (outerContainer)
-        pc = outerContainer;
-    else
-        pc = innerContainer;
-    frameContainer = new FrameContainer (pc);
-    frameContainer->stackBefore(pc->childItems().first()); // FIXME-1 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
+    // Parent container might be updated later in reposition()
+    frameContainer = new FrameContainer (ornamentsContainer);
     return frameContainer;
 }
 
@@ -799,6 +794,38 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
      - map design
     */
 
+    // FIXME-3 for testing we do some coloring and additional drawing
+    /*
+    if (type != TmpParent) {
+        // BranchContainer
+        setPen(QPen(Qt::green));
+
+        // OrnamentsContainer
+        ornamentsContainer->setPen(QPen(Qt::blue));
+        //ornamentsContainer->setPen(Qt::NoPen);
+
+        // InnerContainer
+        //innerContainer->setPen(QPen(Qt::cyan));
+
+        QColor col;
+        if (branchesContainerLayout == FloatingBounded && depth > 0) {
+            // Special layout: FloatingBounded
+            col = QColor(Qt::gray);
+            col.setAlpha(150);
+            setBranchesContainerBrush(col);
+        } else if (branchesContainerLayout == FloatingFree) {
+            // Special layout: FloatingFree
+            col = QColor(Qt::blue);
+            col.setAlpha(120);
+            setBrush(col);
+        } else {
+            // Don't paint other containers
+            setBranchesContainerBrush(Qt::NoBrush);
+            setBrush(Qt::NoBrush);
+            if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
+        }
+    }   // Visualizations for testing
+    */
 }
 
 void BranchContainer::updateVisuals()
@@ -967,42 +994,15 @@ void BranchContainer::reposition()
 
     // Frame depends on dimensions calculated so far
     if (frameContainer) {
-        if (frameContainer->getIncludeChildren())   // FIXME-0 not working yet
+        if (frameContainer->getIncludeChildren()) {
+            frameContainer->setParentItem(innerContainer); // FIXME-2 check for outercontainer?
+            frameContainer->stackBefore(innerContainer->childItems().first()); // FIXME-1 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
             frameContainer->setRect(frameContainer->parentContainer()->rect());
-        else
+        } else {
+            frameContainer->setParentItem(ornamentsContainer);
+            frameContainer->stackBefore(ornamentsContainer->childItems().first()); // FIXME-1 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
             frameContainer->setRect(ornamentsContainer->rect());    // FIXME-0 check...
+        }
     }
 
-    // FIXME-3 for testing we do some coloring and additional drawing
-    /*
-    if (type != TmpParent) {
-        // BranchContainer
-        setPen(QPen(Qt::green));
-
-        // OrnamentsContainer
-        ornamentsContainer->setPen(QPen(Qt::blue));
-        //ornamentsContainer->setPen(Qt::NoPen);
-
-        // InnerContainer
-        //innerContainer->setPen(QPen(Qt::cyan));
-
-        QColor col;
-        if (branchesContainerLayout == FloatingBounded && depth > 0) {
-            // Special layout: FloatingBounded
-            col = QColor(Qt::gray);
-            col.setAlpha(150);
-            setBranchesContainerBrush(col);
-        } else if (branchesContainerLayout == FloatingFree) {
-            // Special layout: FloatingFree
-            col = QColor(Qt::blue);
-            col.setAlpha(120);
-            setBrush(col);
-        } else {
-            // Don't paint other containers
-            setBranchesContainerBrush(Qt::NoBrush);
-            setBrush(Qt::NoBrush);
-            if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
-        }
-    }   // Visualizations for testing
-    */
 }
