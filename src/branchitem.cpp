@@ -465,7 +465,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     return NULL;
 }
 
-void BranchItem::updateStyles(const bool &keepFrame)
+void BranchItem::updateStyles(const bool &keepFrame)    // FIXME-0 not really required. Create BC::updateStyles or similar...
 {
     // Update styles when relinking branches  // FIXME-1 review, maybe done with layout in reposition automatically?
     /*

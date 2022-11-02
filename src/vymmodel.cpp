@@ -3412,8 +3412,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             keepFrame = false;
         }
 
-        // Save current own position for undo // FIXME-1
-        // Save current children positions for undo // FIXME-1
+        // RelinkBranch: Save current own position for undo // FIXME-1
+        // and save current children positions for undo 
 
         // Prepare relinking: Save old position for undo, if required
         //
@@ -3470,7 +3470,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStyles(keepFrame);    // FIXME-1 not implemented yet. Where should e.g. links etc be adapted to relinked branches? Example: detach. Idea: Update styles for subtree (Which is changed when relinking)
+        branch->updateStyles(keepFrame);    // FIXME-0 not implemented yet. Where should e.g. links etc be adapted to relinked branches? Example: detach. Idea: Update styles for subtree (Which is changed when relinking)
 
         emitDataChanged(branch);
 
