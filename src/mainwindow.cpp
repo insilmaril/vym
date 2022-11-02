@@ -21,10 +21,13 @@ using namespace std;
 #include <QTextStream>
 
 #include "aboutdialog.h"
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "branchpropeditor.h"
 #include "command.h"
 #include "confluence-agent.h"
+#include "confluence-user.h"
+#include "confluence-userdialog.h"
 #include "credentials.h"
 #include "download-agent.h"
 #include "file.h"
@@ -34,6 +37,8 @@ using namespace std;
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
+#include "jira-agent.h"
+#include "jira-settings-dialog.h"
 #include "lineeditdialog.h"
 #include "macros.h"
 #include "mapeditor.h"
@@ -50,7 +55,6 @@ using namespace std;
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
-#include "userdialog.h"
 #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
@@ -78,7 +82,6 @@ extern QDir tmpVymDir;
 extern QDir cashDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern uint clipboardItemCount;
 extern int statusbarTime;
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
@@ -92,11 +95,13 @@ extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
-extern QStringList jiraPrefixList;
-extern bool jiraClientAvailable;
-extern bool confluenceAgentAvailable;
 extern QString confluencePassword;
+extern QString jiraPassword;
 extern Switchboard switchboard;
+
+extern bool restoreMode;
+extern QStringList ignoredLockedFiles;
+extern QStringList lastSessionFiles;
 
 extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
@@ -152,9 +157,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Sometimes we may need to remember old selections
     prevSelection = "";
 
-    // Default color
-    currentColor = Qt::black;
-
     // Create unique temporary directory
     bool ok;
     QString tmpVymDirPath = makeTmpDir(ok, "vym");
@@ -173,7 +175,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     QDir d(clipboardDir);
     d.mkdir(clipboardDir);
     makeSubDirs(clipboardDir);
-    clipboardItemCount = 0;
 
     // Create directory for cashed files, e.g. svg images
     if (!tmpVymDir.mkdir("cash")) {
@@ -253,6 +254,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupModeActions();
     setupNetworkActions();
     setupSettingsActions();
+    setupConnectActions();
     setupContextMenus();
     setupMacros();
     setupToolbars();
@@ -266,13 +268,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setWindowTitle(noteEditor->getEditorTitle());
     dw->hide();
     noteEditorDW = dw;
-    addDockWidget(Qt::LeftDockWidgetArea, dw);
-
-    dw = new QDockWidget();
-    dw->setWidget(branchPropertyEditor);
-    dw->setObjectName("BranchPropertyEditor");
-    dw->hide();
-    branchPropertyEditorDW = dw;
     addDockWidget(Qt::LeftDockWidgetArea, dw);
 
     dw = new QDockWidget();
@@ -308,12 +303,12 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     addDockWidget(Qt::BottomDockWidgetArea, dw);
 
-    branchPropertyEditor = new BranchPropertyEditor();
     dw = new QDockWidget(tr("Property Editor", "PropertyEditor"));
     dw->setWidget(branchPropertyEditor);
     dw->setObjectName("PropertyEditor");
     dw->hide();
     addDockWidget(Qt::LeftDockWidgetArea, dw);
+    branchPropertyEditorDW = dw;
 
     historyWindow = new HistoryWindow();
     dw = new QDockWidget(tr("History window", "HistoryWidget"));
@@ -378,9 +373,12 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     restoreState(settings.value("/mainwindow/state", 0).toByteArray());
 
-    // Enable testmenu
-    // settings.setValue( "mainwindow/showTestMenu", true);
     updateGeometry();
+
+    // After startup, schedule looking for updates AFTER
+    // release notes have been downloaded
+    // (avoid race condition with simultanously receiving cookies)
+    checkUpdatesAfterReleaseNotes = true;
 
 #if defined(VYM_DBUS)
     // Announce myself on DBUS
@@ -1015,6 +1013,9 @@ void Main::setupAPI()
     c = new Command("currentMapIndex", Command::Any);
     vymCommands.append(c);
 
+    c = new Command("editHeading", Command::Branch);
+    vymCommands.append(c);
+
     c = new Command("loadMap", Command::Any);
     c->addPar(Command::String, false, "Path to map");
     vymCommands.append(c);
@@ -1024,6 +1025,13 @@ void Main::setupAPI()
 
     c = new Command("selectMap", Command::Any);
     c->addPar(Command::Int, false, "Index of map");
+    vymCommands.append(c);
+
+    c = new Command("selectQuickColor", Command::Any);
+    c->addPar(Command::Int, false, "Index of quick color [0..6]");
+    vymCommands.append(c);
+
+    c = new Command("currentColor", Command::Any);
     vymCommands.append(c);
 
     c = new Command("toggleTreeEditor", Command::Any);
@@ -1147,6 +1155,7 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportConfluence()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
+    actionFileExportConfluence = a;
 
     a = new QAction( tr("Firefox Bookmarks", "File export menu") + 
                         tr("(still experimental)"),
@@ -1441,7 +1450,6 @@ void Main::setupEditActions()
                     this);
     a->setShortcut(Qt::Key_PageUp);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
@@ -1455,7 +1463,6 @@ void Main::setupEditActions()
                     this);
     a->setShortcut(Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
-    // a->setEnabled (false);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
@@ -1464,6 +1471,32 @@ void Main::setupEditActions()
     switchboard.addSwitch("mapEditMoveBranchDown", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDown()));
     actionMoveDown = a;
+
+    a = new QAction(QPixmap(":up-diagonal-right.png"), tr("Move branch diagonally up", "Edit menu"),
+                    this);
+    a->setShortcut(Qt::CTRL + Qt::Key_PageUp);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    mapEditorActions.append(a);
+    taskEditorActions.append(a);
+    restrictedMapActions.append(a);
+    actionListBranches.append(a);
+    editMenu->addAction(a);
+    switchboard.addSwitch("mapEditMoveBranchUpDiagonally", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editMoveUpDiagonally()));
+    actionMoveUpDiagonally = a;
+
+    a = new QAction(QPixmap(":down-diagonal-left.png"), tr("Move branch diagonally down", "Edit menu"),
+                    this);
+    a->setShortcut(Qt::CTRL + Qt::Key_PageDown);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    mapEditorActions.append(a);
+    taskEditorActions.append(a);
+    restrictedMapActions.append(a);
+    actionListBranches.append(a);
+    editMenu->addAction(a);
+    switchboard.addSwitch("mapEditMoveBranchDownDiagonally", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editMoveDownDiagonally()));
+    actionMoveDownDiagonally = a;
 
     a = new QAction(QPixmap(), tr("&Detach", "Context menu"), this);
     a->setStatusTip(tr("Detach branch and use as mapcenter", "Context menu"));
@@ -1658,29 +1691,16 @@ void Main::setupEditActions()
     actionHeading2URL = a;
 
     tag = "JIRA";
-    a = new QAction(tr("Create URL to Jira", "Edit menu") + " (experimental)",
+    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu"),
                     this);
     a->setShortcut(Qt::Key_J + Qt::SHIFT);
-    a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapUpdateFromJira", shortcutScope, a, tag);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(getJiraData()));
-    actionListBranches.append(a);
-    actionGetJiraData = a;
-
-    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu") +
-                        " (experimental)",
-                    this);
-    a->setShortcut(Qt::Key_J + Qt::CTRL);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
-    actionListBranches.append(a);
     actionGetJiraDataSubtree = a;
 
-    a = new QAction(tr("Get page name from Confluence", "Edit menu") +
-                        " (experimental)",
+    a = new QAction(tr("Get page name from Confluence", "Edit menu"),
                     this);
     //    a->setShortcut ( Qt::Key_J + Qt::CTRL);
     //    a->setShortcutContext (Qt::WindowShortcut);
@@ -1771,6 +1791,16 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editCycleTaskStatus()));
     actionListBranches.append(a);
     actionCycleTaskStatus = a;
+
+    a = new QAction(QPixmap(), tr("Reset delta priority for visible tasks", "Reset delta"), this);
+    a->setShortcutContext(Qt::WindowShortcut);
+    a->setCheckable(false);
+    a->setEnabled(false);
+    addAction(a);
+    switchboard.addSwitch("mapResetTaskDeltaPrio", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editTaskResetDeltaPrio()));
+    actionListBranches.append(a);
+    actionTaskResetDeltaPrio = a;
 
     a = new QAction(QPixmap(), tr("Reset sleep", "Task sleep"), this);
     a->setShortcutContext(Qt::WindowShortcut);
@@ -2072,14 +2102,7 @@ void Main::setupFormatActions()
 
     QString tag = tr("Formatting", "Shortcuts");
 
-    QAction *a;
-    QPixmap pix(16, 16);
-    pix.fill(Qt::black);
-    a = new QAction(pix, tr("Set &Color") + QString("..."), this);
-    formatMenu->addAction(a);
-    switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectColor()));
-    actionFormatColor = a;
+    QAction* a;
 
     a = new QAction(QPixmap(":/formatcolorpicker.png"),
                     tr("Pic&k color", "Edit menu"), this);
@@ -2168,6 +2191,7 @@ void Main::setupFormatActions()
     formatMenu->addAction(a);
     actionFormatLinkColorHint = a;
 
+    QPixmap pix(16, 16);
     pix.fill(Qt::white);
     a = new QAction(pix, tr("Set &Link Color") + "...", this);
     formatMenu->addAction(a);
@@ -2399,6 +2423,30 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapPreviousSlide", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(previousSlide()));
+}
+
+// Connect Actions
+void Main::setupConnectActions()
+{
+    QMenu *connectMenu = menuBar()->addMenu(tr("&Connect"));
+    QString tag = tr("Connect", "Shortcuts");
+
+    QAction *a;
+
+    a = new QAction( tr("Get Confluence user data", "Connect action"), this);
+    a->setShortcut(Qt::SHIFT + Qt::Key_C);
+    connectMenu->addAction(a);
+    switchboard.addSwitch ("confluenceUser", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(getConfluenceUser()));
+    actionConnectGetConfluenceUser = a;
+
+    connectMenu->addAction(actionGetConfluencePageName);
+    connectMenu->addAction(actionGetJiraDataSubtree);
+
+    connectMenu->addSeparator();
+
+    connectMenu->addAction(actionSettingsJIRA);
+    connectMenu->addAction(actionSettingsConfluence);
 }
 
 // Mode Actions
@@ -2901,6 +2949,13 @@ void Main::setupSettingsActions()
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsConfluence()));
     settingsMenu->addAction(a);
+    actionSettingsConfluence = a;
+
+    a = new QAction(tr("JIRA Credentials", "Settings action") + "...",
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(settingsJIRA()));
+    settingsMenu->addAction(a);
+    actionSettingsJIRA = a;
 
     a = new QAction(tr("Set path for macros", "Settings action") + "...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsMacroPath()));
@@ -3127,6 +3182,7 @@ void Main::setupContextMenus()
     taskContextMenu = branchContextMenu->addMenu(tr("Tasks", "Context menu"));
     taskContextMenu->addAction(actionToggleTask);
     taskContextMenu->addAction(actionCycleTaskStatus);
+    taskContextMenu->addAction(actionTaskResetDeltaPrio);
     taskContextMenu->addSeparator();
     taskContextMenu->addAction(actionTaskSleep0);
     taskContextMenu->addAction(actionTaskSleepN);
@@ -3152,7 +3208,6 @@ void Main::setupContextMenus()
     branchLinksContextMenu->addAction(actionLocalURL);
     branchLinksContextMenu->addAction(actionGetURLsFromNote);
     branchLinksContextMenu->addAction(actionHeading2URL);
-    branchLinksContextMenu->addAction(actionGetJiraData);
     branchLinksContextMenu->addAction(actionGetJiraDataSubtree);
     branchLinksContextMenu->addAction(actionGetConfluencePageName);
     branchLinksContextMenu->addSeparator();
@@ -3317,6 +3372,8 @@ void Main::setupToolbars()
     editActionsToolbar->addAction(actionAddBranch);
     editActionsToolbar->addAction(actionMoveUp);
     editActionsToolbar->addAction(actionMoveDown);
+    editActionsToolbar->addAction(actionMoveDownDiagonally);
+    editActionsToolbar->addAction(actionMoveUpDiagonally);
     editActionsToolbar->addAction(actionSortChildren);
     editActionsToolbar->addAction(actionSortBackChildren);
     editActionsToolbar->addAction(actionToggleScroll);
@@ -3343,12 +3400,47 @@ void Main::setupToolbars()
     referencesToolbar->addAction(actionEditVymLink);
 
     // Format and colors
-    colorsToolbar = addToolBar(tr("Colors toolbar", "Colors toolbar name"));
+    colorsToolbar = new QToolBar(tr("Colors toolbar", "Colors toolbar name"));
     colorsToolbar->setObjectName("colorsTB");
-    colorsToolbar->addAction(actionFormatColor);
+
+    actionGroupQuickColors = new QActionGroup(this);
+    actionGroupQuickColors->setExclusive(true);
+    int i = 0;
+
+    QColor c;
+    c.setNamedColor ("#ff0000"); quickColors << c;
+    c.setNamedColor ("#d95100"); quickColors << c;
+    c.setNamedColor ("#009900"); quickColors << c;
+    c.setNamedColor ("#00aa7f"); quickColors << c;
+    c.setNamedColor ("#aa00ff"); quickColors << c;
+    c.setNamedColor ("#c466ff"); quickColors << c;
+    c.setNamedColor ("#0000ff"); quickColors << c;
+    c.setNamedColor ("#000000"); quickColors << c;
+
+    QPixmap pix(16, 16);
+    QAction *a;
+    int n = 0;
+    foreach (c, quickColors) {
+        pix.fill(c);
+        a = new QAction(pix, tr("Select color (Press Shift for more options)") + QString("..."), actionGroupQuickColors);
+        a->setCheckable(true);
+        a->setData(n);
+        //formatMenu->addAction(a);
+        // switchboard.addSwitch("mapFormatColor", shortcutScope, a, tag);
+        connect(a, SIGNAL(triggered()), this, SLOT(quickColorPressed()));
+        colorsToolbar->addAction(a);
+        n++;
+    }
+    actionGroupQuickColors->actions().first()->setChecked(true);
+
     colorsToolbar->addAction(actionFormatPickColor);
     colorsToolbar->addAction(actionFormatColorBranch);
     colorsToolbar->addAction(actionFormatColorSubtree);
+    // Only place toolbar on very first startup
+    if (settings.value("/mainwindow/recentFileList").toStringList().isEmpty())
+        addToolBar (Qt::RightToolBarArea, colorsToolbar);
+    else
+        addToolBar (colorsToolbar);
 
     // Zoom
     zoomToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
@@ -3431,7 +3523,7 @@ VymView *Main::currentView() const
     if (tabWidget->currentWidget())
         return (VymView *)tabWidget->currentWidget();
     else
-        return NULL;
+        return nullptr;
 }
 
 VymView *Main::view(const int i) { return (VymView *)tabWidget->widget(i); }
@@ -3440,7 +3532,7 @@ MapEditor *Main::currentMapEditor() const
 {
     if (tabWidget->currentWidget())
         return currentView()->getMapEditor();
-    return NULL;
+    return nullptr;
 }
 
 uint Main::currentMapID() const
@@ -3507,17 +3599,11 @@ void Main::updateTabName(VymModel *vm)
 
     for (int i = 0; i < tabWidget->count(); i++)
         if (view(i)->getModel() == vm) {
-            if (vm->isDefault()) {
-                tabWidget->setTabText(
-                    i, tr("unnamed", "Name for empty and unnamed default map"));
-            }
-            else {
-                if (vm->isReadOnly())
-                    tabWidget->setTabText(i, vm->getFileName() + " " +
-                                                 tr("(readonly)"));
-                else
-                    tabWidget->setTabText(i, vm->getFileName());
-            }
+            if (vm->isReadOnly())
+                tabWidget->setTabText(i, vm->getFileName() + " " +
+                                             tr("(readonly)"));
+            else
+                tabWidget->setTabText(i, vm->getFileName());
             return;
         }
 }
@@ -3770,6 +3856,9 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             statusBar()->showMessage("Loaded " + fn, statusbarTime);
         }
     }
+
+    fileSaveSession();
+
     return err;
 }
 
@@ -3810,8 +3899,6 @@ void Main::fileLoad(const LoadMode &lmode)
             fileLoad(fn, lmode, getMapType(fn));
     }
     removeProgressCounter();
-
-    fileSaveSession();
 }
 
 void Main::fileLoad()
@@ -3827,21 +3914,38 @@ void Main::fileSaveSession()
         flist.append(view(i)->getModel()->getFilePath());
 
     settings.setValue("/mainwindow/sessionFileList", flist);
+
+    // Also called by event loop regulary, but apparently not often enough
+    settings.sync();
 }
 
 void Main::fileRestoreSession()
 {
-    QStringList flist =
-        settings.value("/mainwindow/sessionFileList").toStringList();
-    QStringList::Iterator it = flist.begin();
+    restoreMode = true;
 
-    initProgressCounter(flist.count());
-    while (it != flist.end()) {
+    QStringList::Iterator it = lastSessionFiles.begin();
+
+    initProgressCounter(lastSessionFiles.count());
+    while (it != lastSessionFiles.end()) {
         FileType type = getMapType(*it);
         fileLoad(*it, NewMap, type);
         *it++;
     }
     removeProgressCounter();
+
+    // By now all files should have been loaded
+    // Reset the restore flag and display message if needed
+    if (ignoredLockedFiles.count() > 0) {
+        QString msg(
+            QObject::tr("Existing lockfiles have been ignored for the maps "
+                        "listed below. Please check, if the maps might be "
+                        "openend in another instance of vym:\n\n"));
+        QMessageBox::warning(0, QObject::tr("Warning"),
+                             msg + ignoredLockedFiles.join("\n"));
+    }
+
+    restoreMode = false;
+    ignoredLockedFiles.clear();
 }
 
 void Main::fileLoadRecent()
@@ -4111,6 +4215,7 @@ void Main::fileImportFirefoxBookmarks()
         fd.setNameFilters(filters);
         fd.setAcceptMode(QFileDialog::AcceptOpen);
         fd.setWindowTitle(tr("Import Firefox Bookmarks into new map"));
+        fd.setLabelText( QFileDialog::Accept, tr("Import"));
 
         if (fd.exec() == QDialog::Accepted) {
             qApp->processEvents(); // close QFileDialog
@@ -4135,7 +4240,7 @@ void Main::fileImportFreemind()
     fd.setDirectory(lastMapDir);
     fd.setFileMode(QFileDialog::ExistingFiles);
     fd.setNameFilters(filters);
-    fd.setWindowTitle(vymName + " - " + tr("Load Freemind map"));
+    fd.setWindowTitle(vymName + " - " + tr("Open Freemind map"));
     fd.setAcceptMode(QFileDialog::AcceptOpen);
 
     QString fn;
@@ -4165,6 +4270,7 @@ void Main::fileImportMM()
     fd.setNameFilters(filters);
     fd.setAcceptMode(QFileDialog::AcceptOpen);
     fd.setWindowTitle(tr("Import") + " " + "Mind Manager");
+    fd.setLabelText( QFileDialog::Accept, tr("Import"));
 
     if (fd.exec() == QDialog::Accepted) {
         lastMapDir = fd.directory();
@@ -4601,13 +4707,6 @@ void Main::editHeading2URL()
         m->editHeading2URL();
 }
 
-void Main::getJiraData()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->getJiraData(false);
-}
-
 void Main::getJiraDataSubtree()
 {
     VymModel *m = currentModel();
@@ -4620,6 +4719,57 @@ void Main::setHeadingConfluencePageName()
     VymModel *m = currentModel();
     if (m)
         m->setHeadingConfluencePageName();
+}
+
+void Main::getConfluenceUser()
+{
+    VymModel *m = currentModel();
+    if (m) {
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi) {
+            ConfluenceUserDialog *dia = new ConfluenceUserDialog;
+            centerDialog(dia);
+            if (dia->exec() > 0) {
+                BranchItem *bi = m->addNewBranch();
+                if (!bi) return;
+                if (!m->select(bi)) return;
+                selbi = m->getSelectedBranch();
+
+                ConfluenceUser user = dia->getSelectedUser();
+
+                AttributeItem *ai;
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.displayName");
+                ai->setValue(user.getDisplayName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userKey");
+                ai->setValue(user.getUserKey());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.userName");
+                ai->setValue(user.getUserName());
+                m->setAttribute(selbi, ai);
+
+                ai = new AttributeItem();
+                ai->setKey("ConfluenceUser.url");
+                ai->setValue(user.getURL());
+                m->setAttribute(selbi, ai);
+
+                m->setURL(user.getURL(), false);
+                m->setHeading(user.getDisplayName());
+
+                m->selectParent();
+            }
+            dia->clearFocus();
+            delete dia;
+            m->getMapEditor()->activateWindow();
+            m->getMapEditor()->setFocus();
+        }
+    }
 }
 
 void Main::editHeading()
@@ -4706,9 +4856,9 @@ void Main::editVymLink()
             QStringList filters;
             filters << "VYM map (*.vym)";
             QFileDialog fd;
-            fd.setWindowTitle(vymName + " - " + tr("Link to another map"));
+            fd.setWindowTitle(vymName + " - " + tr("Link to another vym map"));
             fd.setNameFilters(filters);
-            fd.setWindowTitle(vymName + " - " + tr("Link to another map"));
+            fd.setLabelText( QFileDialog::Accept, tr("Set as link to vym map"));
             fd.setDirectory(lastMapDir);
             fd.setAcceptMode(QFileDialog::AcceptOpen);
             if (!bi->getVymLink().isEmpty())
@@ -4752,6 +4902,38 @@ void Main::editCycleTaskStatus()
     VymModel *m = currentModel();
     if (m)
         m->cycleTaskStatus();
+}
+
+void Main::editTaskResetDeltaPrio() // FIXME-2 With multiple selections enabled, old selection should be restored
+{
+    QList <Task*> tasks;
+    QList <VymModel*> models;
+    for (int i = 0; i < taskModel->count(); i++)
+    {
+        Task *task = taskModel->getTask(i);
+        if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0) {
+            tasks << task;
+            VymModel *m = task->getBranch()->getModel();
+            if (!models.contains(m))
+                models << m;
+        }
+    }
+
+    foreach (VymModel *model, models) {
+        // Unselect everything
+        model->unselectAll();
+
+        // Select all branches, where tasks whill be updated
+        foreach (Task *task, tasks) {
+            BranchItem *bi = task->getBranch();
+            if (bi->getModel() == model) {
+                model->selectToggle(bi);
+            }
+        }
+
+        // Bulk update all branches in this model
+        model->setTaskPriorityDelta(0);
+    }
 }
 
 void Main::editTaskSleepN()
@@ -4890,6 +5072,22 @@ void Main::editMoveDown()
         m->moveDown();
 }
 
+void Main::editMoveDownDiagonally()
+{
+    MapEditor *me = currentMapEditor();
+    VymModel *m = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading)
+        m->moveDownDiagonally();
+}
+
+void Main::editMoveUpDiagonally()
+{
+    MapEditor *me = currentMapEditor();
+    VymModel *m = currentModel();
+    if (me && m && me->getState() != MapEditor::EditingHeading)
+        m->moveUpDiagonally();
+}
+
 void Main::editDetach()
 {
     VymModel *m = currentModel();
@@ -4979,7 +5177,7 @@ void Main::editAddAttribute()
     VymModel *m = currentModel();
     if (m) {
 
-        m->addAttribute();
+        m->setAttribute();
     }
 }
 
@@ -5368,43 +5566,90 @@ void Main::updateQueries(
     */
 }
 
+void Main::selectQuickColor(int n)
+{
+    if (n < 0 || n > 7) return;
+
+    actionGroupQuickColors->actions().at(n)->setChecked(true);
+    setCurrentColor(quickColors.at(n));
+}
+
+void Main::setQuickColor(QColor col)
+{
+    int i = getCurrentColorIndex();
+    if (i < 0) return;
+
+    QPixmap pix(16, 16);
+    pix.fill(col);
+    actionGroupQuickColors->checkedAction()->setIcon(pix);
+    quickColors.replace(i, col);
+}
+
+void Main::quickColorPressed()
+{
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return;
+
+    if (QApplication::keyboardModifiers() == Qt::ShiftModifier) {
+        QColor col = getCurrentColor();
+        col = QColorDialog::getColor((col), this);
+        if (!col.isValid()) return;
+
+        setQuickColor(col);
+    } else
+        selectQuickColor(i);
+}
+
 void Main::formatPickColor()
 {
     VymModel *m = currentModel();
     if (m)
-        setCurrentColor(m->getCurrentHeadingColor());
+        setQuickColor( m->getCurrentHeadingColor());
 }
 
-QColor Main::getCurrentColor() { return currentColor; }
+QColor Main::getCurrentColor() 
+{ 
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return QColor();
+
+    return quickColors.at(i);
+}
+
+int Main::getCurrentColorIndex()
+{
+    QAction* a = actionGroupQuickColors->checkedAction();
+
+    if (a == nullptr) return -1;
+
+    return actionGroupQuickColors->actions().indexOf(a);
+}
 
 void Main::setCurrentColor(QColor c)
 {
+    int i = getCurrentColorIndex();
+
+    if (i < 0) return;
+
     QPixmap pix(16, 16);
     pix.fill(c);
-    actionFormatColor->setIcon(pix);
-    currentColor = c;
-}
 
-void Main::formatSelectColor()
-{
-    QColor col = QColorDialog::getColor((currentColor), this);
-    if (!col.isValid())
-        return;
-    setCurrentColor(col);
+    actionGroupQuickColors->actions().at(i)->setIcon(pix);
 }
 
 void Main::formatColorBranch()
 {
     VymModel *m = currentModel();
     if (m)
-        m->colorBranch(currentColor);
+        m->colorBranch(getCurrentColor());
 }
 
 void Main::formatColorSubtree()
 {
     VymModel *m = currentModel();
     if (m)
-        m->colorSubtree(currentColor);
+        m->colorSubtree(getCurrentColor());
 }
 
 void Main::formatLinkStyleLine()
@@ -5745,34 +5990,60 @@ void Main::settingsToggleDownloads() { downloadsEnabled(true); }
 
 bool Main::settingsConfluence()
 {
+    if (!QSslSocket::supportsSsl())
+    {
+        QMessageBox::warning(
+            0, tr("Warning"),
+            tr("No SSL support available for this build of vym"));
+        debugInfo();
+        return false;
+    }
+
     CredentialsDialog dia;
     dia.setURL(
-        settings.value("/confluence/url", "Confluence base URL").toString());
-    dia.setUser(settings.value("/confluence/username", "Confluence username")
+        settings.value("/atlassian/confluence/url", "Confluence base URL").toString());
+    dia.setUser(settings.value("/atlassian/confluence/username", "Confluence username")
                     .toString());
     dia.setSavePassword(
-        settings.value("/confluence/savePassword", false).toBool());
+        settings.value("/atlassian/confluence/savePassword", false).toBool());
     if (!confluencePassword.isEmpty())
         dia.setPassword(confluencePassword);
 
     dia.exec();
 
     if (dia.result() > 0) {
-        settings.setValue("/confluence/url", dia.getURL());
-        settings.setValue("/confluence/username", dia.getUser());
-        settings.setValue("/confluence/savePassword", dia.savePassword());
-        if (dia.savePassword())
-            settings.setValue("/confluence/password", dia.getPassword());
-        else
-            settings.setValue("/confluence/password", "");
-
+        settings.setValue("/atlassian/confluence/url", dia.getURL());
+        settings.setValue("/atlassian/confluence/username", dia.getUser());
+        settings.setValue("/atlassian/confluence/savePassword", dia.savePassword());
         confluencePassword = dia.getPassword();
-        confluenceAgentAvailable = true;
-    }
-    else
-        confluenceAgentAvailable = false;
+        if (dia.savePassword())
+            settings.setValue("/atlassian/confluence/password", confluencePassword);
+        else
+            settings.setValue("/atlassian/confluence/password", "");
 
-    return confluenceAgentAvailable;
+        return true;
+    }
+    return false;
+}
+
+bool Main::settingsJIRA()
+{
+    if (!QSslSocket::supportsSsl())
+    {
+        QMessageBox::warning(
+            0, tr("Warning"),
+            tr("No SSL support available for this build of vym"));
+        debugInfo();
+        return false;
+    }
+
+    JiraSettingsDialog dia;
+    dia.exec();
+
+    if (dia.result() > 0)
+        return true;
+    else
+        return false;
 }
 
 void Main::windowToggleNoteEditor()
@@ -6027,6 +6298,23 @@ void Main::updateActions()
     actionViewToggleScriptEditor->setChecked(
         scriptEditor->parentWidget()->isVisible());
 
+    if (JiraAgent::available())
+        actionGetJiraDataSubtree->setEnabled(true);
+    else
+        actionGetJiraDataSubtree->setEnabled(false);
+
+    if (ConfluenceAgent::available())
+    {
+        actionGetConfluencePageName->setEnabled(true);
+        actionConnectGetConfluenceUser->setEnabled(true);
+        actionFileExportConfluence->setEnabled(true);
+    } else
+    {
+        actionGetConfluencePageName->setEnabled(false);
+        actionConnectGetConfluenceUser->setEnabled(false);
+        actionFileExportConfluence->setEnabled(false);
+    }
+
     VymView *vv = currentView();
     if (vv) {
         actionViewToggleTreeEditor->setChecked(vv->treeEditorIsVisible());
@@ -6225,27 +6513,17 @@ void Main::updateActions()
                 if (url.isEmpty()) {
                     actionOpenURL->setEnabled(false);
                     actionOpenURLTab->setEnabled(false);
-                    actionGetJiraData->setEnabled(false);
                     actionGetConfluencePageName->setEnabled(false);
                 }
                 else {
                     actionOpenURL->setEnabled(true);
                     actionOpenURLTab->setEnabled(true);
-
-                    bool ok = false;
-                    foreach (QString prefix, jiraPrefixList) {
-                        if (url.contains(prefix)) {
-                            ok = true;
-                            break;
-                        }
-                    }
-                    actionGetJiraData->setEnabled(ok && jiraClientAvailable);
-                    if (url.contains(
-                            settings.value("/confluence/url", "").toString()))
+                    if (ConfluenceAgent::available())
                         actionGetConfluencePageName->setEnabled(true);
                     else
                         actionGetConfluencePageName->setEnabled(false);
                 }
+
                 if (selti && selti->getVymLink().isEmpty()) {
                     actionOpenVymLink->setEnabled(false);
                     actionOpenVymLinkBackground->setEnabled(false);
@@ -6262,6 +6540,23 @@ void Main::updateActions()
 
                 if ((selbi && !selbi->canMoveDown()) || selbis.count() > 1)
                     actionMoveDown->setEnabled(false);
+
+                if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
+                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-0 add check for moveDiagonalUp
+
+                if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
+                    actionMoveDownDiagonally->setEnabled(false);
+
+                if (selbi && selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
+                {
+                    actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
+                    actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-left.png"));
+                }
+                else
+                {
+                    actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-left.png"));
+                    actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-right.png"));
+                }
 
                 if ((selbi && selbi->branchCount() < 2)  || selbis.count() > 1) { 
                     actionSortChildren->setEnabled(false);
@@ -6284,7 +6579,10 @@ void Main::updateActions()
                 }
 
 
-                if (clipboardItemCount > 0)
+                const QClipboard *clipboard = QApplication::clipboard();
+                const QMimeData *mimeData = clipboard->mimeData();
+                if (mimeData->formats().contains("application/x-vym") ||
+                    mimeData->hasImage())
                     actionPaste->setEnabled(true);
                 else
                     actionPaste->setEnabled(false);
@@ -6329,7 +6627,10 @@ void Main::updateActions()
         }
 
         if (selbis.count() > 0)
+        {
             actionFormatColorBranch->setEnabled(true);
+            actionFormatColorSubtree->setEnabled(true);
+        }
     }
     else {
         // No map available
@@ -6500,24 +6801,13 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
-    VymModel *m = currentModel();
-    if (m) {
-        m->repeatLastCommand();
-    }
 }
 
 void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        UserDialog dia;
-        dia.exec();
-        if (dia.result() > 0) {
-            m->setHeading(dia.selectedUser());
-            m->setURL(
-                QString("<ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>")
-                    .arg(dia.selectedUserKey()));
-        }
+        //m->repeatLastCommand();
     }
 }
 
@@ -6734,6 +7024,7 @@ void Main::downloadReleaseNotesFinished()
         }
     }
     else {
+        statusMessage("Downloading release notes failed.");
         if (debug) {
             qDebug() << "Main::downloadReleaseNotesFinished ";
             qDebug() << "  result: failed";
@@ -6741,9 +7032,24 @@ void Main::downloadReleaseNotesFinished()
         }
     }
     agent->deleteLater();
+
+    if (checkUpdatesAfterReleaseNotes)
+    {
+        // After startup we want to check also for updates, but only after
+        // releasenotes are there (and we have a cookie already)
+        checkUpdatesAfterReleaseNotes = false;
+        checkUpdates();
+    }
 }
 
-void Main::checkReleaseNotes()
+void Main::checkReleaseNotesAndUpdates ()
+{
+    // Called once after startup
+    // checkUpdatesAfterReleaseNotes is already true then
+    checkReleaseNotes();
+}
+
+void Main::checkReleaseNotes ()
 {
     bool userTriggered;
     if (qobject_cast<QAction *>(sender()))
@@ -6757,6 +7063,7 @@ void Main::checkReleaseNotes()
                 settings.value("/downloads/releaseNotes/shownVersion", "0.0.1")
                     .toString())) {
             QUrl releaseNotesUrl(
+                // Local URL for testing only
                 // QString("http://localhost/release-notes.php?vymVersion=%1") /
                 QString("http://www.insilmaril.de/vym/"
                         "release-notes.php?vymVersion=%1&codeQuality=%2")

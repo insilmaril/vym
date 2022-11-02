@@ -137,9 +137,13 @@ void ExportMarkdown::doExport()
 
     displayedDestination = filePath;
 
-    success = true;
+    result = ExportBase::Success;
 
-    completeExport(QStringList(listTasksString));
+    QStringList args;
+    args << filePath;
+    args << listTasksString;
+
+    completeExport(args);
 }
 
 QString ExportMarkdown::underline(const QString &text, const QString &line)

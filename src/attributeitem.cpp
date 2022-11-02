@@ -1,18 +1,40 @@
 #include "attributeitem.h"
 
+#include <QDebug>
+
 extern bool debug;
 
-AttributeItem::AttributeItem(const QList<QVariant> &data, TreeItem *parent)
-    : BranchItem(data, parent)
+AttributeItem::AttributeItem(TreeItem *parent)
+    : BranchItem(parent)
 {
+    //qDebug() << "Constr. AttrItem (parent)";
     TreeItem::setType(Attribute);
     internal = false;
     attrType = Undefined;
 }
 
-AttributeItem::~AttributeItem() {}
+AttributeItem::AttributeItem(const QString &k, const QString &v, TreeItem *parent)
+    : BranchItem(parent)
+{
+    //qDebug() << "Constr. AttrItem (k, v, parent)";
+    TreeItem::setType(Attribute);
+    internal = false;
 
-void AttributeItem::set(const QString &k, const QString &v, const Type &)
+    set(k, v);
+}
+
+AttributeItem::~AttributeItem() {
+    //qDebug() << "Destr. AttrItem";
+}
+
+void AttributeItem::copy(AttributeItem *other)
+{
+    key = other->key;
+    value = other->value;
+    attrType = other->attrType;
+}
+
+void AttributeItem::set(const QString &k, const QString &v)
 {
     key = k;
     value = QVariant(v);
@@ -84,14 +106,15 @@ QString AttributeItem::getAttributeTypeString()
             return "String";
         case DateTime:
             return "DateTime";
-        case Undefined:
-            return "Undefined";
-        }
+        default:
+            break;
     }
+    return "Undefined";
+}
 
-    void AttributeItem::setInternal(bool b) { internal = b; }
+void AttributeItem::setInternal(bool b) { internal = b; }
 
-    bool AttributeItem::isInternal() { return internal; }
+bool AttributeItem::isInternal() { return internal; }
 
 QString AttributeItem::getDataXML()
 {

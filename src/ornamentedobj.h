@@ -25,8 +25,7 @@ class OrnamentedObj : public LinkableMapObj {
     virtual void init();
     virtual void copy(OrnamentedObj *);
 
-    virtual void
-    setLinkColor(); // sets color according to colorhint, overloaded
+    //virtual void
     virtual void setColor(QColor); // set the color of text and link
     QColor getColor();             // get color of heading
     QRectF getBBoxHeading();

@@ -48,7 +48,7 @@ void ExportBase::init()
     exportName = "unnamed";
     lastCommand = "";
     cancelFlag = false;
-    success = false;
+    result = Undefined;
     defaultDirPath = lastExportDir.absolutePath();
     dirPath = defaultDirPath;
 }
@@ -112,7 +112,7 @@ void ExportBase::setListTasks(bool b) { listTasks = b; }
 bool ExportBase::execDialog()
 {
     QString fn =
-        QFileDialog::getSaveFileName(NULL, caption, dirPath, filter, NULL,
+        QFileDialog::getSaveFileName(nullptr, caption, filePath, filter, nullptr,
                                      QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty()) {
@@ -153,9 +153,10 @@ void ExportBase::completeExport(QStringList args)
                       .arg(filePath);
     }
     else {
-        command = QString("vym.currentMap().exportMap(\"%1\", \"%2\"")
-                      .arg(exportName)
-                      .arg(filePath);
+        // Only add exportName as default, rest of arguments need to be passed
+        // (Cloud exports ahve no filename...)
+        command = QString("vym.currentMap().exportMap(\"%1\"")
+                      .arg(exportName);
 
         foreach (QString arg, args)
             command += QString(", \"%1\"").arg(arg);
@@ -167,20 +168,28 @@ void ExportBase::completeExport(QStringList args)
                            command);
     settings.setLocalValue(model->getFilePath(), "/export/last/description",
                            exportName);
-    settings.setLocalValue(model->getFilePath(), "/export/last/destination",
+    settings.setLocalValue(model->getFilePath(), "/export/last/displayedDestination",
                            displayedDestination);
 
     // Trigger saving of export command if it has changed
     if (model && (lastCommand != command))
         model->setChanged();
 
-    if (success)
-        mainWindow->statusMessage(
-            QString("Exported as %1 to %2").arg(exportName).arg(displayedDestination));
-    else
-        mainWindow->statusMessage(QString("Failed to export as %1 to %2")
+    switch (result) {
+        case Success:
+            mainWindow->statusMessage(
+                QString("Exported as %1 to %2").arg(exportName).arg(displayedDestination));
+            break;
+        case Failed:
+            mainWindow->statusMessage(QString("Failed to export as %1 to %2")
                                       .arg(exportName)
                                       .arg(displayedDestination));
+            break;
+        case Ongoing:
+            break;
+        default:
+            qWarning() << "Export base: undefined export result for " << exportName;
+        }
 }
 
 void ExportBase::completeExport()

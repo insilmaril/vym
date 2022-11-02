@@ -10,8 +10,8 @@
 // XLinkItem
 /////////////////////////////////////////////////////////////////
 
-XLinkItem::XLinkItem(const QList<QVariant> &data, TreeItem *parent)
-    : MapItem(data, parent)
+XLinkItem::XLinkItem(TreeItem *parent)
+    : MapItem(parent)
 
 {
     // qDebug() << "Const XLinkItem () "<<this;
@@ -34,7 +34,7 @@ XLinkItem::~XLinkItem()
 void XLinkItem::init()
 {
     setType(XLink);
-    link = NULL;
+    link = nullptr;
 }
 
 void XLinkItem::clear() {}
@@ -53,7 +53,7 @@ MapObj *XLinkItem::getMO()
 {
     if (link)
         return link->getMO();
-    return NULL;
+    return nullptr;
 }
 
 void XLinkItem::setSelection()

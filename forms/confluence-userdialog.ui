@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UserDialog</class>
- <widget class="QDialog" name="UserDialog">
+ <class>ConfluenceUserDialog</class>
+ <widget class="QDialog" name="ConfluenceUserDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>216</height>
+    <width>392</width>
+    <height>308</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <widget class="QLineEdit" name="lineEdit"/>
    </item>
    <item>
-    <widget class="QListWidget" name="userList"/>
+    <widget class="QListWidget" name="userListWidget"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -29,7 +29,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel</set>
      </property>
     </widget>
    </item>

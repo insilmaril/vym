@@ -25,8 +25,7 @@ class MapItem : public TreeItem {
     PositionMode posMode;
 
   public:
-    MapItem();
-    MapItem(const QList<QVariant> &data, TreeItem *parent = 0);
+    MapItem(TreeItem *parent = 0);
 
     void init();
 

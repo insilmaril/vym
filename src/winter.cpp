@@ -4,6 +4,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPen>
+#include <QRandomGenerator>
+
 
 #include "mapobj.h"
 #include "misc.h"
@@ -12,9 +14,11 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
 {
     type = t;
 
-    size = qrand() % 10 + 3;
+    size = QRandomGenerator::global()->bounded(10) + 3;
     QPen p(Qt::white);
-    dv = QPointF(qrand() % 10 / 10.0 - 0.5, qrand() % 10 / 10.0 + 1);
+    dv = QPointF(
+            QRandomGenerator::global()->bounded(10) / 10.0 - 0.5,
+            QRandomGenerator::global()->bounded(10) / 10.0 + 1);
 
     switch (type) {
         case Smilla: {
@@ -39,9 +43,9 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
                 l->setParentItem(this);
                 l->setZValue(Z_SNOW);
             }
-            da = qrand() % 20 / 10.0 - 1;
+            da = QRandomGenerator::global()->bounded(20) / 10.0 - 1;
         }
-            setRotation(qrand() % 60);
+            setRotation(QRandomGenerator::global()->bounded(60));
             break;
         case Disc:
             disc = scene->addEllipse(0, 0, size, size, p);
@@ -52,8 +56,10 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
         case Egg:
             disc = scene->addEllipse(0, 0, size, size * 1.5, p);
             disc->setParentItem(this);
-            disc->setBrush(QColor( 
-                qrand() % 100 + 150, qrand() % 100 + 150, qrand() % 100 + 150, 255));
+            disc->setBrush(QColor(
+                QRandomGenerator::global()->bounded(100) + 150,
+                QRandomGenerator::global()->bounded(100) + 150,
+                QRandomGenerator::global()->bounded(100) + 150, 255));
             disc->setZValue(Z_SNOW);
             break;
         default:
@@ -210,7 +216,9 @@ void Winter::setObstacles(QList<QRectF> obslist)
     while (!unfreeze.isEmpty()) {
         // Blow a bit up
         unfreeze.first()->blow(
-            QPointF(qrand() % 10 / 10.0 - 0.5, qrand() % 10 / 10.0 - 5));
+            QPointF(
+                QRandomGenerator::global()->bounded(10) / 10.0 - 0.5,
+                QRandomGenerator::global()->bounded(10) / 10.0 - 5));
         fallingSnow.append(unfreeze.takeFirst());
     }
 }
@@ -229,7 +237,7 @@ void Winter::animate()
         int j = 0;
         while (j < obstacles.count() && cont) {
             if (obstacles.at(j).contains(p) &&
-                qrand() % (obstacles.count() + 1) > obstacles.count() - 1) {
+                QRandomGenerator::global()->bounded(obstacles.count() + 1) > obstacles.count() - 1) {
                 // Freeze snowflake on obstacle
                 // Probality is equale for obstacles or falling through
                 frozenSnow.append(fallingSnow.at(i));
@@ -273,7 +281,7 @@ void Winter::makeSnow()
         // Remove some of the existing frozen flakes
         for (int i = 0; i < 10; i++) {
             if (frozenSnow.count() > 0) {
-                int j = qrand() % frozenSnow.count();
+                int j = QRandomGenerator::global()->bounded(frozenSnow.count());
                 delete frozenSnow.takeAt(j);
             }
         }

@@ -5,336 +5,263 @@
 #include "vymmodel.h"
 
 #include <QHash>
+#include <QMessageBox>
+#include <QSslSocket>
 
 extern Main *mainWindow;
 extern QDir vymBaseDir;
+extern QString jiraPassword;
+extern Settings settings;
+extern QTextStream vout;
 extern bool debug;
 
-JiraAgent::JiraAgent(BranchItem *bi, const QString &u)
+bool JiraAgent::available()
 {
-    // qDebug()<<"Constr. JiraAgent for "<<branchID;
+    if (!QSslSocket::supportsSsl())
+        return false;
+    if ( settings.value("/atlassian/jira/username", "").toString().isEmpty())
+        return false;
+    if ( settings.value("/atlassian/jira/servers/size", 0).toInt() < 1)
+        return false;
 
-    p = NULL;
-    killTimer = NULL;
+    return true;
+}
 
-    if (!bi) {
-        qWarning("Const JiraAgent: bi == NULL");
-        delete (this);
-        return;
-    }
-    branchID = bi->getID();
-    VymModel *model = bi->getModel();
-    modelID = model->getModelID();
+JiraAgent::JiraAgent()
+{
+    //qDebug ()<< "Constr. JiraAgent";
 
-    QString ticketID;
-
-    url = u;
-
-    QStringList args;
-
-    if (url.contains("/browse/") || url.contains("servicedesk")) {
-        // Extract ID from URL first:
-
-        missionType = SingleTicket;
-        ticketID = url.section('/', -1, -1);
-        if (ticketID.isEmpty()) {
-            qWarning() << "JiraAgent: No ticketID found in: " << url;
-            delete (this);
-            return;
-        }
-        args << ticketID;
-    }
-    else if (u.contains("fixme-filter")) // FIXME-4 not supported yet for jira
-    {
-        missionType = Query;
-        args << "--query";
-        args << url;
-    }
-    else {
-        // Try to pass string or ID directly
-        if (url.length() > 15) {
-            // For security limit length
-            qWarning() << "JiraAgent: URL too long, aborting!";
-            return;
-        }
-
-        missionType = SingleTicket;
-        args << url;
-        ticketID = url;
-    }
-
-    ticketScript = vymBaseDir.path() + "/scripts/jigger";
-
-    p = new VymProcess;
-
-    connect(p, SIGNAL(finished(int, QProcess::ExitStatus)), this,
-            SLOT(processFinished(int, QProcess::ExitStatus)));
-
-    if (debug)
-        qDebug() << "JiraAgent:  " << ticketScript << "  args: " << args;
-
-    p->start(ticketScript, args);
-    if (!p->waitForStarted()) {
-        qWarning() << "JiraAgent::getJiraData couldn't start " << ticketScript;
-        return;
-    }
-
-    // Visual hint that we are doing something  // FIXME-4 show spinner instead?
-    if (missionType == SingleTicket) {
-        oldHeading = bi->getHeading();
-        model->setHeadingPlainText("Updating: " + bi->getHeadingPlain(),
-                                   bi); // FIXME-4 translation needed?
-    }
-
-    killTimer = new QTimer(this);
-    killTimer->setInterval(10000);
-    killTimer->setSingleShot(true);
-
-    QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
-    killTimer->start();
+    init();
 }
 
 JiraAgent::~JiraAgent()
 {
-    if (p)
-        delete p;
+    //qDebug() << "Destr. JiraAgent";
+
     if (killTimer)
         delete killTimer;
 }
 
-void JiraAgent::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
+void JiraAgent::init()
 {
-    if (exitStatus == QProcess::NormalExit) {
-        result = p->getStdout().split("\n");
-        QString err = p->getErrout();
-        if (!err.isEmpty()) {
-            qWarning() << "JiraAgent Error: \n" << err;
-            undoUpdateMessage();
-        }
-        else
-            processJiraData();
+    jobType = Undefined;
+    jobStep = -1;
+    abortJob = false;
+
+    killTimer = nullptr;
+
+    networkManager = new QNetworkAccessManager(this);
+
+    modelID = 0;    // invalid ID
+
+    killTimer = new QTimer(this);
+    killTimer->setInterval(15000);
+    killTimer->setSingleShot(true);
+
+    QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
+
+    // Read credentials    
+    username =
+        settings.value("/atlassian/jira/username", "user_johnDoe").toString();
+    password = settings.value("/atlassian/jira/password", jiraPassword).toString();
+
+    // Set API rest point. baseURL later on depends on different JIRA system
+    apiURL = "/rest/api/2";
+}
+
+void JiraAgent::setJobType(JobType jt)
+{
+    jobType = jt;
+}
+
+bool JiraAgent::setBranch(BranchItem *bi)
+{
+    if (!bi) {
+        abortJob = true;
+        return false;
+    } else {
+        branchID = bi->getID();
+        modelID = bi->getModel()->getModelID();
+        return true;
     }
-    else
-        qWarning() << "JiraAgent: Process finished with exitCode=" << exitCode;
+}
+
+
+bool JiraAgent::setTicket(const QString &id)
+{
+    // Find ID part in parameter:
+    QRegExp re("(\\w+[-|\\s]\\d+)");
+    if (re.indexIn(id) < 0) {
+        qWarning() << "JiraAgent::setTicket invalid ID: " << id;
+        abortJob = true;
+        return false;
+    }
+
+    ticketID = re.cap(1);
+    ticketID.replace(" ", "-");
+
+    bool foundPattern = false;
+
+    settings.beginGroup("/atlassian/jira");
+
+    // Try to find baseURL of server by looking through patterns in ticket IDs:
+    int size = settings.beginReadArray("servers");
+    for (int i = 0; i < size; ++i) {
+        settings.setArrayIndex(i);
+        foreach (QString p, settings.value("pattern").toString().split(",")) {
+            if (ticketID.contains(p)) {
+                baseURL = settings.value("baseURL","-").toString();
+                foundPattern = true;
+                break;
+            }
+        }
+    }
+    settings.endArray();
+    settings.endGroup();
+
+    return foundPattern;
+}
+
+QString JiraAgent::getURL()
+{
+    return baseURL + "/browse/" + ticketID;
+}
+
+void JiraAgent::startJob()
+{
+    if (jobStep > 0) {
+        unknownStepWarning();
+        finishJob();
+    } else {
+        jobStep = 0;
+        continueJob();
+    }
+}
+
+void JiraAgent::continueJob()
+{
+    if (abortJob) {
+        finishJob();
+        return;
+    }
+
+    jobStep++;
+
+    // qDebug() << "JA::contJob " << jobType << " Step: " << jobStep << "TicketID: " << ticketID;
+
+    switch(jobType) {
+        case GetTicketInfo:
+            switch(jobStep) {
+                case 1:
+                    // if (!requestedURL.toString().startsWith("http"))
+                    //    requestedURL.setPath("https://" + requestedURL.path());
+                    startGetTicketRequest();
+                    break;
+                case 2: {
+                    QJsonDocument jsdoc = QJsonDocument (jsobj);
+
+                    // Insert references to original branch and model
+                    // FIXME-2 not needed jsobj["vymModelID"] = QString::number(modelID);
+                    jsobj["vymBranchID"] = QJsonValue(branchID);
+                    jsobj["vymTicketURL"] = QJsonValue(getURL());
+
+                    emit (jiraTicketReady(QJsonObject(jsobj)));
+                    finishJob();
+                    }
+                    break;
+                default:
+                    unknownStepWarning();
+                    break;
+            };
+            break;
+        default:
+            qWarning() << "JiraAgent::continueJob   unknown jobType " << jobType;
+    }
+}
+
+void JiraAgent::finishJob()
+{
     deleteLater();
 }
 
-void JiraAgent::timeout() { undoUpdateMessage(); }
-
-void JiraAgent::processJiraData()
+void JiraAgent::unknownStepWarning()
 {
-    // Find model from which we had been started
-    VymModel *model = mainWindow->getModel(modelID);
-    if (model) {
-        // and find branch which triggered this mission
-        BranchItem *missionBI = (BranchItem *)(model->findID(branchID));
-        if (missionBI) {
-            // Here we go...
-
-            QRegExp re("(.*):(\\S*):\"(.*)\"");
-            re.setMinimal(false);
-            ticket_desc.clear();
-            ticket_prio.clear();
-            ticket_status.clear();
-
-            QStringList ticketIDs;
-            foreach (QString line, result) {
-                if (debug)
-                    qDebug() << "JiraAgent::processJiraData  line=" << line;
-                if (re.indexIn(line) != -1) {
-                    if (re.cap(2) == "short_desc") {
-                        ticketIDs.append(re.cap(1));
-                        ticket_desc[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "type") {
-                        ticket_type[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "priority") {
-                        ticket_prio[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "status") {
-                        ticket_status[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "resolution") {
-                        ticket_resolution[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "created") {
-                        ticket_created[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "updated") {
-                        ticket_updated[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "assignee") {
-                        ticket_assignee[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "reporter") {
-                        ticket_reporter[re.cap(1)] =
-                            re.cap(3).replace("\\\"", "\"");
-                    }
-                    else if (re.cap(2) == "url") {
-                        ticket_url[re.cap(1)] = re.cap(3).replace("\\\"", "\"");
-                    }
-                }
-            }
-            if (ticket_desc.count() <= 0) {
-                qWarning() << "JiraAgent: Couldn't find data";
-                undoUpdateMessage(missionBI);
-            }
-            else if (missionType == SingleTicket) {
-                // Only single ticket changed
-                QString t = ticketIDs.first();
-                setModelJiraData(model, missionBI, t);
-            }
-            else {
-                // Process results of query
-                BranchItem *newbi;
-                foreach (QString b, ticketIDs) {
-                    // qDeticket ()<<" -> "<<b<<" "<<ticket_desc[b];
-                    newbi = model->addNewBranch(missionBI);
-                    newbi->setURL("https://" + b); // FIXME-4 no filters yet
-                    if (!newbi)
-                        qWarning() << "JiraAgent: Couldn't create new branch?!";
-                    else
-                        setModelJiraData(model, newbi, b);
-                }
-            }
-        }
-        else
-            qWarning() << "JiraAgent: Found model, but not branch #"
-                       << branchID;
-    }
-    else
-        qWarning() << "JiraAgent: Couldn't find model #" << modelID;
+    qWarning() << "JA::contJob  unknow step in jobType = " 
+        << jobType 
+        << "jobStep = " << jobStep;
 }
 
-void JiraAgent::setModelJiraData(VymModel *model, BranchItem *bi,
-                                 const QString &ticketID)
+void JiraAgent::startGetTicketRequest()
 {
-    if (debug) {
-        qDebug() << "JiraAgent::setModelJiraData for ticketID: " << ticketID;
+    QUrl url = QUrl(baseURL + apiURL + "/issue/" + ticketID);
+
+    QNetworkRequest request = QNetworkRequest(url);
+
+    // Basic authentication in header
+    QString concatenated = username + ":" + password;
+    QByteArray data = concatenated.toLocal8Bit().toBase64();
+    QString headerData = "Basic " + data;
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+
+    if (debug)
+    {
+        qDebug() << "JA::startGetTicketRequest: url = " + request.url().toString();
     }
 
-    QStringList solvedStates;
-    /*
-    solvedStates << "Open";
-    solvedStates << "To Do";
-    solvedStates << "In Analysis";
-    solvedStates << "Prepared";
-    solvedStates << "Implemented";
-    solvedStates << "In Overall Integration";
-    solvedStates << "Overall Integration Done";
-    */
-    solvedStates << "Verification Done";
-    solvedStates << "Resolved";
-    solvedStates << "Closed";
-    solvedStates << "Done";
+    killTimer->start();
 
-    QString idName = ticketID;
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &JiraAgent::ticketReceived);
 
-    if (solvedStates.contains(ticket_resolution[ticketID])) {
-        idName = "(" + idName + ")";
-        model->colorSubtree(Qt::blue, bi);
-    }
-
-    model->setHeadingPlainText(idName + " - " + ticket_desc[ticketID], bi);
-
-    // Save current selections  // FIXME-4 No multiselection yet (cleanup IDs vs
-    // UUIDs in treeitem)
-    QString oldSelection = model->getSelectString();
-
-    // Try to find subbranch named "JIRA log"
-
-    BranchItem *logBranch;
-    bool logBranchAvailable = false;
-    for (int n = 0; n < bi->branchCount(); n++) {
-        logBranch = bi->getBranchNum(n);
-        if (logBranch->getHeadingPlain() == "JIRA log") {
-            model->select(logBranch);
-            logBranchAvailable = true;
-            break;
-        }
-    }
-    if (!logBranchAvailable) {
-        logBranch = model->addNewBranch(bi, -2);
-        model->setHeadingPlainText("JIRA log", logBranch);
-        model->select(logBranch);
-    }
-
-    BranchItem *timestampBranch = model->addTimestamp();
-    BranchItem *infoBranch;
-
-    model->select(timestampBranch);
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Prio: " + ticket_prio[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Type: " + ticket_type[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Status: " + ticket_status[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Resolution: " + ticket_resolution[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Assignee: " + ticket_assignee[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Created: " + ticket_created[ticketID],
-                                   infoBranch);
-
-    infoBranch = model->addNewBranch();
-    if (infoBranch)
-        model->setHeadingPlainText("Updated: " + ticket_updated[ticketID],
-                                   infoBranch);
-
-    if (bi->getURL().isEmpty()) {
-        model->select(bi);
-        model->setURL(ticket_url[ticketID]);
-    }
-
-    // Scroll log branch
-    model->select(logBranch);
-    logBranch = model->getSelectedBranch();
-
-    if (logBranch && !logBranch->isScrolled()) {
-        model->toggleScroll();
-    }
-
-    // Selected previous objects
-    model->select(oldSelection);
+    networkManager->get(request);
 }
 
-void JiraAgent::undoUpdateMessage(BranchItem *bi)
+void JiraAgent::ticketReceived(QNetworkReply *reply)
 {
-    VymModel *model = mainWindow->getModel(modelID);
-    if (model) {
-        if (!bi)
-            bi = (BranchItem *)(model->findID(branchID));
-        if (bi) {
-            model->setHeading(oldHeading, bi);
-        }
-        else
-            qWarning()
-                << "JiraAgent::undoUpdateMessage couldn't find branch item!";
+    // qDebug() << "JA::ticketReceived";
+
+    killTimer->stop();
+
+    networkManager->disconnect();
+
+    QString r = reply->readAll();
+
+    if (reply->error()) {
+        if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+            QMessageBox::warning(
+                nullptr, tr("Warning"),
+                tr("Authentication problem when contacting JIRA"));
+
+        qWarning() << "JiraAgent::ticketRReveived reply error";
+        qWarning() << "Error: " << reply->error();
+        vout << "reply: " << Qt::endl << r << Qt::endl;
+        finishJob();
+        return;
     }
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(r.toUtf8());
+    jsobj = jsdoc.object();
+    continueJob();
 }
+
+void JiraAgent::timeout() 
+{
+    qWarning() << "JiraAgent timeout!!   jobType = " << jobType;
+}
+
+#ifndef QT_NO_SSL
+void JiraAgent::sslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
+{
+    QString errorString;
+    foreach (const QSslError &error, errors) {
+        if (!errorString.isEmpty())
+            errorString += '\n';
+        errorString += error.errorString();
+    }
+
+    reply->ignoreSslErrors();
+    qWarning() << "JiraAgent: One or more SSL errors has occurred: " << errorString;
+    qWarning() << "Errors ignored.";
+}
+#endif

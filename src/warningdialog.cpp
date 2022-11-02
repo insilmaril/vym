@@ -67,3 +67,7 @@ void WarningDialog::setCaption(const QString &s)
 {
     QDialog::setWindowTitle("VYM - " + s);
 }
+void WarningDialog::setAcceptedText(const QString &s)
+{
+    ui.okButton->setText(s);
+}

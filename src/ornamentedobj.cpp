@@ -54,17 +54,6 @@ void OrnamentedObj::copy(OrnamentedObj *other)
     ornamentsBBox = other->ornamentsBBox;
 }
 
-void OrnamentedObj::setLinkColor()
-{
-    VymModel *model = treeItem->getModel();
-    if (!model)
-        return;
-    if (model->getMapLinkColorHint() == HeadingColor)
-        LinkableMapObj::setLinkColor(heading->getColor());
-    else
-        LinkableMapObj::setLinkColor(model->getMapDefLinkColor());
-}
-
 void OrnamentedObj::setColor(QColor col)
 {
     heading->setColor(col);

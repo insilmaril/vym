@@ -130,9 +130,13 @@ void ExportASCII::doExport()
 
     displayedDestination = filePath;
 
+    result = ExportBase::Success;
 
-    success = true;
-    completeExport(QStringList(listTasksString));
+    QStringList args;
+    args << filePath;
+    args << listTasksString;
+
+    completeExport(args);
 }
 
 QString ExportASCII::underline(const QString &text, const QString &line)

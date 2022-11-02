@@ -26,7 +26,6 @@ class BranchObj : public OrnamentedObj {
 
     virtual void setVisibility(bool, int); // set visibility
     virtual void setVisibility(bool);      // set vis. for w
-    virtual void setLinkColor();           // set the color of link
 
     virtual void positionContents();
     virtual void move(double x, double y);

@@ -177,20 +177,6 @@ void BranchObj::setVisibility(bool v, int toDepth)
 
 void BranchObj::setVisibility(bool v) { setVisibility(v, MAX_DEPTH); }
 
-void BranchObj::setLinkColor()
-{
-    // Overloaded from LinkableMapObj
-    // BranchObj can use color of heading
-
-    VymModel *model = treeItem->getModel();
-    if (model) {
-        if (model->getMapLinkColorHint() == HeadingColor)
-            LinkableMapObj::setLinkColor(heading->getColor());
-        else
-            LinkableMapObj::setLinkColor();
-    }
-}
-
 void BranchObj::positionContents()
 {
     OrnamentedObj::positionContents();

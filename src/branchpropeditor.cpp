@@ -62,6 +62,8 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
         show();
     else
         hide();
+    
+    connectSignals();
 }
 
 BranchPropertyEditor::~BranchPropertyEditor()
@@ -75,8 +77,6 @@ BranchPropertyEditor::~BranchPropertyEditor()
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    if (!ti) return;
-
     disconnectSignals();
     if (!ti)
         ui.tabWidget->setEnabled(false);
@@ -88,9 +88,9 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                        // ported...
         {
             ui.tabWidget->setEnabled(true);
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 4; ++i)
                 ui.tabWidget->setTabEnabled(i, true);
-            ui.tabWidget->setTabEnabled(3, false);
+            ui.tabWidget->setTabEnabled(4, false);
 
             // Frame
             FrameObj::FrameType t = branchObj->getFrameType();
@@ -234,10 +234,14 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         //attributeDelegate.setAttributeTable (mapEditor->attributeTable());
         //ui.attributeTableView->setItemDelegate (&attributeDelegate);
 
-        // Finally activate signals
-        connectSignals();
-
         } // BranchItem
+    }
+    else if (ti->getType() == TreeItem::Image) {
+        ui.tabWidget->setEnabled(true);
+        for (int i = 0; i < ui.tabWidget->count(); ++i)
+            ui.tabWidget->setTabEnabled(i, false);
+        ui.tabWidget->setTabEnabled(3, true);
+        ui.tabWidget->setCurrentIndex(3);
     }
     else if (ti->getType() == TreeItem::Attribute) {
         ui.tabWidget->setEnabled(true);
@@ -248,6 +252,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     else {
         ui.tabWidget->setEnabled(false);
     }
+    connectSignals();
 }
 
 void BranchPropertyEditor::setModel(VymModel *m)
@@ -325,8 +330,6 @@ void BranchPropertyEditor::frameIncludeChildrenChanged(int i)
 
 void BranchPropertyEditor::linkHideUnselectedChanged(int i)
 {
-    if (!branchItem)
-        return;
     model->setHideLinkUnselected(i);
 }
 

@@ -56,10 +56,10 @@ ExportHTMLDialog::ExportHTMLDialog(QWidget *parent) : QDialog(parent)
 
 void ExportHTMLDialog::readSettings()
 {
-    dir = settings
+    dir.setPath(settings
               .localValue(filepath, "/export/html/exportDir",
                           vymBaseDir.currentPath())
-              .toString(); // FIXME-3 exportDir only needed for dialog
+              .toString()); // FIXME-3 exportDir only needed for dialog
     ui.lineEditDir->setText(dir.absolutePath());
 
     includeMapImage =

@@ -450,9 +450,12 @@ void ExportHTML::doExport(bool useDialog)
 
     displayedDestination = filePath;
 
-    success = true;
+    result = ExportBase::Success;
 
-    completeExport(QStringList(dirPath));
+    QStringList args;
+    args << filePath;
+    args << dirPath;
+    completeExport(args);
 
     dia.saveSettings();
     model->setExportMode(false);

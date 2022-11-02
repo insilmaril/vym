@@ -19,7 +19,6 @@
 extern Main *mainWindow;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern uint clipboardItemCount;
 extern bool debug;
 extern QPrinter *printer;
 
@@ -58,7 +57,7 @@ MapEditor::MapEditor(VymModel *vm)
     setStyleSheet("QGraphicsView:focus {" + editorFocusStyle + "}");
 
     // Create bitmap cursors, platform dependant
-    HandOpenCursor = QCursor(QPixmap(":/cursorhandopen.png"), 1, 1);
+    HandOpenCursor = QCursor(QPixmap(":/mode-move-view.png"), 1, 1);
     PickColorCursor = QCursor(QPixmap(":/cursorcolorpicker.png"), 5, 27);
     XLinkCursor = QCursor(QPixmap(":/cursorxlink.png"), 1, 7);
 
@@ -428,17 +427,21 @@ QPointF MapEditor::getViewCenter() { return viewCenter; }
 
 void MapEditor::updateMatrix()
 {
-    double a = M_PI / 180 * angle;
-    double sina = sin((double)a);
-    double cosa = cos((double)a);
-
-    QMatrix zm(zoomFactor, 0, 0, zoomFactor, 0, 0);
-    // QMatrix translationMatrix(1, 0, 0, 1, 50.0, 50.0);
-    QMatrix rm(cosa, sina, -sina, cosa, 0, 0);
-    setMatrix(zm * rm);
+    QTransform t_zoom;
+    t_zoom.scale(zoomFactor, zoomFactor);
+    QTransform t_rot;
+    t_rot.rotate(angle);
+    setTransform(t_zoom * t_rot);
 }
 
-void MapEditor::minimizeView() { setSceneRect(scene()->itemsBoundingRect()); }
+void MapEditor::minimizeView() {
+    // If we only would set scene rectangle to existing items, then 
+    // view fould "jump", when Qt automatically tries to center. 
+    // Better consider the currently visible viewport (with slight offset)
+    QRectF r = mapToScene(viewport()->geometry()).boundingRect();
+    r.translate(-2,-3);
+    setSceneRect(scene()->itemsBoundingRect().united(r));
+}
 
 void MapEditor::print()
 {
@@ -454,10 +457,10 @@ void MapEditor::print()
 
     if (totalBBox.width() > totalBBox.height())
         // recommend landscape
-        printer->setOrientation(QPrinter::Landscape);
+        printer->setPageOrientation(QPageLayout::Landscape);
     else
         // recommend portrait
-        printer->setOrientation(QPrinter::Portrait);
+        printer->setPageOrientation(QPageLayout::Portrait);
 
     QPrintDialog dialog(printer, this);
     dialog.setWindowTitle(tr("Print vym map", "MapEditor"));
@@ -523,7 +526,7 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()
+QRectF MapEditor::getTotalBBox()    // FIXME-2 really needed? Overlaps with scene and VM...
 {
     minimizeView();
     return sceneRect();
@@ -1105,6 +1108,12 @@ void MapEditor::editHeading()
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
 
+#if defined(Q_OS_WINDOWS)
+        QFont font = lineEdit->font();
+        font.setPointSize(font.pointSize() + 4);
+        lineEdit->setFont(font);
+#endif
+
         QPointF tl;
         QPointF br;
         qreal w = 230;
@@ -1138,6 +1147,11 @@ void MapEditor::editHeading()
 
 void MapEditor::editHeadingFinished()
 {
+    if (state != EditingHeading || !lineEdit ) {
+        qWarning() << "ME::editHeadingFinished not editing heading!";
+        return;
+    }
+
     setState(Neutral);
     // lineEdit->releaseKeyboard();
     lineEdit->clearFocus();
@@ -1285,19 +1299,16 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     if (ti_found)
         lmo_found = ((MapItem *)ti_found)->getLMO();
 
-    // Stop editing heading
+
+    // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
-        if (ti_found && ti_found->isBranchLikeType() &&
-            ti_found == model->getSelectedItem()) {
-            // return event to LineEdit to allow selecting in LineEdit
-            e->ignore();
-            QGraphicsView::mousePressEvent(e);
-            return;
-        }
-        else
-            // Stop editing in LineEdit
-            editHeadingFinished();
+        e->ignore();
+        QGraphicsView::mousePressEvent(e);
+        return;
     }
+
+    // Stop editing in LineEdit
+    if (state == EditingHeading) editHeadingFinished();
 
     QString sysFlagName;
     QUuid uid;
@@ -1475,7 +1486,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();
                 if (xlo) {
-                    setState(EditingLink);
+                    setState(DrawingXLink);
                     int i = xlo->ctrlPointInClickBox(p);
                     if (i >= 0)
                         xlo->setSelection(i);
@@ -1505,6 +1516,13 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
             QString("ME::mousePressEvent  Scene: %1  widget: %2")
                 .arg(qpointFToString(mapToScene(e->pos())))
                 .arg(qpointFToString(e->pos())));
+
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseMoveEvent(e);
+        return;
+    }
 
     // Move sceneView
     if (state == MovingView &&
@@ -1540,7 +1558,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     // Move the selected MapObj
     if (mosel &&
         (state == MovingObject || state == MovingObjectWithoutLinking ||
-         state == EditingLink)) {
+         state == DrawingXLink)) {
         int margin = 50;
 
         // Check if we have to scroll
@@ -1707,6 +1725,13 @@ void MapEditor::moveObject()
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 {
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseReleaseEvent(e);
+        return;
+    }
+
     QPointF p = mapToScene(e->pos());
     TreeItem *seli = model->getSelectedItem();
 
@@ -1906,6 +1931,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 {
+    // Allow selecting text in QLineEdit if necessary
+    if (model->isSelectionBlocked()) {
+        e->ignore();
+        QGraphicsView::mouseDoubleClickEvent(e);
+        return;
+    }
+
     if (e->button() == Qt::LeftButton) {
         QPointF p = mapToScene(e->pos());
         TreeItem *ti = findMapItem(p, NULL);
@@ -1934,9 +1966,9 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 void MapEditor::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier &&
-        e->orientation() == Qt::Vertical) {
-        QPointF p = mapToScene(e->pos());
-        if (e->delta() > 0)
+        e->angleDelta().y() != 0) {
+        QPointF p = mapToScene(e->position().toPoint());
+        if (e->angleDelta().y() > 0)
             // setZoomFactorTarget (zoomFactorTarget*1.15);
             setViewCenterTarget(p, zoomFactorTarget * 1.15, 0);
         else
@@ -2100,6 +2132,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
 
     QItemSelection sel = model->getSelectionModel()->selection();
 
+    LinkableMapObj *lmo;
     // Add new selected objects
     foreach (QModelIndex ix, sel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
@@ -2107,6 +2140,9 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
+        lmo = mi->getLMO();
+        if (lmo)
+            mi->getLMO()->updateVisibility();
     }
 
     // Delete objects meanwhile removed from selection
@@ -2116,6 +2152,9 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsDeselected.contains(mi))
                 itemsDeselected.append(mi);
+        lmo = mi->getLMO(); // FIXME-2 xlink does return nullptr
+        if (lmo)
+            mi->getLMO()->updateVisibility();
     }
 
     // Trim list of selection paths

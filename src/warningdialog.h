@@ -15,6 +15,7 @@ class WarningDialog : public QDialog {
     virtual void setShowAgainName(const QString &s);
     virtual void setText(const QString &s);
     virtual void setCaption(const QString &s);
+    virtual void setAcceptedText(const QString &s);
 
   private:
     void init();

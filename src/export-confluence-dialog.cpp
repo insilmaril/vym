@@ -19,24 +19,31 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     filepath = "";
     settingsChanged = false;
 
-    // Create button group
-    buttonGroup = new QButtonGroup(this);
-    // buttonGroup->addButton( ui.createPageButton );
-    // buttonGroup->addButton( ui.updatePageButton );
-
-    ui.updatePageButton->setChecked(true);
-    pageButtonPressed(0);
-
     // connect(buttonGroup, SIGNAL(buttonPressed(int)), this,
     // SLOT(pageButtonPressed(int)));
     connect(ui.createPageButton, SIGNAL(clicked(bool)), this,
-            SLOT(pageButtonPressed(bool)));
+            SLOT(pageButtonPressed()));
     connect(ui.updatePageButton, SIGNAL(clicked(bool)), this,
-            SLOT(pageButtonPressed(bool)));
+            SLOT(pageButtonPressed()));
 
     // signals and slots connections
-    connect(ui.imageCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(imageCheckBoxPressed(bool)));
+    connect(ui.mapCenterToPageNameCheckBox, SIGNAL(toggled(bool)), this,
+            SLOT(mapCenterToPageNameCheckBoxPressed(bool)));
+    connect(ui.textColorCheckBox, SIGNAL(toggled(bool)), this,
+            SLOT(textcolorCheckBoxPressed(bool)));
+    connect(ui.lineEditURL, SIGNAL(textChanged(const QString &)), this,
+            SLOT(URLChanged()));
+    connect(ui.lineEditPageName, SIGNAL(textChanged(const QString &)), this,
+            SLOT(pageNameChanged()));
+    connect(ui.saveSettingsInMapCheckBox, SIGNAL(toggled(bool)), this,
+            SLOT(saveSettingsInMapCheckBoxPressed(bool)));
+
+    // Not implemented yet
+    ui.includeImagesCheckBox->hide();
+    ui.TOCCheckBox->hide();
+    ui.taskFlagsCheckBox->hide();
+    ui.userFlagsCheckBox->hide();
+    /*
     connect(ui.includeImagesCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(includeImagesCheckBoxPressed(bool)));
     connect(ui.TOCCheckBox, SIGNAL(toggled(bool)), this,
@@ -47,30 +54,31 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
             SLOT(taskFlagsCheckBoxPressed(bool)));
     connect(ui.userFlagsCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(userFlagsCheckBoxPressed(bool)));
-    connect(ui.textColorCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(textcolorCheckBoxPressed(bool)));
-    connect(ui.lineEditPageURL, SIGNAL(textChanged(const QString &)), this,
-            SLOT(pageURLChanged()));
-    connect(ui.lineEditPageTitle, SIGNAL(textChanged(const QString &)), this,
-            SLOT(pageTitleChanged()));
-    connect(ui.saveSettingsInMapCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(saveSettingsInMapCheckBoxPressed(bool)));
+    */
 }
 
 void ExportConfluenceDialog::readSettings()
 {
-    pageURL = settings
-                  .localValue(filepath, "/export/confluence/pageURL",
+    url = settings
+                  .localValue(filepath, "/export/confluence/url",
                               "Enter URL of page")
                   .toString();
-    ui.lineEditPageURL->setText(pageURL);
+    ui.lineEditURL->setText(url);
 
-    pageTitle = settings
-                    .localValue(filepath, "/export/confluence/pageTitle",
+    pageName = settings
+                    .localValue(filepath, "/export/confluence/pageName",
                                 "New page created on " +
                                     QDateTime::currentDateTime().toString())
                     .toString();
-    ui.lineEditPageTitle->setText(pageTitle);
+    ui.lineEditPageName->setText(pageName);
+
+    ui.createPageButton->setChecked(
+        settings
+            .localValue(filepath, "/export/confluence/createNewPage", true).toBool());
+
+    ui.updatePageButton->setChecked(!
+        settings
+            .localValue(filepath, "/export/confluence/createNewPage", false).toBool());
 
     /*  FIXME-3 cleanup the copied HTML parameters
     includeMapImage = settings.localValue (filepath,
@@ -97,49 +105,65 @@ void ExportConfluenceDialog::readSettings()
     ui.userFlagsCheckBox->setChecked(useUserFlags);
 
     */
+    mapCenterToPageName =
+        settings.localValue(filepath, "/export/confluence/mapCenterToPageName", true)
+            .toBool();
+    ui.mapCenterToPageNameCheckBox->setChecked(mapCenterToPageName);
     useTextColor =
-        settings.localValue(filepath, "/export/confluence/useTextColor", "no")
+        settings.localValue(filepath, "/export/confluence/useTextColor", false)
             .toBool();
     ui.textColorCheckBox->setChecked(useTextColor);
 
     saveSettingsInMap =
         settings
-            .localValue(filepath, "/export/confluence/saveSettingsInMap", "no")
+            .localValue(filepath, "/export/confluence/saveSettingsInMap", true)
             .toBool();
     ui.saveSettingsInMapCheckBox->setChecked(saveSettingsInMap);
+
+
+    pageButtonPressed();
 }
 
-void ExportConfluenceDialog::setPageURL(const QString &s) { pageURL = s; }
+void ExportConfluenceDialog::setURL(const QString &u) { url = u; }
 
-void ExportConfluenceDialog::setPageTitle(const QString &s) { pageTitle = s; }
+void ExportConfluenceDialog::setPageName(const QString &s) { pageName = s; }
 
-void ExportConfluenceDialog::pageButtonPressed(bool)
+void ExportConfluenceDialog::pageButtonPressed()
 {
     if (ui.createPageButton->isChecked()) {
-        ui.pageURLLabel->setText("URL of parent page");
-        ui.pageTitleLabel->setText("Page title (required)");
+        ui.URLLabel->setText("URL of parent page");
+        ui.pageNameLabel->setText("Page title (required)");
     }
     else {
-        ui.pageURLLabel->setText("URL of existing page");
-        ui.pageTitleLabel->setText("Page title (optional)");
+        ui.URLLabel->setText("URL of existing page");
+        ui.pageNameLabel->setText("Page title (optional)");
     }
 }
 
-void ExportConfluenceDialog::pageURLChanged()
+void ExportConfluenceDialog::URLChanged()
 {
     settingsChanged = true;
-    pageURL = ui.lineEditPageURL->text();
+    url = ui.lineEditURL->text();
 }
 
-void ExportConfluenceDialog::pageTitleChanged()
+void ExportConfluenceDialog::pageNameChanged()
 {
     settingsChanged = true;
-    pageTitle = ui.lineEditPageTitle->text();
+    pageName = ui.lineEditPageName->text();
 }
 
-void ExportConfluenceDialog::imageCheckBoxPressed(bool b)
+void ExportConfluenceDialog::mapCenterToPageNameCheckBoxPressed(bool b)
 {
-    includeMapImage = b;
+    mapCenterToPageName = b;
+    if (mapCenterToPageName)
+    {
+        ui.lineEditPageName->setText(pageNameHint);
+        ui.lineEditPageName->setEnabled(false);
+    } else
+    {
+        ui.lineEditPageName->show();
+        ui.lineEditPageName->setEnabled(true);
+    }
     settingsChanged = true;
 }
 
@@ -218,12 +242,13 @@ void ExportConfluenceDialog::saveSettings()
         //        "/export/confluence/useTaskFlags", useTaskFlags);
         //        settings.setLocalValue (filepath,
         //        "/export/confluence/useUserFlags", useUserFlags);
-        settings.setLocalValue(filepath, "/export/confluence/useTextColor",
-                               useTextColor);
         settings.setValue("/export/confluence/showWarnings", showWarnings);
         settings.setValue("/export/confluence/showOutput", showOutput);
-        settings.setValue("/export/confluence/pageURL", pageURL);
-        settings.setValue("/export/confluence/pageTitle", pageTitle);
+        settings.setLocalValue(filepath, "/export/confluence/mapCenterToPageName", mapCenterToPageName);
+        settings.setLocalValue(filepath, "/export/confluence/useTextColor", useTextColor);
+        settings.setLocalValue(filepath, "/export/confluence/url", url);
+        settings.setLocalValue(filepath, "/export/confluence/pageName", pageName);
+        settings.setLocalValue(filepath, "/export/confluence/createNewPage", ui.createPageButton->isChecked());
     }
 }
 
@@ -231,15 +256,19 @@ void ExportConfluenceDialog::setFilePath(const QString &s) { filepath = s; }
 
 void ExportConfluenceDialog::setMapName(const QString &s) { mapname = s; }
 
-QString ExportConfluenceDialog::getPageURL() { return pageURL; }
+void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
 
-QString ExportConfluenceDialog::getPageTitle() { return pageTitle; }
+bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
+
+QString ExportConfluenceDialog::getURL() { return url; }
+
+QString ExportConfluenceDialog::getPageName() { return pageName; }
+
+void ExportConfluenceDialog::setPageNameHint(const QString &s) 
+{
+    pageNameHint = s;
+}
 
 bool ExportConfluenceDialog::warnings() { return showWarnings; }
 
 bool ExportConfluenceDialog::hasChanged() { return settingsChanged; }
-
-bool ExportConfluenceDialog::createNewPage()
-{
-    return ui.createPageButton->isChecked();
-}

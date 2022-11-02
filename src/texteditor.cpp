@@ -43,7 +43,7 @@ TextEditor::TextEditor()
 
     e = new QTextEdit(this);
     e->setFocus();
-    e->setTabStopWidth(20); // unit is pixel
+    e->setTabStopDistance(20); // unit is pixel, default would be 80
     e->setAutoFillBackground(true);
     e->installEventFilter(this);
     connect(e, SIGNAL(textChanged()), this, SLOT(editorChanged()));
@@ -418,7 +418,7 @@ void TextEditor::setupEditActions()
 void TextEditor::setupFormatActions()
 {
     QString tag = tr("Texteditor", "Shortcuts");
-    QToolBar *fontHintsToolBar =
+    fontHintsToolBar =
         addToolBar(tr("Font hints", "toolbar in texteditor"));
     fontHintsToolBar->setObjectName("noteEditorFontToolBar");
     QMenu *formatMenu = menuBar()->addMenu(tr("F&ormat"));
@@ -447,7 +447,7 @@ void TextEditor::setupFormatActions()
     fontHintsToolBar->addAction(a);
     actionFormatRichText = a;
 
-    QToolBar *fontToolBar = addToolBar(tr("Fonts", "toolbar in texteditor"));
+    fontToolBar = addToolBar(tr("Fonts", "toolbar in texteditor"));
     fontToolBar->setObjectName("noteEditorFontToolBar");
 
     comboFont = new QComboBox;
@@ -472,7 +472,7 @@ void TextEditor::setupFormatActions()
 
     formatMenu->addSeparator();
 
-    QToolBar *formatToolBar = addToolBar(tr("Format", "toolbar in texteditor"));
+    formatToolBar = addToolBar(tr("Format", "toolbar in texteditor"));
     formatToolBar->setObjectName("noteEditorFormatToolBar");
 
     QPixmap pix(16, 16);
@@ -787,7 +787,7 @@ void TextEditor::textSaveAs()
 {
     QString caption = tr("Export Note to single file");
     QString fn = QFileDialog::getSaveFileName(
-        this, caption, QString::null, "VYM Note (HTML) (*.html);;All files (*)",
+        this, caption, QString(), "VYM Note (HTML) (*.html);;All files (*)",
         0, QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty()) {
@@ -860,7 +860,7 @@ void TextEditor::textExportAsASCII()
             s = filenameHint;
     }
     else
-        s = QString::null;
+        s = QString();
     QString caption = tr("Export Note to single file (ASCII)");
     fn = QFileDialog::getSaveFileName(
         this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)");
@@ -930,12 +930,18 @@ void TextEditor::toggleFonthint()
 
 void TextEditor::setRichTextMode(bool b)
 {
+    actionFormatUseFixedFont->setEnabled(false);
     if (b) {
         e->setHtml(e->toHtml());
-        actionFormatUseFixedFont->setEnabled(false);
         actionFormatRichText->setChecked(true);
     }
     else {
+        // Reset also text format 
+        QTextCharFormat textformat;
+        textformat.setForeground(colorFont);
+        textformat.setBackground(colorFilledEditor);
+        textformat.setFont(varFont);
+        e->setCurrentCharFormat(textformat);
         e->setPlainText(e->toPlainText());
         actionFormatUseFixedFont->setEnabled(true);
         actionFormatRichText->setChecked(false);
@@ -1113,6 +1119,8 @@ void TextEditor::updateActions()
     if (!actionFormatRichText->isChecked() || !b) {
         comboFont->setEnabled(false);
         comboSize->setEnabled(false);
+        fontToolBar->hide();
+        formatToolBar->hide();
         actionTextColor->setEnabled(false);
         actionTextBold->setEnabled(false);
         actionTextUnderline->setEnabled(false);
@@ -1128,6 +1136,8 @@ void TextEditor::updateActions()
     else {
         comboFont->setEnabled(true);
         comboSize->setEnabled(true);
+        fontToolBar->show();
+        formatToolBar->show();
         actionTextColor->setEnabled(true);
         actionTextBold->setEnabled(true);
         actionTextUnderline->setEnabled(true);
@@ -1180,7 +1190,7 @@ void TextEditor::updateState()
 
 void TextEditor::setEmptyEditorColor()
 {
-    QColor col = QColorDialog::getColor(colorEmptyEditor, NULL);
+    QColor col = QColorDialog::getColor(colorEmptyEditor, nullptr);
     if (!col.isValid())
         return;
     colorEmptyEditor = col;
@@ -1191,7 +1201,7 @@ void TextEditor::setEmptyEditorColor()
 
 void TextEditor::setInactiveEditorColor()
 {
-    QColor col = QColorDialog::getColor(colorInactiveEditor, NULL);
+    QColor col = QColorDialog::getColor(colorInactiveEditor, nullptr);
     if (!col.isValid())
         return;
     colorInactiveEditor = col;
@@ -1202,7 +1212,7 @@ void TextEditor::setInactiveEditorColor()
 
 void TextEditor::setFilledEditorColor()
 {
-    QColor col = QColorDialog::getColor(colorFilledEditor, NULL);
+    QColor col = QColorDialog::getColor(colorFilledEditor, nullptr);
     if (!col.isValid())
         return;
     colorFilledEditor = col;
@@ -1213,7 +1223,7 @@ void TextEditor::setFilledEditorColor()
 
 void TextEditor::setFontColor()
 {
-    QColor col = QColorDialog::getColor(colorFont, NULL);
+    QColor col = QColorDialog::getColor(colorFont, nullptr);
     if (!col.isValid())
         return;
     colorFont = col;

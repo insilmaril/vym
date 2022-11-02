@@ -1,4 +1,4 @@
-VYM - View Your Mind (c) 2004-2021 by Uwe Drechsel
+VYM - View Your Mind (c) 2004-2022 by Uwe Drechsel
 ==================================================
 
 Documentation
@@ -62,7 +62,7 @@ Installation
     development packages of the Qt5 toolkit installed. (Check also the
     homepage above for details):
 
-      qmake
+      cmake .
       make
       make install
 
@@ -72,7 +72,7 @@ Questions and feedback
 
 Please direct support questions to the mailinglist first: 
 
-    vym-forum@lists.sourceforge.net
+  vym-forum@lists.sourceforge.net
 
 Bugs and feature requests will be taken care of in 
 

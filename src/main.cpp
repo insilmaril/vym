@@ -41,11 +41,10 @@ QString localeName;
 
 QTextStream vout(stdout); // vymout - Testing for now. Flush after writing...
 
-QStringList jiraPrefixList;    // List containing URLs of Jira systems
-bool jiraClientAvailable;      // collabzone specific currently
-bool confluenceAgentAvailable; // native Confluence support via REST API, also
-                               // credentials required in settings
-QString confluencePassword; // password is only on request written to settings
+// Accessing JIRA and Confluence is done using agents
+// Credentials may be stored in settings, but only on request
+QString jiraPassword;
+QString confluencePassword;
 
 TaskModel *taskModel;
 TaskEditor *taskEditor;
@@ -73,7 +72,6 @@ QDir tmpVymDir;          // All temp files go there, created in mainwindow
 QDir cashDir;            // tmp dir with cashed svg files in tmpVymDir
 QString clipboardDir;    // Clipboard used in all mapEditors
 QString clipboardFile;   // Clipboard used in all mapEditors
-uint clipboardItemCount; // Number of items in clipboard
 
 QDir vymBaseDir; // Containing all styles, scripts, images, ...
 QDir lastImageDir;
@@ -87,9 +85,10 @@ QString flagsPath; // Pointing to flags
 
 bool debug;                // global debugging flag
 bool testmode;             // Used to disable saving of autosave setting
-bool recoveryMode = false; // Activated via command line switch and deactivated
-                           // after initial loading of files
+bool restoreMode = false;  // During restore, existing lockfiles are ignored
+
 QStringList ignoredLockedFiles;
+QStringList lastSessionFiles;   //! Will be overwritten in setting after load, so read initially
 
 Switchboard switchboard;
 
@@ -210,7 +209,7 @@ int main(int argc, char *argv[])
         "--recover    recover     Delete lockfiles during initial loading of "
         "files\n"
         "-s           shortcuts   Show Keyboard shortcuts on start\n"
-        "--sl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
+        "--cl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
         "start\n"
         "-t           testmode    Test mode, e.g. no autosave and changing of "
         "its setting\n"
@@ -255,15 +254,13 @@ int main(int argc, char *argv[])
     else
         vymInstanceName = pidString;
 
-    bool debugBuild = false;
 #ifdef QT_DEBUG
     qDebug() << "QT_DEBUG is set";
-    debugBuild = true;
 #endif
 
     // Use /usr/share/vym or /usr/local/share/vym or . ?
     // First try options
-    if (options.isOn("local") || debugBuild) {
+    if (options.isOn("local")) {
         vymBaseDir.setPath(vymBaseDir.currentPath());
     }
     else
@@ -280,7 +277,7 @@ int main(int argc, char *argv[])
         vymBaseDir.cdUp();
         vymBaseDir.cd("Resources");
 #elif defined(Q_OS_WINDOWS)
-        vymBaseDir.setPath(QDir::currentPath());
+        vymBaseDir.setPath(QCoreApplication::applicationDirPath());
 #else
         vymBaseDir.setPath(VYMBASEDIR);
 #endif
@@ -381,19 +378,9 @@ int main(int argc, char *argv[])
     headingEditor = new HeadingEditor("headingeditor");
     branchPropertyEditor = new BranchPropertyEditor();
 
-    // Check if there is a JiraClient       // FIXME-3 check for ruby
-    QFileInfo fi(vymBaseDir.path() + "/scripts/jigger");
-    jiraClientAvailable = fi.exists();
-    jiraPrefixList = settings.value("/system/jiraPrefixList")
-                         .toStringList(); // FIXME-3 currently not used
-
-    // Check if there is a (native) Confluence agent
-    if (!settings.value("/confluence/url", "").toString().isEmpty() &&
-        !settings.value("/confluence/username", "").toString().isEmpty())
-        confluenceAgentAvailable = true;
-    else
-        confluenceAgentAvailable = false;
-    confluencePassword = settings.value("/confluence/password", "").toString();
+    // Initially read filenames of last session, before settings are 
+    // overwritten during loading of maps
+    lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
 
     Main m;
 
@@ -451,37 +438,18 @@ int main(int argc, char *argv[])
         m.show();
     }
 
-    // Show release notes, if not already done
-    m.checkReleaseNotes();
-
-    // Check for updates
-    m.checkUpdates();
+    // Show release notes and afterwards updates
+    m.checkReleaseNotesAndUpdates();
 
     if (options.isOn("shortcuts"))
         switchboard
             .printASCII(); // FIXME-3 global switchboard and exit after listing
-
-    if (options.isOn("recover"))
-        recoveryMode = true;
 
     m.loadCmdLine();
 
     // Restore last session
     if (options.isOn("restore"))
         m.fileRestoreSession();
-
-    // By now all files should have been loaded
-    // Reset the restore flag and display message if needed
-    if (ignoredLockedFiles.count() > 0) {
-        QString msg(
-            QObject::tr("Existing lockfiles have been ignored for the maps "
-                        "listed below. Please check, if the maps might be "
-                        "openend in another instance of vym.\n\n"));
-        QMessageBox::warning(0, QObject::tr("Warning"),
-                             msg + ignoredLockedFiles.join("\n"));
-    }
-    recoveryMode = false;
-    ignoredLockedFiles.clear();
 
     // Load script
     if (options.isOn("load")) {

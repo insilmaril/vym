@@ -77,20 +77,23 @@
     <file alias="freemind/xmag.png">flags/freemind/xmag.png</file>
 
     <file alias="cursorcolorpicker.png">icons/cursors/cursorcolorpicker.png</file>
-    <file alias="cursorhandopen.png">icons/cursors/cursorhandopen.png</file>
     <file alias="cursorxlink.png">icons/cursors/cursorxlink.png</file>
 
     <file alias="configure-plus.svg">icons/configure-plus.svg</file>
 
-    <file alias="down.png">icons/down.png</file>
     <file alias="up.png">icons/up.png</file>
+    <file alias="down.png">icons/down.png</file>
+    <file alias="up-diagonal-left.png">icons/up-diagonal-left.png</file>
+    <file alias="up-diagonal-right.png">icons/up-diagonal-right.png</file>
+    <file alias="down-diagonal-left.png">icons/down-diagonal-left.png</file>
+    <file alias="down-diagonal-right.png">icons/down-diagonal-right.png</file>
     <file alias="editcopy.png">icons/editcopy.png</file>
     <file alias="editcut.png">icons/editcut.png</file>
     <file alias="editpaste.png">icons/editpaste.png</file>
     <file alias="editsort.png">icons/editsort.png</file>
     <file alias="editsortback.png">icons/editsortback.png</file>
     <file alias="edittrash.png">icons/edittrash.png</file>
-    <file alias="exit.png">icons/exit.png</file>
+    <file alias="exit.png">icons/system-shutdown.svg</file>
     <file alias="file-document-export.png">icons/file-document-export.png</file>
     <file alias="fileclose.png">icons/fileclose.png</file>
     <file alias="filenew.png">icons/filenew.png</file>
@@ -123,6 +126,8 @@
     <file alias="redo.png">icons/redo.png</file>
     <file alias="transform-rotate-ccw.svg">icons/transform-rotate-ccw.svg</file>
     <file alias="transform-rotate-cw.svg">icons/transform-rotate-cw.svg</file>
+    <file alias="script-reload.svg">icons/script-reload.svg</file>
+    <file alias="script-run.svg">icons/script-run.svg</file>
     <file alias="scripteditor.png">icons/scripteditor.png</file>
     <file alias="selectnext.png">icons/selectnext.png</file>
     <file alias="selectprevious.png">icons/selectprevious.png</file>

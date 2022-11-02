@@ -29,12 +29,15 @@ class TaskEditor : public QWidget {
     void setFilterFlags2();
     void setFilterFlags3();
     void updateFilters();
+    bool taskVisible(Task*);
+    void resetDeltaPrio();
     bool select(Task *task);
     void clearSelection();
     void showSelection();
     void contextMenuEvent(QContextMenuEvent *e);
 
   private slots:
+    void cellClicked(QModelIndex);
     void headerContextMenu();
     void updateColumnLayout();
     void selectionChanged(const QItemSelection &selected,

@@ -48,6 +48,7 @@ class VymModelWrapper : public VymScriptContext {
     void cut();
     void cycleTask();
     bool exportMap();
+    int getBranchIndex();
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
@@ -113,6 +114,7 @@ class VymModelWrapper : public VymScriptContext {
     bool selectLastImage();
     bool selectParent();
     bool selectLatestAdded();
+    bool selectToggle(const QString &selectString);
     void setFlagByName(const QString &s);
     void setHeadingConfluencePageName();
     void setHeadingPlainText(const QString &s);

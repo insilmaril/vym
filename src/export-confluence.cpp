@@ -2,14 +2,17 @@
 
 #include <QMessageBox>
 
+#include "attributeitem.h"
 #include "branchobj.h"
 #include "confluence-agent.h"
 #include "mainwindow.h"
 #include "settings.h"
 #include "warningdialog.h"
+#include "xmlobj.h"
 
 extern QString flagsPath;
 extern Main *mainWindow;
+extern QString vymName;
 extern QString vymVersion;
 extern QString vymHome;
 extern Settings settings;
@@ -20,16 +23,20 @@ ExportConfluence::ExportConfluence(VymModel *m) : ExportBase(m) { init(); }
 
 void ExportConfluence::init()
 {
-    exportName = "Confluence";
-    extension = ".html";
-    frameURLs = true;
+    createNewPage = true;
+    exportName = "ConfluenceNewPage";
 
-    pageURL = "";
-    pageTitle = "";
+    extension = ".html";
+
+    url = "";
+    pageName = "";
 }
 
-void ExportConfluence::setPageURL(const QString &u) { pageURL = u; }
-void ExportConfluence::setPageTitle(const QString &t) { pageTitle = t; }
+void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
+
+void ExportConfluence::setURL(const QString &u) { url = u; }
+
+void ExportConfluence::setPageName(const QString &t) { pageName = t;}
 
 QString ExportConfluence::getBranchText(BranchItem *current)
 {
@@ -41,6 +48,9 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         }
         QString id = model->getSelectString(current);
         QString heading = quoteMeta(current->getHeadingPlain());
+
+        // Long headings are will have linebreaks by default
+        heading = heading.replace("\\n", " ");
 
         if (dia.useTextColor) {
             QColor c = current->getHeadingColor();
@@ -54,7 +64,6 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         }
 
         QString s;
-        QString url = current->getURL();
 
         // Task flags
         QString taskFlags;
@@ -90,16 +99,33 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // if (dia.useNumbering) number = getSectionString(current) + " ";
 
         // URL
-        if (!url.isEmpty()) {
-            if (url.contains("ri:userkey"))
-                s += url;
-            else
+        //     <ac:link>
+        //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
+        //</ac:link> </span>
+        
+        // For URLs check, if there is already a Confluence user in an attribute
+        QString url;
+        AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
+        if (ai) {
+            url = ai->getKey();
+            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->getValue().toString());
+        } else {
+            url = current->getURL();
+
+            if (!url.isEmpty()) {
+                if (url.contains(settings.value("/atlassian/confluence/url",
+                       "---undefined---").toString()) && url.contains("&")) {
+
+                    // Fix ampersands in URL to Confluence itself
+                    url = quoteMeta(url);
+                } 
+
                 s += QString("<a href=\"%1\">%2</a>")
                          .arg(url)
                          .arg(number + taskFlags + heading + userFlags);
+            } else
+                s += number + taskFlags + heading + userFlags;
         }
-        else
-            s += number + taskFlags + heading + userFlags;
 
         // Include images // FIXME-3 not implemented yet
         /*
@@ -181,23 +207,26 @@ QString ExportConfluence::buildList(BranchItem *current)
 
     QString ind = "\n" + indent(current->depth() + 1, false);
 
-    QString sectionBegin;
-    QString sectionEnd;
+    QString sectionBegin = "";
+    QString sectionEnd   = "" ;
     QString itemBegin;
     QString itemEnd;
 
+    QString expandBegin;
+    QString expandEnd;
+
     switch (current->depth() + 1) {
     case 0:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h1>";
         itemEnd = "</h1>";
         break;
     case 1:
-        sectionBegin = "";
-        sectionEnd = "";
         itemBegin = "<h3>";
         itemEnd = "</h3>";
+        break;
+    case 2:
+        itemBegin = "<h4>";
+        itemEnd = "</h4>";
         break;
     default:
         sectionBegin =
@@ -209,23 +238,52 @@ QString ExportConfluence::buildList(BranchItem *current)
         break;
     }
 
-    if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
-        r += ind + sectionBegin;
-        while (bi) {
-            if (!bi->hasHiddenExportParent() && !bi->isHidden()) {
+    while (bi) {
+        if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
+            r += ind + sectionBegin;
+            if ( bi && bi->isScrolled())
+            {
+                expandBegin = "\n" + ind;
+                expandBegin += QString("<ac:structured-macro ac:macro-id=\"%1\" ac:name=\"expand\" ac:schema-version=\"1\">").arg(bi->getUuid().toString()) ;
+                expandBegin += "<ac:rich-text-body>";
+                expandEnd = "\n" + ind + "</ac:rich-text-body>";
+                expandEnd += "</ac:structured-macro>";
+            } else
+            {
+                expandBegin = "";
+                expandEnd   = "";
+            }
+
+            if (!bi->hasHiddenExportParent() && !bi->isHidden() ) {
                 visChilds++;
-                r += ind + itemBegin;
-                r += getBranchText(bi);
+                r += ind;
+                r += itemBegin;
+                    
+                // Check if first mapcenter is already usded for pageName
+                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))  
+                    r += getBranchText(bi);
 
                 if (itemBegin.startsWith("<h"))
-                    r += itemEnd + buildList(bi);
+                {
+                    // Current item is heading
+                    r += itemEnd;
+                    r += expandBegin;
+                    r += buildList(bi);
+                    r += expandEnd;
+                }
                 else
-                    r += buildList(bi) + itemEnd;
+                {
+                    // Current item is list item
+                    r += expandBegin;
+                    r += buildList(bi);
+                    r += expandEnd;
+                    r += itemEnd;
+                }
             }
-            i++;
-            bi = current->getBranchNum(i);
+            r += ind + sectionEnd;
         }
-        r += ind + sectionEnd;
+        i++;
+        bi = current->getBranchNum(i);
     }
 
     return r;
@@ -273,14 +331,21 @@ void ExportConfluence::doExport(bool useDialog)
     // Setup dialog and read settings
     dia.setMapName(model->getMapName());
     dia.setFilePath(model->getFilePath());
-    dia.setPageURL(pageURL);
-    dia.setPageTitle(pageTitle);
+    dia.setURL(url);
+    dia.setPageName(pageName);
+    BranchItem *bi = (BranchItem*)(model->findBySelectString("mc0"));
+    if (bi)
+        dia.setPageNameHint(bi->getHeadingPlain());
+
     dia.readSettings();
 
     if (useDialog) {
         if (dia.exec() != QDialog::Accepted)
             return;
         model->setChanged();
+        url = dia.getURL();
+        createNewPage = dia.getCreateNewPage();
+        pageName = dia.getPageName();
     }
 
     // Open file for writing
@@ -290,7 +355,6 @@ void ExportConfluence::doExport(bool useDialog)
             0, QObject::tr("Critical Export Error"),
             QObject::tr("Trying to save HTML file:") + "\n\n" +
                 QObject::tr("Could not write %1").arg(filePath));
-        mainWindow->statusMessage(QString(QObject::tr("Export failed.")));
         return;
     }
     QTextStream ts(&file);
@@ -319,76 +383,35 @@ void ExportConfluence::doExport(bool useDialog)
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
 
+    ts << "<p style=\"text-align: center;\"> <sub> <em>Page created with ";
+    ts << "<a href=\"https://sourceforge.net/projects/vym/\">" << vymName << " " << vymVersion<< "</a>";
+    ts << "</em> </sub> </p>";
+
     file.close();
 
-    // First check if page already exists
-    ConfluenceAgent *ca_details = new ConfluenceAgent();
-    ConfluenceAgent *ca_content = new ConfluenceAgent();
-
-    mainWindow->statusMessage(
-        QObject::tr("Trying to read Confluence page details...", "Confluence export"));
-    qApp->processEvents();
-
-    if (ca_details->getPageDetails(dia.getPageURL())) {
-        ca_details->waitForResult();
-
-        if (ca_details->success()) {
-            // Page with URL is existing already
-            if (dia.createNewPage()) {
-                if(debug) qDebug() << "Starting to create new page..."; 
-                ca_content->createPage(dia.getPageURL(), dia.getPageTitle(),
-                                       filePath);
-                ca_content->waitForResult();
-                if (ca_content->success()) {
-                    if (debug) qDebug() << "Page created.";
-                    success = true;
-                }
-                else {
-                    if (debug) qDebug() << "Page not created.";
-                    success = false;
-                }
-            }
-            else {
-                if (debug) qDebug() << "Starting to update existing page...";
-                mainWindow->statusMessage(
-                    QObject::tr("Trying to update Confluence page...", "Confluence export"));
-                qApp->processEvents();
-
-                ca_content->updatePage(dia.getPageURL(), dia.getPageTitle(),
-                                       filePath);
-                ca_content->waitForResult();
-                if (ca_content->success()) {
-                    if (debug) qDebug() << "Page updated.";
-                    success = true;
-                }
-                else {
-                    if (debug) {
-                        qWarning() << "Page not updated:";
-                        qWarning() << ca_content->getResult();
-                    }
-                    success = false;
-                }
-            }
-        }
-        else {
-            // Page not existing
-            success = false;
-            if (dia.createNewPage())
-                qWarning() << "Parent page not existing: " << dia.getPageURL();
-            else
-                qWarning() << "Page not existing, cannot update it: "
-                           << dia.getPageURL();
-        }
-    }
-
-    delete (ca_details);
-    delete (ca_content);
-
-    displayedDestination = dia.getPageURL();
+    // Create Confluence agent
+    ConfluenceAgent *agent = new ConfluenceAgent();
+    if (createNewPage)
+        agent->setJobType(ConfluenceAgent::NewPage);
+    else
+        agent->setJobType(ConfluenceAgent::UpdatePage);
+    agent->setPageURL(url);
+    agent->setNewPageName(pageName);
+    agent->setUploadFilePath(filePath);
+    agent->setModelID(model->getModelID());
+    agent->startJob();
 
     QStringList args;
-    args <<  displayedDestination;
-    args <<  dia.getPageTitle();
+    exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
+    args <<  url;
+    if (!pageName.isEmpty()) 
+        args <<  pageName;
+
+    result = ExportBase::Ongoing;
+
+    // Prepare human readable info in tooltip of LastExport:
+    displayedDestination = QString("Page: %1 - %2").arg(pageName).arg(url); 
+
     completeExport(args);
 
     dia.saveSettings();

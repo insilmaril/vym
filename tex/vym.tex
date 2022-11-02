@@ -25,7 +25,7 @@
 \newcommand{\hint}[1]{
     \begin{center} 
         \begin{tabular}{|rp{12cm}|} \hline
-            {\bf Hint}:& #1\\   \hline
+            {\bf Hint}:& #2\\   \hline
         \end{tabular}
             \marginpar{\Huge !} 
     \end{center} 
@@ -57,7 +57,7 @@
 \title{
     \includegraphics[width=8cm]{images/vym-logo-new.png} \\ 
     VYM  -- View Your Mind \\ 
-    {\small Version 2.8.0} \\ 
+    {\small Version 2.8.16} \\ 
     { Usermanual }
 \author{\textcopyright Uwe Drechsel  }
 }
@@ -1044,7 +1044,7 @@ Volunteers are always welcome ;-)
 
 \subsection{Import} \label{import}
 
-\subsubsection*{Mozilla Firefox bookmarks}
+\subsubsection{Mozilla Firefox bookmarks}
 Currently \vym supports an experimental import of Firefox bookmarks:
 Firefox can backup bookmkarks in a file in JSON format. This file can be
 imported into an existing \vym map.
@@ -1052,7 +1052,15 @@ imported into an existing \vym map.
 Future \vym versions might be able to export this bookmark map again to JSON, so
 that it could be restored in Firefox.
 
-\subsubsection*{Mind Manager}
+\subsubsection{Freemind and Freeplane}
+Freemind is no longer actively developed, the project is continued in
+the Freeplane project, see also
+\href{https://www.freeplane.org/}{https://www.freeplane.org/}.
+
+\vym supports reading the general structure of a Freeplane map and some
+of its flags. Also notes are read.
+
+\subsubsection{Mind Manager}
 \vym has currently a very basic import filter to convert maps created by
 {\em Mind Manager}\footnote{Mind Manager is a commercial i.e. non free,
 software application by Mindjet for Windows and the Mac. Both names are
@@ -1064,7 +1072,7 @@ and pictures are not converted at the moment. You can import files with
 \end{itemize}
 
 
-\subsubsection*{Directory structure}
+\subsubsection{Directory structure}
 \vym can read a directory structure. This is mainly for
 testing \vym e.g. to easily create huge maps used for benchmarks (yes,
 there is still room to optimize \vym ;-)
@@ -1083,13 +1091,13 @@ You can toggle this flag in the toolbar or by pressing \key{H}.  Note
 that there is a global option in the settings menu ( \ref{settings}) to
 toggle the use of this flag. By default the flag is enabled.
 
-\subsubsection*{Last used format}
+\subsubsection{Last used format}
 Repeats the last export action without further dialogs like asking for
 directories. The associated export type and filepaths are stored within
 the map and thus map specific. Note: Not all export types support this
 feature yet.
 
-\subsubsection*{Image}
+\subsubsection{Image}
 \vym supports all image formats which are natively supported by the
 QT~toolkit:
 BMP, JPEG, PBM, PGM, PNG, PPN, XPM, and XBM.
@@ -1097,13 +1105,13 @@ For use in websites and for sending images by email PNG is a good
 recommodation regarding quality and size of the image. \vym uses QTs
 default options for compressing the images.
 
-\subsubsection*{PDF}
+\subsubsection{PDF}
 Exports to Portable Document Format.
 
-\subsubsection*{SVG}
+\subsubsection{SVG}
 Exports to Scalable Vector Graphics.
 
-\subsubsection*{Open Office}
+\subsubsection{Open Office}
 Open Office beginning with version~2 uses the so called "Open Document
 Format", which can be written by \vym. The options are currently
 limited, but it possible to export presentations which can be opened in
@@ -1130,7 +1138,7 @@ at the moment:
 Some of the templates make use of {\em sections} i.e sections insert the
 headings of mainbranches as chapters for sections into the presentation.
 
-\subsubsection*{HTML (Webpages)}
+\subsubsection{HTML (Webpages)}
 This is the format to use if you wish to create a webpage. To see an example
 visit the \vym homepage: 
 \href{http://www.InSilmaril.de/vym}{www.InSilmaril.de/vym}
@@ -1147,25 +1155,25 @@ A dialog allows the user to set various options:
     If set to yes, \vym will save above settings in the map.
 \end{itemize}
 
-\subsubsection*{A \& O -- Achievements and Objectives}
+\subsubsection{A \& O -- Achievements and Objectives}
 A specialized form of ASCII export (see next section), which is used for
 workreports. Currently it is considered experimental.
 %FIXME-3 Details
 
-\subsubsection*{ASCII}
+\subsubsection{ASCII}
 Exporting a map as text is somewhat experimental at the moment. Later
 this will probably be done using stylesheets. So the output may change
 in future versions of \vym.
 
-\subsubsection*{CSV}
+\subsubsection{CSV}
 Exports map into a Comma Separated Value file, which can be used to
 import into all kinds spreadsheet software.
 
-\subsubsection*{Taskjuggler}
+\subsubsection{Taskjuggler}
 Used to export to Taskjuggler project management software. Currently
 considered experimental.
 
-\subsubsection*{\LaTeX}
+\subsubsection{\LaTeX}
 \vym can generate an input file for \LaTeX. Currently this is considered
 as experimental, there are no options (yet). 
 By selecting
@@ -1191,18 +1199,18 @@ Just add e.g. these entries>
     /export/latex/sectionName-4=paragraph
 \end{verbatim}
 
-\subsubsection*{Markdown}
+\subsubsection{Markdown}
 Used to export to Markdown, see also
 \href{https://daringfireball.net/projects/markdown/}{https://daringfireball.net/projects/markdown/}
 Currently considered experimental.
 
-\subsubsection*{OrgMode}
+\subsubsection{OrgMode}
 Used to export to Emacs OrgMode, see also
 \href{https://orgmode.org/}{https://orgmode.org/}
 Currently considered experimental.
 
 
-\subsubsection*{XML} \label{xmlexport}
+\subsubsection{XML} \label{xmlexport}
 The map is written into a directory both as an image and as an XML file.
 The directory is set in a file dialog. If the directory is not empty,
 you will be warned and offered choices if you are at risk of overwriting
@@ -1214,12 +1222,53 @@ becomes {\tt todo.xml}, {\tt todo.png}, {\tt todo-image-1.png} and so
 on. This is useful if, for example, a website comprises several combined
 maps that have to be stored in the same directory.
 
-\subsubsection*{Export a part of a map}
+\subsubsection{Export a part of a map}
 Select a branch you want to export together with its children, then open
 the context menu and choose {\em Save Selection}. This will create a
 file with the suffix {\tt .vyp}, which is an abbreviation for "vym
 part".
 
+\subsection{Connect vym to the cloud}  \label{cloud}
+Starting with \vym 2.8.16 some exchange with cloud applications is
+possible. So far this is limited to cloud applications from the company
+Atlassian\footnote{Atlassian, Confluence and JIRA are registered
+trademarks}. You find the related features and settings in the "Connect"
+settings in the menubar on top of the main window.
+\subsubsection{Confluence}
+\vym so far can
+\begin{itemize}
+    \item Get Confluence user name and insert it into map. (This will
+        create a link to the user profile during export to Confluence)
+    \item Export a map to a Confluence page
+    \item Get the name of a Confluence page and the space name and use
+        it as headin when pasting an URL. (Happens automatically, if
+        Confluence is configured)
+\end{itemize}
+
+\subsubsection{JIRA}
+\begin{itemize}
+    \item Get description of a JIRA ticket and use it as heading
+    \item Get additional information, e.g. color branch if ticket is
+        already closed
+\end{itemize}
+
+\subsection{Connect vym using DBUS}
+If you don't know what DBUS is, you probably want to skip this section,
+this is about remote controling \vym using the DBUS protocol on Linux.
+
+Currently this is used to
+\begin{itemize}
+    \item Run the development tests, see also 
+
+        \href{https://github.com/insilmaril/vym/blob/develop/test/vym-test.rb}
+        {https://github.com/insilmaril/vym/blob/develop/test/vym-test.rb}
+    \item Add content from other applications, e.g. paste an email from
+        the mutt client, see also 
+
+        \href{https://github.com/insilmaril/vym/blob/develop/scripts/vym-addmail.rb}
+        {https://github.com/insilmaril/vym/blob/develop/scripts/vym-addmail.rb}
+\end{itemize}
+For more details see also \ref{dbus}.
 
 \section{Advanced usage}
 
@@ -1601,7 +1650,7 @@ Open FILEs with vym
 -R  FILE     run         Run script
 -r           restore     Restore last session
 -s           shortcuts   Show Keyboard shortcuts on start
---sl         LaTeX       Show Keyboard shortcuts in LaTeX format on start
+--cl         LaTeX       Show Keyboard shortcuts in LaTeX format on start
 -t           testmode    Test mode, e.g. no autosave and changing of its setting
 -v           version     Show vym version
 \end{verbatim}
@@ -1630,18 +1679,27 @@ The scripts within \vym are edited using the {\em script editor}:
     \includegraphics[width=13cm]{images/scripteditor.png}
 \end{center}
 Open the scripteditor by pressing \key{Alt + S} or from the {\em
-View}-menu. The output of of scritps cans be seen in the script output
+View}-menu. The output of of scripts cans be seen in the script output
 window with \key{Alt + Shift + S}
 
 \subsection{Example scripts}  \label{examplescripts}
 A set of example scripts is installed together with \vym, see the
-installation directory and the subfolder {\tt scripts/examples/}.
+installation directory and the subfolder {\tt demos/scripts/} and the
+macros in the macro tab of the script editor.
 \subsubsection{Macro to create a rounded rectangle frame}
 \begin{code}
-\# Macro F12
-setFrameType ("RoundedRectangle");
-setFramePadding (10);
-setFrameIncludeChildren (true);
+// Macro Shift + F1: Frame background light red
+function macro_shift_f1()
+{
+    map = vym.currentMap();
+    status = "Background off";
+    if (map.getFrameType() == "NoFrame") {
+        status = "Background light red";
+    }
+    toggle_frame ( map );
+    map.setFrameBrushColor("#ffb3b4");
+    statusMessage(status);
+}
 \end{code}
 
 \subsubsection{Batch script to export all maps as images}
@@ -1652,7 +1710,7 @@ with
 \$ vym --quit --run export-image.vys *.vym
 \end{code}
 
-\subsubsection{Full scripting using ruby and DBUS}
+\subsubsection{Full scripting using ruby and DBUS} \label{dbus}
 Nearly every action in \vym can be controlled via DBUS (on Linux
 machines). You can have several \vym instances running at the same time,
 e.g. for production and development. Before controlling one, you need to
@@ -1731,7 +1789,7 @@ everything else fails you can contact the author Uwe Drechsel at
 
 
 
-\subsection{How to report bugs}     %FIXME-0
+\subsection{How to report bugs}
 Please file bugs and issues in github: 
 \begin{center}
     \href{ https://github.com/insilmaril/vym/issues}{https://github.com/insilmaril/vym/issues}
@@ -1811,9 +1869,12 @@ to compress all data in your current directory.
 There are lots of features which might find their way into \vym.
 Together with \vym you should have received a directory with several
 example maps. You find them by clicking Help \ra Open~vym~example~maps.
+%FIXME outdated example
 There you will find the map {\tt vym-projectplan.vym}. It lists quite a
-lot of things to be done in future. If you have more ideas, contact the
-development team at {\tt vym-devel@lists.sourceforge.net}.
+lot of things to be done in future. If you have more ideas, open
+enhancement tickets  
+team at
+\href{https://github.com/insilmaril/vym/issues}{https://github.com/insilmaril/vym/issues}
 
 
 \subsection{New languages support}
@@ -1825,13 +1886,13 @@ the development tools, from those tools especially the translation tool
 In some Linux distributions the development tools are in an extra
 package, e.g. on SUSE LINUX you should have installed:
 \begin{code}
-libqt4-devel.rpm
-libqt4-devel-doc.rpm
-libqt4-devel-tools.rpm
+libqt5-devel.rpm
+libqt5-devel-doc.rpm
+libqt5-devel-tools.rpm
 \end{code}
-If you don't have QT in your system, you can get it from 
-    \href{http://www.qt.nokia.com}{http://www.qt.nokia.com} Once you
-    are able to compile vym yourself, you can translate the text in vym
+If you don't have Qt in your system, you can get it from 
+    \href{https://qt.io}{https://qt.nio}
+    You can translate the text in vym
     itself by performing the following steps:
 \begin{itemize}
     \item Let's assume now your encoding is "NEW" instead of for example

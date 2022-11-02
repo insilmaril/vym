@@ -14,17 +14,12 @@ bool isImage(const QString &fname)
     return fname.contains(rx);
 }
 
-ImageItem::ImageItem()
+ImageItem::ImageItem():MapItem(nullptr)
 {
-    qDebug() << "Constr ImageItem";
+    //qDebug() << "Constr ImageItem";
     init();
 }
 
-ImageItem::ImageItem(const QList<QVariant> &data, TreeItem *parent)
-    : MapItem(data, parent)
-{
-    init();
-}
 
 ImageItem::~ImageItem()
 {
@@ -72,6 +67,7 @@ FloatImageObj *ImageItem::createMapObj()
     fio->setZValue(zValue);
     fio->setRelPos(pos);
     fio->updateVisibility();
+    fio->setLinkColor();
     return fio;
 }
 

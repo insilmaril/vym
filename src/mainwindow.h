@@ -72,6 +72,7 @@ class Main : public QMainWindow {
     void setupSelectActions();
     void setupFormatActions();
     void setupViewActions();
+    void setupConnectActions();
     void setupModeActions();
     void setupWindowActions();
     void setupFlagActions();
@@ -179,9 +180,9 @@ class Main : public QMainWindow {
     void editURL();
     void editLocalURL();
     void editHeading2URL();
-    void getJiraData();
     void getJiraDataSubtree();
     void setHeadingConfluencePageName();
+    void getConfluenceUser();
     void openVymLinks(const QStringList &, bool background = false);
     void editVymLink();
     void editOpenMultipleVymLinks();
@@ -195,11 +196,14 @@ class Main : public QMainWindow {
     void editToggleHideExport();
     void editToggleTask();
     void editCycleTaskStatus();
+    void editTaskResetDeltaPrio();
     void editTaskSleepN();
     void editAddTimestamp();
     void editMapProperties();
     void editMoveUp();
     void editMoveDown();
+    void editMoveUpDiagonally();
+    void editMoveDownDiagonally();
     void editDetach();
     void editSortChildren();
     void editSortBackChildren();
@@ -249,12 +253,15 @@ class Main : public QMainWindow {
     void editFindDuplicateURLs();
 
   public slots:
+    void selectQuickColor(int n);
+    void setQuickColor(QColor col);
+    void quickColorPressed();
     void formatPickColor();
     QColor getCurrentColor();
+    int getCurrentColorIndex();
     void setCurrentColor(QColor);
 
   private slots:
-    void formatSelectColor();
     void formatColorBranch();
     void formatColorSubtree();
     void formatLinkStyleLine();
@@ -302,6 +309,7 @@ class Main : public QMainWindow {
     void settingsToggleAnimation();
     void settingsToggleDownloads();
     bool settingsConfluence();
+    bool settingsJIRA();
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditor();
@@ -361,6 +369,12 @@ class Main : public QMainWindow {
     void callMacro();
     void downloadReleaseNotesFinished();
 
+  private:
+    bool checkUpdatesAfterReleaseNotes;
+
+  public:
+    void checkReleaseNotesAndUpdates();
+
   public slots:
     void checkReleaseNotes();
     bool downloadsEnabled(bool userTriggered = false);
@@ -405,8 +419,6 @@ class Main : public QMainWindow {
     QList<QAction *> actionListBranches;
     QList<QAction *> actionListItems;
 
-    QColor currentColor;
-
     int xLinkMenuWidth;
 
     QMenu *recentFilesMenu;
@@ -415,6 +427,8 @@ class Main : public QMainWindow {
 
     QAction *macroActions[24];
     QStringList macro;
+
+    QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
     QToolBar *fileToolbar;
@@ -441,6 +455,7 @@ class Main : public QMainWindow {
     QAction *actionFilePrint;
     QAction *actionMapProperties;
     QAction *actionFileExportLast;
+    QAction *actionFileExportConfluence;
     QAction *actionUndo;
     QAction *actionRedo;
     QAction *actionCopy;
@@ -448,6 +463,8 @@ class Main : public QMainWindow {
     QAction *actionPaste;
     QAction *actionMoveUp;
     QAction *actionMoveDown;
+    QAction *actionMoveDownDiagonally;
+    QAction *actionMoveUpDiagonally;
     QAction *actionDetach;
     QAction *actionSortChildren;
     QAction *actionSortBackChildren;
@@ -464,7 +481,6 @@ class Main : public QMainWindow {
     QAction *actionURLNew;
     QAction *actionLocalURL;
     QAction *actionHeading2URL;
-    QAction *actionGetJiraData;
     QAction *actionGetJiraDataSubtree;
     QAction *actionGetConfluencePageName;
     QAction *actionOpenVymLink;
@@ -476,6 +492,7 @@ class Main : public QMainWindow {
     QAction *actionToggleTask;
     QAction *actionTogglePresentationMode;
     QAction *actionCycleTaskStatus;
+    QAction *actionTaskResetDeltaPrio;
     QAction *actionTaskSleep0;
     QAction *actionTaskSleepN;
     QAction *actionTaskSleep1;
@@ -521,7 +538,8 @@ class Main : public QMainWindow {
     QAction *actionSelectNothing;
     QAction *actionFind;
 
-    QAction *actionFormatColor;
+    QActionGroup *actionGroupQuickColors;
+    QAction *actionFormatQuickColor;
     QAction *actionFormatPickColor;
     QAction *actionFormatColorBranch;
     QAction *actionFormatColorSubtree;
@@ -573,6 +591,7 @@ class Main : public QMainWindow {
     QAction *actionViewToggleSmoothPixmapTransform;
     QAction *actionViewCenter;
 
+    QAction *actionConnectGetConfluenceUser;
     QAction *actionSettingsAutoSelectNewBranch;
     QAction *actionSettingsAutoSelectText;
     QAction *actionSettingsUseFlagGroups;
@@ -585,6 +604,8 @@ class Main : public QMainWindow {
     QAction *actionSettingsWriteBackupFile;
     QAction *actionSettingsToggleDownloads;
     QAction *actionSettingsUseAnimation;
+    QAction *actionSettingsJIRA;
+    QAction *actionSettingsConfluence;
 };
 
 #endif

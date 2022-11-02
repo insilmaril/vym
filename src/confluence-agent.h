@@ -2,81 +2,103 @@
 #define CONFLUENCEAGENT_H
 
 #include <QHash>
+#include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QObject>
 #include <QTimer>
 
-#include "heading.h"
-#include "vymprocess.h"
+#include "confluence-user.h"
 
 class BranchItem;
 class VymModel;
+
+//////////////////////////////////////////////////////////////////////////
 
 class ConfluenceAgent : public QObject {
     Q_OBJECT
 
   public:
+    enum JobType {Undefined, CopyPagenameToHeading, NewPage, UpdatePage, UserInfo};
+
+    static bool available();
+
     ConfluenceAgent();
     ConfluenceAgent(BranchItem *bi);
     ~ConfluenceAgent();
     void init();
-    void test();
-    bool getPageDetails(const QString &url);
-    bool getPageDetailsNative(const QString &url);
+    void setJobType(JobType jt);
+    void setBranch(BranchItem *bi);
+    void setModelID(uint id);
+    void setPageURL(const QString &u);
+    void setNewPageName(const QString &t);
+    void setUploadFilePath(const QString &fp);
+
+    void startJob();
 
   private:
-    bool uploadContent(const QString &url, const QString &title,
-                       const QString &fpath, const bool &newPage);
+    void continueJob();
+    void finishJob();
+    void unknownStepWarning();
+
+  signals:
+    void foundUsers(QList <ConfluenceUser>);
 
   public:
-    bool updatePage(const QString &url, const QString &title,
-                    const QString &fpath);
-    bool createPage(const QString &url, const QString &title,
-                    const QString &fpath);
-    bool getUsers(const QString &name);
-    void waitForResult();
-    bool success();
-    QString getResult();
+    void getUsers(const QString &name); //! Convenience function to get user data
 
-  public slots:
-    virtual void dataReceived(int exitCode, QProcess::ExitStatus exitStatus);
-    virtual void timeout();
-
-  private:
-    QString confluenceScript;
-    VymProcess *vymProcess;
-    QTimer *killTimer;
-    bool succ;
-    QString result;
-
-    // REST access related, new
-  public:
+  private:  
     void startGetPageSourceRequest(QUrl requestedUrl);
-    void startGetPageDetailsRequest(QString query);
+    void startGetPageDetailsRequest();
+    void startCreatePageRequest();
+    void startUpdatePageRequest();
+    void startGetUserInfoRequest();
+    bool requestSuccessful(QNetworkReply *reply, const QString &requestDesc);
 
   private slots:
-    void pageSourceReceived();
-    void pageDetailsReceived();
+    void pageSourceReceived(QNetworkReply *reply);
+    void pageDetailsReceived(QNetworkReply *reply);
+    void contentUploaded(QNetworkReply *reply);
+    void userInfoReceived(QNetworkReply *reply);
+    void timeout();
+
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
 #endif
 
   private:
-    QNetworkAccessManager qnam;
-    QNetworkReply *reply;
-    bool httpRequestAborted;
+    // Job related 
+    QTimer *killTimer;
+    JobType jobType;
+    int jobStep;
+    bool abortJob;  // Flag to abort during initialization of job
 
+    // Network handling
+    QNetworkAccessManager *networkManager;
+    QJsonObject jsobj;
+
+    // Settings: Credentials to access Confluence
     QString username;
     QString password;
 
-    uint branchID;
-    uint modelID;
-
+    // Settings: Where to find Confluence
     QString baseURL;
     QString apiURL;
 
+    // Backreferences to take action in calling model
+    uint branchID;
+    uint modelID;
+
+    // Parameters
     QString pageURL;
+    QString newPageName;
+    QString uploadFilePath;
+    QString userQuery;
+
+    // Page details received from Confluence
     QString pageID;
     QString spaceKey;
+
+    // User info received from Confluence
+    QList <ConfluenceUser> userList;
 };
 #endif

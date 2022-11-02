@@ -17,20 +17,22 @@ class ExportConfluenceDialog : public QDialog {
   public:
     ExportConfluenceDialog(QWidget *parent = 0);
 
-    virtual QString getPageURL();
-    virtual QString getPageTitle();
+    void setCreateNewPage(bool b);
+    bool getCreateNewPage();
+    virtual QString getURL();
+    virtual QString getPageName();
+    void setPageNameHint(const QString &s);
     virtual bool warnings();
     virtual bool hasChanged();
-    virtual bool createNewPage();
 
   public slots:
     virtual void readSettings();
-    virtual void setPageURL(const QString &);
-    virtual void setPageTitle(const QString &);
-    virtual void pageButtonPressed(bool);
-    virtual void pageURLChanged();
-    virtual void pageTitleChanged();
-    virtual void imageCheckBoxPressed(bool b);
+    virtual void setURL(const QString &);
+    virtual void setPageName(const QString &);
+    virtual void pageButtonPressed();
+    virtual void URLChanged();
+    virtual void pageNameChanged();
+    virtual void mapCenterToPageNameCheckBoxPressed(bool b);
     virtual void includeImagesCheckBoxPressed(bool b);
     virtual void TOCCheckBoxPressed(bool b);
     virtual void numberingCheckBoxPressed(bool b);
@@ -52,16 +54,15 @@ class ExportConfluenceDialog : public QDialog {
     bool useTaskFlags;
     bool useUserFlags;
     bool useTextColor;
-    bool css_copy;
+    bool mapCenterToPageName;
 
   protected:
     QButtonGroup *buttonGroup;
-    QString css_src;
-    QString css_dst;
     bool showWarnings;
     bool showOutput;
-    QString pageURL;
-    QString pageTitle;
+    QString url;
+    QString pageName;
+    QString pageNameHint;
     QString filepath;
     bool settingsChanged;
     QString mapname;

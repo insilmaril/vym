@@ -1,6 +1,7 @@
 #include "scripting.h"
 
 #include "branchitem.h"
+#include "confluence-agent.h"
 #include "imageitem.h"
 #include "mainwindow.h"
 #include "misc.h"
@@ -10,7 +11,6 @@
 
 extern Main *mainWindow;
 extern QString vymVersion;
-extern bool confluenceAgentAvailable;
 
 ///////////////////////////////////////////////////////////////////////////
 void logError(QScriptContext *context, QScriptContext::Error error,
@@ -56,12 +56,18 @@ void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 
 bool VymWrapper::isConfluenceAgentAvailable()
 {
-    return confluenceAgentAvailable;
+    return ConfluenceAgent::available();
 }
 
 QObject *VymWrapper::currentMap()
 {
     return mainWindow->getCurrentModelWrapper();
+}
+
+void VymWrapper::editHeading()
+{
+    MapEditor *me = mainWindow->currentMapEditor();
+    if (me) me->editHeading();
 }
 
 bool VymWrapper::loadMap(const QString &filename)
@@ -87,6 +93,16 @@ void VymWrapper::selectMap(uint n)
         logError(context(), QScriptContext::RangeError,
                  QString("Map '%1' not available.").arg(n));
     }
+}
+
+void VymWrapper::selectQuickColor(int n)
+{
+    mainWindow->selectQuickColor(n);
+}
+
+QString VymWrapper::currentColor()
+{
+    return mainWindow->getCurrentColor().name();
 }
 
 uint VymWrapper::currentMapID()

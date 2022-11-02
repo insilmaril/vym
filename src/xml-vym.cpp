@@ -48,12 +48,12 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
 {
     QColor col;
     /* Testing
-    qDebug()<< "startElement: <"<< eName
-            << ">     state="<<state
-            << "  laststate="<<stateStack.last()
-            << "   loadMode="<<loadMode
-            //<<"       line="<<QXmlDefaultHandler::lineNumber();
-        <<"contentFilter="<<contentFilter;
+    qDebug() << "startElement: <" << eName
+             << ">     state=" << state
+             << "  laststate=" << stateStack.last()
+             << "   loadMode=" << loadMode
+            //<<"       line=" << QXmlDefaultHandler::lineNumber();
+             << "contentFilter=" << contentFilter;
     */
 
     stateStack.append(state);
@@ -343,10 +343,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     else if (eName == "attribute" &&
              (state == StateBranch || state == StateMapCenter)) {
         state = StateAttribute;
-        QList<QVariant> cData;
-        cData << "new attribute"
-              << "undef";
-        AttributeItem *ai = new AttributeItem(cData);
+        AttributeItem *ai = new AttributeItem(lastBranch);
         if (ai) {
             if (!atts.value("key").isEmpty())
                 ai->setKey(atts.value("key"));
@@ -371,7 +368,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     ai->setValue(atts.value("value")); 
             }
         }
-        model->addAttribute(lastBranch, ai);
+        model->setAttribute(lastBranch, ai);
     }
     else if (state == StateHtml) {
         // Only for backward compatibility
@@ -388,10 +385,11 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
 bool parseVYMHandler::endElement(const QString &, const QString &,
                                  const QString &eName)
 {
+    /* Testing
     QString h;
     lastBranch ? h = lastBranch->getHeadingPlain() : h = "";
-    // qDebug()<< "endElement </" <<eName <<">  state=" <<state << "
-    // lastBranch=" << h;
+    qDebug() << "endElement </" << eName << ">  state=" << state << " lastBranch=" << h;
+    */
 
     switch (state) {
     case StateMap:
@@ -674,6 +672,16 @@ bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
     if (lastMI) {
         bool okx, oky;
         float x, y;
+        if (!a.value("posX").isEmpty()) {   // Introduced in 2.9.501, added here for file compatibility
+            if (!a.value("posY").isEmpty()) {
+                x = a.value("posX").toFloat(&okx);
+                y = a.value("posY").toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setRelPos(QPointF(x, y));
+                else
+                    return false; // Couldn't read relPos
+            }
+        }
         if (!a.value("relPosX").isEmpty()) {
             if (!a.value("relPosY").isEmpty()) {
                 x = a.value("relPosX").toFloat(&okx);
@@ -783,6 +791,16 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
         lastImage->setZValue(a.value("zPlane").toInt());
     float x, y;
     bool okx, oky;
+    if (!a.value("posX").isEmpty()) {   // Introduced in 2.9.501, added here for file compatibility
+        if (!a.value("posY").isEmpty()) {
+            x = a.value("posX").toFloat(&okx);
+            y = a.value("posY").toFloat(&oky);
+            if (okx && oky)
+                lastImage->setRelPos(QPointF(x, y));
+            else
+                return false; // Couldn't read relPos
+        }
+    }
     if (!a.value("relPosX").isEmpty()) {
         if (!a.value("relPosY").isEmpty()) {
             // read relPos
@@ -929,10 +947,9 @@ bool parseVYMHandler::readSettingAttr(const QXmlAttributes &a)
     if (!a.value("key").isEmpty()) {
         lastSetting = a.value("key");
         if (!a.value("value").isEmpty())
-            // Beginning with 2.5.0 value is stored as between tags,
-            // no  longer as attribute
-            settings.setLocalValue(model->getDestPath(), a.value("key"),
-                                   a.value("value"));
+            settings.setLocalValue(
+                    model->getDestPath(), a.value("key"),
+                    a.value("value"));
         else
             return false;
     }

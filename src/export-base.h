@@ -16,6 +16,7 @@
 
 class ExportBase {
   public:
+    enum Result {Undefined, Success, Failed, Ongoing};
     ExportBase();
     ExportBase(VymModel *m);
     virtual ~ExportBase();
@@ -60,7 +61,7 @@ class ExportBase {
     QString filter;
     bool listTasks; // Append task list
     bool cancelFlag;
-    bool success;
+    Result result;
 };
 
 #endif

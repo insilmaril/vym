@@ -28,6 +28,8 @@ TaskEditor::TaskEditor(QWidget *)
     // Creat Table view
     view = new QTableView;
 
+    setMinimumWidth(350);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     QToolBar *tb = new QToolBar("TaskEditor filters");
@@ -146,6 +148,9 @@ TaskEditor::TaskEditor(QWidget *)
     connect(view->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
             SLOT(selectionChanged(QItemSelection, QItemSelection)));
+
+    connect(view, SIGNAL(clicked(QModelIndex)),
+            this, SLOT(cellClicked(QModelIndex)));
 
     // Enable wordwrap when data changes
     if (settings.value("/taskeditor/wordWrap", true)
@@ -273,9 +278,14 @@ void TaskEditor::setFilterFlags3()
 
 void TaskEditor::updateFilters()
 {
+    // ugly, but calling twice updates rows as expected  // FIXME-3 review...
     filterActiveModel->invalidate();
-    filterActiveModel
-        ->invalidate(); // ugly, but calling twice updates rows as expected
+    filterActiveModel->invalidate();
+}
+
+bool TaskEditor::taskVisible(Task *task)
+{
+    return filterActiveModel->taskVisible(task);
 }
 
 void TaskEditor::showSelection()
@@ -308,6 +318,13 @@ bool TaskEditor::select(Task *task)
 }
 
 void TaskEditor::clearSelection() { view->selectionModel()->clearSelection(); }
+
+void TaskEditor::cellClicked(QModelIndex ix_unmapped)
+{
+    QModelIndex ix = filterActiveModel->mapToSource(ix_unmapped);
+    if (ix.isValid() && ix.column() == 2)
+        taskModel->getTask(ix)->getBranch()->getModel()->cycleTaskStatus();
+}
 
 void TaskEditor::headerContextMenu()
 {

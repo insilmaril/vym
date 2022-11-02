@@ -1,5 +1,19 @@
 #!/usr/bin/ruby
 
+# This ruby script can be called from mutt to create a branch in vym
+# with the mail currently visible in mutts pager.
+# The mail itself will be added as note to a branch, which has the
+# heading "YYYY-MM-DD Email: $SUBJECT"
+#
+# vym is notified using DBUS, which usually only is available on Linux
+# systems
+#
+# Example entry for .muttrc:
+# macro pager Y "|/home/uwe/vym/branches/develop/scripts/vym-addmail.rb\n" "Add note to production inst ance of vym"
+#
+# vym itself needs to be starting using the name option, using  "vym -n production"
+#
+
 require File.expand_path("../vym-ruby", __FILE__) 
 require 'tempfile'
 require 'mail'
@@ -25,14 +39,23 @@ begin
     out << "Date: #{mail.date.to_s}\n"
     out << "</pre>"
 
+    text = ""
     if mail.multipart? then
       puts "Warning: multipart mail detected. Only using first part."
-      # puts mail.parts.first.decoded
-      out << mail.parts.first.decoded
+      text = mail.parts.first.decoded
     else
       #out <<  mail.body.raw_source.gsub("\n", "<br/>")
-      out <<  mail.decoded
-      #puts out
+      text = mail.decoded
+    end
+
+    if text.include?("<html")
+      out << text
+    else
+      out << "<p>"
+      text.gsub!("\r\n\r\n", "</p><p>")
+      text.gsub!("\r\n", "")
+      out << text
+      out << "</p>"
     end
 
     out << "</body></html>"

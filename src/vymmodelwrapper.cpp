@@ -266,20 +266,39 @@ bool VymModelWrapper::exportMap()
             listTasks = true;
         model->exportASCII(filename, listTasks, false);
     }
-    else if (format == "Confluence") {
-        if (argumentCount() < 2) {
+    else if (format == "ConfluenceNewPage") {
+        // 0: General export format
+        // 1: URL of parent page (required)
+        // 2: page title (required)
+        if (argumentCount() < 3) {
             logError(context(), QScriptContext::SyntaxError,
-                     "Page URL and title missing in Confluence export");
+                 QString("Confluence export new page: Only %1 instead of 3 parameters given")
+                 .arg(argumentCount()));
             return setResult(r);
         }
-        if (argumentCount() == 2) {
-            logError(context(), QScriptContext::SyntaxError,
-                     "Page title missing in Confluence export");
-            return setResult(r);
-        }
+
         QString url = argument(2).toString();
-        QString title = argument(3).toString();
-        model->exportConfluence(url, title, false);
+        QString pageName = argument(3).toString();
+
+        model->exportConfluence(true, url, pageName, false);
+    }
+    else if (format == "ConfluenceUpdatePage") {
+        // 0: General export format
+        // 1: URL of  page to be updated
+        // 2: page title (optional)
+        if (argumentCount() == 1) {
+            logError(context(), QScriptContext::SyntaxError,
+                     "URL of new page missing in Confluence export");
+            return setResult(r);
+        }
+        QString url = argument(1).toString();
+
+        QString title = "";
+        if (argumentCount() == 3) {
+            title = argument(2).toString();
+        }
+
+        model->exportConfluence(false, url, title, false);
     }
     else if (format == "CSV") {
         model->exportCSV(filename, false);
@@ -355,6 +374,17 @@ bool VymModelWrapper::exportMap()
         return setResult(r);
     }
     return setResult(true);
+}
+
+int VymModelWrapper::getBranchIndex()
+{
+    int r;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        r = selbi->num();
+    } else
+        r = -1;
+    return setResult(r);
 }
 
 QString VymModelWrapper::getDestPath()
@@ -778,11 +808,18 @@ bool VymModelWrapper::selectLatestAdded()
     return setResult(r);
 }
 
+bool VymModelWrapper::selectToggle(const QString &selectString)
+{
+    bool r = model->selectToggle(selectString);
+    if (!r)
+        logError(context(), QScriptContext::UnknownError,
+                 "Couldn't toggle item with select string " + selectString);
+    return setResult(r);
+}
+
 void VymModelWrapper::setFlagByName(const QString &s)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi)
-        selbi->activateStandardFlagByName(s);
+    model->setFlagByName(s);
 }
 
 void VymModelWrapper::setHeadingConfluencePageName()
@@ -1013,7 +1050,5 @@ void VymModelWrapper::unselectAll() { model->unselectAll(); }
 
 void VymModelWrapper::unsetFlagByName(const QString &s)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi)
-        selbi->deactivateStandardFlagByName(s);
+    model->unsetFlagByName(s);
 }

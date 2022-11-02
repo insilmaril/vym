@@ -9,8 +9,9 @@ class ExportConfluence : public ExportBase {
     ExportConfluence();
     ExportConfluence(VymModel *m);
     virtual void init();
-    void setPageURL(const QString &u);
-    void setPageTitle(const QString &t);
+    void setCreateNewPage(bool);
+    void setURL(const QString &u);
+    void setPageName(const QString &t);
     virtual QString createTOC();
     virtual void doExport(bool useDialog = true);
 
@@ -18,13 +19,10 @@ class ExportConfluence : public ExportBase {
     QString getBranchText(BranchItem *);
     QString buildList(BranchItem *);
     QString imageMap;
-    QString cssSrc;
-    QString cssDst;
 
-    QString pageURL;
-    QString pageTitle;
-
-    bool frameURLs;
+    bool createNewPage;
+    QString url;
+    QString pageName;
 
     QPointF offset;
 

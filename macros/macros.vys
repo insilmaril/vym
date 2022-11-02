@@ -8,53 +8,59 @@ function toggle_frame(map)
 	} else
 		map.setFrameType ("NoFrame");
 }
+function colorSubtreeWithQuickColor(n)
+{
+    map = vym.currentMap();
+    vym.selectQuickColor(n);
+    c = vym.currentColor();
+    map.colorSubtree (c);
+}
+
 // Macro F1: Color subtree red
 function macro_f1()
 {
-    map = vym.currentMap();
-    map.colorSubtree ("#ff0000");
+    colorSubtreeWithQuickColor(0);
 }
 
 // Macro F2: Color subtree amber
 function macro_f2()
 {
-    map = vym.currentMap();
-    map.colorSubtree ("#d95100");
+    colorSubtreeWithQuickColor(1);
+
+    // Or if you prefer to edit the heading of a branch using "F2"-key,
+    // you can use below instead of above:
+    // vym.editHeading();
 }
 
 // Macro F3: color subtree green
 function macro_f3()
 {
-    map = vym.currentMap();
-    map.colorSubtree ("#009900");
+    colorSubtreeWithQuickColor(2);
 }
+
 
 // Macro F4: color subtree light green
 function macro_f4() 
 {
-    map = vym.currentMap();
-    map.colorSubtree ("#00aa7f");
+    colorSubtreeWithQuickColor(3);
 }
 
 // Macro F5: color subtree purple
 function macro_f5()
 {
-    map = vym.currentMap();
-    map.colorSubtree ("#aa00ff");
+    colorSubtreeWithQuickColor(4);
 }
 
 // Macro F6: color subtree light purple
 function macro_f6()
 {
-    map = vym.currentMap();
-    map.colorSubtree ("#c466ff");
+    colorSubtreeWithQuickColor(5);
 }
 
 // Macro F7: color subtree blue
 function macro_f7()
 {
-    map = vym.currentMap();
-    map.colorSubtree ("#0000ff");
+    colorSubtreeWithQuickColor(6);
 }
 
 // Macro F8: Repeat last command
@@ -228,9 +234,9 @@ function macro_shift_f9()
 }
 
 // Macro Shift + F10: 
+// Useful for timestamps created on last entry
 function macro_shift_f10()
 {   
-    map = vym.currentMap();
 }
 
 // Macro Shift + F11: Replace "@..." by mutt aliases
