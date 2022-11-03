@@ -63,6 +63,16 @@ class BranchContainer : public Container {
     void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
+    // Selections
+    // FIXME-1 should be in base class also for ImageContainer (and maybe links, too)
+    void select();
+    void unselect();
+    bool isSelected();
+  private:
+    Container *selectionContainer;
+
+  public:
+
     int childrenCount();    //! Sum of branch and image children
 
     int branchCount();

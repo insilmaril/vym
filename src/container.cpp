@@ -589,4 +589,13 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
             qWarning() << "Container::reposition  unknown layout type for container: " << info();
             break;
     }
+
+    // Now rectangles are defined. Adapt overlay containers, if required.
+    foreach (QGraphicsItem *child, childItems()) {
+        Container *c = (Container*) child;
+        if (c->overlay) {
+            c->setRect(rect());
+        }
+    }
+
 }

@@ -370,7 +370,6 @@ void MapEditor::animate()
         if (!c->isAnimated())
             animatedContainers.removeAll(c);
     }
-    model->emitSelectionChanged();
 
     if (!animatedContainers.isEmpty())
         animationTimer->start(animationInterval);
@@ -1782,6 +1781,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         qreal h_total;
         foreach (TreeItem *ti, movingItems)
         {
+            // FIXME-2 ME::moveObject add items to tmpParentContainer only, if no parent is moved simultanously
             // The item structure in VymModel remaines untouched so far,
             // only containers will be reparented temporarily!
             if (ti->hasTypeBranch()) {
@@ -1880,10 +1880,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             bc->updateUpLink();
         }
     }
-
-    // Update selection
-    QItemSelection sel = model->getSelectionModel()->selection();
-    updateSelection(sel, sel);
 
     scene()->update();
 
@@ -2302,72 +2298,38 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     Q_UNUSED(nsel);
 
     QList<MapItem *> itemsSelected;
-    QList<MapItem *> itemsDeselected;
 
     QItemSelection sel = model->getSelectionModel()->selection();
 
-    // Add new selected objects
+    // Select objects
     foreach (QModelIndex ix, sel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
-    /*
-        lmo = mi->getLMO();
+            if (mi->hasTypeBranch()) {  // FIXME-0 experimental, no mapImages yet (also below)
+                ((BranchItem*)mi)->getBranchContainer()->select();
+        }
+        /* FIXME-1 ME::updateSelection - hide links of unselected objects
+         * also for unselect below
+        lmo = mi->getLMO(); // FIXME-X xlink does return nullptr
         if (lmo)
-            mi->getLMO()->updateVisibility(); // FIXME-1 in updateSelection
-    */
+            mi->getLMO()->updateVisibility();
+        */
     }
 
-    // Delete objects meanwhile removed from selection
+    // Unselect objects (if not part of selection)
     foreach (QModelIndex ix, dsel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
+        //qDebug() << "ME::updateSel   deselecting mi=" << mi << mi->getHeadingPlain();
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink)
-            if (!itemsDeselected.contains(mi))
-                itemsDeselected.append(mi);
-        /*
-        lmo = mi->getLMO(); // FIXME-2 xlink does return nullptr
-        if (lmo)
-            mi->getLMO()->updateVisibility(); // FIXME-1 in updateSelection
-      */
-    }
-
-    // Trim list of selection paths
-    while (itemsSelected.count() < selPathList.count())
-        delete selPathList.takeFirst();
-
-    // Reduce polygons
-    while (itemsSelected.count() < selPathList.count())
-        delete selPathList.takeFirst();
-
-    // Add additonal polygons
-    QGraphicsPathItem *sp;
-    while (itemsSelected.count() > selPathList.count()) {
-        sp = mapScene->addPath(QPainterPath(), QPen(selectionColor),
-                               selectionColor);
-        sp->show();
-        selPathList.append(sp);
-    }
-
-    // Reposition polygons
-    for (int i = 0; i < itemsSelected.count(); ++i) {
-        // MapObj *mo = itemsSelected.at(i)->getMO();  // FIXME-2 remove MO here
-        // Ideas to remove MO: 
-        // - introduce SelectionContainer
-        // - Above SC has QGraphicsPathItem as children
-        // - SC can be parented to a Container
-        // - Destr of Container does NOT delete SLs, but unlinks them 
-        //   (parenting to nullptr), they are maintained in MapEditor
-        // - Advantage: No repositioning needed in MapEditor after initial adding :-)
-        // - Advantage: Always correct z-value
-        sp = selPathList.at(i);
-        sp->setPath(itemsSelected.at(i)->getSelectionPath());
-        sp->setPen(selectionColor);
-        sp->setBrush(selectionColor);
-        //sp->setParentItem(mo);
-        //sp->setZValue(dZ_SELBOX); // which z to use?  // FIXME-1
+            if (!itemsSelected.contains(mi)) {
+                if (mi->hasTypeBranch()) {  // FIXME-X experimental, no mapImages yet
+                    ((BranchItem*)mi)->getBranchContainer()->unselect();
+            }
+        }
     }
 
     scene()->update();
@@ -2417,7 +2379,7 @@ void MapEditor::togglePresentationMode()
     mainWindow->togglePresentationMode();
 }
 
-void MapEditor::setSelectionColor(QColor col)
+void MapEditor::setSelectionColor(QColor col)   // FIXME-2 does not work yet with containers (color hardcoded in BranchContainer)
 {
     selectionColor = col;
     selectionColor.setAlpha(200);

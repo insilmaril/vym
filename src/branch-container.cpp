@@ -51,6 +51,7 @@ void BranchContainer::init()
 
     frameContainer = nullptr;
     imagesContainer = nullptr;
+    selectionContainer = nullptr;
 
     headingContainer = new HeadingContainer ();
 
@@ -206,6 +207,35 @@ void BranchContainer::unsetTemporaryLinked()
 bool BranchContainer::isTemporaryLinked()
 {
     return temporaryLinked;
+}
+
+void BranchContainer::select()
+{
+    if (selectionContainer) return;
+    selectionContainer = new Container (ornamentsContainer);
+    selectionContainer->setType(Selection);
+    selectionContainer->setPen(QPen(Qt::red));
+    selectionContainer->setBrush(Qt::yellow);
+    selectionContainer->overlay = true;
+    selectionContainer->setFlag(ItemStacksBehindParent, true);
+    selectionContainer->setZValue(10);
+    selectionContainer->setRect(ornamentsContainer->rect());
+}
+
+void BranchContainer::unselect()
+{
+    if (!selectionContainer) return;
+
+    delete selectionContainer;
+    selectionContainer = nullptr;
+}
+
+bool BranchContainer::isSelected()
+{
+    if (selectionContainer)
+        return true;
+    else
+        return false;
 }
 
 int BranchContainer::childrenCount()
@@ -470,6 +500,8 @@ FrameContainer* BranchContainer::createFrameContainer()
 {
     // Parent container might be updated later in reposition()
     frameContainer = new FrameContainer (ornamentsContainer);
+    frameContainer->setFlag(ItemStacksBehindParent, true);
+    frameContainer->setZValue(5);
     return frameContainer;
 }
 
@@ -586,10 +618,10 @@ void BranchContainer::updateUpLink()
 
     if (temporaryLinked) {
     /* FIXME-2 BC::updateUpLink cont here to update link for tempLinked branches
+        qDebug() << "BC::updateUpLink  tempLinked"; 
         BranchItem *pbi = branchItem->parentBranch();
         pbi
     */
-        qDebug() << "BC::updateUpLink  tempLinked"; // FIXME-1 never called. temporaryLinked not needed?
     } else {
         // Get "real" parentBranchContainer, not tmpParentContainer (!)
         BranchContainer *pbc = branchItem->parentBranch()->getBranchContainer();
@@ -992,16 +1024,17 @@ void BranchContainer::reposition()
         }
     }
 
-    // Frame depends on dimensions calculated so far
     if (frameContainer) {
         if (frameContainer->getIncludeChildren()) {
             frameContainer->setParentItem(innerContainer); // FIXME-2 check for outercontainer?
-            frameContainer->stackBefore(innerContainer->childItems().first()); // FIXME-1 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
-            frameContainer->setRect(frameContainer->parentContainer()->rect());
+//            frameContainer->setRect(frameContainer->parentContainer()->rect());
         } else {
             frameContainer->setParentItem(ornamentsContainer);
-            frameContainer->stackBefore(ornamentsContainer->childItems().first()); // FIXME-1 check ordering: FC should have IC/OC as child or just OC, if !includeChildren
-            frameContainer->setRect(ornamentsContainer->rect());    // FIXME-0 check...
+            //qDebug() << "BC repos a) fC=" << frameContainer->info() << " pC=" << frameContainer->parentContainer()->info();
+            frameContainer->setParentItem(ornamentsContainer);
+            //qDebug() << "BC repos b) fC=" << frameContainer->info() << " pC=" << frameContainer->parentContainer()->info();
+            frameContainer->setRect(frameContainer->rect());  // FIXME-2 why needed??
+            //qDebug() << "BC repos c) fC=" << frameContainer->info() << " pC=" << frameContainer->parentContainer()->info();
         }
     }
 

@@ -249,7 +249,6 @@ class MapEditor : public QGraphicsView {
     void selectionChanged(const QItemSelection &, const QItemSelection &);
 
   private:
-    QList<QGraphicsPathItem *> selPathList;
     QColor selectionColor;
 
   public slots:
