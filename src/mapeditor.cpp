@@ -1762,7 +1762,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             d_pos = 0;
         tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
         if (!tmpParentContainer->isTemporaryLinked())
-            tmpParentContainer->setTemporaryLinked();
+            tmpParentContainer->setTemporaryLinked(targetBranchContainer);
     } else {
         // Since moved containers are relative to tmpParentContainer anyway, just move
         // tmpParentContainer to pointer position:
@@ -1874,7 +1874,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (ti->hasTypeBranch()) {  // FIXME-2 later it should work the same for images!
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
             if (tmpParentContainer->isTemporaryLinked())
-                bc->setTemporaryLinked();
+                bc->setTemporaryLinked(targetBranchContainer);
             else
                 bc->unsetTemporaryLinked();
             bc->updateUpLink();

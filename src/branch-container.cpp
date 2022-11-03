@@ -95,7 +95,7 @@ void BranchContainer::init()
     imagesContainerLayout = getDefaultImagesContainerLayout();
     branchesContainerLayout = Vertical;
 
-    temporaryLinked = false;
+    tmpParentContainer = nullptr;
 
     scrollOpacity = 1;
 }
@@ -194,19 +194,22 @@ bool BranchContainer::isOriginalFloating()
     return originalFloating;
 }
 
-void BranchContainer::setTemporaryLinked()
+void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
-    temporaryLinked = true;
+    tmpParentContainer = tpc;
 }
 
 void BranchContainer::unsetTemporaryLinked()
 {
-    temporaryLinked = false;
+    tmpParentContainer = nullptr;
 }
 
 bool BranchContainer::isTemporaryLinked()
 {
-    return temporaryLinked;
+    if (tmpParentContainer)
+        return true;
+    else
+        return false;
 }
 
 void BranchContainer::select()
@@ -616,40 +619,36 @@ void BranchContainer::updateUpLink()
 {
     if (branchItem->depth() == 0) return;
 
-    if (temporaryLinked) {
-    /* FIXME-2 BC::updateUpLink cont here to update link for tempLinked branches
-        qDebug() << "BC::updateUpLink  tempLinked"; 
-        BranchItem *pbi = branchItem->parentBranch();
-        pbi
-    */
-    } else {
+    BranchContainer *pbc;
+    if (tmpParentContainer)
+        pbc = tmpParentContainer;
+    else
         // Get "real" parentBranchContainer, not tmpParentContainer (!)
-        BranchContainer *pbc = branchItem->parentBranch()->getBranchContainer();
+        pbc = branchItem->parentBranch()->getBranchContainer();
 
-        QPointF upLinkParent_sp;
-        QPointF upLinkSelf;
-        QPointF downLink;
-        switch (orientation) {
-            case RightOfParent:
-                upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomRight());
-                upLinkSelf = ornamentsContainer->rect().bottomLeft();
-                downLink = ornamentsContainer->rect().bottomRight();
-                break;
-            case LeftOfParent:
-                upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomLeft());
-                upLinkSelf = ornamentsContainer->rect().bottomRight();
-                downLink = ornamentsContainer->rect().bottomLeft();
-                break;
-            default:
-                upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().center());
-                upLinkSelf = ornamentsContainer->rect().center();   // FIXME-2 check...
-                downLink = ornamentsContainer->rect().center();
-                break;
-        }
-        linkContainer->setUpLinkPosParent(ornamentsContainer->sceneTransform().inverted().map(upLinkParent_sp));
-        linkContainer->setUpLinkPosSelf(upLinkSelf);
-        linkContainer->setDownLinkPos(downLink);
+    QPointF upLinkParent_sp;
+    QPointF upLinkSelf;
+    QPointF downLink;
+    switch (orientation) {
+        case RightOfParent:
+            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomRight());
+            upLinkSelf = ornamentsContainer->rect().bottomLeft();
+            downLink = ornamentsContainer->rect().bottomRight();
+            break;
+        case LeftOfParent:
+            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomLeft());
+            upLinkSelf = ornamentsContainer->rect().bottomRight();
+            downLink = ornamentsContainer->rect().bottomLeft();
+            break;
+        default:
+            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().center());
+            upLinkSelf = ornamentsContainer->rect().center();   // FIXME-2 check...
+            downLink = ornamentsContainer->rect().center();
+            break;
     }
+    linkContainer->setUpLinkPosParent(ornamentsContainer->sceneTransform().inverted().map(upLinkParent_sp));
+    linkContainer->setUpLinkPosSelf(upLinkSelf);
+    linkContainer->setDownLinkPos(downLink);
 
     // Color of links
     if (linkContainer->getLinkColorHint() == LinkContainer::DefaultColor)
@@ -1026,7 +1025,9 @@ void BranchContainer::reposition()
 
     if (frameContainer) {
         if (frameContainer->getIncludeChildren()) {
-            frameContainer->setParentItem(innerContainer); // FIXME-2 check for outercontainer?
+            if (outerContainer) // FIXME-2 check for outercontainer?
+                qWarning() << "BC::reposition  frameContainer could use outerContainer!";
+            frameContainer->setParentItem(innerContainer);
 //            frameContainer->setRect(frameContainer->parentContainer()->rect());
         } else {
             frameContainer->setParentItem(ornamentsContainer);

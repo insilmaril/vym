@@ -56,10 +56,10 @@ class BranchContainer : public Container {
     bool isOriginalFloating();
 
   private:
-    bool temporaryLinked;   //! True, while moved as child of tmpParentContainer and linked temporary
+    BranchContainer *tmpParentContainer;
 
   public:
-    void setTemporaryLinked();
+    void setTemporaryLinked(BranchContainer *tpc);
     void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
