@@ -41,12 +41,10 @@ void LinkContainer::init()
 
 void LinkContainer::createBottomLine()
 {
-    /*
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
     bottomLine->setZValue(dZ_LINK);
     bottomLine->setVisible(true); // FIXME-2 testing
-  */
 }
 
 void LinkContainer::deleteBottomLine()
