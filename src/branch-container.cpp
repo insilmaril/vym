@@ -57,7 +57,6 @@ void BranchContainer::init()
 
     ornamentsContainer = new Container ();
     ornamentsContainer->type = OrnamentsContainer;
-    // FIXME-2 not available atm ornamentsContainer->setVerticalAligment(" centered ");
 
     linkContainer = new LinkContainer();
 
@@ -790,7 +789,7 @@ QRectF BranchContainer::getBBoxURLFlag()
 
 void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 {
-    //qDebug() << "BC::udateStyles of " << getName() << " d=" << branchItem->depth();
+    qDebug() << "BC::udateStyles of " << getName() << " d=" << branchItem->depth() << " fC=" << frameContainer;
 
     // Set container layouts
     if (branchesContainerAutoLayout)
@@ -801,6 +800,21 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 
     if (type == TmpParent)  // FIXME-2 Should not be called for tmpParent anyway! (Would have already crashed due to BI->depth above)
         return;
+
+    // Create/delete bottomline
+    if (frameContainer) {
+        if (frameContainer->getFrameType() != FrameContainer::NoFrame &&
+            linkContainer->hasBottomLine()) {
+            qDebug() << "  deleting BL";
+            linkContainer->deleteBottomLine();
+        }
+    } else {
+        qDebug() << " No FC!";
+        if (!linkContainer->hasBottomLine()) {
+            qDebug() << "  creating BL";
+            linkContainer->createBottomLine();
+        }
+    }
 
     uint depth = branchItem->depth();
 

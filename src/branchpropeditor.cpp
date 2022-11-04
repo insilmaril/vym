@@ -365,7 +365,11 @@ void BranchPropertyEditor::frameBrushColorClicked()
             if (fc)
                 col = fc->getBrushColor();
 
-            col = QColorDialog::getColor(col, this);
+            col = QColorDialog::getColor(
+                    col,
+                    this,
+                    tr("Background color of frame","Branch property dialog"),
+                    QColorDialog::ShowAlphaChannel);
             if (col.isValid()) {
                 model->setFrameBrushColor(col, branchItem);
             }

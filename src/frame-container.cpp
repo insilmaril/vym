@@ -349,8 +349,8 @@ QString FrameContainer::saveToDir()
         return QString();
 
     QString frameTypeAttr = attribut("frameType", getFrameTypeName());
-    QString penColAttr = attribut("penColor", pen.color().name());
-    QString brushColAttr = attribut("brushColor", brush.color().name());
+    QString penColAttr = attribut("penColor", pen.color().name(QColor::HexArgb));
+    QString brushColAttr = attribut("brushColor", brush.color().name(QColor::HexArgb));
     QString paddingAttr = attribut("padding", QString::number(padding));
     QString penWidthAttr =
         attribut("penWidth", QString::number(pen.width()));
