@@ -858,6 +858,11 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
         i++;
         bi = model->getRootItem()->getBranchNum(i);
     }
+
+
+    // FIXME-2 Feature: ME::findMapITem - Look also near to mapcenters (or even floating branches)
+    // and return the *nearest* item. Build up list already in above loop
+
     return nullptr;
 }
 
