@@ -51,6 +51,21 @@
     </message>
 </context>
 <context>
+    <name>AttributeDialog</name>
+    <message>
+        <source>Attributes</source>
+        <translation type="unfinished">Vlastnosti</translation>
+    </message>
+    <message>
+        <source>Add key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Zavřít</translation>
+    </message>
+</context>
+<context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>+</source>
@@ -468,6 +483,77 @@ ve svém systému povolit!</translation>
     </message>
 </context>
 <context>
+    <name>ExportXHTMLDialog</name>
+    <message>
+        <source>Export XHTML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to directory:</source>
+        <translation type="unfinished">Exportovat do adresáře:</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished">Procházet</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">Volby</translation>
+    </message>
+    <message>
+        <source>Include image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colored headings in text</source>
+        <translation type="unfinished">Barevné popisy v textu</translation>
+    </message>
+    <message>
+        <source>Save settings in map</source>
+        <translation type="unfinished">Uložit nastavení do mapy</translation>
+    </message>
+    <message>
+        <source>show warnings of xslt processor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>show output of external scripts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylesheets</source>
+        <translation type="unfinished">Stylové listy</translation>
+    </message>
+    <message>
+        <source>XSL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSS:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scripts</source>
+        <translation type="unfinished">Skripty</translation>
+    </message>
+    <message>
+        <source>Before export:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>After Export:</source>
+        <translation type="unfinished">Po exportu:</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Zrušit</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Exportovat</translation>
+    </message>
+</context>
+<context>
     <name>ExtraInfoDialog</name>
     <message>
         <source>Map:</source>
@@ -614,6 +700,42 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Authentication problem when contacting JIRA</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>JiraSettingsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Dialog</translation>
+    </message>
+    <message>
+        <source>JIRA servers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">Přidat</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Odstranit</translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JiraSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -977,7 +1099,7 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Set &amp;Color</source>
-        <translation>Nastavit &amp;barvu</translation>
+        <translation type="vanished">Nastavit &amp;barvu</translation>
     </message>
     <message>
         <source>&amp;Print</source>
@@ -3474,6 +3596,15 @@ because file exists and cannot be changed.</source>
         <source>Set as link to vym map</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Reset delta priority for visible tasks</source>
+        <comment>Reset delta</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select color (Press Shift for more options)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
@@ -4918,6 +5049,16 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>uncompressed, potentially overwrite existing data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find Jira ticket pattern in %1</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Received Jira data.</source>
+        <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
