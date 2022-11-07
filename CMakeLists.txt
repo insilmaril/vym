@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ViewYourMind)
 
+find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+
 set(QtComponents
     LinguistTools
     Network
@@ -20,6 +22,10 @@ set(QtLibraries
     Qt5::Widgets
     Qt5::Xml
 )
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 # On Linux DBUS is used for IPC with vym
 # On openSUSE install it using:  zypper install dbus-1-devel
@@ -82,8 +88,7 @@ if(WIN32)
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
 endif()
 
-
-
+# Add DBUS interfaces, if DBUS is available on platform
 if(DBus1_FOUND)
     list(APPEND VymSources src/dbus/adaptormodel.cpp src/dbus/adaptorvym.cpp)
     include_directories(${CMAKE_SOURCE_DIR}/src/dbus ${CMAKE_SOURCE_DIR}/src)
@@ -91,15 +96,18 @@ if(DBus1_FOUND)
 endif()
 
 # Translations
+file(GLOB_RECURSE ts_files "lang/*.ts")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
+set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
+QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
 
-file(GLOB_RECURSE VymTranslationSources RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lang")
-set_source_files_properties(${VymTranslationSources} PROPERTIES OUTPUT_LOCATION lang)
-QT5_ADD_TRANSLATION(VymTranslations ${VymTranslationSources})
+message(STATUS "bin_dir : ${CMAKE_BINARY_DIR}")
+message(STATUS "ts_files: ${ts_files}")
+message(STATUS "qm_files: ${qm_files}")
 
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
-add_executable(vym ${VymSources} vym.qrc ${VymTranslations})
+add_executable(vym ${VymSources} vym.qrc ${qm_files})
 target_link_libraries(vym ${QtLibraries})
 
 if(WIN32)

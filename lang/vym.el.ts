@@ -2796,6 +2796,21 @@ Do you want to reload that map with the new file?</source>
     </message>
 </context>
 <context>
+    <name>AttributeDialog</name>
+    <message>
+        <source>Attributes</source>
+        <translation type="unfinished">Χαρακτηριστικά</translation>
+    </message>
+    <message>
+        <source>Add key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Κλείσιμο</translation>
+    </message>
+</context>
+<context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>Branch Property Editor</source>
@@ -3210,6 +3225,77 @@ want to allow this in your system!</source>
     </message>
 </context>
 <context>
+    <name>ExportXHTMLDialog</name>
+    <message>
+        <source>Export XHTML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to directory:</source>
+        <translation type="unfinished">Εξαγωγή σε φάκελο:</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished">Περιήγηση</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">Επιλογές</translation>
+    </message>
+    <message>
+        <source>Include image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colored headings in text</source>
+        <translation type="unfinished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
+    </message>
+    <message>
+        <source>Save settings in map</source>
+        <translation type="unfinished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+    </message>
+    <message>
+        <source>show warnings of xslt processor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>show output of external scripts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylesheets</source>
+        <translation type="unfinished">Φύλλα δεδομένων</translation>
+    </message>
+    <message>
+        <source>XSL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSS:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scripts</source>
+        <translation type="unfinished">Σενάρια</translation>
+    </message>
+    <message>
+        <source>Before export:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>After Export:</source>
+        <translation type="unfinished">Μετά την εξαγωγή:</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Άκυρο</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Εξαγωγή</translation>
+    </message>
+</context>
+<context>
     <name>ExtraInfoDialog</name>
     <message>
         <source>VYM - Info</source>
@@ -3329,6 +3415,42 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Authentication problem when contacting JIRA</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>JiraSettingsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Παράθυρο</translation>
+    </message>
+    <message>
+        <source>JIRA servers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">Προσθήκη</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Αφαίρεση</translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JiraSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3951,7 +4073,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Set &amp;Color</source>
-        <translation>Ορισμός &amp;χρώματος</translation>
+        <translation type="vanished">Ορισμός &amp;χρώματος</translation>
     </message>
     <message>
         <source>Pic&amp;k color</source>
@@ -5359,6 +5481,15 @@ because file exists and cannot be changed.</source>
         <source>Set as link to vym map</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Reset delta priority for visible tasks</source>
+        <comment>Reset delta</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select color (Press Shift for more options)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
@@ -6563,6 +6694,16 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>uncompressed, potentially overwrite existing data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find Jira ticket pattern in %1</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Received Jira data.</source>
+        <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

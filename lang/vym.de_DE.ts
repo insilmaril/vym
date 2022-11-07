@@ -62,7 +62,15 @@
     <name>AttributeDialog</name>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Schliessen</translation>
+        <translation type="unfinished">Schliessen</translation>
+    </message>
+    <message>
+        <source>Attributes</source>
+        <translation type="unfinished">Attribute</translation>
+    </message>
+    <message>
+        <source>Add key</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -660,7 +668,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>ExportXHTMLDialog</name>
     <message>
         <source>Export XHTML</source>
-        <translation type="obsolete">Exportiere XHTML</translation>
+        <translation type="unfinished">Exportiere XHTML</translation>
     </message>
     <message>
         <source>Directory:</source>
@@ -668,15 +676,15 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="obsolete">Durchsuchen</translation>
+        <translation type="unfinished">Durchsuchen</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">Optionen</translation>
+        <translation type="unfinished">Optionen</translation>
     </message>
     <message>
         <source>Include image</source>
-        <translation type="obsolete">Bild erzeugen</translation>
+        <translation type="unfinished">Bild erzeugen</translation>
     </message>
     <message>
         <source>Include text</source>
@@ -684,15 +692,15 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>show output of external scripts</source>
-        <translation type="obsolete">Zeige Ausgabe der externen Skripte</translation>
+        <translation type="unfinished">Zeige Ausgabe der externen Skripte</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="obsolete">Exportieren</translation>
+        <translation type="unfinished">Exportieren</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Abbrechen</translation>
+        <translation type="unfinished">Abbrechen</translation>
     </message>
     <message>
         <source>VYM - Export HTML to directory</source>
@@ -712,11 +720,11 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Export to directory:</source>
-        <translation type="obsolete">Export Verzeichnis:</translation>
+        <translation type="unfinished">Export Verzeichnis:</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="obsolete">Farbige Headings im Text</translation>
+        <translation type="unfinished">Farbige Headings im Text</translation>
     </message>
     <message>
         <source>showWarnings e.g. if directory is not empty</source>
@@ -724,15 +732,15 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation type="obsolete">Stylesheets</translation>
+        <translation type="unfinished">Stylesheets</translation>
     </message>
     <message>
         <source>CSS:</source>
-        <translation type="obsolete">CSS:</translation>
+        <translation type="unfinished">CSS:</translation>
     </message>
     <message>
         <source>XSL:</source>
-        <translation type="obsolete">XSL:</translation>
+        <translation type="unfinished">XSL:</translation>
     </message>
     <message>
         <source>VYM - Path to CSS file</source>
@@ -752,19 +760,19 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="obsolete">Einstellungen in map speichern</translation>
+        <translation type="unfinished">Einstellungen in map speichern</translation>
     </message>
     <message>
         <source>Scripts</source>
-        <translation type="obsolete">Skripte</translation>
+        <translation type="unfinished">Skripte</translation>
     </message>
     <message>
         <source>Before export:</source>
-        <translation type="obsolete">Vor Export:</translation>
+        <translation type="unfinished">Vor Export:</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation type="obsolete">Nach Export:</translation>
+        <translation type="unfinished">Nach Export:</translation>
     </message>
     <message>
         <source>The settings saved in the map would like to run scripts:
@@ -828,6 +836,10 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <message>
         <source>Couldn&apos;t start %1</source>
         <translation type="obsolete">%1 konnte nicht nicht gestartet werden</translation>
+    </message>
+    <message>
+        <source>show warnings of xslt processor</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -991,6 +1003,42 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <message>
         <source>Authentication problem when contacting JIRA</source>
         <translation>Authentifizierungsproblem beim Versuch JIRA zu kontaktieren</translation>
+    </message>
+</context>
+<context>
+    <name>JiraSettingsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished">Dialog</translation>
+    </message>
+    <message>
+        <source>JIRA servers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Entfernen</translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="unfinished">Benutzername:</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished">Passwort:</translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished">Passwort speichern</translation>
+    </message>
+    <message>
+        <source>JiraSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1279,7 +1327,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Set &amp;Color</source>
-        <translation>Wähle &amp;Farbe</translation>
+        <translation type="vanished">Wähle &amp;Farbe</translation>
     </message>
     <message>
         <source>Pick color
@@ -4785,6 +4833,15 @@ wird %1 Rückgängig Schritte haben.</translation>
         <source>Set as link to vym map</source>
         <translation>Verbindung zu vym map</translation>
     </message>
+    <message>
+        <source>Reset delta priority for visible tasks</source>
+        <comment>Reset delta</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select color (Press Shift for more options)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
@@ -7158,6 +7215,16 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     <message>
         <source>Load background image</source>
         <translation>Hintergrundbild laden</translation>
+    </message>
+    <message>
+        <source>Could not find Jira ticket pattern in %1</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Received Jira data.</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
