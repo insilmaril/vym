@@ -44,7 +44,7 @@
     <file alias="flag-vymlink.png">flags/flag-vymlink.png</file>
     <file alias="flag-vymlinknew.png">flags/flag-vymlinknew.png</file>
     <file alias="flag-wip.svg">flags/standard/edit-undo.svg</file>
-    
+
     <file alias="freemind/attach.png">flags/freemind/attach.png</file>
     <file alias="freemind/back.png">flags/freemind/back.png</file>
     <file alias="freemind/bell.png">flags/freemind/bell.png</file>
