@@ -4081,7 +4081,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
 
                 if (!m->renameMap(fn)) {
                     QMessageBox::critical(0, tr("Critical Error"),
-                                          tr("Couldn't save %1").arg(fn));
+                                          tr("Couldn't rename map to %1").arg(fn));
                     return;
                 }
             }

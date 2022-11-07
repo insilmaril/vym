@@ -2732,7 +2732,6 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4084"/>
         <location filename="../src/mainwindow.cpp" line="4167"/>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished">%1を保存できませんでした</translation>
@@ -2740,6 +2739,11 @@ because of existing lockfile:
     <message>
         <location filename="../src/mainwindow.cpp" line="4114"/>
         <source>Save map as new default map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="4084"/>
+        <source>Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

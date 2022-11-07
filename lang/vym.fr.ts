@@ -2226,7 +2226,6 @@ existe déjà. Voulez-vous </translation>
         <translation type="obsolete">Appeler une fonction de test</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4084"/>
         <location filename="../src/mainwindow.cpp" line="4167"/>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished">Ne peut pas sauver %1</translation>
@@ -4506,6 +4505,11 @@ because of existing lockfile:
         <location filename="../src/mainwindow.cpp" line="4019"/>
         <source>Save map as</source>
         <translation>Enregistrer la carte sous</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="4084"/>
+        <source>Couldn&apos;t rename map to %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="4217"/>

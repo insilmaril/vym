@@ -4842,6 +4842,10 @@ wird %1 Rückgängig Schritte haben.</translation>
         <source>Select color (Press Shift for more options)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Couldn&apos;t rename map to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
