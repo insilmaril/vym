@@ -2578,6 +2578,7 @@ a causa de un file de bloco existente:
 %2</translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.cpp" line="4084"/>
         <location filename="../src/mainwindow.cpp" line="4167"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Il non pote salveguardar %1</translation>

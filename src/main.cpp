@@ -339,8 +339,7 @@ int main(int argc, char *argv[])
 
     if (debug) {
         qDebug() << "Main:     localName: " << localeName;
-        qDebug() << "Main:  translations: " << localeName,
-            vymBaseDir.path() + "/lang";
+        qDebug() << "Main:  translations: " << localeName, vymBaseDir.path() + "/translations";
         qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
         qDebug() << "Main:          LANG: "
                  << QProcessEnvironment::systemEnvironment().value("LANG",
@@ -349,13 +348,13 @@ int main(int argc, char *argv[])
 
     QTranslator vymTranslator;
     if (!vymTranslator.load(QString("vym.%1").arg(localeName),
-                            vymBaseDir.path() + "/lang")) {
+                            vymBaseDir.path() + "/translations")) {
         WarningDialog warn;
         warn.showCancelButton(false);
         warn.setText(
             QString("Couldn't load translations for locale \"%1\" in\n%2")
                 .arg(localeName)
-                .arg(vymBaseDir.path() + "/lang"));
+                .arg(vymBaseDir.path() + "/translations"));
         warn.setShowAgainName("mainwindow/loadTranslations");
     }
     app.installTranslator(&vymTranslator);
