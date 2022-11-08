@@ -73,7 +73,8 @@ QDir cashDir;            // tmp dir with cashed svg files in tmpVymDir
 QString clipboardDir;    // Clipboard used in all mapEditors
 QString clipboardFile;   // Clipboard used in all mapEditors
 
-QDir vymBaseDir; // Containing all styles, scripts, images, ...
+QDir vymBaseDir;            // Containing all styles, scripts, images, ...
+QDir vymTranslationsDir;    // Translation files (*.qm)
 QDir lastImageDir;
 QDir lastMapDir;
 QDir lastExportDir;
@@ -336,10 +337,11 @@ int main(int argc, char *argv[])
         }
 #endif
     }
+    vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
 
     if (debug) {
         qDebug() << "Main:     localName: " << localeName;
-        qDebug() << "Main:  translations: " << localeName, vymBaseDir.path() + "/translations";
+        qDebug() << "Main:  translations: " << vymTranslationsDir.path();
         qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
         qDebug() << "Main:          LANG: "
                  << QProcessEnvironment::systemEnvironment().value("LANG",
@@ -347,14 +349,13 @@ int main(int argc, char *argv[])
     }
 
     QTranslator vymTranslator;
-    if (!vymTranslator.load(QString("vym.%1").arg(localeName),
-                            vymBaseDir.path() + "/translations")) {
+    if (!vymTranslator.load(QString("vym.%1").arg(localeName), vymTranslationsDir.path())) {
         WarningDialog warn;
         warn.showCancelButton(false);
         warn.setText(
             QString("Couldn't load translations for locale \"%1\" in\n%2")
                 .arg(localeName)
-                .arg(vymBaseDir.path() + "/translations"));
+                .arg(vymTranslationsDir.path()));
         warn.setShowAgainName("mainwindow/loadTranslations");
     }
     app.installTranslator(&vymTranslator);

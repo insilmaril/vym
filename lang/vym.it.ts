@@ -3245,7 +3245,6 @@ poiché esiste il file di blocco:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4084"/>
         <location filename="../src/mainwindow.cpp" line="4167"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Non è possibile salvare %1</translation>

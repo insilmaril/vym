@@ -3079,7 +3079,6 @@ zbog postojeće datoteke zaključavanja:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="4084"/>
         <location filename="../src/mainwindow.cpp" line="4167"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Ne mogu spremiti %1</translation>
