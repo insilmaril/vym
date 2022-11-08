@@ -96,7 +96,7 @@ if(DBus1_FOUND)
 endif()
 
 # Translations
-file(GLOB_RECURSE ts_files "lang/*.ts")
+file(GLOB_RECURSE ts_files ${CMAKE_BINARY_DIR} "lang/*.ts")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
