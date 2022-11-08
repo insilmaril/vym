@@ -96,7 +96,7 @@ if(DBus1_FOUND)
 endif()
 
 # Translations
-file(GLOB_RECURSE ts_files "lang/*.ts")
+file(GLOB_RECURSE ts_files ${CMAKE_BINARY_DIR} "lang/*.ts")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
@@ -121,7 +121,7 @@ install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES doc/vym.1.gz DESTINATION ${CMAKE_INSTALL_MANDIR})
 install(FILES README.md LICENSE.txt DESTINATION ${CMAKE_INSTALL_DOCDIR})
-install(DIRECTORY exports flags icons macros lang scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+install(DIRECTORY exports flags icons macros translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
