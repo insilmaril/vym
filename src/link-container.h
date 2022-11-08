@@ -36,10 +36,11 @@ class LinkContainer : public Container {
 
   protected:
     void init();
-    void createBottomLine();
-    void deleteBottomLine();
 
   public:
+    void createBottomLine();
+    void deleteBottomLine();
+    bool hasBottomLine();
     void delLink();
     void copy(LinkContainer *);
 

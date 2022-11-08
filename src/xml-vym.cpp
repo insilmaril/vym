@@ -403,6 +403,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         if (lastBranch->isScrolled() && lastBranch->branchCount() == 0)
             lastBranch->unScroll();
 
+        lastBranch->getBranchContainer()->updateStyles(BranchContainer::RelinkBranch);
         model->emitDataChanged(lastBranch);
         lastBranch = (BranchItem *)(lastBranch->parent());
         lastBranch->setLastSelectedBranch(0);

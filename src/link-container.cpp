@@ -18,6 +18,8 @@ LinkContainer::~LinkContainer()
 {
     //qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segment=" << segment.count();
     delLink();
+
+    // bottomLine is deleted indirectly as child of LinkContainer
 }
 
 void LinkContainer::init()
@@ -37,6 +39,7 @@ void LinkContainer::init()
     pen.setCapStyle(Qt::RoundCap);
 
     bottomLine = nullptr;
+    createBottomLine();
 }
 
 void LinkContainer::createBottomLine()
@@ -55,10 +58,16 @@ void LinkContainer::deleteBottomLine()
     }
 }
 
+bool LinkContainer::hasBottomLine()
+{
+    if (bottomLine)
+        return true;
+    else
+        return false;
+}
+
 void LinkContainer::delLink()
 {
-    deleteBottomLine();
-
     switch (style) {
         case Line:
             delete (l);
@@ -136,7 +145,6 @@ void LinkContainer::setLinkStyle(Style newstyle)
         default:
             break;
     }
-    createBottomLine();
 }
 
 LinkContainer::Style LinkContainer::getLinkStyle() { return style; }

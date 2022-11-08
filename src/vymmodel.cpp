@@ -2259,6 +2259,8 @@ void VymModel::setFrameType(const FrameContainer::FrameType &t, BranchItem *bi)
             newName = fc->getFrameTypeName();
         }
 
+        bc->updateStyles(BranchContainer::RelinkBranch);
+
         // QString s = bc->getFrameTypeName();
         saveState(
             selbi, QString("setFrameType (\"%1\")").arg(oldName),
@@ -2297,7 +2299,8 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
     qDebug() << "VM::setFIC  b=" << b << "bi=" << bi << selbis;
 
     foreach (BranchItem *selbi, selbis) {
-        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
+        BranchContainer *bc = selbi->getBranchContainer();
+        FrameContainer *fc = bc->getFrameContainer();
         if (fc)  {
             QString u = b ? "false" : "true";
             QString r = !b ? "false" : "true";
@@ -2307,6 +2310,11 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
                     selbi, QString("setFrameIncludeChildren(%1)").arg(r),
                     QString("Include children in %1").arg(getObjectName(selbi)));
             fc->setIncludeChildren(b);
+
+            // FIXME-2 VM should not need to know, that BC needs updates:
+            bc->updateStyles();
+            bc->reposition();
+
             emitDataChanged(selbi);
             reposition();
         }

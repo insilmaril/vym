@@ -789,8 +789,6 @@ QRectF BranchContainer::getBBoxURLFlag()
 
 void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 {
-    qDebug() << "BC::udateStyles of " << getName() << " d=" << branchItem->depth() << " fC=" << frameContainer;
-
     // Set container layouts
     if (branchesContainerAutoLayout)
         setBranchesContainerLayout(getDefaultBranchesContainerLayout() );
@@ -804,16 +802,11 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
     // Create/delete bottomline
     if (frameContainer) {
         if (frameContainer->getFrameType() != FrameContainer::NoFrame &&
-            linkContainer->hasBottomLine()) {
-            qDebug() << "  deleting BL";
+            linkContainer->hasBottomLine())
             linkContainer->deleteBottomLine();
-        }
     } else {
-        qDebug() << " No FC!";
-        if (!linkContainer->hasBottomLine()) {
-            qDebug() << "  creating BL";
+        if (!linkContainer->hasBottomLine())
             linkContainer->createBottomLine();
-        }
     }
 
     uint depth = branchItem->depth();
@@ -1039,9 +1032,14 @@ void BranchContainer::reposition()
 
     if (frameContainer) {
         if (frameContainer->getIncludeChildren()) {
-            if (outerContainer) // FIXME-2 check for outercontainer?
-                qWarning() << "BC::reposition  frameContainer could use outerContainer!";
-            frameContainer->setParentItem(innerContainer);
+            /*
+            if (outerContainer) {
+                qWarning() << "BC::reposition  frameContainer uses outerContainer!";
+                frameContainer->setParentItem(this);
+            } else
+                frameContainer->setParentItem(innerContainer);
+            */
+            frameContainer->setParentItem(this);
 //            frameContainer->setRect(frameContainer->parentContainer()->rect());
         } else {
             frameContainer->setParentItem(ornamentsContainer);

@@ -504,7 +504,7 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
 
     // FIXME-2 for new branch set default font, color, link, frame, children styles
     // newbo->setDefAttr(BranchObj::NewBranch);
-    branchContainer->updateStyles(BranchContainer::NewBranch);
+    // FIXME-2 should be ok after contstructer without manual update - branchContainer->updateStyles(BranchContainer::NewBranch);
 
     if (!getHeading().isEmpty()) {  // FIXME-2 updateVisuals new container and color
         /*

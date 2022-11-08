@@ -145,7 +145,7 @@ class BranchContainer : public Container {
     QRectF getBBoxURLFlag();
 
     /*! Update styles (frame, links, fonts, colors, ...) */
-    void updateStyles(StyleUpdateMode styleUpdateMode);
+    void updateStyles(StyleUpdateMode styleUpdateMode = RelinkBranch);
 
     /*! Update flags and heading */
     void updateVisuals();
