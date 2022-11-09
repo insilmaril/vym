@@ -638,42 +638,39 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
 {
     if (lastBranch) {
         BranchContainer *bc = lastBranch->getBranchContainer();
-        FrameContainer *fc = bc->getFrameContainer();
-        if (!fc)
-            fc = bc->createFrameContainer();
 
         bool ok;
         int x;
         if (!a.value("frameType").isEmpty())
-            fc->setFrameType(a.value("frameType"));
+            bc->setFrameType(a.value("frameType"));
         if (!a.value("penColor").isEmpty())
-            fc->setPenColor(a.value("penColor"));
+            bc->setFramePenColor(a.value("penColor"));
         if (!a.value("brushColor").isEmpty()) {
-            fc->setBrushColor(a.value("brushColor"));
+            bc->setFrameBrushColor(a.value("brushColor"));
             lastMI->setBackgroundColor(a.value("brushColor"));
         }
         if (!a.value("padding").isEmpty()) {
             x = a.value("padding").toInt(&ok);
             if (ok)
-                fc->setPadding(x);
+                bc->setFramePadding(x);
         }
         if (!a.value("borderWidth").isEmpty()) {
             // Deprecated. 2.9.506 uses penWidth instead
             x = a.value("borderWidth").toInt(&ok);
             if (ok)
-                fc->setPenWidth(x);
+                bc->setFramePenWidth(x);
         }
         if (!a.value("penWidth").isEmpty()) {
             // Introduced in 2.9.506 uses penWidth instead
             x = a.value("penWidth").toInt(&ok);
             if (ok)
-                fc->setPenWidth(x);
+                bc->setFramePenWidth(x);
         }
         if (!a.value("includeChildren").isEmpty()) {
             if (a.value("includeChildren") == "true")
-                fc->setIncludeChildren(true);
+                bc->setFrameIncludeChildren(true);
             else
-                fc->setIncludeChildren(false);
+                bc->setFrameIncludeChildren(false);
         }
         return true;
     }

@@ -104,7 +104,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer = new BranchContainer (mapScene, nullptr, nullptr);
     tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
     tmpParentContainer->setName("tmpParentContainer");
-    tmpParentContainer->setType(Container::TmpParent);
+    tmpParentContainer->setContainerType(Container::TmpParent);
     tmpParentContainer->setLayout(Container::FloatingBounded);
     tmpParentContainer->branchesContainerAutoLayout = false;
     tmpParentContainer->setBranchesContainerLayout(Container::FloatingBounded);
@@ -364,7 +364,7 @@ void MapEditor::animate()
     foreach (Container *c, animatedContainers) {
         c->animate();
 
-        if (c->containerType() == Container::Branch)
+        if (c->getContainerType() == Container::Branch)
             ((BranchContainer*)c)->updateUpLink();
 
         if (!c->isAnimated())
@@ -1647,14 +1647,14 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
                 if (xlo) {
-                    setState(DrawingXLink); // FIXME-0 state correct? creating new xlink or editing existing?
+                    setState(DrawingXLink); // FIXME-1 state correct? creating new xlink or editing existing?
                 }
             }
         }
     }
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-1  Shift modifier to only move MC or floating parent not implemented yet
+void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-2  Shift modifier to only move MC or floating parent not implemented yet
 {
     QPointF p_event = mapToScene(e->pos());
 
@@ -2313,7 +2313,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
-            if (mi->hasTypeBranch()) {  // FIXME-0 experimental, no mapImages yet (also below)
+            if (mi->hasTypeBranch()) {  // FIXME-0 ME::updateSelection no mapImages yet (also below)
                 ((BranchItem*)mi)->getBranchContainer()->select();
         }
         /* FIXME-1 ME::updateSelection - hide links of unselected objects

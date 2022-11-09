@@ -18,7 +18,7 @@ HeadingContainer::~HeadingContainer()
 
 void HeadingContainer::init()
 {
-    type = Container::Heading;
+    containerType = Container::Heading;
 
     setHeading("");
     headingColor = QColor(Qt::black);

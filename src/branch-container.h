@@ -12,7 +12,7 @@ class FlagRowContainer;
 class HeadingContainer;
 class LinkContainer;
 
-class BranchContainer : public Container {
+class BranchContainer : public FrameContainer {
   public:
     /*! Orientation relative to parent branch container */
     enum Orientation {
@@ -104,8 +104,6 @@ class BranchContainer : public Container {
     HeadingContainer* getHeadingContainer();
     LinkContainer* getLinkContainer();
 
-    FrameContainer* createFrameContainer();
-    FrameContainer* getFrameContainer();
     void deleteFrameContainer();
 
     // Convenience functions to access children
@@ -169,7 +167,6 @@ class BranchContainer : public Container {
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent
-    FrameContainer *frameContainer;
     Container *branchesContainer;       // Container with children branches
     Container *imagesContainer;         // Container with children images
     Container *ornamentsContainer;      // Flags and heading

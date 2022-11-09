@@ -20,7 +20,7 @@ Container::~Container()
 
 void Container::copy(Container *other)
 {
-    type = other->type;
+    containerType = other->containerType;
 
     originalPos = other->originalPos;
     name = other->name;
@@ -32,7 +32,7 @@ void Container::copy(Container *other)
 
 void Container::init()
 {
-    type = UndefinedType;
+    containerType = UndefinedType;
     layout = Horizontal;
 
     // subcontainers usually may influence position
@@ -55,14 +55,19 @@ void Container::init()
     show();
 }
 
-Container::ContainerType Container::containerType()
+Container::ContainerType Container::getContainerType()
 {
-    return type;
+    return containerType;
 }
 
-void Container::setType(const Container::ContainerType &t)
+int Container::type() const
 {
-    type = t;
+    return Type;
+}
+
+void Container::setContainerType(const Container::ContainerType &t)
+{
+    containerType = t;
 }
 
 void Container::setName(const QString &n)   // FIXME-3 debugging only
@@ -73,7 +78,7 @@ void Container::setName(const QString &n)   // FIXME-3 debugging only
 QString Container::getName()    // FIXME-3 debugging only
 {
     QString t;
-    switch (type) {
+    switch (containerType) {
         case Branch:
             t = "Branch";
             break;
@@ -263,6 +268,17 @@ void Container::setVisibility(bool v)
 void Container::addContainer(Container *c)
 {
     c->setParentItem(this);
+}
+
+QList <Container*> Container::childContainers() // FIXME-0000000 cont here
+{
+    QList <Container*> list;
+    Container *c;
+    foreach (QGraphicsItem *child, childItems()) {
+        if (child->type() > UserType)
+            list << (Container*) child;
+    }
+    return list;
 }
 
 void Container::setAnimation(const AnimPoint &ap) { animatedPos = ap; }
@@ -482,8 +498,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                     x = -x;
 
                 // Position children initially. (So far only centered vertically)
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
+                foreach (Container *c, childContainers()) {
                     if (!c->overlay) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
                         QPointF origin_mapped = mapFromItem(c, QPointF());
@@ -573,7 +588,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 			    break;
                         default:
                             qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignment << " in " << info();
-                            if (type == BranchesContainer)
+                            if (containerType == BranchesContainer)
                                 qWarning() << "  orient=" << ((BranchContainer*)this)->getOrientation();
 		    }
 

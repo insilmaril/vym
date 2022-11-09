@@ -138,12 +138,13 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
+        branchItem = (BranchItem *)ti;
+        BranchContainer *bc = branchItem->getBranchContainer();
+
         if (lastSelectedBranchTab >= 0)
             ui.tabWidget->setCurrentIndex(lastSelectedBranchTab);
 
         lastSelectedBranchTab = ui.tabWidget->currentIndex();
-
-        branchItem = (BranchItem *)ti;
 
         // Activate the right tabs for this branch
         ui.tabWidget->setEnabled(true);
@@ -152,10 +153,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         ui.tabWidget->setTabEnabled(4, false);
 
         // Frame
-        FrameContainer *fc = branchItem->getBranchContainer()->getFrameContainer();
-        FrameContainer::FrameType t = FrameContainer::NoFrame;
-        if  (fc)
-            t = fc->getFrameType();
+        FrameContainer::FrameType t = bc->getFrameType();
 
         if (t == FrameContainer::NoFrame)
         {
@@ -170,16 +168,16 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         }
         else {
             QPixmap pix(16, 16);
-            pix.fill(fc->getPenColor());
+            pix.fill(bc->getFramePenColor());
             ui.framePenColorButton->setIcon(pix);
-            pix.fill(fc->getBrushColor());
+            pix.fill(bc->getFrameBrushColor());
             ui.frameBrushColorButton->setIcon(pix);
             ui.colorGroupBox->setEnabled(true);
             ui.framePaddingSpinBox->setEnabled(true);
-            ui.framePaddingSpinBox->setValue(fc->getPadding());
+            ui.framePaddingSpinBox->setValue(bc->getFramePadding());
             ui.frameWidthSpinBox->setEnabled(true);
             ui.frameWidthSpinBox->setValue(
-                fc->getPenWidth());
+                bc->getFramePenWidth());
             ui.framePaddingLabel->setEnabled(true);
             ui.frameBorderLabel->setEnabled(true);
             ui.includeChildrenCheckBox->setEnabled(true);
@@ -200,7 +198,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                 default:
                     break;
             }
-            if (fc->getIncludeChildren())
+            if (bc->getFrameIncludeChildren())
                 ui.includeChildrenCheckBox->setCheckState(Qt::Checked);
             else
                 ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
@@ -213,7 +211,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
 
         // Layout branches
-        BranchContainer *bc = branchItem->getBranchContainer();
         updateContainerLayoutButtons();
         ui.rotationHeadingSlider->setValue(bc->getRotationHeading());
         ui.rotationInnerContentSlider->setValue(bc->getRotationInnerContent());
@@ -344,9 +341,9 @@ void BranchPropertyEditor::framePenColorClicked()
     if (model) {
         QColor col = Qt::white;
         if (branchItem) {
-            FrameContainer *fc = branchItem->getBranchContainer()->getFrameContainer();
-            if (fc)
-                col = fc->getPenColor();
+            BranchContainer *bc = branchItem->getBranchContainer();
+            if (bc->getFrameType() != FrameContainer::NoFrame)
+                col = bc->getFramePenColor();
 
             col = QColorDialog::getColor(col, this);
             if (col.isValid()) {
@@ -361,9 +358,9 @@ void BranchPropertyEditor::frameBrushColorClicked()
     if (model) {
         QColor col = Qt::white;
         if (branchItem) {
-            FrameContainer *fc = branchItem->getBranchContainer()->getFrameContainer();
-            if (fc)
-                col = fc->getBrushColor();
+            BranchContainer *bc = branchItem->getBranchContainer();
+            if (bc->getFrameType() != FrameContainer::NoFrame)
+                col = bc->getFrameBrushColor();
 
             col = QColorDialog::getColor(
                     col,

@@ -21,9 +21,9 @@ qreal BranchContainer::linkWidth = 20;  // FIXME-2 testing
 
 #define qdbg() qDebug().nospace().noquote()
 
-BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : Container(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
+BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : FrameContainer(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
-    //qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
+    // qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
     scene->addItem(this);
     branchItem = bi;
     init();
@@ -45,23 +45,22 @@ BranchContainer::~BranchContainer()
 
 void BranchContainer::init()
 {
-    type = Container::Branch;
+    containerType = Container::Branch;
 
     orientation = UndefinedOrientation;
 
-    frameContainer = nullptr;
     imagesContainer = nullptr;
     selectionContainer = nullptr;
 
     headingContainer = new HeadingContainer ();
 
     ornamentsContainer = new Container ();
-    ornamentsContainer->type = OrnamentsContainer;
+    ornamentsContainer->containerType = OrnamentsContainer;
 
     linkContainer = new LinkContainer();
 
     innerContainer = new Container ();
-    innerContainer->type = InnerContent;
+    innerContainer->containerType = InnerContent;
 
     ornamentsContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
@@ -105,22 +104,22 @@ BranchContainer* BranchContainer::parentBranchContainer()
     if (!p) return nullptr;;
 
     // Some checks before the real parent can be returned
-    if (p->type != BranchesContainer) return nullptr;
+    if (p->containerType != BranchesContainer) return nullptr;
 
     p = p->parentContainer();
     if (!p) return nullptr;;
 
-    if (p->type != InnerContent) return nullptr;
+    if (p->containerType != InnerContent) return nullptr;
 
     p = p->parentContainer();
     if (!p) return nullptr;;
 
-    if (p->type == OuterContainer) {
+    if (p->containerType == OuterContainer) {
         p = p->parentContainer();
         if (!p) return nullptr;;
     }
 
-    if (! (p->type == Branch || p->type == TmpParent)) return nullptr;
+    if (! (p->containerType == Branch || p->containerType == TmpParent)) return nullptr;
 
     return (BranchContainer*)p;
 }
@@ -215,7 +214,7 @@ void BranchContainer::select()
 {
     if (selectionContainer) return;
     selectionContainer = new Container (ornamentsContainer);
-    selectionContainer->setType(Selection);
+    selectionContainer->setContainerType(Selection);
     selectionContainer->setPen(QPen(Qt::red));
     selectionContainer->setBrush(Qt::yellow);
     selectionContainer->overlay = true;
@@ -272,7 +271,7 @@ void BranchContainer::createBranchesContainer()
     else
         branchesContainer->setLayout(branchesContainerLayout);
     branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
-    branchesContainer->type = Container::BranchesContainer;
+    branchesContainer->containerType = Container::BranchesContainer;
 
     innerContainer->addContainer(branchesContainer);
 }
@@ -283,7 +282,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
         createBranchesContainer();
 
     QPointF sp = c->scenePos();
-    c->setParentItem(branchesContainer);
+    branchesContainer->addContainer(c);
     if (keepScenePos)
         c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
 }
@@ -333,7 +332,7 @@ void BranchContainer::createOuterContainer()
     if (!outerContainer) {
         outerContainer = new Container (this);
         outerContainer->setLayout(BoundingFloats);
-        outerContainer->type = OuterContainer;
+        outerContainer->containerType = OuterContainer;
         outerContainer->addContainer(innerContainer);
         if (imagesContainer)
             outerContainer->addContainer(imagesContainer);
@@ -463,7 +462,6 @@ void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not del
         imagesContainer->setLayout(getDefaultImagesContainerLayout());
     else
         imagesContainer->setLayout(imagesContainerLayout);
-    imagesContainer->type = Container::ImagesContainer;
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
     else
@@ -477,7 +475,7 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
     }
 
     QPointF sp = c->scenePos();
-    c->setParentItem(imagesContainer);
+    imagesContainer->addContainer(c);
 
     if (keepScenePos)
         c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
@@ -498,7 +496,8 @@ LinkContainer* BranchContainer::getLinkContainer()
     return linkContainer;
 }
 
-FrameContainer* BranchContainer::createFrameContainer()
+/*
+FrameContainer* BranchContainer::createFrameContainer() // FIXME-0 remove
 {
     // Parent container might be updated later in reposition()
     frameContainer = new FrameContainer (ornamentsContainer);
@@ -507,16 +506,7 @@ FrameContainer* BranchContainer::createFrameContainer()
     return frameContainer;
 }
 
-FrameContainer* BranchContainer::getFrameContainer()
-{
-    return frameContainer;
-}
-
-void BranchContainer::deleteFrameContainer()
-{
-    delete frameContainer;
-    frameContainer = nullptr;
-}
+*/
 
 QList <BranchContainer*> BranchContainer::childBranches()
 {
@@ -548,15 +538,15 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
 
     int n = 0;
     qreal radius;
-    if (c->type == Branch) {
+    if (c->containerType == Branch) {
         radius = 190;
         n = branchCount();
-    } else if (c->type == Image) {
+    } else if (c->containerType == Image) {
         radius = 100;
         n = imageCount();
     }
 
-    if (!parentItem() || c->type == Image) {
+    if (!parentItem() || c->containerType == Image) {
         // Mapcenter, suggest to put image or mainbranch on circle around center
         qreal a =
             -M_PI_4 + M_PI_2 * n + (M_PI_4 / 2) * (n / 4 % 4);
@@ -660,7 +650,7 @@ void BranchContainer::updateUpLink()
 
 void BranchContainer::setLayout(const Layout &l)
 {
-    if (type != Branch && type != TmpParent)
+    if (containerType != Branch && containerType != TmpParent)
         qWarning() << "BranchContainer::setLayout (...) called for non-branch: " << info();
     Container::setLayout(l);
 }
@@ -796,15 +786,14 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
     if (imagesContainerAutoLayout)
         setImagesContainerLayout(getDefaultImagesContainerLayout() );
 
-    if (type == TmpParent)  // FIXME-2 Should not be called for tmpParent anyway! (Would have already crashed due to BI->depth above)
+    if (containerType == TmpParent)  // FIXME-2 Should not be called for tmpParent anyway! (Would have already crashed due to BI->depth above)
         return;
 
     // Create/delete bottomline
-    if (frameContainer) {
-        if (frameContainer->getFrameType() != FrameContainer::NoFrame &&
+    if (FrameContainer::frameType != FrameContainer::NoFrame &&
             linkContainer->hasBottomLine())
             linkContainer->deleteBottomLine();
-    } else {
+    else {
         if (!linkContainer->hasBottomLine())
             linkContainer->createBottomLine();
     }
@@ -834,7 +823,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 
     // FIXME-3 for testing we do some coloring and additional drawing
     /*
-    if (type != TmpParent) {
+    if (containerType != TmpParent) {
         // BranchContainer
         setPen(QPen(Qt::green));
 
@@ -886,7 +875,7 @@ void BranchContainer::updateVisuals()
 
 Container::Layout BranchContainer::getDefaultBranchesContainerLayout()
 {
-    if (type == TmpParent)
+    if (containerType == TmpParent)
         return FloatingFree;
 
     if (branchItem->depth() == 0)
@@ -916,11 +905,11 @@ void BranchContainer::reposition()
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
 
-    if (!pbc && type != TmpParent) {
+    if (!pbc && containerType != TmpParent) {
         // I am a (not moving) mapCenter
         orientation = UndefinedOrientation;
     } else {
-        if (type != TmpParent) {
+        if (containerType != TmpParent) {
             // "regular repositioning", not currently moved in MapEditor
             if (!pbc)
                 orientation = UndefinedOrientation;
@@ -964,7 +953,7 @@ void BranchContainer::reposition()
     if (depth == 0)
     {
         // MapCenter or TmpParent?
-        if (type != TmpParent) {
+        if (containerType != TmpParent) {
             setHorizontalDirection(LeftToRight);
             innerContainer->setHorizontalDirection(LeftToRight);
             setLayout(FloatingBounded);
@@ -1030,8 +1019,12 @@ void BranchContainer::reposition()
         }
     }
 
+    FrameContainer::setRect(mapRectFromItem(ornamentsContainer, ornamentsContainer->rect()));
+
+    /* FIXME-00 setup frameContainer
     if (frameContainer) {
-        if (frameContainer->getIncludeChildren()) {
+        if (frameIncludeChildren) {
+        */
             /*
             if (outerContainer) {
                 qWarning() << "BC::reposition  frameContainer uses outerContainer!";
@@ -1039,6 +1032,7 @@ void BranchContainer::reposition()
             } else
                 frameContainer->setParentItem(innerContainer);
             */
+    /*
             frameContainer->setParentItem(this);
 //            frameContainer->setRect(frameContainer->parentContainer()->rect());
         } else {
@@ -1050,5 +1044,6 @@ void BranchContainer::reposition()
             //qDebug() << "BC repos c) fC=" << frameContainer->info() << " pC=" << frameContainer->parentContainer()->info();
         }
     }
+    */
 
 }

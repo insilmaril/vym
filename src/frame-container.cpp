@@ -9,9 +9,9 @@
 /////////////////////////////////////////////////////////////////
 // FrameContainer
 /////////////////////////////////////////////////////////////////
-FrameContainer::FrameContainer(Container *parent) : Container(parent)
+FrameContainer::FrameContainer(QGraphicsItem *parent) : Container(parent)
 {
-    //qDebug() << "Constr FrameContainer";
+    //qDebug() << "Constr FrameContainer this=" << this;
     init();
 }
 
@@ -23,14 +23,14 @@ FrameContainer::~FrameContainer()
 
 void FrameContainer::init()
 {
-    type = Frame;
+    containerType = Frame;
     frameType = NoFrame;
     clear();
-    pen.setColor(Qt::black);
-    pen.setWidth(1);
-    brush.setColor(Qt::white);
-    brush.setStyle(Qt::SolidPattern);
-    includeChildren = false;
+    framePen.setColor(Qt::black);
+    framePen.setWidth(1);
+    frameBrush.setColor(Qt::white);
+    frameBrush.setStyle(Qt::SolidPattern);
+    frameIncludeChildren = false;
 
     setVisible(true);
 
@@ -57,13 +57,13 @@ void FrameContainer::clear()
             break;
     }
     frameType = NoFrame;
-    padding = 0; // No frame requires also no padding
-    xsize = 0;
+    framePadding = 0; // No frame requires also no padding
+    frameXSize = 0;
 }
 
 void FrameContainer::setRect(const QRectF &frameSize)
 {
-    //qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(frameSize, 0);
+    // FIXME-2 qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(frameSize, 0);
     QGraphicsRectItem::setRect(frameSize);
     switch (frameType) {
         case NoFrame:
@@ -98,7 +98,7 @@ void FrameContainer::setRect(const QRectF &frameSize)
         case Ellipse:
             ellipseFrame->setRect(
                 QRectF(frameSize.x(), frameSize.y(), frameSize.width(), frameSize.height()));
-            xsize = 20; // max(frameSize.width(), frameSize.height()) / 4;
+            frameXSize = 20; // max(frameSize.width(), frameSize.height()) / 4;
             break;
 
         case Cloud:
@@ -150,32 +150,32 @@ void FrameContainer::setRect(const QRectF &frameSize)
                              tr.y() + (i - 1) * d);
             }
             pathFrame->setPath(path);
-            xsize = 50;
+            frameXSize = 50;
             break;
     }
 }
 
-void FrameContainer::setPadding(const int &i) { padding = i; }  // FIXME-2 not supported yet
+void FrameContainer::setFramePadding(const int &i) { framePadding = i; }  // FIXME-2 not supported yet
 
-int FrameContainer::getPadding()
+int FrameContainer::getFramePadding()
 {
     if (frameType == NoFrame)
         return 0;
     else
-        return padding;
+        return framePadding;
 }
 
-qreal FrameContainer::getTotalPadding() { return xsize + padding + pen.width(); }
+qreal FrameContainer::getFrameTotalPadding() { return frameXSize + framePadding + framePen.width(); }
 
-qreal FrameContainer::getXPadding() { return xsize; }
+qreal FrameContainer::getFrameXPadding() { return frameXSize; }
 
-void FrameContainer::setPenWidth(const int &i)
+void FrameContainer::setFramePenWidth(const int &i)
 {
-    pen.setWidth(i);
+    framePen.setWidth(i);
     repaint();
 }
 
-int FrameContainer::getPenWidth() { return pen.width(); }
+int FrameContainer::getFramePenWidth() { return framePen.width(); }
 
 FrameContainer::FrameType FrameContainer::getFrameType() { return frameType; }
 
@@ -221,18 +221,18 @@ void FrameContainer::setFrameType(const FrameType &t)
             case NoFrame:
                 break;
             case Rectangle:
-                rectFrame = new QGraphicsRectItem;
-                rectFrame->setPen(pen);
-                rectFrame->setBrush(brush);
+                rectFrame = new QGraphicsRectItem;  // FIXME-00 Use my own rectangle!
+                rectFrame->setPen(framePen);
+                rectFrame->setBrush(frameBrush);
                 rectFrame->setZValue(dZ_FRAME_LOW);
                 rectFrame->setParentItem(this);
                 rectFrame->show();
                 break;
             case Ellipse:
                 ellipseFrame = scene()->addEllipse(QRectF(0, 0, 0, 0),
-                                                   pen, brush);
-                ellipseFrame->setPen(pen);
-                ellipseFrame->setBrush(brush);
+                                                   framePen, frameBrush);
+                ellipseFrame->setPen(framePen);
+                ellipseFrame->setBrush(frameBrush);
                 ellipseFrame->setZValue(dZ_FRAME_LOW);
                 ellipseFrame->setParentItem(this);
                 ellipseFrame->show();
@@ -240,17 +240,17 @@ void FrameContainer::setFrameType(const FrameType &t)
             case RoundedRectangle: {
                 QPainterPath path;
                 pathFrame = new QGraphicsPathItem;
-                pathFrame->setPen(pen);
-                pathFrame->setBrush(brush);
+                pathFrame->setPen(framePen);
+                pathFrame->setBrush(frameBrush);
                 pathFrame->setZValue(dZ_FRAME_LOW);
                 pathFrame->setParentItem(this);
                 pathFrame->show();
             } break;
             case Cloud: {
                 QPainterPath path;
-                pathFrame = scene()->addPath(path, pen, brush); ///// FIXME-2 see below
-                pathFrame->setPen(pen);
-                pathFrame->setBrush(brush);
+                pathFrame = scene()->addPath(path, framePen, frameBrush); ///// FIXME-2 see below
+                pathFrame->setPen(framePen);
+                pathFrame->setBrush(frameBrush);
                 pathFrame->setZValue(dZ_FRAME_LOW);
                 pathFrame->setParentItem(this);
                 pathFrame->show();
@@ -275,87 +275,87 @@ void FrameContainer::setFrameType(const QString &t)
         FrameContainer::setFrameType(NoFrame);
 }
 
-void FrameContainer::setPenColor(QColor col)
+void FrameContainer::setFramePenColor(QColor col)
 {
-    pen.setColor(col);
+    framePen.setColor(col);
     repaint();  // FIXME-2 needed?
 }
 
-QColor FrameContainer::getPenColor() { return pen.color(); }
+QColor FrameContainer::getFramePenColor() { return framePen.color(); }
 
-void FrameContainer::setBrushColor(QColor col)
+void FrameContainer::setFrameBrushColor(QColor col)
 {
-    brush.setColor(col);
+    frameBrush.setColor(col);
     repaint();  // FIXME-2 needed?
 }
 
-QColor FrameContainer::getBrushColor() { return brush.color(); }
+QColor FrameContainer::getFrameBrushColor() { return frameBrush.color(); }
 
-void FrameContainer::setIncludeChildren(bool b)
+void FrameContainer::setFrameIncludeChildren(bool b)
 {
-    includeChildren = b;
+    frameIncludeChildren = b;
 }
 
-bool FrameContainer::getIncludeChildren() { return includeChildren; }
+bool FrameContainer::getFrameIncludeChildren() { return frameIncludeChildren; }
 
 void FrameContainer::repaint()
 {
     // Repaint, when e.g. borderWidth has changed or a color
     switch (frameType) {
         case Rectangle:
-            rectFrame->setPen(pen);
-            rectFrame->setBrush(brush);
+            rectFrame->setPen(framePen);
+            rectFrame->setBrush(frameBrush);
             break;
         case RoundedRectangle:
-            pathFrame->setPen(pen);
-            pathFrame->setBrush(brush);
+            pathFrame->setPen(framePen);
+            pathFrame->setBrush(frameBrush);
             break;
         case Ellipse:
-            ellipseFrame->setPen(pen);
-            ellipseFrame->setBrush(brush);
+            ellipseFrame->setPen(framePen);
+            ellipseFrame->setBrush(frameBrush);
             break;
         case Cloud:
-            pathFrame->setPen(pen);
-            pathFrame->setBrush(brush);
+            pathFrame->setPen(framePen);
+            pathFrame->setBrush(frameBrush);
             break;
         default:
             break;
     }
 }
 
-void FrameContainer::setZValue(double z)
+void FrameContainer::setFrameZValue(double z)
 {
     switch (frameType) {
-    case NoFrame:
-        break;
-    case Rectangle:
-        rectFrame->setZValue(z);
-        break;
-    case RoundedRectangle:
-        pathFrame->setZValue(z);
-        break;
-    case Ellipse:
-        ellipseFrame->setZValue(z);
-        break;
-    case Cloud:
-        pathFrame->setZValue(z);
-        break;
+        case NoFrame:
+            break;
+        case Rectangle:
+            rectFrame->setZValue(z);
+            break;
+        case RoundedRectangle:
+            pathFrame->setZValue(z);
+            break;
+        case Ellipse:
+            ellipseFrame->setZValue(z);
+            break;
+        case Cloud:
+            pathFrame->setZValue(z);
+            break;
     }
 }
 
-QString FrameContainer::saveToDir()
+QString FrameContainer::saveFrame()
 {
     if (frameType == NoFrame)
         return QString();
 
     QString frameTypeAttr = attribut("frameType", getFrameTypeName());
-    QString penColAttr = attribut("penColor", pen.color().name(QColor::HexArgb));
-    QString brushColAttr = attribut("brushColor", brush.color().name(QColor::HexArgb));
-    QString paddingAttr = attribut("padding", QString::number(padding));
+    QString penColAttr = attribut("penColor", framePen.color().name(QColor::HexArgb));
+    QString brushColAttr = attribut("brushColor", frameBrush.color().name(QColor::HexArgb));
+    QString paddingAttr = attribut("padding", QString::number(framePadding));
     QString penWidthAttr =
-        attribut("penWidth", QString::number(pen.width()));
+        attribut("penWidth", QString::number(framePen.width()));
     QString incChildren;
-    if (includeChildren)
+    if (frameIncludeChildren)
         incChildren = attribut("includeChildren", "true");
     return singleElement("frame", frameTypeAttr + penColAttr + brushColAttr +
                                       paddingAttr + penWidthAttr +
@@ -364,5 +364,5 @@ QString FrameContainer::saveToDir()
 
 void FrameContainer::reposition()
 {
-    //qDebug() << "FC::reposition()";
+    qDebug() << "FC::reposition()";
 }

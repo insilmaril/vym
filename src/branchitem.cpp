@@ -166,9 +166,8 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         s += note.saveToDir();
 
     // Save frame
-    FrameContainer *fc = branchContainer->getFrameContainer();
-    if (fc && fc->getFrameType() != FrameContainer::NoFrame)
-            s += fc->saveToDir();
+    if (branchContainer->getFrameType() != FrameContainer::NoFrame)
+        s += branchContainer->saveFrame();
 
     // save names of flags set
     s += standardFlags.saveState();
@@ -389,7 +388,8 @@ void BranchItem::setImagesLayout(const QString &s)
 
 QColor BranchItem::getBackgroundColor(BranchItem *start)
 {
-    // Determine background color in taskEditor
+    // Determine background color in taskEditor // FIXME-0
+    /*
     FrameContainer *fc = branchContainer->getFrameContainer();
 
     if (fc && fc->getFrameType() != FrameContainer::NoFrame) {
@@ -403,6 +403,7 @@ QColor BranchItem::getBackgroundColor(BranchItem *start)
         return pb->getBackgroundColor(start);
     else
         return model->getMapBackgroundColor();
+    */
 }
 
 void BranchItem::setLastSelectedBranch()
@@ -553,7 +554,7 @@ void BranchItem::updateContainerStackingOrder()
 
     branchContainer->setParentItem(nullptr);
 
-    if (parentBranch() == rootItem) 
+    if (parentBranch() == rootItem)
         // I am the center
         return;
 

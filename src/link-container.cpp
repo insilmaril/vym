@@ -24,7 +24,7 @@ LinkContainer::~LinkContainer()
 
 void LinkContainer::init()
 {
-    type = Link;
+    containerType = Link;
 
     l = nullptr;
     p = nullptr;

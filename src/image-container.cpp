@@ -71,7 +71,7 @@ void ImageContainer::copy(ImageContainer *other)
 
 void ImageContainer::init()
 {
-    type = Image;
+    containerType = Image;
 
     imageItem = nullptr;
 

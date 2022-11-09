@@ -54,8 +54,11 @@ class Container : public QGraphicsRectItem {
     virtual void copy(Container*);
     virtual void init();
 
-    void setType(const ContainerType &t);
-    ContainerType containerType();
+    void setContainerType(const ContainerType &t);
+    ContainerType getContainerType();
+
+    enum {Type = UserType + 1};
+    int type() const override;
 
     void setName(const QString &n);
     virtual QString getName();
@@ -88,6 +91,7 @@ class Container : public QGraphicsRectItem {
 
     void addContainer(Container *c);
     Container* parentContainer();
+    QList <Container*> childContainers();
 
     /*! Save original position in current parent items coordinates before temporary relinking
      *  to tmpParentContainer while moving around
@@ -109,7 +113,7 @@ class Container : public QGraphicsRectItem {
     virtual void reposition();
 
   protected:
-    ContainerType type;
+    ContainerType containerType;
 
     bool visible;
     bool overlay;

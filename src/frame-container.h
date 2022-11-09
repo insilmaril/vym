@@ -14,42 +14,44 @@ class FrameContainer : public XMLObj, public Container {
     /*! \brief Supported frame types */
     enum FrameType { NoFrame, Rectangle, RoundedRectangle, Ellipse, Cloud };
 
-    FrameContainer(Container *parent);
+    FrameContainer(QGraphicsItem *parent);
     ~FrameContainer();
     void init();
     void clear();
     void setRect(const QRectF &); // set dimensions
-    void setPadding(const int &);
-    int getPadding();
-    qreal getTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
-    qreal getXPadding();
-    void setPenWidth(const int &);
-    int getPenWidth();
+    void setFramePadding(const int &);
+    int getFramePadding();
+    qreal getFrameTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
+    qreal getFrameXPadding();
+    void setFramePenWidth(const int &);
+    int getFramePenWidth();
     FrameType getFrameType();
     static FrameType getFrameTypeFromString(const QString &);
     QString getFrameTypeName();
     void setFrameType(const FrameType &);
     void setFrameType(const QString &);
-    void setPenColor(QColor);
-    QColor getPenColor();
-    void setBrushColor(QColor);
-    QColor getBrushColor();
-    void setIncludeChildren(bool);
-    bool getIncludeChildren();
+    void setFramePenColor(QColor);
+    QColor getFramePenColor();
+    void setFrameBrushColor(QColor);
+    QColor getFrameBrushColor();
+    void setFrameIncludeChildren(bool);
+    bool getFrameIncludeChildren();
     void repaint();
-    void setZValue(double z);
-    QString saveToDir();
-    void reposition();
+    void setFrameZValue(double z);
+    QString saveFrame();
+    virtual void reposition();
+
+  protected:
+    FrameType frameType; //!< Frame type
 
   private:
-    FrameType frameType; //!< Frame type
     QGraphicsRectItem *rectFrame;
     QGraphicsEllipseItem *ellipseFrame;
     QGraphicsPathItem *pathFrame;
-    int padding; // distance text - frame
-    qreal xsize; //! Extra size caused e.g. by cloud geometry
-    QPen pen;
-    QBrush brush;
-    bool includeChildren;
+    int framePadding; // distance text - frame
+    qreal frameXSize; //! Extra size caused e.g. by cloud geometry
+    QPen framePen;
+    QBrush frameBrush;
+    bool frameIncludeChildren;
 };
 #endif

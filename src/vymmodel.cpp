@@ -2240,24 +2240,12 @@ void VymModel::setFrameType(const FrameContainer::FrameType &t, BranchItem *bi)
     QString newName;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        FrameContainer *fc = bc->getFrameContainer();
-        if (fc)  {
-            // Frame available
-            oldName = fc->getFrameTypeName();
-            if ( t == FrameContainer::NoFrame) {
-                newName = "NoFrame";
-                bc->deleteFrameContainer();
-            } else {
-                fc->setFrameType(t);
-                newName = fc->getFrameTypeName();
-            }
-        } else {
-            // No frame available
-            fc = bc->createFrameContainer();
-            fc->setFrameType(t);
-            oldName = "NoFrame";
-            newName = fc->getFrameTypeName();
-        }
+        if (bc->getFrameType() == t)
+            break;
+
+        oldName = bc->getFrameTypeName();
+        bc->setFrameType(t);
+        newName = bc->getFrameTypeName();
 
         bc->updateStyles(BranchContainer::RelinkBranch);
 
@@ -2284,12 +2272,9 @@ void VymModel::toggleFrameIncludeChildren(BranchItem *bi)
     bool newInclude;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        FrameContainer *fc = bc->getFrameContainer();
-        if (fc)  {
-            oldInclude = fc->getIncludeChildren();
-            newInclude = !oldInclude;
-            fc->setIncludeChildren(newInclude);
-        }
+        oldInclude = bc->getFrameIncludeChildren();
+        newInclude = !oldInclude;
+        bc->setFrameIncludeChildren(newInclude);
     }
 }
 
@@ -2300,8 +2285,7 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        FrameContainer *fc = bc->getFrameContainer();
-        if (fc)  {
+        if (bc->getFrameType() != FrameContainer::NoFrame)  {
             QString u = b ? "false" : "true";
             QString r = !b ? "false" : "true";
 
@@ -2309,14 +2293,14 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
                     selbi, QString("setFrameIncludeChildren(%1)").arg(u),
                     selbi, QString("setFrameIncludeChildren(%1)").arg(r),
                     QString("Include children in %1").arg(getObjectName(selbi)));
-            fc->setIncludeChildren(b);
+            bc->setFrameIncludeChildren(b);
 
             // FIXME-2 VM should not need to know, that BC needs updates:
             bc->updateStyles();
-            bc->reposition();
+            bc->reposition();   // FIXME-2 needed?
 
             emitDataChanged(selbi);
-            reposition();
+            reposition();   // FIXME-2 needed again?
         }
     }
 }
@@ -2325,16 +2309,15 @@ void VymModel::setFramePenColor(const QColor &col, BranchItem *bi)
 
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
-        if (fc) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->getFrameType() != FrameContainer::NoFrame)  {
             saveState(selbi,
                       QString("setFramePenColor (\"%1\")")
-                          .arg(fc->getPenColor().name()),
+                          .arg(bc->getFramePenColor().name()),
                       selbi, QString("setFramePenColor (\"%1\")").arg(col.name()),
                       QString("set pen color of frame to %1").arg(col.name()));
-            fc->setPenColor(col);
+            bc->setFramePenColor(col);
         }
     }
 }
@@ -2343,16 +2326,15 @@ void VymModel::setFrameBrushColor(
     const QColor &col, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
-        if (fc) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->getFrameType() != FrameContainer::NoFrame)  {
             saveState(selbi,
                       QString("setFrameBrushColor (\"%1\")")
-                          .arg(fc->getBrushColor().name()),
+                          .arg(bc->getFrameBrushColor().name()),
                       selbi, QString("setFrameBrushColor (\"%1\")").arg(col.name()),
                       QString("set brush color of frame to %1").arg(col.name()));
-            fc->setBrushColor(col);
+            bc->setFrameBrushColor(col);
         }
     }
 }
@@ -2361,37 +2343,35 @@ void VymModel::setFramePadding(
     const int &i, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
-        if (fc) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->getFrameType() != FrameContainer::NoFrame)  {
             saveState(
                 selbi,
-                QString("setFramePadding (\"%1\")").arg(fc->getPadding()),
+                QString("setFramePadding (\"%1\")").arg(bc->getFramePadding()),
                 selbi, QString("setFramePadding (\"%1\")").arg(i),
                 QString("set padding of frame to %1").arg(i));
-            fc->setPadding(i);
+            bc->setFramePadding(i);
         }
     }
-    reposition();
+    reposition();   // FIXME-2 needed?
 }
 void VymModel::setFramePenWidth(
     const int &i, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        FrameContainer *fc = selbi->getBranchContainer()->getFrameContainer();
-        if (fc) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->getFrameType() != FrameContainer::NoFrame)  {
             saveState(selbi,
                       QString("setFramePenWidth (\"%1\")")
-                          .arg(fc->getPenWidth()),
+                          .arg(bc->getFramePenWidth()),
                       selbi, QString("setFramePenWidth (\"%1\")").arg(i),
                       QString("set pen width of frame to %1").arg(i));
-            fc->setPenWidth(i);
+            bc->setFramePenWidth(i);
         }
     }
-    reposition();
+    reposition(); // FIXME-2 needed?
 }
 
 void VymModel::setRotationHeading (const int &i) // FIXME-2 no savestate

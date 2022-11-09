@@ -11,7 +11,7 @@
 FlagRowContainer::FlagRowContainer()
 {
     // qDebug() << "Const FlagRowContainer ()";
-    type = FlagRowCont;
+    containerType = FlagRowCont;
     layout = Horizontal;
     horizontalDirection = LeftToRight;
     setPen(QPen(Qt::black));    //FIXME-2 testing only

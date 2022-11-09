@@ -17,7 +17,7 @@ FlagContainer::~FlagContainer()
 void FlagContainer::init()
 {
     avis = true;
-    type = FlagCont;
+    containerType = FlagCont;
 }
 
 void FlagContainer::setUuid(const QUuid &id) { uid = id; }
