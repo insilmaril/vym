@@ -388,14 +388,11 @@ void BranchItem::setImagesLayout(const QString &s)
 
 QColor BranchItem::getBackgroundColor(BranchItem *start)
 {
-    // Determine background color in taskEditor // FIXME-0
-    /*
-    FrameContainer *fc = branchContainer->getFrameContainer();
-
-    if (fc && fc->getFrameType() != FrameContainer::NoFrame) {
+    // Determine background color in taskEditor
+    if (branchContainer->getFrameType() != FrameContainer::NoFrame) {
         // Don't return color of parent branches, which do not include me as child
-        if (fc->getIncludeChildren() || this == start)
-            return fc->getBrushColor();
+        if (branchContainer->getFrameIncludeChildren() || this == start)
+            return branchContainer->getFrameBrushColor();
     }
 
     BranchItem *pb = parentBranch();
@@ -403,7 +400,6 @@ QColor BranchItem::getBackgroundColor(BranchItem *start)
         return pb->getBackgroundColor(start);
     else
         return model->getMapBackgroundColor();
-    */
 }
 
 void BranchItem::setLastSelectedBranch()
