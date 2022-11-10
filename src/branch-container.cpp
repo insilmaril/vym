@@ -823,6 +823,9 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
         // InnerContainer
         //innerContainer->setPen(QPen(Qt::cyan));
 
+        if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
+
+        // Background colors for floating content
         QColor col;
         if (branchesContainerLayout == FloatingBounded && depth > 0) {
             // Special layout: FloatingBounded
@@ -838,7 +841,6 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
             // Don't paint other containers
             setBranchesContainerBrush(Qt::NoBrush);
             setBrush(Qt::NoBrush);
-            if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
         }
     }   // Visualizations for testing
 }
