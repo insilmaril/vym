@@ -8,7 +8,6 @@
 
 class BranchItem;
 class FlagRowContainer;
-// class FrameContainer;
 class HeadingContainer;
 class LinkContainer;
 
@@ -103,8 +102,6 @@ class BranchContainer : public FrameContainer {
 
     HeadingContainer* getHeadingContainer();
     LinkContainer* getLinkContainer();
-
-    void deleteFrameContainer();
 
     // Convenience functions to access children
     QList <BranchContainer*> childBranches();

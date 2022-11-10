@@ -224,7 +224,8 @@ void FrameContainer::setFrameType(const FrameType &t)
                 rectFrame = new QGraphicsRectItem;  // FIXME-00 Use my own rectangle!
                 rectFrame->setPen(framePen);
                 rectFrame->setBrush(frameBrush);
-                rectFrame->setZValue(dZ_FRAME_LOW);
+                rectFrame->setFlag(ItemStacksBehindParent, true);
+                //rectFrame->setZValue(dZ_FRAME_LOW);
                 rectFrame->setParentItem(this);
                 rectFrame->show();
                 break;
@@ -233,7 +234,8 @@ void FrameContainer::setFrameType(const FrameType &t)
                                                    framePen, frameBrush);
                 ellipseFrame->setPen(framePen);
                 ellipseFrame->setBrush(frameBrush);
-                ellipseFrame->setZValue(dZ_FRAME_LOW);
+                ellipseFrame->setFlag(ItemStacksBehindParent, true);
+                //ellipseFrame->setZValue(dZ_FRAME_LOW);
                 ellipseFrame->setParentItem(this);
                 ellipseFrame->show();
                 break;
@@ -242,7 +244,8 @@ void FrameContainer::setFrameType(const FrameType &t)
                 pathFrame = new QGraphicsPathItem;
                 pathFrame->setPen(framePen);
                 pathFrame->setBrush(frameBrush);
-                pathFrame->setZValue(dZ_FRAME_LOW);
+                pathFrame->setFlag(ItemStacksBehindParent, true);
+                //pathFrame->setZValue(dZ_FRAME_LOW);
                 pathFrame->setParentItem(this);
                 pathFrame->show();
             } break;
@@ -251,7 +254,8 @@ void FrameContainer::setFrameType(const FrameType &t)
                 pathFrame = scene()->addPath(path, framePen, frameBrush); ///// FIXME-2 see below
                 pathFrame->setPen(framePen);
                 pathFrame->setBrush(frameBrush);
-                pathFrame->setZValue(dZ_FRAME_LOW);
+                pathFrame->setFlag(ItemStacksBehindParent, true);
+                //pathFrame->setZValue(dZ_FRAME_LOW);
                 pathFrame->setParentItem(this);
                 pathFrame->show();
             }

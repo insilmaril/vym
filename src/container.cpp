@@ -270,8 +270,9 @@ void Container::addContainer(Container *c)
     c->setParentItem(this);
 }
 
-QList <Container*> Container::childContainers() // FIXME-0000000 cont here
+QList <Container*> Container::childContainers() // FIXME-000 cont here, replace all childItems() ...
 {
+    //Return list of children, but ignore QGraphicsItems, which are not Containers
     QList <Container*> list;
     Container *c;
     foreach (QGraphicsItem *child, childItems()) {

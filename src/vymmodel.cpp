@@ -2249,13 +2249,11 @@ void VymModel::setFrameType(const FrameContainer::FrameType &t, BranchItem *bi)
 
         bc->updateStyles(BranchContainer::RelinkBranch);
 
-        // QString s = bc->getFrameTypeName();
         saveState(
             selbi, QString("setFrameType (\"%1\")").arg(oldName),
             selbi, QString("setFrameType (\"%1\")").arg(newName),
             QString("set type of frame to %1").arg(newName));
         reposition();
-        //bo->updateLinkGeometry(); // FIXME-2 update links for frame container
     }
 }
 
@@ -2281,7 +2279,6 @@ void VymModel::toggleFrameIncludeChildren(BranchItem *bi)
 void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    qDebug() << "VM::setFIC  b=" << b << "bi=" << bi << selbis;
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
@@ -2295,12 +2292,10 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
                     QString("Include children in %1").arg(getObjectName(selbi)));
             bc->setFrameIncludeChildren(b);
 
-            // FIXME-2 VM should not need to know, that BC needs updates:
             bc->updateStyles();
-            bc->reposition();   // FIXME-2 needed?
 
             emitDataChanged(selbi);
-            reposition();   // FIXME-2 needed again?
+            reposition();
         }
     }
 }
@@ -5838,11 +5833,12 @@ void VymModel::emitNoteChanged(TreeItem *ti)
     mainWindow->updateNoteEditor(ti);
 }
 
-void VymModel::emitDataChanged(TreeItem *ti)
+void VymModel::emitDataChanged(TreeItem *ti)    // FIXME-2 seems to be called for every ti during load
 {
+    // qDebug() << "VM::emitDataChanged ti=" << ti;
     QModelIndex ix = index(ti);
     emit(dataChanged(ix, ix));
-    emitSelectionChanged();
+    emitSelectionChanged(); // FIXME-2 should no longer be necessary
     if (!repositionBlocked) {
         // Update taskmodel and recalc priorities there
         if (ti->hasTypeBranch() && ((BranchItem *)ti)->getTask()) {

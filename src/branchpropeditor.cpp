@@ -333,6 +333,9 @@ void BranchPropertyEditor::frameTypeChanged(int i)
                 model->setFrameType(FrameContainer::Cloud);
                 break;
         }
+
+        // Update data in dialog
+        setItem(branchItem);
     }
 }
 

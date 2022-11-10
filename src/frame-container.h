@@ -42,16 +42,16 @@ class FrameContainer : public XMLObj, public Container {
     virtual void reposition();
 
   protected:
-    FrameType frameType; //!< Frame type
+    FrameType frameType;    //! Frame type
+    int framePadding;       //! Distance text - frame
+    QPen framePen;
+    QBrush frameBrush;
+    bool frameIncludeChildren;
 
   private:
     QGraphicsRectItem *rectFrame;
     QGraphicsEllipseItem *ellipseFrame;
     QGraphicsPathItem *pathFrame;
-    int framePadding; // distance text - frame
     qreal frameXSize; //! Extra size caused e.g. by cloud geometry
-    QPen framePen;
-    QBrush frameBrush;
-    bool frameIncludeChildren;
 };
 #endif

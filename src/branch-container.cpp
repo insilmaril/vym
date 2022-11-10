@@ -13,13 +13,13 @@
 #include "misc.h"
 #include "xlinkobj.h"
 
+#define qdbg() qDebug().nospace().noquote()
+
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
 
 qreal BranchContainer::linkWidth = 20;  // FIXME-2 testing
-
-#define qdbg() qDebug().nospace().noquote()
 
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : FrameContainer(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
@@ -496,18 +496,6 @@ LinkContainer* BranchContainer::getLinkContainer()
     return linkContainer;
 }
 
-/*
-FrameContainer* BranchContainer::createFrameContainer() // FIXME-0 remove
-{
-    // Parent container might be updated later in reposition()
-    frameContainer = new FrameContainer (ornamentsContainer);
-    frameContainer->setFlag(ItemStacksBehindParent, true);
-    frameContainer->setZValue(5);
-    return frameContainer;
-}
-
-*/
-
 QList <BranchContainer*> BranchContainer::childBranches()
 {
     QList <BranchContainer*> list;
@@ -823,6 +811,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 
     // FIXME-3 for testing we do some coloring and additional drawing
     /*
+    */
     if (containerType != TmpParent) {
         // BranchContainer
         setPen(QPen(Qt::green));
@@ -852,7 +841,6 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
             if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
         }
     }   // Visualizations for testing
-    */
 }
 
 void BranchContainer::updateVisuals()
@@ -1019,31 +1007,13 @@ void BranchContainer::reposition()
         }
     }
 
-    FrameContainer::setRect(mapRectFromItem(ornamentsContainer, ornamentsContainer->rect()));
-
-    /* FIXME-00 setup frameContainer
-    if (frameContainer) {
-        if (frameIncludeChildren) {
-        */
-            /*
-            if (outerContainer) {
-                qWarning() << "BC::reposition  frameContainer uses outerContainer!";
-                frameContainer->setParentItem(this);
-            } else
-                frameContainer->setParentItem(innerContainer);
-            */
-    /*
-            frameContainer->setParentItem(this);
-//            frameContainer->setRect(frameContainer->parentContainer()->rect());
-        } else {
-            frameContainer->setParentItem(ornamentsContainer);
-            //qDebug() << "BC repos a) fC=" << frameContainer->info() << " pC=" << frameContainer->parentContainer()->info();
-            frameContainer->setParentItem(ornamentsContainer);
-            //qDebug() << "BC repos b) fC=" << frameContainer->info() << " pC=" << frameContainer->parentContainer()->info();
-            frameContainer->setRect(frameContainer->rect());  // FIXME-2 why needed??
-            //qDebug() << "BC repos c) fC=" << frameContainer->info() << " pC=" << frameContainer->parentContainer()->info();
-        }
+    // Update frames
+    if (frameType != FrameContainer::NoFrame) {
+        if (frameIncludeChildren)   // FIXME-00 nested frames don't work
+            FrameContainer::setRect(
+                    mapRectFromItem(innerContainer, innerContainer->rect()));
+        else
+            FrameContainer::setRect(
+                    mapRectFromItem(ornamentsContainer, ornamentsContainer->rect()));
     }
-    */
-
 }
