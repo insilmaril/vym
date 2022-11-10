@@ -221,7 +221,7 @@ void FrameContainer::setFrameType(const FrameType &t)
             case NoFrame:
                 break;
             case Rectangle:
-                rectFrame = new QGraphicsRectItem;  // FIXME-00 Use my own rectangle!
+                rectFrame = new QGraphicsRectItem;  // FIXME-3 Use my own Container rect!
                 rectFrame->setPen(framePen);
                 rectFrame->setBrush(frameBrush);
                 rectFrame->setFlag(ItemStacksBehindParent, true);
@@ -251,7 +251,7 @@ void FrameContainer::setFrameType(const FrameType &t)
             } break;
             case Cloud: {
                 QPainterPath path;
-                pathFrame = scene()->addPath(path, framePen, frameBrush); ///// FIXME-2 see below
+                pathFrame = scene()->addPath(path, framePen, frameBrush);
                 pathFrame->setPen(framePen);
                 pathFrame->setBrush(frameBrush);
                 pathFrame->setFlag(ItemStacksBehindParent, true);
