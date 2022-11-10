@@ -353,7 +353,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childItems().count();
+    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -363,7 +363,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
     // Then the subcontainers are positioned.
     //
     // a) Do we have any children after all?
-    if (!isVisible() || childItems().count() == 0)
+    if (!isVisible() || childContainers().count() == 0)
     {
         setRect(QRectF());
         return;
@@ -372,11 +372,8 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
     // b) calc sizes and reposition subcontainers first based on their layouts
     //    (overloaded: Leaf containers like HeadingContainer will not recurse)
 
-    Container *c;
-    foreach (QGraphicsItem *child, childItems()) {
-        c = (Container*) child;
-            c->reposition();
-    }
+    foreach (Container *c, childContainers())
+        c->reposition();
 
     // c) Align my own containers
 
@@ -390,13 +387,11 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // First child container is ornamentsContainer (or innerContainer),
                 // next children are imagesContainer and/or branchesContainer
 
-                if (childItems().count() > 4 ) {
+                if (childContainers().count() > 4 ) {
                     qWarning() << "Container::reposition " << info();
                     qWarning() << "Wrong number of children containers: " << childItems().count();
-                    foreach (QGraphicsItem *child, childItems()) {
-                        Container *c = (Container*) child;
+                    foreach (Container *c, childContainers())
                         qdbg() << "  " << c->info();
-                    }
 
                     return;
                 }
@@ -405,8 +400,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 QRectF c_bbox;  // bbox of container in my own coord
                 QRectF bbox;    // United bboxes
 
-                foreach (QGraphicsItem *child, childItems()) {
-                    Container *c = (Container*) child;
+                foreach (Container *c, childContainers()) {
                     c_bbox = mapRectFromItem(c, c->rect());
                     //qdbg() << ind() << " - BF c=" << c->info();
                     bbox = bbox.united(c_bbox);
@@ -416,7 +410,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // Translate, so that total bbox and contents move, so that
                 // first container (ornaments container) is centered in origin
                 // (could also be Innercont. within Outercontainer )
-                Container *oc = (Container*)(childItems().first());
+                Container *oc = (Container*)(childContainers().first());
                 QPointF t = oc->rect().center();    // FIXME-3 t seems to be always (0,0) ?!?  Check again with flags!
                 if (t != QPointF(0,0)) {
                     qdbg() << ind()
@@ -426,7 +420,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                         << " oc=" << oc->info();
                     /* FIXME-3 innerContainer now correctly rotates around headingContainer, but with images the corners might go outside of bounding OuterContainer...
                     bbox.translate(t);
-                    foreach (QGraphicsItem *child, childItems()) {
+                    foreach (QGraphicsItem *child, childContainers()) {
                         Container *c = (Container*) child;
                         c->setPos(c->pos() + t);
                     }
@@ -447,12 +441,11 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                 // Calc bbox of all children to prepare calculating rect()
                 QRectF r;
-                if (childItems().count() > 0) {
+                if (childContainers().count() > 0) {
                     bool first_iteration = true;
 
                     // Consider other children
-                    foreach (QGraphicsItem *child, childItems()) {
-                        c = (Container*) child;
+                    foreach (Container *c, childContainers()) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
 
                         if (first_iteration) {
@@ -478,8 +471,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 qreal w_total = 0;
 
                 //qdbg() << ind() << " * Starting HL for " << info();
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
+                foreach (Container *c, childContainers()) {
                     if (!c->overlay) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
 
@@ -540,10 +532,9 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                     if (parentContainer() && parentContainer()->hasFloatingLayout())  {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
                         //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
-                        foreach (QGraphicsItem *child, childItems()) {
-                            c = (Container*) child;
+                        foreach (Container *c, childContainers()) {
                             if (!c->overlay)
-                                c->setPos(child->pos() - v_central);
+                                c->setPos(c->pos() - v_central);
                         }
                     }
                 }
@@ -559,9 +550,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 qreal w_max = 0;
 
                 // Calc space required
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
-
+                foreach (Container *c, childContainers()) {
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
 
                     // For width and height we can use the already mapped dimensions
@@ -574,8 +563,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 qreal y = - h_total / 2;
 
                 // Position children initially
-                foreach (QGraphicsItem *child, childItems()) {
-                    c = (Container*) child;
+                foreach (Container *c, childContainers()) {
                     y += - c->rect().top();
 		    switch (horizontalAlignment) {
 			case AlignedLeft:
@@ -607,8 +595,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
     }
 
     // Now rectangles are defined. Adapt overlay containers, if required.
-    foreach (QGraphicsItem *child, childItems()) {
-        Container *c = (Container*) child;
+    foreach (Container *c, childContainers()) {
         if (c->overlay) {
             c->setRect(rect());
         }
