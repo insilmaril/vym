@@ -2,6 +2,8 @@
 
 #include "heading-container.h"
 
+#define qdbg() qDebug().nospace().noquote()
+
 HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent) 
 
 {
@@ -243,7 +245,7 @@ qreal HeadingContainer::getScrollOpacity() // FIXME-2 needed?
 
 void HeadingContainer::reposition()
 {
-    // qDebug() << "HC::reposition " + info();
+    // qdbg() << ind() << "HC::reposition " + info();
     return;
 }
 

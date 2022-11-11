@@ -270,7 +270,7 @@ void Container::addContainer(Container *c)
     c->setParentItem(this);
 }
 
-QList <Container*> Container::childContainers() // FIXME-000 cont here, replace all childItems() ...
+QList <Container*> Container::childContainers()
 {
     //Return list of children, but ignore QGraphicsItems, which are not Containers
     QList <Container*> list;
@@ -528,10 +528,10 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 QPointF v_central;
 
                 if (centralContainer) {
-                    //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
+                    //qdbg() << ind() << " * central container a:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                     if (parentContainer() && parentContainer()->hasFloatingLayout())  {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-                        //qdbg() << ind() << " * central container:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
+                        //qdbg() << ind() << " * central container b:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                         foreach (Container *c, childContainers()) {
                             if (!c->overlay)
                                 c->setPos(c->pos() - v_central);
@@ -541,7 +541,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                 setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
 
-                // qdbg() << ind() << " * Finished HL for " << info();
+                //qdbg() << ind() << " * Finished HL for " << info();
             } // Horizontal layout
             break;
 
@@ -593,12 +593,4 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
             qWarning() << "Container::reposition  unknown layout type for container: " << info();
             break;
     }
-
-    // Now rectangles are defined. Adapt overlay containers, if required.
-    foreach (Container *c, childContainers()) {
-        if (c->overlay) {
-            c->setRect(rect());
-        }
-    }
-
 }

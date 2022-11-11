@@ -1369,9 +1369,6 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
         // Context Menu
         if (selbi) {
             QString sysFlagName;
-            /* FIXME-1 context menu not working yet with task flag
-             * */
-
             QUuid uid = selbi->getBranchContainer()->findFlagByPos(p);
             if (!uid.isNull()) {
                 Flag *flag = systemFlagsMaster->findFlagByUid(uid);

@@ -811,7 +811,6 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 
     // FIXME-3 for testing we do some coloring and additional drawing
     /*
-    */
     if (containerType != TmpParent) {
         // BranchContainer
         setPen(QPen(Qt::green));
@@ -843,6 +842,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
             setBrush(Qt::NoBrush);
         }
     }   // Visualizations for testing
+    */
 }
 
 void BranchContainer::updateVisuals()
@@ -998,7 +998,6 @@ void BranchContainer::reposition()
         }
     }
 
-    // Update XLinks // FIXME-0 not working properly, probably required after every global reposition
     // (tmpParentContainer has no branchItem!)
     if (branchItem) {
         XLinkObj *xlo;
