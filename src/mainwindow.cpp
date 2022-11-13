@@ -3091,7 +3091,7 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(helpDoc()));
 
-    a = new QAction(tr("Open VYM example maps ", "Help action"), this);
+    a = new QAction(tr("Open VYM example maps ", "Help action") + "...", this);
     helpMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(helpDemo()));
     helpMenu->addSeparator();
@@ -6912,6 +6912,7 @@ void Main::helpDemo()
             ++it;
         }
         removeProgressCounter();
+        tabWidget->setCurrentIndex(tabWidget->count() - 1);
     }
 }
 
