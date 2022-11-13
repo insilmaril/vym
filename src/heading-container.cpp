@@ -22,7 +22,7 @@ void HeadingContainer::init()
 {
     containerType = Container::Heading;
 
-    setHeading("");
+    setHeading(" ");
     headingColor = QColor(Qt::black);
 
     layout = Vertical;
