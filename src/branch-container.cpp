@@ -19,7 +19,7 @@ extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
 
-qreal BranchContainer::linkWidth = 20;  // FIXME-2 testing
+qreal BranchContainer::linkWidth = 20;  // FIXME-3 testing
 
 BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : FrameContainer(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
@@ -318,7 +318,7 @@ void BranchContainer::updateBranchesContainer()
         } else {
             if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
                 linkSpaceContainer = new HeadingContainer ();
-                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
+                linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
 
                 innerContainer->addContainer(linkSpaceContainer);
                 linkSpaceContainer->stackBefore(branchesContainer);
@@ -666,7 +666,7 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 
     branchesContainerLayout = ltype;
 
-    if (branchesContainer) { // FIXME-1 only use this if switching to floating*
+    if (branchesContainer) { // FIXME-2 only use this if switching to floating*
         // Keep current positions
         QPointF oc_pos = ornamentsContainer->pos();
         QPointF bcc_pos = branchesContainer->pos() - oc_pos;
@@ -767,12 +767,21 @@ QRectF BranchContainer::getBBoxURLFlag()
 
 void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 {
-    // Set container layouts
-    if (branchesContainerAutoLayout)
-        setBranchesContainerLayout(getDefaultBranchesContainerLayout() );
+    uint depth = branchItem->depth();
 
-    if (imagesContainerAutoLayout)
-        setImagesContainerLayout(getDefaultImagesContainerLayout() );
+    if (styleUpdateMode == NewBranch) {
+        if (depth == 0)
+            setBranchesContainerLayout(FloatingBounded);
+        else
+            setBranchesContainerLayout(Vertical);
+    }
+
+    // Set container layouts
+    // if (branchesContainerAutoLayout)
+    //    setBranchesContainerLayout(getDefaultBranchesContainerLayout() );
+
+    //if (imagesContainerAutoLayout)
+    //    setImagesContainerLayout(getDefaultImagesContainerLayout() );
 
     if (containerType == TmpParent)  // FIXME-2 Should not be called for tmpParent anyway! (Would have already crashed due to BI->depth above)
         return;
@@ -785,8 +794,6 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
         if (!linkContainer->hasBottomLine())
             linkContainer->createBottomLine();
     }
-
-    uint depth = branchItem->depth();
 
     // Example rules for testing
     /*
@@ -863,7 +870,7 @@ void BranchContainer::updateVisuals()
 
 }
 
-Container::Layout BranchContainer::getDefaultBranchesContainerLayout()
+Container::Layout BranchContainer::getDefaultBranchesContainerLayout()  // FIXME-2 needed?
 {
     if (containerType == TmpParent)
         return FloatingFree;
@@ -874,7 +881,7 @@ Container::Layout BranchContainer::getDefaultBranchesContainerLayout()
         return Vertical;
 }
 
-Container::Layout BranchContainer::getDefaultImagesContainerLayout()
+Container::Layout BranchContainer::getDefaultImagesContainerLayout() // FIXME-2 needed?
 {
     return FloatingFree;
 }
@@ -939,7 +946,7 @@ void BranchContainer::reposition()
 
     // linkContainer->setLinkStyle(LinkContainer::NoLink); // FIXME-0 remove here?
 
-    // Settings depending on depth  // FIXME-1 should go to BC::updateStyles
+    // Settings depending on depth  // FIXME-0 should go to BC::updateStyles
     if (depth == 0)
     {
         // MapCenter or TmpParent?

@@ -289,8 +289,8 @@ void LinkContainer::updateLinkGeometry()
     double vy = p2y - p1y;
 
     int z;
-    // FIXME-1 Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
-    // //FIXME-4 no longer used?
+    // FIXME-3 Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
+    // no longer used?
     /*
     if (treeItem->depth() < 2)
         // z = (treeItem->depth() -2) * dZ_DEPTH + dZ_LINK;

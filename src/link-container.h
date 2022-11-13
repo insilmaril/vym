@@ -10,9 +10,6 @@
 The links are connecting the branch and image containers in a map.
 */
 
-class BranchContainer;
-class ImageContainer;
-
 class LinkContainer : public Container {
   public:
     /*! Various drawing styles for links */

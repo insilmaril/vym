@@ -1533,7 +1533,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
         }
 
-        // Check for flags on MousePress    // FIXME-1 check if working
+        // Check for flags on MousePress
         if (selbc) {
             QUuid uid = selbc->findFlagByPos(movingObj_initialScenePos);
             if (!uid.isNull()) {
@@ -1843,7 +1843,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     } else {
         //tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
-        /* FIXME-1 Review orientation while moving
+        /* FIXME-2 Review orientation while moving
          */
         // Try to set orientation for not relinked tmpParentContainer by checking the
         // layout and "original" parent

@@ -183,8 +183,8 @@ void VymModel::init()
     // View - map
     defaultFont.setPointSizeF(16);
     defLinkColor = QColor(0, 0, 255);
-    //FIXME-0 linkColorHint = LMO::DefaultColor;
-    //FIXME-2 linkstyle = LMO::PolyParabel;
+    linkColorHint = LinkContainer::DefaultColor;
+    linkstyle = LinkContainer::PolyParabel;
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
     defXLinkPen.setStyle(Qt::DashLine);
@@ -2401,7 +2401,7 @@ void VymModel::setRotationContent (const int &i) // FIXME-2 no savestate
     }
 }
 
-void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-1 no savestate yet
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -2409,7 +2409,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-1 n
         if (selbi) {
             bc = selbi->getBranchContainer();
 
-            // FIXME-1 Save current positions, we might change to floating layout
+            // FIXME-2 Save current positions, we might change to floating layout
 
             if (s == "Auto")
                 bc->branchesContainerAutoLayout = true;
@@ -2430,7 +2430,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-1 n
     reposition();
 }
 
-void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-1 no savestate yet
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -2916,14 +2916,14 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach() // FIXME-1 savestate missing
+void VymModel::detach() // FIXME-2 savestate missing
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
-            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-1 detach: hardcoded for now, could already be FloatingFree or something else
+            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-2 detach: hardcoded for now, could already be FloatingFree or something else
             reposition();
 
             relinkBranch(selbi, rootItem, -1, true);
@@ -3262,15 +3262,12 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     emit(layoutChanged());
 
     // Create Container
-    newbi->createBranchContainer(getScene());
+    BranchContainer *newbc = newbi->createBranchContainer(getScene());
+    newbc->updateStyles(BranchContainer::NewBranch);
 
-    if (parbi && parbi != rootItem) {
-        // Add newbi also into Container of parent  // FIXME-0 not automatically in BI::updateContainerStackingORder later?
-        parbi->addToBranchesContainer(newbi->getBranchContainer() );
-
-        // Set color of heading to that of parent   // FIXME-0 should be done in style
-        // newbi->setHeadingColor(parbi->getHeadingColor());
-    }
+    if (parbi && parbi != rootItem)
+        // Set color of heading to that of parent   // FIXME-2 maybe get this from design?
+        newbi->setHeadingColor(parbi->getHeadingColor());
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
@@ -3366,7 +3363,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         // If branch and dst have same parent, then num_dst needs to be adjusted 
         // after removing branch
-        if (branchpi == dst && num_dst - 1 > n ) 
+        if (branchpi == dst && num_dst - 1 > n )
             num_dst--;
 
         beginRemoveRows(index(branchpi), n, n);
@@ -3386,7 +3383,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         dst->insertBranch(num_dst, branch);
         endInsertRows();
 
-        // RelinkBranch: Save current own position for undo // FIXME-1
+        // RelinkBranch: Save current own position for undo // FIXME-2
         // and save current children positions for undo 
 
         // Prepare relinking: Save old position for undo, if required
@@ -3396,7 +3393,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         /*
         BranchItem *pbi = bc->getBranchItem()->parentBranch();
         if (pbi) {
-            //Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-1 savestate when relinking MC: will have no parentBranch and crash
+            //Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-2 savestate when relinking MC: will have no parentBranch and crash
             if (originalParentContainer->hasFloatingLayout()) {
                 model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly
                         bc->getBranchItem(),
