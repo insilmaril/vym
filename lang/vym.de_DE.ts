@@ -2906,7 +2906,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
     <message>
         <source>Show keyboard macros</source>
         <comment>Help action</comment>
-        <translation>Tastaturkürzel anzeigen</translation>
+        <translation type="unfinished">Makros anzeigen</translation>
     </message>
     <message>
         <source>XLinks</source>
