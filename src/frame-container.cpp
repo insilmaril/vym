@@ -61,24 +61,24 @@ void FrameContainer::clear()
     frameXSize = 0;
 }
 
-void FrameContainer::setRect(const QRectF &frameSize)
+void FrameContainer::setFrameRect(const QRectF &frameSize)
 {
-    // FIXME-2 qDebug() << "FC::setRect t=" << frameType << " r=" << qrectFToString(frameSize, 0);
-    QGraphicsRectItem::setRect(frameSize);
+    //qDebug() << "FC::setFrameRect t=" << frameType << " r=" << qrectFToString(frameSize, 0);
+    frameRect = frameSize;
     switch (frameType) {
         case NoFrame:
             break;
 
         case Rectangle:
-            rectFrame->setRect(frameSize);
+            rectFrame->setRect(frameRect);
             //qDebug() << "  FC  rect: " << rectFrame << "vis=" << rectFrame->isVisible();
             break;
 
         case RoundedRectangle: {
-            QPointF tl = frameSize.topLeft();
-            QPointF tr = frameSize.topRight();
-            QPointF bl = frameSize.bottomLeft();
-            QPointF br = frameSize.bottomRight();
+            QPointF tl = frameRect.topLeft();
+            QPointF tr = frameRect.topRight();
+            QPointF bl = frameRect.bottomLeft();
+            QPointF br = frameRect.bottomRight();
             QPainterPath path;
 
             qreal n = 10;
@@ -97,19 +97,19 @@ void FrameContainer::setRect(const QRectF &frameSize)
         } break;
         case Ellipse:
             ellipseFrame->setRect(
-                QRectF(frameSize.x(), frameSize.y(), frameSize.width(), frameSize.height()));
-            frameXSize = 20; // max(frameSize.width(), frameSize.height()) / 4;
+                QRectF(frameRect.x(), frameRect.y(), frameRect.width(), frameRect.height()));
+            frameXSize = 20; // max(frameRect.width(), frameRect.height()) / 4;
             break;
 
         case Cloud:
-            QPointF tl = frameSize.topLeft();
-            QPointF tr = frameSize.topRight();
-            QPointF bl = frameSize.bottomLeft();
+            QPointF tl = frameRect.topLeft();
+            QPointF tr = frameRect.topRight();
+            QPointF bl = frameRect.bottomLeft();
             QPainterPath path;
             path.moveTo(tl);
 
-            float w = frameSize.width();
-            float h = frameSize.height();
+            float w = frameRect.width();
+            float h = frameRect.height();
             int n = w / 40;          // number of intervalls
             float d = w / n;         // width of interwall
 
@@ -153,6 +153,11 @@ void FrameContainer::setRect(const QRectF &frameSize)
             frameXSize = 50;
             break;
     }
+}
+
+QRectF FrameContainer::getFrameRect()
+{
+    return frameRect;
 }
 
 void FrameContainer::setFramePadding(const int &i) { framePadding = i; }  // FIXME-2 not supported yet

@@ -18,7 +18,8 @@ class FrameContainer : public XMLObj, public Container {
     ~FrameContainer();
     void init();
     void clear();
-    void setRect(const QRectF &); // set dimensions
+    void setFrameRect(const QRectF &); // set dimensions
+    QRectF getFrameRect();
     void setFramePadding(const int &);
     int getFramePadding();
     qreal getFrameTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
@@ -53,5 +54,6 @@ class FrameContainer : public XMLObj, public Container {
     QGraphicsEllipseItem *ellipseFrame;
     QGraphicsPathItem *pathFrame;
     qreal frameXSize; //! Extra size caused e.g. by cloud geometry
+    QRectF frameRect;
 };
 #endif

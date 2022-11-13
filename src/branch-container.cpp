@@ -1017,11 +1017,11 @@ void BranchContainer::reposition()
 
     // Update frames
     if (frameType != FrameContainer::NoFrame) {
-        if (frameIncludeChildren)   // FIXME-00 nested frames don't work
-            FrameContainer::setRect(
-                    mapRectFromItem(innerContainer, innerContainer->rect()));
+        if (frameIncludeChildren)
+            setFrameRect(
+                mapRectFromItem(innerContainer, innerContainer->rect()));
         else
-            FrameContainer::setRect(
+            setFrameRect(
                     mapRectFromItem(ornamentsContainer, ornamentsContainer->rect()));
     }
 }

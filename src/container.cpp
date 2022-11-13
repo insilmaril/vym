@@ -304,7 +304,7 @@ bool Container::isAnimated()
     return animatedPos.isAnimated();
 }
 
-QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)    // FIXME-2 needed?
+QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)    // FIXME-2 needed? not used so far...
 {
     //qDebug() << "Container::itemChange of " << this << ": " << change << value;
     /*
