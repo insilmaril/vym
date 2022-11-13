@@ -510,6 +510,8 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
         */
     }
 
+    branchContainer->updateStyles(BranchContainer::NewBranch);
+
     return branchContainer;
 }
 
