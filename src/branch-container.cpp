@@ -741,7 +741,7 @@ void BranchContainer::setRotationContent(const int &a)
    }
 }
 
-int BranchContainer::getRotationInnerContent()
+int BranchContainer::getRotationContent()
 {
     return std::round(innerContainer->rotation());
 }

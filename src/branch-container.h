@@ -134,7 +134,7 @@ class BranchContainer : public FrameContainer {
     void setRotationHeading(const int &);
     int getRotationHeading();
     void setRotationContent(const int &);
-    int getRotationInnerContent();
+    int getRotationContent();
 
     QUuid findFlagByPos(const QPointF &p);
     bool isInClickBox(const QPointF &p);

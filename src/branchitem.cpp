@@ -96,7 +96,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     // Save uuid
     QString idAttr = attribut("uuid", uuid.toString());
 
-    QString s, a;
+    QString s;
 
     // Update of note is usually done while unselecting a branch
 
@@ -144,6 +144,15 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         layoutImagesAttr = attribut("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
     }
 
+    QString rotHeadingAttr;
+    qreal a = branchContainer->getRotationHeading();
+    if (a != 0)
+        rotHeadingAttr = attribut("rotHeading", QString("%1").arg(a));
+    QString rotContentAttr;
+    a = branchContainer->getRotationContent();
+    if (a != 0)
+        rotContentAttr = attribut("rotContent", QString("%1").arg(a));
+
     QString posAttr;
     if (parentItem == rootItem || branchContainer->isFloating())
         posAttr = getPosAttr();
@@ -155,6 +164,8 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
                      scrolledAttr +
                      layoutBranchesAttr +
                      layoutImagesAttr +
+                     rotHeadingAttr +
+                     rotContentAttr +
                      idAttr);
     incIndent();
 

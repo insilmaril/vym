@@ -213,9 +213,9 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         // Layout branches
         updateContainerLayoutButtons();
         ui.rotationHeadingSlider->setValue(bc->getRotationHeading());
-        ui.rotationInnerContentSlider->setValue(bc->getRotationInnerContent());
+        ui.rotationInnerContentSlider->setValue(bc->getRotationContent());
         ui.rotationHeadingSpinBox->setValue(bc->getRotationHeading());
-        ui.rotationInnerContentSpinBox->setValue(bc->getRotationInnerContent());
+        ui.rotationInnerContentSpinBox->setValue(bc->getRotationContent());
 
         // Task
         Task *task = branchItem->getTask();

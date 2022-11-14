@@ -603,6 +603,9 @@ bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
         mainWindow->addProgressValue((float)branchesCounter / branchesTotal);
 
     lastMI = lastBranch;
+    BranchContainer *lastBC = lastBranch->getBranchContainer();
+
+    bool ok;
 
     if (!readOOAttr(a))
         return false;
@@ -624,12 +627,21 @@ bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
     // Container layouts
     if (!a.value("branchesLayout").isEmpty()) {
         lastBranch->setBranchesLayout(a.value("branchesLayout"));
-        lastBranch->getBranchContainer()->branchesContainerAutoLayout = false;
+        lastBC->branchesContainerAutoLayout = false;
     }
 
     if (!a.value("imagesLayout").isEmpty()) {
-        lastBranch->getBranchContainer()->imagesContainerAutoLayout = false;
+        lastBC->imagesContainerAutoLayout = false;
         lastBranch->setImagesLayout(a.value("imagesLayout"));
+    }
+
+    if (!a.value("rotHeading").isEmpty()) {
+        lastBC->setRotationHeading(a.value("rotHeading").toDouble(&ok));
+        if (!ok) return false;
+    }
+    if (!a.value("rotContent").isEmpty()) {
+        lastBC->setRotationContent(a.value("rotContent").toDouble(&ok));
+        if (!ok) return false;
     }
     return true;
 }
