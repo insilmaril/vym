@@ -130,7 +130,7 @@ install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES doc/vym.1.gz DESTINATION ${CMAKE_INSTALL_MANDIR})
 install(FILES README.md LICENSE.txt DESTINATION ${CMAKE_INSTALL_DOCDIR})
-install(DIRECTORY exports flags icons macros translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
