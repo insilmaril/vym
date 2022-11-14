@@ -3405,7 +3405,6 @@ void Main::setupToolbars()
 
     actionGroupQuickColors = new QActionGroup(this);
     actionGroupQuickColors->setExclusive(true);
-    int i = 0;
 
     QColor c;
     c.setNamedColor ("#ff0000"); quickColors << c;
