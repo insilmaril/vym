@@ -99,7 +99,7 @@ endif()
 
 
 # Translations
-file(GLOB ts_files ${CMAKE_BINARY_DIR}/"lang/*.ts")
+file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 
