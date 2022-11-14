@@ -95,15 +95,22 @@ if(DBus1_FOUND)
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
 endif()
 
+
+
+
 # Translations
-file(GLOB_RECURSE ts_files ${CMAKE_BINARY_DIR} "lang/*.ts")
+file(GLOB ts_files RELATIVE ${CMAKE_BINARY_DIR} "lang/*.ts")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
-QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
 
-message(STATUS "bin_dir : ${CMAKE_BINARY_DIR}")
-message(STATUS "ts_files: ${ts_files}")
-message(STATUS "qm_files: ${qm_files}")
+# To update the translation files based on source code changes 
+# first call manually 
+# lupdate-qt5 src/ -ts lang/*.ts
+#
+# Qt6 will have a dedicated macro:
+# https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
+QT5_add_translation(qm_files ${ts_files})
+
 
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 

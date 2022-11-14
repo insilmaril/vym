@@ -2799,110 +2799,106 @@ Do you want to reload that map with the new file?</source>
     <name>AttributeDialog</name>
     <message>
         <source>Attributes</source>
-        <translation type="unfinished">Χαρακτηριστικά</translation>
-    </message>
-    <message>
-        <source>Add key</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Χαρακτηριστικά</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Κλείσιμο</translation>
+        <translation type="obsolete">Κλείσιμο</translation>
     </message>
 </context>
 <context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>Branch Property Editor</source>
-        <translation>Επεξεργαστής ιδιοτήτων κλαδου</translation>
+        <translation type="vanished">Επεξεργαστής ιδιοτήτων κλαδου</translation>
     </message>
     <message>
         <source>Frame</source>
-        <translation>Πλαίσιο</translation>
+        <translation type="vanished">Πλαίσιο</translation>
     </message>
     <message>
         <source>Geometry</source>
-        <translation>Γεωμετρία</translation>
+        <translation type="vanished">Γεωμετρία</translation>
     </message>
     <message>
         <source>No Frame</source>
-        <translation>Χωρίς πλαίσιο</translation>
+        <translation type="vanished">Χωρίς πλαίσιο</translation>
     </message>
     <message>
         <source>Rectangle</source>
-        <translation>Ορθογώνιο</translation>
+        <translation type="vanished">Ορθογώνιο</translation>
     </message>
     <message>
         <source>Rounded Rectangle</source>
-        <translation>Ορθογώνιο με καμπύλες γωνίες</translation>
+        <translation type="vanished">Ορθογώνιο με καμπύλες γωνίες</translation>
     </message>
     <message>
         <source>Ellipse</source>
-        <translation>Έλλειψη</translation>
+        <translation type="vanished">Έλλειψη</translation>
     </message>
     <message>
         <source>Cloud</source>
-        <translation>Σύννεφο</translation>
+        <translation type="vanished">Σύννεφο</translation>
     </message>
     <message>
         <source>Padding</source>
-        <translation>Γέμισμα</translation>
+        <translation type="vanished">Γέμισμα</translation>
     </message>
     <message>
         <source>Borderline width</source>
-        <translation>Πλάτος περιγράμματος</translation>
+        <translation type="vanished">Πλάτος περιγράμματος</translation>
     </message>
     <message>
         <source>Include children</source>
-        <translation>Ένταξη απόγονου</translation>
+        <translation type="vanished">Ένταξη απόγονου</translation>
     </message>
     <message>
         <source>Colors</source>
-        <translation>Χρώματα</translation>
+        <translation type="vanished">Χρώματα</translation>
     </message>
     <message>
         <source>Borderline color</source>
-        <translation>Χρώμα περιγράμματος</translation>
+        <translation type="vanished">Χρώμα περιγράμματος</translation>
     </message>
     <message>
         <source>Background color</source>
-        <translation>Χρώμα παρασκηνίου</translation>
+        <translation type="vanished">Χρώμα παρασκηνίου</translation>
     </message>
     <message>
         <source>Layout</source>
-        <translation>Διάταξη</translation>
+        <translation type="vanished">Διάταξη</translation>
     </message>
     <message>
         <source>Include images horizontally</source>
-        <translation>Περιλαμβάνει εικόνες οριζόντια</translation>
+        <translation type="vanished">Περιλαμβάνει εικόνες οριζόντια</translation>
     </message>
     <message>
         <source>Include images vertically</source>
-        <translation>Περιλαμβάνει εικόνες κάθετα</translation>
+        <translation type="vanished">Περιλαμβάνει εικόνες κάθετα</translation>
     </message>
     <message>
         <source>Free positioning of children (experimental!)</source>
-        <translation>Ελεύθερη τοποθέτηση απόγονων (πειραματική λειτουργία)</translation>
+        <translation type="vanished">Ελεύθερη τοποθέτηση απόγονων (πειραματική λειτουργία)</translation>
     </message>
     <message>
         <source>Link</source>
-        <translation>Σύνδεσμος</translation>
+        <translation type="vanished">Σύνδεσμος</translation>
     </message>
     <message>
         <source>Hide link if unselected</source>
-        <translation>Απόκρυψη συνδέσμου εάν δεν είναι επιλεγμένος</translation>
+        <translation type="vanished">Απόκρυψη συνδέσμου εάν δεν είναι επιλεγμένος</translation>
     </message>
     <message>
         <source>Attributes</source>
-        <translation>Χαρακτηριστικά</translation>
+        <translation type="vanished">Χαρακτηριστικά</translation>
     </message>
     <message>
         <source>+</source>
-        <translation>+</translation>
+        <translation type="vanished">+</translation>
     </message>
     <message>
         <source>-</source>
-        <translation>-</translation>
+        <translation type="vanished">-</translation>
     </message>
     <message>
         <source>Property Editor</source>
@@ -2911,28 +2907,11 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Task</source>
-        <translation type="unfinished">Εργασία</translation>
-    </message>
-    <message>
-        <source>Delta priority</source>
-        <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Created:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Modified:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Εργασία</translation>
     </message>
     <message>
         <source>%1 days ago</source>
         <comment>task related times</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sleep:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2976,7 +2955,7 @@ Do you want to reload that map with the new file?</source>
     <name>ConfluenceUserDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
+        <translation type="obsolete">Παράθυρο</translation>
     </message>
     <message>
         <source>Find Confluence user</source>
@@ -2988,23 +2967,7 @@ Do you want to reload that map with the new file?</source>
     <name>CredentialsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
-    </message>
-    <message>
-        <source>URL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Username:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save password</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Παράθυρο</translation>
     </message>
     <message>
         <source>Credentials dialog</source>
@@ -3023,79 +2986,67 @@ Do you want to reload that map with the new file?</source>
     <name>EditXLinkDialog</name>
     <message>
         <source>Edit XLink</source>
-        <translation>Επεξεργασία:XLink</translation>
+        <translation type="vanished">Επεξεργασία:XLink</translation>
     </message>
     <message>
         <source>Arrow begin:</source>
-        <translation>Έναρξη βέλους:</translation>
+        <translation type="vanished">Έναρξη βέλους:</translation>
     </message>
     <message>
         <source>XLink width:</source>
-        <translation>Πλατος XLink:</translation>
+        <translation type="vanished">Πλατος XLink:</translation>
     </message>
     <message>
         <source>Use color of heading</source>
-        <translation>Χρήση χρώματος κεφαλίδας</translation>
+        <translation type="vanished">Χρήση χρώματος κεφαλίδας</translation>
     </message>
     <message>
         <source>XLink color:</source>
-        <translation>Χρώμα XLink:</translation>
+        <translation type="vanished">Χρώμα XLink:</translation>
     </message>
     <message>
         <source>Use as default:</source>
-        <translation>Χρήση ως προκαθορισμένου:</translation>
+        <translation type="vanished">Χρήση ως προκαθορισμένου:</translation>
     </message>
     <message>
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
-        <translation>Στυλ γραμμής:</translation>
+        <translation type="vanished">Στυλ γραμμής:</translation>
     </message>
     <message>
         <source>Arrow end:</source>
-        <translation>Τέλος βέλους:</translation>
+        <translation type="vanished">Τέλος βέλους:</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
 </context>
 <context>
     <name>ExportConfluenceDialog</name>
     <message>
-        <source>Export Confluence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update existing page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Options</source>
-        <translation type="unfinished">Επιλογές</translation>
+        <translation type="obsolete">Επιλογές</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation type="unfinished">Εικόνα διαγράμματος</translation>
+        <translation type="obsolete">Εικόνα διαγράμματος</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation type="unfinished">Συμπερίληψη εικόνων</translation>
+        <translation type="obsolete">Συμπερίληψη εικόνων</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation type="unfinished">Πίνακας περιεχομένων</translation>
+        <translation type="obsolete">Πίνακας περιεχομένων</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation type="unfinished">Σημαίες εργασιών</translation>
+        <translation type="obsolete">Σημαίες εργασιών</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation type="unfinished">Γενικές σημαίες</translation>
+        <translation type="obsolete">Γενικές σημαίες</translation>
     </message>
     <message>
         <source>Number sections</source>
@@ -3103,102 +3054,98 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation type="obsolete">Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="unfinished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+        <translation type="obsolete">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Άκυρο</translation>
+        <translation type="obsolete">Άκυρο</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Εξαγωγή</translation>
-    </message>
-    <message>
-        <source>Use heading of first map center as page name</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Εξαγωγή</translation>
     </message>
 </context>
 <context>
     <name>ExportHTMLDialog</name>
     <message>
         <source>Export HTML</source>
-        <translation>Εξαγωγή ως HTML</translation>
+        <translation type="vanished">Εξαγωγή ως HTML</translation>
     </message>
     <message>
         <source>Export to directory:</source>
-        <translation>Εξαγωγή σε φάκελο:</translation>
+        <translation type="vanished">Εξαγωγή σε φάκελο:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Περιήγηση</translation>
+        <translation type="vanished">Περιήγηση</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Επιλογές</translation>
+        <translation type="vanished">Επιλογές</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation>Εικόνα διαγράμματος</translation>
+        <translation type="vanished">Εικόνα διαγράμματος</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation>Συμπερίληψη εικόνων</translation>
+        <translation type="vanished">Συμπερίληψη εικόνων</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation>Πίνακας περιεχομένων</translation>
+        <translation type="vanished">Πίνακας περιεχομένων</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation>Σημαίες εργασιών</translation>
+        <translation type="vanished">Σημαίες εργασιών</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation>Γενικές σημαίες</translation>
+        <translation type="vanished">Γενικές σημαίες</translation>
     </message>
     <message>
         <source>Number sections</source>
-        <translation>Τομείς αριθμών</translation>
+        <translation type="vanished">Τομείς αριθμών</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation>Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation type="vanished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation>Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+        <translation type="vanished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation>Φύλλα δεδομένων</translation>
+        <translation type="vanished">Φύλλα δεδομένων</translation>
     </message>
     <message>
         <source>Copy CSS from </source>
-        <translation>Αντιγραφή CSS από</translation>
+        <translation type="vanished">Αντιγραφή CSS από</translation>
     </message>
     <message>
         <source>Use CSS from</source>
-        <translation>Χρήση CSS από</translation>
+        <translation type="vanished">Χρήση CSS από</translation>
     </message>
     <message>
         <source>Scripts</source>
-        <translation>Σενάρια</translation>
+        <translation type="vanished">Σενάρια</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation>Μετά την εξαγωγή:</translation>
+        <translation type="vanished">Μετά την εξαγωγή:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Άκυρο</translation>
+        <translation type="vanished">Άκυρο</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation>Εξαγωγή</translation>
+        <translation type="vanished">Εξαγωγή</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -3227,111 +3174,79 @@ want to allow this in your system!</source>
 <context>
     <name>ExportXHTMLDialog</name>
     <message>
-        <source>Export XHTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export to directory:</source>
-        <translation type="unfinished">Εξαγωγή σε φάκελο:</translation>
+        <translation type="obsolete">Εξαγωγή σε φάκελο:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Περιήγηση</translation>
+        <translation type="obsolete">Περιήγηση</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Επιλογές</translation>
-    </message>
-    <message>
-        <source>Include image</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Επιλογές</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation type="obsolete">Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="unfinished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
-    </message>
-    <message>
-        <source>show warnings of xslt processor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>show output of external scripts</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation type="unfinished">Φύλλα δεδομένων</translation>
-    </message>
-    <message>
-        <source>XSL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CSS:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Φύλλα δεδομένων</translation>
     </message>
     <message>
         <source>Scripts</source>
-        <translation type="unfinished">Σενάρια</translation>
-    </message>
-    <message>
-        <source>Before export:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Σενάρια</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation type="unfinished">Μετά την εξαγωγή:</translation>
+        <translation type="obsolete">Μετά την εξαγωγή:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Άκυρο</translation>
+        <translation type="obsolete">Άκυρο</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Εξαγωγή</translation>
+        <translation type="obsolete">Εξαγωγή</translation>
     </message>
 </context>
 <context>
     <name>ExtraInfoDialog</name>
     <message>
         <source>VYM - Info</source>
-        <translation>VYM - Πληροφορίες</translation>
+        <translation type="vanished">VYM - Πληροφορίες</translation>
     </message>
     <message>
         <source>Map:</source>
-        <translation>Διάγραμμα:</translation>
+        <translation type="vanished">Διάγραμμα:</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation>Τίτλος:</translation>
+        <translation type="vanished">Τίτλος:</translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation>Δημιουργός:</translation>
+        <translation type="vanished">Δημιουργός:</translation>
     </message>
     <message>
         <source>Comment:</source>
-        <translation>Σχόλιο:</translation>
+        <translation type="vanished">Σχόλιο:</translation>
     </message>
     <message>
         <source>Statistics:</source>
-        <translation>Στατιστικά:</translation>
+        <translation type="vanished">Στατιστικά:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Άκυρο</translation>
+        <translation type="vanished">Άκυρο</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
-    </message>
-    <message>
-        <source>File location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
 </context>
 <context>
@@ -3364,23 +3279,23 @@ want to allow this in your system!</source>
     <name>HistoryWindow</name>
     <message>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
         <source>Redo</source>
-        <translation>Ακύρωση αναίρεσης</translation>
+        <translation type="vanished">Ακύρωση αναίρεσης</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Χρόνος</translation>
+        <translation type="vanished">Χρόνος</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Σχόλιο</translation>
+        <translation type="vanished">Σχόλιο</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Αναίρεση</translation>
+        <translation type="vanished">Αναίρεση</translation>
     </message>
     <message>
         <source>Close</source>
@@ -3422,31 +3337,15 @@ want to allow this in your system!</source>
     <name>JiraSettingsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
-    </message>
-    <message>
-        <source>JIRA servers:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Παράθυρο</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished">Προσθήκη</translation>
+        <translation type="obsolete">Προσθήκη</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Αφαίρεση</translation>
-    </message>
-    <message>
-        <source>Username:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save password</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Αφαίρεση</translation>
     </message>
     <message>
         <source>JiraSettingsDialog dialog</source>
@@ -3458,11 +3357,11 @@ want to allow this in your system!</source>
     <name>LineEditDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>Ετικέτα κειμένου</translation>
+        <translation type="vanished">Ετικέτα κειμένου</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3477,7 +3376,7 @@ want to allow this in your system!</source>
     <name>LockedFileDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
+        <translation type="obsolete">Παράθυρο</translation>
     </message>
     <message>
         <source>Delete lockfile</source>
@@ -5927,7 +5826,7 @@ The map could not be saved, please check if backup file is available or export a
     <name>ScriptEditor</name>
     <message>
         <source>Form</source>
-        <translation>Φόρμα</translation>
+        <translation type="vanished">Φόρμα</translation>
     </message>
     <message>
         <source>Tab 1</source>
@@ -5935,11 +5834,11 @@ The map could not be saved, please check if backup file is available or export a
     </message>
     <message>
         <source>Save to selected slide</source>
-        <translation>Αποθήκευση στην επιλεγμένη διαφάνεια</translation>
+        <translation type="vanished">Αποθήκευση στην επιλεγμένη διαφάνεια</translation>
     </message>
     <message>
         <source>Run</source>
-        <translation>Εκτέλεση</translation>
+        <translation type="vanished">Εκτέλεση</translation>
     </message>
     <message>
         <source>Tab 2</source>
@@ -5951,11 +5850,11 @@ The map could not be saved, please check if backup file is available or export a
     </message>
     <message>
         <source>Load</source>
-        <translation>Φόρτωση</translation>
+        <translation type="vanished">Φόρτωση</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Αποθήκευση</translation>
+        <translation type="vanished">Αποθήκευση</translation>
     </message>
     <message>
         <source>Slide</source>
@@ -6020,11 +5919,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Reload</source>
-        <translation type="unfinished">Επαναφόρτωση</translation>
-    </message>
-    <message>
-        <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Επαναφόρτωση</translation>
     </message>
     <message>
         <source>Script</source>
@@ -6049,11 +5944,11 @@ Do you want to overwrite it?</source>
     <name>ShowTextDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
 </context>
 <context>
@@ -6743,11 +6638,11 @@ Do you want to write the map</source>
     <name>WarningDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
         <source>showAgainBox</source>
-        <translation>Εμφάνιση AgainBox</translation>
+        <translation type="vanished">Εμφάνιση AgainBox</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -6755,7 +6650,7 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation>Εντάξει</translation>
+        <translation type="vanished">Εντάξει</translation>
     </message>
     <message>
         <source>Proceed</source>
@@ -6774,28 +6669,12 @@ Do you want to write the map</source>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
-        <source>zip settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>zip tool:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Choose</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Status</source>
-        <translation type="unfinished">Κατάσταση</translation>
-    </message>
-    <message>
-        <source>unzip tool:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Κατάσταση</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Κλείσιμο</translation>
+        <translation type="obsolete">Κλείσιμο</translation>
     </message>
     <message>
         <source>zip settings</source>
