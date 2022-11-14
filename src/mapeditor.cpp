@@ -2295,16 +2295,17 @@ MapEditor::EditorState MapEditor::state() { return editorState; }
 
 // FIXME-2 Feature: New setting (maybe with key to toggle) autorotation to adapt view to selection
 
-void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
+void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
-    Q_UNUSED(nsel);
-
+    /*
+    qDebug() << "ME::updateSel";
+    qDebug() << "  newsel=" << newsel;
+    qDebug() << "  dsel=" << dsel;
+    */
     QList<MapItem *> itemsSelected;
 
-    QItemSelection sel = model->getSelectionModel()->selection();
-
     // Select objects
-    foreach (QModelIndex ix, sel.indexes()) {
+    foreach (QModelIndex ix, newsel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink)

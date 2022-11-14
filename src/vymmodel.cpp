@@ -2390,7 +2390,7 @@ void VymModel::setRotationContent (const int &i) // FIXME-2 no savestate
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         BranchContainer *bc = bi->getBranchContainer();
-	if (bc->getRotationInnerContent() == i) {
+	if (bc->getRotationContent() == i) {
 	    // Updating slider also emits valueChanged for spinBox and vice versa
 	    // Go home.
 	    return;
@@ -5600,6 +5600,7 @@ void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)
 
 void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
+    //qDebug() << "VM::updateSel  newsel=" << newsel << " dsel=" << dsel;
     QModelIndex ix;
     MapItem *mi;
     BranchItem *bi;
@@ -5835,7 +5836,7 @@ void VymModel::emitDataChanged(TreeItem *ti)    // FIXME-2 seems to be called fo
     // qDebug() << "VM::emitDataChanged ti=" << ti;
     QModelIndex ix = index(ti);
     emit(dataChanged(ix, ix));
-    emitSelectionChanged(); // FIXME-2 should no longer be necessary
+    //emitSelectionChanged(); // FIXME-2 should no longer be necessary
     if (!repositionBlocked) {
         // Update taskmodel and recalc priorities there
         if (ti->hasTypeBranch() && ((BranchItem *)ti)->getTask()) {

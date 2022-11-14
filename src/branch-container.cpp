@@ -212,14 +212,16 @@ bool BranchContainer::isTemporaryLinked()
 
 void BranchContainer::select()
 {
-    if (selectionContainer) return;
-    selectionContainer = new Container (ornamentsContainer);
-    selectionContainer->setContainerType(Selection);
-    selectionContainer->setPen(QPen(Qt::red));
-    selectionContainer->setBrush(Qt::yellow);
-    selectionContainer->overlay = true;
-    selectionContainer->setFlag(ItemStacksBehindParent, true);
-    selectionContainer->setZValue(10);
+    if (!selectionContainer)
+    {
+        selectionContainer = new Container (ornamentsContainer);
+        selectionContainer->setContainerType(Selection);
+        selectionContainer->setPen(QPen(Qt::red));
+        selectionContainer->setBrush(Qt::yellow);
+        selectionContainer->overlay = true;
+        selectionContainer->setFlag(ItemStacksBehindParent, true);
+        selectionContainer->setZValue(10);
+    }
     selectionContainer->setRect(ornamentsContainer->rect());
 }
 
