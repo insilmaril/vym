@@ -111,6 +111,8 @@ set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINAR
 # https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
 QT5_add_translation(qm_files ${ts_files})
 
+message(STATUS "ts_files: ${ts_files}")
+message(STATUS "qm_files: ${qm_files}")
 
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
