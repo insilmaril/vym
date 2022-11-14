@@ -128,7 +128,8 @@ class BranchContainer : public FrameContainer {
     void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
     void setBranchesContainerBrush(const QBrush &b);
 
-    QRectF getHeadingRect();  //! Return rectangle of HeadingContainer in absolute coordinates
+    QRectF getHeadingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
+    qreal getHeadingRotation(); //! Return rotation angle after transformation to scenePos
 
     void setRotationHeading(const int &);
     int getRotationHeading();

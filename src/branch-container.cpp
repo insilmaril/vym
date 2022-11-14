@@ -706,8 +706,16 @@ void BranchContainer::setBranchesContainerBrush(const QBrush &b)
 
 QRectF BranchContainer::getHeadingRect()
 {
-    QPointF p = headingContainer->scenePos();
+    QPointF p = headingContainer->mapToScene(headingContainer->rect().topLeft());
     return QRectF(p.x(), p.y(), headingContainer->rect().width(), headingContainer->rect().height());
+}
+
+qreal BranchContainer::getHeadingRotation()
+{
+    QPointF v =
+          headingContainer->mapToScene(headingContainer->rect().topRight())
+        - headingContainer->mapToScene(headingContainer->rect().topLeft());
+    return getAngle(v);
 }
 
 void BranchContainer::setRotationHeading(const int &a)
@@ -946,7 +954,7 @@ void BranchContainer::reposition()
 
     // linkContainer->setLinkStyle(LinkContainer::NoLink); // FIXME-0 remove here?
 
-    // Settings depending on depth  // FIXME-0 should go to BC::updateStyles
+    // Settings depending on depth  // FIXME-0 most of this should go to BC::updateStyles
     if (depth == 0)
     {
         // MapCenter or TmpParent?
