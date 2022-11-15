@@ -125,6 +125,7 @@ extern Options options;
 extern ImageIO imageIO;
 
 extern QDir vymBaseDir;
+extern QDir vymTranslationsDir;
 extern QDir lastImageDir;
 extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
@@ -6947,7 +6948,6 @@ void Main::debugInfo()
             .arg(vymVersion)
             .arg(vymBuildDate);
     s += QString("   Platform: %1\n").arg(vymPlatform);
-    s += QString(" localeName: %1\n").arg(localeName);
     s += QString("  tmpVymDir: %1\n").arg(tmpVymDir.path());
     s += QString("zipToolPath: %1\n").arg(zipToolPath);
     s += QString(" vymBaseDir: %1\n").arg(vymBaseDir.path());
@@ -6959,6 +6959,17 @@ void Main::debugInfo()
     QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
     s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";
     s += "    SSL lib: " + QSslSocket::sslLibraryVersionString() + "\n";
+
+    // Info about translations
+    QStringList translations;
+    if(vymTranslationsDir.exists())
+        translations = vymTranslationsDir.entryList();
+    s += "\n";
+    s += QString("            localeName: %1\n").arg(localeName);
+    s += QString("       Translations in: %1\n").arg(vymTranslationsDir.path());
+    s += QString("Available translations: %1\n").arg(translations.count());
+    foreach (QString qm_file, translations)
+        s += QString("                        %1\n").arg(qm_file);
 
     ShowTextDialog dia;
     dia.useFixedFont(true);

@@ -95,11 +95,9 @@ if(DBus1_FOUND)
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
 endif()
 
-
-
-
 # Translations
 file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
+message(STATUS "Creating ${CMAKE_BINARY_DIR}/translations")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 
@@ -111,8 +109,8 @@ set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINAR
 # https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
 QT5_add_translation(qm_files ${ts_files})
 
-message(STATUS "ts_files: ${ts_files}")
-message(STATUS "qm_files: ${qm_files}")
+#message(STATUS "ts_files: ${ts_files}")
+#message(STATUS "qm_files: ${qm_files}")
 
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
@@ -125,6 +123,10 @@ if(WIN32)
 else()
     install(TARGETS vym DESTINATION bin)
 endif()
+
+add_custom_target(make-translations-directory ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/translations)
+add_dependencies(vym make-translations-directory)
 
 install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR})
