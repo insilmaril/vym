@@ -740,7 +740,8 @@ void BranchContainer::setRotationContent(const int &a)
     } else {
         innerContainer->setTransformOriginPoint(0, 0);  // FIXME-X originpoint needed?
         innerContainer->setRotation(a);    // FIXME-2 If BC is FloatingBounded, and bc has images, frame does not include images
-   }
+    }
+    setFrameRotation(a);
 }
 
 int BranchContainer::getRotationContent()
@@ -837,7 +838,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
         //ornamentsContainer->setPen(Qt::NoPen);
 
         // InnerContainer
-        //innerContainer->setPen(QPen(Qt::cyan));
+        innerContainer->setPen(QPen(Qt::cyan));
 
         if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
 
@@ -971,7 +972,7 @@ void BranchContainer::reposition()
 
         linkContainer->setLinkStyle(LinkContainer::NoLink);
 
-        innerContainer->setLayout(BoundingFloats);
+        innerContainer->setLayout(BoundingFloats);  // in TmpParentContainer animate children containers
     } else {
         // Branch or mainbranch
         setLayout(Horizontal);
@@ -1027,11 +1028,22 @@ void BranchContainer::reposition()
 
     // Update frames
     if (frameType != FrameContainer::NoFrame) {
-        if (frameIncludeChildren)
-            setFrameRect(
-                mapRectFromItem(innerContainer, innerContainer->rect()));
-        else
-            setFrameRect(
-                    mapRectFromItem(ornamentsContainer, ornamentsContainer->rect()));
+        if (frameIncludeChildren) {   // FIXME-00 frame needs to be translated in bounded layouts
+            if (outerContainer)
+                setFrameRect( outerContainer->rect());
+            else {
+                setFrameRect(innerContainer->rect());
+                setFramePos(innerContainer->pos());
+            }
+        } else {
+            // Do not include children
+            setFrameRect(ornamentsContainer->rect());
+            setFramePos(mapFromItem(innerContainer, ornamentsContainer->pos()));
+            /*
+            qDebug() << "BC::repos  frame for " << ornamentsContainer->info();
+            qDebug() << "                  ic " << innerContainer->info();
+            qDebug() << "                  bc " << info();
+            */
+        }
     }
 }

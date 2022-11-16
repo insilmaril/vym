@@ -36,6 +36,9 @@ void FrameContainer::init()
 
     // Don't consider for sizes or repositioning
     overlay = true;
+
+    // Rotation
+    angle = 0;
 }
 
 void FrameContainer::clear()
@@ -101,7 +104,7 @@ void FrameContainer::setFrameRect(const QRectF &frameSize)
             frameXSize = 20; // max(frameRect.width(), frameRect.height()) / 4;
             break;
 
-        case Cloud:
+        case Cloud: {
             QPointF tl = frameRect.topLeft();
             QPointF tr = frameRect.topRight();
             QPointF bl = frameRect.bottomLeft();
@@ -151,6 +154,10 @@ void FrameContainer::setFrameRect(const QRectF &frameSize)
             }
             pathFrame->setPath(path);
             frameXSize = 50;
+        }
+            break;
+        default:
+            qWarning() << "FrameContainer::setFrameRect  unknown frame type " << frameType;
             break;
     }
 }
@@ -202,18 +209,17 @@ QString FrameContainer::getFrameTypeName()
     switch (frameType) {
     case Rectangle:
         return "Rectangle";
-        break;
     case RoundedRectangle:
         return "RoundedRectangle";
-        break;
     case Ellipse:
         return "Ellipse";
-        break;
     case Cloud:
         return "Cloud";
-        break;
-    default:
+    case NoFrame:
         return "NoFrame";
+    default:
+        qWarning() << "FrameContainer::setFrameType  unknown frame type " << frameType;
+        break;
     }
 }
 
@@ -265,9 +271,13 @@ void FrameContainer::setFrameType(const FrameType &t)
                 pathFrame->show();
             }
             break;
+            default:
+                qWarning() << "FrameContainer::setFrameType  unknown frame type " << frameType;
+                break;
         }
     }
-    reposition();
+    setFrameRotation(angle);
+    reposition();   // FIXME-2 needed?
 }
 
 void FrameContainer::setFrameType(const QString &t)
@@ -328,6 +338,7 @@ void FrameContainer::repaint()
             pathFrame->setBrush(frameBrush);
             break;
         default:
+            qWarning() << "FrameContainer::repaint  unknown frame type " << frameType;
             break;
     }
 }
@@ -348,6 +359,57 @@ void FrameContainer::setFrameZValue(double z)
             break;
         case Cloud:
             pathFrame->setZValue(z);
+            break;
+        default:
+            qWarning() << "FrameContainer::setFrameZValue unknown frame type " << frameType;
+            break;
+    }
+}
+
+void FrameContainer::setFrameRotation(qreal a)
+{
+    angle = a;
+    switch (frameType) {
+        case NoFrame:
+            break;
+        case Rectangle:
+            rectFrame->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
+            rectFrame->setRotation(angle);
+            break;
+        case RoundedRectangle:
+            pathFrame->setRotation(angle);
+            break;
+        case Ellipse:
+            ellipseFrame->setRotation(angle);
+            break;
+        case Cloud:
+            pathFrame->setRotation(angle);
+            break;
+        default:
+            qWarning() << "FrameContainer::setFrameRotation unknown frame type " << frameType;
+            break;
+    }
+}
+
+void FrameContainer::setFramePos(const QPointF &p)
+{
+    switch (frameType) {
+        case NoFrame:
+            break;
+        case Rectangle:
+            rectFrame->setPos(p);
+            break;
+        case RoundedRectangle:
+            pathFrame->setPos(p);
+            break;
+        case Ellipse:
+            ellipseFrame->setPos(p);
+            break;
+        case Cloud:
+            pathFrame->setPos(p);
+            break;
+        default:
+            qWarning() << "FrameContainer::setFramePos unknown frame type " << frameType;
             break;
     }
 }

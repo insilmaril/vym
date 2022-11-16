@@ -39,6 +39,8 @@ class FrameContainer : public XMLObj, public Container {
     bool getFrameIncludeChildren();
     void repaint();
     void setFrameZValue(double z);
+    void setFrameRotation(qreal a);
+    void setFramePos(const QPointF &p);
     QString saveFrame();
     virtual void reposition();
 
@@ -55,5 +57,6 @@ class FrameContainer : public XMLObj, public Container {
     QGraphicsPathItem *pathFrame;
     qreal frameXSize; //! Extra size caused e.g. by cloud geometry
     QRectF frameRect;
+    qreal angle;
 };
 #endif

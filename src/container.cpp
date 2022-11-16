@@ -411,7 +411,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // first container (ornaments container) is centered in origin
                 // (could also be Innercont. within Outercontainer )
                 Container *oc = (Container*)(childContainers().first());
-                QPointF t = oc->rect().center();    // FIXME-3 t seems to be always (0,0) ?!?  Check again with flags!
+                QPointF t = oc->rect().center();    // FIXME-2 t seems to be always (0,0) ?!?  Check again with flags!
                 if (t != QPointF(0,0)) {
                     qdbg() << ind()
                         << " - BF bbox=" << qrectFToString(bbox, 0)
@@ -532,10 +532,13 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                     if (parentContainer() && parentContainer()->hasFloatingLayout())  {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
                         //qdbg() << ind() << " * central container b:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
-                        foreach (Container *c, childContainers()) {
-                            if (!c->overlay)
-                                c->setPos(c->pos() - v_central);
-                        }
+                        if (!v_central.isNull())
+                            foreach (Container *c, childContainers()) {
+                                if (!c->overlay) {
+                                    //qdbg() << ind() << " * moving c:" << c->info();
+                                    c->setPos(c->pos() - v_central);
+                                }
+                            }
                     }
                 }
 
