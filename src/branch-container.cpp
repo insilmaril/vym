@@ -899,11 +899,6 @@ void BranchContainer::updateVisuals()
 
 }
 
-Container::Layout BranchContainer::getDefaultImagesContainerLayout() // FIXME-2 needed?
-{
-    return FloatingFree;
-}
-
 void BranchContainer::reposition()
 {
     // qDebug() << "BC::reposition " << info();

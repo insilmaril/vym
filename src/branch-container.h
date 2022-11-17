@@ -146,8 +146,6 @@ class BranchContainer : public FrameContainer {
     /*! Update flags and heading */
     void updateVisuals();
 
-    Container::Layout getDefaultImagesContainerLayout();
-
     void reposition();
 
   protected:
