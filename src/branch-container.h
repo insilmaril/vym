@@ -22,9 +22,9 @@ class BranchContainer : public FrameContainer {
 
     /*! Control which styles will be updated */
     enum StyleUpdateMode {
-        UpdateAll,
+        RelinkBranch,
         NewBranch,
-        RelinkBranch};
+        UpdateAll};
 
     BranchContainer (
             QGraphicsScene *scene,
@@ -146,7 +146,6 @@ class BranchContainer : public FrameContainer {
     /*! Update flags and heading */
     void updateVisuals();
 
-    Container::Layout getDefaultBranchesContainerLayout();
     Container::Layout getDefaultImagesContainerLayout();
 
     void reposition();

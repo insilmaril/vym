@@ -2414,14 +2414,11 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
             if (s == "Auto")
                 bc->branchesContainerAutoLayout = true;
             else {
-                Container::Layout layout;
-                if (s == "Default")
-                    layout = bc->getDefaultBranchesContainerLayout();
-                else
-                    layout = Container::getLayoutFromString(s);
+                bc->branchesContainerAutoLayout = false;
+                Container::Layout layout = Container::getLayoutFromString(s);
                 if (layout != Container::UndefinedLayout) {
                     bc->setBranchesContainerLayout(layout);
-                    bc->branchesContainerAutoLayout = false;
+                    qDebug() <<"VM::setBLayout " << layout << s;
                 }
             }
         }

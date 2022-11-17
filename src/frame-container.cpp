@@ -23,7 +23,7 @@ FrameContainer::~FrameContainer()
 
 void FrameContainer::init()
 {
-    containerType = Frame;
+    // FIXME-2 containerType = Frame;
     frameType = NoFrame;
     clear();
     framePen.setColor(Qt::black);

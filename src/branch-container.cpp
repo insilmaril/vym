@@ -10,6 +10,7 @@
 #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
+#include "mapdesign.h"
 #include "misc.h"
 #include "xlinkobj.h"
 
@@ -18,6 +19,8 @@
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
+
+extern MapDesign mapDesign;
 
 qreal BranchContainer::linkWidth = 20;  // FIXME-3 testing
 
@@ -46,6 +49,9 @@ BranchContainer::~BranchContainer()
 void BranchContainer::init()
 {
     containerType = Container::Branch;
+
+    // BranchContainers inherit FrameContainer, reset overlay
+    overlay = false;
 
     orientation = UndefinedOrientation;
 
@@ -265,23 +271,28 @@ bool BranchContainer::hasFloatingBranchesLayout()
         return false;
 }
 
-void BranchContainer::createBranchesContainer()
+void BranchContainer::createBranchesContainer() // FIXME-0 move settings to updateStyles
 {
     branchesContainer = new Container ();
+    branchesContainer->containerType = Container::BranchesContainer;
+    /*
+*/
     if (branchesContainerAutoLayout)
-        branchesContainer->setLayout(getDefaultBranchesContainerLayout());
+        branchesContainer->setLayout(
+                mapDesign.branchesContainerLayout(NewBranch, branchItem->depth()));
     else
         branchesContainer->setLayout(branchesContainerLayout);
     branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
-    branchesContainer->containerType = Container::BranchesContainer;
 
     innerContainer->addContainer(branchesContainer);
 }
 
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
-    if (!branchesContainer)
+    if (!branchesContainer) {
         createBranchesContainer();
+//        updateStyles(NewBranch);
+    }
 
     QPointF sp = c->scenePos();
     branchesContainer->addContainer(c);
@@ -307,9 +318,11 @@ void BranchContainer::updateBranchesContainer()
             branchesContainer = nullptr;
         }
     } else {
-        // Create containers (if required)
-        if (!branchesContainer)
-            createBranchesContainer();
+        if (!branchesContainer) {
+            // should never happen
+            qDebug() << "BC::updateBranchesContainer no branchesCOntainer available!";
+            return;
+        }
 
         // Space for links depends on layout and scrolled state:
         if (linkSpaceContainer) {
@@ -320,7 +333,8 @@ void BranchContainer::updateBranchesContainer()
         } else {
             if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
                 linkSpaceContainer = new HeadingContainer ();
-                linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
+                //linkSpaceContainer->setContainerType(); // FIXME-2
+                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
 
                 innerContainer->addContainer(linkSpaceContainer);
                 linkSpaceContainer->stackBefore(branchesContainer);
@@ -333,8 +347,8 @@ void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
         outerContainer = new Container (this);
-        outerContainer->setLayout(BoundingFloats);
         outerContainer->containerType = OuterContainer;
+        outerContainer->setLayout(BoundingFloats);
         outerContainer->addContainer(innerContainer);
         if (imagesContainer)
             outerContainer->addContainer(imagesContainer);
@@ -460,6 +474,7 @@ int BranchContainer::imageCount()
 void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not deleted, when no longer used
 {
     imagesContainer = new Container ();
+    imagesContainer->containerType = ImagesContainer;
     if (imagesContainerAutoLayout)
         imagesContainer->setLayout(getDefaultImagesContainerLayout());
     else
@@ -610,17 +625,20 @@ void BranchContainer::updateUpLink()
     QPointF downLink;
     switch (orientation) {
         case RightOfParent:
-            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomRight());
+            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
+                    pbc->ornamentsContainer->rect().bottomRight());
             upLinkSelf = ornamentsContainer->rect().bottomLeft();
             downLink = ornamentsContainer->rect().bottomRight();
             break;
         case LeftOfParent:
-            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().bottomLeft());
+            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
+                    pbc->ornamentsContainer->rect().bottomLeft());
             upLinkSelf = ornamentsContainer->rect().bottomRight();
             downLink = ornamentsContainer->rect().bottomLeft();
             break;
         default:
-            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(pbc->ornamentsContainer->rect().center());
+            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
+                    pbc->ornamentsContainer->rect().center());
             upLinkSelf = ornamentsContainer->rect().center();   // FIXME-2 check...
             downLink = ornamentsContainer->rect().center();
             break;
@@ -663,7 +681,7 @@ Container::Layout BranchContainer::getImagesContainerLayout()
 
 void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 {
-    if (branchesContainerLayout == ltype)
+    if (branchesContainerLayout == ltype || ltype == UndefinedLayout)
         return;
 
     branchesContainerLayout = ltype;
@@ -778,24 +796,25 @@ QRectF BranchContainer::getBBoxURLFlag()
 
 void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 {
+    // updateStyles() is never called for TmpParent!
+
+    qDebug() << "BC::updateStyles of " << info();
+
     uint depth = branchItem->depth();
 
-    if (styleUpdateMode == NewBranch) {
-        if (depth == 0)
-            setBranchesContainerLayout(FloatingBounded);
-        else
-            setBranchesContainerLayout(Vertical);
-    }
 
     // Set container layouts
-    // if (branchesContainerAutoLayout)
-    //    setBranchesContainerLayout(getDefaultBranchesContainerLayout() );
+    if (branchesContainerAutoLayout) {
+        qDebug () << "BC::updateStyles  bClayout to " <<
+                mapDesign.branchesContainerLayout(styleUpdateMode, depth)
+            << getLayoutString(mapDesign.branchesContainerLayout(styleUpdateMode, depth));
+        setBranchesContainerLayout(
+                mapDesign.branchesContainerLayout(styleUpdateMode, depth));
+    } else
+        qDebug () << "BC::updateStyles Keeping layout";
 
     //if (imagesContainerAutoLayout)
     //    setImagesContainerLayout(getDefaultImagesContainerLayout() );
-
-    if (containerType == TmpParent)  // FIXME-2 Should not be called for tmpParent anyway! (Would have already crashed due to BI->depth above)
-        return;
 
     // Create/delete bottomline
     if (FrameContainer::frameType != FrameContainer::NoFrame &&
@@ -879,17 +898,6 @@ void BranchContainer::updateVisuals()
     TIactiveFlagUids = branchItem->activeSystemFlagUids();
     systemFlagRowContainer->updateActiveFlagContainers(TIactiveFlagUids, systemFlagsMaster);
 
-}
-
-Container::Layout BranchContainer::getDefaultBranchesContainerLayout()  // FIXME-2 needed?
-{
-    if (containerType == TmpParent)
-        return FloatingFree;
-
-    if (branchItem->depth() == 0)
-        return FloatingBounded;
-    else
-        return Vertical;
 }
 
 Container::Layout BranchContainer::getDefaultImagesContainerLayout() // FIXME-2 needed?
@@ -1028,7 +1036,7 @@ void BranchContainer::reposition()
 
     // Update frames
     if (frameType != FrameContainer::NoFrame) {
-        if (frameIncludeChildren) {   // FIXME-00 frame needs to be translated in bounded layouts
+        if (frameIncludeChildren) {
             if (outerContainer)
                 setFrameRect( outerContainer->rect());
             else {

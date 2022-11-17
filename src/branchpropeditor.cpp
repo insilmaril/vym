@@ -408,7 +408,7 @@ void BranchPropertyEditor::childrenLayoutChanged()
         if ( ui.branchesAutoLayoutCheckBox->isChecked())
             model->setBranchesLayout("Auto");
         else
-            model->setBranchesLayout("Default");
+            model->setBranchesLayout("Default"); // FIXME-00 no longer used...
     } else if (sender() == ui.branchesLayoutVerticalButton)
         model->setBranchesLayout("Vertical");
     else if (sender() == ui.branchesLayoutHorizontalButton)

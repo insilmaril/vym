@@ -91,9 +91,6 @@ QString Container::getName()    // FIXME-3 debugging only
         case FlagRowCont:
             t = "FlagRowCont";
             break;
-        case FloatingContent:
-            t = "FloatingContent";
-            break;
         case Frame:
             t = "Frame";
             break;
@@ -117,6 +114,9 @@ QString Container::getName()    // FIXME-3 debugging only
             break;
         case OuterContainer:
             t = "OuterContainer";
+            break;
+        case Selection:
+            t = "Selection";
             break;
         case TmpParent:
             t = "TmpParent";
@@ -353,7 +353,11 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    /*
+    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    foreach (Container *c, childContainers())
+        qdbg() << ind() << " * child: " << c->info();
+    */
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -470,7 +474,9 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                //qdbg() << ind() << " * Starting HL for " << info();
+                //qdbg() << ind() << " * HL starting for " << info() << this;
+                //foreach (Container *c, childContainers())
+                //    qdbg() << ind() << "   HL: child: " << c->info() << "ovly:" << c->overlay;
                 foreach (Container *c, childContainers()) {
                     if (!c->overlay) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -482,7 +488,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 }
 /*
                 if (centralContainer)
-                    qdbg() << ind() << " * Found central container: " << centralContainer->info();
+                    qdbg() << ind() << "    HL: Found central container: " << centralContainer->info();
 */
 
                 // Left (or right) line, where next children will be aligned to
@@ -503,7 +509,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                         else
                             offset = - (c_bbox.right() - origin_mapped.x());
 
-                        //qdbg() << ind() << " * * " << c->info() << " x=" << x << "  offset=" << offset;
+                        //qdbg() << ind() << "    HL x=" << x << "offset=" << offset << "c: " << c->info();
 
                         // Align vertically centered
                         c->setPos (x + offset, - c->rect().height() / 2 - c->rect().top());
@@ -520,7 +526,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                         } else
                             x -= c_bbox.width();
 
-                        //qdbg() << ind() << " * Done positioning: " << c->info();
+                        //qdbg() << ind() << "    HL Done positioning: " << c->info();
                     }   // No overlay container
                 }   // Position children 
 
@@ -528,14 +534,14 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 QPointF v_central;
 
                 if (centralContainer) {
-                    //qdbg() << ind() << " * central container a:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
+                    //qdbg() << ind() << "    HL central container a:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                     if (parentContainer() && parentContainer()->hasFloatingLayout())  {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-                        //qdbg() << ind() << " * central container b:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
+                        //qdbg() << ind() << "    HL central container b:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                         if (!v_central.isNull())
                             foreach (Container *c, childContainers()) {
                                 if (!c->overlay) {
-                                    //qdbg() << ind() << " * moving c:" << c->info();
+                                    //qdbg() << ind() << "    HL moving c:" << c->info();
                                     c->setPos(c->pos() - v_central);
                                 }
                             }
@@ -544,7 +550,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                 setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
 
-                //qdbg() << ind() << " * Finished HL for " << info();
+                //qdbg() << ind() << " * HL Finished for " << info() << this;
             } // Horizontal layout
             break;
 

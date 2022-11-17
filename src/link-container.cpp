@@ -399,7 +399,7 @@ void LinkContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
 
 void LinkContainer::reposition()
 {
-    //qDebug() << "LC::reposition " + info();
+    //qDebug() << "LC::reposition " << info();
     return;
 }
 
