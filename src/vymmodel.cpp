@@ -2416,10 +2416,8 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
             else {
                 bc->branchesContainerAutoLayout = false;
                 Container::Layout layout = Container::getLayoutFromString(s);
-                if (layout != Container::UndefinedLayout) {
+                if (layout != Container::UndefinedLayout)
                     bc->setBranchesContainerLayout(layout);
-                    qDebug() <<"VM::setBLayout " << layout << s;
-                }
             }
         }
         //emitDataChanged(bi);    // FIXME-2 expensive, needed for changing layout?
@@ -2437,13 +2435,11 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
             if (s == "Auto")
                 bc->imagesContainerAutoLayout = true;
             else {
-                Container::Layout layout;
-                if (s == "Default")
-                    layout = bc->getDefaultImagesContainerLayout();
-                else
-                    layout = Container::getLayoutFromString(s);
-                bc->setImagesContainerLayout(Container::getLayoutFromString(s));
                 bc->imagesContainerAutoLayout = false;
+                Container::Layout layout;
+                layout = Container::getLayoutFromString(s);
+                if (layout != Container::UndefinedLayout)
+                    bc->setImagesContainerLayout(layout);
             }
         }
         //emitDataChanged(bi);    // FIXME-2 expensive, needed for changing layout?

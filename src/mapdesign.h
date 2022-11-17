@@ -29,6 +29,12 @@ class MapDesign {
     QList <Container::Layout> bcNewBranchLayouts;
     QList <Container::Layout> bcRelinkBranchLayouts;
 
+  public:
+    Container::Layout imagesContainerLayout(const BranchContainer::StyleUpdateMode &mode, int depth);
+  private:
+    QList <Container::Layout> icNewBranchLayouts;
+    QList <Container::Layout> icRelinkBranchLayouts;
+
   private:
     QString name;
 };

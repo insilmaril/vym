@@ -93,10 +93,10 @@ void BranchContainer::init()
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
 
-    // Use layout defaults
+    // Set some defaults, should be overridden from MapDesign later
     imagesContainerAutoLayout = true;
     branchesContainerAutoLayout = true;
-    imagesContainerLayout = getDefaultImagesContainerLayout();
+    imagesContainerLayout = FloatingFree;
     branchesContainerLayout = Vertical;
 
     tmpParentContainer = nullptr;
@@ -271,12 +271,10 @@ bool BranchContainer::hasFloatingBranchesLayout()
         return false;
 }
 
-void BranchContainer::createBranchesContainer() // FIXME-0 move settings to updateStyles
+void BranchContainer::createBranchesContainer() // FIXME-0 move settings to updateStyles, also createImagesContainer
 {
     branchesContainer = new Container ();
     branchesContainer->containerType = Container::BranchesContainer;
-    /*
-*/
     if (branchesContainerAutoLayout)
         branchesContainer->setLayout(
                 mapDesign.branchesContainerLayout(NewBranch, branchItem->depth()));
@@ -334,7 +332,7 @@ void BranchContainer::updateBranchesContainer()
             if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
                 linkSpaceContainer = new HeadingContainer ();
                 //linkSpaceContainer->setContainerType(); // FIXME-2
-                linkSpaceContainer->setHeading(" - ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
+                linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
 
                 innerContainer->addContainer(linkSpaceContainer);
                 linkSpaceContainer->stackBefore(branchesContainer);
@@ -476,7 +474,8 @@ void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not del
     imagesContainer = new Container ();
     imagesContainer->containerType = ImagesContainer;
     if (imagesContainerAutoLayout)
-        imagesContainer->setLayout(getDefaultImagesContainerLayout());
+        imagesContainer->setLayout(
+                mapDesign.imagesContainerLayout(NewBranch, branchItem->depth()));
     else
         imagesContainer->setLayout(imagesContainerLayout);
     if (outerContainer)
