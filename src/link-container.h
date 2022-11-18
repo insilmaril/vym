@@ -28,7 +28,7 @@ class LinkContainer : public Container {
         HeadingColor  //!< Link uses the color of heading
     };
 
-    LinkContainer(QGraphicsItem *parent = nullptr);
+    LinkContainer();
     virtual ~LinkContainer();
 
   protected:

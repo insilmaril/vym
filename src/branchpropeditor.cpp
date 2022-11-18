@@ -407,8 +407,14 @@ void BranchPropertyEditor::childrenLayoutChanged()
     if (sender() == ui.branchesAutoLayoutCheckBox) {
         if ( ui.branchesAutoLayoutCheckBox->isChecked())
             model->setBranchesLayout("Auto");
-        else
+        else {
             model->setBranchesLayout("Default"); // FIXME-00 no longer used...
+            QAbstractButton *button = ui.branchesLayoutsButtonGroup->checkedButton();
+            if (button) {
+                qDebug() << "BPE checked " << button;
+                button->click();
+            }
+        }
     } else if (sender() == ui.branchesLayoutVerticalButton)
         model->setBranchesLayout("Vertical");
     else if (sender() == ui.branchesLayoutHorizontalButton)

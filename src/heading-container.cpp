@@ -4,7 +4,7 @@
 
 #define qdbg() qDebug().nospace().noquote()
 
-HeadingContainer::HeadingContainer(QGraphicsItem *parent) : Container(parent) 
+HeadingContainer::HeadingContainer()
 
 {
     //qDebug() << "* Const HeadingContainer begin this = ";

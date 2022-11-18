@@ -9,7 +9,7 @@ class HeadingObj;
 
 class HeadingContainer : public Container {
   public:
-    HeadingContainer (QGraphicsItem *parent = nullptr);
+    HeadingContainer ();
     virtual ~HeadingContainer();
     virtual void init();
 

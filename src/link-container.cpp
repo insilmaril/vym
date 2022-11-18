@@ -7,8 +7,7 @@
 // LinkContainer
 /////////////////////////////////////////////////////////////////
 
-LinkContainer::LinkContainer(QGraphicsItem *parent)
-    : Container(parent)
+LinkContainer::LinkContainer()
 {
     //qDebug() << "Const LinkContainer this=" << this;
     init();

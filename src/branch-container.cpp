@@ -24,7 +24,7 @@ extern MapDesign mapDesign;
 
 qreal BranchContainer::linkWidth = 20;  // FIXME-3 testing
 
-BranchContainer::BranchContainer(QGraphicsScene *scene, QGraphicsItem *parent, BranchItem *bi) : FrameContainer(parent)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
+BranchContainer::BranchContainer(QGraphicsScene *scene, BranchItem *bi)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
     // qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
     scene->addItem(this);
@@ -216,37 +216,6 @@ bool BranchContainer::isTemporaryLinked()
         return false;
 }
 
-void BranchContainer::select()
-{
-    if (!selectionContainer)
-    {
-        selectionContainer = new Container (ornamentsContainer);
-        selectionContainer->setContainerType(Selection);
-        selectionContainer->setPen(QPen(Qt::red));
-        selectionContainer->setBrush(Qt::yellow);
-        selectionContainer->overlay = true;
-        selectionContainer->setFlag(ItemStacksBehindParent, true);
-        selectionContainer->setZValue(10);
-    }
-    selectionContainer->setRect(ornamentsContainer->rect());
-}
-
-void BranchContainer::unselect()
-{
-    if (!selectionContainer) return;
-
-    delete selectionContainer;
-    selectionContainer = nullptr;
-}
-
-bool BranchContainer::isSelected()
-{
-    if (selectionContainer)
-        return true;
-    else
-        return false;
-}
-
 int BranchContainer::childrenCount()
 {
     return branchCount() + imageCount();
@@ -344,7 +313,8 @@ void BranchContainer::updateBranchesContainer()
 void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
-        outerContainer = new Container (this);
+        outerContainer = new Container;
+        outerContainer->setParentItem(this);
         outerContainer->containerType = OuterContainer;
         outerContainer->setLayout(BoundingFloats);
         outerContainer->addContainer(innerContainer);
@@ -791,6 +761,11 @@ QRectF BranchContainer::getBBoxURLFlag()
             return fc->mapRectToScene(fc->rect());
     }
     return QRectF();
+}
+
+void BranchContainer::select()
+{
+    SelectableContainer::select(ornamentsContainer);
 }
 
 void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)

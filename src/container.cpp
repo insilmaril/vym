@@ -7,7 +7,7 @@
 
 #define qdbg() qDebug().nospace().noquote()
 
-Container::Container(QGraphicsItem *parent) : QGraphicsRectItem(parent)
+Container::Container()
 {
     //qdbg() << "* Const Container " << this;
     init();

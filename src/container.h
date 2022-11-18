@@ -23,6 +23,7 @@ class ImageContainer;
 class Container : public QGraphicsRectItem {
   friend class BranchContainer;
   friend class ImageContainer;
+  friend class SelectableContainer;
   public:
     /*! Type of this container */
     enum ContainerType {
@@ -48,7 +49,7 @@ class Container : public QGraphicsRectItem {
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum HorizontalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
 
-    Container (QGraphicsItem *parent = nullptr);
+    Container ();
     virtual ~Container();
     virtual void copy(Container*);
     virtual void init();

@@ -496,7 +496,7 @@ void BranchItem::updateVisuals()
 
 BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
 {
-    branchContainer = new BranchContainer(scene, nullptr, this);
+    branchContainer = new BranchContainer(scene, this);
 
     // Set visibility depending on parents  // FIXME-2
     /*

@@ -101,7 +101,7 @@ MapEditor::MapEditor(VymModel *vm)
     setAcceptDrops(true);
 
     // Container used for temporary moving and relinking branches
-    tmpParentContainer = new BranchContainer (mapScene, nullptr, nullptr);
+    tmpParentContainer = new BranchContainer (mapScene);
     tmpParentContainer->setZValue(1000);    // See also z-values in mapobj.h
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setContainerType(Container::TmpParent);
@@ -2308,11 +2308,15 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
     foreach (QModelIndex ix, newsel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
-            mi->getType() == TreeItem::XLink)
+            mi->getType() == TreeItem::XLink) {
             if (!itemsSelected.contains(mi))
                 itemsSelected.append(mi);
-            if (mi->hasTypeBranch()) {  // FIXME-0 ME::updateSelection no mapImages yet (also below)
+            if (mi->hasTypeBranch())
                 ((BranchItem*)mi)->getBranchContainer()->select();
+                /*
+            if (mi->hasTypeImage()) {  // FIXME-0 ME::updateSelection no mapImages yet (also below)
+                ((ImageItem*)mi)->getImageContainer()->select();
+                */
         }
         /* FIXME-1 ME::updateSelection - hide links of unselected objects
          * also for unselect below
@@ -2329,9 +2333,10 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink)
             if (!itemsSelected.contains(mi)) {
-                if (mi->hasTypeBranch()) {  // FIXME-X experimental, no mapImages yet
+                if (mi->hasTypeBranch()) // FIXME-X experimental, no mapImages yet
                     ((BranchItem*)mi)->getBranchContainer()->unselect();
-            }
+            //if (mi->hasTypeImage()) // FIXME-0 ME::updateSelection no mapImages yet (also below)
+            //    ((ImageItem*)mi)->getImageContainer()->unselect();
         }
     }
 

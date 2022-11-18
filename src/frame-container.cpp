@@ -9,7 +9,7 @@
 /////////////////////////////////////////////////////////////////
 // FrameContainer
 /////////////////////////////////////////////////////////////////
-FrameContainer::FrameContainer(QGraphicsItem *parent) : Container(parent)
+FrameContainer::FrameContainer()
 {
     //qDebug() << "Constr FrameContainer this=" << this;
     init();

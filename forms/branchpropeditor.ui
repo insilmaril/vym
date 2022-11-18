@@ -303,6 +303,9 @@
                    <property name="text">
                     <string>Vertical</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
@@ -310,6 +313,9 @@
                    <property name="text">
                     <string>Horizontal</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
@@ -317,6 +323,9 @@
                    <property name="text">
                     <string>Floating bounded</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
@@ -324,6 +333,9 @@
                    <property name="text">
                     <string>Floating free</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                 </layout>
@@ -378,6 +390,9 @@
                    <property name="text">
                     <string>Vertical</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
@@ -385,6 +400,9 @@
                    <property name="text">
                     <string>Horizontal</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
@@ -392,6 +410,9 @@
                    <property name="text">
                     <string>Floating bounded</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                  <item>
@@ -399,6 +420,9 @@
                    <property name="text">
                     <string>Floating free</string>
                    </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
                   </widget>
                  </item>
                 </layout>
@@ -691,4 +715,8 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="branchesLayoutsButtonGroup"/>
+  <buttongroup name="imagesLayoutsButtonGroup"/>
+ </buttongroups>
 </ui>

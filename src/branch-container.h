@@ -4,14 +4,15 @@
 #include <QBrush>
 
 #include "container.h"
-#include "frame-container.h"
+//#include "frame-container.h"
+#include "selectable-container.h"
 
 class BranchItem;
 class FlagRowContainer;
 class HeadingContainer;
 class LinkContainer;
 
-class BranchContainer : public FrameContainer {
+class BranchContainer : public SelectableContainer {
   public:
     /*! Orientation relative to parent branch container */
     enum Orientation {
@@ -28,7 +29,6 @@ class BranchContainer : public FrameContainer {
 
     BranchContainer (
             QGraphicsScene *scene,
-            QGraphicsItem *parent = nullptr,
             BranchItem *bi = nullptr);
     virtual ~BranchContainer();
     virtual void init();
@@ -62,16 +62,7 @@ class BranchContainer : public FrameContainer {
     void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
-    // Selections
-    // FIXME-1 should be in base class also for ImageContainer (and maybe links, too)
-    void select();
-    void unselect();
-    bool isSelected();
-  private:
-    Container *selectionContainer;
-
   public:
-
     int childrenCount();    //! Sum of branch and image children
 
     int branchCount();
@@ -139,6 +130,8 @@ class BranchContainer : public FrameContainer {
     QUuid findFlagByPos(const QPointF &p);
     bool isInClickBox(const QPointF &p);
     QRectF getBBoxURLFlag();
+
+    virtual void select();  // Overloads SelectableContainer::select
 
     /*! Update styles (frame, links, fonts, colors, ...) */
     void updateStyles(StyleUpdateMode styleUpdateMode = RelinkBranch);

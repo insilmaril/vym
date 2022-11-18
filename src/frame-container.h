@@ -14,7 +14,7 @@ class FrameContainer : public XMLObj, public Container {
     /*! \brief Supported frame types */
     enum FrameType { NoFrame, Rectangle, RoundedRectangle, Ellipse, Cloud };
 
-    FrameContainer(QGraphicsItem *parent);
+    FrameContainer();
     ~FrameContainer();
     void init();
     void clear();
