@@ -20,8 +20,6 @@ extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
 
-extern MapDesign mapDesign;
-
 qreal BranchContainer::linkWidth = 20;  // FIXME-3 testing
 
 BranchContainer::BranchContainer(QGraphicsScene *scene, BranchItem *bi)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
@@ -242,11 +240,13 @@ bool BranchContainer::hasFloatingBranchesLayout()
 
 void BranchContainer::createBranchesContainer() // FIXME-0 move settings to updateStyles, also createImagesContainer
 {
+    MapDesign *md = branchItem->getMapDesign();
+
     branchesContainer = new Container ();
     branchesContainer->containerType = Container::BranchesContainer;
     if (branchesContainerAutoLayout)
         branchesContainer->setLayout(
-                mapDesign.branchesContainerLayout(NewBranch, branchItem->depth()));
+                md->branchesContainerLayout(NewBranch, branchItem->depth()));
     else
         branchesContainer->setLayout(branchesContainerLayout);
     branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
@@ -441,11 +441,12 @@ int BranchContainer::imageCount()
 
 void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not deleted, when no longer used
 {
+    MapDesign *md = branchItem->getMapDesign();
     imagesContainer = new Container ();
     imagesContainer->containerType = ImagesContainer;
     if (imagesContainerAutoLayout)
         imagesContainer->setLayout(
-                mapDesign.imagesContainerLayout(NewBranch, branchItem->depth()));
+                md->imagesContainerLayout(NewBranch, branchItem->depth()));
     else
         imagesContainer->setLayout(imagesContainerLayout);
     if (outerContainer)
@@ -775,15 +776,16 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
     qDebug() << "BC::updateStyles of " << info();
 
     uint depth = branchItem->depth();
+    MapDesign *md = branchItem->getMapDesign();
 
 
     // Set container layouts
     if (branchesContainerAutoLayout) {
         qDebug () << "BC::updateStyles  bClayout to " <<
-                mapDesign.branchesContainerLayout(styleUpdateMode, depth)
-            << getLayoutString(mapDesign.branchesContainerLayout(styleUpdateMode, depth));
+                md->branchesContainerLayout(styleUpdateMode, depth)
+            << getLayoutString(md->branchesContainerLayout(styleUpdateMode, depth));
         setBranchesContainerLayout(
-                mapDesign.branchesContainerLayout(styleUpdateMode, depth));
+                md->branchesContainerLayout(styleUpdateMode, depth));
     } else
         qDebug () << "BC::updateStyles Keeping layout";
 

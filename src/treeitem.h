@@ -16,6 +16,7 @@ class BranchObj;
 class BranchItem;
 class FloatImageObj;
 class ImageItem;
+class MapDesign;
 class QModelIndex;
 class VymModel;
 class XLinkItem;
@@ -34,6 +35,7 @@ class TreeItem : public XMLObj {
     // General housekeeping
     virtual void setModel(VymModel *m);
     virtual VymModel *getModel();
+    virtual MapDesign *getMapDesign();
 
     /*! Return number of item, as it would be after it would have been appended.
     This is used to notify view about layout changes before model is modified.

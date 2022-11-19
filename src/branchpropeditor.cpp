@@ -404,25 +404,24 @@ void BranchPropertyEditor::childrenLayoutChanged()
 {
     if (!model) return;
 
-    if (sender() == ui.branchesAutoLayoutCheckBox) {
-        if ( ui.branchesAutoLayoutCheckBox->isChecked())
-            model->setBranchesLayout("Auto");
-        else {
-            model->setBranchesLayout("Default"); // FIXME-00 no longer used...
-            QAbstractButton *button = ui.branchesLayoutsButtonGroup->checkedButton();
-            if (button) {
-                qDebug() << "BPE checked " << button;
-                button->click();
-            }
+    if ( ui.branchesAutoLayoutCheckBox->isChecked())
+        model->setBranchesLayout("Auto");
+    else {
+        QAbstractButton *button = ui.branchesLayoutsButtonGroup->checkedButton();
+        if (button) {
+            qDebug() << "BPE checked " << button;   // FIXME-000 cont here with images
+            if (button == ui.branchesLayoutVerticalButton)
+                model->setBranchesLayout("Vertical");
+            else if (button == ui.branchesLayoutHorizontalButton)
+                model->setBranchesLayout("Horizontal");
+            else if (button == ui.branchesLayoutBoundedButton)
+                model->setBranchesLayout("FloatingBounded");
+            else if (button == ui.branchesLayoutFreeButton)
+                model->setBranchesLayout("FloatingFree");
+            else
+                qWarning() << "Unknown button checked: " << button;
         }
-    } else if (sender() == ui.branchesLayoutVerticalButton)
-        model->setBranchesLayout("Vertical");
-    else if (sender() == ui.branchesLayoutHorizontalButton)
-        model->setBranchesLayout("Horizontal");
-    else if (sender() == ui.branchesLayoutBoundedButton)
-        model->setBranchesLayout("FloatingBounded");
-    else if (sender() == ui.branchesLayoutFreeButton)
-        model->setBranchesLayout("FloatingFree");
+    }
 
     if (sender() == ui.imagesAutoLayoutCheckBox) {
         if (ui.imagesAutoLayoutCheckBox->isChecked())

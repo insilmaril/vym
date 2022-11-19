@@ -66,8 +66,6 @@ FlagRowMaster *userFlagsMaster;
 
 Macros macros;
 
-MapDesign mapDesign;    // Default design of map   // FIXME-3 extent this later
-                        //
 ulong itemLastID = 0;  // Unique ID for all items in all models
 ulong imageLastID = 0; // Unique ID for cashing images, also flags not in tree
 

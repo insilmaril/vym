@@ -24,6 +24,7 @@ class AttributeItem;
 class BranchItem;
 class FindResultModel;
 class Link;
+class MapDesign;
 class MapEditor;
 class SlideItem;
 class SlideModel;
@@ -670,6 +671,14 @@ class VymModel : public TreeModel {
 
   private:
     MapEditor *mapEditor;
+
+    ////////////////////////////////////////////
+    // MapDesign
+    ////////////////////////////////////////////
+  public:
+    MapDesign* getMapDesign();
+  private:
+    MapDesign* mapDesign;
 
     QColor defLinkColor;        // default color for links
     QPen defXLinkPen;           // default pen for xlinks

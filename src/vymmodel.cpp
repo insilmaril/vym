@@ -39,6 +39,7 @@
 #include "link-container.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
+#include "mapdesign.h"
 #include "misc.h"
 #include "noteeditor.h"
 #include "options.h"
@@ -141,6 +142,8 @@ void VymModel::init()
             .value("/user/name", tr("unknown user",
                                     "default name for map author in settings"))
             .toString();
+    // MapDesign
+    mapDesign = new MapDesign;
 
     // States and IDs
     idLast++;
@@ -2411,9 +2414,14 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
 
             // FIXME-2 Save current positions, we might change to floating layout
 
-            if (s == "Auto")
+            qDebug() << "VM::setBL to " << s;
+            if (s == "Auto") {
+                // FIXME-000 cont here, get layout from mapDesign
                 bc->branchesContainerAutoLayout = true;
-            else {
+                bc->setBranchesContainerLayout(
+                        mapDesign->branchesContainerLayout(
+                            BranchContainer::NewBranch, selbi->depth()));
+            } else {
                 bc->branchesContainerAutoLayout = false;
                 Container::Layout layout = Container::getLayoutFromString(s);
                 if (layout != Container::UndefinedLayout)
@@ -5035,6 +5043,11 @@ void VymModel::reposition()
         bi->repositionContainers();
     }
     mapEditor->minimizeView();  // FIXME-2 review and check for "jumping"
+}
+
+MapDesign* VymModel::getMapDesign()
+{
+    return mapDesign;
 }
 
 bool VymModel::setMapLinkStyle(const QString &s)   // FIXME-2 not ported yet to containers
