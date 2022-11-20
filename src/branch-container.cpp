@@ -445,14 +445,17 @@ int BranchContainer::imageCount()
 
 void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not deleted, when no longer used
 {
-    MapDesign *md = branchItem->getMapDesign();
     imagesContainer = new Container ();
     imagesContainer->containerType = ImagesContainer;
-    if (imagesContainerAutoLayout)
-        imagesContainer->setLayout(
-                md->imagesContainerLayout(NewBranch, branchItem->depth()));
-    else
-        imagesContainer->setLayout(imagesContainerLayout);
+    if (branchItem) {
+        // tmpParentContainer has no associated branchItem!
+        MapDesign *md = branchItem->getMapDesign();
+        if (imagesContainerAutoLayout)
+            imagesContainer->setLayout(
+                    md->imagesContainerLayout(NewBranch, branchItem->depth()));
+        else
+            imagesContainer->setLayout(imagesContainerLayout);
+    }
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
     else

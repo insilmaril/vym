@@ -31,8 +31,8 @@ class ImageContainer : public SelectableContainer {
     void setWidth(qreal w);
     void setScaleFactor(qreal f);
     qreal getScaleFactor();
+    void select();
 
-  public:
     bool load(const QString &, bool createClone = false);
     bool save(const QString &);
     QString getExtension();

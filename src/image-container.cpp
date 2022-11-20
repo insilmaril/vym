@@ -74,6 +74,7 @@ void ImageContainer::init()
     containerType = Image;
 
     imageItem = nullptr;
+    selectionContainer = nullptr;
 
     // Assign ID
     imageLastID++;
@@ -167,6 +168,11 @@ void ImageContainer::setScaleFactor(qreal f)
 }
 
 qreal ImageContainer::getScaleFactor() { return scaleFactor; }
+
+void ImageContainer::select()
+{
+    SelectableContainer::select(this);
+}
 
 bool ImageContainer::load(const QString &fn, bool createClone)
 {

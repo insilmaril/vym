@@ -1873,7 +1873,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Update links
     foreach (TreeItem *ti, movingItems)
     {
-        if (ti->hasTypeBranch()) {  // FIXME-2 later it should work the same for images!
+        if (ti->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
             if (tmpParentContainer->isTemporaryLinked())
                 bc->setTemporaryLinked(targetBranchContainer);
@@ -2309,14 +2309,15 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink) {
-            if (!itemsSelected.contains(mi))
+            if (!itemsSelected.contains(mi)) {
                 itemsSelected.append(mi);
-            if (mi->hasTypeBranch())
-                ((BranchItem*)mi)->getBranchContainer()->select();
-                /*
-            if (mi->hasTypeImage()) {  // FIXME-0 ME::updateSelection no mapImages yet (also below)
-                ((ImageItem*)mi)->getImageContainer()->select();
-                */
+                if (mi->hasTypeBranch())
+                    ((BranchItem*)mi)->getBranchContainer()->select();
+                    /*
+                    */
+                if (mi->hasTypeImage())
+                    ((ImageItem*)mi)->getImageContainer()->select();
+            }
         }
         /* FIXME-1 ME::updateSelection - hide links of unselected objects
          * also for unselect below
@@ -2331,12 +2332,13 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         //qDebug() << "ME::updateSel   deselecting mi=" << mi << mi->getHeadingPlain();
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
-            mi->getType() == TreeItem::XLink)
+            mi->getType() == TreeItem::XLink) {
             if (!itemsSelected.contains(mi)) {
-                if (mi->hasTypeBranch()) // FIXME-X experimental, no mapImages yet
+                if (mi->hasTypeBranch())
                     ((BranchItem*)mi)->getBranchContainer()->unselect();
-            //if (mi->hasTypeImage()) // FIXME-0 ME::updateSelection no mapImages yet (also below)
-            //    ((ImageItem*)mi)->getImageContainer()->unselect();
+                if (mi->hasTypeImage())
+                    ((ImageItem*)mi)->getImageContainer()->unselect();
+            }
         }
     }
 
