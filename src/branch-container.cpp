@@ -240,16 +240,20 @@ bool BranchContainer::hasFloatingBranchesLayout()
 
 void BranchContainer::createBranchesContainer() // FIXME-0 move settings to updateStyles, also createImagesContainer
 {
-    MapDesign *md = branchItem->getMapDesign();
-
     branchesContainer = new Container ();
     branchesContainer->containerType = Container::BranchesContainer;
-    if (branchesContainerAutoLayout)
-        branchesContainer->setLayout(
-                md->branchesContainerLayout(NewBranch, branchItem->depth()));
-    else
-        branchesContainer->setLayout(branchesContainerLayout);
-    branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
+
+    if (branchItem) {
+        // tmpParentContainer has no associated branchItem!
+        MapDesign *md = branchItem->getMapDesign();
+
+        if (branchesContainerAutoLayout)
+            branchesContainer->setLayout(
+                    md->branchesContainerLayout(NewBranch, branchItem->depth()));
+        else
+            branchesContainer->setLayout(branchesContainerLayout);
+        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
+    }
 
     innerContainer->addContainer(branchesContainer);
 }
@@ -258,7 +262,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
     if (!branchesContainer) {
         createBranchesContainer();
-//        updateStyles(NewBranch);
+//        updateStyles(NewBranch);  // FIXME-2 probably not needed
     }
 
     QPointF sp = c->scenePos();

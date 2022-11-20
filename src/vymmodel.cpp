@@ -2413,10 +2413,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
             bc = selbi->getBranchContainer();
 
             // FIXME-2 Save current positions, we might change to floating layout
-
-            qDebug() << "VM::setBL to " << s;
             if (s == "Auto") {
-                // FIXME-000 cont here, get layout from mapDesign
                 bc->branchesContainerAutoLayout = true;
                 bc->setBranchesContainerLayout(
                         mapDesign->branchesContainerLayout(
