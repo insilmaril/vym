@@ -404,12 +404,11 @@ void BranchPropertyEditor::childrenLayoutChanged()
 {
     if (!model) return;
 
-    if ( ui.branchesAutoLayoutCheckBox->isChecked())
+    if (ui.branchesAutoLayoutCheckBox->isChecked())
         model->setBranchesLayout("Auto");
     else {
         QAbstractButton *button = ui.branchesLayoutsButtonGroup->checkedButton();
         if (button) {
-            qDebug() << "BPE checked " << button;   // FIXME-000 cont here with images
             if (button == ui.branchesLayoutVerticalButton)
                 model->setBranchesLayout("Vertical");
             else if (button == ui.branchesLayoutHorizontalButton)
@@ -419,23 +418,27 @@ void BranchPropertyEditor::childrenLayoutChanged()
             else if (button == ui.branchesLayoutFreeButton)
                 model->setBranchesLayout("FloatingFree");
             else
-                qWarning() << "Unknown button checked: " << button;
+                qWarning() << "BPE::childrenLayout changed - unknown branches layout: " << button;
         }
     }
 
-    if (sender() == ui.imagesAutoLayoutCheckBox) {
-        if (ui.imagesAutoLayoutCheckBox->isChecked())
-            model->setImagesLayout("Auto");
-        else
-            model->setImagesLayout("Default");
-    } else if (sender() == ui.imagesLayoutVerticalButton)
-        model->setImagesLayout("Vertical");
-    else if (sender() == ui.imagesLayoutHorizontalButton)
-        model->setImagesLayout("Horizontal");
-    else if (sender() == ui.imagesLayoutBoundedButton)
-        model->setImagesLayout("FloatingBounded");
-    else if (sender() == ui.imagesLayoutFreeButton)
-        model->setImagesLayout("FloatingFree");
+    if (ui.imagesAutoLayoutCheckBox->isChecked())
+        model->setImagesLayout("Auto");
+    else {
+        QAbstractButton *button = ui.imagesLayoutsButtonGroup->checkedButton();
+        if (button) {
+            if (button == ui.imagesLayoutVerticalButton)
+                model->setImagesLayout("Vertical");
+            else if (button == ui.imagesLayoutHorizontalButton)
+                model->setImagesLayout("Horizontal");
+            else if (button == ui.imagesLayoutBoundedButton)
+                model->setImagesLayout("FloatingBounded");
+            else if (button == ui.imagesLayoutFreeButton)
+                model->setImagesLayout("FloatingFree");
+            else
+                qWarning() << "BPE::childrenLayout changed - unknown images layout: " << button;
+        }
+    }
 
     updateContainerLayoutButtons();
 }

@@ -625,10 +625,10 @@ void BranchContainer::updateUpLink()
     linkContainer->setDownLinkPos(downLink);
 
     // Color of links
-    if (linkContainer->getLinkColorHint() == LinkContainer::DefaultColor)
-        linkContainer->setLinkColor(Qt::blue);  // FIXME-0 default for testing
-    else
+    if (linkContainer->getLinkColorHint() == LinkContainer::HeadingColor)
         linkContainer->setLinkColor(headingContainer->getColor());
+    else
+        linkContainer->setLinkColor(branchItem->getMapDesign()->defaultLinkColor());
 
     linkContainer->updateLinkGeometry();
 }
@@ -780,24 +780,25 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 {
     // updateStyles() is never called for TmpParent!
 
-    qDebug() << "BC::updateStyles of " << info();
+    //qDebug() << "BC::updateStyles of " << info();
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->getMapDesign();
 
-
     // Set container layouts
-    if (branchesContainerAutoLayout) {
-        qDebug () << "BC::updateStyles  bClayout to " <<
-                md->branchesContainerLayout(styleUpdateMode, depth)
-            << getLayoutString(md->branchesContainerLayout(styleUpdateMode, depth));
+    if (branchesContainerAutoLayout)
         setBranchesContainerLayout(
                 md->branchesContainerLayout(styleUpdateMode, depth));
-    } else
-        qDebug () << "BC::updateStyles Keeping layout";
 
-    //if (imagesContainerAutoLayout)
-    //    setImagesContainerLayout(getDefaultImagesContainerLayout() );
+    if (imagesContainerAutoLayout)
+        setImagesContainerLayout(
+                md->imagesContainerLayout(styleUpdateMode, depth));
+
+    // Links
+    if (linkContainer->getLinkColorHint() == LinkContainer::HeadingColor)
+        linkContainer->setLinkColor(headingContainer->getColor());
+    else
+        linkContainer->setLinkColor(md->defaultLinkColor());
 
     // Create/delete bottomline
     if (FrameContainer::frameType != FrameContainer::NoFrame &&

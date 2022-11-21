@@ -557,15 +557,15 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
     }
     if (!a.value("linkColorHint").isEmpty()) {
         if (a.value("linkColorHint") == "HeadingColor")
-            model->setMapLinkColorHint(LinkContainer::HeadingColor);
+            model->setLinkColorHint(LinkContainer::HeadingColor);
         else
-            model->setMapLinkColorHint(LinkContainer::DefaultColor);
+            model->setLinkColorHint(LinkContainer::DefaultColor);
     }
     if (!a.value("linkStyle").isEmpty())
         model->setMapLinkStyle(a.value("linkStyle"));
     if (!a.value("linkColor").isEmpty()) {
         col.setNamedColor(a.value("linkColor"));
-        model->setMapDefLinkColor(col);
+        model->setDefaultLinkColor(col);
     }
 
     QPen pen(model->getMapDefXLinkPen());

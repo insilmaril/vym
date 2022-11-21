@@ -792,6 +792,17 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
     return setResult(r);
 }
 
+void VymModelWrapper::setDefaultLinkColor(const QString &color)
+{
+    QColor col(color);
+    if (col.isValid()) {
+        model->setDefaultLinkColor(col);
+    }
+    else
+        logError(context(), QScriptContext::UnknownError,
+                 QString("Could not set color to %1").arg(color));
+}
+
 void VymModelWrapper::setFlagByName(const QString &s)
 {
     model->setFlagByName(s);
@@ -846,17 +857,6 @@ void VymModelWrapper::setMapBackgroundColor(const QString &color)
 }
 
 void VymModelWrapper::setMapComment(const QString &s) { model->setComment(s); }
-
-void VymModelWrapper::setMapDefLinkColor(const QString &color)
-{
-    QColor col(color);
-    if (col.isValid()) {
-        model->setMapDefLinkColor(col);
-    }
-    else
-        logError(context(), QScriptContext::UnknownError,
-                 QString("Could not set color to %1").arg(color));
-}
 
 void VymModelWrapper::setMapLinkStyle(const QString &style)
 {

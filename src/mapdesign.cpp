@@ -20,6 +20,10 @@ void MapDesign::init()
 
     // New branch, child images
     icNewBranchLayouts << Container::FloatingFree;
+
+    // Should links of branches use a default color or the color of heading?
+    linkColHint = LinkContainer::DefaultColor;
+    defaultLinkCol = Qt::blue;
 }
 
 void MapDesign::setName(const QString &s)
@@ -98,4 +102,24 @@ Container::Layout MapDesign::imagesContainerLayout(
                 return Container::UndefinedLayout;
         }
     }
+}
+
+LinkContainer::ColorHint MapDesign::linkColorHint()
+{
+    return linkColHint;
+}
+
+void MapDesign::setLinkColorHint(const LinkContainer::ColorHint &lch)
+{
+    linkColHint = lch;
+}
+
+QColor MapDesign::defaultLinkColor()
+{
+    return defaultLinkCol;
+}
+
+void MapDesign::setDefaultLinkColor(const QColor &col)
+{
+    defaultLinkCol = col;
 }

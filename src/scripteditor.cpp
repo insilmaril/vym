@@ -59,12 +59,11 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     codeEditor->setFont(font);
 
     // Define tab width
-    const int tabStop = 4; // 4 characters
+    const qreal d = 20; // unit is pixels
     QFontMetrics metrics(font);
-    int w = tabStop * metrics.width(' ');
-    codeEditor->setTabStopWidth(w);
-    slideEditor->setTabStopWidth(w);
-    macroEditor->setTabStopWidth(w);
+    codeEditor->setTabStopDistance(d);
+    slideEditor->setTabStopDistance(d);
+    macroEditor->setTabStopDistance(d);
 
     ui.modeTabWidget->setTabText(0, tr("Slide", "Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(1, tr("Macro", "Mode in scriptEditor"));

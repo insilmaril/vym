@@ -112,6 +112,7 @@ class VymModelWrapper : public VymScriptContext {
     bool selectParent();
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString);
+    void setDefaultLinkColor(const QString &color); // FIXME-2 maybe also rename other setMap* methods?
     void setFlagByName(const QString &s);
     void setHeadingConfluencePageName();
     void setHeadingPlainText(const QString &s);
@@ -122,7 +123,6 @@ class VymModelWrapper : public VymScriptContext {
     void setMapAuthor(const QString &s);
     void setMapBackgroundColor(const QString &color);
     void setMapComment(const QString &s);
-    void setMapDefLinkColor(const QString &color);
     void setMapLinkStyle(const QString &style);
     void setMapRotation(float a); // tested: ok
     void setMapTitle(const QString &s);

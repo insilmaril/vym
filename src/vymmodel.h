@@ -685,17 +685,19 @@ class VymModel : public TreeModel {
     QString defXLinkStyleBegin; // default style begin
     QString defXLinkStyleEnd;
                                              // default style end
-    LinkContainer::ColorHint linkColorHint; // use heading color or own color
     LinkContainer::Style linkstyle;         // default style for links
     QFont defaultFont;
 
   public:
     bool setMapLinkStyle(const QString &);   // Set style of link
     LinkContainer::Style getMapLinkStyle();
-    void setMapDefLinkColor(QColor);         // default color of links
-    void setMapLinkColorHintInt();           // color of links
-    void setMapLinkColorHint(LinkContainer::ColorHint); // color of links
-    void toggleMapLinkColorHint(); // after changing linkStyles
+
+    QColor getDefaultLinkColor();
+    void setDefaultLinkColor(const QColor&);         // default color of links
+    LinkContainer::ColorHint getLinkColorHint();
+    void setLinkColorHint(const LinkContainer::ColorHint &);
+    void toggleLinkColorHint(); // after changing linkStyles
+
     void selectMapBackgroundImage();
     void setMapBackgroundImage(const QString &);
     void selectMapBackgroundColor();
@@ -705,8 +707,6 @@ class VymModel : public TreeModel {
     QFont getMapDefaultFont();
     void setMapDefaultFont(const QFont &);
 
-    LinkContainer::ColorHint getMapLinkColorHint();
-    QColor getMapDefLinkColor();
     void setMapDefXLinkPen(const QPen &p);
     QPen getMapDefXLinkPen();
 

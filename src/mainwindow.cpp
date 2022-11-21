@@ -876,11 +876,11 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "");
     modelCommands.append(c);
 
-    c = new Command("setMapDefLinkColor", Command::Any);
+    c = new Command("setDefaultLinkColor", Command::Any);
     c->addPar(Command::Color, false, "Default color of links");
     modelCommands.append(c);
 
-    c = new Command("setMapLinkStyle", Command::Any);
+    c = new Command("setLinkStyle", Command::Any);
     c->addPar(Command::String, false, "Link style in map");
     modelCommands.append(c);
 
@@ -5691,8 +5691,9 @@ void Main::formatSelectLinkColor()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(m->getMapDefLinkColor(), this);
-        m->setMapDefLinkColor(col);
+        QColor col = QColorDialog::getColor(m->getDefaultLinkColor(), this);
+        m->setDefaultLinkColor(col);
+        updateActions();
     }
 }
 
@@ -5700,7 +5701,7 @@ void Main::formatSelectSelectionColor()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(m->getMapDefLinkColor(), this);
+        QColor col = QColorDialog::getColor(m->getSelectionColor(), this);
         m->setSelectionColor(col);
     }
 }
@@ -5720,7 +5721,7 @@ void Main::formatToggleLinkColorHint()
 {
     VymModel *m = currentModel();
     if (m)
-        m->toggleMapLinkColorHint();
+        m->toggleLinkColorHint();
 }
 
 void Main::formatHideLinkUnselected() // FIXME-4 get rid of this with
@@ -6381,7 +6382,7 @@ void Main::updateActions()
         actionFormatBackColor->setIcon(pix);
         pix.fill(m->getSelectionColor());
         actionFormatSelectionColor->setIcon(pix);
-        pix.fill(m->getMapDefLinkColor());
+        pix.fill(m->getDefaultLinkColor());
         actionFormatLinkColor->setIcon(pix);
 
         // Selection history
@@ -6416,7 +6417,7 @@ void Main::updateActions()
         actionCollapseOneLevel->setEnabled(true);
         actionCollapseUnselected->setEnabled(true);
 
-        if (m->getMapLinkColorHint() == LinkContainer::HeadingColor)
+        if (m->getLinkColorHint() == LinkContainer::HeadingColor)
             actionFormatLinkColorHint->setChecked(true);
         else
             actionFormatLinkColorHint->setChecked(false);

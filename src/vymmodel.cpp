@@ -186,7 +186,6 @@ void VymModel::init()
     // View - map
     defaultFont.setPointSizeF(16);
     defLinkColor = QColor(0, 0, 255);
-    linkColorHint = LinkContainer::DefaultColor;
     linkstyle = LinkContainer::PolyParabel;
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
@@ -297,8 +296,10 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint = "";
-    if (linkColorHint == LinkContainer::HeadingColor)
+    /* FIXME-1 mapDesign related settings not saved yet
+       if (linkColorHint == LinkContainer::HeadingColor)
         colhint = xml.attribut("linkColorHint", "HeadingColor");
+    */
 
     QString mapAttr = xml.attribut("version", vymVersion);
     if (!saveSel)
@@ -2425,21 +2426,24 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
                     bc->setBranchesContainerLayout(layout);
             }
         }
-        //emitDataChanged(bi);    // FIXME-2 expensive, needed for changing layout?
     }
     reposition();
 }
 
-void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-1 layouts not working properly // FIXME-2 no savestate yet
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi) {
+            //qDebug() << "VM::setImgLayout s=" << s;
             bc = selbi->getBranchContainer();
-            if (s == "Auto")
+            if (s == "Auto") {
                 bc->imagesContainerAutoLayout = true;
-            else {
+                bc->setImagesContainerLayout(
+                        mapDesign->imagesContainerLayout(
+                            BranchContainer::NewBranch, selbi->depth()));
+            } else {
                 bc->imagesContainerAutoLayout = false;
                 Container::Layout layout;
                 layout = Container::getLayoutFromString(s);
@@ -2447,7 +2451,6 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
                     bc->setImagesContainerLayout(layout);
             }
         }
-        //emitDataChanged(bi);    // FIXME-2 expensive, needed for changing layout?
     }
     reposition();
 }
@@ -5107,38 +5110,48 @@ uint VymModel::getModelID() { return modelID; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
-void VymModel::setMapDefLinkColor(QColor col)  // FIXME-2 not ported yet to containers
+QColor VymModel::getDefaultLinkColor()
 {
-    /*
-    if (!col.isValid())
-        return;
+    return mapDesign->defaultLinkColor();
+}
+
+void VymModel::setDefaultLinkColor(const QColor &col)
+{
+    if (!col.isValid()) return;
+
     saveState(
-        QString("setMapDefLinkColor (\"%1\")").arg(getMapDefLinkColor().name()),
-        QString("setMapDefLinkColor (\"%1\")").arg(col.name()),
+        QString("setDefaultLinkColor (\"%1\")").arg(mapDesign->defaultLinkColor().name()),
+        QString("setDefaultLinkColor (\"%1\")").arg(col.name()),
         QString("Set map link color to %1").arg(col.name()));
 
-    defLinkColor = col;
+    mapDesign->setDefaultLinkColor(col);
+
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
-    BranchContainer *bc;
     nextBranch(cur, prev);
     while (cur) {
-        bc = cur->getBranchContainer();
-        bc->getLinkContainer()->setLinkColor(); // FIXME-2   only def color here...
+        BranchContainer *bc = cur->getBranchContainer();
+        bc->updateUpLink();
+        /* FIXME-0 not needed
+        LinkContainer *lc = bc->getLinkContainer();
+        if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
+            lc->setLinkColor(cur->getHeadingColor());
+        else
+            lc->setLinkColor(cur->getHeadingColor());
+            */
 
-        for (int i = 0; i < cur->imageCount(); ++i)
-            cur->getImageNum(i)->getLMO()->setLinkColor();
+        // for (int i = 0; i < cur->imageCount(); ++i)
+        // FIXME-2 images not supported yet cur->getImageNum(i)->getLMO()->setLinkColor(col);
 
         nextBranch(cur, prev);
     }
     updateActions();
-    */
 }
 
-void VymModel::setMapLinkColorHintInt()  // FIXME-0 not ported yet to containers
+void VymModel::setLinkColorHint(const LinkContainer::ColorHint &lch)  // FIXME-0 not ported yet to containers, see toggleLCH below
 {
+    mapDesign->setLinkColorHint(lch);
     /*
-    // called from setMapLinkColorHint(lch) or at end of parse
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     BranchObj *bo;
@@ -5155,29 +5168,28 @@ void VymModel::setMapLinkColorHintInt()  // FIXME-0 not ported yet to containers
     */
 }
 
-void VymModel::setMapLinkColorHint(LinkContainer::ColorHint lch)
+void VymModel::toggleLinkColorHint()
 {
-    linkColorHint = lch;
-    setMapLinkColorHintInt();
-}
-
-void VymModel::toggleMapLinkColorHint() // FIXME-0 not ported yet to containers
-{
-    if (linkColorHint == LinkContainer::HeadingColor)
-        linkColorHint = LinkContainer::DefaultColor;
+    LinkContainer::ColorHint hint;
+    if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
+        hint = LinkContainer::DefaultColor;
     else
-        linkColorHint = LinkContainer::HeadingColor;
+        hint = LinkContainer::HeadingColor;
+    mapDesign->setLinkColorHint(hint);
+
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        LinkContainer *lc = cur->getBranchContainer()->getLinkContainer();
-        lc->setLinkColorHint(linkColorHint);
+        BranchContainer *bc = cur->getBranchContainer();
+        LinkContainer *lc = bc->getLinkContainer();
+        lc->setLinkColorHint(hint);
 
         /* FIXME-2 image link color not supported yet
         for (int i = 0; i < cur->imageCount(); ++i)
             cur->getImageNum(i)->getLMO()->setLinkColor();
         */
+        bc->updateStyles(BranchContainer::RelinkBranch);
         nextBranch(cur, prev);
     }
 }
@@ -5247,14 +5259,9 @@ QFont VymModel::getMapDefaultFont() { return defaultFont; }
 
 void VymModel::setMapDefaultFont(const QFont &f) { defaultFont = f; }
 
-LinkContainer::ColorHint VymModel::getMapLinkColorHint() // FIXME-0 still used?
+LinkContainer::ColorHint VymModel::getLinkColorHint()
 {
-    return linkColorHint;
-}
-
-QColor VymModel::getMapDefLinkColor() // FIXME-4 move to ME
-{
-    return defLinkColor;
+    return mapDesign->linkColorHint();
 }
 
 void VymModel::setMapDefXLinkPen(const QPen &p) // FIXME-4 move to ME
