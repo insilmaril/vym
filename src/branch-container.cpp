@@ -252,7 +252,9 @@ void BranchContainer::createBranchesContainer() // FIXME-0 move settings to upda
                     md->branchesContainerLayout(NewBranch, branchItem->depth()));
         else
             branchesContainer->setLayout(branchesContainerLayout);
-        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
+
+        // Will be changed later, depends on orientation
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
     }
 
     innerContainer->addContainer(branchesContainer);
@@ -687,11 +689,11 @@ Container::Layout BranchContainer::getBranchesContainerLayout()
     return branchesContainerLayout;
 }
 
-void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &a)
+void BranchContainer::setBranchesContainerVerticalAlignment(const VerticalAlignment &a)
 {
-    branchesContainerHorizontalAlignment = a;
+    branchesContainerVerticalAlignment = a;
     if (branchesContainer)
-        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
 }
 
 void BranchContainer::setBranchesContainerBrush(const QBrush &b)
@@ -968,12 +970,12 @@ void BranchContainer::reposition()
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                setBranchesContainerHorizontalAlignment(AlignedRight);
+                setBranchesContainerVerticalAlignment(AlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerHorizontalAlignment(AlignedLeft);
+                setBranchesContainerVerticalAlignment(AlignedLeft);
                 break;
             case UndefinedOrientation:
                 qWarning() << "BC::reposition - UndefinedOrientation in " << info();

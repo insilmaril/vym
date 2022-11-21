@@ -26,7 +26,7 @@ void HeadingContainer::init()
     headingColor = QColor(Qt::black);
 
     layout = Vertical;
-    horizontalAlignment = AlignedLeft;
+    verticalAlignment = AlignedLeft;
 }
 
 void HeadingContainer::setVisibility(bool v)

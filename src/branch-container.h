@@ -116,7 +116,7 @@ class BranchContainer : public SelectableContainer {
     bool branchesContainerAutoLayout;
     void setBranchesContainerLayout(const Layout &l);
     Container::Layout getBranchesContainerLayout();
-    void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
+    void setBranchesContainerVerticalAlignment(const VerticalAlignment &valign);
     void setBranchesContainerBrush(const QBrush &b);
 
     QRectF getHeadingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
@@ -149,7 +149,7 @@ class BranchContainer : public SelectableContainer {
     // even before containers are created on demand
     Layout imagesContainerLayout;
     Layout branchesContainerLayout;
-    HorizontalAlignment branchesContainerHorizontalAlignment;
+    VerticalAlignment branchesContainerVerticalAlignment;
     QBrush branchesContainerBrush;
 
     HeadingContainer *headingContainer; // Heading of this branch

@@ -27,7 +27,7 @@ void Container::copy(Container *other)
 
     layout = other->layout;
     horizontalDirection = other->horizontalDirection;
-    horizontalAlignment = other->horizontalAlignment;
+    verticalAlignment = other->verticalAlignment;
 }
 
 void Container::init()
@@ -248,9 +248,9 @@ Container::HorizontalDirection Container::getHorizontalDirection()
     return horizontalDirection;
 }
 
-void Container::setHorizontalAlignment(const HorizontalAlignment &a)
+void Container::setVerticalAlignment(const VerticalAlignment &a)
 {
-    horizontalAlignment = a;
+    verticalAlignment = a;
 }
 
 bool Container::isVisibleContainer()
@@ -574,7 +574,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // Position children initially
                 foreach (Container *c, childContainers()) {
                     y += - c->rect().top();
-		    switch (horizontalAlignment) {
+		    switch (verticalAlignment) {
 			case AlignedLeft:
                             c->setPos(- w_max / 2 - c->rect().left(), y);
 			    break;
@@ -585,7 +585,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 			    c->setPos (- c->rect().width() / 2 - c->rect().left(), y);
 			    break;
                         default:
-                            qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignment << " in " << info();
+                            qWarning() << "Container::reposition vertically - undefined alignment:" << verticalAlignment << " in " << info();
                             if (containerType == BranchesContainer)
                                 qWarning() << "  orient=" << ((BranchContainer*)this)->getOrientation();
 		    }
