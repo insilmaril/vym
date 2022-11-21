@@ -5148,33 +5148,8 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     updateActions();
 }
 
-void VymModel::setLinkColorHint(const LinkContainer::ColorHint &lch)  // FIXME-0 not ported yet to containers, see toggleLCH below
+void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-2 saveState missing
 {
-    mapDesign->setLinkColorHint(lch);
-    /*
-    BranchItem *cur = nullptr;
-    BranchItem *prev = nullptr;
-    BranchObj *bo;
-    nextBranch(cur, prev);
-    while (cur) {
-        bo = (BranchObj *)(cur->getLMO());  // FIXME
-        bo->setLinkColor();
-
-        for (int i = 0; i < cur->imageCount(); ++i)
-            cur->getImageNum(i)->getLMO()->setLinkColor();
-
-        nextBranch(cur, prev);
-    }
-    */
-}
-
-void VymModel::toggleLinkColorHint()
-{
-    LinkContainer::ColorHint hint;
-    if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
-        hint = LinkContainer::DefaultColor;
-    else
-        hint = LinkContainer::HeadingColor;
     mapDesign->setLinkColorHint(hint);
 
     BranchItem *cur = nullptr;
@@ -5192,6 +5167,14 @@ void VymModel::toggleLinkColorHint()
         bc->updateStyles(BranchContainer::RelinkBranch);
         nextBranch(cur, prev);
     }
+}
+
+void VymModel::toggleLinkColorHint()
+{
+    if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
+        setLinkColorHint(LinkContainer::DefaultColor);
+    else
+        setLinkColorHint(LinkContainer::HeadingColor);
 }
 
 void VymModel::
