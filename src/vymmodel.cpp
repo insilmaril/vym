@@ -5132,14 +5132,6 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     while (cur) {
         BranchContainer *bc = cur->getBranchContainer();
         bc->updateUpLink();
-        /* FIXME-0 not needed
-        LinkContainer *lc = bc->getLinkContainer();
-        if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
-            lc->setLinkColor(cur->getHeadingColor());
-        else
-            lc->setLinkColor(cur->getHeadingColor());
-            */
-
         // for (int i = 0; i < cur->imageCount(); ++i)
         // FIXME-2 images not supported yet cur->getImageNum(i)->getLMO()->setLinkColor(col);
 

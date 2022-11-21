@@ -942,8 +942,6 @@ void BranchContainer::reposition()
         // then my orientation is already set in MapEditor, so ignore here
     }
 
-    // linkContainer->setLinkStyle(LinkContainer::NoLink); // FIXME-0 remove here?
-
     // Settings depending on depth  // FIXME-0 most of this should go to BC::updateStyles
     if (depth == 0)
     {
