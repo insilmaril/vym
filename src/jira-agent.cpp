@@ -81,8 +81,7 @@ bool JiraAgent::setBranch(BranchItem *bi)
         return false;
     } else {
         branchID = bi->getID();
-        VymModel *model = bi->getModel();
-        modelID = model->getModelID();
+        modelID = bi->getModel()->getModelID();
         return true;
     }
 }
@@ -164,8 +163,8 @@ void JiraAgent::continueJob()
                     // Insert references to original branch and model
                     // FIXME-2 not needed jsobj["vymModelID"] = QString::number(modelID);
                     jsobj["vymBranchID"] = QJsonValue(branchID);
-                    jsobj["vymTicketURL"] = QJsonValue(branchID);
-                    
+                    jsobj["vymTicketURL"] = QJsonValue(getURL());
+
                     emit (jiraTicketReady(QJsonObject(jsobj)));
                     finishJob();
                     }

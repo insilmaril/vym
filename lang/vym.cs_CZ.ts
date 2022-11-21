@@ -51,38 +51,49 @@
     </message>
 </context>
 <context>
+    <name>AttributeDialog</name>
+    <message>
+        <source>Attributes</source>
+        <translation type="obsolete">Vlastnosti</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="obsolete">Zavřít</translation>
+    </message>
+</context>
+<context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>+</source>
-        <translation>+</translation>
+        <translation type="vanished">+</translation>
     </message>
     <message>
         <source>-</source>
-        <translation>-</translation>
+        <translation type="vanished">-</translation>
     </message>
     <message>
         <source>Link</source>
-        <translation>Spojení</translation>
+        <translation type="vanished">Spojení</translation>
     </message>
     <message>
         <source>Rounded Rectangle</source>
-        <translation>Zakulacený obdélník</translation>
+        <translation type="vanished">Zakulacený obdélník</translation>
     </message>
     <message>
         <source>Cloud</source>
-        <translation>Mrak</translation>
+        <translation type="vanished">Mrak</translation>
     </message>
     <message>
         <source>Frame</source>
-        <translation>Rámeček</translation>
+        <translation type="vanished">Rámeček</translation>
     </message>
     <message>
         <source>No Frame</source>
-        <translation>Žádný rámeček</translation>
+        <translation type="vanished">Žádný rámeček</translation>
     </message>
     <message>
         <source>Include images vertically</source>
-        <translation>Přihlédnout k horním a dolním okrajům obrázků</translation>
+        <translation type="vanished">Přihlédnout k horním a dolním okrajům obrázků</translation>
     </message>
     <message>
         <source>Property Editor</source>
@@ -90,63 +101,63 @@
     </message>
     <message>
         <source>Colors</source>
-        <translation>Barvy</translation>
+        <translation type="vanished">Barvy</translation>
     </message>
     <message>
         <source>Hide link if unselected</source>
-        <translation>Skrýt spojení, není-li vybráno</translation>
+        <translation type="vanished">Skrýt spojení, není-li vybráno</translation>
     </message>
     <message>
         <source>Layout</source>
-        <translation>Rozvržení</translation>
+        <translation type="vanished">Rozvržení</translation>
     </message>
     <message>
         <source>Free positioning of children (experimental!)</source>
-        <translation>Volné umístění vedlejších větví (pokusné)</translation>
+        <translation type="vanished">Volné umístění vedlejších větví (pokusné)</translation>
     </message>
     <message>
         <source>Branch Property Editor</source>
-        <translation>Editor vlastností větve</translation>
+        <translation type="vanished">Editor vlastností větve</translation>
     </message>
     <message>
         <source>Padding</source>
-        <translation>Odstup</translation>
+        <translation type="vanished">Odstup</translation>
     </message>
     <message>
         <source>Include images horizontally</source>
-        <translation>Přihlédnout k levým a pravým okrajům obrázků</translation>
+        <translation type="vanished">Přihlédnout k levým a pravým okrajům obrázků</translation>
     </message>
     <message>
         <source>Background color</source>
-        <translation>Barva pozadí</translation>
+        <translation type="vanished">Barva pozadí</translation>
     </message>
     <message>
         <source>Attributes</source>
-        <translation>Vlastnosti</translation>
+        <translation type="vanished">Vlastnosti</translation>
     </message>
     <message>
         <source>Rectangle</source>
-        <translation>Obdélník</translation>
+        <translation type="vanished">Obdélník</translation>
     </message>
     <message>
         <source>Ellipse</source>
-        <translation>Elipsa</translation>
+        <translation type="vanished">Elipsa</translation>
     </message>
     <message>
         <source>Geometry</source>
-        <translation>Uspořádání</translation>
+        <translation type="vanished">Uspořádání</translation>
     </message>
     <message>
         <source>Include children</source>
-        <translation>Zahrnout vedlejší větve</translation>
+        <translation type="vanished">Zahrnout vedlejší větve</translation>
     </message>
     <message>
         <source>Borderline color</source>
-        <translation>Barva dělicí čáry</translation>
+        <translation type="vanished">Barva dělicí čáry</translation>
     </message>
     <message>
         <source>Borderline width</source>
-        <translation>Šířka dělicí čáry</translation>
+        <translation type="vanished">Šířka dělicí čáry</translation>
     </message>
     <message>
         <source>Property Editor</source>
@@ -155,28 +166,11 @@
     </message>
     <message>
         <source>Task</source>
-        <translation type="unfinished">Úkol</translation>
-    </message>
-    <message>
-        <source>Delta priority</source>
-        <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Created:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Modified:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Úkol</translation>
     </message>
     <message>
         <source>%1 days ago</source>
         <comment>task related times</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sleep:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -220,7 +214,7 @@
     <name>ConfluenceUserDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
+        <translation type="obsolete">Dialog</translation>
     </message>
     <message>
         <source>Find Confluence user</source>
@@ -232,23 +226,7 @@
     <name>CredentialsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
-    </message>
-    <message>
-        <source>URL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Username:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save password</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Dialog</translation>
     </message>
     <message>
         <source>Credentials dialog</source>
@@ -267,79 +245,67 @@
     <name>EditXLinkDialog</name>
     <message>
         <source>Close</source>
-        <translation>Zavřít</translation>
+        <translation type="vanished">Zavřít</translation>
     </message>
     <message>
         <source>Use color of heading</source>
-        <translation>Použít barvu záhlaví</translation>
+        <translation type="vanished">Použít barvu záhlaví</translation>
     </message>
     <message>
         <source>Arrow begin:</source>
-        <translation>Začátek šipky:</translation>
+        <translation type="vanished">Začátek šipky:</translation>
     </message>
     <message>
         <source>XLink width:</source>
-        <translation>Šířka xLink:</translation>
+        <translation type="vanished">Šířka xLink:</translation>
     </message>
     <message>
         <source>XLink color:</source>
-        <translation>Barva xLink:</translation>
+        <translation type="vanished">Barva xLink:</translation>
     </message>
     <message>
         <source>Edit XLink</source>
-        <translation>Upravit xLink</translation>
+        <translation type="vanished">Upravit xLink</translation>
     </message>
     <message>
         <source>Arrow end:</source>
-        <translation>Konec šipky:</translation>
+        <translation type="vanished">Konec šipky:</translation>
     </message>
     <message>
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
-        <translation>Styl čáry:</translation>
+        <translation type="vanished">Styl čáry:</translation>
     </message>
     <message>
         <source>Use as default:</source>
-        <translation>Použít jako výchozí:</translation>
+        <translation type="vanished">Použít jako výchozí:</translation>
     </message>
 </context>
 <context>
     <name>ExportConfluenceDialog</name>
     <message>
-        <source>Export Confluence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update existing page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Options</source>
-        <translation type="unfinished">Volby</translation>
+        <translation type="obsolete">Volby</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation type="unfinished">Obrázek mapy</translation>
+        <translation type="obsolete">Obrázek mapy</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation type="unfinished">Zahrnout obrázky</translation>
+        <translation type="obsolete">Zahrnout obrázky</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation type="unfinished">Obsah</translation>
+        <translation type="obsolete">Obsah</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation type="unfinished">Příznaky úkolů</translation>
+        <translation type="obsolete">Příznaky úkolů</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation type="unfinished">Obecné příznaky</translation>
+        <translation type="obsolete">Obecné příznaky</translation>
     </message>
     <message>
         <source>Number sections</source>
@@ -347,66 +313,62 @@
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Barevné popisy v textu</translation>
+        <translation type="obsolete">Barevné popisy v textu</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="unfinished">Uložit nastavení do mapy</translation>
+        <translation type="obsolete">Uložit nastavení do mapy</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Zrušit</translation>
+        <translation type="obsolete">Zrušit</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Exportovat</translation>
-    </message>
-    <message>
-        <source>Use heading of first map center as page name</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Exportovat</translation>
     </message>
 </context>
 <context>
     <name>ExportHTMLDialog</name>
     <message>
         <source>Include images</source>
-        <translation>Zahrnout obrázky</translation>
+        <translation type="vanished">Zahrnout obrázky</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation>Obsah</translation>
+        <translation type="vanished">Obsah</translation>
     </message>
     <message>
         <source>Copy CSS from </source>
-        <translation>Kopírovat CSS z </translation>
+        <translation type="vanished">Kopírovat CSS z </translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation>Obecné příznaky</translation>
+        <translation type="vanished">Obecné příznaky</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation>Obrázek mapy</translation>
+        <translation type="vanished">Obrázek mapy</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Zrušit</translation>
+        <translation type="vanished">Zrušit</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Procházet</translation>
+        <translation type="vanished">Procházet</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation>Exportovat</translation>
+        <translation type="vanished">Exportovat</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation>Uložit nastavení do mapy</translation>
+        <translation type="vanished">Uložit nastavení do mapy</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Volby</translation>
+        <translation type="vanished">Volby</translation>
     </message>
     <message>
         <source>VYM - Export HTML to directory</source>
@@ -414,27 +376,27 @@
     </message>
     <message>
         <source>Number sections</source>
-        <translation>Číslovat oddíly</translation>
+        <translation type="vanished">Číslovat oddíly</translation>
     </message>
     <message>
         <source>Export HTML</source>
-        <translation>Exportovat jako HTML</translation>
+        <translation type="vanished">Exportovat jako HTML</translation>
     </message>
     <message>
         <source>Scripts</source>
-        <translation>Skripty</translation>
+        <translation type="vanished">Skripty</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation>Po exportu:</translation>
+        <translation type="vanished">Po exportu:</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation>Barevné popisy v textu</translation>
+        <translation type="vanished">Barevné popisy v textu</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation>Stylové listy</translation>
+        <translation type="vanished">Stylové listy</translation>
     </message>
     <message>
         <source>The settings saved in the map would like to run script:
@@ -452,7 +414,7 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation>Příznaky úkolů</translation>
+        <translation type="vanished">Příznaky úkolů</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -460,50 +422,89 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Use CSS from</source>
-        <translation>Použít CSS z</translation>
+        <translation type="vanished">Použít CSS z</translation>
     </message>
     <message>
         <source>Export to directory:</source>
-        <translation>Exportovat do adresáře:</translation>
+        <translation type="vanished">Exportovat do adresáře:</translation>
+    </message>
+</context>
+<context>
+    <name>ExportXHTMLDialog</name>
+    <message>
+        <source>Export to directory:</source>
+        <translation type="obsolete">Exportovat do adresáře:</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="obsolete">Procházet</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="obsolete">Volby</translation>
+    </message>
+    <message>
+        <source>Colored headings in text</source>
+        <translation type="obsolete">Barevné popisy v textu</translation>
+    </message>
+    <message>
+        <source>Save settings in map</source>
+        <translation type="obsolete">Uložit nastavení do mapy</translation>
+    </message>
+    <message>
+        <source>Stylesheets</source>
+        <translation type="obsolete">Stylové listy</translation>
+    </message>
+    <message>
+        <source>Scripts</source>
+        <translation type="obsolete">Skripty</translation>
+    </message>
+    <message>
+        <source>After Export:</source>
+        <translation type="obsolete">Po exportu:</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Zrušit</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="obsolete">Exportovat</translation>
     </message>
 </context>
 <context>
     <name>ExtraInfoDialog</name>
     <message>
         <source>Map:</source>
-        <translation>Mapa:</translation>
+        <translation type="vanished">Mapa:</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Zavřít</translation>
+        <translation type="vanished">Zavřít</translation>
     </message>
     <message>
         <source>Statistics:</source>
-        <translation>Statistiky:</translation>
+        <translation type="vanished">Statistiky:</translation>
     </message>
     <message>
         <source>VYM - Info</source>
-        <translation>VYM - Informace</translation>
+        <translation type="vanished">VYM - Informace</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Zrušit</translation>
+        <translation type="vanished">Zrušit</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation>Název:</translation>
+        <translation type="vanished">Název:</translation>
     </message>
     <message>
         <source>Comment:</source>
-        <translation>Poznámka:</translation>
+        <translation type="vanished">Poznámka:</translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation>Autor:</translation>
-    </message>
-    <message>
-        <source>File location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Autor:</translation>
     </message>
 </context>
 <context>
@@ -551,15 +552,15 @@ ve svém systému povolit!</translation>
     <name>HistoryWindow</name>
     <message>
         <source>Redo</source>
-        <translation>Znovu</translation>
+        <translation type="vanished">Znovu</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Čas</translation>
+        <translation type="vanished">Čas</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Zpět</translation>
+        <translation type="vanished">Zpět</translation>
     </message>
     <message>
         <source>Close</source>
@@ -576,7 +577,7 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>Undo action</source>
@@ -584,7 +585,7 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Poznámka</translation>
+        <translation type="vanished">Poznámka</translation>
     </message>
     <message>
         <source>Current state</source>
@@ -618,6 +619,26 @@ ve svém systému povolit!</translation>
     </message>
 </context>
 <context>
+    <name>JiraSettingsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="obsolete">Dialog</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="obsolete">Přidat</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="obsolete">Odstranit</translation>
+    </message>
+    <message>
+        <source>JiraSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LineEditDialog</name>
     <message>
         <source>Ok</source>
@@ -629,18 +650,18 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TextovýŠtítek</translation>
+        <translation type="vanished">TextovýŠtítek</translation>
     </message>
 </context>
 <context>
     <name>LockedFileDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>Delete lockfile</source>
@@ -977,7 +998,7 @@ ve svém systému povolit!</translation>
     </message>
     <message>
         <source>Set &amp;Color</source>
-        <translation>Nastavit &amp;barvu</translation>
+        <translation type="vanished">Nastavit &amp;barvu</translation>
     </message>
     <message>
         <source>&amp;Print</source>
@@ -3474,6 +3495,19 @@ because file exists and cannot be changed.</source>
         <source>Set as link to vym map</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Reset delta priority for visible tasks</source>
+        <comment>Reset delta</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select color (Press Shift for more options)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t rename map to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
@@ -3985,19 +4019,19 @@ The map could not be saved, please check if backup file is available or export a
     <name>ScriptEditor</name>
     <message>
         <source>Run</source>
-        <translation>Spustit</translation>
+        <translation type="vanished">Spustit</translation>
     </message>
     <message>
         <source>Form</source>
-        <translation>Formulář</translation>
+        <translation type="vanished">Formulář</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>Nahrát</translation>
+        <translation type="vanished">Nahrát</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Uložit</translation>
+        <translation type="vanished">Uložit</translation>
     </message>
     <message>
         <source>Couldn&apos;t open %1.
@@ -4062,7 +4096,7 @@ Chcete jej přepsat?</translation>
     </message>
     <message>
         <source>Save to selected slide</source>
-        <translation>Uložit do vybraného snímku</translation>
+        <translation type="vanished">Uložit do vybraného snímku</translation>
     </message>
     <message>
         <source>Overwrite</source>
@@ -4093,11 +4127,7 @@ Chcete jej přepsat?</translation>
     </message>
     <message>
         <source>Reload</source>
-        <translation type="unfinished">Nahrát znovu</translation>
-    </message>
-    <message>
-        <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nahrát znovu</translation>
     </message>
     <message>
         <source>Script</source>
@@ -4122,11 +4152,11 @@ Chcete jej přepsat?</translation>
     <name>ShowTextDialog</name>
     <message>
         <source>Close</source>
-        <translation>Zavřít</translation>
+        <translation type="vanished">Zavřít</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
 </context>
 <context>
@@ -4920,6 +4950,16 @@ Do you want to write the map</source>
         <source>uncompressed, potentially overwrite existing data</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Could not find Jira ticket pattern in %1</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Received Jira data.</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>VymProcess</name>
@@ -4961,7 +5001,7 @@ Do you want to write the map</source>
     <name>WarningDialog</name>
     <message>
         <source>Ok</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
         <source>Show this message again</source>
@@ -4973,7 +5013,7 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>Proceed</source>
@@ -4981,7 +5021,7 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>showAgainBox</source>
-        <translation>BoxUkázatZnovu</translation>
+        <translation type="vanished">BoxUkázatZnovu</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -4992,28 +5032,12 @@ Do you want to write the map</source>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
-        <source>zip settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>zip tool:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Choose</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Status</source>
-        <translation type="unfinished">Stav</translation>
-    </message>
-    <message>
-        <source>unzip tool:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Stav</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation type="obsolete">Zavřít</translation>
     </message>
     <message>
         <source>zip settings</source>

@@ -74,7 +74,8 @@ QDir cashDir;            // tmp dir with cashed svg files in tmpVymDir
 QString clipboardDir;    // Clipboard used in all mapEditors
 QString clipboardFile;   // Clipboard used in all mapEditors
 
-QDir vymBaseDir; // Containing all styles, scripts, images, ...
+QDir vymBaseDir;            // Containing all styles, scripts, images, ...
+QDir vymTranslationsDir;    // Translation files (*.qm)
 QDir lastImageDir;
 QDir lastMapDir;
 QDir lastExportDir;
@@ -345,28 +346,51 @@ int main(int argc, char *argv[])
 #endif
     }
 
+    // Prepare and check translations
+    vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
+    vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
     if (debug) {
         qDebug() << "Main:     localName: " << localeName;
-        qDebug() << "Main:  translations: " << localeName,
-            vymBaseDir.path() + "/lang";
+        qDebug() << "Main:  translations: " << vymTranslationsDir.path();
         qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
         qDebug() << "Main:          LANG: "
-                 << QProcessEnvironment::systemEnvironment().value("LANG",
-                                                                   "foobar");
+                 << QProcessEnvironment::systemEnvironment().value("LANG", "not set.");
     }
 
-    QTranslator vymTranslator;
-    if (!vymTranslator.load(QString("vym.%1").arg(localeName),
-                            vymBaseDir.path() + "/lang")) {
+    bool translationsMissing = false;
+    if(!vymTranslationsDir.exists())
+        translationsMissing = true;
+    else if (vymTranslationsDir.isEmpty())
+        translationsMissing = true;
+
+    if (translationsMissing) {
         WarningDialog warn;
+        warn.setMinimumWidth(800);
+        warn.setMinimumHeight(350);
         warn.showCancelButton(false);
+        warn.setShowAgainName("mainwindow/translations/qmFilesMissing");
+        warn.setCaption("Translations not available");
         warn.setText(
-            QString("Couldn't load translations for locale \"%1\" in\n%2")
-                .arg(localeName)
-                .arg(vymBaseDir.path() + "/lang"));
-        warn.setShowAgainName("mainwindow/loadTranslations");
+                "vym has not been built correctly and only will be available in English: \n\n"
+                "No translation files in " + vymTranslationsDir.path().toLatin1() + "\n\n" +
+                "Please get vym from\n"
+                " * https://sourceforge.net/projects/vym/  or \n"
+                " * https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym");
+        warn.exec();
+    } else {
+        QTranslator vymTranslator;
+        if (!vymTranslator.load(QString("vym.%1").arg(localeName), vymTranslationsDir.path())) {
+            WarningDialog warn;
+            warn.showCancelButton(false);
+            warn.setText(
+                QString("Couldn't load translation for locale \"%1\" in\n%2")
+                    .arg(localeName)
+                    .arg(vymTranslationsDir.path()));
+            warn.setShowAgainName("mainwindow/translations/localeMissing");
+            warn.exec();
+        }
+        app.installTranslator(&vymTranslator);
     }
-    app.installTranslator(&vymTranslator);
 
     // Initializing the master rows of flags
     systemFlagsMaster = new FlagRowMaster;
