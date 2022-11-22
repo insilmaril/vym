@@ -92,10 +92,11 @@ void BranchContainer::init()
     setCentralContainer(headingContainer);
 
     // Set some defaults, should be overridden from MapDesign later
-    imagesContainerAutoLayout = true;
     branchesContainerAutoLayout = true;
-    imagesContainerLayout = FloatingFree;
     branchesContainerLayout = Vertical;
+
+    imagesContainerAutoLayout = true;
+    imagesContainerLayout = FloatingFree;
 
     tmpParentContainer = nullptr;
 
@@ -105,22 +106,22 @@ void BranchContainer::init()
 BranchContainer* BranchContainer::parentBranchContainer()
 {
     Container *p = parentContainer();
-    if (!p) return nullptr;;
+    if (!p) return nullptr;
 
     // Some checks before the real parent can be returned
     if (p->containerType != BranchesContainer) return nullptr;
 
     p = p->parentContainer();
-    if (!p) return nullptr;;
+    if (!p) return nullptr;
 
     if (p->containerType != InnerContent) return nullptr;
 
     p = p->parentContainer();
-    if (!p) return nullptr;;
+    if (!p) return nullptr;
 
     if (p->containerType == OuterContainer) {
         p = p->parentContainer();
-        if (!p) return nullptr;;
+        if (!p) return nullptr;
     }
 
     if (! (p->containerType == Branch || p->containerType == TmpParent)) return nullptr;
@@ -238,24 +239,13 @@ bool BranchContainer::hasFloatingBranchesLayout()
         return false;
 }
 
-void BranchContainer::createBranchesContainer() // FIXME-0 move settings to updateStyles, also createImagesContainer
+void BranchContainer::createBranchesContainer()
 {
     branchesContainer = new Container ();
     branchesContainer->containerType = Container::BranchesContainer;
 
-    if (branchItem) {
-        // tmpParentContainer has no associated branchItem!
-        MapDesign *md = branchItem->getMapDesign();
-
-        if (branchesContainerAutoLayout)
-            branchesContainer->setLayout(
-                    md->branchesContainerLayout(NewBranch, branchItem->depth()));
-        else
-            branchesContainer->setLayout(branchesContainerLayout);
-
-        // Will be changed later, depends on orientation
-        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
-    }
+    // Initial setting here, depends on orientation // FIXME-2 needed?
+    branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
 
     innerContainer->addContainer(branchesContainer);
 }
@@ -264,7 +254,9 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
     if (!branchesContainer) {
         createBranchesContainer();
-//        updateStyles(NewBranch);  // FIXME-2 probably not needed
+        if (branchItem)
+            // tmpParentContainer has no associated branchItem!
+            updateStyles(NewBranch);
     }
 
     QPointF sp = c->scenePos();
@@ -660,9 +652,6 @@ Container::Layout BranchContainer::getImagesContainerLayout()
 
 void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 {
-    if (branchesContainerLayout == ltype || ltype == UndefinedLayout)
-        return;
-
     branchesContainerLayout = ltype;
 
     if (branchesContainer) { // FIXME-2 only use this if switching to floating*
@@ -678,10 +667,9 @@ void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 
         if (ltype == FloatingFree)
             setPos (pos() +  oc_pos);
-    }
 
-    if (branchesContainer)
         branchesContainer->setLayout(branchesContainerLayout);
+    }
 }
 
 Container::Layout BranchContainer::getBranchesContainerLayout()
@@ -782,7 +770,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 {
     // updateStyles() is never called for TmpParent!
 
-    //qDebug() << "BC::updateStyles of " << info();
+    //qDebug() << "BC::updateStyles of " << info() << "mode=" << styleUpdateMode;
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->getMapDesign();
@@ -791,10 +779,15 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
     if (branchesContainerAutoLayout)
         setBranchesContainerLayout(
                 md->branchesContainerLayout(styleUpdateMode, depth));
+    else
+        setBranchesContainerLayout(branchesContainerLayout);
+
 
     if (imagesContainerAutoLayout)
         setImagesContainerLayout(
                 md->imagesContainerLayout(styleUpdateMode, depth));
+    else
+        setImagesContainerLayout(imagesContainerLayout);
 
     // Links
     if (linkContainer->getLinkColorHint() == LinkContainer::HeadingColor)
@@ -811,28 +804,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
             linkContainer->createBottomLine();
     }
 
-    // Example rules for testing
-    /*
-    if (depth == 0) {
-        qDebug() << " d=0";
-        headingContainer->setHeadingColor(Qt::blue);
-    } else if (depth == 1) {
-        headingContainer->setHeadingColor(Qt::green);
-        qDebug() << " d=1";
-    } else {
-        qDebug() << " d>1";
-        headingContainer->setHeadingColor(Qt::black);
-    }
-    */
-
-    /* Conditions
-     - styleUpdateMode: Relink or new branch?
-     - depth "equal" or "greater than"
-     - frame set? (different link points then)
-     - map design
-    */
-
-    // FIXME-3 for testing we do some coloring and additional drawing
+    // FIXME-5 for testing we do some coloring and additional drawing
     /*
     if (containerType != TmpParent) {
         // BranchContainer

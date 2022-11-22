@@ -3442,7 +3442,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStyles(BranchContainer::RelinkBranch);
+        branch->updateStylesRecursively(BranchContainer::RelinkBranch);
 
         emitDataChanged(branch);
 

@@ -85,7 +85,7 @@ class BranchItem : public MapItem {
         QList <TreeItem*> excludedItems); //! search map for branches or images. Ignore
                               //! excludeItems, where search is started or which are selected
 
-    void updateStyles(BranchContainer::StyleUpdateMode styleUpdateMode);
+    void updateStylesRecursively(BranchContainer::StyleUpdateMode styleUpdateMode);
     void updateVisuals();
 
     BranchContainer *createBranchContainer(

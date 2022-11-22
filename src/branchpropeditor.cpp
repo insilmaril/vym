@@ -94,6 +94,7 @@ void BranchPropertyEditor::updateContainerLayoutButtons()
             break;
         default:
             qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(bc->getLayoutString(bc->getBranchesContainerLayout()));
+            qDebug() << "branch=" << branchItem->getHeadingPlain();
     }
 
     // Layout images

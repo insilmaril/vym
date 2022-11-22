@@ -476,16 +476,14 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     return nullptr;
 }
 
-void BranchItem::updateStyles(BranchContainer::StyleUpdateMode styleUpdateMode)
+void BranchItem::updateStylesRecursively(BranchContainer::StyleUpdateMode styleUpdateMode)
 {
-    qDebug() << "BI::updateStyles of " << getHeadingPlain();
-
     // Update my own container
     branchContainer->updateStyles(styleUpdateMode);
 
     // Recurively update subtree
     for (int i = 0; i < branchCounter; i++) {
-        getBranchNum(i)->updateStyles(styleUpdateMode);
+        getBranchNum(i)->updateStylesRecursively(styleUpdateMode);
     }
 }
 

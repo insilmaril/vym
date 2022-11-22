@@ -14,12 +14,19 @@ MapDesign::MapDesign()
 
 void MapDesign::init()
 {
-    // New branch, child branches
+    // NewBranch: Layout of children branches 
     bcNewBranchLayouts << Container::FloatingBounded;
     bcNewBranchLayouts << Container::Vertical;
 
-    // New branch, child images
+    // RelinkBranch: Layout of children branches 
+    bcRelinkBranchLayouts << Container::FloatingBounded;
+    bcRelinkBranchLayouts << Container::Vertical;
+
+    // NewBranch: Layout of children images 
     icNewBranchLayouts << Container::FloatingFree;
+
+    // RelinkBranch: Layout of children images
+    icRelinkBranchLayouts << Container::FloatingFree;
 
     // Should links of branches use a default color or the color of heading?
     linkColHint = LinkContainer::DefaultColor;
