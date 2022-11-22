@@ -250,13 +250,13 @@ void BranchContainer::createBranchesContainer()
     innerContainer->addContainer(branchesContainer);
 }
 
-void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
+void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) // FIXME-2 branchesContainer not deleted, when no longer used
 {
     if (!branchesContainer) {
         createBranchesContainer();
         if (branchItem)
             // tmpParentContainer has no associated branchItem!
-            updateStyles(NewBranch);
+            updateStyles(RelinkBranch);
     }
 
     QPointF sp = c->scenePos();
@@ -441,15 +441,7 @@ void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not del
 {
     imagesContainer = new Container ();
     imagesContainer->containerType = ImagesContainer;
-    if (branchItem) {
-        // tmpParentContainer has no associated branchItem!
-        MapDesign *md = branchItem->getMapDesign();
-        if (imagesContainerAutoLayout)
-            imagesContainer->setLayout(
-                    md->imagesContainerLayout(NewBranch, branchItem->depth()));
-        else
-            imagesContainer->setLayout(imagesContainerLayout);
-    }
+
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
     else
@@ -460,6 +452,8 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
     if (!imagesContainer) {
         createImagesContainer();
+        if (branchItem)
+            updateStyles(RelinkBranch);
     }
 
     QPointF sp = c->scenePos();
@@ -790,6 +784,11 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
         setImagesContainerLayout(imagesContainerLayout);
 
     // Links
+    if (depth == 0)   // FIXME-0 get linkstyle from mapDesign
+        linkContainer->setLinkStyle(LinkContainer::NoLink);
+    else
+        linkContainer->setLinkStyle(LinkContainer::Line);
+
     if (linkContainer->getLinkColorHint() == LinkContainer::HeadingColor)
         linkContainer->setLinkColor(headingContainer->getColor());
     else
@@ -923,21 +922,11 @@ void BranchContainer::reposition()
         if (containerType != TmpParent) {
             setHorizontalDirection(LeftToRight);
             innerContainer->setHorizontalDirection(LeftToRight);
-            setLayout(FloatingBounded);
-        } else {
-            // TmpParent
-            setLayout(Horizontal);  // FIXME-2 needed?
         }
-
-        linkContainer->setLinkStyle(LinkContainer::NoLink);
 
         innerContainer->setLayout(BoundingFloats);  // in TmpParentContainer animate children containers
     } else {
         // Branch or mainbranch
-        setLayout(Horizontal);
-
-        linkContainer->setLinkStyle(LinkContainer::Line);
-
         switch (orientation) {
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
