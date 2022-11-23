@@ -308,6 +308,14 @@ void BranchContainer::updateBranchesContainer()
     }
 }
 
+void BranchContainer::updateImagesContainer()
+{
+    if (imagesContainer && imagesContainer->childItems().count() == 0) {
+        delete imagesContainer;
+        imagesContainer = nullptr;
+    }
+}
+
 void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
@@ -896,7 +904,7 @@ void BranchContainer::reposition()
                             orientation = RightOfParent;
                         else
                             orientation = LeftOfParent;
-                        /*
+                        /* FIXME-2 remove comments
                         qdbg() << ind() << "BC: Setting neworient " << orientation << " in: " << info();
                         qdbg() << ind() << "    pc: " << parentContainer()->info();
                         */
@@ -953,6 +961,9 @@ void BranchContainer::reposition()
     // Update branchesContainer and linkSpaceContainer,
     // this even might remove these containers
     updateBranchesContainer();
+
+    // Remove  imagesContainer, if unused
+    updateImagesContainer();
 
     Container::reposition();
 

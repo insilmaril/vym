@@ -41,7 +41,7 @@ BranchItem::~BranchItem()
     if (branchContainer) {
         // This deletes only the first container here.
         // All other containers deeper down in tree will unlink themselves 
-        // by calling BranchItem::unlinkContainer, which will set 
+        // by calling BranchItem::unlinkBranchContainer, which will set 
         // the branchContainer == nullptr;
         //
         // QGraphicsItems such as BranchContainer will delete all their children 
@@ -538,7 +538,7 @@ void BranchItem::unlinkBranchContainer()
     branchContainer = nullptr;
 }
 
-Container* BranchItem::getBranchesContainer() 
+Container* BranchItem::getBranchesContainer()
 {
     return branchContainer->getBranchesContainer();
 }

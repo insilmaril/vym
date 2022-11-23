@@ -78,8 +78,10 @@ class BranchContainer : public SelectableContainer {
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
 
+
   private:
-    void updateBranchesContainer();    //! Remove unused containers and add needed ones
+    void updateBranchesContainer();     //! Remove unused containers and add needed ones
+    void updateImagesContainer();       //! Remove unused containers and add needed ones
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
