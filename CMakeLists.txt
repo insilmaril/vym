@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ViewYourMind)
 
+find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+
 set(QtComponents
     LinguistTools
     Network
@@ -20,6 +22,10 @@ set(QtLibraries
     Qt5::Widgets
     Qt5::Xml
 )
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 # On Linux DBUS is used for IPC with vym
 # On openSUSE install it using:  zypper install dbus-1-devel
@@ -82,8 +88,7 @@ if(WIN32)
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
 endif()
 
-
-
+# Add DBUS interfaces, if DBUS is available on platform
 if(DBus1_FOUND)
     list(APPEND VymSources src/dbus/adaptormodel.cpp src/dbus/adaptorvym.cpp)
     include_directories(${CMAKE_SOURCE_DIR}/src/dbus ${CMAKE_SOURCE_DIR}/src)
@@ -91,15 +96,25 @@ if(DBus1_FOUND)
 endif()
 
 # Translations
+file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
+message(STATUS "Creating ${CMAKE_BINARY_DIR}/translations")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
+set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 
-file(GLOB_RECURSE VymTranslationSources RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lang")
-set_source_files_properties(${VymTranslationSources} PROPERTIES OUTPUT_LOCATION lang)
-QT5_ADD_TRANSLATION(VymTranslations ${VymTranslationSources})
+# To update the translation files based on source code changes 
+# first call manually 
+# lupdate-qt5 src/ -ts lang/*.ts
+#
+# Qt6 will have a dedicated macro:
+# https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
+QT5_add_translation(qm_files ${ts_files})
+
+#message(STATUS "ts_files: ${ts_files}")
+#message(STATUS "qm_files: ${qm_files}")
 
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
-add_executable(vym ${VymSources} vym.qrc ${VymTranslations})
+add_executable(vym ${VymSources} vym.qrc ${qm_files})
 target_link_libraries(vym ${QtLibraries})
 
 if(WIN32)
@@ -109,11 +124,15 @@ else()
     install(TARGETS vym DESTINATION bin)
 endif()
 
+add_custom_target(make-translations-directory ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/translations)
+add_dependencies(vym make-translations-directory)
+
 install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES doc/vym.1.gz DESTINATION ${CMAKE_INSTALL_MANDIR})
 install(FILES README.md LICENSE.txt DESTINATION ${CMAKE_INSTALL_DOCDIR})
-install(DIRECTORY exports flags icons macros lang scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)

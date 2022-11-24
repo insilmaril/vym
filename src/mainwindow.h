@@ -422,7 +422,7 @@ class Main : public QMainWindow {
     int xLinkMenuWidth;
 
     QMenu *recentFilesMenu;
-    enum { MaxRecentFiles = 9 };
+    enum { MaxRecentFiles = 20 };
     QAction *recentFileActions[MaxRecentFiles];
 
     QAction *macroActions[24];

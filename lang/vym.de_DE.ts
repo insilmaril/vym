@@ -64,121 +64,125 @@
         <source>Close</source>
         <translation type="obsolete">Schliessen</translation>
     </message>
+    <message>
+        <source>Attributes</source>
+        <translation type="obsolete">Attribute</translation>
+    </message>
 </context>
 <context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>Branch Property Editor</source>
-        <translation>Zweig Eigenschaften</translation>
+        <translation type="vanished">Zweig Eigenschaften</translation>
     </message>
     <message>
         <source>Frame</source>
-        <translation>Rahmen</translation>
+        <translation type="vanished">Rahmen</translation>
     </message>
     <message>
         <source>Geometry</source>
-        <translation>Geometrie</translation>
+        <translation type="vanished">Geometrie</translation>
     </message>
     <message>
         <source>No Frame</source>
-        <translation>Kein Rahmen</translation>
+        <translation type="vanished">Kein Rahmen</translation>
     </message>
     <message>
         <source>Rectangle</source>
-        <translation>Rechteck</translation>
+        <translation type="vanished">Rechteck</translation>
     </message>
     <message>
         <source>Rounded Rectangle</source>
-        <translation>Rechteck, gerundet</translation>
+        <translation type="vanished">Rechteck, gerundet</translation>
     </message>
     <message>
         <source>Ellipse</source>
-        <translation>Ellipse</translation>
+        <translation type="vanished">Ellipse</translation>
     </message>
     <message>
         <source>Cloud</source>
-        <translation>Wolke</translation>
+        <translation type="vanished">Wolke</translation>
     </message>
     <message>
         <source>Padding</source>
-        <translation>Abstand</translation>
+        <translation type="vanished">Abstand</translation>
     </message>
     <message>
         <source>Borderline width</source>
-        <translation>Stärke Begrenzungslinie</translation>
+        <translation type="vanished">Stärke Begrenzungslinie</translation>
     </message>
     <message>
         <source>Include children</source>
-        <translation>Unterzweige mit einrahmen</translation>
+        <translation type="vanished">Unterzweige mit einrahmen</translation>
     </message>
     <message>
         <source>Colors</source>
-        <translation>Farben</translation>
+        <translation type="vanished">Farben</translation>
     </message>
     <message>
         <source>Borderline color</source>
-        <translation>Farbe Begrenzungslinie</translation>
+        <translation type="vanished">Farbe Begrenzungslinie</translation>
     </message>
     <message>
         <source>Background color</source>
-        <translation>Hintergrundfarbe</translation>
+        <translation type="vanished">Hintergrundfarbe</translation>
     </message>
     <message>
         <source>Layout</source>
-        <translation>Layout</translation>
+        <translation type="vanished">Layout</translation>
     </message>
     <message>
         <source>Include images horizontally</source>
-        <translation>Linke und rechte Bildkanten berücksichtigen</translation>
+        <translation type="vanished">Linke und rechte Bildkanten berücksichtigen</translation>
     </message>
     <message>
         <source>Include images vertically</source>
-        <translation>Obere und untere Bildkanten berücksichtigen</translation>
+        <translation type="vanished">Obere und untere Bildkanten berücksichtigen</translation>
     </message>
     <message>
         <source>Free positioning of children (experimental!)</source>
-        <translation>Unterzweige frei positionieren (experimentell!)</translation>
+        <translation type="vanished">Unterzweige frei positionieren (experimentell!)</translation>
     </message>
     <message>
         <source>Task</source>
-        <translation>Aufgabe</translation>
+        <translation type="vanished">Aufgabe</translation>
     </message>
     <message>
         <source>Delta priority</source>
         <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
-        <translation>Delta Priorität</translation>
+        <translation type="vanished">Delta Priorität</translation>
     </message>
     <message>
         <source>Created:</source>
-        <translation>Angelegt:</translation>
+        <translation type="vanished">Angelegt:</translation>
     </message>
     <message>
         <source>Modified:</source>
-        <translation>Verändert:</translation>
+        <translation type="vanished">Verändert:</translation>
     </message>
     <message>
         <source>Sleep:</source>
-        <translation>Wiedervorlage:</translation>
+        <translation type="vanished">Wiedervorlage:</translation>
     </message>
     <message>
         <source>Link</source>
-        <translation>Verbindung</translation>
+        <translation type="vanished">Verbindung</translation>
     </message>
     <message>
         <source>Hide link if unselected</source>
-        <translation>Verbindung verbergen, falls nicht selektiert</translation>
+        <translation type="vanished">Verbindung verbergen, falls nicht selektiert</translation>
     </message>
     <message>
         <source>Attributes</source>
-        <translation>Attribute</translation>
+        <translation type="vanished">Attribute</translation>
     </message>
     <message>
         <source>+</source>
-        <translation>+</translation>
+        <translation type="vanished">+</translation>
     </message>
     <message>
         <source>-</source>
-        <translation>-</translation>
+        <translation type="vanished">-</translation>
     </message>
     <message>
         <source>Property Editor</source>
@@ -346,7 +350,7 @@
     <name>ConfluenceUserDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>Find Confluence user</source>
@@ -358,23 +362,23 @@
     <name>CredentialsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>URL:</source>
-        <translation>URL:</translation>
+        <translation type="vanished">URL:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation>Benutzername:</translation>
+        <translation type="vanished">Benutzername:</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation>Passwort:</translation>
+        <translation type="vanished">Passwort:</translation>
     </message>
     <message>
         <source>Save password</source>
-        <translation>Passwort speichern</translation>
+        <translation type="vanished">Passwort speichern</translation>
     </message>
     <message>
         <source>Credentials dialog</source>
@@ -397,32 +401,32 @@
     <name>EditXLinkDialog</name>
     <message>
         <source>Edit XLink</source>
-        <translation>xLink ändern</translation>
+        <translation type="vanished">xLink ändern</translation>
     </message>
     <message>
         <source>Arrow begin:</source>
-        <translation>Pfeilschaft</translation>
+        <translation type="vanished">Pfeilschaft</translation>
     </message>
     <message>
         <source>XLink width:</source>
-        <translation>xLink Dicke:</translation>
+        <translation type="vanished">xLink Dicke:</translation>
     </message>
     <message>
         <source>Use color of heading</source>
-        <translation>Farbe der Beschriftung verwenden</translation>
+        <translation type="vanished">Farbe der Beschriftung verwenden</translation>
     </message>
     <message>
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
-        <translation>Stil der Verbindungslinie</translation>
+        <translation type="vanished">Stil der Verbindungslinie</translation>
     </message>
     <message>
         <source>Arrow end:</source>
-        <translation>Pfeilspitze</translation>
+        <translation type="vanished">Pfeilspitze</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schliessen</translation>
+        <translation type="vanished">Schliessen</translation>
     </message>
     <message>
         <source>Set color of heading</source>
@@ -430,11 +434,11 @@
     </message>
     <message>
         <source>XLink color:</source>
-        <translation>Farbe xLink:</translation>
+        <translation type="vanished">Farbe xLink:</translation>
     </message>
     <message>
         <source>Use as default:</source>
-        <translation>Als Standard verwenden:</translation>
+        <translation type="vanished">Als Standard verwenden:</translation>
     </message>
     <message>
         <source>Delete XLink</source>
@@ -449,43 +453,43 @@
     <name>ExportConfluenceDialog</name>
     <message>
         <source>Export Confluence</source>
-        <translation>Exportiere nach Confluence</translation>
+        <translation type="vanished">Exportiere nach Confluence</translation>
     </message>
     <message>
         <source>Create new page</source>
-        <translation>Neue Seite anlegen</translation>
+        <translation type="vanished">Neue Seite anlegen</translation>
     </message>
     <message>
         <source>Update existing page</source>
-        <translation>Bestehende Seite updaten</translation>
+        <translation type="vanished">Bestehende Seite updaten</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="vanished">Optionen</translation>
     </message>
     <message>
         <source>Use heading of first map center as page name</source>
-        <translation>Verwende Beschriftung des ersten Zentrums als Seitenname</translation>
+        <translation type="vanished">Verwende Beschriftung des ersten Zentrums als Seitenname</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation>Bild der vym map</translation>
+        <translation type="vanished">Bild der vym map</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation>Bilder verwenden</translation>
+        <translation type="vanished">Bilder verwenden</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation>Inhaltsverzeichnis</translation>
+        <translation type="vanished">Inhaltsverzeichnis</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation>Flags der Aufgaben</translation>
+        <translation type="vanished">Flags der Aufgaben</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation>Allgemeine Flags</translation>
+        <translation type="vanished">Allgemeine Flags</translation>
     </message>
     <message>
         <source>Number sections</source>
@@ -493,26 +497,26 @@
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation>Farbe der Zweigbeschriftungen übernehmen</translation>
+        <translation type="vanished">Farbe der Zweigbeschriftungen übernehmen</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation>Einstellungen in map speichern</translation>
+        <translation type="vanished">Einstellungen in map speichern</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="vanished">Abbrechen</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation>Exportieren</translation>
+        <translation type="vanished">Exportieren</translation>
     </message>
 </context>
 <context>
     <name>ExportHTMLDialog</name>
     <message>
         <source>Export HTML</source>
-        <translation>Exportiere HTML</translation>
+        <translation type="vanished">Exportiere HTML</translation>
     </message>
     <message>
         <source>Directory:</source>
@@ -520,47 +524,47 @@
     </message>
     <message>
         <source>Export to directory:</source>
-        <translation>Export Verzeichnis:</translation>
+        <translation type="vanished">Export Verzeichnis:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation type="vanished">Durchsuchen</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="vanished">Optionen</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation>Bild der vym map</translation>
+        <translation type="vanished">Bild der vym map</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation>Bilder verwenden</translation>
+        <translation type="vanished">Bilder verwenden</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation>Inhaltsverzeichnis</translation>
+        <translation type="vanished">Inhaltsverzeichnis</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation>Flags der Aufgaben</translation>
+        <translation type="vanished">Flags der Aufgaben</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation>Allgemeine Flags</translation>
+        <translation type="vanished">Allgemeine Flags</translation>
     </message>
     <message>
         <source>Number sections</source>
-        <translation>Abschnitte numerieren</translation>
+        <translation type="vanished">Abschnitte numerieren</translation>
     </message>
     <message>
         <source>Copy CSS from </source>
-        <translation>CSS Vorlage kopieren von</translation>
+        <translation type="vanished">CSS Vorlage kopieren von</translation>
     </message>
     <message>
         <source>Use CSS from</source>
-        <translation>CSS verwenden von</translation>
+        <translation type="vanished">CSS verwenden von</translation>
     </message>
     <message>
         <source>Include image</source>
@@ -568,15 +572,15 @@
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation>Farbe der Zweigbeschriftungen übernehmen</translation>
+        <translation type="vanished">Farbe der Zweigbeschriftungen übernehmen</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation>Einstellungen in map speichern</translation>
+        <translation type="vanished">Einstellungen in map speichern</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation>Stylesheets</translation>
+        <translation type="vanished">Stylesheets</translation>
     </message>
     <message>
         <source>CSS:</source>
@@ -584,11 +588,11 @@
     </message>
     <message>
         <source>Scripts</source>
-        <translation>Skripte</translation>
+        <translation type="vanished">Skripte</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation>Nach Export:</translation>
+        <translation type="vanished">Nach Export:</translation>
     </message>
     <message>
         <source>Include image of map</source>
@@ -604,11 +608,11 @@
     </message>
     <message>
         <source>Export</source>
-        <translation>Exportieren</translation>
+        <translation type="vanished">Exportieren</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="vanished">Abbrechen</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -834,39 +838,39 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>ExtraInfoDialog</name>
     <message>
         <source>VYM - Info</source>
-        <translation>VYM - Info</translation>
+        <translation type="vanished">VYM - Info</translation>
     </message>
     <message>
         <source>Map:</source>
-        <translation>Map:</translation>
+        <translation type="vanished">Map:</translation>
     </message>
     <message>
         <source>File location:</source>
-        <translation>Dateipfad:</translation>
+        <translation type="vanished">Dateipfad:</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation>Titel</translation>
+        <translation type="vanished">Titel</translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation>Author:</translation>
+        <translation type="vanished">Author:</translation>
     </message>
     <message>
         <source>Comment:</source>
-        <translation>Kommentar:</translation>
+        <translation type="vanished">Kommentar:</translation>
     </message>
     <message>
         <source>Statistics:</source>
-        <translation>Statistik:</translation>
+        <translation type="vanished">Statistik:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="vanished">Abbrechen</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schliessen</translation>
+        <translation type="vanished">Schliessen</translation>
     </message>
 </context>
 <context>
@@ -939,11 +943,11 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>HistoryWindow</name>
     <message>
         <source>Redo</source>
-        <translation>Wiederherstellen</translation>
+        <translation type="vanished">Wiederherstellen</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Rückgängig</translation>
+        <translation type="vanished">Rückgängig</translation>
     </message>
     <message>
         <source>Close</source>
@@ -956,15 +960,11 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Zeit</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation></translation>
+        <translation type="vanished">Zeit</translation>
     </message>
     <message>
         <source>Action</source>
@@ -994,14 +994,46 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
 </context>
 <context>
+    <name>JiraSettingsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="obsolete">Dialog</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="obsolete">Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="obsolete">Entfernen</translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="obsolete">Benutzername:</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="obsolete">Passwort:</translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="obsolete">Passwort speichern</translation>
+    </message>
+    <message>
+        <source>JiraSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
+        <translation>JIRA Einstellungen</translation>
+    </message>
+</context>
+<context>
     <name>LineEditDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation type="vanished">TextLabel</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1016,7 +1048,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>LockedFileDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>Delete lockfile</source>
@@ -1279,7 +1311,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Set &amp;Color</source>
-        <translation>Wähle &amp;Farbe</translation>
+        <translation type="vanished">Wähle &amp;Farbe</translation>
     </message>
     <message>
         <source>Pick color
@@ -2858,7 +2890,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
     <message>
         <source>Show keyboard macros</source>
         <comment>Help action</comment>
-        <translation>Tastaturkürzel anzeigen</translation>
+        <translation>Makros anzeigen</translation>
     </message>
     <message>
         <source>XLinks</source>
@@ -4785,6 +4817,19 @@ wird %1 Rückgängig Schritte haben.</translation>
         <source>Set as link to vym map</source>
         <translation>Verbindung zu vym map</translation>
     </message>
+    <message>
+        <source>Reset delta priority for visible tasks</source>
+        <comment>Reset delta</comment>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Select color (Press Shift for more options)</source>
+        <translation>Farbe auswählen (Drücke Shift für mehr Optionen)</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t rename map to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
@@ -5989,15 +6034,15 @@ Bugzilla Zugriff in YaST installieren</translation>
     <name>ScriptEditor</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation type="vanished">Formular</translation>
     </message>
     <message>
         <source>Reload</source>
-        <translation>Neu laden</translation>
+        <translation type="vanished">Neu laden</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation>Speichern als</translation>
+        <translation type="vanished">Speichern als</translation>
     </message>
     <message>
         <source>Tab 1</source>
@@ -6005,11 +6050,11 @@ Bugzilla Zugriff in YaST installieren</translation>
     </message>
     <message>
         <source>Save to selected slide</source>
-        <translation>In ausgewählte Folie speichern</translation>
+        <translation type="vanished">In ausgewählte Folie speichern</translation>
     </message>
     <message>
         <source>Run</source>
-        <translation>Starten</translation>
+        <translation type="vanished">Starten</translation>
     </message>
     <message>
         <source>Tab 2</source>
@@ -6021,11 +6066,11 @@ Bugzilla Zugriff in YaST installieren</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>Laden</translation>
+        <translation type="vanished">Laden</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Speichern</translation>
+        <translation type="vanished">Speichern</translation>
     </message>
     <message>
         <source>Save slide</source>
@@ -6127,7 +6172,7 @@ Wollen Sie sie überschreiben?</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schliessen</translation>
+        <translation type="vanished">Schliessen</translation>
     </message>
     <message>
         <source>History of %1</source>
@@ -6135,7 +6180,7 @@ Wollen Sie sie überschreiben?</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
 </context>
 <context>
@@ -7159,6 +7204,16 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
         <source>Load background image</source>
         <translation>Hintergrundbild laden</translation>
     </message>
+    <message>
+        <source>Could not find Jira ticket pattern in %1</source>
+        <comment>VymModel</comment>
+        <translation>Konnte keine JIRA ID finden in %1</translation>
+    </message>
+    <message>
+        <source>Received Jira data.</source>
+        <comment>VymModel</comment>
+        <translation>JIRA Daten wurden abgerufen.</translation>
+    </message>
 </context>
 <context>
     <name>VymProcess</name>
@@ -7214,7 +7269,7 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -7222,38 +7277,38 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="vanished">Ok</translation>
     </message>
     <message>
         <source>showAgainBox</source>
-        <translation>showAgainBox</translation>
+        <translation type="vanished">showAgainBox</translation>
     </message>
 </context>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
         <source>zip settings</source>
-        <translation>zip Einstellungen</translation>
+        <translation type="vanished">zip Einstellungen</translation>
     </message>
     <message>
         <source>zip tool:</source>
-        <translation>zip Hilfsprogramm:</translation>
+        <translation type="vanished">zip Hilfsprogramm:</translation>
     </message>
     <message>
         <source>Choose</source>
-        <translation>Suchen</translation>
+        <translation type="vanished">Suchen</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Status</translation>
+        <translation type="vanished">Status</translation>
     </message>
     <message>
         <source>unzip tool:</source>
-        <translation>unzip Hilfsprogramm:</translation>
+        <translation type="vanished">unzip Hilfsprogramm:</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Schliessen</translation>
+        <translation type="vanished">Schliessen</translation>
     </message>
     <message>
         <source>zip settings</source>
