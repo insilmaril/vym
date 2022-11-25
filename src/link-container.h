@@ -79,7 +79,7 @@ class LinkContainer : public Container {
     QGraphicsLineItem *l;               // line style
     QGraphicsPolygonItem *p;            // poly styles
     int arcsegs;                        // arc: number of segments
-    QList<QGraphicsLineItem *> segment; // a part of e.g. the parabel
+    QList<QGraphicsLineItem *> segments;// a part of e.g. the parabel
     QPolygonF pa0; // For drawing of PolyParabel and PolyLine
     QPolygonF pa1; // For drawing of PolyParabel
     QPolygonF pa2; // For drawing of PolyParabel
