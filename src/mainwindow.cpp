@@ -6360,20 +6360,20 @@ void Main::updateActions()
 
         // Link style in context menu
         switch (m->getMapLinkStyle()) {
-        case LinkContainer::Line:
-            actionFormatLinkStyleLine->setChecked(true);
-            break;
-        case LinkContainer::Parabel:
-            actionFormatLinkStyleParabel->setChecked(true);
-            break;
-        case LinkContainer::PolyLine:
-            actionFormatLinkStylePolyLine->setChecked(true);
-            break;
-        case LinkContainer::PolyParabel:
-            actionFormatLinkStylePolyParabel->setChecked(true);
-            break;
-        default:
-            break;
+            case LinkContainer::Line:
+                actionFormatLinkStyleLine->setChecked(true);
+                break;
+            case LinkContainer::Parabel:
+                actionFormatLinkStyleParabel->setChecked(true);
+                break;
+            case LinkContainer::PolyLine:
+                actionFormatLinkStylePolyLine->setChecked(true);
+                break;
+            case LinkContainer::PolyParabel:
+                actionFormatLinkStylePolyParabel->setChecked(true);
+                break;
+            default:
+                break;
         }
 
         // Update colors

@@ -16,9 +16,10 @@ class LinkContainer : public Container {
     enum Style {
         NoLink,         //!< No visible link
         Line,           //!< Straight line
-        Parabel,        //!< Parabel
         PolyLine,       //!< Polygon (thick line)
-        PolyParabel     //!< Thick parabel
+        Parabel,        //!< Parabel
+        PolyParabel,    //!< Thick parabel
+        Undefined
     };
 
     /*! Hint if link should use the default link color or the color of heading
@@ -43,6 +44,8 @@ class LinkContainer : public Container {
 
     void setLinkStyle(Style);
     Style getLinkStyle();
+    static Style styleFromString(const QString &);
+    static QString styleString(const Style &);
 
     void setLinkColorHint(ColorHint);
     ColorHint getLinkColorHint();

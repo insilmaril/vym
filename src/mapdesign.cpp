@@ -29,8 +29,15 @@ void MapDesign::init()
     icRelinkBranchLayouts << Container::FloatingFree;
 
     // Should links of branches use a default color or the color of heading?
-    linkColHint = LinkContainer::DefaultColor;
+    linkColorHintInt = LinkContainer::DefaultColor;
     defaultLinkCol = Qt::blue;
+
+    linkStyles << LinkContainer::NoLink;
+    linkStyles << LinkContainer::Parabel;
+    //linkStyles << LinkContainer::PolyLine;
+    //linkStyles << LinkContainer::Line;
+    //linkStyles << LinkContainer::PolyParabel;
+    //linkStyles << LinkContainer::Parabel;
 }
 
 void MapDesign::setName(const QString &s)
@@ -113,12 +120,12 @@ Container::Layout MapDesign::imagesContainerLayout(
 
 LinkContainer::ColorHint MapDesign::linkColorHint()
 {
-    return linkColHint;
+    return linkColorHintInt;
 }
 
 void MapDesign::setLinkColorHint(const LinkContainer::ColorHint &lch)
 {
-    linkColHint = lch;
+    linkColorHintInt = lch;
 }
 
 QColor MapDesign::defaultLinkColor()
@@ -130,3 +137,30 @@ void MapDesign::setDefaultLinkColor(const QColor &col)
 {
     defaultLinkCol = col;
 }
+
+LinkContainer::Style MapDesign::linkStyle(int depth)
+{
+    // Special case for now:    // FIXME-3
+    // For style PolyParabel or PolyLine in d=1
+    // return Parabel or Line for d>1
+
+    if (depth < 2)
+        return linkStyles.at(depth);
+
+    return linkStyles.at(1);
+}
+
+bool MapDesign::setLinkStyle(const LinkContainer::Style &style, int depth)
+{
+    // Special case for now:    // FIXME-3
+    // Only set style for d=1
+    // (Used to be map-wide setting before 3.x)
+
+    if (linkStyles.count() < 2)
+        linkStyles << style;
+    else
+        linkStyles[1] = style;
+
+    return true;
+}
+

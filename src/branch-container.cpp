@@ -792,10 +792,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
         setImagesContainerLayout(imagesContainerLayout);
 
     // Links
-    if (depth == 0)   // FIXME-0 get linkstyle from mapDesign
-        linkContainer->setLinkStyle(LinkContainer::NoLink);
-    else
-        linkContainer->setLinkStyle(LinkContainer::Line);
+    linkContainer->setLinkStyle(md->linkStyle(depth));
 
     if (linkContainer->getLinkColorHint() == LinkContainer::HeadingColor)
         linkContainer->setLinkColor(headingContainer->getColor());

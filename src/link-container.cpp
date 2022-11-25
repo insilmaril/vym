@@ -86,13 +86,11 @@ void LinkContainer::delLink()
     }
 }
 
-void LinkContainer::setLinkStyle(Style newstyle)
+void LinkContainer::setLinkStyle(Style newStyle)
 {
-    if (style == newstyle) return;
+    // FIXME-2 needed? if (style == newStyle) return;
 
-    delLink();
-
-    style = newstyle;
+    style = newStyle;
 
     QGraphicsLineItem *cl;
     switch (style) {
@@ -147,6 +145,39 @@ void LinkContainer::setLinkStyle(Style newstyle)
 }
 
 LinkContainer::Style LinkContainer::getLinkStyle() { return style; }
+
+LinkContainer::Style LinkContainer::styleFromString(const QString &s)
+{
+    LinkContainer::Style style;
+     if (s == "StyleLine")
+        return LinkContainer::Line;
+    else if (s == "StyleParabel")
+        return LinkContainer::Parabel;
+    else if (s == "StylePolyLine")
+        return LinkContainer::PolyLine;
+    else if (s == "StylePolyParabel")
+        return LinkContainer::PolyParabel;
+
+    return  LinkContainer::Undefined;
+}
+
+QString LinkContainer::styleString(const Style &style)
+{
+    switch (style) {
+        case LinkContainer::NoLink:
+            return "StyleNoLink";
+        case LinkContainer::Line:
+            return "StyleLine";
+        case LinkContainer::Parabel:
+            return "StyleParabel";
+        case LinkContainer::PolyLine:
+            return "StylePolyLine";
+        case LinkContainer::PolyParabel:
+            return "StylePolyParabel";
+        default:
+            return "StyleUndefined";
+    }
+}
 
 void LinkContainer::setLinkColorHint(ColorHint hint)
 {
@@ -323,11 +354,14 @@ void LinkContainer::updateLinkGeometry()
         case Parabel:
             parabel(pa0, p1x, p1y, p2x, p2y);
             for (int i = 0; i < segment.size(); ++i) {
-                segment.at(i)->setLine(QLineF(pa0.at(i).x(), pa0.at(i).y(),
-                                              pa0.at(i + 1).x(),
-                                              pa0.at(i + 1).y()));
+                segment.at(i)->setLine(QLineF(
+                            pa0.at(i).x(),
+                            pa0.at(i).y(),
+                            pa0.at(i + 1).x(),
+                            pa0.at(i + 1).y()));
                 segment.at(i)->setZValue(z);
             }
+            setPos(0,0);    // FIXME-2 needed?  Probably due to reposition()
             break;
         case PolyLine:
             pa0.clear();

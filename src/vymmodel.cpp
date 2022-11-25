@@ -186,7 +186,6 @@ void VymModel::init()
     // View - map
     defaultFont.setPointSizeF(16);
     defLinkColor = QColor(0, 0, 255);
-    linkstyle = LinkContainer::PolyParabel;
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
     defXLinkPen.setStyle(Qt::DashLine);
@@ -275,23 +274,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     XMLObj xml;
 
     // Save Header
-    QString ls;
-    switch (linkstyle) {
-        /* FIXME-2 saving linkstyles not ported yet
-        case LMO::Line:
-            ls = "StyleLine";
-            break;
-        case LMO::Parabel:
-            ls = "StyleParabel";
-            break;
-        case LMO::PolyLine:
-            ls = "StylePolyLine";
-            */
-            break;
-        default:
-            ls = "StylePolyParabel";
-            break;
-    }
+    //QString ls = LinkContainer::styleString(mapDesign->linkStyle(1));  // FIXME-0 currently only one style for whole map
 
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
@@ -313,7 +296,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("defaultFont", defaultFont.toString()) +
             xml.attribut("selectionColor",
                          mapEditor->getSelectionColor().name()) +
-            xml.attribut("linkStyle", ls) +
+//            xml.attribut("linkStyle", ls) +  // FIXME-0 basic styles currently not saved from mapDesign
             xml.attribut("linkColor", defLinkColor.name()) +
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
             xml.attribut("defXLinkWidth",
@@ -5050,61 +5033,33 @@ MapDesign* VymModel::getMapDesign()
     return mapDesign;
 }
 
-bool VymModel::setMapLinkStyle(const QString &s)   // FIXME-2 not ported yet to containers
+bool VymModel::setMapLinkStyle(const QString &newStyleString)
 {
-    return true;
-    /*
-    QString snow;
-    switch (linkstyle) {
-    case LinkableMapObj::Line:
-        snow = "StyleLine";
-        break;
-    case LinkableMapObj::Parabel:
-        snow = "StyleParabel";
-        break;
-    case LinkableMapObj::PolyLine:
-        snow = "StylePolyLine";
-        break;
-    case LinkableMapObj::PolyParabel:
-        snow = "StylePolyParabel";
-        break;
-    default:
-        return false;
-        break;
-    }
+    QString currentStyleString = LinkContainer::styleString(mapDesign->linkStyle(1));  // FIXME-0 only one style currently
 
-    saveState(QString("setMapLinkStyle (\"%1\")").arg(s),
-              QString("setMapLinkStyle (\"%1\")").arg(snow),
-              QString("Set map link style (\"%1\")").arg(s));
+    saveState(QString("setMapLinkStyle (\"%1\")").arg(newStyleString),
+              QString("setMapLinkStyle (\"%1\")").arg(currentStyleString),
+              QString("Set map link style (\"%1\")").arg(newStyleString));
 
-    if (s == "StyleLine")
-        linkstyle = LinkableMapObj::Line;
-    else if (s == "StyleParabel")
-        linkstyle = LinkableMapObj::Parabel;
-    else if (s == "StylePolyLine")
-        linkstyle = LinkableMapObj::PolyLine;
-    else if (s == "StylePolyParabel")
-        linkstyle = LinkableMapObj::PolyParabel;
-    else
-        linkstyle = LinkableMapObj::UndefinedStyle;
+    auto style = LinkContainer::styleFromString(newStyleString);
 
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO()); // FIXME
-        bo->setLinkStyle(bo->getDefLinkStyle(
-            cur->parent())); // FIXME-4 better emit dataCHanged and leave the
-                             // changes to View
+        BranchContainer *bc = cur->getBranchContainer();
+        bc->getLinkContainer()->setLinkStyle(style);
         nextBranch(cur, prev);
     }
     reposition();
-    */
     return true;
 }
 
-LinkContainer::Style VymModel::getMapLinkStyle() { return linkstyle; }
+LinkContainer::Style VymModel::getMapLinkStyle() // FIXME-0 only one level atm
+{
+    return mapDesign->linkStyle(1);
+}
 
 uint VymModel::getModelID() { return modelID; }
 

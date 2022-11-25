@@ -680,13 +680,12 @@ class VymModel : public TreeModel {
   private:
     MapDesign* mapDesign;
 
-    QColor defLinkColor;        // default color for links
-    QPen defXLinkPen;           // default pen for xlinks
-    QString defXLinkStyleBegin; // default style begin
+    QColor defLinkColor;        // default color for links  //FIXME-2 move to mapDesign
+    QPen defXLinkPen;           // default pen for xlinks   //FIXME-2 move to mapDesign
+    QString defXLinkStyleBegin; // default style begin      //FIXME-2 move to mapDesign
     QString defXLinkStyleEnd;
                                              // default style end
-    LinkContainer::Style linkstyle;         // default style for links
-    QFont defaultFont;
+    QFont defaultFont;                                      //FIXME-2 move to mapDesign
 
   public:
     bool setMapLinkStyle(const QString &);   // Set style of link

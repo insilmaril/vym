@@ -33,6 +33,9 @@ class MapDesign {
     QColor defaultLinkColor();
     void setDefaultLinkColor(const QColor &col);
 
+    LinkContainer::Style linkStyle(int depth);
+    bool setLinkStyle(const LinkContainer::Style &style, int depth);
+
   private:
     QString name;
 
@@ -42,8 +45,10 @@ class MapDesign {
     QList <Container::Layout> icNewBranchLayouts;
     QList <Container::Layout> icRelinkBranchLayouts;
 
-    LinkContainer::ColorHint linkColHint;
+    LinkContainer::ColorHint linkColorHintInt;
     QColor defaultLinkCol;
+
+    QList <LinkContainer::Style> linkStyles;
 };
 
 #endif
