@@ -17,7 +17,7 @@ LinkContainer::LinkContainer()
 
 LinkContainer::~LinkContainer()
 {
-    qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segments=" << segments.count();
+    //qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segments=" << segments.count();
     delLink();
 
     // bottomLine is deleted indirectly as child of LinkContainer
@@ -120,7 +120,6 @@ void LinkContainer::setLinkStyle(Style newStyle)
                 else
                     cl->hide();
                 segments.append(cl);
-                qDebug() << "BC::setLinkStyle  cl=" << cl;
             }
             pa0.resize(arcsegs + 1);
             break;
@@ -351,8 +350,8 @@ void LinkContainer::updateLinkGeometry()
     QPointF tp(-qRound(sin(a) * thickness_start),   // FIXME-2 qround needed?
                 qRound(cos(a) * thickness_start));
 
-    qDebug() << " p1: " << qpointFToString(QPointF(p1x, p1y))
-             << " p2: " << qpointFToString(QPointF(p2x, p2y));
+    // FIXME-2 testingqDebug() << " p1: " << qpointFToString(QPointF(p1x, p1y))
+    //         << " p2: " << qpointFToString(QPointF(p2x, p2y));
 
     // Draw the link
     switch (style) {
@@ -370,7 +369,6 @@ void LinkContainer::updateLinkGeometry()
                             pa0.at(i + 1).x(),
                             pa0.at(i + 1).y()));
                 segments.at(i)->setZValue(z);
-                qDebug() << " i:" << i << pa0.at(i).x() << pa0.at(i).y() << segments.at(i);
             }
             setPos(0,0);    // FIXME-2 needed?  Probably due to reposition()
             break;
@@ -429,7 +427,7 @@ void LinkContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
     if (vx > -0.0001 && vx < 0.0001)
         m = 0;
     else
-        m = (vy / (vx * vx));
+        m = - (vy / (vx * vx));
     dx = vx / (arcsegs);
     ya.clear();
     ya << QPointF(p1x, p1y);
