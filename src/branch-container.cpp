@@ -920,16 +920,16 @@ void BranchContainer::reposition()
         // then my orientation is already set in MapEditor, so ignore here
     }
 
-    // Settings depending on depth  // FIXME-0 most of this should go to BC::updateStyles
+    // Settings depending on depth
     if (depth == 0)
     {
         // MapCenter or TmpParent?
         if (containerType != TmpParent) {
             setHorizontalDirection(LeftToRight);
-            innerContainer->setHorizontalDirection(LeftToRight);
+            // FIXME-2 set in updateChildrenStructure: innerContainer->setHorizontalDirection(LeftToRight);
         }
 
-        innerContainer->setLayout(BoundingFloats);  // in TmpParentContainer animate children containers
+        // FIXME-2 set in updateChildrenStructure: innerContainer->setLayout(BoundingFloats);
     } else {
         // Branch or mainbranch
         switch (orientation) {
