@@ -94,9 +94,10 @@ void LinkContainer::setLinkStyle(Style newStyle)
 {
     // FIXME-2 needed? if (style == newStyle) return;
 
-    style = newStyle;
 
     delLink();
+
+    style = newStyle;
 
     QGraphicsLineItem *cl;
     switch (style) {
