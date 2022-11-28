@@ -14,6 +14,7 @@
 #define dZ_ICON 80
 #define dZ_TEXT 90
 #define dZ_DEPTH 100
+#define Z_SNOW 2000
 #define Z_INIT 9999
 #define Z_LINEEDIT 10000
 

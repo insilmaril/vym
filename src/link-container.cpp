@@ -49,7 +49,7 @@ void LinkContainer::createBottomLine()
 {
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
-    bottomLine->setZValue(dZ_LINK);
+    //FIXME-2 needed? bottomLine->setZValue(dZ_LINK);
     bottomLine->setVisible(true); // FIXME-2 testing
 }
 
@@ -71,7 +71,6 @@ bool LinkContainer::hasBottomLine()
 
 void LinkContainer::delLink()
 {
-    qDebug() << "LC::delLink" << this;
     switch (style) {
         case Line:
             delete (l);
@@ -108,12 +107,14 @@ void LinkContainer::setLinkStyle(Style newStyle)
                 l->show();
             //else
             //    l->hide();
+            l->setPen(pen);
             break;
         case Parabel:
             for (int i = 0; i < arcsegs; i++) {
                 cl = new QGraphicsLineItem(this);
                 cl->setLine(QLineF(i * 5, 0, i * 10, 100));
-                cl->setZValue(dZ_LINK);
+                cl->setPen(pen);
+                //FIXME-2 needed? cl->setZValue(dZ_LINK);
                 if (visible)
                     cl->show();
                 else
@@ -124,7 +125,9 @@ void LinkContainer::setLinkStyle(Style newStyle)
             break;
         case PolyLine:
             p = new QGraphicsPolygonItem(this);
-            p->setZValue(dZ_LINK);
+            //FIXME-2 needed? p->setZValue(dZ_LINK);
+            p->setPen(pen);
+            p->setBrush(QBrush(pen.color()));
             if (visible)
                 p->show();
             else
@@ -133,7 +136,9 @@ void LinkContainer::setLinkStyle(Style newStyle)
             break;
         case PolyParabel:
             p = new QGraphicsPolygonItem(this);
-            p->setZValue(dZ_LINK);
+            //FIXME-2 needed? p->setZValue(dZ_LINK);
+            p->setPen(pen);
+            p->setBrush(QBrush(pen.color()));
             if (visible)
                 p->show();
             else
@@ -202,16 +207,13 @@ void LinkContainer::setLinkColor(QColor col)
     if (bottomLine)
         bottomLine->setPen(pen);
 
-    qDebug() << "LC::setLinkColor a)" << col << " style:" << style << " segments: " << segments.size();
     switch (style) {
         case Line:
             l->setPen(pen);
             break;
         case Parabel:
-            for (int i = 0; i < segments.size(); ++i) {
+            for (int i = 0; i < segments.size(); ++i)
                 segments.at(i)->setPen(pen);
-                qDebug() << "pen: " << pen;
-            }
             break;
         case PolyLine:
             p->setBrush(QBrush(linkcolor));
@@ -224,7 +226,6 @@ void LinkContainer::setLinkColor(QColor col)
         default:
             break;
     }
-    qDebug() << "LC::setLinkColor b)" << col;
 }
 
 QColor LinkContainer::getLinkColor() { return linkcolor; }
@@ -326,7 +327,7 @@ void LinkContainer::updateLinkGeometry()
     double vx = p2x - p1x;
     double vy = p2y - p1y;
 
-    int z;
+    int z = -20000;
     // FIXME-3 Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
     // no longer used?
     /*

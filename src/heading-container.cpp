@@ -40,7 +40,6 @@ QGraphicsTextItem *HeadingContainer::newLine(QString s)
 {
     QGraphicsTextItem *t = new QGraphicsTextItem(s, this);
     t->setFont(headingFont);
-    t->setZValue(dZ_TEXT);
     t->setDefaultTextColor(headingColor);
 
     headingLines.append(t);
@@ -67,7 +66,6 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
                      "\"http://www.w3.org/TR/REC-html40/strict.dtd\">")) {
         t = new QGraphicsTextItem(this);
         t->setFont(headingFont);
-        t->setZValue(dZ_TEXT);
         t->setHtml(s);
         t->setDefaultTextColor(headingColor);
         headingLines.append(t);

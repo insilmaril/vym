@@ -36,7 +36,6 @@ void ImageItem::init()
     setType(Image);
     hideLinkUnselected = true;  // FIXME-2 needed?
     originalFilename = "no original name available";
-    zValue = dZ_FLOATIMG;
 }
 
 void ImageItem::clear() // FIXME-2 check if needed

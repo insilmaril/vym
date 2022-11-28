@@ -2411,7 +2411,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
     reposition();
 }
 
-void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-1 layouts not working properly // FIXME-2 no savestate yet
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-1 Both floating layouts not working properly // FIXME-2 no savestate yet
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -3624,13 +3624,6 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/
         reposition();
         emitDataChanged(pi);
         select(sel);
-        /*
-        BranchObj *bo = getSelectedBranchObj(); // FIXME not ported yet to containers
-        if (bo) {
-            bo->move2RelPos(p);
-            reposition();
-        }
-        */
         saveStateBlocked = oldSaveState;
     }
 }
@@ -4049,7 +4042,7 @@ void VymModel::clearFlags()
     }
 }
 
-void VymModel::colorBranch(QColor c)
+void VymModel::colorBranch(QColor c)    // FIXME-2 evtl. update link color
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
@@ -4067,7 +4060,7 @@ void VymModel::colorBranch(QColor c)
     mapEditor->getScene()->update();
 }
 
-void VymModel::colorSubtree(QColor c, BranchItem *bi)
+void VymModel::colorSubtree(QColor c, BranchItem *bi)   // FIXME-2 evtl. update link color
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
@@ -5032,7 +5025,7 @@ MapDesign* VymModel::getMapDesign()
 
 bool VymModel::setMapLinkStyle(const QString &newStyleString)
 {
-    QString currentStyleString = LinkContainer::styleString(mapDesign->linkStyle(1));  // FIXME-2 only one style currently
+    QString currentStyleString = LinkContainer::styleString(mapDesign->linkStyle(1));
 
     saveState(QString("setMapLinkStyle (\"%1\")").arg(newStyleString),
               QString("setMapLinkStyle (\"%1\")").arg(currentStyleString),
@@ -5040,14 +5033,16 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
 
     auto style = LinkContainer::styleFromString(newStyleString);
 
+    // For whole map set style for d=1
+    mapDesign->setLinkStyle(style, 1);
+
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
-    BranchObj *bo;
     nextBranch(cur, prev);
     while (cur) {
         BranchContainer *bc = cur->getBranchContainer();
-        bc->getLinkContainer()->setLinkStyle(style);
-        //bc->updateStyles(BranchContainer::RelinkBranch);
+        //bc->getLinkContainer()->setLinkStyle(style);
+        bc->updateStyles(BranchContainer::RelinkBranch);
         nextBranch(cur, prev);
     }
     reposition();
@@ -5110,14 +5105,14 @@ void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-
         LinkContainer *lc = bc->getLinkContainer();
         lc->setLinkColorHint(hint);
 
-        /* FIXME-2 image link color not supported yet
-        for (int i = 0; i < cur->imageCount(); ++i)
-            cur->getImageNum(i)->getLMO()->setLinkColor();
-        */
-        bc->updateUpLink();
+        // FIXME-2 setLinkColorHint: image link color not supported yet
+        //for (int i = 0; i < cur->imageCount(); ++i)
+        //    cur->getImageNum(i)->getLMO()->setLinkColor();
+        //
         bc->updateStyles(BranchContainer::RelinkBranch);
         nextBranch(cur, prev);
     }
+    reposition();
 }
 
 void VymModel::toggleLinkColorHint()    // FIXME-00 totally broken
