@@ -5115,7 +5115,7 @@ void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-
     reposition();
 }
 
-void VymModel::toggleLinkColorHint()    // FIXME-00 totally broken
+void VymModel::toggleLinkColorHint()
 {
     if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
         setLinkColorHint(LinkContainer::DefaultColor);
