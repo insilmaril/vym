@@ -147,7 +147,13 @@ LinkContainer::Style MapDesign::linkStyle(int depth)
     if (depth < 2)
         return linkStyles.at(depth);
 
-    return linkStyles.at(1);
+    if (linkStyles.at(1) == LinkContainer::PolyParabel)
+        return LinkContainer::Parabel;
+
+    if (linkStyles.at(1) == LinkContainer::PolyLine)
+        return LinkContainer::Line;
+
+    return linkStyles.at(1);    // Return eithe Line or Parabel
 }
 
 bool MapDesign::setLinkStyle(const LinkContainer::Style &style, int depth)

@@ -70,6 +70,7 @@ void BranchContainer::init()
     ornamentsContainer->addContainer(headingContainer);
 
     standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
+    standardFlagRowContainer->setName("StandardFlags"); // FIXME-2 debugging only
     systemFlagRowContainer = new FlagRowContainer;
 
     // Adding the containers will reparent them and thus set scene

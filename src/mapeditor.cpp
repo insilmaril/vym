@@ -1644,7 +1644,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
                 if (xlo) {
-                    setState(DrawingXLink); // FIXME-1 state correct? creating new xlink or editing existing?
+                    setState(DrawingXLink); // FIXME-2 state correct? creating new xlink or editing existing?
                 }
             }
         }
@@ -2319,7 +2319,7 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
                     ((ImageItem*)mi)->getImageContainer()->select();
             }
         }
-        /* FIXME-1 ME::updateSelection - hide links of unselected objects
+        /* FIXME-2 ME::updateSelection - hide links of unselected objects
          * also for unselect below
         lmo = mi->getLMO(); // FIXME-X xlink does return nullptr
         if (lmo)

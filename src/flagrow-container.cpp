@@ -113,5 +113,6 @@ QUuid FlagRowContainer::findFlagByPos(const QPointF &p)
 
 void FlagRowContainer::reposition()
 {
+    //qDebug() << "FRC::reposition()" << getName() << parentContainer()->parentContainer()->parentContainer()->getName();
     Container::reposition();
 }

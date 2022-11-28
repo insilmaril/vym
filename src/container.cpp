@@ -474,9 +474,9 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                //qdbg() << ind() << " * HL starting for " << info() << this;
+                //qdbg() << ind() << " * HL starting for " << info();
                 //foreach (Container *c, childContainers())
-                //    qdbg() << ind() << "   HL: child: " << c->info() << "ovly:" << c->overlay;
+                //   qdbg() << ind() << "   HL: child: " << c->info() << " ovly:" << c->overlay;
                 foreach (Container *c, childContainers()) {
                     if (!c->overlay) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -550,7 +550,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                 setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
 
-                //qdbg() << ind() << " * HL Finished for " << info() << this;
+                //qdbg() << ind() << " * HL Finished for " << info();
             } // Horizontal layout
             break;
 

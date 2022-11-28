@@ -274,8 +274,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     XMLObj xml;
 
     // Save Header
-    //QString ls = LinkContainer::styleString(mapDesign->linkStyle(1));  // FIXME-0 currently only one style for whole map
-
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint = "";
@@ -296,7 +294,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("defaultFont", defaultFont.toString()) +
             xml.attribut("selectionColor",
                          mapEditor->getSelectionColor().name()) +
-//            xml.attribut("linkStyle", ls) +  // FIXME-0 basic styles currently not saved from mapDesign
+            xml.attribut("linkStyle", LinkContainer::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
             xml.attribut("linkColor", defLinkColor.name()) +
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
             xml.attribut("defXLinkWidth",
@@ -3724,7 +3722,7 @@ void VymModel::clearItem(TreeItem *ti)
     return;
 }
 
-bool VymModel::scrollBranch(BranchItem *bi) // FIXME-1 scroll icon not at right place
+bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 scroll and other icons not at right place
 {
     if (bi) {
         if (bi->isScrolled())
@@ -3739,11 +3737,10 @@ bool VymModel::scrollBranch(BranchItem *bi) // FIXME-1 scroll icon not at right 
             u = "unscroll";
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
-            reposition();   // FIXME-2 scroll flag is a bit off in the beginning, needs 2nd reposition
+            reposition();   // FIXME-0 scroll flag is a bit off in the beginning, needs 2nd reposition
             emitDataChanged(bi);
             emitSelectionChanged();
-            mapEditor->getScene()
-                ->update(); // Needed for _quick_ update,  even in 1.13.x
+            mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x  // FIXME-2 still needed now?
             return true;
         }
     }
@@ -5035,7 +5032,7 @@ MapDesign* VymModel::getMapDesign()
 
 bool VymModel::setMapLinkStyle(const QString &newStyleString)
 {
-    QString currentStyleString = LinkContainer::styleString(mapDesign->linkStyle(1));  // FIXME-0 only one style currently
+    QString currentStyleString = LinkContainer::styleString(mapDesign->linkStyle(1));  // FIXME-2 only one style currently
 
     saveState(QString("setMapLinkStyle (\"%1\")").arg(newStyleString),
               QString("setMapLinkStyle (\"%1\")").arg(currentStyleString),
@@ -5050,13 +5047,14 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     while (cur) {
         BranchContainer *bc = cur->getBranchContainer();
         bc->getLinkContainer()->setLinkStyle(style);
+        //bc->updateStyles(BranchContainer::RelinkBranch);
         nextBranch(cur, prev);
     }
     reposition();
     return true;
 }
 
-LinkContainer::Style VymModel::getMapLinkStyle() // FIXME-0 only one level atm
+LinkContainer::Style VymModel::getMapLinkStyle() // FIXME-2 only one level atm
 {
     return mapDesign->linkStyle(1);
 }
@@ -5095,6 +5093,11 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     updateActions();
 }
 
+LinkContainer::ColorHint VymModel::getLinkColorHint()
+{
+    return mapDesign->linkColorHint();
+}
+
 void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-2 saveState missing
 {
     mapDesign->setLinkColorHint(hint);
@@ -5111,12 +5114,13 @@ void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-
         for (int i = 0; i < cur->imageCount(); ++i)
             cur->getImageNum(i)->getLMO()->setLinkColor();
         */
+        bc->updateUpLink();
         bc->updateStyles(BranchContainer::RelinkBranch);
         nextBranch(cur, prev);
     }
 }
 
-void VymModel::toggleLinkColorHint()
+void VymModel::toggleLinkColorHint()    // FIXME-00 totally broken
 {
     if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
         setLinkColorHint(LinkContainer::DefaultColor);
@@ -5145,8 +5149,7 @@ void VymModel::
     }
 }
 
-void VymModel::setMapBackgroundImage(
-    const QString &fn) // FIXME-3 missing savestate, move to ME
+void VymModel::setMapBackgroundImage( const QString &fn) // FIXME-3 missing savestate, move to ME
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
@@ -5162,7 +5165,7 @@ void VymModel::setMapBackgroundImage(
     mapEditor->getScene()->setBackgroundBrush(brush);
 }
 
-void VymModel::selectMapBackgroundColor()
+void VymModel::selectMapBackgroundColor()// FIXME-2 move to MD or ME
 {
     QColor col = QColorDialog::getColor(
         mapEditor->getScene()->backgroundBrush().color(), nullptr);
@@ -5171,7 +5174,7 @@ void VymModel::selectMapBackgroundColor()
     setMapBackgroundColor(col);
 }
 
-void VymModel::setMapBackgroundColor(QColor col) // FIXME-4 move to ME
+void VymModel::setMapBackgroundColor(QColor col) // FIXME-2 move to MD or ME
 {
     QColor oldcol = mapEditor->getScene()->backgroundBrush().color();
     saveState(QString("setMapBackgroundColor (\"%1\")").arg(oldcol.name()),
@@ -5180,7 +5183,7 @@ void VymModel::setMapBackgroundColor(QColor col) // FIXME-4 move to ME
     mapEditor->getScene()->setBackgroundBrush(col);
 }
 
-QColor VymModel::getMapBackgroundColor() // FIXME-4 move to ME
+QColor VymModel::getMapBackgroundColor() // FIXME-2 move to MD or ME
 {
     return mapEditor->getScene()->backgroundBrush().color();
 }
@@ -5188,11 +5191,6 @@ QColor VymModel::getMapBackgroundColor() // FIXME-4 move to ME
 QFont VymModel::getMapDefaultFont() { return defaultFont; }
 
 void VymModel::setMapDefaultFont(const QFont &f) { defaultFont = f; }
-
-LinkContainer::ColorHint VymModel::getLinkColorHint()
-{
-    return mapDesign->linkColorHint();
-}
 
 void VymModel::setMapDefXLinkPen(const QPen &p) // FIXME-4 move to ME
 {
@@ -5221,7 +5219,7 @@ QString VymModel::getMapDefXLinkStyleEnd() { return defXLinkStyleEnd; }
 void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
 {
     QList<TreeItem *> selItems;
-    if (selti) 
+    if (selti)
         selItems.append(selti);
     else
         selItems = getSelectedItems();

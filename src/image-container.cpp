@@ -87,6 +87,7 @@ void ImageContainer::init()
     pixmapItem = nullptr;
     originalPixmap = nullptr;
     scaleFactor = 1;
+    overlay = false;    // Inherits FrameContainer, which has overlay == true
 
      // FIXME-3 for testing we do some coloring and additional drawing
     //setPen(QPen(Qt::red));

@@ -71,6 +71,7 @@ bool LinkContainer::hasBottomLine()
 
 void LinkContainer::delLink()
 {
+    qDebug() << "LC::delLink" << this;
     switch (style) {
         case Line:
             delete (l);
@@ -92,8 +93,7 @@ void LinkContainer::delLink()
 
 void LinkContainer::setLinkStyle(Style newStyle)
 {
-    // FIXME-2 needed? if (style == newStyle) return;
-
+    if (style == newStyle) return;
 
     delLink();
 
@@ -103,7 +103,6 @@ void LinkContainer::setLinkStyle(Style newStyle)
     switch (style) {
         case Line:
             l = new QGraphicsLineItem(this);
-            l->setPen(pen);
             //l->setZValue(dZ_LINK);    // FIXME-2 check, needed?
             //if (visible)
                 l->show();
@@ -114,7 +113,6 @@ void LinkContainer::setLinkStyle(Style newStyle)
             for (int i = 0; i < arcsegs; i++) {
                 cl = new QGraphicsLineItem(this);
                 cl->setLine(QLineF(i * 5, 0, i * 10, 100));
-                cl->setPen(pen);
                 cl->setZValue(dZ_LINK);
                 if (visible)
                     cl->show();
@@ -126,7 +124,6 @@ void LinkContainer::setLinkStyle(Style newStyle)
             break;
         case PolyLine:
             p = new QGraphicsPolygonItem(this);
-            p->setPen(pen);
             p->setZValue(dZ_LINK);
             if (visible)
                 p->show();
@@ -136,7 +133,6 @@ void LinkContainer::setLinkStyle(Style newStyle)
             break;
         case PolyParabel:
             p = new QGraphicsPolygonItem(this);
-            p->setPen(pen);
             p->setZValue(dZ_LINK);
             if (visible)
                 p->show();
@@ -205,25 +201,30 @@ void LinkContainer::setLinkColor(QColor col)
 
     if (bottomLine)
         bottomLine->setPen(pen);
+
+    qDebug() << "LC::setLinkColor a)" << col << " style:" << style << " segments: " << segments.size();
     switch (style) {
-    case Line:
-        l->setPen(pen);
-        break;
-    case Parabel:
-        for (int i = 0; i < segments.size(); ++i)
-            segments.at(i)->setPen(pen);
-        break;
-    case PolyLine:
-        p->setBrush(QBrush(col));
-        p->setPen(pen);
-        break;
-    case PolyParabel:
-        p->setBrush(QBrush(col));
-        p->setPen(pen);
-        break;
-    default:
-        break;
+        case Line:
+            l->setPen(pen);
+            break;
+        case Parabel:
+            for (int i = 0; i < segments.size(); ++i) {
+                segments.at(i)->setPen(pen);
+                qDebug() << "pen: " << pen;
+            }
+            break;
+        case PolyLine:
+            p->setBrush(QBrush(linkcolor));
+            p->setPen(pen);
+            break;
+        case PolyParabel:
+            p->setBrush(QBrush(linkcolor));
+            p->setPen(pen);
+            break;
+        default:
+            break;
     }
+    qDebug() << "LC::setLinkColor b)" << col;
 }
 
 QColor LinkContainer::getLinkColor() { return linkcolor; }
@@ -351,15 +352,11 @@ void LinkContainer::updateLinkGeometry()
     QPointF tp(-qRound(sin(a) * thickness_start),   // FIXME-2 qround needed?
                 qRound(cos(a) * thickness_start));
 
-    // FIXME-2 testingqDebug() << " p1: " << qpointFToString(QPointF(p1x, p1y))
-    //         << " p2: " << qpointFToString(QPointF(p2x, p2y));
-
     // Draw the link
     switch (style) {
         case Line:
             l->setLine(p1x, p1y, p2x, p2y);
             l->setZValue(z);
-            setPos(0,0);    // FIXME-2 needed!  Probably due to reposition()
             break;
         case Parabel:
             parabel(pa0, p1x, p1y, p2x, p2y);
@@ -371,19 +368,18 @@ void LinkContainer::updateLinkGeometry()
                             pa0.at(i + 1).y()));
                 segments.at(i)->setZValue(z);
             }
-            setPos(0,0);    // FIXME-2 needed?  Probably due to reposition()
             break;
         case PolyLine:
             pa0.clear();
-            pa0 << QPointF(p2x + tp.x(), p2y + tp.y());
-            pa0 << QPointF(p2x - tp.x(), p2y - tp.y());
-            pa0 << QPointF(upLinkPosParent.x(), upLinkPosParent.y());
+            pa0 << QPointF(p1x + tp.x(), p1y + tp.y());
+            pa0 << QPointF(p1x - tp.x(), p1y - tp.y());
+            pa0 << QPointF(p2x,p2y);
             p->setPolygon(QPolygonF(pa0));
             p->setZValue(z);
             break;
         case PolyParabel:
-            parabel(pa1, p1x, p1y, p2x + tp.x(), p2y + tp.y());
-            parabel(pa2, p1x, p1y, p2x - tp.x(), p2y - tp.y());
+            parabel(pa1, p1x + tp.x(), p1y + tp.y(), p2x, p2y);
+            parabel(pa2, p1x - tp.x(), p1y - tp.y(), p2x, p2y);
             pa0.clear();
             for (int i = 0; i <= arcsegs; i++)
                 pa0 << QPointF(pa1.at(i));
@@ -395,8 +391,9 @@ void LinkContainer::updateLinkGeometry()
         default:
             qWarning() << "LinkContainer::updateLinkGeometry - Unknown LinkStyle in " << __LINE__;
             break;
-        }
     }
+    setPos(0,0);    // needed due to reposition()
+}
 
 void LinkContainer::setUpLinkPosParent(const QPointF& p)
 {
