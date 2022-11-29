@@ -18,45 +18,48 @@ class FrameContainer : public XMLObj, public Container {
     ~FrameContainer();
     void init();
     void clear();
-    void setFrameRect(const QRectF &); // set dimensions
-    QRectF getFrameRect();
-    void setFramePadding(const int &);
-    int getFramePadding();
-    qreal getFrameTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
-    qreal getFrameXPadding();
-    void setFramePenWidth(const int &);
-    int getFramePenWidth();
-    FrameType getFrameType();
-    static FrameType getFrameTypeFromString(const QString &);
-    QString getFrameTypeName();
+
+    void repaint();
+    virtual void reposition();
+    void setFrameZValue(double z);
+
+    // Interfaces
+    FrameType frameType();
+    static FrameType frameTypeFromString(const QString &);
+    QString frameTypeString();
     void setFrameType(const FrameType &);
     void setFrameType(const QString &);
-    void setFramePenColor(QColor);
-    QColor getFramePenColor();
-    void setFrameBrushColor(QColor);
-    QColor getFrameBrushColor();
-    void setFrameIncludeChildren(bool);
-    bool getFrameIncludeChildren();
-    void repaint();
-    void setFrameZValue(double z);
-    void setFrameRotation(qreal a);
+    QRectF frameRect();
+    void setFrameRect(const QRectF &); // set dimensions
     void setFramePos(const QPointF &p);
+    int framePadding();
+    void setFramePadding(const int &);
+    qreal frameTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
+    qreal frameXPadding();
+    int framePenWidth();
+    void setFramePenWidth(const int &);
+    QColor framePenColor();
+    void setFramePenColor(const QColor&);
+    QColor frameBrushColor();
+    void setFrameBrushColor(const QColor &);
+    bool frameIncludeChildren();
+    void setFrameIncludeChildren(bool);
+    void setFrameRotation(const qreal &);
     QString saveFrame();
-    virtual void reposition();
 
   protected:
-    FrameType frameType;    //! Frame type
-    int framePadding;       //! Distance text - frame
+    FrameType frameTypeInt; //! Frame type
+    int framePaddingInt;    //! Distance text - frame
     QPen framePen;
     QBrush frameBrush;
-    bool frameIncludeChildren;
+    bool frameIncludeChildrenInt;
 
   private:
     QGraphicsRectItem *rectFrame;
     QGraphicsEllipseItem *ellipseFrame;
     QGraphicsPathItem *pathFrame;
     qreal frameXSize; //! Extra size caused e.g. by cloud geometry
-    QRectF frameRect;
+    QRectF frameRectInt;
     qreal angle;
 };
 #endif

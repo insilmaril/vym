@@ -2,15 +2,15 @@ Data structures
 ===============
 
 The logical structure is equivalent to the view in the TreeEditor:
-This is the tree of branches and images.
+This is the tree of branches, images, and xlink endpoints.
 
 The graphical structure holds different and more information, for
-example a branch also has a flagrow, which in turn has a set of flags
-and so on.
+example a branch also has a system- and a user-flagrow, which in turn
+has a set of flags and so on.
 
-The logical part is mostly about maintaining and inserting branches and images,
-while the graphical is required to maintain the visualization and
-calculation of positions and bounding boxes.
+The logical part is mostly about maintaining and inserting branches and
+images, while the graphical is required to maintain the visualization
+and calculation of positions and bounding boxes.
 
 I have decided to maintain both structures indepently, which allows
 to use the QAbstractItem for the TreeEditor and general maintenance of
@@ -48,13 +48,13 @@ Containers
 - Containers are no longer part of a BranchObj, but become their own
   structures. In the end they will probably replace the current MapObj and
   inherited classes.
-  
+
 - Container classes (like MapObjs previously) don't follow the rule of
   three: This works, because we
-    - we only use pointers, esp. for passing to functions 
+    - we only use pointers, esp. for passing to functions
     - are very care careful to delete containers
     - no containers created on stack
-   
+
 - Container layout
     - BranchContainer
         - [Optional: FrameContainer]
@@ -90,7 +90,7 @@ Ideas
   - Horizontal (as already in use for non-floating children)
 
   - *BoundingFloats* when branchesContainer has Floating layout
-    
+
     First child is *targetContainer*, which will be ornamentsContainer,
     next children are (optionally) imagesContainer and branchesContainer.
     (LinkSpaceContainer is not used with BoundingFloats!)
@@ -105,7 +105,7 @@ Ideas
         - ????
     oC is positioned within BoundingFloats, so that upperleft of bbox of
     children is again (local) origin.
-    
+
 * Add/remove containers as needed. Examples
   - Flags, frames, etc. only if set
   - Additional info likes statistics (no. of children, ...)
@@ -140,7 +140,8 @@ Bugs
 
 * Position hint for relinking often way to low, not really below new
   parent
-  
+
+
 Next steps
 ----------
 
@@ -167,5 +168,5 @@ Next steps
         - need at all in the end?
         - getSelectionPath
 
-* Let containers inherit QGraphicsItem and use a QRectF for geometry instead of inheriting QGraphicsRectItem        
+* Let containers inherit QGraphicsItem and use a QRectF for geometry instead of inheriting QGraphicsRectItem
   once drawing boxes is no longer required for debugging

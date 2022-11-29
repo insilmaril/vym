@@ -404,7 +404,7 @@ QString VymModelWrapper::getFrameType()
     QString r;
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        r = selbi->getBranchContainer()->getFrameTypeName();
+        r = selbi->getBranchContainer()->frameTypeString();
     }
     return setResult(r);
 }

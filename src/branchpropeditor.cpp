@@ -154,7 +154,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         ui.tabWidget->setTabEnabled(4, false);
 
         // Frame
-        FrameContainer::FrameType t = bc->getFrameType();
+        FrameContainer::FrameType t = bc->frameType();
 
         if (t == FrameContainer::NoFrame)
         {
@@ -169,16 +169,15 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         }
         else {
             QPixmap pix(16, 16);
-            pix.fill(bc->getFramePenColor());
+            pix.fill(bc->framePenColor());
             ui.framePenColorButton->setIcon(pix);
-            pix.fill(bc->getFrameBrushColor());
+            pix.fill(bc->frameBrushColor());
             ui.frameBrushColorButton->setIcon(pix);
             ui.colorGroupBox->setEnabled(true);
             ui.framePaddingSpinBox->setEnabled(true);
-            ui.framePaddingSpinBox->setValue(bc->getFramePadding());
+            ui.framePaddingSpinBox->setValue(bc->framePadding());
             ui.frameWidthSpinBox->setEnabled(true);
-            ui.frameWidthSpinBox->setValue(
-                bc->getFramePenWidth());
+            ui.frameWidthSpinBox->setValue( bc->framePenWidth());
             ui.framePaddingLabel->setEnabled(true);
             ui.frameBorderLabel->setEnabled(true);
             ui.includeChildrenCheckBox->setEnabled(true);
@@ -199,7 +198,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                 default:
                     break;
             }
-            if (bc->getFrameIncludeChildren())
+            if (bc->frameIncludeChildren())
                 ui.includeChildrenCheckBox->setCheckState(Qt::Checked);
             else
                 ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
@@ -346,8 +345,8 @@ void BranchPropertyEditor::framePenColorClicked()
         QColor col = Qt::white;
         if (branchItem) {
             BranchContainer *bc = branchItem->getBranchContainer();
-            if (bc->getFrameType() != FrameContainer::NoFrame)
-                col = bc->getFramePenColor();
+            if (bc->frameType() != FrameContainer::NoFrame)
+                col = bc->framePenColor();
 
             col = QColorDialog::getColor(col, this);
             if (col.isValid()) {
@@ -363,8 +362,8 @@ void BranchPropertyEditor::frameBrushColorClicked()
         QColor col = Qt::white;
         if (branchItem) {
             BranchContainer *bc = branchItem->getBranchContainer();
-            if (bc->getFrameType() != FrameContainer::NoFrame)
-                col = bc->getFrameBrushColor();
+            if (bc->frameType() != FrameContainer::NoFrame)
+                col = bc->frameBrushColor();
 
             col = QColorDialog::getColor(
                     col,

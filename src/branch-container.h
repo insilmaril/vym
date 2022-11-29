@@ -135,6 +135,31 @@ class BranchContainer : public SelectableContainer {
 
     virtual void select();  // Overloads SelectableContainer::select
 
+    // FrameContainer interfaces
+    FrameContainer::FrameType frameType();
+    QString frameTypeString();
+    void setFrameType(const FrameContainer::FrameType &);
+    void setFrameType(const QString &);
+    QRectF frameRect();
+    void setFrameRect(const QRectF &);
+    void setFramePos(const QPointF &p);
+
+    int framePadding();
+    void setFramePadding(const int &);
+    qreal frameTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
+    qreal frameXPadding();
+    int framePenWidth();
+    void setFramePenWidth(const int &);
+    QColor framePenColor();
+    void setFramePenColor(const QColor &);
+    QColor frameBrushColor();
+    void setFrameBrushColor(const QColor&);
+
+    bool frameIncludeChildren();
+    void setFrameIncludeChildren(bool);
+    void setFrameRotation(const qreal &a);
+    QString saveFrame();
+
     /*! Update styles (frame, links, fonts, colors, ...) */
     void updateStyles(StyleUpdateMode styleUpdateMode = RelinkBranch);
 
@@ -162,6 +187,8 @@ class BranchContainer : public SelectableContainer {
     Container *ornamentsContainer;      // Flags and heading
     Container *innerContainer;          // Ornaments (see above) and children branches
     Container *outerContainer;          // Used only with FloatingBounded images and vertical branches
+
+    FrameContainer *frameContainer;
 
     FlagRowContainer *standardFlagRowContainer;
     FlagRowContainer *systemFlagRowContainer;

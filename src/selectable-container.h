@@ -3,7 +3,7 @@
 
 #include "frame-container.h"
 
-class SelectableContainer:public FrameContainer {
+class SelectableContainer:public Container {
   friend class BranchContainer;
   public:
     virtual void select(Container *c);

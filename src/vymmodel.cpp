@@ -2225,12 +2225,12 @@ void VymModel::setFrameType(const FrameContainer::FrameType &t, BranchItem *bi)
     QString newName;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        if (bc->getFrameType() == t)
+        if (bc->frameType() == t)
             break;
 
-        oldName = bc->getFrameTypeName();
+        oldName = bc->frameTypeString();
         bc->setFrameType(t);
-        newName = bc->getFrameTypeName();
+        newName = bc->frameTypeString();
 
         bc->updateStyles(BranchContainer::RelinkBranch);
 
@@ -2244,7 +2244,7 @@ void VymModel::setFrameType(const FrameContainer::FrameType &t, BranchItem *bi)
 
 void VymModel::setFrameType(const QString &s)
 {
-    setFrameType(FrameContainer::getFrameTypeFromString(s));
+    setFrameType(FrameContainer::frameTypeFromString(s));
 }
 
 void VymModel::toggleFrameIncludeChildren(BranchItem *bi)
@@ -2255,7 +2255,7 @@ void VymModel::toggleFrameIncludeChildren(BranchItem *bi)
     bool newInclude;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        oldInclude = bc->getFrameIncludeChildren();
+        oldInclude = bc->frameIncludeChildren();
         newInclude = !oldInclude;
         bc->setFrameIncludeChildren(newInclude);
     }
@@ -2267,7 +2267,7 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->getFrameType() != FrameContainer::NoFrame)  {
+        if (bc->frameType() != FrameContainer::NoFrame)  {
             QString u = b ? "false" : "true";
             QString r = !b ? "false" : "true";
 
@@ -2291,10 +2291,10 @@ void VymModel::setFramePenColor(const QColor &col, BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->getFrameType() != FrameContainer::NoFrame)  {
+        if (bc->frameType() != FrameContainer::NoFrame)  {
             saveState(selbi,
                       QString("setFramePenColor (\"%1\")")
-                          .arg(bc->getFramePenColor().name()),
+                          .arg(bc->framePenColor().name()),
                       selbi, QString("setFramePenColor (\"%1\")").arg(col.name()),
                       QString("set pen color of frame to %1").arg(col.name()));
             bc->setFramePenColor(col);
@@ -2308,10 +2308,10 @@ void VymModel::setFrameBrushColor(
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->getFrameType() != FrameContainer::NoFrame)  {
+        if (bc->frameType() != FrameContainer::NoFrame)  {
             saveState(selbi,
                       QString("setFrameBrushColor (\"%1\")")
-                          .arg(bc->getFrameBrushColor().name()),
+                          .arg(bc->frameBrushColor().name()),
                       selbi, QString("setFrameBrushColor (\"%1\")").arg(col.name()),
                       QString("set brush color of frame to %1").arg(col.name()));
             bc->setFrameBrushColor(col);
@@ -2325,10 +2325,10 @@ void VymModel::setFramePadding(
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->getFrameType() != FrameContainer::NoFrame)  {
+        if (bc->frameType() != FrameContainer::NoFrame)  {
             saveState(
                 selbi,
-                QString("setFramePadding (\"%1\")").arg(bc->getFramePadding()),
+                QString("setFramePadding (\"%1\")").arg(bc->framePadding()),
                 selbi, QString("setFramePadding (\"%1\")").arg(i),
                 QString("set padding of frame to %1").arg(i));
             bc->setFramePadding(i);
@@ -2342,10 +2342,10 @@ void VymModel::setFramePenWidth(
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->getFrameType() != FrameContainer::NoFrame)  {
+        if (bc->frameType() != FrameContainer::NoFrame)  {
             saveState(selbi,
                       QString("setFramePenWidth (\"%1\")")
-                          .arg(bc->getFramePenWidth()),
+                          .arg(bc->framePenWidth()),
                       selbi, QString("setFramePenWidth (\"%1\")").arg(i),
                       QString("set pen width of frame to %1").arg(i));
             bc->setFramePenWidth(i);

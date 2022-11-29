@@ -69,6 +69,8 @@ void BranchContainer::init()
     ornamentsContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
 
+    frameContainer = nullptr;
+
     standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
     standardFlagRowContainer->setName("StandardFlags"); // FIXME-2 debugging only
     systemFlagRowContainer = new FlagRowContainer;
@@ -769,6 +771,161 @@ void BranchContainer::select()
     SelectableContainer::select(ornamentsContainer);
 }
 
+FrameContainer::FrameType BranchContainer::frameType()
+{
+    if (frameContainer)
+        return frameContainer->frameType();
+    else
+        return FrameContainer::NoFrame;
+}
+
+QString BranchContainer::frameTypeString()
+{
+    if (frameContainer)
+        return frameContainer->frameTypeString();
+    return QString();
+}
+
+void BranchContainer::setFrameType(const FrameContainer::FrameType &ftype)
+{
+    if (ftype == FrameContainer::NoFrame) {
+        if (frameContainer) {
+            delete frameContainer;
+            frameContainer = nullptr;
+        }
+        return;
+    }
+
+    if (!frameContainer)
+        frameContainer = new FrameContainer;
+
+    if (ftype == frameContainer->frameType())
+        return;
+
+    frameContainer->setFrameType(ftype);
+    frameContainer->setParentItem(ornamentsContainer);    // FIXME-0 testing only
+    frameContainer->overlay = true;
+}
+
+void BranchContainer::setFrameType(const QString &s)
+{
+    FrameContainer::FrameType ftype = FrameContainer::frameTypeFromString(s);
+    setFrameType(ftype);
+}
+
+QRectF BranchContainer::frameRect()
+{
+    if (frameContainer)
+        return frameContainer->frameRect();
+    else
+        return QRectF();
+}
+
+void BranchContainer::setFrameRect(const QRectF &frameSize)
+{
+    if (frameContainer)
+        frameContainer->setFrameRect(frameSize);
+}
+
+void BranchContainer::setFramePos(const QPointF &p)
+{
+    if (frameContainer)
+        frameContainer->setFramePos(p);
+}
+
+int BranchContainer::framePadding()
+{
+    if (frameContainer)
+        return frameContainer->framePadding();
+    return 0;
+}
+
+void BranchContainer::setFramePadding(const int &p)
+{
+    if (frameContainer)
+        frameContainer->setFramePadding(p);
+}
+
+qreal BranchContainer::frameTotalPadding() // padding +  pen width + xsize (e.g. cloud)
+{
+    if (frameContainer)
+        return frameContainer->frameTotalPadding();
+    return 0;
+}
+
+qreal BranchContainer::frameXPadding()
+{
+    if (frameContainer)
+        return frameContainer->frameXPadding();
+    return 0;
+}
+
+int BranchContainer::framePenWidth()
+{
+    if (frameContainer)
+        return frameContainer->framePenWidth();
+    return 0;
+}
+
+void BranchContainer::setFramePenWidth(const int &w)
+{
+    if (frameContainer)
+        frameContainer->setFramePenWidth(w);
+}
+
+QColor BranchContainer::framePenColor()
+{
+    if (frameContainer)
+        return frameContainer->framePenColor();
+    return QColor();
+}
+
+void BranchContainer::setFramePenColor(const QColor &c)
+{
+    if (frameContainer)
+        frameContainer->setFramePenColor(c);
+}
+
+QColor BranchContainer::frameBrushColor()
+{
+    if (frameContainer)
+        return frameContainer->frameBrushColor();
+    return QColor();
+}
+
+void BranchContainer::setFrameBrushColor(const QColor &c)
+{
+    if (frameContainer)
+        frameContainer->setFrameBrushColor(c);
+}
+
+bool BranchContainer::frameIncludeChildren()
+{
+    if (frameContainer)
+        return frameContainer->frameIncludeChildren();
+    else
+        return false;
+}
+
+void BranchContainer::setFrameIncludeChildren(bool b)
+{
+    if (frameContainer)
+        frameContainer->setFrameIncludeChildren(b);
+}
+
+void BranchContainer::setFrameRotation(const qreal &a)
+{
+    if (frameContainer)
+        frameContainer->setFrameRotation(a);
+}
+
+QString BranchContainer::saveFrame()
+{
+    if (frameContainer)
+        return frameContainer->saveFrame();
+    return QString();
+}
+
 void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 {
     // updateStyles() is never called for TmpParent!
@@ -801,7 +958,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
         linkContainer->setLinkColor(md->defaultLinkColor());
 
     // Create/delete bottomline
-    if (FrameContainer::frameType != FrameContainer::NoFrame &&
+    if (frameType() != FrameContainer::NoFrame &&
             linkContainer->hasBottomLine())
             linkContainer->deleteBottomLine();
     else {
@@ -984,8 +1141,8 @@ void BranchContainer::reposition()
     }
 
     // Update frames
-    if (frameType != FrameContainer::NoFrame) {
-        if (frameIncludeChildren) {
+    if (frameType() != FrameContainer::NoFrame) {
+        if (frameIncludeChildren()) {
             if (outerContainer)
                 setFrameRect( outerContainer->rect());
             else {

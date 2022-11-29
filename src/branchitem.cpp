@@ -177,7 +177,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         s += note.saveToDir();
 
     // Save frame
-    if (branchContainer->getFrameType() != FrameContainer::NoFrame)
+    if (branchContainer->frameType() != FrameContainer::NoFrame)
         s += branchContainer->saveFrame();
 
     // save names of flags set
@@ -400,10 +400,10 @@ void BranchItem::setImagesLayout(const QString &s)
 QColor BranchItem::getBackgroundColor(BranchItem *start)
 {
     // Determine background color in taskEditor
-    if (branchContainer->getFrameType() != FrameContainer::NoFrame) {
+    if (branchContainer->frameType() != FrameContainer::NoFrame) {
         // Don't return color of parent branches, which do not include me as child
-        if (branchContainer->getFrameIncludeChildren() || this == start)
-            return branchContainer->getFrameBrushColor();
+        if (branchContainer->frameIncludeChildren() || this == start)
+            return branchContainer->frameBrushColor();
     }
 
     BranchItem *pb = parentBranch();
