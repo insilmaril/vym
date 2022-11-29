@@ -5,7 +5,8 @@ extern bool debug;
 
 class VymLock {
   public:
-    enum LockState { undefined, lockedByMyself, lockedByOther, notWritable };
+    enum LockState { Undefined, LockedByMyself, LockedByOther, NotWritable };
+    void operator==(const VymLock &);
     VymLock();
     VymLock(const QString &fn);
     ~VymLock();

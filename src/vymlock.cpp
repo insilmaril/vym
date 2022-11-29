@@ -6,6 +6,15 @@
 
 #include "vymlock.h"
 
+void VymLock::operator==(const VymLock &other)
+{
+    author = other.author;
+    host = other.host;
+    mapPath = other.mapPath;
+    lockPath = other.lockPath;
+    state = Undefined;  // call tryLock() to update state!
+}
+
 VymLock::VymLock() { init(); }
 
 VymLock::VymLock(const QString &fn)
@@ -16,11 +25,14 @@ VymLock::VymLock(const QString &fn)
 
 VymLock::~VymLock()
 {
-    if (state == lockedByMyself && !releaseLock())
-        qWarning() << "Destructor VymLock:  Removing LockFile failed";
+    if (state == LockedByMyself && !releaseLock())
+        qWarning() << "Destructor VymLock:  Removing LockFile failed for " << lockPath ;
 }
 
-void VymLock::init() { state = undefined; }
+void VymLock::init()
+{
+    state = Undefined;
+}
 
 bool VymLock::tryLock()
 {
@@ -45,7 +57,7 @@ bool VymLock::tryLock()
             if (match.hasMatch())
                 host = match.captured(1);
         }
-        state = lockedByOther;
+        state = LockedByOther;
         return false;
     }
 
@@ -56,7 +68,7 @@ bool VymLock::tryLock()
                        "VymLock::tryLock failed: Cannot open lockFile %1\n%2")
                        .arg(mapPath + ".lock")
                        .arg(lockFile.errorString());
-        state = notWritable;
+        state = NotWritable;
         return false;
     }
 
