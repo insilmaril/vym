@@ -3715,7 +3715,7 @@ void VymModel::clearItem(TreeItem *ti)
     return;
 }
 
-bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 scroll and other icons not at right place
+bool VymModel::scrollBranch(BranchItem *bi)
 {
     if (bi) {
         if (bi->isScrolled())
@@ -3730,9 +3730,9 @@ bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 scroll and other icons no
             u = "unscroll";
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
-            reposition();   // FIXME-0 scroll flag is a bit off in the beginning, needs 2nd reposition
             emitDataChanged(bi);
-            emitSelectionChanged();
+            reposition();
+            // FIXME-2 still needed? emitSelectionChanged();
             mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x  // FIXME-2 still needed now?
             return true;
         }
@@ -3740,7 +3740,7 @@ bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 scroll and other icons no
     return false;
 }
 
-bool VymModel::unscrollBranch(BranchItem *bi) // FIXME-1 scroll icon still there, even after reposition
+bool VymModel::unscrollBranch(BranchItem *bi)
 {
     if (bi) {
         if (!bi->isScrolled())
@@ -3751,9 +3751,9 @@ bool VymModel::unscrollBranch(BranchItem *bi) // FIXME-1 scroll icon still there
             r = "unscroll";
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
-            emitSelectionChanged();
-            reposition();
+            // FIXME-2 still needed? emitSelectionChanged();
             emitDataChanged(bi);
+            reposition();
             mapEditor->getScene()
                 ->update(); // Needed for _quick_ update,  even in 1.13.x
             return true;
@@ -3762,7 +3762,7 @@ bool VymModel::unscrollBranch(BranchItem *bi) // FIXME-1 scroll icon still there
     return false;
 }
 
-void VymModel::toggleScroll()
+void VymModel::toggleScroll()   // FIXME-2 rework to multiselection
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {

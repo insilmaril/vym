@@ -128,6 +128,7 @@ void LinkContainer::setLinkStyle(Style newStyle)
             //FIXME-2 needed? p->setZValue(dZ_LINK);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
+            p->setFlag(ItemStacksBehindParent, true);   // FIXME-2 testing only
             if (visible)
                 p->show();
             else

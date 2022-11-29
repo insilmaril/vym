@@ -277,7 +277,7 @@ void FrameContainer::setFrameType(const FrameType &t)
         }
     }
     setFrameRotation(angle);
-    reposition();   // FIXME-2 needed?
+    // reposition() is called in vymmodel for all containers
 }
 
 void FrameContainer::setFrameType(const QString &t)
@@ -297,7 +297,7 @@ void FrameContainer::setFrameType(const QString &t)
 void FrameContainer::setFramePenColor(QColor col)
 {
     framePen.setColor(col);
-    repaint();  // FIXME-2 needed?
+    repaint();
 }
 
 QColor FrameContainer::getFramePenColor() { return framePen.color(); }
@@ -305,7 +305,7 @@ QColor FrameContainer::getFramePenColor() { return framePen.color(); }
 void FrameContainer::setFrameBrushColor(QColor col)
 {
     frameBrush.setColor(col);
-    repaint();  // FIXME-2 needed?
+    repaint();
 }
 
 QColor FrameContainer::getFrameBrushColor() { return frameBrush.color(); }
