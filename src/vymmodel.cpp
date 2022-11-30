@@ -2247,8 +2247,9 @@ void VymModel::setFrameType(const QString &s)
     setFrameType(FrameContainer::frameTypeFromString(s));
 }
 
-void VymModel::toggleFrameIncludeChildren(BranchItem *bi)
+void VymModel::toggleFrameIncludeChildren(BranchItem *bi)   // FIXME-0
 {
+    /*
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     bool oldInclude;
@@ -2259,10 +2260,12 @@ void VymModel::toggleFrameIncludeChildren(BranchItem *bi)
         newInclude = !oldInclude;
         bc->setFrameIncludeChildren(newInclude);
     }
+    */
 }
 
-void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
+void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)  // FIXME-0 obsolete
 {
+    /*
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
@@ -2283,6 +2286,7 @@ void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)
             reposition();
         }
     }
+    */
 }
 
 void VymModel::setFramePenColor(const QColor &col, BranchItem *bi)

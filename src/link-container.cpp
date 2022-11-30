@@ -126,6 +126,7 @@ void LinkContainer::setLinkStyle(Style newStyle)
         case PolyLine:
             p = new QGraphicsPolygonItem(this);
             //FIXME-2 needed? p->setZValue(dZ_LINK);
+            p->setZValue(-20000);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
             p->setFlag(ItemStacksBehindParent, true);   // FIXME-2 testing only

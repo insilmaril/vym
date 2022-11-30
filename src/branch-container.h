@@ -136,27 +136,25 @@ class BranchContainer : public SelectableContainer {
     virtual void select();  // Overloads SelectableContainer::select
 
     // FrameContainer interfaces
-    FrameContainer::FrameType frameType();
-    QString frameTypeString();
-    void setFrameType(const FrameContainer::FrameType &);
-    void setFrameType(const QString &);
-    QRectF frameRect();
-    void setFrameRect(const QRectF &);
-    void setFramePos(const QPointF &p);
+    FrameContainer::FrameType frameType(bool innerFrame = true);
+    QString frameTypeString(bool innerFrame = true);
+    void setFrameType(const FrameContainer::FrameType &, bool innerFrame = true);
+    void setFrameType(const QString &, bool innerFrame = true);
+    QRectF frameRect(bool innerFrame = true);
+    void setFrameRect(const QRectF &, bool innerFrame = true);
+    void setFramePos(const QPointF &p, bool innerFrame = true);
 
-    int framePadding();
-    void setFramePadding(const int &);
-    qreal frameTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
-    qreal frameXPadding();
-    int framePenWidth();
-    void setFramePenWidth(const int &);
-    QColor framePenColor();
-    void setFramePenColor(const QColor &);
-    QColor frameBrushColor();
-    void setFrameBrushColor(const QColor&);
+    int framePadding(bool innerFrame = true);
+    void setFramePadding(const int &, bool innerFrame = true);
+    qreal frameTotalPadding(bool innerFrame = true); // padding +  pen width + xsize (e.g. cloud)
+    qreal frameXPadding(bool innerFrame = true);
+    int framePenWidth(bool innerFrame = true);
+    void setFramePenWidth(const int &, bool innerFrame = true);
+    QColor framePenColor( bool innerFrame = true);
+    void setFramePenColor(const QColor &, bool innerFrame = true);
+    QColor frameBrushColor( bool innerFrame = true);
+    void setFrameBrushColor(const QColor&, bool innerFrame = true);
 
-    bool frameIncludeChildren();
-    void setFrameIncludeChildren(bool);
     void setFrameRotation(const qreal &a);
     QString saveFrame();
 
@@ -184,11 +182,9 @@ class BranchContainer : public SelectableContainer {
     LinkContainer *linkContainer;       // uplink to parent
     Container *branchesContainer;       // Container with children branches
     Container *imagesContainer;         // Container with children images
-    Container *ornamentsContainer;      // Flags and heading
-    Container *innerContainer;          // Ornaments (see above) and children branches
-    Container *outerContainer;          // Used only with FloatingBounded images and vertical branches
-
-    FrameContainer *frameContainer;
+    FrameContainer *ornamentsContainer;      // Flags and heading
+    FrameContainer *innerContainer;          // Ornaments (see above) and children branches
+    FrameContainer *outerContainer;          // Used only with FloatingBounded images and vertical branches
 
     FlagRowContainer *standardFlagRowContainer;
     FlagRowContainer *systemFlagRowContainer;

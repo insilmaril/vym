@@ -35,7 +35,7 @@ void FrameContainer::init()
     setVisible(true);
 
     // Don't consider for sizes or repositioning
-    overlay = true;
+    // FIXME-2 still needed? overlay = true;
 
     // Rotation
     angle = 0;
@@ -92,7 +92,8 @@ void FrameContainer::repaint()
 
 void FrameContainer::reposition()
 {
-    qDebug() << "FC::reposition()";
+    // qDebug() << "FC::reposition()";
+    Container::reposition();    // FIXME-2 no need to overload without special functionality
 }
 
 void FrameContainer::setFrameZValue(double z)   // FIXME-2 needed?

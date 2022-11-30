@@ -678,12 +678,14 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
             if (ok)
                 bc->setFramePenWidth(x);
         }
-        if (!a.value("includeChildren").isEmpty()) {
+        /*
+        if (!a.value("includeChildren").isEmpty()) {  //FIXME-0
             if (a.value("includeChildren") == "true")
                 bc->setFrameIncludeChildren(true);
             else
                 bc->setFrameIncludeChildren(false);
         }
+        */
         return true;
     }
     return true;

@@ -57,7 +57,6 @@ Containers
 
 - Container layout
     - BranchContainer
-        - [Optional: FrameContainer]
         - InnerContainer
             - OrnamentsContainer
                 [Optional/Later: systemFlagsContainer]

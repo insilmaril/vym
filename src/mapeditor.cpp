@@ -112,6 +112,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setImagesContainerLayout(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
+    tmpParentContainer->setFrameType(FrameContainer::NoFrame);
     tmpParentContainer->reposition();
 
     // Shortcuts and actions
