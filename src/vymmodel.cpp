@@ -118,6 +118,8 @@ VymModel::~VymModel()
     // qApp->processEvents();	// Update view (scene()->update() is not enough)
     // qDebug() << "Destr VymModel end   this="<<this;
 
+    vymLock.releaseLock();
+
     delete (wrapper);
 }
 
@@ -1023,17 +1025,12 @@ void VymModel::importDir()
 
 bool VymModel::removeVymLock()
 {
-    if (vymLock.removeLock()) {
+    if (vymLock.removeLockForced()) {
         mainWindow->statusMessage(tr("Removed lockfile for %1").arg(mapName));
         setReadOnly(false);
         return true;
-    }
-    else {
-        QMessageBox::warning(
-            0, tr("Warning"),
-            tr("Couldn't remove lockfile for %1").arg(mapName));
+    } else
         return false;
-    }
 }
 
 bool VymModel::tryVymLock()
@@ -1057,8 +1054,10 @@ bool VymModel::tryVymLock()
         if (debug)
             qDebug() << "VymModel::tryLock failed!";
         setReadOnly(true);
-        if (vymLock.getState() == VymLock::lockedByOther) {
+        if (vymLock.getState() == VymLock::LockedByOther) {
             if (restoreMode) {
+                // While restoring maps, existing lockfiles will be ignored for
+                // loading, but listed in a warning dialog
                 ignoredLockedFiles << filePath;
                 return removeVymLock();
             }
@@ -1079,11 +1078,23 @@ bool VymModel::tryVymLock()
                 dia.setWindowTitle(
                     tr("Warning: Map already opended", "VymModel"));
                 if (dia.execDialog() == LockedFileDialog::DeleteLockfile) {
-                    return removeVymLock();
+                    if (!removeVymLock()) {
+                        // Could not remove existing lockfile, give up
+                        QMessageBox::warning(
+                            0, tr("Warning"),
+                            tr("Couldn't remove lockfile for %1").arg(mapName));
+                        return false;
+                    }
+                    if (!tryVymLock()) {
+                        // Was able to remove existing lockfile, but not able to 
+                        // create new one.
+                        qWarning() << "VymModel::tryVymLock could not create new lockfile after removing old";
+                        return false;
+                    }
                 }
             }
         }
-        else if (vymLock.getState() == VymLock::notWritable) {
+        else if (vymLock.getState() == VymLock::NotWritable) {
             WarningDialog dia;
             QString s = QString(tr("Cannot create lockfile of map! "
                                    "It will be opened in readonly mode.\n\n"));
@@ -1101,21 +1112,25 @@ bool VymModel::tryVymLock()
 bool VymModel::renameMap(const QString &newPath)
 {
     QString oldPath = filePath;
-    setFilePath(newPath);
-    if (vymLock.getState() == VymLock::lockedByMyself) {
-        // vymModel owns the lockfile, try to rename it
-        if (!vymLock.rename(fileName)) {
-            qWarning("Warning: VymModel::renameMap failed");
-            setFilePath(oldPath);
+    if (vymLock.getState() == VymLock::LockedByMyself) {
+        // vymModel owns the lockfile, try to create new lock
+        VymLock newLock;
+        newLock = vymLock;
+        newLock.setMapPath(newPath);    // Resets state for newLock to "Undefined"
+        if (!newLock.tryLock()) {
+            qWarning() << QString("VymModel::renameMap  could not create lockfile for %1").arg(newPath);
             return false;
         }
-        else
-            return true;
-    }
 
-    // try to create new lockfile for the lock states: lockedByOther and
-    // notWritable
-    return tryVymLock();
+        // Change lockfiles now
+        if (!vymLock.releaseLock())
+            qWarning() << "VymModel::renameMap failed to release lock for " << oldPath;
+        vymLock = newLock;
+        setFilePath(newPath);
+        return true;
+    }
+    qWarning() << "VymModel::renameMap failed to get lockfile";
+    return false;
 }
 
 void VymModel::setReadOnly(bool b)
@@ -4061,7 +4076,7 @@ void VymModel::editHeading2URL()
         setURL(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-0 update error message, check
+void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
                                          // if jiraClientAvail is set correctly
 {
     if (!JiraAgent::available()) {
@@ -4199,7 +4214,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
 }
 
 
-void VymModel::setHeadingConfluencePageName()   // FIXME-0 always asks for Confluence credentials when adding any URL
+void VymModel::setHeadingConfluencePageName()   // FIXME-2 always asks for Confluence credentials when adding any URL
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {

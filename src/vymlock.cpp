@@ -12,21 +12,19 @@ void VymLock::operator==(const VymLock &other)
     host = other.host;
     mapPath = other.mapPath;
     lockPath = other.lockPath;
-    state = Undefined;  // call tryLock() to update state!
+    state = other.state;
 }
 
 VymLock::VymLock() { init(); }
 
-VymLock::VymLock(const QString &fn)
+VymLock::VymLock(const QString &path)
 {
     init();
-    mapPath = fn;
+    setMapPath(path);
 }
 
 VymLock::~VymLock()
 {
-    if (state == LockedByMyself && !releaseLock())
-        qWarning() << "Destructor VymLock:  Removing LockFile failed for " << lockPath ;
 }
 
 void VymLock::init()
@@ -36,14 +34,14 @@ void VymLock::init()
 
 bool VymLock::tryLock()
 {
-    QFile lockFile(mapPath + ".lock");
+    QFile lockFile(lockPath);
     if (lockFile.exists()) {
         // File is already locked
         if (debug)
-            qDebug() << "VymLock::tryLock  failed: LockFile exists";
+            qDebug() << QString("VymLock::tryLock  failed: LockFile exists: %1").arg(lockFile.fileName());
 
         QString s;
-        if (!loadStringFromDisk(mapPath, s))
+        if (!loadStringFromDisk(lockFile.fileName(), s))
             qWarning("Failed to read from existing lockFile");
         else {
             QRegularExpression re("^author:\\s\\\"(.*)\\\"$");
@@ -66,7 +64,7 @@ bool VymLock::tryLock()
             qWarning()
                 << QString(
                        "VymLock::tryLock failed: Cannot open lockFile %1\n%2")
-                       .arg(mapPath + ".lock")
+                       .arg(lockFile.fileName())
                        .arg(lockFile.errorString());
         state = NotWritable;
         return false;
@@ -84,41 +82,37 @@ bool VymLock::tryLock()
         out << s;
     }
 
+    state = LockedByMyself;
     lockFile.close();
-    state = lockedByMyself;
 
     return true;
 }
 
 VymLock::LockState VymLock::getState() { return state; }
 
-bool VymLock::removeLock()
-{
-    QFile LockFile(mapPath + ".lock");
-    if (LockFile.remove())
-        return true;
-    else
-        return false;
-}
-
 bool VymLock::releaseLock()
 {
-    if (state == lockedByMyself) {
-        QFile LockFile(mapPath + ".lock");
-        if (LockFile.remove())
+    qDebug() << "VL::releaseLock " << lockPath;
+    if (state == LockedByMyself) {
+        QFile lockFile(lockPath);
+        if (lockFile.remove()) {
+            state = Undefined;
             return true;
+        }
     }
+    qWarning() << "VymLock::releaseLock  failed for " << lockPath;
     return false;
 }
 
-bool VymLock::rename(const QString &newMapPath)
+bool VymLock::removeLockForced()
 {
-    QFile lockFile(mapPath + ".lock");
-
-    if (lockFile.rename(newMapPath + ".lock")) {
-        mapPath = newMapPath;
+    qDebug() << "VL::removeLockForced " << lockPath;
+    QFile lockFile(lockPath);
+    if (lockFile.remove()) {
+        state = Undefined;
         return true;
     }
+    qWarning() << "VymLock::removeLockForced  failed for " << lockPath;
     return false;
 }
 
@@ -129,6 +123,17 @@ QString VymLock::getAuthor() { return author; }
 void VymLock::setHost(const QString &s) { host = s; }
 
 QString VymLock::getHost() { return host; }
-void VymLock::setMapPath(const QString &s) { mapPath = s; }
 
-QString VymLock::getMapPath() { return mapPath; }
+void VymLock::setMapPath(const QString &path)
+{
+    mapPath = path;
+    lockPath = path + ".lock";
+
+    // Reset state for a new path
+    state = Undefined;
+}
+
+QString VymLock::getMapPath()
+{
+    return mapPath;
+}

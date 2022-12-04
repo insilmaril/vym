@@ -13,21 +13,20 @@ class VymLock {
     void init();
     bool tryLock();
     LockState getState();
-    bool removeLock();
     bool releaseLock();
-    bool rename(const QString &newMapPath);
+    bool removeLockForced();
     void setAuthor(const QString &s);
     QString getAuthor();
     void setHost(const QString &s);
     QString getHost();
-    void setMapPath(const QString &s);
+    void setMapPath(const QString &path);
     QString getMapPath();
 
   private:
-    QWidget *parent;
     QString author;
     QString host;
     QString mapPath;
+    QString lockPath;
     LockState state;
 };
 
