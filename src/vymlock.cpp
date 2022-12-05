@@ -92,7 +92,6 @@ VymLock::LockState VymLock::getState() { return state; }
 
 bool VymLock::releaseLock()
 {
-    qDebug() << "VL::releaseLock " << lockPath;
     if (state == LockedByMyself) {
         QFile lockFile(lockPath);
         if (lockFile.remove()) {
@@ -106,7 +105,6 @@ bool VymLock::releaseLock()
 
 bool VymLock::removeLockForced()
 {
-    qDebug() << "VL::removeLockForced " << lockPath;
     QFile lockFile(lockPath);
     if (lockFile.remove()) {
         state = Undefined;
