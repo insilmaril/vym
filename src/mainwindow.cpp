@@ -4081,7 +4081,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
 
                 if (!m->renameMap(fn)) {
                     QMessageBox::critical(0, tr("Critical Error"),
-                                          tr("Couldn't rename map to %1").arg(fn));
+                                          tr("Saving the map failed:\nCouldn't rename map to %1").arg(fn));
                     return;
                 }
             }
@@ -4164,7 +4164,7 @@ void Main::fileSaveAsDefault()
 
             if (!m->renameMap(fn)) {
                 QMessageBox::critical(0, tr("Critical Error"),
-                                      tr("Couldn't save %1").arg(fn));
+                                      tr("Couldn't save as default, failed to rename to\n%1").arg(fn));
                 return;
             }
 
@@ -6341,7 +6341,7 @@ void Main::updateActions()
             standardFlagsMaster->setEnabled(false);
             userFlagsMaster->setEnabled(false);
 
-            // Disable map related actions
+            // Disable map related actions in readonly mode // FIXME-2 not all actions disabled 
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled(false);
 
@@ -6542,7 +6542,7 @@ void Main::updateActions()
                     actionMoveDown->setEnabled(false);
 
                 if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
-                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-0 add check for moveDiagonalUp
+                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-2 add check for moveDiagonalUp
 
                 if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
                     actionMoveDownDiagonally->setEnabled(false);
