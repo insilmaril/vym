@@ -177,14 +177,15 @@ class BranchContainer : public SelectableContainer {
     VerticalAlignment branchesContainerVerticalAlignment;
     QBrush branchesContainerBrush;
 
+    FrameContainer *frameOrnaments;     // Frame container around ornamentsContainer
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent
     Container *branchesContainer;       // Container with children branches
     Container *imagesContainer;         // Container with children images
-    FrameContainer *ornamentsContainer;      // Flags and heading
-    FrameContainer *innerContainer;          // Ornaments (see above) and children branches
-    FrameContainer *outerContainer;          // Used only with FloatingBounded images and vertical branches
+    Container *ornamentsContainer;      // Flags and heading
+    Container *innerContainer;          // Ornaments (see above) and children branches
+    Container *outerContainer;          // Used only with FloatingBounded images and vertical branches
 
     FlagRowContainer *standardFlagRowContainer;
     FlagRowContainer *systemFlagRowContainer;

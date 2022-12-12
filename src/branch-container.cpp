@@ -56,19 +56,22 @@ void BranchContainer::init()
     imagesContainer = nullptr;
     selectionContainer = nullptr;
 
-    headingContainer = new HeadingContainer ();
+    headingContainer = new HeadingContainer;
+    frameOrnaments = new FrameContainer;
+    frameOrnaments->overlay = true;
 
-    ornamentsContainer = new FrameContainer ();
+    ornamentsContainer = new Container;
     ornamentsContainer->containerType = OrnamentsContainer;
-    ornamentsContainer->setFrameType(FrameContainer::NoFrame);
 
     linkContainer = new LinkContainer;
 
-    innerContainer = new FrameContainer;
+    innerContainer = new Container;
     innerContainer->containerType = InnerContent;
-    innerContainer->setFrameType(FrameContainer::NoFrame);
+    // FIXME-0 innerContainer->setFrameType(FrameContainer::NoFrame);
 
     ornamentsContainer->addContainer(linkContainer);
+    ornamentsContainer->addContainer(frameOrnaments);
+    // FIXME-0 testing innerContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
 
     standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
@@ -327,14 +330,16 @@ void BranchContainer::updateImagesContainer()
 void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
-        outerContainer = new FrameContainer;
+        outerContainer = new Container;
         outerContainer->setParentItem(this);
         outerContainer->containerType = OuterContainer;
         outerContainer->setLayout(BoundingFloats);
         outerContainer->addContainer(innerContainer);
+        /* FIXME-0 outerContainer frame?
         outerContainer->setFrameType(FrameContainer::RoundedRectangle);
         outerContainer->setFramePenColor(Qt::blue);
         outerContainer->setFrameBrushColor(QColor(0,0,200,120));
+        */
         if (imagesContainer)
             outerContainer->addContainer(imagesContainer);
         addContainer(outerContainer);
@@ -595,6 +600,8 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
 
 void BranchContainer::updateUpLink()
 {
+    // FIXME-0 qDebug() << "BC::updateUpLink of " << info();
+
     if (branchItem->depth() == 0) return;
 
     BranchContainer *pbc;
@@ -611,6 +618,13 @@ void BranchContainer::updateUpLink()
         case RightOfParent:
             upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
                     pbc->ornamentsContainer->rect().bottomRight());
+            /*
+            upLinkSelf = ornamentsContainer->rect().bottomLeft();
+            downLink = ornamentsContainer->rect().bottomRight();
+            */
+            //upLinkParent_sp = QPointF(0,0);   // seems to work
+            //pbc->ornamentsContainer->mapToScene(
+            //        pbc->ornamentsContainer->rect().bottomRight());
             upLinkSelf = ornamentsContainer->rect().bottomLeft();
             downLink = ornamentsContainer->rect().bottomRight();
             break;
@@ -627,7 +641,7 @@ void BranchContainer::updateUpLink()
             downLink = ornamentsContainer->rect().center();
             break;
     }
-    linkContainer->setUpLinkPosParent(ornamentsContainer->sceneTransform().inverted().map(upLinkParent_sp));
+    linkContainer->setUpLinkPosParent(innerContainer->sceneTransform().inverted().map(upLinkParent_sp));
     linkContainer->setUpLinkPosSelf(upLinkSelf);
     linkContainer->setDownLinkPos(downLink);
 
@@ -782,7 +796,7 @@ void BranchContainer::select()
 FrameContainer::FrameType BranchContainer::frameType(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->frameType();
+        return frameOrnaments->frameType();
     else
         return FrameContainer::NoFrame;
 }
@@ -790,14 +804,14 @@ FrameContainer::FrameType BranchContainer::frameType(bool innerFrame)
 QString BranchContainer::frameTypeString(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->frameTypeString();
+        return frameOrnaments->frameTypeString();
     return QString();
 }
 
 void BranchContainer::setFrameType(const FrameContainer::FrameType &ftype, bool innerFrame)
 {
     if (innerFrame)
-        ornamentsContainer->setFrameType(ftype);
+        frameOrnaments->setFrameType(ftype);
 }
 
 void BranchContainer::setFrameType(const QString &s, bool innerFrame)
@@ -809,7 +823,7 @@ void BranchContainer::setFrameType(const QString &s, bool innerFrame)
 QRectF BranchContainer::frameRect(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->frameRect();
+        return frameOrnaments->frameRect();
     else
         return QRectF();
 }
@@ -817,91 +831,91 @@ QRectF BranchContainer::frameRect(bool innerFrame)
 void BranchContainer::setFrameRect(const QRectF &frameSize, bool innerFrame)
 {
     if (innerFrame)
-        ornamentsContainer->setFrameRect(frameSize);
+        frameOrnaments->setFrameRect(frameSize);
 }
 
 void BranchContainer::setFramePos(const QPointF &p, bool innerFrame)
 {
     if (innerFrame)
-        ornamentsContainer->setFramePos(p);
+        frameOrnaments->setFramePos(p);
 }
 
 int BranchContainer::framePadding(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->framePadding();
+        return frameOrnaments->framePadding();
     return 0;
 }
 
 void BranchContainer::setFramePadding(const int &p, bool innerFrame)
 {
     if (innerFrame)
-        ornamentsContainer->setFramePadding(p);
+        frameOrnaments->setFramePadding(p);
 }
 
 qreal BranchContainer::frameTotalPadding(bool innerFrame) // padding +  pen width + xsize (e.g. cloud)
 {
     if (innerFrame)
-        return ornamentsContainer->frameTotalPadding();
+        return frameOrnaments->frameTotalPadding();
     return 0;
 }
 
 qreal BranchContainer::frameXPadding(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->frameXPadding();
+        return frameOrnaments->frameXPadding();
     return 0;
 }
 
 int BranchContainer::framePenWidth(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->framePenWidth();
+        return frameOrnaments->framePenWidth();
     return 0;
 }
 
 void BranchContainer::setFramePenWidth(const int &w, bool innerFrame)
 {
     if (innerFrame)
-       ornamentsContainer->setFramePenWidth(w);
+       frameOrnaments->setFramePenWidth(w);
 }
 
 QColor BranchContainer::framePenColor(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->framePenColor();
+        return frameOrnaments->framePenColor();
     return QColor();
 }
 
 void BranchContainer::setFramePenColor(const QColor &c, bool innerFrame)
 {
     if (innerFrame)
-        ornamentsContainer->setFramePenColor(c);
+        frameOrnaments->setFramePenColor(c);
 }
 
 QColor BranchContainer::frameBrushColor(bool innerFrame)
 {
     if (innerFrame)
-        return ornamentsContainer->frameBrushColor();
+        return frameOrnaments->frameBrushColor();
     return QColor();
 }
 
 void BranchContainer::setFrameBrushColor(const QColor &c, bool innerFrame)
 {
     if (innerFrame)
-        ornamentsContainer->setFrameBrushColor(c);
+        frameOrnaments->setFrameBrushColor(c);
 }
 
 void BranchContainer::setFrameRotation(const qreal &a)
 {
     //FIXME-000 if (innerFrame)
-        ornamentsContainer->setFrameRotation(a);
+        frameOrnaments->setFrameRotation(a);
 }
 
 QString BranchContainer::saveFrame()
 {
     //FIXME-000 if (innerFrame)
-        return ornamentsContainer->saveFrame();
+        return frameOrnaments->saveFrame();
     return QString();
 }
 
@@ -1102,10 +1116,12 @@ void BranchContainer::reposition()
 
     Container::reposition();
 
-    // Update links
+    // Update links // FIXME-0000 disabled for testing
+    /*
+    */
     if (branchesContainer && branchCount() > 0) {
-        foreach (QGraphicsItem *g_item, branchesContainer->childItems()) {
-            BranchContainer *bc = (BranchContainer*) g_item;
+        foreach (Container *c, branchesContainer->childContainers()) {
+            BranchContainer *bc = (BranchContainer*) c;
             bc->updateUpLink();
         }
     }
@@ -1121,7 +1137,9 @@ void BranchContainer::reposition()
     }
 
     // Update frames    // FIXME-0 inner/outerContainer missing
-    ornamentsContainer->setFrameRect(ornamentsContainer->rect());   // FIXME-0 maybe overload setRect in FC?
+    //ornamentsContainer->setFrameRect(ornamentsContainer->rect());   // FIXME-0 testing
+    frameOrnaments->setFrameRect(ornamentsContainer->rect());
+    //frameOrnaments->setPos(ornamentsContainer->pos());
     /*
     if (frameType() != FrameContainer::NoFrame) {
         if (frameIncludeChildren()) {

@@ -36,6 +36,7 @@ class LinkContainer : public Container {
     void init();
 
   public:
+    void addTestLink();
     void createBottomLine();
     void deleteBottomLine();
     bool hasBottomLine();

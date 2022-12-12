@@ -45,6 +45,24 @@ void LinkContainer::init()
     visible = true;
 }
 
+void LinkContainer::addTestLink()   // FIXME-0 only experimenting
+{
+    /*
+    */
+    // FIXME-0 below only for experimenting
+    QPen ellPen = QPen(Qt::red);
+    QBrush ellBrush = QBrush(Qt::gray);
+
+    QGraphicsEllipseItem *ellipse = new QGraphicsEllipseItem (this);
+    ellipse->setRect(QRectF(-40, 0, 120, 90));
+    ellipse->setPen(ellPen);
+    ellipse->setBrush(ellBrush);
+    ellipse->setFlag(ItemStacksBehindParent, true);
+    ellipse->setParentItem(this);
+    ellipse->show();
+
+}
+
 void LinkContainer::createBottomLine()
 {
     bottomLine = new QGraphicsLineItem(this);

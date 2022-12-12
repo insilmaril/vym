@@ -1529,7 +1529,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         }
         return;
     }
-    
+
     if (undoCom.startsWith("model.")) {
         // After creating saveStateBlock, no "model." prefix needed for commands
         undoCommand = undoCom;
@@ -3119,7 +3119,7 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
         AttributeItem *ai;
         for (int i = 0; i < dst->attributeCount(); i++) {
             ai = dst->getAttributeNum(i);
-            if (ai->getKey() == ai_new->getKey()) 
+            if (ai->getKey() == ai_new->getKey())
             {
                 // Key exists, overwrite value
                 ai->copy(ai_new);
@@ -3250,6 +3250,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Create Container
     BranchContainer *newbc = newbi->createBranchContainer(getScene());
     newbc->updateStyles(BranchContainer::NewBranch);
+    newbc->getLinkContainer()->addTestLink();   // FIXME-0 only experimenting...
 
     if (parbi && parbi != rootItem)
         // Set color of heading to that of parent   // FIXME-2 maybe get this from design?
@@ -3347,7 +3348,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         // Remove at current position
         int n = branch->childNum();
 
-        // If branch and dst have same parent, then num_dst needs to be adjusted 
+        // If branch and dst have same parent, then num_dst needs to be adjusted
         // after removing branch
         if (branchpi == dst && num_dst - 1 > n )
             num_dst--;
@@ -3370,7 +3371,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         endInsertRows();
 
         // RelinkBranch: Save current own position for undo // FIXME-2
-        // and save current children positions for undo 
+        // and save current children positions for undo
 
         // Prepare relinking: Save old position for undo, if required
         //
@@ -3409,10 +3410,10 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         // Update parent item and stacking order of container
         branch->updateContainerStackingOrder();
 
-            // will change container layouts and possibly orientations 
+            // will change container layouts and possibly orientations
             reposition();
 
-            // Restore positions. 
+            // Restore positions.
             bc->setRealScenePos(positions.last());
 
             for (int i = 0; i < branch->branchCount(); i++)
@@ -3515,7 +3516,7 @@ bool VymModel::relinkTo(const QString &dstString, int num)
         if (relinkBranch(selbi, (BranchItem *)dst, num, true)) {
             emitSelectionChanged();
             return true;
-        } 
+        }
     } else if (selti->hasTypeImage()) {
         if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
             return true;
@@ -4275,7 +4276,7 @@ void VymModel::setHeadingConfluencePageName()   // FIXME-2 always asks for Confl
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         QString url = selbi->getURL();
-        if (!url.isEmpty() && 
+        if (!url.isEmpty() &&
                 settings.contains("/atlassian/confluence/url") &&
                 url.contains(settings.value("/atlassian/confluence/url").toString())) {
 
@@ -5083,7 +5084,7 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     nextBranch(cur, prev);
     while (cur) {
         BranchContainer *bc = cur->getBranchContainer();
-        bc->updateUpLink();
+        bc->updateUpLink(); // FIXME-0   "updateUpLink" correct here?
         // for (int i = 0; i < cur->imageCount(); ++i)
         // FIXME-2 images not supported yet cur->getImageNum(i)->getLMO()->setLinkColor(col);
 

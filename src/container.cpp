@@ -353,8 +353,8 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
+    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
     /*
-    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
     foreach (Container *c, childContainers())
         qdbg() << ind() << " * child: " << c->info();
     */
@@ -534,18 +534,24 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 QPointF v_central;
 
                 if (centralContainer) {
+                    //v_central = mapFromItem(centralContainer, centralContainer->rect().center());
                     //qdbg() << ind() << "    HL central container a:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
-                    if (parentContainer() && parentContainer()->hasFloatingLayout())  {
-                        v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-                        //qdbg() << ind() << "    HL central container b:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
-                        if (!v_central.isNull())
-                            foreach (Container *c, childContainers()) {
-                                if (!c->overlay) {
-                                    //qdbg() << ind() << "    HL moving c:" << c->info();
-                                    c->setPos(c->pos() - v_central);
+                    //qdbg() << ind() << " v_central = " << qpointFToString(v_central);
+                    if (parentContainer()) {
+                        if (parentContainer()->hasFloatingLayout())  {
+                            v_central = mapFromItem(centralContainer, centralContainer->rect().center());
+                            //qdbg() << ind() << "    HL central container b:  => v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
+                            if (!v_central.isNull())
+                                foreach (Container *c, childContainers()) {
+                                    if (!c->overlay) {
+                                        //qdbg() << ind() << "    HL moving c:" << c->info();
+                                        c->setPos(c->pos() - v_central);
+                                    }
                                 }
-                            }
-                    }
+                        }
+                    } //else
+                        // No parentContainer, adjust mainBranch, so that heading keeps position
+                        // FIXME-00 Make mapCenter positions absolute and independent of container size setPos(-v_central);
                 }
 
                 setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
