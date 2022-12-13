@@ -12,6 +12,8 @@ class FlagRowContainer;
 class HeadingContainer;
 class LinkContainer;
 
+class LinkObj;
+
 class BranchContainer : public SelectableContainer {
   public:
     /*! Orientation relative to parent branch container */
@@ -169,6 +171,9 @@ class BranchContainer : public SelectableContainer {
   protected:
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
+
+    // Uplink to parent
+    LinkObj *upLink;
 
     // Save layout, alignment and brush of children containers 
     // even before containers are created on demand

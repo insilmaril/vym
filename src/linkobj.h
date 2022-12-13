@@ -1,18 +1,17 @@
-#ifndef LINK_CONTAINER_H
-#define LINK_CONTAINER_H
+#ifndef LINKOBJ_H
+#define LINKOBJ_H
+
+#include "mapobj.h"
 
 #include <QPen>
 
-#include "container.h"
-
-class LinkObj;
-
-/*! \brief This container class provides links and is used in BranchContainer and ImageContainer
-
-The links are connecting the branch and image containers in a map.
+/*! \brief This class provides links to draw linkx from ImageContainers and OrnamentsContainers to their parent BranchContainers
 */
 
-class LinkContainer : public Container {
+class QGraphicsLineItem;
+class QGraphicsPolygonItem;
+
+class LinkObj : public MapObj {
   public:
     /*! Various drawing styles for links */
     enum Style {
@@ -31,21 +30,19 @@ class LinkContainer : public Container {
         HeadingColor  //!< Link uses the color of heading
     };
 
-    LinkContainer();
-    virtual ~LinkContainer();
+    LinkObj(QGraphicsItem *parent = nullptr);
+    virtual ~LinkObj();
 
   protected:
     void init();
 
   public:
     void addTestLink();
-    void addLink(LinkObj*);
-
     void createBottomLine();
     void deleteBottomLine();
     bool hasBottomLine();
     void delLink();
-    void copy(LinkContainer *);
+    void copy(LinkObj *);
 
     void setLinkStyle(Style);
     Style getLinkStyle();

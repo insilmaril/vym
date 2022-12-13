@@ -1,33 +1,32 @@
-#include "link-container.h"
+#include "linkobj.h"
 
 #include <math.h>
-#include <QDebug>
 
-#include "linkobj.h"    // FIXME-1 testing for now, no functinality moved over yet
+#include <QDebug>
+#include <QGraphicsEllipseItem>
+
 #include "misc.h" // FIXME-2 only debugging
 
 /////////////////////////////////////////////////////////////////
-// LinkContainer
+// LinkObj
 /////////////////////////////////////////////////////////////////
 
-LinkContainer::LinkContainer()
+LinkObj::LinkObj(QGraphicsItem *parent) : MapObj(parent)
 {
-    //qDebug() << "Const LinkContainer this=" << this;
+    qDebug() << "Const LinkObj this=" << this;
     init();
 }
 
-LinkContainer::~LinkContainer()
+LinkObj::~LinkObj()
 {
-    //qDebug()<< "Destructor LC  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segments=" << segments.count();
+    //qDebug()<< "Destructor LO  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segments=" << segments.count();
     delLink();
 
-    // bottomLine is deleted indirectly as child of LinkContainer
+    // bottomLine is deleted indirectly as child of LinkObj
 }
 
-void LinkContainer::init()
+void LinkObj::init()
 {
-    containerType = Link;
-
     l = nullptr;
     p = nullptr;
     linkcolor = Qt::black;
@@ -40,13 +39,13 @@ void LinkContainer::init()
     pen.setColor(linkcolor);
     pen.setCapStyle(Qt::RoundCap);
 
+    visible = true; // FIXME-1 needed?
+
     bottomLine = nullptr;
     createBottomLine();
-
-    visible = true;
 }
 
-void LinkContainer::addTestLink()   // FIXME-0 only experimenting
+void LinkObj::addTestLink()   // FIXME-0 only experimenting
 {
     /*
     */
@@ -64,11 +63,7 @@ void LinkContainer::addTestLink()   // FIXME-0 only experimenting
 
 }
 
-void LinkContainer::addLink(LinkObj *lo)   // FIXME-0 only experimenting
-{
-}
-
-void LinkContainer::createBottomLine()
+void LinkObj::createBottomLine()
 {
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
@@ -76,7 +71,7 @@ void LinkContainer::createBottomLine()
     bottomLine->setVisible(true); // FIXME-2 testing
 }
 
-void LinkContainer::deleteBottomLine()
+void LinkObj::deleteBottomLine()
 {
     if (bottomLine) {
         delete bottomLine;
@@ -84,7 +79,7 @@ void LinkContainer::deleteBottomLine()
     }
 }
 
-bool LinkContainer::hasBottomLine()
+bool LinkObj::hasBottomLine()
 {
     if (bottomLine)
         return true;
@@ -92,7 +87,7 @@ bool LinkContainer::hasBottomLine()
         return false;
 }
 
-void LinkContainer::delLink()
+void LinkObj::delLink()
 {
     switch (style) {
         case Line:
@@ -113,7 +108,7 @@ void LinkContainer::delLink()
     }
 }
 
-void LinkContainer::setLinkStyle(Style newStyle)
+void LinkObj::setLinkStyle(Style newStyle)
 {
     if (style == newStyle) return;
 
@@ -177,52 +172,52 @@ void LinkContainer::setLinkStyle(Style newStyle)
     }
 }
 
-LinkContainer::Style LinkContainer::getLinkStyle() { return style; }
+LinkObj::Style LinkObj::getLinkStyle() { return style; }
 
-LinkContainer::Style LinkContainer::styleFromString(const QString &s)
+LinkObj::Style LinkObj::styleFromString(const QString &s)
 {
-    LinkContainer::Style style;
+    LinkObj::Style style;
      if (s == "StyleLine")
-        return LinkContainer::Line;
+        return LinkObj::Line;
     else if (s == "StyleParabel")
-        return LinkContainer::Parabel;
+        return LinkObj::Parabel;
     else if (s == "StylePolyLine")
-        return LinkContainer::PolyLine;
+        return LinkObj::PolyLine;
     else if (s == "StylePolyParabel")
-        return LinkContainer::PolyParabel;
+        return LinkObj::PolyParabel;
 
-    return  LinkContainer::Undefined;
+    return  LinkObj::Undefined;
 }
 
-QString LinkContainer::styleString(const Style &style)
+QString LinkObj::styleString(const Style &style)
 {
     switch (style) {
-        case LinkContainer::NoLink:
+        case LinkObj::NoLink:
             return "StyleNoLink";
-        case LinkContainer::Line:
+        case LinkObj::Line:
             return "StyleLine";
-        case LinkContainer::Parabel:
+        case LinkObj::Parabel:
             return "StyleParabel";
-        case LinkContainer::PolyLine:
+        case LinkObj::PolyLine:
             return "StylePolyLine";
-        case LinkContainer::PolyParabel:
+        case LinkObj::PolyParabel:
             return "StylePolyParabel";
         default:
             return "StyleUndefined";
     }
 }
 
-void LinkContainer::setLinkColorHint(ColorHint hint)
+void LinkObj::setLinkColorHint(ColorHint hint)
 {
     colorHint = hint;
 }
 
-LinkContainer::ColorHint LinkContainer::getLinkColorHint()
+LinkObj::ColorHint LinkObj::getLinkColorHint()
 {
     return colorHint;
 }
 
-void LinkContainer::setLinkColor(QColor col)
+void LinkObj::setLinkColor(QColor col)
 {
     if (linkcolor == col) return;
 
@@ -253,15 +248,15 @@ void LinkContainer::setLinkColor(QColor col)
     }
 }
 
-QColor LinkContainer::getLinkColor() { return linkcolor; }
+QColor LinkObj::getLinkColor() { return linkcolor; }
 
-void LinkContainer::setVisibility(bool v)
+void LinkObj::setVisibility(bool v)
 {
     visible = v;
     updateVisibility();
 }
 
-void LinkContainer::updateVisibility()
+void LinkObj::updateVisibility()
 {
     bool visnow = visible;
 
@@ -328,7 +323,7 @@ void LinkContainer::updateVisibility()
     }
 }
 
-void LinkContainer::updateLinkGeometry()
+void LinkObj::updateLinkGeometry()
 {
     // needs:
     //	upLinkPosParent
@@ -415,28 +410,28 @@ void LinkContainer::updateLinkGeometry()
             p->setZValue(z);
             break;
         default:
-            qWarning() << "LinkContainer::updateLinkGeometry - Unknown LinkStyle in " << __LINE__;
+            qWarning() << "LinkObj::updateLinkGeometry - Unknown LinkStyle in " << __LINE__;
             break;
     }
     setPos(0,0);    // needed due to reposition()
 }
 
-void LinkContainer::setUpLinkPosParent(const QPointF& p)
+void LinkObj::setUpLinkPosParent(const QPointF& p)
 {
     upLinkPosParent = p;
 }
 
-void LinkContainer::setUpLinkPosSelf(const QPointF& p)
+void LinkObj::setUpLinkPosSelf(const QPointF& p)
 {
     upLinkPosSelf = p;
 }
 
-void LinkContainer::setDownLinkPos(const QPointF& p)
+void LinkObj::setDownLinkPos(const QPointF& p)
 {
     downLinkPos= p;
 }
 
-void LinkContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
+void LinkObj::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
                              qreal p2y)
 {
     qreal vx = p2x - p1x;
@@ -464,7 +459,7 @@ void LinkContainer::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,
     }
 }
 
-void LinkContainer::reposition()
+void LinkObj::reposition()
 {
     //qDebug() << "LC::reposition " << info();
     return;

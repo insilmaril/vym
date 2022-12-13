@@ -10,6 +10,7 @@
 #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
+#include "linkobj.h"
 #include "mapdesign.h"
 #include "misc.h"
 #include "xlinkobj.h"
@@ -93,6 +94,9 @@ void BranchContainer::init()
 
     setLayout(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
+
+    // Create an uplink for every branch 
+    upLink = new LinkObj;
 
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
@@ -641,6 +645,7 @@ void BranchContainer::updateUpLink()
             downLink = ornamentsContainer->rect().center();
             break;
     }
+    /*
     linkContainer->setUpLinkPosParent(innerContainer->sceneTransform().inverted().map(upLinkParent_sp));
     linkContainer->setUpLinkPosSelf(upLinkSelf);
     linkContainer->setDownLinkPos(downLink);
@@ -652,6 +657,27 @@ void BranchContainer::updateUpLink()
         linkContainer->setLinkColor(branchItem->getMapDesign()->defaultLinkColor());
 
     linkContainer->updateLinkGeometry();
+*/
+    // FIXME-000 playing with new LinkObj
+    upLink->setParentItem(linkContainer);
+
+    upLink->setLinkStyle(LinkObj::PolyLine);    // FIXME-0
+    upLink->setLinkColor(Qt::red);          // FIXME-0
+    upLink->setVisible(true);               // FIXME-0
+
+    upLink->setUpLinkPosParent(innerContainer->sceneTransform().inverted().map(upLinkParent_sp));
+    upLink->setUpLinkPosSelf(upLinkSelf);
+    upLink->setDownLinkPos(downLink);
+
+    // Color of links
+    /*
+    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
+        upLink->setLinkColor(headingContainer->getColor());
+    else
+        upLink->setLinkColor(branchItem->getMapDesign()->defaultLinkColor());
+    */
+
+    upLink->updateLinkGeometry();
 }
 
 void BranchContainer::setLayout(const Layout &l)
@@ -950,7 +976,15 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
     else
         linkContainer->setLinkColor(md->defaultLinkColor());
 
-    // Create/delete bottomline
+    //FIXME-0000 upLink->setLinkStyle(md->linkStyle(depth));
+
+    // FIXME-0 playing with LinkObj
+    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
+        upLink->setLinkColor(headingContainer->getColor());
+    else
+        upLink->setLinkColor(md->defaultLinkColor());
+
+    // Create/delete bottomline // FIXME-0 not yet with LinkObj
     if (frameType() != FrameContainer::NoFrame &&
             linkContainer->hasBottomLine())
             linkContainer->deleteBottomLine();

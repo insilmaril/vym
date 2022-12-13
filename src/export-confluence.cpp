@@ -40,13 +40,6 @@ void ExportConfluence::setPageName(const QString &t) { pageName = t;}
 QString ExportConfluence::getBranchText(BranchItem *current)
 {
     if (current) {
-        QRectF hr;
-        /* 
-        LinkableMapObj *lmo = current->getLMO();
-        if (lmo) {
-            hr = ((BranchObj *)lmo)->getBBoxHeading();  // FIXME-2 export bbox for imagemap?
-        }
-        */
         QString id = model->getSelectString(current);
         QString heading = quoteMeta(current->getHeadingPlain());
 

@@ -52,7 +52,7 @@ TaskEditor *taskEditor;
 ScriptEditor *scriptEditor;
 ScriptOutput *scriptOutput;
 HeadingEditor *headingEditor;
-NoteEditor *noteEditor; // used in Constr. of LinkableMapObj
+NoteEditor *noteEditor;
 BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow

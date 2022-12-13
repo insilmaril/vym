@@ -3250,7 +3250,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Create Container
     BranchContainer *newbc = newbi->createBranchContainer(getScene());
     newbc->updateStyles(BranchContainer::NewBranch);
-    newbc->getLinkContainer()->addTestLink();   // FIXME-0 only experimenting...
+    //newbc->getLinkContainer()->addTestLink();   // FIXME-0 only experimenting...
 
     if (parbi && parbi != rootItem)
         // Set color of heading to that of parent   // FIXME-2 maybe get this from design?

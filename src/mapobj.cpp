@@ -7,9 +7,9 @@
 /////////////////////////////////////////////////////////////////
 // MapObj
 /////////////////////////////////////////////////////////////////
-MapObj::MapObj(QGraphicsItem *parent, TreeItem *ti) : QGraphicsItem(parent)
+MapObj::MapObj(QGraphicsItem *parent) : QGraphicsItem(parent)
 {
-    //qDebug() << "Const MapObj (this,ti)=(" << this << "," << ti << ")";
+    //qDebug() << "Const MapObj";
     init();
 }
 
@@ -30,8 +30,6 @@ QRectF MapObj::boundingRect() const { return QRectF(); }
 
 void MapObj::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) {}
 
-QString MapObj::getPosString() { return qpointFToString(pos()); }
-
-bool MapObj::isVisibleObj() { return visible; }
+bool MapObj::isVisibleObj() { return visible; } // FIXME-2 Currently not used. Remove?
 
 void MapObj::setVisibility(bool v) { visible = v; }

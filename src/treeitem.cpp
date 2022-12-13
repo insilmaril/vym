@@ -691,8 +691,6 @@ void TreeItem::setHideTmp(HideTmpMode mode)
     if (type == Image || type == Branch || type == MapCenter)
     //	((ImageItem*)this)->updateVisibility();
     {
-        // LinkableMapObj* lmo=((MapItem*)this)->getLMO();
-
         if (mode == HideExport &&
             (hideExport ||
              hasHiddenExportParent())) // FIXME-4  try to avoid calling
