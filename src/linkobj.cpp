@@ -43,6 +43,8 @@ void LinkObj::init()
 
     bottomLine = nullptr;
     createBottomLine();
+
+    setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
 }
 
 void LinkObj::addTestLink()   // FIXME-0 only experimenting
@@ -147,7 +149,7 @@ void LinkObj::setLinkStyle(Style newStyle)
             p->setZValue(-20000);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
-            p->setFlag(ItemStacksBehindParent, true);   // FIXME-2 testing only
+            p->setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
             if (visible)
                 p->show();
             else

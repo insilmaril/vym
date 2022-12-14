@@ -59,13 +59,18 @@ void LinkContainer::addTestLink()   // FIXME-0 only experimenting
     ellipse->setPen(ellPen);
     ellipse->setBrush(ellBrush);
     ellipse->setFlag(ItemStacksBehindParent, true);
-    ellipse->setParentItem(this);
+    //ellipse->setParentItem(this);
     ellipse->show();
 
 }
 
 void LinkContainer::addLink(LinkObj *lo)   // FIXME-0 only experimenting
 {
+    qDebug() << "LC::addLink " << lo;
+    lo->setParentItem(this);
+    lo->setFlag(ItemStacksBehindParent, true);
+    if (childItems().count() > 1)
+        lo->stackBefore(childItems().at(0));
 }
 
 void LinkContainer::createBottomLine()

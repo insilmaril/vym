@@ -621,7 +621,8 @@ void BranchContainer::updateUpLink()
     switch (orientation) {
         case RightOfParent:
             upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
-                    pbc->ornamentsContainer->rect().bottomRight());
+                    //pbc->ornamentsContainer->rect().bottomRight());
+                    pbc->ornamentsContainer->rect().center());
             /*
             upLinkSelf = ornamentsContainer->rect().bottomLeft();
             downLink = ornamentsContainer->rect().bottomRight();
@@ -629,8 +630,10 @@ void BranchContainer::updateUpLink()
             //upLinkParent_sp = QPointF(0,0);   // seems to work
             //pbc->ornamentsContainer->mapToScene(
             //        pbc->ornamentsContainer->rect().bottomRight());
-            upLinkSelf = ornamentsContainer->rect().bottomLeft();
-            downLink = ornamentsContainer->rect().bottomRight();
+            upLinkSelf = ornamentsContainer->mapToScene(
+                    ornamentsContainer->rect().bottomLeft());
+            downLink = ornamentsContainer->mapToScene(
+                    ornamentsContainer->rect().bottomRight());
             break;
         case LeftOfParent:
             upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
@@ -659,15 +662,22 @@ void BranchContainer::updateUpLink()
     linkContainer->updateLinkGeometry();
 */
     // FIXME-000 playing with new LinkObj
-    upLink->setParentItem(linkContainer);
+    //upLink->setParentItem(linkContainer);
+    qDebug() << "BC::updateUpLink  of " << info();
+    pbc->getLinkContainer()->addLink(upLink);
+
+    upLink->setFlag(ItemStacksBehindParent, true);
 
     upLink->setLinkStyle(LinkObj::PolyLine);    // FIXME-0
     upLink->setLinkColor(Qt::red);          // FIXME-0
     upLink->setVisible(true);               // FIXME-0
 
-    upLink->setUpLinkPosParent(innerContainer->sceneTransform().inverted().map(upLinkParent_sp));
-    upLink->setUpLinkPosSelf(upLinkSelf);
-    upLink->setDownLinkPos(downLink);
+    upLink->setUpLinkPosParent(
+            pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
+    upLink->setUpLinkPosSelf(
+            pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkSelf));
+    upLink->setDownLinkPos(
+            pbc->getLinkContainer()->sceneTransform().inverted().map(downLink));
 
     // Color of links
     /*
