@@ -43,8 +43,6 @@ void LinkObj::init()
 
     bottomLine = nullptr;
     createBottomLine();
-
-    //setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
 }
 
 void LinkObj::createBottomLine()
@@ -131,7 +129,6 @@ void LinkObj::setLinkStyle(Style newStyle)
             p->setZValue(-20000);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
-            //p->setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
             if (visible)
                 p->show();
             else

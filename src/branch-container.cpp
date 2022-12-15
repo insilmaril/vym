@@ -598,7 +598,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
 
 void BranchContainer::updateUpLink()
 {
-    // FIXME-0 qDebug() << "BC::updateUpLink of " << info();
+    // qDebug() << "BC::updateUpLink of " << info();
 
     if (branchItem->depth() == 0) return;
 
@@ -638,25 +638,8 @@ void BranchContainer::updateUpLink()
                     ornamentsContainer->rect().center());
             break;
     }
-    /*
-    linkContainer->setUpLinkPosParent(innerContainer->sceneTransform().inverted().map(upLinkParent_sp));
-    linkContainer->setUpLinkPosSelf(upLinkSelf);
-    linkContainer->setDownLinkPos(downLink);
 
-    // Color of links
-    if (linkContainer->getLinkColorHint() == LinkContainer::HeadingColor)
-        linkContainer->setLinkColor(headingContainer->getColor());
-    else
-        linkContainer->setLinkColor(branchItem->getMapDesign()->defaultLinkColor());
-
-    linkContainer->updateLinkGeometry();
-*/
     pbc->getLinkContainer()->addLink(upLink);
-
-    upLink->setFlag(ItemStacksBehindParent, true);
-
-    upLink->setLinkStyle(LinkObj::PolyLine);    // FIXME-0
-    upLink->setLinkColor(Qt::red);          // FIXME-0
 
     upLink->setUpLinkPosParent(
             pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
@@ -930,8 +913,7 @@ void BranchContainer::setFrameBrushColor(const QColor &c, bool innerFrame)
 
 void BranchContainer::setFrameRotation(const qreal &a)
 {
-    //FIXME-000 if (innerFrame)
-        frameOrnaments->setFrameRotation(a);
+    //FIXME-000 if (innerFrame) frameOrnaments->setFrameRotation(a);
 }
 
 QString BranchContainer::saveFrame()
@@ -972,15 +954,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
     else
         upLink->setLinkColor(md->defaultLinkColor());
 
-    //FIXME-0000 upLink->setLinkStyle(md->linkStyle(depth));
-
-    // FIXME-0 playing with LinkObj
-    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
-        upLink->setLinkColor(headingContainer->getColor());
-    else
-        upLink->setLinkColor(md->defaultLinkColor());
-
-    // Create/delete bottomline // FIXME-0 not yet with LinkObj
+    // Create/delete bottomline
     if (frameType() != FrameContainer::NoFrame &&
             upLink->hasBottomLine())
             upLink->deleteBottomLine();
@@ -1146,9 +1120,7 @@ void BranchContainer::reposition()
 
     Container::reposition();
 
-    // Update links // FIXME-0000 disabled for testing
-    /*
-    */
+    // Update links
     if (branchesContainer && branchCount() > 0) {
         foreach (Container *c, branchesContainer->childContainers()) {
             BranchContainer *bc = (BranchContainer*) c;
@@ -1166,8 +1138,7 @@ void BranchContainer::reposition()
         }
     }
 
-    // Update frames    // FIXME-0 inner/outerContainer missing
-    //ornamentsContainer->setFrameRect(ornamentsContainer->rect());   // FIXME-0 testing
+    // Update frames    // FIXME-1 Rework. inner/outerContainer missing
     frameOrnaments->setFrameRect(ornamentsContainer->rect());
     //frameOrnaments->setPos(ornamentsContainer->pos());
     /*
