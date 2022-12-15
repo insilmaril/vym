@@ -3397,15 +3397,19 @@ void Main::setupToolbars()
     actionGroupQuickColors = new QActionGroup(this);
     actionGroupQuickColors->setExclusive(true);
 
+    // Define quickColors
     QColor c;
-    c.setNamedColor ("#ff0000"); quickColors << c;
-    c.setNamedColor ("#d95100"); quickColors << c;
-    c.setNamedColor ("#009900"); quickColors << c;
-    c.setNamedColor ("#00aa7f"); quickColors << c;
-    c.setNamedColor ("#aa00ff"); quickColors << c;
-    c.setNamedColor ("#c466ff"); quickColors << c;
-    c.setNamedColor ("#0000ff"); quickColors << c;
-    c.setNamedColor ("#000000"); quickColors << c;
+    c.setNamedColor ("#ff0000"); quickColors << c;  // Red
+    c.setNamedColor ("#d95100"); quickColors << c;  // Orange
+    c.setNamedColor ("#009900"); quickColors << c;  // Green
+    c.setNamedColor ("#aa00ff"); quickColors << c;  // Purple
+    c.setNamedColor ("#0000ff"); quickColors << c;  // Blue
+    c.setNamedColor ("#000000"); quickColors << c;  // Black
+    c.setNamedColor ("#444444"); quickColors << c;  // Dark gray
+    c.setNamedColor ("#aaaaaa"); quickColors << c;  // Light gray
+    c.setNamedColor ("#ffffff"); quickColors << c;  // White
+    //c.setNamedColor ("#00aa7f"); quickColors << c;  // Light green
+    //c.setNamedColor ("#c466ff"); quickColors << c;  // Light purple
 
     QPixmap pix(16, 16);
     QAction *a;
@@ -4071,7 +4075,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
 
                 if (!m->renameMap(fn)) {
                     QMessageBox::critical(0, tr("Critical Error"),
-                                          tr("Couldn't rename map to %1").arg(fn));
+                                          tr("Saving the map failed:\nCouldn't rename map to %1").arg(fn));
                     return;
                 }
             }
@@ -4154,7 +4158,7 @@ void Main::fileSaveAsDefault()
 
             if (!m->renameMap(fn)) {
                 QMessageBox::critical(0, tr("Critical Error"),
-                                      tr("Couldn't save %1").arg(fn));
+                                      tr("Couldn't save as default, failed to rename to\n%1").arg(fn));
                 return;
             }
 
@@ -6329,7 +6333,7 @@ void Main::updateActions()
             standardFlagsMaster->setEnabled(false);
             userFlagsMaster->setEnabled(false);
 
-            // Disable map related actions
+            // Disable map related actions in readonly mode // FIXME-2 not all actions disabled 
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled(false);
 
