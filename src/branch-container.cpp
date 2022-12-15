@@ -68,11 +68,9 @@ void BranchContainer::init()
 
     innerContainer = new Container;
     innerContainer->containerType = InnerContent;
-    // FIXME-0 innerContainer->setFrameType(FrameContainer::NoFrame);
 
     ornamentsContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(frameOrnaments);
-    // FIXME-0 testing innerContainer->addContainer(linkContainer);
     ornamentsContainer->addContainer(headingContainer);
 
     standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
@@ -253,16 +251,12 @@ void BranchContainer::createBranchesContainer()
 {
     branchesContainer = new Container ();
     branchesContainer->containerType = Container::BranchesContainer;
-    //branchesContainer->setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
 
 
     // Initial setting here, depends on orientation // FIXME-2 needed?
     branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
 
     innerContainer->addContainer(branchesContainer);
-
-    // FIXME-0 Stack before ornaments, so that innerFrame is above children links
-    //branchesContainer->stackBefore(ornamentsContainer);
 }
 
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) // FIXME-2 branchesContainer not deleted, when no longer used
@@ -339,11 +333,6 @@ void BranchContainer::createOuterContainer()
         outerContainer->containerType = OuterContainer;
         outerContainer->setLayout(BoundingFloats);
         outerContainer->addContainer(innerContainer);
-        /* FIXME-0 outerContainer frame?
-        outerContainer->setFrameType(FrameContainer::RoundedRectangle);
-        outerContainer->setFramePenColor(Qt::blue);
-        outerContainer->setFrameBrushColor(QColor(0,0,200,120));
-        */
         if (imagesContainer)
             outerContainer->addContainer(imagesContainer);
         addContainer(outerContainer);
@@ -506,6 +495,11 @@ LinkContainer* BranchContainer::getLinkContainer()
     return linkContainer;
 }
 
+LinkObj* BranchContainer::getLink()
+{
+    return upLink;
+}
+
 QList <BranchContainer*> BranchContainer::childBranches()
 {
     QList <BranchContainer*> list;
@@ -621,15 +615,7 @@ void BranchContainer::updateUpLink()
     switch (orientation) {
         case RightOfParent:
             upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
-                    //pbc->ornamentsContainer->rect().bottomRight());
                     pbc->ornamentsContainer->rect().center());
-            /*
-            upLinkSelf = ornamentsContainer->rect().bottomLeft();
-            downLink = ornamentsContainer->rect().bottomRight();
-            */
-            //upLinkParent_sp = QPointF(0,0);   // seems to work
-            //pbc->ornamentsContainer->mapToScene(
-            //        pbc->ornamentsContainer->rect().bottomRight());
             upLinkSelf = ornamentsContainer->mapToScene(
                     ornamentsContainer->rect().bottomLeft());
             downLink = ornamentsContainer->mapToScene(
@@ -637,15 +623,19 @@ void BranchContainer::updateUpLink()
             break;
         case LeftOfParent:
             upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
-                    pbc->ornamentsContainer->rect().bottomLeft());
-            upLinkSelf = ornamentsContainer->rect().bottomRight();
-            downLink = ornamentsContainer->rect().bottomLeft();
+                    pbc->ornamentsContainer->rect().center());
+            upLinkSelf = ornamentsContainer->mapToScene(
+                    ornamentsContainer->rect().bottomRight());
+            downLink = ornamentsContainer->mapToScene(
+                    ornamentsContainer->rect().bottomLeft());
             break;
         default:
             upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
                     pbc->ornamentsContainer->rect().center());
-            upLinkSelf = ornamentsContainer->rect().center();   // FIXME-2 check...
-            downLink = ornamentsContainer->rect().center();
+            upLinkSelf = ornamentsContainer->mapToScene(
+                    ornamentsContainer->rect().center());
+            downLink = ornamentsContainer->mapToScene(
+                    ornamentsContainer->rect().center());
             break;
     }
     /*
@@ -661,16 +651,12 @@ void BranchContainer::updateUpLink()
 
     linkContainer->updateLinkGeometry();
 */
-    // FIXME-000 playing with new LinkObj
-    //upLink->setParentItem(linkContainer);
-    qDebug() << "BC::updateUpLink  of " << info();
     pbc->getLinkContainer()->addLink(upLink);
 
     upLink->setFlag(ItemStacksBehindParent, true);
 
     upLink->setLinkStyle(LinkObj::PolyLine);    // FIXME-0
     upLink->setLinkColor(Qt::red);          // FIXME-0
-    upLink->setVisible(true);               // FIXME-0
 
     upLink->setUpLinkPosParent(
             pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
@@ -979,12 +965,12 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
         setImagesContainerLayout(imagesContainerLayout);
 
     // Links
-    linkContainer->setLinkStyle(md->linkStyle(depth));
+    upLink->setLinkStyle(md->linkStyle(depth));
 
-    if (linkContainer->getLinkColorHint() == LinkContainer::HeadingColor)
-        linkContainer->setLinkColor(headingContainer->getColor());
+    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
+        upLink->setLinkColor(headingContainer->getColor());
     else
-        linkContainer->setLinkColor(md->defaultLinkColor());
+        upLink->setLinkColor(md->defaultLinkColor());
 
     //FIXME-0000 upLink->setLinkStyle(md->linkStyle(depth));
 
@@ -996,11 +982,11 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 
     // Create/delete bottomline // FIXME-0 not yet with LinkObj
     if (frameType() != FrameContainer::NoFrame &&
-            linkContainer->hasBottomLine())
-            linkContainer->deleteBottomLine();
+            upLink->hasBottomLine())
+            upLink->deleteBottomLine();
     else {
-        if (!linkContainer->hasBottomLine())
-            linkContainer->createBottomLine();
+        if (!upLink->hasBottomLine())
+            upLink->createBottomLine();
     }
 
     // FIXME-5 for testing we do some coloring and additional drawing

@@ -97,6 +97,7 @@ class BranchContainer : public SelectableContainer {
 
     HeadingContainer* getHeadingContainer();
     LinkContainer* getLinkContainer();
+    LinkObj* getLink();
 
     // Convenience functions to access children
     QList <BranchContainer*> childBranches();

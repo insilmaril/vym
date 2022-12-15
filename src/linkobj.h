@@ -37,7 +37,6 @@ class LinkObj : public MapObj {
     void init();
 
   public:
-    void addTestLink();
     void createBottomLine();
     void deleteBottomLine();
     bool hasBottomLine();

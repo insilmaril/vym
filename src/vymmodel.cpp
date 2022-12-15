@@ -36,7 +36,8 @@
 #include "file.h"
 #include "findresultmodel.h"
 #include "jira-agent.h"
-#include "link-container.h"
+//#include "link-container.h"
+#include "linkobj.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "mapdesign.h"
@@ -278,7 +279,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint = "";
     /* FIXME-1 mapDesign related settings not saved yet
-       if (linkColorHint == LinkContainer::HeadingColor)
+       if (linkColorHint == LinkObj::HeadingColor)
         colhint = xml.attribut("linkColorHint", "HeadingColor");
     */
 
@@ -294,7 +295,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("defaultFont", defaultFont.toString()) +
             xml.attribut("selectionColor",
                          mapEditor->getSelectionColor().name()) +
-            xml.attribut("linkStyle", LinkContainer::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
+            xml.attribut("linkStyle", LinkObj::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
             xml.attribut("linkColor", defLinkColor.name()) +
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
             xml.attribut("defXLinkWidth",
@@ -2247,7 +2248,7 @@ void VymModel::setFrameType(const QString &s)
     setFrameType(FrameContainer::frameTypeFromString(s));
 }
 
-void VymModel::toggleFrameIncludeChildren(BranchItem *bi)   // FIXME-0
+void VymModel::toggleFrameIncludeChildren(BranchItem *bi)   // FIXME-1 will be replaced by 2nd frame
 {
     /*
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -2263,7 +2264,7 @@ void VymModel::toggleFrameIncludeChildren(BranchItem *bi)   // FIXME-0
     */
 }
 
-void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)  // FIXME-0 obsolete
+void VymModel::setFrameIncludeChildren(bool b, BranchItem *bi)  // FIXME-1 will be replaced by 2nd frame
 {
     /*
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -3254,7 +3255,6 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     if (parbi && parbi != rootItem) {
         // Set color of heading to that of parent   // FIXME-2 maybe get this from design?
         newbi->setHeadingColor(parbi->getHeadingColor());
-        //newbi->parentBranch()->getBranchContainer()->getLinkContainer()->addTestLink();   // FIXME-0 only experimenting...
     }
 
     // Update parent item and stacking order of container to match order in model
@@ -5031,13 +5031,13 @@ MapDesign* VymModel::getMapDesign()
 
 bool VymModel::setMapLinkStyle(const QString &newStyleString)
 {
-    QString currentStyleString = LinkContainer::styleString(mapDesign->linkStyle(1));
+    QString currentStyleString = LinkObj::styleString(mapDesign->linkStyle(1));
 
     saveState(QString("setMapLinkStyle (\"%1\")").arg(newStyleString),
               QString("setMapLinkStyle (\"%1\")").arg(currentStyleString),
               QString("Set map link style (\"%1\")").arg(newStyleString));
 
-    auto style = LinkContainer::styleFromString(newStyleString);
+    auto style = LinkObj::styleFromString(newStyleString);
 
     // For whole map set style for d=1
     mapDesign->setLinkStyle(style, 1);
@@ -5055,7 +5055,7 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     return true;
 }
 
-LinkContainer::Style VymModel::getMapLinkStyle() // FIXME-2 only one level atm
+LinkObj::Style VymModel::getMapLinkStyle() // FIXME-2 only one level atm
 {
     return mapDesign->linkStyle(1);
 }
@@ -5094,12 +5094,12 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     updateActions();
 }
 
-LinkContainer::ColorHint VymModel::getLinkColorHint()
+LinkObj::ColorHint VymModel::getLinkColorHint()
 {
     return mapDesign->linkColorHint();
 }
 
-void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-2 saveState missing
+void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 saveState missing
 {
     mapDesign->setLinkColorHint(hint);
 
@@ -5108,8 +5108,9 @@ void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-
     nextBranch(cur, prev);
     while (cur) {
         BranchContainer *bc = cur->getBranchContainer();
-        LinkContainer *lc = bc->getLinkContainer();
-        lc->setLinkColorHint(hint);
+        LinkObj *upLink = bc->getLink();
+        if (upLink)
+            upLink->setLinkColorHint(hint);
 
         // FIXME-2 setLinkColorHint: image link color not supported yet
         //for (int i = 0; i < cur->imageCount(); ++i)
@@ -5123,10 +5124,10 @@ void VymModel::setLinkColorHint(const LinkContainer::ColorHint &hint)  // FIXME-
 
 void VymModel::toggleLinkColorHint()
 {
-    if (mapDesign->linkColorHint() == LinkContainer::HeadingColor)
-        setLinkColorHint(LinkContainer::DefaultColor);
+    if (mapDesign->linkColorHint() == LinkObj::HeadingColor)
+        setLinkColorHint(LinkObj::DefaultColor);
     else
-        setLinkColorHint(LinkContainer::HeadingColor);
+        setLinkColorHint(LinkObj::HeadingColor);
 }
 
 void VymModel::

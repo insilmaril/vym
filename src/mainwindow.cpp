@@ -6360,16 +6360,16 @@ void Main::updateActions()
 
         // Link style in context menu
         switch (m->getMapLinkStyle()) {
-            case LinkContainer::Line:
+            case LinkObj::Line:
                 actionFormatLinkStyleLine->setChecked(true);
                 break;
-            case LinkContainer::Parabel:
+            case LinkObj::Parabel:
                 actionFormatLinkStyleParabel->setChecked(true);
                 break;
-            case LinkContainer::PolyLine:
+            case LinkObj::PolyLine:
                 actionFormatLinkStylePolyLine->setChecked(true);
                 break;
-            case LinkContainer::PolyParabel:
+            case LinkObj::PolyParabel:
                 actionFormatLinkStylePolyParabel->setChecked(true);
                 break;
             default:
@@ -6417,7 +6417,7 @@ void Main::updateActions()
         actionCollapseOneLevel->setEnabled(true);
         actionCollapseUnselected->setEnabled(true);
 
-        if (m->getLinkColorHint() == LinkContainer::HeadingColor)
+        if (m->getLinkColorHint() == LinkObj::HeadingColor)
             actionFormatLinkColorHint->setChecked(true);
         else
             actionFormatLinkColorHint->setChecked(false);

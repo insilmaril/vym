@@ -13,7 +13,7 @@
 #include "branchitem.h"
 #include "file.h"
 #include "imageitem.h"
-#include "link-container.h"
+#include "linkobj.h"
 #include "mapeditor.h"
 #include "treeitem.h"
 #include "treemodel.h"
@@ -689,12 +689,12 @@ class VymModel : public TreeModel {
 
   public:
     bool setMapLinkStyle(const QString &);   // Set style of link
-    LinkContainer::Style getMapLinkStyle();
+    LinkObj::Style getMapLinkStyle();
 
     QColor getDefaultLinkColor();
     void setDefaultLinkColor(const QColor&);         // default color of links
-    LinkContainer::ColorHint getLinkColorHint();
-    void setLinkColorHint(const LinkContainer::ColorHint &);
+    LinkObj::ColorHint getLinkColorHint();
+    void setLinkColorHint(const LinkObj::ColorHint &);
     void toggleLinkColorHint(); // after changing linkStyles
 
     void selectMapBackgroundImage();

@@ -199,7 +199,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                     break;
             }
             /*
-            if (bc->frameIncludeChildren()) // FIXME-0
+            if (bc->frameIncludeChildren()) // FIXME-1 will be replaced by 2nd frame
                 ui.includeChildrenCheckBox->setCheckState(Qt::Checked);
             else
                 ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
@@ -394,7 +394,7 @@ void BranchPropertyEditor::framePenWidthChanged(int i)
 void BranchPropertyEditor::frameIncludeChildrenChanged(int i)
 {
     if (model)
-        model->setFrameIncludeChildren(i, branchItem);  // FIXME-0
+        model->setFrameIncludeChildren(i, branchItem);  // FIXME-1 will be replaced by 2nd frame
 }
 
 void BranchPropertyEditor::linkHideUnselectedChanged(int i)

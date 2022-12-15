@@ -397,7 +397,7 @@ void BranchItem::setImagesLayout(const QString &s)
     branchContainer->setImagesContainerLayout(Container::getLayoutFromString(s));
 }
 
-QColor BranchItem::getBackgroundColor(BranchItem *start)    // FIXME-0 adapt to double frame
+QColor BranchItem::getBackgroundColor(BranchItem *start)    // FIXME-1 adapt to second frame
 {
     return QColor(200,200,200);
     /*

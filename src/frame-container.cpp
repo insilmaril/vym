@@ -39,10 +39,6 @@ void FrameContainer::init()
 
     // Rotation
     angle = 0;
-
-    // Testing position changes
-    //setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);    // FIXME-0 testing
-
 }
 
 void FrameContainer::clear()
@@ -68,7 +64,7 @@ void FrameContainer::clear()
     frameXSize = 0;
 }
 
-void FrameContainer::repaint()  // FIXME-0 still needed? When exactly?
+void FrameContainer::repaint()  // FIXME-1 still needed? When exactly?
 {
     // Repaint, when e.g. borderWidth has changed or a color
     switch (frameTypeInt) {

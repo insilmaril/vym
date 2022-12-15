@@ -557,9 +557,9 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
     }
     if (!a.value("linkColorHint").isEmpty()) {
         if (a.value("linkColorHint") == "HeadingColor")
-            model->setLinkColorHint(LinkContainer::HeadingColor);
+            model->setLinkColorHint(LinkObj::HeadingColor);
         else
-            model->setLinkColorHint(LinkContainer::DefaultColor);
+            model->setLinkColorHint(LinkObj::DefaultColor);
     }
     if (!a.value("linkStyle").isEmpty())
         model->setMapLinkStyle(a.value("linkStyle"));
@@ -679,7 +679,7 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
                 bc->setFramePenWidth(x);
         }
         /*
-        if (!a.value("includeChildren").isEmpty()) {  //FIXME-0
+        if (!a.value("includeChildren").isEmpty()) {  //FIXME-1 change to second frame
             if (a.value("includeChildren") == "true")
                 bc->setFrameIncludeChildren(true);
             else

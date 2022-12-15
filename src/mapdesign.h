@@ -4,7 +4,7 @@
 #include <QString>
 
 #include "branch-container.h"
-#include "link-container.h"
+#include "linkobj.h"
 
 /*! \brief A MapDesign defines the visual appearance of a map, e.g. how branches, frames,     links look. Settings depend on
       - depth
@@ -28,13 +28,13 @@ class MapDesign {
     Container::Layout imagesContainerLayout(
             const BranchContainer::StyleUpdateMode &mode, int depth);
 
-    LinkContainer::ColorHint linkColorHint();
-    void setLinkColorHint(const LinkContainer::ColorHint &lch);
+    LinkObj::ColorHint linkColorHint();
+    void setLinkColorHint(const LinkObj::ColorHint &lch);
     QColor defaultLinkColor();
     void setDefaultLinkColor(const QColor &col);
 
-    LinkContainer::Style linkStyle(int depth);
-    bool setLinkStyle(const LinkContainer::Style &style, int depth);
+    LinkObj::Style linkStyle(int depth);
+    bool setLinkStyle(const LinkObj::Style &style, int depth);
 
   private:
     QString name;
@@ -45,10 +45,10 @@ class MapDesign {
     QList <Container::Layout> icNewBranchLayouts;
     QList <Container::Layout> icRelinkBranchLayouts;
 
-    LinkContainer::ColorHint linkColorHintInt;
+    LinkObj::ColorHint linkColorHintInt;
     QColor defaultLinkCol;
 
-    QList <LinkContainer::Style> linkStyles;
+    QList <LinkObj::Style> linkStyles;
 };
 
 #endif

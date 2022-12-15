@@ -29,15 +29,15 @@ void MapDesign::init()
     icRelinkBranchLayouts << Container::FloatingFree;
 
     // Should links of branches use a default color or the color of heading?
-    linkColorHintInt = LinkContainer::DefaultColor;
+    linkColorHintInt = LinkObj::DefaultColor;
     defaultLinkCol = Qt::blue;
 
-    linkStyles << LinkContainer::NoLink;
-    linkStyles << LinkContainer::Parabel;
-    //linkStyles << LinkContainer::PolyLine;
-    //linkStyles << LinkContainer::Line;
-    //linkStyles << LinkContainer::PolyParabel;
-    //linkStyles << LinkContainer::Parabel;
+    linkStyles << LinkObj::NoLink;
+    linkStyles << LinkObj::Parabel;
+    //linkStyles << LinkObj::PolyLine;
+    //linkStyles << LinkObj::Line;
+    //linkStyles << LinkObj::PolyParabel;
+    //linkStyles << LinkObj::Parabel;
 }
 
 void MapDesign::setName(const QString &s)
@@ -118,12 +118,12 @@ Container::Layout MapDesign::imagesContainerLayout(
     }
 }
 
-LinkContainer::ColorHint MapDesign::linkColorHint()
+LinkObj::ColorHint MapDesign::linkColorHint()
 {
     return linkColorHintInt;
 }
 
-void MapDesign::setLinkColorHint(const LinkContainer::ColorHint &lch)
+void MapDesign::setLinkColorHint(const LinkObj::ColorHint &lch)
 {
     linkColorHintInt = lch;
 }
@@ -138,7 +138,7 @@ void MapDesign::setDefaultLinkColor(const QColor &col)
     defaultLinkCol = col;
 }
 
-LinkContainer::Style MapDesign::linkStyle(int depth)
+LinkObj::Style MapDesign::linkStyle(int depth)
 {
     // Special case for now:    // FIXME-3
     // For style PolyParabel or PolyLine in d=1
@@ -147,16 +147,16 @@ LinkContainer::Style MapDesign::linkStyle(int depth)
     if (depth < 2)
         return linkStyles.at(depth);
 
-    if (linkStyles.at(1) == LinkContainer::PolyParabel)
-        return LinkContainer::Parabel;
+    if (linkStyles.at(1) == LinkObj::PolyParabel)
+        return LinkObj::Parabel;
 
-    if (linkStyles.at(1) == LinkContainer::PolyLine)
-        return LinkContainer::Line;
+    if (linkStyles.at(1) == LinkObj::PolyLine)
+        return LinkObj::Line;
 
     return linkStyles.at(1);    // Return eithe Line or Parabel
 }
 
-bool MapDesign::setLinkStyle(const LinkContainer::Style &style, int depth)
+bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
 {
     // Special case for now:    // FIXME-3
     // Only set style for d=1

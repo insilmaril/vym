@@ -13,7 +13,7 @@
 
 LinkObj::LinkObj(QGraphicsItem *parent) : MapObj(parent)
 {
-    qDebug() << "Const LinkObj this=" << this;
+    //qDebug() << "Const LinkObj this=" << this;
     init();
 }
 
@@ -44,25 +44,7 @@ void LinkObj::init()
     bottomLine = nullptr;
     createBottomLine();
 
-    setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
-}
-
-void LinkObj::addTestLink()   // FIXME-0 only experimenting
-{
-    /*
-    */
-    // FIXME-0 below only for experimenting
-    QPen ellPen = QPen(Qt::red);
-    QBrush ellBrush = QBrush(Qt::gray);
-
-    QGraphicsEllipseItem *ellipse = new QGraphicsEllipseItem (this);
-    ellipse->setRect(QRectF(-40, 0, 120, 90));
-    ellipse->setPen(ellPen);
-    ellipse->setBrush(ellBrush);
-    ellipse->setFlag(ItemStacksBehindParent, true);
-    ellipse->setParentItem(this);
-    ellipse->show();
-
+    //setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
 }
 
 void LinkObj::createBottomLine()
@@ -149,7 +131,7 @@ void LinkObj::setLinkStyle(Style newStyle)
             p->setZValue(-20000);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
-            p->setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
+            //p->setFlag(ItemStacksBehindParent, true);   // FIXME-0 testing only
             if (visible)
                 p->show();
             else
