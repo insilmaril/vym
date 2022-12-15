@@ -158,7 +158,6 @@ class BranchContainer : public SelectableContainer {
     QColor frameBrushColor( bool innerFrame = true);
     void setFrameBrushColor(const QColor&, bool innerFrame = true);
 
-    void setFrameRotation(const qreal &a);
     QString saveFrame();
 
     /*! Update styles (frame, links, fonts, colors, ...) */

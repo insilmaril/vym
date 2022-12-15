@@ -758,7 +758,6 @@ void BranchContainer::setRotationContent(const int &a)
         innerContainer->setTransformOriginPoint(0, 0);  // FIXME-X originpoint needed?
         innerContainer->setRotation(a);    // FIXME-2 If BC is FloatingBounded, and bc has images, frame does not include images
     }
-    setFrameRotation(a);
 }
 
 int BranchContainer::getRotationContent()
@@ -911,15 +910,9 @@ void BranchContainer::setFrameBrushColor(const QColor &c, bool innerFrame)
         frameOrnaments->setFrameBrushColor(c);
 }
 
-void BranchContainer::setFrameRotation(const qreal &a)
-{
-    //FIXME-000 if (innerFrame) frameOrnaments->setFrameRotation(a);
-}
-
 QString BranchContainer::saveFrame()
 {
-    //FIXME-000 if (innerFrame)
-        return frameOrnaments->saveFrame();
+    //FIXME-000 if (innerFrame) return frameOrnaments->saveFrame();
     return QString();
 }
 

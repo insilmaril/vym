@@ -36,9 +36,6 @@ void FrameContainer::init()
 
     // Don't consider for sizes or repositioning
     // FIXME-2 still needed? overlay = true;
-
-    // Rotation
-    angle = 0;
 }
 
 void FrameContainer::clear()
@@ -206,7 +203,6 @@ void FrameContainer::setFrameType(const FrameType &t)
                 break;
         }
     }
-    setFrameRotation(angle);
     // reposition() is called in vymmodel for all containers
 }
 
@@ -393,31 +389,6 @@ bool FrameContainer::frameIncludeChildren() { return frameIncludeChildrenInt; }
 void FrameContainer::setFrameIncludeChildren(bool b)
 {
     frameIncludeChildrenInt = b;
-}
-
-void FrameContainer::setFrameRotation(const qreal &a)
-{
-    angle = a;
-    switch (frameTypeInt) {
-        case NoFrame:
-            break;
-        case Rectangle:
-            rectFrame->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
-            rectFrame->setRotation(angle);
-            break;
-        case RoundedRectangle:
-            pathFrame->setRotation(angle);
-            break;
-        case Ellipse:
-            ellipseFrame->setRotation(angle);
-            break;
-        case Cloud:
-            pathFrame->setRotation(angle);
-            break;
-        default:
-            qWarning() << "FrameContainer::setFrameRotation unknown frame type " << frameTypeInt;
-            break;
-    }
 }
 
 QString FrameContainer::saveFrame()
