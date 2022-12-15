@@ -639,7 +639,7 @@ void BranchContainer::updateUpLink()
             break;
     }
 
-    pbc->getLinkContainer()->addLink(upLink);
+    pbc->getLinkContainer()->addLink(upLink);   // FIXME-0 review. Any potential issues?
 
     upLink->setUpLinkPosParent(
             pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
@@ -912,8 +912,10 @@ void BranchContainer::setFrameBrushColor(const QColor &c, bool innerFrame)
 
 QString BranchContainer::saveFrame()
 {
-    //FIXME-000 if (innerFrame) return frameOrnaments->saveFrame();
-    return QString();
+    if (frameOrnaments && frameOrnaments->frameType() != FrameContainer::NoFrame)
+        return frameOrnaments->saveFrame();
+    else
+        return QString();
 }
 
 void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
@@ -1089,7 +1091,6 @@ void BranchContainer::reposition()
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                //innerContainer->setHorizontalDirection(RightToLeft); // FIXME-0 testing
                 setBranchesContainerVerticalAlignment(AlignedLeft);
                 break;
             case UndefinedOrientation:

@@ -22,12 +22,9 @@ void LinkContainer::init()
     containerType = Link;
 }
 
-void LinkContainer::addLink(LinkObj *lo)   // FIXME-0 only experimenting
+void LinkContainer::addLink(LinkObj *lo)   // FIXME-0 still experimental
 {
     lo->setParentItem(this);
-    lo->setFlag(ItemStacksBehindParent, true);
-    if (childItems().count() > 1)
-        lo->stackBefore(childItems().at(0));
 }
 
 void LinkContainer::reposition()
