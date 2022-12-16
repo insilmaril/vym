@@ -73,18 +73,23 @@ void BranchContainer::init()
     innerContainer = new Container;
     innerContainer->containerType = InnerContent;
 
-    ornamentsContainer->addContainer(linkContainer);
-    ornamentsContainer->addContainer(frameOrnaments);
-    ornamentsContainer->addContainer(headingContainer);
-
     standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
     systemFlagRowContainer = new FlagRowContainer;
 
-    // Adding the containers will reparent them and thus set scene
+    ornamentsContainer->addContainer(linkContainer);
+    ornamentsContainer->addContainer(frameOrnaments);
+    ornamentsContainer->addContainer(headingContainer);
     ornamentsContainer->addContainer(standardFlagRowContainer);
     ornamentsContainer->addContainer(systemFlagRowContainer);
+
     ornamentsContainer->setCentralContainer(headingContainer);
+
     innerContainer->addContainer(ornamentsContainer);
+
+    frameOrnaments->setZValue(0);
+    headingContainer->setZValue(40);
+    standardFlagRowContainer->setZValue(20);
+    systemFlagRowContainer->setZValue(30);
 
     branchesContainer = nullptr;
     linkSpaceContainer = nullptr;

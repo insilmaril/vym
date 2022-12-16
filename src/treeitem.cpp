@@ -490,7 +490,7 @@ Flag *TreeItem::findFlagByUid(const QUuid &uid)
     return f;
 }
 
-Flag *TreeItem::toggleFlagByUid(const QUuid &uid, bool useGroups)
+Flag *TreeItem::toggleFlagByUid(const QUuid &uid, bool useGroups)   // FIXME-0 toggling flags makes selection box disappear
 {
     Flag *f = standardFlagsMaster->findFlagByUid(uid);
     if (f) {

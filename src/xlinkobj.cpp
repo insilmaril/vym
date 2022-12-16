@@ -53,7 +53,6 @@ void XLinkObj::init()
     scene->addItem(this);
 
     path = scene->addPath(QPainterPath(), pen, Qt::NoBrush);
-    path->setZValue(dZ_XLINK);
 
     beginArrow = new ArrowObj(this);
     beginArrow->setPen(pen);
@@ -67,7 +66,6 @@ void XLinkObj::init()
 
     pen.setStyle(Qt::SolidLine);
     poly = scene->addPolygon(QPolygonF(), pen, pen.color());
-    poly->setZValue(dZ_XLINK);
 
     // Control points for bezier path
     // (We have at least a begin branch, consider its orientation)
@@ -246,13 +244,6 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
 
     BranchItem *bi_begin = link->getBeginBranch();
     BranchItem *bi_end = link->getEndBranch();
-    if (bi_begin && bi_end && link->getState() == Link::activeXLink)
-        // Note: with MapObj being a GraphicsItem now, maybe better reparent the
-        // xlinkobj line->setZValue (dZ_DEPTH *
-        // max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK);
-        path->setZValue(dZ_XLINK);
-    else
-        path->setZValue(dZ_XLINK);
 
     setVisibility();
 }

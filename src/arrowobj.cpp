@@ -23,14 +23,11 @@ void ArrowObj::init()
 
     pen.setStyle(Qt::SolidLine);
     arrowBegin = scene()->addPolygon(QPolygonF(), pen);
-    arrowBegin->setZValue(dZ_XLINK);
     arrowBegin->setParentItem(this);
     arrowEnd = scene()->addPolygon(QPolygonF(), pen);
-    arrowEnd->setZValue(dZ_XLINK);
     arrowEnd->setParentItem(this);
 
     line = scene()->addLine(QLineF(), pen);
-    line->setZValue(dZ_XLINK);
 
     arrowSize = 4;
     useFixedLength = false;
