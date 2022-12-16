@@ -19,10 +19,9 @@ LinkObj::LinkObj(QGraphicsItem *parent) : MapObj(parent)
 
 LinkObj::~LinkObj()
 {
-    //qDebug()<< "Destructor LO  this=" << this << " style=" << style << " l=" << l << " p =" << p<< "  segments=" << segments.count();
+    //qDebug()<< "Destructor LO  this=" << this;
     delLink();
-
-    // bottomLine is deleted indirectly as child of LinkObj
+    deleteBottomLine();
 }
 
 void LinkObj::init()

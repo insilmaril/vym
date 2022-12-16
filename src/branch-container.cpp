@@ -43,6 +43,9 @@ BranchContainer::~BranchContainer()
         // when the BranchItem will be deleted later
         branchItem->unlinkBranchContainer();
     }
+
+    if (upLink)
+        delete upLink;
 }
 
 void BranchContainer::init()
