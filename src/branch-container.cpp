@@ -58,7 +58,8 @@ void BranchContainer::init()
     selectionContainer = nullptr;
 
     headingContainer = new HeadingContainer;
-    frameOrnaments = new FrameContainer;
+
+    frameOrnaments = new FrameContainer;    // FIXME-2 only create on demand
     frameOrnaments->overlay = true;
 
     ornamentsContainer = new Container;
@@ -74,7 +75,6 @@ void BranchContainer::init()
     ornamentsContainer->addContainer(headingContainer);
 
     standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
-    standardFlagRowContainer->setName("StandardFlags"); // FIXME-2 debugging only
     systemFlagRowContainer = new FlagRowContainer;
 
     // Adding the containers will reparent them and thus set scene
@@ -600,6 +600,10 @@ void BranchContainer::updateUpLink()
 {
     // qDebug() << "BC::updateUpLink of " << info();
 
+    // Sets geometry and color. Called from MapEditor e.g. during animation or 
+    // from VymModel, when colors change
+
+    // MapCenters don't have upLinks
     if (branchItem->depth() == 0) return;
 
     BranchContainer *pbc;
@@ -639,7 +643,7 @@ void BranchContainer::updateUpLink()
             break;
     }
 
-    pbc->getLinkContainer()->addLink(upLink);   // FIXME-0 review. Any potential issues?
+    pbc->getLinkContainer()->addLink(upLink);
 
     upLink->setUpLinkPosParent(
             pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
@@ -649,12 +653,10 @@ void BranchContainer::updateUpLink()
             pbc->getLinkContainer()->sceneTransform().inverted().map(downLink));
 
     // Color of links
-    /*
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
         upLink->setLinkColor(headingContainer->getColor());
     else
         upLink->setLinkColor(branchItem->getMapDesign()->defaultLinkColor());
-    */
 
     upLink->updateLinkGeometry();
 }
@@ -1051,7 +1053,7 @@ void BranchContainer::reposition()
                             orientation = RightOfParent;
                         else
                             orientation = LeftOfParent;
-                        /* FIXME-2 remove comments
+                        /* FIXME-5 remove comments
                         qdbg() << ind() << "BC: Setting neworient " << orientation << " in: " << info();
                         qdbg() << ind() << "    pc: " << parentContainer()->info();
                         */

@@ -5100,7 +5100,7 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     nextBranch(cur, prev);
     while (cur) {
         BranchContainer *bc = cur->getBranchContainer();
-        bc->updateUpLink(); // FIXME-0   "updateUpLink" correct here?
+        bc->updateUpLink();
         // for (int i = 0; i < cur->imageCount(); ++i)
         // FIXME-2 images not supported yet cur->getImageNum(i)->getLMO()->setLinkColor(col);
 

@@ -61,7 +61,7 @@ void FrameContainer::clear()
     frameXSize = 0;
 }
 
-void FrameContainer::repaint()  // FIXME-1 still needed? When exactly?
+void FrameContainer::repaint()
 {
     // Repaint, when e.g. borderWidth has changed or a color
     switch (frameTypeInt) {
