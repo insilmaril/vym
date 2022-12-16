@@ -2,11 +2,11 @@
 
 #include "container.h"
 
-void SelectableContainer::select(Container *c)  // FIXME-0 selection rect is lost when flag is toggled, scrolled (repositioned?)
+void SelectableContainer::select(Container *c)
 {
     if (!selectionContainer)
     {
-        selectionContainer = new Container; // FIXME-00 Container gets zero size in Container::reposition without childs and thus disappears
+        selectionContainer = new Container;
         selectionContainer->setContainerType(Selection);
         selectionContainer->setPen(QPen(Qt::red));
         selectionContainer->setBrush(Qt::yellow);
