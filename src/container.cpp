@@ -369,7 +369,9 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
     // a) Do we have any children after all?
     if (!isVisible() || childContainers().count() == 0)
     {
-        setRect(QRectF());
+        if (!overlay)
+            setRect(QRectF());
+            // The overlay case is handled later in parent container
         return;
     }
 
@@ -607,5 +609,12 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
         default:
             qWarning() << "Container::reposition  unknown layout type for container: " << info();
             break;
+    }
+
+    // Now we have calculated our own size, adjust depending overlay containers
+    foreach (Container *c, childContainers()) {
+        if (c->overlay) {
+            c->setRect(rect());
+        }
     }
 }
