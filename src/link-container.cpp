@@ -14,7 +14,11 @@ LinkContainer::LinkContainer()
 
 LinkContainer::~LinkContainer()
 {
-    //qDebug()<< "Destructor LC  this=" << this;
+    // qDebug()<< "Destructor LC  this=" << this << "children: " << childItems().count();
+
+    // Unparent any children, will be taken care of in own destructors
+    while (!childItems().isEmpty())
+        childItems().first()->setParentItem(nullptr);
 }
 
 void LinkContainer::init()
@@ -22,9 +26,10 @@ void LinkContainer::init()
     containerType = Link;
 }
 
-void LinkContainer::addLink(LinkObj *lo)   // FIXME-0 still experimental
+void LinkContainer::addLink(LinkObj *lo)
 {
-    lo->setParentItem(this);
+    if (lo->parentItem() != this)
+        lo->setParentItem(this);
 }
 
 void LinkContainer::reposition()
