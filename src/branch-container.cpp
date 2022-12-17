@@ -73,7 +73,7 @@ void BranchContainer::init()
     innerContainer = new Container;
     innerContainer->containerType = InnerContent;
 
-    standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
+    standardFlagRowContainer = new FlagRowContainer;    // FIXME-2 Only create FRCs on demand
     systemFlagRowContainer = new FlagRowContainer;
 
     ornamentsContainer->addContainer(linkContainer);
@@ -970,6 +970,7 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 
     // FIXME-5 for testing we do some coloring and additional drawing
     /*
+    */
     if (containerType != TmpParent) {
         // BranchContainer
         setPen(QPen(Qt::green));
@@ -1001,7 +1002,6 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
             setBrush(Qt::NoBrush);
         }
     }   // Visualizations for testing
-    */
 }
 
 void BranchContainer::updateVisuals()
