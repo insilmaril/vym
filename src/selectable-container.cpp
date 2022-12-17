@@ -1,12 +1,9 @@
 #include "selectable-container.h"
 
-#include <QDebug>
-
 #include "container.h"
 
 void SelectableContainer::select(Container *c)
 {
-    qDebug() << "SC::select  c=" << c->info();
     if (!selectionContainer)
     {
         selectionContainer = new Container;
@@ -14,12 +11,10 @@ void SelectableContainer::select(Container *c)
         selectionContainer->setPen(QPen(Qt::red));
         selectionContainer->setBrush(Qt::yellow);
         selectionContainer->overlay = true;
+        //selectionContainer->setFlag(ItemStacksBehindParent, true);
     }
     selectionContainer->setParentItem(c);
     selectionContainer->setZValue(10);  // FIXME-2 align z values in ornamentsContainer
-    selectionContainer->setFlag(ItemStacksBehindParent, true);
-
-    // Initially set rectangle
     selectionContainer->setRect(c->rect());
 }
 

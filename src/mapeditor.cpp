@@ -2314,6 +2314,8 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
                 itemsSelected.append(mi);
                 if (mi->hasTypeBranch())
                     ((BranchItem*)mi)->getBranchContainer()->select();
+                    /*
+                    */
                 if (mi->hasTypeImage())
                     ((ImageItem*)mi)->getImageContainer()->select();
             }
