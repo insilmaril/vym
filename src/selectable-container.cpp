@@ -11,10 +11,11 @@ void SelectableContainer::select(Container *c)
         selectionContainer->setPen(QPen(Qt::red));
         selectionContainer->setBrush(Qt::yellow);
         selectionContainer->overlay = true;
-        //selectionContainer->setFlag(ItemStacksBehindParent, true);
     }
     selectionContainer->setParentItem(c);
     selectionContainer->setZValue(10);  // FIXME-2 align z values in ornamentsContainer
+
+    // Initially set rectangle
     selectionContainer->setRect(c->rect());
 }
 
