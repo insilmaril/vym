@@ -172,7 +172,7 @@ qreal ImageContainer::getScaleFactor() { return scaleFactor; }
 
 void ImageContainer::select()
 {
-    SelectableContainer::select(this);
+    SelectableContainer::select(this, QColor(Qt::yellow)); // FIXME-0 get from mapDesign
 }
 
 bool ImageContainer::load(const QString &fn, bool createClone)

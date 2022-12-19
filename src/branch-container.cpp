@@ -73,7 +73,7 @@ void BranchContainer::init()
     innerContainer = new Container;
     innerContainer->containerType = InnerContent;
 
-    standardFlagRowContainer = new FlagRowContainer;    // FIXME-1 Only create FRCs on demand
+    standardFlagRowContainer = new FlagRowContainer;    // FIXME-2 Only create FRCs on demand
     systemFlagRowContainer = new FlagRowContainer;
 
     ornamentsContainer->addContainer(linkContainer);
@@ -804,7 +804,10 @@ QRectF BranchContainer::getBBoxURLFlag()
 
 void BranchContainer::select()
 {
-    SelectableContainer::select(ornamentsContainer);
+    //SelectableContainer::select(ornamentsContainer);
+    SelectableContainer::select(
+	    frameOrnaments,
+	    branchItem->getMapDesign()->selectionColor());
 }
 
 FrameContainer::FrameType BranchContainer::frameType(bool innerFrame)

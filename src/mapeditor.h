@@ -255,9 +255,5 @@ class MapEditor : public QGraphicsView {
     void updateSelection(QItemSelection, QItemSelection); // update selection
     void updateData(const QModelIndex &);                 // update data
     void togglePresentationMode();
-
-  public:
-    void setSelectionColor(QColor c);
-    QColor getSelectionColor();
 };
 #endif

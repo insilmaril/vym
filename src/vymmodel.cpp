@@ -296,7 +296,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                 mapEditor->getScene()->backgroundBrush().color().name()) +
             xml.attribut("defaultFont", defaultFont.toString()) +
             xml.attribut("selectionColor",
-                         mapEditor->getSelectionColor().name()) +
+                         mapDesign->selectionColor().name(QColor::HexArgb)) +
             xml.attribut("linkStyle", LinkObj::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
             xml.attribut("linkColor", defLinkColor.name()) +
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
@@ -5419,22 +5419,19 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::selectMapSelectionColor()
-{
-    QColor col = QColorDialog::getColor(defLinkColor, nullptr);
-    setSelectionColor(col);
-}
-
 void VymModel::setSelectionColorInt(QColor col)
 {
     if (!col.isValid())
         return;
     saveState(QString("setSelectionColor (\"%1\")")
-                  .arg(mapEditor->getSelectionColor().name()),
+                  .arg(mapDesign->selectionColor().name(QColor::HexArgb)),
               QString("setSelectionColor (\"%1\")").arg(col.name()),
               QString("Set color of selection box to %1").arg(col.name()));
 
-    mapEditor->setSelectionColor(col);
+    mapDesign->setSelectionColor(col);
+    QItemSelection selection = selModel->selection();
+    unselectAll();
+    selModel->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
 void VymModel::emitSelectionChanged(const QItemSelection &newsel)
@@ -5457,7 +5454,7 @@ void VymModel::setSelectionColor(QColor col)
     setSelectionColorInt(col);
 }
 
-QColor VymModel::getSelectionColor() { return mapEditor->getSelectionColor(); }
+QColor VymModel::getSelectionColor() { return mapDesign->selectionColor(); }
 
 bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst)
 {

@@ -2389,13 +2389,3 @@ void MapEditor::togglePresentationMode()
 {
     mainWindow->togglePresentationMode();
 }
-
-void MapEditor::setSelectionColor(QColor col)   // FIXME-2 does not work yet with containers (color hardcoded in BranchContainer)
-{
-    selectionColor = col;
-    selectionColor.setAlpha(200);
-    QItemSelection sel = model->getSelectionModel()->selection();
-    updateSelection(sel, sel);
-}
-
-QColor MapEditor::getSelectionColor() { return selectionColor; }

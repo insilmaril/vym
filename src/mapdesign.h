@@ -36,6 +36,9 @@ class MapDesign {
     LinkObj::Style linkStyle(int depth);
     bool setLinkStyle(const LinkObj::Style &style, int depth);
 
+    QColor selectionColor();
+    void setSelectionColor(const QColor &col);
+
   private:
     QString name;
 
@@ -49,6 +52,8 @@ class MapDesign {
     QColor defaultLinkCol;
 
     QList <LinkObj::Style> linkStyles;
+
+    QColor selectionColorInt;
 };
 
 #endif

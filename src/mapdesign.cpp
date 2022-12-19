@@ -170,3 +170,11 @@ bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
     return true;
 }
 
+QColor MapDesign::selectionColor()
+{
+    return selectionColorInt;
+}
+void MapDesign::setSelectionColor(const QColor &c)
+{
+    selectionColorInt = c;
+}

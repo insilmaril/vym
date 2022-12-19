@@ -6,7 +6,7 @@
 class SelectableContainer:public Container {
   friend class BranchContainer;
   public:
-    virtual void select(Container *c);
+    virtual void select(Container *container,const QColor &color);
     void unselect();
     bool isSelected();
 

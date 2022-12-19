@@ -2,21 +2,22 @@
 
 #include "container.h"
 
-void SelectableContainer::select(Container *c)
+void SelectableContainer::select(Container *parent, const QColor &color)
 {
     if (!selectionContainer)
     {
         selectionContainer = new Container;
         selectionContainer->setContainerType(Selection);
-        selectionContainer->setPen(QPen(Qt::red));
-        selectionContainer->setBrush(Qt::yellow);
+        //selectionContainer->setPen(QPen(Qt::red));
+        selectionContainer->setPen(QPen(Qt::NoPen));
+        selectionContainer->setBrush(color);
         selectionContainer->overlay = true;
     }
-    selectionContainer->setParentItem(c);
+    selectionContainer->setParentItem(parent);
     selectionContainer->setZValue(10);  // FIXME-2 align z values in ornamentsContainer
 
     // Initially set rectangle
-    selectionContainer->setRect(c->rect());
+    selectionContainer->setRect(parent->rect());
 }
 
 void SelectableContainer::unselect()

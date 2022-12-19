@@ -5705,7 +5705,11 @@ void Main::formatSelectSelectionColor()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(m->getSelectionColor(), this);
+        QColor col = QColorDialog::getColor(
+                m->getSelectionColor(),
+                this,
+                tr("Color of selection box","Mainwindow"),
+                QColorDialog::ShowAlphaChannel);
         m->setSelectionColor(col);
     }
 }
