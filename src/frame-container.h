@@ -20,7 +20,6 @@ class FrameContainer : public XMLObj, public Container {
     void clear();
     void repaint();
     virtual void reposition();
-    void setFrameZValue(double z);
 
     // Interfaces
     FrameType frameType();

@@ -86,11 +86,6 @@ void BranchContainer::init()
 
     innerContainer->addContainer(ornamentsContainer);
 
-    frameOrnaments->setZValue(0);
-    headingContainer->setZValue(40);
-    standardFlagRowContainer->setZValue(20);
-    systemFlagRowContainer->setZValue(30);
-
     branchesContainer = nullptr;
     linkSpaceContainer = nullptr;
 
@@ -804,9 +799,10 @@ QRectF BranchContainer::getBBoxURLFlag()
 
 void BranchContainer::select()
 {
-    //SelectableContainer::select(ornamentsContainer);
     SelectableContainer::select(
-	    frameOrnaments,
+	    ornamentsContainer,
+	    //frameOrnaments,
+	    headingContainer,
 	    branchItem->getMapDesign()->selectionColor());
 }
 

@@ -5,6 +5,7 @@
 
 #include "file.h"
 #include "imageitem.h"
+#include "mapdesign.h"
 
 extern QDir cashDir;
 extern ulong imageLastID;
@@ -93,22 +94,6 @@ void ImageContainer::init()
     //setPen(QPen(Qt::red));
 }
 
-void ImageContainer::setZValue(qreal z)
-{
-    switch (imageType) {
-        case ImageContainer::SVG:
-        case ImageContainer::ClonedSVG:
-            svgItem->setZValue(z);
-            break;
-        case ImageContainer::Pixmap:
-        case ImageContainer::ModifiedPixmap:
-            pixmapItem->setZValue(z);
-            break;
-        default:
-            break;
-    }
-}
-
 void ImageContainer::setVisibility(bool v)
 {
     switch (imageType) {
@@ -170,9 +155,12 @@ void ImageContainer::setScaleFactor(qreal f)
 
 qreal ImageContainer::getScaleFactor() { return scaleFactor; }
 
-void ImageContainer::select()
+void ImageContainer::select()   // FIXME-0 z-ordering wrong. Above image.
 {
-    SelectableContainer::select(this, QColor(Qt::yellow)); // FIXME-0 get from mapDesign
+    SelectableContainer::select(
+	    this,
+            childItems().first(),
+	    imageItem->getMapDesign()->selectionColor());
 }
 
 bool ImageContainer::load(const QString &fn, bool createClone)

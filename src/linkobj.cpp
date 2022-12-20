@@ -48,7 +48,6 @@ void LinkObj::createBottomLine()
 {
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
-    //FIXME-2 needed? bottomLine->setZValue(dZ_LINK);
     bottomLine->setVisible(true); // FIXME-2 testing
 }
 
@@ -101,7 +100,6 @@ void LinkObj::setLinkStyle(Style newStyle)
     switch (style) {
         case Line:
             l = new QGraphicsLineItem(this);
-            //l->setZValue(dZ_LINK);    // FIXME-2 check, needed?
             //if (visible)
                 l->show();
             //else
@@ -113,7 +111,6 @@ void LinkObj::setLinkStyle(Style newStyle)
                 cl = new QGraphicsLineItem(this);
                 cl->setLine(QLineF(i * 5, 0, i * 10, 100));
                 cl->setPen(pen);
-                //FIXME-2 needed? cl->setZValue(dZ_LINK);
                 if (visible)
                     cl->show();
                 else
@@ -124,8 +121,6 @@ void LinkObj::setLinkStyle(Style newStyle)
             break;
         case PolyLine:
             p = new QGraphicsPolygonItem(this);
-            //FIXME-2 needed? p->setZValue(dZ_LINK);
-            p->setZValue(-20000);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
             if (visible)
@@ -136,7 +131,6 @@ void LinkObj::setLinkStyle(Style newStyle)
             break;
         case PolyParabel:
             p = new QGraphicsPolygonItem(this);
-            //FIXME-2 needed? p->setZValue(dZ_LINK);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
             if (visible)
@@ -341,7 +335,6 @@ void LinkObj::updateLinkGeometry()
     // Draw the horizontal line below heading (from childRefPos to parentPos)
     if (bottomLine) {
         bottomLine->setLine(p2x,p2y, downLinkPos.x(), downLinkPos.y());
-        //bottomLine->setZValue(z);
     }
 
     double a; // angle
@@ -357,7 +350,6 @@ void LinkObj::updateLinkGeometry()
     switch (style) {
         case Line:
             l->setLine(p1x, p1y, p2x, p2y);
-            l->setZValue(z);
             break;
         case Parabel:
             parabel(pa0, p1x, p1y, p2x, p2y);
@@ -367,7 +359,6 @@ void LinkObj::updateLinkGeometry()
                             pa0.at(i).y(),
                             pa0.at(i + 1).x(),
                             pa0.at(i + 1).y()));
-                segments.at(i)->setZValue(z);
             }
             break;
         case PolyLine:
@@ -376,7 +367,6 @@ void LinkObj::updateLinkGeometry()
             pa0 << QPointF(p1x - tp.x(), p1y - tp.y());
             pa0 << QPointF(p2x,p2y);
             p->setPolygon(QPolygonF(pa0));
-            p->setZValue(z);
             break;
         case PolyParabel:
             parabel(pa1, p1x + tp.x(), p1y + tp.y(), p2x, p2y);
@@ -387,7 +377,6 @@ void LinkObj::updateLinkGeometry()
             for (int i = 0; i <= arcsegs; i++)
                 pa0 << QPointF(pa2.at(arcsegs - i));
             p->setPolygon(QPolygonF(pa0));
-            p->setZValue(z);
             break;
         default:
             qWarning() << "LinkObj::updateLinkGeometry - Unknown LinkStyle in " << __LINE__;

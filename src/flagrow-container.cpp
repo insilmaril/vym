@@ -21,17 +21,6 @@ FlagRowContainer::~FlagRowContainer()
     // qDebug() << "Destr FlagRowContainer";
 }
 
-void FlagRowContainer::setZValue(double z)  // FIXME-2 z value of children? in base class?
-{
-    /*
-    QGraphicsItem::setZValue(z);
-    foreach (QGraphicsItem *child, childItems()) {
-        Container* c = (Container*) child;
-        c->setZValue(z);
-    }
-    */
-}
-
 void FlagRowContainer::updateActiveFlagContainers(const QList<QUuid> activeFlagUids,
                                       FlagRowMaster *masterRowMain,
                                       FlagRowMaster *masterRowOptional)

@@ -90,11 +90,6 @@ qreal ImageItem::getScaleFactor()
         return 1;
 }
 
-void ImageItem::setZValue(int z)
-{
-    imageContainer->setZValue(z);
-}
-
 void ImageItem::setOriginalFilename(const QString &fn)
 {
     originalFilename = fn;
@@ -139,7 +134,6 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     // Save uuid
     QString idAttr = attribut("uuid", uuid.toString());
 
-    QString zAttr = attribut("zValue", QString().setNum(zValue));
     QString url;
 
     url = "images/" + prefix + "image-" + QString().number(itemID) +
@@ -156,7 +150,7 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     return singleElement("floatimage",
                 MapItem::getPosAttr() +
                 MapItem::getLinkableAttr() +
-                TreeItem::getGeneralAttr() + zAttr +
+                TreeItem::getGeneralAttr() +
                 attribut("href", QString("file:") + url) +
                 nameAttr + scaleAttr + idAttr);
 }

@@ -1,20 +1,22 @@
 #include "selectable-container.h"
 
+#include <QDebug>
+
 #include "container.h"
 
-void SelectableContainer::select(Container *parent, const QColor &color)
+void SelectableContainer::select(Container *parent, QGraphicsItem* successorItem, const QColor &color)
 {
     if (!selectionContainer)
     {
         selectionContainer = new Container;
         selectionContainer->setContainerType(Selection);
-        //selectionContainer->setPen(QPen(Qt::red));
         selectionContainer->setPen(QPen(Qt::NoPen));
         selectionContainer->setBrush(color);
         selectionContainer->overlay = true;
     }
     selectionContainer->setParentItem(parent);
-    selectionContainer->setZValue(10);  // FIXME-2 align z values in ornamentsContainer
+    if (successorItem)
+	selectionContainer->stackBefore(successorItem);
 
     // Initially set rectangle
     selectionContainer->setRect(parent->rect());

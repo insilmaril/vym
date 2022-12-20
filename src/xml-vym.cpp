@@ -804,8 +804,7 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
             return true;
         }
     }
-    if (!a.value("zPlane").isEmpty())
-        lastImage->setZValue(a.value("zPlane").toInt());
+
     float x, y;
     bool okx, oky;
     if (!a.value("posX").isEmpty()) {

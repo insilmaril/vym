@@ -23,7 +23,7 @@ FrameContainer::~FrameContainer()
 
 void FrameContainer::init()
 {
-    // FIXME-2 containerType = Frame;
+    containerType = Frame;
     frameTypeInt = NoFrame;
     clear();
     framePen.setColor(Qt::black);
@@ -93,29 +93,6 @@ void FrameContainer::reposition()
     Container::reposition();    // FIXME-2 no need to overload without special functionality
 }
 
-void FrameContainer::setFrameZValue(double z)   // FIXME-2 needed?
-{
-    switch (frameTypeInt) {
-        case NoFrame:
-            break;
-        case Rectangle:
-            rectFrame->setZValue(z);
-            break;
-        case RoundedRectangle:
-            pathFrame->setZValue(z);
-            break;
-        case Ellipse:
-            ellipseFrame->setZValue(z);
-            break;
-        case Cloud:
-            pathFrame->setZValue(z);
-            break;
-        default:
-            qWarning() << "FrameContainer::setFrameZValue unknown frame type " << frameTypeInt;
-            break;
-    }
-}
-
 FrameContainer::FrameType FrameContainer::frameType() { return frameTypeInt; }
 
 FrameContainer::FrameType FrameContainer::frameTypeFromString(const QString &s)
@@ -163,7 +140,6 @@ void FrameContainer::setFrameType(const FrameType &t)
                 rectFrame->setPen(framePen);
                 rectFrame->setBrush(frameBrush);
                 rectFrame->setFlag(ItemStacksBehindParent, true);
-                //rectFrame->setZValue(dZ_FRAME_LOW);
                 rectFrame->setParentItem(this);
                 rectFrame->show();
                 break;
@@ -173,7 +149,6 @@ void FrameContainer::setFrameType(const FrameType &t)
                 ellipseFrame->setPen(framePen);
                 ellipseFrame->setBrush(frameBrush);
                 ellipseFrame->setFlag(ItemStacksBehindParent, true);
-                //ellipseFrame->setZValue(dZ_FRAME_LOW);
                 ellipseFrame->setParentItem(this);
                 ellipseFrame->show();
                 break;
@@ -183,7 +158,6 @@ void FrameContainer::setFrameType(const FrameType &t)
                 pathFrame->setPen(framePen);
                 pathFrame->setBrush(frameBrush);
                 pathFrame->setFlag(ItemStacksBehindParent, true);
-                //pathFrame->setZValue(dZ_FRAME_LOW);
                 pathFrame->setParentItem(this);
                 pathFrame->show();
             } break;
@@ -193,7 +167,6 @@ void FrameContainer::setFrameType(const FrameType &t)
                 pathFrame->setPen(framePen);
                 pathFrame->setBrush(frameBrush);
                 pathFrame->setFlag(ItemStacksBehindParent, true);
-                //pathFrame->setZValue(dZ_FRAME_LOW);
                 pathFrame->setParentItem(this);
                 pathFrame->show();
             }

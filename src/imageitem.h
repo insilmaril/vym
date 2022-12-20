@@ -28,12 +28,10 @@ class ImageItem : public MapItem {
   protected:
     ImageContainer *imageContainer;
     QString originalFilename;
-    int zValue;
 
   public:
     void setScaleFactor(qreal);
     qreal getScaleFactor();
-    void setZValue(int z);
     void setOriginalFilename(const QString &);
     QString getOriginalFilename();
     QString getUniqueFilename();
