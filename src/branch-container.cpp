@@ -969,16 +969,17 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
 
     // FIXME-5 for testing we do some coloring and additional drawing
     /*
+    */
     if (containerType != TmpParent) {
         // BranchContainer
-        setPen(QPen(Qt::green));
+        //setPen(QPen(Qt::green));
 
         // OrnamentsContainer
-        ornamentsContainer->setPen(QPen(Qt::blue));
+        //ornamentsContainer->setPen(QPen(Qt::blue));
         //ornamentsContainer->setPen(Qt::NoPen);
 
         // InnerContainer
-        innerContainer->setPen(QPen(Qt::cyan));
+        //innerContainer->setPen(QPen(Qt::cyan));
 
         if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
 
@@ -1000,7 +1001,6 @@ void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
             setBrush(Qt::NoBrush);
         }
     }   // Visualizations for testing
-    */
 }
 
 void BranchContainer::updateVisuals()

@@ -155,7 +155,7 @@ void ImageContainer::setScaleFactor(qreal f)
 
 qreal ImageContainer::getScaleFactor() { return scaleFactor; }
 
-void ImageContainer::select()   // FIXME-0 z-ordering wrong. Above image.
+void ImageContainer::select()
 {
     SelectableContainer::select(
 	    this,
