@@ -536,11 +536,12 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 QPointF v_central;
 
                 if (centralContainer) {
-                    v_central = mapFromItem(centralContainer, centralContainer->rect().center());
+                    //v_central = mapFromItem(centralContainer, centralContainer->rect().center());
                     qdbg() << ind() << "    HL a) central container: v_central=" << qpointFToString(v_central, 0) << " cc =" << centralContainer->info();
                     //qdbg() << ind() << " v_central = " << qpointFToString(v_central);
                     if (parentContainer()) {
                         if (parentContainer()->hasFloatingLayout())  {
+			    v_central = mapFromItem(centralContainer, centralContainer->rect().center());
                             qdbg() << ind() << "    HL b) central container: v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                             if (!v_central.isNull())
                                 foreach (Container *c, childContainers()) {
@@ -556,6 +557,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 			// Make my  heading (!) position constant, by moving
 			// children (including headingContainer)
 			qdbg() << ind() << "Moving children of mapcenter " << info();
+			v_central = mapFromItem(centralContainer, centralContainer->rect().center());
 			/*
 			*/
 			if (!v_central.isNull())
