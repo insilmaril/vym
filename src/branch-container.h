@@ -109,6 +109,9 @@ class BranchContainer : public SelectableContainer {
     /*! Get suggestion where a relinked child could be positioned (scene coord) */
     QPointF getPositionHintRelink(Container*, int d_pos = 0, const QPointF & p_scene = QPointF());
 
+    /*! Get positions for links */
+    QPointF downLinkPos(const QPointF &scenePosChild);
+
     /*! Update "upwards" links in LinkContainer */
     void updateUpLink();
 

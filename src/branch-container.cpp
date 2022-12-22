@@ -599,14 +599,27 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     return hint;
 }
 
+QPointF BranchContainer::downLinkPos(const QPointF &scenePosChild)
+{
+    if (frameType() != FrameContainer::NoFrame)
+        // Use frame center of frame
+        return ornamentsContainer->mapToScene(
+                ornamentsContainer->rect().center());
+
+    if (scenePosChild.x() >= ornamentsContainer->scenePos().x())
+        return ornamentsContainer->mapToScene(
+                ornamentsContainer->rect().bottomRight());
+    else
+        return ornamentsContainer->mapToScene(
+                ornamentsContainer->rect().bottomLeft());
+}
+
 void BranchContainer::updateUpLink()
 {
-    // qDebug() << "BC::updateUpLink of " << info();
-
     // Sets geometry and color. Called from MapEditor e.g. during animation or 
     // from VymModel, when colors change
 
-    // MapCenters don't have upLinks
+    // MapCenters don't have upLinks    // FIXME-00 but might have a bottomline needing an update
     if (branchItem->depth() == 0) return;
 
     BranchContainer *pbc;
@@ -616,29 +629,24 @@ void BranchContainer::updateUpLink()
         // Get "real" parentBranchContainer, not tmpParentContainer (!)
         pbc = branchItem->parentBranch()->getBranchContainer();
 
-    QPointF upLinkParent_sp;
+    QPointF upLinkParent_sp = pbc->downLinkPos(ornamentsContainer->mapToScene(
+                                ornamentsContainer->pos()));
     QPointF upLinkSelf;
     QPointF downLink;
     switch (orientation) {
         case RightOfParent:
-            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
-                    pbc->ornamentsContainer->rect().center());
             upLinkSelf = ornamentsContainer->mapToScene(
                     ornamentsContainer->rect().bottomLeft());
             downLink = ornamentsContainer->mapToScene(
                     ornamentsContainer->rect().bottomRight());
             break;
         case LeftOfParent:
-            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
-                    pbc->ornamentsContainer->rect().center());
             upLinkSelf = ornamentsContainer->mapToScene(
                     ornamentsContainer->rect().bottomRight());
             downLink = ornamentsContainer->mapToScene(
                     ornamentsContainer->rect().bottomLeft());
             break;
         default:
-            upLinkParent_sp = pbc->ornamentsContainer->mapToScene(
-                    pbc->ornamentsContainer->rect().center());
             upLinkSelf = ornamentsContainer->mapToScene(
                     ornamentsContainer->rect().center());
             downLink = ornamentsContainer->mapToScene(
@@ -652,7 +660,7 @@ void BranchContainer::updateUpLink()
             pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
     upLink->setUpLinkPosSelf(
             pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkSelf));
-    upLink->setDownLinkPos(
+    upLink->setDownLinkPos( // FIXME-00 should be set in parent? needed for bottomline...
             pbc->getLinkContainer()->sceneTransform().inverted().map(downLink));
 
     // Color of links
@@ -821,7 +829,7 @@ QString BranchContainer::frameTypeString(bool innerFrame)
     return QString();
 }
 
-void BranchContainer::setFrameType(const FrameContainer::FrameType &ftype, bool innerFrame)
+void BranchContainer::setFrameType(const FrameContainer::FrameType &ftype, bool innerFrame) // FIXME-00 toggle bottomline depending on frame
 {
     if (innerFrame)
         frameOrnaments->setFrameType(ftype);

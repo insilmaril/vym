@@ -146,8 +146,6 @@ Next steps
 
 * Moving containers around
     - Todo
-        - Fix z value of select box for selected containers
-        - absolute position for MapCenters for COntainers
 
     - moving and tmp linked:
       - maybe also information about rotation of tmp child
