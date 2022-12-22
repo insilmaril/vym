@@ -39,13 +39,6 @@ class MapItem : public TreeItem {
 
     virtual QString getPosAttr();       //! Get position attributes shared by Images and Branches
     virtual QString getLinkableAttr();  //! Get attributes shared by Images and Branches
-
-  public:
-    /*! Return path to highlight currently selected items in scene coordinates */
-    virtual QPainterPath getSelectionPath();
-
-    /*! Return position to edit headings in scene coordinates */
-    virtual QPointF getEditPosition();
 };
 
 #endif

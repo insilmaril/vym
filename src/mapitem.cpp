@@ -69,49 +69,5 @@ QString MapItem::getLinkableAttr()
     if (hideLinkUnselected)
         s += attribut("hideLink", "true");
 
-    // Save rotation                        // FIXME-2 use rotation via container layouts
-    /*
-    QString rotAttr;
-    if (mo && mo->getRotation() != 0)
-        rotAttr = attribut("rotation", QString().setNum(mo->getRotation()));
-    */
-
-    // FIXME-2 Also save scale factor?  
-
     return s;
 }
-
-#include "heading-container.h"
-QPainterPath MapItem::getSelectionPath() // FIXME-2 could be in BranchContainer or ImageContainer
-{
-    qreal d = 3;    // Margins around rectangle of item
-    QPolygonF polygon;
-    if (hasTypeBranch() )
-    {
-        HeadingContainer *hc = ((BranchItem*)this)->getBranchContainer()->getHeadingContainer();
-        polygon = hc->mapToScene(hc->rect().marginsAdded(QMarginsF(d, d, d, d)));
-    } else if (hasTypeImage()) {
-        ImageContainer *ic =((ImageItem*)this)->getImageContainer();
-        polygon = ic->mapToScene(ic->rect().marginsAdded(QMarginsF(d, d, d, d)));
-    } else if (type == XLink) {
-        return QPainterPath();
-    } else
-        qWarning() << "MapItem::getSelectionPath - unknown item type = " << type;
-
-    QPainterPath path;
-    path.addPolygon(polygon);
-    return path;
-}
-
-QPointF MapItem::getEditPosition() // FIXME-2 should be directly in BranchContainer
-{
-    QPointF p;
-
-    if (hasTypeBranch() )
-        p = ((BranchItem*)this)->getBranchContainer()->scenePos();
-    else
-        qWarning() << "MapItem::getEditPosition - unknown item type!";
-
-    return p;
-}
-
