@@ -353,11 +353,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
-    /*
-    foreach (Container *c, childContainers())
-        qdbg() << ind() << " * child: " << c->info();
-    */
+    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -476,9 +472,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                qdbg() << ind() << " * HL starting for " << info();
-                //foreach (Container *c, childContainers())
-                //   qdbg() << ind() << "   HL: child: " << c->info() << " ovly:" << c->overlay;
+                //qdbg() << ind() << " * HL starting for " << info();
                 foreach (Container *c, childContainers()) {
                     if (!c->overlay) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -488,10 +482,6 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                         h_max = (h_max < h) ? h : h_max;
                     }
                 }
-/*
-                if (centralContainer)
-                    qdbg() << ind() << "    HL: Found central container: " << centralContainer->info();
-*/
 
                 // Left (or right) line, where next children will be aligned to
                 qreal x = - w_total / 2;
@@ -536,42 +526,24 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 QPointF v_central;
 
                 if (centralContainer) {
-                    //v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-                    qdbg() << ind() << "    HL a) central container: v_central=" << qpointFToString(v_central, 0) << " cc =" << centralContainer->info();
-                    //qdbg() << ind() << " v_central = " << qpointFToString(v_central);
-                    if (parentContainer()) {
-                        if (parentContainer()->hasFloatingLayout())  {
+		    // Now we might want to adjust positions of children, so
+		    // that centralContainer (==headingContainer) keeps its position
+		    // This may happen, if
+		    // - I am in a floating layout or
+		    // - I am a MapCenter myself
+                    if ((parentContainer() && parentContainer()->hasFloatingLayout()) || !parentContainer() ) {
 			    v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-                            qdbg() << ind() << "    HL b) central container: v_central=" << qpointFToString(v_central, 0) << " cc=" << centralContainer->info();
                             if (!v_central.isNull())
                                 foreach (Container *c, childContainers()) {
-                                    if (!c->overlay) {
-					qdbg() << ind() << "    HL c) moving " << c->info();
+                                    if (!c->overlay)
                                         c->setPos(c->pos() - v_central);
-                                    }
                                 }
-                        }
-                    } else {
-                        // I am a MapCenter (no parentContainer)
-			// My absolute position is in the center of total bounding box, including children.
-			// Make my  heading (!) position constant, by moving
-			// children (including headingContainer)
-			qdbg() << ind() << "Moving children of mapcenter " << info();
-			v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-			/*
-			*/
-			if (!v_central.isNull())
-			    foreach (Container *c, childContainers()) {
-				if (!c->overlay) {
-				    c->setPos(c->pos() - v_central);
-				}
-			    }
 		    }
                 }
 
                 setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
 
-                qdbg() << ind() << " * HL Finished for " << info();
+                //qdbg() << ind() << " * HL Finished for " << info();
             } // Horizontal layout
             break;
 
