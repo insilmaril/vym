@@ -41,11 +41,12 @@ void LinkObj::init()
     visible = true; // FIXME-1 needed?
 
     bottomLine = nullptr;
-    createBottomLine();
 }
 
 void LinkObj::createBottomLine()
 {
+    if (bottomLine) return;
+
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
     bottomLine->setVisible(true); // FIXME-2 testing
@@ -306,8 +307,13 @@ void LinkObj::updateLinkGeometry()
     //	style
     //
     // sets:
-    //  bottomlineY
-    //	drawing of the link itself
+    //	drawing of bottomLine and upLink
+
+    setPos(0,0);    // needed due to reposition()
+
+    // Draw the horizontal line below heading (from childRefPos to parentPos)
+    if (bottomLine)
+        bottomLine->setLine(QLineF(upLinkPosSelf, downLinkPos));
 
     if (style == NoLink)
         return;
@@ -331,12 +337,6 @@ void LinkObj::updateLinkGeometry()
     else
         z = dZ_LINK;
     */
-
-    // Draw the horizontal line below heading (from childRefPos to parentPos)
-    if (bottomLine) {
-        bottomLine->setLine(p2x,p2y, downLinkPos.x(), downLinkPos.y());
-    }
-
     double a; // angle
     if (vx > -0.000001 && vx < 0.000001)
         a = M_PI_2;
@@ -382,7 +382,6 @@ void LinkObj::updateLinkGeometry()
             qWarning() << "LinkObj::updateLinkGeometry - Unknown LinkStyle in " << __LINE__;
             break;
     }
-    setPos(0,0);    // needed due to reposition()
 }
 
 void LinkObj::setUpLinkPosParent(const QPointF& p)

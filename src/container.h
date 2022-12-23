@@ -55,6 +55,17 @@ class Container : public QGraphicsRectItem {
     int containerDepth();
     QString ind();
 
+    // Convenience coordinates
+    QPointF leftCenter();
+    QPointF rightCenter();
+    QPointF topCenter();
+    QPointF bottomCenter();
+    QPointF center();
+    QPointF bottomLeft();
+    QPointF bottomRight();
+    QPointF topLeft();
+    QPointF topRight();
+
     void setLayout(const Layout &ltype);
 
     Layout getLayout();

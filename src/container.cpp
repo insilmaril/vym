@@ -163,6 +163,16 @@ QString Container::ind()
     return s;
 }
 
+QPointF Container::leftCenter() {return QPointF(rect().left(), (rect().bottom() + rect().top() ) /2);}
+QPointF Container::rightCenter() {return QPointF(rect().right(), (rect().bottom() + rect().top() ) /2);}
+QPointF Container::topCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().top());}
+QPointF Container::bottomCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().bottom());}
+QPointF Container::center() {return rect().center();}
+QPointF Container::bottomLeft() {return rect().bottomLeft();}
+QPointF Container::bottomRight() {return rect().bottomRight();}
+QPointF Container::topLeft() {return rect().topLeft();}
+QPointF Container::topRight() {return rect().topRight();}
+
 void Container::setLayout(const Layout &l)
 {
     layout = l;
