@@ -62,7 +62,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         branchesTotal = 0;
         branchesCounter = 0;
 
-        if (loadMode == NewMap) {
+        if (loadMode == NewMap || loadMode == DefaultMap) {
             // Create mapCenter
             model->clear();
             lastBranch = NULL;
