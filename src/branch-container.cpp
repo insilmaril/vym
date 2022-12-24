@@ -109,7 +109,7 @@ void BranchContainer::init()
     imagesContainerAutoLayout = true;
     imagesContainerLayout = FloatingFree;
 
-    tmpParentContainer = nullptr;
+    tmpLinkedParentContainer = nullptr;
 
     scrollOpacity = 1;
 }
@@ -210,17 +210,17 @@ bool BranchContainer::isOriginalFloating()
 
 void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
-    tmpParentContainer = tpc;
+    tmpLinkedParentContainer = tpc;
 }
 
 void BranchContainer::unsetTemporaryLinked()
 {
-    tmpParentContainer = nullptr;
+    tmpLinkedParentContainer = nullptr;
 }
 
 bool BranchContainer::isTemporaryLinked()
 {
-    if (tmpParentContainer)
+    if (tmpLinkedParentContainer)
         return true;
     else
         return false;
@@ -267,7 +267,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) //
     if (!branchesContainer) {
         createBranchesContainer();
         if (branchItem)
-            // tmpParentContainer has no associated branchItem!
+            // tmpLinkedParentContainer has no associated branchItem!
             updateStyles(RelinkBranch);
     }
 
@@ -685,29 +685,38 @@ void BranchContainer::updateUpLink()
     QPointF downLink_sp = downLinkPos(orientation);
 
     BranchContainer *pbc = nullptr;
-    if (tmpParentContainer)
-        pbc = tmpParentContainer;
+    if (tmpLinkedParentContainer)
+        // I am temporarily linked to tmpLinkedParentContainer
+        pbc = tmpLinkedParentContainer;
     else
-        // Get "real" parentBranchContainer, not tmpParentContainer (!)
+        // I am moving with tmpParent or just regular updated
         pbc = parentBranchContainer();
 
     if (pbc) {
-        // In case we have a parent, we can draw the upLink
         QPointF upLinkParent_sp;
-        if (pbc->getContainerType() == Container::TmpParent)
+        if (pbc->getContainerType() == Container::TmpParent) {
+            // Currently moving with tmpParentContainer, BUT not linked to tmpLinkedParentContainer
             upLinkParent_sp = originalParentPos;
-        else
-            upLinkParent_sp = pbc->downLinkPos(orientation);    // FIXME-000 original parent!
 
-        // Add this link to parents LinkContainer (for correct z-stacking)
-        pbc->getLinkContainer()->addLink(upLink);
+            QGraphicsItem* upLinkParent = upLink->parentItem();
+            upLink->setUpLinkPosParent(
+                    upLinkParent->sceneTransform().inverted().map(upLinkParent_sp));
+            upLink->setUpLinkPosSelf(
+                    upLinkParent->sceneTransform().inverted().map(upLinkSelf_sp));
+            upLink->setDownLinkPos(
+                    upLinkParent->sceneTransform().inverted().map(downLink_sp));
+        } else {
+            upLinkParent_sp = pbc->downLinkPos(orientation);
 
-        upLink->setUpLinkPosParent(
-                pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
-        upLink->setUpLinkPosSelf(
-                pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkSelf_sp));
-        upLink->setDownLinkPos(
-                pbc->getLinkContainer()->sceneTransform().inverted().map(downLink_sp));
+            pbc->getLinkContainer()->addLink(upLink);
+
+            upLink->setUpLinkPosParent(
+                    pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
+            upLink->setUpLinkPosSelf(
+                    pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkSelf_sp));
+            upLink->setDownLinkPos(
+                    pbc->getLinkContainer()->sceneTransform().inverted().map(downLink_sp));
+        }
     } else {
         // I am a MapCenter without parent. Add LinkObj to my own LinkContainer,
         // so that at least positions are updated and bottomLine can be drawn

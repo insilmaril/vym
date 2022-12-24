@@ -57,7 +57,7 @@ class BranchContainer : public SelectableContainer {
     bool isOriginalFloating();
 
   private:
-    BranchContainer *tmpParentContainer;
+    BranchContainer *tmpLinkedParentContainer;
 
   public:
     void setTemporaryLinked(BranchContainer *tpc);
