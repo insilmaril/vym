@@ -102,7 +102,7 @@ MapEditor::MapEditor(VymModel *vm)
 
     // Container used for temporary moving and relinking branches
     tmpParentContainer = new BranchContainer (mapScene);
-    tmpParentContainer->setZValue(1000);    // FIXME-1 Better insert MapCenters before tmpParentContainer
+    tmpParentContainer->setZValue(1000);
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setContainerType(Container::TmpParent);
     tmpParentContainer->setLayout(Container::FloatingBounded);
@@ -1280,7 +1280,7 @@ void MapEditor::editHeading()
 
         lineEdit = new QLineEdit;
         QGraphicsProxyWidget *proxyWidget = mapScene->addWidget(lineEdit);
-        proxyWidget->setZValue(Z_LINEEDIT);
+        proxyWidget->setZValue(10000);
         // FIXME-2 get total rotation XXX for BC in scene and do "proxyWidget->setRotation(XXX);
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
