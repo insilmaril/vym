@@ -2006,7 +2006,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
             model->saveStateEndBlock();
         } else {
-            // Branches moved, but not relinked
+            // Branches moved, but not relinked // FIXME-0 "jumping" for first animation step!
             QPointF t = p - movingObj_initialScenePos;    // Defined in mousePressEvent
 
             QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();

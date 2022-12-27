@@ -4,7 +4,7 @@
 
 #include "container.h"
 
-void SelectableContainer::select(Container *parent, QGraphicsItem* successorItem, const QColor &color)
+void SelectableContainer::select(Container *parent, const QColor &color)
 {
     if (!selectionContainer)
     {
@@ -14,9 +14,7 @@ void SelectableContainer::select(Container *parent, QGraphicsItem* successorItem
         selectionContainer->setBrush(color);
         selectionContainer->overlay = true;
     }
-    selectionContainer->setParentItem(parent);
-    if (successorItem)
-	selectionContainer->stackBefore(successorItem);
+    parent->addContainer(selectionContainer, Z_SELECTION);
 
     // Initially set rectangle
     selectionContainer->setRect(parent->rect());

@@ -135,9 +135,10 @@ QString Container::info (const QString &prefix)
 {
     return prefix +
         getName() +
+        QString(" zPos: %1").arg(zPos) +
         QString(" Layout: %1").arg(getLayoutString()) +
-        QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0)) +
-        QString(" pos: %1").arg(qpointFToString(pos(), 0)) +
+        //QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0)) +
+        //QString(" pos: %1").arg(qpointFToString(pos(), 0)) +
         QString(" rect: %1").arg(qrectFToString(rect(), 0));
 }
 
@@ -275,9 +276,21 @@ void Container::setVisibility(bool v)
     setVisible(visible);
 }
 
-void Container::addContainer(Container *c)
+void Container::addContainer(Container *c, int z)
 {
     c->setParentItem(this);
+    if (z >= 0) {
+        // Order containers
+        c->zPos = z;
+
+        // First find sibling with lowest z
+        foreach (Container *child, childContainers()) {
+            if (c->zPos < child->zPos && c != child) {
+                c->stackBefore(child);
+                break;
+            }
+        }
+    }
 }
 
 QList <Container*> Container::childContainers()
@@ -363,7 +376,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    // qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,

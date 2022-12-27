@@ -5,6 +5,13 @@
 
 #include "animpoint.h"
 
+#define Z_LINK 10
+#define Z_FRAME_ORNAMENTS 20
+#define Z_SELECTION 30
+#define Z_HEADING 40
+#define Z_STANDARD_FLAGS 50
+#define Z_SYSTEM_FLAGS 60
+
 class BranchContainer;
 class ImageContainer;
 
@@ -88,7 +95,7 @@ class Container : public QGraphicsRectItem {
     virtual bool isVisibleContainer();
     virtual void setVisibility(bool);
 
-    void addContainer(Container *c);
+    void addContainer(Container *c, int z = -1);
     Container* parentContainer();
     QList <Container*> childContainers();
 
@@ -116,6 +123,8 @@ class Container : public QGraphicsRectItem {
 
     bool visible;
     bool overlay;
+
+    int zPos;       //! Containers can be orderd by zPos. Lowest zPos is first container
 
     QPointF originalPos;    //! Save position before move for undo
     AnimPoint animatedPos;  //! animated position to let e.g. a branch "snap back"

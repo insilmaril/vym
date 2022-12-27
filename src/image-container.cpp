@@ -159,7 +159,6 @@ void ImageContainer::select()
 {
     SelectableContainer::select(
 	    this,
-            childItems().first(),
 	    imageItem->getMapDesign()->selectionColor());
 }
 

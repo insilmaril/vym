@@ -73,14 +73,12 @@ void BranchContainer::init()
     innerContainer = new Container;
     innerContainer->containerType = InnerContent;
 
-    standardFlagRowContainer = new FlagRowContainer;    // FIXME-2 Only create FRCs on demand
-    systemFlagRowContainer = new FlagRowContainer;
+    standardFlagRowContainer = nullptr;
+    systemFlagRowContainer = nullptr;
 
-    ornamentsContainer->addContainer(linkContainer);
-    ornamentsContainer->addContainer(frameOrnaments);
-    ornamentsContainer->addContainer(headingContainer);
-    ornamentsContainer->addContainer(standardFlagRowContainer);
-    ornamentsContainer->addContainer(systemFlagRowContainer);
+    ornamentsContainer->addContainer(linkContainer, Z_LINK);
+    ornamentsContainer->addContainer(frameOrnaments, Z_FRAME_ORNAMENTS);
+    ornamentsContainer->addContainer(headingContainer, Z_HEADING);
 
     ornamentsContainer->setCentralContainer(headingContainer);
 
@@ -857,11 +855,17 @@ int BranchContainer::getRotationContent()
 
 QUuid BranchContainer::findFlagByPos(const QPointF &p)
 {
-    QUuid uid = systemFlagRowContainer->findFlagByPos(p);
-    if (!uid.isNull())
-        return uid;
+    QUuid uid;
 
-    uid = standardFlagRowContainer->findFlagByPos(p);
+    if (systemFlagRowContainer) {
+        uid = systemFlagRowContainer->findFlagByPos(p);
+        if (!uid.isNull())
+            return uid;
+    }
+
+    if (standardFlagRowContainer)
+        uid = standardFlagRowContainer->findFlagByPos(p);
+
     return uid;
 }
 
@@ -886,8 +890,6 @@ void BranchContainer::select()
 {
     SelectableContainer::select(
 	    ornamentsContainer,
-	    //frameOrnaments,
-	    headingContainer,
 	    branchItem->getMapDesign()->selectionColor());
 }
 
@@ -1095,15 +1097,36 @@ void BranchContainer::updateVisuals()
         headingContainer->setHeading(branchItem->getHeadingText());
 
     // Update standard flags active in TreeItem
-
     QList<QUuid> TIactiveFlagUids = branchItem->activeFlagUids();
-    standardFlagRowContainer->updateActiveFlagContainers(
-        TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
+    if (TIactiveFlagUids.count() == 0) {
+        if (standardFlagRowContainer) {
+            delete standardFlagRowContainer;
+            standardFlagRowContainer = nullptr;
+        }
+    } else {
+        if (!standardFlagRowContainer) {
+            standardFlagRowContainer = new FlagRowContainer;
+            ornamentsContainer->addContainer(standardFlagRowContainer, Z_STANDARD_FLAGS);
+        }
+        standardFlagRowContainer->updateActiveFlagContainers(
+            TIactiveFlagUids, standardFlagsMaster, userFlagsMaster);
+    }
 
     // Add missing system flags active in TreeItem
     TIactiveFlagUids = branchItem->activeSystemFlagUids();
-    systemFlagRowContainer->updateActiveFlagContainers(TIactiveFlagUids, systemFlagsMaster);
-
+    if (TIactiveFlagUids.count() == 0) {
+        if (systemFlagRowContainer) {
+            delete systemFlagRowContainer;
+            systemFlagRowContainer = nullptr;
+        }
+    } else {
+        if (!systemFlagRowContainer) {
+            systemFlagRowContainer = new FlagRowContainer;
+            ornamentsContainer->addContainer(systemFlagRowContainer, Z_SYSTEM_FLAGS);
+        }
+        systemFlagRowContainer->updateActiveFlagContainers(
+            TIactiveFlagUids, systemFlagsMaster);
+    }
 }
 
 void BranchContainer::reposition()
