@@ -75,12 +75,12 @@ void BranchContainer::init()
     standardFlagRowContainer = nullptr;
     systemFlagRowContainer = nullptr;
 
-    ornamentsContainer->addContainer(linkContainer, Z_LINK);
     ornamentsContainer->addContainer(headingContainer, Z_HEADING);
 
     ornamentsContainer->setCentralContainer(headingContainer);
 
-    innerContainer->addContainer(ornamentsContainer);
+    innerContainer->addContainer(linkContainer, Z_LINK);
+    innerContainer->addContainer(ornamentsContainer, Z_ORNAMENTS);
 
     branchesContainer = nullptr;
     linkSpaceContainer = nullptr;
@@ -911,14 +911,15 @@ void BranchContainer::setFrameType(const FrameContainer::FrameType &ftype, bool 
     if (useInnerFrame) {
         if (ftype == FrameContainer::NoFrame) {
             if (innerFrame) {
+                innerContainer->addContainer(ornamentsContainer, Z_INNER_FRAME);
                 delete innerFrame;
                 innerFrame = nullptr;
             }
         } else {
             if (!innerFrame) {
                 innerFrame = new FrameContainer;
-                innerFrame->overlay = true;
-                ornamentsContainer->addContainer(innerFrame, Z_FRAME_ORNAMENTS);
+                innerFrame->addContainer(ornamentsContainer, Z_INNER_FRAME);
+                innerContainer->addContainer(innerFrame);
             }
             innerFrame->setFrameType(ftype);
         }

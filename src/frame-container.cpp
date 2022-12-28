@@ -32,6 +32,9 @@ void FrameContainer::init()
     frameBrush.setStyle(Qt::SolidPattern);
     frameIncludeChildrenInt = false;
 
+    setLayout(Container::Horizontal);
+    setHorizontalDirection(Container::LeftToRight);
+
     setVisible(true);
 
     // Don't consider for sizes or repositioning
@@ -58,7 +61,7 @@ void FrameContainer::clear()
     }
     frameTypeInt = NoFrame;
     framePaddingInt = 0; // No frame requires also no padding
-    frameXSize = 0;
+    frameXSize = 0; // FIXME-2 needed? Not in init() anyway...
 }
 
 void FrameContainer::repaint()

@@ -6,11 +6,12 @@
 #include "animpoint.h"
 
 #define Z_LINK 10
-#define Z_FRAME_ORNAMENTS 20
-#define Z_SELECTION 30
-#define Z_HEADING 40
-#define Z_STANDARD_FLAGS 50
-#define Z_SYSTEM_FLAGS 60
+#define Z_INNER_FRAME 20
+#define Z_ORNAMENTS 30
+#define Z_SELECTION 40
+#define Z_HEADING 50
+#define Z_STANDARD_FLAGS 60
+#define Z_SYSTEM_FLAGS 70
 
 class BranchContainer;
 class ImageContainer;
