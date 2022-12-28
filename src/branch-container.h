@@ -143,24 +143,24 @@ class BranchContainer : public SelectableContainer {
     virtual void select();  // Overloads SelectableContainer::select
 
     // FrameContainer interfaces
-    FrameContainer::FrameType frameType(bool innerFrame = true);
-    QString frameTypeString(bool innerFrame = true);
-    void setFrameType(const FrameContainer::FrameType &, bool innerFrame = true);
-    void setFrameType(const QString &, bool innerFrame = true);
-    QRectF frameRect(bool innerFrame = true);
-    void setFrameRect(const QRectF &, bool innerFrame = true);
-    void setFramePos(const QPointF &p, bool innerFrame = true);
+    FrameContainer::FrameType frameType(bool useInnerFrame = true);
+    QString frameTypeString(bool useInnerFrame = true);
+    void setFrameType(const FrameContainer::FrameType &, bool useInnerFrame = true);
+    void setFrameType(const QString &, bool useInnerFrame = true);
+    QRectF frameRect(bool useInnerFrame = true);
+    void setFrameRect(const QRectF &, bool useInnerFrame = true);
+    void setFramePos(const QPointF &p, bool useInnerFrame = true);
 
-    int framePadding(bool innerFrame = true);
-    void setFramePadding(const int &, bool innerFrame = true);
-    qreal frameTotalPadding(bool innerFrame = true); // padding +  pen width + xsize (e.g. cloud)
-    qreal frameXPadding(bool innerFrame = true);
-    int framePenWidth(bool innerFrame = true);
-    void setFramePenWidth(const int &, bool innerFrame = true);
-    QColor framePenColor( bool innerFrame = true);
-    void setFramePenColor(const QColor &, bool innerFrame = true);
-    QColor frameBrushColor( bool innerFrame = true);
-    void setFrameBrushColor(const QColor&, bool innerFrame = true);
+    int framePadding(bool useInnerFrame = true);
+    void setFramePadding(const int &, bool useInnerFrame = true);
+    qreal frameTotalPadding(bool useInnerFrame = true); // padding +  pen width + xsize (e.g. cloud)
+    qreal frameXPadding(bool useInnerFrame = true);
+    int framePenWidth(bool useInnerFrame = true);
+    void setFramePenWidth(const int &, bool useInnerFrame = true);
+    QColor framePenColor( bool useInnerFrame = true);
+    void setFramePenColor(const QColor &, bool useInnerFrame = true);
+    QColor frameBrushColor( bool useInnerFrame = true);
+    void setFrameBrushColor(const QColor&, bool useInnerFrame = true);
 
     QString saveFrame();
 
@@ -186,7 +186,7 @@ class BranchContainer : public SelectableContainer {
     VerticalAlignment branchesContainerVerticalAlignment;
     QBrush branchesContainerBrush;
 
-    FrameContainer *frameOrnaments;     // Frame container around ornamentsContainer
+    FrameContainer *innerFrame;         // Frame container around ornamentsContainer
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent

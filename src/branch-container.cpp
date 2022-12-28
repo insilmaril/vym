@@ -62,8 +62,7 @@ void BranchContainer::init()
 
     headingContainer = new HeadingContainer;
 
-    frameOrnaments = new FrameContainer;    // FIXME-2 only create on demand
-    frameOrnaments->overlay = true;
+    innerFrame = nullptr;
 
     ornamentsContainer = new Container;
     ornamentsContainer->containerType = OrnamentsContainer;
@@ -77,7 +76,6 @@ void BranchContainer::init()
     systemFlagRowContainer = nullptr;
 
     ornamentsContainer->addContainer(linkContainer, Z_LINK);
-    ornamentsContainer->addContainer(frameOrnaments, Z_FRAME_ORNAMENTS);
     ornamentsContainer->addContainer(headingContainer, Z_HEADING);
 
     ornamentsContainer->setCentralContainer(headingContainer);
@@ -893,123 +891,136 @@ void BranchContainer::select()
 	    branchItem->getMapDesign()->selectionColor());
 }
 
-FrameContainer::FrameType BranchContainer::frameType(bool innerFrame)
+FrameContainer::FrameType BranchContainer::frameType(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->frameType();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->frameType();
     else
         return FrameContainer::NoFrame;
 }
 
-QString BranchContainer::frameTypeString(bool innerFrame)
+QString BranchContainer::frameTypeString(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->frameTypeString();
-    return QString();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->frameTypeString();
+    return "NoFrame";
 }
 
-void BranchContainer::setFrameType(const FrameContainer::FrameType &ftype, bool innerFrame)
+void BranchContainer::setFrameType(const FrameContainer::FrameType &ftype, bool useInnerFrame)
 {
-    if (innerFrame)
-        frameOrnaments->setFrameType(ftype);
+    if (useInnerFrame) {
+        if (ftype == FrameContainer::NoFrame) {
+            if (innerFrame) {
+                delete innerFrame;
+                innerFrame = nullptr;
+            }
+        } else {
+            if (!innerFrame) {
+                innerFrame = new FrameContainer;
+                innerFrame->overlay = true;
+                ornamentsContainer->addContainer(innerFrame, Z_FRAME_ORNAMENTS);
+            }
+            innerFrame->setFrameType(ftype);
+        }
+    }
 }
 
-void BranchContainer::setFrameType(const QString &s, bool innerFrame)
+void BranchContainer::setFrameType(const QString &s, bool useInnerFrame)
 {
     FrameContainer::FrameType ftype = FrameContainer::frameTypeFromString(s);
-    setFrameType(ftype);
+    setFrameType(ftype, useInnerFrame);
 }
 
-QRectF BranchContainer::frameRect(bool innerFrame)
+QRectF BranchContainer::frameRect(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->frameRect();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->frameRect();
     else
         return QRectF();
 }
 
-void BranchContainer::setFrameRect(const QRectF &frameSize, bool innerFrame)
+void BranchContainer::setFrameRect(const QRectF &frameSize, bool useInnerFrame)
 {
-    if (innerFrame)
-        frameOrnaments->setFrameRect(frameSize);
+    if (useInnerFrame && innerFrame)
+        innerFrame->setFrameRect(frameSize);
 }
 
-void BranchContainer::setFramePos(const QPointF &p, bool innerFrame)
+void BranchContainer::setFramePos(const QPointF &p, bool useInnerFrame)
 {
-    if (innerFrame)
-        frameOrnaments->setFramePos(p);
+    if (useInnerFrame && innerFrame)
+        innerFrame->setFramePos(p);
 }
 
-int BranchContainer::framePadding(bool innerFrame)
+int BranchContainer::framePadding(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->framePadding();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->framePadding();
     return 0;
 }
 
-void BranchContainer::setFramePadding(const int &p, bool innerFrame)
+void BranchContainer::setFramePadding(const int &p, bool useInnerFrame)
 {
-    if (innerFrame)
-        frameOrnaments->setFramePadding(p);
+    if (useInnerFrame && innerFrame)
+        innerFrame->setFramePadding(p);
 }
 
-qreal BranchContainer::frameTotalPadding(bool innerFrame) // padding +  pen width + xsize (e.g. cloud)
+qreal BranchContainer::frameTotalPadding(bool useInnerFrame) // padding +  pen width + xsize (e.g. cloud)
 {
-    if (innerFrame)
-        return frameOrnaments->frameTotalPadding();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->frameTotalPadding();
     return 0;
 }
 
-qreal BranchContainer::frameXPadding(bool innerFrame)
+qreal BranchContainer::frameXPadding(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->frameXPadding();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->frameXPadding();
     return 0;
 }
 
-int BranchContainer::framePenWidth(bool innerFrame)
+int BranchContainer::framePenWidth(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->framePenWidth();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->framePenWidth();
     return 0;
 }
 
-void BranchContainer::setFramePenWidth(const int &w, bool innerFrame)
+void BranchContainer::setFramePenWidth(const int &w, bool useInnerFrame)
 {
-    if (innerFrame)
-       frameOrnaments->setFramePenWidth(w);
+    if (useInnerFrame && innerFrame)
+       innerFrame->setFramePenWidth(w);
 }
 
-QColor BranchContainer::framePenColor(bool innerFrame)
+QColor BranchContainer::framePenColor(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->framePenColor();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->framePenColor();
     return QColor();
 }
 
-void BranchContainer::setFramePenColor(const QColor &c, bool innerFrame)
+void BranchContainer::setFramePenColor(const QColor &c, bool useInnerFrame)
 {
-    if (innerFrame)
-        frameOrnaments->setFramePenColor(c);
+    if (useInnerFrame && innerFrame)
+        innerFrame->setFramePenColor(c);
 }
 
-QColor BranchContainer::frameBrushColor(bool innerFrame)
+QColor BranchContainer::frameBrushColor(bool useInnerFrame)
 {
-    if (innerFrame)
-        return frameOrnaments->frameBrushColor();
+    if (useInnerFrame && innerFrame)
+        return innerFrame->frameBrushColor();
     return QColor();
 }
 
-void BranchContainer::setFrameBrushColor(const QColor &c, bool innerFrame)
+void BranchContainer::setFrameBrushColor(const QColor &c, bool useInnerFrame)
 {
-    if (innerFrame)
-        frameOrnaments->setFrameBrushColor(c);
+    if (useInnerFrame && innerFrame)
+        innerFrame->setFrameBrushColor(c);
 }
 
 QString BranchContainer::saveFrame()
 {
-    if (frameOrnaments && frameOrnaments->frameType() != FrameContainer::NoFrame)
-        return frameOrnaments->saveFrame();
+    if (innerFrame && innerFrame->frameType() != FrameContainer::NoFrame)
+        return innerFrame->saveFrame();
     else
         return QString();
 }
@@ -1254,8 +1265,10 @@ void BranchContainer::reposition()
     }
 
     // Update frames    // FIXME-1 Rework. inner/outerContainer missing
-    frameOrnaments->setFrameRect(ornamentsContainer->rect());
-    //frameOrnaments->setPos(ornamentsContainer->pos());
+    if (innerFrame)
+        innerFrame->setFrameRect(ornamentsContainer->rect());
+
+    //innerFrame->setPos(ornamentsContainer->pos());
     /*
     if (frameType() != FrameContainer::NoFrame) {
         if (frameIncludeChildren()) {
