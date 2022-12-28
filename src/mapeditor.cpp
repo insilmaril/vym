@@ -2006,7 +2006,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
             model->saveStateEndBlock();
         } else {
-            // Branches moved, but not relinked // FIXME-0 "jumping" for first animation step!
+            // Branches moved, but not relinked
             QPointF t = p - movingObj_initialScenePos;    // Defined in mousePressEvent
 
             QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
@@ -2032,7 +2032,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     bi->updateContainerStackingOrder();
 
                     // Floating layout or mapcenter moved, saveState
-                    if (bc->isFloating() || bi->depth() == 0)
+                    if (bc->isFloating() || bi->depth() == 0)   // FIXME-2 No saveState? check...
                     {
                         // Relative positioning
                         model->saveState(

@@ -135,10 +135,10 @@ QString Container::info (const QString &prefix)
 {
     return prefix +
         getName() +
-        QString(" zPos: %1").arg(zPos) +
+        //QString(" zPos: %1").arg(zPos) +
         QString(" Layout: %1").arg(getLayoutString()) +
-        //QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0)) +
-        //QString(" pos: %1").arg(qpointFToString(pos(), 0)) +
+        QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0)) +
+        QString(" pos: %1").arg(qpointFToString(pos(), 0)) +
         QString(" rect: %1").arg(qrectFToString(rect(), 0));
 }
 
@@ -305,7 +305,11 @@ QList <Container*> Container::childContainers()
     return list;
 }
 
-void Container::setAnimation(const AnimPoint &ap) { animatedPos = ap; }
+void Container::setAnimation(const AnimPoint &ap)
+{
+    animatedPos = ap;
+    animate();
+}
 
 void Container::stopAnimation()
 {

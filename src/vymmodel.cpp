@@ -5026,7 +5026,6 @@ void VymModel::unsetContextPos()
 
 void VymModel::reposition()
 {
-    //qDebug() << "VM::reposition";
     if (repositionBlocked)
         return;
 
