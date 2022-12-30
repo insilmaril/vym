@@ -65,6 +65,9 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     else
         hide();
 
+    connect(ui.tabWidget, SIGNAL(currentChanged(int)), this,
+            SLOT(indexChanged(int)));
+
     connectSignals();
 }
 
@@ -509,6 +512,11 @@ void BranchPropertyEditor::addAttributeClicked()
 void BranchPropertyEditor::deleteAttributeClicked()
 {
     qDebug() << "BranchPropEditor::deleteAttribute";
+}
+
+void BranchPropertyEditor::indexChanged(int n)
+{
+    lastSelectedBranchTab = n;
 }
 
 void BranchPropertyEditor::connectSignals()

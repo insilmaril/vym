@@ -40,6 +40,7 @@ class BranchPropertyEditor : public QDialog {
     void taskPriorityDeltaChanged(int);
     void addAttributeClicked();
     void deleteAttributeClicked();
+    void indexChanged(int);
 
   signals:
     void windowClosed();
