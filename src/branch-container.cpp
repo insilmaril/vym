@@ -851,7 +851,6 @@ int BranchContainer::getRotationHeading()
 void BranchContainer::setRotationSubtree(const int &a)
 {
     if (outerFrame) {
-        outerFrame->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
         outerFrame->setRotation(a);
         if (outerContainer)
             outerContainer->setRotation(0);
@@ -859,11 +858,9 @@ void BranchContainer::setRotationSubtree(const int &a)
             innerContainer->setRotation(0);
     } else {
         if (outerContainer) {
-            outerContainer->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
             outerContainer->setRotation(a);
             innerContainer->setRotation(0);
         } else {
-            innerContainer->setTransformOriginPoint(0, 0);  // FIXME-X originpoint needed?
             innerContainer->setRotation(a);    // FIXME-2 If BC is FloatingBounded, and bc has images, frame does not include images
         }
     }
