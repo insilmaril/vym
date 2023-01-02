@@ -146,9 +146,6 @@ class BranchContainer : public SelectableContainer {
     QString frameTypeString(const bool &useInnerFrame);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &);
     void setFrameType(const bool &useInnerFrame, const QString &);
-    QRectF frameRect(const bool &useInnerFrame);
-    void setFrameRect(const bool &useInnerFrame, const QRectF &);
-    void setFramePos(const bool &useInnerFrame, const QPointF &p);
 
     int framePadding(const bool &useInnerFrame = true);
     void setFramePadding(const bool &useInnerFrame, const int &);

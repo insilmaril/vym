@@ -1000,41 +1000,6 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const QString &s)
     setFrameType(useInnerFrame, ftype);
 }
 
-QRectF BranchContainer::frameRect(const bool &useInnerFrame)
-{
-    if (useInnerFrame) {
-        if (innerFrame)
-            return innerFrame->frameRect();
-    } else {
-        if (outerFrame)
-            return outerFrame->frameRect();
-    }
-    return QRectF();
-}
-
-void BranchContainer::setFrameRect(const bool &useInnerFrame, const QRectF &frameSize) // FIXME-1 should no longer be necessary...
-{
-    if (useInnerFrame) {
-        if (innerFrame)
-            innerFrame->setFrameRect(frameSize);
-        return;
-    }
-
-    if (outerFrame)
-        outerFrame->setFrameRect(frameSize);
-}
-
-void BranchContainer::setFramePos(const bool &useInnerFrame, const QPointF &p)
-{
-    if (useInnerFrame) {
-        if (innerFrame)
-            innerFrame->setFramePos(p);
-        return;
-    }
-    if (outerFrame)
-        outerFrame->setFramePos(p);
-}
-
 int BranchContainer::framePadding(const bool &useInnerFrame)
 {
     if (useInnerFrame) {
@@ -1415,28 +1380,13 @@ void BranchContainer::reposition()
     if (innerFrame)
         innerFrame->setFrameRect(ornamentsContainer->rect());
 
-    if (outerFrame) {   // FIXME-0 subtree might go out of outerFrame!
-        if (outerContainer)
+    if (outerFrame) {
+        if (outerContainer) {
             outerFrame->setFrameRect(outerContainer->rect());
-        else
-            outerFrame->setFrameRect(innerContainer->rect());
-    }
-
-    //innerFrame->setPos(ornamentsContainer->pos());    // FIXME-0 review comments below
-    /*
-    if (frameType() != FrameContainer::NoFrame) {
-        if (frameIncludeChildren()) {
-            if (outerContainer)
-                setFrameRect( outerContainer->rect());
-            else {
-                //setFrameRect(innerContainer->rect());
-                //setFramePos(innerContainer->pos());
-            }
+            outerFrame->setFramePos(outerContainer->pos());
         } else {
-            // Do not include children
-            setFrameRect(ornamentsContainer->rect());
-            setFramePos(mapFromItem(innerContainer, ornamentsContainer->pos()));
+            outerFrame->setFrameRect(innerContainer->rect());
+            outerFrame->setFramePos(innerContainer->pos());
         }
     }
-    */
 }
