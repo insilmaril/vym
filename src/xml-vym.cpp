@@ -640,7 +640,7 @@ bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
         if (!ok) return false;
     }
     if (!a.value("rotContent").isEmpty()) {
-        lastBC->setRotationContent(a.value("rotContent").toDouble(&ok));
+        lastBC->setRotationSubtree(a.value("rotContent").toDouble(&ok));
         if (!ok) return false;
     }
     return true;
@@ -653,39 +653,37 @@ bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
 
         bool ok;
         int x;
+
+        bool useInnerFrame = true;
+        if (!a.value("includeChildren").isEmpty()) {
+            if (a.value("includeChildren") == "true")
+                useInnerFrame = false;
+        }
         if (!a.value("frameType").isEmpty())
-            bc->setFrameType(a.value("frameType"));
+            bc->setFrameType(useInnerFrame, a.value("frameType"));
         if (!a.value("penColor").isEmpty())
-            bc->setFramePenColor(a.value("penColor"));
+            bc->setFramePenColor(useInnerFrame, a.value("penColor"));
         if (!a.value("brushColor").isEmpty()) {
-            bc->setFrameBrushColor(a.value("brushColor"));
+            bc->setFrameBrushColor(useInnerFrame, a.value("brushColor"));
             lastMI->setBackgroundColor(a.value("brushColor"));
         }
         if (!a.value("padding").isEmpty()) {
             x = a.value("padding").toInt(&ok);
             if (ok)
-                bc->setFramePadding(x);
+                bc->setFramePadding(useInnerFrame, x);
         }
         if (!a.value("borderWidth").isEmpty()) {
             // Deprecated. 2.9.506 uses penWidth instead
             x = a.value("borderWidth").toInt(&ok);
             if (ok)
-                bc->setFramePenWidth(x);
+                bc->setFramePenWidth(useInnerFrame, x);
         }
         if (!a.value("penWidth").isEmpty()) {
             // Introduced in 2.9.506 uses penWidth instead
             x = a.value("penWidth").toInt(&ok);
             if (ok)
-                bc->setFramePenWidth(x);
+                bc->setFramePenWidth(useInnerFrame, x);
         }
-        /*
-        if (!a.value("includeChildren").isEmpty()) {  //FIXME-1 change to second frame
-            if (a.value("includeChildren") == "true")
-                bc->setFrameIncludeChildren(true);
-            else
-                bc->setFrameIncludeChildren(false);
-        }
-        */
         return true;
     }
     return true;

@@ -6,6 +6,7 @@
 #include "animpoint.h"
 
 #define Z_LINK 10
+#define Z_OUTER_FRAME 15
 #define Z_INNER_FRAME 20
 #define Z_ORNAMENTS 30
 #define Z_SELECTION 40
@@ -31,7 +32,7 @@ class Container : public QGraphicsRectItem {
         Heading,
         Image,
         ImagesContainer,
-        InnerContent,
+        InnerContainer,
         Link,
         OrnamentsContainer,
         OuterContainer,

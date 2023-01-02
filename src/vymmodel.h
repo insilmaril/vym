@@ -361,18 +361,16 @@ class VymModel : public TreeModel {
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 
-    void setFrameType(const FrameContainer::FrameType &, BranchItem *bi = nullptr);
-    void setFrameType(const QString &);
-    void toggleFrameIncludeChildren(BranchItem *bi = nullptr);
-    void setFrameIncludeChildren(bool, BranchItem *bi = nullptr);
-    void setFramePenColor(const QColor &, BranchItem *bi = nullptr);
-    void setFrameBrushColor(const QColor &, BranchItem *bi = nullptr);
-    void setFramePadding(const int &, BranchItem *bi = nullptr);
-    void setFramePenWidth(const int &, BranchItem *bi = nullptr);
+    void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
+    void setFrameType(const bool &useInnerFrame, const QString &);
+    void setFramePenColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);
+    void setFrameBrushColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);
+    void setFramePadding(const bool &useInnerFrame, const int &, BranchItem *bi = nullptr);
+    void setFramePenWidth(const bool &useInnerFrame, const int &, BranchItem *bi = nullptr);
     void setBranchesLayout(const QString &, BranchItem *bi = nullptr);
     void setImagesLayout(const QString &, BranchItem *bi = nullptr);
     void setRotationHeading(const int &);
-    void setRotationContent(const int &);
+    void setRotationSubtree(const int &);
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */

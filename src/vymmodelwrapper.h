@@ -52,7 +52,7 @@ class VymModelWrapper : public VymScriptContext {
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
-    QString getFrameType();
+    QString getFrameType(const bool & useInnerFrame);
     QString getHeadingPlainText();
     QString getHeadingXML();
     QString getMapAuthor();
@@ -129,12 +129,11 @@ class VymModelWrapper : public VymScriptContext {
     void setMapZoom(float z); // tested: ok
     void setNotePlainText(const QString &s);
     void setPos(qreal x, qreal y);
-    void setFramePenWidth(int w);
-    void setFrameBrushColor(const QString &color);
-    void setFrameIncludeChildren(bool b);
-    void setFramePadding(int padding);
-    void setFramePenColor(const QString &color);
-    void setFrameType(const QString &type);
+    void setFramePenWidth(const bool & useInnerFrame, int w);
+    void setFrameBrushColor(const bool & useInnerFrame, const QString &color);
+    void setFramePadding(const bool & useInnerFrame, int padding);
+    void setFramePenColor(const bool & useInnerFrame, const QString &color);
+    void setFrameType(const bool & useInnerFrame, const QString &type);
     void setScaleFactor(qreal f);
     void setSelectionColor(const QString &color);
     void setTaskPriorityDelta(const int &n);
@@ -151,7 +150,6 @@ class VymModelWrapper : public VymScriptContext {
     void sortChildren();
     void toggleFlagByUid(const QString &s);
     void toggleFlagByName(const QString &s);
-    void toggleFrameIncludeChildren();
     void toggleScroll();
     void toggleTarget();
     void toggleTask();

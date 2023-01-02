@@ -38,7 +38,7 @@ void Container::init()
     // subcontainers usually may influence position
     // Only mapCenters will stay where they are
 
-    minimumWidth = 0;
+    minimumWidth = 0;   // FIXME-2 unused
 
     horizontalDirection = LeftToRight;
 
@@ -103,8 +103,8 @@ QString Container::getName()    // FIXME-3 debugging only
         case ImagesContainer:
             t = "ImagesContainer";
             break;
-        case InnerContent:
-            t = "InnerContent";
+        case InnerContainer:
+            t = "InnerContainer";
             break;
         case Link:
             t = "Link";

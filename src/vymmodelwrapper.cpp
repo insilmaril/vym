@@ -399,12 +399,12 @@ QString VymModelWrapper::getFileName()
     return setResult(model->getFileName());
 }
 
-QString VymModelWrapper::getFrameType()
+QString VymModelWrapper::getFrameType(const bool &useInnerFrame)
 {
     QString r;
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        r = selbi->getBranchContainer()->frameTypeString();
+        r = selbi->getBranchContainer()->frameTypeString(useInnerFrame);
     }
     return setResult(r);
 }
@@ -883,34 +883,29 @@ void VymModelWrapper::setPos(qreal x, qreal y)
     model->setPos(QPointF(x, y));
 }
 
-void VymModelWrapper::setFramePenWidth(int width)
+void VymModelWrapper::setFramePenWidth(const bool &useInnerFrame, int width)
 {
-    model->setFramePenWidth(width);
+    model->setFramePenWidth(useInnerFrame, width);
 }
 
-void VymModelWrapper::setFrameBrushColor(const QString &color)
+void VymModelWrapper::setFrameBrushColor(const bool &useInnerFrame, const QString &color)
 {
-    model->setFrameBrushColor(color);
+    model->setFrameBrushColor(useInnerFrame, color);
 }
 
-void VymModelWrapper::setFrameIncludeChildren(bool b)
+void VymModelWrapper::setFramePadding(const bool &useInnerFrame, int padding)
 {
-    model->setFrameIncludeChildren(b);
+    model->setFramePadding(useInnerFrame, padding);
 }
 
-void VymModelWrapper::setFramePadding(int padding)
+void VymModelWrapper::setFramePenColor(const bool &useInnerFrame, const QString &color)
 {
-    model->setFramePadding(padding);
+    model->setFramePenColor(useInnerFrame, color);
 }
 
-void VymModelWrapper::setFramePenColor(const QString &color)
+void VymModelWrapper::setFrameType(const bool &useInnerFrame, const QString &type)
 {
-    model->setFramePenColor(color);
-}
-
-void VymModelWrapper::setFrameType(const QString &type)
-{
-    model->setFrameType(type);
+    model->setFrameType(useInnerFrame, type);
 }
 
 void VymModelWrapper::setScaleFactor(qreal f) { model->setScaleFactor(f); }
@@ -986,11 +981,6 @@ void VymModelWrapper::toggleFlagByUid(const QString &s)
 void VymModelWrapper::toggleFlagByName(const QString &s)
 {
     model->toggleFlagByName(s);
-}
-
-void VymModelWrapper::toggleFrameIncludeChildren()
-{
-    model->toggleFrameIncludeChildren();
 }
 
 void VymModelWrapper::toggleScroll() { model->toggleScroll(); }

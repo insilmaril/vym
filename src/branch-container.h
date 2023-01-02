@@ -129,12 +129,11 @@ class BranchContainer : public SelectableContainer {
     void setBranchesContainerBrush(const QBrush &b);
 
     QRectF getHeadingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
-    qreal getHeadingRotation(); //! Return rotation angle after transformation to scenePos
 
     void setRotationHeading(const int &);
     int getRotationHeading();
-    void setRotationContent(const int &);
-    int getRotationContent();
+    void setRotationSubtree(const int &);
+    int getRotationSubtree();
 
     QUuid findFlagByPos(const QPointF &p);
     bool isInClickBox(const QPointF &p);
@@ -143,24 +142,24 @@ class BranchContainer : public SelectableContainer {
     virtual void select();  // Overloads SelectableContainer::select
 
     // FrameContainer interfaces
-    FrameContainer::FrameType frameType(bool useInnerFrame = true);
-    QString frameTypeString(bool useInnerFrame = true);
-    void setFrameType(const FrameContainer::FrameType &, bool useInnerFrame = true);
-    void setFrameType(const QString &, bool useInnerFrame = true);
-    QRectF frameRect(bool useInnerFrame = true);
-    void setFrameRect(const QRectF &, bool useInnerFrame = true);
-    void setFramePos(const QPointF &p, bool useInnerFrame = true);
+    FrameContainer::FrameType frameType(const bool &useInnerFrame);
+    QString frameTypeString(const bool &useInnerFrame);
+    void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &);
+    void setFrameType(const bool &useInnerFrame, const QString &);
+    QRectF frameRect(const bool &useInnerFrame);
+    void setFrameRect(const bool &useInnerFrame, const QRectF &);
+    void setFramePos(const bool &useInnerFrame, const QPointF &p);
 
-    int framePadding(bool useInnerFrame = true);
-    void setFramePadding(const int &, bool useInnerFrame = true);
-    qreal frameTotalPadding(bool useInnerFrame = true); // padding +  pen width + xsize (e.g. cloud)
-    qreal frameXPadding(bool useInnerFrame = true);
-    int framePenWidth(bool useInnerFrame = true);
-    void setFramePenWidth(const int &, bool useInnerFrame = true);
-    QColor framePenColor( bool useInnerFrame = true);
-    void setFramePenColor(const QColor &, bool useInnerFrame = true);
-    QColor frameBrushColor( bool useInnerFrame = true);
-    void setFrameBrushColor(const QColor&, bool useInnerFrame = true);
+    int framePadding(const bool &useInnerFrame = true);
+    void setFramePadding(const bool &useInnerFrame, const int &);
+    qreal frameTotalPadding(const bool &useInnerFrame); // padding +  pen width + xsize (e.g. cloud)
+    qreal frameXPadding(const bool & useInnerFrame);
+    int framePenWidth(const bool &useInnerFrame);
+    void setFramePenWidth(const bool &useInnerFrame, const int &);
+    QColor framePenColor(const bool &useInnerFrame);
+    void setFramePenColor(const bool &useInnerFrame, const QColor &);
+    QColor frameBrushColor(const bool &useInnerFrame);
+    void setFrameBrushColor(const bool &useInnerFrame, const QColor&);
 
     QString saveFrame();
 
@@ -187,6 +186,7 @@ class BranchContainer : public SelectableContainer {
     QBrush branchesContainerBrush;
 
     FrameContainer *innerFrame;         // Frame container around ornamentsContainer
+    FrameContainer *outerFrame;         // Frame container around whole branchContainer
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent

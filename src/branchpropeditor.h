@@ -27,12 +27,12 @@ class BranchPropertyEditor : public QDialog {
     void setModel(VymModel *);
 
   private slots:
-    void frameTypeChanged(int);
+    void frameTypeChanged(int i);
     void framePenColorClicked();
     void frameBrushColorClicked();
     void framePaddingChanged(int);
     void framePenWidthChanged(int);
-    void frameIncludeChildrenChanged(int);
+
     void linkHideUnselectedChanged(int);
     void childrenLayoutChanged();
     void rotationHeadingChanged(int);

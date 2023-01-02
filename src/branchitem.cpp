@@ -148,8 +148,9 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     qreal a = branchContainer->getRotationHeading();
     if (a != 0)
         rotHeadingAttr = attribut("rotHeading", QString("%1").arg(a));
+
     QString rotContentAttr;
-    a = branchContainer->getRotationContent();
+    a = branchContainer->getRotationSubtree();
     if (a != 0)
         rotContentAttr = attribut("rotContent", QString("%1").arg(a));
 
@@ -177,7 +178,8 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         s += note.saveToDir();
 
     // Save frame
-    if (branchContainer->frameType() != FrameContainer::NoFrame)
+    if (branchContainer->frameType(true) != FrameContainer::NoFrame ||
+        branchContainer->frameType(false) != FrameContainer::NoFrame)
         s += branchContainer->saveFrame();
 
     // save names of flags set

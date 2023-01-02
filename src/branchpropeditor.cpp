@@ -26,8 +26,8 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
 
     QPixmap pix(16, 16);
     pix.fill(QColor(Qt::black));
-    ui.framePenColorButton->setIcon(pix);
-    ui.frameBrushColorButton->setIcon(pix);
+    ui.innerFramePenColorButton->setIcon(pix);
+    ui.innerFrameBrushColorButton->setIcon(pix);
 
     // Remember the last tab, which was used when a branch was selected
     lastSelectedBranchTab = -1;
@@ -156,57 +156,91 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
 
-        // Frame
-        FrameContainer::FrameType t = bc->frameType();
+        // Inner frame
+        FrameContainer::FrameType t = bc->frameType(true);
 
         if (t == FrameContainer::NoFrame)
         {
-            ui.frameTypeCombo->setCurrentIndex(0);
-            ui.colorGroupBox->setEnabled(false);
-            ui.framePaddingSpinBox->setEnabled(false);
-            ui.frameWidthSpinBox->setEnabled(false);
-            ui.framePaddingLabel->setEnabled(false);
-            ui.frameBorderLabel->setEnabled(false);
-            ui.includeChildrenCheckBox->setEnabled(false);
-            ui.includeChildrenCheckBox->setEnabled(false);
+            ui.innerFrameTypeCombo->setCurrentIndex(0);
+            ui.innerFrameColorGroupBox->setEnabled(false);
+            ui.innerFramePaddingSpinBox->setEnabled(false);
+            ui.innerFrameWidthSpinBox->setEnabled(false);
+            ui.innerFramePaddingLabel->setEnabled(false);
+            ui.innerFrameBorderLabel->setEnabled(false);
         }
         else {
             QPixmap pix(16, 16);
-            pix.fill(bc->framePenColor());
-            ui.framePenColorButton->setIcon(pix);
-            pix.fill(bc->frameBrushColor());
-            ui.frameBrushColorButton->setIcon(pix);
-            ui.colorGroupBox->setEnabled(true);
-            ui.framePaddingSpinBox->setEnabled(true);
-            ui.framePaddingSpinBox->setValue(bc->framePadding());
-            ui.frameWidthSpinBox->setEnabled(true);
-            ui.frameWidthSpinBox->setValue( bc->framePenWidth());
-            ui.framePaddingLabel->setEnabled(true);
-            ui.frameBorderLabel->setEnabled(true);
-            ui.includeChildrenCheckBox->setEnabled(true);
+            pix.fill(bc->framePenColor(true));
+            ui.innerFramePenColorButton->setIcon(pix);
+            pix.fill(bc->frameBrushColor(true));
+            ui.innerFrameBrushColorButton->setIcon(pix);
+            ui.innerFrameColorGroupBox->setEnabled(true);
+            ui.innerFramePaddingSpinBox->setEnabled(true);
+            ui.innerFramePaddingSpinBox->setValue(bc->framePadding(true));
+            ui.innerFrameWidthSpinBox->setEnabled(true);
+            ui.innerFrameWidthSpinBox->setValue( bc->framePenWidth(true));
+            ui.innerFramePaddingLabel->setEnabled(true);
+            ui.innerFrameBorderLabel->setEnabled(true);
 
             switch (t) {
                 case FrameContainer::Rectangle:
-                    ui.frameTypeCombo->setCurrentIndex(1);
+                    ui.innerFrameTypeCombo->setCurrentIndex(1);
                     break;
                 case FrameContainer::RoundedRectangle:
-                    ui.frameTypeCombo->setCurrentIndex(2);
+                    ui.innerFrameTypeCombo->setCurrentIndex(2);
                     break;
                 case FrameContainer::Ellipse:
-                    ui.frameTypeCombo->setCurrentIndex(3);
+                    ui.innerFrameTypeCombo->setCurrentIndex(3);
                     break;
                 case FrameContainer::Cloud:
-                    ui.frameTypeCombo->setCurrentIndex(4);
+                    ui.innerFrameTypeCombo->setCurrentIndex(4);
                     break;
                 default:
                     break;
             }
-            /*
-            if (bc->frameIncludeChildren()) // FIXME-1 will be replaced by 2nd frame
-                ui.includeChildrenCheckBox->setCheckState(Qt::Checked);
-            else
-                ui.includeChildrenCheckBox->setCheckState(Qt::Unchecked);
-                */
+        }
+        // Outer frame
+        t = bc->frameType(false);
+
+        if (t == FrameContainer::NoFrame)
+        {
+            ui.outerFrameTypeCombo->setCurrentIndex(0);
+            ui.outerFrameColorGroupBox->setEnabled(false);
+            ui.outerFramePaddingSpinBox->setEnabled(false);
+            ui.outerFrameWidthSpinBox->setEnabled(false);
+            ui.outerFramePaddingLabel->setEnabled(false);
+            ui.outerFrameBorderLabel->setEnabled(false);
+        }
+        else {
+            QPixmap pix(16, 16);
+            pix.fill(bc->framePenColor(false));
+            ui.outerFramePenColorButton->setIcon(pix);
+            pix.fill(bc->frameBrushColor(false));
+            ui.outerFrameBrushColorButton->setIcon(pix);
+            ui.outerFrameColorGroupBox->setEnabled(true);
+            ui.outerFramePaddingSpinBox->setEnabled(true);
+            ui.outerFramePaddingSpinBox->setValue(bc->framePadding(false));
+            ui.outerFrameWidthSpinBox->setEnabled(true);
+            ui.outerFrameWidthSpinBox->setValue( bc->framePenWidth(false));
+            ui.outerFramePaddingLabel->setEnabled(true);
+            ui.outerFrameBorderLabel->setEnabled(true);
+
+            switch (t) {
+                case FrameContainer::Rectangle:
+                    ui.outerFrameTypeCombo->setCurrentIndex(1);
+                    break;
+                case FrameContainer::RoundedRectangle:
+                    ui.outerFrameTypeCombo->setCurrentIndex(2);
+                    break;
+                case FrameContainer::Ellipse:
+                    ui.outerFrameTypeCombo->setCurrentIndex(3);
+                    break;
+                case FrameContainer::Cloud:
+                    ui.outerFrameTypeCombo->setCurrentIndex(4);
+                    break;
+                default:
+                    break;
+            }
         }
 
         // Link
@@ -218,9 +252,9 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         // Layout branches
         updateContainerLayoutButtons();
         ui.rotationHeadingSlider->setValue(bc->getRotationHeading());
-        ui.rotationInnerContentSlider->setValue(bc->getRotationContent());
+        ui.rotationInnerContentSlider->setValue(bc->getRotationSubtree());
         ui.rotationHeadingSpinBox->setValue(bc->getRotationHeading());
-        ui.rotationInnerContentSpinBox->setValue(bc->getRotationContent());
+        ui.rotationInnerContentSpinBox->setValue(bc->getRotationSubtree());
 
         // Task
         Task *task = branchItem->getTask();
@@ -321,21 +355,22 @@ void BranchPropertyEditor::setModel(VymModel *m)
 void BranchPropertyEditor::frameTypeChanged(int i)
 {
     if (model) {
+        bool useInnerFrame = (sender() == ui.innerFrameTypeCombo) ? true : false;
         switch (i) {
             case 0:
-                model->setFrameType(FrameContainer::NoFrame);
+                model->setFrameType(useInnerFrame, FrameContainer::NoFrame);
                 break;
             case 1:
-                model->setFrameType(FrameContainer::Rectangle);
+                model->setFrameType(useInnerFrame, FrameContainer::Rectangle);
                 break;
             case 2:
-                model->setFrameType(FrameContainer::RoundedRectangle);
+                model->setFrameType(useInnerFrame, FrameContainer::RoundedRectangle);
                 break;
             case 3:
-                model->setFrameType(FrameContainer::Ellipse);
+                model->setFrameType(useInnerFrame, FrameContainer::Ellipse);
                 break;
             case 4:
-                model->setFrameType(FrameContainer::Cloud);
+                model->setFrameType(useInnerFrame, FrameContainer::Cloud);
                 break;
         }
 
@@ -346,16 +381,21 @@ void BranchPropertyEditor::frameTypeChanged(int i)
 
 void BranchPropertyEditor::framePenColorClicked()
 {
+    bool useInnerFrame = (sender() == ui.innerFramePenColorButton) ? true : false;
+
     if (model) {
         QColor col = Qt::white;
         if (branchItem) {
             BranchContainer *bc = branchItem->getBranchContainer();
-            if (bc->frameType() != FrameContainer::NoFrame)
-                col = bc->framePenColor();
+            if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)
+                col = bc->framePenColor(useInnerFrame);
 
             col = QColorDialog::getColor(col, this);
             if (col.isValid()) {
-                model->setFramePenColor(col, branchItem);
+                model->setFramePenColor(useInnerFrame, col, branchItem);
+
+                // Re-set item to update color button
+                setItem(branchItem);
             }
         }
     }
@@ -364,11 +404,12 @@ void BranchPropertyEditor::framePenColorClicked()
 void BranchPropertyEditor::frameBrushColorClicked()
 {
     if (model) {
+        bool useInnerFrame = (sender() == ui.innerFrameBrushColorButton) ? true : false;
         QColor col = Qt::white;
         if (branchItem) {
             BranchContainer *bc = branchItem->getBranchContainer();
-            if (bc->frameType() != FrameContainer::NoFrame)
-                col = bc->frameBrushColor();
+            if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)
+                col = bc->frameBrushColor(useInnerFrame);
 
             col = QColorDialog::getColor(
                     col,
@@ -376,7 +417,10 @@ void BranchPropertyEditor::frameBrushColorClicked()
                     tr("Background color of frame","Branch property dialog"),
                     QColorDialog::ShowAlphaChannel);
             if (col.isValid()) {
-                model->setFrameBrushColor(col, branchItem);
+                model->setFrameBrushColor(useInnerFrame, col, branchItem);
+
+                // Re-set item to update color button
+                setItem(branchItem);
             }
         }
     }
@@ -384,20 +428,18 @@ void BranchPropertyEditor::frameBrushColorClicked()
 
 void BranchPropertyEditor::framePaddingChanged(int i)
 {
-    if (model)
-        model->setFramePadding(i, branchItem);
+    if (model) {
+        bool useInnerFrame = (sender() == ui.innerFramePaddingSpinBox) ? true : false;
+        model->setFramePadding(useInnerFrame, i, branchItem);
+    }
 }
 
 void BranchPropertyEditor::framePenWidthChanged(int i)
 {
-    if (model)
-        model->setFramePenWidth(i, branchItem);
-}
-
-void BranchPropertyEditor::frameIncludeChildrenChanged(int i)
-{
-    if (model)
-        model->setFrameIncludeChildren(i, branchItem);  // FIXME-1 will be replaced by 2nd frame
+    if (model) {
+        bool useInnerFrame = (sender() == ui.innerFrameWidthSpinBox) ? true : false;
+        model->setFramePenWidth(useInnerFrame, i, branchItem);
+    }
 }
 
 void BranchPropertyEditor::linkHideUnselectedChanged(int i)
@@ -460,7 +502,7 @@ void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-2 Create cu
 void BranchPropertyEditor::rotationInnerContentChanged(int i)
 {
     if (model)
-        model->setRotationContent(i);
+        model->setRotationSubtree(i);
 
     ui.rotationInnerContentSlider->setValue(i);
     ui.rotationInnerContentSpinBox->setValue(i);
@@ -521,20 +563,29 @@ void BranchPropertyEditor::indexChanged(int n)
 
 void BranchPropertyEditor::connectSignals()
 {
-    // Frame
-    connect(ui.framePenColorButton, SIGNAL(clicked()), this,
+    // Frames
+    connect(ui.innerFramePenColorButton, SIGNAL(clicked()), this,
             SLOT(framePenColorClicked()));
-    connect(ui.framePaddingSpinBox, SIGNAL(valueChanged(int)), this,
+    connect(ui.innerFramePaddingSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(framePaddingChanged(int)));
-    connect(ui.frameWidthSpinBox, SIGNAL(valueChanged(int)), this,
+    connect(ui.innerFrameWidthSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(framePenWidthChanged(int)));
-    connect(ui.frameBrushColorButton, SIGNAL(clicked()), this,
+    connect(ui.innerFrameBrushColorButton, SIGNAL(clicked()), this,
             SLOT(frameBrushColorClicked()));
-    connect(ui.frameTypeCombo, SIGNAL(currentIndexChanged(int)), this,
+    connect(ui.innerFrameTypeCombo, SIGNAL(currentIndexChanged(int)), this,
             SLOT(frameTypeChanged(int)));
-    connect(ui.includeChildrenCheckBox, SIGNAL(stateChanged(int)), this,
-            SLOT(frameIncludeChildrenChanged(int)));
 
+    connect(ui.outerFramePenColorButton, SIGNAL(clicked()), this,
+            SLOT(framePenColorClicked()));
+    connect(ui.outerFramePaddingSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(framePaddingChanged(int)));
+    connect(ui.outerFrameWidthSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(framePenWidthChanged(int)));
+    connect(ui.outerFrameBrushColorButton, SIGNAL(clicked()), this,
+            SLOT(frameBrushColorClicked()));
+
+    connect(ui.outerFrameTypeCombo, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(frameTypeChanged(int)));
     // Link
     connect(ui.hideLinkIfUnselected, SIGNAL(stateChanged(int)), this,
             SLOT(linkHideUnselectedChanged(int)));
@@ -596,12 +647,17 @@ void BranchPropertyEditor::connectSignals()
 void BranchPropertyEditor::disconnectSignals()
 {
     // Frame
-    disconnect(ui.framePenColorButton, 0, 0, 0);
-    disconnect(ui.framePaddingSpinBox, 0, 0, 0);
-    disconnect(ui.frameWidthSpinBox, 0, 0, 0);
-    disconnect(ui.frameBrushColorButton, 0, 0, 0);
-    disconnect(ui.frameTypeCombo, 0, 0, 0);
-    disconnect(ui.includeChildrenCheckBox, 0, 0, 0);
+    disconnect(ui.innerFramePenColorButton, 0, 0, 0);
+    disconnect(ui.innerFramePaddingSpinBox, 0, 0, 0);
+    disconnect(ui.innerFrameWidthSpinBox, 0, 0, 0);
+    disconnect(ui.innerFrameBrushColorButton, 0, 0, 0);
+    disconnect(ui.innerFrameTypeCombo, 0, 0, 0);
+
+    disconnect(ui.outerFramePenColorButton, 0, 0, 0);
+    disconnect(ui.outerFramePaddingSpinBox, 0, 0, 0);
+    disconnect(ui.outerFrameWidthSpinBox, 0, 0, 0);
+    disconnect(ui.outerFrameBrushColorButton, 0, 0, 0);
+    disconnect(ui.outerFrameTypeCombo, 0, 0, 0);
 
     // Link
     disconnect(ui.hideLinkIfUnselected, 0, 0, 0);
