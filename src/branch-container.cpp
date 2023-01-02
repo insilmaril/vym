@@ -850,19 +850,36 @@ int BranchContainer::getRotationHeading()
 
 void BranchContainer::setRotationSubtree(const int &a)
 {
-    if (outerContainer) {
-        outerContainer->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
-        outerContainer->setRotation(a);
-        innerContainer->setRotation(0);
+    if (outerFrame) {
+        outerFrame->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
+        outerFrame->setRotation(a);
+        if (outerContainer)
+            outerContainer->setRotation(0);
+        else
+            innerContainer->setRotation(0);
     } else {
-        innerContainer->setTransformOriginPoint(0, 0);  // FIXME-X originpoint needed?
-        innerContainer->setRotation(a);    // FIXME-2 If BC is FloatingBounded, and bc has images, frame does not include images
+        if (outerContainer) {
+            outerContainer->setTransformOriginPoint(0, 0);  // FIXME-2 originpoint needed?
+            outerContainer->setRotation(a);
+            innerContainer->setRotation(0);
+        } else {
+            innerContainer->setTransformOriginPoint(0, 0);  // FIXME-X originpoint needed?
+            innerContainer->setRotation(a);    // FIXME-2 If BC is FloatingBounded, and bc has images, frame does not include images
+        }
     }
 }
 
 int BranchContainer::getRotationSubtree()
 {
-    return std::round(innerContainer->rotation());
+
+    if (outerFrame) {
+        return std::round(outerFrame->rotation());
+    } else {
+        if (outerContainer)
+            return std::round(outerContainer->rotation());
+        else
+            return std::round(innerContainer->rotation());
+    }
 }
 
 QUuid BranchContainer::findFlagByPos(const QPointF &p)
@@ -950,6 +967,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
         // Outer frame around whole branchContainer including children
         if (ftype == FrameContainer::NoFrame) {
             if (outerFrame) {
+                int a = getRotationSubtree();
                 Container *c;
                 if (outerContainer)
                     c = outerContainer;
@@ -958,9 +976,11 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                 addContainer(c);
                 delete outerFrame;
                 outerFrame = nullptr;
+                setRotationSubtree(a);
             }
         } else {
             if (!outerFrame) {
+                int a = getRotationSubtree();
                 outerFrame = new FrameContainer;
                 outerFrame->setFrameIncludeChildren(true);
                 Container *c;
@@ -970,6 +990,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                     c = innerContainer;
                 outerFrame->addContainer(c);
                 addContainer(outerFrame, Z_OUTER_FRAME);
+                setRotationSubtree(a);
             }
             outerFrame->setFrameType(ftype);
         }
