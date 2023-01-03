@@ -73,7 +73,7 @@ void VymWrapper::editHeading()
 bool VymWrapper::loadMap(const QString &filename)
 {
     bool r;
-    if (File::Success == mainWindow->fileLoad(filename, NewMap, VymMap))
+    if (File::Success == mainWindow->fileLoad(filename, File::NewMap, File::VymMap))
         r = true;
     else
         r = false;

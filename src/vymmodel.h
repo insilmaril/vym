@@ -85,7 +85,7 @@ class VymModel : public TreeModel {
   private:
     bool zipped;       // should map be zipped
     static int mapNum; // unique number for model used in save/undo
-    FileType fileType; // type of file, e.g. vym, freemind...
+    File::FileType fileType; // type of file, e.g. vym, freemind...
     QString fileName;  // short name of file (for tab)
                       // example.vym
 
@@ -153,9 +153,9 @@ class VymModel : public TreeModel {
     */
     File::ErrorCode
     loadMap(QString, //!< Path
-            const LoadMode &lmode =
-                NewMap, //!< New map, replace or add to selection
-            const FileType &ftype = VymMap, //!< VymMap or FreeMind
+            const File::LoadMode &lmode =
+                File::NewMap, //!< New map, replace or add to selection
+            const File::FileType &ftype = File::VymMap, //!< VymMap or FreeMind
             const int &contentFilter =
                 0x0000,  //!< For undo types of content can be filterd
             int pos = -1 //!< Optionally tell position where to add data
@@ -163,7 +163,7 @@ class VymModel : public TreeModel {
 
   public:
     /*! \brief Save the map to file */
-    File::ErrorCode save(const SaveMode &);
+    File::ErrorCode save(const File::SaveMode &);
 
   public:
     void loadImage(BranchItem *dst = NULL, const QString &fn = "");
@@ -254,7 +254,7 @@ class VymModel : public TreeModel {
     Additionally a comment is logged.
 
     */
-    void saveState(const SaveMode &savemode, const QString &undoSelection,
+    void saveState(const File::SaveMode &savemode, const QString &undoSelection,
                    const QString &undoCommand, const QString &redoSelection,
                    const QString &redoCommand, const QString &comment = "",
                    TreeItem *saveSelection = nullptr, QString dataXML = "");
@@ -288,12 +288,12 @@ class VymModel : public TreeModel {
                           const QString &comment);
 
     /*! Save state before loading a map */
-    void saveStateBeforeLoad(LoadMode lmode, const QString &fname);
+    void saveStateBeforeLoad(File::LoadMode lmode, const QString &fname);
 
     /*! Put several states into one block for a single undo step */
     void saveStateBeginBlock(const QString &comment);
     void saveStateEndBlock();
-    
+
     ////////////////////////////////////////////
     // unsorted so far
     ////////////////////////////////////////////

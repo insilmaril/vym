@@ -55,7 +55,7 @@ void parseBaseHandler::setInputFile(const QString &s) { inputFile = s; }
 
 void parseBaseHandler::setInputString(const QString &s) { inputString = s; }
 
-void parseBaseHandler::setLoadMode(const LoadMode &lm, int p)
+void parseBaseHandler::setLoadMode(const File::LoadMode &lm, int p)
 {
     loadMode = lm;
     insertPos = p;

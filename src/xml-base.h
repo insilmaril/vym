@@ -29,13 +29,13 @@ class parseBaseHandler : public QXmlDefaultHandler {
     void setTmpDir(QString);
     void setInputFile(const QString &);
     void setInputString(const QString &);
-    void setLoadMode(const LoadMode &, int p = -1);
+    void setLoadMode(const File::LoadMode &, int p = -1);
     bool readHtmlAttr(const QXmlAttributes &);
 
   protected:
     QString errorProt;
 
-    LoadMode loadMode;
+    File::LoadMode loadMode;
     int insertPos;
 
     bool isVymPart;

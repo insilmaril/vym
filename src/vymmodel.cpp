@@ -448,7 +448,7 @@ bool VymModel::parseVymText(const QString &s)
 
         handler->setInputString(s);
         handler->setModel(this);
-        handler->setLoadMode(ImportReplace, 0);
+        handler->setLoadMode(File::ImportReplace, 0);
 
         ok = reader.parse(source);
         repositionBlocked = false;
@@ -470,8 +470,8 @@ bool VymModel::parseVymText(const QString &s)
     return ok;
 }
 
-File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
-                                  const FileType &ftype,
+File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
+                                  const File::FileType &ftype,
                                   const int &contentFilter, int pos)
 {
     File::ErrorCode err = File::Success;
@@ -485,20 +485,20 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
     parseBaseHandler *handler;
     fileType = ftype;
     switch (fileType) {
-    case VymMap:
-        handler = new parseVYMHandler;
-        ((parseVYMHandler *)handler)->setContentFilter(contentFilter);
-        break;
-    case FreemindMap:
-        handler = new parseFreemindHandler;
-        break;
-    default:
-        QMessageBox::critical(0, tr("Critical Parse Error"),
-                              "Unknown FileType in VymModel::load()");
-        return File::Aborted;
+        case File::VymMap:
+            handler = new parseVYMHandler;
+            ((parseVYMHandler *)handler)->setContentFilter(contentFilter);
+            break;
+        case File::FreemindMap:
+            handler = new parseFreemindHandler;
+            break;
+        default:
+            QMessageBox::critical(0, tr("Critical Parse Error"),
+                                  "Unknown FileType in VymModel::load()");
+            return File::Aborted;
     }
 
-    if (lmode == NewMap) {
+    if (lmode == File::NewMap) {
         // Reset timestamp to check for later updates of file
         fileChangedTime = QFileInfo(destPath).lastModified();
 
@@ -522,7 +522,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
         xmlfile = fname;
         zipped = false;
 
-        if (lmode == NewMap || lmode == DefaultMap)
+        if (lmode == File::NewMap || lmode == File::DefaultMap)
             zipped_org = false;
     }
     else {
@@ -598,8 +598,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
             tmpdir = fname.left(fname.lastIndexOf("/", -1));
         handler->setTmpDir(tmpdir);
         handler->setInputFile(file.fileName());
-        if (lmode == ImportReplace)
-            handler->setLoadMode(ImportReplace, pos);
+        if (lmode == File::ImportReplace)
+            handler->setLoadMode(File::ImportReplace, pos);
         else
             handler->setLoadMode(lmode, pos);
 
@@ -615,7 +615,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
             reposition(); // to generate bbox sizes
             emitSelectionChanged();
 
-            if (lmode == NewMap) // no lockfile for default map!
+            if (lmode == File::NewMap) // no lockfile for default map!
             {
                 mapDefault = false;
                 mapChanged = false;
@@ -652,7 +652,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
 
     updateActions();
 
-    if (lmode != NewMap)
+    if (lmode != File::NewMap)
         emitUpdateQueries();
 
     if (mapEditor) {
@@ -664,7 +664,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
     return err;
 }
 
-File::ErrorCode VymModel::save(const SaveMode &savemode)
+File::ErrorCode VymModel::save(const File::SaveMode &savemode)
 {
     QString tmpZipDir;
     QString mapFileName;
@@ -756,7 +756,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
     makeSubDirs(fileDir);
 
     QString saveFile;
-    if (savemode == CompleteMap || selModel->selection().isEmpty()) {
+    if (savemode == File::CompleteMap || selModel->selection().isEmpty()) {
         // Save complete map
         if (zipped)
             // Use defined name for map within zipfile to avoid problems
@@ -1501,7 +1501,7 @@ void VymModel::resetHistory()
     mainWindow->updateHistory(undoSet);
 }
 
-void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
+void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSelection,
                          const QString &undoCom, const QString &redoSelection,
                          const QString &redoCom, const QString &comment,
                          TreeItem *saveSel, QString dataXML)
@@ -1514,15 +1514,15 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         return;
 
     /*
+    */
     if (debug) {
         qDebug() << "VM::saveState() for map " << mapName;
         qDebug() << "  block:   " << buildingUndoBlock;
-        qDebug() << "  undoCom: " << undoSelection;
-        qDebug() << "  undoSel: " << undoCom;
-        qDebug() << "  redoCom: " << redoSelection;
-        qDebug() << "  redoSel: " << redoCom;
+        qDebug() << "  undoSel: " << undoSelection;
+        qDebug() << "  undoCom: " << undoCom;
+//        qDebug() << "  redoSel: " << redoSelection;
+//        qDebug() << "  redoCom: " << redoCom;
     }
-    */
 
     QString undoCommand;
     QString redoCommand;
@@ -1561,6 +1561,10 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
 
     // Increase undo steps, but check for repeated actions  // FIXME-2 currently unused
     // like editing a vymNote - then do not increase but replace last command
+    //
+    // Undo blocks start with "model.select" - do not consider these for repeated actions
+    if (!undoCommand.startsWith("model.select")) {
+    }
     /*
     QRegExp re ("parseVymText.*\\(.*vymnote");
     if (curStep > 0 && redoSelection == lastRedoSelection() &&
@@ -1592,7 +1596,7 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
                             saveSel);
 
-    if (savemode == PartOfMap) {
+    if (savemode == File::PartOfMap) {
         undoCommand.replace("PATH", bakMapPath);
         redoCommand.replace("PATH", bakMapPath);
     }
@@ -1660,7 +1664,7 @@ void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
     else
         qWarning("VymModel::saveStateChangingPart  no redoSel given!");
 
-    saveState(PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
+    saveState(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
               redoSelection, rc, comment, undoSel);
 }
 
@@ -1676,7 +1680,7 @@ void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
         // save the selected branch of the map, Undo will insert part of map
         if (redoSel->depth() > 0)
             undoSelection = getSelectString(redoSel->parent());
-        saveState(PartOfMap, undoSelection,
+        saveState(File::PartOfMap, undoSelection,
                   QString("addMapInsert (\"PATH\",%1,%2)")
                       .arg(redoSel->num())
                       .arg(SlideContent),
@@ -1699,7 +1703,7 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveState(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &undoSel, const QString &uc,
@@ -1709,7 +1713,7 @@ void VymModel::saveState(const QString &undoSel, const QString &uc,
     // "Normal" savestate: save commands, selections and comment
     // so just save commands for undo and redo
     // and use current selection
-    saveState(UndoCommand, undoSel, uc, redoSel, rc, comment, nullptr);
+    saveState(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &uc, const QString &rc,
@@ -1717,7 +1721,7 @@ void VymModel::saveState(const QString &uc, const QString &rc,
 {
     // "Normal" savestate applied to model (no selection needed):
     // save commands  and comment
-    saveState(UndoCommand, nullptr, uc, nullptr, rc, comment, nullptr);
+    saveState(File::CodeBlock, nullptr, uc, nullptr, rc, comment, nullptr);
 }
 
 void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
@@ -1732,20 +1736,20 @@ void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveState(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
-void VymModel::saveStateBeforeLoad(LoadMode lmode, const QString &fname)
+void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        if (lmode == ImportAdd)
+        if (lmode == File::ImportAdd)
             saveStateChangingPart(selbi, selbi,
                                   QString("addMapInsert (\"%1\")").arg(fname),
                                   QString("Add map %1 to %2")
                                       .arg(fname)
                                       .arg(getObjectName(selbi)));
-        if (lmode == ImportReplace) {
+        if (lmode == File::ImportReplace) {
             BranchItem *pi = (BranchItem *)(selbi->parent());
             saveStateChangingPart(pi, pi,
                                   QString("addMapReplace(%1)").arg(fname),
@@ -1756,9 +1760,10 @@ void VymModel::saveStateBeforeLoad(LoadMode lmode, const QString &fname)
     }
 }
 
-void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-3 make blocks more intelligent:
+void VymModel::saveStateBeginBlock(const QString &comment)
     // - if only used for single command, don't build block and adapt comment
     // - add checks, that block is really ended!
+    // - Currently used for moving/relinking in MapEditor
 {
     buildingUndoBlock = true;
     undoBlockComment = comment;
@@ -1773,7 +1778,7 @@ void VymModel::saveStateEndBlock()
     // Drop whole block, if empty
     if (undoBlock.isEmpty() && redoBlock.isEmpty()) return;
 
-    saveState(UndoCommand, "", undoBlock, "", redoBlock, undoBlockComment, nullptr);
+    saveState(File::CodeBlock, "", undoBlock, "", redoBlock, undoBlockComment, nullptr);
 }
 
 QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }
@@ -2767,7 +2772,7 @@ void VymModel::paste()
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
-                if (File::Success != loadMap(fn, ImportAdd, VymMap, SlideContent))
+                if (File::Success != loadMap(fn, File::ImportAdd, File::VymMap, SlideContent))
                     qWarning() << "VM::paste Loading clipboard failed: " << fn;
             }
             zipped = zippedOrg;
@@ -6093,7 +6098,7 @@ SlideItem *VymModel::addSlide()
     }
     QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
     int pos = si->childNumber();
-    saveState(PartOfMap, getSelectString(),
+    saveState(File::PartOfMap, getSelectString(),
               QString("removeSlide (%1)").arg(pos), getSelectString(),
               QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
               s);
@@ -6105,7 +6110,7 @@ void VymModel::deleteSlide(SlideItem *si)
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveState(PartOfMap, getSelectString(),
+        saveState(File::PartOfMap, getSelectString(),
                   QString("addMapInsert (\"PATH\",%1)").arg(pos),
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
                   "Remove slide", nullptr, s);

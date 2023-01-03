@@ -112,8 +112,8 @@ class Main : public QMainWindow {
     void editorChanged();
 
   public slots:
-    File::ErrorCode fileLoad(QString, const LoadMode &, const FileType &ftype);
-    void fileLoad(const LoadMode &);
+    File::ErrorCode fileLoad(QString, const File::LoadMode &, const File::FileType &ftype);
+    void fileLoad(const File::LoadMode &);
   private slots:
     void fileLoad();
     void fileSaveSession();
@@ -122,13 +122,13 @@ class Main : public QMainWindow {
   private slots:
     void fileLoadRecent();
     void addRecentMap(const QString &);
-    void fileSave(VymModel *, const SaveMode &);
+    void fileSave(VymModel *, const File::SaveMode &);
     void fileSave();
   public slots:
     void fileSave(VymModel *); // autosave from MapEditor
   private slots:
     void fileSaveAs();
-    void fileSaveAs(const SaveMode &);
+    void fileSaveAs(const File::SaveMode &);
     void fileSaveAsDefault();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();

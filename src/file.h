@@ -4,12 +4,12 @@
 #include <QDir>
 
 namespace File {
-enum ErrorCode { Success, Aborted, NoZip };
-}
+    enum ErrorCode { Success, Aborted, NoZip };
 
-enum LoadMode { NewMap, DefaultMap, ImportAdd, ImportReplace };
-enum SaveMode { PartOfMap, CompleteMap, UndoCommand };
-enum FileType { VymMap, FreemindMap, UnknownMap };
+    enum LoadMode { NewMap, DefaultMap, ImportAdd, ImportReplace };
+    enum SaveMode { PartOfMap, CompleteMap, CodeBlock };
+    enum FileType { VymMap, FreemindMap, UnknownMap };
+}
 
 /////////////////////////////////////////////////////////////////////////////
 QString convertToRel(const QString &, const QString &);
@@ -37,7 +37,7 @@ File::ErrorCode unzipDir(QDir, QString);
 bool loadStringFromDisk(const QString &fn, QString &s);
 bool saveStringToDisk(const QString &fn, const QString &s);
 
-FileType getMapType(const QString &fn);
+File::FileType getMapType(const QString &fn);
 
 //////////////////////////////////////////////////////////
 // Helper function to select image format while in SaveDialogs

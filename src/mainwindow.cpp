@@ -454,8 +454,8 @@ void Main::loadCmdLine()
 
     initProgressCounter(flist.count());
     while (it != flist.end()) {
-        FileType type = getMapType(*it);
-        fileLoad(*it, NewMap, type);
+        File::FileType type = getMapType(*it);
+        fileLoad(*it, File::NewMap, type);
         *it++;
     }
     removeProgressCounter();
@@ -3644,7 +3644,7 @@ void Main::fileNew()
     // Don't show counter while loading default map
     removeProgressCounter();
 
-    if (File::Success != fileLoad(default_path, DefaultMap, VymMap)) {
+    if (File::Success != fileLoad(default_path, File::DefaultMap, File::VymMap)) {
         QMessageBox::critical(0, tr("Critical Error"),
                               tr("Couldn't load default map:\n\n%1\n\nvym will "
                                  "create an empty map now.",
@@ -3686,8 +3686,8 @@ void Main::fileNewCopy()
     }
 }
 
-File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
-                               const FileType &ftype)
+File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
+                               const File::FileType &ftype)
 {
     File::ErrorCode err = File::Success;
 
@@ -3699,7 +3699,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
 
     VymModel *vm;
 
-    if (lmode == NewMap) {
+    if (lmode == File::NewMap) {
         // Check, if map is already loaded
         int i = 0;
         while (i <= tabWidget->count() - 1) {
@@ -3741,7 +3741,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
 
         vm = currentModel();
 
-        if (lmode == NewMap) {
+        if (lmode == File::NewMap) {
             if (vm && vm->isDefault()) {
                 // There is a map model already and it still the default map,
                 // use it.
@@ -3750,10 +3750,10 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             else
                 createModel = true;
         }
-        else if (lmode == DefaultMap) {
+        else if (lmode == File::DefaultMap) {
             createModel = true;
         }
-        else if (lmode == ImportAdd || lmode == ImportReplace) {
+        else if (lmode == File::ImportAdd || lmode == File::ImportReplace) {
             if (!vm) {
                 QMessageBox::warning(0, "Warning",
                                      "Trying to import into non existing map");
@@ -3776,11 +3776,11 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
         // Check, if file exists (important for creating new files
         // from command line
         if (!QFile(fn).exists()) {
-            if (lmode == DefaultMap) {
+            if (lmode == File::DefaultMap) {
                 return File::Aborted;
             }
 
-            if (lmode == NewMap) {
+            if (lmode == File::NewMap) {
                 QMessageBox mb(vymName,
                                tr("This map does not exist:\n  %1\nDo you want "
                                   "to create a new one?")
@@ -3824,7 +3824,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             // Save existing filename in case  we import
             QString fn_org = vm->getFilePath();
 
-            if (lmode != DefaultMap) {
+            if (lmode != File::DefaultMap) {
 
                 vm->setFilePath(fn);
                 vm->saveStateBeforeLoad(lmode, fn);
@@ -3838,24 +3838,24 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             err = vm->loadMap(fn, lmode, ftype);
 
             // Restore old (maybe empty) filepath, if this is an import
-            if (lmode == ImportAdd || lmode == ImportReplace)
+            if (lmode == File::ImportAdd || lmode == File::ImportReplace)
                 vm->setFilePath(fn_org);
         }
 
         // Finally check for errors and go home
         if (err == File::Aborted) {
-            if (lmode == NewMap)
+            if (lmode == File::NewMap)
                 fileCloseMap();
             statusBar()->showMessage("Could not load " + fn, statusbarTime);
         }
         else {
-            if (lmode == NewMap) {
+            if (lmode == File::NewMap) {
                 vm->setFilePath(fn);
                 updateTabName(vm);
                 actionFilePrint->setEnabled(true);
                 addRecentMap(fn);
             }
-            else if (lmode == DefaultMap) {
+            else if (lmode == File::DefaultMap) {
                 vm->makeDefault();
                 updateTabName(vm);
             }
@@ -3870,20 +3870,20 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
     return err;
 }
 
-void Main::fileLoad(const LoadMode &lmode)
+void Main::fileLoad(const File::LoadMode &lmode)
 {
     QString caption;
     switch (lmode) {
-    case NewMap:
+    case File::NewMap:
         caption = vymName + " - " + tr("Load vym map");
         break;
-    case DefaultMap:
+    case File::DefaultMap:
         // Not used directly
         return;
-    case ImportAdd:
+    case File::ImportAdd:
         caption = vymName + " - " + tr("Import: Add vym map to selection");
         break;
-    case ImportReplace:
+    case File::ImportReplace:
         caption =
             vymName + " - " + tr("Import: Replace selection with vym map");
         break;
@@ -3911,7 +3911,7 @@ void Main::fileLoad(const LoadMode &lmode)
 
 void Main::fileLoad()
 {
-    fileLoad(NewMap);
+    fileLoad(File::NewMap);
     tabWidget->setCurrentIndex(tabWidget->count() - 1);
 }
 
@@ -3935,8 +3935,8 @@ void Main::fileRestoreSession()
 
     initProgressCounter(lastSessionFiles.count());
     while (it != lastSessionFiles.end()) {
-        FileType type = getMapType(*it);
-        fileLoad(*it, NewMap, type);
+        File::FileType type = getMapType(*it);
+        fileLoad(*it, File::NewMap, type);
         *it++;
     }
     removeProgressCounter();
@@ -3962,8 +3962,8 @@ void Main::fileLoadRecent()
     if (action) {
         initProgressCounter();
         QString fn = action->data().toString();
-        FileType type = getMapType(fn);
-        fileLoad(fn, NewMap, type);
+        File::FileType type = getMapType(fn);
+        fileLoad(fn, File::NewMap, type);
         removeProgressCounter();
         tabWidget->setCurrentIndex(tabWidget->count() - 1);
     }
@@ -3984,7 +3984,7 @@ void Main::addRecentMap(const QString &fileName)
     setupRecentMapsMenu();
 }
 
-void Main::fileSave(VymModel *m, const SaveMode &savemode)
+void Main::fileSave(VymModel *m, const File::SaveMode &savemode)
 {
     if (!m)
         return;
@@ -4009,15 +4009,15 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
                                  statusbarTime);
 }
 
-void Main::fileSave() { fileSave(currentModel(), CompleteMap); }
+void Main::fileSave() { fileSave(currentModel(), File::CompleteMap); }
 
-void Main::fileSave(VymModel *m) { fileSave(m, CompleteMap); }
+void Main::fileSave(VymModel *m) { fileSave(m, File::CompleteMap); }
 
-void Main::fileSaveAs(const SaveMode &savemode)
+void Main::fileSaveAs(const File::SaveMode &savemode)
 {
     if (currentMapEditor()) {
         QString filter;
-        if (savemode == CompleteMap)
+        if (savemode == File::CompleteMap)
             filter = "VYM map (*.vym)";
         else
             filter = "VYM part of map (*vyp)";
@@ -4061,7 +4061,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
             else {
                 // New file, add extension to filename, if missing
                 // This is always .vym or .vyp, depending on savemode
-                if (savemode == CompleteMap) {
+                if (savemode == File::CompleteMap) {
                     if (!fn.contains(".vym") && !fn.contains(".xml"))
                         fn += ".vym";
                 }
@@ -4074,8 +4074,8 @@ void Main::fileSaveAs(const SaveMode &savemode)
             // Save now
             VymModel *m = currentModel();
             QString fn_org = m->getFilePath(); // Restore fn later, if savemode
-                                               // != CompleteMap
-            if (savemode == CompleteMap) {
+                                               // != File::CompleteMap
+            if (savemode == File::CompleteMap) {
                 // Check for existing lockfile
                 QFile lockFile(fn + ".lock");
                 if (lockFile.exists()) {
@@ -4096,7 +4096,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
             fileSave(m, savemode);
 
             // Set name of tab
-            if (savemode == CompleteMap)
+            if (savemode == File::CompleteMap)
                 updateTabName(m);
             else { // Renaming map to original name, because we only saved the
                    // selected part of it
@@ -4107,7 +4107,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
     }
 }
 
-void Main::fileSaveAs() { fileSaveAs(CompleteMap); }
+void Main::fileSaveAs() { fileSaveAs(File::CompleteMap); }
 
 void Main::fileSaveAsDefault()
 {
@@ -4158,7 +4158,7 @@ void Main::fileSaveAsDefault()
             // Save now as new default
             VymModel *m = currentModel();
             QString fn_org = m->getFilePath(); // Restore fn later, if savemode
-                                               // != CompleteMap
+                                               // != File::CompleteMap
             // Check for existing lockfile
             QFile lockFile(fn + ".lock");
             if (lockFile.exists()) {
@@ -4176,7 +4176,7 @@ void Main::fileSaveAsDefault()
                 return;
             }
 
-            fileSave(m, CompleteMap);
+            fileSave(m, File::CompleteMap);
 
             // Set name of tab
             updateTabName(m);
@@ -4258,7 +4258,7 @@ void Main::fileImportFreemind()
         QStringList::Iterator it = flist.begin();
         while (it != flist.end()) {
             fn = *it;
-            if (fileLoad(fn, NewMap, FreemindMap)) {
+            if (fileLoad(fn, File::NewMap, File::FreemindMap)) {
                 currentMapEditor()->getModel()->setFilePath("");
             }
             ++it;
@@ -4288,7 +4288,7 @@ void Main::fileImportMM()
             im.setFile(*it);
             if (im.transform() &&
                 File::Success ==
-                    fileLoad(im.getTransformedFile(), NewMap, VymMap) &&
+                    fileLoad(im.getTransformedFile(), File::NewMap, File::VymMap) &&
                 currentMapEditor())
                 currentMapEditor()->getModel()->setFilePath("");
             ++it;
@@ -4499,7 +4499,7 @@ bool Main::fileCloseMap(int i)
             switch (mb.exec()) {
             case QMessageBox::Yes:
                 // save and close
-                fileSave(m, CompleteMap);
+                fileSave(m, File::CompleteMap);
                 break;
             case QMessageBox::No:
                 // close  without saving
@@ -4822,7 +4822,7 @@ void Main::openVymLinks(const QStringList &vl, bool background)
             QMessageBox::critical(0, tr("Critical Error"),
                                   tr("Couldn't open map %1").arg(vlmin.at(j)));
         else {
-            fileLoad(vlmin.at(j), NewMap, VymMap);
+            fileLoad(vlmin.at(j), File::NewMap, File::VymMap);
             if (!background)
                 tabWidget->setCurrentIndex(tabWidget->count() - 1);
         }
@@ -5278,11 +5278,11 @@ void Main::editNewBranchBelow()
     }
 }
 
-void Main::editImportAdd() { fileLoad(ImportAdd); }
+void Main::editImportAdd() { fileLoad(File::ImportAdd); }
 
-void Main::editImportReplace() { fileLoad(ImportReplace); }
+void Main::editImportReplace() { fileLoad(File::ImportReplace); }
 
-void Main::editSaveBranch() { fileSaveAs(PartOfMap); }
+void Main::editSaveBranch() { fileSaveAs(File::PartOfMap); }
 
 void Main::editDeleteKeepChildren()
 {
@@ -6931,7 +6931,7 @@ void Main::helpDemo()
         initProgressCounter(flist.count());
         while (it != flist.end()) {
             fn = *it;
-            fileLoad(*it, NewMap, VymMap);
+            fileLoad(*it, File::NewMap, File::VymMap);
             ++it;
         }
         removeProgressCounter();

@@ -62,7 +62,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         branchesTotal = 0;
         branchesCounter = 0;
 
-        if (loadMode == NewMap || loadMode == DefaultMap) {
+        if (loadMode == File::NewMap || loadMode == File::DefaultMap) {
             // Create mapCenter
             model->clear();
             lastBranch = nullptr;
@@ -94,7 +94,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     }
     else if (eName == "setting" && state == StateMap) {
         state = StateMapSetting;
-        if (loadMode == NewMap) {
+        if (loadMode == File::NewMap) {
             htmldata.clear();
             readSettingAttr(atts);
         }
@@ -112,7 +112,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     }
     else if (eName == "mapcenter" && state == StateMap) {
         state = StateMapCenter;
-        if (loadMode == NewMap) {
+        if (loadMode == File::NewMap) {
             // Really use the found mapcenter as MCO in a new map
             lastBranch = model->createMapCenter();
         }
@@ -122,7 +122,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             BranchItem *bi = model->getSelectedBranch();
             if (bi) {
                 lastBranch = bi;
-                if (loadMode == ImportAdd) {
+                if (loadMode == File::ImportAdd) {
                     // Import Add
                     if (insertPos < 0)
                         lastBranch = model->createBranch(lastBranch);
@@ -263,7 +263,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             // If a vym part is _loaded_ (not imported),
             // selection==lmo==nullptr
             // Treat it like ImportAdd then...
-            loadMode = ImportAdd;
+            loadMode = File::ImportAdd;
             // we really have no MCO at this time
             lastBranch = model->createMapCenter();
             model->select(lastBranch);
@@ -274,7 +274,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             lastBranch = (BranchItem *)ti;
             if (eName == "branch") {
                 state = StateBranch;
-                if (loadMode == ImportAdd) {
+                if (loadMode == File::ImportAdd) {
                     lastBranch = model->createBranch(lastBranch);
                     model->setLatestAddedItem(lastBranch);
                     if (insertPos >= 0)
@@ -745,7 +745,7 @@ bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
 
         if (!a.value("uuid").isEmpty()) {
             // While pasting, check for existing UUID
-            if (loadMode != ImportAdd && !model->findUuid(a.value("uuid")))
+            if (loadMode != File::ImportAdd && !model->findUuid(a.value("uuid")))
                 lastMI->setUuid(a.value("uuid"));
         }
     }

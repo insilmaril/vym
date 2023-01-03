@@ -95,10 +95,10 @@ void VymModelWrapper::addMapInsert(QString fileName, int pos, int contentFilter)
     if (QDir::isRelativePath(fileName))
         fileName = QDir::currentPath() + "/" + fileName;
 
-    model->saveStateBeforeLoad(ImportAdd, fileName);
+    model->saveStateBeforeLoad(File::ImportAdd, fileName);
 
     if (File::Aborted ==
-        model->loadMap(fileName, ImportAdd, VymMap, contentFilter, pos))
+        model->loadMap(fileName, File::ImportAdd, File::VymMap, contentFilter, pos))
         logError(context(), QScriptContext::UnknownError,
                  QString("Couldn't load %1").arg(fileName));
 }
@@ -118,9 +118,9 @@ void VymModelWrapper::addMapReplace(QString fileName)
     if (QDir::isRelativePath(fileName))
         fileName = QDir::currentPath() + "/" + fileName;
 
-    model->saveStateBeforeLoad(ImportReplace, fileName);
+    model->saveStateBeforeLoad(File::ImportReplace, fileName);
 
-    if (File::Aborted == model->loadMap(fileName, ImportReplace, VymMap))
+    if (File::Aborted == model->loadMap(fileName, File::ImportReplace, File::VymMap))
         logError(context(), QScriptContext::UnknownError,
                  QString("Couldn't load %1").arg(fileName));
 }
