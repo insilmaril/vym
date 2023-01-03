@@ -2332,34 +2332,48 @@ void VymModel::setFramePenWidth(
     reposition(); // FIXME-2 needed?
 }
 
-void VymModel::setRotationHeading (const int &i) // FIXME-2 no savestate
+void VymModel::setRotationHeading (const int &i)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchContainer *bc = bi->getBranchContainer();
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        BranchContainer *bc = selbi->getBranchContainer();
 	if (bc->getRotationHeading() == i) {
 	    // Updating slider also emits valueChanged for spinBox and vice versa
 	    // Go home.
 	    return;
 	}
+
+        saveState(selbi,
+                  QString("setRotationHeading (\"%1\")")
+                      .arg(bc->getRotationHeading()),
+                  selbi, QString("setRotationHeading (\"%1\")").arg(i),
+                  QString("Set rotation angle of heading and flags to %1").arg(i));
+
         bc->setRotationHeading(i);
         reposition();
         emitSelectionChanged();
     }
 }
 
-void VymModel::setRotationSubtree (const int &i) // FIXME-2 no savestate
+void VymModel::setRotationSubtree (const int &i)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchContainer *bc = bi->getBranchContainer();
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        BranchContainer *bc = selbi->getBranchContainer();
 	if (bc->getRotationSubtree() == i) {
 	    // Updating slider also emits valueChanged for spinBox and vice versa
 	    // Go home.
 	    return;
 	}
+
+        saveState(selbi,
+                  QString("setRotationSubtree (\"%1\")")
+                      .arg(bc->getRotationSubtree()),
+                  selbi, QString("setRotationSubtree (\"%1\")").arg(i),
+                  QString("Set rotation angle of heading and subtree to %1").arg(i));
+
         bc->setRotationSubtree(i);
-	reposition();
+        reposition();
         emitSelectionChanged();
     }
 }

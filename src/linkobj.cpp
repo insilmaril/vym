@@ -38,8 +38,6 @@ void LinkObj::init()
     pen.setColor(linkcolor);
     pen.setCapStyle(Qt::RoundCap);
 
-    visible = true; // FIXME-1 needed?
-
     bottomLine = nullptr;
 }
 
@@ -49,7 +47,6 @@ void LinkObj::createBottomLine()
 
     bottomLine = new QGraphicsLineItem(this);
     bottomLine->setPen(pen);
-    bottomLine->setVisible(true); // FIXME-2 testing
 }
 
 void LinkObj::deleteBottomLine()

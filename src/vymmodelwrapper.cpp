@@ -443,6 +443,24 @@ QString VymModelWrapper::getNoteXML()
     return setResult(model->getNote().saveToDir());
 }
 
+int VymModelWrapper::getRotationHeading()
+{
+    int r = -1;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        r = selbi->getBranchContainer()->getRotationHeading();
+    return setResult(r);
+}
+
+int VymModelWrapper::getRotationSubtree()
+{
+    int r = -1;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        r = selbi->getBranchContainer()->getRotationSubtree();
+    return setResult(r);
+}
+
 QString VymModelWrapper::getSelectionString()
 {
     return setResult(model->getSelectString());
@@ -906,6 +924,16 @@ void VymModelWrapper::setFramePenColor(const bool &useInnerFrame, const QString 
 void VymModelWrapper::setFrameType(const bool &useInnerFrame, const QString &type)
 {
     model->setFrameType(useInnerFrame, type);
+}
+
+void VymModelWrapper::setRotationHeading(const int &i)
+{
+    model->setRotationHeading(i);
+}
+
+void VymModelWrapper::setRotationSubtree(const int &i)
+{
+    model->setRotationSubtree(i);
 }
 
 void VymModelWrapper::setScaleFactor(qreal f) { model->setScaleFactor(f); }

@@ -636,6 +636,12 @@ void Main::setupAPI()
     c = new Command("getNoteXML", Command::TreeItem);
     modelCommands.append(c);
 
+    c = new Command("getRotationHeading", Command::Branch);
+    modelCommands.append(c);
+
+    c = new Command("getRotationSubtree", Command::Branch);
+    modelCommands.append(c);
+
     c = new Command("getSelectionString", Command::TreeItem);
     modelCommands.append(c);
 
@@ -904,6 +910,14 @@ void Main::setupAPI()
     c = new Command("setPos", Command::BranchOrImage);
     c->addPar(Command::Double, false, "Position x");
     c->addPar(Command::Double, false, "Position y");
+    modelCommands.append(c);
+
+    c = new Command("setRotationHeading", Command::Branch);
+    c->addPar(Command::Int, false, "Rotation angle of heading and flags");
+    modelCommands.append(c);
+
+    c = new Command("setRotationSubtree", Command::Branch);
+    c->addPar(Command::Int, false, "Rotation angle of heading and subtree");
     modelCommands.append(c);
 
     c = new Command("setScaleFactor", Command::Image);

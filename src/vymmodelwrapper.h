@@ -60,6 +60,8 @@ class VymModelWrapper : public VymScriptContext {
     QString getMapTitle();
     QString getNotePlainText();
     QString getNoteXML();
+    int getRotationHeading();
+    int getRotationSubtree();
     QString getSelectionString();
     int getTaskPriorityDelta();
     QString getTaskSleep();
@@ -136,6 +138,8 @@ class VymModelWrapper : public VymScriptContext {
     void setFrameType(const bool & useInnerFrame, const QString &type);
     void setScaleFactor(qreal f);
     void setSelectionColor(const QString &color);
+    void setRotationHeading(const int &i);
+    void setRotationSubtree(const int &i);
     void setTaskPriorityDelta(const int &n);
     bool setTaskSleep(const QString &s);
     void setURL(const QString &s);

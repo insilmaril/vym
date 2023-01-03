@@ -268,7 +268,7 @@ void BranchItem::unScroll()
         toggleScroll();
 }
 
-bool BranchItem::toggleScroll()
+bool BranchItem::toggleScroll() // FIXME-2 check visibility of LinkObjs
 {
     // MapCenters are not scrollable
     if (depth() == 0)
