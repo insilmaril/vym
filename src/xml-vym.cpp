@@ -43,6 +43,12 @@ bool VymReader::read(QIODevice *device)
     return !xml.error();
 }
 
+
+void  VymReader::raiseUnknownElementError()
+{
+    xml.raiseError("Found unknown element: " + xml.name().toString());
+}
+
 void VymReader::readVymMap()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("vymmap"));
@@ -87,18 +93,26 @@ void VymReader::readVymMap()
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("mapcenter"))
             readMapCenter();
+        else if (xml.name() == QLatin1String("select"))
+            readSelect();
         else {
-            qDebug() << "VymMap skip element:" << xml.name().toString();
-            xml.skipCurrentElement();   // FIXME-0 should raise error instead
+            raiseUnknownElementError();
+            return;
         }
     }
+}
+
+void VymReader::readSelect()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("select"));
+
+    QString s = xml.readElementText();
+    model->select(s);
 }
 
 void VymReader::readMapCenter()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("mapcenter"));
-
-    qDebug() << "VR::readMapCenter";
 
     if (loadMode == File::NewMap) {
         // Really use this as mapCenter in a new map
@@ -137,7 +151,6 @@ void VymReader::readMapCenter()
     readBranchAttr();
 
     while (xml.readNextStartElement()) {
-        qDebug() << "MapCenter next start element:" << xml.name().toString();
         if (xml.name() == QLatin1String("heading"))
             readHeading();
         else if (xml.name() == QLatin1String("branch"))
@@ -145,8 +158,8 @@ void VymReader::readMapCenter()
         else if (xml.name() == QLatin1String("frame"))
             readFrame();
         else {
-            qDebug() << "MC skip element:" << xml.name().toString();
-            xml.skipCurrentElement();   // FIXME-2 should raise error for unknown elements
+            raiseUnknownElementError();
+            return;
         }
     }
 
@@ -156,8 +169,6 @@ void VymReader::readMapCenter()
 void VymReader::readBranch()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("branch"));
-
-    qDebug() << "VR::readBranch";
 
     lastBranch = model->createBranch(lastBranch);
     readBranchAttr();
@@ -170,11 +181,13 @@ void VymReader::readBranch()
         else if (xml.name() == QLatin1String("frame"))
             readFrame();
         else {
-            qDebug() << "Branch skip element:" << xml.name().toString();
-            xml.skipCurrentElement();   // FIXME-2 should raise error for unknown elements
+            raiseUnknownElementError();
+            return;
         }
     // FIXME-00 cont here with frame and images
     }
+
+    // FIXME-0 checkMoreElements();
 
     // Empty branches may not be scrolled
     // (happens if bookmarks are imported)
@@ -191,8 +204,6 @@ void VymReader::readBranch()
 void VymReader::readHeading()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("heading"));
-
-    qDebug() << "VR::readHeading";
 
     if (!lastBranch) {
             xml.raiseError("No lastBranch available to set heading.");
@@ -227,7 +238,6 @@ void VymReader::readHeading()
     a = "text";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        qDebug() << "Heading is " << s;
         vymtext.setText(unquoteQuotes(s));
 
         if (versionLowerOrEqual(version, "2.4.99") &&
@@ -245,21 +255,19 @@ void VymReader::readHeading()
         }
         lastBranch->setHeading(vymtext);
     }
-    qDebug() << "Heading skipping";
-    xml.skipCurrentElement();
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
 }
 
 void VymReader::readFrame()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("frame"));
 
-    qDebug() << "VR::readFrame";
-
     readFrameAttr();
 
     if (xml.readNextStartElement()) {
-        qDebug() << "Frame: Unknown start element found: " << xml.name().toString();
-        xml.raiseError("Found unknown element: " + xml.name().toString());
+        raiseUnknownElementError();
         return;
     }
 }
@@ -402,8 +410,6 @@ void VymReader::readVymMapAttr()
 
 void VymReader::readBranchAttr()
 {
-    qDebug() << "VR::readBranchAttr";
-
     Q_ASSERT(xml.isStartElement() && (
             xml.name() == QLatin1String("branch") ||
             xml.name() == QLatin1String("mapcenter")));
@@ -479,8 +485,6 @@ void VymReader::readBranchAttr()
 
 void VymReader::readOrnamentsAttr() // FIXME-0 not ported yet
 {
-    qDebug() << "VR::readOrnamentsAttr";
-
     Q_ASSERT(xml.isStartElement() && (
             xml.name() == QLatin1String("branch") ||
             xml.name() == QLatin1String("mapcenter")));
@@ -488,8 +492,6 @@ void VymReader::readOrnamentsAttr() // FIXME-0 not ported yet
 
 void VymReader::readFrameAttr()
 {
-    qDebug() << "VR::readFrameAttr";
-
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("frame"));
 
     if (lastBranch) {

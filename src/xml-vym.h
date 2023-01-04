@@ -19,10 +19,10 @@ class VymReader : public BaseReader {
 
     bool read(QIODevice *device);
 
-    static inline QString versionAttribute() { return QStringLiteral("version"); }
-
-private:
+  private:
+    void raiseUnknownElementError();
     void readVymMap();
+    void readSelect();
     void readMapCenter();
     void readBranch();
     void readHeading();
