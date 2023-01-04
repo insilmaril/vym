@@ -1,5 +1,5 @@
-#ifndef XML_H
-#define XML_H
+#ifndef XML_VYM_H
+#define XML_VYM_H
 
 #include "xml-base.h"
 
@@ -13,80 +13,49 @@ class Task;
 
 /*! \brief Parsing VYM maps from XML documents */
 
-enum Content {
-    TreeContent = 0x0001,
-    SlideContent = 0x0002,
-    XLinkContent = 0x0004
-};
-
-class parseVYMHandler : public parseBaseHandler {
+class VymReader : public BaseReader {
   public:
-    parseVYMHandler();
-    void setContentFilter(const int &);
+    VymReader(VymModel*);
 
-  private:
-    int contentFilter;
+    bool read(QIODevice *device);
 
-  public:
-    bool startDocument();
-    bool startElement(const QString &, const QString &, const QString &eName,
-                      const QXmlAttributes &atts);
-    bool endElement(const QString &, const QString &, const QString &);
-    bool characters(const QString &);
-    QString errorString();
-    bool readMapAttr(const QXmlAttributes &);
-    bool readBranchAttr(const QXmlAttributes &);
-    bool readFrameAttr(const QXmlAttributes &);
-    bool readOOAttr(const QXmlAttributes &);
-    bool readNoteAttr(const QXmlAttributes &);
-    bool readImageAttr(const QXmlAttributes &);
-    bool readXLinkAttr(const QXmlAttributes &);
-    bool readLinkNewAttr(const QXmlAttributes &);
-    bool readSettingAttr(const QXmlAttributes &);
-    bool readSlideAttr(const QXmlAttributes &);
-    bool readTaskAttr(const QXmlAttributes &);
-    bool readUserFlagDefAttr(const QXmlAttributes &);
-    bool readUserFlagAttr(const QXmlAttributes &);
+    static inline QString versionAttribute() { return QStringLiteral("version"); }
 
-  private:
-    enum State {
-        StateInit,
-        StateMap,
-        StateMapSelect,
-        StateMapSetting,
-        StateMapSlide,
-        StateMapCenter,
-        StateBranch,
-        StateBranchXLink, // Obsolete
-        StateVymNote,
-        StateHtmlNote, // Obsolete >= 1.13.6
-        StateHtml,
-        StateFrame,
-        StateStandardFlag, // New in 2.7.509
-        StateUserFlagDef,  // New in 2.7.509
-        StateUserFlag,
-        StateNote, // Obsolete >= 1.4.6
-        StateImage,
-        StateHeading,
-        StateLink,
-        StateAttribute,
-        StateTask
-    };
+private:
+    void readVymMap();
+    void readMapCenter();
+    void readBranch();
+    void readHeading();
+
+    void readVymMapAttr();
+    void readBranchAttr();
+    void readOrnamentsAttr();
 
     int branchesCounter;
     int branchesTotal;
 
-    State state;
-    QList<State> stateStack;
     VymText vymtext;
 
     BranchItem *lastBranch;
-    ImageItem *lastImage;
+    //ImageItem *lastImage;
     MapItem *lastMI;
-    SlideItem *lastSlide;
-    Task *lastTask;
-    QString lastSetting;
+    //SlideItem *lastSlide;
+    //Task *lastTask;
+    //QString lastSetting;
 
     bool useProgress;
 };
+
+
+
+
+
+// FIXME-0 Below is obsolete, also in legacy...
+/*
+enum Content {
+    TreeContent = 0x0001,   // FIXME-2 unused
+    SlideContent = 0x0002,
+    XLinkContent = 0x0004   // FIXME-2 unused
+};
+*/
 #endif

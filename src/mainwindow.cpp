@@ -6811,9 +6811,16 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
+    /*
     if (!currentMapEditor())
         return;
     currentMapEditor()->testFunction1();
+    */
+    VymModel *m = currentModel();
+    if (m) {
+        //m->repeatLastCommand();
+        m->test();
+    }
 }
 
 void Main::testFunction2()

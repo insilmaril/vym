@@ -54,8 +54,8 @@
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
-#include "xml-freemind.h"
-#include "xml-vym.h"
+#include "xml-freemind-legacy.h"
+#include "xml-vym-legacy.h"
 #include "xmlobj.h"
 
 #ifdef Q_OS_WINDOWS
@@ -1867,6 +1867,37 @@ TreeItem *VymModel::findUuid(const QUuid &id)
         nextBranch(cur, prev);
     }
     return nullptr;
+}
+
+#include "xml-vym.h"
+void VymModel::test()
+{
+    qDebug() << "VM::test()";
+
+    QString fileName = "test.xml";
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+                QString("Cannot read file %1:\n%2.")
+                .arg(QDir::toNativeSeparators(fileName),
+                    file.errorString()));
+        return;
+    }
+
+    VymReader reader(this);
+    if (!reader.read(&file)) {
+        QMessageBox::warning(nullptr, QString("QXmlStream Bookmarks"),
+                QString("Parse error in file %1:\n\n%2")
+                .arg(QDir::toNativeSeparators(fileName),
+                    reader.errorString()));
+    } else {
+        mainWindow->statusMessage("File loaded");
+        reposition();
+    }
+
 }
 
 //////////////////////////////////////////////

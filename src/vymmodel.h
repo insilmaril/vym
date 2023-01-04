@@ -304,6 +304,8 @@ class VymModel : public TreeModel {
     TreeItem *findID(const uint &i);    // find MapObj by unique ID
     TreeItem *findUuid(const QUuid &i); // find MapObj by unique ID
 
+    void test();
+
     ////////////////////////////////////////////
     // Interface
     ////////////////////////////////////////////
