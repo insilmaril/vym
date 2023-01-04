@@ -1082,7 +1082,7 @@ bool VymModel::tryVymLock()
 bool VymModel::renameMap(const QString &newPath)
 {
     QString oldPath = filePath;
-    if (vymLock.getState() == VymLock::LockedByMyself) {
+    if (vymLock.getState() == VymLock::LockedByMyself || vymLock.getState() == VymLock::Undefined) {
         // vymModel owns the lockfile, try to create new lock
         VymLock newLock;
         newLock = vymLock;
@@ -1099,7 +1099,7 @@ bool VymModel::renameMap(const QString &newPath)
         setFilePath(newPath);
         return true;
     }
-    qWarning() << "VymModel::renameMap failed to get lockfile";
+    qWarning() << "VymModel::renameMap failed to get lockfile. state=" << vymLock.getState();
     return false;
 }
 

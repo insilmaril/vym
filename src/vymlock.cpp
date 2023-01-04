@@ -99,6 +99,10 @@ bool VymLock::releaseLock()
             return true;
         }
     }
+    if (state == Undefined)
+        // No lockfile yet, e.g. in new map
+        return true;
+
     qWarning() << "VymLock::releaseLock  failed for " << lockPath;
     return false;
 }
