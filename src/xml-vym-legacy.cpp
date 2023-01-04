@@ -472,7 +472,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
     return true;
 }
 
-bool parseVYMHandler::characters(const QString &ch) // FIXME-0 port and test
+bool parseVYMHandler::characters(const QString &ch)
 {
     // qDebug()<< "xml-vym: characters " << ch << "  state=" << state;
 
@@ -488,28 +488,28 @@ bool parseVYMHandler::characters(const QString &ch) // FIXME-0 port and test
         model->select(ch_simplified);
         break;
     case StateMapSetting:
-        htmldata += ch;// FIXME-0 port and test
+        htmldata += ch;
         break;
     case StateMapCenter:
         break;
     case StateNote: // only in vym <1.4.6
-        htmldata += ch_simplified;// FIXME-0 port and test
+        htmldata += ch_simplified;
         break;
     case StateBranch:
         break;
     case StateStandardFlag:
-        lastBranch->activateStandardFlagByName(ch_simplified);// FIXME-0 port and test
+        lastBranch->activateStandardFlagByName(ch_simplified);
         break;
     case StateImage:
         break;
-    case StateVymNote:// FIXME-0 port and test
+    case StateVymNote:
         htmldata += ch;
         break;
     case StateHtmlNote: // Only for compatibility
-        htmldata = ch;// FIXME-0 port and test
+        htmldata = ch;
         break;
     case StateHtml:
-        htmldata += ch_org;// FIXME-0 port and test
+        htmldata += ch_org;
         break;
     case StateHeading:
         htmldata += ch;
