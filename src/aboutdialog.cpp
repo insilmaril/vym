@@ -21,6 +21,11 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
     tabs = new QTabWidget(this);
     credits = new AboutTextBrowser(parent);
 
+    QStringList versions;
+    versions << vymVersion;
+    versions << vymBuildDate;
+    versions << vymCodeName;
+
     credits->setHtml(
         QString(
             "<center><img src=\"" + iconPath +
@@ -31,10 +36,9 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "<p align=\"center\"> (c) 2004-%1 by Uwe Drechsel (<a "
             "href=\"mailto:vym@InSilmaril.de\">vym@InSilmaril.de</a>)</p>"
             "<p align=\"center\"> Version " +
-            vymVersion + " - " + vymBuildDate +
+            versions.join(" - ") +
             "</p>"
             "<p align=\"center\"> " +
-            vymCodeName + " " +
             vymCodeQuality +
             "</p>"
             "<ul>"
