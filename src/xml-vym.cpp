@@ -142,8 +142,8 @@ void VymReader::readMapCenter()
             readHeading();
         else if (xml.name() == QLatin1String("branch"))
             readBranch();
-//        else if (xml.name() == QLatin1String("frame"))
-//            readFrame();
+        else if (xml.name() == QLatin1String("frame"))
+            readFrame();
         else {
             qDebug() << "MC skip element:" << xml.name().toString();
             xml.skipCurrentElement();   // FIXME-2 should raise error for unknown elements
@@ -167,6 +167,8 @@ void VymReader::readBranch()
             readHeading();
         else if (xml.name() == QLatin1String("branch"))
             readBranch();
+        else if (xml.name() == QLatin1String("frame"))
+            readFrame();
         else {
             qDebug() << "Branch skip element:" << xml.name().toString();
             xml.skipCurrentElement();   // FIXME-2 should raise error for unknown elements
@@ -245,6 +247,21 @@ void VymReader::readHeading()
     }
     qDebug() << "Heading skipping";
     xml.skipCurrentElement();
+}
+
+void VymReader::readFrame()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("frame"));
+
+    qDebug() << "VR::readFrame";
+
+    readFrameAttr();
+
+    if (xml.readNextStartElement()) {
+        qDebug() << "Frame: Unknown start element found: " << xml.name().toString();
+        xml.raiseError("Found unknown element: " + xml.name().toString());
+        return;
+    }
 }
 
 void VymReader::readVymMapAttr()
@@ -467,5 +484,59 @@ void VymReader::readOrnamentsAttr() // FIXME-0 not ported yet
     Q_ASSERT(xml.isStartElement() && (
             xml.name() == QLatin1String("branch") ||
             xml.name() == QLatin1String("mapcenter")));
+}
+
+void VymReader::readFrameAttr()
+{
+    qDebug() << "VR::readFrameAttr";
+
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("frame"));
+
+    if (lastBranch) {
+        BranchContainer *bc = lastBranch->getBranchContainer();
+
+        bool useInnerFrame = true;
+        // useInnerFrame was introduced in 2.9.506
+        // It replaces the previous "includeChildren" attribute
+        QString a = "includeChildren";
+        QString s = xml.attributes().value(a).toString();
+        if (s == "true")
+            useInnerFrame = false;
+
+        a = "frameType";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty())
+            bc->setFrameType(useInnerFrame, s);
+        a = "penColor";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty())
+            bc->setFramePenColor(useInnerFrame, s);
+        a = "brushColor";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            bc->setFrameBrushColor(useInnerFrame, s);
+            lastMI->setBackgroundColor(s);
+        }
+
+        int i;
+        bool ok;
+        a = "padding";
+        s = xml.attributes().value(a).toString();
+        i = s.toInt(&ok);
+        if (ok)
+            bc->setFramePadding(useInnerFrame, i);
+
+        a = "borderWidth";
+        s = xml.attributes().value(a).toString();
+        i = s.toInt(&ok);
+        if (ok)
+            bc->setFramePenWidth(useInnerFrame, i);
+
+        a = "penWidth";
+        s = xml.attributes().value(a).toString();
+        i = s.toInt(&ok);
+        if (ok)
+            bc->setFramePenWidth(useInnerFrame, i);
+    }
 }
 

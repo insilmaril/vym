@@ -26,10 +26,12 @@ private:
     void readMapCenter();
     void readBranch();
     void readHeading();
+    void readFrame();
 
     void readVymMapAttr();
     void readBranchAttr();
     void readOrnamentsAttr();
+    void readFrameAttr();
 
     int branchesCounter;
     int branchesTotal;
