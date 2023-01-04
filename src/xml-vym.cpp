@@ -49,7 +49,7 @@ void  VymReader::raiseUnknownElementError()
     xml.raiseError("Found unknown element: " + xml.name().toString());
 }
 
-void VymReader::readVymMap()
+void VymReader::readVymMap() // FIXME-1 test importAdd/importReplace
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("vymmap"));
 
@@ -201,7 +201,7 @@ void VymReader::readBranch()
     lastBranch->setLastSelectedBranch(0);
 }
 
-void VymReader::readHeading()
+void VymReader::readHeading() // FIXME-1 test with legacy vym versions
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("heading"));
 
@@ -239,21 +239,22 @@ void VymReader::readHeading()
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         vymtext.setText(unquoteQuotes(s));
+        lastBranch->setHeading(vymtext);
 
-        if (versionLowerOrEqual(version, "2.4.99") &&
+        /*
+        if (versionLowerOrEqual(version, "2.4.99") && // FIXME-1 test with legacy
             htmldata.contains("<html>"))
             // versions before 2.5.0 didn't use CDATA to save richtext
             vymtext.setAutoText(htmldata);
         else {
             // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
-            // Later versions use the <vymnote  text="...">  attribute,
-            // which is set already in begin element
+            // Later versions use the <heading text="...">  attribute,
             // If both htmldata and vymtext are already available, use the
             // vymtext
             if (vymtext.isEmpty())
                 vymtext.setText(htmldata);
         }
-        lastBranch->setHeading(vymtext);
+        */
     }
 
     if (xml.readNextStartElement())

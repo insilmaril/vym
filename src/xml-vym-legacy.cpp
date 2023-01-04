@@ -89,7 +89,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                 model->setVersion(version);
         }
     }
-    else if (eName == "select" && state == StateMap) { // FIXME-0 port and test
+    else if (eName == "select" && state == StateMap) {
         state = StateMapSelect;
     }
     else if (eName == "setting" && state == StateMap) { // FIXME-0 port and test
@@ -110,7 +110,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             readSlideAttr(atts);
         }
     }
-    else if (eName == "mapcenter" && state == StateMap) { // FIXME-2 port and test
+    else if (eName == "mapcenter" && state == StateMap) {
         state = StateMapCenter;
         if (loadMode == File::NewMap) {
             // Really use the found mapcenter as MCO in a new map
@@ -163,7 +163,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         state = StateUserFlag;
         return (readUserFlagAttr(atts));
     }
-    else if (eName == "heading" && // FIXME-0 test with legacy vym versions
+    else if (eName == "heading" &&
              (state == StateMapCenter || state == StateBranch ||
               state == StateInit)) {
         if (state == StateInit) {   // FIXME-0 note this state for heading!
@@ -310,7 +310,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!atts.value("fonthint").isEmpty())
             vymtext.setFontHint(atts.value("fonthint"));
     }
-    else if (eName == "frame" && // FIXME-0 port and test
+    else if (eName == "frame" &&
              (state == StateBranch || state == StateMapCenter)) {
         state = StateFrame;
         if (!readFrameAttr(atts))
@@ -327,7 +327,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!readLinkNewAttr(atts))
             return false;
     }
-    else if (eName == "branch" && state == StateBranch) { // FIXME-0 port and test
+    else if (eName == "branch" && state == StateBranch) {
         lastBranch = model->createBranch(lastBranch);
         readBranchAttr(atts);
     }
@@ -381,7 +381,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     return true;
 }
 
-bool parseVYMHandler::endElement(const QString &, const QString &, // FIXME-0 port and test
+bool parseVYMHandler::endElement(const QString &, const QString &,
                                  const QString &eName)
 {
     /* Testing
@@ -426,25 +426,25 @@ bool parseVYMHandler::endElement(const QString &, const QString &, // FIXME-0 po
         }
         lastBranch->setHeading(vymtext);
         break;
-    case StateHtmlNote: // Richtext note, needed anyway for backward
-                        // compatibility
+    case StateHtmlNote:  // FIXME-0 port and test
+        // Richtext note, needed anyway for backward compatibility
         vymtext.setRichText(htmldata);
         lastBranch->setNote(vymtext);
         break;
-    case StateMapSlide:
+    case StateMapSlide: // FIXME-0 port and test
         lastSlide = nullptr;
         break;
-    case StateNote:
+    case StateNote: // FIXME-0 port and test
         // version < 1.4.6
         vymtext.setText(htmldata);
         lastBranch->setNote(vymtext);
         break;
-    case StateMapSetting:
+    case StateMapSetting: // FIXME-0 port and test
         // version >= 2.5.0  previously value only as attribut
         settings.setLocalValue(model->getDestPath(), lastSetting, htmldata);
         break;
-    case StateVymNote: // Might be richtext or plaintext with
-        // version >= 1.13.8
+    case StateVymNote:  // FIXME-0 port and test
+        // Might be richtext or plaintext with version >= 1.13.8
         if (versionLowerOrEqual(version, "2.4.99") &&
             htmldata.contains("<html>"))
             // versions before 2.5.0 didn't use CDATA to save richtext
@@ -460,7 +460,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &, // FIXME-0 po
         }
         lastBranch->setNote(vymtext);
         break;
-    case StateHtml:
+    case StateHtml:// FIXME-0 port and test
         htmldata += "</" + eName + ">";
         if (eName == "html")
             htmldata.replace("<br></br>", "<br />");
@@ -488,28 +488,28 @@ bool parseVYMHandler::characters(const QString &ch) // FIXME-0 port and test
         model->select(ch_simplified);
         break;
     case StateMapSetting:
-        htmldata += ch;
+        htmldata += ch;// FIXME-0 port and test
         break;
     case StateMapCenter:
         break;
     case StateNote: // only in vym <1.4.6
-        htmldata += ch_simplified;
+        htmldata += ch_simplified;// FIXME-0 port and test
         break;
     case StateBranch:
         break;
     case StateStandardFlag:
-        lastBranch->activateStandardFlagByName(ch_simplified);
+        lastBranch->activateStandardFlagByName(ch_simplified);// FIXME-0 port and test
         break;
     case StateImage:
         break;
-    case StateVymNote:
+    case StateVymNote:// FIXME-0 port and test
         htmldata += ch;
         break;
     case StateHtmlNote: // Only for compatibility
-        htmldata = ch;
+        htmldata = ch;// FIXME-0 port and test
         break;
     case StateHtml:
-        htmldata += ch_org;
+        htmldata += ch_org;// FIXME-0 port and test
         break;
     case StateHeading:
         htmldata += ch;
