@@ -180,21 +180,18 @@ void VymReader::readBranch()
             readBranch();
         else if (xml.name() == QLatin1String("frame"))
             readFrame();
+    // FIXME-00 cont here with images
         else {
             raiseUnknownElementError();
             return;
         }
-    // FIXME-00 cont here with frame and images
     }
-
-    // FIXME-0 checkMoreElements();
 
     // Empty branches may not be scrolled
     // (happens if bookmarks are imported)
     if (lastBranch->isScrolled() && lastBranch->branchCount() == 0)
         lastBranch->unScroll();
 
-    // FIXME-0 needed? lastBranch->getBranchContainer()->updateStyles(BranchContainer::RelinkBranch);
     model->emitDataChanged(lastBranch);
 
     lastBranch = (BranchItem *)(lastBranch->parent());

@@ -52,7 +52,7 @@ class VymReader : public BaseReader {
 
 
 
-// FIXME-0 Below is obsolete, also in legacy...
+// FIXME-1 Below is mostly obsolete, also in legacy...
 /*
 enum Content {
     TreeContent = 0x0001,   // FIXME-2 unused
