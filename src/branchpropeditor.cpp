@@ -133,6 +133,7 @@ BranchPropertyEditor::~BranchPropertyEditor()
     settings.setValue("/satellite/propertywindow/showWithMain", isVisible());
     settings.setValue("/satellite/propertywindow/currentIndex", ui.tabWidget->currentIndex());
 
+    attributeModel->clear();
     delete (attributeModel);
 }
 

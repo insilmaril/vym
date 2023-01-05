@@ -59,7 +59,7 @@ class BranchPropertyEditor : public QDialog {
 
     int lastSelectedBranchTab;
 
-    QAbstractItemModel *attributeModel;
+    QStandardItemModel *attributeModel;
 
     //AttributeDelegate attributeDelegate;
 };

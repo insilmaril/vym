@@ -298,7 +298,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("selectionColor",
                          mapDesign->selectionColor().name(QColor::HexArgb)) +
             xml.attribut("linkStyle", LinkObj::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
-            xml.attribut("linkColor", defLinkColor.name()) +
+            xml.attribut("linkColor", defLinkColor.name()) +    // FIXME-1 not saved correctly
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
             xml.attribut("defXLinkWidth",
                          QString().setNum(defXLinkPen.width(), 10)) +
@@ -1310,6 +1310,11 @@ void VymModel::redo()
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory(undoSet);
+
+    // Selection might have changed. Also force update in BranchPropertyEditor
+    unselectAll();
+    select(undoSelection);
+
     updateActions();
 
     /* TODO remove testing
@@ -1447,6 +1452,11 @@ void VymModel::undo()
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory(undoSet);
+
+    // Selection might have changed. Also force update in BranchPropertyEditor
+    unselectAll();
+    select(redoSelection);
+
     updateActions();
 }
 
@@ -1546,7 +1556,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
         return;
     }
 
-    if (undoCom.startsWith("model.")) {
+    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) {
         // After creating saveStateBlock, no "model." prefix needed for commands
         undoCommand = undoCom;
         redoCommand = redoCom;
@@ -1559,28 +1569,45 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             redoCommand = QString("model.%1").arg(redoCom);
     }
 
-    // Increase undo steps, but check for repeated actions  // FIXME-2 currently unused
+    if (debug) {
+        qDebug() << "  undoCommand: " << undoCommand;
+        qDebug() << "  redoCommand: " << redoCommand;
+//        qDebug() << "  redoSel: " << redoSelection;
+//        qDebug() << "  redoCom: " << redoCom;
+    }
+
+    // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
     //
+    bool repeatedCommand = false;
     // Undo blocks start with "model.select" - do not consider these for repeated actions
-    if (!undoCommand.startsWith("model.select")) {
+    if (!undoCommand.startsWith("{")) {
+        if (curStep > 0 && redoSelection == lastRedoSelection()) {
+            int i = redoCommand.indexOf("(");
+            QString rcl = redoCommand.left(i-1);
+            if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
+                if (debug)
+                    qDebug() << "VM::saveState repeated command: " << rcl;
+
+                // Current command is a repeated one. We only want to "squash" some of these
+                if (rcl.startsWith("model.setRotation") ||
+                    rcl.startsWith("model.parseVymText")) {
+                    // Do not increase undoCommand counter
+                    repeatedCommand = true;
+                    undoCommand = undoSet.value(
+                        QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
+                }
+            }
+        }
     }
-    /*
-    QRegExp re ("parseVymText.*\\(.*vymnote");
-    if (curStep > 0 && redoSelection == lastRedoSelection() &&
-        lastRedoCommand().contains(re)) {
-        undoCommand = undoSet.value(
-            QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
-    }
-    else {
-    */
+    if (!repeatedCommand) {
         if (undosAvail < stepsTotal)
             undosAvail++;
 
         curStep++;
         if (curStep > stepsTotal)
             curStep = 1;
-    //}
+    }
 
     QString histDir = getHistoryPath();
     QString bakMapPath = histDir + "/map.xml";
@@ -1778,7 +1805,10 @@ void VymModel::saveStateEndBlock()
     // Drop whole block, if empty
     if (undoBlock.isEmpty() && redoBlock.isEmpty()) return;
 
-    saveState(File::CodeBlock, "", undoBlock, "", redoBlock, undoBlockComment, nullptr);
+    saveState(File::CodeBlock,
+            "", QString("{%1}").arg(undoBlock),
+            "", QString("{%1}").arg(redoBlock),
+            undoBlockComment, nullptr);
 }
 
 QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }
@@ -5412,8 +5442,7 @@ void VymModel::setSelectionColorInt(QColor col)
 
 void VymModel::emitSelectionChanged(const QItemSelection &newsel)
 {
-    emit(selectionChanged(newsel,
-                          newsel)); // needed e.g. to update geometry in editor
+    emit(selectionChanged(newsel, newsel)); // needed e.g. to update geometry in editor
     sendSelection();
 }
 
