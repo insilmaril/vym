@@ -555,7 +555,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 // into this ME)
                 // mainWindow->fileLoadFromTmp (flist);
                 // returnCode = 1;	// Silently forget this attempt to load
-                qWarning("MainWindow::load (fn)  multimap found...");
+                qWarning("MainWindow::loadMap multimap found";
             }
 
             if (flist.isEmpty()) {
@@ -584,10 +584,11 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         repositionBlocked = true;
         saveStateBlocked = true;
         mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
+
         QXmlInputSource source(&file);
-        QXmlSimpleReader reader;
-        reader.setContentHandler(handler);
-        reader.setErrorHandler(handler);
+        xmlSimpleReader.setContentHandler(handler);
+        xmlSimpleReader.setErrorHandler(handler);
+
         handler->setModel(this);
 
         // We need to set the tmpDir in order  to load files with rel. path
@@ -604,7 +605,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             handler->setLoadMode(lmode, pos);
 
         // Here we actually parse the XML file
-        bool ok = reader.parse(source);
+        bool ok = xmlSimpleReader.parse(source);
 
         // Aftermath
         repositionBlocked = false;
