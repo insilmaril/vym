@@ -297,7 +297,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         else
             return false;
     }
-    else if (eName == "branch" && state == StateMapCenter) { // FIXME-0 port and test
+    else if (eName == "branch" && state == StateMapCenter) {
         state = StateBranch;
         lastBranch = model->createBranch(lastBranch);
         readBranchAttr(atts);

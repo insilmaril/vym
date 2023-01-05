@@ -608,10 +608,10 @@ def test_references (vym)
   map.setURL ""
   expect "setURL: unset URL with empty string", map.getURL, ""
 
-  vl="default.vym"
+  vl = "default.vym"
   map.setVymLink vl
-  s=map.getVymLink
-  expect "setVymLink returns absolute path", map.getVymLink, map.getFileDir + vl
+  s = map.getVymLink
+  expect "setVymLink returns absolute path", map.getFileDir + vl, s
   map.undo
   expect "undo: setVymLink", map.getVymLink, ""
   map.redo
@@ -876,7 +876,7 @@ def test_bugfixes (vym)
   heading "Bugfixes:"
   map = init_map( vym )
   map.select @main_b
-  expect "Mapcenter of #{@center_1} has no frame", map.getFrameType, "NoFrame"
+  expect "Mapcenter of #{@center_1} has no frame", map.getFrameType(true), "NoFrame"
 end
 
 #######################

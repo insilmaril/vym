@@ -301,7 +301,7 @@ void ExportHTML::doExport(bool useDialog)
 
     // Check, if warnings should be used before overwriting
     // the output directory
-    if (dia.getDir().exists() && dia.getDir().count() > 0) {
+    if (dia.getDir().exists() && dia.getDir().entryList(QDir::NoDot | QDir::NoDotDot).count() > 0) {
         WarningDialog warn;
         warn.showCancelButton(true);
         warn.setText(QString("The directory %1 is not empty.\n"
