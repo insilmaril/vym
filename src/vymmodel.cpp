@@ -2438,7 +2438,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
     reposition();
 }
 
-void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-1 Both floating layouts not working properly // FIXME-2 no savestate yet
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-0 Both floating layouts not working properly (need to be set manually, then ok) // FIXME-2 no savestate yet
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
