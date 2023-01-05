@@ -23,6 +23,7 @@ class VymReader : public BaseReader {
     void raiseUnknownElementError();
     void readVymMap();
     void readSelect();
+    void readSetting();
     void readMapCenter();
     void readBranch();
     void readHeading();

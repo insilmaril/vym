@@ -93,6 +93,8 @@ void VymReader::readVymMap() // FIXME-1 test importAdd/importReplace
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("mapcenter"))
             readMapCenter();
+        else if (xml.name() == QLatin1String("setting"))
+            readSetting();
         else if (xml.name() == QLatin1String("select"))
             readSelect();
         else {
@@ -108,6 +110,26 @@ void VymReader::readSelect()
 
     QString s = xml.readElementText();
     model->select(s);
+}
+
+void VymReader::readSetting()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("setting"));
+
+    QString k = xml.attributes().value("key").toString();
+    if (!k.isEmpty()) {
+        QString v = xml.attributes().value("value").toString();
+        if (v.isEmpty()) {
+            // Version >= 2.5.0 have value as element text
+            v = xml.readElementText();
+            if (!v.isEmpty()) {
+                settings.setLocalValue( model->getDestPath(), k, v);
+            }
+        } else {
+            // Version < 2.5.0 have value as element attribute
+            settings.setLocalValue( model->getDestPath(), k, v);
+        }
+    }
 }
 
 void VymReader::readMapCenter()

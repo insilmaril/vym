@@ -92,7 +92,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     else if (eName == "select" && state == StateMap) {
         state = StateMapSelect;
     }
-    else if (eName == "setting" && state == StateMap) { // FIXME-0 port and test
+    else if (eName == "setting" && state == StateMap) {
         state = StateMapSetting;
         if (loadMode == File::NewMap) {
             htmldata.clear();
@@ -439,7 +439,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         vymtext.setText(htmldata);
         lastBranch->setNote(vymtext);
         break;
-    case StateMapSetting: // FIXME-0 port and test
+    case StateMapSetting:
         // version >= 2.5.0  previously value only as attribut
         settings.setLocalValue(model->getDestPath(), lastSetting, htmldata);
         break;
