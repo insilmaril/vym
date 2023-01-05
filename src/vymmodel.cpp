@@ -555,7 +555,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 // into this ME)
                 // mainWindow->fileLoadFromTmp (flist);
                 // returnCode = 1;	// Silently forget this attempt to load
-                qWarning("MainWindow::loadMap multimap found";
+                qWarning("MainWindow::loadMap multimap found");
             }
 
             if (flist.isEmpty()) {
@@ -586,6 +586,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
 
         QXmlInputSource source(&file);
+        QXmlSimpleReader xmlSimpleReader;
         xmlSimpleReader.setContentHandler(handler);
         xmlSimpleReader.setErrorHandler(handler);
 
