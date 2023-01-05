@@ -4316,8 +4316,6 @@ void VymModel::setHeadingConfluencePageName()   // FIXME-2 always asks for Confl
 
 void VymModel::setVymLink(const QString &s)
 {
-    if (s.isEmpty()) return;
-
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         saveState(
