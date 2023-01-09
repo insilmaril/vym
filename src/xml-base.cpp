@@ -22,3 +22,14 @@ void BaseReader::setLoadMode(const File::LoadMode &lm, int p)
     loadMode = lm;
     insertPos = p;
 }
+
+QString BaseReader::parseHREF(QString href)
+{
+    QString type = href.section(":", 0, 0);
+    QString path = href.section(":", 1, 1);
+    if (!tmpDir.endsWith("/"))
+        return tmpDir + "/" + path;
+    else
+        return tmpDir + path;
+}
+

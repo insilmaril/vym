@@ -22,12 +22,15 @@ class VymReader : public BaseReader {
   private:
     void raiseUnknownElementError();
     void readVymMap();
-    void readSelect();
+    void readSelection();
     void readSetting();
     void readMapCenter();
     void readBranch();
     void readHeading();
     void readFrame();
+    void readStandardFlag();
+    void readUserFlagDef();
+    void readUserFlag();
 
     void readVymMapAttr();
     void readBranchAttr();

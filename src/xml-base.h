@@ -16,6 +16,7 @@ class BaseReader {
     QString errorString() const;
 
     void setLoadMode(const File::LoadMode &lm, int p);
+    QString parseHREF(QString href);
 
   protected:
     VymModel *model;
@@ -25,7 +26,8 @@ class BaseReader {
     File::LoadMode loadMode;
     int insertPos;
 
-    QString htmldata;   // Legacy
+    QString tmpDir;
+    QString htmldata;
     QString version;
 };
 

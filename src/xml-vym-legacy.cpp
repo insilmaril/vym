@@ -150,15 +150,15 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         }
         readBranchAttr(atts);
     }
-    else if ((eName == "standardflag" || eName == "standardFlag") && // FIXME-0 port and test
+    else if ((eName == "standardflag" || eName == "standardFlag") &&
              (state == StateMapCenter || state == StateBranch)) {
         state = StateStandardFlag;
     }
-    else if (eName == "userflagdef" && state == StateMap) { // FIXME-0 port and test
+    else if (eName == "userflagdef" && state == StateMap) {
         state = StateUserFlagDef;
         return (readUserFlagDefAttr(atts));
     }
-    else if (eName == "userflag" && // FIXME-0 port and test
+    else if (eName == "userflag" &&
              (state == StateMapCenter || state == StateBranch)) {
         state = StateUserFlag;
         return (readUserFlagAttr(atts));

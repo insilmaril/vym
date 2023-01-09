@@ -96,7 +96,9 @@ void VymReader::readVymMap() // FIXME-1 test importAdd/importReplace
         else if (xml.name() == QLatin1String("setting"))
             readSetting();
         else if (xml.name() == QLatin1String("select"))
-            readSelect();
+            readSelection();
+        else if (xml.name() == QLatin1String("userflagdef"))
+            readUserFlagDef();
         else {
             raiseUnknownElementError();
             return;
@@ -104,12 +106,17 @@ void VymReader::readVymMap() // FIXME-1 test importAdd/importReplace
     }
 }
 
-void VymReader::readSelect()
+void VymReader::readSelection()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("select"));
 
     QString s = xml.readElementText();
     model->select(s);
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
 }
 
 void VymReader::readSetting()
@@ -202,7 +209,12 @@ void VymReader::readBranch()
             readBranch();
         else if (xml.name() == QLatin1String("frame"))
             readFrame();
-    // FIXME-00 cont here with images
+        else if (xml.name() == QLatin1String("standardFlag") ||
+                 xml.name() == QLatin1String("standardflag"))
+            readStandardFlag();
+        else if (xml.name() == QLatin1String("userflag"))
+            readUserFlag();
+    // FIXME-00 cont here with images, notes, ...
         else {
             raiseUnknownElementError();
             return;
@@ -286,6 +298,82 @@ void VymReader::readFrame()
 
     readFrameAttr();
 
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
+}
+
+void VymReader::readStandardFlag()
+{
+    Q_ASSERT(xml.isStartElement() &&
+            (xml.name() == QLatin1String("standardFlag") ||
+             xml.name() == QLatin1String("standardflag")));
+
+    QString s = xml.readElementText();
+    model->setFlagByName(s);
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
+}
+
+void VymReader::readUserFlagDef()
+{
+    Q_ASSERT(xml.isStartElement() &&
+             xml.name() == QLatin1String("userflagdef"));
+
+    QString name;
+    QString path;
+    QString tooltip;
+    QUuid uid;
+
+    QString a = "name";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        name = s;
+
+    a = "tooltip";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        tooltip = s;
+
+    a = "uuid";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        uid = QUuid(s);
+
+    Flag *flag;
+
+    a = "href";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        // Setup flag with image
+        flag = mainWindow->setupFlag(parseHREF(s), Flag::UserFlag,
+                                     name, tooltip, uid);
+    else {
+        xml.raiseError("readUserFlagDefAttr:  Couldn't read href of flag " + name);
+        return;
+    }
+
+    a = "group";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        flag->setGroup(s);
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
+}
+
+void VymReader::readUserFlag()
+{
+    Q_ASSERT(xml.isStartElement() &&
+             xml.name() == QLatin1String("userflag"));
+
+    QString s = xml.readElementText();
+    model->setFlagByName(s);
     if (xml.readNextStartElement()) {
         raiseUnknownElementError();
         return;
