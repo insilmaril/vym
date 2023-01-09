@@ -75,6 +75,7 @@ void BranchPropertyEditor::updateContainerLayoutButtons()
 {
     BranchContainer *bc = branchItem->getBranchContainer();
 
+    // Layout branches
     if (bc->branchesContainerAutoLayout) {
         ui.branchesAutoLayoutCheckBox->setChecked(true);
         ui.branchesLayoutsFrame->setEnabled(false);

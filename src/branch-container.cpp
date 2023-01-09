@@ -473,6 +473,7 @@ void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not del
 {
     imagesContainer = new Container ();
     imagesContainer->containerType = ImagesContainer;
+    imagesContainer->setLayout(imagesContainerLayout);
 
     if (outerContainer)
         outerContainer->addContainer(imagesContainer);
