@@ -2812,8 +2812,8 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
     case Flag::UserFlag:
         flag = userFlagsMaster->createFlag(path);
 
-        // User flags read from file already have a Uuid - use it
-        if (!uid.isNull())
+        if (flag &&!uid.isNull())
+            // User flags read from file already have a Uuid - use it
             flag->setUuid(uid);
         break;
 

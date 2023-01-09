@@ -351,11 +351,15 @@ void VymReader::readUserFlagDef()
 
     a = "href";
     s = xml.attributes().value(a).toString();
-    if (!s.isEmpty())
+    if (!s.isEmpty()) {
         // Setup flag with image
         flag = mainWindow->setupFlag(parseHREF(s), Flag::UserFlag,
                                      name, tooltip, uid);
-    else {
+        if (!flag) {
+            xml.raiseError("Couldn't read userflag from: " + s);
+            return;
+        }
+    } else {
         xml.raiseError("readUserFlagDefAttr:  Couldn't read href of flag " + name);
         return;
     }

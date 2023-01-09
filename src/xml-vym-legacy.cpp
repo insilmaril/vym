@@ -1060,7 +1060,7 @@ bool parseVYMHandler::readTaskAttr(const QXmlAttributes &a)
     return true;
 }
 
-bool parseVYMHandler::readUserFlagDefAttr(const QXmlAttributes &a)
+bool parseVYMHandler::readUserFlagDefAttr(const QXmlAttributes &a)  // FIXME-0 test, also without loaded .vym map in parallel and also missing resource
 {
     QString name;
     QString path;
@@ -1087,7 +1087,7 @@ bool parseVYMHandler::readUserFlagDefAttr(const QXmlAttributes &a)
         return false;
     }
 
-    if (!a.value("group").isEmpty())
+    if (flag && !a.value("group").isEmpty())
         flag->setGroup(a.value("group"));
 
     return true;
