@@ -380,7 +380,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    // qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
