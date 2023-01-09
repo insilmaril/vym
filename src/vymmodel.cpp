@@ -188,7 +188,6 @@ void VymModel::init()
 
     // View - map
     defaultFont.setPointSizeF(16);
-    defLinkColor = QColor(0, 0, 255);
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
     defXLinkPen.setStyle(Qt::DashLine);
@@ -280,7 +279,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
     QString colhint = "";
-    /* FIXME-1 mapDesign related settings not saved yet
+    /* FIXME-2 mapDesign related settings not saved yet (at least not all)
        if (linkColorHint == LinkObj::HeadingColor)
         colhint = xml.attribut("linkColorHint", "HeadingColor");
     */
@@ -298,7 +297,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("selectionColor",
                          mapDesign->selectionColor().name(QColor::HexArgb)) +
             xml.attribut("linkStyle", LinkObj::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
-            xml.attribut("linkColor", defLinkColor.name()) +    // FIXME-1 not saved correctly
+            xml.attribut("linkColor", mapDesign->defaultLinkColor().name()) +
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
             xml.attribut("defXLinkWidth",
                          QString().setNum(defXLinkPen.width(), 10)) +
