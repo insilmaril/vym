@@ -399,23 +399,23 @@ void BranchItem::setImagesLayout(const QString &s)
     branchContainer->setImagesContainerLayout(Container::getLayoutFromString(s));
 }
 
-QColor BranchItem::getBackgroundColor(BranchItem *start)    // FIXME-1 adapt to second frame
+QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)
 {
-    return QColor(200,200,200);
-    /*
-    // Determine background color in taskEditor
-    if (branchContainer->frameType() != FrameContainer::NoFrame) {
-        // Don't return color of parent branches, which do not include me as child
-        if (branchContainer->frameIncludeChildren() || this == start)
-            return branchContainer->frameBrushColor();
-    }
+    // Determine background color in taskEditor, first try inner frame
+    if (checkInnerFrame && branchContainer->frameType(true) != FrameContainer::NoFrame)
+            return branchContainer->frameBrushColor(true);
+
+    // Outer frame
+    if (branchContainer->frameType(false) != FrameContainer::NoFrame)
+            return branchContainer->frameBrushColor(false);
 
     BranchItem *pb = parentBranch();
     if (pb && pb != rootItem)
-        return pb->getBackgroundColor(start);
+        // Recursively try parents and check for frames there
+        return pb->getBackgroundColor(start, false);
     else
+        // No frame found
         return model->getMapBackgroundColor();
-        */
 }
 
 void BranchItem::setLastSelectedBranch()

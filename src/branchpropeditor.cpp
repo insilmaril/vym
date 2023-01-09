@@ -75,6 +75,7 @@ void BranchPropertyEditor::updateContainerLayoutButtons()
 {
     BranchContainer *bc = branchItem->getBranchContainer();
 
+    // Layout branches
     if (bc->branchesContainerAutoLayout) {
         ui.branchesAutoLayoutCheckBox->setChecked(true);
         ui.branchesLayoutsFrame->setEnabled(false);
@@ -133,6 +134,7 @@ BranchPropertyEditor::~BranchPropertyEditor()
     settings.setValue("/satellite/propertywindow/showWithMain", isVisible());
     settings.setValue("/satellite/propertywindow/currentIndex", ui.tabWidget->currentIndex());
 
+    attributeModel->clear();
     delete (attributeModel);
 }
 
