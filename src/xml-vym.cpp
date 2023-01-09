@@ -112,11 +112,6 @@ void VymReader::readSelection()
 
     QString s = xml.readElementText();
     model->select(s);
-
-    if (xml.readNextStartElement()) {
-        raiseUnknownElementError();
-        return;
-    }
 }
 
 void VymReader::readSetting()
@@ -186,6 +181,12 @@ void VymReader::readMapCenter()
             readBranch();
         else if (xml.name() == QLatin1String("frame"))
             readFrame();
+        else if (xml.name() == QLatin1String("standardFlag") ||
+                 xml.name() == QLatin1String("standardflag"))
+            readStandardFlag();
+    // FIXME-00 cont here with images, notes, ...
+        else if (xml.name() == QLatin1String("userflag"))
+            readUserFlag();
         else {
             raiseUnknownElementError();
             return;
@@ -311,11 +312,14 @@ void VymReader::readStandardFlag()
              xml.name() == QLatin1String("standardflag")));
 
     QString s = xml.readElementText();
-    model->setFlagByName(s);
+    lastBranch->activateStandardFlagByName(s);
+
+    /*
     if (xml.readNextStartElement()) {
         raiseUnknownElementError();
         return;
     }
+    */
 }
 
 void VymReader::readUserFlagDef()
@@ -372,12 +376,10 @@ void VymReader::readUserFlag()
     Q_ASSERT(xml.isStartElement() &&
              xml.name() == QLatin1String("userflag"));
 
-    QString s = xml.readElementText();
-    model->setFlagByName(s);
-    if (xml.readNextStartElement()) {
-        raiseUnknownElementError();
-        return;
-    }
+    QString a = "uuid";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        lastBranch->toggleFlagByUid(QUuid(s));
 }
 
 void VymReader::readVymMapAttr()
