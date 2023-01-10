@@ -2278,18 +2278,64 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         if (bc->frameType(useInnerFrame) == t)
             break;
 
+        QString uif = boolToString(useInnerFrame);
+
+        bool saveCompleteFrame = false;
+
+        if (t == FrameContainer::NoFrame)
+            // Save also penWidth, colors, etc. to restore frame on undo
+            saveCompleteFrame = true;
+
+        if (saveCompleteFrame) {
+            saveStateBeginBlock("Set frame parameters");
+            QString colorName = bc->framePenColor(useInnerFrame).name();
+            saveState(selbi, QString("setFramePenColor (%1, \"%2\")")
+                      .arg(uif)
+                      .arg(colorName),
+                    selbi, "",
+                    QString("set pen color of frame to %1").arg(colorName));
+
+            colorName = bc->frameBrushColor(useInnerFrame).name();
+            saveState(selbi, QString("setFrameBrushColor (%1, \"%2\")")
+                      .arg(uif)
+                      .arg(colorName),
+                    selbi, "",
+                    QString("set background color of frame to %1").arg(colorName));
+
+            int i = bc->framePenWidth(useInnerFrame);
+            saveState(selbi,
+                      QString("setFramePenWidth (%1, \"%2\")")
+                        .arg(uif)
+                        .arg(i),
+                      selbi, "",
+                      QString("set pen width of frame to %1").arg(i));
+
+            i = bc->framePadding(useInnerFrame);
+            saveState(
+                selbi,
+                QString("setFramePadding (%1, \"%2\")")
+                  .arg(uif)
+                  .arg(bc->framePadding(i)),
+                selbi, "",
+                QString("set padding of frame to %1").arg(i));
+        }
+
         oldName = bc->frameTypeString(useInnerFrame);
         bc->setFrameType(useInnerFrame, t);
         newName = bc->frameTypeString(useInnerFrame);
 
         bc->updateStyles(BranchContainer::RelinkBranch);
 
+
         saveState(
-            selbi, QString("setFrameType (\"%1\")").arg(oldName),   // FIXME-1 saveCommand
-            selbi, QString("setFrameType (\"%1\")").arg(newName),
+            selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(oldName),
+            selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(newName),
             QString("set type of frame to %1").arg(newName));
-        reposition();
+
+        if (saveCompleteFrame)
+            saveStateEndBlock();
     }
+    reposition();
 }
 
 void VymModel::setFrameType(const bool &useInnerFrame, const QString &s)
@@ -2304,10 +2350,14 @@ void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, Br
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+            QString uif = boolToString(useInnerFrame);
             saveState(selbi,
-                      QString("setFramePenColor (\"%1\")")  // FIXME-1 saveCommand
-                          .arg(bc->framePenColor(useInnerFrame).name()),
-                      selbi, QString("setFramePenColor (\"%1\")").arg(col.name()),
+                      QString("setFramePenColor (%1, \"%2\")")
+                        .arg(uif)
+                        .arg(bc->framePenColor(useInnerFrame).name()),
+                      selbi, QString("setFramePenColor (%1, \"%2\")")
+                        .arg(uif)
+                        .arg(col.name()),
                       QString("set pen color of frame to %1").arg(col.name()));
             bc->setFramePenColor(useInnerFrame, col);
         }
@@ -2321,10 +2371,14 @@ void VymModel::setFrameBrushColor(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+            QString uif = boolToString(useInnerFrame);
             saveState(selbi,
-                      QString("setFrameBrushColor (\"%1\")")    // FIXME-1 saveCommand
-                          .arg(bc->frameBrushColor(useInnerFrame).name()),
-                      selbi, QString("setFrameBrushColor (\"%1\")").arg(col.name()),
+                      QString("setFrameBrushColor (%1, \"%2\")")
+                        .arg(uif)
+                        .arg(bc->frameBrushColor(useInnerFrame).name()),
+                      selbi, QString("setFrameBrushColor (%1, \"%2\")")
+                        .arg(uif)
+                        .arg(col.name()),
                       QString("set brush color of frame to %1").arg(col.name()));
             bc->setFrameBrushColor(useInnerFrame, col);
         }
@@ -2338,10 +2392,13 @@ void VymModel::setFramePadding(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+            QString uif = boolToString(useInnerFrame);
             saveState(
                 selbi,
-                QString("setFramePadding (\"%1\")").arg(bc->framePadding(useInnerFrame)),    // FIXME-1 saveCommand
-                selbi, QString("setFramePadding (\"%1\")").arg(i),
+                QString("setFramePadding (%1, \"%2\")")
+                  .arg(uif)
+                  .arg(bc->framePadding(useInnerFrame)),
+                selbi, QString("setFramePadding (%1, \"%2\")").arg(uif).arg(i),
                 QString("set padding of frame to %1").arg(i));
             bc->setFramePadding(useInnerFrame, i);
         }
@@ -2355,15 +2412,17 @@ void VymModel::setFramePenWidth(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+            QString uif = boolToString(useInnerFrame);
             saveState(selbi,
-                      QString("setFramePenWidth (\"%1\")")  // FIXME-1 saveCommand
-                          .arg(bc->framePenWidth(useInnerFrame)),
-                      selbi, QString("setFramePenWidth (\"%1\")").arg(i),
+                      QString("setFramePenWidth (%1, \"%2\")")
+                        .arg(uif)
+                        .arg(bc->framePenWidth(useInnerFrame)),
+                      selbi, QString("setFramePenWidth (%1, \"%2\")").arg(uif).arg(i),
                       QString("set pen width of frame to %1").arg(i));
             bc->setFramePenWidth(useInnerFrame, i);
         }
     }
-    reposition(); // FIXME-2 needed?
+    reposition();
 }
 
 void VymModel::setRotationHeading (const int &i)
@@ -2484,8 +2543,8 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
     if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch()) &&
         ti->hideInExport() != b) {
         ti->setHideInExport(b);
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
+        QString u = boolToString(!b);
+        QString r = boolToString(b);
 
         saveState(ti, QString("setHideExport (%1)").arg(u), ti,
                   QString("setHideExport (%1)").arg(r),

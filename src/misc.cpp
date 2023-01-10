@@ -11,6 +11,11 @@
 
 extern QString vymVersion;
 
+QString boolToString(const bool &b)
+{
+    return b ? "true" : "false";
+}
+
 QString richTextToPlain(QString r, const QString &indent, const int &width)
 {
     Q_UNUSED(width);
