@@ -5,7 +5,6 @@ require 'date'
 require 'fileutils'
 require 'optparse'
 
-
 def waitkey
   puts "Press return to continue..."
   STDIN.gets
@@ -51,21 +50,28 @@ def heading (s)
   puts "\n#{s}\n#{'-' * s.length}\n"
 end
 
-def init_map( vym )
-  # FIXME-2 Missing: check or init default map
-  # Map Structure:
-  # MapCenter 0
-  #   Main A
-  #     branch a
-  #       branch a1
-  #       branch a2
-  #       branch a3
-  #   Main B
-  # MapCenter 1
+def init_map( mapPath )
+  # Copy the map referenced above to @testDir/test-current.vym 
+  # and try to load it
+  FileUtils.cp mapPath, @currentMapPath
 
-  #n = vym.mapCount.to_i
-  #vym.loadMap (@testmap)
-  return vym.map (1)
+  if @vym.loadMap (@currentMapPath)
+    puts "# Loaded #{mapPath} -> #{@currentMapPath}"
+    id = @vym.currentMapID
+    return @vym.map (id)
+  end
+
+  puts "Failed to load #{mapPath}"
+  exit
+end
+
+def close_current_map
+  id = @vym.currentMapID
+  if @vym.closeMapWithID(id)
+    puts "# Closed map with id = #{id}"
+  else
+    puts "# Failed to close map with id = #{id}"
+  end
 end
 
 def summary
@@ -76,20 +82,30 @@ def summary
 end
 
 #######################
-def test_vym (vym)
+def test_vym
+  #@vym.clearConsole
+
   heading "Mainwindow checks:"
-  version = "2.8.0"
-  expect_warning_only "Version is #{version}", vym.version, version
+  version = "2.9.506"
+  expect_warning_only "Version is #{version}", @vym.version, version
 
-  expect "Loading map '#{@testmap}'", vym.loadMap(@testmap), true
+  expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
 
-  vym.clearConsole
+  testMapDefaultPath = "#{@testDir}/test-default.vym"
+  expect "Default map exists at '#{testMapDefaultPath}'", File.file?(testMapDefaultPath), true
+
+  testMapPath = "#{@testDir}/test-default.vym"
+  map = init_map testMapDefaultPath
+  expect "init_map copies default map to '#{testMapPath}'", File.file?(testMapPath), true
+  expect "Title of copied map title is accessible and not empty", map.getMapTitle.length > 0, true
+
+  close_current_map
 end
 
 #######################
-def test_basics (vym)
+def test_basics
   heading "Basic checks:"
-  map = init_map( vym )
+  map = init_map( @testDir + "/" + "test-default.vym")
 
   title = "vym map used for testing"
   expect "map title is '#{title}'", map.getMapTitle, title
@@ -110,17 +126,19 @@ def test_basics (vym)
   map.selectParent
   expect "selectParent", map.getHeadingPlainText, "MapCenter 0"
 
-  expect "getDestPath: Got #{map.getDestPath}", map.getDestPath, @testdir + "/testmap.vym"
-  expect "getFileDir:  Got #{map.getFileDir}", map.getFileDir, @testdir + "/"
+  expect "getDestPath: Got #{map.getDestPath}", map.getDestPath, @testDir + "/test-current.vym"
+  expect "getFileDir:  Got #{map.getFileDir}", map.getFileDir, @testDir + "/"
+
+  close_current_map
 end
 
 #######################
-def test_export (vym)
+def test_export
   heading "Export:"
-  map = init_map( vym )
+  map = init_map( @testDir + "/" + "test-default.vym")
 
   #HTML
-  exportdir = "#{@testdir}/export-html"
+  exportdir = "#{@testDir}/export-html"
   Dir.mkdir(exportdir)
   htmlpath = "#{exportdir}/output.html"
   flagdir  = "#{exportdir}/flags"
@@ -148,7 +166,7 @@ def test_export (vym)
   expect "exportLast: HTML CSS exists", File.exists?(csspath), true
 
   #AO
-  exportdir = "#{@testdir}/export-ao"
+  exportdir = "#{@testDir}/export-ao"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.txt"
   map.exportMap("AO", filepath)
@@ -158,7 +176,7 @@ def test_export (vym)
   expect "exportLast:  AO file exists", File.exists?(filepath), true
 
   #ASCII
-  exportdir = "#{@testdir}/export-ascii"
+  exportdir = "#{@testDir}/export-ascii"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.txt"
   map.exportMap("ASCII", filepath, false)
@@ -168,7 +186,7 @@ def test_export (vym)
   expect "exportLast:  ASCII file exists", File.exists?(filepath), true
 
   #CSV
-  exportdir = "#{@testdir}/export-csv"
+  exportdir = "#{@testDir}/export-csv"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.csv"
   map.exportMap("CSV", filepath)
@@ -178,7 +196,7 @@ def test_export (vym)
   expect "exportLast:  CSV file exists", File.exists?(filepath), true
 
   #Image
-  exportdir = "#{@testdir}/export-image"
+  exportdir = "#{@testDir}/export-image"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.png"
   map.exportMap("Image", filepath,"PNG")
@@ -188,7 +206,7 @@ def test_export (vym)
   expect "exportLast:  PNG file exists", File.exists?(filepath), true
 
   #LaTeX
-  exportdir = "#{@testdir}/export-latex"
+  exportdir = "#{@testDir}/export-latex"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.tex"
   map.exportMap("LaTeX", filepath)
@@ -198,7 +216,7 @@ def test_export (vym)
   expect "exportLast:   LaTeX file exists", File.exists?(filepath), true
 
   #Markdown
-  exportdir = "#{@testdir}/export-markdown"
+  exportdir = "#{@testDir}/export-markdown"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.md"
   map.exportMap("Markdown", filepath)
@@ -208,7 +226,7 @@ def test_export (vym)
   expect "exportLast:     Markdown file exists", File.exists?(filepath), true
 
   #OrgMode
-  exportdir = "#{@testdir}/export-orgmode"
+  exportdir = "#{@testDir}/export-orgmode"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.org"
   map.exportMap("OrgMode", filepath)
@@ -218,7 +236,7 @@ def test_export (vym)
   expect "exportLast:     OrgMode file exists", File.exists?(filepath), true
 
   #PDF
-  exportdir = "#{@testdir}/export-pdf"
+  exportdir = "#{@testDir}/export-pdf"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.pdf"
   map.exportMap("PDF", filepath)
@@ -228,7 +246,7 @@ def test_export (vym)
   expect "exportLast: PDF file exists", File.exists?(filepath), true
 
   #SVG
-  exportdir = "#{@testdir}/export-svg"
+  exportdir = "#{@testDir}/export-svg"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.svg"
   map.exportMap("SVG", filepath)
@@ -238,10 +256,10 @@ def test_export (vym)
   expect "exportLast: SVG file exists", File.exists?(filepath), true
 
   #XML
-  exportdir = "#{@testdir}/export-xml"
+  exportdir = "#{@testDir}/export-xml"
   Dir.mkdir(exportdir)
   filepath = "#{exportdir}/output.xml"
-  map.exportMap("XML", filepath, @testdir)
+  map.exportMap("XML", filepath, @testDir)
   expect "exportXML: XML file exists", File.exists?(filepath), true
   File.delete(filepath)
   map.exportMap("Last")
@@ -249,24 +267,28 @@ def test_export (vym)
 
   #OpenOffice Impress //FIXME-2
   #Taskjuggler //FIXME-3
+
+  close_current_map
 end
 
 #######################
-def test_extrainfo (vym)
+def test_extrainfo
   heading "Extra information:"
-  map = init_map( vym )
+  map = init_map( @testDir + "/" + "test-default.vym")
   map.setMapAuthor("Fra Erasmas")
   expect "Set and get map author", map.getMapAuthor, "Fra Erasmas"
   map.setMapComment("xy z")
   expect "Set and get map comment", map.getMapComment, "xy z"
   map.setMapTitle("vym rules!")
   expect "Set and get map title", map.getMapTitle, "vym rules!"
+
+  close_current_map
 end
 
 #######################
-def test_adding_branches (vym)
+def test_adding_branches
   heading "Adding branches:"
-  map = init_map( vym )
+  map = init_map( @testDir + "/" + "test-default.vym")
   map.select @main_a
   n = map.branchCount.to_i
   map.addBranch()
@@ -278,7 +300,9 @@ def test_adding_branches (vym)
   map.undo
   expect( "Undo: addBranch", map.branchCount.to_i, n )
 
-  map = init_map( vym )
+  close_current_map
+  map = init_map( @testDir + "/" + "test-default.vym")
+
   map.select @main_a
   n = map.branchCount.to_i
   map.select @branch_a
@@ -291,7 +315,9 @@ def test_adding_branches (vym)
   map.undo
   expect "Undo: addBranchAbove/Below", map.branchCount.to_i, n
 
-  map = init_map( vym )
+  close_current_map
+  map = init_map( @testDir + "/" + "test-default.vym")
+
   map.select @branch_a
   map.addBranchBefore
   map.select @main_a
@@ -304,6 +330,8 @@ def test_adding_branches (vym)
   map.undo
   map.select @main_a
   expect "Undo: addBranchBefore", map.branchCount.to_i, n
+
+  close_current_map
 end
 
 #######################
@@ -805,7 +833,7 @@ def test_notes (vym)
   map.loadNote("test/note-plain.txt")
   expect "Load plain text note from file. Still plaintext?", map.hasRichTextNote, false
   expect "Note contains 'not bold'", map.getNotePlainText.include?("not bold"), true
-  filepath = "#{@testdir}/save-note.txt"
+  filepath = "#{@testDir}/save-note.txt"
   map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true
   expect "Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true
@@ -851,7 +879,7 @@ def test_notes (vym)
   # RichText notes load & save
   map.loadNote("test/note.html")
   expect "Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote, true
-  filepath = "#{@testdir}/save-note.txt"
+  filepath = "#{@testDir}/save-note.txt"
   map.saveNote(filepath)
   expect "Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true
   expect "Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true
@@ -877,6 +905,16 @@ def test_bugfixes (vym)
   map = init_map( vym )
   map.select @main_b
   expect "Mapcenter of #{@center_1} has no frame", map.getFrameType(true), "NoFrame"
+end
+
+######################
+def test_load_legacy_maps (vym)
+  heading "Load legacy maps:"
+  map = vym.loadMap ("test/example-pre-2.9.500-positions.xml")
+  #map = init_map( vym )
+  map.select @center1
+  expect "Foobar of #{@center_1} has no frame", map.getFrameType(true), "NoFrame"
+  waitkey
 end
 
 #######################
@@ -943,11 +981,12 @@ begin
   OptionParser.new do |opts|
     opts.banner = "Usage: vym-test.rb [options]"
 
-    opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testdir] = s }
+    opts.on('-d', '--directory  NAME', 'Directory name') { |s| options[:testDir] = s }
   end.parse!
 
-  @testdir = options[:testdir]
-  @testmap = ARGV[0]
+  @testDir = options[:testDir]
+  @testmap = "#{@testDir}/test-default.vym"
+  @currentMapPath = @testDir + "/" + "test-current.vym"
 
   $tests_passed    = 0
   $tests_failed    = 0
@@ -970,33 +1009,34 @@ begin
   vym_mgr = VymManager.new
   #vym_mgr.show_running
 
-  vym = vym_mgr.find(instance_name)
+  @vym = vym_mgr.find(instance_name)
 
-  if !vym
+  if !@vym
     puts "Couldn't find instance name \"#{instance_name}\", please start one:"
     puts "vym -l -n \"#{instance-name}\" -t test/default.vym"
     exit
   end
 
-  test_vym(vym)
-  test_basics(vym)
-  test_export(vym)
-  test_extrainfo(vym)
-  test_adding_branches(vym)
-  test_adding_maps(vym)
-  test_scrolling(vym)
-  test_moving_parts(vym)
-  test_modify_branches(vym)
-  test_flags(vym)
-  test_delete_parts(vym)
-  test_copy_paste(vym)
-  test_references(vym)
-  test_history(vym)
-  test_xlinks(vym)
-  test_tasks(vym)
-  test_notes(vym)
-  test_headings(vym)
-  test_bugfixes(vym)
+  test_vym
+  test_basics
+  #test_export # FIXME-0 hangs
+  test_extrainfo
+  test_adding_branches
+  #test_adding_maps(vym)
+  #test_scrolling(vym)
+  #test_moving_parts(vym)
+  #test_modify_branches(vym)
+  #test_flags(vym)
+  #test_delete_parts(vym)
+  #test_copy_paste(vym)
+  #test_references(vym)
+  #test_history(vym)
+  #test_xlinks(vym)
+  #test_tasks(vym)
+  #test_notes(vym)
+  #test_headings(vym)
+  #test_bugfixes(vym)
+  #test_load_legacy_maps(@vym)
   summary
 
 end

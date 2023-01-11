@@ -602,6 +602,48 @@ void VymReader::readOrnamentsAttr() // FIXME-0 not ported yet
     Q_ASSERT(xml.isStartElement() && (
             xml.name() == QLatin1String("branch") ||
             xml.name() == QLatin1String("mapcenter")));
+
+    if (lastBranch) {
+        BranchContainer *bc = lastBranch->getBranchContainer();
+
+        bool okx, oky;
+        float x, y;
+
+        QString a = "posX";
+        x = xml.attributes().value(a).toFloat(&okx);
+        a = "posY";
+        y = xml.attributes().value(a).toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Could not parse attributes posX and posY");
+            return;
+        }
+
+        // Only left for compatibility with versions < 2.9.500
+        a = "relPosX";
+        x = xml.attributes().value(a).toFloat(&okx);
+        a = "relPosY";
+        y = xml.attributes().value(a).toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Could not parse attributes relPosX and relPosY");
+            return;
+        }
+
+        // Only left for compatibility with versions < 2.9.500
+        a = "absPosX";
+        x = xml.attributes().value(a).toFloat(&okx);
+        a = "absPosY";
+        y = xml.attributes().value(a).toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Could not parse attributes absPosX and absPosY");
+            return;
+        }
+    }
 }
 
 void VymReader::readFrameAttr()

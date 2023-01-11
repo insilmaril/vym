@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
     taskModel = new TaskModel();
 
     debug = options.isOn("debug");
-    
+
     testmode = options.isOn("testmode");
 
     QString pidString = QString::number(QCoreApplication::applicationPid());

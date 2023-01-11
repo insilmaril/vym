@@ -25,7 +25,7 @@ class Vym
           com = "vym.#{c}();"
           puts " * Calling vym: \"#{com}\":" if $debug
           ret = @main.execute( com )
-        else  
+        else
           # with parameters
           p = "";
           a = []
@@ -35,17 +35,17 @@ class Vym
             else
               a << p
             end
-          end  
+          end
           com = "vym.#{c} (#{a.join(',')});"
           puts " ** Calling vym: \"#{com}\":" if $debug
           ret = @main.execute( com )
-        end  
+        end
 
-        #FIXME-0  err = m.errorLevel[0]
+        #FIXME-4  err = m.errorLevel[0]
         if $debug
           puts "     Returned: #{ret[0]}" if ret[0] != ""
           # puts "        Error: #{err}" if err > 0
-        end  
+        end
         ret[0]
       end
     end # Creating vym commands
@@ -60,7 +60,6 @@ class Vym
   end
 
   def map (n)
-    #puts "def map:  @service.object(\"/vymmodel_#{n}\")"
     map = @service.object("/vymmodel_#{n}")
     map.introspect
     map.default_iface = "org.insilmaril.vym.model.adaptor"
@@ -69,7 +68,7 @@ class Vym
       return VymMap.new(map, n )
     else
       raise "Error: Map #{n} not accessible in #{@instance}!"
-    end  
+    end
   end
 
   def show_methods
@@ -84,7 +83,7 @@ end
 class VymMap
   def initialize(map, n )
     @map = map
-    
+
     # Getting commands for model via DBUS
     #if mapCount() > 0
       # m = model(1)
@@ -99,7 +98,7 @@ class VymMap
             com = "vym.currentMap().#{c}();"
             puts " * Calling model: \"#{com}\":" if $debug
             ret = @map.execute( com )
-          else  
+          else
             # Build string with parameters
             p = "";
             a = []
@@ -109,19 +108,19 @@ class VymMap
               else
                 a << p
               end
-            end  
+            end
             # com = "vym.clearConsole(); print( vym.currentMap().#{c} (#{a.join(',')}));"
             com = " vym.currentMap().#{c} (#{a.join(',')});"
             puts " ** Calling model: \"#{com}\":" if $debug
             ret = @map.execute( com )
             puts "Done calling" if $debug
-          end  
+          end
 
-          #FIXME-0 err = m.errorLevel[0]
+          #FIXME-3 err = m.errorLevel[0]
           if $debug
             puts "     Returned: #{ret[0]}" if ret[0] != ""
             #puts "        Error: #{err}" if err > 0
-          end  
+          end
           ret[0]
         end
       end
@@ -156,10 +155,10 @@ class VymManager
 
       vym_main_obj.default_iface = "org.insilmaril.vym.main.adaptor"
 
-      if vym_main_obj.getInstanceName[0] == name 
+      if vym_main_obj.getInstanceName[0] == name
         puts "VymManager: Found instance named '#{name}': #{list.at(i)}" if $debug
         return Vym.new list.at(i)
-     end  
+     end
     end
 
     raise "Could not find instance named \"test\""
