@@ -1037,7 +1037,7 @@ begin
   test_load_legacy_maps
 
   # FIXME-1 Tests not refactored completely yet
-  ##test_export # FIXME-0 hangs
+  ##test_export # FIXME-1 hangs
   ##test_adding_maps(vym)
   ##test_scrolling(vym)
   ##test_moving_parts(vym)

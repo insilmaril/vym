@@ -99,7 +99,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             readSettingAttr(atts);
         }
     }
-    else if (eName == "slide" && state == StateMap) { // XML-FIXME-0 port and test
+    else if (eName == "slide" && state == StateMap) { // XML-FIXME-1 port and test
         state = StateMapSlide;
         if (!(contentFilter & SlideContent)) {
             // Ignore slides during paste
@@ -204,7 +204,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!readTaskAttr(atts))
             return false;
     }
-    else if (eName == "note" && // XML-FIXME-0 port and test
+    else if (eName == "note" && // XML-FIXME-1 port legacy and test
              (state == StateMapCenter ||
               state == StateBranch)) { // only for backward compatibility
                                        // (<1.4.6). Use htmlnote now.
@@ -214,7 +214,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!readNoteAttr(atts))
             return false;
     }
-    else if (eName == "htmlnote" && // XML-FIXME-0 port and test
+    else if (eName == "htmlnote" && // XML-FIXME-1 port legacy and test
              state == StateMapCenter) { // only for backward compatibility. Use
                                         // vymnote now
         state = StateHtmlNote;
@@ -222,7 +222,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!atts.value("fonthint").isEmpty())
             vymtext.setFontHint(atts.value("fonthint"));
     }
-    else if (eName == "vymnote" && // XML-FIXME-0 port and test
+    else if (eName == "vymnote" && // XML-FIXME-1 test
              (state == StateMapCenter || state == StateBranch ||
               state == StateInit)) {
         if (state == StateInit)
@@ -302,7 +302,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         lastBranch = model->createBranch(lastBranch);
         readBranchAttr(atts);
     }
-    else if (eName == "htmlnote" && // XML-FIXME-0 port and test
+    else if (eName == "htmlnote" && // XML-FIXME-1 port and test
              state == StateBranch) { // only for backward compatibility. Use
                                      // vymnote now
         state = StateHtmlNote;
@@ -331,7 +331,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         lastBranch = model->createBranch(lastBranch);
         readBranchAttr(atts);
     }
-    else if (eName == "html" && // XML-FIXME-0 port and test
+    else if (eName == "html" && // XML-FIXME-1 port legacy and test
              (state == StateHtmlNote ||
               state == StateVymNote)) { // Only for backward compatibility
         state = StateHtml;
@@ -364,12 +364,12 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     qWarning() << "Found unknown attribute type: " << type;
             } else {
                 if (!atts.value("value").isEmpty())
-                    ai->setValue(atts.value("value")); 
+                    ai->setValue(atts.value("value"));
             }
         }
         model->setAttribute(lastBranch, ai);
     }
-    else if (state == StateHtml) { // XML-FIXME-0 port and test
+    else if (state == StateHtml) { // XML-FIXME-1 port legacy and test
         // Only for backward compatibility
         // accept all while in html mode,
         htmldata += "<" + eName;
@@ -410,7 +410,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         break;
     case StateTask:
         break;
-    case StateHeading:  // XML-FIXME-0 test with legacy
+    case StateHeading:  // XML-FIXME-1 test with legacy
         if (versionLowerOrEqual(version, "2.4.99") &&
             htmldata.contains("<html>"))
             // versions before 2.5.0 didn't use CDATA to save richtext
@@ -426,7 +426,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         }
         lastBranch->setHeading(vymtext);
         break;
-    case StateHtmlNote:  // XML-FIXME-0 port and test
+    case StateHtmlNote:  // XML-FIXME-1 port legacy and test
         // Richtext note, needed anyway for backward compatibility
         vymtext.setRichText(htmldata);
         lastBranch->setNote(vymtext);
@@ -434,7 +434,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
     case StateMapSlide: // XML-FIXME-0 port and test
         lastSlide = nullptr;
         break;
-    case StateNote: // XML-FIXME-0 port and test
+    case StateNote: // XML-FIXME-1 port legacy and test
         // version < 1.4.6
         vymtext.setText(htmldata);
         lastBranch->setNote(vymtext);
@@ -443,7 +443,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         // version >= 2.5.0  previously value only as attribut
         settings.setLocalValue(model->getDestPath(), lastSetting, htmldata);
         break;
-    case StateVymNote:  // XML-FIXME-0 port and test
+    case StateVymNote:  // XML-FIXME-1 test
         // Might be richtext or plaintext with version >= 1.13.8
         if (versionLowerOrEqual(version, "2.4.99") &&
             htmldata.contains("<html>"))
@@ -460,7 +460,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         }
         lastBranch->setNote(vymtext);
         break;
-    case StateHtml:// XML-FIXME-0 port and test
+    case StateHtml:// XML-FIXME-1 port legacy and test
         htmldata += "</" + eName + ">";
         if (eName == "html")
             htmldata.replace("<br></br>", "<br />");
@@ -508,10 +508,10 @@ bool parseVYMHandler::characters(const QString &ch)
     case StateHtmlNote: // Only for compatibility
         htmldata = ch;
         break;
-    case StateHtml: // XML-FIXME-0 port and test
+    case StateHtml: // XML-FIXME-2 test legacy
         htmldata += ch_org;
         break;
-    case StateHeading:  // XML-FIXME-0 port and test
+    case StateHeading:  // XML-FIXME-1 test legacy
         htmldata += ch;
         break;
     default:
