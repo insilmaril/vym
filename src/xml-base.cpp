@@ -3,10 +3,11 @@
 #include "vymmodel.h"
 
 
-BaseReader::BaseReader(VymModel *m)
+BaseReader::BaseReader(VymModel *vm)
 {
-    //qDebug() << "Constr. BaseReader";
-    model = m;
+    //qDebug() << "Constr. BaseReader (VymModel*)";
+    model = vm;
+    lastBranch = nullptr;
 }
 
 QString BaseReader::errorString() const
@@ -17,12 +18,6 @@ QString BaseReader::errorString() const
             .arg(xml.columnNumber());
 }
 
-void BaseReader::setLoadMode(const File::LoadMode &lm, int p)
-{
-    loadMode = lm;
-    insertPos = p;
-}
-
 QString BaseReader::parseHREF(QString href)
 {
     QString type = href.section(":", 0, 0);
@@ -31,5 +26,18 @@ QString BaseReader::parseHREF(QString href)
         return tmpDir + "/" + path;
     else
         return tmpDir + path;
+}
+
+void BaseReader::setModel(VymModel *vm)
+{
+    model = vm;
+}
+
+void BaseReader::setInputString(const QString &s) { inputString = s; }
+
+void BaseReader::setLoadMode(const File::LoadMode &lm, int p)
+{
+    loadMode = lm;
+    insertPos = p;
 }
 

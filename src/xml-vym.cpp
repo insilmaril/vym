@@ -42,8 +42,11 @@ bool VymReader::read(QIODevice *device)
             if (version.isEmpty())
                 version = "0.0.0";
             if (!lastBranch) {
-                xml.raiseError("Found heading element but don't know lastBranch");
-                return !xml.error();
+                lastBranch = model->getSelectedBranch();
+                if (!lastBranch) {
+                    xml.raiseError("Found heading element but no branch is selected!");
+                    return !xml.error();
+                }
             }
             readHeadingOrVymNote();
         } else {

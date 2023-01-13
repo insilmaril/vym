@@ -3,11 +3,6 @@
 
 #include "xml-base.h"
 
-#include "vymnote.h"
-
-class BranchItem;
-class ImageItem;
-class MapItem;
 class SlideItem;
 class Task;
 
@@ -15,8 +10,7 @@ class Task;
 
 class VymReader : public BaseReader {
   public:
-    VymReader(VymModel*);
-
+    VymReader (VymModel*);
     bool read(QIODevice *device);
 
   private:
@@ -42,9 +36,7 @@ class VymReader : public BaseReader {
 
     VymText vymtext;
 
-    BranchItem *lastBranch;
-    //ImageItem *lastImage;
-    MapItem *lastMI;
+    // Other last* already move to xml-base.h :
     //SlideItem *lastSlide;
     //Task *lastTask;
     //QString lastSetting;

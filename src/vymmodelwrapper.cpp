@@ -455,7 +455,7 @@ qreal VymModelWrapper::getPosX()
             c = (Container*)(selii->getImageContainer());
     }
 
-    qDebug() << "VMW x=" << c->pos().x();
+    qDebug() << "VMW x=" << c->pos().x();   // FIXME-0 testing
     if (c)
         return setResult(c->pos().x());
 

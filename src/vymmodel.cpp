@@ -54,8 +54,9 @@
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
-#include "xml-freemind-legacy.h"
-#include "xml-vym-legacy.h"
+#include "xml-freemind-legacy.h"    // XML-FIXME-2 remove
+#include "xml-vym.h"
+#include "xml-vym-legacy.h" // XML-FIXME-2 remove
 #include "xmlobj.h"
 
 #ifdef Q_OS_WINDOWS
@@ -435,37 +436,37 @@ bool VymModel::parseVymText(const QString &s)
     bool ok = false;
     BranchItem *bi = getSelectedBranch();
     if (bi) {
-        parseBaseHandler *handler = new parseVYMHandler;
-
         bool saveStateBlockedOrg = saveStateBlocked;
         repositionBlocked = true;
         saveStateBlocked = true;
-        QXmlInputSource source;
-        source.setData(s);
-        QXmlSimpleReader reader;
-        reader.setContentHandler(handler);
-        reader.setErrorHandler(handler);
 
-        handler->setInputString(s);
-        handler->setModel(this);
-        handler->setLoadMode(File::ImportReplace, 0);
+        // XML-FIXME-1 Workaround: write string to disk so that it can be
+        // used with QIODevice of QXmlStreamReader/VymReader
+        saveStringToDisk("testdata.xml", s);
 
-        ok = reader.parse(source);
+        QFile file("testdata.xml");
+        if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+                    QString("Cannot read file %1:\n%2.")
+                    .arg(QDir::toNativeSeparators(fileName),
+                        file.errorString()));
+            return false;
+        }
+
+        VymReader vymReader(this);
+        vymReader.setLoadMode(File::ImportReplace, 0);
+
+        ok = vymReader.read(&file);
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
         if (ok) {
             if (s.startsWith("<vymnote"))
                 emitNoteChanged(bi);
             emitDataChanged(bi);
-            reposition(); // to generate bbox sizes
         }
-        else {
+        else
             QMessageBox::critical(0, tr("Critical Parse Error"),
-                                  tr(handler->errorProtocol().toUtf8()));
-            // returnCode=1;
-            // Still return "success": the map maybe at least
-            // partially read by the parser
-        }
+                                    vymReader.errorString());
     }
     return ok;
 }
@@ -1901,7 +1902,6 @@ TreeItem *VymModel::findUuid(const QUuid &id)
     return nullptr;
 }
 
-#include "xml-vym.h"
 void VymModel::test()
 {
     qDebug() << "VM::test()";

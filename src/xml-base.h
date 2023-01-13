@@ -4,19 +4,26 @@
 #include <QXmlStreamReader>
 
 #include "file.h"
+#include "vymtext.h"
+
 
 class VymModel;
+class BranchItem;
+class ImageItem;
+class MapItem;
 
 /*! \brief Base class for parsing maps from XML documents */
 
 class BaseReader {
   public:
-    BaseReader(VymModel*);
+    BaseReader(VymModel *vm);
 
     QString errorString() const;
 
-    void setLoadMode(const File::LoadMode &lm, int p);
     QString parseHREF(QString href);
+    void setModel(VymModel *);
+    void setInputString(const QString &);
+    void setLoadMode(const File::LoadMode &, int p = -1);
 
   protected:
     VymModel *model;
@@ -27,8 +34,15 @@ class BaseReader {
     int insertPos;
 
     QString tmpDir;
+    QString inputString;
     QString htmldata;
     QString version;
+
+    VymText vymtext;
+
+    BranchItem *lastBranch;
+    //ImageItem *lastImage;
+    MapItem *lastMI;
 };
 
 #endif
