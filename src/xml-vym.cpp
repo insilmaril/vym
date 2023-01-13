@@ -291,8 +291,8 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
 
     //htmldata += xml.text();  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
     htmldata += xml.readElementText(QXmlStreamReader::IncludeChildElements);  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
-    qDebug() << "htmldata: " << htmldata << "  xml.name=" << xml.name() << vymtext.getText();
-    qDebug() << xml.tokenType() << xml.tokenString();
+    //qDebug() << "htmldata: " << htmldata << "  xml.name=" << xml.name() << vymtext.getText();
+    //qDebug() << xml.tokenType() << xml.tokenString();
 
     if (versionLowerOrEqual(version, "2.4.99") && // XML-FIXME-1 test with legacy
         htmldata.contains("<html>"))
@@ -307,7 +307,6 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
             vymtext.setText(htmldata);
     }
 
-    qDebug() << "xmlname: " << xml.name();
     if (xml.name() == "heading")
         lastBranch->setHeading(vymtext);
 

@@ -483,15 +483,16 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         rotationAngle = mapEditor->getAngleTarget();
     }
 
-    parseBaseHandler *handler;
+    BaseReader *reader;
     fileType = ftype;
     switch (fileType) {
         case File::VymMap:
-            handler = new parseVYMHandler;
-            ((parseVYMHandler *)handler)->setContentFilter(contentFilter);
+            reader = new VymReader(this);
+            // XML-FIXME-1 set contentfilter?   seems unused.
+            //((parseVYMHandler *)handler)->setContentFilter(contentFilter);
             break;
         case File::FreemindMap:
-            handler = new parseFreemindHandler;
+            //reader = new FreemindReader(this); // XML-FIXME-1 not implemented yet
             break;
         default:
             QMessageBox::critical(0, tr("Critical Parse Error"),
@@ -586,28 +587,27 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         saveStateBlocked = true;
         mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
 
-        QXmlInputSource source(&file);
-        QXmlSimpleReader xmlSimpleReader;
-        xmlSimpleReader.setContentHandler(handler);
-        xmlSimpleReader.setErrorHandler(handler);
-
-        handler->setModel(this);
-
         // We need to set the tmpDir in order  to load files with rel. path
         QString tmpdir;
         if (zipped)
             tmpdir = tmpZipDir;
         else
             tmpdir = fname.left(fname.lastIndexOf("/", -1));
-        handler->setTmpDir(tmpdir);
-        handler->setInputFile(file.fileName());
-        if (lmode == File::ImportReplace)
-            handler->setLoadMode(File::ImportReplace, pos);
-        else
-            handler->setLoadMode(lmode, pos);
 
+        if (lmode == File::ImportReplace)
+            reader->setLoadMode(File::ImportReplace, pos);
+        else
+            reader->setLoadMode(lmode, pos);
+
+        // Open file    // XML-FIXME-1 rework, was not used in legacy
+        if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+                    QString("Cannot read file %1:\n%2.")
+                    .arg(QDir::toNativeSeparators(fileName),
+                        file.errorString()));
+        }
         // Here we actually parse the XML file
-        bool ok = xmlSimpleReader.parse(source);
+        bool ok = reader->read(&file);
 
         // Aftermath
         repositionBlocked = false;
@@ -640,15 +640,16 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         }
         else {
             QMessageBox::critical(0, tr("Critical Parse Error"),
-                                  tr(handler->errorProtocol().toUtf8()));
+                                    reader->errorString());
             // returnCode=1;
             // Still return "success": the map maybe at least
             // partially read by the parser
         }
     }
 
-    // Delete tmpZipDir
+    // Cleanup
     removeDir(QDir(tmpZipDir));
+    delete reader;
 
     // Restore original zip state
     zipped = zipped_org;

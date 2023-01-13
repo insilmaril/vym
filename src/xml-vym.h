@@ -11,7 +11,7 @@ class Task;
 class VymReader : public BaseReader {
   public:
     VymReader (VymModel*);
-    bool read(QIODevice *device);
+    virtual bool read(QIODevice *device);
 
   private:
     void raiseUnknownElementError();

@@ -17,6 +17,7 @@ class MapItem;
 class BaseReader {
   public:
     BaseReader(VymModel *vm);
+    virtual bool read(QIODevice *device) = 0;
 
     QString errorString() const;
 
