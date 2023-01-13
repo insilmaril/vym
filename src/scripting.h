@@ -23,6 +23,7 @@ class VymScriptContext : public QObject, protected QScriptable {
     bool setResult(bool r);
     int setResult(int r);
     uint setResult(uint r);
+    qreal setResult(qreal r);
 };
 
 ///////////////////////////////////////////////////////////////////////////

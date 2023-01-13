@@ -49,6 +49,12 @@ uint VymScriptContext::setResult(uint r)
     return r;
 }
 
+qreal VymScriptContext::setResult(qreal r)
+{
+    context()->engine()->globalObject().setProperty("lastResult", r);
+    return r;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper() {}
 

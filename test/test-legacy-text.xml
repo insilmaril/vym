@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
 <vymmap  version="2.4.0" author="Uwe Drechsel" title="VYM - View Your Mind" 
     date="2015-04-24" branchCount="6" backgroundColor="#ffffff" defaultFont="Sans Serif,16,-1,0,50,0,0,0,0,0" selectionColor="#ffff00" linkStyle="StylePolyParabel" linkColor="#0000ff" defXLinkColor="#0211e6" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0" linkColorHint="HeadingColor">
-    <mapcenter absPosX="0" absPosY="0" hideLink="false" uuid="{27bcd406-6fd4-455a-9323-c4cecc5c2498}">
+    <mapcenter absPosX="123" absPosY="0" hideLink="false" uuid="{27bcd406-6fd4-455a-9323-c4cecc5c2498}">
         <heading  textColor="#000000">View Your Mind</heading>
         <frame  frameType="Cloud" penColor="#000000" brushColor="#ffffff" padding="5" borderWidth="3" />
         <vymnote  fonthint="undef">
@@ -53,6 +53,9 @@ p, li { white-space: pre-wrap; }
             <frame  frameType="RoundedRectangle" penColor="#ff8000" brushColor="#ececec" padding="5" borderWidth="1" includeChildren="true" />
             <standardflag>lamp</standardflag>
             <branch hideLink="false" uuid="{b001fe07-3734-48d6-a992-582250fb9bb8}">
+                <heading  textColor="#ff5500">Heading in characters</heading>
+            </branch>
+            <branch hideLink="false" uuid="{b001fe07-3735-48d6-a992-582250fb9bb8}">
                 <heading  textColor="#ff5500">RichText in Noteeditor</heading>
                 <vymnote  fonthint="fixed">
 <html><head><meta name="qrichtext" content="1"></meta><style type="text/css">
@@ -70,12 +73,6 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans Mono'; font-weight:600; color:#ff007f;&quot;&gt;RichText&lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Mono'; color:#000000;&quot;&gt; in &lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Mono'; font-weight:600; color:#55ff00;&quot;&gt;Heading&lt;/span&gt;&lt;span style=&quot; font-family:'DejaVu Sans Mono'; color:#000000;&quot;&gt; which is &amp;lt;b&amp;gt;not bold&amp;lt;/b&amp;gt;!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</heading>
             </branch>
-        </branch>
-        <branch relPosX="-841" relPosY="402" hideLink="true" uuid="{6d8bffc6-3234-4229-9a39-a2a5e1e527ba}">
-            <heading  textColor="#000000">.</heading>
-        </branch>
-        <branch relPosX="574" relPosY="265" hideLink="true" uuid="{2131fabe-1bc9-4ca5-9f0c-3c00bd1eccc3}">
-            <heading  textColor="#000000">.</heading>
         </branch>
     </mapcenter>
     <select>mc:0</select>

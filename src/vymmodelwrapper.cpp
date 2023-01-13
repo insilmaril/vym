@@ -443,6 +443,26 @@ QString VymModelWrapper::getNoteXML()
     return setResult(model->getNote().saveToDir());
 }
 
+qreal VymModelWrapper::getPosX()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    qDebug() << "VMW x=" << c->pos().x();
+    if (c)
+        return setResult(c->pos().x());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get position from item");
+}
+
 int VymModelWrapper::getRotationHeading()
 {
     int r = -1;

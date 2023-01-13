@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "#{ENV['PWD']}/scripts/vym-ruby"
+require 'colorize'
 require 'date'
 require 'fileutils'
 require 'optparse'
@@ -12,11 +13,11 @@ end
 
 def expect (comment, v_real, v_exp)
   if v_exp == v_real
-    puts "    Ok: #{comment}"
+    puts "    Ok: #{comment}".green
     $tests_passed += 1
     # waitkey
   else
-    puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
+    puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'".red
     $tests_failed += 1
     waitkey
   end
@@ -25,11 +26,11 @@ end
 
 def expect_warning_only (comment, v_real, v_exp)
   if v_exp == v_real
-    puts "    Ok: #{comment}"
+    puts "    Ok: #{comment}".green
     $tests_passed += 1
     # waitkey
   else
-    puts "Warning: #{comment}. Expected '#{v_exp}', but got '#{v_real}'"
+    puts "Warning: #{comment}. Expected '#{v_exp}', but got '#{v_real}'".red
     $tests_warnings += 1
   end
   $tests_total += 1
@@ -37,40 +38,45 @@ end
 
 def expect_error (comment, error)
   if error.length ==  0
-    puts "Failed: #{comment}. Command did not return error."
+    puts "Failed: #{comment}. Command did not return error.".red
     $tests_failed += 1
   else
-    puts "    Ok: #{comment}"
+    puts "    Ok: #{comment}".green
     $tests_passed += 1
   end
   $tests_total += 1
 end
 
 def heading (s)
-  puts "\n#{s}\n#{'-' * s.length}\n"
+  puts "\n#{s}\n#{'-' * s.length}\n".yellow
 end
 
 def init_map( mapPath )
-  # Copy the map referenced above to @testDir/test-current.vym 
+  # Copy the map referenced above to @testDir/test-current.[vym|xml]
   # and try to load it
+  if mapPath.end_with? ".vym"
+    @currentMapPath = "#{@testDir}/test-current.vym"
+  else
+    @currentMapPath = "#{@testDir}/test-current.xml"
+  end
   FileUtils.cp mapPath, @currentMapPath
 
   if @vym.loadMap (@currentMapPath)
-    puts "# Loaded #{mapPath} -> #{@currentMapPath}"
+    puts "# Loaded #{mapPath} -> #{@currentMapPath}".blue
     id = @vym.currentMapID
     return @vym.map (id)
   end
 
-  puts "Failed to load #{mapPath}"
+  puts "Failed to load #{mapPath}".red
   exit
 end
 
 def close_current_map
   id = @vym.currentMapID
   if @vym.closeMapWithID(id)
-    puts "# Closed map with id = #{id}"
+    puts "# Closed map with id = #{id}".blue
   else
-    puts "# Failed to close map with id = #{id}"
+    puts "# Failed to close map with id = #{id}".red
   end
 end
 
@@ -464,9 +470,9 @@ def test_modify_branches (vym)
 end
 
 #######################
-def test_flags (vym)
+def test_flags
   heading "Flags"
-  map = init_map( vym )
+  map = init_map( @testDir + "/" + "test-default.vym")
   map.select @main_a
 
   def set_flags (map, flags)
@@ -535,6 +541,8 @@ def test_flags (vym)
     map.toggleFlagByName flag
     expect "toggleFlag: flag #{flag} deactivated", map.hasActiveFlag(flag), false
   end
+
+  close_current_map
 end
 
 #######################
@@ -908,12 +916,17 @@ def test_bugfixes (vym)
 end
 
 ######################
-def test_load_legacy_maps (vym)
+def test_load_legacy_maps
   heading "Load legacy maps:"
-  map = vym.loadMap ("test/example-pre-2.9.500-positions.xml")
-  #map = init_map( vym )
-  map.select @center1
-  expect "Foobar of #{@center_1} has no frame", map.getFrameType(true), "NoFrame"
+  map = init_map (@testDir + "/" + "test-legacy-text.xml")
+  map.select @branch_a
+  expect "Heading with plaintext as characters is read", map.getHeadingPlainText, "Heading in characters"
+  close_current_map
+
+  map = init_map ("test/example-pre-2.9.500-positions.xml")
+  map.select @center_0
+  expect "Position of #{@center_0} is ok (currently #{map.getPosX()}", map.getPosX().to_f, 0
+  close_current_map
   waitkey
 end
 
@@ -986,7 +999,6 @@ begin
 
   @testDir = options[:testDir]
   @testmap = "#{@testDir}/test-default.vym"
-  @currentMapPath = @testDir + "/" + "test-current.vym"
 
   $tests_passed    = 0
   $tests_failed    = 0
@@ -1018,25 +1030,28 @@ begin
   end
 
   test_vym
-  test_basics
-  #test_export # FIXME-0 hangs
-  test_extrainfo
-  test_adding_branches
-  #test_adding_maps(vym)
-  #test_scrolling(vym)
-  #test_moving_parts(vym)
-  #test_modify_branches(vym)
-  #test_flags(vym)
-  #test_delete_parts(vym)
-  #test_copy_paste(vym)
-  #test_references(vym)
-  #test_history(vym)
-  #test_xlinks(vym)
-  #test_tasks(vym)
-  #test_notes(vym)
-  #test_headings(vym)
-  #test_bugfixes(vym)
-  #test_load_legacy_maps(@vym)
+  #test_basics
+  #test_extrainfo
+  #test_adding_branches
+  test_load_legacy_maps
+
+  # FIXME-1 Tests not refactored completely yet
+  ##test_export # FIXME-0 hangs
+  ##test_adding_maps(vym)
+  ##test_scrolling(vym)
+  ##test_moving_parts(vym)
+  ##test_modify_branches(vym)
+  #test_flags
+  ##test_delete_parts(vym)
+  ##test_copy_paste(vym)
+  ##test_references(vym)
+  ##test_history(vym)
+  ##test_xlinks(vym)
+  ##test_tasks(vym)
+  ##test_notes(vym)
+  ##test_headings(vym)
+  ##test_bugfixes(vym)
+
   summary
 
 end
