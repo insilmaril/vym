@@ -636,6 +636,18 @@ void Main::setupAPI()
     c = new Command("getNoteXML", Command::TreeItem);
     modelCommands.append(c);
 
+    c = new Command("getPosX", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("getPosY", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("getScenePosX", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("getScenePosY", Command::TreeItem);
+    modelCommands.append(c);
+
     c = new Command("getRotationHeading", Command::Branch);
     modelCommands.append(c);
 

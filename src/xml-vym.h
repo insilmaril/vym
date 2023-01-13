@@ -26,7 +26,7 @@ class VymReader : public BaseReader {
     void readSetting();
     void readMapCenter();
     void readBranch();
-    void readHeading();
+    void readHeadingOrVymNote();
     void readFrame();
     void readStandardFlag();
     void readUserFlagDef();

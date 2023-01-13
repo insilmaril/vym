@@ -1906,7 +1906,7 @@ void VymModel::test()
 {
     qDebug() << "VM::test()";
 
-    QString fileName = "test.xml";
+    QString fileName = "/home/uwe/vym/branches/xml-streamreader/test.xml";
     if (fileName.isEmpty())
         return;
 

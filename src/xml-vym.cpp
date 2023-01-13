@@ -35,11 +35,21 @@ bool VymReader::read(QIODevice *device)
     if (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("vymmap")) {
             readVymMap();
+        } else if (xml.name() == QLatin1String("heading") ||
+                   xml.name() == QLatin1String("vymnote"))  { // XML-FIXME-1 test
+            // Only read some stuff like VymNote or Heading
+            // e.g. for undo/redo
+            if (version.isEmpty())
+                version = "0.0.0";
+            if (!lastBranch) {
+                xml.raiseError("Found heading element but don't know lastBranch");
+                return !xml.error();
+            }
+            readHeadingOrVymNote();
         } else {
-            xml.raiseError("No vymmap as next element.");
+            xml.raiseError("No vymmap or heading as next element.");
         }
     }
-
     return !xml.error();
 }
 
@@ -49,7 +59,7 @@ void  VymReader::raiseUnknownElementError()
     xml.raiseError("Found unknown element: " + xml.name().toString());
 }
 
-void VymReader::readVymMap() // FIXME-1 test importAdd/importReplace
+void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("vymmap"));
 
@@ -76,7 +86,7 @@ void VymReader::readVymMap() // FIXME-1 test importAdd/importReplace
                     .arg(vymVersion));
         }
         else
-            model->setVersion(version); // FIXME-1 really needed? what for?
+            model->setVersion(version); // XML-FIXME-1 really needed? what for?
     }
 
     branchesTotal = 0;
@@ -176,7 +186,7 @@ void VymReader::readMapCenter()
 
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("heading"))
-            readHeading();
+            readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch"))
             readBranch();
         else if (xml.name() == QLatin1String("frame"))
@@ -184,7 +194,7 @@ void VymReader::readMapCenter()
         else if (xml.name() == QLatin1String("standardFlag") ||
                  xml.name() == QLatin1String("standardflag"))
             readStandardFlag();
-    // FIXME-00 cont here with images, notes, ...
+    // XML-FIXME-00 cont here with images, notes, ...
         else if (xml.name() == QLatin1String("userflag"))
             readUserFlag();
         else {
@@ -193,7 +203,7 @@ void VymReader::readMapCenter()
         }
     }
 
-    model->emitDataChanged(lastBranch);
+    model->emitDataChanged(lastBranch); // XML-FIXME-2 needed?
 }
 
 void VymReader::readBranch()
@@ -205,7 +215,7 @@ void VymReader::readBranch()
 
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("heading"))
-            readHeading();
+            readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch"))
             readBranch();
         else if (xml.name() == QLatin1String("frame"))
@@ -215,7 +225,7 @@ void VymReader::readBranch()
             readStandardFlag();
         else if (xml.name() == QLatin1String("userflag"))
             readUserFlag();
-    // FIXME-00 cont here with images, notes, ...
+    // XML-FIXME-00 cont here with images, notes, ...
         else {
             raiseUnknownElementError();
             return;
@@ -233,12 +243,14 @@ void VymReader::readBranch()
     lastBranch->setLastSelectedBranch(0);
 }
 
-void VymReader::readHeading() // FIXME-1 test with legacy vym versions
+void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versions
 {
-    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("heading"));
+    Q_ASSERT(xml.isStartElement() &&
+            (xml.name() == QLatin1String("heading") ||
+             xml.name() == QLatin1String("vymnote") ));
 
     if (!lastBranch) {
-            xml.raiseError("No lastBranch available to set heading.");
+            xml.raiseError("No lastBranch available to set heading or vymnote.");
             return;
     }
 
@@ -271,23 +283,36 @@ void VymReader::readHeading() // FIXME-1 test with legacy vym versions
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         vymtext.setText(unquoteQuotes(s));
+
+    }
+
+    //htmldata += xml.text();  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
+    htmldata += xml.readElementText(QXmlStreamReader::IncludeChildElements);  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
+    qDebug() << "htmldata: " << htmldata << "  xml.name=" << xml.name() << vymtext.getText();
+    qDebug() << xml.tokenType() << xml.tokenString();
+
+    if (versionLowerOrEqual(version, "2.4.99") && // XML-FIXME-1 test with legacy
+        htmldata.contains("<html>"))
+        // versions before 2.5.0 didn't use CDATA to save richtext
+        vymtext.setAutoText(htmldata);
+    else {
+        // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
+        // Later versions use the <heading text="...">  attribute,
+        // If both htmldata and vymtext are already available, use the
+        // vymtext
+        if (vymtext.isEmpty())
+            vymtext.setText(htmldata);
+    }
+
+    qDebug() << "xmlname: " << xml.name();
+    if (xml.name() == "heading")
         lastBranch->setHeading(vymtext);
 
-        /*
-        if (versionLowerOrEqual(version, "2.4.99") && // FIXME-1 test with legacy
-            htmldata.contains("<html>"))
-            // versions before 2.5.0 didn't use CDATA to save richtext
-            vymtext.setAutoText(htmldata);
-        else {
-            // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
-            // Later versions use the <heading text="...">  attribute,
-            // If both htmldata and vymtext are already available, use the
-            // vymtext
-            if (vymtext.isEmpty())
-                vymtext.setText(htmldata);
-        }
-        */
-    }
+    if (xml.name() == "vymnote")
+        lastBranch->setNote(vymtext);
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
@@ -597,7 +622,7 @@ void VymReader::readBranchAttr()
     }
 }
 
-void VymReader::readOrnamentsAttr() // FIXME-0 not ported yet
+void VymReader::readOrnamentsAttr() // XML-FIXME-0 add tests for legacy absPos and relPos
 {
     Q_ASSERT(xml.isStartElement() && (
             xml.name() == QLatin1String("branch") ||
@@ -610,38 +635,56 @@ void VymReader::readOrnamentsAttr() // FIXME-0 not ported yet
         float x, y;
 
         QString a = "posX";
-        x = xml.attributes().value(a).toFloat(&okx);
-        a = "posY";
-        y = xml.attributes().value(a).toFloat(&oky);
-        if (okx && oky)
-            lastMI->setPos(QPointF(x, y));
-        else {
-            xml.raiseError("Could not parse attributes posX and posY");
-            return;
+        QString s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            x = xml.attributes().value(a).toFloat(&okx);
+            a = "posY";
+            s = xml.attributes().value(a).toString();
+            if (!s.isEmpty()) {
+                y = xml.attributes().value(a).toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setPos(QPointF(x, y));
+                else {
+                    xml.raiseError("Could not parse attributes posX and posY");
+                    return;
+                }
+            }
         }
 
         // Only left for compatibility with versions < 2.9.500
         a = "relPosX";
-        x = xml.attributes().value(a).toFloat(&okx);
-        a = "relPosY";
-        y = xml.attributes().value(a).toFloat(&oky);
-        if (okx && oky)
-            lastMI->setPos(QPointF(x, y));
-        else {
-            xml.raiseError("Could not parse attributes relPosX and relPosY");
-            return;
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            x = xml.attributes().value(a).toFloat(&okx);
+            a = "relPosY";
+            s = xml.attributes().value(a).toString();
+            if (!s.isEmpty()) {
+                y = xml.attributes().value(a).toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setPos(QPointF(x, y));
+                else {
+                    xml.raiseError("Could not parse attributes relPosX and relPosY");
+                    return;
+                }
+            }
         }
 
         // Only left for compatibility with versions < 2.9.500
         a = "absPosX";
-        x = xml.attributes().value(a).toFloat(&okx);
-        a = "absPosY";
-        y = xml.attributes().value(a).toFloat(&oky);
-        if (okx && oky)
-            lastMI->setPos(QPointF(x, y));
-        else {
-            xml.raiseError("Could not parse attributes absPosX and absPosY");
-            return;
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            x = xml.attributes().value(a).toFloat(&okx);
+            a = "absPosY";
+            s = xml.attributes().value(a).toString();
+            if (!s.isEmpty()) {
+                y = xml.attributes().value(a).toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setPos(QPointF(x, y));
+                else {
+                    xml.raiseError("Could not parse attributes absPosX and absPosY");
+                    return;
+                }
+            }
         }
     }
 }
