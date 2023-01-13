@@ -188,7 +188,8 @@ void VymReader::readMapCenter()
     readBranchAttr();
 
     while (xml.readNextStartElement()) {
-        if (xml.name() == QLatin1String("heading"))
+        if (xml.name() == QLatin1String("heading") ||
+            xml.name() == QLatin1String("vymnote"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch"))
             readBranch();
@@ -217,7 +218,8 @@ void VymReader::readBranch()
     readBranchAttr();
 
     while (xml.readNextStartElement()) {
-        if (xml.name() == QLatin1String("heading"))
+        if (xml.name() == QLatin1String("heading") ||
+            xml.name() == QLatin1String("vymnote"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch"))
             readBranch();
@@ -624,7 +626,7 @@ void VymReader::readBranchAttr()
     }
 }
 
-void VymReader::readOrnamentsAttr() // XML-FIXME-0 add tests for legacy absPos and relPos
+void VymReader::readOrnamentsAttr()
 {
     Q_ASSERT(xml.isStartElement() && (
             xml.name() == QLatin1String("branch") ||

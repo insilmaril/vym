@@ -455,12 +455,68 @@ qreal VymModelWrapper::getPosX()
             c = (Container*)(selii->getImageContainer());
     }
 
-    qDebug() << "VMW x=" << c->pos().x();   // FIXME-0 testing
     if (c)
         return setResult(c->pos().x());
 
     logError(context(), QScriptContext::UnknownError,
-             "Could not get position from item");
+             "Could not get x-position from item");
+}
+
+qreal VymModelWrapper::getPosY()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    if (c)
+        return setResult(c->pos().y());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get y-position from item");
+}
+
+qreal VymModelWrapper::getScenePosX()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    if (c)
+        return setResult(c->scenePos().x());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get scenePos.x() from item");
+}
+
+qreal VymModelWrapper::getScenePosY()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    if (c)
+        return setResult(c->scenePos().y());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get scenePos.y() from item");
 }
 
 int VymModelWrapper::getRotationHeading()

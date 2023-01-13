@@ -61,11 +61,9 @@ class VymModelWrapper : public VymScriptContext {
     QString getNotePlainText();
     QString getNoteXML();
     qreal getPosX();
-    /*
     qreal getPosY();
-    qreal getPosSceneX();
-    qreal getPosSceneY();
-    */
+    qreal getScenePosX();
+    qreal getScenePosY();
     int getRotationHeading();
     int getRotationSubtree();
     QString getSelectionString();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
 <vymmap  version="2.4.0" author="Uwe Drechsel" title="VYM - View Your Mind" 
     date="2015-04-24" branchCount="6" backgroundColor="#ffffff" defaultFont="Sans Serif,16,-1,0,50,0,0,0,0,0" selectionColor="#ffff00" linkStyle="StylePolyParabel" linkColor="#0000ff" defXLinkColor="#0211e6" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0" linkColorHint="HeadingColor">
-    <mapcenter absPosX="123" absPosY="0" hideLink="false" uuid="{27bcd406-6fd4-455a-9323-c4cecc5c2498}">
+    <mapcenter absPosX="314" absPosY="0" hideLink="false" uuid="{27bcd406-6fd4-455a-9323-c4cecc5c2498}">
         <heading  textColor="#000000">View Your Mind</heading>
         <frame  frameType="Cloud" penColor="#000000" brushColor="#ffffff" padding="5" borderWidth="3" />
         <vymnote  fonthint="undef">
@@ -48,7 +48,7 @@ p, li { white-space: pre-wrap; }
         </body>
       </html>
         </vymnote>
-        <branch relPosX="165" relPosY="-28" hideLink="false" incImgV="true" incImgH="true" uuid="{d91a5a92-151b-45ac-bb07-7292f27ad43d}">
+        <branch relPosX="123" relPosY="42" hideLink="false" incImgV="true" incImgH="true" uuid="{d91a5a92-151b-45ac-bb07-7292f27ad43d}">
             <heading  textColor="#ff5500">Examples</heading>
             <frame  frameType="RoundedRectangle" penColor="#ff8000" brushColor="#ececec" padding="5" borderWidth="1" includeChildren="true" />
             <standardflag>lamp</standardflag>

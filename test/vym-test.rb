@@ -921,13 +921,14 @@ def test_load_legacy_maps
   map = init_map (@testDir + "/" + "test-legacy-text.xml")
   map.select @branch_a
   expect "Heading with plaintext as characters is read", map.getHeadingPlainText, "Heading in characters"
-  close_current_map
 
-  map = init_map ("test/example-pre-2.9.500-positions.xml")
   map.select @center_0
-  expect "Position of #{@center_0} is ok (currently #{map.getPosX()}", map.getPosX().to_f, 0
+  expect "Checking parsing 'absPos': x-position of #{@center_0} is ok", map.getPosX().to_f, 314
+  expect "Checking parsing 'absPos': y-position of #{@center_0} is ok", map.getPosY().to_f, 0
+  map.select @main_a
+  expect "Checking parsing 'relPos': x-position of #{@main_a} is ok", map.getPosX().to_f, 123
+  expect "Checking parsing 'relPos': y-position of #{@main_a} is ok", map.getPosY().to_f, 42
   close_current_map
-  waitkey
 end
 
 #######################
