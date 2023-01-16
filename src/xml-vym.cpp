@@ -117,36 +117,42 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             lastBranch = model->createMapCenter();
         }
         else {
-            // Treat the found mapcenter as a branch
+            // Treat the found mapcenter as a branch or another mapcenter
             // in an existing map
-            BranchItem *bi = model->getSelectedBranch();
-            if (bi) {
-                lastBranch = bi;
-                if (loadMode == File::ImportAdd) {
-                    // Import Add
-                    if (insertPos < 0)
-                        lastBranch = model->createBranch(lastBranch);
-                    else {
-                        lastBranch = model->addNewBranch(lastBranch, insertPos);
-                        insertPos++;
-                    }
+            lastBranch = model->getSelectedBranch();
+            qDebug() << "xml-vym mapcenter found. lastBranch = " << lastBranch << insertPos;
+            if (!lastBranch)
+                lastBranch = rootItem;
+
+            if (loadMode == File::ImportAdd) {
+                // Import Add
+                if (insertPos < 0)
+                    lastBranch = model->createBranch(lastBranch);
+                else {
+                    // Needed for undo of deleting a mapcenter at insertPos
+                    lastBranch = model->addNewBranch(lastBranch, insertPos);
+                    insertPos++;
+                }
+            } else {
+                // Import Replace
+                if (insertPos < 0) {
+                    insertPos = lastBranch->num() + 1;
+                    model->clearItem(lastBranch);
                 }
                 else {
-                    // Import Replace
-                    if (insertPos < 0) {
-                        insertPos = lastBranch->num() + 1;
-                        model->clearItem(lastBranch);
-                    }
+                    BranchItem *pi = lastBranch->parentBranch();
+                    if (!pi)
+                        qWarning() << "No parentBranch found when trying to replace branch with mapcenter";
                     else {
-                        BranchItem *pi = bi->parentBranch();
                         lastBranch = model->addNewBranch(pi, insertPos);
                         insertPos++;
                     }
                 }
             }
-            else
+            //}
+            //else
                 // if nothing selected, add mapCenter without parent
-                lastBranch = model->createMapCenter();
+            //    lastBranch = model->createMapCenter();
         }
         readBranchAttr(atts);
     }

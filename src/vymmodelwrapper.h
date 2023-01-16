@@ -30,7 +30,7 @@ class VymModelWrapper : public VymScriptContext {
   public slots:
     void addBranch();
     void addBranchBefore();
-    void addMapCenter(qreal x, qreal y);
+    void addMapCenterAtPos(qreal x, qreal y);
     void addMapInsert(QString filename, int pos, int contentFilter);
     void addMapInsert(const QString &filename, int pos);
     void addMapInsert(const QString &filename);

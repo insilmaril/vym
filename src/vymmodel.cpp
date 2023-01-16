@@ -1552,7 +1552,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             qDebug() << "VM::saveState  undoBlock = " << undoBlock;
             qDebug() << "VM::saveState  redoBlock = " << redoBlock;
         }
-        return;
+        return; // FIXME-00 returns before PATH is set and replaced!
     }
 
     if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) {
@@ -2983,9 +2983,13 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach() // FIXME-2 savestate missing
+void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis;
+    if (bi)
+        selbis << bi;
+    else
+        selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
@@ -3020,9 +3024,9 @@ void VymModel::sortChildren(bool inverse)
     }
 }
 
-BranchItem *VymModel::createMapCenter()
+BranchItem *VymModel::createMapCenter(int pos)
 {
-    BranchItem *newbi = addMapCenter(QPointF(0, 0));
+    BranchItem *newbi = addMapCenterAtPos(QPointF(0, 0));
     return newbi;
 }
 
@@ -3248,12 +3252,12 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag)
             contextPos *= 1 / (qreal)(rootItem->branchCount());
     }
 
-    BranchItem *bi = addMapCenter(contextPos);
+    BranchItem *bi = addMapCenterAtPos(contextPos);
     updateActions();
     emitShowSelection();
     if (saveStateFlag)
         saveState(bi, "remove()", nullptr,
-                  QString("addMapCenter (%1,%2)")
+                  QString("addMapCenterAtPos (%1,%2)")
                       .arg(contextPos.x())
                       .arg(contextPos.y()),
                   QString("Adding MapCenter to (%1,%2)")
@@ -3263,10 +3267,9 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag)
     return bi;
 }
 
-BranchItem *VymModel::addMapCenter(QPointF absPos)
+BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
 // createMapCenter could then probably be merged with createBranch
 {
-
     // Create TreeItem
     QModelIndex parix = index(rootItem);
 
@@ -3344,21 +3347,21 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos)
+BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
 {
     BranchItem *newbi = nullptr;
-    if (!bi)
-        bi = getSelectedBranch();
+    if (!pi)
+        pi = getSelectedBranch();
 
-    if (bi) {
+    if (pi) {
         QString redosel = getSelectString(bi);
-        newbi = addNewBranchInt(bi, pos);
+        newbi = addNewBranchInt(pi, pos);
         QString undosel = getSelectString(newbi);
 
         if (newbi) {
             saveState(undosel, "remove ()", redosel,
                       QString("addBranch (%1)").arg(pos),
-                      QString("Add new branch to %1").arg(getObjectName(bi)));
+                      QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
             // In Network mode, the client needs to know where the new branch
@@ -3451,7 +3454,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         dst->insertBranch(num_dst, branch);
         endInsertRows();
 
-        // RelinkBranch: Save current own position for undo // FIXME-2
+        // RelinkBranch: Save current own position for undo // FIXME-2 test with deleteKeepCHildren and delete main branch or even mapcenter!
         // and save current children positions for undo
 
         // Prepare relinking: Save old position for undo, if required
@@ -3620,15 +3623,20 @@ void VymModel::deleteLater(uint id)
         deleteLaterIDs.append(id);
 }
 
-void VymModel::deleteSelection()
+void VymModel::deleteSelection(ulong selID)
 {
-    QList<uint> selectedIDs = getSelectedIDs();
+    QList<ulong> selectedIDs;
+    if (selID > 0)
+        selectedIDs << selID;
+    else
+        selectedIDs = getSelectedIDs();
+
     unselectAll();
     QString fn;
 
     mapEditor->stopAllAnimation();  // FIXME-2 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
 
-    foreach (uint id, selectedIDs) {
+    foreach (ulong id, selectedIDs) {
         TreeItem *ti = findID(id);
         if (ti) {
             if (ti->hasTypeBranch()) { // Delete branch
@@ -3672,45 +3680,49 @@ void VymModel::deleteSelection()
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)  // FIXME-2 still uses BO/LMO below and causes wrong stacking order
-// deleteKeepChildren FIXME-3+ does not work yet for mapcenters
-// deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
+void VymModel::deleteKeepChildren(bool saveStateFlag)
 {
-    BranchItem *selbi = getSelectedBranch();
-    BranchItem *pi;
-    if (selbi) {
-        // Don't use this on mapcenter
-        if (selbi->depth() < 1)
-            return;
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+        // FIXME-3 Don't use this (yet) on mapcenter (could use detach(BranchItem*) !)
+        if (selbi->depth() < 1) {
+            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-0 cont here. Undo script fails
+            while (selbi->branchCount() > 0)
+                detach(selbi->getBranchNum(0));
 
-        pi = (BranchItem *)(selbi->parent());
-        // Check if we have children at all to keep
-        if (selbi->branchCount() == 0) {
-            deleteSelection();
-            return;
+            deleteSelection(selbi->getID());
+            //saveStateEndBlock();
+        } else {
+            // Check if we have children at all to keep
+            if (selbi->branchCount() == 0) {
+                deleteSelection();
+                break;
+            }
+
+            BranchItem *pi = (BranchItem *)(selbi->parent());
+
+            if (saveStateFlag)
+                saveStateChangingPart(pi, pi, "removeKeepChildren ()",
+                                      QString("Remove %1 and keep its children")
+                                          .arg(getObjectName(selbi)));
+
+            QString sel = getSelectString(selbi);
+            unselectAll();
+            bool oldSaveState = saveStateBlocked;
+            saveStateBlocked = true;
+            int num_dst = selbi->num();
+            BranchItem *bi = selbi->getFirstBranch();
+            while (bi) {
+                relinkBranch(bi, pi, num_dst, true);
+                bi = selbi->getFirstBranch();
+                num_dst++;
+            }
+            deleteItem(selbi);
+            reposition();
+            emitDataChanged(pi);
+            select(sel);
+            saveStateBlocked = oldSaveState;
         }
-
-        if (saveStateFlag)
-            saveStateChangingPart(pi, pi, "removeKeepChildren ()",
-                                  QString("Remove %1 and keep its children")
-                                      .arg(getObjectName(selbi)));
-
-        QString sel = getSelectString(selbi);
-        unselectAll();
-        bool oldSaveState = saveStateBlocked;
-        saveStateBlocked = true;
-        int num_dst = selbi->num();
-        BranchItem *bi = selbi->getFirstBranch();
-        while (bi) {
-            relinkBranch(bi, pi, num_dst, true);
-            bi = selbi->getFirstBranch();
-            num_dst++;
-        }
-        deleteItem(selbi);
-        reposition();
-        emitDataChanged(pi);
-        select(sel);
-        saveStateBlocked = oldSaveState;
     }
 }
 
@@ -6076,9 +6088,9 @@ QModelIndex VymModel::getSelectedIndex()
         return QModelIndex();
 }
 
-QList<uint> VymModel::getSelectedIDs()
+QList<ulong> VymModel::getSelectedIDs()
 {
-    QList<uint> uids;
+    QList<ulong> uids;
     foreach (TreeItem *ti, getSelectedItems())
         uids.append(ti->getID());
     return uids;

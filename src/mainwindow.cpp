@@ -540,7 +540,7 @@ void Main::setupAPI()
     c = new Command("addBranchBefore", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("addMapCenter", Command::Any);
+    c = new Command("addMapCenterAtPos", Command::Any);
     c->addPar(Command::Double, false, "Position x");
     c->addPar(Command::Double, false, "Position y");
     modelCommands.append(c);

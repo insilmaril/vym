@@ -83,9 +83,9 @@ void VymModelWrapper::addBranchBefore()
                  "Couldn't add branch before selection to map");
 }
 
-void VymModelWrapper::addMapCenter(qreal x, qreal y)
+void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
 {
-    if (!model->addMapCenter(QPointF(x, y)))
+    if (!model->addMapCenterAtPos(QPointF(x, y)))
         logError(context(), QScriptContext::UnknownError,
                  "Couldn't add mapcenter");
 }
