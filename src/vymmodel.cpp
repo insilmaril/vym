@@ -689,7 +689,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
 {
     QString tmpZipDir;
     QString mapFileName;
-    QString safeFilePath;
+    QString saveFilePath;
 
     File::ErrorCode err = File::Success;
 
@@ -697,7 +697,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
         // save as .xml
         mapFileName = mapName + ".xml";
     else
-        // use name given by user, even if he chooses .doc
+        // use name given by user, could be anything
         mapFileName = fileName;
 
     // Look, if we should zip the data:
@@ -719,18 +719,18 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
             tr("uncompressed, potentially overwrite existing data"));
         mb.setButtonText(QMessageBox::Cancel, tr("Cancel"));
         switch (mb.exec()) {
-        case QMessageBox::Yes:
-            // save compressed (default file format)
-            zipped = true;
-            break;
-        case QMessageBox::No:
-            // save uncompressed
-            zipped = false;
-            break;
-        case QMessageBox::Cancel:
-            // do nothing
-            return File::Aborted;
-            break;
+            case QMessageBox::Yes:
+                // save compressed (default file format)
+                zipped = true;
+                break;
+            case QMessageBox::No:
+                // save uncompressed
+                zipped = false;
+                break;
+            case QMessageBox::Cancel:
+                // do nothing
+                return File::Aborted;
+                break;
         }
     }
 
@@ -769,8 +769,8 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
             return File::Aborted;
         }
 
-        safeFilePath = filePath;
-        setFilePath(tmpZipDir + "/" + mapName + ".xml", safeFilePath);
+        saveFilePath = filePath;
+        setFilePath(tmpZipDir + "/" + mapName + ".xml", saveFilePath);
     } // zipped
 
     // Create mapName and fileDir
@@ -798,7 +798,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
         else
             saveFile = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
                                  QPointF(), getSelectedBranch());
-        // TODO take care of multiselections
+        // FIXME-3 take care of multiselections when saving parts
     }
 
     bool saved;
@@ -822,7 +822,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
         removeDir(QDir(tmpZipDir));
 
         // Restore original filepath outside of tmp zip dir
-        setFilePath(safeFilePath);
+        setFilePath(saveFilePath);
     }
 
     updateActions();
