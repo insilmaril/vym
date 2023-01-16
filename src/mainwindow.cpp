@@ -79,7 +79,7 @@ extern TaskEditor *taskEditor;
 extern TaskModel *taskModel;
 extern Macros macros;
 extern QDir tmpVymDir;
-extern QDir cashDir;
+extern QDir cacheDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
 extern int statusbarTime;
@@ -177,13 +177,13 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     d.mkdir(clipboardDir);
     makeSubDirs(clipboardDir);
 
-    // Create directory for cashed files, e.g. svg images
-    if (!tmpVymDir.mkdir("cash")) {
+    // Create directory for cached files, e.g. svg images
+    if (!tmpVymDir.mkdir("cache")) {
         qWarning(
-            "Mainwindow: Could not create cash directory, failed to start vym");
+            "Mainwindow: Could not create cache directory, failed to start vym");
         exit(1);
     }
-    cashDir = QDir(tmpVymDirPath + "/cash");
+    cacheDir = QDir(tmpVymDirPath + "/cache");
 
     // Remember PID of our friendly webbrowser
     browserPID = new qint64;

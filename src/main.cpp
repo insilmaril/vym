@@ -66,10 +66,10 @@ FlagRowMaster *userFlagsMaster;
 Macros macros;
 
 ulong itemLastID = 0;  // Unique ID for all items in all models
-ulong imageLastID = 0; // Unique ID for cashing images, also flags not in tree
+ulong imageLastID = 0; // Unique ID for caching images, also flags not in tree
 
 QDir tmpVymDir;          // All temp files go there, created in mainwindow
-QDir cashDir;            // tmp dir with cashed svg files in tmpVymDir
+QDir cacheDir;            // tmp dir with cached svg files in tmpVymDir
 QString clipboardDir;    // Clipboard used in all mapEditors
 QString clipboardFile;   // Clipboard used in all mapEditors
 

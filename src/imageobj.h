@@ -41,7 +41,7 @@ class ImageObj : public QGraphicsItem {
     ImageObj::ImageType imageType;
 
     QGraphicsSvgItem *svgItem;
-    QString svgCashPath;
+    QString svgCachePath;
 
     QGraphicsPixmapItem *pixmapItem;
     QPixmap *originalPixmap;

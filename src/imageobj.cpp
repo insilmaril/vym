@@ -9,7 +9,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QSvgGenerator>
 
-extern QDir cashDir;
+extern QDir cacheDir;
 extern ulong imageLastID;
 
 /////////////////////////////////////////////////////////////////
@@ -79,11 +79,11 @@ void ImageObj::copy(ImageObj *other)
     switch (other->imageType) {
     case ImageObj::SVG:
     case ImageObj::ClonedSVG:
-        if (!other->svgCashPath.isEmpty()) {
-            load(other->svgCashPath, true);
+        if (!other->svgCachePath.isEmpty()) {
+            load(other->svgCachePath, true);
         }
         else
-            qWarning() << "ImgObj::copy svg: no svgCashPath available.";
+            qWarning() << "ImgObj::copy svg: no svgCachePath available.";
 
         svgItem->setVisible(isVisible());
         break;
@@ -255,21 +255,21 @@ bool ImageObj::load(const QString &fn, bool createClone)
 
         if (createClone) {
             imageType = ImageObj::ClonedSVG;
-            svgCashPath = fn;
+            svgCachePath = fn;
         }
         else {
             imageType = ImageObj::SVG;
 
-            // Copy original file to cash
+            // Copy original file to cache
             QFile svgFile(fn);
-            QString newPath = cashDir.path() + "/" + QString().number(imageID) +
+            QString newPath = cacheDir.path() + "/" + QString().number(imageID) +
                               "-" + basename(fn);
             if (!svgFile.copy(newPath)) {
                 qWarning() << "ImageObj::load (" << fn
                            << ") could not be copied to " << newPath;
             }
 
-            svgCashPath = newPath;
+            svgCachePath = newPath;
         }
 
         return true;
@@ -300,9 +300,9 @@ bool ImageObj::save(const QString &fn)
     case ImageObj::SVG:
     case ImageObj::ClonedSVG:
         if (svgItem) {
-            QFile svgFile(svgCashPath);
+            QFile svgFile(svgCachePath);
             if (!QFile(fn).exists() && !svgFile.copy(fn)) {
-                qWarning() << "ImageObj::save  failed to copy " << svgCashPath
+                qWarning() << "ImageObj::save  failed to copy " << svgCachePath
                            << " to " << fn;
                 return false;
             }
@@ -346,7 +346,7 @@ QIcon ImageObj::getIcon()
     switch (imageType) {
     case ImageObj::SVG:
     case ImageObj::ClonedSVG:
-        return QPixmap(svgCashPath);
+        return QPixmap(svgCachePath);
         break;
     case ImageObj::Pixmap:
     case ImageObj::ModifiedPixmap:

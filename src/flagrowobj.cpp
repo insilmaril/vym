@@ -130,7 +130,7 @@ void FlagRowObj::activateFlag(Flag *flag)
         FlagObj *fo = new FlagObj(this);
 
         // Loading an imageObj  will *copy* it
-        // and thus read the flag from cash
+        // and thus read the flag from cache
         fo->loadImage(flag->getImageObj());
 
         fo->setUuid(flag->getUuid());
