@@ -98,15 +98,43 @@ void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
     if (loadMode == File::NewMap || loadMode == File::DefaultMap) {
         // Create mapCenter
         model->clear();
-        lastBranch = nullptr;
+        lastBranch = model->getRootItem();
 
         readVymMapAttr();
+    } else {
+        // Imports need a selection
+        lastBranch = model->getSelectedBranch();
+        if (!lastBranch) {
+            xml.raiseError("readVymMap - Importing map, but nothing selected!");
+            return;
+        }
+
+        qDebug() << "a) Importing to lB=" << lastBranch->getHeadingPlain();
+        if (loadMode == File::ImportReplace) {
+            qDebug() << "b) ImportReplace  insPos=" << insertPos << "lastBranch=" << lastBranch;
+            insertPos = lastBranch->num();
+            BranchItem *pb = lastBranch->parentBranch();
+            if (!pb) {
+                xml.raiseError("readVymMap - No parent branch for selection in ImportReplace!");
+                return;
+            }
+
+            qDebug() << "c) lB deleted: " << insertPos << lastBranch;
+            model->deleteItem(lastBranch);
+            lastBranch = pb;
+            loadMode == File::ImportAdd;
+        } else {
+            if (insertPos < 0)
+                insertPos = 0;
+        }
     }
 
     while (xml.readNextStartElement()) {
-        if (xml.name() == QLatin1String("mapcenter"))
-            readMapCenter();
-        else if (xml.name() == QLatin1String("setting"))
+        if (xml.name() == QLatin1String("mapcenter") ||
+            xml.name() == QLatin1String("branch")) {
+            readBranchOrMapCenter(loadMode, insertPos);
+            insertPos++;
+        } else if (xml.name() == QLatin1String("setting"))
             readSetting();
         else if (xml.name() == QLatin1String("select"))
             readSelection();
@@ -147,82 +175,49 @@ void VymReader::readSetting()
     }
 }
 
-void VymReader::readMapCenter()
+void VymReader::readMapCenter() // XML-FIXME-00 merge with readBranchOrMapCenter()?!?
 {
-    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("mapcenter"));
-
-    if (loadMode == File::NewMap) {
-        // Really use this as mapCenter in a new map
-        lastBranch = model->createMapCenter();
-    } else {
-        // Use the "mapcenter" from xml  as a "branch"
-        // in an existing map
-        BranchItem *bi = model->getSelectedBranch();
-        if (bi) {
-            lastBranch = bi;
-            if (loadMode == File::ImportAdd) {
-                // Import Add
-                if (insertPos < 0)
-                    lastBranch = model->createBranch(lastBranch);
-                else {
-                    lastBranch = model->addNewBranch(lastBranch, insertPos);
-                    insertPos++;
-                }
-            }
-            else {
-                // Import Replace
-                if (insertPos < 0) {
-                    insertPos = lastBranch->num() + 1;
-                    model->clearItem(lastBranch);
-                }
-                else {
-                    BranchItem *pi = bi->parentBranch();
-                    lastBranch = model->addNewBranch(pi, insertPos);
-                    insertPos++;
-                }
-            }
-        } else
-            // if nothing selected, add mapCenter without parent
-            lastBranch = model->createMapCenter();
-    }
-    readBranchAttr();
-
-    while (xml.readNextStartElement()) {
-        if (xml.name() == QLatin1String("heading") ||
-            xml.name() == QLatin1String("vymnote"))
-            readHeadingOrVymNote();
-        else if (xml.name() == QLatin1String("branch"))
-            readBranch();
-        else if (xml.name() == QLatin1String("frame"))
-            readFrame();
-        else if (xml.name() == QLatin1String("standardFlag") ||
-                 xml.name() == QLatin1String("standardflag"))
-            readStandardFlag();
-    // XML-FIXME-00 cont here with images, notes, ...
-        else if (xml.name() == QLatin1String("userflag"))
-            readUserFlag();
-        else {
-            raiseUnknownElementError();
-            return;
-        }
-    }
-
-    model->emitDataChanged(lastBranch); // XML-FIXME-2 needed?
+    qDebug() << "VM::readMC called!";
 }
 
-void VymReader::readBranch()
+void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertPosBranch)
 {
-    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("branch"));
+    Q_ASSERT(xml.isStartElement() &&
+            (xml.name() == QLatin1String("branch") ||
+             xml.name() == QLatin1String("mapcenter")));
 
-    lastBranch = model->createBranch(lastBranch);
+    qDebug() << "1) readBoMC   lB=" << lastBranch << "loadMode=" << loadModeBranch << "insPos=" << insertPosBranch;
+
+    // Create branch or mapCenter
+    if (loadModeBranch == File::NewMap || loadModeBranch == File::DefaultMap) {
+        if (lastBranch == model->getRootItem())
+            lastBranch = model->createMapCenter();
+        else
+            lastBranch = model->createBranch(lastBranch);
+    } else {
+        // For Imports create branch at insertPos
+        // (Here we only use ImportInsert, replacements already have
+        // been done before)
+        if (loadModeBranch == File::ImportAdd) {
+            if (insertPosBranch < 0) {
+                qDebug () << "  - creating new branch to " << lastBranch->getHeadingPlain();
+                lastBranch = model->createBranch(lastBranch);
+            }
+            else {
+                lastBranch = model->addNewBranch(lastBranch, insertPosBranch);
+            }
+        }
+    }
     readBranchAttr();
 
+    // While going deeper, no longer "import" but just load as usual
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("heading") ||
             xml.name() == QLatin1String("vymnote"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch"))
-            readBranch();
+            // Going deeper we regard incoming data as "new", no inserts/replacements
+            readBranchOrMapCenter(File::NewMap, -1);
         else if (xml.name() == QLatin1String("frame"))
             readFrame();
         else if (xml.name() == QLatin1String("standardFlag") ||
@@ -244,7 +239,8 @@ void VymReader::readBranch()
 
     model->emitDataChanged(lastBranch);
 
-    lastBranch = (BranchItem *)(lastBranch->parent());
+    qDebug() << "  lB before selecting parent: " << lastBranch->getHeadingPlain();
+    lastBranch = lastBranch->parentBranch();
     lastBranch->setLastSelectedBranch(0);
 }
 

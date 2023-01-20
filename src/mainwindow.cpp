@@ -3676,7 +3676,7 @@ void Main::fileNew()
 
     QString default_path = settings
                                .value("/system/defaultMap/path",
-                                      vymBaseDir.path() + "/demos/default.vym")
+                                      vymBaseDir.path() + "/demos/default.vym") // FIXME-2 maybe switch to xml for default map?
                                .toString();
 
     // Don't show counter while loading default map
@@ -3781,8 +3781,8 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
 
         if (lmode == File::NewMap) {
             if (vm && vm->isDefault()) {
-                // There is a map model already and it still the default map,
-                // use it.
+                // There is a map model already and it still is the default map,
+                // no need to create a new model.
                 createModel = false;
             }
             else
@@ -6854,6 +6854,7 @@ void Main::testFunction1()
         return;
     currentMapEditor()->testFunction1();
     */
+    editImportReplace(); return;
     VymModel *m = currentModel();
     if (m) {
         //m->repeatLastCommand();

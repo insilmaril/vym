@@ -501,7 +501,6 @@ class VymModel : public TreeModel {
     TreeItem *deleteItem(
         TreeItem *); //!< Delete item and return parent (if parent!= rootItem)
     void deleteLink(Link *); //!< Remove Link and related LinkItems in TreeModel
-    void clearItem(TreeItem *ti); //!< Remove all children of TreeItem ti
     bool scrollBranch(BranchItem *);
     bool unscrollBranch(BranchItem *);
     void toggleScroll();

@@ -3750,33 +3750,6 @@ void VymModel::deleteLink(Link *l)
         delete (l);
 }
 
-void VymModel::clearItem(TreeItem *ti)
-{
-    if (ti) {
-        // Clear task (or other data in item itself)
-        ti->clear();
-
-        QModelIndex parentIndex = index(ti);
-        if (!parentIndex.isValid())
-            return;
-
-        int n = ti->childCount();
-        if (n == 0)
-            return;
-
-        emit(layoutAboutToBeChanged());
-
-        beginRemoveRows(parentIndex, 0, n - 1);
-        removeRows(0, n, parentIndex);
-        endRemoveRows();
-
-        reposition();
-
-        emit(layoutChanged());
-    }
-    return;
-}
-
 bool VymModel::scrollBranch(BranchItem *bi)
 {
     if (bi) {

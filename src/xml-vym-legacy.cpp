@@ -135,7 +135,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     // Import Replace
                     if (insertPos < 0) {
                         insertPos = lastBranch->num() + 1;
-                        model->clearItem(lastBranch);
+                        // FIXME-2 removed in VM model->clearItem(lastBranch);
                     }
                     else {
                         BranchItem *pi = bi->parentBranch();
@@ -254,13 +254,13 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!readImageAttr(atts))
             return false;
     }
-    else if ((eName == "branch" || eName == "floatimage") && // XML-FIXME-0 port and test
+    else if ((eName == "branch" || eName == "floatimage") && // XML-FIXME-0 port and test. Used e.g. in paste()
              state == StateMap) {
         // This is used in vymparts, which have no mapcenter or for undo
         isVymPart = true;
         TreeItem *ti = model->getSelectedItem();
         if (!ti) {
-            // If a vym part is _loaded_ (not imported),
+            // If a vym part is _loaded_ (not imported),    // XML-FIXME-1 test loading vympart .vyp
             // selection==lmo==nullptr
             // Treat it like ImportAdd then...
             loadMode = File::ImportAdd;
@@ -280,8 +280,8 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     if (insertPos >= 0)
                         model->relinkBranch(lastBranch, (BranchItem *)ti, insertPos);
                 }
-                else
-                    model->clearItem(lastBranch);
+                //else
+                    // FIXME-2 removed in VM model->clearItem(lastBranch);
                 readBranchAttr(atts);
             }
             else if (eName == "floatimage") {
