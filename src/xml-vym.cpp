@@ -111,18 +111,19 @@ void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
 
         qDebug() << "a) Importing to lB=" << lastBranch->getHeadingPlain();
         if (loadMode == File::ImportReplace) {
-            qDebug() << "b) ImportReplace  insPos=" << insertPos << "lastBranch=" << lastBranch;
             insertPos = lastBranch->num();
             BranchItem *pb = lastBranch->parentBranch();
+            qDebug() << "b) ImportReplace  insPos=" << insertPos << "lastBranch=" << lastBranch << lastBranch->getHeadingPlain();
             if (!pb) {
                 xml.raiseError("readVymMap - No parent branch for selection in ImportReplace!");
                 return;
             }
 
-            qDebug() << "c) lB deleted: " << insertPos << lastBranch;
+            qDebug() << "c) lB deleted: " << insertPos << lastBranch << " new lB=" << pb << pb->getHeadingPlain();
             model->deleteItem(lastBranch);
             lastBranch = pb;
-            loadMode == File::ImportAdd;
+            loadMode = File::ImportAdd;
+            qDebug() << "d) loadMode= " << loadMode;
         } else {
             if (insertPos < 0)
                 insertPos = 0;
@@ -186,7 +187,7 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             (xml.name() == QLatin1String("branch") ||
              xml.name() == QLatin1String("mapcenter")));
 
-    qDebug() << "1) readBoMC   lB=" << lastBranch << "loadMode=" << loadModeBranch << "insPos=" << insertPosBranch;
+    qDebug() << "1) readBoMC   lB=" << lastBranch << "loadModeBranch=" << loadModeBranch << "insPos=" << insertPosBranch;
 
     // Create branch or mapCenter
     if (loadModeBranch == File::NewMap || loadModeBranch == File::DefaultMap) {
