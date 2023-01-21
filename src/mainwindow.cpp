@@ -1133,7 +1133,24 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
 
-    a = new QAction( tr("Firefox Bookmarks", "Import filters") + 
+    // Import at selection (adding to selection)
+    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportAdd = a;
+    fileImportMenu->addAction(a);
+
+    // Import at selection (replacing selection)
+    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportReplace = a;
+    fileImportMenu->addAction(a);
+    fileImportMenu->addSeparator();
+
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") +
                         tr("(experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this,
@@ -1934,20 +1951,6 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep28 = a;
-
-    // Import at selection (adding to selection)
-    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportAdd = a;
-
-    // Import at selection (replacing selection)
-    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportReplace = a;
 
     // Save selection
     a = new QAction(tr("Save selection", "Edit menu"), this);

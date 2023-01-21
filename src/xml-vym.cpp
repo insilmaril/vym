@@ -109,21 +109,17 @@ void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
             return;
         }
 
-        qDebug() << "a) Importing to lB=" << lastBranch->getHeadingPlain();
         if (loadMode == File::ImportReplace) {
             insertPos = lastBranch->num();
             BranchItem *pb = lastBranch->parentBranch();
-            qDebug() << "b) ImportReplace  insPos=" << insertPos << "lastBranch=" << lastBranch << lastBranch->getHeadingPlain();
             if (!pb) {
                 xml.raiseError("readVymMap - No parent branch for selection in ImportReplace!");
                 return;
             }
 
-            qDebug() << "c) lB deleted: " << insertPos << lastBranch << " new lB=" << pb << pb->getHeadingPlain();
             model->deleteItem(lastBranch);
             lastBranch = pb;
             loadMode = File::ImportAdd;
-            qDebug() << "d) loadMode= " << loadMode;
         } else {
             if (insertPos < 0)
                 insertPos = 0;
@@ -187,8 +183,6 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             (xml.name() == QLatin1String("branch") ||
              xml.name() == QLatin1String("mapcenter")));
 
-    qDebug() << "1) readBoMC   lB=" << lastBranch << "loadModeBranch=" << loadModeBranch << "insPos=" << insertPosBranch;
-
     // Create branch or mapCenter
     if (loadModeBranch == File::NewMap || loadModeBranch == File::DefaultMap) {
         if (lastBranch == model->getRootItem())
@@ -200,10 +194,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
         // (Here we only use ImportInsert, replacements already have
         // been done before)
         if (loadModeBranch == File::ImportAdd) {
-            if (insertPosBranch < 0) {
-                qDebug () << "  - creating new branch to " << lastBranch->getHeadingPlain();
+            if (insertPosBranch < 0)
                 lastBranch = model->createBranch(lastBranch);
-            }
             else {
                 lastBranch = model->addNewBranch(lastBranch, insertPosBranch);
             }
@@ -240,7 +232,6 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
 
     model->emitDataChanged(lastBranch);
 
-    qDebug() << "  lB before selecting parent: " << lastBranch->getHeadingPlain();
     lastBranch = lastBranch->parentBranch();
     lastBranch->setLastSelectedBranch(0);
 }
