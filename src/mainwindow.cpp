@@ -79,7 +79,7 @@ extern TaskEditor *taskEditor;
 extern TaskModel *taskModel;
 extern Macros macros;
 extern QDir tmpVymDir;
-extern QDir cashDir;
+extern QDir cacheDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
 extern int statusbarTime;
@@ -177,13 +177,13 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     d.mkdir(clipboardDir);
     makeSubDirs(clipboardDir);
 
-    // Create directory for cashed files, e.g. svg images
-    if (!tmpVymDir.mkdir("cash")) {
+    // Create directory for cached files, e.g. svg images
+    if (!tmpVymDir.mkdir("cache")) {
         qWarning(
-            "Mainwindow: Could not create cash directory, failed to start vym");
+            "Mainwindow: Could not create cache directory, failed to start vym");
         exit(1);
     }
-    cashDir = QDir(tmpVymDirPath + "/cash");
+    cacheDir = QDir(tmpVymDirPath + "/cache");
 
     // Remember PID of our friendly webbrowser
     browserPID = new qint64;
@@ -4015,7 +4015,10 @@ void Main::fileSave(VymModel *m) { fileSave(m, File::CompleteMap); }
 
 void Main::fileSaveAs(const File::SaveMode &savemode)
 {
-    if (currentMapEditor()) {
+    VymModel *m = currentModel();
+    if (!m) return;
+
+    if (currentMapEditor()) {   // FIXME-2 this check is not needed
         QString filter;
         if (savemode == File::CompleteMap)
             filter = "VYM map (*.vym)";
@@ -4023,6 +4026,7 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
             filter = "VYM part of map (*vyp)";
         filter += ";;All (* *.*)";
 
+        // Get destination path
         QString fn = QFileDialog::getSaveFileName(
             this, tr("Save map as"), lastMapDir.path(), filter, nullptr,
             QFileDialog::DontConfirmOverwrite);
@@ -4071,28 +4075,26 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
                 }
             }
 
-            // Save now
-            VymModel *m = currentModel();
-            QString fn_org = m->getFilePath(); // Restore fn later, if savemode
-                                               // != File::CompleteMap
-            if (savemode == File::CompleteMap) {
-                // Check for existing lockfile
-                QFile lockFile(fn + ".lock");
-                if (lockFile.exists()) {
-                    QMessageBox::critical(0, tr("Critical Error"),
-                                          tr("Couldn't save %1,\nbecause of "
-                                             "existing lockfile:\n\n%2")
-                                              .arg(fn)
-                                              .arg(lockFile.fileName()));
-                    return;
-                }
+            // Save original filepath, might want to restore after saving
+            QString fn_org = m->getFilePath();
 
-                if (!m->renameMap(fn)) {
-                    QMessageBox::critical(0, tr("Critical Error"),
-                                          tr("Saving the map failed:\nCouldn't rename map to %1").arg(fn));
-                    return;
-                }
+            // Check for existing lockfile
+            QFile lockFile(fn + ".lock");
+            if (lockFile.exists()) {
+                QMessageBox::critical(0, tr("Critical Error"),
+                                      tr("Couldn't save %1,\nbecause of "
+                                         "existing lockfile:\n\n%2")
+                                          .arg(fn)
+                                          .arg(lockFile.fileName()));
+                return;
             }
+
+            if (!m->renameMap(fn)) {
+                QMessageBox::critical(0, tr("Critical Error"),
+                                      tr("Saving the map failed:\nCouldn't rename map to %1").arg(fn));
+                return; // FIXME-3 Check: If saved part of map and this error occurs?
+            }
+
             fileSave(m, savemode);
 
             // Set name of tab
@@ -4101,6 +4103,10 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
             else { // Renaming map to original name, because we only saved the
                    // selected part of it
                 m->setFilePath(fn_org);
+                if (!m->renameMap(fn_org)) {
+                    QMessageBox::critical(0, "Critical Error",
+                                          "Couldn't rename map back to " + fn_org);
+                }
             }
             return;
         }

@@ -16,7 +16,7 @@ Documentation
 * Screencasts
 
     There are several screencasts available on YouTube, which show some
-    feature of vym and how to use them:
+    features of vym and how to use them:
 
     http://www.youtube.com/user/ViewYourMind
 
@@ -31,8 +31,8 @@ https://sourceforge.net/projects/vym/
 
 The latest development drops can be found in the Files/Development folder there.
 
-The latest binaries for Linux (currently mainly openSUSE) are built and available in the
-Open Build Service project of Uwe Drechsel (aka insilmaril):
+The latest binaries for Linux, Debian and Ubuntu are built and available in the authors
+Open Build Service project:
 
 https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym
 
@@ -40,8 +40,8 @@ https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=v
 Source code
 -----------
 
-The source code was hosted on Sourceforge for 16 years. Starting in
-2021 the development is done in github:
+The source code was hosted on Sourceforge for 16 years, but in
+2021 the development moved to github:
 
 https://github.com/insilmaril/vym
 
@@ -70,11 +70,11 @@ Installation
 Questions and feedback
 ----------------------
 
-Please direct support questions to the mailinglist first: 
+Please direct support questions to the mailinglist first:
 
   vym-forum@lists.sourceforge.net
 
-Bugs and feature requests will be taken care of in 
+Bugs and feature requests will be taken care of in
 
   https://github.com/insilmaril/vym/issues
 
