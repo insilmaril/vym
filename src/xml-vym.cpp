@@ -112,7 +112,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     }
     else if (eName == "mapcenter" && state == StateMap) {
         state = StateMapCenter;
-        if (loadMode == File::NewMap) {
+        if (loadMode == File::NewMap || loadMode == File::DefaultMap) {
             // Really use the found mapcenter as MCO in a new map
             lastBranch = model->createMapCenter();
         }
@@ -122,7 +122,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
             lastBranch = model->getSelectedBranch();
             qDebug() << "xml-vym mapcenter found. lastBranch = " << lastBranch << insertPos;
             if (!lastBranch)
-                lastBranch = rootItem;
+                lastBranch = model->getRootItem();
 
             if (loadMode == File::ImportAdd) {
                 // Import Add

@@ -3354,7 +3354,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         pi = getSelectedBranch();
 
     if (pi) {
-        QString redosel = getSelectString(bi);
+        QString redosel = getSelectString(pi);
         newbi = addNewBranchInt(pi, pos);
         QString undosel = getSelectString(newbi);
 
