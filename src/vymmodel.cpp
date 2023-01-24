@@ -4136,7 +4136,7 @@ void VymModel::toggleFlagByName(const QString &name, bool useGroups)
     }
 }
 
-void VymModel::clearFlags()
+void VymModel::clearFlags() // FIXME-2 multiple selections not supported
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {

@@ -37,13 +37,14 @@ class Vym
             end
           end
           com = "vym.#{c} (#{a.join(',')});"
-          puts " ** Calling vym: \"#{com}\":" if $debug
+          puts " * Calling vym: \"#{com}\":" if $debug
           ret = @main.execute( com )
         end
 
         #FIXME-4  err = m.errorLevel[0]
         if $debug
           puts "     Returned: #{ret[0]}" if ret[0] != ""
+          pp ret
           # puts "        Error: #{err}" if err > 0
         end
         ret[0]

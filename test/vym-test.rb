@@ -69,10 +69,11 @@ end
 
 def close_current_map
   id = @vym.currentMapID
-  if @vym.closeMapWithID(id)
+  r = @vym.closeMapWithID(id)
+  if r
     puts "# Closed map with id = #{id}".blue
   else
-    puts "# Failed to close map with id = #{id}".red
+    puts "# Failed to close map with id = #{id}. CurrentMapID = #{id}".red
   end
 end
 
@@ -531,6 +532,7 @@ def test_flags
   unset_flags( map, smileys )
 
   map.clearFlags
+
   expect "clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false
   expect "clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false
 
@@ -538,7 +540,7 @@ def test_flags
   # Toggling flags
   a = ["stopsign", "lifebelt"]
   a.each do |flag|
-    puts "Flag is now: #{flag}"
+    #puts "Flag is now: #{flag}"
     map.toggleFlagByName flag
     expect "toggleFlag: flag #{flag} activated", map.hasActiveFlag(flag), true
 
@@ -929,6 +931,8 @@ def test_saving
   expect "Save selection: After loading of #{fn} #{@center_0} is ok", map.getHeadingPlainText, "branch a"
   map.select @main_a
   expect "Save selection: After loading of #{fn} #{@main_a} is ok", map.getHeadingPlainText, "branch a1"
+
+  close_current_map
 end
 
 ######################
@@ -1088,6 +1092,7 @@ begin
   test_adding_maps
   test_frames
   test_saving
+  test_flags
   #test_bugfixes
 
   # FIXME-1 Tests not refactored completely yet
@@ -1095,7 +1100,6 @@ begin
   ##test_scrolling(vym)
   ##test_moving_parts(vym)
   ##test_modify_branches(vym)
-  #test_flags
   ##test_delete_parts(vym)
   ##test_copy_paste(vym)
   ##test_references(vym)

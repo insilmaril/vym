@@ -62,7 +62,7 @@ void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 
 bool VymWrapper::isConfluenceAgentAvailable()
 {
-    return ConfluenceAgent::available();
+    return setResult(ConfluenceAgent::available());
 }
 
 QObject *VymWrapper::currentMap()
@@ -107,7 +107,7 @@ bool VymWrapper::closeMapWithID(uint n)
     if (!r)
         logError(context(), QScriptContext::RangeError,
                  QString("Map '%1' not available.").arg(n));
-    return r;
+    return setResult(r);
 }
 
 void VymWrapper::selectQuickColor(int n)
@@ -117,7 +117,7 @@ void VymWrapper::selectQuickColor(int n)
 
 QString VymWrapper::currentColor()
 {
-    return mainWindow->getCurrentColor().name();
+    return setResult(mainWindow->getCurrentColor().name());
 }
 
 uint VymWrapper::currentMapID()
@@ -134,7 +134,7 @@ QString VymWrapper::loadFile(
 {
     QString s;
     loadStringFromDisk(filename, s);
-    return s;
+    return setResult(s);
 }
 
 void VymWrapper::saveFile(
