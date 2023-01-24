@@ -784,6 +784,10 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Filename of note to save");
     modelCommands.append(c);
 
+    c = new Command("saveSelection", Command::BranchOrImage);
+    c->addPar(Command::String, false, "Filename to save branch or image");
+    modelCommands.append(c);
+
     c = new Command("scroll", Command::Branch);
     modelCommands.append(c);
 

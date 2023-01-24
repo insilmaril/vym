@@ -1,5 +1,7 @@
 #include "vymmodelwrapper.h"
 
+#include <QMessageBox>
+
 #include "branchitem.h"
 #include "imageitem.h"
 #include "misc.h"
@@ -759,6 +761,19 @@ void VymModelWrapper::saveImage(const QString &filename)
 void VymModelWrapper::saveNote(const QString &filename)
 {
     model->saveNote(filename);
+}
+
+void VymModelWrapper::saveSelection(const QString &filename)
+{
+    QString filename_org = model->getFilePath(); // Restore filename later
+    if (!model->renameMap(filename)) {
+        QMessageBox::critical(0,
+            tr("Critical Error"),
+            tr("Saving the map failed:\nCouldn't rename map to %1").arg(filename));
+        return;
+    }
+    model->save(File::PartOfMap);
+    model->renameMap(filename_org);
 }
 
 void VymModelWrapper::scroll()

@@ -107,6 +107,7 @@ class VymModelWrapper : public VymScriptContext {
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);
     void saveNote(const QString &filename);
+    void saveSelection(const QString &filename);
     void scroll();
     bool select(const QString &s);
     bool selectID(const QString &s);

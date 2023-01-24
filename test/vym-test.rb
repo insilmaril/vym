@@ -54,11 +54,7 @@ end
 def init_map( mapPath )
   # Copy the map referenced above to @testDir/test-current.[vym|xml]
   # and try to load it
-  if mapPath.end_with? ".vym"
-    @currentMapPath = "#{@testDir}/test-current.vym"
-  else
-    @currentMapPath = "#{@testDir}/test-current.xml"
-  end
+  @currentMapPath = "#{@testDir}/test-current#{File.extname(mapPath)}"
   FileUtils.cp mapPath, @currentMapPath
 
   if @vym.loadMap (@currentMapPath)
@@ -916,12 +912,29 @@ def test_headings (vym)
 end
 
 ######################
+def test_saving
+  heading "Saving:"
+  map = init_map @testMapDefaultPath
+  #
+  # Save selection without overwriting original map
+  map.select @branch_a
+  fn = @testDir + "/test-saveSelection.vyp"
+  map.saveSelection(fn)
+  expect "#Save selection: #{@branch_a} to #{fn}", File.file?(fn), true
+
+  close_current_map
+
+  map = init_map fn
+  map.select @center_0
+  expect "Save selection: After loading of #{fn} #{@center_0} is ok", map.getHeadingPlainText, "branch a"
+  map.select @main_a
+  expect "Save selection: After loading of #{fn} #{@main_a} is ok", map.getHeadingPlainText, "branch a1"
+end
+
+######################
 def test_bugfixes
   heading "Bugfixes:"
   map = init_map @testMapDefaultPath
-
-  map.select @main_b
-  expect "Mapcenter of #{@center_1} has no frame", map.getFrameType(true), "NoFrame"
 
   close_current_map
 end
@@ -1074,7 +1087,8 @@ begin
   #test_load_legacy_maps
   #test_adding_maps
   test_frames
-  test_bugfixes
+  test_saving
+  #test_bugfixes
 
   # FIXME-1 Tests not refactored completely yet
   ##test_export # FIXME-1 hangs

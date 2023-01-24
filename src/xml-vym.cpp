@@ -92,6 +92,7 @@ void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
             model->setVersion(version); // XML-FIXME-1 really needed? what for?
     }
 
+    // XML-FIXME-0 read branchCount
     branchesTotal = 0;
     branchesCounter = 0;
 
@@ -424,13 +425,16 @@ void VymReader::readVymMapAttr()
 
     a = "branchCount";
     s = xml.attributes().value(a).toString();
+    int i;
     bool ok;
-    int i = s.toInt(&ok);
-    if (!ok) {
-        xml.raiseError("Could not parse attribute " + a);
-        return;
+    if (!s.isEmpty()) {
+        i = s.toInt(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        branchesTotal = i;
     }
-    branchesTotal = i;
     if (branchesTotal > 10) {
         useProgress = true;
         mainWindow->setProgressMaximum(branchesTotal);
@@ -484,18 +488,22 @@ void VymReader::readVymMapAttr()
     a = "defXLinkColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        col.setNamedColor(s);
-        pen.setColor(col);
+        if (!s.isEmpty()) {
+            col.setNamedColor(s);
+            pen.setColor(col);
+        }
     }
 
     a = "defXLinkWidth";
     s = xml.attributes().value(a).toString();
-    i = s.toInt(&ok);
-    if (!ok) {
-        xml.raiseError("Could not parse attribute  " + a);
-        return;
+    if (!s.isEmpty()) {
+        i = s.toInt(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute  " + a);
+            return;
+        }
+        pen.setWidth(i);
     }
-    pen.setWidth(i);
 
     a = "defXLinkPenStyle";
     s = xml.attributes().value(a).toString();
@@ -520,23 +528,28 @@ void VymReader::readVymMapAttr()
     if (!s.isEmpty())
         model->setMapDefXLinkStyleEnd(s);
 
+    qreal r;
     a = "mapZoomFactor";
     s = xml.attributes().value(a).toString();
-    qreal r = s.toDouble(&ok);
-    if (!ok) {
-        xml.raiseError("Could not parse attribute" + a);
-        return;
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute" + a);
+            return;
+        }
+        model->setMapZoomFactor(r);
     }
-    model->setMapZoomFactor(r);
 
     a = "mapRotationAngle";
     s = xml.attributes().value(a).toString();
-    r = s.toDouble(&ok);
-    if (!ok) {
-        xml.raiseError("Could not parse attribute " + a);
-        return;
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        model->setMapRotationAngle(r);
     }
-    model->setMapRotationAngle(r);
 }
 
 void VymReader::readBranchAttr()
