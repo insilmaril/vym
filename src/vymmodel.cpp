@@ -3680,7 +3680,7 @@ void VymModel::deleteSelection(ulong selID)
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)
+void VymModel::deleteKeepChildren(bool saveStateFlag)   // FIXME-2 nothing done, if childs have attributes
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
