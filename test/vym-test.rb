@@ -97,12 +97,12 @@ def test_vym
 
   expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
 
-  testMapDefaultPath = "#{@testDir}/test-default.vym"
-  expect "Default map exists at '#{testMapDefaultPath}'", File.file?(testMapDefaultPath), true
+  pp @testMapDefaultPath
+  expect "Default map exists at '#{@testMapDefaultPath}'", File.file?(@testMapDefaultPath), true
 
   testMapPath = "#{@testDir}/test-default.vym"
-  map = init_map testMapDefaultPath
-  expect "init_map copies default map to '#{testMapPath}'", File.file?(testMapPath), true
+  map = init_map @testMapDefaultPath
+  expect "init_map copies default testmap to '#{testMapPath}'", File.file?(testMapPath), true
   expect "Title of copied map title is accessible and not empty", map.getMapTitle.length > 0, true
 
   close_current_map
@@ -111,7 +111,7 @@ end
 #######################
 def test_basics
   heading "Basic checks:"
-  map = init_map( @testDir + "/" + "test-default.vym")
+  map = init_map @testMapDefaultPath
 
   title = "vym map used for testing"
   expect "map title is '#{title}'", map.getMapTitle, title
@@ -141,7 +141,7 @@ end
 #######################
 def test_export
   heading "Export:"
-  map = init_map( @testDir + "/" + "test-default.vym")
+  map = init_map @testMapDefaultPath
 
   #HTML
   exportdir = "#{@testDir}/export-html"
@@ -280,7 +280,7 @@ end
 #######################
 def test_extrainfo
   heading "Extra information:"
-  map = init_map( @testDir + "/" + "test-default.vym")
+  map = init_map @testMapDefaultPath
   map.setMapAuthor("Fra Erasmas")
   expect "Set and get map author", map.getMapAuthor, "Fra Erasmas"
   map.setMapComment("xy z")
@@ -294,7 +294,7 @@ end
 #######################
 def test_adding_branches
   heading "Adding branches:"
-  map = init_map( @testDir + "/" + "test-default.vym")
+  map = init_map @testMapDefaultPath
   map.select @main_a
   n = map.branchCount.to_i
   map.addBranch()
@@ -307,7 +307,7 @@ def test_adding_branches
   expect( "Undo: addBranch", map.branchCount.to_i, n )
 
   close_current_map
-  map = init_map( @testDir + "/" + "test-default.vym")
+  map = init_map @testMapDefaultPath
 
   map.select @main_a
   n = map.branchCount.to_i
@@ -322,7 +322,7 @@ def test_adding_branches
   expect "Undo: addBranchAbove/Below", map.branchCount.to_i, n
 
   close_current_map
-  map = init_map( @testDir + "/" + "test-default.vym")
+  map = init_map @testMapDefaultPath
 
   map.select @branch_a
   map.addBranchBefore
@@ -341,36 +341,44 @@ def test_adding_branches
 end
 
 #######################
-def test_adding_maps (vym)
+def test_adding_maps
   heading "Adding maps"
-  map = init_map( vym )
+  map = init_map @testMapDefaultPath
   map.select @branch_a
-  n=map.branchCount.to_i
-  map.addMapReplace "test/default.vym"
+  n = map.branchCount.to_i
+  map.addMapReplace @testMapDefaultPath
   map.select @main_a
-  expect "addMapReplace: check branch count in #{@main_a}", map.branchCount.to_i, n + @n_centers -1
+  expect "addMapReplace: check branch count in #{@main_a}", map.branchCount.to_i, n + 1
   map.select @branch_a
   expect "addMapReplace: check if #{@branch_a} is new", map.branchCount.to_i, 2
+  expect "addMapReplace: Loaded MapCenter 0", map.getHeadingPlainText, "MapCenter 0"
+  map.select @branch_b
+  expect "addMapReplace: Loaded MapCenter 1", map.getHeadingPlainText, "MapCenter 1"
 
   map.undo
   map.select @main_a
   expect "Undo: check branch count in #{@main_a}", map.branchCount.to_i, 3
   map.select @branch_a
   expect "Undo: check if #{@branch_a} is back", map.branchCount.to_i, 3
+  close_current_map
 
-  map = init_map( vym )
-  map.select @main_a
-  map.addMapInsert "test/default.vym", 1
-  map.select @main_a
+  map = init_map @testMapDefaultPath
+  map.select @branch_a
+  n = map.branchCount.to_i
+  map.addMapInsert @testMapDefaultPath, 1  # Create testmap with several MCs
+  map.select @branch_a
   expect "addMapInsert: branch count",  map.branchCount.to_i, n + 2
-  map.select @main_a + ",bo:1"
+  map.select @branch_a + ",bo:1"
   expect "addMapInsert: new heading", map.getHeadingPlainText, "MapCenter 0"
+  map.select @branch_a + ",bo:2"
+  expect "addMapInsert: new heading", map.getHeadingPlainText, "MapCenter 1"
 
   map.undo
-  map.select @main_a
-  expect "Undo: check branch count in #{@main_a}", map.branchCount.to_i, 3
+  map.select @branch_a
+  expect "Undo: check branch count in #{@branch_a}", map.branchCount.to_i, 3
   map.select @branch_b
   expect "Undo: check heading of  #{@branch_b}",  map.getHeadingPlainText, "branch b"
+  close_current_map
 end
 
 #######################
@@ -472,7 +480,7 @@ end
 #######################
 def test_flags
   heading "Flags"
-  map = init_map( @testDir + "/" + "test-default.vym")
+  map = init_map @testMapDefaultPath
   map.select @main_a
 
   def set_flags (map, flags)
@@ -908,11 +916,37 @@ def test_headings (vym)
 end
 
 ######################
-def test_bugfixes (vym)
+def test_bugfixes
   heading "Bugfixes:"
-  map = init_map( vym )
+  map = init_map @testMapDefaultPath
+
   map.select @main_b
   expect "Mapcenter of #{@center_1} has no frame", map.getFrameType(true), "NoFrame"
+
+  close_current_map
+end
+
+######################
+def test_frames
+  heading "Frames:"
+  map = init_map @testMapFrames
+
+  map.select @center_0
+  expect "Mapcenter of #{@center_0} has no inner frame", map.getFrameType(true), "NoFrame"
+  expect "Mapcenter of #{@center_0} has no outer frame", map.getFrameType(true), "NoFrame"
+
+  map.select @center_1
+  expect "Mapcenter of #{@center_1} has no inner frame", map.getFrameType(true), "NoFrame"
+  expect "Mapcenter of #{@center_1} has outer frame", map.getFrameType(false), "RoundedRectangle"
+
+  map.select @center_2
+  expect "Mapcenter of #{@center_2} has inner frame", map.getFrameType(true), "RoundedRectangle"
+  expect "Mapcenter of #{@center_2} has no outer frame", map.getFrameType(false), "NoFrame"
+
+  map.select @center_3
+  expect "Mapcenter of #{@center_3} has inner frame", map.getFrameType(true), "RoundedRectangle"
+  expect "Mapcenter of #{@center_3} has outer frame", map.getFrameType(false), "RoundedRectangle"
+  close_current_map
 end
 
 ######################
@@ -999,7 +1033,8 @@ begin
   end.parse!
 
   @testDir = options[:testDir]
-  @testmap = "#{@testDir}/test-default.vym"
+  @testMapDefaultPath= "#{@testDir}/test-default.vym"
+  @testMapFrames = "#{@testDir}/test-frames.vym"
 
   $tests_passed    = 0
   $tests_failed    = 0
@@ -1008,14 +1043,16 @@ begin
 
   #######################
   @center_0="mc:0"
-  @center_1="mc:1"
   @main_a="mc:0,bo:0"
     @branch_a=@main_a+",bo:0"
     @branch_b=@main_a+",bo:1"
     @branch_c=@main_a+",bo:2"
   @main_b="mc:0,bo:1"
+  @center_1="mc:1"
+  @center_2="mc:2"
+  @center_3="mc:3"
 
-  @n_centers=2
+  @n_centers = 2
 
   instance_name = 'test'
 
@@ -1031,14 +1068,16 @@ begin
   end
 
   test_vym
-  #test_basics
+  test_basics
   #test_extrainfo
   #test_adding_branches
-  test_load_legacy_maps
+  #test_load_legacy_maps
+  #test_adding_maps
+  test_frames
+  test_bugfixes
 
   # FIXME-1 Tests not refactored completely yet
   ##test_export # FIXME-1 hangs
-  ##test_adding_maps(vym)
   ##test_scrolling(vym)
   ##test_moving_parts(vym)
   ##test_modify_branches(vym)
@@ -1051,8 +1090,8 @@ begin
   ##test_tasks(vym)
   ##test_notes(vym)
   ##test_headings(vym)
-  ##test_bugfixes(vym)
 
+  # XML-FIXME-1 missing tests (and commands): importAdd, importReplace
   summary
 
 end

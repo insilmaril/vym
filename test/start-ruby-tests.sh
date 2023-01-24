@@ -3,6 +3,8 @@
 SRCDIR=test
 VYMTESTDIR=$(mktemp -d /tmp/vym-test-XXXX)
 
+echo Created $VYMTESTDIR
+#
 # Copy test data to temporary test directory
 cp $SRCDIR/*.vym $VYMTESTDIR
 cp $SRCDIR/*.xml $VYMTESTDIR
