@@ -47,7 +47,7 @@ class ImageContainer : public SelectableContainer {
     ImageContainer::ImageType imageType;
 
     QGraphicsSvgItem *svgItem;
-    QString svgCashPath;
+    QString svgCachePath;
 
     QGraphicsPixmapItem *pixmapItem;
     QPixmap *originalPixmap;

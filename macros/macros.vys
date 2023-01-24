@@ -6,7 +6,7 @@ function toggle_frame(map)
     if (map.getFrameType(true) == "NoFrame" ) {
         map.setFrameType (true, "RoundedRectangle");
 	} else
-		map.setFrameType (true, "NoFrame");
+    map.setFrameType (true, "NoFrame");
 }
 function colorSubtreeWithQuickColor(n)
 {

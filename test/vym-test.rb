@@ -1082,10 +1082,10 @@ begin
 
   test_vym
   test_basics
-  #test_extrainfo
-  #test_adding_branches
-  #test_load_legacy_maps
-  #test_adding_maps
+  test_extrainfo
+  test_adding_branches
+  test_load_legacy_maps
+  test_adding_maps
   test_frames
   test_saving
   #test_bugfixes

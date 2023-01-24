@@ -13,6 +13,7 @@ class Vector;
 class QDialog;
 
 /////////////////////////////////////////////////////////////////////////////
+QString boolToString(const bool &);
 QString richTextToPlain(QString r);
 QString qpointToString(const QPoint &p);
 QString qpointFToString(const QPointF &p, int d = 1);

@@ -420,11 +420,11 @@ class VymModel : public TreeModel {
     void moveDown();               //!< Move branch down
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
-    void detach();                 //!< Detach branch and use as new mapcenter
+    void detach(BranchItem* bi = nullptr);   //!< Detach branch and use as new mapcenter
     void sortChildren(bool inverse = false); //!< Sort children lexically
 
     // The create methods are used to quickly parse a XML file
-    BranchItem *createMapCenter();             //!< Create MapCenter
+    BranchItem *createMapCenter(int pos = -1); //!< Create MapCenter
     BranchItem *createBranch(BranchItem *dst); //!< Create Branch
     ImageItem *createImage(BranchItem *dst);   //!< Create image
 
@@ -442,10 +442,10 @@ class VymModel : public TreeModel {
 
     /*! \brief Add new mapcenter
 
-    Disclaimer: Still experimental, not fully supported yet.
+    Disclaimer: Still experimental, not fully supported yet. FIXME-2 compare with createMapCenter()
     */
     BranchItem *addMapCenter(bool saveStateFlag = true);
-    BranchItem *addMapCenter(QPointF absPos);
+    BranchItem *addMapCenterAtPos(QPointF absPos);
 
     /*! \brief Add new branch
 
@@ -492,7 +492,7 @@ class VymModel : public TreeModel {
   public:
     void cleanupItems();    //!< Delete orphaned Items
     void deleteLater(uint); //!< Delete later with new beginRemoveRow
-    void deleteSelection(); //!< Delete selection
+    void deleteSelection(ulong selID = 0); //!< Delete selection
     void deleteKeepChildren(
         bool saveStateFlag = true); //!< remove branch, but keep children
   public:
@@ -679,7 +679,6 @@ class VymModel : public TreeModel {
   private:
     MapDesign* mapDesign;
 
-    QColor defLinkColor;        // default color for links  //FIXME-2 move to mapDesign
     QPen defXLinkPen;           // default pen for xlinks   //FIXME-2 move to mapDesign
     QString defXLinkStyleBegin; // default style begin      //FIXME-2 move to mapDesign
     QString defXLinkStyleEnd;
@@ -820,7 +819,7 @@ class VymModel : public TreeModel {
     TreeItem *getSelectedItem();
     QList<TreeItem *> getSelectedItems();
     QModelIndex getSelectedIndex();
-    QList<uint> getSelectedIDs();
+    QList<ulong> getSelectedIDs();
     QStringList getSelectedUUIDs();
     bool isSelected(TreeItem *);
     QString getSelectString();

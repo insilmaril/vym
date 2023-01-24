@@ -139,7 +139,7 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     url = "images/" + prefix + "image-" + QString().number(itemID) +
           imageContainer->getExtension();
 
-    // And really save the image  (svgs will be copied from cash!)
+    // And really save the image  (svgs will be copied from cache!)
     imageContainer->save(tmpdir + "/" + url);
 
     QString nameAttr = attribut("originalName", originalFilename);
