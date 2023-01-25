@@ -173,11 +173,6 @@ void VymReader::readSetting()
     }
 }
 
-void VymReader::readMapCenter() // XML-FIXME-00 merge with readBranchOrMapCenter()?!?
-{
-    qDebug() << "VM::readMC called!";
-}
-
 void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertPosBranch)
 {
     Q_ASSERT(xml.isStartElement() &&

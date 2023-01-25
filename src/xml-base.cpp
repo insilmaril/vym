@@ -33,6 +33,11 @@ void BaseReader::setModel(VymModel *vm)
     model = vm;
 }
 
+void BaseReader::setTmpDir(QString tp)
+{
+    tmpDir = tp;
+}
+
 void BaseReader::setInputString(const QString &s) { inputString = s; }
 
 void BaseReader::setLoadMode(const File::LoadMode &lm, int p)

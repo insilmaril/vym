@@ -23,6 +23,7 @@ class BaseReader {
 
     QString parseHREF(QString href);
     void setModel(VymModel *);
+    void setTmpDir(QString);
     void setInputString(const QString &);
     void setLoadMode(const File::LoadMode &, int p = -1);
 

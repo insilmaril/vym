@@ -593,6 +593,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         else
             tmpdir = fname.left(fname.lastIndexOf("/", -1));
 
+        reader->setTmpDir(tmpdir);
+
         if (lmode == File::ImportReplace)
             reader->setLoadMode(File::ImportReplace, pos);
         else
