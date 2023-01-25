@@ -1060,7 +1060,7 @@ bool parseVYMHandler::readTaskAttr(const QXmlAttributes &a)
     return true;
 }
 
-bool parseVYMHandler::readUserFlagDefAttr(const QXmlAttributes &a)  // XML-FIXME-0 test, also without loaded .vym map in parallel and also missing resource
+bool parseVYMHandler::readUserFlagDefAttr(const QXmlAttributes &a)
 {
     QString name;
     QString path;

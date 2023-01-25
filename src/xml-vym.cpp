@@ -92,7 +92,6 @@ void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
             model->setVersion(version); // XML-FIXME-1 really needed? what for?
     }
 
-    // XML-FIXME-0 read branchCount
     branchesTotal = 0;
     branchesCounter = 0;
 

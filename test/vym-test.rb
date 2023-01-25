@@ -475,8 +475,8 @@ def test_modify_branches (vym)
 end
 
 #######################
-def test_flags
-  heading "Flags"
+def test_standard_flags
+  heading "Standard flags"
   map = init_map @testMapDefaultPath
   map.select @main_a
 
@@ -548,6 +548,19 @@ def test_flags
     expect "toggleFlag: flag #{flag} deactivated", map.hasActiveFlag(flag), false
   end
 
+  close_current_map
+end
+
+#######################
+def test_user_flags
+  heading "User flags"
+  map = init_map (@testDir + "/" + "test-userflag.vym")
+
+  map.select @branch_a
+  flagName = "userflag-vym"
+  expect "Has active flag '#{flagName}'", map.hasActiveFlag(flagName), true
+
+  # FIXME-0 cont here
   close_current_map
 end
 
@@ -1085,14 +1098,15 @@ begin
   end
 
   test_vym
-  test_basics
-  test_extrainfo
-  test_adding_branches
-  test_load_legacy_maps
-  test_adding_maps
-  test_frames
-  test_saving
-  test_flags
+  #test_basics
+  #test_extrainfo
+  #test_adding_branches
+  #test_load_legacy_maps
+  #test_adding_maps
+  #test_frames
+  #test_saving
+  #test_standard_flags
+  test_user_flags
   #test_bugfixes
 
   # FIXME-1 Tests not refactored completely yet

@@ -44,6 +44,15 @@ bool FlagRow::isActive(const QUuid &uid)
     return false;
 }
 
+bool FlagRow::hasFlag(const QString &name)
+{
+    Flag *f = masterRow->findFlagByName(name);
+    if (f)
+        return true;
+    else
+        return false;
+}
+
 bool FlagRow::toggle(const QString &name, bool useGroups)
 {
     // First get UID from mastRow

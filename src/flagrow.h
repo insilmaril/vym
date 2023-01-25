@@ -17,6 +17,7 @@ class FlagRow
     const QList<QUuid> activeFlagUids();
     bool isActive(const QString &name);
     bool isActive(const QUuid &uuid);
+    bool hasFlag(const QString &name);
 
     /*! \brief Toggle a Flag
     To activate a flag its uid will be copied from masterRow to activeUids in
