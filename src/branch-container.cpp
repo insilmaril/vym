@@ -933,7 +933,7 @@ FrameContainer::FrameType BranchContainer::frameType(const bool &useInnerFrame)
     return FrameContainer::NoFrame;
 }
 
-QString BranchContainer::frameTypeString(const bool &useInnerFrame) // FIXME-0 Not working for outer frame
+QString BranchContainer::frameTypeString(const bool &useInnerFrame)
 {
     if (useInnerFrame) {
         if (innerFrame)
