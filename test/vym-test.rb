@@ -379,9 +379,10 @@ def test_adding_maps
 end
 
 #######################
-def test_scrolling (vym)
+def test_scrolling
   heading "Scrolling and unscrolling"
-  map = init_map( vym )
+  map = init_map @testMapDefaultPath
+
   map.select @main_a
   map.toggleScroll
   expect "toggleScroll", map.isScrolled, true
@@ -392,7 +393,6 @@ def test_scrolling (vym)
   map.unscroll
   expect "unscroll", map.isScrolled, false
 
-  map = init_map( vym )
   map.scroll
   map.select @branch_a
   map.scroll
@@ -402,15 +402,15 @@ def test_scrolling (vym)
   expect "unscrollChildren", map.isScrolled, false
   map.undo
   expect "undo unscrollChildren", map.isScrolled, true
-  map.unscroll
-  map.select @branch_a
-  map.unscroll
+
+  close_current_map
 end
 
 #######################
-def test_moving_parts (vym)
+def test_moving_parts
   heading "Moving parts"
-  map = init_map( vym )
+  map = init_map @testMapDefaultPath
+
   map.select @branch_a
   map.moveDown
   map.select @branch_a
@@ -419,7 +419,7 @@ def test_moving_parts (vym)
   map.select @branch_a
   expect "Undo Moving down", map.getHeadingPlainText, "branch a"
 
-  map = init_map( vym )
+  #map = init_map( vym )
   map.select @branch_b
   map.moveUp
   map.select @branch_a
@@ -428,7 +428,7 @@ def test_moving_parts (vym)
   map.select @branch_b
   expect "Undo Moving up", map.getHeadingPlainText, "branch b"
 
-  map = init_map( vym )
+  #map = init_map( vym )
   map.select @main_b
   n=map.branchCount.to_i
   map.select @branch_a
@@ -440,13 +440,12 @@ def test_moving_parts (vym)
   map.select @branch_b
   expect "Undo: RelinkTo #{@main_b}: branchCount decreased there", map.branchCount.to_i, n
 
-  map = init_map( vym )
+  #map = init_map( vym )
   map.select @main_a
   err = map.relinkTo @branch_a,0,0,0
   expect_error "RelinkTo myself fails.", err
 
-  map
-  map = init_map( vym )
+  #map = init_map( vym )
   map.select @branch_a
   n=map.branchCount.to_i
   map.select @main_b
@@ -458,6 +457,8 @@ def test_moving_parts (vym)
   map.undo
   map.select @center_0
   expect "Undo RelinkTo pos 1: branchCount of center", map.branchCount.to_i, 2
+
+  close_current_map
 end
 
 #######################
@@ -741,11 +742,19 @@ def test_xlinks (vym)
 end
 
 #######################
-def test_tasks (vym)
+def test_tasks
   heading "Tasks:"
-  map = init_map( vym )
-  map.select @main_a
-  expect "Branch has no task before test", map.hasTask, false
+  map = init_map (@testDir + "/" + "test-tasks.xml")
+
+  map.select @branch_a
+  expect "After loading #{@branch_a} has no task", map.hasTask, false
+
+  map.select @branch_b
+  expect "After loading #{@branch_b} has task", map.hasTask, true
+  expect "After loading #{@branch_b} task sleeps more than 1000 days",
+    map.getTaskSleepDays.to_i > 1000, true
+
+  map.select @branch_a
   map.toggleTask
   expect "Toggle task", map.hasTask, true
 
@@ -812,6 +821,8 @@ def test_tasks (vym)
   expect "Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true
   expect "Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'",
     map.getTaskSleep, date_later_iso
+
+  close_current_map
 end
 
 ######################
@@ -1104,26 +1115,25 @@ begin
   #test_load_legacy_maps
   #test_adding_maps
   #test_frames
+  test_moving_parts
   #test_saving
+  #test_scrolling
   #test_standard_flags
-  test_user_flags
+  #test_tasks
+  #test_user_flags
   #test_bugfixes
 
   # FIXME-1 Tests not refactored completely yet
   ##test_export # FIXME-1 hangs
-  ##test_scrolling(vym)
-  ##test_moving_parts(vym)
   ##test_modify_branches(vym)
   ##test_delete_parts(vym)
   ##test_copy_paste(vym)
   ##test_references(vym)
   ##test_history(vym)
   ##test_xlinks(vym)
-  ##test_tasks(vym)
   ##test_notes(vym)
   ##test_headings(vym)
 
-  # XML-FIXME-1 missing tests (and commands): importAdd, importReplace
   summary
 
 end

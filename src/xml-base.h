@@ -4,6 +4,8 @@
 #include <QXmlStreamReader>
 
 #include "file.h"
+
+#include "task.h"
 #include "vymtext.h"
 
 
@@ -27,6 +29,8 @@ class BaseReader {
     void setInputString(const QString &);
     void setLoadMode(const File::LoadMode &, int p = -1);
 
+    QString attributeToString(const QString &a);
+
   protected:
     VymModel *model;
 
@@ -43,8 +47,13 @@ class BaseReader {
     VymText vymtext;
 
     BranchItem *lastBranch;
-    //ImageItem *lastImage;
+    Task *lastTask;
     MapItem *lastMI;
+    //
+    //ImageItem *lastImage;
+    //SlideItem *lastSlide;
+    //QString lastSetting;
+
 };
 
 #endif

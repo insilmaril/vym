@@ -46,3 +46,7 @@ void BaseReader::setLoadMode(const File::LoadMode &lm, int p)
     insertPos = p;
 }
 
+QString BaseReader::attributeToString(const QString &a)
+{
+    return xml.attributes().value(a).toString();
+}

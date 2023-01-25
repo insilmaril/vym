@@ -197,7 +197,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!atts.value("text").isEmpty())
             vymtext.setText(unquoteQuotes(atts.value("text")));
     }
-    else if (eName == "task" && // XML-FIXME-0 port and test
+    else if (eName == "task" &&
              (state == StateMapCenter || state == StateBranch)) {
         state = StateTask;
         lastTask = taskModel->createTask(lastBranch);

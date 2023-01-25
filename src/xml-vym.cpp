@@ -62,7 +62,7 @@ void  VymReader::raiseUnknownElementError()
     xml.raiseError("Found unknown element: " + xml.name().toString());
 }
 
-void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
+void VymReader::readVymMap()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("vymmap"));
 
@@ -72,7 +72,6 @@ void VymReader::readVymMap() // XML-FIXME-1 test importAdd/importReplace
         return;
     }
 
-    // FIXME-2 move reading of version attribute to readVymMapAttr()
     if (!xml.attributes().value("version").isEmpty()) {
         version = xml.attributes().value("version").toString();
         if (!versionLowerOrEqualThanVym(version)) {
@@ -213,6 +212,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             readStandardFlag();
         else if (xml.name() == QLatin1String("userflag"))
             readUserFlag();
+        else if (xml.name() == QLatin1String("task"))
+            readTaskAttr();
     // XML-FIXME-00 cont here with images, notes, ...
         else {
             raiseUnknownElementError();
@@ -737,6 +738,46 @@ void VymReader::readFrameAttr()
         i = s.toInt(&ok);
         if (ok)
             bc->setFramePenWidth(useInnerFrame, i);
+    }
+}
+
+void VymReader::readTaskAttr()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("task"));
+
+    if (lastBranch) {
+        lastTask = taskModel->createTask(lastBranch);
+
+        QString s = attributeToString("status");
+        if (!s.isEmpty())
+            lastTask->setStatus(s);
+
+        s = attributeToString("awake");
+        if (!s.isEmpty())
+            lastTask->setAwake(s);
+
+        s = attributeToString("date_creation");
+        if (!s.isEmpty())
+            lastTask->setDateCreation(s);
+
+        s = attributeToString("date_modification");
+        if (!s.isEmpty())
+            lastTask->setDateModification(s);
+
+        s = attributeToString("date_sleep");
+        if (!s.isEmpty()) {
+            if (!lastTask->setDateSleep(s)) {
+                xml.raiseError("Could not set sleep time for task: " + s);
+                return;
+            }
+        }
+        s = attributeToString("prio_delta");
+        if (!s.isEmpty()) {
+            bool ok;
+            int d = s.toInt(&ok);
+            if (ok)
+                lastTask->setPriorityDelta(d);
+        }
     }
 }
 

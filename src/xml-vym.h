@@ -29,16 +29,12 @@ class VymReader : public BaseReader {
     void readBranchAttr();
     void readOrnamentsAttr();
     void readFrameAttr();
+    void readTaskAttr();
 
     int branchesCounter;
     int branchesTotal;
 
     VymText vymtext;
-
-    // Other last* already move to xml-base.h :
-    //SlideItem *lastSlide;
-    //Task *lastTask;
-    //QString lastSetting;
 
     bool useProgress;
 };
