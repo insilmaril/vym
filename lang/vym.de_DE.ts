@@ -2192,7 +2192,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
-        <translation>Konnte %1 nicht speichern</translation>
+        <translation type="vanished">Konnte %1 nicht speichern</translation>
     </message>
     <message>
         <source>Export to Open Office</source>
@@ -4828,7 +4828,18 @@ wird %1 Rückgängig Schritte haben.</translation>
     </message>
     <message>
         <source>Couldn&apos;t rename map to %1</source>
-        <translation>Konnte Map nicht umbenennen zu %1</translation>
+        <translation type="vanished">Konnte Map nicht umbenennen zu %1</translation>
+    </message>
+    <message>
+        <source>Saving the map failed:
+Couldn&apos;t rename map to %1</source>
+        <translation>Die Map konnte nicht gespeichert werden, weil das umbenennen zu %1 fehlgeschlagen ist.</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save as default, failed to rename to
+%1</source>
+        <translation>Konnte die Map nicht als Standard Map speichern, weil das Umbennen fehlgeschlagen ist:
+%1</translation>
     </message>
 </context>
 <context>

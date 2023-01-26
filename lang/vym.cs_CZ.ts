@@ -1801,7 +1801,7 @@ protože se nepodařilo vytvořit uzamykací soubor:
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
-        <translation>Nepodařilo se uložit %1</translation>
+        <translation type="vanished">Nepodařilo se uložit %1</translation>
     </message>
     <message>
         <source>Set path for macros</source>
@@ -3505,7 +3505,13 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Couldn&apos;t rename map to %1</source>
+        <source>Saving the map failed:
+Couldn&apos;t rename map to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save as default, failed to rename to
+%1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
