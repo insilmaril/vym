@@ -4828,7 +4828,7 @@ wird %1 Rückgängig Schritte haben.</translation>
     </message>
     <message>
         <source>Couldn&apos;t rename map to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Map nicht umbenennen zu %1</translation>
     </message>
 </context>
 <context>
