@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
     taskModel = new TaskModel();
 
     debug = options.isOn("debug");
-    
+
     testmode = options.isOn("testmode");
 
     QString pidString = QString::number(QCoreApplication::applicationPid());
@@ -320,10 +320,14 @@ int main(int argc, char *argv[])
     }
     else {
 #if defined(Q_OS_LINUX)
-        if (debug)
+        if (debug) {
             qDebug() << "Main:  (OS Linux)   using $LANG for locale";
+        }
+
         localeName =
             QProcessEnvironment::systemEnvironment().value("LANG", "en");
+        if (localeName.contains('.'))
+            localeName = localeName.left(localeName.indexOf('.'));
 #else
         if (debug)
             qDebug() << "Main:  (OS other)   using  "
@@ -343,6 +347,7 @@ int main(int argc, char *argv[])
     vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
     if (debug) {
         qDebug() << "Main:     localName: " << localeName;
+        qDebug() << "Main:      locale(): " << QLocale::system().name();
         qDebug() << "Main:  translations: " << vymTranslationsDir.path();
         qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
         qDebug() << "Main:          LANG: "
@@ -355,6 +360,7 @@ int main(int argc, char *argv[])
     else if (vymTranslationsDir.isEmpty())
         translationsMissing = true;
 
+    QTranslator vymTranslator;
     if (translationsMissing) {
         WarningDialog warn;
         warn.setMinimumWidth(800);
@@ -370,8 +376,9 @@ int main(int argc, char *argv[])
                 " * https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym");
         warn.exec();
     } else {
-        QTranslator vymTranslator;
-        if (!vymTranslator.load(QString("vym.%1").arg(localeName), vymTranslationsDir.path())) {
+        if (debug)
+            qDebug() << "Trying to load " << vymTranslationsDir.path() << QString("vym.%1").arg(localeName);
+        if (!vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path())) {
             WarningDialog warn;
             warn.showCancelButton(false);
             warn.setText(
@@ -380,6 +387,9 @@ int main(int argc, char *argv[])
                     .arg(vymTranslationsDir.path()));
             warn.setShowAgainName("mainwindow/translations/localeMissing");
             warn.exec();
+        } else {
+            if (debug)
+                qDebug() << "Loading translation succeeded :-)";
         }
         app.installTranslator(&vymTranslator);
     }

@@ -67,16 +67,19 @@
 <context>
     <name>AttributeDialog</name>
     <message>
+        <location filename="../forms/attributedialog.ui" line="19"/>
         <source>Attributes</source>
-        <translation type="obsolete">属性</translation>
+        <translation type="unfinished">属性</translation>
     </message>
     <message>
+        <location filename="../forms/attributedialog.ui" line="30"/>
         <source>Add key</source>
-        <translation type="obsolete">添加键</translation>
+        <translation type="unfinished">添加键</translation>
     </message>
     <message>
+        <location filename="../forms/attributedialog.ui" line="50"/>
         <source>Close</source>
-        <translation type="obsolete">关闭</translation>
+        <translation type="unfinished">关闭</translation>
     </message>
 </context>
 <context>
@@ -89,80 +92,173 @@
 <context>
     <name>BranchPropertyEditor</name>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="20"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="376"/>
         <source>Branch Property Editor</source>
-        <translation type="obsolete">分支属性编辑器</translation>
+        <translation type="unfinished">分支属性编辑器</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="30"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="392"/>
         <source>Frame</source>
-        <translation type="obsolete">边框</translation>
+        <translation type="unfinished">边框</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="51"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="377"/>
         <source>Geometry</source>
-        <translation type="obsolete">几何</translation>
+        <translation type="unfinished">几何</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="64"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="378"/>
         <source>No Frame</source>
-        <translation type="obsolete">无边框</translation>
+        <translation type="unfinished">无边框</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="69"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="379"/>
         <source>Rectangle</source>
-        <translation type="obsolete">矩形</translation>
+        <translation type="unfinished">矩形</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="74"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="380"/>
+        <source>Rounded Rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="79"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="381"/>
         <source>Ellipse</source>
-        <translation type="obsolete">椭圆</translation>
+        <translation type="unfinished">椭圆</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="84"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="382"/>
+        <source>Cloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="105"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="384"/>
         <source>Padding</source>
-        <translation type="obsolete">填充</translation>
+        <translation type="unfinished">填充</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="112"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="385"/>
         <source>Borderline width</source>
-        <translation type="obsolete">边缘宽度</translation>
+        <translation type="unfinished">边缘宽度</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="136"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="386"/>
+        <source>Include children</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="169"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="387"/>
         <source>Colors</source>
-        <translation type="obsolete">颜色</translation>
+        <translation type="unfinished">颜色</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="215"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="389"/>
         <source>Borderline color</source>
-        <translation type="obsolete">边缘颜色</translation>
+        <translation type="unfinished">边缘颜色</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="244"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="391"/>
         <source>Background color</source>
-        <translation type="obsolete">背景颜色</translation>
+        <translation type="unfinished">背景颜色</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="273"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="396"/>
         <source>Layout</source>
-        <translation type="obsolete">布局</translation>
+        <translation type="unfinished">布局</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="281"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="393"/>
         <source>Include images horizontally</source>
-        <translation type="obsolete">在水平方向包含图象</translation>
+        <translation type="unfinished">在水平方向包含图象</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="288"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="394"/>
         <source>Include images vertically</source>
-        <translation type="obsolete">在垂直方向包含图象</translation>
+        <translation type="unfinished">在垂直方向包含图象</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="295"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="395"/>
+        <source>Free positioning of children (experimental!)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="318"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="401"/>
+        <source>Task</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="336"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="397"/>
+        <source>Delta priority</source>
+        <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="358"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="398"/>
+        <source>Created:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="375"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="399"/>
+        <source>Modified:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="392"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="400"/>
+        <source>Sleep:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/branchpropeditor.ui" line="420"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="403"/>
         <source>Link</source>
-        <translation type="obsolete">链接</translation>
+        <translation type="unfinished">链接</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="426"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="402"/>
         <source>Hide link if unselected</source>
-        <translation type="obsolete">未选中时隐藏链接</translation>
+        <translation type="unfinished">未选中时隐藏链接</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="447"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="406"/>
         <source>Attributes</source>
-        <translation type="obsolete">属性</translation>
+        <translation type="unfinished">属性</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="473"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="404"/>
         <source>+</source>
-        <translation type="obsolete">+</translation>
+        <translation type="unfinished">+</translation>
     </message>
     <message>
+        <location filename="../forms/branchpropeditor.ui" line="480"/>
+        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="405"/>
         <source>-</source>
-        <translation type="obsolete">-</translation>
+        <translation type="unfinished">-</translation>
     </message>
     <message>
         <location filename="../src/branchpropeditor.cpp" line="21"/>
@@ -328,8 +424,10 @@
 <context>
     <name>ConfluenceUserDialog</name>
     <message>
+        <location filename="../forms/confluence-userdialog.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_confluence-userdialog.h" line="63"/>
         <source>Dialog</source>
-        <translation type="obsolete">对话框</translation>
+        <translation type="unfinished">对话框</translation>
     </message>
     <message>
         <location filename="../src/confluence-userdialog.cpp" line="13"/>
@@ -341,8 +439,34 @@
 <context>
     <name>CredentialsDialog</name>
     <message>
+        <location filename="../forms/credentials.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_credentials.h" line="98"/>
         <source>Dialog</source>
-        <translation type="obsolete">对话框</translation>
+        <translation type="unfinished">对话框</translation>
+    </message>
+    <message>
+        <location filename="../forms/credentials.ui" line="20"/>
+        <location filename="../vym_autogen/include/ui_credentials.h" line="99"/>
+        <source>URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/credentials.ui" line="30"/>
+        <location filename="../vym_autogen/include/ui_credentials.h" line="100"/>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/credentials.ui" line="40"/>
+        <location filename="../vym_autogen/include/ui_credentials.h" line="101"/>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/credentials.ui" line="54"/>
+        <location filename="../vym_autogen/include/ui_credentials.h" line="102"/>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/credentials.cpp" line="7"/>
@@ -363,28 +487,63 @@
 <context>
     <name>EditXLinkDialog</name>
     <message>
+        <location filename="../forms/editxlinkdialog.ui" line="20"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="196"/>
         <source>Edit XLink</source>
-        <translation type="vanished">编辑 XLink</translation>
+        <translation>编辑 XLink</translation>
     </message>
     <message>
+        <location filename="../forms/editxlinkdialog.ui" line="40"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="197"/>
+        <source>Arrow begin:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/editxlinkdialog.ui" line="63"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="198"/>
         <source>XLink width:</source>
-        <translation type="vanished">XLink 宽度：</translation>
+        <translation>XLink 宽度：</translation>
     </message>
     <message>
+        <location filename="../forms/editxlinkdialog.ui" line="79"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="199"/>
+        <source>Use color of heading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/editxlinkdialog.ui" line="177"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="204"/>
+        <source>Line style:</source>
+        <extracomment>Linestyle in Edit XLink dialog</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/editxlinkdialog.ui" line="190"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="205"/>
+        <source>Arrow end:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/editxlinkdialog.ui" line="253"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="208"/>
         <source>Close</source>
-        <translation type="obsolete">关闭</translation>
+        <translation type="unfinished">关闭</translation>
     </message>
     <message>
         <source>Set color of heading</source>
         <translation type="obsolete">设为与标题颜色相同</translation>
     </message>
     <message>
+        <location filename="../forms/editxlinkdialog.ui" line="109"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="202"/>
         <source>XLink color:</source>
-        <translation type="vanished">XLink 颜色：</translation>
+        <translation>XLink 颜色：</translation>
     </message>
     <message>
+        <location filename="../forms/editxlinkdialog.ui" line="151"/>
+        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="203"/>
         <source>Use as default:</source>
-        <translation type="vanished">设为默认：</translation>
+        <translation>设为默认：</translation>
     </message>
     <message>
         <source>Quit and delete XLink</source>
@@ -398,79 +557,223 @@
 <context>
     <name>ExportConfluenceDialog</name>
     <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="26"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="248"/>
+        <source>Export Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="34"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="249"/>
+        <source>Create new page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="44"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="250"/>
+        <source>Update existing page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="145"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="251"/>
         <source>Options</source>
-        <translation type="obsolete">选项</translation>
+        <translation type="unfinished">选项</translation>
     </message>
     <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="166"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="252"/>
+        <source>Use heading of first map center as page name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="179"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="253"/>
         <source>Colored headings in text</source>
-        <translation type="obsolete">标题含有颜色</translation>
+        <translation type="unfinished">标题含有颜色</translation>
     </message>
     <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="192"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="254"/>
         <source>Save settings in map</source>
-        <translation type="obsolete">在该导图中保存设置</translation>
+        <translation type="unfinished">在该导图中保存设置</translation>
     </message>
     <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="208"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="255"/>
+        <source>Image of map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="218"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="256"/>
+        <source>Include images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="228"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="257"/>
+        <source>Table of contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="238"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="258"/>
+        <source>Task flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="248"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="259"/>
+        <source>General flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="290"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="260"/>
         <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
+        <translation type="unfinished">取消</translation>
     </message>
     <message>
+        <location filename="../forms/export-confluence-dialog.ui" line="297"/>
+        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="261"/>
         <source>Export</source>
-        <translation type="obsolete">导出</translation>
+        <translation type="unfinished">导出</translation>
     </message>
 </context>
 <context>
     <name>ExportHTMLDialog</name>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="61"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="316"/>
         <source>Export to directory:</source>
-        <translation type="obsolete">导出至目录：</translation>
+        <translation type="unfinished">导出至目录：</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="90"/>
+        <location filename="../forms/export-html-dialog.ui" line="267"/>
+        <location filename="../forms/export-html-dialog.ui" line="280"/>
+        <location filename="../forms/export-html-dialog.ui" line="353"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="317"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="330"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="331"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="334"/>
         <source>Browse</source>
-        <translation type="obsolete">浏览</translation>
+        <translation type="unfinished">浏览</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="117"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="318"/>
         <source>Options</source>
-        <translation type="obsolete">选项</translation>
+        <translation type="unfinished">选项</translation>
     </message>
     <message>
         <source>Include image</source>
         <translation type="obsolete">包含图象</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="186"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="325"/>
         <source>Colored headings in text</source>
-        <translation type="obsolete">标题含有颜色</translation>
+        <translation type="unfinished">标题含有颜色</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="199"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="326"/>
         <source>Save settings in map</source>
-        <translation type="obsolete">在该导图中保存设置</translation>
+        <translation type="unfinished">在该导图中保存设置</translation>
     </message>
     <message>
         <source>show output of external scripts</source>
         <translation type="obsolete">显示外部脚本输出</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="216"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="327"/>
         <source>Stylesheets</source>
-        <translation type="obsolete">样式表</translation>
+        <translation type="unfinished">样式表</translation>
     </message>
     <message>
         <source>CSS:</source>
         <translation type="obsolete">CSS:</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="26"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="315"/>
+        <source>Export HTML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="138"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="319"/>
+        <source>Image of map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="145"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="320"/>
+        <source>Include images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="152"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="321"/>
+        <source>Table of contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="159"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="322"/>
+        <source>Task flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="166"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="323"/>
+        <source>General flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="173"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="324"/>
+        <source>Number sections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="231"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="328"/>
+        <source>Copy CSS from </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="251"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="329"/>
+        <source>Use CSS from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/export-html-dialog.ui" line="297"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="332"/>
         <source>Scripts</source>
-        <translation type="obsolete">脚本</translation>
+        <translation type="unfinished">脚本</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="327"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="333"/>
         <source>After Export:</source>
-        <translation type="obsolete">导出后：</translation>
+        <translation type="unfinished">导出后：</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="382"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="335"/>
         <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
+        <translation type="unfinished">取消</translation>
     </message>
     <message>
+        <location filename="../forms/export-html-dialog.ui" line="389"/>
+        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="336"/>
         <source>Export</source>
-        <translation type="obsolete">导出</translation>
+        <translation type="unfinished">导出</translation>
     </message>
     <message>
         <location filename="../src/export-html-dialog.cpp" line="130"/>
@@ -496,72 +799,92 @@ want to allow this in your system!</source>
 <context>
     <name>ExportXHTMLDialog</name>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="20"/>
         <source>Export XHTML</source>
-        <translation type="obsolete">导出为 XHTML</translation>
+        <translation type="unfinished">导出为 XHTML</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="40"/>
         <source>Export to directory:</source>
-        <translation type="obsolete">导出至目录：</translation>
+        <translation type="unfinished">导出至目录：</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="63"/>
+        <location filename="../forms/exportxhtmldialog.ui" line="210"/>
+        <location filename="../forms/exportxhtmldialog.ui" line="258"/>
+        <location filename="../forms/exportxhtmldialog.ui" line="324"/>
+        <location filename="../forms/exportxhtmldialog.ui" line="375"/>
         <source>Browse</source>
-        <translation type="obsolete">浏览</translation>
+        <translation type="unfinished">浏览</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="84"/>
         <source>Options</source>
-        <translation type="obsolete">选项</translation>
+        <translation type="unfinished">选项</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="142"/>
         <source>show output of external scripts</source>
-        <translation type="obsolete">显示外部脚本输出</translation>
+        <translation type="unfinished">显示外部脚本输出</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="108"/>
         <source>Include image</source>
-        <translation type="obsolete">包含图象</translation>
+        <translation type="unfinished">包含图象</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="115"/>
         <source>Colored headings in text</source>
-        <translation type="obsolete">标题含有颜色</translation>
+        <translation type="unfinished">标题含有颜色</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="122"/>
         <source>Save settings in map</source>
-        <translation type="obsolete">在该导图中保存设置</translation>
+        <translation type="unfinished">在该导图中保存设置</translation>
     </message>
     <message>
         <source>showWarnings e.g. if directory is not empty</source>
         <translation type="obsolete">显示警告，例如当目录非空时</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="156"/>
         <source>Stylesheets</source>
-        <translation type="obsolete">样式表</translation>
+        <translation type="unfinished">样式表</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="191"/>
         <source>XSL:</source>
-        <translation type="obsolete">XSL:</translation>
+        <translation type="unfinished">XSL:</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="239"/>
         <source>CSS:</source>
-        <translation type="obsolete">CSS:</translation>
+        <translation type="unfinished">CSS:</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="270"/>
         <source>Scripts</source>
-        <translation type="obsolete">脚本</translation>
+        <translation type="unfinished">脚本</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="305"/>
         <source>Before export:</source>
-        <translation type="obsolete">导出前：</translation>
+        <translation type="unfinished">导出前：</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="356"/>
         <source>After Export:</source>
-        <translation type="obsolete">导出后：</translation>
+        <translation type="unfinished">导出后：</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="428"/>
         <source>Export</source>
-        <translation type="obsolete">导出</translation>
+        <translation type="unfinished">导出</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="421"/>
         <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
+        <translation type="unfinished">取消</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -622,39 +945,66 @@ want to allow this in your system!</source>
         <translation type="obsolete">%1 未正常退出</translation>
     </message>
     <message>
+        <location filename="../forms/exportxhtmldialog.ui" line="129"/>
         <source>show warnings of xslt processor</source>
-        <translation type="obsolete">显示 XSLT 处理器的警告</translation>
+        <translation type="unfinished">显示 XSLT 处理器的警告</translation>
     </message>
 </context>
 <context>
     <name>ExtraInfoDialog</name>
     <message>
+        <location filename="../forms/extrainfodialog.ui" line="15"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="165"/>
         <source>VYM - Info</source>
-        <translation type="vanished">VYM - 信息</translation>
+        <translation>VYM - 信息</translation>
     </message>
     <message>
+        <location filename="../forms/extrainfodialog.ui" line="36"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="166"/>
         <source>Map:</source>
-        <translation type="vanished">导图名称：</translation>
+        <translation>导图名称：</translation>
     </message>
     <message>
+        <location filename="../forms/extrainfodialog.ui" line="53"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="167"/>
+        <source>File location:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/extrainfodialog.ui" line="79"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="171"/>
+        <source>Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/extrainfodialog.ui" line="89"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="172"/>
         <source>Author:</source>
-        <translation type="vanished">作者：</translation>
+        <translation>作者：</translation>
     </message>
     <message>
+        <location filename="../forms/extrainfodialog.ui" line="112"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="173"/>
         <source>Comment:</source>
-        <translation type="vanished">注释：</translation>
+        <translation>注释：</translation>
     </message>
     <message>
+        <location filename="../forms/extrainfodialog.ui" line="122"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="174"/>
         <source>Statistics:</source>
-        <translation type="vanished">统计：</translation>
+        <translation>统计：</translation>
     </message>
     <message>
+        <location filename="../forms/extrainfodialog.ui" line="174"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="175"/>
         <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
+        <location filename="../forms/extrainfodialog.ui" line="181"/>
+        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="176"/>
         <source>Close</source>
-        <translation type="vanished">关闭</translation>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
@@ -713,28 +1063,38 @@ want to allow this in your system!</source>
 <context>
     <name>HistoryWindow</name>
     <message>
+        <location filename="../forms/historywindow.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_historywindow.h" line="90"/>
         <source>Dialog</source>
-        <translation type="vanished">对话框</translation>
+        <translation>对话框</translation>
     </message>
     <message>
+        <location filename="../forms/historywindow.ui" line="48"/>
+        <location filename="../vym_autogen/include/ui_historywindow.h" line="91"/>
         <source>Redo</source>
-        <translation type="vanished">重做</translation>
+        <translation>重做</translation>
     </message>
     <message>
         <source>New Row</source>
         <translation type="obsolete">新行</translation>
     </message>
     <message>
+        <location filename="../forms/historywindow.ui" line="70"/>
+        <location filename="../vym_autogen/include/ui_historywindow.h" line="93"/>
         <source>Time</source>
-        <translation type="vanished">时间</translation>
+        <translation>时间</translation>
     </message>
     <message>
+        <location filename="../forms/historywindow.ui" line="75"/>
+        <location filename="../vym_autogen/include/ui_historywindow.h" line="95"/>
         <source>Comment</source>
-        <translation type="vanished">注释</translation>
+        <translation>注释</translation>
     </message>
     <message>
+        <location filename="../forms/historywindow.ui" line="83"/>
+        <location filename="../vym_autogen/include/ui_historywindow.h" line="96"/>
         <source>Undo</source>
-        <translation type="vanished">撤销</translation>
+        <translation>撤销</translation>
     </message>
     <message>
         <source>Close</source>
@@ -781,16 +1141,46 @@ want to allow this in your system!</source>
 <context>
     <name>JiraSettingsDialog</name>
     <message>
+        <location filename="../forms/jira-settings-dialog.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="126"/>
         <source>Dialog</source>
-        <translation type="obsolete">对话框</translation>
+        <translation type="unfinished">对话框</translation>
     </message>
     <message>
+        <location filename="../forms/jira-settings-dialog.ui" line="20"/>
+        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="127"/>
+        <source>JIRA servers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/jira-settings-dialog.ui" line="45"/>
+        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="128"/>
         <source>Add</source>
-        <translation type="obsolete">添加</translation>
+        <translation type="unfinished">添加</translation>
     </message>
     <message>
+        <location filename="../forms/jira-settings-dialog.ui" line="52"/>
+        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="129"/>
         <source>Remove</source>
-        <translation type="obsolete">删除</translation>
+        <translation type="unfinished">删除</translation>
+    </message>
+    <message>
+        <location filename="../forms/jira-settings-dialog.ui" line="61"/>
+        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="130"/>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/jira-settings-dialog.ui" line="71"/>
+        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="131"/>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/jira-settings-dialog.ui" line="85"/>
+        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="132"/>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/jira-settings-dialog.cpp" line="14"/>
@@ -802,16 +1192,28 @@ want to allow this in your system!</source>
 <context>
     <name>LineEditDialog</name>
     <message>
+        <location filename="../forms/lineeditdialog.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="98"/>
         <source>Dialog</source>
-        <translation type="obsolete">对话框</translation>
+        <translation type="unfinished">对话框</translation>
     </message>
     <message>
+        <location filename="../forms/lineeditdialog.ui" line="26"/>
+        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="99"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/lineeditdialog.ui" line="89"/>
         <location filename="../src/lineeditdialog.cpp" line="16"/>
+        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="103"/>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
+        <location filename="../forms/lineeditdialog.ui" line="99"/>
         <location filename="../src/lineeditdialog.cpp" line="9"/>
+        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="104"/>
         <source>Ok</source>
         <translation type="unfinished">确定</translation>
     </message>
@@ -819,16 +1221,22 @@ want to allow this in your system!</source>
 <context>
     <name>LockedFileDialog</name>
     <message>
+        <location filename="../forms/lockedfiledialog.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="91"/>
         <source>Dialog</source>
-        <translation type="obsolete">对话框</translation>
+        <translation type="unfinished">对话框</translation>
     </message>
     <message>
+        <location filename="../forms/lockedfiledialog.ui" line="116"/>
         <location filename="../src/lockedfiledialog.cpp" line="7"/>
+        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="92"/>
         <source>Delete lockfile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../forms/lockedfiledialog.ui" line="123"/>
         <location filename="../src/lockedfiledialog.cpp" line="6"/>
+        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="93"/>
         <source>Open readonly</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4579,8 +4987,8 @@ Do you want to reload that map with the new file?</source>
         <location filename="../src/file.cpp" line="440"/>
         <location filename="../src/file.cpp" line="472"/>
         <location filename="../src/file.cpp" line="483"/>
-        <location filename="../src/main.cpp" line="418"/>
-        <location filename="../src/main.cpp" line="426"/>
+        <location filename="../src/main.cpp" line="428"/>
+        <location filename="../src/main.cpp" line="436"/>
         <location filename="../src/xsltproc.cpp" line="62"/>
         <location filename="../src/xsltproc.cpp" line="68"/>
         <source>Critical Error</source>
@@ -4707,8 +5115,8 @@ to notifiy Browsers of changed bookmarks.</source>
         <location filename="../src/file.cpp" line="499"/>
         <location filename="../src/file.cpp" line="509"/>
         <location filename="../src/imports.cpp" line="41"/>
-        <location filename="../src/main.cpp" line="482"/>
-        <location filename="../src/main.cpp" line="497"/>
+        <location filename="../src/main.cpp" line="492"/>
+        <location filename="../src/main.cpp" line="507"/>
         <location filename="../src/scripteditor.cpp" line="141"/>
         <location filename="../src/scripteditor.cpp" line="153"/>
         <location filename="../src/scripteditor.cpp" line="179"/>
@@ -4796,20 +5204,20 @@ Do you risk to overwrite its contents?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="419"/>
+        <location filename="../src/main.cpp" line="429"/>
         <source>Couldn&apos;t find tool to unzip data,or your Windows version is older than Windows 10.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="427"/>
+        <location filename="../src/main.cpp" line="437"/>
         <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
  </source>
         <comment>zip tool missing on Linux/Mac platform</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="483"/>
-        <location filename="../src/main.cpp" line="498"/>
+        <location filename="../src/main.cpp" line="493"/>
+        <location filename="../src/main.cpp" line="508"/>
         <source>Couldn&apos;t open &quot;%1&quot;
 .</source>
         <translation type="unfinished"></translation>
@@ -4882,24 +5290,52 @@ Do you risk to overwrite its contents?</source>
 <context>
     <name>ScriptEditor</name>
     <message>
+        <location filename="../forms/scripteditor.ui" line="20"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="240"/>
         <source>Form</source>
-        <translation type="obsolete">表单</translation>
+        <translation type="unfinished">表单</translation>
     </message>
     <message>
+        <location filename="../forms/scripteditor.ui" line="85"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="248"/>
+        <source>Save to selected slide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/scripteditor.ui" line="141"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="253"/>
         <source>Reload</source>
-        <translation type="obsolete">重新载入</translation>
+        <translation type="unfinished">重新载入</translation>
     </message>
     <message>
+        <location filename="../forms/scripteditor.ui" line="230"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="257"/>
+        <source>Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/scripteditor.ui" line="264"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="259"/>
         <source>Save as</source>
-        <translation type="obsolete">另存为</translation>
+        <translation type="unfinished">另存为</translation>
     </message>
     <message>
+        <location filename="../forms/scripteditor.ui" line="58"/>
+        <location filename="../forms/scripteditor.ui" line="117"/>
+        <location filename="../forms/scripteditor.ui" line="206"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="244"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="252"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="256"/>
         <source>Run</source>
-        <translation type="obsolete">运行</translation>
+        <translation type="unfinished">运行</translation>
     </message>
     <message>
+        <location filename="../forms/scripteditor.ui" line="152"/>
+        <location filename="../forms/scripteditor.ui" line="241"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="254"/>
+        <location filename="../vym_autogen/include/ui_scripteditor.h" line="258"/>
         <source>Save</source>
-        <translation type="obsolete">保存</translation>
+        <translation type="unfinished">保存</translation>
     </message>
     <message>
         <location filename="../src/scripteditor.cpp" line="104"/>
@@ -4998,12 +5434,16 @@ Do you want to overwrite it?</source>
 <context>
     <name>ShowTextDialog</name>
     <message>
+        <location filename="../forms/showtextdialog.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_showtextdialog.h" line="71"/>
         <source>Dialog</source>
-        <translation type="vanished">对话框</translation>
+        <translation>对话框</translation>
     </message>
     <message>
+        <location filename="../forms/showtextdialog.ui" line="68"/>
+        <location filename="../vym_autogen/include/ui_showtextdialog.h" line="72"/>
         <source>Close</source>
-        <translation type="vanished">关闭</translation>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>
@@ -5998,21 +6438,29 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">VYM - 警告：Foo...</translation>
     </message>
     <message>
+        <location filename="../forms/warningdialog.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_warningdialog.h" line="101"/>
         <source>Dialog</source>
-        <translation type="obsolete">对话框</translation>
+        <translation type="unfinished">对话框</translation>
     </message>
     <message>
+        <location filename="../forms/warningdialog.ui" line="91"/>
+        <location filename="../vym_autogen/include/ui_warningdialog.h" line="102"/>
         <source>showAgainBox</source>
-        <translation type="vanished">再次提醒</translation>
+        <translation>再次提醒</translation>
     </message>
     <message>
+        <location filename="../forms/warningdialog.ui" line="117"/>
         <location filename="../src/warningdialog.cpp" line="51"/>
+        <location filename="../vym_autogen/include/ui_warningdialog.h" line="103"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
+        <location filename="../forms/warningdialog.ui" line="124"/>
+        <location filename="../vym_autogen/include/ui_warningdialog.h" line="104"/>
         <source>Ok</source>
-        <translation type="vanished">确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../src/warningdialog.cpp" line="10"/>
@@ -6034,8 +6482,44 @@ Do you want to reload that map with the new file?</source>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
+        <location filename="../forms/zip-settings-dialog.ui" line="14"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="126"/>
+        <source>zip settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/zip-settings-dialog.ui" line="20"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="127"/>
+        <source>zip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/zip-settings-dialog.ui" line="32"/>
+        <location filename="../forms/zip-settings-dialog.ui" line="60"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="128"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="131"/>
+        <source>Choose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/zip-settings-dialog.ui" line="39"/>
+        <location filename="../forms/zip-settings-dialog.ui" line="67"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="129"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="132"/>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/zip-settings-dialog.ui" line="48"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="130"/>
+        <source>unzip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../forms/zip-settings-dialog.ui" line="104"/>
+        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="133"/>
         <source>Close</source>
-        <translation type="obsolete">关闭</translation>
+        <translation type="unfinished">关闭</translation>
     </message>
     <message>
         <location filename="../src/zip-settings-dialog.cpp" line="22"/>

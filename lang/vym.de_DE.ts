@@ -62,127 +62,131 @@
     <name>AttributeDialog</name>
     <message>
         <source>Close</source>
-        <translation type="obsolete">Schliessen</translation>
+        <translation>Schliessen</translation>
     </message>
     <message>
         <source>Attributes</source>
-        <translation type="obsolete">Attribute</translation>
+        <translation>Attribute</translation>
+    </message>
+    <message>
+        <source>Add key</source>
+        <translation>Schlüssel hinzufügen</translation>
     </message>
 </context>
 <context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>Branch Property Editor</source>
-        <translation type="vanished">Zweig Eigenschaften</translation>
+        <translation>Zweig Eigenschaften</translation>
     </message>
     <message>
         <source>Frame</source>
-        <translation type="vanished">Rahmen</translation>
+        <translation>Rahmen</translation>
     </message>
     <message>
         <source>Geometry</source>
-        <translation type="vanished">Geometrie</translation>
+        <translation>Geometrie</translation>
     </message>
     <message>
         <source>No Frame</source>
-        <translation type="vanished">Kein Rahmen</translation>
+        <translation>Kein Rahmen</translation>
     </message>
     <message>
         <source>Rectangle</source>
-        <translation type="vanished">Rechteck</translation>
+        <translation>Rechteck</translation>
     </message>
     <message>
         <source>Rounded Rectangle</source>
-        <translation type="vanished">Rechteck, gerundet</translation>
+        <translation>Rechteck, gerundet</translation>
     </message>
     <message>
         <source>Ellipse</source>
-        <translation type="vanished">Ellipse</translation>
+        <translation>Ellipse</translation>
     </message>
     <message>
         <source>Cloud</source>
-        <translation type="vanished">Wolke</translation>
+        <translation>Wolke</translation>
     </message>
     <message>
         <source>Padding</source>
-        <translation type="vanished">Abstand</translation>
+        <translation>Abstand</translation>
     </message>
     <message>
         <source>Borderline width</source>
-        <translation type="vanished">Stärke Begrenzungslinie</translation>
+        <translation>Stärke Begrenzungslinie</translation>
     </message>
     <message>
         <source>Include children</source>
-        <translation type="vanished">Unterzweige mit einrahmen</translation>
+        <translation>Unterzweige mit einrahmen</translation>
     </message>
     <message>
         <source>Colors</source>
-        <translation type="vanished">Farben</translation>
+        <translation>Farben</translation>
     </message>
     <message>
         <source>Borderline color</source>
-        <translation type="vanished">Farbe Begrenzungslinie</translation>
+        <translation>Farbe Begrenzungslinie</translation>
     </message>
     <message>
         <source>Background color</source>
-        <translation type="vanished">Hintergrundfarbe</translation>
+        <translation>Hintergrundfarbe</translation>
     </message>
     <message>
         <source>Layout</source>
-        <translation type="vanished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <source>Include images horizontally</source>
-        <translation type="vanished">Linke und rechte Bildkanten berücksichtigen</translation>
+        <translation>Linke und rechte Bildkanten berücksichtigen</translation>
     </message>
     <message>
         <source>Include images vertically</source>
-        <translation type="vanished">Obere und untere Bildkanten berücksichtigen</translation>
+        <translation>Obere und untere Bildkanten berücksichtigen</translation>
     </message>
     <message>
         <source>Free positioning of children (experimental!)</source>
-        <translation type="vanished">Unterzweige frei positionieren (experimentell!)</translation>
+        <translation>Unterzweige frei positionieren (experimentell!)</translation>
     </message>
     <message>
         <source>Task</source>
-        <translation type="vanished">Aufgabe</translation>
+        <translation>Aufgabe</translation>
     </message>
     <message>
         <source>Delta priority</source>
         <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
-        <translation type="vanished">Delta Priorität</translation>
+        <translation>Delta Priorität</translation>
     </message>
     <message>
         <source>Created:</source>
-        <translation type="vanished">Angelegt:</translation>
+        <translation>Angelegt:</translation>
     </message>
     <message>
         <source>Modified:</source>
-        <translation type="vanished">Verändert:</translation>
+        <translation>Verändert:</translation>
     </message>
     <message>
         <source>Sleep:</source>
-        <translation type="vanished">Wiedervorlage:</translation>
+        <translation>Wiedervorlage:</translation>
     </message>
     <message>
         <source>Link</source>
-        <translation type="vanished">Verbindung</translation>
+        <translation>Verbindung</translation>
     </message>
     <message>
         <source>Hide link if unselected</source>
-        <translation type="vanished">Verbindung verbergen, falls nicht selektiert</translation>
+        <translation>Verbindung verbergen, falls nicht selektiert</translation>
     </message>
     <message>
         <source>Attributes</source>
-        <translation type="vanished">Attribute</translation>
+        <translation>Attribute</translation>
     </message>
     <message>
         <source>+</source>
-        <translation type="vanished">+</translation>
+        <translation>+</translation>
     </message>
     <message>
         <source>-</source>
-        <translation type="vanished">-</translation>
+        <translation>-</translation>
     </message>
     <message>
         <source>Property Editor</source>
@@ -350,7 +354,7 @@
     <name>ConfluenceUserDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <source>Find Confluence user</source>
@@ -362,23 +366,23 @@
     <name>CredentialsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <source>URL:</source>
-        <translation type="vanished">URL:</translation>
+        <translation>URL:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation type="vanished">Benutzername:</translation>
+        <translation>Benutzername:</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation type="vanished">Passwort:</translation>
+        <translation>Passwort:</translation>
     </message>
     <message>
         <source>Save password</source>
-        <translation type="vanished">Passwort speichern</translation>
+        <translation>Passwort speichern</translation>
     </message>
     <message>
         <source>Credentials dialog</source>
@@ -401,32 +405,32 @@
     <name>EditXLinkDialog</name>
     <message>
         <source>Edit XLink</source>
-        <translation type="vanished">xLink ändern</translation>
+        <translation>xLink ändern</translation>
     </message>
     <message>
         <source>Arrow begin:</source>
-        <translation type="vanished">Pfeilschaft</translation>
+        <translation>Pfeilschaft</translation>
     </message>
     <message>
         <source>XLink width:</source>
-        <translation type="vanished">xLink Dicke:</translation>
+        <translation>xLink Dicke:</translation>
     </message>
     <message>
         <source>Use color of heading</source>
-        <translation type="vanished">Farbe der Beschriftung verwenden</translation>
+        <translation>Farbe der Beschriftung verwenden</translation>
     </message>
     <message>
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
-        <translation type="vanished">Stil der Verbindungslinie</translation>
+        <translation>Stil der Verbindungslinie</translation>
     </message>
     <message>
         <source>Arrow end:</source>
-        <translation type="vanished">Pfeilspitze</translation>
+        <translation>Pfeilspitze</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation>Schliessen</translation>
     </message>
     <message>
         <source>Set color of heading</source>
@@ -434,11 +438,11 @@
     </message>
     <message>
         <source>XLink color:</source>
-        <translation type="vanished">Farbe xLink:</translation>
+        <translation>Farbe xLink:</translation>
     </message>
     <message>
         <source>Use as default:</source>
-        <translation type="vanished">Als Standard verwenden:</translation>
+        <translation>Als Standard verwenden:</translation>
     </message>
     <message>
         <source>Delete XLink</source>
@@ -453,43 +457,43 @@
     <name>ExportConfluenceDialog</name>
     <message>
         <source>Export Confluence</source>
-        <translation type="vanished">Exportiere nach Confluence</translation>
+        <translation>Exportiere nach Confluence</translation>
     </message>
     <message>
         <source>Create new page</source>
-        <translation type="vanished">Neue Seite anlegen</translation>
+        <translation>Neue Seite anlegen</translation>
     </message>
     <message>
         <source>Update existing page</source>
-        <translation type="vanished">Bestehende Seite updaten</translation>
+        <translation>Bestehende Seite updaten</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="vanished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <source>Use heading of first map center as page name</source>
-        <translation type="vanished">Verwende Beschriftung des ersten Zentrums als Seitenname</translation>
+        <translation>Verwende Beschriftung des ersten Zentrums als Seitenname</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation type="vanished">Bild der vym map</translation>
+        <translation>Bild der vym map</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation type="vanished">Bilder verwenden</translation>
+        <translation>Bilder verwenden</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation type="vanished">Inhaltsverzeichnis</translation>
+        <translation>Inhaltsverzeichnis</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation type="vanished">Flags der Aufgaben</translation>
+        <translation>Flags der Aufgaben</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation type="vanished">Allgemeine Flags</translation>
+        <translation>Allgemeine Flags</translation>
     </message>
     <message>
         <source>Number sections</source>
@@ -497,26 +501,26 @@
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="vanished">Farbe der Zweigbeschriftungen übernehmen</translation>
+        <translation>Farbe der Zweigbeschriftungen übernehmen</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="vanished">Einstellungen in map speichern</translation>
+        <translation>Einstellungen in map speichern</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Exportieren</translation>
+        <translation>Exportieren</translation>
     </message>
 </context>
 <context>
     <name>ExportHTMLDialog</name>
     <message>
         <source>Export HTML</source>
-        <translation type="vanished">Exportiere HTML</translation>
+        <translation>Exportiere HTML</translation>
     </message>
     <message>
         <source>Directory:</source>
@@ -524,47 +528,47 @@
     </message>
     <message>
         <source>Export to directory:</source>
-        <translation type="vanished">Export Verzeichnis:</translation>
+        <translation>Export Verzeichnis:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="vanished">Durchsuchen</translation>
+        <translation>Durchsuchen</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="vanished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation type="vanished">Bild der vym map</translation>
+        <translation>Bild der vym map</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation type="vanished">Bilder verwenden</translation>
+        <translation>Bilder verwenden</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation type="vanished">Inhaltsverzeichnis</translation>
+        <translation>Inhaltsverzeichnis</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation type="vanished">Flags der Aufgaben</translation>
+        <translation>Flags der Aufgaben</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation type="vanished">Allgemeine Flags</translation>
+        <translation>Allgemeine Flags</translation>
     </message>
     <message>
         <source>Number sections</source>
-        <translation type="vanished">Abschnitte numerieren</translation>
+        <translation>Abschnitte numerieren</translation>
     </message>
     <message>
         <source>Copy CSS from </source>
-        <translation type="vanished">CSS Vorlage kopieren von</translation>
+        <translation>CSS Vorlage kopieren von</translation>
     </message>
     <message>
         <source>Use CSS from</source>
-        <translation type="vanished">CSS verwenden von</translation>
+        <translation>CSS verwenden von</translation>
     </message>
     <message>
         <source>Include image</source>
@@ -572,15 +576,15 @@
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="vanished">Farbe der Zweigbeschriftungen übernehmen</translation>
+        <translation>Farbe der Zweigbeschriftungen übernehmen</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="vanished">Einstellungen in map speichern</translation>
+        <translation>Einstellungen in map speichern</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation type="vanished">Stylesheets</translation>
+        <translation>Stylesheets</translation>
     </message>
     <message>
         <source>CSS:</source>
@@ -588,11 +592,11 @@
     </message>
     <message>
         <source>Scripts</source>
-        <translation type="vanished">Skripte</translation>
+        <translation>Skripte</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation type="vanished">Nach Export:</translation>
+        <translation>Nach Export:</translation>
     </message>
     <message>
         <source>Include image of map</source>
@@ -608,11 +612,11 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Exportieren</translation>
+        <translation>Exportieren</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -664,7 +668,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>ExportXHTMLDialog</name>
     <message>
         <source>Export XHTML</source>
-        <translation type="obsolete">Exportiere XHTML</translation>
+        <translation>Exportiere XHTML</translation>
     </message>
     <message>
         <source>Directory:</source>
@@ -672,15 +676,15 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="obsolete">Durchsuchen</translation>
+        <translation>Durchsuchen</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <source>Include image</source>
-        <translation type="obsolete">Bild erzeugen</translation>
+        <translation>Bild erzeugen</translation>
     </message>
     <message>
         <source>Include text</source>
@@ -688,15 +692,15 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>show output of external scripts</source>
-        <translation type="obsolete">Zeige Ausgabe der externen Skripte</translation>
+        <translation>Zeige Ausgabe der externen Skripte</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="obsolete">Exportieren</translation>
+        <translation>Exportieren</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>VYM - Export HTML to directory</source>
@@ -716,11 +720,11 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Export to directory:</source>
-        <translation type="obsolete">Export Verzeichnis:</translation>
+        <translation>Export Verzeichnis:</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="obsolete">Farbige Headings im Text</translation>
+        <translation>Farbige Beschriftungen im Text</translation>
     </message>
     <message>
         <source>showWarnings e.g. if directory is not empty</source>
@@ -728,15 +732,15 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation type="obsolete">Stylesheets</translation>
+        <translation>Stylesheets</translation>
     </message>
     <message>
         <source>CSS:</source>
-        <translation type="obsolete">CSS:</translation>
+        <translation>CSS:</translation>
     </message>
     <message>
         <source>XSL:</source>
-        <translation type="obsolete">XSL:</translation>
+        <translation>XSL:</translation>
     </message>
     <message>
         <source>VYM - Path to CSS file</source>
@@ -756,19 +760,19 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="obsolete">Einstellungen in map speichern</translation>
+        <translation>Einstellungen in map speichern</translation>
     </message>
     <message>
         <source>Scripts</source>
-        <translation type="obsolete">Skripte</translation>
+        <translation>Skripte</translation>
     </message>
     <message>
         <source>Before export:</source>
-        <translation type="obsolete">Vor Export:</translation>
+        <translation>Vor Export:</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation type="obsolete">Nach Export:</translation>
+        <translation>Nach Export:</translation>
     </message>
     <message>
         <source>The settings saved in the map would like to run scripts:
@@ -833,44 +837,48 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
         <source>Couldn&apos;t start %1</source>
         <translation type="obsolete">%1 konnte nicht nicht gestartet werden</translation>
     </message>
+    <message>
+        <source>show warnings of xslt processor</source>
+        <translation>Warnungen des XSLT Prozessors anzeigen</translation>
+    </message>
 </context>
 <context>
     <name>ExtraInfoDialog</name>
     <message>
         <source>VYM - Info</source>
-        <translation type="vanished">VYM - Info</translation>
+        <translation>VYM - Info</translation>
     </message>
     <message>
         <source>Map:</source>
-        <translation type="vanished">Map:</translation>
+        <translation>Map:</translation>
     </message>
     <message>
         <source>File location:</source>
-        <translation type="vanished">Dateipfad:</translation>
+        <translation>Dateipfad:</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation type="vanished">Titel</translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation type="vanished">Author:</translation>
+        <translation>Author:</translation>
     </message>
     <message>
         <source>Comment:</source>
-        <translation type="vanished">Kommentar:</translation>
+        <translation>Kommentar:</translation>
     </message>
     <message>
         <source>Statistics:</source>
-        <translation type="vanished">Statistik:</translation>
+        <translation>Statistik:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation>Schliessen</translation>
     </message>
 </context>
 <context>
@@ -943,11 +951,11 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>HistoryWindow</name>
     <message>
         <source>Redo</source>
-        <translation type="vanished">Wiederherstellen</translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="vanished">Rückgängig</translation>
+        <translation>Rückgängig</translation>
     </message>
     <message>
         <source>Close</source>
@@ -960,11 +968,15 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="vanished">Zeit</translation>
+        <translation>Zeit</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation></translation>
     </message>
     <message>
         <source>Action</source>
@@ -997,43 +1009,47 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>JiraSettingsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="obsolete">Dialog</translation>
+        <translation>Dialog</translation>
+    </message>
+    <message>
+        <source>JIRA servers:</source>
+        <translation>JIRA server:</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="obsolete">Hinzufügen</translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="obsolete">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation type="obsolete">Benutzername:</translation>
+        <translation>Benutzername:</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation type="obsolete">Passwort:</translation>
+        <translation>Passwort:</translation>
     </message>
     <message>
         <source>Save password</source>
-        <translation type="obsolete">Passwort speichern</translation>
+        <translation>Passwort speichern</translation>
     </message>
     <message>
         <source>JiraSettingsDialog dialog</source>
         <comment>dialog window title</comment>
-        <translation>JIRA Einstellungen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LineEditDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="vanished">TextLabel</translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1048,7 +1064,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <name>LockedFileDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <source>Delete lockfile</source>
@@ -2890,7 +2906,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
     <message>
         <source>Show keyboard macros</source>
         <comment>Help action</comment>
-        <translation>Makros anzeigen</translation>
+        <translation>Tatstur Makros anzeigen</translation>
     </message>
     <message>
         <source>XLinks</source>
@@ -4820,25 +4836,22 @@ wird %1 Rückgängig Schritte haben.</translation>
     <message>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
-        <translation></translation>
+        <translation>Delta Priorität für sichtbare Aufgaben zurücksetzen</translation>
     </message>
     <message>
         <source>Select color (Press Shift for more options)</source>
         <translation>Farbe auswählen (Drücke Shift für mehr Optionen)</translation>
     </message>
     <message>
-        <source>Couldn&apos;t rename map to %1</source>
-        <translation type="vanished">Konnte Map nicht umbenennen zu %1</translation>
-    </message>
-    <message>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
-        <translation>Die Map konnte nicht gespeichert werden, weil das umbenennen zu %1 fehlgeschlagen ist.</translation>
+        <translation>Map konnte nicht gespeichert werden
+Konnte nicht umbenennen zu %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t save as default, failed to rename to
 %1</source>
-        <translation>Konnte die Map nicht als Standard Map speichern, weil das Umbennen fehlgeschlagen ist:
+        <translation>Konnte nicht als Standard speichern, das umbennen ist fehlgeschlagen:
 %1</translation>
     </message>
 </context>
@@ -6045,15 +6058,15 @@ Bugzilla Zugriff in YaST installieren</translation>
     <name>ScriptEditor</name>
     <message>
         <source>Form</source>
-        <translation type="vanished">Formular</translation>
+        <translation>Formular</translation>
     </message>
     <message>
         <source>Reload</source>
-        <translation type="vanished">Neu laden</translation>
+        <translation>Neu laden</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation type="vanished">Speichern als</translation>
+        <translation>Speichern als</translation>
     </message>
     <message>
         <source>Tab 1</source>
@@ -6061,11 +6074,11 @@ Bugzilla Zugriff in YaST installieren</translation>
     </message>
     <message>
         <source>Save to selected slide</source>
-        <translation type="vanished">In ausgewählte Folie speichern</translation>
+        <translation>In ausgewählte Folie speichern</translation>
     </message>
     <message>
         <source>Run</source>
-        <translation type="vanished">Starten</translation>
+        <translation>Starten</translation>
     </message>
     <message>
         <source>Tab 2</source>
@@ -6077,11 +6090,11 @@ Bugzilla Zugriff in YaST installieren</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="vanished">Laden</translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Speichern</translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <source>Save slide</source>
@@ -6183,7 +6196,7 @@ Wollen Sie sie überschreiben?</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation>Schliessen</translation>
     </message>
     <message>
         <source>History of %1</source>
@@ -6191,7 +6204,7 @@ Wollen Sie sie überschreiben?</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
 </context>
 <context>
@@ -7218,12 +7231,12 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     <message>
         <source>Could not find Jira ticket pattern in %1</source>
         <comment>VymModel</comment>
-        <translation>Konnte keine JIRA ID finden in %1</translation>
+        <translation>Konnte keine JIRA Ticket Zeichenfolge finden in %1</translation>
     </message>
     <message>
         <source>Received Jira data.</source>
         <comment>VymModel</comment>
-        <translation>JIRA Daten wurden abgerufen.</translation>
+        <translation>Jira Daten empfangen</translation>
     </message>
 </context>
 <context>
@@ -7280,7 +7293,7 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     </message>
     <message>
         <source>Dialog</source>
-        <translation type="vanished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -7288,38 +7301,38 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="vanished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <source>showAgainBox</source>
-        <translation type="vanished">showAgainBox</translation>
+        <translation>showAgainBox</translation>
     </message>
 </context>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
         <source>zip settings</source>
-        <translation type="vanished">zip Einstellungen</translation>
+        <translation>zip Einstellungen</translation>
     </message>
     <message>
         <source>zip tool:</source>
-        <translation type="vanished">zip Hilfsprogramm:</translation>
+        <translation>zip Hilfsprogramm:</translation>
     </message>
     <message>
         <source>Choose</source>
-        <translation type="vanished">Suchen</translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="vanished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <source>unzip tool:</source>
-        <translation type="vanished">unzip Hilfsprogramm:</translation>
+        <translation>unzip Hilfsprogramm:</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation>Schliessen</translation>
     </message>
     <message>
         <source>zip settings</source>
