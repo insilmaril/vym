@@ -247,14 +247,14 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!atts.value("text").isEmpty())
             vymtext.setText(unquoteQuotes(atts.value("text")));
     }
-    else if (eName == "floatimage" && // XML-FIXME-0 port and test
+    else if (eName == "floatimage" &&
              (state == StateMapCenter || state == StateBranch)) {
         state = StateImage;
         lastImage = model->createImage(lastBranch);
         if (!readImageAttr(atts))
             return false;
     }
-    else if ((eName == "branch" || eName == "floatimage") && // XML-FIXME-0 port and test. Used e.g. in paste()
+    else if ((eName == "branch" || eName == "floatimage") &&
              state == StateMap) {
         // This is used in vymparts, which have no mapcenter or for undo
         isVymPart = true;
@@ -472,7 +472,7 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
     return true;
 }
 
-bool parseVYMHandler::characters(const QString &ch)
+bool parseVYMHandler::characters(const QString &ch) // XML-FIXME-0 check compatibility
 {
     // qDebug()<< "xml-vym: characters " << ch << "  state=" << state;
 

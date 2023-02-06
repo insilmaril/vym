@@ -49,8 +49,8 @@ class BaseReader {
     BranchItem *lastBranch;
     Task *lastTask;
     MapItem *lastMI;
-    //
-    //ImageItem *lastImage;
+
+    ImageItem *lastImage;
     //SlideItem *lastSlide;
     //QString lastSetting;
 

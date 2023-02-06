@@ -24,6 +24,7 @@ class VymReader : public BaseReader {
     void readStandardFlag();
     void readUserFlagDef();
     void readUserFlag();
+    void readImage();
 
     void readVymMapAttr();
     void readBranchAttr();

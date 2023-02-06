@@ -130,7 +130,9 @@ void VymReader::readVymMap()
             xml.name() == QLatin1String("branch")) {
             readBranchOrMapCenter(loadMode, insertPos);
             insertPos++;
-        } else if (xml.name() == QLatin1String("setting"))
+        } else if (xml.name() == QLatin1String("floatimage"))
+            readImage();    // Used when pasting image
+        else if (xml.name() == QLatin1String("setting"))
             readSetting();
         else if (xml.name() == QLatin1String("select"))
             readSelection();
@@ -214,7 +216,9 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             readUserFlag();
         else if (xml.name() == QLatin1String("task"))
             readTaskAttr();
-    // XML-FIXME-00 cont here with images, notes, ...
+        else if (xml.name() == QLatin1String("floatimage"))
+            readImage();
+    // XML-FIXME-00 cont here with attributes, notes, ...
         else {
             raiseUnknownElementError();
             return;
@@ -382,6 +386,9 @@ void VymReader::readUserFlagDef()
     if (!s.isEmpty())
         flag->setGroup(s);
 
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
     if (xml.readNextStartElement()) {
         raiseUnknownElementError();
         return;
@@ -397,6 +404,76 @@ void VymReader::readUserFlag()
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
         lastBranch->toggleFlagByUid(QUuid(s));
+}
+
+void VymReader::readImage()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("floatimage"));
+
+    lastImage = model->createImage(lastBranch);
+    lastMI = lastImage;
+
+    QString s;
+
+    s = attributeToString("href");
+    if (!s.isEmpty()) {
+        // Load Image
+        if (!lastImage->load(parseHREF(s))) {
+            QMessageBox::warning(0, "Warning: ",
+                                 "Couldn't load image\n" +
+                                     parseHREF(s));
+            lastImage = nullptr;
+            return;
+        }
+    }
+
+    // Scale image
+    // scaleX and scaleY are no longer used since 2.7.509 and replaced by
+    // scaleFactor
+    float x = 1;
+    float y = 1;
+    bool okx, oky;
+    s = attributeToString("scaleX");
+    if (!s.isEmpty()) {
+        x = s.toFloat(&okx);
+        if (!okx) {
+            xml.raiseError("Couldn't read scaleX of image");
+            return;
+        }
+    }
+
+    s = attributeToString("scaleY");
+    if (!s.isEmpty()) {
+        y = s.toFloat(&oky);
+        if (!oky) {
+            xml.raiseError("Couldn't read scaleY of image");
+            return;
+        }
+    }
+
+    s = attributeToString("scaleFactor");
+    if (!s.isEmpty()) {
+        x = s.toFloat(&okx);
+        if (!okx) {
+            xml.raiseError("Couldn't read scaleFactor of image");
+            return;
+        }
+    }
+
+    if (x != 1)
+        lastImage->setScaleFactor(x);
+
+    readOrnamentsAttr();
+
+    s = attributeToString("originalName");
+    if (!s.isEmpty())
+        lastImage->setOriginalFilename(s);
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
 }
 
 void VymReader::readVymMapAttr()
@@ -626,66 +703,82 @@ void VymReader::readOrnamentsAttr()
 {
     Q_ASSERT(xml.isStartElement() && (
             xml.name() == QLatin1String("branch") ||
-            xml.name() == QLatin1String("mapcenter")));
+            xml.name() == QLatin1String("mapcenter") ||
+            xml.name() == QLatin1String("floatimage")));
 
-    if (lastBranch) {
-        BranchContainer *bc = lastBranch->getBranchContainer();
+    float x, y;
+    bool okx, oky;
 
-        bool okx, oky;
-        float x, y;
-
-        QString a = "posX";
-        QString s = xml.attributes().value(a).toString();
-        if (!s.isEmpty()) {
-            x = xml.attributes().value(a).toFloat(&okx);
-            a = "posY";
-            s = xml.attributes().value(a).toString();
-            if (!s.isEmpty()) {
-                y = xml.attributes().value(a).toFloat(&oky);
-                if (okx && oky)
-                    lastMI->setPos(QPointF(x, y));
-                else {
-                    xml.raiseError("Could not parse attributes posX and posY");
-                    return;
-                }
-            }
+    QString s = attributeToString("posX");
+    QString t = attributeToString("posY");
+    if (!s.isEmpty() || !t.isEmpty()) {
+        x = s.toFloat(&okx);
+        y = t.toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Couldn't read position of item");
+            return;
         }
+    }
 
-        // Only left for compatibility with versions < 2.9.500
-        a = "relPosX";
-        s = xml.attributes().value(a).toString();
-        if (!s.isEmpty()) {
-            x = xml.attributes().value(a).toFloat(&okx);
-            a = "relPosY";
-            s = xml.attributes().value(a).toString();
-            if (!s.isEmpty()) {
-                y = xml.attributes().value(a).toFloat(&oky);
-                if (okx && oky)
-                    lastMI->setPos(QPointF(x, y));
-                else {
-                    xml.raiseError("Could not parse attributes relPosX and relPosY");
-                    return;
-                }
-            }
+    // Only left for compatibility with versions < 2.9.500
+    s = attributeToString("relPosX");
+    t = attributeToString("relPosY");
+    if (!s.isEmpty() || !t.isEmpty()) {
+        x = s.toFloat(&okx);
+        y = t.toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Couldn't read relative position of item");
+            return;
         }
+    }
 
-        // Only left for compatibility with versions < 2.9.500
-        a = "absPosX";
-        s = xml.attributes().value(a).toString();
-        if (!s.isEmpty()) {
-            x = xml.attributes().value(a).toFloat(&okx);
-            a = "absPosY";
-            s = xml.attributes().value(a).toString();
-            if (!s.isEmpty()) {
-                y = xml.attributes().value(a).toFloat(&oky);
-                if (okx && oky)
-                    lastMI->setPos(QPointF(x, y));
-                else {
-                    xml.raiseError("Could not parse attributes absPosX and absPosY");
-                    return;
-                }
-            }
+    // Only left for compatibility with versions < 2.9.500
+    s = attributeToString("absPosX");
+    t = attributeToString("absPosY");
+    if (!s.isEmpty() || !t.isEmpty()) {
+        x = s.toFloat(&okx);
+        y = t.toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Couldn't read absolute position of item");
+            return;
         }
+    }
+
+    s = attributeToString("url");
+    if (!s.isEmpty())
+        lastMI->setURL(s);
+    s = attributeToString("vymLink");
+    if (!s.isEmpty())
+        lastMI->setVymLink(s);
+    s = attributeToString("hideInExport");
+    if (!s.isEmpty())
+        if (s == "true")
+            lastMI->setHideInExport(true);
+
+    s = attributeToString("hideLink");
+    if (!s.isEmpty()) {
+        if (s == "true")
+            lastMI->setHideLinkUnselected(true);
+        else
+            lastMI->setHideLinkUnselected(false);
+    }
+
+    s = attributeToString("localTarget");
+    if (!s.isEmpty())
+        if (s == "true")
+            lastMI->toggleTarget();
+
+    s = attributeToString("uuid");
+    if (!s.isEmpty()) {
+        // While pasting, check for existing UUID
+        if (loadMode != File::ImportAdd && !model->findUuid(s))
+            lastMI->setUuid(s);
     }
 }
 
