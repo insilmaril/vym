@@ -106,14 +106,16 @@ endif()
 #    QT5_add_translation(qm_files ${ts_files})
 
 # Translations
-#file(GLOB_RECURSE ts_files ${CMAKE_BINARY_DIR} "lang/*.ts")
-file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
+file(GLOB ts_files ABSOLUTE ${CMAKE_BINARY_DIR} "lang/*.ts")
+#file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
 message(STATUS "Creating ${CMAKE_BINARY_DIR}/translations")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 #    set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 
-QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
+#QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
+QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
+#QT5_add_translation(qm_files ${ts_files})
 
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "ts_files: ${ts_files}")
