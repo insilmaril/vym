@@ -2944,7 +2944,7 @@ void Main::setupSettingsActions()
         tr("Set application to zip/unzip files", "Settings action") + "...",
         this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsZipTool()));
-    settingsMenu->addAction(a);
+    // FIXME-2 Disabled for now  settingsMenu->addAction(a);
 
     a = new QAction(tr("Confluence Credentials", "Settings action") + "...",
                     this);
@@ -5858,7 +5858,7 @@ bool Main::settingsURL()
     return ok;
 }
 
-void Main::settingsZipTool()
+void Main::settingsZipTool()    // FIXME-2 Disabled for now, to be removed completely in 2.9.1
 {
     // Default zip tool is tar on Windows 10, zip/unzip elsewhere
     ZipSettingsDialog dia;
