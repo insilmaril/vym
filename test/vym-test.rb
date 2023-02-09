@@ -561,7 +561,7 @@ def test_user_flags
   flagName = "userflag-vym"
   expect "Has active flag '#{flagName}'", map.hasActiveFlag(flagName), true
 
-  # FIXME-0 cont here
+  # FIXME-2 cont here
   close_current_map
 end
 
@@ -624,7 +624,7 @@ def test_copy_paste (vym)
 
   map.copy
   map.paste
-  map.selectLatestAdded     #FIXME-0 not set for ImportAdd, which is used by paste
+  map.selectLatestAdded     #FIXME-2 not set for ImportAdd, which is used by paste
   s = map.getSelectionString
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
 
