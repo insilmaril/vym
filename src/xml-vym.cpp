@@ -544,7 +544,7 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
 
     if (!a.value("backgroundColor").isEmpty()) {
         col.setNamedColor(a.value("backgroundColor"));
-        model->getScene()->setBackgroundBrush(col);
+        model->setMapBackgroundColor(col);
     }
     if (!a.value("defaultFont").isEmpty()) {
         QFont font;

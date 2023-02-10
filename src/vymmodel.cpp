@@ -4904,9 +4904,7 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
 // View related
 //////////////////////////////////////////////
 
-void VymModel::registerEditor(QWidget *me) { mapEditor = (MapEditor *)me; }
-
-void VymModel::unregisterEditor(QWidget *) { mapEditor = NULL; }
+void VymModel::registerMapEditor(QWidget *e) { mapEditor = (MapEditor *)e; }
 
 void VymModel::setMapZoomFactor(const double &d)
 {
@@ -5145,13 +5143,14 @@ void VymModel::selectMapBackgroundColor()
     setMapBackgroundColor(col);
 }
 
-void VymModel::setMapBackgroundColor(QColor col) // FIXME-4 move to ME
+void VymModel::setMapBackgroundColor(QColor col)
 {
     QColor oldcol = mapEditor->getScene()->backgroundBrush().color();
     saveState(QString("setMapBackgroundColor (\"%1\")").arg(oldcol.name()),
               QString("setMapBackgroundColor (\"%1\")").arg(col.name()),
               QString("Set background color of map to %1").arg(col.name()));
-    mapEditor->getScene()->setBackgroundBrush(col);
+    backgroundColor = col;  // Used for backroundRole in TreeModel::data()
+    vymView->setBackgroundColor(backgroundColor);
 }
 
 QColor VymModel::getMapBackgroundColor() // FIXME-4 move to ME
@@ -5491,7 +5490,8 @@ void VymModel::setSelectionColorInt(QColor col)
               QString("setSelectionColor (\"%1\")").arg(col.name()),
               QString("Set color of selection box to %1").arg(col.name()));
 
-    mapEditor->setSelectionColor(col);
+    vymView->setSelectionColor(col);
+    selectionColor = col;
 }
 
 void VymModel::emitSelectionChanged(const QItemSelection &newsel)
@@ -5514,7 +5514,7 @@ void VymModel::setSelectionColor(QColor col)
     setSelectionColorInt(col);
 }
 
-QColor VymModel::getSelectionColor() { return mapEditor->getSelectionColor(); }
+QColor VymModel::getSelectionColor() { return selectionColor;}
 
 bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst)
 {

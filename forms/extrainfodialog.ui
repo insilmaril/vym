@@ -39,9 +39,6 @@
    </item>
    <item>
     <widget class="QLineEdit" name="mapNameLE">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(239, 240, 241);</string>
-     </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
@@ -57,13 +54,10 @@
    <item>
     <widget class="QLineEdit" name="fileLocationLE">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(240,240,240);</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -125,13 +119,13 @@
    </item>
    <item>
     <widget class="QTextEdit" name="statsTE">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="font">
       <font>
        <family>DejaVu Sans Mono</family>
       </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(239, 240, 241);</string>
      </property>
     </widget>
    </item>

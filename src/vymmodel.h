@@ -622,8 +622,7 @@ class VymModel : public TreeModel {
     // View related
     ////////////////////////////////////////////
   public:
-    void registerEditor(QWidget *);
-    void unregisterEditor(QWidget *);
+    void registerMapEditor(QWidget *);
 
     void setMapZoomFactor(const double &);
     void setMapRotationAngle(const double &);

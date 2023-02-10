@@ -98,8 +98,6 @@ class TreeItem : public XMLObj {
     virtual QColor getHeadingColor(); //! Returns color of heading
     virtual void setBackgroundColor(
         QColor color); //! Set color of frame brush, if LMO exists for item
-    virtual QColor getBackgroundColor(); //! Returns color of frame brush, if
-                                         //! LMO exists for item
 
   protected:
     QString url;

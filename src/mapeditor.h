@@ -233,7 +233,7 @@ class MapEditor : public QGraphicsView {
     void togglePresentationMode();
 
   public:
-    void setSelectionColor(QColor c);
+    void setSelectionColor(const QColor &c);
     QColor getSelectionColor();
 };
 #endif

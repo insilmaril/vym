@@ -2,6 +2,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "branchobj.h"
 #include "imageitem.h"
 #include "treeitem.h"
 #include "treemodel.h"
@@ -28,15 +29,29 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     TreeItem *item = getItem(index);
+    BranchItem *bi = nullptr;
+    if (item->isBranchLikeType())
+        bi = (BranchItem*)item;
 
-    if (role == Qt::EditRole || role == Qt::DisplayRole) 
+    if (role == Qt::EditRole || role == Qt::DisplayRole)
         return item->data(index.column());
 
     if (role == Qt::ForegroundRole)
         return item->getHeadingColor();
-    // if (role == Qt::BackgroundRole )  // does not look nice
-    //  return item->getBackgroundColor();
-    
+
+    if (role == Qt::BackgroundRole) {
+        if (bi) {
+            BranchItem *frameBI = bi->getFramedParentBranch(bi);
+            if (frameBI && index.column() != 5) {
+                BranchObj *bo = frameBI->getBranchObj();
+                if (bo)
+                    return bo->getFrameBrushColor();
+            }
+            else
+                return backgroundColor;
+        }
+    }
+
     return QVariant();
 }
 

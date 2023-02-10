@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>ScriptEditor</class>
  <widget class="QWidget" name="ScriptEditor">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
-    <height>275</height>
+    <width>404</width>
+    <height>268</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -275,20 +278,11 @@
        </item>
        <item>
         <widget class="QLineEdit" name="scriptPathLineEdit">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
+         <property name="enabled">
+          <bool>true</bool>
          </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(240,240,240);</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="frame">
-          <bool>false</bool>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
