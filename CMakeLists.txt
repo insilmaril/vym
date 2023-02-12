@@ -114,7 +114,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 
 #QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
-QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
+#QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
 #QT5_add_translation(qm_files ${ts_files})
 
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")

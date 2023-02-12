@@ -124,13 +124,14 @@ void TreeEditor::startEdit()
         edit(ix);
 }
 
-void TreeEditor::selectionChanged(const QItemSelection &selected,
+/*
+void TreeEditor::selectionChanged(const QItemSelection &selected, // FIXME-0  overload not updating selection!
                                   const QItemSelection &)
 {
+    qDebug() << "TE::selChanged";
     foreach(TreeItem* ti, model->getSelectedItems()) {
     }
 
-    /*
             view->setStyleSheet(
                 "QTableView {selection-background-color: " +
                 m->getSelectionColor().name() +
@@ -139,5 +140,5 @@ void TreeEditor::selectionChanged(const QItemSelection &selected,
             view->scrollTo(selected.indexes().first());
         }
     }
-    */
 }
+*/
