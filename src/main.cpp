@@ -108,6 +108,8 @@ ImageIO imageIO;
 
 int statusbarTime = 10000;
 
+bool darkTheme = true;
+
 int warningCount = 0;
 int criticalCount = 0;
 int fatalCount = 0;

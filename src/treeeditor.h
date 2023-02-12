@@ -24,6 +24,8 @@ class TreeEditor : public QTreeView {
     void cursorUp();
     void cursorDown();
     void startEdit();
+    void selectionChanged(const QItemSelection &selected,
+                          const QItemSelection &);
 
   private:
     VymModel *model;

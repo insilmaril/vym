@@ -153,7 +153,7 @@ void VymView::setSelectionColor(const QColor &col)
 {
     mapEditor->setSelectionColor(col);
     treeEditor->setStyleSheet(
-        "selection-background-color: " + col.name() + ";" +
+//        "selection-background-color: " + col.name() + ";" +
         "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
 }
 

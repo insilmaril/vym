@@ -27,11 +27,19 @@
 
 #include "highlighter.h"
 
+extern bool darkTheme;
+
 Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
+
     HighlightingRule rule;
 
-    keywordFormat.setForeground(Qt::darkBlue);
+    if (darkTheme)
+        keywordFormat.setForeground(Qt::cyan);
+    else
+        keywordFormat.setForeground(Qt::darkBlue);
+
+    quotationFormat.setForeground(Qt::red);
     keywordFormat.setFontWeight(QFont::Bold);
 
     // QT keywords
@@ -44,18 +52,24 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
     */
 
     // Single line comments
-    singleLineCommentFormat.setForeground(Qt::red);
+    if (darkTheme)
+        singleLineCommentFormat.setForeground(Qt::magenta);
+    else
+        singleLineCommentFormat.setForeground(Qt::darkMagenta);
     rule.pattern = QRegExp("//[^\n]*");
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
     // multiline comments
-    multiLineCommentFormat.setForeground(Qt::red);
+    if (darkTheme)
+        multiLineCommentFormat.setForeground(Qt::magenta);
+    else
+        multiLineCommentFormat.setForeground(Qt::darkMagenta);
     commentStartExpression = QRegExp("/\\*");
     commentEndExpression = QRegExp("\\*/");
 
     // Quotations
-    quotationFormat.setForeground(Qt::darkGreen);
+    quotationFormat.setForeground(Qt::red);
     rule.pattern = QRegExp("\".*\"");
     rule.format = quotationFormat;
     highlightingRules.append(rule);

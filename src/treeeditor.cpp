@@ -123,3 +123,21 @@ void TreeEditor::startEdit()
     if (ix.isValid())
         edit(ix);
 }
+
+void TreeEditor::selectionChanged(const QItemSelection &selected,
+                                  const QItemSelection &)
+{
+    foreach(TreeItem* ti, model->getSelectedItems()) {
+    }
+
+    /*
+            view->setStyleSheet(
+                "QTableView {selection-background-color: " +
+                m->getSelectionColor().name() +
+                "; selection-color:" + bi->getHeadingColor().name() + "}" +
+                "QTableView:focus {" + editorFocusStyle + "}");
+            view->scrollTo(selected.indexes().first());
+        }
+    }
+    */
+}

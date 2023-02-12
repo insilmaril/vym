@@ -37,7 +37,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         return item->data(index.column());
 
     if (role == Qt::ForegroundRole)
-        return item->getHeadingColor();
+        return item->getHeadingColor(); // FIXME-0 color for selected text??? Maybe don't use selection color at all?
 
     if (role == Qt::BackgroundRole) {
         if (bi) {
