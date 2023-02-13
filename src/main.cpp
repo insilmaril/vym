@@ -5,8 +5,6 @@
 #include <iostream>
 using namespace std;
 
-#include <QStyleFactory>    // FIXME-2 testing only
-
 #include "command.h"
 #include "findresultwidget.h"
 #include "findwidget.h"
@@ -536,7 +534,6 @@ int main(int argc, char *argv[])
             qDebug() << "Using dark theme";
         else
             qDebug() << "Not using dark theme";
-        qDebug() << "Available styles: " << QStyleFactory::keys();
     }
 
     app.exec();

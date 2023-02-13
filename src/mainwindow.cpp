@@ -18,6 +18,7 @@ using namespace std;
 #include <QScriptEngine>
 #include <QSslSocket>
 #include <QStatusBar>
+#include <QStyleFactory>    // FIXME-2 testing only
 #include <QTextStream>
 
 #include "aboutdialog.h"
@@ -6199,14 +6200,20 @@ void Main::updateNoteText(const VymText &vt)
 
 void Main::updateNoteEditor(TreeItem *ti)
 {
-    if (ti)
-        noteEditor->setNote(ti->getNote());
+    if (ti) {
+        if (!ti->hasEmptyNote())
+            noteEditor->setNote(ti->getNote());
+        else
+            noteEditor->clear(); // Also sets empty state
+        return;
+    }
+    noteEditor->setInactive();
 }
 
 void Main::updateHeadingEditor(TreeItem *ti)
 {
     if (ti)
-        headingEditor->setVymText(ti->getHeading());
+        headingEditor->setVymText(ti->getHeading()); // FIXME-0 sets HE
 }
 
 void Main::selectInNoteEditor(QString s, int i)
@@ -6243,11 +6250,7 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
             if (!ti) return;
 
             // Update note editor
-
-            if (!ti->hasEmptyNote())
-                noteEditor->setNote(ti->getNote());
-            else
-                noteEditor->clear(); // Also sets empty state
+            updateNoteEditor(ti);
 
             // Show URL and link in statusbar
             QString status;
@@ -6287,7 +6290,7 @@ void Main::updateDockWidgetTitles(VymModel *model)
             s = bi->getHeadingPlain();
             noteEditor->setVymText(bi->getNote());
             VymText vt = bi->getHeading();
-            headingEditor->setVymText(vt);
+            headingEditor->setVymText(vt);  // FIXME-0 sets HE
         }
 
         noteEditor->setEditorTitle(s);
@@ -6959,15 +6962,16 @@ void Main::debugInfo()
     s =  QString("vym version: %1 - %2\n")
             .arg(vymVersion)
             .arg(vymBuildDate);
-    s += QString("   Platform: %1\n").arg(vymPlatform);
-    s += QString("  tmpVymDir: %1\n").arg(tmpVymDir.path());
-    s += QString("zipToolPath: %1\n").arg(zipToolPath);
-    s += QString(" vymBaseDir: %1\n").arg(vymBaseDir.path());
-    s += QString("currentPath: %1\n").arg(QDir::currentPath());
-    s += QString(" appDirPath: %1\n")
+    s += QString("     Platform: %1\n").arg(vymPlatform);
+    s += QString("    tmpVymDir: %1\n").arg(tmpVymDir.path());
+    s += QString("  zipToolPath: %1\n").arg(zipToolPath);
+    s += QString("   vymBaseDir: %1\n").arg(vymBaseDir.path());
+    s += QString("  currentPath: %1\n").arg(QDir::currentPath());
+    s += QString("   appDirPath: %1\n")
             .arg(QCoreApplication::applicationDirPath());
-    s += QString("   Settings: %1\n").arg(settings.fileName());
-    s += QString(" Dark theme: %1\n").arg(usingDarkTheme);
+    s += QString("     Settings: %1\n\n").arg(settings.fileName());
+    s += QString("   Dark theme: %1\n").arg(usingDarkTheme);
+    s += QString("Avail. styles: %1\n\n").arg(QStyleFactory::keys().join(","));
     s += " SSL status: ";
     QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
     s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";
