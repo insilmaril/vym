@@ -27,19 +27,18 @@
 
 #include "highlighter.h"
 
-extern bool darkTheme;
+extern bool usingDarkTheme;
 
 Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
 
     HighlightingRule rule;
 
-    if (darkTheme)
+    if (usingDarkTheme)
         keywordFormat.setForeground(Qt::cyan);
     else
         keywordFormat.setForeground(Qt::darkBlue);
 
-    quotationFormat.setForeground(Qt::red);
     keywordFormat.setFontWeight(QFont::Bold);
 
     // QT keywords
@@ -52,7 +51,7 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
     */
 
     // Single line comments
-    if (darkTheme)
+    if (usingDarkTheme)
         singleLineCommentFormat.setForeground(Qt::magenta);
     else
         singleLineCommentFormat.setForeground(Qt::darkMagenta);
@@ -61,7 +60,7 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
     highlightingRules.append(rule);
 
     // multiline comments
-    if (darkTheme)
+    if (usingDarkTheme)
         multiLineCommentFormat.setForeground(Qt::magenta);
     else
         multiLineCommentFormat.setForeground(Qt::darkMagenta);

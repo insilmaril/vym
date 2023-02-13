@@ -106,6 +106,8 @@ extern QStringList lastSessionFiles;
 extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
 
+extern bool usingDarkTheme;
+
 QMenu *branchAddContextMenu;
 QMenu *branchContextMenu;
 QMenu *branchLinksContextMenu;
@@ -6965,6 +6967,7 @@ void Main::debugInfo()
     s += QString(" appDirPath: %1\n")
             .arg(QCoreApplication::applicationDirPath());
     s += QString("   Settings: %1\n").arg(settings.fileName());
+    s += QString(" Dark theme: %1\n").arg(usingDarkTheme);
     s += " SSL status: ";
     QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
     s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";

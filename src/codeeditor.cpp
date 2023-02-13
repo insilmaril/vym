@@ -2,7 +2,7 @@
 
 #include "codeeditor.h"
 
-extern bool darkTheme;
+extern bool usingDarkTheme;
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
@@ -67,7 +67,7 @@ void CodeEditor::highlightCurrentLine()
         QTextEdit::ExtraSelection selection;
 
         QColor lineColor;
-        if (darkTheme)
+        if (usingDarkTheme)
             lineColor = QColor(Qt::darkGray).darker(150);
         else
             lineColor = QColor(Qt::yellow).lighter(160);
@@ -85,7 +85,7 @@ void CodeEditor::highlightCurrentLine()
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
-    if (darkTheme)
+    if (usingDarkTheme)
         painter.fillRect(event->rect(), QColor(Qt::darkGray).darker(150));
     else
         painter.fillRect(event->rect(), Qt::lightGray);
@@ -97,7 +97,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     int bottom = top + (int)blockBoundingRect(block).height();
 
     QColor penColor;
-    if (darkTheme)
+    if (usingDarkTheme)
         penColor = Qt::lightGray;
     else
         penColor = Qt::black;

@@ -5,6 +5,8 @@
 #include <iostream>
 using namespace std;
 
+#include <QStyleFactory>    // FIXME-2 testing only
+
 #include "command.h"
 #include "findresultwidget.h"
 #include "findwidget.h"
@@ -55,7 +57,7 @@ NoteEditor *noteEditor; // used in Constr. of LinkableMapObj
 BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow
-Main *mainWindow; // used in BranchObj::select()
+Main *mainWindow;
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
@@ -108,7 +110,7 @@ ImageIO imageIO;
 
 int statusbarTime = 10000;
 
-bool darkTheme = true;
+bool usingDarkTheme;
 
 int warningCount = 0;
 int criticalCount = 0;
@@ -523,6 +525,19 @@ int main(int argc, char *argv[])
 
     // Enable some last minute cleanup
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
+
+    // Are we using dark theme?
+    int text_hsv_value = app.palette().color(QPalette::WindowText).value();
+    int bg_hsv_value = app.palette().color(QPalette::Base).value();
+    usingDarkTheme = (text_hsv_value > bg_hsv_value);
+
+    if (debug) {
+        if (usingDarkTheme)
+            qDebug() << "Using dark theme";
+        else
+            qDebug() << "Not using dark theme";
+        qDebug() << "Available styles: " << QStyleFactory::keys();
+    }
 
     app.exec();
 
