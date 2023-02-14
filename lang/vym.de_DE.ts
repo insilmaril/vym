@@ -1038,7 +1038,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <message>
         <source>JiraSettingsDialog dialog</source>
         <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation>JIRA Einstellungen</translation>
     </message>
 </context>
 <context>
@@ -6585,22 +6585,22 @@ Wollen Sie sie überschreiben?</translation>
     <message>
         <source>Set empty editor background color</source>
         <comment>TextEditor</comment>
-        <translation>Hintergrundfarbe leerer Editor</translation>
+        <translation type="vanished">Hintergrundfarbe leerer Editor</translation>
     </message>
     <message>
         <source>Set filled editor background color</source>
         <comment>TextEditor</comment>
-        <translation>Hintergrundfarbe Editor mit Text</translation>
+        <translation type="vanished">Hintergrundfarbe Editor mit Text</translation>
     </message>
     <message>
         <source>Set inactive editor background color</source>
         <comment>TextEditor</comment>
-        <translation>Hintergrundfarbe inaktiver Editor</translation>
+        <translation type="vanished">Hintergrundfarbe inaktiver Editor</translation>
     </message>
     <message>
         <source>Set default font color</source>
         <comment>TextEditor</comment>
-        <translation>Standard Textfarbe</translation>
+        <translation type="vanished">Standard Textfarbe</translation>
     </message>
     <message>
         <source>Export Note to single file</source>
@@ -6821,6 +6821,16 @@ Wollen Sie sie überschreiben?</translation>
         <source>Print</source>
         <comment>TextEditor</comment>
         <translation>Drucken</translation>
+    </message>
+    <message>
+        <source>Set RichText default background color</source>
+        <comment>TextEditor</comment>
+        <translation>Setze Standardfarbe für Hintergrund mit RichText</translation>
+    </message>
+    <message>
+        <source>Set RichText default font color</source>
+        <comment>TextEditor</comment>
+        <translation>Setze Standardzeichenfarbe für RichText</translation>
     </message>
 </context>
 <context>

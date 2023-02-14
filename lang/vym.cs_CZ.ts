@@ -4668,22 +4668,12 @@ Chcete jej přepsat?</translation>
         <translation>Tisk</translation>
     </message>
     <message>
-        <source>Set empty editor background color</source>
+        <source>Set RichText default background color</source>
         <comment>TextEditor</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Set filled editor background color</source>
-        <comment>TextEditor</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set inactive editor background color</source>
-        <comment>TextEditor</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set default font color</source>
+        <source>Set RichText default font color</source>
         <comment>TextEditor</comment>
         <translation type="unfinished"></translation>
     </message>
