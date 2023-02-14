@@ -6,7 +6,6 @@
 #include <QLineEdit>
 #include <QPropertyAnimation>
 
-#include "attribute.h"
 #include "ornamentedobj.h"
 #include "settings.h"
 #include "vymmodel.h"
@@ -211,8 +210,6 @@ class MapEditor : public QGraphicsView {
     QPointF movingVec;           // how far has Content moved
 
     QPointF contextMenuPos; // position where context event was triggered
-
-    AttributeTable *attrTable;
 
     bool printFrame;  // Print frame around map
     bool printFooter; // Print footer below map
