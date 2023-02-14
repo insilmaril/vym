@@ -18,6 +18,7 @@ class VymReader : public BaseReader {
     void readVymMap();
     void readSelection();
     void readSetting();
+    void readAttribute();
     void readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertPosBranch);
     void readHeadingOrVymNote();
     void readFrame();

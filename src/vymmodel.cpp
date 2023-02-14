@@ -3232,7 +3232,7 @@ AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missi
     return nullptr;
 }
 
-AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
+AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   // FIXME-3 better pass reference, e.g. from xml-vym
 {
     if (dst) {
 

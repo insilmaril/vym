@@ -173,6 +173,42 @@ void VymReader::readSetting()
     }
 }
 
+void VymReader::readAttribute()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("attribute"));
+
+    QString key = xml.attributes().value("key").toString();
+    QString val = xml.attributes().value("value").toString();
+    QString type = xml.attributes().value("type").toString();   // May be empty!
+    if (lastBranch && !key.isEmpty() && !type.isEmpty()) {
+        AttributeItem *ai = new AttributeItem(lastBranch);
+        if (type == "Integer")
+            ai->setValue(val.toInt());
+        else if (type == "String")
+            ai->setValue(val);
+        else if (type == "DateTime")
+            ai->setValue(QDateTime::fromString(val, Qt::ISODate));
+        else if (type == "Undefined") {
+            ai->setValue(val);
+            ai->setAttributeType(AttributeItem::Undefined);
+            qWarning() << "Found attribute type 'Undefined'";
+        } else {
+            xml.raiseError("readAttribute: Found unknown attribute type");
+            return;
+        }
+
+        ai->setKey(key);
+
+        // Insert this attribute into model
+        model->setAttribute(lastBranch, ai);
+    }
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
+}
+
 void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertPosBranch)
 {
     Q_ASSERT(xml.isStartElement() &&
@@ -218,7 +254,9 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             readTaskAttr();
         else if (xml.name() == QLatin1String("floatimage"))
             readImage();
-    // XML-FIXME-00 cont here with attributes, notes, ...
+        else if (xml.name() == QLatin1String("attribute"))
+            readAttribute();
+    // XML-FIXME-00 cont here with notes, xlinks ...
         else {
             raiseUnknownElementError();
             return;
