@@ -91,6 +91,7 @@ extern QString vymName;
 extern QString vymVersion;
 extern QString vymPlatform;
 extern QString vymCodeQuality;
+extern QString vymCodeName;
 extern QString vymBuildDate;
 extern QString localeName;
 extern bool debug;
@@ -6965,9 +6966,11 @@ void Main::helpMacros()
 void Main::debugInfo()
 {
     QString s;
-    s =  QString("vym version: %1 - %2\n")
+    s =  QString("vym version: %1 - %2 - %3 %4\n")
             .arg(vymVersion)
-            .arg(vymBuildDate);
+            .arg(vymBuildDate)
+            .arg(vymCodeQuality)
+            .arg(vymCodeName);
     s += QString("     Platform: %1\n").arg(vymPlatform);
     s += QString("    tmpVymDir: %1\n").arg(tmpVymDir.path());
     s += QString("  zipToolPath: %1\n").arg(zipToolPath);

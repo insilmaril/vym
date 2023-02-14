@@ -227,8 +227,9 @@ int main(int argc, char *argv[])
         cout << "VYM - View Your Mind (c) 2004-" << QDate::currentDate().year()
              << " Uwe Drechsel " << endl
              << "   Version: " << __VYM_VERSION << endl
-             << "Build date: " << __VYM_BUILD_DATE << endl
-             << "  " << __VYM_CODENAME << endl;
+             << "  " << __VYM_CODENAME << endl
+             << "   Quality: " << __VYM_CODE_QUALITY << endl
+             << "Build date: " << __VYM_BUILD_DATE << endl;
 
         return 0;
     }
