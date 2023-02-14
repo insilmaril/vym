@@ -339,7 +339,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         readHtmlAttr(atts);
         htmldata += ">";
     }
-    else if (eName == "attribute" && // XML-FIXME-0 port and test
+    else if (eName == "attribute" &&
              (state == StateBranch || state == StateMapCenter)) {
         state = StateAttribute;
         AttributeItem *ai = new AttributeItem(lastBranch);
