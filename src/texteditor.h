@@ -97,6 +97,10 @@ class TextEditor : public QMainWindow {
     void setColorRichTextDefaultBackground();
     void setColorRichTextDefaultForeground();
 
+  public:
+    void setColorMapBackground(const QColor&);
+    void setUseColorMapBackground(bool);
+
   protected:
     QString shortcutScope; // used for settings and shortcut scopes
     QTextEdit *e;
@@ -112,6 +116,8 @@ class TextEditor : public QMainWindow {
 
     QColor colorRichTextDefaultBackground;
     QColor colorRichTextDefaultForeground;
+    QColor colorMapBackground;
+    bool useColorMapBackground;
 
     QFont varFont;
     QFont fixedFont;

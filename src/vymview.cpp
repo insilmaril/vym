@@ -65,8 +65,7 @@ VymView::VymView(VymModel *m)
     // Selection in Model changed
     connect(
         selModel,
-        SIGNAL(
-            selectionChanged(const QItemSelection &, const QItemSelection &)),
+        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
         this,
         SLOT(changeSelection(const QItemSelection &, const QItemSelection &)));
 

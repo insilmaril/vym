@@ -426,6 +426,31 @@ bool BranchItem::getFrameIncludeChildren()
         return includeChildren;
 }
 
+QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)  // FIXME-2 backport from 3.0 to 2.9, adapt when merging back to 3.0!
+{
+    /*
+    // Determine background color in taskEditor, first try inner frame
+    if (checkInnerFrame && branchContainer->frameType(true) != FrameContainer::NoFrame)
+            return branchContainer->frameBrushColor(true);
+
+    // Outer frame
+    if (branchContainer->frameType(false) != FrameContainer::NoFrame)
+            return branchContainer->frameBrushColor(false);
+
+    BranchItem *pb = parentBranch();
+    if (pb && pb != rootItem)
+        // Recursively try parents and check for frames there
+        return pb->getBackgroundColor(start, false);
+    else
+    */
+    BranchItem *bi = getFramedParentBranch(start);
+    if (bi)
+        return bi->getBranchObj()->getFrameBrushColor();
+
+        // No frame found
+        return model->getMapBackgroundColor();
+}
+
 void BranchItem::setLastSelectedBranch()
 {
     int d = depth();

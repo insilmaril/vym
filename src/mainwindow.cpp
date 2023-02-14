@@ -323,7 +323,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
-
     connect(noteEditor, SIGNAL(textHasChanged(const VymText &)), this,
             SLOT(updateNoteText(const VymText &)));
     connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
@@ -6212,8 +6211,15 @@ void Main::updateNoteEditor(TreeItem *ti)
 
 void Main::updateHeadingEditor(TreeItem *ti)
 {
-    if (ti)
-        headingEditor->setVymText(ti->getHeading()); // FIXME-0 sets HE
+    if (ti && ti->isBranchLikeType()) {
+        BranchItem *bi = (BranchItem*)ti;
+        if (bi->getHeading().isRichText()) {
+            headingEditor->setUseColorMapBackground(true);
+            headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
+        } else
+            headingEditor->setUseColorMapBackground(false);
+        headingEditor->setVymText(bi->getHeading());
+    }
 }
 
 void Main::selectInNoteEditor(QString s, int i)
@@ -6264,7 +6270,7 @@ void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
                 statusMessage(status);
 
             // Update text in HeadingEditor
-            headingEditor->setVymText(ti->getHeading());
+            updateHeadingEditor(ti);
 
             // Select in TaskEditor, if necessary
             Task *t = NULL;
