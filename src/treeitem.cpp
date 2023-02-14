@@ -377,8 +377,6 @@ QColor TreeItem::getHeadingColor() { return heading.getColor(); }
 
 void TreeItem::setBackgroundColor(QColor color) { backgroundColor = color; }
 
-QColor TreeItem::getBackgroundColor() { return backgroundColor; }
-
 void TreeItem::setURL(const QString &u)
 {
     url = u;

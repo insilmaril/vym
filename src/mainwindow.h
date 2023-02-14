@@ -421,6 +421,8 @@ class Main : public QMainWindow {
 
     int xLinkMenuWidth;
 
+    QString defaultMapPath;         // Read from settings, depends on usingDarkTheme
+
     QMenu *recentFilesMenu;
     enum { MaxRecentFiles = 20 };
     QAction *recentFileActions[MaxRecentFiles];

@@ -5054,9 +5054,7 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
 // View related
 //////////////////////////////////////////////
 
-void VymModel::registerEditor(QWidget *me) { mapEditor = (MapEditor *)me; }
-
-void VymModel::unregisterEditor(QWidget *) { mapEditor = nullptr; }
+void VymModel::registerMapEditor(QWidget *e) { mapEditor = (MapEditor *)e; }
 
 void VymModel::setMapZoomFactor(const double &d)
 {
@@ -5273,7 +5271,8 @@ void VymModel::setMapBackgroundColor(QColor col) // FIXME-2 move to MD or ME
     saveState(QString("setMapBackgroundColor (\"%1\")").arg(oldcol.name()),
               QString("setMapBackgroundColor (\"%1\")").arg(col.name()),
               QString("Set background color of map to %1").arg(col.name()));
-    mapEditor->getScene()->setBackgroundBrush(col);
+    backgroundColor = col;  // Used for backroundRole in TreeModel::data()
+    vymView->setBackgroundColor(backgroundColor);
 }
 
 QColor VymModel::getMapBackgroundColor() // FIXME-2 move to MD or ME
@@ -5495,7 +5494,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::setSelectionColorInt(QColor col)
+void VymModel::setSelectionColorInt(QColor col) // FIXME-0 check if still working after merging of develop into layout-test
 {
     if (!col.isValid())
         return;

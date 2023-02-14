@@ -94,10 +94,12 @@ class TextEditor : public QMainWindow {
     void updateActions();
     void setState(EditorState);
     void updateState();
-    void setEmptyEditorColor();
-    void setInactiveEditorColor();
-    void setFilledEditorColor();
-    void setFontColor();
+    void setColorRichTextDefaultBackground();
+    void setColorRichTextDefaultForeground();
+
+  public:
+    void setColorMapBackground(const QColor&);
+    void setUseColorMapBackground(bool);
 
   protected:
     QString shortcutScope; // used for settings and shortcut scopes
@@ -108,17 +110,14 @@ class TextEditor : public QMainWindow {
     QString filename;
     QString filenameHint;
 
-    QBrush emptyPaper;    // setting the background color
-    QBrush filledPaper;   // depending on the state
-    QBrush inactivePaper; // depending on the state
     EditorState state;
     bool blockChangedSignal;
     bool blockTextUpdate;       // Set *while* textHasChanged is still being emitted
 
-    QColor colorEmptyEditor;
-    QColor colorFilledEditor;
-    QColor colorInactiveEditor;
-    QColor colorFont;
+    QColor colorRichTextDefaultBackground;
+    QColor colorRichTextDefaultForeground;
+    QColor colorMapBackground;
+    bool useColorMapBackground;
 
     QFont varFont;
     QFont fixedFont;

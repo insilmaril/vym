@@ -82,7 +82,7 @@ MapEditor::MapEditor(VymModel *vm)
     angle = angleTarget = 0;
 
     model = vm;
-    model->registerEditor(this);
+    model->registerMapEditor(this);
 
     setScene(mapScene);
 
@@ -2389,3 +2389,13 @@ void MapEditor::togglePresentationMode()
 {
     mainWindow->togglePresentationMode();
 }
+
+void MapEditor::setSelectionColor(const QColor &col)
+{
+    selectionColor = col;
+    selectionColor.setAlpha(220);
+    QItemSelection sel = model->getSelectionModel()->selection();
+    updateSelection(sel, sel);
+}
+
+QColor MapEditor::getSelectionColor() { return selectionColor; }

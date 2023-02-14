@@ -2,6 +2,8 @@
 
 #include "codeeditor.h"
 
+extern bool usingDarkTheme;
+
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
@@ -64,7 +66,11 @@ void CodeEditor::highlightCurrentLine()
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection;
 
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
+        QColor lineColor;
+        if (usingDarkTheme)
+            lineColor = QColor(Qt::darkGray).darker(150);
+        else
+            lineColor = QColor(Qt::yellow).lighter(160);
 
         selection.format.setBackground(lineColor);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -79,7 +85,10 @@ void CodeEditor::highlightCurrentLine()
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
-    painter.fillRect(event->rect(), Qt::lightGray);
+    if (usingDarkTheme)
+        painter.fillRect(event->rect(), QColor(Qt::darkGray).darker(150));
+    else
+        painter.fillRect(event->rect(), Qt::lightGray);
 
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
@@ -87,10 +96,16 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
         (int)blockBoundingGeometry(block).translated(contentOffset()).top();
     int bottom = top + (int)blockBoundingRect(block).height();
 
+    QColor penColor;
+    if (usingDarkTheme)
+        penColor = Qt::lightGray;
+    else
+        penColor = Qt::black;
+
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::black);
+            painter.setPen(penColor);
             painter.drawText(0, top, lineNumberArea->width(),
                              fontMetrics().height(), Qt::AlignRight, number);
         }

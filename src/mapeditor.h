@@ -6,7 +6,6 @@
 #include <QLineEdit>
 #include <QPropertyAnimation>
 
-#include "attribute.h"
 #include "settings.h"
 #include "vymmodel.h"
 #include "xlink.h"
@@ -255,5 +254,9 @@ class MapEditor : public QGraphicsView {
     void updateSelection(QItemSelection, QItemSelection); // update selection
     void updateData(const QModelIndex &);                 // update data
     void togglePresentationMode();
+
+  public:
+    void setSelectionColor(const QColor &c);
+    QColor getSelectionColor();
 };
 #endif
