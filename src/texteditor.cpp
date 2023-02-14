@@ -663,7 +663,7 @@ bool TextEditor::eventFilter(QObject *obj, QEvent *ev)
 
 void TextEditor::editorChanged()
 {
-    qDebug() << "TE::editorChanged" << editorName << "blockChanged: " << blockChangedSignal;
+    //qDebug() << "TE::editorChanged" << editorName << "blockChanged: " << blockChangedSignal;
     EditorState oldState = state;
     if (isEmpty())
         state = emptyEditor;
@@ -684,11 +684,8 @@ void TextEditor::editorChanged()
 
 void TextEditor::setRichText(const QString &t)
 {
-    qDebug() << "TE::setRichText" << editorName << t;
     blockChangedSignal = true;
     e->setReadOnly(false);
-    // FIXME-0 needed?  clear();
-
     e->setHtml(t);
     actionFormatRichText->setChecked(true);
 
@@ -699,7 +696,6 @@ void TextEditor::setRichText(const QString &t)
 
 void TextEditor::setPlainText(const QString &t)
 {
-    qDebug() << "TE::setPlainText" << editorName << t;
     blockChangedSignal = true;
     e->setReadOnly(false);
     // FIXME-0 needed?  clear();
@@ -749,7 +745,7 @@ void TextEditor::editCopyAll()
 
 void TextEditor::clear()
 {
-    qDebug() << "TE::clear" << editorName;
+    //qDebug() << "TE::clear" << editorName;
     bool blockChangedOrg = blockChangedSignal;
 
     blockChangedSignal = true;
@@ -1135,10 +1131,10 @@ void TextEditor::updateActions()
     }
 }
 
-void TextEditor::setState(EditorState s) // FIXME-0 called 12x when reselecting once in ME
+void TextEditor::setState(EditorState s) // FIXME-2 called 12x when reselecting once in ME
                                          // 5 alone for HeadingEditor
 {
-    qDebug() << "TE::setState" << s << editorName;
+    //qDebug() << "TE::setState" << s << editorName;
     QPalette p = qApp->palette();
     QColor baseColor;
     QColor windowTextColor;
@@ -1175,7 +1171,7 @@ void TextEditor::setState(EditorState s) // FIXME-0 called 12x when reselecting 
 
 void TextEditor::updateState()
 {
-    qDebug() << "TE::updateState" << editorName;
+    //qDebug() << "TE::updateState" << editorName;
     if (isEmpty())
         setState(emptyEditor);
     else
