@@ -273,7 +273,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
        .value("/system/defaultMap/path",
               vymBaseDir.path() + QString("/demos/default%1.vym").arg(ext_dark))
        .toString();
-    qDebug() << usingDarkTheme << defaultMapPath;
 
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
@@ -3647,7 +3646,6 @@ void Main::editorChanged()
 
 void Main::fileNew()
 {
-    qDebug() << "Main::fileNew  default=" << defaultMapPath;
     VymModel *vm;
 
     // Don't show counter while loading default map
