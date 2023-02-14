@@ -419,6 +419,18 @@ int main(int argc, char *argv[])
     // overwritten during loading of maps
     lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
 
+    // Are we using dark theme?
+    int text_hsv_value = app.palette().color(QPalette::WindowText).value();
+    int bg_hsv_value = app.palette().color(QPalette::Base).value();
+    usingDarkTheme = (text_hsv_value > bg_hsv_value);
+
+    if (debug) {
+        if (usingDarkTheme)
+            qDebug() << "Using dark theme";
+        else
+            qDebug() << "Not using dark theme";
+    }
+
     Main m;
 
     // Check for zip tools
@@ -524,18 +536,6 @@ int main(int argc, char *argv[])
 
     // Enable some last minute cleanup
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
-
-    // Are we using dark theme?
-    int text_hsv_value = app.palette().color(QPalette::WindowText).value();
-    int bg_hsv_value = app.palette().color(QPalette::Base).value();
-    usingDarkTheme = (text_hsv_value > bg_hsv_value);
-
-    if (debug) {
-        if (usingDarkTheme)
-            qDebug() << "Using dark theme";
-        else
-            qDebug() << "Not using dark theme";
-    }
 
     app.exec();
 

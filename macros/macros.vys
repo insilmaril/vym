@@ -69,19 +69,17 @@ function macro_f8()
     colorSubtreeWithQuickColor(7);
 }
 
-// Macro F9: Repeat last command
+// Macro F9: Color subtree light white
 function macro_f9()
 {
-    map = vym.currentMap();
-    map.repeatLastCommand();
+    colorSubtreeWithQuickColor(8);
 }
 
-// Macro F10: Set task to sleep until 18:00
+// Macro F10: Repeat last command
 function macro_f10()
 {
     map = vym.currentMap();
-    map.setTaskSleep("18:00");
-    statusMessage("Task sleeping until 18:00");
+    map.repeatLastCommand();
 }
 
 // Macro F11: Set task to sleep until next day

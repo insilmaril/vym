@@ -265,6 +265,16 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupToolbars();
     setupFlagActions();
 
+    // Set default path for new maps depending on theme
+    QString ext_dark;
+    if (usingDarkTheme)
+        ext_dark = "-dark";
+    defaultMapPath = settings
+       .value("/system/defaultMap/path",
+              vymBaseDir.path() + QString("/demos/default%1.vym").arg(ext_dark))
+       .toString();
+    qDebug() << usingDarkTheme << defaultMapPath;
+
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
     dw = new QDockWidget();
@@ -3416,7 +3426,11 @@ void Main::setupToolbars()
     c.setNamedColor ("#d95100"); quickColors << c;  // Orange
     c.setNamedColor ("#009900"); quickColors << c;  // Green
     c.setNamedColor ("#aa00ff"); quickColors << c;  // Purple
-    c.setNamedColor ("#0000ff"); quickColors << c;  // Blue
+    if (usingDarkTheme)
+        c.setNamedColor ("#00aaff");                // LightBlue
+    else
+        c.setNamedColor ("#0000ff");                // Blue
+    quickColors << c;
     c.setNamedColor ("#000000"); quickColors << c;  // Black
     c.setNamedColor ("#444444"); quickColors << c;  // Dark gray
     c.setNamedColor ("#aaaaaa"); quickColors << c;  // Light gray
@@ -3633,22 +3647,18 @@ void Main::editorChanged()
 
 void Main::fileNew()
 {
+    qDebug() << "Main::fileNew  default=" << defaultMapPath;
     VymModel *vm;
-
-    QString default_path = settings
-                               .value("/system/defaultMap/path",
-                                      vymBaseDir.path() + "/demos/default.vym")
-                               .toString();
 
     // Don't show counter while loading default map
     removeProgressCounter();
 
-    if (File::Success != fileLoad(default_path, DefaultMap, VymMap)) {
+    if (File::Success != fileLoad(defaultMapPath, DefaultMap, VymMap)) {
         QMessageBox::critical(0, tr("Critical Error"),
                               tr("Couldn't load default map:\n\n%1\n\nvym will "
                                  "create an empty map now.",
                                  "Mainwindow: Failed to load default map")
-                                  .arg(default_path));
+                                  .arg(defaultMapPath));
 
         vm = currentModel();
 
@@ -4117,14 +4127,8 @@ void Main::fileSaveAs() { fileSaveAs(CompleteMap); }
 void Main::fileSaveAsDefault()
 {
     if (currentMapEditor()) {
-        QString defaultPath =
-            settings
-                .value("/system/defaultMap/path",
-                       vymBaseDir.path() + "/demos/default.vym")
-                .toString();
-
         QString fn = QFileDialog::getSaveFileName(
-            this, tr("Save map as new default map"), defaultPath,
+            this, tr("Save map as new default map"), defaultMapPath,
             "VYM map (*.vym)", NULL, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
@@ -5892,16 +5896,11 @@ void Main::settingsMacroPath()
 
 void Main::settingsDefaultMapPath()
 {
-    QString defaultPath = settings
-                              .value("/system/defaultMap/path",
-                                     vymBaseDir.path() + "/demos/default.vym")
-                              .toString();
-
     QStringList filters;
     filters << "VYM defaults map (*.vym)";
     QFileDialog fd;
-    fd.setDirectory(dirname(defaultPath));
-    fd.selectFile(basename(defaultPath));
+    fd.setDirectory(dirname(defaultMapPath));
+    fd.selectFile(basename(defaultMapPath));
     fd.setFileMode(QFileDialog::ExistingFile);
     fd.setNameFilters(filters);
     fd.setWindowTitle(vymName + " - " +
@@ -5910,8 +5909,8 @@ void Main::settingsDefaultMapPath()
 
     QString fn;
     if (fd.exec() == QDialog::Accepted) {
-        settings.setValue("/system/defaultMap/path",
-                          fd.selectedFiles().first());
+        defaultMapPath = fd.selectedFiles().first();
+        settings.setValue("/system/defaultMap/path", defaultMapPath);
     }
 }
 
