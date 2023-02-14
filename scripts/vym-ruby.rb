@@ -1,7 +1,7 @@
 require 'dbus'
 require 'pp'
 
-$debug = true
+$debug = false
 
 class Vym
   def initialize (name)

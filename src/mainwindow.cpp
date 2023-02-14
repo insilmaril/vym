@@ -603,6 +603,14 @@ void Main::setupAPI()
               "LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
+    c = new Command("getIntAttribute", Command::Branch);
+    c->addPar(Command::String, false, "Key of string attribute");
+    modelCommands.append(c);
+
+    c = new Command("getStringAttribute", Command::Branch);
+    c->addPar(Command::String, false, "Key of integer attribute");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::Any);
     modelCommands.append(c);
 
@@ -818,6 +826,11 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("selectParent", Command::Branch);
+    modelCommands.append(c);
+
+    c = new Command("setAttribute", Command::Branch);
+    c->addPar(Command::String, false, "Key of attribute as string");
+    c->addPar(Command::String, false, "String Value of attribute");
     modelCommands.append(c);
 
     c = new Command("setFlagByName", Command::TreeItem);

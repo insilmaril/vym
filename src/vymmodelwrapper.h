@@ -48,6 +48,8 @@ class VymModelWrapper : public VymScriptContext {
     void cut();
     void cycleTask();
     bool exportMap();
+    QString getStringAttribute(const QString &key);
+    int getIntAttribute(const QString &key);
     int getBranchIndex();
     QString getDestPath();
     QString getFileDir();
@@ -120,6 +122,7 @@ class VymModelWrapper : public VymScriptContext {
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString);
     void setDefaultLinkColor(const QString &color); // FIXME-2 maybe also rename other setMap* methods?
+    void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &s);
     void setHeadingConfluencePageName();
     void setHeadingPlainText(const QString &s);

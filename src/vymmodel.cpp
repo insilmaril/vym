@@ -3218,7 +3218,6 @@ QString VymModel::getXLinkStyleEnd()
 }
 
 AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missing
-
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -3265,6 +3264,19 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   
 
         emitDataChanged(dst);
         return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
+    }
+    return nullptr;
+}
+
+AttributeItem *VymModel::getAttributeByKey(const QString &key)
+{
+    BranchItem *bi = getSelectedBranch();
+    if (bi) {
+        for (int i = 0; i < bi->attributeCount(); i++) {
+            AttributeItem *ai = bi->getAttributeNum(i);
+            if (ai->getKey() == key)
+                return ai;
+        }
     }
     return nullptr;
 }

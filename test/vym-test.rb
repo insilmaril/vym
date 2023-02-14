@@ -94,7 +94,6 @@ def test_vym
 
   expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
 
-  pp @testMapDefaultPath
   expect "Default map exists at '#{@testMapDefaultPath}'", File.file?(@testMapDefaultPath), true
 
   testMapPath = "#{@testDir}/test-default.vym"
@@ -133,6 +132,16 @@ def test_basics
   expect "getFileDir:  Got #{map.getFileDir}", map.getFileDir, @testDir + "/"
 
   close_current_map
+end
+
+#######################
+def test_attributes
+  heading "Attributes:"
+  map = init_map (@testDir + "/" + "test-attributes.xml")
+
+  map.select @main_a
+  expect "String attribute is '6 * 9'", map.getStringAttribute("string-attribute"), "6 * 9"
+  expect "Integer attribute is 42", map.getIntAttribute("int-attribute"), 42
 end
 
 #######################
@@ -1109,13 +1118,14 @@ begin
   end
 
   test_vym
+  test_attributes
   #test_basics
   #test_extrainfo
   #test_adding_branches
   #test_load_legacy_maps
   #test_adding_maps
   #test_frames
-  test_moving_parts
+  #test_moving_parts
   #test_saving
   #test_scrolling
   #test_standard_flags

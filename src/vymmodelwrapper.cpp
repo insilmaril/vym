@@ -2,6 +2,7 @@
 
 #include <QMessageBox>
 
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "imageitem.h"
 #include "misc.h"
@@ -375,6 +376,44 @@ bool VymModelWrapper::exportMap()
         return setResult(r);
     }
     return setResult(true);
+}
+
+QString VymModelWrapper::getStringAttribute(const QString &key)
+{
+    QVariant v;
+    AttributeItem *ai = model->getAttributeByKey(key);
+    if (ai) {
+        if (ai->getAttributeType() != AttributeItem::String) {
+            logError(context(), QScriptContext::SyntaxError,
+                     QString("Attribute with key '%1' has no type 'String'").arg(key));
+            return setResult(QString());
+        }
+        v = ai->getValue();
+    } else {
+        logError(context(), QScriptContext::SyntaxError,
+                 QString("No attribute found with key '%1'").arg(key));
+        return setResult(QString());
+    }
+    return setResult(v.toString());
+}
+
+int VymModelWrapper::getIntAttribute(const QString &key)
+{
+    QVariant v;
+    AttributeItem *ai = model->getAttributeByKey(key);
+    if (ai) {
+        if (ai->getAttributeType() != AttributeItem::Integer) {
+            logError(context(), QScriptContext::SyntaxError,
+                     QString("Attribute with key '%1' has no type 'Integer'").arg(key));
+            return setResult(-1);
+        }
+        v = ai->getValue();
+    } else {
+        logError(context(), QScriptContext::SyntaxError,
+                 QString("No attribute found with key '%1'").arg(key));
+        return setResult(-1);
+    }
+    return setResult(v.toInt());
 }
 
 int VymModelWrapper::getBranchIndex()
@@ -899,6 +938,10 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
         logError(context(), QScriptContext::UnknownError,
                  "Couldn't toggle item with select string " + selectString);
     return setResult(r);
+}
+
+void VymModelWrapper::setAttribute(const QString &key, const QString &value)
+{
 }
 
 void VymModelWrapper::setDefaultLinkColor(const QString &color)
