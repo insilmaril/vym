@@ -56,7 +56,7 @@ NoteEditor *noteEditor;
 BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow
-Main *mainWindow; // used in BranchObj::select()
+Main *mainWindow;
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
 
@@ -108,6 +108,8 @@ Options options;
 ImageIO imageIO;
 
 int statusbarTime = 10000;
+
+bool usingDarkTheme;
 
 int warningCount = 0;
 int criticalCount = 0;
@@ -233,8 +235,9 @@ int main(int argc, char *argv[])
         cout << "VYM - View Your Mind (c) 2004-" << QDate::currentDate().year()
              << " Uwe Drechsel " << endl
              << "   Version: " << __VYM_VERSION << endl
-             << "Build date: " << __VYM_BUILD_DATE << endl
-             << "  " << __VYM_CODENAME << endl;
+             << "  " << __VYM_CODENAME << endl
+             << "   Quality: " << __VYM_CODE_QUALITY << endl
+             << "Build date: " << __VYM_BUILD_DATE << endl;
 
         return 0;
     }
@@ -328,10 +331,14 @@ int main(int argc, char *argv[])
     }
     else {
 #if defined(Q_OS_LINUX)
-        if (debug)
+        if (debug) {
             qDebug() << "Main:  (OS Linux)   using $LANG for locale";
+        }
+
         localeName =
             QProcessEnvironment::systemEnvironment().value("LANG", "en");
+        if (localeName.contains('.'))
+            localeName = localeName.left(localeName.indexOf('.'));
 #else
         if (debug)
             qDebug() << "Main:  (OS other)   using  "
@@ -351,6 +358,7 @@ int main(int argc, char *argv[])
     vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
     if (debug) {
         qDebug() << "Main:     localName: " << localeName;
+        qDebug() << "Main:      locale(): " << QLocale::system().name();
         qDebug() << "Main:  translations: " << vymTranslationsDir.path();
         qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
         qDebug() << "Main:          LANG: "
@@ -363,6 +371,7 @@ int main(int argc, char *argv[])
     else if (vymTranslationsDir.isEmpty())
         translationsMissing = true;
 
+    QTranslator vymTranslator;
     if (translationsMissing) {
         WarningDialog warn;
         warn.setMinimumWidth(800);
@@ -378,8 +387,9 @@ int main(int argc, char *argv[])
                 " * https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym");
         warn.exec();
     } else {
-        QTranslator vymTranslator;
-        if (!vymTranslator.load(QString("vym.%1").arg(localeName), vymTranslationsDir.path())) {
+        if (debug)
+            qDebug() << "Trying to load " << vymTranslationsDir.path() << QString("vym.%1").arg(localeName);
+        if (!vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path())) {
             WarningDialog warn;
             warn.showCancelButton(false);
             warn.setText(
@@ -388,6 +398,9 @@ int main(int argc, char *argv[])
                     .arg(vymTranslationsDir.path()));
             warn.setShowAgainName("mainwindow/translations/localeMissing");
             warn.exec();
+        } else {
+            if (debug)
+                qDebug() << "Loading translation succeeded :-)";
         }
         app.installTranslator(&vymTranslator);
     }
@@ -413,6 +426,18 @@ int main(int argc, char *argv[])
     // Initially read filenames of last session, before settings are 
     // overwritten during loading of maps
     lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
+
+    // Are we using dark theme?
+    int text_hsv_value = app.palette().color(QPalette::WindowText).value();
+    int bg_hsv_value = app.palette().color(QPalette::Base).value();
+    usingDarkTheme = (text_hsv_value > bg_hsv_value);
+
+    if (debug) {
+        if (usingDarkTheme)
+            qDebug() << "Using dark theme";
+        else
+            qDebug() << "Not using dark theme";
+    }
 
     Main m;
 

@@ -285,7 +285,207 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
             return;
     }
 
+<<<<<<< HEAD
     htmldata.clear();
+=======
+    if (!a.value("backgroundColor").isEmpty()) {
+        col.setNamedColor(a.value("backgroundColor"));
+        model->setMapBackgroundColor(col);
+    }
+    if (!a.value("defaultFont").isEmpty()) {
+        QFont font;
+        font.fromString(a.value("defaultFont"));
+        model->setMapDefaultFont(font);
+    }
+    if (!a.value("selectionColor").isEmpty()) {
+        col.setNamedColor(a.value("selectionColor"));
+        model->setSelectionColor(col);
+    }
+    if (!a.value("linkColorHint").isEmpty()) {
+        if (a.value("linkColorHint") == "HeadingColor")
+            model->setMapLinkColorHint(LinkableMapObj::HeadingColor);
+        else
+            model->setMapLinkColorHint(LinkableMapObj::DefaultColor);
+    }
+    if (!a.value("linkStyle").isEmpty())
+        model->setMapLinkStyle(a.value("linkStyle"));
+    if (!a.value("linkColor").isEmpty()) {
+        col.setNamedColor(a.value("linkColor"));
+        model->setMapDefLinkColor(col);
+    }
+
+    QPen pen(model->getMapDefXLinkPen());
+    if (!a.value("defXLinkColor").isEmpty()) {
+        col.setNamedColor(a.value("defXLinkColor"));
+        pen.setColor(col);
+    }
+    if (!a.value("defXLinkWidth").isEmpty())
+        pen.setWidth(a.value("defXLinkWidth").toInt());
+    if (!a.value("defXLinkPenStyle").isEmpty()) {
+        bool ok;
+        Qt::PenStyle ps = penStyle(a.value("defXLinkPenStyle"), ok);
+        if (!ok)
+            return false;
+        pen.setStyle(ps);
+    }
+    model->setMapDefXLinkPen(pen);
+
+    if (!a.value("defXLinkStyleBegin").isEmpty())
+        model->setMapDefXLinkStyleBegin(a.value("defXLinkStyleBegin"));
+    if (!a.value("defXLinkStyleEnd").isEmpty())
+        model->setMapDefXLinkStyleEnd(a.value("defXLinkStyleEnd"));
+
+    if (!a.value("mapZoomFactor").isEmpty())
+        model->setMapZoomFactor(a.value("mapZoomFactor").toDouble());
+    if (!a.value("mapRotationAngle").isEmpty())
+        model->setMapRotationAngle(a.value("mapRotationAngle").toDouble());
+    return true;
+}
+
+bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
+{
+    branchesCounter++;
+    if (useProgress)
+        mainWindow->addProgressValue((float)branchesCounter / branchesTotal);
+
+    lastMI = lastBranch;
+
+    if (!readOOAttr(a))
+        return false;
+
+    if (!a.value("scrolled").isEmpty())
+        lastBranch->toggleScroll();
+
+    if (!a.value("incImgV").isEmpty()) {
+        if (a.value("incImgV") == "true")
+            lastBranch->setIncludeImagesVer(true);
+        else
+            lastBranch->setIncludeImagesVer(false);
+    }
+    if (!a.value("incImgH").isEmpty()) {
+        if (a.value("incImgH") == "true")
+            lastBranch->setIncludeImagesHor(true);
+        else
+            lastBranch->setIncludeImagesHor(false);
+    }
+    if (a.value("childrenFreePos") == "true")
+        lastBranch->setChildrenLayout(BranchItem::FreePositioning);
+
+    return true;
+}
+
+bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
+{
+    if (lastMI) {
+        OrnamentedObj *oo = (OrnamentedObj *)(lastMI->getLMO());
+        if (oo) {
+            bool ok;
+            int x;
+            {
+                if (!a.value("frameType").isEmpty())
+                    oo->setFrameType(a.value("frameType"));
+                if (!a.value("penColor").isEmpty())
+                    oo->setFramePenColor(a.value("penColor"));
+                if (!a.value("brushColor").isEmpty()) {
+                    oo->setFrameBrushColor(a.value("brushColor"));
+                    lastMI->setBackgroundColor(a.value("brushColor"));
+                }
+                if (!a.value("padding").isEmpty()) {
+                    x = a.value("padding").toInt(&ok);
+                    if (ok)
+                        oo->setFramePadding(x);
+                }
+                if (!a.value("borderWidth").isEmpty()) {
+                    x = a.value("borderWidth").toInt(&ok);
+                    if (ok)
+                        oo->setFrameBorderWidth(x);
+                }
+                if (!a.value("includeChildren").isEmpty()) {
+                    if (a.value("includeChildren") == "true")
+                        oo->setFrameIncludeChildren(true);
+                    else
+                        oo->setFrameIncludeChildren(false);
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
+{
+    if (lastMI) {
+        bool okx, oky;
+        float x, y;
+        if (!a.value("posX").isEmpty()) {   // Introduced in 2.9.501, added here for file compatibility
+            if (!a.value("posY").isEmpty()) {
+                x = a.value("posX").toFloat(&okx);
+                y = a.value("posY").toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setRelPos(QPointF(x, y));
+                else
+                    return false; // Couldn't read relPos
+            }
+        }
+        if (!a.value("relPosX").isEmpty()) {
+            if (!a.value("relPosY").isEmpty()) {
+                x = a.value("relPosX").toFloat(&okx);
+                y = a.value("relPosY").toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setRelPos(QPointF(x, y));
+                else
+                    return false; // Couldn't read relPos
+            }
+        }
+        if (!a.value("absPosX").isEmpty()) {
+            if (!a.value("absPosY").isEmpty()) {
+                x = a.value("absPosX").toFloat(&okx);
+                y = a.value("absPosY").toFloat(&oky);
+                if (okx && oky)
+                    lastMI->setAbsPos(QPointF(x, y));
+                else
+                    return false; // Couldn't read absPos
+            }
+        }
+        if (!a.value("url").isEmpty())
+            lastMI->setURL(a.value("url"));
+        if (!a.value("vymLink").isEmpty())
+            lastMI->setVymLink(a.value("vymLink"));
+        if (!a.value("hideInExport").isEmpty())
+            if (a.value("hideInExport") == "true")
+                lastMI->setHideInExport(true);
+
+        if (!a.value("hideLink").isEmpty()) {
+            if (a.value("hideLink") == "true")
+                lastMI->setHideLinkUnselected(true);
+            else
+                lastMI->setHideLinkUnselected(false);
+        }
+
+        if (!a.value("localTarget").isEmpty())
+            if (a.value("localTarget") == "true")
+                lastMI->toggleTarget();
+        if (!a.value("rotation").isEmpty()) {
+            x = a.value("rotation").toFloat(&okx);
+            if (okx)
+                lastMI->setRotation(x);
+            else
+                return false; // Couldn't read rotation
+        }
+
+        if (!a.value("uuid").isEmpty()) {
+            // While pasting, check for existing UUID
+            if (loadMode != ImportAdd && !model->findUuid(a.value("uuid")))
+                lastMI->setUuid(a.value("uuid"));
+        }
+    }
+    return true;
+}
+
+bool parseVYMHandler::readNoteAttr(const QXmlAttributes &a)
+{ // only for backward compatibility (<1.4.6). Use htmlnote now.
+>>>>>>> origin
     vymtext.clear();
 
     QString a = "fonthint";

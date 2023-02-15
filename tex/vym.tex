@@ -25,7 +25,7 @@
 \newcommand{\hint}[1]{
     \begin{center} 
         \begin{tabular}{|rp{12cm}|} \hline
-            {\bf Hint}:& #2\\   \hline
+            {\bf Hint}:& #1\\   \hline
         \end{tabular}
             \marginpar{\Huge !} 
     \end{center} 
@@ -57,7 +57,7 @@
 \title{
     \includegraphics[width=8cm]{images/vym-logo-new.png} \\ 
     VYM  -- View Your Mind \\ 
-    {\small Version 2.8.16} \\ 
+    {\small Version 2.9.0} \\ 
     { Usermanual }
 \author{\textcopyright Uwe Drechsel  }
 }
@@ -789,17 +789,10 @@ depending on whether text is associated with a selected branch.
 
 \subsection{States}
 Before you can type or paste text into it, you have
-to select a branch in the mapeditor. Note that the background colour\footnote{
-The backround colours can be changed in settings, e.g. if you use a dark
-theme and don't want to see a bright background in the editor}
-of the noteeditor indicates its state:
-\begin{itemize}
-    \item grey: no text entered yet
-    \item white: some text has been entered
-\end{itemize}   
-In the mapeditor itself, to signal that there is a note with more
-information for a particular branch, a little "note" flag will appear
-next to the heading of the branch. This is illustrated in the lower
+to select a branch in the mapeditor.
+In the mapeditor a little "notepad" flag will appear
+next to the heading of the branch, once you have entered some text in
+the noteeditor. This is illustrated in the lower
 branch on the right hand side: 
 \maximage{images/branches-flags.png}
 
@@ -1241,7 +1234,7 @@ settings in the menubar on top of the main window.
         create a link to the user profile during export to Confluence)
     \item Export a map to a Confluence page
     \item Get the name of a Confluence page and the space name and use
-        it as headin when pasting an URL. (Happens automatically, if
+        it as heading when pasting an URL. (Happens automatically, if
         Confluence is configured)
 \end{itemize}
 

@@ -30,14 +30,14 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 
     TreeItem *item = getItem(index);
 
-    if (role == Qt::EditRole || role == Qt::DisplayRole) 
+    if (role == Qt::EditRole || role == Qt::DisplayRole)
         return item->data(index.column());
 
     if (role == Qt::ForegroundRole)
         return item->getHeadingColor();
-    // if (role == Qt::BackgroundRole )  // does not look nice
+    // if (role == Qt::BackgroundRole )  // does not look nice  // FIXME-0 check again!
     //  return item->getBackgroundColor();
-    
+
     return QVariant();
 }
 

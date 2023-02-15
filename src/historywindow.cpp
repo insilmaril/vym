@@ -133,7 +133,7 @@ void HistoryWindow::update(SimpleSettings &set)
     }
 
     // Generated the "now" row
-    QColor c(255, 200, 120);
+    QColor c = palette().color(QPalette::Highlight);
     for (i = 0; i <= 2; i++) {
         if (i != 1) {
             item = new QTableWidgetItem("");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" lang="zh_TW">
+<TS version="2.1" language="zh_TW">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -43,6 +43,21 @@
     <message>
         <source>Set application to open an URL...</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AttributeDialog</name>
+    <message>
+        <source>Attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">關閉</translation>
     </message>
 </context>
 <context>
@@ -144,6 +159,57 @@
         <source>Free positioning of children (experimental!)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Task</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delta priority</source>
+        <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Created:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modified:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sleep:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <comment>Branchprop window: Attribute name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <comment>Branchprop window: Attribute value</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <comment>Branchprop window: Attribute type</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 days ago</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sleeping %1 days</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task is awake</source>
+        <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BranchPropertyWindow</name>
@@ -166,6 +232,57 @@
     <message>
         <source>Close</source>
         <translation type="obsolete">關閉</translation>
+    </message>
+</context>
+<context>
+    <name>ConfluenceAgent</name>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">警告</translation>
+    </message>
+    <message>
+        <source>Authentication problem when contacting Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConfluenceUserDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find Confluence user</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CredentialsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Credentials dialog</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -225,6 +342,65 @@
     <message>
         <source>Close</source>
         <translation type="unfinished">關閉</translation>
+    </message>
+</context>
+<context>
+    <name>ExportConfluenceDialog</name>
+    <message>
+        <source>Export Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update existing page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">選項</translation>
+    </message>
+    <message>
+        <source>Use heading of first map center as page name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colored headings in text</source>
+        <translation type="unfinished">文字中著色的標頭</translation>
+    </message>
+    <message>
+        <source>Save settings in map</source>
+        <translation type="unfinished">在圖中儲存設定值</translation>
+    </message>
+    <message>
+        <source>Image of map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table of contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">匯出</translation>
     </message>
 </context>
 <context>
@@ -339,31 +515,31 @@ want to allow this in your system!</source>
     <name>ExportXHTMLDialog</name>
     <message>
         <source>Export XHTML</source>
-        <translation type="obsolete">匯出 XHTML</translation>
+        <translation type="unfinished">匯出 XHTML</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="obsolete">瀏覽</translation>
+        <translation type="unfinished">瀏覽</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="obsolete">選項</translation>
+        <translation type="unfinished">選項</translation>
     </message>
     <message>
         <source>Include image</source>
-        <translation type="obsolete">包含圖像</translation>
+        <translation type="unfinished">包含圖像</translation>
     </message>
     <message>
         <source>show output of external scripts</source>
-        <translation type="obsolete">顯示外部命令稿的輸出</translation>
+        <translation type="unfinished">顯示外部命令稿的輸出</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="obsolete">匯出</translation>
+        <translation type="unfinished">匯出</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
+        <translation type="unfinished">取消</translation>
     </message>
     <message>
         <source>VYM - Export HTML to directory</source>
@@ -375,11 +551,11 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Export to directory:</source>
-        <translation type="obsolete">匯出至目錄：</translation>
+        <translation type="unfinished">匯出至目錄：</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="obsolete">文字中著色的標頭</translation>
+        <translation type="unfinished">文字中著色的標頭</translation>
     </message>
     <message>
         <source>showWarnings e.g. if directory is not empty</source>
@@ -387,15 +563,15 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation type="obsolete">樣式表</translation>
+        <translation type="unfinished">樣式表</translation>
     </message>
     <message>
         <source>CSS:</source>
-        <translation type="obsolete">CSS：</translation>
+        <translation type="unfinished">CSS：</translation>
     </message>
     <message>
         <source>XSL:</source>
-        <translation type="obsolete">XSL：</translation>
+        <translation type="unfinished">XSL：</translation>
     </message>
     <message>
         <source>VYM - Path to CSS file</source>
@@ -411,19 +587,19 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="obsolete">在圖中儲存設定值</translation>
+        <translation type="unfinished">在圖中儲存設定值</translation>
     </message>
     <message>
         <source>Scripts</source>
-        <translation type="obsolete">命令稿</translation>
+        <translation type="unfinished">命令稿</translation>
     </message>
     <message>
         <source>Before export:</source>
-        <translation type="obsolete">匯出之前：</translation>
+        <translation type="unfinished">匯出之前：</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation type="obsolete">匯出之後：</translation>
+        <translation type="unfinished">匯出之後：</translation>
     </message>
     <message>
         <source>VYM - Path to pre export script</source>
@@ -462,6 +638,10 @@ want to allow this in your system!</source>
         <source>%1 didn&apos;t exit normally</source>
         <translation type="obsolete">%1 並未正常離開</translation>
     </message>
+    <message>
+        <source>show warnings of xslt processor</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ExtraInfoDialog</name>
@@ -495,6 +675,10 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File location:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -536,7 +720,7 @@ want to allow this in your system!</source>
     <name>HeadingEditor</name>
     <message>
         <source>Heading Editor</source>
-        <comment>Window caption</comment>
+        <comment>Name of editor shown as window title</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -564,7 +748,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">關閉</translation>
+        <translation type="obsolete">關閉</translation>
     </message>
     <message>
         <source>Action</source>
@@ -584,6 +768,53 @@ want to allow this in your system!</source>
     <message>
         <source>Current state</source>
         <comment>Current bar in history hwindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>JiraAgent</name>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished">警告</translation>
+    </message>
+    <message>
+        <source>Authentication problem when contacting JIRA</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>JiraSettingsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA servers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">加入</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">移除</translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JiraSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -841,7 +1072,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>Set &amp;Color</source>
-        <translation>設定顏色(&amp;C)</translation>
+        <translation type="vanished">設定顏色(&amp;C)</translation>
     </message>
     <message>
         <source>Pick color
@@ -1503,7 +1734,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
-        <translation type="unfinished">無法儲存 %1</translation>
+        <translation type="obsolete">無法儲存 %1</translation>
     </message>
     <message>
         <source>Import</source>
@@ -1589,7 +1820,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab in %2.</source>
-        <translation>無法啟動 %1 以在 %2 中開啟新的頁標。</translation>
+        <translation type="vanished">無法啟動 %1 以在 %2 中開啟新的頁標。</translation>
     </message>
     <message>
         <source>Set application to open PDF files</source>
@@ -1632,7 +1863,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Firefox Bookmarks</source>
-        <translation type="obsolete">Firefox 書籤</translation>
+        <translation type="unfinished">Firefox 書籤</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
@@ -1648,7 +1879,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Bookmarks</source>
-        <translation>書籤</translation>
+        <translation type="vanished">書籤</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 to open a new tab</source>
@@ -1665,11 +1896,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>Note Editor</source>
-        <translation type="unfinished">註記編輯器</translation>
-    </message>
-    <message>
-        <source>Heading Editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">註記編輯器</translation>
     </message>
     <message>
         <source>Search results list</source>
@@ -2066,11 +2293,6 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom toolbar</source>
-        <comment>View Toolbar name</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Zoom in</source>
         <comment>View action</comment>
         <translation type="unfinished">放大</translation>
@@ -2133,7 +2355,7 @@ exists already. Do you want to</source>
     <message>
         <source>Use modifier to color branches</source>
         <comment>Mode modifier</comment>
-        <translation type="unfinished">於顏色分支使用修飾鍵</translation>
+        <translation type="obsolete">於顏色分支使用修飾鍵</translation>
     </message>
     <message>
         <source>Use modifier to copy</source>
@@ -2149,16 +2371,6 @@ exists already. Do you want to</source>
         <source>Note</source>
         <comment>SystemFlag</comment>
         <translation type="unfinished">註記</translation>
-    </message>
-    <message>
-        <source>URL to Document </source>
-        <comment>SystemFlag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>URL to Bugzilla </source>
-        <comment>SystemFlag</comment>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Link to another vym map</source>
@@ -2208,112 +2420,12 @@ exists already. Do you want to</source>
     <message>
         <source>Important</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished">重要</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Back</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>forward</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Look here</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">重要</translation>
     </message>
     <message>
         <source>Dangerous</source>
         <comment>Freemind-Flag</comment>
-        <translation type="unfinished">危險</translation>
-    </message>
-    <message>
-        <source>Don&apos;t flagrget</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flag</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Home</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Telephone</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Music</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mailbox</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Maix</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To be improved</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Magic</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To be discussed</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reminder</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Excellent</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Linux</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sweet</source>
-        <comment>Freemind-Flag</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">危險</translation>
     </message>
     <message>
         <source>Set application to open pdf files</source>
@@ -2353,7 +2465,7 @@ exists already. Do you want to</source>
     <message>
         <source>Edit branch after adding it</source>
         <comment>Settings action</comment>
-        <translation type="unfinished">加入分支之後編輯它</translation>
+        <translation type="obsolete">加入分支之後編輯它</translation>
     </message>
     <message>
         <source>Select branch after adding it</source>
@@ -2442,7 +2554,7 @@ exists already. Do you want to</source>
     <message>
         <source>unnamed</source>
         <comment>MainWindow: name for new and empty file</comment>
-        <translation type="unfinished">未命名</translation>
+        <translation type="obsolete">未命名</translation>
     </message>
     <message>
         <source>The map %1
@@ -2520,11 +2632,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished">Firefox 書籤</translation>
     </message>
     <message>
-        <source>Import Dir%1</source>
-        <comment>Import Filters</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remove only branch and keep its children </source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -2575,7 +2682,7 @@ to confusion when finishing working with vym.Do you want to</source>
     </message>
     <message>
         <source>Link to another map</source>
-        <translation type="unfinished">連結到另外的圖譜</translation>
+        <translation type="obsolete">連結到另外的圖譜</translation>
     </message>
     <message>
         <source>Select previous</source>
@@ -2590,10 +2697,6 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Selection toolbar</source>
         <comment>Toolbar name</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Script Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2760,36 +2863,6 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Bugzilla handling</source>
-        <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create URL to SUSE Bugzilla</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Get data from SUSE Bugzilla</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Get data from SUSE Bugzilla for subtree</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SUSE Fate tool handling</source>
-        <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create URL to SUSE FATE tool</source>
-        <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>vymlinks - linking maps</source>
         <comment>Shortcuts</comment>
         <translation type="unfinished"></translation>
@@ -2812,11 +2885,6 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Various</source>
         <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add   ...</source>
-        <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2872,10 +2940,6 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <source>Info</source>
         <translation type="obsolete">資訊</translation>
-    </message>
-    <message>
-        <source>Spreadsheet</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Properties</source>
@@ -2954,10 +3018,6 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Load Freemind map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Export as CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2991,11 +3051,6 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter sleep time (number of days or date YYYY-MM-DD or DD.MM[.YYYY]</source>
-        <comment>task sleep time dialog</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Couldn&apos;t set sleep time to %1.
 </source>
         <translation type="unfinished"></translation>
@@ -3022,11 +3077,6 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>tasks</source>
-        <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>slides</source>
         <comment>Info about map</comment>
         <translation type="unfinished"></translation>
@@ -3034,14 +3084,6 @@ because of existing lockfile:
     <message>
         <source>xLinks</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set application to zip/unzip files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory with vym macros:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3132,6 +3174,359 @@ because of existing lockfile:
     </message>
     <message>
         <source>Please allow vym to check for updates!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script output window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as default map</source>
+        <comment>File menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Dir...</source>
+        <comment>Import Filters</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confluence (HTML)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Firefox Bookmarks</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished">Firefox 書籤</translation>
+    </message>
+    <message>
+        <source>Text (Markdown)...</source>
+        <comment>File export menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSV...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move branch diagonally up</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move branch diagonally down</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get data from JIRA for subtree</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get page name from Confluence</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset delta priority for visible tasks</source>
+        <comment>Reset delta</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add image...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Goto linked map...</source>
+        <comment>Edit menu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Presentation mode</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script output window</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <comment>Shortcuts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Get Confluence user data</source>
+        <comment>Connect action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to select and reorder objects</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format painter: pick color from another branch and apply</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to move branches without linking</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use modifier to move view without selecting</source>
+        <comment>Mode modifier</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation type="unfinished">圖像</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <comment>Filedialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <comment>SystemFlag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hm...</source>
+        <comment>Standardflag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Important</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">重要</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Look here</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dangerous</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished">危險</translation>
+    </message>
+    <message>
+        <source>Don&apos;t forget</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Home</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Telephone</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Music</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mailbox</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mail</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To be improved</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magic</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To be discussed</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reminder</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Excellent</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linux</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sweet</source>
+        <comment>Freemind flag</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Confluence Credentials</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA Credentials</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path for default path</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show keyboard macros</source>
+        <comment>Help action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select color (Press Shift for more options)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View toolbar</source>
+        <comment>View Toolbar name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Flags toolbar</source>
+        <comment>user Flags Toolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load default map:
+
+%1
+
+vym will create an empty map now.</source>
+        <comment>Mainwindow: Failed to load default map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1,
+because file exists and cannot be changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving the map failed:
+Couldn&apos;t rename map to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save map as new default map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have no permissions to write to </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite as new default map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save as default, failed to rename to
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Firefox Bookmarks into new map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Freemind map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link to another vym map</source>
+        <translation type="unfinished">連結到另外的 vym 圖譜</translation>
+    </message>
+    <message>
+        <source>Set as link to vym map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
+        <comment>task sleep time dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks total</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tasks in map</source>
+        <comment>Info about map</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load vym script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set vym default map to be loaded on startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No SSL support available for this build of vym</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3292,6 +3687,11 @@ to notifiy Browsers of changed bookmarks.</source>
     <message>
         <source>Note Editor</source>
         <comment>Window caption</comment>
+        <translation type="obsolete">註記編輯器</translation>
+    </message>
+    <message>
+        <source>Note Editor</source>
+        <comment>Name of editor shown as window title</comment>
         <translation type="unfinished">註記編輯器</translation>
     </message>
 </context>
@@ -3339,7 +3739,7 @@ to notifiy Browsers of changed bookmarks.</source>
     </message>
     <message>
         <source>Couldn&apos;t start zip to compress data.</source>
-        <translation>無法啟動 zip 去壓縮資料。</translation>
+        <translation type="vanished">無法啟動 zip 去壓縮資料。</translation>
     </message>
     <message>
         <source>zip didn&apos;t exit normally</source>
@@ -3347,11 +3747,11 @@ to notifiy Browsers of changed bookmarks.</source>
     </message>
     <message>
         <source>Couldn&apos;t start unzip to decompress data.</source>
-        <translation>無法啟動 unzip 去解壓縮資料。</translation>
+        <translation type="vanished">無法啟動 unzip 去解壓縮資料。</translation>
     </message>
     <message>
         <source>unzip didn&apos;t exit normally</source>
-        <translation>unzip 並未正常離開</translation>
+        <translation type="vanished">unzip 並未正常離開</translation>
     </message>
     <message>
         <source>Could not start %1</source>
@@ -3383,12 +3783,12 @@ multiple selected files.</source>
     <message>
         <source>Exporting the %1 bookmarks will overwrite
 your existing bookmarks file.</source>
-        <translation>匯出 %1 書籤將會覆寫
+        <translation type="vanished">匯出 %1 書籤將會覆寫
 您的現有書籤檔案。</translation>
     </message>
     <message>
         <source>Warning: Overwriting %1 bookmarks</source>
-        <translation>警告：正在覆寫 %1 項書籤</translation>
+        <translation type="vanished">警告：正在覆寫 %1 項書籤</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -3397,7 +3797,7 @@ your existing bookmarks file.</source>
     <message>
         <source>Couldn&apos;t find script %1
 to notifiy Browsers of changed bookmarks.</source>
-        <translation>找不到命令稿 %1
+        <translation type="vanished">找不到命令稿 %1
 去在瀏覽器中註記變更的書籤。</translation>
     </message>
     <message>
@@ -3468,29 +3868,6 @@ Do you risk to overwrite its contents?</source>
 您要冒險覆寫它的內容嗎？</translation>
     </message>
     <message>
-        <source>No Bugzilla client found.  For openSUSE you can install by (running as root):
-
-</source>
-        <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alternatively you can also add the repository
-and install the perl module for Bugzilla access using YaST</source>
-        <comment>VymModel, how to install Bugzilla client module</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning: Couldn&apos;t find Bugzilla client</source>
-        <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t open &quot;%1&quot;
-%2.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Couldn&apos;t read settings from &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3544,15 +3921,6 @@ and install the perl module for Bugzilla access using YaST</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Could not copy %1 to %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t find a macro at  %1.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Please use Settings-&gt;</source>
         <translation type="unfinished">請使用 設定值-&gt;</translation>
     </message>
@@ -3561,22 +3929,9 @@ and install the perl module for Bugzilla access using YaST</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Couldn&apos;t save &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t start tool to decompress data.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Note Editor</source>
         <comment>Shortcut group</comment>
         <translation type="obsolete">註記編輯器</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
- </source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Could not export as AO to %1</source>
@@ -3612,6 +3967,116 @@ and install the perl module for Bugzilla access using YaST</source>
     </message>
     <message>
         <source>Couldn&apos;t link from %1 to target of old symbolic link %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as AO report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as Firefox bookmarks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as Firefox bookmarks to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag: %1</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flag: url</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image: %1</source>
+        <comment>Alt tag in HTML export</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export as Markdown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not export as Markdown to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t start %1 tool to compress data!
+The map could not be saved, please check if backup file is available or export as XML file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t start %1 tool to decompress data!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Firefox bookmarks</source>
+        <comment>Import dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading bookmarks:</source>
+        <comment>Progress dialog while importing bookmarks</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Imported %1 bookmarks</source>
+        <comment>Import dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find macros at  %1.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to unzip data,or your Windows version is older than Windows 10.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
+ </source>
+        <comment>zip tool missing on Linux/Mac platform</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read macros from &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t write macros to &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t read script from &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t write script to &quot;%1&quot;
+.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3655,28 +4120,7 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t open %1.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tab 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save to selected slide</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tab 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Current key:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3700,7 +4144,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Save</source>
         <comment>ScriptEditor</comment>
-        <translation type="unfinished">儲存</translation>
+        <translation type="obsolete">儲存</translation>
     </message>
     <message>
         <source>Couldn&apos;t get model to save script into slide!</source>
@@ -3708,6 +4152,32 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Couldn&apos;t find slide to save script into slide!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script</source>
+        <comment>Mode in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No script selected</source>
+        <comment>scriptname in scriptEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macros saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script saved to %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3765,23 +4235,38 @@ Do you want to overwrite it?</source>
 <context>
     <name>TaskEditor</name>
     <message>
-        <source>Current map</source>
-        <comment>TaskEditor</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Active tasks</source>
-        <comment>TaskEditor</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit heading</source>
         <comment>TaskEditor</comment>
-        <translation type="unfinished">編輯標頭</translation>
+        <translation type="obsolete">編輯標頭</translation>
     </message>
     <message>
-        <source>New tasks</source>
-        <comment>TaskEditor</comment>
+        <source>Show only tasks from current map</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only active tasks</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only new tasks</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only blocker tasks</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only tasks marked with this arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only tasks marked without any arrow-up flag</source>
+        <comment>Filters in task Editor</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3819,6 +4304,16 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Task</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delta</source>
+        <comment>TaskEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flags</source>
         <comment>TaskEditor</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -4063,11 +4558,6 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Text Editor</source>
-        <comment>Text Editor Window caption</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation type="unfinished"></translation>
@@ -4212,6 +4702,16 @@ Do you want to overwrite it?</source>
         <source>Edi&amp;t</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Set RichText default background color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set RichText default font color</source>
+        <comment>TextEditor</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeEditor</name>
@@ -4257,7 +4757,7 @@ Writing it uncompressed will also write images
 and flags and thus may overwrite files in the given directory
 
 Do you want to write the map</source>
-        <translation type="unfinished">圖譜 %1
+        <translation type="obsolete">圖譜 %1
 並未使用壓縮過的 vym 檔案格式。
 以未壓縮的方式寫入它將會寫入圖像和旗標，
 因而也許會覆寫給定目錄中的檔案。
@@ -4270,7 +4770,7 @@ Do you want to write the map</source>
     </message>
     <message>
         <source>uncompressed</source>
-        <translation type="unfinished">未壓縮</translation>
+        <translation type="obsolete">未壓縮</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -4365,11 +4865,6 @@ Do you want to reload that map with the new file?</source>
         <translation type="obsolete">圖像</translation>
     </message>
     <message>
-        <source>Contacting Bugzilla...</source>
-        <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Link to another map</source>
         <translation type="obsolete">連結到另外的圖譜</translation>
     </message>
@@ -4398,10 +4893,6 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished">嚴重錯誤</translation>
     </message>
     <message>
-        <source>Unsupported format in %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished">無法儲存 %1</translation>
     </message>
@@ -4417,16 +4908,6 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Warning</source>
         <translation type="unfinished">警告</translation>
-    </message>
-    <message>
-        <source>Redo failed:
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Script aborted:
-%1</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Export as LaTeX</source>
@@ -4452,11 +4933,6 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Warning: Map already opended</source>
         <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Image</source>
-        <comment>Default name for new image</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4502,6 +4978,34 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
     </message>
     <message>
         <source>Couldn&apos;t remove lockfile for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The map %1
+did not use the compressed vym file format.
+Writing it uncompressed will also write images 
+and flags and thus may overwrite files into the given directory
+
+Do you want to write the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>uncompressed, potentially overwrite existing data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find Jira ticket pattern in %1</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contacting Jira...</source>
+        <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Received Jira data.</source>
+        <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4565,6 +5069,64 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
     </message>
     <message>
         <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <comment>Warning dialog default window name</comment>
+        <translation type="unfinished">警告</translation>
+    </message>
+</context>
+<context>
+    <name>ZipSettingsDialog</name>
+    <message>
+        <source>zip settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unzip tool:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">關閉</translation>
+    </message>
+    <message>
+        <source>zip settings</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path to 7z.exe</source>
+        <comment>zip tool settings dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to 7z to zip/unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to zip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set path to unzip files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
