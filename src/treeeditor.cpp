@@ -23,6 +23,8 @@ TreeEditor::TreeEditor(VymModel *m)
         setModel(model);
     init();
 }
+// FIXME-0 on load also set basecolor to BG of map (white map still has black base in TE)
+// FIXME-0 set decoration color in TE to link color in map or some other contrast color (white decoration for white map BG and white base...)
 
 void TreeEditor::init()
 {
