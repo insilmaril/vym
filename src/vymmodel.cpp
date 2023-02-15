@@ -56,7 +56,6 @@
 #include "xlinkobj.h"
 #include "xml-freemind-legacy.h"    // XML-FIXME-2 remove
 #include "xml-vym.h"
-#include "xml-vym-legacy.h" // XML-FIXME-2 remove
 #include "xmlobj.h"
 
 #ifdef Q_OS_WINDOWS
@@ -595,7 +594,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         reader->setTmpDir(tmpdir);
 
-        if (lmode == File::ImportReplace)
+        if (lmode == File::ImportReplace)   // XML-FIXME-1 needed???
             reader->setLoadMode(File::ImportReplace, pos);
         else
             reader->setLoadMode(lmode, pos);
@@ -608,6 +607,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                         file.errorString()));
         }
         // Here we actually parse the XML file
+        qDebug() << "VM::loadMap pos=" << pos;
         bool ok = reader->read(&file);
 
         // Aftermath
@@ -1715,7 +1715,7 @@ void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
         saveState(File::PartOfMap, undoSelection,
                   QString("addMapInsert (\"PATH\",%1,%2)")
                       .arg(redoSel->num())
-                      .arg(SlideContent),
+                      .arg(VymReader::SlideContent),
                   redoSelection, "remove ()", comment, redoSel);
     }
 }
@@ -2877,7 +2877,7 @@ void VymModel::copy()
     }
 }
 
-void VymModel::paste()
+void VymModel::paste()  // FIXME-000  wrong BC, always added on top of children... 
 {
     if (readonly)
         return;
@@ -2896,11 +2896,11 @@ void VymModel::paste()
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
-                if (File::Success != loadMap(fn, File::ImportAdd, File::VymMap, SlideContent))
+                if (File::Success != loadMap(fn, File::ImportAdd, File::VymMap, VymReader::SlideContent, selbi->branchCount()))
                     qWarning() << "VM::paste Loading clipboard failed: " << fn;
             }
             zipped = zippedOrg;
-            reposition();
+            reposition();   // XML-FIXME-0 needed?
         } else if (mimeData->hasImage()) {
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
             QString fn = clipboardDir + "/" + "image.png";

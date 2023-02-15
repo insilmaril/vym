@@ -83,13 +83,13 @@ def summary
   puts "Warnings:     #{$tests_warnings}"
   puts "Tests failed: #{$tests_failed}"
 end
-        
+
 #######################
 def test_vym
   #@vym.clearConsole
 
   heading "Mainwindow checks:"
-  version = "2.9.506"
+  version = "2.9.507"
   expect_warning_only "Version is #{version}", @vym.version, version
 
   expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
@@ -245,9 +245,10 @@ def test_bugfixes
 end
 
 #######################
-def test_copy_paste (vym)
+def test_copy_paste
   heading "Copy, cut & Paste"
-  map = init_map( vym )
+
+  map = init_map @testMapDefaultPath
   map.select @main_a
   n = map.branchCount.to_i
 
@@ -275,12 +276,15 @@ def test_copy_paste (vym)
   s = map.getSelectionString
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "branch a"
   map.cut
+
+  close_current_map
 end
 
 #######################
-def test_delete_parts (vym)
+def test_delete_parts
   heading "Deleting parts"
-  map = init_map( vym )
+
+  map = init_map @testMapDefaultPath
   map.select @main_a
   n=map.branchCount.to_i
   map.select @branch_a
@@ -294,7 +298,9 @@ def test_delete_parts (vym)
   map.select @branch_a
   expect "Undo Remove branch: branchcount restored branch", map.branchCount.to_i, m
 
-  map = init_map( vym )
+  close_current_map
+
+  map = init_map @testMapDefaultPath
   map.select @branch_a
   n = map.branchCount.to_i
   map.removeChildren
@@ -304,7 +310,9 @@ def test_delete_parts (vym)
   map.select @branch_a
   expect "Undo: removeChildren: branchcount", map.branchCount.to_i, n
 
-  map = init_map( vym )
+  close_current_map
+  map = init_map @testMapDefaultPath
+
   map.select @main_a
   n=map.branchCount.to_i
   map.select @branch_a
@@ -318,13 +326,17 @@ def test_delete_parts (vym)
   map.select @branch_a
   expect "Undo: removeKeepChildren: branchcount of branch", map.branchCount.to_i, m
 
-  map = init_map( vym )
+  close_current_map
+  map = init_map @testMapDefaultPath
+
   n = map.centerCount.to_i
   map.select @center_1
   map.remove
   expect "remove mapCenter: number of centers decreased", map.centerCount.to_i, n - 1
   map.undo
   expect "Undo remove mapCenter: number of centers increased", map.centerCount.to_i, n
+
+  close_current_map
 end
 
 #######################
@@ -1122,27 +1134,27 @@ begin
   test_vym
   test_basics
 
-  test_adding_branches
-  test_adding_maps
-  test_attributes
-  test_bugfixes
-  ##test_copy_paste(vym)
-  ##test_delete_parts(vym)
+  #test_adding_branches
+  #test_adding_maps
+  #test_attributes
+  #test_bugfixes
+  test_copy_paste
+  test_delete_parts
   ##test_export # FIXME-1 hangs
-  test_extrainfo
-  test_frames
+  #test_extrainfo
+  #test_frames
   ##test_headings(vym)
   ##test_history(vym)
-  test_load_legacy_maps
+  #test_load_legacy_maps
   ##test_modify_branches(vym)
-  test_moving_parts
+  #test_moving_parts
   ##test_notes(vym)
   ##test_references(vym)
-  test_saving
-  test_scrolling
-  test_standard_flags
-  test_tasks
-  test_user_flags
+  #test_saving
+  #test_scrolling
+  #test_standard_flags
+  #test_tasks
+  #test_user_flags
 
   ##test_xlinks(vym)
 
