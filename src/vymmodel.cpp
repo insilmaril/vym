@@ -607,7 +607,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                         file.errorString()));
         }
         // Here we actually parse the XML file
-        qDebug() << "VM::loadMap pos=" << pos;
         bool ok = reader->read(&file);
 
         // Aftermath

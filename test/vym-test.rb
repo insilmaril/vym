@@ -515,7 +515,7 @@ def test_frames
   close_current_map
 end
 
-def test_headings (vym)
+def test_headings
   heading "Headings:"
   # FIXME same checks like for notes above for headings
 end
@@ -1137,29 +1137,28 @@ begin
   test_vym
   test_basics
 
-  #test_adding_branches
-  #test_adding_maps
-  #test_attributes
-  #test_bugfixes
-  #test_copy_paste
-  #test_delete_parts
-  ##test_export # FIXME-1 hangs
-  #test_extrainfo
-  #test_frames
-  # test_headings(vym)  # FIXME-2 no tests available
+  test_adding_branches
+  test_adding_maps
+  test_attributes
+  test_bugfixes
+  test_copy_paste
+  test_delete_parts
+  #test_export # FIXME-1 hangs
+  test_extrainfo
+  test_frames
+  ##test_headings  # FIXME-2 no tests available
   test_history
-  #test_load_legacy_maps
-  ##test_modify_branches(vym)
-  #test_moving_parts
-  ##test_notes(vym)
-  ##test_references(vym)
-  #test_saving
-  #test_scrolling
-  #test_standard_flags
-  #test_tasks
-  #test_user_flags
-
-  ##test_xlinks(vym)
+  test_load_legacy_maps
+  #test_modify_branches(vym)
+  test_moving_parts
+  #test_notes(vym)
+  #test_references(vym)
+  test_saving
+  test_scrolling
+  test_standard_flags
+  test_tasks
+  test_user_flags
+  #test_xlinks(vym)
 
   summary
 
