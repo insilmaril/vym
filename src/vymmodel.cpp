@@ -1591,17 +1591,20 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             int i = redoCommand.indexOf("(");
             QString rcl = redoCommand.left(i-1);
             if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
-                if (debug)
-                    qDebug() << "VM::saveState repeated command: " << rcl;
 
                 // Current command is a repeated one. We only want to "squash" some of these
-                if (rcl.startsWith("model.setRotation") ||
-                    rcl.startsWith("model.parseVymText")) {
+                QRegExp re("<vymnote");
+                if (rcl.startsWith("model.parseVymText") && re.indexIn(redoCommand) > 0) {
+                    if (debug)
+                        qDebug() << "VM::saveState repeated command: " << redoCommand;
+
                     // Do not increase undoCommand counter
                     repeatedCommand = true;
                     undoCommand = undoSet.value(
                         QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
-                }
+                } else
+                    if (debug)
+                        qDebug() << "VM::saveState not repeated command: " << redoCommand;
             }
         }
     }

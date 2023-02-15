@@ -521,9 +521,10 @@ def test_headings (vym)
 end
 
 #######################
-def test_history (vym)
+def test_history
   heading "History"
-  map = init_map( vym )
+
+  map = init_map @testMapDefaultPath
   map.select @main_a
   map.setHeadingPlainText "A"
   map.setHeadingPlainText "B"
@@ -531,7 +532,7 @@ def test_history (vym)
   map.undo
   map.undo
   map.undo
-  expect "Undo 3 times", map.getHeadingPlainText, "Main A"
+  expect "Undo 3 times, after changing heading -> 'A' -> 'B' -> 'C'", map.getHeadingPlainText, "Main A"
   map.redo
   expect "Redo once", map.getHeadingPlainText, "A"
   map.copy
@@ -544,6 +545,8 @@ def test_history (vym)
   map.selectLastChildBranch
   expect "Paste from the past", map.getHeadingPlainText, "A"
   map.remove
+
+  close_current_map
 end
 
 #######################
@@ -1138,13 +1141,13 @@ begin
   #test_adding_maps
   #test_attributes
   #test_bugfixes
-  test_copy_paste
-  test_delete_parts
+  #test_copy_paste
+  #test_delete_parts
   ##test_export # FIXME-1 hangs
   #test_extrainfo
   #test_frames
-  ##test_headings(vym)
-  ##test_history(vym)
+  # test_headings(vym)  # FIXME-2 no tests available
+  test_history
   #test_load_legacy_maps
   ##test_modify_branches(vym)
   #test_moving_parts
