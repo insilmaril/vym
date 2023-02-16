@@ -172,9 +172,6 @@
            <height>0</height>
           </size>
          </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(240,240,240);</string>
-         </property>
          <property name="inputMask">
           <string/>
          </property>
