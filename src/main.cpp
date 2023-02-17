@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QMessageBox>
+#include <QStyleFactory> // FIXME-0 testing
 
 #include <cstdlib>
 #include <iostream>
@@ -345,6 +346,45 @@ int main(int argc, char *argv[])
 #endif
     }
 
+    // Use dark theme depending on system appearance and preferences
+    int text_hsv_value = app.palette().color(QPalette::WindowText).value();
+    int bg_hsv_value = app.palette().color(QPalette::Base).value();
+    bool systemSeemsDark = (text_hsv_value > bg_hsv_value);
+    QString settingsDarkTheme = settings.value("/system/darkTheme", "system").toString();
+    if (settingsDarkTheme == "always" || (settingsDarkTheme == "system" && systemSeemsDark))
+        usingDarkTheme = true;
+    else
+        usingDarkTheme = false;
+
+#if defined(Q_OS_WINDOWS)
+    if (usingDarkTheme) {
+        qApp->setStyle(QStyleFactory::create("fusion"));
+
+        // On Windows, there is no dark palette predefined, let's do that on our own
+        QPalette palette;
+        palette.setColor(QPalette::Window, QColor(53,53,53));
+        palette.setColor(QPalette::WindowText, Qt::white);
+        palette.setColor(QPalette::Base, QColor(27, 30, 32));
+        palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+        palette.setColor(QPalette::ToolTipBase, Qt::white);
+        palette.setColor(QPalette::ToolTipText, Qt::white);
+        palette.setColor(QPalette::Text, Qt::white);
+        palette.setColor(QPalette::Button, QColor(53,53,53));
+        palette.setColor(QPalette::ButtonText, Qt::white);
+        palette.setColor(QPalette::BrightText, Qt::red);
+        palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
+        palette.setColor(QPalette::HighlightedText, Qt::black);
+        qApp->setPalette(palette);
+    }
+#endif
+
+    if (debug) {
+        if (usingDarkTheme)
+            qDebug() << "Using dark theme";
+        else
+            qDebug() << "Not using dark theme";
+    }
+
     // Prepare and check translations
     vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
     vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
@@ -419,17 +459,6 @@ int main(int argc, char *argv[])
     // overwritten during loading of maps
     lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
 
-    // Are we using dark theme?
-    int text_hsv_value = app.palette().color(QPalette::WindowText).value();
-    int bg_hsv_value = app.palette().color(QPalette::Base).value();
-    usingDarkTheme = (text_hsv_value > bg_hsv_value);
-
-    if (debug) {
-        if (usingDarkTheme)
-            qDebug() << "Using dark theme";
-        else
-            qDebug() << "Not using dark theme";
-    }
 
     Main m;
 
