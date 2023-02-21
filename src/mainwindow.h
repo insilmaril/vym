@@ -302,6 +302,7 @@ class Main : public QMainWindow {
   public slots:
     void settingsAutosaveTime();
     void settingsDefaultMapAuthor();
+    void settingsDarkTheme();
     void settingsShowParentsLevelTasks();
     void settingsShowParentsLevelFindResults();
     void settingsToggleAutoLayout();
@@ -600,6 +601,7 @@ class Main : public QMainWindow {
     QAction *actionSettingsUseHideExport;
     QAction *actionSettingsToggleAutosave;
     QAction *actionSettingsAutosaveTime;
+    QAction *actionSettingsDarkTheme;
     QAction *actionSettingsShowParentsLevelTasks;
     QAction *actionSettingsShowParentsLevelFindResults;
     QAction *actionSettingsToggleAutoLayout;

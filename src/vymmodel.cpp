@@ -5169,6 +5169,9 @@ void VymModel::setDefaultLinkColor(const QColor &col)
 
     mapDesign->setDefaultLinkColor(col);
 
+    // Set color for "link arrows" in TreeEditor
+    vymView->setLinkColor(col);
+
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);

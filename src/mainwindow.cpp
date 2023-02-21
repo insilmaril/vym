@@ -30,6 +30,7 @@ using namespace std;
 #include "confluence-user.h"
 #include "confluence-userdialog.h"
 #include "credentials.h"
+#include "darktheme-settings-dialog.h"
 #include "download-agent.h"
 #include "file.h"
 #include "findresultmodel.h"
@@ -2628,12 +2629,10 @@ void Main::setupFlagActions()
 
     // Add entry now, to avoid chicken and egg problem and position toolbar
     // after all others:
-    flag =
-        setupFlag(":/flag-stopsign.svg", Flag::StandardFlag, "stopsign",
+    setupFlag(":/flag-stopsign.svg", Flag::StandardFlag, "stopsign",
                   tr("This won't work!", "Standardflag"), QUuid(), Qt::Key_1);
 
-    flag =
-        setupFlag(":/flag-hook-green.svg",
+    flag = setupFlag(":/flag-hook-green.svg",
                   // flag = setupFlag ( "flags/standard/dialog-ok-apply.svg",
                   Flag::StandardFlag, "hook-green",
                   tr("Status - ok,done", "Standardflag"), QUuid(), Qt::Key_2);
@@ -2659,13 +2658,13 @@ void Main::setupFlagActions()
                      Qt::Key_Question);
     flag->setGroup("standard-mark");
 
-    flag = setupFlag(":/flag-info.svg", Flag::StandardFlag, "info",
+    setupFlag(":/flag-info.svg", Flag::StandardFlag, "info",
                      tr("Info", "Standardflag"), QUuid(), Qt::Key_I);
 
-    flag = setupFlag(":/flag-lamp.svg", Flag::StandardFlag, "lamp",
+    setupFlag(":/flag-lamp.svg", Flag::StandardFlag, "lamp",
                      tr("Idea!", "Standardflag"), QUuid(), Qt::Key_Asterisk);
 
-    flag = setupFlag(":/flag-heart.svg", Flag::StandardFlag, "heart",
+    setupFlag(":/flag-heart.svg", Flag::StandardFlag, "heart",
                      tr("I just love...", "Standardflag"));
 
     flag = setupFlag(":/flag-face-smile.svg", Flag::StandardFlag, "smiley-good",
@@ -2684,7 +2683,7 @@ void Main::setupFlagActions()
                      "smiley-omb", tr("Oh no!", "Standardflag"), QUuid());
     flag->setGroup("standard-faces");
 
-    flag = setupFlag(":/flag-flash.svg", Flag::StandardFlag, "flash",
+    setupFlag(":/flag-flash.svg", Flag::StandardFlag, "flash",
                      tr("Dangerous", "Standardflag"));
 
     flag = setupFlag(":/flag-arrow-up.svg", Flag::StandardFlag, "arrow-up",
@@ -2707,99 +2706,98 @@ void Main::setupFlagActions()
                      QUuid(), Qt::SHIFT + Qt::CTRL + Qt::Key_PageDown);
     flag->setGroup("standard-arrow");
 
-    flag = setupFlag(":/flag-thumb-up.png", Flag::StandardFlag, "thumb-up",
+    setupFlag(":/flag-thumb-up.png", Flag::StandardFlag, "thumb-up",
                      tr("I like this", "Standardflag"));
 
-    flag = setupFlag(":/flag-thumb-down.png", Flag::StandardFlag, "thumb-down",
+    setupFlag(":/flag-thumb-down.png", Flag::StandardFlag, "thumb-down",
                      tr("I do not like this", "Standardflag"));
 
     // Original khelpcenter.png
-    flag = setupFlag(":/flag-lifebelt.svg", Flag::StandardFlag, "lifebelt",
+    setupFlag(":/flag-lifebelt.svg", Flag::StandardFlag, "lifebelt",
                      tr("This will help", "Standardflag"));
 
-    flag = setupFlag(":/flag-phone.svg", Flag::StandardFlag, "phone",
+    setupFlag(":/flag-phone.svg", Flag::StandardFlag, "phone",
                      tr("Call...", "Standardflag"));
 
-    flag = setupFlag(":/flag-clock.svg", Flag::StandardFlag, "clock",
+    setupFlag(":/flag-clock.svg", Flag::StandardFlag, "clock",
                      tr("Time critical", "Standardflag"));
 
-    flag = setupFlag(":/flag-present.png", Flag::StandardFlag, "present",
+    setupFlag(":/flag-present.png", Flag::StandardFlag, "present",
                      tr("Surprise!", "Standardflag"));
 
-    flag = setupFlag(":/flag-rose.png", Flag::StandardFlag, "rose",
+    setupFlag(":/flag-rose.png", Flag::StandardFlag, "rose",
                      tr("Rose", "Standardflag"));
 
     // Freemind flags
-    flag = setupFlag(":/freemind/warning.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/warning.png", Flag::FreemindFlag,
                      "freemind-warning", tr("Important", "Freemind flag"));
 
     for (int i = 1; i < 8; i++) {
-        flag = setupFlag(QString(":/freemind/priority-%1.png").arg(i),
+        setupFlag(QString(":/freemind/priority-%1.png").arg(i),
                          Flag::FreemindFlag,
                          QString("freemind-priority-%1").arg(i),
                          tr("Important", "Freemind flag"));
         flag->setGroup("freemind-priority");
     }
 
-    flag = setupFlag(":/freemind/back.png", Flag::FreemindFlag, "freemind-back",
+    setupFlag(":/freemind/back.png", Flag::FreemindFlag, "freemind-back",
                      tr("Back", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/forward.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/forward.png", Flag::FreemindFlag,
                      "freemind-forward", tr("Forward", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/attach.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/attach.png", Flag::FreemindFlag,
                      "freemind-attach", tr("Look here", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/clanbomber.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/clanbomber.png", Flag::FreemindFlag,
                      "freemind-clanbomber", tr("Dangerous", "Freemind flag"));
 
-    flag =
-        setupFlag(":/freemind/desktopnew.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/desktopnew.png", Flag::FreemindFlag,
                   "freemind-desktopnew", tr("Don't forget", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/flag.png", Flag::FreemindFlag, "freemind-flag",
+    setupFlag(":/freemind/flag.png", Flag::FreemindFlag, "freemind-flag",
                      tr("Flag", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/gohome.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/gohome.png", Flag::FreemindFlag,
                      "freemind-gohome", tr("Home", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/kaddressbook.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/kaddressbook.png", Flag::FreemindFlag,
                      "freemind-kaddressbook", tr("Telephone", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/knotify.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/knotify.png", Flag::FreemindFlag,
                      "freemind-knotify", tr("Music", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/korn.png", Flag::FreemindFlag, "freemind-korn",
+    setupFlag(":/freemind/korn.png", Flag::FreemindFlag, "freemind-korn",
                      tr("Mailbox", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/mail.png", Flag::FreemindFlag, "freemind-mail",
+    setupFlag(":/freemind/mail.png", Flag::FreemindFlag, "freemind-mail",
                      tr("Mail", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/password.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/password.png", Flag::FreemindFlag,
                      "freemind-password", tr("Password", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/pencil.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/pencil.png", Flag::FreemindFlag,
                      "freemind-pencil", tr("To be improved", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/stop.png", Flag::FreemindFlag, "freemind-stop",
+    setupFlag(":/freemind/stop.png", Flag::FreemindFlag, "freemind-stop",
                      tr("Stop", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/wizard.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/wizard.png", Flag::FreemindFlag,
                      "freemind-wizard", tr("Magic", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/xmag.png", Flag::FreemindFlag, "freemind-xmag",
+    setupFlag(":/freemind/xmag.png", Flag::FreemindFlag, "freemind-xmag",
                      tr("To be discussed", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/bell.png", Flag::FreemindFlag, "freemind-bell",
+    setupFlag(":/freemind/bell.png", Flag::FreemindFlag, "freemind-bell",
                      tr("Reminder", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/bookmark.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/bookmark.png", Flag::FreemindFlag,
                      "freemind-bookmark", tr("Excellent", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/penguin.png", Flag::FreemindFlag,
+    setupFlag(":/freemind/penguin.png", Flag::FreemindFlag,
                      "freemind-penguin", tr("Linux", "Freemind flag"));
 
-    flag = setupFlag(":/freemind/licq.png", Flag::FreemindFlag, "freemind-licq",
+    setupFlag(":/freemind/licq.png", Flag::FreemindFlag, "freemind-licq",
                      tr("Sweet", "Freemind flag"));
 }
 
@@ -3050,7 +3048,15 @@ void Main::setupSettingsActions()
     settingsMenu->addSeparator();
 
     a = new QAction(
-        tr("Number of visible parents in task editor", "Settings action"),
+        tr("Dark theme", "Settings action") + "...",
+        this);
+    connect(a, SIGNAL(triggered()), this,
+            SLOT(settingsDarkTheme()));
+    settingsMenu->addAction(a);
+    actionSettingsDarkTheme= a;
+
+    a = new QAction(
+        tr("Number of visible parents in task editor", "Settings action") + "...",
         this);
     connect(a, SIGNAL(triggered()), this,
             SLOT(settingsShowParentsLevelTasks()));
@@ -3058,7 +3064,7 @@ void Main::setupSettingsActions()
     actionSettingsShowParentsLevelTasks = a;
 
     a = new QAction(tr("Number of visible parents in find results window",
-                       "Settings action"),
+                       "Settings action") + "...",
                     this);
     connect(a, SIGNAL(triggered()), this,
             SLOT(settingsShowParentsLevelFindResults()));
@@ -5961,6 +5967,30 @@ void Main::settingsDefaultMapAuthor()
         settings.setValue("/user/name", s);
 }
 
+void Main::settingsDarkTheme()
+{
+    DarkThemeSettingsDialog dia;
+    QString settingDarkTheme = settings.value("/system/darkTheme", "system").toString();
+    if (settingDarkTheme == "always")
+        dia.ui.alwaysUseDarkThemeButton->setChecked(true);
+    else
+        dia.ui.systemUseDarkThemeButton->setChecked(true);
+    dia.exec();
+
+    QString newSetting;
+    if (dia.ui.alwaysUseDarkThemeButton->isChecked())
+            newSetting = "always";
+    else
+        newSetting = "system";
+
+    if (settingDarkTheme != newSetting) {
+        settings.setValue("/system/darkTheme", newSetting);
+        QMessageBox::information(
+            0, tr("Information"),
+            tr("Restart vym to apply the changed dark theme setting"));
+    }
+}
+
 void Main::settingsShowParentsLevelFindResults()
 {
     bool ok;
@@ -6238,7 +6268,7 @@ void Main::setFocusMapEditor()
         vv->setFocusMapEditor();
 }
 
-void Main::changeSelection(VymModel *model, const QItemSelection &newsel,
+void Main::changeSelection(VymModel *model, const QItemSelection &,
                            const QItemSelection &)
 {
     // Setting the model in BPE implicitely
@@ -6297,8 +6327,6 @@ void Main::updateDockWidgetTitles(VymModel *model)
         if (bi) {
             s = bi->getHeadingPlain();
             noteEditor->setVymText(bi->getNote());
-            VymText vt = bi->getHeading();
-            headingEditor->setVymText(vt);  // FIXME-0 sets HE
         }
 
         noteEditor->setEditorTitle(s);
@@ -6826,9 +6854,15 @@ void Main::flagChanged()
 
 void Main::testFunction1()
 {
-    if (!currentMapEditor())
-        return;
-    currentMapEditor()->testFunction1();
+    // Avail. styles:
+    // Linux (KDE): Breeze,bb10dark,bb10bright,cleanlooks,gtk2,cde,motif,plastique,Windows,Fusion
+    // Windows: windowsvista,Windows,Fusion
+    //qApp->setStyle(QStyleFactory::create("windowsvista"));
+
+    VymModel *m = currentModel();
+    if (m) {
+        m->setMapBackgroundColor(QColor(255, 170,127));
+    }
 }
 
 void Main::testFunction2()
