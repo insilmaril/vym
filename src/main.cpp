@@ -1,6 +1,5 @@
 #include <QApplication>
 #include <QMessageBox>
-#include <QStyleFactory> // FIXME-0 testing
 
 #include <cstdlib>
 #include <iostream>

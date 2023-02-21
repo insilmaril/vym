@@ -5967,18 +5967,14 @@ void Main::settingsDarkTheme()
 {
     DarkThemeSettingsDialog dia;
     QString settingDarkTheme = settings.value("/system/darkTheme", "system").toString();
-    if (settingDarkTheme == "never")
-        dia.ui.neverUseDarkThemeButton->setChecked(true);
-    else if (settingDarkTheme == "always")
-        dia.ui.alwaysUseDarkThemeButton->setChecked(true); // FIXME-0 "always" not implemented yet in main.cpp
+    if (settingDarkTheme == "always")
+        dia.ui.alwaysUseDarkThemeButton->setChecked(true);
     else
         dia.ui.systemUseDarkThemeButton->setChecked(true);
     dia.exec();
 
     QString newSetting;
-    if (dia.ui.neverUseDarkThemeButton->isChecked())
-        newSetting = "never";
-    else if (dia.ui.alwaysUseDarkThemeButton->isChecked())
+    if (dia.ui.alwaysUseDarkThemeButton->isChecked())
             newSetting = "always";
     else
         newSetting = "system";

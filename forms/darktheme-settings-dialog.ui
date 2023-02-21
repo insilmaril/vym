@@ -35,16 +35,6 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QRadioButton" name="neverUseDarkThemeButton">
-          <property name="text">
-           <string>Never  use dark theme</string>
-          </property>
-          <attribute name="buttonGroup">
-           <string notr="true">buttonGroup</string>
-          </attribute>
-         </widget>
-        </item>
-        <item>
          <widget class="QRadioButton" name="alwaysUseDarkThemeButton">
           <property name="text">
            <string>Always use dark theme</string>
