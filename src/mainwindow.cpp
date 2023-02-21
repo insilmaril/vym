@@ -6327,8 +6327,6 @@ void Main::updateDockWidgetTitles(VymModel *model)
         if (bi) {
             s = bi->getHeadingPlain();
             noteEditor->setVymText(bi->getNote());
-            VymText vt = bi->getHeading();
-            headingEditor->setVymText(vt);  // FIXME-0 sets HE
         }
 
         noteEditor->setEditorTitle(s);
