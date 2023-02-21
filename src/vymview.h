@@ -27,6 +27,7 @@ class VymView : public QMainWindow {
     void previousSlide();
     void setSelectionColor(const QColor &);
     void setBackgroundColor(const QColor &);
+    void setLinkColor(const QColor &);
 
   public slots:
     void changeSelection(const QItemSelection &newSel,

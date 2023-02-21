@@ -164,6 +164,17 @@ void VymView::setBackgroundColor(const QColor &col)
         "background-color: " + col.name());
 }
 
+void VymView::setLinkColor(const QColor &col)
+{
+    // Set color for "link arrows" in TreeEditor
+    //
+    // Alternatively one could use stylesheets
+    // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
+    QPalette palette = treeEditor->palette();
+    palette.setColor(QPalette::Text, col);
+    treeEditor->setPalette(palette);
+}
+
 void VymView::changeSelection(const QItemSelection &newsel,
                               const QItemSelection &desel)
 {

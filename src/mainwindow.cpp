@@ -6857,7 +6857,12 @@ void Main::testFunction1()
     // Avail. styles:
     // Linux (KDE): Breeze,bb10dark,bb10bright,cleanlooks,gtk2,cde,motif,plastique,Windows,Fusion
     // Windows: windowsvista,Windows,Fusion
-    qApp->setStyle(QStyleFactory::create("windowsvista"));
+    //qApp->setStyle(QStyleFactory::create("windowsvista"));
+
+    VymModel *m = currentModel();
+    if (m) {
+        m->setMapBackgroundColor(QColor(255, 170,127));
+    }
 }
 
 void Main::testFunction2()
