@@ -3730,7 +3730,7 @@ void VymModel::deleteSelection(ulong selID)
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)
+void VymModel::deleteKeepChildren(bool saveStateFlag)   // FIXME-2 nothing done, if childs have attributes
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
@@ -5190,6 +5190,9 @@ void VymModel::setDefaultLinkColor(const QColor &col)
 
     mapDesign->setDefaultLinkColor(col);
 
+    // Set color for "link arrows" in TreeEditor
+    vymView->setLinkColor(col);
+
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
@@ -5286,7 +5289,7 @@ void VymModel::selectMapBackgroundColor()// FIXME-2 move to MD or ME
     setMapBackgroundColor(col);
 }
 
-void VymModel::setMapBackgroundColor(QColor col)
+void VymModel::setMapBackgroundColor(QColor col) // FIXME-2 move to MD or ME
 {
     QColor oldcol = mapEditor->getScene()->backgroundBrush().color();
     saveState(QString("setMapBackgroundColor (\"%1\")").arg(oldcol.name()),
@@ -5515,7 +5518,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::setSelectionColorInt(QColor col)
+void VymModel::setSelectionColorInt(QColor col) // FIXME-0 check if still working after merging of develop into layout-test
 {
     if (!col.isValid())
         return;
