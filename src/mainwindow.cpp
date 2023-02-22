@@ -5967,18 +5967,14 @@ void Main::settingsDarkTheme()
 {
     DarkThemeSettingsDialog dia;
     QString settingDarkTheme = settings.value("/system/darkTheme", "system").toString();
-    if (settingDarkTheme == "never")
-        dia.ui.neverUseDarkThemeButton->setChecked(true);
-    else if (settingDarkTheme == "always")
-        dia.ui.alwaysUseDarkThemeButton->setChecked(true); // FIXME-0 "always" not implemented yet in main.cpp
+    if (settingDarkTheme == "always")
+        dia.ui.alwaysUseDarkThemeButton->setChecked(true);
     else
         dia.ui.systemUseDarkThemeButton->setChecked(true);
     dia.exec();
 
     QString newSetting;
-    if (dia.ui.neverUseDarkThemeButton->isChecked())
-        newSetting = "never";
-    else if (dia.ui.alwaysUseDarkThemeButton->isChecked())
+    if (dia.ui.alwaysUseDarkThemeButton->isChecked())
             newSetting = "always";
     else
         newSetting = "system";
@@ -6327,8 +6323,6 @@ void Main::updateDockWidgetTitles(VymModel *model)
         if (bi) {
             s = bi->getHeadingPlain();
             noteEditor->setVymText(bi->getNote());
-            VymText vt = bi->getHeading();
-            headingEditor->setVymText(vt);  // FIXME-0 sets HE
         }
 
         noteEditor->setEditorTitle(s);
@@ -6857,7 +6851,12 @@ void Main::testFunction1()
     // Avail. styles:
     // Linux (KDE): Breeze,bb10dark,bb10bright,cleanlooks,gtk2,cde,motif,plastique,Windows,Fusion
     // Windows: windowsvista,Windows,Fusion
-    qApp->setStyle(QStyleFactory::create("windowsvista"));
+    //qApp->setStyle(QStyleFactory::create("windowsvista"));
+
+    VymModel *m = currentModel();
+    if (m) {
+        m->setMapBackgroundColor(QColor(255, 170,127));
+    }
 }
 
 void Main::testFunction2()

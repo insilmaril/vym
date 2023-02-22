@@ -5035,6 +5035,10 @@ void VymModel::setMapDefLinkColor(QColor col)
         QString("Set map link color to %1").arg(col.name()));
 
     defLinkColor = col;
+
+    // Set color for "link arrows" in TreeEditor
+    vymView->setLinkColor(col);
+
     BranchItem *cur = NULL;
     BranchItem *prev = NULL;
     BranchObj *bo;
