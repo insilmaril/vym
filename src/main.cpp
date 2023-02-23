@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QMessageBox>
+#include <QStyleFactory>
 
 #include <cstdlib>
 #include <iostream>
