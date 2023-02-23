@@ -21,46 +21,40 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
     tabs = new QTabWidget(this);
     credits = new AboutTextBrowser(parent);
 
-    QStringList versions;
-    versions << vymVersion;
-    versions << vymBuildDate;
-    versions << vymCodeName;
+    QString version = vymVersion;
+    if (!vymCodeName.isEmpty())
+        version += QString(" - \"%1\"").arg(vymCodeName);
 
     credits->setHtml(
         QString(
-            "<center><img src=\"" + iconPath +
-            "vym-128x128.png\"></center>"
+            "<center><img src=\"" + iconPath + "vym-128x128.png\"></center>"
             "<h3><center>VYM - View Your Mind </h3>"
-            "<p align=\"center\"> A tool to put the things you have got in "
-            "your mind into a map.</p>"
+            "<p align=\"center\"> A tool to put the things you have got in your mind into a map.</p>"
             "<p align=\"center\"> (c) 2004-%1 by Uwe Drechsel (<a "
             "href=\"mailto:vym@InSilmaril.de\">vym@InSilmaril.de</a>)</p>"
-            "<p align=\"center\"> Version " +
-            versions.join(" - ") +
-            "</p>"
-            "<p align=\"center\"> " +
-            vymCodeQuality +
-            "</p>"
+            "<p align=\"center\"> Version " + version + "</p>"
+            "<p align=\"center\"> Quality: " + vymCodeQuality + "</p>"
+            "<p align=\"center\"> Build date: " + vymBuildDate + "</p>"
             "<ul>"
-            "<li> Contact</li>"
-            "<ul>"
-            "<li> vym homepage:<br> <a href=\"http://www.InSilmaril.de/vym\">"
-            "http://www.InSilmaril.de/vym</a></li>"
-            "<li> Project homepage on Sourceforge:<br> <a "
-            "href=\"http://sourceforge.net/projects/vym/\">"
-            "http://sourceforge.net/projects/vym/</a></li>"
-            "<li> Mailinglists are also on Sourceforge:"
-            "<ul>"
-            "<li>Please ask general questions about vym  on "
-            "<a "
-            "href=\"mailto:vym-forum@lists.sourceforge.net\">vym-forum</a></li>"
-            "<li>Subscribe/Unsubscribe and archives can be found  "
-            "<a "
-            "href=\"https://sourceforge.net/mail/?group_id=127802\">here</a></"
-            "li>"
-            "</ul>"
-            "</ul>"
-            "<li> Credits "
+                "<li> Contact</li>"
+                    "<ul>"
+                        "<li> Code and issue tracker:<br>"
+                            "<a href=\"https://github.com/insilmaril/vym\">"
+                        "https://github.com/insilmaril/vym</a></li>"
+                        "<li> Project homepage on Sourceforge with Apple and Windows downloads:<br>"
+                            "<a href=\"http://sourceforge.net/projects/vym/\">"
+                            "http://sourceforge.net/projects/vym/</a></li>"
+                        "<li> vym homepage with overview and examples:<br> <a href=\"http://www.InSilmaril.de/vym\">"
+                            "http://www.InSilmaril.de/vym</a></li>"
+                        "<li> Mailinglists are also on Sourceforge:"
+                            "<ul>"
+                                "<li>Please ask general questions about vym  on "
+                                    "<a href=\"mailto:vym-forum@lists.sourceforge.net\">vym-forum</a></li>"
+                                "<li>Subscribe/Unsubscribe and archives can be found  "
+                                    "<a href=\"https://sourceforge.net/mail/?group_id=127802\">here</a></li>"
+                            "</ul>"
+                    "</ul>"
+                "<li> Credits "
             "<ul>"
             "<li>Documentation"
             "  <ul>"
@@ -123,7 +117,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "  </ul>"
             "<li> General"
             "  <ul>"
-            "    <li>CMake setup by Daniel Rossberg, Costantino Giuliodori and Patrick "
+            "    <li>Initial CMake setup by Daniel Rossberg, Costantino Giuliodori and Patrick "
             "Spendrin</li>"
             "    <li>All the guys at Trolltech (now Qt) for starting Qt </li>"
             "    <li>All the guys at SUSE Linux for openSUSE Linux and support,"
