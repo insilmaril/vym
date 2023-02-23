@@ -34,7 +34,7 @@ The latest development drops can be found in the Files/Development folder there.
 The latest binaries for Linux, Debian and Ubuntu are built and available in the authors
 Open Build Service project:
 
-https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym
+https://software.opensuse.org/download.html?project=home%3Ainsilmaril&package=vym
 
 
 Source code
