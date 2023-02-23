@@ -95,6 +95,7 @@ if(WIN32)
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
 endif()
 
+
 # Add DBUS interfaces, if DBUS is available on platform
 if(DBus1_FOUND)
     list(APPEND VymSources src/dbus/adaptormodel.cpp src/dbus/adaptorvym.cpp)
@@ -121,7 +122,7 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 
 #QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
-#QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
+QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
 #QT5_add_translation(qm_files ${ts_files})
 
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
@@ -138,6 +139,22 @@ if(WIN32)
     install(TARGETS vym DESTINATION "${CMAKE_INSTALL_PREFIX}")
 else()
     install(TARGETS vym DESTINATION bin)
+endif()
+
+if(APPLE)
+    message(STATUS "Detected APPLE")
+    set_target_properties(vym PROPERTIES MACOSX_BUNDLE TRUE )
+
+    # Add property to Info.plist
+    set(MACOSX_BUNDLE_ICON_FILE vym.icns)
+
+    # tell CMake where to find and install the file itself
+    set(APP_ICON_MACOSX ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
+    set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
+           MACOSX_PACKAGE_LOCATION "Resources")
+
+#FIXME-0    add_executable(vym MACOSX_BUNDLE main.cpp ${APP_ICON_MACOSX})
+target_sources(vym PUBLIC ${APP_ICON_MACOSX})
 endif()
 
 add_custom_target(make-translations-directory ALL

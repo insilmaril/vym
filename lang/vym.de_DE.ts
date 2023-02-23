@@ -391,6 +391,30 @@
     </message>
 </context>
 <context>
+    <name>DarkThemeSettingsDialog</name>
+    <message>
+        <source>Dark theme settings</source>
+        <translation>Einstellungen für dunkles Design</translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <translation>Dunkles Design</translation>
+    </message>
+    <message>
+        <source>Always use dark theme</source>
+        <translation>Immer dunkles Design verwenden</translation>
+    </message>
+    <message>
+        <source>System settings for dark theme</source>
+        <translation>System Einstellungen fpr dunkles Design verwenden</translation>
+    </message>
+    <message>
+        <source>DarkThemeSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
+        <translation>Dunkles Design Einstellungen</translation>
+    </message>
+</context>
+<context>
     <name>DownloadAgent</name>
     <message>
         <source>warning</source>
@@ -4071,11 +4095,11 @@ Map als standard map speichern</translation>
     </message>
     <message>
         <source>Please allow vym to download release notes!</source>
-        <translation>Bitte vym den Zugriff auf auf Release-Dokumente ermöglichen!</translation>
+        <translation>Bitte erlauben Sie vym die  Release-Anmerkungen herunterzuladen!</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation>&lt;html&gt;&lt;h3&gt;Wollen Sie vym erlauben, online nach Updates und Release-Meldungen zu suchen?&lt;/h3&gt;
+        <translation type="vanished">&lt;html&gt;&lt;h3&gt;Wollen Sie vym erlauben, online nach Updates und Release-Meldungen zu suchen?&lt;/h3&gt;
 Falls Sie es erlauben, wird vym &lt;ul&gt;&lt;li&gt;einmalig nach Release-Meldungen sehen&lt;/li&gt;
 &lt;li&gt;regelmäßig nach Updates suchen und ggf. benachrichtigen, falls Updates verfügbar sind, z.B. wenn wichtige Bugfixes zur Verfügung stehen&lt;/li&gt;
 &lt;li&gt;ein Cookie mit einer zufälligen ID erhalten und die vym Version und Namen der Plattform( z.B. Windows- oder Linux Version) an mich (Uwe Drechsel) senden.
@@ -4770,7 +4794,7 @@ wird %1 Rückgängig Schritte haben.</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="obsolete">Information</translation>
+        <translation>Information</translation>
     </message>
     <message>
         <source>Changed settings will be applied after restarting vym</source>
@@ -4853,6 +4877,23 @@ Konnte nicht umbenennen zu %1</translation>
 %1</source>
         <translation>Konnte nicht als Standard speichern, das umbennen ist fehlgeschlagen:
 %1</translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <comment>Settings action</comment>
+        <translation>Dunkles Design</translation>
+    </message>
+    <message>
+        <source>Restart vym to apply the changed dark theme setting</source>
+        <translation>Bitte vym neu starten um die Einstellungen für dunkles Design zu verwenden</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
+        <translation>&lt;html&gt;&lt;h3&gt;Erlauben Sie vym online nach Updates oder Release Anmerkungen zu suchen?&lt;/h3&gt;Wenn Sie es erlauben, wird vym &lt;ul&gt;&lt;li&gt;einmalig online nach Release Anmerkungen suchen&lt;/li&gt;&lt;li&gt;regelmäßig nach Updates suchen und Sie benachrichtigen, sollten Updates wie z.B. wichtige Fehlerbehebungen verfügbar sein&lt;/li&gt;&lt;li&gt;ein cookie erhalten mit eineer zufällig erzeugten ID und einige anonymisierte Daten senden, wie z.B.&lt;ul&gt;&lt;li&gt;vym Version&lt;/li&gt;&lt;li&gt;Plattform Name und ID &quot;Windows&quot; oder &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;Einstellungen wie z.B. Sprache und ob dunkles Design verwendet wird&lt;/li&gt;&lt;/ul&gt;Diese Daten werden geschickt zum Author von vym: Uwe Drechsel.&lt;p&gt;Als vym Entwickler motiviert es mich zu sehen, wenn viele Menschen vym benutzen. Natürlich bin ich neugierig, auf welchen Plattformen vym verwendet wird. Jede dieser Plattformen benötigt eine Menge meiner (Frei-)zeit.&lt;/p&gt; &lt;p&gt;Abgesehen von obigen Daten wird nichts weiteres gesendet, insbesondere keine privaten Daten. (Bitte bei Zweifel gerne die Quellen prüfen!)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Falls Sie es nicht zulassen, wird&lt;ul&gt;&lt;li&gt;nichts heruntergeladen und &lt;b&gt;besonders werde ich nicht motiviert&lt;/b&gt; weiter tausende Stunden meiner Zeit in die Entwicklung einer freien Software zu stecken.&lt;/ul&gt;Bitte erlauben Sie vym nach Updates zu sehen :-)</translation>
+    </message>
+    <message>
+        <source>That&apos;s ok, though I would be happy to see many users working with vym and also on which platforms.</source>
+        <translation>Schade, ich würde mich wirklich freuen, wenn ich viele Menschen vym benutzen sehe und auch auf welchen Plattformen vym genutzt wird.</translation>
     </message>
 </context>
 <context>
