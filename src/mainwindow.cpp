@@ -7219,10 +7219,11 @@ bool Main::downloadsEnabled(bool userTriggered)
                    "Please allow vym to check for updates :-)");
             QMessageBox mb(vymName, infotext, QMessageBox::Information,
                            QMessageBox::Yes | QMessageBox::Default,
-                           QMessageBox::Cancel | QMessageBox::Escape,
+                           QMessageBox::No | QMessageBox::Escape,
                            QMessageBox::NoButton);
+
             mb.setButtonText(QMessageBox::Yes, tr("Allow"));
-            mb.setButtonText(QMessageBox::Cancel, tr("Do not allow"));
+            mb.setButtonText(QMessageBox::No, tr("Do not allow"));
             switch (mb.exec()) {
             case QMessageBox::Yes: {
                 result = true;
@@ -7235,6 +7236,11 @@ bool Main::downloadsEnabled(bool userTriggered)
                                    }
             default:
                 result = false;
+                QMessageBox msgBox;
+                msgBox.setText(tr("That's ok, though I would be happy to see many users working with vym and also on which platforms."));
+                msgBox.setStandardButtons(QMessageBox::Close);
+                msgBox.setIconPixmap(QPixmap(":/flag-face-sad.svg"));
+                msgBox.exec();
                 break;
             }
         }
