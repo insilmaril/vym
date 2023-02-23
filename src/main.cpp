@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QMessageBox>
+#include <QStyleFactory>
 
 #include <cstdlib>
 #include <iostream>
@@ -232,12 +233,15 @@ int main(int argc, char *argv[])
     }
 
     if (options.isOn("version")) {
-        cout << "VYM - View Your Mind (c) 2004-" << QDate::currentDate().year()
-             << " Uwe Drechsel " << endl
-             << "   Version: " << __VYM_VERSION << endl
-             << "  " << __VYM_CODENAME << endl
-             << "   Quality: " << __VYM_CODE_QUALITY << endl
-             << "Build date: " << __VYM_BUILD_DATE << endl;
+        QString s = QString("VYM - View Your Mind (c) 2004-%1").arg(QDate::currentDate().year());
+        s += " Uwe Drechsel\n";
+        s += "   Version: " + vymVersion;
+        if (!vymCodeName.isEmpty())
+            s += QString(" - \"%1\"").arg(vymCodeName);
+        s += "\n";
+        s += "   Quality: " + vymCodeQuality + "\n";
+        s += "Build date: " + vymBuildDate + "\n";
+        cout << s.toStdString();
 
         return 0;
     }

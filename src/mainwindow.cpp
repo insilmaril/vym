@@ -7049,8 +7049,8 @@ void Main::debugInfo()
 void Main::helpAbout()
 {
     AboutDialog ad;
-    ad.setMinimumSize(500, 500);
-    ad.resize(QSize(500, 500));
+    ad.setMinimumSize(900, 700);
+    ad.resize(QSize(900, 700));
     ad.exec();
 }
 
@@ -7120,6 +7120,22 @@ void Main::downloadReleaseNotesFinished()
     }
 }
 
+QUrl Main::serverUrl(const QString &scriptName)
+{
+    // Local URL for testing only
+    // QString("http://localhost/release-notes.php?vymVersion=%1") /
+    return QUrl(
+        QString("http://www.insilmaril.de/vym/%1?"
+                    "vymVersion=%2"
+                    "&config=darkTheme=%3+localeName=%4+buildDate=%4+codeQuality=%5")
+            .arg(scriptName)
+            .arg(vymVersion)
+            .arg(usingDarkTheme)
+            .arg(vymBuildDate)
+            .arg(vymCodeQuality)
+            );
+}
+
 void Main::checkReleaseNotesAndUpdates ()
 {
     // Called once after startup
@@ -7140,14 +7156,7 @@ void Main::checkReleaseNotes ()
             versionLowerThanVym(
                 settings.value("/downloads/releaseNotes/shownVersion", "0.0.1")
                     .toString())) {
-            QUrl releaseNotesUrl(
-                // Local URL for testing only
-                // QString("http://localhost/release-notes.php?vymVersion=%1") /
-                QString("http://www.insilmaril.de/vym/"
-                        "release-notes.php?vymVersion=%1&codeQuality=%2")
-                    .arg(vymVersion)
-                    .arg(vymCodeQuality));
-            DownloadAgent *agent = new DownloadAgent(releaseNotesUrl);
+            DownloadAgent *agent = new DownloadAgent(serverUrl("release-notes.php"));
             connect(agent, SIGNAL(downloadFinished()), this,
                     SLOT(downloadReleaseNotesFinished()));
             QTimer::singleShot(0, agent, SLOT(execute()));
@@ -7191,9 +7200,13 @@ bool Main::downloadsEnabled(bool userTriggered)
                    "<li>check regulary for updates and notify you in case you "
                    "should update, e.g. if there are "
                    "important bug fixes available</li>"
-                   "<li>receive a cookie with a random ID and send vym version "
-                   "and platform name and the ID  "
-                   "(e.g. \"Windows\" or \"Linux\") back to me, Uwe Drechsel."
+                   "<li>receive a cookie with a random ID and send some anonymous data, like:"
+                   "<ul>"
+                   "<li>vym version</li>"
+                   "<li>platform name and the ID (e.g. \"Windows\" or \"Linux\")</li>"
+                   "<li>if you are using dark theme</li>"
+                   "</ul>"
+                   "This data is sent to me, Uwe Drechsel."
                    "<p>As vym developer I am motivated to see "
                    "many people using vym. Of course I am curious to see, on "
                    "which system vym is used. Maintaining each "
@@ -7214,18 +7227,28 @@ bool Main::downloadsEnabled(bool userTriggered)
                    "Please allow vym to check for updates :-)");
             QMessageBox mb(vymName, infotext, QMessageBox::Information,
                            QMessageBox::Yes | QMessageBox::Default,
-                           QMessageBox::Cancel | QMessageBox::Escape,
+                           QMessageBox::No | QMessageBox::Escape,
                            QMessageBox::NoButton);
+
             mb.setButtonText(QMessageBox::Yes, tr("Allow"));
-            mb.setButtonText(QMessageBox::Cancel, tr("Do not allow"));
+            mb.setButtonText(QMessageBox::No, tr("Do not allow"));
             switch (mb.exec()) {
-            case QMessageBox::Yes:
+            case QMessageBox::Yes: {
                 result = true;
-                QMessageBox::information(
-                    0, vymName, tr("Thank you for enabling downloads!"));
+                QMessageBox msgBox;
+                msgBox.setText(tr("Thank you for enabling downloads!"));
+                msgBox.setStandardButtons(QMessageBox::Close);
+                msgBox.setIconPixmap(QPixmap(":/flag-face-smile.svg"));
+                msgBox.exec();
                 break;
+                                   }
             default:
                 result = false;
+                QMessageBox msgBox;
+                msgBox.setText(tr("That's ok, though I would be happy to see many users working with vym and also on which platforms."));
+                msgBox.setStandardButtons(QMessageBox::Close);
+                msgBox.setIconPixmap(QPixmap(":/flag-face-sad.svg"));
+                msgBox.exec();
                 break;
             }
         }
@@ -7291,11 +7314,7 @@ void Main::downloadUpdatesFinishedInt() { downloadUpdatesFinished(true); }
 
 void Main::downloadUpdates(bool userTriggered)
 {
-    QUrl updatesUrl(QString("http://www.insilmaril.de/vym/"
-                            "updates.php?vymVersion=%1&codeQuality=%2")
-                        .arg(vymVersion)
-                        .arg(vymCodeQuality));
-    DownloadAgent *agent = new DownloadAgent(updatesUrl);
+    DownloadAgent *agent = new DownloadAgent(serverUrl("updates.php"));
     if (userTriggered)
         connect(agent, SIGNAL(downloadFinished()), this,
                 SLOT(downloadUpdatesFinishedInt()));

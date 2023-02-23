@@ -371,6 +371,7 @@ class Main : public QMainWindow {
     void downloadReleaseNotesFinished();
 
   private:
+    QUrl serverUrl(const QString &scriptName);
     bool checkUpdatesAfterReleaseNotes;
 
   public:
