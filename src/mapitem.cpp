@@ -30,8 +30,10 @@ Container* MapItem::getContainer()
 
 void MapItem::setPos(const QPointF &p)
 {
-    if (hasTypeBranch())
+    if (hasTypeBranch()) {
         ((BranchItem*)this)->getBranchContainer()->setPos(p);
+        return;
+    }
 
     if (hasTypeImage())
         ((ImageItem*)this)->getImageContainer()->setPos(p);

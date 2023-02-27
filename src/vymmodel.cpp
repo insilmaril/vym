@@ -54,7 +54,7 @@
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
-#include "xml-freemind.h"
+#include "xml-freemind-legacy.h"    // XML-FIXME-2 remove
 #include "xml-vym.h"
 #include "xmlobj.h"
 
@@ -434,37 +434,37 @@ bool VymModel::parseVymText(const QString &s)
     bool ok = false;
     BranchItem *bi = getSelectedBranch();
     if (bi) {
-        parseBaseHandler *handler = new parseVYMHandler;
-
         bool saveStateBlockedOrg = saveStateBlocked;
         repositionBlocked = true;
         saveStateBlocked = true;
-        QXmlInputSource source;
-        source.setData(s);
-        QXmlSimpleReader reader;
-        reader.setContentHandler(handler);
-        reader.setErrorHandler(handler);
 
-        handler->setInputString(s);
-        handler->setModel(this);
-        handler->setLoadMode(File::ImportReplace, 0);
+        // XML-FIXME-1 Workaround: write string to disk so that it can be
+        // used with QIODevice of QXmlStreamReader/VymReader
+        saveStringToDisk("testdata.xml", s);
 
-        ok = reader.parse(source);
+        QFile file("testdata.xml");
+        if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+                    QString("Cannot read file %1:\n%2.")
+                    .arg(QDir::toNativeSeparators(fileName),
+                        file.errorString()));
+            return false;
+        }
+
+        VymReader vymReader(this);
+        vymReader.setLoadMode(File::ImportReplace, 0);
+
+        ok = vymReader.read(&file);
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
         if (ok) {
             if (s.startsWith("<vymnote"))
                 emitNoteChanged(bi);
             emitDataChanged(bi);
-            reposition(); // to generate bbox sizes
         }
-        else {
+        else
             QMessageBox::critical(0, tr("Critical Parse Error"),
-                                  tr(handler->errorProtocol().toUtf8()));
-            // returnCode=1;
-            // Still return "success": the map maybe at least
-            // partially read by the parser
-        }
+                                    vymReader.errorString());
     }
     return ok;
 }
@@ -481,15 +481,16 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         rotationAngle = mapEditor->getAngleTarget();
     }
 
-    parseBaseHandler *handler;
+    BaseReader *reader;
     fileType = ftype;
     switch (fileType) {
         case File::VymMap:
-            handler = new parseVYMHandler;
-            ((parseVYMHandler *)handler)->setContentFilter(contentFilter);
+            reader = new VymReader(this);
+            // XML-FIXME-1 set contentfilter?   seems unused.
+            //((parseVYMHandler *)handler)->setContentFilter(contentFilter);
             break;
         case File::FreemindMap:
-            handler = new parseFreemindHandler;
+            //reader = new FreemindReader(this); // XML-FIXME-1 not implemented yet
             break;
         default:
             QMessageBox::critical(0, tr("Critical Parse Error"),
@@ -554,7 +555,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 // into this ME)
                 // mainWindow->fileLoadFromTmp (flist);
                 // returnCode = 1;	// Silently forget this attempt to load
-                qWarning("MainWindow::load (fn)  multimap found...");
+                qWarning("MainWindow::loadMap multimap found");
             }
 
             if (flist.isEmpty()) {
@@ -583,11 +584,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         repositionBlocked = true;
         saveStateBlocked = true;
         mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
-        QXmlInputSource source(&file);
-        QXmlSimpleReader reader;
-        reader.setContentHandler(handler);
-        reader.setErrorHandler(handler);
-        handler->setModel(this);
 
         // We need to set the tmpDir in order  to load files with rel. path
         QString tmpdir;
@@ -595,15 +591,23 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             tmpdir = tmpZipDir;
         else
             tmpdir = fname.left(fname.lastIndexOf("/", -1));
-        handler->setTmpDir(tmpdir);
-        handler->setInputFile(file.fileName());
-        if (lmode == File::ImportReplace)
-            handler->setLoadMode(File::ImportReplace, pos);
-        else
-            handler->setLoadMode(lmode, pos);
 
+        reader->setTmpDir(tmpdir);
+
+        if (lmode == File::ImportReplace)   // XML-FIXME-1 needed???
+            reader->setLoadMode(File::ImportReplace, pos);
+        else
+            reader->setLoadMode(lmode, pos);
+
+        // Open file    // XML-FIXME-1 rework, was not used in legacy
+        if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+                    QString("Cannot read file %1:\n%2.")
+                    .arg(QDir::toNativeSeparators(fileName),
+                        file.errorString()));
+        }
         // Here we actually parse the XML file
-        bool ok = reader.parse(source);
+        bool ok = reader->read(&file);
 
         // Aftermath
         repositionBlocked = false;
@@ -636,15 +640,16 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         }
         else {
             QMessageBox::critical(0, tr("Critical Parse Error"),
-                                  tr(handler->errorProtocol().toUtf8()));
+                                    reader->errorString());
             // returnCode=1;
             // Still return "success": the map maybe at least
             // partially read by the parser
         }
     }
 
-    // Delete tmpZipDir
+    // Cleanup
     removeDir(QDir(tmpZipDir));
+    delete reader;
 
     // Restore original zip state
     zipped = zipped_org;
@@ -1585,17 +1590,20 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             int i = redoCommand.indexOf("(");
             QString rcl = redoCommand.left(i-1);
             if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
-                if (debug)
-                    qDebug() << "VM::saveState repeated command: " << rcl;
 
                 // Current command is a repeated one. We only want to "squash" some of these
-                if (rcl.startsWith("model.setRotation") ||
-                    rcl.startsWith("model.parseVymText")) {
+                QRegExp re("<vymnote");
+                if (rcl.startsWith("model.parseVymText") && re.indexIn(redoCommand) > 0) {
+                    if (debug)
+                        qDebug() << "VM::saveState repeated command: " << redoCommand;
+
                     // Do not increase undoCommand counter
                     repeatedCommand = true;
                     undoCommand = undoSet.value(
                         QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
-                }
+                } else
+                    if (debug)
+                        qDebug() << "VM::saveState not repeated command: " << redoCommand;
             }
         }
     }
@@ -1709,7 +1717,7 @@ void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
         saveState(File::PartOfMap, undoSelection,
                   QString("addMapInsert (\"PATH\",%1,%2)")
                       .arg(redoSel->num())
-                      .arg(SlideContent),
+                      .arg(VymReader::SlideContent),
                   redoSelection, "remove ()", comment, redoSel);
     }
 }
@@ -1896,6 +1904,36 @@ TreeItem *VymModel::findUuid(const QUuid &id)
         nextBranch(cur, prev);
     }
     return nullptr;
+}
+
+void VymModel::test()
+{
+    qDebug() << "VM::test()";
+
+    QString fileName = "/home/uwe/vym/branches/xml-streamreader/test.xml";
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+                QString("Cannot read file %1:\n%2.")
+                .arg(QDir::toNativeSeparators(fileName),
+                    file.errorString()));
+        return;
+    }
+
+    VymReader reader(this);
+    if (!reader.read(&file)) {
+        QMessageBox::warning(nullptr, QString("QXmlStream Bookmarks"),
+                QString("Parse error in file %1:\n\n%2")
+                .arg(QDir::toNativeSeparators(fileName),
+                    reader.errorString()));
+    } else {
+        mainWindow->statusMessage("File loaded");
+        reposition();
+    }
+
 }
 
 //////////////////////////////////////////////
@@ -2841,7 +2879,7 @@ void VymModel::copy()
     }
 }
 
-void VymModel::paste()
+void VymModel::paste()  // FIXME-000  wrong BC, always added on top of children... 
 {
     if (readonly)
         return;
@@ -2860,11 +2898,11 @@ void VymModel::paste()
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
-                if (File::Success != loadMap(fn, File::ImportAdd, File::VymMap, SlideContent))
+                if (File::Success != loadMap(fn, File::ImportAdd, File::VymMap, VymReader::SlideContent, selbi->branchCount()))
                     qWarning() << "VM::paste Loading clipboard failed: " << fn;
             }
             zipped = zippedOrg;
-            reposition();
+            reposition();   // XML-FIXME-0 needed?
         } else if (mimeData->hasImage()) {
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
             QString fn = clipboardDir + "/" + "image.png";
@@ -3182,7 +3220,6 @@ QString VymModel::getXLinkStyleEnd()
 }
 
 AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missing
-
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -3196,7 +3233,7 @@ AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missi
     return nullptr;
 }
 
-AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
+AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   // FIXME-3 better pass reference, e.g. from xml-vym
 {
     if (dst) {
 
@@ -3229,6 +3266,19 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
 
         emitDataChanged(dst);
         return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
+    }
+    return nullptr;
+}
+
+AttributeItem *VymModel::getAttributeByKey(const QString &key)
+{
+    BranchItem *bi = getSelectedBranch();
+    if (bi) {
+        for (int i = 0; i < bi->attributeCount(); i++) {
+            AttributeItem *ai = bi->getAttributeNum(i);
+            if (ai->getKey() == key)
+                return ai;
+        }
     }
     return nullptr;
 }
@@ -3786,33 +3836,6 @@ void VymModel::deleteLink(Link *l)
         delete (l);
 }
 
-void VymModel::clearItem(TreeItem *ti)
-{
-    if (ti) {
-        // Clear task (or other data in item itself)
-        ti->clear();
-
-        QModelIndex parentIndex = index(ti);
-        if (!parentIndex.isValid())
-            return;
-
-        int n = ti->childCount();
-        if (n == 0)
-            return;
-
-        emit(layoutAboutToBeChanged());
-
-        beginRemoveRows(parentIndex, 0, n - 1);
-        removeRows(0, n, parentIndex);
-        endRemoveRows();
-
-        reposition();
-
-        emit(layoutChanged());
-    }
-    return;
-}
-
 bool VymModel::scrollBranch(BranchItem *bi)
 {
     if (bi) {
@@ -4129,7 +4152,7 @@ void VymModel::toggleFlagByName(const QString &name, bool useGroups)
     }
 }
 
-void VymModel::clearFlags()
+void VymModel::clearFlags() // FIXME-2 multiple selections not supported
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -4383,8 +4406,6 @@ void VymModel::setHeadingConfluencePageName()   // FIXME-2 always asks for Confl
 
 void VymModel::setVymLink(const QString &s)
 {
-    if (s.isEmpty()) return;
-
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         saveState(

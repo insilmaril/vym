@@ -23,6 +23,7 @@ class VymScriptContext : public QObject, protected QScriptable {
     bool setResult(bool r);
     int setResult(int r);
     uint setResult(uint r);
+    qreal setResult(qreal r);
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,8 @@ class VymWrapper : public VymScriptContext {
     void editHeading();
     bool loadMap(const QString &filename);
     int mapCount();
-    void selectMap(uint n);
+    void gotoMap(uint n);
+    bool closeMapWithID(uint n);
     void selectQuickColor(int n);
     QString currentColor();
     uint currentMapID();

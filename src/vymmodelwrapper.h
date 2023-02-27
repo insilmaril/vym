@@ -48,6 +48,8 @@ class VymModelWrapper : public VymScriptContext {
     void cut();
     void cycleTask();
     bool exportMap();
+    QString getStringAttribute(const QString &key);
+    int getIntAttribute(const QString &key);
     int getBranchIndex();
     QString getDestPath();
     QString getFileDir();
@@ -60,6 +62,10 @@ class VymModelWrapper : public VymScriptContext {
     QString getMapTitle();
     QString getNotePlainText();
     QString getNoteXML();
+    qreal getPosX();
+    qreal getPosY();
+    qreal getScenePosX();
+    qreal getScenePosY();
     int getRotationHeading();
     int getRotationSubtree();
     QString getSelectionString();
@@ -103,6 +109,7 @@ class VymModelWrapper : public VymScriptContext {
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);
     void saveNote(const QString &filename);
+    void saveSelection(const QString &filename);
     void scroll();
     bool select(const QString &s);
     bool selectID(const QString &s);
@@ -115,6 +122,7 @@ class VymModelWrapper : public VymScriptContext {
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString);
     void setDefaultLinkColor(const QString &color); // FIXME-2 maybe also rename other setMap* methods?
+    void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &s);
     void setHeadingConfluencePageName();
     void setHeadingPlainText(const QString &s);

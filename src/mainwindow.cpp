@@ -616,6 +616,14 @@ void Main::setupAPI()
               "LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
+    c = new Command("getIntAttribute", Command::Branch);
+    c->addPar(Command::String, false, "Key of string attribute");
+    modelCommands.append(c);
+
+    c = new Command("getStringAttribute", Command::Branch);
+    c->addPar(Command::String, false, "Key of integer attribute");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::Any);
     modelCommands.append(c);
 
@@ -647,6 +655,18 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getNoteXML", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("getPosX", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("getPosY", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("getScenePosX", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("getScenePosY", Command::TreeItem);
     modelCommands.append(c);
 
     c = new Command("getRotationHeading", Command::Branch);
@@ -785,6 +805,10 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Filename of note to save");
     modelCommands.append(c);
 
+    c = new Command("saveSelection", Command::BranchOrImage);
+    c->addPar(Command::String, false, "Filename to save branch or image");
+    modelCommands.append(c);
+
     c = new Command("scroll", Command::Branch);
     modelCommands.append(c);
 
@@ -815,6 +839,11 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("selectParent", Command::Branch);
+    modelCommands.append(c);
+
+    c = new Command("setAttribute", Command::Branch);
+    c->addPar(Command::String, false, "Key of attribute as string");
+    c->addPar(Command::String, false, "String Value of attribute");
     modelCommands.append(c);
 
     c = new Command("setFlagByName", Command::TreeItem);
@@ -1025,6 +1054,10 @@ void Main::setupAPI()
     c = new Command("clearConsole", Command::Any);
     vymCommands.append(c);
 
+    c = new Command("closeMapWithID", Command::Any);
+    c->addPar(Command::Int, false, "ID of map (unsigned int)");
+    vymCommands.append(c);
+
     c = new Command("currentMap", Command::Any);
     vymCommands.append(c);
 
@@ -1041,7 +1074,7 @@ void Main::setupAPI()
     c = new Command("mapCount", Command::Any);
     vymCommands.append(c);
 
-    c = new Command("selectMap", Command::Any);
+    c = new Command("gotoMap", Command::Any);
     c->addPar(Command::Int, false, "Index of map");
     vymCommands.append(c);
 
@@ -1130,7 +1163,24 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
 
-    a = new QAction( tr("Firefox Bookmarks", "Import filters") + 
+    // Import at selection (adding to selection)
+    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportAdd = a;
+    fileImportMenu->addAction(a);
+
+    // Import at selection (replacing selection)
+    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportReplace = a;
+    fileImportMenu->addAction(a);
+    fileImportMenu->addSeparator();
+
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") +
                         tr("(experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this,
@@ -1931,20 +1981,6 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep28 = a;
-
-    // Import at selection (adding to selection)
-    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportAdd = a;
-
-    // Import at selection (replacing selection)
-    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportReplace = a;
 
     // Save selection
     a = new QAction(tr("Save selection", "Edit menu"), this);
@@ -2822,8 +2858,8 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
     case Flag::UserFlag:
         flag = userFlagsMaster->createFlag(path);
 
-        // User flags read from file already have a Uuid - use it
-        if (!uid.isNull())
+        if (flag &&!uid.isNull())
+            // User flags read from file already have a Uuid - use it
             flag->setUuid(uid);
         break;
 
@@ -3597,25 +3633,47 @@ VymModel *Main::getModel(uint id) // Used in BugAgent
     return nullptr;
 }
 
-void Main::gotoModel(VymModel *m)
+bool Main::gotoModel(VymModel *m)
 {
     for (int i = 0; i < tabWidget->count(); i++)
         if (view(i)->getModel() == m) {
             tabWidget->setCurrentIndex(i);
-            return;
+            return true;
         }
+    return false;
 }
 
-void Main::gotoModelID(uint id)
+bool Main::gotoModelWithID(uint id)
 {
     VymModel *vm;
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
         if (vm && vm->getModelID() == id) {
             tabWidget->setCurrentIndex(i);
-            return;
+            return true;
         }
     }
+    return false;
+}
+
+bool Main::closeModelWithID(uint id)
+{
+    VymModel *vm;
+    for (int i = 0; i < tabWidget->count(); i++) {
+        vm = view(i)->getModel();
+        if (vm && vm->getModelID() == id) {
+            tabWidget->removeTab(i);
+
+            // Destroy stuff, order is important
+            delete (vm->getMapEditor());
+            delete (view(i));
+            delete (vm);
+
+            updateActions();
+            return true;
+        }
+    }
+    return false;
 }
 
 int Main::modelCount() { return tabWidget->count(); }
@@ -3760,8 +3818,8 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
 
         if (lmode == File::NewMap) {
             if (vm && vm->isDefault()) {
-                // There is a map model already and it still the default map,
-                // use it.
+                // There is a map model already and it still is the default map,
+                // no need to create a new model.
                 createModel = false;
             }
             else

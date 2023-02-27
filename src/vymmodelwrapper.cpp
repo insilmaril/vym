@@ -1,5 +1,8 @@
 #include "vymmodelwrapper.h"
 
+#include <QMessageBox>
+
+#include "attributeitem.h"
 #include "branchitem.h"
 #include "imageitem.h"
 #include "misc.h"
@@ -375,6 +378,44 @@ bool VymModelWrapper::exportMap()
     return setResult(true);
 }
 
+QString VymModelWrapper::getStringAttribute(const QString &key)
+{
+    QVariant v;
+    AttributeItem *ai = model->getAttributeByKey(key);
+    if (ai) {
+        if (ai->getAttributeType() != AttributeItem::String) {
+            logError(context(), QScriptContext::SyntaxError,
+                     QString("Attribute with key '%1' has no type 'String'").arg(key));
+            return setResult(QString());
+        }
+        v = ai->getValue();
+    } else {
+        logError(context(), QScriptContext::SyntaxError,
+                 QString("No attribute found with key '%1'").arg(key));
+        return setResult(QString());
+    }
+    return setResult(v.toString());
+}
+
+int VymModelWrapper::getIntAttribute(const QString &key)
+{
+    QVariant v;
+    AttributeItem *ai = model->getAttributeByKey(key);
+    if (ai) {
+        if (ai->getAttributeType() != AttributeItem::Integer) {
+            logError(context(), QScriptContext::SyntaxError,
+                     QString("Attribute with key '%1' has no type 'Integer'").arg(key));
+            return setResult(-1);
+        }
+        v = ai->getValue();
+    } else {
+        logError(context(), QScriptContext::SyntaxError,
+                 QString("No attribute found with key '%1'").arg(key));
+        return setResult(-1);
+    }
+    return setResult(v.toInt());
+}
+
 int VymModelWrapper::getBranchIndex()
 {
     int r;
@@ -441,6 +482,82 @@ QString VymModelWrapper::getNotePlainText()
 QString VymModelWrapper::getNoteXML()
 {
     return setResult(model->getNote().saveToDir());
+}
+
+qreal VymModelWrapper::getPosX()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    if (c)
+        return setResult(c->pos().x());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get x-position from item");
+}
+
+qreal VymModelWrapper::getPosY()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    if (c)
+        return setResult(c->pos().y());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get y-position from item");
+}
+
+qreal VymModelWrapper::getScenePosX()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    if (c)
+        return setResult(c->scenePos().x());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get scenePos.x() from item");
+}
+
+qreal VymModelWrapper::getScenePosY()
+{
+    Container *c = nullptr;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi)
+        c = (Container*)(selbi->getBranchContainer());
+    else {
+        ImageItem *selii = model->getSelectedImage();
+        if (selii)
+            c = (Container*)(selii->getImageContainer());
+    }
+
+    if (c)
+        return setResult(c->scenePos().y());
+
+    logError(context(), QScriptContext::UnknownError,
+             "Could not get scenePos.y() from item");
 }
 
 int VymModelWrapper::getRotationHeading()
@@ -685,6 +802,19 @@ void VymModelWrapper::saveNote(const QString &filename)
     model->saveNote(filename);
 }
 
+void VymModelWrapper::saveSelection(const QString &filename)
+{
+    QString filename_org = model->getFilePath(); // Restore filename later
+    if (!model->renameMap(filename)) {
+        QMessageBox::critical(0,
+            tr("Critical Error"),
+            tr("Saving the map failed:\nCouldn't rename map to %1").arg(filename));
+        return;
+    }
+    model->save(File::PartOfMap);
+    model->renameMap(filename_org);
+}
+
 void VymModelWrapper::scroll()
 {
     BranchItem *selbi = getSelectedBranch();
@@ -808,6 +938,10 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
         logError(context(), QScriptContext::UnknownError,
                  "Couldn't toggle item with select string " + selectString);
     return setResult(r);
+}
+
+void VymModelWrapper::setAttribute(const QString &key, const QString &value)
+{
 }
 
 void VymModelWrapper::setDefaultLinkColor(const QString &color)

@@ -516,7 +516,10 @@ void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
 
 bool TreeItem::hasActiveFlag(const QString &name)
 {
-    return standardFlags.isActive(name);
+    if (standardFlags.hasFlag(name))
+        return standardFlags.isActive(name);
+    else
+        return userFlags.isActive(name);
 }
 
 bool TreeItem::hasActiveSystemFlag(const QString &name)

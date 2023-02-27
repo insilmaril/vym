@@ -26,10 +26,14 @@ FlagRowMaster::~FlagRowMaster()
 Flag *FlagRowMaster::createFlag(const QString &path)
 {
     Flag *flag = new Flag;
-    flag->load(path);
-    flags.append(flag);
+    if (flag->load(path)) {
+        flags.append(flag);
+        return flag;
+    }
 
-    return flag;
+    qWarning() << "FlagRowMaster::createFlag  failed to read " << path;
+    delete flag;
+    return nullptr;
 }
 
 void FlagRowMaster::createConfigureAction()
