@@ -7185,10 +7185,11 @@ QUrl Main::serverUrl(const QString &scriptName)
     return QUrl(
         QString("http://www.insilmaril.de/vym/%1?"
                     "vymVersion=%2"
-                    "&config=darkTheme=%3+localeName=%4+buildDate=%4+codeQuality=%5")
+                    "&config=darkTheme=%3+localeName=%4+buildDate=%5+codeQuality=%6")
             .arg(scriptName)
             .arg(vymVersion)
             .arg(usingDarkTheme)
+            .arg(localeName)
             .arg(vymBuildDate)
             .arg(vymCodeQuality)
             );

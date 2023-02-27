@@ -3013,6 +3013,30 @@ Do you want to reload that map with the new file?</source>
     </message>
 </context>
 <context>
+    <name>DarkThemeSettingsDialog</name>
+    <message>
+        <source>Dark theme settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always use dark theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System settings for dark theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DarkThemeSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DownloadAgent</name>
     <message>
         <source>Warning</source>
@@ -5022,7 +5046,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation>&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
+        <translation type="vanished">&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
     </message>
     <message>
         <source>Allow</source>
@@ -5498,6 +5522,27 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <source>Couldn&apos;t save as default, failed to rename to
 %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restart vym to apply the changed dark theme setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>That&apos;s ok, though I would be happy to see many users working with vym and also on which platforms.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

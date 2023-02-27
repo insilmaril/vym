@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 
 extern Main *mainWindow;
+extern bool usingDarkTheme;
 
 FindWidget::FindWidget(QWidget *)
 {
@@ -92,16 +93,28 @@ void FindWidget::setStatus(Status st)
     status = st;
     QPalette p = palette();
     QColor c;
-    switch (st) {
-    case Success:
-        c = QColor(120, 255, 120);
-        break;
-    case Failed:
-        c = QColor(255, 120, 120);
-        break;
-    default:
-        c = QColor(255, 255, 255);
-    }
+    if (usingDarkTheme)
+        switch (st) {
+            case Success:
+                c = QColor(0, 170, 0);
+                break;
+            case Failed:
+                c = QColor(170, 0, 0);
+                break;
+            default:
+                c = p.color(QPalette::Base);
+        }
+    else
+        switch (st) {
+            case Success:
+                c = QColor(120, 255, 120);
+                break;
+            case Failed:
+                c = QColor(255, 120, 120);
+                break;
+            default:
+                c = p.color(QPalette::Base);
+        }
     p.setColor(QPalette::Active, static_cast<QPalette::ColorRole>(9), c);
     p.setColor(QPalette::Inactive, static_cast<QPalette::ColorRole>(9), c);
     findcombo->setPalette(p);
