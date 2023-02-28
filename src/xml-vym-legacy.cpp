@@ -316,7 +316,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!readFrameAttr(atts))
             return false;
     }
-    else if (eName == "xlink" && state == StateBranch) { // XML-FIXME-0 port and test
+    else if (eName == "xlink" && state == StateBranch) { // XML-FIXME Not ported, not backward compatible!
         // Obsolete after 1.13.2
         state = StateBranchXLink;
         if (!readXLinkAttr(atts))
