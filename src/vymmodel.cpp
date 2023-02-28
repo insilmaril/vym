@@ -2902,7 +2902,6 @@ void VymModel::paste()  // FIXME-000  wrong BC, always added on top of children.
                     qWarning() << "VM::paste Loading clipboard failed: " << fn;
             }
             zipped = zippedOrg;
-            reposition();   // XML-FIXME-0 needed?
         } else if (mimeData->hasImage()) {
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
             QString fn = clipboardDir + "/" + "image.png";
