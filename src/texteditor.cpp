@@ -908,7 +908,6 @@ void TextEditor::toggleFonthint()
 
 void TextEditor::setRichTextMode(bool b)
 {
-    qDebug() << "TE::setRichTextMode b=" << b;
     actionFormatUseFixedFont->setEnabled(false);
     if (b) {
         e->setHtml(e->toHtml());
