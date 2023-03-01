@@ -40,7 +40,7 @@ BranchContainer::~BranchContainer()
         // Unlink all containers in my own subtree, which will be deleted
         // when tree of QGraphicsItems is deleted.
         // In every destructor tell the linked BranchItem to longer consider deleting containers
-        // when the BranchItem will be deleted later
+    // when the BranchItem will be deleted later
         branchItem->unlinkBranchContainer();
     }
 
@@ -279,7 +279,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) //
     if (!branchesContainer) {
         createBranchesContainer();
         if (branchItem)
-            // tmpLinkedParentContainer has no associated branchItem!
+            // For new created BC update styles
             updateStyles(RelinkBranch);
     }
 
@@ -485,8 +485,10 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
     if (!imagesContainer) {
         createImagesContainer();
+        /* FIXME-1 styles should be updated in Container c, but ImageContainer has no updateStyles()
         if (branchItem)
             updateStyles(RelinkBranch);
+        */
     }
 
     QPointF sp = c->scenePos();
@@ -1143,14 +1145,21 @@ QString BranchContainer::saveFrame()
     return r;
 }
 
-void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode)
+void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode) // FIXME-1 shouldn't mode be defined in MapDesign rather than BranchContainer?
 {
-    // updateStyles() is never called for TmpParent!
+    // Note: updateStyles() is never called for TmpParent!
 
     //qDebug() << "BC::updateStyles of " << info() << "mode=" << styleUpdateMode;
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->getMapDesign();
+
+    // Set heading color // FIXME-00 especially for new mapCenters
+    md->updateBranchHeadingColor(
+            branchItem, styleUpdateMode, depth);
+
+    // Set frame // FIXME-00 especially for new mapCenters
+
 
     // Set container layouts
     if (branchesContainerAutoLayout)

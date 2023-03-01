@@ -28,6 +28,14 @@ void MapDesign::init()
     // RelinkBranch: Layout of children images
     icRelinkBranchLayouts << Container::FloatingFree;
 
+    // Heading colors
+    newBranchHeadingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
+    newBranchHeadingColorHints << MapDesign::InheritedColor;        // Use color of parent
+    relinkedBranchHeadingColorHints << MapDesign::UnchangedColor;   // Do not change color
+
+    newBranchHeadingColors << QColor(Qt::green);
+    relinkedBranchHeadingColors << QColor(Qt::red);   // FIXME-1 currently unused
+
     // Should links of branches use a default color or the color of heading?
     linkColorHintInt = LinkObj::DefaultColor;
     defaultLinkCol = Qt::blue;
@@ -55,7 +63,7 @@ Container::Layout MapDesign::branchesContainerLayout(
         int depth)
 {
     //qDebug() << "MD  mode=" << mode << " d=" << depth;
-    if (mode == BranchContainer::NewBranch) {
+    if (mode == BranchContainer::NewBranch) {   // FIXME-0 doesn't look like "relinked", see next line
         // Relinked branch
         int max = bcNewBranchLayouts.count();
         if (depth < max)
@@ -170,10 +178,95 @@ bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
     return true;
 }
 
+void MapDesign::updateBranchHeadingColor(
+        BranchItem *branchItem,
+        const BranchContainer::StyleUpdateMode &mode,
+        int depth)
+{
+    if (branchItem) {
+        HeadingColorHint colHint;
+        if (mode == BranchContainer::NewBranch) {
+            int max = newBranchHeadingColorHints.count();
+            if (depth < max)
+                colHint = newBranchHeadingColorHints.at(depth);
+            else {
+                if (max > 0)
+                    // Return last entry, if it exists
+                    colHint = newBranchHeadingColorHints.at(max - 1);
+                else {
+                    colHint = UndefinedColor;
+                }
+            }
+        } else {
+            // RelinkedBranch
+            int max = relinkedBranchHeadingColorHints.count();
+            if (depth < max)
+                colHint = relinkedBranchHeadingColorHints.at(depth);
+            else {
+                if (max > 0)
+                    // Return last entry, if it exists
+                    colHint = relinkedBranchHeadingColorHints.at(max - 1);
+                else {
+                    colHint = UndefinedColor;
+                }
+            }
+        }
+        QColor col;
+        switch (colHint) {
+            case InheritedColor: {
+                BranchItem *pi = branchItem->parentBranch();
+                if (pi) {
+                    col = pi->getHeadingColor();
+                    break;
+                }
+
+            }
+                // If there is no parent branch, mapCenter should 
+                // have a specific color, thus continue
+            case SpecificColor:
+                if (mode == BranchContainer::NewBranch) {
+                    int max = newBranchHeadingColors.count();
+                    if (depth < max)
+                        col = newBranchHeadingColors.at(depth);
+                    else {
+                        if (max > 0)
+                            // Return last entry, if it exists
+                            col = newBranchHeadingColors.at(max - 1);
+                        else {
+                            qWarning() << "No specific color found for new branch";
+                            col = QColor("#EEEEEE");
+                        }
+                    }
+                } else {
+                    int max = relinkedBranchHeadingColors.count();
+                    if (depth < max)
+                        col = relinkedBranchHeadingColors.at(depth);
+                    else {
+                        if (max > 0)
+                            // Return last entry, if it exists
+                            col = relinkedBranchHeadingColors.at(max - 1);
+                        else {
+                            qWarning() << "No specific color found for relinked branch";
+                            col = QColor("#EEEEEE");
+                        }
+                    }
+                }
+                branchItem->setHeadingColor(col);
+                break;
+            case UnchangedColor:
+                return;
+            default:
+                qWarning() << "MapDesign::updateBranchHeadingColor no newBranchHeadingColorHint defined";
+        }
+        branchItem->setHeadingColor(col);
+    }
+}
+
 QColor MapDesign::selectionColor()
 {
     return selectionColorInt;
 }
+
 void MapDesign::setSelectionColor(const QColor &c)
 {
     selectionColorInt = c;

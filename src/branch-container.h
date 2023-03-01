@@ -25,9 +25,8 @@ class BranchContainer : public SelectableContainer {
 
     /*! Control which styles will be updated */
     enum StyleUpdateMode {
-        RelinkBranch,
         NewBranch,
-        UpdateAll};
+        RelinkBranch};
 
     BranchContainer (
             QGraphicsScene *scene,

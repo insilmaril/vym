@@ -4,6 +4,7 @@
 #include <QString>
 
 #include "branch-container.h"
+#include "branchitem.h"
 #include "linkobj.h"
 
 /*! \brief A MapDesign defines the visual appearance of a map, e.g. how branches, frames,     links look. Settings depend on
@@ -17,6 +18,12 @@
 
 class MapDesign {
   public:
+    enum HeadingColorHint {
+        SpecificColor,
+        InheritedColor,
+        UnchangedColor,
+        UndefinedColor};
+
     MapDesign();
     void init();
 
@@ -36,6 +43,11 @@ class MapDesign {
     LinkObj::Style linkStyle(int depth);
     bool setLinkStyle(const LinkObj::Style &style, int depth);
 
+    void updateBranchHeadingColor(
+            BranchItem *branchItem,
+            const BranchContainer::StyleUpdateMode &mode,
+            int depth);
+
     QColor selectionColor();
     void setSelectionColor(const QColor &col);
 
@@ -47,6 +59,11 @@ class MapDesign {
 
     QList <Container::Layout> icNewBranchLayouts;
     QList <Container::Layout> icRelinkBranchLayouts;
+
+    QList <MapDesign::HeadingColorHint> newBranchHeadingColorHints;
+    QList <MapDesign::HeadingColorHint> relinkedBranchHeadingColorHints;
+    QList <QColor> newBranchHeadingColors;
+    QList <QColor> relinkedBranchHeadingColors;
 
     LinkObj::ColorHint linkColorHintInt;
     QColor defaultLinkCol;
