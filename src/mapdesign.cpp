@@ -14,38 +14,80 @@ MapDesign::MapDesign()
 
 void MapDesign::init()
 {
-    // NewBranch: Layout of children branches 
-    bcNewBranchLayouts << Container::FloatingBounded;
-    bcNewBranchLayouts << Container::Vertical;
+    int mapDesign = 1;  // FIXME-2 only for testing, later load/save
 
-    // RelinkBranch: Layout of children branches 
-    bcRelinkBranchLayouts << Container::FloatingBounded;
-    bcRelinkBranchLayouts << Container::Vertical;
+    if (mapDesign == 0) {
+        // Default mapDesign
+        // NewBranch: Layout of children branches 
+        bcNewBranchLayouts << Container::FloatingBounded;
+        bcNewBranchLayouts << Container::Vertical;
 
-    // NewBranch: Layout of children images 
-    icNewBranchLayouts << Container::FloatingFree;
+        // RelinkBranch: Layout of children branches 
+        bcRelinkBranchLayouts << Container::FloatingBounded;
+        bcRelinkBranchLayouts << Container::Vertical;
 
-    // RelinkBranch: Layout of children images
-    icRelinkBranchLayouts << Container::FloatingFree;
+        // NewBranch: Layout of children images 
+        icNewBranchLayouts << Container::FloatingFree;
 
-    // Heading colors
-    newBranchHeadingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
-    newBranchHeadingColorHints << MapDesign::InheritedColor;        // Use color of parent
-    relinkedBranchHeadingColorHints << MapDesign::UnchangedColor;   // Do not change color
+        // RelinkBranch: Layout of children images
+        icRelinkBranchLayouts << Container::FloatingFree;
 
-    newBranchHeadingColors << QColor(Qt::green);
-    relinkedBranchHeadingColors << QColor(Qt::red);   // FIXME-1 currently unused
+        // Heading colors
+        newBranchHeadingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
+        newBranchHeadingColorHints << MapDesign::InheritedColor;        // Use color of parent
+        relinkedBranchHeadingColorHints << MapDesign::UnchangedColor;   // Do not change color
 
-    // Should links of branches use a default color or the color of heading?
-    linkColorHintInt = LinkObj::DefaultColor;
-    defaultLinkCol = Qt::blue;
+        newBranchHeadingColors << QColor(Qt::green);
+        relinkedBranchHeadingColors << QColor(Qt::red);   // FIXME-1 currently unused
 
-    linkStyles << LinkObj::NoLink;
-    linkStyles << LinkObj::Parabel;
-    //linkStyles << LinkObj::PolyLine;
-    //linkStyles << LinkObj::Line;
-    //linkStyles << LinkObj::PolyParabel;
-    //linkStyles << LinkObj::Parabel;
+        // Should links of branches use a default color or the color of heading?
+        linkColorHintInt = LinkObj::DefaultColor;
+        defaultLinkCol = Qt::blue;
+
+        linkStyles << LinkObj::NoLink;
+        linkStyles << LinkObj::Parabel;
+        //linkStyles << LinkObj::PolyLine;
+        //linkStyles << LinkObj::Line;
+        //linkStyles << LinkObj::PolyParabel;
+        //linkStyles << LinkObj::Parabel;
+    } else if (mapDesign == 1) {
+        // Rainbow colors depending on depth mapDesign
+        // NewBranch: Layout of children branches 
+        bcNewBranchLayouts << Container::FloatingBounded;
+        bcNewBranchLayouts << Container::Vertical;
+
+        // RelinkBranch: Layout of children branches 
+        bcRelinkBranchLayouts << Container::FloatingBounded;
+        bcRelinkBranchLayouts << Container::Vertical;
+
+        // NewBranch: Layout of children images 
+        icNewBranchLayouts << Container::FloatingFree;
+
+        // RelinkBranch: Layout of children images
+        icRelinkBranchLayouts << Container::FloatingFree;
+
+        // Heading colors
+        newBranchHeadingColorHints << MapDesign::SpecificColor;
+        relinkedBranchHeadingColorHints << MapDesign::SpecificColor;
+
+        relinkedBranchHeadingColors << QColor(Qt::red);
+        relinkedBranchHeadingColors << QColor(Qt::green);
+        relinkedBranchHeadingColors << QColor(Qt::blue);
+        relinkedBranchHeadingColors << QColor(Qt::white);
+        relinkedBranchHeadingColors << QColor(Qt::yellow);
+        newBranchHeadingColors = relinkedBranchHeadingColors;
+
+        // Should links of branches use a default color or the color of heading?
+        linkColorHintInt = LinkObj::DefaultColor;
+        defaultLinkCol = Qt::blue;
+
+        linkStyles << LinkObj::NoLink;
+        linkStyles << LinkObj::Parabel;
+        //linkStyles << LinkObj::PolyLine;
+        //linkStyles << LinkObj::Line;
+        //linkStyles << LinkObj::PolyParabel;
+        //linkStyles << LinkObj::Parabel;
+    }
 }
 
 void MapDesign::setName(const QString &s)
@@ -184,6 +226,7 @@ void MapDesign::updateBranchHeadingColor(
         int depth)
 {
     if (branchItem) {
+        qDebug() << "MD::updateBranchHeadingColor mode=" << mode << " d=" << depth << branchItem->getHeadingPlain();
         HeadingColorHint colHint;
         if (mode == BranchContainer::NewBranch) {
             int max = newBranchHeadingColorHints.count();
@@ -214,16 +257,17 @@ void MapDesign::updateBranchHeadingColor(
         QColor col;
         switch (colHint) {
             case InheritedColor: {
+                qDebug() << " - InheritedColor";
                 BranchItem *pi = branchItem->parentBranch();
                 if (pi) {
                     col = pi->getHeadingColor();
                     break;
                 }
-
-            }
                 // If there is no parent branch, mapCenter should 
                 // have a specific color, thus continue
+            }
             case SpecificColor:
+                qDebug() << " - SpecificColor";
                 if (mode == BranchContainer::NewBranch) {
                     int max = newBranchHeadingColors.count();
                     if (depth < max)
@@ -254,6 +298,7 @@ void MapDesign::updateBranchHeadingColor(
                 branchItem->setHeadingColor(col);
                 break;
             case UnchangedColor:
+                qDebug() << " - UnchangedColor";
                 return;
             default:
                 qWarning() << "MapDesign::updateBranchHeadingColor no newBranchHeadingColorHint defined";
