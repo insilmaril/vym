@@ -280,7 +280,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) //
         createBranchesContainer();
         if (branchItem)
             // For new created BC update styles
-            updateStyles(RelinkBranch);
+            updateStyles(MapDesign::RelinkedItem);
     }
 
     QPointF sp = c->scenePos();
@@ -1145,33 +1145,34 @@ QString BranchContainer::saveFrame()
     return r;
 }
 
-void BranchContainer::updateStyles(StyleUpdateMode styleUpdateMode) // FIXME-1 shouldn't mode be defined in MapDesign rather than BranchContainer?
+void BranchContainer::updateStyles(MapDesign::UpdateMode updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    //qDebug() << "BC::updateStyles of " << info() << "mode=" << styleUpdateMode;
+    //qDebug() << "BC::updateStyles of " << info() << "mode=" << updateMode;
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->getMapDesign();
 
-    // Set heading color // FIXME-00 especially for new mapCenters
+    // Set heading color (might depend on parentBranch, so pass the branchItem)
     md->updateBranchHeadingColor(
-            branchItem, styleUpdateMode, depth);
+            branchItem, updateMode, depth);
 
-    // Set frame // FIXME-00 especially for new mapCenters
+    // Set frame
+    md->updateFrames(this, updateMode, depth);
 
 
     // Set container layouts
     if (branchesContainerAutoLayout)
         setBranchesContainerLayout(
-                md->branchesContainerLayout(styleUpdateMode, depth));
+                md->branchesContainerLayout(updateMode, depth));
     else
         setBranchesContainerLayout(branchesContainerLayout);
 
 
     if (imagesContainerAutoLayout)
         setImagesContainerLayout(
-                md->imagesContainerLayout(styleUpdateMode, depth));
+                md->imagesContainerLayout(updateMode, depth));
     else
         setImagesContainerLayout(imagesContainerLayout);
 

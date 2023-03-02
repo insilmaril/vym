@@ -3,6 +3,7 @@
 
 #include "branch-container.h"
 #include "image-container.h"
+#include "mapdesign.h"
 #include "mapitem.h"
 #include "task.h"
 
@@ -85,7 +86,7 @@ class BranchItem : public MapItem {
         QList <TreeItem*> excludedItems); //! search map for branches or images. Ignore
                               //! excludeItems, where search is started or which are selected
 
-    void updateStylesRecursively(BranchContainer::StyleUpdateMode styleUpdateMode);
+    void updateStylesRecursively(MapDesign::UpdateMode updateMode);
     void updateVisuals();
 
     BranchContainer *createBranchContainer(

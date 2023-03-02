@@ -2362,7 +2362,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         bc->setFrameType(useInnerFrame, t);
         newName = bc->frameTypeString(useInnerFrame);
 
-        bc->updateStyles(BranchContainer::RelinkBranch);
+        bc->updateStyles(MapDesign::RelinkedItem);
 
 
         saveState(
@@ -2522,7 +2522,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
                 bc->branchesContainerAutoLayout = true;
                 bc->setBranchesContainerLayout(
                         mapDesign->branchesContainerLayout(
-                            BranchContainer::NewBranch, selbi->depth()));
+                            MapDesign::NewItem, selbi->depth()));
             } else {
                 bc->branchesContainerAutoLayout = false;
                 Container::Layout layout = Container::getLayoutFromString(s);
@@ -2546,7 +2546,7 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
                 bc->imagesContainerAutoLayout = true;
                 bc->setImagesContainerLayout(
                         mapDesign->imagesContainerLayout(
-                            BranchContainer::NewBranch, selbi->depth()));
+                            MapDesign::NewItem, selbi->depth()));
             } else {
                 bc->imagesContainerAutoLayout = false;
                 Container::Layout layout;
@@ -3555,7 +3555,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStylesRecursively(BranchContainer::RelinkBranch);
+        branch->updateStylesRecursively(MapDesign::RelinkedItem);
 
         emitDataChanged(branch);
 
@@ -5151,7 +5151,7 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     while (cur) {
         BranchContainer *bc = cur->getBranchContainer();
         //bc->getLinkContainer()->setLinkStyle(style);
-        bc->updateStyles(BranchContainer::RelinkBranch);
+        bc->updateStyles(MapDesign::RelinkedItem);
         nextBranch(cur, prev);
     }
     reposition();
@@ -5222,7 +5222,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //for (int i = 0; i < cur->imageCount(); ++i)
         //    cur->getImageNum(i)->getLMO()->setLinkColor();
         //
-        bc->updateStyles(BranchContainer::RelinkBranch);
+        bc->updateStyles(MapDesign::RelinkedItem);
         nextBranch(cur, prev);
     }
     reposition();

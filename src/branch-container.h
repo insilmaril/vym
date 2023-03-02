@@ -5,6 +5,7 @@
 
 #include "container.h"
 //#include "frame-container.h"
+#include "mapdesign.h"
 #include "selectable-container.h"
 
 class BranchItem;
@@ -22,11 +23,6 @@ class BranchContainer : public SelectableContainer {
         LeftOfParent,
         RightOfParent
     };
-
-    /*! Control which styles will be updated */
-    enum StyleUpdateMode {
-        NewBranch,
-        RelinkBranch};
 
     BranchContainer (
             QGraphicsScene *scene,
@@ -160,7 +156,7 @@ class BranchContainer : public SelectableContainer {
     QString saveFrame();
 
     /*! Update styles (frame, links, fonts, colors, ...) */
-    void updateStyles(StyleUpdateMode styleUpdateMode = RelinkBranch);
+    void updateStyles(MapDesign::UpdateMode updateMode = MapDesign::RelinkedItem);
 
     /*! Update flags and heading */
     void updateVisuals();

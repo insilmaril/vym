@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include "branchitem.h"
+
 /////////////////////////////////////////////////////////////////
 // MapDesign
 /////////////////////////////////////////////////////////////////
@@ -101,11 +103,11 @@ QString MapDesign::getName()
 }
 
 Container::Layout MapDesign::branchesContainerLayout(
-        const BranchContainer::StyleUpdateMode &mode,
+        const MapDesign::UpdateMode &mode,
         int depth)
 {
     //qDebug() << "MD  mode=" << mode << " d=" << depth;
-    if (mode == BranchContainer::NewBranch) {   // FIXME-0 doesn't look like "relinked", see next line
+    if (mode == NewItem) {   // FIXME-0 doesn't look like "relinked", see next line
         // Relinked branch
         int max = bcNewBranchLayouts.count();
         if (depth < max)
@@ -135,11 +137,11 @@ Container::Layout MapDesign::branchesContainerLayout(
 }
 
 Container::Layout MapDesign::imagesContainerLayout(
-        const BranchContainer::StyleUpdateMode &mode,
+        const UpdateMode &mode,
         int depth)
 {
     //qDebug() << "MD  mode=" << mode << " d=" << depth;
-    if (mode == BranchContainer::NewBranch) {
+    if (mode == NewItem) {
         // Relinked branch
         int max = icNewBranchLayouts.count();
         if (depth < max)
@@ -222,13 +224,13 @@ bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
 
 void MapDesign::updateBranchHeadingColor(
         BranchItem *branchItem,
-        const BranchContainer::StyleUpdateMode &mode,
+        const UpdateMode &mode,
         int depth)
 {
     if (branchItem) {
         qDebug() << "MD::updateBranchHeadingColor mode=" << mode << " d=" << depth << branchItem->getHeadingPlain();
         HeadingColorHint colHint;
-        if (mode == BranchContainer::NewBranch) {
+        if (mode == NewItem) {
             int max = newBranchHeadingColorHints.count();
             if (depth < max)
                 colHint = newBranchHeadingColorHints.at(depth);
@@ -268,7 +270,7 @@ void MapDesign::updateBranchHeadingColor(
             }
             case SpecificColor:
                 qDebug() << " - SpecificColor";
-                if (mode == BranchContainer::NewBranch) {
+                if (mode == NewItem) {
                     int max = newBranchHeadingColors.count();
                     if (depth < max)
                         col = newBranchHeadingColors.at(depth);
@@ -304,6 +306,16 @@ void MapDesign::updateBranchHeadingColor(
                 qWarning() << "MapDesign::updateBranchHeadingColor no newBranchHeadingColorHint defined";
         }
         branchItem->setHeadingColor(col);
+    }
+}
+
+void MapDesign::updateFrames(
+    BranchContainer *branchContainer,
+    const UpdateMode &mode,
+    int depth)
+{
+    if (branchContainer) {
+        qDebug() << "MD::updateFrames mode=" << mode << " d=" << depth;// << branchItem->getHeadingPlain();
     }
 }
 
