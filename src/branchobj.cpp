@@ -13,6 +13,7 @@ extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
 extern bool debug;
+extern bool usingDarkTheme;
 
 /////////////////////////////////////////////////////////////////
 // BranchObj
@@ -364,6 +365,9 @@ void BranchObj::updateVisuals()
 
 void BranchObj::setDefAttr(BranchModification mod, bool keepFrame)
 {
+
+    // Note: not needed in 3.x.0 versions, 
+    // where MapDesign will be used
     QFont font = treeItem->getModel()->getMapDefaultFont();
     qreal fontsize = font.pointSizeF();
     switch (treeItem->depth()) {
@@ -385,9 +389,18 @@ void BranchObj::setDefAttr(BranchModification mod, bool keepFrame)
     heading->setFont(font);
 
     if (mod == NewBranch && !keepFrame) {
-        if (treeItem->depth() == 0)
-            setFrameType(FrameObj::Rectangle);
-        else
+        if (treeItem->depth() == 0) {
+            setFrameType(FrameObj::RoundedRectangle);
+            setFrameBorderWidth(2);
+            if (usingDarkTheme) {
+                setFramePenColor(QColor(Qt::white));
+                setFrameBrushColor(QColor(85, 85, 127));
+                treeItem->setHeadingColor(QColor(Qt::white));
+            } else {
+                setFramePenColor(QColor(Qt::black));
+                setFrameBrushColor(QColor(Qt::white));
+            }
+        } else
             setFrameType(FrameObj::NoFrame);
     }
     if (mod == NewBranch)
