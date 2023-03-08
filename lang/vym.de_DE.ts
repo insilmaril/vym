@@ -4895,6 +4895,11 @@ Konnte nicht umbenennen zu %1</translation>
         <source>That&apos;s ok, though I would be happy to see many users working with vym and also on which platforms.</source>
         <translation>Schade, ich würde mich wirklich freuen, wenn ich viele Menschen vym benutzen sehe und auch auf welchen Plattformen vym genutzt wird.</translation>
     </message>
+    <message>
+        <source>Show scripting commands</source>
+        <comment>Help action</comment>
+        <translation type="unfinished">Skript Befehle anzeigen</translation>
+    </message>
 </context>
 <context>
     <name>MapEditor</name>
