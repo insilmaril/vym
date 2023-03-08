@@ -229,6 +229,15 @@ void VymModelWrapper::cycleTask()
                  "Couldn't cycle task status");
 }
 
+int VymModelWrapper::depth()
+{
+    TreeItem *selti = model->getSelectedItem();
+    if (selti)
+        return setResult(selti->depth());
+    else
+        return setResult (-2);  // FIXME-2 should throw error
+}
+
 bool VymModelWrapper::exportMap()
 {
     bool r = false;

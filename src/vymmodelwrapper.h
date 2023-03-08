@@ -47,6 +47,7 @@ class VymModelWrapper : public VymScriptContext {
     void copy();
     void cut();
     void cycleTask();
+    int depth();
     bool exportMap();
     int getBranchIndex();
     QString getDestPath();
