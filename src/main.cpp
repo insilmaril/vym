@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     options.add("recover", Option::Switch, "recover", "recover");
     options.add("restore", Option::Switch, "r", "restore");
     options.add("shortcuts", Option::Switch, "s", "shortcuts");
-    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX");
+//    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX") // FIXME-2 not really used?
     options.add("testmode", Option::Switch, "t", "testmode");
     options.add("version", Option::Switch, "v", "version");
     options.setHelpText(
@@ -197,27 +197,23 @@ int main(int argc, char *argv[])
         "http://www.InSilmaril.de/vym\n\n"
         "Usage: vym [OPTION]... [FILE]... \n"
         "Open FILEs with vym\n\n"
-        "-b           batch       batch mode: hide windows\n"
-        "-c           commands	  List all available commands\n"
-        "-d           debug       Show debugging output\n"
-        "-h           help        Show this help text\n"
-        "-L           load        Load script\n"
-        "-l           local       Run with ressources in current directory\n"
-        "--locale     locale      Override system locale setting to select "
-        "language\n"
-        "-n  STRING   name        Set name of instance for DBus access\n"
-        "-q           quit        Quit immediatly after start for "
-        "benchmarking\n"
-        "-R  FILE     run         Run script\n"
-        "-r           restore     Restore last session\n"
-        "--recover    recover     Delete lockfiles during initial loading of "
-        "files\n"
-        "-s           shortcuts   Show Keyboard shortcuts on start\n"
-        "--cl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
+        "-b           batch         batch mode: hide windows\n"
+        "-c           commands	    List all available commands\n"
+        "-cl          commandslatex List commands in LaTeX format\n"
+        "-d           debug         Show debugging output\n"
+        "-h           help          Show this help text\n"
+        "-L           load          Load script\n"
+        "-l           local         Run with ressources in current directory\n"
+        "--locale     locale        Override system locale setting to select language\n"
+        "-n  STRING   name          Set name of instance for DBus access\n"
+        "-q           quit          Quit immediatly after start for benchmarking\n"
+        "-R  FILE     run           Run script\n"
+        "-r           restore       Restore last session\n"
+        "--recover    recover       Delete lockfiles during initial loading of files\n"
+        "-s           shortcuts     Show Keyboard shortcuts on start\n"
         "start\n"
-        "-t           testmode    Test mode, e.g. no autosave and changing of "
-        "its setting\n"
-        "-v           version     Show vym version\n");
+        "-t           testmode      Test mode, e.g. no autosave and changing of its setting\n"
+        "-v           version       Show vym version\n");
 
     if (options.parse()) {
         cout << endl << qPrintable(options.getHelpText()) << endl;
@@ -493,11 +489,13 @@ int main(int argc, char *argv[])
     m.fileNew();
 
     if (options.isOn("commands")) {
-        cout << "Available commands:\n";
-        cout << "==================:\n";
+        cout << "Available commands in map:\n";
+        cout << "=========================:\n";
         foreach (Command *c, modelCommands)
             cout << c->getDescription().toStdString() << endl;
 
+        cout << "Available commands in vym:\n";
+        cout << "=========================:\n";
         foreach (Command *c, vymCommands)
             cout << c->getDescription().toStdString() << endl;
         return 0;
