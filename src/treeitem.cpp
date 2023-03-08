@@ -355,7 +355,7 @@ QString TreeItem::getHeadingPlainWithParents(uint numberOfParents = 0)
     return s;
 }
 
-QString TreeItem::getHeadingDepth() // Indent by depth for debugging
+QString TreeItem::getHeadingDepth() // Indent by depth for debugging    // FIXME-2 rename
 {
     QString ds;
     for (int i = 0; i < depth(); i++)
