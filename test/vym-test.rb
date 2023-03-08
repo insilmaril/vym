@@ -517,9 +517,9 @@ def test_delete_parts (vym)
   heading "Deleting parts"
   map = init_map( vym ) 
   map.select @main_a
-  n=map.branchCount.to_i
+  n = map.branchCount.to_i
   map.select @branch_a
-  m=map.branchCount.to_i
+  m = map.branchCount.to_i
   map.remove
   map.select @main_a
   expect "Remove branch: branchcount",  map.branchCount.to_i, n - 1
