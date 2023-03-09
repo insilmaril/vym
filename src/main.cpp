@@ -110,6 +110,7 @@ ImageIO imageIO;
 int statusbarTime = 10000;
 
 bool usingDarkTheme;
+QColor vymBlue;
 
 int warningCount = 0;
 int criticalCount = 0;

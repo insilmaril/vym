@@ -138,6 +138,8 @@ extern QDir vymInstallDir;
 #endif
 extern QString zipToolPath;
 
+extern QColor vymBlue;
+
 Main::Main(QWidget *parent) : QMainWindow(parent)
 {
     mainWindow = this;
@@ -3459,6 +3461,7 @@ void Main::setupToolbars()
     else
         c.setNamedColor ("#0000ff");                // Blue
     quickColors << c;
+    vymBlue = c;
     c.setNamedColor ("#000000"); quickColors << c;  // Black
     c.setNamedColor ("#444444"); quickColors << c;  // Dark gray
     c.setNamedColor ("#aaaaaa"); quickColors << c;  // Light gray
