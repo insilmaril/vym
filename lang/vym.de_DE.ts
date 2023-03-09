@@ -406,7 +406,7 @@
     </message>
     <message>
         <source>System settings for dark theme</source>
-        <translation>System Einstellungen fpr dunkles Design verwenden</translation>
+        <translation>System Einstellungen für dunkles Design verwenden</translation>
     </message>
     <message>
         <source>DarkThemeSettingsDialog dialog</source>
