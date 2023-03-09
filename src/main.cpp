@@ -204,15 +204,17 @@ int main(int argc, char *argv[])
         "-h           help          Show this help text\n"
         "-L           load          Load script\n"
         "-l           local         Run with ressources in current directory\n"
-        "--locale     locale        Override system locale setting to select language\n"
+        "--locale     locale        Override system locale setting to select\n"
+        "                           language\n"
         "-n  STRING   name          Set name of instance for DBus access\n"
         "-q           quit          Quit immediatly after start for benchmarking\n"
         "-R  FILE     run           Run script\n"
         "-r           restore       Restore last session\n"
-        "--recover    recover       Delete lockfiles during initial loading of files\n"
+        "--recover    recover       Delete lockfiles during initial loading of\n"
+        "                           files\n"
         "-s           shortcuts     Show Keyboard shortcuts on start\n"
-        "start\n"
-        "-t           testmode      Test mode, e.g. no autosave and changing of its setting\n"
+        "-t           testmode      Test mode, e.g. no autosave and changing\n"
+        "                           of its setting\n"
         "-v           version       Show vym version\n");
 
     if (options.parse()) {
