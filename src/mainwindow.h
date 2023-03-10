@@ -364,7 +364,7 @@ class Main : public QMainWindow {
     void helpShortcuts();
     void helpMacros();
     void helpScriptingCommands();
-    void debugInfo();
+    void helpDebugInfo();
     void helpAbout();
     void helpAboutQT();
 

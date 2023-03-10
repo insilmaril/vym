@@ -31,6 +31,7 @@ using namespace std;
 #include "confluence-userdialog.h"
 #include "credentials.h"
 #include "darktheme-settings-dialog.h"
+#include "debuginfo.h"
 #include "download-agent.h"
 #include "file.h"
 #include "findresultmodel.h"
@@ -3169,7 +3170,7 @@ void Main::setupHelpActions()
 
     a = new QAction(tr("Debug info", "Option to show debugging info"), this);
     helpMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(debugInfo()));
+    connect(a, SIGNAL(triggered()), this, SLOT(helpDebugInfo()));
 
     a = new QAction(tr("About QT", "Help action"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(helpAboutQT()));
@@ -6061,7 +6062,7 @@ bool Main::settingsConfluence()
         QMessageBox::warning(
             0, tr("Warning"),
             tr("No SSL support available for this build of vym"));
-        debugInfo();
+        helpDebugInfo();
         return false;
     }
 
@@ -6099,7 +6100,7 @@ bool Main::settingsJIRA()
         QMessageBox::warning(
             0, tr("Warning"),
             tr("No SSL support available for this build of vym"));
-        debugInfo();
+        helpDebugInfo();
         return false;
     }
 
@@ -7045,44 +7046,11 @@ void Main::helpScriptingCommands()
     dia.exec();
 }
 
-#include <QSslSocket>
-void Main::debugInfo()
+void Main::helpDebugInfo()
 {
-    QString s;
-    s =  QString("vym version: %1 - %2 - %3 %4\n")
-            .arg(vymVersion)
-            .arg(vymBuildDate)
-            .arg(vymCodeQuality)
-            .arg(vymCodeName);
-    s += QString("     Platform: %1\n").arg(vymPlatform);
-    s += QString("    tmpVymDir: %1\n").arg(tmpVymDir.path());
-    s += QString("  zipToolPath: %1\n").arg(zipToolPath);
-    s += QString("   vymBaseDir: %1\n").arg(vymBaseDir.path());
-    s += QString("  currentPath: %1\n").arg(QDir::currentPath());
-    s += QString("   appDirPath: %1\n")
-            .arg(QCoreApplication::applicationDirPath());
-    s += QString("     Settings: %1\n\n").arg(settings.fileName());
-    s += QString("   Dark theme: %1\n").arg(usingDarkTheme);
-    s += QString("Avail. styles: %1\n\n").arg(QStyleFactory::keys().join(","));
-    s += " SSL status: ";
-    QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
-    s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";
-    s += "    SSL lib: " + QSslSocket::sslLibraryVersionString() + "\n";
-
-    // Info about translations
-    QStringList translations;
-    if(vymTranslationsDir.exists())
-        translations = vymTranslationsDir.entryList();
-    s += "\n";
-    s += QString("            localeName: %1\n").arg(localeName);
-    s += QString("       Translations in: %1\n").arg(vymTranslationsDir.path());
-    s += QString("Available translations: %1\n").arg(translations.count());
-    foreach (QString qm_file, translations)
-        s += QString("                        %1\n").arg(qm_file);
-
     ShowTextDialog dia;
     dia.useFixedFont(true);
-    dia.setText(s);
+    dia.setText(debugInfo());
     dia.setMinimumWidth(900);
     dia.exec();
 }
@@ -7168,13 +7136,14 @@ QUrl Main::serverUrl(const QString &scriptName)
     return QUrl(
         QString("http://www.insilmaril.de/vym/%1?"
                     "vymVersion=%2"
-                    "&config=darkTheme=%3+localeName=%4+buildDate=%5+codeQuality=%6")
+                    "&config=darkTheme=%3+localeName=%4+buildDate=%5+codeQuality='%6'+codeName='%7'")
             .arg(scriptName)
             .arg(vymVersion)
             .arg(usingDarkTheme)
             .arg(localeName)
             .arg(vymBuildDate)
             .arg(vymCodeQuality)
+            .arg(vymCodeName)
             );
 }
 

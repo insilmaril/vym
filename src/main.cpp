@@ -7,6 +7,7 @@
 using namespace std;
 
 #include "command.h"
+#include "debuginfo.h"
 #include "findresultwidget.h"
 #include "findwidget.h"
 #include "flagrow.h"
@@ -263,6 +264,7 @@ int main(int argc, char *argv[])
 
 #ifdef QT_DEBUG
     qDebug() << "QT_DEBUG is set";
+    debug = true;
 #endif
 
     // Use /usr/share/vym or /usr/local/share/vym or . ?
@@ -390,14 +392,8 @@ int main(int argc, char *argv[])
     // Prepare and check translations
     vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
     vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-    if (debug) {
-        qDebug() << "Main:     localName: " << localeName;
-        qDebug() << "Main:      locale(): " << QLocale::system().name();
-        qDebug() << "Main:  translations: " << vymTranslationsDir.path();
-        qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
-        qDebug() << "Main:          LANG: "
-                 << QProcessEnvironment::systemEnvironment().value("LANG", "not set.");
-    }
+    if (debug)
+        cout << debugInfo().toStdString() << endl;
 
     bool translationsMissing = false;
     if(!vymTranslationsDir.exists())
@@ -423,7 +419,8 @@ int main(int argc, char *argv[])
     } else {
         if (debug)
             qDebug() << "Trying to load " << vymTranslationsDir.path() << QString("vym.%1").arg(localeName);
-        if (!vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path())) {
+        //if (!vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path())) {
+        if (!vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm")) {
             WarningDialog warn;
             warn.showCancelButton(false);
             warn.setText(
