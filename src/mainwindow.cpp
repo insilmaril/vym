@@ -3457,12 +3457,9 @@ void Main::setupToolbars()
     c.setNamedColor ("#d95100"); quickColors << c;  // Orange
     c.setNamedColor ("#009900"); quickColors << c;  // Green
     c.setNamedColor ("#aa00ff"); quickColors << c;  // Purple
-    if (usingDarkTheme)
-        c.setNamedColor ("#00aaff");                // LightBlue
-    else
-        c.setNamedColor ("#0000ff");                // Blue
-    quickColors << c;
-    vymBlue = c;
+    c.setNamedColor ("#0000ff"); quickColors << c;  // Blue
+    c.setNamedColor ("#00aaff"); quickColors << c;  // LightBlue
+    usingDarkTheme ? vymBlue = c : vymBlue = quickColors.count() - 2;
     c.setNamedColor ("#000000"); quickColors << c;  // Black
     c.setNamedColor ("#444444"); quickColors << c;  // Dark gray
     c.setNamedColor ("#aaaaaa"); quickColors << c;  // Light gray
@@ -5616,7 +5613,7 @@ void Main::updateQueries(
 
 void Main::selectQuickColor(int n)
 {
-    if (n < 0 || n > 7) return;
+    if (n < 0 || n > quickColors.count() - 1) return;
 
     actionGroupQuickColors->actions().at(n)->setChecked(true);
     setCurrentColor(quickColors.at(n));
