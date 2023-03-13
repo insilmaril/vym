@@ -418,12 +418,12 @@ int main(int argc, char *argv[])
                 " * https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym");
         warn.exec();
     } else {
-        //if (!vymTranslator.load(QString("vym.el.qm"), vymTranslationsDir.path())) { // Use this to load specific language
+        //if (!vymTranslator.load(QString("vym.de_DE.qm"), vymTranslationsDir.path())) { // Use this to load specific language
         if (!vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm")) {
             WarningDialog warn;
             warn.showCancelButton(false);
             warn.setText(
-                QString("Couldn't load translation for locale \"%1\" in\n%2")
+                QString("Couldn't load translation for locale \"%1\" from\n%2")
                     .arg(localeName)
                     .arg(vymTranslationsDir.path()));
             warn.setShowAgainName("mainwindow/translations/localeMissing");
