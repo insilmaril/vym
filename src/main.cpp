@@ -428,11 +428,8 @@ int main(int argc, char *argv[])
                     .arg(vymTranslationsDir.path()));
             warn.setShowAgainName("mainwindow/translations/localeMissing");
             warn.exec();
-        } else {
-            // if (debug)
-                qDebug() << "Loading translation succeeded: " << vymTranslator.filePath() << vymTranslator.language();
-        }
-        QCoreApplication::installTranslator(&vymTranslator);
+        } else
+            QCoreApplication::installTranslator(&vymTranslator);
     }
 
     if (debug)
