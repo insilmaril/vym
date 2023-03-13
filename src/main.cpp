@@ -76,7 +76,10 @@ QString clipboardDir;    // Clipboard used in all mapEditors
 QString clipboardFile;   // Clipboard used in all mapEditors
 
 QDir vymBaseDir;            // Containing all styles, scripts, images, ...
+
 QDir vymTranslationsDir;    // Translation files (*.qm)
+QTranslator vymTranslator;
+
 QDir lastImageDir;
 QDir lastMapDir;
 QDir lastExportDir;
@@ -392,8 +395,6 @@ int main(int argc, char *argv[])
     // Prepare and check translations
     vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
     vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-    if (debug)
-        cout << debugInfo().toStdString() << endl;
 
     bool translationsMissing = false;
     if(!vymTranslationsDir.exists())
@@ -401,7 +402,6 @@ int main(int argc, char *argv[])
     else if (vymTranslationsDir.isEmpty())
         translationsMissing = true;
 
-    QTranslator vymTranslator;
     if (translationsMissing) {
         WarningDialog warn;
         warn.setMinimumWidth(800);
@@ -411,15 +411,14 @@ int main(int argc, char *argv[])
         warn.setCaption("Translations not available");
         warn.setText(
                 "vym has not been built correctly and only will be available in English: \n\n"
-                "No translation files in " + vymTranslationsDir.path().toLatin1() + "\n\n" +
+                "No translation files in\n" +
+                vymTranslationsDir.path().toLatin1() + "\n\n" +
                 "Please get vym from\n"
                 " * https://sourceforge.net/projects/vym/  or \n"
                 " * https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym");
         warn.exec();
     } else {
-        if (debug)
-            qDebug() << "Trying to load " << vymTranslationsDir.path() << QString("vym.%1").arg(localeName);
-        //if (!vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path())) {
+        //if (!vymTranslator.load(QString("vym.el.qm"), vymTranslationsDir.path())) { // Use this to load specific language
         if (!vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm")) {
             WarningDialog warn;
             warn.showCancelButton(false);
@@ -430,11 +429,14 @@ int main(int argc, char *argv[])
             warn.setShowAgainName("mainwindow/translations/localeMissing");
             warn.exec();
         } else {
-            if (debug)
-                qDebug() << "Loading translation succeeded :-)";
+            // if (debug)
+                qDebug() << "Loading translation succeeded: " << vymTranslator.filePath() << vymTranslator.language();
         }
-        app.installTranslator(&vymTranslator);
+        QCoreApplication::installTranslator(&vymTranslator);
     }
+
+    if (debug)
+        cout << debugInfo().toStdString() << endl;
 
     // Initializing the master rows of flags
     systemFlagsMaster = new FlagRowMaster;

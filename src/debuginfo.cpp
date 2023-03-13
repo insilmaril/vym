@@ -6,6 +6,7 @@
 #include <QSslSocket>
 #include <QString>
 #include <QStyleFactory>
+#include <QTranslator>
 
 #include "settings.h"
 
@@ -25,6 +26,7 @@ extern QString localeName;
 extern QDir vymBaseDir;
 extern QDir tmpVymDir;          // All temp files go there, created in mainwindow
 extern QDir vymTranslationsDir;
+extern QTranslator vymTranslator;
 
 extern QString zipToolPath;
 
@@ -56,6 +58,8 @@ QString debugInfo()
     if(vymTranslationsDir.exists())
         translations = vymTranslationsDir.entryList();
     s += "\n";
+    s += QString("       Translator path: %1\n").arg(vymTranslator.filePath());
+    s += QString("       Translator lang: %1\n").arg(vymTranslator.language());
     s += QString("            localeName: %1\n").arg(localeName);
     s += QString("                system: %1\n").arg(QLocale::system().name());
     s += QString("              language: %1\n").arg(QLocale::languageToString(QLocale::system().language()));
