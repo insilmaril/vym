@@ -385,13 +385,6 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    if (debug) {
-        if (usingDarkTheme)
-            qDebug() << "Using dark theme";
-        else
-            qDebug() << "Not using dark theme";
-    }
-
     // Prepare and check translations
     vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
     vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
@@ -431,9 +424,6 @@ int main(int argc, char *argv[])
         } else
             QCoreApplication::installTranslator(&vymTranslator);
     }
-
-    if (debug)
-        cout << debugInfo().toStdString() << endl;
 
     // Initializing the master rows of flags
     systemFlagsMaster = new FlagRowMaster;
@@ -486,6 +476,10 @@ int main(int argc, char *argv[])
 
     m.setWindowIcon(QPixmap(":/vym.png"));
     m.fileNew();
+
+    if (debug)
+        // Show debug info AFTER creating MainWindow
+        cout << debugInfo().toStdString() << endl;
 
     if (options.isOn("commands")) {
         cout << "Available commands in map:\n";
