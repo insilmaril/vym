@@ -1,7 +1,9 @@
 \item addBranch\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Index of new branch\\
            Type: & Int\\
        Optional: &  yes\\
@@ -9,17 +11,21 @@
 
 \item addBranchBefore\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item addMapCenter\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 2\\
+   Parameter: &  1:\\
         Comment: & Position x\\
            Type: & Double\\
        Optional: &  No\\
-   Parameter: &  1:\\
+   Parameter: &  2:\\
         Comment: & Position y\\
            Type: & Double\\
        Optional: &  No\\
@@ -27,16 +33,18 @@
 
 \item addMapInsert\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 3\\
+   Parameter: &  1:\\
         Comment: & Filename of map to load\\
            Type: & String\\
        Optional: &  No\\
-   Parameter: &  1:\\
+   Parameter: &  2:\\
         Comment: & Index where map is inserted\\
            Type: & Int\\
        Optional: &  yes\\
-   Parameter: &  2:\\
+   Parameter: &  3:\\
         Comment: & Content filter\\
            Type: & Int\\
        Optional: &  yes\\
@@ -44,8 +52,10 @@
 
 \item addMapReplace\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Filename of map to load\\
            Type: & String\\
        Optional: &  No\\
@@ -53,29 +63,33 @@
 
 \item addSlide\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item addXLink\\
 \begin{tabular}{rl}
-  Selection: & BranchLike\\
-   Parameter: &  0:\\
+  SelectionType: & BranchLike\\
+    Return Type: & Void\\
+     Parameters: & 5\\
+   Parameter: &  1:\\
         Comment: & Begin of XLink\\
            Type: & String\\
        Optional: &  No\\
-   Parameter: &  1:\\
+   Parameter: &  2:\\
         Comment: & End of XLink\\
            Type: & String\\
        Optional: &  No\\
-   Parameter: &  2:\\
+   Parameter: &  3:\\
         Comment: & Width of XLink\\
            Type: & Int\\
        Optional: &  yes\\
-   Parameter: &  3:\\
+   Parameter: &  4:\\
         Comment: & Color of XLink\\
            Type: & Color\\
        Optional: &  yes\\
-   Parameter: &  4:\\
+   Parameter: &  5:\\
         Comment: & Penstyle of XLink\\
            Type: & String\\
        Optional: &  yes\\
@@ -83,18 +97,24 @@
 
 \item branchCount\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Int\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item centerCount\\
 \begin{tabular}{rl}
-  Selection: & BranchLike\\
+  SelectionType: & BranchLike\\
+    Return Type: & Int\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item centerOnID\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & UUID of object to center on\\
            Type: & String\\
        Optional: &  No\\
@@ -102,13 +122,17 @@
 
 \item clearFlags\\
 \begin{tabular}{rl}
-  Selection: & BranchLike\\
+  SelectionType: & BranchLike\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item colorBranch\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & New color\\
            Type: & Color\\
        Optional: &  yes\\
@@ -116,8 +140,10 @@
 
 \item colorSubtree\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & New color\\
            Type: & Color\\
        Optional: &  yes\\
@@ -125,27 +151,42 @@
 
 \item copy\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item cut\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item cycleTask\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & True, if cycling in reverse order\\
            Type: & Bool\\
        Optional: &  yes\\
 \end{tabular}
 
+\item depth\\
+\begin{tabular}{rl}
+  SelectionType: & BranchOrImage\\
+    Return Type: & Int\\
+     Parameters: & 0\\
+\end{tabular}
+
 \item exportMap\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Bool\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, LaTeX, Markdown, OrgMode, PDF, SVG, XML)\\
            Type: & String\\
        Optional: &  No\\
@@ -153,118 +194,164 @@
 
 \item getDestPath\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getFileDir\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getFileName\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getFrameType\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getHeadingPlainText\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
+  SelectionType: & TreeItem\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getHeadingXML\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
+  SelectionType: & TreeItem\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getMapAuthor\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getMapComment\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getMapTitle\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getNotePlainText\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
+  SelectionType: & TreeItem\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getNoteXML\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
+  SelectionType: & TreeItem\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getSelectionString\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
+  SelectionType: & TreeItem\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getTaskPriorityDelta\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Int\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getTaskSleep\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getTaskSleepDays\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Int\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getURL\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
+  SelectionType: & TreeItem\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getVymLink\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getXLinkColor\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
+  SelectionType: & XLink\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getXLinkWidth\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
+  SelectionType: & XLink\\
+    Return Type: & Int\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getXLinkPenStyle\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
+  SelectionType: & XLink\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getXLinkStyleBegin\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
+  SelectionType: & XLink\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item getXLinkStyleEnd\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
+  SelectionType: & XLink\\
+    Return Type: & String\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item hasActiveFlag\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
-   Parameter: &  0:\\
+  SelectionType: & TreeItem\\
+    Return Type: & Bool\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Name of flag\\
            Type: & String\\
        Optional: &  No\\
@@ -272,37 +359,64 @@
 
 \item hasNote\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item hasRichTextNote\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item hasTask\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item importDir\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Directory name to import\\
            Type: & String\\
        Optional: &  No\\
 \end{tabular}
 
+\item initIterator\\
+\begin{tabular}{rl}
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 2\\
+   Parameter: &  1:\\
+        Comment: & Name of iterator\\
+           Type: & String\\
+       Optional: &  No\\
+   Parameter: &  2:\\
+        Comment: & Flag to go deep levels first\\
+           Type: & Bool\\
+       Optional: &  yes\\
+\end{tabular}
+
 \item isScrolled\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item loadImage\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Filename of image\\
            Type: & String\\
        Optional: &  No\\
@@ -310,8 +424,10 @@
 
 \item loadNote\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Filename of note\\
            Type: & String\\
        Optional: &  No\\
@@ -319,32 +435,42 @@
 
 \item moveDown\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item moveUp\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item moveSlideDown\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item moveSlideUp\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item move\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 2\\
+   Parameter: &  1:\\
         Comment: & Position x\\
            Type: & Double\\
        Optional: &  No\\
-   Parameter: &  1:\\
+   Parameter: &  2:\\
         Comment: & Position y\\
            Type: & Double\\
        Optional: &  No\\
@@ -352,31 +478,50 @@
 
 \item moveRel\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 2\\
+   Parameter: &  1:\\
         Comment: & Position x\\
            Type: & Double\\
        Optional: &  No\\
-   Parameter: &  1:\\
+   Parameter: &  2:\\
         Comment: & Position y\\
            Type: & Double\\
        Optional: &  No\\
 \end{tabular}
 
+\item nextIterator\\
+\begin{tabular}{rl}
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
+        Comment: & Name of iterator\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
 \item nop\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item note2URLs\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item parseVymText\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & parse XML of VymText, e.g for Heading or VymNote\\
            Type: & String\\
        Optional: &  No\\
@@ -384,30 +529,36 @@
 
 \item paste\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item redo\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item relinkTo\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
-   Parameter: &  0:\\
+  SelectionType: & TreeItem\\
+    Return Type: & Bool\\
+     Parameters: & 4\\
+   Parameter: &  1:\\
         Comment: & Selection string of parent\\
            Type: & String\\
        Optional: &  No\\
-   Parameter: &  1:\\
+   Parameter: &  2:\\
         Comment: & Index position\\
            Type: & Int\\
        Optional: &  No\\
-   Parameter: &  2:\\
+   Parameter: &  3:\\
         Comment: & Position x\\
            Type: & Double\\
        Optional: &  yes\\
-   Parameter: &  3:\\
+   Parameter: &  4:\\
         Comment: & Position y\\
            Type: & Double\\
        Optional: &  yes\\
@@ -415,23 +566,31 @@
 
 \item remove\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
+  SelectionType: & TreeItem\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item removeChildren\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item removeKeepChildren\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item removeSlide\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Index of slide to remove\\
            Type: & Int\\
        Optional: &  No\\
@@ -439,17 +598,21 @@
 
 \item repeatLastCommand\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item saveImage\\
 \begin{tabular}{rl}
-  Selection: & Image\\
-   Parameter: &  0:\\
+  SelectionType: & Image\\
+    Return Type: & Void\\
+     Parameters: & 2\\
+   Parameter: &  1:\\
         Comment: & Filename of image to save\\
            Type: & String\\
        Optional: &  No\\
-   Parameter: &  1:\\
+   Parameter: &  2:\\
         Comment: & Format of image to save\\
            Type: & String\\
        Optional: &  No\\
@@ -457,8 +620,10 @@
 
 \item saveNote\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Filename of note to save\\
            Type: & String\\
        Optional: &  No\\
@@ -466,13 +631,17 @@
 
 \item scroll\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item select\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Bool\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Selection string\\
            Type: & String\\
        Optional: &  No\\
@@ -480,18 +649,24 @@
 
 \item selectFirstBranch\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item selectFirstChildBranch\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item selectID\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Bool\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Unique ID\\
            Type: & String\\
        Optional: &  No\\
@@ -499,33 +674,52 @@
 
 \item selectLastBranch\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item selectLastChildBranch\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item selectLastImage\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item selectLatestAdded\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item selectParent\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
+\end{tabular}
+
+\item selectToggle\\
+\begin{tabular}{rl}
+  SelectionType: & BranchOrImage\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item setFlagByName\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
-   Parameter: &  0:\\
+  SelectionType: & TreeItem\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Name of flag\\
            Type: & String\\
        Optional: &  No\\
@@ -533,8 +727,10 @@
 
 \item setTaskPriorityDelta\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Manually add value to priority of task\\
            Type: & String\\
        Optional: &  No\\
@@ -542,8 +738,10 @@
 
 \item setTaskSleep\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Days to sleep\\
            Type: & String\\
        Optional: &  No\\
@@ -551,8 +749,10 @@
 
 \item setFrameIncludeChildren\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Include or don't include children in frame\\
            Type: & Bool\\
        Optional: &  No\\
@@ -560,8 +760,10 @@
 
 \item setFrameType\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Type of frame\\
            Type: & String\\
        Optional: &  No\\
@@ -569,8 +771,10 @@
 
 \item setFramePenColor\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Color of frame border line\\
            Type: & Color\\
        Optional: &  No\\
@@ -578,8 +782,10 @@
 
 \item setFrameBrushColor\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Color of frame background\\
            Type: & Color\\
        Optional: &  No\\
@@ -587,8 +793,10 @@
 
 \item setFramePadding\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Padding around frame\\
            Type: & Int\\
        Optional: &  No\\
@@ -596,8 +804,10 @@
 
 \item setFrameBorderWidth\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Width of frame borderline\\
            Type: & Int\\
        Optional: &  No\\
@@ -605,13 +815,17 @@
 
 \item setHeadingConfluencePageName\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item setHeadingPlainText\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
-   Parameter: &  0:\\
+  SelectionType: & TreeItem\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & New heading\\
            Type: & String\\
        Optional: &  No\\
@@ -619,8 +833,10 @@
 
 \item setHideExport\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Set if item should be visible in export\\
            Type: & Bool\\
        Optional: &  No\\
@@ -628,8 +844,10 @@
 
 \item setIncludeImagesHorizontally\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Set if images should be included horizontally in parent branch\\
            Type: & Bool\\
        Optional: &  No\\
@@ -637,8 +855,10 @@
 
 \item setIncludeImagesVertically\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Set if images should be included vertically in parent branch\\
            Type: & Bool\\
        Optional: &  No\\
@@ -646,8 +866,10 @@
 
 \item setHideLinksUnselected\\
 \begin{tabular}{rl}
-  Selection: & BranchOrImage\\
-   Parameter: &  0:\\
+  SelectionType: & BranchOrImage\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Set if links of items should be visible for unselected items\\
            Type: & Bool\\
        Optional: &  No\\
@@ -655,8 +877,10 @@
 
 \item setMapAnimCurve\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & EasingCurve used in animation in MapEditor\\
            Type: & Int\\
        Optional: &  No\\
@@ -664,8 +888,10 @@
 
 \item setMapAuthor\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & \\
            Type: & String\\
        Optional: &  No\\
@@ -673,8 +899,10 @@
 
 \item setMapAnimDuration\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Duration of animation in MapEditor in milliseconds\\
            Type: & Int\\
        Optional: &  No\\
@@ -682,8 +910,10 @@
 
 \item setMapBackgroundColor\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Color of map background\\
            Type: & Color\\
        Optional: &  No\\
@@ -691,8 +921,10 @@
 
 \item setMapComment\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & \\
            Type: & String\\
        Optional: &  No\\
@@ -700,8 +932,10 @@
 
 \item setMapTitle\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & \\
            Type: & String\\
        Optional: &  No\\
@@ -709,8 +943,10 @@
 
 \item setMapDefLinkColor\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Default color of links\\
            Type: & Color\\
        Optional: &  No\\
@@ -718,8 +954,10 @@
 
 \item setMapLinkStyle\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Link style in map\\
            Type: & String\\
        Optional: &  No\\
@@ -727,8 +965,10 @@
 
 \item setMapRotation\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Rotation of map\\
            Type: & Double\\
        Optional: &  No\\
@@ -736,8 +976,10 @@
 
 \item setMapTitle\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & \\
            Type: & String\\
        Optional: &  No\\
@@ -745,8 +987,10 @@
 
 \item setMapZoom\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Zoomfactor of map\\
            Type: & Double\\
        Optional: &  No\\
@@ -754,8 +998,10 @@
 
 \item setNotePlainText\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Note of branch\\
            Type: & String\\
        Optional: &  No\\
@@ -763,8 +1009,10 @@
 
 \item setScaleFactor\\
 \begin{tabular}{rl}
-  Selection: & Image\\
-   Parameter: &  0:\\
+  SelectionType: & Image\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Scale image by factor f\\
            Type: & Double\\
        Optional: &  No\\
@@ -772,17 +1020,43 @@
 
 \item setSelectionColor\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Color of selection box\\
            Type: & Color\\
        Optional: &  No\\
 \end{tabular}
 
+\item setTaskPriority\\
+\begin{tabular}{rl}
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
+        Comment: & Priority of task\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item setTaskSleep\\
+\begin{tabular}{rl}
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
+        Comment: & Sleep time of task\\
+           Type: & String\\
+       Optional: &  No\\
+\end{tabular}
+
 \item setURL\\
 \begin{tabular}{rl}
-  Selection: & TreeItem\\
-   Parameter: &  0:\\
+  SelectionType: & TreeItem\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & URL of TreeItem\\
            Type: & String\\
        Optional: &  No\\
@@ -790,8 +1064,10 @@
 
 \item setVymLink\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Vymlink of branch\\
            Type: & String\\
        Optional: &  No\\
@@ -799,8 +1075,10 @@
 
 \item setXLinkColor\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
-   Parameter: &  0:\\
+  SelectionType: & XLink\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Color of xlink\\
            Type: & String\\
        Optional: &  No\\
@@ -808,8 +1086,10 @@
 
 \item setXLinkStyle\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
-   Parameter: &  0:\\
+  SelectionType: & XLink\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Style of xlink\\
            Type: & String\\
        Optional: &  No\\
@@ -817,8 +1097,10 @@
 
 \item setXLinkStyleBegin\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
-   Parameter: &  0:\\
+  SelectionType: & XLink\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Style of xlink begin\\
            Type: & String\\
        Optional: &  No\\
@@ -826,8 +1108,10 @@
 
 \item setXLinkStyleEnd\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
-   Parameter: &  0:\\
+  SelectionType: & XLink\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Style of xlink end\\
            Type: & String\\
        Optional: &  No\\
@@ -835,8 +1119,10 @@
 
 \item setXLinkWidth\\
 \begin{tabular}{rl}
-  Selection: & XLink\\
-   Parameter: &  0:\\
+  SelectionType: & XLink\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Width of xlink\\
            Type: & Int\\
        Optional: &  No\\
@@ -844,8 +1130,10 @@
 
 \item sleep\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Sleep (seconds)\\
            Type: & Int\\
        Optional: &  No\\
@@ -853,8 +1141,10 @@
 
 \item sortChildren\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Sort children of branch in revers order if set\\
            Type: & Bool\\
        Optional: &  yes\\
@@ -862,8 +1152,10 @@
 
 \item toggleFlagByUid\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Uid of flag to toggle\\
            Type: & String\\
        Optional: &  No\\
@@ -871,8 +1163,10 @@
 
 \item toggleFlagByName\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Name of flag to toggle\\
            Type: & String\\
        Optional: &  No\\
@@ -880,81 +1174,105 @@
 
 \item toggleFrameIncludeChildren\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item toggleScroll\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item toggleTarget\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item toggleTask\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item undo\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item unscroll\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Bool\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item unscrollChildren\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item unselectAll\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item unsetFlagByName\\
 \begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Name of flag to unset\\
-           Type: & String\\
-       Optional: &  No\\
-\end{tabular}
-
-\item toggleFlag\\
-\begin{tabular}{rl}
-  Selection: & Branch\\
-   Parameter: &  0:\\
-        Comment: & Name of flag to toggle\\
            Type: & String\\
        Optional: &  No\\
 \end{tabular}
 
 \item clearConsole\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item currentMap\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item currentMapIndex\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
+\end{tabular}
+
+\item editHeading\\
+\begin{tabular}{rl}
+  SelectionType: & Branch\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item loadMap\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Path to map\\
            Type: & String\\
        Optional: &  No\\
@@ -962,25 +1280,51 @@
 
 \item mapCount\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item selectMap\\
 \begin{tabular}{rl}
-  Selection: & Any\\
-   Parameter: &  0:\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
         Comment: & Index of map\\
            Type: & Int\\
        Optional: &  No\\
 \end{tabular}
 
+\item selectQuickColor\\
+\begin{tabular}{rl}
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 1\\
+   Parameter: &  1:\\
+        Comment: & Index of quick color [0..6]\\
+           Type: & Int\\
+       Optional: &  No\\
+\end{tabular}
+
+\item currentColor\\
+\begin{tabular}{rl}
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
+\end{tabular}
+
 \item toggleTreeEditor\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 
 \item version\\
 \begin{tabular}{rl}
-  Selection: & Any\\
+  SelectionType: & Any\\
+    Return Type: & Void\\
+     Parameters: & 0\\
 \end{tabular}
 

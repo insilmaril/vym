@@ -2765,12 +2765,12 @@ Do you want to reload that map with the new file?</source>
     <message>
         <source>Credits</source>
         <comment>Help-&gt;About vym dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εύσημα</translation>
     </message>
     <message>
         <source>License</source>
         <comment>Help-&gt;About vym dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Άδεια</translation>
     </message>
 </context>
 <context>
@@ -2799,15 +2799,15 @@ Do you want to reload that map with the new file?</source>
     <name>AttributeDialog</name>
     <message>
         <source>Attributes</source>
-        <translation type="unfinished">Χαρακτηριστικά</translation>
+        <translation>Χαρακτηριστικά</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Κλείσιμο</translation>
+        <translation>Κλείσιμο</translation>
     </message>
     <message>
         <source>Add key</source>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη κλειδιού</translation>
     </message>
 </context>
 <context>
@@ -2911,129 +2911,105 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Task</source>
-        <translation type="unfinished">Εργασία</translation>
+        <translation>Εργασία</translation>
     </message>
     <message>
         <source>%1 days ago</source>
         <comment>task related times</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1 ημέρες πριν</translation>
     </message>
     <message>
         <source>sleeping %1 days</source>
         <comment>task related times</comment>
-        <translation type="unfinished"></translation>
+        <translation>σε αναστολή %1 ημέρες</translation>
     </message>
     <message>
         <source>Task is awake</source>
         <comment>task related times</comment>
-        <translation type="unfinished"></translation>
+        <translation>Η εργασία είναι σε εγρήγορση</translation>
     </message>
     <message>
         <source>Name</source>
         <comment>Branchprop window: Attribute name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Όνομα</translation>
     </message>
     <message>
         <source>Value</source>
         <comment>Branchprop window: Attribute value</comment>
-        <translation type="unfinished"></translation>
+        <translation>ΤΙμή</translation>
     </message>
     <message>
         <source>Type</source>
         <comment>Branchprop window: Attribute type</comment>
-        <translation type="unfinished"></translation>
+        <translation>Είδος</translation>
     </message>
     <message>
         <source>Delta priority</source>
         <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Προτεραιότητα δέλτα</translation>
     </message>
     <message>
         <source>Created:</source>
-        <translation type="unfinished"></translation>
+        <translation>Δημιουργήθηκε:</translation>
     </message>
     <message>
         <source>Modified:</source>
-        <translation type="unfinished"></translation>
+        <translation>Τροποποιήθηκε:</translation>
     </message>
     <message>
         <source>Sleep:</source>
-        <translation type="unfinished"></translation>
+        <translation>Αναστολή:</translation>
     </message>
 </context>
 <context>
     <name>ConfluenceAgent</name>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">Προειδοποίηση</translation>
+        <translation>Προειδοποίηση</translation>
     </message>
     <message>
         <source>Authentication problem when contacting Confluence</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>ConfluenceUserDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
+        <translation>Παράθυρο</translation>
     </message>
     <message>
         <source>Find Confluence user</source>
         <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εύρεση χρήστη που συνεισφέρει</translation>
     </message>
 </context>
 <context>
     <name>CredentialsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
+        <translation>Παράθυρο</translation>
     </message>
     <message>
         <source>Credentials dialog</source>
         <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation>Παράθυρο διαπίστευσης</translation>
     </message>
     <message>
         <source>URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation type="unfinished"></translation>
+        <translation>Όνομα χρήστη:</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Κωδικός πρόσβασης:</translation>
     </message>
     <message>
         <source>Save password</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DarkThemeSettingsDialog</name>
-    <message>
-        <source>Dark theme settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dark theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always use dark theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>System settings for dark theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DarkThemeSettingsDialog dialog</source>
-        <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation>Αποθήκευση κωδικού πρόσβασης</translation>
     </message>
 </context>
 <context>
@@ -3087,27 +3063,27 @@ Do you want to reload that map with the new file?</source>
     <name>ExportConfluenceDialog</name>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Επιλογές</translation>
+        <translation>Επιλογές</translation>
     </message>
     <message>
         <source>Image of map</source>
-        <translation type="unfinished">Εικόνα διαγράμματος</translation>
+        <translation>Εικόνα διαγράμματος</translation>
     </message>
     <message>
         <source>Include images</source>
-        <translation type="unfinished">Συμπερίληψη εικόνων</translation>
+        <translation>Συμπερίληψη εικόνων</translation>
     </message>
     <message>
         <source>Table of contents</source>
-        <translation type="unfinished">Πίνακας περιεχομένων</translation>
+        <translation>Πίνακας περιεχομένων</translation>
     </message>
     <message>
         <source>Task flags</source>
-        <translation type="unfinished">Σημαίες εργασιών</translation>
+        <translation>Σημαίες εργασιών</translation>
     </message>
     <message>
         <source>General flags</source>
-        <translation type="unfinished">Γενικές σημαίες</translation>
+        <translation>Γενικές σημαίες</translation>
     </message>
     <message>
         <source>Number sections</source>
@@ -3115,35 +3091,35 @@ Do you want to reload that map with the new file?</source>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation>Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="unfinished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+        <translation>Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Άκυρο</translation>
+        <translation>Άκυρο</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Εξαγωγή</translation>
+        <translation>Εξαγωγή</translation>
     </message>
     <message>
         <source>Export Confluence</source>
-        <translation type="unfinished"></translation>
+        <translation>Εξαγωγή συνεισφοράς</translation>
     </message>
     <message>
         <source>Create new page</source>
-        <translation type="unfinished"></translation>
+        <translation>Δημιουργία νέας σελίδας</translation>
     </message>
     <message>
         <source>Update existing page</source>
-        <translation type="unfinished"></translation>
+        <translation>Ενημέρωση υπάρχουσας σελίδας</translation>
     </message>
     <message>
         <source>Use heading of first map center as page name</source>
-        <translation type="unfinished"></translation>
+        <translation>Χρήση της επικεφαλίδας του κέντρου του πρώτου διαγράμματος ως όνομα σελίδας</translation>
     </message>
 </context>
 <context>
@@ -3252,71 +3228,71 @@ want to allow this in your system!</source>
     <name>ExportXHTMLDialog</name>
     <message>
         <source>Export to directory:</source>
-        <translation type="unfinished">Εξαγωγή σε φάκελο:</translation>
+        <translation>Εξαγωγή σε φάκελο:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Περιήγηση</translation>
+        <translation>Περιήγηση</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished">Επιλογές</translation>
+        <translation>Επιλογές</translation>
     </message>
     <message>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation>Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
         <source>Save settings in map</source>
-        <translation type="unfinished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+        <translation>Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
         <source>Stylesheets</source>
-        <translation type="unfinished">Φύλλα δεδομένων</translation>
+        <translation>Φύλλα δεδομένων</translation>
     </message>
     <message>
         <source>Scripts</source>
-        <translation type="unfinished">Σενάρια</translation>
+        <translation>Σενάρια</translation>
     </message>
     <message>
         <source>After Export:</source>
-        <translation type="unfinished">Μετά την εξαγωγή:</translation>
+        <translation>Μετά την εξαγωγή:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Άκυρο</translation>
+        <translation>Άκυρο</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">Εξαγωγή</translation>
+        <translation>Εξαγωγή</translation>
     </message>
     <message>
         <source>Export XHTML</source>
-        <translation type="unfinished"></translation>
+        <translation>Εξαγωγή XHTML</translation>
     </message>
     <message>
         <source>Include image</source>
-        <translation type="unfinished"></translation>
+        <translation>Συμπερίληψη εικόνας</translation>
     </message>
     <message>
         <source>show warnings of xslt processor</source>
-        <translation type="unfinished"></translation>
+        <translation>εμφάνιση προειδοποιήσεων του επεξεργαστή xslt</translation>
     </message>
     <message>
         <source>show output of external scripts</source>
-        <translation type="unfinished"></translation>
+        <translation>εμφάνιση εξόδου εξωτερικών σεναρίων</translation>
     </message>
     <message>
         <source>XSL:</source>
-        <translation type="unfinished"></translation>
+        <translation>XSL:</translation>
     </message>
     <message>
         <source>CSS:</source>
-        <translation type="unfinished"></translation>
+        <translation>CSS:</translation>
     </message>
     <message>
         <source>Before export:</source>
-        <translation type="unfinished"></translation>
+        <translation>Πριν την εξαγωγή:</translation>
     </message>
 </context>
 <context>
@@ -3355,7 +3331,7 @@ want to allow this in your system!</source>
     </message>
     <message>
         <source>File location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Τοποθεσία αρχείου:</translation>
     </message>
 </context>
 <context>
@@ -3381,7 +3357,7 @@ want to allow this in your system!</source>
     <message>
         <source>Heading Editor</source>
         <comment>Name of editor shown as window title</comment>
-        <translation type="unfinished">Επεξεργαστής κεφαλίδας</translation>
+        <translation>Επεξεργαστής κεφαλίδας</translation>
     </message>
 </context>
 <context>
@@ -3435,47 +3411,47 @@ want to allow this in your system!</source>
     <name>JiraAgent</name>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">Προειδοποίηση</translation>
+        <translation>Προειδοποίηση</translation>
     </message>
     <message>
         <source>Authentication problem when contacting JIRA</source>
-        <translation type="unfinished"></translation>
+        <translation>Πρόβλημα πιστοποίησης κατά την επικοινωνία με το JIRA</translation>
     </message>
 </context>
 <context>
     <name>JiraSettingsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
+        <translation>Παράθυρο</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished">Προσθήκη</translation>
+        <translation>Προσθήκη</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Αφαίρεση</translation>
+        <translation>Αφαίρεση</translation>
     </message>
     <message>
         <source>JiraSettingsDialog dialog</source>
         <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation>JiraSettingsDialog παράθυρο</translation>
     </message>
     <message>
         <source>JIRA servers:</source>
-        <translation type="unfinished"></translation>
+        <translation>JIRA διακομιστές:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation type="unfinished"></translation>
+        <translation>Όνομα χρήστη:</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Κωδικός πρόσβασης:</translation>
     </message>
     <message>
         <source>Save password</source>
-        <translation type="unfinished"></translation>
+        <translation>Αποθήκευση κωδικού πρόσβασης</translation>
     </message>
 </context>
 <context>
@@ -3501,15 +3477,15 @@ want to allow this in your system!</source>
     <name>LockedFileDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished">Παράθυρο</translation>
+        <translation>Παράθυρο</translation>
     </message>
     <message>
         <source>Delete lockfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Διαγραφή αρχείου κλειδώματος</translation>
     </message>
     <message>
         <source>Open readonly</source>
-        <translation type="unfinished"></translation>
+        <translation>Άνοιγμα σε ανάγνωση μόνο</translation>
     </message>
 </context>
 <context>
@@ -5046,7 +5022,7 @@ exists already. Do you want to</source>
     </message>
     <message>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send vym version and platform name and the ID  (e.g. &quot;Windows&quot; or &quot;Linux&quot;) back to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation type="vanished">&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
+        <translation>&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο VYM να ελέγχει για ενημερώσεις ή πληροφορίες εκδόσεων;&lt;/h3&gt;Εάν το επιτρέπετε, το VYM θα &lt;ul&gt;&lt;li&gt;κάνει μια φορά έλεγχο για πληροφορίες έκδοσης&lt;/li&gt;&lt;li&gt;, θα ελέγχει τακτικά για ενημερώσεις και θα σας ενημερώνει σε περίπτωση που θα πρέπει να κάνετε ενημέρωση, π.χ. αν υπάρχουν διαθέσιμες διορθώσεις σφαλμάτων &lt;/li&gt;&lt;li&gt;ένα cookie με τυχαίο ID θα στέλνει την έκδοση του VYM, τον τύπο του λειτουργικού συστήματος και το ID του (π.χ. &quot;Windows&quot; or &quot;Linux&quot;) στον Uwe Drechsel.&lt;p&gt;Ως δημιουργός του VYM θα ήθελα να δω ολοένα και περισσότερους ανθρώπους να το χρησιμοποιούν. Επίσης, θα ήθελα να γνωρίζω σε ποια λειτουργικά συστήματα εκτελείται η εφαρμογή αυτή. Η στήριξη που θα πρέπει να παρέχω για καθένα σύστημα απαιτεί πολύ προσωπικό χρόνο.&lt;/p&gt; &lt;p&gt;Καμμιά άλλη πληροφορία ή δεδομένο δεν θα φτάνει σε μένα, όπως επίσης δεν θα λαμβάνω και δεν θα συλλέγω κανένα προσωπικό δεδομένο. (Μπορείτε να διασταυρώσετε τον ισχυρισμό μου ελέγχοντας τον πηγαίο κώδικα της εφαρμογής. &lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέπετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνεται λήψη καμιάς πληροφορίας και, επίσης, &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να διαθέσω χρόνο για την ανάπτυξη της εφαρμογής.&lt;/ul&gt;Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων :-)</translation>
     </message>
     <message>
         <source>Allow</source>
@@ -5124,12 +5100,12 @@ exists already. Do you want to</source>
     <message>
         <source>Text (A&amp;O report)...</source>
         <comment>Export format</comment>
-        <translation type="unfinished"></translation>
+        <translation>Κείμενο (Α&amp;Ο αναφορά)...</translation>
     </message>
     <message>
         <source>Debug info</source>
         <comment>Option to show debugging info</comment>
-        <translation type="unfinished"></translation>
+        <translation>Πληροφορίες αποσφαλμάτωσης</translation>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
@@ -5140,248 +5116,249 @@ exists already. Do you want to</source>
 because of existing lockfile:
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν ήταν δυνατή η αποθήκευση του %1,
+επειδή υπάρχει αρχείο κλειδώματος.</translation>
     </message>
     <message>
         <source>branches</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation>κλάδοι</translation>
     </message>
     <message>
         <source>notes</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation>σημειώσεις</translation>
     </message>
     <message>
         <source>images</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation>εικόνες</translation>
     </message>
     <message>
         <source>slides</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation>διαφάνειες</translation>
     </message>
     <message>
         <source>xLinks</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation>xLinks</translation>
     </message>
     <message>
         <source>Script output window</source>
-        <translation type="unfinished"></translation>
+        <translation>Παράθυρο εξόδου σεναρίου</translation>
     </message>
     <message>
         <source>Import Dir...</source>
         <comment>Import Filters</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εισαγωγή φακέλων...</translation>
     </message>
     <message>
         <source>Confluence (HTML)...</source>
         <comment>File export menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Συνεισφορά (HTML)...</translation>
     </message>
     <message>
         <source>Text (Markdown)...</source>
         <comment>File export menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Κείμενο (Markdown)...</translation>
     </message>
     <message>
         <source>CSV...</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV...</translation>
     </message>
     <message>
         <source>Add image...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Προσθήκη εικόνας</translation>
     </message>
     <message>
         <source>Goto linked map...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Μετάβαση στο συνδεδεμένο διάγραμμα...</translation>
     </message>
     <message>
         <source>Toggle Presentation mode</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εναλλαγή λειτουργίας Παρουσίασης</translation>
     </message>
     <message>
         <source>Script output window</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Παράθυρο εξόδου σεναρίου</translation>
     </message>
     <message>
         <source>Show keyboard macros</source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση μακροεντολών πληκτρολογίου</translation>
     </message>
     <message>
         <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Καταχωρίστε τον χρόνο αναστολής (αριθμός ημερών, ώρες με το γράμμα &apos;ω&apos; ή ημερομηνία της μορφής ΕΕΕΕ-ΜΜ-ΗΗ ή ΗΗ.ΜΜ[ΕΕΕΕ]</translation>
     </message>
     <message>
         <source>tasks total</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation>σύνολο εργασιών</translation>
     </message>
     <message>
         <source>tasks in map</source>
         <comment>Info about map</comment>
-        <translation type="unfinished"></translation>
+        <translation>εργασίες στο διάγραμμα</translation>
     </message>
     <message>
         <source>Load vym script</source>
-        <translation type="unfinished"></translation>
+        <translation>Φόρτωση σεναρίου vym</translation>
     </message>
     <message>
         <source>Save as default map</source>
         <comment>File menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Αποθήκευση ως προεπιλεγμένο διάγραμμα</translation>
     </message>
     <message>
         <source>Get page name from Confluence</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Λήψη ονόματος σελίδας από τη Συνεισφορά</translation>
     </message>
     <message>
         <source>Images</source>
-        <translation type="unfinished">Εικόνες</translation>
+        <translation>Εικόνες</translation>
     </message>
     <message>
         <source>All</source>
         <comment>Filedialog</comment>
-        <translation type="unfinished">Όλα</translation>
+        <translation>Όλα</translation>
     </message>
     <message>
         <source>URL</source>
         <comment>SystemFlag</comment>
-        <translation type="unfinished"></translation>
+        <translation>URL</translation>
     </message>
     <message>
         <source>User Flags toolbar</source>
         <comment>user Flags Toolbar</comment>
-        <translation type="unfinished"></translation>
+        <translation>Μπάρα σημαιών χρήστη</translation>
     </message>
     <message>
         <source>Hm...</source>
         <comment>Standardflag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Χμ...</translation>
     </message>
     <message>
         <source>Important</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Σημαντικό</translation>
+        <translation>Σημαντικό</translation>
     </message>
     <message>
         <source>Back</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Πίσω</translation>
+        <translation>Πίσω</translation>
     </message>
     <message>
         <source>Forward</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Μπροστά</translation>
     </message>
     <message>
         <source>Look here</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Δείτε εδώ</translation>
+        <translation>Δείτε εδώ</translation>
     </message>
     <message>
         <source>Dangerous</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Επικίνδυνο</translation>
+        <translation>Επικίνδυνο</translation>
     </message>
     <message>
         <source>Don&apos;t forget</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Μην ξεχνάτε</translation>
     </message>
     <message>
         <source>Flag</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Σημαία</translation>
+        <translation>Σημαία</translation>
     </message>
     <message>
         <source>Home</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Αρχική</translation>
+        <translation>Αρχική</translation>
     </message>
     <message>
         <source>Telephone</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Τηλέφωνο</translation>
+        <translation>Τηλέφωνο</translation>
     </message>
     <message>
         <source>Music</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Μουσική</translation>
+        <translation>Μουσική</translation>
     </message>
     <message>
         <source>Mailbox</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Γραμματοκιβώτιο</translation>
+        <translation>Γραμματοκιβώτιο</translation>
     </message>
     <message>
         <source>Mail</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ταχυδρομείο</translation>
     </message>
     <message>
         <source>Password</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Κωδικός πρόσβασης</translation>
+        <translation>Κωδικός πρόσβασης</translation>
     </message>
     <message>
         <source>To be improved</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Να βελτιωθεί</translation>
+        <translation>Να βελτιωθεί</translation>
     </message>
     <message>
         <source>Stop</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Σταμάτημα</translation>
+        <translation>Σταμάτημα</translation>
     </message>
     <message>
         <source>Magic</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Μαγικό</translation>
+        <translation>Μαγικό</translation>
     </message>
     <message>
         <source>To be discussed</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Να συζητηθεί</translation>
+        <translation>Να συζητηθεί</translation>
     </message>
     <message>
         <source>Reminder</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Υπενθύμιση</translation>
+        <translation>Υπενθύμιση</translation>
     </message>
     <message>
         <source>Excellent</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Εξαιρετικό</translation>
+        <translation>Εξαιρετικό</translation>
     </message>
     <message>
         <source>Linux</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Linux</translation>
+        <translation>Linux</translation>
     </message>
     <message>
         <source>Sweet</source>
         <comment>Freemind flag</comment>
-        <translation type="unfinished">Γλυκό</translation>
+        <translation>Γλυκό</translation>
     </message>
     <message>
         <source>Confluence Credentials</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Διαπιστευτήρια συνεισφοράς</translation>
     </message>
     <message>
         <source>Set path for default path</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ορισμός διαδρομής για την προκαθορισμένη διαδρομή</translation>
     </message>
     <message>
         <source>Couldn&apos;t load default map:
@@ -5390,160 +5367,146 @@ because of existing lockfile:
 
 vym will create an empty map now.</source>
         <comment>Mainwindow: Failed to load default map</comment>
-        <translation type="unfinished"></translation>
+        <translation>Δεν ήταν δυνατή η φόρτωση του προεπιλεγμένου διαγράμματος:
+
+% 1
+
+Το vym θα δημιουργήσει ένα κενό διάγραμμα τώρα.</translation>
     </message>
     <message>
         <source>Couldn&apos;t save %1,
 because file exists and cannot be changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν ήταν δυνατή η αποθήκευση του %1,
+επειδή το αρχείο υπάρχει και δεν μπορεί να αλλάξει.</translation>
     </message>
     <message>
         <source>Save map as new default map</source>
-        <translation type="unfinished"></translation>
+        <translation>Αποθήκευση διαγράμματος ως νέο προεπιλεγμένο διάγραμμα</translation>
     </message>
     <message>
         <source>You have no permissions to write to </source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν έχετε άδεια για να γράψετε στο </translation>
     </message>
     <message>
         <source>Overwrite as new default map</source>
-        <translation type="unfinished"></translation>
+        <translation>Αντικατάσταση ως νέο προεπιλεγμένο διάγραμμα</translation>
     </message>
     <message>
         <source>Set vym default map to be loaded on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Ορισμός του προεπιλεγμένου διαγράμματος για φόρτωση κατά την εκκίνηση</translation>
     </message>
     <message>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Λήψη δεδομένων από το JIRA για το υπο-δέντρο</translation>
     </message>
     <message>
         <source>(experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>(σε πειραματικό στάδιο)</translation>
     </message>
     <message>
         <source>Firefox Bookmarks</source>
         <comment>File export menu</comment>
-        <translation type="unfinished">Σελιδοδείκτες Firefox</translation>
+        <translation>Σελιδοδείκτες Firefox</translation>
     </message>
     <message>
         <source>Move branch diagonally up</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Μετακίνηση κλάδου διαγώνια προς τα πάνω</translation>
     </message>
     <message>
         <source>Move branch diagonally down</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Μετακίνηση κλάδου διαγώνια προς τα κάτω</translation>
     </message>
     <message>
         <source>&amp;Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Σύνδεση</translation>
     </message>
     <message>
         <source>Connect</source>
         <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
+        <translation>Σύνδεση</translation>
     </message>
     <message>
         <source>Get Confluence user data</source>
         <comment>Connect action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Λήψη δεδομένων συνεισφοράς χρήστη</translation>
     </message>
     <message>
         <source>Use modifier to select and reorder objects</source>
         <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
+        <translation>Χρήση του επεξεργαστή για επιλογή και επαναταξινόμηση αντικειμένων</translation>
     </message>
     <message>
         <source>Format painter: pick color from another branch and apply</source>
         <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
+        <translation>Μορφοποίηση ζωγραφικής: επιλέξτε χρώμα από άλλο κλάδο και εφαρμόστε</translation>
     </message>
     <message>
         <source>Use modifier to move branches without linking</source>
         <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
+        <translation>Χρήση του επεξεργαστή για μετακίνηση κλάδων χωρίς συνδέσεις</translation>
     </message>
     <message>
         <source>Use modifier to move view without selecting</source>
         <comment>Mode modifier</comment>
-        <translation type="unfinished"></translation>
+        <translation>Χρήση του επεξεργαστή για μετακίνηση προβολής χωρίς επιλογή</translation>
     </message>
     <message>
         <source>JIRA Credentials</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Διαπιστευτήρια JIRA</translation>
     </message>
     <message>
         <source>View toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση εργαλειοθήκης</translation>
     </message>
     <message>
         <source>Firefox Bookmarks</source>
-        <translation type="unfinished">Σελιδοδείκτες Firefox</translation>
+        <translation>Σελιδοδείκτες Firefox</translation>
     </message>
     <message>
         <source>Import Firefox Bookmarks into new map</source>
-        <translation type="unfinished"></translation>
+        <translation>Εισαγωγή σελιδοδεικτών Firefox στο νέο διάγραμμα</translation>
     </message>
     <message>
         <source>No SSL support available for this build of vym</source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν υπάρχει διαθέσιμη υποστήριξη SSL γι&apos; αυτή την έκδοση του vym</translation>
     </message>
     <message>
         <source>Open Freemind map</source>
-        <translation type="unfinished"></translation>
+        <translation>Άνοιγμα διαγράμματος Freemind</translation>
     </message>
     <message>
         <source>Link to another vym map</source>
-        <translation type="unfinished">Σύνδεσμος προς άλλο διάγραμμα VYM</translation>
+        <translation>Σύνδεσμος προς άλλο διάγραμμα vym</translation>
     </message>
     <message>
         <source>Set as link to vym map</source>
-        <translation type="unfinished"></translation>
+        <translation>Ορισμός ως σύνδεσμος προς διάγραμμα vym</translation>
     </message>
     <message>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
-        <translation type="unfinished"></translation>
+        <translation>Επαναφορά προτεραιότητας δέλτα για ορατές εργασίες</translation>
     </message>
     <message>
         <source>Select color (Press Shift for more options)</source>
-        <translation type="unfinished"></translation>
+        <translation>Επιλογή χρώματος (Πιέστε Shift για περισσότερες επιλογές)</translation>
     </message>
     <message>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Η αποθήκευση του διαγράμματος απέτυχε:
+Δεν ήταν δυνατή η μετονομασία του διαγράμματος σε %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t save as default, failed to rename to
 %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dark theme</source>
-        <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restart vym to apply the changed dark theme setting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>That&apos;s ok, though I would be happy to see many users working with vym and also on which platforms.</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία αποθήκευσης ως προκαθορισμένο, αποτυχία μετονομασίας σε
+%1</translation>
     </message>
 </context>
 <context>
@@ -5574,7 +5537,7 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <source>Note Editor</source>
         <comment>Name of editor shown as window title</comment>
-        <translation type="unfinished">Επεξεργαστής σημειώσεων</translation>
+        <translation>Επεξεργαστής σημειώσεων</translation>
     </message>
 </context>
 <context>
@@ -5860,35 +5823,35 @@ and install the perl module for Bugzilla access using YaST</source>
     <message>
         <source>Flag: %1</source>
         <comment>Alt tag in HTML export</comment>
-        <translation type="unfinished"></translation>
+        <translation>Σημαία: %1</translation>
     </message>
     <message>
         <source>Flag: url</source>
         <comment>Alt tag in HTML export</comment>
-        <translation type="unfinished"></translation>
+        <translation>Σημαία: url</translation>
     </message>
     <message>
         <source>Image: %1</source>
         <comment>Alt tag in HTML export</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εικόνα: %1</translation>
     </message>
     <message>
         <source>Export as Markdown</source>
-        <translation type="unfinished"></translation>
+        <translation>Εξαγωγή ως Markdown</translation>
     </message>
     <message>
         <source>Could not export as Markdown to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν ήταν δυνατή η εξαγωγή ως Markdown στο %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 tool to decompress data!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία εκκίνησης εργαλείου %1 για αποσυμπίεση δεδομένων!</translation>
     </message>
     <message>
         <source>Couldn&apos;t find macros at  %1.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία εύρεσης μακροεντολών στο  %1.</translation>
     </message>
     <message>
         <source>Couldn&apos;t find tool to unzip data. Please download and install 7z and set path in Settings menu:
@@ -5900,78 +5863,79 @@ and install the perl module for Bugzilla access using YaST</source>
         <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
  </source>
         <comment>zip tool missing on Linux/Mac platform</comment>
-        <translation type="unfinished"></translation>
+        <translation>Δεν ήταν δυνατή η εύρεση εργαλείου για συμπίεση/αποσυμπίεση δεδομένων. Εγκαταστήστε τη και προσδιορίστε τη διαδρομή στο μενού Ρυθμίσεις:</translation>
     </message>
     <message>
         <source>Couldn&apos;t open &quot;%1&quot;
 .</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία ανοίγματος &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Couldn&apos;t read macros from &quot;%1&quot;
 .</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία ανάγνωσης μακροεντολών από το &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Couldn&apos;t write macros to &quot;%1&quot;
 .</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία εγγραφής μακροεντολών στο &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Couldn&apos;t read script from &quot;%1&quot;
 .</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία ανάγνωσης σεναρίου από το &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Couldn&apos;t write script to &quot;%1&quot;
 .</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία εγγραφής σεναρίων στο &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Export as AO report</source>
-        <translation type="unfinished"></translation>
+        <translation>Εξαγωγή ως αναφορά ΑΟ</translation>
     </message>
     <message>
         <source>Couldn&apos;t start %1 tool to compress data!
 The map could not be saved, please check if backup file is available or export as XML file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία εκκίνησης εργαλείου %1 για συμπίεση δεδομένων!
+Το διάγραμμα δεν μπορεί να αποθηκευτεί. Παρακαλώ ελέγξτε εάν ένα αντίγραφο ασφαλείας είναι διαθέσιμο ή κάντε εξαγωγή σε αρχείο XML!</translation>
     </message>
     <message>
         <source>Export as Firefox bookmarks</source>
-        <translation type="unfinished"></translation>
+        <translation>Εξαγωγή σαν σελιδοδείκτες του Firefox</translation>
     </message>
     <message>
         <source>Could not export as Firefox bookmarks to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν ήταν δυνατή η εξαγωγή ως σελιδοδείκτες Firefox στο %1</translation>
     </message>
     <message>
         <source>Import Firefox bookmarks</source>
         <comment>Import dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εισαγωγή σελιδοδεικτών Firefox</translation>
     </message>
     <message>
         <source>Loading bookmarks:</source>
         <comment>Progress dialog while importing bookmarks</comment>
-        <translation type="unfinished"></translation>
+        <translation>Φόρτωση σελιδοδεικτών:</translation>
     </message>
     <message>
         <source>Imported %1 bookmarks</source>
         <comment>Import dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εισαγωγή %1 σελιδοδεικτών</translation>
     </message>
     <message>
         <source>Couldn&apos;t find tool to unzip data,or your Windows version is older than Windows 10.</source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν ήταν δυνατή η εύρεση εργαλείου για την αποσυμπίεση δεδομένων, ή η έκδοση των Windows σας είναι παλαιότερη από τα Windows 10.</translation>
     </message>
     <message>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Τα υπάρχοντα αρχεία κλειδώματος έχουν αγνοηθεί για τα διαγράμματα που αναφέρονται παρακάτω. Παρακαλώ ελέγξτε εάν τα διαγράμματα είναι ανοιχτά σε άλλο στιγμιότυπο του vym:</translation>
     </message>
     <message>
         <source>JIRA agent not setup.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ο πελάτης JIRA δεν έχει ρυθμιστεί</translation>
     </message>
 </context>
 <context>
@@ -6071,29 +6035,29 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Reload</source>
-        <translation type="unfinished">Επαναφόρτωση</translation>
+        <translation>Επαναφόρτωση</translation>
     </message>
     <message>
         <source>Script</source>
         <comment>Mode in scriptEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Σενάριο</translation>
     </message>
     <message>
         <source>No script selected</source>
         <comment>scriptname in scriptEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Δεν επιλέχθηκε σενάριο</translation>
     </message>
     <message>
         <source>Macros saved to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Οι μακροεντολές αποθηκεύτηκαν στο %1</translation>
     </message>
     <message>
         <source>Script saved to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Το σενάριο αποθηκεύτηκε στο %1</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation>Αποθήκευση ως</translation>
     </message>
 </context>
 <context>
@@ -6132,32 +6096,32 @@ Do you want to overwrite it?</source>
     <message>
         <source>Show only tasks from current map</source>
         <comment>Filters in task Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση μόνο εργασιών από το τρέχον διάγραμμα</translation>
     </message>
     <message>
         <source>Show only active tasks</source>
         <comment>Filters in task Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση μόνο των ενεργών εργασιών</translation>
     </message>
     <message>
         <source>Show only new tasks</source>
         <comment>Filters in task Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση μόνο νέων εργασιών</translation>
     </message>
     <message>
         <source>Show only tasks marked with this arrow-up flag</source>
         <comment>Filters in task Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση μόνο εργασιών που επισημαίνονται με αυτή τη σημαία βέλους προς τα πάνω</translation>
     </message>
     <message>
         <source>Show only tasks marked without any arrow-up flag</source>
         <comment>Filters in task Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση μόνο εργασιών που δεν επισημαίνονται με σημαία βέλους προς τα πάνω</translation>
     </message>
     <message>
         <source>Show only blocker tasks</source>
         <comment>Filters in task Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση μόνο εργασιών αποκλεισμού</translation>
     </message>
 </context>
 <context>
@@ -6200,12 +6164,12 @@ Do you want to overwrite it?</source>
     <message>
         <source>Delta</source>
         <comment>TaskEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Δέλτα</translation>
     </message>
     <message>
         <source>Flags</source>
         <comment>TaskEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Σημαίες</translation>
     </message>
 </context>
 <context>
@@ -6420,12 +6384,12 @@ Do you want to overwrite it?</source>
     <message>
         <source>Set RichText default background color</source>
         <comment>TextEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ορίστε το προεπιλεγμένο χρώμα φόντου στο Εμπλουτισμένο Κείμενο</translation>
     </message>
     <message>
         <source>Set RichText default font color</source>
         <comment>TextEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ορίστε το προεπιλεγμένο χρώμα γραμματοσειράς στο Εμπλουτισμένο Κείμενο</translation>
     </message>
 </context>
 <context>
@@ -6700,12 +6664,12 @@ Do you want to reload that map with the new file?</source>
         <source>Cannot create lockfile of map! It will be opened in readonly mode.
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία δημιουργίας αρχείου κλειδώματος του διαγράμματος! Θα ανοίξει μόνο σε λειτουργία ανάγνωσης.</translation>
     </message>
     <message>
         <source>Warning</source>
         <comment>VymModel</comment>
-        <translation type="unfinished">Προειδοποίηση</translation>
+        <translation>Προειδοποίηση</translation>
     </message>
     <message>
         <source>Map seems to be already opened in another vym instance!
@@ -6713,20 +6677,24 @@ Do you want to reload that map with the new file?</source>
  Map is locked by &quot;%1&quot; on &quot;%2&quot;
 
 Please only delete the lockfile, if you are sure nobody else is currently working on this map.</source>
-        <translation type="unfinished"></translation>
+        <translation>Το διάγραμμα φαίνεται να έχει ήδη ανοίξει σε άλλο στιγμιότυπο του vym!
+
+Το διάγραμμα είναι κλειδωμένο από το &quot;% 1&quot; στο &quot;% 2&quot;
+
+Διαγράψτε το αρχείο κλειδώματος, μόνο εάν είστε βέβαιοι ότι κανείς άλλος δεν εργάζεται αυτήν τη στιγμή σε αυτό το διάγραμμα.</translation>
     </message>
     <message>
         <source>Removed lockfile for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Αφαιρέθηκε το αρχείο κλειδώματος για το %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t remove lockfile for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία αφαίρεσης αρχείου κλειδώματος για το %1</translation>
     </message>
     <message>
         <source>Contacting Jira...</source>
         <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
+        <translation>Επικοινωνία με Jira...</translation>
     </message>
     <message>
         <source>The map %1
@@ -6735,21 +6703,26 @@ Writing it uncompressed will also write images
 and flags and thus may overwrite files into the given directory
 
 Do you want to write the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Το διάγραμμα %1
+δεν χρησιμοποίησε τη συμπιεσμένη μορφή αρχείου vym.
+Αν το γράψετε ασυμπίεστο θα εγγραφούν εικόνες
+και σημαίες και έτσι μπορεί να αντικαταστήσει αρχεία στον δεδομένο κατάλογο
+
+Θέλετε να γράψετε το διάγραμμα</translation>
     </message>
     <message>
         <source>uncompressed, potentially overwrite existing data</source>
-        <translation type="unfinished"></translation>
+        <translation>μη συμπιεσμένο, πιθανή αντικατάσταση υπαρχόντων αρχείων</translation>
     </message>
     <message>
         <source>Could not find Jira ticket pattern in %1</source>
         <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
+        <translation>Αδυναμία εύρεσης προτύπου ετικέτας Jira στο %1</translation>
     </message>
     <message>
         <source>Received Jira data.</source>
         <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
+        <translation>Έγινε λήψη δεδομένων Jira.</translation>
     </message>
 </context>
 <context>
@@ -6809,60 +6782,60 @@ Do you want to write the map</source>
     <message>
         <source>Warning</source>
         <comment>Warning dialog default window name</comment>
-        <translation type="unfinished">Προειδοποίηση</translation>
+        <translation>Προειδοποίηση</translation>
     </message>
 </context>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Κατάσταση</translation>
+        <translation>Κατάσταση</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Κλείσιμο</translation>
+        <translation>Κλείσιμο</translation>
     </message>
     <message>
         <source>zip settings</source>
         <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation>ρυθμίσεις συμπίεσης</translation>
     </message>
     <message>
         <source>Path to 7z.exe</source>
         <comment>zip tool settings dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Διαδρομή προς το αρχείο 7z.exe</translation>
     </message>
     <message>
         <source>Set path to 7z to zip/unzip files</source>
-        <translation type="unfinished"></translation>
+        <translation>Ορίστε διαδρομή προς το 7z για συμπίεση/αποσυμπίεση αρχείων</translation>
     </message>
     <message>
         <source>Set path to zip files</source>
-        <translation type="unfinished"></translation>
+        <translation>Ορίστε διαδρομή για συμπίεση αρχείων</translation>
     </message>
     <message>
         <source>Set path to unzip files</source>
-        <translation type="unfinished"></translation>
+        <translation>Ορίστε διαδρομή για αποσυμπίεση αρχείων</translation>
     </message>
     <message>
         <source>Status: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Κατάσταση: %1</translation>
     </message>
     <message>
         <source>zip settings</source>
-        <translation type="unfinished"></translation>
+        <translation>ρυθμίσεις συμπίεσης</translation>
     </message>
     <message>
         <source>zip tool:</source>
-        <translation type="unfinished"></translation>
+        <translation>εργαλείο συμπίεσης:</translation>
     </message>
     <message>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>Επιλογή</translation>
     </message>
     <message>
         <source>unzip tool:</source>
-        <translation type="unfinished"></translation>
+        <translation>εργαλείο αποσυμπίεσης:</translation>
     </message>
 </context>
 </TS>

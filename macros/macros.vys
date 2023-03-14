@@ -51,43 +51,41 @@ function macro_f5()
     colorSubtreeWithQuickColor(4);
 }
 
-// Macro F6: Color subtree black
+// Macro F6: Color subtree blue
 function macro_f6()
 {
     colorSubtreeWithQuickColor(5);
 }
 
-// Macro F7: Color subtree dark gray
+// Macro F7: Color subtree black
 function macro_f7()
 {
     colorSubtreeWithQuickColor(6);
 }
 
-// Macro F8: Color subtree light gray
+// Macro F8: Color subtree dark gray
 function macro_f8()
 {
     colorSubtreeWithQuickColor(7);
 }
 
-// Macro F9: Color subtree light white
+// Macro F9: Color subtree light gray
 function macro_f9()
 {
     colorSubtreeWithQuickColor(8);
 }
 
-// Macro F10: Repeat last command
+// Macro F10: Color subtree light white
 function macro_f10()
 {
-    map = vym.currentMap();
-    map.repeatLastCommand();
+    colorSubtreeWithQuickColor(9);
 }
 
-// Macro F11: Set task to sleep until next day
+// Macro F11: Repeat last command
 function macro_f11()
 {
     map = vym.currentMap();
-    map.setTaskSleep("1");
-    statusMessage("Task sleeping until tomorrow");
+    map.repeatLastCommand();
 }
 
 // Macro F12: toggle high prio task

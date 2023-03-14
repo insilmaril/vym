@@ -3641,6 +3641,11 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Show scripting commands</source>
+        <comment>Help action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>

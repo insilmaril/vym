@@ -40,8 +40,8 @@ class FrameContainer : public XMLObj, public Container {
     void setFramePenColor(const QColor&);
     QColor frameBrushColor();
     void setFrameBrushColor(const QColor &);
-    bool frameIncludeChildren();
-    void setFrameIncludeChildren(bool);
+    bool frameIncludeChildren();        // FIXME-2 obsolete
+    void setFrameIncludeChildren(bool); // FIXME-2 obsolete
     QString saveFrame();
 
   protected:
@@ -49,7 +49,7 @@ class FrameContainer : public XMLObj, public Container {
     int framePaddingInt;    //! Distance text - frame
     QPen framePen;
     QBrush frameBrush;
-    bool frameIncludeChildrenInt;
+    bool frameIncludeChildrenInt;       // FIXME-2 obsolete
 
   private:
     QGraphicsRectItem *rectFrame;

@@ -7,7 +7,7 @@
 using namespace std;
 
 #include "command.h"
-//#include "definitions.h"
+#include "debuginfo.h"
 #include "findresultwidget.h"
 #include "findwidget.h"
 #include "flagrow.h"
@@ -76,7 +76,10 @@ QString clipboardDir;    // Clipboard used in all mapEditors
 QString clipboardFile;   // Clipboard used in all mapEditors
 
 QDir vymBaseDir;            // Containing all styles, scripts, images, ...
+
 QDir vymTranslationsDir;    // Translation files (*.qm)
+QTranslator vymTranslator;
+
 QDir lastImageDir;
 QDir lastMapDir;
 QDir lastExportDir;
@@ -111,6 +114,7 @@ ImageIO imageIO;
 int statusbarTime = 10000;
 
 bool usingDarkTheme;
+QColor vymBlue;
 
 int warningCount = 0;
 int criticalCount = 0;
@@ -193,7 +197,7 @@ int main(int argc, char *argv[])
     options.add("recover", Option::Switch, "recover", "recover");
     options.add("restore", Option::Switch, "r", "restore");
     options.add("shortcuts", Option::Switch, "s", "shortcuts");
-    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX");
+//    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX") // FIXME-2 not really used?
     options.add("testmode", Option::Switch, "t", "testmode");
     options.add("version", Option::Switch, "v", "version");
     options.setHelpText(
@@ -205,27 +209,25 @@ int main(int argc, char *argv[])
         "http://www.InSilmaril.de/vym\n\n"
         "Usage: vym [OPTION]... [FILE]... \n"
         "Open FILEs with vym\n\n"
-        "-b           batch       batch mode: hide windows\n"
-        "-c           commands	  List all available commands\n"
-        "-d           debug       Show debugging output\n"
-        "-h           help        Show this help text\n"
-        "-L           load        Load script\n"
-        "-l           local       Run with ressources in current directory\n"
-        "--locale     locale      Override system locale setting to select "
-        "language\n"
-        "-n  STRING   name        Set name of instance for DBus access\n"
-        "-q           quit        Quit immediatly after start for "
-        "benchmarking\n"
-        "-R  FILE     run         Run script\n"
-        "-r           restore     Restore last session\n"
-        "--recover    recover     Delete lockfiles during initial loading of "
-        "files\n"
-        "-s           shortcuts   Show Keyboard shortcuts on start\n"
-        "--cl         LaTeX       Show Keyboard shortcuts in LaTeX format on "
-        "start\n"
-        "-t           testmode    Test mode, e.g. no autosave and changing of "
-        "its setting\n"
-        "-v           version     Show vym version\n");
+        "-b           batch         batch mode: hide windows\n"
+        "-c           commands	    List all available commands\n"
+        "-cl          commandslatex List commands in LaTeX format\n"
+        "-d           debug         Show debugging output\n"
+        "-h           help          Show this help text\n"
+        "-L           load          Load script\n"
+        "-l           local         Run with ressources in current directory\n"
+        "--locale     locale        Override system locale setting to select\n"
+        "                           language\n"
+        "-n  STRING   name          Set name of instance for DBus access\n"
+        "-q           quit          Quit immediatly after start for benchmarking\n"
+        "-R  FILE     run           Run script\n"
+        "-r           restore       Restore last session\n"
+        "--recover    recover       Delete lockfiles during initial loading of\n"
+        "                           files\n"
+        "-s           shortcuts     Show Keyboard shortcuts on start\n"
+        "-t           testmode      Test mode, e.g. no autosave and changing\n"
+        "                           of its setting\n"
+        "-v           version       Show vym version\n");
 
     if (options.parse()) {
         cout << endl << qPrintable(options.getHelpText()) << endl;
@@ -272,6 +274,7 @@ int main(int argc, char *argv[])
 
 #ifdef QT_DEBUG
     qDebug() << "QT_DEBUG is set";
+    debug = true;
 #endif
 
     // Use /usr/share/vym or /usr/local/share/vym or . ?
@@ -328,34 +331,8 @@ int main(int argc, char *argv[])
     }
 
     // Initialize translations
-    if (options.isOn("locale")) {
+    if (options.isOn("locale"))
         localeName = options.getArg("locale");
-        if (debug)
-            qDebug() << "Main:  using option for locale";
-    }
-    else {
-#if defined(Q_OS_LINUX)
-        if (debug) {
-            qDebug() << "Main:  (OS Linux)   using $LANG for locale";
-        }
-
-        localeName =
-            QProcessEnvironment::systemEnvironment().value("LANG", "en");
-        if (localeName.contains('.'))
-            localeName = localeName.left(localeName.indexOf('.'));
-#else
-        if (debug)
-            qDebug() << "Main:  (OS other)   using  "
-                        "QLocale::system().uiLanguages(  using for locale";
-        localeName = QLocale::system().uiLanguages().first();
-
-        if (localeName.contains("-")) {
-            if (debug)
-                qDebug() << "Main:  Replacing '-' with '_' in locale";
-            localeName.replace("-", "_");
-        }
-#endif
-    }
 
     // Use dark theme depending on system appearance and preferences
     int text_hsv_value = app.palette().color(QPalette::WindowText).value();
@@ -389,24 +366,9 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    if (debug) {
-        if (usingDarkTheme)
-            qDebug() << "Using dark theme";
-        else
-            qDebug() << "Not using dark theme";
-    }
-
     // Prepare and check translations
     vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
     vymTranslationsDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-    if (debug) {
-        qDebug() << "Main:     localName: " << localeName;
-        qDebug() << "Main:      locale(): " << QLocale::system().name();
-        qDebug() << "Main:  translations: " << vymTranslationsDir.path();
-        qDebug() << "Main:   uiLanguages: " << QLocale::system().uiLanguages();
-        qDebug() << "Main:          LANG: "
-                 << QProcessEnvironment::systemEnvironment().value("LANG", "not set.");
-    }
 
     bool translationsMissing = false;
     if(!vymTranslationsDir.exists())
@@ -414,7 +376,6 @@ int main(int argc, char *argv[])
     else if (vymTranslationsDir.isEmpty())
         translationsMissing = true;
 
-    QTranslator vymTranslator;
     if (translationsMissing) {
         WarningDialog warn;
         warn.setMinimumWidth(800);
@@ -424,28 +385,31 @@ int main(int argc, char *argv[])
         warn.setCaption("Translations not available");
         warn.setText(
                 "vym has not been built correctly and only will be available in English: \n\n"
-                "No translation files in " + vymTranslationsDir.path().toLatin1() + "\n\n" +
+                "No translation files in\n" +
+                vymTranslationsDir.path().toLatin1() + "\n\n" +
                 "Please get vym from\n"
                 " * https://sourceforge.net/projects/vym/  or \n"
                 " * https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym");
         warn.exec();
     } else {
-        if (debug)
-            qDebug() << "Trying to load " << vymTranslationsDir.path() << QString("vym.%1").arg(localeName);
-        if (!vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path())) {
+        bool ok;
+        if (!localeName.isEmpty())
+            // Use localeName to load specific language
+            ok = vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path());
+        else
+            ok = vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm");
+
+        if (!ok) {
             WarningDialog warn;
             warn.showCancelButton(false);
             warn.setText(
-                QString("Couldn't load translation for locale \"%1\" in\n%2")
+                QString("Couldn't load translation for locale \"%1\" from\n%2")
                     .arg(localeName)
                     .arg(vymTranslationsDir.path()));
             warn.setShowAgainName("mainwindow/translations/localeMissing");
             warn.exec();
-        } else {
-            if (debug)
-                qDebug() << "Loading translation succeeded :-)";
-        }
-        app.installTranslator(&vymTranslator);
+        } else
+            QCoreApplication::installTranslator(&vymTranslator);
     }
 
     // Initializing the master rows of flags
@@ -500,12 +464,18 @@ int main(int argc, char *argv[])
     m.setWindowIcon(QPixmap(":/vym.png"));
     m.fileNew();
 
+    if (debug)
+        // Show debug info AFTER creating MainWindow
+        cout << debugInfo().toStdString() << endl;
+
     if (options.isOn("commands")) {
-        cout << "Available commands:\n";
-        cout << "==================:\n";
+        cout << "Available commands in map:\n";
+        cout << "=========================:\n";
         foreach (Command *c, modelCommands)
             cout << c->getDescription().toStdString() << endl;
 
+        cout << "Available commands in vym:\n";
+        cout << "=========================:\n";
         foreach (Command *c, vymCommands)
             cout << c->getDescription().toStdString() << endl;
         return 0;

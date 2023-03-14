@@ -2,14 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ViewYourMind)
 
-# Build optimized with debug info
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
-
-# Ignore deprecated warning caused be Qt 15.2 LTS for now
-set(CMAKE_WARN_DEPRECATED OFF)
-
 find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-
 
 set(QtComponents
     LinguistTools
@@ -111,22 +104,20 @@ endif()
     #
     # Qt6 will have a dedicated macro:
     # https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
-#    QT5_add_translation(qm_files ${ts_files})
 
-# Translations
-file(GLOB ts_files ABSOLUTE ${CMAKE_BINARY_DIR} "lang/*.ts")
-#file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
+#file(GLOB ts_files ABSOLUTE ${CMAKE_BINARY_DIR} "lang/*.ts")
+file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
 message(STATUS "Creating ${CMAKE_BINARY_DIR}/translations")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
-#    set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
+#set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_SOURCE_DIR}/translations)
 
-# Experimenting, ignore for now:
 #QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
-#QT5_add_translation(qm_files ${ts_files})
-
-# Enable below to rebuild ts_files
 #QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
+#QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR}/src)
+
+QT5_add_translation(qm_files ${ts_files})
+add_compile_definitions(CMAKE_SOURCE_DIR)
 
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "ts_files: ${ts_files}")

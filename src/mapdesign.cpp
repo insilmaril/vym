@@ -4,6 +4,8 @@
 
 #include "branchitem.h"
 
+extern bool usingDarkTheme;
+
 /////////////////////////////////////////////////////////////////
 // MapDesign
 /////////////////////////////////////////////////////////////////
@@ -16,7 +18,7 @@ MapDesign::MapDesign()
 
 void MapDesign::init()
 {
-    int mapDesign = 1;  // FIXME-2 only for testing, later load/save
+    int mapDesign = 0;  // FIXME-2 only for testing, later load/save
 
     if (mapDesign == 0) {
         // Default mapDesign
@@ -41,6 +43,27 @@ void MapDesign::init()
 
         newBranchHeadingColors << QColor(Qt::green);
         relinkedBranchHeadingColors << QColor(Qt::red);   // FIXME-1 currently unused
+
+        // Frames
+        /*
+        newInnerFrameTypes;
+        newInnerFramePenColors;
+        newInnerFrameBrushColors;
+        newInnerFramePenWidths;
+        relinkedInnerFrameTypes;
+        relinkedInnerFramePenColors;
+        relinkedInnerFrameBrushColors;
+        relinkedInnerFramePenWidths;
+
+        newOuterFrameTypes;
+        newOuterFramePenColors;
+        newOuterFrameBrushColors;
+        newOuterFramePenWidths;
+        relinkedOuterFrameTypes;
+        relinkedOuterFramePenColors;
+        relinkedOuterFrameBrushColors;
+        relinkedOuterFramePenWidths;
+        */
 
         // Should links of branches use a default color or the color of heading?
         linkColorHintInt = LinkObj::DefaultColor;
@@ -316,6 +339,17 @@ void MapDesign::updateFrames(
 {
     if (branchContainer) {
         qDebug() << "MD::updateFrames mode=" << mode << " d=" << depth;// << branchItem->getHeadingPlain();
+        // FIXME-0 Hardcoded for now, use lists soon:
+        if (mode == NewItem && depth == 0) {
+            branchContainer->setFrameType(true, FrameContainer::RoundedRectangle);
+            if (usingDarkTheme) {
+                branchContainer->setFramePenColor(true, QColor(Qt::white));
+                branchContainer->setFrameBrushColor(true, QColor(85, 85, 127));
+            } else {
+                    branchContainer->setFramePenColor(true, QColor(Qt::black));
+                    branchContainer->setFrameBrushColor(true, QColor(Qt::white));
+            }
+        }
     }
 }
 

@@ -4,6 +4,27 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 
+%https://de.overleaf.com/learn/latex/Code_listing
+\usepackage{listings}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\tiny,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
 \setlength{\headheight}{0cm}
 \setlength{\headsep}{0cm}
 \setlength{\topskip}{0cm}
@@ -13,7 +34,7 @@
 \setlength{\parindent}{0cm}
 \setlength{\oddsidemargin}{0cm}
 \setlength{\textwidth}{16cm}
-\setlength{\textheight}{27cm}
+\setlength{\textheight}{25cm}
 
 \newlength{\maximgwidth}
 \setlength{\maximgwidth}{14cm}
@@ -40,6 +61,9 @@
 
 \newenvironment{code}[1] { \verbatim #1}{\endverbatim  }
 
+\pagestyle{plain}
+\pagenumbering{arabic}
+
 \hypersetup{bookmarks, bookmarksopen,
   pdftitle={VYM - a tool for visual thinking },
   pdfauthor={Uwe Drechsel},    
@@ -50,7 +74,8 @@
   colorlinks={true},     
   linkcolor={blue},
   urlcolor={green},
-  citecolor={red}} 
+  citecolor={red}}
+
 
 
 \begin{document}
@@ -221,6 +246,8 @@ A good starting point to learn more about Mindmaps in general is Wikipedia:
 
 
 
+
+\newpage
 \section{The Concept of the \vym application}
 %FIXME-3 maybe add a general introduction here...
 \subsection{The Mainwindow and its satellites} \label{satellite}
@@ -1627,26 +1654,7 @@ etc.) in the following places:
 \end{enumerate}
 
 \subsection{Command line options} \label{options} 
-\begin{verbatim}
-Usage: vym [OPTION]... [FILE]... 
-Open FILEs with vym
-
--b           batch       batch mode: hide windows
--c           commands	  List all available commands
--d           debug       Show debugging output
--h           help        Show this help text
--L           load        Load script
--l           local       Run with ressources in current directory
---locale     locale      Override system locale setting to select language
--n  STRING   name        Set name of instance for DBus access
--q           quit        Quit immediatly after start for benchmarking
--R  FILE     run         Run script
--r           restore     Restore last session
--s           shortcuts   Show Keyboard shortcuts on start
---cl         LaTeX       Show Keyboard shortcuts in LaTeX format on start
--t           testmode    Test mode, e.g. no autosave and changing of its setting
--v           version     Show vym version
-\end{verbatim}
+\lstinputlisting{help.tex}
 You can also give several filenames at the commandline to let \vym open
 several maps at once.
  
