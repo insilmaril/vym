@@ -324,34 +324,8 @@ int main(int argc, char *argv[])
     }
 
     // Initialize translations
-    if (options.isOn("locale")) {
+    if (options.isOn("locale"))
         localeName = options.getArg("locale");
-        if (debug)
-            qDebug() << "Main:  using option for locale";
-    }
-    else {
-#if defined(Q_OS_LINUX)
-        if (debug) {
-            qDebug() << "Main:  (OS Linux)   using $LANG for locale";
-        }
-
-        localeName =
-            QProcessEnvironment::systemEnvironment().value("LANG", "en");
-        if (localeName.contains('.'))
-            localeName = localeName.left(localeName.indexOf('.'));
-#else
-        if (debug)
-            qDebug() << "Main:  (OS other)   using  "
-                        "QLocale::system().uiLanguages(  using for locale";
-        localeName = QLocale::system().uiLanguages().first();
-
-        if (localeName.contains("-")) {
-            if (debug)
-                qDebug() << "Main:  Replacing '-' with '_' in locale";
-            localeName.replace("-", "_");
-        }
-#endif
-    }
 
     // Use dark theme depending on system appearance and preferences
     int text_hsv_value = app.palette().color(QPalette::WindowText).value();
@@ -411,8 +385,14 @@ int main(int argc, char *argv[])
                 " * https://software.opensuse.org//download.html?project=home%3Ainsilmaril&package=vym");
         warn.exec();
     } else {
-        //if (!vymTranslator.load(QString("vym.de_DE.qm"), vymTranslationsDir.path())) { // Use this to load specific language
-        if (!vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm")) {
+        bool ok;
+        if (!localeName.isEmpty())
+            // Use localeName to load specific language
+            ok = vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path());
+        else
+            ok = vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm");
+
+        if (!ok) {
             WarningDialog warn;
             warn.showCancelButton(false);
             warn.setText(
