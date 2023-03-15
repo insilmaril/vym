@@ -322,7 +322,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
         if (!readXLinkAttr(atts))
             return false;
     }
-    else if (eName == "xlink" && state == StateMap) { // XML-FIXME-0 port and test
+    else if (eName == "xlink" && state == StateMap) {
         state = StateLink;
         if (!readLinkNewAttr(atts))
             return false;

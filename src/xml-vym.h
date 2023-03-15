@@ -33,6 +33,7 @@ class VymReader : public BaseReader {
     void readUserFlagDef();
     void readUserFlag();
     void readImage();
+    void readXLink();
 
     void readVymMapAttr();
     void readBranchAttr();

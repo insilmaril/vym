@@ -143,6 +143,8 @@ void VymReader::readVymMap()
             readSelection();
         else if (xml.name() == QLatin1String("userflagdef"))
             readUserFlagDef();
+        else if (xml.name() == QLatin1String("xlink"))
+            readXLink();
         else {
             raiseUnknownElementError();
             return;
@@ -511,6 +513,75 @@ void VymReader::readImage()
     s = attributeToString("originalName");
     if (!s.isEmpty())
         lastImage->setOriginalFilename(s);
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
+}
+
+void VymReader::readXLink()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("xlink"));
+
+    QString s;
+
+    TreeItem *beginBI = model->findBySelectString(xml.attributes().value("beginID").toString());
+    TreeItem *endBI = model->findBySelectString(xml.attributes().value("endID").toString());
+    if (beginBI && endBI && beginBI->hasTypeBranch() && endBI->hasTypeBranch()) {
+        Link *li = new Link(model);
+        li->setBeginBranch((BranchItem *)beginBI);
+        li->setEndBranch((BranchItem *)endBI);
+
+        model->createLink(li);
+
+        QPen pen = li->getPen();
+        bool ok;
+        s = attributeToString("color");
+        if (!s.isEmpty())
+            pen.setColor(QColor(s));
+
+        s = attributeToString("type");
+        if (s.isEmpty())
+            li->setLinkType(s);
+
+        s = attributeToString("width");
+        if (s.isEmpty())
+            pen.setWidth(s.toInt(&ok, 10));
+
+        s = attributeToString("penstyle");
+        if (s.isEmpty())
+            pen.setStyle(penStyle(s, ok));
+
+        li->setPen(pen);
+
+        s = attributeToString("styleBegin");
+        if (s.isEmpty())
+            li->setStyleBegin(s);
+
+        s = attributeToString("styleEnd");
+        if (s.isEmpty())
+            li->setStyleEnd(s);
+
+        /* FIXME-3 better set control points via VymModel for saveState
+         * (no longer include XLO then...)
+        */
+
+        XLinkObj *xlo = li->getXLinkObj();
+        s = attributeToString("c0");
+        if (xlo && !s.isEmpty()) {
+            QPointF p = point(s, ok);
+            if (ok)
+                xlo->setC0(p);
+        }
+        s = attributeToString("c1");
+        if (xlo && !s.isEmpty()) {
+            QPointF p = point(s, ok);
+            if (ok)
+                xlo->setC1(p);
+        }
+    }
 
     if (xml.tokenType() == QXmlStreamReader::EndElement)
         return;
