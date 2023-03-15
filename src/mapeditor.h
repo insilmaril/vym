@@ -6,7 +6,6 @@
 #include <QLineEdit>
 #include <QPropertyAnimation>
 
-#include "ornamentedobj.h"
 #include "settings.h"
 #include "vymmodel.h"
 #include "xlink.h"
@@ -23,19 +22,19 @@ class MapEditor : public QGraphicsView {
     enum EditorState {
         Neutral,
         EditingHeading,
+        DrawingLink,
         DrawingXLink,
         MovingObject,
+        MovingObjectTmpLinked,
         MovingObjectWithoutLinking,
-        MovingView,
-        PickingColor,
-        DrawingLink
+        PanningView,
+        PickingColor
     };
 
     MapEditor(VymModel *vm);
     ~MapEditor();
     VymModel *getModel();
     QGraphicsScene *getScene();
-    MapEditor::EditorState getState();
 
     // Animation of scrollbars
     Q_PROPERTY(QPointF scrollBarPos READ getScrollBarPos WRITE setScrollBarPos)
@@ -46,8 +45,6 @@ class MapEditor : public QGraphicsView {
     QPropertyAnimation scrollBarPosAnimation;
     QTimer *panningTimer;
     QPointF vPan;      //! Direction of panning during moving of object
-    QPoint pointerPos; //! Pointer position in widget coordinates
-    Qt::KeyboardModifiers pointerMod; //! modifiers of move event
 
   private slots:
     void panView();
@@ -59,6 +56,23 @@ class MapEditor : public QGraphicsView {
     void setScrollBarPos(const QPointF &p);
     QPointF getScrollBarPos();
     void animateScrollBars();
+
+    // Animation of containers
+  private:
+    QTimer *animationTimer;
+    bool animationUse;
+    uint animationTicks;
+    uint animationInterval;
+    int timerId;                 // animation timer
+    QList<Container*> animatedContainers;
+
+  private slots:
+    void animate(); //!< Called by timer to animate stuff
+  public:
+    void startAnimation(Container *c, const QPointF &v);
+    void startAnimation(Container *c, const QPointF &start, const QPointF &dest);
+    void stopAnimation(Container *c);
+    void stopAllAnimation();
 
     // Animation of zoom
     Q_PROPERTY(qreal zoomFactor READ getZoomFactor WRITE setZoomFactor)
@@ -127,9 +141,11 @@ class MapEditor : public QGraphicsView {
     void testFunction2(); //! just testing new stuff
 
   public:
-    TreeItem *findMapItem(QPointF p,
-                          TreeItem *exclude); //! find item in map at position
+    TreeItem *findMapItem(QPointF p, const
+                          QList <TreeItem*> &excludedItems = QList<TreeItem*>()); //! find item in map at position
                                               //! p. Ignore item exclude
+    BranchItem *findMapBranchItem(QPointF p, const
+                          QList <TreeItem*> &excludedItems = QList<TreeItem*>()); //! only return BranchItem
     void toggleWinter();
 
     BranchItem *getBranchDirectAbove(
@@ -146,8 +162,10 @@ class MapEditor : public QGraphicsView {
     getRightBranch(TreeItem *ti); //! bet branch right of bi (in TreeView)
 
   private:
-      enum ToggleDirection {toggleUndefined, toggleUp, toggleDown};
-      ToggleDirection lastToggleDirection;
+    // Toggle objects by moving the cursor up/down with shift modifier
+    // (needs to consider the current direction of movement)
+    enum ToggleDirection {toggleUndefined, toggleUp, toggleDown};
+    ToggleDirection lastToggleDirection;
 
   public slots:
     void cursorUp();
@@ -168,10 +186,10 @@ class MapEditor : public QGraphicsView {
     void contextMenuEvent(QContextMenuEvent *e);
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);
-    void startMovingView(QMouseEvent *);
+    void startPanningView(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
-    void moveObject();
+    void moveObject(QMouseEvent *, const QPointF &p_event);    // Called from mouseMoveEvent
     void mouseReleaseEvent(QMouseEvent *);
     void mouseDoubleClickEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
@@ -194,7 +212,13 @@ class MapEditor : public QGraphicsView {
     QCursor PickColorCursor; // cursor while picking color
     QCursor CopyCursor;      // cursor while picking color
     QCursor XLinkCursor;     // cursor while picking color
-    EditorState state;
+
+    // Various states of the MapEditor
+  public:
+    MapEditor::EditorState state();
+
+  private:
+    EditorState editorState;
 
     void setState(EditorState);
     bool objectMoved; // true if object was not clicked, but moved with mouse
@@ -202,12 +226,15 @@ class MapEditor : public QGraphicsView {
     // Temporary used for linkx
     Link *tmpLink;
 
-    MapObj *movingObj;           // moving a MapObj
-    QPointF movingObj_orgPos;    // org. pos of mouse before move
-    QPointF movingObj_orgRelPos; // org. relative pos of mouse before move
-    QPointF movingObj_offset;    // offset of mousepointer to object
-    QPointF movingCont_start;    // inital pos of moving Content or
-    QPointF movingVec;           // how far has Content moved
+    // Temporary used for panning view
+    QPoint panning_initialPointerPos;           // initial pos in pointer coordinates
+    QPoint panning_initialScrollBarValues;      // inital values of scrollbars
+
+    // Moving containers
+    QList <TreeItem*> movingItems;              // selected items which are currently moved
+    QPointF movingObj_initialScenePos;          // coord when button was pressed
+    QPointF movingObj_initialContainerOffset;   // offset from above coordinates to object
+    BranchContainer *tmpParentContainer;
 
     QPointF contextMenuPos; // position where context event was triggered
 
@@ -221,7 +248,6 @@ class MapEditor : public QGraphicsView {
     void selectionChanged(const QItemSelection &, const QItemSelection &);
 
   private:
-    QList<QGraphicsPathItem *> selPathList;
     QColor selectionColor;
 
   public slots:

@@ -1,5 +1,5 @@
     VYM - View Your Mind
-    Copyright (C) 2004-2022 Uwe Drechsel  
+    Copyright (C) 2004-2023 Uwe Drechsel
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2 as published by
@@ -11,7 +11,7 @@
     GNU General Public License below for more details.
 
 	In addition, as a special exception, Uwe Drechsel
-	gives permission to link the code of this program with the QT 
+	gives permission to link the code of this program with the QT
 	libraries from trolltech.com (or with modified versions of QT that
 	use the same license as QT), and distribute linked combinations
 	including the two. You must obey the GNU General Public License in

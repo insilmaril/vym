@@ -8,7 +8,6 @@
 #include "attributeitem.h"
 #include "branchitem.h"
 #include "flag.h"
-#include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "settings.h"
@@ -16,1076 +15,905 @@
 #include "task.h"
 #include "taskmodel.h"
 #include "xlinkitem.h"
+#include "xlinkobj.h"
 
 extern Main *mainWindow;
 extern Settings settings;
 extern TaskModel *taskModel;
 extern QString vymVersion;
 
-parseVYMHandler::parseVYMHandler()
+VymReader::VymReader(VymModel* m)
+    : BaseReader(m)
 {
-    // Default is to load everything
-    contentFilter = 0x0000; // TODO  use filters for all content types below
+    //qDebug() << "Constr. VymReader";
 }
 
-void parseVYMHandler::setContentFilter(const int &c) { contentFilter = c; }
-
-bool parseVYMHandler::startDocument()
+bool VymReader::read(QIODevice *device)
 {
-    errorProt = "";
-    state = StateInit;
-    stateStack.clear();
-    stateStack.append(StateInit);
-    htmldata = "";
-    isVymPart = false;
-    useProgress = false;
-    return true;
-}
+    xml.setDevice(device);
 
-bool parseVYMHandler::startElement(const QString &, const QString &,
-                                   const QString &eName,
-                                   const QXmlAttributes &atts)
-{
-    QColor col;
-    /* Testing
-    qDebug() << "startElement: <" << eName
-             << ">     state=" << state
-             << "  laststate=" << stateStack.last()
-             << "   loadMode=" << loadMode
-            //<<"       line=" << QXmlDefaultHandler::lineNumber();
-             << "contentFilter=" << contentFilter;
-    */
-
-    stateStack.append(state);
-    if (state == StateInit && (eName == "vymmap")) {
-        state = StateMap;
-        branchesTotal = 0;
-        branchesCounter = 0;
-
-        if (loadMode == NewMap || loadMode == DefaultMap) {
-            // Create mapCenter
-            model->clear();
-            lastBranch = NULL;
-
-            readMapAttr(atts);
-        }
-        // Check version
-        if (!atts.value("version").isEmpty()) {
-            version = atts.value("version");
-            if (!versionLowerOrEqualThanVym(version)) {
-                QMessageBox::warning(
-                    0, QObject::tr("Warning: Version Problem"),
-                    QObject::tr(
-                        "<h3>Map is newer than VYM</h3>"
-                        "<p>The map you are just trying to load was "
-                        "saved using vym %1. "
-                        "The version of this vym is %2. "
-                        "If you run into problems after pressing "
-                        "the ok-button below, updating vym should help.</p>")
-                        .arg(version)
-                        .arg(vymVersion));
-            }
-            else
-                model->setVersion(version);
-        }
-    }
-    else if (eName == "select" && state == StateMap) {
-        state = StateMapSelect;
-    }
-    else if (eName == "setting" && state == StateMap) {
-        state = StateMapSetting;
-        if (loadMode == NewMap) {
-            htmldata.clear();
-            readSettingAttr(atts);
-        }
-    }
-    else if (eName == "slide" && state == StateMap) {
-        state = StateMapSlide;
-        if (!(contentFilter & SlideContent)) {
-            // Ignore slides during paste
-            lastSlide = model->addSlide();
-            if (insertPos >= 0)
-                model->relinkSlide(lastSlide, insertPos);
-
-            readSlideAttr(atts);
-        }
-    }
-    else if (eName == "mapcenter" && state == StateMap) {
-        state = StateMapCenter;
-        if (loadMode == NewMap) {
-            // Really use the found mapcenter as MCO in a new map
-            lastBranch = model->createMapCenter();
-        }
-        else {
-            // Treat the found mapcenter as a branch
-            // in an existing map
-            BranchItem *bi = model->getSelectedBranch();
-            if (bi) {
-                lastBranch = bi;
-                if (loadMode == ImportAdd) {
-                    // Import Add
-                    if (insertPos < 0)
-                        lastBranch = model->createBranch(lastBranch);
-                    else {
-                        lastBranch = model->addNewBranch(lastBranch, insertPos);
-                        insertPos++;
-                    }
-                }
-                else {
-                    // Import Replace
-                    if (insertPos < 0) {
-                        insertPos = lastBranch->num() + 1;
-                        model->clearItem(lastBranch);
-                    }
-                    else {
-                        BranchItem *pi = bi->parentBranch();
-                        lastBranch = model->addNewBranch(pi, insertPos);
-                        insertPos++;
-                    }
-                }
-            }
-            else
-                // if nothing selected, add mapCenter without parent
-                lastBranch = model->createMapCenter();
-        }
-        readBranchAttr(atts);
-    }
-    else if ((eName == "standardflag" || eName == "standardFlag") &&
-             (state == StateMapCenter || state == StateBranch)) {
-        state = StateStandardFlag;
-    }
-    else if (eName == "userflagdef" && state == StateMap) {
-        state = StateUserFlagDef;
-        return (readUserFlagDefAttr(atts));
-    }
-    else if (eName == "userflag" &&
-             (state == StateMapCenter || state == StateBranch)) {
-        state = StateUserFlag;
-        return (readUserFlagAttr(atts));
-    }
-    else if (eName == "heading" &&
-             (state == StateMapCenter || state == StateBranch ||
-              state == StateInit)) {
-        if (state == StateInit) {
+    if (xml.readNextStartElement()) {
+        if (xml.name() == QLatin1String("vymmap")) {
+            readVymMap();
+        } else if (xml.name() == QLatin1String("heading") ||
+                   xml.name() == QLatin1String("vymnote"))  { // XML-FIXME-1 test
             // Only read some stuff like VymNote or Heading
             // e.g. for undo/redo
-            lastBranch = model->getSelectedBranch();
             if (version.isEmpty())
                 version = "0.0.0";
-        }
-        if (!lastBranch)
-            return false;
-
-        state = StateHeading;
-        htmldata.clear();
-        vymtext.clear();
-        if (!atts.value("fonthint").isEmpty())
-            vymtext.setFontHint(atts.value("fonthint"));
-        if (!atts.value("textMode").isEmpty()) {
-            if (atts.value("textMode") == "richText")
-                vymtext.setRichText(true);
-            else
-                vymtext.setRichText(false);
-        }
-        if (!atts.value("textColor").isEmpty()) {
-            // For compatibility with <= 2.4.0 set both branch and
-            // heading color
-            col.setNamedColor(atts.value("textColor"));
-            lastBranch->setHeadingColor(col);
-            vymtext.setColor(col);
-        }
-        if (!atts.value("text").isEmpty())
-            vymtext.setText(unquoteQuotes(atts.value("text")));
-    }
-    else if (eName == "task" &&
-             (state == StateMapCenter || state == StateBranch)) {
-        state = StateTask;
-        lastTask = taskModel->createTask(lastBranch);
-        if (!readTaskAttr(atts))
-            return false;
-    }
-    else if (eName == "note" &&
-             (state == StateMapCenter ||
-              state == StateBranch)) { // only for backward compatibility
-                                       // (<1.4.6). Use htmlnote now.
-        state = StateNote;
-        htmldata.clear();
-        vymtext.clear();
-        if (!readNoteAttr(atts))
-            return false;
-    }
-    else if (eName == "htmlnote" &&
-             state == StateMapCenter) { // only for backward compatibility. Use
-                                        // vymnote now
-        state = StateHtmlNote;
-        vymtext.clear();
-        if (!atts.value("fonthint").isEmpty())
-            vymtext.setFontHint(atts.value("fonthint"));
-    }
-    else if (eName == "vymnote" &&
-             (state == StateMapCenter || state == StateBranch ||
-              state == StateInit)) {
-        if (state == StateInit)
-        // Only read some stuff like VymNote or Heading
-        // e.g. for undo/redo
-        {
-            lastBranch = model->getSelectedBranch();
-            if (version.isEmpty())
-                version = "0.0.0";
-        }
-        state = StateVymNote;
-        htmldata.clear();
-        vymtext.clear();
-        if (!atts.value("fonthint").isEmpty())
-            vymtext.setFontHint(atts.value("fonthint"));
-        if (!atts.value("textMode").isEmpty()) {
-            if (atts.value("textMode") == "richText")
-                vymtext.setRichText(true);
-            else
-                vymtext.setRichText(false);
-        }
-        if (!atts.value("text").isEmpty())
-            vymtext.setText(unquoteQuotes(atts.value("text")));
-    }
-    else if (eName == "floatimage" &&
-             (state == StateMapCenter || state == StateBranch)) {
-        state = StateImage;
-        lastImage = model->createImage(lastBranch);
-        if (!readImageAttr(atts))
-            return false;
-    }
-    else if ((eName == "branch" || eName == "floatimage") &&
-             state == StateMap) {
-        // This is used in vymparts, which have no mapcenter or for undo
-        isVymPart = true;
-        TreeItem *ti = model->getSelectedItem();
-        if (!ti) {
-            // If a vym part is _loaded_ (not imported),
-            // selection==lmo==NULL
-            // Treat it like ImportAdd then...
-            loadMode = ImportAdd;
-            // we really have no MCO at this time
-            lastBranch = model->createMapCenter();
-            model->select(lastBranch);
-            model->setHeadingPlainText("Import");
-            ti = lastBranch;
-        }
-        if (ti && ti->isBranchLikeType()) {
-            lastBranch = (BranchItem *)ti;
-            if (eName == "branch") {
-                state = StateBranch;
-                if (loadMode == ImportAdd) {
-                    lastBranch = model->createBranch(lastBranch);
-                    model->setLatestAddedItem(lastBranch);
-                    if (insertPos >= 0)
-                        model->relinkBranch(lastBranch, (BranchItem *)ti,
-                                            insertPos);
+            if (!lastBranch) {
+                lastBranch = model->getSelectedBranch();
+                if (!lastBranch) {
+                    xml.raiseError("Found heading element but no branch is selected!");
+                    return !xml.error();
                 }
-                else
-                    model->clearItem(lastBranch);
-                readBranchAttr(atts);
             }
-            else if (eName == "floatimage") {
-                state = StateImage;
-                lastImage = model->createImage(lastBranch);
-                model->setLatestAddedItem(lastImage);
-                if (!readImageAttr(atts))
-                    return false;
-            }
-            else
-                return false;
+            readHeadingOrVymNote();
+        } else {
+            xml.raiseError("No vymmap or heading as next element.");
+        }
+    }
+    return !xml.error();
+}
+
+
+void  VymReader::raiseUnknownElementError()
+{
+    xml.raiseError("Found unknown element: " + xml.name().toString());
+}
+
+void VymReader::readVymMap()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("vymmap"));
+
+    // Check version
+    if (!xml.attributes().hasAttribute("version")) {
+        xml.raiseError("No version found for vymmap.");
+        return;
+    }
+
+    if (!xml.attributes().value("version").isEmpty()) {
+        version = xml.attributes().value("version").toString();
+        if (!versionLowerOrEqualThanVym(version)) {
+            QMessageBox::warning(
+                0, QObject::tr("Warning: Version Problem"),
+                QObject::tr(
+                    "<h3>Map is newer than VYM</h3>"
+                    "<p>The map you are just trying to load was "
+                    "saved using vym %1. "
+                    "The version of this vym is %2. "
+                    "If you run into problems after pressing "
+                    "the ok-button below, updating vym should help.</p>")
+                    .arg(version)
+                    .arg(vymVersion));
         }
         else
-            return false;
+            model->setVersion(version); // XML-FIXME-1 really needed? what for?
     }
-    else if (eName == "branch" && state == StateMapCenter) {
-        state = StateBranch;
-        lastBranch = model->createBranch(lastBranch);
-        readBranchAttr(atts);
-    }
-    else if (eName == "htmlnote" &&
-             state == StateBranch) { // only for backward compatibility. Use
-                                     // vymnote now
-        state = StateHtmlNote;
-        vymtext.clear();
-        if (!atts.value("fonthint").isEmpty())
-            vymtext.setFontHint(atts.value("fonthint"));
-    }
-    else if (eName == "frame" &&
-             (state == StateBranch || state == StateMapCenter)) {
-        state = StateFrame;
-        if (!readFrameAttr(atts))
-            return false;
-    }
-    else if (eName == "xlink" && state == StateBranch) {
-        // Obsolete after 1.13.2
-        state = StateBranchXLink;
-        if (!readXLinkAttr(atts))
-            return false;
-    }
-    else if (eName == "xlink" && state == StateMap) {
-        state = StateLink;
-        if (!readLinkNewAttr(atts))
-            return false;
-    }
-    else if (eName == "branch" && state == StateBranch) {
-        lastBranch = model->createBranch(lastBranch);
-        readBranchAttr(atts);
-    }
-    else if (eName == "html" &&
-             (state == StateHtmlNote ||
-              state == StateVymNote)) { // Only for backward compatibility
-        state = StateHtml;
-        htmldata = "<" + eName;
-        readHtmlAttr(atts);
-        htmldata += ">";
-    }
-    else if (eName == "attribute" &&
-             (state == StateBranch || state == StateMapCenter)) {
-        state = StateAttribute;
-        AttributeItem *ai = new AttributeItem(lastBranch);
-        if (ai) {
-            if (!atts.value("key").isEmpty())
-                ai->setKey(atts.value("key"));
 
-            QString type = atts.value("type");
-            QString val = atts.value("value");
-            if (!type.isEmpty()) {
-                if (type == "Integer")
-                    ai->setValue(val.toInt());
-                else if (type == "String")
-                    ai->setValue(val);
-                else if (type == "Undefined") {
-                    ai->setValue(val);
-                    ai->setAttributeType(AttributeItem::Undefined);
-                    qWarning() << "Found attribute type 'Undefined'";
-                } else if (type == "DateTime") {
-                    ai->setValue(QDateTime::fromString(val, Qt::ISODate));
-                } else
-                    qWarning() << "Found unknown attribute type: " << type;
-            } else {
-                if (!atts.value("value").isEmpty())
-                    ai->setValue(atts.value("value")); 
+    branchesTotal = 0;
+    branchesCounter = 0;
+
+    if (loadMode == File::NewMap || loadMode == File::DefaultMap) {
+        // Create mapCenter
+        model->clear();
+        lastBranch = model->getRootItem();
+
+        readVymMapAttr();
+    } else {
+        // Imports need a selection
+        lastBranch = model->getSelectedBranch();
+
+        if (loadMode == File::ImportReplace) {
+            if (!lastBranch) {
+                xml.raiseError("readVymMap - Import/Replace map, but nothing selected!");
+                return;
             }
+
+            insertPos = lastBranch->num();
+            BranchItem *pb = lastBranch->parentBranch();
+            if (!pb) {
+                xml.raiseError("readVymMap - No parent branch for selection in ImportReplace!");
+                return;
+            }
+
+            model->deleteItem(lastBranch);
+            lastBranch = pb;
+            loadMode = File::ImportAdd;
+        } else {
+            if (insertPos < 0)
+                insertPos = 0;
         }
+    }
+
+    if (!lastBranch)
+        // Make sure, that mapcenters can be pasted on empty map e.g. for undo
+        lastBranch = model->getRootItem();
+
+    while (xml.readNextStartElement()) {
+        if (xml.name() == QLatin1String("mapcenter") ||
+            xml.name() == QLatin1String("branch")) {
+            readBranchOrMapCenter(loadMode, insertPos);
+            insertPos++;
+        } else if (xml.name() == QLatin1String("floatimage"))
+            readImage();    // Used when pasting image
+        else if (xml.name() == QLatin1String("setting"))
+            readSetting();
+        else if (xml.name() == QLatin1String("select"))
+            readSelection();
+        else if (xml.name() == QLatin1String("userflagdef"))
+            readUserFlagDef();
+        else {
+            raiseUnknownElementError();
+            return;
+        }
+    }
+}
+
+void VymReader::readSelection()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("select"));
+
+    QString s = xml.readElementText();
+    model->select(s);
+}
+
+void VymReader::readSetting()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("setting"));
+
+    QString k = xml.attributes().value("key").toString();
+    if (!k.isEmpty()) {
+        QString v = xml.attributes().value("value").toString();
+        if (v.isEmpty()) {
+            // Version >= 2.5.0 have value as element text
+            v = xml.readElementText();
+            if (!v.isEmpty()) {
+                settings.setLocalValue( model->getDestPath(), k, v);
+            }
+        } else {
+            // Version < 2.5.0 have value as element attribute
+            settings.setLocalValue( model->getDestPath(), k, v);
+        }
+    }
+}
+
+void VymReader::readAttribute()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("attribute"));
+
+    QString key = xml.attributes().value("key").toString();
+    QString val = xml.attributes().value("value").toString();
+    QString type = xml.attributes().value("type").toString();   // May be empty!
+    if (lastBranch && !key.isEmpty() && !type.isEmpty()) {
+        AttributeItem *ai = new AttributeItem(lastBranch);
+        if (type == "Integer")
+            ai->setValue(val.toInt());
+        else if (type == "String")
+            ai->setValue(val);
+        else if (type == "DateTime")
+            ai->setValue(QDateTime::fromString(val, Qt::ISODate));
+        else if (type == "Undefined") {
+            ai->setValue(val);
+            ai->setAttributeType(AttributeItem::Undefined);
+            qWarning() << "Found attribute type 'Undefined'";
+        } else {
+            xml.raiseError("readAttribute: Found unknown attribute type");
+            return;
+        }
+
+        ai->setKey(key);
+
+        // Insert this attribute into model
         model->setAttribute(lastBranch, ai);
     }
-    else if (state == StateHtml) {
-        // Only for backward compatibility
-        // accept all while in html mode,
-        htmldata += "<" + eName;
-        readHtmlAttr(atts);
-        htmldata += ">";
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
     }
-    else
-        return false; // Error
-    return true;
 }
 
-bool parseVYMHandler::endElement(const QString &, const QString &,
-                                 const QString &eName)
+void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertPosBranch)
 {
-    /* Testing
-    QString h;
-    lastBranch ? h = lastBranch->getHeadingPlain() : h = "";
-    qDebug() << "endElement </" << eName << ">  state=" << state << " lastBranch=" << h;
-    */
+    Q_ASSERT(xml.isStartElement() &&
+            (xml.name() == QLatin1String("branch") ||
+             xml.name() == QLatin1String("mapcenter")));
 
-    switch (state) {
-    case StateMap:
-        break;
-    case StateMapCenter:
-        model->emitDataChanged(lastBranch);
-        lastBranch = (BranchItem *)(lastBranch->parent());
-        break;
-    case StateBranch:
-        // Empty branches may not be scrolled
-        // (happens if bookmarks are imported)
-        if (lastBranch->isScrolled() && lastBranch->branchCount() == 0)
-            lastBranch->unScroll();
+    // Create branch or mapCenter
+    if (loadModeBranch == File::NewMap || loadModeBranch == File::DefaultMap) {
+        if (lastBranch == model->getRootItem())
+            lastBranch = model->createMapCenter();
+        else
+            lastBranch = model->createBranch(lastBranch);
+    } else {
+        // For Imports create branch at insertPos
+        // (Here we only use ImportInsert, replacements already have
+        // been done before)
+        if (loadModeBranch == File::ImportAdd) {
+            if (insertPosBranch < 0)
+                lastBranch = model->createBranch(lastBranch);
+            else {
+                lastBranch = model->addNewBranch(lastBranch, insertPosBranch);
+            }
+        }
+    }
+    readBranchAttr();
 
-        model->emitDataChanged(lastBranch);
-        lastBranch = (BranchItem *)(lastBranch->parent());
-        lastBranch->setLastSelectedBranch(0);
-        break;
-    case StateTask:
-        break;
-    case StateHeading:
-        if (versionLowerOrEqual(version, "2.4.99") &&
-            htmldata.contains("<html>"))
-            // versions before 2.5.0 didn't use CDATA to save richtext
-            vymtext.setAutoText(htmldata);
+    // While going deeper, no longer "import" but just load as usual
+    while (xml.readNextStartElement()) {
+        if (xml.name() == QLatin1String("heading") ||
+            xml.name() == QLatin1String("vymnote"))
+            readHeadingOrVymNote();
+        else if (xml.name() == QLatin1String("branch"))
+            // Going deeper we regard incoming data as "new", no inserts/replacements
+            readBranchOrMapCenter(File::NewMap, -1);
+        else if (xml.name() == QLatin1String("frame"))
+            readFrame();
+        else if (xml.name() == QLatin1String("standardFlag") ||
+                 xml.name() == QLatin1String("standardflag"))
+            readStandardFlag();
+        else if (xml.name() == QLatin1String("userflag"))
+            readUserFlag();
+        else if (xml.name() == QLatin1String("task"))
+            readTaskAttr();
+        else if (xml.name() == QLatin1String("floatimage"))
+            readImage();
+        else if (xml.name() == QLatin1String("attribute"))
+            readAttribute();
+    // XML-FIXME-00 cont here with notes, xlinks ...
         else {
-            // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
-            // Later versions use the <vymnote  text="...">  attribute,
-            // which is set already in begin element
-            // If both htmldata and vymtext are already available, use the
-            // vymtext
-            if (vymtext.isEmpty())
-                vymtext.setText(htmldata);
+            raiseUnknownElementError();
+            return;
         }
-        lastBranch->setHeading(vymtext);
-        break;
-    case StateHtmlNote: // Richtext note, needed anyway for backward
-                        // compatibility
-        vymtext.setRichText(htmldata);
-        lastBranch->setNote(vymtext);
-        break;
-    case StateMapSlide:
-        lastSlide = NULL;
-        break;
-    case StateNote:
-        // version < 1.4.6
-        vymtext.setText(htmldata);
-        lastBranch->setNote(vymtext);
-        break;
-    case StateMapSetting:
-        // version >= 2.5.0  previously value only as attribut
-        settings.setLocalValue(model->getDestPath(), lastSetting, htmldata);
-        break;
-    case StateVymNote: // Might be richtext or plaintext with
-        // version >= 1.13.8
-        if (versionLowerOrEqual(version, "2.4.99") &&
-            htmldata.contains("<html>"))
-            // versions before 2.5.0 didn't use CDATA to save richtext
-            vymtext.setAutoText(htmldata);
-        else {
-            // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
-            // Later versions use the <vymnote  text="...">  attribute,
-            // which is set already in begin element
-            // If both htmldata and vymtext are already available, use the
-            // vymtext
-            if (vymtext.isEmpty())
-                vymtext.setText(htmldata);
-        }
-        lastBranch->setNote(vymtext);
-        break;
-    case StateHtml:
-        htmldata += "</" + eName + ">";
-        if (eName == "html")
-            htmldata.replace("<br></br>", "<br />");
-        break;
-    default:
-        break;
     }
-    state = stateStack.takeLast();
-    return true;
+
+    // Empty branches may not be scrolled
+    // (happens if bookmarks are imported)
+    if (lastBranch->isScrolled() && lastBranch->branchCount() == 0)
+        lastBranch->unScroll();
+
+    model->emitDataChanged(lastBranch);
+
+    lastBranch = lastBranch->parentBranch();
+    lastBranch->setLastSelectedBranch(0);
 }
 
-bool parseVYMHandler::characters(const QString &ch)
+void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versions
 {
-    // qDebug()<< "xml-vym: characters " << ch << "  state=" << state;
+    Q_ASSERT(xml.isStartElement() &&
+            (xml.name() == QLatin1String("heading") ||
+             xml.name() == QLatin1String("vymnote") ));
 
-    QString ch_org = quoteMeta(ch);
-    QString ch_simplified = ch.simplified();
-
-    switch (state) {
-    case StateInit:
-        break;
-    case StateMap:
-        break;
-    case StateMapSelect:
-        model->select(ch_simplified);
-        break;
-    case StateMapSetting:
-        htmldata += ch;
-        break;
-    case StateMapCenter:
-        break;
-    case StateNote: // only in vym <1.4.6
-        htmldata += ch_simplified;
-        break;
-    case StateBranch:
-        break;
-    case StateStandardFlag:
-        lastBranch->activateStandardFlagByName(ch_simplified);
-        break;
-    case StateImage:
-        break;
-    case StateVymNote:
-        htmldata += ch;
-        break;
-    case StateHtmlNote: // Only for compatibility
-        htmldata = ch;
-        break;
-    case StateHtml:
-        htmldata += ch_org;
-        break;
-    case StateHeading:
-        htmldata += ch;
-        break;
-    default:
-        return false;
-    }
-    return true;
-}
-
-QString parseVYMHandler::errorString()
-{
-    return "the document is not in the VYM file format";
-}
-
-bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
-{
-    QColor col;
-    if (!a.value("author").isEmpty())
-        model->setAuthor(a.value("author"));
-    if (!a.value("title").isEmpty())
-        model->setTitle(a.value("title"));
-    if (!a.value("comment").isEmpty())
-        model->setComment(unquoteMeta(a.value("comment")));
-    if (!a.value("branchCount").isEmpty()) {
-        branchesTotal = a.value("branchCount").toInt();
-        if (branchesTotal > 10) {
-            useProgress = true;
-            mainWindow->setProgressMaximum(branchesTotal);
-        }
+    if (!lastBranch) {
+            xml.raiseError("No lastBranch available to set heading or vymnote.");
+            return;
     }
 
-    if (!a.value("backgroundColor").isEmpty()) {
-        col.setNamedColor(a.value("backgroundColor"));
-        model->setMapBackgroundColor(col);
-    }
-    if (!a.value("defaultFont").isEmpty()) {
-        QFont font;
-        font.fromString(a.value("defaultFont"));
-        model->setMapDefaultFont(font);
-    }
-    if (!a.value("selectionColor").isEmpty()) {
-        col.setNamedColor(a.value("selectionColor"));
-        model->setSelectionColor(col);
-    }
-    if (!a.value("linkColorHint").isEmpty()) {
-        if (a.value("linkColorHint") == "HeadingColor")
-            model->setMapLinkColorHint(LinkableMapObj::HeadingColor);
-        else
-            model->setMapLinkColorHint(LinkableMapObj::DefaultColor);
-    }
-    if (!a.value("linkStyle").isEmpty())
-        model->setMapLinkStyle(a.value("linkStyle"));
-    if (!a.value("linkColor").isEmpty()) {
-        col.setNamedColor(a.value("linkColor"));
-        model->setMapDefLinkColor(col);
-    }
-
-    QPen pen(model->getMapDefXLinkPen());
-    if (!a.value("defXLinkColor").isEmpty()) {
-        col.setNamedColor(a.value("defXLinkColor"));
-        pen.setColor(col);
-    }
-    if (!a.value("defXLinkWidth").isEmpty())
-        pen.setWidth(a.value("defXLinkWidth").toInt());
-    if (!a.value("defXLinkPenStyle").isEmpty()) {
-        bool ok;
-        Qt::PenStyle ps = penStyle(a.value("defXLinkPenStyle"), ok);
-        if (!ok)
-            return false;
-        pen.setStyle(ps);
-    }
-    model->setMapDefXLinkPen(pen);
-
-    if (!a.value("defXLinkStyleBegin").isEmpty())
-        model->setMapDefXLinkStyleBegin(a.value("defXLinkStyleBegin"));
-    if (!a.value("defXLinkStyleEnd").isEmpty())
-        model->setMapDefXLinkStyleEnd(a.value("defXLinkStyleEnd"));
-
-    if (!a.value("mapZoomFactor").isEmpty())
-        model->setMapZoomFactor(a.value("mapZoomFactor").toDouble());
-    if (!a.value("mapRotationAngle").isEmpty())
-        model->setMapRotationAngle(a.value("mapRotationAngle").toDouble());
-    return true;
-}
-
-bool parseVYMHandler::readBranchAttr(const QXmlAttributes &a)
-{
-    branchesCounter++;
-    if (useProgress)
-        mainWindow->addProgressValue((float)branchesCounter / branchesTotal);
-
-    lastMI = lastBranch;
-
-    if (!readOOAttr(a))
-        return false;
-
-    if (!a.value("scrolled").isEmpty())
-        lastBranch->toggleScroll();
-
-    if (!a.value("incImgV").isEmpty()) {
-        if (a.value("incImgV") == "true")
-            lastBranch->setIncludeImagesVer(true);
-        else
-            lastBranch->setIncludeImagesVer(false);
-    }
-    if (!a.value("incImgH").isEmpty()) {
-        if (a.value("incImgH") == "true")
-            lastBranch->setIncludeImagesHor(true);
-        else
-            lastBranch->setIncludeImagesHor(false);
-    }
-    if (a.value("childrenFreePos") == "true")
-        lastBranch->setChildrenLayout(BranchItem::FreePositioning);
-
-    return true;
-}
-
-bool parseVYMHandler::readFrameAttr(const QXmlAttributes &a)
-{
-    if (lastMI) {
-        OrnamentedObj *oo = (OrnamentedObj *)(lastMI->getLMO());
-        if (oo) {
-            bool ok;
-            int x;
-            {
-                if (!a.value("frameType").isEmpty())
-                    oo->setFrameType(a.value("frameType"));
-                if (!a.value("penColor").isEmpty())
-                    oo->setFramePenColor(a.value("penColor"));
-                if (!a.value("brushColor").isEmpty()) {
-                    oo->setFrameBrushColor(a.value("brushColor"));
-                    lastMI->setBackgroundColor(a.value("brushColor"));
-                }
-                if (!a.value("padding").isEmpty()) {
-                    x = a.value("padding").toInt(&ok);
-                    if (ok)
-                        oo->setFramePadding(x);
-                }
-                if (!a.value("borderWidth").isEmpty()) {
-                    x = a.value("borderWidth").toInt(&ok);
-                    if (ok)
-                        oo->setFrameBorderWidth(x);
-                }
-                if (!a.value("includeChildren").isEmpty()) {
-                    if (a.value("includeChildren") == "true")
-                        oo->setFrameIncludeChildren(true);
-                    else
-                        oo->setFrameIncludeChildren(false);
-                }
-            }
-            return true;
-        }
-    }
-    return false;
-}
-
-bool parseVYMHandler::readOOAttr(const QXmlAttributes &a)
-{
-    if (lastMI) {
-        bool okx, oky;
-        float x, y;
-        if (!a.value("posX").isEmpty()) {   // Introduced in 2.9.501, added here for file compatibility
-            if (!a.value("posY").isEmpty()) {
-                x = a.value("posX").toFloat(&okx);
-                y = a.value("posY").toFloat(&oky);
-                if (okx && oky)
-                    lastMI->setRelPos(QPointF(x, y));
-                else
-                    return false; // Couldn't read relPos
-            }
-        }
-        if (!a.value("relPosX").isEmpty()) {
-            if (!a.value("relPosY").isEmpty()) {
-                x = a.value("relPosX").toFloat(&okx);
-                y = a.value("relPosY").toFloat(&oky);
-                if (okx && oky)
-                    lastMI->setRelPos(QPointF(x, y));
-                else
-                    return false; // Couldn't read relPos
-            }
-        }
-        if (!a.value("absPosX").isEmpty()) {
-            if (!a.value("absPosY").isEmpty()) {
-                x = a.value("absPosX").toFloat(&okx);
-                y = a.value("absPosY").toFloat(&oky);
-                if (okx && oky)
-                    lastMI->setAbsPos(QPointF(x, y));
-                else
-                    return false; // Couldn't read absPos
-            }
-        }
-        if (!a.value("url").isEmpty())
-            lastMI->setURL(a.value("url"));
-        if (!a.value("vymLink").isEmpty())
-            lastMI->setVymLink(a.value("vymLink"));
-        if (!a.value("hideInExport").isEmpty())
-            if (a.value("hideInExport") == "true")
-                lastMI->setHideInExport(true);
-
-        if (!a.value("hideLink").isEmpty()) {
-            if (a.value("hideLink") == "true")
-                lastMI->setHideLinkUnselected(true);
-            else
-                lastMI->setHideLinkUnselected(false);
-        }
-
-        if (!a.value("localTarget").isEmpty())
-            if (a.value("localTarget") == "true")
-                lastMI->toggleTarget();
-        if (!a.value("rotation").isEmpty()) {
-            x = a.value("rotation").toFloat(&okx);
-            if (okx)
-                lastMI->setRotation(x);
-            else
-                return false; // Couldn't read rotation
-        }
-
-        if (!a.value("uuid").isEmpty()) {
-            // While pasting, check for existing UUID
-            if (loadMode != ImportAdd && !model->findUuid(a.value("uuid")))
-                lastMI->setUuid(a.value("uuid"));
-        }
-    }
-    return true;
-}
-
-bool parseVYMHandler::readNoteAttr(const QXmlAttributes &a)
-{ // only for backward compatibility (<1.4.6). Use htmlnote now.
+    htmldata.clear();
     vymtext.clear();
-    QString fn;
-    if (!a.value("href").isEmpty()) {
-        // Load note
-        fn = parseHREF(a.value("href"));
-        QFile file(fn);
-        QString s; // Reading a note
 
-        if (!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "parseVYMHandler::readNoteAttr:  Couldn't load " + fn;
-            return false;
-        }
-        QTextStream stream(&file);
-        stream.setCodec("UTF-8");
-        QString lines;
-        while (!stream.atEnd()) {
-            lines += stream.readLine() + "\n";
-        }
-        file.close();
+    QString a = "fonthint";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        vymtext.setFontHint(s);
 
-        lines = "<html><head><meta name=\"qrichtext\" content=\"1\" "
-                "/></head><body>" +
-                lines + "</p></body></html>";
-        vymtext.setText(lines); // this probably should set type, too...
+    a = "textMode";
+    s = xml.attributes().value(a).toString();
+    if (s == "richText")
+        vymtext.setRichText(true);
+    else
+        vymtext.setRichText(false);
+
+    a = "textColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        // For compatibility with <= 2.4.0 set both branch and
+        // heading color
+        QColor col(s);
+        lastBranch->setHeadingColor(col);
+        vymtext.setColor(col);
     }
-    if (!a.value("fonthint").isEmpty())
-        vymtext.setFontHint(a.value("fonthint"));
-    lastBranch->setNote(vymtext);
-    return true;
+
+    a = "text";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        vymtext.setText(unquoteQuotes(s));
+
+    }
+
+    //htmldata += xml.text();  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
+    htmldata += xml.readElementText(QXmlStreamReader::IncludeChildElements);  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
+    //qDebug() << "htmldata: " << htmldata << "  xml.name=" << xml.name() << vymtext.getText();
+    //qDebug() << xml.tokenType() << xml.tokenString();
+
+    if (versionLowerOrEqual(version, "2.4.99") && // XML-FIXME-1 test with legacy
+        htmldata.contains("<html>"))
+        // versions before 2.5.0 didn't use CDATA to save richtext
+        vymtext.setAutoText(htmldata);
+    else {
+        // Versions 2.5.0 to 2.7.562  had HTML data encoded as CDATA
+        // Later versions use the <heading text="...">  attribute,
+        // If both htmldata and vymtext are already available, use the
+        // vymtext
+        if (vymtext.isEmpty())
+            vymtext.setText(htmldata);
+    }
+
+    if (xml.name() == "heading")
+        lastBranch->setHeading(vymtext);
+
+    if (xml.name() == "vymnote")
+        lastBranch->setNote(vymtext);
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
 }
 
-bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
+void VymReader::readFrame()
 {
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("frame"));
+
+    readFrameAttr();
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
+}
+
+void VymReader::readStandardFlag()
+{
+    Q_ASSERT(xml.isStartElement() &&
+            (xml.name() == QLatin1String("standardFlag") ||
+             xml.name() == QLatin1String("standardflag")));
+
+    QString s = xml.readElementText();
+    lastBranch->activateStandardFlagByName(s);
+
+    /*
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
+    */
+}
+
+void VymReader::readUserFlagDef()
+{
+    Q_ASSERT(xml.isStartElement() &&
+             xml.name() == QLatin1String("userflagdef"));
+
+    QString name;
+    QString path;
+    QString tooltip;
+    QUuid uid;
+
+    QString a = "name";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        name = s;
+
+    a = "tooltip";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        tooltip = s;
+
+    a = "uuid";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        uid = QUuid(s);
+
+    Flag *flag;
+
+    a = "href";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        // Setup flag with image
+        flag = mainWindow->setupFlag(parseHREF(s), Flag::UserFlag,
+                                     name, tooltip, uid);
+        if (!flag) {
+            xml.raiseError("Couldn't read userflag from: " + s);
+            return;
+        }
+    } else {
+        xml.raiseError("readUserFlagDefAttr:  Couldn't read href of flag " + name);
+        return;
+    }
+
+    a = "group";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        flag->setGroup(s);
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
+}
+
+void VymReader::readUserFlag()
+{
+    Q_ASSERT(xml.isStartElement() &&
+             xml.name() == QLatin1String("userflag"));
+
+    QString a = "uuid";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        lastBranch->toggleFlagByUid(QUuid(s));
+}
+
+void VymReader::readImage()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("floatimage"));
+
+    lastImage = model->createImage(lastBranch);
     lastMI = lastImage;
 
-    if (!readOOAttr(a))
-        return false;
+    QString s;
 
-    if (!a.value("href").isEmpty()) {
+    s = attributeToString("href");
+    if (!s.isEmpty()) {
         // Load Image
-        if (!lastImage->load(parseHREF(a.value("href")))) {
+        if (!lastImage->load(parseHREF(s))) {
             QMessageBox::warning(0, "Warning: ",
                                  "Couldn't load image\n" +
-                                     parseHREF(a.value("href")));
-            lastImage = NULL;
-            return true;
-        }
-    }
-    if (!a.value("zPlane").isEmpty())
-        lastImage->setZValue(a.value("zPlane").toInt());
-    float x, y;
-    bool okx, oky;
-    if (!a.value("posX").isEmpty()) {   // Introduced in 2.9.501, added here for file compatibility
-        if (!a.value("posY").isEmpty()) {
-            x = a.value("posX").toFloat(&okx);
-            y = a.value("posY").toFloat(&oky);
-            if (okx && oky)
-                lastImage->setRelPos(QPointF(x, y));
-            else
-                return false; // Couldn't read relPos
-        }
-    }
-    if (!a.value("relPosX").isEmpty()) {
-        if (!a.value("relPosY").isEmpty()) {
-            // read relPos
-            x = a.value("relPosX").toFloat(&okx);
-            y = a.value("relPosY").toFloat(&oky);
-            if (okx && oky)
-                lastImage->setRelPos(QPointF(x, y));
-            else
-                // Couldn't read relPos
-                return false;
+                                     parseHREF(s));
+            lastImage = nullptr;
+            return;
         }
     }
 
     // Scale image
     // scaleX and scaleY are no longer used since 2.7.509 and replaced by
     // scaleFactor
-    x = y = 1;
-    if (!a.value("scaleX").isEmpty()) {
-        x = a.value("scaleX").toFloat(&okx);
-        if (!okx)
-            return false;
+    float x = 1;
+    float y = 1;
+    bool okx, oky;
+    s = attributeToString("scaleX");
+    if (!s.isEmpty()) {
+        x = s.toFloat(&okx);
+        if (!okx) {
+            xml.raiseError("Couldn't read scaleX of image");
+            return;
+        }
     }
 
-    if (!a.value("scaleY").isEmpty()) {
-        x = a.value("scaleY").toFloat(&oky);
-        if (!oky)
-            return false;
+    s = attributeToString("scaleY");
+    if (!s.isEmpty()) {
+        y = s.toFloat(&oky);
+        if (!oky) {
+            xml.raiseError("Couldn't read scaleY of image");
+            return;
+        }
     }
 
-    if (!a.value("scaleFactor").isEmpty()) {
-        x = a.value("scaleFactor").toFloat(&okx);
-        if (!okx)
-            return false;
+    s = attributeToString("scaleFactor");
+    if (!s.isEmpty()) {
+        x = s.toFloat(&okx);
+        if (!okx) {
+            xml.raiseError("Couldn't read scaleFactor of image");
+            return;
+        }
     }
 
     if (x != 1)
         lastImage->setScaleFactor(x);
 
-    if (!readOOAttr(a))
-        return false;
+    readOrnamentsAttr();
 
-    if (!a.value("originalName").isEmpty())
-    {
-        lastImage->setOriginalFilename(a.value("originalName"));
-    }
-    return true;
+    s = attributeToString("originalName");
+    if (!s.isEmpty())
+        lastImage->setOriginalFilename(s);
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
 }
 
-bool parseVYMHandler::readXLinkAttr(const QXmlAttributes &a)
+void VymReader::readVymMapAttr()
 {
-    // Obsolete, see also readLinkAttr
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("vymmap"));
 
-    if (!a.value("beginID").isEmpty()) {
-        if (!a.value("endID").isEmpty()) {
-            TreeItem *beginBI = model->findBySelectString(a.value("beginID"));
-            TreeItem *endBI = model->findBySelectString(a.value("endID"));
-            if (beginBI && endBI && beginBI->isBranchLikeType() &&
-                endBI->isBranchLikeType()) {
-                Link *li = new Link(model);
-                li->setBeginBranch((BranchItem *)beginBI);
-                li->setEndBranch((BranchItem *)endBI);
-                QPen pen = li->getPen();
+    QString a = "author";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setAuthor(s);
 
-                if (!a.value("color").isEmpty()) {
-                    QColor col;
-                    col.setNamedColor(a.value("color"));
-                    pen.setColor(col);
-                }
+    a = "title";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setTitle(s);
 
-                if (!a.value("width").isEmpty()) {
-                    bool okx;
-                    pen.setWidth(a.value("width").toInt(&okx, 10));
-                }
-                model->createLink(li);
+    a = "comment";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setComment(unquoteMeta(s));
+
+    a = "branchCount";
+    s = xml.attributes().value(a).toString();
+    int i;
+    bool ok;
+    if (!s.isEmpty()) {
+        i = s.toInt(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        branchesTotal = i;
+    }
+    if (branchesTotal > 10) {
+        useProgress = true;
+        mainWindow->setProgressMaximum(branchesTotal);
+    }
+
+    QColor col;
+    a = "backgroundColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        col.setNamedColor(s);
+        model->getScene()->setBackgroundBrush(col);
+    }
+
+    a = "defaultFont";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        QFont font;
+        font.fromString(s);
+        model->setMapDefaultFont(font);
+    }
+
+    a = "selectionColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        col.setNamedColor(s);
+        model->setSelectionColor(col);
+    }
+
+    a = "linkColorHint";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        if (s == "HeadingColor")
+            model->setLinkColorHint(LinkObj::HeadingColor);
+        else
+            model->setLinkColorHint(LinkObj::DefaultColor);
+    }
+
+    a = "linkStyle";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setMapLinkStyle(s);
+
+    a = "linkColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        col.setNamedColor(s);
+        model->setDefaultLinkColor(col);
+    }
+
+    QPen pen(model->getMapDefXLinkPen());
+    a = "defXLinkColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        if (!s.isEmpty()) {
+            col.setNamedColor(s);
+            pen.setColor(col);
+        }
+    }
+
+    a = "defXLinkWidth";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        i = s.toInt(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute  " + a);
+            return;
+        }
+        pen.setWidth(i);
+    }
+
+    a = "defXLinkPenStyle";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        bool ok;
+        Qt::PenStyle ps = penStyle(s, ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        pen.setStyle(ps);
+    }
+    model->setMapDefXLinkPen(pen);
+
+    a = "defXLinkStyleBegin";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setMapDefXLinkStyleBegin(s);
+
+    a = "defXLinkStyleEnd";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setMapDefXLinkStyleEnd(s);
+
+    qreal r;
+    a = "mapZoomFactor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute" + a);
+            return;
+        }
+        model->setMapZoomFactor(r);
+    }
+
+    a = "mapRotationAngle";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        model->setMapRotationAngle(r);
+    }
+}
+
+void VymReader::readBranchAttr()
+{
+    Q_ASSERT(xml.isStartElement() && (
+            xml.name() == QLatin1String("branch") ||
+            xml.name() == QLatin1String("mapcenter")));
+
+    branchesCounter++;
+    if (useProgress)
+        mainWindow->addProgressValue((float)branchesCounter / branchesTotal);
+
+    lastMI = lastBranch;
+    BranchContainer *lastBC = lastBranch->getBranchContainer();
+
+    readOrnamentsAttr();
+
+    QString a = "scrolled";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        lastBranch->toggleScroll();
+
+    a = "incImgV";
+    s = xml.attributes().value(a).toString();
+    if (s == "true")      // pre 2.9 feature
+        lastBranch->setImagesLayout("FloatingBounded");
+
+    a = "incImgH";
+    s = xml.attributes().value(a).toString();
+    if (s == "true")      // pre 2.9 feature
+        lastBranch->setImagesLayout("FloatingBounded");
+
+    a = "childrenFreePos";
+    s = xml.attributes().value(a).toString();
+    if (s == "true")      // pre 2.9 feature
+        lastBranch->setBranchesLayout("FloatingBounded");
+
+    // Container layouts
+    a = "branchesLayout";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        lastBranch->setBranchesLayout(s);
+        lastBC->branchesContainerAutoLayout = false;
+    }
+
+    a = "imagesLayout";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        lastBC->imagesContainerAutoLayout = false;
+        lastBranch->setImagesLayout(s);
+    }
+
+    bool ok;
+    qreal r;
+    a = "rotHeading";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        lastBC->setRotationHeading(r);
+    }
+
+    a = "rotContent";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        lastBC->setRotationSubtree(r);
+    }
+}
+
+void VymReader::readOrnamentsAttr()
+{
+    Q_ASSERT(xml.isStartElement() && (
+            xml.name() == QLatin1String("branch") ||
+            xml.name() == QLatin1String("mapcenter") ||
+            xml.name() == QLatin1String("floatimage")));
+
+    float x, y;
+    bool okx, oky;
+
+    QString s = attributeToString("posX");
+    QString t = attributeToString("posY");
+    if (!s.isEmpty() || !t.isEmpty()) {
+        x = s.toFloat(&okx);
+        y = t.toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Couldn't read position of item");
+            return;
+        }
+    }
+
+    // Only left for compatibility with versions < 2.9.500
+    s = attributeToString("relPosX");
+    t = attributeToString("relPosY");
+    if (!s.isEmpty() || !t.isEmpty()) {
+        x = s.toFloat(&okx);
+        y = t.toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Couldn't read relative position of item");
+            return;
+        }
+    }
+
+    // Only left for compatibility with versions < 2.9.500
+    s = attributeToString("absPosX");
+    t = attributeToString("absPosY");
+    if (!s.isEmpty() || !t.isEmpty()) {
+        x = s.toFloat(&okx);
+        y = t.toFloat(&oky);
+        if (okx && oky)
+            lastMI->setPos(QPointF(x, y));
+        else {
+            xml.raiseError("Couldn't read absolute position of item");
+            return;
+        }
+    }
+
+    s = attributeToString("url");
+    if (!s.isEmpty())
+        lastMI->setURL(s);
+    s = attributeToString("vymLink");
+    if (!s.isEmpty())
+        lastMI->setVymLink(s);
+    s = attributeToString("hideInExport");
+    if (!s.isEmpty())
+        if (s == "true")
+            lastMI->setHideInExport(true);
+
+    s = attributeToString("hideLink");
+    if (!s.isEmpty()) {
+        if (s == "true")
+            lastMI->setHideLinkUnselected(true);
+        else
+            lastMI->setHideLinkUnselected(false);
+    }
+
+    s = attributeToString("localTarget");
+    if (!s.isEmpty())
+        if (s == "true")
+            lastMI->toggleTarget();
+
+    s = attributeToString("uuid");
+    if (!s.isEmpty()) {
+        // While pasting, check for existing UUID
+        if (loadMode != File::ImportAdd && !model->findUuid(s))
+            lastMI->setUuid(s);
+    }
+}
+
+void VymReader::readFrameAttr()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("frame"));
+
+    if (lastBranch) {
+        BranchContainer *bc = lastBranch->getBranchContainer();
+
+        bool useInnerFrame = true;
+        // useInnerFrame was introduced in 2.9.506
+        // It replaces the previous "includeChildren" attribute
+        QString a = "includeChildren";
+        QString s = xml.attributes().value(a).toString();
+        if (s == "true")
+            useInnerFrame = false;
+
+        a = "frameType";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty())
+            bc->setFrameType(useInnerFrame, s);
+        a = "penColor";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty())
+            bc->setFramePenColor(useInnerFrame, s);
+        a = "brushColor";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            bc->setFrameBrushColor(useInnerFrame, s);
+            lastMI->setBackgroundColor(s);
+        }
+
+        int i;
+        bool ok;
+        a = "padding";
+        s = xml.attributes().value(a).toString();
+        i = s.toInt(&ok);
+        if (ok)
+            bc->setFramePadding(useInnerFrame, i);
+
+        a = "borderWidth";
+        s = xml.attributes().value(a).toString();
+        i = s.toInt(&ok);
+        if (ok)
+            bc->setFramePenWidth(useInnerFrame, i);
+
+        a = "penWidth";
+        s = xml.attributes().value(a).toString();
+        i = s.toInt(&ok);
+        if (ok)
+            bc->setFramePenWidth(useInnerFrame, i);
+    }
+}
+
+void VymReader::readTaskAttr()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("task"));
+
+    if (lastBranch) {
+        lastTask = taskModel->createTask(lastBranch);
+
+        QString s = attributeToString("status");
+        if (!s.isEmpty())
+            lastTask->setStatus(s);
+
+        s = attributeToString("awake");
+        if (!s.isEmpty())
+            lastTask->setAwake(s);
+
+        s = attributeToString("date_creation");
+        if (!s.isEmpty())
+            lastTask->setDateCreation(s);
+
+        s = attributeToString("date_modification");
+        if (!s.isEmpty())
+            lastTask->setDateModification(s);
+
+        s = attributeToString("date_sleep");
+        if (!s.isEmpty()) {
+            if (!lastTask->setDateSleep(s)) {
+                xml.raiseError("Could not set sleep time for task: " + s);
+                return;
             }
         }
-    }
-    return true;
-}
-
-bool parseVYMHandler::readLinkNewAttr(const QXmlAttributes &a)
-{
-    // object ID is used starting in version 1.8.76
-    // (before there was beginBranch and endBranch)
-    //
-    // Starting in 1.13.2 xlinks are no longer subitems of branches,
-    // but listed at the end of the data in a map. This makes handling
-    // of links much safer and easier
-
-    if (!a.value("beginID").isEmpty()) {
-        if (!a.value("endID").isEmpty()) {
-            TreeItem *beginBI = model->findBySelectString(a.value("beginID"));
-            TreeItem *endBI = model->findBySelectString(a.value("endID"));
-            if (beginBI && endBI && beginBI->isBranchLikeType() &&
-                endBI->isBranchLikeType()) {
-                Link *li = new Link(model);
-                li->setBeginBranch((BranchItem *)beginBI);
-                li->setEndBranch((BranchItem *)endBI);
-
-                model->createLink(li);
-
-                bool okx;
-                QPen pen = li->getPen();
-                if (!a.value("type").isEmpty()) {
-                    li->setLinkType(a.value("type"));
-                }
-                if (!a.value("color").isEmpty()) {
-                    QColor col;
-                    col.setNamedColor(a.value("color"));
-                    pen.setColor(col);
-                }
-                if (!a.value("width").isEmpty()) {
-                    pen.setWidth(a.value("width").toInt(&okx, 10));
-                }
-                if (!a.value("penstyle").isEmpty()) {
-                    pen.setStyle(penStyle(a.value("penstyle"), okx));
-                }
-                li->setPen(pen);
-
-                if (!a.value("styleBegin").isEmpty())
-                    li->setStyleBegin(a.value("styleBegin"));
-                if (!a.value("styleEnd").isEmpty())
-                    li->setStyleEnd(a.value("styleEnd"));
-
-                XLinkObj *xlo = (XLinkObj *)(li->getMO());
-                if (xlo && !a.value("c0").isEmpty()) {
-                    QPointF p = point(a.value("c0"), okx);
-                    if (okx)
-                        xlo->setC0(p);
-                }
-                if (xlo && !a.value("c1").isEmpty()) {
-                    QPointF p = point(a.value("c1"), okx);
-                    if (okx)
-                        xlo->setC1(p);
-                }
-            }
-        }
-    }
-    return true;
-}
-
-bool parseVYMHandler::readSettingAttr(const QXmlAttributes &a)
-{
-    if (!a.value("key").isEmpty()) {
-        lastSetting = a.value("key");
-        if (!a.value("value").isEmpty())
-            settings.setLocalValue(
-                    model->getDestPath(), a.value("key"),
-                    a.value("value"));
-        else
-            return false;
-    }
-    else
-        return false;
-
-    return true;
-}
-
-bool parseVYMHandler::readSlideAttr(const QXmlAttributes &a)
-{
-    QStringList scriptlines; // FIXME-3 needed for switching to inScript
-                             // Most attributes are obsolete with inScript
-    if (!lastSlide)
-        return false;
-    {
-        if (!a.value("name").isEmpty())
-            lastSlide->setName(a.value("name"));
-        if (!a.value("zoom").isEmpty()) {
+        s = attributeToString("prio_delta");
+        if (!s.isEmpty()) {
             bool ok;
-            qreal z = a.value("zoom").toDouble(&ok);
-            if (!ok)
-                return false;
-            scriptlines.append(QString("setMapZoom(%1)").arg(z));
-        }
-        if (!a.value("rotation").isEmpty()) {
-            bool ok;
-            qreal z = a.value("rotation").toDouble(&ok);
-            if (!ok)
-                return false;
-            scriptlines.append(QString("setMapRotation(%1)").arg(z));
-        }
-        if (!a.value("duration").isEmpty()) {
-            bool ok;
-            int d = a.value("duration").toInt(&ok);
-            if (!ok)
-                return false;
-            scriptlines.append(QString("setMapAnimDuration(%1)").arg(d));
-        }
-        if (!a.value("curve").isEmpty()) {
-            bool ok;
-            int i = a.value("curve").toInt(&ok);
-            if (!ok)
-                return false;
-            if (i < 0 || i > QEasingCurve::OutInBounce)
-                return false;
-            scriptlines.append(QString("setMapAnimCurve(%1)").arg(i));
-        }
-        if (!a.value("mapitem").isEmpty()) {
-            TreeItem *ti = model->findBySelectString(a.value("mapitem"));
-            if (!ti)
-                return false;
-            scriptlines.append(
-                QString("centerOnID(\"%1\")").arg(ti->getUuid().toString()));
-        }
-        if (!a.value("inScript").isEmpty()) {
-            lastSlide->setInScript(unquoteMeta(a.value("inScript")));
-        }
-        else
-            lastSlide->setInScript(unquoteMeta(scriptlines.join(";\n")));
-
-        if (!a.value("outScript").isEmpty()) {
-            lastSlide->setOutScript(unquoteMeta(a.value("outScript")));
+            int d = s.toInt(&ok);
+            if (ok)
+                lastTask->setPriorityDelta(d);
         }
     }
-    return true;
 }
 
-bool parseVYMHandler::readTaskAttr(const QXmlAttributes &a)
-{
-    if (!lastTask)
-        return false;
-    {
-        if (!a.value("status").isEmpty())
-            lastTask->setStatus(a.value("status"));
-        if (!a.value("awake").isEmpty())
-            lastTask->setAwake(a.value("awake"));
-        if (!a.value("date_creation").isEmpty())
-            lastTask->setDateCreation(a.value("date_creation"));
-        if (!a.value("date_modification").isEmpty())
-            lastTask->setDateModification(a.value("date_modification"));
-        if (!a.value("date_sleep").isEmpty()) {
-            if (!lastTask->setDateSleep(a.value("date_sleep")))
-                return false;
-        }
-        if (!a.value("prio_delta").isEmpty()) {
-            lastTask->setPriorityDelta(a.value("prio_delta").toInt());
-        }
-    }
-    return true;
-}
-
-bool parseVYMHandler::readUserFlagDefAttr(const QXmlAttributes &a)
-{
-    QString name;
-    QString path;
-    QString tooltip;
-    QUuid uid;
-
-    if (!a.value("name").isEmpty())
-        name = a.value("name");
-    if (!a.value("tooltip").isEmpty())
-        tooltip = a.value("tooltip");
-    if (!a.value("uuid").isEmpty())
-        uid = QUuid(a.value("uuid"));
-
-    Flag *flag;
-
-    if (!a.value("href").isEmpty()) {
-        // Setup flag with image
-        flag = mainWindow->setupFlag(parseHREF(a.value("href")), Flag::UserFlag,
-                                     name, tooltip, uid);
-    }
-    else {
-        qWarning() << "readUserFlagDefAttr:  Couldn't read href of flag "
-                   << a.value("name");
-        return false;
-    }
-
-    if (!a.value("group").isEmpty())
-        flag->setGroup(a.value("group"));
-
-    return true;
-}
-
-bool parseVYMHandler::readUserFlagAttr(const QXmlAttributes &a)
-{
-    QString name;
-    QString uuid;
-
-    if (!a.value("name").isEmpty())
-        name = a.value("name");
-    if (!a.value("uuid").isEmpty())
-        uuid = a.value("uuid");
-
-    lastBranch->toggleFlagByUid(QUuid(uuid));
-
-    return true;
-}

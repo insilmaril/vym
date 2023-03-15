@@ -11,6 +11,11 @@
 
 extern QString vymVersion;
 
+QString boolToString(const bool &b)
+{
+    return b ? "true" : "false";
+}
+
 QString richTextToPlain(QString r, const QString &indent, const int &width)
 {
     Q_UNUSED(width);
@@ -63,31 +68,39 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
 
 QString qpointToString(const QPoint &p)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("(%1, %2)").arg(p.y()).arg(p.y());
 }
 
-QString qpointFToString(const QPointF &p)
+QString qpointFToString(const QPointF &p, int d)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("(%1, %2)")
+        .arg(QString::number(p.x(),'f', d))
+        .arg(QString::number(p.y(),'f', d));
+}
+
+QString qrectFToString(const QRectF &r, int d)
+{
+    return QString("(%1, %2  %3x%4)")
+        .arg(QString::number(r.x(),'f', d))
+        .arg(QString::number(r.y(),'f', d))
+        .arg(QString::number(r.width(),'f', d))
+        .arg(QString::number(r.height(),'f', d));
 }
 
 QString VectorToString(const Vector &p)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("(%1, %2)").arg(p.x()).arg(p.y());
 }
 
 ostream &operator<<(ostream &stream, QPoint const &p)
 {
-    stream << "(" << p.x() << "," << p.y() << ")";
+    stream << "(" << p.x() << ", " << p.y() << ")";
     return stream;
 }
 
 ostream &operator<<(ostream &stream, QPointF const &p)
 {
-    stream << "(" << p.x() << "," << p.y() << ")";
+    stream << "(" << p.x() << ", " << p.y() << ")";
     return stream;
 }
 
@@ -102,47 +115,6 @@ ostream &operator<<(ostream &stream, Vector const &p)
 {
     stream << "(" << p.x() << "," << p.y() << ")";
     return stream;
-}
-
-qreal getAngle(const QPointF &p)
-{
-    // Calculate angle of vector to x-axis
-    if (p.x() == 0) {
-        if (p.y() >= 0)
-            return M_PI_2;
-        else
-            return 3 * M_PI_2;
-    }
-    else {
-        if (p.x() > 0) {
-            if (p.y() < 0)
-                return (qreal)(-atan((qreal)(p.y()) / (qreal)(p.x())));
-            else
-                return (qreal)(2 * M_PI -
-                               atan((qreal)(p.y()) / (qreal)(p.x())));
-        }
-        else
-            return (qreal)(M_PI - atan((qreal)(p.y()) / (qreal)(p.x())));
-    }
-    /*
-    // Calculate angle of vector to y-axis
-    if (p.y()==0)
-    {
-    if (p.x()>=0)
-        return M_PI_2;
-    else
-        return 3* M_PI_2;
-    } else
-    {
-    if (p.y()>0)
-        return (qreal)(M_PI  - atan ( (qreal)(p.x()) / (qreal)(p.y()) ) );
-    else
-        if (p.x()<0)
-        return (qreal)( 2*M_PI - atan ( (qreal)(p.x()) / (qreal)(p.y()) ) );
-        else
-        return (qreal)( - atan ( (qreal)(p.x()) / (qreal)(p.y()) ) );
-    }
-    */
 }
 
 qreal min(qreal a, qreal b)

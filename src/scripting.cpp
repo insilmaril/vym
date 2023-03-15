@@ -49,6 +49,12 @@ uint VymScriptContext::setResult(uint r)
     return r;
 }
 
+qreal VymScriptContext::setResult(qreal r)
+{
+    context()->engine()->globalObject().setProperty("lastResult", r);
+    return r;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper() {}
 
@@ -56,7 +62,7 @@ void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 
 bool VymWrapper::isConfluenceAgentAvailable()
 {
-    return ConfluenceAgent::available();
+    return setResult(ConfluenceAgent::available());
 }
 
 QObject *VymWrapper::currentMap()
@@ -73,7 +79,7 @@ void VymWrapper::editHeading()
 bool VymWrapper::loadMap(const QString &filename)
 {
     bool r;
-    if (File::Success == mainWindow->fileLoad(filename, NewMap, VymMap))
+    if (File::Success == mainWindow->fileLoad(filename, File::NewMap, File::VymMap))
         r = true;
     else
         r = false;
@@ -87,12 +93,21 @@ int VymWrapper::mapCount()
     return setResult(mainWindow->modelCount());
 }
 
-void VymWrapper::selectMap(uint n)
+void VymWrapper::gotoMap(uint n)
 {
     if (!mainWindow->gotoWindow(n)) {
         logError(context(), QScriptContext::RangeError,
                  QString("Map '%1' not available.").arg(n));
     }
+}
+
+bool VymWrapper::closeMapWithID(uint n)
+{
+    bool r = mainWindow->closeModelWithID(n);
+    if (!r)
+        logError(context(), QScriptContext::RangeError,
+                 QString("Map '%1' not available.").arg(n));
+    return setResult(r);
 }
 
 void VymWrapper::selectQuickColor(int n)
@@ -102,7 +117,7 @@ void VymWrapper::selectQuickColor(int n)
 
 QString VymWrapper::currentColor()
 {
-    return mainWindow->getCurrentColor().name();
+    return setResult(mainWindow->getCurrentColor().name());
 }
 
 uint VymWrapper::currentMapID()
@@ -119,7 +134,7 @@ QString VymWrapper::loadFile(
 {
     QString s;
     loadStringFromDisk(filename, s);
-    return s;
+    return setResult(s);
 }
 
 void VymWrapper::saveFile(
@@ -132,7 +147,7 @@ void VymWrapper::saveFile(
 QString VymWrapper::version() { return setResult(vymVersion); }
 
 // See also http://doc.qt.io/qt-5/qscriptengine.html#newFunction
-Selection::Selection() { modelWrapper = NULL; }
+Selection::Selection() { modelWrapper = nullptr; }
 
 void Selection::test()
 {

@@ -8,10 +8,11 @@
 #include <QtGui>
 
 // #include "attributedelegate.h"
-#include "branchobj.h"
 
 class QAbstractItemModel;
 
+class BranchItem;
+class TreeItem;
 class VymModel;
 
 class BranchPropertyEditor : public QDialog {
@@ -19,23 +20,27 @@ class BranchPropertyEditor : public QDialog {
   public:
     BranchPropertyEditor(QWidget *parent = 0);
     ~BranchPropertyEditor();
+  private:
+    void updateContainerLayoutButtons();
+  public:
     void setItem(TreeItem *);
     void setModel(VymModel *);
 
   private slots:
-    void frameTypeChanged(int);
+    void frameTypeChanged(int i);
     void framePenColorClicked();
     void frameBrushColorClicked();
     void framePaddingChanged(int);
-    void frameBorderWidthChanged(int);
-    void frameIncludeChildrenChanged(int);
+    void framePenWidthChanged(int);
+
     void linkHideUnselectedChanged(int);
-    void incImgVerChanged(int);
-    void incImgHorChanged(int);
-    void childrenFreePositioningChanged(int);
+    void childrenLayoutChanged();
+    void rotationHeadingChanged(int);
+    void rotationInnerContentChanged(int);
     void taskPriorityDeltaChanged(int);
     void addAttributeClicked();
     void deleteAttributeClicked();
+    void indexChanged(int);
 
   signals:
     void windowClosed();
@@ -49,14 +54,12 @@ class BranchPropertyEditor : public QDialog {
 
     Ui::BranchPropertyEditor ui;
 
-    BranchObj *branchObj;
     BranchItem *branchItem;
     VymModel *model;
 
-    QColor penColor;
-    QColor brushColor;
+    int lastSelectedBranchTab;
 
-    QAbstractItemModel *attributeModel;
+    QStandardItemModel *attributeModel;
 
     //AttributeDelegate attributeDelegate;
 };

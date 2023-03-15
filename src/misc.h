@@ -13,9 +13,11 @@ class Vector;
 class QDialog;
 
 /////////////////////////////////////////////////////////////////////////////
+QString boolToString(const bool &);
 QString richTextToPlain(QString r);
 QString qpointToString(const QPoint &p);
-QString qpointFToString(const QPointF &p);
+QString qpointFToString(const QPointF &p, int d = 1);
+QString qrectFToString(const QRectF &r, int d = 1);
 QString VectorToString(const Vector &p);
 
 extern ostream &operator<<(ostream &stream, QPoint const &p);
@@ -23,7 +25,6 @@ extern ostream &operator<<(ostream &stream, QPointF const &p);
 extern ostream &operator<<(ostream &stream, QRectF const &r);
 extern ostream &operator<<(ostream &stream, Vector const &p);
 
-qreal getAngle(const QPointF &);
 qreal min(qreal, qreal);
 qreal max(qreal, qreal);
 qreal roof(qreal x);
@@ -39,5 +40,4 @@ void centerDialog(QDialog *dia);
 bool versionLowerThanVym(const QString &);
 bool versionLowerOrEqualThanVym(const QString &);
 bool versionLowerOrEqual(const QString &, const QString &);
-
 #endif

@@ -43,8 +43,8 @@ void ExportAO::doExport()
     QString dashIndent;
 
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
 
     model->nextBranch(cur, prev);
     while (cur) {

@@ -12,7 +12,7 @@ EditXLinkDialog::EditXLinkDialog(QWidget *parent) : QDialog(parent)
     ui.setupUi(this);
 
     delink = false;
-    link = NULL;
+    link = nullptr;
 
     ui.lineStyleCombo->addItem(QIcon("://linestyle-solid.png"), "Solid line",
                                0);

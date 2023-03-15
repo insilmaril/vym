@@ -406,7 +406,7 @@
     </message>
     <message>
         <source>System settings for dark theme</source>
-        <translation>System Einstellungen fpr dunkles Design verwenden</translation>
+        <translation>System Einstellungen für dunkles Design verwenden</translation>
     </message>
     <message>
         <source>DarkThemeSettingsDialog dialog</source>
@@ -4894,6 +4894,11 @@ Konnte nicht umbenennen zu %1</translation>
     <message>
         <source>That&apos;s ok, though I would be happy to see many users working with vym and also on which platforms.</source>
         <translation>Schade, ich würde mich wirklich freuen, wenn ich viele Menschen vym benutzen sehe und auch auf welchen Plattformen vym genutzt wird.</translation>
+    </message>
+    <message>
+        <source>Show scripting commands</source>
+        <comment>Help action</comment>
+        <translation type="unfinished">Skript Befehle anzeigen</translation>
     </message>
 </context>
 <context>

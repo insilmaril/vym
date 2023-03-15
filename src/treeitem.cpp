@@ -3,12 +3,10 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "branchobj.h"
 #include "misc.h"
 #include "treeitem.h"
 #include "vymmodel.h"
 #include "xlinkitem.h"
-#include "xlinkobj.h"
 
 using namespace std;
 
@@ -32,18 +30,18 @@ TreeItem::TreeItem(TreeItem *parent)
 
 TreeItem::~TreeItem()
 {
-    // qDebug()<<"Destr TreeItem this="<<this<<"
-    // childcount="<<childItems.count();
+    //qDebug() << "Destr TreeItem begin: this=" << this << getHeadingPlain();
     TreeItem *ti;
     while (!childItems.isEmpty()) {
         ti = childItems.takeFirst();
+        //qDebug() << "  In destr TI going to delete ti=" << ti << ti->getHeadingPlain();
         delete ti;
     }
 }
 
 void TreeItem::init()
 {
-    model = NULL;
+    model = nullptr;
 
     // Assign ID
     itemLastID++;
@@ -83,23 +81,25 @@ void TreeItem::init()
 
 void TreeItem::setModel(VymModel *m) { model = m; }
 
-VymModel *TreeItem::getModel() { return model; }
+VymModel* TreeItem::getModel() { return model; }
+
+MapDesign* TreeItem::getMapDesign() { return model->getMapDesign(); }
 
 int TreeItem::getRowNumAppend(TreeItem *item)
 {
     switch (item->type) {
-    case Attribute:
-        return attributeOffset + attributeCounter;
-    case XLink:
-        return xlinkOffset + xlinkCounter;
-    case Image:
-        return imageOffset + imageCounter;
-    case MapCenter:
-        return branchOffset + branchCounter;
-    case Branch:
-        return branchOffset + branchCounter;
-    default:
-        return -1;
+        case Attribute:
+            return attributeOffset + attributeCounter;
+        case XLink:
+            return xlinkOffset + xlinkCounter;
+        case Image:
+            return imageOffset + imageCounter;
+        case MapCenter:
+            return branchOffset + branchCounter;
+        case Branch:
+            return branchOffset + branchCounter;
+        default:
+            return -1;
     }
 }
 
@@ -131,7 +131,7 @@ void TreeItem::appendChild(TreeItem *item)
         branchOffset++;
     }
 
-    if (item->isBranchLikeType()) {
+    if (item->hasTypeBranch()) {
         // branches are on bottom of list
         childItems.append(item);
         branchCounter++;
@@ -164,7 +164,7 @@ void TreeItem::removeChild(int row)
             imageCounter--;
             branchOffset--;
         }
-        if (childItems.at(row)->isBranchLikeType())
+        if (childItems.at(row)->hasTypeBranch())
             branchCounter--;
 
         childItems.removeAt(row);
@@ -198,7 +198,7 @@ int TreeItem::row() const
     if (parentItem)
         return parentItem->childItems.indexOf(const_cast<TreeItem *>(this));
 
-    qDebug() << "TI::row() pI=NULL this=" << this << "  ***************";
+    qDebug() << "TI::row() pI=nullptr this=" << this << "  ***************";
     return 0;
 }
 
@@ -208,7 +208,7 @@ int TreeItem::depth()
     // MapCenter d=0
     int d = -2;
     TreeItem *ti = this;
-    while (ti != NULL) {
+    while (ti != nullptr) {
         ti = ti->parent();
         d++;
     }
@@ -274,9 +274,17 @@ TreeItem::Type TreeItem::getType()
     return type;
 }
 
-bool TreeItem::isBranchLikeType() const
+bool TreeItem::hasTypeBranch() const
 {
     if (type == Branch || type == MapCenter)
+        return true;
+    else
+        return false;
+}
+
+bool TreeItem::hasTypeImage() const
+{
+    if (type == Image)
         return true;
     else
         return false;
@@ -508,7 +516,10 @@ void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
 
 bool TreeItem::hasActiveFlag(const QString &name)
 {
-    return standardFlags.isActive(name);
+    if (standardFlags.hasFlag(name))
+        return standardFlags.isActive(name);
+    else
+        return userFlags.isActive(name);
 }
 
 bool TreeItem::hasActiveSystemFlag(const QString &name)
@@ -575,7 +586,7 @@ TreeItem *TreeItem::getChildNum(const int &n)
     if (n >= 0 && n < childItems.count())
         return childItems.at(n);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getFirstBranch()
@@ -583,7 +594,7 @@ BranchItem *TreeItem::getFirstBranch()
     if (branchCounter > 0)
         return getBranchNum(0);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getLastBranch()
@@ -591,7 +602,7 @@ BranchItem *TreeItem::getLastBranch()
     if (branchCounter > 0)
         return getBranchNum(branchCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 ImageItem *TreeItem::getFirstImage()
@@ -599,7 +610,7 @@ ImageItem *TreeItem::getFirstImage()
     if (imageCounter > 0)
         return getImageNum(imageCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 ImageItem *TreeItem::getLastImage()
@@ -607,18 +618,18 @@ ImageItem *TreeItem::getLastImage()
     if (imageCounter > 0)
         return getImageNum(imageCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getNextBranch(BranchItem *currentBranch)
 {
     if (!currentBranch)
-        return NULL;
+        return nullptr;
     int n = num(currentBranch) + 1;
     if (n < branchCounter)
         return getBranchNum(branchOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getBranchNum(const int &n)
@@ -626,22 +637,7 @@ BranchItem *TreeItem::getBranchNum(const int &n)
     if (n >= 0 && n < branchCounter)
         return (BranchItem *)getChildNum(branchOffset + n);
     else
-        return NULL;
-}
-
-BranchObj *TreeItem::getBranchObjNum(const int &n)
-{
-    if (n >= 0 && n < branchCounter) {
-        BranchItem *bi = getBranchNum(n);
-        if (bi) {
-            BranchObj *bo = (BranchObj *)(bi->getLMO());
-            if (bo)
-                return bo;
-            else
-                qDebug() << "TI::getBONum bo=NULL";
-        }
-    }
-    return NULL;
+        return nullptr;
 }
 
 ImageItem *TreeItem::getImageNum(const int &n)
@@ -649,15 +645,7 @@ ImageItem *TreeItem::getImageNum(const int &n)
     if (n >= 0 && n < imageCounter)
         return (ImageItem *)getChildNum(imageOffset + n);
     else
-        return NULL;
-}
-
-FloatImageObj *TreeItem::getImageObjNum(const int &n)
-{
-    if (imageCounter > 0)
-        return (FloatImageObj *)(getImageNum(n)->getLMO());
-    else
-        return NULL;
+        return nullptr;
 }
 
 AttributeItem *TreeItem::getAttributeNum(const int &n)
@@ -665,7 +653,7 @@ AttributeItem *TreeItem::getAttributeNum(const int &n)
     if (n >= 0 && n < attributeCounter)
         return (AttributeItem *)getChildNum(attributeOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 AttributeItem *TreeItem::getAttributeByKey(const QString &k)
@@ -683,7 +671,7 @@ XLinkItem *TreeItem::getXLinkItemNum(const int &n)
     if (n >= 0 && n < xlinkCounter)
         return (XLinkItem *)getChildNum(xlinkOffset + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 XLinkObj *TreeItem::getXLinkObjNum(const int &n)
@@ -696,7 +684,7 @@ XLinkObj *TreeItem::getXLinkObjNum(const int &n)
                 return l->getXLinkObj();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void TreeItem::setHideTmp(HideTmpMode mode)
@@ -704,8 +692,6 @@ void TreeItem::setHideTmp(HideTmpMode mode)
     if (type == Image || type == Branch || type == MapCenter)
     //	((ImageItem*)this)->updateVisibility();
     {
-        // LinkableMapObj* lmo=((MapItem*)this)->getLMO();
-
         if (mode == HideExport &&
             (hideExport ||
              hasHiddenExportParent())) // FIXME-4  try to avoid calling

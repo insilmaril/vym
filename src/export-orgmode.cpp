@@ -30,8 +30,8 @@ void ExportOrgMode::doExport()
     // Main loop over all branches
     QString s;
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
         if (!cur->hasHiddenExportParent()) {

@@ -199,8 +199,8 @@ void VymView::expandOneLevel()
 {
     int level = 999999;
     int d;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     QModelIndex pix;
 
     // Find level to expand
@@ -214,8 +214,8 @@ void VymView::expandOneLevel()
     }
 
     // Expand all to level
-    cur = NULL;
-    prev = NULL;
+    cur = nullptr;
+    prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
         pix = model->index(cur);
@@ -231,8 +231,8 @@ void VymView::collapseOneLevel()
 {
     int level = -1;
     int d;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     QModelIndex pix;
 
     // Find level to collapse
@@ -246,8 +246,8 @@ void VymView::collapseOneLevel()
     }
 
     // collapse all to level
-    cur = NULL;
-    prev = NULL;
+    cur = nullptr;
+    prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
         pix = model->index(cur);
@@ -272,14 +272,14 @@ void VymView::collapseUnselected()
     // Do not include selected branch,
     // this one also should be collapsed later
     BranchItem *cur = selbi->parentBranch();
-    BranchItem *prev = NULL;
+    BranchItem *prev = nullptr;
 
     while (cur->parentBranch()) {
         itemPath << cur;
         cur = cur->parentBranch();
     }
 
-    cur = NULL;
+    cur = nullptr;
 
     // collapse all to level
     model->nextBranch(cur, prev);

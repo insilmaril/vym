@@ -6,8 +6,6 @@
 #include <QPen>
 #include <QRandomGenerator>
 
-
-#include "mapobj.h"
 #include "misc.h"
 
 SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
@@ -41,7 +39,6 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
                 l->setZValue(1000);
                 l->setPen(p);
                 l->setParentItem(this);
-                l->setZValue(Z_SNOW);
             }
             da = QRandomGenerator::global()->bounded(20) / 10.0 - 1;
         }
@@ -51,7 +48,6 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
             disc = scene->addEllipse(0, 0, size, size, p);
             disc->setParentItem(this);
             disc->setBrush(Qt::white);
-            disc->setZValue(Z_SNOW);
             break;
         case Egg:
             disc = scene->addEllipse(0, 0, size, size * 1.5, p);
@@ -60,7 +56,6 @@ SnowFlake::SnowFlake(QGraphicsScene *scene, SnowType t)
                 QRandomGenerator::global()->bounded(100) + 150,
                 QRandomGenerator::global()->bounded(100) + 150,
                 QRandomGenerator::global()->bounded(100) + 150, 255));
-            disc->setZValue(Z_SNOW);
             break;
         default:
             break;

@@ -103,8 +103,9 @@ class Main : public QMainWindow {
     uint currentMapID() const;
     int currentMapIndex() const;
     VymModel *getModel(uint);
-    void gotoModel(VymModel *m);
-    void gotoModelID(uint id);
+    bool gotoModel(VymModel *m);
+    bool gotoModelWithID(uint id);
+    bool closeModelWithID(uint id);
     int modelCount();
     void updateTabName(VymModel *vm);
 
@@ -112,8 +113,8 @@ class Main : public QMainWindow {
     void editorChanged();
 
   public slots:
-    File::ErrorCode fileLoad(QString, const LoadMode &, const FileType &ftype);
-    void fileLoad(const LoadMode &);
+    File::ErrorCode fileLoad(QString, const File::LoadMode &, const File::FileType &ftype);
+    void fileLoad(const File::LoadMode &);
   private slots:
     void fileLoad();
     void fileSaveSession();
@@ -122,13 +123,13 @@ class Main : public QMainWindow {
   private slots:
     void fileLoadRecent();
     void addRecentMap(const QString &);
-    void fileSave(VymModel *, const SaveMode &);
+    void fileSave(VymModel *, const File::SaveMode &);
     void fileSave();
   public slots:
     void fileSave(VymModel *); // autosave from MapEditor
   private slots:
     void fileSaveAs();
-    void fileSaveAs(const SaveMode &);
+    void fileSaveAs(const File::SaveMode &);
     void fileSaveAsDefault();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
@@ -363,7 +364,8 @@ class Main : public QMainWindow {
     void helpDemo();
     void helpShortcuts();
     void helpMacros();
-    void debugInfo();
+    void helpScriptingCommands();
+    void helpDebugInfo();
     void helpAbout();
     void helpAboutQT();
 

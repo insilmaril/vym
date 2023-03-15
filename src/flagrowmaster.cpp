@@ -12,22 +12,28 @@ extern Main *mainWindow;
 FlagRowMaster::FlagRowMaster()
 {
     // qDebug()<< "Const FlagRowMaster ()";
-    toolbar = NULL;
-    configureAction = NULL;
+    toolbar = nullptr;
+    configureAction = nullptr;
 }
 
 FlagRowMaster::~FlagRowMaster()
 {
     // qDebug()<< "Destr FlagRowMaster    toolbar=" << toolbar;
+    while (!flags.isEmpty())
+        delete (flags.takeLast());
 }
 
 Flag *FlagRowMaster::createFlag(const QString &path)
 {
     Flag *flag = new Flag;
-    flag->load(path);
-    flags.append(flag);
+    if (flag->load(path)) {
+        flags.append(flag);
+        return flag;
+    }
 
-    return flag;
+    qWarning() << "FlagRowMaster::createFlag  failed to read " << path;
+    delete flag;
+    return nullptr;
 }
 
 void FlagRowMaster::createConfigureAction()
@@ -63,7 +69,7 @@ Flag *FlagRowMaster::findFlagByUid(const QUuid &uid)
             return flags.at(i);
         i++;
     }
-    return NULL;
+    return nullptr;
 }
 
 Flag *FlagRowMaster::findFlagByName(const QString &name)
@@ -75,7 +81,7 @@ Flag *FlagRowMaster::findFlagByName(const QString &name)
         i++;
     }
     qDebug() << "FR::findFlagByName failed for name " << name;
-    return NULL;
+    return nullptr;
 }
 
 void FlagRowMaster::resetUsedCounter()

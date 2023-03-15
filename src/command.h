@@ -15,17 +15,25 @@ class Command {
         BranchOrImage,
         XLink
     };
-    enum ParameterType { Undefined, String, Int, Double, Color, Bool };
-    Command(const QString &n, SelectionType st);
+    enum ParameterType {
+        Undefined,
+        String,
+        Int,
+        Double,
+        Color,
+        Bool,
+        Void};
+
+    Command(const QString &n, SelectionType st, ParameterType retType = Void);
     QString getName();
     QString getDescription();
     QString getDescriptionLaTeX();
     void addPar(ParameterType t, bool opt, const QString &c = QString());
     int parCount();
     ParameterType getParType(int n);
-    QString getParTypeName(int n);
     SelectionType getSelectionType();
     QString getSelectionTypeName();
+    QString typeToString(const ParameterType &type);
     bool isParOptional(int n);
     QString getParComment(int n);
 
@@ -33,6 +41,7 @@ class Command {
     QString name;
     SelectionType selectionType;
     QList<ParameterType> parTypes;
+    ParameterType returnType;
     QList<bool> parOpts;
     QStringList parComments;
 };

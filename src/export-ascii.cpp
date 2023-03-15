@@ -31,8 +31,8 @@ void ExportASCII::doExport()
     QString curIndent;
     QString dashIndent;
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
 
     int lastDepth = 0;
 

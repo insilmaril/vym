@@ -76,6 +76,7 @@ HEADERS	+= \
     src/branchpropeditor.h\
     src/codeeditor.h \
     src/command.h \
+    src/container.h \
     src/confluence-agent.h \
     src/confluence-user.h \
     src/confluence-userdialog.h \
@@ -189,6 +190,7 @@ SOURCES	+= \
     src/codeeditor.cpp \
     src/command.cpp \
     src/confluence-agent.cpp \
+    src/container.cpp \
     src/confluence-user.cpp \
     src/credentials.cpp \
     src/dockeditor.cpp \

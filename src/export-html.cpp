@@ -2,7 +2,7 @@
 
 #include <QMessageBox>
 
-#include "branchobj.h"
+#include "heading-container.h"
 #include "mainwindow.h"
 #include "warningdialog.h"
 
@@ -30,11 +30,11 @@ QString ExportHTML::getBranchText(BranchItem *current)
     if (current) {
         bool vis = false;
         QRectF hr;
-        LinkableMapObj *lmo = current->getLMO();
-        if (lmo) {
-            hr = ((BranchObj *)lmo)->getBBoxHeading();
-            vis = lmo->isVisibleObj();
-        }
+        BranchContainer *bc = current->getBranchContainer();
+        HeadingContainer *hc = bc->getHeadingContainer();
+        hr = hc->mapRectToScene(hc->rect());
+        vis = hc->isVisible();
+
         QString col;
         QString id = model->getSelectString(current);
         if (dia.useTextColor)
@@ -80,7 +80,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                                              "Alt tag in HTML export")
                                      .arg(f->getName()))
                             .arg(uid.toString() +
-                                 f->getImageObj()->getExtension());
+                                 f->getImageContainer()->getExtension());
             }
         }
 
@@ -97,7 +97,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                      .arg(number + taskFlags + heading + flags)
                      .arg(QObject::tr("Flag: url", "Alt tag in HTML export"));
 
-            QRectF fbox = current->getBBoxURLFlag();
+            QRectF fbox = current->getBranchContainer()->getBBoxURLFlag();
             if (vis)
                 imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' "
                                     "href='%5' alt='External link: %6'>\n")
@@ -114,7 +114,8 @@ QString ExportHTML::getBranchText(BranchItem *current)
         s += "</span>";
 
         // Create imagemap
-        if (vis && dia.includeMapImage)
+        if (vis && dia.includeMapImage) // FIXME-3 maybe use polygons instead of QRectF for shapes
+                                        // shape = "poly" coords="x1,y1,x2,y2,..."
             imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' "
                                 "href='#%5' alt='%6'>\n")
                             .arg(hr.left() - offset.x())
@@ -260,8 +261,8 @@ QString ExportHTML::createTOC()
     toc += "\n";
     toc += "</td></tr>\n";
     toc += "<tr><td>\n";
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
         if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent()) {
@@ -300,7 +301,7 @@ void ExportHTML::doExport(bool useDialog)
 
     // Check, if warnings should be used before overwriting
     // the output directory
-    if (dia.getDir().exists() && dia.getDir().count() > 0) {
+    if (dia.getDir().exists() && dia.getDir().entryList(QDir::NoDot | QDir::NoDotDot).count() > 0) {
         WarningDialog warn;
         warn.showCancelButton(true);
         warn.setText(QString("The directory %1 is not empty.\n"
@@ -436,7 +437,7 @@ void ExportHTML::doExport(bool useDialog)
             f = userFlagsMaster->findFlagByUid(uid);
 
         if (f) {
-            ImageObj *io = f->getImageObj();
+            ImageContainer *io = f->getImageContainer();
             if (io)
                 io->save(flagsBasePath + "/" + uid.toString() +
                          io->getExtension());

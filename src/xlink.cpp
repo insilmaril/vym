@@ -31,11 +31,11 @@ Link::~Link()
 
 void Link::init()
 {
-    xlo = NULL;
-    beginBranch = NULL;
-    endBranch = NULL;
-    beginLinkItem = NULL;
-    endLinkItem = NULL;
+    xlo = nullptr;
+    beginBranch = nullptr;
+    endBranch = nullptr;
+    beginLinkItem = nullptr;
+    endLinkItem = nullptr;
     xLinkState = Link::undefinedXLink;
 
     type = Bezier;
@@ -56,11 +56,8 @@ BranchItem *Link::getBeginBranch() { return beginBranch; }
 
 void Link::setEndBranch(BranchItem *bi)
 {
-    if (bi) {
+    if (bi)
         endBranch = bi;
-        if (xlo)
-            xlo->initC1();
-    }
 }
 
 BranchItem *Link::getEndBranch() { return endBranch; }
@@ -98,7 +95,7 @@ XLinkItem *Link::getOtherEnd(XLinkItem *xli)
         return endLinkItem;
     if (xli == endLinkItem)
         return beginLinkItem;
-    return NULL;
+    return nullptr;
 }
 
 void Link::setPen(const QPen &p)
@@ -173,12 +170,12 @@ void Link::deactivate()
     //    qDebug()<<"Link::deactivate ******************************";
     xLinkState = deleteXLink;
     if (beginLinkItem)
-        beginLinkItem->setLink(NULL);
+        beginLinkItem->setLink(nullptr);
     if (endLinkItem)
-        endLinkItem->setLink(NULL);
+        endLinkItem->setLink(nullptr);
     if (xlo) {
         delete (xlo);
-        xlo = NULL;
+        xlo = nullptr;
     }
 }
 
@@ -188,9 +185,9 @@ void Link::removeXLinkItem(XLinkItem *xli)
 {
     // Only mark _one_ end for removal here!
     if (xli == beginLinkItem)
-        beginLinkItem = NULL;
+        beginLinkItem = nullptr;
     if (xli == endLinkItem)
-        endLinkItem = NULL;
+        endLinkItem = nullptr;
     xLinkState = deleteXLink;
 }
 
@@ -253,12 +250,10 @@ QString Link::saveToDir()
 
 XLinkObj *Link::getXLinkObj() { return xlo; }
 
-XLinkObj *Link::createMapObj()
+XLinkObj *Link::createXLinkObj()
 {
     if (!xlo)
-        xlo = new XLinkObj(beginBranch->getLMO(), this);
+        xlo = new XLinkObj(this);
     xlo->setVisibility();
     return xlo;
 }
-
-MapObj *Link::getMO() { return xlo; }

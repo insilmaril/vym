@@ -13,6 +13,7 @@
 #include "branchitem.h"
 #include "file.h"
 #include "imageitem.h"
+#include "linkobj.h"
 #include "mapeditor.h"
 #include "treeitem.h"
 #include "treemodel.h"
@@ -23,6 +24,7 @@ class AttributeItem;
 class BranchItem;
 class FindResultModel;
 class Link;
+class MapDesign;
 class MapEditor;
 class SlideItem;
 class SlideModel;
@@ -83,7 +85,7 @@ class VymModel : public TreeModel {
   private:
     bool zipped;       // should map be zipped
     static int mapNum; // unique number for model used in save/undo
-    FileType fileType; // type of file, e.g. vym, freemind...
+    File::FileType fileType; // type of file, e.g. vym, freemind...
     QString fileName;  // short name of file (for tab)
                       // example.vym
 
@@ -151,9 +153,9 @@ class VymModel : public TreeModel {
     */
     File::ErrorCode
     loadMap(QString, //!< Path
-            const LoadMode &lmode =
-                NewMap, //!< New map, replace or add to selection
-            const FileType &ftype = VymMap, //!< VymMap or FreeMind
+            const File::LoadMode &lmode =
+                File::NewMap, //!< New map, replace or add to selection
+            const File::FileType &ftype = File::VymMap, //!< VymMap or FreeMind
             const int &contentFilter =
                 0x0000,  //!< For undo types of content can be filterd
             int pos = -1 //!< Optionally tell position where to add data
@@ -161,7 +163,7 @@ class VymModel : public TreeModel {
 
   public:
     /*! \brief Save the map to file */
-    File::ErrorCode save(const SaveMode &);
+    File::ErrorCode save(const File::SaveMode &);
 
   public:
     void loadImage(BranchItem *dst = NULL, const QString &fn = "");
@@ -201,6 +203,11 @@ class VymModel : public TreeModel {
 
     QString histPath;       //!< Path to history file
     SimpleSettings undoSet; //!< undo/redo commands, saved in histPath
+    QString undoBlockComment;//!< Comment for a set of undo commands in history
+    QString undoBlock;      //!< undo commands in saveStateBeginBlock, including select statements
+    QString redoBlock;      //!< redo commands in saveStateBeginBlock, including select statements
+    bool buildingUndoBlock; //!< true, while a set of undo commands is built
+
     int stepsTotal;         //!< total number of steps (undos+redos)
     int curStep;            //!< Current step in history (ring buffer)
     int curClipboard;       //!< number of history step, which is the current
@@ -222,7 +229,6 @@ class VymModel : public TreeModel {
       Returns heading of a branch or name of an object for use in comment
       of undo/redo history
     */
-    QString getObjectName(LinkableMapObj *);
     QString getObjectName(TreeItem *);
 
     void redo();            //!< Redo last action
@@ -248,10 +254,10 @@ class VymModel : public TreeModel {
     Additionally a comment is logged.
 
     */
-    void saveState(const SaveMode &savemode, const QString &undoSelection,
+    void saveState(const File::SaveMode &savemode, const QString &undoSelection,
                    const QString &undoCommand, const QString &redoSelection,
-                   const QString &redoCommand, const QString &comment,
-                   TreeItem *saveSelection, QString dataXML = "");
+                   const QString &redoCommand, const QString &comment = "",
+                   TreeItem *saveSelection = nullptr, QString dataXML = "");
 
     /*! Overloaded for convenience */
     void saveStateChangingPart(TreeItem *undoSelection, TreeItem *redoSelection,
@@ -264,16 +270,16 @@ class VymModel : public TreeModel {
     /*! Overloaded for convenience */
     void saveState(TreeItem *undoSelection, const QString &undoCommand,
                    TreeItem *redoSelection, const QString &redoCommand,
-                   const QString &comment);
+                   const QString &comment = "");
 
     /*! Overloaded for convenience */
     void saveState(const QString &undoSelection, const QString &undoCommand,
                    const QString &redoSelection, const QString &redoCommand,
-                   const QString &comment);
+                   const QString &comment = "");
 
     /*! Overloaded for convenience */
     void saveState(const QString &undoCommand, const QString &redoCommand,
-                   const QString &comment);
+                   const QString &comment = "");
 
     /*! Save a change in string and merge
     minor sequential  changes  */
@@ -282,7 +288,11 @@ class VymModel : public TreeModel {
                           const QString &comment);
 
     /*! Save state before loading a map */
-    void saveStateBeforeLoad(LoadMode lmode, const QString &fname);
+    void saveStateBeforeLoad(File::LoadMode lmode, const QString &fname);
+
+    /*! Put several states into one block for a single undo step */
+    void saveStateBeginBlock(const QString &comment);
+    void saveStateEndBlock();
 
     ////////////////////////////////////////////
     // unsorted so far
@@ -293,6 +303,8 @@ class VymModel : public TreeModel {
     TreeItem *findBySelectString(QString s);
     TreeItem *findID(const uint &i);    // find MapObj by unique ID
     TreeItem *findUuid(const QUuid &i); // find MapObj by unique ID
+
+    void test();
 
     ////////////////////////////////////////////
     // Interface
@@ -351,17 +363,16 @@ class VymModel : public TreeModel {
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 
-    void setFrameType(const FrameObj::FrameType &);
-    void setFrameType(const QString &);
-    void toggleFrameIncludeChildren();
-    void setFrameIncludeChildren(bool);
-    void setFramePenColor(const QColor &);
-    void setFrameBrushColor(const QColor &);
-    void setFramePadding(const int &);
-    void setFrameBorderWidth(const int &);
-    void setIncludeImagesVer(bool);
-    void setIncludeImagesHor(bool);
-    void setChildrenLayout(BranchItem::LayoutHint layoutHint);
+    void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
+    void setFrameType(const bool &useInnerFrame, const QString &);
+    void setFramePenColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);
+    void setFrameBrushColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);
+    void setFramePadding(const bool &useInnerFrame, const int &, BranchItem *bi = nullptr);
+    void setFramePenWidth(const bool &useInnerFrame, const int &, BranchItem *bi = nullptr);
+    void setBranchesLayout(const QString &, BranchItem *bi = nullptr);
+    void setImagesLayout(const QString &, BranchItem *bi = nullptr);
+    void setRotationHeading(const int &);
+    void setRotationSubtree(const int &);
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */
@@ -409,11 +420,11 @@ class VymModel : public TreeModel {
     void moveDown();               //!< Move branch down
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
-    void detach();                 //!< Detach branch and use as new mapcenter
+    void detach(BranchItem* bi = nullptr);   //!< Detach branch and use as new mapcenter
     void sortChildren(bool inverse = false); //!< Sort children lexically
 
     // The create methods are used to quickly parse a XML file
-    BranchItem *createMapCenter();             //!< Create MapCenter
+    BranchItem *createMapCenter(int pos = -1); //!< Create MapCenter
     BranchItem *createBranch(BranchItem *dst); //!< Create Branch
     ImageItem *createImage(BranchItem *dst);   //!< Create image
 
@@ -426,15 +437,16 @@ class VymModel : public TreeModel {
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
-    AttributeItem *setAttribute();
-    AttributeItem *setAttribute(BranchItem *dst, AttributeItem *);
+    AttributeItem* setAttribute();
+    AttributeItem* setAttribute(BranchItem *dst, AttributeItem *);
+    AttributeItem* getAttributeByKey(const QString &key);
 
     /*! \brief Add new mapcenter
 
-    Disclaimer: Still experimental, not fully supported yet.
+    Disclaimer: Still experimental, not fully supported yet. FIXME-2 compare with createMapCenter()
     */
     BranchItem *addMapCenter(bool saveStateFlag = true);
-    BranchItem *addMapCenter(QPointF absPos);
+    BranchItem *addMapCenterAtPos(QPointF absPos);
 
     /*! \brief Add new branch
 
@@ -463,24 +475,25 @@ class VymModel : public TreeModel {
     BranchItem *addNewBranch(BranchItem *bi = NULL, int pos = -2);
     BranchItem *
     addNewBranchBefore(); //!< Insert branch between selection and its parent
+
     /*! \brief Relink a branch to a new destination dst
-    Relinks branch to dst at branch position pos. There is no saveState
-    here, as for example moveUp or moving in MapEditor have
-    different needs to call saveState
-    Returns true if relinking was successful.
+        Relinks branch to dst at branch position pos. There is no saveState
+        here, as for example moveUp or moving in MapEditor have
+        different needs to call saveState
+        Returns true if relinking was successful.
     */
-    bool relinkBranch(BranchItem *branch, BranchItem *dst, int pos = -1,
-                      bool updateSelection = false, QPointF orgPos = QPointF());
+    bool relinkBranch(BranchItem *branch, BranchItem *dst, int num_new = -1,
+                      bool updateSelection = false);
     bool relinkImage(ImageItem *image, BranchItem *dst);
 
-    bool relinkTo(const QString &dest, int num, QPointF pos);
+    bool relinkTo(const QString &dest, int num);
 
   private:
     bool cleaningUpLinks; //!< True while cleaning up to avoid recursion
   public:
     void cleanupItems();    //!< Delete orphaned Items
     void deleteLater(uint); //!< Delete later with new beginRemoveRow
-    void deleteSelection(); //!< Delete selection
+    void deleteSelection(ulong selID = 0); //!< Delete selection
     void deleteKeepChildren(
         bool saveStateFlag = true); //!< remove branch, but keep children
   public:
@@ -489,7 +502,6 @@ class VymModel : public TreeModel {
     TreeItem *deleteItem(
         TreeItem *); //!< Delete item and return parent (if parent!= rootItem)
     void deleteLink(Link *); //!< Remove Link and related LinkItems in TreeModel
-    void clearItem(TreeItem *ti); //!< Remove all children of TreeItem ti
     bool scrollBranch(BranchItem *);
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
@@ -659,22 +671,30 @@ class VymModel : public TreeModel {
   private:
     MapEditor *mapEditor;
 
-    QColor defLinkColor;        // default color for links
-    QPen defXLinkPen;           // default pen for xlinks
-    QString defXLinkStyleBegin; // default style begin
+    ////////////////////////////////////////////
+    // MapDesign
+    ////////////////////////////////////////////
+  public:
+    MapDesign* getMapDesign();
+  private:
+    MapDesign* mapDesign;
+
+    QPen defXLinkPen;           // default pen for xlinks   //FIXME-2 move to mapDesign
+    QString defXLinkStyleBegin; // default style begin      //FIXME-2 move to mapDesign
     QString defXLinkStyleEnd;
-    ;                                        // default style end
-    LinkableMapObj::ColorHint linkcolorhint; // use heading color or own color
-    LinkableMapObj::Style linkstyle;         // default style for links
-    QFont defaultFont;
+                                             // default style end
+    QFont defaultFont;                                      //FIXME-2 move to mapDesign
 
   public:
     bool setMapLinkStyle(const QString &);   // Set style of link
-    LinkableMapObj::Style getMapLinkStyle(); // requested in LMO
-    void setMapDefLinkColor(QColor);         // default color of links
-    void setMapLinkColorHintInt();           // color of links
-    void setMapLinkColorHint(LinkableMapObj::ColorHint); // color of links
-    void toggleMapLinkColorHint(); // after changing linkStyles
+    LinkObj::Style getMapLinkStyle();
+
+    QColor getDefaultLinkColor();
+    void setDefaultLinkColor(const QColor&);         // default color of links
+    LinkObj::ColorHint getLinkColorHint();
+    void setLinkColorHint(const LinkObj::ColorHint &);
+    void toggleLinkColorHint(); // after changing linkStyles
+
     void selectMapBackgroundImage();
     void setMapBackgroundImage(const QString &);
     void selectMapBackgroundColor();
@@ -684,8 +704,6 @@ class VymModel : public TreeModel {
     QFont getMapDefaultFont();
     void setMapDefaultFont(const QFont &);
 
-    LinkableMapObj::ColorHint getMapLinkColorHint();
-    QColor getMapDefLinkColor();
     void setMapDefXLinkPen(const QPen &p);
     QPen getMapDefXLinkPen();
 
@@ -694,31 +712,8 @@ class VymModel : public TreeModel {
     void setMapDefXLinkStyleEnd(const QString &s);
     QString getMapDefXLinkStyleEnd();
 
-    /*!  Move absolutly to (x,y).  */
-    void move(const double &x, const double &y);
-
-    /*!  Move relativly to (x,y).  */
-    void moveRel(const double &x, const double &y);
-
-    ////////////////////////////////////////////
-    // Animation  **experimental**
-    ////////////////////////////////////////////
-  private:
-    QTimer *animationTimer;
-    bool animationUse;
-    uint animationTicks;
-    uint animationInterval;
-    int timerId;                 // animation timer
-    QList<MapObj *> animObjList; // list with animated objects
-
-  private slots:
-    void animate(); //!< Called by timer to animate stuff
-  public:
-    void startAnimation(BranchObj *bo, const QPointF &v);
-    void startAnimation(BranchObj *bo, const QPointF &start,
-                        const QPointF &dest);
-    void stopAnimation(MapObj *mo);
-    void stopAllAnimation();
+    /*!  Set position as QGraphicsItem. Only without parentItem absolute position is used */
+    void setPos(const QPointF &p, TreeItem *ti = nullptr);
 
     ////////////////////////////////////////////
     // Network related
@@ -783,7 +778,6 @@ class VymModel : public TreeModel {
 
     bool select(const QString &);          //! Select by string
     bool selectID(const QString &);        //! select by unique ID (QUuid)
-    bool select(LinkableMapObj *lmo);      //! Select by pointer to LMO
     bool selectToggle(TreeItem *ti);       //! Toggle select state
     bool selectToggle(const QString &selectString); //! Overloaded function to toggle select state
     bool select(TreeItem *ti);             //! Select by pointer to TreeItem
@@ -815,10 +809,8 @@ class VymModel : public TreeModel {
 
   public:
     TreeItem::Type selectionType();
-    LinkableMapObj *getSelectedLMO();
-    BranchObj *getSelectedBranchObj();
     BranchItem *getSelectedBranch();
-    QList<BranchItem *> getSelectedBranches();
+    QList<BranchItem *> getSelectedBranches(BranchItem *bi = nullptr);
     ImageItem *getSelectedImage();
     Task *getSelectedTask();
     XLinkItem *getSelectedXLinkItem();
@@ -827,11 +819,10 @@ class VymModel : public TreeModel {
     TreeItem *getSelectedItem();
     QList<TreeItem *> getSelectedItems();
     QModelIndex getSelectedIndex();
-    QList<uint> getSelectedIDs();
+    QList<ulong> getSelectedIDs();
     QStringList getSelectedUUIDs();
     bool isSelected(TreeItem *);
     QString getSelectString();
-    QString getSelectString(LinkableMapObj *lmo);
     QString getSelectString(TreeItem *item);
     QString getSelectString(BranchItem *item);
     QString getSelectString(const uint &i);
@@ -846,7 +837,6 @@ class VymModel : public TreeModel {
     void emitSelectionChanged(const QItemSelection &oldsel);
     void emitSelectionChanged();
     void selectMapLinkColor();
-    void selectMapSelectionColor();
 
   private:
     void setSelectionColorInt(QColor);

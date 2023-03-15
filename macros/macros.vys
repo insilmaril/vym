@@ -3,10 +3,10 @@
 // Helper function to toggle frame
 function toggle_frame(map)
 {
-    if (map.getFrameType() == "NoFrame" ) {
-        map.setFrameType ("RoundedRectangle");
+    if (map.getFrameType(true) == "NoFrame" ) {
+        map.setFrameType (true, "RoundedRectangle");
 	} else
-		map.setFrameType ("NoFrame");
+    map.setFrameType (true, "NoFrame");
 }
 function colorSubtreeWithQuickColor(n)
 {
@@ -51,43 +51,41 @@ function macro_f5()
     colorSubtreeWithQuickColor(4);
 }
 
-// Macro F6: Color subtree black
+// Macro F6: Color subtree blue
 function macro_f6()
 {
     colorSubtreeWithQuickColor(5);
 }
 
-// Macro F7: Color subtree dark gray
+// Macro F7: Color subtree black
 function macro_f7()
 {
     colorSubtreeWithQuickColor(6);
 }
 
-// Macro F8: Color subtree light gray
+// Macro F8: Color subtree dark gray
 function macro_f8()
 {
     colorSubtreeWithQuickColor(7);
 }
 
-// Macro F9: Color subtree light white
+// Macro F9: Color subtree light gray
 function macro_f9()
 {
     colorSubtreeWithQuickColor(8);
 }
 
-// Macro F10: Repeat last command
+// Macro F10: Color subtree light white
 function macro_f10()
 {
-    map = vym.currentMap();
-    map.repeatLastCommand();
+    colorSubtreeWithQuickColor(9);
 }
 
-// Macro F11: Set task to sleep until next day
+// Macro F11: Repeat last command
 function macro_f11()
 {
     map = vym.currentMap();
-    map.setTaskSleep("1");
-    statusMessage("Task sleeping until tomorrow");
+    map.repeatLastCommand();
 }
 
 // Macro F12: toggle high prio task
@@ -105,7 +103,7 @@ function macro_f12()
         map.unsetFlagByName("stopsign");
         map.setFlagByName("hook-green");
         map.colorBranch("#0000ff");
-    } else {	  
+    } else {
         if (map.hasActiveFlag("hook-green")) {
             // Switch to state 0
             map.unsetFlagByName("hook-green");
@@ -127,7 +125,7 @@ function macro_shift_f1()
         status = "Background light red";
     }
     toggle_frame ( map );
-    map.setFrameBrushColor("#ffb3b4");
+    map.setFrameBrushColor(true, "#ffb3b4");
     statusMessage(status);
 }
 
@@ -136,11 +134,11 @@ function macro_shift_f2()
 {
     map = vym.currentMap();
     status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
+    if (map.getFrameType(true) == "NoFrame") {
         status = "Background light green";
     }
     toggle_frame ( map );
-    map.setFrameBrushColor("#bdffd6");
+    map.setFrameBrushColor(true, "#bdffd6");
     statusMessage(status);
 }
 
@@ -149,11 +147,11 @@ function macro_shift_f3()
 {
     map = vym.currentMap();
     status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
+    if (map.getFrameType(true) == "NoFrame") {
         status = "Background light yellow";
     }
     toggle_frame ( map );
-    map.setFrameBrushColor("#efefb3");
+    map.setFrameBrushColor(true, "#efefb3");
     statusMessage(status);
 }
 
@@ -162,11 +160,11 @@ function macro_shift_f4()
 {
     map = vym.currentMap();
     status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
+    if (map.getFrameType(true) == "NoFrame") {
         status = "Background light blue";
     }
     toggle_frame ( map );
-    map.setFrameBrushColor("#e2e6ff");
+    map.setFrameBrushColor(true, "#e2e6ff");
     statusMessage(status);
 }
 
@@ -175,11 +173,11 @@ function macro_shift_f5()
 {
     map = vym.currentMap();
     status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
+    if (map.getFrameType(true) == "NoFrame") {
         status = "Background light grey";
     }
     toggle_frame ( map );
-    map.setFrameBrushColor("#d6d6d6");
+    map.setFrameBrushColor(true, "#d6d6d6");
     statusMessage(status);
 }
 
@@ -188,11 +186,11 @@ function macro_shift_f6()
 {
     map = vym.currentMap();
     status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
+    if (map.getFrameType(true) == "NoFrame") {
         status = "Background purple";
     }
     toggle_frame ( map );
-    map.setFrameBrushColor("#ffaaff");
+    map.setFrameBrushColor(true, "#ffaaff");
     statusMessage(status);
 }
 
@@ -214,25 +212,23 @@ function macro_shift_f8()
 {
     map = vym.currentMap();
     status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
+    if (map.getFrameType(true) == "NoFrame") {
         status = "Background black";
     }
     toggle_frame ( map );
-    map.setFrameBrushColor("#000000");
+    map.setFrameBrushColor(true, "#000000");
     statusMessage(status);
 }
 
-// Macro Shift + F9: Toggle frame to include children
+// Macro Shift + F9:
 function macro_shift_f9()
 {
-    map = vym.currentMap();
-    map.toggleFrameIncludeChildren();
 }
 
 // Macro Shift + F10: 
 // Useful for timestamps created on last entry
 function macro_shift_f10()
-{   
+{
 }
 
 // Macro Shift + F11: Replace "@..." by mutt aliases

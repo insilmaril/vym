@@ -27,7 +27,7 @@ QString mkdtemp(QString tmpl)
         return QString();
     }
 
-    uint64_t random_time_bits = time(NULL);
+    uint64_t random_time_bits = time(nullptr);
 
     value += (random_time_bits ^ getpid());
 

@@ -2,7 +2,6 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "branchobj.h"
 #include "imageitem.h"
 #include "treeitem.h"
 #include "treemodel.h"
@@ -10,16 +9,17 @@
 
 TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
-    // qDebug()<<"Constr TreeModel  this=" << this;
+    // qDebug() << "Constr TreeModel  this=" << this;
     QList<QVariant> rootData;
     rootData << "Heading";
     // rootData << "Type";
     rootItem = new BranchItem();
+    rootItem->setHeadingPlainText("rootItem");
 }
 
 TreeModel::~TreeModel()
 {
-    // qDebug()<<"Destr TreeModel  this="<<this;
+    //qDebug()<<"Destr TreeModel  this="<<this;
     delete rootItem;
 }
 
@@ -29,28 +29,14 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     TreeItem *item = getItem(index);
-    BranchItem *bi = nullptr;
-    if (item->isBranchLikeType())
-        bi = (BranchItem*)item;
 
     if (role == Qt::EditRole || role == Qt::DisplayRole)
         return item->data(index.column());
 
     if (role == Qt::ForegroundRole)
-        return item->getHeadingColor(); // FIXME-0 color for selected text??? Maybe don't use selection color at all?
-
-    if (role == Qt::BackgroundRole) {
-        if (bi) {
-            BranchItem *frameBI = bi->getFramedParentBranch(bi);
-            if (frameBI && index.column() != 5) {
-                BranchObj *bo = frameBI->getBranchObj();
-                if (bo)
-                    return bo->getFrameBrushColor();
-            }
-            else
-                return backgroundColor;
-        }
-    }
+        return item->getHeadingColor();
+    // if (role == Qt::BackgroundRole )  // does not look nice  // FIXME-0 check again!
+    //  return item->getBackgroundColor();
 
     return QVariant();
 }
@@ -142,7 +128,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
 {
     if (deepLevelsFirst) {
         // Walk through map beginning at current with previous==0
-        // Start at root, if current==NULL
+        // Start at root, if current==nullptr
         if (!current) {
             if (start) {
                 current = start;
@@ -160,7 +146,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
         if (current == previous) {
             // Had leaf before, go up again.
             if (start && start == current) {
-                current = NULL;
+                current = nullptr;
                 return;
             }
             current = current->parentBranch();
@@ -196,7 +182,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
             else {
                 // and go further up
                 if (current == rootItem)
-                    current = NULL;
+                    current = nullptr;
                 previous = current;
                 return;
             }
@@ -204,7 +190,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
     }
     else {
         // Walk through map beginning at current with previous==0
-        // Start at root, if current==NULL
+        // Start at root, if current==nullptr
         if (!current) {
             if (start) {
                 current = start;
@@ -235,7 +221,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
         }
         else {
             if (start && previous == start) {
-                current = NULL;
+                current = nullptr;
                 return;
             }
 
@@ -251,7 +237,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
                 previous = current;
                 current = current->parentBranch();
                 if (!current) {
-                    current = NULL;
+                    current = nullptr;
                     return;
                 }
                 else {
@@ -288,7 +274,7 @@ TreeItem *TreeModel::getItem(const QModelIndex &index) const
         if (item)
             return item;
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *TreeModel::getRootItem() { return rootItem; }
@@ -300,5 +286,5 @@ Link *TreeModel::getXLinkNum(const int &n)
     if (n >= 0 && n < xlinks.count())
         return xlinks.at(n);
     else
-        return NULL;
+        return nullptr;
 }

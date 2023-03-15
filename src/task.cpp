@@ -11,7 +11,7 @@ Task::Task(TaskModel *tm)
     //    qDebug()<<"Constr. Task";
     status = NotStarted;
     awake = Task::WideAwake;
-    branch = NULL;
+    branch = nullptr;
     prio = 0;
     prio_delta = 0;
     model = tm;
@@ -22,7 +22,7 @@ Task::~Task()
 {
     //    qDebug()<<"Destr. Task";
     if (branch)
-        branch->setTask(NULL);
+        branch->setTask(nullptr);
 }
 
 void Task::setModel(TaskModel *tm) { model = tm; }

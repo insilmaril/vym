@@ -31,6 +31,7 @@ using namespace std;
 #include "confluence-userdialog.h"
 #include "credentials.h"
 #include "darktheme-settings-dialog.h"
+#include "debuginfo.h"
 #include "download-agent.h"
 #include "file.h"
 #include "findresultmodel.h"
@@ -62,7 +63,7 @@ using namespace std;
 #include "xlinkitem.h"
 #include "zip-settings-dialog.h"
 
-QPrinter *printer = NULL;
+QPrinter *printer = nullptr;
 
 //#include <modeltest.h>
 
@@ -137,6 +138,8 @@ extern QDir lastMapDir;
 extern QDir vymInstallDir;
 #endif
 extern QString zipToolPath;
+
+extern QColor vymBlue;
 
 Main::Main(QWidget *parent) : QMainWindow(parent)
 {
@@ -383,7 +386,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     progressDialog.setMinimumWidth(600);
     // progressDialog.setWindowModality (Qt::WindowModal);   // That forces
     // mainwindo to update and slows down
-    progressDialog.setCancelButton(NULL);
+    progressDialog.setCancelButton(nullptr);
 
     restoreState(settings.value("/mainwindow/state", 0).toByteArray());
 
@@ -467,8 +470,8 @@ void Main::loadCmdLine()
 
     initProgressCounter(flist.count());
     while (it != flist.end()) {
-        FileType type = getMapType(*it);
-        fileLoad(*it, NewMap, type);
+        File::FileType type = getMapType(*it);
+        fileLoad(*it, File::NewMap, type);
         *it++;
     }
     removeProgressCounter();
@@ -553,7 +556,7 @@ void Main::setupAPI()
     c = new Command("addBranchBefore", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("addMapCenter", Command::Any);
+    c = new Command("addMapCenterAtPos", Command::Any);
     c->addPar(Command::Double, false, "Position x");
     c->addPar(Command::Double, false, "Position y");
     modelCommands.append(c);
@@ -579,10 +582,10 @@ void Main::setupAPI()
     c->addPar(Command::String, true, "Penstyle of XLink");
     modelCommands.append(c);
 
-    c = new Command("branchCount", Command::Any);
+    c = new Command("branchCount", Command::Any, Command::Int);
     modelCommands.append(c);
 
-    c = new Command("centerCount", Command::BranchLike);
+    c = new Command("centerCount", Command::BranchLike, Command::Int);
     modelCommands.append(c);
 
     c = new Command("centerOnID", Command::Any);
@@ -610,96 +613,130 @@ void Main::setupAPI()
     c->addPar(Command::Bool, true, "True, if cycling in reverse order");
     modelCommands.append(c);
 
-    c = new Command("exportMap", Command::Any);
+    c = new Command("depth", Command::BranchOrImage, Command::Int);
+    modelCommands.append(c);
+
+    c = new Command("exportMap", Command::Any, Command::Bool);
     c->addPar(Command::String, false,
               "Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, "
               "LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
-    c = new Command("getDestPath", Command::Any);
+    c = new Command("getDestPath", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getFileDir", Command::Any);
+    c = new Command("getFileDir", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getFileName", Command::Any);
+    c = new Command("getFileName", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getFrameType", Command::Branch);
+    c = new Command("getFrameType", Command::Branch, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getHeadingPlainText", Command::TreeItem);
+    c = new Command("getHeadingPlainText", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getHeadingXML", Command::TreeItem);
+    c = new Command("getHeadingXML", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getMapAuthor", Command::Any);
+    c = new Command("getIntAttribute", Command::Branch, Command::Int);
+    c->addPar(Command::String, false, "Key of string attribute");
     modelCommands.append(c);
 
-    c = new Command("getMapComment", Command::Any);
+    c = new Command("getMapAuthor", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getMapTitle", Command::Any);
+    c = new Command("getMapComment", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getNotePlainText", Command::TreeItem);
+    c = new Command("getMapTitle", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getNoteXML", Command::TreeItem);
+    c = new Command("getNotePlainText", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getSelectionString", Command::TreeItem);
+    c = new Command("getNoteXML", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getTaskPriorityDelta", Command::Branch);
+    c = new Command("getPosX", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command("getTaskSleep", Command::Branch);
+    c = new Command("getPosY", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command("getTaskSleepDays", Command::Branch);
+    c = new Command("getScenePosX", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command("getURL", Command::TreeItem);
+    c = new Command("getScenePosY", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command("getVymLink", Command::Branch);
+    c = new Command("getRotationHeading", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("getXLinkColor", Command::XLink);
+    c = new Command("getRotationSubtree", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("getXLinkWidth", Command::XLink);
+    c = new Command("getSelectionString", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getXLinkPenStyle", Command::XLink);
+    c = new Command("getStringAttribute", Command::Branch, Command::String);
+    c->addPar(Command::String, false, "Key of integer attribute");
     modelCommands.append(c);
 
-    c = new Command("getXLinkStyleBegin", Command::XLink);
+    c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
     modelCommands.append(c);
 
-    c = new Command("getXLinkStyleEnd", Command::XLink);
+    c = new Command("getTaskSleep", Command::Branch, Command::String);
     modelCommands.append(c);
 
-    c = new Command("hasActiveFlag", Command::TreeItem);
+    c = new Command("getTaskSleepDays", Command::Branch, Command::Int);
+    modelCommands.append(c);
+
+    c = new Command("getURL", Command::TreeItem, Command::String);
+    modelCommands.append(c);
+
+    c = new Command("getVymLink", Command::Branch, Command::String);
+    modelCommands.append(c);
+
+    c = new Command("getXLinkColor", Command::XLink, Command::String);
+    modelCommands.append(c);
+
+    c = new Command("getXLinkWidth", Command::XLink, Command::Int);
+    modelCommands.append(c);
+
+    c = new Command("getXLinkPenStyle", Command::XLink, Command::String);
+    modelCommands.append(c);
+
+    c = new Command("getXLinkStyleBegin", Command::XLink, Command::String);
+    modelCommands.append(c);
+
+    c = new Command("getXLinkStyleEnd", Command::XLink, Command::String);
+    modelCommands.append(c);
+
+    c = new Command("hasActiveFlag", Command::TreeItem, Command::Bool);
     c->addPar(Command::String, false, "Name of flag");
     modelCommands.append(c);
 
-    c = new Command("hasNote", Command::Branch);
+    c = new Command("hasNote", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("hasRichTextNote", Command::Branch);
+    c = new Command("hasRichTextNote", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("hasTask", Command::Branch);
+    c = new Command("hasTask", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("importDir", Command::Branch);
     c->addPar(Command::String, false, "Directory name to import");
     modelCommands.append(c);
 
-    c = new Command("isScrolled", Command::Branch);
+    c = new Command("initIterator", Command::Branch, Command::Bool);
+    c->addPar(Command::String, false, "Name of iterator");
+    c->addPar(Command::Bool, true, "Flag to go deep levels first");
+    modelCommands.append(c);
+
+    c = new Command("isScrolled", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("loadImage", Command::Branch);
@@ -732,6 +769,10 @@ void Main::setupAPI()
     c->addPar(Command::Double, false, "Position y");
     modelCommands.append(c);
 
+    c = new Command("nextIterator", Command::Branch, Command::Bool);
+    c->addPar(Command::String, false, "Name of iterator");
+    modelCommands.append(c);
+
     c = new Command("nop", Command::Any);
     modelCommands.append(c);
 
@@ -739,7 +780,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     // internally required for undo/redo of changing VymText:
-    c = new Command("parseVymText", Command::Branch);
+    c = new Command("parseVymText", Command::Branch, Command::Bool);
     c->addPar(Command::String, false,
               "parse XML of VymText, e.g for Heading or VymNote");
     modelCommands.append(c);
@@ -751,8 +792,8 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("relinkTo",
-                    Command::TreeItem); // FIXME different number of parameters
-                                        // for Image or Branch
+                    Command::TreeItem,
+                    Command::Bool); // FIXME different number of parameters for Image or Branch
     c->addPar(Command::String, false, "Selection string of parent");
     c->addPar(Command::Int, false, "Index position");
     c->addPar(Command::Double, true, "Position x");
@@ -784,36 +825,48 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Filename of note to save");
     modelCommands.append(c);
 
+    c = new Command("saveSelection", Command::BranchOrImage);
+    c->addPar(Command::String, false, "Filename to save branch or image");
+    modelCommands.append(c);
+
     c = new Command("scroll", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("select", Command::Any);
+    c = new Command("select", Command::Any, Command::Bool);
     c->addPar(Command::String, false, "Selection string");
     modelCommands.append(c);
 
-    c = new Command("selectFirstBranch", Command::Branch);
+    c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("selectFirstChildBranch", Command::Branch);
+    c = new Command("selectFirstChildBranch", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("selectID", Command::Any);
+    c = new Command("selectID", Command::Any, Command::Bool);
     c->addPar(Command::String, false, "Unique ID");
     modelCommands.append(c);
 
-    c = new Command("selectLastBranch", Command::Branch);
+    c = new Command("selectLastBranch", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("selectLastChildBranch", Command::Branch);
+    c = new Command("selectLastChildBranch", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("selectLastImage", Command::Branch);
+    c = new Command("selectLastImage", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("selectLatestAdded", Command::Any);
+    c = new Command("selectLatestAdded", Command::Any, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("selectParent", Command::Branch);
+    c = new Command("selectParent", Command::Branch, Command::Bool);
+    modelCommands.append(c);
+
+    c = new Command("selectToggle", Command::BranchOrImage, Command::Bool);
+    modelCommands.append(c);
+
+    c = new Command("setAttribute", Command::Branch);
+    c->addPar(Command::String, false, "Key of attribute as string");
+    c->addPar(Command::String, false, "String Value of attribute");
     modelCommands.append(c);
 
     c = new Command("setFlagByName", Command::TreeItem);
@@ -849,8 +902,8 @@ void Main::setupAPI()
     c->addPar(Command::Int, false, "Padding around frame");
     modelCommands.append(c);
 
-    c = new Command("setFrameBorderWidth", Command::BranchOrImage);
-    c->addPar(Command::Int, false, "Width of frame borderline");
+    c = new Command("setFramePenWidth", Command::BranchOrImage);
+    c->addPar(Command::Int, false, "Width of frame pen");
     modelCommands.append(c);
 
     c = new Command("setHeadingConfluencePageName", Command::Branch);
@@ -862,16 +915,6 @@ void Main::setupAPI()
 
     c = new Command("setHideExport", Command::BranchOrImage);
     c->addPar(Command::Bool, false, "Set if item should be visible in export");
-    modelCommands.append(c);
-
-    c = new Command("setIncludeImagesHorizontally", Command::Branch);
-    c->addPar(Command::Bool, false,
-              "Set if images should be included horizontally in parent branch");
-    modelCommands.append(c);
-
-    c = new Command("setIncludeImagesVertically", Command::Branch);
-    c->addPar(Command::Bool, false,
-              "Set if images should be included vertically in parent branch");
     modelCommands.append(c);
 
     c = new Command("setHideLinksUnselected", Command::BranchOrImage);
@@ -905,11 +948,11 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "");
     modelCommands.append(c);
 
-    c = new Command("setMapDefLinkColor", Command::Any);
+    c = new Command("setDefaultLinkColor", Command::Any);
     c->addPar(Command::Color, false, "Default color of links");
     modelCommands.append(c);
 
-    c = new Command("setMapLinkStyle", Command::Any);
+    c = new Command("setLinkStyle", Command::Any);
     c->addPar(Command::String, false, "Link style in map");
     modelCommands.append(c);
 
@@ -929,12 +972,33 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Note of branch");
     modelCommands.append(c);
 
+    c = new Command("setPos", Command::BranchOrImage);
+    c->addPar(Command::Double, false, "Position x");
+    c->addPar(Command::Double, false, "Position y");
+    modelCommands.append(c);
+
+    c = new Command("setRotationHeading", Command::Branch);
+    c->addPar(Command::Int, false, "Rotation angle of heading and flags");
+    modelCommands.append(c);
+
+    c = new Command("setRotationSubtree", Command::Branch);
+    c->addPar(Command::Int, false, "Rotation angle of heading and subtree");
+    modelCommands.append(c);
+
     c = new Command("setScaleFactor", Command::Image);
     c->addPar(Command::Double, false, "Scale image by factor f");
     modelCommands.append(c);
 
     c = new Command("setSelectionColor", Command::Any);
     c->addPar(Command::Color, false, "Color of selection box");
+    modelCommands.append(c);
+
+    c = new Command("setTaskPriority", Command::Branch);
+    c->addPar(Command::Int, false, "Priority of task");
+    modelCommands.append(c);
+
+    c = new Command("setTaskSleep", Command::Branch, Command::Bool);
+    c->addPar(Command::String, false, "Sleep time of task");
     modelCommands.append(c);
 
     c = new Command("setURL", Command::TreeItem);
@@ -997,7 +1061,7 @@ void Main::setupAPI()
     c = new Command("undo", Command::Any);
     modelCommands.append(c);
 
-    c = new Command("unscroll", Command::Branch);
+    c = new Command("unscroll", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("unscrollChildren", Command::Branch);
@@ -1010,15 +1074,15 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Name of flag to unset");
     modelCommands.append(c);
 
-    c = new Command("toggleFlag", Command::Branch);
-    c->addPar(Command::String, false, "Name of flag to toggle");
-    modelCommands.append(c);
-
     //
     // Below are the commands for vym itself:
     //
 
     c = new Command("clearConsole", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("closeMapWithID", Command::Any);
+    c->addPar(Command::Int, false, "ID of map (unsigned int)");
     vymCommands.append(c);
 
     c = new Command("currentMap", Command::Any);
@@ -1037,7 +1101,7 @@ void Main::setupAPI()
     c = new Command("mapCount", Command::Any);
     vymCommands.append(c);
 
-    c = new Command("selectMap", Command::Any);
+    c = new Command("gotoMap", Command::Any);
     c->addPar(Command::Int, false, "Index of map");
     vymCommands.append(c);
 
@@ -1126,7 +1190,24 @@ void Main::setupFileActions()
 
     fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
 
-    a = new QAction( tr("Firefox Bookmarks", "Import filters") + 
+    // Import at selection (adding to selection)
+    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportAdd = a;
+    fileImportMenu->addAction(a);
+
+    // Import at selection (replacing selection)
+    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportReplace = a;
+    fileImportMenu->addAction(a);
+    fileImportMenu->addSeparator();
+
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") +
                         tr("(experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this,
@@ -1927,20 +2008,6 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep28 = a;
-
-    // Import at selection (adding to selection)
-    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportAdd = a;
-
-    // Import at selection (replacing selection)
-    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportReplace = a;
 
     // Save selection
     a = new QAction(tr("Save selection", "Edit menu"), this);
@@ -2818,8 +2885,8 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
     case Flag::UserFlag:
         flag = userFlagsMaster->createFlag(path);
 
-        // User flags read from file already have a Uuid - use it
-        if (!uid.isNull())
+        if (flag &&!uid.isNull())
+            // User flags read from file already have a Uuid - use it
             flag->setUuid(uid);
         break;
 
@@ -2847,8 +2914,8 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
     QAction *a;
 
     // Set icon for action
-    ImageObj *image = flag->getImageObj();
-    a = new QAction(image->getIcon(), flag->getUuid().toString(), this);
+    ImageContainer *ic = flag->getImageContainer();
+    a = new QAction(ic->getIcon(), flag->getUuid().toString(), this);
 
     flag->setAction(a);
     a->setCheckable(true);
@@ -3120,7 +3187,7 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(helpDoc()));
 
-    a = new QAction(tr("Open VYM example maps ", "Help action"), this);
+    a = new QAction(tr("Open VYM example maps ", "Help action") + "...", this);
     helpMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(helpDemo()));
     helpMenu->addSeparator();
@@ -3142,9 +3209,13 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(helpMacros()));
 
+    a = new QAction(tr("Show scripting commands", "Help action"), this);
+    helpMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(helpScriptingCommands()));
+
     a = new QAction(tr("Debug info", "Option to show debugging info"), this);
     helpMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(debugInfo()));
+    connect(a, SIGNAL(triggered()), this, SLOT(helpDebugInfo()));
 
     a = new QAction(tr("About QT", "Help action"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(helpAboutQT()));
@@ -3431,11 +3502,9 @@ void Main::setupToolbars()
     c.setNamedColor ("#d95100"); quickColors << c;  // Orange
     c.setNamedColor ("#009900"); quickColors << c;  // Green
     c.setNamedColor ("#aa00ff"); quickColors << c;  // Purple
-    if (usingDarkTheme)
-        c.setNamedColor ("#00aaff");                // LightBlue
-    else
-        c.setNamedColor ("#0000ff");                // Blue
-    quickColors << c;
+    c.setNamedColor ("#0000ff"); quickColors << c;  // Blue
+    c.setNamedColor ("#00aaff"); quickColors << c;  // LightBlue
+    usingDarkTheme ? vymBlue = c : vymBlue = quickColors.count() - 2;
     c.setNamedColor ("#000000"); quickColors << c;  // Black
     c.setNamedColor ("#444444"); quickColors << c;  // Dark gray
     c.setNamedColor ("#aaaaaa"); quickColors << c;  // Light gray
@@ -3499,20 +3568,20 @@ void Main::setupToolbars()
     modModesToolbar->addAction(actionModModeXLink);
     modModesToolbar->addAction(actionModModeMoveObject);
     modModesToolbar->addAction(actionModModeMoveView);
-    
+
     // Create flag toolbars (initialized later in setupFlagActions() )
     addToolBarBreak();
     standardFlagsToolbar =
         addToolBar(tr("Standard Flags toolbar", "Standard Flag Toolbar"));
     standardFlagsToolbar->setObjectName("standardFlagTB");
     standardFlagsMaster->setToolBar(standardFlagsToolbar);
-    
+
     userFlagsToolbar =
         addToolBar(tr("User Flags toolbar", "user Flags Toolbar"));
     userFlagsToolbar->setObjectName("userFlagsTB");
     userFlagsMaster->setToolBar(userFlagsToolbar);
     userFlagsMaster->createConfigureAction();
-    
+
     // Add all toolbars to View menu
     toolbarsMenu->addAction(fileToolbar->toggleViewAction());
     toolbarsMenu->addAction(clipboardToolbar->toggleViewAction());
@@ -3578,40 +3647,62 @@ VymModel *Main::currentModel() const
     if (vv)
         return vv->getModel();
     else
-        return NULL;
+        return nullptr;
 }
 
 VymModel *Main::getModel(uint id) // Used in BugAgent
 {
     if (id <= 0)
-        return NULL;
+        return nullptr;
 
     for (int i = 0; i < tabWidget->count(); i++) {
         if (view(i)->getModel()->getModelID() == id)
             return view(i)->getModel();
     }
-    return NULL;
+    return nullptr;
 }
 
-void Main::gotoModel(VymModel *m)
+bool Main::gotoModel(VymModel *m)
 {
     for (int i = 0; i < tabWidget->count(); i++)
         if (view(i)->getModel() == m) {
             tabWidget->setCurrentIndex(i);
-            return;
+            return true;
         }
+    return false;
 }
 
-void Main::gotoModelID(uint id)
+bool Main::gotoModelWithID(uint id)
 {
     VymModel *vm;
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
         if (vm && vm->getModelID() == id) {
             tabWidget->setCurrentIndex(i);
-            return;
+            return true;
         }
     }
+    return false;
+}
+
+bool Main::closeModelWithID(uint id)
+{
+    VymModel *vm;
+    for (int i = 0; i < tabWidget->count(); i++) {
+        vm = view(i)->getModel();
+        if (vm && vm->getModelID() == id) {
+            tabWidget->removeTab(i);
+
+            // Destroy stuff, order is important
+            delete (vm->getMapEditor());
+            delete (view(i));
+            delete (vm);
+
+            updateActions();
+            return true;
+        }
+    }
+    return false;
 }
 
 int Main::modelCount() { return tabWidget->count(); }
@@ -3619,7 +3710,7 @@ int Main::modelCount() { return tabWidget->count(); }
 void Main::updateTabName(VymModel *vm)
 {
     if (!vm) {
-        qWarning() << "Main::updateTabName   vm == NULL";
+        qWarning() << "Main::updateTabName   vm == nullptr";
         return;
     }
 
@@ -3657,7 +3748,7 @@ void Main::fileNew()
     // Don't show counter while loading default map
     removeProgressCounter();
 
-    if (File::Success != fileLoad(defaultMapPath, DefaultMap, VymMap)) {
+    if (File::Success != fileLoad(defaultMapPath, File::DefaultMap, File::VymMap)) {
         QMessageBox::critical(0, tr("Critical Error"),
                               tr("Couldn't load default map:\n\n%1\n\nvym will "
                                  "create an empty map now.",
@@ -3679,7 +3770,7 @@ void Main::fileNew()
     else {
         vm = currentModel();
     }
-    
+
     // Switch to new tab    
     tabWidget->setCurrentIndex(tabWidget->count() - 1);
 }
@@ -3699,8 +3790,8 @@ void Main::fileNewCopy()
     }
 }
 
-File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
-                               const FileType &ftype)
+File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
+                               const File::FileType &ftype)
 {
     File::ErrorCode err = File::Success;
 
@@ -3712,7 +3803,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
 
     VymModel *vm;
 
-    if (lmode == NewMap) {
+    if (lmode == File::NewMap) {
         // Check, if map is already loaded
         int i = 0;
         while (i <= tabWidget->count() - 1) {
@@ -3754,19 +3845,19 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
 
         vm = currentModel();
 
-        if (lmode == NewMap) {
+        if (lmode == File::NewMap) {
             if (vm && vm->isDefault()) {
-                // There is a map model already and it still the default map,
-                // use it.
+                // There is a map model already and it still is the default map,
+                // no need to create a new model.
                 createModel = false;
             }
             else
                 createModel = true;
         }
-        else if (lmode == DefaultMap) {
+        else if (lmode == File::DefaultMap) {
             createModel = true;
         }
-        else if (lmode == ImportAdd || lmode == ImportReplace) {
+        else if (lmode == File::ImportAdd || lmode == File::ImportReplace) {
             if (!vm) {
                 QMessageBox::warning(0, "Warning",
                                      "Trying to import into non existing map");
@@ -3789,11 +3880,11 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
         // Check, if file exists (important for creating new files
         // from command line
         if (!QFile(fn).exists()) {
-            if (lmode == DefaultMap) {
+            if (lmode == File::DefaultMap) {
                 return File::Aborted;
             }
 
-            if (lmode == NewMap) {
+            if (lmode == File::NewMap) {
                 QMessageBox mb(vymName,
                                tr("This map does not exist:\n  %1\nDo you want "
                                   "to create a new one?")
@@ -3837,7 +3928,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             // Save existing filename in case  we import
             QString fn_org = vm->getFilePath();
 
-            if (lmode != DefaultMap) {
+            if (lmode != File::DefaultMap) {
 
                 vm->setFilePath(fn);
                 vm->saveStateBeforeLoad(lmode, fn);
@@ -3851,24 +3942,24 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             err = vm->loadMap(fn, lmode, ftype);
 
             // Restore old (maybe empty) filepath, if this is an import
-            if (lmode == ImportAdd || lmode == ImportReplace)
+            if (lmode == File::ImportAdd || lmode == File::ImportReplace)
                 vm->setFilePath(fn_org);
         }
 
         // Finally check for errors and go home
         if (err == File::Aborted) {
-            if (lmode == NewMap)
+            if (lmode == File::NewMap)
                 fileCloseMap();
             statusBar()->showMessage("Could not load " + fn, statusbarTime);
         }
         else {
-            if (lmode == NewMap) {
+            if (lmode == File::NewMap) {
                 vm->setFilePath(fn);
                 updateTabName(vm);
                 actionFilePrint->setEnabled(true);
                 addRecentMap(fn);
             }
-            else if (lmode == DefaultMap) {
+            else if (lmode == File::DefaultMap) {
                 vm->makeDefault();
                 updateTabName(vm);
             }
@@ -3883,20 +3974,20 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
     return err;
 }
 
-void Main::fileLoad(const LoadMode &lmode)
+void Main::fileLoad(const File::LoadMode &lmode)
 {
     QString caption;
     switch (lmode) {
-    case NewMap:
+    case File::NewMap:
         caption = vymName + " - " + tr("Load vym map");
         break;
-    case DefaultMap:
+    case File::DefaultMap:
         // Not used directly
         return;
-    case ImportAdd:
+    case File::ImportAdd:
         caption = vymName + " - " + tr("Import: Add vym map to selection");
         break;
-    case ImportReplace:
+    case File::ImportReplace:
         caption =
             vymName + " - " + tr("Import: Replace selection with vym map");
         break;
@@ -3924,7 +4015,7 @@ void Main::fileLoad(const LoadMode &lmode)
 
 void Main::fileLoad()
 {
-    fileLoad(NewMap);
+    fileLoad(File::NewMap);
     tabWidget->setCurrentIndex(tabWidget->count() - 1);
 }
 
@@ -3948,8 +4039,8 @@ void Main::fileRestoreSession()
 
     initProgressCounter(lastSessionFiles.count());
     while (it != lastSessionFiles.end()) {
-        FileType type = getMapType(*it);
-        fileLoad(*it, NewMap, type);
+        File::FileType type = getMapType(*it);
+        fileLoad(*it, File::NewMap, type);
         *it++;
     }
     removeProgressCounter();
@@ -3975,8 +4066,8 @@ void Main::fileLoadRecent()
     if (action) {
         initProgressCounter();
         QString fn = action->data().toString();
-        FileType type = getMapType(fn);
-        fileLoad(fn, NewMap, type);
+        File::FileType type = getMapType(fn);
+        fileLoad(fn, File::NewMap, type);
         removeProgressCounter();
         tabWidget->setCurrentIndex(tabWidget->count() - 1);
     }
@@ -3997,7 +4088,7 @@ void Main::addRecentMap(const QString &fileName)
     setupRecentMapsMenu();
 }
 
-void Main::fileSave(VymModel *m, const SaveMode &savemode)
+void Main::fileSave(VymModel *m, const File::SaveMode &savemode)
 {
     if (!m)
         return;
@@ -4022,18 +4113,18 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
                                  statusbarTime);
 }
 
-void Main::fileSave() { fileSave(currentModel(), CompleteMap); }
+void Main::fileSave() { fileSave(currentModel(), File::CompleteMap); }
 
-void Main::fileSave(VymModel *m) { fileSave(m, CompleteMap); }
+void Main::fileSave(VymModel *m) { fileSave(m, File::CompleteMap); }
 
-void Main::fileSaveAs(const SaveMode &savemode)
+void Main::fileSaveAs(const File::SaveMode &savemode)
 {
     VymModel *m = currentModel();
     if (!m) return;
 
     if (currentMapEditor()) {   // FIXME-2 this check is not needed
         QString filter;
-        if (savemode == CompleteMap)
+        if (savemode == File::CompleteMap)
             filter = "VYM map (*.vym)";
         else
             filter = "VYM part of map (*vyp)";
@@ -4041,7 +4132,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
 
         // Get destination path
         QString fn = QFileDialog::getSaveFileName(
-            this, tr("Save map as"), lastMapDir.path(), filter, NULL,
+            this, tr("Save map as"), lastMapDir.path(), filter, nullptr,
             QFileDialog::DontConfirmOverwrite);
         if (!fn.isEmpty()) {
             // Check for existing file
@@ -4078,7 +4169,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
             else {
                 // New file, add extension to filename, if missing
                 // This is always .vym or .vyp, depending on savemode
-                if (savemode == CompleteMap) {
+                if (savemode == File::CompleteMap) {
                     if (!fn.contains(".vym") && !fn.contains(".xml"))
                         fn += ".vym";
                 }
@@ -4111,7 +4202,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
             fileSave(m, savemode);
 
             // Set name of tab
-            if (savemode == CompleteMap)
+            if (savemode == File::CompleteMap)
                 updateTabName(m);
             else { // Renaming map to original name, because we only saved the
                    // selected part of it
@@ -4126,7 +4217,7 @@ void Main::fileSaveAs(const SaveMode &savemode)
     }
 }
 
-void Main::fileSaveAs() { fileSaveAs(CompleteMap); }
+void Main::fileSaveAs() { fileSaveAs(File::CompleteMap); }
 
 void Main::fileSaveAsDefault()
 {
@@ -4171,7 +4262,7 @@ void Main::fileSaveAsDefault()
             // Save now as new default
             VymModel *m = currentModel();
             QString fn_org = m->getFilePath(); // Restore fn later, if savemode
-                                               // != CompleteMap
+                                               // != File::CompleteMap
             // Check for existing lockfile
             QFile lockFile(fn + ".lock");
             if (lockFile.exists()) {
@@ -4189,7 +4280,7 @@ void Main::fileSaveAsDefault()
                 return;
             }
 
-            fileSave(m, CompleteMap);
+            fileSave(m, File::CompleteMap);
 
             // Set name of tab
             updateTabName(m);
@@ -4271,7 +4362,7 @@ void Main::fileImportFreemind()
         QStringList::Iterator it = flist.begin();
         while (it != flist.end()) {
             fn = *it;
-            if (fileLoad(fn, NewMap, FreemindMap)) {
+            if (fileLoad(fn, File::NewMap, File::FreemindMap)) {
                 currentMapEditor()->getModel()->setFilePath("");
             }
             ++it;
@@ -4301,7 +4392,7 @@ void Main::fileImportMM()
             im.setFile(*it);
             if (im.transform() &&
                 File::Success ==
-                    fileLoad(im.getTransformedFile(), NewMap, VymMap) &&
+                    fileLoad(im.getTransformedFile(), File::NewMap, File::VymMap) &&
                 currentMapEditor())
                 currentMapEditor()->getModel()->setFilePath("");
             ++it;
@@ -4512,7 +4603,7 @@ bool Main::fileCloseMap(int i)
             switch (mb.exec()) {
             case QMessageBox::Yes:
                 // save and close
-                fileSave(m, CompleteMap);
+                fileSave(m, File::CompleteMap);
                 break;
             case QMessageBox::No:
                 // close  without saving
@@ -4835,7 +4926,7 @@ void Main::openVymLinks(const QStringList &vl, bool background)
             QMessageBox::critical(0, tr("Critical Error"),
                                   tr("Couldn't open map %1").arg(vlmin.at(j)));
         else {
-            fileLoad(vlmin.at(j), NewMap, VymMap);
+            fileLoad(vlmin.at(j), File::NewMap, File::VymMap);
             if (!background)
                 tabWidget->setCurrentIndex(tabWidget->count() - 1);
         }
@@ -5039,8 +5130,8 @@ void Main::editMapProperties()
     uint f = 0;
     uint n = 0;
     uint xl = 0;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     m->nextBranch(cur, prev);
     while (cur) {
         if (!cur->getNote().isEmpty())
@@ -5081,7 +5172,7 @@ void Main::editMoveUp()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveUp();
 }
 
@@ -5089,7 +5180,7 @@ void Main::editMoveDown()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveDown();
 }
 
@@ -5097,7 +5188,7 @@ void Main::editMoveDownDiagonally()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveDownDiagonally();
 }
 
@@ -5105,7 +5196,7 @@ void Main::editMoveUpDiagonally()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading)
+    if (me && m && me->state() != MapEditor::EditingHeading)
         m->moveUpDiagonally();
 }
 
@@ -5291,11 +5382,11 @@ void Main::editNewBranchBelow()
     }
 }
 
-void Main::editImportAdd() { fileLoad(ImportAdd); }
+void Main::editImportAdd() { fileLoad(File::ImportAdd); }
 
-void Main::editImportReplace() { fileLoad(ImportReplace); }
+void Main::editImportReplace() { fileLoad(File::ImportReplace); }
 
-void Main::editSaveBranch() { fileSaveAs(PartOfMap); }
+void Main::editSaveBranch() { fileSaveAs(File::PartOfMap); }
 
 void Main::editDeleteKeepChildren()
 {
@@ -5489,11 +5580,11 @@ void Main::editMoveToTarget()
             QList<TreeItem *> itemList = model->getSelectedItems();
             if (itemList.count() < 1) return;
 
-            if (dsti && dsti->isBranchLikeType() ) {
+            if (dsti && dsti->hasTypeBranch() ) {
                 BranchItem *selbi;
                 BranchItem *pi;
                 foreach (TreeItem *ti, itemList) {
-                    if (ti->isBranchLikeType() )
+                    if (ti->hasTypeBranch() )
                     {
                         selbi = (BranchItem*)ti;
                         pi = selbi->parentBranch();
@@ -5501,13 +5592,8 @@ void Main::editMoveToTarget()
                         // If branch below exists, select that one
                         // Makes it easier to quickly resort using the MoveTo function
                         BranchItem *below = pi->getBranchNum(selbi->num() + 1);
-                        LinkableMapObj *lmo = selbi->getLMO();
-                        QPointF orgPos;
-                        if (lmo)
-                            orgPos = lmo->getAbsPos();
 
-                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1, true,
-                                                orgPos)) {
+                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1, true)) {
                             if (below)
                                 model->select(below);
                             else if (pi)
@@ -5589,7 +5675,7 @@ void Main::updateQueries(
 
 void Main::selectQuickColor(int n)
 {
-    if (n < 0 || n > 7) return;
+    if (n < 0 || n > quickColors.count() - 1) return;
 
     actionGroupQuickColors->actions().at(n)->setChecked(true);
     setCurrentColor(quickColors.at(n));
@@ -5727,8 +5813,9 @@ void Main::formatSelectLinkColor()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(m->getMapDefLinkColor(), this);
-        m->setMapDefLinkColor(col);
+        QColor col = QColorDialog::getColor(m->getDefaultLinkColor(), this);
+        m->setDefaultLinkColor(col);
+        updateActions();
     }
 }
 
@@ -5736,7 +5823,11 @@ void Main::formatSelectSelectionColor()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(m->getMapDefLinkColor(), this);
+        QColor col = QColorDialog::getColor(
+                m->getSelectionColor(),
+                this,
+                tr("Color of selection box","Mainwindow"),
+                QColorDialog::ShowAlphaChannel);
         m->setSelectionColor(col);
     }
 }
@@ -5756,7 +5847,7 @@ void Main::formatToggleLinkColorHint()
 {
     VymModel *m = currentModel();
     if (m)
-        m->toggleMapLinkColorHint();
+        m->toggleLinkColorHint();
 }
 
 void Main::formatHideLinkUnselected() // FIXME-4 get rid of this with
@@ -6035,7 +6126,7 @@ bool Main::settingsConfluence()
         QMessageBox::warning(
             0, tr("Warning"),
             tr("No SSL support available for this build of vym"));
-        debugInfo();
+        helpDebugInfo();
         return false;
     }
 
@@ -6073,7 +6164,7 @@ bool Main::settingsJIRA()
         QMessageBox::warning(
             0, tr("Warning"),
             tr("No SSL support available for this build of vym"));
-        debugInfo();
+        helpDebugInfo();
         return false;
     }
 
@@ -6239,7 +6330,7 @@ void Main::updateNoteEditor(TreeItem *ti)
 
 void Main::updateHeadingEditor(TreeItem *ti)
 {
-    if (ti && ti->isBranchLikeType()) {
+    if (ti && ti->hasTypeBranch()) {
         BranchItem *bi = (BranchItem*)ti;
         if (bi->getHeading().isRichText()) {
             headingEditor->setUseColorMapBackground(true);
@@ -6301,8 +6392,8 @@ void Main::changeSelection(VymModel *model, const QItemSelection &,
             updateHeadingEditor(ti);
 
             // Select in TaskEditor, if necessary
-            Task *t = NULL;
-            if (ti->isBranchLikeType())
+            Task *t = nullptr;
+            if (ti->hasTypeBranch())
                 t = ((BranchItem *)ti)->getTask();
 
             if (t)
@@ -6327,7 +6418,9 @@ void Main::updateDockWidgetTitles(VymModel *model)
 
         noteEditor->setEditorTitle(s);
         noteEditorDW->setWindowTitle(noteEditor->getEditorTitle());
-        branchPropertyEditor->setModel(model);
+        //qDebug() << "Main::updateDockWidgetTitles";
+        // FIXME-2 review. Also already called in MW::changeSelection, not necessary, right?
+        // branchPropertyEditor->setModel(model);
     }
 }
 
@@ -6419,20 +6512,20 @@ void Main::updateActions()
 
         // Link style in context menu
         switch (m->getMapLinkStyle()) {
-        case LinkableMapObj::Line:
-            actionFormatLinkStyleLine->setChecked(true);
-            break;
-        case LinkableMapObj::Parabel:
-            actionFormatLinkStyleParabel->setChecked(true);
-            break;
-        case LinkableMapObj::PolyLine:
-            actionFormatLinkStylePolyLine->setChecked(true);
-            break;
-        case LinkableMapObj::PolyParabel:
-            actionFormatLinkStylePolyParabel->setChecked(true);
-            break;
-        default:
-            break;
+            case LinkObj::Line:
+                actionFormatLinkStyleLine->setChecked(true);
+                break;
+            case LinkObj::Parabel:
+                actionFormatLinkStyleParabel->setChecked(true);
+                break;
+            case LinkObj::PolyLine:
+                actionFormatLinkStylePolyLine->setChecked(true);
+                break;
+            case LinkObj::PolyParabel:
+                actionFormatLinkStylePolyParabel->setChecked(true);
+                break;
+            default:
+                break;
         }
 
         // Update colors
@@ -6441,7 +6534,7 @@ void Main::updateActions()
         actionFormatBackColor->setIcon(pix);
         pix.fill(m->getSelectionColor());
         actionFormatSelectionColor->setIcon(pix);
-        pix.fill(m->getMapDefLinkColor());
+        pix.fill(m->getDefaultLinkColor());
         actionFormatLinkColor->setIcon(pix);
 
         // Selection history
@@ -6476,7 +6569,7 @@ void Main::updateActions()
         actionCollapseOneLevel->setEnabled(true);
         actionCollapseUnselected->setEnabled(true);
 
-        if (m->getMapLinkColorHint() == LinkableMapObj::HeadingColor)
+        if (m->getLinkColorHint() == LinkObj::HeadingColor)
             actionFormatLinkColorHint->setChecked(true);
         else
             actionFormatLinkColorHint->setChecked(false);
@@ -6594,7 +6687,7 @@ void Main::updateActions()
                 if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
                     actionMoveDownDiagonally->setEnabled(false);
 
-                if (selbi && selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
+                if (selbi && selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent) // FIXME-2 check if ok 
                 {
                     actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
                     actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-left.png"));
@@ -6797,7 +6890,7 @@ QObject *Main::getCurrentModelWrapper()
     if (m)
         return m->getWrapper();
     else
-        return NULL;
+        return nullptr;
 }
 
 bool Main::gotoWindow(const int &n)
@@ -6839,7 +6932,7 @@ void Main::flagChanged()
 {
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
-    if (me && m && me->getState() != MapEditor::EditingHeading) {
+    if (me && m && me->state() != MapEditor::EditingHeading) {
         m->toggleFlagByUid(QUuid(sender()->objectName()),
                            actionSettingsUseFlagGroups->isChecked());
         updateActions();
@@ -6864,6 +6957,7 @@ void Main::testFunction2()
     VymModel *m = currentModel();
     if (m) {
         //m->repeatLastCommand();
+        currentMapEditor()->testFunction2();
     }
 }
 
@@ -6973,10 +7067,11 @@ void Main::helpDemo()
         initProgressCounter(flist.count());
         while (it != flist.end()) {
             fn = *it;
-            fileLoad(*it, NewMap, VymMap);
+            fileLoad(*it, File::NewMap, File::VymMap);
             ++it;
         }
         removeProgressCounter();
+        tabWidget->setCurrentIndex(tabWidget->count() - 1);
     }
 }
 
@@ -6996,44 +7091,34 @@ void Main::helpMacros()
     dia.exec();
 }
 
-#include <QSslSocket>
-void Main::debugInfo()
+void Main::helpScriptingCommands()
 {
-    QString s;
-    s =  QString("vym version: %1 - %2 - %3 %4\n")
-            .arg(vymVersion)
-            .arg(vymBuildDate)
-            .arg(vymCodeQuality)
-            .arg(vymCodeName);
-    s += QString("     Platform: %1\n").arg(vymPlatform);
-    s += QString("    tmpVymDir: %1\n").arg(tmpVymDir.path());
-    s += QString("  zipToolPath: %1\n").arg(zipToolPath);
-    s += QString("   vymBaseDir: %1\n").arg(vymBaseDir.path());
-    s += QString("  currentPath: %1\n").arg(QDir::currentPath());
-    s += QString("   appDirPath: %1\n")
-            .arg(QCoreApplication::applicationDirPath());
-    s += QString("     Settings: %1\n\n").arg(settings.fileName());
-    s += QString("   Dark theme: %1\n").arg(usingDarkTheme);
-    s += QString("Avail. styles: %1\n\n").arg(QStyleFactory::keys().join(","));
-    s += " SSL status: ";
-    QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
-    s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";
-    s += "    SSL lib: " + QSslSocket::sslLibraryVersionString() + "\n";
-
-    // Info about translations
-    QStringList translations;
-    if(vymTranslationsDir.exists())
-        translations = vymTranslationsDir.entryList();
-    s += "\n";
-    s += QString("            localeName: %1\n").arg(localeName);
-    s += QString("       Translations in: %1\n").arg(vymTranslationsDir.path());
-    s += QString("Available translations: %1\n").arg(translations.count());
-    foreach (QString qm_file, translations)
-        s += QString("                        %1\n").arg(qm_file);
-
     ShowTextDialog dia;
     dia.useFixedFont(true);
+    QString s;
+    s = "Available commands in map:\n";
+    s += "=========================:\n";
+    foreach (Command *c, modelCommands) {
+        s += c->getDescription();
+        s += "\n";
+    }
+
+    s += "Available commands in vym:\n";
+    s += "=========================:\n";
+    foreach (Command *c, vymCommands) {
+        s += c->getDescription();
+        s += "\n";
+    }
+
     dia.setText(s);
+    dia.exec();
+}
+
+void Main::helpDebugInfo()
+{
+    ShowTextDialog dia;
+    dia.useFixedFont(true);
+    dia.setText(debugInfo());
     dia.setMinimumWidth(900);
     dia.exec();
 }
@@ -7119,12 +7204,14 @@ QUrl Main::serverUrl(const QString &scriptName)
     return QUrl(
         QString("http://www.insilmaril.de/vym/%1?"
                     "vymVersion=%2"
-                    "&config=darkTheme=%3+localeName=%4+buildDate=%4+codeQuality=%5")
+                    "&config=darkTheme=%3+localeName=%4+buildDate=%5+codeQuality='%6'+codeName='%7'")
             .arg(scriptName)
             .arg(vymVersion)
             .arg(usingDarkTheme)
+            .arg(localeName)
             .arg(vymBuildDate)
             .arg(vymCodeQuality)
+            .arg(vymCodeName)
             );
 }
 

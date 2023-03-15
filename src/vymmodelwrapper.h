@@ -30,7 +30,7 @@ class VymModelWrapper : public VymScriptContext {
   public slots:
     void addBranch();
     void addBranchBefore();
-    void addMapCenter(qreal x, qreal y);
+    void addMapCenterAtPos(qreal x, qreal y);
     void addMapInsert(QString filename, int pos, int contentFilter);
     void addMapInsert(const QString &filename, int pos);
     void addMapInsert(const QString &filename);
@@ -47,12 +47,15 @@ class VymModelWrapper : public VymScriptContext {
     void copy();
     void cut();
     void cycleTask();
+    int depth();
     bool exportMap();
+    QString getStringAttribute(const QString &key);
+    int getIntAttribute(const QString &key);
     int getBranchIndex();
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
-    QString getFrameType();
+    QString getFrameType(const bool & useInnerFrame);
     QString getHeadingPlainText();
     QString getHeadingXML();
     QString getMapAuthor();
@@ -60,6 +63,12 @@ class VymModelWrapper : public VymScriptContext {
     QString getMapTitle();
     QString getNotePlainText();
     QString getNoteXML();
+    qreal getPosX();
+    qreal getPosY();
+    qreal getScenePosX();
+    qreal getScenePosY();
+    int getRotationHeading();
+    int getRotationSubtree();
     QString getSelectionString();
     int getTaskPriorityDelta();
     QString getTaskSleep();
@@ -80,8 +89,6 @@ class VymModelWrapper : public VymScriptContext {
     bool isScrolled();
     void loadImage(const QString &filename);
     void loadNote(const QString &filename);
-    void move(qreal x, qreal y);
-    void moveRel(qreal x, qreal y);
     void moveDown();
     void moveUp();
     void moveSlideDown(int n);
@@ -94,7 +101,6 @@ class VymModelWrapper : public VymScriptContext {
     bool parseVymText(const QString &text);
     void paste();
     void redo();
-    bool relinkTo(const QString &parent, int num, qreal x, qreal y);
     bool relinkTo(const QString &parent, int num);
     bool relinkTo(const QString &parent);
     void remove();
@@ -104,6 +110,7 @@ class VymModelWrapper : public VymScriptContext {
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);
     void saveNote(const QString &filename);
+    void saveSelection(const QString &filename);
     void scroll();
     bool select(const QString &s);
     bool selectID(const QString &s);
@@ -115,32 +122,33 @@ class VymModelWrapper : public VymScriptContext {
     bool selectParent();
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString);
+    void setDefaultLinkColor(const QString &color); // FIXME-2 maybe also rename other setMap* methods?
+    void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &s);
     void setHeadingConfluencePageName();
     void setHeadingPlainText(const QString &s);
     void setHideExport(bool b);
     void setHideLinkUnselected(bool b);
-    void setIncludeImagesHorizontally(bool b);
-    void setIncludeImagesVertically(bool b);
     void setMapAnimCurve(int n);
     void setMapAnimDuration(int n);
     void setMapAuthor(const QString &s);
     void setMapBackgroundColor(const QString &color);
     void setMapComment(const QString &s);
-    void setMapDefLinkColor(const QString &color);
     void setMapLinkStyle(const QString &style);
     void setMapRotation(float a); // tested: ok
     void setMapTitle(const QString &s);
     void setMapZoom(float z); // tested: ok
     void setNotePlainText(const QString &s);
-    void setFrameBorderWidth(int border);
-    void setFrameBrushColor(const QString &color);
-    void setFrameIncludeChildren(bool b);
-    void setFramePadding(int padding);
-    void setFramePenColor(const QString &color);
-    void setFrameType(const QString &type);
+    void setPos(qreal x, qreal y);
+    void setFramePenWidth(const bool & useInnerFrame, int w);
+    void setFrameBrushColor(const bool & useInnerFrame, const QString &color);
+    void setFramePadding(const bool & useInnerFrame, int padding);
+    void setFramePenColor(const bool & useInnerFrame, const QString &color);
+    void setFrameType(const bool & useInnerFrame, const QString &type);
     void setScaleFactor(qreal f);
     void setSelectionColor(const QString &color);
+    void setRotationHeading(const int &i);
+    void setRotationSubtree(const int &i);
     void setTaskPriorityDelta(const int &n);
     bool setTaskSleep(const QString &s);
     void setURL(const QString &s);
@@ -155,7 +163,6 @@ class VymModelWrapper : public VymScriptContext {
     void sortChildren();
     void toggleFlagByUid(const QString &s);
     void toggleFlagByName(const QString &s);
-    void toggleFrameIncludeChildren();
     void toggleScroll();
     void toggleTarget();
     void toggleTask();

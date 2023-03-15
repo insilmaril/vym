@@ -13,6 +13,8 @@ extern QString vymBuildDate;
 extern QString vymCodeName;
 extern QString vymCodeQuality;
 
+extern QColor vymBlue;
+
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 {
 
@@ -27,6 +29,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 
     credits->setHtml(
         QString(
+            "<style>a:link { color: " + vymBlue.name() + "; background-color: transparent;}</style>"
             "<center><img src=\"" + iconPath + "vym-128x128.png\"></center>"
             "<h3><center>VYM - View Your Mind </h3>"
             "<p align=\"center\"> A tool to put the things you have got in your mind into a map.</p>"

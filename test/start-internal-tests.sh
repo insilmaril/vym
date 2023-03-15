@@ -3,7 +3,7 @@
 SRCDIR=test
 VYMTESTDIR=$(mktemp -d /tmp/vym-test-XXXX)
 
-DEFAULTMAP=$SRCDIR/default.vym
+DEFAULTMAP=$SRCDIR/test/default.vym
 TESTMAP=$VYMTESTDIR/testmap.vym
 
 echo Copying $DEFAULTMAP to $TESTMAP

@@ -9,7 +9,6 @@
 
 #include "branchitem.h"
 #include "file.h"
-#include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "vymprocess.h"

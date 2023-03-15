@@ -37,13 +37,14 @@ class Vym
             end
           end
           com = "vym.#{c} (#{a.join(',')});"
-          puts " ** Calling vym: \"#{com}\":" if $debug
+          puts " * Calling vym: \"#{com}\":" if $debug
           ret = @main.execute( com )
         end
 
-        #FIXME-2  err = m.errorLevel[0]
+        #FIXME-4  err = m.errorLevel[0]
         if $debug
           puts "     Returned: #{ret[0]}" if ret[0] != ""
+          pp ret
           # puts "        Error: #{err}" if err > 0
         end
         ret[0]
@@ -60,7 +61,6 @@ class Vym
   end
 
   def map (n)
-    #puts "def map:  @service.object(\"/vymmodel_#{n}\")"
     map = @service.object("/vymmodel_#{n}")
     map.introspect
     map.default_iface = "org.insilmaril.vym.model.adaptor"
@@ -117,7 +117,7 @@ class VymMap
             puts "Done calling" if $debug
           end
 
-          #FIXME-2 err = m.errorLevel[0]
+          #FIXME-3 err = m.errorLevel[0]
           if $debug
             puts "     Returned: #{ret[0]}" if ret[0] != ""
             #puts "        Error: #{err}" if err > 0

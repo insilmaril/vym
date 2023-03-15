@@ -3,7 +3,6 @@
 #include <QDebug>
 
 #include "branchitem.h"
-#include "branchobj.h"
 #include "task.h"
 #include "vymmodel.h"
 
@@ -69,7 +68,7 @@ Task *TaskModel::getTask(const QModelIndex &ix) const
     if (ix.isValid())
         return tasks.at(ix.row());
     else
-        return NULL;
+        return nullptr;
 }
 
 Task *TaskModel::getTask(const int i) const
@@ -77,7 +76,7 @@ Task *TaskModel::getTask(const int i) const
     if (i >= 0 && i < count())
         return getTask(createIndex(i, 0));
     else
-        return NULL;
+        return nullptr;
 }
 
 int TaskModel::rowCount(const QModelIndex &parent) const
@@ -179,17 +178,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         if (role == Qt::ForegroundRole && bi)
             return bi->getHeadingColor();
         if (role == Qt::BackgroundRole && bi) {
-            BranchItem *frameBI = bi->getFramedParentBranch(bi);
-            if (frameBI && index.column() != 5) {
-                BranchObj *bo = frameBI->getBranchObj();
-                if (bo)
-                    // Return frame background
-                    return bo->getFrameBrushColor();
-            }
-            else {
-                // Return map background
-                return bi->getModel()->getMapBackgroundColor();
-            }
+            return bi->getBackgroundColor(bi);
         }
     }
 
@@ -327,7 +316,7 @@ Task *TaskModel::createTask(BranchItem *bi)
         foreach (Task *t, tasks) {
             if (t->getBranch() == bi) {
                 qWarning() << "TaskModel::createTask Branch exists already!";
-                return NULL;
+                return nullptr;
             }
         }
         Task *task = new Task(this);
@@ -340,7 +329,7 @@ Task *TaskModel::createTask(BranchItem *bi)
         return task;
     }
     qWarning() << "TaskEditor::addItem - item exists";
-    return NULL;
+    return nullptr;
 }
 
 void TaskModel::deleteTask(Task *t)

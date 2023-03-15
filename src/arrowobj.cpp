@@ -1,5 +1,5 @@
 #include "arrowobj.h"
-#include "misc.h"
+#include "geometry.h"
 
 #include <QDebug>
 #include <QGraphicsScene>
@@ -23,12 +23,11 @@ void ArrowObj::init()
 
     pen.setStyle(Qt::SolidLine);
     arrowBegin = scene()->addPolygon(QPolygonF(), pen);
-    arrowBegin->setZValue(dZ_XLINK);
+    arrowBegin->setParentItem(this);
     arrowEnd = scene()->addPolygon(QPolygonF(), pen);
-    arrowEnd->setZValue(dZ_XLINK);
+    arrowEnd->setParentItem(this);
 
     line = scene()->addLine(QLineF(), pen);
-    line->setZValue(dZ_XLINK);
 
     arrowSize = 4;
     useFixedLength = false;
@@ -92,12 +91,10 @@ void ArrowObj::setEndPoint(QPointF p)
 {
     endPoint = p;
 
-    line->setLine(absPos.x(), absPos.y(), p.x(), p.y());
-    arrowEnd->setPos(absPos);
+    line->setLine(pos().x(), pos().y(), p.x(), p.y());
 
-    qreal a = getAngle(endPoint - absPos);
+    qreal a = getAngle(pos() - endPoint);
     arrowEnd->setRotation(-a / 6.28 * 360);
-    arrowEnd->setPos(endPoint);
 }
 
 QPointF ArrowObj::getEndPoint() { return endPoint; }

@@ -1,10 +1,11 @@
 #include "command.h"
 
 #include <QDebug>
-Command::Command(const QString &n, SelectionType st)
+Command::Command(const QString &n, SelectionType st, ParameterType retType)
 {
     name = n;
     selectionType = st;
+    returnType = retType;
 }
 
 QString Command::getName() { return name; }
@@ -12,13 +13,15 @@ QString Command::getName() { return name; }
 QString Command::getDescription()
 {
     QString s;
-    s = QString("%1\n").arg(name);
-    s += QString("  Selection: %1\n").arg(getSelectionTypeName());
+    s = QString("Command: \"%1\"\n").arg(name);
+    s += QString("  SelectionType: %1\n").arg(getSelectionTypeName());
+    s += QString("    Return type: %1\n").arg(typeToString(returnType));
+    s += QString("     Parameters: %1\n").arg(parCount());
     // s+=QString(" Parameters: %1\n").arg(parCount() );
     for (int i = 0; i < parCount(); i++) {
-        s += QString("   Parameter %1:\n").arg(i);
+        s += QString("    Parameter %1:\n").arg(i + 1);
         s += QString("        Comment: %1\n").arg(getParComment(i));
-        s += QString("           Type: %1\n").arg(getParTypeName(i));
+        s += QString("           Type: %1\n").arg(typeToString(getParType(i)));
         s += QString("       Optional: ");
         isParOptional(i) ? s += "yes\n" : s += "No\n";
     }
@@ -30,11 +33,14 @@ QString Command::getDescriptionLaTeX()
     QString s;
     s = QString("\\item %1\\\\\n").arg(name);
     s += "\\begin{tabular}{rl}\n";
-    s += QString("  Selection: & %1\\\\\n").arg(getSelectionTypeName());
+    s += QString("  SelectionType: & %1\\\\\n").arg(getSelectionTypeName());
+    s += QString("    Return Type: & %1\\\\\n").arg(typeToString(returnType));
+
+    s += QString("     Parameters: & %1\\\\\n").arg(parCount());
     for (int i = 0; i < parCount(); i++) {
-        s += QString("   Parameter: &  %1:\\\\\n").arg(i);
+        s += QString("   Parameter: &  %1:\\\\\n").arg(i + 1);
         s += QString("        Comment: & %1\\\\\n").arg(getParComment(i));
-        s += QString("           Type: & %1\\\\\n").arg(getParTypeName(i));
+        s += QString("           Type: & %1\\\\\n").arg(typeToString(getParType(i)));
         s += QString("       Optional: &  ");
         isParOptional(i) ? s += "yes\\\\\n" : s += "No\\\\\n";
     }
@@ -60,9 +66,9 @@ Command::ParameterType Command::getParType(int n)
     return Undefined;
 }
 
-QString Command::getParTypeName(int n)
+QString Command::typeToString(const ParameterType &type)
 {
-    switch (getParType(n)) {
+    switch (type) {
     case String:
         return "String";
     case Int:
@@ -73,8 +79,12 @@ QString Command::getParTypeName(int n)
         return "Color";
     case Bool:
         return "Bool";
-    default:
+    case Void:
+        return "Void";
+    case Undefined:
         return "Undefined";
+    default:
+        return "not defined in class Command.";
     }
 }
 

@@ -1,6 +1,9 @@
 #ifndef BRANCHITEM_H
 #define BRANCHITEM_H
 
+#include "branch-container.h"
+#include "image-container.h"
+#include "mapdesign.h"
 #include "mapitem.h"
 #include "task.h"
 
@@ -8,14 +11,13 @@
 
 class QString;
 class QGraphicsScene;
-class BranchObj;
+
+class HeadingContainer;
 class Link;
 class XLinkItem;
 
 class BranchItem : public MapItem {
   public:
-    enum LayoutHint { AutoPositioning, FreePositioning };
-
     BranchItem(TreeItem *parent = nullptr);
     virtual ~BranchItem();
     virtual void clear();
@@ -57,26 +59,11 @@ class BranchItem : public MapItem {
     virtual bool resetTmpUnscroll(); // scroll all tmp scrolled parents again
                                      // e.g. when unselecting
     virtual void sortChildren(bool inverse = false); //! Sort children
-    virtual void setChildrenLayout(BranchItem::LayoutHint layoutHint);
-    virtual BranchItem::LayoutHint getChildrenLayout();
-
-  protected:
-    bool includeImagesVer;     //! include floatimages in bbox vertically
-    bool includeImagesHor;     //! include floatimages in bbox horizontally
-    bool includeChildren;      //! include children in frame
-    LayoutHint childrenLayout; //! should children be positioned freely?
 
   public:
-    void setIncludeImagesVer(bool);
-    bool getIncludeImagesVer();
-    void setIncludeImagesHor(bool);
-    bool getIncludeImagesHor();
-    QString getIncludeImageAttr();
-    BranchItem *getFramedParentBranch(BranchItem *start);
-    void setFrameIncludeChildren(bool);
-    bool getFrameIncludeChildren();
-
-    QColor getBackgroundColor(BranchItem *start, bool checkInnerFrame = true);  // FIXME-2 Note: Backport from 3.0 to 2.9
+    void setBranchesLayout(const QString &);
+    void setImagesLayout(const QString &);
+    QColor getBackgroundColor(BranchItem *start, bool checkInnerFrame = true);
 
   protected:
     int lastSelectedBranchNum;
@@ -96,15 +83,27 @@ class BranchItem : public MapItem {
   public:
     TreeItem *findMapItem(
         QPointF p,
-        TreeItem *excludeTI); //! search map for branches or images. Ignore
-                              //! excludeTI, where search is started
+        QList <TreeItem*> excludedItems); //! search map for branches or images. Ignore
+                              //! excludeItems, where search is started or which are selected
 
-    virtual void
-    updateStyles(const bool &keepFrame =
-                     false); //! update related fonts, parObjects, links, ...
-    virtual BranchObj *getBranchObj();
-    virtual BranchObj *createMapObj(
+    void updateStylesRecursively(MapDesign::UpdateMode updateMode);
+    void updateVisuals();
+
+    BranchContainer *createBranchContainer(
         QGraphicsScene *scene); //! Create classic object in GraphicsView
+
+    BranchContainer* getBranchContainer();
+    void unlinkBranchContainer();
+    Container* getBranchesContainer();
+
+  private:
+    BranchContainer *branchContainer;
+
+  public:
+    void updateContainerStackingOrder();
+    void addToBranchesContainer(BranchContainer*);
+    void addToImagesContainer(ImageContainer*);
+    void repositionContainers();
 };
 
 #endif

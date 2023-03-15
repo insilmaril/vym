@@ -2,7 +2,6 @@
 #include <QGraphicsScene>
 
 #include "branchitem.h"
-#include "linkablemapobj.h"
 #include "vymmodel.h"
 #include "xlinkobj.h"
 
@@ -49,17 +48,17 @@ void XLinkItem::updateXLink()
         link->updateLink();
 }
 
-MapObj *XLinkItem::getMO()
+XLinkObj *XLinkItem::getXLinkObj()
 {
     if (link)
-        return link->getMO();
+        return link->getXLinkObj();
     return nullptr;
 }
 
 void XLinkItem::setSelection()
 {
     if (link) {
-        XLinkObj *xlo = (XLinkObj *)getMO();
+        XLinkObj *xlo = getXLinkObj();
         if (xlo) {
             if (parentItem == link->getBeginBranch())
                 xlo->setSelection(XLinkObj::C0);
@@ -77,5 +76,5 @@ BranchItem *XLinkItem::getPartnerBranch()
         else
             return link->getBeginBranch();
     }
-    return NULL;
+    return nullptr;
 }

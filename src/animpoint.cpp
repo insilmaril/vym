@@ -60,6 +60,8 @@ void AnimPoint::copy(AnimPoint other)
 void AnimPoint::setStart(const QPointF &p)
 {
     startPos = p;
+    setX(startPos.x());
+    setY(startPos.y());
     initVector();
 }
 
@@ -90,6 +92,12 @@ bool AnimPoint::animate()
 {
     if (!animated)
         return false;
+    // Some math to slow down the movement in the end
+    qreal f = 1 - n / (qreal)animTicks;
+    qreal ff = 1 - f * f * f;
+    setX(startPos.x() + vector.x() * ff);
+    setY(startPos.y() + vector.y() * ff);
+
     n++;
     if (n > animTicks) {
         vector = QPointF(0, 0);
@@ -98,12 +106,6 @@ bool AnimPoint::animate()
         setY(destPos.y());
         return false;
     }
-
-    // Some math to slow down the movement in the end
-    qreal f = 1 - n / (qreal)animTicks;
-    qreal ff = 1 - f * f * f;
-    setX(startPos.x() + vector.x() * ff);
-    setY(startPos.y() + vector.y() * ff);
 
     return animated;
 }

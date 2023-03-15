@@ -11,7 +11,7 @@ FindResultItem::FindResultItem(const QVector<QVariant> &data,
     itemData = data;
     orgID = -1;
     orgIndex = -1;
-    orgModel = NULL;
+    orgModel = nullptr;
     if (data.isEmpty())
         itemData.append(QVariant("empty"));
 }

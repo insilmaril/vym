@@ -1,44 +1,50 @@
-#ifndef IMAGEOBJ_H
-#define IMAGEOBJ_H
+#ifndef IMAGE_CONTAINER_H
+#define IMAGE_CONTAINER_H
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QGraphicsSvgItem>
 
-/*! \brief Base class for images, which can be pixmaps or svg
+#include "container.h"
+#include "selectable-container.h"
+
+class ImageItem;
+
+/*! \brief Base class for images in containers, which can be pixmaps or svg
  *
- * ImageObj is used both by items part of the map "tree" in
- * ImageItem and as flag in FlagObj
+ * ImageContainer is used both by items part of the map "tree" in
+ * a ImageItem and also as flag  part of a FlagRow
  *
  * Both of these types are actually drawn onto the map
  */
 
-class ImageObj : public QGraphicsItem {
+class ImageContainer : public SelectableContainer {
   public:
     enum ImageType { Undefined, Pixmap, ModifiedPixmap, SVG, ClonedSVG };
 
-    ImageObj();
-    ImageObj(QGraphicsItem *);
-    ~ImageObj();
-    void init();
-    void copy(ImageObj *);
-    void setPos(const QPointF &pos);
-    void setPos(const qreal &x, const qreal &y);
-    void setZValue(qreal z);
+    ImageContainer();
+    virtual ~ImageContainer();
+    virtual void copy(ImageContainer*);
+    virtual void init();
     void setVisibility(bool);
     void setWidth(qreal w);
     void setScaleFactor(qreal f);
     qreal getScaleFactor();
-    virtual QRectF boundingRect() const;
-    virtual void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
+    void select();
+
     bool load(const QString &, bool createClone = false);
     bool save(const QString &);
     QString getExtension();
     ImageType getType();
     QIcon getIcon();
 
+    void setImageItem(ImageItem*);
+    ImageItem* getImageItem();
+
+    void reposition();
+
   protected:
-    ImageObj::ImageType imageType;
+    ImageContainer::ImageType imageType;
 
     QGraphicsSvgItem *svgItem;
     QString svgCachePath;
@@ -49,5 +55,7 @@ class ImageObj : public QGraphicsItem {
     qreal scaleFactor;
 
     ulong imageID;
+
+    ImageItem *imageItem; // FIXME-2 only used when part of ImageItem
 };
 #endif

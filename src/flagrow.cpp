@@ -12,7 +12,7 @@ extern Main *mainWindow;
 FlagRow::FlagRow()
 {
     //qDebug()<< "Const FlagRow ()";
-    masterRow = NULL;
+    masterRow = nullptr;
 }
 
 FlagRow::~FlagRow()
@@ -42,6 +42,15 @@ bool FlagRow::isActive(const QUuid &uid)
         if (i == uid)
             return true;
     return false;
+}
+
+bool FlagRow::hasFlag(const QString &name)
+{
+    Flag *f = masterRow->findFlagByName(name);
+    if (f)
+        return true;
+    else
+        return false;
 }
 
 bool FlagRow::toggle(const QString &name, bool useGroups)

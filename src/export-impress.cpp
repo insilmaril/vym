@@ -110,7 +110,7 @@ void ExportOO::exportPresentation()
                 pagesBI = ((BranchItem *)pagesBI->parent())->getBranchNum(j);
             }
             else
-                pagesBI = NULL; // We are already iterating over the sectionBIs
+                pagesBI = nullptr; // We are already iterating over the sectionBIs
         }
         i++;
         if (mapcenters > 1)

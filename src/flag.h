@@ -4,8 +4,9 @@
 #include <QAction>
 #include <QUuid>
 
-#include "imageobj.h"
 #include "xmlobj.h"
+
+class ImageContainer;
 
 /*! \brief One flag belonging to a FlagRow.
 
@@ -39,7 +40,7 @@ class Flag : public XMLObj {
     void unsetGroup();
     void setToolTip(const QString &);
     const QString getToolTip();
-    ImageObj *getImageObj();
+    ImageContainer *getImageContainer();
     void setAction(QAction *a);
     QAction *getAction();
     void setUsed(bool);
@@ -64,7 +65,7 @@ class Flag : public XMLObj {
     QUuid uuid;
 
   private:
-    ImageObj *image;
+    ImageContainer *imageContainer;
     QString path;
 };
 

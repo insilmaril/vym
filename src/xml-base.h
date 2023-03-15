@@ -1,50 +1,59 @@
 #ifndef XML_BASE
 #define XML_BASE
 
-//#include <QString>
-#include <QXmlAttributes>
+#include <QXmlStreamReader>
 
 #include "file.h"
 
+#include "task.h"
+#include "vymtext.h"
+
+
 class VymModel;
+class BranchItem;
+class ImageItem;
+class MapItem;
 
 /*! \brief Base class for parsing maps from XML documents */
 
-class parseBaseHandler : public QXmlDefaultHandler {
+class BaseReader {
   public:
-    parseBaseHandler();
-    ~parseBaseHandler();
-    QString errorProtocol();
-    QString parseHREF(QString);
-    virtual bool startElement(const QString &, const QString &,
-                              const QString &eName,
-                              const QXmlAttributes &atts) = 0;
-    virtual bool endElement(const QString &, const QString &,
-                            const QString &) = 0;
-    virtual bool characters(const QString &) = 0;
+    BaseReader(VymModel *vm);
+    virtual bool read(QIODevice *device) = 0;
 
-    virtual QString errorString() = 0;
-    bool fatalError(const QXmlParseException &);
+    QString errorString() const;
+
+    QString parseHREF(QString href);
     void setModel(VymModel *);
     void setTmpDir(QString);
-    void setInputFile(const QString &);
     void setInputString(const QString &);
-    void setLoadMode(const LoadMode &, int p = -1);
-    bool readHtmlAttr(const QXmlAttributes &);
+    void setLoadMode(const File::LoadMode &, int p = -1);
+
+    QString attributeToString(const QString &a);
 
   protected:
-    QString errorProt;
+    VymModel *model;
 
-    LoadMode loadMode;
+    QXmlStreamReader xml;
+
+    File::LoadMode loadMode;
     int insertPos;
 
-    bool isVymPart;
-    int branchDepth;
-    VymModel *model;
     QString tmpDir;
-    QString inputFile;
     QString inputString;
     QString htmldata;
     QString version;
+
+    VymText vymtext;
+
+    BranchItem *lastBranch;
+    Task *lastTask;
+    MapItem *lastMI;
+
+    ImageItem *lastImage;
+    //SlideItem *lastSlide;
+    //QString lastSetting;
+
 };
+
 #endif

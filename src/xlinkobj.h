@@ -4,7 +4,7 @@
 #include <QPen>
 
 #include "arrowobj.h"
-#include "linkablemapobj.h"
+#include "branch-container.h"
 #include "mapobj.h"
 #include "xlink.h"
 
@@ -17,7 +17,8 @@ class BranchItem;
 /////////////////////////////////////////////////////////////////////////////
 class XLinkObj : public MapObj {
   public:
-    enum CurrentSelection { Unselected, Path, C0, C1 };
+    enum SelectionType { Empty, Path, C0, C1 };
+    XLinkObj(Link*);
     XLinkObj(QGraphicsItem *, Link *l);
     virtual ~XLinkObj();
     virtual void init();
@@ -30,13 +31,9 @@ class XLinkObj : public MapObj {
     ArrowObj::OrnamentStyle getStyleEnd();
     QPointF getBeginPos();
     QPointF getEndPos();
-    virtual void move(QPointF p);
     virtual void setEnd(QPointF);
-    void setSelection(int cp);
-    void setSelection(CurrentSelection s);
+    void setSelection(SelectionType s);
     void updateXLink();
-    void positionBBox();
-    void calcBBoxSize();
     void setVisibility(bool);
     void setVisibility();
     void initC0();
@@ -45,8 +42,9 @@ class XLinkObj : public MapObj {
     void initC1();
     void setC1(const QPointF &p);
     QPointF getC1();
-    bool isInClickBox(const QPointF &p);
-    int ctrlPointInClickBox(const QPointF &p);
+    void setSelectedCtrlPoint(const QPointF &);
+
+    SelectionType couldSelect(const QPointF &);
     QPainterPath getClickPath();
 
   private:
@@ -58,19 +56,21 @@ class XLinkObj : public MapObj {
     static int d_control;
     QPainterPath clickPath;
     QGraphicsPolygonItem *poly; // Arrowhead, when one end is not visible
-    ArrowObj *pointerBegin;     // Arrowhead
-    ArrowObj *pointerEnd;       // Arrowhead
+    ArrowObj *beginArrow;     // Arrowhead
+    ArrowObj *endArrow;       // Arrowhead
     QGraphicsPathItem *path;
 
     QPointF beginPos;
     QPointF endPos;
-    QPointF c0, c1; // Controlpoints for Bezier path
-    LinkableMapObj::Orientation beginOrient;
-    LinkableMapObj::Orientation endOrient;
-    QGraphicsEllipseItem *ctrl_p0;
-    QGraphicsEllipseItem *ctrl_p1;
+    BranchContainer::Orientation beginOrient;
+    BranchContainer::Orientation endOrient;
 
-    CurrentSelection curSelection;
+    // Controlpoints for Bezier path
+    QPointF c0, c1;
+    QGraphicsEllipseItem *c0_ellipse;
+    QGraphicsEllipseItem *c1_ellipse;
+
+    SelectionType curSelection;
 
     BranchItem *visBranch; // the "visible" part of a partially scrolled li
     Link *link;

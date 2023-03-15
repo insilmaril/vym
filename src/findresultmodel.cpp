@@ -199,7 +199,7 @@ FindResultItem *FindResultModel::getItem(const QModelIndex &index) const
 
 FindResultItem *FindResultModel::addItem(TreeItem *ti)
 {
-    FindResultItem *ni = NULL;
+    FindResultItem *ni = nullptr;
     if (ti) {
         QModelIndex parix(index(rootItem));
 
@@ -225,7 +225,7 @@ FindResultItem *FindResultModel::addSubItem(FindResultItem *parent,
                                             const QString &s, TreeItem *pi,
                                             int i)
 {
-    FindResultItem *ni = NULL;
+    FindResultItem *ni = nullptr;
     if (pi && parent) {
         QModelIndex parix(index(parent));
 

@@ -3,7 +3,6 @@
 #include "attributeitem.h"
 #include "branchitem.h"
 #include "file.h"
-#include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "vymmodel.h"
@@ -16,7 +15,7 @@ extern QDir vymBaseDir;
 
 ImportBase::ImportBase()
 {
-    model = NULL;
+    model = nullptr;
     init();
 }
 
@@ -32,7 +31,7 @@ ImportBase::~ImportBase()
     removeDir(tmpDir);
 }
 
-void ImportBase::init() 
+void ImportBase::init()
 {
     bool ok;
     tmpDir.setPath(makeTmpDir(ok, "vym-import"));
@@ -64,7 +63,7 @@ bool ImportFirefoxBookmarks::transform()
     progressDialog.setAutoReset(false);
     progressDialog.setAutoClose(false);
     progressDialog.setMinimumWidth(600);
-    progressDialog.setCancelButton(NULL);
+    progressDialog.setCancelButton(nullptr);
     progressDialog.setWindowTitle(QObject::tr("Import Firefox bookmarks","Import dialog"));
     progressDialog.setLabelText(
         QObject::tr("Loading bookmarks:", "Progress dialog while importing bookmarks"));

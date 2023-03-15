@@ -1,67 +1,38 @@
 #include "geometry.h"
 
-#include "misc.h"
-#include <math.h>
-
 #include <QString>
-
 #include <iostream>
+#include <math.h>
+#include "misc.h"
+
 using namespace std;
-
-QRectF addBBox(QRectF r1, QRectF r2)
-{
-    // Find smallest QRectF containing given rectangles
-
-    QRectF n;
-    // Set left border
-    if (r1.left() <= r2.left())
-        n.setLeft(r1.left());
-    else
-        n.setLeft(r2.left());
-
-    // Set top border
-    if (r1.top() <= r2.top())
-        n.setTop(r1.top());
-    else
-        n.setTop(r2.top());
-
-    // Set right border
-    if (r1.right() <= r2.right())
-        n.setRight(r2.right());
-    else
-        n.setRight(r1.right());
-
-    // Set bottom
-    if (r1.bottom() <= r2.bottom())
-        n.setBottom(r2.bottom());
-    else
-        n.setBottom(r1.bottom());
-    return n;
-}
-
-QSize addBBoxSize(QSize s1, QSize s2)
-{
-    // Find the minimimum smallest QSize which could include 2 given sizes
-
-    QSize s = s1;
-    if (s1.width() <= s2.width())
-        s.setWidth(s2.width());
-    if (s1.height() <= s2.height())
-        s.setHeight(s2.height());
-    return s;
-}
-
-bool isInBox(const QPointF &p, const QRectF &box)
-{
-    if (p.x() >= box.left() && p.x() <= box.right() && p.y() <= box.bottom() &&
-        p.y() >= box.top())
-        return true;
-    return false;
-}
 
 qreal Geometry::distance(const QPointF &p, const QPointF &q)
 {
-    return sqrt(p.x() * q.x() + p.y() * q.y());
+    return sqrt( (p.x() - q.x()) * (p.x() - q.x())
+               + (p.y() - q.y()) * (p.y() - q.y()) );
+}
+
+qreal getAngle(const QPointF &p)
+{
+    // Calculate angle between  vector from origin to p and  x-axis
+    if (p.x() == 0) {
+        if (p.y() >= 0)
+            return M_PI_2;
+        else
+            return 3 * M_PI_2;
+    }
+    else {
+        if (p.x() > 0) {
+            if (p.y() < 0)
+                return (qreal)(-atan((qreal)(p.y()) / (qreal)(p.x())));
+            else
+                return (qreal)(2 * M_PI -
+                               atan((qreal)(p.y()) / (qreal)(p.x())));
+        }
+        else
+            return (qreal)(M_PI - atan((qreal)(p.y()) / (qreal)(p.x())));
+    }
 }
 
 Vector::Vector() : QPointF() {}

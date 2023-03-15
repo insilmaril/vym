@@ -552,7 +552,7 @@ bool saveStringToDisk(const QString &fname, const QString &s)
     return true;
 }
 
-FileType getMapType(const QString &fn)
+File::FileType getMapType(const QString &fn)
 {
     int i = fn.lastIndexOf(".");
     if (i >= 0) {

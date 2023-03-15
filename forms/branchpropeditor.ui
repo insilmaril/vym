@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>325</width>
-    <height>378</height>
+    <width>380</width>
+    <height>712</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,280 +19,630 @@
   <property name="windowTitle">
    <string>Branch Property Editor</string>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_12">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tabFrame">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <attribute name="title">
        <string>Frame</string>
       </attribute>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <property name="leftMargin">
-        <number>9</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>9</number>
-       </property>
-       <property name="bottomMargin">
-        <number>9</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_11">
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="innerFrameGroupBox">
          <property name="title">
-          <string>Geometry</string>
+          <string>Inner frame</string>
          </property>
-         <layout class="QGridLayout">
-          <item row="0" column="0" colspan="4">
-           <widget class="QComboBox" name="frameTypeCombo">
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QGroupBox" name="innerFrameGeometryGroupBox">
+            <property name="title">
+             <string>Geometry</string>
+            </property>
+            <layout class="QGridLayout">
+             <item row="2" column="1" colspan="2">
+              <widget class="QLabel" name="innerFrameBorderLabel">
+               <property name="text">
+                <string>Borderline width</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QSpinBox" name="innerFrameWidthSpinBox">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QSpinBox" name="innerFramePaddingSpinBox">
+               <property name="maximum">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" colspan="2">
+              <widget class="QLabel" name="innerFramePaddingLabel">
+               <property name="text">
+                <string>Padding</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="4">
+              <widget class="QComboBox" name="innerFrameTypeCombo">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>No Frame</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Rectangle</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Rounded Rectangle</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ellipse</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Cloud</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="innerFrameColorGroupBox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <item>
-             <property name="text">
-              <string>No Frame</string>
+            <property name="title">
+             <string>Colors</string>
+            </property>
+            <layout class="QGridLayout">
+             <property name="leftMargin">
+              <number>7</number>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Rectangle</string>
+             <property name="topMargin">
+              <number>7</number>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Rounded Rectangle</string>
+             <property name="rightMargin">
+              <number>7</number>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Ellipse</string>
+             <property name="bottomMargin">
+              <number>7</number>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Cloud</string>
+             <property name="spacing">
+              <number>6</number>
              </property>
-            </item>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="2" column="1" colspan="2">
-           <widget class="QLabel" name="framePaddingLabel">
-            <property name="text">
-             <string>Padding</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" colspan="2">
-           <widget class="QLabel" name="frameBorderLabel">
-            <property name="text">
-             <string>Borderline width</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QSpinBox" name="framePaddingSpinBox">
-            <property name="maximum">
-             <number>50</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QSpinBox" name="frameWidthSpinBox">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>20</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="QCheckBox" name="includeChildrenCheckBox">
-            <property name="text">
-             <string>Include children</string>
-            </property>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="innerFrameBrushColorButton">
+               <property name="minimumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>20</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="innerFramePenColorLabelDesc">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Borderline color</string>
+               </property>
+               <property name="buddy">
+                <cstring>innerFramePenColorButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="innerFrameBrushColorLabelDesc">
+               <property name="text">
+                <string>Background color</string>
+               </property>
+               <property name="buddy">
+                <cstring>innerFrameBrushColorButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="innerFramePenColorButton">
+               <property name="minimumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>20</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>6</number>
+        <widget class="QGroupBox" name="outerFrameGroupBox">
+         <property name="title">
+          <string>Outer frame</string>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QGroupBox" name="outerFrameGeometryBox">
+            <property name="title">
+             <string>Geometry</string>
+            </property>
+            <layout class="QGridLayout" name="_2">
+             <item row="0" column="0" colspan="4">
+              <widget class="QComboBox" name="outerFrameTypeCombo">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>No Frame</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Rectangle</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Rounded Rectangle</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ellipse</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Cloud</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QSpinBox" name="outerFramePaddingSpinBox">
+               <property name="maximum">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QSpinBox" name="outerFrameWidthSpinBox">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" colspan="2">
+              <widget class="QLabel" name="outerFrameBorderLabel">
+               <property name="text">
+                <string>Borderline width</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" colspan="2">
+              <widget class="QLabel" name="outerFramePaddingLabel">
+               <property name="text">
+                <string>Padding</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="outerFrameColorGroupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Colors</string>
+            </property>
+            <layout class="QGridLayout" name="_3">
+             <property name="leftMargin">
+              <number>7</number>
+             </property>
+             <property name="topMargin">
+              <number>7</number>
+             </property>
+             <property name="rightMargin">
+              <number>7</number>
+             </property>
+             <property name="bottomMargin">
+              <number>7</number>
+             </property>
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="outerFrameBrushColorButton">
+               <property name="minimumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>20</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="outerFramePenColorLabelDesc">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Borderline color</string>
+               </property>
+               <property name="buddy">
+                <cstring>innerFramePenColorButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="outerFrameBrushColorLabelDesc">
+               <property name="text">
+                <string>Background color</string>
+               </property>
+               <property name="buddy">
+                <cstring>innerFrameBrushColorButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="outerFramePenColorButton">
+               <property name="minimumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>20</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabLayout">
+      <attribute name="title">
+       <string>Layout</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QGroupBox" name="colorGroupBox">
+          <widget class="QGroupBox" name="childrenBranchesGroupBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="title">
-            <string>Colors</string>
+            <string>Layout of  branches</string>
            </property>
-           <layout class="QGridLayout">
-            <property name="leftMargin">
-             <number>7</number>
-            </property>
-            <property name="topMargin">
-             <number>7</number>
-            </property>
-            <property name="rightMargin">
-             <number>7</number>
-            </property>
-            <property name="bottomMargin">
-             <number>7</number>
-            </property>
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="framePenColorButton">
-              <property name="minimumSize">
-               <size>
-                <width>32</width>
-                <height>32</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>16777215</height>
-               </size>
-              </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QCheckBox" name="branchesAutoLayoutCheckBox">
               <property name="text">
-               <string/>
+               <string>Automatic</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="penColorLabelDesc">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+            <item>
+             <widget class="QFrame" name="branchesLayoutsFrame">
+              <property name="enabled">
+               <bool>true</bool>
               </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_2">
+                 <item>
+                  <widget class="QRadioButton" name="branchesLayoutVerticalButton">
+                   <property name="text">
+                    <string>Vertical</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="branchesLayoutHorizontalButton">
+                   <property name="text">
+                    <string>Horizontal</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="branchesLayoutBoundedButton">
+                   <property name="text">
+                    <string>Floating bounded</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="branchesLayoutFreeButton">
+                   <property name="text">
+                    <string>Floating free</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="childrenImagesGroupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title">
+            <string>Layout of  images</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QCheckBox" name="imagesAutoLayoutCheckBox">
               <property name="text">
-               <string>Borderline color</string>
-              </property>
-              <property name="buddy">
-               <cstring>framePenColorButton</cstring>
+               <string>Automatic</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="frameBrushColorButton">
-              <property name="minimumSize">
-               <size>
-                <width>32</width>
-                <height>0</height>
-               </size>
+            <item>
+             <widget class="QFrame" name="imagesLayoutsFrame">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>16777215</height>
-               </size>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
               </property>
-              <property name="text">
-               <string/>
-              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_3">
+                 <item>
+                  <widget class="QRadioButton" name="imagesLayoutVerticalButton">
+                   <property name="text">
+                    <string>Vertical</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="imagesLayoutHorizontalButton">
+                   <property name="text">
+                    <string>Horizontal</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="imagesLayoutBoundedButton">
+                   <property name="text">
+                    <string>Floating bounded</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="imagesLayoutFreeButton">
+                   <property name="text">
+                    <string>Floating free</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">imagesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="brushColorLabelDesc">
-              <property name="text">
-               <string>Background color</string>
-              </property>
-              <property name="buddy">
-               <cstring>frameBrushColorButton</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
          </item>
         </layout>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="Layout">
-      <attribute name="title">
-       <string>Layout</string>
-      </attribute>
-      <layout class="QVBoxLayout">
        <item>
-        <layout class="QVBoxLayout">
+        <widget class="QLabel" name="rotationHeadingLabel">
+         <property name="text">
+          <string>Rotation heading:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QCheckBox" name="incImgHor">
-           <property name="text">
-            <string>Include images horizontally</string>
+          <widget class="QSlider" name="rotationHeadingSlider">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="incImgVer">
-           <property name="text">
-            <string>Include images vertically</string>
+          <widget class="QSpinBox" name="rotationHeadingSpinBox">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="rotationInnerContentLabel">
+         <property name="text">
+          <string>Rotation content:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QSlider" name="rotationInnerContentSlider">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="childrenFreePositioning">
-           <property name="text">
-            <string>Free positioning of children (experimental!)</string>
+          <widget class="QSpinBox" name="rotationInnerContentSpinBox">
+           <property name="minimum">
+            <number>-90</number>
+           </property>
+           <property name="maximum">
+            <number>90</number>
            </property>
           </widget>
          </item>
@@ -313,7 +663,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_4">
+     <widget class="QWidget" name="tabTask">
       <attribute name="title">
        <string>Task</string>
       </attribute>
@@ -415,7 +765,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tabLink">
       <attribute name="title">
        <string>Link</string>
       </attribute>
@@ -442,7 +792,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="tabAttributes">
       <attribute name="title">
        <string>Attributes</string>
       </attribute>
@@ -517,4 +867,8 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="branchesLayoutsButtonGroup"/>
+  <buttongroup name="imagesLayoutsButtonGroup"/>
+ </buttongroups>
 </ui>
