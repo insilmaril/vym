@@ -124,7 +124,7 @@ void TextEditor::init(const QString &scope)
     pix.fill(colorRichTextDefaultBackground);
     actionFilledEditorColor->setIcon(pix);
 
-    colorRichTextDefaultForeground.setNamedColor(    // FIXME-0 check...
+    colorRichTextDefaultForeground.setNamedColor(
         settings.value(n + "colors/richTextDefaultForeground", "#000000").toString());
     e->setTextColor(colorRichTextDefaultForeground);
     pix.fill(colorRichTextDefaultForeground);
@@ -698,7 +698,6 @@ void TextEditor::setPlainText(const QString &t)
 {
     blockChangedSignal = true;
     e->setReadOnly(false);
-    // FIXME-0 needed?  clear();
 
     e->setTextColor(qApp->palette().color(QPalette::WindowText));
     e->setPlainText(t);
@@ -751,7 +750,7 @@ void TextEditor::clear()
     blockChangedSignal = true;
     e->clear();
     setState(emptyEditor);
-    e->setTextColor(colorRichTextDefaultForeground); // FIXME-0 still needed?
+    //e->setTextColor(colorRichTextDefaultForeground); // FIXME-2 still needed?
 
     blockChangedSignal = blockChangedOrg;
 }
@@ -1146,16 +1145,15 @@ void TextEditor::setState(EditorState s) // FIXME-2 called 12x when reselecting 
                 if (useColorMapBackground)
                     baseColor = colorMapBackground;
                 else
-                    baseColor = colorRichTextDefaultBackground;     // FIXME-0
+                    baseColor = colorRichTextDefaultBackground;     // FIXME-2
                                                                     // also read
                                                                     // from
                                                                     // settings
                                                                     // ?!??
-                windowTextColor = p.color(QPalette::WindowText);    // FIXME-0 duplicate with below
             } else {
                 baseColor = p.color(QPalette::Base);
-                windowTextColor = p.color(QPalette::WindowText);
             }
+            windowTextColor = p.color(QPalette::WindowText);
             e->setReadOnly(false);
             break;
         case inactiveEditor:

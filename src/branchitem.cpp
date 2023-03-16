@@ -426,7 +426,7 @@ bool BranchItem::getFrameIncludeChildren()
         return includeChildren;
 }
 
-QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)  // FIXME-2 backport from 3.0 to 2.9, adapt when merging back to 3.0!
+QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)
 {
     /*
     // Determine background color in taskEditor, first try inner frame

@@ -76,7 +76,7 @@ class BranchItem : public MapItem {
     void setFrameIncludeChildren(bool);
     bool getFrameIncludeChildren();
 
-    QColor getBackgroundColor(BranchItem *start, bool checkInnerFrame = true);  // FIXME-2 Note: Backport from 3.0 to 2.9
+    QColor getBackgroundColor(BranchItem *start, bool checkInnerFrame = true);
 
   protected:
     int lastSelectedBranchNum;

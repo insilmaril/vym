@@ -190,7 +190,6 @@ int main(int argc, char *argv[])
     options.add("recover", Option::Switch, "recover", "recover");
     options.add("restore", Option::Switch, "r", "restore");
     options.add("shortcuts", Option::Switch, "s", "shortcuts");
-//    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX") // FIXME-2 not really used?
     options.add("testmode", Option::Switch, "t", "testmode");
     options.add("version", Option::Switch, "v", "version");
     options.setHelpText(

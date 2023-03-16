@@ -14,13 +14,13 @@
 # vym itself needs to be starting using the name option, using  "vym -n production"
 #
 
-require File.expand_path("../vym-ruby", __FILE__) 
+require File.expand_path("../vym-ruby", __FILE__)
 require 'tempfile'
 require 'mail'
 
 mail_in = ""
 ARGF.each_line do |line|
-  mail_in << line 
+  mail_in << line
 end
 
 begin
@@ -78,7 +78,7 @@ begin
     end
 
     # Before doing anything, make sure there is a return value available
-    # Otherwise the script might block     // FIXME-1
+    # Otherwise the script might block     // FIXME
     #version = vym.version
 
     puts "Found #{vym.mapCount} maps"
