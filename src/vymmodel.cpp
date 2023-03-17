@@ -628,7 +628,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 resetHistory();
                 resetSelectionHistory();
 
-                // Set treeEditor and slideEditor visibilty per map
+                // Set treeEditor and slideEditor visibility per map
                 vymView->readSettings();
 
                 if (!tryVymLock() && debug)
