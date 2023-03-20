@@ -355,31 +355,31 @@
         <location filename="../forms/darktheme-settings-dialog.ui" line="+20"/>
         <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+101"/>
         <source>Dark theme settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ρυθμίσεις σκοτεινού θέματος</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
         <source>Dark theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Σκοτεινό θέμα</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
         <source>Always use dark theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Χρήση πάντοτε του σκοτεινού θέματος</translation>
     </message>
     <message>
         <location line="+10"/>
         <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
         <source>System settings for dark theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Ρυθμίσεις συστήματος για το σκοτεινό θέμα</translation>
     </message>
     <message>
         <location filename="../src/darktheme-settings-dialog.cpp" line="+13"/>
         <source>DarkThemeSettingsDialog dialog</source>
         <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation>Παραθυρο ρυθμίεων για το σκοτεινό θέμα</translation>
     </message>
 </context>
 <context>
@@ -1435,7 +1435,7 @@ want to allow this in your system!</source>
     <message>
         <location line="+5484"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο vym να ελέγχει στο διαδίκτυο για ενημερώσεις ή σημειώσεις κυκλοφορίας;&lt;/h3&gt;Εάν συμφωνείτε, το vym θα &lt;ul&gt;&lt;li&gt;ελέγχει μία φορά για σημειώσεις έκδοσης&lt;/li&gt;&lt;li&gt;ελέγχει τακτικά για ενημερώσεις και σας ειδοποιεί σε περίπτωση που πρέπει να κάνετε ενημέρωση, π.χ. εάν υπάρχουν διαθέσιμες σημαντικές διορθώσεις σφαλμάτων&lt;/li&gt;&lt;li&gt;λάβετε ένα cookie με ένα τυχαίο αναγνωριστικό και θα σταλούν ορισμένα ανώνυμα δεδομένα, όπως:&lt;ul&gt;&lt;li&gt; έκδοση του vym&lt;/li&gt;&lt;li&gt;όνομα πλατφόρμας και το αναγνωριστικό ( π.χ. &quot;Windows&quot; ή &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;εάν χρησιμοποιείτε σκοτεινό θέμα&lt;/li&gt;&lt;/ul&gt;Αυτά τα δεδομένα αποστέλλονται σε εμένα, Uwe Drechsel.&lt;p&gt;Ως προγραμματιστής vym έχω κίνητρο να βλέπω πολλά άτομα να χρησιμοποιούν το vym. Φυσικά είμαι περίεργος να δω, σε ποιο λειτουργικό σύστημα χρησιμοποιείται το vym. Η συντήρηση καθενός από τα συστήματα απαιτεί πολύ από τον (ελεύθερο) χρόνο μου.&lt;/p&gt; &lt;p&gt;Δεν θα σταλούν άλλα δεδομένα εκτός από τα παραπάνω, ειδικότερα δεν θα συλλέγονται ή αποστέλλονται προσωπικά δεδομένα. (Ελέγξτε τον πηγαίο κώδικα, εάν δεν με πιστεύετε.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέψετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνει λήψη κανενός δεδομένου και ειδικά &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να ξοδέψω μερικές ακόμη  χιλιάδες ώρες για την ανάπτυξη ενός εργαλείου Ελεύθερου Λογισμικού.&lt;/ul&gt;Επιτρέψτε στο vym να ελέγχει για ενημερώσεις :-)</translation>
     </message>
     <message>
         <location line="-5453"/>
@@ -2654,7 +2654,7 @@ exists already. Do you want to</source>
     <message>
         <location line="+9"/>
         <source>That&apos;s ok, though I would be happy to see many users working with vym and also on which platforms.</source>
-        <translation type="unfinished"></translation>
+        <translation>Δεν πειράζει, αν και θα χαιρόμουν να δω πολλούς χρήστες να δουλεύουν με το vym και επίσης σε ποια λειτουργικά συστήματα.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -3047,13 +3047,13 @@ because of existing lockfile:
         <location line="+72"/>
         <source>Dark theme</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Σκοτεινό θέμα</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Show scripting commands</source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Εμφάνιση εντολών σεναρίου</translation>
     </message>
     <message>
         <location line="+519"/>
@@ -3191,12 +3191,12 @@ because file exists and cannot be changed.</source>
     <message>
         <location line="+1747"/>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Πληροφορίες</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Restart vym to apply the changed dark theme setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Επανεκκινήστε το vym για να εφαρμοστεί η νέα ρύθμιση του σκοτεινού θέματος</translation>
     </message>
     <message>
         <location line="+51"/>
