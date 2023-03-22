@@ -51,10 +51,17 @@ Installation
 
 * Binaries
 
-    Installation depends on the platform you use, please check the
-    homepage for details:
+    Binaries for all major platforms can be found on:
 
-    http://www.insilmaril.de/vym
+    https://sourceforge.net/projects/vym/
+
+    Packages there are: openSUSE rpm, Ubuntu deb, Apple dmg, Windows exe
+
+    More Linux like packages and developer versions are built in 
+    Open Build Service:
+
+    https://build.opensuse.org/package/show/home:insilmaril/vym
+
 
 * Compiling
 
