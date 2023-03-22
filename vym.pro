@@ -43,7 +43,7 @@ macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
 }
 
-TRANSLATIONS += lang/vym.de_DE.ts
+TRANSLATIONS += lang/vym.de.ts
 TRANSLATIONS += lang/vym.el.ts
 TRANSLATIONS += lang/vym.en.ts
 TRANSLATIONS += lang/vym.es.ts

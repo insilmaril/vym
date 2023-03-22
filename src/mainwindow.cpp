@@ -18,7 +18,6 @@ using namespace std;
 #include <QScriptEngine>
 #include <QSslSocket>
 #include <QStatusBar>
-#include <QStyleFactory>    // FIXME-2 testing only
 #include <QTextStream>
 
 #include "aboutdialog.h"
@@ -6944,6 +6943,7 @@ void Main::testFunction1()
     // Avail. styles:
     // Linux (KDE): Breeze,bb10dark,bb10bright,cleanlooks,gtk2,cde,motif,plastique,Windows,Fusion
     // Windows: windowsvista,Windows,Fusion
+    //#include <QStyleFactory>
     //qApp->setStyle(QStyleFactory::create("windowsvista"));
 
     VymModel *m = currentModel();

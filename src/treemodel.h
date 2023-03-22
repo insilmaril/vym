@@ -47,7 +47,7 @@ class TreeModel : public QAbstractItemModel {
     QList<uint> deleteLaterIDs;
 
     QColor backgroundColor; // Set in VymModel to optimize backgroundRole
-    QColor selectionColor;  // Set in VymModel to optimize highlightedText palette  // FIXME-0 used?
+    QColor selectionColor;  // Set in VymModel to optimize highlightedText palette
 };
 
 #endif
