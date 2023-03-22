@@ -5521,6 +5521,7 @@ void VymModel::setSelectionColorInt(QColor col) // FIXME-0 check if still workin
               QString("Set color of selection box to %1").arg(col.name()));
 
     mapDesign->setSelectionColor(col);
+    vymView->setSelectionColor(col);
     QItemSelection selection = selModel->selection();
     unselectAll();
     selModel->select(selection, QItemSelectionModel::ClearAndSelect);
