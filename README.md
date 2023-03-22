@@ -57,7 +57,7 @@ Installation
 
     Packages there are: openSUSE rpm, Ubuntu deb, Apple dmg, Windows exe
 
-    More Linux like packages and developer versions are built in 
+    More Linux like packages and developer versions are built in
     Open Build Service:
 
     https://build.opensuse.org/package/show/home:insilmaril/vym
@@ -66,8 +66,7 @@ Installation
 * Compiling
 
     Compiling vym from scratch is pretty easy, if you have the
-    development packages of the Qt5 toolkit installed. (Check also the
-    homepage above for details):
+    development packages of the Qt5 toolkit installed.
 
       cmake .
       make
@@ -77,11 +76,11 @@ Installation
 Questions and feedback
 ----------------------
 
-Please direct support questions to the mailinglist first:
-
-  vym-forum@lists.sourceforge.net
-
 Bugs and feature requests will be taken care of in
 
   https://github.com/insilmaril/vym/issues
+
+Please direct support questions to the mailinglist first:
+
+  vym-forum@lists.sourceforge.net
 
