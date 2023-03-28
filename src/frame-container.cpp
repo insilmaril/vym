@@ -30,12 +30,13 @@ void FrameContainer::init()
     framePen.setWidth(1);
     frameBrush.setColor(Qt::white);
     frameBrush.setStyle(Qt::SolidPattern);
-    frameIncludeChildrenInt = false;
 
     setLayout(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
 
     setVisible(true);
+
+    usage = Undefined;
 
     // Don't consider for sizes or repositioning
     // FIXME-2 still needed? overlay = true;
@@ -360,17 +361,21 @@ void FrameContainer::setFrameBrushColor(const QColor &col)
     repaint();
 }
 
-bool FrameContainer::frameIncludeChildren() { return frameIncludeChildrenInt; }
-
-void FrameContainer::setFrameIncludeChildren(bool b)
+void FrameContainer::setUsage(FrameUsage u)
 {
-    frameIncludeChildrenInt = b;
+    usage = u;
 }
 
 QString FrameContainer::saveFrame()
 {
     if (frameTypeInt == NoFrame)
         return QString();
+
+    QString frameUsageAttr;
+    if (usage == InnerFrame)
+        frameUsageAttr = attribut("frameUsage", "innerFrame");
+    else if (usage == OuterFrame)
+        frameUsageAttr = attribut("frameUsage", "outerFrame");
 
     QString frameTypeAttr = attribut("frameType", frameTypeString());
     QString penColAttr = attribut("penColor", framePen.color().name(QColor::HexArgb));
@@ -379,9 +384,9 @@ QString FrameContainer::saveFrame()
     QString penWidthAttr =
         attribut("penWidth", QString::number(framePen.width()));
     QString incChildren;
-    if (frameIncludeChildrenInt)
-        incChildren = attribut("includeChildren", "true");
-    return singleElement("frame", frameTypeAttr + penColAttr + brushColAttr +
+
+    return singleElement("frame", frameTypeAttr + frameUsageAttr + penColAttr +
+                                      brushColAttr +
                                       paddingAttr + penWidthAttr +
                                       incChildren);
 }

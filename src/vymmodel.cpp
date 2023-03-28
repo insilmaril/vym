@@ -1557,7 +1557,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             qDebug() << "VM::saveState  undoBlock = " << undoBlock;
             qDebug() << "VM::saveState  redoBlock = " << redoBlock;
         }
-        return; // FIXME-00 returns before PATH is set and replaced!
+        return; // FIXME-0 in building undoBlock: returns before PATH is set and replaced!
     }
 
     if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) {
@@ -2362,8 +2362,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         bc->setFrameType(useInnerFrame, t);
         newName = bc->frameTypeString(useInnerFrame);
 
-        bc->updateStyles(MapDesign::RelinkedItem);
-
+        //bc->updateStyles(MapDesign::RelinkedItem);  // FIXME-00 why "relinked" here?
 
         saveState(
             selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(oldName),
@@ -3385,6 +3384,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
+    newbc->updateStyles(MapDesign::NewItem);
 
     reposition();
     return newbi;

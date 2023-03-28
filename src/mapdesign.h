@@ -9,6 +9,15 @@
 #include "frame-container.h"
 #include "linkobj.h"
 
+// Extended QList, which allows to access element at position n or, if n does not exist,
+// the last existing element before n
+template <typename T> class ConfigList {
+  public:
+    QList <T> qlist;
+    ConfigList <T> & operator<<(const T &other);
+    T tryAt(int);
+};
+
 /*! \brief A MapDesign defines the visual appearance of a map, e.g. how branches, frames,     links look. Settings depend on
       - depth
       - Mode: NewBranch, RelinkBranch
@@ -57,6 +66,7 @@ class MapDesign {
             const UpdateMode &mode,
             int depth);
 
+    FrameContainer::FrameType frameType(bool useInnerFrame, const UpdateMode &mode, int depth);
     void updateFrames(
             BranchContainer *branchContainer,
             const UpdateMode &mode,
@@ -82,7 +92,7 @@ class MapDesign {
     QList <QColor> relinkedBranchHeadingColors;
 
     // Frames
-    QList <FrameContainer::FrameType> newInnerFrameTypes;
+    ConfigList <FrameContainer::FrameType> newInnerFrameTypes;
     QList <QColor> newInnerFramePenColors;
     QList <QColor> newInnerFrameBrushColors;
     QList <int> newInnerFramePenWidths;

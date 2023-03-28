@@ -907,20 +907,27 @@ void VymReader::readFrameAttr()
         // useInnerFrame was introduced in 2.9.506
         // It replaces the previous "includeChildren" attribute
         QString a = "includeChildren";
-        QString s = xml.attributes().value(a).toString();
+        QString s = attributeToString(a);
         if (s == "true")
             useInnerFrame = false;
 
+        a = "frameUsage";
+        s = attributeToString(a);
+        if (s == "innerFrame")
+            useInnerFrame = true;
+        else if (s == "outerFrame")
+            useInnerFrame = false;
+
         a = "frameType";
-        s = xml.attributes().value(a).toString();
+        s = attributeToString(a);
         if (!s.isEmpty())
             bc->setFrameType(useInnerFrame, s);
         a = "penColor";
-        s = xml.attributes().value(a).toString();
+        s = attributeToString(a);
         if (!s.isEmpty())
             bc->setFramePenColor(useInnerFrame, s);
         a = "brushColor";
-        s = xml.attributes().value(a).toString();
+        s = attributeToString(a);
         if (!s.isEmpty()) {
             bc->setFrameBrushColor(useInnerFrame, s);
             lastMI->setBackgroundColor(s);
@@ -929,19 +936,19 @@ void VymReader::readFrameAttr()
         int i;
         bool ok;
         a = "padding";
-        s = xml.attributes().value(a).toString();
+        s = attributeToString(a);
         i = s.toInt(&ok);
         if (ok)
             bc->setFramePadding(useInnerFrame, i);
 
         a = "borderWidth";
-        s = xml.attributes().value(a).toString();
+        s = attributeToString(a);
         i = s.toInt(&ok);
         if (ok)
             bc->setFramePenWidth(useInnerFrame, i);
 
         a = "penWidth";
-        s = xml.attributes().value(a).toString();
+        s = attributeToString(a);
         i = s.toInt(&ok);
         if (ok)
             bc->setFramePenWidth(useInnerFrame, i);

@@ -14,6 +14,9 @@ class FrameContainer : public XMLObj, public Container {
     /*! \brief Supported frame types */
     enum FrameType { NoFrame, Rectangle, RoundedRectangle, Ellipse, Cloud };
 
+    /*! When saving, save also the usage */
+    enum FrameUsage {Undefined, InnerFrame, OuterFrame};
+
     FrameContainer();
     ~FrameContainer();
     void init();
@@ -40,8 +43,7 @@ class FrameContainer : public XMLObj, public Container {
     void setFramePenColor(const QColor&);
     QColor frameBrushColor();
     void setFrameBrushColor(const QColor &);
-    bool frameIncludeChildren();        // FIXME-2 obsolete
-    void setFrameIncludeChildren(bool); // FIXME-2 obsolete
+    void setUsage(FrameUsage u);
     QString saveFrame();
 
   protected:
@@ -49,7 +51,6 @@ class FrameContainer : public XMLObj, public Container {
     int framePaddingInt;    //! Distance text - frame
     QPen framePen;
     QBrush frameBrush;
-    bool frameIncludeChildrenInt;       // FIXME-2 obsolete
 
   private:
     QGraphicsRectItem *rectFrame;
@@ -57,5 +58,6 @@ class FrameContainer : public XMLObj, public Container {
     QGraphicsPathItem *pathFrame;
     qreal frameXSize; //! Extra size caused e.g. by cloud geometry
     QRectF frameRectInt;
+    FrameUsage usage;
 };
 #endif

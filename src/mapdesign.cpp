@@ -6,6 +6,18 @@
 
 extern bool usingDarkTheme;
 
+template <typename T> ConfigList <T> & ConfigList<T>::operator<<(const T &other) {
+    qlist << other;
+}
+
+template <typename T> T ConfigList<T>::tryAt(int i) {
+    // FIXME-000 cont here.  Define and return default value, if qlist empty
+    if (i < qlist.count())
+        return qlist.last();
+    else
+        return qlist.at(i);
+}
+
 /////////////////////////////////////////////////////////////////
 // MapDesign
 /////////////////////////////////////////////////////////////////
@@ -44,12 +56,12 @@ void MapDesign::init()
         newBranchHeadingColors << QColor(Qt::green);
         relinkedBranchHeadingColors << QColor(Qt::red);   // FIXME-1 currently unused
 
-        // Frames
-        /*
-        newInnerFrameTypes;
+        // Frames   // FIXME-0 settings not complete yet
+        newInnerFrameTypes << FrameContainer::RoundedRectangle;
         newInnerFramePenColors;
         newInnerFrameBrushColors;
         newInnerFramePenWidths;
+        /*
         relinkedInnerFrameTypes;
         relinkedInnerFramePenColors;
         relinkedInnerFrameBrushColors;
@@ -332,6 +344,15 @@ void MapDesign::updateBranchHeadingColor(
     }
 }
 
+FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, const UpdateMode &mode, int depth)
+{
+    // FIXME-00 Hardcoded settings for frames for now, use lists soon:
+    if (mode == NewItem && depth == 0)
+        return FrameContainer::RoundedRectangle;
+    else
+        return FrameContainer::NoFrame;
+}
+
 void MapDesign::updateFrames(
     BranchContainer *branchContainer,
     const UpdateMode &mode,
@@ -339,9 +360,12 @@ void MapDesign::updateFrames(
 {
     if (branchContainer) {
         qDebug() << "MD::updateFrames mode=" << mode << " d=" << depth;// << branchItem->getHeadingPlain();
-        // FIXME-0 Hardcoded for now, use lists soon:
+        // FIXME-00 Hardcoded settings for frames for now, use lists soon:
+
+        // Inner frame
+        FrameContainer::FrameType ftype = frameType(true, mode, depth);
         if (mode == NewItem && depth == 0) {
-            branchContainer->setFrameType(true, FrameContainer::RoundedRectangle);
+            branchContainer->setFrameType(true, ftype);
             if (usingDarkTheme) {
                 branchContainer->setFramePenColor(true, QColor(Qt::white));
                 branchContainer->setFrameBrushColor(true, QColor(85, 85, 127));
@@ -350,6 +374,8 @@ void MapDesign::updateFrames(
                     branchContainer->setFrameBrushColor(true, QColor(Qt::white));
             }
         }
+        // Outer frame
+        branchContainer->setFrameType(false, FrameContainer::NoFrame);
     }
 }
 

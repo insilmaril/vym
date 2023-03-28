@@ -272,16 +272,16 @@ void BranchContainer::createBranchesContainer()
     branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
 
     innerContainer->addContainer(branchesContainer);
+
+    if (branchItem)
+        // For new created BC update styles
+        updateStyles(MapDesign::RelinkedItem);  // FIXME-0 only update layouts, not all in BC?  // FIXME-0 is "relinked" correct here?
 }
 
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) // FIXME-2 branchesContainer not deleted, when no longer used
 {
-    if (!branchesContainer) {
+    if (!branchesContainer)
         createBranchesContainer();
-        if (branchItem)
-            // For new created BC update styles
-            updateStyles(MapDesign::RelinkedItem);
-    }
 
     QPointF sp = c->scenePos();
     branchesContainer->addContainer(c);
@@ -961,6 +961,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
         } else {
             if (!innerFrame) {
                 innerFrame = new FrameContainer;
+                innerFrame->setUsage(FrameContainer::InnerFrame);
                 innerFrame->addContainer(ornamentsContainer, Z_ORNAMENTS);
                 innerFrame->setRotation(ornamentsContainer->rotation());
                 innerContainer->addContainer(innerFrame, Z_INNER_FRAME);
@@ -987,7 +988,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
             if (!outerFrame) {
                 int a = getRotationSubtree();
                 outerFrame = new FrameContainer;
-                outerFrame->setFrameIncludeChildren(true);
+                outerFrame->setUsage(FrameContainer::OuterFrame);
                 Container *c;
                 if (outerContainer)
                     c = outerContainer;
@@ -1134,7 +1135,7 @@ void BranchContainer::setFrameBrushColor(const bool &useInnerFrame, const QColor
         outerFrame->setFrameBrushColor(c);
 }
 
-QString BranchContainer::saveFrame()
+QString BranchContainer::saveFrame()    // FIXME-000 save also, if there is no frame used and this is different from MapDesign settings, especially for MCs
 {
     QString r;
     if (innerFrame && innerFrame->frameType() != FrameContainer::NoFrame)
