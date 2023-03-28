@@ -155,6 +155,10 @@ class BranchContainer : public SelectableContainer {
 
     QString saveFrame();
 
+  private:
+    void updateBranchesContainerLayout();
+
+  public:
     /*! Update styles (frame, links, fonts, colors, ...) */
     void updateStyles(MapDesign::UpdateMode updateMode = MapDesign::RelinkedItem);
 

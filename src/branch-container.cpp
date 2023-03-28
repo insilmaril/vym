@@ -273,9 +273,7 @@ void BranchContainer::createBranchesContainer()
 
     innerContainer->addContainer(branchesContainer);
 
-    if (branchItem)
-        // For new created BC update styles
-        updateStyles(MapDesign::RelinkedItem);  // FIXME-0 only update layouts, not all in BC?  // FIXME-0 is "relinked" correct here?
+    updateBranchesContainerLayout();
 }
 
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) // FIXME-2 branchesContainer not deleted, when no longer used
@@ -1146,6 +1144,17 @@ QString BranchContainer::saveFrame()    // FIXME-000 save also, if there is no f
     return r;
 }
 
+void BranchContainer::updateBranchesContainerLayout()
+{
+    // Set container layouts
+    if (branchItem && branchesContainerAutoLayout)
+        setBranchesContainerLayout(
+            branchItem->getMapDesign()->branchesContainerLayout(
+                MapDesign::NewItem, branchItem->depth()));
+    else
+        setBranchesContainerLayout(branchesContainerLayout);
+}
+
 void BranchContainer::updateStyles(MapDesign::UpdateMode updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
@@ -1163,13 +1172,7 @@ void BranchContainer::updateStyles(MapDesign::UpdateMode updateMode)
     md->updateFrames(this, updateMode, depth);
 
 
-    // Set container layouts
-    if (branchesContainerAutoLayout)
-        setBranchesContainerLayout(
-                md->branchesContainerLayout(updateMode, depth));
-    else
-        setBranchesContainerLayout(branchesContainerLayout);
-
+    updateBranchesContainerLayout();
 
     if (imagesContainerAutoLayout)
         setImagesContainerLayout(

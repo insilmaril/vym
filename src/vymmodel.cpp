@@ -2362,8 +2362,6 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         bc->setFrameType(useInnerFrame, t);
         newName = bc->frameTypeString(useInnerFrame);
 
-        //bc->updateStyles(MapDesign::RelinkedItem);  // FIXME-00 why "relinked" here?
-
         saveState(
             selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(oldName),
             selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(newName),
@@ -3384,7 +3382,6 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
-    newbc->updateStyles(MapDesign::NewItem);
 
     reposition();
     return newbi;
