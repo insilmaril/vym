@@ -114,6 +114,7 @@ VymModel::~VymModel()
     // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor = nullptr;
     repositionBlocked = true;
+    updateStylesBlocked = true;
     autosaveTimer->stop();
     fileChangedTimer->stop();
 
@@ -174,6 +175,7 @@ void VymModel::init()
     mapName = fileName;
     repositionBlocked = false;
     saveStateBlocked = false;
+    updateStylesBlocked = false;
 
     autosaveTimer = new QTimer(this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
@@ -606,10 +608,15 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                     .arg(QDir::toNativeSeparators(fileName),
                         file.errorString()));
         }
+
+        if (lmode != File::ImportAdd && lmode != File::ImportReplace)
+            updateStylesBlocked = true;
+
         // Here we actually parse the XML file
         bool ok = reader->read(&file);
 
         // Aftermath
+        updateStylesBlocked = false;
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
         mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
@@ -3336,6 +3343,9 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
     if (bc)
         bc->setPos(absPos);
 
+    if (!updateStylesBlocked)
+        bc->updateStyles(MapDesign::NewItem);
+
     return newbi;
 }
 
@@ -3382,6 +3392,10 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
+
+    // Update styles (if not currently loading a new map or the default map)
+    if (!updateStylesBlocked)
+        newbc->updateStyles(MapDesign::NewItem);
 
     reposition();
     return newbi;

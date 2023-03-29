@@ -216,6 +216,7 @@ class VymModel : public TreeModel {
     int undosAvail;         //!< Available number of undo steps
     bool repositionBlocked; //!< block while load or undo
     bool saveStateBlocked;  //!< block saving current state
+    bool updateStylesBlocked; //! While loading a new map, don't update container styles
   public:
     void blockReposition();   //! Block reposition while bigger changes, e.g. an import
     void unblockReposition(); //! Unblock reposition and do repositon

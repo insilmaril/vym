@@ -53,6 +53,7 @@ void MapDesign::init()
         newBranchHeadingColorHints << MapDesign::InheritedColor;        // Use color of parent
         relinkedBranchHeadingColorHints << MapDesign::UnchangedColor;   // Do not change color
 
+        newBranchHeadingColors << QColor(Qt::white);
         newBranchHeadingColors << QColor(Qt::green);
         relinkedBranchHeadingColors << QColor(Qt::red);   // FIXME-1 currently unused
 
@@ -62,19 +63,10 @@ void MapDesign::init()
         newInnerFrameBrushColors;
         newInnerFramePenWidths;
         /*
-        relinkedInnerFrameTypes;
-        relinkedInnerFramePenColors;
-        relinkedInnerFrameBrushColors;
-        relinkedInnerFramePenWidths;
-
         newOuterFrameTypes;
         newOuterFramePenColors;
         newOuterFrameBrushColors;
         newOuterFramePenWidths;
-        relinkedOuterFrameTypes;
-        relinkedOuterFramePenColors;
-        relinkedOuterFrameBrushColors;
-        relinkedOuterFramePenWidths;
         */
 
         // Should links of branches use a default color or the color of heading?

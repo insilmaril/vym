@@ -524,8 +524,6 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
         */
     }
 
-    branchContainer->updateStyles(MapDesign::NewItem);
-
     return branchContainer;
 }
 
