@@ -1486,9 +1486,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     /*
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "   ti_found=" << ti_found;
-    */
     //if (ti_found) qDebug() << "   ti_found="<<ti_found->getHeading();
-    //qDebug() << " flag=" << sysFlagName;
+    */
 
     // If Modifier mode "view" is set, all other clicks can be ignored,
     // nothing will be selected

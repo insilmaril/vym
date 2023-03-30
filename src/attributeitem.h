@@ -32,6 +32,7 @@ class AttributeItem : public BranchItem {
     void setValue(const QDateTime &dt);
     QVariant getValue();
     QDateTime getValueDateTime();
+    QColor getHeadingColor();
     using BranchItem::setType;
     virtual void setAttributeType(const Type &t);
     AttributeItem::Type getAttributeType();

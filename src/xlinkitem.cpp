@@ -34,6 +34,7 @@ void XLinkItem::init()
 {
     setType(XLink);
     link = nullptr;
+    itemData[0] = "XLink";  // FIXME-2 testing, better name and update this elsewhere
 }
 
 void XLinkItem::clear() {}
@@ -53,6 +54,12 @@ XLinkObj *XLinkItem::getXLinkObj()
     if (link)
         return link->getXLinkObj();
     return nullptr;
+}
+
+QColor XLinkItem::getHeadingColor()
+{
+    // Used in TreeModel::data() to get colors
+    return link->getPen().color();
 }
 
 void XLinkItem::setSelection()

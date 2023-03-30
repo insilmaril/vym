@@ -1,5 +1,6 @@
 #include "attributeitem.h"
 
+#include <QApplication>
 #include <QDebug>
 
 extern bool debug;
@@ -87,6 +88,11 @@ QVariant AttributeItem::getValue()
     return value;
 }
 
+QColor AttributeItem::getHeadingColor()
+{
+    // Used in TreeModel::data() to get colors
+    return qApp->palette().color(QPalette::Text);
+}
 void AttributeItem::setAttributeType(const Type &t)
 {
     attrType = t;

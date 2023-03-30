@@ -1274,7 +1274,7 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    // qDebug() << "BC::reposition " << info();
+    qDebug() << "BC::reposition " << info();
 
     // Abreviation for depth
     uint depth;

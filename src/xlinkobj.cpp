@@ -143,6 +143,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
     QPointF a, b;
     QPolygonF pa;
 
+    qDebug() << "XLO::updateXLink";
     BranchContainer *beginBC = nullptr;
     BranchContainer *endBC = nullptr;
     BranchItem *bi = link->getBeginBranch();

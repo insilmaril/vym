@@ -39,8 +39,13 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ForegroundRole)
         return item->getHeadingColor();
 
-    if (role == Qt::BackgroundRole)
-        return bi->getBackgroundColor(bi);
+    if (role == Qt::BackgroundRole) {
+        if (bi)
+            return bi->getBackgroundColor(bi);
+        else
+            // Selected XLink does not have a branchItem
+            return qApp->palette().color(QPalette::Base);
+    }
 
     return QVariant();
 }
