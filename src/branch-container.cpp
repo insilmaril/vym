@@ -173,7 +173,7 @@ void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original pa
     originalOrientation = orientation;
     originalFloating = isFloating();
     if (parentItem()) {
-        originalParentPos = parentBranchContainer()->downLinkPos(orientation);
+        originalParentPos = parentBranchContainer()->downLinkPos();
         //qDebug() << "BC:setOrient of " << info();
         //qDebug() << "        parent: " << parentBranchContainer()->info() <<originalParentPos;
     }
@@ -612,6 +612,11 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     return hint;
 }
 
+QPointF BranchContainer::downLinkPos()
+{
+    return downLinkPos(orientation);
+}
+
 QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
 {
     if (frameType(true) != FrameContainer::NoFrame) {
@@ -695,7 +700,7 @@ void BranchContainer::updateUpLink()
     // MapCenters still might have upLinks: The bottomLine is part of upLink!
 
     QPointF upLinkSelf_sp = upLinkPos(orientation);
-    QPointF downLink_sp = downLinkPos(orientation);
+    QPointF downLink_sp = downLinkPos();
 
     BranchContainer *pbc = nullptr;
     if (tmpLinkedParentContainer)
@@ -719,7 +724,7 @@ void BranchContainer::updateUpLink()
             upLink->setDownLinkPos(
                     upLinkParent->sceneTransform().inverted().map(downLink_sp));
         } else {
-            upLinkParent_sp = pbc->downLinkPos(orientation);
+            upLinkParent_sp = pbc->downLinkPos();
 
             pbc->getLinkContainer()->addLink(upLink);
 
@@ -1274,7 +1279,7 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    qDebug() << "BC::reposition " << info();
+    //qDebug() << "BC::reposition " << info();
 
     // Abreviation for depth
     uint depth;

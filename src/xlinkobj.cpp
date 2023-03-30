@@ -138,7 +138,7 @@ void XLinkObj::setSelection(SelectionType s)
     setVisibility();
 }
 
-void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
+void XLinkObj::updateXLink()
 {
     QPointF a, b;
     QPolygonF pa;
@@ -175,7 +175,7 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
         if (!bc)
             return;
 
-        a = b = bc->scenePos(); // FIXME-2 get suggestion: bc->getChildRefPos();
+        a = b = bc->downLinkPos();
 
         if (bc->getOrientation() == BranchContainer::RightOfParent) {
             b.setX(b.x() + 2 * arrowSize);
@@ -200,9 +200,9 @@ void XLinkObj::updateXLink() // FIXME-2 rewrite to containers
         // If a link is just drawn in the editor,
         // we have already a beginBranch
         if (beginBC)
-            beginPos = beginBC->scenePos(); // FIXME-2 beginBC->getChildRefPos();
+            beginPos = beginBC->downLinkPos();
         if (endBC)
-            endPos = endBC->scenePos(); // FIXME-2 endBC->getChildRefPos();
+            endPos = endBC->downLinkPos();
 
         if (beginBC && endBC) {
             beginArrow->setPos(beginPos);
