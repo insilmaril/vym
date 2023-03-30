@@ -622,6 +622,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
         file.close();
         if (ok) {
+            rootItem->updateStylesRecursively(MapDesign::RelinkedItem);
             reposition(); // to generate bbox sizes
             emitSelectionChanged();
 
@@ -5156,15 +5157,8 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     // For whole map set style for d=1
     mapDesign->setLinkStyle(style, 1);
 
-    BranchItem *cur = nullptr;
-    BranchItem *prev = nullptr;
-    nextBranch(cur, prev);
-    while (cur) {
-        BranchContainer *bc = cur->getBranchContainer();
-        //bc->getLinkContainer()->setLinkStyle(style);
-        bc->updateStyles(MapDesign::RelinkedItem);
-        nextBranch(cur, prev);
-    }
+    rootItem->updateStylesRecursively(MapDesign::RelinkedItem);
+
     reposition();
     return true;
 }
@@ -5522,7 +5516,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::setSelectionColorInt(QColor col) // FIXME-0 check if still working after merging of develop into layout-test
+void VymModel::setSelectionColorInt(QColor col)
 {
     if (!col.isValid())
         return;
