@@ -35,29 +35,29 @@ void MapDesign::init()
     if (mapDesign == 0) {
         // Default mapDesign
         // NewBranch: Layout of children branches 
-        bcNewBranchLayouts << Container::FloatingBounded;
-        bcNewBranchLayouts << Container::Vertical;
+        branchContainerLayouts << Container::FloatingBounded;
+        branchContainerLayouts << Container::Vertical;
 
         // NewBranch: Layout of children images 
-        icNewBranchLayouts << Container::FloatingFree;
+        imageContainerLayouts << Container::FloatingFree;
 
         // Heading colors
-        newBranchHeadingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
-        newBranchHeadingColorHints << MapDesign::InheritedColor;        // Use color of parent
+        headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
+        headingColorHints << MapDesign::InheritedColor;        // Use color of parent
 
-        newBranchHeadingColors << QColor(Qt::white);
-        newBranchHeadingColors << QColor(Qt::green);
+        headingColors << QColor(Qt::white);
+        headingColors << QColor(Qt::green);
 
         // Frames   // FIXME-0 settings not complete yet
-        newInnerFrameTypes << FrameContainer::RoundedRectangle;
-        newInnerFramePenColors;
-        newInnerFrameBrushColors;
-        newInnerFramePenWidths;
+        innerFrameTypes << FrameContainer::RoundedRectangle;
+        innerFramePenColors;
+        innerFrameBrushColors;
+        innerFramePenWidths;
         /*
-        newOuterFrameTypes;
-        newOuterFramePenColors;
-        newOuterFrameBrushColors;
-        newOuterFramePenWidths;
+        outerFrameTypes;
+        outerFramePenColors;
+        outerFrameBrushColors;
+        outerFramePenWidths;
         */
 
         // Should links of branches use a default color or the color of heading?
@@ -73,20 +73,20 @@ void MapDesign::init()
     } else if (mapDesign == 1) {
         // Rainbow colors depending on depth mapDesign
         // NewBranch: Layout of children branches 
-        bcNewBranchLayouts << Container::FloatingBounded;
-        bcNewBranchLayouts << Container::Vertical;
+        branchContainerLayouts << Container::FloatingBounded;
+        branchContainerLayouts << Container::Vertical;
 
         // NewBranch: Layout of children images 
-        icNewBranchLayouts << Container::FloatingFree;
+        imageContainerLayouts << Container::FloatingFree;
 
         // Heading colors
-        newBranchHeadingColorHints << MapDesign::SpecificColor;
+        headingColorHints << MapDesign::SpecificColor;
 
-        newBranchHeadingColors << QColor(Qt::red);
-        newBranchHeadingColors << QColor(Qt::green);
-        newBranchHeadingColors << QColor(Qt::blue);
-        newBranchHeadingColors << QColor(Qt::white);
-        newBranchHeadingColors << QColor(Qt::yellow);
+        headingColors << QColor(Qt::red);
+        headingColors << QColor(Qt::green);
+        headingColors << QColor(Qt::blue);
+        headingColors << QColor(Qt::white);
+        headingColors << QColor(Qt::yellow);
 
         // Should links of branches use a default color or the color of heading?
         linkColorHintInt = LinkObj::DefaultColor;
@@ -113,13 +113,13 @@ QString MapDesign::getName()
 
 Container::Layout MapDesign::branchesContainerLayout(int depth)
 {
-    int max = bcNewBranchLayouts.count();
+    int max = branchContainerLayouts.count();
     if (depth < max)
-        return bcNewBranchLayouts.at(depth);
+        return branchContainerLayouts.at(depth);
     else {
         if (max > 0)
             // Return last entry, if it exists
-            return bcNewBranchLayouts.at(max - 1);
+            return branchContainerLayouts.at(max - 1);
         else
             // Don't change 
             return Container::UndefinedLayout;
@@ -128,13 +128,13 @@ Container::Layout MapDesign::branchesContainerLayout(int depth)
 
 Container::Layout MapDesign::imagesContainerLayout(int depth)
 {
-    int max = icNewBranchLayouts.count();
+    int max = imageContainerLayouts.count();
     if (depth < max)
-        return icNewBranchLayouts.at(depth);
+        return imageContainerLayouts.at(depth);
     else {
         if (max > 0)
             // Return last entry, if it exists
-            return icNewBranchLayouts.at(max - 1);
+            return imageContainerLayouts.at(max - 1);
         else
             // Don't change 
             return Container::UndefinedLayout;
@@ -200,13 +200,13 @@ void MapDesign::updateBranchHeadingColor(
     if (branchItem) {
         qDebug() << "MD::updateBranchHeadingColor " << " d=" << depth << branchItem->getHeadingPlain();
         HeadingColorHint colHint;
-        int max = newBranchHeadingColorHints.count();
+        int max = headingColorHints.count();
         if (depth < max)
-            colHint = newBranchHeadingColorHints.at(depth);
+            colHint = headingColorHints.at(depth);
         else {
             if (max > 0)
                 // Return last entry, if it exists
-                colHint = newBranchHeadingColorHints.at(max - 1);
+                colHint = headingColorHints.at(max - 1);
             else
                 colHint = UndefinedColor;
         }
@@ -225,13 +225,13 @@ void MapDesign::updateBranchHeadingColor(
             }
             case SpecificColor: {
                 qDebug() << " - SpecificColor";
-                int max = newBranchHeadingColors.count();
+                int max = headingColors.count();
                 if (depth < max)
-                    col = newBranchHeadingColors.at(depth);
+                    col = headingColors.at(depth);
                 else {
                     if (max > 0)
                         // Return last entry, if it exists
-                        col = newBranchHeadingColors.at(max - 1);
+                        col = headingColors.at(max - 1);
                     else {
                         qWarning() << "No specific color found for new branch";
                         col = QColor("#EEEEEE");
@@ -245,16 +245,16 @@ void MapDesign::updateBranchHeadingColor(
                 qDebug() << " - UnchangedColor";
                 return;
             default:
-                qWarning() << "MapDesign::updateBranchHeadingColor no newBranchHeadingColorHint defined";
+                qWarning() << "MapDesign::updateBranchHeadingColor no branchHeadingColorHint defined";
         }
         branchItem->setHeadingColor(col);
     }
 }
 
-FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, const UpdateMode &mode, int depth)
+FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, int depth)
 {
     // FIXME-00 Hardcoded settings for frames for now, use lists soon:
-    if (mode == NewItem && depth == 0)
+    if (depth == 0)
         return FrameContainer::RoundedRectangle;
     else
         return FrameContainer::NoFrame;
@@ -270,7 +270,7 @@ void MapDesign::updateFrames(
         // FIXME-00 Hardcoded settings for frames for now, use lists soon:
 
         // Inner frame
-        FrameContainer::FrameType ftype = frameType(true, mode, depth);
+        FrameContainer::FrameType ftype = frameType(true, depth);
         if (mode == NewItem && depth == 0) {
             branchContainer->setFrameType(true, ftype);
             if (usingDarkTheme) {

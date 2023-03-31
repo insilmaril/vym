@@ -63,7 +63,7 @@ class MapDesign {
             BranchItem *branchItem,
             int depth);
 
-    FrameContainer::FrameType frameType(bool useInnerFrame, const UpdateMode &mode, int depth);
+    FrameContainer::FrameType frameType(bool useInnerFrame, int depth);
     void updateFrames(
             BranchContainer *branchContainer,
             const UpdateMode &mode,
@@ -76,23 +76,23 @@ class MapDesign {
     QString name;
 
     // Container layouts
-    QList <Container::Layout> bcNewBranchLayouts;
-    QList <Container::Layout> icNewBranchLayouts;
+    QList <Container::Layout> branchContainerLayouts;
+    QList <Container::Layout> imageContainerLayouts;
 
     // Colors of headings
-    QList <MapDesign::HeadingColorHint> newBranchHeadingColorHints;
-    QList <QColor> newBranchHeadingColors;
+    QList <MapDesign::HeadingColorHint> headingColorHints;
+    QList <QColor> headingColors;
 
     // Frames
-    ConfigList <FrameContainer::FrameType> newInnerFrameTypes;
-    QList <QColor> newInnerFramePenColors;
-    QList <QColor> newInnerFrameBrushColors;
-    QList <int> newInnerFramePenWidths;
+    ConfigList <FrameContainer::FrameType> innerFrameTypes;
+    QList <QColor> innerFramePenColors;
+    QList <QColor> innerFrameBrushColors;
+    QList <int> innerFramePenWidths;
 
-    QList <FrameContainer::FrameType> newOuterFrameTypes;
-    QList <QColor> newOuterFramePenColors;
-    QList <QColor> newOuterFrameBrushColors;
-    QList <int> newOuterFramePenWidths;
+    QList <FrameContainer::FrameType> outerFrameTypes;
+    QList <QColor> outerFramePenColors;
+    QList <QColor> outerFrameBrushColors;
+    QList <int> outerFramePenWidths;
 
     // Links
     LinkObj::ColorHint linkColorHintInt;
