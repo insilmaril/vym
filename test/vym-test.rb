@@ -591,6 +591,17 @@ def test_scrolling
 end
 
 #######################
+def test_slides
+  heading "Slides"
+  map = init_map "#{@testDir}/test-slides.xml"
+
+  map.select @main_a
+  expect "Successfully loaded map with slides", map.slideCount, 3
+
+  close_current_map
+end
+
+#######################
 def test_modify_branches (vym)
   heading "Modifying branches"
   map = init_map( vym )
@@ -1168,6 +1179,7 @@ begin
   #test_references(vym)
   #test_saving
   #test_scrolling
+  test_slides
   #test_standard_flags
   #test_tasks
   #test_user_flags

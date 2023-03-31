@@ -159,6 +159,7 @@ class VymModelWrapper : public VymScriptContext {
     void setXLinkStyleEnd(const QString &style);
     void setXLinkWidth(int w);
     void sleep(int n);
+    int slideCount();
     void sortChildren(bool b);
     void sortChildren();
     void toggleFlagByUid(const QString &s);

@@ -1140,6 +1140,11 @@ void VymModelWrapper::sleep(int n)
     sleep(n);
 }
 
+int VymModelWrapper::slideCount()
+{
+    return setResult(model->slideCount());
+}
+
 void VymModelWrapper::sortChildren(bool b) { model->sortChildren(b); }
 
 void VymModelWrapper::sortChildren() { sortChildren(false); }
