@@ -145,6 +145,8 @@ void VymReader::readVymMap()
             readUserFlagDef();
         else if (xml.name() == QLatin1String("xlink"))
             readXLink();
+        else if (xml.name() == QLatin1String("slide"))
+            readSlide();
         else {
             raiseUnknownElementError();
             return;
@@ -263,7 +265,6 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             readImage();
         else if (xml.name() == QLatin1String("attribute"))
             readAttribute();
-    // XML-FIXME-00 cont here with notes, xlinks ...
         else {
             raiseUnknownElementError();
             return;
@@ -582,6 +583,73 @@ void VymReader::readXLink()
                 xlo->setC1(p);
         }
     }
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
+}
+
+void VymReader::readSlide()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("slide"));
+
+    QStringList scriptlines; // FIXME-3 needed for switching to inScript
+                             // Most attributes are obsolete with inScript
+
+    QString s;
+    bool ok;
+    qreal r;
+    int i;
+
+    lastSlide = model->addSlide();
+
+    qreal slideZoom;
+    s = attributeToString("name");
+    if (!s.isEmpty())
+        lastSlide->setName(s);
+
+    s = attributeToString("zoom");
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (ok) scriptlines.append(QString("setMapZoom(%1)").arg(r));
+    }
+
+    s = attributeToString("rotation");
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (ok) scriptlines.append(QString("setMapRotation(%1)").arg(r));
+    }
+
+    s = attributeToString("duration");
+    if (!s.isEmpty()) {
+        i = s.toInt(&ok);
+        if (ok) scriptlines.append(QString("setMapAnimCurve(%1)").arg(i));
+    }
+
+    s = attributeToString("curve");
+    if (!s.isEmpty()) {
+        i = s.toInt(&ok);
+        if (ok) scriptlines.append(QString("setMapAnimDuration(%1)").arg(i));
+    }
+
+    s = attributeToString("mapitem");
+    if (!s.isEmpty()) {
+        TreeItem *ti = model->findUuid(s);
+        if (ti) scriptlines.append(
+            QString("centerOnID(\"%1\")").arg(ti->getUuid().toString()));
+    }
+
+    s = attributeToString("inScript");
+    if (!s.isEmpty())
+        lastSlide->setInScript(unquoteMeta(s));
+    else
+        lastSlide->setInScript(unquoteMeta(scriptlines.join(";\n"))); // FIXME-3 unquote needed? Not used currently anyway
+
+    s = attributeToString("outScript");
+    if (!s.isEmpty())
+        lastSlide->setOutScript(unquoteMeta(s));
 
     if (xml.tokenType() == QXmlStreamReader::EndElement)
         return;

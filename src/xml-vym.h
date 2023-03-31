@@ -34,6 +34,7 @@ class VymReader : public BaseReader {
     void readUserFlag();
     void readImage();
     void readXLink();
+    void readSlide();
 
     void readVymMapAttr();
     void readBranchAttr();

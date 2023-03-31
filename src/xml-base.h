@@ -13,6 +13,7 @@ class VymModel;
 class BranchItem;
 class ImageItem;
 class MapItem;
+class SlideItem;
 
 /*! \brief Base class for parsing maps from XML documents */
 
@@ -51,9 +52,7 @@ class BaseReader {
     MapItem *lastMI;
 
     ImageItem *lastImage;
-    //SlideItem *lastSlide;
-    //QString lastSetting;
-
+    SlideItem *lastSlide;
 };
 
 #endif
