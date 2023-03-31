@@ -641,6 +641,7 @@ void VymReader::readSlide()
             QString("centerOnID(\"%1\")").arg(ti->getUuid().toString()));
     }
 
+    // Up to 2.9.0 at least only inScript seems to be used
     s = attributeToString("inScript");
     if (!s.isEmpty())
         lastSlide->setInScript(unquoteMeta(s));
@@ -996,10 +997,8 @@ void VymReader::readFrameAttr()
             bc->setFramePenColor(useInnerFrame, s);
         a = "brushColor";
         s = attributeToString(a);
-        if (!s.isEmpty()) {
+        if (!s.isEmpty())
             bc->setFrameBrushColor(useInnerFrame, s);
-            lastMI->setBackgroundColor(s);  // FIXME-0 why BG in addition to brush?
-        }
 
         int i;
         bool ok;

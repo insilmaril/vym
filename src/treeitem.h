@@ -80,7 +80,6 @@ class TreeItem : public XMLObj {
 
   protected:
     Heading heading;
-    QColor backgroundColor;
 
   public:
     virtual void setHeading(const VymText &vt);
@@ -98,8 +97,6 @@ class TreeItem : public XMLObj {
     setHeadingColor(QColor color);    //! Set color of heading. In BranchItem
                                       //! overloaded to update QGraphicsView
     virtual QColor getHeadingColor(); //! Returns color of heading
-    virtual void setBackgroundColor(
-        QColor color); //! Set color of frame brush, if LMO exists for item
 
   protected:
     QString url;

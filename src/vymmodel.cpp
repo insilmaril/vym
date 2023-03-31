@@ -2882,7 +2882,7 @@ void VymModel::copy()
     }
 }
 
-void VymModel::paste()  // FIXME-000  wrong BC, always added on top of children... 
+void VymModel::paste()
 {
     if (readonly)
         return;

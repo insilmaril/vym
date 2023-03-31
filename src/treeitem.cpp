@@ -72,8 +72,6 @@ void TreeItem::init()
     itemData.clear();
     itemData << "";
 
-    backgroundColor = Qt::transparent;
-
     standardFlags.setMasterRow(standardFlagsMaster);
     userFlags.setMasterRow(userFlagsMaster);
     systemFlags.setMasterRow(systemFlagsMaster);
@@ -374,8 +372,6 @@ QString TreeItem::getHeadingDepth() // Indent by depth for debugging    // FIXME
 void TreeItem::setHeadingColor(QColor color) { heading.setColor(color); }
 
 QColor TreeItem::getHeadingColor() { return heading.getColor(); }
-
-void TreeItem::setBackgroundColor(QColor color) { backgroundColor = color; }
 
 void TreeItem::setURL(const QString &u)
 {

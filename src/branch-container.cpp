@@ -1134,7 +1134,7 @@ void BranchContainer::setFrameBrushColor(const bool &useInnerFrame, const QColor
     }
 }
 
-QString BranchContainer::saveFrame()    // FIXME-000 save also, if there is no frame used and this is different from MapDesign settings, especially for MCs
+QString BranchContainer::saveFrame()
 {
     QString r;
     if (innerFrame && innerFrame->frameType() != FrameContainer::NoFrame)
