@@ -2526,8 +2526,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
             if (s == "Auto") {
                 bc->branchesContainerAutoLayout = true;
                 bc->setBranchesContainerLayout(
-                        mapDesign->branchesContainerLayout(
-                            MapDesign::NewItem, selbi->depth()));
+                        mapDesign->branchesContainerLayout(selbi->depth()));
             } else {
                 bc->branchesContainerAutoLayout = false;
                 Container::Layout layout = Container::getLayoutFromString(s);
@@ -2550,8 +2549,7 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
             if (s == "Auto") {
                 bc->imagesContainerAutoLayout = true;
                 bc->setImagesContainerLayout(
-                        mapDesign->imagesContainerLayout(
-                            MapDesign::NewItem, selbi->depth()));
+                        mapDesign->imagesContainerLayout(selbi->depth()));
             } else {
                 bc->imagesContainerAutoLayout = false;
                 Container::Layout layout;

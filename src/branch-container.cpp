@@ -724,7 +724,7 @@ void BranchContainer::updateUpLink()
             upLink->setDownLinkPos(
                     upLinkParent->sceneTransform().inverted().map(downLink_sp));
         } else {
-            upLinkParent_sp = pbc->downLinkPos();
+            upLinkParent_sp = pbc->downLinkPos(orientation);
 
             pbc->getLinkContainer()->addLink(upLink);
 
@@ -1000,12 +1000,6 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                 outerFrame->addContainer(c);
                 addContainer(outerFrame, Z_OUTER_FRAME);
                 setRotationSubtree(a);
-
-                /*
-                innerContainer->addContainer(innerFrame, Z_INNER_FRAME);
-                */
-
-                qDebug() << "BC created outerFrame";
             }
             outerFrame->setFrameType(ftype);
         }
@@ -1157,7 +1151,7 @@ void BranchContainer::updateBranchesContainerLayout()
     if (branchItem && branchesContainerAutoLayout)
         setBranchesContainerLayout(
             branchItem->getMapDesign()->branchesContainerLayout(
-                MapDesign::NewItem, branchItem->depth()));
+                branchItem->depth()));
     else
         setBranchesContainerLayout(branchesContainerLayout);
 }
@@ -1172,18 +1166,18 @@ void BranchContainer::updateStyles(MapDesign::UpdateMode updateMode)
     MapDesign *md = branchItem->getMapDesign();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    md->updateBranchHeadingColor(
-            branchItem, updateMode, depth);
+    if (updateMode == MapDesign::NewItem)
+        md->updateBranchHeadingColor(
+                branchItem, depth);
 
     // Set frame
     md->updateFrames(this, updateMode, depth);
-
 
     updateBranchesContainerLayout();
 
     if (imagesContainerAutoLayout)
         setImagesContainerLayout(
-                md->imagesContainerLayout(updateMode, depth));
+                md->imagesContainerLayout(depth));
     else
         setImagesContainerLayout(imagesContainerLayout);
 

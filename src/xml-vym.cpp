@@ -918,7 +918,6 @@ void VymReader::readFrameAttr()
         else if (s == "outerFrame")
             useInnerFrame = false;
 
-        qDebug() << "xml: useInnerFrame=" << useInnerFrame << " s=" << s;
         a = "frameType";
         s = attributeToString(a);
         if (!s.isEmpty())
