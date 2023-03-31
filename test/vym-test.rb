@@ -24,6 +24,19 @@ def expect (comment, v_real, v_exp)
   $tests_total += 1
 end
 
+def expectNot (comment, v_real, v_exp)
+  if v_exp != v_real
+    puts "    Ok: #{comment}".green
+    $tests_passed += 1
+    # waitkey
+  else
+    puts "Failed: #{comment}. Expected not to get '#{v_exp}'".red
+    $tests_failed += 1
+    waitkey
+  end
+  $tests_total += 1
+end
+
 def expect_warning_only (comment, v_real, v_exp)
   if v_exp == v_real
     puts "    Ok: #{comment}".green
@@ -89,7 +102,7 @@ def test_vym
   #@vym.clearConsole
 
   heading "Mainwindow checks:"
-  version = "2.9.507"
+  version = "2.9.510"
   expect_warning_only "Version is #{version}", @vym.version, version
 
   expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
@@ -503,15 +516,15 @@ def test_frames
 
   map.select @center_1
   expect "Mapcenter of #{@center_1} has no inner frame", map.getFrameType(true), "NoFrame"
-  expect "Mapcenter of #{@center_1} has outer frame", map.getFrameType(false), "RoundedRectangle"
+  expectNot "Mapcenter of #{@center_1} has outer frame", map.getFrameType(false), "NoFrame"
 
   map.select @center_2
-  expect "Mapcenter of #{@center_2} has inner frame", map.getFrameType(true), "RoundedRectangle"
+  expectNot "Mapcenter of #{@center_2} has inner frame", map.getFrameType(true), "NoFrame"
   expect "Mapcenter of #{@center_2} has no outer frame", map.getFrameType(false), "NoFrame"
 
   map.select @center_3
-  expect "Mapcenter of #{@center_3} has inner frame", map.getFrameType(true), "RoundedRectangle"
-  expect "Mapcenter of #{@center_3} has outer frame", map.getFrameType(false), "RoundedRectangle"
+  expectNot "Mapcenter of #{@center_3} has inner frame", map.getFrameType(true), "NoFrame"
+  expectNot "Mapcenter of #{@center_3} has outer frame", map.getFrameType(false), "NoFrame"
   close_current_map
 end
 

@@ -1000,6 +1000,12 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                 outerFrame->addContainer(c);
                 addContainer(outerFrame, Z_OUTER_FRAME);
                 setRotationSubtree(a);
+
+                /*
+                innerContainer->addContainer(innerFrame, Z_INNER_FRAME);
+                */
+
+                qDebug() << "BC created outerFrame";
             }
             outerFrame->setFrameType(ftype);
         }
@@ -1017,11 +1023,10 @@ int BranchContainer::framePadding(const bool &useInnerFrame)
     if (useInnerFrame) {
         if (innerFrame)
             return innerFrame->framePadding();
-        else
-            return 0;
+    } else {
+        if (outerFrame)
+            return outerFrame->framePadding();
     }
-    if (outerFrame)
-        return outerFrame->framePadding();
 
     return 0;
 }
@@ -1031,11 +1036,10 @@ void BranchContainer::setFramePadding(const bool &useInnerFrame, const int &p)
     if (useInnerFrame) {
         if (innerFrame)
             innerFrame->setFramePadding(p);
-        return;
+    } else {
+        if (outerFrame)
+            outerFrame->setFramePadding(p);
     }
-
-    if (outerFrame)
-        outerFrame->setFramePadding(p);
 }
 
 qreal BranchContainer::frameTotalPadding(const bool &useInnerFrame) // padding +  pen width + xsize (e.g. cloud)
@@ -1043,11 +1047,10 @@ qreal BranchContainer::frameTotalPadding(const bool &useInnerFrame) // padding +
     if (useInnerFrame) {
         if (innerFrame)
             return innerFrame->frameTotalPadding();
-        else
-            return 0;
+    } else {
+        if (outerFrame)
+            return outerFrame->frameTotalPadding();
     }
-    if (outerFrame)
-        return outerFrame->frameTotalPadding();
 
     return 0;
 }
@@ -1057,11 +1060,10 @@ qreal BranchContainer::frameXPadding(const bool &useInnerFrame)
     if (useInnerFrame) {
         if (innerFrame)
             return innerFrame->frameXPadding();
-        else
-            return 0;
+    } else {
+        if (outerFrame)
+            return outerFrame->frameXPadding();
     }
-    if (outerFrame)
-        return outerFrame->frameXPadding();
 
     return 0;
 }
@@ -1071,11 +1073,10 @@ int BranchContainer::framePenWidth(const bool &useInnerFrame)
     if (useInnerFrame) {
         if (innerFrame)
             return innerFrame->framePenWidth();
-        else
-            return 0;
+    } else {
+        if (outerFrame)
+            return outerFrame->framePenWidth();
     }
-    if (outerFrame)
-        return outerFrame->framePenWidth();
 
     return 0;
 }
@@ -1085,20 +1086,21 @@ void BranchContainer::setFramePenWidth(const bool &useInnerFrame, const int &w)
     if (useInnerFrame) {
        if (innerFrame)
            innerFrame->setFramePenWidth(w);
-       return;
+    } else {
+        if (outerFrame)
+           outerFrame->setFramePenWidth(w);
     }
-    if (outerFrame)
-       outerFrame->setFramePenWidth(w);
 }
 
 QColor BranchContainer::framePenColor(const bool &useInnerFrame)
 {
     if (useInnerFrame) {
         if (innerFrame)
-        return innerFrame->framePenColor();
+            return innerFrame->framePenColor();
+    } else {
+        if (outerFrame)
+            return outerFrame->framePenColor();
     }
-    if (outerFrame)
-        return outerFrame->framePenColor();
 
     return QColor();
 }
@@ -1108,10 +1110,10 @@ void BranchContainer::setFramePenColor(const bool &useInnerFrame, const QColor &
     if (useInnerFrame) {
         if (innerFrame)
             innerFrame->setFramePenColor(c);
-        return;
+    } else {
+        if (outerFrame)
+            outerFrame->setFramePenColor(c);
     }
-    if (outerFrame)
-        outerFrame->setFramePenColor(c);
 }
 
 QColor BranchContainer::frameBrushColor(const bool &useInnerFrame)
@@ -1119,10 +1121,10 @@ QColor BranchContainer::frameBrushColor(const bool &useInnerFrame)
     if (useInnerFrame) {
         if (innerFrame)
             return innerFrame->frameBrushColor();
-        return QColor();
+    } else {
+        if (outerFrame)
+            return outerFrame->frameBrushColor();
     }
-    if (outerFrame)
-        return outerFrame->frameBrushColor();
 
     return QColor();
 }
@@ -1132,10 +1134,10 @@ void BranchContainer::setFrameBrushColor(const bool &useInnerFrame, const QColor
     if (useInnerFrame) {
         if (innerFrame)
             innerFrame->setFrameBrushColor(c);
-        return;
+    } else {
+        if (outerFrame)
+            outerFrame->setFrameBrushColor(c);
     }
-    if (outerFrame)
-        outerFrame->setFrameBrushColor(c);
 }
 
 QString BranchContainer::saveFrame()    // FIXME-000 save also, if there is no frame used and this is different from MapDesign settings, especially for MCs

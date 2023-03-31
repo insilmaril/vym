@@ -11,7 +11,7 @@ template <typename T> ConfigList <T> & ConfigList<T>::operator<<(const T &other)
 }
 
 template <typename T> T ConfigList<T>::tryAt(int i) {
-    // FIXME-000 cont here.  Define and return default value, if qlist empty
+    // FIXME-0 cont here.  Define and return default value, if qlist empty
     if (i < qlist.count())
         return qlist.last();
     else
@@ -350,8 +350,8 @@ void MapDesign::updateFrames(
     const UpdateMode &mode,
     int depth)
 {
-    if (branchContainer) {
-        qDebug() << "MD::updateFrames mode=" << mode << " d=" << depth;// << branchItem->getHeadingPlain();
+    if (branchContainer && mode == NewItem) {
+        qDebug() << "MD::updateFrames mode=" << mode << " d=" << depth << branchContainer->getBranchItem()->getHeadingPlain();
         // FIXME-00 Hardcoded settings for frames for now, use lists soon:
 
         // Inner frame

@@ -918,6 +918,7 @@ void VymReader::readFrameAttr()
         else if (s == "outerFrame")
             useInnerFrame = false;
 
+        qDebug() << "xml: useInnerFrame=" << useInnerFrame << " s=" << s;
         a = "frameType";
         s = attributeToString(a);
         if (!s.isEmpty())
@@ -930,7 +931,7 @@ void VymReader::readFrameAttr()
         s = attributeToString(a);
         if (!s.isEmpty()) {
             bc->setFrameBrushColor(useInnerFrame, s);
-            lastMI->setBackgroundColor(s);
+            lastMI->setBackgroundColor(s);  // FIXME-0 why BG in addition to brush?
         }
 
         int i;

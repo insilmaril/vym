@@ -143,7 +143,7 @@ void XLinkObj::updateXLink()
     QPointF a, b;
     QPolygonF pa;
 
-    qDebug() << "XLO::updateXLink";
+    //qDebug() << "XLO::updateXLink";
     BranchContainer *beginBC = nullptr;
     BranchContainer *endBC = nullptr;
     BranchItem *bi = link->getBeginBranch();
