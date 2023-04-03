@@ -10,6 +10,8 @@ BaseReader::BaseReader(VymModel *vm)
     lastBranch = nullptr;
 }
 
+void BaseReader::setContentFilter(const int &c) { contentFilter = c; }
+
 QString BaseReader::errorString() const
 {
     return QObject::tr("%1\nLine %2, column %3")

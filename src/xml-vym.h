@@ -10,13 +10,6 @@ class Task;
 
 class VymReader : public BaseReader {
   public:
-  // FIXME-1 Below is mostly obsolete, also in legacy...
-  enum Content {
-      TreeContent = 0x0001,   // FIXME-2 unused
-      SlideContent = 0x0002,
-      XLinkContent = 0x0004   // FIXME-2 unused
-  };
-
     VymReader (VymModel*);
     virtual bool read(QIODevice *device);
 

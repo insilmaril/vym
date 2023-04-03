@@ -26,6 +26,10 @@ VymReader::VymReader(VymModel* m)
     : BaseReader(m)
 {
     //qDebug() << "Constr. VymReader";
+
+    // When importing maps, content could be filtered,
+    // e.g. without slides
+    contentFilter = 0x0000;
 }
 
 bool VymReader::read(QIODevice *device)
@@ -603,54 +607,56 @@ void VymReader::readSlide()
     qreal r;
     int i;
 
-    lastSlide = model->addSlide();
+    if (!(contentFilter & SlideContent)) {
+        lastSlide = model->addSlide();
 
-    qreal slideZoom;
-    s = attributeToString("name");
-    if (!s.isEmpty())
-        lastSlide->setName(s);
+        qreal slideZoom;
+        s = attributeToString("name");
+        if (!s.isEmpty())
+            lastSlide->setName(s);
 
-    s = attributeToString("zoom");
-    if (!s.isEmpty()) {
-        r = s.toDouble(&ok);
-        if (ok) scriptlines.append(QString("setMapZoom(%1)").arg(r));
+        s = attributeToString("zoom");
+        if (!s.isEmpty()) {
+            r = s.toDouble(&ok);
+            if (ok) scriptlines.append(QString("setMapZoom(%1)").arg(r));
+        }
+
+        s = attributeToString("rotation");
+        if (!s.isEmpty()) {
+            r = s.toDouble(&ok);
+            if (ok) scriptlines.append(QString("setMapRotation(%1)").arg(r));
+        }
+
+        s = attributeToString("duration");
+        if (!s.isEmpty()) {
+            i = s.toInt(&ok);
+            if (ok) scriptlines.append(QString("setMapAnimCurve(%1)").arg(i));
+        }
+
+        s = attributeToString("curve");
+        if (!s.isEmpty()) {
+            i = s.toInt(&ok);
+            if (ok) scriptlines.append(QString("setMapAnimDuration(%1)").arg(i));
+        }
+
+        s = attributeToString("mapitem");
+        if (!s.isEmpty()) {
+            TreeItem *ti = model->findUuid(s);
+            if (ti) scriptlines.append(
+                QString("centerOnID(\"%1\")").arg(ti->getUuid().toString()));
+        }
+
+        // Up to 2.9.0 at least only inScript seems to be used
+        s = attributeToString("inScript");
+        if (!s.isEmpty())
+            lastSlide->setInScript(unquoteMeta(s));
+        else
+            lastSlide->setInScript(unquoteMeta(scriptlines.join(";\n"))); // FIXME-3 unquote needed? Not used currently anyway
+
+        s = attributeToString("outScript");
+        if (!s.isEmpty())
+            lastSlide->setOutScript(unquoteMeta(s));
     }
-
-    s = attributeToString("rotation");
-    if (!s.isEmpty()) {
-        r = s.toDouble(&ok);
-        if (ok) scriptlines.append(QString("setMapRotation(%1)").arg(r));
-    }
-
-    s = attributeToString("duration");
-    if (!s.isEmpty()) {
-        i = s.toInt(&ok);
-        if (ok) scriptlines.append(QString("setMapAnimCurve(%1)").arg(i));
-    }
-
-    s = attributeToString("curve");
-    if (!s.isEmpty()) {
-        i = s.toInt(&ok);
-        if (ok) scriptlines.append(QString("setMapAnimDuration(%1)").arg(i));
-    }
-
-    s = attributeToString("mapitem");
-    if (!s.isEmpty()) {
-        TreeItem *ti = model->findUuid(s);
-        if (ti) scriptlines.append(
-            QString("centerOnID(\"%1\")").arg(ti->getUuid().toString()));
-    }
-
-    // Up to 2.9.0 at least only inScript seems to be used
-    s = attributeToString("inScript");
-    if (!s.isEmpty())
-        lastSlide->setInScript(unquoteMeta(s));
-    else
-        lastSlide->setInScript(unquoteMeta(scriptlines.join(";\n"))); // FIXME-3 unquote needed? Not used currently anyway
-
-    s = attributeToString("outScript");
-    if (!s.isEmpty())
-        lastSlide->setOutScript(unquoteMeta(s));
 
     if (xml.tokenType() == QXmlStreamReader::EndElement)
         return;

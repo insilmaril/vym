@@ -19,7 +19,15 @@ class SlideItem;
 
 class BaseReader {
   public:
+  enum Content {
+      TreeContent = 0x0001,   // currently unused
+      SlideContent = 0x0002,
+      XLinkContent = 0x0004   // currently unused
+  };
+
     BaseReader(VymModel *vm);
+    void setContentFilter(const int &);
+
     virtual bool read(QIODevice *device) = 0;
 
     QString errorString() const;
@@ -53,6 +61,8 @@ class BaseReader {
 
     ImageItem *lastImage;
     SlideItem *lastSlide;
+
+    int contentFilter;
 };
 
 #endif

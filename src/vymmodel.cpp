@@ -488,8 +488,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     switch (fileType) {
         case File::VymMap:
             reader = new VymReader(this);
-            // XML-FIXME-1 set contentfilter?   seems unused.
-            //((parseVYMHandler *)handler)->setContentFilter(contentFilter);
+            // For imports we might want to ignore slides
+            reader->setContentFilter(contentFilter);
             break;
         case File::FreemindMap:
             //reader = new FreemindReader(this); // XML-FIXME-1 not implemented yet
@@ -2915,11 +2915,11 @@ void VymModel::paste()
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
             //setTextFormat(Qt::RichText);
-            qDebug() << "VM::paste found html...";
+            qDebug() << "VM::paste found html...";  // FIXME-2 testing
         } else if (mimeData->hasText()) {
             //setText(mimeData->text());
             //setTextFormat(Qt::PlainText);
-            qDebug() << "VM::paste found text...";
+            qDebug() << "VM::paste found text...";  // FIXME-2 testing
         } else {
             qWarning() << "VM::paste Cannot paste data, mimeData->formats=" << mimeData->formats();
         }
