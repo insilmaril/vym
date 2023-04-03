@@ -164,7 +164,8 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         if (t == FrameContainer::NoFrame)
         {
             ui.innerFrameTypeCombo->setCurrentIndex(0);
-            ui.innerFrameColorGroupBox->setEnabled(false);
+            ui.innerFramePenColorButton->setEnabled(false);
+            ui.innerFrameBrushColorButton->setEnabled(false);
             ui.innerFramePaddingSpinBox->setEnabled(false);
             ui.innerFrameWidthSpinBox->setEnabled(false);
             ui.innerFramePaddingLabel->setEnabled(false);
@@ -176,7 +177,8 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.innerFramePenColorButton->setIcon(pix);
             pix.fill(bc->frameBrushColor(true));
             ui.innerFrameBrushColorButton->setIcon(pix);
-            ui.innerFrameColorGroupBox->setEnabled(true);
+            ui.innerFramePenColorButton->setEnabled(true);
+            ui.innerFrameBrushColorButton->setEnabled(true);
             ui.innerFramePaddingSpinBox->setEnabled(true);
             ui.innerFramePaddingSpinBox->setValue(bc->framePadding(true));
             ui.innerFrameWidthSpinBox->setEnabled(true);
@@ -207,19 +209,21 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         if (t == FrameContainer::NoFrame)
         {
             ui.outerFrameTypeCombo->setCurrentIndex(0);
-            ui.outerFrameColorGroupBox->setEnabled(false);
+            ui.outerFramePenColorButton->setEnabled(false);
+            ui.outerFrameBrushColorButton->setEnabled(false);
             ui.outerFramePaddingSpinBox->setEnabled(false);
             ui.outerFrameWidthSpinBox->setEnabled(false);
             ui.outerFramePaddingLabel->setEnabled(false);
             ui.outerFrameBorderLabel->setEnabled(false);
         }
         else {
+            ui.outerFramePenColorButton->setEnabled(true);
+            ui.outerFrameBrushColorButton->setEnabled(true);
             QPixmap pix(16, 16);
             pix.fill(bc->framePenColor(false));
             ui.outerFramePenColorButton->setIcon(pix);
             pix.fill(bc->frameBrushColor(false));
             ui.outerFrameBrushColorButton->setIcon(pix);
-            ui.outerFrameColorGroupBox->setEnabled(true);
             ui.outerFramePaddingSpinBox->setEnabled(true);
             ui.outerFramePaddingSpinBox->setValue(bc->framePadding(false));
             ui.outerFrameWidthSpinBox->setEnabled(true);
