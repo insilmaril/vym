@@ -15,7 +15,13 @@ template <typename T> class ConfigList {
   public:
     QList <T> qlist;
     ConfigList <T> & operator<<(const T &other);
+    T & operator[](int i);
     T tryAt(int);
+    int count();
+    // FIXME-3 not used void setDefault(const T &);
+
+  protected:
+    T defaultValue;
 };
 
 /*! \brief A MapDesign defines the visual appearance of a map, e.g. how branches, frames,     links look. Settings depend on
@@ -76,28 +82,28 @@ class MapDesign {
     QString name;
 
     // Container layouts
-    QList <Container::Layout> branchContainerLayouts;
-    QList <Container::Layout> imageContainerLayouts;
+    ConfigList <Container::Layout> branchContainerLayouts;
+    ConfigList <Container::Layout> imageContainerLayouts;
 
     // Colors of headings
-    QList <MapDesign::HeadingColorHint> headingColorHints;
-    QList <QColor> headingColors;
+    ConfigList <MapDesign::HeadingColorHint> headingColorHints;
+    ConfigList <QColor> headingColors;
 
     // Frames
     ConfigList <FrameContainer::FrameType> innerFrameTypes;
-    QList <QColor> innerFramePenColors;
-    QList <QColor> innerFrameBrushColors;
-    QList <int> innerFramePenWidths;
+    ConfigList <QColor> innerFramePenColors;
+    ConfigList <QColor> innerFrameBrushColors;
+    ConfigList <int> innerFramePenWidths;
 
-    QList <FrameContainer::FrameType> outerFrameTypes;
-    QList <QColor> outerFramePenColors;
-    QList <QColor> outerFrameBrushColors;
-    QList <int> outerFramePenWidths;
+    ConfigList <FrameContainer::FrameType> outerFrameTypes;
+    ConfigList <QColor> outerFramePenColors;
+    ConfigList <QColor> outerFrameBrushColors;
+    ConfigList <int> outerFramePenWidths;
 
     // Links
     LinkObj::ColorHint linkColorHintInt;
     QColor defaultLinkCol;
-    QList <LinkObj::Style> linkStyles;
+    ConfigList <LinkObj::Style> linkStyles;
 
     // Selection
     QColor selectionColorInt;

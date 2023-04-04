@@ -10,13 +10,24 @@ template <typename T> ConfigList <T> & ConfigList<T>::operator<<(const T &other)
     qlist << other;
 }
 
-template <typename T> T ConfigList<T>::tryAt(int i) {
-    // FIXME-0 cont here.  Define and return default value, if qlist empty
-    if (i < qlist.count())
-        return qlist.last();
-    else
+template <typename T> T & ConfigList<T>::operator[](int i) {
+    if (i >= 0 && i < qlist.count())
         return qlist.at(i);
 }
+
+template <typename T> T ConfigList<T>::tryAt(int i) {
+    return qlist.last();
+}
+
+template <typename T> int ConfigList<T>::count() {
+    return qlist.count();
+}
+
+/*
+FIXME-3 currently not used template <typename T> void ConfigList<T>::setDefault(const T &d) {
+    defaultValue = d;
+}
+*/
 
 /////////////////////////////////////////////////////////////////
 // MapDesign
@@ -48,7 +59,7 @@ void MapDesign::init()
         headingColors << QColor(Qt::white);
         headingColors << QColor(Qt::green);
 
-        // Frames   // FIXME-0 settings not complete yet
+        // Frames   // FIXME-0 settings not complete yet (also consider dark theme)
         innerFrameTypes << FrameContainer::RoundedRectangle;
         innerFramePenColors;
         innerFrameBrushColors;
@@ -66,10 +77,6 @@ void MapDesign::init()
 
         linkStyles << LinkObj::NoLink;
         linkStyles << LinkObj::Parabel;
-        //linkStyles << LinkObj::PolyLine;
-        //linkStyles << LinkObj::Line;
-        //linkStyles << LinkObj::PolyParabel;
-        //linkStyles << LinkObj::Parabel;
     } else if (mapDesign == 1) {
         // Rainbow colors depending on depth mapDesign
         // NewBranch: Layout of children branches 
@@ -113,32 +120,12 @@ QString MapDesign::getName()
 
 Container::Layout MapDesign::branchesContainerLayout(int depth)
 {
-    int max = branchContainerLayouts.count();
-    if (depth < max)
-        return branchContainerLayouts.at(depth);
-    else {
-        if (max > 0)
-            // Return last entry, if it exists
-            return branchContainerLayouts.at(max - 1);
-        else
-            // Don't change 
-            return Container::UndefinedLayout;
-    }
+    return branchContainerLayouts.tryAt(depth);
 }
 
 Container::Layout MapDesign::imagesContainerLayout(int depth)
 {
-    int max = imageContainerLayouts.count();
-    if (depth < max)
-        return imageContainerLayouts.at(depth);
-    else {
-        if (max > 0)
-            // Return last entry, if it exists
-            return imageContainerLayouts.at(max - 1);
-        else
-            // Don't change 
-            return Container::UndefinedLayout;
-    }
+    return imageContainerLayouts.tryAt(depth);
 }
 
 LinkObj::ColorHint MapDesign::linkColorHint()
@@ -164,31 +151,27 @@ void MapDesign::setDefaultLinkColor(const QColor &col)
 LinkObj::Style MapDesign::linkStyle(int depth)
 {
     // Special case for now:    // FIXME-3
-    // For style PolyParabel or PolyLine in d=1
-    // return Parabel or Line for d>1
+    // For style PolyParabel or PolyLine in d == 1
+    // return Parabel or Line for d > 1
 
     if (depth < 2)
-        return linkStyles.at(depth);
+        return linkStyles.tryAt(depth);
 
-    if (linkStyles.at(1) == LinkObj::PolyParabel)
+    if (linkStyles.tryAt(1) == LinkObj::PolyParabel)
         return LinkObj::Parabel;
 
-    if (linkStyles.at(1) == LinkObj::PolyLine)
+    if (linkStyles.tryAt(1) == LinkObj::PolyLine)
         return LinkObj::Line;
 
-    return linkStyles.at(1);    // Return eithe Line or Parabel
+    return linkStyles.tryAt(1);    // Return either Line or Parabel
 }
 
 bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
 {
-    // Special case for now:    // FIXME-3
-    // Only set style for d=1
-    // (Used to be map-wide setting before 3.x)
+    // Special case for now: only set LinkStyle for first levels    // FIXME-2
+    // Only set style for d=1 (Used to be map-wide setting before 3.x)
 
     if (linkStyles.count() < 2)
-        linkStyles << style;
-    else
-        linkStyles[1] = style;
 
     return true;
 }
@@ -199,17 +182,7 @@ void MapDesign::updateBranchHeadingColor(
 {
     if (branchItem) {
         qDebug() << "MD::updateBranchHeadingColor " << " d=" << depth << branchItem->getHeadingPlain();
-        HeadingColorHint colHint;
-        int max = headingColorHints.count();
-        if (depth < max)
-            colHint = headingColorHints.at(depth);
-        else {
-            if (max > 0)
-                // Return last entry, if it exists
-                colHint = headingColorHints.at(max - 1);
-            else
-                colHint = UndefinedColor;
-        }
+        HeadingColorHint colHint = headingColorHints.tryAt(depth);
 
         QColor col;
         switch (colHint) {
@@ -225,18 +198,7 @@ void MapDesign::updateBranchHeadingColor(
             }
             case SpecificColor: {
                 qDebug() << " - SpecificColor";
-                int max = headingColors.count();
-                if (depth < max)
-                    col = headingColors.at(depth);
-                else {
-                    if (max > 0)
-                        // Return last entry, if it exists
-                        col = headingColors.at(max - 1);
-                    else {
-                        qWarning() << "No specific color found for new branch";
-                        col = QColor("#EEEEEE");
-                    }
-                }
+                col = headingColors.tryAt(depth);
                 branchItem->setHeadingColor(col);
 
                 break;
