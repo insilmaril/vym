@@ -1060,6 +1060,7 @@ end
 ######################
 def test_load_legacy_maps
   heading "Load legacy maps:"
+
   map = init_map "maps/legacy/legacy-text-2.4.0.xml"
   map.select @branch_a
   expect "Heading with plaintext as characters is read", map.getHeadingPlainText, "Heading in characters"
@@ -1070,6 +1071,26 @@ def test_load_legacy_maps
   map.select @main_a
   expect "Checking parsing 'relPos': x-position of #{@main_a} is ok", map.getPosX().to_f, 123
   expect "Checking parsing 'relPos': y-position of #{@main_a} is ok", map.getPosY().to_f, 42
+
+  close_current_map
+
+  map = init_map "maps/legacy/time-management-1.13.33.vym"
+  map.select @main_a
+  s = "To see an explanation"
+  expect "<heading> using characters: Heading includes '#{s}'", map.getHeadingPlainText.include?(s), true
+  expect "<vymnote> using <html>: creates RichText note", map.hasRichTextNote, true
+  s = "time management"
+  expect "<vymnote> using <html>: Note contains '#{s}'", map.getNotePlainText.include?(s), true
+
+  close_current_map
+
+  map = init_map "maps/legacy/lifeforms-2.1.11.vym"
+  map.select @center_0
+
+  s = "Life forms"
+  expect "<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML.include?(s), true
+  s = "html"
+  expect "<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML.include?(s), true
 
   close_current_map
 end
