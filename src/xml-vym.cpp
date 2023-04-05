@@ -297,6 +297,8 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
             return;
     }
 
+    // Save type for later (after reading html)
+    QStringRef textType = xml.name();
     htmldata.clear();
     vymtext.clear();
 
@@ -327,12 +329,40 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
     if (!s.isEmpty()) {
         vymtext.setText(unquoteQuotes(s));
 
-    }
+    } else {
+        // Legacy versions did not used the "text" attribute, but had the content as characters
 
-    //htmldata += xml.text();  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
-    htmldata += xml.readElementText(QXmlStreamReader::IncludeChildElements);  // XML-FIXME-0 test with legacy (at least heading and vymnote. similar note, htmlnote, html)
-    //qDebug() << "htmldata: " << htmldata << "  xml.name=" << xml.name() << vymtext.getText();
-    //qDebug() << xml.tokenType() << xml.tokenString();
+        bool finished = false;
+        while (!finished) {
+            xml.readNext();
+            switch(xml.tokenType())
+            {
+                case QXmlStreamReader::StartElement:
+                    if (xml.name() == QLatin1String("html")) {
+                        vymtext.setRichText(true);
+                        readHtml();
+                    } else {
+                        raiseUnknownElementError();
+                        return;
+                    }
+                    break;
+                case QXmlStreamReader::EndElement:
+                    if (xml.name().toString() != textType) {
+                        xml.raiseError("Expected end token: " + textType + " but found " + xml.name().toString());
+                        return;
+                    }
+                    finished = true;
+                    break;
+                case QXmlStreamReader::Characters:
+                    htmldata += xml.text().toString();
+                    break;
+                default:
+                    break;
+            }
+        }
+    } // Legacy text as characters instead of text attribute
+
+    //qDebug() << "xml.name()=" <<xml.name() << " htmldata: " << htmldata << " vT=" <<vymtext.getText(); // FIXME-2 testing
 
     if (versionLowerOrEqual(version, "2.4.99") && // XML-FIXME-1 test with legacy
         htmldata.contains("<html>"))
@@ -347,10 +377,10 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
             vymtext.setText(htmldata);
     }
 
-    if (xml.name() == "heading")
+    if (textType == "heading")
         lastBranch->setHeading(vymtext);
 
-    if (xml.name() == "vymnote")
+    if (textType == "vymnote")
         lastBranch->setNote(vymtext);
 
     if (xml.tokenType() == QXmlStreamReader::EndElement)
@@ -358,6 +388,39 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
+}
+
+void VymReader::readHtml()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("html"));
+
+    bool finished = false;
+
+    while (!finished) {
+        xml.readNext();
+        switch(xml.tokenType())
+        {
+            case QXmlStreamReader::StartElement:
+                htmldata += "<" + xml.name().toString();
+                for (int i = 0; i < xml.attributes().count(); i++) {
+                    htmldata += " " + xml.attributes().at(i).name();
+                    htmldata += "=\"" + xml.attributes().at(i).value() + "\"";
+                }
+                htmldata += ">";
+                break;
+            case QXmlStreamReader::EndElement:
+                htmldata += "</" + xml.name().toString() + ">";
+                if (xml.name() == QLatin1String("html"))
+                    finished = true;
+                break;
+            case QXmlStreamReader::Characters:
+                htmldata += xml.text().toString();
+                break;
+            default:
+                // Ignore other token types
+                break;
+        }
+    }
 }
 
 void VymReader::readFrame()
