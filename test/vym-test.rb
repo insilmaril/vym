@@ -1091,6 +1091,7 @@ def test_load_legacy_maps
   expect "<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML.include?(s), true
   s = "html"
   expect "<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML.include?(s), true
+  puts map.getHeadingXML
 
   close_current_map
 end
