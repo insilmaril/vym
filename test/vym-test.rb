@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "#{ENV['PWD']}/scripts/vym-ruby"
+require "#{ENV['PWD']}/../scripts/vym-ruby"
 require 'colorize'
 require 'date'
 require 'fileutils'
@@ -68,7 +68,14 @@ def init_map( mapPath )
   # Copy the map referenced above to @testDir/test-current.[vym|xml]
   # and try to load it
   @currentMapPath = "#{@testDir}/test-current#{File.extname(mapPath)}"
-  FileUtils.cp mapPath, @currentMapPath
+
+  begin
+    puts "init_map #{mapPath}"
+    FileUtils.cp mapPath, @currentMapPath
+  rescue
+    puts "Failed to copy #{mapPath} to #{@currentMapPath}"
+    exit
+  end
 
   if @vym.loadMap (@currentMapPath)
     puts "# Loaded #{mapPath} -> #{@currentMapPath}".blue
@@ -107,11 +114,9 @@ def test_vym
 
   expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
 
-  expect "Default map exists at '#{@testMapDefaultPath}'", File.file?(@testMapDefaultPath), true
 
-  testMapPath = "#{@testDir}/test-default.vym"
-  map = init_map @testMapDefaultPath
-  expect "init_map copies default testmap to '#{testMapPath}'", File.file?(testMapPath), true
+  map = init_map @testMapDefault
+  expect "init_map copies default testmap to '#{@currentMapPath}'", File.file?(@currentMapPath), true
   expect "Title of copied map title is accessible and not empty", map.getMapTitle.length > 0, true
 
   close_current_map
@@ -120,7 +125,7 @@ end
 #######################
 def test_basics
   heading "Basic checks:"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   title = "vym map used for testing"
   expect "map title is '#{title}'", map.getMapTitle, title
@@ -150,7 +155,7 @@ end
 #######################
 def test_adding_branches
   heading "Adding branches:"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @main_a
   n = map.branchCount.to_i
   map.addBranch()
@@ -163,7 +168,7 @@ def test_adding_branches
   expect( "Undo: addBranch", map.branchCount.to_i, n )
 
   close_current_map
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   map.select @main_a
   n = map.branchCount.to_i
@@ -178,7 +183,7 @@ def test_adding_branches
   expect "Undo: addBranchAbove/Below", map.branchCount.to_i, n
 
   close_current_map
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   map.select @branch_a
   map.addBranchBefore
@@ -199,10 +204,10 @@ end
 #######################
 def test_adding_maps
   heading "Adding maps"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @branch_a
   n = map.branchCount.to_i
-  map.addMapReplace @testMapDefaultPath
+  map.addMapReplace @currentMapPath
   map.select @main_a
   expect "addMapReplace: check branch count in #{@main_a}", map.branchCount.to_i, n + 1
   map.select @branch_a
@@ -218,10 +223,10 @@ def test_adding_maps
   expect "Undo: check if #{@branch_a} is back", map.branchCount.to_i, 3
   close_current_map
 
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @branch_a
   n = map.branchCount.to_i
-  map.addMapInsert @testMapDefaultPath, 1  # Create testmap with several MCs
+  map.addMapInsert @currentMapPath, 1  # Create testmap with several MCs
   map.select @branch_a
   expect "addMapInsert: branch count",  map.branchCount.to_i, n + 2
   map.select @branch_a + ",bo:1"
@@ -240,7 +245,7 @@ end
 #######################
 def test_attributes
   heading "Attributes:"
-  map = init_map (@testDir + "/" + "test-attributes.xml")
+  map = init_map "maps/test-attributes.xml"
 
   map.select @main_a
   expect "String attribute is '6 * 9'", map.getStringAttribute("string-attribute"), "6 * 9"
@@ -252,7 +257,7 @@ end
 ######################
 def test_bugfixes
   heading "Bugfixes:"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   close_current_map
 end
@@ -261,7 +266,7 @@ end
 def test_copy_paste
   heading "Copy, cut & Paste"
 
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @main_a
   n = map.branchCount.to_i
 
@@ -297,7 +302,7 @@ end
 def test_delete_parts
   heading "Deleting parts"
 
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @main_a
   n=map.branchCount.to_i
   map.select @branch_a
@@ -313,7 +318,7 @@ def test_delete_parts
 
   close_current_map
 
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @branch_a
   n = map.branchCount.to_i
   map.removeChildren
@@ -324,7 +329,7 @@ def test_delete_parts
   expect "Undo: removeChildren: branchcount", map.branchCount.to_i, n
 
   close_current_map
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   map.select @main_a
   n=map.branchCount.to_i
@@ -340,7 +345,7 @@ def test_delete_parts
   expect "Undo: removeKeepChildren: branchcount of branch", map.branchCount.to_i, m
 
   close_current_map
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   n = map.centerCount.to_i
   map.select @center_1
@@ -355,7 +360,7 @@ end
 #######################
 def test_export
   heading "Export:"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   #HTML
   exportdir = "#{@testDir}/export-html"
@@ -494,7 +499,7 @@ end
 #######################
 def test_extrainfo
   heading "Extra information:"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.setMapAuthor("Fra Erasmas")
   expect "Set and get map author", map.getMapAuthor, "Fra Erasmas"
   map.setMapComment("xy z")
@@ -537,7 +542,7 @@ end
 def test_history
   heading "History"
 
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @main_a
   map.setHeadingPlainText "A"
   map.setHeadingPlainText "B"
@@ -565,7 +570,7 @@ end
 #######################
 def test_scrolling
   heading "Scrolling and unscrolling"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   map.select @main_a
   map.toggleScroll
@@ -593,7 +598,7 @@ end
 #######################
 def test_slides
   heading "Slides"
-  map = init_map "#{@testDir}/test-slides.xml"
+  map = init_map "maps/test-slides.xml"
 
   map.select @main_a
   expect "Successfully loaded map with slides", map.slideCount, 3
@@ -602,9 +607,10 @@ def test_slides
 end
 
 #######################
-def test_modify_branches (vym)
+def test_modify_branches
   heading "Modifying branches"
-  map = init_map( vym )
+  map = init_map @testMapDefault
+
   map.select @branch_a
   map.setHeadingPlainText "Changed!"
   expect "setHeadingPlainText", map.getHeadingPlainText, "Changed!"
@@ -613,12 +619,14 @@ def test_modify_branches (vym)
   map.redo
   expect "redo: setHeadingPlainText", map.getHeadingPlainText, "Changed!"
   map.undo
+
+  close_current_map
 end
 
 #######################
 def test_moving_parts
   heading "Moving parts"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
 
   map.select @branch_a
   map.moveDown
@@ -671,11 +679,12 @@ def test_moving_parts
 end
 
 ######################
-def test_notes (vym)
+def test_notes
   heading "Notes:"
 
   # Plaintext notes basic actions
-  map = init_map( vym )
+  map = init_map @testMapDefault
+
   map.select @main_a
   note_plain = "vymnote plaintext"
   map.setNotePlainText(note_plain)
@@ -712,8 +721,8 @@ def test_notes (vym)
   expect "Redo restores previous note", map.getNotePlainText, 'Foobar'
 
   # Plaintext notes load & save
-  note_org = IO.read('test/note-plain.txt')
-  map.loadNote("test/note-plain.txt")
+  note_org = IO.read('notes/note-plain.txt')
+  map.loadNote("test/notes/note-plain.txt")
   expect "Load plain text note from file. Still plaintext?", map.hasRichTextNote, false
   expect "Note contains 'not bold'", map.getNotePlainText.include?("not bold"), true
   filepath = "#{@testDir}/save-note.txt"
@@ -728,8 +737,10 @@ def test_notes (vym)
   map.setNotePlainText("")
   expect "setNotePlainText(\"\") deletes note", map.hasNote, false
 
+  close_current_map
+
   # RichText basic actions
-  map = init_map( vym )
+  map = init_map @testMapDefault
   map.select @main_a
   rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
   map.parseVymText(rt_note)
@@ -760,7 +771,7 @@ def test_notes (vym)
   expect "Redo restores previous plaintext note", map.getNotePlainText, 'Foobar'
 
   # RichText notes load & save
-  map.loadNote("test/note.html")
+  map.loadNote("test/notes/note.html")
   expect "Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote, true
   filepath = "#{@testDir}/save-note.txt"
   map.saveNote(filepath)
@@ -774,13 +785,16 @@ def test_notes (vym)
   map.setNotePlainText("")
   expect "setNotePlainText(\"\") deletes note", map.hasNote, false
 
-  # Compatibility with version < 2.5.0  # FIXME missing
+  # Compatibility with version < 2.5.0  # FIXME-2 missing
+
+  close_current_map
 end
 
 #######################
-def test_references (vym)
+def test_references
   heading "References"
-  map = init_map( vym )
+  map = init_map @testMapDefault
+
   map.select @main_a
   url = "www.insilmaril.de"
   map.setURL url
@@ -802,12 +816,14 @@ def test_references (vym)
   map.redo
   expect "redo: setVymLink", map.getVymLink, s
   map.undo
+
+  close_current_map
 end
 
 #######################
 def test_standard_flags
   heading "Standard flags"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   map.select @main_a
 
   def set_flags (map, flags)
@@ -884,7 +900,7 @@ end
 #######################
 def test_user_flags
   heading "User flags"
-  map = init_map (@testDir + "/" + "test-userflag.vym")
+  map = init_map "maps/test-userflag.vym"
 
   map.select @branch_a
   flagName = "userflag-vym"
@@ -895,9 +911,10 @@ def test_user_flags
 end
 
 #######################
-def test_xlinks (vym)
+def test_xlinks
   heading "XLinks:"
-  map = init_map( vym )
+  map = init_map @testMapDefault
+
   map.addXLink("mc:0,bo:0","mc:0,bo:1",2,"#ff0000","Qt::DashDotLine")
   map.selectLatestAdded
   expect "Default color of XLink", map.getXLinkColor, "#ff0000"
@@ -931,13 +948,13 @@ def test_xlinks (vym)
   map.undo
   expect "Undo style of XLink end", map.getXLinkStyleEnd, "HeadFull"
 
-  map.remove
+  close_current_map
 end
 
 #######################
 def test_tasks
   heading "Tasks:"
-  map = init_map (@testDir + "/" + "test-tasks.xml")
+  map = init_map "maps/test-tasks.xml"
 
   map.select @branch_a
   expect "After loading #{@branch_a} has no task", map.hasTask, false
@@ -1021,7 +1038,7 @@ end
 ######################
 def test_saving
   heading "Saving:"
-  map = init_map @testMapDefaultPath
+  map = init_map @testMapDefault
   #
   # Save selection without overwriting original map
   map.select @branch_a
@@ -1043,7 +1060,7 @@ end
 ######################
 def test_load_legacy_maps
   heading "Load legacy maps:"
-  map = init_map (@testDir + "/" + "test-legacy-text.xml")
+  map = init_map "maps/legacy/legacy-text-2.4.0.xml"
   map.select @branch_a
   expect "Heading with plaintext as characters is read", map.getHeadingPlainText, "Heading in characters"
 
@@ -1053,6 +1070,7 @@ def test_load_legacy_maps
   map.select @main_a
   expect "Checking parsing 'relPos': x-position of #{@main_a} is ok", map.getPosX().to_f, 123
   expect "Checking parsing 'relPos': y-position of #{@main_a} is ok", map.getPosY().to_f, 42
+
   close_current_map
 end
 
@@ -1124,8 +1142,8 @@ begin
   end.parse!
 
   @testDir = options[:testDir]
-  @testMapDefaultPath= "#{@testDir}/test-default.vym"
-  @testMapFrames = "#{@testDir}/test-frames.vym"
+  @testMapDefault= "maps/test-default.vym"
+  @testMapFrames = "maps/test-frames.vym"
 
   $tests_passed    = 0
   $tests_failed    = 0
@@ -1169,21 +1187,21 @@ begin
   #test_delete_parts
   #test_export
   #test_extrainfo
-  test_frames
+  #test_frames
   ##test_headings  # FIXME-2 no tests available
   #test_history
-  #test_load_legacy_maps
-  #test_modify_branches(vym)
+  test_load_legacy_maps # FIXME-2 fails currently
+  #test_modify_branches
   #test_moving_parts
-  #test_notes(vym)
-  #test_references(vym)
+  #test_notes
+  #test_references
   #test_saving
   #test_scrolling
-  test_slides
+  #test_slides
   #test_standard_flags
   #test_tasks
   #test_user_flags
-  #test_xlinks(vym)
+  #test_xlinks
 
   summary
 

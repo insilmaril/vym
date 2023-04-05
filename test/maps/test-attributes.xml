@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
+
+<vymmap  version="2.9.506" author="Uwe (inventor of vym)" title="" comment="" date="2023-02-14" branchCount="2" backgroundColor="#ffffff" defaultFont="Noto Sans,16,-1,5,50,0,0,0,0,0,Regular" selectionColor="#ffffff00" linkStyle="StylePolyParabel" linkColor="#0000ff" defXLinkColor="#3232ff" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0">
+
+    <mapcenter posX="0" posY="0" uuid="{40b3036b-bac8-4b46-b008-bbf70f076842}">
+        <heading  textMode="plainText"  textColor="#000000"  text="New default map" />
+        <frame  frameType="RoundedRectangle" penColor="#ff000000" brushColor="#ffffffff" padding="0" penWidth="2" />
+        <branch posX="218.022" posY="-130.35" uuid="{760ad715-1e5a-4352-b339-119645beb1c6}">
+            <heading  textMode="plainText"  textColor="#0000ff"  text="Branch with attributes" />
+            <attribute  key="string-attribute" value="6 * 9" type="String" />
+            <attribute  key="int-attribute" value="42" type="Integer" />
+        </branch>
+    </mapcenter>
+    <select>mc:0,bo:0</select>
+</vymmap>
