@@ -40,7 +40,7 @@ bool VymReader::read(QIODevice *device)
         if (xml.name() == QLatin1String("vymmap")) {
             readVymMap();
         } else if (xml.name() == QLatin1String("heading") ||
-                   xml.name() == QLatin1String("vymnote"))  { // XML-FIXME-1 test
+                   xml.name() == QLatin1String("vymnote"))  {
             // Only read some stuff like VymNote or Heading
             // e.g. for undo/redo
             if (version.isEmpty())
@@ -91,8 +91,6 @@ void VymReader::readVymMap()
                     .arg(version)
                     .arg(vymVersion));
         }
-        else
-            model->setVersion(version); // XML-FIXME-1 really needed? what for?
     }
 
     branchesTotal = 0;

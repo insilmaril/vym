@@ -1947,9 +1947,6 @@ void VymModel::test()
 //////////////////////////////////////////////
 // Interface
 //////////////////////////////////////////////
-void VymModel::setVersion(const QString &s) { version = s; }
-
-QString VymModel::getVersion() { return version; }
 
 void VymModel::setTitle(const QString &s)
 {

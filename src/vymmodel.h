@@ -311,8 +311,6 @@ class VymModel : public TreeModel {
     // Interface
     ////////////////////////////////////////////
   public:
-    void setVersion(const QString &);
-    QString getVersion();
     void setTitle(const QString &);
     QString getTitle();
     void setAuthor(const QString &);
