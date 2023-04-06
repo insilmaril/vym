@@ -1089,9 +1089,8 @@ def test_load_legacy_maps
 
   s = "Life forms"
   expect "<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML.include?(s), true
-  s = "html"
-  expect "<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML.include?(s), true
-  puts map.getHeadingXML
+  s = "textMode=\"richText"
+  expect "<heading> using characters creates RichText", map.getHeadingXML.include?(s), true
 
   close_current_map
 end
