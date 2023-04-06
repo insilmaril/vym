@@ -16,7 +16,10 @@ template <typename T> T & ConfigList<T>::operator[](int i) {
 }
 
 template <typename T> T ConfigList<T>::tryAt(int i) {
-    return qlist.last();
+    if (i >= qlist.count())
+        return qlist.last();
+    else
+        return qlist.at(i);
 }
 
 template <typename T> int ConfigList<T>::count() {
