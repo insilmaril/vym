@@ -23,7 +23,7 @@ TreeModel::~TreeModel()
     delete rootItem;
 }
 
-QVariant TreeModel::data(const QModelIndex &index, int role) const
+QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-1 no foreground color for imageItem
 {
     if (!index.isValid())
         return QVariant();
@@ -37,14 +37,17 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         return item->data(index.column());
 
     if (role == Qt::ForegroundRole)
-        return item->getHeadingColor();
+        if (bi)
+            return bi->getHeadingColor();
+        else
+            return qApp->palette().color(QPalette::Text);
 
     if (role == Qt::BackgroundRole) {
         if (bi)
             return bi->getBackgroundColor(bi);
         else
             // Selected XLink does not have a branchItem
-            return qApp->palette().color(QPalette::Base);
+            return qApp->palette().color(QPalette::Window); // FIXME-1 Better return map background, just like in BranchItem
     }
 
     return QVariant();
