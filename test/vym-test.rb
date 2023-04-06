@@ -1211,7 +1211,7 @@ begin
   #test_frames
   ##test_headings  # FIXME-2 no tests available
   #test_history
-  test_load_legacy_maps # FIXME-2 fails currently
+  test_load_legacy_maps
   #test_modify_branches
   #test_moving_parts
   #test_notes
