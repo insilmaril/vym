@@ -3,18 +3,34 @@
 <vymmap  version="1.4.0" author="Uwe (inventor of vym)" title="" comment="Manually created map to test very old maps with notes" date="2023-04-11" backgroundColor="#ffffff" defaultFont="Sans Serif,16,-1,0,50,0,0,0,0,0" selectionColor="#ffff00" linkStyle="StylePolyLine" linkColor="#0000ff" defXLinkColor="#e6e6e6" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0" linkColorHint="HeadingColor">
     <mapcenter absPosX="27" absPosY="245" hideLink="false" uuid="{e5e8967d-ed26-47e2-942d-e1ae6db1c6d0}"><heading  textMode="plainText"  fonthint="undef"  textColor="#000000">Legacy notes</heading>
         <frame  frameType="Rectangle" penColor="#000000" brushColor="#ffffff" padding="0" borderWidth="1" />
-        <branch relPosX="150" relPosY="-150" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c6c4}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">Legacy #note# pre 1.4.6</heading>
-            <branch uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c6c4}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">plaintext #note# in external file</heading>
+        <branch relPosX="150" relPosY="-150" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c6c4}">
+            <heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="Legacy &lt;note&gt; pre 1.4.6" />
+            <branch uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c6c4}">
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="plaintext &lt;note&gt; in external file" />
                 <note href="file:external-note-plaintext.txt" />
             </branch>
-            <branch uuid="{ab33a7c8-a33d-4a28-80bd-9ef07935356a}"><heading  textMode="plainText"  fonthint="undef"  textColor="#005500">plaintext #note# in characters</heading>
+            <branch uuid="{ab33a7c8-a33d-4a28-80bd-9ef07935356a}">
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#005500" text="plaintext &lt;note&gt; in characters" />
                 <note>Plaintext note in characters</note>
             </branch>
-            <branch uuid="{25719270-400e-4649-a192-856beb354b67}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff">plaintext #note# with file and empty characters</heading>
+            <branch uuid="{25719270-400e-4649-a192-856beb354b67}">
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff" text="plaintext &lt;note&gt; with file and empty characters" />
                 <note href="file:external-note-plaintext.txt">characters plaintext note</note>
             </branch>
+            <branch uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c654}">
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="RichText &lt;note&gt; in external file" />
+                <note href="file:external-note-richtext.html" />
+            </branch>
+            <branch uuid="{ab33a7c8-a33d-4a28-80bd-9ef07935355a}">
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#005500" text="RichText &lt;note&gt; in characters" />
+                <note>RichText note in characters</note>
+            </branch>
+            <branch uuid="{25719270-400e-4649-a192-856beb354567}">
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff" text="RichText &lt;note&gt; with file and empty characters" />
+                <note href="file:external-note-plaintext.txt">characters RichText note</note>
+            </branch>
         </branch>
-        <branch relPosX="150" relPosY="150" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c002}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">Legacy #htmlnote#</heading>
+        <branch relPosX="150" relPosY="150" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c002}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="Legacy &lt;htmlnote&gt;" />
         </branch>
     </mapcenter>
     <select>mc:0,bo:0</select>
