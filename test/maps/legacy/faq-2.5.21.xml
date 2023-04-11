@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
+
+<vymmap  version="2.5.21" author="Uwe (inventor of vym)" title="" comment="" date="2016-08-17" branchCount="24" backgroundColor="#ffffff" defaultFont="Sans Serif,16,-1,0,50,0,0,0,0,0" selectionColor="#ffff00" linkStyle="StylePolyLine" linkColor="#0000ff" defXLinkColor="#e6e6e6" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0" linkColorHint="HeadingColor">
+    <mapcenter absPosX="27" absPosY="245" hideLink="false" uuid="{e5e8967d-ed26-47e2-942d-e1ae6db1c6d0}"><heading  textMode="plainText"  fonthint="undef"  textColor="#000000">vym - FAQ</heading>
+        <frame  frameType="Rectangle" penColor="#000000" brushColor="#ffffff" padding="0" borderWidth="1" />
+        <branch relPosX="307" relPosY="-214" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c6c4}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">How to make vym better</heading>
+            <branch hideLink="false" uuid="{840f205a-79ee-48a8-99d5-a639f6633305}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">How to get the sources</heading><vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Since vym is under the GPL, the sources should be part of your distribution e.g. in SUSE LINUX they can be installed easily with YaST from the CD/DVD.</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">You find the latest version at the project site.:</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">	https://sourceforge.net/projects/vym/</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">See the questions about Documentation-&gt;git-&gt; How to do an anonymous checkout </span>                </p></body></html>]]></vymnote>
+            </branch>
+            <branch hideLink="false" scrolled="yes" uuid="{a498d3ad-6625-45d9-bde0-e17c0376605a}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">How to translate vym</heading><vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">You need </span></p>
+<ul style="margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;"><li style=" font-family:'Sans Serif';" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The sources of vym. (See the question about getting the sources)</li>
+<li style=" font-family:'Sans Serif';" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">a installation of Nokias (former Trolltechs) Qt. A part of Qt are the development tools, from those tools especially the translation tool &quot;Linguist&quot; is needed. <br /><br />Note: In some Linux distributions the development tools are in an extra package, e.g. on openSUSE you should have installed:<br />	<span style=" color:#0000ff;">libqt5-devel.rpm <br /><br /></span>If you don't have Qt in your system, you can get it from <br /><span style=" color:#0000ff;">	http://qt.io</span></li></ul>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Once you are able to compile vym yourself, you can translate the text in vym itself by performing the following steps:</span></p>
+<ul style="margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;"><li style=" font-family:'Sans Serif';" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Let's assume now your encoding is &quot;NEW&quot; instead of for example &quot;de&quot; for german or &quot;en&quot; for english</li>
+<ul style="margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;"><li style=" font-family:'Sans Serif';" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Add <span style=" color:#0000ff;">lang/vym.NEW.ts</span> to the TRANSLATIONS section of <span style=" font-family:'Courier';">vym.pro</span></li></ul>
+<ul style="margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;"><li style=" font-family:'Sans Serif';" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Run <span style=" color:#0000ff;">lupdate</span> to create vym_NEW.ts file:</li></ul>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;"><span style=" font-family:'Adobe Courier';">	lupdate vym.pro</span></p>
+<li style=" font-family:'Sans Serif';" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Run Linguist on vym_NEW.ts and do the translation:</li>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;"><span style=" font-family:'Adobe Courier';">linguist vym.NEW.ts</span></p>
+<li style=" font-family:'Sans Serif';" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Run <span style=" color:#0000ff;">lrelease</span> to create vym_NEW.qm:</li>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;"><span style=" font-family:'Adobe Courier';">	lrelease vym.NEW.qm</span></p>
+<li style=" font-family:'Sans Serif';" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Run the local copy of vym to check your changes: <span style=" color:#0000ff;">vym -l <br /></span><span style=" color:#000000;">(Alternatively you can do a</span><span style=" color:#0000ff;"> make install</span><span style=" color:#000000;"> to install vym completely in your system.)</span><br /></li></ul>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">If you feel brave, you can also translate the manual. It is written in LaTeX, you just have to change the file </span><span style=" font-family:'Sans Serif'; color:#0000ff;">tex/vym.tex</span><span style=" font-family:'Sans Serif';">. (Linguist and QT are not needed, but it is useful to know how to work with LaTeX and esp. pdflatex to create the PDF.)</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Please mail me every translation you have done. I can also give you a developer access to the project, if you want to provide translations regulary.</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Thanks for helping to make vym more popular!</span></p>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">-Uwe</span>                </p></body></html>]]></vymnote>
+                <branch hideLink="false" url="http://doc.trolltech.com/3.3/linguist-manual.html" uuid="{8ae0fdd0-72d4-4d88-8b5b-e70b8e619595}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">Documentation on QT Linguist</heading>
+                </branch>
+            </branch>
+            <branch hideLink="false" uuid="{699f93bd-0d05-4464-9578-2b75a98f9001}"><heading  fonthint="undef"  textColor="#005500" textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif'; color:#ff0000;">CDATA heading</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif'; color:#0000ff;">https://sourceforge.net/projects/vym/</span></p>
+<p style="-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';"><br /></p></body></html>]]></heading>
+            </branch>
+            <branch hideLink="false" uuid="{461e6f39-faac-4133-8c5a-5c9a2aa59524}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000">How to get a new feature</heading><vymnote  textMode="richText"><![CDATA[<html><head><meta name="qrichtext" content="1"></meta></head><body style="font-size:10pt;font-family:Sans Serif"><p>The best way to get a new feature into vym is to code it yourself ;-)</p><p>If you can't code it or don't want to, you can ask on the mailing list (see project site at https://sourceforge.net/projects/vym/) or contact me directly.</p><p>Unfortunatly I am quite busy with my &quot;real life&quot; work and my family, so I don't have as much time to improve vym as I would like to have. The most important features are already there, I think, I will concentrate on adding an infrastructure for scripting and connectivity to other software, I guess.</p><p></p></body></html>
+                ]]></vymnote>
+            </branch>
+        </branch>
+        <branch relPosX="305" relPosY="-86" hideLink="false" uuid="{ab33a7c8-a33d-4a28-80bd-9ef07935356a}"><heading  textMode="plainText"  fonthint="undef"  textColor="#005500">Supported systems</heading>
+            <branch hideLink="false" uuid="{fb51c658-8c91-4e81-9550-d44f317401a1}"><heading  textMode="plainText"  fonthint="undef"  textColor="#005500">Is there a version for KDE?</heading>
+                <standardflag>cross-red</standardflag><vymnote  textMode="richText"><![CDATA[<html><head><meta name="qrichtext" content="1"></meta></head><body style="font-size:10pt;font-family:Sans Serif"><p>vym runs perfectly under KDE, but doesn't make use of KDE libraries so far. There are some things which could be improved by using KDE:</p><ul type="disc"><li>Better file dialogs (network transparency e.g. with FTP and webDAV support)</li><li>Better printer support through kprinter</li><li>unique look and feel on KDE desktop</li></ul><p>But: at the moment I do not intend to port vym to KDE. It would make cross platform builds more difficult, as people would also need KDE development environment. </p><p>A compromise could be to use a small wrapper library which provides access to the most important KDE features (see above), if KDE is present on the system. Unfortunatly I don't have time at the moment to implement this, so if you want to help, please contact me.</p></body></html>
+                ]]></vymnote>
+            </branch>
+            <branch hideLink="false" uuid="{699f93bd-0d05-4464-9578-2b75a98f9e9d}"><heading  textMode="plainText"  fonthint="undef"  textColor="#005500">Is there a version for Windows?</heading>
+                <standardflag>hook-green</standardflag><vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Yes. Please download from </span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif'; color:#0000ff;">https://sourceforge.net/projects/vym/</span></p>
+<p style="-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';"><br /></p></body></html>]]></vymnote>
+            </branch>
+            <branch hideLink="false" uuid="{5edcadc6-b3a1-47dd-bd0d-75a1f1de2159}"><heading  textMode="plainText"  fonthint="undef"  textColor="#005500">Is there a version for Mac OS X?</heading>
+                <standardflag>wip</standardflag><vymnote  textMode="plainText"  fonthint="var"  textColor="#000000">2011-06-28: Unfortunatly the last and quite ancient available version for Mac is 1.10.0.
+
+
+2016-08-17: I plan to release 2.6.0 also for Mac OSX, stay tuned.</vymnote>
+            </branch>
+        </branch>
+        <branch relPosX="300" relPosY="15" hideLink="false" uuid="{25719270-400e-4649-a192-856beb354b67}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff">Most wanted features</heading>
+            <branch hideLink="false" uuid="{2ca83853-21d9-4948-8b03-8c85801fe733}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff">Free positioning of branches</heading><vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Beginning with vym 2.5.21 there is an experimental feature to position branches freely. You could also use the folloing workaround:</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Mainbranches (these are the ones closest to the mapcenter) can be positioned freely, so just use one of those. You can then &quot;hide&quot; their link to the mapcenter in the context menu.</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">The &quot;Back to Main Page&quot; branch in this map is an example.</span></p>
+<p style="-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';"><br /></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'Sans Serif';">Another workaround is to use more mapcenters in one map. Use the &quot;C&quot; key or the context menu to create a new mapcenter.</span>                </p></body></html>]]></vymnote>
+            </branch>
+            <branch hideLink="false" uuid="{c8984f73-411f-414f-add0-29b5a4a585f3}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff">done already</heading>
+                <branch hideLink="false" uuid="{c98613ca-3542-4ecd-8579-570d0a5e9e57}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff">Cross references between branches</heading>
+                    <standardflag>hook-green</standardflag><vymnote  textMode="richText"><![CDATA[<html><head><meta name="qrichtext" content="1"></meta></head><body style="font-size:10pt;font-family:Sans Serif"><p>Linking two branches is possible since version 1.7.0. See the section about &quot;xLinks&quot; in the documentation.</p></body></html>
+                    ]]></vymnote>
+                </branch>
+                <branch hideLink="false" uuid="{1af7336a-77fc-48e2-920c-f54a79e6fb49}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff">Export to Open Office</heading>
+                    <standardflag>hook-green</standardflag>
+                </branch>
+            </branch>
+        </branch>
+        <branch relPosX="321" relPosY="153" hideLink="false" uuid="{0be19d8d-92be-4c6c-b130-252cda7af89a}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">Documentation</heading>
+            <standardflag>lifebelt</standardflag>
+            <branch hideLink="false" uuid="{7620e802-9937-4ec8-808d-8a2dff6a70e4}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">git</heading>
+                <branch hideLink="false" uuid="{90f3ae17-9ce9-4899-9a7a-aa0a70afc42f}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">How to do a git checkout</heading><vymnote  textMode="richText"><![CDATA[<html><head><meta name="qrichtext" content="1"></meta><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:10pt;">Of course you need to have git installed on your system. For just having a peek, you could also use the webaccess, see next branch.</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:10pt;">Once you have git, you can do an anonymous checkout:</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:10pt; color:#000080;">  git clone git://git.code.sf.net/p/vym/code vym-code</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:10pt; color:#000000;">If you already have a sourceforge account of course you can also:</span></p>
+<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:10pt; color:#000080;">  git clone ssh://insilmaril@git.code.sf.net/p/vym/code vym-code</span></p>
+<p style="-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; color:#000080;"><br /></p></body></html>
+                    ]]></vymnote>
+                </branch>
+                <branch hideLink="false" uuid="{1adb79a2-9e53-4ada-a818-da3ac749d094}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">How to build vym</heading><vymnote  textMode="plainText"  fonthint="var"  textColor="#000000">To compile and install vym from the sources:
+download the sources
+need to have QT4.7 (or newer) from Nokia
+run qmake
+run make  
+run vym
+</vymnote>
+                </branch>
+                <branch hideLink="false" url="https://sourceforge.net/p/vym/code/" uuid="{168b93c4-8b2b-4a11-8741-8c98ce71d8c7}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">vym webaccess</heading>
+                </branch>
+                <branch hideLink="false" url="https://sourceforge.net/scm/?type=git&amp;group_id=127802" uuid="{9274a650-7c17-48e6-a1d5-a21a1dc34e54}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">Sourceforge git documentation</heading>
+                    <standardflag>info</standardflag>
+                </branch>
+            </branch>
+            <branch hideLink="false" url="http://qt.io" uuid="{269977f9-5535-4cb7-bce9-a8efcdb83370}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">QT</heading>
+            </branch>
+            <branch hideLink="false" url="download/vym.pdf" uuid="{b15a49ee-788b-4c3e-ab36-3eca9c47a323}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa5500">vym Documentation</heading>
+            </branch>
+        </branch>
+        <branch relPosX="-89" relPosY="166" hideLink="true" url="http://www.InSilmaril.de/vym/index.html" uuid="{6f41aa87-460f-4db8-a709-05d5eee6860e}"><heading  textMode="plainText"  fonthint="undef"  textColor="#0432ff">Back to Main Page</heading>
+        </branch>
+    </mapcenter><setting  key="/vym/export/xhtml/exportDir">/suse/uwedr/tmp/insilmaril/vym/</setting><setting  key="/vym/export/xhtml/useImage">yes</setting><setting  key="/vym/export/xhtml/useTextColor">yes</setting><setting  key="/vym/export/xhtml/saveSettingsInMap">yes</setting><setting  key="/export/xhtml/exportDir">/suse/uwedr/share/uwe/insilmaril/vym/</setting><setting  key="/export/xhtml/useImage">yes</setting><setting  key="/export/xhtml/useTextColor">yes</setting><setting  key="/export/xhtml/xsl">/usr/share/vym/styles/vym2xhtml.xsl</setting><setting  key="/export/xhtml/css">/usr/share/vym/styles/vym.css</setting><setting  key="/export/xhtml/saveSettingsInMap">yes</setting><setting  key="/export/last/exportPath">/home/uwe/ownCloud8/vym/maps/exports/faq.html</setting><setting  key="/export/last/command"><![CDATA[exportHTML("/home/uwe/ownCloud8/vym/maps/exports","/home/uwe/ownCloud8/vym/maps/exports/faq.html")]]></setting><setting  key="/export/last/description">HTML</setting><setting  key="/export/html/exportDir">/home/uwe/ownCloud8/vym/maps/exports</setting><setting  key="/export/html/useImage">true</setting><setting  key="/export/html/useTextColor">true</setting><setting  key="/export/html/saveSettingsInMap">yes</setting><setting  key="/export/html/useTOC">false</setting><setting  key="/export/html/useNumbering">true</setting><setting  key="/export/html/useTaskFlags">false</setting><setting  key="/export/html/useUserFlags">true</setting><setting  key="/export/html/css_copy">true</setting><setting  key="/export/html/css_src">/usr/share/vym/styles/vym.css</setting><setting  key="/export/html/css_dst">vym.css</setting><setting  key="/export/html/includeMapImage">true</setting><setting  key="/export/html/includeImages">true</setting><setting  key="/export/html/postscript"></setting>
+    <select>mc:0,bo:0,bo:1</select>
+</vymmap>

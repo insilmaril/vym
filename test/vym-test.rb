@@ -70,7 +70,6 @@ def init_map( mapPath )
   @currentMapPath = "#{@testDir}/test-current#{File.extname(mapPath)}"
 
   begin
-    puts "init_map #{mapPath}"
     FileUtils.cp mapPath, @currentMapPath
   rescue
     puts "Failed to copy #{mapPath} to #{@currentMapPath}"
@@ -1091,6 +1090,22 @@ def test_load_legacy_maps
   expect "<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML.include?(s), true
   s = "textMode=\"richText"
   expect "<heading> using characters creates RichText", map.getHeadingXML.include?(s), true
+
+  close_current_map
+
+  map = init_map "maps/legacy/faq-2.5.21.xml"
+  map.select @branch_b
+
+  s = "libqt5-devel.rpm"
+  expect "<vymnote> using characters and CDATA: has RichText note", map.hasRichTextNote, true
+  expect "<vymnote> using characters and CDATA: includes '#{s}'", map.getNotePlainText.include?(s), true
+  expect "<vymnote> using characters and CDATA: has RichText note", map.hasRichTextNote, true
+
+  map.select @branch_c
+  s = "textMode=\"richText"
+  expect "<heading> using characters and CDATA: creates RichText", map.getHeadingXML.include?(s), true
+  s = "CDATA heading"
+  expect "<heading> using characters and CDATA: includes '#{s}'", map.getHeadingPlainText.include?(s), true
 
   close_current_map
 end
