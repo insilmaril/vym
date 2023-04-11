@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ViewYourMind)
 
-find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-
 set(QtComponents
     LinguistTools
     Network
@@ -61,9 +59,7 @@ if(WIN32)
 include(GNUInstallDirs)
 
 find_package(Qt5 COMPONENTS ${QtComponents} REQUIRED)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+
 list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/forms")
 
 get_target_property(QtLibraryType Qt5::Widgets TYPE)
