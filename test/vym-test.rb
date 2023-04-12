@@ -155,8 +155,8 @@ def test_basics
   author ="Uwe Drechsel"
   expect "Author is '#{author}'", map.getMapAuthor, author
 
-  map.select @main_a
-  expect "select mainbranch A", map.getSelectionString, @main_a
+  map.select @main_A
+  expect "select mainbranch A", map.getSelectionString, @main_A
   expect "getHeadingPlainText", map.getHeadingPlainText, "Main A"
   expect "branchCount", map.branchCount, 3
 
@@ -179,13 +179,13 @@ end
 def test_adding_branches
   heading "Adding branches:"
   map = init_map @testMapDefault
-  map.select @main_a
+  map.select @main_A
   n = map.branchCount.to_i
   map.addBranch()
   expect( "addBranch", map.branchCount.to_i, n + 1 )
 
   map.selectLatestAdded
-  expect "selectLatestAdded", map.getSelectionString, @main_a + ",bo:3"
+  expect "selectLatestAdded", map.getSelectionString, @main_A + ",bo:3"
 
   map.undo
   expect( "Undo: addBranch", map.branchCount.to_i, n )
@@ -193,12 +193,12 @@ def test_adding_branches
   close_current_map
   map = init_map @testMapDefault
 
-  map.select @main_a
+  map.select @main_A
   n = map.branchCount.to_i
-  map.select @branch_a
+  map.select @branch_0Aa
   map.addBranch( -3 )
   map.addBranch( -1 )
-  map.select @main_a
+  map.select @main_A
   expect "addBranchAbove/Below", map.branchCount.to_i, n + 2
 
   map.undo
@@ -208,17 +208,17 @@ def test_adding_branches
   close_current_map
   map = init_map @testMapDefault
 
-  map.select @branch_a
+  map.select @branch_0Aa
   map.addBranchBefore
-  map.select @main_a
+  map.select @main_A
   expect "addBranchBefore: check branchcount",  map.branchCount.to_i, n
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "addBranchBefore: check heading", map.getHeadingPlainText, ""
 
   # Undo twice: addBranchNew and relinkTo
   map.undo
   map.undo
-  map.select @main_a
+  map.select @main_A
   expect "Undo: addBranchBefore", map.branchCount.to_i, n
 
   close_current_map
@@ -228,40 +228,40 @@ end
 def test_adding_maps
   heading "Adding maps"
   map = init_map @testMapDefault
-  map.select @branch_a
+  map.select @branch_0Aa
   n = map.branchCount.to_i
   map.addMapReplace @currentMapPath
-  map.select @main_a
-  expect "addMapReplace: check branch count in #{@main_a}", map.branchCount.to_i, n + 1
-  map.select @branch_a
-  expect "addMapReplace: check if #{@branch_a} is new", map.branchCount.to_i, 2
+  map.select @main_A
+  expect "addMapReplace: check branch count in #{@main_A}", map.branchCount.to_i, n + 1
+  map.select @branch_0Aa
+  expect "addMapReplace: check if #{@branch_0Aa} is new", map.branchCount.to_i, 2
   expect "addMapReplace: Loaded MapCenter 0", map.getHeadingPlainText, "MapCenter 0"
-  map.select @branch_b
+  map.select @branch_0Ab
   expect "addMapReplace: Loaded MapCenter 1", map.getHeadingPlainText, "MapCenter 1"
 
   map.undo
-  map.select @main_a
-  expect "Undo: check branch count in #{@main_a}", map.branchCount.to_i, 3
-  map.select @branch_a
-  expect "Undo: check if #{@branch_a} is back", map.branchCount.to_i, 3
+  map.select @main_A
+  expect "Undo: check branch count in #{@main_A}", map.branchCount.to_i, 3
+  map.select @branch_0Aa
+  expect "Undo: check if #{@branch_0Aa} is back", map.branchCount.to_i, 3
   close_current_map
 
   map = init_map @testMapDefault
-  map.select @branch_a
+  map.select @branch_0Aa
   n = map.branchCount.to_i
   map.addMapInsert @currentMapPath, 1  # Create testmap with several MCs
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "addMapInsert: branch count",  map.branchCount.to_i, n + 2
-  map.select @branch_a + ",bo:1"
+  map.select @branch_0Aa + ",bo:1"
   expect "addMapInsert: new heading", map.getHeadingPlainText, "MapCenter 0"
-  map.select @branch_a + ",bo:2"
+  map.select @branch_0Aa + ",bo:2"
   expect "addMapInsert: new heading", map.getHeadingPlainText, "MapCenter 1"
 
   map.undo
-  map.select @branch_a
-  expect "Undo: check branch count in #{@branch_a}", map.branchCount.to_i, 3
-  map.select @branch_b
-  expect "Undo: check heading of  #{@branch_b}",  map.getHeadingPlainText, "branch b"
+  map.select @branch_0Aa
+  expect "Undo: check branch count in #{@branch_0Aa}", map.branchCount.to_i, 3
+  map.select @branch_0Ab
+  expect "Undo: check heading of  #{@branch_0Ab}",  map.getHeadingPlainText, "branch b"
   close_current_map
 end
 
@@ -270,7 +270,7 @@ def test_attributes
   heading "Attributes:"
   map = init_map "maps/test-attributes.xml"
 
-  map.select @main_a
+  map.select @main_A
   expect "String attribute is '6 * 9'", map.getStringAttribute("string-attribute"), "6 * 9"
   expect "Integer attribute is 42", map.getIntAttribute("int-attribute"), 42
 
@@ -290,7 +290,7 @@ def test_copy_paste
   heading "Copy, cut & Paste"
 
   map = init_map @testMapDefault
-  map.select @main_a
+  map.select @main_A
   n = map.branchCount.to_i
 
   map.copy
@@ -300,17 +300,17 @@ def test_copy_paste
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
 
   map.undo
-  map.select @main_a
-  expect "Undo paste: branchCount of #{@main_a}", map.branchCount.to_i, n
+  map.select @main_A
+  expect "Undo paste: branchCount of #{@main_A}", map.branchCount.to_i, n
 
   map.redo
   map.select s
   expect "redo paste: check heading", map.getHeadingPlainText, "Main A"
 
-  map.select @branch_a
+  map.select @branch_0Aa
   map.cut
-  map.select @main_a
-  expect "cut: branchCount of #{@main_a}", map.branchCount.to_i, n
+  map.select @main_A
+  expect "cut: branchCount of #{@main_A}", map.branchCount.to_i, n
 
   map.paste
   map.selectLastChildBranch
@@ -326,45 +326,45 @@ def test_delete_parts
   heading "Deleting parts"
 
   map = init_map @testMapDefault
-  map.select @main_a
+  map.select @main_A
   n=map.branchCount.to_i
-  map.select @branch_a
+  map.select @branch_0Aa
   m=map.branchCount.to_i
   map.remove
-  map.select @main_a
+  map.select @main_A
   expect "Remove branch: branchcount",  map.branchCount.to_i, n - 1
   map.undo
-  map.select @main_a
+  map.select @main_A
   expect "Undo Remove branch: branchcount parent", map.branchCount.to_i, n
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "Undo Remove branch: branchcount restored branch", map.branchCount.to_i, m
 
   close_current_map
 
   map = init_map @testMapDefault
-  map.select @branch_a
+  map.select @branch_0Aa
   n = map.branchCount.to_i
   map.removeChildren
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "removeChildren: branchcount", map.branchCount.to_i, 0
   map.undo
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "Undo: removeChildren: branchcount", map.branchCount.to_i, n
 
   close_current_map
   map = init_map @testMapDefault
 
-  map.select @main_a
+  map.select @main_A
   n=map.branchCount.to_i
-  map.select @branch_a
+  map.select @branch_0Aa
   m=map.branchCount.to_i
   map.removeKeepChildren
-  map.select @main_a
+  map.select @main_A
   expect "removeKeepChildren: branchcount", map.branchCount.to_i, n + m - 1
   map.undo
-  map.select @main_a
+  map.select @main_A
   expect "Undo: removeKeepChildren: branchcount of parent", map.branchCount.to_i, n
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "Undo: removeKeepChildren: branchcount of branch", map.branchCount.to_i, m
 
   close_current_map
@@ -566,7 +566,7 @@ def test_history
   heading "History"
 
   map = init_map @testMapDefault
-  map.select @main_a
+  map.select @main_A
   map.setHeadingPlainText "A"
   map.setHeadingPlainText "B"
   map.setHeadingPlainText "C"
@@ -595,7 +595,7 @@ def test_scrolling
   heading "Scrolling and unscrolling"
   map = init_map @testMapDefault
 
-  map.select @main_a
+  map.select @main_A
   map.toggleScroll
   expect "toggleScroll", map.isScrolled, true
   map.undo
@@ -606,11 +606,11 @@ def test_scrolling
   expect "unscroll", map.isScrolled, false
 
   map.scroll
-  map.select @branch_a
+  map.select @branch_0Aa
   map.scroll
-  map.select @main_a
+  map.select @main_A
   map.unscrollChildren
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "unscrollChildren", map.isScrolled, false
   map.undo
   expect "undo unscrollChildren", map.isScrolled, true
@@ -623,7 +623,7 @@ def test_slides
   heading "Slides"
   map = init_map "maps/test-slides.xml"
 
-  map.select @main_a
+  map.select @main_A
   expect "Successfully loaded map with slides", map.slideCount, 3
 
   close_current_map
@@ -634,7 +634,7 @@ def test_modify_branches
   heading "Modifying branches"
   map = init_map @testMapDefault
 
-  map.select @branch_a
+  map.select @branch_0Aa
   map.setHeadingPlainText "Changed!"
   expect "setHeadingPlainText", map.getHeadingPlainText, "Changed!"
   map.undo
@@ -651,49 +651,49 @@ def test_moving_parts
   heading "Moving parts"
   map = init_map @testMapDefault
 
-  map.select @branch_a
+  map.select @branch_0Aa
   map.moveDown
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "Moving down", map.getHeadingPlainText, "branch b"
   map.undo
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "Undo Moving down", map.getHeadingPlainText, "branch a"
 
   #map = init_map( vym )
-  map.select @branch_b
+  map.select @branch_0Ab
   map.moveUp
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "Moving up", map.getHeadingPlainText, "branch b"
   map.undo
-  map.select @branch_b
+  map.select @branch_0Ab
   expect "Undo Moving up", map.getHeadingPlainText, "branch b"
 
   #map = init_map( vym )
-  map.select @main_b
+  map.select @main_B
   n=map.branchCount.to_i
-  map.select @branch_a
-  map.relinkTo @main_b,0,0,0
-  map.select @main_b
-  expect "RelinkTo #{@main_b}: branchCount increased there",  map.branchCount.to_i, n+1
+  map.select @branch_0Aa
+  map.relinkTo @main_B,0,0,0
+  map.select @main_B
+  expect "RelinkTo #{@main_B}: branchCount increased there",  map.branchCount.to_i, n+1
 
   map.undo
-  map.select @branch_b
-  expect "Undo: RelinkTo #{@main_b}: branchCount decreased there", map.branchCount.to_i, n
+  map.select @branch_0Ab
+  expect "Undo: RelinkTo #{@main_B}: branchCount decreased there", map.branchCount.to_i, n
 
   #map = init_map( vym )
-  map.select @main_a
-  err = map.relinkTo @branch_a,0,0,0
+  map.select @main_A
+  err = map.relinkTo @branch_0Aa,0,0,0
   #FIXME-2 disabled, error not supported atm expect_error "RelinkTo myself fails.", err
 
   #map = init_map( vym )
-  map.select @branch_a
+  map.select @branch_0Aa
   n=map.branchCount.to_i
-  map.select @main_b
-  map.relinkTo @branch_a, 1, 0, 0
-  map.select @branch_a
-  expect "RelinkTo #{@branch_a}, pos 1: branchCount increased there",  map.branchCount.to_i, n+1
-  map.select "#{@branch_a},bo:1"
-  expect "RelinkTo #{@branch_a}, pos 1: Mainbranch really moved", map.getHeadingPlainText, "Main B"
+  map.select @main_B
+  map.relinkTo @branch_0Aa, 1, 0, 0
+  map.select @branch_0Aa
+  expect "RelinkTo #{@branch_0Aa}, pos 1: branchCount increased there",  map.branchCount.to_i, n+1
+  map.select "#{@branch_0Aa},bo:1"
+  expect "RelinkTo #{@branch_0Aa}, pos 1: Mainbranch really moved", map.getHeadingPlainText, "Main B"
   map.undo
   map.select @center_0
   expect "Undo RelinkTo pos 1: branchCount of center", map.branchCount.to_i, 2
@@ -708,12 +708,12 @@ def test_notes
   # Plaintext notes basic actions
   map = init_map @testMapDefault
 
-  map.select @main_a
+  map.select @main_A
   note_plain = "vymnote plaintext"
   map.setNotePlainText(note_plain)
   expect "Set note to \"#{note_plain}\". Still plaintext?", map.hasRichTextNote, false
   map.select @center_0
-  map.select @main_a
+  map.select @main_A
   expect "After reselect, is note plaintext?", map.hasRichTextNote, false
 
   note_plain = "<b>plaintext, not bold!</b>"
@@ -721,7 +721,7 @@ def test_notes
   expect "Set note to plaintext containing html tags. Still plaintext", map.hasRichTextNote, false
   note_new = map.getNotePlainText
   map.select @center_0
-  map.select @main_a
+  map.select @main_A
   expect "After reselect, is note text unchanged?", map.getNotePlainText, note_new
   expect "After reselect, is note plaintext?", map.hasRichTextNote, false
 
@@ -735,12 +735,12 @@ def test_notes
   map.remove
 
   # Plaintext notes undo & redo
-  map.select @main_a
+  map.select @main_A
   map.setNotePlainText('Foobar')
   map.undo
   expect "Undo after setNotePlainText restores previous note", map.getNotePlainText, note_plain
   map.redo
-  map.select @main_a
+  map.select @main_A
   expect "Redo restores previous note", map.getNotePlainText, 'Foobar'
 
   # Plaintext notes load & save
@@ -764,13 +764,13 @@ def test_notes
 
   # RichText basic actions
   map = init_map @testMapDefault
-  map.select @main_a
+  map.select @main_A
   rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
   map.parseVymText(rt_note)
   expect "parseVymText of richText note produces note", map.hasNote, true
   expect "parseVymText of richText note produces richText note", map.hasRichTextNote, true
   map.select @center_0
-  map.select @main_a
+  map.select @main_A
   expect "After reselect, is note RichText?", map.hasRichTextNote, true
 
 
@@ -785,12 +785,12 @@ def test_notes
   map.remove
 
   # RichText notes undo & redo
-  map.select @main_a
+  map.select @main_A
   map.setNotePlainText('Foobar')
   map.undo
   expect "Undo after setNotePlainText restores RichText note", map.getNoteXML, rt_note
   map.redo
-  map.select @main_a
+  map.select @main_A
   expect "Redo restores previous plaintext note", map.getNotePlainText, 'Foobar'
 
   # RichText notes load & save
@@ -818,7 +818,7 @@ def test_references
   heading "References"
   map = init_map @testMapDefault
 
-  map.select @main_a
+  map.select @main_A
   url = "www.insilmaril.de"
   map.setURL url
   expect "setURL to '#{url}'", map.getURL, url
@@ -847,7 +847,7 @@ end
 def test_standard_flags
   heading "Standard flags"
   map = init_map @testMapDefault
-  map.select @main_a
+  map.select @main_A
 
   def set_flags (map, flags)
     flags.each do |f|
@@ -925,7 +925,7 @@ def test_user_flags
   heading "User flags"
   map = init_map "maps/test-userflag.vym"
 
-  map.select @branch_a
+  map.select @branch_0Aa
   flagName = "userflag-vym"
   expect "Has active flag '#{flagName}'", map.hasActiveFlag(flagName), true
 
@@ -979,15 +979,15 @@ def test_tasks
   heading "Tasks:"
   map = init_map "maps/test-tasks.xml"
 
-  map.select @branch_a
-  expect "After loading #{@branch_a} has no task", map.hasTask, false
+  map.select @branch_0Aa
+  expect "After loading #{@branch_0Aa} has no task", map.hasTask, false
 
-  map.select @branch_b
-  expect "After loading #{@branch_b} has task", map.hasTask, true
-  expect "After loading #{@branch_b} task sleeps more than 1000 days",
+  map.select @branch_0Ab
+  expect "After loading #{@branch_0Ab} has task", map.hasTask, true
+  expect "After loading #{@branch_0Ab} task sleeps more than 1000 days",
     map.getTaskSleepDays.to_i > 1000, true
 
-  map.select @branch_a
+  map.select @branch_0Aa
   map.toggleTask
   expect "Toggle task", map.hasTask, true
 
@@ -1064,18 +1064,18 @@ def test_saving
   map = init_map @testMapDefault
   #
   # Save selection without overwriting original map
-  map.select @branch_a
+  map.select @branch_0Aa
   fn = @testDir + "/test-saveSelection.vyp"
   map.saveSelection(fn)
-  expect "#Save selection: #{@branch_a} to #{fn}", File.file?(fn), true
+  expect "#Save selection: #{@branch_0Aa} to #{fn}", File.file?(fn), true
 
   close_current_map
 
   map = init_map fn
   map.select @center_0
   expect "Save selection: After loading of #{fn} #{@center_0} is ok", map.getHeadingPlainText, "branch a"
-  map.select @main_a
-  expect "Save selection: After loading of #{fn} #{@main_a} is ok", map.getHeadingPlainText, "branch a1"
+  map.select @main_A
+  expect "Save selection: After loading of #{fn} #{@main_A} is ok", map.getHeadingPlainText, "branch a1"
 
   close_current_map
 end
@@ -1085,20 +1085,20 @@ def test_load_legacy_maps
   heading "Load legacy maps:"
 
   map = init_map "maps/legacy/legacy-text-2.4.0.xml"
-  map.select @branch_a
+  map.select @branch_0Aa
   expect "Heading with plaintext as characters is read", map.getHeadingPlainText, "Heading in characters"
 
   map.select @center_0
   expect "Checking parsing 'absPos': x-position of #{@center_0} is ok", map.getPosX().to_f, 314
   expect "Checking parsing 'absPos': y-position of #{@center_0} is ok", map.getPosY().to_f, 0
-  map.select @main_a
-  expect "Checking parsing 'relPos': x-position of #{@main_a} is ok", map.getPosX().to_f, 123
-  expect "Checking parsing 'relPos': y-position of #{@main_a} is ok", map.getPosY().to_f, 42
+  map.select @main_A
+  expect "Checking parsing 'relPos': x-position of #{@main_A} is ok", map.getPosX().to_f, 123
+  expect "Checking parsing 'relPos': y-position of #{@main_A} is ok", map.getPosY().to_f, 42
 
   close_current_map
 
   map = init_map "maps/legacy/time-management-1.13.33.vym"
-  map.select @main_a
+  map.select @main_A
   s = "To see an explanation"
   expect "<heading> using characters: Heading includes '#{s}'", map.getHeadingPlainText.include?(s), true
   expect "<vymnote> using <html>: creates RichText note", map.hasRichTextNote, true
@@ -1118,14 +1118,14 @@ def test_load_legacy_maps
   close_current_map
 
   map = init_map "maps/legacy/faq-2.5.21.xml"
-  map.select @branch_b
+  map.select @branch_0Ab
 
   s = "libqt5-devel.rpm"
   expect "<vymnote> using characters and CDATA: has RichText note", map.hasRichTextNote, true
   expect "<vymnote> using characters and CDATA: includes '#{s}'", map.getNotePlainText.include?(s), true
   expect "<vymnote> using characters and CDATA: has RichText note", map.hasRichTextNote, true
 
-  map.select @branch_c
+  map.select @branch_0Ac
   s = "textMode=\"richText"
   expect "<heading> using characters and CDATA: creates RichText", map.getHeadingXML.include?(s), true
   s = "CDATA heading"
@@ -1134,22 +1134,45 @@ def test_load_legacy_maps
   close_current_map
 
 
-  files = ["maps/legacy/external-note-plaintext.txt"]
-  map = init_map "maps/legacy/notes2.xml", files
+  files = [
+    "maps/legacy/external-note-plaintext.txt",
+    "maps/legacy/external-note-richtext.html" ]
+  map = init_map "maps/legacy/notes.xml", files
 
-  map.select @branch_a
-  s ="Plaintext note in file"
-  expectInclude "<note> reads plaintext from external file", map.getNotePlainText, s
-  map.select @branch_b
-  s ="Plaintext note in characters"
-  expectInclude "<note> reads plaintext from characters", map.getNotePlainText, s
-  # FIXME-0 add test: Read <note> with plaintext in href and characters, same behaviour as in 2.9.0
-  # FIXME-0 add test: Read <note> with RichText in href
-  # FIXME-0 add test: Read <note> with RichText in characters
-  # FIXME-0 add test: Read <note> with RichText in href and characters, same behaviour as in 2.9.0
+  map.select @branch_0Aa
+  expect"<note> with plaintext in external file: text has type PlainText",
+    map.hasRichTextNote, false
+  expectInclude "<note> with plaintext in external file: text is read correctly",
+    map.getNotePlainText,
+    "PlainText note in file"
 
-  # FIXME-0 add test: Read <htmlnote> with Plaintext
-  # FIXME-0 add test: Read <htmlnote> with RichText
+  map.select @branch_0Ab
+  expect"<note> with plaintext in characters: text has type PlainText",
+    map.hasRichTextNote, false
+  expectInclude "<note> reads plaintext from characters",
+    map.getNotePlainText,
+    "PlainText note in characters"
+
+  map.select @branch_0Ac
+  expect"<note> with RichText in external file: text has type RichText",
+    map.hasRichTextNote, true
+  expectInclude "<note> reads RichText from external file",
+    map.getNotePlainText,
+    "RichText note in file"
+  map.select @branch_0Ab
+
+  map.select @branch_0Ba
+  expect"<htmlnote> with PlainText in characters: text has type PlainText",
+    map.hasRichTextNote, false
+  expectInclude "<htmlnote> reads PlainText from characters",
+    map.getNotePlainText,
+    "PlainText note in characters"
+  map.select @branch_0Bb
+  expect"<htmlnote> with RichText in characters: text has type RichText",
+    map.hasRichTextNote, true
+  expectInclude "<htmlnote> reads RichText from characters",
+    map.getNotePlainText,
+    "RichText note in characters"
 
   # FIXME-2 implement and add test: xlinks in subitems of branches (pre 1.13.2)
   close_current_map
@@ -1232,17 +1255,17 @@ begin
   $tests_total     = 0
 
   #######################
-  @center_0="mc:0"
-  @main_a="mc:0,bo:0"
-    @branch_a=@main_a+",bo:0"
-    @branch_b=@main_a+",bo:1"
-    @branch_c=@main_a+",bo:2"
-  @main_b="mc:0,bo:1"
-  @center_1="mc:1"
-  @center_2="mc:2"
-  @center_3="mc:3"
-
-  @n_centers = 2
+  @center_0 = "mc:0"
+  @main_A = "mc:0,bo:0"
+    @branch_0Aa = @main_A + ",bo:0"
+    @branch_0Ab = @main_A + ",bo:1"
+    @branch_0Ac = @main_A + ",bo:2"
+  @main_B="mc:0,bo:1"
+    @branch_0Ba = @main_B + ",bo:0"
+    @branch_0Bb = @main_B + ",bo:1"
+  @center_1 = "mc:1"
+  @center_2 = "mc:2"
+  @center_3 = "mc:3"
 
   instance_name = 'test'
 

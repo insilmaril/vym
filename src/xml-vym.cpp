@@ -249,7 +249,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
     // While going deeper, no longer "import" but just load as usual
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("heading") ||
-            xml.name() == QLatin1String("vymnote"))
+            xml.name() == QLatin1String("vymnote") ||
+            xml.name() == QLatin1String("htmlnote"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch"))
             // Going deeper we regard incoming data as "new", no inserts/replacements
@@ -267,6 +268,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             readImage();
         else if (xml.name() == QLatin1String("attribute"))
             readAttribute();
+        else if (xml.name() == QLatin1String("note"))
+            readLegacyNote();
         else {
             raiseUnknownElementError();
             return;
@@ -284,15 +287,16 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
     lastBranch->setLastSelectedBranch(0);
 }
 
-void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versions
+void VymReader::readHeadingOrVymNote()
 {
     Q_ASSERT(xml.isStartElement() &&
             (xml.name() == QLatin1String("heading") ||
-             xml.name() == QLatin1String("vymnote") ));
+             xml.name() == QLatin1String("vymnote") ||
+             xml.name() == QLatin1String("htmlnote") ));
 
     if (!lastBranch) {
-            xml.raiseError("No lastBranch available to set heading or vymnote.");
-            return;
+        xml.raiseError("No lastBranch available to set <heading>, <vymnote>, or <htmlnote>.");
+        return;
     }
 
     // Save type for later (after reading html)
@@ -328,7 +332,7 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
         vymtext.setText(unquoteQuotes(s));
 
     } else {
-        // Legacy versions did not used the "text" attribute, but had the content as characters
+        // Legacy versions did not use the "text" attribute, but had the content as characters
 
         bool finished = false;
         while (!finished) {
@@ -360,9 +364,9 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
         }
     } // Legacy text as characters instead of text attribute
 
-    //qDebug() << "xml.name()=" <<xml.name() << " htmldata: " << htmldata << " vT=" <<vymtext.getText(); // FIXME-2 testing
+    //qDebug() << "xml.name()=" <<xml.name() << " " << xml.tokenString()<<" htmldata: " << htmldata << " vT=" <<vymtext.getText(); // FIXME-2 testing
 
-    if (versionLowerOrEqual(version, "2.4.99") && // XML-FIXME-1 test with legacy
+    if (versionLowerOrEqual(version, "2.4.99") &&
         htmldata.contains("<html>"))
         // versions before 2.5.0 didn't use CDATA to save richtext
         vymtext.setAutoText(htmldata);
@@ -378,7 +382,7 @@ void VymReader::readHeadingOrVymNote() // XML-FIXME-1 test with legacy vym versi
     if (textType == "heading")
         lastBranch->setHeading(vymtext);
 
-    if (textType == "vymnote")
+    if (textType == "vymnote" || textType == "htmlnote")
         lastBranch->setNote(vymtext);
 
     if (xml.tokenType() == QXmlStreamReader::EndElement)
@@ -395,7 +399,6 @@ void VymReader::readHtml()
     bool finished = false;
 
     while (!finished) {
-        xml.readNext();
         switch(xml.tokenType())
         {
             case QXmlStreamReader::StartElement:
@@ -409,7 +412,7 @@ void VymReader::readHtml()
             case QXmlStreamReader::EndElement:
                 htmldata += "</" + xml.name().toString() + ">";
                 if (xml.name() == QLatin1String("html"))
-                    finished = true;
+                    return;
                 break;
             case QXmlStreamReader::Characters:
                 htmldata += xml.text().toString();
@@ -418,6 +421,7 @@ void VymReader::readHtml()
                 // Ignore other token types
                 break;
         }
+        xml.readNext();
     }
 }
 
@@ -433,6 +437,69 @@ void VymReader::readFrame()
     }
 }
 
+void VymReader::readLegacyNote()
+{ // only for backward compatibility (<1.4.6).
+  // Later htmlnote was used and meanwhile vymnote.
+    Q_ASSERT(xml.isStartElement() &&
+            xml.name() == QLatin1String("note"));
+
+    if (!lastBranch) {
+            xml.raiseError("No lastBranch available to set <note>.");
+            return;
+    }
+
+    QString a = "fonthint";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        vymtext.setFontHint(s);
+
+    a = "href";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        // Load note
+        QString fn = parseHREF(s);
+        QFile file(fn);
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            xml.raiseError("parseVYMHandler::readLegacyNote:  Couldn't load " + fn);
+            return;
+        }
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        QString lines;
+        while (!stream.atEnd()) {
+            lines += stream.readLine() + "\n";
+        }
+        file.close();
+
+        if (lines.contains("<html")) {
+            lines = "<html><head><meta name=\"qrichtext\" content=\"1\" "
+                    "/></head><body>" +
+                    lines + "</p></body></html>";
+            vymtext.setRichText(lines);
+        } else
+            vymtext.setPlainText(lines);
+
+        xml.readNext();
+        if (xml.tokenType() == QXmlStreamReader::Characters) {
+            htmldata += xml.text().toString();
+            qWarning() << "Found characters AND href in legacy <note> element. Ignoring characters...";
+            // Read to end element. There should be no <html> coming up...
+            xml.readNext();
+            if (xml.tokenType() != QXmlStreamReader::EndElement) {
+                xml.raiseError(QString("Found unexpected element <%1>").arg(xml.name()));
+                return;
+            }
+        }
+    } else {
+        s = xml.readElementText();
+        if (!s.isEmpty())
+            vymtext.setText(s);
+    }
+
+    lastBranch->setNote(vymtext);
+}
+
 void VymReader::readStandardFlag()
 {
     Q_ASSERT(xml.isStartElement() &&
@@ -441,13 +508,6 @@ void VymReader::readStandardFlag()
 
     QString s = xml.readElementText();
     lastBranch->activateStandardFlagByName(s);
-
-    /*
-    if (xml.readNextStartElement()) {
-        raiseUnknownElementError();
-        return;
-    }
-    */
 }
 
 void VymReader::readUserFlagDef()

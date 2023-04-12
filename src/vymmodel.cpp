@@ -440,8 +440,11 @@ bool VymModel::parseVymText(const QString &s)
         repositionBlocked = true;
         saveStateBlocked = true;
 
-        // XML-FIXME-1 Workaround: write string to disk so that it can be
-        // used with QIODevice of QXmlStreamReader/VymReader
+        // XML-FIXME-1 VymModel::parseVymText Workaround to pass string to QXmlStreamreader
+        // write string to disk, so that it can be used with QIODevice of
+        // QXmlStreamReader:VymReader 
+        //
+        // In theory constructor of QXmlStreamreader should also accept a QString!  
         saveStringToDisk("testdata.xml", s);
 
         QFile file("testdata.xml");
@@ -596,63 +599,69 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         reader->setTmpDir(tmpdir);
 
-        if (lmode == File::ImportReplace)   // XML-FIXME-1 needed???
+        if (lmode == File::ImportReplace)
             reader->setLoadMode(File::ImportReplace, pos);
         else
             reader->setLoadMode(lmode, pos);
 
-        // Open file    // XML-FIXME-1 rework, was not used in legacy
+        bool parsedWell = false;
+
+        // Open file
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+            QMessageBox::critical(nullptr, "VymModel::loadMap",
                     QString("Cannot read file %1:\n%2.")
                     .arg(QDir::toNativeSeparators(fileName),
                         file.errorString()));
+            err = File::Aborted;
+        } else {
+            if (lmode != File::ImportAdd && lmode != File::ImportReplace)
+                updateStylesBlocked = true;
+
+            // Here we actually parse the XML file
+            parsedWell = reader->read(&file);
+
+            file.close();
         }
-
-        if (lmode != File::ImportAdd && lmode != File::ImportReplace)
-            updateStylesBlocked = true;
-
-        // Here we actually parse the XML file
-        bool ok = reader->read(&file);
 
         // Aftermath
         updateStylesBlocked = false;
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
         mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
-        file.close();
-        if (ok) {
-            rootItem->updateStylesRecursively(MapDesign::RelinkedItem);
-            reposition(); // to generate bbox sizes
-            emitSelectionChanged();
 
-            if (lmode == File::NewMap) // no lockfile for default map!
-            {
-                mapDefault = false;
-                mapChanged = false;
-                mapUnsaved = false;
-                autosaveTimer->stop();
+        if (err != File::Aborted) {
+            if (parsedWell) {
+                rootItem->updateStylesRecursively(MapDesign::RelinkedItem);
+                reposition(); // to generate bbox sizes
+                emitSelectionChanged();
 
-                resetHistory();
-                resetSelectionHistory();
+                if (lmode == File::NewMap) // no lockfile for default map!
+                {
+                    mapDefault = false;
+                    mapChanged = false;
+                    mapUnsaved = false;
+                    autosaveTimer->stop();
 
-                // Set treeEditor and slideEditor visibility per map
-                vymView->readSettings();
+                    resetHistory();
+                    resetSelectionHistory();
 
-                if (!tryVymLock() && debug)
-                    qWarning() << "VM::loadMap  no lockfile created!";
+                    // Set treeEditor and slideEditor visibility per map
+                    vymView->readSettings();
+
+                    if (!tryVymLock() && debug)
+                        qWarning() << "VM::loadMap  no lockfile created!";
+                }
+
+                // Recalc priorities and sort
+                taskModel->recalcPriorities();
+            } else {
+                QMessageBox::critical(0, tr("Critical Parse Error"),
+                                        reader->errorString());
+                // returnCode=1;
+                // Still return "success": the map maybe at least
+                // partially read by the parser
             }
-
-            // Recalc priorities and sort
-            taskModel->recalcPriorities();
-        }
-        else {
-            QMessageBox::critical(0, tr("Critical Parse Error"),
-                                    reader->errorString());
-            // returnCode=1;
-            // Still return "success": the map maybe at least
-            // partially read by the parser
-        }
+        } // err != File::Aborted
     }
 
     // Cleanup

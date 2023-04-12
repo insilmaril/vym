@@ -11,11 +11,7 @@
             </branch>
             <branch uuid="{ab33a7c8-a33d-4a28-80bd-9ef07935356a}">
                 <heading  textMode="plainText"  fonthint="undef"  textColor="#005500" text="plaintext &lt;note&gt; in characters" />
-                <note>Plaintext note in characters</note>
-            </branch>
-            <branch uuid="{25719270-400e-4649-a192-856beb354b67}">
-                <heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff" text="plaintext &lt;note&gt; with file and empty characters" />
-                <note href="file:external-note-plaintext.txt">Plaintext note in characters</note>
+                <note>PlainText note in characters</note>
             </branch>
             <branch uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c654}">
                 <heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="RichText &lt;note&gt; in external file" />
@@ -25,20 +21,27 @@
                 <heading  textMode="plainText"  fonthint="undef"  textColor="#005500" text="RichText &lt;note&gt; in characters" />
                 <note>RichText note in characters</note>
             </branch>
-            <branch uuid="{25719270-400e-4649-a192-856beb354567}">
-                <heading  textMode="plainText"  fonthint="undef"  textColor="#aa00ff" text="RichText &lt;note&gt; with file and empty characters" />
-                <note href="file:external-note-plaintext.txt">characters RichText note</note>
-            </branch>
         </branch>
-        <branch relPosX="150" relPosY="150" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c002}"><heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="Legacy &lt;htmlnote&gt;" />
+        <branch relPosX="150" relPosY="150" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c002}">
+            <heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="Legacy &lt;htmlnote&gt;" />
+            <branch>
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#005500" text="PlainText &lt;htmlnote&gt; in characters" />
+                <htmlnote  fonthint="var">PlainText note in characters</htmlnote>
+            </branch>
+            <branch>
+                <heading  textMode="plainText"  fonthint="undef"  textColor="#005500" text="RichText &lt;htmlnote&gt; in characters" />
                 <htmlnote  fonthint="var">
 
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <html><head><meta name="qrichtext" content="1" /><style type="text/css">
 p, li { white-space: pre-wrap; }
-</style></head><body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal; text-decoration:none;">
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">embedded-html-in-htmlnote</p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"></p></body></html>
+</style></head><body style=" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'DejaVu Sans Mono'; font-size:12pt; color:#00aa7f;">Rich</span><span style=" font-family:'DejaVu Sans Mono'; font-size:12pt; color:#ff0000;">Text note in characters</span></p></body></html>
+
+
                 </htmlnote>
+            </branch>
         </branch>
     </mapcenter>
     <select>mc:0,bo:0</select>

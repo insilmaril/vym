@@ -23,6 +23,7 @@ class VymReader : public BaseReader {
     void readHeadingOrVymNote();
     void readHtml();
     void readFrame();
+    void readLegacyNote();
     void readStandardFlag();
     void readUserFlagDef();
     void readUserFlag();
