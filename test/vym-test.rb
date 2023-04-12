@@ -24,6 +24,20 @@ def expect (comment, v_real, v_exp)
   $tests_total += 1
 end
 
+def expectInclude (comment, s, substring)
+  if s.include? substring
+    puts "    Ok: #{comment}".green
+    $tests_passed += 1
+    # waitkey
+  else
+    puts "Failed: #{comment}. Could not find '#{substring}' in string below:".red
+    puts "'#{s}'"
+    $tests_failed += 1
+    waitkey
+  end
+  $tests_total += 1
+end
+
 def expectNot (comment, v_real, v_exp)
   if v_exp != v_real
     puts "    Ok: #{comment}".green
@@ -64,7 +78,7 @@ def heading (s)
   puts "\n#{s}\n#{'-' * s.length}\n".yellow
 end
 
-def init_map( mapPath )
+def init_map( mapPath, files = [])
   # Copy the map referenced above to @testDir/test-current.[vym|xml]
   # and try to load it
   @currentMapPath = "#{@testDir}/test-current#{File.extname(mapPath)}"
@@ -72,13 +86,23 @@ def init_map( mapPath )
   begin
     FileUtils.cp mapPath, @currentMapPath
   rescue
-    puts "Failed to copy #{mapPath} to #{@currentMapPath}"
+    puts "Failed to copy #{mapPath} to #{@currentMapPath}".red
     exit
+  end
+
+  files.each do |fn|
+    begin
+      FileUtils.cp fn, @testDir
+      puts "# Copied #{fn} to #{@testDir}".light_black
+    rescue
+      puts "Failed to copy #{fn} to #{@testDir}".red
+      exit
+    end
   end
 
   if @vym.loadMap (@currentMapPath)
     id = @vym.currentMapID
-    puts "# Loaded #{mapPath} -> #{@currentMapPath} (id: #{id})".blue
+    puts "# Loaded #{mapPath} -> #{@currentMapPath} (id: #{id})".light_black
     return @vym.map (id)
   end
 
@@ -90,7 +114,7 @@ def close_current_map
   id = @vym.currentMapID
   r = @vym.closeMapWithID(id)
   if r
-    puts "# Closed map (id: #{id})".blue
+    puts "# Closed map (id: #{id})".light_black
   else
     puts "# Failed to close map with id = #{id}. CurrentMapID = #{id}".red
   end
@@ -1107,6 +1131,27 @@ def test_load_legacy_maps
   s = "CDATA heading"
   expect "<heading> using characters and CDATA: includes '#{s}'", map.getHeadingPlainText.include?(s), true
 
+  close_current_map
+
+
+  files = ["maps/legacy/external-note-plaintext.txt"]
+  map = init_map "maps/legacy/notes2.xml", files
+
+  map.select @branch_a
+  s ="Plaintext note in file"
+  expectInclude "<note> reads plaintext from external file", map.getNotePlainText, s
+  map.select @branch_b
+  s ="Plaintext note in characters"
+  expectInclude "<note> reads plaintext from characters", map.getNotePlainText, s
+  # FIXME-0 add test: Read <note> with plaintext in href and characters, same behaviour as in 2.9.0
+  # FIXME-0 add test: Read <note> with RichText in href
+  # FIXME-0 add test: Read <note> with RichText in characters
+  # FIXME-0 add test: Read <note> with RichText in href and characters, same behaviour as in 2.9.0
+
+  # FIXME-0 add test: Read <htmlnote> with Plaintext
+  # FIXME-0 add test: Read <htmlnote> with RichText
+
+  # FIXME-2 implement and add test: xlinks in subitems of branches (pre 1.13.2)
   close_current_map
 end
 
