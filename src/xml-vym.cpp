@@ -270,6 +270,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             readAttribute();
         else if (xml.name() == QLatin1String("note"))
             readLegacyNote();
+        else if (xml.name() == QLatin1String("xlink"))
+            readLegacyXLink();
         else {
             raiseUnknownElementError();
             return;
@@ -498,6 +500,53 @@ void VymReader::readLegacyNote()
     }
 
     lastBranch->setNote(vymtext);
+}
+
+void VymReader::readLegacyXLink()
+{ // only for backward compatibility
+  // Before 1.13.2 xlinks used to be part of <branch>
+    Q_ASSERT(xml.isStartElement() &&
+            xml.name() == QLatin1String("xlink"));
+
+    QString a = "beginID";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        TreeItem *beginBI = model->findBySelectString(s);
+        a = "endID";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            TreeItem *endBI = model->findBySelectString(s);
+            if (beginBI && endBI && beginBI->hasTypeBranch() && endBI->hasTypeBranch()) {
+                Link *li = new Link(model);
+                li->setBeginBranch((BranchItem *)beginBI);
+                li->setEndBranch((BranchItem *)endBI);
+                model->createLink(li);
+
+                QPen pen = li->getPen();
+
+                a = "color";
+                s = xml.attributes().value(a).toString();
+                if (!s.isEmpty()) {
+                    QColor col;
+                    col.setNamedColor(s);
+                    pen.setColor(col);
+                }
+
+                a = "width";
+                s = xml.attributes().value(a).toString();
+                if (!s.isEmpty()) {
+                    bool okx;
+                    pen.setWidth(s.toInt(&okx, 10));
+                }
+                li->setPen(pen);
+            }
+        }
+    }
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
 }
 
 void VymReader::readStandardFlag()

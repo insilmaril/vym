@@ -865,7 +865,7 @@ bool parseVYMHandler::readImageAttr(const QXmlAttributes &a)
 
 bool parseVYMHandler::readXLinkAttr(const QXmlAttributes &a)
 {
-    // Obsolete, see also readLinkAttr
+    // Obsolete, see also readLinkNewAttr
 
     if (!a.value("beginID").isEmpty()) {
         if (!a.value("endID").isEmpty()) {
