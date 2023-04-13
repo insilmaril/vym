@@ -352,14 +352,9 @@ void VymReader::readHeadingOrVymNote()
         }
         file.close();
 
-        if (lines.contains("<html")) {
-            /*  // FIXME-0 check
-            lines = "<html><head><meta name=\"qrichtext\" content=\"1\" "
-                    "/></head><body>" +
-                    lines + "</p></body></html>";
-            */
+        if (lines.contains("<html"))
             vymtext.setRichText(lines);
-        } else
+        else
             vymtext.setPlainText(lines);
 
         xml.readNext();

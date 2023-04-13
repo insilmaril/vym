@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
+
+<vymmap  version="1.4.0" author="Uwe (inventor of vym)" title="" comment="Manually created map to test very old maps with notes" date="2023-04-11" backgroundColor="#ffffff" defaultFont="Sans Serif,16,-1,0,50,0,0,0,0,0" selectionColor="#ffff00" linkStyle="StylePolyLine" linkColor="#0000ff" defXLinkColor="#e6e6e6" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0" linkColorHint="HeadingColor">
+    <mapcenter absPosX="27" absPosY="245" hideLink="false" uuid="{e5e8967d-ed26-47e2-942d-e1ae6db1c6d0}"><heading  textMode="plainText"  fonthint="undef"  textColor="#000000">Legacy xlinks</heading>
+        <frame  frameType="Rectangle" penColor="#000000" brushColor="#ffffff" padding="0" borderWidth="1" />
+        <branch relPosX="150" relPosY="-50" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c6c4}">
+            <heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="Begin xlink" />
+            <xlink beginID="mc:0,bo:0" endID="mc:0,bo:1" color="#00ff00" width="3"/>
+        </branch>
+        <branch relPosX="150" relPosY="50" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c6c4}">
+            <heading  textMode="plainText"  fonthint="undef"  textColor="#aa0000" text="End xlink" />
+            <xlink beginID="mc:0,bo:0" endID="mc:0,bo:1" color="#00ff00" width="3"/>
+        </branch>
+    </mapcenter>
+    <select>mc:0,bo:0</select>
+</vymmap>

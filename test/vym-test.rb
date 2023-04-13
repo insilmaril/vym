@@ -1181,8 +1181,15 @@ def test_load_legacy_maps
     map.getNotePlainText,
     "RichText note in characters"
 
-  # FIXME-2 implement and add test: xlinks in subitems of branches (pre 1.13.2)
-  
+  close_current_map
+
+  map = init_map "maps/legacy/xlinks.xml"
+  # FIXME-2 add test: xlinks in subitems of branches (pre 1.13.2)
+  map.select @main_A
+  expect "<xlink> within <branch> is read", map.xlinkCount, 1
+
+  map.selectXLinkOtherEnd 0
+  expect "<xlink> connects  '#{@main_A}' and '#{@main_B}'", map.getSelectionString, @main_B
   close_current_map
 end
 
