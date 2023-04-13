@@ -336,7 +336,6 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
              (state == StateHtmlNote ||
               state == StateVymNote)) { // Only for backward compatibility
         state = StateHtml;
-        qDebug() << "Starting HTML.";
         htmldata = "<" + eName;
         readHtmlAttr(atts);
         htmldata += ">";
