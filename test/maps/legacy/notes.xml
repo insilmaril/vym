@@ -19,7 +19,13 @@
             </branch>
             <branch uuid="{ab33a7c8-a33d-4a28-80bd-9ef07935355a}">
                 <heading  textMode="plainText"  fonthint="undef"  textColor="#005500" text="RichText &lt;note&gt; in characters" />
-                <note>RichText note in characters</note>
+                <note>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'DejaVu Sans Mono'; font-size:12pt; color:#00aa7f;">Rich</span><span style=" font-family:'DejaVu Sans Mono'; font-size:12pt; color:#ff0000;">Text note in characters</span></p></body></html>
+                </note>
             </branch>
         </branch>
         <branch relPosX="150" relPosY="150" hideLink="false" uuid="{0b38c4e5-e0df-4fb6-8195-810789d4c002}">

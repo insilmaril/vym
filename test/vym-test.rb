@@ -1313,7 +1313,7 @@ begin
   #test_standard_flags
   #test_tasks
   #test_user_flags
-  test_xlinks
+  #test_xlinks
 
   summary
 

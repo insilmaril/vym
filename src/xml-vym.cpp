@@ -250,7 +250,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("heading") ||
             xml.name() == QLatin1String("vymnote") ||
-            xml.name() == QLatin1String("htmlnote"))
+            xml.name() == QLatin1String("htmlnote") ||
+            xml.name() == QLatin1String("note"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch"))
             // Going deeper we regard incoming data as "new", no inserts/replacements
@@ -268,8 +269,6 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             readImage();
         else if (xml.name() == QLatin1String("attribute"))
             readAttribute();
-        else if (xml.name() == QLatin1String("note"))
-            readLegacyNote();
         else if (xml.name() == QLatin1String("xlink"))
             readLegacyXLink();
         else {
@@ -294,7 +293,8 @@ void VymReader::readHeadingOrVymNote()
     Q_ASSERT(xml.isStartElement() &&
             (xml.name() == QLatin1String("heading") ||
              xml.name() == QLatin1String("vymnote") ||
-             xml.name() == QLatin1String("htmlnote") ));
+             xml.name() == QLatin1String("htmlnote") ||
+             xml.name() == QLatin1String("note") ));
 
     if (!lastBranch) {
         xml.raiseError("No lastBranch available to set <heading>, <vymnote>, or <htmlnote>.");
@@ -328,13 +328,54 @@ void VymReader::readHeadingOrVymNote()
         vymtext.setColor(col);
     }
 
+    QString t = xml.attributes().value("href").toString();
     a = "text";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         vymtext.setText(unquoteQuotes(s));
+    } else if (!t.isEmpty()) {
+        // <note> element using an external file with href="..."
+        // only for backward compatibility (<1.4.6).
+        // Later htmlnote was used and meanwhile vymnote.
+        QString fn = parseHREF(t);
+        QFile file(fn);
 
+        if (!file.open(QIODevice::ReadOnly)) {
+            xml.raiseError("parseVYMHandler::readLegacyNote:  Couldn't load " + fn);
+            return;
+        }
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        QString lines;
+        while (!stream.atEnd()) {
+            lines += stream.readLine() + "\n";
+        }
+        file.close();
+
+        if (lines.contains("<html")) {
+            /*  // FIXME-0 check
+            lines = "<html><head><meta name=\"qrichtext\" content=\"1\" "
+                    "/></head><body>" +
+                    lines + "</p></body></html>";
+            */
+            vymtext.setRichText(lines);
+        } else
+            vymtext.setPlainText(lines);
+
+        xml.readNext();
+        if (xml.tokenType() == QXmlStreamReader::Characters) {
+            htmldata += xml.text().toString();
+            qWarning() << "Found characters AND href in legacy <note> element. Ignoring characters...";
+            // Read to end element. There should be no <html> coming up...
+            xml.readNext();
+            if (xml.tokenType() != QXmlStreamReader::EndElement) {
+                xml.raiseError(QString("Found unexpected element <%1>").arg(xml.name()));
+                return;
+            }
+        }
     } else {
-        // Legacy versions did not use the "text" attribute, but had the content as characters
+        // Legacy versions did not use the "text" attribute, 
+        // but had the content as characters or inline <html>
 
         bool finished = false;
         while (!finished) {
@@ -383,8 +424,7 @@ void VymReader::readHeadingOrVymNote()
 
     if (textType == "heading")
         lastBranch->setHeading(vymtext);
-
-    if (textType == "vymnote" || textType == "htmlnote")
+    else
         lastBranch->setNote(vymtext);
 
     if (xml.tokenType() == QXmlStreamReader::EndElement)
@@ -437,71 +477,6 @@ void VymReader::readFrame()
         raiseUnknownElementError();
         return;
     }
-}
-
-void VymReader::readLegacyNote()
-{ // only for backward compatibility (<1.4.6).
-  // Later htmlnote was used and meanwhile vymnote.
-    Q_ASSERT(xml.isStartElement() &&
-            xml.name() == QLatin1String("note"));
-
-    if (!lastBranch) {
-            xml.raiseError("No lastBranch available to set <note>.");
-            return;
-    }
-
-    QString a = "fonthint";
-    QString s = xml.attributes().value(a).toString();
-    if (!s.isEmpty())
-        vymtext.setFontHint(s);
-
-    a = "href";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        // Load note
-        QString fn = parseHREF(s);
-        QFile file(fn);
-
-        if (!file.open(QIODevice::ReadOnly)) {
-            xml.raiseError("parseVYMHandler::readLegacyNote:  Couldn't load " + fn);
-            return;
-        }
-        QTextStream stream(&file);
-        stream.setCodec("UTF-8");
-        QString lines;
-        while (!stream.atEnd()) {
-            lines += stream.readLine() + "\n";
-        }
-        file.close();
-
-        if (lines.contains("<html")) {
-            /*  // FIXME-0 check
-            lines = "<html><head><meta name=\"qrichtext\" content=\"1\" "
-                    "/></head><body>" +
-                    lines + "</p></body></html>";
-            */
-            vymtext.setRichText(lines);
-        } else
-            vymtext.setPlainText(lines);
-
-        xml.readNext();
-        if (xml.tokenType() == QXmlStreamReader::Characters) {
-            htmldata += xml.text().toString();
-            qWarning() << "Found characters AND href in legacy <note> element. Ignoring characters...";
-            // Read to end element. There should be no <html> coming up...
-            xml.readNext();
-            if (xml.tokenType() != QXmlStreamReader::EndElement) {
-                xml.raiseError(QString("Found unexpected element <%1>").arg(xml.name()));
-                return;
-            }
-        }
-    } else {
-        s = xml.readElementText();
-        if (!s.isEmpty())
-            vymtext.setText(s);
-    }
-
-    lastBranch->setNote(vymtext);
 }
 
 void VymReader::readLegacyXLink()
