@@ -882,6 +882,7 @@ bool parseVYMHandler::readXLinkAttr(const QXmlAttributes &a)
                     bool okx;
                     pen.setWidth(a.value("width").toInt(&okx, 10));
                 }
+                li->setPen(pen);
                 model->createLink(li);
             }
         }
