@@ -87,12 +87,21 @@ int VymWrapper::mapCount()
     return setResult(mainWindow->modelCount());
 }
 
-void VymWrapper::selectMap(uint n)
+void VymWrapper::gotoMap(uint n)
 {
     if (!mainWindow->gotoWindow(n)) {
         logError(context(), QScriptContext::RangeError,
                  QString("Map '%1' not available.").arg(n));
     }
+}
+
+bool VymWrapper::closeMapWithID(uint n)
+{
+    bool r = mainWindow->closeModelWithID(n);
+    if (!r)
+        logError(context(), QScriptContext::RangeError,
+                 QString("Map '%1' not available.").arg(n));
+    return setResult(r);
 }
 
 void VymWrapper::selectQuickColor(int n)

@@ -38,7 +38,8 @@ class VymWrapper : public VymScriptContext {
     void editHeading();
     bool loadMap(const QString &filename);
     int mapCount();
-    void selectMap(uint n);
+    void gotoMap(uint n);
+    bool closeMapWithID(uint n);
     void selectQuickColor(int n);
     QString currentColor();
     uint currentMapID();

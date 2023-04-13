@@ -104,7 +104,8 @@ class Main : public QMainWindow {
     int currentMapIndex() const;
     VymModel *getModel(uint);
     void gotoModel(VymModel *m);
-    void gotoModelID(uint id);
+    void gotoModelWithID(uint id);
+    bool closeModelWithID(uint id);
     int modelCount();
     void updateTabName(VymModel *vm);
 

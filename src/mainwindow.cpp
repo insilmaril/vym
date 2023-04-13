@@ -1042,6 +1042,10 @@ void Main::setupAPI()
     c = new Command("clearConsole", Command::Any);
     vymCommands.append(c);
 
+    c = new Command("closeMapWithID", Command::Any);
+    c->addPar(Command::Int, false, "ID of map (unsigned int)");
+    vymCommands.append(c);
+
     c = new Command("currentMap", Command::Any);
     vymCommands.append(c);
 
@@ -1058,7 +1062,7 @@ void Main::setupAPI()
     c = new Command("mapCount", Command::Any);
     vymCommands.append(c);
 
-    c = new Command("selectMap", Command::Any);
+    c = new Command("gotoMap", Command::Any);
     c->addPar(Command::Int, false, "Index of map");
     vymCommands.append(c);
 
@@ -3625,7 +3629,7 @@ void Main::gotoModel(VymModel *m)
         }
 }
 
-void Main::gotoModelID(uint id)
+void Main::gotoModelWithID(uint id)
 {
     VymModel *vm;
     for (int i = 0; i < tabWidget->count(); i++) {
@@ -3635,6 +3639,26 @@ void Main::gotoModelID(uint id)
             return;
         }
     }
+}
+
+bool Main::closeModelWithID(uint id)
+{
+    VymModel *vm;
+    for (int i = 0; i < tabWidget->count(); i++) {
+        vm = view(i)->getModel();
+        if (vm && vm->getModelID() == id) {
+            tabWidget->removeTab(i);
+
+            // Destroy stuff, order is important
+            delete (vm->getMapEditor());
+            delete (view(i));
+            delete (vm);
+
+            updateActions();
+            return true;
+        }
+    }
+    return false;
 }
 
 int Main::modelCount() { return tabWidget->count(); }
