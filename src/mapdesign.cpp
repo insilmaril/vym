@@ -62,13 +62,38 @@ void MapDesign::init()
         headingColors << QColor(Qt::white);
         headingColors << QColor(Qt::green);
 
-        // Frames   // FIXME-0 settings not complete yet (also consider dark theme)
+        // Frames
         innerFrameTypes << FrameContainer::RoundedRectangle;
-        innerFramePenColors;
-        innerFrameBrushColors;
-        innerFramePenWidths;
+        innerFrameTypes << FrameContainer::Rectangle;
+        innerFrameTypes << FrameContainer::Rectangle;
+        innerFrameTypes << FrameContainer::NoFrame;
+        innerFramePenWidths << 2;
+
+        outerFrameTypes << FrameContainer::Rectangle;
+        outerFrameTypes << FrameContainer::RoundedRectangle;
+        outerFrameTypes << FrameContainer::Rectangle;
+        outerFrameTypes << FrameContainer::Rectangle;
+        outerFrameTypes << FrameContainer::NoFrame;
+        if (usingDarkTheme) {
+            innerFramePenColors << QColor(Qt::black);
+            innerFrameBrushColors << QColor(85, 85, 127);
+            outerFramePenColors << QColor(Qt::green);
+            outerFramePenColors << QColor(Qt::red);
+            outerFramePenColors << QColor(Qt::green);
+            outerFramePenColors << QColor(Qt::red);
+            outerFrameBrushColors << QColor(85, 85, 127);
+            outerFrameBrushColors << QColor(25, 25, 117);
+            outerFrameBrushColors << QColor(85, 85, 127);
+            outerFrameBrushColors << QColor(25, 25, 117);
+        } else {
+            innerFramePenColors << QColor(Qt::black);
+            innerFrameBrushColors << QColor(Qt::white);
+            outerFramePenColors << QColor(Qt::green);
+            outerFrameBrushColors << QColor(85, 85, 127);
+        }
+
+        outerFrameTypes << FrameContainer::NoFrame;
         /*
-        outerFrameTypes;
         outerFramePenColors;
         outerFrameBrushColors;
         outerFramePenWidths;
@@ -184,13 +209,13 @@ void MapDesign::updateBranchHeadingColor(
         int depth)
 {
     if (branchItem) {
-        qDebug() << "MD::updateBranchHeadingColor " << " d=" << depth << branchItem->getHeadingPlain();
+        //qDebug() << "MD::updateBranchHeadingColor " << " d=" << depth << branchItem->getHeadingPlain(); // FIXME-2
         HeadingColorHint colHint = headingColorHints.tryAt(depth);
 
         QColor col;
         switch (colHint) {
             case InheritedColor: {
-                qDebug() << " - InheritedColor";
+                //qDebug() << " - InheritedColor"; // FIXME-2
                 BranchItem *pi = branchItem->parentBranch();
                 if (pi) {
                     col = pi->getHeadingColor();
@@ -200,7 +225,7 @@ void MapDesign::updateBranchHeadingColor(
                 // have a specific color, thus continue
             }
             case SpecificColor: {
-                qDebug() << " - SpecificColor";
+                //qDebug() << " - SpecificColor"; // FIXME-2
                 col = headingColors.tryAt(depth);
                 branchItem->setHeadingColor(col);
 
@@ -218,11 +243,10 @@ void MapDesign::updateBranchHeadingColor(
 
 FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, int depth)
 {
-    // FIXME-00 Hardcoded settings for frames for now, use lists soon:
-    if (depth == 0)
-        return FrameContainer::RoundedRectangle;
+    if (useInnerFrame)
+        return innerFrameTypes.tryAt(depth);
     else
-        return FrameContainer::NoFrame;
+        return outerFrameTypes.tryAt(depth);
 }
 
 void MapDesign::updateFrames(
@@ -231,23 +255,18 @@ void MapDesign::updateFrames(
     int depth)
 {
     if (branchContainer && mode == NewItem) {
-        qDebug() << "MD::updateFrames mode=" << mode << " d=" << depth << branchContainer->getBranchItem()->getHeadingPlain();
-        // FIXME-00 Hardcoded settings for frames for now, use lists soon:
 
-        // Inner frame
-        FrameContainer::FrameType ftype = frameType(true, depth);
-        if (mode == NewItem && depth == 0) {
-            branchContainer->setFrameType(true, ftype);
-            if (usingDarkTheme) {
-                branchContainer->setFramePenColor(true, QColor(Qt::white));
-                branchContainer->setFrameBrushColor(true, QColor(85, 85, 127));
-            } else {
-                    branchContainer->setFramePenColor(true, QColor(Qt::black));
-                    branchContainer->setFrameBrushColor(true, QColor(Qt::white));
+        if (mode == NewItem) {
+            // Inner frame
+            branchContainer->setFrameType(true, frameType(true, depth));
+            branchContainer->setFrameBrushColor(true, innerFrameBrushColors.tryAt(depth));
+            branchContainer->setFramePenColor(true, innerFramePenColors.tryAt(depth));
+
+            // Outer frame
+            branchContainer->setFrameType(false, frameType(false, depth));
+            branchContainer->setFrameBrushColor(false, outerFrameBrushColors.tryAt(depth));
+            branchContainer->setFramePenColor(false, outerFramePenColors.tryAt(depth));
             }
-        }
-        // Outer frame
-        branchContainer->setFrameType(false, FrameContainer::NoFrame);
     }
 }
 
