@@ -456,6 +456,7 @@ bool VymModel::parseVymText(const QString &s)
             return false;
         }
 
+        //FIXME-2 qDebug () << "VM::parseVymText " << s.left(30) << "...";
         VymReader vymReader(this);
         vymReader.setLoadMode(File::ImportReplace, 0);
 

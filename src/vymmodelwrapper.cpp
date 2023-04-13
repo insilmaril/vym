@@ -10,6 +10,7 @@
 #include "vymmodel.h"
 #include "vymtext.h"
 #include "xlink.h"
+#include "xlinkitem.h"
 #include "xmlobj.h" // include quoteQuotes
 
 ///////////////////////////////////////////////////////////////////////////
@@ -949,6 +950,46 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
     return setResult(r);
 }
 
+bool VymModelWrapper::selectXLink(int n)
+{
+    bool r = false;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        XLinkItem *xli = selbi->getXLinkItemNum(n);
+        if (!xli)
+            logError(context(), QScriptContext::UnknownError,
+                     QString("Selected branch has no xlink with index %1").arg(n));
+        else
+            r = model->select((TreeItem*)xli);
+    } else
+        logError(context(), QScriptContext::UnknownError,
+                 "Selected item is not a branch");
+    return setResult(r);
+}
+
+bool VymModelWrapper::selectXLinkOtherEnd(int n)
+{
+    bool r = false;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        XLinkItem *xli = selbi->getXLinkItemNum(n);
+        if (!xli)
+            logError(context(), QScriptContext::UnknownError,
+                     QString("Selected branch has no xlink with index %1").arg(n));
+        else {
+            BranchItem *bi = xli->getPartnerBranch();
+            if (!bi)
+                logError(context(), QScriptContext::UnknownError,
+                         "Selected xlink has no other end ?!");
+            else
+                r = model->select(bi);
+        }
+    } else
+        logError(context(), QScriptContext::UnknownError,
+                 "Selected item is not a branch");
+    return setResult(r);
+}
+
 void VymModelWrapper::setAttribute(const QString &key, const QString &value)
 {
 }
@@ -1187,4 +1228,17 @@ void VymModelWrapper::unselectAll() { model->unselectAll(); }
 void VymModelWrapper::unsetFlagByName(const QString &s)
 {
     model->unsetFlagByName(s);
+}
+
+int VymModelWrapper::xlinkCount()
+{
+    int r;
+    BranchItem *selbi = getSelectedBranch();
+    if (selbi) {
+        r = selbi->xlinkCount();
+    } else
+        logError(context(), QScriptContext::UnknownError,
+                 "Selected item is not a branch");
+
+    return setResult(r);
 }

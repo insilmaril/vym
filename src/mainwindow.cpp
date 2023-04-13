@@ -863,6 +863,14 @@ void Main::setupAPI()
     c = new Command("selectToggle", Command::BranchOrImage, Command::Bool);
     modelCommands.append(c);
 
+    c = new Command("selectXLink", Command::Branch, Command::Bool);
+    c->addPar(Command::Int, false, "Number of xlink");
+    modelCommands.append(c);
+
+    c = new Command("selectXLinkOtherEnd", Command::Branch, Command::Bool);
+    c->addPar(Command::Int, false, "Number of xlink");
+    modelCommands.append(c);
+
     c = new Command("setAttribute", Command::Branch);
     c->addPar(Command::String, false, "Key of attribute as string");
     c->addPar(Command::String, false, "String Value of attribute");
@@ -1032,7 +1040,7 @@ void Main::setupAPI()
     c->addPar(Command::Int, false, "Sleep (seconds)");
     modelCommands.append(c);
 
-    c = new Command("slideCount", Command::Any);
+    c = new Command("slideCount", Command::Any, Command::Int);
     modelCommands.append(c);
 
     c = new Command("sortChildren", Command::Branch);
@@ -1076,6 +1084,9 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Name of flag to unset");
     modelCommands.append(c);
 
+    c = new Command("xlinkCount", Command::Branch, Command::Int);
+    modelCommands.append(c);
+
     //
     // Below are the commands for vym itself:
     //
@@ -1100,7 +1111,7 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Path to map");
     vymCommands.append(c);
 
-    c = new Command("mapCount", Command::Any);
+    c = new Command("mapCount", Command::Any), Command::Int;
     vymCommands.append(c);
 
     c = new Command("gotoMap", Command::Any);

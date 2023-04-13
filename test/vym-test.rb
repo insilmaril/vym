@@ -938,8 +938,11 @@ def test_xlinks
   heading "XLinks:"
   map = init_map @testMapDefault
 
-  map.addXLink("mc:0,bo:0","mc:0,bo:1",2,"#ff0000","Qt::DashDotLine")
-  map.selectLatestAdded
+  map.select @main_A
+  n = map.xlinkCount
+  map.addXLink(@main_A, @main_B, 2,"#ff0000","Qt::DashDotLine")
+  expect "xlink count increased after creating xlink", map.xlinkCount, n + 1
+  map.selectXLink 0
   expect "Default color of XLink", map.getXLinkColor, "#ff0000"
   expect "Default width of XLink", map.getXLinkWidth.to_i, 2
   expect "Default style of XLink", map.getXLinkPenStyle, "Qt::DashDotLine"
@@ -970,6 +973,10 @@ def test_xlinks
   expect "New style of XLink end", map.getXLinkStyleEnd, "None"
   map.undo
   expect "Undo style of XLink end", map.getXLinkStyleEnd, "HeadFull"
+
+  map.select @main_A
+  map.selectXLinkOtherEnd 0
+  expect "xlink connects  '#{@main_A}' and '#{@main_B}'", map.getSelectionString, @main_B
 
   close_current_map
 end
@@ -1175,6 +1182,7 @@ def test_load_legacy_maps
     "RichText note in characters"
 
   # FIXME-2 implement and add test: xlinks in subitems of branches (pre 1.13.2)
+  
   close_current_map
 end
 
@@ -1305,7 +1313,7 @@ begin
   #test_standard_flags
   #test_tasks
   #test_user_flags
-  #test_xlinks
+  test_xlinks
 
   summary
 

@@ -475,9 +475,11 @@ void VymReader::readLegacyNote()
         file.close();
 
         if (lines.contains("<html")) {
+            /*  // FIXME-0 check
             lines = "<html><head><meta name=\"qrichtext\" content=\"1\" "
                     "/></head><body>" +
                     lines + "</p></body></html>";
+            */
             vymtext.setRichText(lines);
         } else
             vymtext.setPlainText(lines);
