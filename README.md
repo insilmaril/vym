@@ -57,7 +57,7 @@ Installation
 
     Packages there are: openSUSE rpm, Ubuntu deb, Apple dmg, Windows exe
 
-    More Linux like packages and developer versions are built in 
+    More Linux like packages and developer versions are built in
     Open Build Service:
 
     https://build.opensuse.org/package/show/home:insilmaril/vym
