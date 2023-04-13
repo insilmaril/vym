@@ -336,6 +336,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
              (state == StateHtmlNote ||
               state == StateVymNote)) { // Only for backward compatibility
         state = StateHtml;
+        qDebug() << "Starting HTML.";
         htmldata = "<" + eName;
         readHtmlAttr(atts);
         htmldata += ">";
@@ -365,7 +366,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                     qWarning() << "Found unknown attribute type: " << type;
             } else {
                 if (!atts.value("value").isEmpty())
-                    ai->setValue(atts.value("value")); 
+                    ai->setValue(atts.value("value"));
             }
         }
         model->setAttribute(lastBranch, ai);
@@ -428,7 +429,10 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         break;
     case StateHtmlNote: // Richtext note, needed anyway for backward
                         // compatibility
-        vymtext.setRichText(htmldata);
+        if (htmldata.contains("<html"))
+            vymtext.setRichText(htmldata);
+        else
+            vymtext.setPlainText(htmldata);
         lastBranch->setNote(vymtext);
         break;
     case StateMapSlide:
@@ -436,7 +440,8 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         break;
     case StateNote:
         // version < 1.4.6
-        vymtext.setText(htmldata);
+        if (!htmldata.isEmpty())
+            vymtext.setText(htmldata);
         lastBranch->setNote(vymtext);
         break;
     case StateMapSetting:
@@ -506,10 +511,10 @@ bool parseVYMHandler::characters(const QString &ch)
         htmldata += ch;
         break;
     case StateHtmlNote: // Only for compatibility
-        htmldata = ch;
+        htmldata += ch;
         break;
     case StateHtml:
-        htmldata += ch_org;
+        htmldata += ch_simplified;
         break;
     case StateHeading:
         htmldata += ch;
@@ -759,14 +764,13 @@ bool parseVYMHandler::readNoteAttr(const QXmlAttributes &a)
         }
         file.close();
 
-        lines = "<html><head><meta name=\"qrichtext\" content=\"1\" "
-                "/></head><body>" +
-                lines + "</p></body></html>";
-        vymtext.setText(lines); // this probably should set type, too...
+        if (lines.contains("<html")) {
+            vymtext.setRichText(lines);
+        } else
+            vymtext.setPlainText(lines);
     }
     if (!a.value("fonthint").isEmpty())
         vymtext.setFontHint(a.value("fonthint"));
-    lastBranch->setNote(vymtext);
     return true;
 }
 
