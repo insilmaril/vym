@@ -1755,15 +1755,18 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     if (targetItem && targetItem->hasTypeBranch() &&
             !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
-        targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
         int d_pos;
-        if (e->modifiers() & Qt::ShiftModifier) // FIXME-1 should also change targetBranchContainer
+        if (e->modifiers() & Qt::ShiftModifier) {
+            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
             d_pos = 1;
-        else if (e->modifiers() & Qt::ControlModifier)
+        } else if (e->modifiers() & Qt::ControlModifier) {
+            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
             d_pos = -1;
-        else
+        } else {
+            targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
             d_pos = 0;
+        }
         tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);

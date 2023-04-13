@@ -591,7 +591,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     } else {
         // Regular layout
         if (branchesContainer)
-            r = branchesContainer->rect();  // FIXME-2 check rotation: is rect still correct or better mapped bbox/rect?
+            r = branchesContainer->rect();  // FIXME-2 getPositionHintRelink: check rotation: is rect still correct or better mapped bbox/rect?
         qreal y;
         if (d_pos == 0)
             y = r.bottom();
