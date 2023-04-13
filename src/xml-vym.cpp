@@ -334,6 +334,7 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
     }
     else if (eName == "html" &&
              (state == StateHtmlNote ||
+              state == StateNote ||
               state == StateVymNote)) { // Only for backward compatibility
         state = StateHtml;
         htmldata = "<" + eName;
@@ -439,8 +440,12 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
         break;
     case StateNote:
         // version < 1.4.6
-        if (!htmldata.isEmpty())
-            vymtext.setText(htmldata);
+        if (!htmldata.isEmpty()) {
+            if (htmldata.contains("<html"))
+                vymtext.setRichText(htmldata);
+            else
+                vymtext.setPlainText(htmldata);
+        }
         lastBranch->setNote(vymtext);
         break;
     case StateMapSetting:
