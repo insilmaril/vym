@@ -375,6 +375,8 @@ void MapEditor::animate()
 
     if (!animatedContainers.isEmpty())
         animationTimer->start(animationInterval);
+
+    model->repositionXLinks();
 }
 
 void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-2 only used in ME::autoLayout
@@ -1885,6 +1887,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     scene()->update();
 
+    model->repositionXLinks();
     return;
 }
 

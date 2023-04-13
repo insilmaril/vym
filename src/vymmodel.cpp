@@ -5141,7 +5141,17 @@ void VymModel::reposition()
         bi = rootItem->getBranchNum(i);
         bi->repositionContainers();
     }
+
+    repositionXLinks();
+
     mapEditor->minimizeView();  // FIXME-2 review and check for "jumping"
+}
+
+void VymModel::repositionXLinks()
+{
+    // Reposition xlinks
+    foreach (Link *link, xlinks)
+        link->updateLink();
 }
 
 MapDesign* VymModel::getMapDesign()

@@ -653,7 +653,8 @@ class VymModel : public TreeModel {
     void setContextPos(QPointF); //!< local position during context menu
     void unsetContextPos();      //!< forget local position after context menu
 
-    void reposition(); //!< Call reposition for all MCOs
+    void reposition();           //!< Call reposition for all MCs and update XLinks
+    void repositionXLinks();     //!< Call updateXLink for all xlinks
     void setHideTmpMode(TreeItem::HideTmpMode mode);
 
     void emitNoteChanged(TreeItem *ti);
