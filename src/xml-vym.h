@@ -20,7 +20,6 @@ class VymReader : public BaseReader {
     void readAttribute();
     void readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertPosBranch);
     void readHeadingOrVymNote();
-    void readHtml();
     void readFrame();
     void readLegacyXLink();
     void readStandardFlag();

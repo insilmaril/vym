@@ -42,6 +42,8 @@ class BaseReader {
     QString attributeToString(const QString &a);
 
   protected:
+    void readHtml();
+
     VymModel *model;
 
     QXmlStreamReader xml;

@@ -423,39 +423,6 @@ void VymReader::readHeadingOrVymNote()
         raiseUnknownElementError();
 }
 
-void VymReader::readHtml()
-{
-    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("html"));
-
-    bool finished = false;
-
-    while (!finished) {
-        switch(xml.tokenType())
-        {
-            case QXmlStreamReader::StartElement:
-                htmldata += "<" + xml.name().toString();
-                for (int i = 0; i < xml.attributes().count(); i++) {
-                    htmldata += " " + xml.attributes().at(i).name();
-                    htmldata += "=\"" + xml.attributes().at(i).value() + "\"";
-                }
-                htmldata += ">";
-                break;
-            case QXmlStreamReader::EndElement:
-                htmldata += "</" + xml.name().toString() + ">";
-                if (xml.name() == QLatin1String("html"))
-                    return;
-                break;
-            case QXmlStreamReader::Characters:
-                htmldata += xml.text().toString();
-                break;
-            default:
-                // Ignore other token types
-                break;
-        }
-        xml.readNext();
-    }
-}
-
 void VymReader::readFrame()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("frame"));

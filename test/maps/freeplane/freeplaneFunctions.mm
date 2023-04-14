@@ -1,10 +1,10 @@
 <map version="freeplane 1.9.13">
 <!--To view this file, download free mind mapping software Freeplane from https://www.freeplane.org -->
-<node TEXT="Basic Freeplane&#xa;Functions" FOLDED="false" ID="ID_45488473" CREATED="1288535648658" MODIFIED="1620564178204" BACKGROUND_COLOR="#00ff99">
-<icon BUILTIN="bee"/>
-<font BOLD="true"/>
-<hook NAME="MapStyle">
-    <properties show_icon_for_attributes="false" show_notes_in_map="false" show_note_icons="false" fit_to_viewport="false;"/>
+    <node TEXT="Basic Freeplane&#xa;Functions" FOLDED="false" ID="ID_45488473" CREATED="1288535648658" MODIFIED="1620564178204" BACKGROUND_COLOR="#00ff99">
+        <icon BUILTIN="bee"/>
+        <font BOLD="true"/>
+        <hook NAME="MapStyle">
+        <properties show_icon_for_attributes="false" show_notes_in_map="false" show_note_icons="false" fit_to_viewport="false;"/>
 
 <map_styles>
 <stylenode LOCALIZED_TEXT="styles.root_node" STYLE="oval" UNIFORM_SHAPE="true" VGAP_QUANTITY="24 pt">
@@ -1228,38 +1228,39 @@
 </html></richcontent>
 <hook NAME="AlwaysUnfoldedNode"/>
 </node>
-<node ID="ID_1266354824" CREATED="1319799106394" MODIFIED="1620564016975" STYLE="fork" TEXT_SHORTENED="true"><richcontent TYPE="NODE">
+        <node ID="ID_1266354824" CREATED="1319799106394" MODIFIED="1620564016975" STYLE="fork" TEXT_SHORTENED="true"><richcontent TYPE="NODE">
 
-<html>
-  <head>
-    
-  </head>
-  <body>
-    <p style="text-align: center">
-      <b>Text </b>&#160;with <a href="http://www.freeplane.org">in-line</a>&#160;hyperlink(s), and:
-    </p>
-  </body>
-</html>
-</richcontent>
-<richcontent TYPE="NOTE" CONTENT-TYPE="xml/">
-<html>
-  <head>
-    
-  </head>
-  <body>
-    <p>
-      <b>See</b>
-    </p>
-    <ul>
-      <li>
-        <i>Help &gt;  </i><i>Tutorial</i>&#160;<a href="freeplaneUserGuide.mm#ID_265318117">Edit &gt; Node core text</a>&#160;
-      </li>
-    </ul>
-  </body>
-</html></richcontent>
-<edge WIDTH="thin"/>
-<hook NAME="AlwaysUnfoldedNode"/>
-</node>
-</node>
-</node>
+        <html>
+          <head>
+            
+          </head>
+          <body>
+            <p style="text-align: center">
+              <b>Text </b>&#160;with <a href="http://www.freeplane.org">in-line</a>&#160;hyperlink(s), and:
+            </p>
+          </body>
+        </html>
+            </richcontent>
+            <richcontent TYPE="NOTE" CONTENT-TYPE="xml/">
+                <html>
+                  <head>
+                    
+                  </head>
+                  <body>
+                    <p>
+                      <b>See</b>
+                    </p>
+                    <ul>
+                      <li>
+                        <i>Help &gt;  </i><i>Tutorial</i>&#160;<a href="freeplaneUserGuide.mm#ID_265318117">Edit &gt; Node core text</a>&#160;
+                      </li>
+                    </ul>
+                  </body>
+                </html>
+            </richcontent>
+            <edge WIDTH="thin"/>
+            <hook NAME="AlwaysUnfoldedNode"/>
+        </node>
+        </node>
+    </node>
 </map>

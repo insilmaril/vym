@@ -14,11 +14,18 @@ class FreeplaneReader : public BaseReader {
 
   private:
     QString attrString();
+    void readToEnd();
 
+    void readArrowLink();
+    void readAttribute();
+    void readCloud();
+    void readEdge();
+    void readFont();
+    void readIcon();
+    void readHook();
     void readMap();
     void readNode();
-    void readIcon();
-    void readFont();
+    void readRichContent();
 
     VymText vymtext;
 };
