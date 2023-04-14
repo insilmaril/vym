@@ -1575,7 +1575,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             qDebug() << "VM::saveState  undoBlock = " << undoBlock;
             qDebug() << "VM::saveState  redoBlock = " << redoBlock;
         }
-        return; // FIXME-0 in building undoBlock: returns before PATH is set and replaced!
+        return;
     }
 
     if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) {
@@ -3399,7 +3399,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
 
-    // Update styles (if not currently loading a new map or the default map)
+    // Update styles (if not currently loading a map or the default map)    // FIXME-0 on redo styles are updated again :-(
     if (!updateStylesBlocked)
         newbc->updateStyles(MapDesign::NewItem);
 
@@ -5172,7 +5172,7 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     // For whole map set style for d=1
     mapDesign->setLinkStyle(style, 1);
 
-    rootItem->updateStylesRecursively(MapDesign::RelinkedItem);
+    rootItem->updateStylesRecursively(MapDesign::RelinkedItem); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
 
     reposition();
     return true;
@@ -5242,7 +5242,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //for (int i = 0; i < cur->imageCount(); ++i)
         //    cur->getImageNum(i)->getLMO()->setLinkColor();
         //
-        bc->updateStyles(MapDesign::RelinkedItem);
+        bc->updateStyles(MapDesign::RelinkedItem);  // FIXME-2 Better introduce new flag like MapDesign::LinkColorHintOnly
         nextBranch(cur, prev);
     }
     reposition();
@@ -6201,7 +6201,7 @@ SlideModel *VymModel::getSlideModel() { return slideModel; }
 
 int VymModel::slideCount() { return slideModel->count(); }
 
-SlideItem *VymModel::addSlide()
+SlideItem *VymModel::addSlide()     // FIXME-2 test undo/redo
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)
@@ -6241,7 +6241,7 @@ SlideItem *VymModel::addSlide()
     return si;
 }
 
-void VymModel::deleteSlide(SlideItem *si)
+void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 test undo/redo
 {
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
