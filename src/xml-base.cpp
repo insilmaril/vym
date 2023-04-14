@@ -48,7 +48,13 @@ void BaseReader::setLoadMode(const File::LoadMode &lm, int p)
     insertPos = p;
 }
 
+void  BaseReader::raiseUnknownElementError()
+{
+    xml.raiseError("Found unknown element: " + xml.name().toString());
+}
+
 QString BaseReader::attributeToString(const QString &a)
 {
     return xml.attributes().value(a).toString();
 }
+

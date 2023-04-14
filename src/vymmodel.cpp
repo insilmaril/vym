@@ -55,6 +55,7 @@
 #include "xlinkitem.h"
 #include "xlinkobj.h"
 #include "xml-freemind-legacy.h"    // XML-FIXME-2 remove
+#include "xml-freeplane.h"
 #include "xml-vym.h"
 #include "xmlobj.h"
 
@@ -496,7 +497,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             reader->setContentFilter(contentFilter);
             break;
         case File::FreemindMap:
-            //reader = new FreemindReader(this); // XML-FIXME-1 not implemented yet
+            reader = new FreeplaneReader(this); // XML-FIXME-1 not fully implemented yet
             break;
         default:
             QMessageBox::critical(0, tr("Critical Parse Error"),

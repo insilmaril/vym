@@ -37,6 +37,7 @@ class BaseReader {
     void setTmpDir(QString);
     void setInputString(const QString &);
     void setLoadMode(const File::LoadMode &, int p = -1);
+    void raiseUnknownElementError();
 
     QString attributeToString(const QString &a);
 

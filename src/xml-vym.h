@@ -14,7 +14,6 @@ class VymReader : public BaseReader {
     virtual bool read(QIODevice *device);
 
   private:
-    void raiseUnknownElementError();
     void readVymMap();
     void readSelection();
     void readSetting();

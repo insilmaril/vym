@@ -60,12 +60,6 @@ bool VymReader::read(QIODevice *device)
     return !xml.error();
 }
 
-
-void  VymReader::raiseUnknownElementError()
-{
-    xml.raiseError("Found unknown element: " + xml.name().toString());
-}
-
 void VymReader::readVymMap()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("vymmap"));
