@@ -169,12 +169,14 @@ void FreeplaneReader::readNode()
 
     lastBranch = model->createBranch(lastBranch);
 
+    vymtext.clear();
+    htmldata.clear();
+
     QString a = "TEXT";
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         qDebug() << "FP::readNode Found text=" << s;
         vymtext.setPlainText(s);
-        lastBranch->setHeading(vymtext);
     }
 
     while (xml.readNextStartElement()) {
@@ -198,12 +200,17 @@ void FreeplaneReader::readNode()
         else if (xml.name() == QLatin1String("node"))
             readNode();
         else {
-            qdbg() << "Still in node a)";
             raiseUnknownElementError();
-            qdbg() << "Still in node a)";
             return;
         }
     }
+
+    if (!htmldata.isEmpty())
+        vymtext.setRichText(htmldata);
+    lastBranch->setHeading(vymtext);
+
+    lastBranch = lastBranch->parentBranch();
+    lastBranch->setLastSelectedBranch(0);
 }
 
 void FreeplaneReader::readRichContent()
