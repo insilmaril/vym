@@ -2607,7 +2607,7 @@ da die Lockdatei nicht angelegt werden konnte:
         <location line="+1480"/>
         <source>View toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation>Werkzeugleiste ANsicht</translation>
+        <translation>Werkzeugleiste Ansicht</translation>
     </message>
     <message>
         <location line="+663"/>
