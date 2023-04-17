@@ -202,8 +202,8 @@ int TreeItem::row() const
 
 int TreeItem::depth()
 {
-    // Rootitem d=-1
-    // MapCenter d=0
+    // Rootitem  d = -1
+    // MapCenter d =  0
     int d = -2;
     TreeItem *ti = this;
     while (ti != nullptr) {

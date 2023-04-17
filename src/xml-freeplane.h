@@ -7,6 +7,8 @@
 
 /*! \brief Parsing Freeplane maps */
 
+class BranchItem;
+
 class FreeplaneReader : public BaseReader {
   public:
     FreeplaneReader (VymModel*);
@@ -27,7 +29,8 @@ class FreeplaneReader : public BaseReader {
     void readNode();
     void readRichContent();
 
-    VymText vymtext;
+    BranchItem* mainBranchRight;
+    BranchItem* mainBranchLeft;
 };
 
 #endif

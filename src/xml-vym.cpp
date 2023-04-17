@@ -276,7 +276,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
     if (lastBranch->isScrolled() && lastBranch->branchCount() == 0)
         lastBranch->unScroll();
 
-    model->emitDataChanged(lastBranch); // FIXME-2 needed?
+    lastBranch->updateVisuals();
+
 
     lastBranch = lastBranch->parentBranch();
     lastBranch->setLastSelectedBranch(0);

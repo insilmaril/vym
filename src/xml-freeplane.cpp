@@ -2,12 +2,16 @@
 
 #define qdbg() qDebug().nospace().noquote()
 
+#include "branchitem.h"
 #include "vymmodel.h"
 
 FreeplaneReader::FreeplaneReader(VymModel* m)
     : BaseReader(m)
 {
     qDebug() << "Constr. FreeplaneReader";
+
+    mainBranchRight = nullptr;
+    mainBranchLeft = nullptr;
 }
 
 QString FreeplaneReader::attrString()
@@ -169,14 +173,37 @@ void FreeplaneReader::readNode()
 
     lastBranch = model->createBranch(lastBranch);
 
-    vymtext.clear();
+    if (lastBranch->depth() == 0) {
+        // I am a mapcenter:
+        // Create two "helper" branches, because Freeplane seems to haves no
+        // relative positioning for mainbranches
+        mainBranchLeft = model->createBranch(lastBranch);
+        mainBranchRight = model->createBranch(lastBranch);
+
+        mainBranchLeft->setPos(QPointF(-200, 0));
+        mainBranchLeft->setHeadingPlainText(" ");
+
+        mainBranchRight->setPos(QPointF(200, 0));
+        mainBranchRight->setHeadingPlainText(" ");
+    }
+
     htmldata.clear();
+    VymText heading;
 
     QString a = "TEXT";
     QString s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        qDebug() << "FP::readNode Found text=" << s;
-        vymtext.setPlainText(s);
+    if (!s.isEmpty())
+        heading.setPlainText(s);
+
+    a = "POSITION";
+    s = xml.attributes().value(a).toString();
+    if (lastBranch->depth() == 1 && !s.isEmpty()) {
+        // Freeplane has a different concept for mainbranches
+        // Move either to left or right side of mapcenter
+        if (s == "left")
+            model->relinkBranch(lastBranch, mainBranchLeft);
+        else if (s == "right")
+            model->relinkBranch(lastBranch, mainBranchRight);
     }
 
     while (xml.readNextStartElement()) {
@@ -197,20 +224,27 @@ void FreeplaneReader::readNode()
             readHook();
         else if (xml.name() == QLatin1String("richcontent"))
             readRichContent();
-        else if (xml.name() == QLatin1String("node"))
+        else if (xml.name() == QLatin1String("node")) {
             readNode();
-        else {
+        } else {
             raiseUnknownElementError();
             return;
         }
     }
 
-    if (!htmldata.isEmpty())
-        vymtext.setRichText(htmldata);
-    lastBranch->setHeading(vymtext);
+    if (!htmldata.isEmpty()) {
+        heading.setRichText(htmldata);
+        qdbg() << "htmldata in node: '" <<htmldata << "'";
+    }
+    lastBranch->setHeading(heading);
 
-    lastBranch = lastBranch->parentBranch();
-    lastBranch->setLastSelectedBranch(0);
+    lastBranch->updateVisuals();
+
+    if(lastBranch->depth() == 2) {
+        // Hop over helper "mainBranches" back to mapCenter
+        lastBranch = lastBranch->parentBranch()->parentBranch();
+    } else
+        lastBranch = lastBranch->parentBranch();
 }
 
 void FreeplaneReader::readRichContent()
@@ -222,10 +256,9 @@ void FreeplaneReader::readRichContent()
     qdbg() << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
 
     while (xml.readNextStartElement()) {
-        if (xml.name() == QLatin1String("html")){
+        if (xml.name() == QLatin1String("html"))
             readHtml();
-            qdbg() << "FP: richcontent finished. htmldata=" << htmldata;
-        } else {
+        else {
             raiseUnknownElementError();
             return;
         }

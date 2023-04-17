@@ -54,7 +54,6 @@
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
-#include "xml-freemind-legacy.h"    // XML-FIXME-2 remove
 #include "xml-freeplane.h"
 #include "xml-vym.h"
 #include "xmlobj.h"
@@ -5896,13 +5895,13 @@ void VymModel::emitNoteChanged(TreeItem *ti)
     mainWindow->updateNoteEditor(ti);
 }
 
-void VymModel::emitDataChanged(TreeItem *ti)    // FIXME-2 seems to be called for every ti during load
+void VymModel::emitDataChanged(TreeItem *ti)
 {
     // qDebug() << "VM::emitDataChanged ti=" << ti;
-    QModelIndex ix = index(ti);
-    emit(dataChanged(ix, ix));
-    //emitSelectionChanged(); // FIXME-2 should no longer be necessary
     if (!repositionBlocked) {
+        QModelIndex ix = index(ti);
+        emit(dataChanged(ix, ix));
+
         // Update taskmodel and recalc priorities there
         if (ti->hasTypeBranch() && ((BranchItem *)ti)->getTask()) {
             taskModel->emitDataChanged(((BranchItem *)ti)->getTask());
