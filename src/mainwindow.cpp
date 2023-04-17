@@ -3616,7 +3616,7 @@ void Main::setupToolbars()
     toolbarStates[colorsToolbar] = true;
     toolbarStates[zoomToolbar] = true;
     toolbarStates[modModesToolbar] = false;
-    toolbarStates[referencesToolbar] = false;
+    toolbarStates[referencesToolbar] = true;
     toolbarStates[editorsToolbar] = false;
     toolbarStates[standardFlagsToolbar] = true;
     toolbarStates[userFlagsToolbar] = true;
