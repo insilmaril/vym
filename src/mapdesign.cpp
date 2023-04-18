@@ -251,22 +251,20 @@ FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, int depth)
 
 void MapDesign::updateFrames(
     BranchContainer *branchContainer,
-    const UpdateMode &mode,
+    const CreationMode &creationMode,
+    const RelinkMode &relinkMode,
     int depth)
 {
-    if (branchContainer && mode == NewItem) {
+    if (branchContainer && creationMode != NotCreated) {
+        // Inner frame
+        branchContainer->setFrameType(true, frameType(true, depth));
+        branchContainer->setFrameBrushColor(true, innerFrameBrushColors.tryAt(depth));
+        branchContainer->setFramePenColor(true, innerFramePenColors.tryAt(depth));
 
-        if (mode == NewItem) {
-            // Inner frame
-            branchContainer->setFrameType(true, frameType(true, depth));
-            branchContainer->setFrameBrushColor(true, innerFrameBrushColors.tryAt(depth));
-            branchContainer->setFramePenColor(true, innerFramePenColors.tryAt(depth));
-
-            // Outer frame
-            branchContainer->setFrameType(false, frameType(false, depth));
-            branchContainer->setFrameBrushColor(false, outerFrameBrushColors.tryAt(depth));
-            branchContainer->setFramePenColor(false, outerFramePenColors.tryAt(depth));
-            }
+        // Outer frame
+        branchContainer->setFrameType(false, frameType(false, depth));
+        branchContainer->setFrameBrushColor(false, outerFrameBrushColors.tryAt(depth));
+        branchContainer->setFramePenColor(false, outerFramePenColors.tryAt(depth));
     }
 }
 

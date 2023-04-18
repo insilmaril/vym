@@ -161,7 +161,7 @@ class BranchContainer : public SelectableContainer {
 
   public:
     /*! Update styles (frame, links, fonts, colors, ...) */
-    void updateStyles(MapDesign::UpdateMode updateMode = MapDesign::RelinkedItem);
+    void updateStyles(MapDesign::CreationMode, MapDesign::RelinkMode);
 
     /*! Update flags and heading */
     void updateVisuals();

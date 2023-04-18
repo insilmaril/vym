@@ -1156,7 +1156,9 @@ void BranchContainer::updateBranchesContainerLayout()
         setBranchesContainerLayout(branchesContainerLayout);
 }
 
-void BranchContainer::updateStyles(MapDesign::UpdateMode updateMode)
+void BranchContainer::updateStyles(
+        MapDesign::CreationMode creationMode,
+        MapDesign::RelinkMode relinkMode)
 {
     // Note: updateStyles() is never called for TmpParent!
 
@@ -1166,12 +1168,12 @@ void BranchContainer::updateStyles(MapDesign::UpdateMode updateMode)
     MapDesign *md = branchItem->getMapDesign();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    if (updateMode == MapDesign::NewItem)
+    if (creationMode != MapDesign::NotCreated)
         md->updateBranchHeadingColor(
                 branchItem, depth);
 
     // Set frame
-    md->updateFrames(this, updateMode, depth);
+    md->updateFrames(this, creationMode, relinkMode, depth); // FIXME-2  depth not really necessary here
 
     updateBranchesContainerLayout();
 

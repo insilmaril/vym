@@ -481,15 +481,17 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     return nullptr;
 }
 
-void BranchItem::updateStylesRecursively(MapDesign::UpdateMode updateMode)
+void BranchItem::updateStylesRecursively(
+        MapDesign::CreationMode creationMode,
+        MapDesign::RelinkMode relinkMode)
 {
     // Update my own container
     if (branchContainer)
-        branchContainer->updateStyles(updateMode);
+        branchContainer->updateStyles(creationMode, relinkMode);
 
     // Recurively update subtree
     for (int i = 0; i < branchCounter; i++) {
-        getBranchNum(i)->updateStylesRecursively(updateMode);
+        getBranchNum(i)->updateStylesRecursively(creationMode, relinkMode);
     }
 }
 

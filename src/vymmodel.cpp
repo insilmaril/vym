@@ -632,7 +632,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (err != File::Aborted) {
             if (parsedWell) {
-                rootItem->updateStylesRecursively(MapDesign::RelinkedItem);
+                rootItem->updateStylesRecursively(MapDesign::CreatedWhileLoading, MapDesign::NotRelinked);
                 reposition(); // to generate bbox sizes
                 emitSelectionChanged();
 
@@ -3350,7 +3350,7 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
         bc->setPos(absPos);
 
     if (!updateStylesBlocked)
-        bc->updateStyles(MapDesign::NewItem);
+        bc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
 
     return newbi;
 }
@@ -3401,7 +3401,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
 
     // Update styles (if not currently loading a map or the default map)    // FIXME-0 on redo styles are updated again :-(
     if (!updateStylesBlocked)
-        newbc->updateStyles(MapDesign::NewItem);
+        newbc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
 
     reposition();
     return newbi;
@@ -3473,6 +3473,18 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             qWarning() << "VM::relinkBranch  Attempting to relink to myself: " << branch->getHeadingPlain();
             return false;
         }
+
+        // What kind of relinking are we doing? Important for style updates
+        MapDesign::RelinkMode relinkMode = MapDesign::NotRelinked;
+
+        if (branch->parentBranch() != dst)
+            relinkMode = MapDesign::ParentChanged;
+
+        if (branch->num() != num_dst)
+            relinkMode = relinkMode | MapDesign::PositionChanged;
+
+        if (branch->depth() != dst->depth() + 1)
+            relinkMode = relinkMode | MapDesign::DepthChanged;
 
         // Check if we relink down to own children
         if (dst->isChildOf(branch))
@@ -3571,8 +3583,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         // Update parent item and stacking order of container
         branch->updateContainerStackingOrder();
 
-        // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStylesRecursively(MapDesign::RelinkedItem);
+        // reset parObj, fonts, frame, etc in related branch-container or other view-objects
+        branch->updateStylesRecursively(MapDesign::NotCreated, relinkMode);
 
         emitDataChanged(branch);
 
@@ -5172,7 +5184,7 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     // For whole map set style for d=1
     mapDesign->setLinkStyle(style, 1);
 
-    rootItem->updateStylesRecursively(MapDesign::RelinkedItem); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
+    rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
 
     reposition();
     return true;
@@ -5242,7 +5254,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //for (int i = 0; i < cur->imageCount(); ++i)
         //    cur->getImageNum(i)->getLMO()->setLinkColor();
         //
-        bc->updateStyles(MapDesign::RelinkedItem);  // FIXME-2 Better introduce new flag like MapDesign::LinkColorHintOnly
+    rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
         nextBranch(cur, prev);
     }
     reposition();

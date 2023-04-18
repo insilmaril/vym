@@ -44,9 +44,28 @@ class MapDesign {
         UnchangedColor,
         UndefinedColor};
 
-    enum UpdateMode {
-        NewItem,
-        RelinkedItem};
+    enum CreationMode : unsigned int {
+        NotCreated = 0x0000,
+        Created    = 0x0001,
+        CreatedWhileLoading = 0x0002};
+
+    enum RelinkMode : unsigned int {
+        NotRelinked     = 0x0000,
+        DepthChanged    = 0x0001,
+        PositionChanged = 0x0002,
+        ParentChanged   = 0x0004,
+        LinkChanged     = 0x0008};
+
+    /*
+    constexpr RelinkMode operator|(RelinkMode X, RelinkMode Y) {
+        return static_cast<RelinkMode>(
+            static_cast<unsigned int>(X) | static_cast<unsigned int>(Y));
+    }
+
+    RelinkMode& operator|=(RelinkMode& X, RelinkMode Y) {
+        X = X | Y; return X;
+    }
+    */
 
     MapDesign();
     void init();
@@ -72,7 +91,8 @@ class MapDesign {
     FrameContainer::FrameType frameType(bool useInnerFrame, int depth);
     void updateFrames(
             BranchContainer *branchContainer,
-            const UpdateMode &mode,
+            const CreationMode &creationMode,
+            const RelinkMode &relinkMode,
             int depth);
 
     QColor selectionColor();
@@ -109,4 +129,13 @@ class MapDesign {
     QColor selectionColorInt;
 };
 
+    inline MapDesign::RelinkMode operator|(MapDesign::RelinkMode a, MapDesign::RelinkMode b)
+    {
+        return static_cast<MapDesign::RelinkMode>(static_cast<int>(a) | static_cast<int>(b));
+    }
+
+    inline MapDesign::RelinkMode operator|=(MapDesign::RelinkMode &a, MapDesign::RelinkMode b)
+    {
+        a = a | b; return a;
+    }
 #endif
