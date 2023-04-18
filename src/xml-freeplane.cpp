@@ -14,6 +14,25 @@ FreeplaneReader::FreeplaneReader(VymModel* m)
     mainBranchLeft = nullptr;
 }
 
+void FreeplaneReader::foundElement(const QString &e)
+{
+    // remember we found this element
+    if (!foundElements.contains(e))
+        foundElements << e;
+
+    Q_ASSERT(xml.isStartElement() && xml.name() == e);
+
+    // remember its attributes
+    QStringList sl = elementAttributes[e];
+    for (int i = 0; i < xml.attributes().count(); i++) {
+        QString n = xml.attributes()[i].name().toString();
+        if (!sl.contains(n))
+            sl << n;
+    }
+    qdbg() << "regElement="  << e << "  sl=" << sl.join(",");
+    elementAttributes[e] = sl;
+}
+
 QString FreeplaneReader::attrString()
 {
     QStringList sl;
@@ -50,6 +69,13 @@ bool FreeplaneReader::read(QIODevice *device)
         }
     }
 
+    // Report what we have found so far
+    qdbg() << "Found elements: " << foundElements.join(",");
+    foreach (QString e, foundElements) {
+        qdbg() << "  Attributes of " << e << "  " << elementAttributes[e];
+    }
+
+
     // FIXME-1 implementation missing...
     return !xml.error();
 }
@@ -57,8 +83,7 @@ bool FreeplaneReader::read(QIODevice *device)
 void FreeplaneReader::readArrowLink()
 {
     QString elementName = "arrowlink";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
@@ -67,6 +92,7 @@ void FreeplaneReader::readArrowLink()
 void FreeplaneReader::readAttribute()
 {
     QString elementName = "attribute";
+    foundElement(elementName);
 
     Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
 
@@ -77,8 +103,7 @@ void FreeplaneReader::readAttribute()
 void FreeplaneReader::readCloud()
 {
     QString elementName = "cloud";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
@@ -87,8 +112,7 @@ void FreeplaneReader::readCloud()
 void FreeplaneReader::readEdge()
 {
     QString elementName = "edge";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
@@ -97,8 +121,7 @@ void FreeplaneReader::readEdge()
 void FreeplaneReader::readFont()
 {
     QString elementName = "font";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     qdbg() << "FP::readFont a xml=" << xml.name() << " " << xml.tokenString();
@@ -109,8 +132,7 @@ void FreeplaneReader::readFont()
 void FreeplaneReader::readIcon()
 {
     QString elementName = "icon";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
 
@@ -128,8 +150,7 @@ void FreeplaneReader::readIcon()
 void FreeplaneReader::readHook()
 {
     QString elementName = "hook";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg () << QString("FR <%1> attributes: %2").arg(elementName).arg(attrString());
 
@@ -162,7 +183,8 @@ void FreeplaneReader::readHook()
 
 void FreeplaneReader::readMap()
 {
-    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("map"));
+    QString elementName = "map";
+    foundElement(elementName);
 
     // Check version// FIXME-2 How to deal with Freeplane versions???
     QString a = "version";
@@ -191,8 +213,7 @@ void FreeplaneReader::readMap()
 void FreeplaneReader::readMapStyles()
 {
     QString elementName = "map_styles";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg() << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
@@ -201,8 +222,7 @@ void FreeplaneReader::readMapStyles()
 void FreeplaneReader::readNode()
 {
     QString elementName = "node";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg() << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
 
@@ -286,8 +306,7 @@ void FreeplaneReader::readProperties()
 {
     // Seems to be sub element of <hook  NAME="MAPSTYLE" ...>
     QString elementName = "properties";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+    foundElement(elementName);
 
     qdbg () << QString("FR <%1> attributes: %2").arg(elementName).arg(attrString());
     QString a = "backgroundImageURI";   // FIXME-2 not supported yet

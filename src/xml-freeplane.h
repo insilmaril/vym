@@ -15,6 +15,7 @@ class FreeplaneReader : public BaseReader {
     virtual bool read(QIODevice *device);
 
   private:
+    void foundElement(const QString &e);
     QString attrString();
     void readToEnd();
 
@@ -33,6 +34,10 @@ class FreeplaneReader : public BaseReader {
 
     BranchItem* mainBranchRight;
     BranchItem* mainBranchLeft;
+
+    QStringList foundElements;
+
+    QMap <QString, QStringList> elementAttributes;
 };
 
 #endif
