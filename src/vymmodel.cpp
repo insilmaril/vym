@@ -5268,8 +5268,7 @@ void VymModel::toggleLinkColorHint()
         setLinkColorHint(LinkObj::HeadingColor);
 }
 
-void VymModel::
-    selectMapBackgroundImage() // FIXME-3 for using background image:
+void VymModel::selectMapBackgroundImage() // FIXME-3 for using background image:
                                // view.setCacheMode(QGraphicsView::CacheBackground);
                                // Also this belongs into ME
 {
@@ -5289,7 +5288,7 @@ void VymModel::
     }
 }
 
-void VymModel::setMapBackgroundImage( const QString &fn) // FIXME-3 missing savestate, move to ME
+void VymModel::setMapBackgroundImage( const QString &fn) // FIXME-2 missing savestate, move to ME
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();

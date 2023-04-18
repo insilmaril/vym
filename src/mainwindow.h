@@ -270,7 +270,7 @@ class Main : public QMainWindow {
     void formatLinkStylePolyLine();
     void formatLinkStylePolyParabel();
     void formatSelectBackColor();
-    void formatSelectBackImage();
+    void formatSelectBackgroundImage();
     void formatSelectLinkColor();
     void formatSelectSelectionColor();
     void formatSelectFont();

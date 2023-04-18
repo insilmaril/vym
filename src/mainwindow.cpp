@@ -2304,7 +2304,7 @@ void Main::setupFormatActions()
 
     a = new QAction(pix, tr("Set &Background image") + "...", this);
     formatMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectBackImage()));
+    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectBackgroundImage()));
     actionFormatBackImage = a;
 }
 
@@ -3378,9 +3378,7 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackColor);
-    // if (settings.value( "/mainwindow/showTestMenu",false).toBool() )
-    //    canvasContextMenu->addAction( actionFormatBackImage );  //FIXME-3
-    //    makes vym too slow: postponed for later version
+    canvasContextMenu->addAction(actionFormatBackImage );
 
     // Menu for last opened files
     // Create actions
@@ -5815,7 +5813,7 @@ void Main::formatSelectBackColor()
         m->selectMapBackgroundColor();
 }
 
-void Main::formatSelectBackImage()
+void Main::formatSelectBackgroundImage()
 {
     VymModel *m = currentModel();
     if (m)
