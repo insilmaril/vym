@@ -36,6 +36,7 @@ class FreeplaneReader : public BaseReader {
     BranchItem* mainBranchLeft;
 
     QStringList foundElements;
+    QStringList ignoredElements;
 
     QMap <QString, QStringList> elementAttributes;
 };

@@ -45,14 +45,11 @@ QString FreeplaneReader::attrString()
 void FreeplaneReader::readToEnd()
 {
     QString endName = xml.name().toString();
-    QStringList startElements;
     while (!xml.isEndElement() || xml.name() != endName) {
         xml.readNext();
-        qdbg() << "FP::readToEnd  " << xml.name() << " " << xml.tokenString();
-        if (xml.isStartElement() && !startElements.contains(xml.name()))
-            startElements << xml.name().toString();
+        if (xml.isStartElement() && !ignoredElements.contains(xml.name()))
+            ignoredElements << xml.name().toString();
     }
-    qdbg() << "FPR::readToEnd of '" << endName << "' found startElements: [" << startElements.join(", ") << "]";
 }
 
 bool FreeplaneReader::read(QIODevice *device)
@@ -74,7 +71,7 @@ bool FreeplaneReader::read(QIODevice *device)
     foreach (QString e, foundElements) {
         qdbg() << "  Attributes of " << e << "  " << elementAttributes[e];
     }
-
+    qdbg() << "Ignored elements from readToEnd(): " << ignoredElements.join(",");
 
     // FIXME-1 implementation missing...
     return !xml.error();
@@ -85,7 +82,6 @@ void FreeplaneReader::readArrowLink()
     QString elementName = "arrowlink";
     foundElement(elementName);
 
-    qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
 }
 
@@ -96,7 +92,6 @@ void FreeplaneReader::readAttribute()
 
     Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
 
-    qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
 }
 
@@ -105,7 +100,6 @@ void FreeplaneReader::readCloud()
     QString elementName = "cloud";
     foundElement(elementName);
 
-    qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
 }
 
@@ -114,7 +108,6 @@ void FreeplaneReader::readEdge()
     QString elementName = "edge";
     foundElement(elementName);
 
-    qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
     readToEnd();
 }
 
@@ -123,18 +116,13 @@ void FreeplaneReader::readFont()
     QString elementName = "font";
     foundElement(elementName);
 
-    qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
-    qdbg() << "FP::readFont a xml=" << xml.name() << " " << xml.tokenString();
     readToEnd();
-    qdbg() << "FP::readFont b xml=" << xml.name() << " " << xml.tokenString();
 }
 
 void FreeplaneReader::readIcon()
 {
     QString elementName = "icon";
     foundElement(elementName);
-
-    qdbg () << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
 
     QString a = "BUILTIN";
     QString s = xml.attributes().value(a).toString();
@@ -151,8 +139,6 @@ void FreeplaneReader::readHook()
 {
     QString elementName = "hook";
     foundElement(elementName);
-
-    qdbg () << QString("FR <%1> attributes: %2").arg(elementName).arg(attrString());
 
     QString a = "NAME";
     QString s = xml.attributes().value(a).toString();
@@ -223,8 +209,6 @@ void FreeplaneReader::readNode()
 {
     QString elementName = "node";
     foundElement(elementName);
-
-    qdbg() << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
 
     lastBranch = model->createBranch(lastBranch);
 
@@ -308,12 +292,9 @@ void FreeplaneReader::readProperties()
     QString elementName = "properties";
     foundElement(elementName);
 
-    qdbg () << QString("FR <%1> attributes: %2").arg(elementName).arg(attrString());
-    QString a = "backgroundImageURI";   // FIXME-2 not supported yet
+    QString a = "backgroundImageURI";
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        qdbg() << "FR::readProperties  backgroundImage not supported yet in vym";
-        // heading.setPlainText(s);
         model->setMapBackgroundImage(s);
     }
 
@@ -322,10 +303,7 @@ void FreeplaneReader::readProperties()
 void FreeplaneReader::readRichContent()
 {
     QString elementName = "richcontent";
-
-    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
-
-    qdbg() << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
+    foundElement(elementName);
 
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("html"))
