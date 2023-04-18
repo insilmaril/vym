@@ -66,7 +66,7 @@ void BaseReader::readHtml()
     bool finished = false;
 
     while (!finished) {
-        qdbg() << "readHtml: " << xml.name() << " " << xml.tokenString();
+        // qdbg() << "readHtml: " << xml.name() << " " << xml.tokenString();
         switch(xml.tokenType())
         {
             case QXmlStreamReader::StartElement:

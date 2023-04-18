@@ -26,7 +26,9 @@ class FreeplaneReader : public BaseReader {
     void readIcon();
     void readHook();
     void readMap();
+    void readMapStyles();
     void readNode();
+    void readProperties();
     void readRichContent();
 
     BranchItem* mainBranchRight;

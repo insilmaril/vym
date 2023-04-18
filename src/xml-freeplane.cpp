@@ -132,7 +132,32 @@ void FreeplaneReader::readHook()
     Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
 
     qdbg () << QString("FR <%1> attributes: %2").arg(elementName).arg(attrString());
-    readToEnd();
+
+    QString a = "NAME";
+    QString s = xml.attributes().value(a).toString();
+    if(s == "MapStyle") {
+        a = "background";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            QColor col(s);
+            model->setMapBackgroundColor(col);
+            qdbg() << "FR::setMapBackground col = " << s;
+        }
+    }
+
+    while (xml.readNextStartElement()) {
+        if (xml.name() == QLatin1String("properties")){
+            readProperties();
+        } else if (xml.name() == QLatin1String("map_styles")){
+            readMapStyles();
+        } else if (xml.name() == QLatin1String("Parameters")){
+            qdbg () << "FR::readHook  ignoring <Parameters> element...";
+            readToEnd();
+        } else {
+            raiseUnknownElementError();
+            return;
+        }
+    }
 }
 
 void FreeplaneReader::readMap()
@@ -161,6 +186,16 @@ void FreeplaneReader::readMap()
             return;
         }
     }
+}
+
+void FreeplaneReader::readMapStyles()
+{
+    QString elementName = "map_styles";
+
+    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+
+    qdbg() << QString("FP <%1> attributes: %2").arg(elementName).arg(attrString());
+    readToEnd();
 }
 
 void FreeplaneReader::readNode()
@@ -234,7 +269,7 @@ void FreeplaneReader::readNode()
 
     if (!htmldata.isEmpty()) {
         heading.setRichText(htmldata);
-        qdbg() << "htmldata in node: '" <<htmldata << "'";
+        // qdbg() << "htmldata in node: '" <<htmldata << "'";
     }
     lastBranch->setHeading(heading);
 
@@ -247,6 +282,24 @@ void FreeplaneReader::readNode()
         lastBranch = lastBranch->parentBranch();
 }
 
+void FreeplaneReader::readProperties()
+{
+    // Seems to be sub element of <hook  NAME="MAPSTYLE" ...>
+    QString elementName = "properties";
+
+    Q_ASSERT(xml.isStartElement() && xml.name() == elementName);
+
+    qdbg () << QString("FR <%1> attributes: %2").arg(elementName).arg(attrString());
+    QString a = "backgroundImageURI";   // FIXME-2 not supported yet
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        qdbg() << "FR::readProperties  backgroundImage not supported yet in vym";
+        // heading.setPlainText(s);
+        model->setMapBackgroundImage(s);
+    }
+
+    readToEnd();
+}
 void FreeplaneReader::readRichContent()
 {
     QString elementName = "richcontent";
