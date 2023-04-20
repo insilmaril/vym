@@ -23,7 +23,7 @@ TreeModel::~TreeModel()
     delete rootItem;
 }
 
-QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-1 no foreground color for imageItem
+QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-1 no foreground color for imageItem and attr. item (use color of parentBranch)
 {
     if (!index.isValid())
         return QVariant();

@@ -141,11 +141,9 @@ void VymModel::init()
     mapEditor = nullptr;
 
     // Use default author
-    author =
-        settings
-            .value("/user/name", tr("unknown user",
-                                    "default name for map author in settings"))
-            .toString();
+    author = settings
+            .value("/user/name",
+                    tr("unknown user", "default name for map author in settings")).toString();
     // MapDesign
     mapDesign = new MapDesign;
 
@@ -195,6 +193,9 @@ void VymModel::init()
     defXLinkPen.setStyle(Qt::DashLine);
     defXLinkStyleBegin = "HeadFull";
     defXLinkStyleEnd = "HeadFull";
+
+    usesBackgroundImage = false;
+    backgroundImageName = "";
 
     hasContextPos = false;
 
@@ -294,7 +295,21 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("branchCount", QString().number(branchCount())) +
             xml.attribut(
                 "backgroundColor",
-                mapEditor->getScene()->backgroundBrush().color().name()) +
+                mapEditor->getScene()->backgroundBrush().color().name());
+
+        // Save background image
+        if (usesBackgroundImage && !backgroundImage.isNull()) {
+            QString fn = "images/" + backgroundImageName;    // FIXME-0 use unique name and orgFilename. Load BG img again!
+            if (!backgroundImage.save(tmpdir + fn, "PNG", 100))
+                qWarning() << "VymModel::saveToDir failed to save background image to " << fn;
+            else {
+                mapAttr +=
+                    xml.attribut("backgroundImage", fn) +
+                    xml.attribut("backgroundImageName", backgroundImageName);
+            }
+        }
+
+        mapAttr +=
             xml.attribut("defaultFont", defaultFont.toString()) +
             xml.attribut("selectionColor",
                          mapDesign->selectionColor().name(QColor::HexArgb)) +
@@ -496,7 +511,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             reader->setContentFilter(contentFilter);
             break;
         case File::FreemindMap:
-            reader = new FreeplaneReader(this); // XML-FIXME-1 not fully implemented yet
+            reader = new FreeplaneReader(this);
             break;
         default:
             QMessageBox::critical(0, tr("Critical Parse Error"),
@@ -5268,27 +5283,22 @@ void VymModel::toggleLinkColorHint()
         setLinkColorHint(LinkObj::HeadingColor);
 }
 
-void VymModel::selectMapBackgroundImage() // FIXME-3 for using background image:
-                               // view.setCacheMode(QGraphicsView::CacheBackground);
-                               // Also this belongs into ME
+void VymModel::setMapBackgroundColor(QColor col)
 {
-    QStringList filters;
-    filters << tr("Images") +
-                   " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-    QFileDialog fd;
-    fd.setFileMode(QFileDialog::ExistingFile);
-    fd.setWindowTitle(vymName + " - " + tr("Load background image"));
-    fd.setDirectory(lastImageDir);
-    fd.setAcceptMode(QFileDialog::AcceptOpen);
-
-    if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
-        // TODO selectMapBackgroundImg in QT4 use:  lastImageDir=fd.directory();
-        lastImageDir = QDir(fd.directory().path());
-        setMapBackgroundImage(fd.selectedFiles().first());
-    }
+    QColor oldcol = mapEditor->getScene()->backgroundBrush().color();
+    saveState(QString("setMapBackgroundColor (\"%1\")").arg(oldcol.name()),
+              QString("setMapBackgroundColor (\"%1\")").arg(col.name()),
+              QString("Set background color of map to %1").arg(col.name()));
+    backgroundColor = col;  // Used for backroundRole in TreeModel::data()
+    vymView->setBackgroundColor(backgroundColor);
 }
 
-void VymModel::setMapBackgroundImage( const QString &fn) // FIXME-2 missing savestate, move to ME
+QColor VymModel::getMapBackgroundColor()
+{
+    return mapEditor->getScene()->backgroundBrush().color();
+}
+
+bool VymModel::setMapBackgroundImage( const QString &fn) // FIXME-2 missing savestate
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
@@ -5299,33 +5309,47 @@ void VymModel::setMapBackgroundImage( const QString &fn) // FIXME-2 missing save
     QString ("setMapBackgroundImage (%1)").arg(col.name()),
     QString("Set background color of map to %1").arg(col.name()));
     */
+
+    // FIXME-3 maybe also use: view.setCacheMode(QGraphicsView::CacheBackground);
     QBrush brush;
-    brush.setTextureImage(QImage(fn));
+    backgroundImage.load(fn);
+    if (backgroundImage.isNull()) {
+        usesBackgroundImage = false;
+        backgroundImageName.clear();
+        return false;
+    }
+
+    brush.setTextureImage(backgroundImage);
     mapEditor->getScene()->setBackgroundBrush(brush);
+    usesBackgroundImage = true;
+    backgroundImageName = basename(fn);
+    return true;
 }
 
-void VymModel::selectMapBackgroundColor()// FIXME-2 move to MD or ME
+void VymModel::unsetMapBackgroundImage() // FIXME-2 missing savestate
 {
-    QColor col = QColorDialog::getColor(
-        mapEditor->getScene()->backgroundBrush().color(), nullptr);
-    if (!col.isValid())
-        return;
-    setMapBackgroundColor(col);
+    /*
+    QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
+    saveState(
+    selection,
+    QString ("setMapBackgroundImage (%1)").arg(oldcol.name()),
+    selection,
+    QString ("setMapBackgroundImage (%1)").arg(col.name()),
+    QString("Set background color of map to %1").arg(col.name()));
+    */
+    vymView->setBackgroundColor(getMapBackgroundColor());
+    usesBackgroundImage = false;
+    backgroundImageName.clear();
 }
 
-void VymModel::setMapBackgroundColor(QColor col) // FIXME-2 move to MD or ME
+bool VymModel::hasMapBackgroundImage()
 {
-    QColor oldcol = mapEditor->getScene()->backgroundBrush().color();
-    saveState(QString("setMapBackgroundColor (\"%1\")").arg(oldcol.name()),
-              QString("setMapBackgroundColor (\"%1\")").arg(col.name()),
-              QString("Set background color of map to %1").arg(col.name()));
-    backgroundColor = col;  // Used for backroundRole in TreeModel::data()
-    vymView->setBackgroundColor(backgroundColor);
+    return usesBackgroundImage;
 }
 
-QColor VymModel::getMapBackgroundColor() // FIXME-2 move to MD or ME
+QString VymModel::mapBackgroundImageName()
 {
-    return mapEditor->getScene()->backgroundBrush().color();
+    return backgroundImageName;
 }
 
 QFont VymModel::getMapDefaultFont() { return defaultFont; }

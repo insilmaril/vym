@@ -695,12 +695,18 @@ class VymModel : public TreeModel {
     void setLinkColorHint(const LinkObj::ColorHint &);
     void toggleLinkColorHint(); // after changing linkStyles
 
-    void selectMapBackgroundImage();
-    void setMapBackgroundImage(const QString &);
-    void selectMapBackgroundColor();
     void setMapBackgroundColor(QColor);
     QColor getMapBackgroundColor();
+    bool setMapBackgroundImage(const QString &);
+    void unsetMapBackgroundImage();
+    bool hasMapBackgroundImage();
+    QString mapBackgroundImageName();
+  private:
+    bool usesBackgroundImage;
+    QString backgroundImageName;
+    QImage backgroundImage;
 
+  public:
     QFont getMapDefaultFont();
     void setMapDefaultFont(const QFont &);
 

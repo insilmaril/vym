@@ -269,8 +269,7 @@ class Main : public QMainWindow {
     void formatLinkStyleParabel();
     void formatLinkStylePolyLine();
     void formatLinkStylePolyParabel();
-    void formatSelectBackColor();
-    void formatSelectBackgroundImage();
+    void formatBackground();
     void formatSelectLinkColor();
     void formatSelectSelectionColor();
     void formatSelectFont();
@@ -550,8 +549,7 @@ class Main : public QMainWindow {
     QAction *actionFormatColorBranch;
     QAction *actionFormatColorSubtree;
     QAction *actionFormatLinkColorHint;
-    QAction *actionFormatBackColor;
-    QAction *actionFormatBackImage;
+    QAction *actionFormatBackground;
     QAction *actionFormatLinkColor;
     QAction *actionFormatSelectionColor;
     QAction *actionFormatFont;

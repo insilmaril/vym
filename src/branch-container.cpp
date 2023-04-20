@@ -483,7 +483,7 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
 {
     if (!imagesContainer) {
         createImagesContainer();
-        /* FIXME-1 styles should be updated in Container c, but ImageContainer has no updateStyles()
+        /* FIXME-2 imagesContainer styles should be updated in Container c, but ImageContainer has no updateStyles() yet
         if (branchItem)
             updateStyles(RelinkBranch);
         */

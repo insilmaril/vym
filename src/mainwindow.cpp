@@ -22,6 +22,7 @@ using namespace std;
 
 #include "aboutdialog.h"
 #include "attributeitem.h"
+#include "background-dialog.h"
 #include "branchitem.h"
 #include "branchpropeditor.h"
 #include "command.h"
@@ -2297,15 +2298,10 @@ void Main::setupFormatActions()
     connect(a, SIGNAL(triggered()), this, SLOT(formatSelectSelectionColor()));
     actionFormatSelectionColor = a;
 
-    a = new QAction(pix, tr("Set &Background Color") + "...", this);
+    a = new QAction(pix, tr("Set &Background color and image") + "...", this);
     formatMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectBackColor()));
-    actionFormatBackColor = a;
-
-    a = new QAction(pix, tr("Set &Background image") + "...", this);
-    formatMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectBackgroundImage()));
-    actionFormatBackImage = a;
+    connect(a, SIGNAL(triggered()), this, SLOT(formatBackground()));
+    actionFormatBackground = a;
 }
 
 // View Actions
@@ -3377,8 +3373,7 @@ void Main::setupContextMenus()
 
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
-    canvasContextMenu->addAction(actionFormatBackColor);
-    canvasContextMenu->addAction(actionFormatBackImage );
+    canvasContextMenu->addAction(actionFormatBackground);
 
     // Menu for last opened files
     // Create actions
@@ -5806,18 +5801,12 @@ void Main::formatLinkStylePolyParabel()
     }
 }
 
-void Main::formatSelectBackColor()
-{
+void Main::formatBackground() {
     VymModel *m = currentModel();
-    if (m)
-        m->selectMapBackgroundColor();
-}
-
-void Main::formatSelectBackgroundImage()
-{
-    VymModel *m = currentModel();
-    if (m)
-        m->selectMapBackgroundImage();
+    if (m) {
+        BackgroundDialog dia(m);
+        dia.exec();
+    }
 }
 
 void Main::formatSelectLinkColor()
@@ -6542,7 +6531,7 @@ void Main::updateActions()
         // Update colors
         QPixmap pix(16, 16);
         pix.fill(m->getMapBackgroundColor());
-        actionFormatBackColor->setIcon(pix);
+        actionFormatBackground->setIcon(pix);
         pix.fill(m->getSelectionColor());
         actionFormatSelectionColor->setIcon(pix);
         pix.fill(m->getDefaultLinkColor());
