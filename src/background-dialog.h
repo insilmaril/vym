@@ -10,7 +10,7 @@ class BackgroundDialog : public QDialog {
 
   public:
     BackgroundDialog(VymModel *m);
-    int exec();
+    int  exec();
 
   public slots:
     void selectBackgroundColor();

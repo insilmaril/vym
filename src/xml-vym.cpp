@@ -813,6 +813,17 @@ void VymReader::readVymMapAttr()
         model->getScene()->setBackgroundBrush(col);
     }
 
+    a = "backgroundImage";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setMapBackgroundImage(parseHREF(s));
+
+    a = "backgroundImageName";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        model->setMapBackgroundImageName(s);
+    }
+
     a = "defaultFont";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {

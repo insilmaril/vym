@@ -32,8 +32,12 @@ BackgroundDialog::BackgroundDialog(VymModel *m)
 
 int BackgroundDialog::exec()
 {
-    return QDialog::exec();
+    int r = QDialog::exec();
+    if (ui.useBackgroundImageCheckbox->isChecked())
+        model->setMapBackgroundImageName(ui.imageNameLineEdit->text());
+    return r;
 }
+
 void BackgroundDialog::selectBackgroundColor()
 {
     QColor col = QColorDialog::getColor(

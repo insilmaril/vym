@@ -698,6 +698,7 @@ class VymModel : public TreeModel {
     void setMapBackgroundColor(QColor);
     QColor getMapBackgroundColor();
     bool setMapBackgroundImage(const QString &);
+    void setMapBackgroundImageName(const QString &);
     void unsetMapBackgroundImage();
     bool hasMapBackgroundImage();
     QString mapBackgroundImageName();

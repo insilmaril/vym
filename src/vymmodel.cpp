@@ -299,12 +299,12 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
         // Save background image
         if (usesBackgroundImage && !backgroundImage.isNull()) {
-            QString fn = "images/" + backgroundImageName;    // FIXME-0 use unique name and orgFilename. Load BG img again!
+            QString fn = "images/" + backgroundImageName;    // FIXME-0 use unique name and orgFilename.
             if (!backgroundImage.save(tmpdir + fn, "PNG", 100))
                 qWarning() << "VymModel::saveToDir failed to save background image to " << fn;
             else {
                 mapAttr +=
-                    xml.attribut("backgroundImage", fn) +
+                    xml.attribut("backgroundImage", "file:" + fn) +
                     xml.attribut("backgroundImageName", backgroundImageName);
             }
         }
@@ -5315,15 +5315,20 @@ bool VymModel::setMapBackgroundImage( const QString &fn) // FIXME-2 missing save
     backgroundImage.load(fn);
     if (backgroundImage.isNull()) {
         usesBackgroundImage = false;
-        backgroundImageName.clear();
         return false;
     }
 
     brush.setTextureImage(backgroundImage);
     mapEditor->getScene()->setBackgroundBrush(brush);
     usesBackgroundImage = true;
-    backgroundImageName = basename(fn);
+    if (backgroundImageName.isEmpty())
+        backgroundImageName = basename(fn);
     return true;
+}
+
+void VymModel::setMapBackgroundImageName( const QString &s) // FIXME-2 missing savestate
+{
+    backgroundImageName = s;
 }
 
 void VymModel::unsetMapBackgroundImage() // FIXME-2 missing savestate
