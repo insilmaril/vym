@@ -73,7 +73,7 @@ bool FreeplaneReader::read(QIODevice *device)
     }
     qdbg() << "Ignored elements from readToEnd(): " << ignoredElements.join(",");
 
-    // FIXME-1 implementation missing...
+    // FIXME-2 FreeplaneReader implementation uncomplete: ICON, NOTE, ...
     return !xml.error();
 }
 
@@ -244,6 +244,21 @@ void FreeplaneReader::readNode()
         else if (s == "right")
             model->relinkBranch(lastBranch, mainBranchRight);
     }
+
+    a = "FOLDED";
+    s = xml.attributes().value(a).toString();
+    if (s == "true")
+        lastBranch->toggleScroll();
+
+    a = "COLOR";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        lastBranch->setHeadingColor(QColor(s));
+
+    a = "LINK";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        lastBranch->setURL(s);
 
     while (xml.readNextStartElement()) {
         qdbg() << "FP::readNode   startElement=" << xml.name();
