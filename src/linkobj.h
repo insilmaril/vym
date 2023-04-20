@@ -20,6 +20,7 @@ class LinkObj : public MapObj {
         PolyLine,       //!< Polygon (thick line)
         Parabel,        //!< Parabel
         PolyParabel,    //!< Thick parabel
+        ListDash,       //!< Item list, no real links drawn
         Undefined
     };
 

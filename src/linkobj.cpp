@@ -81,6 +81,9 @@ void LinkObj::delLink()
         case PolyParabel:
             delete (p);
             break;
+        case ListDash:
+            delete (p);
+            break;
         default:
             break;
     }
@@ -139,6 +142,16 @@ void LinkObj::setLinkStyle(Style newStyle)
             pa1.resize(arcsegs + 1);
             pa2.resize(arcsegs + 1);
             break;
+        case ListDash:
+            p = new QGraphicsPolygonItem(this);
+            p->setPen(pen);
+            p->setBrush(QBrush(pen.color()));
+            if (visible)
+                p->show();
+            else
+                p->hide();
+            pa0.resize(3);
+            break;
         default:
             break;
     }
@@ -157,6 +170,8 @@ LinkObj::Style LinkObj::styleFromString(const QString &s)
         return LinkObj::PolyLine;
     else if (s == "StylePolyParabel")
         return LinkObj::PolyParabel;
+    else if (s == "ListDash")
+        return LinkObj::ListDash;
 
     return  LinkObj::Undefined;
 }
@@ -174,6 +189,8 @@ QString LinkObj::styleString(const Style &style)
             return "StylePolyLine";
         case LinkObj::PolyParabel:
             return "StylePolyParabel";
+        case LinkObj::ListDash:
+            return "ListDash";
         default:
             return "StyleUndefined";
     }
@@ -212,6 +229,10 @@ void LinkObj::setLinkColor(QColor col)
             p->setPen(pen);
             break;
         case PolyParabel:
+            p->setBrush(QBrush(linkcolor));
+            p->setPen(pen);
+            break;
+        case ListDash:
             p->setBrush(QBrush(linkcolor));
             p->setPen(pen);
             break;
@@ -265,6 +286,12 @@ void LinkObj::updateVisibility()
                 qDebug() << "LC::updateVis p==0 (PolyParabel) ";
                          //<< treeItem->getHeadingPlain(); // FIXME-4
             break;
+        case ListDash:
+            if (p)
+                p->show();
+            else
+                qDebug() << "LC::updateVis p==0 (PolyLine)"; // FIXME-4
+            break;
         default:
             break;
         }
@@ -286,6 +313,10 @@ void LinkObj::updateVisibility()
                 p->hide();
             break;
         case PolyParabel:
+            if (p)
+                p->hide();
+            break;
+        case ListDash:
             if (p)
                 p->hide();
             break;
@@ -374,6 +405,18 @@ void LinkObj::updateLinkGeometry()
             for (int i = 0; i <= arcsegs; i++)
                 pa0 << QPointF(pa2.at(arcsegs - i));
             p->setPolygon(QPolygonF(pa0));
+            break;
+        case ListDash: {  // FIXME-0 WIP, cont here. Currently size of dash changes :-(
+                          // Width defined in BC:  linkSPaceContainer->setHeading("   ")
+            pa0.clear();
+            // center of LinkContainer, which will contain the list
+            // qDebug() << "LO::updateLG for ListDash p1x= " << p1x << " p2x=" << p2x;
+            pa0 << QPointF(p2x - 5, p2y);
+            pa0 << QPointF(p2x - 5, p2y + 1);
+            pa0 << QPointF(p2x - 15, p2y + 1);
+            pa0 << QPointF(p2x - 15, p2y);
+            p->setPolygon(QPolygonF(pa0));
+            }
             break;
         default:
             qWarning() << "LinkObj::updateLinkGeometry - Unknown LinkStyle in " << __LINE__;

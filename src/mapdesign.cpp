@@ -105,6 +105,7 @@ void MapDesign::init()
 
         linkStyles << LinkObj::NoLink;
         linkStyles << LinkObj::Parabel;
+        linkStyles << LinkObj::ListDash;    // FIXME-0 testing
     } else if (mapDesign == 1) {
         // Rainbow colors depending on depth mapDesign
         // NewBranch: Layout of children branches 
@@ -181,6 +182,8 @@ LinkObj::Style MapDesign::linkStyle(int depth)
     // Special case for now:    // FIXME-3
     // For style PolyParabel or PolyLine in d == 1
     // return Parabel or Line for d > 1
+
+    return linkStyles.tryAt(depth); // FIXME-0 check below...
 
     if (depth < 2)
         return linkStyles.tryAt(depth);
