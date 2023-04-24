@@ -105,6 +105,7 @@ void MapDesign::init()
 
         linkStyles << LinkObj::NoLink;
         linkStyles << LinkObj::Parabel;
+        linkStyles << LinkObj::Parabel;
         linkStyles << LinkObj::ListDash;    // FIXME-0 testing
     } else if (mapDesign == 1) {
         // Rainbow colors depending on depth mapDesign

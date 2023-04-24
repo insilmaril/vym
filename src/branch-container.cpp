@@ -76,6 +76,7 @@ void BranchContainer::init()
     standardFlagRowContainer = nullptr;
     systemFlagRowContainer = nullptr;
 
+    listContainer = nullptr;
     ornamentsContainer->addContainer(headingContainer, Z_HEADING);
 
     ornamentsContainer->setCentralContainer(headingContainer);
@@ -105,6 +106,8 @@ void BranchContainer::init()
 
     imagesContainerAutoLayout = true;
     imagesContainerLayout = FloatingFree;
+
+    useListLayout = false;
 
     tmpLinkedParentContainer = nullptr;
 
@@ -271,7 +274,10 @@ void BranchContainer::createBranchesContainer()
     // Initial setting here, depends on orientation // FIXME-2 needed?
     branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
 
-    innerContainer->addContainer(branchesContainer);
+    if (listContainer)
+        listContainer->addContainer(branchesContainer);
+    else
+        innerContainer->addContainer(branchesContainer);
 
     updateBranchesContainerLayout();
 }
@@ -323,7 +329,10 @@ void BranchContainer::updateBranchesContainer()
                 //linkSpaceContainer->setContainerType(); // FIXME-2
                 linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
 
-                innerContainer->addContainer(linkSpaceContainer);
+                if (listContainer)
+                    listContainer->addContainer(linkSpaceContainer);
+                else
+                    innerContainer->addContainer(linkSpaceContainer);
                 linkSpaceContainer->stackBefore(branchesContainer);
             }
         }
@@ -371,7 +380,7 @@ void BranchContainer::updateChildrenStructure()
     //
     // Usually both inagesContainer and branchesContainer are children of
     // innerContainer.  The layout of innerContainer is either Horizontal or
-    // BoundingFloats outerContainer is only needed in corner case d)
+    // BoundingFloats. outerContainer is only needed in corner case d)
     //
     // a) No FloatingBounded children
     //    - No outerContainer
@@ -400,9 +409,8 @@ void BranchContainer::updateChildrenStructure()
     //    - imagesContainer is FloatingBounded
 
     if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
-        // a) No FloatingBounded children
+        // a) No FloatingBounded images or branches
         deleteOuterContainer();
-        innerContainer->setLayout(Horizontal);
     } else if (branchesContainerLayout == FloatingBounded && imagesContainerLayout != FloatingBounded) {
         // b) Only branches are FloatingBounded
         deleteOuterContainer();
@@ -419,6 +427,43 @@ void BranchContainer::updateChildrenStructure()
         // e) remaining cases
         deleteOuterContainer();
         innerContainer->setLayout(FloatingBounded);
+    }
+
+    // FIXME-0 test ListDash. Introduce "list" flag later, for now use special heading
+    if (branchItem && branchItem->getHeadingPlain() == "test")
+        useListLayout = true;
+    else
+        useListLayout = false;
+
+    if (useListLayout) {
+        if (!listContainer) {
+            // Enable vertical layout to show the listContainer below ornamentsCOntainer
+            innerContainer->setLayout(Vertical);
+            innerContainer->setVerticalAlignment(AlignedLeft);
+
+            // listContainer has one linkSpaceCOntainer left of branchesContainer
+            // and is below ornamentsContainer
+            listContainer = new Container;
+            listContainer->containerType = Container::ListContainer;
+            listContainer->setLayout(Horizontal);
+            if (linkSpaceContainer)
+                listContainer->addContainer(linkSpaceContainer);
+            if (branchesContainer)
+                listContainer->addContainer(branchesContainer);
+            qDebug() << "innerCont.=" << innerContainer;
+            innerContainer->addContainer(listContainer);
+        }
+    } else {
+        // No list layout
+        if (listContainer) {
+            innerContainer->setLayout(Horizontal);
+            if (linkSpaceContainer)
+                innerContainer->addContainer(linkSpaceContainer);
+            if (branchesContainer)
+                innerContainer->addContainer(branchesContainer);
+            delete listContainer;
+            listContainer = nullptr;
+        }
     }
 }
 

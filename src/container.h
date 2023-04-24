@@ -34,6 +34,7 @@ class Container : public QGraphicsRectItem {
         ImagesContainer,
         InnerContainer,
         Link,
+        ListContainer,
         OrnamentsContainer,
         OuterContainer,
         Selection,

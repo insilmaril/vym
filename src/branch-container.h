@@ -179,6 +179,7 @@ class BranchContainer : public SelectableContainer {
     // even before containers are created on demand
     Layout imagesContainerLayout;
     Layout branchesContainerLayout;
+    bool useListLayout;
     VerticalAlignment branchesContainerVerticalAlignment;
     QBrush branchesContainerBrush;
 
@@ -189,6 +190,7 @@ class BranchContainer : public SelectableContainer {
     LinkContainer *linkContainer;       // uplink to parent
     Container *branchesContainer;       // Container with children branches
     Container *imagesContainer;         // Container with children images
+    Container *listContainer;           // if lists are used, contains linkSpaceContainer and branchesContainer
     Container *ornamentsContainer;      // Flags and heading
     Container *innerContainer;          // Ornaments (see above) and children branches
     Container *outerContainer;          // Used only with FloatingBounded images and vertical branches
