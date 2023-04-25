@@ -127,8 +127,9 @@ BranchContainer* BranchContainer::parentBranchContainer()
     p = p->parentContainer();
     if (!p) return nullptr;
 
-    // parent of branchesContainer has type InnerContainer
-    if (p->containerType != InnerContainer) return nullptr;
+    // parent of branchesContainer has type InnerContainer or ListContainer
+    if (p->containerType != InnerContainer && p->containerType != ListContainer)
+        return nullptr;
 
     // Parent of parent of branchesContainer: inner/outerContainer
     p = p->parentContainer();
@@ -176,9 +177,12 @@ void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original pa
     originalOrientation = orientation;
     originalFloating = isFloating();
     if (parentItem()) {
+        /*
+        qDebug() << "BC:setOrient of " << info();
+        qDebug() << "        parent: " << parentBranchContainer();
+        qDebug() << "        parent: " << parentBranchContainer()->info() <<originalParentPos;
+        */
         originalParentPos = parentBranchContainer()->downLinkPos();
-        //qDebug() << "BC:setOrient of " << info();
-        //qDebug() << "        parent: " << parentBranchContainer()->info() <<originalParentPos;
     }
 }
 
@@ -701,7 +705,7 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
 
 QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
 {
-    if (frameType(true) != FrameContainer::NoFrame) {
+    if (frameType(true) != FrameContainer::NoFrame && frameType(false) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
             // Framed MapCenter: Use center of frame
             return ornamentsContainer->mapToScene(
@@ -769,7 +773,12 @@ void BranchContainer::updateUpLink()
             upLink->setDownLinkPos(
                     upLinkParent->sceneTransform().inverted().map(downLink_sp));
         } else {
-            upLinkParent_sp = pbc->downLinkPos(orientation);
+            // Special case: If I am in a list, use my own 
+            // upper left corner and width of linkSpaceContainer as reference
+            if (pbc->useListLayout)
+                upLinkParent_sp = QPointF(100, 0);
+            else
+                upLinkParent_sp = pbc->downLinkPos(orientation);
 
             pbc->getLinkContainer()->addLink(upLink);
 
@@ -975,12 +984,14 @@ FrameContainer::FrameType BranchContainer::frameType(const bool &useInnerFrame)
     if (useInnerFrame) {
         if (innerFrame)
             return innerFrame->frameType();
-        return FrameContainer::NoFrame;
+        else
+            return FrameContainer::NoFrame;
     }
+
     if (outerFrame)
         return outerFrame->frameType();
-
-    return FrameContainer::NoFrame;
+    else
+        return FrameContainer::NoFrame;
 }
 
 QString BranchContainer::frameTypeString(const bool &useInnerFrame)

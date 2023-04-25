@@ -346,14 +346,14 @@ void LinkObj::updateLinkGeometry()
     if (style == NoLink)
         return;
 
-    double p1x = upLinkPosParent.x(); // Link is drawn from P1 to P2
-    double p1y = upLinkPosParent.y();
+    double par_x = upLinkPosParent.x(); // Link is drawn from P1 to P2
+    double par_y = upLinkPosParent.y();
 
-    double p2x = upLinkPosSelf.x();
-    double p2y = upLinkPosSelf.y();
+    double self_x = upLinkPosSelf.x();
+    double self_y = upLinkPosSelf.y();
 
-    double vx = p2x - p1x;
-    double vy = p2y - p1y;
+    double vx = self_x - par_x;
+    double vy = self_y - par_y;
 
     int z = -20000;
     // FIXME-3 Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
@@ -377,10 +377,10 @@ void LinkObj::updateLinkGeometry()
     // Draw the link
     switch (style) {
         case Line:
-            l->setLine(p1x, p1y, p2x, p2y);
+            l->setLine(par_x, par_y, self_x, self_y);
             break;
         case Parabel:
-            parabel(pa0, p1x, p1y, p2x, p2y);
+            parabel(pa0, par_x, par_y, self_x, self_y);
             for (int i = 0; i < segments.size(); ++i) {
                 segments.at(i)->setLine(QLineF(
                             pa0.at(i).x(),
@@ -391,14 +391,14 @@ void LinkObj::updateLinkGeometry()
             break;
         case PolyLine:
             pa0.clear();
-            pa0 << QPointF(p1x + tp.x(), p1y + tp.y());
-            pa0 << QPointF(p1x - tp.x(), p1y - tp.y());
-            pa0 << QPointF(p2x,p2y);
+            pa0 << QPointF(par_x + tp.x(), par_y + tp.y());
+            pa0 << QPointF(par_x - tp.x(), par_y - tp.y());
+            pa0 << QPointF(self_x, self_y);
             p->setPolygon(QPolygonF(pa0));
             break;
         case PolyParabel:
-            parabel(pa1, p1x + tp.x(), p1y + tp.y(), p2x, p2y);
-            parabel(pa2, p1x - tp.x(), p1y - tp.y(), p2x, p2y);
+            parabel(pa1, par_x + tp.x(), par_y + tp.y(), self_x, self_y);
+            parabel(pa2, par_x - tp.x(), par_y - tp.y(), self_x, self_y);
             pa0.clear();
             for (int i = 0; i <= arcsegs; i++)
                 pa0 << QPointF(pa1.at(i));
@@ -410,11 +410,15 @@ void LinkObj::updateLinkGeometry()
                           // Width defined in BC:  linkSPaceContainer->setHeading("   ")
             pa0.clear();
             // center of LinkContainer, which will contain the list
-            // qDebug() << "LO::updateLG for ListDash p1x= " << p1x << " p2x=" << p2x;
-            pa0 << QPointF(p2x - 5, p2y);
-            pa0 << QPointF(p2x - 5, p2y + 1);
-            pa0 << QPointF(p2x - 15, p2y + 1);
-            pa0 << QPointF(p2x - 15, p2y);
+            // qDebug() << "LO::updateLG for ListDash par_x= " << par_x << " self_x=" << self_x;
+            pa0 << QPointF(self_x, self_y);
+            pa0 << QPointF(par_x, par_y);
+            /*
+            pa0 << QPointF(self_x - 5, self_y);
+            pa0 << QPointF(self_x - 5, self_y + 1);
+            pa0 << QPointF(self_x - 15, self_y + 1);
+            pa0 << QPointF(self_x - 15, self_y);
+            */
             p->setPolygon(QPolygonF(pa0));
             }
             break;
