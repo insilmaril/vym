@@ -45,7 +45,7 @@ QVariant SlideModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags SlideModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return QFlag(0);
 
     return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
