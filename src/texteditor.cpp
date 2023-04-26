@@ -376,7 +376,7 @@ void TextEditor::setupEditActions()
     editMenu->addAction(a);
 
     editMenu->addSeparator();
-    a = new QAction(QPixmap(":/editcopy.png"), tr("&Copy"), this);
+    a = new QAction(QPixmap(":/editcopy.svg"), tr("&Copy"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_C);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textCopy", shortcutScope, a, tag);

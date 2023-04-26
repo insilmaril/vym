@@ -1147,7 +1147,7 @@ void Main::setupFileActions()
     QMenu *fileMenu = menuBar()->addMenu(tag);
 
     QAction *a;
-    a = new QAction(QPixmap(":/filenew.png"), tr("&New map", "File menu"),
+    a = new QAction(QPixmap(":/filenew.svg"), tr("&New map", "File menu"),
                     this);
     switchboard.addSwitch("fileMapNew", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
@@ -1155,7 +1155,7 @@ void Main::setupFileActions()
     fileMenu->addAction(a);
     actionFileNew = a;
 
-    a = new QAction(QPixmap(":/filenewcopy.png"),
+    a = new QAction(QPixmap(":/filenewcopy.svg"),
                     tr("&Copy to new map", "File menu"), this);
     switchboard.addSwitch("fileMapNewCopy", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNewCopy()));
@@ -1182,7 +1182,7 @@ void Main::setupFileActions()
     fileLastMapsMenu = fileMenu->addMenu(tr("Open Recent", "File menu"));
     fileMenu->addSeparator();
 
-    a = new QAction(QPixmap(":/filesave.png"), tr("&Save...", "File menu"),
+    a = new QAction(QPixmap(":/filesave.svg"), tr("&Save...", "File menu"),
                     this);
     switchboard.addSwitch("fileMapSave", shortcutScope, a, tag);
     cloneActionMapEditor(a, Qt::CTRL + Qt::Key_S);
@@ -1191,7 +1191,7 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
     actionFileSave = a;
 
-    a = new QAction(QPixmap(":/filesaveas.png"), tr("Save &As...", "File menu"),
+    a = new QAction(QPixmap(":/filesaveas.svg"), tr("Save &As...", "File menu"),
                     this);
     fileMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
@@ -1354,7 +1354,7 @@ void Main::setupFileActions()
 
     fileMenu->addSeparator();
 
-    a = new QAction(QPixmap(":/fileprint.png"), tr("&Print") + QString("..."),
+    a = new QAction(QPixmap(":/fileprint.svg"), tr("&Print") + QString("..."),
                     this);
     a->setShortcut(Qt::CTRL + Qt::Key_P);
     switchboard.addSwitch("fileMapPrint", shortcutScope, a, tag);
@@ -1370,7 +1370,7 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileCloseMap()));
     fileMenu->addAction(a);
 
-    a = new QAction(QPixmap(":/exit.png"), tr("E&xit", "File menu"), this);
+    a = new QAction(QPixmap(":/exit.svg"), tr("E&xit", "File menu"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_Q);
     switchboard.addSwitch("fileExit", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExitVYM()));
@@ -1418,7 +1418,7 @@ void Main::setupEditActions()
     actionRedo = a;
 
     editMenu->addSeparator();
-    a = new QAction(QPixmap(":/editcopy.png"), tr("&Copy", "Edit menu"), this);
+    a = new QAction(QPixmap(":/edit-copy.svg"), tr("&Copy", "Edit menu"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_C);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
@@ -1429,7 +1429,7 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editCopy()));
     actionCopy = a;
 
-    a = new QAction(QPixmap(":/editcut.png"), tr("Cu&t", "Edit menu"), this);
+    a = new QAction(QPixmap(":/edit-cut.svg"), tr("Cu&t", "Edit menu"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_X);
     a->setEnabled(false);
     a->setShortcutContext(Qt::WidgetShortcut);
@@ -1442,7 +1442,7 @@ void Main::setupEditActions()
     addAction(a);
     actionCut = a;
 
-    a = new QAction(QPixmap(":/editpaste.png"), tr("&Paste", "Edit menu"),
+    a = new QAction(QPixmap(":/edit-paste.svg"), tr("&Paste", "Edit menu"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(editPaste()));
     a->setShortcut(Qt::CTRL + Qt::Key_V);
@@ -2167,7 +2167,7 @@ void Main::setupSelectActions()
     actionSelectNothing = a;
 
     tag = tr("Search functions", "Shortcuts");
-    a = new QAction(QPixmap(":/find.png"), tr("Find...", "Edit menu"), this);
+    a = new QAction(QPixmap(":/find.svg"), tr("Find...", "Edit menu"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_F);
     selectMenu->addAction(a);
     switchboard.addSwitch("mapFind", shortcutScope, a, tag);
@@ -2175,7 +2175,7 @@ void Main::setupSelectActions()
     actionListFiles.append(a);
     actionFind = a;
 
-    a = new QAction(QPixmap(":/find.png"), tr("Find...", "Edit menu"), this);
+    a = new QAction(QPixmap(":/find.svg"), tr("Find...", "Edit menu"), this);
     a->setShortcut(Qt::Key_Slash);
     selectMenu->addAction(a);
     switchboard.addSwitch("mapFindAlt", shortcutScope, a, tag);
