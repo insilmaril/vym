@@ -426,7 +426,7 @@ void TextEditor::setupFormatActions()
     actionFormatUseFixedFont = a;
 
     // Original icon: ./share/icons/oxygen/22x22/actions/format-text-color.png
-    a = new QAction(QPixmap(":/formatrichtext.png"), tr("&Richtext"), this);
+    a = new QAction(QPixmap(":/formatrichtext.svg"), tr("&Richtext"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_R);
     //    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable(true);

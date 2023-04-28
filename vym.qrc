@@ -107,7 +107,7 @@
     <file alias="formatcolorpicker.png">icons/formatcolorpicker.png</file>
     <file alias="formatcolorsubtree.png">icons/formatcolorsubtree.png</file>
     <file alias="formatfixedfont.png">icons/formatfixedfont.png</file>
-    <file alias="formatrichtext.png">icons/formatrichtext.png</file>
+    <file alias="formatrichtext.svg">icons/formatrichtext.svg</file>
     <file alias="formatvarfont.png">icons/formatvarfont.png</file>
     <file alias="headingeditor.png">icons/headingeditor.png</file>
     <file alias="history.png">icons/history.png</file>
