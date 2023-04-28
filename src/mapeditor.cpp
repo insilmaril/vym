@@ -263,7 +263,7 @@ void MapEditor::panView()
     }
 }
 
-void MapEditor::scrollTo(const QModelIndex &index)  // FIXME-2 also consider images
+void MapEditor::scrollTo(const QModelIndex &index)
 {
     if (index.isValid()) {
         TreeItem *ti = static_cast<TreeItem *>(index.internalPointer());
@@ -274,7 +274,7 @@ void MapEditor::scrollTo(const QModelIndex &index)  // FIXME-2 also consider ima
             scroll = true;
         }
 
-        // FIXME-2 ME::scrollTo Also check for images, not just branches
+        // FIXME-2 ME::scrollTo Also check for images, not only branches
         // FIXME-2 Moving xlink ctrl point to upper edge of view can cause infinite scrolling
 
         if (scroll) {
@@ -296,7 +296,9 @@ void MapEditor::setScrollBarPosTarget(QRectF rect)
     // Prepare scrolling
     qreal width = viewport()->width();
     qreal height = viewport()->height();
-    QRectF viewRect = transform().mapRect(rect);
+    QRectF viewRect = transform().
+        scale(zoomFactorTarget, zoomFactorTarget).
+        mapRect(rect);
 
     qreal left = horizontalScrollBar()->value();
     qreal right = left + width;
@@ -488,6 +490,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
                                     const qreal &at, const int duration,
                                     const QEasingCurve &easingCurve)
 {
+    qDebug() << "ME::setViewCenterTarget p= " << p;
     viewCenterTarget = p;
     zoomFactorTarget = zft;
     angleTarget = at;
@@ -540,8 +543,10 @@ void MapEditor::setViewCenterTarget()// FIXME-2 add ImageItem and -Container (ce
 {
     MapItem *selti = (MapItem *)(model->getSelectedItem());
     if (selti) {
-        if (selti->hasTypeBranch())
-            setViewCenterTarget(((BranchItem*)selti)->getBranchContainer()->getHeadingContainer()->rect().center(), 1, 0);
+        if (selti->hasTypeBranch()) {
+            Container *c = ((BranchItem*)selti)->getBranchContainer()->getHeadingContainer();
+            setViewCenterTarget(c->mapToScene(c->rect().center()), 1, 0);
+        }
     }
 }
 
