@@ -861,25 +861,28 @@ Container::Layout BranchContainer::getImagesContainerLayout()
     return imagesContainerLayout;
 }
 
-void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
+void BranchContainer::setBranchesContainerLayout(const Layout &layoutNew)
 {
-    branchesContainerLayout = ltype;
-    // qDebug() << "BC::setBCLayout " << ltype << getName();// << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
+    // FIXME-0 if (branchesContainerLayout != layoutNew) {
+    if (true) {
+        branchesContainerLayout = layoutNew;
+        // qDebug() << "BC::setBCLayout " << layoutNew << getName();// << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
 
-    if (branchesContainer) { // FIXME-2 only use this if switching to floating*
-        // Keep current positions
-        QPointF oc_pos = ornamentsContainer->pos();
-        QPointF bcc_pos = branchesContainer->pos() - oc_pos;
+        if (branchesContainer) {
+            if (layoutNew == FloatingFree || layoutNew == FloatingBounded) {
+                // Keep current positions
+                QPointF oc_pos = ornamentsContainer->pos();
+                QPointF bcc_pos = branchesContainer->pos() - oc_pos;
 
-        foreach (QGraphicsItem *child, branchesContainer->childItems()) {
-            BranchContainer *bc = (BranchContainer*)child;
-            bc->setPos( bc->pos() + bcc_pos);
+                foreach (QGraphicsItem *child, branchesContainer->childItems()) {
+                    BranchContainer *bc = (BranchContainer*)child;
+                    bc->setPos( bc->pos() + bcc_pos);
+                }
+
+                setPos (pos() +  oc_pos);
+            }
+            branchesContainer->setLayout(branchesContainerLayout);
         }
-
-        if (ltype == FloatingFree)
-            setPos (pos() +  oc_pos);
-
-        branchesContainer->setLayout(branchesContainerLayout);
     }
 }
 
