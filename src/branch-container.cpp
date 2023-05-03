@@ -433,15 +433,17 @@ void BranchContainer::updateChildrenStructure()
         innerContainer->setLayout(FloatingBounded);
     }
 
+    /* FIXME-2 debugging
     QString h ="?";
     if (branchItem) h = branchItem->getHeadingPlain();
     qDebug() << "BC::updateChildrenStructure of " << h << layout;
+    */
     // Structure for bullet point list layouts
     BranchContainer *pbc = parentBranchContainer();
     if (pbc && pbc->branchesContainerLayout == List) {
         // Parent has list layout
         if (!bulletPointContainer) {
-            qDebug() << "... Creating bulletPointContainer";
+            //qDebug() << "... Creating bulletPointContainer";
             bulletPointContainer = new HeadingContainer;    // FIXME-2 create new type or re-use LinkObj and set type 
             // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
             bulletPointContainer->setHeading(" • ");
@@ -465,7 +467,7 @@ void BranchContainer::updateChildrenStructure()
 
             // listContainer has one linkSpaceCOntainer left of branchesContainer
             // and is below ornamentsContainer
-            qDebug() << "... Creating listContainer";
+            //qDebug() << "... Creating listContainer";
             listContainer = new Container;
             listContainer->containerType = Container::ListContainer;
             listContainer->setLayout(Horizontal);
@@ -473,7 +475,6 @@ void BranchContainer::updateChildrenStructure()
                 listContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
                 listContainer->addContainer(branchesContainer);
-            qDebug() << "BC::updateChildrenStructure  innerCont.=" << innerContainer;
             innerContainer->addContainer(listContainer);
         }
     } else {
@@ -863,27 +864,10 @@ Container::Layout BranchContainer::getImagesContainerLayout()
 
 void BranchContainer::setBranchesContainerLayout(const Layout &layoutNew)
 {
-    // FIXME-0 if (branchesContainerLayout != layoutNew) {
-    if (true) {
-        branchesContainerLayout = layoutNew;
-        // qDebug() << "BC::setBCLayout " << layoutNew << getName();// << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
+    branchesContainerLayout = layoutNew;
 
-        if (branchesContainer) {
-            if (layoutNew == FloatingFree || layoutNew == FloatingBounded) {
-                // Keep current positions
-                QPointF oc_pos = ornamentsContainer->pos();
-                QPointF bcc_pos = branchesContainer->pos() - oc_pos;
-
-                foreach (QGraphicsItem *child, branchesContainer->childItems()) {
-                    BranchContainer *bc = (BranchContainer*)child;
-                    bc->setPos( bc->pos() + bcc_pos);
-                }
-
-                setPos (pos() +  oc_pos);
-            }
-            branchesContainer->setLayout(branchesContainerLayout);
-        }
-    }
+    if (branchesContainer)
+        branchesContainer->setLayout(branchesContainerLayout);
 }
 
 Container::Layout BranchContainer::getBranchesContainerLayout()
@@ -1238,7 +1222,7 @@ void BranchContainer::updateStyles(
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    qDebug() << "BC::updateStyles of " << info();
+    //qDebug() << "BC::updateStyles of " << info();
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->getMapDesign();
