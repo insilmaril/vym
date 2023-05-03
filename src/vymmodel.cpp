@@ -299,7 +299,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
         // Save background image
         if (usesBackgroundImage && !backgroundImage.isNull()) {
-            QString fn = "images/" + backgroundImageName;    // FIXME-0 use unique name and orgFilename.
+            QString fn = "images/image-0-background";
             if (!backgroundImage.save(tmpdir + fn, "PNG", 100))
                 qWarning() << "VymModel::saveToDir failed to save background image to " << fn;
             else {
