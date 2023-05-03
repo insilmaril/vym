@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>324</width>
-    <height>598</height>
+    <height>626</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabFrame">
       <property name="minimumSize">
@@ -437,6 +437,16 @@
                   <widget class="QRadioButton" name="branchesLayoutFreeButton">
                    <property name="text">
                     <string>Floating free</string>
+                   </property>
+                   <attribute name="buttonGroup">
+                    <string notr="true">branchesLayoutsButtonGroup</string>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="branchesLayoutListButton">
+                   <property name="text">
+                    <string>List</string>
                    </property>
                    <attribute name="buttonGroup">
                     <string notr="true">branchesLayoutsButtonGroup</string>

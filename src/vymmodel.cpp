@@ -2555,6 +2555,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
                 if (layout != Container::UndefinedLayout)
                     bc->setBranchesContainerLayout(layout);
             }
+            bc->updateStyles(MapDesign::NotCreated, MapDesign::NotRelinked); // FIXME-0 needed?
         }
     }
     reposition();
@@ -4218,7 +4219,7 @@ void VymModel::colorBranch(QColor c)    // FIXME-2 evtl. update link color
     mapEditor->getScene()->update();
 }
 
-void VymModel::colorSubtree(QColor c, BranchItem *bi)   // FIXME-2 evtl. update link color
+void VymModel::colorSubtree(QColor c, BranchItem *bi)  // FIXME-0 moves heading by 9 px  // FIXME-2 evtl. update link color
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 

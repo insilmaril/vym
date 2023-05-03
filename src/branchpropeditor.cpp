@@ -96,6 +96,9 @@ void BranchPropertyEditor::updateContainerLayoutButtons()
         case Container::FloatingFree:
             ui.branchesLayoutFreeButton->setChecked(true);
             break;
+        case Container::List:
+            ui.branchesLayoutListButton->setChecked(true);
+            break;
         default:
             qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(bc->getLayoutString(bc->getBranchesContainerLayout()));
             qDebug() << "branch=" << branchItem->getHeadingPlain();
@@ -470,6 +473,8 @@ void BranchPropertyEditor::childrenLayoutChanged()
                 model->setBranchesLayout("FloatingBounded");
             else if (button == ui.branchesLayoutFreeButton)
                 model->setBranchesLayout("FloatingFree");
+            else if (button == ui.branchesLayoutListButton)
+                model->setBranchesLayout("List");
             else
                 qWarning() << "BPE::childrenLayout changed - unknown branches layout: " << button;
         }
@@ -607,6 +612,8 @@ void BranchPropertyEditor::connectSignals()
             this, SLOT(childrenLayoutChanged()));
     connect(ui.branchesLayoutFreeButton, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
+    connect(ui.branchesLayoutListButton, SIGNAL(clicked()),
+            this, SLOT(childrenLayoutChanged()));
     connect(ui.imagesAutoLayoutCheckBox, SIGNAL(clicked()),
             this, SLOT(childrenLayoutChanged()));
     connect(ui.imagesLayoutVerticalButton, SIGNAL(clicked()),
@@ -674,6 +681,7 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.branchesLayoutHorizontalButton, 0, 0, 0);
     disconnect(ui.branchesLayoutBoundedButton, 0, 0, 0);
     disconnect(ui.branchesLayoutFreeButton, 0, 0, 0);
+    disconnect(ui.branchesLayoutListButton, 0, 0, 0);
     disconnect(ui.imagesAutoLayoutCheckBox, 0, 0, 0);
     disconnect(ui.imagesLayoutVerticalButton, 0, 0, 0);
     disconnect(ui.imagesLayoutHorizontalButton, 0, 0, 0);

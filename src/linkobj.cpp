@@ -410,15 +410,10 @@ void LinkObj::updateLinkGeometry()
                           // Width defined in BC:  linkSPaceContainer->setHeading("   ")
             pa0.clear();
             // center of LinkContainer, which will contain the list
-            // qDebug() << "LO::updateLG for ListDash par_x= " << par_x << " self_x=" << self_x;
-            pa0 << QPointF(self_x, self_y);
-            pa0 << QPointF(par_x, par_y);
-            /*
-            pa0 << QPointF(self_x - 5, self_y);
-            pa0 << QPointF(self_x - 5, self_y + 1);
-            pa0 << QPointF(self_x - 15, self_y + 1);
-            pa0 << QPointF(self_x - 15, self_y);
-            */
+            // FIXME-2 qDebug() << "LO::updateLG for ListDash bPP=" << bulletPointPos;
+            //pa0 << QPointF(bulletPointPos + QPointF(-4, 0) + QPointF(self_x, self_y));
+            pa0 << QPointF(bulletPointPos + QPointF( 4, 0));
+            pa0 << QPointF(bulletPointPos + QPointF(-4, 0));
             p->setPolygon(QPolygonF(pa0));
             }
             break;
@@ -441,6 +436,11 @@ void LinkObj::setUpLinkPosSelf(const QPointF& p)
 void LinkObj::setDownLinkPos(const QPointF& p)
 {
     downLinkPos= p;
+}
+
+void LinkObj::setBulletPointPos(const QPointF& p)
+{
+    bulletPointPos= p;
 }
 
 void LinkObj::parabel(QPolygonF &ya, qreal p1x, qreal p1y, qreal p2x,

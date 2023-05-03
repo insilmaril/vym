@@ -191,6 +191,7 @@ Container::Layout Container::getLayoutFromString(const QString &s)
     if (s == "BoundingFloats") return BoundingFloats;
     if (s == "FloatingBounded") return FloatingBounded;
     if (s == "FloatingFree") return FloatingFree;
+    if (s == "List") return List;
     return UndefinedLayout;
 }
 
@@ -212,6 +213,9 @@ QString Container::getLayoutString(const Layout &l)
             break;
         case FloatingFree:
             r = "FloatingFree";
+            break;
+        case List:
+            r = "List";
             break;
         case UndefinedLayout:
             r = "UndefinedLayout";
@@ -574,6 +578,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
             } // Horizontal layout
             break;
 
+        case List:
         case Vertical: {
                 qreal h_total = 0;
                 qreal w_max = 0;

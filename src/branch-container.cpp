@@ -77,6 +77,8 @@ void BranchContainer::init()
     systemFlagRowContainer = nullptr;
 
     listContainer = nullptr;
+    bulletPointContainer = nullptr;
+
     ornamentsContainer->addContainer(headingContainer, Z_HEADING);
 
     ornamentsContainer->setCentralContainer(headingContainer);
@@ -106,8 +108,6 @@ void BranchContainer::init()
 
     imagesContainerAutoLayout = true;
     imagesContainerLayout = FloatingFree;
-
-    useListLayout = false;
 
     tmpLinkedParentContainer = nullptr;
 
@@ -277,7 +277,6 @@ void BranchContainer::createBranchesContainer()
 
     // Initial setting here, depends on orientation // FIXME-2 needed?
     branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
-
     if (listContainer)
         listContainer->addContainer(branchesContainer);
     else
@@ -302,7 +301,7 @@ Container* BranchContainer::getBranchesContainer()
     return branchesContainer;
 }
 
-void BranchContainer::updateBranchesContainer()
+void BranchContainer::updateBranchesContainer() // FIXME-0 delete listContainer, too?
 {
     if (branchCount() == 0) {
         // no children branches, remove unused containers
@@ -337,6 +336,7 @@ void BranchContainer::updateBranchesContainer()
                     listContainer->addContainer(linkSpaceContainer);
                 else
                     innerContainer->addContainer(linkSpaceContainer);
+
                 linkSpaceContainer->stackBefore(branchesContainer);
             }
         }
@@ -433,13 +433,31 @@ void BranchContainer::updateChildrenStructure()
         innerContainer->setLayout(FloatingBounded);
     }
 
-    // FIXME-0 test ListDash. Introduce "list" flag later, for now use special heading
-    if (branchItem && branchItem->getHeadingPlain() == "test")
-        useListLayout = true;
-    else
-        useListLayout = false;
+    QString h ="?";
+    if (branchItem) h = branchItem->getHeadingPlain();
+    qDebug() << "BC::updateChildrenStructure of " << h << layout;
+    // Structure for bullet point list layouts
+    BranchContainer *pbc = parentBranchContainer();
+    if (pbc && pbc->branchesContainerLayout == List) {
+        // Parent has list layout
+        if (!bulletPointContainer) {
+            qDebug() << "... Creating bulletPointContainer";
+            bulletPointContainer = new HeadingContainer;    // FIXME-2 create new type or re-use LinkObj and set type 
+            // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
+            bulletPointContainer->setHeading(" • ");
+            bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
+            ornamentsContainer->addContainer(bulletPointContainer);
+            bulletPointContainer->stackBefore(ornamentsContainer->childContainers().first());
+        }
+    } else {
+        // Parent has no list layout
+        if (bulletPointContainer) {
+            delete bulletPointContainer;
+            bulletPointContainer = nullptr;
+        }
+    }
 
-    if (useListLayout) {
+    if (branchesContainerLayout == List) {
         if (!listContainer) {
             // Enable vertical layout to show the listContainer below ornamentsCOntainer
             innerContainer->setLayout(Vertical);
@@ -447,6 +465,7 @@ void BranchContainer::updateChildrenStructure()
 
             // listContainer has one linkSpaceCOntainer left of branchesContainer
             // and is below ornamentsContainer
+            qDebug() << "... Creating listContainer";
             listContainer = new Container;
             listContainer->containerType = Container::ListContainer;
             listContainer->setLayout(Horizontal);
@@ -454,11 +473,10 @@ void BranchContainer::updateChildrenStructure()
                 listContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
                 listContainer->addContainer(branchesContainer);
-            qDebug() << "innerCont.=" << innerContainer;
+            qDebug() << "BC::updateChildrenStructure  innerCont.=" << innerContainer;
             innerContainer->addContainer(listContainer);
         }
     } else {
-        // No list layout
         if (listContainer) {
             innerContainer->setLayout(Horizontal);
             if (linkSpaceContainer)
@@ -705,12 +723,14 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
 
 QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
 {
-    if (frameType(true) != FrameContainer::NoFrame && frameType(false) != FrameContainer::NoFrame) {
+    if (frameType(true) != FrameContainer::NoFrame ||
+        frameType(false) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
             // Framed MapCenter: Use center of frame
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->center());
         else {
+
             // Framed branch: Use left or right edge
             switch (orientationChild) {
                 case RightOfParent:
@@ -775,10 +795,7 @@ void BranchContainer::updateUpLink()
         } else {
             // Special case: If I am in a list, use my own 
             // upper left corner and width of linkSpaceContainer as reference
-            if (pbc->useListLayout)
-                upLinkParent_sp = QPointF(100, 0);
-            else
-                upLinkParent_sp = pbc->downLinkPos(orientation);
+            upLinkParent_sp = pbc->downLinkPos(orientation);
 
             pbc->getLinkContainer()->addLink(upLink);
 
@@ -800,7 +817,7 @@ void BranchContainer::updateUpLink()
                 linkContainer->sceneTransform().inverted().map(downLink_sp));
     }
 
-    // Create/delete bottomLine depending on frameType (if not already done)
+    // Create/delete bottomLine depending on frameType (if not already done)    // FIXME-0 duplicate with updateStyles()?
     if (containerType != Container::TmpParent) {
         if (frameType(true) == FrameContainer::NoFrame)
             upLink->createBottomLine();
@@ -847,12 +864,12 @@ Container::Layout BranchContainer::getImagesContainerLayout()
 void BranchContainer::setBranchesContainerLayout(const Layout &ltype)
 {
     branchesContainerLayout = ltype;
+    // qDebug() << "BC::setBCLayout " << ltype << getName();// << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
 
     if (branchesContainer) { // FIXME-2 only use this if switching to floating*
         // Keep current positions
         QPointF oc_pos = ornamentsContainer->pos();
         QPointF bcc_pos = branchesContainer->pos() - oc_pos;
-        //qDebug() << "BC::setBCLayout " << getName() << " oc_pos=" << oc_pos << "bcc_pos=" << bcc_pos;
 
         foreach (QGraphicsItem *child, branchesContainer->childItems()) {
             BranchContainer *bc = (BranchContainer*)child;
@@ -887,8 +904,8 @@ void BranchContainer::setBranchesContainerBrush(const QBrush &b)
 
 QRectF BranchContainer::getHeadingRect()
 {
-    QPointF p = headingContainer->mapToScene(headingContainer->rect().topLeft());
-    return QRectF(p.x(), p.y(), headingContainer->rect().width(), headingContainer->rect().height());
+    // Returns scene coordinates of bounding rectanble
+    return headingContainer->mapToScene(headingContainer->rect()).boundingRect();
 }
 
 void BranchContainer::setRotationHeading(const int &a)
@@ -1218,19 +1235,25 @@ void BranchContainer::updateStyles(
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    //qDebug() << "BC::updateStyles of " << info() << "mode=" << updateMode;
+    qDebug() << "BC::updateStyles of " << info();
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->getMapDesign();
+    BranchContainer *pbc = parentBranchContainer();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
     if (creationMode != MapDesign::NotCreated)
         md->updateBranchHeadingColor(
                 branchItem, depth);
 
+    // bulletpoint color should match heading color
+    if (bulletPointContainer)
+        bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
+
     // Set frame
     md->updateFrames(this, creationMode, relinkMode, depth); // FIXME-2  depth not really necessary here
 
+    //qDebug() << "BC::updateStyles a) layout=" << branchesContainerLayout;
     updateBranchesContainerLayout();
 
     if (imagesContainerAutoLayout)
@@ -1240,14 +1263,21 @@ void BranchContainer::updateStyles(
         setImagesContainerLayout(imagesContainerLayout);
 
     // Links
-    upLink->setLinkStyle(md->linkStyle(depth));
+    if (pbc) {
+        if (pbc->branchesContainerLayout == List)
+            upLink->setLinkStyle(LinkObj::NoLink);
+        else
+            upLink->setLinkStyle(md->linkStyle(depth));
+    } else
+        // MapCenter has no upLink
+        upLink->setLinkStyle(LinkObj::NoLink);
 
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
         upLink->setLinkColor(headingContainer->getColor());
     else
         upLink->setLinkColor(md->defaultLinkColor());
 
-    // Create/delete bottomline
+    // Create/delete bottomline // FIXME-0 set bottomline depending on existence of upLink above
     if (frameType(true) != FrameContainer::NoFrame &&
             upLink->hasBottomLine())
             upLink->deleteBottomLine();
@@ -1333,7 +1363,7 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    //qDebug() << "BC::reposition " << info();
+    // qDebug() << "BC::reposition " << info();
 
     // Abreviation for depth
     uint depth;

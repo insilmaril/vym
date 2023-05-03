@@ -54,7 +54,8 @@ class MapDesign {
         DepthChanged    = 0x0001,
         PositionChanged = 0x0002,
         ParentChanged   = 0x0004,
-        LinkChanged     = 0x0008};
+        LinkChanged     = 0x0008,
+        ColorChanged    = 0x0010};
 
     /*
     constexpr RelinkMode operator|(RelinkMode X, RelinkMode Y) {

@@ -63,6 +63,7 @@ class LinkObj : public MapObj {
     void setUpLinkPosParent(const QPointF&);  // Upwards link pos, parents end (local coord)
     void setUpLinkPosSelf(const QPointF&);    // Upwards own link pos (local coord)
     void setDownLinkPos(const QPointF&);      // Upwards own link pos (local coord)
+    void setBulletPointPos(const QPointF&);   // Center of bullet point, if List* is used (local coord)
 
     void reposition();
 
@@ -72,6 +73,7 @@ class LinkObj : public MapObj {
     QPointF upLinkPosParent;
     QPointF upLinkPosSelf;
     QPointF downLinkPos;
+    QPointF bulletPointPos;
 
     int thickness_start; // for StylePoly*
     Style style;         // Current style
