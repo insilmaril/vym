@@ -377,7 +377,10 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
-void BranchContainer::updateChildrenStructure()
+void BranchContainer::updateChildrenStructure() // FIXME-0 No links after removing ListLayout
+                                                // When a map with list layout is loaded and 
+                                                // layout is switched to e.g. Vertical, the links 
+                                                // are not drawn. Has to be saved/loaded first
 {
     // The structure of subcontainers within a BranchContainer
     // depends on layouts of imagesContainer and branchesContainer:
