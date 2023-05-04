@@ -38,16 +38,12 @@ Containers
 ----------
 
 - Container either represents a graphical object, e.g. the
-  HeadingContainer is the text of a branch on the map. Or the container
-  has contains (sic!) a set of other containers
+  HeadingContainer, which is the text of a branch on the map. Or the
+  container contains (sic!) a set of other containers
 
 - Containers containing others use ContainerLayouts and hints for
   aligning their subcontainers. This information is used for
   repositioning and defined in the MapDesign
-
-- Containers are no longer part of a BranchObj, but become their own
-  structures. In the end they will probably replace the current MapObj and
-  inherited classes.
 
 - Container classes (like MapObjs previously) don't follow the rule of
   three: This works, because we
@@ -55,15 +51,24 @@ Containers
     - are very care careful to delete containers
     - no containers created on stack
 
+- Structure of containers is dynamic: If a branch has no child
+  branches, there is no need for container elements required for
+  layout (branchesContainer, listContainer, linkspaceContainer, ...)
+
 - Container layout
     - BranchContainer
         - InnerContainer
             - OrnamentsContainer
-                [Optional/Later: systemFlagsContainer]
-                [Optional/Later: userFlagsContainer]
+                [Optional: bulletPointContainer]
+                [Optional: systemFlagsContainer]
+                [Optional: userFlagsContainer]
                 - linkContainer
                 - headingContainer
             - [Optional: linkSpaceContainer]
+            - [Optional: listContainer]
+                - [Optional: linkSpaceContainer]
+                - [Optional: imagesContainer]
+                - [Optional: branchesContainer]
             - [Optional: imagesContainer]
             - [Optional: branchesContainer]
 
@@ -106,7 +111,6 @@ Ideas
     children is again (local) origin.
 
 * Add/remove containers as needed. Examples
-  - Flags, frames, etc. only if set
   - Additional info likes statistics (no. of children, ...)
 
 * Dedicated containers for links
@@ -167,3 +171,19 @@ Next steps
 
 * Let containers inherit QGraphicsItem and use a QRectF for geometry instead of inheriting QGraphicsRectItem
   once drawing boxes is no longer required for debugging
+
+* Cleanup branchContainer structure handling
+
+  Methods only called from one place:
+  -  createBranchesContainer()   from addToBranchesContainer()
+     could be merged with addToBranchesContainer()
+
+  -  updateBranchesContainer()   from reposition()
+     should be merged with updateChildrenStructure()
+
+  linkSpaceContainer and listContainer seem to be existing independent
+  of number of children. Should be created on demand only.    
+
+  adding a branch should always *only* add it to branchesContainer
+  and *afterwards* the structure can be updated and other layout
+  containers be created on demand.

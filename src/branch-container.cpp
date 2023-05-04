@@ -278,7 +278,7 @@ void BranchContainer::createBranchesContainer()
     // Initial setting here, depends on orientation // FIXME-2 needed?
     branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
     if (listContainer)
-        listContainer->addContainer(branchesContainer);
+        listContainer->addContainer(branchesContainer); // FIXME-2 what, if there are no branches yet - then there should not be a listContainer, but it should be created, too? Thus branchesContainer and others would needed to be setup in updateChildrenStructure()...
     else
         innerContainer->addContainer(branchesContainer);
 
@@ -475,7 +475,7 @@ void BranchContainer::updateChildrenStructure()
             if (linkSpaceContainer)
                 listContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
-                listContainer->addContainer(branchesContainer);
+                listContainer->addContainer(branchesContainer); // FIXME-0 what about images?
             innerContainer->addContainer(listContainer);
         }
     } else {
@@ -484,7 +484,7 @@ void BranchContainer::updateChildrenStructure()
             if (linkSpaceContainer)
                 innerContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
-                innerContainer->addContainer(branchesContainer);
+                innerContainer->addContainer(branchesContainer);    // FIXME-0 what about images?
             delete listContainer;
             listContainer = nullptr;
         }
@@ -1434,7 +1434,7 @@ void BranchContainer::reposition()
 
     // Update branchesContainer and linkSpaceContainer,
     // this even might remove these containers
-    updateBranchesContainer();  // FIXME-00 merge with updateChildrenStructure() above. This is the only call to updateBranchesContainer
+    updateBranchesContainer();  // FIXME-000 merge with updateChildrenStructure() above. This is the only call to updateBranchesContainer. See also README-layout.md
 
     // Remove  imagesContainer, if unused
     updateImagesContainer();
