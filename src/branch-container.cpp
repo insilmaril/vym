@@ -433,11 +433,12 @@ void BranchContainer::updateChildrenStructure()
         innerContainer->setLayout(FloatingBounded);
     }
 
-    /* FIXME-2 debugging
+    /* FIXME-2 debug info
     QString h ="?";
     if (branchItem) h = branchItem->getHeadingPlain();
     qDebug() << "BC::updateChildrenStructure of " << h << layout;
     */
+
     // Structure for bullet point list layouts
     BranchContainer *pbc = parentBranchContainer();
     if (pbc && pbc->branchesContainerLayout == List) {
@@ -816,16 +817,6 @@ void BranchContainer::updateUpLink()
                 linkContainer->sceneTransform().inverted().map(upLinkSelf_sp));
         upLink->setDownLinkPos(
                 linkContainer->sceneTransform().inverted().map(downLink_sp));
-    }
-
-    // Create/delete bottomLine depending on frameType (if not already done)    // FIXME-0 duplicate with updateStyles()?
-    if (containerType != Container::TmpParent) {
-        if (frameType(true) == FrameContainer::NoFrame)
-            upLink->createBottomLine();
-        else
-            upLink->deleteBottomLine();
-    } else {
-        upLink->deleteBottomLine();
     }
 
     // Color of links
@@ -1350,7 +1341,7 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    // qDebug() << "BC::reposition " << info();
+    //qDebug() << "BC::reposition " << info();
 
     // Abreviation for depth
     uint depth;
@@ -1443,7 +1434,7 @@ void BranchContainer::reposition()
 
     // Update branchesContainer and linkSpaceContainer,
     // this even might remove these containers
-    updateBranchesContainer();
+    updateBranchesContainer();  // FIXME-00 merge with updateChildrenStructure() above. This is the only call to updateBranchesContainer
 
     // Remove  imagesContainer, if unused
     updateImagesContainer();

@@ -406,7 +406,7 @@ void LinkObj::updateLinkGeometry()
                 pa0 << QPointF(pa2.at(arcsegs - i));
             p->setPolygon(QPolygonF(pa0));
             break;
-        case ListDash: {  // FIXME-0 WIP, cont here. Currently size of dash changes :-(
+        case ListDash: {  // FIXME-2 WIP, cont here. Not used?
                           // Width defined in BC:  linkSPaceContainer->setHeading("   ")
             pa0.clear();
             // center of LinkContainer, which will contain the list

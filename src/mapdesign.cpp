@@ -104,6 +104,7 @@ void MapDesign::init()
         defaultLinkCol = Qt::blue;
 
         linkStyles << LinkObj::NoLink;
+        linkStyles << LinkObj::PolyParabel;
         linkStyles << LinkObj::Parabel;
     } else if (mapDesign == 1) {
         // Rainbow colors depending on depth mapDesign
@@ -178,22 +179,7 @@ void MapDesign::setDefaultLinkColor(const QColor &col)
 
 LinkObj::Style MapDesign::linkStyle(int depth)
 {
-    // Special case for now:    // FIXME-3
-    // For style PolyParabel or PolyLine in d == 1
-    // return Parabel or Line for d > 1
-
-    return linkStyles.tryAt(depth); // FIXME-0 check below...
-
-    if (depth < 2)
-        return linkStyles.tryAt(depth);
-
-    if (linkStyles.tryAt(1) == LinkObj::PolyParabel)
-        return LinkObj::Parabel;
-
-    if (linkStyles.tryAt(1) == LinkObj::PolyLine)
-        return LinkObj::Line;
-
-    return linkStyles.tryAt(1);    // Return either Line or Parabel
+    return linkStyles.tryAt(depth);
 }
 
 bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)

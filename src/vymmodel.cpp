@@ -482,6 +482,7 @@ bool VymModel::parseVymText(const QString &s)
             if (s.startsWith("<vymnote"))
                 emitNoteChanged(bi);
             emitDataChanged(bi);
+            reposition();
         }
         else
             QMessageBox::critical(0, tr("Critical Parse Error"),
@@ -2544,7 +2545,6 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
         if (selbi) {
             bc = selbi->getBranchContainer();
 
-            // FIXME-2 Save current positions, we might change to floating layout
             if (s == "Auto") {
                 bc->branchesContainerAutoLayout = true;
                 bc->setBranchesContainerLayout(
@@ -2555,7 +2555,6 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
                 if (layout != Container::UndefinedLayout)
                     bc->setBranchesContainerLayout(layout);
             }
-            bc->updateStyles(MapDesign::NotCreated, MapDesign::NotRelinked); // FIXME-0 needed?
         }
     }
     reposition();
@@ -3415,7 +3414,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
 
-    // Update styles (if not currently loading a map or the default map)    // FIXME-0 on redo styles are updated again :-(
+    // Update styles (if not currently loading a map or the default map)
     if (!updateStylesBlocked)
         newbc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
 
@@ -4219,7 +4218,7 @@ void VymModel::colorBranch(QColor c)    // FIXME-2 evtl. update link color
     mapEditor->getScene()->update();
 }
 
-void VymModel::colorSubtree(QColor c, BranchItem *bi)  // FIXME-0 moves heading by 9 px  // FIXME-2 evtl. update link color
+void VymModel::colorSubtree(QColor c, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
