@@ -71,13 +71,11 @@ class BranchContainer : public SelectableContainer {
      *  there is a branchesContainer 
      */
     bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
-    void createBranchesContainer();
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
 
 
   private:
-    void updateBranchesContainer();     //! Remove unused containers and add needed ones
     void updateImagesContainer();       //! Remove unused containers and add needed ones
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();

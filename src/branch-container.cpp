@@ -269,26 +269,24 @@ bool BranchContainer::hasFloatingBranchesLayout()
         return false;
 }
 
-void BranchContainer::createBranchesContainer()
-{
-    branchesContainer = new Container ();
-    branchesContainer->containerType = Container::BranchesContainer;
-
-
-    // Initial setting here, depends on orientation // FIXME-2 needed?
-    branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
-    if (listContainer)
-        listContainer->addContainer(branchesContainer); // FIXME-2 what, if there are no branches yet - then there should not be a listContainer, but it should be created, too? Thus branchesContainer and others would needed to be setup in updateChildrenStructure()...
-    else
-        innerContainer->addContainer(branchesContainer);
-
-    updateBranchesContainerLayout();
-}
 
 void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) // FIXME-2 branchesContainer not deleted, when no longer used
 {
-    if (!branchesContainer)
-        createBranchesContainer();
+    if (!branchesContainer) {
+        // Create branchesContainer before adding to it
+        branchesContainer = new Container ();
+        branchesContainer->containerType = Container::BranchesContainer;
+
+
+        // Initial setting here, depends on orientation // FIXME-2 needed?
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
+        if (listContainer)
+            listContainer->addContainer(branchesContainer); // FIXME-2 what, if there are no branches yet - then there should not be a listContainer, but it should be created, too? Thus branchesContainer and others would needed to be setup in updateChildrenStructure()...
+        else
+            innerContainer->addContainer(branchesContainer);
+
+        updateBranchesContainerLayout();
+    }
 
     QPointF sp = c->scenePos();
     branchesContainer->addContainer(c);
@@ -299,48 +297,6 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) //
 Container* BranchContainer::getBranchesContainer()
 {
     return branchesContainer;
-}
-
-void BranchContainer::updateBranchesContainer() // FIXME-0 delete listContainer, too?
-{
-    if (branchCount() == 0) {
-        // no children branches, remove unused containers
-        if (linkSpaceContainer) {
-            delete linkSpaceContainer;
-            linkSpaceContainer = nullptr;
-        }
-        if (branchesContainer) {
-            delete branchesContainer;
-            branchesContainer = nullptr;
-        }
-    } else {
-        if (!branchesContainer) {
-            // should never happen
-            qDebug() << "BC::updateBranchesContainer no branchesCOntainer available!";
-            return;
-        }
-
-        // Space for links depends on layout and scrolled state:
-        if (linkSpaceContainer) {
-            if (hasFloatingBranchesLayout() || branchItem->isScrolled()) {
-                delete linkSpaceContainer;
-                linkSpaceContainer = nullptr;
-            }
-        } else {
-            if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
-                linkSpaceContainer = new HeadingContainer ();
-                //linkSpaceContainer->setContainerType(); // FIXME-2
-                linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
-
-                if (listContainer)
-                    listContainer->addContainer(linkSpaceContainer);
-                else
-                    innerContainer->addContainer(linkSpaceContainer);
-
-                linkSpaceContainer->stackBefore(branchesContainer);
-            }
-        }
-    }
 }
 
 void BranchContainer::updateImagesContainer()
@@ -452,8 +408,8 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 No links after removi
             // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
             bulletPointContainer->setHeading(" • ");
             bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
-            ornamentsContainer->addContainer(bulletPointContainer);
-            bulletPointContainer->stackBefore(ornamentsContainer->childContainers().first());
+            ornamentsContainer->addContainer(bulletPointContainer, 65); // FIXME-000 order is wrong...
+            // FIXME-0 use z? bulletPointContainer->stackBefore(ornamentsContainer->childContainers().first());
         }
     } else {
         // Parent has no list layout
@@ -465,7 +421,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 No links after removi
 
     if (branchesContainerLayout == List) {
         if (!listContainer) {
-            // Enable vertical layout to show the listContainer below ornamentsCOntainer
+            // Create and setup a listContainer *below* the ornamentsContainer
             innerContainer->setLayout(Vertical);
             innerContainer->setVerticalAlignment(AlignedLeft);
 
@@ -482,6 +438,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 No links after removi
             innerContainer->addContainer(listContainer);
         }
     } else {
+        // Switch back from listContainer to regular setup with innerContainer
         if (listContainer) {
             innerContainer->setLayout(Horizontal);
             if (linkSpaceContainer)
@@ -492,9 +449,48 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 No links after removi
             listContainer = nullptr;
         }
     }
+
+    if (branchCount() == 0) {
+        // no children branches, remove unused containers
+        if (linkSpaceContainer) {
+            delete linkSpaceContainer;
+            linkSpaceContainer = nullptr;
+        }
+        if (branchesContainer) {
+            delete branchesContainer;
+            branchesContainer = nullptr;
+        }
+    } else {
+        if (!branchesContainer) {
+            // should never happen
+            qDebug() << "BC::updateBranchesContainer no branchesContainer available!";
+            return;
+        }
+
+        // Space for links depends on layout and scrolled state:
+        if (linkSpaceContainer) {
+            if (hasFloatingBranchesLayout() || branchItem->isScrolled()) {
+                delete linkSpaceContainer;
+                linkSpaceContainer = nullptr;
+            }
+        } else {
+            if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
+                linkSpaceContainer = new HeadingContainer ();
+                //linkSpaceContainer->setContainerType(); // FIXME-2
+                linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
+
+                if (listContainer)
+                    listContainer->addContainer(linkSpaceContainer);
+                else
+                    innerContainer->addContainer(linkSpaceContainer);
+
+                linkSpaceContainer->stackBefore(branchesContainer);
+            }
+        }
+    }
 }
 
-void BranchContainer::showStructure()
+void BranchContainer::showStructure()   // FIXME-2 no longer needed with Container::printStructure()
 {
     Container *c = getBranchesContainer();
     if (outerContainer)
@@ -1234,7 +1230,6 @@ void BranchContainer::updateStyles(
     // Set frame
     md->updateFrames(this, creationMode, relinkMode, depth); // FIXME-2  depth not really necessary here
 
-    //qDebug() << "BC::updateStyles a) layout=" << branchesContainerLayout;
     updateBranchesContainerLayout();
 
     if (imagesContainerAutoLayout)
@@ -1253,7 +1248,7 @@ void BranchContainer::updateStyles(
         // MapCenter has no upLink
         upLink->setLinkStyle(LinkObj::NoLink);
 
-    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
+    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)    // FIXME-1 upLink col also set in BC::updateUpLink
         upLink->setLinkColor(headingContainer->getColor());
     else
         upLink->setLinkColor(md->defaultLinkColor());
@@ -1434,10 +1429,6 @@ void BranchContainer::reposition()
 
     // Depending on layouts, we might need to insert outerContainer and relink children
     updateChildrenStructure();
-
-    // Update branchesContainer and linkSpaceContainer,
-    // this even might remove these containers
-    updateBranchesContainer();  // FIXME-000 merge with updateChildrenStructure() above. This is the only call to updateBranchesContainer. See also README-layout.md
 
     // Remove  imagesContainer, if unused
     updateImagesContainer();

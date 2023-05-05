@@ -2565,7 +2565,14 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
             }
         }
     }
+
+    // Create and delete containers, update their structure
     reposition();
+
+    // Links might have been added or removed
+    foreach (BranchItem *selbi, selbis)
+        if (selbi)
+            selbi->updateStylesRecursively(MapDesign::NotCreated, MapDesign::StyleChanged);
 }
 
 void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)

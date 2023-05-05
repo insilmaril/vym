@@ -49,13 +49,14 @@ class MapDesign {
         Created    = 0x0001,
         CreatedWhileLoading = 0x0002};
 
-    enum RelinkMode : unsigned int {
+    enum RelinkMode : unsigned int {    // FIXME-2 cleanup? what's used?
         NotRelinked     = 0x0000,
         DepthChanged    = 0x0001,
         PositionChanged = 0x0002,
         ParentChanged   = 0x0004,
         LinkChanged     = 0x0008,
-        ColorChanged    = 0x0010};
+        ColorChanged    = 0x0010,
+        StyleChanged    = 0x0020};
 
     /*
     constexpr RelinkMode operator|(RelinkMode X, RelinkMode Y) {

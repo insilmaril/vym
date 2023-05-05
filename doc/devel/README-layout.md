@@ -149,10 +149,8 @@ Next steps
 ----------
 
 * Moving containers around
-    - Todo
-
-    - moving and tmp linked:
-      - maybe also information about rotation of tmp child
+    - moving and tmp linked: maybe also information about rotation of
+    - tmp child
 
       The tmpParentContainer needs to be positioned based on link point and
       orientation from above, also considering modifier keys to link
@@ -174,16 +172,6 @@ Next steps
 
 * Cleanup branchContainer structure handling
 
-  Methods only called from one place:
-  -  createBranchesContainer()   from addToBranchesContainer()
-     could be merged with addToBranchesContainer()
-
-  -  updateBranchesContainer()   from reposition()
-     should be merged with updateChildrenStructure()
-
   linkSpaceContainer and listContainer seem to be existing independent
   of number of children. Should be created on demand only.    
 
-  adding a branch should always *only* add it to branchesContainer
-  and *afterwards* the structure can be updated and other layout
-  containers be created on demand.

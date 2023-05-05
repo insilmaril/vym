@@ -111,6 +111,9 @@ QString Container::getName()    // FIXME-3 debugging only
         case Link:
             t = "Link";
             break;
+        case ListContainer:
+            t = "ListContainer";
+            break;
         case OrnamentsContainer:
             t = "OrnamentsContainer";
             break;

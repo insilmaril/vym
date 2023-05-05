@@ -490,7 +490,6 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
                                     const qreal &at, const int duration,
                                     const QEasingCurve &easingCurve)
 {
-    qDebug() << "ME::setViewCenterTarget p= " << p;
     viewCenterTarget = p;
     zoomFactorTarget = zft;
     angleTarget = at;
