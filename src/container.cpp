@@ -7,6 +7,8 @@
 
 #define qdbg() qDebug().nospace().noquote()
 
+int Container::curIndent = 0; // make instance of curIndent
+
 Container::Container()
 {
     //qdbg() << "* Const Container " << this;
@@ -140,6 +142,22 @@ QString Container::info (const QString &prefix)
         QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0)) +
         QString(" pos: %1").arg(qpointFToString(pos(), 0)) +
         QString(" rect: %1").arg(qrectFToString(rect(), 0));
+}
+
+void Container::printStructure()
+{
+   QString indent;
+    for (int i = 0; i < curIndent; i++)
+        indent += "  ";
+
+    qdbg() << indent << "-" << info();
+
+    if (childContainers().count() > 0) {
+        curIndent++;
+        foreach (Container* c, childContainers())
+            c->printStructure();
+        curIndent--;
+    }
 }
 
 int Container::containerDepth()

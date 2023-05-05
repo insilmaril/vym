@@ -10,9 +10,9 @@
 #define Z_INNER_FRAME 20
 #define Z_ORNAMENTS 30
 #define Z_SELECTION 40
-#define Z_HEADING 50
 #define Z_STANDARD_FLAGS 60
 #define Z_SYSTEM_FLAGS 70
+#define Z_HEADING 80
 
 class BranchContainer;
 class ImageContainer;
@@ -21,6 +21,7 @@ class Container : public QGraphicsRectItem {
   friend class BranchContainer;
   friend class ImageContainer;
   friend class SelectableContainer;
+
   public:
     /*! Type of this container */
     enum ContainerType {
@@ -62,6 +63,9 @@ class Container : public QGraphicsRectItem {
     virtual QString getName();
 
     virtual QString info (const QString &prefix = "");
+    virtual void printStructure();  // Only for debugging
+    static int curIndent;
+
     int containerDepth();
     QString ind();
 

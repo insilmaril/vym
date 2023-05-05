@@ -1944,6 +1944,14 @@ void VymModel::test()
 {
     qDebug() << "VM::test()";
 
+    BranchItem *selbi = getSelectedBranches().first();
+
+    if (selbi)
+        selbi->getBranchContainer()->printStructure();
+
+    return;
+
+
     QString fileName = "/home/uwe/vym/branches/xml-streamreader/test.xml";
     if (fileName.isEmpty())
         return;
@@ -3773,7 +3781,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)   // FIXME-2 nothing done,
     foreach (BranchItem *selbi, selbis) {
         // FIXME-3 Don't use this (yet) on mapcenter (could use detach(BranchItem*) !)
         if (selbi->depth() < 1) {
-            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-0 cont here. Undo script fails
+            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-1 cont here. Undo script fails
             while (selbi->branchCount() > 0)
                 detach(selbi->getBranchNum(0));
 
