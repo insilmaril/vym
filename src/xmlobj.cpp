@@ -140,9 +140,7 @@ void XMLObj::decIndent()
 QString XMLObj::indent()
 {
     QString s = "\n";
-    int i;
-    for (i = 0; i < curIndent * indentWidth; i++) {
+    for (int i = 0; i < curIndent * indentWidth; i++)
         s += " ";
-    }
     return s;
 }
