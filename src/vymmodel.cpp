@@ -1944,11 +1944,12 @@ void VymModel::test()
 {
     qDebug() << "VM::test()";
 
-    BranchItem *selbi = getSelectedBranches().first();
-
-    if (selbi)
-        selbi->getBranchContainer()->printStructure();
-
+    foreach (TreeItem *ti, getSelectedItems()) {
+        if (ti->hasTypeBranch())
+            ((BranchItem*)ti)->getBranchContainer()->printStructure();
+        if (ti->hasTypeImage())
+            ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
+    }
     return;
 
 
