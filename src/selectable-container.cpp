@@ -15,6 +15,7 @@ void SelectableContainer::select(Container *parent, const QColor &color)
         selectionContainer->overlay = true;
     }
     parent->addContainer(selectionContainer, Z_SELECTION);
+    selectionContainer->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
 
     // Initially set rectangle
     selectionContainer->setRect(parent->rect());
