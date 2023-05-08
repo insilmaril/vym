@@ -10,6 +10,7 @@
 #define Z_INNER_FRAME 20
 #define Z_ORNAMENTS 30
 #define Z_SELECTION 40
+#define Z_BULLETPOINT 50
 #define Z_STANDARD_FLAGS 60
 #define Z_SYSTEM_FLAGS 70
 #define Z_HEADING 80

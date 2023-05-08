@@ -333,7 +333,7 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
-void BranchContainer::updateChildrenStructure() // FIXME-0 No links after removing ListLayout
+void BranchContainer::updateChildrenStructure()
                                                 // When a map with list layout is loaded and 
                                                 // layout is switched to e.g. Vertical, the links 
                                                 // are not drawn. Has to be saved/loaded first
@@ -408,8 +408,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 No links after removi
             // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
             bulletPointContainer->setHeading(" • ");
             bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
-            ornamentsContainer->addContainer(bulletPointContainer, 65); // FIXME-000 order is wrong...
-            // FIXME-0 use z? bulletPointContainer->stackBefore(ornamentsContainer->childContainers().first());
+            ornamentsContainer->addContainer(bulletPointContainer, Z_BULLETPOINT);
         }
     } else {
         // Parent has no list layout
