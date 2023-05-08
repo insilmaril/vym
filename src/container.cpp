@@ -49,6 +49,9 @@ void Container::init()
     // Overlay is used for frames: Don't consider for sizes or repositioning
     overlay = false;
 
+    // Initial z-value
+    zPos = 0;
+
     // Not visible usually
     setBrush(Qt::NoBrush);
     setPen(Qt::NoPen);
@@ -138,14 +141,15 @@ QString Container::getName()    // FIXME-3 debugging only
 
 QString Container::info (const QString &prefix)
 {
-    return prefix +
-        getName() +
-        //QString(" zPos: %1").arg(zPos) +
-        QString(" Layout: %1").arg(getLayoutString()) +
-        QString(" z: %1").arg(zPos);
-        //QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0)) +
-        //QString(" pos: %1").arg(qpointFToString(pos(), 0)) +
-        //QString(" rect: %1").arg(qrectFToString(rect(), 0));
+    return prefix
+        + getName()
+        // + QString(" zPos: %1").arg(zPos)
+        + QString(" Layout: %1").arg(getLayoutString())
+        + QString(" z: %1").arg(zPos)
+        + QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
+        + QString(" pos: %1").arg(qpointFToString(pos(), 0))
+        + QString(" rect: %1").arg(qrectFToString(rect(), 0))
+        ;
 }
 
 void Container::printStructure()

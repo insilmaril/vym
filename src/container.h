@@ -9,6 +9,7 @@
 #define Z_OUTER_FRAME 15
 #define Z_INNER_FRAME 20
 #define Z_ORNAMENTS 30
+#define Z_IMAGE 35
 #define Z_SELECTION 40
 #define Z_BULLETPOINT 50
 #define Z_STANDARD_FLAGS 60

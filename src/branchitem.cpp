@@ -490,7 +490,7 @@ void BranchItem::updateStylesRecursively(
     if (branchContainer)
         branchContainer->updateStyles(creationMode, relinkMode);
 
-    // Recurively update subtree
+    // Recursively update subtree
     for (int i = 0; i < branchCounter; i++) {
         getBranchNum(i)->updateStylesRecursively(creationMode, relinkMode);
     }

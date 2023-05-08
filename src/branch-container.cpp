@@ -557,7 +557,7 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
     }
 
     QPointF sp = c->scenePos();
-    imagesContainer->addContainer(c);
+    imagesContainer->addContainer(c, Z_IMAGE);
 
     if (keepScenePos)
         c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
