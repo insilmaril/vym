@@ -1024,6 +1024,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
     } else {
         // Outer frame around whole branchContainer including children
         if (ftype == FrameContainer::NoFrame) {
+            // Remove outerFrame
             if (outerFrame) {
                 int a = getRotationSubtree();
                 Container *c;
@@ -1037,6 +1038,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                 setRotationSubtree(a);
             }
         } else {
+            // Set outerFrame   // FIXME-0   Mainbranch with floatingBounded image has broken layout (try load and create after load: different!)
             if (!outerFrame) {
                 int a = getRotationSubtree();
                 outerFrame = new FrameContainer;
@@ -1053,6 +1055,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
             outerFrame->setFrameType(ftype);
         }
     }
+    updateChildrenStructure();
 }
 
 void BranchContainer::setFrameType(const bool &useInnerFrame, const QString &s)
