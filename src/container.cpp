@@ -145,10 +145,11 @@ QString Container::info (const QString &prefix)
         + getName()
         // + QString(" zPos: %1").arg(zPos)
         + QString(" Layout: %1").arg(getLayoutString())
-        + QString(" z: %1").arg(zPos)
-        + QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
-        + QString(" pos: %1").arg(qpointFToString(pos(), 0))
-        + QString(" rect: %1").arg(qrectFToString(rect(), 0))
+        //+ QString(" z: %1").arg(zPos)
+        + QString(" a: %1").arg(qRound(rotation()))
+        //+ QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
+        //+ QString(" pos: %1").arg(qpointFToString(pos(), 0))
+        //+ QString(" rect: %1").arg(qrectFToString(rect(), 0))
         ;
 }
 

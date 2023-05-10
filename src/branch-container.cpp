@@ -112,6 +112,8 @@ void BranchContainer::init()
     tmpLinkedParentContainer = nullptr;
 
     scrollOpacity = 1;
+
+    rotationSubtree = 0;
 }
 
 BranchContainer* BranchContainer::parentBranchContainer()
@@ -311,7 +313,10 @@ void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
         outerContainer = new Container;
-        outerContainer->setParentItem(this);
+        if (outerFrame)
+            outerFrame->addContainer(outerContainer);
+        else
+            outerContainer->setParentItem(this);
         outerContainer->containerType = OuterContainer;
         outerContainer->setLayout(BoundingFloats);
         outerContainer->addContainer(innerContainer);
@@ -324,7 +329,10 @@ void BranchContainer::createOuterContainer()
 void BranchContainer::deleteOuterContainer()
 {
     if (outerContainer) {
-        addContainer(innerContainer);
+        if (outerFrame)
+            outerFrame->addContainer(innerContainer);
+        else
+            addContainer(innerContainer);
         if (imagesContainer) {
             innerContainer->addContainer(imagesContainer);
         }
@@ -390,6 +398,34 @@ void BranchContainer::updateChildrenStructure()
         // e) remaining cases
         deleteOuterContainer();
         innerContainer->setLayout(FloatingBounded);
+    }
+
+    // Rotation of outer container or outerFrame    // FIXME-2 optimize and set only on demand?
+    if (outerFrame) {
+        outerFrame->setRotation(rotationSubtree);
+        if (outerContainer)
+            outerContainer->setRotation(0);
+        else
+            innerContainer->setRotation(0);
+    } else {
+        if (outerContainer)
+            outerContainer->setRotation(rotationSubtree);
+        else
+            innerContainer->setRotation(rotationSubtree);
+    }
+
+    // Update structure of outerContainer and outerFrame:
+    // outerContainer should be child of outerFrame, if this is used
+    if (outerContainer) {
+        if (outerFrame)
+            outerFrame->addContainer(outerContainer);
+        else
+            outerContainer->setParentItem(this);
+    } else {
+        if (outerFrame)
+            outerFrame->addContainer(innerContainer);
+        else
+            addContainer(innerContainer);
     }
 
     /* FIXME-2 debug info
@@ -903,33 +939,12 @@ int BranchContainer::getRotationHeading()
 
 void BranchContainer::setRotationSubtree(const int &a)
 {
-    if (outerFrame) {
-        outerFrame->setRotation(a);
-        if (outerContainer)
-            outerContainer->setRotation(0);
-        else
-            innerContainer->setRotation(0);
-    } else {
-        if (outerContainer) {
-            outerContainer->setRotation(a);
-            innerContainer->setRotation(0);
-        } else {
-            innerContainer->setRotation(a);    // FIXME-2 If BC is FloatingBounded, and bc has images, frame does not include images
-        }
-    }
+    rotationSubtree = a;
 }
 
 int BranchContainer::getRotationSubtree()
 {
-
-    if (outerFrame) {
-        return std::round(outerFrame->rotation());
-    } else {
-        if (outerContainer)
-            return std::round(outerContainer->rotation());
-        else
-            return std::round(innerContainer->rotation());
-    }
+    return qRound(rotationSubtree);
 }
 
 QUuid BranchContainer::findFlagByPos(const QPointF &p)
@@ -1050,7 +1065,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                     c = innerContainer;
                 outerFrame->addContainer(c);
                 addContainer(outerFrame, Z_OUTER_FRAME);
-                setRotationSubtree(a);
+                // FIXME-0 still needed?  set in updateCS below...  setRotationSubtree(a);
             }
             outerFrame->setFrameType(ftype);
         }
@@ -1430,7 +1445,7 @@ void BranchContainer::reposition()
     }
 
     // Depending on layouts, we might need to insert outerContainer and relink children
-    updateChildrenStructure();
+    updateChildrenStructure();  // FIXME-0 needed in every reposition() or only when changed ?
 
     // Remove  imagesContainer, if unused
     updateImagesContainer();

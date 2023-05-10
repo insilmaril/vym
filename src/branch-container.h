@@ -126,8 +126,13 @@ class BranchContainer : public SelectableContainer {
 
     void setRotationHeading(const int &);
     int getRotationHeading();
+
     void setRotationSubtree(const int &);
     int getRotationSubtree();
+  protected:
+    qreal rotationSubtree;
+
+  public:
 
     QUuid findFlagByPos(const QPointF &p);
     bool isInClickBox(const QPointF &p);
