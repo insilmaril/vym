@@ -130,6 +130,7 @@ class BranchContainer : public SelectableContainer {
     void setRotationSubtree(const int &);
     int getRotationSubtree();
   protected:
+    qreal rotationHeading;
     qreal rotationSubtree;
 
   public:

@@ -309,7 +309,7 @@ void BranchContainer::updateImagesContainer()
     }
 }
 
-void BranchContainer::createOuterContainer()
+void BranchContainer::createOuterContainer() // FIXME-0 structure in BC::updateChildrenStructure()
 {
     if (!outerContainer) {
         outerContainer = new Container;
@@ -326,7 +326,7 @@ void BranchContainer::createOuterContainer()
     }
 }
 
-void BranchContainer::deleteOuterContainer()
+void BranchContainer::deleteOuterContainer() // FIXME-0 structure in BC::updateChildrenStructure()
 {
     if (outerContainer) {
         if (outerFrame)
@@ -413,6 +413,12 @@ void BranchContainer::updateChildrenStructure()
         else
             innerContainer->setRotation(rotationSubtree);
     }
+
+    // Rotation of heading
+    if (innerFrame)
+        innerFrame->setRotation(rotationHeading);
+    else
+        ornamentsContainer->setRotation(rotationHeading);
 
     // Update structure of outerContainer and outerFrame:
     // outerContainer should be child of outerFrame, if this is used
@@ -880,6 +886,8 @@ void BranchContainer::setImagesContainerLayout(const Layout &ltype)
 
     if (imagesContainer)
         imagesContainer->setLayout(imagesContainerLayout);
+
+    updateChildrenStructure();
 }
 
 Container::Layout BranchContainer::getImagesContainerLayout()
@@ -922,24 +930,20 @@ QRectF BranchContainer::getHeadingRect()
 
 void BranchContainer::setRotationHeading(const int &a)
 {
-    if (innerFrame)
-        innerFrame->setRotation( 1.0 * a);
-    else
-        ornamentsContainer->setRotation( 1.0 * a);
+    rotationHeading = a;
+    updateChildrenStructure();
     //headingContainer->setScale(f + a * 1.1);      // FIXME-2 what about scaling?? Which transformCenter?
 }
 
 int BranchContainer::getRotationHeading()
 {
-    if (innerFrame)
-        return std::round(innerFrame->rotation());
-    else
-        return std::round(ornamentsContainer->rotation());
+    return qRound(rotationHeading);
 }
 
 void BranchContainer::setRotationSubtree(const int &a)
 {
     rotationSubtree = a;
+    updateChildrenStructure();
 }
 
 int BranchContainer::getRotationSubtree()
@@ -1445,10 +1449,10 @@ void BranchContainer::reposition()
     }
 
     // Depending on layouts, we might need to insert outerContainer and relink children
-    updateChildrenStructure();  // FIXME-0 needed in every reposition() or only when changed ?
+    // updateChildrenStructure();  // FIXME-0 needed in every reposition() or only when changed ?
 
     // Remove  imagesContainer, if unused
-    updateImagesContainer();
+    updateImagesContainer();    // FIXME-0 should go to updateChildrenStucture()
 
     Container::reposition();
 
