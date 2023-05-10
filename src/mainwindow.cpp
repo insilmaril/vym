@@ -409,6 +409,10 @@ Main::~Main()
 {
     // qDebug()<<"Destr Mainwindow"<<flush;
 
+    // Make sure there is no focus elsewhere, e.g. in BranchPropertyEditor
+    // which could cause a crash.  (Qt bug?)
+    setFocus();
+
     // Save Settings
 
     if (!testmode) {
