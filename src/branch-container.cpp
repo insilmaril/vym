@@ -257,9 +257,6 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
         branchesContainer = new Container ();
         branchesContainer->containerType = Container::BranchesContainer;
 
-
-        // Initial setting here, depends on orientation // FIXME-2 needed?
-        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
         if (listContainer)
             listContainer->addContainer(branchesContainer);
         else
