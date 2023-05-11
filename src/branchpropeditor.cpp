@@ -199,8 +199,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                 case FrameContainer::Ellipse:
                     ui.innerFrameTypeCombo->setCurrentIndex(3);
                     break;
-                case FrameContainer::Cloud:
+                case FrameContainer::Circle:
                     ui.innerFrameTypeCombo->setCurrentIndex(4);
+                    break;
+                case FrameContainer::Cloud:
+                    ui.innerFrameTypeCombo->setCurrentIndex(5);
                     break;
                 default:
                     break;
@@ -244,8 +247,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                 case FrameContainer::Ellipse:
                     ui.outerFrameTypeCombo->setCurrentIndex(3);
                     break;
-                case FrameContainer::Cloud:
+                case FrameContainer::Circle:
                     ui.outerFrameTypeCombo->setCurrentIndex(4);
+                    break;
+                case FrameContainer::Cloud:
+                    ui.outerFrameTypeCombo->setCurrentIndex(5);
                     break;
                 default:
                     break;
@@ -379,6 +385,9 @@ void BranchPropertyEditor::frameTypeChanged(int i)
                 model->setFrameType(useInnerFrame, FrameContainer::Ellipse);
                 break;
             case 4:
+                model->setFrameType(useInnerFrame, FrameContainer::Circle);
+                break;
+            case 5:
                 model->setFrameType(useInnerFrame, FrameContainer::Cloud);
                 break;
         }

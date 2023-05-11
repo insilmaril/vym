@@ -54,6 +54,7 @@ void FrameContainer::clear()
             delete pathFrame;
             break;
         case Ellipse:
+        case Circle:
             delete ellipseFrame;
             break;
         case Cloud:
@@ -78,6 +79,7 @@ void FrameContainer::repaint()
             pathFrame->setBrush(frameBrush);
             break;
         case Ellipse:
+        case Circle:
             ellipseFrame->setPen(framePen);
             ellipseFrame->setBrush(frameBrush);
             break;
@@ -107,6 +109,8 @@ FrameContainer::FrameType FrameContainer::frameTypeFromString(const QString &s)
         return RoundedRectangle;
     else if (s == "Ellipse")
         return Ellipse;
+    else if (s == "Circle")
+        return Circle;
     else if (s == "Cloud")
         return Cloud;
     return NoFrame;
@@ -121,6 +125,8 @@ QString FrameContainer::frameTypeString()
         return "RoundedRectangle";
     case Ellipse:
         return "Ellipse";
+    case Circle:
+        return "Circle";
     case Cloud:
         return "Cloud";
     case NoFrame:
@@ -148,6 +154,7 @@ void FrameContainer::setFrameType(const FrameType &t)
                 rectFrame->show();
                 break;
             case Ellipse:
+            case Circle:
                 ellipseFrame = scene()->addEllipse(QRectF(0, 0, 0, 0),
                                                    framePen, frameBrush);
                 ellipseFrame->setPen(framePen);
@@ -186,15 +193,17 @@ void FrameContainer::setFrameType(const FrameType &t)
 void FrameContainer::setFrameType(const QString &t)
 {
     if (t == "Rectangle")
-        FrameContainer::setFrameType(Rectangle);
+        setFrameType(Rectangle);
     else if (t == "RoundedRectangle")
-        FrameContainer::setFrameType(RoundedRectangle);
+        setFrameType(RoundedRectangle);
     else if (t == "Ellipse")
-        FrameContainer::setFrameType(Ellipse);
+        setFrameType(Ellipse);
+    else if (t == "Circle")
+        setFrameType(Circle);
     else if (t == "Cloud")
-        FrameContainer::setFrameType(Cloud);
+        setFrameType(Cloud);
     else
-        FrameContainer::setFrameType(NoFrame);
+        setFrameType(NoFrame);
 }
 
 QRectF FrameContainer::frameRect()
@@ -241,7 +250,13 @@ void FrameContainer::setFrameRect(const QRectF &frameSize)
                 QRectF(frameRectInt.x(), frameRectInt.y(), frameRectInt.width(), frameRectInt.height()));
             frameXSize = 20; // max(frameRectInt.width(), frameRectInt.height()) / 4;
             break;
-
+        case Circle: {
+            qreal r = max(frameRectInt.width(), frameRectInt.height());
+            ellipseFrame->setRect(
+                QRectF(frameRectInt.x(), frameRectInt.y(), r, r));
+            frameXSize = 20; // r / 4
+            }
+            break;
         case Cloud: {
             QPointF tl = frameRectInt.topLeft();
             QPointF tr = frameRectInt.topRight();
@@ -312,6 +327,7 @@ void FrameContainer::setFramePos(const QPointF &p)
             pathFrame->setPos(p);
             break;
         case Ellipse:
+        case Circle:
             ellipseFrame->setPos(p);
             break;
         case Cloud:

@@ -12,7 +12,7 @@
 class FrameContainer : public XMLObj, public Container {
   public:
     /*! \brief Supported frame types */
-    enum FrameType { NoFrame, Rectangle, RoundedRectangle, Ellipse, Cloud };
+    enum FrameType { NoFrame, Rectangle, RoundedRectangle, Ellipse, Circle, Cloud };
 
     /*! When saving, save also the usage */
     enum FrameUsage {Undefined, InnerFrame, OuterFrame};

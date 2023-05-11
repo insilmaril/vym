@@ -110,9 +110,6 @@ Ideas
     oC is positioned within BoundingFloats, so that upperleft of bbox of
     children is again (local) origin.
 
-* Add/remove containers as needed. Examples
-  - Additional info likes statistics (no. of children, ...)
-
 * Dedicated containers for links
   - Allows more complex links, e.g. curved "bottomlines" under headings,
     maybe curved headings later
@@ -140,9 +137,6 @@ Bugs
     - Mapcenters use real scene positions
 
     - rotate branchesContainer? Could enable interesting layouts
-
-* Position hint for relinking often way to low, not really below new
-  parent
 
 
 Next steps

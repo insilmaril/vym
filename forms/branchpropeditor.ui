@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabFrame">
       <property name="minimumSize">
@@ -81,6 +81,11 @@
             <item>
              <property name="text">
               <string>Ellipse</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Circle</string>
              </property>
             </item>
             <item>
@@ -239,6 +244,11 @@
             <item>
              <property name="text">
               <string>Ellipse</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Circle</string>
              </property>
             </item>
             <item>
@@ -844,7 +854,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="imagesLayoutsButtonGroup"/>
   <buttongroup name="branchesLayoutsButtonGroup"/>
+  <buttongroup name="imagesLayoutsButtonGroup"/>
  </buttongroups>
 </ui>
