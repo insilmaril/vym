@@ -309,6 +309,8 @@ void Container::setVisibility(bool v)
 
 void Container::addContainer(Container *c, int z)
 {
+    if (childContainers().contains(c)) return;
+
     c->setParentItem(this);
     if (z >= 0) {
         // Order containers

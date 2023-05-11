@@ -36,7 +36,7 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
         ui.tabWidget->widget(3)->hide();
 
     //Create Model and View to hold attributes
-    attributeModel = new QStandardItemModel (1, 3, this);
+    attributeModel = new QStandardItemModel (1, 3, this);   // FIXME-2 used?
     attributeModel->setHeaderData(0,
             Qt::Horizontal,
             tr("Name","Branchprop window: Attribute name"));

@@ -113,49 +113,25 @@ void BranchContainer::init()
 
     scrollOpacity = 1;
 
+    rotationHeading = 0;
     rotationSubtree = 0;
 }
 
-BranchContainer* BranchContainer::parentBranchContainer()
+BranchContainer* BranchContainer::parentBranchContainer(Container *c)
 {
-    // We need at least a parent container
-    Container *p = parentContainer();
-    if (!p) return nullptr;
+    // In code no argument is used, always start with current BranchContainer
+    if (!c)
+        c = parentContainer();
 
-    // parent container should be branchesContainer
-    if (p->containerType != BranchesContainer) return nullptr;
-
-    // branchesContainer itself has a parent
-    p = p->parentContainer();
-    if (!p) return nullptr;
-
-    // parent of branchesContainer has type InnerContainer or ListContainer
-    if (p->containerType != InnerContainer && p->containerType != ListContainer)
-        return nullptr;
-
-    // Parent of parent of branchesContainer: inner/outerContainer
-    p = p->parentContainer();
-    if (!p) return nullptr;
-
-    // parent of inner/OuterContainer
-    if (p->containerType == OuterContainer || p->containerType == InnerContainer) {
-        p = p->parentContainer();
-        if (!p) return nullptr;
+    while (c && c->containerType != Branch) {
+        if (c->containerType == TmpParent) {
+            // qWarning() << "BC::pBC found tmpParentContainer for c=" << c->info();
+            return nullptr;
+        }
+        c = c->parentContainer();
     }
 
-    // We could have an outer frame. Move on to parent of frame, then
-    if (p->containerType == Frame) {
-        p = p->parentContainer();
-        if (!p) return nullptr;
-    }
-
-    if (! (p->containerType == Branch || p->containerType == TmpParent))
-    {
-        qDebug() << "BC::pBC p=" << p->info();
-        return nullptr;
-    }
-
-    return (BranchContainer*)p;
+    return (BranchContainer*)c;
 }
 
 void BranchContainer::setBranchItem(BranchItem *bi) { branchItem = bi; }
@@ -272,10 +248,12 @@ bool BranchContainer::hasFloatingBranchesLayout()
 }
 
 
-void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) // FIXME-2 branchesContainer not deleted, when no longer used
+void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 {
     if (!branchesContainer) {
         // Create branchesContainer before adding to it
+        // (It will be deleted later in updateChildrenStructure(), if there
+        // are no children)
         branchesContainer = new Container ();
         branchesContainer->containerType = Container::BranchesContainer;
 
@@ -283,15 +261,17 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos) //
         // Initial setting here, depends on orientation // FIXME-2 needed?
         branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
         if (listContainer)
-            listContainer->addContainer(branchesContainer); // FIXME-2 what, if there are no branches yet - then there should not be a listContainer, but it should be created, too? Thus branchesContainer and others would needed to be setup in updateChildrenStructure()...
+            listContainer->addContainer(branchesContainer);
         else
             innerContainer->addContainer(branchesContainer);
 
-        updateBranchesContainerLayout();
     }
 
     QPointF sp = c->scenePos();
     branchesContainer->addContainer(c);
+
+    updateBranchesContainerLayout();
+
     if (keepScenePos)
         c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
 }
@@ -309,33 +289,30 @@ void BranchContainer::updateImagesContainer()
     }
 }
 
-void BranchContainer::createOuterContainer() // FIXME-0 structure in BC::updateChildrenStructure()
+void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
         outerContainer = new Container;
-        if (outerFrame)
-            outerFrame->addContainer(outerContainer);
-        else
-            outerContainer->setParentItem(this);
         outerContainer->containerType = OuterContainer;
         outerContainer->setLayout(BoundingFloats);
-        outerContainer->addContainer(innerContainer);
-        if (imagesContainer)
-            outerContainer->addContainer(imagesContainer);
         addContainer(outerContainer);
+
+        // Children structure is updated in updateChildrenStructure(), which is
+        // anyway calling this method
     }
 }
 
-void BranchContainer::deleteOuterContainer() // FIXME-0 structure in BC::updateChildrenStructure()
+void BranchContainer::deleteOuterContainer()
 {
     if (outerContainer) {
+        // Before outerContainer get's deleted, it's children need to be reparented
         if (outerFrame)
             outerFrame->addContainer(innerContainer);
         else
             addContainer(innerContainer);
-        if (imagesContainer) {
+        if (imagesContainer)
             innerContainer->addContainer(imagesContainer);
-        }
+
         delete outerContainer;
         outerContainer = nullptr;
     }
@@ -379,6 +356,13 @@ void BranchContainer::updateChildrenStructure()
     //    - branchesContainer is Vertical
     //    - imagesContainer is FloatingBounded
 
+    /*
+    QString h;
+    if (branchItem)
+        h = branchItem->getHeadingPlain();
+    qDebug() << "BC::updateChildrenStructure() of " << h;
+    */
+
     if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
         // a) No FloatingBounded images or branches
         deleteOuterContainer();
@@ -400,7 +384,7 @@ void BranchContainer::updateChildrenStructure()
         innerContainer->setLayout(FloatingBounded);
     }
 
-    // Rotation of outer container or outerFrame    // FIXME-2 optimize and set only on demand?
+    // Rotation of outer container or outerFrame    // FIXME-2 optimize and set only on demand? Maybe in updateStyles()?
     if (outerFrame) {
         outerFrame->setRotation(rotationSubtree);
         if (outerContainer)
@@ -420,25 +404,17 @@ void BranchContainer::updateChildrenStructure()
     else
         ornamentsContainer->setRotation(rotationHeading);
 
-    // Update structure of outerContainer and outerFrame:
-    // outerContainer should be child of outerFrame, if this is used
+    // Update structure of outerContainer
     if (outerContainer) {
+        // outerContainer should be child of outerFrame, if this is used
         if (outerFrame)
             outerFrame->addContainer(outerContainer);
         else
             outerContainer->setParentItem(this);
-    } else {
-        if (outerFrame)
-            outerFrame->addContainer(innerContainer);
-        else
-            addContainer(innerContainer);
+        outerContainer->addContainer(innerContainer);
+        if (imagesContainer)
+            outerContainer->addContainer(imagesContainer);
     }
-
-    /* FIXME-2 debug info
-    QString h ="?";
-    if (branchItem) h = branchItem->getHeadingPlain();
-    qDebug() << "BC::updateChildrenStructure of " << h << layout;
-    */
 
     // Structure for bullet point list layouts
     BranchContainer *pbc = parentBranchContainer();
@@ -475,7 +451,7 @@ void BranchContainer::updateChildrenStructure()
             if (linkSpaceContainer)
                 listContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
-                listContainer->addContainer(branchesContainer); // FIXME-0 what about images?
+                listContainer->addContainer(branchesContainer); // FIXME-0 what about images in list layouts?
             innerContainer->addContainer(listContainer);
         }
     } else {
@@ -485,7 +461,7 @@ void BranchContainer::updateChildrenStructure()
             if (linkSpaceContainer)
                 innerContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
-                innerContainer->addContainer(branchesContainer);    // FIXME-0 what about images?
+                innerContainer->addContainer(branchesContainer);    // FIXME-0 what about images in list layouts?
             delete listContainer;
             listContainer = nullptr;
         }
@@ -901,6 +877,7 @@ void BranchContainer::setBranchesContainerLayout(const Layout &layoutNew)
 
     if (branchesContainer)
         branchesContainer->setLayout(branchesContainerLayout);
+    updateChildrenStructure();
 }
 
 Container::Layout BranchContainer::getBranchesContainerLayout()
@@ -931,7 +908,7 @@ QRectF BranchContainer::getHeadingRect()
 void BranchContainer::setRotationHeading(const int &a)
 {
     rotationHeading = a;
-    updateChildrenStructure();
+    updateChildrenStructure();  // FIXME-0 or better do this in updateStyles()?
     //headingContainer->setScale(f + a * 1.1);      // FIXME-2 what about scaling?? Which transformCenter?
 }
 
@@ -943,7 +920,7 @@ int BranchContainer::getRotationHeading()
 void BranchContainer::setRotationSubtree(const int &a)
 {
     rotationSubtree = a;
-    updateChildrenStructure();
+    updateChildrenStructure();  // FIXME-0 or better do this in updateStyles()?
 }
 
 int BranchContainer::getRotationSubtree()
@@ -1057,7 +1034,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                 setRotationSubtree(a);
             }
         } else {
-            // Set outerFrame   // FIXME-0   Mainbranch with floatingBounded image has broken layout (try load and create after load: different!)
+            // Set outerFrame
             if (!outerFrame) {
                 int a = getRotationSubtree();
                 outerFrame = new FrameContainer;
@@ -1069,7 +1046,6 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                     c = innerContainer;
                 outerFrame->addContainer(c);
                 addContainer(outerFrame, Z_OUTER_FRAME);
-                // FIXME-0 still needed?  set in updateCS below...  setRotationSubtree(a);
             }
             outerFrame->setFrameType(ftype);
         }
@@ -1233,7 +1209,7 @@ void BranchContainer::updateStyles(
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    //qDebug() << "BC::updateStyles of " << info();
+    // qDebug() << "BC::updateStyles of " << info(); // FIXME-2 called often during load
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->getMapDesign();
@@ -1360,8 +1336,6 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    //qDebug() << "BC::reposition " << info();
-
     // Abreviation for depth
     uint depth;
     if (branchItem)
@@ -1369,6 +1343,8 @@ void BranchContainer::reposition()
     else
         // tmpParentContainer has no branchItem
         depth = 0;
+
+    //qDebug() << "BC::reposition " << info() << "depth=" << depth;
 
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
@@ -1447,9 +1423,6 @@ void BranchContainer::reposition()
                 break;
         }
     }
-
-    // Depending on layouts, we might need to insert outerContainer and relink children
-    // updateChildrenStructure();  // FIXME-0 needed in every reposition() or only when changed ?
 
     // Remove  imagesContainer, if unused
     updateImagesContainer();    // FIXME-0 should go to updateChildrenStucture()

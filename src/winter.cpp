@@ -218,7 +218,7 @@ void Winter::setObstacles(QList<QRectF> obslist)
     }
 }
 
-void Winter::animate()
+void Winter::animate()  // FIXME-3   z-order and releasing (shake branch)  not working
 {
     // test->setRect(QRectF(viewRect.topLeft(), viewRect.bottomRight()));
 

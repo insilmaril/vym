@@ -30,7 +30,7 @@ class BranchContainer : public SelectableContainer {
     virtual ~BranchContainer();
     virtual void init();
 
-    BranchContainer* parentBranchContainer();
+    BranchContainer* parentBranchContainer(Container *c = nullptr);
 
     void setBranchItem(BranchItem *);
     BranchItem *getBranchItem() const;
