@@ -452,7 +452,10 @@ void BranchContainer::updateChildrenStructure()
                 listContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
                 listContainer->addContainer(branchesContainer); // FIXME-0 what about images in list layouts?
-            innerContainer->addContainer(listContainer);
+
+            // Insert at end, especially behind innerFrame or ornamentsContainer
+            innerContainer->addContainer(listContainer, Z_LIST);
+
         }
     } else {
         // Switch back from listContainer to regular setup with innerContainer

@@ -15,6 +15,7 @@
 #define Z_STANDARD_FLAGS 60
 #define Z_SYSTEM_FLAGS 70
 #define Z_HEADING 80
+#define Z_LIST 90
 
 class BranchContainer;
 class ImageContainer;
