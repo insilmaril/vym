@@ -48,14 +48,14 @@
           <string>Heading</string>
          </property>
          <layout class="QFormLayout" name="formLayout_2">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="innerFrameTypeLabel">
             <property name="text">
              <string>Type</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QComboBox" name="innerFrameTypeCombo">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -95,28 +95,28 @@
             </item>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="innerFramePaddingLabel">
             <property name="text">
              <string>Padding</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QSpinBox" name="innerFramePaddingSpinBox">
             <property name="maximum">
              <number>50</number>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="innerFrameBorderLabel">
             <property name="text">
              <string>Width</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QSpinBox" name="innerFrameWidthSpinBox">
             <property name="minimum">
              <number>1</number>
@@ -126,7 +126,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="innerFrameBrushColorLabelDesc">
             <property name="text">
              <string>Frame color</string>
@@ -136,7 +136,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="4" column="1">
            <widget class="QPushButton" name="innerFramePenColorButton">
             <property name="minimumSize">
              <size>
@@ -155,7 +155,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="innerFramePenColorLabelDesc">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -171,7 +171,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QPushButton" name="innerFrameBrushColorButton">
             <property name="minimumSize">
              <size>
@@ -190,6 +190,20 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="innerFrameAutoDesignCheckBox">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="innerFrameAutoLabel">
+            <property name="text">
+             <string>Automatic</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -205,14 +219,14 @@
           <string>Subtree</string>
          </property>
          <layout class="QFormLayout" name="formLayout">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="outerFrameTypeLabel">
             <property name="text">
              <string>Type</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QComboBox" name="outerFrameTypeCombo">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -258,28 +272,28 @@
             </item>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="outerFramePaddingLabel">
             <property name="text">
              <string>Padding</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QSpinBox" name="outerFramePaddingSpinBox">
             <property name="maximum">
              <number>50</number>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="outerFrameBorderLabel">
             <property name="text">
              <string>Width</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="4" column="1">
            <widget class="QSpinBox" name="outerFrameWidthSpinBox">
             <property name="minimum">
              <number>1</number>
@@ -289,7 +303,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="outerFramePenColorLabelDesc">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -305,7 +319,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <widget class="QPushButton" name="outerFramePenColorButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -330,7 +344,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="outerFrameBrushColorLabelDesc">
             <property name="text">
              <string>Background color</string>
@@ -340,7 +354,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="6" column="1">
            <widget class="QPushButton" name="outerFrameBrushColorButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -360,6 +374,20 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="outerFrameAutoLabel">
+            <property name="text">
+             <string>Automatic</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="outerFrameAutoDesignCheckBox">
             <property name="text">
              <string/>
             </property>
@@ -854,7 +882,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="branchesLayoutsButtonGroup"/>
   <buttongroup name="imagesLayoutsButtonGroup"/>
+  <buttongroup name="branchesLayoutsButtonGroup"/>
  </buttongroups>
 </ui>

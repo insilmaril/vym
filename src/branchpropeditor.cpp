@@ -161,9 +161,9 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
 
-        // Inner frame
+        // Inner frame  // FIXME-0 disable below, if true
+        ui.innerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(true));
         FrameContainer::FrameType t = bc->frameType(true);
-
         if (t == FrameContainer::NoFrame)
         {
             ui.innerFrameTypeCombo->setCurrentIndex(0);
@@ -210,6 +210,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             }
         }
         // Outer frame
+        ui.outerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(false));  // FIXME-0 disable below, if true
         t = bc->frameType(false);
 
         if (t == FrameContainer::NoFrame)
@@ -361,10 +362,24 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
 void BranchPropertyEditor::setModel(VymModel *m)
 {
     model = m;
-    if (model)
-        setItem(model->getSelectedItem());
-    else
-        ui.tabWidget->setEnabled(false);
+    if (model) {
+        QList <TreeItem*> seltis = model->getSelectedItems();
+        if (!seltis.isEmpty()) {
+            setItem(seltis.last()); // FIXME-2 ok to only display last selected item?
+            return;
+        }
+    }
+    ui.tabWidget->setEnabled(false);
+}
+
+void BranchPropertyEditor::frameAutoDesignChanged()
+{
+    if (model) {
+        if ((sender() == ui.innerFrameAutoDesignCheckBox))
+            model->setFrameAutoDesign(true, ui.innerFrameAutoDesignCheckBox->isChecked());
+        else
+            model->setFrameAutoDesign(false, ui.outerFrameAutoDesignCheckBox->isChecked());
+    }
 }
 
 void BranchPropertyEditor::frameTypeChanged(int i)
@@ -410,7 +425,7 @@ void BranchPropertyEditor::framePenColorClicked()
 
             col = QColorDialog::getColor(col, this);
             if (col.isValid()) {
-                model->setFramePenColor(useInnerFrame, col, branchItem);
+                model->setFramePenColor(useInnerFrame, col);
 
                 // Re-set item to update color button
                 setItem(branchItem);
@@ -435,7 +450,7 @@ void BranchPropertyEditor::frameBrushColorClicked()
                     tr("Background color of frame","Branch property dialog"),
                     QColorDialog::ShowAlphaChannel);
             if (col.isValid()) {
-                model->setFrameBrushColor(useInnerFrame, col, branchItem);
+                model->setFrameBrushColor(useInnerFrame, col);
 
                 // Re-set item to update color button
                 setItem(branchItem);
@@ -448,7 +463,7 @@ void BranchPropertyEditor::framePaddingChanged(int i)
 {
     if (model) {
         bool useInnerFrame = (sender() == ui.innerFramePaddingSpinBox) ? true : false;
-        model->setFramePadding(useInnerFrame, i, branchItem);
+        model->setFramePadding(useInnerFrame, i);
     }
 }
 
@@ -456,7 +471,7 @@ void BranchPropertyEditor::framePenWidthChanged(int i)
 {
     if (model) {
         bool useInnerFrame = (sender() == ui.innerFrameWidthSpinBox) ? true : false;
-        model->setFramePenWidth(useInnerFrame, i, branchItem);
+        model->setFramePenWidth(useInnerFrame, i);
     }
 }
 
@@ -584,6 +599,8 @@ void BranchPropertyEditor::indexChanged(int n)
 void BranchPropertyEditor::connectSignals()
 {
     // Frames
+    connect(ui.innerFrameAutoDesignCheckBox, SIGNAL(clicked()), this,
+            SLOT(frameAutoDesignChanged()));
     connect(ui.innerFramePenColorButton, SIGNAL(clicked()), this,
             SLOT(framePenColorClicked()));
     connect(ui.innerFramePaddingSpinBox, SIGNAL(valueChanged(int)), this,
@@ -595,6 +612,8 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.innerFrameTypeCombo, SIGNAL(currentIndexChanged(int)), this,
             SLOT(frameTypeChanged(int)));
 
+    connect(ui.outerFrameAutoDesignCheckBox, SIGNAL(clicked()), this,
+            SLOT(frameAutoDesignChanged()));
     connect(ui.outerFramePenColorButton, SIGNAL(clicked()), this,
             SLOT(framePenColorClicked()));
     connect(ui.outerFramePaddingSpinBox, SIGNAL(valueChanged(int)), this,
@@ -669,12 +688,14 @@ void BranchPropertyEditor::connectSignals()
 void BranchPropertyEditor::disconnectSignals()
 {
     // Frame
+    disconnect(ui.innerFrameAutoDesignCheckBox, 0, 0, 0);
     disconnect(ui.innerFramePenColorButton, 0, 0, 0);
     disconnect(ui.innerFramePaddingSpinBox, 0, 0, 0);
     disconnect(ui.innerFrameWidthSpinBox, 0, 0, 0);
     disconnect(ui.innerFrameBrushColorButton, 0, 0, 0);
     disconnect(ui.innerFrameTypeCombo, 0, 0, 0);
 
+    disconnect(ui.outerFrameAutoDesignCheckBox, 0, 0, 0);
     disconnect(ui.outerFramePenColorButton, 0, 0, 0);
     disconnect(ui.outerFramePaddingSpinBox, 0, 0, 0);
     disconnect(ui.outerFrameWidthSpinBox, 0, 0, 0);

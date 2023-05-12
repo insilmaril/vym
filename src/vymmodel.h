@@ -362,6 +362,7 @@ class VymModel : public TreeModel {
     QString getURL(); // returns URL of selection or ""
     QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
 
+    void setFrameAutoDesign(const bool &useInnerFrame, const bool &);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
     void setFrameType(const bool &useInnerFrame, const QString &);
     void setFramePenColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);

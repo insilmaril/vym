@@ -27,6 +27,7 @@ class BranchPropertyEditor : public QDialog {
     void setModel(VymModel *);
 
   private slots:
+    void frameAutoDesignChanged();
     void frameTypeChanged(int i);
     void framePenColorClicked();
     void frameBrushColorClicked();

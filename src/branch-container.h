@@ -142,6 +142,8 @@ class BranchContainer : public SelectableContainer {
     virtual void select();  // Overloads SelectableContainer::select
 
     // FrameContainer interfaces
+    bool frameAutoDesign(const bool &useInnerFrame);
+    void setFrameAutoDesign(const bool &userInnerFrame, const bool &);
     FrameContainer::FrameType frameType(const bool &useInnerFrame);
     QString frameTypeString(const bool &useInnerFrame);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &);

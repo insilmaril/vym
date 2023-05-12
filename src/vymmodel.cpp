@@ -2345,6 +2345,16 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     return urls;
 }
 
+void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b) // FIXME-2 no savestate
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        bc->setFrameAutoDesign(useInnerFrame, b);
+    }
+}
+
 void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &t, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);

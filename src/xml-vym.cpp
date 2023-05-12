@@ -1096,50 +1096,83 @@ void VymReader::readFrameAttr()
         bool useInnerFrame = true;
         // useInnerFrame was introduced in 2.9.506
         // It replaces the previous "includeChildren" attribute
+        bool ok = false;
         QString a = "includeChildren";
         QString s = attributeToString(a);
-        if (s == "true")
-            useInnerFrame = false;
+        if (!s.isEmpty()) {
+            ok = true;
+            if (s == "true")
+                useInnerFrame = false;
+        }
 
         a = "frameUsage";
         s = attributeToString(a);
-        if (s == "innerFrame")
+        if (s == "innerFrame") {
             useInnerFrame = true;
-        else if (s == "outerFrame")
+            ok = true;
+        } else if (s == "outerFrame") {
             useInnerFrame = false;
+            ok =true;
+        }
+
+        if (!ok) {
+            xml.raiseError("No includeChildren or frameUsage attribut found for frame");
+            return;
+        }
 
         a = "frameType";
         s = attributeToString(a);
-        if (!s.isEmpty())
-            bc->setFrameType(useInnerFrame, s);
+        if (s.isEmpty())
+            s = "Rectangle";
+
+        // Start with setting/creating frame. 
+        // assuming that there is no "NoFrame" frame in the xml
+        bc->setFrameType(useInnerFrame, s);
+
+        // Default also in FrameContainer is autoDesign == true
+        bool autoDesign = true;
+
         a = "penColor";
         s = attributeToString(a);
-        if (!s.isEmpty())
+        if (!s.isEmpty()) {
             bc->setFramePenColor(useInnerFrame, s);
+            autoDesign = false;
+        }
+
         a = "brushColor";
         s = attributeToString(a);
-        if (!s.isEmpty())
+        if (!s.isEmpty()) {
             bc->setFrameBrushColor(useInnerFrame, s);
+            autoDesign = false;
+        }
 
         int i;
-        bool ok;
         a = "padding";
         s = attributeToString(a);
         i = s.toInt(&ok);
-        if (ok)
+        if (ok) {
             bc->setFramePadding(useInnerFrame, i);
+            autoDesign = false;
+        }
 
         a = "borderWidth";
         s = attributeToString(a);
         i = s.toInt(&ok);
-        if (ok)
+        if (ok) {
             bc->setFramePenWidth(useInnerFrame, i);
+            autoDesign = false;
+        }
 
         a = "penWidth";
         s = attributeToString(a);
         i = s.toInt(&ok);
-        if (ok)
+        if (ok) {
             bc->setFramePenWidth(useInnerFrame, i);
+            autoDesign = false;
+        }
+
+        bc->setFrameAutoDesign(useInnerFrame, autoDesign);
+
     }
 }
 

@@ -968,6 +968,36 @@ void BranchContainer::select()
 	    branchItem->getMapDesign()->selectionColor());
 }
 
+bool BranchContainer::frameAutoDesign(const bool &useInnerFrame)
+{
+    if (useInnerFrame) {
+        if (innerFrame)
+            return innerFrame->autoDesign;
+    } else {
+        if (outerFrame)
+            return outerFrame->autoDesign;
+    }
+
+    // If there is no frame, return default autoDesign
+    return true;
+}
+
+void BranchContainer::setFrameAutoDesign(const bool &useInnerFrame, const bool &b)
+{
+    if (useInnerFrame) {
+        if (innerFrame) {
+            innerFrame->autoDesign = b;
+            return;
+        }
+    } else {
+        if (outerFrame) {
+            outerFrame->autoDesign = b;
+            return;
+        }
+    }
+    qWarning() << "BC::setFrameAutoDesign no frame available!";
+}
+
 FrameContainer::FrameType BranchContainer::frameType(const bool &useInnerFrame)
 {
     if (useInnerFrame) {
