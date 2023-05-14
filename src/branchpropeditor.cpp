@@ -161,7 +161,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
 
-        // Inner frame  // FIXME-0 disable below, if true
+        // Inner frame
         ui.innerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(true));
         FrameContainer::FrameType t = bc->frameType(true);
         if (t == FrameContainer::NoFrame || bc->frameAutoDesign(true))

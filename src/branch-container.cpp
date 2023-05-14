@@ -374,7 +374,10 @@ void BranchContainer::updateChildrenStructure()
     } else if (branchesContainerLayout != FloatingBounded && imagesContainerLayout == FloatingBounded) {
         // d) Only images are FloatingBounded
         createOuterContainer();
-        innerContainer->setLayout(Horizontal);
+        if (listContainer)
+            innerContainer->setLayout(Vertical);
+        else
+            innerContainer->setLayout(Horizontal);
     } else {
         // e) remaining cases
         deleteOuterContainer();
@@ -440,18 +443,17 @@ void BranchContainer::updateChildrenStructure()
             innerContainer->setVerticalAlignment(AlignedLeft);
 
             // listContainer has one linkSpaceCOntainer left of branchesContainer
-            // and is below ornamentsContainer
-            //qDebug() << "... Creating listContainer";
             listContainer = new Container;
             listContainer->containerType = Container::ListContainer;
             listContainer->setLayout(Horizontal);
             if (linkSpaceContainer)
                 listContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
-                listContainer->addContainer(branchesContainer); // FIXME-0 what about images in list layouts?
+                listContainer->addContainer(branchesContainer);
 
             // Insert at end, especially behind innerFrame or ornamentsContainer
             innerContainer->addContainer(listContainer, Z_LIST);
+            //qDebug() << "... Created listContainer in branch " << branchItem->getHeadingPlain();
 
         }
     } else {
@@ -461,7 +463,7 @@ void BranchContainer::updateChildrenStructure()
             if (linkSpaceContainer)
                 innerContainer->addContainer(linkSpaceContainer);
             if (branchesContainer)
-                innerContainer->addContainer(branchesContainer);    // FIXME-0 what about images in list layouts?
+                innerContainer->addContainer(branchesContainer);
             delete listContainer;
             listContainer = nullptr;
         }
@@ -908,7 +910,7 @@ QRectF BranchContainer::getHeadingRect()
 void BranchContainer::setRotationHeading(const int &a)
 {
     rotationHeading = a;
-    updateChildrenStructure();  // FIXME-0 or better do this in updateStyles()?
+    updateChildrenStructure();  // FIXME-2 or better do this in updateStyles()?
     //headingContainer->setScale(f + a * 1.1);      // FIXME-2 what about scaling?? Which transformCenter?
 }
 
@@ -920,7 +922,7 @@ int BranchContainer::getRotationHeading()
 void BranchContainer::setRotationSubtree(const int &a)
 {
     rotationSubtree = a;
-    updateChildrenStructure();  // FIXME-0 or better do this in updateStyles()?
+    updateChildrenStructure();  // FIXME-2 or better do this in updateStyles()?
 }
 
 int BranchContainer::getRotationSubtree()
