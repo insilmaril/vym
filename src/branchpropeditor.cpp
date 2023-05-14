@@ -164,99 +164,119 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         // Inner frame  // FIXME-0 disable below, if true
         ui.innerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(true));
         FrameContainer::FrameType t = bc->frameType(true);
-        if (t == FrameContainer::NoFrame)
+        if (t == FrameContainer::NoFrame || bc->frameAutoDesign(true))
         {
-            ui.innerFrameTypeCombo->setCurrentIndex(0);
+            ui.innerFrameTypeLabel->setEnabled(false);
+            ui.innerFrameTypeCombo->setEnabled(false);
             ui.innerFramePenColorButton->setEnabled(false);
             ui.innerFrameBrushColorButton->setEnabled(false);
             ui.innerFramePaddingSpinBox->setEnabled(false);
             ui.innerFrameWidthSpinBox->setEnabled(false);
             ui.innerFramePaddingLabel->setEnabled(false);
             ui.innerFrameBorderLabel->setEnabled(false);
+            ui.innerFrameBrushColorLabelDesc->setEnabled(false);
+            ui.innerFramePenColorLabelDesc->setEnabled(false);
         }
         else {
-            QPixmap pix(16, 16);
-            pix.fill(bc->framePenColor(true));
-            ui.innerFramePenColorButton->setIcon(pix);
-            pix.fill(bc->frameBrushColor(true));
-            ui.innerFrameBrushColorButton->setIcon(pix);
+            ui.innerFrameTypeLabel->setEnabled(true);
+            ui.innerFrameTypeCombo->setEnabled(true);
             ui.innerFramePenColorButton->setEnabled(true);
             ui.innerFrameBrushColorButton->setEnabled(true);
             ui.innerFramePaddingSpinBox->setEnabled(true);
-            ui.innerFramePaddingSpinBox->setValue(bc->framePadding(true));
             ui.innerFrameWidthSpinBox->setEnabled(true);
-            ui.innerFrameWidthSpinBox->setValue( bc->framePenWidth(true));
             ui.innerFramePaddingLabel->setEnabled(true);
             ui.innerFrameBorderLabel->setEnabled(true);
+            ui.innerFrameBrushColorLabelDesc->setEnabled(true);
+            ui.innerFramePenColorLabelDesc->setEnabled(true);
+        }
 
-            switch (t) {
-                case FrameContainer::Rectangle:
-                    ui.innerFrameTypeCombo->setCurrentIndex(1);
-                    break;
-                case FrameContainer::RoundedRectangle:
-                    ui.innerFrameTypeCombo->setCurrentIndex(2);
-                    break;
-                case FrameContainer::Ellipse:
-                    ui.innerFrameTypeCombo->setCurrentIndex(3);
-                    break;
-                case FrameContainer::Circle:
-                    ui.innerFrameTypeCombo->setCurrentIndex(4);
-                    break;
-                case FrameContainer::Cloud:
-                    ui.innerFrameTypeCombo->setCurrentIndex(5);
-                    break;
-                default:
-                    break;
-            }
+        QPixmap pix(16, 16);
+        pix.fill(bc->framePenColor(true));
+        ui.innerFramePenColorButton->setIcon(pix);
+        pix.fill(bc->frameBrushColor(true));
+        ui.innerFrameBrushColorButton->setIcon(pix);
+        ui.innerFramePaddingSpinBox->setValue(bc->framePadding(true));
+        ui.innerFrameWidthSpinBox->setValue( bc->framePenWidth(true));
+
+        switch (t) {
+            case FrameContainer::NoFrame:
+                ui.innerFrameTypeCombo->setCurrentIndex(0);
+                break;
+            case FrameContainer::Rectangle:
+                ui.innerFrameTypeCombo->setCurrentIndex(1);
+                break;
+            case FrameContainer::RoundedRectangle:
+                ui.innerFrameTypeCombo->setCurrentIndex(2);
+                break;
+            case FrameContainer::Ellipse:
+                ui.innerFrameTypeCombo->setCurrentIndex(3);
+                break;
+            case FrameContainer::Circle:
+                ui.innerFrameTypeCombo->setCurrentIndex(4);
+                break;
+            case FrameContainer::Cloud:
+                ui.innerFrameTypeCombo->setCurrentIndex(5);
+                break;
+            default:
+                break;
         }
         // Outer frame
-        ui.outerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(false));  // FIXME-0 disable below, if true
+        ui.outerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(false));
         t = bc->frameType(false);
-
-        if (t == FrameContainer::NoFrame)
+        if (t == FrameContainer::NoFrame || bc->frameAutoDesign(false))
         {
-            ui.outerFrameTypeCombo->setCurrentIndex(0);
+            ui.outerFrameTypeLabel->setEnabled(false);
+            ui.outerFrameTypeCombo->setEnabled(false);
             ui.outerFramePenColorButton->setEnabled(false);
             ui.outerFrameBrushColorButton->setEnabled(false);
             ui.outerFramePaddingSpinBox->setEnabled(false);
             ui.outerFrameWidthSpinBox->setEnabled(false);
             ui.outerFramePaddingLabel->setEnabled(false);
             ui.outerFrameBorderLabel->setEnabled(false);
+            ui.outerFrameBrushColorLabelDesc->setEnabled(false);
+            ui.outerFramePenColorLabelDesc->setEnabled(false);
         }
         else {
+            ui.outerFrameTypeLabel->setEnabled(true);
+            ui.outerFrameTypeCombo->setEnabled(true);
             ui.outerFramePenColorButton->setEnabled(true);
             ui.outerFrameBrushColorButton->setEnabled(true);
-            QPixmap pix(16, 16);
-            pix.fill(bc->framePenColor(false));
-            ui.outerFramePenColorButton->setIcon(pix);
-            pix.fill(bc->frameBrushColor(false));
-            ui.outerFrameBrushColorButton->setIcon(pix);
             ui.outerFramePaddingSpinBox->setEnabled(true);
-            ui.outerFramePaddingSpinBox->setValue(bc->framePadding(false));
             ui.outerFrameWidthSpinBox->setEnabled(true);
-            ui.outerFrameWidthSpinBox->setValue( bc->framePenWidth(false));
             ui.outerFramePaddingLabel->setEnabled(true);
             ui.outerFrameBorderLabel->setEnabled(true);
+            ui.outerFrameBrushColorLabelDesc->setEnabled(true);
+            ui.outerFramePenColorLabelDesc->setEnabled(true);
+        }
 
-            switch (t) {
-                case FrameContainer::Rectangle:
-                    ui.outerFrameTypeCombo->setCurrentIndex(1);
-                    break;
-                case FrameContainer::RoundedRectangle:
-                    ui.outerFrameTypeCombo->setCurrentIndex(2);
-                    break;
-                case FrameContainer::Ellipse:
-                    ui.outerFrameTypeCombo->setCurrentIndex(3);
-                    break;
-                case FrameContainer::Circle:
-                    ui.outerFrameTypeCombo->setCurrentIndex(4);
-                    break;
-                case FrameContainer::Cloud:
-                    ui.outerFrameTypeCombo->setCurrentIndex(5);
-                    break;
-                default:
-                    break;
-            }
+        pix.fill(bc->framePenColor(false));
+        ui.outerFramePenColorButton->setIcon(pix);
+        pix.fill(bc->frameBrushColor(false));
+        ui.outerFrameBrushColorButton->setIcon(pix);
+        ui.outerFramePaddingSpinBox->setValue(bc->framePadding(false));
+        ui.outerFrameWidthSpinBox->setValue( bc->framePenWidth(false));
+
+        switch (t) {
+            case FrameContainer::NoFrame:
+                ui.outerFrameTypeCombo->setCurrentIndex(0);
+                break;
+            case FrameContainer::Rectangle:
+                ui.outerFrameTypeCombo->setCurrentIndex(1);
+                break;
+            case FrameContainer::RoundedRectangle:
+                ui.outerFrameTypeCombo->setCurrentIndex(2);
+                break;
+            case FrameContainer::Ellipse:
+                ui.outerFrameTypeCombo->setCurrentIndex(3);
+                break;
+            case FrameContainer::Circle:
+                ui.outerFrameTypeCombo->setCurrentIndex(4);
+                break;
+            case FrameContainer::Cloud:
+                ui.outerFrameTypeCombo->setCurrentIndex(5);
+                break;
+            default:
+                break;
         }
 
         // Link
@@ -379,6 +399,7 @@ void BranchPropertyEditor::frameAutoDesignChanged()
             model->setFrameAutoDesign(true, ui.innerFrameAutoDesignCheckBox->isChecked());
         else
             model->setFrameAutoDesign(false, ui.outerFrameAutoDesignCheckBox->isChecked());
+        setItem(branchItem);
     }
 }
 
