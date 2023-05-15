@@ -55,13 +55,6 @@ void ImageContainer::copy(ImageContainer *other)
             setRect(pixmapItem->boundingRect());
             imageType = ImageContainer::Pixmap;
             break;
-        case ImageContainer::ModifiedPixmap:
-            // create new pixmap?
-            pixmapItem->setPixmap(other->pixmapItem->pixmap());
-            pixmapItem->setParentItem(this);
-            pixmapItem->setVisible(isVisible());
-            imageType = ImageContainer::Pixmap;
-            break;
         default:
             qWarning() << "ImgObj::copy other->imageType undefined";
             return;
@@ -86,7 +79,6 @@ void ImageContainer::init()
 
     svgItem = nullptr;
     pixmapItem = nullptr;
-    originalPixmap = nullptr;
     scaleFactor = 1;
     overlay = false;    // Inherits FrameContainer, which has overlay == true
 
@@ -102,7 +94,6 @@ void ImageContainer::setVisibility(bool v)
             v ? svgItem->show() : svgItem->hide();
             break;
         case ImageContainer::Pixmap:
-        case ImageContainer::ModifiedPixmap:
             v ? pixmapItem->show() : pixmapItem->hide();
             break;
         default:
@@ -121,36 +112,7 @@ void ImageContainer::setWidth(qreal w)
 void ImageContainer::setScaleFactor(qreal f)
 {
     scaleFactor = f;
-        switch (imageType) {
-            case ImageContainer::SVG:
-            case ImageContainer::ClonedSVG: {
-                svgItem->setScale(f);
-                QRectF r = rect();
-                r.setWidth(r.width() * f);
-                r.setHeight(r.height() * f);
-                setRect(r);
-                break;
-            }
-            case ImageContainer::Pixmap:
-                if (f != 1) {
-                    // create ModifiedPixmap
-                    originalPixmap = new QPixmap(pixmapItem->pixmap());
-                    imageType = ModifiedPixmap;
-
-                    setScaleFactor(f);
-                }
-                break;
-            case ImageContainer::ModifiedPixmap:
-                if (!originalPixmap) {
-                    qWarning() << "ImageContainer::setScaleFactor   no originalPixmap!";
-                    return;
-                }
-                pixmapItem->setPixmap(originalPixmap->scaled(
-                    originalPixmap->width() * f, originalPixmap->height() * f));
-                break;
-            default:
-            break;
-    }
+    setScale(f);
 }
 
 qreal ImageContainer::getScaleFactor() { return scaleFactor; }
@@ -229,9 +191,6 @@ bool ImageContainer::save(const QString &fn)
         case ImageContainer::Pixmap:
             return pixmapItem->pixmap().save(fn, "PNG", 100);
             break;
-        case ImageContainer::ModifiedPixmap:
-            return originalPixmap->save(fn, "PNG", 100);
-            break;
         default:
             break;
     }
@@ -247,7 +206,6 @@ QString ImageContainer::getExtension()
             s = ".svg";
             break;
         case ImageContainer::Pixmap:
-        case ImageContainer::ModifiedPixmap:
             s = ".png";
             break;
         default:
@@ -266,7 +224,6 @@ QIcon ImageContainer::getIcon()
             return QPixmap(svgCachePath);
             break;
         case ImageContainer::Pixmap:
-        case ImageContainer::ModifiedPixmap:
             return QIcon(pixmapItem->pixmap());
             break;
         default:

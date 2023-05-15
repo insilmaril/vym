@@ -3994,7 +3994,7 @@ void VymModel::setScaleFactor(qreal f)
     }
 }
 
-void VymModel::growSelectionSize() // FIXME-3 Also for heading in BranchItem?
+void VymModel::growSelectionSize() // FIXME-2 Also for heading in BranchItem?
 {
     ImageItem *selii = getSelectedImage();
     if (selii) {

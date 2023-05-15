@@ -20,7 +20,7 @@ class ImageItem;
 
 class ImageContainer : public SelectableContainer {
   public:
-    enum ImageType { Undefined, Pixmap, ModifiedPixmap, SVG, ClonedSVG };
+    enum ImageType { Undefined, Pixmap, SVG, ClonedSVG };
 
     ImageContainer();
     virtual ~ImageContainer();
@@ -50,7 +50,6 @@ class ImageContainer : public SelectableContainer {
     QString svgCachePath;
 
     QGraphicsPixmapItem *pixmapItem;
-    QPixmap *originalPixmap;
 
     qreal scaleFactor;
 
