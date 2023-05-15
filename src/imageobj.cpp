@@ -41,12 +41,6 @@ ImageObj::~ImageObj()
         if (pixmapItem)
             delete (pixmapItem);
         break;
-    case ImageObj::ModifiedPixmap:
-        if (pixmapItem)
-            delete (pixmapItem);
-        if (originalPixmap)
-            delete (originalPixmap);
-        break;
     default:
         qDebug() << "Destr ImgObj: imageType undefined";
         break;
@@ -65,7 +59,6 @@ void ImageObj::init()
     imageType = ImageObj::Undefined;
     svgItem = NULL;
     pixmapItem = NULL;
-    originalPixmap = NULL;
     scaleFactor = 1;
 }
 
@@ -94,13 +87,6 @@ void ImageObj::copy(ImageObj *other)
         pixmapItem->setVisible(isVisible());
         imageType = ImageObj::Pixmap;
         break;
-    case ImageObj::ModifiedPixmap:
-        // create new pixmap?
-        pixmapItem->setPixmap(other->pixmapItem->pixmap());
-        pixmapItem->setParentItem(parentItem());
-        pixmapItem->setVisible(isVisible());
-        imageType = ImageObj::Pixmap;
-        break;
     default:
         qWarning() << "ImgObj::copy other->imageType undefined";
         return;
@@ -119,9 +105,6 @@ void ImageObj::setPos(const QPointF &pos)
     case ImageObj::Pixmap:
         pixmapItem->setPos(pos);
         break;
-    case ImageObj::ModifiedPixmap:
-        pixmapItem->setPos(pos);
-        break;
     default:
         break;
     }
@@ -137,7 +120,6 @@ void ImageObj::setZValue(qreal z)
         svgItem->setZValue(z);
         break;
     case ImageObj::Pixmap:
-    case ImageObj::ModifiedPixmap:
         pixmapItem->setZValue(z);
         break;
     default:
@@ -153,7 +135,6 @@ void ImageObj::setVisibility(bool v)
         v ? svgItem->show() : svgItem->hide();
         break;
     case ImageObj::Pixmap:
-    case ImageObj::ModifiedPixmap:
         v ? pixmapItem->show() : pixmapItem->hide();
         break;
     default:
@@ -178,21 +159,8 @@ void ImageObj::setScaleFactor(qreal f)
         svgItem->setScale(f);
         break;
     case ImageObj::Pixmap:
-        if (f != 1) {
-            // create ModifiedPixmap
-            originalPixmap = new QPixmap(pixmapItem->pixmap());
-            imageType = ModifiedPixmap;
-
-            setScaleFactor(f);
-        }
-        break;
-    case ImageObj::ModifiedPixmap:
-        if (!originalPixmap) {
-            qWarning() << "ImageObj::setScaleFactor   no originalPixmap!";
-            return;
-        }
-        pixmapItem->setPixmap(originalPixmap->scaled(
-            originalPixmap->width() * f, originalPixmap->height() * f));
+        if (f != 1)
+            pixmapItem->setScale(f);
         break;
     default:
         break;
@@ -206,12 +174,9 @@ QRectF ImageObj::boundingRect() const
     switch (imageType) {
     case ImageObj::SVG:
     case ImageObj::ClonedSVG:
-        return QRectF(0, 0, svgItem->boundingRect().width() * scaleFactor,
-                      svgItem->boundingRect().height() * scaleFactor);
+        return svgItem->mapToScene(svgItem->boundingRect()).boundingRect();
     case ImageObj::Pixmap:
-        return pixmapItem->boundingRect();
-    case ImageObj::ModifiedPixmap:
-        return pixmapItem->boundingRect();
+        return pixmapItem->mapToScene(pixmapItem->boundingRect()).boundingRect();
     default:
         break;
     }
@@ -230,7 +195,6 @@ void ImageObj::paint(QPainter *painter, const QStyleOptionGraphicsItem *sogi,
         svgItem->paint(painter, sogi, widget);
         break;
     case ImageObj::Pixmap:
-    case ImageObj::ModifiedPixmap:
         pixmapItem->paint(painter, sogi, widget);
         break;
     default:
@@ -312,9 +276,6 @@ bool ImageObj::save(const QString &fn)
     case ImageObj::Pixmap:
         return pixmapItem->pixmap().save(fn, "PNG", 100);
         break;
-    case ImageObj::ModifiedPixmap:
-        return originalPixmap->save(fn, "PNG", 100);
-        break;
     default:
         break;
     }
@@ -330,7 +291,6 @@ QString ImageObj::getExtension()
         s = ".svg";
         break;
     case ImageObj::Pixmap:
-    case ImageObj::ModifiedPixmap:
         s = ".png";
         break;
     default:
@@ -349,7 +309,6 @@ QIcon ImageObj::getIcon()
         return QPixmap(svgCachePath);
         break;
     case ImageObj::Pixmap:
-    case ImageObj::ModifiedPixmap:
         return QIcon(pixmapItem->pixmap());
         break;
     default:

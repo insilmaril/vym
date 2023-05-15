@@ -15,7 +15,7 @@
 
 class ImageObj : public QGraphicsItem {
   public:
-    enum ImageType { Undefined, Pixmap, ModifiedPixmap, SVG, ClonedSVG };
+    enum ImageType { Undefined, Pixmap, SVG, ClonedSVG };
 
     ImageObj();
     ImageObj(QGraphicsItem *);
@@ -44,7 +44,6 @@ class ImageObj : public QGraphicsItem {
     QString svgCachePath;
 
     QGraphicsPixmapItem *pixmapItem;
-    QPixmap *originalPixmap;
 
     qreal scaleFactor;
 
