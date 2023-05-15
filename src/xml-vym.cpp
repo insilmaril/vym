@@ -1116,8 +1116,10 @@ void VymReader::readFrameAttr()
         }
 
         if (!ok) {
-            xml.raiseError("No includeChildren or frameUsage attribut found for frame");
-            return;
+            // In pre 3.0.0 versions "includeChildren" was optional for frame.
+            // Without "includeCHildren" and without the later "frameUsage, assume
+            // a frame is an innerFrame:
+            useInnerFrame = true;
         }
 
         a = "frameType";
