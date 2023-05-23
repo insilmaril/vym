@@ -239,6 +239,7 @@ void HeadingContainer::setScrollOpacity(qreal o) // FIXME-2 needed?
 
 qreal HeadingContainer::getScrollOpacity() // FIXME-2 needed?
 {
+    return 0;
 }
 
 void HeadingContainer::reposition()
