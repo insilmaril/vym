@@ -364,25 +364,6 @@ bool Container::isAnimated()
     return animatedPos.isAnimated();
 }
 
-QVariant Container::itemChange(GraphicsItemChange change, const QVariant &value)    // FIXME-2 needed? not used so far...
-{
-    //qDebug() << "Container::itemChange of " << this << ": " << change << value;
-    /*
-    if (change == ItemPositionChange && scene()) {
-        // value is the new position.
-        QPointF newPos = value.toPointF();
-        QRectF rect = scene()->sceneRect();
-        if (!rect.contains(newPos)) {
-            // Keep the item inside the scene rect.
-            newPos.setX(qMin(rect.right(), qMax(newPos.x(), rect.left())));
-            newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
-            return newPos;
-        }
-    }
-    */
-    return  QGraphicsItem::itemChange(change, value);
-}
-
 Container* Container::parentContainer()
 {
     return (Container*)parentItem();

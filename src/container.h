@@ -125,7 +125,6 @@ class Container : public QGraphicsRectItem {
     virtual bool isAnimated();
 
   public:
-    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     virtual void reposition();
 
   protected:

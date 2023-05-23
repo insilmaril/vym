@@ -1116,7 +1116,7 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Path to map");
     vymCommands.append(c);
 
-    c = new Command("mapCount", Command::Any), Command::Int;
+    c = new Command("mapCount", Command::Any);
     vymCommands.append(c);
 
     c = new Command("gotoMap", Command::Any);

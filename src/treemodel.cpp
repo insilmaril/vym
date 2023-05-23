@@ -36,11 +36,12 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-1 n
     if (role == Qt::EditRole || role == Qt::DisplayRole)
         return item->data(index.column());
 
-    if (role == Qt::ForegroundRole)
+    if (role == Qt::ForegroundRole) {
         if (bi)
             return bi->getHeadingColor();
         else
             return qApp->palette().color(QPalette::Text);
+    }
 
     if (role == Qt::BackgroundRole) {
         if (bi)

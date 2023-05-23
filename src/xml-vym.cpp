@@ -714,7 +714,6 @@ void VymReader::readSlide()
     if (!(contentFilter & SlideContent)) {
         lastSlide = model->addSlide();
 
-        qreal slideZoom;
         s = attributeToString("name");
         if (!s.isEmpty())
             lastSlide->setName(s);

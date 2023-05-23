@@ -39,7 +39,7 @@ FIXME-3 currently not used template <typename T> void ConfigList<T>::setDefault(
 
 MapDesign::MapDesign()
 {
-    //qDebug() << "Constr. MapDesign";
+    qDebug() << "Constr. MapDesign";
     init();
 }
 

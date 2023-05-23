@@ -11,6 +11,10 @@ BaseReader::BaseReader(VymModel *vm)
     lastBranch = nullptr;
 }
 
+BaseReader::~BaseReader()
+{
+}
+
 void BaseReader::setContentFilter(const int &c) { contentFilter = c; }
 
 QString BaseReader::errorString() const

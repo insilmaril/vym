@@ -511,6 +511,7 @@ qreal VymModelWrapper::getPosX()
 
     logError(context(), QScriptContext::UnknownError,
              "Could not get x-position from item");
+    return 0;
 }
 
 qreal VymModelWrapper::getPosY()
@@ -530,6 +531,7 @@ qreal VymModelWrapper::getPosY()
 
     logError(context(), QScriptContext::UnknownError,
              "Could not get y-position from item");
+    return 0;
 }
 
 qreal VymModelWrapper::getScenePosX()
@@ -549,6 +551,7 @@ qreal VymModelWrapper::getScenePosX()
 
     logError(context(), QScriptContext::UnknownError,
              "Could not get scenePos.x() from item");
+    return 0;
 }
 
 qreal VymModelWrapper::getScenePosY()
@@ -568,6 +571,7 @@ qreal VymModelWrapper::getScenePosY()
 
     logError(context(), QScriptContext::UnknownError,
              "Could not get scenePos.y() from item");
+    return 0;
 }
 
 int VymModelWrapper::getRotationHeading()

@@ -26,6 +26,7 @@ class BaseReader {
   };
 
     BaseReader(VymModel *vm);
+    virtual ~BaseReader();
     void setContentFilter(const int &);
 
     virtual bool read(QIODevice *device) = 0;
