@@ -1879,7 +1879,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
     */
 
-    // Update links
+    // Update links // FIXME-1 links not updated correctly when moving branches
     foreach (TreeItem *ti, movingItems)
     {
         if (ti->hasTypeBranch()) {
