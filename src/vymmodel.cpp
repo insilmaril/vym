@@ -124,6 +124,7 @@ VymModel::~VymModel()
     vymLock.releaseLock();
 
     delete (wrapper);
+    delete mapDesign;
 }
 
 void VymModel::clear()
