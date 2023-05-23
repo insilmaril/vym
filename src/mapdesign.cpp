@@ -8,6 +8,7 @@ extern bool usingDarkTheme;
 
 template <typename T> ConfigList <T> & ConfigList<T>::operator<<(const T &other) {
     qlist << other;
+    return *this;
 }
 
 template <typename T> T & ConfigList<T>::operator[](int i) {
@@ -187,7 +188,8 @@ bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
     // Special case for now: only set LinkStyle for first levels    // FIXME-2
     // Only set style for d=1 (Used to be map-wide setting before 3.x)
 
-    if (linkStyles.count() < 2)
+    if (linkStyles.count() < 2) // FIXME-2 not needed
+        return true;
 
     return true;
 }
