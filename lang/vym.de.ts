@@ -3602,7 +3602,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
     <message>
         <location filename="../src/xml-vym.cpp" line="+77"/>
         <source>Warning: Version Problem</source>
-        <translation>Warnung: Versionsproblemm</translation>
+        <translation>Warnung: Versionsproblem</translation>
     </message>
     <message>
         <location line="+1"/>
