@@ -2133,7 +2133,14 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     QItemSelection sel = model->getSelectionModel()->selection();
 
     LinkableMapObj *lmo;
+
     // Add new selected objects
+    if (sel.indexes().count() > 1)
+        mainWindow->statusMessage(
+            QString("%1 items selected").arg(sel.indexes().count()));   // FIXME-0 add translation
+    else
+        mainWindow->statusMessage("");
+
     foreach (QModelIndex ix, sel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->isBranchLikeType() || mi->getType() == TreeItem::Image ||
