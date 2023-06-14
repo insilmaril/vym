@@ -53,6 +53,7 @@ class MapEditor : public QGraphicsView {
     void panView();
 
   public:
+    void showSelection();
     void scrollTo(const QModelIndex &index);
     void setScrollBarPosTarget(QRectF rect); //!  ensureVisible of rect
     QPointF getScrollBarPosTarget();

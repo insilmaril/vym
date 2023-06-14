@@ -73,6 +73,15 @@ QString qpointFToString(const QPointF &p)
            ")";
 }
 
+QString qrectFToString(const QRectF &r, int d)
+{
+    return QString("(%1, %2  %3x%4)")
+        .arg(QString::number(r.x(),'f', d))
+        .arg(QString::number(r.y(),'f', d))
+        .arg(QString::number(r.width(),'f', d))
+        .arg(QString::number(r.height(),'f', d));
+}
+
 QString VectorToString(const Vector &p)
 {
     return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
