@@ -6908,7 +6908,7 @@ void Main::testFunction1()
 
     VymModel *m = currentModel();
     if (m) {
-        m->setMapBackgroundColor(QColor(255, 170,127));
+        qDebug() << "ME::vp->width()=" << m->getMapEditor()->viewport()->width();
     }
 }
 

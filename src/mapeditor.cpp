@@ -206,21 +206,16 @@ void MapEditor::panView()
     }
 }
 
-void MapEditor::showSelection()
+void MapEditor::ensureSelectionVisibleAnimated()
 {
     // Changes viewCenter to make sure that bounding box of all currently
     // selected items is  within the margins of the viewport
     //
     // Only zooms, if bounding box of items does NOT fit into viewport 
-    // (or explicitely requested later)
-    //
-    // Only rotates view, if this is explicitely requested.
-    // Rotation of first item is used for alignment then.
+    // view is centered then on bounding box. (Useful also for big images)
     //
     // Similar to QGraphicsItem::ensureVisible, but with animation and (if necessary)
-    // zooming and rotating
-    //
-    // FIXME-2 later introduce switches: useRotation, useZoom or fitSelection (zoom && rotate)
+    // zooming
 
     QList <TreeItem*> selis = model->getSelectedItems();
 
@@ -237,7 +232,7 @@ void MapEditor::showSelection()
             lmo = ((MapItem *)ti)->getLMO();
         if (lmo) {
             if (firstIteration) {
-                bbox = lmo->getBBox();  // FIXME-2 scene coord for container later!
+                bbox = lmo->getBBox();
                 firstIteration = false;
             } else
                 bbox = bbox.united(lmo->getBBox());
@@ -248,64 +243,46 @@ void MapEditor::showSelection()
     int ymargin = settings.value("/mapeditor/scrollToMarginX/", 80).toInt();
 
     // Do we need to zoom out to show selection?
-    bool zoomRequired = false;
     QRect bboxViewCoord = mapFromScene(bbox).boundingRect();
 
     qreal zoom_x = 1;
     qreal zoom_y = 1;
     if (bboxViewCoord.width() > viewport()->width() - 2 * xmargin)
-        zoom_x = 1.0 * viewport()->width() / bboxViewCoord.width();
+        zoom_x = 1.0 * viewport()->width() / (bboxViewCoord.width() + 2 * xmargin);
     if (bboxViewCoord.height() > viewport()->height() - 2 * ymargin)
-        zoom_y = 1.0 * viewport()->height() / bboxViewCoord.height();
+        zoom_y = 1.0 * viewport()->height() / (bboxViewCoord.height() + 2 * ymargin);
 
     qreal zf = min(zoom_x, zoom_y);
-    qDebug() << "zx="  << zoom_x << "zy="<< zoom_y << "zf=" << zf;
 
-    if (zf < 1)
-        zoomRequired = true;
-
-    qDebug() 
-        << "ME::showSel  bbox= " << qrectFToString(bbox) 
-        << "bboxVieCoord=" << qrectFToString(bboxViewCoord)
-        << "zoomReq: " << zoomRequired
-        << " zf=" << zf;
-
-    // FIXME-0 calculate  zoomed bbox
+    if (zf < 1) {
+        setViewCenterTarget(bbox.center(), zf, angle);
+        return;
+    }
 
     // After zooming bbox would fit into margins of viewport
     long view_dx = 0;
     long view_dy = 0;
     if (bboxViewCoord.left() < xmargin)
         // move left
-        {
         view_dx = bboxViewCoord.left() - xmargin;
-        qDebug() << "Moving left... ";
-        }
     else if (bboxViewCoord.right() > viewport()->width())
         // move right
-        {
         view_dx = bboxViewCoord.x() + bboxViewCoord.width() - viewport()->width() + xmargin;
-        qDebug() << "Moving right... ";
-        }
 
     if (bboxViewCoord.top() < ymargin)
         // move up
-        {
         view_dy = bboxViewCoord.top() - ymargin;
-        qDebug() << "Moving up...";
-        }
     else if (bboxViewCoord.bottom() > viewport()->height() - ymargin)
         // move down
-        {
         view_dy = bboxViewCoord.y() + bboxViewCoord.height() - viewport()->height() + ymargin;
-        qDebug() << "Moving down...";
-        }
 
-    qDebug() << view_dx << view_dy <<"(dx,dy)=" << qpointFToString(QPointF(view_dx,view_dy));
-    // FIXME-000 cont here center on translated and mapped new viewcenter    
     if (abs(view_dx) > 5 || abs(view_dy) > 5)
-        setViewCenterTarget(mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)), zf, 0, 2000, QEasingCurve::OutQuint);
-    //setViewCenterTarget(bbox.center(), zf, 0, 2000, QEasingCurve::OutQuint);
+        setViewCenterTarget(
+                mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
+                zoomFactor,
+                angle,
+                2000,
+                QEasingCurve::OutQuint);
 }
 
 void MapEditor::scrollTo(const QModelIndex &index)
