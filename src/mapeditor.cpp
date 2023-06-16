@@ -239,8 +239,8 @@ void MapEditor::ensureSelectionVisibleAnimated()
         }
     }
 
-    int xmargin = settings.value("/mapeditor/scrollToMarginX/", 80).toInt();
-    int ymargin = settings.value("/mapeditor/scrollToMarginX/", 80).toInt();
+    int xmargin = settings.value("/mapeditor/scrollToMarginX/", 30).toInt();
+    int ymargin = settings.value("/mapeditor/scrollToMarginX/", 30).toInt();
 
     // Do we need to zoom out to show selection?
     QRect bboxViewCoord = mapFromScene(bbox).boundingRect();
@@ -248,9 +248,9 @@ void MapEditor::ensureSelectionVisibleAnimated()
     qreal zoom_x = 1;
     qreal zoom_y = 1;
     if (bboxViewCoord.width() > viewport()->width() - 2 * xmargin)
-        zoom_x = 1.0 * viewport()->width() / (bboxViewCoord.width() + 2 * xmargin);
+        zoom_x = (1.0 * viewport()->width() - 2 * xmargin) / bbox.width();
     if (bboxViewCoord.height() > viewport()->height() - 2 * ymargin)
-        zoom_y = 1.0 * viewport()->height() / (bboxViewCoord.height() + 2 * ymargin);
+        zoom_y = (1.0 * viewport()->height() - 2 * ymargin) / bbox.height();
 
     qreal zf = min(zoom_x, zoom_y);
 
