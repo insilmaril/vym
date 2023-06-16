@@ -296,7 +296,7 @@ void VymView::showSelection()
 {
     QModelIndex ix = model->getSelectedIndex();
     treeEditor->scrollTo(ix, QAbstractItemView::EnsureVisible);
-    mapEditor->scrollTo(ix);
+    mapEditor->ensureSelectionVisibleAnimated();
 }
 
 void VymView::toggleTreeEditor()

@@ -250,7 +250,7 @@ void MapEditor::panView()
         QRectF r = QRectF(q, QPointF(q.x() + 1, q.y() + 1));
 
         // Expand view if necessary
-        setScrollBarPosTarget(r);
+        setScrollBarPosTarget(r);   // FIXME-0   mapToScene first?   
 
         // Stop possible other animations
         if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
@@ -261,6 +261,90 @@ void MapEditor::panView()
                                         vPan.x());
         verticalScrollBar()->setValue(verticalScrollBar()->value() + vPan.y());
     }
+}
+
+void MapEditor::ensureSelectionVisibleAnimated()
+{
+    // Changes viewCenter to make sure that bounding box of all currently
+    // selected items is  within the margins of the viewport
+    //
+    // Only zooms, if bounding box of items does NOT fit into viewport 
+    // view is centered then on bounding box. (Useful also for big images)
+    //
+    // Similar to QGraphicsItem::ensureVisible, but with animation and (if necessary)
+    // zooming
+
+    QList <TreeItem*> selis = model->getSelectedItems();
+
+    // Nothing to do, if nothing is selected
+    if (selis.isEmpty()) return;
+
+    // Calculate total bounding box
+    QRectF bbox;
+    bool firstIteration = true;
+
+    foreach (TreeItem *ti, selis) {
+        Container *c = nullptr;
+        if (ti->getType() == TreeItem::Image)
+            c = ((ImageItem*)ti)->getImageContainer();
+        else if (ti->hasTypeBranch())
+            c = ((BranchItem*)ti)->getBranchContainer()->getHeadingContainer();
+        if (c) {
+            if (firstIteration) {
+                bbox = c->mapToScene(c->rect()).boundingRect();
+                firstIteration = false;
+            } else
+                bbox = bbox.united(c->mapToScene(c->rect()).boundingRect());
+        }
+    }
+
+    //scene()->addRect(bbox, QPen(Qt::green)); // FIXME-0 debugging only
+
+    int xmargin = settings.value("/mapeditor/scrollToMarginX/", 30).toInt();
+    int ymargin = settings.value("/mapeditor/scrollToMarginX/", 30).toInt();
+
+    // Do we need to zoom out to show selection?
+    QRect bboxViewCoord = mapFromScene(bbox).boundingRect();
+
+    qreal zoom_x = 1;
+    qreal zoom_y = 1;
+    if (bboxViewCoord.width() > viewport()->width() - 2 * xmargin)
+        zoom_x = (1.0 * viewport()->width() - 2 * xmargin) / bbox.width();
+    if (bboxViewCoord.height() > viewport()->height() - 2 * ymargin)
+        zoom_y = (1.0 * viewport()->height() - 2 * ymargin) / bbox.height();
+
+    qreal zf = min(zoom_x, zoom_y);
+
+    if (zf < 1) {
+        setViewCenterTarget(bbox.center(), zf, angle);
+        // FIXME-2 qDebug() << "ME::showSel  viewport=" << viewport()->width() << "," << viewport()->height() << "zx=" << zoom_x << " zy=" << zoom_y << " zoomFactor=" << zoomFactor << " zf=" << zf;
+        return;
+    }
+
+    // After zooming bbox would fit into margins of viewport
+    long view_dx = 0;
+    long view_dy = 0;
+    if (bboxViewCoord.left() < xmargin)
+        // move left
+        view_dx = bboxViewCoord.left() - xmargin;
+    else if (bboxViewCoord.right() > viewport()->width())
+        // move right
+        view_dx = bboxViewCoord.x() + bboxViewCoord.width() - viewport()->width() + xmargin;
+
+    if (bboxViewCoord.top() < ymargin)
+        // move up
+        view_dy = bboxViewCoord.top() - ymargin;
+    else if (bboxViewCoord.bottom() > viewport()->height() - ymargin)
+        // move down
+        view_dy = bboxViewCoord.y() + bboxViewCoord.height() - viewport()->height() + ymargin;
+
+    if (abs(view_dx) > 5 || abs(view_dy) > 5)
+        setViewCenterTarget(
+                mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
+                zoomFactor,
+                angle,
+                2000,
+                QEasingCurve::OutQuint);
 }
 
 void MapEditor::scrollTo(const QModelIndex &index)
@@ -285,7 +369,7 @@ void MapEditor::scrollTo(const QModelIndex &index)
     }
 }
 
-void MapEditor::setScrollBarPosTarget(QRectF rect)
+void MapEditor::setScrollBarPosTarget(QRectF rect)  // FIXME-0 does not work with zoomed views, compare setViewCenterTarget below (which works)
 {
     // Expand viewport, if rect is not contained
     if (!sceneRect().contains(rect))
@@ -903,10 +987,13 @@ void MapEditor::testFunction2()
 
 void MapEditor::testFunction1()
 {
+    qDebug() << "zoomFactor=" << zoomFactor;
+    /*
     BranchItem *selbi = model->getSelectedBranch();
     if (selbi) {
         selbi->getBranchContainer()->showStructure();
     }
+    */
     //autoLayout();
 }
 
@@ -2352,6 +2439,13 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
             }
         }
     }
+
+    // Show count of multiple selected items
+    if (itemsSelected.count() > 1)
+        mainWindow->statusMessage(
+            tr("%1 items selected","Status message when selecting multiple items").arg(itemsSelected.count()));
+    else
+        mainWindow->statusMessage("");
 
     scene()->update();
 }

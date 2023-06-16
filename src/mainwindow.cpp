@@ -4062,8 +4062,13 @@ void Main::fileRestoreSession()
             QObject::tr("Existing lockfiles have been ignored for the maps "
                         "listed below. Please check, if the maps might be "
                         "openend in another instance of vym:\n\n"));
-        QMessageBox::warning(0, QObject::tr("Warning"),
-                             msg + ignoredLockedFiles.join("\n"));
+        WarningDialog warn;
+        warn.setMinimumWidth(800);
+        warn.setMinimumHeight(350);
+        warn.showCancelButton(false);
+        warn.setCaption("Existing lockfiles ignored");
+        warn.setText(msg + ignoredLockedFiles.join("\n"));
+        warn.exec();
     }
 
     restoreMode = false;
@@ -6953,7 +6958,7 @@ void Main::testFunction1()
 
     VymModel *m = currentModel();
     if (m) {
-        m->test();
+        m->getMapEditor()->testFunction1();
     }
 }
 
