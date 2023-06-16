@@ -308,6 +308,7 @@ void MapEditor::ensureSelectionVisibleAnimated()
 
     qreal zoom_x = 1;
     qreal zoom_y = 1;
+    // FIXME-2 bbox might be needed to rotate first to match view, if angle != 0
     if (bboxViewCoord.width() > viewport()->width() - 2 * xmargin)
         zoom_x = (1.0 * viewport()->width() - 2 * xmargin) / bbox.width();
     if (bboxViewCoord.height() > viewport()->height() - 2 * ymargin)
