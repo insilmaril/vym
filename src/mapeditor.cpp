@@ -2442,9 +2442,10 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
     }
 
     // Show count of multiple selected items
-    if (itemsSelected.count() > 1)
+    int selCount = model->getSelectionModel()->selection().indexes().count();
+    if (selCount > 1)
         mainWindow->statusMessage(
-            tr("%1 items selected","Status message when selecting multiple items").arg(itemsSelected.count()));
+            tr("%1 items selected","Status message when selecting multiple items").arg(selCount));
     else
         mainWindow->statusMessage("");
 
