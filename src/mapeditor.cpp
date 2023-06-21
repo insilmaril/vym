@@ -190,7 +190,7 @@ void MapEditor::panView()
         QRectF r = QRectF(q, QPointF(q.x() + 1, q.y() + 1));
 
         // Expand view if necessary
-        setScrollBarPosTarget(r);   // FIXME-0   mapToScene first?   
+        setScrollBarPosTarget(r);   // FIXME-2   mapToScene first?   
 
         // Stop possible other animations
         if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
@@ -300,7 +300,7 @@ void MapEditor::scrollTo(const QModelIndex &index)
     }
 }
 
-void MapEditor::setScrollBarPosTarget(QRectF rect)  // FIXME-0 does not work with zoomed views, compare setViewCenterTarget below (which works)
+void MapEditor::setScrollBarPosTarget(QRectF rect)
 {
     // Expand viewport, if rect is not contained
     if (!sceneRect().contains(rect))
