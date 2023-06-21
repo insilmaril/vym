@@ -5928,9 +5928,7 @@ void Main::settingsZipTool()    // FIXME-2 Disabled for now, to be removed compl
 
 void Main::settingsMacroPath()
 {
-    QString macroPath =
-        settings.value("/macros/path", vymBaseDir.path() + "/macros/macros.vys")
-            .toString();
+    QString macroPath = macros.getPath();
 
     QStringList filters;
     filters << "VYM script files (*.vys)";
@@ -5944,7 +5942,8 @@ void Main::settingsMacroPath()
 
     QString fn;
     if (fd.exec() == QDialog::Accepted) {
-        settings.setValue("/macros/path", fd.selectedFiles().first());
+        if (macros.setPath( fd.selectedFiles().first()))
+            settings.setValue("/macros/path", macros.getPath());
     }
 }
 
