@@ -51,160 +51,111 @@
 <context>
     <name>AttributeDialog</name>
     <message>
-        <location filename="../forms/attributedialog.ui" line="+19"/>
         <source>Attributes</source>
-        <translation>Χαρακτηριστικά</translation>
+        <translation type="vanished">Χαρακτηριστικά</translation>
     </message>
     <message>
-        <location line="+31"/>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
     <message>
-        <location line="-20"/>
         <source>Add key</source>
-        <translation>Προσθήκη κλειδιού</translation>
+        <translation type="vanished">Προσθήκη κλειδιού</translation>
     </message>
 </context>
 <context>
     <name>BranchPropertyEditor</name>
     <message>
-        <location filename="../forms/branchpropeditor.ui" line="+20"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+376"/>
         <source>Branch Property Editor</source>
-        <translation>Επεξεργαστής ιδιοτήτων κλαδου</translation>
+        <translation type="vanished">Επεξεργαστής ιδιοτήτων κλαδου</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+16"/>
         <source>Frame</source>
-        <translation>Πλαίσιο</translation>
+        <translation type="vanished">Πλαίσιο</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-15"/>
         <source>Geometry</source>
-        <translation>Γεωμετρία</translation>
+        <translation type="vanished">Γεωμετρία</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>No Frame</source>
-        <translation>Χωρίς πλαίσιο</translation>
+        <translation type="vanished">Χωρίς πλαίσιο</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Rectangle</source>
-        <translation>Ορθογώνιο</translation>
+        <translation type="vanished">Ορθογώνιο</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Rounded Rectangle</source>
-        <translation>Ορθογώνιο με καμπύλες γωνίες</translation>
+        <translation type="vanished">Ορθογώνιο με καμπύλες γωνίες</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Ellipse</source>
-        <translation>Έλλειψη</translation>
+        <translation type="vanished">Έλλειψη</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Cloud</source>
-        <translation>Σύννεφο</translation>
+        <translation type="vanished">Σύννεφο</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+2"/>
         <source>Padding</source>
-        <translation>Γέμισμα</translation>
+        <translation type="vanished">Γέμισμα</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Borderline width</source>
-        <translation>Πλάτος περιγράμματος</translation>
+        <translation type="vanished">Πλάτος περιγράμματος</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Include children</source>
-        <translation>Ένταξη απόγονου</translation>
+        <translation type="vanished">Ένταξη απόγονου</translation>
     </message>
     <message>
-        <location line="+33"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Colors</source>
-        <translation>Χρώματα</translation>
+        <translation type="vanished">Χρώματα</translation>
     </message>
     <message>
-        <location line="+46"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+2"/>
         <source>Borderline color</source>
-        <translation>Χρώμα περιγράμματος</translation>
+        <translation type="vanished">Χρώμα περιγράμματος</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+2"/>
         <source>Background color</source>
-        <translation>Χρώμα παρασκηνίου</translation>
+        <translation type="vanished">Χρώμα παρασκηνίου</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+5"/>
         <source>Layout</source>
-        <translation>Διάταξη</translation>
+        <translation type="vanished">Διάταξη</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-3"/>
         <source>Include images horizontally</source>
-        <translation>Περιλαμβάνει εικόνες οριζόντια</translation>
+        <translation type="vanished">Περιλαμβάνει εικόνες οριζόντια</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Include images vertically</source>
-        <translation>Περιλαμβάνει εικόνες κάθετα</translation>
+        <translation type="vanished">Περιλαμβάνει εικόνες κάθετα</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Free positioning of children (experimental!)</source>
-        <translation>Ελεύθερη τοποθέτηση απόγονων (πειραματική λειτουργία)</translation>
+        <translation type="vanished">Ελεύθερη τοποθέτηση απόγονων (πειραματική λειτουργία)</translation>
     </message>
     <message>
-        <location line="+125"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+8"/>
         <source>Link</source>
-        <translation>Σύνδεσμος</translation>
+        <translation type="vanished">Σύνδεσμος</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-1"/>
         <source>Hide link if unselected</source>
-        <translation>Απόκρυψη συνδέσμου εάν δεν είναι επιλεγμένος</translation>
+        <translation type="vanished">Απόκρυψη συνδέσμου εάν δεν είναι επιλεγμένος</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+4"/>
         <source>Attributes</source>
-        <translation>Χαρακτηριστικά</translation>
+        <translation type="vanished">Χαρακτηριστικά</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-2"/>
         <source>+</source>
-        <translation>+</translation>
+        <translation type="vanished">+</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>-</source>
-        <translation>-</translation>
+        <translation type="vanished">-</translation>
     </message>
     <message>
         <location filename="../src/branchpropeditor.cpp" line="+21"/>
@@ -213,13 +164,11 @@
         <translation>Επεξεργαστής ιδιοτήτων</translation>
     </message>
     <message>
-        <location filename="../forms/branchpropeditor.ui" line="-162"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-4"/>
         <source>Task</source>
-        <translation>Εργασία</translation>
+        <translation type="vanished">Εργασία</translation>
     </message>
     <message>
-        <location filename="../src/branchpropeditor.cpp" line="+156"/>
+        <location line="+156"/>
         <location line="+6"/>
         <source>%1 days ago</source>
         <comment>task related times</comment>
@@ -256,35 +205,27 @@
         <translation>Είδος</translation>
     </message>
     <message>
-        <location filename="../forms/branchpropeditor.ui" line="+18"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-4"/>
         <source>Delta priority</source>
         <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
-        <translation>Προτεραιότητα δέλτα</translation>
+        <translation type="vanished">Προτεραιότητα δέλτα</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Created:</source>
-        <translation>Δημιουργήθηκε:</translation>
+        <translation type="vanished">Δημιουργήθηκε:</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Modified:</source>
-        <translation>Τροποποιήθηκε:</translation>
+        <translation type="vanished">Τροποποιήθηκε:</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Sleep:</source>
-        <translation>Αναστολή:</translation>
+        <translation type="vanished">Αναστολή:</translation>
     </message>
 </context>
 <context>
     <name>ConfluenceAgent</name>
     <message>
-        <location filename="../src/confluence-agent.cpp" line="+520"/>
+        <location filename="../src/confluence-agent.cpp" line="+562"/>
         <location line="+6"/>
         <source>Warning</source>
         <translation>Προειδοποίηση</translation>
@@ -296,12 +237,19 @@
     </message>
 </context>
 <context>
+    <name>ConfluenceSettingsDialog</name>
+    <message>
+        <location filename="../src/confluence-settings-dialog.cpp" line="+12"/>
+        <source>Confluence settings</source>
+        <comment>Confluence settings dialog title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConfluenceUserDialog</name>
     <message>
-        <location filename="../forms/confluence-userdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_confluence-userdialog.h" line="+63"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
         <location filename="../src/confluence-userdialog.cpp" line="+13"/>
@@ -313,67 +261,48 @@
 <context>
     <name>CredentialsDialog</name>
     <message>
-        <location filename="../forms/credentials.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+98"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
-        <location filename="../src/credentials.cpp" line="+7"/>
         <source>Credentials dialog</source>
         <comment>dialog window title</comment>
-        <translation>Παράθυρο διαπίστευσης</translation>
+        <translation type="vanished">Παράθυρο διαπίστευσης</translation>
     </message>
     <message>
-        <location filename="../forms/credentials.ui" line="+6"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
         <source>URL:</source>
-        <translation>URL:</translation>
+        <translation type="vanished">URL:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
         <source>Username:</source>
-        <translation>Όνομα χρήστη:</translation>
+        <translation type="vanished">Όνομα χρήστη:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
         <source>Password:</source>
-        <translation>Κωδικός πρόσβασης:</translation>
+        <translation type="vanished">Κωδικός πρόσβασης:</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
         <source>Save password</source>
-        <translation>Αποθήκευση κωδικού πρόσβασης</translation>
+        <translation type="vanished">Αποθήκευση κωδικού πρόσβασης</translation>
     </message>
 </context>
 <context>
     <name>DarkThemeSettingsDialog</name>
     <message>
-        <location filename="../forms/darktheme-settings-dialog.ui" line="+20"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+101"/>
         <source>Dark theme settings</source>
-        <translation>Ρυθμίσεις σκοτεινού θέματος</translation>
+        <translation type="vanished">Ρυθμίσεις σκοτεινού θέματος</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
         <source>Dark theme</source>
-        <translation>Σκοτεινό θέμα</translation>
+        <translation type="vanished">Σκοτεινό θέμα</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
         <source>Always use dark theme</source>
-        <translation>Χρήση πάντοτε του σκοτεινού θέματος</translation>
+        <translation type="vanished">Χρήση πάντοτε του σκοτεινού θέματος</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
         <source>System settings for dark theme</source>
-        <translation>Ρυθμίσεις συστήματος για το σκοτεινό θέμα</translation>
+        <translation type="vanished">Ρυθμίσεις συστήματος για το σκοτεινό θέμα</translation>
     </message>
     <message>
         <location filename="../src/darktheme-settings-dialog.cpp" line="+13"/>
@@ -394,269 +323,179 @@
 <context>
     <name>EditXLinkDialog</name>
     <message>
-        <location filename="../forms/editxlinkdialog.ui" line="+20"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+196"/>
         <source>Edit XLink</source>
-        <translation>Επεξεργασία:XLink</translation>
+        <translation type="vanished">Επεξεργασία:XLink</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Arrow begin:</source>
-        <translation>Έναρξη βέλους:</translation>
+        <translation type="vanished">Έναρξη βέλους:</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>XLink width:</source>
-        <translation>Πλατος XLink:</translation>
+        <translation type="vanished">Πλατος XLink:</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Use color of heading</source>
-        <translation>Χρήση χρώματος κεφαλίδας</translation>
+        <translation type="vanished">Χρήση χρώματος κεφαλίδας</translation>
     </message>
     <message>
-        <location line="+30"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+3"/>
         <source>XLink color:</source>
-        <translation>Χρώμα XLink:</translation>
+        <translation type="vanished">Χρώμα XLink:</translation>
     </message>
     <message>
-        <location line="+42"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Use as default:</source>
-        <translation>Χρήση ως προκαθορισμένου:</translation>
+        <translation type="vanished">Χρήση ως προκαθορισμένου:</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
-        <translation>Στυλ γραμμής:</translation>
+        <translation type="vanished">Στυλ γραμμής:</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Arrow end:</source>
-        <translation>Τέλος βέλους:</translation>
+        <translation type="vanished">Τέλος βέλους:</translation>
     </message>
     <message>
-        <location line="+63"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+3"/>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
 </context>
 <context>
     <name>ExportConfluenceDialog</name>
     <message>
-        <location filename="../forms/export-confluence-dialog.ui" line="+145"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+251"/>
         <source>Options</source>
-        <translation>Επιλογές</translation>
+        <translation type="vanished">Επιλογές</translation>
     </message>
     <message>
-        <location line="+63"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+4"/>
         <source>Image of map</source>
-        <translation>Εικόνα διαγράμματος</translation>
+        <translation type="vanished">Εικόνα διαγράμματος</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Include images</source>
-        <translation>Συμπερίληψη εικόνων</translation>
+        <translation type="vanished">Συμπερίληψη εικόνων</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Table of contents</source>
-        <translation>Πίνακας περιεχομένων</translation>
+        <translation type="vanished">Πίνακας περιεχομένων</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Task flags</source>
-        <translation>Σημαίες εργασιών</translation>
+        <translation type="vanished">Σημαίες εργασιών</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>General flags</source>
-        <translation>Γενικές σημαίες</translation>
+        <translation type="vanished">Γενικές σημαίες</translation>
     </message>
     <message>
-        <location line="-69"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="-6"/>
         <source>Colored headings in text</source>
-        <translation>Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation type="vanished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Save settings in map</source>
-        <translation>Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+        <translation type="vanished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
-        <location line="+98"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+6"/>
         <source>Cancel</source>
-        <translation>Άκυρο</translation>
+        <translation type="vanished">Άκυρο</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Export</source>
-        <translation>Εξαγωγή</translation>
+        <translation type="vanished">Εξαγωγή</translation>
     </message>
     <message>
-        <location line="-271"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="-13"/>
         <source>Export Confluence</source>
-        <translation>Εξαγωγή συνεισφοράς</translation>
+        <translation type="vanished">Εξαγωγή συνεισφοράς</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Create new page</source>
-        <translation>Δημιουργία νέας σελίδας</translation>
+        <translation type="vanished">Δημιουργία νέας σελίδας</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Update existing page</source>
-        <translation>Ενημέρωση υπάρχουσας σελίδας</translation>
+        <translation type="vanished">Ενημέρωση υπάρχουσας σελίδας</translation>
     </message>
     <message>
-        <location line="+122"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+2"/>
         <source>Use heading of first map center as page name</source>
-        <translation>Χρήση της επικεφαλίδας του κέντρου του πρώτου διαγράμματος ως όνομα σελίδας</translation>
+        <translation type="vanished">Χρήση της επικεφαλίδας του κέντρου του πρώτου διαγράμματος ως όνομα σελίδας</translation>
     </message>
 </context>
 <context>
     <name>ExportHTMLDialog</name>
     <message>
-        <location filename="../forms/export-html-dialog.ui" line="+26"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+315"/>
         <source>Export HTML</source>
-        <translation>Εξαγωγή ως HTML</translation>
+        <translation type="vanished">Εξαγωγή ως HTML</translation>
     </message>
     <message>
-        <location line="+35"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Export to directory:</source>
-        <translation>Εξαγωγή σε φάκελο:</translation>
+        <translation type="vanished">Εξαγωγή σε φάκελο:</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location line="+177"/>
-        <location line="+13"/>
-        <location line="+73"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
-        <location line="+13"/>
-        <location line="+1"/>
-        <location line="+3"/>
         <source>Browse</source>
-        <translation>Περιήγηση</translation>
+        <translation type="vanished">Περιήγηση</translation>
     </message>
     <message>
-        <location line="-236"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="-16"/>
         <source>Options</source>
-        <translation>Επιλογές</translation>
+        <translation type="vanished">Επιλογές</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Image of map</source>
-        <translation>Εικόνα διαγράμματος</translation>
+        <translation type="vanished">Εικόνα διαγράμματος</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Include images</source>
-        <translation>Συμπερίληψη εικόνων</translation>
+        <translation type="vanished">Συμπερίληψη εικόνων</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Table of contents</source>
-        <translation>Πίνακας περιεχομένων</translation>
+        <translation type="vanished">Πίνακας περιεχομένων</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Task flags</source>
-        <translation>Σημαίες εργασιών</translation>
+        <translation type="vanished">Σημαίες εργασιών</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>General flags</source>
-        <translation>Γενικές σημαίες</translation>
+        <translation type="vanished">Γενικές σημαίες</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Number sections</source>
-        <translation>Τομείς αριθμών</translation>
+        <translation type="vanished">Τομείς αριθμών</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Colored headings in text</source>
-        <translation>Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation type="vanished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Save settings in map</source>
-        <translation>Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+        <translation type="vanished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Stylesheets</source>
-        <translation>Φύλλα δεδομένων</translation>
+        <translation type="vanished">Φύλλα δεδομένων</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Copy CSS from </source>
-        <translation>Αντιγραφή CSS από</translation>
+        <translation type="vanished">Αντιγραφή CSS από</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Use CSS from</source>
-        <translation>Χρήση CSS από</translation>
+        <translation type="vanished">Χρήση CSS από</translation>
     </message>
     <message>
-        <location line="+46"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+3"/>
         <source>Scripts</source>
-        <translation>Σενάρια</translation>
+        <translation type="vanished">Σενάρια</translation>
     </message>
     <message>
-        <location line="+30"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>After Export:</source>
-        <translation>Μετά την εξαγωγή:</translation>
+        <translation type="vanished">Μετά την εξαγωγή:</translation>
     </message>
     <message>
-        <location line="+55"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+2"/>
         <source>Cancel</source>
-        <translation>Άκυρο</translation>
+        <translation type="vanished">Άκυρο</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Export</source>
-        <translation>Εξαγωγή</translation>
+        <translation type="vanished">Εξαγωγή</translation>
     </message>
     <message>
         <location filename="../src/export-html-dialog.cpp" line="+130"/>
@@ -688,150 +527,111 @@ want to allow this in your system!</source>
 <context>
     <name>ExportXHTMLDialog</name>
     <message>
-        <location filename="../forms/exportxhtmldialog.ui" line="+49"/>
         <source>Export to directory:</source>
-        <translation>Εξαγωγή σε φάκελο:</translation>
+        <translation type="vanished">Εξαγωγή σε φάκελο:</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+165"/>
-        <location line="+57"/>
-        <location line="+81"/>
-        <location line="+60"/>
         <source>Browse</source>
-        <translation>Περιήγηση</translation>
+        <translation type="vanished">Περιήγηση</translation>
     </message>
     <message>
-        <location line="-342"/>
         <source>Options</source>
-        <translation>Επιλογές</translation>
+        <translation type="vanished">Επιλογές</translation>
     </message>
     <message>
-        <location line="+37"/>
         <source>Colored headings in text</source>
-        <translation>Χρωματιστές κεφαλίδες στο κείμενο</translation>
+        <translation type="vanished">Χρωματιστές κεφαλίδες στο κείμενο</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Save settings in map</source>
-        <translation>Αποθήκευση ρυθμίσεων διαγράμματος</translation>
+        <translation type="vanished">Αποθήκευση ρυθμίσεων διαγράμματος</translation>
     </message>
     <message>
-        <location line="+31"/>
         <source>Stylesheets</source>
-        <translation>Φύλλα δεδομένων</translation>
+        <translation type="vanished">Φύλλα δεδομένων</translation>
     </message>
     <message>
-        <location line="+138"/>
         <source>Scripts</source>
-        <translation>Σενάρια</translation>
+        <translation type="vanished">Σενάρια</translation>
     </message>
     <message>
-        <location line="+110"/>
         <source>After Export:</source>
-        <translation>Μετά την εξαγωγή:</translation>
+        <translation type="vanished">Μετά την εξαγωγή:</translation>
     </message>
     <message>
-        <location line="+65"/>
         <source>Cancel</source>
-        <translation>Άκυρο</translation>
+        <translation type="vanished">Άκυρο</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Export</source>
-        <translation>Εξαγωγή</translation>
+        <translation type="vanished">Εξαγωγή</translation>
     </message>
     <message>
-        <location line="-468"/>
         <source>Export XHTML</source>
-        <translation>Εξαγωγή XHTML</translation>
+        <translation type="vanished">Εξαγωγή XHTML</translation>
     </message>
     <message>
-        <location line="+103"/>
         <source>Include image</source>
-        <translation>Συμπερίληψη εικόνας</translation>
+        <translation type="vanished">Συμπερίληψη εικόνας</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>show warnings of xslt processor</source>
-        <translation>εμφάνιση προειδοποιήσεων του επεξεργαστή xslt</translation>
+        <translation type="vanished">εμφάνιση προειδοποιήσεων του επεξεργαστή xslt</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>show output of external scripts</source>
-        <translation>εμφάνιση εξόδου εξωτερικών σεναρίων</translation>
+        <translation type="vanished">εμφάνιση εξόδου εξωτερικών σεναρίων</translation>
     </message>
     <message>
-        <location line="+61"/>
         <source>XSL:</source>
-        <translation>XSL:</translation>
+        <translation type="vanished">XSL:</translation>
     </message>
     <message>
-        <location line="+57"/>
         <source>CSS:</source>
-        <translation>CSS:</translation>
+        <translation type="vanished">CSS:</translation>
     </message>
     <message>
-        <location line="+81"/>
         <source>Before export:</source>
-        <translation>Πριν την εξαγωγή:</translation>
+        <translation type="vanished">Πριν την εξαγωγή:</translation>
     </message>
 </context>
 <context>
     <name>ExtraInfoDialog</name>
     <message>
-        <location filename="../forms/extrainfodialog.ui" line="+15"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+163"/>
         <source>VYM - Info</source>
-        <translation>VYM - Πληροφορίες</translation>
+        <translation type="vanished">VYM - Πληροφορίες</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Map:</source>
-        <translation>Διάγραμμα:</translation>
+        <translation type="vanished">Διάγραμμα:</translation>
     </message>
     <message>
-        <location line="+37"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+5"/>
         <source>Title:</source>
-        <translation>Τίτλος:</translation>
+        <translation type="vanished">Τίτλος:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Author:</source>
-        <translation>Δημιουργός:</translation>
+        <translation type="vanished">Δημιουργός:</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Comment:</source>
-        <translation>Σχόλιο:</translation>
+        <translation type="vanished">Σχόλιο:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Statistics:</source>
-        <translation>Στατιστικά:</translation>
+        <translation type="vanished">Στατιστικά:</translation>
     </message>
     <message>
-        <location line="+52"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Cancel</source>
-        <translation>Άκυρο</translation>
+        <translation type="vanished">Άκυρο</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
     <message>
-        <location line="-125"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="-9"/>
         <source>File location:</source>
-        <translation>Τοποθεσία αρχείου:</translation>
+        <translation type="vanished">Τοποθεσία αρχείου:</translation>
     </message>
 </context>
 <context>
@@ -855,34 +655,24 @@ want to allow this in your system!</source>
 <context>
     <name>HistoryWindow</name>
     <message>
-        <location filename="../forms/historywindow.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+90"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
-        <location line="+34"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+1"/>
         <source>Redo</source>
-        <translation>Ακύρωση αναίρεσης</translation>
+        <translation type="vanished">Ακύρωση αναίρεσης</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+2"/>
         <source>Time</source>
-        <translation>Χρόνος</translation>
+        <translation type="vanished">Χρόνος</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+2"/>
         <source>Comment</source>
-        <translation>Σχόλιο</translation>
+        <translation type="vanished">Σχόλιο</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+1"/>
         <source>Undo</source>
-        <translation>Αναίρεση</translation>
+        <translation type="vanished">Αναίρεση</translation>
     </message>
     <message>
         <location filename="../src/historywindow.cpp" line="+16"/>
@@ -912,7 +702,7 @@ want to allow this in your system!</source>
 <context>
     <name>JiraAgent</name>
     <message>
-        <location filename="../src/jira-agent.cpp" line="+232"/>
+        <location filename="../src/jira-agent.cpp" line="+247"/>
         <source>Warning</source>
         <translation>Προειδοποίηση</translation>
     </message>
@@ -925,79 +715,62 @@ want to allow this in your system!</source>
 <context>
     <name>JiraSettingsDialog</name>
     <message>
-        <location filename="../forms/jira-settings-dialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+126"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+2"/>
         <source>Add</source>
-        <translation>Προσθήκη</translation>
+        <translation type="vanished">Προσθήκη</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
         <source>Remove</source>
-        <translation>Αφαίρεση</translation>
+        <translation type="vanished">Αφαίρεση</translation>
+    </message>
+    <message>
+        <source>JiraSettingsDialog dialog</source>
+        <comment>dialog window title</comment>
+        <translation type="vanished">JiraSettingsDialog παράθυρο</translation>
+    </message>
+    <message>
+        <source>JIRA servers:</source>
+        <translation type="vanished">JIRA διακομιστές:</translation>
+    </message>
+    <message>
+        <source>Username:</source>
+        <translation type="vanished">Όνομα χρήστη:</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation type="vanished">Κωδικός πρόσβασης:</translation>
+    </message>
+    <message>
+        <source>Save password</source>
+        <translation type="vanished">Αποθήκευση κωδικού πρόσβασης</translation>
     </message>
     <message>
         <location filename="../src/jira-settings-dialog.cpp" line="+14"/>
-        <source>JiraSettingsDialog dialog</source>
-        <comment>dialog window title</comment>
-        <translation>JiraSettingsDialog παράθυρο</translation>
-    </message>
-    <message>
-        <location filename="../forms/jira-settings-dialog.ui" line="-32"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="-2"/>
-        <source>JIRA servers:</source>
-        <translation>JIRA διακομιστές:</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+3"/>
-        <source>Username:</source>
-        <translation>Όνομα χρήστη:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
-        <source>Password:</source>
-        <translation>Κωδικός πρόσβασης:</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
-        <source>Save password</source>
-        <translation>Αποθήκευση κωδικού πρόσβασης</translation>
+        <source>Jira settings</source>
+        <comment>Jira settings dialog title</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LineEditDialog</name>
     <message>
-        <location filename="../forms/lineeditdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+98"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+1"/>
         <source>TextLabel</source>
-        <translation>Ετικέτα κειμένου</translation>
+        <translation type="vanished">Ετικέτα κειμένου</translation>
     </message>
     <message>
-        <location line="+63"/>
         <location filename="../src/lineeditdialog.cpp" line="+16"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+4"/>
         <source>Cancel</source>
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../src/lineeditdialog.cpp" line="-7"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+1"/>
+        <location line="-7"/>
         <source>Ok</source>
         <translation>Εντάξει</translation>
     </message>
@@ -1005,22 +778,16 @@ want to allow this in your system!</source>
 <context>
     <name>LockedFileDialog</name>
     <message>
-        <location filename="../forms/lockedfiledialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="+86"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
-        <location line="+71"/>
         <location filename="../src/lockedfiledialog.cpp" line="+7"/>
-        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="+1"/>
         <source>Delete lockfile</source>
         <translation>Διαγραφή αρχείου κλειδώματος</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../src/lockedfiledialog.cpp" line="-1"/>
-        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="+1"/>
+        <location line="-1"/>
         <source>Open readonly</source>
         <translation>Άνοιγμα σε ανάγνωση μόνο</translation>
     </message>
@@ -1028,7 +795,7 @@ want to allow this in your system!</source>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/mainwindow.cpp" line="+149"/>
+        <location filename="../src/mainwindow.cpp" line="+147"/>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation>Κύριο παράθυρο</translation>
@@ -1082,7 +849,7 @@ want to allow this in your system!</source>
         <translation>Επεξεργαστές κειμένου</translation>
     </message>
     <message>
-        <location line="+835"/>
+        <location line="+839"/>
         <source>&amp;Map</source>
         <comment>Menu for file actions</comment>
         <translation>&amp;Διάγραμμα</translation>
@@ -1152,13 +919,13 @@ want to allow this in your system!</source>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+999"/>
-        <location line="+2114"/>
+        <location line="+2139"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(σε πειραματική λειτουργία)</translation>
     </message>
     <message>
-        <location line="-3314"/>
+        <location line="-3339"/>
         <source>Export</source>
         <comment>File menu</comment>
         <translation>Εξαγωγή</translation>
@@ -1433,12 +1200,12 @@ want to allow this in your system!</source>
         <translation>Χρήση κεφαλίδας για URL</translation>
     </message>
     <message>
-        <location line="+5484"/>
+        <location line="+5491"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation>&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο vym να ελέγχει στο διαδίκτυο για ενημερώσεις ή σημειώσεις κυκλοφορίας;&lt;/h3&gt;Εάν συμφωνείτε, το vym θα &lt;ul&gt;&lt;li&gt;ελέγχει μία φορά για σημειώσεις έκδοσης&lt;/li&gt;&lt;li&gt;ελέγχει τακτικά για ενημερώσεις και σας ειδοποιεί σε περίπτωση που πρέπει να κάνετε ενημέρωση, π.χ. εάν υπάρχουν διαθέσιμες σημαντικές διορθώσεις σφαλμάτων&lt;/li&gt;&lt;li&gt;λάβετε ένα cookie με ένα τυχαίο αναγνωριστικό και θα σταλούν ορισμένα ανώνυμα δεδομένα, όπως:&lt;ul&gt;&lt;li&gt; έκδοση του vym&lt;/li&gt;&lt;li&gt;όνομα πλατφόρμας και το αναγνωριστικό ( π.χ. &quot;Windows&quot; ή &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;εάν χρησιμοποιείτε σκοτεινό θέμα&lt;/li&gt;&lt;/ul&gt;Αυτά τα δεδομένα αποστέλλονται σε εμένα, Uwe Drechsel.&lt;p&gt;Ως προγραμματιστής vym έχω κίνητρο να βλέπω πολλά άτομα να χρησιμοποιούν το vym. Φυσικά είμαι περίεργος να δω, σε ποιο λειτουργικό σύστημα χρησιμοποιείται το vym. Η συντήρηση καθενός από τα συστήματα απαιτεί πολύ από τον (ελεύθερο) χρόνο μου.&lt;/p&gt; &lt;p&gt;Δεν θα σταλούν άλλα δεδομένα εκτός από τα παραπάνω, ειδικότερα δεν θα συλλέγονται ή αποστέλλονται προσωπικά δεδομένα. (Ελέγξτε τον πηγαίο κώδικα, εάν δεν με πιστεύετε.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέψετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνει λήψη κανενός δεδομένου και ειδικά &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να ξοδέψω μερικές ακόμη  χιλιάδες ώρες για την ανάπτυξη ενός εργαλείου Ελεύθερου Λογισμικού.&lt;/ul&gt;Επιτρέψτε στο vym να ελέγχει για ενημερώσεις :-)</translation>
     </message>
     <message>
-        <location line="-5453"/>
+        <location line="-5460"/>
         <source>vymlinks - linking maps</source>
         <comment>Shortcuts</comment>
         <translation>Σύνδεσμοι VYM - σύνδεση διαγραμμάτων</translation>
@@ -2334,7 +2101,7 @@ want to allow this in your system!</source>
         <translation>Εργαλειοθήκη μετατροπέα κατάστασης</translation>
     </message>
     <message>
-        <location line="+228"/>
+        <location line="+248"/>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
@@ -2351,13 +2118,13 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <location line="+1"/>
         <location line="+73"/>
-        <location line="+260"/>
+        <location line="+265"/>
         <location line="+93"/>
         <source>Cancel</source>
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-366"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -2398,7 +2165,7 @@ Do you want to create a new one?</source>
         <translation>ή</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+116"/>
         <source>Saved  %1</source>
         <translation>Αποθηκεύτηκε: %1</translation>
     </message>
@@ -2449,7 +2216,7 @@ exists already. Do you want to</source>
         <location line="+201"/>
         <location line="+392"/>
         <location line="+1030"/>
-        <location line="+38"/>
+        <location line="+20"/>
         <location line="+875"/>
         <location line="+206"/>
         <location line="+183"/>
@@ -2457,7 +2224,7 @@ exists already. Do you want to</source>
         <translation>Προειδοποίηση</translation>
     </message>
     <message>
-        <location line="-2924"/>
+        <location line="-2906"/>
         <source>Couldn&apos;t find configuration for export to LibreOffice
 </source>
         <translation>Αδυναμία εντοπισμού ρυθμίσεων για εξαγωγή σε LibreOffice</translation>
@@ -2480,19 +2247,19 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location line="+106"/>
-        <location line="+2335"/>
+        <location line="+2317"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Αδυναμία εύρεσης εφαρμογής προβολης για ανοιγμα του %1.</translation>
     </message>
     <message>
-        <location line="-2334"/>
-        <location line="+2335"/>
+        <location line="-2316"/>
+        <location line="+2317"/>
         <source>Please use Settings-&gt;</source>
         <translation>Παρακαλώ χρησιμοποιήστε τις Ρυθμίσεις-&gt;</translation>
     </message>
     <message>
-        <location line="-2334"/>
+        <location line="-2316"/>
         <location line="+1248"/>
         <source>Set application to open an URL</source>
         <translation>Ορισμός μιας εφαρμογής για άνοιγμα URL</translation>
@@ -2538,8 +2305,8 @@ exists already. Do you want to</source>
         <translation>Ορισμός URL για ένα τοπικό αρχείο</translation>
     </message>
     <message>
-        <location line="-1050"/>
-        <location line="+390"/>
+        <location line="-1055"/>
+        <location line="+395"/>
         <location line="+46"/>
         <location line="+9"/>
         <location line="+73"/>
@@ -2568,12 +2335,12 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location line="+818"/>
-        <location line="+1099"/>
+        <location line="+1081"/>
         <source>Set application to open PDF files</source>
         <translation>Ορισμός εφαρμογής για άνοιγμα αρχείων PDF</translation>
     </message>
     <message>
-        <location line="-1027"/>
+        <location line="-1009"/>
         <source>Number of undo/redo levels:</source>
         <translation>Αριθμός αναιρέσεων/ακύρωσης αναιρέσεων:</translation>
     </message>
@@ -2598,12 +2365,12 @@ exists already. Do you want to</source>
         <translation>Αριθμός πρόγονων κόμβων που εμφανιζονται για κάθε εργασία:</translation>
     </message>
     <message>
-        <location line="-2375"/>
+        <location line="-2380"/>
         <source>(readonly)</source>
         <translation>(μόνο για ανάγνωση)</translation>
     </message>
     <message>
-        <location line="+2841"/>
+        <location line="+2828"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Ιστορικό για %1</translation>
@@ -2679,7 +2446,7 @@ exists already. Do you want to</source>
         <translation>Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων!</translation>
     </message>
     <message>
-        <location line="-4407"/>
+        <location line="-4414"/>
         <source>Set author for new maps</source>
         <comment>Settings action</comment>
         <translation>Ορισμός συγγραφέα για νέα διαγράμματα</translation>
@@ -2697,7 +2464,7 @@ exists already. Do you want to</source>
         <translation>Αριθμός ορατών γονικών κόμβων στο παράθυρο αποτελεσμάτων εύρεσης</translation>
     </message>
     <message>
-        <location line="+2895"/>
+        <location line="+2920"/>
         <source>Set author for new maps (used in lockfile)</source>
         <translation>Ορισμός συγγραφέα για νέα διαγράμματα (χρησιμοποιείται στο αρχείο κλειδώματος)</translation>
     </message>
@@ -2707,7 +2474,7 @@ exists already. Do you want to</source>
         <translation>Αριθμός γονικών κόμβων που εμφανίζονται στο παράθυρο αποτελεσμάτων:</translation>
     </message>
     <message>
-        <location line="-4835"/>
+        <location line="-4860"/>
         <source>Webpage (HTML)...</source>
         <comment>File export menu</comment>
         <translation>Ιστοσελίδα (HTML)...</translation>
@@ -2725,13 +2492,13 @@ exists already. Do you want to</source>
         <translation>Κείμενο με εργασίες</translation>
     </message>
     <message>
-        <location line="+4766"/>
+        <location line="+4791"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>Άγνωστος χρήστης</translation>
     </message>
     <message>
-        <location line="-4759"/>
+        <location line="-4784"/>
         <source>Text (A&amp;O report)...</source>
         <comment>Export format</comment>
         <translation>Κείμενο (Α&amp;Ο αναφορά)...</translation>
@@ -2743,7 +2510,7 @@ exists already. Do you want to</source>
         <translation>Πληροφορίες αποσφαλμάτωσης</translation>
     </message>
     <message>
-        <location line="+951"/>
+        <location line="+976"/>
         <location line="+82"/>
         <source>Couldn&apos;t save %1,
 because of existing lockfile:
@@ -2783,12 +2550,12 @@ because of existing lockfile:
         <translation>xLinks</translation>
     </message>
     <message>
-        <location line="-4775"/>
+        <location line="-4804"/>
         <source>Script output window</source>
         <translation>Παράθυρο εξόδου σεναρίου</translation>
     </message>
     <message>
-        <location line="+848"/>
+        <location line="+852"/>
         <source>Import Dir...</source>
         <comment>Import Filters</comment>
         <translation>Εισαγωγή φακέλων...</translation>
@@ -2841,7 +2608,7 @@ because of existing lockfile:
         <translation>Εμφάνιση μακροεντολών πληκτρολογίου</translation>
     </message>
     <message>
-        <location line="+1848"/>
+        <location line="+1873"/>
         <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
         <translation>Καταχωρίστε τον χρόνο αναστολής (αριθμός ημερών, ώρες με το γράμμα &apos;ω&apos; ή ημερομηνία της μορφής ΕΕΕΕ-ΜΜ-ΗΗ ή ΗΗ.ΜΜ[ΕΕΕΕ]</translation>
@@ -2864,7 +2631,7 @@ because of existing lockfile:
         <translation>Φόρτωση σεναρίου vym</translation>
     </message>
     <message>
-        <location line="-4773"/>
+        <location line="-4798"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation>Αποθήκευση ως προεπιλεγμένο διάγραμμα</translation>
@@ -3056,7 +2823,7 @@ because of existing lockfile:
         <translation>Εμφάνιση εντολών σεναρίου</translation>
     </message>
     <message>
-        <location line="+519"/>
+        <location line="+539"/>
         <source>Couldn&apos;t load default map:
 
 %1
@@ -3070,7 +2837,7 @@ vym will create an empty map now.</source>
 Το vym θα δημιουργήσει ένα κενό διάγραμμα τώρα.</translation>
     </message>
     <message>
-        <location line="+390"/>
+        <location line="+395"/>
         <source>Couldn&apos;t save %1,
 because file exists and cannot be changed.</source>
         <translation>Δεν ήταν δυνατή η αποθήκευση του %1,
@@ -3097,7 +2864,7 @@ because file exists and cannot be changed.</source>
         <translation>Ορισμός του προεπιλεγμένου διαγράμματος για φόρτωση κατά την εκκίνηση</translation>
     </message>
     <message>
-        <location line="-4205"/>
+        <location line="-4230"/>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
         <translation>Λήψη δεδομένων από το JIRA για το υπο-δέντρο</translation>
@@ -3179,7 +2946,7 @@ because file exists and cannot be changed.</source>
         <translation>Εμφάνιση εργαλειοθήκης</translation>
     </message>
     <message>
-        <location line="+763"/>
+        <location line="+788"/>
         <source>Firefox Bookmarks</source>
         <translation>Σελιδοδείκτες Firefox</translation>
     </message>
@@ -3200,12 +2967,12 @@ because file exists and cannot be changed.</source>
     </message>
     <message>
         <location line="+51"/>
-        <location line="+38"/>
+        <location line="+20"/>
         <source>No SSL support available for this build of vym</source>
         <translation>Δεν υπάρχει διαθέσιμη υποστήριξη SSL γι&apos; αυτή την έκδοση του vym</translation>
     </message>
     <message>
-        <location line="-1811"/>
+        <location line="-1793"/>
         <source>Open Freemind map</source>
         <translation>Άνοιγμα διαγράμματος Freemind</translation>
     </message>
@@ -3220,7 +2987,7 @@ because file exists and cannot be changed.</source>
         <translation>Ορισμός ως σύνδεσμος προς διάγραμμα vym</translation>
     </message>
     <message>
-        <location line="-3075"/>
+        <location line="-3100"/>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
         <translation>Επαναφορά προτεραιότητας δέλτα για ορατές εργασίες</translation>
@@ -3231,7 +2998,7 @@ because file exists and cannot be changed.</source>
         <translation>Επιλογή χρώματος (Πιέστε Shift για περισσότερες επιλογές)</translation>
     </message>
     <message>
-        <location line="+656"/>
+        <location line="+681"/>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
         <translation>Η αποθήκευση του διαγράμματος απέτυχε:
@@ -3261,10 +3028,15 @@ Couldn&apos;t rename map to %1</source>
         <translation>Επεξεργασία κεφαλίδας</translation>
     </message>
     <message>
-        <location line="+336"/>
+        <location line="+415"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation>Εκτύπωση διαγράμματος VYM</translation>
+    </message>
+    <message>
+        <location line="+1674"/>
+        <source>%1 items selected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3378,7 +3150,6 @@ Couldn&apos;t rename map to %1</source>
     </message>
     <message>
         <location filename="../src/macros.cpp" line="+24"/>
-        <location filename="../src/mainwindow.cpp" line="-224"/>
         <source>Warning</source>
         <translation>Προειδοποίηση</translation>
     </message>
@@ -3715,14 +3486,14 @@ The map could not be saved, please check if backup file is available or export a
         <translation>Δεν ήταν δυνατή η εύρεση εργαλείου για την αποσυμπίεση δεδομένων, ή η έκδοση των Windows σας είναι παλαιότερη από τα Windows 10.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3"/>
+        <location filename="../src/mainwindow.cpp" line="-232"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
         <translation>Τα υπάρχοντα αρχεία κλειδώματος έχουν αγνοηθεί για τα διαγράμματα που αναφέρονται παρακάτω. Παρακαλώ ελέγξτε εάν τα διαγράμματα είναι ανοιχτά σε άλλο στιγμιότυπο του vym:</translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4084"/>
+        <location filename="../src/vymmodel.cpp" line="+4082"/>
         <source>JIRA agent not setup.</source>
         <translation>Ο πελάτης JIRA δεν έχει ρυθμιστεί</translation>
     </message>
@@ -3730,40 +3501,24 @@ The map could not be saved, please check if backup file is available or export a
 <context>
     <name>ScriptEditor</name>
     <message>
-        <location filename="../forms/scripteditor.ui" line="+23"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+239"/>
         <source>Form</source>
-        <translation>Φόρμα</translation>
+        <translation type="vanished">Φόρμα</translation>
     </message>
     <message>
-        <location line="+65"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+8"/>
         <source>Save to selected slide</source>
-        <translation>Αποθήκευση στην επιλεγμένη διαφάνεια</translation>
+        <translation type="vanished">Αποθήκευση στην επιλεγμένη διαφάνεια</translation>
     </message>
     <message>
-        <location line="-27"/>
-        <location line="+59"/>
-        <location line="+86"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="-4"/>
-        <location line="+8"/>
-        <location line="+4"/>
         <source>Run</source>
-        <translation>Εκτέλεση</translation>
+        <translation type="vanished">Εκτέλεση</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+1"/>
         <source>Load</source>
-        <translation>Φόρτωση</translation>
+        <translation type="vanished">Φόρτωση</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+86"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="-3"/>
-        <location line="+4"/>
         <source>Save</source>
-        <translation>Αποθήκευση</translation>
+        <translation type="vanished">Αποθήκευση</translation>
     </message>
     <message>
         <location filename="../src/scripteditor.cpp" line="-128"/>
@@ -3824,13 +3579,11 @@ Do you want to overwrite it?</source>
         <translation>Φόρτωση σεναρίου</translation>
     </message>
     <message>
-        <location filename="../forms/scripteditor.ui" line="-97"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="-5"/>
         <source>Reload</source>
-        <translation>Επαναφόρτωση</translation>
+        <translation type="vanished">Επαναφόρτωση</translation>
     </message>
     <message>
-        <location filename="../src/scripteditor.cpp" line="-94"/>
+        <location line="-94"/>
         <source>Script</source>
         <comment>Mode in scriptEditor</comment>
         <translation>Σενάριο</translation>
@@ -3852,25 +3605,19 @@ Do you want to overwrite it?</source>
         <translation>Το σενάριο αποθηκεύτηκε στο %1</translation>
     </message>
     <message>
-        <location filename="../forms/scripteditor.ui" line="+120"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+6"/>
         <source>Save as</source>
-        <translation>Αποθήκευση ως</translation>
+        <translation type="vanished">Αποθήκευση ως</translation>
     </message>
 </context>
 <context>
     <name>ShowTextDialog</name>
     <message>
-        <location filename="../forms/showtextdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_showtextdialog.h" line="+71"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
-        <location line="+54"/>
-        <location filename="../vym_autogen/include/ui_showtextdialog.h" line="+1"/>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
 </context>
 <context>
@@ -4618,32 +4365,24 @@ Do you want to write the map</source>
 <context>
     <name>WarningDialog</name>
     <message>
-        <location filename="../forms/warningdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+92"/>
         <source>Dialog</source>
-        <translation>Παράθυρο</translation>
+        <translation type="vanished">Παράθυρο</translation>
     </message>
     <message>
-        <location line="+49"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+1"/>
         <source>showAgainBox</source>
-        <translation>Εμφάνιση AgainBox</translation>
+        <translation type="vanished">Εμφάνιση AgainBox</translation>
     </message>
     <message>
-        <location line="+26"/>
         <location filename="../src/warningdialog.cpp" line="+51"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+1"/>
         <source>Cancel</source>
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+1"/>
         <source>Ok</source>
-        <translation>Εντάξει</translation>
+        <translation type="vanished">Εντάξει</translation>
     </message>
     <message>
-        <location filename="../src/warningdialog.cpp" line="-41"/>
+        <location line="-41"/>
         <source>Proceed</source>
         <translation>Πρόοδος</translation>
     </message>
@@ -4662,18 +4401,12 @@ Do you want to write the map</source>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
-        <location filename="../forms/zip-settings-dialog.ui" line="+39"/>
-        <location line="+28"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+129"/>
-        <location line="+3"/>
         <source>Status</source>
-        <translation>Κατάσταση</translation>
+        <translation type="vanished">Κατάσταση</translation>
     </message>
     <message>
-        <location line="+37"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+1"/>
         <source>Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation type="vanished">Κλείσιμο</translation>
     </message>
     <message>
         <location filename="../src/zip-settings-dialog.cpp" line="+22"/>
@@ -4711,30 +4444,20 @@ Do you want to write the map</source>
         <translation>Κατάσταση: %1</translation>
     </message>
     <message>
-        <location filename="../forms/zip-settings-dialog.ui" line="-90"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="-7"/>
         <source>zip settings</source>
-        <translation>ρυθμίσεις συμπίεσης</translation>
+        <translation type="vanished">ρυθμίσεις συμπίεσης</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+1"/>
         <source>zip tool:</source>
-        <translation>εργαλείο συμπίεσης:</translation>
+        <translation type="vanished">εργαλείο συμπίεσης:</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location line="+28"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+1"/>
-        <location line="+3"/>
         <source>Choose</source>
-        <translation>Επιλογή</translation>
+        <translation type="vanished">Επιλογή</translation>
     </message>
     <message>
-        <location line="-12"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="-1"/>
         <source>unzip tool:</source>
-        <translation>εργαλείο αποσυμπίεσης:</translation>
+        <translation type="vanished">εργαλείο αποσυμπίεσης:</translation>
     </message>
 </context>
 </TS>

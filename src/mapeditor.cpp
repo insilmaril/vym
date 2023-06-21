@@ -2216,7 +2216,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     // Add new selected objects
     if (sel.indexes().count() > 1)
         mainWindow->statusMessage(
-            QString("%1 items selected").arg(sel.indexes().count()));   // FIXME-0 add translation
+            tr("%1 items selected").arg(sel.indexes().count()));
     else
         mainWindow->statusMessage("");
 

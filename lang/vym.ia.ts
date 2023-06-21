@@ -52,191 +52,111 @@
 <context>
     <name>AttributeDialog</name>
     <message>
-        <location filename="../forms/attributedialog.ui" line="+19"/>
         <source>Attributes</source>
-        <translation type="unfinished">Attributos</translation>
+        <translation type="obsolete">Attributos</translation>
     </message>
     <message>
-        <location line="+11"/>
-        <source>Add key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+20"/>
         <source>Close</source>
-        <translation type="unfinished">Claude</translation>
+        <translation type="obsolete">Claude</translation>
     </message>
 </context>
 <context>
     <name>BranchPropertyEditor</name>
     <message>
-        <location filename="../forms/branchpropeditor.ui" line="+20"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+376"/>
         <source>Branch Property Editor</source>
-        <translation>Editor de Proprietate de Ramo</translation>
+        <translation type="vanished">Editor de Proprietate de Ramo</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+16"/>
         <source>Frame</source>
-        <translation>Quadro</translation>
+        <translation type="vanished">Quadro</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-15"/>
         <source>Geometry</source>
-        <translation>Geometria</translation>
+        <translation type="vanished">Geometria</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>No Frame</source>
-        <translation>Nulle quadro</translation>
+        <translation type="vanished">Nulle quadro</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Rectangle</source>
-        <translation>Rectangulo</translation>
+        <translation type="vanished">Rectangulo</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Rounded Rectangle</source>
-        <translation>Rectangulo arrotundate </translation>
+        <translation type="vanished">Rectangulo arrotundate </translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Ellipse</source>
-        <translation>Ellipse</translation>
+        <translation type="vanished">Ellipse</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Cloud</source>
-        <translation>Nube</translation>
+        <translation type="vanished">Nube</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+2"/>
         <source>Padding</source>
-        <translation>Borra</translation>
+        <translation type="vanished">Borra</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Borderline width</source>
-        <translation>Spissor de margine</translation>
+        <translation type="vanished">Spissor de margine</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Include children</source>
-        <translation>Include infantes</translation>
+        <translation type="vanished">Include infantes</translation>
     </message>
     <message>
-        <location line="+33"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Colors</source>
-        <translation>Colores</translation>
+        <translation type="vanished">Colores</translation>
     </message>
     <message>
-        <location line="+46"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+2"/>
         <source>Borderline color</source>
-        <translation>Color de margine</translation>
+        <translation type="vanished">Color de margine</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+2"/>
         <source>Background color</source>
-        <translation>Color de fundo</translation>
+        <translation type="vanished">Color de fundo</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+5"/>
         <source>Layout</source>
-        <translation>Disposition</translation>
+        <translation type="vanished">Disposition</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-3"/>
         <source>Include images horizontally</source>
-        <translation>Include images horizontalmente</translation>
+        <translation type="vanished">Include images horizontalmente</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Include images vertically</source>
-        <translation>Include images verticalmente</translation>
+        <translation type="vanished">Include images verticalmente</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>Free positioning of children (experimental!)</source>
-        <translation>Libere positionar de filios (experimental!)</translation>
+        <translation type="vanished">Libere positionar de filios (experimental!)</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+6"/>
         <source>Task</source>
-        <translation type="unfinished">Carga</translation>
+        <translation type="obsolete">Carga</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-4"/>
-        <source>Delta priority</source>
-        <extracomment>Manual delta added to priority of task in branch prop editor</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
-        <source>Created:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
-        <source>Modified:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
-        <source>Sleep:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+3"/>
         <source>Link</source>
-        <translation>Ligamine</translation>
+        <translation type="vanished">Ligamine</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-1"/>
         <source>Hide link if unselected</source>
-        <translation>Cela ligamine si non selectionate</translation>
+        <translation type="vanished">Cela ligamine si non selectionate</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+4"/>
         <source>Attributes</source>
-        <translation>Attributos</translation>
+        <translation type="vanished">Attributos</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="-2"/>
         <source>+</source>
-        <translation>+</translation>
+        <translation type="vanished">+</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_branchpropeditor.h" line="+1"/>
         <source>-</source>
-        <translation>-</translation>
+        <translation type="vanished">-</translation>
     </message>
     <message>
         <location filename="../src/branchpropeditor.cpp" line="+21"/>
@@ -285,7 +205,7 @@
 <context>
     <name>ConfluenceAgent</name>
     <message>
-        <location filename="../src/confluence-agent.cpp" line="+520"/>
+        <location filename="../src/confluence-agent.cpp" line="+562"/>
         <location line="+6"/>
         <source>Warning</source>
         <translation type="unfinished">Advertimento</translation>
@@ -297,12 +217,19 @@
     </message>
 </context>
 <context>
+    <name>ConfluenceSettingsDialog</name>
+    <message>
+        <location filename="../src/confluence-settings-dialog.cpp" line="+12"/>
+        <source>Confluence settings</source>
+        <comment>Confluence settings dialog title</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConfluenceUserDialog</name>
     <message>
-        <location filename="../forms/confluence-userdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_confluence-userdialog.h" line="+63"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialogo</translation>
+        <translation type="obsolete">Dialogo</translation>
     </message>
     <message>
         <location filename="../src/confluence-userdialog.cpp" line="+13"/>
@@ -314,68 +241,12 @@
 <context>
     <name>CredentialsDialog</name>
     <message>
-        <location filename="../forms/credentials.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+98"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialogo</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
-        <source>URL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
-        <source>Username:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
-        <source>Password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <location filename="../vym_autogen/include/ui_credentials.h" line="+1"/>
-        <source>Save password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/credentials.cpp" line="+7"/>
-        <source>Credentials dialog</source>
-        <comment>dialog window title</comment>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Dialogo</translation>
     </message>
 </context>
 <context>
     <name>DarkThemeSettingsDialog</name>
-    <message>
-        <location filename="../forms/darktheme-settings-dialog.ui" line="+20"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+101"/>
-        <source>Dark theme settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
-        <source>Dark theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
-        <source>Always use dark theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_darktheme-settings-dialog.h" line="+1"/>
-        <source>System settings for dark theme</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <location filename="../src/darktheme-settings-dialog.cpp" line="+13"/>
         <source>DarkThemeSettingsDialog dialog</source>
@@ -395,269 +266,159 @@
 <context>
     <name>EditXLinkDialog</name>
     <message>
-        <location filename="../forms/editxlinkdialog.ui" line="+20"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+196"/>
         <source>Edit XLink</source>
-        <translation type="unfinished">Edita XLink</translation>
+        <translation type="obsolete">Edita XLink</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Arrow begin:</source>
-        <translation>Inizio de flecha:</translation>
+        <translation type="vanished">Inizio de flecha:</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>XLink width:</source>
-        <translation>Spissor de XLinK:</translation>
+        <translation type="vanished">Spissor de XLinK:</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Use color of heading</source>
-        <translation>Usa color de capite</translation>
+        <translation type="vanished">Usa color de capite</translation>
     </message>
     <message>
-        <location line="+98"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+5"/>
         <source>Line style:</source>
         <extracomment>Linestyle in Edit XLink dialog</extracomment>
-        <translation>Stylo de linea:</translation>
+        <translation type="vanished">Stylo de linea:</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Arrow end:</source>
-        <translation>Fin de flecha:</translation>
+        <translation type="vanished">Fin de flecha:</translation>
     </message>
     <message>
-        <location line="+63"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+3"/>
         <source>Close</source>
-        <translation>Claude</translation>
+        <translation type="vanished">Claude</translation>
     </message>
     <message>
-        <location line="-144"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="-6"/>
         <source>XLink color:</source>
-        <translation>Color de XLink:</translation>
+        <translation type="vanished">Color de XLink:</translation>
     </message>
     <message>
-        <location line="+42"/>
-        <location filename="../vym_autogen/include/ui_editxlinkdialog.h" line="+1"/>
         <source>Use as default:</source>
-        <translation>Usa como predefinite:</translation>
+        <translation type="vanished">Usa como predefinite:</translation>
     </message>
 </context>
 <context>
     <name>ExportConfluenceDialog</name>
     <message>
-        <location filename="../forms/export-confluence-dialog.ui" line="+26"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+248"/>
-        <source>Export Confluence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
-        <source>Create new page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
-        <source>Update existing page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+101"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Options</source>
-        <translation type="unfinished">Optiones</translation>
+        <translation type="obsolete">Optiones</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
-        <source>Use heading of first map center as page name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+42"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+3"/>
         <source>Image of map</source>
-        <translation type="unfinished">Imagine de mappa</translation>
+        <translation type="obsolete">Imagine de mappa</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Include images</source>
-        <translation type="unfinished">include images</translation>
+        <translation type="obsolete">include images</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Table of contents</source>
-        <translation type="unfinished">Indice</translation>
+        <translation type="obsolete">Indice</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Task flags</source>
-        <translation type="unfinished">Bandieras de carga</translation>
+        <translation type="obsolete">Bandieras de carga</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>General flags</source>
-        <translation type="unfinished">Bandieras general</translation>
+        <translation type="obsolete">Bandieras general</translation>
     </message>
     <message>
-        <location line="-69"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="-6"/>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Capites colorate in texto</translation>
+        <translation type="obsolete">Capites colorate in texto</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Save settings in map</source>
-        <translation type="unfinished">Salveguarda preferentias in mappa</translation>
+        <translation type="obsolete">Salveguarda preferentias in mappa</translation>
     </message>
     <message>
-        <location line="+98"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+6"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-confluence-dialog.h" line="+1"/>
         <source>Export</source>
-        <translation type="unfinished">Exporta</translation>
+        <translation type="obsolete">Exporta</translation>
     </message>
 </context>
 <context>
     <name>ExportHTMLDialog</name>
     <message>
-        <location filename="../forms/export-html-dialog.ui" line="+26"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+315"/>
         <source>Export HTML</source>
-        <translation>Exporta in HTML</translation>
+        <translation type="vanished">Exporta in HTML</translation>
     </message>
     <message>
-        <location line="+35"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Export to directory:</source>
-        <translation>Exporta in directorio:</translation>
+        <translation type="vanished">Exporta in directorio:</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location line="+177"/>
-        <location line="+13"/>
-        <location line="+73"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
-        <location line="+13"/>
-        <location line="+1"/>
-        <location line="+3"/>
         <source>Browse</source>
-        <translation>Naviga</translation>
+        <translation type="vanished">Naviga</translation>
     </message>
     <message>
-        <location line="-236"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="-16"/>
         <source>Options</source>
-        <translation>Optiones</translation>
+        <translation type="vanished">Optiones</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Image of map</source>
-        <translation>Imagine de mappa</translation>
+        <translation type="vanished">Imagine de mappa</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Include images</source>
-        <translation>include images</translation>
+        <translation type="vanished">include images</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Table of contents</source>
-        <translation>Indice</translation>
+        <translation type="vanished">Indice</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Task flags</source>
-        <translation>Bandieras de carga</translation>
+        <translation type="vanished">Bandieras de carga</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>General flags</source>
-        <translation>Bandieras general</translation>
+        <translation type="vanished">Bandieras general</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Number sections</source>
-        <translation>Numerar sectiones</translation>
+        <translation type="vanished">Numerar sectiones</translation>
     </message>
     <message>
-        <location line="+58"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+4"/>
         <source>Copy CSS from </source>
-        <translation>Copiar CSS ex</translation>
+        <translation type="vanished">Copiar CSS ex</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Use CSS from</source>
-        <translation>Usar CSS ex</translation>
+        <translation type="vanished">Usar CSS ex</translation>
     </message>
     <message>
-        <location line="-65"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="-4"/>
         <source>Colored headings in text</source>
-        <translation>Capites colorate in texto</translation>
+        <translation type="vanished">Capites colorate in texto</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Save settings in map</source>
-        <translation>Salveguarda preferentias in mappa</translation>
+        <translation type="vanished">Salveguarda preferentias in mappa</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Stylesheets</source>
-        <translation>Folios de stilo</translation>
+        <translation type="vanished">Folios de stilo</translation>
     </message>
     <message>
-        <location line="+81"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+5"/>
         <source>Scripts</source>
-        <translation>Scripts</translation>
+        <translation type="vanished">Scripts</translation>
     </message>
     <message>
-        <location line="+30"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>After Export:</source>
-        <translation>Postea exportation:</translation>
+        <translation type="vanished">Postea exportation:</translation>
     </message>
     <message>
-        <location line="+55"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+2"/>
         <source>Cancel</source>
-        <translation>Cancella</translation>
+        <translation type="vanished">Cancella</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_export-html-dialog.h" line="+1"/>
         <source>Export</source>
-        <translation>Exporta</translation>
+        <translation type="vanished">Exporta</translation>
     </message>
     <message>
         <location filename="../src/export-html-dialog.cpp" line="+130"/>
@@ -688,150 +449,83 @@ vole permitter isto in tu systema!</translation>
 <context>
     <name>ExportXHTMLDialog</name>
     <message>
-        <location filename="../forms/exportxhtmldialog.ui" line="+20"/>
-        <source>Export XHTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+29"/>
         <source>Export to directory:</source>
-        <translation type="unfinished">Exporta in directorio:</translation>
+        <translation type="obsolete">Exporta in directorio:</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+165"/>
-        <location line="+57"/>
-        <location line="+81"/>
-        <location line="+60"/>
         <source>Browse</source>
-        <translation type="unfinished">Naviga</translation>
+        <translation type="obsolete">Naviga</translation>
     </message>
     <message>
-        <location line="-342"/>
         <source>Options</source>
-        <translation type="unfinished">Optiones</translation>
+        <translation type="obsolete">Optiones</translation>
     </message>
     <message>
-        <location line="+30"/>
         <source>Include image</source>
-        <translation type="unfinished">Include imagines</translation>
+        <translation type="obsolete">Include imagines</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Colored headings in text</source>
-        <translation type="unfinished">Capites colorate in texto</translation>
+        <translation type="obsolete">Capites colorate in texto</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Save settings in map</source>
-        <translation type="unfinished">Salveguarda preferentias in mappa</translation>
+        <translation type="obsolete">Salveguarda preferentias in mappa</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>show warnings of xslt processor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>show output of external scripts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+11"/>
         <source>Stylesheets</source>
-        <translation type="unfinished">Folios de stilo</translation>
+        <translation type="obsolete">Folios de stilo</translation>
     </message>
     <message>
-        <location line="+50"/>
-        <source>XSL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+57"/>
         <source>CSS:</source>
-        <translation type="unfinished">CSS:</translation>
+        <translation type="obsolete">CSS:</translation>
     </message>
     <message>
-        <location line="+31"/>
         <source>Scripts</source>
-        <translation type="unfinished">Scripts</translation>
+        <translation type="obsolete">Scripts</translation>
     </message>
     <message>
-        <location line="+50"/>
-        <source>Before export:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+60"/>
         <source>After Export:</source>
-        <translation type="unfinished">Postea exportation:</translation>
+        <translation type="obsolete">Postea exportation:</translation>
     </message>
     <message>
-        <location line="+65"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
         <source>Export</source>
-        <translation type="unfinished">Exporta</translation>
+        <translation type="obsolete">Exporta</translation>
     </message>
 </context>
 <context>
     <name>ExtraInfoDialog</name>
     <message>
-        <location filename="../forms/extrainfodialog.ui" line="+15"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+163"/>
         <source>VYM - Info</source>
-        <translation>VYM - Info</translation>
+        <translation type="vanished">VYM - Info</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Map:</source>
-        <translation>Mappa:</translation>
+        <translation type="vanished">Mappa:</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
-        <source>File location:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+4"/>
         <source>Title:</source>
-        <translation>Titulo:</translation>
+        <translation type="vanished">Titulo:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Author:</source>
-        <translation>Autor:</translation>
+        <translation type="vanished">Autor:</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Comment:</source>
-        <translation>Commento:</translation>
+        <translation type="vanished">Commento:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Statistics:</source>
-        <translation>Statistics:</translation>
+        <translation type="vanished">Statistics:</translation>
     </message>
     <message>
-        <location line="+52"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Cancel</source>
-        <translation>Cancella</translation>
+        <translation type="vanished">Cancella</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_extrainfodialog.h" line="+1"/>
         <source>Close</source>
-        <translation>Claude</translation>
+        <translation type="vanished">Claude</translation>
     </message>
 </context>
 <context>
@@ -855,34 +549,24 @@ vole permitter isto in tu systema!</translation>
 <context>
     <name>HistoryWindow</name>
     <message>
-        <location filename="../forms/historywindow.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+90"/>
         <source>Dialog</source>
-        <translation>Dialogo</translation>
+        <translation type="vanished">Dialogo</translation>
     </message>
     <message>
-        <location line="+34"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+1"/>
         <source>Redo</source>
-        <translation>Face de nove</translation>
+        <translation type="vanished">Face de nove</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+2"/>
         <source>Time</source>
-        <translation>Tempore</translation>
+        <translation type="vanished">Tempore</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+2"/>
         <source>Comment</source>
-        <translation>Commento</translation>
+        <translation type="vanished">Commento</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <location filename="../vym_autogen/include/ui_historywindow.h" line="+1"/>
         <source>Undo</source>
-        <translation>Annulla</translation>
+        <translation type="vanished">Annulla</translation>
     </message>
     <message>
         <location filename="../src/historywindow.cpp" line="+16"/>
@@ -912,7 +596,7 @@ vole permitter isto in tu systema!</translation>
 <context>
     <name>JiraAgent</name>
     <message>
-        <location filename="../src/jira-agent.cpp" line="+232"/>
+        <location filename="../src/jira-agent.cpp" line="+247"/>
         <source>Warning</source>
         <translation type="unfinished">Advertimento</translation>
     </message>
@@ -925,79 +609,41 @@ vole permitter isto in tu systema!</translation>
 <context>
     <name>JiraSettingsDialog</name>
     <message>
-        <location filename="../forms/jira-settings-dialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+126"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialogo</translation>
+        <translation type="obsolete">Dialogo</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
-        <source>JIRA servers:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
         <source>Add</source>
-        <translation type="unfinished">Adde</translation>
+        <translation type="obsolete">Adde</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
-        <source>Username:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
-        <source>Password:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <location filename="../vym_autogen/include/ui_jira-settings-dialog.h" line="+1"/>
-        <source>Save password</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Remove</translation>
     </message>
     <message>
         <location filename="../src/jira-settings-dialog.cpp" line="+14"/>
-        <source>JiraSettingsDialog dialog</source>
-        <comment>dialog window title</comment>
+        <source>Jira settings</source>
+        <comment>Jira settings dialog title</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LineEditDialog</name>
     <message>
-        <location filename="../forms/lineeditdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+98"/>
         <source>Dialog</source>
-        <translation>Dialogo</translation>
+        <translation type="vanished">Dialogo</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+1"/>
         <source>TextLabel</source>
-        <translation>Etiquetta de texto</translation>
+        <translation type="vanished">Etiquetta de texto</translation>
     </message>
     <message>
-        <location line="+63"/>
         <location filename="../src/lineeditdialog.cpp" line="+16"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+4"/>
         <source>Cancel</source>
         <translation>Cancellar</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../src/lineeditdialog.cpp" line="-7"/>
-        <location filename="../vym_autogen/include/ui_lineeditdialog.h" line="+1"/>
+        <location line="-7"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
@@ -1005,22 +651,16 @@ vole permitter isto in tu systema!</translation>
 <context>
     <name>LockedFileDialog</name>
     <message>
-        <location filename="../forms/lockedfiledialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="+86"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialogo</translation>
+        <translation type="obsolete">Dialogo</translation>
     </message>
     <message>
-        <location line="+71"/>
         <location filename="../src/lockedfiledialog.cpp" line="+7"/>
-        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="+1"/>
         <source>Delete lockfile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../src/lockedfiledialog.cpp" line="-1"/>
-        <location filename="../vym_autogen/include/ui_lockedfiledialog.h" line="+1"/>
+        <location line="-1"/>
         <source>Open readonly</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1028,7 +668,7 @@ vole permitter isto in tu systema!</translation>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/mainwindow.cpp" line="+299"/>
+        <location filename="../src/mainwindow.cpp" line="+297"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
         <translation>Cerca lista de exitos</translation>
@@ -1046,7 +686,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Editor de script</translation>
     </message>
     <message>
-        <location line="+783"/>
+        <location line="+787"/>
         <source>&amp;New map</source>
         <comment>File menu</comment>
         <translation>&amp;Nove mappa</translation>
@@ -1836,7 +1476,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Isto non functiona!</translation>
     </message>
     <message>
-        <location line="-2501"/>
+        <location line="-2505"/>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation>Fenestra principal</translation>
@@ -1873,7 +1513,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Editores de texto</translation>
     </message>
     <message>
-        <location line="+835"/>
+        <location line="+839"/>
         <source>&amp;Map</source>
         <comment>Menu for file actions</comment>
         <translation>&amp;Mappa</translation>
@@ -2148,7 +1788,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Information de debug</translation>
     </message>
     <message>
-        <location line="+515"/>
+        <location line="+535"/>
         <source>Couldn&apos;t load default map:
 
 %1
@@ -2158,7 +1798,7 @@ vym will create an empty map now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+441"/>
         <location line="+82"/>
         <source>Couldn&apos;t save %1,
 because of existing lockfile:
@@ -2249,12 +1889,12 @@ a causa de un file de bloco existente:
         <translation>Numero de genitores mostrate per un carga:</translation>
     </message>
     <message>
-        <location line="-2375"/>
+        <location line="-2380"/>
         <source>(readonly)</source>
         <translation>(de sol lectura)</translation>
     </message>
     <message>
-        <location line="-1924"/>
+        <location line="-1944"/>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -2271,7 +1911,7 @@ a causa de un file de bloco existente:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+635"/>
+        <location line="+660"/>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
@@ -2284,7 +1924,7 @@ Couldn&apos;t rename map to %1</source>
     </message>
     <message>
         <location line="+1849"/>
-        <location line="+38"/>
+        <location line="+20"/>
         <source>No SSL support available for this build of vym</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2336,7 +1976,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Pro favor permitte que vym verifica actualisationes!</translation>
     </message>
     <message>
-        <location line="-4400"/>
+        <location line="-4407"/>
         <source>Set application to open pdf files</source>
         <comment>Settings action</comment>
         <translation>Fixa application per aperir files pdf</translation>
@@ -2473,12 +2113,12 @@ Couldn&apos;t rename map to %1</source>
         <translation>Circa QT</translation>
     </message>
     <message>
-        <location line="-2857"/>
+        <location line="-2861"/>
         <source>Script output window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+825"/>
+        <location line="+829"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
@@ -2864,12 +2504,12 @@ Couldn&apos;t rename map to %1</source>
         <translation>Barra de instrumentos de color</translation>
     </message>
     <message>
-        <location line="+3755"/>
+        <location line="+3762"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3696"/>
+        <location line="-3703"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation>Barra de instrumentos de editores</translation>
@@ -2881,7 +2521,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>barra de instrumento de modos de modificator</translation>
     </message>
     <message>
-        <location line="+228"/>
+        <location line="+248"/>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
@@ -2897,13 +2537,13 @@ a confusion quando on termina de travaliar con vym. Tu vole</translation>
     <message>
         <location line="+1"/>
         <location line="+73"/>
-        <location line="+260"/>
+        <location line="+265"/>
         <location line="+93"/>
         <source>Cancel</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-366"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -2944,7 +2584,7 @@ Tu vole crea un nove?</translation>
         <translation>o</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+116"/>
         <source>Saved  %1</source>
         <translation>Salveguardate %1</translation>
     </message>
@@ -3004,7 +2644,7 @@ exists already. Do you want to</source>
         <translation>Exporta como CSV</translation>
     </message>
     <message>
-        <location line="-3213"/>
+        <location line="-3238"/>
         <location line="+22"/>
         <location line="+8"/>
         <location line="+13"/>
@@ -3014,7 +2654,7 @@ exists already. Do you want to</source>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+999"/>
-        <location line="+2114"/>
+        <location line="+2139"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(ancora experimental)</translation>
@@ -3031,7 +2671,7 @@ exists already. Do you want to</source>
         <location line="+201"/>
         <location line="+392"/>
         <location line="+1030"/>
-        <location line="+38"/>
+        <location line="+20"/>
         <location line="+875"/>
         <location line="+206"/>
         <location line="+183"/>
@@ -3039,7 +2679,7 @@ exists already. Do you want to</source>
         <translation>Advertimento</translation>
     </message>
     <message>
-        <location line="-2836"/>
+        <location line="-2818"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Le mappa %1 ha essite modificate ma non salveguardate ancora. Tu vole</translation>
     </message>
@@ -3055,20 +2695,20 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location line="+106"/>
-        <location line="+2335"/>
+        <location line="+2317"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Il nonpoteva trovar un application pro aperir %1.
 </translation>
     </message>
     <message>
-        <location line="-2334"/>
-        <location line="+2335"/>
+        <location line="-2316"/>
+        <location line="+2317"/>
         <source>Please use Settings-&gt;</source>
         <translation>Pro favor usa preferentias -&gt;</translation>
     </message>
     <message>
-        <location line="-2334"/>
+        <location line="-2316"/>
         <location line="+1248"/>
         <source>Set application to open an URL</source>
         <translation>Fixa application pro aperir un URL</translation>
@@ -3114,8 +2754,8 @@ exists already. Do you want to</source>
         <translation>Fixa Url per un file local</translation>
     </message>
     <message>
-        <location line="-1050"/>
-        <location line="+390"/>
+        <location line="-1055"/>
+        <location line="+395"/>
         <location line="+46"/>
         <location line="+9"/>
         <location line="+73"/>
@@ -3181,12 +2821,12 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location line="+784"/>
-        <location line="+1099"/>
+        <location line="+1081"/>
         <source>Set application to open PDF files</source>
         <translation>Fixa application pro aperir files PDF</translation>
     </message>
     <message>
-        <location line="-1027"/>
+        <location line="-1009"/>
         <source>Number of undo/redo levels:</source>
         <translation>Numero de nivellos de annulla/reface:</translation>
     </message>
@@ -3211,7 +2851,7 @@ exists already. Do you want to</source>
         <translation type="unfinished">Information</translation>
     </message>
     <message>
-        <location line="+486"/>
+        <location line="+468"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Historia per %1</translation>
@@ -3256,10 +2896,15 @@ exists already. Do you want to</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+336"/>
+        <location line="+415"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation>Imprime mappa de vym</translation>
+    </message>
+    <message>
+        <location line="+1674"/>
+        <source>%1 items selected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3268,7 +2913,7 @@ exists already. Do you want to</source>
         <location filename="../src/noteeditor.cpp" line="+13"/>
         <source>Note Editor</source>
         <comment>Name of editor shown as window title</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Editor de nota</translation>
     </message>
 </context>
 <context>
@@ -3346,7 +2991,6 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location filename="../src/macros.cpp" line="+24"/>
-        <location filename="../src/mainwindow.cpp" line="-3002"/>
         <source>Warning</source>
         <translation>Advertimento</translation>
     </message>
@@ -3710,14 +3354,14 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3"/>
+        <location filename="../src/mainwindow.cpp" line="-2992"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4084"/>
+        <location filename="../src/vymmodel.cpp" line="+4082"/>
         <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3725,52 +3369,32 @@ The map could not be saved, please check if backup file is available or export a
 <context>
     <name>ScriptEditor</name>
     <message>
-        <location filename="../forms/scripteditor.ui" line="+23"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+239"/>
         <source>Form</source>
-        <translation>Forma</translation>
+        <translation type="vanished">Forma</translation>
     </message>
     <message>
-        <location line="+121"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+13"/>
         <source>Reload</source>
-        <translation type="unfinished">Recarga</translation>
+        <translation type="obsolete">Recarga</translation>
     </message>
     <message>
-        <location line="+120"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+6"/>
         <source>Save as</source>
-        <translation type="unfinished">Salveguarda como</translation>
+        <translation type="obsolete">Salveguarda como</translation>
     </message>
     <message>
-        <location line="-176"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="-11"/>
         <source>Save to selected slide</source>
-        <translation>Salveguarda le diapositiva seligite</translation>
+        <translation type="vanished">Salveguarda le diapositiva seligite</translation>
     </message>
     <message>
-        <location line="-27"/>
-        <location line="+59"/>
-        <location line="+86"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="-4"/>
-        <location line="+8"/>
-        <location line="+4"/>
         <source>Run</source>
-        <translation>Executa</translation>
+        <translation type="vanished">Executa</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="+1"/>
         <source>Load</source>
-        <translation>Carga</translation>
+        <translation type="vanished">Carga</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+86"/>
-        <location filename="../vym_autogen/include/ui_scripteditor.h" line="-3"/>
-        <location line="+4"/>
         <source>Save</source>
-        <translation>Salveguarda</translation>
+        <translation type="vanished">Salveguarda</translation>
     </message>
     <message>
         <location filename="../src/scripteditor.cpp" line="-93"/>
@@ -3854,16 +3478,12 @@ Do you want to overwrite it?</source>
 <context>
     <name>ShowTextDialog</name>
     <message>
-        <location filename="../forms/showtextdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_showtextdialog.h" line="+71"/>
         <source>Dialog</source>
-        <translation>Dialogo</translation>
+        <translation type="vanished">Dialogo</translation>
     </message>
     <message>
-        <location line="+54"/>
-        <location filename="../vym_autogen/include/ui_showtextdialog.h" line="+1"/>
         <source>Close</source>
-        <translation>Claude</translation>
+        <translation type="vanished">Claude</translation>
     </message>
 </context>
 <context>
@@ -4604,32 +4224,24 @@ Tu vole recargar le mappa con le nove file?</translation>
 <context>
     <name>WarningDialog</name>
     <message>
-        <location filename="../forms/warningdialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+92"/>
         <source>Dialog</source>
-        <translation>Dialogo</translation>
+        <translation type="vanished">Dialogo</translation>
     </message>
     <message>
-        <location line="+49"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+1"/>
         <source>showAgainBox</source>
-        <translation>MonstraQuadroDeNove</translation>
+        <translation type="vanished">MonstraQuadroDeNove</translation>
     </message>
     <message>
-        <location line="+26"/>
         <location filename="../src/warningdialog.cpp" line="+51"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+1"/>
         <source>Cancel</source>
         <translation>cancella</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../vym_autogen/include/ui_warningdialog.h" line="+1"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="vanished">Ok</translation>
     </message>
     <message>
-        <location filename="../src/warningdialog.cpp" line="-41"/>
+        <location line="-41"/>
         <source>Proceed</source>
         <translation>Procede</translation>
     </message>
@@ -4648,44 +4260,12 @@ Tu vole recargar le mappa con le nove file?</translation>
 <context>
     <name>ZipSettingsDialog</name>
     <message>
-        <location filename="../forms/zip-settings-dialog.ui" line="+14"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+126"/>
-        <source>zip settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+1"/>
-        <source>zip tool:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <location line="+28"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+1"/>
-        <location line="+3"/>
-        <source>Choose</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-21"/>
-        <location line="+28"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="-2"/>
-        <location line="+3"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation type="obsolete">Status</translation>
     </message>
     <message>
-        <location line="-19"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="-2"/>
-        <source>unzip tool:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+56"/>
-        <location filename="../vym_autogen/include/ui_zip-settings-dialog.h" line="+3"/>
         <source>Close</source>
-        <translation type="unfinished">Claude</translation>
+        <translation type="obsolete">Claude</translation>
     </message>
     <message>
         <location filename="../src/zip-settings-dialog.cpp" line="+22"/>
