@@ -365,9 +365,6 @@ void ConfluenceAgent::startGetPageDetailsRequest()
     if (debug) qDebug() << "CA::startGetPageDetailsRequest" << pageID;
 
     // Authentication in URL  (only SSL!)
-    // FIXME-0 switch to Personal Access Token
-    // https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/
-
     QString query = "https://" 
         + baseURL + apiURL 
         + "/content/" + pageID + "?expand=metadata.labels,version";
