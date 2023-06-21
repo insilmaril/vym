@@ -44,8 +44,8 @@ QString localeName;
 QTextStream vout(stdout); // vymout - Testing for now. Flush after writing...
 
 // Accessing JIRA and Confluence is done using agents
-// Credentials may be stored in settings, but only on request
-QString jiraPassword;
+// Credentials may be stored in settings, but only on request   // FIXME-0 review this policy, especially for PATs
+QString jiraPassword;   
 QString confluencePassword;
 
 TaskModel *taskModel;

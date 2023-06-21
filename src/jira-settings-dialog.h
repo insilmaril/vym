@@ -12,6 +12,7 @@ class JiraSettingsDialog : public QDialog {
   public slots:
     void addServer();
     void deleteServer();
+    void updateAuthenticationFields();
     void updateSettings();
 
   private:

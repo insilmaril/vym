@@ -77,6 +77,8 @@ class ConfluenceAgent : public QObject {
     QJsonObject jsobj;
 
     // Settings: Credentials to access Confluence
+    bool authUsingPAT;
+    QString personalAccessToken;
     QString username;
     QString password;
 

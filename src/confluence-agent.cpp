@@ -78,11 +78,22 @@ void ConfluenceAgent::init()
     baseURL = settings.value("/atlassian/confluence/url", "baseURL").toString();
     
     // Read credentials 
-    username =
-        settings.value("/atlassian/confluence/username", "user_johnDoe").toString();
-    password = settings.value("/atlassian/confluence/password", confluencePassword).toString();
+    authUsingPAT = 
+        settings.value("/atlassian/confluence/authUsingPAT", true).toBool();
+    if (authUsingPAT)
+        personalAccessToken =
+            settings.value("/atlassian/confluence/PAT", "undefined").toString();
+    else {
+        username =
+            settings.value("/atlassian/confluence/username", "user_johnDoe").toString();
+        if (!confluencePassword.isEmpty())
+            password = confluencePassword;
+        else
+            password = 
+                settings.value("/atlassian/confluence/password", "").toString();
+    }
 
-    if (password.isEmpty()) {
+    if (!authUsingPAT && password.isEmpty()) {
         // Set global password
         if (!mainWindow->settingsConfluence()) 
             abortJob = true;
@@ -325,13 +336,19 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
     QNetworkRequest request = QNetworkRequest(url);
 
     // Basic authentication in header
-    QString concatenated = username + ":" + password;
-    QByteArray data = concatenated.toLocal8Bit().toBase64();
-    QString headerData = "Basic " + data;
+    QString headerData;
+    if (authUsingPAT)
+        headerData = QString("Bearer %1").arg(personalAccessToken);
+    else {
+        QString concatenated = username + ":" + password;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     if (debug)
     {
+        qDebug() << "CA::startGetPageSourceRequest: header = " + headerData;
         qDebug() << "CA::startGetPageSourceRequest: url = " + request.url().toString();
     }
 
@@ -348,16 +365,25 @@ void ConfluenceAgent::startGetPageDetailsRequest()
     if (debug) qDebug() << "CA::startGetPageDetailsRequest" << pageID;
 
     // Authentication in URL  (only SSL!)
-    // maybe switch to token later:
+    // FIXME-0 switch to Personal Access Token
     // https://developer.atlassian.com/cloud/confluence/basic-auth-for-rest-apis/
-    QString concatenated = username + ":" + password;
 
     QString query = "https://" 
-        + concatenated 
-        + "@" + baseURL + apiURL 
+        + baseURL + apiURL 
         + "/content/" + pageID + "?expand=metadata.labels,version";
 
     QNetworkRequest request = QNetworkRequest(QUrl(query));
+
+    // Basic authentication in header
+    QString headerData;
+    if (authUsingPAT)
+        headerData = QString("Bearer %1").arg(personalAccessToken);
+    else {
+        QString concatenated = username + ":" + password;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &ConfluenceAgent::pageDetailsReceived);
@@ -371,11 +397,20 @@ void ConfluenceAgent::startCreatePageRequest()
 {
     // qDebug() << "CA::startCreatePageRequest";
 
-    QString concatenated = username + ":" + password;
-
-    QString url = "https://" + concatenated + "@" + baseURL + apiURL + "/content";
+    QString url = "https://" + baseURL + apiURL + "/content";
 
     QNetworkRequest request = QNetworkRequest(QUrl(url));
+
+    // Basic authentication in header
+    QString headerData;
+    if (authUsingPAT)
+        headerData = QString("Bearer %1").arg(personalAccessToken);
+    else {
+        QString concatenated = username + ":" + password;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QJsonObject payload;
@@ -427,12 +462,21 @@ void ConfluenceAgent::startUpdatePageRequest()
 {
     if (debug) qDebug() << "CA::startUpdatePageRequest";
 
-    QString concatenated = username + ":" + password;
-
-    QString url = "https://" + concatenated + "@" + baseURL + apiURL + "/content" + "/" + pageID;
+    QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID;
 
     QNetworkRequest request = QNetworkRequest(QUrl(url));
+
+    // Basic authentication in header
+    QString headerData;
+    if (authUsingPAT)
+        headerData = QString("Bearer %1").arg(personalAccessToken);
+    else {
+        QString concatenated = username + ":" + password;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json; charset=utf-8");
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     QJsonObject payload;
     payload["id"] = pageID;
@@ -484,22 +528,23 @@ void ConfluenceAgent::startGetUserInfoRequest()
 {
     if (debug) qDebug() << "CA::startGetInfoRequest for " << userQuery;
 
-    QString concatenated = username + ":" + password;
-
     QString query = "https://" + baseURL + apiURL
-    //    + concatenated 
-    //    + "@" + apiURL 
         + "/search?cql=user.fullname~" + userQuery;
-    // qDebug() << query;
 
     networkManager->disconnect();
 
     QNetworkRequest request = QNetworkRequest(QUrl(query));
 //    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-//
+
     // Basic authentication in header
-    QByteArray data = concatenated.toLocal8Bit().toBase64();
-    QString headerData = "Basic " + data;
+    QString headerData;
+    if (authUsingPAT)
+        headerData = QString("Bearer %1").arg(personalAccessToken);
+    else {
+        QString concatenated = username + ":" + password;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     connect(networkManager, &QNetworkAccessManager::finished,

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CredentialsDialog</class>
- <widget class="QDialog" name="CredentialsDialog">
+ <class>ConfluenceSettingsDialog</class>
+ <widget class="QDialog" name="ConfluenceSettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>631</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,12 +17,29 @@
    <item>
     <widget class="QLabel" name="UrlLabel">
      <property name="text">
-      <string>URL:</string>
+      <string>Confluence URL:</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLineEdit" name="urlLineEdit"/>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="usePATCheckBox">
+     <property name="text">
+      <string>Use Personal Access Toke instead of username and password for authentication</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="PATLabel">
+     <property name="text">
+      <string>Personal Access Token:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="PATLineEdit"/>
    </item>
    <item>
     <widget class="QLabel" name="userLabel">
@@ -56,6 +73,19 @@
     </widget>
    </item>
    <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -78,7 +108,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>CredentialsDialog</receiver>
+   <receiver>ConfluenceSettingsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -94,7 +124,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>CredentialsDialog</receiver>
+   <receiver>ConfluenceSettingsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
