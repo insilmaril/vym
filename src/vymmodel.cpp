@@ -1928,6 +1928,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         bi->setHeading(vt);
         emitDataChanged(bi);
         emitUpdateQueries();
+        mainWindow->updateHeadingEditor(bi);    // Update esp. HeadingEditor
         reposition();
     }
 }
