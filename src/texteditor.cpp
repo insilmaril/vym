@@ -912,6 +912,7 @@ void TextEditor::setRichTextMode(bool b)
     if (b) {
         e->setHtml(e->toHtml());
         actionFormatRichText->setChecked(true);
+        setUseColorMapBackground(true);
     } else {
         // Reset also text format 
         QTextCharFormat textformat;
@@ -921,6 +922,7 @@ void TextEditor::setRichTextMode(bool b)
         e->setPlainText(e->toPlainText());
         actionFormatUseFixedFont->setEnabled(true);
         actionFormatRichText->setChecked(false);
+        setUseColorMapBackground(false);
     }
     setState(state);    // re-set state to force updating colors
     updateActions();
