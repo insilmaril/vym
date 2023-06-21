@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>629</width>
-    <height>393</height>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,6 +54,23 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="usePATCheckBox">
+     <property name="text">
+      <string>Use Personal Access Token instead of username and password for authentication</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="PATLabel">
+     <property name="text">
+      <string>Personal Access Token:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="PATLineEdit"/>
    </item>
    <item>
     <widget class="QLabel" name="userLabel">

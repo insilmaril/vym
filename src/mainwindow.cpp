@@ -29,7 +29,7 @@ using namespace std;
 #include "confluence-agent.h"
 #include "confluence-user.h"
 #include "confluence-userdialog.h"
-#include "credentials.h"
+#include "confluence-settings-dialog.h"
 #include "darktheme-settings-dialog.h"
 #include "debuginfo.h"
 #include "download-agent.h"
@@ -99,8 +99,6 @@ extern QString localeName;
 extern bool debug;
 extern bool testmode;
 extern QTextStream vout;
-extern QString confluencePassword;
-extern QString jiraPassword;
 extern Switchboard switchboard;
 
 extern bool restoreMode;
@@ -6139,31 +6137,13 @@ bool Main::settingsConfluence()
         return false;
     }
 
-    CredentialsDialog dia;
-    dia.setURL(
-        settings.value("/atlassian/confluence/url", "Confluence base URL").toString());
-    dia.setUser(settings.value("/atlassian/confluence/username", "Confluence username")
-                    .toString());
-    dia.setSavePassword(
-        settings.value("/atlassian/confluence/savePassword", false).toBool());
-    if (!confluencePassword.isEmpty())
-        dia.setPassword(confluencePassword);
-
+    ConfluenceSettingsDialog dia;
     dia.exec();
 
-    if (dia.result() > 0) {
-        settings.setValue("/atlassian/confluence/url", dia.getURL());
-        settings.setValue("/atlassian/confluence/username", dia.getUser());
-        settings.setValue("/atlassian/confluence/savePassword", dia.savePassword());
-        confluencePassword = dia.getPassword();
-        if (dia.savePassword())
-            settings.setValue("/atlassian/confluence/password", confluencePassword);
-        else
-            settings.setValue("/atlassian/confluence/password", "");
-
+    if (dia.result() > 0)
         return true;
-    }
-    return false;
+    else
+        return false;
 }
 
 bool Main::settingsJIRA()

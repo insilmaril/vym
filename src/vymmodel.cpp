@@ -94,8 +94,6 @@ extern QDir lastImageDir;
 extern QDir lastMapDir;
 extern QDir lastExportDir;
 
-extern QString confluencePassword;
-
 extern Settings settings;
 extern QTextStream vout;
 

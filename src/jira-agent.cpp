@@ -61,9 +61,20 @@ void JiraAgent::init()
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
     // Read credentials    
-    username =
-        settings.value("/atlassian/jira/username", "user_johnDoe").toString();
-    password = settings.value("/atlassian/jira/password", jiraPassword).toString();
+    authUsingPAT = 
+        settings.value("/atlassian/jira/authUsingPAT", true).toBool();
+    if (authUsingPAT)
+        personalAccessToken =
+            settings.value("/atlassian/jira/PAT", "undefined").toString();
+    else {
+        username =
+            settings.value("/atlassian/jira/username", "user_johnDoe").toString();
+        if (!jiraPassword.isEmpty())
+            password = jiraPassword;
+        else
+            password = 
+                settings.value("/atlassian/jira/password", "").toString();
+    }
 
     // Set API rest point. baseURL later on depends on different JIRA system
     apiURL = "/rest/api/2";
@@ -198,15 +209,19 @@ void JiraAgent::startGetTicketRequest()
     QNetworkRequest request = QNetworkRequest(url);
 
     // Basic authentication in header
-    QString concatenated = username + ":" + password;
-    QByteArray data = concatenated.toLocal8Bit().toBase64();
-    QString headerData = "Basic " + data;
+    QString headerData;
+    if (authUsingPAT)
+        headerData = QString("Bearer %1").arg(personalAccessToken);
+    else {
+        QString concatenated = username + ":" + password;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
+
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     if (debug)
-    {
         qDebug() << "JA::startGetTicketRequest: url = " + request.url().toString();
-    }
 
     killTimer->start();
 
