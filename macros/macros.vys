@@ -122,7 +122,7 @@ function macro_shift_f1()
 {
     map = vym.currentMap();
     status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
+    if (map.getFrameType(true) == "NoFrame") {
         status = "Background light red";
     }
     toggle_frame ( map );
