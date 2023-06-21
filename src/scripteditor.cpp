@@ -136,13 +136,8 @@ void ScriptEditor::reloadMacros()
         macroEditor->setPlainText(m);
         ui.macroPathLineEdit->setText(macros.getPath());
     }
-    else {
-        QString error(QObject::tr("Error"));
-        QString msg(QObject::tr("Couldn't read macros from \"%1\"\n.")
-                        .arg(macros.getPath()));
-        QMessageBox::warning(0, error, msg);
-    }
 }
+
 void ScriptEditor::saveMacros()
 {
     if (saveStringToDisk(macros.getPath(), macroEditor->toPlainText()))

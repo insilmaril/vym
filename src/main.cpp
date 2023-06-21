@@ -315,6 +315,15 @@ int main(int argc, char *argv[])
     iconPath = vymBaseDir.path() + "/icons/";
     flagsPath = vymBaseDir.path() + "/flags/";
 
+    // When running locally, use local macros. Otherwise settings are used
+    if (options.isOn("local"))
+        macros.setPath(vymBaseDir.path() + "/macros/macros.vys");
+    else
+        macros.setPath(
+            settings
+            .value("/macros/path", vymBaseDir.path() + "/macros/macros.vys")
+            .toString());
+
     // Some directories
     QDir useDir;
     if (options.isOn("local"))
