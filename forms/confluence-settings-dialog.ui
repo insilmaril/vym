@@ -39,7 +39,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="PATLineEdit"/>
+    <widget class="QLineEdit" name="PATLineEdit">
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="userLabel">
