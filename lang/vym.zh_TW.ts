@@ -56,6 +56,25 @@
     </message>
 </context>
 <context>
+    <name>BackgroundDialog</name>
+    <message>
+        <location filename="../src/background-dialog.cpp" line="+20"/>
+        <source>Set background</source>
+        <comment>Dialog to set background color or image</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Images</source>
+        <translation type="unfinished">圖像</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Load background image</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>No Frame</source>
@@ -74,7 +93,7 @@
         <translation type="obsolete">垂直地含入圖像</translation>
     </message>
     <message>
-        <location filename="../src/branchpropeditor.cpp" line="+21"/>
+        <location filename="../src/branchpropeditor.cpp" line="+20"/>
         <source>Property Editor</source>
         <comment>Window caption</comment>
         <translation type="unfinished"></translation>
@@ -98,7 +117,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+254"/>
         <location line="+6"/>
         <source>%1 days ago</source>
         <comment>task related times</comment>
@@ -114,6 +133,12 @@
         <location line="+3"/>
         <source>Task is awake</source>
         <comment>task related times</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+148"/>
+        <source>Background color of frame</source>
+        <comment>Branch property dialog</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -486,7 +511,7 @@ want to allow this in your system!</source>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/mainwindow.cpp" line="+2187"/>
+        <location filename="../src/mainwindow.cpp" line="+2247"/>
         <source>Linkstyle Line</source>
         <translation>連結樣式 直線</translation>
     </message>
@@ -496,23 +521,22 @@ want to allow this in your system!</source>
         <translation>連結樣式 粗線</translation>
     </message>
     <message>
-        <location line="+42"/>
         <source>Set &amp;Background Color</source>
-        <translation>設定背景顏色(&amp;B)</translation>
+        <translation type="vanished">設定背景顏色(&amp;B)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+51"/>
         <source>&amp;View</source>
         <translation>檢視(&amp;V)</translation>
     </message>
     <message>
-        <location line="+2410"/>
-        <location line="+1248"/>
+        <location line="+2409"/>
+        <location line="+1242"/>
         <source>Set application to open an URL</source>
         <translation>設定開啟 URL 的應用程式</translation>
     </message>
     <message>
-        <location line="-1800"/>
+        <location line="-1794"/>
         <source>Overwrite</source>
         <translation>覆寫</translation>
     </message>
@@ -556,22 +580,22 @@ want to allow this in your system!</source>
         <translation>無論如何都開啟</translation>
     </message>
     <message>
-        <location line="+3189"/>
+        <location line="+3186"/>
         <source>Critcal error</source>
         <translation>嚴重錯誤</translation>
     </message>
     <message>
-        <location line="-3116"/>
+        <location line="-3113"/>
         <source>Create</source>
         <translation>建立</translation>
     </message>
     <message>
-        <location line="+2129"/>
+        <location line="+2123"/>
         <source>VYM -Information:</source>
         <translation>VYM - 資訊：</translation>
     </message>
     <message>
-        <location line="-2043"/>
+        <location line="-2037"/>
         <source>Load vym map</source>
         <translation>載入 vym 圖譜</translation>
     </message>
@@ -586,12 +610,12 @@ want to allow this in your system!</source>
         <translation>匯入：以 vym 圖譜置換所選</translation>
     </message>
     <message>
-        <location line="-749"/>
+        <location line="-748"/>
         <source>Add</source>
         <translation>加入</translation>
     </message>
     <message>
-        <location line="+646"/>
+        <location line="+645"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -623,7 +647,7 @@ exists already. Do you want to</source>
         <translation>無法開啟圖譜 %1</translation>
     </message>
     <message>
-        <location line="-2215"/>
+        <location line="-2214"/>
         <source>Take care!</source>
         <comment>Standardflag</comment>
         <translation>注意！</translation>
@@ -701,14 +725,14 @@ exists already. Do you want to</source>
         <translation>會有用處</translation>
     </message>
     <message>
-        <location line="+1553"/>
+        <location line="+1552"/>
         <location line="+54"/>
         <location line="+1"/>
         <source>Import</source>
         <translation>匯入</translation>
     </message>
     <message>
-        <location line="-3176"/>
+        <location line="-3156"/>
         <location line="+22"/>
         <location line="+8"/>
         <location line="+13"/>
@@ -717,19 +741,19 @@ exists already. Do you want to</source>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+5"/>
-        <location line="+999"/>
-        <location line="+2139"/>
+        <location line="+980"/>
+        <location line="+2138"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(仍然是實驗性質)</translation>
     </message>
     <message>
-        <location line="-3227"/>
+        <location line="-3207"/>
         <source>&amp;Print</source>
         <translation>列印(&amp;P)</translation>
     </message>
     <message>
-        <location line="+3158"/>
+        <location line="+3138"/>
         <location line="+68"/>
         <source>Export to</source>
         <translation>匯出至</translation>
@@ -739,35 +763,35 @@ exists already. Do you want to</source>
         <location line="+269"/>
         <location line="+201"/>
         <location line="+392"/>
-        <location line="+1030"/>
+        <location line="+1024"/>
         <location line="+20"/>
-        <location line="+875"/>
-        <location line="+206"/>
+        <location line="+878"/>
+        <location line="+207"/>
         <location line="+183"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location line="-2705"/>
-        <location line="+2317"/>
+        <location line="-2703"/>
+        <location line="+2314"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>找不到檢視器以開啟 %1。</translation>
     </message>
     <message>
-        <location line="-2316"/>
-        <location line="+2317"/>
+        <location line="-2313"/>
+        <location line="+2314"/>
         <source>Please use Settings-&gt;</source>
         <translation>請使用 設定值-&gt;</translation>
     </message>
     <message>
-        <location line="-1080"/>
-        <location line="+1081"/>
+        <location line="-1083"/>
+        <location line="+1084"/>
         <source>Set application to open PDF files</source>
         <translation>設定開啟 PDF 檔案的應用程式</translation>
     </message>
     <message>
-        <location line="-4282"/>
+        <location line="-4278"/>
         <source>Oh no!</source>
         <comment>Standardflag</comment>
         <translation>噢，不要！</translation>
@@ -809,24 +833,24 @@ exists already. Do you want to</source>
         <translation>資訊</translation>
     </message>
     <message>
-        <location line="+1604"/>
+        <location line="+1603"/>
         <source>Firefox Bookmarks</source>
         <translation type="unfinished">Firefox 書籤</translation>
     </message>
     <message>
-        <location line="-3988"/>
+        <location line="-4041"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3099"/>
+        <location line="+3150"/>
         <source>File actions toolbar</source>
         <comment>Toolbar for file actions</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2301"/>
+        <location line="-2296"/>
         <source>&amp;New map</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
@@ -868,7 +892,7 @@ exists already. Do you want to</source>
         <translation type="unfinished">匯入</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+40"/>
         <source>Export</source>
         <comment>File menu</comment>
         <translation type="unfinished">匯出</translation>
@@ -892,13 +916,13 @@ exists already. Do you want to</source>
         <translation type="unfinished">離開(&amp;X)</translation>
     </message>
     <message>
-        <location line="+2114"/>
+        <location line="+2092"/>
         <source>Edit actions toolbar</source>
         <comment>Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2088"/>
+        <location line="-2066"/>
         <source>&amp;Undo</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">復原(&amp;U)</translation>
@@ -1032,7 +1056,7 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+532"/>
+        <location line="+518"/>
         <location line="+8"/>
         <source>Find...</source>
         <comment>Edit menu</comment>
@@ -1045,7 +1069,7 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-469"/>
+        <location line="-455"/>
         <source>Open URL</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">開啟 URL</translation>
@@ -1117,25 +1141,25 @@ exists already. Do you want to</source>
         <translation type="unfinished">隱藏在匯出中</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+189"/>
         <source>Add timestamp</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-850"/>
         <source>Add map (insert)</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">加入圖譜 (插入)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Add map (replace)</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">加入圖譜 (置換)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+811"/>
         <source>Save selection</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">儲存所選</translation>
@@ -1209,12 +1233,7 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>Set &amp;Background image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+28"/>
+        <location line="+33"/>
         <source>Zoom in</source>
         <comment>View action</comment>
         <translation type="unfinished">放大</translation>
@@ -1238,13 +1257,13 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1186"/>
+        <location line="+1183"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1103"/>
+        <location line="-1100"/>
         <source>History Window</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -1274,13 +1293,13 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1077"/>
+        <location line="+1074"/>
         <source>Modifier modes toolbar</source>
         <comment>Modifier Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-995"/>
+        <location line="-992"/>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
         <translation type="unfinished">使用修飾鍵去繪製 xLinks</translation>
@@ -1323,13 +1342,13 @@ exists already. Do you want to</source>
         <translation type="unfinished">在匯出的圖譜中隱藏物件</translation>
     </message>
     <message>
-        <location line="+886"/>
+        <location line="+883"/>
         <source>Standard Flags toolbar</source>
         <comment>Standard Flag Toolbar</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-874"/>
+        <location line="-871"/>
         <source>Status - ok,done</source>
         <comment>Standardflag</comment>
         <translation type="unfinished"></translation>
@@ -1490,14 +1509,14 @@ exists already. Do you want to</source>
         <translation type="unfinished">儲存圖像</translation>
     </message>
     <message>
-        <location line="+480"/>
+        <location line="+479"/>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2534"/>
+        <location line="-2514"/>
         <source>PDF%1</source>
         <comment>File export menu</comment>
         <translation type="unfinished"></translation>
@@ -1532,7 +1551,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+442"/>
+        <location line="+428"/>
         <source>Toggle target...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -1550,13 +1569,13 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-372"/>
+        <location line="-358"/>
         <source>Extract URLs from note</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+940"/>
+        <location line="+921"/>
         <source>Map target</source>
         <comment>SystemFlag</comment>
         <translation type="unfinished"></translation>
@@ -1574,43 +1593,43 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2130"/>
+        <location line="-2111"/>
         <source>Firefox Bookmarks</source>
         <comment>Import filters</comment>
         <translation type="unfinished">Firefox 書籤</translation>
     </message>
     <message>
-        <location line="+827"/>
+        <location line="+813"/>
         <source>Remove only branch and keep its children </source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1912"/>
+        <location line="+1906"/>
         <source>Loading: %1</source>
         <comment>Progress dialog while loading maps</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2568"/>
+        <location line="-2548"/>
         <source>E&amp;dit</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+853"/>
+        <location line="+839"/>
         <source>Select default font</source>
         <comment>Branch attribute</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+78"/>
         <source>Toolbars</source>
         <comment>Toolbars overview in view menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1146"/>
+        <location line="+1143"/>
         <source>Undo and clipboard toolbar</source>
         <comment>Toolbar for redo/undo and clipboard</comment>
         <translation type="unfinished"></translation>
@@ -1628,7 +1647,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1281"/>
+        <location line="+1283"/>
         <source>Enter URL:</source>
         <translation type="unfinished">輸入 URL：</translation>
     </message>
@@ -1639,7 +1658,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished">圖像</translation>
     </message>
     <message>
-        <location line="-2675"/>
+        <location line="-2669"/>
         <source>Select previous</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -1651,13 +1670,13 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1342"/>
+        <location line="+1334"/>
         <source>Selection toolbar</source>
         <comment>Toolbar name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3075"/>
+        <location line="-3126"/>
         <source>Task list</source>
         <comment>TaskEditor</comment>
         <translation type="unfinished"></translation>
@@ -1669,7 +1688,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1501"/>
+        <location line="+1574"/>
         <source>Toggle task</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -1711,7 +1730,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+85"/>
         <source>Select</source>
         <comment>Select menu</comment>
         <translation type="unfinished"></translation>
@@ -1723,7 +1742,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+192"/>
+        <location line="+187"/>
         <source>Rotate counterclockwise</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -1776,7 +1795,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+723"/>
+        <location line="+722"/>
         <source>or</source>
         <comment>File Dialog</comment>
         <translation type="unfinished"></translation>
@@ -1787,7 +1806,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3773"/>
+        <location line="-3826"/>
         <source>Property Editor</source>
         <comment>PropertyEditor</comment>
         <translation type="unfinished"></translation>
@@ -1799,13 +1818,13 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1434"/>
+        <location line="+1507"/>
         <source>Open linked map in background tab</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+687"/>
+        <location line="+668"/>
         <source>Next slide</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -1817,7 +1836,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2310"/>
+        <location line="-2364"/>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation type="unfinished"></translation>
@@ -1841,7 +1860,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+839"/>
+        <location line="+895"/>
         <source>&amp;Map</source>
         <comment>Menu for file actions</comment>
         <translation type="unfinished"></translation>
@@ -1853,7 +1872,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+538"/>
+        <location line="+555"/>
         <source>References Context menu</source>
         <comment>Shortcuts</comment>
         <translation type="unfinished"></translation>
@@ -1877,7 +1896,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+153"/>
         <source>Removing parts of a map</source>
         <comment>Shortcuts</comment>
         <translation type="unfinished"></translation>
@@ -1907,7 +1926,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+115"/>
         <source>Views</source>
         <comment>Shortcuts</comment>
         <translation type="unfinished"></translation>
@@ -1949,7 +1968,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1992"/>
+        <location line="-1973"/>
         <source>Properties</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1966,13 +1985,13 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished">向下移動分支</translation>
     </message>
     <message>
-        <location line="+512"/>
+        <location line="+498"/>
         <source>Map properties...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+318"/>
         <source>Note editor</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -2002,7 +2021,7 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1901"/>
+        <location line="-1882"/>
         <source>Webpage (HTML)...</source>
         <comment>File export menu</comment>
         <translation type="unfinished"></translation>
@@ -2026,13 +2045,13 @@ to confusion when finishing working with vym.Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1948"/>
+        <location line="+1929"/>
         <source>Debug info</source>
         <comment>Option to show debugging info</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+976"/>
+        <location line="+975"/>
         <location line="+82"/>
         <source>Couldn&apos;t save %1,
 because of existing lockfile:
@@ -2124,7 +2143,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+856"/>
+        <location line="+850"/>
         <source>Number of undo/redo levels:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2160,12 +2179,12 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2380"/>
+        <location line="-2374"/>
         <source>(readonly)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2828"/>
+        <location line="+2824"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation type="unfinished"></translation>
@@ -2177,7 +2196,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+441"/>
+        <location line="+442"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation type="unfinished"></translation>
@@ -2188,7 +2207,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+191"/>
         <source>Please allow vym to download release notes!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2230,18 +2249,18 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-7056"/>
+        <location line="-7107"/>
         <source>Script output window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+885"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+26"/>
         <source>(experimental)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2305,7 +2324,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+185"/>
+        <location line="+171"/>
         <source>Add image...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -2317,7 +2336,12 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+170"/>
+        <source>Set &amp;Background color and image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Toggle Presentation mode</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -2544,7 +2568,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+312"/>
+        <location line="+309"/>
         <source>Select color (Press Shift for more options)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2561,7 +2585,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+173"/>
         <source>Couldn&apos;t load default map:
 
 %1
@@ -2642,7 +2666,13 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+830"/>
+        <location line="+670"/>
+        <source>Color of selection box</source>
+        <comment>Mainwindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+154"/>
         <source>Load vym script</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2658,7 +2688,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3037"/>
+        <location line="-3030"/>
         <source>Dark theme</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
@@ -2670,7 +2700,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2867"/>
+        <location line="+2860"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2680,7 +2710,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1175"/>
+        <location line="+1179"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2693,25 +2723,26 @@ Couldn&apos;t rename map to %1</source>
 <context>
     <name>MapEditor</name>
     <message>
-        <location filename="../src/mapeditor.cpp" line="+125"/>
+        <location filename="../src/mapeditor.cpp" line="+173"/>
         <location line="+5"/>
         <source>Edit heading</source>
         <comment>MapEditor</comment>
         <translation type="unfinished">編輯標頭</translation>
     </message>
     <message>
-        <location line="+415"/>
+        <location line="+504"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1674"/>
+        <location line="+1766"/>
         <source>%1 items selected</source>
+        <comment>Status message when selecting multiple items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2174"/>
+        <location line="-2399"/>
         <source>Map Editor</source>
         <comment>Shortcut scope</comment>
         <translation type="unfinished"></translation>
@@ -2731,10 +2762,10 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <location filename="../src/export-ao.cpp" line="+27"/>
         <location filename="../src/export-ascii.cpp" line="+21"/>
-        <location filename="../src/export-confluence.cpp" line="+355"/>
+        <location filename="../src/export-confluence.cpp" line="+349"/>
         <location filename="../src/export-csv.cpp" line="+21"/>
         <location filename="../src/export-firefox.cpp" line="+68"/>
-        <location filename="../src/export-html.cpp" line="+350"/>
+        <location filename="../src/export-html.cpp" line="+351"/>
         <location filename="../src/export-impress.cpp" line="+55"/>
         <location line="+73"/>
         <location line="+34"/>
@@ -2795,7 +2826,7 @@ Couldn&apos;t rename map to %1</source>
         <location line="+13"/>
         <location line="+32"/>
         <location line="+11"/>
-        <location filename="../src/main.cpp" line="+439"/>
+        <location filename="../src/main.cpp" line="+447"/>
         <location line="+8"/>
         <location filename="../src/xsltproc.cpp" line="+62"/>
         <location line="+6"/>
@@ -2835,15 +2866,15 @@ Couldn&apos;t rename map to %1</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../src/export-base.cpp" line="+63"/>
+        <location filename="../src/export-base.cpp" line="+62"/>
         <location filename="../src/file.cpp" line="+238"/>
         <location line="+11"/>
         <location line="+154"/>
         <location line="+10"/>
-        <location filename="../src/imports.cpp" line="+41"/>
+        <location filename="../src/imports.cpp" line="+40"/>
         <location filename="../src/main.cpp" line="+62"/>
         <location line="+15"/>
-        <location filename="../src/scripteditor.cpp" line="+141"/>
+        <location filename="../src/scripteditor.cpp" line="+140"/>
         <location line="+12"/>
         <location line="+26"/>
         <location line="+17"/>
@@ -3050,7 +3081,7 @@ Do you risk to overwrite its contents?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/export-html.cpp" line="-280"/>
+        <location filename="../src/export-html.cpp" line="-281"/>
         <location line="+20"/>
         <source>Flag: %1</source>
         <comment>Alt tag in HTML export</comment>
@@ -3063,7 +3094,7 @@ Do you risk to overwrite its contents?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <source>Image: %1</source>
         <comment>Alt tag in HTML export</comment>
         <translation type="unfinished"></translation>
@@ -3135,7 +3166,7 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3259"/>
+        <location filename="../src/mainwindow.cpp" line="-3257"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
@@ -3166,8 +3197,15 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4082"/>
+        <location filename="../src/vymmodel.cpp" line="+4319"/>
         <source>JIRA agent not setup.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/xml-base.cpp" line="+22"/>
+        <source>%1
+Line %2, column %3</source>
+        <comment>Error message while parsing XML</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3308,7 +3346,7 @@ Do you want to overwrite it?</source>
 <context>
     <name>TaskModel</name>
     <message>
-        <location filename="../src/taskmodel.cpp" line="+208"/>
+        <location filename="../src/taskmodel.cpp" line="+197"/>
         <source>Prio</source>
         <comment>TaskEditor</comment>
         <translation type="unfinished"></translation>
@@ -3649,20 +3687,20 @@ Do you want to overwrite it?</source>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../src/vymmodel.cpp" line="-3916"/>
+        <location filename="../src/vymmodel.cpp" line="-4148"/>
         <source>unnamed</source>
         <translation type="unfinished">未命名</translation>
     </message>
     <message>
         <location line="+316"/>
-        <location line="+33"/>
+        <location line="+30"/>
         <location line="+82"/>
-        <location line="+61"/>
+        <location line="+75"/>
         <source>Critical Parse Error</source>
         <translation type="unfinished">嚴重的解析錯誤</translation>
     </message>
     <message>
-        <location line="-124"/>
+        <location line="-138"/>
         <location line="+48"/>
         <source>Critical Load Error</source>
         <translation type="unfinished">嚴重的載入錯誤</translation>
@@ -3680,18 +3718,18 @@ Do you want to overwrite it?</source>
         <translation type="unfinished">在 .vym 檔案夾中找不到圖譜 (*.xml)。</translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+147"/>
         <source>compressed (vym default)</source>
         <translation type="unfinished">已壓縮 (vym 預設)</translation>
     </message>
     <message>
         <location line="+4"/>
-        <location line="+199"/>
+        <location line="+190"/>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
-        <location line="-173"/>
+        <location line="-164"/>
         <location line="+7"/>
         <source>Save Error</source>
         <translation type="unfinished">儲存錯誤</translation>
@@ -3716,18 +3754,17 @@ could not be renamed before saving</source>
     </message>
     <message>
         <location line="+71"/>
-        <location line="+59"/>
-        <location line="+4211"/>
+        <location line="+50"/>
         <source>Images</source>
         <translation type="unfinished">圖像</translation>
     </message>
     <message>
-        <location line="-4263"/>
+        <location line="-43"/>
         <source>Load image</source>
         <translation type="unfinished">載入圖像</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+48"/>
         <source>Save image</source>
         <translation type="unfinished">儲存圖像</translation>
     </message>
@@ -3761,7 +3798,7 @@ Do you want to overwrite it?</source>
         <translation type="unfinished">選擇目錄結構以匯入</translation>
     </message>
     <message>
-        <location line="+191"/>
+        <location line="+188"/>
         <source>The file of the map  on disk has changed:
 
    %1
@@ -3780,18 +3817,18 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+192"/>
         <source>Autosave disabled during undo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+747"/>
+        <location line="+875"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation type="unfinished">註記</translation>
     </message>
     <message>
-        <location line="+2293"/>
+        <location line="+2396"/>
         <source>Export map as image</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3806,46 +3843,41 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished">重要匯出錯誤</translation>
     </message>
     <message>
-        <location line="+479"/>
-        <source>Load background image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-621"/>
+        <location line="-142"/>
         <source>Export map as PDF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3561"/>
-        <location line="+3536"/>
+        <location line="-3787"/>
+        <location line="+3762"/>
         <source>Critical Error</source>
         <translation type="unfinished">嚴重錯誤</translation>
     </message>
     <message>
-        <location line="-3535"/>
+        <location line="-3761"/>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished">無法儲存 %1</translation>
     </message>
     <message>
-        <location line="+3536"/>
+        <location line="+3762"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3626"/>
-        <location line="+58"/>
+        <location line="-3843"/>
+        <location line="+49"/>
         <source>All</source>
         <comment>Filedialog</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+184"/>
-        <location line="+3002"/>
+        <location line="+3230"/>
         <source>Warning</source>
         <translation type="unfinished">警告</translation>
     </message>
     <message>
-        <location line="+632"/>
+        <location line="+630"/>
         <location line="+27"/>
         <source>(still experimental)</source>
         <translation type="unfinished">(仍然是實驗性質)</translation>
@@ -3857,12 +3889,12 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3977"/>
+        <location line="-4194"/>
         <source>Critical Save Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+266"/>
         <source>unknown user</source>
         <comment>Default for lockfiles of maps</comment>
         <translation type="unfinished"></translation>
@@ -3874,13 +3906,13 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2099"/>
+        <location line="+2290"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation type="unfinished">新圖譜</translation>
     </message>
     <message>
-        <location line="+1369"/>
+        <location line="+1404"/>
         <source>Export map as SVG</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3890,13 +3922,13 @@ Do you want to reload that map with the new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4437"/>
+        <location line="-4668"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+956"/>
+        <location line="+961"/>
         <source>Cannot create lockfile of map! It will be opened in readonly mode.
 
 </source>
@@ -3928,7 +3960,7 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-378"/>
+        <location line="-369"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -3943,7 +3975,7 @@ Do you want to write the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3396"/>
+        <location line="+3615"/>
         <source>Could not find Jira ticket pattern in %1</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -3958,6 +3990,20 @@ Do you want to write the map</source>
         <location line="+87"/>
         <source>Received Jira data.</source>
         <comment>VymModel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VymModelWrapper</name>
+    <message>
+        <location filename="../src/vymmodelwrapper.cpp" line="+824"/>
+        <source>Critical Error</source>
+        <translation type="unfinished">嚴重錯誤</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Saving the map failed:
+Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

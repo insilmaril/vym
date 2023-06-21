@@ -19,7 +19,7 @@ void BaseReader::setContentFilter(const int &c) { contentFilter = c; }
 
 QString BaseReader::errorString() const
 {
-    return QObject::tr("%1\nLine %2, column %3")
+    return QObject::tr("%1\nLine %2, column %3","Error message while parsing XML")
             .arg(xml.errorString())
             .arg(xml.lineNumber())
             .arg(xml.columnNumber());
