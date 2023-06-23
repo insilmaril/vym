@@ -2419,6 +2419,8 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
 
         if (saveCompleteFrame)
             saveStateEndBlock();
+
+        emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
     }
     reposition();
 }
@@ -2467,7 +2469,7 @@ void VymModel::setFrameBrushColor(
                       QString("set brush color of frame to %1").arg(col.name()));
             bc->setFrameBrushColor(useInnerFrame, col);
         }
-        emitDataChanged(bi);  // Notify HeadingEditor to eventually change BG color
+        emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
     }
 }
 
@@ -5964,8 +5966,8 @@ void VymModel::emitNoteChanged(TreeItem *ti)
 
 void VymModel::emitDataChanged(TreeItem *ti)
 {
-    // qDebug() << "VM::emitDataChanged ti=" << ti;
-    if (!repositionBlocked) {
+    //qDebug() << "VM::emitDataChanged ti=" << ti;
+    if (ti && !repositionBlocked) {
         QModelIndex ix = index(ti);
         emit(dataChanged(ix, ix));
 
