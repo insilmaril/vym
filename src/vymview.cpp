@@ -88,6 +88,10 @@ VymView::VymView(VymModel *m)
                                              // MainWindow and rename method
                                              // (also updates selection in BPE)
 
+    connect(model,
+            SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+            mainWindow, SLOT(updateHeadingEditor()));   // FIXME-2 introduced new to update BG color when frameBrush changes
+
     connect(model, SIGNAL(updateQueries(VymModel *)), mainWindow,
             SLOT(updateQueries(VymModel *)));
 

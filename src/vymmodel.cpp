@@ -1928,7 +1928,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         bi->setHeading(vt);
         emitDataChanged(bi);
         emitUpdateQueries();
-        mainWindow->updateHeadingEditor(bi);    // Update esp. HeadingEditor
+        mainWindow->updateHeadingEditor(bi);    // Update HeadingEditor with new heading
         reposition();
     }
 }
@@ -2307,6 +2307,7 @@ void VymModel::setFrameBrushColor(
             bo->setFrameBrushColor(c);
             bi->setBackgroundColor(c); // FIXME-4 redundant with above
         }
+        emitDataChanged(bi);  // Notify HeadingEditor to eventually change BG color
     }
 }
 
