@@ -2060,7 +2060,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         bi->setHeading(vt);
         emitDataChanged(bi);
         emitUpdateQueries();
-        mainWindow->updateHeadingEditor(bi);    // Update esp. HeadingEditor
+        mainWindow->updateHeadingEditor(bi);    // Update HeadingEditor with new heading
         reposition();
     }
 }
@@ -2467,6 +2467,7 @@ void VymModel::setFrameBrushColor(
                       QString("set brush color of frame to %1").arg(col.name()));
             bc->setFrameBrushColor(useInnerFrame, col);
         }
+        emitDataChanged(bi);  // Notify HeadingEditor to eventually change BG color
     }
 }
 

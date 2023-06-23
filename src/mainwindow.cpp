@@ -3737,9 +3737,9 @@ void Main::editorChanged()
 {
     VymModel *vm = currentModel();
     if (vm) {
-        TreeItem *ti = vm->getSelectedItem();
-        updateNoteEditor(ti);
-        updateHeadingEditor(ti);
+        BranchItem *bi = vm->getSelectedBranch();
+        updateNoteEditor(bi);
+        updateHeadingEditor(bi);
         updateQueries(vm);
         taskEditor->setMapName(vm->getMapName());
         updateDockWidgetTitles(vm);
@@ -6316,17 +6316,27 @@ void Main::updateNoteEditor(TreeItem *ti)
     noteEditor->setInactive();
 }
 
-void Main::updateHeadingEditor(TreeItem *ti)
+void Main::updateHeadingEditor(BranchItem *bi)  // FIXME-3 move to HeadingEditor
 {
-    if (ti && ti->hasTypeBranch()) {
-        BranchItem *bi = (BranchItem*)ti;
-        if (bi->getHeading().isRichText()) {
-            headingEditor->setUseColorMapBackground(true);
-            headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
-        } else
-            headingEditor->setUseColorMapBackground(false);
+    if (!bi) {
+        VymModel *m = currentModel();
+        if (!m) return;
+
+        bi = m->getSelectedBranch();
+    }
+
+    // Give up, if not a single branch is selected
+    if (!bi) return;
+
+    if (bi->getHeading().isRichText()) {
+        headingEditor->setUseColorMapBackground(true);
+        headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
+    } else {
+        headingEditor->setUseColorMapBackground(false);
         headingEditor->setVymText(bi->getHeading());
     }
+
+    headingEditor->setEditorTitle();
 }
 
 void Main::selectInNoteEditor(QString s, int i)
@@ -6359,30 +6369,28 @@ void Main::changeSelection(VymModel *model, const QItemSelection &,
             taskEditor->clearSelection();
 
         } else {
-            TreeItem *ti = model->getItem(model->getSelectionModel()->selectedIndexes().first());
-            if (!ti) return;
+            BranchItem *bi = model->getSelectedBranch();
+            if (!bi) return;
 
             // Update note editor
-            updateNoteEditor(ti);
+            updateNoteEditor(bi);
 
             // Show URL and link in statusbar
             QString status;
-            QString s = ti->getURL();
+            QString s = bi->getURL();
             if (!s.isEmpty())
                 status += "URL: " + s + "  ";
-            s = ti->getVymLink();
+            s = bi->getVymLink();
             if (!s.isEmpty())
                 status += "Link: " + s;
             if (!status.isEmpty())
                 statusMessage(status);
 
             // Update text in HeadingEditor
-            updateHeadingEditor(ti);
+            updateHeadingEditor(bi);
 
             // Select in TaskEditor, if necessary
-            Task *t = nullptr;
-            if (ti->hasTypeBranch())
-                t = ((BranchItem *)ti)->getTask();
+            Task *t = bi->getTask();
 
             if (t)
                 taskEditor->select(t);
@@ -6405,7 +6413,7 @@ void Main::updateDockWidgetTitles(VymModel *model)
         }
 
         noteEditor->setEditorTitle(s);
-        noteEditorDW->setWindowTitle(noteEditor->getEditorTitle());
+
         //qDebug() << "Main::updateDockWidgetTitles";
         // FIXME-2 review. Also already called in MW::changeSelection, not necessary, right?
         // branchPropertyEditor->setModel(model);

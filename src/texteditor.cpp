@@ -142,6 +142,11 @@ bool TextEditor::isEmpty()
 void TextEditor::setEditorTitle(const QString &s)
 {
     editorTitle = (s.isEmpty()) ? editorName : editorName + ": " + s;
+
+    // Set title of parent dockWidget
+    if (parentWidget())
+        parentWidget()->setWindowTitle(editorTitle);
+
     setWindowTitle(editorTitle);
 }
 

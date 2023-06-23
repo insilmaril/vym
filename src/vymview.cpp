@@ -88,6 +88,10 @@ VymView::VymView(VymModel *m)
                                              // MainWindow and rename method
                                              // (also updates selection in BPE)
 
+    connect(model,
+            SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+            mainWindow, SLOT(updateHeadingEditor()));   // FIXME-2 introduced new to update BG color when frameBrush changes
+
     connect(model, SIGNAL(updateQueries(VymModel *)), mainWindow,
             SLOT(updateQueries(VymModel *)));
 
@@ -162,6 +166,7 @@ void VymView::setBackgroundColor(const QColor &col)
     treeEditor->setStyleSheet(
         "selection-background-color: " + mapEditor->getSelectionColor().name() + ";" +
         "background-color: " + col.name());
+    mainWindow->updateHeadingEditor();
 }
 
 void VymView::setLinkColor(const QColor &col)
