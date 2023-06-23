@@ -162,6 +162,7 @@ void VymView::setBackgroundColor(const QColor &col)
     treeEditor->setStyleSheet(
         "selection-background-color: " + mapEditor->getSelectionColor().name() + ";" +
         "background-color: " + col.name());
+    mainWindow->updateHeadingEditor();
 }
 
 void VymView::setLinkColor(const QColor &col)

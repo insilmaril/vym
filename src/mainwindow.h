@@ -332,7 +332,7 @@ class Main : public QMainWindow {
     void updateHeading(const VymText &vt);
     void updateNoteText(const VymText &vt);
     void updateNoteEditor(TreeItem *ti);
-    void updateHeadingEditor(TreeItem *ti);
+    void updateHeadingEditor(BranchItem *bi = nullptr);
     void selectInNoteEditor(QString s, int i);
     void setFocusMapEditor();
     void changeSelection(VymModel *model, const QItemSelection &newSel,

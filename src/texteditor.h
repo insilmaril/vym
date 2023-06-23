@@ -20,7 +20,7 @@ class TextEditor : public QMainWindow {
     void init(const QString &ename);
     bool isEmpty();
     void setEditorName(const QString &);
-    void setEditorTitle(const QString &);
+    void setEditorTitle(const QString &t = "");
     QString getEditorTitle();
     void setFont(const QFont &);
     void setFontHint(const QString &);
