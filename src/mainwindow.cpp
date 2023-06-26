@@ -6018,15 +6018,21 @@ void Main::settingsDarkTheme()
     QString settingDarkTheme = settings.value("/system/darkTheme", "system").toString();
     if (settingDarkTheme == "always")
         dia.ui.alwaysUseDarkThemeButton->setChecked(true);
-    else
-        dia.ui.systemUseDarkThemeButton->setChecked(true);
+    else 
+        if (settingDarkTheme == "never")
+            dia.ui.neverUseDarkThemeButton->setChecked(true);
+        else
+            dia.ui.systemUseDarkThemeButton->setChecked(true);
     dia.exec();
 
     QString newSetting;
     if (dia.ui.alwaysUseDarkThemeButton->isChecked())
             newSetting = "always";
     else
-        newSetting = "system";
+        if (dia.ui.neverUseDarkThemeButton->isChecked())
+            newSetting = "never";
+        else
+            newSetting = "system";
 
     if (settingDarkTheme != newSetting) {
         settings.setValue("/system/darkTheme", newSetting);
