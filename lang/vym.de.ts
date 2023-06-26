@@ -312,6 +312,14 @@
     </message>
 </context>
 <context>
+    <name>DefaultMapSettingsDialog</name>
+    <message>
+        <location filename="../src/default-map-settings-dialog.cpp" line="+59"/>
+        <source>Set vym default map to be loaded on startup</source>
+        <translation>Default map setzen, die beim Start geladen wird</translation>
+    </message>
+</context>
+<context>
     <name>DownloadAgent</name>
     <message>
         <location filename="../src/download-agent.cpp" line="+188"/>
@@ -793,7 +801,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/mainwindow.cpp" line="+2187"/>
+        <location filename="../src/mainwindow.cpp" line="+2179"/>
         <source>Linkstyle Line</source>
         <translation>Verbindungsstil Linie</translation>
     </message>
@@ -818,13 +826,13 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location line="+2410"/>
+        <location line="+2411"/>
         <location line="+1248"/>
         <source>Set application to open an URL</source>
         <translation>URLs öffnen mit...</translation>
     </message>
     <message>
-        <location line="-1800"/>
+        <location line="-1801"/>
         <source>Overwrite</source>
         <translation>Überschreiben</translation>
     </message>
@@ -842,7 +850,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
         <translation>Datei konnte nicht gespeichert werden </translation>
     </message>
     <message>
-        <location line="+487"/>
+        <location line="+488"/>
         <source>Save modified map before closing it</source>
         <translation>Speichern und Map schliessen</translation>
     </message>
@@ -852,38 +860,38 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
         <translation>Änderungen verwerfen</translation>
     </message>
     <message>
-        <location line="-853"/>
+        <location line="-854"/>
         <location line="+395"/>
         <location line="+46"/>
         <location line="+9"/>
         <location line="+73"/>
         <location line="+8"/>
-        <location line="+648"/>
+        <location line="+649"/>
         <source>Critical Error</source>
         <translation>Kritischer Fehler</translation>
     </message>
     <message>
-        <location line="-1108"/>
+        <location line="-1109"/>
         <source>Open anyway</source>
         <translation>Trotzdem öffnen</translation>
     </message>
     <message>
-        <location line="+3189"/>
+        <location line="+3206"/>
         <source>Critcal error</source>
         <translation>Kritischer Fehler</translation>
     </message>
     <message>
-        <location line="-3116"/>
+        <location line="-3133"/>
         <source>Create</source>
         <translation>Anlegen</translation>
     </message>
     <message>
-        <location line="+2129"/>
+        <location line="+2109"/>
         <source>VYM -Information:</source>
         <translation>vym-Information:</translation>
     </message>
     <message>
-        <location line="-2043"/>
+        <location line="-2023"/>
         <source>Load vym map</source>
         <translation>Lade vym Map</translation>
     </message>
@@ -935,7 +943,7 @@ exists already. Do you want to</source>
 Wollen Sie sie überschreiben?</translation>
     </message>
     <message>
-        <location line="+350"/>
+        <location line="+351"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Die Map %1 wurde geändert,
 aber noch nicht gespeichert. Wollen Sie </translation>
@@ -946,7 +954,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>Konnte die Map %1 nicht öffnen</translation>
     </message>
     <message>
-        <location line="-2215"/>
+        <location line="-2216"/>
         <source>Take care!</source>
         <comment>Standardflag</comment>
         <translation>Vorsicht!</translation>
@@ -1024,14 +1032,14 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>Das könnte helfen</translation>
     </message>
     <message>
-        <location line="+1553"/>
+        <location line="+1554"/>
         <location line="+54"/>
         <location line="+1"/>
         <source>Import</source>
         <translation>Importieren</translation>
     </message>
     <message>
-        <location line="-3176"/>
+        <location line="-3177"/>
         <location line="+22"/>
         <location line="+8"/>
         <location line="+13"/>
@@ -1041,62 +1049,62 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+999"/>
-        <location line="+2139"/>
+        <location line="+2140"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(noch experimentelle Funktion)</translation>
     </message>
     <message>
-        <location line="-3227"/>
+        <location line="-3228"/>
         <source>&amp;Print</source>
         <translation>&amp;Drucken</translation>
     </message>
     <message>
-        <location line="+3158"/>
+        <location line="+3159"/>
         <location line="+68"/>
         <source>Export to</source>
         <translation>Exportieren als</translation>
     </message>
     <message>
-        <location line="-317"/>
-        <location line="+269"/>
+        <location line="-318"/>
+        <location line="+270"/>
         <location line="+201"/>
         <location line="+392"/>
-        <location line="+1030"/>
+        <location line="+1041"/>
         <location line="+20"/>
-        <location line="+875"/>
+        <location line="+880"/>
         <location line="+206"/>
         <location line="+183"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location line="-2705"/>
-        <location line="+2317"/>
+        <location line="-2721"/>
+        <location line="+2333"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Konnte kein Programm zum Öffnen von %1 finden.</translation>
     </message>
     <message>
-        <location line="-2316"/>
-        <location line="+2317"/>
+        <location line="-2332"/>
+        <location line="+2333"/>
         <source>Please use Settings-&gt;</source>
         <translation>Bitte setzen sie einen Pfad in Einstellungen-&gt;</translation>
     </message>
     <message>
-        <location line="-1926"/>
+        <location line="-1942"/>
         <source>Couldn&apos;t set sleep time to %1.
 </source>
         <translation>Konnte Wiedervorlage nicht setzen auf %1</translation>
     </message>
     <message>
         <location line="+846"/>
-        <location line="+1081"/>
+        <location line="+1097"/>
         <source>Set application to open PDF files</source>
         <translation>PDFs öffnen mit</translation>
     </message>
     <message>
-        <location line="-4282"/>
+        <location line="-4299"/>
         <source>Oh no!</source>
         <comment>Standardflag</comment>
         <translation>Oh nein!</translation>
@@ -1132,7 +1140,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>Verlaufsfenster</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="-70"/>
         <source>Main window</source>
         <comment>Shortcut group</comment>
         <translation>Hauptfenster</translation>
@@ -1150,7 +1158,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>Text Editor</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+54"/>
         <source>Script output window</source>
         <translation>Script Ausgabe</translation>
     </message>
@@ -1549,23 +1557,23 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>XLinks</translation>
     </message>
     <message>
-        <location line="+2740"/>
+        <location line="+2746"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>unbekannter Benutzer</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+53"/>
         <source>Number of parents shown for a task:</source>
         <translation>Anzahl der Elternzweige, die bei Aufgabe gezeigt werden:</translation>
     </message>
     <message>
-        <location line="-1770"/>
+        <location line="-1781"/>
         <source>Firefox Bookmarks</source>
         <translation>Firefox Lesezeichen</translation>
     </message>
     <message>
-        <location line="-3174"/>
+        <location line="-3175"/>
         <source>&amp;Open...</source>
         <comment>File menu</comment>
         <translation>&amp;Öffnen...</translation>
@@ -1701,13 +1709,13 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>URL öffnen</translation>
     </message>
     <message>
-        <location line="-1511"/>
+        <location line="-1502"/>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation>Hauptfenster</translation>
     </message>
     <message>
-        <location line="+1520"/>
+        <location line="+1511"/>
         <source>Open URL in new tab</source>
         <comment>Edit menu</comment>
         <translation>URL in neuen Tab öffnen</translation>
@@ -2250,13 +2258,12 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>JIRA Zugangsdaten</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>Set path for default path</source>
         <comment>Settings action</comment>
-        <translation>Pfad festlegen für Standardmap</translation>
+        <translation type="vanished">Pfad festlegen für Standardmap</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+90"/>
         <source>Number of visible parents in task editor</source>
         <comment>Settings action</comment>
         <translation>Anzahl sichtbarer Elternzweige im Aufgaben Editor</translation>
@@ -2301,7 +2308,7 @@ da die Lockdatei nicht angelegt werden konnte:
 %2</translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+235"/>
         <source>Couldn&apos;t find configuration for export to LibreOffice
 </source>
         <translation>Konnte Konfiguration zum Exportieren nach LibreOffice nicht finden
@@ -2338,17 +2345,17 @@ da die Lockdatei nicht angelegt werden konnte:
         <translation>Querverbindungen</translation>
     </message>
     <message>
-        <location line="+886"/>
+        <location line="+891"/>
         <source>Set author for new maps (used in lockfile)</source>
         <translation>Author für neue Maps angeben (zur Verwendung in Lockdatei)</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+45"/>
         <source>Number of parents shown in find results:</source>
         <translation>Anzahl sichtbarer Elternzweige im Ergebnisfenster der Suche</translation>
     </message>
     <message>
-        <location line="-2369"/>
+        <location line="-2381"/>
         <source>(readonly)</source>
         <translation>(nur lesen)</translation>
     </message>
@@ -2393,7 +2400,7 @@ Map als standard map speichern</translation>
         <translation>Als neue standard map überschreiben</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+81"/>
         <source>Import Firefox Bookmarks into new map</source>
         <translation>Importiere Firefox Lesezeichen in neue Map</translation>
     </message>
@@ -2416,23 +2423,22 @@ Map als standard map speichern</translation>
         <translation>Aufgaben in Map</translation>
     </message>
     <message>
-        <location line="+830"/>
+        <location line="+828"/>
         <source>Load vym script</source>
         <translation>Script laden</translation>
     </message>
     <message>
-        <location line="+19"/>
         <source>Set vym default map to be loaded on startup</source>
-        <translation>Default map setzen, die beim Start geladen wird</translation>
+        <translation type="vanished">Default map setzen, die beim Start geladen wird</translation>
     </message>
     <message>
-        <location line="+126"/>
+        <location line="+158"/>
         <location line="+20"/>
         <source>No SSL support available for this build of vym</source>
         <translation>SSL nicht unterstützt</translation>
     </message>
     <message>
-        <location line="+1081"/>
+        <location line="+1086"/>
         <source>Please allow vym to download release notes!</source>
         <translation>Bitte erlauben Sie vym die  Release-Anmerkungen herunterzuladen!</translation>
     </message>
@@ -2474,7 +2480,7 @@ Map als standard map speichern</translation>
         <translation>Bitte vym erlauben nach Updates zu sehen!</translation>
     </message>
     <message>
-        <location line="-4846"/>
+        <location line="-4863"/>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
         <translation>Modifizierer zum Anlegen von xLinks verwenden</translation>
@@ -2716,12 +2722,18 @@ Map als standard map speichern</translation>
     </message>
     <message>
         <location line="+49"/>
+        <source>Set path for new maps</source>
+        <comment>Settings action</comment>
+        <translation>Pfad für neue Maps setzen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Set path for macros</source>
         <comment>Settings action</comment>
         <translation>Pfad für Makros</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+4"/>
         <source>Set number of undo levels</source>
         <comment>Settings action</comment>
         <translation>Anzahl der Rückgängig Aktionen</translation>
@@ -2833,7 +2845,7 @@ Map als standard map speichern</translation>
         <translation>Speichern &amp;unter...</translation>
     </message>
     <message>
-        <location line="+312"/>
+        <location line="+313"/>
         <source>Export as CSV</source>
         <translation>Exportiere als CSV</translation>
     </message>
@@ -2886,7 +2898,7 @@ Map als standard map speichern</translation>
 </translation>
     </message>
     <message>
-        <location line="+890"/>
+        <location line="+869"/>
         <source>Number of undo/redo levels:</source>
         <translation>Anzahl der Rückgängig Aktionen</translation>
     </message>
@@ -2897,17 +2909,17 @@ Map als standard map speichern</translation>
 wird %1 Rückgängig Schritte haben.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+40"/>
         <source>Number of seconds before autosave:</source>
         <translation>Anzahl der Sekunden vor automatischem Speichern</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+47"/>
         <source>Information</source>
         <translation>Information</translation>
     </message>
     <message>
-        <location line="+468"/>
+        <location line="+473"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Verlauf von %1</translation>
@@ -2931,7 +2943,7 @@ wird %1 Rückgängig Schritte haben.</translation>
         <translation>Lade vym Beispiel Map</translation>
     </message>
     <message>
-        <location line="-4311"/>
+        <location line="-4328"/>
         <source>I just love...</source>
         <comment>Standardflag</comment>
         <translation>Ich liebe das</translation>
@@ -2943,7 +2955,7 @@ wird %1 Rückgängig Schritte haben.</translation>
         <translation>Post</translation>
     </message>
     <message>
-        <location line="+1521"/>
+        <location line="+1522"/>
         <source>Open Freemind map</source>
         <translation>Öffne Freemind map</translation>
     </message>
@@ -2958,7 +2970,7 @@ wird %1 Rückgängig Schritte haben.</translation>
         <translation>Verbindung zu vym map</translation>
     </message>
     <message>
-        <location line="-3100"/>
+        <location line="-3101"/>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
         <translation>Delta Priorität für sichtbare Aufgaben zurücksetzen</translation>
@@ -2989,12 +3001,12 @@ Konnte nicht umbenennen zu %1</translation>
         <translation>Dunkles Design</translation>
     </message>
     <message>
-        <location line="+2966"/>
+        <location line="+2978"/>
         <source>Restart vym to apply the changed dark theme setting</source>
         <translation>Bitte vym neu starten um die Einstellungen für dunkles Design zu verwenden</translation>
     </message>
     <message>
-        <location line="+1175"/>
+        <location line="+1180"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation>&lt;html&gt;&lt;h3&gt;Erlauben Sie vym online nach Updates oder Release Anmerkungen zu suchen?&lt;/h3&gt;Wenn Sie es erlauben, wird vym &lt;ul&gt;&lt;li&gt;einmalig online nach Release Anmerkungen suchen&lt;/li&gt;&lt;li&gt;regelmäßig nach Updates suchen und Sie benachrichtigen, sollten Updates wie z.B. wichtige Fehlerbehebungen verfügbar sein&lt;/li&gt;&lt;li&gt;ein cookie erhalten mit eineer zufällig erzeugten ID und einige anonymisierte Daten senden, wie z.B.&lt;ul&gt;&lt;li&gt;vym Version&lt;/li&gt;&lt;li&gt;Plattform Name und ID &quot;Windows&quot; oder &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;Einstellungen wie z.B. Sprache und ob dunkles Design verwendet wird&lt;/li&gt;&lt;/ul&gt;Diese Daten werden geschickt zum Author von vym: Uwe Drechsel.&lt;p&gt;Als vym Entwickler motiviert es mich zu sehen, wenn viele Menschen vym benutzen. Natürlich bin ich neugierig, auf welchen Plattformen vym verwendet wird. Jede dieser Plattformen benötigt eine Menge meiner (Frei-)zeit.&lt;/p&gt; &lt;p&gt;Abgesehen von obigen Daten wird nichts weiteres gesendet, insbesondere keine privaten Daten. (Bitte bei Zweifel gerne die Quellen prüfen!)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Falls Sie es nicht zulassen, wird&lt;ul&gt;&lt;li&gt;nichts heruntergeladen und &lt;b&gt;besonders werde ich nicht motiviert&lt;/b&gt; weiter tausende Stunden meiner Zeit in die Entwicklung einer freien Software zu stecken.&lt;/ul&gt;Bitte erlauben Sie vym nach Updates zu sehen :-)</translation>
     </message>
@@ -3004,7 +3016,7 @@ Konnte nicht umbenennen zu %1</translation>
         <translation>Schade, ich würde mich wirklich freuen, wenn ich viele Menschen vym benutzen sehe und auch auf welchen Plattformen vym genutzt wird.</translation>
     </message>
     <message>
-        <location line="-4097"/>
+        <location line="-4114"/>
         <source>Show scripting commands</source>
         <comment>Help action</comment>
         <translation>Skript Befehle anzeigen</translation>
@@ -3246,7 +3258,7 @@ Wollen Sie sie überschreiben für einen Export nach %1?</translation>
         <location line="+13"/>
         <location line="+32"/>
         <location line="+11"/>
-        <location filename="../src/main.cpp" line="+439"/>
+        <location filename="../src/main.cpp" line="+449"/>
         <location line="+8"/>
         <location filename="../src/xsltproc.cpp" line="+62"/>
         <location line="+6"/>
@@ -3325,7 +3337,7 @@ Die Map konnte nicht gespeichert werden: Bitte prüfen, ob eine Backup Datei vor
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/macros.cpp" line="+24"/>
+        <location filename="../src/macros.cpp" line="+46"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
@@ -3338,8 +3350,7 @@ Die Map konnte nicht gespeichert werden: Bitte prüfen, ob eine Backup Datei vor
         <location filename="../src/imports.cpp" line="+41"/>
         <location filename="../src/main.cpp" line="+62"/>
         <location line="+15"/>
-        <location filename="../src/scripteditor.cpp" line="+141"/>
-        <location line="+12"/>
+        <location filename="../src/scripteditor.cpp" line="+148"/>
         <location line="+26"/>
         <location line="+17"/>
         <source>Error</source>
@@ -3381,9 +3392,15 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation>&lt;h3&gt;Map ist neuer als VYM&lt;/h3&gt;&lt;p&gt;Die Map, die Sie gerade versuchen zu laden wurde mit vym %1 gespeichert. Die vorliegende Version von vym ist %2. Falls nach dem Fortfahren mit Ok Probleme autauchen, sollte ein Update von vym helfen.&lt;/p&gt;</translation>
     </message>
     <message>
+        <source>Couldn&apos;t find macros at  %1.
+</source>
+        <translation type="vanished">Konnte Makro nicht finden in %1.</translation>
+    </message>
+    <message>
         <location filename="../src/macros.cpp" line="+1"/>
         <source>Couldn&apos;t find macros at  %1.
 </source>
+        <comment>Macros::pathExists</comment>
         <translation>Konnte Makro nicht finden in %1.</translation>
     </message>
     <message>
@@ -3427,14 +3444,13 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../src/scripteditor.cpp" line="-54"/>
         <source>Couldn&apos;t read macros from &quot;%1&quot;
 .</source>
-        <translation>Konnte Makro nicht finden in %1.
+        <translation type="vanished">Konnte Makro nicht finden in %1.
 </translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location filename="../src/scripteditor.cpp" line="-42"/>
         <source>Couldn&apos;t write macros to &quot;%1&quot;
 .</source>
         <translation>Konnte Makros nicht speichern nach &quot;%1&quot;
@@ -3491,7 +3507,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4082"/>
+        <location filename="../src/vymmodel.cpp" line="+4084"/>
         <source>JIRA agent not setup.</source>
         <translation>JIRA agent ist nicht eingerichtet</translation>
     </message>
@@ -3533,7 +3549,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation type="vanished">Speichern</translation>
     </message>
     <message>
-        <location filename="../src/scripteditor.cpp" line="-93"/>
+        <location filename="../src/scripteditor.cpp" line="-88"/>
         <location line="+7"/>
         <source>Warning</source>
         <translation>Warnung</translation>
@@ -3573,7 +3589,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation>Konnte Folie zum Speichern des Scripts nicht finden!</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+34"/>
         <source>Macros saved to %1</source>
         <translation>Makros gespeichert nach %1</translation>
     </message>
@@ -3723,7 +3739,7 @@ Wollen Sie sie überschreiben?</translation>
 <context>
     <name>TextEditor</name>
     <message>
-        <location filename="../src/texteditor.cpp" line="+293"/>
+        <location filename="../src/texteditor.cpp" line="+298"/>
         <source>&amp;Import...</source>
         <translation>&amp;Importiere</translation>
     </message>
@@ -3931,13 +3947,13 @@ Wollen Sie sie überschreiben?</translation>
         <translation>Note Actions</translation>
     </message>
     <message>
-        <location line="-236"/>
+        <location line="-241"/>
         <source>Ready</source>
         <comment>Statusbar message</comment>
         <translation>Bereit</translation>
     </message>
     <message>
-        <location line="+153"/>
+        <location line="+158"/>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation>Notiz hat keinen Dateinamen</translation>
@@ -4006,7 +4022,7 @@ Wollen Sie sie überschreiben?</translation>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../src/vymmodel.cpp" line="-3941"/>
+        <location filename="../src/vymmodel.cpp" line="-3943"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>unbekannter Benutzer</translation>
@@ -4120,12 +4136,12 @@ konnte vor dem Speichern nicht umbenannt werden</translation>
     <message>
         <location line="+71"/>
         <location line="+59"/>
-        <location line="+4211"/>
+        <location line="+4213"/>
         <source>Images</source>
         <translation>Bilder</translation>
     </message>
     <message>
-        <location line="-4267"/>
+        <location line="-4269"/>
         <location line="+58"/>
         <source>All</source>
         <comment>Filedialog</comment>
@@ -4155,12 +4171,12 @@ Wollen Sie sie überschreiben?</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+3536"/>
+        <location line="+3538"/>
         <source>Critical Error</source>
         <translation>Kritischer Fehler</translation>
     </message>
     <message>
-        <location line="-3535"/>
+        <location line="-3537"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Konnte %1 nicht speichern</translation>
     </message>
@@ -4194,13 +4210,13 @@ Map ist gesperrt von &quot;%1&quot; auf &quot;%2&quot;
 Bitte Lockdatei nur entfernen, wenn wirklich niemand anderes diese Map momentan verwendet.</translation>
     </message>
     <message>
-        <location line="+3056"/>
+        <location line="+3058"/>
         <source>Contacting Jira...</source>
         <comment>VymModel</comment>
         <translation>Kontaktiere JIRA...</translation>
     </message>
     <message>
-        <location line="-3097"/>
+        <location line="-3099"/>
         <source>Removed lockfile for %1</source>
         <translation>Lockdateo für %1 entfernt.</translation>
     </message>
@@ -4247,23 +4263,23 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     </message>
     <message>
         <location line="-131"/>
-        <location line="+3002"/>
+        <location line="+3004"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location line="-2677"/>
+        <location line="-2679"/>
         <source>Autosave disabled during undo.</source>
         <translation>Autosave ausgeschaltet während der Aktion &quot;Rückgängig&quot;</translation>
     </message>
     <message>
-        <location line="+747"/>
+        <location line="+748"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation>Notiz</translation>
     </message>
     <message>
-        <location line="+1022"/>
+        <location line="+1023"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation>Neue Map</translation>
