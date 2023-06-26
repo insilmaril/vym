@@ -40,7 +40,7 @@ void ExportCSV::doExport()
         if (!cur->hasHiddenExportParent()) {
             // If necessary, write note
             if (!cur->isNoteEmpty()) {
-                s = cur->getNoteASCII();
+                s = cur->getNoteASCII(0, 0);
                 s = s.replace("\n", "\n" + curIndent);
                 out += ("\"" + s + "\",");
             }

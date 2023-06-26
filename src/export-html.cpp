@@ -173,7 +173,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 // n.replace(re,"");
             }
             else {
-                n = current->getNoteASCII()
+                n = current->getNoteASCII(0, 0)
                         .replace("<", "&lt;")
                         .replace(">", "&gt;");
                 n.replace("\n", "<br/>");

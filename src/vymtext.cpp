@@ -95,15 +95,13 @@ void VymText::setAutoText(const QString &s)
 
 QString VymText::getText() const { return text; }
 
-QString VymText::getTextASCII() const { return getTextASCII("", 80); }
+QString VymText::getTextASCII() const { return getTextASCII("", 80); } // FIXME-2 use setting, see TreeItem::setHeading
 
-QString VymText::getTextASCII(QString indent,
-                              const int &) const // FIXME-3 use width
+QString VymText::getTextASCII(QString indent, const int &width) const
 {
     if (text.isEmpty())
         return text;
 
-    int width = 80;
     QString s;
     QRegExp rx;
     rx.setMinimal(true);
@@ -111,11 +109,10 @@ QString VymText::getTextASCII(QString indent,
     if (isRichText())
         s = text;
     else {
-        if (fonthint == "fixed") {
+        if (fonthint == "fixed" || width == 0) {
             s = text;
-        }
-        else {
-            // Wordwrap
+        } else {
+            // Wordwrap, if width > 0 
 
             QString newnote;
             QString curline;
