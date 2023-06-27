@@ -1175,7 +1175,7 @@ void MapEditor::editHeading()
     BranchItem *bi = model->getSelectedBranch();
     if (bo && bo) {
         VymText heading = bi->getHeading();
-        if (heading.isRichText()) {
+        if (heading.isRichText() || bi->getHeadingPlain().contains("\n")) {
             mainWindow->windowShowHeadingEditor();
             return;
         }
