@@ -32,6 +32,7 @@ using namespace std;
 #include "confluence-settings-dialog.h"
 #include "darktheme-settings-dialog.h"
 #include "debuginfo.h"
+#include "default-map-settings-dialog.h"
 #include "download-agent.h"
 #include "file.h"
 #include "findresultmodel.h"
@@ -266,15 +267,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setupMacros();
     setupToolbars();
     setupFlagActions();
-
-    // Set default path for new maps depending on theme
-    QString ext_dark;
-    if (usingDarkTheme)
-        ext_dark = "-dark";
-    defaultMapPath = settings
-       .value("/system/defaultMap/path",
-              vymBaseDir.path() + QString("/demos/default%1.vym").arg(ext_dark))
-       .toString();
 
     // Dock widgets ///////////////////////////////////////////////
     QDockWidget *dw;
@@ -3046,13 +3038,13 @@ void Main::setupSettingsActions()
     settingsMenu->addAction(a);
     actionSettingsJIRA = a;
 
-    a = new QAction(tr("Set path for macros", "Settings action") + "...", this);
-    connect(a, SIGNAL(triggered()), this, SLOT(settingsMacroPath()));
-    settingsMenu->addAction(a);
-
-    a = new QAction(tr("Set path for default path", "Settings action") + "...",
+    a = new QAction(tr("Set path for new maps", "Settings action") + "...",
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsDefaultMapPath()));
+    settingsMenu->addAction(a);
+
+    a = new QAction(tr("Set path for macros", "Settings action") + "...", this);
+    connect(a, SIGNAL(triggered()), this, SLOT(settingsMacroPath()));
     settingsMenu->addAction(a);
 
     a = new QAction(tr("Set number of undo levels", "Settings action") + "...",
@@ -3756,12 +3748,12 @@ void Main::fileNew()
     // Don't show counter while loading default map
     removeProgressCounter();
 
-    if (File::Success != fileLoad(defaultMapPath, File::DefaultMap, File::VymMap)) {
+    if (File::Success != fileLoad(newMapPath(), File::DefaultMap, File::VymMap)) {
         QMessageBox::critical(0, tr("Critical Error"),
                               tr("Couldn't load default map:\n\n%1\n\nvym will "
                                  "create an empty map now.",
                                  "Mainwindow: Failed to load default map")
-                                  .arg(defaultMapPath));
+                                  .arg(newMapPath()));
 
         vm = currentModel();
 
@@ -4236,7 +4228,7 @@ void Main::fileSaveAsDefault()
 {
     if (currentMapEditor()) {
         QString fn = QFileDialog::getSaveFileName(
-            this, tr("Save map as new default map"), defaultMapPath,
+            this, tr("Save map as new default map"), newMapPath(),
             "VYM map (*.vym)", NULL, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
@@ -4299,6 +4291,7 @@ void Main::fileSaveAsDefault()
             updateTabName(m);
 
             // Set new default path
+            settings.setValue("/system/defaultMap/auto", false);
             settings.setValue("/system/defaultMap/path", fn);
         }
     }
@@ -5995,26 +5988,6 @@ void Main::settingsMacroPath()
     }
 }
 
-void Main::settingsDefaultMapPath()
-{
-    QStringList filters;
-    filters << "VYM defaults map (*.vym)";
-    QFileDialog fd;
-    fd.setDirectory(dirname(defaultMapPath));
-    fd.selectFile(basename(defaultMapPath));
-    fd.setFileMode(QFileDialog::ExistingFile);
-    fd.setNameFilters(filters);
-    fd.setWindowTitle(vymName + " - " +
-                      tr("Set vym default map to be loaded on startup"));
-    fd.setAcceptMode(QFileDialog::AcceptOpen);
-
-    QString fn;
-    if (fd.exec() == QDialog::Accepted) {
-        defaultMapPath = fd.selectedFiles().first();
-        settings.setValue("/system/defaultMap/path", defaultMapPath);
-    }
-}
-
 void Main::settingsUndoLevels()
 {
     bool ok;
@@ -6028,6 +6001,32 @@ void Main::settingsUndoLevels()
                                     "opened will have \"%1\" undo/redo levels")
                                      .arg(i));
     }
+}
+
+void Main::settingsDefaultMapPath()
+{
+    DefaultMapSettingsDialog dia;
+    dia.exec();
+}
+
+QString Main::defaultMapPath()
+{
+    // Define default automatical path (also as fallback)
+    QString ext_dark;
+    if (usingDarkTheme)
+        ext_dark = "-dark";
+
+    return vymBaseDir.path() + QString("/demos/default%1.vym").arg(ext_dark);
+}
+
+QString Main::newMapPath()
+{
+    if (settings.value("/system/defaultMap/auto", true).toBool())
+        return defaultMapPath();
+    else
+        return settings
+           .value("/system/defaultMap/path", defaultMapPath())
+           .toString();
 }
 
 bool Main::useAutosave() { return actionSettingsToggleAutosave->isChecked(); }
@@ -6066,15 +6065,21 @@ void Main::settingsDarkTheme()
     QString settingDarkTheme = settings.value("/system/darkTheme", "system").toString();
     if (settingDarkTheme == "always")
         dia.ui.alwaysUseDarkThemeButton->setChecked(true);
-    else
-        dia.ui.systemUseDarkThemeButton->setChecked(true);
+    else 
+        if (settingDarkTheme == "never")
+            dia.ui.neverUseDarkThemeButton->setChecked(true);
+        else
+            dia.ui.systemUseDarkThemeButton->setChecked(true);
     dia.exec();
 
     QString newSetting;
     if (dia.ui.alwaysUseDarkThemeButton->isChecked())
             newSetting = "always";
     else
-        newSetting = "system";
+        if (dia.ui.neverUseDarkThemeButton->isChecked())
+            newSetting = "never";
+        else
+            newSetting = "system";
 
     if (settingDarkTheme != newSetting) {
         settings.setValue("/system/darkTheme", newSetting);

@@ -292,10 +292,12 @@ class Main : public QMainWindow {
     bool settingsURL();
     void settingsZipTool();
     void settingsMacroPath();
-    void settingsDefaultMapPath();
     void settingsUndoLevels();
+    void settingsDefaultMapPath();
 
   public:
+    QString defaultMapPath();   // Default path, used with "auto" to define newMapPath
+    QString newMapPath();       // Depends on settings and dark theme
     bool useAutosave();
     void setAutosave(bool b);
 
@@ -423,8 +425,6 @@ class Main : public QMainWindow {
     QList<QAction *> actionListItems;
 
     int xLinkMenuWidth;
-
-    QString defaultMapPath;         // Read from settings, depends on usingDarkTheme
 
     QMenu *recentFilesMenu;
     enum { MaxRecentFiles = 20 };

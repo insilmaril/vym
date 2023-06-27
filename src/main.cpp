@@ -348,10 +348,11 @@ int main(int argc, char *argv[])
     int bg_hsv_value = app.palette().color(QPalette::Base).value();
     bool systemSeemsDark = (text_hsv_value > bg_hsv_value);
     QString settingsDarkTheme = settings.value("/system/darkTheme", "system").toString();
-    if (settingsDarkTheme == "always" || (settingsDarkTheme == "system" && systemSeemsDark))
-        usingDarkTheme = true;
-    else
-        usingDarkTheme = false;
+    usingDarkTheme = false;
+    if (settingsDarkTheme != "never") {
+        if (settingsDarkTheme == "always" || (settingsDarkTheme == "system" && systemSeemsDark))
+            usingDarkTheme = true;
+    }
 
 #if defined(Q_OS_WINDOWS)
     if (usingDarkTheme) {

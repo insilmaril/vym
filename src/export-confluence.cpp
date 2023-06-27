@@ -170,7 +170,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                 n.replace(re, "&amp;");
             }
             else {
-                n = current->getNoteASCII();
+                n = current->getNoteASCII(0, 0);
                 n.replace("&", "&amp;");
                 n.replace("<", "&lt;");
                 n.replace(">", "&gt;");

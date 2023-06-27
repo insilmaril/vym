@@ -1,5 +1,5 @@
-#ifndef CREDENTIALS_H
-#define CREDENTIALS_H
+#ifndef CONFLUENCE_SETTINGS_DIALOG_H
+#define CONFLUENCE_SETTINGS_DIALOG_H
 
 #include "ui_confluence-settings-dialog.h"
 
@@ -17,4 +17,4 @@ class ConfluenceSettingsDialog : public QDialog {
     Ui::ConfluenceSettingsDialog ui;
 };
 
-#endif // CREDENTIALS_H
+#endif // CONFLUENCE_SETTINGS_DIALOG_H

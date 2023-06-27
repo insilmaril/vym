@@ -40,7 +40,7 @@ void ExportOrgMode::doExport()
             ts << (" " + cur->getHeadingPlain() + "\n");
             // If necessary, write note
             if (!cur->isNoteEmpty()) {
-                ts << (cur->getNoteASCII());
+                ts << (cur->getNoteASCII(0, 80));
                 ts << ("\n");
             }
         }

@@ -280,6 +280,14 @@
     </message>
 </context>
 <context>
+    <name>DefaultMapSettingsDialog</name>
+    <message>
+        <location filename="../src/default-map-settings-dialog.cpp" line="+59"/>
+        <source>Set vym default map to be loaded on startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DownloadAgent</name>
     <message>
         <location filename="../src/download-agent.cpp" line="+188"/>
@@ -693,7 +701,7 @@ ve svém systému povolit!</translation>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/mainwindow.cpp" line="+3252"/>
+        <location filename="../src/mainwindow.cpp" line="+3244"/>
         <source>Add</source>
         <translation>Přidat</translation>
     </message>
@@ -714,17 +722,17 @@ ve svém systému povolit!</translation>
         <translation>Přidat novou větev</translation>
     </message>
     <message>
-        <location line="+5790"/>
+        <location line="+5810"/>
         <source>Allow</source>
         <translation>Povolit</translation>
     </message>
     <message>
-        <location line="-2689"/>
+        <location line="-2708"/>
         <source>Discard changes</source>
         <translation>Zahodit změny</translation>
     </message>
     <message>
-        <location line="-488"/>
+        <location line="-489"/>
         <source>Couldn&apos;t save </source>
         <translation>Nepodařilo se uložit </translation>
     </message>
@@ -790,12 +798,12 @@ ve svém systému povolit!</translation>
         <translation>Editor skriptů</translation>
     </message>
     <message>
-        <location line="+5718"/>
+        <location line="+5698"/>
         <source>VYM -Information:</source>
         <translation>Informace VYMu:</translation>
     </message>
     <message>
-        <location line="-3773"/>
+        <location line="-3753"/>
         <source>Linkstyle Curve</source>
         <translation>Styl spojení křivka</translation>
     </message>
@@ -823,18 +831,18 @@ ve svém systému povolit!</translation>
         <translation>&amp;Tisk</translation>
     </message>
     <message>
-        <location line="+5944"/>
+        <location line="+5964"/>
         <source>Do not allow</source>
         <translation>Nepovolit</translation>
     </message>
     <message>
-        <location line="-7155"/>
+        <location line="-7166"/>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation>Hlavní okno</translation>
     </message>
     <message>
-        <location line="+1679"/>
+        <location line="+1670"/>
         <source>Open linked map</source>
         <comment>Edit menu</comment>
         <translation>Otevřít spojenou mapu</translation>
@@ -852,18 +860,18 @@ ve svém systému povolit!</translation>
         <translation>Vybrat stávající popis</translation>
     </message>
     <message>
-        <location line="+2951"/>
+        <location line="+2957"/>
         <source>Set author for new maps (used in lockfile)</source>
         <translation>Zadat autora nových map (k použití v uzamykacím souboru)</translation>
     </message>
     <message>
-        <location line="-4885"/>
+        <location line="-4891"/>
         <source>&amp;Open...</source>
         <comment>File menu</comment>
         <translation>&amp;Otevřít...</translation>
     </message>
     <message>
-        <location line="+3438"/>
+        <location line="+3439"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Mapa %1 byla změněna,
 ale ještě nebyla uložena. Chcete </translation>
@@ -874,7 +882,7 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation>Odkaz na jinou mapu programu VYM</translation>
     </message>
     <message>
-        <location line="-1836"/>
+        <location line="-1837"/>
         <source>Animation</source>
         <comment>Settings action</comment>
         <translation>Pohyblivé obrázky</translation>
@@ -923,24 +931,24 @@ ale ještě nebyla uložena. Chcete </translation>
         <translation>Použít upravovač pro založení xLinks</translation>
     </message>
     <message>
-        <location line="+4437"/>
+        <location line="+4457"/>
         <source>Critcal error</source>
         <translation>Vážná chyba</translation>
     </message>
     <message>
-        <location line="-4398"/>
+        <location line="-4418"/>
         <source>Images</source>
         <translation>Obrázky</translation>
     </message>
     <message>
-        <location line="+1724"/>
+        <location line="+1725"/>
         <location line="+54"/>
         <location line="+1"/>
         <source>Import</source>
         <translation>Importovat</translation>
     </message>
     <message>
-        <location line="-3191"/>
+        <location line="-3192"/>
         <source>Import</source>
         <comment>File menu</comment>
         <translation>Importovat</translation>
@@ -989,7 +997,7 @@ Chcete jej přepsat?</translation>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+980"/>
-        <location line="+2138"/>
+        <location line="+2139"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(stále pokusné)</translation>
@@ -1002,20 +1010,20 @@ Chcete jej přepsat?</translation>
 </translation>
     </message>
     <message>
-        <location line="-687"/>
+        <location line="-688"/>
         <source>Open anyway</source>
         <translation>Přesto otevřít</translation>
     </message>
     <message>
-        <location line="+888"/>
-        <location line="+2314"/>
+        <location line="+889"/>
+        <location line="+2333"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Nepodařilo se nalézt žádný program pro otevření %1.
 </translation>
     </message>
     <message>
-        <location line="-3975"/>
+        <location line="-3995"/>
         <source>Set number of undo levels</source>
         <comment>Settings action</comment>
         <translation>Nastavit počet kroků zpět</translation>
@@ -1026,24 +1034,24 @@ Chcete jej přepsat?</translation>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location line="+5958"/>
+        <location line="+5978"/>
         <source>Thank you for enabling downloads!</source>
         <translation>Poděkování za povolení stahování!</translation>
     </message>
     <message>
-        <location line="-5735"/>
+        <location line="-5755"/>
         <source>Move branch down</source>
         <comment>Edit menu</comment>
         <translation>Posunout větev dolů</translation>
     </message>
     <message>
-        <location line="+4378"/>
-        <location line="+1084"/>
+        <location line="+4379"/>
+        <location line="+1103"/>
         <source>Set application to open PDF files</source>
         <translation>Nastavit program pro otevírání souborů PDF</translation>
     </message>
     <message>
-        <location line="-5785"/>
+        <location line="-5805"/>
         <source>Repeat last export (%1)</source>
         <translation>Zopakovat poslední export (%1)</translation>
     </message>
@@ -1054,12 +1062,12 @@ Chcete jej přepsat?</translation>
         <location line="+9"/>
         <location line="+73"/>
         <location line="+8"/>
-        <location line="+648"/>
+        <location line="+649"/>
         <source>Critical Error</source>
         <translation>Vážná chyba</translation>
     </message>
     <message>
-        <location line="-791"/>
+        <location line="-792"/>
         <source>Save map as</source>
         <translation>Uložit mapu jako</translation>
     </message>
@@ -1070,7 +1078,7 @@ Chcete jej přepsat?</translation>
         <translation>O Qt</translation>
     </message>
     <message>
-        <location line="+1266"/>
+        <location line="+1267"/>
         <location line="+68"/>
         <source>Export to</source>
         <translation>Exportovat jako</translation>
@@ -1081,7 +1089,7 @@ Chcete jej přepsat?</translation>
         <translation>Mapu %1 se nepodařilo otevřít</translation>
     </message>
     <message>
-        <location line="-3199"/>
+        <location line="-3200"/>
         <source>Open URL in new tab</source>
         <comment>Edit menu</comment>
         <translation>Otevřít adresy (URL) v nové kartě</translation>
@@ -1104,13 +1112,13 @@ Chcete jej přepsat?</translation>
         <translation>&amp;Obnovit poslední sezení</translation>
     </message>
     <message>
-        <location line="+3544"/>
-        <location line="+2314"/>
+        <location line="+3545"/>
+        <location line="+2333"/>
         <source>Please use Settings-&gt;</source>
         <translation>Použijte, prosím, nastavení -&gt;</translation>
     </message>
     <message>
-        <location line="-3751"/>
+        <location line="-3771"/>
         <source>Tasks</source>
         <comment>Context menu</comment>
         <translation>Úkoly</translation>
@@ -1127,13 +1135,13 @@ Chcete jej přepsat?</translation>
         <translation>&amp;Vložit</translation>
     </message>
     <message>
-        <location line="+3362"/>
+        <location line="+3363"/>
         <source>Spreadsheet</source>
         <comment>Filedialog</comment>
         <translation>Tabulkový dokument</translation>
     </message>
     <message>
-        <location line="-3397"/>
+        <location line="-3398"/>
         <source>&amp;Redo</source>
         <comment>Edit menu</comment>
         <translation>&amp;Znovu</translation>
@@ -1144,14 +1152,14 @@ Chcete jej přepsat?</translation>
         <translation>Import: Nahradit výběr mapou</translation>
     </message>
     <message>
-        <location line="+3018"/>
+        <location line="+3038"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>Dokumentaci %1 se v:
 %2 nepodařilo najít</translation>
     </message>
     <message>
-        <location line="-5808"/>
+        <location line="-5828"/>
         <source>Add map (insert)</source>
         <comment>Edit menu</comment>
         <translation>Vložit mapu (přidat do výběru)</translation>
@@ -1163,17 +1171,17 @@ Chcete jej přepsat?</translation>
         <translation>Uložit obrázek</translation>
     </message>
     <message>
-        <location line="+2699"/>
+        <location line="+2705"/>
         <source>Number of seconds before autosave:</source>
         <translation>Počet sekund před automatickým uložením:</translation>
     </message>
     <message>
-        <location line="+1198"/>
+        <location line="+1212"/>
         <source>Please allow vym to download release notes!</source>
         <translation>Povolte, prosím, VYMu přístup k poznámkám o vydání!</translation>
     </message>
     <message>
-        <location line="-4221"/>
+        <location line="-4241"/>
         <source>Set application to open pdf files</source>
         <comment>Settings action</comment>
         <translation>Nastavit program pro otevírání souborů PDF</translation>
@@ -1203,17 +1211,17 @@ Chcete jej přepsat?</translation>
         <translation>&amp;Uložit...</translation>
     </message>
     <message>
-        <location line="+3273"/>
+        <location line="+3274"/>
         <source>Export as CSV</source>
         <translation>Exportovat jako CSV</translation>
     </message>
     <message>
-        <location line="+1632"/>
+        <location line="+1643"/>
         <source>Number of parents shown in find results:</source>
         <translation>Počet viditelných rodičovských větví v okně s výsledky hledání:</translation>
     </message>
     <message>
-        <location line="-2096"/>
+        <location line="-2108"/>
         <source>Import: Add vym map to selection</source>
         <translation>Importo: Přidat mapu k výběru</translation>
     </message>
@@ -1252,18 +1260,18 @@ protože se nepodařilo vytvořit uzamykací soubor:
 %2</translation>
     </message>
     <message>
-        <location line="+328"/>
+        <location line="+329"/>
         <source>Save modified map before closing it</source>
         <translation>Uložit upravenou mapu před jejím zavřením</translation>
     </message>
     <message>
-        <location line="-1563"/>
+        <location line="-1559"/>
         <source>Set path for macros</source>
         <comment>Settings action</comment>
         <translation>Nastavit cestu pro makra</translation>
     </message>
     <message>
-        <location line="-756"/>
+        <location line="-761"/>
         <source>Set &amp;Link Color</source>
         <translation>Nastavit barvu &amp;spojení</translation>
     </message>
@@ -1286,12 +1294,12 @@ protože se nepodařilo vytvořit uzamykací soubor:
         <translation>Žádné zvětšení</translation>
     </message>
     <message>
-        <location line="+4973"/>
+        <location line="+4993"/>
         <source>Update information</source>
         <translation>Informace o aktualizaci</translation>
     </message>
     <message>
-        <location line="-4004"/>
+        <location line="-4024"/>
         <source>Follow XLink</source>
         <comment>Context menu name</comment>
         <translation>Sledovat xLink</translation>
@@ -1314,12 +1322,12 @@ Chcete </translation>
         <translation>Přidat novou větev dole</translation>
     </message>
     <message>
-        <location line="+3264"/>
+        <location line="+3265"/>
         <source>Set URL to a local file</source>
         <translation>Nastavit adresu (URL) k místnímu souboru</translation>
     </message>
     <message>
-        <location line="-2610"/>
+        <location line="-2611"/>
         <source>Pic&amp;k color</source>
         <comment>Edit menu</comment>
         <translation>Pře&amp;vzít barvu</translation>
@@ -1347,17 +1355,17 @@ Chcete </translation>
         <translation>&amp;Zpět</translation>
     </message>
     <message>
-        <location line="+4627"/>
+        <location line="+4607"/>
         <source>Settings have been changed. The next map opened will have &quot;%1&quot; undo/redo levels</source>
         <translation>Nastavení byla změněna. Následující otevřená mapa bude mít &quot;%1&quot; kroků zpět/znovu</translation>
     </message>
     <message>
-        <location line="-1244"/>
+        <location line="-1223"/>
         <source>Enter URL:</source>
         <translation>Nová adresa (URL):</translation>
     </message>
     <message>
-        <location line="-3025"/>
+        <location line="-3026"/>
         <source>Open all URLs in subtree</source>
         <comment>Edit menu</comment>
         <translation>Otevřít všechny adresy (URL) ve vedlejším stromu</translation>
@@ -1402,18 +1410,18 @@ Chcete </translation>
         <translation>Posunout větev nahoru</translation>
     </message>
     <message>
-        <location line="+4543"/>
+        <location line="+4555"/>
         <source>Number of parents shown for a task:</source>
         <translation>Počet rodičovských větví ukázaný pro úkol:</translation>
     </message>
     <message>
-        <location line="-1382"/>
+        <location line="-1393"/>
         <location line="+1242"/>
         <source>Set application to open an URL</source>
         <translation>Nastavit program pro otevírání adres (URL)</translation>
     </message>
     <message>
-        <location line="-2637"/>
+        <location line="-2638"/>
         <source>Edit XLink</source>
         <comment>Context menu name</comment>
         <translation>Upravit xLink</translation>
@@ -1425,42 +1433,42 @@ Chcete </translation>
         <translation>Uložit výběr</translation>
     </message>
     <message>
-        <location line="+5020"/>
+        <location line="+5040"/>
         <source>Load vym example map</source>
         <translation>Otevřít příkladovou mapu programu VYM</translation>
     </message>
     <message>
-        <location line="-3719"/>
+        <location line="-3739"/>
         <source>Follow XLink</source>
         <comment>Context menu</comment>
         <translation>Sledovat xLink</translation>
     </message>
     <message>
         <location line="+918"/>
-        <location line="+269"/>
+        <location line="+270"/>
         <location line="+201"/>
         <location line="+392"/>
-        <location line="+1024"/>
+        <location line="+1035"/>
         <location line="+20"/>
-        <location line="+878"/>
+        <location line="+886"/>
         <location line="+207"/>
         <location line="+183"/>
         <source>Warning</source>
         <translation>Varování</translation>
     </message>
     <message>
-        <location line="-5578"/>
+        <location line="-5598"/>
         <source>Open all vym links in subtree</source>
         <comment>Edit menu</comment>
         <translation>Otevřít všechny odkazy na mapy VYMu ve vedlejším stromu</translation>
     </message>
     <message>
-        <location line="+5579"/>
+        <location line="+5599"/>
         <source>Please allow vym to check for updates!</source>
         <translation>Povolte, prosím, VYMu zjišťovat dostupnost aktualizací!</translation>
     </message>
     <message>
-        <location line="-6055"/>
+        <location line="-6075"/>
         <source>&amp;Close Map</source>
         <comment>File menu</comment>
         <translation>&amp;Zavřít mapu</translation>
@@ -1495,13 +1503,13 @@ Chcete </translation>
         <translation>Nastavit program pro rozbalení/zabalení souborů</translation>
     </message>
     <message>
-        <location line="+2079"/>
+        <location line="+2080"/>
         <source>Couldn&apos;t set sleep time to %1.
 </source>
         <translation>Nepodařilo se nastavit čas spánku na %1.</translation>
     </message>
     <message>
-        <location line="-3963"/>
+        <location line="-3964"/>
         <source>&amp;Map</source>
         <comment>Menu for file actions</comment>
         <translation>&amp;Mapa</translation>
@@ -1524,18 +1532,18 @@ Chcete </translation>
         <translation>&amp;Ukončit</translation>
     </message>
     <message>
-        <location line="+4648"/>
+        <location line="+4628"/>
         <source>Number of undo/redo levels:</source>
         <translation>Počet kroků zpět/znovu:</translation>
     </message>
     <message>
-        <location line="-3798"/>
+        <location line="-3778"/>
         <source>Color sub&amp;tree</source>
         <comment>Edit menu</comment>
         <translation>Obarvit vedlejší &amp;strom</translation>
     </message>
     <message>
-        <location line="-1974"/>
+        <location line="-1965"/>
         <source>Main window</source>
         <comment>Shortcut group</comment>
         <translation>Hlavní okno</translation>
@@ -1553,7 +1561,7 @@ Chcete </translation>
         <translation>Editory textu</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+36"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
         <translation>Seznam s výsledky hledání</translation>
@@ -2094,7 +2102,13 @@ Chcete </translation>
         <translation type="unfinished">Neukazovat předměty v exportovaných mapách</translation>
     </message>
     <message>
-        <location line="+883"/>
+        <location line="+349"/>
+        <source>Set path for new maps</source>
+        <comment>Settings action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+534"/>
         <source>Standard Flags toolbar</source>
         <comment>Standard Flag Toolbar</comment>
         <translation type="unfinished">Nástrojový pruh s obvyklými příznaky</translation>
@@ -2364,7 +2378,7 @@ Chcete </translation>
         <translation>nebo</translation>
     </message>
     <message>
-        <location line="+802"/>
+        <location line="+803"/>
         <source>HTML</source>
         <comment>Filedialog</comment>
         <translation>HTML</translation>
@@ -2432,13 +2446,13 @@ Chcete </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+225"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation type="unfinished">Neznámý uživatel</translation>
     </message>
     <message>
-        <location line="+497"/>
+        <location line="+511"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation type="unfinished">Historie pro %1</translation>
@@ -2462,7 +2476,7 @@ Chcete </translation>
         <translation>Zjišťuji dostupnost aktualizací...</translation>
     </message>
     <message>
-        <location line="-7077"/>
+        <location line="-7097"/>
         <source>Script output window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2520,7 +2534,7 @@ Chcete </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1872"/>
+        <location line="+1873"/>
         <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
         <translation type="unfinished"></translation>
@@ -2538,12 +2552,12 @@ Chcete </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+824"/>
+        <location line="+822"/>
         <source>Load vym script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4789"/>
+        <location line="-4788"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
@@ -2712,13 +2726,7 @@ Chcete </translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
-        <source>Set path for default path</source>
-        <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+708"/>
+        <location line="+724"/>
         <source>Couldn&apos;t load default map:
 
 %1
@@ -2749,12 +2757,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1747"/>
-        <source>Set vym default map to be loaded on startup</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-4204"/>
+        <location line="-2457"/>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -2836,7 +2839,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+790"/>
+        <location line="+791"/>
         <source>Firefox Bookmarks</source>
         <translation type="unfinished">Záložky Firefoxu</translation>
     </message>
@@ -2846,13 +2849,13 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1793"/>
+        <location line="+1804"/>
         <location line="+20"/>
         <source>No SSL support available for this build of vym</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1787"/>
+        <location line="-1798"/>
         <source>Open Freemind map</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2862,7 +2865,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3080"/>
+        <location line="-3081"/>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
         <translation type="unfinished"></translation>
@@ -2897,7 +2900,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2860"/>
+        <location line="+2872"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2907,7 +2910,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1179"/>
+        <location line="+1187"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2933,7 +2936,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Upravit popisek</translation>
     </message>
     <message>
-        <location line="+504"/>
+        <location line="+502"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation>Vytisknout mapu</translation>
@@ -2973,10 +2976,9 @@ Couldn&apos;t rename map to %1</source>
         <location line="+154"/>
         <location line="+10"/>
         <location filename="../src/imports.cpp" line="+40"/>
-        <location filename="../src/main.cpp" line="+517"/>
+        <location filename="../src/main.cpp" line="+527"/>
         <location line="+15"/>
-        <location filename="../src/scripteditor.cpp" line="+140"/>
-        <location line="+12"/>
+        <location filename="../src/scripteditor.cpp" line="+147"/>
         <location line="+26"/>
         <location line="+17"/>
         <source>Error</source>
@@ -3143,7 +3145,14 @@ Couldn&apos;t rename map to %1</source>
         <translation>Exportotvat jako prezentaci LibreOffice Impress</translation>
     </message>
     <message>
-        <location filename="../src/macros.cpp" line="+26"/>
+        <location filename="../src/macros.cpp" line="+47"/>
+        <source>Couldn&apos;t find macros at  %1.
+</source>
+        <comment>Macros::pathExists</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Please use Settings-&gt;</source>
         <translation>Použijte, prosím, Nastavení -&gt;</translation>
     </message>
@@ -3303,12 +3312,6 @@ Risknete přepsat jeho obsah?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/macros.cpp" line="-2"/>
-        <source>Couldn&apos;t find macros at  %1.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/main.cpp" line="+1"/>
         <source>Couldn&apos;t find tool to zip/unzip data. Please install on your platform and setpath in Settings menu:
  </source>
@@ -3323,13 +3326,7 @@ Risknete přepsat jeho obsah?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/scripteditor.cpp" line="-54"/>
-        <source>Couldn&apos;t read macros from &quot;%1&quot;
-.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location filename="../src/scripteditor.cpp" line="-42"/>
         <source>Couldn&apos;t write macros to &quot;%1&quot;
 .</source>
         <translation type="unfinished"></translation>
@@ -3392,14 +3389,14 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3257"/>
+        <location filename="../src/mainwindow.cpp" line="-3277"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4319"/>
+        <location filename="../src/vymmodel.cpp" line="+4323"/>
         <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3445,7 +3442,7 @@ Line %2, column %3</source>
         <translation>Nahrát skript</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-55"/>
         <source>Couldn&apos;t get model to save script into slide!</source>
         <translation>Nepodařilo se získat model pro uložení skriptu do snímku!</translation>
     </message>
@@ -3459,12 +3456,12 @@ Line %2, column %3</source>
         <translation type="vanished">Uložit do vybraného snímku</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+105"/>
         <source>Overwrite</source>
         <translation>Přepsat</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-113"/>
         <location line="+7"/>
         <source>Warning</source>
         <translation>Varování</translation>
@@ -3482,7 +3479,7 @@ Line %2, column %3</source>
         <translation>Makro</translation>
     </message>
     <message>
-        <location line="+147"/>
+        <location line="+142"/>
         <source>The file %1
 exists already.
 Do you want to overwrite it?</source>
@@ -3496,7 +3493,7 @@ Chcete jej přepsat?</translation>
         <translation type="obsolete">Nahrát znovu</translation>
     </message>
     <message>
-        <location line="-146"/>
+        <location line="-141"/>
         <source>Script</source>
         <comment>Mode in scriptEditor</comment>
         <translation type="unfinished"></translation>
@@ -3508,7 +3505,7 @@ Chcete jej přepsat?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+72"/>
         <source>Macros saved to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3629,7 +3626,7 @@ Chcete jej přepsat?</translation>
 <context>
     <name>TextEditor</name>
     <message>
-        <location filename="../src/texteditor.cpp" line="+388"/>
+        <location filename="../src/texteditor.cpp" line="+393"/>
         <source>Cu&amp;t</source>
         <translation>Vyj&amp;mout</translation>
     </message>
@@ -3828,13 +3825,13 @@ Chcete jej přepsat?</translation>
         <translation>&amp;Bohatý text</translation>
     </message>
     <message>
-        <location line="-378"/>
+        <location line="-383"/>
         <source>Ready</source>
         <comment>Statusbar message</comment>
         <translation>Připraven</translation>
     </message>
     <message>
-        <location line="+153"/>
+        <location line="+158"/>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation>Poznámka nemá žádný název souboru.</translation>
@@ -3913,7 +3910,7 @@ Chcete jej přepsat?</translation>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../src/vymmodel.cpp" line="-3832"/>
+        <location filename="../src/vymmodel.cpp" line="-3836"/>
         <location line="+30"/>
         <location line="+82"/>
         <location line="+75"/>
@@ -3925,22 +3922,22 @@ Chcete jej přepsat?</translation>
         <translation type="vanished">Nahrát obrázek pozadí</translation>
     </message>
     <message>
-        <location line="+4027"/>
+        <location line="+4031"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation>Nepodařilo se uložit obrázek %1 ve formátu %2</translation>
     </message>
     <message>
-        <location line="-3734"/>
+        <location line="-3738"/>
         <source>Critical Import Error</source>
         <translation>Vážná chyba při zavádění</translation>
     </message>
     <message>
-        <location line="+3900"/>
+        <location line="+3904"/>
         <source>Critical Export Error</source>
         <translation>Vážná chyba při vyvádění</translation>
     </message>
     <message>
-        <location line="-3761"/>
+        <location line="-3765"/>
         <source>Cannot create lockfile of map! It will be opened in readonly mode.
 
 </source>
@@ -3969,7 +3966,7 @@ Chcete jej přepsat?</translation>
         <translation>Nahrát znovu</translation>
     </message>
     <message>
-        <location line="+3733"/>
+        <location line="+3737"/>
         <location line="+27"/>
         <source>(still experimental)</source>
         <translation>(stále pokusné)</translation>
@@ -3980,7 +3977,7 @@ Chcete jej přepsat?</translation>
         <translation>Exportovat XML do adresáře</translation>
     </message>
     <message>
-        <location line="-4036"/>
+        <location line="-4040"/>
         <source>Couldn&apos;t create temporary directory before save
 </source>
         <translation>Před uložením se nepodařilo vytvořit dočasný adresář
@@ -4014,12 +4011,12 @@ se nepodařilo přejmenovat před uložením</translation>
     </message>
     <message>
         <location line="+168"/>
-        <location line="+3762"/>
+        <location line="+3766"/>
         <source>Critical Error</source>
         <translation>Vážná chyba</translation>
     </message>
     <message>
-        <location line="-3938"/>
+        <location line="-3942"/>
         <location line="+7"/>
         <source>Save Error</source>
         <translation>Chyba při ukládání</translation>
@@ -4047,13 +4044,13 @@ se nepodařilo přejmenovat před uložením</translation>
         <translation>Vážná chyba při ukládání</translation>
     </message>
     <message>
-        <location line="+4167"/>
+        <location line="+4171"/>
         <location line="+27"/>
         <source>Export as csv</source>
         <translation>Exportovat jako CSV</translation>
     </message>
     <message>
-        <location line="-3566"/>
+        <location line="-3570"/>
         <source>Autosave disabled during undo.</source>
         <translation>Automatické ukládání zakázáno během kroku &quot;Zpět&quot;.</translation>
     </message>
@@ -4100,22 +4097,22 @@ Chcete mapu nahrát znovu s novým souborem?</translation>
     </message>
     <message>
         <location line="-119"/>
-        <location line="+3230"/>
+        <location line="+3234"/>
         <source>Warning</source>
         <translation>Varování</translation>
     </message>
     <message>
-        <location line="-3589"/>
+        <location line="-3593"/>
         <source>compressed (vym default)</source>
         <translation>zapsat zkomprimovanou (výchozí pro vym)</translation>
     </message>
     <message>
-        <location line="+3950"/>
+        <location line="+3954"/>
         <source>Export map as image</source>
         <translation>Exportovat mapu jako obrázek</translation>
     </message>
     <message>
-        <location line="-3714"/>
+        <location line="-3718"/>
         <source>Cannot find the directory %1</source>
         <translation>Nepodařilo se najít adresář %1</translation>
     </message>
@@ -4127,7 +4124,7 @@ could not be removed before saving</source>
 se nepodařilo odstranit před uložením</translation>
     </message>
     <message>
-        <location line="+4050"/>
+        <location line="+4054"/>
         <source>Export map as XML</source>
         <translation>Exportovat mapu jako XML</translation>
     </message>
@@ -4142,7 +4139,7 @@ se nepodařilo odstranit před uložením</translation>
         <translation>Exportovat mapu jako PDF</translation>
     </message>
     <message>
-        <location line="-3676"/>
+        <location line="-3680"/>
         <source>unknown user</source>
         <comment>Default for lockfiles of maps</comment>
         <translation>Neznámý uživatel</translation>
@@ -4167,19 +4164,19 @@ se nepodařilo odstranit před uložením</translation>
         <translation>Varování: Mapa je již otevřena</translation>
     </message>
     <message>
-        <location line="+1200"/>
+        <location line="+1201"/>
         <source>Note</source>
         <comment>FindAll in VymModel</comment>
         <translation>Poznámka</translation>
     </message>
     <message>
-        <location line="+1090"/>
+        <location line="+1093"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation>Nová mapa</translation>
     </message>
     <message>
-        <location line="-2299"/>
+        <location line="-2303"/>
         <source>Map seems to be already opened in another vym instance!
 
  Map is locked by &quot;%1&quot; on &quot;%2&quot;
@@ -4202,13 +4199,13 @@ Pokud si jste jisti, že na mapě nikdo jiný již nepracuje, prosím, pouze sma
         <translation>Soubor zámku nelze odstranit %1</translation>
     </message>
     <message>
-        <location line="+3269"/>
+        <location line="+3273"/>
         <source>Contacting Jira...</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3638"/>
+        <location line="-3642"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -4223,7 +4220,7 @@ Do you want to write the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3615"/>
+        <location line="+3619"/>
         <source>Could not find Jira ticket pattern in %1</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>

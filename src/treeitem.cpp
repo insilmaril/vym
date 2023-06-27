@@ -313,7 +313,9 @@ QVariant TreeItem::data(int column) const { return itemData.value(column); }
 void TreeItem::setHeading(const VymText &vt)
 {
     heading = vt;
-    itemData[0] = heading.getTextASCII(); // used in TreeEditor
+    itemData[0] = heading.getTextASCII(0, 80); // used in TreeEditor // FIXME-2 introduce settings for width of heading:
+                                            // - default setting for vym
+                                            // - map specific setting
 }
 
 void TreeItem::setHeadingPlainText(const QString &s)
