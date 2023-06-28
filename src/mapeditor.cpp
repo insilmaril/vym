@@ -206,6 +206,87 @@ void MapEditor::panView()
     }
 }
 
+void MapEditor::ensureAreaVisibleAnimated(const QRectF &area)
+{
+    // Changes viewCenter to make sure that 
+    // r is  within the margins of the viewport
+    //
+    // Only zooms, if r NOT fit into viewport 
+    // view is centered then on bounding box.
+    //
+    // Similar to QGraphicsItem::ensureVisible, 
+    // but with animation and (if necessary)
+    // zooming
+
+    int xmargin = settings.value("/mapeditor/scrollToMarginX/", 30).toInt();
+    int ymargin = settings.value("/mapeditor/scrollToMarginY/", 30).toInt();
+
+    // Do we need to zoom out to show area?
+    QRect bboxViewCoord = mapFromScene(area).boundingRect();
+    QRect areaViewCoord = mapFromScene(area).boundingRect();
+
+    // Visible area within margins
+    QRect visibleViewCoord = rect();
+    visibleViewCoord -= QMargins(xmargin, ymargin, xmargin, ymargin);
+
+    QRectF visibleSceneCoord = mapToScene(visibleViewCoord).boundingRect();
+    qreal w_visible = viewport()->width() - 2 * xmargin;
+    qreal h_visible = viewport()->height() - 2 * ymargin;
+    qreal zoom_x = 1;
+    qreal zoom_y = 1;
+//    if (bboxViewCoord.width() > viewport()->width() - 2 * xmargin)    // FIXME-0 why if?
+        zoom_x = w_visible / area.width();
+//    if (bboxViewCoord.height() > viewport()->height() - 2 * ymargin)
+        zoom_y = h_visible / area.height();
+
+    qreal zf = min(zoom_x, zoom_y);
+
+    qDebug() << "ME::ensureAreaVis  zoom_cur=" << zoomFactor << "zoom_new=" << zoom_x << zoom_y << "zf=" << zf;
+    qDebug() << "                w/h_visible=" << w_visible << h_visible;
+    qDebug() << "               viewport wxh=" << viewport()->width() << viewport()->height() <<  "bboxView=" << bboxViewCoord;
+    //qDebug() << "                  sceneRect=" << sceneRect();
+    qDebug() << "                    visArea=" << visibleViewCoord;
+    qDebug() << "                   visScene=" << visibleSceneCoord;
+    qDebug() << "              areaViewCoord=" << areaViewCoord;
+    bool zoomOutRequired = 
+        (visibleViewCoord.width() < areaViewCoord.width() ||
+         visibleViewCoord.height() < areaViewCoord.height());
+    bool zoomInRequired = 
+        (visibleViewCoord.width() > areaViewCoord.width() &&
+         visibleViewCoord.height() > areaViewCoord.height());
+    qDebug() << " zoom out: " << zoomOutRequired;
+    qDebug() << " zoom  in: " << zoomInRequired;
+    // FIXME-0 if (zf < 1) {
+        setViewCenterTarget(area.center(), zf, angle);
+        return;
+    //}
+
+    // After zooming bbox would fit into margins of viewport
+    long view_dx = 0;
+    long view_dy = 0;
+    if (bboxViewCoord.left() < xmargin)
+        // move left
+        view_dx = bboxViewCoord.left() - xmargin;
+    else if (bboxViewCoord.right() > viewport()->width())
+        // move right
+        view_dx = bboxViewCoord.x() + bboxViewCoord.width() - viewport()->width() + xmargin;
+
+    if (bboxViewCoord.top() < ymargin)
+        // move up
+        view_dy = bboxViewCoord.top() - ymargin;
+    else if (bboxViewCoord.bottom() > viewport()->height() - ymargin)
+        // move down
+        view_dy = bboxViewCoord.y() + bboxViewCoord.height() - viewport()->height() + ymargin;
+
+    if (abs(view_dx) > 5 || abs(view_dy) > 5)
+        setViewCenterTarget(
+                mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
+                zoomFactor,
+                angle,
+                2000,
+                QEasingCurve::OutQuint);
+}
+
 void MapEditor::ensureSelectionVisibleAnimated()
 {
     // Changes viewCenter to make sure that bounding box of all currently
@@ -242,47 +323,7 @@ void MapEditor::ensureSelectionVisibleAnimated()
     int xmargin = settings.value("/mapeditor/scrollToMarginX/", 30).toInt();
     int ymargin = settings.value("/mapeditor/scrollToMarginX/", 30).toInt();
 
-    // Do we need to zoom out to show selection?
-    QRect bboxViewCoord = mapFromScene(bbox).boundingRect();
-
-    qreal zoom_x = 1;
-    qreal zoom_y = 1;
-    if (bboxViewCoord.width() > viewport()->width() - 2 * xmargin)
-        zoom_x = (1.0 * viewport()->width() - 2 * xmargin) / bbox.width();
-    if (bboxViewCoord.height() > viewport()->height() - 2 * ymargin)
-        zoom_y = (1.0 * viewport()->height() - 2 * ymargin) / bbox.height();
-
-    qreal zf = min(zoom_x, zoom_y);
-
-    if (zf < 1) {
-        setViewCenterTarget(bbox.center(), zf, angle);
-        return;
-    }
-
-    // After zooming bbox would fit into margins of viewport
-    long view_dx = 0;
-    long view_dy = 0;
-    if (bboxViewCoord.left() < xmargin)
-        // move left
-        view_dx = bboxViewCoord.left() - xmargin;
-    else if (bboxViewCoord.right() > viewport()->width())
-        // move right
-        view_dx = bboxViewCoord.x() + bboxViewCoord.width() - viewport()->width() + xmargin;
-
-    if (bboxViewCoord.top() < ymargin)
-        // move up
-        view_dy = bboxViewCoord.top() - ymargin;
-    else if (bboxViewCoord.bottom() > viewport()->height() - ymargin)
-        // move down
-        view_dy = bboxViewCoord.y() + bboxViewCoord.height() - viewport()->height() + ymargin;
-
-    if (abs(view_dx) > 5 || abs(view_dy) > 5)
-        setViewCenterTarget(
-                mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
-                zoomFactor,
-                angle,
-                2000,
-                QEasingCurve::OutQuint);
+    ensureAreaVisibleAnimated(bbox);
 }
 
 void MapEditor::scrollTo(const QModelIndex &index)
@@ -1215,7 +1256,9 @@ void MapEditor::editHeading()
         // To avoid problems with Cursor up/down
         setFocus();
 
-        animateScrollBars();
+        qDebug() << "ME::editH  r=" << r;
+        //animateScrollBars();  // FIXME-0
+        ensureAreaVisibleAnimated(r);
         lineEdit->setText(heading.getTextASCII());
         lineEdit->setFocus();
         lineEdit->selectAll(); // Hack to enable cursor in lineEdit
@@ -1243,7 +1286,7 @@ void MapEditor::editHeadingFinished()
     delete (lineEdit);
     lineEdit = NULL;
 
-    animateScrollBars(); // FIXME-0  if zoomed in, scrolls to nowwhere ?!?!
+    //animateScrollBars(); // FIXME-0  if zoomed in, scrolls to nowwhere ?!?!
 
     // Maybe reselect previous branch
     mainWindow->editHeadingFinished(model);
