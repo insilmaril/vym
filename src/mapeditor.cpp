@@ -2092,10 +2092,10 @@ void MapEditor::wheelEvent(QWheelEvent *e)
         QPointF p = mapToScene(e->position().toPoint());
         if (e->angleDelta().y() > 0)
             // setZoomFactorTarget (zoomFactorTarget*1.15);
-            setViewCenterTarget(p, zoomFactorTarget * 1.15, 0);
+            setViewCenterTarget(p, zoomFactorTarget * 1.15, angleTarget);
         else
             // setZoomFactorTarget (zoomFactorTarget*0.85);
-            setViewCenterTarget(p, zoomFactorTarget * 0.85, 0);
+            setViewCenterTarget(p, zoomFactorTarget * 0.85, angleTarget);
     }
     else {
         scrollBarPosAnimation.stop();
