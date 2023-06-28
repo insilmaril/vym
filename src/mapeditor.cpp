@@ -1208,7 +1208,7 @@ void MapEditor::editHeading()
         QRectF r(tl, br);
         lineEdit->setGeometry(r.toRect());
 
-        setScrollBarPosTarget(r);
+        setScrollBarPosTarget(r); // FIXME-0  if zoomed in, scrolls to nowwhere ?!?!
         scene()->update();
 
         // Set focus to MapEditor first
@@ -1243,7 +1243,7 @@ void MapEditor::editHeadingFinished()
     delete (lineEdit);
     lineEdit = NULL;
 
-    animateScrollBars();
+    animateScrollBars(); // FIXME-0  if zoomed in, scrolls to nowwhere ?!?!
 
     // Maybe reselect previous branch
     mainWindow->editHeadingFinished(model);
