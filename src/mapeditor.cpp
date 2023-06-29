@@ -206,7 +206,7 @@ void MapEditor::panView()
     }
 }
 
-void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
+void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea) // FIXME-2 zooming in not working yet (fit to selection)
 {
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
