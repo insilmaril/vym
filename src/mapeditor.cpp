@@ -263,7 +263,7 @@ void MapEditor::panView()
     }
 }
 
-void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
+void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea) // FIXME-2 zooming in not working yet (fit to selection)
 {
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
@@ -302,8 +302,8 @@ void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
         (visibleViewCoord.width() > areaViewCoord.width() &&
          visibleViewCoord.height() > areaViewCoord.height());
 
-    qDebug() << " zoom out: " << zoomOutRequired;
-    qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactor << " zf=" << zf;
+    //qDebug() << " zoom out: " << zoomOutRequired;
+    //qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactor << " zf=" << zf;
     if (zoomOutRequired) {
         setViewCenterTarget(area.center(), zf, angle);
         return;
@@ -1430,15 +1430,12 @@ void MapEditor::editHeading()
         QRectF r(tl, br);
         lineEdit->setGeometry(r.toRect());
 
-        setScrollBarPosTarget(r); // FIXME-0  if zoomed in, scrolls to nowwhere ?!?!
         scene()->update();
 
         // Set focus to MapEditor first
         // To avoid problems with Cursor up/down
         setFocus();
 
-        qDebug() << "ME::editH  r=" << r;
-        //animateScrollBars();  // FIXME-0
         ensureAreaVisibleAnimated(r);
         lineEdit->setText(heading.getTextASCII());
         lineEdit->setFocus();
@@ -1467,7 +1464,7 @@ void MapEditor::editHeadingFinished()
     delete (lineEdit);
     lineEdit = nullptr;
 
-    //animateScrollBars(); // FIXME-0  if zoomed in, scrolls to nowwhere ?!?!
+    // FIXME-2 ensureAreaVisible like in starting editing?
 
     // Maybe reselect previous branch
     mainWindow->editHeadingFinished(model);

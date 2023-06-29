@@ -2,7 +2,7 @@
 #define VERSION_H
 
 #define __VYM_VERSION "2.9.512"
-#define __VYM_BUILD_DATE "2023-06-27"
+#define __VYM_BUILD_DATE "2023-06-29"
 #define __VYM_CODE_QUALITY "*Experimental*"
 //#define __VYM_CODE_QUALITY "*Beta*"
 //#define __VYM_CODENAME "Beta 2 of upcoming 2.9.0"

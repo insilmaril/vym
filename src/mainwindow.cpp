@@ -6335,8 +6335,7 @@ void Main::updateHeadingEditor(BranchItem *bi)  // FIXME-3 move to HeadingEditor
 
     // Color settings, also to prepare switching to RichText later
     headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
-    qDebug() << "Main::updateHE  bgcol=" << bi->getBackgroundColor(bi); // FIXME-0
-    headingEditor->setColorRichTextDefaultForeground(bi->getHeadingColor());    // FIXME-0 rethink...
+    headingEditor->setColorRichTextDefaultForeground(bi->getHeadingColor());
 
     headingEditor->setVymText(bi->getHeading());
     headingEditor->setEditorTitle();
