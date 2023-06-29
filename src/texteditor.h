@@ -94,10 +94,12 @@ class TextEditor : public QMainWindow {
     void updateActions();
     void setState(EditorState);
     void updateState();
-    void setColorRichTextDefaultBackground();
-    void setColorRichTextDefaultForeground();
+    void selectColorRichTextDefaultBackground();
+    void selectColorRichTextDefaultForeground();
 
   public:
+    void setColorRichTextDefaultForeground(const QColor &);
+    void setColorRichTextDefaultBackground(const QColor &);
     void setColorMapBackground(const QColor&);
     void setUseColorMapBackground(bool);
 

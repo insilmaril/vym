@@ -6333,15 +6333,14 @@ void Main::updateHeadingEditor(BranchItem *bi)  // FIXME-3 move to HeadingEditor
     // Give up, if not a single branch is selected
     if (!bi) return;
 
-    if (bi->getHeading().isRichText()) {
-        headingEditor->setUseColorMapBackground(true);
-        headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
-    } else {
-        headingEditor->setUseColorMapBackground(false);
-        headingEditor->setVymText(bi->getHeading());
-    }
+    // Color settings, also to prepare switching to RichText later
+    headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
+    qDebug() << "Main::updateHE  bgcol=" << bi->getBackgroundColor(bi); // FIXME-0
+    headingEditor->setColorRichTextDefaultForeground(bi->getHeadingColor());    // FIXME-0 rethink...
 
+    headingEditor->setVymText(bi->getHeading());
     headingEditor->setEditorTitle();
+
 }
 
 void Main::selectInNoteEditor(QString s, int i)

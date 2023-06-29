@@ -588,12 +588,12 @@ void TextEditor::setupSettingsActions()
     a = new QAction(
         tr("Set RichText default background color", "TextEditor") + "...", this);
     settingsMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(setColorRichTextDefaultBackground()));
+    connect(a, SIGNAL(triggered()), this, SLOT(selectColorRichTextDefaultBackground()));
     actionFilledEditorColor = a;
 
     a = new QAction(tr("Set RichText default font color", "TextEditor") + "...", this);
     settingsMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(setColorRichTextDefaultForeground()));
+    connect(a, SIGNAL(triggered()), this, SLOT(selectColorRichTextDefaultForeground()));
     actionFontColor = a;
 }
 
@@ -694,7 +694,9 @@ void TextEditor::setRichText(const QString &t)
     e->setHtml(t);
     actionFormatRichText->setChecked(true);
 
+    // Update state including colors
     updateState();
+
     updateActions();
     blockChangedSignal = false;
 }
@@ -704,11 +706,18 @@ void TextEditor::setPlainText(const QString &t)
     blockChangedSignal = true;
     e->setReadOnly(false);
 
-    e->setTextColor(qApp->palette().color(QPalette::WindowText));
     e->setPlainText(t);
     actionFormatRichText->setChecked(false);
 
+    // Reset also text format // FIXME-0 review
+    QTextCharFormat textformat;
+    textformat.setForeground(qApp->palette().color(QPalette::WindowText));
+    textformat.setFont(varFont);
+    e->setCurrentCharFormat(textformat);
+
+    // Update state including colors
     updateState();
+
     updateActions();
     blockChangedSignal = false;
 }
@@ -912,25 +921,21 @@ void TextEditor::toggleFonthint()
 
 void TextEditor::setRichTextMode(bool b)
 {
-    // qDebug() << "TE::setRichTextMode b=" << b;
+    qDebug() << "TE::setRichTextMode b=" << b;
     actionFormatUseFixedFont->setEnabled(false);
     if (b) {
-        e->setHtml(e->toHtml());
-        actionFormatRichText->setChecked(true);
-        setUseColorMapBackground(true);
+        qDebug() << "e=" << e->toHtml();
+        setRichText(e->toHtml());
+
+        // Use default foreground color for all text when switching to RichText
+        QTextCursor cursor = e->textCursor();
+        e->selectAll();// FIXME-0
+        e->setTextColor(colorRichTextDefaultForeground);
+        e->setTextCursor(cursor);
+        
     } else {
-        // Reset also text format 
-        QTextCharFormat textformat;
-        textformat.setForeground(qApp->palette().color(QPalette::WindowText));
-        textformat.setFont(varFont);
-        e->setCurrentCharFormat(textformat);
-        e->setPlainText(e->toPlainText());
-        actionFormatUseFixedFont->setEnabled(true);
-        actionFormatRichText->setChecked(false);
-        setUseColorMapBackground(false);
+        setPlainText(e->toPlainText());
     }
-    setState(state);    // re-set state to force updating colors
-    updateActions();
     emit(textHasChanged(getVymText()));
 }
 
@@ -1140,7 +1145,7 @@ void TextEditor::updateActions()
 void TextEditor::setState(EditorState s) // FIXME-2 called 12x when reselecting once in ME
                                          // 5 alone for HeadingEditor
 {
-    //qDebug() << "TE::setState" << s << editorName;
+    qDebug() << "TE::setState" << s << editorName;
     QPalette p = qApp->palette();
     QColor baseColor;
     QColor windowTextColor;
@@ -1149,25 +1154,28 @@ void TextEditor::setState(EditorState s) // FIXME-2 called 12x when reselecting 
         case emptyEditor:
         case filledEditor:
             if (actionFormatRichText->isChecked()) {
+                windowTextColor = colorRichTextDefaultForeground;
+
                 if (useColorMapBackground)
                     baseColor = colorMapBackground;
                 else
-                    baseColor = colorRichTextDefaultBackground;     // FIXME-2
+                    baseColor = colorRichTextDefaultBackground;     // FIXME-0
                                                                     // also read
                                                                     // from
                                                                     // settings
                                                                     // ?!??
             } else {
                 baseColor = p.color(QPalette::Base);
+                windowTextColor = p.color(QPalette::WindowText);
             }
-            windowTextColor = p.color(QPalette::WindowText);
             e->setReadOnly(false);
             break;
         case inactiveEditor:
             baseColor = Qt::black;
             e->setReadOnly(true);
     }
-    p.setColor(QPalette::Base, baseColor);
+    qDebug() << "TE::setState"  << editorName << " s = " << s << "useBC=" << useColorMapBackground << "baseCol=" << baseColor;
+    p.setColor(QPalette::Base, baseColor); // FIXME-0
     p.setColor(QPalette::WindowText, windowTextColor);
     e->setPalette(p);
 
@@ -1183,7 +1191,7 @@ void TextEditor::updateState()
         setState(filledEditor);
 }
 
-void TextEditor::setColorRichTextDefaultBackground()
+void TextEditor::selectColorRichTextDefaultBackground()
 {
     QColor col = QColorDialog::getColor(colorRichTextDefaultBackground, nullptr);
     if (!col.isValid())
@@ -1194,11 +1202,18 @@ void TextEditor::setColorRichTextDefaultBackground()
     actionFilledEditorColor->setIcon(pix);
 }
 
-void TextEditor::setColorRichTextDefaultForeground()
+void TextEditor::selectColorRichTextDefaultForeground()
 {
     QColor col = QColorDialog::getColor(colorRichTextDefaultForeground, nullptr);
     if (!col.isValid())
         return;
+    setColorRichTextDefaultForeground(col);
+}
+
+void TextEditor::setColorRichTextDefaultForeground(const QColor &col)
+{
+    if (!col.isValid()) return;
+
     colorRichTextDefaultForeground = col;
     QPixmap pix(16, 16);
     pix.fill(colorRichTextDefaultForeground);
@@ -1208,12 +1223,17 @@ void TextEditor::setColorRichTextDefaultForeground()
 void TextEditor::setColorMapBackground(const QColor &col)
 {
     colorMapBackground = col;
-    QPalette p = e->palette();
-    p.setColor(QPalette::Base, colorMapBackground);
-    e->setPalette(p);
 }
 
-void TextEditor::setUseColorMapBackground(bool b)
+void TextEditor::setUseColorMapBackground(bool b)   // FIXME-0 color should be set in one place only
 {
     useColorMapBackground = b;
+    /*
+    QPalette p = e->palette();
+    if (useColorMapBackground)
+        p.setColor(QPalette::Base, colorMapBackground);
+    else
+        p.setColor(QPalette::Base, colorMapBackground);
+    e->setPalette(p);
+    */
 }
