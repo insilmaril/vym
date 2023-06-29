@@ -53,8 +53,8 @@ class MapEditor : public QGraphicsView {
     void panView();
 
   public:
-    void ensureAreaVisibleAnimated(const QRectF &area);
-    void ensureSelectionVisibleAnimated();
+    void ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea = false);
+    void ensureSelectionVisibleAnimated(bool maximizeArea = false);
     void scrollTo(const QModelIndex &index);
     void setScrollBarPosTarget(QRectF rect); //!  ensureVisible of rect
     QPointF getScrollBarPosTarget();
