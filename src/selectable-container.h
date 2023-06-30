@@ -8,7 +8,8 @@ class SelectableContainer:public Container {
   public:
     virtual void select(
             Container *container,
-            const QColor &color);
+            const QPen &,
+            const QBrush &);
     void unselect();
     bool isSelected();
 

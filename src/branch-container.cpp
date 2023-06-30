@@ -967,7 +967,8 @@ void BranchContainer::select()
 {
     SelectableContainer::select(
 	    ornamentsContainer,
-	    branchItem->getMapDesign()->selectionColor());
+	    branchItem->getMapDesign()->selectionPen(),
+	    branchItem->getMapDesign()->selectionBrush());
 }
 
 bool BranchContainer::frameAutoDesign(const bool &useInnerFrame)

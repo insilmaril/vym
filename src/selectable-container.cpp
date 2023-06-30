@@ -4,14 +4,14 @@
 
 #include "container.h"
 
-void SelectableContainer::select(Container *parent, const QColor &color)
+void SelectableContainer::select(Container *parent, const QPen &pen, const QBrush &brush)
 {
     if (!selectionContainer)
     {
         selectionContainer = new Container;
         selectionContainer->setContainerType(Selection);
-        selectionContainer->setPen(QPen(Qt::NoPen));
-        selectionContainer->setBrush(color);
+        selectionContainer->setPen(pen);
+        selectionContainer->setBrush(brush);
         selectionContainer->overlay = true;
     }
     parent->addContainer(selectionContainer, Z_SELECTION);

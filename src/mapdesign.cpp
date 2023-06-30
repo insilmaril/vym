@@ -47,95 +47,68 @@ void MapDesign::init()
 {
     int mapDesign = 0;  // FIXME-2 only for testing, later load/save
 
-    if (mapDesign == 0) {
-        // Default mapDesign
-        // NewBranch: Layout of children branches 
-        branchContainerLayouts << Container::FloatingBounded;
-        branchContainerLayouts << Container::Vertical;
+    // Selection
+    selectionPenInt = QPen(QColor(255,255,0,255), 3);
+    selectionBrushInt = QBrush(QColor(255,255,0,120));
 
-        // NewBranch: Layout of children images 
-        imageContainerLayouts << Container::FloatingFree;
+    // NewBranch: Layout of children branches 
+    branchContainerLayouts << Container::FloatingBounded;
+    branchContainerLayouts << Container::Vertical;
 
-        // Heading colors
-        headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
-        headingColorHints << MapDesign::InheritedColor;        // Use color of parent
+    // NewBranch: Layout of children images 
+    imageContainerLayouts << Container::FloatingFree;
 
-        headingColors << QColor(Qt::white);
-        headingColors << QColor(Qt::green);
+    // Heading colors
+    headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
+    headingColorHints << MapDesign::InheritedColor;        // Use color of parent
 
-        // Frames
-        innerFrameTypes << FrameContainer::RoundedRectangle;
-        innerFrameTypes << FrameContainer::Rectangle;
-        innerFrameTypes << FrameContainer::Rectangle;
-        innerFrameTypes << FrameContainer::NoFrame;
-        innerFramePenWidths << 2;
+    headingColors << QColor(Qt::white);
+    headingColors << QColor(Qt::green);
 
-        outerFrameTypes << FrameContainer::Rectangle;
-        outerFrameTypes << FrameContainer::RoundedRectangle;
-        outerFrameTypes << FrameContainer::Rectangle;
-        outerFrameTypes << FrameContainer::Rectangle;
-        outerFrameTypes << FrameContainer::NoFrame;
-        if (usingDarkTheme) {
-            innerFramePenColors << QColor(Qt::black);
-            innerFrameBrushColors << QColor(85, 85, 127);
-            outerFramePenColors << QColor(Qt::green);
-            outerFramePenColors << QColor(Qt::red);
-            outerFramePenColors << QColor(Qt::green);
-            outerFramePenColors << QColor(Qt::red);
-            outerFrameBrushColors << QColor(85, 85, 127);
-            outerFrameBrushColors << QColor(25, 25, 117);
-            outerFrameBrushColors << QColor(85, 85, 127);
-            outerFrameBrushColors << QColor(25, 25, 117);
-        } else {
-            innerFramePenColors << QColor(Qt::black);
-            innerFrameBrushColors << QColor(Qt::white);
-            outerFramePenColors << QColor(Qt::green);
-            outerFrameBrushColors << QColor(85, 85, 127);
-        }
+    // Frames
+    innerFrameTypes << FrameContainer::RoundedRectangle;
+    innerFrameTypes << FrameContainer::Rectangle;
+    innerFrameTypes << FrameContainer::Rectangle;
+    innerFrameTypes << FrameContainer::NoFrame;
+    innerFramePenWidths << 2;
 
-        outerFrameTypes << FrameContainer::NoFrame;
-        /*
-        outerFramePenColors;
-        outerFrameBrushColors;
-        outerFramePenWidths;
-        */
-
-        // Should links of branches use a default color or the color of heading?
-        linkColorHintInt = LinkObj::DefaultColor;
-        defaultLinkCol = Qt::blue;
-
-        linkStyles << LinkObj::NoLink;
-        linkStyles << LinkObj::PolyParabel;
-        linkStyles << LinkObj::Parabel;
-    } else if (mapDesign == 1) {
-        // Rainbow colors depending on depth mapDesign
-        // NewBranch: Layout of children branches 
-        branchContainerLayouts << Container::FloatingBounded;
-        branchContainerLayouts << Container::Vertical;
-
-        // NewBranch: Layout of children images 
-        imageContainerLayouts << Container::FloatingFree;
-
-        // Heading colors
-        headingColorHints << MapDesign::SpecificColor;
-
-        headingColors << QColor(Qt::red);
-        headingColors << QColor(Qt::green);
-        headingColors << QColor(Qt::blue);
-        headingColors << QColor(Qt::white);
-        headingColors << QColor(Qt::yellow);
-
-        // Should links of branches use a default color or the color of heading?
-        linkColorHintInt = LinkObj::DefaultColor;
-        defaultLinkCol = Qt::blue;
-
-        linkStyles << LinkObj::NoLink;
-        linkStyles << LinkObj::Parabel;
-        //linkStyles << LinkObj::PolyLine;
-        //linkStyles << LinkObj::Line;
-        //linkStyles << LinkObj::PolyParabel;
-        //linkStyles << LinkObj::Parabel;
+    outerFrameTypes << FrameContainer::Rectangle;
+    outerFrameTypes << FrameContainer::RoundedRectangle;
+    outerFrameTypes << FrameContainer::Rectangle;
+    outerFrameTypes << FrameContainer::Rectangle;
+    outerFrameTypes << FrameContainer::NoFrame;
+    if (usingDarkTheme) {
+        innerFramePenColors << QColor(Qt::black);
+        innerFrameBrushColors << QColor(85, 85, 127);
+        outerFramePenColors << QColor(Qt::green);
+        outerFramePenColors << QColor(Qt::red);
+        outerFramePenColors << QColor(Qt::green);
+        outerFramePenColors << QColor(Qt::red);
+        outerFrameBrushColors << QColor(85, 85, 127);
+        outerFrameBrushColors << QColor(25, 25, 117);
+        outerFrameBrushColors << QColor(85, 85, 127);
+        outerFrameBrushColors << QColor(25, 25, 117);
+    } else {
+        innerFramePenColors << QColor(Qt::black);
+        innerFrameBrushColors << QColor(Qt::white);
+        outerFramePenColors << QColor(Qt::green);
+        outerFrameBrushColors << QColor(85, 85, 127);
     }
+
+    outerFrameTypes << FrameContainer::NoFrame;
+    /*
+    outerFramePenColors;
+    outerFrameBrushColors;
+    outerFramePenWidths;
+    */
+
+    // Should links of branches use a default color or the color of heading?
+    linkColorHintInt = LinkObj::DefaultColor;
+    defaultLinkCol = Qt::blue;
+
+    linkStyles << LinkObj::NoLink;
+    linkStyles << LinkObj::PolyParabel;
+    linkStyles << LinkObj::Parabel;
 }
 
 void MapDesign::setName(const QString &s)
@@ -258,12 +231,22 @@ void MapDesign::updateFrames(
     }
 }
 
-QColor MapDesign::selectionColor()
+QPen MapDesign::selectionPen()
 {
-    return selectionColorInt;
+    return selectionPenInt;
 }
 
-void MapDesign::setSelectionColor(const QColor &c)
+void MapDesign::setSelectionPen(const QPen &p)
 {
-    selectionColorInt = c;
+    selectionPenInt = p;
+}
+
+QBrush MapDesign::selectionBrush()
+{
+    return selectionBrushInt;
+}
+
+void MapDesign::setSelectionBrush(const QBrush &b)
+{
+    selectionBrushInt = b;
 }

@@ -97,8 +97,10 @@ class MapDesign {
             const RelinkMode &relinkMode,
             int depth);
 
-    QColor selectionColor();
-    void setSelectionColor(const QColor &col);
+    QPen selectionPen();
+    void setSelectionPen(const QPen &);
+    QBrush selectionBrush();
+    void setSelectionBrush(const QBrush &);
 
   private:
     QString name;
@@ -128,7 +130,8 @@ class MapDesign {
     ConfigList <LinkObj::Style> linkStyles;
 
     // Selection
-    QColor selectionColorInt;
+    QPen selectionPenInt;
+    QBrush selectionBrushInt;
 };
 
     inline MapDesign::RelinkMode operator|(MapDesign::RelinkMode a, MapDesign::RelinkMode b)
