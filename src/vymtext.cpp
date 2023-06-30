@@ -242,6 +242,7 @@ QStringList VymText::getAttributes() const
         if (!fonthint.isEmpty())
             ret << attribut("fonthint", fonthint);
     }
+    ret << attribut("textColor", color.name());
     ret << attribut("text", quoteQuotes(text));
     return ret;
 }
