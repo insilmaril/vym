@@ -847,15 +847,18 @@ class VymModel : public TreeModel {
     void selectMapLinkColor();
 
   private:
-    void setSelectionColorInt(QColor);
     QItemSelectionModel *selModel;
     QString lastSelectString;
     bool selectionBlocked; //! Used to block changes of selection while editing
                            //! a heading
 
   public:
-    void setSelectionColor(QColor);
-    QColor getSelectionColor();
+    void setSelectionPenColor(QColor);
+    QColor getSelectionPenColor();
+    void setSelectionPenWidth(qreal);
+    qreal getSelectionPenWidth();
+    void setSelectionBrushColor(QColor);
+    QColor getSelectionBrushColor();
 
     ////////////////////////////////////////////
     // Iterating and selecting branches

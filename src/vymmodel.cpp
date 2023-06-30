@@ -287,7 +287,10 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     */
 
     QString mapAttr = xml.attribut("version", vymVersion);
-    if (!saveSel)
+    if (!saveSel) {
+        QPen selPen = mapEditor->getSelectionPen();
+        QBrush selBrush = mapEditor->getSelectionBrush();
+
         mapAttr +=
             xml.attribut("author", author) + xml.attribut("title", title) +
             xml.attribut("comment", comment) + xml.attribut("date", getDate()) +
@@ -310,8 +313,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
         mapAttr +=
             xml.attribut("defaultFont", defaultFont.toString()) +
-            xml.attribut("selectionColor",
-                         mapDesign->selectionColor().name(QColor::HexArgb)) +
+            xml.attribut("selectionPenColor", selPen.color().name(QColor::HexArgb)) +
+            xml.attribut("selectionPenWidth", QString().setNum(selPen.width())) + 
+            xml.attribut("selectionBrushColor", selBrush.color().name(QColor::HexArgb)) +
             xml.attribut("linkStyle", LinkObj::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
             xml.attribut("linkColor", mapDesign->defaultLinkColor().name()) +
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
@@ -326,6 +330,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("mapRotationAngle",
                          QString().setNum(mapEditor->getAngleTarget())) +
             colhint;
+    }
     header += xml.beginElement("vymmap", mapAttr);
     xml.incIndent();
 
@@ -5600,22 +5605,6 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::setSelectionColorInt(QColor col)
-{
-    if (!col.isValid())
-        return;
-    saveState(QString("setSelectionColor (\"%1\")")
-                  .arg(mapDesign->selectionColor().name(QColor::HexArgb)),
-              QString("setSelectionColor (\"%1\")").arg(col.name()),
-              QString("Set color of selection box to %1").arg(col.name()));
-
-    mapDesign->setSelectionColor(col);
-    vymView->setSelectionColor(col);
-    QItemSelection selection = selModel->selection();
-    unselectAll();
-    selModel->select(selection, QItemSelectionModel::ClearAndSelect);
-}
-
 void VymModel::emitSelectionChanged(const QItemSelection &newsel)
 {
     emit(selectionChanged(newsel, newsel)); // needed e.g. to update geometry in editor
@@ -5628,14 +5617,61 @@ void VymModel::emitSelectionChanged()
     emitSelectionChanged(newsel);
 }
 
-void VymModel::setSelectionColor(QColor col)
+void VymModel::setSelectionPenColor(QColor col)
 {
     if (!col.isValid())
         return;
-    setSelectionColorInt(col);
+
+    QPen selPen = mapEditor->getSelectionPen();
+    saveState(QString("setSelectionPenColor (\"%1\")")
+                  .arg(selPen.color().name()),
+              QString("setSelectionPenColor (\"%1\")").arg(col.name()),
+              QString("Set pen color of selection box to %1").arg(col.name()));
+
+    selPen.setColor(col);
+    mapEditor->setSelectionPen(selPen);
 }
 
-QColor VymModel::getSelectionColor() { return mapDesign->selectionColor(); }
+QColor VymModel::getSelectionPenColor() {
+    return mapEditor->getSelectionPen().color();
+}
+
+void VymModel::setSelectionPenWidth(qreal w)
+{
+    QPen selPen = mapEditor->getSelectionPen();
+    
+    saveState(QString("setSelectionPenWidth (\"%1\")")
+                  .arg(mapEditor->getSelectionPen().width()),
+              QString("setSelectionPenWidth (\"%1\")").arg(w),
+              QString("Set pen width of selection box to %1").arg(w));
+
+    selPen.setWidth(w);
+    mapEditor->setSelectionPen(selPen);
+    //vymView->setSelectionColor(col);
+}
+
+qreal VymModel::getSelectionPenWidth() {
+    return mapEditor->getSelectionPen().width();
+}
+
+void VymModel::setSelectionBrushColor(QColor col)
+{
+    if (!col.isValid())
+        return;
+
+    QBrush selBrush = mapEditor->getSelectionBrush();
+    saveState(QString("setSelectionBrushColor (\"%1\")")
+                  .arg(selBrush.color().name()),
+              QString("setSelectionBrushColor (\"%1\")").arg(col.name()),
+              QString("Set Brush color of selection box to %1").arg(col.name()));
+
+    selBrush.setColor(col);
+    mapEditor->setSelectionBrush(selBrush);
+}
+
+QColor VymModel::getSelectionBrushColor() {
+    return mapEditor->getSelectionBrush().color();
+}
 
 bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst)
 {

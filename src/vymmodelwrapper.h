@@ -148,7 +148,9 @@ class VymModelWrapper : public VymScriptContext {
     void setFramePenColor(const bool & useInnerFrame, const QString &color);
     void setFrameType(const bool & useInnerFrame, const QString &type);
     void setScaleFactor(qreal f);
-    void setSelectionColor(const QString &color);
+    void setSelectionBrushColor(const QString &color);
+    void setSelectionPenColor(const QString &color);
+    void setSelectionPenWidth(const qreal &);
     void setRotationHeading(const int &i);
     void setRotationSubtree(const int &i);
     void setTaskPriorityDelta(const int &n);

@@ -25,7 +25,7 @@ class VymView : public QMainWindow {
     void initFocus();
     void nextSlide();
     void previousSlide();
-    void setSelectionColor(const QColor &);
+    void setSelectionBrush(const QBrush &);
     void setBackgroundColor(const QColor &);
     void setLinkColor(const QColor &);
 

@@ -419,7 +419,7 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
                 mainWindow->gotoModel(m);
             view->setStyleSheet(
                 "QTableView {selection-background-color: " +
-                m->getSelectionColor().name() +
+                m->getSelectionBrushColor().name() +
                 "; selection-color:" + bi->getHeadingColor().name() + "}" +
                 "QTableView:focus {" + editorFocusStyle + "}");
             view->scrollTo(selected.indexes().first());

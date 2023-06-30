@@ -831,11 +831,37 @@ void VymReader::readVymMapAttr()
         model->setMapDefaultFont(font);
     }
 
-    a = "selectionColor";
+    a = "selectionColor";   // Only for compatibility. No longer used starting 2.9.512
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         col.setNamedColor(s);
-        model->setSelectionColor(col);
+        model->setSelectionPenColor(col);
+        model->setSelectionBrushColor(col);
+    }
+
+    a = "selectionPenColor";   // Introduced 2.9.12
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        col.setNamedColor(s);
+        model->setSelectionPenColor(col);
+    }
+
+    a = "selectionPenWidth";   // Introduced 2.9.12
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        float  w = s.toFloat(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute  " + a);
+            return;
+        }
+        model->setSelectionPenWidth(w);
+    }
+
+    a = "selectionBrushColor";   // Introduced 2.9.12
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        col.setNamedColor(s);
+        model->setSelectionBrushColor(col);
     }
 
     a = "linkColorHint";

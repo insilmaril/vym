@@ -251,6 +251,8 @@ class MapEditor : public QGraphicsView {
 
   private:
     QColor selectionColor;
+    QPen selectionPen;
+    QBrush selectionBrush;
 
   public slots:
     void updateSelection(QItemSelection, QItemSelection); // update selection
@@ -258,7 +260,9 @@ class MapEditor : public QGraphicsView {
     void togglePresentationMode();
 
   public:
-    void setSelectionColor(const QColor &c);
-    QColor getSelectionColor();
+    void setSelectionPen(const QPen &p);
+    QPen getSelectionPen();
+    void setSelectionBrush(const QBrush &p);
+    QBrush getSelectionBrush();
 };
 #endif

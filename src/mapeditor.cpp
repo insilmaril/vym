@@ -181,9 +181,9 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editHeading()));
 
-    // Selections
-    selectionColor = QColor(255, 255, 0);
-    selectionColor.setAlpha(150);
+    // Selections   // FIXME-1 consider MapDesign defaults!
+    selectionPen = QPen(QColor(255,255,0), 1);
+    selectionBrush = QBrush(QColor(255,255,0));
 
     // Panning
     panningTimer = new QTimer(this);
@@ -2429,7 +2429,7 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
     */
     QList<MapItem *> itemsSelected;
 
-    // Select objects
+    // Select objects   // FIXME-0 consider new selBrush and selPen settings from MapEditor!
     foreach (QModelIndex ix, newsel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
@@ -2522,12 +2522,20 @@ void MapEditor::togglePresentationMode()
     mainWindow->togglePresentationMode();
 }
 
-void MapEditor::setSelectionColor(const QColor &col)
+void MapEditor::setSelectionPen(const QPen &p)
 {
-    selectionColor = col;
-    selectionColor.setAlpha(220);
+    selectionPen = p;
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
 }
 
-QColor MapEditor::getSelectionColor() { return selectionColor; }
+QPen MapEditor::getSelectionPen() { return selectionPen; }
+
+void MapEditor::setSelectionBrush(const QBrush &b)
+{
+    selectionBrush = b;
+    QItemSelection sel = model->getSelectionModel()->selection();
+    updateSelection(sel, sel);
+}
+
+QBrush MapEditor::getSelectionBrush() { return selectionBrush; }
