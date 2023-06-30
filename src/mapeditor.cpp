@@ -1396,6 +1396,7 @@ void MapEditor::editHeading()
         VymText heading = bi->getHeading();
         if (heading.isRichText() || bi->getHeadingPlain().contains("\n")) {
             mainWindow->windowShowHeadingEditor();
+            ensureSelectionVisibleAnimated();
             return;
         }
         model->setSelectionBlocked(true);
