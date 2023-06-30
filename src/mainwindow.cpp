@@ -5775,12 +5775,17 @@ void Main::formatSelectLinkColor()
     }
 }
 
-void Main::formatSelectSelectionColor()
+void Main::formatSelectSelectionColor() // FIXME-0 no Pen/Brush support yet
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(m->getMapDefLinkColor(), this);
-        m->setSelectionColor(col);
+        QColor col = QColorDialog::getColor(
+                m->getSelectionBrushColor(),
+                this,
+                tr("Color of selection box","Mainwindow"),
+                QColorDialog::ShowAlphaChannel);
+        m->setSelectionPenColor(col);
+        m->setSelectionBrushColor(col);
     }
 }
 
@@ -6480,7 +6485,7 @@ void Main::updateActions()
         QPixmap pix(16, 16);
         pix.fill(m->getMapBackgroundColor());
         actionFormatBackColor->setIcon(pix);
-        pix.fill(m->getSelectionColor());
+        pix.fill(m->getSelectionBrushColor());
         actionFormatSelectionColor->setIcon(pix);
         pix.fill(m->getMapDefLinkColor());
         actionFormatLinkColor->setIcon(pix);

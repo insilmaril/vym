@@ -561,8 +561,28 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
         model->setMapDefaultFont(font);
     }
     if (!a.value("selectionColor").isEmpty()) {
+        // Only for compatibility
         col.setNamedColor(a.value("selectionColor"));
-        model->setSelectionColor(col);
+        model->setSelectionBrushColor(col);
+        model->setSelectionPenColor(col);
+        model->setSelectionPenWidth(1);
+    }
+    if (!a.value("selectionPenColor").isEmpty()) {
+        // Introduced in 2.9.12
+        col.setNamedColor(a.value("selectionPenColor"));
+        model->setSelectionPenColor(col);
+    }
+    if (!a.value("selectionPenWidth").isEmpty()) {
+        // Introduced in 2.9.12
+        bool ok;
+        qreal w = a.value("selectionPenWidth").toFloat(&ok);
+        if (ok)
+            model->setSelectionPenWidth(w);
+    }
+    if (!a.value("selectionBrushColor").isEmpty()) {
+        // Introduced in 2.9.12
+        col.setNamedColor(a.value("selectionBrushColor"));
+        model->setSelectionBrushColor(col);
     }
     if (!a.value("linkColorHint").isEmpty()) {
         if (a.value("linkColorHint") == "HeadingColor")

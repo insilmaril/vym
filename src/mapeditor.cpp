@@ -134,7 +134,8 @@ MapEditor::MapEditor(VymModel *vm)
     connect(a, SIGNAL(triggered()), this, SLOT(editHeading()));
 
     // Selections
-    selectionColor = QColor(255, 255, 0);
+    selectionPen = QPen(QColor(255,255,0), 1);
+    selectionBrush = QBrush(QColor(255,255,0));
 
     // Panning
     panningTimer = new QTimer(this);
@@ -2284,8 +2285,7 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     // Add additonal polygons
     QGraphicsPathItem *sp;
     while (itemsSelected.count() > selPathList.count()) {
-        sp = mapScene->addPath(QPainterPath(), QPen(selectionColor),
-                               selectionColor);
+        sp = mapScene->addPath(QPainterPath());
         sp->show();
         selPathList.append(sp);
     }
@@ -2295,8 +2295,8 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
         MapObj *mo = itemsSelected.at(i)->getMO();
         sp = selPathList.at(i);
         sp->setPath(mo->getSelectionPath());
-        sp->setPen(selectionColor);
-        sp->setBrush(selectionColor);
+        sp->setPen(selectionPen);
+        sp->setBrush(selectionBrush);
         sp->setParentItem(mo);
         sp->setZValue(dZ_SELBOX);
 
@@ -2352,12 +2352,20 @@ void MapEditor::togglePresentationMode()
     mainWindow->togglePresentationMode();
 }
 
-void MapEditor::setSelectionColor(const QColor &col)
+void MapEditor::setSelectionPen(const QPen &p)
 {
-    selectionColor = col;
-    selectionColor.setAlpha(220);
+    selectionPen = p;
     QItemSelection sel = model->getSelectionModel()->selection();
     updateSelection(sel, sel);
 }
 
-QColor MapEditor::getSelectionColor() { return selectionColor; }
+QPen MapEditor::getSelectionPen() { return selectionPen; }
+
+void MapEditor::setSelectionBrush(const QBrush &b)
+{
+    selectionBrush = b;
+    QItemSelection sel = model->getSelectionModel()->selection();
+    updateSelection(sel, sel);
+}
+
+QBrush MapEditor::getSelectionBrush() { return selectionBrush; }

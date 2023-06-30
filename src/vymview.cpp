@@ -152,11 +152,11 @@ void VymView::nextSlide() { slideEditor->nextSlide(); }
 
 void VymView::previousSlide() { slideEditor->previousSlide(); }
 
-void VymView::setSelectionColor(const QColor &col)
+void VymView::setSelectionBrush(const QBrush &brush)
 {
-    mapEditor->setSelectionColor(col);
+    mapEditor->setSelectionBrush(brush);
     treeEditor->setStyleSheet(
-        "selection-background-color: " + col.name() + ";" +
+        "selection-background-color: " + brush.color().name() + ";" +
         "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
 }
 
@@ -164,7 +164,7 @@ void VymView::setBackgroundColor(const QColor &col)
 {
     mapEditor->getScene()->setBackgroundBrush(col);
     treeEditor->setStyleSheet(
-        "selection-background-color: " + mapEditor->getSelectionColor().name() + ";" +
+        "selection-background-color: " + mapEditor->getSelectionBrush().color().name() + ";" +
         "background-color: " + col.name());
     mainWindow->updateHeadingEditor();
 }

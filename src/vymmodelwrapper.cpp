@@ -954,14 +954,29 @@ void VymModelWrapper::setFrameType(const QString &type)
 
 void VymModelWrapper::setScaleFactor(qreal f) { model->setScaleFactor(f); }
 
-void VymModelWrapper::setSelectionColor(const QString &color)
+void VymModelWrapper::setSelectionBrushColor(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
         logError(context(), QScriptContext::SyntaxError,
                  QString("Could not set color to %1").arg(color));
     else
-        model->setSelectionColor(col);
+        model->setSelectionBrushColor(col);
+}
+
+void VymModelWrapper::setSelectionPenColor(const QString &color)
+{
+    QColor col(color);
+    if (!col.isValid())
+        logError(context(), QScriptContext::SyntaxError,
+                 QString("Could not set color to %1").arg(color));
+    else
+        model->setSelectionPenColor(col);
+}
+
+void VymModelWrapper::setSelectionPenWidth(const qreal &w)
+{
+    model->setSelectionPenWidth(w);
 }
 
 void VymModelWrapper::setTaskPriorityDelta(const int &n)
