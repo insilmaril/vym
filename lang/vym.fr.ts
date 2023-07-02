@@ -70,60 +70,60 @@
         <location filename="../src/background-dialog.cpp" line="+20"/>
         <source>Set background</source>
         <comment>Dialog to set background color or image</comment>
-        <translation type="unfinished"></translation>
+        <translation>Choix de la couleur ou l&apos;image de fond</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Images</source>
-        <translation type="unfinished">Images</translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Load background image</source>
-        <translation type="unfinished">Charger l&apos;image de fond</translation>
+        <translation>Charger l&apos;image de fond</translation>
     </message>
 </context>
 <context>
     <name>BranchPropertyEditor</name>
     <message>
         <source>Branch Property Editor</source>
-        <translation type="vanished">Editer les propriétés de la branche</translation>
+        <translation>Editer les propriétés de la branche</translation>
     </message>
     <message>
         <source>Frame</source>
-        <translation type="vanished">Encadrement</translation>
+        <translation>Encadrement</translation>
     </message>
     <message>
         <source>Geometry</source>
-        <translation type="vanished">Géométrie</translation>
+        <translation>Géométrie</translation>
     </message>
     <message>
         <source>No Frame</source>
-        <translation type="vanished">Pas d&apos;encadrement</translation>
+        <translation>Pas d&apos;encadrement</translation>
     </message>
     <message>
         <source>Rectangle</source>
-        <translation type="vanished">Rectangle</translation>
+        <translation>Rectangle</translation>
     </message>
     <message>
         <source>Rounded Rectangle</source>
-        <translation type="vanished">Rectangle arrondi</translation>
+        <translation>Rectangle arrondi</translation>
     </message>
     <message>
         <source>Ellipse</source>
-        <translation type="vanished">Ellipse</translation>
+        <translation>Ellipse</translation>
     </message>
     <message>
         <source>Cloud</source>
-        <translation type="vanished">Nuage</translation>
+        <translation>Nuage</translation>
     </message>
     <message>
         <source>Padding</source>
-        <translation type="vanished">Remplissage</translation>
+        <translation>Remplissage</translation>
     </message>
     <message>
         <source>Borderline width</source>
-        <translation type="vanished">Epaisseur contour</translation>
+        <translation>Epaisseur contour</translation>
     </message>
     <message>
         <source>Include children</source>
@@ -539,35 +539,35 @@ cela sur votre système!</translation>
     <message>
         <source>VYM - Info</source>
         <translatorcomment>VYM - Informations</translatorcomment>
-        <translation type="vanished">VYM - Info</translation>
+        <translation>VYM - Info</translation>
     </message>
     <message>
         <source>Map:</source>
-        <translation type="vanished">Carte:</translation>
+        <translation>Carte:</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation type="vanished">Titre:</translation>
+        <translation>Titre:</translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation type="vanished">Auteur :</translation>
+        <translation>Auteur :</translation>
     </message>
     <message>
         <source>Comment:</source>
-        <translation type="vanished">Commentaire:</translation>
+        <translation>Commentaire:</translation>
     </message>
     <message>
         <source>Statistics:</source>
-        <translation type="vanished">Statistiques:</translation>
+        <translation>Statistiques:</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Fermer</translation>
+        <translation>Fermer</translation>
     </message>
 </context>
 <context>
@@ -620,19 +620,19 @@ cela sur votre système!</translation>
     </message>
     <message>
         <source>Redo</source>
-        <translation type="vanished">Refaire</translation>
+        <translation>Refaire</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation type="vanished">Heure</translation>
+        <translation>Heure</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="vanished">Commentaire</translation>
+        <translation>Commentaire</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="vanished">Défaire</translation>
+        <translation>Annuler</translation>
     </message>
 </context>
 <context>
@@ -677,7 +677,7 @@ cela sur votre système!</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="vanished">Etiquette </translation>
+        <translation>Etiquette</translation>
     </message>
     <message>
         <location filename="../src/lineeditdialog.cpp" line="+16"/>
@@ -721,7 +721,7 @@ cela sur votre système!</translation>
     </message>
     <message>
         <source>Set &amp;Background Color</source>
-        <translation type="vanished">Définir la couleur du &amp;Fond</translation>
+        <translation>Définir la couleur du &amp;Fond</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -855,13 +855,13 @@ cela sur votre système!</translation>
     <message>
         <location line="+885"/>
         <source>Set author for new maps (used in lockfile)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de l&apos;auteur des nouvelles cartes (pour le verrouillage)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
-        <translation type="unfinished"></translation>
+        <translation>Auteur inconnu</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -1191,19 +1191,19 @@ existe déjà. Voulez-vous </translation>
     <message>
         <location line="+52"/>
         <source>Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriétés</translation>
     </message>
     <message>
         <location line="+210"/>
         <source>Move branch up</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">Monter la branche</translation>
+        <translation>Monter la branche</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Move branch down</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished">Descendre la branche</translation>
+        <translation>Descendre la branche</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -1323,13 +1323,13 @@ existe déjà. Voulez-vous </translation>
         <location line="+202"/>
         <source>Note editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editeur d&apos;arbre</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Heading editor</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Editeur d&apos;entête</translation>
     </message>
     <message>
         <location line="+218"/>
@@ -1375,36 +1375,36 @@ existe déjà. Voulez-vous </translation>
         <location line="+315"/>
         <source>Move branch diagonally up</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Monter la branche diagonalement</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Move branch diagonally down</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Descendre la branche diagonalement</translation>
     </message>
     <message>
         <location line="+307"/>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser la priorité delta des tâches visibles</translation>
     </message>
     <message>
         <location line="+617"/>
         <source>&amp;Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Connecter</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connect</source>
         <comment>Shortcuts</comment>
-        <translation type="unfinished"></translation>
+        <translation>Connecter</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Get Confluence user data</source>
         <comment>Connect action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Récupérer les données utilisateur depuis Confluence</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1561,49 +1561,49 @@ existe déjà. Voulez-vous </translation>
         <location line="+137"/>
         <source>Set author for new maps</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Définir l&apos;auteur des nouvelles cartes</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Confluence Credentials</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Identifiants Confluence</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>JIRA Credentials</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Identifiants JIRA</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Dark theme</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Mode sombre</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Number of visible parents in task editor</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de parents affichés dans l&apos;éditeur de tâches</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Number of visible parents in find results window</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de lignes affichées dans la fenêtre résultats</translation>
     </message>
     <message>
         <location line="+83"/>
         <source>Show scripting commands</source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les commandes de script</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Debug info</source>
         <comment>Option to show debugging info</comment>
-        <translation type="unfinished"></translation>
+        <translation>Information de débogage</translation>
     </message>
     <message>
         <location line="+4056"/>
@@ -1618,7 +1618,11 @@ existe déjà. Voulez-vous </translation>
 
 vym will create an empty map now.</source>
         <comment>Mainwindow: Failed to load default map</comment>
-        <translation type="unfinished"></translation>
+        <translation>Imposible de charger la carte par défaut :
+        
+%1
+
+VYM va créer une carte vide.</translation>
     </message>
     <message>
         <location line="+395"/>
@@ -1708,7 +1712,7 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <location line="+1"/>
         <source>Restart vym to apply the changed dark theme setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Relancer VYM pour appliquer les réglages du mode sombre</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -2147,7 +2151,7 @@ Couldn&apos;t rename map to %1</source>
         <location line="+25"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Enregister comme carte par défaut</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -2375,7 +2379,7 @@ Couldn&apos;t rename map to %1</source>
     </message>
     <message>
         <source>Set &amp;Background image</source>
-        <translation type="vanished">Définit l&apos;&amp;Image de fond</translation>
+        <translation>Définit l&apos;&amp;Image de fond</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2513,7 +2517,7 @@ Couldn&apos;t rename map to %1</source>
         <location line="+5"/>
         <source>Check for release notes and updates</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Vérifier les mises à jour</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2626,13 +2630,13 @@ Couldn&apos;t rename map to %1</source>
         <location line="+5"/>
         <source>Download and show release notes</source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Télécharger et afficher les notes de révision</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Check, if updates are available</source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Vérifier si des mises à jour sont disponibles</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2655,59 +2659,59 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <location line="-2915"/>
         <source>Script output window</source>
-        <translation type="unfinished"></translation>
+        <translation>Fenêtre de sortie script</translation>
     </message>
     <message>
         <location line="+925"/>
         <source>Import Dir...</source>
         <comment>Import Filters</comment>
-        <translation type="unfinished"></translation>
+        <translation>Importer un dossier</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Confluence (HTML)...</source>
         <comment>File export menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Confluence (HTML)...</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Text (Markdown)...</source>
         <comment>File export menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Text (Markdown)...</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>CSV...</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV...</translation>
     </message>
     <message>
         <location line="+486"/>
         <source>Get page name from Confluence</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Récupérer le nom de la page depuis Confluence</translation>
     </message>
     <message>
         <location line="+263"/>
         <source>Add image...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter une image</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Goto linked map...</source>
         <comment>Edit menu</comment>
-        <translation type="unfinished"></translation>
+        <translation>Atteindre la carte liée...</translation>
     </message>
     <message>
         <location line="+170"/>
         <source>Set &amp;Background color and image</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir la couleur ou image d&apos;arrière-plan</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Toggle Presentation mode</source>
         <comment>View action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Basculer en mode présentation</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -2719,13 +2723,13 @@ Couldn&apos;t rename map to %1</source>
         <location line="+598"/>
         <source>Set path for new maps</source>
         <comment>Settings action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Définir le chemin des nouvelles cartes</translation>
     </message>
     <message>
         <location line="+170"/>
         <source>Show keyboard macros</source>
         <comment>Help action</comment>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les touches de macros</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2808,7 +2812,7 @@ Couldn&apos;t rename map to %1</source>
         <location line="+21"/>
         <source>View toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Barre d&apos;outil vue</translation>
     </message>
     <message>
         <location line="+396"/>
@@ -2956,7 +2960,7 @@ Couldn&apos;t rename map to %1</source>
         <location filename="../src/noteeditor.cpp" line="+13"/>
         <source>Note Editor</source>
         <comment>Name of editor shown as window title</comment>
-        <translation type="unfinished">Éditeur de note</translation>
+        <translation>Éditeur d&apos;arbre</translation>
     </message>
 </context>
 <context>
@@ -3181,7 +3185,8 @@ Couldn&apos;t rename map to %1</source>
         <location line="+64"/>
         <source>Couldn&apos;t start %1 tool to compress data!
 The map could not be saved, please check if backup file is available or export as XML file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de lancer %1 pour compresser les données.
+La carte ne peut pas être sauvegardée. Vérifier qu&apos;il existe une sauvegarde ou exporter en tant que fichier XML.</translation>
     </message>
     <message>
         <location line="-50"/>
@@ -3420,19 +3425,19 @@ Line %2, column %3</source>
     </message>
     <message>
         <source>Save to selected slide</source>
-        <translation type="vanished">Sauvegarder dans la diapo sélectionnée</translation>
+        <translation>Sauvegarder dans la diapo sélectionnée</translation>
     </message>
     <message>
         <source>Run</source>
-        <translation type="vanished">Lancer</translation>
+        <translation>Exécuter</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="vanished">Charger</translation>
+        <translation>Charger</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Sauvegarder</translation>
+        <translation>Sauvegarder</translation>
     </message>
     <message>
         <location filename="../src/scripteditor.cpp" line="-88"/>
@@ -3462,7 +3467,7 @@ Line %2, column %3</source>
         <location line="+3"/>
         <source>No script selected</source>
         <comment>scriptname in scriptEditor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Aucun script sélectionné</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3519,7 +3524,7 @@ Voulez-vous l&apos;écraser?</translation>
     <name>ShowTextDialog</name>
     <message>
         <source>Close</source>
-        <translation type="vanished">Fermer</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <source>Dialog</source>
@@ -3532,7 +3537,7 @@ Voulez-vous l&apos;écraser?</translation>
         <location filename="../src/taskeditor.cpp" line="+46"/>
         <source>Show only tasks from current map</source>
         <comment>Filters in task Editor</comment>
-        <translation type="unfinished"></translation>
+        <translation>Montrer uniquement les tâches de la carte courante</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3828,7 +3833,7 @@ Voulez-vous l&apos;écraser?</translation>
     <message>
         <location line="+80"/>
         <source>Note Editor</source>
-        <translation>Éditeur de note</translation>
+        <translation>Éditeur d&apos;arbre</translation>
     </message>
     <message>
         <location line="-186"/>
@@ -3954,12 +3959,13 @@ Writing it uncompressed will also write images
 and flags and thus may overwrite files into the given directory
 
 Do you want to write the map</source>
-        <translation type="unfinished"></translation>
+        <translation>La carte %1 n&apos;utilise pas le format VYM compressé.
+Enregister en format non compressé va générer des fichiers images dans le répertoire, ce qui risque d&apos;écraser les données existantes.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>uncompressed, potentially overwrite existing data</source>
-        <translation type="unfinished"></translation>
+        <translation>non compressé, risque d&apos;écraser des données existantes du répertoire</translation>
     </message>
     <message>
         <location line="+314"/>
@@ -3971,7 +3977,7 @@ Do you want to write the map</source>
         <location line="+37"/>
         <source>Warning: Map already opended</source>
         <comment>VymModel</comment>
-        <translation type="unfinished"></translation>
+        <translation>Attention : carte déjà ouverte</translation>
     </message>
     <message>
         <location line="-354"/>
@@ -4222,7 +4228,7 @@ Voulez-vous recharger la carte à partir du nouveau fichier?</translation>
     </message>
     <message>
         <source>Load background image</source>
-        <translation type="vanished">Charger l&apos;image de fond</translation>
+        <translation>Charger l&apos;image de fond</translation>
     </message>
 </context>
 <context>
@@ -4302,7 +4308,7 @@ Couldn&apos;t rename map to %1</source>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="vanished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -4325,7 +4331,7 @@ Couldn&apos;t rename map to %1</source>
         <location line="+9"/>
         <source>Path to 7z.exe</source>
         <comment>zip tool settings dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Configuration des outils ZIP</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -4335,12 +4341,12 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <location line="+3"/>
         <source>Set path to zip files</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir l&apos;emplacement des fichiers ZIP</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set path to unzip files</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir l&apos;emplacement pour la décompression unzip</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -4348,7 +4354,7 @@ Couldn&apos;t rename map to %1</source>
         <location line="+5"/>
         <location line="+2"/>
         <source>Status: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Etat : %1</translation>
     </message>
 </context>
 </TS>
