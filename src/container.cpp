@@ -520,7 +520,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                         w_total += c_bbox.width();
                         qreal h = c_bbox.height();
-                        h_max = (h_max < h) ? h : h_max;
+                        if (h_max < h) h_max = h;
                     }
                 }
 
@@ -600,25 +600,26 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                     // For width and height we can use the already mapped dimensions
                     qreal w = c_bbox.width();
-                    w_max = (w_max < w) ? w : w_max;
+                    if (w_max < w) w_max = w;
                     h_total += c_bbox.height();
                 }
 
                 // Top line, where next children will be aligned to
                 qreal y = - h_total / 2;
 
-                // Position children initially // FIXME-0 consider mapped dimensions like in Horizontal!
+                // Position children initially
                 foreach (Container *c, childContainers()) {
+                    QRectF c_bbox = mapRectFromItem(c, c->rect());
                     y += - c->rect().top();
 		    switch (verticalAlignment) {
 			case AlignedLeft:
-                            c->setPos(- w_max / 2 - c->rect().left(), y);
+                            c->setPos((- w_max + c_bbox.width()) / 2, y);
 			    break;
 			case AlignedRight:
-                            c->setPos(w_max / 2 - c->rect().right(), y);
+                            c->setPos((w_max - c_bbox.width()) / 2, y);
 			    break;
 			case AlignedCentered:
-			    c->setPos (- c->rect().width() / 2 - c->rect().left(), y);
+			    c->setPos (0, y);
 			    break;
                         default:
                             qWarning() << "Container::reposition vertically - undefined alignment:" << verticalAlignment << " in " << info();
