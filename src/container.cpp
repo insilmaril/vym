@@ -146,10 +146,10 @@ QString Container::info (const QString &prefix)
         // + QString(" zPos: %1").arg(zPos)
         + QString(" Layout: %1").arg(getLayoutString())
         //+ QString(" z: %1").arg(zPos)
-        + QString(" a: %1").arg(qRound(rotation()))
+        //+ QString(" a: %1").arg(qRound(rotation()))
         //+ QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
         //+ QString(" pos: %1").arg(qpointFToString(pos(), 0))
-        //+ QString(" rect: %1").arg(qrectFToString(rect(), 0))
+        + QString(" rect: %1").arg(qrectFToString(rect(), 0))
         ;
 }
 
@@ -394,7 +394,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    // qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -544,14 +544,14 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                         //qdbg() << ind() << "    HL x=" << x << "offset=" << offset << "c: " << c->info();
 
-                        // Align vertically centered
-                        c->setPos (x + offset, - c->rect().height() / 2 - c->rect().top());
+                        // Align vertically centered, consider mapped(!) dim
+                        c->setPos (x + offset, - c_bbox.height() / 2 - c_bbox.top());
 
                         // Align vertically to top
-                        // c->setPos (x + offset, - h_max / 2 - c->rect().top());
+                        //c->setPos (x + offset, - h_max / 2 - c_bbox.top());
 
                         // Align vertically to bottom
-                        // c->setPos (x + offset, h_max / 2 - c->rect().bottom());
+                        //c->setPos (x + offset, h_max / 2 - c_bbox.bottom());
 
                         // Post alignment
                         if (horizontalDirection == LeftToRight) {

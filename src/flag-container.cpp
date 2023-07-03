@@ -18,6 +18,7 @@ void FlagContainer::init()
 {
     avis = true;
     containerType = FlagCont;
+    //setPen(QPen(Qt::green));    // FIXME-0 positioned too high, esp. the note flag. svg icons have wrong position
 }
 
 void FlagContainer::setUuid(const QUuid &id) { uid = id; }

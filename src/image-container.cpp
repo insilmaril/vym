@@ -82,8 +82,8 @@ void ImageContainer::init()
     scaleFactor = 1;
     overlay = false;    // Inherits FrameContainer, which has overlay == true
 
-     // FIXME-3 for testing we do some coloring and additional drawing
-    //setPen(QPen(Qt::red));
+    // FIXME-3 for testing we do some coloring and additional drawing
+    //setPen(QPen(Qt::white));    // FIXME-0
 }
 
 void ImageContainer::setVisibility(bool v)
@@ -154,7 +154,9 @@ bool ImageContainer::load(const QString &fn, bool createClone)
 
             svgCachePath = newPath;
         }   // No clone created
-        setRect(svgItem->boundingRect());
+        QRectF r = svgItem->boundingRect();
+        // r.translate(0, -120);
+        setRect(r);
     } else {
         // Not svg
         QPixmap pm;

@@ -55,7 +55,7 @@ bool Flag::load(const QString &fn)
         return false;
 
     if (fn.contains("svg")) {
-        imageContainer->setWidth(32); // FIXME-3 scale svg of flags
+        imageContainer->setWidth(32);
     }
 
     path = fn;

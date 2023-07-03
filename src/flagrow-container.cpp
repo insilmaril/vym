@@ -11,9 +11,12 @@
 FlagRowContainer::FlagRowContainer()
 {
     // qDebug() << "Const FlagRowContainer ()";
+    // setPen(QPen(Qt::red));
     containerType = FlagRowCont;
     layout = Horizontal;
     horizontalDirection = LeftToRight;
+    verticalAlignment = AlignedCentered;
+
 }
 
 FlagRowContainer::~FlagRowContainer()
