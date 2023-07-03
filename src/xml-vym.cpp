@@ -30,6 +30,9 @@ VymReader::VymReader(VymModel* m)
     // When importing maps, content could be filtered,
     // e.g. without slides
     contentFilter = 0x0000;
+
+    branchesTotal = 0;
+    useProgress = false;
 }
 
 bool VymReader::read(QIODevice *device)
