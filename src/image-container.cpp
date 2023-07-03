@@ -44,16 +44,18 @@ void ImageContainer::copy(ImageContainer *other)
 
             svgItem->setVisible(isVisible());
             svgItem->setParentItem(this);
-            setRect(svgItem->boundingRect());
+            setRect(other->rect());
             break;
-        case ImageContainer::Pixmap:
+        case ImageContainer::Pixmap: {
             pixmapItem = new QGraphicsPixmapItem();
             pixmapItem->setPixmap(other->pixmapItem->pixmap());
-            pixmapItem->setParentItem(this); // FIXME-2 check...
+            pixmapItem->setParentItem(this);
+            QRectF r = other->pixmapItem->boundingRect();
+            pixmapItem->setPos( - r.width() / 2, - r.height() /2);
             pixmapItem->setVisible(isVisible());
-            //pixmapItem->setOffset(-20,-20);  // FIXME-2 testing
-            setRect(pixmapItem->boundingRect());
+            setRect(other->rect());
             imageType = ImageContainer::Pixmap;
+            }
             break;
         default:
             qWarning() << "ImgObj::copy other->imageType undefined";
@@ -83,7 +85,7 @@ void ImageContainer::init()
     overlay = false;    // Inherits FrameContainer, which has overlay == true
 
     // FIXME-3 for testing we do some coloring and additional drawing
-    //setPen(QPen(Qt::white));    // FIXME-0
+    //setPen(QPen(Qt::white));
 }
 
 void ImageContainer::setVisibility(bool v)
@@ -155,8 +157,10 @@ bool ImageContainer::load(const QString &fn, bool createClone)
             svgCachePath = newPath;
         }   // No clone created
         QRectF r = svgItem->boundingRect();
-        // r.translate(0, -120);
-        setRect(r);
+
+        // Center svg
+        svgItem->setPos( -r.width() / 2, - r.height() / 2);
+        setRect(mapFromItem(svgItem, svgItem->boundingRect()).boundingRect());
     } else {
         // Not svg
         QPixmap pm;
@@ -170,7 +174,10 @@ bool ImageContainer::load(const QString &fn, bool createClone)
         pixmapItem = new QGraphicsPixmapItem(this);
         pixmapItem->setPixmap(pm);
 
-        setRect(pixmapItem->boundingRect());
+        // Center svg
+        QRectF r = pixmapItem->boundingRect();
+        pixmapItem->setPos( -r.width() / 2, - r.height() / 2);
+        setRect(mapFromItem(pixmapItem, pixmapItem->boundingRect()).boundingRect());
     }
 
     return true;

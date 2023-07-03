@@ -394,7 +394,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -542,16 +542,16 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                         else
                             offset = - (c_bbox.right() - origin_mapped.x());
 
-                        //qdbg() << ind() << "    HL x=" << x << "offset=" << offset << "c: " << c->info();
+                        //qdbg() << ind() << "    HL x=" << x << " offset=" << offset << " c: " << c->info();
 
                         // Align vertically centered, consider mapped(!) dim
-                        c->setPos (x + offset, - c_bbox.height() / 2 - c_bbox.top());
+                        c->setPos (x + offset, 0);
 
                         // Align vertically to top
-                        //c->setPos (x + offset, - h_max / 2 - c_bbox.top());
+                        // c->setPos (x + offset, - (h_max - c_bbox.height()) / 2);
 
                         // Align vertically to bottom
-                        //c->setPos (x + offset, h_max / 2 - c_bbox.bottom());
+                        // c->setPos (x + offset, + (h_max - c_bbox.height()) / 2);
 
                         // Post alignment
                         if (horizontalDirection == LeftToRight) {
@@ -559,7 +559,8 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                         } else
                             x -= c_bbox.width();
 
-                        //qdbg() << ind() << "    HL Done positioning: " << c->info();
+                        // qdbg() << ind() << "    HL Done positioning: " << c->info();
+                        //qdgb() << ind() << "                         " << 
                     }   // No overlay container
                 }   // Position children 
 
@@ -606,7 +607,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // Top line, where next children will be aligned to
                 qreal y = - h_total / 2;
 
-                // Position children initially
+                // Position children initially // FIXME-0 consider mapped dimensions like in Horizontal!
                 foreach (Container *c, childContainers()) {
                     y += - c->rect().top();
 		    switch (verticalAlignment) {
