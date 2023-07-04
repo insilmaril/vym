@@ -469,6 +469,8 @@ void BranchContainer::updateChildrenStructure()
         }
     }
 
+    updateImagesContainer();
+
     if (branchCount() == 0) {
         // no children branches, remove unused containers
         if (linkSpaceContainer) {
@@ -554,8 +556,11 @@ int BranchContainer::imageCount()
         return imagesContainer->childItems().count();
 }
 
-void BranchContainer::createImagesContainer() // FIXME-2 imagesContainer not deleted, when no longer used
+void BranchContainer::createImagesContainer()
 {
+    // imagesContainer is created when images are added to branch
+    // The destructor of ImageItem calls 
+    // updateChildrenStructure() in parentBranch()
     imagesContainer = new Container ();
     imagesContainer->containerType = ImagesContainer;
     imagesContainer->setLayout(imagesContainerLayout);
@@ -1456,9 +1461,6 @@ void BranchContainer::reposition()
                 break;
         }
     }
-
-    // Remove  imagesContainer, if unused
-    updateImagesContainer();    // FIXME-0 should go to updateChildrenStucture()
 
     Container::reposition();
 

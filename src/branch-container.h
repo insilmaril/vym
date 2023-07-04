@@ -79,9 +79,9 @@ class BranchContainer : public SelectableContainer {
     void updateImagesContainer();       //! Remove unused containers and add needed ones
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();
-    void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
 
   public:
+    void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
     void showStructure();     // Print structure for debugging
     int imageCount();
     void createImagesContainer();

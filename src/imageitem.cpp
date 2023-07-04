@@ -22,11 +22,15 @@ ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be n
 
 ImageItem::~ImageItem()
 {
-    //qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer;
+    // qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer;
 
     if (imageContainer) {
         delete imageContainer;
         imageContainer = nullptr;
+
+        // Remove images container, if no longer required
+        if (parentBranch())
+            parentBranch()->getBranchContainer()->updateChildrenStructure();
     }
 }
 
