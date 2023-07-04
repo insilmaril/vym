@@ -676,9 +676,9 @@ class VymModel : public TreeModel {
     // MapDesign
     ////////////////////////////////////////////
   public:
-    MapDesign* getMapDesign();
+    MapDesign* mapDesign();
   private:
-    MapDesign* mapDesign;
+    MapDesign* mapDesignInt;
 
     QPen defXLinkPen;           // default pen for xlinks   //FIXME-2 move to mapDesign
     QString defXLinkStyleBegin; // default style begin      //FIXME-2 move to mapDesign

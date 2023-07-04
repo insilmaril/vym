@@ -847,7 +847,7 @@ void BranchContainer::updateUpLink()
         upLink->setLinkColor(headingContainer->getColor());
     else {
         if (branchItem)
-            upLink->setLinkColor(branchItem->getMapDesign()->defaultLinkColor());
+            upLink->setLinkColor(branchItem->mapDesign()->defaultLinkColor());
     }
 
     upLink->updateLinkGeometry();
@@ -972,8 +972,8 @@ void BranchContainer::select()
 {
     SelectableContainer::select(
 	    ornamentsContainer,
-	    branchItem->getMapDesign()->selectionPen(),
-	    branchItem->getMapDesign()->selectionBrush());
+	    branchItem->mapDesign()->selectionPen(),
+	    branchItem->mapDesign()->selectionBrush());
 }
 
 bool BranchContainer::frameAutoDesign(const bool &useInnerFrame)
@@ -1235,7 +1235,7 @@ void BranchContainer::updateBranchesContainerLayout()
     // Set container layouts
     if (branchItem && branchesContainerAutoLayout)
         setBranchesContainerLayout(
-            branchItem->getMapDesign()->branchesContainerLayout(
+            branchItem->mapDesign()->branchesContainerLayout(
                 branchItem->depth()));
     else
         setBranchesContainerLayout(branchesContainerLayout);
@@ -1250,7 +1250,7 @@ void BranchContainer::updateStyles(
     // qDebug() << "BC::updateStyles of " << info(); // FIXME-2 called often during load
 
     uint depth = branchItem->depth();
-    MapDesign *md = branchItem->getMapDesign();
+    MapDesign *md = branchItem->mapDesign();
     BranchContainer *pbc = parentBranchContainer();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)

@@ -123,8 +123,8 @@ void ImageContainer::select()
 {
     SelectableContainer::select(
 	    this,
-	    imageItem->getMapDesign()->selectionPen(),
-	    imageItem->getMapDesign()->selectionBrush());
+	    imageItem->mapDesign()->selectionPen(),
+	    imageItem->mapDesign()->selectionBrush());
 }
 
 bool ImageContainer::load(const QString &fn, bool createClone)

@@ -2429,7 +2429,7 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
     */
     QList<MapItem *> itemsSelected;
 
-    // Select objects   // FIXME-0 consider new selBrush and selPen settings from MapEditor!
+    // Select objects
     foreach (QModelIndex ix, newsel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||

@@ -81,7 +81,7 @@ void TreeItem::setModel(VymModel *m) { model = m; }
 
 VymModel* TreeItem::getModel() { return model; }
 
-MapDesign* TreeItem::getMapDesign() { return model->getMapDesign(); }
+MapDesign* TreeItem::mapDesign() { return model->mapDesign(); }
 
 int TreeItem::getRowNumAppend(TreeItem *item)
 {

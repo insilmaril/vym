@@ -122,7 +122,7 @@ VymModel::~VymModel()
     vymLock.releaseLock();
 
     delete (wrapper);
-    delete mapDesign;
+    delete mapDesignInt;
 }
 
 void VymModel::clear()
@@ -144,7 +144,7 @@ void VymModel::init()
             .value("/user/name",
                     tr("unknown user", "default name for map author in settings")).toString();
     // MapDesign
-    mapDesign = new MapDesign;
+    mapDesignInt = new MapDesign;
 
     // States and IDs
     idLast++;
@@ -316,8 +316,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             xml.attribut("selectionPenColor", selPen.color().name(QColor::HexArgb)) +
             xml.attribut("selectionPenWidth", QString().setNum(selPen.width())) + 
             xml.attribut("selectionBrushColor", selBrush.color().name(QColor::HexArgb)) +
-            xml.attribut("linkStyle", LinkObj::styleString(mapDesign->linkStyle(1))) +  // FIXME-2 only one level save atm
-            xml.attribut("linkColor", mapDesign->defaultLinkColor().name()) +
+            xml.attribut("linkStyle", LinkObj::styleString(mapDesignInt->linkStyle(1))) +  // FIXME-2 only one level save atm
+            xml.attribut("linkColor", mapDesignInt->defaultLinkColor().name()) +
             xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
             xml.attribut("defXLinkWidth",
                          QString().setNum(defXLinkPen.width(), 10)) +
@@ -852,7 +852,7 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
     return err;
 }
 
-void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)
+void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)   // FIXME-2 move file dialog to MainWindow
 {
     if (!parentBranch)
         parentBranch = getSelectedBranch();
@@ -2575,7 +2575,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
             if (s == "Auto") {
                 bc->branchesContainerAutoLayout = true;
                 bc->setBranchesContainerLayout(
-                        mapDesign->branchesContainerLayout(selbi->depth()));
+                        mapDesignInt->branchesContainerLayout(selbi->depth()));
             } else {
                 bc->branchesContainerAutoLayout = false;
                 Container::Layout layout = Container::getLayoutFromString(s);
@@ -2605,7 +2605,7 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
             if (s == "Auto") {
                 bc->imagesContainerAutoLayout = true;
                 bc->setImagesContainerLayout(
-                        mapDesign->imagesContainerLayout(selbi->depth()));
+                        mapDesignInt->imagesContainerLayout(selbi->depth()));
             } else {
                 bc->imagesContainerAutoLayout = false;
                 Container::Layout layout;
@@ -5215,14 +5215,14 @@ void VymModel::repositionXLinks()
         link->updateLink();
 }
 
-MapDesign* VymModel::getMapDesign()
+MapDesign* VymModel::mapDesign()
 {
-    return mapDesign;
+    return mapDesignInt;
 }
 
 bool VymModel::setMapLinkStyle(const QString &newStyleString)
 {
-    QString currentStyleString = LinkObj::styleString(mapDesign->linkStyle(1));
+    QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(1));
 
     saveState(QString("setMapLinkStyle (\"%1\")").arg(newStyleString),
               QString("setMapLinkStyle (\"%1\")").arg(currentStyleString),
@@ -5231,7 +5231,7 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     auto style = LinkObj::styleFromString(newStyleString);
 
     // For whole map set style for d=1
-    mapDesign->setLinkStyle(style, 1);
+    mapDesignInt->setLinkStyle(style, 1);
 
     rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
 
@@ -5241,7 +5241,7 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
 
 LinkObj::Style VymModel::getMapLinkStyle() // FIXME-2 only one level atm
 {
-    return mapDesign->linkStyle(1);
+    return mapDesignInt->linkStyle(1);
 }
 
 uint VymModel::getModelID() { return modelID; }
@@ -5250,7 +5250,7 @@ void VymModel::setView(VymView *vv) { vymView = vv; }
 
 QColor VymModel::getDefaultLinkColor()
 {
-    return mapDesign->defaultLinkColor();
+    return mapDesignInt->defaultLinkColor();
 }
 
 void VymModel::setDefaultLinkColor(const QColor &col)
@@ -5258,11 +5258,11 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     if (!col.isValid()) return;
 
     saveState(
-        QString("setDefaultLinkColor (\"%1\")").arg(mapDesign->defaultLinkColor().name()),
+        QString("setDefaultLinkColor (\"%1\")").arg(mapDesignInt->defaultLinkColor().name()),
         QString("setDefaultLinkColor (\"%1\")").arg(col.name()),
         QString("Set map link color to %1").arg(col.name()));
 
-    mapDesign->setDefaultLinkColor(col);
+    mapDesignInt->setDefaultLinkColor(col);
 
     // Set color for "link arrows" in TreeEditor
     vymView->setLinkColor(col);
@@ -5283,12 +5283,12 @@ void VymModel::setDefaultLinkColor(const QColor &col)
 
 LinkObj::ColorHint VymModel::getLinkColorHint()
 {
-    return mapDesign->linkColorHint();
+    return mapDesignInt->linkColorHint();
 }
 
 void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 saveState missing
 {
-    mapDesign->setLinkColorHint(hint);
+    mapDesignInt->setLinkColorHint(hint);
 
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
@@ -5311,7 +5311,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
 
 void VymModel::toggleLinkColorHint()
 {
-    if (mapDesign->linkColorHint() == LinkObj::HeadingColor)
+    if (mapDesignInt->linkColorHint() == LinkObj::HeadingColor)
         setLinkColorHint(LinkObj::DefaultColor);
     else
         setLinkColorHint(LinkObj::HeadingColor);

@@ -45,8 +45,6 @@ MapDesign::MapDesign()
 
 void MapDesign::init()
 {
-    int mapDesign = 0;  // FIXME-2 only for testing, later load/save
-
     // Selection
     selectionPenInt = QPen(QColor(255,255,0,255), 3);
     selectionBrushInt = QBrush(QColor(255,255,0,120));

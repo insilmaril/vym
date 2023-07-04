@@ -35,7 +35,7 @@ class TreeItem : public XMLObj {
     // General housekeeping
     virtual void setModel(VymModel *m);
     virtual VymModel *getModel();
-    virtual MapDesign *getMapDesign();
+    virtual MapDesign *mapDesign();
 
     /*! Return number of item, as it would be after it would have been appended.
     This is used to notify view about layout changes before model is modified.
