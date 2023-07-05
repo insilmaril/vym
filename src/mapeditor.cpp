@@ -182,8 +182,8 @@ MapEditor::MapEditor(VymModel *vm)
     connect(a, SIGNAL(triggered()), this, SLOT(editHeading()));
 
     // Selections   // FIXME-1 consider MapDesign defaults!
-    selectionPen = QPen(QColor(255,255,0), 1);
-    selectionBrush = QBrush(QColor(255,255,0));
+    selectionPen = model->mapDesign()->selectionPen();     //QPen(QColor(255,255,0), 1);
+    selectionBrush = model->mapDesign()->selectionBrush(); //QBrush(QColor(255,255,0));
 
     // Panning
     panningTimer = new QTimer(this);
@@ -1915,7 +1915,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
                 if (tmpParentContainer->branchCount() == 0 || bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
                     bc->setOriginalPos();
-                    bc->setOriginalOrientation();
+                    bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
                     tmpParentContainer->addToBranchesContainer(bc, true);
                 }
 
@@ -1994,7 +1994,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
     */
 
-    // Update links // FIXME-1 links not updated correctly when moving branches
+    // Update links // FIXME-0 links not updated correctly when relinking branches
     foreach (TreeItem *ti, movingItems)
     {
         if (ti->hasTypeBranch()) {

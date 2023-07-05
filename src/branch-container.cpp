@@ -97,6 +97,9 @@ void BranchContainer::init()
     setHorizontalDirection(Container::LeftToRight);
 
     // Create an uplink for every branch 
+    // This link will become the child of my parents
+    // linkContainer later. This will allow moving when parent moves,
+    // without recalculating geometry.
     upLink = new LinkObj;
 
     // Center of whole mainBranches should be the heading
@@ -109,7 +112,9 @@ void BranchContainer::init()
     imagesContainerAutoLayout = true;
     imagesContainerLayout = FloatingFree;
 
+    // Not temporary linked
     tmpLinkedParentContainer = nullptr;
+    originalParentBranchContainer = nullptr;
 
     scrollOpacity = 1;
 
@@ -150,10 +155,11 @@ void BranchContainer::setOrientation(const Orientation &o)
     orientation = o;
 }
 
-void BranchContainer::setOriginalOrientation()  // FIXME-1 sets also original parent, should be part of setOriginalPos, which should be in LinkContainer
+void BranchContainer::setOriginalOrientation()  // FIXME-1 refactor the setOrig* methods into one setTmpParentContainer()
 {
     originalOrientation = orientation;
     originalFloating = isFloating();
+    originalParentBranchContainer = parentBranchContainer();
     if (parentItem()) {
         /*
         qDebug() << "BC:setOrient of " << info();
@@ -205,14 +211,16 @@ bool BranchContainer::isOriginalFloating()
     return originalFloating;
 }
 
-void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
+void BranchContainer::setTemporaryLinked(BranchContainer *tpc)  // FIXME-0 update upLink
 {
     tmpLinkedParentContainer = tpc;
+    updateUpLink();
 }
 
-void BranchContainer::unsetTemporaryLinked()
+void BranchContainer::unsetTemporaryLinked()    // FIXME-0 update upLink
 {
     tmpLinkedParentContainer = nullptr;
+    updateUpLink();
 }
 
 bool BranchContainer::isTemporaryLinked()
@@ -608,6 +616,13 @@ LinkObj* BranchContainer::getLink()
     return upLink;
 }
 
+void BranchContainer::linkTo(BranchContainer *pbc)
+{
+    if (!pbc) return;
+
+    pbc->linkContainer->addLink(upLink);
+}
+
 QList <BranchContainer*> BranchContainer::childBranches()
 {
     QList <BranchContainer*> list;
@@ -800,17 +815,31 @@ void BranchContainer::updateUpLink()
     if (tmpLinkedParentContainer)
         // I am temporarily linked to tmpLinkedParentContainer
         pbc = tmpLinkedParentContainer;
-    else
+    else if (originalParentBranchContainer)
         // I am moving with tmpParent or just regular updated
+        pbc = originalParentBranchContainer;
+    else
         pbc = parentBranchContainer();
+
+    qDebug() << "BC::updateUpLink of " << info() << " tmpLinkedPC=" << tmpLinkedParentContainer 
+             << " pbc=" << pbc
+             << " orgPBC=" << originalParentBranchContainer;
 
     if (pbc) {
         QPointF upLinkParent_sp;
-        if (pbc->getContainerType() == Container::TmpParent) {
+        if (true) { // FIXME-0 pbc->getContainerType() == Container::TmpParent) {
             // Currently moving with tmpParentContainer, BUT not linked to tmpLinkedParentContainer
-            upLinkParent_sp = originalParentPos;
+            // If temp linked:
+            // upLinkParent_sp = originalParentPos;
+            upLinkParent_sp = pbc->downLinkPos();
 
+
+            qDebug() << "    upLink      =" << upLink;
             QGraphicsItem* upLinkParent = upLink->parentItem();
+            qDebug() << "    upLinkParent=" << upLinkParent;
+            qDebug() << " upLinkParent_sp=" << upLinkParent_sp;
+            if (!upLinkParent) return;
+
             upLink->setUpLinkPosParent(
                     upLinkParent->sceneTransform().inverted().map(upLinkParent_sp));
             upLink->setUpLinkPosSelf(
@@ -822,7 +851,7 @@ void BranchContainer::updateUpLink()
             // upper left corner and width of linkSpaceContainer as reference
             upLinkParent_sp = pbc->downLinkPos(orientation);
 
-            pbc->getLinkContainer()->addLink(upLink);
+            pbc->getLinkContainer()->addLink(upLink);   // FIXME-0 why adding upLink to parent???
 
             upLink->setUpLinkPosParent(
                     pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
@@ -1382,7 +1411,7 @@ void BranchContainer::reposition()
         // tmpParentContainer has no branchItem
         depth = 0;
 
-    //qDebug() << "BC::reposition " << info() << "depth=" << depth;
+    qDebug() << "BC::reposition " << info() << "depth=" << depth;
 
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked

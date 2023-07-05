@@ -53,6 +53,7 @@ class BranchContainer : public SelectableContainer {
 
   private:
     BranchContainer *tmpLinkedParentContainer;
+    BranchContainer *originalParentBranchContainer;
 
   public:
     void setTemporaryLinked(BranchContainer *tpc);
@@ -91,6 +92,7 @@ class BranchContainer : public SelectableContainer {
     HeadingContainer* getHeadingContainer();
     LinkContainer* getLinkContainer();
     LinkObj* getLink();
+    void linkTo(BranchContainer *);
 
     // Convenience functions to access children
     QList <BranchContainer*> childBranches();

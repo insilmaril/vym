@@ -513,7 +513,7 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
         newbo->setVisibility(false);
     */
 
-    // For mainbranches get a position hint
+    // For mainbranches get a position hint // FIXME-2 probably also other floating branches...
     if (depth() == 1)
         branchContainer->setPos(parentBranch()->getBranchContainer()->getPositionHintNewChild(branchContainer));
 
@@ -527,6 +527,11 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
         newbo->setColor(heading.getColor());
         */
     }
+
+    // Link to parent branch visually by
+    // adding my upLink to parents linkContainer
+    if (parentBranch())
+        branchContainer->linkTo(parentBranch()->getBranchContainer());
 
     return branchContainer;
 }
