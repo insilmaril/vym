@@ -5556,7 +5556,7 @@ void VymModel::setSelectionBrushColor(QColor col)
               QString("Set Brush color of selection box to %1").arg(col.name()));
 
     selBrush.setColor(col);
-    mapEditor->setSelectionBrush(selBrush);
+    vymView->setSelectionBrush(selBrush);
 }
 
 QColor VymModel::getSelectionBrushColor() {
