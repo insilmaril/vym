@@ -164,7 +164,7 @@ class VymModel : public TreeModel {
     File::ErrorCode save(const SaveMode &);
 
   public:
-    void loadImage(BranchItem *dst = NULL, const QString &fn = "");
+    ImageItem* loadImage(BranchItem *dst = NULL, const QString &fn = "");
     void saveImage(ImageItem *ii = NULL, QString fn = "");
 
   private:
@@ -494,7 +494,7 @@ class VymModel : public TreeModel {
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
-    void setScaleFactor(qreal);
+    void setScaleFactor(qreal, ImageItem *ii = nullptr);
     void growSelectionSize();
     void shrinkSelectionSize();
     void resetSelectionSize();
