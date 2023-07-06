@@ -60,9 +60,6 @@ void MapDesign::init()
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
     headingColorHints << MapDesign::InheritedColor;        // Use color of parent
 
-    headingColors << QColor(Qt::white);
-    headingColors << QColor(Qt::green);
-
     // Frames
     innerFrameTypes << FrameContainer::RoundedRectangle;
     innerFrameTypes << FrameContainer::Rectangle;
@@ -76,6 +73,8 @@ void MapDesign::init()
     outerFrameTypes << FrameContainer::Rectangle;
     outerFrameTypes << FrameContainer::NoFrame;
     if (usingDarkTheme) {
+        headingColors << QColor(Qt::white);
+        headingColors << QColor(Qt::green);
         innerFramePenColors << QColor(Qt::black);
         innerFrameBrushColors << QColor(85, 85, 127);
         outerFramePenColors << QColor(Qt::green);
@@ -87,10 +86,12 @@ void MapDesign::init()
         outerFrameBrushColors << QColor(85, 85, 127);
         outerFrameBrushColors << QColor(25, 25, 117);
     } else {
+        headingColors << QColor(Qt::black);
+        headingColors << QColor(Qt::green);
         innerFramePenColors << QColor(Qt::black);
         innerFrameBrushColors << QColor(Qt::white);
-        outerFramePenColors << QColor(Qt::green);
-        outerFrameBrushColors << QColor(85, 85, 127);
+        outerFramePenColors << QColor(Qt::darkGreen);
+        outerFrameBrushColors << QColor(230, 230, 255);
     }
 
     outerFrameTypes << FrameContainer::NoFrame;
