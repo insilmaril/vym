@@ -155,26 +155,48 @@ void VymReader::readVymMap()
     }
 }
 
+void VymReader::readMapDesignCompatibleAttributes()
+{
+    // Reads attributes which moved from
+    // <vymmap> before 2.9.13 to <mapdesign>
+
+    Q_ASSERT(xml.isStartElement() &&
+            ( xml.name() == QLatin1String("vymmap") ||
+              xml.name() == QLatin1String("mapdesign")));
+
+    QString a = "selectionBrushColor";
+    QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setSelectionBrushColor(QColor(s));
+
+    a = "linkColorHint";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        if (s == "HeadingColor")
+            model->setLinkColorHint(LinkObj::HeadingColor);
+        else
+            model->setLinkColorHint(LinkObj::DefaultColor);
+    }
+
+    a = "linkStyle";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setMapLinkStyle(s);
+
+    a = "linkColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        model->setDefaultLinkColor(QColor(s));
+    }
+}
+
 void VymReader::readMapDesign()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("mapdesign"));
 
     bool ok;
-    QString a = "textMode";
-    QString s = xml.attributes().value(a).toString();
-    if (s == "selectionPenColor")
-        model->setSelectionPenColor(QColor(s));
-    if (s == "selectionPenWidth") {
-        double w = s.toDouble(&ok);
-        if (ok)
-            model->setSelectionPenWidth(w);
-        else {
-            xml.raiseError("Couldn't read selectionPenWidth from: " + s);
-            return;
-        }
-    }
-    if (s == "selectionBrushColor")
-        model->setSelectionBrushColor(QColor(s));
+
+    readMapDesignCompatibleAttributes();
 
     if (xml.tokenType() == QXmlStreamReader::EndElement)
         return;
@@ -352,7 +374,7 @@ void VymReader::readHeadingOrVymNote()
         // For compatibility with <= 2.4.0 set both branch and
         // heading color
         QColor col(s);
-        lastBranch->setHeadingColor(col);
+        lastBranch->setHeadingColor(col);   
         vymtext.setColor(col);
     }
 
@@ -864,7 +886,9 @@ void VymReader::readVymMapAttr()
         model->setMapDefaultFont(font);
     }
 
-    a = "selectionColor";   // Only for compatibility. No longer used starting 2.9.512
+    // Only for backwards compatibility reading <vymmap>.
+    // moved to <mapdesign> starting 2.9.513
+    a = "selectionColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         col.setNamedColor(s);
@@ -872,14 +896,18 @@ void VymReader::readVymMapAttr()
         model->setSelectionBrushColor(col);
     }
 
-    a = "selectionPenColor";   // Introduced 2.9.12 // FIXME-2 move to mapDesign
+    // Only for backwards compatibility reading <vymmap>.
+    // moved to <mapdesign> starting 2.9.513
+    a = "selectionPenColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         col.setNamedColor(s);
         model->setSelectionPenColor(col);
     }
 
-    a = "selectionPenWidth";   // Introduced 2.9.12 // FIXME-2 move to mapDesign
+    // Only for backwards compatibility reading <vymmap>.
+    // moved to <mapdesign> starting 2.9.513
+    a = "selectionPenWidth"; 
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         float  w = s.toFloat(&ok);
@@ -890,33 +918,7 @@ void VymReader::readVymMapAttr()
         model->setSelectionPenWidth(w);
     }
 
-    a = "selectionBrushColor";   // Introduced 2.9.12   // FIXME-2 move to mapDesign
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        col.setNamedColor(s);
-        model->setSelectionBrushColor(col);
-    }
-
-    a = "linkColorHint";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        if (s == "HeadingColor")
-            model->setLinkColorHint(LinkObj::HeadingColor);
-        else
-            model->setLinkColorHint(LinkObj::DefaultColor);
-    }
-
-    a = "linkStyle";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty())
-        model->setMapLinkStyle(s);
-
-    a = "linkColor";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        col.setNamedColor(s);
-        model->setDefaultLinkColor(col);
-    }
+    readMapDesignCompatibleAttributes();
 
     QPen pen(model->getMapDefXLinkPen());
     a = "defXLinkColor";

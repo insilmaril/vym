@@ -15,6 +15,7 @@ class VymReader : public BaseReader {
 
   private:
     void readVymMap();
+    void readMapDesignCompatibleAttributes();
     void readMapDesign();
     void readSelection();
     void readSetting();

@@ -1278,16 +1278,15 @@ void BranchContainer::updateStyles(
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    // qDebug() << "BC::updateStyles of " << info(); // FIXME-2 called often during load
+    qDebug() << "BC::updateStyles of " << info(); // FIXME-2 called often during load
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();
     BranchContainer *pbc = parentBranchContainer();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    if (creationMode != MapDesign::NotCreated)
-        md->updateBranchHeadingColor(
-                branchItem, depth);
+    if (creationMode == MapDesign::Created)
+        md->updateBranchHeadingColor( branchItem, depth);
 
     // bulletpoint color should match heading color
     if (bulletPointContainer)
@@ -1314,6 +1313,7 @@ void BranchContainer::updateStyles(
         // MapCenter has no upLink
         upLink->setLinkStyle(LinkObj::NoLink);
 
+    // FIXME-000 linkColorHint not set properly when loading maps
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)    // FIXME-1 upLink col also set in BC::updateUpLink
         upLink->setLinkColor(headingContainer->getColor());
     else

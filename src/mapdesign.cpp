@@ -60,7 +60,7 @@ void MapDesign::init()
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
     headingColorHints << MapDesign::InheritedColor;        // Use color of parent
 
-    headingColors << QColor(Qt::white);
+    //headingColors << QColor(Qt::white);
     headingColors << QColor(Qt::green);
 
     // Frames
@@ -78,7 +78,7 @@ void MapDesign::init()
     outerFrameTypes << FrameContainer::NoFrame;
     */
     if (usingDarkTheme) {
-        innerFramePenColors << QColor(Qt::black);
+        innerFramePenColors << QColor(Qt::white);
         innerFrameBrushColors << QColor(85, 85, 127);
         outerFramePenColors << QColor(Qt::green);
         outerFramePenColors << QColor(Qt::red);
@@ -257,15 +257,22 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
     QString s;
 
     xml.incIndent();
-    s += xml.singleElement(
-            "mapdesign", 
+    s += xml.singleElement("mapdesign",
             xml.attribut("selectionPenColor", selectionPenInt.color().name(QColor::HexArgb)));
-    s += xml.singleElement(
-            "mapdesign", 
+    s += xml.singleElement("mapdesign",
             xml.attribut("selectionPenWidth", QString().setNum(selectionPenInt.width())));
-    s += xml.singleElement(
-            "mapdesign", 
+    s += xml.singleElement("mapdesign",
             xml.attribut("selectionBrushColor", selectionBrushInt.color().name(QColor::HexArgb)));
+
+    if (linkColorHintInt == LinkObj::HeadingColor)
+        s += xml.singleElement("mapdesign",
+                xml.attribut("linkColorHint", "HeadingColor"));
+
+    s += xml.singleElement("mapdesign",
+            xml.attribut("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-2 only one level save atm
+    s += xml.singleElement("mapdesign",
+            xml.attribut("linkColor", defaultLinkColor().name()));
+
     xml.decIndent();
 
     return s;

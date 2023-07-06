@@ -283,14 +283,17 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
     QString mapAttr = xml.attribut("version", vymVersion);
     if (!saveSel) {
+        mapAttr += xml.attribut("date", getDate()) + "\n";
+
         if (!author.isEmpty())
             mapAttr += xml.attribut("author", author) + "\n";
         if (!title.isEmpty())
             mapAttr += xml.attribut("title", title) + "\n";
         if (!comment.isEmpty())
             mapAttr += xml.attribut("comment", comment) + "\n";
-        mapAttr += xml.attribut("date", getDate()) + "\n";
-        mapAttr += xml.attribut("branchCount", QString().number(branchCount())) + "\n";
+
+
+        // FIXME-2 move these map settings to mapDesign:
         mapAttr += xml.attribut("backgroundColor",
                 mapEditor->getScene()->backgroundBrush().color().name()) + "\n";
 
@@ -304,11 +307,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                 mapAttr += xml.attribut("backgroundImageName", backgroundImageName) + "\n";
             }
         }
-
-        // FIXME-2 move these map settings to mapDesign:
         mapAttr += xml.attribut("defaultFont", defaultFont.toString()) + "\n";
-        mapAttr += xml.attribut("linkStyle", LinkObj::styleString(mapDesignInt->linkStyle(1))) + "\n"; // FIXME-2 only one level save atm
-        mapAttr += xml.attribut("linkColor", mapDesignInt->defaultLinkColor().name()) + "\n";
         mapAttr += xml.attribut("defXLinkColor", defXLinkPen.color().name()) + "\n";
         mapAttr += xml.attribut("defXLinkWidth",
                      QString().setNum(defXLinkPen.width(), 10)) + "\n";
@@ -316,12 +315,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                      penStyleToString(defXLinkPen.style())) + "\n";
         mapAttr += xml.attribut("defXLinkStyleBegin", defXLinkStyleBegin) + "\n";
         mapAttr += xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) + "\n";
-        ////////////////
-
-        mapAttr += xml.attribut("mapZoomFactor",
-                     QString().setNum(mapEditor->getZoomFactorTarget())) + "\n";
-        mapAttr += xml.attribut("mapRotationAngle",
-                     QString().setNum(mapEditor->getAngleTarget()));
 
         QString colhint = "";
         /* FIXME-2 mapDesign related settings not saved yet (at least not all)
@@ -329,6 +322,13 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             colhint = xml.attribut("linkColorHint", "HeadingColor");
         */
         mapAttr += colhint;
+        ////////////////
+
+        mapAttr += xml.attribut("branchCount", QString().number(branchCount()));
+        mapAttr += xml.attribut("mapZoomFactor",
+                     QString().setNum(mapEditor->getZoomFactorTarget()));
+        mapAttr += xml.attribut("mapRotationAngle",
+                     QString().setNum(mapEditor->getAngleTarget()));
     }
     header += xml.beginElement("vymmap", mapAttr);
 
@@ -3451,6 +3451,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     newbi->updateContainerStackingOrder();
 
     // Update styles (if not currently loading a map or the default map)
+    qDebug() << "VM::addNewBranch  updateStylesBlocked=" << updateStylesBlocked;
     if (!updateStylesBlocked)
         newbc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
 
@@ -5309,7 +5310,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //for (int i = 0; i < cur->imageCount(); ++i)
         //    cur->getImageNum(i)->getLMO()->setLinkColor();
         //
-    rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
+        rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
         nextBranch(cur, prev);
     }
     reposition();

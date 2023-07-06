@@ -95,7 +95,7 @@ QString XMLObj::singleElement(QString s, QString at)
 // returns <s at at at at ... />
 QString XMLObj::singleElement(QString s, QStringList attributes)
 {
-    return indent() + "<" + s + " " + attributes.join(" ") + " />";
+    return indent() + "<" + s + " " + attributes.join("") + " />";
 }
 
 // returns <s>
@@ -113,7 +113,7 @@ QString XMLObj::endElement(QString s) { return indent() + "</" + s + ">"; }
 // returns  at="val"
 QString XMLObj::attribut(QString at, QString val) const // FIXME-2 rename to "attribute" to fix spelling
 {
-    return " " + at + "=\"" + quoteMeta(val) + "\"";
+    return at + "=\"" + quoteMeta(val) + "\" ";
 }
 
 // returns <s> val </s>

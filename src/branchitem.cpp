@@ -158,7 +158,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (parentItem == rootItem || branchContainer->isFloating())
         posAttr = getPosAttr();
 
-    s = beginElement(elementName +
+    s = beginElement(elementName + " " +
             posAttr +
             MapItem::getLinkableAttr() +
             TreeItem::getGeneralAttr() +
