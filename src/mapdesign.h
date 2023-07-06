@@ -102,6 +102,8 @@ class MapDesign {
     QBrush selectionBrush();
     void setSelectionBrush(const QBrush &);
 
+    QString saveToDir(const QString &tmpdir, const QString &prefix);
+
   private:
     QString name;
 
@@ -143,4 +145,5 @@ class MapDesign {
     {
         a = a | b; return a;
     }
+
 #endif

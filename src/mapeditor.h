@@ -249,20 +249,12 @@ class MapEditor : public QGraphicsView {
   signals:
     void selectionChanged(const QItemSelection &, const QItemSelection &);
 
-  private:
-    QColor selectionColor;
-    QPen selectionPen;
-    QBrush selectionBrush;
-
   public slots:
-    void updateSelection(QItemSelection, QItemSelection); // update selection
     void updateData(const QModelIndex &);                 // update data
     void togglePresentationMode();
-
-  public:
-    void setSelectionPen(const QPen &p);
-    QPen getSelectionPen();
-    void setSelectionBrush(const QBrush &p);
-    QBrush getSelectionBrush();
+    void updateSelection(QItemSelection, QItemSelection); // update selection
+                                                          //
+  public:  
+    void updateSelection(); // update selection after selection style changed
 };
 #endif

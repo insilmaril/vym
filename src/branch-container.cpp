@@ -217,7 +217,7 @@ void BranchContainer::setTemporaryLinked(BranchContainer *tpc)  // FIXME-0 updat
     updateUpLink();
 }
 
-void BranchContainer::unsetTemporaryLinked()    // FIXME-0 update upLink
+void BranchContainer::unsetTemporaryLinked()
 {
     tmpLinkedParentContainer = nullptr;
     updateUpLink();
@@ -618,7 +618,10 @@ LinkObj* BranchContainer::getLink()
 
 void BranchContainer::linkTo(BranchContainer *pbc)
 {
+
     if (!pbc) return;
+
+    originalParentBranchContainer = nullptr;
 
     pbc->linkContainer->addLink(upLink);
 }
@@ -833,11 +836,10 @@ void BranchContainer::updateUpLink()
             // upLinkParent_sp = originalParentPos;
             upLinkParent_sp = pbc->downLinkPos();
 
-
-            qDebug() << "    upLink      =" << upLink;
+            //qDebug() << "    upLink      =" << upLink;
             QGraphicsItem* upLinkParent = upLink->parentItem();
-            qDebug() << "    upLinkParent=" << upLinkParent;
-            qDebug() << " upLinkParent_sp=" << upLinkParent_sp;
+            //qDebug() << "    upLinkParent=" << upLinkParent;
+            //qDebug() << " upLinkParent_sp=" << upLinkParent_sp;
             if (!upLinkParent) return;
 
             upLink->setUpLinkPosParent(

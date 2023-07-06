@@ -39,7 +39,7 @@ FIXME-3 currently not used template <typename T> void ConfigList<T>::setDefault(
 
 MapDesign::MapDesign()
 {
-    qDebug() << "Constr. MapDesign";
+    // qDebug() << "Constr. MapDesign";
     init();
 }
 
@@ -65,16 +65,18 @@ void MapDesign::init()
 
     // Frames
     innerFrameTypes << FrameContainer::RoundedRectangle;
-    innerFrameTypes << FrameContainer::Rectangle;
-    innerFrameTypes << FrameContainer::Rectangle;
     innerFrameTypes << FrameContainer::NoFrame;
+    //innerFrameTypes << FrameContainer::Rectangle;
     innerFramePenWidths << 2;
 
+    outerFrameTypes << FrameContainer::NoFrame;
+    /*
     outerFrameTypes << FrameContainer::Rectangle;
     outerFrameTypes << FrameContainer::RoundedRectangle;
     outerFrameTypes << FrameContainer::Rectangle;
     outerFrameTypes << FrameContainer::Rectangle;
     outerFrameTypes << FrameContainer::NoFrame;
+    */
     if (usingDarkTheme) {
         innerFramePenColors << QColor(Qt::black);
         innerFrameBrushColors << QColor(85, 85, 127);
@@ -247,4 +249,24 @@ QBrush MapDesign::selectionBrush()
 void MapDesign::setSelectionBrush(const QBrush &b)
 {
     selectionBrushInt = b;
+}
+
+QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
+{
+    XMLObj xml;
+    QString s;
+
+    xml.incIndent();
+    s += xml.singleElement(
+            "mapdesign", 
+            xml.attribut("selectionPenColor", selectionPenInt.color().name(QColor::HexArgb)));
+    s += xml.singleElement(
+            "mapdesign", 
+            xml.attribut("selectionPenWidth", QString().setNum(selectionPenInt.width())));
+    s += xml.singleElement(
+            "mapdesign", 
+            xml.attribut("selectionBrushColor", selectionBrushInt.color().name(QColor::HexArgb)));
+    xml.decIndent();
+
+    return s;
 }

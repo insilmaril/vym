@@ -181,10 +181,6 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editHeading()));
 
-    // Selections   // FIXME-1 consider MapDesign defaults!
-    selectionPen = model->mapDesign()->selectionPen();     //QPen(QColor(255,255,0), 1);
-    selectionBrush = model->mapDesign()->selectionBrush(); //QBrush(QColor(255,255,0));
-
     // Panning
     panningTimer = new QTimer(this);
     vPan = QPointF();
@@ -1994,7 +1990,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
     */
 
-    // Update links // FIXME-0 links not updated correctly when relinking branches
+    // Update links
     foreach (TreeItem *ti, movingItems)
     {
         if (ti->hasTypeBranch()) {
@@ -2003,7 +1999,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 bc->setTemporaryLinked(targetBranchContainer);
             else
                 bc->unsetTemporaryLinked();
-            bc->updateUpLink();
         }
     }
 
@@ -2420,6 +2415,50 @@ MapEditor::EditorState MapEditor::state() { return editorState; }
 
 // FIXME-2 Feature: New setting (maybe with key to toggle) autorotation to adapt view to selection
 
+void MapEditor::updateData(const QModelIndex &sel)
+{
+    TreeItem *ti = static_cast<TreeItem *>(sel.internalPointer());
+
+    /* testing
+        qDebug() << "ME::updateData";
+        if (!ti)
+        {
+        qDebug() << "  ti=nullptr";
+        return;
+        }
+        qDebug() << "  ti="<<ti;
+        qDebug() << "  h="<<ti->getHeadingPlain();
+    */
+
+    if (ti && ti->hasTypeBranch())
+        ((BranchItem*)ti)->updateVisuals();
+
+    if (winter) {
+        QList<QRectF> obstacles;
+        BranchContainer *bc;
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
+        model->nextBranch(cur, prev);
+        while (cur) {
+            if (!cur->hasHiddenExportParent()) {
+                // Branches
+                bc = cur->getBranchContainer();
+                if (bc && bc->isVisible()) {
+                    HeadingContainer *hc = bc->getHeadingContainer();
+                    obstacles.append(hc->mapRectToScene(hc->boundingRect()));
+                }
+            }
+            model->nextBranch(cur, prev);
+        }
+        winter->setObstacles(obstacles);
+    }
+}
+
+void MapEditor::togglePresentationMode()
+{
+    mainWindow->togglePresentationMode();
+}
+
 void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
     /*
@@ -2475,67 +2514,25 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
     else
         mainWindow->statusMessage("");
 
-    scene()->update();
+    scene()->update();  // FIXME-0 needed?
 }
 
-void MapEditor::updateData(const QModelIndex &sel)
+void MapEditor::updateSelection()
 {
-    TreeItem *ti = static_cast<TreeItem *>(sel.internalPointer());
+    QList<MapItem *> itemsSelected;
 
-    /* testing
-        qDebug() << "ME::updateData";
-        if (!ti)
-        {
-        qDebug() << "  ti=nullptr";
-        return;
+    // Select objects
+    foreach (QModelIndex ix, model->getSelectionModel()->selection().indexes()) {
+        MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
+        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
+            mi->getType() == TreeItem::XLink) {
+                if (mi->hasTypeBranch())
+                    ((BranchItem*)mi)->getBranchContainer()->select();
+                if (mi->hasTypeImage())
+                    ((ImageItem*)mi)->getImageContainer()->select();
         }
-        qDebug() << "  ti="<<ti;
-        qDebug() << "  h="<<ti->getHeadingPlain();
-    */
-
-    if (ti && ti->hasTypeBranch())
-        ((BranchItem*)ti)->updateVisuals();
-
-    if (winter) {
-        QList<QRectF> obstacles;
-        BranchContainer *bc;
-        BranchItem *cur = nullptr;
-        BranchItem *prev = nullptr;
-        model->nextBranch(cur, prev);
-        while (cur) {
-            if (!cur->hasHiddenExportParent()) {
-                // Branches
-                bc = cur->getBranchContainer();
-                if (bc && bc->isVisible()) {
-                    HeadingContainer *hc = bc->getHeadingContainer();
-                    obstacles.append(hc->mapRectToScene(hc->boundingRect()));
-                }
-            }
-            model->nextBranch(cur, prev);
-        }
-        winter->setObstacles(obstacles);
     }
+
+    scene()->update();  // FIXME-0 needed?
 }
 
-void MapEditor::togglePresentationMode()
-{
-    mainWindow->togglePresentationMode();
-}
-
-void MapEditor::setSelectionPen(const QPen &p)
-{
-    selectionPen = p;
-    QItemSelection sel = model->getSelectionModel()->selection();
-    updateSelection(sel, sel);
-}
-
-QPen MapEditor::getSelectionPen() { return selectionPen; }
-
-void MapEditor::setSelectionBrush(const QBrush &b)
-{
-    selectionBrush = b;
-    QItemSelection sel = model->getSelectionModel()->selection();
-    updateSelection(sel, sel);
-}
-
-QBrush MapEditor::getSelectionBrush() { return selectionBrush; }

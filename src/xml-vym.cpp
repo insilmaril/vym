@@ -130,7 +130,9 @@ void VymReader::readVymMap()
         lastBranch = model->getRootItem();
 
     while (xml.readNextStartElement()) {
-        if (xml.name() == QLatin1String("mapcenter") ||
+        if (xml.name() == QLatin1String("mapdesign"))
+            readMapDesign();
+        else if (xml.name() == QLatin1String("mapcenter") ||
             xml.name() == QLatin1String("branch")) {
             readBranchOrMapCenter(loadMode, insertPos);
             insertPos++;
@@ -151,6 +153,34 @@ void VymReader::readVymMap()
             return;
         }
     }
+}
+
+void VymReader::readMapDesign()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("mapdesign"));
+
+    bool ok;
+    QString a = "textMode";
+    QString s = xml.attributes().value(a).toString();
+    if (s == "selectionPenColor")
+        model->setSelectionPenColor(QColor(s));
+    if (s == "selectionPenWidth") {
+        double w = s.toDouble(&ok);
+        if (ok)
+            model->setSelectionPenWidth(w);
+        else {
+            xml.raiseError("Couldn't read selectionPenWidth from: " + s);
+            return;
+        }
+    }
+    if (s == "selectionBrushColor")
+        model->setSelectionBrushColor(QColor(s));
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
 }
 
 void VymReader::readSelection()
@@ -842,14 +872,14 @@ void VymReader::readVymMapAttr()
         model->setSelectionBrushColor(col);
     }
 
-    a = "selectionPenColor";   // Introduced 2.9.12
+    a = "selectionPenColor";   // Introduced 2.9.12 // FIXME-2 move to mapDesign
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         col.setNamedColor(s);
         model->setSelectionPenColor(col);
     }
 
-    a = "selectionPenWidth";   // Introduced 2.9.12
+    a = "selectionPenWidth";   // Introduced 2.9.12 // FIXME-2 move to mapDesign
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         float  w = s.toFloat(&ok);
@@ -860,7 +890,7 @@ void VymReader::readVymMapAttr()
         model->setSelectionPenWidth(w);
     }
 
-    a = "selectionBrushColor";   // Introduced 2.9.12
+    a = "selectionBrushColor";   // Introduced 2.9.12   // FIXME-2 move to mapDesign
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         col.setNamedColor(s);

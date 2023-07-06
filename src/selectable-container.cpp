@@ -10,10 +10,11 @@ void SelectableContainer::select(Container *parent, const QPen &pen, const QBrus
     {
         selectionContainer = new Container;
         selectionContainer->setContainerType(Selection);
-        selectionContainer->setPen(pen);
-        selectionContainer->setBrush(brush);
         selectionContainer->overlay = true;
     }
+    selectionContainer->setPen(pen);
+    selectionContainer->setBrush(brush);
+
     parent->addContainer(selectionContainer, Z_SELECTION);
     selectionContainer->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
 

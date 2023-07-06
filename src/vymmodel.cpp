@@ -280,24 +280,19 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     // Save Header
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
-    QString colhint = "";
-    /* FIXME-2 mapDesign related settings not saved yet (at least not all)
-       if (linkColorHint == LinkObj::HeadingColor)
-        colhint = xml.attribut("linkColorHint", "HeadingColor");
-    */
 
     QString mapAttr = xml.attribut("version", vymVersion);
     if (!saveSel) {
-        QPen selPen = mapEditor->getSelectionPen();
-        QBrush selBrush = mapEditor->getSelectionBrush();
-
-        mapAttr +=
-            xml.attribut("author", author) + xml.attribut("title", title) +
-            xml.attribut("comment", comment) + xml.attribut("date", getDate()) +
-            xml.attribut("branchCount", QString().number(branchCount())) +
-            xml.attribut(
-                "backgroundColor",
-                mapEditor->getScene()->backgroundBrush().color().name());
+        if (!author.isEmpty())
+            mapAttr += xml.attribut("author", author) + "\n";
+        if (!title.isEmpty())
+            mapAttr += xml.attribut("title", title) + "\n";
+        if (!comment.isEmpty())
+            mapAttr += xml.attribut("comment", comment) + "\n";
+        mapAttr += xml.attribut("date", getDate()) + "\n";
+        mapAttr += xml.attribut("branchCount", QString().number(branchCount())) + "\n";
+        mapAttr += xml.attribut("backgroundColor",
+                mapEditor->getScene()->backgroundBrush().color().name()) + "\n";
 
         // Save background image
         if (usesBackgroundImage && !backgroundImage.isNull()) {
@@ -305,33 +300,40 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             if (!backgroundImage.save(tmpdir + fn, "PNG", 100))
                 qWarning() << "VymModel::saveToDir failed to save background image to " << fn;
             else {
-                mapAttr +=
-                    xml.attribut("backgroundImage", "file:" + fn) +
-                    xml.attribut("backgroundImageName", backgroundImageName);
+                mapAttr += xml.attribut("backgroundImage", "file:" + fn) + "\n";
+                mapAttr += xml.attribut("backgroundImageName", backgroundImageName) + "\n";
             }
         }
 
-        mapAttr +=
-            xml.attribut("defaultFont", defaultFont.toString()) +
-            xml.attribut("selectionPenColor", selPen.color().name(QColor::HexArgb)) +
-            xml.attribut("selectionPenWidth", QString().setNum(selPen.width())) + 
-            xml.attribut("selectionBrushColor", selBrush.color().name(QColor::HexArgb)) +
-            xml.attribut("linkStyle", LinkObj::styleString(mapDesignInt->linkStyle(1))) +  // FIXME-2 only one level save atm
-            xml.attribut("linkColor", mapDesignInt->defaultLinkColor().name()) +
-            xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
-            xml.attribut("defXLinkWidth",
-                         QString().setNum(defXLinkPen.width(), 10)) +
-            xml.attribut("defXLinkPenStyle",
-                         penStyleToString(defXLinkPen.style())) +
-            xml.attribut("defXLinkStyleBegin", defXLinkStyleBegin) +
-            xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) +
-            xml.attribut("mapZoomFactor",
-                         QString().setNum(mapEditor->getZoomFactorTarget())) +
-            xml.attribut("mapRotationAngle",
-                         QString().setNum(mapEditor->getAngleTarget())) +
-            colhint;
+        // FIXME-2 move these map settings to mapDesign:
+        mapAttr += xml.attribut("defaultFont", defaultFont.toString()) + "\n";
+        mapAttr += xml.attribut("linkStyle", LinkObj::styleString(mapDesignInt->linkStyle(1))) + "\n"; // FIXME-2 only one level save atm
+        mapAttr += xml.attribut("linkColor", mapDesignInt->defaultLinkColor().name()) + "\n";
+        mapAttr += xml.attribut("defXLinkColor", defXLinkPen.color().name()) + "\n";
+        mapAttr += xml.attribut("defXLinkWidth",
+                     QString().setNum(defXLinkPen.width(), 10)) + "\n";
+        mapAttr += xml.attribut("defXLinkPenStyle",
+                     penStyleToString(defXLinkPen.style())) + "\n";
+        mapAttr += xml.attribut("defXLinkStyleBegin", defXLinkStyleBegin) + "\n";
+        mapAttr += xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) + "\n";
+        ////////////////
+
+        mapAttr += xml.attribut("mapZoomFactor",
+                     QString().setNum(mapEditor->getZoomFactorTarget())) + "\n";
+        mapAttr += xml.attribut("mapRotationAngle",
+                     QString().setNum(mapEditor->getAngleTarget()));
+
+        QString colhint = "";
+        /* FIXME-2 mapDesign related settings not saved yet (at least not all)
+           if (linkColorHint == LinkObj::HeadingColor)
+            colhint = xml.attribut("linkColorHint", "HeadingColor");
+        */
+        mapAttr += colhint;
     }
     header += xml.beginElement("vymmap", mapAttr);
+
+    QString design = mapDesignInt->saveToDir(tmpdir, prefix);
+
     xml.incIndent();
 
     // Find the used flags while traversing the tree
@@ -399,7 +401,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     xml.decIndent();
     footer += xml.endElement("vymmap");
 
-    return header + flags + tree + footer;
+    return header + design + flags + tree + footer;
 }
 
 QString VymModel::saveTreeToDir(const QString &tmpdir, const QString &prefix,
@@ -3629,6 +3631,10 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         }
         */
 
+        // Update upLink of BranchContainer to *parent* BC of destination
+        BranchContainer *bc = branch->getBranchContainer();
+        bc->linkTo(dst->getBranchContainer());
+
         // Update parent item and stacking order of container
         branch->updateContainerStackingOrder();
 
@@ -5265,7 +5271,7 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     mapDesignInt->setDefaultLinkColor(col);
 
     // Set color for "link arrows" in TreeEditor
-    vymView->setLinkColor(col);
+    vymView->updateColors();
 
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
@@ -5324,7 +5330,7 @@ void VymModel::setMapBackgroundColor(QColor col)
               QString("setMapBackgroundColor (\"%1\")").arg(col.name()),
               QString("Set background color of map to %1").arg(col.name()));
     backgroundColor = col;  // Used for backroundRole in TreeModel::data()
-    vymView->setBackgroundColor(backgroundColor);
+    vymView->updateColors();
 }
 
 QColor VymModel::getMapBackgroundColor()
@@ -5376,7 +5382,7 @@ void VymModel::unsetMapBackgroundImage() // FIXME-2 missing savestate
     QString ("setMapBackgroundImage (%1)").arg(col.name()),
     QString("Set background color of map to %1").arg(col.name()));
     */
-    vymView->setBackgroundColor(getMapBackgroundColor());
+    vymView->updateColors();
     usesBackgroundImage = false;
     backgroundImageName.clear();
 }
@@ -5622,36 +5628,37 @@ void VymModel::setSelectionPenColor(QColor col)
     if (!col.isValid())
         return;
 
-    QPen selPen = mapEditor->getSelectionPen();
+    QPen selPen = mapDesignInt->selectionPen();
     saveState(QString("setSelectionPenColor (\"%1\")")
                   .arg(selPen.color().name()),
               QString("setSelectionPenColor (\"%1\")").arg(col.name()),
               QString("Set pen color of selection box to %1").arg(col.name()));
 
     selPen.setColor(col);
-    mapEditor->setSelectionPen(selPen);
+    mapDesignInt->setSelectionPen(selPen);
+    mapEditor->updateSelection();
 }
 
 QColor VymModel::getSelectionPenColor() {
-    return mapEditor->getSelectionPen().color();
+    return mapDesignInt->selectionPen().color();
 }
 
 void VymModel::setSelectionPenWidth(qreal w)
 {
-    QPen selPen = mapEditor->getSelectionPen();
+    QPen selPen = mapDesignInt->selectionPen();
     
     saveState(QString("setSelectionPenWidth (\"%1\")")
-                  .arg(mapEditor->getSelectionPen().width()),
+                  .arg(mapDesignInt->selectionPen().width()),
               QString("setSelectionPenWidth (\"%1\")").arg(w),
               QString("Set pen width of selection box to %1").arg(w));
 
     selPen.setWidth(w);
-    mapEditor->setSelectionPen(selPen);
-    //vymView->setSelectionColor(col);
+    mapDesignInt->setSelectionPen(selPen);
+    mapEditor->updateSelection();
 }
 
 qreal VymModel::getSelectionPenWidth() {
-    return mapEditor->getSelectionPen().width();
+    return mapDesignInt->selectionPen().width();
 }
 
 void VymModel::setSelectionBrushColor(QColor col)
@@ -5659,18 +5666,19 @@ void VymModel::setSelectionBrushColor(QColor col)
     if (!col.isValid())
         return;
 
-    QBrush selBrush = mapEditor->getSelectionBrush();
+    QBrush selBrush = mapDesignInt->selectionBrush();
     saveState(QString("setSelectionBrushColor (\"%1\")")
                   .arg(selBrush.color().name()),
               QString("setSelectionBrushColor (\"%1\")").arg(col.name()),
               QString("Set Brush color of selection box to %1").arg(col.name()));
 
     selBrush.setColor(col);
-    mapEditor->setSelectionBrush(selBrush);
+    mapDesignInt->setSelectionBrush(selBrush);
+    vymView->updateColors();
 }
 
 QColor VymModel::getSelectionBrushColor() {
-    return mapEditor->getSelectionBrush().color();
+    return mapDesignInt->selectionBrush().color();
 }
 
 bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst)
