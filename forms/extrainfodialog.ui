@@ -163,13 +163,6 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="closeButton">
        <property name="text">
         <string>Close</string>
@@ -184,7 +177,6 @@
  <tabstops>
   <tabstop>authorLE</tabstop>
   <tabstop>closeButton</tabstop>
-  <tabstop>cancelButton</tabstop>
   <tabstop>mapNameLE</tabstop>
  </tabstops>
  <resources/>
@@ -197,22 +189,6 @@
    <hints>
     <hint type="sourcelabel">
      <x>321</x>
-     <y>377</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>187</x>
-     <y>201</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cancelButton</sender>
-   <signal>clicked()</signal>
-   <receiver>ExtraInfoDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>230</x>
      <y>377</y>
     </hint>
     <hint type="destinationlabel">

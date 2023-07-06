@@ -854,10 +854,11 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
     return err;
 }
 
-void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)   // FIXME-2 move file dialog to MainWindow
+ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QString &fn)  // FIXME-2 better move filedialog to MainWindow
 {
     if (!parentBranch)
         parentBranch = getSelectedBranch();
+
     if (parentBranch) {
         QString filter = QString(tr("Images") +
                                  " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
@@ -885,7 +886,7 @@ void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)   // FIXME
                                   .arg(s)
                                   .arg(getObjectName(parentBranch)));
 
-                    // Find nice position for new image, take childPos
+                    // Find nice position for new image, take childPos // FIXME-1 position below last image
                     ImageContainer *ic = ii->getImageContainer();
                     QPointF pos_new = parentBranch->getBranchContainer()->getPositionHintNewChild(ic);
                     ic->setPos(pos_new);
@@ -893,6 +894,7 @@ void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)   // FIXME
                     select(parentBranch);
 
                     reposition();
+                    return ii;
                 }
                 else {
                     qWarning() << "vymmodel: Failed to load " + s;
@@ -901,6 +903,7 @@ void VymModel::loadImage(BranchItem *parentBranch, const QString &fn)   // FIXME
             }
         }
     }
+    return nullptr;
 }
 
 void VymModel::saveImage(ImageItem *ii, QString fn)
@@ -2968,8 +2971,11 @@ void VymModel::paste()
             QString fn = clipboardDir + "/" + "image.png";
             if (!image.save(fn))
                 qWarning() << "VM::paste  Could not save copy of image in system clipboard";
-            else
-                loadImage(selbi, fn);
+            else {
+                ImageItem *ii = loadImage(selbi, fn);
+                if (ii)
+                    setScaleFactor(300.0 / image.width(), ii);    // FIXME-2 Better use user-defined fixed width
+            }
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
             //setTextFormat(Qt::RichText);
@@ -3996,9 +4002,11 @@ void VymModel::unscrollChildren()
     }
 }
 
-void VymModel::setScaleFactor(qreal f)
+void VymModel::setScaleFactor(qreal f, ImageItem *selii)
 {
-    ImageItem *selii = getSelectedImage();
+    if (!selii)
+        selii = getSelectedImage();
+
     if (selii) {
         qreal f_old = selii->getScaleFactor();
         selii->setScaleFactor(f);

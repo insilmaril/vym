@@ -162,7 +162,7 @@ void VymView::updateColors()
     /*
     mapEditor->setSelectionBrush(brush);
     treeEditor->setStyleSheet(
-        "selection-background-color: " + brush.color().name() + ";" +
+        "selection-background-color: " + brush.color().name(QColor::HexArgb) + ";" +
         "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
         */
 
