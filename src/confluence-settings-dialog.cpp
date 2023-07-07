@@ -1,9 +1,9 @@
 #include "confluence-settings-dialog.h"
 
-#include <QSettings>
+#include "settings.h"
 
 extern QString confluencePassword;
-extern QSettings settings;
+extern Settings settings;
 
 ConfluenceSettingsDialog::ConfluenceSettingsDialog(QWidget *parent) : QDialog(parent)
 {

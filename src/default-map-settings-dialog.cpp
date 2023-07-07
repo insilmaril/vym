@@ -1,11 +1,10 @@
 #include "default-map-settings-dialog.h"
 
 #include <QFileDialog>
-#include <QSettings>
 
 #include "mainwindow.h"
 
-extern QSettings settings;
+extern Settings settings;
 extern Main *mainWindow;
 extern QString vymName;
 
