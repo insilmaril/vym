@@ -1460,9 +1460,12 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     // Check vymlink  modifier (before selecting object!)
     if (ti_found && sysFlagName == "system-vymLink") {
         model->select(ti_found);
-        if (e->modifiers() & Qt::ControlModifier)
-            mainWindow->editOpenVymLink(true);
-        else
+        if (e->modifiers() & Qt::ControlModifier) {
+            if (e->modifiers() & Qt::ShiftModifier)
+                model->deleteVymLink();
+            else
+                mainWindow->editOpenVymLink(true);
+        } else
             mainWindow->editOpenVymLink(false);
         return;
     }
@@ -1488,14 +1491,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                     mainWindow->editOpenURLTab();
                 else
                     mainWindow->editOpenURL();
-            }
-            else if (sysFlagName == "system-vymLink") {
-                if (e->modifiers() & Qt::ControlModifier)
-                    mainWindow->editOpenVymLink(true);
-                else
-                    mainWindow->editOpenVymLink(false);
-                // tabWidget may change, better return now
-                // before segfaulting...
             }
             else if (sysFlagName == "system-note")
                 mainWindow->windowToggleNoteEditor();
