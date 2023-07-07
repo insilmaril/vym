@@ -283,6 +283,7 @@ class Main : public QMainWindow {
     void viewRotateCounterClockwise();
     void viewRotateClockwise();
     void viewCenter();
+    void viewCenterScaled();
 
   public slots:
     void networkStartServer();
@@ -560,6 +561,7 @@ class Main : public QMainWindow {
     QAction *actionRotateCounterClockwise;
     QAction *actionRotateClockwise;
     QAction *actionCenterOn;
+    QAction *actionFitToSelection;
 
     QActionGroup *actionGroupModModes;
     QAction *actionModModePoint;

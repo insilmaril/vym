@@ -1658,17 +1658,20 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 if (flag)
                 {
                     sysFlagName = flag->getName();
-                    qDebug() << "ME::mousePress found flag " << sysFlagName;
+                    qDebug() << "ME::mousePress found flag " << sysFlagName;    // FIXME-2 testing
                 }
             }
         }
 
-        // Check vymlink  modifier (before selecting object!)   // FIXME-2 why here and not below with other system flags? Why before selecting?
+        // Check vymlink  modifier (before selecting object!)
         if (sysFlagName == "system-vymLink") {
             model->select(ti_found);
-            if (e->modifiers() & Qt::ControlModifier)
-                mainWindow->editOpenVymLink(true);
-            else
+            if (e->modifiers() & Qt::ControlModifier) {
+                if (e->modifiers() & Qt::ShiftModifier)
+                    model->deleteVymLink();
+                else
+                    mainWindow->editOpenVymLink(true);
+            } else
                 mainWindow->editOpenVymLink(false);
             return;
         }
@@ -1738,16 +1741,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                     mainWindow->editOpenURLTab();
                 else
                     mainWindow->editOpenURL();
-            }
-            else if (sysFlagName == "system-vymLink") {
-                if (e->modifiers() & Qt::ControlModifier)
-                    mainWindow->editOpenVymLink(true);
-                else
-                    mainWindow->editOpenVymLink(false);
-                // tabWidget may change, better return now
-                // before segfaulting...
-            }
-            else if (sysFlagName == "system-note")
+            } else if (sysFlagName == "system-note")
                 mainWindow->windowToggleNoteEditor();
             else if (sysFlagName == "hideInExport")
                 model->toggleHideExport();

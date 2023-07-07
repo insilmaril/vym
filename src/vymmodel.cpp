@@ -5998,10 +5998,10 @@ void VymModel::appendSelectionToHistory() // FIXME-4 history unable to cope with
     }
 }
 
-void VymModel::emitShowSelection()
+void VymModel::emitShowSelection(bool scaled)
 {
     if (!repositionBlocked)
-        emit(showSelection());
+        emit(showSelection(scaled));
 }
 
 TreeItem* VymModel::lastToggledItem()
