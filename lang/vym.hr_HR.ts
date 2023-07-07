@@ -256,7 +256,7 @@
 <context>
     <name>DefaultMapSettingsDialog</name>
     <message>
-        <location filename="../src/default-map-settings-dialog.cpp" line="+59"/>
+        <location filename="../src/default-map-settings-dialog.cpp" line="+58"/>
         <source>Set vym default map to be loaded on startup</source>
         <translation type="unfinished"></translation>
     </message>
@@ -799,13 +799,13 @@ Provjerite da li to stvarno
         <location line="+5"/>
         <location line="+5"/>
         <location line="+999"/>
-        <location line="+2140"/>
+        <location line="+2149"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(experimentalno)</translation>
     </message>
     <message>
-        <location line="-3340"/>
+        <location line="-3349"/>
         <source>Export</source>
         <comment>File menu</comment>
         <translation>Izvoz</translation>
@@ -1492,6 +1492,12 @@ Provjerite da li to stvarno
         <translation>Centriraj odabrano</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>Fit view to selection</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+12"/>
         <source>Note editor</source>
         <comment>View action</comment>
@@ -2055,18 +2061,18 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+903"/>
+        <location line="+915"/>
         <source>Load vym script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2765"/>
+        <location line="-2777"/>
         <source>About QT</source>
         <comment>Help action</comment>
         <translation>O QTu</translation>
     </message>
     <message>
-        <location line="-2861"/>
+        <location line="-2870"/>
         <source>Script output window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2118,7 +2124,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+556"/>
         <source>Images</source>
         <translation type="unfinished">Slike</translation>
     </message>
@@ -2147,7 +2153,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1545"/>
+        <location line="-1554"/>
         <source>(experimental)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2164,7 +2170,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+670"/>
+        <location line="+679"/>
         <source>Use modifier to select and reorder objects</source>
         <comment>Mode modifier</comment>
         <translation type="unfinished"></translation>
@@ -2428,12 +2434,12 @@ because file exists and cannot be changed.</source>
         <translation>Alatna traka boja</translation>
     </message>
     <message>
-        <location line="+3779"/>
+        <location line="+3791"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3720"/>
+        <location line="-3732"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation>Alatna traka uređivača</translation>
@@ -2585,7 +2591,7 @@ zbog postojeće datoteke zaključavanja:
         <location line="+270"/>
         <location line="+201"/>
         <location line="+392"/>
-        <location line="+1041"/>
+        <location line="+1053"/>
         <location line="+20"/>
         <location line="+880"/>
         <location line="+206"/>
@@ -2594,7 +2600,7 @@ zbog postojeće datoteke zaključavanja:
         <translation>Upozorenje</translation>
     </message>
     <message>
-        <location line="-3230"/>
+        <location line="-3242"/>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
@@ -2623,25 +2629,25 @@ Couldn&apos;t rename map to %1</source>
     </message>
     <message>
         <location line="+106"/>
-        <location line="+2333"/>
+        <location line="+2345"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Ne mogu naći program za pregledavanje %1.</translation>
     </message>
     <message>
-        <location line="-2332"/>
-        <location line="+2333"/>
+        <location line="-2344"/>
+        <location line="+2345"/>
         <source>Please use Settings-&gt;</source>
         <translation>Molim koristite postavke-&gt;</translation>
     </message>
     <message>
-        <location line="-2332"/>
-        <location line="+1248"/>
+        <location line="-2344"/>
+        <location line="+1260"/>
         <source>Set application to open an URL</source>
         <translation>Postavi aplikaciju za otvaranje URLa</translation>
     </message>
     <message>
-        <location line="-1185"/>
+        <location line="-1197"/>
         <source>Enter URL:</source>
         <translation>Unesi URL:</translation>
     </message>
@@ -2742,7 +2748,13 @@ Couldn&apos;t rename map to %1</source>
         <translation>xLinkovi</translation>
     </message>
     <message>
-        <location line="+784"/>
+        <location line="+673"/>
+        <source>Color of selection box</source>
+        <comment>Mainwindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+123"/>
         <location line="+1097"/>
         <source>Set application to open PDF files</source>
         <translation>Postavi aplikaciju za otvaranje PDF datoteka</translation>
@@ -2896,13 +2908,13 @@ Couldn&apos;t rename map to %1</source>
         <translation>Uredi naslov</translation>
     </message>
     <message>
-        <location line="+415"/>
+        <location line="+446"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation>Ispis vym mape</translation>
     </message>
     <message>
-        <location line="+1674"/>
+        <location line="+1669"/>
         <source>%1 items selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3347,14 +3359,14 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3382"/>
+        <location filename="../src/mainwindow.cpp" line="-3394"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4084"/>
+        <location filename="../src/vymmodel.cpp" line="+4099"/>
         <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3585,7 +3597,7 @@ već postoji.
         <translation>Spreman</translation>
     </message>
     <message>
-        <location line="+158"/>
+        <location line="+161"/>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation>Nema imena datoteke za ovu bilješku.</translation>
@@ -3800,7 +3812,7 @@ već postoji.
         <translation>Uređivač bilješki</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+174"/>
         <source>Export Note to single file</source>
         <translation>Izvezi bilješku u jednu datoteku</translation>
     </message>
@@ -3863,7 +3875,7 @@ već postoji.
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../src/vymmodel.cpp" line="-3943"/>
+        <location filename="../src/vymmodel.cpp" line="-3958"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>nepoznati korisnik</translation>
@@ -3874,7 +3886,7 @@ već postoji.
         <translation>neimenovana</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <location line="+33"/>
         <location line="+82"/>
         <location line="+61"/>
@@ -3907,12 +3919,12 @@ već postoji.
     </message>
     <message>
         <location line="+4"/>
-        <location line="+199"/>
+        <location line="+201"/>
         <source>Cancel</source>
         <translation>Odustani</translation>
     </message>
     <message>
-        <location line="-173"/>
+        <location line="-175"/>
         <location line="+7"/>
         <source>Save Error</source>
         <translation>Greška spremanja</translation>
@@ -3945,25 +3957,25 @@ ne može biti preimenovana prije spremanja</translation>
     </message>
     <message>
         <location line="+71"/>
-        <location line="+59"/>
-        <location line="+4213"/>
+        <location line="+61"/>
+        <location line="+4218"/>
         <source>Images</source>
         <translation>Slike</translation>
     </message>
     <message>
-        <location line="-4269"/>
-        <location line="+58"/>
+        <location line="-4276"/>
+        <location line="+60"/>
         <source>All</source>
         <comment>Filedialog</comment>
         <translation>Sve</translation>
     </message>
     <message>
-        <location line="-54"/>
+        <location line="-56"/>
         <source>Load image</source>
         <translation>Učitaj sliku</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+59"/>
         <source>Save image</source>
         <translation>Spremi sliku</translation>
     </message>
@@ -3981,7 +3993,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+3538"/>
+        <location line="+3543"/>
         <source>Critical Error</source>
         <translation>Kritična greška</translation>
     </message>
@@ -3992,7 +4004,7 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3283"/>
+        <location line="-3288"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Ne mogu spremiti %1</translation>
     </message>
@@ -4043,7 +4055,7 @@ Molim vas obrišite datoteku zaključavanja ako ste sigurni da trenutno nitko ne
         <translation>Uklonjena datoteka zaključavanja za %1</translation>
     </message>
     <message>
-        <location line="-322"/>
+        <location line="-324"/>
         <source>The map %1
 did not use the compressed vym file format.
 Writing it uncompressed will also write images 
@@ -4058,13 +4070,13 @@ Do you want to write the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+365"/>
-        <location line="+3004"/>
+        <location line="+367"/>
+        <location line="+3009"/>
         <source>Warning</source>
         <translation>Upozorenje</translation>
     </message>
     <message>
-        <location line="-3003"/>
+        <location line="-3008"/>
         <source>Couldn&apos;t remove lockfile for %1</source>
         <translation>Ne mogu ukloniti datoteku zaključavanja za %1</translation>
     </message>
@@ -4118,13 +4130,13 @@ Do you want to reload that map with the new file?</source>
         <translation>Bilješka</translation>
     </message>
     <message>
-        <location line="+1023"/>
+        <location line="+1026"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation>Nova mapa</translation>
     </message>
     <message>
-        <location line="+937"/>
+        <location line="+939"/>
         <source>Could not find Jira ticket pattern in %1</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>

@@ -2319,6 +2319,15 @@ void Main::setupViewActions()
     actionListFiles.append(a);
     actionCenterOn = a;
 
+    a = new QAction(QPixmap(),
+                    tr("Fit view to selection", "View action"), this);
+    a->setShortcut(Qt::Key_Period + Qt::SHIFT);
+    viewMenu->addAction(a);
+    switchboard.addSwitch("mapCenterAndFitView", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(viewCenterScaled()));
+    actionListFiles.append(a);
+    actionCenterOn = a;
+
     viewMenu->addSeparator();
 
     // a=noteEditorDW->toggleViewAction();
@@ -5854,7 +5863,14 @@ void Main::viewCenter()
 {
     VymModel *m = currentModel();
     if (m)
-        m->emitShowSelection();
+        m->emitShowSelection(false);
+}
+
+void Main::viewCenterScaled()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->emitShowSelection(true);
 }
 
 void Main::networkStartServer()

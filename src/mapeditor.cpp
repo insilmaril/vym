@@ -248,7 +248,7 @@ void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
 
     //qDebug() << " zoom out: " << zoomOutRequired;
     //qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactor << " zf=" << zf;
-    if (zoomOutRequired) {
+    if (zoomOutRequired || maximizeArea) {
         setViewCenterTarget(area.center(), zf, angle);
         return;
     }

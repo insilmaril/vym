@@ -257,7 +257,7 @@
 <context>
     <name>DefaultMapSettingsDialog</name>
     <message>
-        <location filename="../src/default-map-settings-dialog.cpp" line="+59"/>
+        <location filename="../src/default-map-settings-dialog.cpp" line="+58"/>
         <source>Set vym default map to be loaded on startup</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1138,7 +1138,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Selectiona</translation>
     </message>
     <message>
-        <location line="+317"/>
+        <location line="+326"/>
         <source>Tree editor</source>
         <comment>View action</comment>
         <translation>Editor de arbore</translation>
@@ -1185,7 +1185,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Verifica per notas de liberation e actualisationes</translation>
     </message>
     <message>
-        <location line="-905"/>
+        <location line="-914"/>
         <source>Toggle target...</source>
         <comment>Edit menu</comment>
         <translation>Alterna objectivo...</translation>
@@ -1363,7 +1363,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Centra sur selection</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+92"/>
         <source>History Window</source>
         <comment>View action</comment>
         <translation>Fenestra de historia</translation>
@@ -1490,7 +1490,7 @@ vole permitter isto in tu systema!</translation>
         <translation>Isto non functiona!</translation>
     </message>
     <message>
-        <location line="-2496"/>
+        <location line="-2505"/>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation>Fenestra principal</translation>
@@ -1640,7 +1640,7 @@ vole permitter isto in tu systema!</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+76"/>
         <source>Note editor</source>
         <comment>View action</comment>
         <translation>Editor de nota</translation>
@@ -1867,7 +1867,7 @@ a causa de un file de bloco existente:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+828"/>
+        <location line="+840"/>
         <source>Load vym script</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1898,18 +1898,18 @@ a causa de un file de bloco existente:
         <translation>Numero de genitores mostrate per un carga:</translation>
     </message>
     <message>
-        <location line="-2392"/>
+        <location line="-2404"/>
         <source>(readonly)</source>
         <translation>(de sol lectura)</translation>
     </message>
     <message>
-        <location line="-1944"/>
+        <location line="-1953"/>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1745"/>
+        <location line="+1754"/>
         <source>Select color (Press Shift for more options)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1932,7 +1932,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1861"/>
+        <location line="+1873"/>
         <location line="+20"/>
         <source>No SSL support available for this build of vym</source>
         <translation type="unfinished"></translation>
@@ -1985,7 +1985,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Pro favor permitte que vym verifica actualisationes!</translation>
     </message>
     <message>
-        <location line="-4424"/>
+        <location line="-4436"/>
         <source>Set application to open pdf files</source>
         <comment>Settings action</comment>
         <translation>Fixa application per aperir files pdf</translation>
@@ -2122,7 +2122,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Circa QT</translation>
     </message>
     <message>
-        <location line="-2861"/>
+        <location line="-2870"/>
         <source>Script output window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2168,7 +2168,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+556"/>
         <source>Images</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2197,7 +2197,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1545"/>
+        <location line="-1554"/>
         <source>(experimental)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2226,7 +2226,13 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+636"/>
+        <location line="+499"/>
+        <source>Fit view to selection</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+146"/>
         <source>&amp;Connect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2507,12 +2513,18 @@ Couldn&apos;t rename map to %1</source>
         <translation>Barra de instrumentos de color</translation>
     </message>
     <message>
-        <location line="+3779"/>
+        <location line="+2344"/>
+        <source>Color of selection box</source>
+        <comment>Mainwindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1447"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3720"/>
+        <location line="-3732"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation>Barra de instrumentos de editores</translation>
@@ -2647,7 +2659,7 @@ exists already. Do you want to</source>
         <translation>Exporta como CSV</translation>
     </message>
     <message>
-        <location line="-3239"/>
+        <location line="-3248"/>
         <location line="+22"/>
         <location line="+8"/>
         <location line="+13"/>
@@ -2657,7 +2669,7 @@ exists already. Do you want to</source>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+999"/>
-        <location line="+2140"/>
+        <location line="+2149"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(ancora experimental)</translation>
@@ -2673,7 +2685,7 @@ exists already. Do you want to</source>
         <location line="+270"/>
         <location line="+201"/>
         <location line="+392"/>
-        <location line="+1041"/>
+        <location line="+1053"/>
         <location line="+20"/>
         <location line="+880"/>
         <location line="+206"/>
@@ -2682,7 +2694,7 @@ exists already. Do you want to</source>
         <translation>Advertimento</translation>
     </message>
     <message>
-        <location line="-2834"/>
+        <location line="-2846"/>
         <source>The map %1 has been modified but not saved yet. Do you want to</source>
         <translation>Le mappa %1 ha essite modificate ma non salveguardate ancora. Tu vole</translation>
     </message>
@@ -2698,26 +2710,26 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location line="+106"/>
-        <location line="+2333"/>
+        <location line="+2345"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Il nonpoteva trovar un application pro aperir %1.
 </translation>
     </message>
     <message>
-        <location line="-2332"/>
-        <location line="+2333"/>
+        <location line="-2344"/>
+        <location line="+2345"/>
         <source>Please use Settings-&gt;</source>
         <translation>Pro favor usa preferentias -&gt;</translation>
     </message>
     <message>
-        <location line="-2332"/>
-        <location line="+1248"/>
+        <location line="-2344"/>
+        <location line="+1260"/>
         <source>Set application to open an URL</source>
         <translation>Fixa application pro aperir un URL</translation>
     </message>
     <message>
-        <location line="-1185"/>
+        <location line="-1197"/>
         <source>Enter URL:</source>
         <translation>Inserta URL:</translation>
     </message>
@@ -2823,7 +2835,7 @@ exists already. Do you want to</source>
         <translation>xLinks</translation>
     </message>
     <message>
-        <location line="+784"/>
+        <location line="+796"/>
         <location line="+1097"/>
         <source>Set application to open PDF files</source>
         <translation>Fixa application pro aperir files PDF</translation>
@@ -2899,13 +2911,13 @@ exists already. Do you want to</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+415"/>
+        <location line="+446"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation>Imprime mappa de vym</translation>
     </message>
     <message>
-        <location line="+1674"/>
+        <location line="+1669"/>
         <source>%1 items selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3351,14 +3363,14 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3009"/>
+        <location filename="../src/mainwindow.cpp" line="-3021"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4084"/>
+        <location filename="../src/vymmodel.cpp" line="+4099"/>
         <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3589,7 +3601,7 @@ Do you want to overwrite it?</source>
         <translation>Preste</translation>
     </message>
     <message>
-        <location line="+158"/>
+        <location line="+161"/>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation>Nulle nomine de file disponibile pro iste nota.</translation>
@@ -3804,7 +3816,7 @@ Do you want to overwrite it?</source>
         <translation>Editor de nota</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+174"/>
         <source>Export Note to single file</source>
         <translation>Exporta nota in un singule file</translation>
     </message>
@@ -3865,7 +3877,7 @@ Do you want to overwrite it?</source>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../src/vymmodel.cpp" line="-3943"/>
+        <location filename="../src/vymmodel.cpp" line="-3958"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>usator incognite</translation>
@@ -3876,7 +3888,7 @@ Do you want to overwrite it?</source>
         <translation>sin nomine</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <location line="+33"/>
         <location line="+82"/>
         <location line="+61"/>
@@ -3919,7 +3931,7 @@ Do you want to write the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+325"/>
         <source>unknown user</source>
         <comment>Default for lockfiles of maps</comment>
         <translation>usator incognite</translation>
@@ -3931,18 +3943,18 @@ Do you want to write the map</source>
         <translation>Advertimento: Mappa ja aperite</translation>
     </message>
     <message>
-        <location line="-363"/>
+        <location line="-365"/>
         <source>compressed (vym default)</source>
         <translation>comprimite (predefinite de vym)</translation>
     </message>
     <message>
         <location line="+4"/>
-        <location line="+199"/>
+        <location line="+201"/>
         <source>Cancel</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location line="-173"/>
+        <location line="-175"/>
         <location line="+7"/>
         <source>Save Error</source>
         <translation>Salveguarda error</translation>
@@ -3973,25 +3985,25 @@ could not be renamed before saving</source>
     </message>
     <message>
         <location line="+71"/>
-        <location line="+59"/>
-        <location line="+4213"/>
+        <location line="+61"/>
+        <location line="+4218"/>
         <source>Images</source>
         <translation>Imagines</translation>
     </message>
     <message>
-        <location line="-4269"/>
-        <location line="+58"/>
+        <location line="-4276"/>
+        <location line="+60"/>
         <source>All</source>
         <comment>Filedialog</comment>
         <translation>Omne</translation>
     </message>
     <message>
-        <location line="-54"/>
+        <location line="-56"/>
         <source>Load image</source>
         <translation>Carga imagine</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+59"/>
         <source>Save image</source>
         <translation>Salveguarda imagine</translation>
     </message>
@@ -4008,12 +4020,12 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+3538"/>
+        <location line="+3543"/>
         <source>Critical Error</source>
         <translation>Error critic</translation>
     </message>
     <message>
-        <location line="-3537"/>
+        <location line="-3542"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Il non pote salveguardar %1</translation>
     </message>
@@ -4092,12 +4104,12 @@ Tu vole recargar le mappa con le nove file?</translation>
     </message>
     <message>
         <location line="-131"/>
-        <location line="+3004"/>
+        <location line="+3009"/>
         <source>Warning</source>
         <translation>Advertimento</translation>
     </message>
     <message>
-        <location line="-2679"/>
+        <location line="-2684"/>
         <source>Autosave disabled during undo.</source>
         <translation>Salveguardar automatc dishabilitate durante annullation.</translation>
     </message>
@@ -4108,13 +4120,13 @@ Tu vole recargar le mappa con le nove file?</translation>
         <translation>Nota</translation>
     </message>
     <message>
-        <location line="+1023"/>
+        <location line="+1026"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation>Nove mappa</translation>
     </message>
     <message>
-        <location line="+937"/>
+        <location line="+939"/>
         <source>Could not find Jira ticket pattern in %1</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>

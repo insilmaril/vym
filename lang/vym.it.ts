@@ -260,7 +260,7 @@
 <context>
     <name>DefaultMapSettingsDialog</name>
     <message>
-        <location filename="../src/default-map-settings-dialog.cpp" line="+59"/>
+        <location filename="../src/default-map-settings-dialog.cpp" line="+58"/>
         <source>Set vym default map to be loaded on startup</source>
         <translation type="unfinished"></translation>
     </message>
@@ -732,13 +732,13 @@ voglia permettere ciò nel tuo sistema!</translation>
         <translation>&amp;Vedi</translation>
     </message>
     <message>
-        <location line="+2411"/>
-        <location line="+1248"/>
+        <location line="+2420"/>
+        <location line="+1260"/>
         <source>Set application to open an URL</source>
         <translation>Scegli l&apos;applicazione per aprire gli URL</translation>
     </message>
     <message>
-        <location line="-1801"/>
+        <location line="-1813"/>
         <source>Overwrite</source>
         <translation>Sovvrascrivi</translation>
     </message>
@@ -786,12 +786,12 @@ voglia permettere ciò nel tuo sistema!</translation>
         <translation>Tralascia le modifiche</translation>
     </message>
     <message>
-        <location line="+1399"/>
+        <location line="+1411"/>
         <source>VYM -Information:</source>
         <translation>VIM - Informazioni:</translation>
     </message>
     <message>
-        <location line="-2253"/>
+        <location line="-2265"/>
         <location line="+395"/>
         <location line="+46"/>
         <location line="+9"/>
@@ -802,12 +802,12 @@ voglia permettere ciò nel tuo sistema!</translation>
         <translation>Errore Critico</translation>
     </message>
     <message>
-        <location line="+2097"/>
+        <location line="+2109"/>
         <source>Critcal error</source>
         <translation>Errore Critico</translation>
     </message>
     <message>
-        <location line="-3786"/>
+        <location line="-3798"/>
         <source>Add</source>
         <translation>Aggiungi</translation>
     </message>
@@ -819,12 +819,12 @@ voglia permettere ciò nel tuo sistema!</translation>
         <translation>Importa</translation>
     </message>
     <message>
-        <location line="-3060"/>
+        <location line="-3069"/>
         <source>&amp;Print</source>
         <translation>&amp;Stampa</translation>
     </message>
     <message>
-        <location line="+1386"/>
+        <location line="+1395"/>
         <source>Take care!</source>
         <comment>Standardflag</comment>
         <translation>Fare attenzione!</translation>
@@ -902,7 +902,7 @@ voglia permettere ciò nel tuo sistema!</translation>
         <translation>Questo aiuta</translation>
     </message>
     <message>
-        <location line="-1568"/>
+        <location line="-1577"/>
         <location line="+22"/>
         <location line="+8"/>
         <location line="+13"/>
@@ -912,19 +912,19 @@ voglia permettere ciò nel tuo sistema!</translation>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+999"/>
-        <location line="+2140"/>
+        <location line="+2149"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(in via di sperimentazione)</translation>
     </message>
     <message>
-        <location line="-2496"/>
+        <location line="-2505"/>
         <source>Add image...</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1751"/>
+        <location line="+1760"/>
         <source>The map %1
 is already opened.Opening the same map in multiple editors may lead 
 to confusion when finishing working with vym.Do you want to</source>
@@ -980,7 +980,7 @@ exists already. Do you want to</source>
         <location line="+270"/>
         <location line="+201"/>
         <location line="+392"/>
-        <location line="+1041"/>
+        <location line="+1053"/>
         <location line="+20"/>
         <location line="+880"/>
         <location line="+206"/>
@@ -989,16 +989,16 @@ exists already. Do you want to</source>
         <translation>Attenzione</translation>
     </message>
     <message>
-        <location line="-2721"/>
-        <location line="+2333"/>
+        <location line="-2733"/>
+        <location line="+2345"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Non è possibile trovare un applicazione per aprire %1.
 </translation>
     </message>
     <message>
-        <location line="-2332"/>
-        <location line="+2333"/>
+        <location line="-2344"/>
+        <location line="+2345"/>
         <source>Please use Settings-&gt;</source>
         <translation>Usare le Impostazioni-&gt;</translation>
     </message>
@@ -1009,19 +1009,19 @@ exists already. Do you want to</source>
         <translation>Scegli il programma per aprire i file PDF</translation>
     </message>
     <message>
-        <location line="-4299"/>
+        <location line="-4311"/>
         <source>Oh no!</source>
         <comment>Standardflag</comment>
         <translation>Oh no!</translation>
     </message>
     <message>
-        <location line="-2405"/>
+        <location line="-2414"/>
         <source>Search results list</source>
         <comment>FindResultWidget</comment>
         <translation>Cerca lista dei risultati</translation>
     </message>
     <message>
-        <location line="+3099"/>
+        <location line="+3108"/>
         <source>File actions toolbar</source>
         <comment>Toolbar for file actions</comment>
         <translation>Barra strumenti azioni di file</translation>
@@ -1033,7 +1033,7 @@ exists already. Do you want to</source>
         <translation>Barra di azioni di Edit</translation>
     </message>
     <message>
-        <location line="-3056"/>
+        <location line="-3065"/>
         <source>Task list</source>
         <comment>TaskEditor</comment>
         <translation>Elenco delle task</translation>
@@ -1321,7 +1321,7 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+76"/>
         <source>Note editor</source>
         <comment>View action</comment>
         <translation>Editor di note</translation>
@@ -1374,7 +1374,7 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1545"/>
+        <location line="-1554"/>
         <source>(experimental)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1403,7 +1403,13 @@ exists already. Do you want to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+636"/>
+        <location line="+499"/>
+        <source>Fit view to selection</source>
+        <comment>View action</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+146"/>
         <source>&amp;Connect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1655,12 +1661,18 @@ exists already. Do you want to</source>
         <translation>XLinks</translation>
     </message>
     <message>
-        <location line="+3960"/>
+        <location line="+2525"/>
+        <source>Color of selection box</source>
+        <comment>Mainwindow</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1447"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3521"/>
+        <location line="-3533"/>
         <source>Couldn&apos;t load default map:
 
 %1
@@ -1737,7 +1749,7 @@ poiché esiste il file di blocco:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+828"/>
+        <location line="+840"/>
         <source>Load vym script</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1800,7 +1812,7 @@ poiché esiste il file di blocco:
         <translation>Per favore permetti a vym di verificare gli aggiornamenti!</translation>
     </message>
     <message>
-        <location line="-5713"/>
+        <location line="-5734"/>
         <source>Open all URLs in subtree (including scrolled branches)</source>
         <comment>Edit menu</comment>
         <translation>Apre tutte le URL in un sottoalbero (inclusi i rami scorsi)</translation>
@@ -1824,7 +1836,7 @@ poiché esiste il file di blocco:
         <translation>Rimuove i figli</translation>
     </message>
     <message>
-        <location line="+370"/>
+        <location line="+379"/>
         <source>Tree editor</source>
         <comment>View action</comment>
         <translation>Editor a albero</translation>
@@ -1848,13 +1860,13 @@ poiché esiste il file di blocco:
         <translation>Editor di script</translation>
     </message>
     <message>
-        <location line="-66"/>
+        <location line="-75"/>
         <source>Center on selection</source>
         <comment>View action</comment>
         <translation>Centra su selezione</translation>
     </message>
     <message>
-        <location line="+1186"/>
+        <location line="+1195"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation>Barra di strumenti per editor</translation>
@@ -1866,7 +1878,7 @@ poiché esiste il file di blocco:
         <translation>Barra di strumenti per i modi del Modificatore</translation>
     </message>
     <message>
-        <location line="-1438"/>
+        <location line="-1447"/>
         <source>Select previous</source>
         <comment>Edit menu</comment>
         <translation>Seleziona il precedente</translation>
@@ -1902,7 +1914,7 @@ poiché esiste il file di blocco:
         <translation>Ruota in moto orario</translation>
     </message>
     <message>
-        <location line="+328"/>
+        <location line="+337"/>
         <source>Map target</source>
         <comment>SystemFlag</comment>
         <translation>Mappa obiettivo</translation>
@@ -1962,7 +1974,7 @@ poiché esiste il file di blocco:
         <translation>Sorpresa!</translation>
     </message>
     <message>
-        <location line="-1601"/>
+        <location line="-1610"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
@@ -1980,7 +1992,7 @@ poiché esiste il file di blocco:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+941"/>
+        <location line="+950"/>
         <source>Info</source>
         <comment>Standardflag</comment>
         <translation>Info</translation>
@@ -2143,7 +2155,7 @@ poiché esiste il file di blocco:
         <translation>xLinks</translation>
     </message>
     <message>
-        <location line="+891"/>
+        <location line="+903"/>
         <source>Set author for new maps (used in lockfile)</source>
         <translation>Imposta l&apos;autore per le nuove mappe (usato nel file di blocco)</translation>
     </message>
@@ -2164,7 +2176,7 @@ poiché esiste il file di blocco:
         <translation>Numero di genitori mostrati per task:</translation>
     </message>
     <message>
-        <location line="-2392"/>
+        <location line="-2404"/>
         <source>(readonly)</source>
         <translation>(di sola lettura)</translation>
     </message>
@@ -2175,18 +2187,18 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2386"/>
+        <location line="+2398"/>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
         <translation>Esporta nell&apos;ultimo formato usato (%1) in %2</translation>
     </message>
     <message>
-        <location line="-2257"/>
+        <location line="-2269"/>
         <source>Firefox Bookmarks</source>
         <translation type="unfinished">Segnalibri di Firefox</translation>
     </message>
     <message>
-        <location line="-3175"/>
+        <location line="-3184"/>
         <source>&amp;Open...</source>
         <comment>File menu</comment>
         <translation>&amp;Apri...</translation>
@@ -2559,7 +2571,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Zoom fuori</translation>
     </message>
     <message>
-        <location line="+240"/>
+        <location line="+249"/>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
         <translation>Usa i modifier per disegnare XLink</translation>
@@ -2649,7 +2661,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Salva immagine</translation>
     </message>
     <message>
-        <location line="-2193"/>
+        <location line="-2202"/>
         <source>&amp;New map</source>
         <comment>File menu</comment>
         <translation>&amp;Nuova Mappa</translation>
@@ -2705,7 +2717,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Specifica &amp;Immagine di sfondo</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+166"/>
         <source>History Window</source>
         <comment>View action</comment>
         <translation>Finestra cronologia</translation>
@@ -2880,7 +2892,7 @@ Couldn&apos;t rename map to %1</source>
 </translation>
     </message>
     <message>
-        <location line="+869"/>
+        <location line="+881"/>
         <source>Number of undo/redo levels:</source>
         <translation>Numero di annullamenti/rifacimenti:</translation>
     </message>
@@ -2934,13 +2946,13 @@ Couldn&apos;t rename map to %1</source>
         <translation>Edita Titolo</translation>
     </message>
     <message>
-        <location line="+415"/>
+        <location line="+446"/>
         <source>Print vym map</source>
         <comment>MapEditor</comment>
         <translation>Stampa Mappa di vym</translation>
     </message>
     <message>
-        <location line="+1674"/>
+        <location line="+1669"/>
         <source>%1 items selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3386,14 +3398,14 @@ Vuoi rischiare di sovvrascrivere i contenuti?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3009"/>
+        <location filename="../src/mainwindow.cpp" line="-3021"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/vymmodel.cpp" line="+4084"/>
+        <location filename="../src/vymmodel.cpp" line="+4099"/>
         <source>JIRA agent not setup.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3622,7 +3634,7 @@ Vuoi sovrascriverlo?</translation>
 <context>
     <name>TextEditor</name>
     <message>
-        <location filename="../src/texteditor.cpp" line="+298"/>
+        <location filename="../src/texteditor.cpp" line="+301"/>
         <source>&amp;Import...</source>
         <translation>&amp;Importa...</translation>
     </message>
@@ -3771,7 +3783,7 @@ Vuoi sovrascriverlo?</translation>
         <translation>carattere &amp;fisso predefinito</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+198"/>
         <source>Export Note to single file</source>
         <translation>Esporta nota in un file singolo</translation>
     </message>
@@ -3793,7 +3805,7 @@ Vuoi sovrascriverlo?</translation>
         <translation>Esporta nota in un file singolo (ASCII)</translation>
     </message>
     <message>
-        <location line="-242"/>
+        <location line="-250"/>
         <source>Note Editor</source>
         <translation>Editor di Note</translation>
     </message>
@@ -3842,13 +3854,13 @@ Vuoi sovrascriverlo?</translation>
         <translation>Note Azioni</translation>
     </message>
     <message>
-        <location line="-241"/>
+        <location line="-244"/>
         <source>Ready</source>
         <comment>Statusbar message</comment>
         <translation>Pronto</translation>
     </message>
     <message>
-        <location line="+158"/>
+        <location line="+161"/>
         <source>No filename available for this note.</source>
         <comment>Statusbar message</comment>
         <translation>Nessun nome di file disponibile per questa nota.</translation>
@@ -3865,7 +3877,7 @@ Vuoi sovrascriverlo?</translation>
         <translation>&amp;Richtext</translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+354"/>
         <location line="+76"/>
         <source>The file %1
 exists already.
@@ -3906,7 +3918,7 @@ Vuoi sovvrascriverlo?</translation>
 <context>
     <name>VymModel</name>
     <message>
-        <location filename="../src/vymmodel.cpp" line="-3943"/>
+        <location filename="../src/vymmodel.cpp" line="-3958"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>utente sconosciuto</translation>
@@ -3917,7 +3929,7 @@ Vuoi sovvrascriverlo?</translation>
         <translation>senza nome</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <location line="+33"/>
         <location line="+82"/>
         <location line="+61"/>
@@ -3960,7 +3972,7 @@ Do you want to write the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+325"/>
         <source>unknown user</source>
         <comment>Default for lockfiles of maps</comment>
         <translation>utente sconosciuto</translation>
@@ -3972,18 +3984,18 @@ Do you want to write the map</source>
         <translation>Attenzione: La mappa è già aperta</translation>
     </message>
     <message>
-        <location line="-363"/>
+        <location line="-365"/>
         <source>compressed (vym default)</source>
         <translation>compressi (predefiniti di vym)</translation>
     </message>
     <message>
         <location line="+4"/>
-        <location line="+199"/>
+        <location line="+201"/>
         <source>Cancel</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location line="-173"/>
+        <location line="-175"/>
         <location line="+7"/>
         <source>Save Error</source>
         <translation>Errore di Salvataggio</translation>
@@ -4016,25 +4028,25 @@ non puo&apos; essere rinominato prima del salvataggio</translation>
     </message>
     <message>
         <location line="+71"/>
-        <location line="+59"/>
-        <location line="+4213"/>
+        <location line="+61"/>
+        <location line="+4218"/>
         <source>Images</source>
         <translation>Immagini</translation>
     </message>
     <message>
-        <location line="-4269"/>
-        <location line="+58"/>
+        <location line="-4276"/>
+        <location line="+60"/>
         <source>All</source>
         <comment>Filedialog</comment>
         <translation>Tutto</translation>
     </message>
     <message>
-        <location line="-54"/>
+        <location line="-56"/>
         <source>Load image</source>
         <translation>Carica immagine</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+59"/>
         <source>Save image</source>
         <translation>Salva immagine</translation>
     </message>
@@ -4052,12 +4064,12 @@ Vuoi sovrascriverlo? </translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+3538"/>
+        <location line="+3543"/>
         <source>Critical Error</source>
         <translation>Errore Critico</translation>
     </message>
     <message>
-        <location line="-3537"/>
+        <location line="-3542"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Non è possibile salvare %1</translation>
     </message>
@@ -4087,7 +4099,7 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3047"/>
+        <location line="+3052"/>
         <source>Could not find Jira ticket pattern in %1</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4099,7 +4111,7 @@ Please only delete the lockfile, if you are sure nobody else is currently workin
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3099"/>
+        <location line="-3104"/>
         <source>Removed lockfile for %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4148,12 +4160,12 @@ Vuoi ricaricare la mappa in un nuovo file?</translation>
     </message>
     <message>
         <location line="-131"/>
-        <location line="+3004"/>
+        <location line="+3009"/>
         <source>Warning</source>
         <translation>Attenzione</translation>
     </message>
     <message>
-        <location line="-2679"/>
+        <location line="-2684"/>
         <source>Autosave disabled during undo.</source>
         <translation>Salvataggio automatico disabilitato durante il cancella.</translation>
     </message>
@@ -4164,13 +4176,13 @@ Vuoi ricaricare la mappa in un nuovo file?</translation>
         <translation>Note</translation>
     </message>
     <message>
-        <location line="+1023"/>
+        <location line="+1026"/>
         <source>New map</source>
         <comment>New map</comment>
         <translation>Nuova Mappa</translation>
     </message>
     <message>
-        <location line="+1271"/>
+        <location line="+1273"/>
         <source>Export map as image</source>
         <translation>Esporta mappa come immagine</translation>
     </message>
