@@ -43,7 +43,7 @@ endif()
 
 if(WIN32)
     set(OPENSSL_ROOT_DIR "C:/OpenSSL-Win64")
-    find_package(OpenSSL REQUIRED)
+    find_package(OpenSSL)
 
     if( OPENSSL_FOUND )
         include_directories(${OPENSSL_INCLUDE_DIRS})
