@@ -3457,7 +3457,6 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     newbi->updateContainerStackingOrder();
 
     // Update styles (if not currently loading a map or the default map)
-    qDebug() << "VM::addNewBranch  updateStylesBlocked=" << updateStylesBlocked;
     if (!updateStylesBlocked)
         newbc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
 
@@ -5318,7 +5317,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //for (int i = 0; i < cur->imageCount(); ++i)
         //    cur->getImageNum(i)->getLMO()->setLinkColor();
         //
-        rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
+        rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged);
         nextBranch(cur, prev);
     }
     reposition();

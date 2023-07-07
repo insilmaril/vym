@@ -1278,7 +1278,7 @@ void BranchContainer::updateStyles(
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    qDebug() << "BC::updateStyles of " << info(); // FIXME-2 called often during load
+    //qDebug() << "BC::updateStyles of " << info(); // FIXME-2 called often during load
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();
@@ -1303,7 +1303,7 @@ void BranchContainer::updateStyles(
     else
         setImagesContainerLayout(imagesContainerLayout);
 
-    // Links
+    // Link style
     if (pbc) {
         if (pbc->branchesContainerLayout == List)
             upLink->setLinkStyle(LinkObj::NoLink);
@@ -1313,8 +1313,8 @@ void BranchContainer::updateStyles(
         // MapCenter has no upLink
         upLink->setLinkStyle(LinkObj::NoLink);
 
-    // FIXME-000 linkColorHint not set properly when loading maps
-    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)    // FIXME-1 upLink col also set in BC::updateUpLink
+    // Link color
+    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)    // FIXME-0 upLink col also set in BC::updateUpLink
         upLink->setLinkColor(headingContainer->getColor());
     else
         upLink->setLinkColor(md->defaultLinkColor());
@@ -1413,7 +1413,7 @@ void BranchContainer::reposition()
         // tmpParentContainer has no branchItem
         depth = 0;
 
-    qDebug() << "BC::reposition " << info() << "depth=" << depth;
+    //qDebug() << "BC::reposition " << info() << "depth=" << depth;
 
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked

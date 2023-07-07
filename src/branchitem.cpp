@@ -533,6 +533,9 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
     if (parentBranch())
         branchContainer->linkTo(parentBranch()->getBranchContainer());
 
+    // And set color hint for link
+    branchContainer->getLink()->setLinkColorHint(model->mapDesign()->linkColorHint());
+
     return branchContainer;
 }
 
