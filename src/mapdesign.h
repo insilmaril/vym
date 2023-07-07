@@ -49,7 +49,7 @@ class MapDesign {
         Created    = 0x0001,
         CreatedWhileLoading = 0x0002};
 
-    enum RelinkMode : unsigned int {    // FIXME-2 cleanup? what's used?
+    enum RelinkMode : unsigned int {    // FIXME-2 cleanup? what's used? Maybe use only "trigger" instead of creation and relink mode?
         NotRelinked     = 0x0000,
         DepthChanged    = 0x0001,
         PositionChanged = 0x0002,

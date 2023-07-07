@@ -839,42 +839,25 @@ void BranchContainer::updateUpLink()
     if (pbc) {
         tmpParentBI = pbc->getBranchItem();
         QPointF upLinkParent_sp;
-        if (true) { // FIXME-0 pbc->getContainerType() == Container::TmpParent) {
-            // Currently moving with tmpParentContainer, BUT not linked to tmpLinkedParentContainer
-            // If temp linked:
-            // upLinkParent_sp = originalParentPos;
-            upLinkParent_sp = pbc->downLinkPos();
 
-            //qDebug() << "    upLink      =" << upLink;
-            QGraphicsItem* upLinkParent = upLink->parentItem();
-            //qDebug() << "    upLinkParent=" << upLinkParent;
-            //qDebug() << " upLinkParent_sp=" << upLinkParent_sp;
-            if (!upLinkParent) return;
+        upLinkParent_sp = pbc->downLinkPos();
+        upLinkParent_sp = pbc->downLinkPos(orientation);
 
-            upLink->setUpLinkPosParent(
-                    upLinkParent->sceneTransform().inverted().map(upLinkParent_sp));
-            upLink->setUpLinkPosSelf(
-                    upLinkParent->sceneTransform().inverted().map(upLinkSelf_sp));
-            upLink->setDownLinkPos(
-                    upLinkParent->sceneTransform().inverted().map(downLink_sp));
-        } else {
-            // Special case: If I am in a list, use my own 
-            // upper left corner and width of linkSpaceContainer as reference
-            upLinkParent_sp = pbc->downLinkPos(orientation);
+        QGraphicsItem* upLinkParent = upLink->parentItem();
+        if (!upLinkParent) return;
 
-            pbc->getLinkContainer()->addLink(upLink);   // FIXME-0 why adding upLink to parent???
-
-            upLink->setUpLinkPosParent(
-                    pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkParent_sp));
-            upLink->setUpLinkPosSelf(
-                    pbc->getLinkContainer()->sceneTransform().inverted().map(upLinkSelf_sp));
-            upLink->setDownLinkPos(
-                    pbc->getLinkContainer()->sceneTransform().inverted().map(downLink_sp));
-        }
+        upLink->setUpLinkPosParent(
+                upLinkParent->sceneTransform().inverted().map(upLinkParent_sp));
+        upLink->setUpLinkPosSelf(
+                upLinkParent->sceneTransform().inverted().map(upLinkSelf_sp));
+        upLink->setDownLinkPos(
+                upLinkParent->sceneTransform().inverted().map(downLink_sp));
     } else {
         // I am a MapCenter without parent. Add LinkObj to my own LinkContainer,
         // so that at least positions are updated and bottomLine can be drawn
         linkContainer->addLink(upLink);
+
+        upLink->setLinkStyle(LinkObj::NoLink);
 
         upLink->setUpLinkPosSelf(
                 linkContainer->sceneTransform().inverted().map(upLinkSelf_sp));
@@ -892,9 +875,21 @@ void BranchContainer::updateUpLink()
     }
 
     // Style of link
-    if (tmpParentBI)
-        upLink->setLinkStyle(tmpParentBI->mapDesign()->linkStyle( 1 + tmpParentBI->depth()));
+    if (tmpParentBI) {
+        if (pbc && pbc->branchesContainerLayout == List)
+            upLink->setLinkStyle(LinkObj::NoLink);
+        else
+            upLink->setLinkStyle(tmpParentBI->mapDesign()->linkStyle( 1 + tmpParentBI->depth()));
+    }
 
+    // Create/delete bottomline, depends on frame and (List-)Layout
+    if (frameType(true) != FrameContainer::NoFrame &&
+            upLink->hasBottomLine())
+            upLink->deleteBottomLine();
+    else {
+        if (!upLink->hasBottomLine() && containerType != TmpParent)
+            upLink->createBottomLine();
+    }
     // Finally geometry
     upLink->updateLinkGeometry();
 }
@@ -1049,7 +1044,7 @@ void BranchContainer::setFrameAutoDesign(const bool &useInnerFrame, const bool &
             return;
         }
     }
-    qWarning() << "BC::setFrameAutoDesign no frame available!";
+    qWarning() << "BC::setFrameAutoDesign no frame available!"; // FIXME-0 autoframe cannot be disabled without frame :-(
 }
 
 FrameContainer::FrameType BranchContainer::frameType(const bool &useInnerFrame)
@@ -1318,32 +1313,12 @@ void BranchContainer::updateStyles(
     else
         setImagesContainerLayout(imagesContainerLayout);
 
-    // Link style   // FIXME-0 also set in updateUpLink
-    /*
-    if (pbc) {
-        if (pbc->branchesContainerLayout == List)
-            upLink->setLinkStyle(LinkObj::NoLink);
-        else
-            upLink->setLinkStyle(md->linkStyle(depth));
-    } else
-        // MapCenter has no upLink
-        upLink->setLinkStyle(LinkObj::NoLink);
-    */
-
     // Link color
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)    // FIXME-0 upLink col also set in BC::updateUpLink
         upLink->setLinkColor(headingContainer->getColor());
     else
         upLink->setLinkColor(md->defaultLinkColor());
 
-    // Create/delete bottomline // FIXME-0 set bottomline depending on existence of upLink above
-    if (frameType(true) != FrameContainer::NoFrame &&
-            upLink->hasBottomLine())
-            upLink->deleteBottomLine();
-    else {
-        if (!upLink->hasBottomLine())
-            upLink->createBottomLine();
-    }
 
     // FIXME-5 for testing we do some coloring and additional drawing
     /*

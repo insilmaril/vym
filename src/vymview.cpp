@@ -157,10 +157,8 @@ void VymView::updateColors()
     // Set selection color, link color and background color in editors:
     // TreeEditor, HeadingEditor and MapEditor
 
-
     // Selection
     /*
-    mapEditor->setSelectionBrush(brush);
     treeEditor->setStyleSheet(
         "selection-background-color: " + brush.color().name(QColor::HexArgb) + ";" +
         "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
