@@ -211,16 +211,18 @@ bool BranchContainer::isOriginalFloating()
     return originalFloating;
 }
 
-void BranchContainer::setTemporaryLinked(BranchContainer *tpc)  // FIXME-0 update upLink
+void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
     tmpLinkedParentContainer = tpc;
-    updateUpLink();
+    if (containerType != TmpParent)
+        updateUpLink();
 }
 
 void BranchContainer::unsetTemporaryLinked()
 {
     tmpLinkedParentContainer = nullptr;
-    updateUpLink();
+    if (containerType != TmpParent)
+        updateUpLink();
 }
 
 bool BranchContainer::isTemporaryLinked()
@@ -815,20 +817,27 @@ void BranchContainer::updateUpLink()
     QPointF downLink_sp = downLinkPos();
 
     BranchContainer *pbc = nullptr;
-    if (tmpLinkedParentContainer)
+
+    if (tmpLinkedParentContainer) {
         // I am temporarily linked to tmpLinkedParentContainer
         pbc = tmpLinkedParentContainer;
-    else if (originalParentBranchContainer)
-        // I am moving with tmpParent or just regular updated
+    } else if (originalParentBranchContainer)
+        // I am moving with tmpParent, use original parent for link
         pbc = originalParentBranchContainer;
     else
+        // Regular update, e.g. when linkStyle changes
         pbc = parentBranchContainer();
 
+    BranchItem *tmpParentBI = nullptr;
+
+    /*
     qDebug() << "BC::updateUpLink of " << info() << " tmpLinkedPC=" << tmpLinkedParentContainer 
              << " pbc=" << pbc
              << " orgPBC=" << originalParentBranchContainer;
+     */
 
     if (pbc) {
+        tmpParentBI = pbc->getBranchItem();
         QPointF upLinkParent_sp;
         if (true) { // FIXME-0 pbc->getContainerType() == Container::TmpParent) {
             // Currently moving with tmpParentContainer, BUT not linked to tmpLinkedParentContainer
@@ -873,7 +882,8 @@ void BranchContainer::updateUpLink()
                 linkContainer->sceneTransform().inverted().map(downLink_sp));
     }
 
-    // Color of links
+
+    // Color of link (depends on current parent)
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
         upLink->setLinkColor(headingContainer->getColor());
     else {
@@ -881,6 +891,11 @@ void BranchContainer::updateUpLink()
             upLink->setLinkColor(branchItem->mapDesign()->defaultLinkColor());
     }
 
+    // Style of link
+    if (tmpParentBI)
+        upLink->setLinkStyle(tmpParentBI->mapDesign()->linkStyle( 1 + tmpParentBI->depth()));
+
+    // Finally geometry
     upLink->updateLinkGeometry();
 }
 
@@ -1303,7 +1318,8 @@ void BranchContainer::updateStyles(
     else
         setImagesContainerLayout(imagesContainerLayout);
 
-    // Link style
+    // Link style   // FIXME-0 also set in updateUpLink
+    /*
     if (pbc) {
         if (pbc->branchesContainerLayout == List)
             upLink->setLinkStyle(LinkObj::NoLink);
@@ -1312,6 +1328,7 @@ void BranchContainer::updateStyles(
     } else
         // MapCenter has no upLink
         upLink->setLinkStyle(LinkObj::NoLink);
+    */
 
     // Link color
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)    // FIXME-0 upLink col also set in BC::updateUpLink

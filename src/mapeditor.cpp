@@ -2513,8 +2513,6 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
             tr("%1 items selected","Status message when selecting multiple items").arg(selCount));
     else
         mainWindow->statusMessage("");
-
-    scene()->update();  // FIXME-0 needed?
 }
 
 void MapEditor::updateSelection()
@@ -2532,7 +2530,5 @@ void MapEditor::updateSelection()
                     ((ImageItem*)mi)->getImageContainer()->select();
         }
     }
-
-    scene()->update();  // FIXME-0 needed?
 }
 
