@@ -1748,7 +1748,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             return;
         }
     }   // system flags or modModes
-    else { // No selbc found, check XLinks
+    else { // No selbc found, check XLinks // FIXME-0 might scroll out of visible map ?!?
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
