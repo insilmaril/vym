@@ -65,8 +65,8 @@ void MapDesign::init()
 
     // Frames
     innerFrameTypes << FrameContainer::RoundedRectangle;
+    innerFrameTypes << FrameContainer::Rectangle;
     innerFrameTypes << FrameContainer::NoFrame;
-    //innerFrameTypes << FrameContainer::Rectangle;
     innerFramePenWidths << 2;
 
     outerFrameTypes << FrameContainer::NoFrame;
@@ -80,6 +80,10 @@ void MapDesign::init()
     if (usingDarkTheme) {
         innerFramePenColors << QColor(Qt::white);
         innerFrameBrushColors << QColor(85, 85, 127);
+
+        innerFramePenColors << QColor(Qt::blue);
+        innerFrameBrushColors << QColor(25, 25, 127);
+
         outerFramePenColors << QColor(Qt::green);
         outerFramePenColors << QColor(Qt::red);
         outerFramePenColors << QColor(Qt::green);
