@@ -44,19 +44,16 @@ class MapDesign {
         UnchangedColor,
         UndefinedColor};
 
-    enum CreationMode : unsigned int {
-        NotCreated = 0x0000,
-        Created    = 0x0001,
-        CreatedWhileLoading = 0x0002};
-
-    enum RelinkMode : unsigned int {    // FIXME-2 cleanup? what's used? Maybe use only "trigger" instead of creation and relink mode?
-        NotRelinked     = 0x0000,
-        DepthChanged    = 0x0001,
-        PositionChanged = 0x0002,
-        ParentChanged   = 0x0004,
-        LinkChanged     = 0x0008,
-        ColorChanged    = 0x0010,
-        StyleChanged    = 0x0020};
+    enum UpdateMode : unsigned int {
+        Undefined           = 0x0000,
+        MapLoad             = 0x0001,
+        //MapImport         = 0x0002
+        CreatedByUser       = 0x0004,
+        RelinkedByUser      = 0x0008,
+        LayoutChanged       = 0x0010,
+        LinkStyleChanged    = 0x0010,
+        StyleChanged        = 0x0011    // e.g. heading color, which could change link color, too
+    };
 
     /*
     constexpr RelinkMode operator|(RelinkMode X, RelinkMode Y) {
@@ -93,8 +90,7 @@ class MapDesign {
     FrameContainer::FrameType frameType(bool useInnerFrame, int depth);
     void updateFrames(
             BranchContainer *branchContainer,
-            const CreationMode &creationMode,
-            const RelinkMode &relinkMode,
+            const UpdateMode &updateMode,
             int depth);
 
     QPen selectionPen();
@@ -136,12 +132,12 @@ class MapDesign {
     QBrush selectionBrushInt;
 };
 
-    inline MapDesign::RelinkMode operator|(MapDesign::RelinkMode a, MapDesign::RelinkMode b)
+    inline MapDesign::UpdateMode operator|(MapDesign::UpdateMode a, MapDesign::UpdateMode b)
     {
-        return static_cast<MapDesign::RelinkMode>(static_cast<int>(a) | static_cast<int>(b));
+        return static_cast<MapDesign::UpdateMode>(static_cast<int>(a) | static_cast<int>(b));
     }
 
-    inline MapDesign::RelinkMode operator|=(MapDesign::RelinkMode &a, MapDesign::RelinkMode b)
+    inline MapDesign::UpdateMode operator|=(MapDesign::UpdateMode &a, MapDesign::UpdateMode b)
     {
         a = a | b; return a;
     }

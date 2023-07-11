@@ -9,6 +9,8 @@
 #define Z_OUTER_FRAME 15
 #define Z_INNER_FRAME 20
 #define Z_ORNAMENTS 30
+#define Z_LINKSPACE 33
+#define Z_BRANCHES 35
 #define Z_IMAGE 35
 #define Z_SELECTION 40
 #define Z_BULLETPOINT 50
@@ -38,6 +40,7 @@ class Container : public QGraphicsRectItem {
         ImagesContainer,
         InnerContainer,
         Link,
+        LinkSpace,
         ListContainer,
         OrnamentsContainer,
         OuterContainer,

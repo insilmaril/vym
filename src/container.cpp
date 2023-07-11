@@ -114,6 +114,9 @@ QString Container::getName()    // FIXME-3 debugging only
         case Link:
             t = "Link";
             break;
+        case LinkSpace:
+            t = "LinkSpace";
+            break;
         case ListContainer:
             t = "ListContainer";
             break;
@@ -145,11 +148,12 @@ QString Container::info (const QString &prefix)
         + getName()
         // + QString(" zPos: %1").arg(zPos)
         + QString(" Layout: %1").arg(getLayoutString())
-        //+ QString(" z: %1").arg(zPos)
+        + QString(" horDirection: %1").arg(horizontalDirection)
+        + QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
         //+ QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
         //+ QString(" pos: %1").arg(qpointFToString(pos(), 0))
-        + QString(" rect: %1").arg(qrectFToString(rect(), 0))
+        //+ QString(" rect: %1").arg(qrectFToString(rect(), 0))
         ;
 }
 
@@ -312,11 +316,12 @@ void Container::addContainer(Container *c, int z)
     if (childContainers().contains(c)) return;
 
     c->setParentItem(this);
-    if (z >= 0) {
-        // Order containers
+    if (z > 0)
+        // Update z of container
         c->zPos = z;
 
-        // First find sibling with lowest z
+    if (c->zPos > 0) {
+        // Order containers, first find sibling with lowest z
         foreach (Container *child, childContainers()) {
             if (c->zPos < child->zPos && c != child) {
                 c->stackBefore(child);

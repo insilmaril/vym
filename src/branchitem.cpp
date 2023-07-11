@@ -231,7 +231,7 @@ void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
     branchContainer->getHeadingContainer()->setHeadingColor(color);
-    branchContainer->updateStyles(MapDesign::NotCreated, MapDesign::ColorChanged);
+    branchContainer->updateStyles(MapDesign::StyleChanged | MapDesign::LinkStyleChanged);
 }
 
 void BranchItem::updateTaskFlag()
@@ -483,16 +483,15 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 }
 
 void BranchItem::updateStylesRecursively(
-        MapDesign::CreationMode creationMode,
-        MapDesign::RelinkMode relinkMode)
+        MapDesign::UpdateMode updateMode)
 {
     // Update my own container
     if (branchContainer)
-        branchContainer->updateStyles(creationMode, relinkMode);
+        branchContainer->updateStyles(updateMode);
 
     // Recursively update subtree
     for (int i = 0; i < branchCounter; i++) {
-        getBranchNum(i)->updateStylesRecursively(creationMode, relinkMode);
+        getBranchNum(i)->updateStylesRecursively(updateMode);
     }
 }
 

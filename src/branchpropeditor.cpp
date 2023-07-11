@@ -164,10 +164,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         // Inner frame
         ui.innerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(true));
         FrameContainer::FrameType t = bc->frameType(true);
+        ui.innerFrameTypeCombo->setEnabled(!bc->frameAutoDesign(true));
+
         if (t == FrameContainer::NoFrame || bc->frameAutoDesign(true))
         {
             ui.innerFrameTypeLabel->setEnabled(false);
-            ui.innerFrameTypeCombo->setEnabled(false);
             ui.innerFramePenColorButton->setEnabled(false);
             ui.innerFrameBrushColorButton->setEnabled(false);
             ui.innerFramePaddingSpinBox->setEnabled(false);
@@ -179,7 +180,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         }
         else {
             ui.innerFrameTypeLabel->setEnabled(true);
-            ui.innerFrameTypeCombo->setEnabled(true);
+            // FIXME-0 ui.innerFrameTypeCombo->setEnabled(true);
             ui.innerFramePenColorButton->setEnabled(true);
             ui.innerFrameBrushColorButton->setEnabled(true);
             ui.innerFramePaddingSpinBox->setEnabled(true);
@@ -220,13 +221,15 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             default:
                 break;
         }
+
         // Outer frame
         ui.outerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(false));
         t = bc->frameType(false);
+        ui.outerFrameTypeCombo->setEnabled(!bc->frameAutoDesign(false));
+
         if (t == FrameContainer::NoFrame || bc->frameAutoDesign(false))
         {
             ui.outerFrameTypeLabel->setEnabled(false);
-            ui.outerFrameTypeCombo->setEnabled(false);
             ui.outerFramePenColorButton->setEnabled(false);
             ui.outerFrameBrushColorButton->setEnabled(false);
             ui.outerFramePaddingSpinBox->setEnabled(false);
@@ -238,7 +241,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         }
         else {
             ui.outerFrameTypeLabel->setEnabled(true);
-            ui.outerFrameTypeCombo->setEnabled(true);
+            // FIXME-0 ui.outerFrameTypeCombo->setEnabled(true);
             ui.outerFramePenColorButton->setEnabled(true);
             ui.outerFrameBrushColorButton->setEnabled(true);
             ui.outerFramePaddingSpinBox->setEnabled(true);

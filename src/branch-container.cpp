@@ -120,6 +120,9 @@ void BranchContainer::init()
 
     rotationHeading = 0;
     rotationSubtree = 0;
+
+    autoDesignInnerFrame = true;
+    autoDesignOuterFrame = true;
 }
 
 BranchContainer* BranchContainer::parentBranchContainer(Container *c)
@@ -266,6 +269,7 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
         // are no children)
         branchesContainer = new Container ();
         branchesContainer->containerType = Container::BranchesContainer;
+        branchesContainer->zPos = Z_BRANCHES;
 
         if (listContainer)
             listContainer->addContainer(branchesContainer);
@@ -507,7 +511,8 @@ void BranchContainer::updateChildrenStructure()
         } else {
             if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
                 linkSpaceContainer = new HeadingContainer ();
-                //linkSpaceContainer->setContainerType(); // FIXME-2
+                linkSpaceContainer->setContainerType(LinkSpace);
+                linkSpaceContainer->zPos = Z_LINKSPACE;
                 linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
 
                 if (listContainer)
@@ -518,43 +523,6 @@ void BranchContainer::updateChildrenStructure()
                 linkSpaceContainer->stackBefore(branchesContainer);
             }
         }
-    }
-}
-
-void BranchContainer::showStructure()   // FIXME-2 no longer needed with Container::printStructure()
-{
-    Container *c = getBranchesContainer();
-    if (outerContainer)
-        qDebug() << "outerContainer:" << outerContainer->info();
-    else
-        qDebug() << "No outerContainer.";
-
-    qDebug() << "InnerContainer: " << innerContainer->info();
-
-    if (c) {
-        qDebug() << "branchesContainer: " << c->info();
-        for (int i=0; i < c->childItems().count(); i++)
-            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
-    }
-    c = getImagesContainer();
-    if (c) {
-        qDebug() << "imagesContainer: " << c->info();
-        for (int i=0; i < c->childItems().count(); i++)
-            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
-    }
-
-
-    c = standardFlagRowContainer;
-    if (c) {
-        qDebug() << "Standard flags: " << c;
-        for (int i=0; i < c->childItems().count(); i++)
-            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
-    }
-    c = systemFlagRowContainer;
-    if (c) {
-        qDebug() << "System flags: " << c;
-        for (int i=0; i < c->childItems().count(); i++)
-            qDebug() << "  i=" << i << ((Container*)c->childItems().at(i))->info();
     }
 }
 
@@ -1019,32 +987,18 @@ void BranchContainer::select()
 
 bool BranchContainer::frameAutoDesign(const bool &useInnerFrame)
 {
-    if (useInnerFrame) {
-        if (innerFrame)
-            return innerFrame->autoDesign;
-    } else {
-        if (outerFrame)
-            return outerFrame->autoDesign;
-    }
-
-    // If there is no frame, return default autoDesign
-    return true;
+    if (useInnerFrame)
+        return autoDesignInnerFrame;
+    else
+        return autoDesignOuterFrame;
 }
 
 void BranchContainer::setFrameAutoDesign(const bool &useInnerFrame, const bool &b)
 {
-    if (useInnerFrame) {
-        if (innerFrame) {
-            innerFrame->autoDesign = b;
-            return;
-        }
-    } else {
-        if (outerFrame) {
-            outerFrame->autoDesign = b;
-            return;
-        }
-    }
-    qWarning() << "BC::setFrameAutoDesign no frame available!"; // FIXME-0 autoframe cannot be disabled without frame :-(
+    if (useInnerFrame)
+        autoDesignInnerFrame = b;
+    else
+        autoDesignOuterFrame = b;
 }
 
 FrameContainer::FrameType BranchContainer::frameType(const bool &useInnerFrame)
@@ -1074,7 +1028,7 @@ QString BranchContainer::frameTypeString(const bool &useInnerFrame)
     return "NoFrame";
 }
 
-void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)
+void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)   // FIXME-0 called twice for a branch during load ?!
 {
     if (useInnerFrame) {
         // Inner frame around ornamentsContainer
@@ -1283,8 +1237,7 @@ void BranchContainer::updateBranchesContainerLayout()
 }
 
 void BranchContainer::updateStyles(
-        MapDesign::CreationMode creationMode,
-        MapDesign::RelinkMode relinkMode)
+        MapDesign::UpdateMode updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
 
@@ -1295,7 +1248,7 @@ void BranchContainer::updateStyles(
     BranchContainer *pbc = parentBranchContainer();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    if (creationMode == MapDesign::Created)
+    if (updateMode == MapDesign::CreatedByUser)
         md->updateBranchHeadingColor( branchItem, depth);
 
     // bulletpoint color should match heading color
@@ -1303,7 +1256,7 @@ void BranchContainer::updateStyles(
         bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
 
     // Set frame
-    md->updateFrames(this, creationMode, relinkMode, depth); // FIXME-2  depth not really necessary here
+    md->updateFrames(this, updateMode, depth); // FIXME-2  depth not really necessary here
 
     updateBranchesContainerLayout();
 

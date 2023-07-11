@@ -83,7 +83,6 @@ class BranchContainer : public SelectableContainer {
 
   public:
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
-    void showStructure();     // Print structure for debugging
     int imageCount();
     void createImagesContainer();
     void addToImagesContainer(Container *c, bool keepScenePos = false);
@@ -143,6 +142,11 @@ class BranchContainer : public SelectableContainer {
 
     virtual void select();  // Overloads SelectableContainer::select
 
+  private:
+    bool autoDesignInnerFrame;
+    bool autoDesignOuterFrame;
+
+  public:
     // FrameContainer interfaces
     bool frameAutoDesign(const bool &useInnerFrame);
     void setFrameAutoDesign(const bool &userInnerFrame, const bool &);
@@ -169,7 +173,7 @@ class BranchContainer : public SelectableContainer {
 
   public:
     /*! Update styles (frame, links, fonts, colors, ...) */
-    void updateStyles(MapDesign::CreationMode, MapDesign::RelinkMode);
+    void updateStyles(MapDesign::UpdateMode);
 
     /*! Update flags and heading */
     void updateVisuals();

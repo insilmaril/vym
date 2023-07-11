@@ -214,11 +214,10 @@ FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, int depth)
 
 void MapDesign::updateFrames(
     BranchContainer *branchContainer,
-    const CreationMode &creationMode,
-    const RelinkMode &relinkMode,
+    const UpdateMode &updateMode,
     int depth)
 {
-    if (branchContainer && creationMode != NotCreated) {
+    if (branchContainer && updateMode == CreatedByUser) {
         // Inner frame
         branchContainer->setFrameType(true, frameType(true, depth));
         branchContainer->setFrameBrushColor(true, innerFrameBrushColors.tryAt(depth));

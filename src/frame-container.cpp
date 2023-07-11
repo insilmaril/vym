@@ -385,7 +385,8 @@ void FrameContainer::setUsage(FrameUsage u)
 
 QString FrameContainer::saveFrame()
 {
-    if (frameTypeInt == NoFrame)
+    if (frameTypeInt == NoFrame && autoDesign)
+        // Actually this frame should not exist, but anyway
         return QString();
 
     QStringList attrList;
@@ -394,14 +395,18 @@ QString FrameContainer::saveFrame()
     else if (usage == OuterFrame)
         attrList << attribut("frameUsage", "outerFrame");
 
-    if (!autoDesign) {
-        attrList << attribut("autoDesign", "false");
+    // autoDesign is enabled per default
 
+    if (!autoDesign) {
+        // FIXME-0 attrList << attribut("autoDesign", "false");  // move to <branch>
         attrList <<  attribut("frameType", frameTypeString());
-        attrList <<  attribut("penColor", framePen.color().name(QColor::HexArgb));
-        attrList <<  attribut("brushColor", frameBrush.color().name(QColor::HexArgb));
-        attrList <<  attribut("padding", QString::number(framePaddingInt));
-        attrList <<  attribut("penWidth", QString::number(framePen.width()));
+
+        if (frameTypeInt != NoFrame) {
+            attrList <<  attribut("penColor", framePen.color().name(QColor::HexArgb));
+            attrList <<  attribut("brushColor", frameBrush.color().name(QColor::HexArgb));
+            attrList <<  attribut("padding", QString::number(framePaddingInt));
+            attrList <<  attribut("penWidth", QString::number(framePen.width()));
+        }
     }
 
     return singleElement("frame", attrList.join(" "));

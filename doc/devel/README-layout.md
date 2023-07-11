@@ -78,6 +78,18 @@ Containers
 Ideas 
 -----
 
+* Load/save of frames and autoDesign of frames
+    - when loading a map, all frames are saved within map: Those using
+      autoDesign and those which don't
+    - when creating a branch manually or via script, autoDesign option
+      is set for frames and they will be created as defined in
+      mapDesign
+    - Saving the autoDesign option of frames:
+        - in <branch>, so that also the NoFrame type can be saved
+        - autoInnerFrame
+        - autoOuterFrame
+
+
 * Introduce *reference position*, which can be used in other containers
   to position these containers. The reference position should be center
   of HeadingContainer

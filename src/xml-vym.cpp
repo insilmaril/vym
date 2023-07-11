@@ -1192,7 +1192,7 @@ void VymReader::readFrameAttr()
         bc->setFrameType(useInnerFrame, s);
 
         // Default also in FrameContainer is autoDesign == true
-        bool autoDesign = true;
+        bool autoDesign = true; // FIXME-0 move to <branch>
 
         a = "penColor";
         s = attributeToString(a);
@@ -1233,7 +1233,7 @@ void VymReader::readFrameAttr()
             autoDesign = false;
         }
 
-        bc->setFrameAutoDesign(useInnerFrame, autoDesign);
+        // FIXME-0 bc->setFrameAutoDesign(useInnerFrame, autoDesign);
 
     }
 }

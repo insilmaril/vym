@@ -997,8 +997,7 @@ void MapEditor::testFunction2()
     {
         if (selti->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
-            bc->showStructure();
-            bc->setScrollOpacity(bc->getScrollOpacity() * 0.9);   // FIXME-2 animation test
+            //bc->setScrollOpacity(bc->getScrollOpacity() * 0.9);   // FIXME-2 animation test
         } else if (selti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)selti)->getImageContainer();
             qDebug() << ic->info() << ic;
@@ -1010,13 +1009,12 @@ void MapEditor::testFunction2()
 
 void MapEditor::testFunction1()
 {
-    qDebug() << "zoomFactor=" << zoomFactor;
     /*
+    */
     BranchItem *selbi = model->getSelectedBranch();
     if (selbi) {
-        selbi->getBranchContainer()->showStructure();
+        selbi->getBranchContainer()->printStructure();
     }
-    */
     //autoLayout();
 }
 

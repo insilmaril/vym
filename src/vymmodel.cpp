@@ -654,7 +654,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (err != File::Aborted) {
             if (parsedWell) {
-                rootItem->updateStylesRecursively(MapDesign::CreatedWhileLoading, MapDesign::NotRelinked);
+                rootItem->updateStylesRecursively(MapDesign::MapLoad);
                 reposition(); // to generate bbox sizes
                 emitSelectionChanged();
 
@@ -2362,6 +2362,8 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b) // F
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
         bc->setFrameAutoDesign(useInnerFrame, b);
+        if (b && mapDesignInt->frameType(useInnerFrame, selbi->depth()) != bc->frameType(useInnerFrame))
+            setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
     }
 }
 
@@ -2596,7 +2598,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
     // Links might have been added or removed
     foreach (BranchItem *selbi, selbis)
         if (selbi)
-            selbi->updateStylesRecursively(MapDesign::NotCreated, MapDesign::StyleChanged);
+            selbi->updateStylesRecursively(MapDesign::LayoutChanged);
 }
 
 void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
@@ -3407,7 +3409,7 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
         bc->setPos(absPos);
 
     if (!updateStylesBlocked)
-        bc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
+        bc->updateStyles(MapDesign::CreatedByUser);
 
     return newbi;
 }
@@ -3457,8 +3459,8 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     newbi->updateContainerStackingOrder();
 
     // Update styles (if not currently loading a map or the default map)
-    if (!updateStylesBlocked)
-        newbc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
+    //if (!updateStylesBlocked)
+    // FIXME-0  moved to addNewBranch. Could use MD::MapLoad.   newbc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
 
     reposition();
     return newbi;
@@ -3489,6 +3491,8 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
                (QString("move %1").arg(ps)); sendSelection();
                */
         }
+
+        newbi->getBranchContainer()->updateStyles(MapDesign::CreatedByUser);
     }
     return newbi;
 }
@@ -3532,8 +3536,10 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         }
 
         // What kind of relinking are we doing? Important for style updates
-        MapDesign::RelinkMode relinkMode = MapDesign::NotRelinked;
+        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser;
 
+
+        /* FIXME-0 relinkModes still needed?
         if (branch->parentBranch() != dst)
             relinkMode = MapDesign::ParentChanged;
 
@@ -3542,6 +3548,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         if (branch->depth() != dst->depth() + 1)
             relinkMode = relinkMode | MapDesign::DepthChanged;
+            */
 
         // Check if we relink down to own children
         if (dst->isChildOf(branch))
@@ -3645,7 +3652,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related branch-container or other view-objects
-        branch->updateStylesRecursively(MapDesign::NotCreated, relinkMode);
+        branch->updateStylesRecursively(MapDesign::RelinkedByUser);
 
         emitDataChanged(branch);
 
@@ -5247,7 +5254,7 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     // For whole map set style for d=1
     mapDesignInt->setLinkStyle(style, 1);
 
-    rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged); // FIXME-2 Better introduce new flag like MapDesign::LinksOnly
+    rootItem->updateStylesRecursively(MapDesign::LinkStyleChanged);
 
     reposition();
     return true;
@@ -5317,7 +5324,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //for (int i = 0; i < cur->imageCount(); ++i)
         //    cur->getImageNum(i)->getLMO()->setLinkColor();
         //
-        rootItem->updateStylesRecursively(MapDesign::NotCreated, MapDesign::LinkChanged);
+        rootItem->updateStylesRecursively(MapDesign::LinkStyleChanged);
         nextBranch(cur, prev);
     }
     reposition();
