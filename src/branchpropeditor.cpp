@@ -180,7 +180,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         }
         else {
             ui.innerFrameTypeLabel->setEnabled(true);
-            // FIXME-0 ui.innerFrameTypeCombo->setEnabled(true);
             ui.innerFramePenColorButton->setEnabled(true);
             ui.innerFrameBrushColorButton->setEnabled(true);
             ui.innerFramePaddingSpinBox->setEnabled(true);
@@ -241,7 +240,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         }
         else {
             ui.outerFrameTypeLabel->setEnabled(true);
-            // FIXME-0 ui.outerFrameTypeCombo->setEnabled(true);
             ui.outerFramePenColorButton->setEnabled(true);
             ui.outerFrameBrushColorButton->setEnabled(true);
             ui.outerFramePaddingSpinBox->setEnabled(true);

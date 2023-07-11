@@ -3458,7 +3458,6 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
 
-    // FIXME-0 needed here in addNewBranchInt? reposition();
     return newbi;
 }
 

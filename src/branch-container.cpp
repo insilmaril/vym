@@ -1028,7 +1028,7 @@ QString BranchContainer::frameTypeString(const bool &useInnerFrame)
     return "NoFrame";
 }
 
-void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)   // FIXME-0 called twice for a branch during load ?!
+void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)
 {
     if (useInnerFrame) {
         // Inner frame around ornamentsContainer
