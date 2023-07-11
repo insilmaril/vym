@@ -28,7 +28,6 @@ class FrameContainer : public XMLObj, public Container {
     FrameType frameType();
     static FrameType frameTypeFromString(const QString &);
     QString frameTypeString();
-    bool autoDesign;
     void setFrameDesignAuto(const bool &);
     void setFrameType(const FrameType &);
     void setFrameType(const QString &);
@@ -49,7 +48,6 @@ class FrameContainer : public XMLObj, public Container {
     QString saveFrame();
 
   protected:
-    bool frameAutoDesignFlag;
     FrameType frameTypeInt; //! Frame type
     int framePaddingInt;    //! Distance text - frame
     QPen framePen;

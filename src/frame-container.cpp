@@ -26,7 +26,6 @@ void FrameContainer::init()
     containerType = Frame;
     frameTypeInt = NoFrame;
     clear();
-    frameAutoDesignFlag = true;
     framePen.setColor(Qt::black);
     framePen.setWidth(1);
     frameBrush.setColor(Qt::white);
@@ -385,28 +384,19 @@ void FrameContainer::setUsage(FrameUsage u)
 
 QString FrameContainer::saveFrame()
 {
-    if (frameTypeInt == NoFrame && autoDesign)
-        // Actually this frame should not exist, but anyway
-        return QString();
-
     QStringList attrList;
     if (usage == InnerFrame)
         attrList << attribut("frameUsage", "innerFrame");
     else if (usage == OuterFrame)
         attrList << attribut("frameUsage", "outerFrame");
 
-    // autoDesign is enabled per default
+    attrList <<  attribut("frameType", frameTypeString());
 
-    if (!autoDesign) {
-        // FIXME-0 attrList << attribut("autoDesign", "false");  // move to <branch>
-        attrList <<  attribut("frameType", frameTypeString());
-
-        if (frameTypeInt != NoFrame) {
-            attrList <<  attribut("penColor", framePen.color().name(QColor::HexArgb));
-            attrList <<  attribut("brushColor", frameBrush.color().name(QColor::HexArgb));
-            attrList <<  attribut("padding", QString::number(framePaddingInt));
-            attrList <<  attribut("penWidth", QString::number(framePen.width()));
-        }
+    if (frameTypeInt != NoFrame) {
+        attrList <<  attribut("penColor", framePen.color().name(QColor::HexArgb));
+        attrList <<  attribut("brushColor", frameBrush.color().name(QColor::HexArgb));
+        attrList <<  attribut("padding", QString::number(framePaddingInt));
+        attrList <<  attribut("penWidth", QString::number(framePen.width()));
     }
 
     return singleElement("frame", attrList.join(" "));

@@ -1008,6 +1008,16 @@ void VymReader::readBranchAttr()
     if (!s.isEmpty())
         lastBranch->toggleScroll();
 
+    a = "autoInnerFrame";
+    s = xml.attributes().value(a).toString();
+    if (s == "false")
+        lastBC->setFrameAutoDesign(true, false);
+
+    a = "autoOuterFrame";
+    s = xml.attributes().value(a).toString();
+    if (s == "false")
+        lastBC->setFrameAutoDesign(false, false);
+
     a = "incImgV";
     s = xml.attributes().value(a).toString();
     if (s == "true")      // pre 2.9 feature
@@ -1191,50 +1201,34 @@ void VymReader::readFrameAttr()
         // assuming that there is no "NoFrame" frame in the xml
         bc->setFrameType(useInnerFrame, s);
 
-        // Default also in FrameContainer is autoDesign == true
-        bool autoDesign = true; // FIXME-0 move to <branch>
-
         a = "penColor";
         s = attributeToString(a);
-        if (!s.isEmpty()) {
+        if (!s.isEmpty())
             bc->setFramePenColor(useInnerFrame, s);
-            autoDesign = false;
-        }
 
         a = "brushColor";
         s = attributeToString(a);
-        if (!s.isEmpty()) {
+        if (!s.isEmpty())
             bc->setFrameBrushColor(useInnerFrame, s);
-            autoDesign = false;
-        }
 
         int i;
         a = "padding";
         s = attributeToString(a);
         i = s.toInt(&ok);
-        if (ok) {
+        if (ok)
             bc->setFramePadding(useInnerFrame, i);
-            autoDesign = false;
-        }
 
         a = "borderWidth";
         s = attributeToString(a);
         i = s.toInt(&ok);
-        if (ok) {
+        if (ok)
             bc->setFramePenWidth(useInnerFrame, i);
-            autoDesign = false;
-        }
 
         a = "penWidth";
         s = attributeToString(a);
         i = s.toInt(&ok);
-        if (ok) {
+        if (ok)
             bc->setFramePenWidth(useInnerFrame, i);
-            autoDesign = false;
-        }
-
-        // FIXME-0 bc->setFrameAutoDesign(useInnerFrame, autoDesign);
-
     }
 }
 

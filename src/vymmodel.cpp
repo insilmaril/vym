@@ -3458,11 +3458,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
 
-    // Update styles (if not currently loading a map or the default map)
-    //if (!updateStylesBlocked)
-    // FIXME-0  moved to addNewBranch. Could use MD::MapLoad.   newbc->updateStyles(MapDesign::Created, MapDesign::NotRelinked);
-
-    reposition();
+    // FIXME-0 needed here in addNewBranchInt? reposition();
     return newbi;
 }
 
@@ -3537,18 +3533,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         // What kind of relinking are we doing? Important for style updates
         MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser;
-
-
-        /* FIXME-0 relinkModes still needed?
-        if (branch->parentBranch() != dst)
-            relinkMode = MapDesign::ParentChanged;
-
-        if (branch->num() != num_dst)
-            relinkMode = relinkMode | MapDesign::PositionChanged;
-
-        if (branch->depth() != dst->depth() + 1)
-            relinkMode = relinkMode | MapDesign::DepthChanged;
-            */
 
         // Check if we relink down to own children
         if (dst->isChildOf(branch))

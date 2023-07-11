@@ -158,10 +158,18 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (parentItem == rootItem || branchContainer->isFloating())
         posAttr = getPosAttr();
 
+    QString autoDesignAttr;
+
+    if (!branchContainer->frameAutoDesign(true))
+        autoDesignAttr += attribut("autoInnerFrame", "false");
+    if (!branchContainer->frameAutoDesign(false))
+        autoDesignAttr += attribut("autoOuterFrame", "false");
+
     s = beginElement(elementName + " " +
             posAttr +
             MapItem::getLinkableAttr() +
             TreeItem::getGeneralAttr() +
+                     autoDesignAttr +
                      scrolledAttr +
                      layoutBranchesAttr +
                      layoutImagesAttr +
