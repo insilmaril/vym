@@ -2324,7 +2324,7 @@ void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
         emitDataChanged(bi);
         reposition();
 
-        if (updateFromCloud)
+        if (updateFromCloud)    // FIXME-2 use oembed.com also for Youtube and other cloud providers
             // Check for Confluence
             setHeadingConfluencePageName();
     }
