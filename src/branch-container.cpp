@@ -1266,13 +1266,6 @@ void BranchContainer::updateStyles(
     else
         setImagesContainerLayout(imagesContainerLayout);
 
-    // Link color
-    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)    // FIXME-0 upLink col also set in BC::updateUpLink
-        upLink->setLinkColor(headingContainer->getColor());
-    else
-        upLink->setLinkColor(md->defaultLinkColor());
-
-
     // FIXME-5 for testing we do some coloring and additional drawing
     /*
     if (containerType != TmpParent) {

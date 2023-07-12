@@ -4250,6 +4250,7 @@ void VymModel::colorBranch(QColor c)    // FIXME-2 evtl. update link color
                       .arg(getObjectName(selbi))
                       .arg(c.name()));
         selbi->setHeadingColor(c); // color branch
+        selbi->getBranchContainer()->updateUpLink();
         emitDataChanged(selbi);
         taskEditor->showSelection();
     }
@@ -4271,6 +4272,7 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
         nextBranch(cur, prev, true, bi);
         while (cur) {
             cur->setHeadingColor(c); // color links, color children
+            cur->getBranchContainer()->updateUpLink();
             emitDataChanged(cur);
             nextBranch(cur, prev, true, bi);
         }
