@@ -35,7 +35,7 @@ class VymReader : public BaseReader {
     void readBranchAttr();
     void readOrnamentsAttr();
     void readFrameAttr();
-    void readTaskAttr();
+    void readTask();
 
     int branchesCounter;
     int branchesTotal;

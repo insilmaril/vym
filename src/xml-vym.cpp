@@ -313,7 +313,7 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
         else if (xml.name() == QLatin1String("userflag"))
             readUserFlag();
         else if (xml.name() == QLatin1String("task"))
-            readTaskAttr();
+            readTask();
         else if (xml.name() == QLatin1String("floatimage"))
             readImage();
         else if (xml.name() == QLatin1String("attribute"))
@@ -1232,7 +1232,7 @@ void VymReader::readFrameAttr()
     }
 }
 
-void VymReader::readTaskAttr()
+void VymReader::readTask()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("task"));
 
@@ -1270,5 +1270,11 @@ void VymReader::readTaskAttr()
                 lastTask->setPriorityDelta(d);
         }
     }
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
 }
 
