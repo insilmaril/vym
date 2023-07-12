@@ -194,10 +194,10 @@ void VymView::updateColors()
     // Alternatively one could use stylesheets
     // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
     /* FIXME-1 link colors
-    QPalette palette = treeEditor->palette();
-    palette.setColor(QPalette::Text, col);
-    treeEditor->setPalette(palette);
     */
+    QPalette palette = treeEditor->palette();
+    palette.setColor(QPalette::Text, model->mapDesign()->defaultLinkColor());
+    treeEditor->setPalette(palette);
 }
 
 void VymView::changeSelection(const QItemSelection &newsel,
