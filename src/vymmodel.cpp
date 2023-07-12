@@ -886,7 +886,7 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QString &fn)  // 
                                   .arg(s)
                                   .arg(getObjectName(parentBranch)));
 
-                    // Find nice position for new image, take childPos // FIXME-1 position below last image
+                    // Find nice position for new image, take childPos // FIXME-2 position below last image
                     ImageContainer *ic = ii->getImageContainer();
                     QPointF pos_new = parentBranch->getBranchContainer()->getPositionHintNewChild(ic);
                     ic->setPos(pos_new);
@@ -2976,16 +2976,16 @@ void VymModel::paste()
             else {
                 ImageItem *ii = loadImage(selbi, fn);
                 if (ii)
-                    setScaleFactor(300.0 / image.width(), ii);    // FIXME-2 Better use user-defined fixed width
+                    setScaleFactor(300.0 / image.width(), ii);    // FIXME-2 Better use user-defined fixed width when pasting images
             }
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
             //setTextFormat(Qt::RichText);
-            qDebug() << "VM::paste found html...";  // FIXME-2 testing
+            //qDebug() << "VM::paste found html...";
         } else if (mimeData->hasText()) {
             //setText(mimeData->text());
             //setTextFormat(Qt::PlainText);
-            qDebug() << "VM::paste found text...";  // FIXME-2 testing
+            //qDebug() << "VM::paste found text...";
         } else {
             qWarning() << "VM::paste Cannot paste data, mimeData->formats=" << mimeData->formats();
         }
