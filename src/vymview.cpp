@@ -174,20 +174,16 @@ void VymView::updateColors()
         "background-color: " + col.name());
     */
 
-    // FIXME-2 maybe use gradient with pen/brush colors? //
+    // FIXME-2 maybe use gradient with pen/brush colors for selection? //
     // https://stackoverflow.com/questions/34187874/setting-qtreeview-selected-item-style-in-qss
     // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
     /*
     QString s;
     s += "QTreeView { show-decoration-selected: 1; }";
-    s += QString("QTreeView::item { border: 1px solid #d9d9d9; border-top-color: transparent; border-bottom-color: transparent; }");
-
-    s += " QTreeView::item:hover { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0000fd, stop: 1 #cbdaf1); border: 1px solid #ff2222; }";
-
+    s += "QTreeView::item { border: 1px solid #d9d9d9; border-top-color: transparent; border-bottom-color: transparent; }";
+    s += "QTreeView::item:hover { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0000fd, stop: 1 #cbdaf1); border: 1px solid #ff2222; }";
     s += "QTreeView::item:selected { border: 1px solid #56ffbc; }";
-
     s += "QTreeView::item:selected:active{ background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #ff0000); }";
-
     //s += "QTreeView::item:selected:!active { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6b9be8, stop: 1 #577fbf); } ";
     treeEditor->setStyleSheet(s);
     */
@@ -197,7 +193,7 @@ void VymView::updateColors()
     //
     // Alternatively one could use stylesheets
     // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
-    /* FIXME-0 link colors
+    /* FIXME-1 link colors
     QPalette palette = treeEditor->palette();
     palette.setColor(QPalette::Text, col);
     treeEditor->setPalette(palette);
