@@ -5494,7 +5494,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::selectMapSelectionColor()    // FIXME-0 move out of VymModel, consider Pen/Brush
+void VymModel::selectMapSelectionColor()    // FIXME-2 move out of VymModel, consider Pen/Brush
 {
     QColor col = QColorDialog::getColor(defLinkColor, NULL);
     setSelectionPenColor(col);
