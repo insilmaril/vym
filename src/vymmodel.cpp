@@ -185,7 +185,8 @@ void VymModel::init()
     connect(taskAlarmTimer, SIGNAL(timeout()), this, SLOT(updateTasksAlarm()));
     taskAlarmTimer->start(3000);
 
-    // View - map
+    // View - map   
+    // FIXME-0 move XLink styles to MapDesign
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
     defXLinkPen.setStyle(Qt::DashLine);

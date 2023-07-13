@@ -175,8 +175,6 @@ void VymView::updateColors()
     else 
         mapEditor->getScene()->setBackgroundBrush(mapDesign->backgroundColor());
 
-    /* FIXME-0 treeEditor->setStyleSheet(
-    */
     s += "selection-background-color: " + mapDesign->selectionBrush().color().name() + ";" + "background-color: " + mapDesign->backgroundColor().name();
 
     // FIXME-2 maybe use gradient with pen/brush colors for selection? //
@@ -192,12 +190,13 @@ void VymView::updateColors()
     */
     mainWindow->updateHeadingEditor();
 
-    // Link colors in TreeEditor
-    /* FIXME-0
+    // Link colors in TreeEditor // FIXME-0  palette only works, if no stylesheet is written!
+    /* 
+    */
     QPalette palette = treeEditor->palette();
     palette.setColor(QPalette::Text, model->mapDesign()->defaultLinkColor());
+    qDebug() << "VV setting TE links to " <<model->mapDesign()->defaultLinkColor().name();
     treeEditor->setPalette(palette);
-    */
 
     // s += "QTreeView::branch {color: red; background: palette(base);}";
     treeEditor->setStyleSheet(s);
