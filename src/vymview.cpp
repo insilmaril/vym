@@ -195,7 +195,7 @@ void VymView::updateColors()
     */
     QPalette palette = treeEditor->palette();
     palette.setColor(QPalette::Text, model->mapDesign()->defaultLinkColor());
-    qDebug() << "VV setting TE links to " <<model->mapDesign()->defaultLinkColor().name();
+    //qDebug() << "VV setting TE links to " <<model->mapDesign()->defaultLinkColor().name();
     treeEditor->setPalette(palette);
 
     // s += "QTreeView::branch {color: red; background: palette(base);}";

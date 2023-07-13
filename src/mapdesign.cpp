@@ -345,11 +345,13 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
             qWarning() << "md::saveToDir failed to save background image to " << fn;
         else
             s += xml.singleElement("md",
-                xml.attribut("backgroundImage", "file:" + fn) + "\n" +
+                xml.attribut("backgroundImage", "file:" + fn) +
                 xml.attribut("backgroundImageName", backgroundImageNameInt));
     }
 
-    s += xml.attribut("defaultFont", defaultFontInt.toString()) + "\n";
+    s += xml.singleElement("md",
+            xml.attribut("defaultFont", defaultFontInt.toString()));
+
     s += xml.singleElement("md",
             xml.attribut("selectionPenColor", selectionPenInt.color().name(QColor::HexArgb)));
     s += xml.singleElement("md",

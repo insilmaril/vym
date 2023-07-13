@@ -5330,8 +5330,11 @@ bool VymModel::setBackgroundImage( const QString &fn) // FIXME-2 missing savesta
 
     // FIXME-3 maybe also use: view.setCacheMode(QGraphicsView::CacheBackground);
 
-    return mapDesignInt->setBackgroundImage(fn);
-    // FIXME-00 mapEditor->getScene()->setBackgroundBrush(brush);
+    if (mapDesignInt->setBackgroundImage(fn)) {
+        vymView->updateColors();
+        return true;
+    } else
+        return false;
 }
 
 void VymModel::setBackgroundImageName( const QString &s) // FIXME-2 missing savestate
