@@ -1066,7 +1066,7 @@ void VymModelWrapper::setMapComment(const QString &s) { model->setComment(s); }
 
 void VymModelWrapper::setMapLinkStyle(const QString &style)
 {
-    if (!model->setMapLinkStyle(style))
+    if (!model->setLinkStyle(style))
         logError(context(), QScriptContext::UnknownError,
                  QString("Could not set linkstyle to %1").arg(style));
 }

@@ -5,6 +5,7 @@
 
 #include "branchitem.h"
 #include "file.h"
+#include "misc.h"
 
 extern bool usingDarkTheme;
 
@@ -122,6 +123,13 @@ void MapDesign::init()
     linkColorHintInt = LinkObj::DefaultColor;
     defaultLinkCol = Qt::blue;
 
+    // XLinks
+    defXLinkPenInt.setWidth(1);
+    defXLinkPenInt.setColor(QColor(50, 50, 255));
+    defXLinkPenInt.setStyle(Qt::DashLine);
+    defXLinkStyleBeginInt = "HeadFull";
+    defXLinkStyleEndInt = "HeadFull";
+
     linkStyles << LinkObj::NoLink;
     linkStyles << LinkObj::PolyParabel;
     linkStyles << LinkObj::Parabel;
@@ -182,6 +190,37 @@ bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
 
     return true;
 }
+
+void MapDesign::setDefXLinkPen(const QPen &p)
+{
+    defXLinkPenInt = p;
+}
+
+QPen MapDesign::defXLinkPen()
+{
+    return defXLinkPenInt;
+}
+
+void MapDesign::setDefXLinkStyleBegin(const QString &s)
+{
+    defXLinkStyleBeginInt = s;
+}
+
+QString MapDesign::defXLinkStyleBegin()
+{
+    return defXLinkStyleBeginInt;
+}
+
+void MapDesign::setDefXLinkStyleEnd(const QString &s)
+{
+    defXLinkStyleEndInt = s;
+}
+
+QString MapDesign::defXLinkStyleEnd()
+{
+    return defXLinkStyleEndInt;
+}
+
 
 void MapDesign::setBackgroundColor(const QColor &col)
 {
@@ -365,8 +404,22 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
 
     s += xml.singleElement("md",
             xml.attribut("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-2 only one level save atm
+
     s += xml.singleElement("md",
             xml.attribut("linkColor", defaultLinkColor().name()));
+
+        s += xml.singleElement("md",
+                xml.attribut("defXLinkColor", defXLinkPenInt.color().name()));
+        s += xml.singleElement("md",
+                xml.attribut("defXLinkWidth",
+                     QString().setNum(defXLinkPenInt.width(), 10)));
+        s += xml.singleElement("md",
+                xml.attribut("defXLinkPenStyle",
+                     penStyleToString(defXLinkPenInt.style())));
+        s += xml.singleElement("md",
+                xml.attribut("defXLinkStyleBegin", defXLinkStyleBeginInt));
+        s += xml.singleElement("md",
+                xml.attribut("defXLinkStyleEnd", defXLinkStyleEndInt));
 
     xml.decIndent();
     s += xml.endElement("mapdesign");

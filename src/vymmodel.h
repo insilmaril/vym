@@ -680,19 +680,15 @@ class VymModel : public TreeModel {
   private:
     MapDesign* mapDesignInt;
 
-    QPen defXLinkPen;           // default pen for xlinks   //FIXME-2 move to mapDesign
-    QString defXLinkStyleBegin; // default style begin      //FIXME-2 move to mapDesign
-    QString defXLinkStyleEnd;
-
   public:
-    bool setMapLinkStyle(const QString &);   // Set style of link
-    LinkObj::Style getMapLinkStyle();
-
-    QColor getDefaultLinkColor();
+    bool setLinkStyle(const QString &);   // Set style of link
     void setDefaultLinkColor(const QColor&);         // default color of links
-    LinkObj::ColorHint getLinkColorHint();
     void setLinkColorHint(const LinkObj::ColorHint &);
     void toggleLinkColorHint(); // after changing linkStyles
+
+    void setDefXLinkPen(const QPen &p);
+    void setDefXLinkStyleBegin(const QString &s);
+    void setDefXLinkStyleEnd(const QString &s);
 
     void setBackgroundColor(QColor);
     bool setBackgroundImage(const QString &);
@@ -701,14 +697,6 @@ class VymModel : public TreeModel {
     bool hasBackgroundImage();
     QString backgroundImageName();
 
-  public:
-    void setMapDefXLinkPen(const QPen &p);
-    QPen getMapDefXLinkPen();
-
-    void setMapDefXLinkStyleBegin(const QString &s);
-    QString getMapDefXLinkStyleBegin();
-    void setMapDefXLinkStyleEnd(const QString &s);
-    QString getMapDefXLinkStyleEnd();
 
     /*!  Set position as QGraphicsItem. Only without parentItem absolute position is used */
     void setPos(const QPointF &p, TreeItem *ti = nullptr);

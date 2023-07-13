@@ -39,7 +39,7 @@ void Link::init()
     xLinkState = Link::undefinedXLink;
 
     type = Bezier;
-    pen = model->getMapDefXLinkPen();
+    pen = model->mapDesign()->defXLinkPen();
 }
 
 VymModel *Link::getModel() { return model; }

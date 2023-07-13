@@ -185,14 +185,6 @@ void VymModel::init()
     connect(taskAlarmTimer, SIGNAL(timeout()), this, SLOT(updateTasksAlarm()));
     taskAlarmTimer->start(3000);
 
-    // View - map   
-    // FIXME-0 move XLink styles to MapDesign
-    defXLinkPen.setWidth(1);
-    defXLinkPen.setColor(QColor(50, 50, 255));
-    defXLinkPen.setStyle(Qt::DashLine);
-    defXLinkStyleBegin = "HeadFull";
-    defXLinkStyleEnd = "HeadFull";
-
     hasContextPos = false;
 
     hidemode = TreeItem::HideNone;
@@ -288,24 +280,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             mapAttr += xml.attribut("title", title) + "\n";
         if (!comment.isEmpty())
             mapAttr += xml.attribut("comment", comment) + "\n";
-
-
-        // FIXME-0 move all these map settings to mapDesign:
-        mapAttr += xml.attribut("defXLinkColor", defXLinkPen.color().name()) + "\n";
-        mapAttr += xml.attribut("defXLinkWidth",
-                     QString().setNum(defXLinkPen.width(), 10)) + "\n";
-        mapAttr += xml.attribut("defXLinkPenStyle",
-                     penStyleToString(defXLinkPen.style())) + "\n";
-        mapAttr += xml.attribut("defXLinkStyleBegin", defXLinkStyleBegin) + "\n";
-        mapAttr += xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) + "\n";
-
-        QString colhint = "";
-        /* FIXME-2 mapDesign related settings not saved yet (at least not all)
-           if (linkColorHint == LinkObj::HeadingColor)
-            colhint = xml.attribut("linkColorHint", "HeadingColor");
-        */
-        mapAttr += colhint;
-        ////////////////
 
         mapAttr += xml.attribut("branchCount", QString().number(branchCount()));
         mapAttr += xml.attribut("mapZoomFactor",
@@ -3220,8 +3194,8 @@ bool VymModel::createLink(Link *link)
     else
         link->updateLink();
 
-    link->setStyleBegin(defXLinkStyleBegin);
-    link->setStyleEnd(defXLinkStyleEnd);
+    link->setStyleBegin(mapDesignInt->defXLinkStyleBegin());
+    link->setStyleEnd(mapDesignInt->defXLinkStyleEnd());
     return true;
 }
 
@@ -4534,9 +4508,9 @@ void VymModel::editXLink()
         dia.setLink(l);
         if (dia.exec() == QDialog::Accepted) {
             if (dia.useSettingsGlobal()) {
-                setMapDefXLinkPen(l->getPen());
-                setMapDefXLinkStyleBegin(l->getStyleBeginString());
-                setMapDefXLinkStyleEnd(l->getStyleEndString());
+                setDefXLinkPen(l->getPen());
+                setDefXLinkStyleBegin(l->getStyleBeginString());
+                setDefXLinkStyleEnd(l->getStyleEndString());
             }
         }
     }
@@ -5209,12 +5183,12 @@ MapDesign* VymModel::mapDesign()
     return mapDesignInt;
 }
 
-bool VymModel::setMapLinkStyle(const QString &newStyleString)
+bool VymModel::setLinkStyle(const QString &newStyleString)
 {
     QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(1));
 
-    saveState(QString("setMapLinkStyle (\"%1\")").arg(newStyleString),
-              QString("setMapLinkStyle (\"%1\")").arg(currentStyleString),
+    saveState(QString("setLinkStyle (\"%1\")").arg(newStyleString),
+              QString("setLinkStyle (\"%1\")").arg(currentStyleString),
               QString("Set map link style (\"%1\")").arg(newStyleString));
 
     auto style = LinkObj::styleFromString(newStyleString);
@@ -5228,19 +5202,9 @@ bool VymModel::setMapLinkStyle(const QString &newStyleString)
     return true;
 }
 
-LinkObj::Style VymModel::getMapLinkStyle() // FIXME-2 only one level atm
-{
-    return mapDesignInt->linkStyle(1);
-}
-
 uint VymModel::getModelID() { return modelID; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
-
-QColor VymModel::getDefaultLinkColor()
-{
-    return mapDesignInt->defaultLinkColor();
-}
 
 void VymModel::setDefaultLinkColor(const QColor &col)
 {
@@ -5268,11 +5232,6 @@ void VymModel::setDefaultLinkColor(const QColor &col)
         nextBranch(cur, prev);
     }
     updateActions();
-}
-
-LinkObj::ColorHint VymModel::getLinkColorHint()
-{
-    return mapDesignInt->linkColorHint();
 }
 
 void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 saveState missing
@@ -5367,29 +5326,20 @@ QString VymModel::backgroundImageName()
     return mapDesignInt->backgroundImageName();
 }
 
-void VymModel::setMapDefXLinkPen(const QPen &p) // FIXME-4 move to ME
+void VymModel::setDefXLinkPen(const QPen &p)    // FIXME-2 used? saveState?
 {
-    defXLinkPen = p;
+    mapDesignInt->setDefXLinkPen(p);
 }
 
-QPen VymModel::getMapDefXLinkPen() // FIXME-4 move to ME
+void VymModel::setDefXLinkStyleBegin(const QString &s)
 {
-    return defXLinkPen;
+    mapDesignInt->setDefXLinkStyleBegin(s);
 }
 
-void VymModel::setMapDefXLinkStyleBegin(const QString &s)
+void VymModel::setDefXLinkStyleEnd(const QString &s)
 {
-    defXLinkStyleBegin = s;
+    mapDesignInt->setDefXLinkStyleEnd(s);
 }
-
-QString VymModel::getMapDefXLinkStyleBegin() { return defXLinkStyleBegin; }
-
-void VymModel::setMapDefXLinkStyleEnd(const QString &s)
-{
-    defXLinkStyleEnd = s;
-}
-
-QString VymModel::getMapDefXLinkStyleEnd() { return defXLinkStyleEnd; }
 
 void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
 {

@@ -274,7 +274,7 @@ void VymReader::readMapDesignCompatibleAttributes()
     a = "linkStyle";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setMapLinkStyle(s);
+        model->setLinkStyle(s);
 
     a = "linkColor";
     s = xml.attributes().value(a).toString();
@@ -282,7 +282,7 @@ void VymReader::readMapDesignCompatibleAttributes()
         model->setDefaultLinkColor(QColor(s));
     }
 
-    QPen pen(model->getMapDefXLinkPen());
+    QPen pen(model->mapDesign()->defXLinkPen());
     a = "defXLinkColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
@@ -314,17 +314,17 @@ void VymReader::readMapDesignCompatibleAttributes()
         }
         pen.setStyle(ps);
     }
-    model->setMapDefXLinkPen(pen);
+    model->setDefXLinkPen(pen);
 
     a = "defXLinkStyleBegin";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setMapDefXLinkStyleBegin(s);
+        model->setDefXLinkStyleBegin(s);
 
     a = "defXLinkStyleEnd";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setMapDefXLinkStyleEnd(s);
+        model->setDefXLinkStyleEnd(s);
 }
 
 void VymReader::readSelection()

@@ -5778,7 +5778,7 @@ void Main::formatLinkStyleLine()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->setMapLinkStyle("StyleLine");
+        m->setLinkStyle("StyleLine");
         actionFormatLinkStyleLine->setChecked(true);
     }
 }
@@ -5787,7 +5787,7 @@ void Main::formatLinkStyleParabel()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->setMapLinkStyle("StyleParabel");
+        m->setLinkStyle("StyleParabel");
         actionFormatLinkStyleParabel->setChecked(true);
     }
 }
@@ -5796,7 +5796,7 @@ void Main::formatLinkStylePolyLine()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->setMapLinkStyle("StylePolyLine");
+        m->setLinkStyle("StylePolyLine");
         actionFormatLinkStylePolyLine->setChecked(true);
     }
 }
@@ -5805,7 +5805,7 @@ void Main::formatLinkStylePolyParabel()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->setMapLinkStyle("StylePolyParabel");
+        m->setLinkStyle("StylePolyParabel");
         actionFormatLinkStylePolyParabel->setChecked(true);
     }
 }
@@ -5822,7 +5822,7 @@ void Main::formatSelectLinkColor()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(m->getDefaultLinkColor(), this);
+        QColor col = QColorDialog::getColor(m->mapDesign()->defaultLinkColor(), this);
         m->setDefaultLinkColor(col);
         updateActions();
     }
@@ -6527,7 +6527,7 @@ void Main::updateActions()
             actionListItems.at(i)->setEnabled(false);
 
         // Link style in context menu
-        switch (m->getMapLinkStyle()) {
+        switch (m->mapDesign()->linkStyle(0)) { // FIXME-2 what about other depths?
             case LinkObj::Line:
                 actionFormatLinkStyleLine->setChecked(true);
                 break;
@@ -6550,7 +6550,7 @@ void Main::updateActions()
         actionFormatBackground->setIcon(pix);
         pix.fill(m->getSelectionBrushColor());
         actionFormatSelectionColor->setIcon(pix);
-        pix.fill(m->getDefaultLinkColor());
+        pix.fill(m->mapDesign()->defaultLinkColor());
         actionFormatLinkColor->setIcon(pix);
 
         // Selection history
@@ -6585,7 +6585,7 @@ void Main::updateActions()
         actionCollapseOneLevel->setEnabled(true);
         actionCollapseUnselected->setEnabled(true);
 
-        if (m->getLinkColorHint() == LinkObj::HeadingColor)
+        if (m->mapDesign()->linkColorHint() == LinkObj::HeadingColor)
             actionFormatLinkColorHint->setChecked(true);
         else
             actionFormatLinkColorHint->setChecked(false);

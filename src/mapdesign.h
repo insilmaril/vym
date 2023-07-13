@@ -84,6 +84,13 @@ class MapDesign {
     LinkObj::Style linkStyle(int depth);
     bool setLinkStyle(const LinkObj::Style &style, int depth);
 
+    void setDefXLinkPen(const QPen &p);
+    QPen defXLinkPen();
+    void setDefXLinkStyleBegin(const QString &s);
+    QString defXLinkStyleBegin();
+    void setDefXLinkStyleEnd(const QString &s);
+    QString defXLinkStyleEnd();
+
     void setBackgroundColor(const QColor &);
     QColor backgroundColor();
 
@@ -147,6 +154,12 @@ class MapDesign {
     LinkObj::ColorHint linkColorHintInt;
     QColor defaultLinkCol;
     ConfigList <LinkObj::Style> linkStyles;
+
+    // XLinks
+    QPen defXLinkPenInt;           // default pen for xlinks
+    QString defXLinkStyleBeginInt; // default style begin
+    QString defXLinkStyleEndInt;
+
 
     // Selection
     QPen selectionPenInt;
