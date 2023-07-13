@@ -172,7 +172,7 @@ void VymView::updateColors()
     // Background image
     if (mapDesign->hasBackgroundImage())
         mapEditor->getScene()->setBackgroundBrush(mapDesign->backgroundImageBrush());
-    else
+    else 
         mapEditor->getScene()->setBackgroundBrush(mapDesign->backgroundColor());
 
     /* FIXME-0 treeEditor->setStyleSheet(

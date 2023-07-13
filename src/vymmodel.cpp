@@ -186,7 +186,6 @@ void VymModel::init()
     taskAlarmTimer->start(3000);
 
     // View - map
-    defaultFont.setPointSizeF(16);
     defXLinkPen.setWidth(1);
     defXLinkPen.setColor(QColor(50, 50, 255));
     defXLinkPen.setStyle(Qt::DashLine);
@@ -291,7 +290,6 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
 
         // FIXME-0 move all these map settings to mapDesign:
-        mapAttr += xml.attribut("defaultFont", defaultFont.toString()) + "\n";
         mapAttr += xml.attribut("defXLinkColor", defXLinkPen.color().name()) + "\n";
         mapAttr += xml.attribut("defXLinkWidth",
                      QString().setNum(defXLinkPen.width(), 10)) + "\n";
@@ -5317,11 +5315,6 @@ void VymModel::setBackgroundColor(QColor col)
     vymView->updateColors();
 }
 
-QColor VymModel::getBackgroundColor()    // FIXME-0 remove getter methods
-{
-    return mapDesign()->backgroundColor();
-}
-
 bool VymModel::setBackgroundImage( const QString &fn) // FIXME-2 missing savestate
 {
     /*
@@ -5369,10 +5362,6 @@ QString VymModel::backgroundImageName()
 {
     return mapDesignInt->backgroundImageName();
 }
-
-QFont VymModel::getMapDefaultFont() { return defaultFont; }
-
-void VymModel::setMapDefaultFont(const QFont &f) { defaultFont = f; }
 
 void VymModel::setMapDefXLinkPen(const QPen &p) // FIXME-4 move to ME
 {

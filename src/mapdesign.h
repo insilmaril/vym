@@ -1,6 +1,7 @@
 #ifndef MAPDESIGN_H
 #define MAPDESIGN_H
 
+#include <QFont>
 #include <QString>
 
 //#include "branch-container.h"
@@ -108,6 +109,9 @@ class MapDesign {
     QBrush selectionBrush();
     void setSelectionBrush(const QBrush &);
 
+    QFont defaultFont();
+    void setDefaultFont(const QFont &f);
+
     QString saveToDir(const QString &tmpdir, const QString &prefix);
 
   private:
@@ -147,16 +151,19 @@ class MapDesign {
     // Selection
     QPen selectionPenInt;
     QBrush selectionBrushInt;
+
+    // Default font
+    QFont defaultFontInt;
 };
 
-    inline MapDesign::UpdateMode operator|(MapDesign::UpdateMode a, MapDesign::UpdateMode b)
-    {
-        return static_cast<MapDesign::UpdateMode>(static_cast<int>(a) | static_cast<int>(b));
-    }
+inline MapDesign::UpdateMode operator|(MapDesign::UpdateMode a, MapDesign::UpdateMode b)
+{
+    return static_cast<MapDesign::UpdateMode>(static_cast<int>(a) | static_cast<int>(b));
+}
 
-    inline MapDesign::UpdateMode operator|=(MapDesign::UpdateMode &a, MapDesign::UpdateMode b)
-    {
-        a = a | b; return a;
-    }
+inline MapDesign::UpdateMode operator|=(MapDesign::UpdateMode &a, MapDesign::UpdateMode b)
+{
+    a = a | b; return a;
+}
 
 #endif

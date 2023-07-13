@@ -683,8 +683,6 @@ class VymModel : public TreeModel {
     QPen defXLinkPen;           // default pen for xlinks   //FIXME-2 move to mapDesign
     QString defXLinkStyleBegin; // default style begin      //FIXME-2 move to mapDesign
     QString defXLinkStyleEnd;
-                                             // default style end
-    QFont defaultFont;                                      //FIXME-2 move to mapDesign
 
   public:
     bool setMapLinkStyle(const QString &);   // Set style of link
@@ -697,7 +695,6 @@ class VymModel : public TreeModel {
     void toggleLinkColorHint(); // after changing linkStyles
 
     void setBackgroundColor(QColor);
-    QColor getBackgroundColor();
     bool setBackgroundImage(const QString &);
     void setBackgroundImageName(const QString &);
     void unsetBackgroundImage();
@@ -705,9 +702,6 @@ class VymModel : public TreeModel {
     QString backgroundImageName();
 
   public:
-    QFont getMapDefaultFont();
-    void setMapDefaultFont(const QFont &);
-
     void setMapDefXLinkPen(const QPen &p);
     QPen getMapDefXLinkPen();
 

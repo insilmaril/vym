@@ -203,6 +203,60 @@ void VymReader::readMapDesignCompatibleAttributes()
         model->setBackgroundColor(QColor(s));
     }
 
+    a = "backgroundImage";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setBackgroundImage(parseHREF(s));
+
+    a = "backgroundImageName";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        model->setBackgroundImageName(s);
+    }
+
+    a = "defaultFont";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        QFont font;
+        font.fromString(s);
+        model->mapDesign()->setDefaultFont(font);
+    }
+
+    QColor col;
+
+    // Only for backwards compatibility reading <vymmap>.
+    // moved to <mapdesign> starting 2.9.513
+    a = "selectionColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        col.setNamedColor(s);
+        model->setSelectionPenColor(col);
+        model->setSelectionBrushColor(col);
+    }
+
+    // Only for backwards compatibility reading <vymmap>.
+    // moved to <mapdesign> starting 2.9.513
+    a = "selectionPenColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        col.setNamedColor(s);
+        model->setSelectionPenColor(col);
+    }
+
+    bool ok;
+    // Only for backwards compatibility reading <vymmap>.
+    // moved to <mapdesign> starting 2.9.513
+    a = "selectionPenWidth"; 
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        float  w = s.toFloat(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute  " + a);
+            return;
+        }
+        model->setSelectionPenWidth(w);
+    }
+
     a = "selectionBrushColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
@@ -227,6 +281,50 @@ void VymReader::readMapDesignCompatibleAttributes()
     if (!s.isEmpty()) {
         model->setDefaultLinkColor(QColor(s));
     }
+
+    QPen pen(model->getMapDefXLinkPen());
+    a = "defXLinkColor";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        if (!s.isEmpty()) {
+            col.setNamedColor(s);
+            pen.setColor(col);
+        }
+    }
+
+    a = "defXLinkWidth";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        int i = s.toInt(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute  " + a);
+            return;
+        }
+        pen.setWidth(i);
+    }
+
+    a = "defXLinkPenStyle";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        bool ok;
+        Qt::PenStyle ps = penStyle(s, ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        pen.setStyle(ps);
+    }
+    model->setMapDefXLinkPen(pen);
+
+    a = "defXLinkStyleBegin";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setMapDefXLinkStyleBegin(s);
+
+    a = "defXLinkStyleEnd";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty())
+        model->setMapDefXLinkStyleEnd(s);
 }
 
 void VymReader::readSelection()
@@ -883,105 +981,6 @@ void VymReader::readVymMapAttr()
         mainWindow->setProgressMaximum(branchesTotal);
     }
 
-    QColor col;
-
-    a = "backgroundImage";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty())
-        model->setBackgroundImage(parseHREF(s));
-
-    a = "backgroundImageName";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        model->setBackgroundImageName(s);
-    }
-
-    a = "defaultFont";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        QFont font;
-        font.fromString(s);
-        model->setMapDefaultFont(font);
-    }
-
-    // Only for backwards compatibility reading <vymmap>.
-    // moved to <mapdesign> starting 2.9.513
-    a = "selectionColor";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        col.setNamedColor(s);
-        model->setSelectionPenColor(col);
-        model->setSelectionBrushColor(col);
-    }
-
-    // Only for backwards compatibility reading <vymmap>.
-    // moved to <mapdesign> starting 2.9.513
-    a = "selectionPenColor";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        col.setNamedColor(s);
-        model->setSelectionPenColor(col);
-    }
-
-    // Only for backwards compatibility reading <vymmap>.
-    // moved to <mapdesign> starting 2.9.513
-    a = "selectionPenWidth"; 
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        float  w = s.toFloat(&ok);
-        if (!ok) {
-            xml.raiseError("Could not parse attribute  " + a);
-            return;
-        }
-        model->setSelectionPenWidth(w);
-    }
-
-    readMapDesignCompatibleAttributes();
-
-    QPen pen(model->getMapDefXLinkPen());
-    a = "defXLinkColor";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        if (!s.isEmpty()) {
-            col.setNamedColor(s);
-            pen.setColor(col);
-        }
-    }
-
-    a = "defXLinkWidth";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        i = s.toInt(&ok);
-        if (!ok) {
-            xml.raiseError("Could not parse attribute  " + a);
-            return;
-        }
-        pen.setWidth(i);
-    }
-
-    a = "defXLinkPenStyle";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        bool ok;
-        Qt::PenStyle ps = penStyle(s, ok);
-        if (!ok) {
-            xml.raiseError("Could not parse attribute " + a);
-            return;
-        }
-        pen.setStyle(ps);
-    }
-    model->setMapDefXLinkPen(pen);
-
-    a = "defXLinkStyleBegin";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty())
-        model->setMapDefXLinkStyleBegin(s);
-
-    a = "defXLinkStyleEnd";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty())
-        model->setMapDefXLinkStyleEnd(s);
-
     qreal r;
     a = "mapZoomFactor";
     s = xml.attributes().value(a).toString();
@@ -1004,6 +1003,8 @@ void VymReader::readVymMapAttr()
         }
         model->setMapRotationAngle(r);
     }
+
+    readMapDesignCompatibleAttributes();
 }
 
 void VymReader::readBranchAttr()
