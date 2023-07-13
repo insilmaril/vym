@@ -424,7 +424,7 @@ QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)
         return pb->getBackgroundColor(start, false);
     else
         // No frame found
-        return model->getMapBackgroundColor();
+        return model->mapDesign()->backgroundColor();
 }
 
 void BranchItem::setLastSelectedBranch()

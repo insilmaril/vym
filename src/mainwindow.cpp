@@ -6546,7 +6546,7 @@ void Main::updateActions()
 
         // Update colors
         QPixmap pix(16, 16);
-        pix.fill(m->getMapBackgroundColor());
+        pix.fill(m->mapDesign()->backgroundColor());
         actionFormatBackground->setIcon(pix);
         pix.fill(m->getSelectionBrushColor());
         actionFormatSelectionColor->setIcon(pix);

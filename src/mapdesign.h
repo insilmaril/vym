@@ -83,6 +83,16 @@ class MapDesign {
     LinkObj::Style linkStyle(int depth);
     bool setLinkStyle(const LinkObj::Style &style, int depth);
 
+    void setBackgroundColor(const QColor &);
+    QColor backgroundColor();
+
+    bool setBackgroundImage(const QString &fileName);
+    void setBackgroundImageName(const QString &);
+    void unsetBackgroundImage();
+    bool hasBackgroundImage();
+    QString backgroundImageName();
+    QBrush backgroundImageBrush();
+
     void updateBranchHeadingColor(
             BranchItem *branchItem,
             int depth);
@@ -110,6 +120,13 @@ class MapDesign {
     // Colors of headings
     ConfigList <MapDesign::HeadingColorHint> headingColorHints;
     ConfigList <QColor> headingColors;
+
+    // Background
+    QColor backgroundColorInt;
+    bool usesBackgroundImage;
+    QString backgroundImageNameInt;
+    QImage backgroundImage;
+    QBrush backgroundImageBrushInt;
 
     // Frames
     ConfigList <FrameContainer::FrameType> innerFrameTypes;

@@ -147,8 +147,8 @@ void FreeplaneReader::readHook()
         s = xml.attributes().value(a).toString();
         if (!s.isEmpty()) {
             QColor col(s);
-            model->setMapBackgroundColor(col);
-            qdbg() << "FR::setMapBackground col = " << s;
+            model->setBackgroundColor(col);
+            qdbg() << "FR::setBackground col = " << s;
         }
     }
 
@@ -310,7 +310,7 @@ void FreeplaneReader::readProperties()
     QString a = "backgroundImageURI";
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        model->setMapBackgroundImage(s);
+        model->setBackgroundImage(s);
     }
 
     readToEnd();

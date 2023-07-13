@@ -155,17 +155,56 @@ void VymReader::readVymMap()
     }
 }
 
+void VymReader::readMapDesign()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("mapdesign"));
+
+    bool ok;
+
+    while (xml.readNextStartElement()) {
+        if (xml.name() == QLatin1String("md"))
+            readMapDesignElement();
+        else {
+            raiseUnknownElementError();
+            return;
+        }
+    }
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+}
+
+void VymReader::readMapDesignElement()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("md"));
+
+    bool ok;
+
+    readMapDesignCompatibleAttributes();
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement)
+        return;
+
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
+}
+
 void VymReader::readMapDesignCompatibleAttributes()
 {
-    // Reads attributes which moved from
-    // <vymmap> before 2.9.13 to <mapdesign>
+    // Reads attributes which before 2.9.13 used to be
+    // in <vymmap> and now are in <mapdesign>
 
     Q_ASSERT(xml.isStartElement() &&
             ( xml.name() == QLatin1String("vymmap") ||
-              xml.name() == QLatin1String("mapdesign")));
+              xml.name() == QLatin1String("md")));
 
-    QString a = "selectionBrushColor";
+    QString a = "backgroundColor";
     QString s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        model->setBackgroundColor(QColor(s));
+    }
+
+    a = "selectionBrushColor";
+    s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
         model->setSelectionBrushColor(QColor(s));
 
@@ -188,21 +227,6 @@ void VymReader::readMapDesignCompatibleAttributes()
     if (!s.isEmpty()) {
         model->setDefaultLinkColor(QColor(s));
     }
-}
-
-void VymReader::readMapDesign()
-{
-    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("mapdesign"));
-
-    bool ok;
-
-    readMapDesignCompatibleAttributes();
-
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
-
-    if (xml.readNextStartElement())
-        raiseUnknownElementError();
 }
 
 void VymReader::readSelection()
@@ -860,22 +884,16 @@ void VymReader::readVymMapAttr()
     }
 
     QColor col;
-    a = "backgroundColor";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        col.setNamedColor(s);
-        model->getScene()->setBackgroundBrush(col);
-    }
 
     a = "backgroundImage";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setMapBackgroundImage(parseHREF(s));
+        model->setBackgroundImage(parseHREF(s));
 
     a = "backgroundImageName";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        model->setMapBackgroundImageName(s);
+        model->setBackgroundImageName(s);
     }
 
     a = "defaultFont";

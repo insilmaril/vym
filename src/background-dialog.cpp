@@ -34,7 +34,7 @@ int BackgroundDialog::exec()
 {
     int r = QDialog::exec();
     if (ui.useBackgroundImageCheckbox->isChecked())
-        model->setMapBackgroundImageName(ui.imageNameLineEdit->text());
+        model->setBackgroundImageName(ui.imageNameLineEdit->text());
     return r;
 }
 
@@ -44,7 +44,7 @@ void BackgroundDialog::selectBackgroundColor()
         model->getMapEditor()->getScene()->backgroundBrush().color(), nullptr);
     if (!col.isValid())
         return;
-    model->setMapBackgroundColor(col);
+    model->setBackgroundColor(col);
 
     // Update local and maybe also global color button
     updateBackgroundColorButton();
@@ -54,7 +54,7 @@ void BackgroundDialog::selectBackgroundColor()
 void BackgroundDialog::toggleBackgroundImage()
 {
     if (!ui.useBackgroundImageCheckbox->isChecked()) {
-        model->unsetMapBackgroundImage();
+        model->unsetBackgroundImage();
         updateBackgroundImageControls();
     } else
         selectBackgroundImage();
@@ -73,7 +73,7 @@ void BackgroundDialog::selectBackgroundImage()
 
     if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
         lastImageDir = QDir(fd.directory().path());
-        if (model->setMapBackgroundImage(fd.selectedFiles().first()))
+        if (model->setBackgroundImage(fd.selectedFiles().first()))
             updateBackgroundImageControls();
     }
 }
@@ -81,14 +81,14 @@ void BackgroundDialog::selectBackgroundImage()
 void BackgroundDialog::updateBackgroundColorButton()
 {
     QPixmap pix(16, 16);
-    pix.fill(model->getMapBackgroundColor());
+    pix.fill(model->mapDesign()->backgroundColor());
     ui.backgroundColorButton->setIcon(pix);
 }
 
 void BackgroundDialog::updateBackgroundImageControls()
 {
-    if (model->hasMapBackgroundImage()) {
-        ui.imageNameLineEdit->setText(model->mapBackgroundImageName());
+    if (model->hasBackgroundImage()) {
+        ui.imageNameLineEdit->setText(model->backgroundImageName());
         ui.useBackgroundImageCheckbox->setChecked(true);
     } else {
         ui.imageNameLineEdit->setText("");

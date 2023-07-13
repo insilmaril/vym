@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>324</width>
+    <width>389</width>
     <height>626</height>
    </rect>
   </property>
@@ -138,15 +138,21 @@
           </item>
           <item row="4" column="1">
            <widget class="QPushButton" name="innerFramePenColorButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
-              <width>32</width>
+              <width>53</width>
               <height>32</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>20</width>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>
@@ -173,15 +179,21 @@
           </item>
           <item row="5" column="1">
            <widget class="QPushButton" name="innerFrameBrushColorButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
-              <width>32</width>
+              <width>53</width>
               <height>32</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>20</width>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>
@@ -322,14 +334,14 @@
           <item row="5" column="1">
            <widget class="QPushButton" name="outerFramePenColorButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>32</width>
+              <width>53</width>
               <height>32</height>
              </size>
             </property>
@@ -357,14 +369,14 @@
           <item row="6" column="1">
            <widget class="QPushButton" name="outerFrameBrushColorButton">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>32</width>
+              <width>53</width>
               <height>32</height>
              </size>
             </property>
@@ -882,7 +894,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="imagesLayoutsButtonGroup"/>
   <buttongroup name="branchesLayoutsButtonGroup"/>
+  <buttongroup name="imagesLayoutsButtonGroup"/>
  </buttongroups>
 </ui>

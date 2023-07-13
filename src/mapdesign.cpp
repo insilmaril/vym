@@ -1,8 +1,10 @@
 #include "mapdesign.h"
 
+#include <QApplication>
 #include <QDebug>
 
 #include "branchitem.h"
+#include "file.h"
 
 extern bool usingDarkTheme;
 
@@ -78,6 +80,9 @@ void MapDesign::init()
     outerFrameTypes << FrameContainer::NoFrame;
     */
     if (usingDarkTheme) {
+        QPalette palette = qApp->palette();
+        backgroundColorInt = QColor(palette.color(QPalette::Base));
+
         innerFramePenColors << QColor(Qt::white);
         innerFrameBrushColors << QColor(85, 85, 127);
 
@@ -93,6 +98,7 @@ void MapDesign::init()
         outerFrameBrushColors << QColor(85, 85, 127);
         outerFrameBrushColors << QColor(25, 25, 117);
     } else {
+        backgroundColorInt = QColor(Qt::white);
         innerFramePenColors << QColor(Qt::black);
         innerFrameBrushColors << QColor(Qt::white);
         outerFramePenColors << QColor(Qt::green);
@@ -170,6 +176,56 @@ bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
 
     return true;
 }
+
+void MapDesign::setBackgroundColor(const QColor &col)
+{
+    backgroundColorInt = col;
+}
+
+QColor MapDesign::backgroundColor()
+{
+    return backgroundColorInt;
+}
+
+bool MapDesign::setBackgroundImage(const QString &fileName)
+{
+    backgroundImage.load(fileName);
+    if (backgroundImage.isNull()) {
+        usesBackgroundImage = false;
+        return false;
+    }
+
+    usesBackgroundImage = true;
+    backgroundImageNameInt = basename(fileName);
+    backgroundImageBrushInt.setTextureImage(backgroundImage);
+}
+
+void MapDesign::setBackgroundImageName(const QString &n)
+{
+    backgroundImageNameInt = n;
+}
+
+void MapDesign::unsetBackgroundImage()
+{
+    usesBackgroundImage = false;
+    backgroundImageNameInt.clear();
+}
+
+bool MapDesign::hasBackgroundImage()
+{
+    return usesBackgroundImage;
+}
+
+QString MapDesign::backgroundImageName()
+{
+    return backgroundImageNameInt;
+}
+
+QBrush MapDesign::backgroundImageBrush()
+{
+    return backgroundImageBrushInt;
+}
+
 
 void MapDesign::updateBranchHeadingColor(
         BranchItem *branchItem,
@@ -260,22 +316,41 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
     QString s;
 
     xml.incIndent();
-    s += xml.singleElement("mapdesign",
+    s += xml.beginElement("mapdesign");
+
+    xml.incIndent();
+    s += xml.singleElement("md",
+            xml.attribut("backgroundColor", backgroundColorInt.name()));
+
+    // Save background image
+    if (usesBackgroundImage && !backgroundImage.isNull()) {
+        QString fn = "images/image-0-background";
+        if (!backgroundImage.save(tmpdir + fn, "PNG", 100))
+            qWarning() << "md::saveToDir failed to save background image to " << fn;
+        else
+            s += xml.singleElement("md",
+                xml.attribut("backgroundImage", "file:" + fn) + "\n" +
+                xml.attribut("backgroundImageName", backgroundImageNameInt));
+    }
+
+    s += xml.singleElement("md",
             xml.attribut("selectionPenColor", selectionPenInt.color().name(QColor::HexArgb)));
-    s += xml.singleElement("mapdesign",
+    s += xml.singleElement("md",
             xml.attribut("selectionPenWidth", QString().setNum(selectionPenInt.width())));
-    s += xml.singleElement("mapdesign",
+    s += xml.singleElement("md",
             xml.attribut("selectionBrushColor", selectionBrushInt.color().name(QColor::HexArgb)));
 
     if (linkColorHintInt == LinkObj::HeadingColor)
-        s += xml.singleElement("mapdesign",
+        s += xml.singleElement("md",
                 xml.attribut("linkColorHint", "HeadingColor"));
 
-    s += xml.singleElement("mapdesign",
+    s += xml.singleElement("md",
             xml.attribut("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-2 only one level save atm
-    s += xml.singleElement("mapdesign",
+    s += xml.singleElement("md",
             xml.attribut("linkColor", defaultLinkColor().name()));
 
+    xml.decIndent();
+    s += xml.endElement("mapdesign");
     xml.decIndent();
 
     return s;

@@ -157,6 +157,7 @@ void VymView::updateColors()
     // Set selection color, link color and background color in editors:
     // TreeEditor, HeadingEditor and MapEditor
 
+    QString s;
     // Selection
     /*
     treeEditor->setStyleSheet(
@@ -166,38 +167,40 @@ void VymView::updateColors()
 
     mapEditor->updateSelection();
 
-    // Background
-    QColor backgroundColor;
-    //mapEditor->getScene()->setBackgroundBrush(col); // FIXME-0 get from mapDesign
+    MapDesign *mapDesign = model->mapDesign();
+
+    // Background image
+    if (mapDesign->hasBackgroundImage())
+        mapEditor->getScene()->setBackgroundBrush(mapDesign->backgroundImageBrush());
+    else
+        mapEditor->getScene()->setBackgroundBrush(mapDesign->backgroundColor());
+
     /* FIXME-0 treeEditor->setStyleSheet(
-        "selection-background-color: " + model->mapDesign()->selectionBrush().color().name() + ";" +
-        "background-color: " + col.name());
     */
+    s += "selection-background-color: " + mapDesign->selectionBrush().color().name() + ";" + "background-color: " + mapDesign->backgroundColor().name();
 
     // FIXME-2 maybe use gradient with pen/brush colors for selection? //
     // https://stackoverflow.com/questions/34187874/setting-qtreeview-selected-item-style-in-qss
     // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
     /*
-    QString s;
     s += "QTreeView { show-decoration-selected: 1; }";
     s += "QTreeView::item { border: 1px solid #d9d9d9; border-top-color: transparent; border-bottom-color: transparent; }";
     s += "QTreeView::item:hover { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #0000fd, stop: 1 #cbdaf1); border: 1px solid #ff2222; }";
     s += "QTreeView::item:selected { border: 1px solid #56ffbc; }";
     s += "QTreeView::item:selected:active{ background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #ff0000); }";
     //s += "QTreeView::item:selected:!active { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6b9be8, stop: 1 #577fbf); } ";
-    treeEditor->setStyleSheet(s);
     */
     mainWindow->updateHeadingEditor();
 
-    // Link colors: Set color for "link arrows" in TreeEditor
-    //
-    // Alternatively one could use stylesheets
-    // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
-    /* FIXME-1 link colors
-    */
+    // Link colors in TreeEditor
+    /* FIXME-0
     QPalette palette = treeEditor->palette();
     palette.setColor(QPalette::Text, model->mapDesign()->defaultLinkColor());
     treeEditor->setPalette(palette);
+    */
+
+    // s += "QTreeView::branch {color: red; background: palette(base);}";
+    treeEditor->setStyleSheet(s);
 }
 
 void VymView::changeSelection(const QItemSelection &newsel,

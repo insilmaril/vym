@@ -1055,7 +1055,7 @@ void VymModelWrapper::setMapBackgroundColor(const QString &color)
 {
     QColor col(color);
     if (col.isValid()) {
-        model->setMapBackgroundColor(col);
+        model->setBackgroundColor(col);
     }
     else
         logError(context(), QScriptContext::UnknownError,
