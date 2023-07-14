@@ -944,6 +944,18 @@ void Main::setupAPI()
     c->addPar(Command::Color, false, "Color of selection box");
     modelCommands.append(c);
 
+    c = new Command("setSelectionPenColor", Command::Any);
+    c->addPar(Command::Color, false, "Color of selection box border");
+    modelCommands.append(c);
+
+    c = new Command("setSelectionPenWidth", Command::Any);
+    c->addPar(Command::Int, false, "Selection box border width ");
+    modelCommands.append(c);
+
+    c = new Command("setSelectionBrushColor", Command::Any);
+    c->addPar(Command::Color, false, "Color of selection box background");
+    modelCommands.append(c);
+
     c = new Command("setTaskPriority", Command::Branch);
     c->addPar(Command::Int, false, "Priority of task");
     modelCommands.append(c);
