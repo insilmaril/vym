@@ -3404,6 +3404,11 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
         <translation>&lt;h3&gt;Map ist neuer als VYM&lt;/h3&gt;&lt;p&gt;Die Map, die Sie gerade versuchen zu laden wurde mit vym %1 gespeichert. Die vorliegende Version von vym ist %2. Falls nach dem Fortfahren mit Ok Probleme autauchen, sollte ein Update von vym helfen.&lt;/p&gt;</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>&lt;p&gt;The map will be opened readonly, because not all information from new maps can be saved with this version of vym. Please be careful!</source>
+        <translation>Die Map wird nur zum Lesen geöffnet, da nicht alle Information aus der neuen Map mit dieser Version von vym gespeichert werden können. Bitte vorsichtig sein!</translation>
+    </message>
+    <message>
         <source>Couldn&apos;t find macros at  %1.
 </source>
         <translation type="vanished">Konnte Makro nicht finden in %1.</translation>

@@ -3274,6 +3274,11 @@ Acceptez-vous l&apos;écrasement éventuel de son contenu ?</translation>
         <translation>&lt;h3&gt;La Carte est d&apos;une version plus récente que VYM&lt;/h3&gt;&lt;p&gt;La carte que vous essayez de charger a été sauvée en utilisant vym %1. La version présente de vym est %2. Si vous rencontrez des erreurs en validant le bouton OK, mettre à jour vym devrait vous aider.&lt;/p&gt;</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>&lt;p&gt;The map will be opened readonly, because not all information from new maps can be saved with this version of vym. Please be careful!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/macros.cpp" line="+1"/>
         <source>Couldn&apos;t find macros at  %1.
 </source>

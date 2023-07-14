@@ -2972,6 +2972,11 @@ Couldn&apos;t rename map to %1</source>
         <translation>&lt;h3&gt;Mapa je novější než VYM&lt;/h3&gt;&lt;p&gt;Mapa, kterou se právě pokoušíte nahrát, byla uložena za použití vymu %1. Verze tohoto vymu je %2. Pokud se po stisknutí tlačítka OK níže dostanete do potíží, aktualizace vymu by měla pomoci.&lt;/p&gt;</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>&lt;p&gt;The map will be opened readonly, because not all information from new maps can be saved with this version of vym. Please be careful!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/file.cpp" line="-90"/>
         <source>Couldn&apos;t rename output to target of old symbolic link %1</source>
         <translation>Nepodařilo se přejmenovat výstup na cíl starého symbolického odkazu %1</translation>
@@ -3218,7 +3223,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Uloženo %1, ale nepodařilo se odstranit %2</translation>
     </message>
     <message>
-        <location filename="../src/xml-vym.cpp" line="-1"/>
+        <location filename="../src/xml-vym.cpp" line="-10"/>
         <source>Warning: Version Problem</source>
         <translation>Varování: Potíže s verzí</translation>
     </message>

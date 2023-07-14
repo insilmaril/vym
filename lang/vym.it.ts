@@ -3306,6 +3306,11 @@ Vuoi rischiare di sovvrascrivere i contenuti?</translation>
         <translation>&lt;h3&gt;La mappa è più nuova di VYM&lt;/h3&gt;&lt;p&gt;La mappa che voi state proprio per caricare è stata salvat con vym%1. La versione di questo vym è %2. Se incontrte problemi dopo la pressione del pulsante in basso, potrebbe essere di aiuto aggiornare vym.&lt;/p&gt;</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>&lt;p&gt;The map will be opened readonly, because not all information from new maps can be saved with this version of vym. Please be careful!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/macros.cpp" line="+1"/>
         <source>Couldn&apos;t find macros at  %1.
 </source>

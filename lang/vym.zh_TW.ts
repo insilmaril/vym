@@ -2957,6 +2957,11 @@ Do you risk to overwrite its contents?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>&lt;p&gt;The map will be opened readonly, because not all information from new maps can be saved with this version of vym. Please be careful!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/export-csv.cpp" line="-10"/>
         <source>Export as CSV</source>
         <translation type="unfinished"></translation>

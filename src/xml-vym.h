@@ -35,6 +35,7 @@ class parseVYMHandler : public parseBaseHandler {
     bool characters(const QString &);
     QString errorString();
     bool readMapAttr(const QXmlAttributes &);
+    bool readMapDesignCompatibleAttr(const QXmlAttributes &);
     bool readBranchAttr(const QXmlAttributes &);
     bool readFrameAttr(const QXmlAttributes &);
     bool readOOAttr(const QXmlAttributes &);
@@ -52,6 +53,8 @@ class parseVYMHandler : public parseBaseHandler {
     enum State {
         StateInit,
         StateMap,
+        StateMapDesign,  // Introduced 2.9.514
+        StateMD,         // Introduced 2.9.514
         StateMapSelect,
         StateMapSetting,
         StateMapSlide,

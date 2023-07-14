@@ -83,11 +83,23 @@ bool parseVYMHandler::startElement(const QString &, const QString &,
                         "If you run into problems after pressing "
                         "the ok-button below, updating vym should help.</p>")
                         .arg(version)
-                        .arg(vymVersion));
+                        .arg(vymVersion) +
+                    QObject::tr(
+                        "<p>The map will be opened readonly, because not "
+                        "all information from new maps can be saved with this "
+                        "version of vym. Please be careful!"));
+                model->setReadOnly(true);
             }
             else
                 model->setVersion(version);
         }
+    }
+    else if (eName == "mapdesign" && state == StateMap) {
+        state = StateMapDesign;
+    }
+    else if (eName == "md" && state == StateMapDesign) {
+        state = StateMD;
+        readMapDesignCompatibleAttr(atts);
     }
     else if (eName == "select" && state == StateMap) {
         state = StateMapSelect;
@@ -394,6 +406,8 @@ bool parseVYMHandler::endElement(const QString &, const QString &,
 
     switch (state) {
     case StateMap:
+    case StateMapDesign:
+    case StateMD:
         break;
     case StateMapCenter:
         model->emitDataChanged(lastBranch);
@@ -490,8 +504,9 @@ bool parseVYMHandler::characters(const QString &ch)
 
     switch (state) {
     case StateInit:
-        break;
     case StateMap:
+    case StateMapDesign:
+    case StateMD:
         break;
     case StateMapSelect:
         model->select(ch_simplified);
@@ -536,7 +551,6 @@ QString parseVYMHandler::errorString()
 
 bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
 {
-    QColor col;
     if (!a.value("author").isEmpty())
         model->setAuthor(a.value("author"));
     if (!a.value("title").isEmpty())
@@ -551,6 +565,24 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
         }
     }
 
+    if (!a.value("mapZoomFactor").isEmpty())
+        model->setMapZoomFactor(a.value("mapZoomFactor").toDouble());
+    if (!a.value("mapRotationAngle").isEmpty())
+        model->setMapRotationAngle(a.value("mapRotationAngle").toDouble());
+
+    return readMapDesignCompatibleAttr(a);
+}
+
+bool parseVYMHandler::readMapDesignCompatibleAttr( const QXmlAttributes &a)
+{
+    // Some attributes moved in version 2.9.514 from
+    // <vymmap> to <mapdesign> and <md>
+    // This code here will allow to parse also newer maps.
+    // Some elements though are not available in older versions, especially
+    // <frame frameUsage="outerFrame" ...>
+    // <branch rotHeading=... rotContent=... >
+
+    QColor col;
     if (!a.value("backgroundColor").isEmpty()) {
         col.setNamedColor(a.value("backgroundColor"));
         model->setMapBackgroundColor(col);
@@ -617,11 +649,6 @@ bool parseVYMHandler::readMapAttr( const QXmlAttributes &a)
         model->setMapDefXLinkStyleBegin(a.value("defXLinkStyleBegin"));
     if (!a.value("defXLinkStyleEnd").isEmpty())
         model->setMapDefXLinkStyleEnd(a.value("defXLinkStyleEnd"));
-
-    if (!a.value("mapZoomFactor").isEmpty())
-        model->setMapZoomFactor(a.value("mapZoomFactor").toDouble());
-    if (!a.value("mapRotationAngle").isEmpty())
-        model->setMapRotationAngle(a.value("mapRotationAngle").toDouble());
     return true;
 }
 

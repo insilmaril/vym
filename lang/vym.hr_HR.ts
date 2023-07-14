@@ -3279,6 +3279,11 @@ The map could not be saved, please check if backup file is available or export a
         <translation>&lt;h3&gt;Mapa je novija od VYMa&lt;/h3&gt;&lt;p&gt;Mapa koju pokušavate učitati je spremljena pomoću vym %1. Verzija ovog vyma je %2. Ako se suočite s problemima, osvježavanje vyma bi trebalo pomoći.&lt;/p&gt;</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>&lt;p&gt;The map will be opened readonly, because not all information from new maps can be saved with this version of vym. Please be careful!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/xsltproc.cpp" line="-6"/>
         <source>Could not start %1</source>
         <translation>Ne mogu pokrenuti %1</translation>
