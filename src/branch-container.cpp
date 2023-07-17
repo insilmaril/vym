@@ -1236,12 +1236,11 @@ void BranchContainer::updateBranchesContainerLayout()
         setBranchesContainerLayout(branchesContainerLayout);
 }
 
-void BranchContainer::updateStyles(
-        MapDesign::UpdateMode updateMode)
+void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    //qDebug() << "BC::updateStyles of " << info(); // FIXME-2 called often during load
+    //qDebug() << "BC::updateStyles of " << info(); // FIXME-2 testing
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();
@@ -1249,7 +1248,7 @@ void BranchContainer::updateStyles(
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
     if (updateMode == MapDesign::CreatedByUser)
-        md->updateBranchHeadingColor( branchItem, depth);
+        md->updateBranchHeadingColor(updateMode, branchItem, depth);
 
     // bulletpoint color should match heading color
     if (bulletPointContainer)

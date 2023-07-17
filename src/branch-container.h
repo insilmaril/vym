@@ -173,7 +173,7 @@ class BranchContainer : public SelectableContainer {
 
   public:
     /*! Update styles (frame, links, fonts, colors, ...) */
-    void updateStyles(MapDesign::UpdateMode);
+    void updateStyles(const MapDesign::UpdateMode &);
 
     /*! Update flags and heading */
     void updateVisuals();

@@ -3,8 +3,10 @@
 #include <QApplication>
 #include <QDebug>
 
+#include "branch-container.h"
 #include "branchitem.h"
 #include "file.h"
+#include "heading-container.h"
 #include "misc.h"
 
 extern bool usingDarkTheme;
@@ -273,29 +275,29 @@ QBrush MapDesign::backgroundImageBrush()
 
 
 void MapDesign::updateBranchHeadingColor(
+        const MapDesign::UpdateMode &updateMode,
         BranchItem *branchItem,
         int depth)
 {
     if (branchItem) {
-        //qDebug() << "MD::updateBranchHeadingColor " << " d=" << depth << branchItem->getHeadingPlain(); // FIXME-2
         HeadingColorHint colHint = headingColorHints.tryAt(depth);
 
         QColor col;
         switch (colHint) {
             case InheritedColor: {
-                //qDebug() << " - InheritedColor"; // FIXME-2
-                BranchItem *pi = branchItem->parentBranch();
-                if (pi) {
-                    col = pi->getHeadingColor();
+                //qDebug() << " - InheritedColor "; // FIXME-2 testing...
+                BranchItem *pbi = branchItem->parentBranch();
+                if (pbi) {
+                    col = pbi->getHeadingColor();
+                //qDebug() << " - " << col.name();
                     break;
                 }
                 // If there is no parent branch, mapCenter should 
                 // have a specific color, thus continue
             }
             case SpecificColor: {
-                //qDebug() << " - SpecificColor"; // FIXME-2
+                //qDebug() << " - SpecificColor";
                 col = headingColors.tryAt(depth);
-                branchItem->setHeadingColor(col);
 
                 break;
             }
@@ -305,7 +307,10 @@ void MapDesign::updateBranchHeadingColor(
             default:
                 qWarning() << "MapDesign::updateBranchHeadingColor no branchHeadingColorHint defined";
         }
-        branchItem->setHeadingColor(col);
+        // Don't call BranchItem, this would again call back BC::updateStyles!
+        branchItem->TreeItem::setHeadingColor(col);
+        branchItem->getBranchContainer()->getHeadingContainer()->setHeadingColor(col);
+        branchItem->getBranchContainer()->updateUpLink();
     }
 }
 

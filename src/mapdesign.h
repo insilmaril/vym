@@ -10,6 +10,8 @@
 #include "frame-container.h"
 #include "linkobj.h"
 
+/////////////////////////////////////////////////////////////////////////////
+
 // Extended QList, which allows to access element at position n or, if n does not exist,
 // the last existing element before n
 template <typename T> class ConfigList {
@@ -25,6 +27,7 @@ template <typename T> class ConfigList {
     T defaultValue;
 };
 
+/////////////////////////////////////////////////////////////////////////////
 /*! \brief A MapDesign defines the visual appearance of a map, e.g. how branches, frames,     links look. Settings depend on
       - depth
       - Mode: NewBranch, RelinkBranch
@@ -34,8 +37,6 @@ template <typename T> class ConfigList {
 
 class BranchContainer;
 class BranchItem;
-
-/////////////////////////////////////////////////////////////////////////////
 
 class MapDesign {
   public:
@@ -102,6 +103,7 @@ class MapDesign {
     QBrush backgroundImageBrush();
 
     void updateBranchHeadingColor(
+            const MapDesign::UpdateMode &updateMode,
             BranchItem *branchItem,
             int depth);
 
@@ -169,6 +171,7 @@ class MapDesign {
     QFont defaultFontInt;
 };
 
+/////////////////////////////////////////////////////////////////////////////
 inline MapDesign::UpdateMode operator|(MapDesign::UpdateMode a, MapDesign::UpdateMode b)
 {
     return static_cast<MapDesign::UpdateMode>(static_cast<int>(a) | static_cast<int>(b));

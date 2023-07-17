@@ -3415,6 +3415,9 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
 
+    // Reposition now for correct position of e.g. LineEdit later and upLink
+    reposition();
+
     return newbi;
 }
 
@@ -3444,6 +3447,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
                */
         }
 
+        // Required to initialize styles
         newbi->getBranchContainer()->updateStyles(MapDesign::CreatedByUser);
     }
     return newbi;
