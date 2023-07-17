@@ -3403,6 +3403,11 @@ Do you risk to overwrite its contents?</source>
         <translation>&lt;h3&gt;Η έκδοση αυτού του διαγράμματος είναι νεότερη από το VYM&lt;/h3&gt;&lt;p&gt;Το διάγραμμα που προσπαθείτε να φορτώσετε αποθηκεύτηκε με την έκδοση %1 του VYM. Η έκδοση του VYM που εκτελείται αυτή τη στιγμή ειναι %2. Εάν αντιμετωπίσετε προβλήματα μετά το πάτημα του πλήκτρου &quot;εντάξει&quot;, η ενημέρωση του VYM θα βοηθήσει.&lt;/p&gt;</translation>
     </message>
     <message>
+        <location line="+9"/>
+        <source>&lt;p&gt;The map will be opened readonly, because not all information from new maps can be saved with this version of vym. Please be careful!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/xsltproc.cpp" line="-5"/>
         <source>Could not start %1</source>
         <translation>Αδυναμία εκκίνησης του %1</translation>

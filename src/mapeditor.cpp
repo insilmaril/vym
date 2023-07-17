@@ -941,7 +941,6 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
         link = model->getXLinkNum(i);
         if (link) {
             XLinkObj *xlo = link->getXLinkObj();
-            if (xlo)
             if (xlo) {
                 XLinkObj::SelectionType xlinkSelection = xlo->couldSelect(p);
                 if (xlinkSelection == XLinkObj::Path) {
@@ -2469,10 +2468,12 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
                 itemsSelected.append(mi);
                 if (mi->hasTypeBranch())
                     ((BranchItem*)mi)->getBranchContainer()->select();
-                    /*
-                    */
                 if (mi->hasTypeImage())
                     ((ImageItem*)mi)->getImageContainer()->select();
+                if (mi->hasTypeXLink())
+                    ((XLinkItem*)mi)->getXLinkObj()->select(
+			model->mapDesign()->selectionPen(),
+			model->mapDesign()->selectionBrush());
             }
         }
         /* FIXME-2 ME::updateSelection - hide links of unselected objects
@@ -2494,6 +2495,8 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
                     ((BranchItem*)mi)->getBranchContainer()->unselect();
                 if (mi->hasTypeImage())
                     ((ImageItem*)mi)->getImageContainer()->unselect();
+                if (mi->hasTypeXLink())
+                    ((XLinkItem*)mi)->getXLinkObj()->unselect();
             }
         }
     }

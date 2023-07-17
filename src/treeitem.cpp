@@ -288,6 +288,14 @@ bool TreeItem::hasTypeImage() const
         return false;
 }
 
+bool TreeItem::hasTypeXLink() const
+{
+    if (type == XLink)
+        return true;
+    else
+        return false;
+}
+
 QString TreeItem::getTypeName()
 {
     switch (type) {

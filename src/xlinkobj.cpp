@@ -37,6 +37,8 @@ XLinkObj::~XLinkObj()
     delete (path);
     delete (c0_ellipse);
     delete (c1_ellipse);
+    if (selection_ellipse)
+        delete selection_ellipse;
     delete (endArrow);
     delete (beginArrow);
 }
@@ -76,6 +78,8 @@ void XLinkObj::init()
                                   clickBorder * 2, pen, pen.color());
     c1_ellipse = scene->addEllipse(0, 0, clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
+
+    selection_ellipse = nullptr;
 
     beginOrient = endOrient = BranchContainer::UndefinedOrientation;
     pen.setWidth(1);
@@ -436,5 +440,32 @@ XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
                 return Path;
     }
     return XLinkObj::Empty;
+}
+
+void XLinkObj::select(const QPen &pen, const QBrush &brush)
+{
+    if (!selection_ellipse) {
+        QGraphicsScene *scene = link->getBeginBranch()->getBranchContainer()->scene();
+        qreal r = clickBorder * 2.5;
+        selection_ellipse = scene->addEllipse(-r / 2 , -r / 2, r, r, pen, brush);
+        selection_ellipse->setFlag(QGraphicsItem::ItemStacksBehindParent);
+    }
+
+    switch (curSelection) {
+        case C0:
+            selection_ellipse->setParentItem(c0_ellipse);
+            break;
+        case C1:
+            selection_ellipse->setParentItem(c1_ellipse);
+            break;
+        default:
+            break;
+    }
+}
+
+void XLinkObj::unselect()
+{
+    delete selection_ellipse;
+    selection_ellipse = nullptr;
 }
 

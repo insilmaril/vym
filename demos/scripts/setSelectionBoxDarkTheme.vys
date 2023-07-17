@@ -1,0 +1,5 @@
+map = vym.currentMap();
+map.setSelectionPenWidth(2);
+map.setSelectionPenColor("#ffffff00");
+map.setSelectionBrushColor("#44ffff00");
+print ("Updated selection box colors.");

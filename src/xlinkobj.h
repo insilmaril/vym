@@ -45,7 +45,8 @@ class XLinkObj : public MapObj {
     void setSelectedCtrlPoint(const QPointF &);
 
     SelectionType couldSelect(const QPointF &);
-    QPainterPath getClickPath();
+    void select(const QPen &pen, const QBrush &brush);
+    void unselect();
 
   private:
     enum StateVis { Hidden, OnlyBegin, OnlyEnd, Full, FullShowControls };
@@ -69,6 +70,7 @@ class XLinkObj : public MapObj {
     QPointF c0, c1;
     QGraphicsEllipseItem *c0_ellipse;
     QGraphicsEllipseItem *c1_ellipse;
+    QGraphicsEllipseItem *selection_ellipse;
 
     SelectionType curSelection;
 

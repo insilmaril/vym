@@ -73,6 +73,7 @@ class TreeItem : public XMLObj {
     virtual Type getType();
     virtual bool hasTypeBranch() const;
     virtual bool hasTypeImage() const;
+    virtual bool hasTypeXLink() const;
     virtual QString getTypeName();
 
     // Accessing data
