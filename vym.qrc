@@ -100,7 +100,7 @@
     <file alias="filenewcopy.png">icons/filenewcopy.png</file>
     <file alias="fileopen.png">icons/fileopen.png</file>
     <file alias="fileprint.png">icons/fileprint.png</file>
-    <file alias="filesave.png">icons/filesave.png</file>
+    <file alias="filesave.svg">icons/document-save.svg</file>
     <file alias="filesaveas.png">icons/filesaveas.png</file>
     <file alias="find.png">icons/find.png</file>
     <file alias="formatcolorbranch.png">icons/formatcolorbranch.png</file>

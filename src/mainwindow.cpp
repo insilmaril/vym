@@ -1131,7 +1131,7 @@ void Main::setupFileActions()
     fileLastMapsMenu = fileMenu->addMenu(tr("Open Recent", "File menu"));
     fileMenu->addSeparator();
 
-    a = new QAction(QPixmap(":/filesave.png"), tr("&Save...", "File menu"),
+    a = new QAction(QPixmap(":/filesave.svg"), tr("&Save...", "File menu"),
                     this);
     switchboard.addSwitch("fileMapSave", shortcutScope, a, tag);
     cloneActionMapEditor(a, Qt::CTRL + Qt::Key_S);
