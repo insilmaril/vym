@@ -6498,10 +6498,10 @@ void Main::updateActions()
         QList<TreeItem *> seltis = m->getSelectedItems();
         QList<BranchItem *> selbis = m->getSelectedBranches();
         TreeItem *selti;
-        selti = (seltis.count() == 1) ? seltis.first() : nullptr;
+        selti = (seltis.count() >= 1) ? seltis.first() : nullptr;
 
         BranchItem *selbi;
-        selbi = (selbis.count() == 1) ? selbis.first() : nullptr;
+        selbi = (selbis.count() >= 1) ? selbis.first() : nullptr;
 
         // readonly mode
         if (m->isReadOnly()) {
@@ -6726,7 +6726,7 @@ void Main::updateActions()
                     actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-right.png"));
                 }
 
-                if ((selbi && selbi->branchCount() < 2)  || selbis.count() > 1) { 
+                if ((selbi && selbi->branchCount() < 2)  && selbis.count() < 2) { 
                     actionSortChildren->setEnabled(false);
                     actionSortBackChildren->setEnabled(false);
                 }
@@ -7000,12 +7000,8 @@ void Main::toggleWinter()
 void Main::toggleHideExport()
 {
     VymModel *m = currentModel();
-    if (!m)
-        return;
-    if (actionToggleHideMode->isChecked())
-        m->setHideTmpMode(TreeItem::HideExport);
-    else
-        m->setHideTmpMode(TreeItem::HideNone);
+    if (m)
+        m->toggleHideExport();
 }
 
 void Main::testCommand()

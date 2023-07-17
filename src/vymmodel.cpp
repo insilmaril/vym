@@ -3068,23 +3068,24 @@ void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing
 
 void VymModel::sortChildren(bool inverse)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        if (selbi->branchCount() > 1) {
-            if (!inverse)
-                saveStateChangingPart(
-                    selbi, selbi, "sortChildren ()",
-                    QString("Sort children of %1").arg(getObjectName(selbi)));
-            else
-                saveStateChangingPart(selbi, selbi, "sortChildren (false)",
-                                      QString("Inverse sort children of %1")
-                                          .arg(getObjectName(selbi)));
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+	if (selbi) {
+	    if (selbi->branchCount() > 1) {
+		if (!inverse)
+		    saveStateChangingPart(
+			selbi, selbi, "sortChildren ()",
+			QString("Sort children of %1").arg(getObjectName(selbi)));
+		else
+		    saveStateChangingPart(selbi, selbi, "sortChildren (false)",
+					  QString("Inverse sort children of %1")
+					      .arg(getObjectName(selbi)));
 
-            selbi->sortChildren(inverse);
-            select(selbi);
-            reposition();
-        }
+		selbi->sortChildren(inverse);
+	    }
+	}
     }
+    reposition();
 }
 
 BranchItem *VymModel::createMapCenter(int pos)
@@ -3870,7 +3871,7 @@ void VymModel::deleteLink(Link *l)
         delete (l);
 }
 
-bool VymModel::scrollBranch(BranchItem *bi)
+bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 upLinks still visible??
 {
     if (bi) {
         if (bi->isScrolled())
@@ -3888,7 +3889,6 @@ bool VymModel::scrollBranch(BranchItem *bi)
             emitDataChanged(bi);
             reposition();
             // FIXME-2 still needed? emitSelectionChanged();
-            mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x  // FIXME-2 still needed now?
             return true;
         }
     }
@@ -3906,7 +3906,6 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             r = "unscroll";
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
-            // FIXME-2 still needed? emitSelectionChanged();
             emitDataChanged(bi);
             reposition();
             mapEditor->getScene()
@@ -3917,19 +3916,21 @@ bool VymModel::unscrollBranch(BranchItem *bi)
     return false;
 }
 
-void VymModel::toggleScroll()   // FIXME-2 rework to multiselection
+void VymModel::toggleScroll()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        if (selbi->isScrolled())
-            unscrollBranch(selbi);
-        else
-            scrollBranch(selbi);
-        // Note: saveState & reposition are called in above functions
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+	if (selbi) {
+	    if (selbi->isScrolled())
+		unscrollBranch(selbi);
+	    else
+		scrollBranch(selbi);
+	    // Note: saveState & reposition are called in above functions
+	}
     }
 }
 
-void VymModel::unscrollChildren()
+void VymModel::unscrollChildren()   // FIXME-2 rework to multiselection
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -5556,7 +5557,7 @@ void VymModel::setSelectionPenColor(QColor col)
 
     selPen.setColor(col);
     mapDesignInt->setSelectionPen(selPen);
-    mapEditor->updateSelection();
+    vymView->updateColors();
 }
 
 QColor VymModel::getSelectionPenColor() {
@@ -5574,7 +5575,7 @@ void VymModel::setSelectionPenWidth(qreal w)
 
     selPen.setWidth(w);
     mapDesignInt->setSelectionPen(selPen);
-    mapEditor->updateSelection();
+    vymView->updateColors();
 }
 
 qreal VymModel::getSelectionPenWidth() {

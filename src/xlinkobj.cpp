@@ -35,10 +35,12 @@ XLinkObj::~XLinkObj()
     //qDebug() << "Destr XLinkObj";
     delete (poly);
     delete (path);
+
+    // If ctrl point is selected, then deleting ctrl point will
+    // also delete selection_ellipse
     delete (c0_ellipse);
     delete (c1_ellipse);
-    if (selection_ellipse)
-        delete selection_ellipse;
+
     delete (endArrow);
     delete (beginArrow);
 }
@@ -449,6 +451,10 @@ void XLinkObj::select(const QPen &pen, const QBrush &brush)
         qreal r = clickBorder * 2.5;
         selection_ellipse = scene->addEllipse(-r / 2 , -r / 2, r, r, pen, brush);
         selection_ellipse->setFlag(QGraphicsItem::ItemStacksBehindParent);
+    } else {
+        // Update colors
+        selection_ellipse->setPen(pen);
+        selection_ellipse->setBrush(brush);
     }
 
     switch (curSelection) {

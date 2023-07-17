@@ -1747,7 +1747,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             return;
         }
     }   // system flags or modModes
-    else { // No selbc found, check XLinks // FIXME-0 might scroll out of visible map ?!?
+    else { // No selbc found, check XLinks
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
@@ -2523,6 +2523,10 @@ void MapEditor::updateSelection()
                     ((BranchItem*)mi)->getBranchContainer()->select();
                 if (mi->hasTypeImage())
                     ((ImageItem*)mi)->getImageContainer()->select();
+                if (mi->hasTypeXLink())
+                    ((XLinkItem*)mi)->getXLinkObj()->select(
+			model->mapDesign()->selectionPen(),
+			model->mapDesign()->selectionBrush());
         }
     }
 }
