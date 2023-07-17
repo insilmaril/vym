@@ -48,6 +48,7 @@ class XLinkObj : public MapObj {
     bool isInClickBox(const QPointF &p);
     int ctrlPointInClickBox(const QPointF &p);
     QPainterPath getClickPath();
+    QPainterPath getSelectionPath();
 
   private:
     enum StateVis { Hidden, OnlyBegin, OnlyEnd, Full, FullShowControls };

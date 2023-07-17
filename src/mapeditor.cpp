@@ -1586,7 +1586,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (e->button() == Qt::MidButton)
             model->toggleScroll();
     }
-    else { // No lmo found, check XLinks    // FIXME-0 might scroll out of visible map ?!?
+    else { // No lmo found, check XLinks
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();

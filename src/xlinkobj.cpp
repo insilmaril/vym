@@ -484,3 +484,8 @@ XLinkObj::getClickPath() // also needs mirroring if oriented left. Create method
         break;
     }
 }
+
+QPainterPath XLinkObj::getSelectionPath()
+{
+    return getClickPath();
+}
