@@ -434,7 +434,6 @@ bool VymModel::parseVymText(const QString &s)
             return false;
         }
 
-        //FIXME-2 qDebug () << "VM::parseVymText " << s.left(30) << "...";
         VymReader vymReader(this);
         vymReader.setLoadMode(File::ImportReplace, 0);
 
@@ -3765,13 +3764,13 @@ void VymModel::deleteSelection(ulong selID)
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)   // FIXME-2 nothing done, if childs have attributes
+void VymModel::deleteKeepChildren(bool saveStateFlag)   // FIXME-2 nothing done, if childen have attributes
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
         // FIXME-3 Don't use this (yet) on mapcenter (could use detach(BranchItem*) !)
         if (selbi->depth() < 1) {
-            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-1 cont here. Undo script fails
+            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-2 cont here. Undo script fails
             while (selbi->branchCount() > 0)
                 detach(selbi->getBranchNum(0));
 
@@ -4189,10 +4188,10 @@ void VymModel::toggleFlagByName(const QString &name, bool useGroups)
     }
 }
 
-void VymModel::clearFlags() // FIXME-2 multiple selections not supported
+void VymModel::clearFlags()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
         selbi->deactivateAllStandardFlags();
         reposition();
         emitDataChanged(selbi);
@@ -4200,7 +4199,7 @@ void VymModel::clearFlags() // FIXME-2 multiple selections not supported
     }
 }
 
-void VymModel::colorBranch(QColor c)    // FIXME-2 evtl. update link color
+void VymModel::colorBranch(QColor c)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
