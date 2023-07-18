@@ -2276,7 +2276,7 @@ void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
         emitDataChanged(bi);
         reposition();
 
-        if (updateFromCloud)    // FIXME-2 use oembed.com also for Youtube and other cloud providers
+        if (updateFromCloud)    // FIXME-3 use oembed.com also for Youtube and other cloud providers
             // Check for Confluence
             setHeadingConfluencePageName();
     }
@@ -2455,7 +2455,7 @@ void VymModel::setFramePadding(
             bc->setFramePadding(useInnerFrame, i);
         }
     }
-    reposition();   // FIXME-2 needed?
+    reposition();
 }
 void VymModel::setFramePenWidth(
     const bool &useInnerFrame, const int &i, BranchItem *bi)
@@ -3866,7 +3866,7 @@ void VymModel::deleteLink(Link *l)
         delete (l);
 }
 
-bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 upLinks still visible??
+bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 upLinks still visible?!
 {
     if (bi) {
         if (bi->isScrolled())
@@ -3883,7 +3883,6 @@ bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 upLinks still visible??
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
-            // FIXME-2 still needed? emitSelectionChanged();
             return true;
         }
     }
@@ -3903,8 +3902,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
-            mapEditor->getScene()
-                ->update(); // Needed for _quick_ update,  even in 1.13.x
+            //mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x   //FIXME-2 really?
             return true;
         }
     }
