@@ -62,7 +62,6 @@ using namespace std;
 #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
-#include "zip-settings-dialog.h"
 
 QPrinter *printer = nullptr;
 
@@ -3041,12 +3040,6 @@ void Main::setupSettingsActions()
     connect(a, SIGNAL(triggered()), this, SLOT(settingsURL()));
     settingsMenu->addAction(a);
 
-    a = new QAction(
-        tr("Set application to zip/unzip files", "Settings action") + "...",
-        this);
-    connect(a, SIGNAL(triggered()), this, SLOT(settingsZipTool()));
-    // FIXME-2 Disabled for now  settingsMenu->addAction(a);
-
     a = new QAction(tr("Confluence Credentials", "Settings action") + "...",
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsConfluence()));
@@ -5987,13 +5980,6 @@ bool Main::settingsURL()
     if (ok)
         settings.setValue("/system/readerURL", text);
     return ok;
-}
-
-void Main::settingsZipTool()    // FIXME-2 Disabled for now, to be removed completely in 2.9.1
-{
-    // Default zip tool is tar on Windows 10, zip/unzip elsewhere
-    ZipSettingsDialog dia;
-    dia.exec();
 }
 
 void Main::settingsMacroPath()

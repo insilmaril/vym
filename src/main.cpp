@@ -457,7 +457,7 @@ int main(int argc, char *argv[])
             0, QObject::tr("Critical Error"),
             QObject::tr("Couldn't find tool to unzip data,"
                         "or your Windows version is older than Windows 10."));
-        m.settingsZipTool();
+        //m.settingsZipTool();
     }
 #else
     if (!zipToolAvailable || !unzipToolAvailable) {
@@ -467,7 +467,7 @@ int main(int argc, char *argv[])
                         "Please install on your platform and set"
                         "path in Settings menu:\n ",
                         "zip tool missing on Linux/Mac platform"));
-        m.settingsZipTool();
+        //m.settingsZipTool();
     }
 #endif
 
