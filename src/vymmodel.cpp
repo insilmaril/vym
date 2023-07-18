@@ -810,31 +810,20 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
     return err;
 }
 
-ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QString &fn)  // FIXME-2 better move filedialog to MainWindow
+ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
 {
     if (!parentBranch)
         parentBranch = getSelectedBranch();
 
     if (parentBranch) {
-        QString filter = QString(tr("Images") +
-                                 " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
-                                 "*.pnm *.svg *.svgz);;" +
-                                 tr("All", "Filedialog") + " (*.*)");
-        QStringList fns;
-        if (fn.isEmpty())
-            fns = QFileDialog::getOpenFileNames(
-                nullptr, vymName + " - " + tr("Load image"), lastImageDir.path(),
-                filter);
-        else
-            fns.append(fn);
-
-        if (!fns.isEmpty()) {
+        if (!imagePaths.isEmpty()) {
+	    ImageItem *ii = nullptr;
             lastImageDir.setPath(
-                fns.first().left(fns.first().lastIndexOf("/")));
+                imagePaths.first().left(imagePaths.first().lastIndexOf("/")));
             QString s;
-            for (int j = 0; j < fns.count(); j++) {
-                s = fns.at(j);
-                ImageItem *ii = createImage(parentBranch);
+            for (int j = 0; j < imagePaths.count(); j++) {
+                s = imagePaths.at(j);
+                ii = createImage(parentBranch);
                 if (ii && ii->load(s)) {
                     saveState((TreeItem *)ii, "remove()", parentBranch,
                               QString("loadImage (\"%1\")").arg(s),
@@ -842,24 +831,31 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QString &fn)  // 
                                   .arg(s)
                                   .arg(getObjectName(parentBranch)));
 
-                    // Find nice position for new image, take childPos // FIXME-2 position below last image
+                    // FIXME-3 Find nice position for new image, e.g. below last image?
                     ImageContainer *ic = ii->getImageContainer();
                     QPointF pos_new = parentBranch->getBranchContainer()->getPositionHintNewChild(ic);
                     ic->setPos(pos_new);
 
                     select(parentBranch);
-
-                    reposition();
-                    return ii;
                 }
                 else {
                     qWarning() << "vymmodel: Failed to load " + s;
                     deleteItem(ii);
                 }
             }
+
+	    reposition();
+	    return ii;	// When pasting we need the last added image for scaling
         }
     }
     return nullptr;
+}
+
+ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QString &imagePath)
+{
+    QStringList imagePaths;
+    imagePaths << imagePath;
+    loadImage(parentBranch, imagePaths);
 }
 
 void VymModel::saveImage(ImageItem *ii, QString fn)
@@ -2932,7 +2928,7 @@ void VymModel::paste()
             else {
                 ImageItem *ii = loadImage(selbi, fn);
                 if (ii)
-                    setScaleFactor(300.0 / image.width(), ii);    // FIXME-2 Better use user-defined fixed width when pasting images
+                    setScaleFactor(300.0 / image.width(), ii);    // FIXME-3 Better use user-defined fixed width when pasting images
             }
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
@@ -6184,7 +6180,7 @@ QString VymModel::getSelectString()
     return getSelectString(getSelectedItem());
 }
 
-QString VymModel::getSelectString(TreeItem *ti) // FIXME-2 maybe replace bo -> bi, fi -> ii, ...
+QString VymModel::getSelectString(TreeItem *ti) // FIXME-3 maybe replace bo -> bi, fi -> ii, ...
 {
     QString s;
     if (!ti || ti->depth() < 0)

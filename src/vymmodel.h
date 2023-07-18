@@ -166,8 +166,13 @@ class VymModel : public TreeModel {
     File::ErrorCode save(const File::SaveMode &);
 
   public:
-    ImageItem* loadImage(BranchItem *dst = NULL, const QString &fn = "");
-    void saveImage(ImageItem *ii = NULL, QString fn = "");
+    ImageItem* loadImage(
+            BranchItem *dst = nullptr, 
+            const QStringList &imagePaths = QStringList());
+    ImageItem* loadImage(
+            BranchItem *dst = nullptr, 
+            const QString &imagePath = QString());
+    void saveImage(ImageItem *ii = nullptr, QString fn = "");
 
   private:
     void importDirInt(BranchItem *, QDir);

@@ -2243,7 +2243,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::wheelEvent(QWheelEvent *e)
+void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-2 stop current animations
 {
     if (e->modifiers() & Qt::ControlModifier &&
         e->angleDelta().y() != 0) {
