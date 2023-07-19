@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>629</width>
-    <height>447</height>
+    <width>904</width>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,6 +56,29 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="selectedServerLabel">
+     <property name="text">
+      <string>Selected Jira server (click above):</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="selectedServerLineEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="inputMask">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string notr="true"/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QCheckBox" name="usePATCheckBox">
      <property name="text">
       <string>Use Personal Access Token instead of username and password for authentication</string>
@@ -71,6 +94,9 @@
    </item>
    <item>
     <widget class="QLineEdit" name="PATLineEdit">
+     <property name="inputMethodHints">
+      <set>Qt::ImhNone</set>
+     </property>
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
      </property>
@@ -95,15 +121,11 @@
    </item>
    <item>
     <widget class="QLineEdit" name="passwordLineEdit">
+     <property name="inputMethodHints">
+      <set>Qt::ImhNone</set>
+     </property>
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="savePasswordCheckBox">
-     <property name="text">
-      <string>Save password</string>
      </property>
     </widget>
    </item>
@@ -116,7 +138,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Close</set>
      </property>
      <property name="centerButtons">
       <bool>false</bool>
