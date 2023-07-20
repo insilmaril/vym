@@ -2243,8 +2243,6 @@ void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
     if (sel.indexes().count() > 1)
         mainWindow->statusMessage(
             tr("%1 items selected").arg(sel.indexes().count()));
-    else
-        mainWindow->statusMessage("");
 
     foreach (QModelIndex ix, sel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
