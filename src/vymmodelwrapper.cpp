@@ -241,6 +241,16 @@ int VymModelWrapper::depth()
         return setResult (-2);  // FIXME-2 should throw error
 }
 
+void VymModelWrapper::detach()
+{
+    BranchItem *selbi = model->getSelectedBranch();
+    if (selbi)
+        model->detach(selbi);
+    else
+        logError(context(), QScriptContext::SyntaxError,
+                 QString("No branch selected, could not detach"));
+}
+
 bool VymModelWrapper::exportMap()
 {
     bool r = false;

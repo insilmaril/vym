@@ -48,6 +48,7 @@ class VymModelWrapper : public VymScriptContext {
     void cut();
     void cycleTask();
     int depth();
+    void detach();
     bool exportMap();
     QString getStringAttribute(const QString &key);
     int getIntAttribute(const QString &key);

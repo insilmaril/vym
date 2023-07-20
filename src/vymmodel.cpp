@@ -3041,7 +3041,7 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing
+void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing.
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -3052,7 +3052,7 @@ void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
-            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-2 detach: hardcoded for now, could already be FloatingFree or something else
+            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 detach: hardcoded for now, could already be FloatingFree or something else
             reposition();
 
             relinkBranch(selbi, rootItem, -1, true);
@@ -3487,9 +3487,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             return false;
         }
 
-        // What kind of relinking are we doing? Important for style updates
-        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser;
-
         // Check if we relink down to own children
         if (dst->isChildOf(branch))
             return false;
@@ -3498,13 +3495,28 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             unselectAll();
 
         // Save old selection for savestate
-        QString preSelStr = getSelectString(branch);
+        QString preSelString = getSelectString(branch);
         QString preNum = QString::number(branch->num(), 10);
-        QString preParStr = getSelectString(branch->parent());
+        QString preParString = getSelectString(branch->parent());
+
+        // Remember original position, too
+        bool rememberPos = false;
+        BranchItem *pbi = branch->parentBranch();
+        if (pbi == rootItem)
+        {
+            // Remember position of MapCenter
+            rememberPos = true;
+        } else {
+            BranchContainer *pbc = pbi->getBranchContainer();
+            if (pbc->hasFloatingBranchesLayout())
+                rememberPos = true;
+        }
+
+        // What kind of relinking are we doing? Important for style updates
+        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser;
 
         emit(layoutAboutToBeChanged());
         BranchItem *branchpi = (BranchItem *)branch->parent();
-
         // Remove at current position
         int n = branch->childNum();
 
@@ -3530,59 +3542,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         dst->insertBranch(num_dst, branch);
         endInsertRows();
 
-        // RelinkBranch: Save current own position for undo // FIXME-2 test with deleteKeepCHildren and delete main branch or even mapcenter!
-        // and save current children positions for undo
-
-        // Prepare relinking: Save old position for undo, if required
-        //
-        // tmpParentContainer always has floating layout,
-        // check original parent instead:
-        /*
-        BranchItem *pbi = bc->getBranchItem()->parentBranch();
-        if (pbi) {
-            //Container *originalParentContainer = pbi->getBranchesContainer(); // FIXME-2 savestate when relinking MC: will have no parentBranch and crash
-            if (originalParentContainer->hasFloatingLayout()) {
-                model->saveState(   // FIXME-2 check if undo/redo for moving floats and MCs works correctly
-                        bc->getBranchItem(),
-                        QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
-                        nullptr,
-                        "",
-                        QString("Move %1") .arg(bc->getBranchItem()->getHeadingPlain()));
-            }
-        }
-        */
-
-        /*
-        // If branch becomes mapcenter, preserve current positions and update type
-        if (branch->depth() == 0) {
-            BranchContainer *bc;
-            branch->setType(TreeItem::MapCenter);
-
-            QList <QPointF> positions;
-            for (int i = 0; i < branch->branchCount(); i++)
-            {
-                bc = branch->getBranchNum(i)->getBranchContainer();
-                positions << bc->getRealScenePos();
-            }
-            bc = branch->getBranchContainer();
-            positions << bc->getRealScenePos();
-
-        // Update parent item and stacking order of container
-        branch->updateContainerStackingOrder();
-
-            // will change container layouts and possibly orientations
-            reposition();
-
-            // Restore positions.
-            bc->setRealScenePos(positions.last());
-
-            for (int i = 0; i < branch->branchCount(); i++)
-            {
-                bc = branch->getBranchNum(i)->getBranchContainer();
-                bc->setRealScenePos(positions[i]);
-            }
-        }
-        */
+        // RelinkBranch: Save current own position for undo // FIXME-0 test with deleteKeepCHildren and delete main branch or even mapcenter!
 
         // Update upLink of BranchContainer to *parent* BC of destination
         BranchContainer *bc = branch->getBranchContainer();
@@ -3598,18 +3558,30 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         reposition(); // both for moveUp/Down and relinking
 
-        // Savestate
-        QString postSelStr = getSelectString(branch);
-        QString postNum = QString::number(branch->num(), 10);
+        // Savestate, but not if just moving up/down
+        if (!saveStateBlocked) {
+            if (rememberPos) {
+                saveState(
+                    preSelString,
+                    QString("setPos %1;").arg(qpointFToString(branch->getBranchContainer()->getOriginalPos())),
+                    "",
+                    "",
+                    QString("Move %1") .arg(headingText(branch)));
+            }
 
-        if (!saveStateBlocked) { // Don't build strings when moving up/down
+            QString postSelStr = getSelectString(branch);
+            QString postNum = QString::number(branch->num(), 10);
+
             QString undoCom;
             QString redoCom;
 
-            undoCom = "relinkTo (\"" + preParStr + "\"," + preNum + ")";
+            if (pbi == rootItem)
+                undoCom = "detach ()";
+            else
+                undoCom = "relinkTo (\"" + preParString + "\"," + preNum + ")";
             redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
 
-            saveState(postSelStr, undoCom, preSelStr, redoCom,
+            saveState(postSelStr, undoCom, preSelString, redoCom,
                       QString("Relink %1 to %2")
                           .arg(getObjectName(branch))
                           .arg(getObjectName(dst)));

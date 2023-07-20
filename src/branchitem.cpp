@@ -12,6 +12,14 @@
 
 extern TaskModel *taskModel;
 
+QString headingText(BranchItem *bi)
+{
+    if (bi)
+        return bi->getHeadingPlain();
+    else
+        return QString("No branch available");
+}
+
 BranchItem::BranchItem(TreeItem *parent)
     : MapItem(parent)
 {
@@ -64,7 +72,11 @@ void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
     tmpUnscrolled = other->tmpUnscrolled;
 }
 
-BranchItem *BranchItem::parentBranch() { return (BranchItem *)parentItem; }
+BranchItem *BranchItem::parentBranch()  // FIXME-3 in case of rootItem should return nullptr. Adapt all usages...
+{
+    // For MapCenters this will return rootItem
+    return (BranchItem *)parentItem;
+}
 
 void BranchItem::insertBranch(int pos, BranchItem *branch)
 {

@@ -609,6 +609,9 @@ void Main::setupAPI()
     c = new Command("depth", Command::BranchOrImage, Command::Int);
     modelCommands.append(c);
 
+    c = new Command("detach", Command::Branch);
+    modelCommands.append(c);
+
     c = new Command("exportMap", Command::Any, Command::Bool);
     c->addPar(Command::String, false,
               "Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, "
