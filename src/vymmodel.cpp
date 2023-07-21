@@ -3041,7 +3041,7 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing.
+void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing, use "detach" command
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -3546,7 +3546,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         // Update upLink of BranchContainer to *parent* BC of destination
         BranchContainer *bc = branch->getBranchContainer();
-        bc->linkTo(dst->getBranchContainer());
+        BranchContainer *dstBC = dst->getBranchContainer(); // might be nullptr for MC!
+        bc->linkTo(dstBC);
 
         // Update parent item and stacking order of container
         branch->updateContainerStackingOrder();
@@ -3561,9 +3562,10 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         // Savestate, but not if just moving up/down
         if (!saveStateBlocked) {
             if (rememberPos) {
+                // For undo move back to original position in old floating layout
                 saveState(
                     preSelString,
-                    QString("setPos %1;").arg(qpointFToString(branch->getBranchContainer()->getOriginalPos())),
+                    QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
                     "",
                     "",
                     QString("Move %1") .arg(headingText(branch)));
@@ -3585,6 +3587,16 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
                       QString("Relink %1 to %2")
                           .arg(getObjectName(branch))
                           .arg(getObjectName(dst)));
+
+            if (dstBC && dstBC->hasFloatingBranchesLayout()) {
+                // Save current position for redo
+                saveState("", "",
+                          postSelStr,
+                          QString("setPos %1;").arg(qpointFToString(bc->pos())),
+                          QString("Move %1")
+                              .arg(getObjectName(branch)));
+            }
+
         }
 
         // New parent might be invisible
