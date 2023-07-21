@@ -3041,7 +3041,7 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach(BranchItem *bi) // FIXME-2 savestate missing, use "detach" command
+void VymModel::detach(BranchItem *bi) // FIXME-0 savestate missing, use "detach" command
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -3541,8 +3541,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         beginInsertRows(index(dst), n + num_dst, n + num_dst);
         dst->insertBranch(num_dst, branch);
         endInsertRows();
-
-        // RelinkBranch: Save current own position for undo // FIXME-0 test with deleteKeepCHildren and delete main branch or even mapcenter!
 
         // Update upLink of BranchContainer to *parent* BC of destination
         BranchContainer *bc = branch->getBranchContainer();
