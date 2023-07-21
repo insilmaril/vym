@@ -1,5 +1,6 @@
 #include "geometry.h"
 
+#include <QDebug>
 #include <QString>
 #include <iostream>
 #include <math.h>
@@ -17,12 +18,23 @@ qreal getAngle(const QPointF &p)
 {
     // Calculate angle between  vector from origin to p and  x-axis
     if (p.x() == 0) {
-        if (p.y() >= 0)
+        if (p.y() == 0) {
+            qWarning() << "::getAngle for P(0,0)";
+            return 0;
+        }
+        if (p.y() > 0)
             return M_PI_2;
         else
             return 3 * M_PI_2;
     }
     else {
+        if (p.y() == 0) {
+            if (p.x() > 0) 
+                return 0;
+            else
+                return M_PI;
+        }
+
         if (p.x() > 0) {
             if (p.y() < 0)
                 return (qreal)(-atan((qreal)(p.y()) / (qreal)(p.x())));

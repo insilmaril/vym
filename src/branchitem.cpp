@@ -157,12 +157,12 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     }
 
     QString rotHeadingAttr;
-    qreal a = branchContainer->getRotationHeading();
+    qreal a = branchContainer->rotationHeading();
     if (a != 0)
         rotHeadingAttr = attribut("rotHeading", QString("%1").arg(a));
 
     QString rotContentAttr;
-    a = branchContainer->getRotationSubtree();
+    a = branchContainer->rotationSubtree();
     if (a != 0)
         rotContentAttr = attribut("rotContent", QString("%1").arg(a));
 

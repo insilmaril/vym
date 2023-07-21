@@ -2482,7 +2482,7 @@ void VymModel::setRotationHeading (const int &i)
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         BranchContainer *bc = selbi->getBranchContainer();
-	if (bc->getRotationHeading() == i) {
+	if (bc->rotationHeading() == i) {
 	    // Updating slider also emits valueChanged for spinBox and vice versa
 	    // Go home.
 	    return;
@@ -2490,7 +2490,7 @@ void VymModel::setRotationHeading (const int &i)
 
         saveState(selbi,
                   QString("setRotationHeading (\"%1\")")
-                      .arg(bc->getRotationHeading()),
+                      .arg(bc->rotationHeading()),
                   selbi, QString("setRotationHeading (\"%1\")").arg(i),
                   QString("Set rotation angle of heading and flags to %1").arg(i));
 
@@ -2505,7 +2505,7 @@ void VymModel::setRotationSubtree (const int &i)
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         BranchContainer *bc = selbi->getBranchContainer();
-	if (bc->getRotationSubtree() == i) {
+	if (bc->rotationSubtree() == i) {
 	    // Updating slider also emits valueChanged for spinBox and vice versa
 	    // Go home.
 	    return;
@@ -2513,7 +2513,7 @@ void VymModel::setRotationSubtree (const int &i)
 
         saveState(selbi,
                   QString("setRotationSubtree (\"%1\")")
-                      .arg(bc->getRotationSubtree()),
+                      .arg(bc->rotationSubtree()),
                   selbi, QString("setRotationSubtree (\"%1\")").arg(i),
                   QString("Set rotation angle of heading and subtree to %1").arg(i));
 

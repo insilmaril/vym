@@ -259,7 +259,7 @@ void MapEditor::panView()
     }
 }
 
-void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea) // FIXME-2 zooming in not working yet (fit to selection)
+void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
 {
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
@@ -367,6 +367,16 @@ void MapEditor::ensureSelectionVisibleAnimated(bool maximizeArea)
         }
     }
 
+    // FIXME-0 testing autorotation
+    if (selis.count() == 1) {
+        if (selis.first()->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)selis.first())->getBranchContainer();
+            qreal a = ::getAngle(bc->getHeadingContainer()->mapToScene(QPointF(10, 0)));
+            qDebug() << "ME::updateSelAnim   r in S   :" << bc->rotationHeadingInScene();
+            setAngleTarget(- bc->rotationHeadingInScene());
+        }
+    }
+
     ensureAreaVisibleAnimated(bbox, maximizeArea);
 }
 
@@ -377,7 +387,7 @@ void MapEditor::scrollTo(const QModelIndex &index)
         QRectF r;
         bool scroll = false;
         if ( ti->hasTypeBranch())  {
-            r = ((BranchItem*)ti)->getBranchContainer()->getHeadingRect();
+            r = ((BranchItem*)ti)->getBranchContainer()->headingRect();
             scroll = true;
         }
 
@@ -1414,11 +1424,11 @@ void MapEditor::editHeading()
 
         BranchContainer *bc = bi->getBranchContainer();
         if (bc->getOrientation() == BranchContainer::RightOfParent) {
-            tl = bc->getHeadingRect().topLeft();
+            tl = bc->headingRect().topLeft();
             br = tl + QPointF(w, h);
         }
         else {
-            br = bc->getHeadingRect().bottomRight();
+            br = bc->headingRect().bottomRight();
             tl = br - QPointF(w, h);
         }
         QRectF r(tl, br);

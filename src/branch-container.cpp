@@ -118,8 +118,8 @@ void BranchContainer::init()
 
     scrollOpacity = 1;
 
-    rotationHeading = 0;
-    rotationSubtree = 0;
+    rotationHeadingInt = 0;
+    rotationSubtreeInt = 0;
 
     autoDesignInnerFrame = true;
     autoDesignOuterFrame = true;
@@ -400,23 +400,23 @@ void BranchContainer::updateChildrenStructure()
 
     // Rotation of outer container or outerFrame    // FIXME-2 optimize and set only on demand? Maybe in updateStyles()?
     if (outerFrame) {
-        outerFrame->setRotation(rotationSubtree);
+        outerFrame->setRotation(rotationSubtreeInt);
         if (outerContainer)
             outerContainer->setRotation(0);
         else
             innerContainer->setRotation(0);
     } else {
         if (outerContainer)
-            outerContainer->setRotation(rotationSubtree);
+            outerContainer->setRotation(rotationSubtreeInt);
         else
-            innerContainer->setRotation(rotationSubtree);
+            innerContainer->setRotation(rotationSubtreeInt);
     }
 
     // Rotation of heading
     if (innerFrame)
-        innerFrame->setRotation(rotationHeading);
+        innerFrame->setRotation(rotationHeadingInt);
     else
-        ornamentsContainer->setRotation(rotationHeading);
+        ornamentsContainer->setRotation(rotationHeadingInt);
 
     // Update structure of outerContainer
     if (outerContainer) {
@@ -915,7 +915,7 @@ void BranchContainer::setBranchesContainerBrush(const QBrush &b)
         branchesContainer->setBrush(branchesContainerBrush);
 }
 
-QRectF BranchContainer::getHeadingRect()
+QRectF BranchContainer::headingRect()
 {
     // Returns scene coordinates of bounding rectanble
     return headingContainer->mapToScene(headingContainer->rect()).boundingRect();
@@ -923,25 +923,38 @@ QRectF BranchContainer::getHeadingRect()
 
 void BranchContainer::setRotationHeading(const int &a)
 {
-    rotationHeading = a;
+    rotationHeadingInt = a;
     updateChildrenStructure();  // FIXME-2 or better do this in updateStyles()?
     //headingContainer->setScale(f + a * 1.1);      // FIXME-2 what about scaling?? Which transformCenter?
 }
 
-int BranchContainer::getRotationHeading()
+int BranchContainer::rotationHeading()
 {
-    return qRound(rotationHeading);
+    return qRound(rotationHeadingInt);
+}
+
+int BranchContainer::rotationHeadingInScene()
+{
+    qreal r = rotationHeadingInt + rotationSubtreeInt;
+
+    BranchContainer *pbc = parentBranchContainer();
+    while (pbc) {
+        r += pbc->rotationSubtree();
+        pbc = pbc->parentBranchContainer();
+    }
+
+    return qRound(r);
 }
 
 void BranchContainer::setRotationSubtree(const int &a)
 {
-    rotationSubtree = a;
+    rotationSubtreeInt = a;
     updateChildrenStructure();  // FIXME-2 or better do this in updateStyles()?
 }
 
-int BranchContainer::getRotationSubtree()
+int BranchContainer::rotationSubtree()
 {
-    return qRound(rotationSubtree);
+    return qRound(rotationSubtreeInt);
 }
 
 QUuid BranchContainer::findFlagByPos(const QPointF &p)
@@ -1055,7 +1068,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
         if (ftype == FrameContainer::NoFrame) {
             // Remove outerFrame
             if (outerFrame) {
-                int a = getRotationSubtree();
+                int a = rotationSubtree();
                 Container *c;
                 if (outerContainer)
                     c = outerContainer;
@@ -1069,7 +1082,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
         } else {
             // Set outerFrame
             if (!outerFrame) {
-                int a = getRotationSubtree();
+                int a = rotationSubtree();
                 outerFrame = new FrameContainer;
                 outerFrame->setUsage(FrameContainer::OuterFrame);
                 Container *c;

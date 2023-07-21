@@ -589,7 +589,7 @@ int VymModelWrapper::getRotationHeading()
     int r = -1;
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
-        r = selbi->getBranchContainer()->getRotationHeading();
+        r = selbi->getBranchContainer()->rotationHeading();
     return setResult(r);
 }
 
@@ -598,7 +598,7 @@ int VymModelWrapper::getRotationSubtree()
     int r = -1;
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
-        r = selbi->getBranchContainer()->getRotationSubtree();
+        r = selbi->getBranchContainer()->rotationSubtree();
     return setResult(r);
 }
 

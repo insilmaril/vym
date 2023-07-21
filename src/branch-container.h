@@ -123,16 +123,17 @@ class BranchContainer : public SelectableContainer {
     void setBranchesContainerVerticalAlignment(const VerticalAlignment &valign);
     void setBranchesContainerBrush(const QBrush &b);
 
-    QRectF getHeadingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
+    QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
 
     void setRotationHeading(const int &);
-    int getRotationHeading();
+    int rotationHeading();
+    int rotationHeadingInScene();
 
     void setRotationSubtree(const int &);
-    int getRotationSubtree();
+    int rotationSubtree();
   protected:
-    qreal rotationHeading;
-    qreal rotationSubtree;
+    qreal rotationHeadingInt;
+    qreal rotationSubtreeInt;
 
   public:
 
