@@ -10,7 +10,6 @@
 
 extern Main *mainWindow;
 extern QDir vymBaseDir;
-extern QString jiraPassword;
 extern Settings settings;
 extern QTextStream vout;
 extern bool debug;
@@ -18,8 +17,6 @@ extern bool debug;
 bool JiraAgent::available()
 {
     if (!QSslSocket::supportsSsl())
-        return false;
-    if ( settings.value("/atlassian/jira/username", "").toString().isEmpty())
         return false;
     if ( settings.value("/atlassian/jira/servers/size", 0).toInt() < 1)
         return false;
@@ -60,24 +57,16 @@ void JiraAgent::init()
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
-    // Read credentials    
-    authUsingPAT = 
-        settings.value("/atlassian/jira/authUsingPAT", true).toBool();
-    if (authUsingPAT)
-        personalAccessToken =
-            settings.value("/atlassian/jira/PAT", "undefined").toString();
-    else {
-        username =
-            settings.value("/atlassian/jira/username", "user_johnDoe").toString();
-        if (!jiraPassword.isEmpty())
-            password = jiraPassword;
-        else
-            password = 
-                settings.value("/atlassian/jira/password", "").toString();
-    }
+    // Reset credentials, these are server specific beginning in 2.9.18
+    authUsingPATInt = true;
+    personalAccessTokenInt = QString();
+    userNameInt = QString();
+    passwordInt = QString();
+    serverNameInt = QString();
 
-    // Set API rest point. baseURL later on depends on different JIRA system
-    apiURL = "/rest/api/2";
+    // Set API rest point. baseUrlInt later on depends on different JIRA system
+    apiUrl = "/rest/api/2";
+
 }
 
 void JiraAgent::setJobType(JobType jt)
@@ -115,14 +104,29 @@ bool JiraAgent::setTicket(const QString &id)
 
     settings.beginGroup("/atlassian/jira");
 
-    // Try to find baseURL of server by looking through patterns in ticket IDs:
+    // Try to find baseUrl of server by looking through patterns in ticket IDs:
     int size = settings.beginReadArray("servers");
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
         foreach (QString p, settings.value("pattern").toString().split(",")) {
             if (ticketID.contains(p)) {
-                baseURL = settings.value("baseURL","-").toString();
                 foundPattern = true;
+
+                baseUrlInt = settings.value("baseUrl","-").toString();
+                serverNameInt = settings.value("name","-").toString();
+
+                // Read credentials for this server   
+                authUsingPATInt = 
+                    settings.value("authUsingPAT", true).toBool();
+                if (authUsingPATInt)
+                    personalAccessTokenInt =
+                        settings.value("PAT", "undefined").toString();
+                else {
+                    userNameInt =
+                        settings.value("username", "user_johnDoe").toString();
+                    passwordInt = 
+                        settings.value("password", "").toString();
+                }
                 break;
             }
         }
@@ -133,9 +137,17 @@ bool JiraAgent::setTicket(const QString &id)
     return foundPattern;
 }
 
-QString JiraAgent::getURL()
+QString JiraAgent::serverName()
 {
-    return baseURL + "/browse/" + ticketID;
+    if (baseUrlInt.isEmpty())
+        return QString();
+    else
+        return serverNameInt;
+}
+
+QString JiraAgent::url()
+{
+    return baseUrlInt + "/browse/" + ticketID;
 }
 
 void JiraAgent::startJob()
@@ -172,9 +184,8 @@ void JiraAgent::continueJob()
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
 
                     // Insert references to original branch and model
-                    // FIXME-2 not needed jsobj["vymModelID"] = QString::number(modelID);
-                    jsobj["vymBranchID"] = QJsonValue(branchID);
-                    jsobj["vymTicketURL"] = QJsonValue(getURL());
+                    jsobj["vymBranchId"] = QJsonValue(branchID);
+                    jsobj["vymTicketUrl"] = QJsonValue(url());
 
                     emit (jiraTicketReady(QJsonObject(jsobj)));
                     finishJob();
@@ -204,16 +215,16 @@ void JiraAgent::unknownStepWarning()
 
 void JiraAgent::startGetTicketRequest()
 {
-    QUrl url = QUrl(baseURL + apiURL + "/issue/" + ticketID);
+    QUrl u = QUrl(baseUrlInt + apiUrl + "/issue/" + ticketID);
 
-    QNetworkRequest request = QNetworkRequest(url);
+    QNetworkRequest request = QNetworkRequest(u);
 
     // Basic authentication in header
     QString headerData;
-    if (authUsingPAT)
-        headerData = QString("Bearer %1").arg(personalAccessToken);
+    if (authUsingPATInt)
+        headerData = QString("Bearer %1").arg(personalAccessTokenInt);
     else {
-        QString concatenated = username + ":" + password;
+        QString concatenated = userNameInt + ":" + passwordInt;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
     }

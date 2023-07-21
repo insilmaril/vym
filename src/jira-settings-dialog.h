@@ -13,7 +13,8 @@ class JiraSettingsDialog : public QDialog {
     void addServer();
     void deleteServer();
     void updateAuthenticationFields();
-    void updateSettings();
+    void fieldsChanged();
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &);
 
   private:
     Ui::JiraSettingsDialog ui;

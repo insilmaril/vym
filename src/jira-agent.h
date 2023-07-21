@@ -24,7 +24,8 @@ class JiraAgent : public QObject {
     void setJobType(JobType jt);
     bool setBranch(BranchItem *bi);
     bool setTicket(const QString &id);
-    QString getURL();
+    QString serverName();
+    QString url();
 
     void startJob();
 
@@ -58,16 +59,17 @@ class JiraAgent : public QObject {
     QJsonObject jsobj;
 
     // Settings: Credentials to access JIRA
-    bool authUsingPAT;
-    QString personalAccessToken;
-    QString username;
-    QString password;
+    bool authUsingPATInt;
+    QString personalAccessTokenInt;
+    QString userNameInt;
+    QString passwordInt;
 
     // Settings: Where to find JIRA and which ticket
-    QString baseURL;
-    QString apiURL;
+    QString baseUrlInt;
+    QString serverNameInt;
+    QString apiUrl;
+    QString ticketUrl;
     QString ticketID;
-    QString ticketURL;
 
     // Backreferences to take action in calling model
     int branchID;

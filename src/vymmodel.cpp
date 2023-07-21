@@ -4306,7 +4306,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
                     return;
                 }
 
-                //setURL(agent->getURL(), false, cur);
+                //setURL(agent->url(), false, cur);
 
                 connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
 
@@ -4352,7 +4352,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         components += compObj["name"].toString();
     }
 
-    int branchID = jsobj["vymBranchID"].toInt();
+    int branchID = jsobj["vymBranchId"].toInt();
 
     QStringList solvedStates;
     solvedStates << "Verification Done";
@@ -4368,7 +4368,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         }
 
         setHeadingPlainText(keyName + ": " + summary, bi);
-        setURL(jsobj["vymTicketURL"].toString());
+        setURL(jsobj["vymTicketUrl"].toString());
 
         AttributeItem *ai;
 

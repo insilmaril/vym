@@ -2404,7 +2404,6 @@ void MapEditor::setState(EditorState s)
 
 MapEditor::EditorState MapEditor::state() { return editorState; }
 
-// FIXME-2 Feature: New setting (maybe with key to toggle) autorotation to adapt view to selection
 
 void MapEditor::updateData(const QModelIndex &sel)
 {
@@ -2450,6 +2449,7 @@ void MapEditor::togglePresentationMode()
     mainWindow->togglePresentationMode();
 }
 
+// FIXME-2 Feature: updateSelection - New settings (maybe with keys to toggle) autorotation to adapt view to selection: Adapt to heading/subtree
 void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
     /*
