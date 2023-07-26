@@ -104,7 +104,7 @@ VymView::VymView(VymModel *m)
     connect(model, SIGNAL(collapseUnselected()), this,
             SLOT(collapseUnselected()));
 
-    connect(model, SIGNAL(showSelection(bool)), this, SLOT(showSelection(bool)));
+    connect(model, SIGNAL(showSelection(bool, bool)), this, SLOT(showSelection(bool, bool)));
 
     connect(model, SIGNAL(updateLayout()), mapEditor, SLOT(autoLayout()));
 
@@ -212,7 +212,7 @@ void VymView::changeSelection(const QItemSelection &newsel,
     mainWindow->updateDockWidgetTitles(model);
     mapEditor->updateSelection(newsel, desel);
 
-    showSelection(false);
+    showSelection(false, false);
 }
 
 void VymView::updateDockWidgetTitles()
@@ -319,11 +319,11 @@ void VymView::collapseUnselected()
     }
 }
 
-void VymView::showSelection(bool scaled)
+void VymView::showSelection(bool scaled, bool rotated)
 {
     QModelIndex ix = model->getSelectedIndex();
     treeEditor->scrollTo(ix, QAbstractItemView::EnsureVisible);
-    mapEditor->ensureSelectionVisibleAnimated(scaled);
+    mapEditor->ensureSelectionVisibleAnimated(scaled, rotated);
 }
 
 void VymView::toggleTreeEditor()

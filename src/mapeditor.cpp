@@ -259,7 +259,11 @@ void MapEditor::panView()
     }
 }
 
-void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
+void MapEditor::ensureAreaVisibleAnimated(
+        const QRectF &area, 
+        bool scaled,
+        bool rotated,
+        qreal new_angle)
 {
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
@@ -274,16 +278,19 @@ void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
     int xmargin = settings.value("/mapeditor/scrollToMarginX/", 50).toInt();
     int ymargin = settings.value("/mapeditor/scrollToMarginY/", 50).toInt();
 
-    // Do we need to zoom out to show area?
+    // Do we need to zoom out to show area? // FIXME-0 consider new_angle
     QRect areaViewCoord = mapFromScene(area).boundingRect();
 
     // Visible area within margins
     QRect visibleViewCoord = rect();
     visibleViewCoord -= QMargins(xmargin, ymargin, xmargin, ymargin);
 
+    if (!rotated)
+        // Use current view rotation, if we do not plan to rotate
+        new_angle = angle;
 
     // Calculate required width and height considering rotation of view
-    qreal a = angle / 180 * M_PI;
+    qreal a = new_angle / 180 * M_PI;
     qreal area_w_viewCoord = abs(sin(a) * area.height()) + abs(cos(a) * area.width());
     qreal area_h_viewCoord = abs(sin(a) * area.width()) + abs(cos(a) * area.height());
     qreal z_x = 1.0 * visibleViewCoord.width() / area_w_viewCoord;
@@ -298,13 +305,20 @@ void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
         (visibleViewCoord.width() > areaViewCoord.width() &&
          visibleViewCoord.height() > areaViewCoord.height());
 
+    int animDuration = 2000;
+    QEasingCurve easingCurve = QEasingCurve::OutQuint;
+    
     //qDebug() << " zoom out: " << zoomOutRequired;
     //qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactor << " zf=" << zf;
-    if (zoomOutRequired || maximizeArea) {
-        setViewCenterTarget(area.center(), zf, angle);
+    if (zoomOutRequired || scaled) {
+        setViewCenterTarget(
+                area.center(), 
+                zf, 
+                new_angle,
+                animDuration,
+                easingCurve);
         return;
     }
-
 
     // After zooming bbox would fit into margins of viewport
     long view_dx = 0;
@@ -323,16 +337,16 @@ void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
         // move down
         view_dy = areaViewCoord.y() + areaViewCoord.height() - viewport()->height() + ymargin;
 
-    if (abs(view_dx) > 5 || abs(view_dy) > 5)
+// FIXME-0    if (abs(view_dx) > 5 || abs(view_dy) > 5)
         setViewCenterTarget(
                 mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
                 zoomFactor,
-                angle,
-                2000,
-                QEasingCurve::OutQuint);
+                new_angle,
+                animDuration,
+                easingCurve);
 }
 
-void MapEditor::ensureSelectionVisibleAnimated(bool maximizeArea)
+void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
 {
     // Changes viewCenter to make sure that bounding box of all currently
     // selected items is  within the margins of the viewport
@@ -366,18 +380,36 @@ void MapEditor::ensureSelectionVisibleAnimated(bool maximizeArea)
                 bbox = bbox.united(c->mapToScene(c->rect()).boundingRect());
         }
     }
+    int old_angle = round_int(angle) % 360;
+    int new_angle = old_angle;
 
-    // FIXME-0 testing autorotation
-    if (selis.count() == 1) {
+    // FIXME-0 testing autorotation. Optimize code...
+    if (rotated && selis.count() == 1) {
         if (selis.first()->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)selis.first())->getBranchContainer();
-            qreal a = ::getAngle(bc->getHeadingContainer()->mapToScene(QPointF(10, 0)));
-            qDebug() << "ME::updateSelAnim   r in S   :" << bc->rotationHeadingInScene();
-            setAngleTarget(- bc->rotationHeadingInScene());
+            //new_angle = ::getAngle(bc->getHeadingContainer()->mapToScene(QPointF(10, 0)));
+            
+            // Avoid rotations > 360°
+            setAngle(old_angle);
+
+            qDebug() << "ME::updateSelAnim";
+
+            qreal rotScene = bc->rotationHeadingInScene();
+            int d_angle = old_angle + round_int(rotScene) % 360;
+            new_angle = old_angle + d_angle;
+            qDebug() << "       angle:" << angle;
+            qDebug() << "   old_angle:" << old_angle;
+            qDebug() << "  rotInScene:" << bc->rotationHeadingInScene();
+            qDebug() << "     d_angle:" << d_angle;
+            qDebug() << " new_angle a:" << new_angle;
+            if (d_angle > 180)
+                d_angle = d_angle - 360;
+            new_angle = old_angle - d_angle;
+            qDebug() << " new_angle b:" << new_angle;
         }
     }
 
-    ensureAreaVisibleAnimated(bbox, maximizeArea);
+    ensureAreaVisibleAnimated(bbox, scaled, rotated, new_angle);
 }
 
 void MapEditor::scrollTo(const QModelIndex &index)
@@ -614,6 +646,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
 
     viewCenter = mapToScene(viewport()->geometry()).boundingRect().center();
 
+    qDebug() << "ME::setVCT at=" << at;
     if (viewCenterAnimation.state() == QAbstractAnimation::Running)
         viewCenterAnimation.stop();
     if (rotationAnimation.state() == QAbstractAnimation::Running)

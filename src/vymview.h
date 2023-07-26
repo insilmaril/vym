@@ -35,7 +35,7 @@ class VymView : public QMainWindow {
     void expandOneLevel();
     void collapseOneLevel();
     void collapseUnselected();
-    void showSelection(bool scaled);
+    void showSelection(bool scaled, bool rotated);
     void toggleTreeEditor();
     void toggleSlideEditor();
     void setFocusMapEditor();

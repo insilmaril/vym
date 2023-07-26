@@ -2395,7 +2395,16 @@ void Main::setupViewActions()
     switchboard.addSwitch("mapCenterAndFitView", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenterScaled()));
     actionListFiles.append(a);
-    actionCenterOn = a;
+    actionCenterOnScaled = a;
+
+    a = new QAction(QPixmap(),
+                    tr("Rotate view to selection", "View action"), this);
+    a->setShortcut(Qt::Key_NumberSign);
+    viewMenu->addAction(a);
+    switchboard.addSwitch("mapCenterAndRotateView", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(viewCenterRotated()));
+    actionListFiles.append(a);
+    actionCenterOnRotated = a;
 
     viewMenu->addSeparator();
 
@@ -5930,6 +5939,13 @@ void Main::viewCenterScaled()
     VymModel *m = currentModel();
     if (m)
         m->emitShowSelection(true);
+}
+
+void Main::viewCenterRotated()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->emitShowSelection(false, true);
 }
 
 void Main::networkStartServer()

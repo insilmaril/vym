@@ -782,10 +782,10 @@ class VymModel : public TreeModel {
     bool selectNext();
     void resetSelectionHistory();
     void appendSelectionToHistory();
-    void emitShowSelection(bool scaled = false); //!< Show selection in all views
+    void emitShowSelection(bool scaled = false, bool rotated = false); //!< Show selection in all views
 
   signals:
-    void showSelection(bool scaled);
+    void showSelection(bool scaled, bool rotated);
 
   public:
     TreeItem *lastToggledItem();
