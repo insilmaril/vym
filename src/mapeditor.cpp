@@ -380,32 +380,20 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
                 bbox = bbox.united(c->mapToScene(c->rect()).boundingRect());
         }
     }
-    int old_angle = round_int(angle) % 360;
-    int new_angle = old_angle;
+    int new_angle = round_int(angle) % 360;
 
-    // FIXME-0 testing autorotation. Optimize code...
     if (rotated && selis.count() == 1) {
         if (selis.first()->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)selis.first())->getBranchContainer();
-            //new_angle = ::getAngle(bc->getHeadingContainer()->mapToScene(QPointF(10, 0)));
             
             // Avoid rotations > 360°
-            setAngle(old_angle);
-
-            qDebug() << "ME::updateSelAnim";
+            setAngle(new_angle);
 
             qreal rotScene = bc->rotationHeadingInScene();
-            int d_angle = old_angle + round_int(rotScene) % 360;
-            new_angle = old_angle + d_angle;
-            qDebug() << "       angle:" << angle;
-            qDebug() << "   old_angle:" << old_angle;
-            qDebug() << "  rotInScene:" << bc->rotationHeadingInScene();
-            qDebug() << "     d_angle:" << d_angle;
-            qDebug() << " new_angle a:" << new_angle;
+            int d_angle = new_angle + round_int(rotScene) % 360;
             if (d_angle > 180)
                 d_angle = d_angle - 360;
-            new_angle = old_angle - d_angle;
-            qDebug() << " new_angle b:" << new_angle;
+            new_angle = new_angle - d_angle;
         }
     }
 
@@ -646,7 +634,6 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
 
     viewCenter = mapToScene(viewport()->geometry()).boundingRect().center();
 
-    qDebug() << "ME::setVCT at=" << at;
     if (viewCenterAnimation.state() == QAbstractAnimation::Running)
         viewCenterAnimation.stop();
     if (rotationAnimation.state() == QAbstractAnimation::Running)
