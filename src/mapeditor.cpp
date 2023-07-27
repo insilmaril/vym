@@ -278,7 +278,7 @@ void MapEditor::ensureAreaVisibleAnimated(
     int xmargin = settings.value("/mapeditor/scrollToMarginX/", 50).toInt();
     int ymargin = settings.value("/mapeditor/scrollToMarginY/", 50).toInt();
 
-    // Do we need to zoom out to show area? // FIXME-0 consider new_angle
+    // Do we need to zoom out to show area?
     QRect areaViewCoord = mapFromScene(area).boundingRect();
 
     // Visible area within margins
@@ -337,7 +337,7 @@ void MapEditor::ensureAreaVisibleAnimated(
         // move down
         view_dy = areaViewCoord.y() + areaViewCoord.height() - viewport()->height() + ymargin;
 
-// FIXME-0    if (abs(view_dx) > 5 || abs(view_dy) > 5)
+    if (abs(view_dx) > 5 || abs(view_dy) > 5 || rotated)
         setViewCenterTarget(
                 mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
                 zoomFactor,

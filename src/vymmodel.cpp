@@ -3041,7 +3041,7 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach(BranchItem *bi) // FIXME-0 savestate missing, use "detach" command
+void VymModel::detach(BranchItem *bi)
 {
     QList<BranchItem *> selbis;
     if (bi)
