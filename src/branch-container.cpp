@@ -1253,7 +1253,7 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    //qDebug() << "BC::updateStyles of " << info(); // FIXME-3 testing
+    qDebug() << "BC::updateStyles of " << info(); // FIXME-3 testing
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();

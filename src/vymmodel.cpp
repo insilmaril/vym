@@ -35,6 +35,7 @@
 #include "export-orgmode.h"
 #include "file.h"
 #include "findresultmodel.h"
+#include "heading-container.h"
 #include "jira-agent.h"
 //#include "link-container.h"
 #include "linkobj.h"
@@ -3041,7 +3042,7 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach(BranchItem *bi)
+void VymModel::detach(BranchItem *bi)   // FIXME-0 sometines linkSpaceCont and/or reposition missing
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -3052,13 +3053,10 @@ void VymModel::detach(BranchItem *bi)
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
-            bc->setBranchesContainerLayout(Container::FloatingBounded);// FIXME-0 detach: hardcoded for now, could already be FloatingFree or something else
-            reposition();
-
             relinkBranch(selbi, rootItem, -1, true);
         }
     }
-    emitSelectionChanged();
+    emitSelectionChanged(); // FIXME-0 needed?
 }
 
 void VymModel::sortChildren(bool inverse)
@@ -3499,7 +3497,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         QString preNum = QString::number(branch->num(), 10);
         QString preParString = getSelectString(branch->parent());
 
-        // Remember original position, too
+        // Remember original position for saveState
         bool rememberPos = false;
         BranchItem *pbi = branch->parentBranch();
         if (pbi == rootItem)
@@ -3512,8 +3510,21 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
                 rememberPos = true;
         }
 
+        // Prepare BranchContainers
+        BranchContainer *bc = branch->getBranchContainer();
+        BranchContainer *dstBC = dst->getBranchContainer(); // might be nullptr for MC!
+
+        // Keep position when detaching
+        bool keepPos;
+        QPointF preDetachPos;
+        if (dst == rootItem) {
+            keepPos = true;
+            preDetachPos = bc->getHeadingContainer()->scenePos();
+        } else
+            keepPos = false;
+
         // What kind of relinking are we doing? Important for style updates
-        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser;
+        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-0 not used later   also not considering detaching
 
         emit(layoutAboutToBeChanged());
         BranchItem *branchpi = (BranchItem *)branch->parent();
@@ -3543,8 +3554,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         endInsertRows();
 
         // Update upLink of BranchContainer to *parent* BC of destination
-        BranchContainer *bc = branch->getBranchContainer();
-        BranchContainer *dstBC = dst->getBranchContainer(); // might be nullptr for MC!
         bc->linkTo(dstBC);
 
         // Update parent item and stacking order of container
@@ -3554,6 +3563,11 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         branch->updateStylesRecursively(MapDesign::RelinkedByUser);
 
         emitDataChanged(branch);
+
+        // Keep position when detaching
+        if (keepPos) {
+            bc->setPos(preDetachPos);
+        }
 
         reposition(); // both for moveUp/Down and relinking
 
