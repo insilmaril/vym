@@ -125,21 +125,13 @@ void BranchContainer::init()
     autoDesignOuterFrame = true;
 }
 
-BranchContainer* BranchContainer::parentBranchContainer(Container *c)
+BranchContainer* BranchContainer::parentBranchContainer()
 {
-    // In code no argument is used, always start with current BranchContainer
-    if (!c)
-        c = parentContainer();
+    if (!branchItem)
+        return nullptr;
 
-    while (c && c->containerType != Branch) {
-        if (c->containerType == TmpParent) {
-            // qWarning() << "BC::pBC found tmpParentContainer for c=" << c->info();
-            return nullptr;
-        }
-        c = c->parentContainer();
-    }
-
-    return (BranchContainer*)c;
+    // For MapCenters parentBranch is rootItem and will return nullptr
+    return branchItem->parentBranch()->getBranchContainer();
 }
 
 void BranchContainer::setBranchItem(BranchItem *bi) { branchItem = bi; }
@@ -255,6 +247,17 @@ bool BranchContainer::hasFloatingBranchesLayout()
         return branchesContainer->hasFloatingLayout();
 
     if (branchesContainerLayout == FloatingBounded || branchesContainerLayout == FloatingFree)
+        return true;
+    else
+        return false;
+}
+
+bool BranchContainer::hasFloatingImagesLayout()
+{
+    if (imagesContainer)
+        return imagesContainer->hasFloatingLayout();
+
+    if (imagesContainerLayout == FloatingBounded || imagesContainerLayout == FloatingFree)
         return true;
     else
         return false;
@@ -622,24 +625,27 @@ QList <ImageContainer*> BranchContainer::childImages()
 
 QPointF BranchContainer::getPositionHintNewChild(Container *c)
 {
-    QRectF r = headingContainer->rect();
-
+    // Should we put new child c on circle around myself?
+    bool useCircle = false;
     int n = 0;
     qreal radius;
-    if (c->containerType == Branch) {
+    if (c->containerType == Branch && hasFloatingBranchesLayout()) {
+        useCircle = true;
         radius = 190;
         n = branchCount();
-    } else if (c->containerType == Image) {
+    } else if (c->containerType == Image && hasFloatingImagesLayout()) {
+        useCircle = true;
         radius = 100;
         n = imageCount();
     }
 
-    if (!parentItem() || c->containerType == Image) {
+    if (useCircle) {
         // Mapcenter, suggest to put image or mainbranch on circle around center
-        qreal a =
-            -M_PI_4 + M_PI_2 * n + (M_PI_4 / 2) * (n / 4 % 4);
+        qreal a = -M_PI_4 + M_PI_2 * n + (M_PI_4 / 2) * (n / 4 % 4);
         return QPointF (radius * cos(a), radius * sin(a));
     }
+
+    QRectF r = headingContainer->rect();
 
     switch (orientation) {
         case LeftOfParent:
@@ -1253,7 +1259,7 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
 
-    qDebug() << "BC::updateStyles of " << info(); // FIXME-3 testing
+    //qDebug() << "BC::updateStyles of " << info(); // FIXME-3 testing
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();
@@ -1362,8 +1368,6 @@ void BranchContainer::reposition()
     else
         // tmpParentContainer has no branchItem
         depth = 0;
-
-    //qDebug() << "BC::reposition " << info() << "depth=" << depth;
 
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked

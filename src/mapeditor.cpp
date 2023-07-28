@@ -1863,7 +1863,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-2  Shift modifier to on
     }
 }
 
-void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
+void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 keep children positions, when moving MC with shift-modifier
 {
     // If necessary pan the view using animation
     if (!panningTimer->isActive())

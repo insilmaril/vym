@@ -72,7 +72,7 @@ void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
     tmpUnscrolled = other->tmpUnscrolled;
 }
 
-BranchItem *BranchItem::parentBranch()  // FIXME-3 in case of rootItem should return nullptr. Adapt all usages...
+BranchItem *BranchItem::parentBranch()
 {
     // For MapCenters this will return rootItem
     return (BranchItem *)parentItem;
@@ -524,36 +524,17 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
 {
     branchContainer = new BranchContainer(scene, this);
 
-    // Set visibility depending on parents  // FIXME-2
-    /*
-    if (parentItem != rootItem &&
-        (((BranchItem *)parentItem)->scrolled ||
-         !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
-        newbo->setVisibility(false);
-    */
+    if (parentBranch() != rootItem) {
+        // For floating branches get a position hint
+        parentBranch()->addToBranchesContainer(branchContainer);
+        BranchContainer *pbc = branchContainer->parentBranchContainer();
+        if (pbc->hasFloatingBranchesLayout())
+            branchContainer->setPos(pbc->getPositionHintNewChild(branchContainer));
 
-    // For mainbranches get a position hint // FIXME-2 probably also other floating branches...
-    if (depth() == 1)
-        branchContainer->setPos(parentBranch()->getBranchContainer()->getPositionHintNewChild(branchContainer));
-
-    // FIXME-2 for new branch set default font, color, link, frame, children styles
-    // newbo->setDefAttr(BranchObj::NewBranch);
-    // FIXME-2 should be ok after contstructer without manual update - branchContainer->updateStyles(BranchContainer::NewBranch);
-
-    if (!getHeading().isEmpty()) {  // FIXME-2 updateVisuals new container and color
-        /*
-        newbo->updateVisuals();
-        newbo->setColor(heading.getColor());
-        */
-    }
-
-    // Link to parent branch visually by
-    // adding my upLink to parents linkContainer
-    if (parentBranch())
+        // Link to parent branch visually by
+        // adding my upLink to parents linkContainer
         branchContainer->linkTo(parentBranch()->getBranchContainer());
-
-    // And set color hint for link
-    branchContainer->getLink()->setLinkColorHint(model->mapDesign()->linkColorHint());
+    }
 
     return branchContainer;
 }

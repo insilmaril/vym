@@ -30,7 +30,7 @@ class BranchContainer : public SelectableContainer {
     virtual ~BranchContainer();
     virtual void init();
 
-    BranchContainer* parentBranchContainer(Container *c = nullptr);
+    BranchContainer* parentBranchContainer();
 
     void setBranchItem(BranchItem *);
     BranchItem *getBranchItem() const;
@@ -72,6 +72,7 @@ class BranchContainer : public SelectableContainer {
      *  there is a branchesContainer 
      */
     bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
+    bool hasFloatingImagesLayout(); //! Checks, if children images are or should be floating
     void addToBranchesContainer(Container *c, bool keepScenePos = false);
     Container* getBranchesContainer();
 
