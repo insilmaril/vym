@@ -1239,18 +1239,21 @@ void MapEditor::editHeading()
         }
         QRectF r(tl, br);
         lineEdit->setGeometry(r.toRect());
+        pw->setGeometry(r.toRect());
 
-        scene()->update();
+        minimizeView();
 
         // Set focus to MapEditor first
         // To avoid problems with Cursor up/down
         setFocus();
 
         ensureAreaVisibleAnimated(r);
+
         lineEdit->setText(heading.getTextASCII());
         lineEdit->setFocus();
         lineEdit->selectAll(); // Hack to enable cursor in lineEdit
         lineEdit->deselect();  // probably a Qt bug...
+
         setState(EditingHeading);
     }
 }
@@ -1259,29 +1262,28 @@ void MapEditor::editHeadingFinished()
 {
     if (state != EditingHeading || !lineEdit ) {
         qWarning() << "ME::editHeadingFinished not editing heading!";
-        return;
+    } else {
+        lineEdit->clearFocus();
+        QString s = lineEdit->text();
+        s.replace(QRegExp("\\n"), " "); // Don't paste newline chars
+        if (s.length() == 0)
+            s = " "; // Don't allow empty lines, which would screw up drawing
+        model->setHeadingPlainText(s);
+        delete (lineEdit);
+        lineEdit = nullptr;
+
+        // FIXME-2 ensureAreaVisible like in starting editing?
+
+        // Maybe reselect previous branch
+        mainWindow->editHeadingFinished(model);
+
+        // Autolayout to avoid overlapping branches with longer headings
+        if (settings.value("/mainwindow/autoLayout/use", "true") == "true")
+            autoLayout();
     }
 
-    setState(Neutral);
-    // lineEdit->releaseKeyboard();
-    lineEdit->clearFocus();
-    QString s = lineEdit->text();
-    s.replace(QRegExp("\\n"), " "); // Don't paste newline chars
-    if (s.length() == 0)
-        s = " "; // Don't allow empty lines, which would screw up drawing
-    model->setHeadingPlainText(s);
     model->setSelectionBlocked(false);
-    delete (lineEdit);
-    lineEdit = NULL;
-
-    // FIXME-2 ensureAreaVisible like in starting editing?
-
-    // Maybe reselect previous branch
-    mainWindow->editHeadingFinished(model);
-
-    // Autolayout to avoid overlapping branches with longer headings
-    if (settings.value("/mainwindow/autoLayout/use", "true") == "true")
-        autoLayout();
+    setState(Neutral);
 }
 
 void MapEditor::contextMenuEvent(QContextMenuEvent *e)
