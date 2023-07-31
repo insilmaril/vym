@@ -1136,9 +1136,10 @@ void VymModel::autosave()
 
     // Also disable autosave for new map without filename
     if (filePath.isEmpty()) {
+        /*
         if (debug)
-            qWarning()
-                << "VymModel::autosave rejected due to missing filePath\n";
+            qWarning() << "VymModel::autosave rejected due to missing filePath\n";
+        */
         return;
     }
 
@@ -1530,8 +1531,8 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
         qDebug() << "  block:   " << buildingUndoBlock;
         qDebug() << "  undoSel: " << undoSelection;
         qDebug() << "  undoCom: " << undoCom;
-//        qDebug() << "  redoSel: " << redoSelection;
-//        qDebug() << "  redoCom: " << redoCom;
+        qDebug() << "  redoSel: " << redoSelection;
+        qDebug() << "  redoCom: " << redoCom;
     }
 
     QString undoCommand;
@@ -3056,7 +3057,6 @@ void VymModel::detach(BranchItem *bi)   // FIXME-0 sometines linkSpaceCont and/o
             relinkBranch(selbi, rootItem, -1, true);
         }
     }
-    emitSelectionChanged(); // FIXME-0 needed?
 }
 
 void VymModel::sortChildren(bool inverse)

@@ -505,6 +505,7 @@ void MapEditor::animate()
     animationTimer->stop();
     foreach (Container *c, animatedContainers) {
         c->animate();
+        qDebug() << "ME::animate c: " << c->info();
 
         if (c->getContainerType() == Container::Branch)
             ((BranchContainer*)c)->updateUpLink();
@@ -1486,8 +1487,6 @@ void MapEditor::editHeadingFinished()
         delete (lineEdit);
         lineEdit = nullptr;
 
-        // FIXME-2 ensureAreaVisible like in starting editing?
-
         // Maybe reselect previous branch
         mainWindow->editHeadingFinished(model);
 
@@ -2004,6 +2003,11 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 k
         }
     }
 
+    // When moving MapCenters with Shift modifier, don't move mainbranches (in scene)
+    if (e->modifiers() & Qt::ShiftModifier) {
+        qDebug() << "ME::moveObj MC with Shift";  // FIXME-0
+    }
+
     // Reposition if required   // FIXME-2 not required currently. Re-check when changing orientation of children containers
     /*
     qDebug() << "   repos  tPC: " << tmpParentContainer->getOrientation() << "  new: " << newOrientation;
@@ -2031,7 +2035,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 k
     return;
 }
 
-void MapEditor::mouseReleaseEvent(QMouseEvent *e)
+void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 multiple mapcenters will end up at same position
 {
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
@@ -2159,7 +2163,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             if (!childBranches.isEmpty()) {
                 repositionNeeded = true;
 
-                // We begin a saveStateBlock, if nothing is really moved, this
+                // We begin a saveStateBlock. If nothing is really moved, this
                 // block will be discarded later
                 model->saveStateBeginBlock(
                     QString("Move %1 branch(es)").arg(childBranches.count())
@@ -2172,17 +2176,18 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                     // Relink container to original parent container
                     // and keep (!) current absolute position
+                    if (bc->isAnimated()) 
+                        bc->stopAnimation();
+
                     bi->updateContainerStackingOrder();
 
                     // Floating layout or mapcenter moved, saveState
-                    if (bc->isFloating() || bi->depth() == 0)   // FIXME-2 No saveState? check...
+                    if (bc->isFloating() || bi->depth() == 0)   // FIXME-0 No saveState? check...
                     {
                         // Relative positioning
                         model->saveState(
                             bi, QString("setPos%1").arg(qpointFToString(bc->getOriginalPos())),
-                            bi, QString("setPos%1").arg(qpointFToString(bc->getOriginalPos() + t)));
-                        if (bi->depth() == 0)
-                            bc->setPos(tmpParentContainer->pos());
+                            bi, QString("setPos%1").arg(qpointFToString(bc->pos())));
                     } else {
                         animationContainers << bc;
                         animationCurrentPositions << bc->pos();

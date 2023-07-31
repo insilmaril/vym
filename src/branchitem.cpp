@@ -576,9 +576,11 @@ void BranchItem::updateContainerStackingOrder()
 
     branchContainer->setParentItem(nullptr);
 
-    if (parentBranch() == rootItem)
+    if (parentBranch() == rootItem) {
         // I am the center
+        branchContainer->setPos(sp);
         return;
+    }
 
     parentBranch()->addToBranchesContainer(branchContainer);
 
