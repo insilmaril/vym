@@ -1863,7 +1863,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-2  Shift modifier to on
     }
 }
 
-void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 keep children positions, when moving MC with shift-modifier
+void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 {
     // If necessary pan the view using animation
     if (!panningTimer->isActive())
@@ -1943,10 +1943,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 k
                     bc->setOriginalPos();
 
                     if (bc->hasFloatingBranchesLayout()) {
-                        foreach(BranchContainer *bc2, bc->childBranches()) {
-                            qDebug() << " ME: setOriginalScenPos for " << bc2->info();
+                        foreach(BranchContainer *bc2, bc->childBranches())
                             bc2->setOriginalScenePos();
-                        }
                     }
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
                     tmpParentContainer->addToBranchesContainer(bc, true);
@@ -2052,7 +2050,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 k
     return;
 }
 
-void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 multiple mapcenters will end up at same position
+void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 {
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
