@@ -1748,7 +1748,7 @@ void MapEditor::moveObject()
             if (seli->depth() == 0) {
                 // Move mapcenter
                 lmosel->move(p - movingObj_offset);
-                if (pointerMod == Qt::ShiftModifier) {
+                if (pointerMod == Qt::ControlModifier) {
                     // Move only mapcenter, leave its children where they are
                     QPointF v;
                     v = lmosel->getAbsPos();
