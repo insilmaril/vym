@@ -505,7 +505,6 @@ void MapEditor::animate()
     animationTimer->stop();
     foreach (Container *c, animatedContainers) {
         c->animate();
-        qDebug() << "ME::animate c: " << c->info();
 
         if (c->getContainerType() == Container::Branch)
             ((BranchContainer*)c)->updateUpLink();
@@ -2182,7 +2181,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)   // FIXME-0 multiple mapcente
                     bi->updateContainerStackingOrder();
 
                     // Floating layout or mapcenter moved, saveState
-                    if (bc->isFloating() || bi->depth() == 0)   // FIXME-0 No saveState? check...
+                    if (bc->isFloating() || bi->depth() == 0)
                     {
                         // Relative positioning
                         model->saveState(
