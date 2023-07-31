@@ -392,6 +392,11 @@ void Container::setOriginalPos()    // FIXME-3 Only used for BranchContainer and
     originalPos = pos();
 }
 
+void Container::setOriginalScenePos()
+{
+    originalPos = scenePos();
+}
+
 QPointF Container::getOriginalPos()
 {
     return originalPos;

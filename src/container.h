@@ -120,6 +120,7 @@ class Container : public QGraphicsRectItem {
     virtual void setPos(qreal x, qreal y);  //! Overloaded for convenience
 
     void setOriginalPos();                   //! Saves current position for later restoring
+    void setOriginalScenePos();              //! Saves current scene position for later restoring
     QPointF getOriginalPos();
 
     virtual void setAnimation(const AnimPoint &ap);

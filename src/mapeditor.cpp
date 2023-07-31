@@ -1930,15 +1930,26 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 k
             if (ti->hasTypeBranch()) {
                 bc = ((BranchItem*)ti)->getBranchContainer();
 
-                if (tmpParentContainer->branchCount() == 0 || bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
-                    bc->setOriginalPos();
-                    bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
-                    tmpParentContainer->addToBranchesContainer(bc, true);
-                }
-
                 if (!bc_first) {
                     bc_first = bc;
                     h_total = bc->rect().height();
+                }
+
+                if (tmpParentContainer->branchCount() == 0 || 
+                    bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
+
+                    // For additional floating containers use scenePos, so that bc_first
+                    // could be moved with additional containers keeping their positions
+                    bc->setOriginalPos();
+
+                    if (bc->hasFloatingBranchesLayout()) {
+                        foreach(BranchContainer *bc2, bc->childBranches()) {
+                            qDebug() << " ME: setOriginalScenPos for " << bc2->info();
+                            bc2->setOriginalScenePos();
+                        }
+                    }
+                    bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
+                    tmpParentContainer->addToBranchesContainer(bc, true);
                 }
 
                 if (bc_first && bc_first != bc) {
@@ -2003,8 +2014,15 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 k
     }
 
     // When moving MapCenters with Shift modifier, don't move mainbranches (in scene)
-    if (e->modifiers() & Qt::ShiftModifier) {
-        qDebug() << "ME::moveObj MC with Shift";  // FIXME-0
+    if (e->modifiers() & Qt::ControlModifier) {
+        BranchContainer *bc_first = tmpParentContainer->childBranches().first();
+        // Loop over branches
+        foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
+            foreach(BranchContainer *bc2, bc->childBranches()) {
+                bc2->setPos( bc->sceneTransform().inverted().map(bc2->getOriginalPos()));
+                bc2->updateUpLink();
+            }
+        }
     }
 
     // Reposition if required   // FIXME-2 not required currently. Re-check when changing orientation of children containers
