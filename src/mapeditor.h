@@ -147,11 +147,15 @@ class MapEditor : public QGraphicsView {
     void testFunction2(); //! just testing new stuff
 
   public:
-    TreeItem *findMapItem(QPointF p, const
-                          QList <TreeItem*> &excludedItems = QList<TreeItem*>()); //! find item in map at position
-                                              //! p. Ignore item exclude
-    BranchItem *findMapBranchItem(QPointF p, const
-                          QList <TreeItem*> &excludedItems = QList<TreeItem*>()); //! only return BranchItem
+    TreeItem *findMapItem(
+            QPointF p, 
+            const QList <TreeItem*> &excludedItems = QList<TreeItem*>(),
+            bool findNearCenter = false);  //! find item in map at position
+                                           //! p. Ignore item exclude
+    BranchItem *findMapBranchItem(
+            QPointF p,
+            const QList <TreeItem*> &excludedItems = QList<TreeItem*>(),
+            bool findNearCenter = false); //! only return BranchItem
     void toggleWinter();
 
     BranchItem *getBranchDirectAbove(

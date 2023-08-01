@@ -534,6 +534,10 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
         // Link to parent branch visually by
         // adding my upLink to parents linkContainer
         branchContainer->linkTo(parentBranch()->getBranchContainer());
+
+        // Parent might be invisible
+        if (parentBranch()->isScrolled() || !branchContainer->parentBranchContainer()->isVisible())
+            branchContainer->setVisibility(false);
     }
 
     return branchContainer;

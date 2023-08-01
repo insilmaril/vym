@@ -669,7 +669,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     if (hasFloatingBranchesLayout()) {
         // Floating layout, position on circle around center of myself
         r = headingContainer->rect();
-        qreal radius = 100;
+        qreal radius = 80;
 
         QPointF center = mapToScene(r.center());
         qreal a = getAngle(p_scene - center);

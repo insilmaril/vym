@@ -963,7 +963,10 @@ void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
     */
 }
 
-TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedItems)
+TreeItem *MapEditor::findMapItem(
+        QPointF p,
+        const QList <TreeItem*> &excludedItems,
+        bool findNearCenter)
 {
     // Search XLinks
     Link *link;
@@ -992,6 +995,8 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
 
     // Search branches (and their childs, e.g. images
     // Start with mapcenter, no images allowed at rootItem
+    BranchItem *nearestMapCenter = nullptr;
+    qreal d = 0;
     int i = 0;
     BranchItem *bi = model->getRootItem()->getFirstBranch();
     TreeItem *found = nullptr;
@@ -999,20 +1004,39 @@ TreeItem *MapEditor::findMapItem(QPointF p, const QList <TreeItem*> &excludedIte
         found = bi->findMapItem(p, excludedItems);
         if (found)
             return found;
+
+        if (findNearCenter) {
+            // Try to find nearest MapCenter
+            Container *hc = bi->getBranchContainer()->getHeadingContainer();
+            QPointF q = hc->mapToScene(hc->center());
+            if (!nearestMapCenter) {
+                nearestMapCenter = bi;
+                d = Geometry::distance(p, q);
+            } else {
+                qreal d2 = Geometry::distance(p, q);
+                if (d2 < d) {
+                    d = d2;
+                    nearestMapCenter = bi;
+                }
+            }
+        }
+
         i++;
         bi = model->getRootItem()->getBranchNum(i);
     }
 
-
-    // FIXME-2 Feature: ME::findMapITem - Look also near to mapcenters (or even floating branches)
-    // and return the *nearest* item. Build up list already in above loop
+    if (nearestMapCenter && d < 80)
+        return nearestMapCenter;
 
     return nullptr;
 }
 
-BranchItem *MapEditor::findMapBranchItem(QPointF p, const QList <TreeItem*> &excludedItems)
+BranchItem *MapEditor::findMapBranchItem(
+        QPointF p,
+        const QList <TreeItem*> &excludedItems,
+        bool findNearCenter)
 {
-    TreeItem *ti = findMapItem(p, excludedItems);
+    TreeItem *ti = findMapItem(p, excludedItems, findNearCenter);
     if (ti && ti->hasTypeBranch())
         return (BranchItem*)ti;
     else
@@ -1871,8 +1895,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     // reset cursor if we are moving and don't copy
 
-    // Check if we could link (temporary)
-    TreeItem *targetItem = findMapItem(p_event, movingItems);
+    // Check if we could link (temporary). Consider also "near" mapCenters.
+    TreeItem *targetItem = findMapItem(p_event, movingItems, true);
 
     // Check, if targetItem is a child of one of the moving items
     if (targetItem) {
@@ -2063,7 +2087,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
     BranchItem *destinationBranch;
 
-    destinationBranch = findMapBranchItem(p, movingItems);
+    destinationBranch = findMapBranchItem(p, movingItems, true);
 
     bool repositionNeeded = false;
 
