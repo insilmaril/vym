@@ -304,7 +304,7 @@ bool Container::isVisibleContainer()
     return visible;
 }
 
-void Container::setVisibility(bool v)
+void Container::setVisibility(bool v)   // FIXME-2 "visible" flag needed really or only isVisible()?
 {
     // qDebug() << "C:setVis v=" << v << info ();
     visible = v;

@@ -289,7 +289,7 @@ void BranchItem::unScroll()
         toggleScroll();
 }
 
-bool BranchItem::toggleScroll() // FIXME-2 check visibility of LinkObjs
+bool BranchItem::toggleScroll() // FIXME-0 Scrolled subtrees visible in loaded maps
 {
     // MapCenters are not scrollable
     if (depth() == 0)
