@@ -18,7 +18,14 @@ class ConfluenceAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, CopyPagenameToHeading, NewPage, UpdatePage, UserInfo};
+    enum JobType {
+        Undefined,
+        CopyPagenameToHeading,
+        NewPage,
+        UpdatePage,
+        UploadAttachment,
+        UserInfo
+    };
 
     static bool available();
 
@@ -52,13 +59,15 @@ class ConfluenceAgent : public QObject {
     void startCreatePageRequest();
     void startUpdatePageRequest();
     void startGetUserInfoRequest();
-    bool requestSuccessful(QNetworkReply *reply, const QString &requestDesc);
+    void startUploadAttachmentRequest();
+    bool wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc);
 
   private slots:
     void pageSourceReceived(QNetworkReply *reply);
     void pageDetailsReceived(QNetworkReply *reply);
     void contentUploaded(QNetworkReply *reply);
     void userInfoReceived(QNetworkReply *reply);
+    void attachmentUploaded(QNetworkReply *reply);
     void timeout();
 
 #ifndef QT_NO_SSL

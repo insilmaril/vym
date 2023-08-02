@@ -552,7 +552,38 @@ void ConfluenceAgent::startGetUserInfoRequest()
     networkManager->get(request);
 }
 
-bool ConfluenceAgent::requestSuccessful(QNetworkReply *reply, const QString &requestDesc)
+void ConfluenceAgent::startUploadAttachmentRequest()
+{
+    if (debug) qDebug() << "CA::startUploadAttachmentRequest";
+
+    QString query = "https://" + baseURL + apiURL
+        + "/search?cql=user.fullname~" + userQuery;
+
+    networkManager->disconnect();
+
+    QNetworkRequest request = QNetworkRequest(QUrl(query));
+//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    // Basic authentication in header
+    QString headerData;
+    if (authUsingPAT)
+        headerData = QString("Bearer %1").arg(personalAccessToken);
+    else {
+        QString concatenated = username + ":" + password;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::userInfoReceived);
+
+    killTimer->start();
+
+    networkManager->get(request);
+}
+
+bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc)
 {
     if (reply->error()) {
         QString stepDesc =QString("Step: Trying to %1").arg(requestDesc);
@@ -589,7 +620,7 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!requestSuccessful(reply, "receive page source"))
+    if (!wasRequestSuccessful(reply, "receive page source"))
         return;
 
     QString r = reply->readAll();
@@ -636,7 +667,7 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!requestSuccessful(reply, "receive page details"))
+    if (!wasRequestSuccessful(reply, "receive page details"))
         return;
 
     QJsonDocument jsdoc;
@@ -655,7 +686,7 @@ void ConfluenceAgent::contentUploaded(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!requestSuccessful(reply, "upload content"))
+    if (!wasRequestSuccessful(reply, "upload content"))
         return;
 
     QJsonDocument jsdoc;
@@ -672,7 +703,26 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!requestSuccessful(reply, "receive user info"))
+    if (!wasRequestSuccessful(reply, "receive user info"))
+        return;
+
+    QString r = reply->readAll();
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(r.toUtf8());
+    jsobj = jsdoc.object();
+    continueJob();
+}
+
+void ConfluenceAgent::attachmentUploaded(QNetworkReply *reply)
+{
+    if (debug) qDebug() << "CA::attachmentUploaded";
+
+    killTimer->stop();
+
+    networkManager->disconnect();
+
+    if (!wasRequestSuccessful(reply, "receive user info"))
         return;
 
     QString r = reply->readAll();

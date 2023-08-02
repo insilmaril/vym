@@ -39,10 +39,12 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
             SLOT(saveSettingsInMapCheckBoxPressed(bool)));
 
     // Not implemented yet
+    /*
     ui.includeImagesCheckBox->hide();
     ui.TOCCheckBox->hide();
     ui.taskFlagsCheckBox->hide();
     ui.userFlagsCheckBox->hide();
+    */
     /*
     connect(ui.includeImagesCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(includeImagesCheckBoxPressed(bool)));
