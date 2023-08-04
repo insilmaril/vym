@@ -52,7 +52,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         // Long headings are will have linebreaks by default
         heading = heading.replace("\\n", " ");
 
-        if (dia.useTextColor) {
+        if (dia.useTextColor()) {
             QColor c = current->getHeadingColor();
             QString cs = QString("rgb(%1,%2,%3);")
                              .arg(c.red())
@@ -260,7 +260,7 @@ QString ExportConfluence::buildList(BranchItem *current)
                 r += itemBegin;
                     
                 // Check if first mapcenter is already usded for pageName
-                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))  
+                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName()))  
                     r += getBranchText(bi);
 
                 if (itemBegin.startsWith("<h"))
@@ -304,7 +304,7 @@ QString ExportConfluence::createTOC()
     model->nextBranch(cur, prev);
     while (cur) {
         if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent()) {
-            if (dia.useNumbering)
+            if (dia.useNumbering())
                 number = getSectionString(cur);
             toc +=
                 QString("<div class=\"vym-toc-branch-%1\">").arg(cur->depth());
@@ -399,6 +399,7 @@ void ExportConfluence::doExport(bool useDialog)
     agent->setNewPageName(pageName);
     agent->setUploadFilePath(filePath);
     agent->setModelID(model->getModelID());
+    agent->exportImage = dia.includeMapImage();
     agent->startJob();
 
     QStringList args;
@@ -410,7 +411,7 @@ void ExportConfluence::doExport(bool useDialog)
     result = ExportBase::Ongoing;
 
     // Prepare human readable info in tooltip of LastExport:
-    displayedDestination = QString("Page: %1 - %2").arg(pageName).arg(url); 
+    displayedDestination = QString("Page name: \"%1\" Url: \"%2\"").arg(pageName).arg(url); 
 
     completeExport(args);
 

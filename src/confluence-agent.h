@@ -99,6 +99,11 @@ class ConfluenceAgent : public QObject {
     uint branchID;
     uint modelID;
 
+    // Export settings
+  public:
+    bool exportImage;
+
+  private:
     // Parameters
     QString pageURL;
     QString newPageName;

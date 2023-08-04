@@ -349,4 +349,4 @@ QDir ExportHTMLDialog::getDir() { return dir; }
 
 bool ExportHTMLDialog::warnings() { return showWarnings; }
 
-bool ExportHTMLDialog::hasChanged() { return settingsChanged; }
+bool ExportHTMLDialog::hasChanged() { return settingsChanged; } // FIXME-2 never used

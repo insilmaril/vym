@@ -75,6 +75,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="imageCheckBox">
+        <property name="text">
+         <string>Image of map</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="textColorCheckBox">
         <property name="text">
          <string>Colored headings in text</string>
@@ -82,16 +89,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="saveSettingsInMapCheckBox">
+       <widget class="QCheckBox" name="useNumberingCheckBox">
         <property name="text">
-         <string>Save settings in map</string>
+         <string>Use numbering</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="imageCheckBox">
+       <widget class="QCheckBox" name="saveSettingsInMapCheckBox">
         <property name="text">
-         <string>Image of map</string>
+         <string>Save settings in map</string>
         </property>
        </widget>
       </item>
@@ -149,22 +156,6 @@
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>exportButton</sender>
-   <signal>clicked()</signal>
-   <receiver>ExportConfluenceDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>541</x>
-     <y>416</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>295</x>
-     <y>220</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>cancelButton</sender>
    <signal>clicked()</signal>
