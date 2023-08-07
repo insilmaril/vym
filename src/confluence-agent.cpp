@@ -568,8 +568,9 @@ void ConfluenceAgent::startGetUserInfoRequest()
 void ConfluenceAgent::startUploadAttachmentRequest()
 {
     if (debug) qDebug() << "CA::startUploadAttachmentRequest";
+    qDebug() << "*** startUploadAttachment begin";
 
-    QString url = "http://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment";
+    QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment";   // FIXME-0 insert "wiki" ???
     //url = "https://www.insilmaril.de/c";
     /*
     curl -u $USER_NAME:$USER_PASSWORD \
@@ -590,10 +591,9 @@ void ConfluenceAgent::startUploadAttachmentRequest()
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
     }
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/formdata");
+    //request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/formdata");
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
     request.setRawHeader("X-Atlassian-Token", "no-check");
-
     //----- begin snip
     //QNetworkReply* ExtRequest::stravaUploadFile2(
     //   QString access_token, 
@@ -603,55 +603,80 @@ void ConfluenceAgent::startUploadAttachmentRequest()
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-1 delete later
 
+
+    QHttpPart imagePart;
+    imagePart.setHeader(
+            QNetworkRequest::ContentDispositionHeader,
+
+            // Name must be "file"
+            QVariant("form-data; name=\"file\"; filename=\"image.png\""));
+    imagePart.setHeader(
+            QNetworkRequest::ContentTypeHeader,
+            QVariant("image/jpeg"));
+
+    QFile *file = new QFile("image.png");   // FIXME-1 delete later
+    if (!file->open(QIODevice::ReadOnly))
+        qWarning() << "Problem opening file!!!!!!!!!!!!!!!";
+    imagePart.setBodyDevice(file);
+    qDebug() << "        url=" << url;
+    qDebug() << "  file size=" << file->size();
+    multiPart->append(imagePart);
+    file->setParent(multiPart); // we cannot delete the file now, so delete it with the multiPart
+
     /*
     QHttpPart textPart;
     textPart.setHeader(QNetworkRequest::ContentTypeHeader,"application/x-www-form-urlencoded");
     textPart.setBody("my text");
     //    textPart.setBody(QByteArray); //How to set parameters like with QUrlQuery
-    postData.addQueryItem("access_token", access_token);
     */
 
-    //multiPart->append(textPart);
-    //multiPart->append(imagePart);
-
-    QHttpPart imagePart;
-    imagePart.setHeader(
-            QNetworkRequest::ContentDispositionHeader,
-            QVariant("form-data; name=\"file\"; filename=\"image.png\""));
-    imagePart.setHeader(
-            QNetworkRequest::ContentTypeHeader,
-            QVariant("image/png"));
-
-    QFile *file = new QFile("image.png");   // FIXME-1 delete later
-    file->open(QIODevice::ReadOnly);
-    imagePart.setBodyDevice(file);
-    qDebug() << "test file size:" << file->size();
-    multiPart->append(imagePart);
-    file->setParent(multiPart); // we cannot delete the file now, so delete it with the multiPart
-
-    qDebug() << "multiPart=" << multiPart;
-    //multiPart->setParent(reply); // delete the multiPart with the reply
-
-    // --- ENd snip
+    // --- End snip
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &ConfluenceAgent::attachmentUploaded);
 
     killTimer->start();
 
     QNetworkReply *reply = networkManager->post(request, multiPart);
+
+    multiPart->setParent(reply); // delete the multiPart with the reply
+
+    QList<QByteArray> reqHeaders = request.rawHeaderList();
+    foreach( QByteArray reqName, reqHeaders )
+    {
+        qDebug() << "  Request: " << reqName << ": " << request.rawHeader(reqName);
+    }
+
     /*
     qDebug() << reply->error();
     qDebug() << reply->errorString();
     qDebug() << reply->readAll();
     */
-    qDebug() << "startUploadAttachment done.";
+    qDebug() << "*** startUploadAttachment end";
 }
 
 bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc)
 {
     if (reply->error()) {
-        QString stepDesc =QString("Step: Trying to %1").arg(requestDesc);
         QString readAll = reply->readAll();
+
+        // Additionally print full error on console
+        qWarning() << "         Step: " << requestDesc;
+        qWarning() << "        Error: " << reply->error();
+        qWarning() << "  Errorstring: " <<  reply->errorString();
+        qDebug() << "      readAll: " << readAll;
+
+        qDebug() << "    Request Url: " << reply->url() ;
+        qDebug() << "      Operation: " << reply->operation() ;
+        qDebug() << "Request headers: ";
+	QList<QByteArray> reqHeaders = reply->rawHeaderList();
+	foreach( QByteArray reqName, reqHeaders )
+        {
+            QByteArray reqValue = reply->rawHeader( reqName );
+            qDebug() << "  " << reqName << ": " << reqValue;
+	}
+ //       qDebug() << "        Request: " << reply->request();;
+
+        /* FIXME-0 open warning dialog
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
             QMessageBox::warning(
                 nullptr, tr("Warning"),
@@ -666,21 +691,7 @@ bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &
                 );
             qDebug() << reply->errorString();
         }
-
-        // Additionally print full error on console
-        qWarning() << reply->error();
-        qWarning() << reply->errorString();
-
-        qDebug() << "    Request Url: " << reply->url() ;
-        qDebug() << "      Operation: " << reply->operation() ;
-        qDebug() << "Request headers: ";
-	QList<QByteArray> reqHeaders = reply->rawHeaderList();
-	foreach( QByteArray reqName, reqHeaders )
-        {
-            QByteArray reqValue = reply->rawHeader( reqName );
-            qDebug() << reqName << ": " << reqValue;
-	}
- //       qDebug() << "        Request: " << reply->request();;
+        */
 
         finishJob();
         return false;
@@ -750,7 +761,7 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
     jsdoc = QJsonDocument::fromJson(reply->readAll());
 
     jsobj = jsdoc.object();
-    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    // cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
 
     continueJob();
 }
@@ -803,7 +814,13 @@ void ConfluenceAgent::attachmentUploaded(QNetworkReply *reply)
         return;
 
     QString r = reply->readAll();
-    qDebug() << "Successful. r=" << r;
+    qDebug() << "CA::attachmentUploaded Successful. r=" << r;
+    QList<QByteArray> reqHeaders = reply->request().rawHeaderList();
+    foreach( QByteArray reqName, reqHeaders )
+    {
+        QByteArray reqValue = reply->request().rawHeader( reqName );
+        qDebug() << "  " << reqName << ": " << reqValue;
+    }
 
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(r.toUtf8());

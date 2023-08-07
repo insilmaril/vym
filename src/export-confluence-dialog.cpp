@@ -27,8 +27,6 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     // signals and slots connections
     connect(ui.mapCenterToPageNameCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(mapCenterToPageNameCheckBoxPressed(bool)));
-    connect(ui.textColorCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(textcolorCheckBoxPressed(bool)));
     connect(ui.lineEditURL, SIGNAL(textChanged(const QString &)), this,
             SLOT(URLChanged()));
     connect(ui.lineEditPageName, SIGNAL(textChanged(const QString &)), this,
