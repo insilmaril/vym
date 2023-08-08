@@ -675,10 +675,9 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
     qDebug() << "*** startUpdateAttachment end";
 }
 
-bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc)
+bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc, const QByteArray &fullReply)
 {
     if (reply->error()) {
-        QByteArray readAll = reply->readAll();
 
         // Additionally print full error on console
         qWarning() << "         Step: " << requestDesc;
@@ -690,9 +689,9 @@ bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &
 
         qDebug() << "      readAll: ";
         QJsonDocument jsdoc;
-        jsdoc = QJsonDocument::fromJson(readAll);
-        QString readAllFormatted = QString(jsdoc.toJson(QJsonDocument::Indented));
-        cout << readAllFormatted.toStdString();
+        jsdoc = QJsonDocument::fromJson(fullReply);
+        QString fullReplyFormatted = QString(jsdoc.toJson(QJsonDocument::Indented));
+        cout << fullReplyFormatted.toStdString();
 
         /*
         qDebug() << "Request headers: ";
@@ -712,7 +711,7 @@ bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &
         else {
             QString msg = QString("QNetworkReply error when trying to \"%1\"\n\n").arg(requestDesc);
             WarningDialog warn;
-            warn.setText(msg + "\n\n" + readAllFormatted);
+            warn.setText(msg + "\n\n" + fullReplyFormatted);
             warn.showCancelButton(false);
             warn.exec();
         }
@@ -731,35 +730,34 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!wasRequestSuccessful(reply, "receive page source"))
+    QByteArray fullReply = reply->readAll();
+    if (!wasRequestSuccessful(reply, "receive page source", fullReply))
         return;
-
-    QString r = reply->readAll();
 
     // Find pageID
     QRegExp rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
     rx.setMinimal(true);
 
-    if (rx.indexIn(r, 0) != -1) {
+    if (rx.indexIn(fullReply, 0) != -1) {
         pageID = rx.cap(1);
     }
     else {
         qWarning()
             << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
-        //qWarning() << r;
+        //qWarning() << fullReply;
         return;
     }
 
     // Find spaceKey 
     rx.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
                   "name=\"confluence-space-key\"\\s*content=\"(.*)\"");
-    if (rx.indexIn(r, 0) != -1) {
+    if (rx.indexIn(fullReply, 0) != -1) {
         spaceKey = rx.cap(1);
     }
     else {
         qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find "
                       "space key in response";
-        qWarning() << r;
+        qWarning() << fullReply;
         finishJob();
         return;
     }
@@ -778,11 +776,12 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!wasRequestSuccessful(reply, "receive page details"))
+    QByteArray fullReply = reply->readAll();
+    if (!wasRequestSuccessful(reply, "receive page details", fullReply))
         return;
 
     QJsonDocument jsdoc;
-    jsdoc = QJsonDocument::fromJson(reply->readAll());
+    jsdoc = QJsonDocument::fromJson(fullReply);
 
     pageObj = jsdoc.object();
     // cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
@@ -798,11 +797,12 @@ void ConfluenceAgent::pageUploaded(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!wasRequestSuccessful(reply, "upload page"))
+    QByteArray fullReply = reply->readAll();
+    if (!wasRequestSuccessful(reply, "upload page", fullReply))
         return;
 
     QJsonDocument jsdoc;
-    jsdoc = QJsonDocument::fromJson(reply->readAll());
+    jsdoc = QJsonDocument::fromJson(fullReply);
     pageObj = jsdoc.object();
     // cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
     continueJob();
@@ -816,13 +816,12 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
 
     networkManager->disconnect();
 
-    if (!wasRequestSuccessful(reply, "receive user info"))
+    QByteArray fullReply = reply->readAll();
+    if (!wasRequestSuccessful(reply, "receive user info", fullReply))
         return;
 
-    QString r = reply->readAll();
-
     QJsonDocument jsdoc;
-    jsdoc = QJsonDocument::fromJson(r.toUtf8());
+    jsdoc = QJsonDocument::fromJson(fullReply);
     pageObj = jsdoc.object();
     continueJob();
 }
@@ -835,35 +834,31 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
 
     networkManager->disconnect();   // FIXME-0 what exactly happens at disconnect? why needed?
 
+    QByteArray fullReply = reply->readAll();
     if (reply->error() == QNetworkReply::ProtocolInvalidOperationError) {
-        QByteArray readAll = reply->readAll();
-        if (readAll.contains(
+        if (fullReply.contains(
                     QString("Cannot add a new attachment with same file name as an existing attachment").toLatin1())) {
             // Replace existing attachment
             qDebug() << "AttachmentID unknown, stopping now"; 
+
             // FIXME-0 attachmentID = 
             finishJob();
             return;
         }
+        if (!wasRequestSuccessful(reply, "create attachment", fullReply))
+            return;
     }
 
-    /* FIXME-0 remove
-    if (!wasRequestSuccessful(reply, "create attachment"))
-        return;
-    */
-
-    QString r = reply->readAll();
-    qDebug() << "CA::attachmentCreated Successful. r=" << r;
-    QList<QByteArray> reqHeaders = reply->request().rawHeaderList();
-    foreach( QByteArray reqName, reqHeaders )
-    {
-        QByteArray reqValue = reply->request().rawHeader( reqName );
-        qDebug() << "  " << reqName << ": " << reqValue;
-    }
 
     QJsonDocument jsdoc;
-    jsdoc = QJsonDocument::fromJson(r.toUtf8());
+    jsdoc = QJsonDocument::fromJson(fullReply);
     attachmentObj = jsdoc.object();
+
+    qDebug() << "CA::attachmentCreated Successful:";
+    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    qDebug() << "-------------";
+    //FIXME-000  convert to array, take first element. see also userinfo
+    //cout << attachmentObj["results"].toArray().toStdString();
 
     // Skip the step with updating attachment
     jobStep++;
@@ -879,19 +874,18 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
 
     networkManager->disconnect();
 
+    QByteArray fullReply = reply->readAll();
     if (reply->error()) {
-        QByteArray readAll = reply->readAll();
-        if (readAll.contains(QString("").toLatin1())) {
+        if (fullReply.contains(QString("").toLatin1())) {
             // Replace existing attachment
         }
         
     }
 
-    if (!wasRequestSuccessful(reply, "update attachment"))
+    if (!wasRequestSuccessful(reply, "update attachment", fullReply))
         return;
 
-    QString r = reply->readAll();
-    qDebug() << "CA::attachmentUpdated Successful. r=" << r;
+    qDebug() << "CA::attachmentUpdated Successful. r=" << fullReply;
     QList<QByteArray> reqHeaders = reply->request().rawHeaderList();
     foreach( QByteArray reqName, reqHeaders )
     {
@@ -900,7 +894,7 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
     }
 
     QJsonDocument jsdoc;
-    jsdoc = QJsonDocument::fromJson(r.toUtf8());
+    jsdoc = QJsonDocument::fromJson(fullReply);
     attachmentObj = jsdoc.object();
     continueJob();
 }

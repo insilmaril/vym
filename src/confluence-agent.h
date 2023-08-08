@@ -62,7 +62,10 @@ class ConfluenceAgent : public QObject {
     void startCreateAttachmentRequest();
     void startUpdateAttachmentRequest();
     QNetworkRequest createRequest(const QUrl &url);
-    bool wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc);
+    bool wasRequestSuccessful(
+            QNetworkReply *reply, 
+            const QString &requestDesc,
+            const QByteArray &fullReply);
 
   private slots:
     void pageSourceReceived(QNetworkReply *reply);
