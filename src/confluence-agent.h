@@ -59,15 +59,18 @@ class ConfluenceAgent : public QObject {
     void startCreatePageRequest();
     void startUpdatePageRequest();
     void startGetUserInfoRequest();
-    void startUploadAttachmentRequest();
+    void startCreateAttachmentRequest();
+    void startUpdateAttachmentRequest();
+    QNetworkRequest createRequest(const QUrl &url);
     bool wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc);
 
   private slots:
     void pageSourceReceived(QNetworkReply *reply);
     void pageDetailsReceived(QNetworkReply *reply);
-    void contentUploaded(QNetworkReply *reply);
+    void pageUploaded(QNetworkReply *reply);
     void userInfoReceived(QNetworkReply *reply);
-    void attachmentUploaded(QNetworkReply *reply);
+    void attachmentCreated(QNetworkReply *reply);
+    void attachmentUpdated(QNetworkReply *reply);
     void timeout();
 
 #ifndef QT_NO_SSL
@@ -83,7 +86,8 @@ class ConfluenceAgent : public QObject {
 
     // Network handling
     QNetworkAccessManager *networkManager;
-    QJsonObject jsobj;
+    QJsonObject pageObj;
+    QJsonObject attachmentObj;
 
     // Settings: Credentials to access Confluence
     bool authUsingPAT;
@@ -113,6 +117,10 @@ class ConfluenceAgent : public QObject {
     // Page details received from Confluence
     QString pageID;
     QString spaceKey;
+
+    // Attachments
+    QString attachmentID;
+    QString attachmentName;
 
     // User info received from Confluence
     QList <ConfluenceUser> userList;
