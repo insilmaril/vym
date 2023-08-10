@@ -2283,7 +2283,6 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapZoomIn", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewZoomIn()));
-    actionListFiles.append(a);
     actionZoomIn = a;
 
     a = new QAction(QPixmap(":/viewmag-.png"), tr("Zoom out", "View action"),
@@ -2292,7 +2291,6 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapZoomOut", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewZoomOut()));
-    actionListFiles.append(a);
     actionZoomOut = a;
 
     a = new QAction(QPixmap(":/transform-rotate-ccw.svg"),
@@ -2301,7 +2299,6 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapRotateCounterClockwise", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewRotateCounterClockwise()));
-    actionListFiles.append(a);
     actionRotateCounterClockwise = a;
 
     a = new QAction(QPixmap(":/transform-rotate-cw.svg"),
@@ -2310,7 +2307,6 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapRotateClockwise", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewRotateClockwise()));
-    actionListFiles.append(a);
     actionRotateClockwise = a;
 
     a = new QAction(QPixmap(":/viewmag-reset.png"),
@@ -2319,8 +2315,6 @@ void Main::setupViewActions()
     switchboard.addSwitch("mapZoomReset", shortcutScope, a, tag);
     viewMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(viewZoomReset()));
-    actionListFiles.append(a);
-    actionZoomReset = a;
 
     a = new QAction(QPixmap(":/viewshowsel.png"),
                     tr("Center on selection", "View action"), this);
@@ -2328,7 +2322,6 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapCenterOn", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenter()));
-    actionListFiles.append(a);
     actionCenterOn = a;
 
     a = new QAction(QPixmap(),
@@ -2337,8 +2330,7 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapCenterAndFitView", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenterScaled()));
-    actionListFiles.append(a);
-    actionCenterOn = a;
+    actionFitToSelection = a;
 
     viewMenu->addSeparator();
 
@@ -6461,6 +6453,16 @@ void Main::updateActions()
             // Disable toolbars
             standardFlagsMaster->setEnabled(false);
             userFlagsMaster->setEnabled(false);
+            clipboardToolbar->setEnabled(false);
+            editActionsToolbar->setEnabled(false);
+            selectionToolbar->setEnabled(false);
+            editorsToolbar->setEnabled(false);
+            colorsToolbar->setEnabled(false);
+            zoomToolbar->setEnabled(false);
+            modModesToolbar->setEnabled(false);
+            referencesToolbar->setEnabled(false);
+            standardFlagsToolbar->setEnabled(false);
+            userFlagsToolbar->setEnabled(false);
 
             // Disable map related actions in readonly mode // FIXME-2 not all actions disabled 
             foreach (QAction *a, restrictedMapActions)
@@ -6472,6 +6474,16 @@ void Main::updateActions()
             // Enable toolbars
             standardFlagsMaster->setEnabled(true);
             userFlagsMaster->setEnabled(true);
+            clipboardToolbar->setEnabled(true);
+            editActionsToolbar->setEnabled(true);
+            selectionToolbar->setEnabled(true);
+            editorsToolbar->setEnabled(true);
+            colorsToolbar->setEnabled(true);
+            zoomToolbar->setEnabled(true);
+            modModesToolbar->setEnabled(true);
+            referencesToolbar->setEnabled(true);
+            standardFlagsToolbar->setEnabled(true);
+            userFlagsToolbar->setEnabled(true);
 
             // Enable map related actions
             foreach (QAction *a, restrictedMapActions)
@@ -6764,6 +6776,16 @@ void Main::updateActions()
         // Disable toolbars
         standardFlagsMaster->setEnabled(false);
         userFlagsMaster->setEnabled(false);
+        clipboardToolbar->setEnabled(false);
+        editActionsToolbar->setEnabled(false);
+        selectionToolbar->setEnabled(false);
+        editorsToolbar->setEnabled(false);
+        colorsToolbar->setEnabled(false);
+        zoomToolbar->setEnabled(false);
+        modModesToolbar->setEnabled(false);
+        referencesToolbar->setEnabled(false);
+        standardFlagsToolbar->setEnabled(false);
+        userFlagsToolbar->setEnabled(false);
     }
 }
 
