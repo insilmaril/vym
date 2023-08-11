@@ -21,10 +21,10 @@ class ConfluenceAgent : public QObject {
     enum JobType {
         Undefined,
         CopyPagenameToHeading,
-        NewPage,
+        CreatePage,
         UpdatePage,
         UploadAttachment,
-        UserInfo
+        GetUserInfo
     };
 
     static bool available();
@@ -59,6 +59,7 @@ class ConfluenceAgent : public QObject {
     void startCreatePageRequest();
     void startUpdatePageRequest();
     void startGetUserInfoRequest();
+    void startGetAttachmentIdRequest();
     void startCreateAttachmentRequest();
     void startUpdateAttachmentRequest();
     QNetworkRequest createRequest(const QUrl &url);
@@ -72,6 +73,7 @@ class ConfluenceAgent : public QObject {
     void pageDetailsReceived(QNetworkReply *reply);
     void pageUploaded(QNetworkReply *reply);
     void userInfoReceived(QNetworkReply *reply);
+    void attachmentInfoReceived(QNetworkReply *reply);
     void attachmentCreated(QNetworkReply *reply);
     void attachmentUpdated(QNetworkReply *reply);
     void timeout();

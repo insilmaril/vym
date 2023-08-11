@@ -198,7 +198,7 @@ void ConfluenceAgent::continueJob()
             };
             break;  // FIXME-0 and now?
 
-        case NewPage:   // FIXME-0 add upload image
+        case CreatePage:   // FIXME-0 add upload image
             switch(jobStep) {
                 case 1:
                     if (pageURL.isEmpty()) {
@@ -254,14 +254,20 @@ void ConfluenceAgent::continueJob()
                     startGetPageDetailsRequest();
                     return;
                 case 3:
+                    // Try to get info for attachment
+                    startGetAttachmentIdRequest();
+
+                    /*  FIXME-0000 cont here
                     // Create attachment with image of map, if required
                     qDebug() << "exportImage= " << exportImage;
                     if (exportImage) {
                         startCreateAttachmentRequest();
                         return;
                     }
-                    // Go on to update page
+                    // Continue to update page
                     jobStep = jobStep + 2;
+                    */
+                    return;
                 case 4:
                     if (exportImage) {
                         startUpdateAttachmentRequest();
@@ -286,7 +292,7 @@ void ConfluenceAgent::continueJob()
             };
 
             break;  // FIXME-0 and now?
-        case UserInfo:
+        case GetUserInfo:
             switch(jobStep) {
                 case 1:
                     // qDebug() << "CA:: begin getting UserInfo";
@@ -343,7 +349,7 @@ void ConfluenceAgent::getUsers(const QString &usrQuery)
         return;
     }
 
-    setJobType(UserInfo);
+    setJobType(GetUserInfo);
     startJob();
 }
 
@@ -582,6 +588,26 @@ void ConfluenceAgent::startGetUserInfoRequest()
     killTimer->start();
 
     networkManager->get(request);
+}
+
+void ConfluenceAgent::startGetAttachmentIdRequest()
+{
+    if (debug) qDebug() << "CA::startGetAttachmentIdRequest";
+    qDebug() << "*** startGetAttachmentId begin";
+
+    QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment";
+
+    QNetworkRequest request = createRequest(url);
+    request.setRawHeader("X-Atlassian-Token", "no-check");
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::attachmentInfoReceived);
+
+    killTimer->start();
+
+    QNetworkReply *reply = networkManager->get(request);
+
+    qDebug() << "*** startGetAttachmentId end";
 }
 
 void ConfluenceAgent::startCreateAttachmentRequest()
@@ -826,6 +852,35 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
     continueJob();
 }
 
+void ConfluenceAgent::attachmentInfoReceived(QNetworkReply *reply)
+{
+    if (debug) qDebug() << "CA::attachmentInfoReceived";
+
+    killTimer->stop();
+
+    networkManager->disconnect();
+
+    QByteArray fullReply = reply->readAll();
+    if (reply->error()) {
+        if (fullReply.contains(QString("").toLatin1())) {
+            // Replace existing attachment
+        }
+        
+    }
+
+    if (!wasRequestSuccessful(reply, "get attachment info", fullReply))
+        return;
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(fullReply);
+
+    attachmentObj = jsdoc.object();
+    qDebug() << "CA::attachmentInfoReceived Successful. r=";
+    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+
+    continueJob();
+}
+
 void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when are reply, parts, and file deleted?
 {
     if (debug) qDebug() << "CA::attachmentCreated";
@@ -839,6 +894,7 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
         if (fullReply.contains(
                     QString("Cannot add a new attachment with same file name as an existing attachment").toLatin1())) {
             // Replace existing attachment
+            qDebug() << "Attachment with name " << attachmentName << " already exists.";
             qDebug() << "AttachmentID unknown, stopping now"; 
 
             // FIXME-0 attachmentID = 

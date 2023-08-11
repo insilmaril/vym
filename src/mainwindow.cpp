@@ -2315,6 +2315,7 @@ void Main::setupViewActions()
     switchboard.addSwitch("mapZoomReset", shortcutScope, a, tag);
     viewMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(viewZoomReset()));
+    actionZoomReset = a;
 
     a = new QAction(QPixmap(":/viewshowsel.png"),
                     tr("Center on selection", "View action"), this);

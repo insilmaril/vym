@@ -392,7 +392,7 @@ void ExportConfluence::doExport(bool useDialog)
     // Create Confluence agent
     ConfluenceAgent *agent = new ConfluenceAgent();
     if (createNewPage)
-        agent->setJobType(ConfluenceAgent::NewPage);
+        agent->setJobType(ConfluenceAgent::CreatePage);
     else
         agent->setJobType(ConfluenceAgent::UpdatePage);
     agent->setPageURL(url);
