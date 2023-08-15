@@ -363,7 +363,7 @@ void ExportConfluence::doExport(bool useDialog)
     // Hide stuff during export
     model->setExportMode(true);
 
-    // Include image
+    // Include image    // FIXME-0 not working yet, only "image.png" used
     // (be careful: this resets Export mode, so call before exporting branches)
     /*
     if (dia.includeMapImage)

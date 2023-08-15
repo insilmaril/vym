@@ -254,21 +254,21 @@ void ConfluenceAgent::continueJob()
                     startGetPageDetailsRequest();
                     return;
                 case 3:
-                    // Try to get info for attachment
-                    startGetAttachmentIdRequest();
-
-                    /*  FIXME-0000 cont here
+                    // Try to get info for attachments
+                    if (exportImage) {
+                        startGetAttachmentsInfoRequest();
+                        return;
+                    }
+                    // Continue, with updating page
+                    jobStep = 6;
+                case 4:
                     // Create attachment with image of map, if required
-                    qDebug() << "exportImage= " << exportImage;
                     if (exportImage) {
                         startCreateAttachmentRequest();
                         return;
                     }
-                    // Continue to update page
+                    // Continue, will goto step with updating page
                     jobStep = jobStep + 2;
-                    */
-                    return;
-                case 4:
                     if (exportImage) {
                         startUpdateAttachmentRequest();
                         jobStep++;
@@ -276,12 +276,21 @@ void ConfluenceAgent::continueJob()
                     }
                     // Attachment with image of map is already there, update it
                 case 5:
+                    // Update attachment with image of map, if required
+                    if (exportImage) {
+                        startUpdateAttachmentRequest();
+                        // FIXME-000 see https://docs.atlassian.com/atlassian-confluence/REST/6.5.2/#content/{id}/child/attachment-updateData
+                        jobStep++;
+                        return;
+                    }
+                    // Attachment with image of map is already there, update it
+                case 6:
                     // Update page with parent url
                     if (newPageName.isEmpty())
                             newPageName = pageObj["title"].toString();
                     startUpdatePageRequest();
                     return;
-                case 6:
+                case 7:
                     //qDebug() << "CA::finished  Updated page with ID: " << pageObj["id"].toString();
                     mainWindow->statusMessage(
                         QString("Updated Confluence page %1").arg(pageURL));
@@ -590,10 +599,10 @@ void ConfluenceAgent::startGetUserInfoRequest()
     networkManager->get(request);
 }
 
-void ConfluenceAgent::startGetAttachmentIdRequest()
+void ConfluenceAgent::startGetAttachmentsInfoRequest()
 {
     if (debug) qDebug() << "CA::startGetAttachmentIdRequest";
-    qDebug() << "*** startGetAttachmentId begin";
+    qDebug() << "*** startGetAttachmentsInfo begin";
 
     QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment";
 
@@ -601,13 +610,13 @@ void ConfluenceAgent::startGetAttachmentIdRequest()
     request.setRawHeader("X-Atlassian-Token", "no-check");
 
     connect(networkManager, &QNetworkAccessManager::finished,
-        this, &ConfluenceAgent::attachmentInfoReceived);
+        this, &ConfluenceAgent::attachmentsInfoReceived);
 
     killTimer->start();
 
     QNetworkReply *reply = networkManager->get(request);
 
-    qDebug() << "*** startGetAttachmentId end";
+    qDebug() << "*** startGetAttachmentsInfo end";
 }
 
 void ConfluenceAgent::startCreateAttachmentRequest()
@@ -622,7 +631,7 @@ void ConfluenceAgent::startCreateAttachmentRequest()
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-0 delete later
 
-    attachmentName = "image.png";
+    uploadAttachmentName = "image.png";
 
     QHttpPart imagePart;
     imagePart.setHeader(
@@ -631,7 +640,7 @@ void ConfluenceAgent::startCreateAttachmentRequest()
             // Name must be "file"
             QVariant(
                 QString("form-data; name=\"file\"; filename=\"%1\"")
-                    .arg(attachmentName)));
+                    .arg(uploadAttachmentName)));
     imagePart.setHeader(
             QNetworkRequest::ContentTypeHeader,
             QVariant("image/jpeg"));
@@ -852,9 +861,9 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
     continueJob();
 }
 
-void ConfluenceAgent::attachmentInfoReceived(QNetworkReply *reply)
+void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
 {
-    if (debug) qDebug() << "CA::attachmentInfoReceived";
+    if (debug) qDebug() << "CA::attachmentsInfoReceived";
 
     killTimer->stop();
 
@@ -863,9 +872,8 @@ void ConfluenceAgent::attachmentInfoReceived(QNetworkReply *reply)
     QByteArray fullReply = reply->readAll();
     if (reply->error()) {
         if (fullReply.contains(QString("").toLatin1())) {
-            // Replace existing attachment
+            // Replace existing attachment  // FIXME-0
         }
-        
     }
 
     if (!wasRequestSuccessful(reply, "get attachment info", fullReply))
@@ -875,8 +883,23 @@ void ConfluenceAgent::attachmentInfoReceived(QNetworkReply *reply)
     jsdoc = QJsonDocument::fromJson(fullReply);
 
     attachmentObj = jsdoc.object();
-    qDebug() << "CA::attachmentInfoReceived Successful. r=";
+    int attachmentsCount = jsdoc["size"].toInt();
+    qDebug() << "results.size=" << attachmentsCount;
+    qDebug() << "CA::attachmentsInfoReceived Successful. r=";
     cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    for (int i = 0; i < attachmentsCount; i++) {
+        attachmentsTitles << jsdoc["results"][i]["title"].toString();
+        attachmentsIds    << jsdoc["results"][i]["id"].toString();
+        qDebug() << " Title: " << attachmentsTitles.last() << 
+                    " Id: " << attachmentsIds.last();
+    }
+
+
+    /* FIXME-0 cont here
+    if (attachmentsCount == 0)
+        jobStep = 
+        */
+
 
     continueJob();
 }
@@ -894,7 +917,7 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
         if (fullReply.contains(
                     QString("Cannot add a new attachment with same file name as an existing attachment").toLatin1())) {
             // Replace existing attachment
-            qDebug() << "Attachment with name " << attachmentName << " already exists.";
+            qDebug() << "Attachment with name " << uploadAttachmentName << " already exists.";
             qDebug() << "AttachmentID unknown, stopping now"; 
 
             // FIXME-0 attachmentID = 

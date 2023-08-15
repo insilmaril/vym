@@ -59,7 +59,7 @@ class ConfluenceAgent : public QObject {
     void startCreatePageRequest();
     void startUpdatePageRequest();
     void startGetUserInfoRequest();
-    void startGetAttachmentIdRequest();
+    void startGetAttachmentsInfoRequest();
     void startCreateAttachmentRequest();
     void startUpdateAttachmentRequest();
     QNetworkRequest createRequest(const QUrl &url);
@@ -73,7 +73,7 @@ class ConfluenceAgent : public QObject {
     void pageDetailsReceived(QNetworkReply *reply);
     void pageUploaded(QNetworkReply *reply);
     void userInfoReceived(QNetworkReply *reply);
-    void attachmentInfoReceived(QNetworkReply *reply);
+    void attachmentsInfoReceived(QNetworkReply *reply);
     void attachmentCreated(QNetworkReply *reply);
     void attachmentUpdated(QNetworkReply *reply);
     void timeout();
@@ -124,8 +124,10 @@ class ConfluenceAgent : public QObject {
     QString spaceKey;
 
     // Attachments
-    QString attachmentID;
-    QString attachmentName;
+    QStringList attachmentsTitles;
+    QStringList attachmentsIds;
+    QString uploadAttachmentName;
+    QString uploadAttachmentId;
 
     // User info received from Confluence
     QList <ConfluenceUser> userList;
