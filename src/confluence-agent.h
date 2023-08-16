@@ -53,30 +53,37 @@ class ConfluenceAgent : public QObject {
   public:
     void getUsers(const QString &name); //! Convenience function to get user data
 
-  private:  
-    void startGetPageSourceRequest(QUrl requestedUrl);
-    void startGetPageDetailsRequest();
-    void startCreatePageRequest();
-    void startUpdatePageRequest();
-    void startGetUserInfoRequest();
-    void startGetAttachmentsInfoRequest();
-    void startCreateAttachmentRequest();
-    void startUpdateAttachmentRequest();
-    QNetworkRequest createRequest(const QUrl &url);
-    bool wasRequestSuccessful(
+  private: QNetworkRequest createRequest(const QUrl &url);
+  private: void startGetPageSourceRequest(QUrl requestedUrl);
+  private slots: void pageSourceReceived(QNetworkReply *reply);
+
+  private: void startGetPageDetailsRequest();
+  private slots: void pageDetailsReceived(QNetworkReply *reply);
+
+  private: void startCreatePageRequest();
+  private: void startUpdatePageRequest();
+  private slots: void pageUploaded(QNetworkReply *reply);
+
+
+  private: void startGetUserInfoRequest();
+  private slots: void userInfoReceived(QNetworkReply *reply);
+
+  private: void startGetAttachmentsInfoRequest();
+  private slots: void attachmentsInfoReceived(QNetworkReply *reply);
+
+  private: void startCreateAttachmentRequest();
+  private slots: void attachmentCreated(QNetworkReply *reply);
+
+  private: void startUpdateAttachmentRequest();
+  private slots: void attachmentUpdated(QNetworkReply *reply);
+
+  private: bool wasRequestSuccessful(
             QNetworkReply *reply, 
             const QString &requestDesc,
             const QByteArray &fullReply);
 
-  private slots:
-    void pageSourceReceived(QNetworkReply *reply);
-    void pageDetailsReceived(QNetworkReply *reply);
-    void pageUploaded(QNetworkReply *reply);
-    void userInfoReceived(QNetworkReply *reply);
-    void attachmentsInfoReceived(QNetworkReply *reply);
-    void attachmentCreated(QNetworkReply *reply);
-    void attachmentUpdated(QNetworkReply *reply);
-    void timeout();
+
+  private slots: void timeout();
 
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
