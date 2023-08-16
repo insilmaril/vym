@@ -256,6 +256,7 @@ void ConfluenceAgent::continueJob()
                 case 3:
                     // Try to get info for attachments
                     if (exportImage) {
+                        uploadAttachmentTitle = "image.png"; // FIXME-0 testing, needs interface
                         startGetAttachmentsInfoRequest();
                         return;
                     }
@@ -264,18 +265,31 @@ void ConfluenceAgent::continueJob()
                 case 4:
                     // Create attachment with image of map, if required
                     if (exportImage) {
-                        startCreateAttachmentRequest();
-                        return;
+                        if (!attachmentsTitles.contains(uploadAttachmentTitle)) {
+                            // Create new attachment
+                            qDebug() << " -> create att.";
+                            startCreateAttachmentRequest();
+                            return;
+                        } else {
+                            // Update existing attachment
+                            qDebug() << " -> update att.";
+                            jobStep = 5;
+
+                            // Find Id of attachment
+                            for (int i = 0; i < attachmentsIds.count(); i++) {
+                                if (attachmentsTitles.at(i) == uploadAttachmentTitle) {
+                                    uploadAttachmentId = attachmentsIds.at(i);
+                                    break;
+                                }
+                                i++;
+                            }
+                        }
+                    } else {
+                        // Continue, will goto step with updating page
+                        jobStep = 6;
                     }
-                    // Continue, will goto step with updating page
-                    jobStep = jobStep + 2;
-                    if (exportImage) {
-                        startUpdateAttachmentRequest();
-                        jobStep++;
-                        return;
-                    }
-                    // Attachment with image of map is already there, update it
                 case 5:
+                    qDebug() << " -> step 5 reached";
                     // Update attachment with image of map, if required
                     if (exportImage) {
                         startUpdateAttachmentRequest();
@@ -387,25 +401,10 @@ void ConfluenceAgent::startGetPageSourceRequest(QUrl requestedURL)
 
     QUrl url = requestedURL;
 
-   // FIXME-0 Refactor everything to use createRequest method
-    QNetworkRequest request = QNetworkRequest(url);
-
-    // Basic authentication in header
-    QString headerData;
-    if (authUsingPAT)
-        headerData = QString("Bearer %1").arg(personalAccessToken);
-    else {
-        QString concatenated = username + ":" + password;
-        QByteArray data = concatenated.toLocal8Bit().toBase64();
-        headerData = "Basic " + data;
-    }
-    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+    QNetworkRequest request = createRequest(url);
 
     if (debug)
-    {
-        qDebug() << "CA::startGetPageSourceRequest: header = " + headerData;
         qDebug() << "CA::startGetPageSourceRequest: url = " + request.url().toString();
-    }
 
     killTimer->start();
 
@@ -466,22 +465,11 @@ void ConfluenceAgent::startGetPageDetailsRequest()
     if (debug) qDebug() << "CA::startGetPageDetailsRequest" << pageID;
 
     // Authentication in URL  (only SSL!)
-    QString query = "https://" 
+    QString url = "https://" 
         + baseURL + apiURL 
         + "/content/" + pageID + "?expand=metadata.labels,version";
 
-    QNetworkRequest request = QNetworkRequest(QUrl(query));
-
-    // Basic authentication in header
-    QString headerData;
-    if (authUsingPAT)
-        headerData = QString("Bearer %1").arg(personalAccessToken);
-    else {
-        QString concatenated = username + ":" + password;
-        QByteArray data = concatenated.toLocal8Bit().toBase64();
-        headerData = "Basic " + data;
-    }
-    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+    QNetworkRequest request = createRequest(url);
 
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &ConfluenceAgent::pageDetailsReceived);
@@ -518,18 +506,7 @@ void ConfluenceAgent::startCreatePageRequest()
 
     QString url = "https://" + baseURL + apiURL + "/content";
 
-    QNetworkRequest request = QNetworkRequest(QUrl(url));
-
-    // Basic authentication in header
-    QString headerData;
-    if (authUsingPAT)
-        headerData = QString("Bearer %1").arg(personalAccessToken);
-    else {
-        QString concatenated = username + ":" + password;
-        QByteArray data = concatenated.toLocal8Bit().toBase64();
-        headerData = "Basic " + data;
-    }
-    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+    QNetworkRequest request = createRequest(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QJsonObject payload;
@@ -658,24 +635,12 @@ void ConfluenceAgent::startGetUserInfoRequest()
 {
     if (debug) qDebug() << "CA::startGetInfoRequest for " << userQuery;
 
-    QString query = "https://" + baseURL + apiURL
+    QString url = "https://" + baseURL + apiURL
         + "/search?cql=user.fullname~" + userQuery;
 
     networkManager->disconnect();
 
-    QNetworkRequest request = QNetworkRequest(QUrl(query));
-//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-    // Basic authentication in header
-    QString headerData;
-    if (authUsingPAT)
-        headerData = QString("Bearer %1").arg(personalAccessToken);
-    else {
-        QString concatenated = username + ":" + password;
-        QByteArray data = concatenated.toLocal8Bit().toBase64();
-        headerData = "Basic " + data;
-    }
-    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+    QNetworkRequest request = createRequest(url);
 
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &ConfluenceAgent::userInfoReceived);
@@ -747,21 +712,14 @@ void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
     attachmentObj = jsdoc.object();
     int attachmentsCount = jsdoc["size"].toInt();
     qDebug() << "results.size=" << attachmentsCount;
-    qDebug() << "CA::attachmentsInfoReceived Successful. r=";
-    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    //qDebug() << "CA::attachmentsInfoReceived Successful. r=";
+    //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
     for (int i = 0; i < attachmentsCount; i++) {
         attachmentsTitles << jsdoc["results"][i]["title"].toString();
         attachmentsIds    << jsdoc["results"][i]["id"].toString();
         qDebug() << " Title: " << attachmentsTitles.last() << 
                     " Id: " << attachmentsIds.last();
     }
-
-
-    /* FIXME-0 cont here
-    if (attachmentsCount == 0)
-        jobStep = 
-        */
-
 
     continueJob();
 }
@@ -778,8 +736,6 @@ void ConfluenceAgent::startCreateAttachmentRequest()
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-0 delete later
 
-    uploadAttachmentName = "image.png";
-
     QHttpPart imagePart;
     imagePart.setHeader(
             QNetworkRequest::ContentDispositionHeader,
@@ -787,7 +743,7 @@ void ConfluenceAgent::startCreateAttachmentRequest()
             // Name must be "file"
             QVariant(
                 QString("form-data; name=\"file\"; filename=\"%1\"")
-                    .arg(uploadAttachmentName)));
+                    .arg(uploadAttachmentTitle)));
     imagePart.setHeader(
             QNetworkRequest::ContentTypeHeader,
             QVariant("image/jpeg"));
@@ -826,7 +782,7 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
         if (fullReply.contains(
                     QString("Cannot add a new attachment with same file name as an existing attachment").toLatin1())) {
             // Replace existing attachment
-            qDebug() << "Attachment with name " << uploadAttachmentName << " already exists.";
+            qDebug() << "Attachment with name " << uploadAttachmentTitle << " already exists.";
             qDebug() << "AttachmentID unknown, stopping now"; 
 
             // FIXME-0 attachmentID = 
@@ -859,7 +815,7 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
     if (debug) qDebug() << "CA::startUpdateAttachmentRequest";
     qDebug() << "*** startUpdateAttachment begin";
 
-    QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment";
+    QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment/" + uploadAttachmentId + "/data";
 
     QNetworkRequest request = createRequest(url);
     request.setRawHeader("X-Atlassian-Token", "no-check");
@@ -907,17 +863,18 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
     networkManager->disconnect();
 
     QByteArray fullReply = reply->readAll();
-    if (reply->error()) {
-        if (fullReply.contains(QString("").toLatin1())) {
-            // Replace existing attachment
-        }
-        
-    }
-
     if (!wasRequestSuccessful(reply, "update attachment", fullReply))
         return;
 
-    qDebug() << "CA::attachmentUpdated Successful. r=" << fullReply;
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(fullReply);
+    attachmentObj = jsdoc.object();
+
+    qDebug() << "CA::attachmentUpdated Successful:";
+    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    qDebug() << "-------------";
+
     QList<QByteArray> reqHeaders = reply->request().rawHeaderList();
     foreach( QByteArray reqName, reqHeaders )
     {
@@ -925,9 +882,6 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
         qDebug() << "  " << reqName << ": " << reqValue;
     }
 
-    QJsonDocument jsdoc;
-    jsdoc = QJsonDocument::fromJson(fullReply);
-    attachmentObj = jsdoc.object();
     continueJob();
 }
 

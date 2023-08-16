@@ -23,7 +23,7 @@ class ConfluenceAgent : public QObject {
         CopyPagenameToHeading,
         CreatePage,
         UpdatePage,
-        UploadAttachment,
+        UploadAttachments,
         GetUserInfo
     };
 
@@ -130,10 +130,12 @@ class ConfluenceAgent : public QObject {
     QString pageID;
     QString spaceKey;
 
-    // Attachments
+    // Attachments found in page
     QStringList attachmentsTitles;
     QStringList attachmentsIds;
-    QString uploadAttachmentName;
+
+    // Attachments queued for upload
+    QString uploadAttachmentTitle;
     QString uploadAttachmentId;
 
     // User info received from Confluence
