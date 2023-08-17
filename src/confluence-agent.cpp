@@ -843,7 +843,7 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
             QNetworkRequest::ContentDispositionHeader,
 
             // Name must be "file"
-            QVariant("form-data; name=\"file\"; filename=\"" +
+            QVariant(
                 QString("form-data; name=\"file\"; filename=\"%1\"")
                     .arg(uploadAttachmentTitle)));
     qDebug() << "title=" << uploadAttachmentTitle;
