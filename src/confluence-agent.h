@@ -39,6 +39,7 @@ class ConfluenceAgent : public QObject {
     void setPageURL(const QString &u);
     void setNewPageName(const QString &t);
     void setUploadFilePath(const QString &fp);
+    void addUploadAttachmentFilePath(const QString &fp);
 
     void startJob();
 
@@ -134,8 +135,9 @@ class ConfluenceAgent : public QObject {
     QStringList attachmentsTitles;
     QStringList attachmentsIds;
 
-    // Attachments queued for upload
-    QString uploadAttachmentTitle;
+    // Current attachments queued for upload
+    QString uploadAttachmentFilePath;
+    QString uploadAttachmentTitle;      // basename(uploadAttachmentFilePath)
     QString uploadAttachmentId;
 
     // User info received from Confluence

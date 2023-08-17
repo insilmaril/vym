@@ -363,19 +363,21 @@ void ExportConfluence::doExport(bool useDialog)
     // Hide stuff during export
     model->setExportMode(true);
 
-    // Include image    // FIXME-0 not working yet, only "image.png" used
+    // Include image of map
     // (be careful: this resets Export mode, so call before exporting branches)
-    /*
-    if (dia.includeMapImage)
+    QString mapImageFilePath = tmpDir.path() + "/mapImage.png";
+    if (dia.includeMapImage())
     {
         QString mapName = getMapName();
-        ts << "<center><img src=\"" << mapName << ".png\"";
-        ts << "alt=\"" << QObject::tr("Image of map: %1.vym","Alt tag in HTML
-    export").arg(mapName) << "\""; ts << " usemap='#imagemap'></center>\n";
-        offset = model->exportImage (dirPath + "/" + mapName + ".png", false,
-    "PNG");
+        ts << "<p>";
+        ts << "  <span style=\"color: rgb(0,170,255);\">";
+        ts << "    <ac:image ac:height=\"250\" >";
+        ts << "      <ri:attachment ri:filename=\"mapImage.png\"/>";
+        ts << "    </ac:image>";
+        ts << "  </span>";
+        ts << "</p>";
+        offset = model->exportImage (mapImageFilePath, false, "PNG");
     }
-    */
 
     // Include table of contents
     // if (dia.useTOC) ts << createTOC();
@@ -400,6 +402,9 @@ void ExportConfluence::doExport(bool useDialog)
     agent->setUploadFilePath(filePath);
     agent->setModelID(model->getModelID());
     agent->exportImage = dia.includeMapImage();
+    if(dia.includeMapImage())
+        agent->addUploadAttachmentFilePath(mapImageFilePath);
+
     agent->startJob();
 
     QStringList args;

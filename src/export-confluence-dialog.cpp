@@ -35,6 +35,18 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     connect(ui.exportButton, &QPushButton::clicked, this, &ExportConfluenceDialog::doExport);
 }
 
+void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
+
+bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
+
+QString ExportConfluenceDialog::getURL() { return url; }
+
+QString ExportConfluenceDialog::getPageName() { return pageName; }
+
+void ExportConfluenceDialog::setPageNameHint(const QString &s) 
+{
+    pageNameHint = s;
+}
 void ExportConfluenceDialog::readSettings()
 {
     url = settings
@@ -99,9 +111,75 @@ void ExportConfluenceDialog::readSettings()
     pageButtonPressed();
 }
 
+void ExportConfluenceDialog::saveSettings()
+{
+    // Save options to settings file
+    // (but don't save at destructor, which
+    // is called for "cancel", too)
+    if (!ui.saveSettingsInMapCheckBox->isChecked())
+        settings.clearLocal(filepath, "/export/confluence");
+    else {
+        settings.setLocalValue(
+                filepath, "/export/confluence/saveSettingsInMap",
+                "yes");
+        settings.setLocalValue (
+                filepath, "/export/confluence/includeMapImage",
+                ui.imageCheckBox->isChecked());
+        //        settings.setLocalValue (filepath,
+        //        "/export/confluence/includeImages", includeImages);
+        //        settings.setLocalValue (filepath, "/export/confluence/useTOC",
+        //        useTOC); 
+        //        settings.setLocalValue (filepath,
+        //        "/export/confluence/useNumbering", useNumbering);
+        settings.setLocalValue(filepath,
+                "/export/confluence/mapCenterToPageName",
+                ui.mapCenterToPageNameCheckBox->isChecked());
+        settings.setLocalValue(filepath,
+                "/export/confluence/useTextColor",
+                ui.textColorCheckBox->isChecked());
+        settings.setLocalValue(filepath,
+                "/export/confluence/useNumbering",
+                ui.useNumberingCheckBox->isChecked());
+        settings.setLocalValue(filepath, "/export/confluence/url", url);
+        settings.setLocalValue(filepath, "/export/confluence/pageName", pageName);
+        settings.setLocalValue(filepath, "/export/confluence/createNewPage", ui.createPageButton->isChecked());
+    }
+}
+
 void ExportConfluenceDialog::setURL(const QString &u) { url = u; }
 
 void ExportConfluenceDialog::setPageName(const QString &s) { pageName = s; }
+
+void ExportConfluenceDialog::setFilePath(const QString &s) { filepath = s; }
+
+void ExportConfluenceDialog::setMapName(const QString &s) { mapname = s; }
+
+bool ExportConfluenceDialog::useTextColor()
+{
+    return ui.textColorCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::mapCenterToPageName()
+{
+    return ui.mapCenterToPageNameCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::useNumbering()
+{
+    return ui.useNumberingCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::includeMapImage()
+{
+    return ui.imageCheckBox->isChecked();
+}
+
+void ExportConfluenceDialog::doExport()
+{
+    qDebug() << "ECD: Starting export now";
+    qDebug() << "  exportImage=" << ui.imageCheckBox->isChecked();
+    accept();
+}
 
 void ExportConfluenceDialog::pageButtonPressed()
 {
@@ -138,81 +216,3 @@ void ExportConfluenceDialog::mapCenterToPageNameCheckBoxPressed(bool b)
     }
 }
 
-void ExportConfluenceDialog::saveSettings()
-{
-    // Save options to settings file
-    // (but don't save at destructor, which
-    // is called for "cancel", too)
-    if (!ui.saveSettingsInMapCheckBox->isChecked())
-        settings.clearLocal(filepath, "/export/confluence");
-    else {
-        settings.setLocalValue(
-                filepath, "/export/confluence/saveSettingsInMap",
-                "yes");
-        settings.setLocalValue (
-                filepath, "/export/confluence/includeMapImage",
-                ui.imageCheckBox->isChecked());
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/includeImages", includeImages);
-        //        settings.setLocalValue (filepath, "/export/confluence/useTOC",
-        //        useTOC); 
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/useNumbering", useNumbering);
-        settings.setLocalValue(filepath,
-                "/export/confluence/mapCenterToPageName",
-                ui.mapCenterToPageNameCheckBox->isChecked());
-        settings.setLocalValue(filepath,
-                "/export/confluence/useTextColor",
-                ui.textColorCheckBox->isChecked());
-        settings.setLocalValue(filepath,
-                "/export/confluence/useNumbering",
-                ui.useNumberingCheckBox->isChecked());
-        settings.setLocalValue(filepath, "/export/confluence/url", url);
-        settings.setLocalValue(filepath, "/export/confluence/pageName", pageName);
-        settings.setLocalValue(filepath, "/export/confluence/createNewPage", ui.createPageButton->isChecked());
-    }
-}
-
-void ExportConfluenceDialog::setFilePath(const QString &s) { filepath = s; }
-
-void ExportConfluenceDialog::setMapName(const QString &s) { mapname = s; }
-
-bool ExportConfluenceDialog::useTextColor()
-{
-    return ui.textColorCheckBox->isChecked();
-}
-
-bool ExportConfluenceDialog::mapCenterToPageName()
-{
-    return ui.mapCenterToPageNameCheckBox->isChecked();
-}
-
-bool ExportConfluenceDialog::useNumbering()
-{
-    return ui.useNumberingCheckBox->isChecked();
-}
-
-bool ExportConfluenceDialog::includeMapImage()
-{
-    return ui.imageCheckBox->isChecked();
-}
-
-void ExportConfluenceDialog::doExport()
-{
-    qDebug() << "ECD: Starting export now";
-    qDebug() << "  exportImage=" << ui.imageCheckBox->isChecked();
-    accept();
-}
-
-void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
-
-bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
-
-QString ExportConfluenceDialog::getURL() { return url; }
-
-QString ExportConfluenceDialog::getPageName() { return pageName; }
-
-void ExportConfluenceDialog::setPageNameHint(const QString &s) 
-{
-    pageNameHint = s;
-}

@@ -23,15 +23,11 @@ class ExportConfluenceDialog : public QDialog {
     virtual QString getPageName();
     void setPageNameHint(const QString &s);
 
-  public slots:
     void readSettings();
+    void saveSettings();
     void setURL(const QString &);
     void setPageName(const QString &);
-    void pageButtonPressed();
-    void URLChanged();
-    void pageNameChanged();
-    void mapCenterToPageNameCheckBoxPressed(bool b);
-    void saveSettings();
+
     void setFilePath(const QString &s);
     void setMapName(const QString &s);
     bool useTextColor();
@@ -39,6 +35,12 @@ class ExportConfluenceDialog : public QDialog {
     bool useNumbering();
     bool includeMapImage();
     void doExport();
+
+  public slots:
+    void pageButtonPressed();
+    void URLChanged();
+    void pageNameChanged();
+    void mapCenterToPageNameCheckBoxPressed(bool b);
 
   protected:
     QString url;

@@ -143,6 +143,12 @@ void ConfluenceAgent::setUploadFilePath(const QString &fp)
     uploadFilePath = fp;
 }
 
+void ConfluenceAgent::addUploadAttachmentFilePath(const QString &fp)
+{
+    uploadAttachmentFilePath = fp;  // FIXME-0 currently only one file supported
+    uploadAttachmentTitle = basename(uploadAttachmentFilePath);
+}
+
 void ConfluenceAgent::startJob()
 {
     if (jobStep > 0) {
@@ -256,7 +262,6 @@ void ConfluenceAgent::continueJob()
                 case 3:
                     // Try to get info for attachments
                     if (exportImage) {
-                        uploadAttachmentTitle = "image.png"; // FIXME-0 testing, needs interface
                         startGetAttachmentsInfoRequest();
                         return;
                     }
@@ -274,19 +279,10 @@ void ConfluenceAgent::continueJob()
                             // Update existing attachment
                             qDebug() << " -> update att.";
                             jobStep = 5;
-
-                            // Find Id of attachment
-                            for (int i = 0; i < attachmentsIds.count(); i++) {
-                                if (attachmentsTitles.at(i) == uploadAttachmentTitle) {
-                                    uploadAttachmentId = attachmentsIds.at(i);
-                                    break;
-                                }
-                                i++;
-                            }
                         }
                     } else {
                         // Continue, will goto step with updating page
-                        jobStep = 6;
+                        jobStep = 6;    // FIXME-0 "Goto" does not work, replace switch with ifs?
                     }
                 case 5:
                     qDebug() << " -> step 5 reached";
@@ -352,7 +348,7 @@ void ConfluenceAgent::continueJob()
     }
 }
 
-void ConfluenceAgent::finishJob()
+void ConfluenceAgent::finishJob()   // FIXME-0 delete subtasks, if required. Or done by QObject?
 {
     deleteLater();
 }
@@ -736,6 +732,9 @@ void ConfluenceAgent::startCreateAttachmentRequest()
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-0 delete later
 
+    qDebug() << "   attFPath=" << uploadAttachmentFilePath;
+    qDebug() << "   attTitle=" << uploadAttachmentTitle;
+
     QHttpPart imagePart;
     imagePart.setHeader(
             QNetworkRequest::ContentDispositionHeader,
@@ -748,7 +747,7 @@ void ConfluenceAgent::startCreateAttachmentRequest()
             QNetworkRequest::ContentTypeHeader,
             QVariant("image/jpeg"));
 
-    QFile *file = new QFile("image.png");   // FIXME-0 delete later
+    QFile *file = new QFile(uploadAttachmentFilePath);
     if (!file->open(QIODevice::ReadOnly))
         qWarning() << "Problem opening file!!!!!!!!!!!!!!!";    // FIXME-0 fix error handling
     imagePart.setBodyDevice(file);
@@ -799,8 +798,7 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
     attachmentObj = jsdoc.object();
 
     qDebug() << "CA::attachmentCreated Successful:";
-    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
-    qDebug() << "-------------";
+    //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
     //FIXME-000  convert to array, take first element. see also userinfo
     //cout << attachmentObj["results"].toArray().toStdString();
 
@@ -813,10 +811,27 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
 void ConfluenceAgent::startUpdateAttachmentRequest()
 {
     if (debug) qDebug() << "CA::startUpdateAttachmentRequest";
-    qDebug() << "*** startUpdateAttachment begin";
+    qDebug() << "*** startUpdateAttachment begin " << uploadAttachmentTitle;
+
+    for (int i = 0; i < attachmentsTitles.count() - 1; i++) {
+        qDebug() << "     - " << attachmentsTitles.at(i);
+        if (attachmentsTitles.at(i) == uploadAttachmentTitle) {
+            uploadAttachmentId = attachmentsIds.at(i);
+            break;
+        }
+    }
+
+    if (uploadAttachmentId.isEmpty()) {
+        QMessageBox::warning(
+            nullptr, tr("Warning"),
+            QString("Could not find existing attachment \"%1\" in page").arg(uploadAttachmentTitle));
+        finishJob();
+        return;
+    }
 
     QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment/" + uploadAttachmentId + "/data";
 
+    qDebug() << "    url=" << url;
     QNetworkRequest request = createRequest(url);
     request.setRawHeader("X-Atlassian-Token", "no-check");
 
@@ -828,12 +843,15 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
             QNetworkRequest::ContentDispositionHeader,
 
             // Name must be "file"
-            QVariant("form-data; name=\"file\"; filename=\"image.png\""));
+            QVariant("form-data; name=\"file\"; filename=\"" +
+                QString("form-data; name=\"file\"; filename=\"%1\"")
+                    .arg(uploadAttachmentTitle)));
+    qDebug() << "title=" << uploadAttachmentTitle;
     imagePart.setHeader(
             QNetworkRequest::ContentTypeHeader,
             QVariant("image/jpeg"));
 
-    QFile *file = new QFile("image.png");   // FIXME-0 delete later
+    QFile *file = new QFile(uploadAttachmentFilePath);   // FIXME-0 delete later
     if (!file->open(QIODevice::ReadOnly))
         qWarning() << "Problem opening file!!!!!!!!!!!!!!!";    // FIXME-0 fix error handling
     imagePart.setBodyDevice(file);
@@ -873,14 +891,6 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
 
     qDebug() << "CA::attachmentUpdated Successful:";
     cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
-    qDebug() << "-------------";
-
-    QList<QByteArray> reqHeaders = reply->request().rawHeaderList();
-    foreach( QByteArray reqName, reqHeaders )
-    {
-        QByteArray reqValue = reply->request().rawHeader( reqName );
-        qDebug() << "  " << reqName << ": " << reqValue;
-    }
 
     continueJob();
 }
