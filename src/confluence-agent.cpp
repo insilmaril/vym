@@ -241,75 +241,77 @@ void ConfluenceAgent::continueJob()
             break;  // FIXME-0 and now?
 
         case UpdatePage:
-            switch(jobStep) {
-                case 1:
-                    if (pageURL.isEmpty()) {
-                        qWarning() << "CA::contJob UpdatePage: pageURL is empty";
-                        finishJob();
-                        return;
-                    }
-
-                    mainWindow->statusMessage(
-                        QString("Starting to update Confluence page %1").arg(pageURL));
-
-                    // Check if page with url already exists and get pageID, spaceKey
-                    startGetPageSourceRequest(pageURL);
-                    return;
-                case 2:
-                    // Get title, which is required by Confluence to update a page
-                    startGetPageDetailsRequest();
-                    return;
-                case 3:
-                    // Try to get info for attachments
-                    if (exportImage) {
-                        startGetAttachmentsInfoRequest();
-                        return;
-                    }
-                    // Continue, with updating page
-                    jobStep = 6;
-                case 4:
-                    // Create attachment with image of map, if required
-                    if (exportImage) {
-                        if (!attachmentsTitles.contains(uploadAttachmentTitle)) {
-                            // Create new attachment
-                            qDebug() << " -> create att.";
-                            startCreateAttachmentRequest();
-                            return;
-                        } else {
-                            // Update existing attachment
-                            qDebug() << " -> update att.";
-                            jobStep = 5;
-                        }
-                    } else {
-                        // Continue, will goto step with updating page
-                        jobStep = 6;    // FIXME-0 "Goto" does not work, replace switch with ifs?
-                    }
-                case 5:
-                    qDebug() << " -> step 5 reached";
-                    // Update attachment with image of map, if required
-                    if (exportImage) {
-                        startUpdateAttachmentRequest();
-                        // FIXME-000 see https://docs.atlassian.com/atlassian-confluence/REST/6.5.2/#content/{id}/child/attachment-updateData
-                        jobStep++;
-                        return;
-                    }
-                    // Attachment with image of map is already there, update it
-                case 6:
-                    // Update page with parent url
-                    if (newPageName.isEmpty())
-                            newPageName = pageObj["title"].toString();
-                    startUpdatePageRequest();
-                    return;
-                case 7:
-                    //qDebug() << "CA::finished  Updated page with ID: " << pageObj["id"].toString();
-                    mainWindow->statusMessage(
-                        QString("Updated Confluence page %1").arg(pageURL));
+            if (jobStep == 1) {
+                if (pageURL.isEmpty()) {
+                    qWarning() << "CA::contJob UpdatePage: pageURL is empty";
                     finishJob();
                     return;
-                default:
-                    unknownStepWarning();
-            };
+                }
 
+                mainWindow->statusMessage(
+                    QString("Starting to update Confluence page %1").arg(pageURL));
+
+                // Check if page with url already exists and get pageID, spaceKey
+                startGetPageSourceRequest(pageURL);
+                return;
+            }
+            if (jobStep == 2) {
+                // Get title, which is required by Confluence to update a page
+                startGetPageDetailsRequest();
+                return;
+            }
+            if (jobStep == 3) {
+                // Try to get info for attachments
+                if (exportImage) {
+                    startGetAttachmentsInfoRequest();
+                    return;
+                }
+                // Continue, with updating page
+                jobStep = 6;
+            }
+            if (jobStep == 4) {
+                // Create attachment with image of map, if required
+                if (exportImage) {
+                    if (!attachmentsTitles.contains(uploadAttachmentTitle)) {
+                        // Create new attachment
+                        qDebug() << " -> create att.";
+                        startCreateAttachmentRequest();
+                        return;
+                    } else {
+                        // Update existing attachment
+                        qDebug() << " -> update att.";
+                        jobStep = 5;
+                    }
+                } else {
+                    // Continue, will goto step with updating page
+                    jobStep = 6;    // FIXME-0 "Goto" does not work, replace switch with ifs?
+                }
+            }
+            if (jobStep == 5) {
+                qDebug() << " -> step 5 reached";
+                // Update attachment with image of map, if required
+                if (exportImage) {
+                    startUpdateAttachmentRequest();
+                    jobStep++;
+                    return;
+                }
+                // Attachment with image of map is already there, update it
+            }
+            if (jobStep == 6) {
+                // Update page with parent url
+                if (newPageName.isEmpty())
+                        newPageName = pageObj["title"].toString();
+                startUpdatePageRequest();
+                return;
+            }
+            if (jobStep == 7) {
+                //qDebug() << "CA::finished  Updated page with ID: " << pageObj["id"].toString();
+                mainWindow->statusMessage(
+                    QString("Updated Confluence page %1").arg(pageURL));
+                finishJob();
+                return;
+            }
+            unknownStepWarning();
             break;  // FIXME-0 and now?
         case GetUserInfo:
             switch(jobStep) {
@@ -337,12 +339,13 @@ void ConfluenceAgent::continueJob()
                         }
                         emit (foundUsers(userList));
                         finishJob();
+                        return;
                     }
-                    break;  // FIXME-0 and now?
                 default:
                     unknownStepWarning();
+                    finishJob();
             }
-            break;  // FIXME-0 and now?
+            return;
         default:
             qWarning() << "ConfluenceAgent::continueJob   unknown jobType " << jobType;
     }
