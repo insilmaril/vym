@@ -6,11 +6,13 @@
 #include <QMessageBox>
 
 #include "file.h"
+#include "mainwindow.h"
 #include "settings.h"
 
 extern QDir vymBaseDir;
 extern Settings settings;
 extern bool debug;
+extern Main *mainWindow;
 
 ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     : QDialog(parent)
@@ -33,13 +35,20 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
             SLOT(pageNameChanged()));
 
     connect(ui.exportButton, &QPushButton::clicked, this, &ExportConfluenceDialog::doExport);
+
+    connect(ui.openPageButton, &QPushButton::clicked, this, &ExportConfluenceDialog::openUrl);
 }
 
 void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
 
 bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
 
-QString ExportConfluenceDialog::getURL() { return url; }
+void ExportConfluenceDialog::openUrl()
+{
+    mainWindow->openURL(ui.lineEditURL->text());
+}
+
+QString ExportConfluenceDialog::getUrl() { return url; }
 
 QString ExportConfluenceDialog::getPageName() { return pageName; }
 

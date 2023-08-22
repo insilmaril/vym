@@ -137,8 +137,8 @@ class ConfluenceAgent : public QObject {
 
     // Current attachments queued for upload
     QString uploadAttachmentFilePath;
-    QString uploadAttachmentTitle;      // basename(uploadAttachmentFilePath)
-    QString uploadAttachmentId;
+    QString uploadAttachmentTitle;      // set with basename(uploadAttachmentFilePath)
+    QString uploadAttachmentId;         // copied from attachmentsIds
 
     // User info received from Confluence
     QList <ConfluenceUser> userList;

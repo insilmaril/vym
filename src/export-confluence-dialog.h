@@ -19,7 +19,8 @@ class ExportConfluenceDialog : public QDialog {
 
     void setCreateNewPage(bool b);
     bool getCreateNewPage();
-    virtual QString getURL();
+    virtual void openUrl();
+    virtual QString getUrl();
     virtual QString getPageName();
     void setPageNameHint(const QString &s);
 

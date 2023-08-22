@@ -343,7 +343,7 @@ void ExportConfluence::doExport(bool useDialog)
         if (dia.exec() != QDialog::Accepted)
             return;
         model->setChanged();
-        url = dia.getURL();
+        url = dia.getUrl();
         createNewPage = dia.getCreateNewPage();
         pageName = dia.getPageName();
     }
