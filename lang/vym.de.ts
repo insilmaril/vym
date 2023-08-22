@@ -27,7 +27,7 @@
     <message>
         <location line="+21"/>
         <source>Please use Settings-&gt;</source>
-        <translation>Bitte setzen sie einen Pfad in Einstellungen-&gt;</translation>
+        <translation>Bitte setzen Sie einen Pfad in Einstellungen-&gt;</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -52,7 +52,7 @@
     <name>AttributeDialog</name>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation type="vanished">Schließen</translation>
     </message>
     <message>
         <source>Attributes</source>
@@ -357,7 +357,7 @@
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation type="vanished">Schließen</translation>
     </message>
     <message>
         <source>XLink color:</source>
@@ -467,7 +467,7 @@
     </message>
     <message>
         <source>Number sections</source>
-        <translation type="vanished">Abschnitte numerieren</translation>
+        <translation type="vanished">Abschnitte nummerieren</translation>
     </message>
     <message>
         <source>Copy CSS from </source>
@@ -637,7 +637,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation type="vanished">Schließen</translation>
     </message>
 </context>
 <context>
@@ -852,7 +852,7 @@ Bitte prüfen Sie, ob Sie das wirklich erlauben wollen!</translation>
     <message>
         <location line="+488"/>
         <source>Save modified map before closing it</source>
-        <translation>Speichern und Map schliessen</translation>
+        <translation>Speichern und Map schließen</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1089,7 +1089,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="-2344"/>
         <location line="+2345"/>
         <source>Please use Settings-&gt;</source>
-        <translation>Bitte setzen sie einen Pfad in Einstellungen-&gt;</translation>
+        <translation>Bitte setzen Sie einen Pfad in Einstellungen-&gt;</translation>
     </message>
     <message>
         <location line="-1954"/>
@@ -1278,7 +1278,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+5"/>
         <source>Grow selection</source>
         <comment>Edit menu</comment>
-        <translation>Auswahl vergössern</translation>
+        <translation>Auswahl vergrößern</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1290,7 +1290,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+9"/>
         <source>Reset selection size</source>
         <comment>Edit menu</comment>
-        <translation>Grösse der Auswahl zurücksetzen</translation>
+        <translation>Größe der Auswahl zurücksetzen</translation>
     </message>
     <message>
         <location line="+442"/>
@@ -1548,7 +1548,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+9"/>
         <source>Show keyboard macros</source>
         <comment>Help action</comment>
-        <translation>Tatstur Makros anzeigen</translation>
+        <translation>Tastatur Makros anzeigen</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -1748,7 +1748,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+17"/>
         <source>Open all vym links in subtree</source>
         <comment>Edit menu</comment>
-        <translation>Alle Verbindungen zu vym maps  in Unterbaum öffnen</translation>
+        <translation>Alle Verbindungen zu vym maps in Unterbaum öffnen</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1826,13 +1826,13 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+89"/>
         <source>reset Zoom</source>
         <comment>View action</comment>
-        <translation>Keine Vergrösserung</translation>
+        <translation>Keine Vergrößerung</translation>
     </message>
     <message>
         <location line="-37"/>
         <source>Zoom in</source>
         <comment>View action</comment>
-        <translation>Vergrössern</translation>
+        <translation>Vergrößern</translation>
     </message>
     <message>
         <location line="-1917"/>
@@ -1999,7 +1999,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+29"/>
         <source>Formatting</source>
         <comment>Shortcuts</comment>
-        <translation>Formattierung</translation>
+        <translation>Formatierung</translation>
     </message>
     <message>
         <location line="+120"/>
@@ -2046,7 +2046,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+907"/>
         <source>User Flags toolbar</source>
         <comment>user Flags Toolbar</comment>
-        <translation>Werzeugleiste Benuzterflags</translation>
+        <translation>Werzeugleiste Benutzerflags</translation>
     </message>
     <message>
         <location line="-838"/>
@@ -2069,7 +2069,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+315"/>
         <source>Move branch diagonally up</source>
         <comment>Edit menu</comment>
-        <translation>Zeig schräg nach oben bewegen</translation>
+        <translation>Zweig schräg nach oben bewegen</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2098,7 +2098,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+29"/>
         <source>Use modifier to select and reorder objects</source>
         <comment>Mode modifier</comment>
-        <translation>Auswählen und Anordnen</translation>
+        <translation>Auswählen und anordnen</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2243,7 +2243,7 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <location line="+137"/>
         <source>Set author for new maps</source>
         <comment>Settings action</comment>
-        <translation>Author für neue Maps angeben</translation>
+        <translation>Autor für neue Maps angeben</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2347,7 +2347,7 @@ da die Lockdatei nicht angelegt werden konnte:
     <message>
         <location line="+903"/>
         <source>Set author for new maps (used in lockfile)</source>
-        <translation>Author für neue Maps angeben (zur Verwendung in Lockdatei)</translation>
+        <translation>Autor für neue Maps angeben (zur Verwendung in Lockdatei)</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -2381,7 +2381,7 @@ da die Lockdatei nicht angelegt werden konnte:
         <location line="+1489"/>
         <source>View toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation>Werkzeugleiste ANsicht</translation>
+        <translation>Werkzeugleiste Ansicht</translation>
     </message>
     <message>
         <location line="+688"/>
@@ -2440,7 +2440,7 @@ Map als standard map speichern</translation>
     <message>
         <location line="+1086"/>
         <source>Please allow vym to download release notes!</source>
-        <translation>Bitte erlauben Sie vym die  Release-Anmerkungen herunterzuladen!</translation>
+        <translation>Bitte erlauben Sie vym die Release-Anmerkungen herunterzuladen!</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -2507,7 +2507,7 @@ Map als standard map speichern</translation>
         <location line="+9"/>
         <source>Select existing heading</source>
         <comment>Settings action</comment>
-        <translation>Beschriftung vor dem editieren auswählen</translation>
+        <translation>Beschriftung vor dem Editieren auswählen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2555,7 +2555,7 @@ Map als standard map speichern</translation>
         <location line="+61"/>
         <source>Edit XLink</source>
         <comment>Context menu name</comment>
-        <translation>xLink ändern</translation>
+        <translation>XLink ändern</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2573,7 +2573,7 @@ Map als standard map speichern</translation>
         <location line="-2202"/>
         <source>&amp;New map</source>
         <comment>File menu</comment>
-        <translation>Neue map</translation>
+        <translation>Neue Map</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2646,7 +2646,7 @@ Map als standard map speichern</translation>
         <location line="+83"/>
         <source>Fit view to selection</source>
         <comment>View action</comment>
-        <translation>Zeige Auwahl und vergrößere</translation>
+        <translation>Zeige Auswahl und vergrößere</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -2664,7 +2664,7 @@ Map als standard map speichern</translation>
         <location line="+7"/>
         <source>Smooth pixmap transformations</source>
         <comment>View action</comment>
-        <translation>Weiche Bild Transformationen</translation>
+        <translation>Weiche Bildtransformationen</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2754,7 +2754,7 @@ Map als standard map speichern</translation>
         <location line="+6"/>
         <source>Autosave time</source>
         <comment>Settings action</comment>
-        <translation>Zeit für automatisches speichern</translation>
+        <translation>Zeit für automatisches Speichern</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2996,14 +2996,14 @@ wird %1 Rückgängig Schritte haben.</translation>
         <location line="+681"/>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
-        <translation>Map konnte nicht gespeichert werden
+        <translation>Map konnte nicht gespeichert werden:
 Konnte nicht umbenennen zu %1</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Couldn&apos;t save as default, failed to rename to
 %1</source>
-        <translation>Konnte nicht als Standard speichern, das umbennen ist fehlgeschlagen:
+        <translation>Konnte nicht als Standard speichern, das Umbennen ist fehlgeschlagen:
 %1</translation>
     </message>
     <message>
@@ -3020,7 +3020,7 @@ Konnte nicht umbenennen zu %1</translation>
     <message>
         <location line="+1180"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
-        <translation>&lt;html&gt;&lt;h3&gt;Erlauben Sie vym online nach Updates oder Release Anmerkungen zu suchen?&lt;/h3&gt;Wenn Sie es erlauben, wird vym &lt;ul&gt;&lt;li&gt;einmalig online nach Release Anmerkungen suchen&lt;/li&gt;&lt;li&gt;regelmäßig nach Updates suchen und Sie benachrichtigen, sollten Updates wie z.B. wichtige Fehlerbehebungen verfügbar sein&lt;/li&gt;&lt;li&gt;ein cookie erhalten mit eineer zufällig erzeugten ID und einige anonymisierte Daten senden, wie z.B.&lt;ul&gt;&lt;li&gt;vym Version&lt;/li&gt;&lt;li&gt;Plattform Name und ID &quot;Windows&quot; oder &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;Einstellungen wie z.B. Sprache und ob dunkles Design verwendet wird&lt;/li&gt;&lt;/ul&gt;Diese Daten werden geschickt zum Author von vym: Uwe Drechsel.&lt;p&gt;Als vym Entwickler motiviert es mich zu sehen, wenn viele Menschen vym benutzen. Natürlich bin ich neugierig, auf welchen Plattformen vym verwendet wird. Jede dieser Plattformen benötigt eine Menge meiner (Frei-)zeit.&lt;/p&gt; &lt;p&gt;Abgesehen von obigen Daten wird nichts weiteres gesendet, insbesondere keine privaten Daten. (Bitte bei Zweifel gerne die Quellen prüfen!)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Falls Sie es nicht zulassen, wird&lt;ul&gt;&lt;li&gt;nichts heruntergeladen und &lt;b&gt;besonders werde ich nicht motiviert&lt;/b&gt; weiter tausende Stunden meiner Zeit in die Entwicklung einer freien Software zu stecken.&lt;/ul&gt;Bitte erlauben Sie vym nach Updates zu sehen :-)</translation>
+        <translation>&lt;html&gt;&lt;h3&gt;Erlauben Sie vym online nach Updates oder Release Anmerkungen zu suchen?&lt;/h3&gt;Wenn Sie es erlauben, wird vym &lt;ul&gt;&lt;li&gt;einmalig online nach Release Anmerkungen suchen&lt;/li&gt;&lt;li&gt;regelmäßig nach Updates suchen und Sie benachrichtigen, sollten Updates wie z.B. wichtige Fehlerbehebungen verfügbar sein&lt;/li&gt;&lt;li&gt;ein cookie erhalten mit eineer zufällig erzeugten ID und einige anonymisierte Daten senden, wie z.B.&lt;ul&gt;&lt;li&gt;vym Version&lt;/li&gt;&lt;li&gt;Plattform Name und ID &quot;Windows&quot; oder &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;Einstellungen wie z.B. Sprache und ob dunkles Design verwendet wird&lt;/li&gt;&lt;/ul&gt;Diese Daten werden geschickt zum Autor von vym: Uwe Drechsel.&lt;p&gt;Als vym Entwickler motiviert es mich zu sehen, wenn viele Menschen vym benutzen. Natürlich bin ich neugierig, auf welchen Plattformen vym verwendet wird. Jede dieser Plattformen benötigt eine Menge meiner (Frei-)zeit.&lt;/p&gt; &lt;p&gt;Abgesehen von obigen Daten wird nichts weiteres gesendet, insbesondere keine privaten Daten. (Bitte bei Zweifel gerne die Quellen prüfen!)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Falls Sie es nicht zulassen, wird&lt;ul&gt;&lt;li&gt;nichts heruntergeladen und &lt;b&gt;besonders werde ich nicht motiviert&lt;/b&gt; weiter tausende Stunden meiner Zeit in die Entwicklung einer freien Software zu stecken.&lt;/ul&gt;Bitte erlauben Sie vym nach Updates zu sehen :-)</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -3102,7 +3102,7 @@ Konnte nicht umbenennen zu %1</translation>
         <location filename="../src/export-html.cpp" line="+2"/>
         <location filename="../src/export-impress.cpp" line="-83"/>
         <source>Could not write %1</source>
-        <translation>%1 konnte nicht </translation>
+        <translation>%1 konnte nicht geschrieben werden</translation>
     </message>
     <message>
         <location filename="../src/export-base.cpp" line="+124"/>
@@ -3220,12 +3220,12 @@ Wollen Sie sie überschreiben für einen Export nach %1?</translation>
     <message>
         <location filename="../src/export-orgmode.cpp" line="-1"/>
         <source>Could not export as OrgMode to %1</source>
-        <translation>Konnte nicht als OrgMode  nach %1 exportieren</translation>
+        <translation>Konnte nicht als OrgMode nach %1 exportieren</translation>
     </message>
     <message>
         <location filename="../src/export-latex.cpp" line="-1"/>
         <source>Could not export as LaTeX to %1</source>
-        <translation>Konnte nicht als LaTeX  nach %1 exportieren</translation>
+        <translation>Konnte nicht als LaTeX nach %1 exportieren</translation>
     </message>
     <message>
         <location filename="../src/export-impress.cpp" line="-116"/>
@@ -3314,7 +3314,7 @@ Die Map konnte nicht gespeichert werden: Bitte prüfen, ob eine Backup Datei vor
     <message>
         <location line="+9"/>
         <source>Couldn&apos;t link from %1 to target of old symbolic link %2</source>
-        <translation>Konnte nicht von %1 zum Ziel des symblischen Links %2 verlinken</translation>
+        <translation>Konnte nicht von %1 zum Ziel des symbolischen Links %2 verlinken</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3401,7 +3401,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
     <message>
         <location line="+1"/>
         <source>&lt;h3&gt;Map is newer than VYM&lt;/h3&gt;&lt;p&gt;The map you are just trying to load was saved using vym %1. The version of this vym is %2. If you run into problems after pressing the ok-button below, updating vym should help.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;Map ist neuer als VYM&lt;/h3&gt;&lt;p&gt;Die Map, die Sie gerade versuchen zu laden wurde mit vym %1 gespeichert. Die vorliegende Version von vym ist %2. Falls nach dem Fortfahren mit Ok Probleme autauchen, sollte ein Update von vym helfen.&lt;/p&gt;</translation>
+        <translation>&lt;h3&gt;Map ist neuer als VYM&lt;/h3&gt;&lt;p&gt;Die Map, die Sie gerade versuchen zu laden wurde mit vym %1 gespeichert. Die vorliegende Version von vym ist %2. Falls nach dem Fortfahren mit Ok Probleme auftauchen, sollte ein Update von vym helfen.&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3423,7 +3423,7 @@ Riskieren Sie es dessen Inhalt zu überschreiben?</translation>
     <message>
         <location line="+1"/>
         <source>Please use Settings-&gt;</source>
-        <translation>Bitte setzen sie einen Pfad in Einstellungen-&gt;</translation>
+        <translation>Bitte setzen Sie einen Pfad in Einstellungen-&gt;</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3649,7 +3649,7 @@ Wollen Sie sie überschreiben?</translation>
     <name>ShowTextDialog</name>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation type="vanished">Schließen</translation>
     </message>
     <message>
         <source>Dialog</source>
@@ -4087,14 +4087,14 @@ Do you want to write the map</source>
         <translation>Die Map %1
 verwendete nicht das komprimierte vym Dateiformat.
 Schreiben ohne Komprimierung würde auch Bilder und Flaggen schreiben und 
-könnte damit Dateien im  Verzeichnis überschreiben
+könnte damit Dateien im Verzeichnis überschreiben
 
 Soll die Map geschrieben werden?</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>uncompressed, potentially overwrite existing data</source>
-        <translation>unkomprimiert, u.U werden Daten überschrieben</translation>
+        <translation>unkomprimiert, u.U. werden Daten überschrieben</translation>
     </message>
     <message>
         <location line="+325"/>
@@ -4460,7 +4460,7 @@ Soll die Map durch die neue Datei ersetzt werden?</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="vanished">Schliessen</translation>
+        <translation type="vanished">Schließen</translation>
     </message>
     <message>
         <location filename="../src/zip-settings-dialog.cpp" line="+22"/>
