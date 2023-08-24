@@ -44,7 +44,7 @@ class ConfluenceAgent : public QObject {
     void startJob();
 
   private:
-    void continueJob();
+    void continueJob(int nextStep = -1);
     void finishJob();
     void unknownStepWarning();
 
@@ -78,6 +78,14 @@ class ConfluenceAgent : public QObject {
   private: void startUpdateAttachmentRequest();
   private slots: void attachmentUpdated(QNetworkReply *reply);
 
+  signals:
+    void attachmentsSuccess();
+    void attachmentsFailure();
+
+  public slots:
+    void attachmentsUploadSuccess();
+    void attachmentsUploadFailure();
+
   private: bool wasRequestSuccessful(
             QNetworkReply *reply, 
             const QString &requestDesc,
@@ -108,7 +116,7 @@ class ConfluenceAgent : public QObject {
     QString username;
     QString password;
 
-    // Settings: Where to find Confluence
+    // Settings: Where to find Confluggence
     QString baseURL;
     QString apiURL;
 
@@ -118,27 +126,32 @@ class ConfluenceAgent : public QObject {
 
     // Export settings
   public:
-    bool exportImage;
+    bool exportImage;   // FIXME-0 still needed? export attachments...
 
   private:
     // Parameters
     QString pageURL;
     QString newPageName;
-    QString uploadFilePath;
+    QString uploadFilePath; // FIXME-0 needed?
     QString userQuery;
 
     // Page details received from Confluence
     QString pageID;
     QString spaceKey;
 
+    // Child agent for attachments
+    ConfluenceAgent *attachmentsAgent;
+
     // Attachments found in page
     QStringList attachmentsTitles;
     QStringList attachmentsIds;
 
     // Current attachments queued for upload
-    QString uploadAttachmentFilePath;
-    QString uploadAttachmentTitle;      // set with basename(uploadAttachmentFilePath)
-    QString uploadAttachmentId;         // copied from attachmentsIds
+    QStringList uploadAttachmentPaths;
+    int currentUploadAttachmentIndex;
+    QString currentAttachmentPath;      // set with basename(..) from path
+    QString currentAttachmentTitle;      // set with basename(..) from path
+    QString currentAttachmentId;         // copied from attachmentsIds
 
     // User info received from Confluence
     QList <ConfluenceUser> userList;

@@ -33,7 +33,7 @@ bool ConfluenceAgent::available()
 }
 
 ConfluenceAgent::ConfluenceAgent() { 
-    //qDebug() << "Constr. ConfluenceAgent";
+    qDebug() << "Constr. ConfluenceAgent jobType=";
     init(); 
 }
 
@@ -54,7 +54,7 @@ ConfluenceAgent::ConfluenceAgent(BranchItem *bi)
 
 ConfluenceAgent::~ConfluenceAgent()
 {
-    //qDebug() << "Destr ConfluenceAgent.";
+    qDebug() << "Destr ConfluenceAgent." << jobType;
     if (killTimer)
         delete killTimer;
 }
@@ -82,6 +82,10 @@ void ConfluenceAgent::init()
     
     // Settings
     exportImage = false;
+
+    // Attachments
+    attachmentsAgent = nullptr;
+    currentUploadAttachmentIndex = -1;
 
     // Read credentials 
     authUsingPAT = 
@@ -145,8 +149,7 @@ void ConfluenceAgent::setUploadFilePath(const QString &fp)
 
 void ConfluenceAgent::addUploadAttachmentFilePath(const QString &fp)
 {
-    uploadAttachmentFilePath = fp;  // FIXME-0 currently only one file supported
-    uploadAttachmentTitle = basename(uploadAttachmentFilePath);
+    uploadAttachmentPaths << fp;
 }
 
 void ConfluenceAgent::startJob()
@@ -160,14 +163,17 @@ void ConfluenceAgent::startJob()
     }
 }
 
-void ConfluenceAgent::continueJob()
+void ConfluenceAgent::continueJob(int nextStep)
 {
     if (abortJob) {
         finishJob();
         return;
     }
 
-    jobStep++;
+    if (nextStep < 0)
+        jobStep++;
+    else
+        jobStep = nextStep;
 
     VymModel *model;
 
@@ -261,50 +267,33 @@ void ConfluenceAgent::continueJob()
                 return;
             }
             if (jobStep == 3) {
-                // Try to get info for attachments
-                if (exportImage) {
-                    startGetAttachmentsInfoRequest();
+                // Upload attachments?
+                if (uploadAttachmentPaths.count() > 0) {
+                    if (attachmentsAgent)   // FIXME-0 what could go wrong here?
+                        qWarning() << "CA::updatePage  attachmentsAgent already exists!";
+                    else {
+                        attachmentsAgent = new ConfluenceAgent;
+                        attachmentsAgent->setJobType(ConfluenceAgent::UploadAttachments);
+                        attachmentsAgent->pageID = pageID;
+                        attachmentsAgent->uploadAttachmentPaths = uploadAttachmentPaths;    
+
+                        connect(attachmentsAgent, &ConfluenceAgent::attachmentsSuccess,
+                            this, &ConfluenceAgent::attachmentsUploadSuccess);
+                        connect(attachmentsAgent, &ConfluenceAgent::attachmentsFailure,
+                            this, &ConfluenceAgent::attachmentsUploadFailure);
+                        attachmentsAgent->startJob();
+                    }
                     return;
                 }
-                // Continue, with updating page
-                jobStep = 6;
             }
             if (jobStep == 4) {
-                // Create attachment with image of map, if required
-                if (exportImage) {
-                    if (!attachmentsTitles.contains(uploadAttachmentTitle)) {
-                        // Create new attachment
-                        qDebug() << " -> create att.";
-                        startCreateAttachmentRequest();
-                        return;
-                    } else {
-                        // Update existing attachment
-                        qDebug() << " -> update att.";
-                        jobStep = 5;
-                    }
-                } else {
-                    // Continue, will goto step with updating page
-                    jobStep = 6;    // FIXME-0 "Goto" does not work, replace switch with ifs?
-                }
-            }
-            if (jobStep == 5) {
-                qDebug() << " -> step 5 reached";
-                // Update attachment with image of map, if required
-                if (exportImage) {
-                    startUpdateAttachmentRequest();
-                    jobStep++;
-                    return;
-                }
-                // Attachment with image of map is already there, update it
-            }
-            if (jobStep == 6) {
                 // Update page with parent url
                 if (newPageName.isEmpty())
                         newPageName = pageObj["title"].toString();
                 startUpdatePageRequest();
                 return;
             }
-            if (jobStep == 7) {
+            if (jobStep == 5) {
                 //qDebug() << "CA::finished  Updated page with ID: " << pageObj["id"].toString();
                 mainWindow->statusMessage(
                     QString("Updated Confluence page %1").arg(pageURL));
@@ -346,6 +335,53 @@ void ConfluenceAgent::continueJob()
                     finishJob();
             }
             return;
+
+        case UploadAttachments:
+            qDebug() << "CA::UploadAttachments step= " << jobStep;
+            if (jobStep == 1) {
+
+                if (uploadAttachmentPaths.count() <= 0) {
+                    qWarning() << "ConfluenceAgent: No attachments to upload!";
+                    emit(attachmentsFailure());
+                    finishJob();
+                    return;
+                }
+
+                // Prepare to upload first attachment in list
+                currentUploadAttachmentIndex = 0;
+
+                // Try to get info for attachments
+                startGetAttachmentsInfoRequest();
+                return;
+            }
+            if (jobStep == 2) {
+                // Entry point for looping over list of attachments to upload
+                qDebug() << "       cAI=" << currentUploadAttachmentIndex;
+                qDebug() << " attCount=" << uploadAttachmentPaths.count();
+                qDebug() << "    titles=" << attachmentsTitles;
+
+                if (currentUploadAttachmentIndex >= uploadAttachmentPaths.count()) {
+                    // All uploaded, let's finish uploading
+                    emit(attachmentsSuccess());
+                    finishJob();
+                } else {
+                    currentAttachmentPath = uploadAttachmentPaths.at(currentUploadAttachmentIndex);
+                    currentAttachmentTitle = basename(currentAttachmentPath);
+
+                    // Create attachment with image of map, if required
+                    if (attachmentsTitles.count() == 0 || 
+                        !attachmentsTitles.contains(currentAttachmentTitle)) {
+                        // Create new attachment
+                        qDebug() << " -> create att.";
+                        startCreateAttachmentRequest();
+                    } else {
+                        // Update existing attachment
+                        qDebug() << " -> update att.";
+                        startUpdateAttachmentRequest();
+                    }
+                }
+                return;
+            }
         default:
             qWarning() << "ConfluenceAgent::continueJob   unknown jobType " << jobType;
     }
@@ -735,8 +771,6 @@ void ConfluenceAgent::startCreateAttachmentRequest()
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-0 delete later
 
-    qDebug() << "   attFPath=" << uploadAttachmentFilePath;
-    qDebug() << "   attTitle=" << uploadAttachmentTitle;
 
     QHttpPart imagePart;
     imagePart.setHeader(
@@ -745,15 +779,17 @@ void ConfluenceAgent::startCreateAttachmentRequest()
             // Name must be "file"
             QVariant(
                 QString("form-data; name=\"file\"; filename=\"%1\"")
-                    .arg(uploadAttachmentTitle)));
+                    .arg(currentAttachmentTitle)));
     imagePart.setHeader(
             QNetworkRequest::ContentTypeHeader,
             QVariant("image/jpeg"));
 
-    QFile *file = new QFile(uploadAttachmentFilePath);
+    QFile *file = new QFile(currentAttachmentPath);
     if (!file->open(QIODevice::ReadOnly))
         qWarning() << "Problem opening file!!!!!!!!!!!!!!!";    // FIXME-0 fix error handling
     imagePart.setBodyDevice(file);
+    qDebug() << "      title=" << currentAttachmentTitle;
+    qDebug() << "       path=" << currentAttachmentPath;
     qDebug() << "        url=" << url;
     qDebug() << "  file size=" << file->size();
     multiPart->append(imagePart);
@@ -784,7 +820,7 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
         if (fullReply.contains(
                     QString("Cannot add a new attachment with same file name as an existing attachment").toLatin1())) {
             // Replace existing attachment
-            qDebug() << "Attachment with name " << uploadAttachmentTitle << " already exists.";
+            qDebug() << "Attachment with name " << currentAttachmentTitle << " already exists.";
             qDebug() << "AttachmentID unknown, stopping now"; 
 
             // FIXME-0 attachmentID = 
@@ -805,41 +841,39 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
     //FIXME-000  convert to array, take first element. see also userinfo
     //cout << attachmentObj["results"].toArray().toStdString();
 
-    // Skip the step with updating attachment
-    jobStep++;
+    currentUploadAttachmentIndex++;
 
-    continueJob();
+    continueJob(2);
 }
 
 void ConfluenceAgent::startUpdateAttachmentRequest()
 {
     if (debug) qDebug() << "CA::startUpdateAttachmentRequest";
-    qDebug() << "*** startUpdateAttachment begin " << uploadAttachmentTitle;
+    qDebug() << "*** startUpdateAttachment begin " << currentAttachmentTitle;
 
     for (int i = 0; i < attachmentsTitles.count() - 1; i++) {
         qDebug() << "     - " << attachmentsTitles.at(i);
-        if (attachmentsTitles.at(i) == uploadAttachmentTitle) {
-            uploadAttachmentId = attachmentsIds.at(i);
+        if (attachmentsTitles.at(i) == currentAttachmentTitle) {
+            currentAttachmentId = attachmentsIds.at(i);
             break;
         }
     }
 
-    if (uploadAttachmentId.isEmpty()) {
+    if (currentAttachmentId.isEmpty()) {
         QMessageBox::warning(
             nullptr, tr("Warning"),
-            QString("Could not find existing attachment \"%1\" in page").arg(uploadAttachmentTitle));
+            QString("Could not find existing attachment \"%1\" in page").arg(currentAttachmentTitle));
         finishJob();
         return;
     }
 
-    QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment/" + uploadAttachmentId + "/data";
+    QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment/" + currentAttachmentId + "/data";
 
     qDebug() << "    url=" << url;
     QNetworkRequest request = createRequest(url);
     request.setRawHeader("X-Atlassian-Token", "no-check");
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-0 delete later
-
 
     QHttpPart imagePart;
     imagePart.setHeader(
@@ -848,16 +882,18 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
             // Name must be "file"
             QVariant(
                 QString("form-data; name=\"file\"; filename=\"%1\"")
-                    .arg(uploadAttachmentTitle)));
-    qDebug() << "title=" << uploadAttachmentTitle;
+                    .arg(currentAttachmentTitle)));
+    qDebug() << "title=" << currentAttachmentTitle;
     imagePart.setHeader(
             QNetworkRequest::ContentTypeHeader,
             QVariant("image/jpeg"));
 
-    QFile *file = new QFile(uploadAttachmentFilePath);   // FIXME-0 delete later
+    QFile *file = new QFile(currentAttachmentPath);   // FIXME-0 delete later
     if (!file->open(QIODevice::ReadOnly))
         qWarning() << "Problem opening file!!!!!!!!!!!!!!!";    // FIXME-0 fix error handling
     imagePart.setBodyDevice(file);
+    qDebug() << "      title=" << currentAttachmentTitle;
+    qDebug() << "       path=" << currentAttachmentPath;
     qDebug() << "        url=" << url;
     qDebug() << "  file size=" << file->size();
     multiPart->append(imagePart);
@@ -887,15 +923,28 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
     if (!wasRequestSuccessful(reply, "update attachment", fullReply))
         return;
 
-
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(fullReply);
     attachmentObj = jsdoc.object();
 
     qDebug() << "CA::attachmentUpdated Successful:";
-    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
 
+    currentUploadAttachmentIndex++;
+
+    continueJob(2);
+}
+
+void ConfluenceAgent::attachmentsUploadSuccess()
+{
+    qDebug() << "CA::attachmentsUploaded successfully";
     continueJob();
+}
+
+void ConfluenceAgent::attachmentsUploadFailure()
+{
+    qDebug() << "CA::attachmentsUpload failed";
+    finishJob();
 }
 
 bool ConfluenceAgent::wasRequestSuccessful(QNetworkReply *reply, const QString &requestDesc, const QByteArray &fullReply)
