@@ -35,6 +35,7 @@ class ExportConfluenceDialog : public QDialog {
     bool mapCenterToPageName();
     bool useNumbering();
     bool includeMapImage();
+    bool includeImages();
     void doExport();
 
   public slots:

@@ -79,9 +79,13 @@ void ExportConfluenceDialog::readSettings()
         pageName = QString();
     ui.lineEditPageName->setText(pageName);
 
-    ui.imageCheckBox->setChecked(
+    ui.includeMapImageCheckBox->setChecked(
         settings.localValue (filepath,
         "/export/confluence/includeMapImage", "true").toBool());
+
+    ui.includeImagesCheckBox->setChecked(
+        settings.localValue (filepath,
+        "/export/confluence/includeImages", "true").toBool());
 
     /*  FIXME-3 cleanup the copied HTML parameters
     includeImages = settings.localValue (filepath,
@@ -133,7 +137,10 @@ void ExportConfluenceDialog::saveSettings()
                 "yes");
         settings.setLocalValue (
                 filepath, "/export/confluence/includeMapImage",
-                ui.imageCheckBox->isChecked());
+                ui.includeMapImageCheckBox->isChecked());
+        settings.setLocalValue (
+                filepath, "/export/confluence/includeImages",
+                ui.includeImagesCheckBox->isChecked());
         //        settings.setLocalValue (filepath,
         //        "/export/confluence/includeImages", includeImages);
         //        settings.setLocalValue (filepath, "/export/confluence/useTOC",
@@ -180,13 +187,16 @@ bool ExportConfluenceDialog::useNumbering()
 
 bool ExportConfluenceDialog::includeMapImage()
 {
-    return ui.imageCheckBox->isChecked();
+    return ui.includeMapImageCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::includeImages()
+{
+    return ui.includeImagesCheckBox->isChecked();
 }
 
 void ExportConfluenceDialog::doExport()
 {
-    qDebug() << "ECD: Starting export now";
-    qDebug() << "  exportImage=" << ui.imageCheckBox->isChecked();
     accept();
 }
 

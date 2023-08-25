@@ -4,7 +4,6 @@
 
 #include "attributeitem.h"
 #include "branchobj.h"
-#include "confluence-agent.h"
 #include "mainwindow.h"
 #include "settings.h"
 #include "warningdialog.h"
@@ -30,6 +29,8 @@ void ExportConfluence::init()
 
     url = "";
     pageName = "";
+
+    agent = nullptr;
 }
 
 void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
@@ -127,9 +128,8 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                 s += number + taskFlags + heading + userFlags;
         }
 
-        // Include images // FIXME-3 not implemented yet
-        /*
-        if (dia.includeImages)
+        // Include images
+        if (dia.includeImages())
         {
             int imageCount = current->imageCount();
             ImageItem *image;
@@ -138,13 +138,13 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             {
                 image = current->getImageNum(i);
                 imagePath =  "image-" + image->getUuid().toString() + ".png";
-                image->save( dirPath + "/" + imagePath, "PNG");
-                s += "<br /><img src=\"" + imagePath;
-                s += "\" alt=\"" + QObject::tr("Image: %1","Alt tag in HTML
-        export").arg(image->getOriginalFilename()); s += "\"><br />";
+                image->saveImage( dirPath + "/" + imagePath);
+                agent->addUploadAttachmentPath(imagePath);
+                s += "<p>  <span style=\"color: rgb(0,170,255);\"><ac:image ac:height=\"250\" >";
+                s += QString("<ri:attachment ri:filename=\"%1\"/></ac:image></span></p>").arg(imagePath);
+
             }
         }
-        */
 
         // Include note
         if (!current->isNoteEmpty()) {
@@ -363,8 +363,18 @@ void ExportConfluence::doExport(bool useDialog)
     // Hide stuff during export
     model->setExportMode(true);
 
+    // Create Confluence agent
+    agent = new ConfluenceAgent();
+    if (createNewPage)
+        agent->setJobType(ConfluenceAgent::CreatePage);
+    else
+        agent->setJobType(ConfluenceAgent::UpdatePage);
+    agent->setPageURL(url);
+    agent->setNewPageName(pageName);
+    agent->setUploadPagePath(filePath);
+    agent->setModelID(model->getModelID());
+
     // Include image of map
-    // (be careful: this resets Export mode, so call before exporting branches)
     QString mapImageFilePath = tmpDir.path() + "/mapImage.png";
     if (dia.includeMapImage())
     {
@@ -377,6 +387,8 @@ void ExportConfluence::doExport(bool useDialog)
         ts << "  </span>";
         ts << "</p>";
         offset = model->exportImage (mapImageFilePath, false, "PNG");
+
+        agent->addUploadAttachmentPath(mapImageFilePath);
     }
 
     // Include table of contents
@@ -391,18 +403,6 @@ void ExportConfluence::doExport(bool useDialog)
 
     file.close();
 
-    // Create Confluence agent
-    ConfluenceAgent *agent = new ConfluenceAgent();
-    if (createNewPage)
-        agent->setJobType(ConfluenceAgent::CreatePage);
-    else
-        agent->setJobType(ConfluenceAgent::UpdatePage);
-    agent->setPageURL(url);
-    agent->setNewPageName(pageName);
-    agent->setUploadPagePath(filePath);
-    agent->setModelID(model->getModelID());
-    if(dia.includeMapImage())
-        agent->addUploadAttachmentPath(mapImageFilePath);
 
     agent->startJob();
 
@@ -421,4 +421,6 @@ void ExportConfluence::doExport(bool useDialog)
 
     dia.saveSettings();
     model->setExportMode(false);
+
+    // Note: ConfluenceAgent professionally destroys itself after completion
 }

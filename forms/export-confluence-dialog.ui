@@ -110,9 +110,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="imageCheckBox">
+       <widget class="QCheckBox" name="includeMapImageCheckBox">
         <property name="text">
-         <string>Image of map</string>
+         <string>Image of map on top of page</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="includeImagesCheckBox">
+        <property name="text">
+         <string>Images used in map</string>
         </property>
        </widget>
       </item>
