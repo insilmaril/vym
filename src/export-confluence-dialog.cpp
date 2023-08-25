@@ -64,12 +64,6 @@ void ExportConfluenceDialog::readSettings()
                   .toString();
     ui.lineEditURL->setText(url);
 
-    pageName = settings
-                    .localValue(filepath, "/export/confluence/pageName",
-                                "New page created on " +
-                                    QDateTime::currentDateTime().toString())
-                    .toString();
-    ui.lineEditPageName->setText(pageName);
 
     ui.createPageButton->setChecked(
         settings
@@ -78,6 +72,11 @@ void ExportConfluenceDialog::readSettings()
     ui.updatePageButton->setChecked(!
         settings
             .localValue(filepath, "/export/confluence/createNewPage", false).toBool());
+    if (!ui.updatePageButton->isChecked()) {
+        pageName = settings.localValue(filepath, "/export/confluence/pageName", 
+                        "New page created on " + QDateTime::currentDateTime().toString()).toString();
+        ui.lineEditPageName->setText(pageName);
+    }
 
     ui.imageCheckBox->setChecked(
         settings.localValue (filepath,
