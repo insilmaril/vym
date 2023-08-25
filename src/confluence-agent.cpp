@@ -730,8 +730,8 @@ void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
     for (int i = 0; i < attachmentsCount; i++) {
         attachmentsTitles << jsdoc["results"][i]["title"].toString();
         attachmentsIds    << jsdoc["results"][i]["id"].toString();
-        // qDebug() << " Title: " << attachmentsTitles.last() << 
-        //             " Id: " << attachmentsIds.last();
+        //qDebug() << " Title: " << attachmentsTitles.last() << 
+        //            " Id: " << attachmentsIds.last();
     }
 
     continueJob();
@@ -824,7 +824,7 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
 {
     if (debug) qDebug() << "CA::startUpdateAttachmentRequest";
 
-    for (int i = 0; i < attachmentsTitles.count() - 1; i++) {
+    for (int i = 0; i < attachmentsTitles.count(); i++) {
         qDebug() << "     - " << attachmentsTitles.at(i);
         if (attachmentsTitles.at(i) == currentAttachmentTitle) {
             currentAttachmentId = attachmentsIds.at(i);
@@ -835,7 +835,7 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
     if (currentAttachmentId.isEmpty()) {
         QMessageBox::warning(
             nullptr, tr("Warning"),
-            QString("Could not find existing attachment \"%1\" in page").arg(currentAttachmentTitle));
+            QString("Could not find existing attachment \"%1\" in page with ID: %2").arg(currentAttachmentTitle).arg(pageID));
         finishJob();
         return;
     }

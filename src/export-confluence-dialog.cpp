@@ -72,11 +72,12 @@ void ExportConfluenceDialog::readSettings()
     ui.updatePageButton->setChecked(!
         settings
             .localValue(filepath, "/export/confluence/createNewPage", false).toBool());
-    if (!ui.updatePageButton->isChecked()) {
+    if (ui.createPageButton->isChecked())
         pageName = settings.localValue(filepath, "/export/confluence/pageName", 
                         "New page created on " + QDateTime::currentDateTime().toString()).toString();
-        ui.lineEditPageName->setText(pageName);
-    }
+    else 
+        pageName = QString();
+    ui.lineEditPageName->setText(pageName);
 
     ui.imageCheckBox->setChecked(
         settings.localValue (filepath,
