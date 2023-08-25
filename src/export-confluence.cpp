@@ -399,11 +399,10 @@ void ExportConfluence::doExport(bool useDialog)
         agent->setJobType(ConfluenceAgent::UpdatePage);
     agent->setPageURL(url);
     agent->setNewPageName(pageName);
-    agent->setUploadFilePath(filePath);
+    agent->setUploadPagePath(filePath);
     agent->setModelID(model->getModelID());
-    agent->exportImage = dia.includeMapImage();
     if(dia.includeMapImage())
-        agent->addUploadAttachmentFilePath(mapImageFilePath);
+        agent->addUploadAttachmentPath(mapImageFilePath);
 
     agent->startJob();
 

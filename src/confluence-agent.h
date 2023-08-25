@@ -38,15 +38,15 @@ class ConfluenceAgent : public QObject {
     void setModelID(uint id);
     void setPageURL(const QString &u);
     void setNewPageName(const QString &t);
-    void setUploadFilePath(const QString &fp);
-    void addUploadAttachmentFilePath(const QString &fp);
+    void setUploadPagePath(const QString &fp);
+    void addUploadAttachmentPath(const QString &fp);
 
     void startJob();
 
   private:
     void continueJob(int nextStep = -1);
     void finishJob();
-    void unknownStepWarning();
+    void unknownStepWarningFinishJob();
 
   signals:
     void foundUsers(QList <ConfluenceUser>);
@@ -124,15 +124,11 @@ class ConfluenceAgent : public QObject {
     uint branchID;
     uint modelID;
 
-    // Export settings
-  public:
-    bool exportImage;   // FIXME-0 still needed? export attachments...
-
   private:
     // Parameters
     QString pageURL;
     QString newPageName;
-    QString uploadFilePath; // FIXME-0 needed?
+    QString uploadPagePath;
     QString userQuery;
 
     // Page details received from Confluence

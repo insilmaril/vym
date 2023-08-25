@@ -33,7 +33,7 @@ bool ConfluenceAgent::available()
 }
 
 ConfluenceAgent::ConfluenceAgent() { 
-    qDebug() << "Constr. ConfluenceAgent jobType=";
+    //qDebug() << "Constr. ConfluenceAgent jobType=";
     init(); 
 }
 
@@ -54,7 +54,7 @@ ConfluenceAgent::ConfluenceAgent(BranchItem *bi)
 
 ConfluenceAgent::~ConfluenceAgent()
 {
-    qDebug() << "Destr ConfluenceAgent." << jobType;
+    // qDebug() << "Destr ConfluenceAgent." << jobType;
     if (killTimer)
         delete killTimer;
 }
@@ -80,9 +80,6 @@ void ConfluenceAgent::init()
     apiURL = baseURL + "/rest/api";
     baseURL = settings.value("/atlassian/confluence/url", "baseURL").toString();
     
-    // Settings
-    exportImage = false;
-
     // Attachments
     attachmentsAgent = nullptr;
     currentUploadAttachmentIndex = -1;
@@ -142,12 +139,12 @@ void ConfluenceAgent::setNewPageName(const QString &t)
     newPageName = t;
 }
 
-void ConfluenceAgent::setUploadFilePath(const QString &fp)
+void ConfluenceAgent::setUploadPagePath(const QString &fp)
 {
-    uploadFilePath = fp;
+    uploadPagePath = fp;
 }
 
-void ConfluenceAgent::addUploadAttachmentFilePath(const QString &fp)
+void ConfluenceAgent::addUploadAttachmentPath(const QString &fp)
 {
     uploadAttachmentPaths << fp;
 }
@@ -155,8 +152,7 @@ void ConfluenceAgent::addUploadAttachmentFilePath(const QString &fp)
 void ConfluenceAgent::startJob()
 {
     if (jobStep > 0) {
-        unknownStepWarning();
-        finishJob();
+        unknownStepWarningFinishJob();
     } else {
         jobStep = 0;
         continueJob();
@@ -177,74 +173,71 @@ void ConfluenceAgent::continueJob(int nextStep)
 
     VymModel *model;
 
-    qDebug() << "CA::contJob " << jobType << " Step: " << jobStep;
+    // qDebug() << "CA::contJob " << jobType << " Step: " << jobStep;
 
     switch(jobType) {
         case CopyPagenameToHeading:
-            switch(jobStep) {
-                case 1:
-                    startGetPageSourceRequest(pageURL);
-                    return;
-                case 2:
-                    startGetPageDetailsRequest();
-                    return;
-                case 3:
-                    model = mainWindow->getModel(modelID);
-                    if (model) {
-                        BranchItem *bi = (BranchItem *)(model->findID(branchID));
+            if (jobStep == 1) {
+                startGetPageSourceRequest(pageURL);
+                return;
+            }
+            if (jobStep == 2) {
+                startGetPageDetailsRequest();
+                return;
+            }
+            if (jobStep == 3) {
+                model = mainWindow->getModel(modelID);
+                if (model) {
+                    BranchItem *bi = (BranchItem *)(model->findID(branchID));
 
-                        if (bi) {
-                            QString h = spaceKey + ": " + pageObj["title"].toString();
-                            model->setHeading(h, bi);
-                        }
-                        else
-                            qWarning() << "CA::continueJob couldn't find branch "
-                                       << branchID;
-                    }
-                    else
-                        qWarning() << "CA::continueJob couldn't find model " << modelID;
-                    break;  // FIXME-0 and now?
-                default:
-                    unknownStepWarning();
-                    break;  // FIXME-0 and now?
-            };
-            break;  // FIXME-0 and now?
+                    if (bi) {
+                        QString h = spaceKey + ": " + pageObj["title"].toString();
+                        model->setHeading(h, bi);
+                    } else
+                        qWarning() << "CA::continueJob couldn't find branch "
+                                   << branchID;
+                } else
+                    qWarning() << "CA::continueJob couldn't find model " << modelID;
+                finishJob();
+                return;
+            }
+            unknownStepWarningFinishJob();
+            return;
 
-        case CreatePage:   // FIXME-0 add upload image
-            switch(jobStep) {
-                case 1:
-                    if (pageURL.isEmpty()) {
-                        qWarning() << "CA::contJob NewPage: pageURL is empty";
-                        finishJob();
-                        return;
-                    }
-                    if (newPageName.isEmpty()) {
-                        qWarning() << "CA::contJob NewPage: newPageName is empty";
-                        finishJob();
-                        return;
-                    }
-
-                    mainWindow->statusMessage(
-                        QString("Starting to create Confluence page %1").arg(pageURL));
-
-                    // Check if parent page with url already exists and get pageID, spaceKey
-                    startGetPageSourceRequest(pageURL);
-                    return;
-                case 2:
-                    // Create new page with parent url
-                    startCreatePageRequest();
-                    return;
-                case 3:
-                    //qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
-                    mainWindow->statusMessage(
-                        QString("Created Confluence page %1").arg(pageURL));
+        case CreatePage:   // FIXME-0 add upload attachments
+            if (jobStep == 1) {
+                if (pageURL.isEmpty()) {
+                    qWarning() << "CA::contJob NewPage: pageURL is empty";
                     finishJob();
                     return;
-                default:
-                    unknownStepWarning();
-            };
+                }
+                if (newPageName.isEmpty()) {
+                    qWarning() << "CA::contJob NewPage: newPageName is empty";
+                    finishJob();
+                    return;
+                }
 
-            break;  // FIXME-0 and now?
+                mainWindow->statusMessage(
+                    QString("Starting to create Confluence page %1").arg(pageURL));
+
+                // Check if parent page with url already exists and get pageID, spaceKey
+                startGetPageSourceRequest(pageURL);
+                return;
+            }
+            if (jobStep == 2) {
+                // Create new page with parent url
+                startCreatePageRequest();
+                return;
+            }
+            if (jobStep == 3) {
+                //qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
+                mainWindow->statusMessage(
+                    QString("Created Confluence page %1").arg(pageURL));
+                finishJob();
+                return;
+            }
+            unknownStepWarningFinishJob();
+            return;
 
         case UpdatePage:
             if (jobStep == 1) {
@@ -269,20 +262,16 @@ void ConfluenceAgent::continueJob(int nextStep)
             if (jobStep == 3) {
                 // Upload attachments?
                 if (uploadAttachmentPaths.count() > 0) {
-                    if (attachmentsAgent)   // FIXME-0 what could go wrong here?
-                        qWarning() << "CA::updatePage  attachmentsAgent already exists!";
-                    else {
-                        attachmentsAgent = new ConfluenceAgent;
-                        attachmentsAgent->setJobType(ConfluenceAgent::UploadAttachments);
-                        attachmentsAgent->pageID = pageID;
-                        attachmentsAgent->uploadAttachmentPaths = uploadAttachmentPaths;    
+                    attachmentsAgent = new ConfluenceAgent;
+                    attachmentsAgent->setJobType(ConfluenceAgent::UploadAttachments);
+                    attachmentsAgent->pageID = pageID;
+                    attachmentsAgent->uploadAttachmentPaths = uploadAttachmentPaths;    
 
-                        connect(attachmentsAgent, &ConfluenceAgent::attachmentsSuccess,
-                            this, &ConfluenceAgent::attachmentsUploadSuccess);
-                        connect(attachmentsAgent, &ConfluenceAgent::attachmentsFailure,
-                            this, &ConfluenceAgent::attachmentsUploadFailure);
-                        attachmentsAgent->startJob();
-                    }
+                    connect(attachmentsAgent, &ConfluenceAgent::attachmentsSuccess,
+                        this, &ConfluenceAgent::attachmentsUploadSuccess);
+                    connect(attachmentsAgent, &ConfluenceAgent::attachmentsFailure,
+                        this, &ConfluenceAgent::attachmentsUploadFailure);
+                    attachmentsAgent->startJob();
                     return;
                 }
             }
@@ -300,44 +289,41 @@ void ConfluenceAgent::continueJob(int nextStep)
                 finishJob();
                 return;
             }
-            unknownStepWarning();
-            break;  // FIXME-0 and now?
-        case GetUserInfo:
-            switch(jobStep) {
-                case 1:
-                    // qDebug() << "CA:: begin getting UserInfo";
-                    startGetUserInfoRequest();
-                    return;
-                case 2: {
-                        QJsonArray array = pageObj["results"].toArray();
-                        QJsonObject userObj;
-                        QJsonObject u;
-                        ConfluenceUser user;
-                        userList.clear();
-                        for (int i = 0; i < array.size(); ++i) {
-                            userObj = array[i].toObject();
+            unknownStepWarningFinishJob();
+            return;
 
-                            u = userObj["user"].toObject();
-                            user.setTitle( userObj["title"].toString());
-                            user.setURL( "https://" + baseURL + "/"
-                                    + "display/~" + u["username"].toString());
-                            user.setUserKey( u["userKey"].toString());
-                            user.setUserName( u["username"].toString());
-                            user.setDisplayName( u["displayName"].toString());
-                            userList << user;
-                        }
-                        emit (foundUsers(userList));
-                        finishJob();
-                        return;
-                    }
-                default:
-                    unknownStepWarning();
-                    finishJob();
+        case GetUserInfo:
+            if (jobStep == 1) {
+                // qDebug() << "CA:: begin getting UserInfo";
+                startGetUserInfoRequest();
+                return;
             }
+            if (jobStep == 2) {
+                QJsonArray array = pageObj["results"].toArray();
+                QJsonObject userObj;
+                QJsonObject u;
+                ConfluenceUser user;
+                userList.clear();
+                for (int i = 0; i < array.size(); ++i) {
+                    userObj = array[i].toObject();
+
+                    u = userObj["user"].toObject();
+                    user.setTitle( userObj["title"].toString());
+                    user.setURL( "https://" + baseURL + "/"
+                            + "display/~" + u["username"].toString());
+                    user.setUserKey( u["userKey"].toString());
+                    user.setUserName( u["username"].toString());
+                    user.setDisplayName( u["displayName"].toString());
+                    userList << user;
+                }
+                emit (foundUsers(userList));
+                finishJob();
+                return;
+            }
+            unknownStepWarningFinishJob();
             return;
 
         case UploadAttachments:
-            qDebug() << "CA::UploadAttachments step= " << jobStep;
             if (jobStep == 1) {
 
                 if (uploadAttachmentPaths.count() <= 0) {
@@ -356,9 +342,6 @@ void ConfluenceAgent::continueJob(int nextStep)
             }
             if (jobStep == 2) {
                 // Entry point for looping over list of attachments to upload
-                qDebug() << "       cAI=" << currentUploadAttachmentIndex;
-                qDebug() << " attCount=" << uploadAttachmentPaths.count();
-                qDebug() << "    titles=" << attachmentsTitles;
 
                 if (currentUploadAttachmentIndex >= uploadAttachmentPaths.count()) {
                     // All uploaded, let's finish uploading
@@ -372,31 +355,33 @@ void ConfluenceAgent::continueJob(int nextStep)
                     if (attachmentsTitles.count() == 0 || 
                         !attachmentsTitles.contains(currentAttachmentTitle)) {
                         // Create new attachment
-                        qDebug() << " -> create att.";
                         startCreateAttachmentRequest();
                     } else {
                         // Update existing attachment
-                        qDebug() << " -> update att.";
                         startUpdateAttachmentRequest();
                     }
                 }
                 return;
             }
+            unknownStepWarningFinishJob();
+            return;
+
         default:
             qWarning() << "ConfluenceAgent::continueJob   unknown jobType " << jobType;
     }
 }
 
-void ConfluenceAgent::finishJob()   // FIXME-0 delete subtasks, if required. Or done by QObject?
+void ConfluenceAgent::finishJob()
 {
     deleteLater();
 }
 
-void ConfluenceAgent::unknownStepWarning()
+void ConfluenceAgent::unknownStepWarningFinishJob()
 {
     qWarning() << "CA::contJob  unknow step in jobType = " 
         << jobType 
         << "jobStep = " << jobStep;
+    finishJob();
 }
 
 void ConfluenceAgent::getUsers(const QString &usrQuery)
@@ -454,8 +439,8 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
     if (debug) qDebug() << "CA::pageSourceReceived";
 
     killTimer->stop();
-
     networkManager->disconnect();
+    reply->deleteLater();
 
     QByteArray fullReply = reply->readAll();
     if (!wasRequestSuccessful(reply, "receive page source", fullReply))
@@ -519,8 +504,8 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
     if (debug) qDebug() << "CA::pageDetailsReceived";
 
     killTimer->stop();
-
     networkManager->disconnect();
+    reply->deleteLater();
 
     QByteArray fullReply = reply->readAll();
     if (!wasRequestSuccessful(reply, "receive page details", fullReply))
@@ -562,9 +547,9 @@ void ConfluenceAgent::startCreatePageRequest()
 
     // Build body
     QString body;
-    if (!loadStringFromDisk(uploadFilePath, body))
+    if (!loadStringFromDisk(uploadPagePath, body))
     {
-        qWarning() << "ConfluenceAgent: Couldn't read file to upload:" << uploadFilePath;
+        qWarning() << "ConfluenceAgent: Couldn't read file to upload:" << uploadPagePath;
         finishJob();
         return;
     }
@@ -620,9 +605,9 @@ void ConfluenceAgent::startUpdatePageRequest()
 
     // Build body
     QString body;
-    if (!loadStringFromDisk(uploadFilePath, body))
+    if (!loadStringFromDisk(uploadPagePath, body))
     {
-        qWarning() << "ConfluenceAgent: Couldn't read file to upload:" << uploadFilePath;
+        qWarning() << "ConfluenceAgent: Couldn't read file to upload:" << uploadPagePath;
         finishJob();
         return;
     }
@@ -652,8 +637,8 @@ void ConfluenceAgent::pageUploaded(QNetworkReply *reply)
     if (debug) qDebug() << "CA::pageUploaded";
 
     killTimer->stop();
-
     networkManager->disconnect();
+    reply->deleteLater();
 
     QByteArray fullReply = reply->readAll();
     if (!wasRequestSuccessful(reply, "upload page", fullReply))
@@ -690,8 +675,8 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
     if (debug) qDebug() << "CA::UserInfopageReceived";
 
     killTimer->stop();
-
     networkManager->disconnect();
+    reply->deleteLater();
 
     QByteArray fullReply = reply->readAll();
     if (!wasRequestSuccessful(reply, "receive user info", fullReply))
@@ -728,16 +713,10 @@ void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
     if (debug) qDebug() << "CA::attachmentsInfoReceived";
 
     killTimer->stop();
-
     networkManager->disconnect();
+    reply->deleteLater();
 
     QByteArray fullReply = reply->readAll();
-    if (reply->error()) {
-        if (fullReply.contains(QString("").toLatin1())) {
-            // Replace existing attachment  // FIXME-0
-        }
-    }
-
     if (!wasRequestSuccessful(reply, "get attachment info", fullReply))
         return;
 
@@ -747,13 +726,12 @@ void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
     attachmentObj = jsdoc.object();
     int attachmentsCount = jsdoc["size"].toInt();
     qDebug() << "results.size=" << attachmentsCount;
-    //qDebug() << "CA::attachmentsInfoReceived Successful. r=";
     //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
     for (int i = 0; i < attachmentsCount; i++) {
         attachmentsTitles << jsdoc["results"][i]["title"].toString();
         attachmentsIds    << jsdoc["results"][i]["id"].toString();
-        qDebug() << " Title: " << attachmentsTitles.last() << 
-                    " Id: " << attachmentsIds.last();
+        // qDebug() << " Title: " << attachmentsTitles.last() << 
+        //             " Id: " << attachmentsIds.last();
     }
 
     continueJob();
@@ -762,14 +740,13 @@ void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
 void ConfluenceAgent::startCreateAttachmentRequest()
 {
     if (debug) qDebug() << "CA::startCreateAttachmentRequest";
-    qDebug() << "*** startCreateAttachment begin";
 
     QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment";
 
     QNetworkRequest request = createRequest(url);
     request.setRawHeader("X-Atlassian-Token", "no-check");
 
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-0 delete later
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
 
     QHttpPart imagePart;
@@ -786,12 +763,14 @@ void ConfluenceAgent::startCreateAttachmentRequest()
 
     QFile *file = new QFile(currentAttachmentPath);
     if (!file->open(QIODevice::ReadOnly))
-        qWarning() << "Problem opening file!!!!!!!!!!!!!!!";    // FIXME-0 fix error handling
+        qWarning() << "Problem opening file!";    // FIXME-0 fix error handling
     imagePart.setBodyDevice(file);
+    /*
     qDebug() << "      title=" << currentAttachmentTitle;
     qDebug() << "       path=" << currentAttachmentPath;
     qDebug() << "        url=" << url;
     qDebug() << "  file size=" << file->size();
+    */
     multiPart->append(imagePart);
     file->setParent(multiPart); // delete later with the multiPart
 
@@ -803,27 +782,24 @@ void ConfluenceAgent::startCreateAttachmentRequest()
     QNetworkReply *reply = networkManager->post(request, multiPart);
 
     multiPart->setParent(reply);
-
-    qDebug() << "*** startCreateAttachment end";
 }
 
-void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when are reply, parts, and file deleted?
+void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)
 {
     if (debug) qDebug() << "CA::attachmentCreated";
 
     killTimer->stop();
-
-    networkManager->disconnect();   // FIXME-0 what exactly happens at disconnect? why needed?
+    networkManager->disconnect();
+    reply->deleteLater();
 
     QByteArray fullReply = reply->readAll();
     if (reply->error() == QNetworkReply::ProtocolInvalidOperationError) {
         if (fullReply.contains(
                     QString("Cannot add a new attachment with same file name as an existing attachment").toLatin1())) {
             // Replace existing attachment
-            qDebug() << "Attachment with name " << currentAttachmentTitle << " already exists.";
-            qDebug() << "AttachmentID unknown, stopping now"; 
+            qWarning() << "Attachment with name " << currentAttachmentTitle << " already exists.";
+            qWarning() << "AttachmentID unknown, stopping now"; 
 
-            // FIXME-0 attachmentID = 
             finishJob();
             return;
         }
@@ -831,14 +807,12 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
             return;
     }
 
-
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(fullReply);
     attachmentObj = jsdoc.object();
 
-    qDebug() << "CA::attachmentCreated Successful:";
+    //qDebug() << "CA::attachmentCreated Successful:";
     //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
-    //FIXME-000  convert to array, take first element. see also userinfo
     //cout << attachmentObj["results"].toArray().toStdString();
 
     currentUploadAttachmentIndex++;
@@ -849,7 +823,6 @@ void ConfluenceAgent::attachmentCreated(QNetworkReply *reply)   // FIXME-0 when 
 void ConfluenceAgent::startUpdateAttachmentRequest()
 {
     if (debug) qDebug() << "CA::startUpdateAttachmentRequest";
-    qDebug() << "*** startUpdateAttachment begin " << currentAttachmentTitle;
 
     for (int i = 0; i < attachmentsTitles.count() - 1; i++) {
         qDebug() << "     - " << attachmentsTitles.at(i);
@@ -869,11 +842,10 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
 
     QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment/" + currentAttachmentId + "/data";
 
-    qDebug() << "    url=" << url;
     QNetworkRequest request = createRequest(url);
     request.setRawHeader("X-Atlassian-Token", "no-check");
 
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);   // FIXME-0 delete later
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     QHttpPart imagePart;
     imagePart.setHeader(
@@ -883,21 +855,22 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
             QVariant(
                 QString("form-data; name=\"file\"; filename=\"%1\"")
                     .arg(currentAttachmentTitle)));
-    qDebug() << "title=" << currentAttachmentTitle;
     imagePart.setHeader(
             QNetworkRequest::ContentTypeHeader,
             QVariant("image/jpeg"));
 
-    QFile *file = new QFile(currentAttachmentPath);   // FIXME-0 delete later
+    QFile *file = new QFile(currentAttachmentPath);
     if (!file->open(QIODevice::ReadOnly))
-        qWarning() << "Problem opening file!!!!!!!!!!!!!!!";    // FIXME-0 fix error handling
+        qWarning() << "Problem opening file!";    // FIXME-0 fix error handling
     imagePart.setBodyDevice(file);
+    /*
     qDebug() << "      title=" << currentAttachmentTitle;
     qDebug() << "       path=" << currentAttachmentPath;
     qDebug() << "        url=" << url;
     qDebug() << "  file size=" << file->size();
+    */
     multiPart->append(imagePart);
-    file->setParent(multiPart); // we cannot delete the file now, so delete it with the multiPart
+    file->setParent(multiPart);
 
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &ConfluenceAgent::attachmentUpdated);
@@ -907,8 +880,6 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
     QNetworkReply *reply = networkManager->post(request, multiPart);
 
     multiPart->setParent(reply);
-
-    qDebug() << "*** startUpdateAttachment end";
 }
 
 void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
@@ -916,8 +887,8 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
     if (debug) qDebug() << "CA::attachmentUpdated";
 
     killTimer->stop();
-
     networkManager->disconnect();
+    reply->deleteLater();
 
     QByteArray fullReply = reply->readAll();
     if (!wasRequestSuccessful(reply, "update attachment", fullReply))
@@ -927,7 +898,6 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
     jsdoc = QJsonDocument::fromJson(fullReply);
     attachmentObj = jsdoc.object();
 
-    qDebug() << "CA::attachmentUpdated Successful:";
     //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
 
     currentUploadAttachmentIndex++;
@@ -935,15 +905,14 @@ void ConfluenceAgent::attachmentUpdated(QNetworkReply *reply)
     continueJob(2);
 }
 
-void ConfluenceAgent::attachmentsUploadSuccess()
+void ConfluenceAgent::attachmentsUploadSuccess() // slot called from attachmentsAgent
 {
-    qDebug() << "CA::attachmentsUploaded successfully";
     continueJob();
 }
 
-void ConfluenceAgent::attachmentsUploadFailure()
+void ConfluenceAgent::attachmentsUploadFailure() // slot called from attachmentsAgent
 {
-    qDebug() << "CA::attachmentsUpload failed";
+    qWarning() << "CA::attachmentsUpload failed";
     finishJob();
 }
 
