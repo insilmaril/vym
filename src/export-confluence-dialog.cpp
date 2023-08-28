@@ -141,12 +141,11 @@ void ExportConfluenceDialog::saveSettings()
         settings.setLocalValue (
                 filepath, "/export/confluence/includeImages",
                 ui.includeImagesCheckBox->isChecked());
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/includeImages", includeImages);
         //        settings.setLocalValue (filepath, "/export/confluence/useTOC",
         //        useTOC); 
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/useNumbering", useNumbering);
+        settings.setLocalValue (
+                filepath, "/export/confluence/useNumbering",
+                ui.useNumberingCheckBox->isChecked());
         settings.setLocalValue(filepath,
                 "/export/confluence/mapCenterToPageName",
                 ui.mapCenterToPageNameCheckBox->isChecked());

@@ -50,6 +50,10 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         QString id = model->getSelectString(current);
         QString heading = quoteMeta(current->getHeadingPlain());
 
+        // Numbering
+        QString number;
+        if (dia.useNumbering()) number = getSectionString(current) + " ";
+
         // Long headings are will have linebreaks by default
         heading = heading.replace("\\n", " ");
 
@@ -61,7 +65,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                              .arg(c.blue());
             heading = QString("<span style='color: %1'>%2</span>")
                           .arg(cs)
-                          .arg(heading);
+                          .arg(number + heading);
         }
 
         QString s;
@@ -95,10 +99,6 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         }
         */
 
-        // Numbering
-        QString number;
-        // if (dia.useNumbering) number = getSectionString(current) + " ";
-
         // URL
         //     <ac:link>
         //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
@@ -123,9 +123,9 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 
                 s += QString("<a href=\"%1\">%2</a>")
                          .arg(url)
-                         .arg(number + taskFlags + heading + userFlags);
+                         .arg(taskFlags + heading + userFlags);
             } else
-                s += number + taskFlags + heading + userFlags;
+                s += taskFlags + heading + userFlags;
         }
 
         // Include images
