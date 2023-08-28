@@ -4,6 +4,7 @@
 #include "frame-container.h"
 #include "heading-container.h"
 #include "image-container.h"
+#include "link-container.h"
 #include "task.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
@@ -238,13 +239,15 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     return s;
 }
 
-void BranchItem::updateVisibility()
+void BranchItem::updateVisibility() // FIXME-0 still needed?
 {
+    /*
     // Needed to hide relinked branch, if parent is scrolled
     if (hasScrolledParent(this) || hidden)
         branchContainer->setVisibility(false);
     else
         branchContainer->setVisibility(true);
+        */
 }
 
 void BranchItem::setHeadingColor(QColor color)
@@ -289,7 +292,7 @@ void BranchItem::unScroll()
         toggleScroll();
 }
 
-bool BranchItem::toggleScroll() // FIXME-0 Scrolled subtrees visible in loaded maps
+bool BranchItem::toggleScroll() // FIXME-0 check XLinks...
 {
     // MapCenters are not scrollable
     if (depth() == 0)
@@ -298,23 +301,33 @@ bool BranchItem::toggleScroll() // FIXME-0 Scrolled subtrees visible in loaded m
     BranchContainer *bc;
     if (scrolled) {
         scrolled = false;
+        if (branchContainer->getBranchesContainer())
+            branchContainer->getBranchesContainer()->setVisibility(true);
+        branchContainer->getLinkContainer()->setVisibility(true);
         systemFlags.deactivate(QString("system-scrolledright"));
+        /*
         if (branchCounter > 0)
             for (int i = 0; i < branchCounter; ++i) {
                 bc = getBranchNum(i)->getBranchContainer();
                 if (bc)
                     bc->setVisibility(true);
             }
+         */
     }
     else {
         scrolled = true;
         systemFlags.activate(QString("system-scrolledright"));
+        if (branchContainer->getBranchesContainer())
+            branchContainer->getBranchesContainer()->setVisibility(false);
+        branchContainer->getLinkContainer()->setVisibility(false);
+        /* FIXME-0 testing
         if (branchCounter > 0)
             for (int i = 0; i < branchCounter; ++i) {
                 bc = getBranchNum(i)->getBranchContainer();
                 if (bc)
                     bc->setVisibility(false);
             }
+        */
     }
 
     return true;

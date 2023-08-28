@@ -253,6 +253,7 @@ void LinkObj::updateVisibility()
 {
     bool visnow = visible;
 
+    qDebug() << "LO::updateVis  visnow=" << visnow << "  vis=" << isVisible();
     // FIXME-2 Hide links of unselected objects (if wanted)
     /*
     if (((MapItem *)treeItem)->getHideLinkUnselected() &&

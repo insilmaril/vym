@@ -151,9 +151,10 @@ QString Container::info (const QString &prefix)
         //+ QString(" horDirection: %1").arg(horizontalDirection)
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
-        + QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
-        + QString(" pos: %1").arg(qpointFToString(pos(), 0))
+        //+ QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
+        //+ QString(" pos: %1").arg(qpointFToString(pos(), 0))
         //+ QString(" rect: %1").arg(qrectFToString(rect(), 0))
+        + QString(" vis: %1").arg(isVisible());
         ;
 }
 
@@ -304,9 +305,9 @@ bool Container::isVisibleContainer()
     return visible;
 }
 
-void Container::setVisibility(bool v)   // FIXME-2 "visible" flag needed really or only isVisible()?
+void Container::setVisibility(bool v)   // FIXME-0 "visible" flag needed really or only isVisible()?
 {
-    // qDebug() << "C:setVis v=" << v << info ();
+    qDebug() << "C:setVis v=" << v << info ();
     visible = v;
     setVisible(visible);
 }
