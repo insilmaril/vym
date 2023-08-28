@@ -4476,11 +4476,17 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 
     setExportMode(true);
 
+    mapEditor->minimizeView();
+
     QImage img(mapEditor->getImage(offset));
-    if (!img.save(fname, format.toLocal8Bit()))
+    if (!img.save(fname, format.toLocal8Bit())) {
         QMessageBox::critical(
             0, tr("Critical Error"),
             tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
+        ex.setResult(ExportBase::Failed);
+    } else
+        ex.setResult(ExportBase::Success);
+
     setExportMode(false);
 
     ex.completeExport();

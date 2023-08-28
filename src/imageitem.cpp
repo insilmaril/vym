@@ -84,6 +84,22 @@ qreal ImageItem::getScaleFactor()
     return 1;
 }
 
+qreal ImageItem::width()
+{
+    if (mo)
+        return mo->width();
+    else
+        return -1;
+}
+
+qreal ImageItem::height()
+{
+    if (mo)
+        return mo->height();
+    else
+        return -1;
+}
+
 void ImageItem::setZValue(int z)
 {
     zValue = z;

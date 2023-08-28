@@ -93,6 +93,16 @@ void FloatImageObj::setScaleFactor(qreal f)
 
 qreal FloatImageObj::getScaleFactor() { return imageObj->getScaleFactor(); }
 
+qreal FloatImageObj::width()
+{
+    return imageObj->boundingRect().width();
+}
+
+qreal FloatImageObj::height()
+{
+    return imageObj->boundingRect().height();
+}
+
 void FloatImageObj::moveCenter(double x, double y)
 {
     FloatObj::moveCenter(x, y);

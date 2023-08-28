@@ -142,6 +142,11 @@ bool ExportBase::canceled() { return cancelFlag; }
 
 void ExportBase::setLastCommand(const QString &s) { lastCommand = s; }
 
+void ExportBase::setResult(const Result &r)
+{
+    result = r;
+}
+
 void ExportBase::completeExport(QStringList args)
 {
     QString command;

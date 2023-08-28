@@ -230,6 +230,25 @@ void ConfluenceAgent::continueJob(int nextStep)
                 return;
             }
             if (jobStep == 3) {
+
+                pageID = pageObj["id"].toString();
+
+                // Upload attachments?
+                if (uploadAttachmentPaths.count() > 0) {
+                    attachmentsAgent = new ConfluenceAgent;
+                    attachmentsAgent->setJobType(ConfluenceAgent::UploadAttachments);
+                    attachmentsAgent->pageID = pageID;
+                    attachmentsAgent->uploadAttachmentPaths = uploadAttachmentPaths;
+
+                    connect(attachmentsAgent, &ConfluenceAgent::attachmentsSuccess,
+                        this, &ConfluenceAgent::attachmentsUploadSuccess);
+                    connect(attachmentsAgent, &ConfluenceAgent::attachmentsFailure,
+                        this, &ConfluenceAgent::attachmentsUploadFailure);
+                    attachmentsAgent->startJob();
+                    return;
+                }
+            }
+            if (jobStep == 4) {
                 //qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
                 mainWindow->statusMessage(
                     QString("Created Confluence page %1").arg(pageURL));
@@ -265,7 +284,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                     attachmentsAgent = new ConfluenceAgent;
                     attachmentsAgent->setJobType(ConfluenceAgent::UploadAttachments);
                     attachmentsAgent->pageID = pageID;
-                    attachmentsAgent->uploadAttachmentPaths = uploadAttachmentPaths;    
+                    attachmentsAgent->uploadAttachmentPaths = uploadAttachmentPaths;
 
                     connect(attachmentsAgent, &ConfluenceAgent::attachmentsSuccess,
                         this, &ConfluenceAgent::attachmentsUploadSuccess);
@@ -647,7 +666,7 @@ void ConfluenceAgent::pageUploaded(QNetworkReply *reply)
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(fullReply);
     pageObj = jsdoc.object();
-    // cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
     continueJob();
 }
 
@@ -691,7 +710,6 @@ void ConfluenceAgent::userInfoReceived(QNetworkReply *reply)
 void ConfluenceAgent::startGetAttachmentsInfoRequest()
 {
     if (debug) qDebug() << "CA::startGetAttachmentIdRequest";
-    qDebug() << "*** startGetAttachmentsInfo begin";
 
     QString url = "https://" + baseURL + apiURL + "/content" + "/" + pageID + "/child/attachment";
 
@@ -704,8 +722,6 @@ void ConfluenceAgent::startGetAttachmentsInfoRequest()
     killTimer->start();
 
     QNetworkReply *reply = networkManager->get(request);
-
-    qDebug() << "*** startGetAttachmentsInfo end";
 }
 
 void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
@@ -725,7 +741,6 @@ void ConfluenceAgent::attachmentsInfoReceived(QNetworkReply *reply)
 
     attachmentObj = jsdoc.object();
     int attachmentsCount = jsdoc["size"].toInt();
-    qDebug() << "results.size=" << attachmentsCount;
     //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
     for (int i = 0; i < attachmentsCount; i++) {
         attachmentsTitles << jsdoc["results"][i]["title"].toString();
@@ -762,8 +777,14 @@ void ConfluenceAgent::startCreateAttachmentRequest()
             QVariant("image/jpeg"));
 
     QFile *file = new QFile(currentAttachmentPath);
-    if (!file->open(QIODevice::ReadOnly))
-        qWarning() << "Problem opening file!";    // FIXME-0 fix error handling
+    if (!file->open(QIODevice::ReadOnly)) {
+        qWarning() << "Problem opening attachment: " << currentAttachmentPath;
+        QMessageBox::warning(
+            nullptr, tr("Warning"),
+            QString("Could not open attachment file \"%1\" in page with ID: %2").arg(currentAttachmentTitle).arg(pageID));
+        finishJob();
+        return;
+    }
     imagePart.setBodyDevice(file);
     /*
     qDebug() << "      title=" << currentAttachmentTitle;
@@ -825,7 +846,7 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
     if (debug) qDebug() << "CA::startUpdateAttachmentRequest";
 
     for (int i = 0; i < attachmentsTitles.count(); i++) {
-        qDebug() << "     - " << attachmentsTitles.at(i);
+        // qDebug() << "     - " << attachmentsTitles.at(i);
         if (attachmentsTitles.at(i) == currentAttachmentTitle) {
             currentAttachmentId = attachmentsIds.at(i);
             break;
@@ -860,8 +881,14 @@ void ConfluenceAgent::startUpdateAttachmentRequest()
             QVariant("image/jpeg"));
 
     QFile *file = new QFile(currentAttachmentPath);
-    if (!file->open(QIODevice::ReadOnly))
-        qWarning() << "Problem opening file!";    // FIXME-0 fix error handling
+    if (!file->open(QIODevice::ReadOnly)) {
+        qWarning() << "Problem opening attachment: " << currentAttachmentPath;
+        QMessageBox::warning(
+            nullptr, tr("Warning"),
+            QString("Could not open attachment file \"%1\" in page with ID: %2").arg(currentAttachmentTitle).arg(pageID));
+        finishJob();
+        return;
+    }
     imagePart.setBodyDevice(file);
     /*
     qDebug() << "      title=" << currentAttachmentTitle;

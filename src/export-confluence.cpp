@@ -140,7 +140,12 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                 imagePath =  "image-" + image->getUuid().toString() + ".png";
                 image->saveImage( dirPath + "/" + imagePath);
                 agent->addUploadAttachmentPath(imagePath);
-                s += "<p>  <span style=\"color: rgb(0,170,255);\"><ac:image ac:height=\"250\" >";
+                s += "<p> <span style=\"color: rgb(0,170,255);\">";
+                // Limit size
+                if (image->width()  > 250)
+                    s+= "<ac:image ac:width=\"250\" >";
+                else
+                    s += "<ac:image>";
                 s += QString("<ri:attachment ri:filename=\"%1\"/></ac:image></span></p>").arg(imagePath);
 
             }
@@ -378,15 +383,19 @@ void ExportConfluence::doExport(bool useDialog)
     QString mapImageFilePath = tmpDir.path() + "/mapImage.png";
     if (dia.includeMapImage())
     {
-        QString mapName = getMapName();
+        offset = model->exportImage (mapImageFilePath, false, "PNG");
+        QImage img(mapImageFilePath);
         ts << "<p>";
-        ts << "  <span style=\"color: rgb(0,170,255);\">";
-        ts << "    <ac:image ac:height=\"250\" >";
+        ts << "  <span style=\"color: rgb(0,170,255);\">\n";
+        if (img.width() > 800)
+            ts << "    <ac:image ac:width=\"800\" >";
+        else
+            ts << "    <ac:image >";
         ts << "      <ri:attachment ri:filename=\"mapImage.png\"/>";
-        ts << "    </ac:image>";
+        ts << "    </ac:image>\n";
         ts << "  </span>";
         ts << "</p>";
-        offset = model->exportImage (mapImageFilePath, false, "PNG");
+
 
         agent->addUploadAttachmentPath(mapImageFilePath);
     }

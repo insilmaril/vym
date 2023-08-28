@@ -23,6 +23,8 @@ class FloatImageObj : public FloatObj {
     void setVisibility(bool); // set vis. for w
     void setScaleFactor(qreal f);
     qreal getScaleFactor();
+    qreal width();
+    qreal height();
     virtual void moveCenter(double x, double y);
     virtual void move(double x, double y);
     virtual void move(QPointF);
