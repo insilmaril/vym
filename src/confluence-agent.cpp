@@ -204,7 +204,7 @@ void ConfluenceAgent::continueJob(int nextStep)
             unknownStepWarningFinishJob();
             return;
 
-        case CreatePage:   // FIXME-0 add upload attachments
+        case CreatePage:
             if (jobStep == 1) {
                 if (pageURL.isEmpty()) {
                     qWarning() << "CA::contJob NewPage: pageURL is empty";
