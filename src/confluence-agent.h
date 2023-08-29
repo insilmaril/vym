@@ -18,7 +18,14 @@ class ConfluenceAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, CopyPagenameToHeading, NewPage, UpdatePage, UserInfo};
+    enum JobType {
+        Undefined,
+        CopyPagenameToHeading,
+        CreatePage,
+        UpdatePage,
+        UploadAttachments,
+        GetUserInfo
+    };
 
     static bool available();
 
@@ -31,14 +38,15 @@ class ConfluenceAgent : public QObject {
     void setModelID(uint id);
     void setPageURL(const QString &u);
     void setNewPageName(const QString &t);
-    void setUploadFilePath(const QString &fp);
+    void setUploadPagePath(const QString &fp);
+    void addUploadAttachmentPath(const QString &fp);
 
     void startJob();
 
   private:
-    void continueJob();
+    void continueJob(int nextStep = -1);
     void finishJob();
-    void unknownStepWarning();
+    void unknownStepWarningFinishJob();
 
   signals:
     void foundUsers(QList <ConfluenceUser>);
@@ -46,20 +54,45 @@ class ConfluenceAgent : public QObject {
   public:
     void getUsers(const QString &name); //! Convenience function to get user data
 
-  private:  
-    void startGetPageSourceRequest(QUrl requestedUrl);
-    void startGetPageDetailsRequest();
-    void startCreatePageRequest();
-    void startUpdatePageRequest();
-    void startGetUserInfoRequest();
-    bool requestSuccessful(QNetworkReply *reply, const QString &requestDesc);
+  private: QNetworkRequest createRequest(const QUrl &url);
+  private: void startGetPageSourceRequest(QUrl requestedUrl);
+  private slots: void pageSourceReceived(QNetworkReply *reply);
 
-  private slots:
-    void pageSourceReceived(QNetworkReply *reply);
-    void pageDetailsReceived(QNetworkReply *reply);
-    void contentUploaded(QNetworkReply *reply);
-    void userInfoReceived(QNetworkReply *reply);
-    void timeout();
+  private: void startGetPageDetailsRequest();
+  private slots: void pageDetailsReceived(QNetworkReply *reply);
+
+  private: void startCreatePageRequest();
+  private: void startUpdatePageRequest();
+  private slots: void pageUploaded(QNetworkReply *reply);
+
+
+  private: void startGetUserInfoRequest();
+  private slots: void userInfoReceived(QNetworkReply *reply);
+
+  private: void startGetAttachmentsInfoRequest();
+  private slots: void attachmentsInfoReceived(QNetworkReply *reply);
+
+  private: void startCreateAttachmentRequest();
+  private slots: void attachmentCreated(QNetworkReply *reply);
+
+  private: void startUpdateAttachmentRequest();
+  private slots: void attachmentUpdated(QNetworkReply *reply);
+
+  signals:
+    void attachmentsSuccess();
+    void attachmentsFailure();
+
+  public slots:
+    void attachmentsUploadSuccess();
+    void attachmentsUploadFailure();
+
+  private: bool wasRequestSuccessful(
+            QNetworkReply *reply, 
+            const QString &requestDesc,
+            const QByteArray &fullReply);
+
+
+  private slots: void timeout();
 
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
@@ -74,7 +107,8 @@ class ConfluenceAgent : public QObject {
 
     // Network handling
     QNetworkAccessManager *networkManager;
-    QJsonObject jsobj;
+    QJsonObject pageObj;
+    QJsonObject attachmentObj;
 
     // Settings: Credentials to access Confluence
     bool authUsingPAT;
@@ -82,7 +116,7 @@ class ConfluenceAgent : public QObject {
     QString username;
     QString password;
 
-    // Settings: Where to find Confluence
+    // Settings: Where to find Confluggence
     QString baseURL;
     QString apiURL;
 
@@ -90,15 +124,30 @@ class ConfluenceAgent : public QObject {
     uint branchID;
     uint modelID;
 
+  private:
     // Parameters
     QString pageURL;
     QString newPageName;
-    QString uploadFilePath;
+    QString uploadPagePath;
     QString userQuery;
 
     // Page details received from Confluence
     QString pageID;
     QString spaceKey;
+
+    // Child agent for attachments
+    ConfluenceAgent *attachmentsAgent;
+
+    // Attachments found in page
+    QStringList attachmentsTitles;
+    QStringList attachmentsIds;
+
+    // Current attachments queued for upload
+    QStringList uploadAttachmentPaths;
+    int currentUploadAttachmentIndex;
+    QString currentAttachmentPath;      // set with basename(..) from path
+    QString currentAttachmentTitle;      // set with basename(..) from path
+    QString currentAttachmentId;         // copied from attachmentsIds
 
     // User info received from Confluence
     QList <ConfluenceUser> userList;

@@ -36,6 +36,7 @@ class ExportBase {
     virtual bool execDialog();
     virtual bool canceled();
     void setLastCommand(const QString &);
+    void setResult(const Result &r);
     void completeExport(
         QStringList args); //! set lastExport and send status message
     void completeExport();

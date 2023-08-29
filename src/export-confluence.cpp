@@ -3,7 +3,7 @@
 #include <QMessageBox>
 
 #include "attributeitem.h"
-#include "confluence-agent.h"
+// FIXME-0 needed?  #include "confluence-agent.h"
 #include "mainwindow.h"
 #include "settings.h"
 #include "warningdialog.h"
@@ -29,6 +29,8 @@ void ExportConfluence::init()
 
     url = "";
     pageName = "";
+
+    agent = nullptr;
 }
 
 void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
@@ -43,10 +45,14 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         QString id = model->getSelectString(current);
         QString heading = quoteMeta(current->getHeadingPlain());
 
+        // Numbering
+        QString number;
+        if (dia.useNumbering()) number = getSectionString(current) + " ";
+
         // Long headings are will have linebreaks by default
         heading = heading.replace("\\n", " ");
 
-        if (dia.useTextColor) {
+        if (dia.useTextColor()) {
             QColor c = current->getHeadingColor();
             QString cs = QString("rgb(%1,%2,%3);")
                              .arg(c.red())
@@ -54,7 +60,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
                              .arg(c.blue());
             heading = QString("<span style='color: %1'>%2</span>")
                           .arg(cs)
-                          .arg(heading);
+                          .arg(number + heading);
         }
 
         QString s;
@@ -88,10 +94,6 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         }
         */
 
-        // Numbering
-        QString number;
-        // if (dia.useNumbering) number = getSectionString(current) + " ";
-
         // URL
         //     <ac:link>
         //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
@@ -116,14 +118,13 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 
                 s += QString("<a href=\"%1\">%2</a>")
                          .arg(url)
-                         .arg(number + taskFlags + heading + userFlags);
+                         .arg(taskFlags + heading + userFlags);
             } else
-                s += number + taskFlags + heading + userFlags;
+                s += taskFlags + heading + userFlags;
         }
 
-        // Include images // FIXME-3 not implemented yet
-        /*
-        if (dia.includeImages)
+        // Include images
+        if (dia.includeImages())
         {
             int imageCount = current->imageCount();
             ImageItem *image;
@@ -132,13 +133,18 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             {
                 image = current->getImageNum(i);
                 imagePath =  "image-" + image->getUuid().toString() + ".png";
-                image->save( dirPath + "/" + imagePath, "PNG");
-                s += "<br /><img src=\"" + imagePath;
-                s += "\" alt=\"" + QObject::tr("Image: %1","Alt tag in HTML
-        export").arg(image->getOriginalFilename()); s += "\"><br />";
+                image->saveImage( dirPath + "/" + imagePath);
+                agent->addUploadAttachmentPath(imagePath);
+                s += "<p> <span style=\"color: rgb(0,170,255);\">";
+                // Limit size
+                if (image->width()  > 250)
+                    s+= "<ac:image ac:width=\"250\" >";
+                else
+                    s += "<ac:image>";
+                s += QString("<ri:attachment ri:filename=\"%1\"/></ac:image></span></p>").arg(imagePath);
+
             }
         }
-        */
 
         // Include note
         if (!current->isNoteEmpty()) {
@@ -254,7 +260,7 @@ QString ExportConfluence::buildList(BranchItem *current)
                 r += itemBegin;
 
                 // Check if first mapcenter is already usded for pageName
-                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName))
+                if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName()))  
                     r += getBranchText(bi);
 
                 if (itemBegin.startsWith("<h"))
@@ -298,7 +304,7 @@ QString ExportConfluence::createTOC()
     model->nextBranch(cur, prev);
     while (cur) {
         if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent()) {
-            if (dia.useNumbering)
+            if (dia.useNumbering())
                 number = getSectionString(cur);
             toc +=
                 QString("<div class=\"vym-toc-branch-%1\">").arg(cur->depth());
@@ -337,7 +343,7 @@ void ExportConfluence::doExport(bool useDialog)
         if (dia.exec() != QDialog::Accepted)
             return;
         model->setChanged();
-        url = dia.getURL();
+        url = dia.getUrl();
         createNewPage = dia.getCreateNewPage();
         pageName = dia.getPageName();
     }
@@ -357,19 +363,37 @@ void ExportConfluence::doExport(bool useDialog)
     // Hide stuff during export
     model->setExportMode(true);
 
-    // Include image
-    // (be careful: this resets Export mode, so call before exporting branches)
-    /*
-    if (dia.includeMapImage)
+    // Create Confluence agent
+    agent = new ConfluenceAgent();
+    if (createNewPage)
+        agent->setJobType(ConfluenceAgent::CreatePage);
+    else
+        agent->setJobType(ConfluenceAgent::UpdatePage);
+    agent->setPageURL(url);
+    agent->setNewPageName(pageName);
+    agent->setUploadPagePath(filePath);
+    agent->setModelID(model->getModelID());
+
+    // Include image of map
+    QString mapImageFilePath = tmpDir.path() + "/mapImage.png";
+    if (dia.includeMapImage())
     {
-        QString mapName = getMapName();
-        ts << "<center><img src=\"" << mapName << ".png\"";
-        ts << "alt=\"" << QObject::tr("Image of map: %1.vym","Alt tag in HTML
-    export").arg(mapName) << "\""; ts << " usemap='#imagemap'></center>\n";
-        offset = model->exportImage (dirPath + "/" + mapName + ".png", false,
-    "PNG");
+        offset = model->exportImage (mapImageFilePath, false, "PNG");
+        QImage img(mapImageFilePath);
+        ts << "<p>";
+        ts << "  <span style=\"color: rgb(0,170,255);\">\n";
+        if (img.width() > 800)
+            ts << "    <ac:image ac:width=\"800\" >";
+        else
+            ts << "    <ac:image >";
+        ts << "      <ri:attachment ri:filename=\"mapImage.png\"/>";
+        ts << "    </ac:image>\n";
+        ts << "  </span>";
+        ts << "</p>";
+
+
+        agent->addUploadAttachmentPath(mapImageFilePath);
     }
-    */
 
     // Include table of contents
     // if (dia.useTOC) ts << createTOC();
@@ -383,16 +407,7 @@ void ExportConfluence::doExport(bool useDialog)
 
     file.close();
 
-    // Create Confluence agent
-    ConfluenceAgent *agent = new ConfluenceAgent();
-    if (createNewPage)
-        agent->setJobType(ConfluenceAgent::NewPage);
-    else
-        agent->setJobType(ConfluenceAgent::UpdatePage);
-    agent->setPageURL(url);
-    agent->setNewPageName(pageName);
-    agent->setUploadFilePath(filePath);
-    agent->setModelID(model->getModelID());
+
     agent->startJob();
 
     QStringList args;
@@ -404,10 +419,12 @@ void ExportConfluence::doExport(bool useDialog)
     result = ExportBase::Ongoing;
 
     // Prepare human readable info in tooltip of LastExport:
-    displayedDestination = QString("Page: %1 - %2").arg(pageName).arg(url);
+    displayedDestination = QString("Page name: \"%1\" Url: \"%2\"").arg(pageName).arg(url); 
 
     completeExport(args);
 
     dia.saveSettings();
     model->setExportMode(false);
+
+    // Note: ConfluenceAgent professionally destroys itself after completion
 }

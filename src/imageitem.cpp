@@ -94,6 +94,22 @@ qreal ImageItem::getScaleFactor()
         return 1;
 }
 
+qreal ImageItem::width()
+{
+    if (imageContainer)
+        return imageContainer->rect().width();
+    else
+        return -1;
+}
+
+qreal ImageItem::height()
+{
+    if (imageContainer)
+        return imageContainer->rect().height();
+    else
+        return -1;
+}
+
 void ImageItem::setOriginalFilename(const QString &fn)
 {
     originalFilename = fn;
@@ -117,7 +133,6 @@ QString ImageItem::getUniqueFilename()
 
 bool ImageItem::saveImage(const QString &fn)
 {
-    qDebug() << "II:saveImage " << fn << imageContainer;
     // This is used when exporting maps or saving selection
     if (imageContainer)
         return imageContainer->save(fn);

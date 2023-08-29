@@ -167,13 +167,11 @@ class Main : public QMainWindow {
 
   public slots:
     void updateQueries(VymModel *);
-
-  private:
     bool openURL(const QString &url);
     void openTabs(QStringList);
-  public slots:
     void editOpenURL();
     void editOpenURLTab();
+
   private slots:
     void editOpenMultipleVisURLTabs(bool ignoreScrolled = true);
     void editOpenMultipleURLTabs();

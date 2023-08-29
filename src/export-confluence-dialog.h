@@ -19,54 +19,37 @@ class ExportConfluenceDialog : public QDialog {
 
     void setCreateNewPage(bool b);
     bool getCreateNewPage();
-    virtual QString getURL();
+    virtual void openUrl();
+    virtual QString getUrl();
     virtual QString getPageName();
     void setPageNameHint(const QString &s);
-    virtual bool warnings();
-    virtual bool hasChanged();
+
+    void readSettings();
+    void saveSettings();
+    void setURL(const QString &);
+    void setPageName(const QString &);
+
+    void setFilePath(const QString &s);
+    void setMapName(const QString &s);
+    bool useTextColor();
+    bool mapCenterToPageName();
+    bool useNumbering();
+    bool includeMapImage();
+    bool includeImages();
+    void doExport();
 
   public slots:
-    virtual void readSettings();
-    virtual void setURL(const QString &);
-    virtual void setPageName(const QString &);
-    virtual void pageButtonPressed();
-    virtual void URLChanged();
-    virtual void pageNameChanged();
-    virtual void mapCenterToPageNameCheckBoxPressed(bool b);
-    virtual void includeImagesCheckBoxPressed(bool b);
-    virtual void TOCCheckBoxPressed(bool b);
-    virtual void numberingCheckBoxPressed(bool b);
-    virtual void taskFlagsCheckBoxPressed(bool b);
-    virtual void userFlagsCheckBoxPressed(bool b);
-    virtual void textcolorCheckBoxPressed(bool b);
-    virtual void saveSettingsInMapCheckBoxPressed(bool b);
-    virtual void warningsCheckBoxPressed(bool b);
-    virtual void outputCheckBoxPressed(bool b);
-    virtual void saveSettings();
-    virtual void setFilePath(const QString &s);
-    virtual void setMapName(const QString &s);
-
-  public:
-    bool includeMapImage;
-    bool includeImages;
-    bool useTOC;
-    bool useNumbering;
-    bool useTaskFlags;
-    bool useUserFlags;
-    bool useTextColor;
-    bool mapCenterToPageName;
+    void pageButtonPressed();
+    void URLChanged();
+    void pageNameChanged();
+    void mapCenterToPageNameCheckBoxPressed(bool b);
 
   protected:
-    QButtonGroup *buttonGroup;
-    bool showWarnings;
-    bool showOutput;
     QString url;
     QString pageName;
     QString pageNameHint;
     QString filepath;
-    bool settingsChanged;
     QString mapname;
-    bool saveSettingsInMap;
 
   private:
     Ui::ExportConfluenceDialog ui;

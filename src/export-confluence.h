@@ -4,6 +4,8 @@
 #include "export-base.h"
 #include "export-confluence-dialog.h"
 
+#include "confluence-agent.h"
+
 class ExportConfluence : public ExportBase {
   public:
     ExportConfluence();
@@ -27,6 +29,8 @@ class ExportConfluence : public ExportBase {
     QPointF offset;
 
     ExportConfluenceDialog dia;
+
+    ConfluenceAgent *agent;
 };
 
 #endif

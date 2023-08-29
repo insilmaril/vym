@@ -1,15 +1,18 @@
 #include "export-confluence-dialog.h"
 
 #include <QDateTime>
+#include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 
 #include "file.h"
+#include "mainwindow.h"
 #include "settings.h"
 
 extern QDir vymBaseDir;
 extern Settings settings;
 extern bool debug;
+extern Main *mainWindow;
 
 ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     : QDialog(parent)
@@ -17,10 +20,7 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     ui.setupUi(this);
 
     filepath = "";
-    settingsChanged = false;
 
-    // connect(buttonGroup, SIGNAL(buttonPressed(int)), this,
-    // SLOT(pageButtonPressed(int)));
     connect(ui.createPageButton, SIGNAL(clicked(bool)), this,
             SLOT(pageButtonPressed()));
     connect(ui.updatePageButton, SIGNAL(clicked(bool)), this,
@@ -29,34 +29,33 @@ ExportConfluenceDialog::ExportConfluenceDialog(QWidget *parent)
     // signals and slots connections
     connect(ui.mapCenterToPageNameCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(mapCenterToPageNameCheckBoxPressed(bool)));
-    connect(ui.textColorCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(textcolorCheckBoxPressed(bool)));
     connect(ui.lineEditURL, SIGNAL(textChanged(const QString &)), this,
             SLOT(URLChanged()));
     connect(ui.lineEditPageName, SIGNAL(textChanged(const QString &)), this,
             SLOT(pageNameChanged()));
-    connect(ui.saveSettingsInMapCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(saveSettingsInMapCheckBoxPressed(bool)));
 
-    // Not implemented yet
-    ui.includeImagesCheckBox->hide();
-    ui.TOCCheckBox->hide();
-    ui.taskFlagsCheckBox->hide();
-    ui.userFlagsCheckBox->hide();
-    /*
-    connect(ui.includeImagesCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(includeImagesCheckBoxPressed(bool)));
-    connect(ui.TOCCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(TOCCheckBoxPressed(bool)));
-    connect(ui.numberingCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(numberingCheckBoxPressed(bool)));
-    connect(ui.taskFlagsCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(taskFlagsCheckBoxPressed(bool)));
-    connect(ui.userFlagsCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(userFlagsCheckBoxPressed(bool)));
-    */
+    connect(ui.exportButton, &QPushButton::clicked, this, &ExportConfluenceDialog::doExport);
+
+    connect(ui.openPageButton, &QPushButton::clicked, this, &ExportConfluenceDialog::openUrl);
 }
 
+void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
+
+bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
+
+void ExportConfluenceDialog::openUrl()
+{
+    mainWindow->openURL(ui.lineEditURL->text());
+}
+
+QString ExportConfluenceDialog::getUrl() { return url; }
+
+QString ExportConfluenceDialog::getPageName() { return pageName; }
+
+void ExportConfluenceDialog::setPageNameHint(const QString &s) 
+{
+    pageNameHint = s;
+}
 void ExportConfluenceDialog::readSettings()
 {
     url = settings
@@ -65,12 +64,6 @@ void ExportConfluenceDialog::readSettings()
                   .toString();
     ui.lineEditURL->setText(url);
 
-    pageName = settings
-                    .localValue(filepath, "/export/confluence/pageName",
-                                "New page created on " +
-                                    QDateTime::currentDateTime().toString())
-                    .toString();
-    ui.lineEditPageName->setText(pageName);
 
     ui.createPageButton->setChecked(
         settings
@@ -79,22 +72,28 @@ void ExportConfluenceDialog::readSettings()
     ui.updatePageButton->setChecked(!
         settings
             .localValue(filepath, "/export/confluence/createNewPage", false).toBool());
+    if (ui.createPageButton->isChecked())
+        pageName = settings.localValue(filepath, "/export/confluence/pageName", 
+                        "New page created on " + QDateTime::currentDateTime().toString()).toString();
+    else 
+        pageName = QString();
+    ui.lineEditPageName->setText(pageName);
+
+    ui.includeMapImageCheckBox->setChecked(
+        settings.localValue (filepath,
+        "/export/confluence/includeMapImage", "true").toBool());
+
+    ui.includeImagesCheckBox->setChecked(
+        settings.localValue (filepath,
+        "/export/confluence/includeImages", "true").toBool());
 
     /*  FIXME-3 cleanup the copied HTML parameters
-    includeMapImage = settings.localValue (filepath,
-    "/export/confluence/includeMapImage", "true").toBool();
-    ui.imageCheckBox->setChecked(includeMapImage);
-
     includeImages = settings.localValue (filepath,
     "/export/confluence/includeImages", "true").toBool();
     ui.includeImagesCheckBox->setChecked(includeImages);
 
     useTOC = settings.localValue (filepath, "/export/confluence/useTOC",
     "true").toBool(); ui.TOCCheckBox->setChecked(useTOC);
-
-    useNumbering = settings.localValue (filepath,
-    "/export/confluence/useNumbering", "true").toBool();
-    ui.numberingCheckBox->setChecked(useNumbering);
 
     useTaskFlags = settings.localValue (filepath,
     "/export/confluence/useTaskFlags", "true").toBool();
@@ -105,28 +104,100 @@ void ExportConfluenceDialog::readSettings()
     ui.userFlagsCheckBox->setChecked(useUserFlags);
 
     */
-    mapCenterToPageName =
-        settings.localValue(filepath, "/export/confluence/mapCenterToPageName", true)
-            .toBool();
-    ui.mapCenterToPageNameCheckBox->setChecked(mapCenterToPageName);
-    useTextColor =
-        settings.localValue(filepath, "/export/confluence/useTextColor", false)
-            .toBool();
-    ui.textColorCheckBox->setChecked(useTextColor);
 
-    saveSettingsInMap =
+    ui.useNumberingCheckBox->setChecked(
+        settings.localValue (filepath,
+        "/export/confluence/useNumbering", "true").toBool());
+    ui.mapCenterToPageNameCheckBox->setChecked(
+        settings.localValue(filepath, "/export/confluence/mapCenterToPageName", true)
+            .toBool());
+    ui.textColorCheckBox->setChecked(
+        settings.localValue(filepath, "/export/confluence/useTextColor", false)
+            .toBool());
+
+    ui.saveSettingsInMapCheckBox->setChecked(
         settings
             .localValue(filepath, "/export/confluence/saveSettingsInMap", true)
-            .toBool();
-    ui.saveSettingsInMapCheckBox->setChecked(saveSettingsInMap);
+            .toBool());
 
 
     pageButtonPressed();
 }
 
+void ExportConfluenceDialog::saveSettings()
+{
+    // Save options to settings file
+    // (but don't save at destructor, which
+    // is called for "cancel", too)
+    if (!ui.saveSettingsInMapCheckBox->isChecked())
+        settings.clearLocal(filepath, "/export/confluence");
+    else {
+        settings.setLocalValue(
+                filepath, "/export/confluence/saveSettingsInMap",
+                "yes");
+        settings.setLocalValue (
+                filepath, "/export/confluence/includeMapImage",
+                ui.includeMapImageCheckBox->isChecked());
+        settings.setLocalValue (
+                filepath, "/export/confluence/includeImages",
+                ui.includeImagesCheckBox->isChecked());
+        //        settings.setLocalValue (filepath, "/export/confluence/useTOC",
+        //        useTOC); 
+        settings.setLocalValue (
+                filepath, "/export/confluence/useNumbering",
+                ui.useNumberingCheckBox->isChecked());
+        settings.setLocalValue(filepath,
+                "/export/confluence/mapCenterToPageName",
+                ui.mapCenterToPageNameCheckBox->isChecked());
+        settings.setLocalValue(filepath,
+                "/export/confluence/useTextColor",
+                ui.textColorCheckBox->isChecked());
+        settings.setLocalValue(filepath,
+                "/export/confluence/useNumbering",
+                ui.useNumberingCheckBox->isChecked());
+        settings.setLocalValue(filepath, "/export/confluence/url", url);
+        settings.setLocalValue(filepath, "/export/confluence/pageName", pageName);
+        settings.setLocalValue(filepath, "/export/confluence/createNewPage", ui.createPageButton->isChecked());
+    }
+}
+
 void ExportConfluenceDialog::setURL(const QString &u) { url = u; }
 
 void ExportConfluenceDialog::setPageName(const QString &s) { pageName = s; }
+
+void ExportConfluenceDialog::setFilePath(const QString &s) { filepath = s; }
+
+void ExportConfluenceDialog::setMapName(const QString &s) { mapname = s; }
+
+bool ExportConfluenceDialog::useTextColor()
+{
+    return ui.textColorCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::mapCenterToPageName()
+{
+    return ui.mapCenterToPageNameCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::useNumbering()
+{
+    return ui.useNumberingCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::includeMapImage()
+{
+    return ui.includeMapImageCheckBox->isChecked();
+}
+
+bool ExportConfluenceDialog::includeImages()
+{
+    return ui.includeImagesCheckBox->isChecked();
+}
+
+void ExportConfluenceDialog::doExport()
+{
+    accept();
+}
 
 void ExportConfluenceDialog::pageButtonPressed()
 {
@@ -140,135 +211,26 @@ void ExportConfluenceDialog::pageButtonPressed()
     }
 }
 
-void ExportConfluenceDialog::URLChanged()
+void ExportConfluenceDialog::URLChanged()   // FIXME-2 remove this and similar methods
 {
-    settingsChanged = true;
     url = ui.lineEditURL->text();
 }
 
 void ExportConfluenceDialog::pageNameChanged()
 {
-    settingsChanged = true;
     pageName = ui.lineEditPageName->text();
 }
 
 void ExportConfluenceDialog::mapCenterToPageNameCheckBoxPressed(bool b)
 {
-    mapCenterToPageName = b;
-    if (mapCenterToPageName)
+    if (ui.mapCenterToPageNameCheckBox->isChecked())
     {
         ui.lineEditPageName->setText(pageNameHint);
-        ui.lineEditPageName->setEnabled(false);
+        ui.lineEditPageName->setEnabled(false); // FIXME-2 better set readonly
     } else
     {
         ui.lineEditPageName->show();
         ui.lineEditPageName->setEnabled(true);
     }
-    settingsChanged = true;
 }
 
-void ExportConfluenceDialog::includeImagesCheckBoxPressed(bool b)
-{
-    includeImages = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::TOCCheckBoxPressed(bool b)
-{
-    useTOC = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::numberingCheckBoxPressed(bool b)
-{
-    useNumbering = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::taskFlagsCheckBoxPressed(bool b)
-{
-    useTaskFlags = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::userFlagsCheckBoxPressed(bool b)
-{
-    useUserFlags = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::textcolorCheckBoxPressed(bool b)
-{
-    useTextColor = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::saveSettingsInMapCheckBoxPressed(bool b)
-{
-    saveSettingsInMap = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::warningsCheckBoxPressed(bool b)
-{
-    showWarnings = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::outputCheckBoxPressed(bool b)
-{
-    showOutput = b;
-    settingsChanged = true;
-}
-
-void ExportConfluenceDialog::saveSettings()
-{
-    // Save options to settings file
-    // (but don't save at destructor, which
-    // is called for "cancel", too)
-    if (!saveSettingsInMap)
-        settings.clearLocal(filepath, "/export/confluence");
-    else {
-        settings.setLocalValue(filepath, "/export/confluence/saveSettingsInMap",
-                               "yes");
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/includeMapImage", includeMapImage);
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/includeImages", includeImages);
-        //        settings.setLocalValue (filepath, "/export/confluence/useTOC",
-        //        useTOC); settings.setLocalValue (filepath,
-        //        "/export/confluence/useNumbering", useNumbering);
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/useTaskFlags", useTaskFlags);
-        //        settings.setLocalValue (filepath,
-        //        "/export/confluence/useUserFlags", useUserFlags);
-        settings.setValue("/export/confluence/showWarnings", showWarnings);
-        settings.setValue("/export/confluence/showOutput", showOutput);
-        settings.setLocalValue(filepath, "/export/confluence/mapCenterToPageName", mapCenterToPageName);
-        settings.setLocalValue(filepath, "/export/confluence/useTextColor", useTextColor);
-        settings.setLocalValue(filepath, "/export/confluence/url", url);
-        settings.setLocalValue(filepath, "/export/confluence/pageName", pageName);
-        settings.setLocalValue(filepath, "/export/confluence/createNewPage", ui.createPageButton->isChecked());
-    }
-}
-
-void ExportConfluenceDialog::setFilePath(const QString &s) { filepath = s; }
-
-void ExportConfluenceDialog::setMapName(const QString &s) { mapname = s; }
-
-void ExportConfluenceDialog::setCreateNewPage(bool b) { ui.createPageButton->setChecked(b); }
-
-bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->isChecked(); }
-
-QString ExportConfluenceDialog::getURL() { return url; }
-
-QString ExportConfluenceDialog::getPageName() { return pageName; }
-
-void ExportConfluenceDialog::setPageNameHint(const QString &s) 
-{
-    pageNameHint = s;
-}
-
-bool ExportConfluenceDialog::warnings() { return showWarnings; }
-
-bool ExportConfluenceDialog::hasChanged() { return settingsChanged; }
