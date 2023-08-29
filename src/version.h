@@ -1,7 +1,7 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define __VYM_VERSION "2.9.21"
+#define __VYM_VERSION "2.9.22"
 #define __VYM_BUILD_DATE "2023-08-28"
 
 #define __VYM_CODE_QUALITY "Production"

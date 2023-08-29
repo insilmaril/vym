@@ -246,7 +246,9 @@ void ConfluenceAgent::continueJob(int nextStep)
                         this, &ConfluenceAgent::attachmentsUploadFailure);
                     attachmentsAgent->startJob();
                     return;
-                }
+                } else
+                    // Proceed to next step
+                    jobStep = 4;
             }
             if (jobStep == 4) {
                 //qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
