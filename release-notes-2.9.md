@@ -1,4 +1,4 @@
-Release notes View Your Mind - VYM
+Release notes VYM - View Your Mind
 ==================================
 
 
