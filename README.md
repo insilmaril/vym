@@ -68,9 +68,16 @@ Installation
     Compiling vym from scratch is pretty easy, if you have the
     development packages of the Qt5 toolkit installed.
 
+    On the command line you can
+
       cmake .
       make
       make install
+
+    or using Qt Creator:
+
+    In "File" do "Open file or project" and select the
+    "CMakeLists.txt". This will setup the project.
 
 
 Questions and feedback
