@@ -72,6 +72,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "    <li>Croatian: Damir Brašnić </li>"
             "    <li>Czech: Vít Pelčák, Pavel Fric</li>"
             "    <li>French: Marc Sert, Philippe Caillaud and Claude </li>"
+            "    <li>German: Uwe Drechsel (with typo fixes by Herbert Reiter)</li>"
             "    <li>Greek: Yannis Kaskamanidis</li>"
             "    <li>Interlingua: Giovanni Sora</li>"
             "    <li>Italian: Albano Battistella, Giovanni Sora, Seyed Puria Nafisi Azizi </li>"
