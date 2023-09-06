@@ -856,7 +856,7 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QString &imagePat
 {
     QStringList imagePaths;
     imagePaths << imagePath;
-    loadImage(parentBranch, imagePaths);
+    return loadImage(parentBranch, imagePaths);
 }
 
 void VymModel::saveImage(ImageItem *ii, QString fn)
