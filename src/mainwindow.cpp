@@ -136,6 +136,7 @@ extern QDir lastMapDir;
 extern QDir vymInstallDir;
 #endif
 extern QString zipToolPath;
+extern QString flagsPath;
 
 extern QColor vymBlue;
 
@@ -2720,6 +2721,19 @@ void Main::setupFlagActions()
 
     addToolBarBreak();
 
+    // Add user flags
+    QDir userFlagsDirectory(flagsPath + "user");
+    QStringList supportedImageFiles = QString("*.png *.bmp *.xbm *.jpg *.png "
+                    "*.xpm *.gif *.pnm *.svg *.svgz").split(' ');
+    QFileInfoList userFlagsList = userFlagsDirectory.entryInfoList(supportedImageFiles,
+                                    QDir::Files | QDir::NoDotAndDotDot);
+
+    for (int userFlagIndex = 0; userFlagIndex < userFlagsList.size(); ++userFlagIndex) {
+        QString userFlagPath = userFlagsList[userFlagIndex].absoluteFilePath();
+
+        setupFlag(userFlagPath, Flag::UserFlag, userFlagPath, "");
+    }
+
     // Add entry now, to avoid chicken and egg problem and position toolbar
     // after all others:
     setupFlag(":/flag-stopsign.svg", Flag::StandardFlag, "stopsign",
@@ -2912,12 +2926,34 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
         flag = standardFlagsMaster->createFlag(path);
         break;
 
-    case Flag::UserFlag:
-        flag = userFlagsMaster->createFlag(path);
-
-        if (flag &&!uid.isNull())
+    case Flag::UserFlag: {
             // User flags read from file already have a Uuid - use it
-            flag->setUuid(uid);
+            // If there is no valid Uuid - generate one from image's binary representation
+            QUuid flagUuid = uid;
+
+            if (flagUuid.isNull()) {
+                QFile flagFile(path);
+
+                if (flagFile.open(QIODevice::ReadOnly)) {
+                    QByteArray flagContent = flagFile.readAll();
+                    flagUuid = QUuid::createUuidV5(QUuid(), flagContent);
+                }
+            }
+
+            if (!flagUuid.isNull()) {
+                flag = userFlagsMaster->findFlagByUid(flagUuid);
+
+                // if flag apparently exist, reuse it
+                if (flag != NULL)
+                    return flag;
+            }
+
+            flag = userFlagsMaster->createFlag(path);
+
+            if (flag &&!flagUuid.isNull())
+                // User flags read from file already have a Uuid - use it
+                flag->setUuid(flagUuid);
+        }
         break;
 
     case Flag::SystemFlag:
