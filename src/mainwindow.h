@@ -561,7 +561,6 @@ class Main : public QMainWindow {
     QAction *actionCenterOn;
     QAction *actionCenterOnScaled;
     QAction *actionCenterOnRotated;
-    QAction *actionFitToSelection;
 
     QActionGroup *actionGroupModModes;
     QAction *actionModModePoint;

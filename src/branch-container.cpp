@@ -672,6 +672,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
         qreal radius = 80;
 
         QPointF center = mapToScene(r.center());
+        qDebug() << "BC::getPositionHintRelink  center= " << center << "  p_scene=" << p_scene; // FIXME-2 testing
         qreal a = getAngle(p_scene - center);
         hint = center + QPointF (radius * cos(a), - radius * sin(a));
     } else {

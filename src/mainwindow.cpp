@@ -2388,8 +2388,6 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapCenterAndFitView", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenterScaled()));
-    // FIXME-0 unused: actionFitToSelection = a;
-    //actionListFiles.append(a);
     actionCenterOnScaled = a;
 
     a = new QAction(QPixmap(),
@@ -2398,7 +2396,6 @@ void Main::setupViewActions()
     viewMenu->addAction(a);
     switchboard.addSwitch("mapCenterAndRotateView", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenterRotated()));
-    actionListFiles.append(a);
     actionCenterOnRotated = a;
 
     viewMenu->addSeparator();

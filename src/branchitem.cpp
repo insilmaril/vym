@@ -320,7 +320,7 @@ bool BranchItem::toggleScroll() // FIXME-0 check XLinks...
         if (branchContainer->getBranchesContainer())
             branchContainer->getBranchesContainer()->setVisibility(false);
         branchContainer->getLinkContainer()->setVisibility(false);
-        /* FIXME-0 testing
+        /* FIXME-0 old code: manually set visibility
         if (branchCounter > 0)
             for (int i = 0; i < branchCounter; ++i) {
                 bc = getBranchNum(i)->getBranchContainer();

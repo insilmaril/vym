@@ -3,7 +3,6 @@
 #include <QMessageBox>
 
 #include "attributeitem.h"
-// FIXME-0 needed?  #include "confluence-agent.h"
 #include "mainwindow.h"
 #include "settings.h"
 #include "warningdialog.h"
