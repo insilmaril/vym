@@ -156,6 +156,7 @@ bool Link::activate()
         if (beginBranch == endBranch)
             return false;
         xLinkState = activeXLink;
+        if (xlo) xlo->initC1();
         model->updateActions();
         return true;
     }
