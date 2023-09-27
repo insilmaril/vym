@@ -65,7 +65,6 @@ BranchItem *Link::getEndBranch() { return endBranch; }
 void Link::setEndPoint(QPointF p)
 {
     // Used only while creating the link, without endBranch
-    qDebug() << "Link::setEntPoint p=" << toS(p);
     if (xlo)
         xlo->setEnd(p);
 }
