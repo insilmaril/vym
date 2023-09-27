@@ -151,9 +151,9 @@ QString Container::info (const QString &prefix)
         //+ QString(" horDirection: %1").arg(horizontalDirection)
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
-        //+ QString(" scenePos: %1").arg(qpointFToString(scenePos(), 0))
-        //+ QString(" pos: %1").arg(qpointFToString(pos(), 0))
-        //+ QString(" rect: %1").arg(qrectFToString(rect(), 0))
+        //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
+        //+ QString(" pos: %1").arg(toS(pos(), 0))
+        //+ QString(" rect: %1").arg(toS(rect(), 0))
         + QString(" vis: %1").arg(isVisible());
         ;
 }
@@ -468,9 +468,9 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 QPointF t = oc->rect().center();    // FIXME-2 t seems to be always (0,0) ?!?  Check again with flags!
                 if (t != QPointF(0,0)) {
                     qdbg() << ind()
-                        << " - BF bbox=" << qrectFToString(bbox, 0)
-                        << " oc.pos=" << qpointFToString(oc->pos())
-                        << " t_oc= " << qpointFToString(t,0)
+                        << " - BF bbox=" << toS(bbox, 0)
+                        << " oc.pos=" << toS(oc->pos())
+                        << " t_oc= " << toS(t,0)
                         << " oc=" << oc->info();
                     /* FIXME-3 innerContainer now correctly rotates around headingContainer, but with images the corners might go outside of bounding OuterContainer...
                     bbox.translate(t);
@@ -511,7 +511,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 }
 
                 setRect(r);
-                //qdbg() << ind() << " + FloatingBounded r=" << qrectFToString(r) << "  pos=" << pos() << getName();
+                //qdbg() << ind() << " + FloatingBounded r=" << toS(r) << "  pos=" << pos() << getName();
             }
             break;
 

@@ -211,6 +211,7 @@ void XLinkObj::updateXLink()
             endPos = endBC->downLinkPos();
 
         if (beginBC && endBC) {
+            qDebug() << "XLO::updateXL  b=" << toS(beginPos) << " e=" << toS(endPos) << " << c0/1=" << toS(c0) << toS(c1);
             beginArrow->setPos(beginPos);
             beginArrow->setEndPoint(beginPos + c0);
 

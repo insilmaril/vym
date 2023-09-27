@@ -812,7 +812,7 @@ QImage MapEditor::getImage(QPointF &offset)
     offset = QPointF(sceneRect.left() - d, sceneRect.top() - d);
     QImage pix(imageRect.width(), imageRect.height(), QImage::Format_RGB32);
 
-    //qDebug() << "ME::getImage   offset="<< offset << " imageRect=" << qrectFToString(imageRect,0) << " sceneRect=" << qrectFToString(sceneRect,0);
+    //qDebug() << "ME::getImage   offset="<< offset << " imageRect=" << toS(imageRect,0) << " sceneRect=" << toS(sceneRect,0);
     QPainter pp(&pix);
     pp.setRenderHints(renderHints());
     mapScene->render(&pp,
@@ -1821,8 +1821,8 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-2  Shift modifier to on
     if (debug && e->modifiers() & Qt::ControlModifier)
         mainWindow->statusMessage(
             QString("ME::mouseMoveEvent  Scene: %1 - Viewport: %2")
-                .arg(qpointFToString(p_event, 0))
-                .arg(qpointToString(e->pos())));
+                .arg(toS(p_event, 0))
+                .arg(toS(e->pos())));
 
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
@@ -2225,8 +2225,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     {
                         // Relative positioning
                         model->saveState(
-                            bi, QString("setPos%1").arg(qpointFToString(bc->getOriginalPos())),
-                            bi, QString("setPos%1").arg(qpointFToString(bc->pos())));
+                            bi, QString("setPos%1").arg(toS(bc->getOriginalPos())),
+                            bi, QString("setPos%1").arg(toS(bc->pos())));
                     } else {
                         animationContainers << bc;
                         animationCurrentPositions << bc->pos();
@@ -2258,8 +2258,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // in parent branch
             pi->addToImagesContainer(ic);
 
-            QString pold = qpointFToString(ic->getOriginalPos());
-            QString pnow = qpointFToString(ic->pos());
+            QString pold = toS(ic->getOriginalPos());
+            QString pnow = toS(ic->pos());
             model->saveState(ii, "setPos " + pold, ii,
                              "setPos " + pnow,
                              QString("Move %1 to %2")

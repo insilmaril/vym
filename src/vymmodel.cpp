@@ -2332,7 +2332,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         if (bc->frameType(useInnerFrame) == t)
             break;
 
-        QString uif = boolToString(useInnerFrame);
+        QString uif = toS(useInnerFrame);
 
         bool saveCompleteFrame = false;
 
@@ -2403,7 +2403,7 @@ void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, Br
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
-            QString uif = boolToString(useInnerFrame);
+            QString uif = toS(useInnerFrame);
             saveState(selbi,
                       QString("setFramePenColor (%1, \"%2\")")
                         .arg(uif)
@@ -2424,7 +2424,7 @@ void VymModel::setFrameBrushColor(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
-            QString uif = boolToString(useInnerFrame);
+            QString uif = toS(useInnerFrame);
             saveState(selbi,
                       QString("setFrameBrushColor (%1, \"%2\")")
                         .arg(uif)
@@ -2446,7 +2446,7 @@ void VymModel::setFramePadding(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
-            QString uif = boolToString(useInnerFrame);
+            QString uif = toS(useInnerFrame);
             saveState(
                 selbi,
                 QString("setFramePadding (%1, \"%2\")")
@@ -2466,7 +2466,7 @@ void VymModel::setFramePenWidth(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
-            QString uif = boolToString(useInnerFrame);
+            QString uif = toS(useInnerFrame);
             saveState(selbi,
                       QString("setFramePenWidth (%1, \"%2\")")
                         .arg(uif)
@@ -2601,8 +2601,8 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
     if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch()) &&
         ti->hideInExport() != b) {
         ti->setHideInExport(b);
-        QString u = boolToString(!b);
-        QString r = boolToString(b);
+        QString u = toS(!b);
+        QString r = toS(b);
 
         saveState(ti, QString("setHideExport (%1)").arg(u), ti,
                   QString("setHideExport (%1)").arg(r),
@@ -3435,7 +3435,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
             // In Network mode, the client needs to know where the new branch
             // is, so we have to pass on this information via saveState.
             // TODO: Get rid of this positioning workaround
-            /* FIXME-4  network problem:  QString ps=qpointfToString
+            /* FIXME-4  network problem:  QString ps=toS
                (newbo->getAbsPos()); sendData ("selectLatestAdded ()"); sendData
                (QString("move %1").arg(ps)); sendSelection();
                */
@@ -3577,7 +3577,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
                 // For undo move back to original position in old floating layout
                 saveState(
                     preSelString,
-                    QString("setPos %1;").arg(qpointFToString(bc->getOriginalPos())),
+                    QString("setPos %1;").arg(toS(bc->getOriginalPos())),
                     "",
                     "",
                     QString("Move %1") .arg(headingText(branch)));
@@ -3604,7 +3604,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
                 // Save current position for redo
                 saveState("", "",
                           postSelStr,
-                          QString("setPos %1;").arg(qpointFToString(bc->pos())),
+                          QString("setPos %1;").arg(toS(bc->pos())),
                           QString("Move %1")
                               .arg(getObjectName(branch)));
             }
@@ -5354,9 +5354,9 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         {
             Container *c = ((MapItem*)ti)->getContainer();
             QPointF pos_old = c->getOriginalPos();
-            QString pos_new_str = qpointFToString(pos_new);
+            QString pos_new_str = toS(pos_new);
 
-            saveState(ti, "setPos " + qpointFToString(pos_old),
+            saveState(ti, "setPos " + toS(pos_old),
                       ti, "setPos " + pos_new_str,
                       QString("Set position of %1 to %2")
                           .arg(getObjectName(ti))

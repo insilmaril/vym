@@ -13,12 +13,12 @@ class Vector;
 class QDialog;
 
 /////////////////////////////////////////////////////////////////////////////
-QString boolToString(const bool &);
 QString richTextToPlain(QString r);
-QString qpointToString(const QPoint &p);
-QString qpointFToString(const QPointF &p, int d = 1);
-QString qrectFToString(const QRectF &r, int d = 1);
-QString VectorToString(const Vector &p);
+QString toS(const bool &);
+QString toS(const QPoint &p);
+QString toS(const QPointF &p, int d = 1);
+QString toS(const QRectF &r, int d = 1);
+QString toS(const Vector &p);
 
 extern ostream &operator<<(ostream &stream, QPoint const &p);
 extern ostream &operator<<(ostream &stream, QPointF const &p);

@@ -213,7 +213,7 @@ QRectF FrameContainer::frameRect()
 
 void FrameContainer::setFrameRect(const QRectF &frameSize)
 {
-    //qDebug() << "FC::setFrameRect t=" << frameTypeInt << " r=" << qrectFToString(frameSize, 0);
+    //qDebug() << "FC::setFrameRect t=" << frameTypeInt << " r=" << toS(frameSize, 0);
     frameRectInt = frameSize;
     switch (frameTypeInt) {
         case NoFrame:

@@ -11,11 +11,6 @@
 
 extern QString vymVersion;
 
-QString boolToString(const bool &b)
-{
-    return b ? "true" : "false";
-}
-
 QString richTextToPlain(QString r, const QString &indent, const int &width)
 {
     Q_UNUSED(width);
@@ -66,19 +61,24 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
     return r;
 }
 
-QString qpointToString(const QPoint &p)
+QString toS(const bool &b)
+{
+    return b ? "true" : "false";
+}
+
+QString toS(const QPoint &p)
 {
     return QString("(%1, %2)").arg(p.x()).arg(p.y());
 }
 
-QString qpointFToString(const QPointF &p, int d)
+QString toS(const QPointF &p, int d)
 {
     return QString("(%1, %2)")
         .arg(QString::number(p.x(),'f', d))
         .arg(QString::number(p.y(),'f', d));
 }
 
-QString qrectFToString(const QRectF &r, int d)
+QString toS(const QRectF &r, int d)
 {
     return QString("(%1, %2  %3x%4)")
         .arg(QString::number(r.x(),'f', d))
@@ -87,7 +87,7 @@ QString qrectFToString(const QRectF &r, int d)
         .arg(QString::number(r.height(),'f', d));
 }
 
-QString VectorToString(const Vector &p)
+QString toS(const Vector &p)
 {
     return QString("(%1, %2)").arg(p.x()).arg(p.y());
 }
