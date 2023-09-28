@@ -3043,7 +3043,7 @@ void VymModel::moveDownDiagonally()
      }
 }
 
-void VymModel::detach(BranchItem *bi)   // FIXME-0 sometines linkSpaceCont and/or reposition missing
+void VymModel::detach(BranchItem *bi)   // FIXME-1 sometines linkSpaceCont and/or reposition missing
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -3524,7 +3524,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             keepPos = false;
 
         // What kind of relinking are we doing? Important for style updates
-        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-0 not used later   also not considering detaching
+        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-1 not used later   also not considering detaching
 
         emit(layoutAboutToBeChanged());
         BranchItem *branchpi = (BranchItem *)branch->parent();

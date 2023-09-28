@@ -292,7 +292,7 @@ void BranchItem::unScroll()
         toggleScroll();
 }
 
-bool BranchItem::toggleScroll() // FIXME-0 check XLinks...
+bool BranchItem::toggleScroll()
 {
     // MapCenters are not scrollable
     if (depth() == 0)
