@@ -180,6 +180,24 @@ QPointF BranchContainer::getOriginalParentPos()
     return originalParentPos;
 }
 
+void BranchContainer::updateVisibilityOfChildren()
+{
+    if (branchesContainer && branchItem)
+    {
+        if (branchItem->isScrolled()) {
+            branchesContainer->setVisibility(false);
+            linkContainer->setVisibility(false);
+        } else {
+            branchesContainer->setVisibility(true);
+            linkContainer->setVisibility(true);
+        }
+
+        // Images of *this* branch may still stay visible, 
+        // deeper down in the tree they will be hidden due to 
+        // parent branch already being hidden
+    }
+}
+
 #include <QTransform>
 void BranchContainer::setScrollOpacity(qreal o)   // FIXME-2 testing for potential later animation
 {
@@ -273,6 +291,8 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
         branchesContainer = new Container ();
         branchesContainer->containerType = Container::BranchesContainer;
         branchesContainer->zPos = Z_BRANCHES;
+
+        updateVisibilityOfChildren();
 
         if (listContainer)
             listContainer->addContainer(branchesContainer);

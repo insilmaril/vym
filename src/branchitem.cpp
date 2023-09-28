@@ -301,35 +301,14 @@ bool BranchItem::toggleScroll() // FIXME-0 check XLinks...
     BranchContainer *bc;
     if (scrolled) {
         scrolled = false;
-        if (branchContainer->getBranchesContainer())
-            branchContainer->getBranchesContainer()->setVisibility(true);
-        branchContainer->getLinkContainer()->setVisibility(true);
         systemFlags.deactivate(QString("system-scrolledright"));
-        /*
-        if (branchCounter > 0)
-            for (int i = 0; i < branchCounter; ++i) {
-                bc = getBranchNum(i)->getBranchContainer();
-                if (bc)
-                    bc->setVisibility(true);
-            }
-         */
     }
     else {
         scrolled = true;
         systemFlags.activate(QString("system-scrolledright"));
-        if (branchContainer->getBranchesContainer())
-            branchContainer->getBranchesContainer()->setVisibility(false);
-        branchContainer->getLinkContainer()->setVisibility(false);
-        /* FIXME-0 old code: manually set visibility
-        if (branchCounter > 0)
-            for (int i = 0; i < branchCounter; ++i) {
-                bc = getBranchNum(i)->getBranchContainer();
-                if (bc)
-                    bc->setVisibility(false);
-            }
-        */
     }
 
+    branchContainer->updateVisibilityOfChildren();
     return true;
 }
 
@@ -547,10 +526,6 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
         // Link to parent branch visually by
         // adding my upLink to parents linkContainer
         branchContainer->linkTo(parentBranch()->getBranchContainer());
-
-        // Parent might be invisible
-        if (parentBranch()->isScrolled() || !branchContainer->parentBranchContainer()->isVisible())
-            branchContainer->setVisibility(false);
     }
 
     return branchContainer;

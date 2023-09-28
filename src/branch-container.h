@@ -43,6 +43,9 @@ class BranchContainer : public SelectableContainer {
     Orientation getOrientation();
     QPointF getOriginalParentPos();
 
+    void updateVisibilityOfChildren();    // consider scroll state for branchesCont and imagesCont
+
+    void setScrolled(bool b);
     void setScrollOpacity(qreal a);
     qreal getScrollOpacity();
   private:
