@@ -54,8 +54,6 @@ class LinkObj : public MapObj {
 
     void setLinkColor(QColor);
     QColor getLinkColor();
-    virtual void setVisibility(bool);
-    void updateVisibility(); //! hides/unhides link depending on selection
 
     /*! update parPos, childRefPos depending on pos redraw link with given style */
     void updateLinkGeometry();

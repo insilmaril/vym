@@ -26,7 +26,6 @@ class ImageContainer : public SelectableContainer {
     virtual ~ImageContainer();
     virtual void copy(ImageContainer*);
     virtual void init();
-    void setVisibility(bool);
     void setWidth(qreal w);
     void setScaleFactor(qreal f);
     qreal getScaleFactor();

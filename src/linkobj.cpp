@@ -101,10 +101,6 @@ void LinkObj::setLinkStyle(Style newStyle)
     switch (style) {
         case Line:
             l = new QGraphicsLineItem(this);
-            //if (visible)
-                l->show();
-            //else
-            //    l->hide();
             l->setPen(pen);
             break;
         case Parabel:
@@ -112,10 +108,6 @@ void LinkObj::setLinkStyle(Style newStyle)
                 cl = new QGraphicsLineItem(this);
                 cl->setLine(QLineF(i * 5, 0, i * 10, 100));
                 cl->setPen(pen);
-                if (visible)
-                    cl->show();
-                else
-                    cl->hide();
                 segments.append(cl);
             }
             pa0.resize(arcsegs + 1);
@@ -124,20 +116,12 @@ void LinkObj::setLinkStyle(Style newStyle)
             p = new QGraphicsPolygonItem(this);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
-            if (visible)
-                p->show();
-            else
-                p->hide();
             pa0.resize(3);
             break;
         case PolyParabel:
             p = new QGraphicsPolygonItem(this);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
-            if (visible)
-                p->show();
-            else
-                p->hide();
             pa0.resize(arcsegs * 2 + 2);
             pa1.resize(arcsegs + 1);
             pa2.resize(arcsegs + 1);
@@ -146,10 +130,6 @@ void LinkObj::setLinkStyle(Style newStyle)
             p = new QGraphicsPolygonItem(this);
             p->setPen(pen);
             p->setBrush(QBrush(pen.color()));
-            if (visible)
-                p->show();
-            else
-                p->hide();
             pa0.resize(3);
             break;
         default:
@@ -242,90 +222,6 @@ void LinkObj::setLinkColor(QColor col)
 }
 
 QColor LinkObj::getLinkColor() { return linkcolor; }
-
-void LinkObj::setVisibility(bool v)
-{
-    visible = v;
-    updateVisibility();
-}
-
-void LinkObj::updateVisibility()
-{
-    bool visnow = visible;
-
-    qDebug() << "LO::updateVis  visnow=" << visnow << "  vis=" << isVisible();
-    // FIXME-2 Hide links of unselected objects (if wanted)
-    /*
-    if (((MapItem *)treeItem)->getHideLinkUnselected() &&
-        !treeItem->getModel()->isSelected(treeItem))
-        visnow = false;
-    */
-
-    if (visnow) {
-        if (bottomLine)
-            bottomLine->show();
-
-        switch (style) {
-        case Line:
-            if (l)
-                l->show();
-            break;
-        case Parabel:
-            for (int i = 0; i < segments.size(); ++i)
-                segments.at(i)->show();
-            break;
-        case PolyLine:
-            if (p)
-                p->show();
-            else
-                qDebug() << "LC::updateVis p==0 (PolyLine)"; // FIXME-4
-            break;
-        case PolyParabel:
-            if (p)
-                p->show();
-            else
-                qDebug() << "LC::updateVis p==0 (PolyParabel) ";
-                         //<< treeItem->getHeadingPlain(); // FIXME-4
-            break;
-        case ListDash:
-            if (p)
-                p->show();
-            else
-                qDebug() << "LC::updateVis p==0 (PolyLine)"; // FIXME-4
-            break;
-        default:
-            break;
-        }
-    }
-    else {
-        if (bottomLine)
-            bottomLine->hide();
-        switch (style) {
-        case Line:
-            if (l)
-                l->hide();
-            break;
-        case Parabel:
-            for (int i = 0; i < segments.size(); ++i)
-                segments.at(i)->hide();
-            break;
-        case PolyLine:
-            if (p)
-                p->hide();
-            break;
-        case PolyParabel:
-            if (p)
-                p->hide();
-            break;
-        case ListDash:
-            if (p)
-                p->hide();
-            break;
-        default:
-            break;
-        }
-    }
-}
 
 void LinkObj::updateLinkGeometry()
 {

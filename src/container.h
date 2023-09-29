@@ -105,9 +105,6 @@ class Container : public QGraphicsRectItem {
 
     void setVerticalAlignment(const VerticalAlignment &a);
 
-    virtual bool isVisibleContainer();
-    virtual void setVisibility(bool);
-
     void addContainer(Container *c, int z = -1);
     Container* parentContainer();
     QList <Container*> childContainers();
@@ -134,7 +131,6 @@ class Container : public QGraphicsRectItem {
   protected:
     ContainerType containerType;
 
-    bool visible;
     bool overlay;
 
     int zPos;       //! Containers can be orderd by zPos. Lowest zPos is first container

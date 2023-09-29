@@ -239,17 +239,6 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     return s;
 }
 
-void BranchItem::updateVisibility() // FIXME-0 still needed?
-{
-    /*
-    // Needed to hide relinked branch, if parent is scrolled
-    if (hasScrolledParent(this) || hidden)
-        branchContainer->setVisibility(false);
-    else
-        branchContainer->setVisibility(true);
-        */
-}
-
 void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);

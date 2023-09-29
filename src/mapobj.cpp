@@ -10,7 +10,6 @@
 MapObj::MapObj(QGraphicsItem *parent) : QGraphicsItem(parent)
 {
     //qDebug() << "Const MapObj";
-    init();
 }
 
 MapObj::~MapObj()
@@ -21,15 +20,6 @@ MapObj::~MapObj()
         i->setParentItem(nullptr);
 }
 
-void MapObj::init()
-{
-    visible = true;
-}
-
 QRectF MapObj::boundingRect() const { return QRectF(); }
 
 void MapObj::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) {}
-
-bool MapObj::isVisibleObj() { return visible; } // FIXME-2 Currently not used. Remove?
-
-void MapObj::setVisibility(bool v) { visible = v; }

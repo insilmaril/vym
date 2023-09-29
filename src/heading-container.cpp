@@ -29,13 +29,6 @@ void HeadingContainer::init()
     verticalAlignment = AlignedLeft;
 }
 
-void HeadingContainer::setVisibility(bool v)
-{
-    visible = v;
-    qDebug() << "HC::setVis  v=" << v;
-    setVisible(visible);
-}
-
 QGraphicsTextItem *HeadingContainer::newLine(QString s)
 {
     QGraphicsTextItem *t = new QGraphicsTextItem(s, this);

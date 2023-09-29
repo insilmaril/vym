@@ -691,10 +691,9 @@ XLinkObj *TreeItem::getXLinkObjNum(const int &n)
     return nullptr;
 }
 
-void TreeItem::setHideTmp(HideTmpMode mode)
+void TreeItem::setHideTmp(HideTmpMode mode) 
 {
     if (type == Image || type == Branch || type == MapCenter)
-    //	((ImageItem*)this)->updateVisibility();
     {
         if (mode == HideExport &&
             (hideExport ||
@@ -706,7 +705,6 @@ void TreeItem::setHideTmp(HideTmpMode mode)
         else
             // Do not hide, but still take care of scrolled status
             hidden = false;
-        updateVisibility();
         // And take care of my children
         for (int i = 0; i < branchCount(); ++i)
             getBranchNum(i)->setHideTmp(mode);
@@ -739,11 +737,6 @@ void TreeItem::setHideInExport(bool b)
 }
 
 bool TreeItem::hideInExport() { return hideExport; }
-
-void TreeItem::updateVisibility()
-{
-    // overloaded in derived objects
-}
 
 bool TreeItem::isHidden() { return hidden; }
 

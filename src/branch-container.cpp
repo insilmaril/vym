@@ -185,11 +185,11 @@ void BranchContainer::updateVisibilityOfChildren()
     if (branchesContainer && branchItem)
     {
         if (branchItem->isScrolled()) {
-            branchesContainer->setVisibility(false);
-            linkContainer->setVisibility(false);
+            branchesContainer->setVisible(false);
+            linkContainer->setVisible(false);
         } else {
-            branchesContainer->setVisibility(true);
-            linkContainer->setVisibility(true);
+            branchesContainer->setVisible(true);
+            linkContainer->setVisible(true);
         }
 
         // Images of *this* branch may still stay visible, 

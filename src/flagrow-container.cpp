@@ -68,14 +68,13 @@ void FlagRowContainer::activateFlag(Flag *flag)
         FlagContainer *fc = new FlagContainer;
         addContainer(fc);
 
+        // qDebug() << "FRC::activateFlag  visible="<< visible << "  Qtvis=" << isVisible();
+
         // Loading an image  will *copy* it
         // and thus read the flag from cash
         fc->copy(flag->getImageContainer());
         fc->setUuid(flag->getUuid());
         fc->setZValue(QGraphicsItem::zValue());
-        fc->setVisibility(visible);
-        // qDebug() << "FRC::activateFlag  visible="<< visible << "  Qtvis=" << isVisible();  FIXME-2 testing only
-        fc->setVisibility(true);
     }
 }
 

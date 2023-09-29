@@ -255,8 +255,9 @@ void XLinkObj::updateXLink()
     setVisibility();
 }
 
-void XLinkObj::setVisibility(bool b)
+void XLinkObj::setVisibility(bool b)    // FIXME-0 needed?
 {
+    qDebug() << "XO::setVis b=" << b << "stateVis=" << stateVis;
     if (stateVis == FullShowControls) {
         c0_ellipse->show();
         c1_ellipse->show();
@@ -272,7 +273,6 @@ void XLinkObj::setVisibility(bool b)
         endArrow->setFixedLength(0);
     }
 
-    MapObj::setVisibility(b);
     if (b) {
         if (stateVis == OnlyBegin) {
             path->hide();

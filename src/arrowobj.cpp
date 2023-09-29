@@ -64,13 +64,13 @@ void ArrowObj::setFixedLength(int i) { fixedLength = i; }
 
 int ArrowObj::getFixedLength() { return fixedLength; }
 
-void ArrowObj::show() { setVisibility(true); }
+void ArrowObj::show() { setVisibility(true); }  // FIXME-0 needed?
 
-void ArrowObj::hide() { setVisibility(false); }
+void ArrowObj::hide() { setVisibility(false); } // FIXME-0 needed?
 
-void ArrowObj::setVisibility(bool b)
+void ArrowObj::setVisibility(bool b)    // FIXME-0 needed?
 {
-    MapObj::setVisibility(b);
+    qDebug() << "AO::setVis b=" << b;
     if (b) {
         if (styleEnd != None)
             arrowEnd->show();

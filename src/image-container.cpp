@@ -88,21 +88,6 @@ void ImageContainer::init()
     //setPen(QPen(Qt::white));
 }
 
-void ImageContainer::setVisibility(bool v)
-{
-    switch (imageType) {
-        case ImageContainer::SVG:
-        case ImageContainer::ClonedSVG:
-            v ? svgItem->show() : svgItem->hide();
-            break;
-        case ImageContainer::Pixmap:
-            v ? pixmapItem->show() : pixmapItem->hide();
-            break;
-        default:
-            break;
-    }
-}
-
 void ImageContainer::setWidth(qreal w)
 {
     if (boundingRect().width() == 0)

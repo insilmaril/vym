@@ -3611,9 +3611,6 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
         }
 
-        // New parent might be invisible
-        branch->updateVisibility();
-
         if (dst->isScrolled()) {
             if (updateSelection)
                 select(dst);
@@ -3862,7 +3859,7 @@ void VymModel::deleteLink(Link *l)
         delete (l);
 }
 
-bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 upLinks still visible?!
+bool VymModel::scrollBranch(BranchItem *bi)
 {
     if (bi) {
         if (bi->isScrolled())
@@ -3885,7 +3882,7 @@ bool VymModel::scrollBranch(BranchItem *bi) // FIXME-0 upLinks still visible?!
     return false;
 }
 
-bool VymModel::unscrollBranch(BranchItem *bi)
+bool VymModel::unscrollBranch(BranchItem *bi)   // FIXME-0  linkContainer gone?
 {
     if (bi) {
         if (!bi->isScrolled())

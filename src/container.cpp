@@ -300,18 +300,6 @@ void Container::setVerticalAlignment(const VerticalAlignment &a)
     verticalAlignment = a;
 }
 
-bool Container::isVisibleContainer()
-{
-    return visible;
-}
-
-void Container::setVisibility(bool v)   // FIXME-0 "visible" flag needed really or only isVisible()?
-{
-    //qDebug() << "C:setVis v=" << v << info ();
-    visible = v;
-    setVisible(visible);
-}
-
 void Container::addContainer(Container *c, int z)
 {
     if (childContainers().contains(c)) return;

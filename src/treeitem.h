@@ -203,8 +203,6 @@ class TreeItem : public XMLObj {
     virtual void setHideInExport(bool); // set export of object (and children)
     virtual bool hideInExport();
     virtual bool isHidden();
-    virtual void
-    updateVisibility(); //! Sets visibility in LinkableMapObj, if existing
 
     virtual QString getGeneralAttr();
 

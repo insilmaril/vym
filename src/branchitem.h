@@ -32,8 +32,6 @@ class BranchItem : public MapItem {
     virtual QString saveToDir(const QString &tmpdir, const QString &prefix,
                               const QPointF &offset, QList<Link *> &tmpLinks);
 
-    virtual void updateVisibility();
-
     virtual void setHeadingColor(
         QColor color); //! Overloaded from TreeItem to update QGraphicsView
 
