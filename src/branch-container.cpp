@@ -1488,7 +1488,7 @@ void BranchContainer::reposition()
         for (int i = 0; i < branchItem->xlinkCount(); ++i) {
             xlo = branchItem->getXLinkObjNum(i);
             if (xlo)
-                xlo->updateXLink();
+                xlo->updateGeometry();
         }
     }
 

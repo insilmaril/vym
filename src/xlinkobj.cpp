@@ -141,15 +141,15 @@ void XLinkObj::setEnd(QPointF p) { endPos = p; }
 void XLinkObj::setSelection(SelectionType s)
 {
     curSelection = s;
-    setVisibility();
+    updateVisibility();
 }
 
-void XLinkObj::updateXLink()
+void XLinkObj::updateGeometry()
 {
     QPointF a, b;
     QPolygonF pa;
 
-    //qDebug() << "XLO::updateXLink";
+    //qDebug() << "XLO::updateGeometry";
     BranchContainer *beginBC = nullptr;
     BranchContainer *endBC = nullptr;
     BranchItem *bi = link->getBeginBranch();
@@ -252,12 +252,61 @@ void XLinkObj::updateXLink()
     BranchItem *bi_begin = link->getBeginBranch();
     BranchItem *bi_end = link->getEndBranch();
 
-    setVisibility();
+    // called often during drawing, but needed during reposition
+    // caused by toggling scroll state
+    updateVisibility();
 }
 
-void XLinkObj::setVisibility(bool b)    // FIXME-0 needed?
+void XLinkObj::updateVisibility()
 {
-    qDebug() << "XO::setVis b=" << b << "stateVis=" << stateVis;
+    BranchContainer *beginBC = nullptr;
+    BranchItem *beginBI = link->getBeginBranch();
+    if (beginBI)
+        beginBC = beginBI->getBranchContainer();
+
+    BranchItem *endBI = link->getEndBranch();
+    BranchContainer *endBC = nullptr;
+    if (endBI)
+        endBC = endBI->getBranchContainer();
+
+    //qDebug() << "XLO::updateVis() beginBI="<<beginBI << "endBI=" << endBI;
+
+    if (beginBC && endBC) {
+        if (beginBC->isVisible() &&
+            endBC->isVisible()) { // Both ends are visible
+            visBranch = nullptr;
+            if (curSelection != Empty)
+                stateVis = FullShowControls;
+            else
+                stateVis = Full;
+            setVisibility(true);
+        }
+        else {
+            if (!beginBC->isVisible() &&
+                !endBC->isVisible()) { // None of the ends is visible
+                visBranch = nullptr;
+                stateVis = Hidden;
+                setVisibility(false);
+            }
+            else { // Just one end is visible, draw a symbol that shows
+                // that there is a link to a scrolled branch
+                if (beginBC->isVisible()) {
+                    stateVis = OnlyBegin;
+                    visBranch = beginBI;
+                }
+                else {
+                    visBranch = endBI;
+                    stateVis = OnlyEnd;
+                }
+                setVisibility(true);
+            }
+        }
+    }
+}
+
+void XLinkObj::setVisibility(bool b)
+{
+    //qDebug() << "XLO::setVis(b)  b=" << b << "stateVis=" << stateVis;
     if (stateVis == FullShowControls) {
         c0_ellipse->show();
         c1_ellipse->show();
@@ -298,50 +347,6 @@ void XLinkObj::setVisibility(bool b)    // FIXME-0 needed?
         path->hide();
         beginArrow->hide();
         endArrow->hide();
-    }
-}
-
-void XLinkObj::setVisibility()
-{
-    BranchContainer *beginBC = nullptr;
-    BranchItem *beginBI = link->getBeginBranch();
-    if (beginBI)
-        beginBC = beginBI->getBranchContainer();
-
-    BranchItem *endBI = link->getEndBranch();
-    BranchContainer *endBC = nullptr;
-    if (endBI)
-        endBC = endBI->getBranchContainer();
-    if (beginBC && endBC) {
-        if (beginBC->isVisible() &&
-            endBC->isVisible()) { // Both ends are visible
-            visBranch = nullptr;
-            if (curSelection != Empty)
-                stateVis = FullShowControls;
-            else
-                stateVis = Full;
-            setVisibility(true);
-        }
-        else {
-            if (!beginBC->isVisible() &&
-                !endBC->isVisible()) { // None of the ends is visible
-                visBranch = nullptr;
-                stateVis = Hidden;
-                setVisibility(false);
-            }
-            else { // Just one end is visible, draw a symbol that shows
-                // that there is a link to a scrolled branch
-                if (beginBC->isVisible()) {
-                    stateVis = OnlyBegin;
-                    visBranch = beginBI;
-                }
-                else {
-                    visBranch = endBI;
-                    stateVis = OnlyEnd;
-                }
-                setVisibility(true);
-            }
-        }
     }
 }
 
@@ -400,7 +405,7 @@ void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
             break;
         default:
             break; }
-    updateXLink();
+    updateGeometry();
 }
 
 XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)

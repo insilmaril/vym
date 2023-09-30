@@ -33,9 +33,9 @@ class XLinkObj : public MapObj {
     QPointF getEndPos();
     virtual void setEnd(QPointF);
     void setSelection(SelectionType s);
-    void updateXLink();
+    void updateGeometry();
+    void updateVisibility();
     void setVisibility(bool);
-    void setVisibility();
     void initC0();
     void setC0(const QPointF &p);
     QPointF getC0();

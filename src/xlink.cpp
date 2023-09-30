@@ -102,7 +102,7 @@ void Link::setPen(const QPen &p)
 {
     pen = p;
     if (xlo)
-        xlo->updateXLink();
+        xlo->updateGeometry();
 }
 
 QPen Link::getPen() { return pen; }
@@ -121,7 +121,7 @@ void Link::setStyleBegin(const QString &s)
 {
     if (xlo) {
         xlo->setStyleBegin(s);
-        xlo->updateXLink();
+        xlo->updateGeometry();
     }
 }
 
@@ -137,7 +137,7 @@ void Link::setStyleEnd(const QString &s)
 {
     if (xlo) {
         xlo->setStyleEnd(s);
-        xlo->updateXLink();
+        xlo->updateGeometry();
     }
 }
 
@@ -195,7 +195,7 @@ void Link::removeXLinkItem(XLinkItem *xli)
 void Link::updateLink()
 {
     if (xlo)
-        xlo->updateXLink();
+        xlo->updateGeometry();
 }
 
 QString Link::saveToDir()
@@ -255,6 +255,5 @@ XLinkObj *Link::createXLinkObj()
 {
     if (!xlo)
         xlo = new XLinkObj(this);
-    xlo->setVisibility();
     return xlo;
 }

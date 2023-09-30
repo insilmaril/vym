@@ -42,14 +42,6 @@ void MapItem::setPos(const QPointF &p)
 void MapItem::setHideLinkUnselected(bool b) // FIXME-2 not working yet with containers
 {
     hideLinkUnselected = b;
-    /*
-    LMO *lmo = getLMO();
-    if (lmo) {
-        // lmo->setHideLinkUnselected();
-        lmo->setVisibility(lmo->isVisibleObj());
-        lmo->updateLinkGeometry();
-    }
-    */
 }
 
 bool MapItem::getHideLinkUnselected() { return hideLinkUnselected; }
