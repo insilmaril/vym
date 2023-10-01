@@ -3882,7 +3882,7 @@ bool VymModel::scrollBranch(BranchItem *bi)
     return false;
 }
 
-bool VymModel::unscrollBranch(BranchItem *bi)   // FIXME-0  linkContainer gone?
+bool VymModel::unscrollBranch(BranchItem *bi)
 {
     if (bi) {
         if (!bi->isScrolled())
@@ -3894,6 +3894,10 @@ bool VymModel::unscrollBranch(BranchItem *bi)   // FIXME-0  linkContainer gone?
             saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
+
+            // Create linkSpaceContainer (e.g. after loading), if missing
+            bi->getBranchContainer()->updateChildrenStructure();
+
             reposition();
             //mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x   //FIXME-2 really?
             return true;
