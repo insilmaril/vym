@@ -2175,7 +2175,13 @@ void MapEditor::dropEvent(QDropEvent *event)
                             model->setVymLink(url);
                         else {
                             model->setURL(url);
-                            model->setHeadingPlainText(url);
+
+                            // Shorten long URLs for heading
+                            int i = url.indexOf("?");
+                            QString url_short = url.left(i);
+                            if (i > 0) 
+                                url_short = url_short + "...";
+                            model->setHeadingPlainText(url_short);
                         }
 
                         model->select(bi->parent());
