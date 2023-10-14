@@ -1025,7 +1025,7 @@ TreeItem *MapEditor::findMapItem(
         bi = model->getRootItem()->getBranchNum(i);
     }
 
-    if (nearestMapCenter && d < 80)
+    if (nearestMapCenter && d < 80 && !excludedItems.contains(nearestMapCenter))
         return nearestMapCenter;
 
     return nullptr;
@@ -1654,8 +1654,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     /*
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "   ti_found=" << ti_found;
-    //if (ti_found) qDebug() << "   ti_found="<<ti_found->getHeading();
     */
+    //if (ti_found) qDebug() << "   ti_found="<<ti_found->getHeading();
 
     // If Modifier mode "view" is set, all other clicks can be ignored,
     // nothing will be selected
@@ -1667,11 +1667,12 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
     QString sysFlagName;    // FIXME-2 could be local to ti_found clause below?
 
-    // XLink modifier, create new XLink
     BranchItem *selbi = model->getSelectedBranch();
     BranchContainer *selbc = nullptr;
     if (selbi) {
         selbc = selbi->getBranchContainer();
+
+        // XLink modifier, create new XLink // FIXME-1 move below to ti_found???
         if (mainWindow->getModMode() == Main::ModModeXLink &&
             (e->modifiers() & Qt::ShiftModifier)) {
             setState(DrawingLink);
@@ -1755,6 +1756,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
                 movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
+
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1763,6 +1765,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             }
             else
                 setState(MovingObject);
+
+            // Set initial position of tmpParentContainer
+            tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);
         }
         else
             // Middle Button - Toggle Scroll
@@ -1813,7 +1818,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-2  Shift modifier to only move MC or floating parent not implemented yet
+void MapEditor::mouseMoveEvent(QMouseEvent *e)
+    // FIXME-2  Shift modifier to only move MC or floating parent not implemented yet
 {
     QPointF p_event = mapToScene(e->pos());
 
@@ -1846,7 +1852,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)  // FIXME-2  Shift modifier to on
         scrollBarPosAnimation.stop();
         viewCenterAnimation.stop();
         rotationAnimation.stop();
-        // zoomAnimation.stop();
+        // zoomAnimation.stop();    // FIXME-2 why no longer used?
 
         return;
     }
@@ -1909,46 +1915,16 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
 
-    // Check if we could link and position tmpParentContainer
-    BranchContainer::Orientation newOrientation;
-    BranchContainer *targetBranchContainer = nullptr;
-
-    if (targetItem && targetItem->hasTypeBranch() &&
-            !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
-
-        int d_pos;
-        if (e->modifiers() & Qt::ShiftModifier) {
-            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
-            d_pos = 1;
-        } else if (e->modifiers() & Qt::ControlModifier) {
-            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
-            d_pos = -1;
-        } else {
-            targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
-            d_pos = 0;
-        }
-        tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
-        if (!tmpParentContainer->isTemporaryLinked())
-            tmpParentContainer->setTemporaryLinked(targetBranchContainer);
-    } else {
-        // Since moved containers are relative to tmpParentContainer anyway, just move
-        // tmpParentContainer to pointer position:
-        tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
-
-        if (tmpParentContainer->isTemporaryLinked()) {
-            tmpParentContainer->unsetTemporaryLinked();
-        }
-    }
-
+    // Add selected branches and images temporary to tmpParentContainer,
+    // if they are not there yet:
     if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
-        // Add selected branches and images temporary to tmpParentContainer,
-        // if they are not there yet:
+        // FIXME-0 Filter out items, where parent also is in movingItems, before adding to tPC
         BranchContainer *bc;
         BranchContainer *bc_first = nullptr;
         qreal h_total;
+        qDebug() << "ME::moveObj adding to tmpParent: " << movingItems.count();
         foreach (TreeItem *ti, movingItems)
         {
-            // FIXME-2 ME::moveObject add items to tmpParentContainer only, if no parent is moved simultanously
             // The item structure in VymModel remaines untouched so far,
             // only containers will be reparented temporarily!
             if (ti->hasTypeBranch()) {
@@ -1965,11 +1941,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     // For additional floating containers use scenePos, so that bc_first
                     // could be moved with additional containers keeping their positions
                     bc->setOriginalPos();
-
-                    if (bc->hasFloatingBranchesLayout()) {
-                        foreach(BranchContainer *bc2, bc->childBranches())
-                            bc2->setOriginalScenePos();
-                    }
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
                     tmpParentContainer->addToBranchesContainer(bc, true);
                 }
@@ -1999,13 +1970,44 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 }
             }
             else
-                qWarning("ME::moveObject  Huh? I'm confused. No LMO or XLink moved");
+                qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
 
     } // add to tmpParentContainer
 
+    // Check if we could link and position tmpParentContainer
+    BranchContainer::Orientation newOrientation;
+    BranchContainer *targetBranchContainer = nullptr;
+    if (targetItem && targetItem->hasTypeBranch() &&
+            !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
+
+        int d_pos;
+        if (e->modifiers() & Qt::ShiftModifier) {
+            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
+            d_pos = 1;
+        } else if (e->modifiers() & Qt::ControlModifier) {
+            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
+            d_pos = -1;
+        } else {
+            targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
+            d_pos = 0;
+        }
+        tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
+        if (!tmpParentContainer->isTemporaryLinked())
+            tmpParentContainer->setTemporaryLinked(targetBranchContainer);
+    } else {
+        // Since moved containers are relative to tmpParentContainer anyway, just move
+        // tmpParentContainer to pointer position:
+        tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
+
+        if (tmpParentContainer->isTemporaryLinked()) {
+            tmpParentContainer->unsetTemporaryLinked();
+        }
+    }
+
     // Set orientation
-    if (targetBranchContainer) {
+    Container *tbc = tmpParentContainer->getBranchesContainer();
+    if (targetBranchContainer && tbc && !tbc->childItems().contains(targetBranchContainer)) {
         if (targetItem->depth() == 0) {
             if (tmpParentContainer->pos().x() > targetBranchContainer->pos().x())
                 newOrientation = BranchContainer::RightOfParent;
@@ -2018,13 +2020,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     } else {
         //tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
         /* FIXME-2 Review orientation while moving
-         */
         // Try to set orientation for not relinked tmpParentContainer by checking the
         // layout and "original" parent
-        Container *c = tmpParentContainer->getBranchesContainer();
-        if (c && !c->childItems().isEmpty()) {
+        if (tbc && !tbc->childItems().isEmpty()) {
             // Consider orientation of *last* selected branch
-            BranchContainer *bc = (BranchContainer*)(c->childItems().last());
+            BranchContainer *bc = (BranchContainer*)(tbc->childItems().last());
+            qDebug() << " - has no targetBranchContainer orgFloating= " << bc->isOriginalFloating();
             if (bc->isOriginalFloating())  {
                 if (tmpParentContainer->pos().x() > bc->getOriginalParentPos().x())
                     newOrientation = BranchContainer::RightOfParent;
@@ -2033,9 +2034,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             } else
                 newOrientation = bc->getOriginalOrientation();
         }
+         */
     }
 
-    // When moving MapCenters with Shift modifier, don't move mainbranches (in scene)
+    // When moving MapCenters with Shift modifier, don't move mainbranches (in scene)   // FIXME-0 check shift vs. Ctrl. Not reimplemented yet
     if (e->modifiers() & Qt::ControlModifier) {
         BranchContainer *bc_first = tmpParentContainer->childBranches().first();
         // Loop over branches
@@ -2207,9 +2209,10 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 model->saveStateBeginBlock(
                     QString("Move %1 branch(es)").arg(childBranches.count())
                 );
+
                 // Empty the tmpParentContainer, which is used for moving
                 // Updating the stacking order also resets the original parents
-
+                // qDebug() << "ME::mouseReleased, empty tPC";
                 foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
 

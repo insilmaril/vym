@@ -151,7 +151,7 @@ QString Container::info (const QString &prefix)
         //+ QString(" horDirection: %1").arg(horizontalDirection)
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
-        //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
+        + QString(" scenePos: %1").arg(toS(scenePos(), 0))
         //+ QString(" pos: %1").arg(toS(pos(), 0))
         //+ QString(" rect: %1").arg(toS(rect(), 0))
         + QString(" vis: %1").arg(isVisible());
@@ -381,7 +381,7 @@ void Container::setOriginalPos()    // FIXME-3 Only used for BranchContainer and
     originalPos = pos();
 }
 
-void Container::setOriginalScenePos()
+void Container::setOriginalScenePos()// FIXME-3 Only used for BranchContainer
 {
     originalPos = scenePos();
 }

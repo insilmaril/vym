@@ -150,17 +150,17 @@ void BranchContainer::setOrientation(const Orientation &o)
     orientation = o;
 }
 
-void BranchContainer::setOriginalOrientation()  // FIXME-1 refactor the setOrig* methods into one setTmpParentContainer()
+void BranchContainer::setOriginalOrientation()  // FIXME-0 refactor the setOrig* methods into one setTmpParentContainer()
 {
     originalOrientation = orientation;
     originalFloating = isFloating();
     originalParentBranchContainer = parentBranchContainer();
     if (parentItem()) {
-        /*
+        /*  FIXME-2 BC::setOriginalOrientation
+        */
         qDebug() << "BC:setOrient of " << info();
         qDebug() << "        parent: " << parentBranchContainer();
         qDebug() << "        parent: " << parentBranchContainer()->info() <<originalParentPos;
-        */
         originalParentPos = parentBranchContainer()->downLinkPos();
     }
 }
@@ -692,7 +692,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
         qreal radius = 80;
 
         QPointF center = mapToScene(r.center());
-        qDebug() << "BC::getPositionHintRelink  center= " << center << "  p_scene=" << p_scene; // FIXME-2 testing
+        //qDebug() << "BC::getPositionHintRelink  center= " << center << "  p_scene=" << p_scene; // FIXME-2 testing
         qreal a = getAngle(p_scene - center);
         hint = center + QPointF (radius * cos(a), - radius * sin(a));
     } else {
