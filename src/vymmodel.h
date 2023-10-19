@@ -809,6 +809,7 @@ class VymModel : public TreeModel {
     AttributeItem *getSelectedAttribute();
     TreeItem *getSelectedItem();
     QList<TreeItem *> getSelectedItems();
+    QList<TreeItem *> getSelectedItemsReduced();
     QModelIndex getSelectedIndex();
     QList<ulong> getSelectedIDs();
     QStringList getSelectedUUIDs();

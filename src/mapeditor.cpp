@@ -1741,7 +1741,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 // want to move around. In that case we would ignore the "pressed" event
                 model->select(ti_found);
         }
-        movingItems = model->getSelectedItems();
+        movingItems = model->getSelectedItemsReduced();
 
         // Make sure currently clicked item is first in list
         int i = movingItems.indexOf(ti_found);

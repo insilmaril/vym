@@ -6146,6 +6146,44 @@ QList<TreeItem *> VymModel::getSelectedItems()
     return l;
 }
 
+QList<TreeItem *> VymModel::getSelectedItemsReduced()
+{
+    // Remove items, whose have parents already in list
+
+    QList<TreeItem *> list = getSelectedItems();
+
+    foreach (TreeItem *ti, list) {
+        qDebug() << " - " << ti->depth() << ti->getHeadingPlain();
+    }
+
+    if (list.isEmpty()) return list;
+
+    // Bubble sort items by depth first
+    for (int n = list.size(); n > 1; n--)
+        for (int i = 0; i < n - 1; i++)
+            if (list.at(i)->depth() > list.at(i + 1)->depth() )
+                list.swapItemsAt(i, i + 1);
+
+    foreach (TreeItem *ti, list) {
+        qDebug() << " - " << ti->depth() << ti->getHeadingPlain();
+    }
+
+    // Remove items, which have parents which have smaller depth
+    // (closer to center)
+    int i = list.size() - 1;
+    int d = list.at(i)->depth();
+    while (i > 0) {
+        for (int j = 0; j < i; j++)
+            if (list.at(i)->isChildOf(list.at(j))) {
+                list.removeAt(i);
+                break;
+            }
+        i--;
+    }
+
+    return list;
+}
+
 QModelIndex VymModel::getSelectedIndex()
 {
     QModelIndexList list = selModel->selectedIndexes();
