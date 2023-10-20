@@ -6152,10 +6152,6 @@ QList<TreeItem *> VymModel::getSelectedItemsReduced()
 
     QList<TreeItem *> list = getSelectedItems();
 
-    foreach (TreeItem *ti, list) {
-        qDebug() << " - " << ti->depth() << ti->getHeadingPlain();
-    }
-
     if (list.isEmpty()) return list;
 
     // Bubble sort items by depth first
@@ -6163,10 +6159,6 @@ QList<TreeItem *> VymModel::getSelectedItemsReduced()
         for (int i = 0; i < n - 1; i++)
             if (list.at(i)->depth() > list.at(i + 1)->depth() )
                 list.swapItemsAt(i, i + 1);
-
-    foreach (TreeItem *ti, list) {
-        qDebug() << " - " << ti->depth() << ti->getHeadingPlain();
-    }
 
     // Remove items, which have parents which have smaller depth
     // (closer to center)

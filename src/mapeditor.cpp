@@ -1918,7 +1918,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Add selected branches and images temporary to tmpParentContainer,
     // if they are not there yet:
     if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
-        // FIXME-0 Filter out items, where parent also is in movingItems, before adding to tPC
         BranchContainer *bc;
         BranchContainer *bc_first = nullptr;
         qreal h_total;
