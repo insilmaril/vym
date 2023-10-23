@@ -1121,7 +1121,7 @@ void Main::setupFileActions()
     actionFileOpen = a;
 
     a = new QAction(tr("&Restore last session", "Edit menu"), this);
-    a->setShortcut(Qt::ALT + Qt::Key_R);
+    a->setShortcut(Qt::CTRL + Qt::Key_R);
     switchboard.addSwitch("fileMapRestore", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileRestoreSession()));
     fileMenu->addAction(a);
@@ -1180,7 +1180,7 @@ void Main::setupFileActions()
                     tr("Repeat last export (%1)").arg("-"), this);
     switchboard.addSwitch("fileExportLast", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportLast()));
-    cloneActionMapEditor(a, Qt::ALT + Qt::Key_E);
+    cloneActionMapEditor(a, Qt::CTRL + Qt::Key_E);
     fileExportMenu->addAction(a);
     actionFileExportLast = a;
     actionListFiles.append(a);
@@ -1440,8 +1440,6 @@ void Main::setupEditActions()
 
     // Add branch by inserting it at selection
     a = new QAction(tr("Add branch (insert)", "Edit menu"), this);
-    a->setShortcut(Qt::ALT + Qt::Key_A);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditAddBranchBefore", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editNewBranchBefore()));
     editMenu->addAction(a);
@@ -1722,7 +1720,7 @@ void Main::setupEditActions()
     actionLocalURL = a;
 
     a = new QAction(tr("Use heading for URL", "Edit menu"), this);
-    a->setShortcut(Qt::ALT + Qt::Key_U);
+    //a->setShortcut(Qt::ALT + Qt::Key_U);
     a->setShortcutContext(Qt::ApplicationShortcut);
     a->setEnabled(false);
     switchboard.addSwitch("mapHeading2URL", shortcutScope, a, tag);
@@ -1981,7 +1979,7 @@ void Main::setupEditActions()
     // Only remove branch, not its children
     a = new QAction(
         tr("Remove only branch and keep its children ", "Edit menu"), this);
-    a->setShortcut(Qt::ALT + Qt::Key_X);
+    a->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_X);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteKeepChildren()));
     a->setEnabled(false);
     addAction(a);
@@ -2383,7 +2381,6 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/slideeditor.png"),
                     tr("Slide editor", "View action"), this);
-    a->setShortcut(Qt::SHIFT + Qt::Key_S);
     a->setCheckable(true);
     viewMenu->addAction(a);
     switchboard.addSwitch("mapToggleSlideEditor", shortcutScope, a, tag);
@@ -2392,7 +2389,7 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/scripteditor.png"),
                     tr("Script editor", "View action"), this);
-    a->setShortcut(Qt::ALT + Qt::Key_S);
+    a->setShortcut(Qt::SHIFT + Qt::Key_S);
     a->setCheckable(true);
     viewMenu->addAction(a);
     switchboard.addSwitch("mapToggleScriptEditor", shortcutScope, a, tag);
@@ -2400,7 +2397,7 @@ void Main::setupViewActions()
     actionViewToggleScriptEditor = a;
 
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
-    a->setShortcut(Qt::ALT + Qt::SHIFT + Qt::Key_S);
+    a->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S);
     a->setCheckable(true);
     viewMenu->addAction(a);
     switchboard.addSwitch("mapToggleScriptOutput", shortcutScope, a, tag);
@@ -2937,11 +2934,9 @@ void Main::setupNetworkActions()
     QAction *a;
 
     a = new QAction("Start TCPserver for MapEditor", this);
-    // a->setShortcut ( Qt::ALT + Qt::Key_T );
     connect(a, SIGNAL(triggered()), this, SLOT(networkStartServer()));
 
     a = new QAction("Connect MapEditor to server", this);
-    // a->setShortcut ( Qt::ALT + Qt::Key_C );
     connect(a, SIGNAL(triggered()), this, SLOT(networkConnect()));
 }
 
