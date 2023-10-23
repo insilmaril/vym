@@ -60,29 +60,29 @@ void ExportASCII::doExport()
                 case 0:
                     if (!out.isEmpty())
                         // Add extra line breaks for 2nd, 3rd, ... MapCenter
-                        out = addEmptyLine(out);
+                        ensureEmptyLines(out, 2);
                     out += underline(cur->getHeadingPlain(), QString("="));
 
                     // Empty line below "====" of MapCenters
-                    addEmptyLine(out);
+                    ensureEmptyLines(out, 1);
                     dashIndent = "";    // No indention for notes in MapCenter
                     break;
                 case 1:
-                    startNewLine(out);
+                    ensureNewLine(out);
                     out += (underline(getSectionString(cur) +
-                                          cur->getHeadingPlain(),
-                                      QString("-")));
+                        cur->getHeadingPlain(),
+                        QString("-")));
                     // Empty line below "----" of MainBranches
-                    addEmptyLine(out);
+                    ensureEmptyLines(out, 1);
                     dashIndent = "";    // No indention for notes in MainBranch
                     break;
                 case 2:
-                    startNewLine(out);
+                    ensureNewLine(out);
                     out += (curIndent + "* " + cur->getHeadingPlain());
                     dashIndent = "  ";
                     break;
                 default:
-                    startNewLine(out);
+                    ensureNewLine(out);
                     out += (curIndent + "- " + cur->getHeadingPlain());
                     dashIndent = "  ";
                     break;
@@ -96,23 +96,27 @@ void ExportASCII::doExport()
                 }
 
                 // If necessary, write URL
-                if (!cur->getURL().isEmpty())
-                    out += (curIndent + dashIndent + cur->getURL()) + "\n"; // FIXME-0 check \n
+                if (!cur->getURL().isEmpty()) {
+                    ensureNewLine(out);
+                    out += (curIndent + dashIndent + cur->getURL()) + "\n";
+                }
 
                 // If necessary, write vymlink
-                if (!cur->getVymLink().isEmpty())
+                if (!cur->getVymLink().isEmpty()) {
+                    ensureNewLine(out);
                     out += (curIndent + dashIndent + cur->getVymLink()) +
                            " (vym mindmap)\n";
+                }
 
                 // If necessary, write note
                 if (!cur->isNoteEmpty()) {
                     // Add at least one empty line before note
-                    addEmptyLine(out);
+                    ensureEmptyLines(out, 1);
 
                     // Add note and empty line after note
                     out += cur->getNoteASCII(curIndent + dashIndent, 80);
 
-                    addEmptyLine(out);
+                    ensureEmptyLines(out, 1);
                 }
                 lastDepth = cur->depth();
             }
@@ -157,19 +161,27 @@ QString ExportASCII::underline(const QString &text, const QString &line)
     return r;
 }
 
-QString ExportASCII::addEmptyLine(QString &text)
+QString ExportASCII::ensureEmptyLines(QString &text, int n)
 {
-    // Add at least one empty line
-    if (!text.endsWith("\n\n")) {
-        if (!text.endsWith("\n"))
-            text += "\n\n";
-        else
-            text += "\n";
+    // Ensure at least n empty lines at the end of text
+
+    // First count trailing line breaks
+    int j = 0;
+    int i = text.count() - 1;
+    while (i > -1 && text.at(i) == "\n")  {
+        i--;
+        j++;
     }
+
+    while (j < n + 1) {
+        text = text + "\n";
+        j++;
+    }
+
     return text;
 }
 
-QString ExportASCII::startNewLine(QString &text)
+QString ExportASCII::ensureNewLine(QString &text)
 {
     // Add one line break, if not already there yet e.g. from empty line
     if (!text.endsWith("\n"))

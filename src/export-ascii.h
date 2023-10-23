@@ -8,8 +8,8 @@ class ExportASCII : public ExportBase {
     ExportASCII();
     virtual void doExport();
     QString underline(const QString &text, const QString &line);
-    QString addEmptyLine(QString &text);
-    QString startNewLine(QString &text);
+    QString ensureEmptyLines(QString &text, int n);
+    QString ensureNewLine(QString &text);
 };
 
 #endif
