@@ -150,9 +150,9 @@ QString VymText::getTextASCII(QString indent, const int &width) const
         rx.setPattern("^");
         s = s.replace(rx, indent);
         rx.setPattern("\n");
-        s = s.replace(rx, "\n" + indent) + "\n";
+        s = s.replace(rx, "\n" + indent);
 
-        return s.trimmed();
+        return s;
     }
 
     // Remove all <style...> ...</style>
