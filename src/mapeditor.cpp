@@ -49,7 +49,7 @@ MapEditor::MapEditor(VymModel *vm)
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
     mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
-    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-0 Avoiding crashes...
+    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-2 Avoiding crashes...
                                                             // Alternatively call removeFromIndex() in destructor
                                                             // or maybe also prepareGeometryChange()
 
@@ -1490,6 +1490,8 @@ void MapEditor::editHeading()
 
         ensureAreaVisibleAnimated(r);
 
+        if (heading.getTextASCII() == " ")
+            heading.setPlainText("");
         lineEdit->setText(heading.getTextASCII());
         lineEdit->setFocus();
         lineEdit->selectAll(); // Hack to enable cursor in lineEdit
