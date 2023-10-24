@@ -216,7 +216,7 @@ QString Settings::getDataXML(const QString &fpath)
                 s += indent() +
                      valueElement("setting",
                                   getCDATA(valuelist.at(i).toString()),
-                                  attribut("key", keylist.at(i)));
+                                  attribute("key", keylist.at(i)));
         i++;
     }
     return s;

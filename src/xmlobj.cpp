@@ -111,7 +111,7 @@ QString XMLObj::beginElement(QString s, QString at)
 QString XMLObj::endElement(QString s) { return indent() + "</" + s + ">"; }
 
 // returns  at="val"
-QString XMLObj::attribut(QString at, QString val) const // FIXME-2 rename to "attribute" to fix spelling
+QString XMLObj::attribute(QString at, QString val) const
 {
     return at + "=\"" + quoteMeta(val) + "\" ";
 }

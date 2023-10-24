@@ -151,7 +151,7 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
         return "";
 
     // Save uuid
-    QString idAttr = attribut("uuid", uuid.toString());
+    QString idAttr = attribute("uuid", uuid.toString());
 
     QString url;
 
@@ -161,15 +161,15 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     // And really save the image  (svgs will be copied from cache!)
     imageContainer->save(tmpdir + "/" + url);
 
-    QString nameAttr = attribut("originalName", originalFilename);
+    QString nameAttr = attribute("originalName", originalFilename);
 
     QString scaleAttr =
-        attribut("scaleFactor", QString().setNum(imageContainer->getScaleFactor()));
+        attribute("scaleFactor", QString().setNum(imageContainer->getScaleFactor()));
 
     return singleElement("floatimage",
                 MapItem::getPosAttr() +
                 MapItem::getLinkableAttr() +
                 TreeItem::getGeneralAttr() +
-                attribut("href", QString("file:") + url) +
+                attribute("href", QString("file:") + url) +
                 nameAttr + scaleAttr + idAttr);
 }

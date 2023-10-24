@@ -808,7 +808,7 @@ def test_notes
   map.setNotePlainText("")
   expect "setNotePlainText(\"\") deletes note", map.hasNote, false
 
-  # Compatibility with version < 2.5.0  # FIXME-2 missing
+  # Compatibility with version < 2.5.0  # FIXME-3 missing
 
   close_current_map
 end
@@ -1292,7 +1292,6 @@ begin
   #test_export
   #test_extrainfo
   #test_frames
-  ##test_headings  # FIXME-2 no tests available
   #test_history
   test_load_legacy_maps
   #test_modify_branches

@@ -236,14 +236,14 @@ QStringList VymText::getAttributes() const
 {
     QStringList ret;
     if (textmode == RichText)
-        ret << attribut("textMode", "richText");
+        ret << attribute("textMode", "richText");
     else {
-        ret << attribut("textMode", "plainText");
+        ret << attribute("textMode", "plainText");
         if (!fonthint.isEmpty())
-            ret << attribut("fonthint", fonthint);
+            ret << attribute("fonthint", fonthint);
     }
-    ret << attribut("textColor", color.name());
-    ret << attribut("text", quoteQuotes(text));
+    ret << attribute("textColor", color.name());
+    ret << attribute("text", quoteQuotes(text));
     return ret;
 }
 

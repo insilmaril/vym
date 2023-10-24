@@ -107,7 +107,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         return QString();
 
     // Save uuid
-    QString idAttr = attribut("uuid", uuid.toString());
+    QString idAttr = attribute("uuid", uuid.toString());
 
     QString s;
 
@@ -115,7 +115,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 
     QString scrolledAttr;
     if (scrolled)
-        scrolledAttr = attribut("scrolled", "yes");
+        scrolledAttr = attribute("scrolled", "yes");
     else
         scrolledAttr = "";
 
@@ -127,10 +127,10 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         qreal x = branchContainer->scenePos().x();
         qreal y = branchContainer->scenePos().y();
         areaAttr =
-            attribut("x1", QString().setNum(x - offset.x())) +
-            attribut("y1", QString().setNum(y - offset.y())) +
-            attribut("x2", QString().setNum(x + branchContainer->rect().width() - offset.x())) +
-            attribut("y2", QString().setNum(y + branchContainer->rect().height() - offset.y()));
+            attribute("x1", QString().setNum(x - offset.x())) +
+            attribute("y1", QString().setNum(y - offset.y())) +
+            attribute("x2", QString().setNum(x + branchContainer->rect().width() - offset.x())) +
+            attribute("y2", QString().setNum(y + branchContainer->rect().height() - offset.y()));
     }
     else
         areaAttr = "";
@@ -147,25 +147,25 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (!branchContainer->branchesContainerAutoLayout)
     {
         // Save the manually set layout for children branches
-        layoutBranchesAttr = attribut("branchesLayout", branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
+        layoutBranchesAttr = attribute("branchesLayout", branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
     }
 
     QString layoutImagesAttr;
     if (!branchContainer->imagesContainerAutoLayout)
     {
         // Save the manually set layout for children Images
-        layoutImagesAttr = attribut("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
+        layoutImagesAttr = attribute("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
     }
 
     QString rotHeadingAttr;
     qreal a = branchContainer->rotationHeading();
     if (a != 0)
-        rotHeadingAttr = attribut("rotHeading", QString("%1").arg(a));
+        rotHeadingAttr = attribute("rotHeading", QString("%1").arg(a));
 
     QString rotContentAttr;
     a = branchContainer->rotationSubtree();
     if (a != 0)
-        rotContentAttr = attribut("rotContent", QString("%1").arg(a));
+        rotContentAttr = attribute("rotContent", QString("%1").arg(a));
 
     QString posAttr;
     if (parentItem == rootItem || branchContainer->isFloating())
@@ -174,9 +174,9 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     QString autoDesignAttr;
 
     if (!branchContainer->frameAutoDesign(true))
-        autoDesignAttr += attribut("autoInnerFrame", "false");
+        autoDesignAttr += attribute("autoInnerFrame", "false");
     if (!branchContainer->frameAutoDesign(false))
-        autoDesignAttr += attribut("autoOuterFrame", "false");
+        autoDesignAttr += attribute("autoOuterFrame", "false");
 
     s = beginElement(elementName + " " +
             posAttr +

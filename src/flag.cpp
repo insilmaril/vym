@@ -120,9 +120,9 @@ QString Flag::getDefinition(const QString &prefix)
         QString url = "flags/" + prefix + uuid.toString() + "-" + name +
                       imageContainer->getExtension();
         QStringList attributes;
-        attributes << attribut("name", name);
-        attributes << attribut("href", QString("file:%1").arg(url));
-        attributes << attribut("uuid", uuid.toString());
+        attributes << attribute("name", name);
+        attributes << attribute("href", QString("file:%1").arg(url));
+        attributes << attribute("uuid", uuid.toString());
         return singleElement("userflagdef", attributes);
     }
     else
@@ -141,8 +141,8 @@ void Flag::saveDataToDir(const QString &dirPath)
 QString Flag::saveState()
 {
     if (type == Flag::UserFlag)
-        return singleElement("userflag", attribut("name", name) +
-                                             attribut("uuid", uuid.toString()));
+        return singleElement("userflag", attribute("name", name) +
+                                             attribute("uuid", uuid.toString()));
     else
         return valueElement("standardflag", name);
 }

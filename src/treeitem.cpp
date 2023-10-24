@@ -744,13 +744,13 @@ QString TreeItem::getGeneralAttr()
 {
     QString s;
     if (hideExport)
-        s += attribut("hideInExport", "true");
+        s += attribute("hideInExport", "true");
     if (!url.isEmpty())
-        s += attribut("url", url);
+        s += attribute("url", url);
     if (!vymLink.isEmpty())
-        s += attribut("vymLink", convertToRel(model->getDestPath(), vymLink));
+        s += attribute("vymLink", convertToRel(model->getDestPath(), vymLink));
 
     if (target)
-        s += attribut("localTarget", "true");
+        s += attribute("localTarget", "true");
     return s;
 }

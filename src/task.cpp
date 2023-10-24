@@ -298,29 +298,29 @@ QString Task::saveToDir()
 {
     QString sleepAttr;
     if (date_sleep.isValid())
-        sleepAttr = attribut("date_sleep", date_sleep.toString(Qt::ISODate));
+        sleepAttr = attribute("date_sleep", date_sleep.toString(Qt::ISODate));
     else
-        sleepAttr = attribut("date_sleep", "2018-01-01T00:00:00");
+        sleepAttr = attribute("date_sleep", "2018-01-01T00:00:00");
 
     // Experimental: Also output priority based on arrow flags for external
     // sorting
     QString prioAttr;
     if (branch) {
         if (branch->hasActiveFlag("2arrow-up"))
-            prioAttr = attribut("prio", "2");
+            prioAttr = attribute("prio", "2");
         if (branch->hasActiveFlag("arrow-up"))
-            prioAttr = attribut("prio", "1");
+            prioAttr = attribute("prio", "1");
     }
 
     QString prioDeltaAttr;
     if (prio_delta != 0)
-        prioDeltaAttr = attribut("prio_delta", QString("%1").arg(prio_delta));
+        prioDeltaAttr = attribute("prio_delta", QString("%1").arg(prio_delta));
     return singleElement(
         "task",
-        attribut("status", getStatusString()) +
-            attribut("awake", getAwakeString()) +
-            attribut("date_creation", date_creation.toString(Qt::ISODate)) +
-            attribut("date_modification",
+        attribute("status", getStatusString()) +
+            attribute("awake", getAwakeString()) +
+            attribute("date_creation", date_creation.toString(Qt::ISODate)) +
+            attribute("date_modification",
                      date_modification.toString(Qt::ISODate)) +
             prioDeltaAttr + sleepAttr + prioAttr);
 }

@@ -271,21 +271,21 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
 
-    QString mapAttr = xml.attribut("version", vymVersion);
+    QString mapAttr = xml.attribute("version", vymVersion);
     if (!saveSel) {
-        mapAttr += xml.attribut("date", getDate()) + "\n";
+        mapAttr += xml.attribute("date", getDate()) + "\n";
 
         if (!author.isEmpty())
-            mapAttr += xml.attribut("author", author) + "\n";
+            mapAttr += xml.attribute("author", author) + "\n";
         if (!title.isEmpty())
-            mapAttr += xml.attribut("title", title) + "\n";
+            mapAttr += xml.attribute("title", title) + "\n";
         if (!comment.isEmpty())
-            mapAttr += xml.attribut("comment", comment) + "\n";
+            mapAttr += xml.attribute("comment", comment) + "\n";
 
-        mapAttr += xml.attribut("branchCount", QString().number(branchCount()));
-        mapAttr += xml.attribut("mapZoomFactor",
+        mapAttr += xml.attribute("branchCount", QString().number(branchCount()));
+        mapAttr += xml.attribute("mapZoomFactor",
                      QString().setNum(mapEditor->getZoomFactorTarget()));
-        mapAttr += xml.attribut("mapRotationAngle",
+        mapAttr += xml.attribute("mapRotationAngle",
                      QString().setNum(mapEditor->getAngleTarget()));
     }
     header += xml.beginElement("vymmap", mapAttr);

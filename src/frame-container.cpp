@@ -386,17 +386,17 @@ QString FrameContainer::saveFrame()
 {
     QStringList attrList;
     if (usage == InnerFrame)
-        attrList << attribut("frameUsage", "innerFrame");
+        attrList << attribute("frameUsage", "innerFrame");
     else if (usage == OuterFrame)
-        attrList << attribut("frameUsage", "outerFrame");
+        attrList << attribute("frameUsage", "outerFrame");
 
-    attrList <<  attribut("frameType", frameTypeString());
+    attrList <<  attribute("frameType", frameTypeString());
 
     if (frameTypeInt != NoFrame) {
-        attrList <<  attribut("penColor", framePen.color().name(QColor::HexArgb));
-        attrList <<  attribut("brushColor", frameBrush.color().name(QColor::HexArgb));
-        attrList <<  attribut("padding", QString::number(framePaddingInt));
-        attrList <<  attribut("penWidth", QString::number(framePen.width()));
+        attrList <<  attribute("penColor", framePen.color().name(QColor::HexArgb));
+        attrList <<  attribute("brushColor", frameBrush.color().name(QColor::HexArgb));
+        attrList <<  attribute("padding", QString::number(framePaddingInt));
+        attrList <<  attribute("penWidth", QString::number(framePen.width()));
     }
 
     return singleElement("frame", attrList.join(" "));

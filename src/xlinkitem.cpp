@@ -34,7 +34,7 @@ void XLinkItem::init()
 {
     setType(XLink);
     link = nullptr;
-    itemData[0] = "XLink";  // FIXME-2 testing, better name and update this elsewhere
+    itemData[0] = "XLink";
 }
 
 void XLinkItem::clear() {}

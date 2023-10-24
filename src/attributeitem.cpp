@@ -125,9 +125,9 @@ bool AttributeItem::isInternal() { return internal; }
 QString AttributeItem::getDataXML()
 {
     QString a;
-    a = attribut("key", getKey());
-    a += attribut("value", getValue().toString());
-    a += attribut("type", getAttributeTypeString());
+    a = attribute("key", getKey());
+    a += attribute("value", getValue().toString());
+    a += attribute("type", getAttributeTypeString());
     return singleElement("attribute", a);
 }
 

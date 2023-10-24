@@ -209,29 +209,29 @@ QString Link::saveToDir()
             qWarning(
                 "Link::saveToDir  ignored, because beginBranch==endBranch, ");
         else {
-            QString colAttr = attribut("color", pen.color().name());
+            QString colAttr = attribute("color", pen.color().name());
             QString widAttr =
-                attribut("width", QString().setNum(pen.width(), 10));
+                attribute("width", QString().setNum(pen.width(), 10));
             QString styAttr =
-                attribut("penstyle", penStyleToString(pen.style()));
+                attribute("penstyle", penStyleToString(pen.style()));
             QString ctrlAttr;
             QString typeAttr;
             switch (type) {
             case Linear:
-                typeAttr = attribut("type", "Linear");
+                typeAttr = attribute("type", "Linear");
                 break;
             case Bezier:
-                typeAttr = attribut("type", "Bezier");
+                typeAttr = attribute("type", "Bezier");
                 if (xlo) {
-                    ctrlAttr += attribut("c0", pointToString(xlo->getC0()));
-                    ctrlAttr += attribut("c1", pointToString(xlo->getC1()));
+                    ctrlAttr += attribute("c0", pointToString(xlo->getC0()));
+                    ctrlAttr += attribute("c1", pointToString(xlo->getC1()));
                 }
                 break;
             }
             QString begSelAttr =
-                attribut("beginID", model->getSelectString(beginBranch));
+                attribute("beginID", model->getSelectString(beginBranch));
             QString endSelAttr =
-                attribut("endID", model->getSelectString(endBranch));
+                attribute("endID", model->getSelectString(endBranch));
             QString styleAttr;
             if (xlo) {
                 styleAttr =

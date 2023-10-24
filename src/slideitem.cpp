@@ -184,23 +184,23 @@ QString SlideItem::saveToDir()
 {
     QString att_ins, att_outs;
     if (inScript.isEmpty()) {
-        att_ins = attribut(
+        att_ins = attribute(
             "inScript",
             QString("select(\"%1\")")
                 .arg(model->getVymModel()->getSelectString(treeItemID)));
     }
     else
-        att_ins = attribut("inScript", inScript);
+        att_ins = attribute("inScript", inScript);
     if (!outScript.isEmpty())
-        att_outs = attribut("outScript", outScript);
+        att_outs = attribute("outScript", outScript);
 
     return singleElement(
-        "slide", attribut("name", data(0).toString()) +
-                     attribut("zoom", QString().setNum(zoomFactor)) +
-                     attribut("rotation", QString().setNum(rotationAngle)) +
-                     attribut("duration", QString().setNum(duration)) +
-                     attribut("curve", QString().setNum(easingCurve.type())) +
-                     attribut("mapitem", model->getVymModel()->getSelectString(
+        "slide", attribute("name", data(0).toString()) +
+                     attribute("zoom", QString().setNum(zoomFactor)) +
+                     attribute("rotation", QString().setNum(rotationAngle)) +
+                     attribute("duration", QString().setNum(duration)) +
+                     attribute("curve", QString().setNum(easingCurve.type())) +
+                     attribute("mapitem", model->getVymModel()->getSelectString(
                                              treeItemID)) +
                      att_ins + att_outs);
 }

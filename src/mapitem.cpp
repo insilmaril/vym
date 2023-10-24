@@ -51,8 +51,8 @@ QString MapItem::getPosAttr()
     QString s;
     QPointF pos = getContainer()->pos();
 
-    s = attribut("posX", QString().setNum(pos.x())) +
-        attribut("posY", QString().setNum(pos.y()));
+    s = attribute("posX", QString().setNum(pos.x())) +
+        attribute("posY", QString().setNum(pos.y()));
     return s;
 }
 
@@ -61,7 +61,7 @@ QString MapItem::getLinkableAttr()
     QString s;
 
     if (hideLinkUnselected)
-        s += attribut("hideLink", "true");
+        s += attribute("hideLink", "true");
 
     return s;
 }

@@ -380,7 +380,7 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
 
     xml.incIndent();
     s += xml.singleElement("md",
-            xml.attribut("backgroundColor", backgroundColorInt.name()));
+            xml.attribute("backgroundColor", backgroundColorInt.name()));
 
     // Save background image
     if (usesBackgroundImage && !backgroundImage.isNull()) {
@@ -389,42 +389,42 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
             qWarning() << "md::saveToDir failed to save background image to " << fn;
         else
             s += xml.singleElement("md",
-                xml.attribut("backgroundImage", "file:" + fn) +
-                xml.attribut("backgroundImageName", backgroundImageNameInt));
+                xml.attribute("backgroundImage", "file:" + fn) +
+                xml.attribute("backgroundImageName", backgroundImageNameInt));
     }
 
     s += xml.singleElement("md",
-            xml.attribut("defaultFont", defaultFontInt.toString()));
+            xml.attribute("defaultFont", defaultFontInt.toString()));
 
     s += xml.singleElement("md",
-            xml.attribut("selectionPenColor", selectionPenInt.color().name(QColor::HexArgb)));
+            xml.attribute("selectionPenColor", selectionPenInt.color().name(QColor::HexArgb)));
     s += xml.singleElement("md",
-            xml.attribut("selectionPenWidth", QString().setNum(selectionPenInt.width())));
+            xml.attribute("selectionPenWidth", QString().setNum(selectionPenInt.width())));
     s += xml.singleElement("md",
-            xml.attribut("selectionBrushColor", selectionBrushInt.color().name(QColor::HexArgb)));
+            xml.attribute("selectionBrushColor", selectionBrushInt.color().name(QColor::HexArgb)));
 
     if (linkColorHintInt == LinkObj::HeadingColor)
         s += xml.singleElement("md",
-                xml.attribut("linkColorHint", "HeadingColor"));
+                xml.attribute("linkColorHint", "HeadingColor"));
 
     s += xml.singleElement("md",
-            xml.attribut("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-2 only one level save atm
+            xml.attribute("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-2 only one level save atm
 
     s += xml.singleElement("md",
-            xml.attribut("linkColor", defaultLinkColor().name()));
+            xml.attribute("linkColor", defaultLinkColor().name()));
 
         s += xml.singleElement("md",
-                xml.attribut("defXLinkColor", defXLinkPenInt.color().name()));
+                xml.attribute("defXLinkColor", defXLinkPenInt.color().name()));
         s += xml.singleElement("md",
-                xml.attribut("defXLinkWidth",
+                xml.attribute("defXLinkWidth",
                      QString().setNum(defXLinkPenInt.width(), 10)));
         s += xml.singleElement("md",
-                xml.attribut("defXLinkPenStyle",
+                xml.attribute("defXLinkPenStyle",
                      penStyleToString(defXLinkPenInt.style())));
         s += xml.singleElement("md",
-                xml.attribut("defXLinkStyleBegin", defXLinkStyleBeginInt));
+                xml.attribute("defXLinkStyleBegin", defXLinkStyleBeginInt));
         s += xml.singleElement("md",
-                xml.attribut("defXLinkStyleEnd", defXLinkStyleEndInt));
+                xml.attribute("defXLinkStyleEnd", defXLinkStyleEndInt));
 
     xml.decIndent();
     s += xml.endElement("mapdesign");
