@@ -45,7 +45,7 @@ MapEditor::MapEditor(VymModel *vm)
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
     mapScene = new QGraphicsScene(NULL);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
-    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-0 Avoiding crashes...
+    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-2 Avoiding crashes...
                                                             // Alternatively call removeFromIndex() in destructor
                                                             // or maybe also prepareGeometryChange()
 
@@ -1207,7 +1207,7 @@ void MapEditor::editHeading()
 
     BranchObj *bo = model->getSelectedBranchObj();
     BranchItem *bi = model->getSelectedBranch();
-    if (bo && bo) {
+    if (bo && bi) {
         VymText heading = bi->getHeading();
         if (heading.isRichText() || bi->getHeadingPlain().contains("\n")) {
             mainWindow->windowShowHeadingEditor();
@@ -1252,6 +1252,8 @@ void MapEditor::editHeading()
 
         ensureAreaVisibleAnimated(r);
 
+        if (heading.getTextASCII() == " ")
+            heading.setPlainText("");
         lineEdit->setText(heading.getTextASCII());
         lineEdit->setFocus();
         lineEdit->selectAll(); // Hack to enable cursor in lineEdit
