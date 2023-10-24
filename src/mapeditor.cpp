@@ -45,6 +45,9 @@ MapEditor::MapEditor(VymModel *vm)
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
     mapScene = new QGraphicsScene(NULL);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
+    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-0 Avoiding crashes...
+                                                            // Alternatively call removeFromIndex() in destructor
+                                                            // or maybe also prepareGeometryChange()
 
     zoomFactor = zoomFactorTarget = 1;
     angle = angleTarget = 0;
