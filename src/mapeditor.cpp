@@ -1711,12 +1711,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
         if (selbc) {
             QUuid uid = selbc->findFlagByPos(movingObj_initialScenePos);
             if (!uid.isNull()) {
-                Flag *flag = systemFlagsMaster->findFlagByUid(uid); //FIXME-3 currently also would find standard flags
+                Flag *flag = systemFlagsMaster->findFlagByUid(uid);
                 if (flag)
-                {
                     sysFlagName = flag->getName();
-                    qDebug() << "ME::mousePress found flag " << sysFlagName;    // FIXME-2 testing
-                }
             }
         }
 
@@ -1824,7 +1821,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 }
 
 void MapEditor::mouseMoveEvent(QMouseEvent *e)
-    // FIXME-2  Shift modifier to only move MC or floating parent not implemented yet
 {
     QPointF p_event = mapToScene(e->pos());
 
@@ -1949,7 +1945,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
                     // Save position of children branches in case we only want to
                     // move this branch and keep children unchanged using CTRL modifier
-                    if (bc->getBranchesContainer()->hasFloatingLayout())
+                    if (bc->hasFloatingBranchesLayout())
                         foreach(QGraphicsItem *i, bc->getBranchesContainer()->childItems())
                             ((BranchContainer*)i)->setOriginalScenePos();
                 }
@@ -2050,7 +2046,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     if (e->modifiers() & Qt::ControlModifier) {
         foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
             BranchItem *bi = bc->getBranchItem();
-            if (bi->depth() == 0 && bc->getBranchesContainer()->hasFloatingLayout()) {
+            if (bi->depth() == 0 && bc->hasFloatingBranchesLayout()) {
                 foreach(BranchContainer *bc2, bc->childBranches()) {
                     bc2->setPos( bc->sceneTransform().inverted().map(bc2->getOriginalPos()));
                     bc2->updateUpLink();
