@@ -1921,7 +1921,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         BranchContainer *bc;
         BranchContainer *bc_first = nullptr;
         qreal h_total;
-        qDebug() << "ME::moveObj adding to tmpParent: " << movingItems.count();
         foreach (TreeItem *ti, movingItems)
         {
             // The item structure in VymModel remaines untouched so far,
@@ -1942,6 +1941,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
                     tmpParentContainer->addToBranchesContainer(bc, true);
+
+                    // Save position of children branches in case we only want to
+                    // move this branch and keep children unchanged using CTRL modifier
+                    if (bc->getBranchesContainer()->hasFloatingLayout())
+                        foreach(QGraphicsItem *i, bc->getBranchesContainer()->childItems())
+                            ((BranchContainer*)i)->setOriginalScenePos();
                 }
 
                 if (bc_first && bc_first != bc) {
@@ -2036,14 +2041,15 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
          */
     }
 
-    // When moving MapCenters with Shift modifier, don't move mainbranches (in scene)   // FIXME-0 check shift vs. Ctrl. Not reimplemented yet
+    // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)
     if (e->modifiers() & Qt::ControlModifier) {
-        BranchContainer *bc_first = tmpParentContainer->childBranches().first();
-        // Loop over branches
         foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
-            foreach(BranchContainer *bc2, bc->childBranches()) {
-                bc2->setPos( bc->sceneTransform().inverted().map(bc2->getOriginalPos()));
-                bc2->updateUpLink();
+            BranchItem *bi = bc->getBranchItem();
+            if (bi->depth() == 0 && bc->getBranchesContainer()->hasFloatingLayout()) {
+                foreach(BranchContainer *bc2, bc->childBranches()) {
+                    bc2->setPos( bc->sceneTransform().inverted().map(bc2->getOriginalPos()));
+                    bc2->updateUpLink();
+                }
             }
         }
     }
