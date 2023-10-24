@@ -69,9 +69,16 @@ Installation
     development packages of the Qt5 toolkit installed. (Check also the
     homepage above for details):
 
+    On the command line you can
+
       cmake .
       make
       make install
+
+    or using Qt Creator:
+
+    In "File" do "Open file or project" and select the
+    "CMakeLists.txt". This will setup the project.
 
 
 Questions and feedback

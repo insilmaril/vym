@@ -49,6 +49,9 @@ MapEditor::MapEditor(VymModel *vm)
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
     mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
+    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-0 Avoiding crashes...
+                                                            // Alternatively call removeFromIndex() in destructor
+                                                            // or maybe also prepareGeometryChange()
 
     if (debug) {
         // Add cross in origin for debugging
@@ -2432,7 +2435,13 @@ void MapEditor::dropEvent(QDropEvent *event)
                             model->setVymLink(url);
                         else {
                             model->setURL(url);
-                            model->setHeadingPlainText(url);
+
+                            // Shorten long URLs for heading
+                            int i = url.indexOf("?");
+                            QString url_short = url.left(i);
+                            if (i > 0) 
+                                url_short = url_short + "...";
+                            model->setHeadingPlainText(url_short);
                         }
 
                         model->select(bi->parent());

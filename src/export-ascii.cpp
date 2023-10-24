@@ -47,8 +47,8 @@ void ExportASCII::doExport()
                 // "<<curIndent.toStdString()<<cur->getHeadingPlain().toStdString();
 
                 // Insert newline after previous list
-                if (cur->depth() < lastDepth)
-                    out += "\n";
+                //if (cur->depth() < lastDepth)
+                //    out += "\n";
 
                 // Make indentstring
                 curIndent = "";
@@ -58,24 +58,32 @@ void ExportASCII::doExport()
                 dashIndent = "";
                 switch (cur->depth()) {
                 case 0:
+                    if (!out.isEmpty())
+                        // Add extra line breaks for 2nd, 3rd, ... MapCenter
+                        ensureEmptyLines(out, 2);
                     out += underline(cur->getHeadingPlain(), QString("="));
-                    out += "\n";
+
+                    // Empty line below "====" of MapCenters
+                    ensureEmptyLines(out, 1);
+                    dashIndent = "";    // No indention for notes in MapCenter
                     break;
                 case 1:
-                    out += "\n";
+                    ensureNewLine(out);
                     out += (underline(getSectionString(cur) +
-                                          cur->getHeadingPlain(),
-                                      QString("-")));
-                    out += "\n";
+                        cur->getHeadingPlain(),
+                        QString("-")));
+                    // Empty line below "----" of MainBranches
+                    ensureEmptyLines(out, 1);
+                    dashIndent = "";    // No indention for notes in MainBranch
                     break;
-                case 3:
-                    out += (curIndent + "- " + cur->getHeadingPlain());
-                    out += "\n";
+                case 2:
+                    ensureNewLine(out);
+                    out += (curIndent + "* " + cur->getHeadingPlain());
                     dashIndent = "  ";
                     break;
                 default:
+                    ensureNewLine(out);
                     out += (curIndent + "- " + cur->getHeadingPlain());
-                    out += "\n";
                     dashIndent = "  ";
                     break;
                 }
@@ -88,21 +96,27 @@ void ExportASCII::doExport()
                 }
 
                 // If necessary, write URL
-                if (!cur->getURL().isEmpty())
+                if (!cur->getURL().isEmpty()) {
+                    ensureNewLine(out);
                     out += (curIndent + dashIndent + cur->getURL()) + "\n";
+                }
 
                 // If necessary, write vymlink
-                if (!cur->getVymLink().isEmpty())
+                if (!cur->getVymLink().isEmpty()) {
+                    ensureNewLine(out);
                     out += (curIndent + dashIndent + cur->getVymLink()) +
                            " (vym mindmap)\n";
+                }
 
                 // If necessary, write note
                 if (!cur->isNoteEmpty()) {
-                    // curIndent +="  | ";
-                    // Only indent for bullet points
-                    if (cur->depth() > 2)
-                        curIndent += "  ";
-                    out += '\n' + cur->getNoteASCII(curIndent, 80);
+                    // Add at least one empty line before note
+                    ensureEmptyLines(out, 1);
+
+                    // Add note and empty line after note
+                    out += cur->getNoteASCII(curIndent + dashIndent, 80);
+
+                    ensureEmptyLines(out, 1);
                 }
                 lastDepth = cur->depth();
             }
@@ -145,4 +159,32 @@ QString ExportASCII::underline(const QString &text, const QString &line)
     for (int j = 0; j < text.length(); j++)
         r += line;
     return r;
+}
+
+QString ExportASCII::ensureEmptyLines(QString &text, int n)
+{
+    // Ensure at least n empty lines at the end of text
+
+    // First count trailing line breaks
+    int j = 0;
+    int i = text.count() - 1;
+    while (i > -1 && text.at(i) == "\n")  {
+        i--;
+        j++;
+    }
+
+    while (j < n + 1) {
+        text = text + "\n";
+        j++;
+    }
+
+    return text;
+}
+
+QString ExportASCII::ensureNewLine(QString &text)
+{
+    // Add one line break, if not already there yet e.g. from empty line
+    if (!text.endsWith("\n"))
+        text += "\n";
+    return text;
 }

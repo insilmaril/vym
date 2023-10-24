@@ -7,7 +7,9 @@ class ExportASCII : public ExportBase {
   public:
     ExportASCII();
     virtual void doExport();
-    virtual QString underline(const QString &text, const QString &line);
+    QString underline(const QString &text, const QString &line);
+    QString ensureEmptyLines(QString &text, int n);
+    QString ensureNewLine(QString &text);
 };
 
 #endif
