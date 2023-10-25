@@ -310,7 +310,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
         tree += settings.getDataXML(destPath);
 
         // Save selection
-        if (getSelectedItem() && !saveSel)
+        if (getSelectedItems().count() > 0 && !saveSel)
             tree += xml.valueElement("select", getSelectString());
     }
     else {
@@ -5754,14 +5754,22 @@ void VymModel::setSelectionBlocked(bool b) { selectionBlocked = b; }
 
 bool VymModel::isSelectionBlocked() { return selectionBlocked; }
 
-bool VymModel::select(const QString &s) // FIXME-4 Does not support multiple selections yet
+bool VymModel::select(const QString &s)
 {
     if (s.isEmpty())
         return false;
-    TreeItem *ti = findBySelectString(s);
-    if (ti)
-        return select(index(ti));
-    return false;
+
+    QStringList list = s.split(";");
+
+    unselectAll();
+    foreach (QString t, list) {
+        TreeItem *ti = findBySelectString(t);
+        if (ti)
+            selectToggle(ti);
+        else
+            return false;
+    }
+    return true;
 }
 
 bool VymModel::selectID(const QString &s)
@@ -6207,10 +6215,15 @@ bool VymModel::isSelected(TreeItem *ti)
 
 QString VymModel::getSelectString()
 {
-    return getSelectString(getSelectedItem());
+    QStringList list;
+    QList <TreeItem*> seltis = getSelectedItems();
+    foreach (TreeItem* selti, seltis)
+        list << getSelectString(selti);
+
+    return list.join(";");
 }
 
-QString VymModel::getSelectString(TreeItem *ti) // FIXME-3 maybe replace bo -> bi, fi -> ii, ...
+QString VymModel::getSelectString(TreeItem *ti) // FIXME-4 maybe replace bo -> bi, fi -> ii, ...
 {
     QString s;
     if (!ti || ti->depth() < 0)
