@@ -3920,10 +3920,10 @@ void VymModel::toggleScroll()
     }
 }
 
-void VymModel::unscrollChildren()   // FIXME-2 rework to multiselection
+void VymModel::unscrollChildren()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
         saveStateChangingPart(
             selbi, selbi, QString("unscrollChildren ()"),
             QString("unscroll all children of %1").arg(getObjectName(selbi)));
@@ -3937,10 +3937,9 @@ void VymModel::unscrollChildren()   // FIXME-2 rework to multiselection
             }
             nextBranch(cur, prev, true, selbi);
         }
-        updateActions();
-        reposition();
-        // Would this help??? emitSelectionChanged();
     }
+    updateActions();
+    reposition();
 }
 
 void VymModel::setScaleFactor(qreal f, ImageItem *selii)
@@ -5755,7 +5754,7 @@ void VymModel::setSelectionBlocked(bool b) { selectionBlocked = b; }
 
 bool VymModel::isSelectionBlocked() { return selectionBlocked; }
 
-bool VymModel::select(const QString &s) // FIXME-2 Does not support multiple selections yet
+bool VymModel::select(const QString &s) // FIXME-4 Does not support multiple selections yet
 {
     if (s.isEmpty())
         return false;
