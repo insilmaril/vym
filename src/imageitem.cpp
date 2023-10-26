@@ -42,7 +42,7 @@ void ImageItem::init()
     originalFilename = "no original name available";
 }
 
-void ImageItem::clear() // FIXME-2 check if needed
+void ImageItem::clear()
 {
     // pure virtual in parent treeitem
     // not used here currently

@@ -398,12 +398,9 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
              xml.name() == QLatin1String("mapcenter")));
 
     // Create branch or mapCenter
-    if (loadModeBranch == File::NewMap || loadModeBranch == File::DefaultMap) {
-        if (lastBranch == model->getRootItem())
-            lastBranch = model->createMapCenter();
-        else
-            lastBranch = model->createBranch(lastBranch);
-    } else {
+    if (loadModeBranch == File::NewMap || loadModeBranch == File::DefaultMap)
+        lastBranch = model->createBranch(lastBranch);
+    else {
         // For Imports create branch at insertPos
         // (Here we only use ImportInsert, replacements already have
         // been done before)

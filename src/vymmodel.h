@@ -429,7 +429,6 @@ class VymModel : public TreeModel {
     void sortChildren(bool inverse = false); //!< Sort children lexically
 
     // The create methods are used to quickly parse a XML file
-    BranchItem *createMapCenter(int pos = -1); //!< Create MapCenter
     BranchItem *createBranch(BranchItem *dst); //!< Create Branch
     ImageItem *createImage(BranchItem *dst);   //!< Create image
 
@@ -446,10 +445,7 @@ class VymModel : public TreeModel {
     AttributeItem* setAttribute(BranchItem *dst, AttributeItem *);
     AttributeItem* getAttributeByKey(const QString &key);
 
-    /*! \brief Add new mapcenter
-
-    Disclaimer: Still experimental, not fully supported yet. FIXME-2 compare with createMapCenter()
-    */
+    //! \brief Add new mapcenter
     BranchItem *addMapCenter(bool saveStateFlag = true);
     BranchItem *addMapCenterAtPos(QPointF absPos);
 

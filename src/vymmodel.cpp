@@ -3081,18 +3081,12 @@ void VymModel::sortChildren(bool inverse)
     reposition();
 }
 
-BranchItem *VymModel::createMapCenter(int pos)
-{
-    BranchItem *newbi = addMapCenterAtPos(QPointF(0, 0));
-    return newbi;
-}
-
 BranchItem *VymModel::createBranch(BranchItem *dst)
 {
-    if (dst)
-        return addNewBranchInt(dst, -2);
+    if (!dst || dst == rootItem)
+        return addMapCenterAtPos(QPointF(0, 0));
     else
-        return nullptr;
+        return addNewBranchInt(dst, -2);
 }
 
 ImageItem *VymModel::createImage(BranchItem *dst)
@@ -3753,11 +3747,11 @@ void VymModel::deleteSelection(ulong selID)
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)   // FIXME-2 nothing done, if childen have attributes
+void VymModel::deleteKeepChildren(bool saveStateFlag)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
-        // FIXME-3 Don't use this (yet) on mapcenter (could use detach(BranchItem*) !)
+        // FIXME-0 Works with MC, but crashes on undo
         if (selbi->depth() < 1) {
             //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-2 cont here. Undo script fails
             while (selbi->branchCount() > 0)
