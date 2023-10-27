@@ -211,9 +211,9 @@ QRectF FrameContainer::frameRect()
     return frameRectInt;
 }
 
-void FrameContainer::setFrameRect(const QRectF &frameSize)
+void FrameContainer::setFrameRect(const QRectF &frameSize)  // FIXME-2 "padding" not supported yet
+                                                            // e.g. circle or cloud go beyond container borders
 {
-    //qDebug() << "FC::setFrameRect t=" << frameTypeInt << " r=" << toS(frameSize, 0);
     frameRectInt = frameSize;
     switch (frameTypeInt) {
         case NoFrame:
@@ -221,7 +221,6 @@ void FrameContainer::setFrameRect(const QRectF &frameSize)
 
         case Rectangle:
             rectFrame->setRect(frameRectInt);
-            //qDebug() << "  FC  rect: " << rectFrame << "vis=" << rectFrame->isVisible();
             break;
 
         case RoundedRectangle: {
@@ -252,6 +251,13 @@ void FrameContainer::setFrameRect(const QRectF &frameSize)
             break;
         case Circle: {
             qreal r = max(frameRectInt.width(), frameRectInt.height());
+            if (frameRectInt.width() > frameRectInt.height()) {
+                r = frameRectInt.width();
+                ellipseFrame->setPos(0, - (r - frameRectInt.height()) / 2);
+            } else {
+                r = frameRectInt.height();
+                ellipseFrame->setPos(- (r - frameRectInt.width()) / 2, 0);
+            }
             ellipseFrame->setRect(
                 QRectF(frameRectInt.x(), frameRectInt.y(), r, r));
             frameXSize = 20; // r / 4

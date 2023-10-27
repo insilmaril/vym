@@ -1302,13 +1302,13 @@ begin
   #test_adding_maps
   #test_attributes
   #test_bugfixes
-  #test_copy_paste
+  test_copy_paste
   #test_delete_parts
   #test_export
   #test_extrainfo
   #test_frames
   #test_history
-  test_load_legacy_maps
+  #test_load_legacy_maps
   #test_modify_branches
   #test_moving_parts
   #test_notes

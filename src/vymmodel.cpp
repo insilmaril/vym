@@ -3701,7 +3701,7 @@ void VymModel::deleteSelection(ulong selID)
     unselectAll();
     QString fn;
 
-    mapEditor->stopAllAnimation();  // FIXME-2 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
+    mapEditor->stopAllAnimation();  // FIXME-4 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
 
     foreach (ulong id, selectedIDs) {
         TreeItem *ti = findID(id);
@@ -6267,7 +6267,7 @@ SlideModel *VymModel::getSlideModel() { return slideModel; }
 
 int VymModel::slideCount() { return slideModel->count(); }
 
-SlideItem *VymModel::addSlide()     // FIXME-2 test undo/redo
+SlideItem *VymModel::addSlide()     // FIXME-2 undo/redo not working
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)
@@ -6298,6 +6298,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 test undo/redo
         si->setInScript(inScript);
         slideModel->setData(slideModel->index(si), seli->getHeadingPlain());
     }
+
     QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
     int pos = si->childNumber();
     saveState(File::PartOfMap, getSelectString(),
@@ -6307,7 +6308,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 test undo/redo
     return si;
 }
 
-void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 test undo/redo
+void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 undo/redo not working
 {
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";

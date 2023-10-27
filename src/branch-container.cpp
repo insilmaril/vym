@@ -1497,12 +1497,9 @@ void BranchContainer::reposition()
         innerFrame->setFrameRect(ornamentsContainer->rect());
 
     if (outerFrame) {
-        if (outerContainer) {
+        if (outerContainer)
             outerFrame->setFrameRect(outerContainer->rect());
-            outerFrame->setFramePos(outerContainer->pos());
-        } else {
+        else
             outerFrame->setFrameRect(innerContainer->rect());
-            outerFrame->setFramePos(innerContainer->pos());
-        }
     }
 }
