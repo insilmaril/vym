@@ -211,8 +211,9 @@ QRectF FrameContainer::frameRect()
     return frameRectInt;
 }
 
-void FrameContainer::setFrameRect(const QRectF &frameSize)  // FIXME-2 "padding" not supported yet
-                                                            // e.g. circle or cloud go beyond container borders
+void FrameContainer::setFrameRect(const QRectF &frameSize)  // FIXME-0 "padding" not supported yet
+                                                            // FIXME-0 circle or cloud go beyond container borders
+                                                            // This will also require adding offset and sizes in Container::reposition()
 {
     frameRectInt = frameSize;
     switch (frameTypeInt) {
