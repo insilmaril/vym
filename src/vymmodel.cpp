@@ -3751,9 +3751,8 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
-        // FIXME-0 Works with MC, but crashes on undo
         if (selbi->depth() < 1) {
-            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-2 cont here. Undo script fails
+            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-3 cont here. Undo script fails
             while (selbi->branchCount() > 0)
                 detach(selbi->getBranchNum(0));
 

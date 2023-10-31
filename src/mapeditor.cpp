@@ -1945,8 +1945,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
                     // Save position of children branches in case we only want to
                     // move this branch and keep children unchanged using CTRL modifier
-                    if (bc->hasFloatingBranchesLayout())
-                        foreach(QGraphicsItem *i, bc->getBranchesContainer()->childItems())
+                    Container *c = bc->getBranchesContainer();
+                    if (bc->hasFloatingBranchesLayout() && c)
+                        foreach(QGraphicsItem *i, c->childItems())
                             ((BranchContainer*)i)->setOriginalScenePos();
                 }
 
