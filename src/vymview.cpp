@@ -328,31 +328,19 @@ void VymView::showSelection(bool scaled, bool rotated)
 
 void VymView::toggleTreeEditor()
 {
-    if (treeEditorDE->isVisible()) {
+    if (treeEditorDE->isVisible())
         treeEditorDE->hide();
-        settings.setLocalValue(model->getFilePath(), "/treeEditor/visible",
-                               "false");
-    }
-    else {
+    else
         treeEditorDE->show();
-        settings.setLocalValue(model->getFilePath(), "/treeEditor/visible",
-                               "true");
-    }
     model->setChanged();
 }
 
 void VymView::toggleSlideEditor()
 {
-    if (slideEditorDE->isVisible()) {
+    if (slideEditorDE->isVisible())
         slideEditorDE->hide();
-        settings.setLocalValue(model->getFilePath(), "/slideEditor/visible",
-                               "false");
-    }
-    else {
+    else
         slideEditorDE->show();
-        settings.setLocalValue(model->getFilePath(), "/slideEditor/visible",
-                               "true");
-    }
 }
 
 void VymView::setFocusMapEditor() { mapEditor->setFocus(); }
