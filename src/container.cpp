@@ -147,14 +147,15 @@ QString Container::info (const QString &prefix)
     return prefix
         + getName()
         // + QString(" zPos: %1").arg(zPos)
-        //+ QString(" Layout: %1").arg(getLayoutString())
         //+ QString(" horDirection: %1").arg(horizontalDirection)
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
         + QString(" scenePos: %1").arg(toS(scenePos(), 0))
-        //+ QString(" pos: %1").arg(toS(pos(), 0))
+        + QString(" pos: %1").arg(toS(pos(), 0))
         //+ QString(" rect: %1").arg(toS(rect(), 0))
-        + QString(" vis: %1").arg(isVisible());
+        + QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
+        //+ QString(" vis: %1").arg(isVisible());
+        + QString(" Layout: %1").arg(getLayoutString())
         ;
 }
 
@@ -393,7 +394,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    //qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    // qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -422,7 +423,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
     switch (layout) {
         case BoundingFloats:
             {
-                //qdbg() << ind() << " - BF a) info=" << info();
+                // qdbg() << ind() << " - BF starting for " << info();
 
                 // BoundingFloats is special case:
                 // Only used for innerContainer or outerContainer
@@ -444,34 +445,18 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                 foreach (Container *c, childContainers()) {
                     c_bbox = mapRectFromItem(c, c->rect());
-                    //qdbg() << ind() << " - BF c=" << c->info();
                     bbox = bbox.united(c_bbox);
                 }
 
-
-                // Translate, so that total bbox and contents move, so that
-                // first container (ornaments container) is centered in origin
-                // (could also be Innercont. within Outercontainer )
-                Container *oc = (Container*)(childContainers().first());
-                QPointF t = oc->rect().center();    // FIXME-2 t seems to be always (0,0) ?!?  Check again with flags!
-                if (t != QPointF(0,0)) {
-                    qdbg() << ind()
-                        << " - BF bbox=" << toS(bbox, 0)
-                        << " oc.pos=" << toS(oc->pos())
-                        << " t_oc= " << toS(t,0)
-                        << " oc=" << oc->info();
-                    /* FIXME-3 innerContainer now correctly rotates around headingContainer, but with images the corners might go outside of bounding OuterContainer...
-                    bbox.translate(t);
-                    foreach (QGraphicsItem *child, childContainers()) {
-                        Container *c = (Container*) child;
-                        c->setPos(c->pos() + t);
-                    }
-                    */
-                }
+                // Translate everything, so that center of rectangle is in origin
+                QPointF t = bbox.center();
+                foreach (Container *c, childContainers())
+                    c->setPos(c->pos() - t);
+                bbox.translate(-t);
 
                 setRect(bbox);
 
-                // qdbg() << ind() << " - BF b) info=" << info();
+                // qdbg() << ind() << " - BF finished for " << info();
             } // BoundingFloats layout
             break;
 
@@ -512,7 +497,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                //qdbg() << ind() << " * HL starting for " << info();
+                // qdbg() << ind() << " * HL starting for " << info();
                 foreach (Container *c, childContainers()) {
                     if (!c->overlay) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -543,8 +528,9 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                         //qdbg() << ind() << "    HL x=" << x << " offset=" << offset << " c: " << c->info();
 
-                        // Align vertically centered, consider mapped(!) dim
+                        // Align vertically centered, consider mapped(!) dimensions
                         c->setPos (x + offset, 0);
+
 
                         // Align vertically to top
                         // c->setPos (x + offset, - (h_max - c_bbox.height()) / 2);
@@ -559,7 +545,6 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                             x -= c_bbox.width();
 
                         // qdbg() << ind() << "    HL Done positioning: " << c->info();
-                        //qdgb() << ind() << "                         " << 
                     }   // No overlay container
                 }   // Position children 
 
@@ -575,16 +560,15 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                     if ((parentContainer() && parentContainer()->hasFloatingLayout()) || !parentContainer() ) {
 			    v_central = mapFromItem(centralContainer, centralContainer->rect().center());
                             if (!v_central.isNull())
-                                foreach (Container *c, childContainers()) {
+                                foreach (Container *c, childContainers())
                                     if (!c->overlay)
                                         c->setPos(c->pos() - v_central);
-                                }
 		    }
                 }
 
                 setRect(QRectF(- w_total / 2 - v_central.x(),  - h_max / 2 - v_central.y(), w_total, h_max));
 
-                //qdbg() << ind() << " * HL Finished for " << info();
+                // qdbg() << ind() << " * HL Finished for " << info();
             } // Horizontal layout
             break;
 
@@ -639,10 +623,9 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
             break;
     }
 
-    // Now we have calculated our own size, adjust depending overlay containers
+    // Now we have calculated our own size, adjust depending overlay containers (selections!)
     foreach (Container *c, childContainers()) {
-        if (c->overlay) {
+        if (c->overlay)
             c->setRect(rect());
-        }
     }
 }

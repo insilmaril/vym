@@ -39,7 +39,7 @@ void FrameContainer::init()
     usage = Undefined;
 
     // Don't consider for sizes or repositioning
-    // FIXME-2 still needed? overlay = true;
+    // overlay = true; // FIXME-0
 }
 
 void FrameContainer::clear()
@@ -95,8 +95,23 @@ void FrameContainer::repaint()
 
 void FrameContainer::reposition()
 {
-    // qDebug() << "FC::reposition()";
-    Container::reposition();    // FIXME-2 no need to overload without special functionality
+    qDebug() << "FC::reposition()";
+
+    // Assumption: FrameContainer only has one child (Ornamentscontainer or Outer/InnerContainer)
+    if (childContainers().count() > 1) {
+        qWarning() << "FrameContainer has more than one container! Parent=" << parentContainer()->info();
+        foreach (Container *c, childContainers())
+            qDebug() << " - " << c->info();
+        return;
+    }
+
+    if (childContainers().isEmpty()) {
+        qWarning() << "FrameContainer has no container!";
+        return;
+    }
+
+    Container *c = childContainers().first();
+    Container::reposition();
 }
 
 FrameContainer::FrameType FrameContainer::frameType() { return frameTypeInt; }
@@ -212,10 +227,14 @@ QRectF FrameContainer::frameRect()
 }
 
 void FrameContainer::setFrameRect(const QRectF &frameSize)  // FIXME-0 "padding" not supported yet
+                                                            // FIXME-0 outerFrame too far right by half of size of branchesContainer in FloatingBounded layout
                                                             // FIXME-0 circle or cloud go beyond container borders
                                                             // This will also require adding offset and sizes in Container::reposition()
 {
     frameRectInt = frameSize;
+    qDebug() << "FC::setFrameRect r=" << toS(frameRectInt, 0) << " scene: " <<  toS(mapRectToScene(frameRectInt), 0);
+    qDebug() << "              rect=" << toS(rect(), 0) << " scene: " <<  toS(mapRectToScene(rect()), 0);
+    setRect(frameRectInt);
     switch (frameTypeInt) {
         case NoFrame:
             break;
@@ -322,7 +341,7 @@ void FrameContainer::setFrameRect(const QRectF &frameSize)  // FIXME-0 "padding"
     }
 }
 
-void FrameContainer::setFramePos(const QPointF &p)
+void FrameContainer::setFramePos(const QPointF &p)  // FIXME-0 unused!
 {
     switch (frameTypeInt) {
         case NoFrame:
