@@ -66,6 +66,12 @@ QString toS(const bool &b)
     return b ? "true" : "false";
 }
 
+QString toS(const qreal &r, int d)
+{
+    return QString("%1")
+        .arg(QString::number(r,'f', d));
+}
+
 QString toS(const QPoint &p)
 {
     return QString("(%1, %2)").arg(p.x()).arg(p.y());

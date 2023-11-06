@@ -15,6 +15,7 @@ class QDialog;
 /////////////////////////////////////////////////////////////////////////////
 QString richTextToPlain(QString r);
 QString toS(const bool &);
+QString toS(const qreal &r, int d = 1);
 QString toS(const QPoint &p);
 QString toS(const QPointF &p, int d = 1);
 QString toS(const QRectF &r, int d = 1);
