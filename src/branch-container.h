@@ -162,8 +162,6 @@ class BranchContainer : public SelectableContainer {
 
     int framePadding(const bool &useInnerFrame = true);
     void setFramePadding(const bool &useInnerFrame, const int &);
-    qreal frameTotalPadding(const bool &useInnerFrame); // padding +  pen width + xsize (e.g. cloud)
-    qreal frameXPadding(const bool & useInnerFrame);
     int framePenWidth(const bool &useInnerFrame);
     void setFramePenWidth(const bool &useInnerFrame, const int &);
     QColor framePenColor(const bool &useInnerFrame);

@@ -1068,7 +1068,7 @@ QString BranchContainer::frameTypeString(const bool &useInnerFrame)
     return "NoFrame";
 }
 
-void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)
+void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)   // FIXME-0 removing innerFrame of MC changes geometry of main branchnes
 {
     if (useInnerFrame) {
         // Inner frame around ornamentsContainer
@@ -1154,32 +1154,6 @@ void BranchContainer::setFramePadding(const bool &useInnerFrame, const int &p)
         if (outerFrame)
             outerFrame->setFramePadding(p);
     }
-}
-
-qreal BranchContainer::frameTotalPadding(const bool &useInnerFrame) // padding +  pen width + xsize (e.g. cloud)
-{
-    if (useInnerFrame) {
-        if (innerFrame)
-            return innerFrame->frameTotalPadding();
-    } else {
-        if (outerFrame)
-            return outerFrame->frameTotalPadding();
-    }
-
-    return 0;
-}
-
-qreal BranchContainer::frameXPadding(const bool &useInnerFrame)
-{
-    if (useInnerFrame) {
-        if (innerFrame)
-            return innerFrame->frameXPadding();
-    } else {
-        if (outerFrame)
-            return outerFrame->frameXPadding();
-    }
-
-    return 0;
 }
 
 int BranchContainer::framePenWidth(const bool &useInnerFrame)
@@ -1307,16 +1281,17 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 
     // FIXME-5 for testing we do some coloring and additional drawing
     /*
+    */
     if (containerType != TmpParent) {
         // BranchContainer
-        //setPen(QPen(Qt::green));
+        setPen(QPen(Qt::blue));
 
         // OrnamentsContainer
         //ornamentsContainer->setPen(QPen(Qt::blue));
         //ornamentsContainer->setPen(Qt::NoPen);
 
         // InnerContainer
-        //innerContainer->setPen(QPen(Qt::cyan));
+        innerContainer->setPen(QPen(Qt::green));
 
         if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
 
@@ -1338,7 +1313,6 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
             setBrush(Qt::NoBrush);
         }
     }   // Visualizations for testing
-    */
 }
 
 void BranchContainer::updateVisuals()
@@ -1490,16 +1464,5 @@ void BranchContainer::reposition()
             if (xlo)
                 xlo->updateGeometry();
         }
-    }
-
-    // Update frames
-    if (innerFrame)
-        innerFrame->setFrameRect(ornamentsContainer->rect());
-
-    if (outerFrame) {
-        if (outerContainer)
-            outerFrame->setFrameRect(outerContainer->rect());
-        else
-            outerFrame->setFrameRect(innerContainer->rect());
     }
 }

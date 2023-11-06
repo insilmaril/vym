@@ -526,11 +526,10 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                         else
                             offset = - (c_bbox.right() - origin_mapped.x());
 
-                        //qdbg() << ind() << "    HL x=" << x << " offset=" << offset << " c: " << c->info();
+                        // qdbg() << ind() << "    HL x=" << x << " offset=" << offset << " c: " << c->info();
 
                         // Align vertically centered, consider mapped(!) dimensions
                         c->setPos (x + offset, 0);
-
 
                         // Align vertically to top
                         // c->setPos (x + offset, - (h_max - c_bbox.height()) / 2);

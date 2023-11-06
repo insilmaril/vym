@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QGraphicsScene>
 
+#include <math.h>
+
 #include "misc.h" //for roof function
 
 /////////////////////////////////////////////////////////////////
@@ -37,9 +39,6 @@ void FrameContainer::init()
     setVisible(true);
 
     usage = Undefined;
-
-    // Don't consider for sizes or repositioning
-    // overlay = true; // FIXME-0
 }
 
 void FrameContainer::clear()
@@ -63,7 +62,6 @@ void FrameContainer::clear()
     }
     frameTypeInt = NoFrame;
     framePaddingInt = 0; // No frame requires also no padding
-    frameXSize = 0; // FIXME-2 needed? Not in init() anyway...
 }
 
 void FrameContainer::repaint()
@@ -95,13 +93,11 @@ void FrameContainer::repaint()
 
 void FrameContainer::reposition()
 {
-    qDebug() << "FC::reposition()";
-
     // Assumption: FrameContainer only has one child (Ornamentscontainer or Outer/InnerContainer)
     if (childContainers().count() > 1) {
         qWarning() << "FrameContainer has more than one container! Parent=" << parentContainer()->info();
         foreach (Container *c, childContainers())
-            qDebug() << " - " << c->info();
+            qWarning() << " - " << c->info();
         return;
     }
 
@@ -110,8 +106,11 @@ void FrameContainer::reposition()
         return;
     }
 
+    // FrameContainer only has one child (Inner-, Outer-, OrnamentsContainer)
     Container *c = childContainers().first();
-    Container::reposition();
+    c->reposition();
+
+    updateGeometry(c->rect());
 }
 
 FrameContainer::FrameType FrameContainer::frameType() { return frameTypeInt; }
@@ -221,87 +220,102 @@ void FrameContainer::setFrameType(const QString &t)
         setFrameType(NoFrame);
 }
 
-QRectF FrameContainer::frameRect()
+void FrameContainer::updateGeometry(const QRectF &childRect)
 {
-    return frameRectInt;
-}
+    QRectF r;
 
-void FrameContainer::setFrameRect(const QRectF &frameSize)  // FIXME-0 "padding" not supported yet
-                                                            // FIXME-0 outerFrame too far right by half of size of branchesContainer in FloatingBounded layout
-                                                            // FIXME-0 circle or cloud go beyond container borders
-                                                            // This will also require adding offset and sizes in Container::reposition()
-{
-    frameRectInt = frameSize;
-    qDebug() << "FC::setFrameRect r=" << toS(frameRectInt, 0) << " scene: " <<  toS(mapRectToScene(frameRectInt), 0);
-    qDebug() << "              rect=" << toS(rect(), 0) << " scene: " <<  toS(mapRectToScene(rect()), 0);
-    setRect(frameRectInt);
     switch (frameTypeInt) {
         case NoFrame:
             break;
 
         case Rectangle:
-            rectFrame->setRect(frameRectInt);
+            rectFrame->setRect(
+                childRect.left() - framePaddingInt,
+                childRect.top() - framePaddingInt,
+                childRect.width() + framePaddingInt * 2,
+                childRect.height() + framePaddingInt * 2);
+
+            r.setRect(
+                    childRect.left() - framePaddingInt * 2,
+                    childRect.top() - framePaddingInt * 2,
+                    childRect.width() + framePaddingInt * 4,
+                    childRect.height() + framePaddingInt * 4);
             break;
 
         case RoundedRectangle: {
-            QPointF tl = frameRectInt.topLeft();
-            QPointF tr = frameRectInt.topRight();
-            QPointF bl = frameRectInt.bottomLeft();
-            QPointF br = frameRectInt.bottomRight();
+            qreal radius = 20;
+            qreal radius_2 = radius * 2;
+
+            QPointF tl = childRect.topLeft() + QPointF(- radius - framePaddingInt, - radius - framePaddingInt);
+            QPointF tr = childRect.topRight() + QPointF(radius + framePaddingInt, - radius - framePaddingInt);
+            QPointF bl = childRect.bottomLeft() + QPointF(- radius - framePaddingInt, radius + framePaddingInt);
+            QPointF br = childRect.bottomRight() + QPointF(radius + framePaddingInt, + radius + framePaddingInt);
             QPainterPath path;
 
-            qreal n = 10;
-            path.moveTo(tl.x() + n / 2, tl.y());
+            path.moveTo(tl.x() + radius, tl.y());
 
             // Top path
-            path.lineTo(tr.x() - n, tr.y());
-            path.arcTo(tr.x() - n, tr.y(), n, n, 90, -90);
-            path.lineTo(br.x(), br.y() - n);
-            path.arcTo(br.x() - n, br.y() - n, n, n, 0, -90);
-            path.lineTo(bl.x() + n, br.y());
-            path.arcTo(bl.x(), bl.y() - n, n, n, -90, -90);
-            path.lineTo(tl.x(), tl.y() + n);
-            path.arcTo(tl.x(), tl.y(), n, n, 180, -90);
+            path.lineTo(tr.x() - radius, tr.y());
+            path.arcTo(tr.x() - radius_2, tr.y(), radius_2, radius_2, 90, -90);
+            path.lineTo(br.x(), br.y() - radius);
+            path.arcTo(br.x() - radius_2, br.y() - radius_2, radius_2, radius_2, 0, -90);
+
+            path.lineTo(bl.x() + radius, br.y());
+            path.arcTo(bl.x(), bl.y() - radius_2, radius_2, radius_2, -90, -90);
+            path.lineTo(tl.x(), tl.y() + radius);
+            path.arcTo(tl.x(), tl.y(), radius_2, radius_2, 180, -90);
             pathFrame->setPath(path);
+
+            r.setRect(
+                    childRect.left() - framePaddingInt * 2 - radius,
+                    childRect.top() - framePaddingInt * 2 - radius,
+                    childRect.width() + framePaddingInt * 4 + radius * 2,
+                    childRect.height() + framePaddingInt * 4 + radius * 2);
         } break;
-        case Ellipse:
+
+        case Ellipse:   // FIXME-0 adapt to new frames
             ellipseFrame->setRect(
-                QRectF(frameRectInt.x(), frameRectInt.y(), frameRectInt.width(), frameRectInt.height()));
-            frameXSize = 20; // max(frameRectInt.width(), frameRectInt.height()) / 4;
+                QRectF(childRect.x(), childRect.y(), childRect.width(), childRect.height()));
             break;
+
         case Circle: {
-            qreal r = max(frameRectInt.width(), frameRectInt.height());
-            if (frameRectInt.width() > frameRectInt.height()) {
-                r = frameRectInt.width();
-                ellipseFrame->setPos(0, - (r - frameRectInt.height()) / 2);
-            } else {
-                r = frameRectInt.height();
-                ellipseFrame->setPos(- (r - frameRectInt.width()) / 2, 0);
-            }
+            qreal radius = sqrt(childRect.height() * childRect.height() + childRect.width() * childRect.width()) / 2;
+            qreal radius_2 = radius * 2;
             ellipseFrame->setRect(
-                QRectF(frameRectInt.x(), frameRectInt.y(), r, r));
-            frameXSize = 20; // r / 4
+                QRectF(
+                    - radius - framePaddingInt, 
+                    - radius - framePaddingInt,
+                    radius_2 + 2 * framePaddingInt,
+                    radius_2 + 2 * framePaddingInt));
+
+            r.setRect(
+                    - radius - framePaddingInt * 2,
+                    - radius - framePaddingInt * 2,
+                    radius * 2  + framePaddingInt * 4,
+                    radius * 2 + framePaddingInt * 4);
             }
             break;
-        case Cloud: {
-            QPointF tl = frameRectInt.topLeft();
-            QPointF tr = frameRectInt.topRight();
-            QPointF bl = frameRectInt.bottomLeft();
+
+        case Cloud: {   // FIXME-0 adapt to new frames
+            QPointF tl = childRect.topLeft() + QPointF( - framePaddingInt, - framePaddingInt);
+            QPointF tr = childRect.topRight() + QPointF(  framePaddingInt, - framePaddingInt);
+            QPointF bl = childRect.bottomLeft();
             QPainterPath path;
             path.moveTo(tl);
 
-            float w = frameRectInt.width();
-            float h = frameRectInt.height();
-            int n = w / 40;          // number of intervalls
-            float d = w / n;         // width of interwall
+            float w = childRect.width();
+            float h = childRect.height();
+            int n = 10; //w / 40;          // number of intervalls
+            float d = w / n; // width of interwall
+
+            float a = 50;    // Parameter with "size" if arcs used for Bezier controlpoints
 
             // Top path
             for (float i = 0; i < n; i++) {
-                path.cubicTo(tl.x() + i * d, tl.y() - 100 * roof((i + 0.5) / n),
-                             tl.x() + (i + 1) * d,
-                             tl.y() - 100 * roof((i + 0.5) / n),
-                             tl.x() + (i + 1) * d + 20 * roof((i + 1) / n),
-                             tl.y() - 50 * roof((i + 1) / n));
+                path.cubicTo(
+                        tl.x() + i * d, tl.y() - 100 * roof((i + 0.5) / n),
+                        tl.x() + (i + 1) * d, tl.y() - 100 * roof((i + 0.5) / n),
+                        tl.x() + (i + 1) * d + 20 * roof((i + 1) / n), tl.y() - 50 * roof((i + 1) / n));
             }
             // Right path
             n = h / 20;
@@ -332,37 +346,18 @@ void FrameContainer::setFrameRect(const QRectF &frameSize)  // FIXME-0 "padding"
                              tr.y() + (i - 1) * d);
             }
             pathFrame->setPath(path);
-            frameXSize = 50;
-        }
+            r.setRect(
+                    - framePaddingInt * 2,
+                    - framePaddingInt * 2,
+                    a * 2  + framePaddingInt * 4,
+                    a * 2 + framePaddingInt * 4);
+            }
             break;
         default:
             qWarning() << "FrameContainer::setFrameRect  unknown frame type " << frameTypeInt;
             break;
-    }
-}
-
-void FrameContainer::setFramePos(const QPointF &p)  // FIXME-0 unused!
-{
-    switch (frameTypeInt) {
-        case NoFrame:
-            break;
-        case Rectangle:
-            rectFrame->setPos(p);
-            break;
-        case RoundedRectangle:
-            pathFrame->setPos(p);
-            break;
-        case Ellipse:
-        case Circle:
-            ellipseFrame->setPos(p);
-            break;
-        case Cloud:
-            pathFrame->setPos(p);
-            break;
-        default:
-            qWarning() << "FrameContainer::setFramePos unknown frame type " << frameTypeInt;
-            break;
-    }
+        }
+    setRect(r);
 }
 
 int FrameContainer::framePadding()
@@ -373,11 +368,11 @@ int FrameContainer::framePadding()
         return framePaddingInt;
 }
 
-void FrameContainer::setFramePadding(const int &i) { framePaddingInt = i; }  // FIXME-2 not supported yet
-
-qreal FrameContainer::frameTotalPadding() { return frameXSize + framePaddingInt + framePen.width(); }
-
-qreal FrameContainer::frameXPadding() { return frameXSize; }
+void FrameContainer::setFramePadding(const int &i)  // FIXME-0 not fully supported yet
+{
+    framePaddingInt = i;
+    updateGeometry(childContainers().first()->rect());
+}
 
 int FrameContainer::framePenWidth() { return framePen.width(); }
 

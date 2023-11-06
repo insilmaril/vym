@@ -31,13 +31,13 @@ class FrameContainer : public XMLObj, public Container {
     void setFrameDesignAuto(const bool &);
     void setFrameType(const FrameType &);
     void setFrameType(const QString &);
-    QRectF frameRect();
-    void setFrameRect(const QRectF &); // set dimensions
-    void setFramePos(const QPointF &p);
+
+  private:
+    void updateGeometry(const QRectF &);
+
+  public:  
     int framePadding();
     void setFramePadding(const int &);
-    qreal frameTotalPadding(); // padding +  pen width + xsize (e.g. cloud)
-    qreal frameXPadding();
     int framePenWidth();
     void setFramePenWidth(const int &);
     QColor framePenColor();
@@ -57,8 +57,7 @@ class FrameContainer : public XMLObj, public Container {
     QGraphicsRectItem *rectFrame;
     QGraphicsEllipseItem *ellipseFrame;
     QGraphicsPathItem *pathFrame;
-    qreal frameXSize; //! Extra size caused e.g. by cloud geometry
-    QRectF frameRectInt;
+    QRectF contentRect;
     FrameUsage usage;
 };
 #endif
