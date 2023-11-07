@@ -221,7 +221,9 @@ void FrameContainer::setFrameType(const QString &t)
 
 void FrameContainer::updateGeometry(const QRectF &childRect)
 {
-    QRectF r;
+    QRectF r;   // Final rectanble of FrameContainer
+
+    qreal pad = framePaddingInt + (framePen.width() - 1) / 2; // "Inner" padding and pen width
 
     switch (frameTypeInt) {
         case NoFrame:
@@ -229,26 +231,26 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
 
         case Rectangle:
             rectFrame->setRect(
-                childRect.left() - framePaddingInt,
-                childRect.top() - framePaddingInt,
-                childRect.width() + framePaddingInt * 2,
-                childRect.height() + framePaddingInt * 2);
+                childRect.left() - pad,
+                childRect.top() - pad,
+                childRect.width() + pad * 2,
+                childRect.height() + pad * 2);
 
             r.setRect(
-                    childRect.left() - framePaddingInt * 2,
-                    childRect.top() - framePaddingInt * 2,
-                    childRect.width() + framePaddingInt * 4,
-                    childRect.height() + framePaddingInt * 4);
+                    childRect.left() - pad * 2,
+                    childRect.top() - pad * 2,
+                    childRect.width() + pad * 4,
+                    childRect.height() + pad * 4);
             break;
 
         case RoundedRectangle: {
             qreal radius = 20;
             qreal radius_2 = radius * 2;
 
-            QPointF tl = childRect.topLeft() + QPointF(- radius - framePaddingInt, - radius - framePaddingInt);
-            QPointF tr = childRect.topRight() + QPointF(radius + framePaddingInt, - radius - framePaddingInt);
-            QPointF bl = childRect.bottomLeft() + QPointF(- radius - framePaddingInt, radius + framePaddingInt);
-            QPointF br = childRect.bottomRight() + QPointF(radius + framePaddingInt, + radius + framePaddingInt);
+            QPointF tl = childRect.topLeft() + QPointF(- radius - pad, - radius - pad);
+            QPointF tr = childRect.topRight() + QPointF(radius + pad, - radius - pad);
+            QPointF bl = childRect.bottomLeft() + QPointF(- radius - pad, radius + pad);
+            QPointF br = childRect.bottomRight() + QPointF(radius + pad, + radius + pad);
             QPainterPath path;
 
             path.moveTo(tl.x() + radius, tl.y());
@@ -266,28 +268,28 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             pathFrame->setPath(path);
 
             r.setRect(
-                    childRect.left() - framePaddingInt * 2 - radius,
-                    childRect.top() - framePaddingInt * 2 - radius,
-                    childRect.width() + framePaddingInt * 4 + radius * 2,
-                    childRect.height() + framePaddingInt * 4 + radius * 2);
+                    childRect.left() - pad * 2 - radius,
+                    childRect.top() - pad * 2 - radius,
+                    childRect.width() + pad * 4 + radius * 2,
+                    childRect.height() + pad * 4 + radius * 2);
         } break;
 
         case Ellipse: {
             // This approach assumes, that proportions in childRect are
             // the same as in ellips. See also calculation in
             // https://stackoverflow.com/questions/433371/ellipse-bounding-a-rectangle
-            qreal w = childRect.width() + framePaddingInt * 2;
-            qreal h = childRect.height() + framePaddingInt * 2;
+            qreal w = childRect.width() + pad * 2;
+            qreal h = childRect.height() + pad * 2;
             qreal a = w / sqrt(2);
             qreal b = h / sqrt(2);
 
             ellipseFrame->setRect(- a, - b, a * 2, b * 2);
 
             r.setRect(
-                    - a - framePaddingInt,
-                    - b - framePaddingInt,
-                    (a + framePaddingInt) * 2,
-                    (b + framePaddingInt) * 2);
+                    - a - pad,
+                    - b - pad,
+                    (a + pad) * 2,
+                    (b + pad) * 2);
             }
             break;
 
@@ -296,29 +298,29 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             qreal radius_2 = radius * 2;
             ellipseFrame->setRect(
                 QRectF(
-                    - radius - framePaddingInt, 
-                    - radius - framePaddingInt,
-                    radius_2 + 2 * framePaddingInt,
-                    radius_2 + 2 * framePaddingInt));
+                    - radius - pad,
+                    - radius - pad,
+                    radius_2 + 2 * pad,
+                    radius_2 + 2 * pad));
 
             r.setRect(
-                    - radius - framePaddingInt * 2,
-                    - radius - framePaddingInt * 2,
-                    radius * 2  + framePaddingInt * 4,
-                    radius * 2 + framePaddingInt * 4);
+                    - radius - pad * 2,
+                    - radius - pad * 2,
+                    radius * 2  + pad * 4,
+                    radius * 2 + pad * 4);
             }
             break;
 
         case Cloud: {   // FIXME-0 adapt to new frames
-            QPointF tl = childRect.topLeft() + QPointF( - framePaddingInt, - framePaddingInt);
-            QPointF tr = childRect.topRight() + QPointF(  framePaddingInt, - framePaddingInt);
+            QPointF tl = childRect.topLeft() + QPointF( - pad, - pad);
+            QPointF tr = childRect.topRight() + QPointF(  pad, - pad);
             QPointF bl = childRect.bottomLeft();
             QPainterPath path;
             path.moveTo(tl);
 
             float w = childRect.width();
             float h = childRect.height();
-            int n = 10; //w / 40;          // number of intervalls
+            int n = w / 40;          // number of intervalls
             float d = w / n; // width of interwall
 
             float a = 50;    // Parameter with "size" if arcs used for Bezier controlpoints
@@ -360,10 +362,10 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             }
             pathFrame->setPath(path);
             r.setRect(
-                    - framePaddingInt * 2,
-                    - framePaddingInt * 2,
-                    a * 2  + framePaddingInt * 4,
-                    a * 2 + framePaddingInt * 4);
+                    - pad * 2,
+                    - pad * 2,
+                    a * 2  + pad * 4,
+                    a * 2 + pad * 4);
             }
             break;
         default:
