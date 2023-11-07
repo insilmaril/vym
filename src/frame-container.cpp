@@ -61,7 +61,6 @@ void FrameContainer::clear()
             break;
     }
     frameTypeInt = NoFrame;
-    framePaddingInt = 0; // No frame requires also no padding
 }
 
 void FrameContainer::repaint()
@@ -160,7 +159,7 @@ void FrameContainer::setFrameType(const FrameType &t)
             case NoFrame:
                 break;
             case Rectangle:
-                rectFrame = new QGraphicsRectItem;  // FIXME-3 Use my own Container rect!
+                rectFrame = new QGraphicsRectItem;  // FIXME-3 Use my own Container QGraphicsRectItem!
                 rectFrame->setPen(framePen);
                 rectFrame->setBrush(frameBrush);
                 rectFrame->setFlag(ItemStacksBehindParent, true);
@@ -273,9 +272,23 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
                     childRect.height() + framePaddingInt * 4 + radius * 2);
         } break;
 
-        case Ellipse:   // FIXME-0 adapt to new frames
-            ellipseFrame->setRect(
-                QRectF(childRect.x(), childRect.y(), childRect.width(), childRect.height()));
+        case Ellipse: {
+            // This approach assumes, that proportions in childRect are
+            // the same as in ellips. See also calculation in
+            // https://stackoverflow.com/questions/433371/ellipse-bounding-a-rectangle
+            qreal w = childRect.width() + framePaddingInt * 2;
+            qreal h = childRect.height() + framePaddingInt * 2;
+            qreal a = w / sqrt(2);
+            qreal b = h / sqrt(2);
+
+            ellipseFrame->setRect(- a, - b, a * 2, b * 2);
+
+            r.setRect(
+                    - a - framePaddingInt,
+                    - b - framePaddingInt,
+                    (a + framePaddingInt) * 2,
+                    (b + framePaddingInt) * 2);
+            }
             break;
 
         case Circle: {
@@ -368,7 +381,7 @@ int FrameContainer::framePadding()
         return framePaddingInt;
 }
 
-void FrameContainer::setFramePadding(const int &i)  // FIXME-0 not fully supported yet
+void FrameContainer::setFramePadding(const int &i)
 {
     framePaddingInt = i;
     updateGeometry(childContainers().first()->rect());
