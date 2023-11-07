@@ -189,13 +189,15 @@
 <context>
     <name>ConfluenceAgent</name>
     <message>
-        <location filename="../src/confluence-agent.cpp" line="+562"/>
-        <location line="+6"/>
+        <location filename="../src/confluence-agent.cpp" line="+785"/>
+        <location line="+75"/>
+        <location line="+29"/>
+        <location line="+89"/>
         <source>Warning</source>
         <translation type="unfinished">Varning</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="+1"/>
         <source>Authentication problem when contacting Confluence</source>
         <translation type="unfinished"></translation>
     </message>
@@ -526,7 +528,7 @@ want to allow this in your system!</source>
 <context>
     <name>JiraAgent</name>
     <message>
-        <location filename="../src/jira-agent.cpp" line="+247"/>
+        <location filename="../src/jira-agent.cpp" line="+258"/>
         <source>Warning</source>
         <translation type="unfinished">Varning</translation>
     </message>
@@ -594,7 +596,7 @@ want to allow this in your system!</source>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/mainwindow.cpp" line="+2179"/>
+        <location filename="../src/mainwindow.cpp" line="+2189"/>
         <source>Linkstyle Line</source>
         <translation>Länkstil linje</translation>
     </message>
@@ -614,20 +616,20 @@ want to allow this in your system!</source>
         <translation>&amp;Visa</translation>
     </message>
     <message>
-        <location line="+1867"/>
+        <location line="+1862"/>
         <source>Overwrite</source>
         <translation>Överskriva</translation>
     </message>
     <message>
-        <location line="-337"/>
+        <location line="-342"/>
         <location line="+73"/>
-        <location line="+265"/>
+        <location line="+270"/>
         <location line="+93"/>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
     <message>
-        <location line="-4062"/>
+        <location line="-4067"/>
         <source>Main window</source>
         <comment>Shortcut scope</comment>
         <translation type="unfinished"></translation>
@@ -663,7 +665,7 @@ want to allow this in your system!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+830"/>
+        <location line="+842"/>
         <source>&amp;Map</source>
         <comment>Menu for file actions</comment>
         <translation type="unfinished">&amp;Karta</translation>
@@ -692,7 +694,7 @@ want to allow this in your system!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+208"/>
         <source>Move branch up</source>
         <comment>Edit menu</comment>
         <translation type="unfinished">Flyttä gren uppåt</translation>
@@ -824,7 +826,7 @@ want to allow this in your system!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+240"/>
+        <location line="+233"/>
         <source>Note editor</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -836,7 +838,7 @@ want to allow this in your system!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+217"/>
         <source>Images</source>
         <translation type="unfinished">Bilder</translation>
     </message>
@@ -853,19 +855,19 @@ want to allow this in your system!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+907"/>
+        <location line="+905"/>
         <source>User Flags toolbar</source>
         <comment>user Flags Toolbar</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-838"/>
+        <location line="-836"/>
         <source>Hm...</source>
         <comment>Standardflag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1554"/>
+        <location line="-1544"/>
         <source>(experimental)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -876,7 +878,7 @@ want to allow this in your system!</source>
         <translation type="unfinished">Firefox bokmärken</translation>
     </message>
     <message>
-        <location line="+315"/>
+        <location line="+313"/>
         <source>Move branch diagonally up</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -888,13 +890,13 @@ want to allow this in your system!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+806"/>
+        <location line="+800"/>
         <source>Fit view to selection</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+146"/>
+        <location line="+144"/>
         <source>&amp;Connect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1062,7 +1064,7 @@ want to allow this in your system!</source>
         <translation type="unfinished">Söt</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+135"/>
         <source>Set author for new maps</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
@@ -1108,7 +1110,17 @@ vym will create an empty map now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+395"/>
+        <location line="+215"/>
+        <source>Loaded %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+145"/>
+        <source>Saving  %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
         <source>Couldn&apos;t save %1,
 because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
@@ -1199,7 +1211,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1086"/>
+        <location line="+1116"/>
         <source>Please allow vym to download release notes!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1246,24 +1258,24 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-5233"/>
+        <location line="-5258"/>
         <source>Select default font</source>
         <comment>Branch attribute</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-992"/>
+        <location line="-990"/>
         <source>Webpage (HTML)...</source>
         <comment>File export menu</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-869"/>
+        <location line="-881"/>
         <source>Script output window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+841"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
@@ -1304,7 +1316,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+486"/>
+        <location line="+484"/>
         <source>Get page name from Confluence</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -1346,19 +1358,19 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+26"/>
         <source>Rotate counterclockwise</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Rotate rclockwise</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+60"/>
         <source>Tree editor</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -1376,7 +1388,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Script editor</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
@@ -1400,7 +1412,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+488"/>
+        <location line="+486"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1501,7 +1513,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+148"/>
         <source>Save map as</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1532,18 +1544,18 @@ because of existing lockfile:
         <translation>Avbryta förändringar</translation>
     </message>
     <message>
-        <location line="+2680"/>
+        <location line="+2710"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1269"/>
+        <location line="-1299"/>
         <source>VYM -Information:</source>
         <translation>VYM -Information:</translation>
     </message>
     <message>
-        <location line="-2265"/>
-        <location line="+395"/>
+        <location line="-2270"/>
+        <location line="+400"/>
         <location line="+46"/>
         <location line="+9"/>
         <location line="+73"/>
@@ -1553,12 +1565,12 @@ because of existing lockfile:
         <translation>Kritisk fel</translation>
     </message>
     <message>
-        <location line="+2109"/>
+        <location line="+2139"/>
         <source>Critcal error</source>
         <translation>Kritisk fel</translation>
     </message>
     <message>
-        <location line="-3798"/>
+        <location line="-3833"/>
         <source>Add</source>
         <translation>Lägg till</translation>
     </message>
@@ -1593,7 +1605,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+994"/>
+        <location line="+1006"/>
         <source>E&amp;dit</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -1604,7 +1616,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+129"/>
         <source>&amp;Detach</source>
         <comment>Context menu</comment>
         <translation type="unfinished"></translation>
@@ -1736,13 +1748,13 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+333"/>
+        <location line="+328"/>
         <source>Center on selection</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1195"/>
+        <location line="+1190"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation type="unfinished"></translation>
@@ -1754,19 +1766,19 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-888"/>
+        <location line="-886"/>
         <source>Map target</source>
         <comment>SystemFlag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+899"/>
+        <location line="+897"/>
         <source>Standard Flags toolbar</source>
         <comment>Standard Flag Toolbar</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-874"/>
+        <location line="-872"/>
         <source>Status - ok,done</source>
         <comment>Standardflag</comment>
         <translation type="unfinished"></translation>
@@ -1784,7 +1796,7 @@ because of existing lockfile:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+434"/>
+        <location line="+432"/>
         <source>Automatic layout</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
@@ -1849,7 +1861,7 @@ Vill du skapa en ny?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+176"/>
+        <location line="+181"/>
         <source>Saved  %1</source>
         <translation>Sparad  %1</translation>
     </message>
@@ -1923,7 +1935,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Kunde inte öppna kartan %1</translation>
     </message>
     <message>
-        <location line="-2216"/>
+        <location line="-2219"/>
         <source>Take care!</source>
         <comment>Standardflag</comment>
         <translation>Var rädd om...!</translation>
@@ -2001,14 +2013,14 @@ Couldn&apos;t rename map to %1</source>
         <translation>Den här ska hjälp</translation>
     </message>
     <message>
-        <location line="+1554"/>
+        <location line="+1557"/>
         <location line="+54"/>
         <location line="+1"/>
         <source>Import</source>
         <translation>Importera</translation>
     </message>
     <message>
-        <location line="-3186"/>
+        <location line="-3179"/>
         <location line="+22"/>
         <location line="+8"/>
         <location line="+13"/>
@@ -2017,19 +2029,19 @@ Couldn&apos;t rename map to %1</source>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+5"/>
-        <location line="+999"/>
-        <location line="+2149"/>
+        <location line="+997"/>
+        <location line="+2144"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation type="unfinished">(fortfarande experimentell)</translation>
     </message>
     <message>
-        <location line="-3237"/>
+        <location line="-3230"/>
         <source>&amp;Print</source>
         <translation>&amp;Skriv ut</translation>
     </message>
     <message>
-        <location line="+3168"/>
+        <location line="+3161"/>
         <location line="+68"/>
         <source>Export to</source>
         <translation>Exportera till</translation>
@@ -2041,52 +2053,52 @@ Couldn&apos;t rename map to %1</source>
         <location line="+392"/>
         <location line="+1053"/>
         <location line="+20"/>
-        <location line="+880"/>
+        <location line="+910"/>
         <location line="+206"/>
         <location line="+183"/>
         <source>Warning</source>
         <translation>Varning</translation>
     </message>
     <message>
-        <location line="-2733"/>
-        <location line="+2345"/>
+        <location line="-2763"/>
+        <location line="+2375"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Kunde inte hittas en visare att öppna %1.
 </translation>
     </message>
     <message>
-        <location line="-2344"/>
-        <location line="+2345"/>
+        <location line="-2374"/>
+        <location line="+2375"/>
         <source>Please use Settings-&gt;</source>
         <translation>Använd Inställningar-&gt;</translation>
     </message>
     <message>
-        <location line="-2344"/>
+        <location line="-2374"/>
         <location line="+1260"/>
         <source>Set application to open an URL</source>
         <translation>Sätt program att öppna URL</translation>
     </message>
     <message>
         <location line="-12"/>
-        <location line="+1097"/>
+        <location line="+1127"/>
         <source>Set application to open PDF files</source>
         <translation>Sätt program att öppna PDF-filer</translation>
     </message>
     <message>
-        <location line="-4311"/>
+        <location line="-4344"/>
         <source>Oh no!</source>
         <comment>Standardflag</comment>
         <translation>Nej men inte!</translation>
     </message>
     <message>
-        <location line="-571"/>
+        <location line="-563"/>
         <source>Formatting</source>
         <comment>Shortcuts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+608"/>
+        <location line="+600"/>
         <source>Call...</source>
         <comment>Standardflag</comment>
         <translation>Ringa...</translation>
@@ -2122,12 +2134,12 @@ Couldn&apos;t rename map to %1</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location line="+1605"/>
+        <location line="+1608"/>
         <source>Firefox Bookmarks</source>
         <translation type="unfinished">Firefox bokmärken</translation>
     </message>
     <message>
-        <location line="-3184"/>
+        <location line="-3177"/>
         <source>&amp;Open...</source>
         <comment>File menu</comment>
         <translation>&amp;Öppna...</translation>
@@ -2247,7 +2259,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+8"/>
         <location line="+10"/>
         <source>Add branch above</source>
         <comment>Edit menu</comment>
@@ -2388,31 +2400,31 @@ Couldn&apos;t rename map to %1</source>
         <translation>&amp;Använd färg av rubrik för länk</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+85"/>
         <source>reset Zoom</source>
         <comment>View action</comment>
         <translation>Normal zoom</translation>
     </message>
     <message>
-        <location line="-37"/>
+        <location line="-33"/>
         <source>Zoom in</source>
         <comment>View action</comment>
         <translation>Zooma in</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Zoom out</source>
         <comment>View action</comment>
         <translation>Zooma ut</translation>
     </message>
     <message>
-        <location line="+249"/>
+        <location line="+242"/>
         <source>Use modifier to draw xLinks</source>
         <comment>Mode modifier</comment>
         <translation>Använd modifierare add rita xLänkar</translation>
     </message>
     <message>
-        <location line="+439"/>
+        <location line="+437"/>
         <source>Set application to open pdf files</source>
         <comment>Settings action</comment>
         <translation>Sätt program att öppna pdf-filer</translation>
@@ -2496,7 +2508,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Spara bild</translation>
     </message>
     <message>
-        <location line="-2202"/>
+        <location line="-2190"/>
         <source>&amp;New map</source>
         <comment>File menu</comment>
         <translation>&amp;Ny karta</translation>
@@ -2514,7 +2526,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Lägg till kartacenter</translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+127"/>
         <source>Sort children</source>
         <comment>Edit menu</comment>
         <translation>Ställa barn i ordning</translation>
@@ -2557,7 +2569,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Sätt &amp;bakgrundsbild</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+158"/>
         <source>History Window</source>
         <comment>View action</comment>
         <translation>Historik fönstret</translation>
@@ -2636,7 +2648,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Jag bara älskar...</translation>
     </message>
     <message>
-        <location line="+263"/>
+        <location line="+261"/>
         <source>Check for release notes and updates</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
@@ -2696,7 +2708,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Referenser (URLs, vymLinks, ...)</translation>
     </message>
     <message>
-        <location line="+1159"/>
+        <location line="+1164"/>
         <source>Export as CSV</source>
         <translation>Exportera som CSV</translation>
     </message>
@@ -2781,12 +2793,12 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2404"/>
+        <location line="-2409"/>
         <source>(readonly)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2857"/>
+        <location line="+2882"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Historik för %1</translation>
@@ -2798,7 +2810,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+441"/>
+        <location line="+451"/>
         <source>Couldn&apos;t find the documentation %1 in:
 %2</source>
         <translation>Kunde inte hittas dokumentation %1 i:(new line)%2</translation>
@@ -2818,7 +2830,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+83"/>
         <location line="+5"/>
         <source>Edit heading</source>
         <comment>MapEditor</comment>
@@ -2831,7 +2843,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1669"/>
+        <location line="+1679"/>
         <source>%1 items selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2855,7 +2867,7 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <location line="+13"/>
         <location filename="../src/export-ascii.cpp" line="+21"/>
-        <location filename="../src/export-confluence.cpp" line="+355"/>
+        <location filename="../src/export-confluence.cpp" line="+360"/>
         <location filename="../src/export-csv.cpp" line="+21"/>
         <location filename="../src/export-firefox.cpp" line="+68"/>
         <location filename="../src/export-html.cpp" line="+350"/>
@@ -3279,7 +3291,7 @@ Ska du äventyra att överskriva innehållet av det?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3021"/>
+        <location filename="../src/mainwindow.cpp" line="-3056"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
@@ -3525,7 +3537,7 @@ Skall den skrivas över?</translation>
         <translation type="unfinished">Export &amp;Som...(ASCII)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+8"/>
         <source>&amp;Print...</source>
         <translation type="unfinished">&amp;Skriva ut...</translation>
     </message>
@@ -3565,8 +3577,8 @@ Skall den skrivas över?</translation>
         <translation type="unfinished">&amp;Ta bort alla</translation>
     </message>
     <message>
-        <location line="-45"/>
-        <location line="+54"/>
+        <location line="-43"/>
+        <location line="+52"/>
         <location line="+64"/>
         <source>Texteditor</source>
         <comment>Shortcuts</comment>
@@ -3731,7 +3743,7 @@ Skall den skrivas över?</translation>
         <translation type="unfinished">Redigera aktiviteter</translation>
     </message>
     <message>
-        <location line="-59"/>
+        <location line="-57"/>
         <source>Note Actions</source>
         <translation type="unfinished">Antecknings aktiviteter</translation>
     </message>
@@ -3754,7 +3766,7 @@ Skall den skrivas över?</translation>
         <translation type="unfinished">&amp;Anteckning</translation>
     </message>
     <message>
-        <location line="+494"/>
+        <location line="+492"/>
         <location line="+76"/>
         <source>The file %1
 exists already.
@@ -3899,12 +3911,12 @@ kunnde inte att vara nämnad igen förrän sparn</translation>
     <message>
         <location line="+71"/>
         <location line="+61"/>
-        <location line="+4218"/>
+        <location line="+4224"/>
         <source>Images</source>
         <translation type="unfinished">Bilder</translation>
     </message>
     <message>
-        <location line="-4276"/>
+        <location line="-4282"/>
         <location line="+60"/>
         <source>All</source>
         <comment>Filedialog</comment>
@@ -3935,12 +3947,12 @@ Vill du överskriva det? {1 ?}</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+3543"/>
+        <location line="+3545"/>
         <source>Critical Error</source>
         <translation type="unfinished">Kritisk fel</translation>
     </message>
     <message>
-        <location line="-3542"/>
+        <location line="-3544"/>
         <source>Couldn&apos;t save %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4056,12 +4068,12 @@ Vill du ha äterladda kartan med ny fil?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+21"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+28"/>
         <source>Export map as PDF</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4098,13 +4110,13 @@ Vill du ha äterladda kartan med ny fil?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-531"/>
+        <location line="-537"/>
         <source>Received Jira data.</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+900"/>
+        <location line="+906"/>
         <source>Load background image</source>
         <translation type="unfinished">Ladda bakgrund bild</translation>
     </message>

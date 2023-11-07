@@ -225,13 +225,15 @@
 <context>
     <name>ConfluenceAgent</name>
     <message>
-        <location filename="../src/confluence-agent.cpp" line="+562"/>
-        <location line="+6"/>
+        <location filename="../src/confluence-agent.cpp" line="+785"/>
+        <location line="+75"/>
+        <location line="+29"/>
+        <location line="+89"/>
         <source>Warning</source>
         <translation>Προειδοποίηση</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="+1"/>
         <source>Authentication problem when contacting Confluence</source>
         <translation></translation>
     </message>
@@ -710,7 +712,7 @@ want to allow this in your system!</source>
 <context>
     <name>JiraAgent</name>
     <message>
-        <location filename="../src/jira-agent.cpp" line="+247"/>
+        <location filename="../src/jira-agent.cpp" line="+258"/>
         <source>Warning</source>
         <translation>Προειδοποίηση</translation>
     </message>
@@ -857,7 +859,7 @@ want to allow this in your system!</source>
         <translation>Επεξεργαστές κειμένου</translation>
     </message>
     <message>
-        <location line="+830"/>
+        <location line="+842"/>
         <source>&amp;Map</source>
         <comment>Menu for file actions</comment>
         <translation>&amp;Διάγραμμα</translation>
@@ -926,14 +928,14 @@ want to allow this in your system!</source>
         <location line="+5"/>
         <location line="+5"/>
         <location line="+5"/>
-        <location line="+999"/>
-        <location line="+2149"/>
+        <location line="+997"/>
+        <location line="+2144"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(σε πειραματική λειτουργία)</translation>
     </message>
     <message>
-        <location line="-3349"/>
+        <location line="-3342"/>
         <source>Export</source>
         <comment>File menu</comment>
         <translation>Εξαγωγή</translation>
@@ -1050,7 +1052,7 @@ want to allow this in your system!</source>
         <translation>Προσθήκη κλάδου (εισαγωγή)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+8"/>
         <location line="+10"/>
         <source>Add branch above</source>
         <comment>Edit menu</comment>
@@ -1208,18 +1210,28 @@ want to allow this in your system!</source>
         <translation>Χρήση κεφαλίδας για URL</translation>
     </message>
     <message>
-        <location line="+4082"/>
+        <location line="+2201"/>
+        <source>Loaded %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+145"/>
+        <source>Saving  %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1731"/>
         <source>Color of selection box</source>
         <comment>Mainwindow</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1447"/>
+        <location line="+1477"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation>&lt;html&gt;&lt;h3&gt;Επιτρέπετε στο vym να ελέγχει στο διαδίκτυο για ενημερώσεις ή σημειώσεις κυκλοφορίας;&lt;/h3&gt;Εάν συμφωνείτε, το vym θα &lt;ul&gt;&lt;li&gt;ελέγχει μία φορά για σημειώσεις έκδοσης&lt;/li&gt;&lt;li&gt;ελέγχει τακτικά για ενημερώσεις και σας ειδοποιεί σε περίπτωση που πρέπει να κάνετε ενημέρωση, π.χ. εάν υπάρχουν διαθέσιμες σημαντικές διορθώσεις σφαλμάτων&lt;/li&gt;&lt;li&gt;λάβετε ένα cookie με ένα τυχαίο αναγνωριστικό και θα σταλούν ορισμένα ανώνυμα δεδομένα, όπως:&lt;ul&gt;&lt;li&gt; έκδοση του vym&lt;/li&gt;&lt;li&gt;όνομα πλατφόρμας και το αναγνωριστικό ( π.χ. &quot;Windows&quot; ή &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;εάν χρησιμοποιείτε σκοτεινό θέμα&lt;/li&gt;&lt;/ul&gt;Αυτά τα δεδομένα αποστέλλονται σε εμένα, Uwe Drechsel.&lt;p&gt;Ως προγραμματιστής vym έχω κίνητρο να βλέπω πολλά άτομα να χρησιμοποιούν το vym. Φυσικά είμαι περίεργος να δω, σε ποιο λειτουργικό σύστημα χρησιμοποιείται το vym. Η συντήρηση καθενός από τα συστήματα απαιτεί πολύ από τον (ελεύθερο) χρόνο μου.&lt;/p&gt; &lt;p&gt;Δεν θα σταλούν άλλα δεδομένα εκτός από τα παραπάνω, ειδικότερα δεν θα συλλέγονται ή αποστέλλονται προσωπικά δεδομένα. (Ελέγξτε τον πηγαίο κώδικα, εάν δεν με πιστεύετε.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;Εάν δεν το επιτρέψετε, &lt;ul&gt;&lt;li&gt;δεν θα γίνει λήψη κανενός δεδομένου και ειδικά &lt;b&gt;δεν θα έχω κίνητρο&lt;/b&gt; να ξοδέψω μερικές ακόμη  χιλιάδες ώρες για την ανάπτυξη ενός εργαλείου Ελεύθερου Λογισμικού.&lt;/ul&gt;Επιτρέψτε στο vym να ελέγχει για ενημερώσεις :-)</translation>
     </message>
     <message>
-        <location line="-5498"/>
+        <location line="-5523"/>
         <source>vymlinks - linking maps</source>
         <comment>Shortcuts</comment>
         <translation>Σύνδεσμοι VYM - σύνδεση διαγραμμάτων</translation>
@@ -1553,43 +1565,43 @@ want to allow this in your system!</source>
         <translation>Μεγέθυνση</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Zoom out</source>
         <comment>View action</comment>
         <translation>Σμίκρυνση</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>Rotate counterclockwise</source>
         <comment>View action</comment>
         <translation>Αριστερόστροφη περιστροφή</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Rotate rclockwise</source>
         <comment>View action</comment>
         <translation>Δεξιόστροφη περιστροφή</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>reset Zoom</source>
         <comment>View action</comment>
         <translation>Επαναφορά εστίασης</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Center on selection</source>
         <comment>View action</comment>
         <translation>Κέντρο της επιλογής</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Fit view to selection</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>Note editor</source>
         <comment>View action</comment>
         <translation>Επεξεργαστής σημειώσεων</translation>
@@ -1619,7 +1631,7 @@ want to allow this in your system!</source>
         <translation>Επεξεργαστής διαφανειών</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Script editor</source>
         <comment>View action</comment>
         <translation>Επεξεργαστής σεναρίων</translation>
@@ -1722,7 +1734,7 @@ want to allow this in your system!</source>
         <translation>Απόκρυψη αντικειμένου στα εξαγόμενα διαγράμματα</translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+347"/>
         <source>Set path for new maps</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
@@ -1734,7 +1746,7 @@ want to allow this in your system!</source>
         <translation>Εργαλειοθήκη κανονικων σημαιών</translation>
     </message>
     <message>
-        <location line="-879"/>
+        <location line="-877"/>
         <source>This won&apos;t work!</source>
         <comment>Standardflag</comment>
         <translation>Αυτό δεν λειτουργεί!</translation>
@@ -1878,7 +1890,7 @@ want to allow this in your system!</source>
         <translation>Αυτό θα βοηθήσει</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+207"/>
         <source>Settings</source>
         <translation>Ρυθμίσεις</translation>
     </message>
@@ -2144,13 +2156,13 @@ to confusion when finishing working with vym.Do you want to</source>
     <message>
         <location line="+1"/>
         <location line="+73"/>
-        <location line="+265"/>
+        <location line="+270"/>
         <location line="+93"/>
         <source>Cancel</source>
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <location line="-366"/>
+        <location line="-371"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -2191,7 +2203,7 @@ Do you want to create a new one?</source>
         <translation>ή</translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+121"/>
         <source>Saved  %1</source>
         <translation>Αποθηκεύτηκε: %1</translation>
     </message>
@@ -2243,14 +2255,14 @@ exists already. Do you want to</source>
         <location line="+392"/>
         <location line="+1053"/>
         <location line="+20"/>
-        <location line="+880"/>
+        <location line="+910"/>
         <location line="+206"/>
         <location line="+183"/>
         <source>Warning</source>
         <translation>Προειδοποίηση</translation>
     </message>
     <message>
-        <location line="-2934"/>
+        <location line="-2964"/>
         <source>Couldn&apos;t find configuration for export to LibreOffice
 </source>
         <translation>Αδυναμία εντοπισμού ρυθμίσεων για εξαγωγή σε LibreOffice</translation>
@@ -2273,19 +2285,19 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location line="+106"/>
-        <location line="+2345"/>
+        <location line="+2375"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Αδυναμία εύρεσης εφαρμογής προβολης για ανοιγμα του %1.</translation>
     </message>
     <message>
-        <location line="-2344"/>
-        <location line="+2345"/>
+        <location line="-2374"/>
+        <location line="+2375"/>
         <source>Please use Settings-&gt;</source>
         <translation>Παρακαλώ χρησιμοποιήστε τις Ρυθμίσεις-&gt;</translation>
     </message>
     <message>
-        <location line="-2344"/>
+        <location line="-2374"/>
         <location line="+1260"/>
         <source>Set application to open an URL</source>
         <translation>Ορισμός μιας εφαρμογής για άνοιγμα URL</translation>
@@ -2331,8 +2343,8 @@ exists already. Do you want to</source>
         <translation>Ορισμός URL για ένα τοπικό αρχείο</translation>
     </message>
     <message>
-        <location line="-1056"/>
-        <location line="+395"/>
+        <location line="-1061"/>
+        <location line="+400"/>
         <location line="+46"/>
         <location line="+9"/>
         <location line="+73"/>
@@ -2361,12 +2373,12 @@ exists already. Do you want to</source>
     </message>
     <message>
         <location line="+830"/>
-        <location line="+1097"/>
+        <location line="+1127"/>
         <source>Set application to open PDF files</source>
         <translation>Ορισμός εφαρμογής για άνοιγμα αρχείων PDF</translation>
     </message>
     <message>
-        <location line="-1046"/>
+        <location line="-1076"/>
         <source>Number of undo/redo levels:</source>
         <translation>Αριθμός αναιρέσεων/ακύρωσης αναιρέσεων:</translation>
     </message>
@@ -2391,12 +2403,12 @@ exists already. Do you want to</source>
         <translation>Αριθμός πρόγονων κόμβων που εμφανιζονται για κάθε εργασία:</translation>
     </message>
     <message>
-        <location line="-2404"/>
+        <location line="-2409"/>
         <source>(readonly)</source>
         <translation>(μόνο για ανάγνωση)</translation>
     </message>
     <message>
-        <location line="+2857"/>
+        <location line="+2882"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Ιστορικό για %1</translation>
@@ -2408,7 +2420,7 @@ exists already. Do you want to</source>
         <translation>Εξαγωγή στη τελευταία χρησιμοποιούμενη μορφή (%1) σε: %2</translation>
     </message>
     <message>
-        <location line="+440"/>
+        <location line="+450"/>
         <source>Critcal error</source>
         <translation>Κρίσιμο σφάλμα</translation>
     </message>
@@ -2472,7 +2484,7 @@ exists already. Do you want to</source>
         <translation>Παρακαλώ, να επιτρέψετε στο VYM να κάνει έλεγχο ενημερώσεων!</translation>
     </message>
     <message>
-        <location line="-4443"/>
+        <location line="-4478"/>
         <source>Set author for new maps</source>
         <comment>Settings action</comment>
         <translation>Ορισμός συγγραφέα για νέα διαγράμματα</translation>
@@ -2490,7 +2502,7 @@ exists already. Do you want to</source>
         <translation>Αριθμός ορατών γονικών κόμβων στο παράθυρο αποτελεσμάτων εύρεσης</translation>
     </message>
     <message>
-        <location line="+2938"/>
+        <location line="+2943"/>
         <source>Set author for new maps (used in lockfile)</source>
         <translation>Ορισμός συγγραφέα για νέα διαγράμματα (χρησιμοποιείται στο αρχείο κλειδώματος)</translation>
     </message>
@@ -2500,7 +2512,7 @@ exists already. Do you want to</source>
         <translation>Αριθμός γονικών κόμβων που εμφανίζονται στο παράθυρο αποτελεσμάτων:</translation>
     </message>
     <message>
-        <location line="-4893"/>
+        <location line="-4886"/>
         <source>Webpage (HTML)...</source>
         <comment>File export menu</comment>
         <translation>Ιστοσελίδα (HTML)...</translation>
@@ -2518,25 +2530,25 @@ exists already. Do you want to</source>
         <translation>Κείμενο με εργασίες</translation>
     </message>
     <message>
-        <location line="+4818"/>
+        <location line="+4811"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>Άγνωστος χρήστης</translation>
     </message>
     <message>
-        <location line="-4811"/>
+        <location line="-4804"/>
         <source>Text (A&amp;O report)...</source>
         <comment>Export format</comment>
         <translation>Κείμενο (Α&amp;Ο αναφορά)...</translation>
     </message>
     <message>
-        <location line="+1957"/>
+        <location line="+1945"/>
         <source>Debug info</source>
         <comment>Option to show debugging info</comment>
         <translation>Πληροφορίες αποσφαλμάτωσης</translation>
     </message>
     <message>
-        <location line="+976"/>
+        <location line="+981"/>
         <location line="+82"/>
         <source>Couldn&apos;t save %1,
 because of existing lockfile:
@@ -2576,12 +2588,12 @@ because of existing lockfile:
         <translation>xLinks</translation>
     </message>
     <message>
-        <location line="-4814"/>
+        <location line="-4819"/>
         <source>Script output window</source>
         <translation>Παράθυρο εξόδου σεναρίου</translation>
     </message>
     <message>
-        <location line="+852"/>
+        <location line="+864"/>
         <source>Import Dir...</source>
         <comment>Import Filters</comment>
         <translation>Εισαγωγή φακέλων...</translation>
@@ -2604,7 +2616,7 @@ because of existing lockfile:
         <translation>CSV...</translation>
     </message>
     <message>
-        <location line="+763"/>
+        <location line="+761"/>
         <source>Add image...</source>
         <comment>Edit menu</comment>
         <translation>Προσθήκη εικόνας</translation>
@@ -2622,19 +2634,19 @@ because of existing lockfile:
         <translation>Εναλλαγή λειτουργίας Παρουσίασης</translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+130"/>
         <source>Script output window</source>
         <comment>View action</comment>
         <translation>Παράθυρο εξόδου σεναρίου</translation>
     </message>
     <message>
-        <location line="+768"/>
+        <location line="+766"/>
         <source>Show keyboard macros</source>
         <comment>Help action</comment>
         <translation>Εμφάνιση μακροεντολών πληκτρολογίου</translation>
     </message>
     <message>
-        <location line="+1874"/>
+        <location line="+1879"/>
         <source>Enter sleep time (number of days, hours with &apos;h&apos; or date YYYY-MM-DD or DD.MM[.YYYY]</source>
         <comment>task sleep time dialog</comment>
         <translation>Καταχωρίστε τον χρόνο αναστολής (αριθμός ημερών, ώρες με το γράμμα &apos;ω&apos; ή ημερομηνία της μορφής ΕΕΕΕ-ΜΜ-ΗΗ ή ΗΗ.ΜΜ[ΕΕΕΕ]</translation>
@@ -2657,19 +2669,19 @@ because of existing lockfile:
         <translation>Φόρτωση σεναρίου vym</translation>
     </message>
     <message>
-        <location line="-4818"/>
+        <location line="-4811"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation>Αποθήκευση ως προεπιλεγμένο διάγραμμα</translation>
     </message>
     <message>
-        <location line="+596"/>
+        <location line="+594"/>
         <source>Get page name from Confluence</source>
         <comment>Edit menu</comment>
         <translation>Λήψη ονόματος σελίδας από τη Συνεισφορά</translation>
     </message>
     <message>
-        <location line="+833"/>
+        <location line="+825"/>
         <source>Images</source>
         <translation>Εικόνες</translation>
     </message>
@@ -2686,13 +2698,13 @@ because of existing lockfile:
         <translation>URL</translation>
     </message>
     <message>
-        <location line="+907"/>
+        <location line="+905"/>
         <source>User Flags toolbar</source>
         <comment>user Flags Toolbar</comment>
         <translation>Μπάρα σημαιών χρήστη</translation>
     </message>
     <message>
-        <location line="-838"/>
+        <location line="-836"/>
         <source>Hm...</source>
         <comment>Standardflag</comment>
         <translation>Χμ...</translation>
@@ -2825,7 +2837,7 @@ because of existing lockfile:
         <translation>Γλυκό</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+160"/>
         <source>Confluence Credentials</source>
         <comment>Settings action</comment>
         <translation>Διαπιστευτήρια συνεισφοράς</translation>
@@ -2862,7 +2874,7 @@ vym will create an empty map now.</source>
 Το vym θα δημιουργήσει ένα κενό διάγραμμα τώρα.</translation>
     </message>
     <message>
-        <location line="+395"/>
+        <location line="+400"/>
         <source>Couldn&apos;t save %1,
 because file exists and cannot be changed.</source>
         <translation>Δεν ήταν δυνατή η αποθήκευση του %1,
@@ -2888,13 +2900,13 @@ because file exists and cannot be changed.</source>
         <translation type="vanished">Ορισμός του προεπιλεγμένου διαγράμματος για φόρτωση κατά την εκκίνηση</translation>
     </message>
     <message>
-        <location line="-2486"/>
+        <location line="-2481"/>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
         <translation>Λήψη δεδομένων από το JIRA για το υπο-δέντρο</translation>
     </message>
     <message>
-        <location line="-578"/>
+        <location line="-576"/>
         <source>(experimental)</source>
         <translation>(σε πειραματικό στάδιο)</translation>
     </message>
@@ -2905,7 +2917,7 @@ because file exists and cannot be changed.</source>
         <translation>Σελιδοδείκτες Firefox</translation>
     </message>
     <message>
-        <location line="+315"/>
+        <location line="+313"/>
         <source>Move branch diagonally up</source>
         <comment>Edit menu</comment>
         <translation>Μετακίνηση κλάδου διαγώνια προς τα πάνω</translation>
@@ -2917,7 +2929,7 @@ because file exists and cannot be changed.</source>
         <translation>Μετακίνηση κλάδου διαγώνια προς τα κάτω</translation>
     </message>
     <message>
-        <location line="+952"/>
+        <location line="+944"/>
         <source>&amp;Connect</source>
         <translation>&amp;Σύνδεση</translation>
     </message>
@@ -2958,7 +2970,7 @@ because file exists and cannot be changed.</source>
         <translation>Χρήση του επεξεργαστή για μετακίνηση προβολής χωρίς επιλογή</translation>
     </message>
     <message>
-        <location line="+441"/>
+        <location line="+439"/>
         <source>JIRA Credentials</source>
         <comment>Settings action</comment>
         <translation>Διαπιστευτήρια JIRA</translation>
@@ -2970,7 +2982,7 @@ because file exists and cannot be changed.</source>
         <translation>Εμφάνιση εργαλειοθήκης</translation>
     </message>
     <message>
-        <location line="+789"/>
+        <location line="+794"/>
         <source>Firefox Bookmarks</source>
         <translation>Σελιδοδείκτες Firefox</translation>
     </message>
@@ -3011,18 +3023,18 @@ because file exists and cannot be changed.</source>
         <translation>Ορισμός ως σύνδεσμος προς διάγραμμα vym</translation>
     </message>
     <message>
-        <location line="-3110"/>
+        <location line="-3105"/>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
         <translation>Επαναφορά προτεραιότητας δέλτα για ορατές εργασίες</translation>
     </message>
     <message>
-        <location line="+1653"/>
+        <location line="+1643"/>
         <source>Select color (Press Shift for more options)</source>
         <translation>Επιλογή χρώματος (Πιέστε Shift για περισσότερες επιλογές)</translation>
     </message>
     <message>
-        <location line="+681"/>
+        <location line="+686"/>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
         <translation>Η αποθήκευση του διαγράμματος απέτυχε:
@@ -3045,7 +3057,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Επεξεργαστής διαγράμματος</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+83"/>
         <location line="+5"/>
         <source>Edit heading</source>
         <comment>MapEditor</comment>
@@ -3058,7 +3070,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Εκτύπωση διαγράμματος VYM</translation>
     </message>
     <message>
-        <location line="+1669"/>
+        <location line="+1679"/>
         <source>%1 items selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3121,7 +3133,7 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <location line="+12"/>
         <location filename="../src/export-ascii.cpp" line="+8"/>
-        <location filename="../src/export-confluence.cpp" line="+355"/>
+        <location filename="../src/export-confluence.cpp" line="+360"/>
         <location filename="../src/export-csv.cpp" line="+21"/>
         <location filename="../src/export-firefox.cpp" line="+68"/>
         <location filename="../src/export-html.cpp" line="+350"/>
@@ -3519,7 +3531,7 @@ The map could not be saved, please check if backup file is available or export a
         <translation>Δεν ήταν δυνατή η εύρεση εργαλείου για την αποσυμπίεση δεδομένων, ή η έκδοση των Windows σας είναι παλαιότερη από τα Windows 10.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-232"/>
+        <location filename="../src/mainwindow.cpp" line="-237"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
@@ -3777,14 +3789,14 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+54"/>
+        <location line="+52"/>
         <location line="+64"/>
         <source>Texteditor</source>
         <comment>Shortcuts</comment>
         <translation>Επεξεργαστής κειμένου</translation>
     </message>
     <message>
-        <location line="-116"/>
+        <location line="-114"/>
         <source>&amp;Import...</source>
         <translation>&amp;Εισαγωγή...</translation>
     </message>
@@ -3804,7 +3816,7 @@ Do you want to overwrite it?</source>
         <translation>Εξαγωγή &amp;ως... (ASCII)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+8"/>
         <source>&amp;Print...</source>
         <translation>&amp;Εκτύπωση...</translation>
     </message>
@@ -4124,12 +4136,12 @@ could not be renamed before saving</source>
     <message>
         <location line="+71"/>
         <location line="+61"/>
-        <location line="+4218"/>
+        <location line="+4224"/>
         <source>Images</source>
         <translation>Εικόνες</translation>
     </message>
     <message>
-        <location line="-4276"/>
+        <location line="-4282"/>
         <location line="+60"/>
         <source>All</source>
         <comment>Filedialog</comment>
@@ -4159,12 +4171,12 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+3543"/>
+        <location line="+3545"/>
         <source>Critical Error</source>
         <translation>Κρίσιμο σφάλμα</translation>
     </message>
     <message>
-        <location line="-3542"/>
+        <location line="-3544"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Αδυναμία αποθήκευσης του %1</translation>
     </message>
@@ -4234,12 +4246,12 @@ Do you want to reload that map with the new file?</source>
         <translation>Εξαγωγή διαγράμματος σε εικόνα</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+21"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation>Αδυναμία αποθήκευσης QImage %1 σε μορφή %2</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+28"/>
         <source>Export map as PDF</source>
         <translation>Εξαγωγη διαγράμματος ως PDF</translation>
     </message>
@@ -4281,7 +4293,7 @@ Do you want to reload that map with the new file?</source>
         <translation>Φόρτωση εικόνας παρασκηνίου</translation>
     </message>
     <message>
-        <location line="-4987"/>
+        <location line="-4993"/>
         <source>unknown user</source>
         <comment>default name for map author in settings</comment>
         <translation>Άγνωστος χρήστης</translation>

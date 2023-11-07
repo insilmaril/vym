@@ -3920,7 +3920,7 @@ File::ErrorCode Main::fileLoad(QString fn, const LoadMode &lmode,
             }
             editorChanged();
             vm->emitShowSelection();
-            statusBar()->showMessage("Loaded " + fn, statusbarTime);
+            statusBar()->showMessage(tr("Loaded %1").arg(fn), statusbarTime);
         }
     }
 
@@ -4063,6 +4063,11 @@ void Main::fileSave(VymModel *m, const SaveMode &savemode)
         fileSaveAs(savemode);
         return; // avoid saving twice...
     }
+
+    // Notification, that we start to save
+    statusBar()->showMessage(tr("Saving  %1...").arg(m->getFilePath()),
+                         statusbarTime);
+    qApp->processEvents();
 
     if (m->save(savemode) == File::Success) {
         statusBar()->showMessage(tr("Saved  %1").arg(m->getFilePath()),

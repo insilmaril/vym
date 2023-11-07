@@ -204,13 +204,15 @@
 <context>
     <name>ConfluenceAgent</name>
     <message>
-        <location filename="../src/confluence-agent.cpp" line="+562"/>
-        <location line="+6"/>
+        <location filename="../src/confluence-agent.cpp" line="+785"/>
+        <location line="+75"/>
+        <location line="+29"/>
+        <location line="+89"/>
         <source>Warning</source>
         <translation type="unfinished">Upozorenje</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="+1"/>
         <source>Authentication problem when contacting Confluence</source>
         <translation type="unfinished"></translation>
     </message>
@@ -603,7 +605,7 @@ Provjerite da li to stvarno
 <context>
     <name>JiraAgent</name>
     <message>
-        <location filename="../src/jira-agent.cpp" line="+247"/>
+        <location filename="../src/jira-agent.cpp" line="+258"/>
         <source>Warning</source>
         <translation type="unfinished">Upozorenje</translation>
     </message>
@@ -729,7 +731,7 @@ Provjerite da li to stvarno
         <translation>Lista zadatka</translation>
     </message>
     <message>
-        <location line="+732"/>
+        <location line="+744"/>
         <source>&amp;Map</source>
         <comment>Menu for file actions</comment>
         <translation>&amp;Mapa</translation>
@@ -798,14 +800,14 @@ Provjerite da li to stvarno
         <location line="+5"/>
         <location line="+5"/>
         <location line="+5"/>
-        <location line="+999"/>
-        <location line="+2149"/>
+        <location line="+997"/>
+        <location line="+2144"/>
         <location line="+105"/>
         <source>(still experimental)</source>
         <translation>(experimentalno)</translation>
     </message>
     <message>
-        <location line="-3349"/>
+        <location line="-3342"/>
         <source>Export</source>
         <comment>File menu</comment>
         <translation>Izvoz</translation>
@@ -946,7 +948,7 @@ Provjerite da li to stvarno
         <translation>Dodaj granu (umetni)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+8"/>
         <location line="+10"/>
         <source>Add branch above</source>
         <comment>Edit menu</comment>
@@ -1462,43 +1464,43 @@ Provjerite da li to stvarno
         <translation>Povećaj</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Zoom out</source>
         <comment>View action</comment>
         <translation>Smanji</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>Rotate counterclockwise</source>
         <comment>View action</comment>
         <translation>Rotiraj u suprotnom smjeru od kazaljke na satu</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Rotate rclockwise</source>
         <comment>View action</comment>
         <translation>Rotiraj u smjeru kazaljke na satu</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>reset Zoom</source>
         <comment>View action</comment>
         <translation>Poništi povećanje</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Center on selection</source>
         <comment>View action</comment>
         <translation>Centriraj odabrano</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Fit view to selection</source>
         <comment>View action</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+11"/>
         <source>Note editor</source>
         <comment>View action</comment>
         <translation>Uređivač bilješki</translation>
@@ -1528,7 +1530,7 @@ Provjerite da li to stvarno
         <translation>Uređivač slajdova</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Script editor</source>
         <comment>View action</comment>
         <translation>Uređivač skripti</translation>
@@ -1654,7 +1656,7 @@ Provjerite da li to stvarno
         <translation>Sakrij objekt u izvezenim mapama</translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+347"/>
         <source>Set path for new maps</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
@@ -1666,7 +1668,7 @@ Provjerite da li to stvarno
         <translation>Alatna traka standardnih zastavica</translation>
     </message>
     <message>
-        <location line="-879"/>
+        <location line="-877"/>
         <source>This won&apos;t work!</source>
         <comment>Standardflag</comment>
         <translation>Ovo ne funkcionira!</translation>
@@ -1810,7 +1812,7 @@ Provjerite da li to stvarno
         <translation>Ovo će pomoći</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+207"/>
         <source>Settings</source>
         <translation>Pos&amp;tavke</translation>
     </message>
@@ -2003,7 +2005,7 @@ vym will create an empty map now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+395"/>
+        <location line="+400"/>
         <source>Couldn&apos;t save %1,
 because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
@@ -2066,7 +2068,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2777"/>
+        <location line="-2782"/>
         <source>About QT</source>
         <comment>Help action</comment>
         <translation>O QTu</translation>
@@ -2077,7 +2079,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+841"/>
         <source>Save as default map</source>
         <comment>File menu</comment>
         <translation type="unfinished"></translation>
@@ -2106,7 +2108,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+477"/>
+        <location line="+475"/>
         <source>Get data from JIRA for subtree</source>
         <comment>Edit menu</comment>
         <translation type="unfinished"></translation>
@@ -2124,7 +2126,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+556"/>
+        <location line="+548"/>
         <source>Images</source>
         <translation type="unfinished">Slike</translation>
     </message>
@@ -2141,19 +2143,19 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+907"/>
+        <location line="+905"/>
         <source>User Flags toolbar</source>
         <comment>user Flags Toolbar</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-838"/>
+        <location line="-836"/>
         <source>Hm...</source>
         <comment>Standardflag</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1554"/>
+        <location line="-1544"/>
         <source>(experimental)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2164,13 +2166,13 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished">Firefoxove knjižne oznake</translation>
     </message>
     <message>
-        <location line="+635"/>
+        <location line="+633"/>
         <source>Reset delta priority for visible tasks</source>
         <comment>Reset delta</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+671"/>
         <source>Use modifier to select and reorder objects</source>
         <comment>Mode modifier</comment>
         <translation type="unfinished"></translation>
@@ -2321,7 +2323,7 @@ because file exists and cannot be changed.</source>
         <translation type="unfinished">Slatko</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+160"/>
         <source>Confluence Credentials</source>
         <comment>Settings action</comment>
         <translation type="unfinished"></translation>
@@ -2434,12 +2436,12 @@ because file exists and cannot be changed.</source>
         <translation>Alatna traka boja</translation>
     </message>
     <message>
-        <location line="+3791"/>
+        <location line="+3826"/>
         <source>&lt;html&gt;&lt;h3&gt;Do you allow vym to check online for updates or release notes?&lt;/h3&gt;If you allow, vym will &lt;ul&gt;&lt;li&gt;check once for release notes&lt;/li&gt;&lt;li&gt;check regulary for updates and notify you in case you should update, e.g. if there are important bug fixes available&lt;/li&gt;&lt;li&gt;receive a cookie with a random ID and send some anonymous data, like:&lt;ul&gt;&lt;li&gt;vym version&lt;/li&gt;&lt;li&gt;platform name and the ID (e.g. &quot;Windows&quot; or &quot;Linux&quot;)&lt;/li&gt;&lt;li&gt;if you are using dark theme&lt;/li&gt;&lt;/ul&gt;This data is sent to me, Uwe Drechsel.&lt;p&gt;As vym developer I am motivated to see many people using vym. Of course I am curious to see, on which system vym is used. Maintaining each of the systems requires a lot of my (spare) time.&lt;/p&gt; &lt;p&gt;No other data than above will be sent, especially no private data will be collected or sent.(Check the source code, if you don&apos;t believe.)&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;If you do not allow, &lt;ul&gt;&lt;li&gt;nothing will be downloaded and especially I will &lt;b&gt;not be motivated&lt;/b&gt; to spend some more thousands of hours on developing a free software tool.&lt;/ul&gt;Please allow vym to check for updates :-)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3732"/>
+        <location line="-3767"/>
         <source>Editors toolbar</source>
         <comment>Editor Toolbar name</comment>
         <translation>Alatna traka uređivača</translation>
@@ -2472,13 +2474,13 @@ do zabune pri završetku rada s vymom. Želite li</translation>
     <message>
         <location line="+1"/>
         <location line="+73"/>
-        <location line="+265"/>
+        <location line="+270"/>
         <location line="+93"/>
         <source>Cancel</source>
         <translation>Odustani</translation>
     </message>
     <message>
-        <location line="-366"/>
+        <location line="-371"/>
         <source>This map does not exist:
   %1
 Do you want to create a new one?</source>
@@ -2519,7 +2521,7 @@ Do you want to create a new one?</source>
         <translation>ili</translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+121"/>
         <source>Saved  %1</source>
         <translation>Spremljen %1</translation>
     </message>
@@ -2547,8 +2549,8 @@ već postoji. Želite li</translation>
         <translation>Prepiši</translation>
     </message>
     <message>
-        <location line="-409"/>
-        <location line="+395"/>
+        <location line="-414"/>
+        <location line="+400"/>
         <location line="+46"/>
         <location line="+9"/>
         <location line="+73"/>
@@ -2593,14 +2595,24 @@ zbog postojeće datoteke zaključavanja:
         <location line="+392"/>
         <location line="+1053"/>
         <location line="+20"/>
-        <location line="+880"/>
+        <location line="+910"/>
         <location line="+206"/>
         <location line="+183"/>
         <source>Warning</source>
         <translation>Upozorenje</translation>
     </message>
     <message>
-        <location line="-3242"/>
+        <location line="-3512"/>
+        <source>Loaded %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+145"/>
+        <source>Saving  %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+95"/>
         <source>Saving the map failed:
 Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
@@ -2629,19 +2641,19 @@ Couldn&apos;t rename map to %1</source>
     </message>
     <message>
         <location line="+106"/>
-        <location line="+2345"/>
+        <location line="+2375"/>
         <source>Couldn&apos;t find a viewer to open %1.
 </source>
         <translation>Ne mogu naći program za pregledavanje %1.</translation>
     </message>
     <message>
-        <location line="-2344"/>
-        <location line="+2345"/>
+        <location line="-2374"/>
+        <location line="+2375"/>
         <source>Please use Settings-&gt;</source>
         <translation>Molim koristite postavke-&gt;</translation>
     </message>
     <message>
-        <location line="-2344"/>
+        <location line="-2374"/>
         <location line="+1260"/>
         <source>Set application to open an URL</source>
         <translation>Postavi aplikaciju za otvaranje URLa</translation>
@@ -2755,12 +2767,12 @@ Couldn&apos;t rename map to %1</source>
     </message>
     <message>
         <location line="+123"/>
-        <location line="+1097"/>
+        <location line="+1127"/>
         <source>Set application to open PDF files</source>
         <translation>Postavi aplikaciju za otvaranje PDF datoteka</translation>
     </message>
     <message>
-        <location line="-1046"/>
+        <location line="-1076"/>
         <source>Number of undo/redo levels:</source>
         <translation>Broj poništi/ponovi nivoa:</translation>
     </message>
@@ -2817,7 +2829,7 @@ Couldn&apos;t rename map to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+421"/>
         <source>History for %1</source>
         <comment>Window Caption</comment>
         <translation>Povijest za %1</translation>
@@ -2829,7 +2841,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Izvezi po zadnje korištenom formatu (%1)  u: %2</translation>
     </message>
     <message>
-        <location line="+440"/>
+        <location line="+450"/>
         <source>Critcal error</source>
         <translation>Kritična greška</translation>
     </message>
@@ -2901,7 +2913,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Uređivač mapa</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+83"/>
         <location line="+5"/>
         <source>Edit heading</source>
         <comment>MapEditor</comment>
@@ -2914,7 +2926,7 @@ Couldn&apos;t rename map to %1</source>
         <translation>Ispis vym mape</translation>
     </message>
     <message>
-        <location line="+1669"/>
+        <location line="+1679"/>
         <source>%1 items selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2982,7 +2994,7 @@ Couldn&apos;t rename map to %1</source>
     <message>
         <location line="+12"/>
         <location filename="../src/export-ascii.cpp" line="+8"/>
-        <location filename="../src/export-confluence.cpp" line="+355"/>
+        <location filename="../src/export-confluence.cpp" line="+360"/>
         <location filename="../src/export-csv.cpp" line="+21"/>
         <location filename="../src/export-firefox.cpp" line="+68"/>
         <location filename="../src/export-html.cpp" line="+350"/>
@@ -3364,7 +3376,7 @@ The map could not be saved, please check if backup file is available or export a
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="-3394"/>
+        <location filename="../src/mainwindow.cpp" line="-3429"/>
         <source>Existing lockfiles have been ignored for the maps listed below. Please check, if the maps might be openend in another instance of vym:
 
 </source>
@@ -3620,14 +3632,14 @@ već postoji.
     </message>
     <message>
         <location line="+2"/>
-        <location line="+54"/>
+        <location line="+52"/>
         <location line="+64"/>
         <source>Texteditor</source>
         <comment>Shortcuts</comment>
         <translation>Uređivač teksta</translation>
     </message>
     <message>
-        <location line="-116"/>
+        <location line="-114"/>
         <source>&amp;Import...</source>
         <translation>&amp;Uvoz...</translation>
     </message>
@@ -3647,7 +3659,7 @@ već postoji.
         <translation>Izvezi &amp;kao... (ASCII)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+8"/>
         <source>&amp;Print...</source>
         <translation>&amp;Ispis...</translation>
     </message>
@@ -3963,12 +3975,12 @@ ne može biti preimenovana prije spremanja</translation>
     <message>
         <location line="+71"/>
         <location line="+61"/>
-        <location line="+4218"/>
+        <location line="+4224"/>
         <source>Images</source>
         <translation>Slike</translation>
     </message>
     <message>
-        <location line="-4276"/>
+        <location line="-4282"/>
         <location line="+60"/>
         <source>All</source>
         <comment>Filedialog</comment>
@@ -3998,12 +4010,12 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+3543"/>
+        <location line="+3545"/>
         <source>Critical Error</source>
         <translation>Kritična greška</translation>
     </message>
     <message>
-        <location line="-254"/>
+        <location line="-256"/>
         <source>Received Jira data.</source>
         <comment>VymModel</comment>
         <translation type="unfinished"></translation>
@@ -4158,12 +4170,12 @@ Do you want to reload that map with the new file?</source>
         <translation>Izvezi mapu kao sliku</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+21"/>
         <source>Couldn&apos;t save QImage %1 in format %2</source>
         <translation>Ne mogu spremiti QImage %1 u formatu %2</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+28"/>
         <source>Export map as PDF</source>
         <translation>Izvezi mapu kao PDF</translation>
     </message>
