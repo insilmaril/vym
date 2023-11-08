@@ -245,13 +245,14 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             break;
 
         case RoundedRectangle: {
-            qreal radius = 20;
+            qreal radius = 10;
             qreal radius_2 = radius * 2;
+            qreal radius_h = radius / 2;
 
-            QPointF tl = childRect.topLeft() + QPointF(- radius - pad, - radius - pad);
-            QPointF tr = childRect.topRight() + QPointF(radius + pad, - radius - pad);
-            QPointF bl = childRect.bottomLeft() + QPointF(- radius - pad, radius + pad);
-            QPointF br = childRect.bottomRight() + QPointF(radius + pad, + radius + pad);
+            QPointF tl = childRect.topLeft() + QPointF(- radius_h - pad, - radius_h - pad);
+            QPointF tr = childRect.topRight() + QPointF(radius_h + pad, - radius_h - pad);
+            QPointF bl = childRect.bottomLeft() + QPointF(- radius_h - pad, radius_h + pad);
+            QPointF br = childRect.bottomRight() + QPointF(radius_h + pad, + radius_h + pad);
             QPainterPath path;
 
             path.moveTo(tl.x() + radius, tl.y());
@@ -269,10 +270,10 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             pathFrame->setPath(path);
 
             r.setRect(
-                    childRect.left() - pad * 2 - radius,
-                    childRect.top() - pad * 2 - radius,
-                    childRect.width() + pad * 4 + radius * 2,
-                    childRect.height() + pad * 4 + radius * 2);
+                    childRect.left() - pad * 2 - radius_h,
+                    childRect.top() - pad * 2 - radius_h,
+                    childRect.width() + pad * 4 + radius_h * 2,
+                    childRect.height() + pad * 4 + radius_h * 2);
         } break;
 
         case Ellipse: {
