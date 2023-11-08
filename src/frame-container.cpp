@@ -108,6 +108,7 @@ void FrameContainer::reposition()
     // FrameContainer only has one child (Inner-, Outer-, OrnamentsContainer)
     Container *c = childContainers().first();
     c->reposition();
+    c->setPos(0, 0);
 
     updateGeometry(c->rect());
 }
@@ -311,7 +312,7 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             }
             break;
 
-        case Cloud: {   // FIXME-0 adapt to new frames
+        case Cloud: {
             QPointF tl = childRect.topLeft() + QPointF( - pad, - pad);
             QPointF tr = childRect.topRight() + QPointF(  pad, - pad);
             QPointF bl = childRect.bottomLeft();
@@ -323,17 +324,23 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             int n = w / 40;          // number of intervalls
             float d = w / n; // width of interwall
 
-            float a = 50;    // Parameter with "size" if arcs used for Bezier controlpoints
+            qreal cf  = 100;     // Cloud factor: Distance of control points from curve point
+            qreal cf2 = cf / 2;
+            qreal px  = cf * 0.8;
+            qreal py  = cf * 0.8;
 
             // Top path
-            for (float i = 0; i < n; i++) {
+            for (float i = 0; i < (n - 1); i++) {
                 path.cubicTo(
-                        tl.x() + i * d, tl.y() - 100 * roof((i + 0.5) / n),
-                        tl.x() + (i + 1) * d, tl.y() - 100 * roof((i + 0.5) / n),
-                        tl.x() + (i + 1) * d + 20 * roof((i + 1) / n), tl.y() - 50 * roof((i + 1) / n));
+                        tl.x() + i * d,                                tl.y() - cf * roof((i + 0.5) / n),
+                        tl.x() + (i + 1) * d,                          tl.y() - cf * roof((i + 0.5) / n),
+                        // At borders left/right there is less "wind" deviation than on top:
+                        tl.x() + (i + 1) * d - 20 * roof((i + 1) / n), tl.y() - cf2 * roof((i + 1) / n));
             }
+
             // Right path
-            n = h / 20;
+            n = h / 40;
+            if (n % 2 == 0 && n > 1) n -= 1;
             d = h / n;
             for (float i = 0; i < n; i++) {
                 path.cubicTo(tr.x() + 100 * roof((i + 0.5) / n), tr.y() + i * d,
@@ -341,18 +348,19 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
                              tr.y() + (i + 1) * d, tr.x() + 60 * roof((i + 1) / n),
                              tr.y() + (i + 1) * d);
             }
+
+            // Bottom path
             n = w / 60;
             d = w / n;
-            // Bottom path
             for (float i = n; i > 0; i--) {
-                path.cubicTo(bl.x() + i * d, bl.y() + 100 * roof((i - 0.5) / n),
-                             bl.x() + (i - 1) * d,
-                             bl.y() + 100 * roof((i - 0.5) / n),
-                             bl.x() + (i - 1) * d + 20 * roof((i - 1) / n),
-                             bl.y() + 50 * roof((i - 1) / n));
+                path.cubicTo(bl.x() + i * d,                                bl.y() + 100 * roof((i - 0.5) / n),
+                             bl.x() + (i - 1) * d,                          bl.y() + 100 * roof((i - 0.5) / n),
+                             bl.x() + (i - 1) * d - 20 * roof((i - 1) / n), bl.y() + 50 * roof((i - 1) / n));
             }
             // Left path
-            n = h / 20;
+            n = h / 40;
+            if (n % 2 == 0 && n > 1) n -= 1;
+
             d = h / n;
             for (float i = n; i > 0; i--) {
                 path.cubicTo(tl.x() - 100 * roof((i - 0.5) / n), tr.y() + i * d,
@@ -361,11 +369,22 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
                              tr.y() + (i - 1) * d);
             }
             pathFrame->setPath(path);
+            QRectF br = path.boundingRect();
+            qreal cw = tr.x() - tl.x();     // Width child box incl. padding
+            qreal ch = bl.y() - tl.y();     // Height child box
+            // center of pathFrame might be outside of origin, due to cloud not completely symmetrical
+            // Correct position of pathFrame and child
+            pathFrame->setPos(- br.center());
+            childContainers().first()->setPos(- br.center());
+
+            // Position of child is set in reposition(),
+            // which calls this updateGeometry() here
+
             r.setRect(
-                    - pad * 2,
-                    - pad * 2,
-                    a * 2  + pad * 4,
-                    a * 2 + pad * 4);
+                    - (br.width() + pad) / 2,
+                    - (br.height() + pad) / 2,  // Vertically centered anyway later...
+                    br.width() + 2 * pad,
+                    br.height() + 2 * pad);
             }
             break;
         default:
