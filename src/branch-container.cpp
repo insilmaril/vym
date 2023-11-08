@@ -150,7 +150,7 @@ void BranchContainer::setOrientation(const Orientation &o)
     orientation = o;
 }
 
-void BranchContainer::setOriginalOrientation()  // FIXME-1 refactor the setOrig* methods into one setTmpParentContainer()
+void BranchContainer::setOriginalOrientation()
 {
     originalOrientation = orientation;
     originalFloating = isFloating();

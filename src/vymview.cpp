@@ -190,7 +190,7 @@ void VymView::updateColors()
     */
     mainWindow->updateHeadingEditor();
 
-    // Link colors in TreeEditor // FIXME-1  palette only works, if no stylesheet is written!
+    // Link colors in TreeEditor // FIXME-2  palette only works, if no stylesheet is written!
     /* 
     */
     QPalette palette = treeEditor->palette();

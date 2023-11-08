@@ -419,7 +419,7 @@ bool VymModel::parseVymText(const QString &s)
         repositionBlocked = true;
         saveStateBlocked = true;
 
-        // XML-FIXME-1 VymModel::parseVymText Workaround to pass string to QXmlStreamreader
+        // XML-FIXME-2 VymModel::parseVymText Workaround to pass string to QXmlStreamreader
         // write string to disk, so that it can be used with QIODevice of
         // QXmlStreamReader:VymReader 
         //
