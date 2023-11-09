@@ -1068,7 +1068,7 @@ QString BranchContainer::frameTypeString(const bool &useInnerFrame)
     return "NoFrame";
 }
 
-void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)   // FIXME-0 removing innerFrame of MC changes geometry of main branchnes
+void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &ftype)
 {
     if (useInnerFrame) {
         // Inner frame around ornamentsContainer
@@ -1076,6 +1076,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
             if (innerFrame) {
                 innerContainer->addContainer(ornamentsContainer, Z_ORNAMENTS);
                 ornamentsContainer->setRotation(innerFrame->rotation());
+                ornamentsContainer->setPos(innerFrame->pos());
                 delete innerFrame;
                 innerFrame = nullptr;
             }
@@ -1085,6 +1086,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
                 innerFrame->setUsage(FrameContainer::InnerFrame);
                 innerFrame->addContainer(ornamentsContainer, Z_ORNAMENTS);
                 innerFrame->setRotation(ornamentsContainer->rotation());
+                innerFrame->setPos(ornamentsContainer->pos());
                 innerContainer->addContainer(innerFrame, Z_INNER_FRAME);
                 ornamentsContainer->setRotation(0);
             }
