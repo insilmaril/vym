@@ -108,7 +108,7 @@ void FrameContainer::reposition()
     // FrameContainer only has one child (Inner-, Outer-, OrnamentsContainer)
     Container *c = childContainers().first();
     c->reposition();
-    c->setPos(0, 0);
+    c->setPos(0, 0);    // For cloud this might change again in updateGeometry()
 
     updateGeometry(c->rect());
 }
@@ -316,12 +316,12 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
         case Cloud: {
             QPointF tl = childRect.topLeft() + QPointF( - pad, - pad);
             QPointF tr = childRect.topRight() + QPointF(  pad, - pad);
-            QPointF bl = childRect.bottomLeft();
+            QPointF bl = childRect.bottomLeft() + QPointF( - pad, + pad);
             QPainterPath path;
             path.moveTo(tl);
 
-            float w = childRect.width();
-            float h = childRect.height();
+            float w = tr.x() - tl.x();
+            float h = bl.y() - tl.y();
             int n = w / 40;          // number of intervalls
             float d = w / n; // width of interwall
 
@@ -371,15 +371,12 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             }
             pathFrame->setPath(path);
             QRectF br = path.boundingRect();
-            qreal cw = tr.x() - tl.x();     // Width child box incl. padding
-            qreal ch = bl.y() - tl.y();     // Height child box
+
             // center of pathFrame might be outside of origin, due to cloud not completely symmetrical
             // Correct position of pathFrame and child
-            pathFrame->setPos(- br.center());
-            childContainers().first()->setPos(- br.center());
-
-            // Position of child is set in reposition(),
-            // which calls this updateGeometry() here
+            QPointF p(pad / 2, 0);
+            pathFrame->setPos(- br.center() + p);
+            childContainers().first()->setPos(- br.center() + p);
 
             r.setRect(
                     - (br.width() + pad) / 2,
@@ -388,6 +385,7 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
                     br.height() + 2 * pad);
             }
             break;
+
         default:
             qWarning() << "FrameContainer::setFrameRect  unknown frame type " << frameTypeInt;
             break;
