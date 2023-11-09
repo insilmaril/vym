@@ -1281,7 +1281,6 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 
     // FIXME-5 for testing we do some coloring and additional drawing
     /*
-    */
     if (containerType != TmpParent) {
         // BranchContainer
         setPen(QPen(Qt::blue));
@@ -1313,6 +1312,7 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
             setBrush(Qt::NoBrush);
         }
     }   // Visualizations for testing
+    */
 }
 
 void BranchContainer::updateVisuals()

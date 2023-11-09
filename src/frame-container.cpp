@@ -322,52 +322,52 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
 
             float w = tr.x() - tl.x();
             float h = bl.y() - tl.y();
-            int n = w / 40;          // number of intervalls
-            float d = w / n; // width of interwall
 
-            qreal cf  = 100;     // Cloud factor: Distance of control points from curve point
-            qreal cf2 = cf / 2;
-            qreal px  = cf * 0.8;
-            qreal py  = cf * 0.8;
+            // Cloud factor: Distance of control points from curve point
+            qreal cfx  = w;
+            qreal cfx2 = cfx / 2;
+            qreal cfy  = h;
+            qreal cfy2 = cfy / 2;
 
             // Top path
-            for (float i = 0; i < (n - 1); i++) {
+            int n = max (3, w / 40);     // number of intervalls
+            if (n % 2 == 0 && n > 1) n -= 1;
+            float d = w / n;    // width of interwall
+            for (float i = 0; i < n; i++) {
                 path.cubicTo(
-                        tl.x() + i * d,                                tl.y() - cf * roof((i + 0.5) / n),
-                        tl.x() + (i + 1) * d,                          tl.y() - cf * roof((i + 0.5) / n),
-                        // At borders left/right there is less "wind" deviation than on top:
-                        tl.x() + (i + 1) * d - 20 * roof((i + 1) / n), tl.y() - cf2 * roof((i + 1) / n));
+                        tl.x() + i * d,                                tl.y() - cfx2 * roof((i + 0.5) / n),
+                        tl.x() + (i + 1) * d,                          tl.y() - cfx2 * roof((i + 0.5) / n),
+                        tl.x() + (i + 1) * d - 0 * (cfx2 / 5) * roof((i + 1) / n), tl.y() - cfx2 * roof((i + 1) / n));
             }
 
             // Right path
-            n = h / 40;
+            n = max(1, h / 40);
             if (n % 2 == 0 && n > 1) n -= 1;
             d = h / n;
             for (float i = 0; i < n; i++) {
-                path.cubicTo(tr.x() + 100 * roof((i + 0.5) / n), tr.y() + i * d,
-                             tr.x() + 100 * roof((i + 0.5) / n),
-                             tr.y() + (i + 1) * d, tr.x() + 60 * roof((i + 1) / n),
-                             tr.y() + (i + 1) * d);
+                path.cubicTo(tr.x() + cfy2 * roof((i + 0.5) / n), tr.y() + i * d,
+                             tr.x() + cfy2 * roof((i + 0.5) / n), tr.y() + (i + 1) * d,
+                             tr.x() + cfy2 * roof((i + 1) / n), tr.y() + (i + 1) * d);
             }
 
             // Bottom path
-            n = w / 60;
+            n = max (2, w / 60);     // number of intervalls
+            if (n % 2 == 0 && n > 1) n -= 1;
             d = w / n;
             for (float i = n; i > 0; i--) {
-                path.cubicTo(bl.x() + i * d,                                bl.y() + 100 * roof((i - 0.5) / n),
-                             bl.x() + (i - 1) * d,                          bl.y() + 100 * roof((i - 0.5) / n),
-                             bl.x() + (i - 1) * d - 20 * roof((i - 1) / n), bl.y() + 50 * roof((i - 1) / n));
+                path.cubicTo(bl.x() + i * d,                                bl.y() + cfy2 * roof((i - 0.5) / n),
+                             bl.x() + (i - 1) * d,                          bl.y() + cfy2 * roof((i - 0.5) / n),
+                             bl.x() + (i - 1) * d - 0 * (cfy / 5 ) * roof((i - 1) / n), bl.y() + cfy2 * roof((i - 1) / n));
             }
             // Left path
-            n = h / 40;
+            n = max(1, h / 40);
             if (n % 2 == 0 && n > 1) n -= 1;
 
             d = h / n;
             for (float i = n; i > 0; i--) {
-                path.cubicTo(tl.x() - 100 * roof((i - 0.5) / n), tr.y() + i * d,
-                             tl.x() - 100 * roof((i - 0.5) / n),
-                             tr.y() + (i - 1) * d, tl.x() - 60 * roof((i - 1) / n),
-                             tr.y() + (i - 1) * d);
+                path.cubicTo(tl.x() - cfy2 * roof((i - 0.5) / n), tr.y() + i * d,
+                             tl.x() - cfy2 * roof((i - 0.5) / n), tr.y() + (i - 1) * d,
+                             tl.x() - cfy2 * roof((i - 1) / n), tr.y() + (i - 1) * d);
             }
             pathFrame->setPath(path);
             QRectF br = path.boundingRect();
