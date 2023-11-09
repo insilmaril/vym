@@ -32,6 +32,7 @@ void FrameContainer::init()
     framePen.setWidth(1);
     frameBrush.setColor(Qt::white);
     frameBrush.setStyle(Qt::SolidPattern);
+    framePaddingInt = 0;
 
     setLayout(Container::Horizontal);
     setHorizontalDirection(Container::LeftToRight);
