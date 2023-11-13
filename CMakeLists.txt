@@ -21,8 +21,10 @@ set(QtLibraries
     Qt5::Xml
 )
 
-# Switch on Debug mode with one of below:
+# Switch on Debug mode  on command line with 
 # cmake -DCMAKE_BUILD_TYPE=Debug .
+#
+# or uncomment here:
 # set(CMAKE_BUILD_TYPE Debug)
 
 set(CMAKE_AUTOMOC ON)
