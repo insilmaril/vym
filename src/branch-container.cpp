@@ -127,6 +127,9 @@ void BranchContainer::init()
 
 BranchContainer* BranchContainer::parentBranchContainer()
 {
+    if (tmpLinkedParentContainer)
+        return tmpLinkedParentContainer;
+
     if (!branchItem)
         return nullptr;
 
@@ -227,7 +230,6 @@ bool BranchContainer::isOriginalFloating()
 void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
     tmpLinkedParentContainer = tpc;
-    qDebug() << "BC::setTmpLinked of " << info();
     if (containerType != TmpParent)
         updateUpLink();
 }
@@ -258,7 +260,6 @@ QPointF BranchContainer::alignTo(PointName ownPointName, BranchContainer* target
     QPointF p = tc->pointByName(targetPointName);
     QPointF q = pointByName(ownPointName);
 
-    qDebug() << "BC::alignTo  p=" << toS(p, 0) << " q=" << toS(q,0);
     return tc->mapToScene(p) - q;
 }
 
@@ -1396,8 +1397,9 @@ void BranchContainer::reposition()
                 orientation = UndefinedOrientation;
             else {
                 /*
-                qdbg() << ind() << "BC::repos pbc=" << pbc->info();
-                qdbg() << ind() << "BC::repos pbc->orientation=" << pbc->orientation;
+                qdbg() << ind() << "BC::repos  bc=" <<      info();
+                qdbg() << ind() << "          pbc=" << pbc->info();
+                qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
                 */
 
                 if (pbc->orientation == UndefinedOrientation) {
@@ -1437,6 +1439,7 @@ void BranchContainer::reposition()
             // FIXME-2 set in updateChildrenStructure: innerContainer->setHorizontalDirection(LeftToRight);
         } else {
             // TmpParentContainer
+            /* // FIXME-0
             switch (orientation) {
                 case LeftOfParent:
                     qDebug() << "BC::repos   left of parent";
@@ -1457,6 +1460,7 @@ void BranchContainer::reposition()
                     qWarning() << "BC::reposition - Unknown orientation " << orientation << " in " << info();
                     break;
             }
+            */
         }
 
         // FIXME-2 set in updateChildrenStructure: innerContainer->setLayout(BoundingFloats);

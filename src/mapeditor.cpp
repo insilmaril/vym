@@ -1985,7 +1985,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
 
-        qDebug() << "ME::setup tPC w=" << toS(w_total) << "h=" << toS(h_total) << "  offset=" << movingObj_initialContainerOffset;
         tmpParentContainer->setRect(- w_total / 2, - h_first / 2, w_total, h_total);    // FIXME-0 testing
     } // add to tmpParentContainer
 
@@ -2059,6 +2058,18 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
 
+    // Update parent containers
+    foreach (TreeItem *ti, movingItems)
+    {
+        if (ti->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
+            if (tmpParentContainer->isTemporaryLinked())
+                bc->setTemporaryLinked(targetBranchContainer);
+            else
+                bc->unsetTemporaryLinked();
+        }
+    }
+
     // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)
     if (e->modifiers() & Qt::ControlModifier) {
         foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
@@ -2112,25 +2123,13 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Reposition if required   // FIXME-0
     /*
     */
-    qDebug() << "ME::mO repos  tPC: " << tmpParentContainer->getOrientation() << "  new: " << newOrientation;
+    //qDebug() << "ME::mO repos  tPC: " << tmpParentContainer->getOrientation() << "  new: " << newOrientation;
     if (newOrientation != tmpParentContainer->getOrientation()) {
-        qDebug() << " - ME::mO repositioning";
+        //qDebug() << " - ME::mO repositioning";
         tmpParentContainer->setOrientation(newOrientation); // FIXME-0 tPC has BoundingFloats layout
-        // FIXME-0 tmpParentContainer->reposition();
+        tmpParentContainer->reposition();
     } //else
         //tmpParentContainer->reposition();   // FIXME-0 only for testing atm (update geometry)
-
-    // Update links
-    foreach (TreeItem *ti, movingItems)
-    {
-        if (ti->hasTypeBranch()) {
-            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
-            if (tmpParentContainer->isTemporaryLinked())
-                bc->setTemporaryLinked(targetBranchContainer);
-            else
-                bc->unsetTemporaryLinked();
-        }
-    }
 
     scene()->update();
 
