@@ -2100,7 +2100,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     } else {
         //No usable targetBranch
         //
-        //tmpParentContainer->setOrientation(BranchContainer::UndefinedOrientation);
         /* FIXME-0 Review orientation while moving
         // Try to set orientation for not relinked tmpParentContainer by checking the
         // layout and "original" parent
@@ -2119,16 +2118,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
          */
     }
 
-    // Reposition if required   // FIXME-0
-    /*
-    */
-    //qDebug() << "ME::mO repos  tPC: " << tmpParentContainer->getOrientation() << "  new: " << newOrientation;
+    // Reposition if required
     if (newOrientation != tmpParentContainer->getOrientation()) {
-        //qDebug() << " - ME::mO repositioning";
-        tmpParentContainer->setOrientation(newOrientation); // FIXME-0 tPC has BoundingFloats layout
+        // tPC has BoundingFloats layout, still children need orientation
+        tmpParentContainer->setOrientation(newOrientation);
         tmpParentContainer->reposition();
-    } //else
-        //tmpParentContainer->reposition();   // FIXME-0 only for testing atm (update geometry)
+    }
 
     scene()->update();
 
