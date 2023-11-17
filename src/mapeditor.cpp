@@ -1970,7 +1970,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     ic->setOriginalPos();
                     tmpParentContainer->addToImagesContainer(ic, true);
                 }
-            }
+        }
             else if (ti->getType() == TreeItem::XLink) {
                 // Move XLink control point
                 XLinkObj *xlo = ((XLinkItem *)ti)->getXLinkObj();
@@ -2296,8 +2296,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     }
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
-                tmpParentContainer->reposition(); // FIXME-0 only testing
-                qDebug() << "ME::emptied tPC  count="<<tmpParentContainer->childBranches().count();
+                //tmpParentContainer->reposition(); // FIXME-0 only testing
 
             }   // Empty tmpParenContainer
 
