@@ -54,6 +54,13 @@ class Container : public QGraphicsRectItem {
     enum HorizontalDirection {LeftToRight, RightToLeft};
     enum VerticalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
 
+    /*! Names of special points and */
+    enum PointName {
+        TopLeft, TopCenter, TopRight,
+        Center,
+        LeftCenter, RightCenter,
+        BottomLeft, BottomCenter, BottomRight};
+
     Container ();
     virtual ~Container();
     virtual void copy(Container*);
@@ -76,15 +83,16 @@ class Container : public QGraphicsRectItem {
     QString ind();
 
     // Convenience coordinates
-    QPointF leftCenter();
-    QPointF rightCenter();
-    QPointF topCenter();
-    QPointF bottomCenter();
-    QPointF center();
-    QPointF bottomLeft();
-    QPointF bottomRight();
+    QPointF pointByName(PointName pn);
     QPointF topLeft();
+    QPointF topCenter();
     QPointF topRight();
+    QPointF leftCenter();
+    QPointF center();
+    QPointF rightCenter();
+    QPointF bottomLeft();
+    QPointF bottomCenter();
+    QPointF bottomRight();
 
     void setLayout(const Layout &ltype);
 

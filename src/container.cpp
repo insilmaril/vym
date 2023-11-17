@@ -156,6 +156,7 @@ QString Container::info (const QString &prefix)
         + QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
         + QString(" Layout: %1").arg(getLayoutString())
+        + QString(" horDir: %1").arg(horizontalDirection)
         ;
 }
 
@@ -197,15 +198,42 @@ QString Container::ind()
     return s;
 }
 
-QPointF Container::leftCenter() {return QPointF(rect().left(), (rect().bottom() + rect().top() ) /2);}
-QPointF Container::rightCenter() {return QPointF(rect().right(), (rect().bottom() + rect().top() ) /2);}
-QPointF Container::topCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().top());}
-QPointF Container::bottomCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().bottom());}
-QPointF Container::center() {return rect().center();}
-QPointF Container::bottomLeft() {return rect().bottomLeft();}
-QPointF Container::bottomRight() {return rect().bottomRight();}
+QPointF Container::pointByName(PointName pn)
+{
+    switch (pn) {
+        case TopLeft:
+            return topLeft();
+        case TopCenter:
+            return topCenter();
+        case TopRight:
+            return topRight();
+        case LeftCenter:
+            return leftCenter();
+        case Center:
+            return center();
+        case RightCenter:
+            return rightCenter();
+        case BottomLeft:
+            return bottomLeft();
+        case BottomCenter:
+            return bottomCenter();
+        case BottomRight:
+            return bottomRight();
+        default:
+            qWarning() << "Container::pointByName undefined PointName" << pn;
+    }
+    return QPointF();
+}
+
 QPointF Container::topLeft() {return rect().topLeft();}
+QPointF Container::topCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().top());}
 QPointF Container::topRight() {return rect().topRight();}
+QPointF Container::leftCenter() {return QPointF(rect().left(), (rect().bottom() + rect().top() ) /2);}
+QPointF Container::center() {return rect().center();}
+QPointF Container::rightCenter() {return QPointF(rect().right(), (rect().bottom() + rect().top() ) /2);}
+QPointF Container::bottomLeft() {return rect().bottomLeft();}
+QPointF Container::bottomCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().bottom());}
+QPointF Container::bottomRight() {return rect().bottomRight();}
 
 void Container::setLayout(const Layout &l)
 {

@@ -63,6 +63,11 @@ class BranchContainer : public SelectableContainer {
     void unsetTemporaryLinked();
     bool isTemporaryLinked();
 
+    /*! Aligns ownPoint of myself to targetPoint of target and returns 
+        the position in coordinate system of myself. Used for positioning tmpParentContainer */
+    QPointF alignTo(PointName ownPointName, BranchContainer* targetBC, PointName targetPointName);
+
+
   public:
     int childrenCount();    //! Sum of branch and image children
 

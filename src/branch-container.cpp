@@ -227,6 +227,7 @@ bool BranchContainer::isOriginalFloating()
 void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
     tmpLinkedParentContainer = tpc;
+    qDebug() << "BC::setTmpLinked of " << info();
     if (containerType != TmpParent)
         updateUpLink();
 }
@@ -244,6 +245,21 @@ bool BranchContainer::isTemporaryLinked()
         return true;
     else
         return false;
+}
+
+QPointF BranchContainer::alignTo(PointName ownPointName, BranchContainer* targetBC, PointName targetPointName)
+{
+    // Find point p
+    Container *tc = targetBC->getBranchesContainer();
+    if (!tc)
+        // FIXME-0 Assume whole HC for now, if now children there yet
+        tc = targetBC->getHeadingContainer();
+
+    QPointF p = tc->pointByName(targetPointName);
+    QPointF q = pointByName(ownPointName);
+
+    qDebug() << "BC::alignTo  p=" << toS(p, 0) << " q=" << toS(q,0);
+    return tc->mapToScene(p) - q;
 }
 
 int BranchContainer::childrenCount()
@@ -680,9 +696,9 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
-QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-1 not working correctly with multiple selected branches
+QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-0 not working correctly with multiple selected branches
 {
-    QPointF hint;
+    QPointF p_hint;
 
     QRectF r;
 
@@ -694,29 +710,32 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
         QPointF center = mapToScene(r.center());
         //qDebug() << "BC::getPositionHintRelink  center= " << center << "  p_scene=" << p_scene; // FIXME-2 testing
         qreal a = getAngle(p_scene - center);
-        hint = center + QPointF (radius * cos(a), - radius * sin(a));
+        p_hint = center + QPointF (radius * cos(a), - radius * sin(a));
     } else {
         // Regular layout
         if (branchesContainer)
-            r = branchesContainer->rect();  // FIXME-2 getPositionHintRelink: check rotation: is rect still correct or better mapped bbox/rect?
+            r = branchesContainer->rect();  // FIXME-0 getPositionHintRelink: check rotation: is rect still correct or better mapped bbox/rect?
         qreal y;
         if (d_pos == 0)
+            // Relink as child
             y = r.bottom();
         else
+            // Relink as sibling
             y = r.bottom() - d_pos * c->rect().height();
 
         switch (orientation) {
             case LeftOfParent:
-                hint = QPointF(-linkWidth + r.left() - c->rect().width(), y);
+                p_hint = QPointF(-linkWidth + r.left() - c->rect().width(), y);
                 break;
             default:
-                hint = QPointF( linkWidth + r.right(), y);
+                p_hint = QPointF( linkWidth + r.right(), y);
                 break;
         }
-        hint = headingContainer->mapToScene(hint);
+        p_hint = headingContainer->mapToScene(p_hint);
     }
 
-    return hint;
+    qDebug() << "BC::getPosHintRelink p_hint=" << toS(p_hint, 0);
+    return p_hint;
 }
 
 QPointF BranchContainer::downLinkPos()
@@ -1283,37 +1302,34 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 
     // FIXME-5 for testing we do some coloring and additional drawing
     /*
-    if (containerType != TmpParent) {
-        // BranchContainer
-        setPen(QPen(Qt::blue));
+    setPen(QPen(Qt::blue));
 
-        // OrnamentsContainer
-        //ornamentsContainer->setPen(QPen(Qt::blue));
-        //ornamentsContainer->setPen(Qt::NoPen);
+    // OrnamentsContainer
+    //ornamentsContainer->setPen(QPen(Qt::blue));
+    //ornamentsContainer->setPen(Qt::NoPen);
 
-        // InnerContainer
-        innerContainer->setPen(QPen(Qt::green));
+    // InnerContainer
+    innerContainer->setPen(QPen(Qt::green));
 
-        if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
+    if (branchesContainer) branchesContainer->setPen(QColor(Qt::gray));
 
-        // Background colors for floating content
-        QColor col;
-        if (branchesContainerLayout == FloatingBounded && depth > 0) {
-            // Special layout: FloatingBounded
-            col = QColor(Qt::gray);
-            col.setAlpha(150);
-            setBranchesContainerBrush(col);
-        } else if (branchesContainerLayout == FloatingFree) {
-            // Special layout: FloatingFree
-            col = QColor(Qt::blue);
-            col.setAlpha(120);
-            setBrush(col);
-        } else {
-            // Don't paint other containers
-            setBranchesContainerBrush(Qt::NoBrush);
-            setBrush(Qt::NoBrush);
-        }
-    }   // Visualizations for testing
+    // Background colors for floating content
+    QColor col;
+    if (branchesContainerLayout == FloatingBounded && depth > 0) {
+        // Special layout: FloatingBounded
+        col = QColor(Qt::gray);
+        col.setAlpha(150);
+        setBranchesContainerBrush(col);
+    } else if (branchesContainerLayout == FloatingFree) {
+        // Special layout: FloatingFree
+        col = QColor(Qt::blue);
+        col.setAlpha(120);
+        setBrush(col);
+    } else {
+        // Don't paint other containers
+        setBranchesContainerBrush(Qt::NoBrush);
+        setBrush(Qt::NoBrush);
+    }
     */
 }
 
@@ -1385,7 +1401,7 @@ void BranchContainer::reposition()
                 */
 
                 if (pbc->orientation == UndefinedOrientation) {
-                    // Parent is tmpParentContainer or mapCenter
+                    // Parent is mapCenter
                     // use relative position to determine orientation
 
                     if (parentContainer()->hasFloatingLayout()) {
@@ -1393,7 +1409,7 @@ void BranchContainer::reposition()
                             orientation = RightOfParent;
                         else
                             orientation = LeftOfParent;
-                        /* FIXME-5 remove comments
+                        /* FIXME-2 remove comments
                         qdbg() << ind() << "BC: Setting neworient " << orientation << " in: " << info();
                         qdbg() << ind() << "    pc: " << parentContainer()->info();
                         */
@@ -1415,10 +1431,32 @@ void BranchContainer::reposition()
     // Settings depending on depth
     if (depth == 0)
     {
-        // MapCenter or TmpParent?
         if (containerType != TmpParent) {
+            // MapCenter
             setHorizontalDirection(LeftToRight);
             // FIXME-2 set in updateChildrenStructure: innerContainer->setHorizontalDirection(LeftToRight);
+        } else {
+            // TmpParentContainer
+            switch (orientation) {
+                case LeftOfParent:
+                    qDebug() << "BC::repos   left of parent";
+                    setHorizontalDirection(RightToLeft);
+                    innerContainer->setHorizontalDirection(RightToLeft);
+                    setBranchesContainerVerticalAlignment(AlignedRight);
+                    break;
+                case RightOfParent:
+                    qDebug() << "BC::repos   right of parent";
+                    setHorizontalDirection(LeftToRight);
+                    innerContainer->setHorizontalDirection(LeftToRight);
+                    setBranchesContainerVerticalAlignment(AlignedLeft);
+                    break;
+                case UndefinedOrientation:
+                    qWarning() << "BC::reposition - UndefinedOrientation in " << info();
+                    break;
+                default:
+                    qWarning() << "BC::reposition - Unknown orientation " << orientation << " in " << info();
+                    break;
+            }
         }
 
         // FIXME-2 set in updateChildrenStructure: innerContainer->setLayout(BoundingFloats);
