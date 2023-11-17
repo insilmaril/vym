@@ -85,6 +85,8 @@ class MapDesign {
     LinkObj::Style linkStyle(int depth);
     bool setLinkStyle(const LinkObj::Style &style, int depth);
 
+    qreal linkWidth();
+
     void setDefXLinkPen(const QPen &p);
     QPen defXLinkPen();
     void setDefXLinkStyleBegin(const QString &s);

@@ -252,7 +252,7 @@ QPointF BranchContainer::alignTo(PointName ownPointName, BranchContainer* target
     // Find point p
     Container *tc = targetBC->getBranchesContainer();
     if (!tc)
-        // FIXME-0 Assume whole HC for now, if now children there yet
+        // FIXME-0 Assume whole HC for now, if now children there yet. Or better OrnCont?
         tc = targetBC->getHeadingContainer();
 
     QPointF p = tc->pointByName(targetPointName);

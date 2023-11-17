@@ -1997,24 +1997,42 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // Link tmpParentContainer temporarily to targetBranchContainer
 
 
-        int d_pos;  // FIXME-0 not needed any longer
         Container::PointName targetPointName;   // FIXME-0 not yet for modifiers
         Container::PointName tpcPointName;  // FIXME-0 not yet for modifiers
+        QPointF linkOffset;                     // Distance for temporary link
         if (e->modifiers() & Qt::ShiftModifier) {
             targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
-            d_pos = 1;
         } else if (e->modifiers() & Qt::ControlModifier) {
             targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
-            d_pos = -1;
         } else {
+            // No modifier used, temporary link to target itself
             targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
-            d_pos = 0;
-            if (targetBranchContainer->getHorizontalDirection() == Container::LeftToRight) {
-                targetPointName = Container::RightCenter;
-                tpcPointName = Container::LeftCenter;
+            if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
+                if (targetBranchContainer->branchCount() == 0) {
+                    // vertically centered besides target
+                    targetPointName = Container::RightCenter;
+                    tpcPointName = Container::LeftCenter;
+                    linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                } else {
+                    // Below target
+                    targetPointName = Container::BottomLeft;
+                    tpcPointName = Container::TopLeft;
+                }
+            } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
+                if (targetBranchContainer->branchCount() == 0) {
+                    // vertically centered besides target
+                    targetPointName = Container::LeftCenter;
+                    tpcPointName = Container::RightCenter;
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                } else {
+                    // Below target
+                    targetPointName = Container::BottomRight;
+                    tpcPointName = Container::TopRight;
+                }
             } else {
-                targetPointName = Container::LeftCenter;
-                tpcPointName = Container::RightCenter;
+                qDebug() << "ME::mO target undefined orientation";
+                targetPointName = Container::Center;
+                tpcPointName = Container::Center;   // FIXME-0 Could also be closes mid points or similar
             }
         }
 
@@ -2025,8 +2043,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
         // FIXME-0 tmpParentContainer->setPos(bc_first_offset + targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
         // FIXME-0 experimental:    
-        tmpParentContainer->setPos( //bc_first_offset + 
-                                    tmpParentContainer->alignTo(tpcPointName, targetBranchContainer, targetPointName));
+        tmpParentContainer->setPos( //bc_first_offset + // FIXME-0
+                                    linkOffset + tmpParentContainer->alignTo(tpcPointName, targetBranchContainer, targetPointName));
 
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);

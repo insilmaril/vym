@@ -193,6 +193,11 @@ bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
     return true;
 }
 
+qreal MapDesign::linkWidth()
+{
+    return 20;
+}
+
 void MapDesign::setDefXLinkPen(const QPen &p)
 {
     defXLinkPenInt = p;
