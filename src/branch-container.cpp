@@ -828,6 +828,9 @@ void BranchContainer::updateUpLink()
 
     // MapCenters still might have upLinks: The bottomLine is part of upLink!
 
+    if (containerType == TmpParent)
+        return;
+
     QPointF upLinkSelf_sp = upLinkPos(orientation);
     QPointF downLink_sp = downLinkPos();
 
