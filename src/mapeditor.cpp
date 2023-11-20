@@ -1922,7 +1922,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
         BranchContainer *bc;
         qreal h_total;
-        qreal h_first;
+        qreal h_first_2;
         qreal w_total;
         foreach (TreeItem *ti, movingItems)
         {
@@ -1935,7 +1935,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     bc_first = bc;
                     w_total = bc->rect().width();
                     h_total = bc->rect().height();
-                    h_first = h_total;
+                    h_first_2 = h_total / 2;
                 }
 
                 if (tmpParentContainer->branchCount() == 0 || 
@@ -1957,12 +1957,13 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 }
 
                 if (bc_first && bc_first != bc) {
+                    h_total += bc->rect().height();
+
                     // Animate other items to position horizontally centered below first one
                     startAnimation (
                             bc,
                             bc->pos(),
-                            QPointF(bc_first->pos().x(), bc_first->pos().y() + h_total));
-                    h_total += bc->rect().height();
+                            QPointF(bc_first->pos().x(), bc_first->pos().y() + h_total - h_first_2 - bc->rect().height() / 2));
                 }
             } else if (ti->hasTypeImage()) {
                 ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
@@ -1984,7 +1985,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
 
-        tmpParentContainer->setRect(- w_total / 2, - h_first / 2, w_total, h_total);    // FIXME-0 testing
+        tmpParentContainer->setRect(- w_total / 2, - h_first_2, w_total, h_total);
     } // add to tmpParentContainer
 
     // Check if we could link and position tmpParentContainer
