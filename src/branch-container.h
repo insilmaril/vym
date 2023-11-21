@@ -129,7 +129,7 @@ class BranchContainer : public SelectableContainer {
     bool branchesContainerAutoLayout;
     void setBranchesContainerLayout(const Layout &l);
     Container::Layout getBranchesContainerLayout();
-    void setBranchesContainerVerticalAlignment(const VerticalAlignment &valign);
+    void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
     void setBranchesContainerBrush(const QBrush &b);
 
     QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
@@ -199,7 +199,7 @@ class BranchContainer : public SelectableContainer {
     // even before containers are created on demand
     Layout imagesContainerLayout;
     Layout branchesContainerLayout;
-    VerticalAlignment branchesContainerVerticalAlignment;
+    HorizontalAlignment branchesContainerHorizontalAlignment;
     QBrush branchesContainerBrush;
 
     FrameContainer *innerFrame;         // Frame container around ornamentsContainer

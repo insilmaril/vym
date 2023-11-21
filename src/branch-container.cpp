@@ -494,7 +494,7 @@ void BranchContainer::updateChildrenStructure()
         if (!listContainer) {
             // Create and setup a listContainer *below* the ornamentsContainer
             innerContainer->setLayout(Vertical);
-            innerContainer->setVerticalAlignment(AlignedLeft);
+            innerContainer->setHorizontalAlignment(AlignedLeft);
 
             // listContainer has one linkSpaceCOntainer left of branchesContainer
             listContainer = new Container;
@@ -951,11 +951,11 @@ Container::Layout BranchContainer::getBranchesContainerLayout()
     return branchesContainerLayout;
 }
 
-void BranchContainer::setBranchesContainerVerticalAlignment(const VerticalAlignment &a)
+void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &a)
 {
-    branchesContainerVerticalAlignment = a;
+    branchesContainerHorizontalAlignment = a;
     if (branchesContainer)
-        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignment);
+        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
 }
 
 void BranchContainer::setBranchesContainerBrush(const QBrush &b)
@@ -1448,13 +1448,13 @@ void BranchContainer::reposition()
                     qDebug() << "BC::repos   left of parent";
                     setHorizontalDirection(RightToLeft);
                     innerContainer->setHorizontalDirection(RightToLeft);
-                    setBranchesContainerVerticalAlignment(AlignedRight);
+                    setBranchesContainerHorizontalAlignment(AlignedRight);
                     break;
                 case RightOfParent:
                     qDebug() << "BC::repos   right of parent";
                     setHorizontalDirection(LeftToRight);
                     innerContainer->setHorizontalDirection(LeftToRight);
-                    setBranchesContainerVerticalAlignment(AlignedLeft);
+                    setBranchesContainerHorizontalAlignment(AlignedLeft);
                     break;
                 case UndefinedOrientation:
                     qWarning() << "BC::reposition - UndefinedOrientation in " << info();
@@ -1473,12 +1473,12 @@ void BranchContainer::reposition()
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                setBranchesContainerVerticalAlignment(AlignedRight);
+                setBranchesContainerHorizontalAlignment(AlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerVerticalAlignment(AlignedLeft);
+                setBranchesContainerHorizontalAlignment(AlignedLeft);
                 break;
             case UndefinedOrientation:
                 qWarning() << "BC::reposition - UndefinedOrientation in " << info();

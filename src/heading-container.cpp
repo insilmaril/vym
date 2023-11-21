@@ -26,7 +26,7 @@ void HeadingContainer::init()
     headingColor = QColor(Qt::black);
 
     layout = Vertical;
-    verticalAlignment = AlignedLeft;
+    horizontalAlignment = AlignedLeft;
 }
 
 QGraphicsTextItem *HeadingContainer::newLine(QString s)
