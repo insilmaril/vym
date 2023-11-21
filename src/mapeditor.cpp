@@ -115,6 +115,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setImagesContainerLayout(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
     tmpParentContainer->setPen(QPen(Qt::NoPen));
+    tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0
     tmpParentContainer->setFrameType(true,  FrameContainer::NoFrame);
     tmpParentContainer->setFrameType(false, FrameContainer::NoFrame);
     tmpParentContainer->reposition();
@@ -1758,7 +1759,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
                 movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
-
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1768,8 +1768,20 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             else
                 setState(MovingObject);
 
-            // Set initial position of tmpParentContainer
+            // Set initial position and size of tmpParentContainer // FIXME-0 Assumes center of BC has (0,0), which is not correct for mainBranches
             tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);
+            if (movingItems.count() > 0) {
+                qreal w = 0;
+                qreal h = 0;
+                foreach (TreeItem *ti, movingItems) {
+                    if (ti->hasTypeBranch()) {
+                        BranchContainer* bc = ((BranchItem*)ti)->getBranchContainer();
+                        w = max(w, bc->rect().width());
+                        h += bc->rect().height();
+                    }
+                }
+                tmpParentContainer->setRect( - w / 2, - h / 2, w, h);
+            }
         }
         else
             // Middle Button - Toggle Scroll
