@@ -163,7 +163,6 @@ void ExportBase::completeExport(QStringList args)
         command += ")";
     }
 
-    // FIXME-0 rename command->exportCommand  exportName->exportDescription displDest -> exportDestination in all files
     model->setExportLastCommand(command);
     model->setExportLastDestination(displayedDestination);
     model->setExportLastDescription(exportName);
