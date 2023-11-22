@@ -2952,7 +2952,7 @@ wird %1 Rückgängig Schritte haben.</translation>
         <location line="+23"/>
         <source>Export in last used format (%1) to: %2</source>
         <comment>status tip</comment>
-        <translation>Exporte im zuletzt genutzten Format (%1) nach: %2</translation>
+        <translation type="unfinished">Exportiere im zuletzt genutzten Format (%1) nach: %2</translation>
     </message>
     <message>
         <location line="+451"/>
