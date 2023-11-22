@@ -6578,7 +6578,7 @@ void Main::updateActions()
             desc = " - ";
         }
         actionFileExportLast->setText(
-            tr("Export in last used format (%1) to: %2", "status tip")
+            tr("Export in last used format: %1\n%2", "status tip")
                 .arg(desc)
                 .arg(dest));
 

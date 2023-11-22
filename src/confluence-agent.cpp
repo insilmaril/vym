@@ -251,9 +251,24 @@ void ConfluenceAgent::continueJob(int nextStep)
                     jobStep = 4;
             }
             if (jobStep == 4) {
-                //qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
+                // qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
+                // cout << QJsonDocument(pageObj).toJson(QJsonDocument::Indented).toStdString();
+                model = mainWindow->getModel(modelID);
+                if (model) {
+                    pageURL = QString("https://%1/pages/viewpage.action?pageId=%2").arg(baseURL).arg(pageObj["id"].toString());
+                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")").arg(pageURL);
+                    QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString()).arg(pageURL);
+                    QString desc = tr("Update existing confluence page");
+                    model->setExportLastCommand(command);
+                    model->setExportLastDestination(dest);
+                    model->setExportLastDescription(desc);
+                    mainWindow->updateActions();
+                }
+
                 mainWindow->statusMessage(
                     QString("Created Confluence page %1").arg(pageURL));
+
+
                 finishJob();
                 return;
             }
@@ -295,6 +310,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                     attachmentsAgent->startJob();
                     return;
                 }
+                jobStep++;
             }
             if (jobStep == 4) {
                 // Update page with parent url
@@ -307,6 +323,18 @@ void ConfluenceAgent::continueJob(int nextStep)
                 //qDebug() << "CA::finished  Updated page with ID: " << pageObj["id"].toString();
                 mainWindow->statusMessage(
                     QString("Updated Confluence page %1").arg(pageURL));
+
+                model = mainWindow->getModel(modelID);
+                if (model) {
+                    pageURL = QString("https://%1/pages/viewpage.action?pageId=%2").arg(baseURL).arg(pageObj["id"].toString());
+                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")").arg(pageURL);
+                    QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString()).arg(pageURL);
+                    QString desc = tr("Update existing confluence page");
+                    model->setExportLastCommand(command);
+                    model->setExportLastDestination(dest);
+                    model->setExportLastDescription(desc);
+                    mainWindow->updateActions();
+                }
                 finishJob();
                 return;
             }
@@ -668,7 +696,7 @@ void ConfluenceAgent::pageUploaded(QNetworkReply *reply)
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(fullReply);
     pageObj = jsdoc.object();
-    //cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    // cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
     continueJob();
 }
 

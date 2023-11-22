@@ -416,6 +416,8 @@ void ExportConfluence::doExport(bool useDialog)
     agent->startJob();
 
     QStringList args;
+
+    // exportName migtht be changed by agent AFTER successfull export and sent to vymModel!
     exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
     args <<  url;
     if (!pageName.isEmpty()) 
@@ -423,7 +425,7 @@ void ExportConfluence::doExport(bool useDialog)
 
     result = ExportBase::Ongoing;
 
-    // Prepare human readable info in tooltip of LastExport:
+    // Prepare human readable info in tooltip of LastExport:    // FIXME-0 set all in agent...
     displayedDestination = QString("Page name: \"%1\" Url: \"%2\"").arg(pageName).arg(url); 
 
     completeExport(args);

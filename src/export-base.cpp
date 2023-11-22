@@ -169,7 +169,8 @@ void ExportBase::completeExport(QStringList args)
         command += ")";
     }
 
-    settings.setLocalValue(model->getFilePath(), "/export/last/command",
+    // FIXME-0 rename command->exportCommand  exportName->exportDescription displDest -> exportDestination in all files
+    settings.setLocalValue(model->getFilePath(), "/export/last/command",    // FIXME-0 use new methods in VM for these settings
                            command);
     settings.setLocalValue(model->getFilePath(), "/export/last/description",
                            exportName);
