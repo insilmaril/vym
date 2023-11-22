@@ -255,9 +255,12 @@ void ConfluenceAgent::continueJob(int nextStep)
                 // cout << QJsonDocument(pageObj).toJson(QJsonDocument::Indented).toStdString();
                 model = mainWindow->getModel(modelID);
                 if (model) {
-                    pageURL = QString("https://%1/pages/viewpage.action?pageId=%2").arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")").arg(pageURL);
-                    QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString()).arg(pageURL);
+                    pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
+                        .arg(baseURL).arg(pageObj["id"].toString());
+                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                        .arg(pageURL);
+                    QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"")
+                        .arg(pageObj["title"].toString()).arg(pageURL);
                     QString desc = tr("Update existing confluence page");
                     model->setExportLastCommand(command);
                     model->setExportLastDestination(dest);
@@ -326,9 +329,12 @@ void ConfluenceAgent::continueJob(int nextStep)
 
                 model = mainWindow->getModel(modelID);
                 if (model) {
-                    pageURL = QString("https://%1/pages/viewpage.action?pageId=%2").arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")").arg(pageURL);
-                    QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString()).arg(pageURL);
+                    pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
+                        .arg(baseURL).arg(pageObj["id"].toString());
+                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                        .arg(pageURL);
+                    QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString())
+                        .arg(pageURL);
                     QString desc = tr("Update existing confluence page");
                     model->setExportLastCommand(command);
                     model->setExportLastDestination(dest);

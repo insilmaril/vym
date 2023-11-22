@@ -425,8 +425,9 @@ void ExportConfluence::doExport(bool useDialog)
 
     result = ExportBase::Ongoing;
 
-    // Prepare human readable info in tooltip of LastExport:    // FIXME-0 set all in agent...
-    displayedDestination = QString("Page name: \"%1\" Url: \"%2\"").arg(pageName).arg(url); 
+    // Prepare human readable info in tooltip of LastExport
+    model->setExportLastDestination(
+            QString("Page title: \"%1\"\nUrl: \"%2\"").arg(url));
 
     completeExport(args);
 

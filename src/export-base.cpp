@@ -17,12 +17,6 @@
 #include "xsltproc.h"
 
 extern Main *mainWindow;
-// extern QDir vymBaseDir;
-// extern QString flagsPath;
-// extern QString vymName;
-// extern QString vymVersion;
-// extern QString vymHome;
-extern Settings settings;
 extern QDir lastExportDir;
 
 ExportBase::ExportBase() { init(); }
@@ -170,12 +164,9 @@ void ExportBase::completeExport(QStringList args)
     }
 
     // FIXME-0 rename command->exportCommand  exportName->exportDescription displDest -> exportDestination in all files
-    settings.setLocalValue(model->getFilePath(), "/export/last/command",    // FIXME-0 use new methods in VM for these settings
-                           command);
-    settings.setLocalValue(model->getFilePath(), "/export/last/description",
-                           exportName);
-    settings.setLocalValue(model->getFilePath(), "/export/last/displayedDestination",
-                           displayedDestination);
+    model->setExportLastCommand(command);
+    model->setExportLastDestination(displayedDestination);
+    model->setExportLastDescription(exportName);
 
     // Trigger saving of export command if it has changed
     if (model && (lastCommand != command))
