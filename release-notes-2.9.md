@@ -2,7 +2,7 @@ Release notes VYM - View Your Mind
 ==================================
 
 
-The lists below show differences between vym 2.8.0 and 2.9.x.
+The lists below shows differences between vym 2.8.0 and the latest 2.9.x version.
 
 Feel free to report any bugs or feature requests on
 [https://github.com/insilmaril/vym/issues](https://github.com/insilmaril/vym/issues)
