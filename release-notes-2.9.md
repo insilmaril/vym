@@ -9,23 +9,23 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - August 2023
+Uwe Drechsel - November 2023
 
 
 ## Version 2.9.26
 ### Features
-* Feature: #87 Enable Crtl modifier for macros triggered by function keys.
+* Feature: [#87](https://github.com/insilmaril/vym/issues/87) Enable Crtl modifier for macros triggered by function keys.
 * Feature: Set last export type to "Update" after successfully "Creating" Confluence page
 * Feature: Updated status bar messages when loading/saving maps
-* Feature: Update Italian translation (#91)
+* Feature: [#91](https://github.com/insilmaril/vym/issues/91) Update Italian translation
 * Feature: Dropped URLs are truncated at start of parameters
 
 ### Bugfixes
 * Bugfix: Minor typo in German translation
 * Bugfix: Minor typo in Confluence settings dialog
 * Bugfix: Pasted text URLs in a heading no longer create URL in branch
-* Bugfix: #90 Disable BSP indexing to avoid crashes
-* Bugfix: #88 Improved ASCII export
+* Bugfix: [#90](https://github.com/insilmaril/vym/issues/90) Disable BSP indexing to avoid crashes
+* Bugfix: [#88](https://github.com/insilmaril/vym/issues/88) Improved ASCII export
 
 ### Changes
 * Change: Removed or changed shortcuts with ALT
