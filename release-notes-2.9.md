@@ -12,8 +12,25 @@ Thanks for using vym!
 Uwe Drechsel - August 2023
 
 
-## Version 2.9.22
+## Version 2.9.26
+### Features
+* Feature: #87 Enable Crtl modifier for macros triggered by function keys.
+* Feature: Set last export type to "Update" after successfully "Creating" Confluence page
+* Feature: Updated status bar messages when loading/saving maps
+* Feature: Update Italian translation (#91)
+* Feature: Dropped URLs are truncated at start of parameters
 
+### Bugfixes
+* Bugfix: Minor typo in German translation
+* Bugfix: Minor typo in Confluence settings dialog
+* Bugfix: Pasted text URLs in a heading no longer create URL in branch
+* Bugfix: #90 Disable BSP indexing to avoid crashes
+* Bugfix: #88 Improved ASCII export
+
+### Changes
+* Change: Removed or changed shortcuts with ALT
+
+## Version 2.9.22
 ### Features
 
 * Feature: Support multiple Jira instances with specific authentication methods
@@ -22,7 +39,6 @@ Uwe Drechsel - August 2023
 * Feature: New commands to control visuals of selection box
 * Feature: added script to set colors of selection box for dark theme:
     - demos/scripts/setSelectionBoxDarkTheme.vys
-cannot understand every of the newer elements <mapdesign> and <md>.
 * Feature: Center on selection and fit to view with Key_Period + Key_Shift
 * Feature: Delete vymLink with Ctrl-Shift click
 * Feature: Scale pasted images to 300px width
@@ -154,8 +170,7 @@ for details
 * Bugfix: Copy to new map
 * Bugfix: crash while checking an empty directory (#9)
 
-Changes:
---------
+### Changes
 
 * Changed: Settings for JIRA and Confluence
 * Changed: Moved functionality of recover session into restore ression
