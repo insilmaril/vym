@@ -1,6 +1,6 @@
 // vim:syntax=javascript
 
-// Helper function to toggle frame
+//! Helper function to toggle frame
 function toggle_frame(map)
 {
     if (map.getFrameType() == "NoFrame" ) {
@@ -16,13 +16,13 @@ function colorSubtreeWithQuickColor(n)
     map.colorSubtree (c);
 }
 
-// Macro F1: Color subtree red
+//! Macro F1: Color subtree red
 function macro_f1()
 {
     colorSubtreeWithQuickColor(0);
 }
 
-// Macro F2: Color subtree orange
+//! Macro F2: Color subtree orange
 function macro_f2()
 {
     colorSubtreeWithQuickColor(1);
@@ -32,63 +32,63 @@ function macro_f2()
     // vym.editHeading();
 }
 
-// Macro F3: Color subtree green
+//! Macro F3: Color subtree green
 function macro_f3()
 {
     colorSubtreeWithQuickColor(2);
 }
 
 
-// Macro F4: Color subtree purple
+//! Macro F4: Color subtree purple
 function macro_f4()
 {
     colorSubtreeWithQuickColor(3);
 }
 
-// Macro F5: Color subtree blue
+//! Macro F5: Color subtree blue
 function macro_f5()
 {
     colorSubtreeWithQuickColor(4);
 }
 
-// Macro F6: Color subtree blue
+//! Macro F6: Color subtree blue
 function macro_f6()
 {
     colorSubtreeWithQuickColor(5);
 }
 
-// Macro F7: Color subtree black
+//! Macro F7: Color subtree black
 function macro_f7()
 {
     colorSubtreeWithQuickColor(6);
 }
 
-// Macro F8: Color subtree dark gray
+//! Macro F8: Color subtree dark gray
 function macro_f8()
 {
     colorSubtreeWithQuickColor(7);
 }
 
-// Macro F9: Color subtree light gray
+//! Macro F9: Color subtree light gray
 function macro_f9()
 {
     colorSubtreeWithQuickColor(8);
 }
 
-// Macro F10: Color subtree light white
+//! Macro F10: Color subtree light white
 function macro_f10()
 {
     colorSubtreeWithQuickColor(9);
 }
 
-// Macro F11: Repeat last command
+//! Macro F11: Repeat last command
 function macro_f11()
 {
     map = vym.currentMap();
     map.repeatLastCommand();
 }
 
-// Macro F12: toggle high prio task
+//! Macro F12: toggle high prio task
 function macro_f12()
 {
 	// Assuming 3 states, which are cycled:
@@ -116,7 +116,7 @@ function macro_f12()
 }
 
 
-// Macro Shift + F1: Frame background light red
+//! Macro Shift + F1: Frame background light red
 function macro_shift_f1()
 {
     map = vym.currentMap();
@@ -129,7 +129,7 @@ function macro_shift_f1()
     statusMessage(status);
 }
 
-// Macro Shift + F2: Frame background light green
+//! Macro Shift + F2: Frame background light green
 function macro_shift_f2()
 {
     map = vym.currentMap();
@@ -142,7 +142,7 @@ function macro_shift_f2()
     statusMessage(status);
 }
 
-// Macro Shift + F3: Frame background light yellow
+//! Macro Shift + F3: Frame background light yellow
 function macro_shift_f3()
 {
     map = vym.currentMap();
@@ -155,7 +155,7 @@ function macro_shift_f3()
     statusMessage(status);
 }
 
-// Macro Shift + F4: Frame background light blue
+//! Macro Shift + F4: Frame background light blue
 function macro_shift_f4()
 {
     map = vym.currentMap();
@@ -168,7 +168,7 @@ function macro_shift_f4()
     statusMessage(status);
 }
 
-// Macro Shift + F5: Frame background light grey
+//! Macro Shift + F5: Frame background light grey
 function macro_shift_f5()
 {
     map = vym.currentMap();
@@ -181,7 +181,7 @@ function macro_shift_f5()
     statusMessage(status);
 }
 
-// Macro Shift + F6: Frame background purple
+//! Macro Shift + F6: Frame background purple
 function macro_shift_f6()
 {
     map = vym.currentMap();
@@ -194,7 +194,7 @@ function macro_shift_f6()
     statusMessage(status);
 }
 
-// Macro Shift + F7: Frame background white
+//! Macro Shift + F7: Frame background white
 function macro_shift_f7()
 {
     map = vym.currentMap();
@@ -207,7 +207,7 @@ function macro_shift_f7()
     statusMessage(status);
 }
 
-// Macro Shift + F8: Frame background black
+//! Macro Shift + F8: Frame background black
 function macro_shift_f8()
 {
     map = vym.currentMap();
@@ -220,20 +220,20 @@ function macro_shift_f8()
     statusMessage(status);
 }
 
-// Macro Shift + F9: Toggle frame to include children
+//! Macro Shift + F9: Toggle frame to include children
 function macro_shift_f9()
 {
     map = vym.currentMap();
     map.toggleFrameIncludeChildren();
 }
 
-// Macro Shift + F10: 
+//! Macro Shift + F10: 
 // Useful for timestamps created on last entry
 function macro_shift_f10()
 {   
 }
 
-// Macro Shift + F11: Replace "@..." by mutt aliases
+//! Macro Shift + F11: Replace "@..." by mutt aliases
 function macro_shift_f11()
 {
 	map     = vym.currentMap();
@@ -272,68 +272,154 @@ function macro_shift_f11()
 	}
 }
 
-// Macro Shift + F12: Strip URLs from confluence and generate readable heading
+//! Macro Shift + F12:
 function macro_shift_f12()
 {
-    vym.clearConsole();
-    m1 = vym.currentMap();
+    statusMessage("Macro F12 + Shift triggered");
+}
 
-    if (vym.isConfluenceAgentAvailable() ) {
-        m1.setHeadingConfluencePageName();
-        statusMessage("Contacting Confluence...");
-        return;
-    } 
 
-    org = m1.getURL();
+// New /////////////////////////////////////
+//! Macro Ctrl + F1:
+function macro_ctrl_f1()
+{
+    statusMessage("Macro F1 + Ctrl triggered");
+}
 
-    if (org.length == 0) {
-		// No URL yet
-		org = m1.getHeadingPlainText();
-		print ("No URL yet");
-		print ("org: " + org);
-		m1.setURL(org);
-	}
-    print ("Original:");
-    print (org);
+//! Macro Ctrl + F2:
+function macro_ctrl_f2()
+{
+    statusMessage("Macro F2 + Ctrl triggered");
+}
 
-    s = org;
+//! Macro Ctrl + F3:
+function macro_ctrl_f3()
+{
+    statusMessage("Macro F3 + Ctrl triggered");
+}
 
-    // Chop trailing "/"
-    if (s[s.length-1] == '/') {
-      s = s.slice(0, s.length - 1);
-    }
+//! Macro Ctrl + F4:
+function macro_ctrl_f4()
+{
+    statusMessage("Macro F4 + Ctrl triggered");
+}
 
-    // Remove confluence parts
-    if (s.indexOf("infohub") != -1) {
-      print("Found infohub page");
-      if (s.indexOf("spaceKey") != -1) {
-        s = s.replace(/^.*spaceKey=/g, "");
-        s = s.replace(/(&title=)/g, ": ");
-      } else
-      {
-        s = s.replace(/^.*display\//g, "");
-        s = s.replace(/\//g, ": ");
-      }
-    } else // no infohub page
-    {
-      // remove path
-      s = s.replace(/^.*\//g, "");
-    }
+//! Macro Ctrl + F5:
+function macro_ctrl_f5()
+{
+    statusMessage("Macro F5 + Ctrl triggered");
+}
 
-    print (s);
+//! Macro Ctrl + F6:
+function macro_ctrl_f6()
+{
+    statusMessage("Macro F6 + Ctrl triggered");
+}
 
-    // Replace "+" and "-"
-    s = s.replace(/\+/g, " ");
-    s = s.replace(/%3A/g, "");
-    print ("After replacing:");
-    print (s);
+//! Macro Ctrl + F7:
+function macro_ctrl_f7()
+{
+    statusMessage("Macro F7 + Ctrl triggered");
+}
 
-    // Write new header
-    m1.setHeadingPlainText(s);
+//! Macro Ctrl + F8:
+function macro_ctrl_f8()
+{
+    statusMessage("Macro F8 + Ctrl triggered");
+}
 
-    if ( org == s ) {
-      statusMessage ("Heading not changed.");
-    } else {
-      statusMessage("Changed heading: " + org + " -> " + s);
-    }
+//! Macro Ctrl + F9:
+function macro_ctrl_f9()
+{
+    statusMessage("Macro F9 + Ctrl triggered");
+}
+
+//! Macro Ctrl + F10: 
+function macro_ctrl_f10()
+{
+    statusMessage("Macro F10 + Ctrl triggered");
+}
+
+//! Macro Ctrl + F11:
+function macro_ctrl_f11()
+{
+    statusMessage("Macro F11 + Ctrl triggered");
+}
+
+//! Macro Ctrl + F12:
+function macro_ctrl_f12()
+{
+    statusMessage("Macro F12 + Ctrl triggered");
+}
+
+//! Macro Ctrl + Shift + F1:
+function macro_ctrl_shift_f1()
+{
+    statusMessage("Macro F1 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F2:
+function macro_ctrl_shift_f2()
+{
+    statusMessage("Macro F2 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F3:
+function macro_ctrl_shift_f3()
+{
+    statusMessage("Macro F3 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F4:
+function macro_ctrl_shift_f4()
+{
+    statusMessage("Macro F4 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F5:
+function macro_ctrl_shift_f5()
+{
+    statusMessage("Macro F5 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F6:
+function macro_ctrl_shift_f6()
+{
+    statusMessage("Macro F6 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F7:
+function macro_ctrl_shift_f7()
+{
+    statusMessage("Macro F7 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F8:
+function macro_ctrl_shift_f8()
+{
+    statusMessage("Macro F8 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F9:
+function macro_ctrl_shift_f9()
+{
+    statusMessage("Macro F9 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F10: 
+function macro_ctrl_shift_f10()
+{
+    statusMessage("Macro F10 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F11:
+function macro_ctrl_shift_f11()
+{
+    statusMessage("Macro F11 + Ctrl + Shift triggered");
+}
+
+//! Macro Ctrl + Shift + F12:
+function macro_ctrl_shift_f12()
+{
+    statusMessage("Macro F12 + Ctrl + Shift triggered");
 }
