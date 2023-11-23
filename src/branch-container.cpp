@@ -252,15 +252,15 @@ bool BranchContainer::isTemporaryLinked()
 QPointF BranchContainer::alignTo(PointName ownPointName, BranchContainer* targetBC, PointName targetPointName)
 {
     // Find point p
-    Container *tc = targetBC->getBranchesContainer();
-    if (!tc)
+    Container *targetBranchesContainer = targetBC->getBranchesContainer();
+    if (!targetBranchesContainer)
         // FIXME-0 Assume whole HC for now, if now children there yet. Or better OrnCont?
-        tc = targetBC->getHeadingContainer();
+        targetBranchesContainer = targetBC->getHeadingContainer();
 
-    QPointF p = tc->pointByName(targetPointName);
+    QPointF p = targetBranchesContainer->pointByName(targetPointName);
     QPointF q = pointByName(ownPointName);
 
-    return tc->mapToScene(p) - q;
+    return targetBranchesContainer->mapToScene(p) - q;
 }
 
 int BranchContainer::childrenCount()
