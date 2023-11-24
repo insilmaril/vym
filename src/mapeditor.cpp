@@ -1768,19 +1768,22 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             else
                 setState(MovingObject);
 
-            // Set initial position and size of tmpParentContainer // FIXME-0 Assumes center of BC has (0,0), which is not correct for mainBranches
+            // Set initial position and size of tmpParentContainer
             tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);
             if (movingItems.count() > 0) {
                 qreal w = 0;
                 qreal h = 0;
+                BranchContainer *bc_first = nullptr;
                 foreach (TreeItem *ti, movingItems) {
                     if (ti->hasTypeBranch()) {
                         BranchContainer* bc = ((BranchItem*)ti)->getBranchContainer();
+                        if (!bc_first)
+                            bc_first = bc;
                         w = max(w, bc->rect().width());
                         h += bc->rect().height();
                     }
                 }
-                tmpParentContainer->setRect( - w / 2, - h / 2, w, h);
+                tmpParentContainer->setRect(bc_first->rect().left(), - bc_first->rect().height() / 2, w, h);
             }
         }
         else
@@ -1906,6 +1909,21 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
+void MapEditor::alignMovingBranchContainers(const Container::HorizontalAlignment &ha, bool animated)
+{
+    BranchContainer *bc;
+    BranchContainer *bc_prev = nullptr;
+    foreach (TreeItem *ti, movingItems) {
+        if (ti->hasTypeBranch()) {
+            bc = ((BranchItem*)ti)->getBranchContainer();
+            if(!bc_prev)
+                bc_prev = bc;
+            // FIXME cont here
+
+        }
+    }
+}
+
 void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 {
     // If necessary pan the view using animation
@@ -1997,7 +2015,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
 
-        tmpParentContainer->setRect(- w_total / 2, - h_first_2, w_total, h_total);
+        // FIXME-0 size set already in mousePressedEvent tmpParentContainer->setRect(- w_total / 2, - h_first_2, w_total, h_total);
     } // add to tmpParentContainer
 
     // Check if we could link and position tmpParentContainer
@@ -2135,7 +2153,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
-        tmpParentContainer->reposition();
+        // FIXME-0 tpc->reposition() might change size!  tmpParentContainer->reposition();
     }
 
     scene()->update();
