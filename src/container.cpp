@@ -329,6 +329,11 @@ void Container::setHorizontalAlignment(const HorizontalAlignment &a)
     horizontalAlignment = a;
 }
 
+QPointF Container::alignTo(PointName ownPointName, Container* targetContainer, PointName targetPointName)
+{
+    return mapFromItem(targetContainer, targetContainer->pointByName(targetPointName)) - pointByName(ownPointName);
+}
+
 void Container::addContainer(Container *c, int z)
 {
     if (childContainers().contains(c)) return;
