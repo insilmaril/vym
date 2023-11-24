@@ -3469,7 +3469,7 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection)
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection) // FIXME-0 multiselection lost after relinking
 {
     if (branch && dst) {
 

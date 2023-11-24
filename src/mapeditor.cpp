@@ -1934,11 +1934,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Add selected branches and images temporary to tmpParentContainer,
     // if they are not there yet:
     BranchContainer *bc_first = nullptr;
+    BranchContainer *bc_prev  = nullptr;
     if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
         BranchContainer *bc;
-        qreal h_total;
-        qreal h_first_2;
-        qreal w_total;
         foreach (TreeItem *ti, movingItems)
         {
             // The item structure in VymModel remaines untouched so far,
@@ -1946,19 +1944,14 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             if (ti->hasTypeBranch()) {
                 bc = ((BranchItem*)ti)->getBranchContainer();
 
-                if (!bc_first) {
+                if (!bc_first)
                     bc_first = bc;
-                    w_total = bc->rect().width();
-                    h_total = bc->rect().height();
-                    h_first_2 = h_total / 2;
-                }
 
                 if (tmpParentContainer->branchCount() == 0 || 
                     bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
 
                     // For additional floating containers use scenePos, so that bc_first
                     // could be moved with additional containers keeping their positions
-                    w_total = max(w_total, bc->rect().width());
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
                     tmpParentContainer->addToBranchesContainer(bc, true);
@@ -1972,17 +1965,18 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 }
 
                 if (bc_first && bc_first != bc) {
-                    h_total += bc->rect().height();
+                    QPointF p;
+                    // Animate other items to position horizontally centered below first one    // FIXME-0 initially also set orientation
+                    if (bc_first->getOriginalOrientation() == BranchContainer::RightOfParent) {
+                        p = tmpParentContainer->mapFromItem(bc, bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft));
+                    } else if (bc_first->getOriginalOrientation() == BranchContainer::LeftOfParent)
+                        p = tmpParentContainer->mapFromItem(bc, bc->alignTo(Container::TopRight, bc_prev, Container::BottomRight));
+                    else
+                        p = tmpParentContainer->mapFromItem(bc, bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
 
-                    // Animate other items to position horizontally centered below first one
-                    startAnimation (
-                            bc,
-                            bc->pos(),
-                            QPointF(bc_first->pos().x(), bc_first->pos().y() + h_total - h_first_2 - bc->rect().height() / 2)); // FIXME-000 cont here
-                                                                                                                                // use alignTo to position BCs
-                                                                                                                                // Note: use center(!) of bc_first instead
-                                                                                                                                // of pos() -   center might be off for MainBranch
+                    startAnimation ( bc, bc->pos(), p);
                 }
+                bc_prev = bc;
             } else if (ti->hasTypeImage()) {
                 ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
                 if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
@@ -2003,7 +1997,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
 
-        // FIXME-0 size set already in mousePressedEvent tmpParentContainer->setRect(- w_total / 2, - h_first_2, w_total, h_total);
     } // add to tmpParentContainer
 
     // Check if we could link and position tmpParentContainer
