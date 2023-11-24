@@ -1912,13 +1912,17 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 void MapEditor::alignMovingBranchContainers(const Container::HorizontalAlignment &ha, bool animated)
 {
     BranchContainer *bc;
-    BranchContainer *bc_prev = nullptr;
+    BranchContainer *bc_first = nullptr;
     foreach (TreeItem *ti, movingItems) {
         if (ti->hasTypeBranch()) {
             bc = ((BranchItem*)ti)->getBranchContainer();
-            if(!bc_prev)
-                bc_prev = bc;
-            // FIXME cont here
+            if (!bc_first)
+                bc_first = bc;
+            // FIXME-0 cont here. Or instead use BC::alignTo ???
+            /*
+            if (ha == Container::AlignedCentered) 
+                bc->setPos
+                    */
 
         }
     }
@@ -1993,7 +1997,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     startAnimation (
                             bc,
                             bc->pos(),
-                            QPointF(bc_first->pos().x(), bc_first->pos().y() + h_total - h_first_2 - bc->rect().height() / 2));
+                            QPointF(bc_first->pos().x(), bc_first->pos().y() + h_total - h_first_2 - bc->rect().height() / 2)); // FIXME-000 cont here
+                                                                                                                                // use alignTo to position BCs
+                                                                                                                                // Note: use center(!) of bc_first instead
+                                                                                                                                // of pos() -   center might be off for MainBranch
                 }
             } else if (ti->hasTypeImage()) {
                 ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
@@ -2072,8 +2079,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
         // FIXME-0 tmpParentContainer->setPos(bc_first_offset + targetBranchContainer->getPositionHintRelink(tmpParentContainer, d_pos, p_event));
         // FIXME-0 experimental:    
+        Container *targetContainer = targetBranchContainer->getBranchesContainer();
+        if (!targetContainer)
+            targetContainer = targetBranchContainer;    // FIXME-0 if tBC has no children, assume whole tBC. What about bounded images, then?
+        
         tmpParentContainer->setPos( //bc_first_offset + // FIXME-0
-                                    linkOffset + tmpParentContainer->alignTo(tpcPointName, targetBranchContainer, targetPointName));
+                                    linkOffset + tmpParentContainer->alignTo(tpcPointName, targetContainer, targetPointName));
 
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
