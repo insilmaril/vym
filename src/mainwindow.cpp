@@ -3413,7 +3413,7 @@ void Main::setupRecentMapsMenu()
 
 void Main::setupMacros()
 {
-    for (int i = 0; i <= 23; i++) {
+    for (int i = 0; i <= 47; i++) {
         macroActions[i] = new QAction(this);
         macroActions[i]->setData(i);
         addAction(macroActions[i]);
@@ -3432,6 +3432,7 @@ void Main::setupMacros()
     macroActions[10]->setShortcut(Qt::Key_F11);
     macroActions[11]->setShortcut(Qt::Key_F12);
 
+    // Shift Modifier
     macroActions[12]->setShortcut(Qt::Key_F1 + Qt::SHIFT);
     macroActions[13]->setShortcut(Qt::Key_F2 + Qt::SHIFT);
     macroActions[14]->setShortcut(Qt::Key_F3 + Qt::SHIFT);
@@ -3444,6 +3445,34 @@ void Main::setupMacros()
     macroActions[21]->setShortcut(Qt::Key_F10 + Qt::SHIFT);
     macroActions[22]->setShortcut(Qt::Key_F11 + Qt::SHIFT);
     macroActions[23]->setShortcut(Qt::Key_F12 + Qt::SHIFT);
+
+    // Ctrl Modifier
+    macroActions[24]->setShortcut(Qt::Key_F1 + Qt::CTRL);
+    macroActions[25]->setShortcut(Qt::Key_F2 + Qt::CTRL);
+    macroActions[26]->setShortcut(Qt::Key_F3 + Qt::CTRL);
+    macroActions[27]->setShortcut(Qt::Key_F4 + Qt::CTRL);
+    macroActions[28]->setShortcut(Qt::Key_F5 + Qt::CTRL);
+    macroActions[29]->setShortcut(Qt::Key_F6 + Qt::CTRL);
+    macroActions[30]->setShortcut(Qt::Key_F7 + Qt::CTRL);
+    macroActions[31]->setShortcut(Qt::Key_F8 + Qt::CTRL);
+    macroActions[32]->setShortcut(Qt::Key_F9 + Qt::CTRL);
+    macroActions[33]->setShortcut(Qt::Key_F10 + Qt::CTRL);
+    macroActions[34]->setShortcut(Qt::Key_F11 + Qt::CTRL);
+    macroActions[35]->setShortcut(Qt::Key_F12 + Qt::CTRL);
+
+    // Shift + Ctrl Modifier
+    macroActions[36]->setShortcut(Qt::Key_F1 + Qt::CTRL + Qt::SHIFT);
+    macroActions[37]->setShortcut(Qt::Key_F2 + Qt::CTRL + Qt::SHIFT);
+    macroActions[38]->setShortcut(Qt::Key_F3 + Qt::CTRL + Qt::SHIFT);
+    macroActions[39]->setShortcut(Qt::Key_F4 + Qt::CTRL + Qt::SHIFT);
+    macroActions[40]->setShortcut(Qt::Key_F5 + Qt::CTRL + Qt::SHIFT);
+    macroActions[41]->setShortcut(Qt::Key_F6 + Qt::CTRL + Qt::SHIFT);
+    macroActions[42]->setShortcut(Qt::Key_F7 + Qt::CTRL + Qt::SHIFT);
+    macroActions[43]->setShortcut(Qt::Key_F8 + Qt::CTRL + Qt::SHIFT);
+    macroActions[44]->setShortcut(Qt::Key_F9 + Qt::CTRL + Qt::SHIFT);
+    macroActions[45]->setShortcut(Qt::Key_F10 + Qt::CTRL + Qt::SHIFT);
+    macroActions[46]->setShortcut(Qt::Key_F11 + Qt::CTRL + Qt::SHIFT);
+    macroActions[47]->setShortcut(Qt::Key_F12 + Qt::CTRL + Qt::SHIFT);
 }
 
 void Main::setupToolbars()
@@ -3978,7 +4007,7 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             }
             editorChanged();
             vm->emitShowSelection();
-            statusBar()->showMessage("Loaded " + fn, statusbarTime);
+            statusBar()->showMessage(tr("Loaded %1").arg(fn), statusbarTime);
         }
     }
 
@@ -4121,6 +4150,11 @@ void Main::fileSave(VymModel *m, const File::SaveMode &savemode)
         fileSaveAs(savemode);
         return; // avoid saving twice...
     }
+
+    // Notification, that we start to save
+    statusBar()->showMessage(tr("Saving  %1...").arg(m->getFilePath()),
+                         statusbarTime);
+    qApp->processEvents();
 
     if (m->save(savemode) == File::Success) {
         statusBar()->showMessage(tr("Saved  %1").arg(m->getFilePath()),
@@ -6631,7 +6665,7 @@ void Main::updateActions()
             desc = " - ";
         }
         actionFileExportLast->setText(
-            tr("Export in last used format (%1) to: %2", "status tip")
+            tr("Export in last used format: %1\n%2", "status tip")
                 .arg(desc)
                 .arg(dest));
 
@@ -7196,16 +7230,25 @@ void Main::callMacro()
     int i = -1;
     if (action) {
         QString s = macros.get();
-        QString shift;
+        QString modifiers;
 
-        i = action->data().toInt() + 1;
+        i = action->data().toInt();
 
-        if (i > 12) {
-            shift = "shift_";
+        if (i > 11 && i < 24) {
+            modifiers = "shift_";
             i = i - 12;
+        } else if (i > 23 && i < 36) {
+            modifiers = "ctrl_";
+            i = i - 24;
+        } else if (i > 35) {
+            modifiers = "ctrl_shift_";
+            i = i - 36;
         }
 
-        s += QString("macro_%1f%2();").arg(shift).arg(i);
+        // Function keys start at "1", not "0"
+        i++;
+
+        s += QString("macro_%1f%2();").arg(modifiers).arg(i);
 
         VymModel *m = currentModel();
         if (m)

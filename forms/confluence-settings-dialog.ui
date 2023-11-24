@@ -27,7 +27,7 @@
    <item>
     <widget class="QCheckBox" name="usePATCheckBox">
      <property name="text">
-      <string>Use Personal Access Toke instead of username and password for authentication</string>
+      <string>Use Personal Access Token instead of username and password for authentication</string>
      </property>
     </widget>
    </item>

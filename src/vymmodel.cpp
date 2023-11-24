@@ -5020,6 +5020,21 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
         return false;
 }
 
+void VymModel::setExportLastCommand(const QString &cmd)
+{
+    settings.setLocalValue(filePath, "/export/last/command", cmd);
+}
+
+void VymModel::setExportLastDescription(const QString &desc)
+{
+    settings.setLocalValue(filePath, "/export/last/description", desc);
+}
+
+void VymModel::setExportLastDestination(const QString &displayedDest)
+{
+    settings.setLocalValue(filePath, "/export/last/displayedDestination", displayedDest);
+}
+
 void VymModel::exportLast()
 {
     QString desc, command,

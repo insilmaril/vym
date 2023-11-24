@@ -429,7 +429,7 @@ class Main : public QMainWindow {
     enum { MaxRecentFiles = 20 };
     QAction *recentFileActions[MaxRecentFiles];
 
-    QAction *macroActions[24];
+    QAction *macroActions[48];
     QStringList macro;
 
     QList <QColor> quickColors;

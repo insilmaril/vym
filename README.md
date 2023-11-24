@@ -13,6 +13,12 @@ Documentation
 
     https://github.com/insilmaril/vym/tree/develop/doc
 
+* Release notes and changelog
+
+    Can either be downloaded directly in vym via
+    "Help - Download and show release notes" or can be accessed in
+    https://github.com/insilmaril/vym/blob/release/release-notes-2.9.md
+
 * Screencasts
 
     There are several screencasts available on YouTube, which show some

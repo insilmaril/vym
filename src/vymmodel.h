@@ -615,6 +615,12 @@ class VymModel : public TreeModel {
     /*! Export as OpenOfficeOrg presentation */
     void exportImpress(const QString &, const QString &);
 
+    /*! Export agent might set export last command AFTER export
+     *  e.g. CreateConfluencePage might turn into UpdateConfluencePage */
+    void setExportLastCommand(const QString &cmd);
+    void setExportLastDescription(const QString &desc);
+    void setExportLastDestination(const QString &displayedDest);
+
     /*! Returns if Export in recently used format is possible*/
     bool exportLastAvailable(QString &description, QString &command,
                              QString &dest);
