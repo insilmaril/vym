@@ -5360,6 +5360,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
     foreach (TreeItem *ti, selItems) {
         if (ti->hasTypeBranch() || ti->hasTypeImage())
         {
+            /*
             Container *c = ((MapItem*)ti)->getContainer();
             QPointF pos_old = c->getOriginalPos();
             QString pos_new_str = toS(pos_new);
@@ -5370,6 +5371,8 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
                           .arg(getObjectName(ti))
                           .arg(pos_new_str));
             c->setPos(pos_new);
+            */
+            qDebug() << "VM::setPos - no originalPos available..."; // FIXME-00 only used in scripting...
         }
     }
     reposition();

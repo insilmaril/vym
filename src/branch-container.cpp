@@ -1375,6 +1375,15 @@ void BranchContainer::reposition()
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
+    qdbg() << ind() << "BC::repos  bc=" <<      info();
+    /*
+    if (pbc)
+        qdbg() << ind() << "          pbc=" << pbc->info();
+    else
+        qdbg() << ind() << "          pbc=0";
+    qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
+    */
+
 
     if (!pbc && containerType != TmpParent) {
         // I am a (not moving) mapCenter
@@ -1385,12 +1394,6 @@ void BranchContainer::reposition()
             if (!pbc)
                 orientation = UndefinedOrientation;
             else {
-                /*
-                qdbg() << ind() << "BC::repos  bc=" <<      info();
-                qdbg() << ind() << "          pbc=" << pbc->info();
-                qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
-                */
-
                 if (pbc->orientation == UndefinedOrientation) {
                     // Parent is mapCenter
                     // use relative position to determine orientation
