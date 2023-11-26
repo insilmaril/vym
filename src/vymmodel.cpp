@@ -6234,7 +6234,7 @@ QString VymModel::getSelectString()
     return list.join(";");
 }
 
-QString VymModel::getSelectString(TreeItem *ti) // FIXME-4 maybe replace bo -> bi, fi -> ii, ...
+QString VymModel::getSelectString(TreeItem *ti)
 {
     QString s;
     if (!ti || ti->depth() < 0)
