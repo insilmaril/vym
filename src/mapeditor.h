@@ -199,7 +199,6 @@ class MapEditor : public QGraphicsView {
     void startPanningView(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
-    void alignMovingBranches(BranchContainer::Orientation orientation, bool animated);
     void moveObject(QMouseEvent *, const QPointF &p_event);    // Called from mouseMoveEvent
     void mouseReleaseEvent(QMouseEvent *);
     void mouseDoubleClickEvent(QMouseEvent *);

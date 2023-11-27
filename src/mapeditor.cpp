@@ -1911,36 +1911,6 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::alignMovingBranches(BranchContainer::Orientation orientation, bool animated)    // FIXME-00000 alignment workfs for leftOfParent, orientation and undefined direction missing
-{
-    qDebug() << "ME::alignMovBranches  orient=" << orientation << "first=" << tmpParentContainer->childBranches().first()->info();
-    tmpParentContainer->reposition();
-    /*
-    BranchContainer *bc_prev = nullptr;
-    foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
-        if (!bc_prev) {
-            // First branch: align directly to tmpParentContainer
-            bc_prev = bc;
-            if (orientation == BranchContainer::LeftOfParent)
-                bc->setPos(tmpParentContainer->mapFromItem(bc,
-                            bc->alignTo(Container::TopRight, tmpParentContainer, Container::TopRight)));
-            else if (orientation == BranchContainer::RightOfParent)
-                bc->setPos(tmpParentContainer->mapFromItem(bc,
-                            bc->alignTo(Container::TopLeft, tmpParentContainer, Container::TopLeft)));
-        } else {
-            // Other branch: align to previous branch
-            if (orientation == BranchContainer::LeftOfParent) {
-                bc->setPos(tmpParentContainer->mapFromItem(bc,
-                            bc->alignTo(Container::TopRight, bc_prev, Container::BottomRight)));
-            } else if (orientation == BranchContainer::RightOfParent)
-                bc->setPos(tmpParentContainer->mapFromItem(bc,
-                            bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft)));
-        }
-        //bc->reposition();
-    }
-    */
-}
-
 void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 {
     // If necessary pan the view using animation
@@ -2094,8 +2064,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
 
-        // FIXME-0 testing aligning stuff
-        alignMovingBranches(targetBranchContainer->getOrientation(), false);    // FIXME-0 testing...
+        tmpParentContainer->reposition();
 
     } else {
         // No target: 
