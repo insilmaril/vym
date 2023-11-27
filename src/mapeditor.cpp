@@ -108,9 +108,11 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setZValue(1000);
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setContainerType(Container::TmpParent);
-    tmpParentContainer->setLayout(Container::FloatingBounded);
+    tmpParentContainer->setLayout(Container::FloatingBounded);  // tPC itself can be moved freely
     tmpParentContainer->branchesContainerAutoLayout = false;
-    tmpParentContainer->setBranchesContainerLayout(Container::FloatingBounded);
+    //tmpParentContainer->setBranchesContainerLayout(Container::FloatingReservedSpace); // FIXME-0 ReservedSpace needed, if Vertical is used?
+    tmpParentContainer->setBranchesContainerLayout(Container::Vertical);
+    //tmpParentContainer->setBranchesContainerLayout(Container::FloatingReservedSpace);
     tmpParentContainer->imagesContainerAutoLayout = false;
     tmpParentContainer->setImagesContainerLayout(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
@@ -1909,6 +1911,36 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
+void MapEditor::alignMovingBranches(BranchContainer::Orientation orientation, bool animated)    // FIXME-00000 alignment workfs for leftOfParent, orientation and undefined direction missing
+{
+    qDebug() << "ME::alignMovBranches  orient=" << orientation << "first=" << tmpParentContainer->childBranches().first()->info();
+    tmpParentContainer->reposition();
+    /*
+    BranchContainer *bc_prev = nullptr;
+    foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
+        if (!bc_prev) {
+            // First branch: align directly to tmpParentContainer
+            bc_prev = bc;
+            if (orientation == BranchContainer::LeftOfParent)
+                bc->setPos(tmpParentContainer->mapFromItem(bc,
+                            bc->alignTo(Container::TopRight, tmpParentContainer, Container::TopRight)));
+            else if (orientation == BranchContainer::RightOfParent)
+                bc->setPos(tmpParentContainer->mapFromItem(bc,
+                            bc->alignTo(Container::TopLeft, tmpParentContainer, Container::TopLeft)));
+        } else {
+            // Other branch: align to previous branch
+            if (orientation == BranchContainer::LeftOfParent) {
+                bc->setPos(tmpParentContainer->mapFromItem(bc,
+                            bc->alignTo(Container::TopRight, bc_prev, Container::BottomRight)));
+            } else if (orientation == BranchContainer::RightOfParent)
+                bc->setPos(tmpParentContainer->mapFromItem(bc,
+                            bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft)));
+        }
+        //bc->reposition();
+    }
+    */
+}
+
 void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 {
     // If necessary pan the view using animation
@@ -1968,13 +2000,17 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     QPointF p;
                     // Animate other items to position horizontally centered below first one    // FIXME-0 initially also set orientation
                     if (bc_first->getOriginalOrientation() == BranchContainer::RightOfParent) {
-                        p = tmpParentContainer->mapFromItem(bc, bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft));
+                        p = tmpParentContainer->mapFromItem(bc,
+                                bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft));
                     } else if (bc_first->getOriginalOrientation() == BranchContainer::LeftOfParent)
-                        p = tmpParentContainer->mapFromItem(bc, bc->alignTo(Container::TopRight, bc_prev, Container::BottomRight));
+                        p = tmpParentContainer->mapFromItem(bc,
+                                bc->alignTo(Container::TopRight, bc_prev, Container::BottomRight));
                     else
-                        p = tmpParentContainer->mapFromItem(bc, bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
+                        p = tmpParentContainer->mapFromItem(bc,
+                                bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
 
-                    startAnimation ( bc, bc->pos(), p);
+                    // FIXME-00   for testing use VerticalLayout instead of: startAnimation ( bc, bc->pos(), p);
+                    tmpParentContainer->setOrientation(bc_first->getOriginalOrientation());
                 }
                 bc_prev = bc;
             } else if (ti->hasTypeImage()) {
@@ -1996,6 +2032,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             else
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
+        tmpParentContainer->reposition();   // FIXME-0 added to test 
 
     } // add to tmpParentContainer
 
@@ -2054,9 +2091,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                                     linkOffset + tmpParentContainer->mapToScene(
                                                     tmpParentContainer->alignTo(
                                                         tpcPointName, targetContainer, targetPointName)));
-
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
+
+        // FIXME-0 testing aligning stuff
+        alignMovingBranches(targetBranchContainer->getOrientation(), false);    // FIXME-0 testing...
+
     } else {
         // No target: 
         // Since moved containers are relative to tmpParentContainer anyway, just move

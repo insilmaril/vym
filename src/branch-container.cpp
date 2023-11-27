@@ -230,8 +230,15 @@ bool BranchContainer::isOriginalFloating()
 void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
     tmpLinkedParentContainer = tpc;
-    if (containerType != TmpParent)
+    if (containerType != TmpParent) {
+        /*
+        */
+        qDebug() << "BC::setTemporaryLinked " << info() << tpc->getHorizontalDirection();   // FIXME-0
+        qDebug() << "                       " << innerContainer->info();
+        innerContainer->setHorizontalDirection(tpc->getHorizontalDirection());
+        innerContainer->reposition();   //update alignment based on orientation
         updateUpLink();
+    }
 }
 
 void BranchContainer::unsetTemporaryLinked()
@@ -393,12 +400,7 @@ void BranchContainer::updateChildrenStructure()
     //    - branchesContainer is Vertical
     //    - imagesContainer is FloatingBounded
 
-    /*
-    QString h;
-    if (branchItem)
-        h = branchItem->getHeadingPlain();
-    qDebug() << "BC::updateChildrenStructure() of " << h;
-    */
+    qDebug() << "BC::updateChildrenStructure() of " << info();
 
     if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
         // a) No FloatingBounded images or branches
@@ -424,6 +426,8 @@ void BranchContainer::updateChildrenStructure()
         innerContainer->setLayout(FloatingBounded);
     }
 
+    qDebug() << "   outer=" << outerContainer;
+    qDebug() << "   inner=" << innerContainer;
     // Rotation of outer container or outerFrame    // FIXME-2 optimize and set only on demand? Maybe in updateStyles()?
     if (outerFrame) {
         outerFrame->setRotation(rotationSubtreeInt);
@@ -482,7 +486,7 @@ void BranchContainer::updateChildrenStructure()
             innerContainer->setLayout(Vertical);
             innerContainer->setHorizontalAlignment(AlignedLeft);
 
-            // listContainer has one linkSpaceCOntainer left of branchesContainer
+            // listContainer has one linkSpaceContainer left of branchesContainer
             listContainer = new Container;
             listContainer->containerType = Container::ListContainer;
             listContainer->setLayout(Horizontal);
@@ -522,20 +526,15 @@ void BranchContainer::updateChildrenStructure()
             branchesContainer = nullptr;
         }
     } else {
-        if (!branchesContainer) {
-            // should never happen
-            qDebug() << "BC::updateBranchesContainer no branchesContainer available!";
-            return;
-        }
-
         // Space for links depends on layout and scrolled state:
+        qDebug() << " bi=" << branchItem << " this=" << this;
         if (linkSpaceContainer) {
-            if (hasFloatingBranchesLayout() || branchItem->isScrolled()) {
+            if (hasFloatingBranchesLayout() || !branchItem || branchItem->isScrolled()) {
                 delete linkSpaceContainer;
                 linkSpaceContainer = nullptr;
             }
         } else {
-            if (!hasFloatingBranchesLayout() && !branchItem->isScrolled()) {
+            if (!hasFloatingBranchesLayout() && (!branchItem || !branchItem->isScrolled())) {
                 linkSpaceContainer = new HeadingContainer ();
                 linkSpaceContainer->setContainerType(LinkSpace);
                 linkSpaceContainer->zPos = Z_LINKSPACE;
@@ -1291,8 +1290,9 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
         setImagesContainerLayout(imagesContainerLayout);
 
     // FIXME-5 for testing we do some coloring and additional drawing
+    if (containerType != TmpParent)
+        setPen(QPen(Qt::green));
     /*
-    setPen(QPen(Qt::blue));
 
     // OrnamentsContainer
     //ornamentsContainer->setPen(QPen(Qt::blue));
@@ -1375,7 +1375,7 @@ void BranchContainer::reposition()
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    qdbg() << ind() << "BC::repos  bc=" <<      info();
+    qdbg() << ind() << "BC::repos  bc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();
@@ -1417,7 +1417,8 @@ void BranchContainer::reposition()
                     //qdbg() << ind() << "BC: Setting parentorient " << orientation << " in: " << info();
                 }
             }
-        } // else:
+        } else
+            qDebug() << "   else branch!"; // else:
         // The "else" here would be that I'm the tmpParentContainer, but
         // then my orientation is already set in MapEditor, so ignore here
     }
@@ -1432,6 +1433,7 @@ void BranchContainer::reposition()
         } else {
             // TmpParentContainer
             /* // FIXME-0
+            */
             switch (orientation) {
                 case LeftOfParent:
                     qDebug() << "BC::repos   left of parent";
@@ -1452,7 +1454,6 @@ void BranchContainer::reposition()
                     qWarning() << "BC::reposition - Unknown orientation " << orientation << " in " << info();
                     break;
             }
-            */
         }
 
         // FIXME-2 set in updateChildrenStructure: innerContainer->setLayout(BoundingFloats);
