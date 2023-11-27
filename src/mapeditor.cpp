@@ -110,9 +110,7 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setContainerType(Container::TmpParent);
     tmpParentContainer->setLayout(Container::FloatingBounded);  // tPC itself can be moved freely
     tmpParentContainer->branchesContainerAutoLayout = false;
-    //tmpParentContainer->setBranchesContainerLayout(Container::FloatingReservedSpace); // FIXME-0 ReservedSpace needed, if Vertical is used?
     tmpParentContainer->setBranchesContainerLayout(Container::Vertical);
-    //tmpParentContainer->setBranchesContainerLayout(Container::FloatingReservedSpace);
     tmpParentContainer->imagesContainerAutoLayout = false;
     tmpParentContainer->setImagesContainerLayout(Container::FloatingBounded);
     tmpParentContainer->setBrush(Qt::NoBrush);
@@ -1785,7 +1783,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                         h += bc->rect().height();
                     }
                 }
-                tmpParentContainer->setRect(bc_first->rect().left(), - bc_first->rect().height() / 2, w, h);
+                if (bc_first) tmpParentContainer->setRect(bc_first->rect().left(), - bc_first->rect().height() / 2, w, h);
             }
         }
         else
@@ -1946,8 +1944,11 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             if (ti->hasTypeBranch()) {
                 bc = ((BranchItem*)ti)->getBranchContainer();
 
-                if (!bc_first)
+                if (!bc_first) {
+                    // Initially set orientation of tmpParentContainer to first BranchContainer
+                    tmpParentContainer->setOrientation(bc->getOrientation());
                     bc_first = bc;
+                }
 
                 if (tmpParentContainer->branchCount() == 0 || 
                     bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
@@ -2002,12 +2003,13 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             else
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
+        qDebug() << "ME adding BCs a)";
         tmpParentContainer->reposition();   // FIXME-0 added to test 
+        qDebug() << "ME adding BCs b)  orientTPC=" << tmpParentContainer->getOrientation();
 
     } // add to tmpParentContainer
 
     // Check if we could link and position tmpParentContainer
-    BranchContainer::Orientation newOrientation;
     BranchContainer *targetBranchContainer = nullptr;
     if (targetItem && targetItem->hasTypeBranch() &&
             !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
@@ -2072,9 +2074,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // tmpParentContainer to pointer position:
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
 
-        if (tmpParentContainer->isTemporaryLinked()) {
+        if (tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->unsetTemporaryLinked();
-        }
     }
 
     // Update parent containers
@@ -2103,6 +2104,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     // Set orientation
+    BranchContainer::Orientation newOrientation;
     Container *tpc_bc = tmpParentContainer->getBranchesContainer();
     if (targetBranchContainer && tpc_bc && !tpc_bc->childItems().contains(targetBranchContainer)) {
         // tmpParentContainer has children and these do NOT contain targetBranchContainer
@@ -2118,27 +2120,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             newOrientation = targetBranchContainer->getOrientation();
         }
     } else {
-        //No usable targetBranch
-        //
-        /* FIXME-0 Review orientation while moving
-        // Try to set orientation for not relinked tmpParentContainer by checking the
-        // layout and "original" parent
-        if (tpc_bc && !tpc_bc->childItems().isEmpty()) {
-            // Consider orientation of *last* selected branch
-            BranchContainer *bc = (BranchContainer*)(tpc_bc->childItems().last());
-            qDebug() << " - has no targetBranchContainer orgFloating= " << bc->isOriginalFloating();
-            if (bc->isOriginalFloating())  {
-                if (tmpParentContainer->pos().x() > bc->getOriginalParentPos().x())
-                    newOrientation = BranchContainer::RightOfParent;
-                else
-                    newOrientation = BranchContainer::LeftOfParent;
-            } else
-                newOrientation = bc->getOriginalOrientation();
-        }
-         */
+        //No usable targetBranch, don't change orientation now
+        newOrientation = tmpParentContainer->getOrientation();
     }
 
     // Reposition if required
+    qDebug() << "ME::mO  setting orientation:  newOrientation=" << newOrientation << "  tpC_ori?" << tmpParentContainer->getOrientation();
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
@@ -2225,6 +2212,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         // Check if we have a destination and should relink
         if (destinationBranch && state() != MovingObjectWithoutLinking) {
+            // Restore list of selected items later
+            QList <TreeItem*> selectedItems = model->getSelectedItems();
 
             model->saveStateBeginBlock(
                     QString("Relink %1 objects to \"%2\"")

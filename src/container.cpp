@@ -269,9 +269,6 @@ QString Container::getLayoutString(const Layout &l)
         case BoundingFloats:
             r = "BoundingFloats";
             break;
-        case FloatingReservedSpace:
-            r = "FloatingReservedSpace";
-            break;
         case FloatingBounded:
             r = "FloatingBounded";
             break;
@@ -494,37 +491,6 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                 // qdbg() << ind() << " - BF finished for " << info();
             } // BoundingFloats layout
-            break;
-
-        case FloatingReservedSpace:
-            {
-                // Used for tmpParentContaer
-                // Calculate total required space
-                // Will not move any children, but keep their
-                // (relative) positions
-
-                qreal w = 0;
-                qreal h = 0;
-                if (childContainers().count() > 0) {
-                    bool first_iteration = true;
-
-                    // Consider other children
-                    foreach (Container *c, childContainers()) {
-                        QRectF c_bbox = mapRectFromItem(c, c->rect());
-
-                        if (first_iteration) {
-                            first_iteration = false;
-                            w = c_bbox.width();
-                            h = c_bbox.height();
-                        } else
-                            w = max(c_bbox.width(), c_bbox.width());
-                            h += c_bbox.height();
-                    }
-                }
-
-                setRect(QRectF(-w / 2, - h / 2, w, h));
-                //qdbg() << ind() << " + FloatingReservedSpace r=" << toS(r) << "  pos=" << pos() << getName();
-            }
             break;
 
         case FloatingBounded:

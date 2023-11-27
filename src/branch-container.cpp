@@ -230,15 +230,11 @@ bool BranchContainer::isOriginalFloating()
 void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
     tmpLinkedParentContainer = tpc;
-    if (containerType != TmpParent) {
         /*
-        */
-        qDebug() << "BC::setTemporaryLinked " << info() << tpc->getHorizontalDirection();   // FIXME-0
-        qDebug() << "                       " << innerContainer->info();
-        innerContainer->setHorizontalDirection(tpc->getHorizontalDirection());
-        innerContainer->reposition();   //update alignment based on orientation
-        updateUpLink();
+    if (containerType != TmpParent) {
+        updateUpLink(); // FIXME-0 needed?
     }
+        */
 }
 
 void BranchContainer::unsetTemporaryLinked()
@@ -400,7 +396,7 @@ void BranchContainer::updateChildrenStructure()
     //    - branchesContainer is Vertical
     //    - imagesContainer is FloatingBounded
 
-    qDebug() << "BC::updateChildrenStructure() of " << info();
+    // qDebug() << "BC::updateChildrenStructure() of " << info();
 
     if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
         // a) No FloatingBounded images or branches
@@ -426,8 +422,6 @@ void BranchContainer::updateChildrenStructure()
         innerContainer->setLayout(FloatingBounded);
     }
 
-    qDebug() << "   outer=" << outerContainer;
-    qDebug() << "   inner=" << innerContainer;
     // Rotation of outer container or outerFrame    // FIXME-2 optimize and set only on demand? Maybe in updateStyles()?
     if (outerFrame) {
         outerFrame->setRotation(rotationSubtreeInt);
@@ -527,7 +521,6 @@ void BranchContainer::updateChildrenStructure()
         }
     } else {
         // Space for links depends on layout and scrolled state:
-        qDebug() << " bi=" << branchItem << " this=" << this;
         if (linkSpaceContainer) {
             if (hasFloatingBranchesLayout() || !branchItem || branchItem->isScrolled()) {
                 delete linkSpaceContainer;
@@ -682,7 +675,7 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
-QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene) // FIXME-0 not working correctly with multiple selected branches
+QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene)
 {
     QPointF p_hint;
 
@@ -700,7 +693,7 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
     } else {
         // Regular layout
         if (branchesContainer)
-            r = branchesContainer->rect();  // FIXME-0 getPositionHintRelink: check rotation: is rect still correct or better mapped bbox/rect?
+            r = branchesContainer->rect();
         qreal y;
         if (d_pos == 0)
             // Relink as child
@@ -1375,7 +1368,7 @@ void BranchContainer::reposition()
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    qdbg() << ind() << "BC::repos  bc=" <<      info() << "  orient=" << orientation;
+    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();
@@ -1418,7 +1411,7 @@ void BranchContainer::reposition()
                 }
             }
         } else
-            qDebug() << "   else branch!"; // else:
+            qDebug() << "   else branch of " << info() << "orient=" << orientation; // else:
         // The "else" here would be that I'm the tmpParentContainer, but
         // then my orientation is already set in MapEditor, so ignore here
     }
@@ -1436,22 +1429,22 @@ void BranchContainer::reposition()
             */
             switch (orientation) {
                 case LeftOfParent:
-                    qDebug() << "BC::repos   left of parent";
+                    qDebug() << "BC::repos tPC left of parent";
                     setHorizontalDirection(RightToLeft);
                     innerContainer->setHorizontalDirection(RightToLeft);
                     setBranchesContainerHorizontalAlignment(AlignedRight);
                     break;
                 case RightOfParent:
-                    qDebug() << "BC::repos   right of parent";
+                    qDebug() << "BC::repos tPC right of parent";
                     setHorizontalDirection(LeftToRight);
                     innerContainer->setHorizontalDirection(LeftToRight);
                     setBranchesContainerHorizontalAlignment(AlignedLeft);
                     break;
                 case UndefinedOrientation:
-                    qWarning() << "BC::reposition - UndefinedOrientation in " << info();
+                    qWarning() << "BC::reposition tPC - UndefinedOrientation in " << info();
                     break;
                 default:
-                    qWarning() << "BC::reposition - Unknown orientation " << orientation << " in " << info();
+                    qWarning() << "BC::reposition tPC - Unknown orientation " << orientation << " in " << info();
                     break;
             }
         }
