@@ -2125,11 +2125,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     // Reposition if required
-    qDebug() << "ME::mO  setting orientation:  newOrientation=" << newOrientation << "  tpC_ori?" << tmpParentContainer->getOrientation();
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
-        // FIXME-0 tpc->reposition() might change size!  tmpParentContainer->reposition();
     }
 
     scene()->update();
@@ -2213,41 +2211,39 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         // Check if we have a destination and should relink
         if (destinationBranch && state() != MovingObjectWithoutLinking) {
             // Restore list of selected items later
-            QList <TreeItem*> selectedItems = model->getSelectedItems();
+            QList <TreeItem*> selectedItems = model->getSelectedItems();    // FIXME-0
+            qDebug() << "ME::release 00 selCount=" << model->getSelectedItems().count();
 
+            /* Obsolete by new VM::relink  FIXME-0
             model->saveStateBeginBlock(
                     QString("Relink %1 objects to \"%2\"")
                         .arg(relinkedObjectsCount)
                         .arg(destinationBranch->getHeadingPlain()));
+                        */
 
-            // Loop over branches
+            // Prepare relinking
+            BranchItem *dst_branch = destinationBranch;
+            int dst_num = -1;
+
+            if (e->modifiers() & Qt::ShiftModifier && destinationBranch->parent()) {
+                // Link above dst
+                dst_branch = destinationBranch->parentBranch();
+                dst_num = destinationBranch->num();
+            } else if (e->modifiers() & Qt::ControlModifier && destinationBranch->parent()) {
+                // Link below dst
+                dst_branch = destinationBranch->parentBranch();
+                dst_num = destinationBranch->num() +  1;
+            }
+
+            // Tell VymModel to relink
+            QList <BranchItem*> movingBranches;
             foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
-                bc->unsetTemporaryLinked();
+                bc->unsetTemporaryLinked(); // FIXME-0 Can this move to VM::relinkBranches?
+                movingBranches << bc->getBranchItem();
+            }
+            model->relinkBranches(movingBranches, dst_branch, dst_num, false);
 
-                BranchItem *bi = bc->getBranchItem();
-                BranchItem *pi = bi->parentBranch();
-
-                // Consider modifiers when relinking a branch:
-                // Default is to append to destinationBranch
-                BranchItem *dst_branch = destinationBranch;
-                int dst_num = -1;
-
-                if (e->modifiers() & Qt::ShiftModifier && destinationBranch->parent()) {
-                    // Link above dst
-                    dst_branch = destinationBranch->parentBranch();
-                    dst_num = destinationBranch->num();
-                } else if (e->modifiers() & Qt::ControlModifier && destinationBranch->parent()) {
-                    // Link below dst
-                    dst_branch = destinationBranch->parentBranch();
-                    dst_num = destinationBranch->num() +  1;
-                }
-
-                // Relink
-                model->relinkBranch(bi, dst_branch, dst_num, true);
-
-            }   // Loop to relink branches
-
-            // Loop over images
+            // Loop over images // FIXME-2 refactor in VM similar to relinkBranches
             foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
                 ImageItem *ii = ic->getImageItem();
                 model->relinkImage(ii, destinationBranch);
@@ -2255,8 +2251,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // Destination available and movingObject
 
             model->reposition();    // FIXME-2 required in general? or already implicit in VM::relink?
-
-            model->saveStateEndBlock();
         } else {
             // Branches moved, but not relinked
             QPointF t = p - movingObj_initialScenePos;    // Defined in mousePressEvent

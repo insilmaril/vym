@@ -1295,6 +1295,9 @@ void VymModel::redo()
         qDebug() << "    ---------------------------";
     }
 
+    // Save current selection
+    QList <ulong> selectedIDs = getSelectedIDs();
+
     // select  object before redo
     if (!redoSelection.isEmpty())
         select(redoSelection);
@@ -1314,7 +1317,8 @@ void VymModel::redo()
 
     // Selection might have changed. Also force update in BranchPropertyEditor
     unselectAll();
-    select(undoSelection);
+    foreach (ulong id, selectedIDs)
+        selectToggle(id);
 
     updateActions();
 
@@ -1399,12 +1403,6 @@ void VymModel::undo()
     // Find out current undo directory
     QString bakMapDir(QString(tmpMapDirPath + "/undo-%1").arg(curStep));
 
-    // select  object before undo
-    if (!undoSelection.isEmpty() && !select(undoSelection)) {
-        qWarning("VymModel::undo()  Could not select object for undo");
-        return;
-    }
-
     if (debug) {
         qDebug() << "VymModel::undo() begin\n";
         qDebug() << "    undosAvail=" << undosAvail;
@@ -1421,9 +1419,14 @@ void VymModel::undo()
         cout << "    ---------------------------" << endl;
     }
 
-    // select  object before undo   // FIXME-2 double select, see above
-    if (!undoSelection.isEmpty())
-        select(undoSelection);
+    // Save current selection
+    QList <ulong> selectedIDs = getSelectedIDs();
+
+    // select  object before undo
+    if (!undoSelection.isEmpty() && !select(undoSelection)) {
+        qWarning("VymModel::undo()  Could not select object for undo");
+        return;
+    }
 
     // bool noErr;
     QString errMsg;
@@ -1456,7 +1459,8 @@ void VymModel::undo()
 
     // Selection might have changed. Also force update in BranchPropertyEditor
     unselectAll();
-    select(redoSelection);
+    foreach (ulong id, selectedIDs)
+        selectToggle(id);
 
     updateActions();
 }
@@ -3469,31 +3473,60 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool updateSelection) // FIXME-0 multiselection lost after relinking
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool keepSelection)
 {
-    if (branch && dst) {
+    if (!branch)
+        return false;
 
+    QList <BranchItem*> branches = {branch};
+    return relinkBranches(branches, dst, num_dst, keepSelection);
+}
+
+bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst, bool keepSelection)   
+// RelinkBranches: FIXME-1 redo not working with multiSelection. Selection is lost after undo
+{
+    if (branches.isEmpty())
+        branches = getSelectedBranches();
+
+    if (!dst || branches.isEmpty())
+        return false;
+
+    qDebug() << "VM:relinkBranch  a) select=" << getSelectString();
+
+    saveStateBeginBlock(
+        QString("Relink %1 objects to \"%2\"")
+            .arg(branches.count())
+            .arg(dst->getHeadingPlain()));
+
+    // At which position will we relink? This will increase later...
+    int n_new = num_dst; 
+    if (num_dst < 0 || num_dst > dst->branchCount())
+        n_new = dst->branchCount();
+
+    foreach (BranchItem *bi, branches) {
         // Check if we link to ourself
-        if (dst == branch) {
-            qWarning() << "VM::relinkBranch  Attempting to relink to myself: " << branch->getHeadingPlain();
+        if (dst == bi) {
+            qWarning() << "VM::relinkBranch  Attempting to relink to myself: " << bi->getHeadingPlain();
             return false;
         }
 
         // Check if we relink down to own children
-        if (dst->isChildOf(branch))
+        if (dst->isChildOf(bi))
             return false;
 
-        if (updateSelection)
-            unselectAll();
+        /*
+        if (keepSelection)
+            unselectAll();  // FIXME-0 needed here?
+                            // */
 
         // Save old selection for savestate
-        QString preSelString = getSelectString(branch);
-        QString preNum = QString::number(branch->num(), 10);
-        QString preParString = getSelectString(branch->parent());
+        QString preSelString = getSelectString(bi);
+        QString preNum = QString::number(bi->num(), 10);
+        QString preParString = getSelectString(bi->parent());
 
         // Remember original position for saveState
         bool rememberPos = false;
-        BranchItem *pbi = branch->parentBranch();
+        BranchItem *pbi = bi->parentBranch();
         if (pbi == rootItem)
         {
             // Remember position of MapCenter
@@ -3505,7 +3538,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
         }
 
         // Prepare BranchContainers
-        BranchContainer *bc = branch->getBranchContainer();
+        BranchContainer *bc = bi->getBranchContainer();
         BranchContainer *dstBC = dst->getBranchContainer(); // might be nullptr for MC!
 
         // Keep position when detaching
@@ -3518,45 +3551,45 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
             keepPos = false;
 
         // What kind of relinking are we doing? Important for style updates
-        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-1 not used later   also not considering detaching
+        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-2 not used later   also not considering detaching
 
         emit(layoutAboutToBeChanged());
-        BranchItem *branchpi = (BranchItem *)branch->parent();
+        BranchItem *branchpi = (BranchItem *)bi->parent();
         // Remove at current position
-        int n = branch->childNum();
+        int n = bi->childNum();
 
-        // If branch and dst have same parent, then num_dst needs to be adjusted
-        // after removing branch
+        // If bi and dst have same parent, then num_dst needs to be adjusted
+        // after removing bi
         if (branchpi == dst && num_dst - 1 > n )
-            num_dst--;
+            n_new--;
 
         beginRemoveRows(index(branchpi), n, n);
         branchpi->removeChild(n);
         endRemoveRows();
 
-        if (num_dst < 0 || num_dst > dst->branchCount())
-            num_dst = dst->branchCount();
-
-        // Append as last branch to dst
         if (dst->branchCount() == 0)
+            // Append as last branch to dst
             n = 0;
         else
+            // Append to branchItems
             n = dst->getFirstBranch()->childNumber();
 
-        beginInsertRows(index(dst), n + num_dst, n + num_dst);
-        dst->insertBranch(num_dst, branch);
+        beginInsertRows(index(dst), n + n_new, n + n_new);
+        dst->insertBranch(n_new, bi);
         endInsertRows();
+
+        n_new++;
 
         // Update upLink of BranchContainer to *parent* BC of destination
         bc->linkTo(dstBC);
 
         // Update parent item and stacking order of container
-        branch->updateContainerStackingOrder();
+        bi->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related branch-container or other view-objects
-        branch->updateStylesRecursively(MapDesign::RelinkedByUser);
+        bi->updateStylesRecursively(MapDesign::RelinkedByUser);
 
-        emitDataChanged(branch);
+        emitDataChanged(bi);
 
         // Keep position when detaching
         if (keepPos) {
@@ -3574,11 +3607,11 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
                     QString("setPos %1;").arg(toS(bc->getOriginalPos())),
                     "",
                     "",
-                    QString("Move %1") .arg(headingText(branch)));
+                    QString("Move %1") .arg(headingText(bi)));
             }
 
-            QString postSelStr = getSelectString(branch);
-            QString postNum = QString::number(branch->num(), 10);
+            QString postSelStr = getSelectString(bi);
+            QString postNum = QString::number(bi->num(), 10);
 
             QString undoCom;
             QString redoCom;
@@ -3591,7 +3624,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
 
             saveState(postSelStr, undoCom, preSelString, redoCom,
                       QString("Relink %1 to %2")
-                          .arg(getObjectName(branch))
+                          .arg(getObjectName(bi))
                           .arg(getObjectName(dst)));
 
             if (dstBC && dstBC->hasFloatingBranchesLayout()) {
@@ -3600,20 +3633,26 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bo
                           postSelStr,
                           QString("setPos %1;").arg(toS(bc->pos())),
                           QString("Move %1")
-                              .arg(getObjectName(branch)));
+                              .arg(getObjectName(bi)));
             }
 
         }
+    }   // Iterating over selbis
 
-        if (dst->isScrolled()) {
-            if (updateSelection)
-                select(dst);
-        }
-        else if (updateSelection)
-            select(branch);
-        return true;
-    }
-    return false;
+    saveStateEndBlock();
+
+    /* FIXME-0 checking selection
+    if (dst->isScrolled()) {
+        if (selectFirstParent)
+            select(dst);
+    } else if (selectFirstParent)
+        select(bi);
+        */
+    unselectAll();  // FIXME-1 also unselects images :-/
+    foreach (BranchItem *bi, branches)
+        selectToggle(bi);
+
+    return true;
 }
 
 bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
@@ -5795,6 +5834,19 @@ bool VymModel::selectID(const QString &s)
 
 bool VymModel::selectToggle(TreeItem *ti)
 {
+    if (ti) {
+        selModel->select(index(ti), QItemSelectionModel::Toggle);
+        // appendSelectionToHistory();	// FIXME-2 selection history not implemented yet
+        // for multiselections
+        lastToggledUuid = ti->getUuid();
+        return true;
+    }
+    return false;
+}
+
+bool VymModel::selectToggle(const uint &id)
+{
+    TreeItem *ti = findID(id);
     if (ti) {
         selModel->select(index(ti), QItemSelectionModel::Toggle);
         // appendSelectionToHistory();	// FIXME-2 selection history not implemented yet

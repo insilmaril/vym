@@ -241,7 +241,7 @@ void BranchContainer::unsetTemporaryLinked()
 {
     tmpLinkedParentContainer = nullptr;
     if (containerType != TmpParent)
-        updateUpLink();
+        updateUpLink(); // FIXME-0 isn't that done later anyway with reposition()?
 }
 
 bool BranchContainer::isTemporaryLinked()
@@ -1368,7 +1368,7 @@ void BranchContainer::reposition()
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
+    // qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();
@@ -1410,8 +1410,7 @@ void BranchContainer::reposition()
                     //qdbg() << ind() << "BC: Setting parentorient " << orientation << " in: " << info();
                 }
             }
-        } else
-            qDebug() << "   else branch of " << info() << "orient=" << orientation; // else:
+        }
         // The "else" here would be that I'm the tmpParentContainer, but
         // then my orientation is already set in MapEditor, so ignore here
     }
@@ -1429,13 +1428,13 @@ void BranchContainer::reposition()
             */
             switch (orientation) {
                 case LeftOfParent:
-                    qDebug() << "BC::repos tPC left of parent";
+                    //qDebug() << "BC::repos tPC left of parent";
                     setHorizontalDirection(RightToLeft);
                     innerContainer->setHorizontalDirection(RightToLeft);
                     setBranchesContainerHorizontalAlignment(AlignedRight);
                     break;
                 case RightOfParent:
-                    qDebug() << "BC::repos tPC right of parent";
+                    //qDebug() << "BC::repos tPC right of parent";
                     setHorizontalDirection(LeftToRight);
                     innerContainer->setHorizontalDirection(LeftToRight);
                     setBranchesContainerHorizontalAlignment(AlignedLeft);

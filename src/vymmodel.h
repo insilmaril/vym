@@ -484,7 +484,9 @@ class VymModel : public TreeModel {
         Returns true if relinking was successful.
     */
     bool relinkBranch(BranchItem *branch, BranchItem *dst, int num_new = -1,
-                      bool updateSelection = false);
+                      bool keepSelection = true);
+    bool relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_new = -1,
+                      bool keepSelection = true);
     bool relinkImage(ImageItem *image, BranchItem *dst);
 
     bool relinkTo(const QString &dest, int num);
@@ -769,12 +771,13 @@ class VymModel : public TreeModel {
     void setSelectionBlocked(bool);
     bool isSelectionBlocked();
 
-    bool select(const QString &);          //! Select by string
-    bool selectID(const QString &);        //! select by unique ID (QUuid)
-    bool selectToggle(TreeItem *ti);       //! Toggle select state
+    bool select(const QString &);           //! Select by string
+    bool selectID(const QString &);         //! select by unique ID (QUuid)
+    bool selectToggle(TreeItem *ti);        //! Toggle select state
+    bool selectToggle(const uint &id);      //! Overloaded function to toggle select state
     bool selectToggle(const QString &selectString); //! Overloaded function to toggle select state
-    bool select(TreeItem *ti);             //! Select by pointer to TreeItem
-    bool select(const QModelIndex &index); //! Select by ModelIndex
+    bool select(TreeItem *ti);              //! Select by pointer to TreeItem
+    bool select(const QModelIndex &index);  //! Select by ModelIndex
     void unselectAll();
     void unselect(QItemSelection desel);
     bool reselect();
