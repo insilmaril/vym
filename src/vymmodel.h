@@ -419,9 +419,7 @@ class VymModel : public TreeModel {
     void paste(); //!< Paste clipboard to branch and backup
     void cut();   //!< Cut to clipboard (and copy)
 
-    bool moveUp(BranchItem *bi);   //!< Move branch up without saving state
-    void moveUp();                 //!< Move branch up with saving state
-    bool moveDown(BranchItem *bi); //!< Move branch down without saving state
+    void moveUp();                 //!< Move branch up
     void moveDown();               //!< Move branch down
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
@@ -483,10 +481,8 @@ class VymModel : public TreeModel {
         different needs to call saveState
         Returns true if relinking was successful.
     */
-    bool relinkBranch(BranchItem *branch, BranchItem *dst, int num_new = -1,
-                      bool keepSelection = true);
-    bool relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_new = -1,
-                      bool keepSelection = true);
+    bool relinkBranch(BranchItem *branch, BranchItem *dst, int num_new = -1);
+    bool relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_new = -1);
     bool relinkImage(ImageItem *image, BranchItem *dst);
 
     bool relinkTo(const QString &dest, int num);
@@ -778,6 +774,7 @@ class VymModel : public TreeModel {
     bool selectToggle(const QString &selectString); //! Overloaded function to toggle select state
     bool select(TreeItem *ti);              //! Select by pointer to TreeItem
     bool select(const QModelIndex &index);  //! Select by ModelIndex
+    bool select(QList <BranchItem*> selbis);//! Used to restore selections
     void unselectAll();
     void unselect(QItemSelection desel);
     bool reselect();

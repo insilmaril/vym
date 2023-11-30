@@ -365,8 +365,9 @@ bool BranchItem::resetTmpUnscroll()
     return result;
 }
 
-void BranchItem::sortChildren(bool inverse) // FIXME-4 optimize by not using moveUp/Down
+void BranchItem::sortChildren(bool inverse) // FIXME-2 refactor and optimize to not using moveUp/Down
 {
+    /*
     int childCount = branchCounter;
     int curChildIndex;
     bool madeChanges = false;
@@ -389,6 +390,7 @@ void BranchItem::sortChildren(bool inverse) // FIXME-4 optimize by not using mov
             }
         }
     } while (madeChanges);
+    */
 }
 
 void BranchItem::setBranchesLayout(const QString &s)

@@ -5653,7 +5653,7 @@ void Main::editMoveToTarget()
                         // Makes it easier to quickly resort using the MoveTo function
                         BranchItem *below = pi->getBranchNum(selbi->num() + 1);
 
-                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1, true)) {
+                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1)) {
                             if (below)
                                 model->select(below);
                             else if (pi)

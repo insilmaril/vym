@@ -2211,15 +2211,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         // Check if we have a destination and should relink
         if (destinationBranch && state() != MovingObjectWithoutLinking) {
             // Restore list of selected items later
-            QList <TreeItem*> selectedItems = model->getSelectedItems();    // FIXME-0
-            qDebug() << "ME::release 00 selCount=" << model->getSelectedItems().count();
-
-            /* Obsolete by new VM::relink  FIXME-0
-            model->saveStateBeginBlock(
-                    QString("Relink %1 objects to \"%2\"")
-                        .arg(relinkedObjectsCount)
-                        .arg(destinationBranch->getHeadingPlain()));
-                        */
 
             // Prepare relinking
             BranchItem *dst_branch = destinationBranch;
@@ -2241,7 +2232,15 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 bc->unsetTemporaryLinked(); // FIXME-0 Can this move to VM::relinkBranches?
                 movingBranches << bc->getBranchItem();
             }
-            model->relinkBranches(movingBranches, dst_branch, dst_num, false);
+
+            model->relinkBranches(
+                    movingBranches,
+                    dst_branch,
+                    dst_num);
+
+            // If dst is scrolled, select it
+            if (dst_branch->isScrolled())
+                model->select(dst_branch);
 
             // Loop over images // FIXME-2 refactor in VM similar to relinkBranches
             foreach(ImageContainer *ic, tmpParentContainer->childImages()) {

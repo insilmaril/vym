@@ -2959,65 +2959,35 @@ void VymModel::cut()
     deleteSelection();
 }
 
-bool VymModel::moveUp(BranchItem *bi)
-{
-    if (readonly)
-        return false;
-
-    bool oldState = saveStateBlocked;
-    saveStateBlocked = true;
-    bool result = false;
-    if (bi && bi->canMoveUp())
-        result =
-            relinkBranch(bi, (BranchItem *)bi->parent(), bi->num() - 1, false);
-    saveStateBlocked = oldState;
-    return result;
-}
-
 void VymModel::moveUp()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        QString oldsel = getSelectString(selbi);
-        if (moveUp(selbi)) {
-            saveState(getSelectString(selbi), "moveDown ()", oldsel,
-                      "moveUp ()",
-                      QString("Move up %1").arg(getObjectName(selbi)));
-            select(selbi);
-        }
-    }
-}
+    if (readonly) return;
 
-bool VymModel::moveDown(BranchItem *bi)
-{
-    if (readonly)
-        return false;
+    QList<BranchItem *> selbis = getSelectedBranches();
+    if (selbis.isEmpty()) return;
 
-    bool oldState = saveStateBlocked;
-    saveStateBlocked = true;
-    bool result = false;
-    if (bi && bi->canMoveDown())
-        result =
-            relinkBranch(bi, (BranchItem *)bi->parent(), bi->num() + 1, false);
-    saveStateBlocked = oldState;
-    return result;
+    foreach (BranchItem *selbi, selbis)
+        relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
+
+    // Restore selection
+    select(selbis);
 }
 
 void VymModel::moveDown()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        QString oldsel = getSelectString(selbi);
-        if (moveDown(selbi)) {
-            saveState(getSelectString(selbi), "moveUp ()", oldsel,
-                      "moveDown ()",
-                      QString("Move down %1").arg(getObjectName(selbi)));
-            select(selbi);
-        }
-    }
+    if (readonly) return;
+
+    QList<BranchItem *> selbis = getSelectedBranches();
+    if (selbis.isEmpty()) return;
+
+    foreach (BranchItem *selbi, selbis)
+        relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 2);
+
+    // Restore selection
+    select(selbis);
 }
 
-void VymModel::moveUpDiagonally()
+void VymModel::moveUpDiagonally()   // FIXME-0 multiselection
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -3030,11 +3000,11 @@ void VymModel::moveUpDiagonally()
         BranchItem *dst = parent->getBranchNum(n-1);
         if (!dst) return;
 
-        relinkBranch(selbi, dst, dst->branchCount() + 1, true);
+        relinkBranch(selbi, dst, dst->branchCount() + 1);
      }
 }
 
-void VymModel::moveDownDiagonally()
+void VymModel::moveDownDiagonally() // FIXME-0 multiselection
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -3043,7 +3013,7 @@ void VymModel::moveDownDiagonally()
         BranchItem *parentParent = parent->parentBranch();
         int n = parent->num();
 
-        relinkBranch(selbi, parentParent, n + 1, true);
+        relinkBranch(selbi, parentParent, n + 1);
      }
 }
 
@@ -3058,7 +3028,7 @@ void VymModel::detach(BranchItem *bi)   // FIXME-1 sometines linkSpaceCont and/o
     foreach (BranchItem *selbi, selbis) {
         if (selbi && selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
-            relinkBranch(selbi, rootItem, -1, true);
+            relinkBranch(selbi, rootItem, -1);
         }
     }
 }
@@ -3463,7 +3433,7 @@ BranchItem *VymModel::addNewBranchBefore()
             // newbi->move2RelPos (p);
 
             // Move selection to new branch
-            relinkBranch(selbi, newbi, 0, true);
+            relinkBranch(selbi, newbi, 0);
 
             // Use color of child instead of parent // FIXME-2 should be done via style
             //newbi->setHeadingColor(selbi->getHeadingColor());
@@ -3473,36 +3443,34 @@ BranchItem *VymModel::addNewBranchBefore()
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst, bool keepSelection)
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst)
 {
     if (!branch)
         return false;
 
     QList <BranchItem*> branches = {branch};
-    return relinkBranches(branches, dst, num_dst, keepSelection);
+    return relinkBranches(branches, dst, num_dst);
 }
 
-bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst, bool keepSelection)   
-// RelinkBranches: FIXME-1 redo not working with multiSelection. Selection is lost after undo
+bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst)   
 {
+    qDebug() << "VM::relink " << branches.count() << " branches to  num_dst=" << num_dst;
+
     if (branches.isEmpty())
         branches = getSelectedBranches();
 
     if (!dst || branches.isEmpty())
         return false;
 
-    qDebug() << "VM:relinkBranch  a) select=" << getSelectString();
+    if (num_dst < 0 || num_dst >= dst->branchCount())
+        num_dst = dst->branchCount();
 
     saveStateBeginBlock(
         QString("Relink %1 objects to \"%2\"")
             .arg(branches.count())
             .arg(dst->getHeadingPlain()));
 
-    // At which position will we relink? This will increase later...
-    int n_new = num_dst; 
-    if (num_dst < 0 || num_dst > dst->branchCount())
-        n_new = dst->branchCount();
-
+    BranchItem* bi_prev = nullptr;
     foreach (BranchItem *bi, branches) {
         // Check if we link to ourself
         if (dst == bi) {
@@ -3513,11 +3481,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         // Check if we relink down to own children
         if (dst->isChildOf(bi))
             return false;
-
-        /*
-        if (keepSelection)
-            unselectAll();  // FIXME-0 needed here?
-                            // */
 
         // Save old selection for savestate
         QString preSelString = getSelectString(bi);
@@ -3555,30 +3518,39 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
         emit(layoutAboutToBeChanged());
         BranchItem *branchpi = (BranchItem *)bi->parent();
+
+        // Save old num
+        int bi_num = bi->num();
+
         // Remove at current position
-        int n = bi->childNum();
+        int removeRowNum = bi->childNum();
 
-        // If bi and dst have same parent, then num_dst needs to be adjusted
-        // after removing bi
-        if (branchpi == dst && num_dst - 1 > n )
-            n_new--;
-
-        beginRemoveRows(index(branchpi), n, n);
-        branchpi->removeChild(n);
+        qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->getHeadingPlain();
+        beginRemoveRows(index(branchpi), removeRowNum, removeRowNum);
+        branchpi->removeChild(removeRowNum);
         endRemoveRows();
 
-        if (dst->branchCount() == 0)
-            // Append as last branch to dst
-            n = 0;
-        else
-            // Append to branchItems
-            n = dst->getFirstBranch()->childNumber();
+        // Insert again
+        int insertRowNum;
+        if (bi_prev)
+            // Simply append after previous branch
+            insertRowNum = bi_prev->num() + 1;
+        else {
+            if (dst->branchCount() == 0)
+                // Append as last branch to dst
+                insertRowNum = 0;   // Still correct even with images and attributes first?
+            else
+                // Append to set of branchItems, e.g. after images and attributes
+                if (bi->parentBranch() == dst && bi_num < num_dst)
+                    insertRowNum = dst->getFirstBranch()->childNumber() + num_dst - 1;
+                else
+                    insertRowNum = dst->getFirstBranch()->childNumber() + num_dst;
+        }
 
-        beginInsertRows(index(dst), n + n_new, n + n_new);
-        dst->insertBranch(n_new, bi);
+        qDebug() << "  VM::relink inserting  at " << insertRowNum;
+        beginInsertRows(index(dst), insertRowNum, insertRowNum);
+        dst->insertBranch(insertRowNum, bi);
         endInsertRows();
-
-        n_new++;
 
         // Update upLink of BranchContainer to *parent* BC of destination
         bc->linkTo(dstBC);
@@ -3617,7 +3589,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
             QString redoCom;
 
             if (pbi == rootItem)
-                undoCom = "detach ()";
+                undoCom = "detach ()";  // FIXME-0 test
             else
                 undoCom = "relinkTo (\"" + preParString + "\"," + preNum + ")";
             redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
@@ -3637,20 +3609,10 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
             }
 
         }
-    }   // Iterating over selbis
+        bi_prev = bi;
+    }   // Iterating over selbis    
 
     saveStateEndBlock();
-
-    /* FIXME-0 checking selection
-    if (dst->isScrolled()) {
-        if (selectFirstParent)
-            select(dst);
-    } else if (selectFirstParent)
-        select(bi);
-        */
-    unselectAll();  // FIXME-1 also unselects images :-/
-    foreach (BranchItem *bi, branches)
-        selectToggle(bi);
 
     return true;
 }
@@ -3703,7 +3665,7 @@ bool VymModel::relinkTo(const QString &dstString, int num)
     if (selti->hasTypeBranch()) {
         BranchItem *selbi = (BranchItem *)selti;
 
-        if (relinkBranch(selbi, (BranchItem *)dst, num, true)) {
+        if (relinkBranch(selbi, (BranchItem *)dst, num)) {
             emitSelectionChanged();
             return true;
         }
@@ -3818,7 +3780,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
             int num_dst = selbi->num();
             BranchItem *bi = selbi->getFirstBranch();
             while (bi) {
-                relinkBranch(bi, pi, num_dst, true);
+                relinkBranch(bi, pi, num_dst);
                 bi = selbi->getFirstBranch();
                 num_dst++;
             }
@@ -5884,6 +5846,13 @@ bool VymModel::select(const QModelIndex &index)
         return true;
     }
     return false;
+}
+
+bool VymModel::select(QList <BranchItem*> selbis)
+{
+    unselectAll();
+    foreach (BranchItem* selbi, selbis)
+        selectToggle(selbi);
 }
 
 void VymModel::unselectAll() { unselect(selModel->selection()); }
