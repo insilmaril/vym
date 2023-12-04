@@ -424,6 +424,10 @@ class VymModel : public TreeModel {
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
     void detach(BranchItem* bi = nullptr);   //!< Detach branch and use as new mapcenter
+  private:
+    QList <BranchItem*> sortBranchesByNum(QList <BranchItem*>, bool inverse = false);
+    QList <BranchItem*> sortBranchesByHeading(QList <BranchItem*>, bool inverse = false);
+  public:
     void sortChildren(bool inverse = false); //!< Sort children lexically
 
     // The create methods are used to quickly parse a XML file

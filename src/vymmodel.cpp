@@ -2966,7 +2966,7 @@ void VymModel::moveUp()
     QList<BranchItem *> selbis = getSelectedBranches();
     if (selbis.isEmpty()) return;
 
-    foreach (BranchItem *selbi, selbis)
+    foreach (BranchItem *selbi, sortBranchesByNum(selbis, false))
         relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
 
     // Restore selection
@@ -2980,14 +2980,14 @@ void VymModel::moveDown()
     QList<BranchItem *> selbis = getSelectedBranches();
     if (selbis.isEmpty()) return;
 
-    foreach (BranchItem *selbi, selbis)
-        relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 2);
+    foreach (BranchItem *selbi, sortBranchesByNum(selbis, true))
+        relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
 
     // Restore selection
     select(selbis);
 }
 
-void VymModel::moveUpDiagonally()   // FIXME-0 multiselection
+void VymModel::moveUpDiagonally()   // FIXME-2 multiselection missing
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -3004,7 +3004,7 @@ void VymModel::moveUpDiagonally()   // FIXME-0 multiselection
      }
 }
 
-void VymModel::moveDownDiagonally() // FIXME-0 multiselection
+void VymModel::moveDownDiagonally() // FIXME-2 multiselection missing
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -3031,6 +3031,54 @@ void VymModel::detach(BranchItem *bi)   // FIXME-1 sometines linkSpaceCont and/o
             relinkBranch(selbi, rootItem, -1);
         }
     }
+}
+
+QList <BranchItem*> VymModel::sortBranchesByNum(QList <BranchItem*> unsortedList, bool inverse)
+{
+    // Shortcut
+    if (unsortedList.count() < 2)
+        return unsortedList;
+
+    // We use QMultiMap because unsortedList might have branches 
+    // with identical depths, but different parentBranches e.g.
+    // when moving up/down. Then parts of the list would be lost.
+    QMultiMap <int, BranchItem*> multimap;
+    foreach (BranchItem *bi, unsortedList)
+        multimap.insert(bi->num(), bi);
+
+    QList <BranchItem*> sortedList;
+
+    QMapIterator<int, BranchItem*> i(multimap);
+    if (inverse) {
+            i.toBack();
+            while (i.hasPrevious()) {
+                i.previous();
+                sortedList << i.value();
+            }
+    } else while (i.hasNext()) {
+        i.next();
+        sortedList << i.value();
+    }
+
+    return sortedList;
+}
+
+QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsortedList, bool inverse)
+{
+    QMap <QString, BranchItem*> map;
+    foreach (BranchItem *bi, unsortedList)
+        map.insert(bi->getHeadingPlain(), bi);
+
+    QList <BranchItem*> sortedList;
+
+    if (inverse)
+        for (auto i = map.cend(), begin = map.cbegin(); i != begin; --i)
+            sortedList << i.value();
+    else
+        for (auto i = map.cbegin(), end = map.cend(); i != end; ++i)
+            sortedList << i.value();
+
+    return sortedList;
 }
 
 void VymModel::sortChildren(bool inverse)
@@ -3454,7 +3502,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst)
 
 bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst)   
 {
-    qDebug() << "VM::relink " << branches.count() << " branches to  num_dst=" << num_dst;
+    // qDebug() << "VM::relink " << branches.count() << " branches to  num_dst=" << num_dst;
 
     if (branches.isEmpty())
         branches = getSelectedBranches();
@@ -3525,7 +3573,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         // Remove at current position
         int removeRowNum = bi->childNum();
 
-        qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->getHeadingPlain();
+        // qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->getHeadingPlain();
         beginRemoveRows(index(branchpi), removeRowNum, removeRowNum);
         branchpi->removeChild(removeRowNum);
         endRemoveRows();
@@ -3540,14 +3588,10 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
                 // Append as last branch to dst
                 insertRowNum = 0;   // Still correct even with images and attributes first?
             else
-                // Append to set of branchItems, e.g. after images and attributes
-                if (bi->parentBranch() == dst && bi_num < num_dst)
-                    insertRowNum = dst->getFirstBranch()->childNumber() + num_dst - 1;
-                else
-                    insertRowNum = dst->getFirstBranch()->childNumber() + num_dst;
+                insertRowNum = dst->getFirstBranch()->childNumber() + num_dst;
         }
 
-        qDebug() << "  VM::relink inserting  at " << insertRowNum;
+        // qDebug() << "  VM::relink inserting  at " << insertRowNum;
         beginInsertRows(index(dst), insertRowNum, insertRowNum);
         dst->insertBranch(insertRowNum, bi);
         endInsertRows();
