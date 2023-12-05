@@ -1783,7 +1783,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                         h += bc->rect().height();
                     }
                 }
-                if (bc_first) tmpParentContainer->setRect(bc_first->rect().left(), - bc_first->rect().height() / 2, w, h);
+                if (bc_first) tmpParentContainer->setRect(bc_first->rect().left(), bc_first->rect().top(), w, h);
             }
         }
         else
