@@ -108,14 +108,15 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->setZValue(1000);
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setContainerType(Container::TmpParent);
-    tmpParentContainer->setLayout(Container::FloatingBounded);  // tPC itself can be moved freely
+    tmpParentContainer->setLayout(Container::FloatingReservedSpace);  // tPC itself can be moved freely
+    // FIXME-0 old: tmpParentContainer->setLayout(Container::FloatingBounded);  // tPC itself can be moved freely
     tmpParentContainer->branchesContainerAutoLayout = false;
     tmpParentContainer->setBranchesContainerLayout(Container::Vertical);
     tmpParentContainer->imagesContainerAutoLayout = false;
-    tmpParentContainer->setImagesContainerLayout(Container::FloatingBounded);
+    tmpParentContainer->setImagesContainerLayout(Container::FloatingFree);
     tmpParentContainer->setBrush(Qt::NoBrush);
-    tmpParentContainer->setPen(QPen(Qt::NoPen));
-    tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0
+    // tmpParentContainer->setPen(QPen(Qt::NoPen));
+    tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
     tmpParentContainer->setFrameType(true,  FrameContainer::NoFrame);
     tmpParentContainer->setFrameType(false, FrameContainer::NoFrame);
     tmpParentContainer->reposition();
@@ -1980,7 +1981,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                         p = tmpParentContainer->mapFromItem(bc,
                                 bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
 
-                    // FIXME-00   for testing use VerticalLayout instead of: startAnimation ( bc, bc->pos(), p);
+                    // FIXME-00   for testing use VerticalLayout instead of animation: 
+                    //startAnimation ( bc, bc->pos(), p);
                     tmpParentContainer->setOrientation(bc_first->getOriginalOrientation());
                 }
                 bc_prev = bc;
@@ -2003,9 +2005,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             else
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
-        qDebug() << "ME adding BCs a)";
-        tmpParentContainer->reposition();   // FIXME-0 added to test 
-        qDebug() << "ME adding BCs b)  orientTPC=" << tmpParentContainer->getOrientation();
+        //qDebug() << "ME adding BCs a) tPC=" << tmpParentContainer->info();
+        //tmpParentContainer->reposition();   // FIXME-0 added to test 
+        qDebug() << "ME adding BCs b) tpC=" << tmpParentContainer->info();
 
     } // add to tmpParentContainer
 
@@ -2066,7 +2068,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
 
-        tmpParentContainer->reposition();
+        tmpParentContainer->reposition();   // FIXME-0 really reposition? might change size for FloatingBounded layout?
 
     } else {
         // No target: 
@@ -2249,7 +2251,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
             // Destination available and movingObject
 
-            model->reposition();    // FIXME-2 required in general? or already implicit in VM::relink?
+            // model->reposition();    // FIXME-2 required in general? or already implicit in VM::relink?
         } else {
             // Branches moved, but not relinked
             QPointF t = p - movingObj_initialScenePos;    // Defined in mousePressEvent

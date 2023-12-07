@@ -150,9 +150,9 @@ QString Container::info (const QString &prefix)
         //+ QString(" horDirection: %1").arg(horizontalDirection)
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
-        + QString(" scenePos: %1").arg(toS(scenePos(), 0))
-        + QString(" pos: %1").arg(toS(pos(), 0))
-        //+ QString(" rect: %1").arg(toS(rect(), 0))
+        //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
+        //+ QString(" pos: %1").arg(toS(pos(), 0))
+        + QString(" rect: %1").arg(toS(rect(), 0))
         + QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
         + QString(" Layout: %1").arg(getLayoutString())
@@ -249,6 +249,7 @@ Container::Layout Container::getLayoutFromString(const QString &s)
 {
     if (s == "Horizontal") return Horizontal;
     if (s == "Vertical") return Vertical;
+    if (s == "FloatingReservedSpace") return FloatingReservedSpace;
     if (s == "BoundingFloats") return BoundingFloats;
     if (s == "FloatingBounded") return FloatingBounded;
     if (s == "FloatingFree") return FloatingFree;
@@ -268,6 +269,9 @@ QString Container::getLayoutString(const Layout &l)
             break;
         case BoundingFloats:
             r = "BoundingFloats";
+            break;
+        case FloatingReservedSpace:
+            r = "FloatingReservedSpace";
             break;
         case FloatingBounded:
             r = "FloatingBounded";
@@ -427,7 +431,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    // qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -491,6 +495,37 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
                 // qdbg() << ind() << " - BF finished for " << info();
             } // BoundingFloats layout
+            break;
+
+        case FloatingReservedSpace:
+            {
+                // Used for tmpParentContaer
+                // Calculate total required space
+                // Will not move any children, but keep their
+                // (relative) positions
+
+                /* FIXME-000 do nothing
+                */
+                qreal w = 0;
+                qreal h = 0;
+                Container* c_first = nullptr;
+                if (childContainers().count() > 0) {
+
+                    // Consider other children
+                    foreach (Container *c, childContainers()) {
+                        QRectF c_bbox = mapRectFromItem(c, c->rect());  // FIXME-000 really map? rect is too big...
+
+                        if (!c_first) c_first = c;
+
+                        w = max(w, c_bbox.width());
+                        h += c_bbox.height();
+                    }
+                }
+
+                QRectF r(c_first->rect().left(), c_first->rect().top(), w, h);
+                // setRect(QRectF(c_first->rect().left(), c_first->rect().top(), w, h));
+                qdbg() << ind() << " + FloatingReservedSpace r=" << toS(r) << "  pos=" << pos() << getName() << "w=" << w << "h=" << h << "rect=" << toS(rect(),0);
+            }
             break;
 
         case FloatingBounded:

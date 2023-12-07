@@ -55,6 +55,7 @@ class Container : public QGraphicsRectItem {
         Horizontal,
         Vertical,
         BoundingFloats,
+        FloatingReservedSpace,
         FloatingBounded,
         FloatingFree,
         List};
