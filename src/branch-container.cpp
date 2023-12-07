@@ -1368,7 +1368,7 @@ void BranchContainer::reposition()
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
+    // qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();

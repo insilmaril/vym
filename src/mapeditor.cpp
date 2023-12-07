@@ -2011,6 +2011,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     } // add to tmpParentContainer
 
+    bool repositionRequired = false;
+
     // Check if we could link and position tmpParentContainer
     BranchContainer *targetBranchContainer = nullptr;
     if (targetItem && targetItem->hasTypeBranch() &&
@@ -2061,7 +2063,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!targetContainer)
             targetContainer = targetBranchContainer;    // FIXME-0 if tBC has no children, assume whole tBC. What about bounded images, then?
         
-        qDebug() << "ME::mO 0";
         tmpParentContainer->setPos(
                                     linkOffset + tmpParentContainer->mapToScene(
                                                     tmpParentContainer->alignTo(
@@ -2069,9 +2070,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
 
-        qDebug() << "ME::mO 0";
-        tmpParentContainer->reposition();   // FIXME-0 really reposition? might change size for FloatingBounded layout?
-                                            // FIXME-0 Careful: orientation of tpC is set further down ?!?!
+        qDebug() << "ME::mO pre reposition()";
+        repositionRequired = true;
 
     } else {
         // No target: 
@@ -2109,32 +2109,37 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     Container *tpc_bc = tmpParentContainer->getBranchesContainer();
     if (targetBranchContainer && tpc_bc && !tpc_bc->childItems().contains(targetBranchContainer)) {
         // tmpParentContainer has children and these do NOT contain targetBranchContainer
-        if (targetItem->depth() == 0) {   // FIXME-0 Better check for layout: Now also other branches may have floatingLayout
+        if (targetItem->depth() == 0) {
             // Relinking to MapCenter
             if (tmpParentContainer->pos().x() > targetBranchContainer->pos().x())
                 newOrientation = BranchContainer::RightOfParent;
             else
                 newOrientation = BranchContainer::LeftOfParent;
-        }
-        else {
+        } else {
             // Relinking to other branch
             newOrientation = targetBranchContainer->getOrientation();
         }
     } else {
         //No usable targetBranch, don't change orientation now
         newOrientation = tmpParentContainer->getOrientation();
+
+        // FIXME-0 Check if first BC in tPC exists and has floating layout (e.g. mainBranch)
+        // In that case we might want to set orientation depending on position relative to parent
     }
 
     // Reposition if required
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
+        repositionRequired = true;
     }
 
-    scene()->update();
+    if (repositionRequired)
+        tmpParentContainer->reposition();
 
     model->repositionXLinks();
-    return;
+
+    scene()->update();
 }
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)

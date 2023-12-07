@@ -431,7 +431,7 @@ QPointF Container::getOriginalPos()
 
 void Container::reposition()    // FIXME-3 Remove comment code used for debugging
 {
-    qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
+    // qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 
     // Repositioning is done recursively:
     // First the size sizes of subcontainers are calculated,
@@ -500,9 +500,6 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
         case FloatingReservedSpace:
             {
                 // Used only for tmpParentContainer
-
-                /* FIXME-000 do nothing
-                */
                 qreal w = 0;
                 qreal h = 0;
                 BranchContainer* bc_first = nullptr;
@@ -512,20 +509,20 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 if (branches.count() > 0) {
                     // Consider other children
                     foreach (BranchContainer *bc, branches) {
-                        QRectF bc_bbox = mapRectFromItem(bc, bc->rect());  // FIXME-000 really map? rect is too big...
+                        QRectF bc_bbox = mapRectFromItem(bc, bc->rect());
 
                         if (!bc_first) bc_first = bc;
 
-                        qdbg() << ind() << " + FloatingReservedSpace c=" << bc->info() << "  c_bbox=" << toS(bc_bbox, 0);
-                        bc->printStructure();
+                        // qdbg() << ind() << " + FloatingReservedSpace c=" << bc->info() << "  c_bbox=" << toS(bc_bbox, 0);
+                        // bc->printStructure();
                         w = max(w, bc_bbox.width());
                         h += bc_bbox.height();
                     }
-                    r = QRectF(bc_first->rect().left(), bc_first->rect().top(), w, h);
+                    // FIXME-0 not used r = QRectF(bc_first->rect().left(), bc_first->rect().top(), w, h);
                     // setRect(QRectF(c_first->rect().left(), c_first->rect().top(), w, h));
                 }
 
-                qdbg() << ind() << " + FloatingReservedSpace r=" << toS(r) << "  pos=" << pos() << " " << getName() << " w=" << w << " h=" << h << " rect=" << toS(rect(),0);
+                // qdbg() << ind() << " + FloatingReservedSpace r=" << toS(r) << "  pos=" << pos() << " " << getName() << " w=" << w << " h=" << h << " rect=" << toS(rect(),0);
             }
             break;
 
