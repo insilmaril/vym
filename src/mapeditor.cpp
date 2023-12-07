@@ -1982,7 +1982,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                                 bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
 
                     // FIXME-00   for testing use VerticalLayout instead of animation: 
-                    //startAnimation ( bc, bc->pos(), p);
+                    startAnimation ( bc, bc->pos(), p);
                     tmpParentContainer->setOrientation(bc_first->getOriginalOrientation());
                 }
                 bc_prev = bc;
@@ -2061,6 +2061,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!targetContainer)
             targetContainer = targetBranchContainer;    // FIXME-0 if tBC has no children, assume whole tBC. What about bounded images, then?
         
+        qDebug() << "ME::mO 0";
         tmpParentContainer->setPos(
                                     linkOffset + tmpParentContainer->mapToScene(
                                                     tmpParentContainer->alignTo(
@@ -2068,7 +2069,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
 
+        qDebug() << "ME::mO 0";
         tmpParentContainer->reposition();   // FIXME-0 really reposition? might change size for FloatingBounded layout?
+                                            // FIXME-0 Careful: orientation of tpC is set further down ?!?!
 
     } else {
         // No target: 
@@ -2081,15 +2084,11 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     // Update parent containers
-    foreach (TreeItem *ti, movingItems)
-    {
-        if (ti->hasTypeBranch()) {
-            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
-            if (tmpParentContainer->isTemporaryLinked())
-                bc->setTemporaryLinked(targetBranchContainer);
-            else
-                bc->unsetTemporaryLinked();
-        }
+    foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
+        if (tmpParentContainer->isTemporaryLinked())
+            bc->setTemporaryLinked(targetBranchContainer);
+        else
+            bc->unsetTemporaryLinked();
     }
 
     // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)
