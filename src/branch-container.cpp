@@ -1283,9 +1283,9 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
         setImagesContainerLayout(imagesContainerLayout);
 
     // FIXME-5 for testing we do some coloring and additional drawing
+    /*
     if (containerType != TmpParent)
         setPen(QPen(Qt::green));
-    /*
 
     // OrnamentsContainer
     //ornamentsContainer->setPen(QPen(Qt::blue));
@@ -1368,7 +1368,7 @@ void BranchContainer::reposition()
     // Set orientation based on depth and if we are floating around or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    // qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
+    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();
@@ -1485,7 +1485,7 @@ void BranchContainer::reposition()
     if (depth == 0)
         updateUpLink();
 
-    // (tmpParentContainer has no branchItem!)
+    // Update XLinks, but not for tmpParentContainer (has no branchItem!)
     if (branchItem) {
         XLinkObj *xlo;
         for (int i = 0; i < branchItem->xlinkCount(); ++i) {
