@@ -151,12 +151,12 @@ QString Container::info (const QString &prefix)
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
         //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
-        //+ QString(" pos: %1").arg(toS(pos(), 0))
+        + QString(" pos: %1").arg(toS(pos(), 0))
         + QString(" rect: %1").arg(toS(rect(), 0))
         + QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
-        + QString(" Layout: %1").arg(getLayoutString())
-        + QString(" horDir: %1").arg(horizontalDirection)
+        //+ QString(" Layout: %1").arg(getLayoutString())
+        //+ QString(" horDir: %1").arg(horizontalDirection)
         ;
 }
 
@@ -499,30 +499,50 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
 
         case FloatingReservedSpace:
             {
-                // Used only for tmpParentContainer
-                qreal w = 0;
-                qreal h = 0;
-                BranchContainer* bc_first = nullptr;
+                // Size is calculated already in MapEditor:
 
-                QRectF r;
-                QList <BranchContainer*> branches = ((BranchContainer*)this)->childBranches();
-                if (branches.count() > 0) {
-                    // Consider other children
-                    foreach (BranchContainer *bc, branches) {
-                        QRectF bc_bbox = mapRectFromItem(bc, bc->rect());
+                // Align branches
+                BranchContainer* tpc = (BranchContainer*)this;
+                QList <BranchContainer*> branches = tpc->childBranches();
 
-                        if (!bc_first) bc_first = bc;
+                Container::PointName refPointName;
+                BranchContainer* refBC = tpc;
 
-                        // qdbg() << ind() << " + FloatingReservedSpace c=" << bc->info() << "  c_bbox=" << toS(bc_bbox, 0);
-                        // bc->printStructure();
-                        w = max(w, bc_bbox.width());
-                        h += bc_bbox.height();
+                BranchContainer* bc_prev = nullptr;
+                foreach (BranchContainer *bc, branches) {
+                    QRectF bc_bbox = mapRectFromItem(bc, bc->rect());
+
+                    switch(tpc->getOrientation()) {
+                        case BranchContainer::LeftOfParent:
+                            if (!bc_prev)
+                                refPointName = Container::TopRight;
+                            else {
+                                refPointName = Container::BottomRight;
+                                refBC = bc_prev;
+                            }
+                            bc->setPos(tpc->mapFromItem(bc, bc->alignTo(
+                                            Container::TopRight,
+                                            refBC,
+                                            refPointName)));
+                            break;
+                        case BranchContainer::RightOfParent:
+                            if (!bc_prev)
+                                refPointName = Container::TopLeft;
+                            else {
+                                refPointName = Container::BottomLeft;
+                                refBC = bc_prev;
+                            }
+                            bc->setPos(tpc->mapFromItem(bc, bc->alignTo(
+                                            Container::TopLeft,
+                                            refBC,
+                                            refPointName)));
+                            break;
+                        default:
+                            // FIXME-000 not implemented yet, e.g. MCs
+                            break;
                     }
-                    // FIXME-0 not used r = QRectF(bc_first->rect().left(), bc_first->rect().top(), w, h);
-                    // setRect(QRectF(c_first->rect().left(), c_first->rect().top(), w, h));
+                    bc_prev = bc;
                 }
-
-                // qdbg() << ind() << " + FloatingReservedSpace r=" << toS(r) << "  pos=" << pos() << " " << getName() << " w=" << w << " h=" << h << " rect=" << toS(rect(),0);
             }
             break;
 

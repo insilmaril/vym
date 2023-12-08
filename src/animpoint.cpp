@@ -92,6 +92,7 @@ bool AnimPoint::animate()
 {
     if (!animated)
         return false;
+
     // Some math to slow down the movement in the end
     qreal f = 1 - n / (qreal)animTicks;
     qreal ff = 1 - f * f * f;

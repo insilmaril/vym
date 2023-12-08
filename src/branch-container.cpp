@@ -439,7 +439,7 @@ void BranchContainer::updateChildrenStructure()
     // Rotation of heading
     if (innerFrame)
         innerFrame->setRotation(rotationHeadingInt);
-    else
+    else if (ornamentsContainer)
         ornamentsContainer->setRotation(rotationHeadingInt);
 
     // Update structure of outerContainer
@@ -464,7 +464,8 @@ void BranchContainer::updateChildrenStructure()
             // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
             bulletPointContainer->setHeading(" • ");
             bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
-            ornamentsContainer->addContainer(bulletPointContainer, Z_BULLETPOINT);
+            if (ornamentsContainer)
+                ornamentsContainer->addContainer(bulletPointContainer, Z_BULLETPOINT);
         }
     } else {
         // Parent has no list layout
@@ -528,6 +529,7 @@ void BranchContainer::updateChildrenStructure()
             }
         } else {
             if (!hasFloatingBranchesLayout() && (!branchItem || !branchItem->isScrolled())) {
+                qDebug() << "BC::updateCS  creating lSC";
                 linkSpaceContainer = new HeadingContainer ();
                 linkSpaceContainer->setContainerType(LinkSpace);
                 linkSpaceContainer->zPos = Z_LINKSPACE;
@@ -1413,6 +1415,23 @@ void BranchContainer::reposition()
         }
         // The "else" here would be that I'm the tmpParentContainer, but
         // then my orientation is already set in MapEditor, so ignore here
+    }
+
+    // FIXME-000 experimenting. Could go to dedicated TmpParentCont class...
+    if (containerType == TmpParent) {
+        if (headingContainer) {
+            delete headingContainer;
+            headingContainer = nullptr;
+        }
+        if (linkSpaceContainer) {
+            delete linkSpaceContainer;
+            linkSpaceContainer = nullptr;
+        }
+        // Or remove these containers completely...
+        if (ornamentsContainer) {
+            delete ornamentsContainer;
+            ornamentsContainer = nullptr;
+        }
     }
 
     // Settings depending on depth

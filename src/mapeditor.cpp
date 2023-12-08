@@ -115,8 +115,8 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->imagesContainerAutoLayout = false;
     tmpParentContainer->setImagesContainerLayout(Container::FloatingFree);
     tmpParentContainer->setBrush(Qt::NoBrush);
-    // tmpParentContainer->setPen(QPen(Qt::NoPen));
-    tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
+    tmpParentContainer->setPen(QPen(Qt::NoPen));
+    // tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
     tmpParentContainer->setFrameType(true,  FrameContainer::NoFrame);
     tmpParentContainer->setFrameType(false, FrameContainer::NoFrame);
     tmpParentContainer->reposition();
@@ -2007,7 +2007,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
         //qDebug() << "ME adding BCs a) tPC=" << tmpParentContainer->info();
         //tmpParentContainer->reposition();   // FIXME-0 added to test 
-        qDebug() << "ME adding BCs b) tpC=" << tmpParentContainer->info();
 
     } // add to tmpParentContainer
 
@@ -2070,7 +2069,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
 
-        qDebug() << "ME::mO pre reposition()";
         repositionRequired = true;
 
     } else {
