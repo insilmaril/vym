@@ -502,11 +502,11 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // Size is calculated already in MapEditor:
 
                 // Align branches
-                BranchContainer* tpc = (BranchContainer*)this;
+                MinimalBranchContainer* tpc = (MinimalBranchContainer*)this;
                 QList <BranchContainer*> branches = tpc->childBranches();
 
                 Container::PointName refPointName;
-                BranchContainer* refBC = tpc;
+                BranchContainer* refBC = (BranchContainer*)tpc;
 
                 BranchContainer* bc_prev = nullptr;
                 foreach (BranchContainer *bc, branches) {

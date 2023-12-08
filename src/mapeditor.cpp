@@ -104,8 +104,9 @@ MapEditor::MapEditor(VymModel *vm)
     setAcceptDrops(true);
 
     // Container used for temporary moving and relinking branches
-    tmpParentContainer = new BranchContainer (mapScene);
-    tmpParentContainer->setZValue(1000);
+    tmpParentContainer = new MinimalBranchContainer ();
+    mapScene->addItem(tmpParentContainer);
+    // FIXME-2 needed? tmpParentContainer->setZValue(1000);
     tmpParentContainer->setName("tmpParentContainer");
     tmpParentContainer->setContainerType(Container::TmpParent);
     tmpParentContainer->setLayout(Container::FloatingReservedSpace);  // tPC itself can be moved freely
@@ -115,10 +116,8 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->imagesContainerAutoLayout = false;
     tmpParentContainer->setImagesContainerLayout(Container::FloatingFree);
     tmpParentContainer->setBrush(Qt::NoBrush);
-    tmpParentContainer->setPen(QPen(Qt::NoPen));
-    // tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
-    tmpParentContainer->setFrameType(true,  FrameContainer::NoFrame);
-    tmpParentContainer->setFrameType(false, FrameContainer::NoFrame);
+    //tmpParentContainer->setPen(QPen(Qt::NoPen));
+     tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
     tmpParentContainer->reposition();
 
     // Shortcuts and actions

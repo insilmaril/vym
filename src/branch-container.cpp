@@ -148,11 +148,6 @@ QString BranchContainer::getName() {
         return Container::getName() + " - ?";
 }
 
-void BranchContainer::setOrientation(const Orientation &o)
-{
-    orientation = o;
-}
-
 void BranchContainer::setOriginalOrientation()
 {
     originalOrientation = orientation;
@@ -171,11 +166,6 @@ void BranchContainer::setOriginalOrientation()
 BranchContainer::Orientation BranchContainer::getOriginalOrientation()
 {
     return originalOrientation;
-}
-
-BranchContainer::Orientation BranchContainer::getOrientation()
-{
-    return orientation;
 }
 
 QPointF BranchContainer::getOriginalParentPos()
@@ -529,7 +519,6 @@ void BranchContainer::updateChildrenStructure()
             }
         } else {
             if (!hasFloatingBranchesLayout() && (!branchItem || !branchItem->isScrolled())) {
-                qDebug() << "BC::updateCS  creating lSC";
                 linkSpaceContainer = new HeadingContainer ();
                 linkSpaceContainer->setContainerType(LinkSpace);
                 linkSpaceContainer->zPos = Z_LINKSPACE;

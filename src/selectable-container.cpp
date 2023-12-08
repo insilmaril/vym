@@ -2,8 +2,6 @@
 
 #include <QDebug>
 
-#include "container.h"
-
 void SelectableContainer::select(Container *parent, const QPen &pen, const QBrush &brush)
 {
     if (!selectionContainer)

@@ -4,7 +4,6 @@
 #include <QBrush>
 
 #include "container.h"
-//#include "frame-container.h"
 #include "mapdesign.h"
 #include "selectable-container.h"
 
@@ -17,14 +16,7 @@ class LinkObj;
 
 class BranchContainer : public SelectableContainer {
   public:
-    /*! Orientation relative to parent branch container */
-    enum Orientation {
-        UndefinedOrientation,
-        LeftOfParent,
-        RightOfParent
-    };
-
-    BranchContainer (
+    BranchContainer(
             QGraphicsScene *scene,
             BranchItem *bi = nullptr);
     virtual ~BranchContainer();
@@ -37,10 +29,8 @@ class BranchContainer : public SelectableContainer {
 
     virtual QString getName();
 
-    void setOrientation(const Orientation &);
     void setOriginalOrientation();
     Orientation getOriginalOrientation();
-    Orientation getOrientation();
     QPointF getOriginalParentPos();
 
     void updateVisibilityOfChildren();    // consider scroll state for branchesCont and imagesCont
@@ -198,7 +188,7 @@ class BranchContainer : public SelectableContainer {
     QBrush branchesContainerBrush;
 
     FrameContainer *innerFrame;         // Frame container around ornamentsContainer
-    FrameContainer *outerFrame;         // Frame container around whole branchContainer
+    FrameContainer *outerFrame;         // Frame container around whole BranchContainer
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent
@@ -214,7 +204,6 @@ class BranchContainer : public SelectableContainer {
     FlagRowContainer *systemFlagRowContainer;
 
   private:
-    Orientation orientation;
     Orientation originalOrientation;            //! Save orientation before move for undo
     bool originalFloating;                      //! Save, if floating before linked temporary
     QPointF originalParentPos;                  // used in ME to determine orientation during move: scene coord of orig, parent

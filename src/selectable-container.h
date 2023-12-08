@@ -1,9 +1,13 @@
 #ifndef SELECTABLE_H
 #define SELECTABLE_H
 
-#include "frame-container.h"
+//#include "branch-container.h"
+//#include "container.h"
+#include "minimal-branch-container.h"
 
-class SelectableContainer:public Container {
+class BranchContainer;
+
+class SelectableContainer : public MinimalBranchContainer {
   friend class BranchContainer;
   public:
     virtual void select(
