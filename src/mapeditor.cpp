@@ -116,8 +116,8 @@ MapEditor::MapEditor(VymModel *vm)
     tmpParentContainer->imagesContainerAutoLayout = false;
     tmpParentContainer->setImagesContainerLayout(Container::FloatingFree);
     tmpParentContainer->setBrush(Qt::NoBrush);
-    //tmpParentContainer->setPen(QPen(Qt::NoPen));
-     tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
+    tmpParentContainer->setPen(QPen(Qt::NoPen));
+    // tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
     tmpParentContainer->reposition();
 
     // Shortcuts and actions

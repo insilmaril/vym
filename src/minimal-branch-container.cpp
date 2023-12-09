@@ -121,11 +121,9 @@ void MinimalBranchContainer::addToBranchesContainer(Container *c, bool keepScene
 {
     if (!branchesContainer) {
         // Create branchesContainer before adding to it
-        // (It will be deleted later in updateChildrenStructure(), if there
-        // are no children)
         branchesContainer = new Container ();
         branchesContainer->setContainerType(Container::BranchesContainer);
-        branchesContainer->setParentItem(this);
+        branchesContainer->setParentItem(this); // Different for BranchItem!
         // FIXME-2 branchesContainer->zPos = Z_BRANCHES;
     }
 
@@ -169,6 +167,7 @@ void MinimalBranchContainer::addToImagesContainer(Container *c, bool keepScenePo
         if (branchItem)
             updateStyles(RelinkBranch);
         */
+        imagesContainer->setParentItem(this);   // Different for BranchItem!
     }
 
     QPointF sp = c->scenePos();
