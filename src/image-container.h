@@ -18,7 +18,7 @@ class ImageItem;
  * Both of these types are actually drawn onto the map
  */
 
-class ImageContainer : public SelectableContainer {
+class ImageContainer : public Container, public SelectableContainer {
   public:
     enum ImageType { Undefined, Pixmap, SVG, ClonedSVG };
 

@@ -249,13 +249,6 @@ void MinimalBranchContainer::setBranchesContainerHorizontalAlignment(const Horiz
         branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
 }
 
-void MinimalBranchContainer::setBranchesContainerBrush(const QBrush &b)
-{
-    branchesContainerBrush = b;
-    if (branchesContainer)
-        branchesContainer->setBrush(branchesContainerBrush);
-}
-
 void MinimalBranchContainer::updateBranchesContainerLayout()
 {
     // Set container layouts
@@ -264,7 +257,7 @@ void MinimalBranchContainer::updateBranchesContainerLayout()
 
 void MinimalBranchContainer::reposition()
 {
-    qdbg() << ind() << "MBC::reposition mbc=" <<      info() << "  orient=" << orientation;
+    // qdbg() << ind() << "MBC::reposition mbc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();

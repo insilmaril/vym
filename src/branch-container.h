@@ -14,7 +14,7 @@ class LinkContainer;
 
 class LinkObj;
 
-class BranchContainer : public SelectableContainer {
+class BranchContainer : public MinimalBranchContainer, public SelectableContainer {
   public:
     BranchContainer(
             QGraphicsScene *scene,
@@ -44,29 +44,7 @@ class BranchContainer : public SelectableContainer {
   public:
     bool isOriginalFloating();
 
-  private:
-    BranchContainer *tmpLinkedParentContainer;
-    BranchContainer *originalParentBranchContainer;
-
-  public:
-    void setTemporaryLinked(BranchContainer *tpc);
-    void unsetTemporaryLinked();
-    bool isTemporaryLinked();
-
-  public:
-    int childrenCount();    //! Sum of branch and image children
-
-    int branchCount();
-
-    /*! branchesContainer exists only, if there are children branches
-     *
-     *  branchesContainer and linkSpaceContainer are children of innerContainer.
-     *  The linkSpaceContainer is existing, only if a !Floating layout is used AND 
-     *  there is a branchesContainer 
-     */
-    bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
-    bool hasFloatingImagesLayout(); //! Checks, if children images are or should be floating
-    void addToBranchesContainer(Container *c, bool keepScenePos = false);
+    void addToBranchesContainer(Container *c);
     Container* getBranchesContainer();
 
 
@@ -77,7 +55,6 @@ class BranchContainer : public SelectableContainer {
 
   public:
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
-    int imageCount();
     void createImagesContainer();
     void addToImagesContainer(Container *c, bool keepScenePos = false);
     Container* getImagesContainer();
@@ -86,10 +63,6 @@ class BranchContainer : public SelectableContainer {
     LinkContainer* getLinkContainer();
     LinkObj* getLink();
     void linkTo(BranchContainer *);
-
-    // Convenience functions to access children
-    QList <BranchContainer*> childBranches();
-    QList <ImageContainer*> childImages();
 
     /*! Get suggestion where new child could be positioned (scene coord) */
     QPointF getPositionHintNewChild(Container*);
@@ -192,8 +165,6 @@ class BranchContainer : public SelectableContainer {
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
     LinkContainer *linkContainer;       // uplink to parent
-    Container *branchesContainer;       // Container with children branches
-    Container *imagesContainer;         // Container with children images
     Container *listContainer;           // Container for bullet point lists, if used
     HeadingContainer *bulletPointContainer;  // if lists are used, contains bulletpoint
     Container *ornamentsContainer;      // Flags and heading

@@ -7,7 +7,7 @@
 
 class BranchContainer;
 
-class SelectableContainer : public MinimalBranchContainer {
+class SelectableContainer {  // FIXME-0 required to inhert Contaier? Star inheritance in BC?
   friend class BranchContainer;
   public:
     virtual void select(

@@ -217,69 +217,11 @@ bool BranchContainer::isOriginalFloating()
     return originalFloating;
 }
 
-void BranchContainer::setTemporaryLinked(BranchContainer *tpc)
+
+void BranchContainer::addToBranchesContainer(Container *c)
 {
-    tmpLinkedParentContainer = tpc;
-        /*
-    if (containerType != TmpParent) {
-        updateUpLink(); // FIXME-0 needed?
-    }
-        */
-}
+    // Overloaded for real BranchContainers compared to MinimalBranchContainer
 
-void BranchContainer::unsetTemporaryLinked()
-{
-    tmpLinkedParentContainer = nullptr;
-    if (containerType != TmpParent)
-        updateUpLink(); // FIXME-0 isn't that done later anyway with reposition()?
-}
-
-bool BranchContainer::isTemporaryLinked()
-{
-    if (tmpLinkedParentContainer)
-        return true;
-    else
-        return false;
-}
-
-int BranchContainer::childrenCount()
-{
-    return branchCount() + imageCount();
-}
-
-int BranchContainer::branchCount()
-{
-    if (!branchesContainer)
-        return 0;
-    else
-        return branchesContainer->childItems().count();
-}
-
-bool BranchContainer::hasFloatingBranchesLayout()
-{
-    if (branchesContainer)
-        return branchesContainer->hasFloatingLayout();
-
-    if (branchesContainerLayout == FloatingBounded || branchesContainerLayout == FloatingFree)
-        return true;
-    else
-        return false;
-}
-
-bool BranchContainer::hasFloatingImagesLayout()
-{
-    if (imagesContainer)
-        return imagesContainer->hasFloatingLayout();
-
-    if (imagesContainerLayout == FloatingBounded || imagesContainerLayout == FloatingFree)
-        return true;
-    else
-        return false;
-}
-
-
-void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
-{
     if (!branchesContainer) {
         // Create branchesContainer before adding to it
         // (It will be deleted later in updateChildrenStructure(), if there
@@ -297,13 +239,9 @@ void BranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
 
     }
 
-    QPointF sp = c->scenePos();
     branchesContainer->addContainer(c);
 
     updateBranchesContainerLayout();
-
-    if (keepScenePos)
-        c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
 }
 
 Container* BranchContainer::getBranchesContainer()
@@ -535,14 +473,6 @@ void BranchContainer::updateChildrenStructure()
     }
 }
 
-int BranchContainer::imageCount()
-{
-    if (!imagesContainer)
-        return 0;
-    else
-        return imagesContainer->childItems().count();
-}
-
 void BranchContainer::createImagesContainer()
 {
     // imagesContainer is created when images are added to branch
@@ -558,7 +488,7 @@ void BranchContainer::createImagesContainer()
         innerContainer->addContainer(imagesContainer);
 }
 
-void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
+void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos) // FIXME-00 keepSP required?
 {
     if (!imagesContainer) {
         createImagesContainer();
@@ -603,30 +533,6 @@ void BranchContainer::linkTo(BranchContainer *pbc)
     originalParentBranchContainer = nullptr;
 
     pbc->linkContainer->addLink(upLink);
-}
-
-QList <BranchContainer*> BranchContainer::childBranches()
-{
-    QList <BranchContainer*> list;
-
-    if (!branchesContainer) return list;
-
-    foreach (QGraphicsItem *g_item, branchesContainer->childItems())
-        list << (BranchContainer*)g_item;
-
-    return list;
-}
-
-QList <ImageContainer*> BranchContainer::childImages()
-{
-    QList <ImageContainer*> list;
-
-    if (!imagesContainer) return list;
-
-    foreach (QGraphicsItem *g_item, imagesContainer->childItems())
-        list << (ImageContainer*)g_item;
-
-    return list;
 }
 
 QPointF BranchContainer::getPositionHintNewChild(Container *c)

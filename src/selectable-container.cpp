@@ -2,12 +2,14 @@
 
 #include <QDebug>
 
+#include "container.h"
+
 void SelectableContainer::select(Container *parent, const QPen &pen, const QBrush &brush)
 {
     if (!selectionContainer)
     {
         selectionContainer = new Container;
-        selectionContainer->setContainerType(Selection);
+        selectionContainer->setContainerType(Container::Selection);
         selectionContainer->overlay = true;
     }
     selectionContainer->setPen(pen);

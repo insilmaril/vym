@@ -20,10 +20,9 @@ class MinimalBranchContainer : public Container {
     virtual void init();
 
     void setOrientation(const Orientation &);
-    void setOriginalOrientation();
     Orientation getOrientation();
 
-  private:
+  protected:
     BranchContainer *tmpLinkedParentContainer;
     BranchContainer *originalParentBranchContainer;
 
@@ -68,7 +67,6 @@ class MinimalBranchContainer : public Container {
     void setBranchesContainerLayout(const Container::Layout &l);
     Container::Layout getBranchesContainerLayout();
     void setBranchesContainerHorizontalAlignment(const Container::HorizontalAlignment &valign);
-    void setBranchesContainerBrush(const QBrush &b);
 
   private:
     void updateBranchesContainerLayout();
@@ -82,7 +80,6 @@ class MinimalBranchContainer : public Container {
     Container::Layout imagesContainerLayout;
     Container::Layout branchesContainerLayout;
     Container::HorizontalAlignment branchesContainerHorizontalAlignment;
-    QBrush branchesContainerBrush;
 
     Container *branchesContainer;       // Container with children branches
     Container *imagesContainer;         // Container with children images

@@ -2010,6 +2010,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     } // add to tmpParentContainer
 
     bool repositionRequired = false;
+    bool updateUpLinksRequired = false;
 
     // Check if we could link and position tmpParentContainer
     BranchContainer *targetBranchContainer = nullptr;
@@ -2078,6 +2079,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
         if (tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->unsetTemporaryLinked();
+
+        updateUpLinksRequired = true;
     }
 
     // Update parent containers
@@ -2088,7 +2091,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             bc->unsetTemporaryLinked();
     }
 
-    // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)
+    // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)   // FIXME-2 not only MCs, but all floating branches
     if (e->modifiers() & Qt::ControlModifier) {
         foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
             BranchItem *bi = bc->getBranchItem();
@@ -2133,6 +2136,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     if (repositionRequired)
         tmpParentContainer->reposition();
+    else if (updateUpLinksRequired)
+        foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
+            bc->updateUpLink();
 
     model->repositionXLinks();
 
