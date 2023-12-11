@@ -106,19 +106,7 @@ MapEditor::MapEditor(VymModel *vm)
     // Container used for temporary moving and relinking branches
     tmpParentContainer = new MinimalBranchContainer ();
     mapScene->addItem(tmpParentContainer);
-    // FIXME-2 needed? tmpParentContainer->setZValue(1000);
     tmpParentContainer->setName("tmpParentContainer");
-    tmpParentContainer->setContainerType(Container::TmpParent);
-    tmpParentContainer->setLayout(Container::FloatingReservedSpace);  // tPC itself can be moved freely
-    // FIXME-0 old: tmpParentContainer->setLayout(Container::FloatingBounded);  // tPC itself can be moved freely
-    tmpParentContainer->branchesContainerAutoLayout = false;
-    tmpParentContainer->setBranchesContainerLayout(Container::Vertical);
-    tmpParentContainer->imagesContainerAutoLayout = false;
-    tmpParentContainer->setImagesContainerLayout(Container::FloatingFree);
-    tmpParentContainer->setBrush(Qt::NoBrush);
-    tmpParentContainer->setPen(QPen(Qt::NoPen));
-    // tmpParentContainer->setPen(QPen(Qt::blue)); // FIXME-0 only for testing
-    tmpParentContainer->reposition();
 
     // Shortcuts and actions
     QAction *a;
@@ -1911,6 +1899,9 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 
 void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 {
+    bool repositionRequired = false;
+    bool updateUpLinksRequired = false;
+
     // If necessary pan the view using animation
     if (!panningTimer->isActive())
         panningTimer->start(50);
@@ -1957,7 +1948,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     // could be moved with additional containers keeping their positions
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
-                    tmpParentContainer->addToBranchesContainer(bc, true);
+                    tmpParentContainer->addToBranchesContainer(bc);
 
                     // Save position of children branches in case we only want to
                     // move this branch and keep children unchanged using CTRL modifier
@@ -1969,7 +1960,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
                 if (bc_first && bc_first != bc) {
                     QPointF p;
-                    // Animate other items to position horizontally centered below first one    // FIXME-0 initially also set orientation
+                    // Animate other items to position horizontally centered below first one
                     if (bc_first->getOriginalOrientation() == BranchContainer::RightOfParent) {
                         p = tmpParentContainer->mapFromItem(bc,
                                 bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft));
@@ -1980,9 +1971,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                         p = tmpParentContainer->mapFromItem(bc,
                                 bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
 
-                    // FIXME-00   for testing use VerticalLayout instead of animation: 
                     startAnimation ( bc, bc->pos(), p);
-                    tmpParentContainer->setOrientation(bc_first->getOriginalOrientation());
                 }
                 bc_prev = bc;
             } else if (ti->hasTypeImage()) {
@@ -2009,9 +1998,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     } // add to tmpParentContainer
 
-    bool repositionRequired = false;
-    bool updateUpLinksRequired = false;
-
     // Check if we could link and position tmpParentContainer
     BranchContainer *targetBranchContainer = nullptr;
     if (targetItem && targetItem->hasTypeBranch() &&
@@ -2019,8 +2005,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // Link tmpParentContainer temporarily to targetBranchContainer
 
 
-        Container::PointName targetPointName;   // FIXME-0 not yet for modifiers
-        Container::PointName tpcPointName;  // FIXME-0 not yet for modifiers
+        Container::PointName targetPointName;   // FIXME-00 Relinking not yet with modifiers
+        Container::PointName tpcPointName;
         QPointF linkOffset;                     // Distance for temporary link
         if (e->modifiers() & Qt::ShiftModifier) {
             targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
@@ -2072,7 +2058,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         repositionRequired = true;
 
     } else {
-        // No target: 
+        // No target:   // FIXME-0 Consider orientation and horAlignment
         // Since moved containers are relative to tmpParentContainer anyway, just move
         // tmpParentContainer to pointer position:
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);

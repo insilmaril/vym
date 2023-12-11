@@ -50,16 +50,28 @@ BranchContainer::~BranchContainer()
 
 void BranchContainer::init()
 {
+    // BranchContainer defaults
+    // partially overwriting MinimalBranchContainer
+    // can be overwritten by MapDesign later
     containerType = Container::Branch;
+
+    setLayout(Container::Horizontal);
+
+    imagesContainerAutoLayout = true;
+    branchesContainerAutoLayout = true;
+
+    scrollOpacity = 1;
+
+    rotationHeadingInt = 0;
+    rotationSubtreeInt = 0;
+
+    autoDesignInnerFrame = true;
+    autoDesignOuterFrame = true;
 
     // BranchContainers inherit FrameContainer, reset overlay
     overlay = false;
 
-    orientation = UndefinedOrientation;
-
-    imagesContainer = nullptr;
-    selectionContainer = nullptr;
-
+    // Setup children containers
     headingContainer = new HeadingContainer;
 
     innerFrame = nullptr;
@@ -86,15 +98,11 @@ void BranchContainer::init()
     innerContainer->addContainer(linkContainer, Z_LINK);
     innerContainer->addContainer(ornamentsContainer, Z_ORNAMENTS);
 
-    branchesContainer = nullptr;
     linkSpaceContainer = nullptr;
 
     outerContainer = nullptr;
 
     addContainer(innerContainer);
-
-    setLayout(Container::Horizontal);
-    setHorizontalDirection(Container::LeftToRight);
 
     // Create an uplink for every branch 
     // This link will become the child of my parents
@@ -104,25 +112,6 @@ void BranchContainer::init()
 
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
-
-    // Set some defaults, should be overridden from MapDesign later
-    branchesContainerAutoLayout = true;
-    branchesContainerLayout = Vertical;
-
-    imagesContainerAutoLayout = true;
-    imagesContainerLayout = FloatingFree;
-
-    // Not temporary linked
-    tmpLinkedParentContainer = nullptr;
-    originalParentBranchContainer = nullptr;
-
-    scrollOpacity = 1;
-
-    rotationHeadingInt = 0;
-    rotationSubtreeInt = 0;
-
-    autoDesignInnerFrame = true;
-    autoDesignOuterFrame = true;
 }
 
 BranchContainer* BranchContainer::parentBranchContainer()
@@ -286,7 +275,7 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
-void BranchContainer::updateChildrenStructure()
+void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a problem:
                                                 // When a map with list layout is loaded and 
                                                 // layout is switched to e.g. Vertical, the links 
                                                 // are not drawn. Has to be saved/loaded first
@@ -1275,92 +1264,45 @@ void BranchContainer::reposition()
     */
 
 
-    if (!pbc && containerType != TmpParent) {
+    if (!pbc)
         // I am a (not moving) mapCenter
         orientation = UndefinedOrientation;
-    } else {
-        if (containerType != TmpParent) {
-            // "regular repositioning", not currently moved in MapEditor
-            if (!pbc)
-                orientation = UndefinedOrientation;
-            else {
-                if (pbc->orientation == UndefinedOrientation) {
-                    // Parent is mapCenter
-                    // use relative position to determine orientation
+    else {
+        // "regular repositioning", not currently moved in MapEditor
+        if (!pbc)
+            orientation = UndefinedOrientation;
+        else {
+            if (pbc->orientation == UndefinedOrientation) {
+                // Parent is mapCenter
+                // use relative position to determine orientation
 
-                    if (parentContainer()->hasFloatingLayout()) {
-                        if (pos().x() >= 0)
-                            orientation = RightOfParent;
-                        else
-                            orientation = LeftOfParent;
-                        /* FIXME-2 remove comments
-                        qdbg() << ind() << "BC: Setting neworient " << orientation << " in: " << info();
-                        qdbg() << ind() << "    pc: " << parentContainer()->info();
-                        */
-                    } else {
-                        // Special case: Mainbranch in horizontal or vertical layout
+                if (parentContainer()->hasFloatingLayout()) {
+                    if (pos().x() >= 0)
                         orientation = RightOfParent;
-                    }
+                    else
+                        orientation = LeftOfParent;
+                    /* FIXME-2 remove comments
+                    qdbg() << ind() << "BC: Setting neworient " << orientation << " in: " << info();
+                    qdbg() << ind() << "    pc: " << parentContainer()->info();
+                    */
                 } else {
-                    // Set same orientation as parent
-                    setOrientation(pbc->orientation);
-                    //qdbg() << ind() << "BC: Setting parentorient " << orientation << " in: " << info();
+                    // Special case: Mainbranch in horizontal or vertical layout
+                    orientation = RightOfParent;
                 }
+            } else {
+                // Set same orientation as parent
+                setOrientation(pbc->orientation);
+                //qdbg() << ind() << "BC: Setting parentorient " << orientation << " in: " << info();
             }
-        }
-        // The "else" here would be that I'm the tmpParentContainer, but
-        // then my orientation is already set in MapEditor, so ignore here
-    }
-
-    // FIXME-000 experimenting. Could go to dedicated TmpParentCont class...
-    if (containerType == TmpParent) {
-        if (headingContainer) {
-            delete headingContainer;
-            headingContainer = nullptr;
-        }
-        if (linkSpaceContainer) {
-            delete linkSpaceContainer;
-            linkSpaceContainer = nullptr;
-        }
-        // Or remove these containers completely...
-        if (ornamentsContainer) {
-            delete ornamentsContainer;
-            ornamentsContainer = nullptr;
         }
     }
 
     // Settings depending on depth
     if (depth == 0)
     {
-        if (containerType != TmpParent) {
-            // MapCenter
-            setHorizontalDirection(LeftToRight);
-            // FIXME-2 set in updateChildrenStructure: innerContainer->setHorizontalDirection(LeftToRight);
-        } else {
-            // TmpParentContainer
-            /* // FIXME-0
-            */
-            switch (orientation) {
-                case LeftOfParent:
-                    //qDebug() << "BC::repos tPC left of parent";
-                    setHorizontalDirection(RightToLeft);
-                    innerContainer->setHorizontalDirection(RightToLeft);
-                    setBranchesContainerHorizontalAlignment(AlignedRight);
-                    break;
-                case RightOfParent:
-                    //qDebug() << "BC::repos tPC right of parent";
-                    setHorizontalDirection(LeftToRight);
-                    innerContainer->setHorizontalDirection(LeftToRight);
-                    setBranchesContainerHorizontalAlignment(AlignedLeft);
-                    break;
-                case UndefinedOrientation:
-                    qWarning() << "BC::reposition tPC - UndefinedOrientation in " << info();
-                    break;
-                default:
-                    qWarning() << "BC::reposition tPC - Unknown orientation " << orientation << " in " << info();
-                    break;
-            }
-        }
+        // MapCenter
+        setHorizontalDirection(LeftToRight);
+        // FIXME-2 set in updateChildrenStructure: innerContainer->setHorizontalDirection(LeftToRight);
 
         // FIXME-2 set in updateChildrenStructure: innerContainer->setLayout(BoundingFloats);
     } else {

@@ -44,7 +44,7 @@ class MinimalBranchContainer : public Container {
      */
     bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
     bool hasFloatingImagesLayout(); //! Checks, if children images are or should be floating
-    void addToBranchesContainer(Container *c, bool keepScenePos = false);
+    void addToBranchesContainer(Container *c);
     Container* getBranchesContainer();
 
     int imageCount();

@@ -4,6 +4,11 @@
 
 #include "container.h"
 
+SelectableContainer::SelectableContainer()
+{
+    selectionContainer = nullptr;
+}
+
 void SelectableContainer::select(Container *parent, const QPen &pen, const QBrush &brush)
 {
     if (!selectionContainer)

@@ -23,29 +23,30 @@ MinimalBranchContainer::~MinimalBranchContainer()   // FIXME-2 use default
 
 void MinimalBranchContainer::init()
 {
-    containerType = Container::Branch;  // FIXME-2 introduce new type
-
+    // General defaults, also used by BranchContainer
     orientation = UndefinedOrientation;
 
     imagesContainer = nullptr;
-
     branchesContainer = nullptr;
 
-    setLayout(Container::Horizontal);   // FIXME-2
-    setHorizontalDirection(Container::LeftToRight);  // FIXME-2
-
-    // Create an uplink for every branch 
-
-    // Set some defaults, should be overridden from MapDesign later
-    branchesContainerAutoLayout = true;
-    branchesContainerLayout = Vertical;
-
-    imagesContainerAutoLayout = true;
-    imagesContainerLayout = FloatingFree;
-
-    // Not temporary linked
     tmpLinkedParentContainer = nullptr;
     originalParentBranchContainer = nullptr;
+
+    setBrush(Qt::NoBrush);
+    setPen(QPen(Qt::NoPen));
+
+    // TmpParentContainer defaults, should be overridden from MapDesign later
+    containerType = Container::TmpParent;
+
+    setLayout(Container::FloatingReservedSpace);
+
+    branchesContainerAutoLayout = false;
+    branchesContainerLayout = Vertical;
+
+    imagesContainerAutoLayout = false;
+    imagesContainerLayout = FloatingFree;
+
+    horizontalDirection = Container::LeftToRight;
 }
 
 void MinimalBranchContainer::setOrientation(const Orientation &o)
@@ -117,7 +118,7 @@ bool MinimalBranchContainer::hasFloatingImagesLayout()
 }
 
 
-void MinimalBranchContainer::addToBranchesContainer(Container *c, bool keepScenePos)
+void MinimalBranchContainer::addToBranchesContainer(Container *c)
 {
     if (!branchesContainer) {
         // Create branchesContainer before adding to it
@@ -132,8 +133,8 @@ void MinimalBranchContainer::addToBranchesContainer(Container *c, bool keepScene
 
     updateBranchesContainerLayout();
 
-    if (keepScenePos)
-        c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
+    // For TmpParentContainer keep position
+    c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
 }
 
 Container* MinimalBranchContainer::getBranchesContainer()

@@ -7,9 +7,10 @@
 
 class BranchContainer;
 
-class SelectableContainer {  // FIXME-0 required to inhert Contaier? Star inheritance in BC?
+class SelectableContainer {
   friend class BranchContainer;
   public:
+    SelectableContainer();
     virtual void select(
             Container *container,
             const QPen &,
