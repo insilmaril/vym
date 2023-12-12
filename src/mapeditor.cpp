@@ -1279,7 +1279,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
 
 void MapEditor::cursorUp()
 {
-    if (state() == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -1303,7 +1303,7 @@ void MapEditor::cursorUp()
 
 void MapEditor::cursorUpToggleSelection()
 {
-    if (state() == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -1331,7 +1331,7 @@ void MapEditor::cursorUpToggleSelection()
 
 void MapEditor::cursorDown()
 {
-    if (state() == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -1356,7 +1356,7 @@ void MapEditor::cursorDown()
 
 void MapEditor::cursorDownToggleSelection()
 {
-    if (state() == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
     BranchItem *selbi = model->getSelectedBranch();
@@ -1425,7 +1425,7 @@ void MapEditor::cursorLast() { model->selectLastBranch(); }
 
 void MapEditor::editHeading()
 {
-    if (state() == EditingHeading) {
+    if (editorState == EditingHeading) {
         editHeadingFinished();
         return;
     }
@@ -1492,7 +1492,7 @@ void MapEditor::editHeading()
 
 void MapEditor::editHeadingFinished()
 {
-    if (state() != EditingHeading || !lineEdit ) {
+    if (editorState != EditingHeading || !lineEdit ) {
         qWarning() << "ME::editHeadingFinished not editing heading!";
     } else {
         lineEdit->clearFocus();
@@ -1643,7 +1643,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }
 
     // Stop editing in LineEdit
-    if (state() == EditingHeading) editHeadingFinished();
+    if (editorState == EditingHeading) editHeadingFinished();
 
     /*
     qDebug() << "ME::mouse pressed\n";
@@ -1842,7 +1842,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 
     // Pan view
-    if (state() == PanningView) {
+    if (editorState == PanningView) {
         QPoint p = e->globalPos();
         QPoint v_pan;
         v_pan.setX(-p.x() + panning_initialPointerPos.x());
@@ -1869,10 +1869,10 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 
     // Move the selected items
     if (movingItems.count() > 0  &&
-        (state() == MovingObject ||
-         state() == MovingObjectTmpLinked ||
-         state() == MovingObjectWithoutLinking ||
-         state() == DrawingXLink)) {
+        (editorState == MovingObject ||
+         editorState == MovingObjectTmpLinked ||
+         editorState == MovingObjectWithoutLinking ||
+         editorState == DrawingXLink)) {
         int margin = 50;
 
         // Check if we have to scroll
@@ -1891,7 +1891,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     } // selection && moving_obj
 
     // Draw a link from one branch to another
-    if (state() == DrawingLink) {
+    if (editorState == DrawingLink) {
         tmpLink->setEndPoint(p_event);
         tmpLink->updateLink();
     }
@@ -2002,8 +2002,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     BranchContainer *targetBranchContainer = nullptr;
     if (targetItem && targetItem->hasTypeBranch() &&
             !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
-        // Link tmpParentContainer temporarily to targetBranchContainer
-
 
         Container::PointName targetPointName;   // FIXME-00 Relinking not yet with modifiers
         Container::PointName tpcPointName;
@@ -2053,6 +2051,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                                                     tmpParentContainer->alignTo(
                                                         tpcPointName, targetContainer, targetPointName)));
         if (!tmpParentContainer->isTemporaryLinked())
+            // Link tmpParentContainer temporarily to targetBranchContainer
+
             tmpParentContainer->setTemporaryLinked(targetBranchContainer);
 
         repositionRequired = true;
@@ -2149,7 +2149,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     bool repositionNeeded = false;
 
     // Have we been picking color?
-    if (state() == PickingColor) {
+    if (editorState == PickingColor) {
         setCursor(Qt::ArrowCursor);
         // Check if we are over another branch
         if (destinationBranch) {
@@ -2163,7 +2163,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been drawing a link?
-    if (state() == DrawingLink) {
+    if (editorState == DrawingLink) {
         setState(Neutral);
 
         TreeItem *seli;
@@ -2198,13 +2198,14 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been moving something?
-    if (state() == MovingObject || state() == MovingObjectTmpLinked) {
+    if (editorState == MovingObject || editorState == MovingObjectTmpLinked) {
         panningTimer->stop();
 
+        qDebug() << "ME::rel stopped moving  eState=" << editorState;
         int relinkedObjectsCount = tmpParentContainer->childBranches().count()  + tmpParentContainer->childImages().count();
 
         // Check if we have a destination and should relink
-        if (destinationBranch && state() != MovingObjectWithoutLinking) {
+        if (destinationBranch && editorState != MovingObjectWithoutLinking) {
             // Restore list of selected items later
 
             // Prepare relinking
@@ -2288,8 +2289,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     }
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
-                //tmpParentContainer->reposition(); // FIXME-0 only testing
-
             }   // Empty tmpParenContainer
 
             if (animationUse && animationContainers.count() > 0) {
@@ -2337,7 +2336,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         // maybe we moved View: set old cursor
         setCursor(Qt::ArrowCursor);
 
-    if (state() != EditingHeading)
+    if (editorState != EditingHeading)
         setState(Neutral); // Continue editing after double click!
 
     movingItems.clear();
@@ -2357,7 +2356,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
         QPointF p = mapToScene(e->pos());
         TreeItem *ti = findMapItem(p);
         if (ti) {
-            if (state() == EditingHeading)
+            if (editorState == EditingHeading)
                 editHeadingFinished();
             model->select(ti);
             BranchItem *selbi = model->getSelectedBranch();
@@ -2396,7 +2395,7 @@ void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-2 stop current animations
 void MapEditor::focusOutEvent(QFocusEvent *)
 {
     // qDebug()<<"ME::focusOutEvent"<<e->reason();
-    if (state() == EditingHeading)
+    if (editorState == EditingHeading)
         editHeadingFinished();
 }
 
