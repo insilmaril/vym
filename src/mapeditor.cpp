@@ -1747,6 +1747,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
                 movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
+                qDebug() << "ME::mousePressed offset=" << toS(movingObj_initialContainerOffset,0);
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1998,76 +1999,122 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     } // add to tmpParentContainer
 
-    // Check if we could link and position tmpParentContainer
     BranchContainer *targetBranchContainer = nullptr;
-    if (targetItem && targetItem->hasTypeBranch() &&
-            !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
 
-        Container::PointName targetPointName;   // FIXME-00 Relinking not yet with modifiers
-        Container::PointName tpcPointName;
-        QPointF linkOffset;                     // Distance for temporary link
-        if (e->modifiers() & Qt::ShiftModifier) {
-            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
-        } else if (e->modifiers() & Qt::ControlModifier) {
-            targetBranchContainer = ((BranchItem*)targetItem)->parentBranch()->getBranchContainer();
-        } else {
-            // No modifier used, temporary link to target itself
-            targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
-            if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
-                if (targetBranchContainer->branchCount() == 0) {
-                    // vertically centered besides target
-                    targetPointName = Container::RightCenter;
-                    tpcPointName = Container::LeftCenter;
-                    linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
-                } else {
-                    // Below target
-                    targetPointName = Container::BottomLeft;
-                    tpcPointName = Container::TopLeft;
-                }
-            } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
-                if (targetBranchContainer->branchCount() == 0) {
-                    // vertically centered besides target
-                    targetPointName = Container::LeftCenter;
-                    tpcPointName = Container::RightCenter;
-                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
-                } else {
-                    // Below target
-                    targetPointName = Container::BottomRight;
-                    tpcPointName = Container::TopRight;
-                }
-            } else {
-                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation";
-                targetPointName = Container::Center;
-                tpcPointName = Container::Center;   // FIXME-0 Could also be close to mid points or similar, e.g. MapCenter
-            }
-        }
-
-        Container *targetContainer = targetBranchContainer->getBranchesContainer();
-        if (!targetContainer)
-            targetContainer = targetBranchContainer;    // FIXME-0 if tBC has no children, assume whole tBC. What about bounded images, then?
-        
-        tmpParentContainer->setPos(
-                                    linkOffset + tmpParentContainer->mapToScene(
-                                                    tmpParentContainer->alignTo(
-                                                        tpcPointName, targetContainer, targetPointName)));
-        if (!tmpParentContainer->isTemporaryLinked())
-            // Link tmpParentContainer temporarily to targetBranchContainer
-
-            tmpParentContainer->setTemporaryLinked(targetBranchContainer);
-
-        repositionRequired = true;
-
-    } else {
-        // No target:   // FIXME-0 Consider orientation and horAlignment
-        // Since moved containers are relative to tmpParentContainer anyway, just move
-        // tmpParentContainer to pointer position:
+    if (editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier)) {
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
 
         if (tmpParentContainer->isTemporaryLinked())
             tmpParentContainer->unsetTemporaryLinked();
 
         updateUpLinksRequired = true;
-    }
+        setState(MovingObjectWithoutLinking);
+    } else {
+        // Check if we could link and position tmpParentContainer
+        if (targetItem && targetItem->hasTypeBranch() &&
+                !(editorState == MovingObjectWithoutLinking && (e->modifiers() & Qt::ShiftModifier))) {
+
+            setState(MovingObjectTmpLinked);
+
+            targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
+
+            Container *alignmentRefContainer = targetBranchContainer->getBranchesContainer();
+            Container::PointName targetPointName;
+            Container::PointName tpcPointName;
+            QPointF linkOffset;                     // Distance for temporary link
+
+            if (e->modifiers() & Qt::ShiftModifier) { // FIXME-0 For modifiers check ME::getBranchAbove/Below (maybe move to VM...)
+                targetBranchContainer = targetBranchContainer->parentBranchContainer();
+
+                if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
+                    // Shift modifier: Link right above 
+                    targetPointName = Container::TopRight;
+                    tpcPointName = Container::BottomLeft;
+                    linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
+                        // Shift modifier: Link left above 
+                        targetPointName = Container::TopLeft;
+                        tpcPointName = Container::BottomRight;
+                        linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                } else {
+                    qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation with shift modifier"; // FIXME-0
+                }
+            } else if (e->modifiers() & Qt::ControlModifier) {
+                targetBranchContainer = targetBranchContainer->parentBranchContainer();
+                if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
+                    // Shift modifier: Link right below 
+                    targetPointName = Container::BottomRight;
+                    tpcPointName = Container::TopLeft;
+                    linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
+                        // Shift modifier: Link left below 
+                        targetPointName = Container::BottomLeft;
+                        tpcPointName = Container::TopRight;
+                        linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                } else {
+                    qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation with shift modifier"; // FIXME-0
+                }
+            } else {
+                // No modifier used, temporary link to target itself
+                if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
+                    if (targetBranchContainer->branchCount() == 0) {
+                        // vertically centered besides target
+                        targetPointName = Container::RightCenter;
+                        tpcPointName = Container::LeftCenter;
+                        linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                    } else {
+                        // Below target
+                        targetPointName = Container::BottomLeft;
+                        tpcPointName = Container::TopLeft;
+                    }
+                } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
+                    if (targetBranchContainer->branchCount() == 0) {
+                        // vertically centered besides target
+                        targetPointName = Container::LeftCenter;
+                        tpcPointName = Container::RightCenter;
+                        linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                    } else {
+                        // Below target
+                        targetPointName = Container::BottomRight;
+                        tpcPointName = Container::TopRight;
+                    }
+                } else {
+                    qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation without modifier"; // FIXME-0
+                    targetPointName = Container::Center;
+                    tpcPointName = Container::Center;   // FIXME-0 Could also be close to mid points or similar, e.g. MapCenter
+                }
+            }
+
+            if (!alignmentRefContainer)
+                alignmentRefContainer = ((BranchItem*)targetItem)->getBranchContainer();    // FIXME-0 if tBC has no children, assume whole tBC. What about bounded images, then?
+
+            tmpParentContainer->setPos(
+                                        linkOffset + tmpParentContainer->mapToScene(
+                                                        tmpParentContainer->alignTo(
+                                                            tpcPointName, alignmentRefContainer, targetPointName)));
+            if (!tmpParentContainer->isTemporaryLinked()) {
+                // Link tmpParentContainer temporarily to targetBranchContainer
+
+                tmpParentContainer->setTemporaryLinked(targetBranchContainer);
+                setState(MovingObjectTmpLinked);
+            }
+
+            repositionRequired = true;
+
+        } else {
+            // No target:
+            // Since moved containers are relative to tmpParentContainer anyway, just move
+            setState(MovingObject);   // FIXME-0 Consider orientation and horAlignment while moving
+
+            // tmpParentContainer to pointer position:
+            tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
+
+            if (tmpParentContainer->isTemporaryLinked())
+                tmpParentContainer->unsetTemporaryLinked();
+
+            updateUpLinksRequired = true;
+        }
+    } // Not in state MovingObjectWithoutLinking
 
     // Update parent containers
     foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
@@ -2118,6 +2165,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
         repositionRequired = true;
+        qDebug() << "ME::mO  orient changed!  offset=" << movingObj_initialContainerOffset;   // FIXME-2
+
+        // FIXME-000 this helps a bit, but is the "other" end of selected BC. ANd does not work yet with main branches
+        movingObj_initialContainerOffset.setX( - movingObj_initialContainerOffset.x());
+        tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
+
     }
 
     if (repositionRequired)
@@ -2201,7 +2254,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     if (editorState == MovingObject || editorState == MovingObjectTmpLinked) {
         panningTimer->stop();
 
-        qDebug() << "ME::rel stopped moving  eState=" << editorState;
+        qDebug() << "ME::rel stopped moving  eState=" << editorState << " dst="<<destinationBranch;
         int relinkedObjectsCount = tmpParentContainer->childBranches().count()  + tmpParentContainer->childImages().count();
 
         // Check if we have a destination and should relink
@@ -2265,15 +2318,15 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                 // Empty the tmpParentContainer, which is used for moving
                 // Updating the stacking order also resets the original parents
-                // qDebug() << "ME::mouseReleased, empty tPC";
+                qDebug() << "ME::mouseReleased, empty tPC";
                 foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
 
-                    // Relink container to original parent container
-                    // and keep (!) current absolute position
                     if (bc->isAnimated()) 
                         bc->stopAnimation();
 
+                    // Relink container to original parent container
+                    // and keep (!) current absolute position
                     bi->updateContainerStackingOrder();
 
                     // Floating layout or mapcenter moved, saveState

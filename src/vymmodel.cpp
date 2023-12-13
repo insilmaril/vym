@@ -3633,7 +3633,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
             QString redoCom;
 
             if (pbi == rootItem)
-                undoCom = "detach ()";  // FIXME-0 test
+                undoCom = "detach ()";  // FIXME-0 Position is not saved when relinking to rootItem
             else
                 undoCom = "relinkTo (\"" + preParString + "\"," + preNum + ")";
             redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
