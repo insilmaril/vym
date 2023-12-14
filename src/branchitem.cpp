@@ -593,8 +593,8 @@ void BranchItem::addToBranchesContainer(BranchContainer *bc)
 
 void BranchItem::addToImagesContainer(ImageContainer *ic)
 {
-    // Keep scene position while relinking image container, so pass "true"
-    branchContainer->addToImagesContainer(ic, true);
+    // Keep scene position while relinking image container
+    branchContainer->addToImagesContainer(ic);
 }
 
 void BranchItem::repositionContainers()

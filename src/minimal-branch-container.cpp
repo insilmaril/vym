@@ -62,11 +62,6 @@ MinimalBranchContainer::Orientation MinimalBranchContainer::getOrientation()
 void MinimalBranchContainer::setTemporaryLinked(BranchContainer *tpc)
 {
     tmpLinkedParentContainer = tpc;
-        /*
-    if (containerType != TmpParent) {
-        updateUpLink(); // FIXME-0 needed?
-    }
-        */
 }
 
 void MinimalBranchContainer::unsetTemporaryLinked()
@@ -160,22 +155,19 @@ void MinimalBranchContainer::createImagesContainer()
     imagesContainer->setLayout(imagesContainerLayout);
 }
 
-void MinimalBranchContainer::addToImagesContainer(Container *c, bool keepScenePos)
+void MinimalBranchContainer::addToImagesContainer(Container *c)
 {
     if (!imagesContainer) {
         createImagesContainer();
-        /* FIXME-2 imagesContainer styles should be updated in Container c, but ImageContainer has no updateStyles() yet
-        if (branchItem)
-            updateStyles(RelinkBranch);
-        */
+
         imagesContainer->setParentItem(this);   // Different for BranchItem!
     }
 
     QPointF sp = c->scenePos();
     imagesContainer->addContainer(c, Z_IMAGE);
 
-    if (keepScenePos)
-        c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
+    // For TmpParentContainer keep position
+    c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
 }
 
 Container* MinimalBranchContainer::getImagesContainer()

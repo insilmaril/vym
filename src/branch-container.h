@@ -56,7 +56,7 @@ class BranchContainer : public MinimalBranchContainer, public SelectableContaine
   public:
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
     void createImagesContainer();
-    void addToImagesContainer(Container *c, bool keepScenePos = false);
+    void addToImagesContainer(Container *c);
     Container* getImagesContainer();
 
     HeadingContainer* getHeadingContainer();

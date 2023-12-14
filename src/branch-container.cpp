@@ -477,7 +477,7 @@ void BranchContainer::createImagesContainer()
         innerContainer->addContainer(imagesContainer);
 }
 
-void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos) // FIXME-00 keepSP required?
+void BranchContainer::addToImagesContainer(Container *c)
 {
     if (!imagesContainer) {
         createImagesContainer();
@@ -490,8 +490,7 @@ void BranchContainer::addToImagesContainer(Container *c, bool keepScenePos) // F
     QPointF sp = c->scenePos();
     imagesContainer->addContainer(c, Z_IMAGE);
 
-    if (keepScenePos)
-        c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
+    c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
 }
 
 Container* BranchContainer::getImagesContainer()

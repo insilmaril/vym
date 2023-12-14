@@ -526,6 +526,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                                             refPointName)));
                             break;
                         case BranchContainer::RightOfParent:
+                        default:
                             if (!bc_prev)
                                 refPointName = Container::TopLeft;
                             else {
@@ -536,9 +537,6 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                                             Container::TopLeft,
                                             refBC,
                                             refPointName)));
-                            break;
-                        default:
-                            // FIXME-000 not implemented yet, e.g. MCs
                             break;
                     }
                     bc_prev = bc;

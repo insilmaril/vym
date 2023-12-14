@@ -49,7 +49,7 @@ class MinimalBranchContainer : public Container {
 
     int imageCount();
     void createImagesContainer();
-    void addToImagesContainer(Container *c, bool keepScenePos = false);
+    void addToImagesContainer(Container *c);
     Container* getImagesContainer();
 
     // Convenience functions to access children
