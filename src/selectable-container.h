@@ -3,7 +3,7 @@
 
 //#include "branch-container.h"
 //#include "container.h"
-#include "minimal-branch-container.h"
+#include "branch-container-base.h"
 
 class BranchContainer;
 

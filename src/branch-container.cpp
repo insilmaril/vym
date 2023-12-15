@@ -233,11 +233,6 @@ void BranchContainer::addToBranchesContainer(Container *c)
     updateBranchesContainerLayout();
 }
 
-Container* BranchContainer::getBranchesContainer()
-{
-    return branchesContainer;
-}
-
 void BranchContainer::updateImagesContainer()
 {
     if (imagesContainer && imagesContainer->childItems().count() == 0) {
@@ -491,11 +486,6 @@ void BranchContainer::addToImagesContainer(Container *c)
     imagesContainer->addContainer(c, Z_IMAGE);
 
     c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
-}
-
-Container* BranchContainer::getImagesContainer()
-{
-    return imagesContainer;
 }
 
 HeadingContainer* BranchContainer::getHeadingContainer()
@@ -1127,17 +1117,6 @@ QString BranchContainer::saveFrame()
     return r;
 }
 
-void BranchContainer::updateBranchesContainerLayout()
-{
-    // Set container layouts
-    if (branchItem && branchesContainerAutoLayout)
-        setBranchesContainerLayout(
-            branchItem->mapDesign()->branchesContainerLayout(
-                branchItem->depth()));
-    else
-        setBranchesContainerLayout(branchesContainerLayout);
-}
-
 void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
@@ -1238,6 +1217,17 @@ void BranchContainer::updateVisuals()
         systemFlagRowContainer->updateActiveFlagContainers(
             TIactiveFlagUids, systemFlagsMaster);
     }
+}
+
+void BranchContainer::updateBranchesContainerLayout()
+{
+    // Set container layouts
+    if (branchItem && branchesContainerAutoLayout)
+        setBranchesContainerLayout(
+            branchItem->mapDesign()->branchesContainerLayout(
+                branchItem->depth()));
+    else
+        setBranchesContainerLayout(branchesContainerLayout);
 }
 
 void BranchContainer::reposition()

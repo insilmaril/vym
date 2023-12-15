@@ -1,12 +1,11 @@
-#ifndef MINIMAL_BRANCH_CONTAINER_H
-#define MINIMAL_BRANCH_CONTAINER_H
+#ifndef BRANCH_CONTAINER_BASE_H
+#define BRANCH_CONTAINER_BASE_H
 
 #include <QBrush>
 
-// #include "branch-container.h"
 #include "container.h"
 
-class MinimalBranchContainer : public Container {
+class BranchContainerBase : public Container {
   public:
     /*! Orientation relative to parent branch container */
     enum Orientation {
@@ -15,8 +14,8 @@ class MinimalBranchContainer : public Container {
         RightOfParent
     };
 
-    MinimalBranchContainer ();
-    virtual ~MinimalBranchContainer();
+    BranchContainerBase ();
+    virtual ~BranchContainerBase();
     virtual void init();
 
     void setOrientation(const Orientation &);
@@ -44,12 +43,12 @@ class MinimalBranchContainer : public Container {
      */
     bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
     bool hasFloatingImagesLayout(); //! Checks, if children images are or should be floating
-    void addToBranchesContainer(Container *c);
+    virtual void addToBranchesContainer(Container *c);
     Container* getBranchesContainer();
 
     int imageCount();
     void createImagesContainer();
-    void addToImagesContainer(Container *c);
+    virtual void addToImagesContainer(Container *c);
     Container* getImagesContainer();
 
     // Convenience functions to access children
@@ -68,11 +67,11 @@ class MinimalBranchContainer : public Container {
     Container::Layout getBranchesContainerLayout();
     void setBranchesContainerHorizontalAlignment(const Container::HorizontalAlignment &valign);
 
-  private:
-    void updateBranchesContainerLayout();
+  protected:
+    virtual void updateBranchesContainerLayout();
 
   public:
-    void reposition();
+    virtual void reposition();
 
   protected:
     // Save layout, alignment and brush of children containers 

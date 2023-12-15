@@ -1,6 +1,7 @@
 #include <QDebug>
 
 #include "container.h"
+#include "tmp-parent-container.h"
 
 #include "branchitem.h"
 #include "misc.h"
@@ -502,7 +503,7 @@ void Container::reposition()    // FIXME-3 Remove comment code used for debuggin
                 // Size is calculated already in MapEditor:
 
                 // Align branches
-                MinimalBranchContainer* tpc = (MinimalBranchContainer*)this;
+                TmpParentContainer* tpc = (TmpParentContainer*)this;
                 QList <BranchContainer*> branches = tpc->childBranches();
 
                 Container::PointName refPointName;

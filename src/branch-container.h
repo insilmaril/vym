@@ -14,7 +14,7 @@ class LinkContainer;
 
 class LinkObj;
 
-class BranchContainer : public MinimalBranchContainer, public SelectableContainer {
+class BranchContainer : public BranchContainerBase, public SelectableContainer {
   public:
     BranchContainer(
             QGraphicsScene *scene,
@@ -45,8 +45,6 @@ class BranchContainer : public MinimalBranchContainer, public SelectableContaine
     bool isOriginalFloating();
 
     void addToBranchesContainer(Container *c);
-    Container* getBranchesContainer();
-
 
   private:
     void updateImagesContainer();       //! Remove unused containers and add needed ones

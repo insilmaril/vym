@@ -104,7 +104,7 @@ MapEditor::MapEditor(VymModel *vm)
     setAcceptDrops(true);
 
     // Container used for temporary moving and relinking branches
-    tmpParentContainer = new MinimalBranchContainer ();
+    tmpParentContainer = new TmpParentContainer ();
     mapScene->addItem(tmpParentContainer);
     tmpParentContainer->setName("tmpParentContainer");
 
@@ -1949,6 +1949,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     // could be moved with additional containers keeping their positions
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
+                    qDebug() << "ME::mO adding to tpc: " << bc->info();
                     tmpParentContainer->addToBranchesContainer(bc);
 
                     // Save position of children branches in case we only want to
@@ -1994,7 +1995,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             else
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
-
+        qDebug() << "ME::mO filled tPC. branch count=" << tmpParentContainer->childBranches().count();
     } // add to tmpParentContainer
 
     BranchContainer *targetBranchContainer = nullptr;
@@ -2132,7 +2133,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
     }
 
-    bc_first = tmpParentContainer->childBranches().first();
+    if (tmpParentContainer->childBranches().count() > 0)
+        // If ME::moveObject is called AFTER tPC has been filled previously, 
+        // bc_first still might be unset here
+        bc_first = tmpParentContainer->childBranches().first();
 
     // Set orientation
     BranchContainer::Orientation newOrientation;
@@ -2165,7 +2169,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             newOrientation = tmpParentContainer->getOrientation();
     }
 
-    // Reposition if required
+    // Reposition if required   // FIXME-0000000 Only works when moving BACK to ORIGINAL side of parent after tmpLinking on other side
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);

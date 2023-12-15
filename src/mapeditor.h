@@ -6,7 +6,7 @@
 #include <QLineEdit>
 #include <QPropertyAnimation>
 
-#include "minimal-branch-container.h"
+#include "tmp-parent-container.h"
 #include "settings.h"
 #include "vymmodel.h"
 #include "xlink.h"
@@ -245,7 +245,7 @@ class MapEditor : public QGraphicsView {
     QList <TreeItem*> movingItems;              // selected items which are currently moved
     QPointF movingObj_initialScenePos;          // coord when button was pressed
     QPointF movingObj_initialContainerOffset;   // offset from above coordinates to object
-    MinimalBranchContainer *tmpParentContainer;
+    TmpParentContainer *tmpParentContainer;
 
     QPointF contextMenuPos; // position where context event was triggered
 
