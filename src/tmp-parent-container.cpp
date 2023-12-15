@@ -30,14 +30,6 @@ void TmpParentContainer::init()
     containerType = Container::TmpParent;
 
     setLayout(Container::FloatingReservedSpace);
-
-    branchesContainerAutoLayout = false;
-    branchesContainerLayout = Vertical;
-
-    imagesContainerAutoLayout = false;
-    imagesContainerLayout = FloatingFree;
-
-    horizontalDirection = Container::LeftToRight;
 }
 
 void TmpParentContainer::addToBranchesContainer(Container *c)
@@ -52,10 +44,15 @@ void TmpParentContainer::addToBranchesContainer(Container *c)
     QPointF sp = c->scenePos();
     branchesContainer->addContainer(c);
 
-    updateBranchesContainerLayout();
-
     // For TmpParentContainer keep position
     c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
+}
+
+void TmpParentContainer::createImagesContainer()
+{
+    imagesContainer = new Container ();
+    imagesContainer->setContainerType(ImagesContainer);
+    imagesContainer->setLayout(Container::FloatingFree);
 }
 
 void TmpParentContainer::addToImagesContainer(Container *c)
@@ -73,13 +70,6 @@ void TmpParentContainer::addToImagesContainer(Container *c)
     c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
 }
 
-
-void TmpParentContainer::updateBranchesContainerLayout()
-{
-    // Set container layouts
-    setBranchesContainerLayout(branchesContainerLayout);
-}
-
 void TmpParentContainer::reposition()
 {
     // qdbg() << ind() << "TPC::reposition tpc=" <<      info() << "  orient=" << orientation;
@@ -95,12 +85,12 @@ void TmpParentContainer::reposition()
         case LeftOfParent:
             //qDebug() << "TPC::repos tPC left of parent";
             setHorizontalDirection(RightToLeft);
-            setBranchesContainerHorizontalAlignment(AlignedRight);
+            branchesContainer->setHorizontalAlignment(AlignedRight);
             break;
         case RightOfParent:
             //qDebug() << "TPC::repos tPC right of parent";
             setHorizontalDirection(LeftToRight);
-            setBranchesContainerHorizontalAlignment(AlignedLeft);
+            branchesContainer->setHorizontalAlignment(AlignedLeft);
             break;
         case UndefinedOrientation:
             qWarning() << "TPC::reposition tPC - UndefinedOrientation in " << info();

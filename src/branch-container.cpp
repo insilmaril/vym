@@ -58,6 +58,7 @@ void BranchContainer::init()
     setLayout(Container::Horizontal);
 
     imagesContainerAutoLayout = true;
+
     branchesContainerAutoLayout = true;
 
     scrollOpacity = 1;
@@ -790,6 +791,17 @@ Container::Layout BranchContainer::getImagesContainerLayout()
     return imagesContainerLayout;
 }
 
+bool BranchContainer::hasFloatingImagesLayout()
+{
+    if (imagesContainer)
+        return imagesContainer->hasFloatingLayout();
+
+    if (imagesContainerLayout == FloatingBounded || imagesContainerLayout == FloatingFree)
+        return true;
+    else
+        return false;
+}
+
 void BranchContainer::setBranchesContainerLayout(const Layout &layoutNew)
 {
     branchesContainerLayout = layoutNew;
@@ -803,6 +815,19 @@ Container::Layout BranchContainer::getBranchesContainerLayout()
 {
     return branchesContainerLayout;
 }
+
+bool BranchContainer::hasFloatingBranchesLayout()
+{
+    if (branchesContainer)
+        return branchesContainer->hasFloatingLayout();
+
+    if (branchesContainerLayout == FloatingBounded || branchesContainerLayout == FloatingFree)
+        return true;
+    else
+        return false;
+}
+
+
 
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &a)
 {
@@ -1117,6 +1142,18 @@ QString BranchContainer::saveFrame()
     return r;
 }
 
+void BranchContainer::updateBranchesContainerLayout()
+{
+    // Set container layouts
+    if (branchItem && branchesContainerAutoLayout)
+        setBranchesContainerLayout(
+            branchItem->mapDesign()->branchesContainerLayout(
+                branchItem->depth()));
+    else
+        setBranchesContainerLayout(branchesContainerLayout);
+}
+
+
 void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 {
     // Note: updateStyles() is never called for TmpParent!
@@ -1217,17 +1254,6 @@ void BranchContainer::updateVisuals()
         systemFlagRowContainer->updateActiveFlagContainers(
             TIactiveFlagUids, systemFlagsMaster);
     }
-}
-
-void BranchContainer::updateBranchesContainerLayout()
-{
-    // Set container layouts
-    if (branchItem && branchesContainerAutoLayout)
-        setBranchesContainerLayout(
-            branchItem->mapDesign()->branchesContainerLayout(
-                branchItem->depth()));
-    else
-        setBranchesContainerLayout(branchesContainerLayout);
 }
 
 void BranchContainer::reposition()

@@ -16,11 +16,6 @@ BranchContainerBase::BranchContainerBase()
     init();
 }
 
-BranchContainerBase::~BranchContainerBase()   // FIXME-2 use default
-{
-    //qDebug() << "* Destr BranchContainerBase" << getName() << this;
-}
-
 void BranchContainerBase::init()
 {
     // General defaults, also used by BranchContainer
@@ -39,12 +34,6 @@ void BranchContainerBase::init()
     containerType = Container::TmpParent;
 
     setLayout(Container::FloatingReservedSpace);
-
-    branchesContainerAutoLayout = false;
-    branchesContainerLayout = Vertical;
-
-    imagesContainerAutoLayout = false;
-    imagesContainerLayout = FloatingFree;
 
     horizontalDirection = Container::LeftToRight;
 }
@@ -90,29 +79,6 @@ int BranchContainerBase::branchCount()
         return branchesContainer->childItems().count();
 }
 
-bool BranchContainerBase::hasFloatingBranchesLayout()
-{
-    if (branchesContainer)
-        return branchesContainer->hasFloatingLayout();
-
-    if (branchesContainerLayout == FloatingBounded || branchesContainerLayout == FloatingFree)
-        return true;
-    else
-        return false;
-}
-
-bool BranchContainerBase::hasFloatingImagesLayout()
-{
-    if (imagesContainer)
-        return imagesContainer->hasFloatingLayout();
-
-    if (imagesContainerLayout == FloatingBounded || imagesContainerLayout == FloatingFree)
-        return true;
-    else
-        return false;
-}
-
-
 void BranchContainerBase::addToBranchesContainer(Container *c) {}
 
 Container* BranchContainerBase::getBranchesContainer()
@@ -128,15 +94,7 @@ int BranchContainerBase::imageCount()
         return imagesContainer->childItems().count();
 }
 
-void BranchContainerBase::createImagesContainer()
-{
-    // imagesContainer is created when images are added to branch
-    // The destructor of ImageItem calls 
-    // updateChildrenStructure() in parentBranch()
-    imagesContainer = new Container ();
-    imagesContainer->setContainerType(ImagesContainer);
-    imagesContainer->setLayout(imagesContainerLayout);
-}
+void BranchContainerBase::createImagesContainer() {}
 
 void BranchContainerBase::addToImagesContainer(Container *c) {}
 
@@ -169,50 +127,6 @@ QList <ImageContainer*> BranchContainerBase::childImages()
     return list;
 }
 
-void BranchContainerBase::setLayout(const Layout &l)
-{
-    if (containerType != Branch && containerType != TmpParent)
-        qWarning() << "BranchContainerBase::setLayout (...) called for non-branch: " << info();
-    Container::setLayout(l);
-}
-
-void BranchContainerBase::setImagesContainerLayout(const Layout &ltype)
-{
-    if (imagesContainerLayout == ltype)
-        return;
-
-    imagesContainerLayout = ltype;
-
-    if (imagesContainer)
-        imagesContainer->setLayout(imagesContainerLayout);
-}
-
-Container::Layout BranchContainerBase::getImagesContainerLayout()
-{
-    return imagesContainerLayout;
-}
-
-void BranchContainerBase::setBranchesContainerLayout(const Layout &layoutNew)
-{
-    branchesContainerLayout = layoutNew;
-
-    if (branchesContainer)
-        branchesContainer->setLayout(branchesContainerLayout);
-}
-
-Container::Layout BranchContainerBase::getBranchesContainerLayout()
-{
-    return branchesContainerLayout;
-}
-
-void BranchContainerBase::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &a)
-{
-    branchesContainerHorizontalAlignment = a;
-    if (branchesContainer)
-        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
-}
-
-void BranchContainerBase::updateBranchesContainerLayout() {}
 
 void BranchContainerBase::reposition() {}
 

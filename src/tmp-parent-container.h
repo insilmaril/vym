@@ -9,10 +9,9 @@ class TmpParentContainer : public BranchContainerBase {
     virtual void init();
 
     virtual void addToBranchesContainer(Container *c);
-    virtual void addToImagesContainer(Container *c);
 
-  protected:
-    virtual void updateBranchesContainerLayout();
+    virtual void createImagesContainer();
+    virtual void addToImagesContainer(Container *c);
 
   public:
     virtual void reposition();

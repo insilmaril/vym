@@ -55,7 +55,6 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
     void createImagesContainer();
     void addToImagesContainer(Container *c);
-    Container* getImagesContainer();
 
     HeadingContainer* getHeadingContainer();
     LinkContainer* getLinkContainer();
@@ -81,10 +80,12 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     bool imagesContainerAutoLayout;
     void setImagesContainerLayout(const Layout &l);
     Container::Layout getImagesContainerLayout();
+    bool hasFloatingImagesLayout(); //! Checks, if children images are or should be floating
 
     bool branchesContainerAutoLayout;
     void setBranchesContainerLayout(const Layout &l);
     Container::Layout getBranchesContainerLayout();
+    bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
     void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
     void setBranchesContainerBrush(const QBrush &b);
 
