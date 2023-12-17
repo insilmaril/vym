@@ -3633,7 +3633,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
             QString redoCom;
 
             if (pbi == rootItem)
-                undoCom = "detach ()";  // FIXME-0 Position is not saved when relinking to rootItem
+                undoCom = "detach ()";  // FIXME-1 Position is not saved when relinking to rootItem
             else
                 undoCom = "relinkTo (\"" + preParString + "\"," + preNum + ")";
             redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
@@ -5417,7 +5417,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
                           .arg(pos_new_str));
             c->setPos(pos_new);
             */
-            qDebug() << "VM::setPos - no originalPos available..."; // FIXME-00 only used in scripting...
+            qDebug() << "VM::setPos - no originalPos available..."; // FIXME-1 only used in scripting...
         }
     }
     reposition();
