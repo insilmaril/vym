@@ -30,17 +30,14 @@ void TmpParentContainer::init()
     containerType = Container::TmpParent;
 
     setLayout(Container::FloatingReservedSpace);
+
+    branchesContainer = new Container ();
+    branchesContainer->setContainerType(Container::BranchesContainer);
+    branchesContainer->setParentItem(this); // Different for BranchItem!
 }
 
 void TmpParentContainer::addToBranchesContainer(Container *c)
 {
-    if (!branchesContainer) {
-        // Create branchesContainer before adding to it
-        branchesContainer = new Container ();
-        branchesContainer->setContainerType(Container::BranchesContainer);
-        branchesContainer->setParentItem(this); // Different for BranchItem!
-    }
-
     QPointF sp = c->scenePos();
     branchesContainer->addContainer(c);
 
@@ -72,7 +69,7 @@ void TmpParentContainer::addToImagesContainer(Container *c)
 
 void TmpParentContainer::reposition()
 {
-    // qdbg() << ind() << "TPC::reposition tpc=" <<      info() << "  orient=" << orientation;
+    qdbg() << ind() << "TPC::reposition tpc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();
@@ -83,12 +80,12 @@ void TmpParentContainer::reposition()
 
     switch (orientation) {
         case LeftOfParent:
-            //qDebug() << "TPC::repos tPC left of parent";
+            qDebug() << "TPC::repos tPC left of parent";
             setHorizontalDirection(RightToLeft);
             branchesContainer->setHorizontalAlignment(AlignedRight);
             break;
         case RightOfParent:
-            //qDebug() << "TPC::repos tPC right of parent";
+            qDebug() << "TPC::repos tPC right of parent";
             setHorizontalDirection(LeftToRight);
             branchesContainer->setHorizontalAlignment(AlignedLeft);
             break;
