@@ -147,14 +147,12 @@ QString Container::info (const QString &prefix)
 {
     return prefix
         + getName()
-        // + QString(" zPos: %1").arg(zPos)
-        //+ QString(" horDirection: %1").arg(horizontalDirection)
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
-        //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
+        + QString(" scenePos: %1").arg(toS(scenePos(), 0))
         + QString(" pos: %1").arg(toS(pos(), 0))
-        + QString(" rect: %1").arg(toS(rect(), 0))
-        + QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
+        //+ QString(" rect: %1").arg(toS(rect(), 0))
+        //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
         //+ QString(" Layout: %1").arg(getLayoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
@@ -301,10 +299,10 @@ QString Container::getLayoutString()
 bool Container::isFloating()
 {
     Container *pc = parentContainer();
-    if (pc && pc->hasFloatingLayout())
-        return true;
+    if (pc)
+        return pc->hasFloatingLayout();
     else
-        return false;
+        return true;
 }
 
 bool Container::hasFloatingLayout() {

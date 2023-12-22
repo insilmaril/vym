@@ -113,12 +113,19 @@ void BranchContainer::init()
 
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
+
+    setPen(QPen(Qt::blue)); // Uncomment for testing
 }
 
 BranchContainer* BranchContainer::parentBranchContainer()
 {
-    if (tmpLinkedParentContainer)
+    if (movingStateInt == TemporaryLinked && tmpLinkedParentContainer)
         return tmpLinkedParentContainer;
+
+    if (movingStateInt == Moving)
+        // Parent is tmpParentContainer, which technically is not a
+        // BranchContainer, so don't return it here
+        return nullptr;
 
     if (!branchItem)
         return nullptr;
@@ -145,11 +152,16 @@ void BranchContainer::setOriginalOrientation()
     originalParentBranchContainer = parentBranchContainer();
     if (parentItem()) {
         /*  FIXME-2 BC::setOriginalOrientation
+        */
         qDebug() << "BC:setOrient of " << info();
         qDebug() << "        parent: " << parentBranchContainer();
-        qDebug() << "        parent: " << parentBranchContainer()->info() <<originalParentPos;
-        */
-        originalParentPos = parentBranchContainer()->downLinkPos();
+        if (parentBranchContainer())
+            qDebug() << "        parent: " << parentBranchContainer()->info() <<originalParentPos;
+
+        if (parentBranchContainer())
+            originalParentPos = parentBranchContainer()->downLinkPos();
+        else
+            originalParentPos = pos();
     }
 }
 
@@ -1258,61 +1270,42 @@ void BranchContainer::updateVisuals()
 
 void BranchContainer::reposition()
 {
-    // Abreviation for depth
-    uint depth;
-    if (branchItem)
-        depth = branchItem->depth();
-    else
-        // tmpParentContainer has no branchItem
-        depth = 0;
-
-    // Set orientation based on depth and if we are floating around or
+    // Set orientation based layout or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    // qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
+    //qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
     /*
-    if (pbc)
+    if (pbc) {
         qdbg() << ind() << "          pbc=" << pbc->info();
-    else
+        qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
+    } else
         qdbg() << ind() << "          pbc=0";
-    qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
+    qdbg() << ind() << "        state=" << movingStateInt;
     */
 
-
-    if (!pbc)
-        // I am a (not moving) mapCenter
-        orientation = UndefinedOrientation;
+    if (movingStateInt == Moving)
+        // I am currently attached to tmpParentContainer
+        orientation = ((BranchContainerBase*)(parentContainer()->parentContainer()))->getOrientation();
     else {
-        // "regular repositioning", not currently moved in MapEditor
-        if (!pbc)
-            orientation = UndefinedOrientation;
-        else {
-            if (pbc->orientation == UndefinedOrientation) {
-                // Parent is mapCenter
-                // use relative position to determine orientation
-
-                if (parentContainer()->hasFloatingLayout()) {
-                    if (pos().x() >= 0)
-                        orientation = RightOfParent;
-                    else
-                        orientation = LeftOfParent;
-                    /* FIXME-2 remove comments
-                    qdbg() << ind() << "BC: Setting neworient " << orientation << " in: " << info();
-                    qdbg() << ind() << "    pc: " << parentContainer()->info();
-                    */
-                } else {
-                    // Special case: Mainbranch in horizontal or vertical layout
+        BranchContainer *pbc = parentBranchContainer();
+        // pbc is now either the temporary parent or the original one, depending on MovingState
+        if (pbc) {
+            if (isFloating()) {
+                if (pos().x() > 0)
                     orientation = RightOfParent;
-                }
-            } else {
-                // Set same orientation as parent
-                setOrientation(pbc->orientation);
-                //qdbg() << ind() << "BC: Setting parentorient " << orientation << " in: " << info();
-            }
-        }
+                else
+                    orientation = LeftOfParent;
+            } else
+                orientation = pbc->getOrientation();
+        } else
+            orientation = BranchContainerBase::UndefinedOrientation;
     }
 
     // Settings depending on depth
+    uint depth = 0;
+    if (branchItem)
+        depth = branchItem->depth();
+
     if (depth == 0)
     {
         // MapCenter
@@ -1356,7 +1349,7 @@ void BranchContainer::reposition()
     if (depth == 0)
         updateUpLink();
 
-    // Update XLinks, but not for tmpParentContainer (has no branchItem!)
+    // Update XLinks
     if (branchItem) {
         XLinkObj *xlo;
         for (int i = 0; i < branchItem->xlinkCount(); ++i) {

@@ -1934,12 +1934,19 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             // The item structure in VymModel remaines untouched so far,
             // only containers will be reparented temporarily!
             if (ti->hasTypeBranch()) {
-                bc = ((BranchItem*)ti)->getBranchContainer();
+                BranchItem *bi = (BranchItem*)ti;
+                bc = bi->getBranchContainer();
 
                 if (!bc_first) {
-                    // Initially set orientation of tmpParentContainer to first BranchContainer
-                    tmpParentContainer->setOrientation(bc->getOrientation());
                     bc_first = bc;
+
+                    // Initially set orientation of tmpParentContainer to first BranchContainer
+                    if (bc->getOrientation() == BranchContainerBase::UndefinedOrientation) {
+                        // Orientation undefined for MapCenters, assume RightOfParent
+                        qDebug() << "ME::mO bc->orient=Undefined for " << bc->info();
+                        tmpParentContainer->setOrientation(BranchContainerBase::RightOfParent);
+                    } else
+                        tmpParentContainer->setOrientation(bc->getOrientation());
                 }
 
                 if (tmpParentContainer->branchCount() == 0 || 
@@ -2080,14 +2087,17 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (!targetRefContainer)
             targetRefContainer = ((BranchItem*)targetItem)->getBranchContainer();    // FIXME-0 if tBC has no children, assume whole tBC. What about bounded images, then?
 
+        // Align tPC to point in target, which has been selected above
         tmpParentContainer->setPos(
                                     linkOffset + movingRefContainer->mapToScene(
                                                     movingRefContainer->alignTo(
                                                         movingRefPointName, targetRefContainer, targetRefPointName)));
-        if (!tmpParentContainer->isTemporaryLinked()) {
+
+        // Set states of MapEditor and tPC
+        if (tmpParentContainer->movingState() != BranchContainerBase::TemporaryLinked) {
             // Link tmpParentContainer temporarily to targetBranchContainer
 
-            tmpParentContainer->setTemporaryLinked(targetBranchContainer);
+            tmpParentContainer->setMovingState(BranchContainerBase::TemporaryLinked, targetBranchContainer);
             setState(MovingObjectTmpLinked);
         }
 
@@ -2095,8 +2105,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     } // tmp linking to target
     else {
-        // No target: // FIXME-000 Consider orientation and horAlignment while moving
-
+        // Update state of MapEditor
         if (mainWindow->getModMode() == Main::ModModeMoveObject &&
                 e->modifiers() & Qt::ShiftModifier)
             setState(MovingObjectWithoutLinking);
@@ -2106,25 +2115,25 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // tmpParentContainer to pointer position:
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
 
-        if (tmpParentContainer->isTemporaryLinked())
-            tmpParentContainer->unsetTemporaryLinked();
+        if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
+            tmpParentContainer->setMovingState(BranchContainerBase::Moving);
 
         updateUpLinksRequired = true;
     }
 
-    // Update parent containers
+    // Update children branch containers (for updating links later)
     foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
-        if (tmpParentContainer->isTemporaryLinked())
-            bc->setTemporaryLinked(targetBranchContainer);
+        if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
+            bc->setMovingState(BranchContainerBase::TemporaryLinked, targetBranchContainer);
         else
-            bc->unsetTemporaryLinked();
+            bc->setMovingState(BranchContainerBase::Moving);
     }
 
     // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)   // FIXME-2 not only MCs, but all floating branches
     if (e->modifiers() & Qt::ControlModifier) {
         foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
             BranchItem *bi = bc->getBranchItem();
-            if (bi->depth() == 0 && bc->hasFloatingBranchesLayout()) {
+            if (bi->depth() >= 0 && bc->hasFloatingBranchesLayout()) {
                 foreach(BranchContainer *bc2, bc->childBranches()) {
                     bc2->setPos( bc->sceneTransform().inverted().map(bc2->getOriginalPos()));
                     bc2->updateUpLink();
@@ -2143,9 +2152,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     Container *tpc_bc = tmpParentContainer->getBranchesContainer();
     if (targetBranchContainer && tpc_bc && !tpc_bc->childItems().contains(targetBranchContainer)) {
         // tmpParentContainer has children and these do NOT contain targetBranchContainer
-        if (targetItem->depth() == 0) {
-            // Relinking to MapCenter
-            if (tmpParentContainer->pos().x() > targetBranchContainer->pos().x())   // FIXME-00000 Use p_event instead of tPC.x()
+        if (targetBranchContainer->hasFloatingBranchesLayout()) {
+            if (p_event.x() > targetBranchContainer->pos().x())
                 newOrientation = BranchContainer::RightOfParent;
             else
                 newOrientation = BranchContainer::LeftOfParent;
@@ -2159,27 +2167,23 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (bc_first) {
             // Set new orientation for branches (not mapCenters): Consider pointer pos relative to first moving branch
             //if (tmpParentContainer->getOrientation() == BranchContainer::LeftOfParent)
-                if (p_event.x() > bc_first->getOriginalParentPos().x())     // FIXME-00000   bc_first is moving, must not be used here!
+                if (p_event.x() > bc_first->getOriginalParentPos().x())
                     newOrientation = BranchContainer::RightOfParent;
                 else
                     newOrientation = BranchContainer::LeftOfParent;
-            qDebug() << "ME::mO::noTarget  " << toS(p_event,0) << toS(bc_first->getOriginalParentPos(),0) << " newOri=" << newOrientation;
         } else
             // No target and no branch moving. No orientation change.
             newOrientation = tmpParentContainer->getOrientation();
     }
 
-    // Reposition if required   // FIXME-0000000 Only works when moving BACK to ORIGINAL side of parent after tmpLinking on other side
+    // Reposition if required
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
         repositionRequired = true;
-        qDebug() << "ME::mO  orient changed!  offset=" << movingObj_initialContainerOffset;   // FIXME-2
 
-        // FIXME-000 this helps a bit, but is the "other" end of selected BC. And does not work yet with main branches
         movingObj_initialContainerOffset.setX( - movingObj_initialContainerOffset.x());
         tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
-
     }
 
     if (repositionRequired)
@@ -2263,9 +2267,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     if (editorState == MovingObject || editorState == MovingObjectTmpLinked) {
         panningTimer->stop();
 
-        qDebug() << "ME::rel stopped moving  eState=" << editorState << " dst="<<destinationBranch;
-        int relinkedObjectsCount = tmpParentContainer->childBranches().count()  + tmpParentContainer->childImages().count();
-
         // Check if we have a destination and should relink
         if (destinationBranch && editorState != MovingObjectWithoutLinking) {
             // Restore list of selected items later
@@ -2287,7 +2288,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // Tell VymModel to relink
             QList <BranchItem*> movingBranches;
             foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
-                bc->unsetTemporaryLinked();
+                bc->setMovingState(BranchContainerBase::NotMoving);
                 movingBranches << bc->getBranchItem();
             }
 
@@ -2324,9 +2325,10 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
                 // Empty the tmpParentContainer, which is used for moving
                 // Updating the stacking order also resets the original parents
-                qDebug() << "ME::mouseReleased, empty tPC";
                 foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
+
+                    bc->setMovingState(BranchContainerBase::NotMoving);
 
                     if (bc->isAnimated()) 
                         bc->stopAnimation();
@@ -2335,14 +2337,17 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                     // and keep (!) current absolute position
                     bi->updateContainerStackingOrder();
 
-                    // Floating layout or mapcenter moved, saveState
-                    if (bc->isFloating() || bi->depth() == 0)
+                    // Floating layout e.g. MapCenter
+                    if (bc->isFloating())
                     {
-                        // Relative positioning
+                        if (bi->depth() == 0)
+                            // MapCenter
+                            bc->setPos(bc->getHeadingContainer()->mapToScene(QPointF(0, 0)));
+                        // Save position change
                         model->saveState(
                             bi, QString("setPos%1").arg(toS(bc->getOriginalPos())),
                             bi, QString("setPos%1").arg(toS(bc->pos())));
-                    } else {
+                    } else {    // FIXME-0 only animate snappack if not Ctrl-moving e.g. MC
                         animationContainers << bc;
                         animationCurrentPositions << bc->pos();
                     }
@@ -2383,7 +2388,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         } // Image moved, but not relinked
 
         if (repositionNeeded) {
-            model->reposition();
+            model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
             model->emitSelectionChanged();
         }
 

@@ -2,6 +2,7 @@
 #include <QGraphicsScene>
 #include <math.h>   // FIXME-2 needed?
 
+#include "heading-container.h"
 #include "tmp-parent-container.h"
 
 #include "branch-container.h"
@@ -24,7 +25,7 @@ void TmpParentContainer::init()
     tmpLinkedParentContainer = nullptr;
     originalParentBranchContainer = nullptr;
 
-    // setPen(QPen(Qt::NoPen)); // Uncomment for testing
+    // setPen(QPen(Qt::green)); // Uncomment for testing
 
     // TmpParentContainer defaults, should be overridden from MapDesign later
     containerType = Container::TmpParent;
@@ -36,13 +37,14 @@ void TmpParentContainer::init()
     branchesContainer->setParentItem(this); // Different for BranchItem!
 }
 
-void TmpParentContainer::addToBranchesContainer(Container *c)
+void TmpParentContainer::addToBranchesContainer(BranchContainer *bc)//FIXME-0000000 selected BC jumps around,esp. for MC and floating layouts
+                                                                    //Here HV and BC are mixed up. Jupmps when orient changes while moving
 {
-    QPointF sp = c->scenePos();
-    branchesContainer->addContainer(c);
+    QPointF sp = bc->getHeadingContainer()->mapToScene(QPoint(0,0));
+    branchesContainer->addContainer(bc);
 
-    // For TmpParentContainer keep position
-    c->setPos(branchesContainer->sceneTransform().inverted().map(sp));
+    // keep position
+    bc->setPos(branchesContainer->sceneTransform().inverted().map(sp));
 }
 
 void TmpParentContainer::createImagesContainer()

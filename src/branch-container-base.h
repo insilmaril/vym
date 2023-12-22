@@ -14,20 +14,28 @@ class BranchContainerBase : public Container {
         RightOfParent
     };
 
+    /*! States related to moving around */
+    enum MovingState {
+        NotMoving,
+        Moving,
+        TemporaryLinked
+    };
+
     BranchContainerBase ();
     virtual void init();
 
     void setOrientation(const Orientation &);
     Orientation getOrientation();
 
+
   protected:
+    MovingState movingStateInt;
     BranchContainer *tmpLinkedParentContainer;
     BranchContainer *originalParentBranchContainer;
 
   public:
-    void setTemporaryLinked(BranchContainer *tpc);
-    void unsetTemporaryLinked();
-    bool isTemporaryLinked();
+    void setMovingState(const MovingState &, BranchContainer *tpc = nullptr);
+    MovingState movingState();
 
   public:
     int childrenCount();    //! Sum of branch and image children

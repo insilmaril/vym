@@ -3017,7 +3017,7 @@ void VymModel::moveDownDiagonally() // FIXME-2 multiselection missing
      }
 }
 
-void VymModel::detach(BranchItem *bi)   // FIXME-1 sometines linkSpaceCont and/or reposition missing
+void VymModel::detach(BranchItem *bi)   // FIXME-1 sometines linkSpaceCont and/or reposition missing // FIXME-1 does not remove link for MainBranch
 {
     QList<BranchItem *> selbis;
     if (bi)

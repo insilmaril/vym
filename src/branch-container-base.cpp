@@ -24,6 +24,7 @@ void BranchContainerBase::init()
     imagesContainer = nullptr;
     branchesContainer = nullptr;
 
+    movingStateInt = NotMoving;
     tmpLinkedParentContainer = nullptr;
     originalParentBranchContainer = nullptr;
 
@@ -48,22 +49,15 @@ BranchContainerBase::Orientation BranchContainerBase::getOrientation()
     return orientation;
 }
 
-void BranchContainerBase::setTemporaryLinked(BranchContainer *tpc)
+void BranchContainerBase::setMovingState(const MovingState &ms, BranchContainer *tpc)
 {
+    movingStateInt = ms;
     tmpLinkedParentContainer = tpc;
 }
 
-void BranchContainerBase::unsetTemporaryLinked()
+BranchContainerBase::MovingState  BranchContainerBase::movingState()
 {
-    tmpLinkedParentContainer = nullptr;
-}
-
-bool BranchContainerBase::isTemporaryLinked()
-{
-    if (tmpLinkedParentContainer)
-        return true;
-    else
-        return false;
+    return movingStateInt;
 }
 
 int BranchContainerBase::childrenCount()

@@ -560,7 +560,7 @@ void BranchItem::updateContainerStackingOrder()
     branchContainer->setParentItem(nullptr);
 
     if (parentBranch() == rootItem) {
-        // I am the center
+        // I am a MapCenter
         branchContainer->setPos(sp);
         return;
     }
