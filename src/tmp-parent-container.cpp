@@ -37,8 +37,7 @@ void TmpParentContainer::init()
     branchesContainer->setParentItem(this); // Different for BranchItem!
 }
 
-void TmpParentContainer::addToBranchesContainer(BranchContainer *bc)//FIXME-0000000 selected BC jumps around,esp. for MC and floating layouts
-                                                                    //Here HV and BC are mixed up. Jupmps when orient changes while moving
+void TmpParentContainer::addToBranchesContainer(BranchContainer *bc)
 {
     QPointF sp = bc->getHeadingContainer()->mapToScene(QPoint(0,0));
     branchesContainer->addContainer(bc);

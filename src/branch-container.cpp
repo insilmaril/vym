@@ -115,6 +115,8 @@ void BranchContainer::init()
     setCentralContainer(headingContainer);
 
     setPen(QPen(Qt::blue)); // Uncomment for testing
+    QGraphicsEllipseItem *center = new QGraphicsEllipseItem (this);
+    center->setPen(QPen(Qt::blue));
 }
 
 BranchContainer* BranchContainer::parentBranchContainer()

@@ -1758,7 +1758,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 setState(MovingObject);
 
             // Set initial position and size of tmpParentContainer
-            tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);
+            tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);  // FIXME-0 really required here?
             if (movingItems.count() > 0) {
                 qreal w = 0;
                 qreal h = 0;
@@ -1944,7 +1944,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     if (bc->getOrientation() == BranchContainerBase::UndefinedOrientation) {
                         // Orientation undefined for MapCenters, assume RightOfParent
                         qDebug() << "ME::mO bc->orient=Undefined for " << bc->info();
-                        tmpParentContainer->setOrientation(BranchContainerBase::RightOfParent);
+                        tmpParentContainer->setOrientation(BranchContainerBase::RightOfParent); // FIXME-0000 Assumption ok?
                     } else
                         tmpParentContainer->setOrientation(bc->getOrientation());
                 }
@@ -2112,9 +2112,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         else
             setState(MovingObject);
 
-        // tmpParentContainer to pointer position:
-        tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
-
         if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
             tmpParentContainer->setMovingState(BranchContainerBase::Moving);
 
@@ -2152,6 +2149,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     Container *tpc_bc = tmpParentContainer->getBranchesContainer();
     if (targetBranchContainer && tpc_bc && !tpc_bc->childItems().contains(targetBranchContainer)) {
         // tmpParentContainer has children and these do NOT contain targetBranchContainer
+
         if (targetBranchContainer->hasFloatingBranchesLayout()) {
             if (p_event.x() > targetBranchContainer->pos().x())
                 newOrientation = BranchContainer::RightOfParent;
@@ -2166,11 +2164,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
         if (bc_first) {
             // Set new orientation for branches (not mapCenters): Consider pointer pos relative to first moving branch
-            //if (tmpParentContainer->getOrientation() == BranchContainer::LeftOfParent)
-                if (p_event.x() > bc_first->getOriginalParentPos().x())
-                    newOrientation = BranchContainer::RightOfParent;
-                else
-                    newOrientation = BranchContainer::LeftOfParent;
+            if (p_event.x() > bc_first->getOriginalParentPos().x())
+                newOrientation = BranchContainer::RightOfParent;
+            else
+                newOrientation = BranchContainer::LeftOfParent;
         } else
             // No target and no branch moving. No orientation change.
             newOrientation = tmpParentContainer->getOrientation();
@@ -2181,16 +2178,25 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
         repositionRequired = true;
-
-        movingObj_initialContainerOffset.setX( - movingObj_initialContainerOffset.x());
-        tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
     }
 
-    if (repositionRequired)
+    if (repositionRequired) {
         tmpParentContainer->reposition();
-    else if (updateUpLinksRequired)
+    } else if (updateUpLinksRequired)
         foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
             bc->updateUpLink();
+
+    if (!targetBranchContainer) {
+        // Above tPC was positioned only if there is a target, so now tPC->setPos() is required if there is no target
+        // Since orientation might have changed and position depends on orientation, only do this now
+        if (bc_first) {
+            QPointF hc_center = tmpParentContainer->mapFromItem(bc_first->getHeadingContainer(), bc_first->getHeadingContainer()->pos());
+            tmpParentContainer->setPos(p_event - hc_center - movingObj_initialContainerOffset);
+        } else
+            // No branches, only image  // FIXME-0 moves position, when there is bc_first released without relinking
+            tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
+
+    }
 
     model->repositionXLinks();
 
