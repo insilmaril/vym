@@ -153,13 +153,6 @@ void BranchContainer::setOriginalOrientation()
     originalFloating = isFloating();
     originalParentBranchContainer = parentBranchContainer();
     if (parentItem()) {
-        /*  FIXME-2 BC::setOriginalOrientation
-        */
-        qDebug() << "BC:setOrient of " << info();
-        qDebug() << "        parent: " << parentBranchContainer();
-        if (parentBranchContainer())
-            qDebug() << "        parent: " << parentBranchContainer()->info() <<originalParentPos;
-
         if (parentBranchContainer())
             originalParentPos = parentBranchContainer()->downLinkPos();
         else

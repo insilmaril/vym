@@ -1747,7 +1747,6 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
                 movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
-                qDebug() << "ME::mousePressed offset=" << toS(movingObj_initialContainerOffset,0);
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -1758,7 +1757,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
                 setState(MovingObject);
 
             // Set initial position and size of tmpParentContainer
-            tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);  // FIXME-0 really required here?
+            // Required when ONLY moving images.
+            tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);
             if (movingItems.count() > 0) {
                 qreal w = 0;
                 qreal h = 0;
@@ -1943,8 +1943,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     // Initially set orientation of tmpParentContainer to first BranchContainer
                     if (bc->getOrientation() == BranchContainerBase::UndefinedOrientation) {
                         // Orientation undefined for MapCenters, assume RightOfParent
-                        qDebug() << "ME::mO bc->orient=Undefined for " << bc->info();
-                        tmpParentContainer->setOrientation(BranchContainerBase::RightOfParent); // FIXME-0000 Assumption ok?
+                        tmpParentContainer->setOrientation(BranchContainerBase::RightOfParent);
                     } else
                         tmpParentContainer->setOrientation(bc->getOrientation());
                 }
@@ -1956,7 +1955,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     // could be moved with additional containers keeping their positions
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
-                    qDebug() << "ME::mO adding to tpc: " << bc->info();
                     tmpParentContainer->addToBranchesContainer(bc);
 
                     // Save position of children branches in case we only want to
