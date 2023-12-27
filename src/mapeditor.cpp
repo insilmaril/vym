@@ -2003,19 +2003,23 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         qDebug() << "ME::mO filled tPC. branch count=" << tmpParentContainer->childBranches().count();
     } // add to tmpParentContainer
 
+    if (tmpParentContainer->childBranches().count() > 0)
+        // If ME::moveObject is called AFTER tPC has been filled previously, 
+        // bc_first still might be unset here
+        bc_first = tmpParentContainer->childBranches().first();
+
     BranchContainer *targetBranchContainer = nullptr;
 
-    // Check if we could link and position tmpParentContainer
-    if (targetItem && targetItem->hasTypeBranch() &&
+    // Check if we are moving a branch and could relink. Position tmpParentContainer
+    if (targetItem && targetItem->hasTypeBranch() && bc_first &&
                 !(mainWindow->getModMode() == Main::ModModeMoveObject &&
                     (e->modifiers() & Qt::ShiftModifier))) {
-
         setState(MovingObjectTmpLinked);
 
         targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
-        Container *targetRefContainer = targetBranchContainer->getBranchesContainer();
-        Container *movingRefContainer = tmpParentContainer;
+        Container *targetRefContainer = targetBranchContainer->getHeadingContainer();
+        Container *movingRefContainer = bc_first->getHeadingContainer();
         Container::PointName targetRefPointName;
         Container::PointName movingRefPointName;
         QPointF linkOffset;                     // Distance for temporary link
@@ -2053,6 +2057,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             }
         } else {
             // No modifier used, temporary link to target itself
+            targetRefContainer = targetBranchContainer->getBranchesContainer();
+            movingRefContainer = tmpParentContainer;
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
                 if (targetBranchContainer->branchCount() == 0) {
                     // vertically centered besides target
@@ -2076,7 +2082,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     movingRefPointName = Container::TopRight;
                 }
             } else {
-                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation without modifier"; // FIXME-0
+                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation without modifier";
                 targetRefPointName = Container::Center;
                 movingRefPointName = Container::Center;   // FIXME-0 Could also be close to mid points or similar, e.g. MapCenter
             }
@@ -2136,11 +2142,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             }
         }
     }
-
-    if (tmpParentContainer->childBranches().count() > 0)
-        // If ME::moveObject is called AFTER tPC has been filled previously, 
-        // bc_first still might be unset here
-        bc_first = tmpParentContainer->childBranches().first();
 
     // Set orientation
     BranchContainer::Orientation newOrientation;
