@@ -70,7 +70,7 @@ void TmpParentContainer::addToImagesContainer(Container *c)
 
 void TmpParentContainer::reposition()
 {
-    qdbg() << ind() << "TPC::reposition tpc=" <<      info() << "  orient=" << orientation;
+    // qdbg() << ind() << "TPC::reposition tpc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();
@@ -81,12 +81,10 @@ void TmpParentContainer::reposition()
 
     switch (orientation) {
         case LeftOfParent:
-            qDebug() << "TPC::repos tPC left of parent";
             setHorizontalDirection(RightToLeft);
             branchesContainer->setHorizontalAlignment(AlignedRight);
             break;
         case RightOfParent:
-            qDebug() << "TPC::repos tPC right of parent";
             setHorizontalDirection(LeftToRight);
             branchesContainer->setHorizontalAlignment(AlignedLeft);
             break;

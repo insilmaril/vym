@@ -3504,6 +3504,9 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 {
     // qDebug() << "VM::relink " << branches.count() << " branches to  num_dst=" << num_dst;
 
+    // Selection is lost when removing rows from model
+    QList <TreeItem*> selectedItems = getSelectedItems();
+
     if (branches.isEmpty())
         branches = getSelectedBranches();
 
@@ -3573,7 +3576,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         // Remove at current position
         int removeRowNum = bi->childNum();
 
-        // qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->getHeadingPlain();
+        //qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->getHeadingPlain();
         beginRemoveRows(index(branchpi), removeRowNum, removeRowNum);
         branchpi->removeChild(removeRowNum);
         endRemoveRows();
@@ -3591,7 +3594,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
                 insertRowNum = dst->getFirstBranch()->childNumber() + num_dst;
         }
 
-        // qDebug() << "  VM::relink inserting  at " << insertRowNum;
+        //qDebug() << "  VM::relink inserting  at " << insertRowNum;
         beginInsertRows(index(dst), insertRowNum, insertRowNum);
         dst->insertBranch(insertRowNum, bi);
         endInsertRows();
@@ -3658,36 +3661,47 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
     saveStateEndBlock();
 
+    // Restore selection, which was lost when removing rows
+    select(selectedItems);
+
     return true;
 }
 
-bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
+bool VymModel::relinkImage(ImageItem *ii, BranchItem *dst) // FIXME-2 No multiselection yet
 {
-    if (image && dst) {
+    // Selection is lost when removing rows from model
+    QList <TreeItem*> selectedItems = getSelectedItems();
+
+    if (ii && dst) {
         emit(layoutAboutToBeChanged());
 
-        BranchItem *pi = (BranchItem *)(image->parent());
+        BranchItem *pi = (BranchItem *)(ii->parent());
         QString oldParString = getSelectString(pi);
         // Remove at current position
-        int n = image->childNum();
+        int n = ii->childNum();
         beginRemoveRows(index(pi), n, n);
         pi->removeChild(n);
         endRemoveRows();
 
         // Add at dst
         QModelIndex dstix = index(dst);
-        n = dst->getRowNumAppend(image);
+        n = dst->getRowNumAppend(ii);
         beginInsertRows(dstix, n, n);
-        dst->appendChild(image);
+        dst->appendChild(ii);
         endInsertRows();
 
         // Set new parent also for lmo
-        dst->addToImagesContainer(image->getImageContainer());
+        dst->addToImagesContainer(ii->getImageContainer());
 
         emit(layoutChanged());
-        saveState(image, QString("relinkTo (\"%1\")").arg(oldParString), image,
+        saveState(ii, QString("relinkTo (\"%1\")").arg(oldParString), ii,
                   QString("relinkTo (\"%1\")").arg(getSelectString(dst)),
                   QString("Relink floatimage to %1").arg(getObjectName(dst)));
+
+        // Restore selection, which was lost when removing rows
+        unselectAll();
+        select(selectedItems);
+
         return true;
     }
     return false;
@@ -5871,7 +5885,6 @@ bool VymModel::selectToggle(const QString &selectString)
 
 bool VymModel::select(TreeItem *ti)
 {
-    qDebug() <<"VM::select ti";
     if (ti)
         return select(index(ti));
     else
@@ -5880,7 +5893,6 @@ bool VymModel::select(TreeItem *ti)
 
 bool VymModel::select(const QModelIndex &index)
 {
-    qDebug() <<"VM::select ix";
     if (index.isValid()) {
         TreeItem *ti = getItem(index);
         if (ti->hasTypeBranch()) {
@@ -5899,6 +5911,13 @@ bool VymModel::select(QList <BranchItem*> selbis)
     unselectAll();
     foreach (BranchItem* selbi, selbis)
         selectToggle(selbi);
+}
+
+bool VymModel::select(QList <TreeItem*> tis)
+{
+    unselectAll();
+    foreach (TreeItem* ti, tis)
+        selectToggle(ti);
 }
 
 void VymModel::unselectAll() { unselect(selModel->selection()); }

@@ -2000,7 +2000,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             else
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
-        qDebug() << "ME::mO filled tPC. branch count=" << tmpParentContainer->childBranches().count();
     } // add to tmpParentContainer
 
     if (tmpParentContainer->childBranches().count() > 0)
@@ -2297,12 +2296,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 movingBranches << bc->getBranchItem();
             }
 
+
             if (!movingBranches.isEmpty())
                 model->relinkBranches(
                         movingBranches,
                         dst_branch,
                         dst_num);
-
             // If dst is scrolled, select it
             if (dst_branch->isScrolled())
                 model->select(dst_branch);

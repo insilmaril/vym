@@ -779,6 +779,7 @@ class VymModel : public TreeModel {
     bool select(TreeItem *ti);              //! Select by pointer to TreeItem
     bool select(const QModelIndex &index);  //! Select by ModelIndex
     bool select(QList <BranchItem*> selbis);//! Used to restore selections
+    bool select(QList <TreeItem*> tis);     //! Select list of pointers e.g. when relinking
     void unselectAll();
     void unselect(QItemSelection desel);
     bool reselect();
