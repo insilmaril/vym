@@ -5871,6 +5871,7 @@ bool VymModel::selectToggle(const QString &selectString)
 
 bool VymModel::select(TreeItem *ti)
 {
+    qDebug() <<"VM::select ti";
     if (ti)
         return select(index(ti));
     else
@@ -5879,6 +5880,7 @@ bool VymModel::select(TreeItem *ti)
 
 bool VymModel::select(const QModelIndex &index)
 {
+    qDebug() <<"VM::select ix";
     if (index.isValid()) {
         TreeItem *ti = getItem(index);
         if (ti->hasTypeBranch()) {

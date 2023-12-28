@@ -2297,10 +2297,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 movingBranches << bc->getBranchItem();
             }
 
-            model->relinkBranches(
-                    movingBranches,
-                    dst_branch,
-                    dst_num);
+            if (!movingBranches.isEmpty())
+                model->relinkBranches(
+                        movingBranches,
+                        dst_branch,
+                        dst_num);
 
             // If dst is scrolled, select it
             if (dst_branch->isScrolled())
@@ -2310,6 +2311,14 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
                 ImageItem *ii = ic->getImageItem();
                 model->relinkImage(ii, destinationBranch);
+            }
+
+            if (!tmpParentContainer->childImages().isEmpty()) {
+                //model->unselectAll();  // FIXME-00 what about additional branches?
+                foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
+                    ImageItem *ii = ic->getImageItem();
+                    model->selectToggle(ii);
+                }
             }
         } else {
             // Branches moved, but not relinked
