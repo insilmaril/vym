@@ -1746,7 +1746,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (ti_found->hasTypeBranch())
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
-                movingObj_initialContainerOffset = bc->mapFromScene(movingObj_initialScenePos);
+                movingObj_initialContainerOffset = bc->getHeadingContainer()->mapFromScene(movingObj_initialScenePos);
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -2121,7 +2121,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         updateUpLinksRequired = true;
     }
 
-    // Update children branch containers (for updating links later)
+    // Update states of children branch containers (for updating links later)
     foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
         if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
             bc->setMovingState(BranchContainerBase::TemporaryLinked, targetBranchContainer);
