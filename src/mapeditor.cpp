@@ -2178,13 +2178,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             QPointF hc_center = tmpParentContainer->mapFromItem(bc_first->getHeadingContainer(), bc_first->getHeadingContainer()->pos());
             tmpParentContainer->setPos(p_event - hc_center - movingObj_initialContainerOffset);
 
-            // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)
+            // When moving with Ctrl  modifier, don't children branches (in scene)
             if (e->modifiers() & Qt::ControlModifier) {
                 foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
                     BranchItem *bi = bc->getBranchItem();
                     if (bc->hasFloatingBranchesLayout()) {
                         foreach(BranchContainer *bc2, bc->childBranches()) {
-                            QPointF hc_center = bc->mapFromItem(bc2->getHeadingContainer(), QPointF(0,0));
                             QPointF q = bc->getHeadingContainer()->sceneTransform().inverted().map(bc2->getOriginalPos());
                             bc2->setPos(q);
                             bc2->updateUpLink();
@@ -2363,11 +2362,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             bi, QString("setPos%1").arg(toS(bc->getOriginalPos())),
                             bi, QString("setPos%1").arg(toS(bc->pos())));
                     } else {
-			//if (!(e->modifiers() & Qt::ControlModifier)) {
-			    // only animate snappack if not Ctrl-moving e.g. MC	// FIXME-0
+			if (!(e->modifiers() & Qt::ControlModifier)) {
+			    // only animate snappack if not Ctrl-moving e.g. MC
 			    animationContainers << bc;
 			    animationCurrentPositions << bc->pos();
-			//}
+			}
                     }
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
