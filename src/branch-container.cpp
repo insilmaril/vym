@@ -617,7 +617,7 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
 {
     if (frameType(true) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
-            // Framed MapCenter: Use center of frame
+            // Framed MapCenter: Use center of frame    // FIXME-2 should depend on layout, not depth
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->center());
         else {
@@ -655,11 +655,10 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
     if (frameType(true) != FrameContainer::NoFrame ||
         frameType(false) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
-            // Framed MapCenter: Use center of frame
+            // Framed MapCenter: Use center of frame    // FIXME-2 should depend on layout, not depth
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->center());
         else {
-
             // Framed branch: Use left or right edge
             switch (orientationChild) {
                 case RightOfParent:
@@ -717,11 +716,7 @@ void BranchContainer::updateUpLink()
 
     BranchItem *tmpParentBI = nullptr;
 
-    /*
-    qDebug() << "BC::updateUpLink of " << info() << " tmpLinkedPC=" << tmpLinkedParentContainer 
-             << " pbc=" << pbc
-             << " orgPBC=" << originalParentBranchContainer;
-     */
+    // qDebug() << "BC::updateUpLink of " << info() << " tmpLinkedPC=" << tmpLinkedParentContainer;
 
     if (pbc) {
         tmpParentBI = pbc->getBranchItem();

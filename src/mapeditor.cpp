@@ -1746,7 +1746,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             if (ti_found->hasTypeBranch())
             {
                 BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
-                movingObj_initialContainerOffset = bc->getHeadingContainer()->mapFromScene(movingObj_initialScenePos);
+                movingObj_initialContainerOffset = movingObj_initialScenePos - bc->getHeadingContainer()->mapToScene(QPointF(0,0));
             }
 
             if (mainWindow->getModMode() == Main::ModModeMoveObject &&
@@ -2168,12 +2168,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     if (repositionRequired)
         tmpParentContainer->reposition();
 
-    if (updateUpLinksRequired) {
-        qDebug() << "ME::mO updateUplinks req";
-        foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
-            bc->updateUpLink();
-    }
-
     if (!targetBranchContainer) {
         // Above tPC was positioned only if there is a target, so now tPC->setPos() is required if there is no target
         // Since orientation might have changed and position depends on orientation, only do this now
@@ -2199,6 +2193,11 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             // No branches, only image
             tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
 
+    }
+
+    if (updateUpLinksRequired) {
+        foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
+            bc->updateUpLink();
     }
 
     model->repositionXLinks();
