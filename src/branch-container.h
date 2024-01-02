@@ -33,6 +33,8 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     Orientation getOriginalOrientation();
     QPointF getOriginalParentPos();
 
+    void setOriginalScenePos();              //! Saves current scene position for later restoring
+
     void updateVisibilityOfChildren();    // consider scroll state for branchesCont and imagesCont
 
     void setScrolled(bool b);

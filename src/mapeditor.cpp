@@ -1955,11 +1955,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     // move this branch and keep children unchanged using CTRL modifier
                     if (bc->hasFloatingBranchesLayout())
                         foreach(BranchContainer *bc2, bc->childBranches())
-                            bc2->setOriginalScenePos();   // FIXME-00 use HC instead of BC?
+                            bc2->setOriginalScenePos();
                                                                             //
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
-                    qDebug() << "ME::mO adding to tPC: " << bc->info();
                     tmpParentContainer->addToBranchesContainer(bc);
 
                 }
@@ -2150,7 +2149,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
         if (bc_first) {
             // Set new orientation for branches (not mapCenters): Consider pointer pos relative to first moving branch
-            if (p_event.x() > bc_first->getOriginalParentPos().x() && !(e->modifiers() & Qt::ControlModifier))     // FIXME-0000000 for CTRl-moves????
+            if (p_event.x() > bc_first->getOriginalParentPos().x() && !(e->modifiers() & Qt::ControlModifier))
                 newOrientation = BranchContainer::RightOfParent;
             else
                 newOrientation = BranchContainer::LeftOfParent;
@@ -2166,11 +2165,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         repositionRequired = true;
     }
 
-    if (repositionRequired) {
-        qDebug() << "ME::mO  tPC->reposition()";
+    if (repositionRequired)
         tmpParentContainer->reposition();
-        // FIXME-0 return;
-    } else if (updateUpLinksRequired)
+    else if (updateUpLinksRequired)
         foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
             bc->updateUpLink();
 
@@ -2181,16 +2178,14 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             QPointF hc_center = tmpParentContainer->mapFromItem(bc_first->getHeadingContainer(), bc_first->getHeadingContainer()->pos());
             tmpParentContainer->setPos(p_event - hc_center - movingObj_initialContainerOffset);
 
-            // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene) // FIXME-000 maybe later, after repositioning tPC???
-            if (e->modifiers() & Qt::ControlModifier) {   // FIXME-2 not only MCs, but all floating branches
+            // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)
+            if (e->modifiers() & Qt::ControlModifier) {
                 foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
                     BranchItem *bi = bc->getBranchItem();
-                    if (bi->depth() >= 0 && bc->hasFloatingBranchesLayout()) {  // FIXME-0 Checking bi->depth required here?
+                    if (bc->hasFloatingBranchesLayout()) {
                         foreach(BranchContainer *bc2, bc->childBranches()) {
                             QPointF hc_center = bc->mapFromItem(bc2->getHeadingContainer(), QPointF(0,0));
-                            qDebug() << "ME::setPos - " << bc2->info() << " oP=" << toS(bc2->getOriginalPos(),0) << "hc=" << toS(hc_center,0);
                             QPointF q = bc->getHeadingContainer()->sceneTransform().inverted().map(bc2->getOriginalPos());
-                            qDebug() << "    q=" << toS(q,0);
                             bc2->setPos(q);
                             bc2->updateUpLink();
                         }

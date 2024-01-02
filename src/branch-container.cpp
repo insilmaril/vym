@@ -172,6 +172,12 @@ QPointF BranchContainer::getOriginalParentPos()
     return originalParentPos;
 }
 
+void BranchContainer::setOriginalScenePos()
+{
+    //qDebug() << "BC::sOSCP  of " << info();
+    originalPos = scenePos();
+}
+
 void BranchContainer::updateVisibilityOfChildren()
 {
     if (branchesContainer && branchItem)
