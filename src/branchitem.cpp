@@ -141,7 +141,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     else
         elementName = "branch";
 
-    // Free positioning of children         // FIXME-2 remove BI::FreePositioning, save laouts for branchesContainer and imagesContainer instead
+    // Free positioning of children
     QString layoutBranchesAttr;
     QString autoLayoutBranchesAttr;
     if (!branchContainer->branchesContainerAutoLayout)

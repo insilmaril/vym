@@ -2167,9 +2167,12 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     if (repositionRequired)
         tmpParentContainer->reposition();
-    else if (updateUpLinksRequired)
+
+    if (updateUpLinksRequired) {
+        qDebug() << "ME::mO updateUplinks req";
         foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
             bc->updateUpLink();
+    }
 
     if (!targetBranchContainer) {
         // Above tPC was positioned only if there is a target, so now tPC->setPos() is required if there is no target
@@ -2200,7 +2203,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     model->repositionXLinks();
 
-    scene()->update();
+    scene()->update();  // FIXME-2 required?
 }
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)

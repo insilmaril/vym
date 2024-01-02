@@ -41,7 +41,7 @@ void Container::init()
     // subcontainers usually may influence position
     // Only mapCenters will stay where they are
 
-    minimumWidth = 0;   // FIXME-2 unused
+    minimumWidth = 0;   // FIXME-2 currently unused, maybe for linkSpaceContainer
 
     horizontalDirection = LeftToRight;
 
@@ -423,7 +423,7 @@ QPointF Container::getOriginalPos()
     return originalPos;
 }
 
-void Container::reposition()    // FIXME-3 Remove comment code used for debugging
+void Container::reposition()
 {
     // qdbg() << ind() << QString("### Reposition of %1").arg(info()) << " childCount=" << childContainers().count();
 

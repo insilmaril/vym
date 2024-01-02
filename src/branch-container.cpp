@@ -697,7 +697,7 @@ void BranchContainer::updateUpLink()
 
     // MapCenters still might have upLinks: The bottomLine is part of upLink!
 
-    if (containerType == TmpParent)
+    if (containerType == TmpParent) // FIXME-0 should no longer be necessary...
         return;
 
     QPointF upLinkSelf_sp = upLinkPos(orientation);

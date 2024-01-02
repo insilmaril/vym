@@ -234,7 +234,7 @@ void LinkObj::updateLinkGeometry()
     // sets:
     //	drawing of bottomLine and upLink
 
-    setPos(0,0);    // needed due to reposition()
+    //setPos(0,0);    // needed due to reposition()   // FIXME-0 First step in tmp moving position is wrong
 
     // Draw the horizontal line below heading (from childRefPos to parentPos)
     if (bottomLine)
