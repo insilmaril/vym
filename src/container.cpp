@@ -415,11 +415,13 @@ void Container::setPos(qreal x, qreal y)
 
 void Container::setOriginalPos()    // FIXME-3 Only used for BranchContainer and ImageContainer -> maybe move to LinkableContainer?
 {
+    qDebug() << "C::sOP  of " << info();
     originalPos = pos();
 }
 
-void Container::setOriginalScenePos()// FIXME-3 Only used for BranchContainer
+void Container::setOriginalScenePos()// FIXME-3 Only used for BranchContainer // FIXME-0 not used any longer
 {
+    qDebug() << "C::sOSCP  of " << info();
     originalPos = scenePos();
 }
 

@@ -70,7 +70,7 @@ void TmpParentContainer::addToImagesContainer(Container *c)
 
 void TmpParentContainer::reposition()
 {
-    // qdbg() << ind() << "TPC::reposition tpc=" <<      info() << "  orient=" << orientation;
+    qdbg() << ind() << "TPC::reposition tpc=" <<      info() << "  orient=" << orientation;
     /*
     if (pbc)
         qdbg() << ind() << "          pbc=" << pbc->info();

@@ -1711,7 +1711,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             model->select(ti_found);
             if (e->modifiers() & Qt::ControlModifier) {
                 if (e->modifiers() & Qt::ShiftModifier)
-                    model->deleteVymLink();
+                    model->deleteVymLink(); // FIXME-2 document deleting vymLink
                 else
                     mainWindow->editOpenVymLink(true);
             } else
@@ -1800,7 +1800,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
             // systemFlag clicked
             if (sysFlagName.contains("system-url")) {
                 if (e->modifiers() & Qt::ControlModifier)
-                    mainWindow->editOpenURLTab();
+                    mainWindow->editOpenURLTab(); // FIXME-2 Document opening in tabs
                 else
                     mainWindow->editOpenURL();
             } else if (sysFlagName == "system-note")
@@ -1951,18 +1951,17 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 if (tmpParentContainer->branchCount() == 0 || 
                     bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
 
-                    // For additional floating containers use scenePos, so that bc_first
-                    // could be moved with additional containers keeping their positions
-                    bc->setOriginalPos();
-                    bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
-                    tmpParentContainer->addToBranchesContainer(bc);
-
                     // Save position of children branches in case we only want to
                     // move this branch and keep children unchanged using CTRL modifier
-                    Container *c = bc->getBranchesContainer();
-                    if (bc->hasFloatingBranchesLayout() && c)
-                        foreach(QGraphicsItem *i, c->childItems())
-                            ((BranchContainer*)i)->setOriginalScenePos();
+                    if (bc->hasFloatingBranchesLayout())
+                        foreach(BranchContainer *bc2, bc->childBranches())
+                            bc2->setOriginalScenePos();   // FIXME-00 use HC instead of BC?
+                                                                            //
+                    bc->setOriginalPos();
+                    bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
+                    qDebug() << "ME::mO adding to tPC: " << bc->info();
+                    tmpParentContainer->addToBranchesContainer(bc);
+
                 }
 
                 if (bc_first && bc_first != bc) {
@@ -2052,7 +2051,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     movingRefPointName = Container::TopRight;
                     linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
             } else {
-                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation with shift modifier"; // FIXME-0
+                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation with ctrl modifier"; // FIXME-0
             }
         } else {
             // No modifier used, temporary link to target itself
@@ -2088,7 +2087,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         }
 
         if (!targetRefContainer)
-            targetRefContainer = ((BranchItem*)targetItem)->getBranchContainer();    // FIXME-0 if tBC has no children, assume whole tBC. What about bounded images, then?
+            targetRefContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
         // Align tPC to point in target, which has been selected above
         tmpParentContainer->setPos(
@@ -2108,6 +2107,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     } // tmp linking to target
     else {
+        // Move without temporary relinking to a target
+        //
         // Update state of MapEditor
         if (mainWindow->getModMode() == Main::ModModeMoveObject &&
                 e->modifiers() & Qt::ShiftModifier)
@@ -2127,19 +2128,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             bc->setMovingState(BranchContainerBase::TemporaryLinked, targetBranchContainer);
         else
             bc->setMovingState(BranchContainerBase::Moving);
-    }
-
-    // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene)   // FIXME-2 not only MCs, but all floating branches
-    if (e->modifiers() & Qt::ControlModifier) {
-        foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
-            BranchItem *bi = bc->getBranchItem();
-            if (bi->depth() >= 0 && bc->hasFloatingBranchesLayout()) {
-                foreach(BranchContainer *bc2, bc->childBranches()) {
-                    bc2->setPos( bc->sceneTransform().inverted().map(bc2->getOriginalPos()));
-                    bc2->updateUpLink();
-                }
-            }
-        }
     }
 
     // Set orientation
@@ -2162,7 +2150,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
         if (bc_first) {
             // Set new orientation for branches (not mapCenters): Consider pointer pos relative to first moving branch
-            if (p_event.x() > bc_first->getOriginalParentPos().x())
+            if (p_event.x() > bc_first->getOriginalParentPos().x() && !(e->modifiers() & Qt::ControlModifier))     // FIXME-0000000 for CTRl-moves????
                 newOrientation = BranchContainer::RightOfParent;
             else
                 newOrientation = BranchContainer::LeftOfParent;
@@ -2179,7 +2167,9 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     if (repositionRequired) {
+        qDebug() << "ME::mO  tPC->reposition()";
         tmpParentContainer->reposition();
+        // FIXME-0 return;
     } else if (updateUpLinksRequired)
         foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
             bc->updateUpLink();
@@ -2190,8 +2180,26 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (bc_first) {
             QPointF hc_center = tmpParentContainer->mapFromItem(bc_first->getHeadingContainer(), bc_first->getHeadingContainer()->pos());
             tmpParentContainer->setPos(p_event - hc_center - movingObj_initialContainerOffset);
+
+            // When moving MapCenters with Ctrl  modifier, don't move mainbranches (in scene) // FIXME-000 maybe later, after repositioning tPC???
+            if (e->modifiers() & Qt::ControlModifier) {   // FIXME-2 not only MCs, but all floating branches
+                foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
+                    BranchItem *bi = bc->getBranchItem();
+                    if (bi->depth() >= 0 && bc->hasFloatingBranchesLayout()) {  // FIXME-0 Checking bi->depth required here?
+                        foreach(BranchContainer *bc2, bc->childBranches()) {
+                            QPointF hc_center = bc->mapFromItem(bc2->getHeadingContainer(), QPointF(0,0));
+                            qDebug() << "ME::setPos - " << bc2->info() << " oP=" << toS(bc2->getOriginalPos(),0) << "hc=" << toS(hc_center,0);
+                            QPointF q = bc->getHeadingContainer()->sceneTransform().inverted().map(bc2->getOriginalPos());
+                            qDebug() << "    q=" << toS(q,0);
+                            bc2->setPos(q);
+                            bc2->updateUpLink();
+                        }
+                    }
+                }
+            }
+
         } else
-            // No branches, only image  // FIXME-0 moves position, when there is bc_first released without relinking
+            // No branches, only image
             tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
 
     }
@@ -2313,7 +2321,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
 
             if (!tmpParentContainer->childImages().isEmpty()) {
-                //model->unselectAll();  // FIXME-00 what about additional branches?
                 foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
                     ImageItem *ii = ic->getImageItem();
                     model->selectToggle(ii);
@@ -2360,9 +2367,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         model->saveState(
                             bi, QString("setPos%1").arg(toS(bc->getOriginalPos())),
                             bi, QString("setPos%1").arg(toS(bc->pos())));
-                    } else {    // FIXME-0 only animate snappack if not Ctrl-moving e.g. MC
-                        animationContainers << bc;
-                        animationCurrentPositions << bc->pos();
+                    } else {
+			//if (!(e->modifiers() & Qt::ControlModifier)) {
+			    // only animate snappack if not Ctrl-moving e.g. MC	// FIXME-0
+			    animationContainers << bc;
+			    animationCurrentPositions << bc->pos();
+			//}
                     }
                 } // children of tmpParentContainer
                 model->saveStateEndBlock();
@@ -2577,39 +2587,36 @@ void MapEditor::dropEvent(QDropEvent *event)
 void MapEditor::setState(EditorState s)
 {
     editorState = s;
-    /* if (debug)
-    {
+    /* if (debug) {
         QString s;
-        switch (state)
-        {
-        case Neutral:
-            s = "Neutral";
-            break;
-        case EditingHeading:
-            s = "EditingHeading";
-            break;
-        case EditingLink:
-            s = "EditingLink";
-            break;
-        case MovingObject:
-            s = "MovingObject";
-            break;
-        case MovingObjectWithoutLinking:
-            s = "MovingObjectWithoutLinking";
-            break;
-        case MovingView:
-            s = "MovingView";
-            break;
-        case PickingColor:
-            s = "PickingColor";
-            break;
-        case DrawingLink:
-            s = "DrawingLink";
-            break;
-        default:
-            s = "Unknown editor state";
-            qDebug() << "MapEditor::setState" << s;
-            break;
+        switch (state) {
+            case Neutral:
+                s = "Neutral";
+                break;
+            case EditingHeading:
+                s = "EditingHeading";
+                break;
+            case EditingLink:
+                s = "EditingLink";
+                break;
+            case MovingObject:
+                s = "MovingObject";
+                break;
+            case MovingObjectWithoutLinking:
+                s = "MovingObjectWithoutLinking";
+                break;
+            case MovingView:
+                s = "MovingView";
+                break;
+            case PickingColor:
+                s = "PickingColor";
+                break;
+            case DrawingLink:
+                s = "DrawingLink";
+                break;
+            default:
+                s = "Unknown editor state";
+                break;
         }
         qDebug() << "MapEditor: State " << s << " of " << model->getMapName();
     }

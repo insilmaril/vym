@@ -3668,6 +3668,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 }
 
 bool VymModel::relinkImage(ImageItem *ii, BranchItem *dst) // FIXME-2 No multiselection yet
+                                                           // see also call in ME::mouseRelease()
 {
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();

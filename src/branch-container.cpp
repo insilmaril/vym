@@ -114,8 +114,10 @@ void BranchContainer::init()
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
 
-    setPen(QPen(Qt::blue)); // Uncomment for testing
-    QGraphicsEllipseItem *center = new QGraphicsEllipseItem (this);
+    /* Uncomment for testing
+    */
+    setPen(QPen(Qt::blue));
+    QGraphicsEllipseItem *center = new QGraphicsEllipseItem (0, 0, 5, 5, this);
     center->setPen(QPen(Qt::blue));
 }
 

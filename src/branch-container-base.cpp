@@ -31,11 +31,6 @@ void BranchContainerBase::init()
     setBrush(Qt::NoBrush);
     setPen(QPen(Qt::NoPen));
 
-    // TmpParentContainer defaults, should be overridden from MapDesign later
-    containerType = Container::TmpParent;
-
-    setLayout(Container::FloatingReservedSpace);
-
     horizontalDirection = Container::LeftToRight;
 }
 
