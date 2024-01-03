@@ -267,9 +267,9 @@ void LinkObj::updateLinkGeometry()
         a = M_PI_2;
     else
         a = atan(vy / vx);
+
     // "turning point" for drawing polygonal links
-    QPointF tp(-qRound(sin(a) * thickness_start),   // FIXME-2 qround needed?
-                qRound(cos(a) * thickness_start));
+    QPointF tp(sin(a) * thickness_start, cos(a) * thickness_start);
 
     // Draw the link
     switch (style) {

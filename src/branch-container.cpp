@@ -654,11 +654,12 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
 {
     if (frameType(true) != FrameContainer::NoFrame ||
         frameType(false) != FrameContainer::NoFrame) {
-        if (!parentBranchContainer())
+        if (!parentBranchContainer() && movingStateInt != Moving ) {
+            qDebug() << "BC::uLP no pbc in " << info(); // FIXME-0 upLink to center when moving MainBranch (every 2nd step)
             // Framed MapCenter: Use center of frame    // FIXME-2 should depend on layout, not depth
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->center());
-        else {
+        } else {
             // Framed branch: Use left or right edge
             switch (orientationChild) {
                 case RightOfParent:
@@ -668,6 +669,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
                 default: // Shouldn't happen
+                    qWarning() << "BC::uLP oopsie in " << info();
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->bottomCenter());
             }
@@ -696,9 +698,6 @@ void BranchContainer::updateUpLink()
 
     // MapCenters still might have upLinks: The bottomLine is part of upLink!
 
-    if (containerType == TmpParent) // FIXME-0 should no longer be necessary...
-        return;
-
     QPointF upLinkSelf_sp = upLinkPos(orientation);
     QPointF downLink_sp = downLinkPos();
 
@@ -716,7 +715,6 @@ void BranchContainer::updateUpLink()
 
     BranchItem *tmpParentBI = nullptr;
 
-    // qDebug() << "BC::updateUpLink of " << info() << " tmpLinkedPC=" << tmpLinkedParentContainer;
 
     if (pbc) {
         tmpParentBI = pbc->getBranchItem();
@@ -765,11 +763,11 @@ void BranchContainer::updateUpLink()
     }
 
     // Create/delete bottomline, depends on frame and (List-)Layout
-    if (frameType(true) != FrameContainer::NoFrame &&
-            upLink->hasBottomLine())
+    if (frameType(true) != FrameContainer::NoFrame) {
+        if (upLink->hasBottomLine())
             upLink->deleteBottomLine();
-    else {
-        if (!upLink->hasBottomLine() && containerType != TmpParent)
+    } else {
+        if (!upLink->hasBottomLine())
             upLink->createBottomLine();
     }
     // Finally geometry
