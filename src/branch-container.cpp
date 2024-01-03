@@ -117,8 +117,8 @@ void BranchContainer::init()
     /* Uncomment for testing
     QGraphicsEllipseItem *center = new QGraphicsEllipseItem (0, 0, 5, 5, this);
     center->setPen(QPen(Qt::blue));
-    */
     setPen(QPen(Qt::blue));
+    */
 }
 
 BranchContainer* BranchContainer::parentBranchContainer()
@@ -655,8 +655,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
     if (frameType(true) != FrameContainer::NoFrame ||
         frameType(false) != FrameContainer::NoFrame) {
         if (!parentBranchContainer() && movingStateInt != Moving ) {
-            qDebug() << "BC::uLP no pbc in " << info(); // FIXME-0 upLink to center when moving MainBranch (every 2nd step)
-            // Framed MapCenter: Use center of frame    // FIXME-2 should depend on layout, not depth
+            // Framed MapCenter: Use center of frame    // FIXME-3 should depend on layout, not depth
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->center());
         } else {

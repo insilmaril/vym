@@ -2201,8 +2201,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     model->repositionXLinks();
-
-    scene()->update();  // FIXME-2 required?
 }
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)
