@@ -570,19 +570,16 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
 {
     QPointF p_hint;
 
-    QRectF r;
-
     if (hasFloatingBranchesLayout()) {
         // Floating layout, position on circle around center of myself
-        r = headingContainer->rect();
         qreal radius = 80;
 
-        QPointF center = mapToScene(r.center());
-        //qDebug() << "BC::getPositionHintRelink  center= " << center << "  p_scene=" << p_scene; // FIXME-2 testing
-        qreal a = getAngle(p_scene - center);
-        p_hint = center + QPointF (radius * cos(a), - radius * sin(a));
+        QPointF center_sp = headingContainer->mapToScene(QPointF(0,0));
+        qreal a = getAngle(p_scene - center_sp);
+        p_hint = center_sp + QPointF (radius * cos(a), - radius * sin(a));
     } else {
-        // Regular layout
+        // Regular layout   // FIXME-2 Currently not used! Currently done in MapEditor...
+        QRectF r;
         if (branchesContainer)
             r = branchesContainer->rect();
         qreal y;
@@ -604,7 +601,6 @@ QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QP
         p_hint = headingContainer->mapToScene(p_hint);
     }
 
-    qDebug() << "BC::getPosHintRelink p_hint=" << toS(p_hint, 0);
     return p_hint;
 }
 
@@ -668,7 +664,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
                 default: // Shouldn't happen
-                    qWarning() << "BC::uLP oopsie in " << info();
+                    qWarning() << "BC::updateLinkPos  undefined orientation in " << info();
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->bottomCenter());
             }
@@ -1268,8 +1264,8 @@ void BranchContainer::reposition()
     // Set orientation based layout or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    //qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
     /*
+    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
     if (pbc) {
         qdbg() << ind() << "          pbc=" << pbc->info();
         qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
@@ -1282,10 +1278,9 @@ void BranchContainer::reposition()
         // I am currently attached to tmpParentContainer
         orientation = ((BranchContainerBase*)(parentContainer()->parentContainer()))->getOrientation();
     else {
-        BranchContainer *pbc = parentBranchContainer();
         // pbc is now either the temporary parent or the original one, depending on MovingState
         if (pbc) {
-            if (isFloating()) {
+            if (pbc->hasFloatingBranchesLayout()) {
                 if (pos().x() > 0)
                     orientation = RightOfParent;
                 else

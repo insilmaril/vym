@@ -251,8 +251,7 @@ void LinkObj::updateLinkGeometry()
     double vy = self_y - par_y;
 
     int z = -20000;
-    // FIXME-3 Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0)
-    // no longer used?
+    // FIXME-2 Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) - still needed?
     /*
     if (treeItem->depth() < 2)
         // z = (treeItem->depth() -2) * dZ_DEPTH + dZ_LINK;
@@ -267,7 +266,7 @@ void LinkObj::updateLinkGeometry()
         a = atan(vy / vx);
 
     // "turning point" for drawing polygonal links
-    QPointF tp(sin(a) * thickness_start, cos(a) * thickness_start);
+    QPointF tp(sin(a) * thickness_start, - cos(a) * thickness_start);
 
     // Draw the link
     switch (style) {

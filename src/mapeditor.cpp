@@ -987,7 +987,7 @@ TreeItem *MapEditor::findMapItem(
 
     // Search branches (and their childs, e.g. images
     // Start with mapcenter, no images allowed at rootItem
-    BranchItem *nearestMapCenter = nullptr;
+    BranchItem *nearestFloatingCenter = nullptr;
     qreal d = 0;
     int i = 0;
     BranchItem *bi = model->getRootItem()->getFirstBranch();
@@ -998,17 +998,18 @@ TreeItem *MapEditor::findMapItem(
             return found;
 
         if (findNearCenter) {
-            // Try to find nearest MapCenter
+            // Try to find nearest MapCenter   // FIXME-2 or branch with floating layout.
+                                               // Currently only MapCenters are searched
             Container *hc = bi->getBranchContainer()->getHeadingContainer();
             QPointF q = hc->mapToScene(hc->center());
-            if (!nearestMapCenter) {
-                nearestMapCenter = bi;
+            if (!nearestFloatingCenter) {
+                nearestFloatingCenter = bi;
                 d = Geometry::distance(p, q);
             } else {
                 qreal d2 = Geometry::distance(p, q);
                 if (d2 < d) {
                     d = d2;
-                    nearestMapCenter = bi;
+                    nearestFloatingCenter = bi;
                 }
             }
         }
@@ -1017,8 +1018,8 @@ TreeItem *MapEditor::findMapItem(
         bi = model->getRootItem()->getBranchNum(i);
     }
 
-    if (nearestMapCenter && d < 80 && !excludedItems.contains(nearestMapCenter))
-        return nearestMapCenter;
+    if (nearestFloatingCenter && d < 80 && !excludedItems.contains(nearestFloatingCenter))
+        return nearestFloatingCenter;
 
     return nullptr;
 }
@@ -2021,7 +2022,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         Container::PointName movingRefPointName;
         QPointF linkOffset;                     // Distance for temporary link
 
-        if (e->modifiers() & Qt::ShiftModifier) { // FIXME-2 Find nice position. Maybe using ME::getBranchAbove/Below (maybe move these to VM...)
+        if (e->modifiers() & Qt::ShiftModifier) {
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
 
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
@@ -2034,9 +2035,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     targetRefPointName = Container::TopLeft;
                     movingRefPointName = Container::BottomRight;
                     linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
-            } else {
-                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation with shift modifier"; // FIXME-0
-            }
+            }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
         } else if (e->modifiers() & Qt::ControlModifier) {
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
@@ -2049,9 +2048,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     targetRefPointName = Container::BottomLeft;
                     movingRefPointName = Container::TopRight;
                     linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
-            } else {
-                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation with ctrl modifier"; // FIXME-0
-            }
+            }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
         } else {
             // No modifier used, temporary link to target itself
             targetRefContainer = targetBranchContainer->getBranchesContainer();
@@ -2078,21 +2075,22 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     targetRefPointName = Container::BottomRight;
                     movingRefPointName = Container::TopRight;
                 }
-            } else {
-                qDebug() << "ME::moveObject -  targetBranchContainer has undefined orientation without modifier";
-                targetRefPointName = Container::Center;
-                movingRefPointName = Container::Center;   // FIXME-0 Could also be close to mid points or similar, e.g. MapCenter
-            }
+            }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
         }
 
         if (!targetRefContainer)
             targetRefContainer = ((BranchItem*)targetItem)->getBranchContainer();
 
-        // Align tPC to point in target, which has been selected above
-        tmpParentContainer->setPos(
-                                    linkOffset + movingRefContainer->mapToScene(
-                                                    movingRefContainer->alignTo(
-                                                        movingRefPointName, targetRefContainer, targetRefPointName)));
+        // Align tmpParentContainer
+        if (targetBranchContainer->hasFloatingBranchesLayout()) {
+            // When temporary linking e.g. to MapCenter, position on a circle around MC
+            tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(nullptr, 0, p_event));
+        } else
+            // Temporary link to branchContainers of targetRefContainer. Use position calculated above
+            tmpParentContainer->setPos(
+                                        linkOffset + movingRefContainer->mapToScene(
+                                                        movingRefContainer->alignTo(
+                                                            movingRefPointName, targetRefContainer, targetRefPointName)));
 
         // Set states of MapEditor and tPC
         if (tmpParentContainer->movingState() != BranchContainerBase::TemporaryLinked) {
@@ -2140,6 +2138,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 newOrientation = BranchContainer::RightOfParent;
             else
                 newOrientation = BranchContainer::LeftOfParent;
+            qDebug() << "ok0 setting newOrientation: " << newOrientation;   // FIXME-0 when tmp linking from leftOfParent to floating rightOfParent, repos of tPC is missing
         } else {
             // Relinking to other branch
             newOrientation = targetBranchContainer->getOrientation();
@@ -2159,14 +2158,21 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     // Reposition if required
+    qDebug() << "ME::mO  tpC: " << tmpParentContainer->getOrientation() << "newOrient=" << newOrientation;
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
         repositionRequired = true;
     }
 
-    if (repositionRequired)
+    if (repositionRequired) {
+        if (bc_first && targetBranchContainer && targetBranchContainer->hasFloatingBranchesLayout()) {
+            qDebug() << "ME::mO  resetting orientations";   // FIXME-0 not working :-(
+            foreach(BranchContainer *bc, tmpParentContainer->childBranches())
+                bc->setOrientation(newOrientation);
+        }
         tmpParentContainer->reposition();
+    }
 
     if (!targetBranchContainer) {
         // Above tPC was positioned only if there is a target, so now tPC->setPos() is required if there is no target

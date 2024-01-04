@@ -3952,7 +3952,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             bi->getBranchContainer()->updateChildrenStructure();
 
             reposition();
-            //mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x   //FIXME-2 really?
+            //mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x   //FIXME-2 really needed?
             return true;
         }
     }
