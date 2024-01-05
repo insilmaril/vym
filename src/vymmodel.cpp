@@ -3017,7 +3017,10 @@ void VymModel::moveDownDiagonally() // FIXME-2 multiselection missing
      }
 }
 
-void VymModel::detach(BranchItem *bi)   // FIXME-1 sometines linkSpaceCont and/or reposition missing // FIXME-1 does not remove link for MainBranch
+void VymModel::detach(BranchItem *bi)   // FIXME-1 Various issues
+                                        // sometines linkSpaceCont and/or reposition missing 
+                                        // -1 does not remove link for MainBranch
+                                        // does not save old position in relinkBranch()
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -3636,7 +3639,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
             QString redoCom;
 
             if (pbi == rootItem)
-                undoCom = "detach ()";  // FIXME-1 Position is not saved when relinking to rootItem
+                undoCom = "detach ()";
             else
                 undoCom = "relinkTo (\"" + preParString + "\"," + preNum + ")";
             redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
