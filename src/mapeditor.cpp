@@ -2134,11 +2134,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // tmpParentContainer has children and these do NOT contain targetBranchContainer
 
         if (targetBranchContainer->hasFloatingBranchesLayout()) {
-            if (p_event.x() > targetBranchContainer->pos().x())
+            if (p_event.x() > targetBranchContainer->getHeadingContainer()->mapToScene(QPointF(0,0)).x())
                 newOrientation = BranchContainer::RightOfParent;
             else
                 newOrientation = BranchContainer::LeftOfParent;
-            qDebug() << "ok0 setting newOrientation: " << newOrientation;   // FIXME-0 when tmp linking from leftOfParent to floating rightOfParent, repos of tPC is missing
         } else {
             // Relinking to other branch
             newOrientation = targetBranchContainer->getOrientation();
@@ -2158,7 +2157,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     // Reposition if required
-    qDebug() << "ME::mO  tpC: " << tmpParentContainer->getOrientation() << "newOrient=" << newOrientation;
     if (newOrientation != tmpParentContainer->getOrientation()) {
         // tPC has BoundingFloats layout, still children need orientation
         tmpParentContainer->setOrientation(newOrientation);
@@ -2167,7 +2165,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
     if (repositionRequired) {
         if (bc_first && targetBranchContainer && targetBranchContainer->hasFloatingBranchesLayout()) {
-            qDebug() << "ME::mO  resetting orientations";   // FIXME-0 not working :-(
             foreach(BranchContainer *bc, tmpParentContainer->childBranches())
                 bc->setOrientation(newOrientation);
         }

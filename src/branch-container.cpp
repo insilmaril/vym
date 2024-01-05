@@ -1274,7 +1274,7 @@ void BranchContainer::reposition()
     qdbg() << ind() << "        state=" << movingStateInt;
     */
 
-    if (movingStateInt == Moving)
+    if (movingStateInt == Moving || movingStateInt == TemporaryLinked)
         // I am currently attached to tmpParentContainer
         orientation = ((BranchContainerBase*)(parentContainer()->parentContainer()))->getOrientation();
     else {
