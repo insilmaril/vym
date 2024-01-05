@@ -36,7 +36,7 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
         ui.tabWidget->widget(3)->hide();
 
     //Create Model and View to hold attributes
-    attributeModel = new QStandardItemModel (1, 3, this);   // FIXME-2 used?
+    attributeModel = new QStandardItemModel (1, 3, this);   // FIXME-2 used and needed?
     attributeModel->setHeaderData(0,
             Qt::Horizontal,
             tr("Name","Branchprop window: Attribute name"));
@@ -143,7 +143,7 @@ BranchPropertyEditor::~BranchPropertyEditor()
 
 void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    disconnectSignals();    // FIXME-2 why complete disconnect? To avoid recursive calls when (pre-)setting values?
+    disconnectSignals();    // FIXME-4 why complete disconnect? To avoid recursive calls when (pre-)setting values?
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
@@ -386,7 +386,7 @@ void BranchPropertyEditor::setModel(VymModel *m)
     if (model) {
         QList <TreeItem*> seltis = model->getSelectedItems();
         if (!seltis.isEmpty()) {
-            setItem(seltis.last()); // FIXME-2 ok to only display last selected item?
+            setItem(seltis.last()); // FIXME-4 ok to only display last selected item?
             return;
         }
     }
@@ -547,7 +547,7 @@ void BranchPropertyEditor::childrenLayoutChanged()
     updateContainerLayoutButtons();
 }
 
-void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-2 Create custom class to sync slider and spinbox and avoid double calls to models
+void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
 {
     if (model)
         model->setRotationHeading(i);
