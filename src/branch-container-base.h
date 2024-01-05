@@ -70,10 +70,6 @@ class BranchContainerBase : public Container {
     Container *imagesContainer;         // Container with children images
 
     Orientation orientation;
-
-  private:
-    bool originalFloating;                      //! Save, if floating before linked temporary   // FIXME-2 needed?
-
 };
 
 #endif

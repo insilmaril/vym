@@ -3955,7 +3955,6 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             bi->getBranchContainer()->updateChildrenStructure();
 
             reposition();
-            //mapEditor->getScene()->update(); // Needed for _quick_ update,  even in 1.13.x   //FIXME-2 really needed?
             return true;
         }
     }
@@ -5412,7 +5411,7 @@ void VymModel::setDefXLinkStyleEnd(const QString &s)
     mapDesignInt->setDefXLinkStyleEnd(s);
 }
 
-void VymModel::setPos(const QPointF &pos_new, TreeItem *selti // FIXME-2 only used in scripting...)
+void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 only used in scripting...)
 {
     QList<TreeItem *> selItems;
     if (selti)

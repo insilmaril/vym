@@ -44,8 +44,6 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     qreal scrollOpacity;
 
   public:
-    bool isOriginalFloating();
-
     void addToBranchesContainer(Container *c);
 
   private:

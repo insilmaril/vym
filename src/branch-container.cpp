@@ -152,7 +152,6 @@ QString BranchContainer::getName() {
 void BranchContainer::setOriginalOrientation()
 {
     originalOrientation = orientation;
-    originalFloating = isFloating();
     originalParentBranchContainer = parentBranchContainer();
     if (parentItem()) {
         if (parentBranchContainer())
@@ -216,12 +215,6 @@ qreal BranchContainer::getScrollOpacity()
 {
     return scrollOpacity;
 }
-
-bool BranchContainer::isOriginalFloating()
-{
-    return originalFloating;
-}
-
 
 void BranchContainer::addToBranchesContainer(Container *c)
 {

@@ -1,12 +1,6 @@
-#include <QDebug>
-#include <QGraphicsScene>
-#include <math.h>   // FIXME-2 needed?
-
 #include "branch-container-base.h"
 
 #include "branch-container.h"
-#include "geometry.h"   // FIXME-2 needed?
-#include "misc.h"   // FIXME-2 needed?
 
 #define qdbg() qDebug().nospace().noquote()
 
