@@ -3017,7 +3017,7 @@ void VymModel::moveDownDiagonally() // FIXME-2 multiselection missing
      }
 }
 
-void VymModel::detach(BranchItem *bi)   // FIXME-1 Various issues
+void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
                                         // sometines linkSpaceCont and/or reposition missing 
                                         // -1 does not remove link for MainBranch
                                         // does not save old position in relinkBranch()
@@ -5412,7 +5412,7 @@ void VymModel::setDefXLinkStyleEnd(const QString &s)
     mapDesignInt->setDefXLinkStyleEnd(s);
 }
 
-void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
+void VymModel::setPos(const QPointF &pos_new, TreeItem *selti // FIXME-2 only used in scripting...)
 {
     QList<TreeItem *> selItems;
     if (selti)
@@ -5423,7 +5423,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
     foreach (TreeItem *ti, selItems) {
         if (ti->hasTypeBranch() || ti->hasTypeImage())
         {
-            /*
+            /* FIXME pos of HeadingContainer for branches?
             Container *c = ((MapItem*)ti)->getContainer();
             QPointF pos_old = c->getOriginalPos();
             QString pos_new_str = toS(pos_new);
@@ -5435,7 +5435,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
                           .arg(pos_new_str));
             c->setPos(pos_new);
             */
-            qDebug() << "VM::setPos - no originalPos available..."; // FIXME-1 only used in scripting...
+            qDebug() << "VM::setPos - no originalPos available...";
         }
     }
     reposition();

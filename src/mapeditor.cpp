@@ -1667,7 +1667,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     if (selbi) {
         selbc = selbi->getBranchContainer();
 
-        // XLink modifier, create new XLink // FIXME-1 move below to ti_found???
+        // XLink modifier, create new XLink
         if (mainWindow->getModMode() == Main::ModModeXLink &&
             (e->modifiers() & Qt::ShiftModifier)) {
             setState(DrawingLink);
