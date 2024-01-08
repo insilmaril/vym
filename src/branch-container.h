@@ -50,6 +50,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void updateImagesContainer();       //! Remove unused containers and add needed ones
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();
+    void updateTransformations();       //! Update rotation and scaling
 
   public:
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
@@ -95,11 +96,19 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     int rotationHeading();
     int rotationHeadingInScene();
 
+    void setScaleHeading(const qreal &);
+    qreal scaleHeading();
+
     void setRotationSubtree(const int &);
     int rotationSubtree();
+
+    void setScaleSubtree(const qreal &);
+    qreal scaleSubtree();
   protected:
     qreal rotationHeadingInt;
     qreal rotationSubtreeInt;
+    qreal scaleHeadingInt;
+    qreal scaleSubtreeInt;
 
   public:
 

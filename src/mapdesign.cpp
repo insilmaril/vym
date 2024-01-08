@@ -42,7 +42,9 @@ FIXME-3 currently not used template <typename T> void ConfigList<T>::setDefault(
 // MapDesign
 /////////////////////////////////////////////////////////////////
 
-MapDesign::MapDesign()  // FIXME-1 add options to update styles when relinking (Never, DepthChanged, Always)(Inner/Outer-Frames,Fonts,HeadingColor,Rotation, ...)
+MapDesign::MapDesign()  // FIXME-1 add options to update styles when relinking (Triggers, Actors)
+                        // Triggers: Never, DepthChanged, Always
+                        // Actors: Inner/Outer-Frames,Fonts,HeadingColor,Rotation Heading/Subtree, ...
 {
     // qDebug() << "Constr. MapDesign";
     init();

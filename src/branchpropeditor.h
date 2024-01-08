@@ -37,7 +37,9 @@ class BranchPropertyEditor : public QDialog {
     void linkHideUnselectedChanged(int);
     void childrenLayoutChanged();
     void rotationHeadingChanged(int);
-    void rotationInnerContentChanged(int);
+    void rotationSubtreeChanged(int);
+    void scaleHeadingChanged(qreal);
+    void scaleSubtreeChanged(qreal);
     void taskPriorityDeltaChanged(int);
     void addAttributeClicked();
     void deleteAttributeClicked();

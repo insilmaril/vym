@@ -162,10 +162,20 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (a != 0)
         rotHeadingAttr = attribute("rotHeading", QString("%1").arg(a));
 
-    QString rotContentAttr;
+    QString rotSubtreeAttr;
     a = branchContainer->rotationSubtree();
     if (a != 0)
-        rotContentAttr = attribute("rotContent", QString("%1").arg(a));
+        rotSubtreeAttr = attribute("rotSubtree", QString("%1").arg(a));
+
+    QString scaleHeadingAttr;
+    a = branchContainer->scaleHeading();
+    if (a != 1)
+        scaleHeadingAttr = attribute("scaleHeading", QString("%1").arg(a));
+
+    QString scaleSubtreeAttr;
+    a = branchContainer->scaleSubtree();
+    if (a != 1)
+        scaleSubtreeAttr = attribute("scaleSubtree", QString("%1").arg(a));
 
     QString posAttr;
     if (parentItem == rootItem || branchContainer->isFloating())
@@ -187,7 +197,9 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
                      layoutBranchesAttr +
                      layoutImagesAttr +
                      rotHeadingAttr +
-                     rotContentAttr +
+                     rotSubtreeAttr +
+                     scaleHeadingAttr +
+                     scaleSubtreeAttr +
                      idAttr);
     incIndent();
 

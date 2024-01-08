@@ -65,6 +65,8 @@ void BranchContainer::init()
 
     rotationHeadingInt = 0;
     rotationSubtreeInt = 0;
+    scaleHeadingInt = 1;
+    scaleSubtreeInt = 1;
 
     autoDesignInnerFrame = true;
     autoDesignOuterFrame = true;
@@ -279,6 +281,44 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
+void BranchContainer::updateTransformations()   // FIXME-0 scale subtree missing
+{
+    // Rotation of heading
+    if (innerFrame)
+        innerFrame->setRotation(rotationHeadingInt);
+    else if (ornamentsContainer)
+        ornamentsContainer->setRotation(rotationHeadingInt);
+
+    // Scale of heading
+    headingContainer->setScale(scaleHeadingInt);
+
+    // scale of children containers
+    //    if (branchesContainer)
+        //  branchesContainer->setScale(scaleSubtreeInt);
+
+    // Rotation of outer container or outerFrame
+    if (outerFrame) {
+        outerFrame->setRotation(rotationSubtreeInt);
+        outerFrame->setScale(scaleSubtreeInt);
+        if (outerContainer) {
+            outerContainer->setRotation(0);
+            outerContainer->setScale(1);
+        } else {
+            innerContainer->setRotation(0);
+            innerContainer->setScale(1);
+        }
+    } else {
+        if (outerContainer) {
+            outerContainer->setRotation(rotationSubtreeInt);
+            outerContainer->setScale(scaleSubtreeInt);
+        } else {
+            innerContainer->setRotation(rotationSubtreeInt);
+            innerContainer->setScale(scaleSubtreeInt);
+        }
+    }
+
+}
+
 void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a problem:
                                                 // When a map with list layout is loaded and 
                                                 // layout is switched to e.g. Vertical, the links 
@@ -343,25 +383,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
         innerContainer->setLayout(FloatingBounded);
     }
 
-    // Rotation of outer container or outerFrame    // FIXME-2 optimize and set only on demand? Maybe in updateStyles()?
-    if (outerFrame) {
-        outerFrame->setRotation(rotationSubtreeInt);
-        if (outerContainer)
-            outerContainer->setRotation(0);
-        else
-            innerContainer->setRotation(0);
-    } else {
-        if (outerContainer)
-            outerContainer->setRotation(rotationSubtreeInt);
-        else
-            innerContainer->setRotation(rotationSubtreeInt);
-    }
-
-    // Rotation of heading
-    if (innerFrame)
-        innerFrame->setRotation(rotationHeadingInt);
-    else if (ornamentsContainer)
-        ornamentsContainer->setRotation(rotationHeadingInt);
+    updateTransformations();
 
     // Update structure of outerContainer
     if (outerContainer) {
@@ -848,7 +870,7 @@ QRectF BranchContainer::headingRect()
 void BranchContainer::setRotationHeading(const int &a)
 {
     rotationHeadingInt = a;
-    updateChildrenStructure();  // FIXME-2 or better do this in updateStyles()?
+    updateTransformations();
     //headingContainer->setScale(f + a * 1.1);      // FIXME-2 what about scaling?? Which transformCenter?
 }
 
@@ -870,15 +892,37 @@ int BranchContainer::rotationHeadingInScene()
     return qRound(r);
 }
 
+void BranchContainer::setScaleHeading(const qreal &f) // FIXME-0
+{
+    scaleHeadingInt = f;
+    updateTransformations();
+}
+
+qreal BranchContainer::scaleHeading() // FIXME-0
+{
+    return scaleHeadingInt;
+}
+
 void BranchContainer::setRotationSubtree(const int &a)
 {
     rotationSubtreeInt = a;
-    updateChildrenStructure();  // FIXME-2 or better do this in updateStyles()?
+    updateTransformations();
 }
 
 int BranchContainer::rotationSubtree()
 {
     return qRound(rotationSubtreeInt);
+}
+
+void BranchContainer::setScaleSubtree(const qreal &f) // FIXME-0
+{
+    scaleSubtreeInt = f;
+    updateTransformations();
+}
+
+qreal BranchContainer::scaleSubtree() // FIXME-0
+{
+    return scaleSubtreeInt;
 }
 
 QUuid BranchContainer::findFlagByPos(const QPointF &p)
@@ -1152,8 +1196,6 @@ void BranchContainer::updateBranchesContainerLayout()
 
 void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 {
-    // Note: updateStyles() is never called for TmpParent!
-
     //qDebug() << "BC::updateStyles of " << info(); // FIXME-3 testing
 
     uint depth = branchItem->depth();

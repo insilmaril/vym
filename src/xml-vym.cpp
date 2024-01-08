@@ -1077,7 +1077,7 @@ void VymReader::readBranchAttr()
         lastBC->setRotationHeading(r);
     }
 
-    a = "rotContent";
+    a = "rotSubtree";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         r = s.toDouble(&ok);
@@ -1086,6 +1086,28 @@ void VymReader::readBranchAttr()
             return;
         }
         lastBC->setRotationSubtree(r);
+    }
+
+    a = "scaleHeading";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        lastBC->setScaleHeading(r);
+    }
+
+    a = "scaleSubtree";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        r = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        lastBC->setScaleSubtree(r);
     }
 }
 

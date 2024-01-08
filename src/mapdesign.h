@@ -53,8 +53,8 @@ class MapDesign {
         CreatedByUser       = 0x0004,
         RelinkedByUser      = 0x0008,
         LayoutChanged       = 0x0010,
-        LinkStyleChanged    = 0x0010,
-        StyleChanged        = 0x0011    // e.g. heading color, which could change link color, too
+        LinkStyleChanged    = 0x0020,
+        StyleChanged        = 0x0040    // e.g. heading color, which could change link color, too
     };
 
     /*

@@ -2529,6 +2529,54 @@ void VymModel::setRotationSubtree (const int &i)
     }
 }
 
+void VymModel::setScaleHeading (const qreal &f) // FIXME-2 savestate: no command yet
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+	if (bc->scaleHeading() != f) {
+            saveState(selbi,
+                      QString("setScaleHeading (\"%1\")")
+                          .arg(bc->scaleHeading()),
+                      selbi, QString("setScaleHeading (\"%1\")").arg(f),
+                      QString("Set scale of heading and flags to %1").arg(f));
+
+            bc->setScaleHeading(f);
+	}
+    }
+
+    if (!selbis.isEmpty()) {
+        reposition();
+        emitSelectionChanged(); // FIXME-2 needed?
+    }
+}
+
+void VymModel::setScaleSubtree (const qreal &f) // FIXME-2 savestate: no command yet
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+	if (bc->scaleSubtree() != f) {
+            saveState(selbi,
+                      QString("setScaleSubtree (\"%1\")")
+                          .arg(bc->scaleSubtree()),
+                      selbi, QString("setScaleSubtree (\"%1\")").arg(f),
+                      QString("Set scale of subtree and flags to %1").arg(f));
+
+            bc->setScaleSubtree(f);
+	}
+    }
+
+    if (!selbis.isEmpty()) {
+        reposition();
+        emitSelectionChanged(); // FIXME-2 needed?
+    }
+}
+
 void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -3029,7 +3077,7 @@ void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
         selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        if (selbi && selbi->depth() > 0) {
+        if (selbi->depth() > 0) {
             bc = selbi->getBranchContainer();
             relinkBranch(selbi, rootItem, -1);
         }
@@ -6373,7 +6421,7 @@ SlideModel *VymModel::getSlideModel() { return slideModel; }
 
 int VymModel::slideCount() { return slideModel->count(); }
 
-SlideItem *VymModel::addSlide()     // FIXME-2 undo/redo not working
+SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)

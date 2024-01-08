@@ -289,9 +289,13 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         // Layout branches
         updateContainerLayoutButtons();
         ui.rotationHeadingSlider->setValue(bc->rotationHeading());
-        ui.rotationInnerContentSlider->setValue(bc->rotationSubtree());
+        ui.rotationSubtreeSlider->setValue(bc->rotationSubtree());
         ui.rotationHeadingSpinBox->setValue(bc->rotationHeading());
-        ui.rotationInnerContentSpinBox->setValue(bc->rotationSubtree());
+        ui.rotationSubtreeSpinBox->setValue(bc->rotationSubtree());
+        ui.scaleHeadingSlider->setValue(bc->scaleHeading());
+        ui.scaleSubtreeSlider->setValue(bc->scaleSubtree());
+        ui.scaleHeadingSpinBox->setValue(bc->scaleHeading());
+        ui.scaleSubtreeSpinBox->setValue(bc->scaleSubtree());
 
         // Task
         Task *task = branchItem->getTask();
@@ -556,13 +560,31 @@ void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-4 Create cu
     ui.rotationHeadingSpinBox->setValue(i);
 }
 
-void BranchPropertyEditor::rotationInnerContentChanged(int i)
+void BranchPropertyEditor::rotationSubtreeChanged(int i)
 {
     if (model)
         model->setRotationSubtree(i);
 
-    ui.rotationInnerContentSlider->setValue(i);
-    ui.rotationInnerContentSpinBox->setValue(i);
+    ui.rotationSubtreeSlider->setValue(i);
+    ui.rotationSubtreeSpinBox->setValue(i);
+}
+
+void BranchPropertyEditor::scaleHeadingChanged(qreal f)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
+{
+    if (model)
+        model->setScaleHeading(f);
+
+    ui.scaleHeadingSlider->setValue(f);
+    ui.scaleHeadingSpinBox->setValue(f);
+}
+
+void BranchPropertyEditor::scaleSubtreeChanged(qreal f)
+{
+    if (model)
+        model->setScaleSubtree(f);
+
+    ui.scaleSubtreeSlider->setValue(f);
+    ui.scaleSubtreeSpinBox->setValue(f);
 }
 
 void BranchPropertyEditor::taskPriorityDeltaChanged(int n)
@@ -683,10 +705,20 @@ void BranchPropertyEditor::connectSignals()
     // With lambda          // FIXME-3
     // connect(spinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
 
-    connect(ui.rotationInnerContentSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(rotationInnerContentChanged(int)));
-    connect(ui.rotationInnerContentSpinBox, SIGNAL(valueChanged(int)),
-            this, SLOT(rotationInnerContentChanged(int)));
+    connect(ui.rotationSubtreeSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(rotationSubtreeChanged(int)));
+    connect(ui.rotationSubtreeSpinBox, SIGNAL(valueChanged(int)),
+            this, SLOT(rotationSubtreeChanged(int)));
+
+    connect(ui.scaleHeadingSlider, SIGNAL(valueChanged(qreal)),
+            this, SLOT(scaleHeadingChanged(qreal)));
+    connect(ui.scaleHeadingSpinBox, SIGNAL(valueChanged(qreal)),
+            this, SLOT(scaleHeadingChanged(qreal)));
+
+    connect(ui.scaleSubtreeSlider, SIGNAL(valueChanged(qreal)),
+            this, SLOT(scaleSubtreeChanged(qreal)));
+    connect(ui.scaleSubtreeSpinBox, SIGNAL(valueChanged(qreal)),
+            this, SLOT(scaleSubtreeChanged(qreal)));
 
     // Tasks
     connect(ui.taskPrioDelta, SIGNAL(valueChanged(int)), this,
@@ -741,8 +773,12 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.imagesLayoutFreeButton, 0, 0, 0);
     disconnect(ui.rotationHeadingSlider, 0, 0, 0);
     disconnect(ui.rotationHeadingSpinBox, 0, 0, 0);
-    disconnect(ui.rotationInnerContentSlider, 0, 0, 0);
-    disconnect(ui.rotationInnerContentSpinBox, 0, 0, 0);
+    disconnect(ui.rotationSubtreeSlider, 0, 0, 0);
+    disconnect(ui.rotationSubtreeSpinBox, 0, 0, 0);
+    disconnect(ui.scaleHeadingSlider, 0, 0, 0);
+    disconnect(ui.scaleHeadingSpinBox, 0, 0, 0);
+    disconnect(ui.scaleSubtreeSlider, 0, 0, 0);
+    disconnect(ui.scaleSubtreeSpinBox, 0, 0, 0);
 
     // Task
     disconnect(ui.taskPrioDelta, 0, 0, 0);
