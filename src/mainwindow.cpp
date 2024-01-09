@@ -3533,7 +3533,7 @@ void Main::setupToolbars()
 
     // Format and colors
     colorsToolbar = new QToolBar(tr("Colors toolbar", "Colors toolbar name"));
-    colorsToolbar->setObjectName("colorsTB");
+    colorsToolbar->setObjectName("colorsTB");   // FIXME-2 Add/rework buttons to color heading, inner/outer frame pen/brush
 
     actionGroupQuickColors = new QActionGroup(this);
     actionGroupQuickColors->setExclusive(true);

@@ -281,7 +281,7 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
-void BranchContainer::updateTransformations()   // FIXME-0 scale subtree missing
+void BranchContainer::updateTransformations()
 {
     // Rotation of heading
     if (innerFrame)
@@ -892,13 +892,13 @@ int BranchContainer::rotationHeadingInScene()
     return qRound(r);
 }
 
-void BranchContainer::setScaleHeading(const qreal &f) // FIXME-0
+void BranchContainer::setScaleHeading(const qreal &f)
 {
     scaleHeadingInt = f;
     updateTransformations();
 }
 
-qreal BranchContainer::scaleHeading() // FIXME-0
+qreal BranchContainer::scaleHeading()
 {
     return scaleHeadingInt;
 }
@@ -914,13 +914,13 @@ int BranchContainer::rotationSubtree()
     return qRound(rotationSubtreeInt);
 }
 
-void BranchContainer::setScaleSubtree(const qreal &f) // FIXME-0
+void BranchContainer::setScaleSubtree(const qreal &f)
 {
     scaleSubtreeInt = f;
     updateTransformations();
 }
 
-qreal BranchContainer::scaleSubtree() // FIXME-0
+qreal BranchContainer::scaleSubtree()
 {
     return scaleSubtreeInt;
 }

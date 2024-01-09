@@ -1615,7 +1615,7 @@ void MapEditor::startPanningView(QMouseEvent *e)
     setCursor(HandOpenCursor);
 }
 
-void MapEditor::mousePressEvent(QMouseEvent *e)
+void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if multiple tree items are found to select the "right" one
 {
     // Ignore right clicks
     if (e->button() == Qt::RightButton) {
@@ -1899,7 +1899,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
+void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)  // FIXME-0 crashes when ctrl moving MC in MoveOnly mode to another MC
 {
     bool repositionRequired = false;
     bool updateUpLinksRequired = false;
@@ -2022,7 +2022,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         Container::PointName movingRefPointName;
         QPointF linkOffset;                     // Distance for temporary link
 
-        if (e->modifiers() & Qt::ShiftModifier) {
+        if (e->modifiers() & Qt::ShiftModifier) {   // FIXME-1 better center instead of bottom for movingRef
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
 
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
@@ -2036,7 +2036,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     movingRefPointName = Container::BottomRight;
                     linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
             }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
-        } else if (e->modifiers() & Qt::ControlModifier) {
+        } else if (e->modifiers() & Qt::ControlModifier) {  // FIXME-1 better center instead of top for movingRef
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
                 // Shift modifier: Link right below
