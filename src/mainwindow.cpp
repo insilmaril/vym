@@ -5012,36 +5012,19 @@ void Main::editCycleTaskStatus()
         m->cycleTaskStatus();
 }
 
-void Main::editTaskResetDeltaPrio() // FIXME-2 With multiple selections enabled, old selection should be restored
+void Main::editTaskResetDeltaPrio()
 {
-    QList <Task*> tasks;
-    QList <VymModel*> models;
+    QList <BranchItem*> taskBranches;
+    Task *task;
     for (int i = 0; i < taskModel->count(); i++)
     {
-        Task *task = taskModel->getTask(i);
-        if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0) {
-            tasks << task;
-            VymModel *m = task->getBranch()->getModel();
-            if (!models.contains(m))
-                models << m;
-        }
+        task = taskModel->getTask(i);
+        if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0)
+            taskBranches << task->getBranch();
     }
 
-    foreach (VymModel *model, models) {
-        // Unselect everything
-        model->unselectAll();
-
-        // Select all branches, where tasks whill be updated
-        foreach (Task *task, tasks) {
-            BranchItem *bi = task->getBranch();
-            if (bi->getModel() == model) {
-                model->selectToggle(bi);
-            }
-        }
-
-        // Bulk update all branches in this model
-        model->setTaskPriorityDelta(0);
-    }
+    foreach (BranchItem *bi, taskBranches)
+        bi->getModel()->setTaskPriorityDelta(0, bi);
 }
 
 void Main::editTaskSleepN()
