@@ -1361,6 +1361,7 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editCopy()));
     actionCopy = a;
 
+    // Multi key shortcuts https://bugreports.qt.io/browse/QTBUG-39127
     a = new QAction(QPixmap(":/editcut.png"), tr("Cu&t", "Edit menu"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_X);
     a->setEnabled(false);
