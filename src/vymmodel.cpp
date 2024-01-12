@@ -611,7 +611,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (err != File::Aborted) {
             if (parsedWell) {
-                rootItem->updateStylesRecursively(MapDesign::MapLoad);
+                // rootItem->updateStylesRecursively(MapDesign::MapLoad); FIXME-2 not used
                 reposition(); // to generate bbox sizes
                 emitSelectionChanged();
 
@@ -2554,6 +2554,16 @@ void VymModel::setScaleHeading (const qreal &f) // FIXME-2 savestate: no command
     }
 }
 
+qreal VymModel::getScaleHeading ()
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    if (selbis.isEmpty()) return 1;
+
+    return selbis.first()->getBranchContainer()->scaleHeading();
+}
+
+
 void VymModel::setScaleSubtree (const qreal &f) // FIXME-2 savestate: no command yet
 {
     QList<BranchItem *> selbis = getSelectedBranches();
@@ -2576,6 +2586,15 @@ void VymModel::setScaleSubtree (const qreal &f) // FIXME-2 savestate: no command
         reposition();
         emitSelectionChanged(); // FIXME-2 needed?
     }
+}
+
+qreal VymModel::getScaleSubtree ()
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    if (selbis.isEmpty()) return 1;
+
+    return selbis.first()->getBranchContainer()->scaleSubtree();
 }
 
 void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)

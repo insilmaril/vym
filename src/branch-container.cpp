@@ -1203,15 +1203,14 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
     BranchContainer *pbc = parentBranchContainer();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    if (updateMode == MapDesign::CreatedByUser)
-        md->updateBranchHeadingColor(updateMode, branchItem, depth);
+    md->updateBranchHeadingColor(updateMode, branchItem, depth);
 
     // bulletpoint color should match heading color
     if (bulletPointContainer)
         bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
 
     // Set frame
-    md->updateFrames(this, updateMode, depth); // FIXME-2  depth not really necessary here
+    md->updateFrames(updateMode, this, depth);
 
     updateBranchesContainerLayout();
 

@@ -379,7 +379,9 @@ class VymModel : public TreeModel {
     void setRotationHeading(const int &);
     void setRotationSubtree(const int &);
     void setScaleHeading(const qreal &);
+    qreal getScaleHeading();
     void setScaleSubtree(const qreal &);
+    qreal getScaleSubtree();
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */

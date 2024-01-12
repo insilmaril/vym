@@ -34,12 +34,25 @@ class BranchPropertyEditor : public QDialog {
     void framePaddingChanged(int);
     void framePenWidthChanged(int);
 
-    void linkHideUnselectedChanged(int);
+    void branchesLayoutsChanged(int);
+    void imagesLayoutsChanged(int);
     void childrenLayoutChanged();
+
+    void linkHideUnselectedChanged(int);
+
     void rotationHeadingChanged(int);
     void rotationSubtreeChanged(int);
+
     void scaleHeadingChanged(qreal);
+    void scaleHeadingSliderPressed();
+    void scaleHeadingSliderChanged(int);
+    void scaleHeadingSliderReleased();
+
     void scaleSubtreeChanged(qreal);
+    void scaleSubtreeSliderPressed();
+    void scaleSubtreeSliderChanged(int);
+    void scaleSubtreeSliderReleased();
+
     void taskPriorityDeltaChanged(int);
     void addAttributeClicked();
     void deleteAttributeClicked();
@@ -63,6 +76,9 @@ class BranchPropertyEditor : public QDialog {
     int lastSelectedBranchTab;
 
     QStandardItemModel *attributeModel;
+
+    qreal scaleHeadingInitialValue;
+    qreal scaleSubtreeInitialValue;
 
     //AttributeDelegate attributeDelegate;
 };

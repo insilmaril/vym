@@ -65,6 +65,9 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     else
         hide();
 
+    scaleHeadingInitialValue = 1;
+    scaleSubtreeInitialValue = 1;
+
     connect(ui.tabWidget, SIGNAL(currentChanged(int)), this,
             SLOT(indexChanged(int)));
 
@@ -76,57 +79,52 @@ void BranchPropertyEditor::updateContainerLayoutButtons()
     BranchContainer *bc = branchItem->getBranchContainer();
 
     // Layout branches
-    if (bc->branchesContainerAutoLayout) {
-        ui.branchesAutoLayoutCheckBox->setChecked(true);
-        ui.branchesLayoutsFrame->setEnabled(false);
-    } else {
-        ui.branchesAutoLayoutCheckBox->setChecked(false);
-        ui.branchesLayoutsFrame->setEnabled(true);
-    }
-    switch (bc->getBranchesContainerLayout()) {
-        case Container::Vertical:
-            ui.branchesLayoutVerticalButton->setChecked(true);
-            break;
-        case Container::Horizontal:
-            ui.branchesLayoutHorizontalButton->setChecked(true);
-            break;
-        case Container::FloatingBounded:
-            ui.branchesLayoutBoundedButton->setChecked(true);
-            break;
-        case Container::FloatingFree:
-            ui.branchesLayoutFreeButton->setChecked(true);
-            break;
-        case Container::List:
-            ui.branchesLayoutListButton->setChecked(true);
-            break;
-        default:
-            qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(bc->getLayoutString(bc->getBranchesContainerLayout()));
-            qDebug() << "branch=" << branchItem->getHeadingPlain();
+    if (bc->branchesContainerAutoLayout)
+        ui.branchesLayoutsCombo->setCurrentIndex(0);
+    else {
+        switch (bc->getBranchesContainerLayout()) {
+            case Container::Vertical:
+                ui.branchesLayoutsCombo->setCurrentIndex(1);
+                break;
+            case Container::Horizontal:
+                ui.branchesLayoutsCombo->setCurrentIndex(2);
+                break;
+            case Container::FloatingBounded:
+                ui.branchesLayoutsCombo->setCurrentIndex(3);
+                break;
+            case Container::FloatingFree:
+                ui.branchesLayoutsCombo->setCurrentIndex(4);
+                break;
+            case Container::List:
+                ui.branchesLayoutsCombo->setCurrentIndex(5);
+                break;
+            default:
+                qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(bc->getLayoutString(bc->getBranchesContainerLayout()));
+                qDebug() << "branch=" << branchItem->getHeadingPlain();
+        }
     }
 
     // Layout images
-    if (bc->imagesContainerAutoLayout) {
-        ui.imagesAutoLayoutCheckBox->setChecked(true);
-        ui.imagesLayoutsFrame->setEnabled(false);
-    } else {
-        ui.imagesAutoLayoutCheckBox->setChecked(false);
-        ui.imagesLayoutsFrame->setEnabled(true);
-    }
-    switch (bc->getImagesContainerLayout()) {
-        case Container::Vertical:
-            ui.imagesLayoutVerticalButton->setChecked(true);
-            break;
-        case Container::Horizontal:
-            ui.imagesLayoutHorizontalButton->setChecked(true);
-            break;
-        case Container::FloatingBounded:
-            ui.imagesLayoutBoundedButton->setChecked(true);
-            break;
-        case Container::FloatingFree:
-            ui.imagesLayoutFreeButton->setChecked(true);
-            break;
-        default:
-            qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(bc->getLayoutString(bc->getImagesContainerLayout()));
+    if (bc->imagesContainerAutoLayout)
+        ui.imagesLayoutsCombo->setCurrentIndex(0);
+    else {
+        switch (bc->getImagesContainerLayout()) {
+            case Container::Vertical:
+                ui.imagesLayoutsCombo->setCurrentIndex(1);
+                break;
+            case Container::Horizontal:
+                ui.imagesLayoutsCombo->setCurrentIndex(2);
+                break;
+            case Container::FloatingBounded:
+                ui.imagesLayoutsCombo->setCurrentIndex(3);
+                break;
+            case Container::FloatingFree:
+                ui.imagesLayoutsCombo->setCurrentIndex(4);
+                break;
+            default:
+                qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(bc->getLayoutString(bc->getImagesContainerLayout()));
+                qDebug() << "branch=" << branchItem->getHeadingPlain();
+        }
     }
 }
 
@@ -280,12 +278,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
                 break;
         }
 
-        // Link
-        if (branchItem->getHideLinkUnselected())
-            ui.hideLinkIfUnselected->setCheckState(Qt::Checked);
-        else
-            ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
-
         // Layout branches
         updateContainerLayoutButtons();
         ui.rotationHeadingSlider->setValue(bc->rotationHeading());
@@ -296,6 +288,12 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         ui.scaleSubtreeSlider->setValue(bc->scaleSubtree());
         ui.scaleHeadingSpinBox->setValue(bc->scaleHeading());
         ui.scaleSubtreeSpinBox->setValue(bc->scaleSubtree());
+
+        // Link
+        if (branchItem->getHideLinkUnselected())
+            ui.hideLinkIfUnselected->setCheckState(Qt::Checked);
+        else
+            ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
 
         // Task
         Task *task = branchItem->getTask();
@@ -506,8 +504,70 @@ void BranchPropertyEditor::linkHideUnselectedChanged(int i)
     model->setHideLinkUnselected(i);
 }
 
-void BranchPropertyEditor::childrenLayoutChanged()
+void BranchPropertyEditor::branchesLayoutsChanged(int i)
 {
+    if (!model) return;
+
+    QString s;
+    switch (i) {
+        case 0:
+            s = "Auto";
+            break;
+        case 1:
+            s = "Vertical";
+            break;
+        case 2:
+            s = "Horizontal";
+            break;
+        case 3:
+            s = "FloatingBounded";
+            break;
+        case 4:
+            s = "FloatingFree";
+            break;
+        case 5:
+            s = "List";
+            break;
+        default:
+            qWarning() << "BranchPropertyEditor unknown layout in line " << __LINE__;
+            return;
+    }
+
+    model->setBranchesLayout(s);
+}
+
+void BranchPropertyEditor::imagesLayoutsChanged(int i)
+{
+    if (!model) return;
+
+    QString s;
+    switch (i) {
+        case 0:
+            s = "Auto";
+            break;
+        case 1:
+            s = "Vertical";
+            break;
+        case 2:
+            s = "Horizontal";
+            break;
+        case 3:
+            s = "Floating bounded";
+            break;
+        case 4:
+            s = "Floating free";
+            break;
+        default:
+            qWarning() << "BranchPropertyEditor unknown layout in line " << __LINE__;
+            return;
+    }
+
+    model->setImagesLayout(s);
+}
+
+void BranchPropertyEditor::childrenLayoutChanged() // FIXME-2 no longer necessary with ComboBox above
+{
+    /*
     if (!model) return;
 
     if (ui.branchesAutoLayoutCheckBox->isChecked())
@@ -549,6 +609,7 @@ void BranchPropertyEditor::childrenLayoutChanged()
     }
 
     updateContainerLayoutButtons();
+    */
 }
 
 void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
@@ -574,8 +635,32 @@ void BranchPropertyEditor::scaleHeadingChanged(qreal f)    // FIXME-4 Create cus
     if (model)
         model->setScaleHeading(f);
 
-    ui.scaleHeadingSlider->setValue(f);
     ui.scaleHeadingSpinBox->setValue(f);
+}
+
+void BranchPropertyEditor::scaleHeadingSliderPressed()
+{
+    if (model)
+        scaleHeadingInitialValue = model->getScaleHeading();
+}
+
+void BranchPropertyEditor::scaleHeadingSliderChanged(int i)
+{
+    qreal v = (qreal) i / 100 + scaleHeadingInitialValue;
+    if (model)
+        model->setScaleHeading(v);
+
+    // Update SpinBox
+    ui.scaleHeadingSpinBox->blockSignals(true);
+    ui.scaleHeadingSpinBox->setValue(v);
+    ui.scaleHeadingSpinBox->blockSignals(false);
+}
+
+void BranchPropertyEditor::scaleHeadingSliderReleased()
+{
+    ui.scaleHeadingSlider->blockSignals(true);
+    ui.scaleHeadingSlider->setValue(0);
+    ui.scaleHeadingSlider->blockSignals(false);
 }
 
 void BranchPropertyEditor::scaleSubtreeChanged(qreal f)
@@ -583,8 +668,33 @@ void BranchPropertyEditor::scaleSubtreeChanged(qreal f)
     if (model)
         model->setScaleSubtree(f);
 
-    ui.scaleSubtreeSlider->setValue(f);
+    //ui.scaleSubtreeSlider->setValue(f);
     ui.scaleSubtreeSpinBox->setValue(f);
+}
+
+void BranchPropertyEditor::scaleSubtreeSliderPressed()
+{
+    if (model)
+        scaleSubtreeInitialValue = model->getScaleSubtree();
+}
+
+void BranchPropertyEditor::scaleSubtreeSliderChanged(int i)
+{
+    qreal v = (qreal) i / 100 + scaleSubtreeInitialValue;
+    if (model)
+        model->setScaleSubtree(v);
+
+    // Update SpinBox
+    ui.scaleSubtreeSpinBox->blockSignals(true);
+    ui.scaleSubtreeSpinBox->setValue(v);
+    ui.scaleSubtreeSpinBox->blockSignals(false);
+}
+
+void BranchPropertyEditor::scaleSubtreeSliderReleased()
+{
+    ui.scaleSubtreeSlider->blockSignals(true);
+    ui.scaleSubtreeSlider->setValue(0);
+    ui.scaleSubtreeSlider->blockSignals(false);
 }
 
 void BranchPropertyEditor::taskPriorityDeltaChanged(int n)
@@ -669,33 +779,12 @@ void BranchPropertyEditor::connectSignals()
 
     connect(ui.outerFrameTypeCombo, SIGNAL(currentIndexChanged(int)), this,
             SLOT(frameTypeChanged(int)));
-    // Link
-    connect(ui.hideLinkIfUnselected, SIGNAL(stateChanged(int)), this,
-            SLOT(linkHideUnselectedChanged(int)));
 
     // Layout
-    connect(ui.branchesAutoLayoutCheckBox, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.branchesLayoutVerticalButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.branchesLayoutHorizontalButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.branchesLayoutBoundedButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.branchesLayoutFreeButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.branchesLayoutListButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.imagesAutoLayoutCheckBox, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.imagesLayoutVerticalButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.imagesLayoutHorizontalButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.imagesLayoutBoundedButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
-    connect(ui.imagesLayoutFreeButton, SIGNAL(clicked()),
-            this, SLOT(childrenLayoutChanged()));
+    connect(ui.branchesLayoutsCombo, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(branchesLayoutsChanged(int)));
+    connect(ui.imagesLayoutsCombo, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(imagesLayoutsChanged(int)));
 
     connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)),
             this, SLOT(rotationHeadingChanged(int)));
@@ -710,15 +799,27 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.rotationSubtreeSpinBox, SIGNAL(valueChanged(int)),
             this, SLOT(rotationSubtreeChanged(int)));
 
-    connect(ui.scaleHeadingSlider, SIGNAL(valueChanged(qreal)),
-            this, SLOT(scaleHeadingChanged(qreal)));
     connect(ui.scaleHeadingSpinBox, SIGNAL(valueChanged(qreal)),
             this, SLOT(scaleHeadingChanged(qreal)));
+    connect(ui.scaleHeadingSlider, SIGNAL(sliderPressed()),
+            this, SLOT(scaleHeadingSliderPressed()));
+    connect(ui.scaleHeadingSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(scaleHeadingSliderChanged(int)));
+    connect(ui.scaleHeadingSlider, SIGNAL(sliderReleased()),
+            this, SLOT(scaleHeadingSliderReleased()));
 
-    connect(ui.scaleSubtreeSlider, SIGNAL(valueChanged(qreal)),
-            this, SLOT(scaleSubtreeChanged(qreal)));
     connect(ui.scaleSubtreeSpinBox, SIGNAL(valueChanged(qreal)),
             this, SLOT(scaleSubtreeChanged(qreal)));
+    connect(ui.scaleSubtreeSlider, SIGNAL(sliderPressed()),
+            this, SLOT(scaleSubtreeSliderPressed()));
+    connect(ui.scaleSubtreeSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(scaleSubtreeSliderChanged(int)));
+    connect(ui.scaleSubtreeSlider, SIGNAL(sliderReleased()),
+            this, SLOT(scaleSubtreeSliderReleased()));
+
+    // Link
+    connect(ui.hideLinkIfUnselected, SIGNAL(stateChanged(int)), this,
+            SLOT(linkHideUnselectedChanged(int)));
 
     // Tasks
     connect(ui.taskPrioDelta, SIGNAL(valueChanged(int)), this,
@@ -760,17 +861,8 @@ void BranchPropertyEditor::disconnectSignals()
     disconnect(ui.hideLinkIfUnselected, 0, 0, 0);
 
     // Layout
-    disconnect(ui.branchesAutoLayoutCheckBox, 0, 0, 0);
-    disconnect(ui.branchesLayoutVerticalButton, 0, 0, 0);
-    disconnect(ui.branchesLayoutHorizontalButton, 0, 0, 0);
-    disconnect(ui.branchesLayoutBoundedButton, 0, 0, 0);
-    disconnect(ui.branchesLayoutFreeButton, 0, 0, 0);
-    disconnect(ui.branchesLayoutListButton, 0, 0, 0);
-    disconnect(ui.imagesAutoLayoutCheckBox, 0, 0, 0);
-    disconnect(ui.imagesLayoutVerticalButton, 0, 0, 0);
-    disconnect(ui.imagesLayoutHorizontalButton, 0, 0, 0);
-    disconnect(ui.imagesLayoutBoundedButton, 0, 0, 0);
-    disconnect(ui.imagesLayoutFreeButton, 0, 0, 0);
+    disconnect(ui.branchesLayoutsCombo, 0, 0, 0);
+    disconnect(ui.imagesLayoutsCombo, 0, 0, 0);
     disconnect(ui.rotationHeadingSlider, 0, 0, 0);
     disconnect(ui.rotationHeadingSpinBox, 0, 0, 0);
     disconnect(ui.rotationSubtreeSlider, 0, 0, 0);

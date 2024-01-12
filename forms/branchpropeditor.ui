@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>317</width>
-    <height>748</height>
+    <height>734</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,6 +22,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_9">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
      <property name="currentIndex">
       <number>1</number>
      </property>
@@ -433,166 +436,37 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QCheckBox" name="branchesAutoLayoutCheckBox">
-              <property name="text">
-               <string>Automatic</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QFrame" name="branchesLayoutsFrame">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout_2">
-                 <item>
-                  <widget class="QRadioButton" name="branchesLayoutVerticalButton">
-                   <property name="text">
-                    <string>Vertical</string>
-                   </property>
-                   <attribute name="buttonGroup">
-                    <string notr="true">branchesLayoutsButtonGroup</string>
-                   </attribute>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="branchesLayoutHorizontalButton">
-                   <property name="text">
-                    <string>Horizontal</string>
-                   </property>
-                   <attribute name="buttonGroup">
-                    <string notr="true">branchesLayoutsButtonGroup</string>
-                   </attribute>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="branchesLayoutBoundedButton">
-                   <property name="text">
-                    <string>Floating bounded</string>
-                   </property>
-                   <attribute name="buttonGroup">
-                    <string notr="true">branchesLayoutsButtonGroup</string>
-                   </attribute>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="branchesLayoutFreeButton">
-                   <property name="text">
-                    <string>Floating free</string>
-                   </property>
-                   <attribute name="buttonGroup">
-                    <string notr="true">branchesLayoutsButtonGroup</string>
-                   </attribute>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="branchesLayoutListButton">
-                   <property name="text">
-                    <string>List</string>
-                   </property>
-                   <attribute name="buttonGroup">
-                    <string notr="true">branchesLayoutsButtonGroup</string>
-                   </attribute>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="childrenImagesGroupBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Layout of  images</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-              <property name="checkable">
-               <bool>false</bool>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
-                <widget class="QCheckBox" name="imagesAutoLayoutCheckBox">
-                 <property name="text">
-                  <string>Automatic</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QFrame" name="imagesLayoutsFrame">
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_8">
-                  <item>
-                   <layout class="QVBoxLayout" name="verticalLayout_3">
-                    <item>
-                     <widget class="QRadioButton" name="imagesLayoutVerticalButton">
-                      <property name="text">
-                       <string>Vertical</string>
-                      </property>
-                      <attribute name="buttonGroup">
-                       <string notr="true">imagesLayoutsButtonGroup</string>
-                      </attribute>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QRadioButton" name="imagesLayoutHorizontalButton">
-                      <property name="text">
-                       <string>Horizontal</string>
-                      </property>
-                      <attribute name="buttonGroup">
-                       <string notr="true">imagesLayoutsButtonGroup</string>
-                      </attribute>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QRadioButton" name="imagesLayoutBoundedButton">
-                      <property name="text">
-                       <string>Floating bounded</string>
-                      </property>
-                      <attribute name="buttonGroup">
-                       <string notr="true">imagesLayoutsButtonGroup</string>
-                      </attribute>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QRadioButton" name="imagesLayoutFreeButton">
-                      <property name="text">
-                       <string>Floating free</string>
-                      </property>
-                      <attribute name="buttonGroup">
-                       <string notr="true">imagesLayoutsButtonGroup</string>
-                      </attribute>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
+             <widget class="QComboBox" name="branchesLayoutsCombo">
+              <item>
+               <property name="text">
+                <string>Automatic</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Vertical</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Horizontal</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Floating bounded</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Floating free</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>List</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
@@ -601,170 +475,310 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="rotationHeadingLabel">
-         <property name="text">
-          <string>Rotation heading:</string>
+        <widget class="QGroupBox" name="childrenImagesGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
+         <property name="title">
+          <string>Layout of  images</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QComboBox" name="imagesLayoutsCombo">
+            <item>
+             <property name="text">
+              <string>Automatic</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Vertical</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Horizontal</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Floating bounded</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Floating free</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QSlider" name="rotationHeadingSlider">
-           <property name="minimum">
-            <number>-90</number>
-           </property>
-           <property name="maximum">
-            <number>90</number>
-           </property>
-           <property name="singleStep">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="rotationHeadingSpinBox">
-           <property name="minimum">
-            <number>-90</number>
-           </property>
-           <property name="maximum">
-            <number>90</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="rotationInnerContentLabel">
-         <property name="text">
-          <string>Rotation subtree:</string>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Dimensions</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="dimensionsAutoCheckBox">
+            <property name="text">
+             <string>Automatic</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Heading width:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QSlider" name="headingWidthSlider">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="headingWidthSPinBox"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QSlider" name="rotationSubtreeSlider">
-           <property name="minimum">
-            <number>-90</number>
-           </property>
-           <property name="maximum">
-            <number>90</number>
-           </property>
-           <property name="singleStep">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="rotationSubtreeSpinBox">
-           <property name="minimum">
-            <number>-90</number>
-           </property>
-           <property name="maximum">
-            <number>90</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Scale heading:</string>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Rotations</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QCheckBox" name="rotationsAutoCheckBox">
+            <property name="text">
+             <string>Automatic</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="rotationHeadingLabel">
+            <property name="text">
+             <string>Rotation heading:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QSlider" name="rotationHeadingSlider">
+              <property name="minimum">
+               <number>-90</number>
+              </property>
+              <property name="maximum">
+               <number>90</number>
+              </property>
+              <property name="singleStep">
+               <number>5</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="rotationHeadingSpinBox">
+              <property name="minimum">
+               <number>-90</number>
+              </property>
+              <property name="maximum">
+               <number>90</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="rotationInnerContentLabel">
+            <property name="text">
+             <string>Rotation subtree:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QSlider" name="rotationSubtreeSlider">
+              <property name="minimum">
+               <number>-90</number>
+              </property>
+              <property name="maximum">
+               <number>90</number>
+              </property>
+              <property name="singleStep">
+               <number>5</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="rotationSubtreeSpinBox">
+              <property name="minimum">
+               <number>-90</number>
+              </property>
+              <property name="maximum">
+               <number>90</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QSlider" name="scaleHeadingSlider">
-           <property name="minimum">
-            <number>-90</number>
-           </property>
-           <property name="maximum">
-            <number>90</number>
-           </property>
-           <property name="singleStep">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="scaleHeadingSpinBox">
-           <property name="decimals">
-            <number>2</number>
-           </property>
-           <property name="minimum">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Scale subtree:</string>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Scaling</string>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <widget class="QCheckBox" name="scalingAutoCheckBox">
+            <property name="text">
+             <string>Automatic</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Scale heading:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QSlider" name="scaleHeadingSlider">
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+              <property name="sliderPosition">
+               <number>0</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::NoTicks</enum>
+              </property>
+              <property name="tickInterval">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="scaleHeadingSpinBox">
+              <property name="decimals">
+               <number>2</number>
+              </property>
+              <property name="minimum">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Scale subtree:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QSlider" name="scaleSubtreeSlider">
+              <property name="minimum">
+               <number>-100</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+              <property name="sliderPosition">
+               <number>0</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="scaleSubtreeSpinBox">
+              <property name="decimals">
+               <number>2</number>
+              </property>
+              <property name="minimum">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QSlider" name="scaleSubtreeSlider">
-           <property name="minimum">
-            <number>-90</number>
-           </property>
-           <property name="maximum">
-            <number>90</number>
-           </property>
-           <property name="singleStep">
-            <number>5</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="scaleSubtreeSpinBox">
-           <property name="decimals">
-            <number>2</number>
-           </property>
-           <property name="minimum">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer">
@@ -775,6 +789,33 @@
           <size>
            <width>20</width>
            <height>79</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabLink">
+      <attribute name="title">
+       <string>Link</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QCheckBox" name="hideLinkIfUnselected">
+         <property name="text">
+          <string>Hide link to parent if unselected</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -883,33 +924,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabLink">
-      <attribute name="title">
-       <string>Link</string>
-      </attribute>
-      <layout class="QVBoxLayout">
-       <item>
-        <widget class="QCheckBox" name="hideLinkIfUnselected">
-         <property name="text">
-          <string>Hide link to parent if unselected</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tabAttributes">
       <attribute name="title">
        <string>Attributes</string>
@@ -972,8 +986,4 @@
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="branchesLayoutsButtonGroup"/>
-  <buttongroup name="imagesLayoutsButtonGroup"/>
- </buttongroups>
 </ui>

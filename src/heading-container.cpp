@@ -46,7 +46,9 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
 
     headingText = s;
 
-    // Hardcoded for now:
+    // Textwidth Hardcoded for now // FIXME-1   See also new setting BranchPropertyEditor
+                                   // Maybe use both number of chars (for wordwrap) and 
+                                   // also pixels (for size of OrnamentsContainer)
     int textWidth = 40;
 
     QGraphicsTextItem *t;

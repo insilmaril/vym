@@ -69,8 +69,9 @@ void MapDesign::init()
     // Heading colors
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
     headingColorHints << MapDesign::InheritedColor;        // Use color of parent
+    headingColorUpdateTriggerRelinking << true;
 
-    //headingColors << QColor(Qt::white);
+    headingColors << QColor(Qt::white);
     headingColors << QColor(Qt::green);
 
     // Frames
@@ -78,6 +79,7 @@ void MapDesign::init()
     innerFrameTypes << FrameContainer::Rectangle;
     innerFrameTypes << FrameContainer::NoFrame;
     innerFramePenWidths << 2;
+    innerFrameUpdateTriggerRelinking << true;   // MapCenters inner frame
 
     outerFrameTypes << FrameContainer::NoFrame;
     /*
@@ -87,6 +89,8 @@ void MapDesign::init()
     outerFrameTypes << FrameContainer::Rectangle;
     outerFrameTypes << FrameContainer::NoFrame;
     */
+    outerFrameUpdateTriggerRelinking << true;   // MapCenters outer frame
+    outerFrameUpdateTriggerRelinking << false;
 
     usesBackgroundImage = false;
 
@@ -286,7 +290,12 @@ void MapDesign::updateBranchHeadingColor(
         BranchItem *branchItem,
         int depth)
 {
-    if (branchItem) {
+    if (!branchItem)
+    return;
+
+    if (updateMode == CreatedByUser || 
+            (updateMode == RelinkedByUser && headingColorUpdateTriggerRelinking.tryAt(depth)))
+    {
         HeadingColorHint colHint = headingColorHints.tryAt(depth);
 
         QColor col;
@@ -330,16 +339,23 @@ FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, int depth)
 }
 
 void MapDesign::updateFrames(
-    BranchContainer *branchContainer,
     const UpdateMode &updateMode,
+    BranchContainer *branchContainer,
     int depth)
 {
-    if (branchContainer && updateMode == CreatedByUser) {
+    if (!branchContainer)
+        return;
+
+    if (updateMode == CreatedByUser || 
+        (updateMode == RelinkedByUser && innerFrameUpdateTriggerRelinking.tryAt(depth))) {
         // Inner frame
         branchContainer->setFrameType(true, frameType(true, depth));
         branchContainer->setFrameBrushColor(true, innerFrameBrushColors.tryAt(depth));
         branchContainer->setFramePenColor(true, innerFramePenColors.tryAt(depth));
+    }
 
+    if (updateMode == CreatedByUser || 
+        (updateMode == RelinkedByUser && outerFrameUpdateTriggerRelinking.tryAt(depth))) {
         // Outer frame
         branchContainer->setFrameType(false, frameType(false, depth));
         branchContainer->setFrameBrushColor(false, outerFrameBrushColors.tryAt(depth));

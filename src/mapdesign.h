@@ -48,7 +48,7 @@ class MapDesign {
 
     enum UpdateMode : unsigned int {
         Undefined           = 0x0000,
-        MapLoad             = 0x0001,
+        //MapLoad             = 0x0001,
         //MapImport         = 0x0002
         CreatedByUser       = 0x0004,
         RelinkedByUser      = 0x0008,
@@ -111,8 +111,8 @@ class MapDesign {
 
     FrameContainer::FrameType frameType(bool useInnerFrame, int depth);
     void updateFrames(
-            BranchContainer *branchContainer,
             const UpdateMode &updateMode,
+            BranchContainer *branchContainer,
             int depth);
 
     QPen selectionPen();
@@ -135,6 +135,7 @@ class MapDesign {
     // Colors of headings
     ConfigList <MapDesign::HeadingColorHint> headingColorHints;
     ConfigList <QColor> headingColors;
+    ConfigList <bool> headingColorUpdateTriggerRelinking;
 
     // Background
     QColor backgroundColorInt;
@@ -148,11 +149,13 @@ class MapDesign {
     ConfigList <QColor> innerFramePenColors;
     ConfigList <QColor> innerFrameBrushColors;
     ConfigList <int> innerFramePenWidths;
+    ConfigList <bool> innerFrameUpdateTriggerRelinking;
 
     ConfigList <FrameContainer::FrameType> outerFrameTypes;
     ConfigList <QColor> outerFramePenColors;
     ConfigList <QColor> outerFrameBrushColors;
     ConfigList <int> outerFramePenWidths;
+    ConfigList <bool> outerFrameUpdateTriggerRelinking;
 
     // Links
     LinkObj::ColorHint linkColorHintInt;
