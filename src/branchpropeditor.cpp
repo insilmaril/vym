@@ -3,6 +3,7 @@
 #include <QColorDialog>
 
 #include "attributeitem.h"
+#include "branch-container.h"
 #include "branchitem.h"
 #include "settings.h"
 #include "vymmodel.h"
@@ -20,6 +21,7 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     setWindowTitle(vymName + " - " + tr("Property Editor", "Window caption"));
 
     branchItem = nullptr;
+    branchContainer = nullptr;
     model = nullptr;
 
     ui.tabWidget->setEnabled(false);
@@ -74,60 +76,6 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     connectSignals();
 }
 
-void BranchPropertyEditor::updateContainerLayoutButtons()
-{
-    BranchContainer *bc = branchItem->getBranchContainer();
-
-    // Layout branches
-    if (bc->branchesContainerAutoLayout)
-        ui.branchesLayoutsCombo->setCurrentIndex(0);
-    else {
-        switch (bc->getBranchesContainerLayout()) {
-            case Container::Vertical:
-                ui.branchesLayoutsCombo->setCurrentIndex(1);
-                break;
-            case Container::Horizontal:
-                ui.branchesLayoutsCombo->setCurrentIndex(2);
-                break;
-            case Container::FloatingBounded:
-                ui.branchesLayoutsCombo->setCurrentIndex(3);
-                break;
-            case Container::FloatingFree:
-                ui.branchesLayoutsCombo->setCurrentIndex(4);
-                break;
-            case Container::List:
-                ui.branchesLayoutsCombo->setCurrentIndex(5);
-                break;
-            default:
-                qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(bc->getLayoutString(bc->getBranchesContainerLayout()));
-                qDebug() << "branch=" << branchItem->getHeadingPlain();
-        }
-    }
-
-    // Layout images
-    if (bc->imagesContainerAutoLayout)
-        ui.imagesLayoutsCombo->setCurrentIndex(0);
-    else {
-        switch (bc->getImagesContainerLayout()) {
-            case Container::Vertical:
-                ui.imagesLayoutsCombo->setCurrentIndex(1);
-                break;
-            case Container::Horizontal:
-                ui.imagesLayoutsCombo->setCurrentIndex(2);
-                break;
-            case Container::FloatingBounded:
-                ui.imagesLayoutsCombo->setCurrentIndex(3);
-                break;
-            case Container::FloatingFree:
-                ui.imagesLayoutsCombo->setCurrentIndex(4);
-                break;
-            default:
-                qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(bc->getLayoutString(bc->getImagesContainerLayout()));
-                qDebug() << "branch=" << branchItem->getHeadingPlain();
-        }
-    }
-}
-
 BranchPropertyEditor::~BranchPropertyEditor()
 {
     settings.setValue("/satellite/propertywindow/geometry/size", size());
@@ -139,9 +87,16 @@ BranchPropertyEditor::~BranchPropertyEditor()
     delete (attributeModel);
 }
 
-void BranchPropertyEditor::setItem(TreeItem *ti)
+void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly differentiate BI, II, AI:
+                                                    // Better set pointers to these TreeItems and update controls separately
+                                                    // THis also would help updating controls without changing the selection
 {
     disconnectSignals();    // FIXME-4 why complete disconnect? To avoid recursive calls when (pre-)setting values?
+
+    // Reset pointers to currently displayed TreeItem
+    branchItem = nullptr;
+    branchContainer = nullptr;
+
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
@@ -164,29 +119,16 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         FrameContainer::FrameType t = bc->frameType(true);
         ui.innerFrameTypeCombo->setEnabled(!bc->frameAutoDesign(true));
 
-        if (t == FrameContainer::NoFrame || bc->frameAutoDesign(true))
-        {
-            ui.innerFrameTypeLabel->setEnabled(false);
-            ui.innerFramePenColorButton->setEnabled(false);
-            ui.innerFrameBrushColorButton->setEnabled(false);
-            ui.innerFramePaddingSpinBox->setEnabled(false);
-            ui.innerFrameWidthSpinBox->setEnabled(false);
-            ui.innerFramePaddingLabel->setEnabled(false);
-            ui.innerFrameBorderLabel->setEnabled(false);
-            ui.innerFrameBrushColorLabelDesc->setEnabled(false);
-            ui.innerFramePenColorLabelDesc->setEnabled(false);
-        }
-        else {
-            ui.innerFrameTypeLabel->setEnabled(true);
-            ui.innerFramePenColorButton->setEnabled(true);
-            ui.innerFrameBrushColorButton->setEnabled(true);
-            ui.innerFramePaddingSpinBox->setEnabled(true);
-            ui.innerFrameWidthSpinBox->setEnabled(true);
-            ui.innerFramePaddingLabel->setEnabled(true);
-            ui.innerFrameBorderLabel->setEnabled(true);
-            ui.innerFrameBrushColorLabelDesc->setEnabled(true);
-            ui.innerFramePenColorLabelDesc->setEnabled(true);
-        }
+        bool b = (t == FrameContainer::NoFrame || bc->frameAutoDesign(true));
+        ui.innerFrameTypeLabel->setEnabled(b);
+        ui.innerFramePenColorButton->setEnabled(b);
+        ui.innerFrameBrushColorButton->setEnabled(b);
+        ui.innerFramePaddingSpinBox->setEnabled(b);
+        ui.innerFrameWidthSpinBox->setEnabled(b);
+        ui.innerFramePaddingLabel->setEnabled(b);
+        ui.innerFrameBorderLabel->setEnabled(b);
+        ui.innerFrameBrushColorLabelDesc->setEnabled(b);
+        ui.innerFramePenColorLabelDesc->setEnabled(b);
 
         QPixmap pix(16, 16);
         pix.fill(bc->framePenColor(true));
@@ -224,29 +166,16 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         t = bc->frameType(false);
         ui.outerFrameTypeCombo->setEnabled(!bc->frameAutoDesign(false));
 
-        if (t == FrameContainer::NoFrame || bc->frameAutoDesign(false))
-        {
-            ui.outerFrameTypeLabel->setEnabled(false);
-            ui.outerFramePenColorButton->setEnabled(false);
-            ui.outerFrameBrushColorButton->setEnabled(false);
-            ui.outerFramePaddingSpinBox->setEnabled(false);
-            ui.outerFrameWidthSpinBox->setEnabled(false);
-            ui.outerFramePaddingLabel->setEnabled(false);
-            ui.outerFrameBorderLabel->setEnabled(false);
-            ui.outerFrameBrushColorLabelDesc->setEnabled(false);
-            ui.outerFramePenColorLabelDesc->setEnabled(false);
-        }
-        else {
-            ui.outerFrameTypeLabel->setEnabled(true);
-            ui.outerFramePenColorButton->setEnabled(true);
-            ui.outerFrameBrushColorButton->setEnabled(true);
-            ui.outerFramePaddingSpinBox->setEnabled(true);
-            ui.outerFrameWidthSpinBox->setEnabled(true);
-            ui.outerFramePaddingLabel->setEnabled(true);
-            ui.outerFrameBorderLabel->setEnabled(true);
-            ui.outerFrameBrushColorLabelDesc->setEnabled(true);
-            ui.outerFramePenColorLabelDesc->setEnabled(true);
-        }
+        b = (t == FrameContainer::NoFrame || bc->frameAutoDesign(false));
+        ui.outerFrameTypeLabel->setEnabled(b);
+        ui.outerFramePenColorButton->setEnabled(b);
+        ui.outerFrameBrushColorButton->setEnabled(b);
+        ui.outerFramePaddingSpinBox->setEnabled(b);
+        ui.outerFrameWidthSpinBox->setEnabled(b);
+        ui.outerFramePaddingLabel->setEnabled(b);
+        ui.outerFrameBorderLabel->setEnabled(b);
+        ui.outerFrameBrushColorLabelDesc->setEnabled(b);
+        ui.outerFramePenColorLabelDesc->setEnabled(b);
 
         pix.fill(bc->framePenColor(false));
         ui.outerFramePenColorButton->setIcon(pix);
@@ -279,15 +208,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         }
 
         // Layout branches
-        updateContainerLayoutButtons();
-        ui.rotationHeadingSlider->setValue(bc->rotationHeading());
-        ui.rotationSubtreeSlider->setValue(bc->rotationSubtree());
-        ui.rotationHeadingSpinBox->setValue(bc->rotationHeading());
-        ui.rotationSubtreeSpinBox->setValue(bc->rotationSubtree());
-        ui.scaleHeadingSlider->setValue(bc->scaleHeading());
-        ui.scaleSubtreeSlider->setValue(bc->scaleSubtree());
-        ui.scaleHeadingSpinBox->setValue(bc->scaleHeading());
-        ui.scaleSubtreeSpinBox->setValue(bc->scaleSubtree());
+
+
+        updateLayoutControls();
+        updateRotationControls();
+        updateScalingControls();
 
         // Link
         if (branchItem->getHideLinkUnselected())
@@ -369,12 +294,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
             ui.tabWidget->setTabEnabled(i, false);
         ui.tabWidget->setTabEnabled(3, true);
         ui.tabWidget->setCurrentIndex(3);
-    } // ImageItem
-    else if (ti->getType() == TreeItem::Attribute) {
+    } else if (ti->getType() == TreeItem::Attribute) {
         ui.tabWidget->setEnabled(true);
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < ui.tabWidget->count(); ++i)
             ui.tabWidget->setTabEnabled(i, false);
-        ui.tabWidget->setTabEnabled(3, true);
+        ui.tabWidget->setTabEnabled(4, true);
     }
     else {
         ui.tabWidget->setEnabled(false);
@@ -393,6 +317,106 @@ void BranchPropertyEditor::setModel(VymModel *m)
         }
     }
     ui.tabWidget->setEnabled(false);
+}
+
+void BranchPropertyEditor::updateLayoutControls()
+{
+    if (!branchContainer)
+        return;
+
+    // Layout branches
+    if (branchContainer->branchesContainerAutoLayout)
+        ui.branchesLayoutsCombo->setCurrentIndex(0);
+    else {
+        switch (branchContainer->getBranchesContainerLayout()) {
+            case Container::Vertical:
+                ui.branchesLayoutsCombo->setCurrentIndex(1);
+                break;
+            case Container::Horizontal:
+                ui.branchesLayoutsCombo->setCurrentIndex(2);
+                break;
+            case Container::FloatingBounded:
+                ui.branchesLayoutsCombo->setCurrentIndex(3);
+                break;
+            case Container::FloatingFree:
+                ui.branchesLayoutsCombo->setCurrentIndex(4);
+                break;
+            case Container::List:
+                ui.branchesLayoutsCombo->setCurrentIndex(5);
+                break;
+            default:
+                qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
+                qDebug() << "branch=" << branchItem->getHeadingPlain();
+        }
+    }
+
+    // Layout images
+    if (branchContainer->imagesContainerAutoLayout)
+        ui.imagesLayoutsCombo->setCurrentIndex(0);
+    else {
+        switch (branchContainer->getImagesContainerLayout()) {
+            case Container::Vertical:
+                ui.imagesLayoutsCombo->setCurrentIndex(1);
+                break;
+            case Container::Horizontal:
+                ui.imagesLayoutsCombo->setCurrentIndex(2);
+                break;
+            case Container::FloatingBounded:
+                ui.imagesLayoutsCombo->setCurrentIndex(3);
+                break;
+            case Container::FloatingFree:
+                ui.imagesLayoutsCombo->setCurrentIndex(4);
+                break;
+            default:
+                qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getImagesContainerLayout()));
+                qDebug() << "branch=" << branchItem->getHeadingPlain();
+        }
+    }
+}
+
+void BranchPropertyEditor::updateRotationControls()
+{
+    bool b;
+    if (branchContainer) {
+        b = branchContainer->rotationsAutoDesign();
+        ui.rotationsAutoCheckBox->setEnabled(true);
+        ui.rotationHeadingSlider->setValue(branchContainer->rotationHeading());
+        ui.rotationSubtreeSlider->setValue(branchContainer->rotationSubtree());
+        ui.rotationHeadingSpinBox->setValue(branchContainer->rotationHeading());
+        ui.rotationSubtreeSpinBox->setValue(branchContainer->rotationSubtree());
+    } else {
+        b = true;
+        ui.rotationsAutoCheckBox->setEnabled(false);
+    }
+
+    ui.rotationHeadingSlider->setEnabled(!b);
+    ui.rotationSubtreeSlider->setEnabled(!b);
+    ui.rotationHeadingSpinBox->setEnabled(!b);
+    ui.rotationSubtreeSpinBox->setEnabled(!b);
+    ui.rotationsAutoCheckBox->setChecked(b);
+}
+
+void BranchPropertyEditor::updateScalingControls()
+{
+    bool b;
+    if (branchContainer) {
+        b = branchContainer->scalingAutoDesign();
+        ui.scalingAutoCheckBox->setEnabled(true);
+        ui.scaleHeadingSlider->setValue(branchContainer->scaleHeading());
+        ui.scaleSubtreeSlider->setValue(branchContainer->scaleSubtree());
+        ui.scaleHeadingSpinBox->setValue(branchContainer->scaleHeading());
+        ui.scaleSubtreeSpinBox->setValue(branchContainer->scaleSubtree());
+
+    } else {
+        b = true;
+        ui.scalingAutoCheckBox->setEnabled(false);
+    }
+
+    ui.scaleHeadingSlider->setEnabled(!b);
+    ui.scaleSubtreeSlider->setEnabled(!b);
+    ui.scaleHeadingSpinBox->setEnabled(!b);
+    ui.scaleSubtreeSpinBox->setEnabled(!b);
+    ui.scalingAutoCheckBox->setChecked(b);
 }
 
 void BranchPropertyEditor::frameAutoDesignChanged()
@@ -565,51 +589,12 @@ void BranchPropertyEditor::imagesLayoutsChanged(int i)
     model->setImagesLayout(s);
 }
 
-void BranchPropertyEditor::childrenLayoutChanged() // FIXME-2 no longer necessary with ComboBox above
+void BranchPropertyEditor::rotationsAutoChanged()
 {
-    /*
-    if (!model) return;
-
-    if (ui.branchesAutoLayoutCheckBox->isChecked())
-        model->setBranchesLayout("Auto");
-    else {
-        QAbstractButton *button = ui.branchesLayoutsButtonGroup->checkedButton();
-        if (button) {
-            if (button == ui.branchesLayoutVerticalButton)
-                model->setBranchesLayout("Vertical");
-            else if (button == ui.branchesLayoutHorizontalButton)
-                model->setBranchesLayout("Horizontal");
-            else if (button == ui.branchesLayoutBoundedButton)
-                model->setBranchesLayout("FloatingBounded");
-            else if (button == ui.branchesLayoutFreeButton)
-                model->setBranchesLayout("FloatingFree");
-            else if (button == ui.branchesLayoutListButton)
-                model->setBranchesLayout("List");
-            else
-                qWarning() << "BPE::childrenLayout changed - unknown branches layout: " << button;
-        }
+    if (model) {
+        model->setRotationsAutoDesign(ui.rotationsAutoCheckBox->isChecked());
+        setItem(branchItem);
     }
-
-    if (ui.imagesAutoLayoutCheckBox->isChecked())
-        model->setImagesLayout("Auto");
-    else {
-        QAbstractButton *button = ui.imagesLayoutsButtonGroup->checkedButton();
-        if (button) {
-            if (button == ui.imagesLayoutVerticalButton)
-                model->setImagesLayout("Vertical");
-            else if (button == ui.imagesLayoutHorizontalButton)
-                model->setImagesLayout("Horizontal");
-            else if (button == ui.imagesLayoutBoundedButton)
-                model->setImagesLayout("FloatingBounded");
-            else if (button == ui.imagesLayoutFreeButton)
-                model->setImagesLayout("FloatingFree");
-            else
-                qWarning() << "BPE::childrenLayout changed - unknown images layout: " << button;
-        }
-    }
-
-    updateContainerLayoutButtons();
-    */
 }
 
 void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
@@ -628,6 +613,14 @@ void BranchPropertyEditor::rotationSubtreeChanged(int i)
 
     ui.rotationSubtreeSlider->setValue(i);
     ui.rotationSubtreeSpinBox->setValue(i);
+}
+
+void BranchPropertyEditor::scalingAutoChanged()
+{
+    if (model) {
+        model->setScalingAutoDesign(ui.scalingAutoCheckBox->isChecked());
+        setItem(branchItem);
+    }
 }
 
 void BranchPropertyEditor::scaleHeadingChanged(qreal f)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
@@ -786,6 +779,8 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.imagesLayoutsCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(imagesLayoutsChanged(int)));
 
+    connect(ui.rotationsAutoCheckBox, SIGNAL(clicked()),
+            this, SLOT(rotationsAutoChanged()));
     connect(ui.rotationHeadingSlider, SIGNAL(valueChanged(int)),
             this, SLOT(rotationHeadingChanged(int)));
     connect(ui.rotationHeadingSpinBox, SIGNAL(valueChanged(int)),
@@ -799,6 +794,8 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.rotationSubtreeSpinBox, SIGNAL(valueChanged(int)),
             this, SLOT(rotationSubtreeChanged(int)));
 
+    connect(ui.scalingAutoCheckBox, SIGNAL(clicked()),
+            this, SLOT(scalingAutoChanged()));
     connect(ui.scaleHeadingSpinBox, SIGNAL(valueChanged(qreal)),
             this, SLOT(scaleHeadingChanged(qreal)));
     connect(ui.scaleHeadingSlider, SIGNAL(sliderPressed()),
@@ -863,10 +860,12 @@ void BranchPropertyEditor::disconnectSignals()
     // Layout
     disconnect(ui.branchesLayoutsCombo, 0, 0, 0);
     disconnect(ui.imagesLayoutsCombo, 0, 0, 0);
+    disconnect(ui.rotationsAutoCheckBox, 0, 0, 0);
     disconnect(ui.rotationHeadingSlider, 0, 0, 0);
     disconnect(ui.rotationHeadingSpinBox, 0, 0, 0);
     disconnect(ui.rotationSubtreeSlider, 0, 0, 0);
     disconnect(ui.rotationSubtreeSpinBox, 0, 0, 0);
+    disconnect(ui.scalingAutoCheckBox, 0, 0, 0);
     disconnect(ui.scaleHeadingSlider, 0, 0, 0);
     disconnect(ui.scaleHeadingSpinBox, 0, 0, 0);
     disconnect(ui.scaleSubtreeSlider, 0, 0, 0);

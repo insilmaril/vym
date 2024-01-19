@@ -1024,16 +1024,6 @@ void VymReader::readBranchAttr()
     if (!s.isEmpty())
         lastBranch->toggleScroll();
 
-    a = "autoInnerFrame";
-    s = xml.attributes().value(a).toString();
-    if (s == "false")
-        lastBC->setFrameAutoDesign(true, false);
-
-    a = "autoOuterFrame";
-    s = xml.attributes().value(a).toString();
-    if (s == "false")
-        lastBC->setFrameAutoDesign(false, false);
-
     a = "incImgV";
     s = xml.attributes().value(a).toString();
     if (s == "true")      // pre 2.9 feature
@@ -1074,6 +1064,7 @@ void VymReader::readBranchAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
+        lastBC->setRotationsAutoDesign(false, false);
         lastBC->setRotationHeading(r);
     }
 
@@ -1085,6 +1076,7 @@ void VymReader::readBranchAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
+        lastBC->setRotationsAutoDesign(false, false);
         lastBC->setRotationSubtree(r);
     }
 
@@ -1096,6 +1088,7 @@ void VymReader::readBranchAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
+        lastBC->setScalingAutoDesign(false, false);
         lastBC->setScaleHeading(r);
     }
 
@@ -1107,6 +1100,7 @@ void VymReader::readBranchAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
+        lastBC->setScalingAutoDesign(false, false);
         lastBC->setScaleSubtree(r);
     }
 }
@@ -1234,6 +1228,9 @@ void VymReader::readFrameAttr()
         s = attributeToString(a);
         if (s.isEmpty())
             s = "Rectangle";
+
+        // We will override AutoDesign
+        bc->setFrameAutoDesign(useInnerFrame, false);
 
         // Start with setting/creating frame. 
         // assuming that there is no "NoFrame" frame in the xml

@@ -2483,6 +2483,19 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
+void VymModel::setRotationsAutoDesign(const bool &b)    // FIXME-2 no savestate yet
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        bc->setRotationsAutoDesign(b);
+    }
+
+    if (!selbis.isEmpty())
+        reposition();
+}
+
 void VymModel::setRotationHeading (const int &i)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
@@ -2503,7 +2516,7 @@ void VymModel::setRotationHeading (const int &i)
 
     if (!selbis.isEmpty()) {
         reposition();
-        emitSelectionChanged();
+        emitSelectionChanged(); // FIXME-2 needed?
     }
 }
 
@@ -2526,8 +2539,22 @@ void VymModel::setRotationSubtree (const int &i)
 
     if (!selbis.isEmpty()) {
         reposition();
-        emitSelectionChanged();
+        emitSelectionChanged(); // FIXME-2 needed?
     }
+}
+
+void VymModel::setScalingAutoDesign (const bool & b) // FIXME-2 savestate: no command yet
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        bc->setScalingAutoDesign(b);
+    }
+
+    if (!selbis.isEmpty())
+        reposition();
 }
 
 void VymModel::setScaleHeading (const qreal &f) // FIXME-2 savestate: no command yet

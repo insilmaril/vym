@@ -106,34 +106,29 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (hidden)
         return QString();
 
-    // Save uuid
-    QString idAttr = attribute("uuid", uuid.toString());
+    QString attr;
 
-    QString s;
+    // Save uuid
+    attr += attribute("uuid", uuid.toString());
 
     // Update of note is usually done while unselecting a branch
 
-    QString scrolledAttr;
     if (scrolled)
-        scrolledAttr = attribute("scrolled", "yes");
-    else
-        scrolledAttr = "";
+        attr += attribute("scrolled", "yes");
 
-    // save area, if not scrolled   // not needed if HTML is rewritten...
+    // save area, if not scrolled   // FIXME-0 only needed for HTML exports
     // also we could check if _any_ of parents is scrolled
-    QString areaAttr;   // FIXME-2 will not work with rotated containers and positions of headings
-    if (branchContainer && parentItem->hasTypeBranch() &&
+    //QString areaAttr;   // FIXME-2 will not work with rotated containers and positions of headings
+    if (branchContainer && parentItem->hasTypeBranch() &&   // FIXME-0 INtroduce exportImageMap flag
         !((BranchItem *)parentItem)->isScrolled()) {
         qreal x = branchContainer->scenePos().x();
         qreal y = branchContainer->scenePos().y();
-        areaAttr =
+        attr +=
             attribute("x1", QString().setNum(x - offset.x())) +
             attribute("y1", QString().setNum(y - offset.y())) +
             attribute("x2", QString().setNum(x + branchContainer->rect().width() - offset.x())) +
             attribute("y2", QString().setNum(y + branchContainer->rect().height() - offset.y()));
     }
-    else
-        areaAttr = "";
 
     QString elementName;
     if (parentItem == rootItem)
@@ -142,65 +137,31 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         elementName = "branch";
 
     // Free positioning of children
-    QString layoutBranchesAttr;
-    QString autoLayoutBranchesAttr;
     if (!branchContainer->branchesContainerAutoLayout)
-    {
         // Save the manually set layout for children branches
-        layoutBranchesAttr = attribute("branchesLayout", branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
-    }
+        attr += attribute("branchesLayout", branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
 
     QString layoutImagesAttr;
     if (!branchContainer->imagesContainerAutoLayout)
-    {
         // Save the manually set layout for children Images
-        layoutImagesAttr = attribute("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
+        attr += attribute("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
+
+    if (!branchContainer->rotationsAutoDesign()) {
+        attr += attribute("rotHeading", QString("%1").arg(branchContainer->rotationHeading()));
+
+        attr += attribute("rotSubtree", QString("%1").arg(branchContainer->rotationSubtree()));
     }
 
-    QString rotHeadingAttr;
-    qreal a = branchContainer->rotationHeading();
-    if (a != 0)
-        rotHeadingAttr = attribute("rotHeading", QString("%1").arg(a));
+    if (!branchContainer->scalingAutoDesign()) {
+        attr += attribute("scaleHeading", QString("%1").arg(branchContainer->scaleHeading()));
 
-    QString rotSubtreeAttr;
-    a = branchContainer->rotationSubtree();
-    if (a != 0)
-        rotSubtreeAttr = attribute("rotSubtree", QString("%1").arg(a));
+        attr += attribute("scaleSubtree", QString("%1").arg(branchContainer->scaleSubtree()));
+    }
 
-    QString scaleHeadingAttr;
-    a = branchContainer->scaleHeading();
-    if (a != 1)
-        scaleHeadingAttr = attribute("scaleHeading", QString("%1").arg(a));
-
-    QString scaleSubtreeAttr;
-    a = branchContainer->scaleSubtree();
-    if (a != 1)
-        scaleSubtreeAttr = attribute("scaleSubtree", QString("%1").arg(a));
-
-    QString posAttr;
     if (parentItem == rootItem || branchContainer->isFloating())
-        posAttr = getPosAttr();
+        attr += getPosAttr();
 
-    QString autoDesignAttr;
-
-    if (!branchContainer->frameAutoDesign(true))
-        autoDesignAttr += attribute("autoInnerFrame", "false");
-    if (!branchContainer->frameAutoDesign(false))
-        autoDesignAttr += attribute("autoOuterFrame", "false");
-
-    s = beginElement(elementName + " " +
-            posAttr +
-            MapItem::getLinkableAttr() +
-            TreeItem::getGeneralAttr() +
-                     autoDesignAttr +
-                     scrolledAttr +
-                     layoutBranchesAttr +
-                     layoutImagesAttr +
-                     rotHeadingAttr +
-                     rotSubtreeAttr +
-                     scaleHeadingAttr +
-                     scaleSubtreeAttr +
-                     idAttr);
+    QString s = beginElement(elementName + " " + attr);
     incIndent();
 
     // save heading
@@ -210,7 +171,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (!note.isEmpty())
         s += note.saveToDir();
 
-    // Save frame
+    // Save frame   // FIXME-0 save only, if not using autoDesign
     if (branchContainer->frameType(true) != FrameContainer::NoFrame ||
         branchContainer->frameType(false) != FrameContainer::NoFrame)
         s += branchContainer->saveFrame();

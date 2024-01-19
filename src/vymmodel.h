@@ -376,8 +376,10 @@ class VymModel : public TreeModel {
     void setFramePenWidth(const bool &useInnerFrame, const int &, BranchItem *bi = nullptr);
     void setBranchesLayout(const QString &, BranchItem *bi = nullptr);
     void setImagesLayout(const QString &, BranchItem *bi = nullptr);
+    void setRotationsAutoDesign(const bool &);
     void setRotationHeading(const int &);
     void setRotationSubtree(const int &);
+    void setScalingAutoDesign(const bool &);
     void setScaleHeading(const qreal &);
     qreal getScaleHeading();
     void setScaleSubtree(const qreal &);

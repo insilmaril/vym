@@ -92,26 +92,31 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
 
+    void setRotationsAutoDesign(const bool &, const bool &update = true);
+    bool rotationsAutoDesign();
     void setRotationHeading(const int &);
     int rotationHeading();
     int rotationHeadingInScene();
 
-    void setScaleHeading(const qreal &);
-    qreal scaleHeading();
-
     void setRotationSubtree(const int &);
     int rotationSubtree();
 
+    void setScalingAutoDesign(const bool &, const bool &update = true);
+    bool scalingAutoDesign();
+    void setScaleHeading(const qreal &);
+    qreal scaleHeading();
     void setScaleSubtree(const qreal &);
     qreal scaleSubtree();
+
   protected:
+    bool rotationsAutoDesignInt;
     qreal rotationHeadingInt;
     qreal rotationSubtreeInt;
+    bool scalingAutoDesignInt;
     qreal scaleHeadingInt;
     qreal scaleSubtreeInt;
 
   public:
-
     QUuid findFlagByPos(const QPointF &p);
     bool isInClickBox(const QPointF &p);
     QRectF getBBoxURLFlag();

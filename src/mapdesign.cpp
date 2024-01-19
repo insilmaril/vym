@@ -127,6 +127,19 @@ void MapDesign::init()
     outerFramePenWidths;
     */
 
+    // Transformations
+    rotationHeadingInt << 0;
+    //rotationHeadingInt << 20;
+    //rotationHeadingInt << 20;
+
+    rotationSubtreeInt << 0;
+
+    scalingHeadingInt << 1.3;
+    scalingHeadingInt << 1.0;
+    scalingHeadingInt << 0.8;
+
+    scalingSubtreeInt << 1.0;
+
     // Should links of branches use a default color or the color of heading?
     linkColorHintInt = LinkObj::DefaultColor;
     defaultLinkCol = Qt::blue;
@@ -285,6 +298,16 @@ QBrush MapDesign::backgroundImageBrush()
 }
 
 
+QFont MapDesign::defaultFont()
+{
+    return defaultFontInt;
+}
+
+void MapDesign::setDefaultFont(const QFont &f)
+{
+    defaultFontInt = f;
+}
+
 void MapDesign::updateBranchHeadingColor(
         const MapDesign::UpdateMode &updateMode,
         BranchItem *branchItem,
@@ -383,14 +406,24 @@ void MapDesign::setSelectionBrush(const QBrush &b)
     selectionBrushInt = b;
 }
 
-QFont MapDesign::defaultFont()
+int MapDesign::rotationHeading(const UpdateMode &updateMode, int depth)
 {
-    return defaultFontInt;
+    return rotationHeadingInt.tryAt(depth);
 }
 
-void MapDesign::setDefaultFont(const QFont &f)
+int MapDesign::rotationSubtree(const UpdateMode &updateMode, int depth)
 {
-    defaultFontInt = f;
+    return rotationSubtreeInt.tryAt(depth);
+}
+
+qreal MapDesign::scalingHeading(const UpdateMode &updateMode, int depth)
+{
+    return scalingHeadingInt.tryAt(depth);
+}
+
+qreal MapDesign::scalingSubtree(const UpdateMode &updateMode, int depth)
+{
+    return scalingSubtreeInt.tryAt(depth);
 }
 
 QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)

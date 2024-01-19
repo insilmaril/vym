@@ -71,12 +71,25 @@ class MapDesign {
     MapDesign();
     void init();
 
+// Basic data of MapDesign
+  public:
     void setName(const QString &);
     QString getName();
 
+  private:
+    QString name;
+
+// Container layouts
+  public:  
     Container::Layout branchesContainerLayout(int depth);
     Container::Layout imagesContainerLayout(int depth);
 
+  private:
+    ConfigList <Container::Layout> branchContainerLayouts;
+    ConfigList <Container::Layout> imageContainerLayouts;
+
+// Links
+  public:
     LinkObj::ColorHint linkColorHint();
     void setLinkColorHint(const LinkObj::ColorHint &lch);
     QColor defaultLinkColor();
@@ -87,6 +100,13 @@ class MapDesign {
 
     qreal linkWidth();
 
+  private:
+    LinkObj::ColorHint linkColorHintInt;
+    QColor defaultLinkCol;
+    ConfigList <LinkObj::Style> linkStyles;
+
+// XLinks
+  public:
     void setDefXLinkPen(const QPen &p);
     QPen defXLinkPen();
     void setDefXLinkStyleBegin(const QString &s);
@@ -94,6 +114,13 @@ class MapDesign {
     void setDefXLinkStyleEnd(const QString &s);
     QString defXLinkStyleEnd();
 
+  private:
+    QPen defXLinkPenInt;           // default pen for xlinks
+    QString defXLinkStyleBeginInt; // default style begin
+    QString defXLinkStyleEndInt;
+
+// Background
+  public:
     void setBackgroundColor(const QColor &);
     QColor backgroundColor();
 
@@ -104,47 +131,37 @@ class MapDesign {
     QString backgroundImageName();
     QBrush backgroundImageBrush();
 
-    void updateBranchHeadingColor(
-            const MapDesign::UpdateMode &updateMode,
-            BranchItem *branchItem,
-            int depth);
-
-    FrameContainer::FrameType frameType(bool useInnerFrame, int depth);
-    void updateFrames(
-            const UpdateMode &updateMode,
-            BranchContainer *branchContainer,
-            int depth);
-
-    QPen selectionPen();
-    void setSelectionPen(const QPen &);
-    QBrush selectionBrush();
-    void setSelectionBrush(const QBrush &);
-
-    QFont defaultFont();
-    void setDefaultFont(const QFont &f);
-
-    QString saveToDir(const QString &tmpdir, const QString &prefix);
-
   private:
-    QString name;
-
-    // Container layouts
-    ConfigList <Container::Layout> branchContainerLayouts;
-    ConfigList <Container::Layout> imageContainerLayouts;
-
-    // Colors of headings
-    ConfigList <MapDesign::HeadingColorHint> headingColorHints;
-    ConfigList <QColor> headingColors;
-    ConfigList <bool> headingColorUpdateTriggerRelinking;
-
-    // Background
     QColor backgroundColorInt;
     bool usesBackgroundImage;
     QString backgroundImageNameInt;
     QImage backgroundImage;
     QBrush backgroundImageBrushInt;
 
-    // Frames
+// Heading & Fonts
+  public:
+    QFont defaultFont();
+    void setDefaultFont(const QFont &f);
+    void updateBranchHeadingColor(
+            const MapDesign::UpdateMode &updateMode,
+            BranchItem *branchItem,
+            int depth);
+
+  private:
+    QFont defaultFontInt;
+
+    ConfigList <MapDesign::HeadingColorHint> headingColorHints;
+    ConfigList <QColor> headingColors;
+    ConfigList <bool> headingColorUpdateTriggerRelinking;
+
+// Frames
+  public:
+    FrameContainer::FrameType frameType(bool useInnerFrame, int depth);
+    void updateFrames(
+            const UpdateMode &updateMode,
+            BranchContainer *branchContainer,
+            int depth);
+  private:
     ConfigList <FrameContainer::FrameType> innerFrameTypes;
     ConfigList <QColor> innerFramePenColors;
     ConfigList <QColor> innerFrameBrushColors;
@@ -157,23 +174,33 @@ class MapDesign {
     ConfigList <int> outerFramePenWidths;
     ConfigList <bool> outerFrameUpdateTriggerRelinking;
 
-    // Links
-    LinkObj::ColorHint linkColorHintInt;
-    QColor defaultLinkCol;
-    ConfigList <LinkObj::Style> linkStyles;
+// Selections
+  public:  
+    QPen selectionPen();
+    void setSelectionPen(const QPen &);
+    QBrush selectionBrush();
+    void setSelectionBrush(const QBrush &);
 
-    // XLinks
-    QPen defXLinkPenInt;           // default pen for xlinks
-    QString defXLinkStyleBeginInt; // default style begin
-    QString defXLinkStyleEndInt;
-
-
-    // Selection
+  private:
     QPen selectionPenInt;
     QBrush selectionBrushInt;
 
-    // Default font
-    QFont defaultFontInt;
+// Transformations
+  public:  
+    int rotationHeading(const UpdateMode &updateMode, int depth);
+    int rotationSubtree(const UpdateMode &updateMode, int depth);
+    qreal scalingHeading(const UpdateMode &updateMode, int depth);
+    qreal scalingSubtree(const UpdateMode &updateMode, int depth);
+
+  private:
+    ConfigList <int> rotationHeadingInt;
+    ConfigList <int> rotationSubtreeInt;
+    ConfigList <double> scalingHeadingInt;
+    ConfigList <double> scalingSubtreeInt;
+
+  public:
+    QString saveToDir(const QString &tmpdir, const QString &prefix);
+
 };
 
 /////////////////////////////////////////////////////////////////////////////

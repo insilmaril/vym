@@ -63,8 +63,11 @@ void BranchContainer::init()
 
     scrollOpacity = 1;
 
+    rotationsAutoDesignInt = true;
     rotationHeadingInt = 0;
     rotationSubtreeInt = 0;
+
+    scalingAutoDesignInt = true;
     scaleHeadingInt = 1;
     scaleSubtreeInt = 1;
 
@@ -283,6 +286,30 @@ void BranchContainer::deleteOuterContainer()
 
 void BranchContainer::updateTransformations()
 {
+    MapDesign *md = nullptr;
+    int depth = 0;
+    if (branchItem)  {
+        md = branchItem->mapDesign();
+        depth = branchItem->depth();
+    } else {
+        qWarning() << "BC::updateTrafos no branchItem!"; // FIXME-2 remove, together with check
+        return;
+    }
+
+    if (!md) {
+        qWarning() << "BC::updateTrafos no MapDesign!"; // FIXME-2 remove, together with check
+        return;
+    }
+    // Reset transformations, if AutoDesign is used
+    if (rotationsAutoDesignInt) {
+        rotationHeadingInt = md->rotationHeading(MapDesign::Undefined, depth);
+        rotationSubtreeInt = md->rotationSubtree(MapDesign::Undefined, depth);
+    }
+    if (scalingAutoDesignInt) {
+        scaleHeadingInt = md->scalingHeading(MapDesign::Undefined, depth);
+        scaleSubtreeInt = md->scalingSubtree(MapDesign::Undefined, depth);
+    }
+
     // Rotation of heading
     if (innerFrame)
         innerFrame->setRotation(rotationHeadingInt);
@@ -294,7 +321,7 @@ void BranchContainer::updateTransformations()
 
     // scale of children containers
     //    if (branchesContainer)
-        //  branchesContainer->setScale(scaleSubtreeInt);
+        //  branchesContainer->setScale(scaleSubtreeInt);   // FIXME-2 needed?
 
     // Rotation of outer container or outerFrame
     if (outerFrame) {
@@ -316,7 +343,6 @@ void BranchContainer::updateTransformations()
             innerContainer->setScale(scaleSubtreeInt);
         }
     }
-
 }
 
 void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a problem:
@@ -867,6 +893,19 @@ QRectF BranchContainer::headingRect()
     return headingContainer->mapToScene(headingContainer->rect()).boundingRect();
 }
 
+void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update)
+{
+    rotationsAutoDesignInt = b;
+
+    if (update)
+        updateTransformations();
+}
+
+bool BranchContainer::rotationsAutoDesign()
+{
+    return rotationsAutoDesignInt;
+}
+
 void BranchContainer::setRotationHeading(const int &a)
 {
     rotationHeadingInt = a;
@@ -890,6 +929,18 @@ int BranchContainer::rotationHeadingInScene()
     }
 
     return qRound(r);
+}
+
+void BranchContainer::setScalingAutoDesign(const bool &b, const bool &update)
+{
+    scalingAutoDesignInt = b;
+    if (update)
+        updateTransformations();
+}
+
+bool BranchContainer::scalingAutoDesign()
+{
+    return scalingAutoDesignInt;
 }
 
 void BranchContainer::setScaleHeading(const qreal &f)
@@ -1171,7 +1222,7 @@ void BranchContainer::setFrameBrushColor(const bool &useInnerFrame, const QColor
     }
 }
 
-QString BranchContainer::saveFrame()
+QString BranchContainer::saveFrame()    // FIXME-0 save only, if not using autoDesign
 {
     QString r;
     if (innerFrame && innerFrame->frameType() != FrameContainer::NoFrame)
@@ -1203,14 +1254,14 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
     BranchContainer *pbc = parentBranchContainer();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    md->updateBranchHeadingColor(updateMode, branchItem, depth);
+    md->updateBranchHeadingColor(updateMode, branchItem, depth);  // FIXME-1 No check for AutoDesign?
 
     // bulletpoint color should match heading color
     if (bulletPointContainer)
         bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
 
     // Set frame
-    md->updateFrames(updateMode, this, depth);
+    md->updateFrames(updateMode, this, depth);  // FIXME-1 No check for AutoDesign?
 
     updateBranchesContainerLayout();
 

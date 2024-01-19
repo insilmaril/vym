@@ -11,6 +11,7 @@
 
 class QAbstractItemModel;
 
+class BranchContainer;
 class BranchItem;
 class TreeItem;
 class VymModel;
@@ -20,11 +21,15 @@ class BranchPropertyEditor : public QDialog {
   public:
     BranchPropertyEditor(QWidget *parent = 0);
     ~BranchPropertyEditor();
-  private:
-    void updateContainerLayoutButtons();
+
   public:
     void setItem(TreeItem *);
     void setModel(VymModel *);
+
+  private:
+    void updateLayoutControls();
+    void updateRotationControls();
+    void updateScalingControls();
 
   private slots:
     void frameAutoDesignChanged();
@@ -36,13 +41,14 @@ class BranchPropertyEditor : public QDialog {
 
     void branchesLayoutsChanged(int);
     void imagesLayoutsChanged(int);
-    void childrenLayoutChanged();
 
     void linkHideUnselectedChanged(int);
 
+    void rotationsAutoChanged();
     void rotationHeadingChanged(int);
     void rotationSubtreeChanged(int);
 
+    void scalingAutoChanged();
     void scaleHeadingChanged(qreal);
     void scaleHeadingSliderPressed();
     void scaleHeadingSliderChanged(int);
@@ -71,6 +77,8 @@ class BranchPropertyEditor : public QDialog {
     Ui::BranchPropertyEditor ui;
 
     BranchItem *branchItem;
+    BranchContainer *branchContainer;
+
     VymModel *model;
 
     int lastSelectedBranchTab;
