@@ -1443,7 +1443,7 @@ void MapEditor::editHeading()
 
         lineEdit = new QLineEdit;
         QGraphicsProxyWidget *proxyWidget = mapScene->addWidget(lineEdit);
-        proxyWidget->setZValue(10000);
+        proxyWidget->setZValue(10000);// FIXME-2 needed?
         // FIXME-3 get total rotation XXX for BC in scene and do "proxyWidget->setRotation(XXX);
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
@@ -1468,6 +1468,9 @@ void MapEditor::editHeading()
             br = bc->headingRect().bottomRight();
             tl = br - QPointF(w, h);
         }
+        // Qt bug when using QProxyWdiget in scaled QGraphicsView
+        // https://bugreports.qt.io/browse/QTBUG-48681
+        // Still present in Qt 6.5
         QRectF r(tl, br);
         lineEdit->setGeometry(r.toRect());
         proxyWidget->setGeometry(r.toRect());
