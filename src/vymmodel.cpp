@@ -314,7 +314,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             tree += xml.valueElement("select", getSelectString());
     }
     else {
-        switch (saveSel->getType()) {
+        switch (saveSel->getType()) {	// FIXME-2 identical switch statements here, not needed
         case TreeItem::Branch:
             // Save Subtree
             tree += ((BranchItem *)saveSel)
@@ -829,8 +829,7 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imag
                     saveState((TreeItem *)ii, "remove()", parentBranch,
                               QString("loadImage (\"%1\")").arg(s),
                               QString("Add image %1 to %2")
-                                  .arg(s)
-                                  .arg(getObjectName(parentBranch)));
+                                  .arg(s, getObjectName(parentBranch)));
 
                     // FIXME-3 Find nice position for new image, e.g. below last image?
                     ImageContainer *ic = ii->getImageContainer();
@@ -985,7 +984,6 @@ void VymModel::importDir()
                           tr("Choose directory structure to import"));
         fd.setAcceptMode(QFileDialog::AcceptOpen);
 
-        QString fn;
         if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
             importDir(fd.selectedFiles().first());
             reposition();
@@ -3518,7 +3516,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     emit(layoutChanged());
 
     // Create Container
-    BranchContainer *newbc = newbi->createBranchContainer(getScene());
+    newbi->createBranchContainer(getScene());
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
@@ -3978,8 +3976,6 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         TreeItem *pi = ti->parent();
         // qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->getHeading()<<"
         // pi="<<pi<<"="<<pi->getHeading();
-
-        TreeItem::Type t = ti->getType();
 
         QModelIndex parentIndex = index(pi);
 
@@ -6145,8 +6141,8 @@ void VymModel::emitDataChanged(TreeItem *ti)
 void VymModel::emitUpdateQueries()
 {
     // Used to tell MainWindow to update query results
-    if (repositionBlocked)
-        return;
+    if (repositionBlocked) return;
+
     emit(updateQueries(this));
 }
 void VymModel::emitUpdateLayout()
@@ -6365,7 +6361,6 @@ QList<TreeItem *> VymModel::getSelectedItemsReduced()
     // Remove items, which have parents which have smaller depth
     // (closer to center)
     int i = list.size() - 1;
-    int d = list.at(i)->depth();
     while (i > 0) {
         for (int j = 0; j < i; j++)
             if (list.at(i)->isChildOf(list.at(j))) {

@@ -1251,7 +1251,6 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();
-    BranchContainer *pbc = parentBranchContainer();
 
     // Set heading color (might depend on parentBranch, so pass the branchItem)
     md->updateBranchHeadingColor(updateMode, branchItem, depth);  // FIXME-1 No check for AutoDesign?

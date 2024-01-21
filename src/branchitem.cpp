@@ -116,10 +116,10 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (scrolled)
         attr += attribute("scrolled", "yes");
 
-    // save area, if not scrolled   // FIXME-0 only needed for HTML exports
+    // save area, if not scrolled   // FIXME-0 only needed for HTML exports - Introduce exportImageMap flag
     // also we could check if _any_ of parents is scrolled
     //QString areaAttr;   // FIXME-2 will not work with rotated containers and positions of headings
-    if (branchContainer && parentItem->hasTypeBranch() &&   // FIXME-0 INtroduce exportImageMap flag
+    if (branchContainer && parentItem->hasTypeBranch() &&
         !((BranchItem *)parentItem)->isScrolled()) {
         qreal x = branchContainer->scenePos().x();
         qreal y = branchContainer->scenePos().y();
@@ -141,7 +141,6 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         // Save the manually set layout for children branches
         attr += attribute("branchesLayout", branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
 
-    QString layoutImagesAttr;
     if (!branchContainer->imagesContainerAutoLayout)
         // Save the manually set layout for children Images
         attr += attribute("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
@@ -260,7 +259,6 @@ bool BranchItem::toggleScroll()
     if (depth() == 0)
         return false;
 
-    BranchContainer *bc;
     if (scrolled) {
         scrolled = false;
         systemFlags.deactivate(QString("system-scrolledright"));
