@@ -82,7 +82,7 @@ MapEditor::MapEditor(VymModel *vm)
     }
 
     zoomFactor = zoomFactorTarget = 1;
-    angle = angleTarget = 0;
+    rotationInt = rotationTargetInt = 0;
 
     model = vm;
     model->registerMapEditor(this);
@@ -255,7 +255,7 @@ void MapEditor::ensureAreaVisibleAnimated(
         const QRectF &area, 
         bool scaled,
         bool rotated,
-        qreal new_angle)
+        qreal new_rotation)
 {
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
@@ -279,10 +279,10 @@ void MapEditor::ensureAreaVisibleAnimated(
 
     if (!rotated)
         // Use current view rotation, if we do not plan to rotate
-        new_angle = angle;
+        new_rotation = rotationInt;
 
     // Calculate required width and height considering rotation of view
-    qreal a = new_angle / 180 * M_PI;
+    qreal a = new_rotation / 180 * M_PI;
     qreal area_w_viewCoord = abs(sin(a) * area.height()) + abs(cos(a) * area.width());
     qreal area_h_viewCoord = abs(sin(a) * area.width()) + abs(cos(a) * area.height());
     qreal z_x = 1.0 * visibleViewCoord.width() / area_w_viewCoord;
@@ -303,7 +303,7 @@ void MapEditor::ensureAreaVisibleAnimated(
         setViewCenterTarget(
                 area.center(), 
                 zf, 
-                new_angle,
+                new_rotation,
                 animDuration,
                 easingCurve);
         return;
@@ -330,7 +330,7 @@ void MapEditor::ensureAreaVisibleAnimated(
         setViewCenterTarget(
                 mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
                 zoomFactor,
-                new_angle,
+                new_rotation,
                 animDuration,
                 easingCurve);
 }
@@ -369,46 +369,24 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
                 bbox = bbox.united(c->mapToScene(c->rect()).boundingRect());
         }
     }
-    int new_angle = round_int(angle) % 360;
+    int new_rotation = round_int(rotationInt) % 360;
 
     if (rotated && selis.count() == 1) {
         if (selis.first()->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)selis.first())->getBranchContainer();
             
             // Avoid rotations > 360°
-            setAngle(new_angle);
+            setRotation(new_rotation);
 
             qreal rotScene = bc->rotationHeadingInScene();
-            int d_angle = new_angle + round_int(rotScene) % 360;
-            if (d_angle > 180)
-                d_angle = d_angle - 360;
-            new_angle = new_angle - d_angle;
+            int d_rotation = new_rotation + round_int(rotScene) % 360;
+            if (d_rotation > 180)
+                d_rotation = d_rotation - 360;
+            new_rotation = new_rotation - d_rotation;
         }
     }
 
-    ensureAreaVisibleAnimated(bbox, scaled, rotated, new_angle);
-}
-
-void MapEditor::scrollTo(const QModelIndex &index)
-{
-    if (index.isValid()) {
-        TreeItem *ti = static_cast<TreeItem *>(index.internalPointer());
-        QRectF r;
-        bool scroll = false;
-        if ( ti->hasTypeBranch())  {
-            r = ((BranchItem*)ti)->getBranchContainer()->headingRect();
-            scroll = true;
-        }
-
-        // FIXME-2 ME::scrollTo Also check for images, not only branches. 
-        // FIXME-2 ME::scrollTo Consider also zoomFactor & rotation
-        // FIXME-2 Moving xlink ctrl point to upper edge of view can cause infinite scrolling
-
-        if (scroll) {
-            setScrollBarPosTarget(r);
-            animateScrollBars();
-        }
-    }
+    ensureAreaVisibleAnimated(bbox, scaled, rotated, new_rotation);
 }
 
 void MapEditor::setScrollBarPosTarget(QRectF rect)
@@ -582,36 +560,36 @@ void MapEditor::setZoomFactor(const qreal &zf)
 
 qreal MapEditor::getZoomFactor() { return zoomFactor; }
 
-void MapEditor::setAngleTarget(const qreal &at)
+void MapEditor::setRotationTarget(const qreal &at)
 {
-    angleTarget = at;
+    rotationTargetInt = at;
     if (rotationAnimation.state() == QAbstractAnimation::Running)
         rotationAnimation.stop();
     if (settings.value("/animation/use/", true).toBool()) {
         rotationAnimation.setTargetObject(this);
-        rotationAnimation.setPropertyName("angle");
+        rotationAnimation.setPropertyName("rotationInt");
         rotationAnimation.setDuration(
             settings.value("/animation/duration/rotation", 2000).toInt());
         rotationAnimation.setEasingCurve(QEasingCurve::OutQuint);
-        rotationAnimation.setStartValue(angle);
+        rotationAnimation.setStartValue(rotationInt);
         rotationAnimation.setEndValue(at);
         rotationAnimation.start();
     }
     else
-        setAngle(angleTarget);
+        setRotation(rotationTargetInt);
 }
 
-qreal MapEditor::getAngleTarget() { return angleTarget; }
+qreal MapEditor::rotationTarget() { return rotationTargetInt; }
 
-void MapEditor::setAngle(const qreal &a)
+void MapEditor::setRotation(const qreal &a)
 {
-    angle = a;
+    rotationInt = a;
     updateMatrix();
     if (winter)
         winter->updateView();
 }
 
-qreal MapEditor::getAngle() { return angle; }
+qreal MapEditor::rotation() { return rotationInt; }
 
 void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
                                     const qreal &at, const int duration,
@@ -619,7 +597,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
 {
     viewCenterTarget = p;
     zoomFactorTarget = zft;
-    angleTarget = at;
+    rotationTargetInt = at;
 
     viewCenter = mapToScene(viewport()->geometry()).boundingRect().center();
 
@@ -641,12 +619,12 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
         viewCenterAnimation.start();
 
         rotationAnimation.setTargetObject(this);
-        rotationAnimation.setPropertyName("angle");
+        rotationAnimation.setPropertyName("rotationInt");
         rotationAnimation.setDuration(
             settings.value("/animation/duration/rotation", duration).toInt());
         rotationAnimation.setEasingCurve(easingCurve);
-        rotationAnimation.setStartValue(angle);
-        rotationAnimation.setEndValue(angleTarget);
+        rotationAnimation.setStartValue(rotationInt);
+        rotationAnimation.setEndValue(rotationTargetInt);
         rotationAnimation.start();
 
         zoomAnimation.setTargetObject(this);
@@ -659,7 +637,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
         zoomAnimation.start();
     }
     else {
-        setAngle(angleTarget);
+        setRotation(rotationTargetInt);
         setZoomFactor(zft);
         setViewCenter(viewCenterTarget);
     }
@@ -687,11 +665,11 @@ void MapEditor::updateMatrix()
     QTransform t_zoom;
     t_zoom.scale(zoomFactor, zoomFactor);
     QTransform t_rot;
-    t_rot.rotate(angle);
+    t_rot.rotate(rotationInt);
     setTransform(t_zoom * t_rot);
 }
 
-void MapEditor::minimizeView() {    // FIXME-2 review if "jumping" can be improved
+void MapEditor::minimizeView() {    // FIXME-2 review if "jumping" when creating/removing scrollbars can be improved
     // If we only would set scene rectangle to existing items, then
     // view fould "jump", when Qt automatically tries to center.
     // Better consider the currently visible viewport (with slight offset)
@@ -1627,7 +1605,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
     // Check if we need to reset zoomFactor for middle button + Ctrl
     if (e->button() == Qt::MidButton && e->modifiers() & Qt::ControlModifier) {
         setZoomFactorTarget(1);
-        setAngleTarget(0);
+        setRotationTarget(0);
         return;
     }
 
@@ -1656,11 +1634,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
     // nothing will be selected
     if ((e->modifiers() & Qt::ShiftModifier) &&
             mainWindow->getModMode() == Main::ModModeMoveView) {
-        startPanningView(e);    // FIXME-2 should be set in mouseMove later
+        startPanningView(e);
         return;
     }
-
-    QString sysFlagName;    // FIXME-2 could be local to ti_found clause below?
 
     BranchItem *selbi = model->getSelectedBranch();
     BranchContainer *selbc = nullptr;
@@ -1681,6 +1657,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
             return;
         }
     }
+
+    QString sysFlagName;
 
     if (ti_found) {
         // Check modifier key (before selecting object!)
@@ -1856,8 +1834,8 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         // Avoid flickering
         scrollBarPosAnimation.stop();
         viewCenterAnimation.stop();
-        rotationAnimation.stop();
-        // zoomAnimation.stop();    // FIXME-2 why no longer used?
+        // rotationAnimation.stop();
+        // zoomAnimation.stop();
 
         return;
     }
@@ -2084,7 +2062,14 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         // Align tmpParentContainer
         if (targetBranchContainer->hasFloatingBranchesLayout()) {
             // When temporary linking e.g. to MapCenter, position on a circle around MC
-            tmpParentContainer->setPos(targetBranchContainer->getPositionHintRelink(nullptr, 0, p_event));
+
+            qreal radius = 80;
+
+            QPointF center_sp = targetBranchContainer->getHeadingContainer()->mapToScene(QPointF(0,0));
+            qreal a = getAngle(p_event - center_sp);
+            QPointF p_hint = center_sp + QPointF (radius * cos(a), - radius * sin(a));
+
+            tmpParentContainer->setPos(p_hint);
         } else
             // Temporary link to branchContainers of targetRefContainer. Use position calculated above
             tmpParentContainer->setPos(
@@ -2462,10 +2447,10 @@ void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-2 stop current animations
         QPointF p = mapToScene(e->position().toPoint());
         if (e->angleDelta().y() > 0)
             // setZoomFactorTarget (zoomFactorTarget*1.15);
-            setViewCenterTarget(p, zoomFactorTarget * 1.15, angleTarget);
+            setViewCenterTarget(p, zoomFactorTarget * 1.15, rotationTargetInt);
         else
             // setZoomFactorTarget (zoomFactorTarget*0.85);
-            setViewCenterTarget(p, zoomFactorTarget * 0.85, angleTarget);
+            setViewCenterTarget(p, zoomFactorTarget * 0.85, rotationTargetInt);
     }
     else {
         scrollBarPosAnimation.stop();
@@ -2664,7 +2649,7 @@ void MapEditor::togglePresentationMode()
     mainWindow->togglePresentationMode();
 }
 
-// FIXME-2 Feature: updateSelection - New settings (maybe with keys to toggle) autorotation to adapt view to selection: Adapt to heading/subtree
+// FIXME-3 Feature: updateSelection - New settings (maybe with keys to toggle) autorotation to adapt view to selection: Adapt to heading/subtree
 void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
     /*

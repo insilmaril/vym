@@ -210,7 +210,7 @@ void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
     branchContainer->getHeadingContainer()->setHeadingColor(color);
-    branchContainer->updateStyles(MapDesign::StyleChanged | MapDesign::LinkStyleChanged);
+    branchContainer->updateStyles(MapDesign::StyleChanged);
 }
 
 void BranchItem::updateTaskFlag()
@@ -427,11 +427,13 @@ BranchItem *BranchItem::getLastSelectedBranchAlt()
 TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 {
     // Search branches
-    TreeItem *ti;
-    for (int i = 0; i < branchCount(); ++i) {
-        ti = getBranchNum(i)->findMapItem(p, excludedItems);
-        if (ti != nullptr)
-            return ti;
+    if (!isScrolled()) {
+        TreeItem *ti;
+        for (int i = 0; i < branchCount(); ++i) {
+            ti = getBranchNum(i)->findMapItem(p, excludedItems);
+            if (ti != nullptr)
+                return ti;
+        }
     }
 
     // Search images
@@ -440,11 +442,11 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     for (int i = 0; i < imageCount(); ++i) {
         ii = getImageNum(i);
         ic = ii->getImageContainer();
-        if (!excludedItems.contains(ii) && ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
+        if (!excludedItems.contains(ii) && ic->isVisible() && ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
     }
 
-    // Search my container     // FIXME-2   Check if container is visible!! (Maybe done automatically)
-    if (branchContainer->isInClickBox(p) && !excludedItems.contains(this) ) //   &&
+    // Search my container
+    if (branchContainer->isVisible() && branchContainer->isInClickBox(p) && !excludedItems.contains(this) ) //   &&
         //getBranchObj()->isVisibleObj())
         return this;
 
@@ -454,6 +456,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 void BranchItem::updateStylesRecursively(
         MapDesign::UpdateMode updateMode)
 {
+    // qDebug() << "BI::updateSR mode=" << MapDesign::updateModeString(updateMode);
     // Update my own container
     if (branchContainer)
         branchContainer->updateStyles(updateMode);

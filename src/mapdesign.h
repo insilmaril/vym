@@ -54,7 +54,8 @@ class MapDesign {
         RelinkedByUser      = 0x0008,
         LayoutChanged       = 0x0010,
         LinkStyleChanged    = 0x0020,
-        StyleChanged        = 0x0040    // e.g. heading color, which could change link color, too
+        StyleChanged        = 0x0040,   // e.g. heading color, which could change link color, too
+        AutoDesign          = 0x0080
     };
 
     /*
@@ -75,6 +76,7 @@ class MapDesign {
   public:
     void setName(const QString &);
     QString getName();
+    static QString updateModeString(const UpdateMode &mode);
 
   private:
     QString name;

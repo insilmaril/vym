@@ -38,7 +38,7 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
         ui.tabWidget->widget(3)->hide();
 
     //Create Model and View to hold attributes
-    attributeModel = new QStandardItemModel (1, 3, this);   // FIXME-2 used and needed?
+    attributeModel = new QStandardItemModel (1, 3, this);   // FIXME-4 used and needed?
     attributeModel->setHeaderData(0,
             Qt::Horizontal,
             tr("Name","Branchprop window: Attribute name"));
@@ -101,7 +101,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
         branchItem = (BranchItem *)ti;
-        BranchContainer *bc = branchItem->getBranchContainer();
+        branchContainer = branchItem->getBranchContainer();
 
         if (lastSelectedBranchTab >= 0)
             ui.tabWidget->setCurrentIndex(lastSelectedBranchTab);
@@ -115,11 +115,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
         ui.tabWidget->setTabEnabled(4, false);
 
         // Inner frame
-        ui.innerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(true));
-        FrameContainer::FrameType t = bc->frameType(true);
-        ui.innerFrameTypeCombo->setEnabled(!bc->frameAutoDesign(true));
+        ui.innerFrameAutoDesignCheckBox->setChecked(branchContainer->frameAutoDesign(true));
+        FrameContainer::FrameType t = branchContainer->frameType(true);
+        ui.innerFrameTypeCombo->setEnabled(!branchContainer->frameAutoDesign(true));
 
-        bool b = (t == FrameContainer::NoFrame || bc->frameAutoDesign(true));
+        bool b = (t == FrameContainer::NoFrame || branchContainer->frameAutoDesign(true));
         ui.innerFrameTypeLabel->setEnabled(b);
         ui.innerFramePenColorButton->setEnabled(b);
         ui.innerFrameBrushColorButton->setEnabled(b);
@@ -131,12 +131,12 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
         ui.innerFramePenColorLabelDesc->setEnabled(b);
 
         QPixmap pix(16, 16);
-        pix.fill(bc->framePenColor(true));
+        pix.fill(branchContainer->framePenColor(true));
         ui.innerFramePenColorButton->setIcon(pix);
-        pix.fill(bc->frameBrushColor(true));
+        pix.fill(branchContainer->frameBrushColor(true));
         ui.innerFrameBrushColorButton->setIcon(pix);
-        ui.innerFramePaddingSpinBox->setValue(bc->framePadding(true));
-        ui.innerFrameWidthSpinBox->setValue( bc->framePenWidth(true));
+        ui.innerFramePaddingSpinBox->setValue(branchContainer->framePadding(true));
+        ui.innerFrameWidthSpinBox->setValue( branchContainer->framePenWidth(true));
 
         switch (t) {
             case FrameContainer::NoFrame:
@@ -162,11 +162,11 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
         }
 
         // Outer frame
-        ui.outerFrameAutoDesignCheckBox->setChecked(bc->frameAutoDesign(false));
-        t = bc->frameType(false);
-        ui.outerFrameTypeCombo->setEnabled(!bc->frameAutoDesign(false));
+        ui.outerFrameAutoDesignCheckBox->setChecked(branchContainer->frameAutoDesign(false));
+        t = branchContainer->frameType(false);
+        ui.outerFrameTypeCombo->setEnabled(!branchContainer->frameAutoDesign(false));
 
-        b = (t == FrameContainer::NoFrame || bc->frameAutoDesign(false));
+        b = (t == FrameContainer::NoFrame || branchContainer->frameAutoDesign(false));
         ui.outerFrameTypeLabel->setEnabled(b);
         ui.outerFramePenColorButton->setEnabled(b);
         ui.outerFrameBrushColorButton->setEnabled(b);
@@ -177,12 +177,12 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
         ui.outerFrameBrushColorLabelDesc->setEnabled(b);
         ui.outerFramePenColorLabelDesc->setEnabled(b);
 
-        pix.fill(bc->framePenColor(false));
+        pix.fill(branchContainer->framePenColor(false));
         ui.outerFramePenColorButton->setIcon(pix);
-        pix.fill(bc->frameBrushColor(false));
+        pix.fill(branchContainer->frameBrushColor(false));
         ui.outerFrameBrushColorButton->setIcon(pix);
-        ui.outerFramePaddingSpinBox->setValue(bc->framePadding(false));
-        ui.outerFrameWidthSpinBox->setValue( bc->framePenWidth(false));
+        ui.outerFramePaddingSpinBox->setValue(branchContainer->framePadding(false));
+        ui.outerFrameWidthSpinBox->setValue( branchContainer->framePenWidth(false));
 
         switch (t) {
             case FrameContainer::NoFrame:

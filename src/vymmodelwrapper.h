@@ -125,7 +125,7 @@ class VymModelWrapper : public VymScriptContext {
     bool selectToggle(const QString &selectString);
     bool selectXLink(int n);
     bool selectXLinkOtherEnd(int n);
-    void setDefaultLinkColor(const QString &color); // FIXME-2 maybe also rename other setMap* methods?
+    void setDefaultLinkColor(const QString &color); // FIXME-4 maybe also rename other setMap* methods?
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &s);
     void setHeadingConfluencePageName();

@@ -158,7 +158,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
             }
         }
 
-        model->emitDataChanged(selbi); // FIXME-2 required, but can reposition in between be blocked?
+        model->emitDataChanged(selbi); // FIXME-4 required, but can reposition in between be blocked?
     } // build bookmakrs
 
     if (jsobj.contains("children") && jsobj["children"].isArray()) {
@@ -170,7 +170,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
 
         if (selbi->depth() > 2) {
             selbi->scroll();
-            model->emitDataChanged(selbi); // FIXME-2 required, but can reposition in between be blocked?
+            model->emitDataChanged(selbi); // FIXME-4 required, but can reposition in between be blocked?
         }
     } 
 

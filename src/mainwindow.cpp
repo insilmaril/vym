@@ -5917,18 +5917,18 @@ void Main::viewZoomOut()
         me->setZoomFactorTarget(me->getZoomFactorTarget() * 0.85);
 }
 
-void Main::viewRotateCounterClockwise() // FIXME-3 move to ME
+void Main::viewRotateCounterClockwise() // FIXME-4 move to ME
 {
     MapEditor *me = currentMapEditor();
     if (me)
-        me->setAngleTarget(me->getAngleTarget() - 10);
+        me->setRotationTarget(me->rotationTarget() - 10);
 }
 
-void Main::viewRotateClockwise() // FIXME-3 move to ME
+void Main::viewRotateClockwise() // FIXME-4 move to ME
 {
     MapEditor *me = currentMapEditor();
     if (me)
-        me->setAngleTarget(me->getAngleTarget() + 10);
+        me->setRotationTarget(me->rotationTarget() + 10);
 }
 
 void Main::viewCenter()

@@ -65,9 +65,6 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     /*! Get suggestion where new child could be positioned (scene coord) */
     QPointF getPositionHintNewChild(Container*);
 
-    /*! Get suggestion where a relinked child could be positioned (scene coord) */
-    QPointF getPositionHintRelink(Container*, int d_pos = 0, const QPointF & p_scene = QPointF());
-
     /*! Get scene positions for links depending on frameType and orientation*/
     QPointF downLinkPos();
     QPointF downLinkPos(const Orientation &orientationChild);

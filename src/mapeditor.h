@@ -57,7 +57,6 @@ class MapEditor : public QGraphicsView {
             bool rotated = false,
             qreal new_angle = 0) ;
     void ensureSelectionVisibleAnimated(bool scaled = false, bool rotated = false);
-    void scrollTo(const QModelIndex &index);
     void setScrollBarPosTarget(QRectF rect); //!  ensureVisible of rect
     QPointF getScrollBarPosTarget();
     void setScrollBarPos(const QPointF &p);
@@ -96,18 +95,18 @@ class MapEditor : public QGraphicsView {
     qreal getZoomFactor();
 
     // Animation of rotation
-    Q_PROPERTY(qreal angle READ getAngle WRITE setAngle)
+    Q_PROPERTY(qreal rotationInt READ rotation WRITE setRotation)
 
   protected:
-    qreal angle;
-    qreal angleTarget;
+    qreal rotationInt;
+    qreal rotationTargetInt;
     QPropertyAnimation rotationAnimation;
 
   public:
-    void setAngleTarget(const qreal &a);
-    qreal getAngleTarget();
-    void setAngle(const qreal &a);
-    qreal getAngle();
+    void setRotationTarget(const qreal &a);
+    qreal rotationTarget();
+    void setRotation(const qreal &a);
+    qreal rotation();
 
     // Animation of viewCenter
     Q_PROPERTY(QPointF viewCenter READ getViewCenter WRITE setViewCenter)

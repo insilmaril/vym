@@ -571,7 +571,7 @@ void VymReader::readHeadingOrVymNote()
         }
     } // Legacy text as characters instead of text attribute
 
-    //qDebug() << "xml.name()=" <<xml.name() << " " << xml.tokenString()<<" htmldata: " << htmldata << " vT=" <<vymtext.getText(); // FIXME-2 testing
+    //qDebug() << "xml.name()=" <<xml.name() << " " << xml.tokenString()<<" htmldata: " << htmldata << " vT=" <<vymtext.getText();
 
     if (versionLowerOrEqual(version, "2.4.99") &&
         htmldata.contains("<html>"))
@@ -990,7 +990,7 @@ void VymReader::readVymMapAttr()
         model->setMapZoomFactor(r);
     }
 
-    a = "mapRotationAngle";
+    a = "mapRotation";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         r = s.toDouble(&ok);
@@ -998,7 +998,7 @@ void VymReader::readVymMapAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
-        model->setMapRotationAngle(r);
+        model->setMapRotation(r);
     }
 
     readMapDesignCompatibleAttributes();

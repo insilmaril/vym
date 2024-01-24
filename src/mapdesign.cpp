@@ -166,6 +166,28 @@ QString MapDesign::getName()
     return name;
 }
 
+QString MapDesign::updateModeString(const UpdateMode &mode)
+{
+    switch (mode) {
+        case Undefined:
+            return "Update mode Undefined!";
+        case CreatedByUser:
+            return "CreatedByUser";
+        case RelinkedByUser:
+            return "RelinkedByUser";
+        case LayoutChanged:
+            return "LayoutChanged";
+        case LinkStyleChanged:
+            return "LinkStyleChanged";
+        case StyleChanged:
+            return "StyleChanged";
+        case AutoDesign:
+            return "AutoDesign";
+        default:
+            return QString("Unknown update mode: %1").arg(mode);
+    }
+}
+
 Container::Layout MapDesign::branchesContainerLayout(int depth)
 {
     return branchContainerLayouts.tryAt(depth);
@@ -203,10 +225,10 @@ LinkObj::Style MapDesign::linkStyle(int depth)
 
 bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
 {
-    // Special case for now: only set LinkStyle for first levels    // FIXME-2
+    // Special case for now: only set LinkStyle for first levels    // FIXME-3
     // Only set style for d=1 (Used to be map-wide setting before 3.x)
 
-    if (linkStyles.count() < 2) // FIXME-2 not needed
+    if (linkStyles.count() < 2) // FIXME-3 not needed
         return true;
 
     return true;
@@ -324,7 +346,7 @@ void MapDesign::updateBranchHeadingColor(
         QColor col;
         switch (colHint) {
             case InheritedColor: {
-                //qDebug() << " - InheritedColor "; // FIXME-2 testing...
+                //qDebug() << " - InheritedColor "; // FIXME-4 testing...
                 BranchItem *pbi = branchItem->parentBranch();
                 if (pbi) {
                     col = pbi->getHeadingColor();
@@ -464,7 +486,7 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
                 xml.attribute("linkColorHint", "HeadingColor"));
 
     s += xml.singleElement("md",
-            xml.attribute("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-2 only one level save atm
+            xml.attribute("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-4 only one level saved currently
 
     s += xml.singleElement("md",
             xml.attribute("linkColor", defaultLinkColor().name()));

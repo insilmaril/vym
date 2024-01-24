@@ -233,4 +233,4 @@ void ImageContainer::setImageItem(ImageItem* ii) {
 
 ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
-void ImageContainer::reposition() {}    // No action necessary  // FIXME-2 remove then?
+void ImageContainer::reposition() {}    // No action necessary, but don't use base class
