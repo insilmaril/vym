@@ -6465,7 +6465,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
                 "CURRENT_ZOOM",
                 QString().setNum(getMapEditor()->getZoomFactorTarget()));
             inScript.replace("CURRENT_ANGLE",
-                             QString().setNum(getMapEditor()->getAngleTarget()));
+                             QString().setNum(getMapEditor()->rotationTarget()));
             inScript.replace("CURRENT_ID",
                              "\"" + seli->getUuid().toString() + "\"");
 
