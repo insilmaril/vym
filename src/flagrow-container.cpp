@@ -3,7 +3,7 @@
 #include "flag.h"
 #include "flag-container.h"
 #include "flagrow-container.h"
-#include "flagrowmaster.h"  // FIXME-2 rename to flagrow-master
+#include "flagrow-master.h"
 
 /////////////////////////////////////////////////////////////////
 // FlagRowContainer

@@ -1,6 +1,6 @@
 #include <QDebug>
 
-#include "flagrowmaster.h"
+#include "flagrow-master.h"
 #include "mainwindow.h"
 
 extern bool debug;
