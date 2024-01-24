@@ -219,6 +219,7 @@ QGraphicsScene *MapEditor::getScene() { return mapScene; }
 
 void MapEditor::panView()
 {
+    return;
     if (!vPan.isNull()) {
         // Scroll if needed
         // To avoid jumping of the sceneView, only
@@ -1418,7 +1419,7 @@ void MapEditor::editHeading()
 
         lineEdit = new QLineEdit;
         QGraphicsProxyWidget *proxyWidget = mapScene->addWidget(lineEdit);
-        proxyWidget->setZValue(10000);// FIXME-2 needed?
+        // proxyWidget->setZValue(10000);// FIXME-2 needed?
         // FIXME-3 get total rotation XXX for BC in scene and do "proxyWidget->setRotation(XXX);
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
@@ -2295,7 +2296,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             if (dst_branch->isScrolled())
                 model->select(dst_branch);
 
-            // Loop over images // FIXME-2 refactor in VM similar to relinkBranches
+            // Loop over images // FIXME-3 refactor in VM similar to relinkBranches
             foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
                 ImageItem *ii = ic->getImageItem();
                 model->relinkImage(ii, destinationBranch);
@@ -2440,7 +2441,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-2 stop current animations
+void MapEditor::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier &&
         e->angleDelta().y() != 0) {
