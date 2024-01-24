@@ -1834,8 +1834,8 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         // Avoid flickering
         scrollBarPosAnimation.stop();
         viewCenterAnimation.stop();
-        rotationAnimation.stop();
-        // zoomAnimation.stop();    // FIXME-2 why no longer used?
+        // rotationAnimation.stop();
+        // zoomAnimation.stop();
 
         return;
     }
