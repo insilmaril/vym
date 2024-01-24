@@ -37,8 +37,6 @@ void XLinkItem::init()
     itemData[0] = "XLink";
 }
 
-void XLinkItem::clear() {}
-
 void XLinkItem::setLink(Link *l) { link = l; }
 
 Link *XLinkItem::getLink() { return link; }

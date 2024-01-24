@@ -30,7 +30,6 @@ class TreeItem : public XMLObj {
     TreeItem(TreeItem *parent = nullptr);
     virtual ~TreeItem();
     void init();
-    virtual void clear() = 0;
 
     // General housekeeping
     virtual void setModel(VymModel *m);

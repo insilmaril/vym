@@ -23,7 +23,6 @@ class BranchItem : public MapItem {
   public:
     BranchItem(TreeItem *parent = nullptr);
     virtual ~BranchItem();
-    virtual void clear();
     virtual void copy(BranchItem *item);
     virtual BranchItem *parentBranch();
 

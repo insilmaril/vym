@@ -1040,8 +1040,7 @@ bool VymModel::tryVymLock()
                            "Map is locked by \"%1\" on \"%2\"\n\n"
                            "Please only delete the lockfile, if you are sure "
                            "nobody else is currently working on this map."))
-                        .arg(a)
-                        .arg(h);
+                        .arg(a, h);
                 dia.setText(s);
                 dia.setWindowTitle(
                     tr("Warning: Map already opended", "VymModel"));
@@ -1236,7 +1235,7 @@ QString VymModel::getObjectName(TreeItem *ti)
     if (s == "")
         s = "unnamed";
 
-    return QString("%1 (%2)").arg(ti->getTypeName()).arg(s);
+    return QString("%1 (%2)").arg(ti->getTypeName(), s);
 }
 
 void VymModel::redo()
@@ -1265,7 +1264,6 @@ void VymModel::redo()
         undoSet.value(QString("/history/step-%1/redoSelection").arg(curStep));
     QString comment =
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
-    QString version = undoSet.value("/history/version");
 
     /* TODO Maybe check for version, if we save the history
     if (!checkVersion(version))
@@ -1273,9 +1271,6 @@ void VymModel::redo()
         tr("Version %1 of saved undo/redo data\ndoes not match current vym
     version %2.").arg(version).arg(vymVersion));
     */
-
-    // Find out current undo directory
-    QString bakMapDir(QString(tmpMapDirPath + "/undo-%1").arg(curStep));
 
     if (debug) {
         qDebug() << "VymModel::redo() begin\n";
@@ -1389,7 +1384,6 @@ void VymModel::undo()
         undoSet.value(QString("/history/step-%1/redoSelection").arg(curStep));
     QString comment =
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
-    QString version = undoSet.value("/history/version");
 
     /* TODO Maybe check for version, if we save the history
     if (!checkVersion(version))
@@ -1397,9 +1391,6 @@ void VymModel::undo()
         tr("Version %1 of saved undo/redo data\ndoes not match current vym
     version %2.").arg(version).arg(vymVersion));
     */
-
-    // Find out current undo directory
-    QString bakMapDir(QString(tmpMapDirPath + "/undo-%1").arg(curStep));
 
     if (debug) {
         qDebug() << "VymModel::undo() begin\n";
@@ -1544,11 +1535,11 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
     {
         // Build string with all commands
         if (!undoCom.isEmpty()) {
-            undoCommand = QString("model.select(\"%1\");model.%2;").arg(undoSelection).arg(undoCom);
+            undoCommand = QString("model.select(\"%1\");model.%2;").arg(undoSelection, undoCom);
             undoBlock = undoCommand + undoBlock;
         }
         if (!redoCom.isEmpty()) {
-            redoCommand = QString("model.select(\"%1\");model.%2;").arg(redoSelection).arg(redoCom);
+            redoCommand = QString("model.select(\"%1\");model.%2;").arg(redoSelection, redoCom);
             redoBlock = redoBlock + redoCommand;
         }
 
@@ -1624,7 +1615,6 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
         makeSubDirs(histDir);
 
     // Save depending on how much needs to be saved
-    QList<Link *> tmpLinks;
     if (saveSel)
         dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
                             saveSel);
@@ -1780,15 +1770,13 @@ void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
             saveStateChangingPart(selbi, selbi,
                                   QString("addMapInsert (\"%1\")").arg(fname),
                                   QString("Add map %1 to %2")
-                                      .arg(fname)
-                                      .arg(getObjectName(selbi)));
+                                      .arg(fname, getObjectName(selbi)));
         if (lmode == File::ImportReplace) {
             BranchItem *pi = (BranchItem *)(selbi->parent());
             saveStateChangingPart(pi, pi,
                                   QString("addMapReplace(%1)").arg(fname),
                                   QString("Add map %1 to %2")
-                                      .arg(fname)
-                                      .arg(getObjectName(selbi)));
+                                      .arg(fname, getObjectName(selbi)));
         }
     }
 }
@@ -2021,8 +2009,7 @@ void VymModel::setHeading(const VymText &vt, BranchItem *bi)
         saveState(bi, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", bi,
                   "parseVymText (\"" + quoteQuotes(h_new.saveToDir()) + "\")",
                   QString("Set heading of %1 to \"%2\"")
-                      .arg(getObjectName(bi))
-                      .arg(s));
+                      .arg(getObjectName(bi), s));
         bi->setHeading(vt);
         emitDataChanged(bi);
         emitUpdateQueries();
@@ -2077,8 +2064,9 @@ void VymModel::updateNoteText(const VymText &vt)
             saveState(selti, "parseVymText (\"" + quoteQuotes(note_old.saveToDir()) + "\")",
                       selti, "parseVymText (\"" + quoteQuotes(note_new.saveToDir()) + "\")",
                       QString("Set note of %1 to \"%2\"")
-                          .arg(getObjectName(selti))
-                          .arg(note_new.getTextASCII().left(20)));
+                          .arg(
+                              getObjectName(selti),
+                              note_new.getTextASCII().left(20)));
 
             selti->setNote(vn);
         }
@@ -3666,9 +3654,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         emit(layoutAboutToBeChanged());
         BranchItem *branchpi = (BranchItem *)bi->parent();
 
-        // Save old num
-        int bi_num = bi->num();
-
         // Remove at current position
         int removeRowNum = bi->childNum();
 
@@ -3963,8 +3948,8 @@ void VymModel::deleteChildren()
         beginRemoveRows(ix, 0, n);
         removeRows(0, n + 1, ix);
         endRemoveRows();
-        if (selbi->isScrolled())
-            unscrollBranch(selbi);
+        if (selbi->isScrolled()) unscrollBranch(selbi);
+
         emit(layoutChanged());
         reposition();
     }
@@ -6000,14 +5985,14 @@ bool VymModel::select(const QModelIndex &index)
     return false;
 }
 
-bool VymModel::select(QList <BranchItem*> selbis)
+void VymModel::select(QList <BranchItem*> selbis)
 {
     unselectAll();
     foreach (BranchItem* selbi, selbis)
         selectToggle(selbi);
 }
 
-bool VymModel::select(QList <TreeItem*> tis)
+void VymModel::select(QList <TreeItem*> tis)
 {
     unselectAll();
     foreach (TreeItem* ti, tis)
@@ -6473,34 +6458,36 @@ SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
 
     TreeItem *seli = getSelectedItem();
 
-    if (si && seli) {
-        QString inScript;
-        if (!loadStringFromDisk(vymBaseDir.path() +
-                                    "/macros/slideeditor-snapshot.vys",
-                                inScript)) {
-            qWarning() << "VymModel::addSlide couldn't load template for "
-                          "taking snapshot";
-            return nullptr;
+    if (si) {
+        if (seli) {
+            QString inScript;
+            if (!loadStringFromDisk(vymBaseDir.path() +
+                                        "/macros/slideeditor-snapshot.vys",
+                                    inScript)) {
+                qWarning() << "VymModel::addSlide couldn't load template for "
+                              "taking snapshot";
+                return nullptr;
+            }
+
+            inScript.replace(
+                "CURRENT_ZOOM",
+                QString().setNum(getMapEditor()->getZoomFactorTarget()));
+            inScript.replace("CURRENT_ANGLE",
+                             QString().setNum(getMapEditor()->getAngleTarget()));
+            inScript.replace("CURRENT_ID",
+                             "\"" + seli->getUuid().toString() + "\"");
+
+            si->setInScript(inScript);
+            slideModel->setData(slideModel->index(si), seli->getHeadingPlain());
         }
 
-        inScript.replace(
-            "CURRENT_ZOOM",
-            QString().setNum(getMapEditor()->getZoomFactorTarget()));
-        inScript.replace("CURRENT_ANGLE",
-                         QString().setNum(getMapEditor()->getAngleTarget()));
-        inScript.replace("CURRENT_ID",
-                         "\"" + seli->getUuid().toString() + "\"");
-
-        si->setInScript(inScript);
-        slideModel->setData(slideModel->index(si), seli->getHeadingPlain());
+        QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
+        int pos = si->childNumber();
+        saveState(File::PartOfMap, getSelectString(),
+                  QString("removeSlide (%1)").arg(pos), getSelectString(),
+                  QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
+                  s);
     }
-
-    QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
-    int pos = si->childNumber();
-    saveState(File::PartOfMap, getSelectString(),
-              QString("removeSlide (%1)").arg(pos), getSelectString(),
-              QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
-              s);
     return si;
 }
 

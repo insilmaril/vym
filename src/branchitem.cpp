@@ -58,11 +58,6 @@ BranchItem::~BranchItem()
         delete branchContainer;
     }
 
-    clear();
-}
-
-void BranchItem::clear()
-{
     if (task)
         taskModel->deleteTask(task);
 }
@@ -116,7 +111,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (scrolled)
         attr += attribute("scrolled", "yes");
 
-    // save area, if not scrolled   // FIXME-0 only needed for HTML exports - Introduce exportImageMap flag
+    // save area, if not scrolled   // FIXME-3 only needed for HTML exports - Introduce exportImageMap flag
     // also we could check if _any_ of parents is scrolled
     //QString areaAttr;   // FIXME-2 will not work with rotated containers and positions of headings
     if (branchContainer && parentItem->hasTypeBranch() &&

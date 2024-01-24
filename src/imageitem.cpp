@@ -42,12 +42,6 @@ void ImageItem::init()
     originalFilename = "no original name available";
 }
 
-void ImageItem::clear()
-{
-    // pure virtual in parent treeitem
-    // not used here currently
-}
-
 BranchItem *ImageItem::parentBranch() { return (BranchItem *)parentItem; }
 
 bool ImageItem::load(const QString &fname)

@@ -20,7 +20,6 @@ class XLinkItem : public MapItem {
     XLinkItem(TreeItem *parent = NULL);
     ~XLinkItem();
     void init();
-    void clear();
     void setLink(Link *);
     Link *getLink();
     void updateXLink();

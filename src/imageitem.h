@@ -16,7 +16,6 @@ class ImageItem : public MapItem {
 
   protected:
     void init();
-    void clear();
 
   public:
     BranchItem* parentBranch();

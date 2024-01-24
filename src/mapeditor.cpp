@@ -293,9 +293,6 @@ void MapEditor::ensureAreaVisibleAnimated(
     bool zoomOutRequired = 
         (visibleViewCoord.width() < areaViewCoord.width() ||
          visibleViewCoord.height() < areaViewCoord.height());
-    bool zoomInRequired = 
-        (visibleViewCoord.width() > areaViewCoord.width() &&
-         visibleViewCoord.height() > areaViewCoord.height());
 
     int animDuration = 2000;
     QEasingCurve easingCurve = QEasingCurve::OutQuint;
@@ -1043,7 +1040,7 @@ void MapEditor::testFunction2()
     {
         if (selti->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
-            //bc->setScrollOpacity(bc->getScrollOpacity() * 0.9);   // FIXME-2 animation test
+            bc->setScrollOpacity(bc->getScrollOpacity() * 0.9);   // FIXME-3 animation test
         } else if (selti->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)selti)->getImageContainer();
             qDebug() << ic->info() << ic;
@@ -1836,8 +1833,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     if (debug && e->modifiers() & Qt::ControlModifier)
         mainWindow->statusMessage(
             QString("ME::mouseMoveEvent  Scene: %1 - Viewport: %2")
-                .arg(toS(p_event, 0))
-                .arg(toS(e->pos())));
+                .arg(toS(p_event, 0),  toS(e->pos())));
 
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
@@ -1919,7 +1915,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Check, if targetItem is a child of one of the moving items
     if (targetItem) {
         foreach (TreeItem *ti, movingItems) {
-            if (targetItem->isChildOf(ti)) {
+            if (ti && targetItem->isChildOf(ti)) {
                 // qWarning() << "ME::moveObject " << targetItem->getHeadingPlain() << "is child of " << ti->getHeadingPlain();
                 targetItem = nullptr;
                 break;
@@ -2185,7 +2181,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             // When moving with Ctrl  modifier, don't children branches (in scene)
             if (e->modifiers() & Qt::ControlModifier) {
                 foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
-                    BranchItem *bi = bc->getBranchItem();
                     if (bc->hasFloatingBranchesLayout()) {
                         foreach(BranchContainer *bc2, bc->childBranches()) {
                             QPointF q = bc->getHeadingContainer()->sceneTransform().inverted().map(bc2->getOriginalPos());
@@ -2259,15 +2254,15 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             if (model->createLink(tmpLink)) {
                 model->saveState(
                     tmpLink->getBeginLinkItem(), "remove ()", seli,
-                    QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")")
-                        .arg(model->getSelectString(tmpLink->getBeginBranch()))
-                        .arg(model->getSelectString(tmpLink->getEndBranch()))
-                        .arg(tmpLink->getPen().width())
-                        .arg(tmpLink->getPen().color().name())
-                        .arg(penStyleToString(tmpLink->getPen().style())),
-                    QString("Adding Link from %1 to %2")
-                        .arg(model->getObjectName(seli))
-                        .arg(model->getObjectName(destinationBranch)));
+                    QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")").arg(
+                        model->getSelectString(tmpLink->getBeginBranch()),
+                        model->getSelectString(tmpLink->getEndBranch()),
+                        QString::number(tmpLink->getPen().width()),
+                        tmpLink->getPen().color().name(),
+                        penStyleToString(tmpLink->getPen().style())),
+                    QString("Adding Link from %1 to %2").arg(
+                                model->getObjectName(seli),
+                                model->getObjectName(destinationBranch)));
                 return;
             }
         }
@@ -2329,7 +2324,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             }
         } else {
             // Branches moved, but not relinked
-            QPointF t = p - movingObj_initialScenePos;    // Defined in mousePressEvent
 
             QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
             QList <QPointF> animationCurrentPositions;   // After reposition start animations
