@@ -57,7 +57,6 @@ class MapEditor : public QGraphicsView {
             bool rotated = false,
             qreal new_angle = 0) ;
     void ensureSelectionVisibleAnimated(bool scaled = false, bool rotated = false);
-    void scrollTo(const QModelIndex &index);
     void setScrollBarPosTarget(QRectF rect); //!  ensureVisible of rect
     QPointF getScrollBarPosTarget();
     void setScrollBarPos(const QPointF &p);

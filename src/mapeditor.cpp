@@ -389,28 +389,6 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
     ensureAreaVisibleAnimated(bbox, scaled, rotated, new_rotation);
 }
 
-void MapEditor::scrollTo(const QModelIndex &index)
-{
-    if (index.isValid()) {
-        TreeItem *ti = static_cast<TreeItem *>(index.internalPointer());
-        QRectF r;
-        bool scroll = false;
-        if ( ti->hasTypeBranch())  {
-            r = ((BranchItem*)ti)->getBranchContainer()->headingRect();
-            scroll = true;
-        }
-
-        // FIXME-2 ME::scrollTo Also check for images, not only branches. 
-        // FIXME-2 ME::scrollTo Consider also zoomFactor & rotation
-        // FIXME-2 Moving xlink ctrl point to upper edge of view can cause infinite scrolling
-
-        if (scroll) {
-            setScrollBarPosTarget(r);
-            animateScrollBars();
-        }
-    }
-}
-
 void MapEditor::setScrollBarPosTarget(QRectF rect)
 {
     // Expand viewport, if rect is not contained
@@ -1656,11 +1634,9 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
     // nothing will be selected
     if ((e->modifiers() & Qt::ShiftModifier) &&
             mainWindow->getModMode() == Main::ModModeMoveView) {
-        startPanningView(e);    // FIXME-2 should be set in mouseMove later
+        startPanningView(e);
         return;
     }
-
-    QString sysFlagName;    // FIXME-2 could be local to ti_found clause below?
 
     BranchItem *selbi = model->getSelectedBranch();
     BranchContainer *selbc = nullptr;
@@ -1681,6 +1657,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
             return;
         }
     }
+
+    QString sysFlagName;
 
     if (ti_found) {
         // Check modifier key (before selecting object!)
