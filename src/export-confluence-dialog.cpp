@@ -211,7 +211,7 @@ void ExportConfluenceDialog::pageButtonPressed()
     }
 }
 
-void ExportConfluenceDialog::URLChanged()   // FIXME-2 remove this and similar methods
+void ExportConfluenceDialog::URLChanged()   // FIXME-3 remove url variable and directly access ui.lineEditURL
 {
     url = ui.lineEditURL->text();
 }
@@ -226,7 +226,7 @@ void ExportConfluenceDialog::mapCenterToPageNameCheckBoxPressed(bool b)
     if (ui.mapCenterToPageNameCheckBox->isChecked())
     {
         ui.lineEditPageName->setText(pageNameHint);
-        ui.lineEditPageName->setEnabled(false); // FIXME-2 better set readonly
+        ui.lineEditPageName->setEnabled(false); // FIXME-3 better set readonly
     } else
     {
         ui.lineEditPageName->show();

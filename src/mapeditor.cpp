@@ -219,7 +219,6 @@ QGraphicsScene *MapEditor::getScene() { return mapScene; }
 
 void MapEditor::panView()
 {
-    return;
     if (!vPan.isNull()) {
         // Scroll if needed
         // To avoid jumping of the sceneView, only
