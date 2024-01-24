@@ -3448,11 +3448,12 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
 
     // Create BranchContainer
     BranchContainer *bc = newbi->createBranchContainer(getScene());
-    if (bc)
+    if (bc) {
         bc->setPos(absPos);
 
-    if (!updateStylesBlocked)
-        bc->updateStyles(MapDesign::CreatedByUser);
+        if (!updateStylesBlocked)
+            bc->updateStyles(MapDesign::CreatedByUser);
+    }
 
     return newbi;
 }
