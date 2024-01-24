@@ -1915,7 +1915,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Check, if targetItem is a child of one of the moving items
     if (targetItem) {
         foreach (TreeItem *ti, movingItems) {
-            if (ti && targetItem->isChildOf(ti)) {
+            if (targetItem->isChildOf(ti)) {
                 // qWarning() << "ME::moveObject " << targetItem->getHeadingPlain() << "is child of " << ti->getHeadingPlain();
                 targetItem = nullptr;
                 break;
@@ -2400,8 +2400,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             model->saveState(ii, "setPos " + pold, ii,
                              "setPos " + pnow,
                              QString("Move %1 to %2")
-                                 .arg(model->getObjectName(ii))
-                                 .arg(pnow));
+                                 .arg(model->getObjectName(ii),  pnow));
 
         } // Image moved, but not relinked
 
