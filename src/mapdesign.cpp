@@ -166,6 +166,28 @@ QString MapDesign::getName()
     return name;
 }
 
+QString MapDesign::updateModeString(const UpdateMode &mode)
+{
+    switch (mode) {
+        case Undefined:
+            return "Update mode Undefined!";
+        case CreatedByUser:
+            return "CreatedByUser";
+        case RelinkedByUser:
+            return "RelinkedByUser";
+        case LayoutChanged:
+            return "LayoutChanged";
+        case LinkStyleChanged:
+            return "LinkStyleChanged";
+        case StyleChanged:
+            return "StyleChanged";
+        case AutoDesign:
+            return "AutoDesign";
+        default:
+            return QString("Unknown update mode: %1").arg(mode);
+    }
+}
+
 Container::Layout MapDesign::branchesContainerLayout(int depth)
 {
     return branchContainerLayouts.tryAt(depth);

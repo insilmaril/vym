@@ -210,7 +210,7 @@ void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
     branchContainer->getHeadingContainer()->setHeadingColor(color);
-    branchContainer->updateStyles(MapDesign::StyleChanged | MapDesign::LinkStyleChanged);
+    branchContainer->updateStyles(MapDesign::StyleChanged);
 }
 
 void BranchItem::updateTaskFlag()

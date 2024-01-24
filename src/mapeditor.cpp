@@ -691,7 +691,7 @@ void MapEditor::updateMatrix()
     setTransform(t_zoom * t_rot);
 }
 
-void MapEditor::minimizeView() {    // FIXME-2 review if "jumping" can be improved
+void MapEditor::minimizeView() {    // FIXME-2 review if "jumping" when creating/removing scrollbars can be improved
     // If we only would set scene rectangle to existing items, then
     // view fould "jump", when Qt automatically tries to center.
     // Better consider the currently visible viewport (with slight offset)

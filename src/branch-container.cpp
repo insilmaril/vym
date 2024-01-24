@@ -23,7 +23,7 @@ extern FlagRowMaster *systemFlagsMaster;
 
 qreal BranchContainer::linkWidth = 20;  // FIXME-3 testing
 
-BranchContainer::BranchContainer(QGraphicsScene *scene, BranchItem *bi)  // FIXME-2 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
+BranchContainer::BranchContainer(QGraphicsScene *scene, BranchItem *bi)  // FIXME-4 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
     // qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
     scene->addItem(this);
@@ -201,7 +201,7 @@ void BranchContainer::updateVisibilityOfChildren()
 }
 
 #include <QTransform>
-void BranchContainer::setScrollOpacity(qreal o)   // FIXME-2 testing for potential later animation
+void BranchContainer::setScrollOpacity(qreal o)   // FIXME-3 testing for potential later animation
 {
     scrollOpacity = o;
     //headingContainer->setScrollOpacity(a);
@@ -302,12 +302,12 @@ void BranchContainer::updateTransformations()
     }
     // Reset transformations, if AutoDesign is used
     if (rotationsAutoDesignInt) {
-        rotationHeadingInt = md->rotationHeading(MapDesign::Undefined, depth);
-        rotationSubtreeInt = md->rotationSubtree(MapDesign::Undefined, depth);
+        rotationHeadingInt = md->rotationHeading(MapDesign::AutoDesign, depth);
+        rotationSubtreeInt = md->rotationSubtree(MapDesign::AutoDesign, depth);
     }
     if (scalingAutoDesignInt) {
-        scaleHeadingInt = md->scalingHeading(MapDesign::Undefined, depth);
-        scaleSubtreeInt = md->scalingSubtree(MapDesign::Undefined, depth);
+        scaleHeadingInt = md->scalingHeading(MapDesign::AutoDesign, depth);
+        scaleSubtreeInt = md->scalingSubtree(MapDesign::AutoDesign, depth);
     }
 
     // Rotation of heading
@@ -897,8 +897,9 @@ void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update)
 {
     rotationsAutoDesignInt = b;
 
-    if (update)
+    if (update) {
         updateTransformations();
+    }
 }
 
 bool BranchContainer::rotationsAutoDesign()
@@ -1247,20 +1248,21 @@ void BranchContainer::updateBranchesContainerLayout()
 
 void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
 {
-    //qDebug() << "BC::updateStyles of " << info(); // FIXME-3 testing
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();
 
+    // qDebug() << "BC::updateStyles mode=" << MapDesign::updateModeString(updateMode) << " of " << info(); // FIXME-4 testing
+                                                                            //
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    md->updateBranchHeadingColor(updateMode, branchItem, depth);  // FIXME-1 No check for AutoDesign?
+    md->updateBranchHeadingColor(updateMode, branchItem, depth);
 
     // bulletpoint color should match heading color
     if (bulletPointContainer)
         bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
 
     // Set frame
-    md->updateFrames(updateMode, this, depth);  // FIXME-1 No check for AutoDesign?
+    md->updateFrames(updateMode, this, depth);  // FIXME-1 No check for AutoDesign? Also: No savestate when e.g. relinking or toggling autodesign
 
     updateBranchesContainerLayout();
 
