@@ -291,15 +291,12 @@ void BranchContainer::updateTransformations()
     if (branchItem)  {
         md = branchItem->mapDesign();
         depth = branchItem->depth();
-    } else {
-        qWarning() << "BC::updateTrafos no branchItem!"; // FIXME-2 remove, together with check
+    } else
         return;
-    }
 
-    if (!md) {
-        qWarning() << "BC::updateTrafos no MapDesign!"; // FIXME-2 remove, together with check
+    if (!md)
         return;
-    }
+
     // Reset transformations, if AutoDesign is used
     if (rotationsAutoDesignInt) {
         rotationHeadingInt = md->rotationHeading(MapDesign::AutoDesign, depth);
@@ -318,10 +315,6 @@ void BranchContainer::updateTransformations()
 
     // Scale of heading
     headingContainer->setScale(scaleHeadingInt);
-
-    // scale of children containers
-    //    if (branchesContainer)
-        //  branchesContainer->setScale(scaleSubtreeInt);   // FIXME-2 needed?
 
     // Rotation of outer container or outerFrame
     if (outerFrame) {
@@ -429,7 +422,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
         // Parent has list layout
         if (!bulletPointContainer) {
             //qDebug() << "... Creating bulletPointContainer";
-            bulletPointContainer = new HeadingContainer;    // FIXME-2 create new type or re-use LinkObj and set type 
+            bulletPointContainer = new HeadingContainer;    // FIXME-4 create new type or re-use LinkObj and set type 
             // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
             bulletPointContainer->setHeading(" • ");
             bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
@@ -533,10 +526,6 @@ void BranchContainer::addToImagesContainer(Container *c)
 {
     if (!imagesContainer) {
         createImagesContainer();
-        /* FIXME-2 imagesContainer styles should be updated in Container c, but ImageContainer has no updateStyles() yet
-        if (branchItem)
-            updateStyles(RelinkBranch);
-        */
     }
 
     QPointF sp = c->scenePos();

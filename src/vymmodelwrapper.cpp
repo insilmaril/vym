@@ -1076,7 +1076,7 @@ void VymModelWrapper::setMapLinkStyle(const QString &style)
                  QString("Could not set linkstyle to %1").arg(style));
 }
 
-void VymModelWrapper::setMapRotation(float a) { model->setMapRotationAngle(a); }
+void VymModelWrapper::setMapRotation(float a) { model->setMapRotation(a); }
 
 void VymModelWrapper::setMapTitle(const QString &s) { model->setTitle(s); }
 

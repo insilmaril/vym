@@ -652,14 +652,14 @@ class VymModel : public TreeModel {
     void registerMapEditor(QWidget *);
 
     void setMapZoomFactor(const double &);
-    void setMapRotationAngle(const double &);
+    void setMapRotation(const double &);
     void setMapAnimDuration(const int &d);
     void setMapAnimCurve(const QEasingCurve &c);
     bool centerOnID(const QString &id);
 
   private:
     double zoomFactor;
-    double rotationAngle;
+    double mapRotationInt;
     int animDuration;
     QEasingCurve animCurve;
 

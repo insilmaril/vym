@@ -192,7 +192,7 @@ void VymModel::init()
 
     // Animation in MapEditor
     zoomFactor = 1;
-    rotationAngle = 0;
+    mapRotationInt = 0;
     animDuration = 2000;
     animCurve = QEasingCurve::OutQuint;
 
@@ -285,8 +285,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
         mapAttr += xml.attribute("branchCount", QString().number(branchCount()));
         mapAttr += xml.attribute("mapZoomFactor",
                      QString().setNum(mapEditor->getZoomFactorTarget()));
-        mapAttr += xml.attribute("mapRotationAngle",
-                     QString().setNum(mapEditor->getAngleTarget()));
+        mapAttr += xml.attribute("mapRotation",
+                     QString().setNum(mapEditor->rotationTarget()));
     }
     header += xml.beginElement("vymmap", mapAttr);
 
@@ -463,7 +463,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     // Get updated zoomFactor, before applying one read from file in the end
     if (mapEditor) {
         zoomFactor = mapEditor->getZoomFactorTarget();
-        rotationAngle = mapEditor->getAngleTarget();
+        mapRotationInt = mapEditor->rotationTarget();
     }
 
     BaseReader *reader;
@@ -658,7 +658,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     if (mapEditor) {
         mapEditor->setZoomFactorTarget(zoomFactor);
-        mapEditor->setAngleTarget(rotationAngle);
+        mapEditor->setRotationTarget(mapRotationInt);
     }
 
     qApp->processEvents(); // Update view (scene()->update() is not enough)
@@ -5263,10 +5263,10 @@ void VymModel::setMapZoomFactor(const double &d)
     mapEditor->setZoomFactorTarget(d);
 }
 
-void VymModel::setMapRotationAngle(const double &d)
+void VymModel::setMapRotation(const double &a)
 {
-    rotationAngle = d;
-    mapEditor->setAngleTarget(d);
+    mapRotationInt = a;
+    mapEditor->setRotationTarget(a);
 }
 
 void VymModel::setMapAnimDuration(const int &d) { animDuration = d; }
@@ -5280,7 +5280,7 @@ bool VymModel::centerOnID(const QString &id)
         Container *c = ((MapItem*)ti)->getContainer();
         if (c && zoomFactor > 0 ) {
             mapEditor->setViewCenterTarget(c->mapToScene(c->rect().center()), zoomFactor,
-                                           rotationAngle, animDuration,
+                                           mapRotationInt, animDuration,
                                            animCurve);
             return true;
         }

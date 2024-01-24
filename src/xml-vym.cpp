@@ -990,7 +990,7 @@ void VymReader::readVymMapAttr()
         model->setMapZoomFactor(r);
     }
 
-    a = "mapRotationAngle";
+    a = "mapRotation";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         r = s.toDouble(&ok);
@@ -998,7 +998,7 @@ void VymReader::readVymMapAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
-        model->setMapRotationAngle(r);
+        model->setMapRotation(r);
     }
 
     readMapDesignCompatibleAttributes();
