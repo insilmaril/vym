@@ -611,7 +611,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (err != File::Aborted) {
             if (parsedWell) {
-                // rootItem->updateStylesRecursively(MapDesign::MapLoad); FIXME-2 not used
+                // rootItem->updateStylesRecursively(MapDesign::MapLoad); FIXME-3 not used
                 reposition(); // to generate bbox sizes
                 emitSelectionChanged();
 
@@ -2500,10 +2500,8 @@ void VymModel::setRotationHeading (const int &i)
         }
     }
 
-    if (!selbis.isEmpty()) {
+    if (!selbis.isEmpty())
         reposition();
-        emitSelectionChanged(); // FIXME-2 needed?
-    }
 }
 
 void VymModel::setRotationSubtree (const int &i)
@@ -2523,10 +2521,8 @@ void VymModel::setRotationSubtree (const int &i)
 	}
     }
 
-    if (!selbis.isEmpty()) {
+    if (!selbis.isEmpty())
         reposition();
-        emitSelectionChanged(); // FIXME-2 needed?
-    }
 }
 
 void VymModel::setScalingAutoDesign (const bool & b) // FIXME-2 savestate: no command yet
@@ -2561,10 +2557,8 @@ void VymModel::setScaleHeading (const qreal &f) // FIXME-2 savestate: no command
 	}
     }
 
-    if (!selbis.isEmpty()) {
+    if (!selbis.isEmpty())
         reposition();
-        emitSelectionChanged(); // FIXME-2 needed?
-    }
 }
 
 qreal VymModel::getScaleHeading ()
@@ -2595,10 +2589,8 @@ void VymModel::setScaleSubtree (const qreal &f) // FIXME-2 savestate: no command
 	}
     }
 
-    if (!selbis.isEmpty()) {
+    if (!selbis.isEmpty())
         reposition();
-        emitSelectionChanged(); // FIXME-2 needed?
-    }
 }
 
 qreal VymModel::getScaleSubtree ()

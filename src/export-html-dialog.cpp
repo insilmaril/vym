@@ -348,5 +348,3 @@ void ExportHTMLDialog::setMapName(const QString &s) { mapname = s; }
 QDir ExportHTMLDialog::getDir() { return dir; }
 
 bool ExportHTMLDialog::warnings() { return showWarnings; }
-
-bool ExportHTMLDialog::hasChanged() { return settingsChanged; } // FIXME-2 never used

@@ -596,44 +596,6 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
-QPointF BranchContainer::getPositionHintRelink(Container *c, int d_pos, const QPointF &p_scene)
-{
-    QPointF p_hint;
-
-    if (hasFloatingBranchesLayout()) {
-        // Floating layout, position on circle around center of myself
-        qreal radius = 80;
-
-        QPointF center_sp = headingContainer->mapToScene(QPointF(0,0));
-        qreal a = getAngle(p_scene - center_sp);
-        p_hint = center_sp + QPointF (radius * cos(a), - radius * sin(a));
-    } else {
-        // Regular layout   // FIXME-2 Currently not used! Currently done in MapEditor...
-        QRectF r;
-        if (branchesContainer)
-            r = branchesContainer->rect();
-        qreal y;
-        if (d_pos == 0)
-            // Relink as child
-            y = r.bottom();
-        else
-            // Relink as sibling
-            y = r.bottom() - d_pos * c->rect().height();
-
-        switch (orientation) {
-            case LeftOfParent:
-                p_hint = QPointF(-linkWidth + r.left() - c->rect().width(), y);
-                break;
-            default:
-                p_hint = QPointF( linkWidth + r.right(), y);
-                break;
-        }
-        p_hint = headingContainer->mapToScene(p_hint);
-    }
-
-    return p_hint;
-}
-
 QPointF BranchContainer::downLinkPos()
 {
     return downLinkPos(orientation);
