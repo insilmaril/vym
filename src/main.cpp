@@ -179,8 +179,7 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(msgHandler);
 
     // Testing for now
-    vout.setCodec("UTF-8");  //FIXME-2
-    //dbg << QString("foobar") << 123;
+    vout.setCodec("UTF-8");  //FIXME-4
 
     // Reading and initializing options commandline options
     options.add("batch", Option::Switch, "b", "batch");
@@ -197,7 +196,7 @@ int main(int argc, char *argv[])
     options.add("recover", Option::Switch, "recover", "recover");
     options.add("restore", Option::Switch, "r", "restore");
     options.add("shortcuts", Option::Switch, "s", "shortcuts");
-//    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX") // FIXME-2 not really used?
+//    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX") // FIXME-3 not really used?
     options.add("testmode", Option::Switch, "t", "testmode");
     options.add("version", Option::Switch, "v", "version");
     options.setHelpText(

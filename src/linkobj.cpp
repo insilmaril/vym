@@ -5,8 +5,6 @@
 #include <QDebug>
 #include <QGraphicsEllipseItem>
 
-#include "misc.h" // FIXME-2 only debugging
-
 /////////////////////////////////////////////////////////////////
 // LinkObj
 /////////////////////////////////////////////////////////////////
@@ -33,7 +31,7 @@ void LinkObj::init()
     style = NoLink;
     arcsegs = 13;
 
-    // FIXME-2 instead of linkcolor pen.color() could be used all around
+    // FIXME-3 instead of linkcolor pen.color() could be used all around
     pen.setWidth(1);
     pen.setColor(linkcolor);
     pen.setCapStyle(Qt::RoundCap);
