@@ -2672,7 +2672,7 @@ void MapEditor::togglePresentationMode()
     mainWindow->togglePresentationMode();
 }
 
-// FIXME-2 Feature: updateSelection - New settings (maybe with keys to toggle) autorotation to adapt view to selection: Adapt to heading/subtree
+// FIXME-3 Feature: updateSelection - New settings (maybe with keys to toggle) autorotation to adapt view to selection: Adapt to heading/subtree
 void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
     /*

@@ -295,7 +295,7 @@ def test_copy_paste
 
   map.copy
   map.paste
-  map.selectLatestAdded     #FIXME-2 not set for ImportAdd, which is used by paste
+  map.selectLatestAdded     #FIXME-3 not set for ImportAdd, which is used by paste
   s = map.getSelectionString
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
 
@@ -1174,7 +1174,7 @@ def test_load_legacy_maps
     map.getNotePlainText,
     "RichText note in characters"
 
-  # FIXME-2 implement and add test: xlinks in subitems of branches (pre 1.13.2)
+  # FIXME-4 implement and add test: xlinks in subitems of branches (pre 1.13.2)
   close_current_map
 end
 
