@@ -314,24 +314,20 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             tree += xml.valueElement("select", getSelectString());
     }
     else {
-        switch (saveSel->getType()) {	// FIXME-2 identical switch statements here, not needed
-        case TreeItem::Branch:
-            // Save Subtree
-            tree += ((BranchItem *)saveSel)
-                        ->saveToDir(tmpdir, prefix, offset, tmpLinks);
-            break;
-        case TreeItem::MapCenter:
-            // Save Subtree
-            tree += ((BranchItem *)saveSel)
-                        ->saveToDir(tmpdir, prefix, offset, tmpLinks);
-            break;
-        case TreeItem::Image:
-            // Save Image
-            tree += ((ImageItem *)saveSel)->saveToDir(tmpdir, prefix);
-            break;
-        default:
-            // other types shouldn't be safed directly...
-            break;
+        switch (saveSel->getType()) {
+            case TreeItem::Branch:
+            case TreeItem::MapCenter:
+                // Save Subtree
+                tree += ((BranchItem *)saveSel)
+                            ->saveToDir(tmpdir, prefix, offset, tmpLinks);
+                break;
+            case TreeItem::Image:
+                // Save Image
+                tree += ((ImageItem *)saveSel)->saveToDir(tmpdir, prefix);
+                break;
+            default:
+                // other types shouldn't be safed directly...
+                break;
         }
     }
 
