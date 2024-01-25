@@ -416,7 +416,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
             outerContainer->addContainer(imagesContainer);
     }
 
-    // Structure for bullet point list layouts
+    // Structure for bullet point list layouts  // FIXME-2 Rotated headings clash with list below
     BranchContainer *pbc = parentBranchContainer();
     if (pbc && pbc->branchesContainerLayout == List) {
         // Parent has list layout
@@ -749,7 +749,8 @@ void BranchContainer::updateUpLink()
             upLink->setLinkStyle(tmpParentBI->mapDesign()->linkStyle( 1 + tmpParentBI->depth()));
     }
 
-    // Create/delete bottomline, depends on frame and (List-)Layout
+    // Create/delete bottomline, depends on frame and (List-)Layout // FIXME-2 list layout not considered
+                                                                    // also missing: if branch has children
     if (frameType(true) != FrameContainer::NoFrame) {
         if (upLink->hasBottomLine())
             upLink->deleteBottomLine();

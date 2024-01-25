@@ -249,14 +249,6 @@ void LinkObj::updateLinkGeometry()
     double vy = self_y - par_y;
 
     int z = -20000;
-    // FIXME-2 Hack to z-move links to MapCenter (d==1) below MCOs frame (d==0) - still needed?
-    /*
-    if (treeItem->depth() < 2)
-        // z = (treeItem->depth() -2) * dZ_DEPTH + dZ_LINK;
-        z = -dZ_LINK;
-    else
-        z = dZ_LINK;
-    */
     double a; // angle
     if (vx > -0.000001 && vx < 0.000001)
         a = M_PI_2;
@@ -298,15 +290,17 @@ void LinkObj::updateLinkGeometry()
                 pa0 << QPointF(pa2.at(arcsegs - i));
             p->setPolygon(QPolygonF(pa0));
             break;
-        case ListDash: {  // FIXME-2 WIP, cont here. Not used?
+        case ListDash: {  // FIXME-3 WIP, cont here. Not used.
                           // Width defined in BC:  linkSPaceContainer->setHeading("   ")
             pa0.clear();
             // center of LinkContainer, which will contain the list
-            // FIXME-2 qDebug() << "LO::updateLG for ListDash bPP=" << bulletPointPos;
+            qDebug() << "LO::updateLG for ListDash bPP=" << bulletPointPos;
             //pa0 << QPointF(bulletPointPos + QPointF(-4, 0) + QPointF(self_x, self_y));
+            /*
             pa0 << QPointF(bulletPointPos + QPointF( 4, 0));
             pa0 << QPointF(bulletPointPos + QPointF(-4, 0));
             p->setPolygon(QPolygonF(pa0));
+            */
             }
             break;
         default:
