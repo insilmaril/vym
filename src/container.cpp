@@ -665,21 +665,22 @@ void Container::reposition()
                 }
 
                 // Top line, where next children will be aligned to
-                qreal y = - h_total / 2;
+                qreal offset = - h_total / 2;
 
                 // Position children initially
                 foreach (Container *c, childContainers()) {
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
-                    y += - c->rect().top();
+                    offset += c_bbox.height() / 2;
+                    //offset += - c->rect().top();
 		    switch (horizontalAlignment) {
 			case AlignedLeft:
-                            c->setPos((- w_max + c_bbox.width()) / 2, y);
+                            c->setPos((- w_max + c_bbox.width()) / 2, offset);
 			    break;
 			case AlignedRight:
-                            c->setPos((w_max - c_bbox.width()) / 2, y);
+                            c->setPos((w_max - c_bbox.width()) / 2, offset);
 			    break;
 			case AlignedCentered:
-			    c->setPos (0, y);
+			    c->setPos (0, offset);
 			    break;
                         default:
                             qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignment << " in " << info();
@@ -687,7 +688,7 @@ void Container::reposition()
                                 qWarning() << "  orient=" << ((BranchContainer*)this)->getOrientation();
 		    }
 
-                    y += c->rect().bottom();
+                    offset += c_bbox.height() / 2;
                 }
 
                 // Set rect

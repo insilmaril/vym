@@ -416,7 +416,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
             outerContainer->addContainer(imagesContainer);
     }
 
-    // Structure for bullet point list layouts  // FIXME-2 Rotated headings clash with list below
+    // Structure for bullet point list layouts
     BranchContainer *pbc = parentBranchContainer();
     if (pbc && pbc->branchesContainerLayout == List) {
         // Parent has list layout
