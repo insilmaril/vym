@@ -2003,7 +2003,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         QPointF linkOffset;                     // Distance for temporary link
 
         BranchContainer *tbc = targetBranchContainer->parentBranchContainer();
-        if (e->modifiers() & Qt::ShiftModifier && tbc) {   // FIXME-1 better center instead of bottom for movingRef
+        if (e->modifiers() & Qt::ShiftModifier && tbc) {            // FIXME-2 better center instead of bottom for movingRef
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
 
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
@@ -2017,7 +2017,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     movingRefPointName = Container::BottomRight;
                     linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
             }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
-        } else if (e->modifiers() & Qt::ControlModifier && tbc) {  // FIXME-1 better center instead of top for movingRef
+        } else if (e->modifiers() & Qt::ControlModifier && tbc) {   // FIXME-2 better center instead of top for movingRef
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
                 // Shift modifier: Link right below
