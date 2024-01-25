@@ -486,7 +486,7 @@ void MapEditor::animate()
     model->repositionXLinks();
 }
 
-void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-2 only used in ME::autoLayout
+void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-3 only used in ME::autoLayout
 {
     if (!c) return;
 
@@ -643,14 +643,18 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
     }
 }
 
-void MapEditor::setViewCenterTarget()// FIXME-2 add ImageItem and -Container (center on image)
+void MapEditor::setViewCenterTarget()
 {
     MapItem *selti = (MapItem *)(model->getSelectedItem());
     if (selti) {
-        if (selti->hasTypeBranch()) {
-            Container *c = ((BranchItem*)selti)->getBranchContainer()->getHeadingContainer();
-            setViewCenterTarget(c->mapToScene(c->rect().center()), 1, 0);
-        }
+        Container *c = nullptr;
+        if (selti->hasTypeBranch()) 
+            c = ((BranchItem*)selti)->getBranchContainer()->getHeadingContainer();
+        else if (selti->hasTypeImage())
+            c = ((ImageItem*)selti)->getImageContainer();
+        else
+            return;
+        setViewCenterTarget(c->mapToScene(c->rect().center()), 1, 0);
     }
 }
 
@@ -801,7 +805,7 @@ void MapEditor::setSmoothPixmap(bool b)
     setRenderHint(QPainter::SmoothPixmapTransform, b);
 }
 
-void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
+void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review use case ("brainstorming")
 {
     /*
     // Create list with all bounding polygons
@@ -810,13 +814,13 @@ void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
     ConvexPolygon p;
     QList<Vector> vectors;
     QList<Vector> orgpos;
-    QStringList headings; // FIXME-3 testing only
+    QStringList headings; // FIXME-4 testing only
     Vector v;
     BranchItem *bi;
     BranchItem *bi2;
     BranchObj *bo;
 
-    // Outer loop: Iterate until we no more changes in orientation
+    // Outer loop: Iterate until we have no more changes in orientation
     bool orientationChanged = true;
     while (orientationChanged) {
         BranchItem *ri = model->getRootItem();
@@ -875,7 +879,7 @@ void MapEditor::autoLayout()    // FIXME-2 not ported yet to containers
                         vectors[j] = v * 10000 / polys.at(j).weight();
                         vectors[i] = v * 10000 / polys.at(i).weight();
                         vectors[i].invert();
-                        // FIXME-3 outer loop, "i" get's changed several
+                        // FIXME-4 outer loop, "i" get's changed several
                         // times...
                         // Better not move away from centroid of 2 colliding
                         // polys, but from centroid of _all_
@@ -1418,8 +1422,7 @@ void MapEditor::editHeading()
 
         lineEdit = new QLineEdit;
         QGraphicsProxyWidget *proxyWidget = mapScene->addWidget(lineEdit);
-        // proxyWidget->setZValue(10000);// FIXME-2 needed?
-        // FIXME-3 get total rotation XXX for BC in scene and do "proxyWidget->setRotation(XXX);
+        // FIXME-3-FT get total rotation XXX for BC in scene and do "proxyWidget->setRotation(XXX);
         lineEdit->setCursor(Qt::IBeamCursor);
         lineEdit->setCursorPosition(1);
 
