@@ -1,5 +1,7 @@
 #include "exportoofiledialog.h"
 
+extern QDir vymBaseDir;
+
 ExportOOFileDialog::ExportOOFileDialog() : QFileDialog() { init(); }
 
 ExportOOFileDialog::ExportOOFileDialog(QWidget *parent, const QString &caption)
@@ -35,8 +37,8 @@ void ExportOOFileDialog::show()
 void ExportOOFileDialog::init()
 {
     setFileMode(QFileDialog::AnyFile);
-    QDir d;
-    d.setPath("/usr/share/vym/exports");
+    QDir d = vymBaseDir;
+    d.cd("exports");
     scanExportConfigs(d);
     d.setPath(d.homePath() + "/.vym/exports");
     scanExportConfigs(d);
