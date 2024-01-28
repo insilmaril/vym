@@ -29,7 +29,8 @@ class BranchItem : public MapItem {
     virtual void insertBranch(int pos, BranchItem *branch);
 
     virtual QString saveToDir(const QString &tmpdir, const QString &prefix,
-                              const QPointF &offset, QList<Link *> &tmpLinks);
+                              const QPointF &offset, QList<Link *> &tmpLinks,
+                              const bool &exportBoundingBoxes);
 
     virtual void setHeadingColor(
         QColor color); //! Overloaded from TreeItem to update QGraphicsView

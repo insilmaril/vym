@@ -319,7 +319,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             case TreeItem::MapCenter:
                 // Save Subtree
                 tree += ((BranchItem *)saveSel)
-                            ->saveToDir(tmpdir, prefix, offset, tmpLinks);
+                            ->saveToDir(tmpdir, prefix, offset, tmpLinks, exportBoundingBoxes);
                 break;
             case TreeItem::Image:
                 // Save Image
@@ -363,8 +363,12 @@ QString VymModel::saveTreeToDir(const QString &tmpdir, const QString &prefix,
 {
     QString s;
     for (int i = 0; i < rootItem->branchCount(); i++)
-        s += rootItem->getBranchNum(i)->saveToDir(tmpdir, prefix, offset,
-                                                  tmpLinks);
+        s += rootItem->getBranchNum(i)->saveToDir(
+                tmpdir,
+                prefix,
+                offset,
+                tmpLinks,
+                exportBoundingBoxes);
     return s;
 }
 
@@ -4949,8 +4953,11 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
     mapUnsaved = munsaved;
 
     // write to directory   //FIXME-3 check totalBBox here...
+    exportBoundingBoxes = true;
     QString saveFile =
         saveToDir(dpath, mname + "-", FlagRowMaster::NoFlags, offset, nullptr);
+    exportBoundingBoxes = false;
+
     QFile file;
 
     file.setFileName(fpath);
@@ -5090,7 +5097,9 @@ void VymModel::exportHTML(const QString &fpath, const QString &dpath,
     if (!fpath.isEmpty())
         ex.setFilePath(fpath);
 
+    exportBoundingBoxes = true;
     ex.doExport(useDialog);
+    exportBoundingBoxes = false;
 }
 
 void VymModel::exportConfluence(bool createPage, const QString &pageURL,

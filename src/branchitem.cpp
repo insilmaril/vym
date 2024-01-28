@@ -95,7 +95,7 @@ void BranchItem::insertBranch(int pos, BranchItem *branch)
 }
 
 QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
-                              const QPointF &offset, QList<Link *> &tmpLinks)
+                              const QPointF &offset, QList<Link *> &tmpLinks, const bool &exportBoundingBoxes)
 {
     // Cloudy stuff can be hidden during exports
     if (hidden)
@@ -111,18 +111,16 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (scrolled)
         attr += attribute("scrolled", "yes");
 
-    // save area, if not scrolled   // FIXME-3 only needed for HTML exports - Introduce exportImageMap flag
-    // also we could check if _any_ of parents is scrolled
-    //QString areaAttr;   // FIXME-2 will not work with rotated containers and positions of headings
-    if (branchContainer && parentItem->hasTypeBranch() &&
+    // save area, if not scrolled
+    // FIXME-4 we could check if _any_ of parents is scrolled
+    if (exportBoundingBoxes && branchContainer && parentItem->hasTypeBranch() &&
         !((BranchItem *)parentItem)->isScrolled()) {
-        qreal x = branchContainer->scenePos().x();
-        qreal y = branchContainer->scenePos().y();
+        QRectF r_bc = branchContainer->mapToScene(branchContainer->rect()).boundingRect();
         attr +=
-            attribute("x1", QString().setNum(x - offset.x())) +
-            attribute("y1", QString().setNum(y - offset.y())) +
-            attribute("x2", QString().setNum(x + branchContainer->rect().width() - offset.x())) +
-            attribute("y2", QString().setNum(y + branchContainer->rect().height() - offset.y()));
+            attribute("x1", QString().setNum(r_bc.topLeft().x() - offset.x())) +
+            attribute("y1", QString().setNum(r_bc.topLeft().y() - offset.y())) +
+            attribute("x2", QString().setNum(r_bc.bottomRight().x() - offset.x())) +
+            attribute("y2", QString().setNum(r_bc.bottomRight().y() - offset.y()));
     }
 
     QString elementName;
@@ -190,7 +188,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     int i = 0;
     TreeItem *ti = getBranchNum(i);
     while (ti) {
-        s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpLinks);
+        s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpLinks, exportBoundingBoxes);
         i++;
         ti = getBranchNum(i);
     }

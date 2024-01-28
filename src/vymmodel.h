@@ -580,6 +580,7 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
   private:
     TreeItem::HideTmpMode hidemode; // true while exporting to hide some stuff
+    bool exportBoundingBoxes = false;
 
   public:
     /*! Set or unset temporary hiding of objects during export  */
