@@ -3065,7 +3065,7 @@ void VymModel::moveDown()
     select(selbis);
 }
 
-void VymModel::moveUpDiagonally()   // FIXME-2 not moving to separate new parents
+void VymModel::moveUpDiagonally()
 {
     if (readonly) return;   // FIXME-3 readonly needs be checked for every 
                             // public function in model, which modifies data...
@@ -3086,7 +3086,7 @@ void VymModel::moveUpDiagonally()   // FIXME-2 not moving to separate new parent
     }
 }
 
-void VymModel::moveDownDiagonally() // FIXME-2 not moving to separate new parents
+void VymModel::moveDownDiagonally()
 {
     if (readonly) return;
 
