@@ -3065,34 +3065,40 @@ void VymModel::moveDown()
     select(selbis);
 }
 
-void VymModel::moveUpDiagonally()   // FIXME-2 multiselection missing
+void VymModel::moveUpDiagonally()   // FIXME-2 not moving to separate new parents
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        BranchItem *parent = selbi->parentBranch();
-        if (parent == rootItem) return;
+    if (readonly) return;   // FIXME-3 readonly needs be checked for every 
+                            // public function in model, which modifies data...
+
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    foreach (BranchItem *selbi, selbis) {
+        BranchItem *pbi = selbi->parentBranch();
+        if (pbi == rootItem) break;
 
         int n = selbi->num();
-        if (n == 0) return;
+        if (n == 0) break;
 
-        BranchItem *dst = parent->getBranchNum(n-1);
-        if (!dst) return;
+        BranchItem *dst = pbi->getBranchNum(n - 1);
+        if (!dst) break;
 
         relinkBranch(selbi, dst, dst->branchCount() + 1);
-     }
+    }
 }
 
-void VymModel::moveDownDiagonally() // FIXME-2 multiselection missing
+void VymModel::moveDownDiagonally() // FIXME-2 not moving to separate new parents
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        BranchItem *parent = selbi->parentBranch();
-        if (parent == rootItem) return;
-        BranchItem *parentParent = parent->parentBranch();
-        int n = parent->num();
+    if (readonly) return;
+
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+        BranchItem *pbi = selbi->parentBranch();
+        if (pbi == rootItem) break;
+        BranchItem *parentParent = pbi->parentBranch();
+        int n = pbi->num();
 
         relinkBranch(selbi, parentParent, n + 1);
-     }
+    }
 }
 
 void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
@@ -3214,7 +3220,6 @@ void VymModel::sortChildren(bool inverse)   // FIXME-2 save only once, but not i
             }
         }
     }
-    //reposition();   // FIXME-2 needed?
 }
 
 BranchItem *VymModel::createBranch(BranchItem *dst)
