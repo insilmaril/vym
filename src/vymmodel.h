@@ -221,7 +221,7 @@ class VymModel : public TreeModel {
     int undosAvail;         //!< Available number of undo steps
     bool repositionBlocked; //!< block while load or undo
     bool saveStateBlocked;  //!< block saving current state
-    bool updateStylesBlocked; //! While loading a new map, don't update container styles
+    bool updateStylesBlocked; //! While loading a new map, don't update container styles    // FIXME-2 needed?
   public:
     void blockReposition();   //! Block reposition while bigger changes, e.g. an import
     void unblockReposition(); //! Unblock reposition and do repositon
@@ -425,7 +425,7 @@ class VymModel : public TreeModel {
     void paste(); //!< Paste clipboard to branch and backup
     void cut();   //!< Cut to clipboard (and copy)
 
-    void moveUp();                 //!< Move branch up
+    void moveUp(BranchItem *bi = nullptr); //!< Move branch up
     void moveDown();               //!< Move branch down
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent

@@ -3032,11 +3032,16 @@ void VymModel::cut()
     deleteSelection();
 }
 
-void VymModel::moveUp()
+void VymModel::moveUp(BranchItem *bi)
 {
     if (readonly) return;
 
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis;
+    if (bi)
+        selbis << bi;
+    else
+        selbis = getSelectedBranches();
+
     if (selbis.isEmpty()) return;
 
     foreach (BranchItem *selbi, sortBranchesByNum(selbis, false))
@@ -3139,7 +3144,7 @@ QList <BranchItem*> VymModel::sortBranchesByNum(QList <BranchItem*> unsortedList
     return sortedList;
 }
 
-QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsortedList, bool inverse)
+QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsortedList, bool inverse) // FIXME-4 Never used.
 {
     QMap <QString, BranchItem*> map;
     foreach (BranchItem *bi, unsortedList)
@@ -3157,26 +3162,59 @@ QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsorted
     return sortedList;
 }
 
-void VymModel::sortChildren(bool inverse)
+void VymModel::sortChildren(bool inverse)   // FIXME-2 save only once, but not in relinking
 {
     QList<BranchItem *> selbis = getSelectedBranches();
-    foreach (BranchItem *selbi, selbis) {
-	if (selbi) {
-	    if (selbi->branchCount() > 1) {
-		if (!inverse)
-		    saveStateChangingPart(
-			selbi, selbi, "sortChildren ()",
-			QString("Sort children of %1").arg(getObjectName(selbi)));
-		else
-		    saveStateChangingPart(selbi, selbi, "sortChildren (false)",
-					  QString("Inverse sort children of %1")
-					      .arg(getObjectName(selbi)));
 
-		selbi->sortChildren(inverse);
-	    }
-	}
+    if (selbis.isEmpty()) return;
+
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi) {
+            if (selbi->branchCount() > 1) {
+                if (!inverse)
+                    saveStateChangingPart(
+                        selbi, selbi, "sortChildren ()",
+                        QString("Sort children of %1").arg(getObjectName(selbi)));
+                else
+                    saveStateChangingPart(selbi, selbi, "sortChildren (false)",
+                                          QString("Inverse sort children of %1")
+                                              .arg(getObjectName(selbi)));
+
+                QMultiMap <QString, BranchItem*> multimap;
+                for (int i = 0; i < selbi->branchCount(); i++)
+                    multimap.insert(selbi->getBranchNum(i)->getHeadingPlain(), selbi->getBranchNum(i));
+
+                int n = 0;
+                QMapIterator<QString, BranchItem*> i(multimap);
+                if (inverse) {
+                    i.toBack();
+                    while (i.hasPrevious()) {
+                        i.previous();
+                        if (i.value()->num() != n) {
+                            // Only relink if not already at this position
+                            // and don't saveState while relinking
+                            bool oldSaveStateBlocked = saveStateBlocked;
+                            saveStateBlocked = true;
+                            relinkBranch(i.value(), selbi, n);
+                            saveStateBlocked = oldSaveStateBlocked;
+                        }
+                        n++;
+                    }
+                } else while (i.hasNext())  {
+                    i.next();
+                    if (i.value()->num() != n) {
+                        // Only relink if not already at this position
+                        bool oldSaveStateBlocked = saveStateBlocked;
+                        saveStateBlocked = true;
+                        relinkBranch(i.value(), selbi, n);
+                        saveStateBlocked = oldSaveStateBlocked;
+                    }
+                    n++;
+                }
+            }
+        }
     }
-    reposition();
+    //reposition();   // FIXME-2 needed?
 }
 
 BranchItem *VymModel::createBranch(BranchItem *dst)
@@ -3593,10 +3631,13 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
     if (num_dst < 0 || num_dst >= dst->branchCount())
         num_dst = dst->branchCount();
 
-    saveStateBeginBlock(
-        QString("Relink %1 objects to \"%2\"")
-            .arg(branches.count())
-            .arg(dst->getHeadingPlain()));
+    if (!saveStateBlocked)
+        // When ordering branches, we already saveState there and not for 
+        // each branch individually
+        saveStateBeginBlock(
+            QString("Relink %1 objects to \"%2\"")
+                .arg(branches.count())
+                .arg(dst->getHeadingPlain()));
 
     BranchItem* bi_prev = nullptr;
     foreach (BranchItem *bi, branches) {
@@ -3728,12 +3769,12 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
                           QString("Move %1")
                               .arg(getObjectName(bi)));
             }
-
-        }
+        } // saveState not blocked
         bi_prev = bi;
     }   // Iterating over selbis    
 
-    saveStateEndBlock();
+    if (!saveStateBlocked)
+        saveStateEndBlock();
 
     // Restore selection, which was lost when removing rows
     select(selectedItems);

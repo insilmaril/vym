@@ -112,7 +112,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         attr += attribute("scrolled", "yes");
 
     // save area, if not scrolled
-    // FIXME-4 we could check if _any_ of parents is scrolled
+    // FIXME-5 we could check if _any_ of parents is scrolled
     if (exportBoundingBoxes && branchContainer && parentItem->hasTypeBranch() &&
         !((BranchItem *)parentItem)->isScrolled()) {
         QRectF r_bc = branchContainer->mapToScene(branchContainer->rect()).boundingRect();
@@ -329,34 +329,6 @@ bool BranchItem::resetTmpUnscroll()
     return result;
 }
 
-void BranchItem::sortChildren(bool inverse) // FIXME-2 refactor and optimize to not using moveUp/Down
-{
-    /*
-    int childCount = branchCounter;
-    int curChildIndex;
-    bool madeChanges = false;
-    do {
-        madeChanges = false;
-        for (curChildIndex = 1; curChildIndex < childCount; curChildIndex++) {
-            BranchItem *curChild = getBranchNum(curChildIndex);
-            BranchItem *prevChild = getBranchNum(curChildIndex - 1);
-            if (inverse) {
-                if (prevChild->getHeadingPlain().compare(
-                        curChild->getHeadingPlain(), Qt::CaseInsensitive) < 0) {
-                    model->moveUp(curChild);
-                    madeChanges = true;
-                }
-            } else if (prevChild->getHeadingPlain().compare(
-                         curChild->getHeadingPlain(), Qt::CaseInsensitive) >
-                     0) {
-                model->moveUp(curChild);
-                madeChanges = true;
-            }
-        }
-    } while (madeChanges);
-    */
-}
-
 void BranchItem::setBranchesLayout(const QString &s)
 {
     branchContainer->setBranchesContainerLayout(Container::getLayoutFromString(s));
@@ -427,7 +399,7 @@ TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
     // Search branches
     if (!isScrolled()) {
         TreeItem *ti;
-        for (int i = 0; i < branchCount(); ++i) {
+        for (int i = 0; i < branchCounter; ++i) {
             ti = getBranchNum(i)->findMapItem(p, excludedItems);
             if (ti != nullptr)
                 return ti;

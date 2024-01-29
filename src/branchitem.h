@@ -59,7 +59,6 @@ class BranchItem : public MapItem {
                                      // during "find" process
     virtual bool resetTmpUnscroll(); // scroll all tmp scrolled parents again
                                      // e.g. when unselecting
-    virtual void sortChildren(bool inverse = false); //! Sort children
 
   public:
     void setBranchesLayout(const QString &);
