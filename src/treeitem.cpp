@@ -541,44 +541,6 @@ QList<QUuid> TreeItem::activeSystemFlagUids()
     return systemFlags.activeFlagUids();
 }
 
-bool TreeItem::canMoveDown()
-{
-    switch (type) {
-    case Undefined:
-        return false;
-    case MapCenter:
-    case Branch:
-        if (!parentItem)
-            return false;
-        if (parentItem->num(this) < parentItem->branchCount() - 1)
-            return true;
-        else
-            return false;
-        break;
-    case Image:
-        return false;
-    default:
-        return false;
-    }
-}
-
-bool TreeItem::canMoveUp()
-{
-    switch (type) {
-    case MapCenter:
-    case Branch:
-        if (!parentItem)
-            return false;
-        if (parentItem->num(this) > 0)
-            return true;
-        else
-            return false;
-        break;
-    default:
-        return false;
-    }
-}
-
 ulong TreeItem::getID() { return itemID; }
 
 void TreeItem::setUuid(const QString &id) { uuid = QUuid(id); }

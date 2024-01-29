@@ -6536,7 +6536,7 @@ void Main::updateActions()
             standardFlagsToolbar->setEnabled(false);
             userFlagsToolbar->setEnabled(false);
 
-            // Disable map related actions in readonly mode // FIXME-2 not all actions disabled 
+            // Disable map related actions in readonly mode // FIXME-3 not all actions disabled 
             foreach (QAction *a, restrictedMapActions)
                 a->setEnabled(false);
 
@@ -6740,19 +6740,17 @@ void Main::updateActions()
                     actionDeleteVymLink->setEnabled(true);
                 }
 
-                if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
-                    actionMoveUp->setEnabled(false);
+                if (selbi) {
+                    bool b = m->canMoveUp(selbi);
+                    actionMoveUp->setEnabled(b);
+                    actionMoveUpDiagonally->setEnabled(b);
+                    actionMoveDown->setEnabled(m->canMoveDown(selbi));
+                    if ((selbi->depth() == 0) || selbis.count() > 1)
+                        actionMoveDownDiagonally->setEnabled(false);
+                }
 
-                if ((selbi && !selbi->canMoveDown()) || selbis.count() > 1)
-                    actionMoveDown->setEnabled(false);
 
-                if ((selbi && !selbi->canMoveUp()) || selbis.count() > 1)
-                    actionMoveUpDiagonally->setEnabled(false);  // FIXME-2 add check for moveDiagonalUp
-
-                if ((selbi && selbi->depth() == 0) || selbis.count() > 1)
-                    actionMoveDownDiagonally->setEnabled(false);
-
-                if (selbi && selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent) // FIXME-2 check if ok 
+                if (selbi && selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
                 {
                     actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
                     actionMoveUpDiagonally->setIcon(QPixmap(":up-diagonal-left.png"));

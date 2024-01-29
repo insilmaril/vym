@@ -425,6 +425,8 @@ class VymModel : public TreeModel {
     void paste(); //!< Paste clipboard to branch and backup
     void cut();   //!< Cut to clipboard (and copy)
 
+    bool canMoveUp(BranchItem *bi);
+    bool canMoveDown(BranchItem *bi);
     void moveUp(BranchItem *bi = nullptr); //!< Move branch up
     void moveDown();               //!< Move branch down
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above

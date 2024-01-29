@@ -3032,6 +3032,32 @@ void VymModel::cut()
     deleteSelection();
 }
 
+bool VymModel::canMoveUp(BranchItem *bi)
+{
+    if (bi) {
+        BranchItem *pbi = bi->parentBranch();
+        if (pbi == rootItem)
+            return false;
+
+        return (pbi->num(bi) > 0);
+    }
+
+    return false;
+}
+
+bool VymModel::canMoveDown(BranchItem *bi)
+{
+    if (bi) {
+        BranchItem *pbi = bi->parentBranch();
+        if (pbi == rootItem)
+            return false;
+
+        return (pbi->num(bi) < pbi->branchCount() - 1);
+    }
+
+    return false;
+}
+
 void VymModel::moveUp(BranchItem *bi)
 {
     if (readonly) return;
@@ -3045,10 +3071,8 @@ void VymModel::moveUp(BranchItem *bi)
     if (selbis.isEmpty()) return;
 
     foreach (BranchItem *selbi, sortBranchesByNum(selbis, false))
-        relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
-
-    // Restore selection
-    select(selbis);
+        if (canMoveUp(selbi))
+            relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
 }
 
 void VymModel::moveDown()
@@ -3059,10 +3083,8 @@ void VymModel::moveDown()
     if (selbis.isEmpty()) return;
 
     foreach (BranchItem *selbi, sortBranchesByNum(selbis, true))
-        relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
-
-    // Restore selection
-    select(selbis);
+        if (canMoveDown(selbi))
+            relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
 }
 
 void VymModel::moveUpDiagonally()

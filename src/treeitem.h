@@ -160,9 +160,6 @@ class TreeItem : public XMLObj {
 
     virtual QList<QUuid> activeSystemFlagUids();
 
-    virtual bool canMoveDown();
-    virtual bool canMoveUp();
-
   protected:
     ulong itemID;
     QUuid uuid;
