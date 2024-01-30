@@ -89,6 +89,9 @@ MapEditor::MapEditor(VymModel *vm)
 
     setScene(mapScene);
 
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
     setStyleSheet("QGraphicsView:focus {" + editorFocusStyle + "}");
 
     // Create bitmap cursors, platform dependant
@@ -673,9 +676,9 @@ void MapEditor::updateMatrix()
     setTransform(t_zoom * t_rot);
 }
 
-void MapEditor::minimizeView() {    // FIXME-2 review if "jumping" when creating/removing scrollbars can be improved
+void MapEditor::minimizeView() {
     // If we only would set scene rectangle to existing items, then
-    // view fould "jump", when Qt automatically tries to center.
+    // view would "jump", when Qt automatically tries to center.
     // Better consider the currently visible viewport (with slight offset)
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);

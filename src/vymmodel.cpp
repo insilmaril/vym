@@ -5380,7 +5380,7 @@ void VymModel::reposition()
 
     repositionXLinks();
 
-    mapEditor->minimizeView();  // FIXME-2 review and check for "jumping"
+    mapEditor->minimizeView();
 }
 
 void VymModel::repositionXLinks()
