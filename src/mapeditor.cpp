@@ -2446,7 +2446,7 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::wheelEvent(QWheelEvent *e)
+void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-2 for zooming use current pos as center, not middle of view
 {
     if (e->modifiers() & Qt::ControlModifier &&
         e->angleDelta().y() != 0) {

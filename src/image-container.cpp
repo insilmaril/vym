@@ -62,7 +62,7 @@ void ImageContainer::copy(ImageContainer *other)
             return;
             break;
     }
-    setScaleFactor(other->scaleFactor);
+    setScaleFactor(other->scaleFactorInt);
 }
 
 void ImageContainer::init()
@@ -81,7 +81,7 @@ void ImageContainer::init()
 
     svgItem = nullptr;
     pixmapItem = nullptr;
-    scaleFactor = 1;
+    scaleFactorInt = 1;
     overlay = false;    // Inherits FrameContainer, which has overlay == true
 
     // FIXME-3 for testing we do some coloring and additional drawing
@@ -98,11 +98,11 @@ void ImageContainer::setWidth(qreal w)
 
 void ImageContainer::setScaleFactor(qreal f)
 {
-    scaleFactor = f;
+    scaleFactorInt = f;
     setScale(f);
 }
 
-qreal ImageContainer::getScaleFactor() { return scaleFactor; }
+qreal ImageContainer::scaleFactor() { return scaleFactorInt; }
 
 void ImageContainer::select()
 {

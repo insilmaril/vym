@@ -11,8 +11,10 @@
 
 class QAbstractItemModel;
 
+class AttributeItem;
 class BranchContainer;
 class BranchItem;
+class ImageItem;
 class TreeItem;
 class VymModel;
 
@@ -25,6 +27,7 @@ class BranchPropertyEditor : public QDialog {
   public:
     void setItem(TreeItem *);
     void setModel(VymModel *);
+    void updateControls();
 
   private:
     void updateLayoutControls();
@@ -72,18 +75,23 @@ class BranchPropertyEditor : public QDialog {
 
   private:
     void connectSignals();
-    void disconnectSignals();
+    void setSignalsEnabled(const bool);
 
     Ui::BranchPropertyEditor ui;
 
+    QList<QWidget*> controlWidgets;
+    bool signalsEnabled;
+
     BranchItem *branchItem;
     BranchContainer *branchContainer;
+    ImageItem *imageItem;
 
     VymModel *model;
 
     int lastSelectedBranchTab;
 
     QStandardItemModel *attributeModel;
+    AttributeItem *attributeItem;
 
     qreal scaleHeadingInitialValue;
     qreal scaleSubtreeInitialValue;

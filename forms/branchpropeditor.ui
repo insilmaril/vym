@@ -570,7 +570,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="headingWidthSPinBox"/>
+             <widget class="QSpinBox" name="headingWidthSpinBox"/>
             </item>
            </layout>
           </item>
@@ -814,7 +814,7 @@
       </attribute>
       <layout class="QVBoxLayout">
        <item>
-        <widget class="QCheckBox" name="hideLinkIfUnselected">
+        <widget class="QCheckBox" name="hideLinkIfUnselectedCheckBox">
          <property name="text">
           <string>Hide link to parent if unselected</string>
          </property>
@@ -843,7 +843,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QSpinBox" name="taskPrioDelta">
+          <widget class="QSpinBox" name="taskPrioDeltaSpinBox">
            <property name="minimum">
             <number>-10000</number>
            </property>
@@ -882,7 +882,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditDateCreation">
+        <widget class="QLineEdit" name="dateCreationLineEdit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -899,7 +899,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditDateModification">
+        <widget class="QLineEdit" name="dateModificationLineEdit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -916,7 +916,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditSleep">
+        <widget class="QLineEdit" name="sleepLineEdit">
          <property name="enabled">
           <bool>false</bool>
          </property>

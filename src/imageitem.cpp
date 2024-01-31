@@ -80,10 +80,10 @@ void ImageItem::setScaleFactor(qreal f)
         imageContainer->setScaleFactor(f);
 }
 
-qreal ImageItem::getScaleFactor()
+qreal ImageItem::scaleFactor()
 {
     if (imageContainer)
-        return imageContainer->getScaleFactor();
+        return imageContainer->scaleFactor();
     else
         return 1;
 }
@@ -158,7 +158,7 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     QString nameAttr = attribute("originalName", originalFilename);
 
     QString scaleAttr =
-        attribute("scaleFactor", QString().setNum(imageContainer->getScaleFactor()));
+        attribute("scaleFactor", QString().setNum(imageContainer->scaleFactor()));
 
     return singleElement("floatimage",
                 MapItem::getPosAttr() +

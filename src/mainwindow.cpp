@@ -989,8 +989,8 @@ void Main::setupAPI()
     c->addPar(Command::Int, false, "Rotation angle of heading and subtree");
     modelCommands.append(c);
 
-    c = new Command("setScaleFactor", Command::Image);
-    c->addPar(Command::Double, false, "Scale image by factor f");
+    c = new Command("setScaleFactor", Command::BranchOrImage);
+    c->addPar(Command::Double, false, "Scale selectgion by factor f");
     modelCommands.append(c);
 
     c = new Command("setSelectionColor", Command::Any);
@@ -4275,7 +4275,7 @@ void Main::fileSaveAsDefault()
     if (currentMapEditor()) {
         QString fn = QFileDialog::getSaveFileName(
             this, tr("Save map as new default map"), newMapPath(),
-            "VYM map (*.vym)", NULL, QFileDialog::DontConfirmOverwrite);
+            "VYM map (*.vym)", nullptr, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
             // Check for existing file

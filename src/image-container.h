@@ -28,7 +28,7 @@ class ImageContainer : public Container, public SelectableContainer {
     virtual void init();
     void setWidth(qreal w);
     void setScaleFactor(qreal f);
-    qreal getScaleFactor();
+    qreal scaleFactor();
     void select();
 
     bool load(const QString &, bool createClone = false);
@@ -50,10 +50,10 @@ class ImageContainer : public Container, public SelectableContainer {
 
     QGraphicsPixmapItem *pixmapItem;
 
-    qreal scaleFactor;
+    qreal scaleFactorInt;
 
     ulong imageID;
 
-    ImageItem *imageItem; // FIXME-2 only used when part of ImageItem
+    ImageItem *imageItem; // only used when part of ImageItem, not in FlagContainer
 };
 #endif

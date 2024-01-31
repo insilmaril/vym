@@ -74,6 +74,31 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
             SLOT(indexChanged(int)));
 
     connectSignals();
+
+    // Build list of controlWidgets, which later will get
+    // signals blocked during changes not triggered by user
+    signalsEnabled = true;
+    QList <QWidget*> children = this->findChildren<QWidget *>();
+    QMutableListIterator <QWidget*> it(children);
+
+    // Only controlWidgets contain names below:
+    QStringList controls;
+    controls <<
+        "Button" <<
+        "Combo" <<
+        "LineEdit" <<
+        "SpinBox" <<
+        "Slider" <<
+        "CheckBox";
+    while (it.hasNext()) {
+        QWidget *w = it.next();
+        foreach (auto s, controls)
+            if (w->objectName().contains(s)) {
+                controlWidgets << w;
+                // FIXME-0 qDebug() << "Adding w=" << w->objectName();
+                break;
+            }
+    }
 }
 
 BranchPropertyEditor::~BranchPropertyEditor()
@@ -87,15 +112,12 @@ BranchPropertyEditor::~BranchPropertyEditor()
     delete (attributeModel);
 }
 
-void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly differentiate BI, II, AI:
-                                                    // Better set pointers to these TreeItems and update controls separately
-                                                    // THis also would help updating controls without changing the selection
+void BranchPropertyEditor::setItem(TreeItem *ti)
 {
-    disconnectSignals();    // FIXME-4 why complete disconnect? To avoid recursive calls when (pre-)setting values?
-
     // Reset pointers to currently displayed TreeItem
     branchItem = nullptr;
     branchContainer = nullptr;
+    imageItem = nullptr;
 
     if (!ti)
         ui.tabWidget->setEnabled(false);
@@ -113,13 +135,23 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
         for (int i = 0; i < 4; ++i)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
+    } else if (ti->hasTypeImage())
+        imageItem = (ImageItem*)ti;
 
+    updateControls();
+}
+
+void BranchPropertyEditor::updateControls()
+{
+    setSignalsEnabled(false);
+
+    if (branchItem) {
         // Inner frame
         ui.innerFrameAutoDesignCheckBox->setChecked(branchContainer->frameAutoDesign(true));
         FrameContainer::FrameType t = branchContainer->frameType(true);
         ui.innerFrameTypeCombo->setEnabled(!branchContainer->frameAutoDesign(true));
 
-        bool b = (t == FrameContainer::NoFrame || branchContainer->frameAutoDesign(true));
+        bool b = (t != FrameContainer::NoFrame && !branchContainer->frameAutoDesign(true));
         ui.innerFrameTypeLabel->setEnabled(b);
         ui.innerFramePenColorButton->setEnabled(b);
         ui.innerFrameBrushColorButton->setEnabled(b);
@@ -166,7 +198,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
         t = branchContainer->frameType(false);
         ui.outerFrameTypeCombo->setEnabled(!branchContainer->frameAutoDesign(false));
 
-        b = (t == FrameContainer::NoFrame || branchContainer->frameAutoDesign(false));
+        b = (t != FrameContainer::NoFrame && !branchContainer->frameAutoDesign(false));
         ui.outerFrameTypeLabel->setEnabled(b);
         ui.outerFramePenColorButton->setEnabled(b);
         ui.outerFrameBrushColorButton->setEnabled(b);
@@ -216,28 +248,28 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
 
         // Link
         if (branchItem->getHideLinkUnselected())
-            ui.hideLinkIfUnselected->setCheckState(Qt::Checked);
+            ui.hideLinkIfUnselectedCheckBox->setCheckState(Qt::Checked);
         else
-            ui.hideLinkIfUnselected->setCheckState(Qt::Unchecked);
+            ui.hideLinkIfUnselectedCheckBox->setCheckState(Qt::Unchecked);
 
         // Task
         Task *task = branchItem->getTask();
         if (task) {
-            ui.taskPrioDelta->setEnabled(true);
-            ui.taskPrioDelta->setValue(task->getPriorityDelta());
-            ui.lineEditDateCreation->setText(
+            ui.taskPrioDeltaSpinBox->setEnabled(true);
+            ui.taskPrioDeltaSpinBox->setValue(task->getPriorityDelta());
+            ui.dateCreationLineEdit->setText(
                 task->getDateCreation().toString() + " - " +
                 QString(tr("%1 days ago", "task related times"))
                     .arg(task->getAgeCreation()));
             QDateTime dt = task->getDateModification();
             if (dt.isValid()) {
-                ui.lineEditDateModification->setText(
+                ui.dateModificationLineEdit->setText(
                     dt.toString() + " - " +
                     QString(tr("%1 days ago", "task related times"))
                         .arg(task->getAgeModification()));
             }
             else {
-                ui.lineEditDateModification->setText("");
+                ui.dateModificationLineEdit->setText("");
             }
 
             dt = task->getSleep();
@@ -250,18 +282,18 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
                                          .arg(daysSleep)
                                : s = QString(tr("Task is awake",
                                                 "task related times"));
-                ui.lineEditSleep->setText(s);
+                ui.sleepLineEdit->setText(s);
             }
             else {
-                ui.lineEditSleep->setText("");
+                ui.sleepLineEdit->setText("");
             }
         }
         else {
-            ui.taskPrioDelta->setEnabled(false);
-            ui.taskPrioDelta->setValue(0);
-            ui.lineEditDateCreation->setText("");
-            ui.lineEditDateModification->setText("");
-            ui.lineEditSleep->setText("");
+            ui.taskPrioDeltaSpinBox->setEnabled(false);
+            ui.taskPrioDeltaSpinBox->setValue(0);
+            ui.dateCreationLineEdit->setText("");
+            ui.dateModificationLineEdit->setText("");
+            ui.sleepLineEdit->setText("");
         }
 
     // Attributes
@@ -283,27 +315,26 @@ void BranchPropertyEditor::setItem(TreeItem *ti)    // FIXME-2 does not clearly 
 
     ui.attributeTableView->resizeColumnsToContents();
 
-    // Initialize Delegate  // FIXME-3 still needed?
+    // Initialize Delegate  // FIXME-4 still needed?
     //attributeDelegate.setAttributeTable (mapEditor->attributeTable());
     //ui.attributeTableView->setItemDelegate (&attributeDelegate);
 
     } // BranchItem
-    else if (ti->getType() == TreeItem::Image) {
+    else if (imageItem) {
         ui.tabWidget->setEnabled(true);
         for (int i = 0; i < ui.tabWidget->count(); ++i)
             ui.tabWidget->setTabEnabled(i, false);
         ui.tabWidget->setTabEnabled(3, true);
         ui.tabWidget->setCurrentIndex(3);
-    } else if (ti->getType() == TreeItem::Attribute) {
+    } else if (attributeItem) {
         ui.tabWidget->setEnabled(true);
         for (int i = 0; i < ui.tabWidget->count(); ++i)
             ui.tabWidget->setTabEnabled(i, false);
         ui.tabWidget->setTabEnabled(4, true);
-    }
-    else {
+    } else {
         ui.tabWidget->setEnabled(false);
     }
-    connectSignals();
+    setSignalsEnabled(true);
 }
 
 void BranchPropertyEditor::setModel(VymModel *m)
@@ -312,7 +343,7 @@ void BranchPropertyEditor::setModel(VymModel *m)
     if (model) {
         QList <TreeItem*> seltis = model->getSelectedItems();
         if (!seltis.isEmpty()) {
-            setItem(seltis.last()); // FIXME-4 ok to only display last selected item?
+            setItem(seltis.first());
             return;
         }
     }
@@ -402,8 +433,6 @@ void BranchPropertyEditor::updateScalingControls()
     if (branchContainer) {
         b = branchContainer->scalingAutoDesign();
         ui.scalingAutoCheckBox->setEnabled(true);
-        ui.scaleHeadingSlider->setValue(branchContainer->scaleHeading());
-        ui.scaleSubtreeSlider->setValue(branchContainer->scaleSubtree());
         ui.scaleHeadingSpinBox->setValue(branchContainer->scaleHeading());
         ui.scaleSubtreeSpinBox->setValue(branchContainer->scaleSubtree());
 
@@ -426,7 +455,8 @@ void BranchPropertyEditor::frameAutoDesignChanged()
             model->setFrameAutoDesign(true, ui.innerFrameAutoDesignCheckBox->isChecked());
         else
             model->setFrameAutoDesign(false, ui.outerFrameAutoDesignCheckBox->isChecked());
-        setItem(branchItem);
+        // FIXME-0 needed? setItem(branchItem);
+        updateControls();
     }
 }
 
@@ -456,7 +486,7 @@ void BranchPropertyEditor::frameTypeChanged(int i)
         }
 
         // Update data in dialog
-        setItem(branchItem);
+        updateControls();
     }
 }
 
@@ -475,8 +505,8 @@ void BranchPropertyEditor::framePenColorClicked()
             if (col.isValid()) {
                 model->setFramePenColor(useInnerFrame, col);
 
-                // Re-set item to update color button
-                setItem(branchItem);
+                // update color button
+                updateControls();
             }
         }
     }
@@ -500,8 +530,8 @@ void BranchPropertyEditor::frameBrushColorClicked()
             if (col.isValid()) {
                 model->setFrameBrushColor(useInnerFrame, col);
 
-                // Re-set item to update color button
-                setItem(branchItem);
+                // update color button
+                updateControls();
             }
         }
     }
@@ -593,7 +623,7 @@ void BranchPropertyEditor::rotationsAutoChanged()
 {
     if (model) {
         model->setRotationsAutoDesign(ui.rotationsAutoCheckBox->isChecked());
-        setItem(branchItem);
+        updateControls();
     }
 }
 
@@ -619,16 +649,17 @@ void BranchPropertyEditor::scalingAutoChanged()
 {
     if (model) {
         model->setScalingAutoDesign(ui.scalingAutoCheckBox->isChecked());
-        setItem(branchItem);
     }
 }
 
 void BranchPropertyEditor::scaleHeadingChanged(qreal f)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
 {
+    qDebug() << __FUNCTION__ << " a)  f=" << f;
     if (model)
         model->setScaleHeading(f);
 
-    ui.scaleHeadingSpinBox->setValue(f);
+    // FIXME-0 not needed, done via VM->BPE->updateControls  ui.scaleHeadingSpinBox->setValue(f);
+    qDebug() << __FUNCTION__ << " b) f=" << f;
 }
 
 void BranchPropertyEditor::scaleHeadingSliderPressed()
@@ -639,6 +670,7 @@ void BranchPropertyEditor::scaleHeadingSliderPressed()
 
 void BranchPropertyEditor::scaleHeadingSliderChanged(int i)
 {
+    qDebug() << "BPE::scaleHeadingSliderChanged i=" << i;
     qreal v = (qreal) i / 100 + scaleHeadingInitialValue;
     if (model)
         model->setScaleHeading(v);
@@ -704,7 +736,7 @@ void BranchPropertyEditor::closeEvent(QCloseEvent *ce)
     return;
 }
 
-void BranchPropertyEditor::addAttributeClicked()
+void BranchPropertyEditor::addAttributeClicked()    // FIXME-4 not used currently
 {
     qDebug() << "BranchPropEditor::addAttribute";
 
@@ -815,11 +847,11 @@ void BranchPropertyEditor::connectSignals()
             this, SLOT(scaleSubtreeSliderReleased()));
 
     // Link
-    connect(ui.hideLinkIfUnselected, SIGNAL(stateChanged(int)), this,
+    connect(ui.hideLinkIfUnselectedCheckBox, SIGNAL(stateChanged(int)), this,
             SLOT(linkHideUnselectedChanged(int)));
 
     // Tasks
-    connect(ui.taskPrioDelta, SIGNAL(valueChanged(int)), this,
+    connect(ui.taskPrioDeltaSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(taskPriorityDeltaChanged(int)));
 
     // Attributes
@@ -837,44 +869,13 @@ void BranchPropertyEditor::connectSignals()
     ui.deleteAttributeButton->hide();
 }
 
-void BranchPropertyEditor::disconnectSignals()
+void BranchPropertyEditor::setSignalsEnabled(const bool b)
 {
-    // Frame
-    disconnect(ui.innerFrameAutoDesignCheckBox, 0, 0, 0);
-    disconnect(ui.innerFramePenColorButton, 0, 0, 0);
-    disconnect(ui.innerFramePaddingSpinBox, 0, 0, 0);
-    disconnect(ui.innerFrameWidthSpinBox, 0, 0, 0);
-    disconnect(ui.innerFrameBrushColorButton, 0, 0, 0);
-    disconnect(ui.innerFrameTypeCombo, 0, 0, 0);
+    return;
 
-    disconnect(ui.outerFrameAutoDesignCheckBox, 0, 0, 0);
-    disconnect(ui.outerFramePenColorButton, 0, 0, 0);
-    disconnect(ui.outerFramePaddingSpinBox, 0, 0, 0);
-    disconnect(ui.outerFrameWidthSpinBox, 0, 0, 0);
-    disconnect(ui.outerFrameBrushColorButton, 0, 0, 0);
-    disconnect(ui.outerFrameTypeCombo, 0, 0, 0);
-
-    // Link
-    disconnect(ui.hideLinkIfUnselected, 0, 0, 0);
-
-    // Layout
-    disconnect(ui.branchesLayoutsCombo, 0, 0, 0);
-    disconnect(ui.imagesLayoutsCombo, 0, 0, 0);
-    disconnect(ui.rotationsAutoCheckBox, 0, 0, 0);
-    disconnect(ui.rotationHeadingSlider, 0, 0, 0);
-    disconnect(ui.rotationHeadingSpinBox, 0, 0, 0);
-    disconnect(ui.rotationSubtreeSlider, 0, 0, 0);
-    disconnect(ui.rotationSubtreeSpinBox, 0, 0, 0);
-    disconnect(ui.scalingAutoCheckBox, 0, 0, 0);
-    disconnect(ui.scaleHeadingSlider, 0, 0, 0);
-    disconnect(ui.scaleHeadingSpinBox, 0, 0, 0);
-    disconnect(ui.scaleSubtreeSlider, 0, 0, 0);
-    disconnect(ui.scaleSubtreeSpinBox, 0, 0, 0);
-
-    // Task
-    disconnect(ui.taskPrioDelta, 0, 0, 0);
-
-    // Attributes
-    disconnect (ui.addAttributeButton, 0, 0, 0);
-    disconnect (ui.deleteAttributeButton, 0, 0, 0);
+    QMutableListIterator <QWidget*> it(controlWidgets);
+    while (it.hasNext()) {
+        QWidget *w = it.next();
+        w->blockSignals(b);
+    }
 }

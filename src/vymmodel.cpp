@@ -68,6 +68,7 @@ extern bool testmode;
 extern bool restoreMode;
 extern QStringList ignoredLockedFiles;
 
+extern BranchPropertyEditor *branchPropertyEditor;
 extern Main *mainWindow;
 
 extern QDir tmpVymDir;
@@ -2525,40 +2526,57 @@ void VymModel::setRotationSubtree (const int &i)
         reposition();
 }
 
-void VymModel::setScalingAutoDesign (const bool & b) // FIXME-2 savestate: no command yet
+void VymModel::setScalingAutoDesign (const bool & b) // FIXME-0 savestate: no command yet
 {
     QList<BranchItem *> selbis = getSelectedBranches();
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        bc->setScalingAutoDesign(b);
+        qDebug() << "VM::setSAD b=" << b << "   old:" << bc->scalingAutoDesign();
+        if (bc->scalingAutoDesign() != b) {
+            if (b) {
+                // FIXME-0 save old scale factors
+            }
+            saveState(selbi,
+                      QString("setScalingAutoDesign (%1)")  // FIXME-0 check bool arg here
+                          .arg(toS(!b)),
+                      selbi, QString("setScalingAutoDesign (%1)").arg(toS(b)),
+                      QString("Set automatic scaling to %1").arg(toS(b)));
+            bc->setScalingAutoDesign(b);
+            branchPropertyEditor->updateControls();
+        }
     }
 
-    if (!selbis.isEmpty())
-        reposition();
+    if (!selbis.isEmpty()) {
+        reposition();   // FIXME-0 needed?
+    }
 }
 
-void VymModel::setScaleHeading (const qreal &f) // FIXME-2 savestate: no command yet
+void VymModel::setScaleHeading (const qreal &f, const bool relative) // FIXME-2 savestate: no command yet
 {
     QList<BranchItem *> selbis = getSelectedBranches();
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-	if (bc->scaleHeading() != f) {
+        qreal f_old = bc->scaleHeading();
+        qreal f_new = relative ? f_old + f : f;
+
+	if (bc->scaleHeading() != f_new) {
             saveState(selbi,
                       QString("setScaleHeading (\"%1\")")
-                          .arg(bc->scaleHeading()),
-                      selbi, QString("setScaleHeading (\"%1\")").arg(f),
-                      QString("Set scale of heading and flags to %1").arg(f));
+                          .arg(f_old),
+                      selbi, QString("setScaleHeading (\"%1\")").arg(f_new),
+                      QString("Set scale of heading and flags to %1").arg(f_new));
 
-            bc->setScaleHeading(f);
+            bc->setScaleHeading(f_new);
+            branchPropertyEditor->updateControls();
 	}
     }
 
     if (!selbis.isEmpty())
-        reposition();
+        reposition();   // FIXME-0 needed?
 }
 
 qreal VymModel::getScaleHeading ()
@@ -2585,12 +2603,12 @@ void VymModel::setScaleSubtree (const qreal &f) // FIXME-2 savestate: no command
                       selbi, QString("setScaleSubtree (\"%1\")").arg(f),
                       QString("Set scale of subtree and flags to %1").arg(f));
 
-            bc->setScaleSubtree(f);
+            bc->setScaleSubtree(f); // FIXME-0 no updateControls???
 	}
     }
 
     if (!selbis.isEmpty())
-        reposition();
+        reposition(); // FIXME-0 needed?
 }
 
 qreal VymModel::getScaleSubtree ()
@@ -2600,6 +2618,30 @@ qreal VymModel::getScaleSubtree ()
     if (selbis.isEmpty()) return 1;
 
     return selbis.first()->getBranchContainer()->scaleSubtree();
+}
+
+void VymModel::setScaleImage(const qreal &f, const bool relative) // FIXME-0 // FIXME-0 savestate: no command yet
+{
+    QList<ImageItem *> seliis = getSelectedImages();
+
+    ImageContainer *ic;
+    foreach (ImageItem *selii, seliis) {
+        ic = selii->getImageContainer();
+        qreal f_old = ic->scaleFactor();
+        qreal f_new = relative ? f_old + f : f;
+	if (ic->scaleFactor() != f_new) {
+            saveState(selii,
+                      QString("setScaleImage(\"%1\")")  // FIXME-0 
+                          .arg(f_old),
+                      selii, QString("setScaleImage(\"%1\")").arg(f_new),
+                      QString("Set scale of image to %1").arg(f_new));
+
+            ic->setScaleFactor(f_new); // FIXME-0 no updateControls???
+	}
+    }
+
+    if (!seliis.isEmpty())
+        reposition(); // FIXME-0 needed?
 }
 
 void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
@@ -4134,46 +4176,58 @@ void VymModel::unscrollChildren()
     reposition();
 }
 
-void VymModel::setScaleFactor(qreal f, ImageItem *selii)
+void VymModel::setScaleFactor(const qreal &f, const bool relative)
 {
-    if (!selii)
-        selii = getSelectedImage();
+    // Scale branches
+    setScalingAutoDesign(false);
+    setScaleHeading(f, relative);
+    setScaleImage(f, relative);
 
-    if (selii) {
-        qreal f_old = selii->getScaleFactor();
-        selii->setScaleFactor(f);
-        saveState(selii, QString("setScaleFactor(%1)").arg(f_old), selii,
-                  QString("setScaleFactor(%1)").arg(f),
-                  QString("Scale %1").arg(getObjectName(selii)));
-        reposition();
+    // Scale images // FIXME-0 not implemented yet
+    /*
+    QList<TreeItem *> seltis = getSelectedItems();
+
+    foreach (TreeItem *selti, seltis) {
+        bool doSaveState = false;
+        qreal f_old;
+        qreal f_new;
+        if (selti->hasTypeBranch()) {
+            f_old =getScaleHeading();
+            relative? f_new = f_old + f : f_new = f;
+            setScaleHeading(f_new);
+            doSaveState = true;
+        } else if (selti->hasTypeImage()) {
+            f_old = ((ImageItem*)selti)->getScaleFactor();
+            relative? f_new = f_old + f : f_new = f;
+            ((ImageItem*)selti)->setScaleFactor(f_new);
+            doSaveState = true;
+        }
+
+        if (doSaveState)
+            saveState(selti, QString("setScaleFactor(%1)").arg(f_old), selti,
+                      QString("setScaleFactor(%1)").arg(f_new),
+                      QString("Scale %1").arg(getObjectName(selti)));
+        // reposition(); // FIXME-2 needed?
     }
+    */
 }
 
-void VymModel::growSelectionSize() // FIXME-2 Also for heading in BranchItem?
+void VymModel::growSelectionSize()
 {
-    ImageItem *selii = getSelectedImage();
-    if (selii) {
-        qreal f = 0.05;
-        qreal sx = selii->getScaleFactor();
-        setScaleFactor(sx + f);
-    }
+
+    setScaleFactor(0.05, true);
 }
 
 void VymModel::shrinkSelectionSize()
 {
-    ImageItem *selii = getSelectedImage();
-    if (selii) {
-        qreal f = 0.05;
-        qreal sx = selii->getScaleFactor();
-        setScaleFactor(sx - f);
-    }
+    setScaleFactor(- 0.05, true);
 }
 
 void VymModel::resetSelectionSize()
 {
     ImageItem *selii = getSelectedImage();
     if (selii)
-        setScaleFactor(1);
+        setScaleFactor(1, false);
 }
 
 void VymModel::emitExpandAll() { emit(expandAll()); }
@@ -6331,11 +6385,31 @@ QList<BranchItem *> VymModel::getSelectedBranches(BranchItem *bi)
 
 ImageItem *VymModel::getSelectedImage()
 {
-    TreeItem *ti = getSelectedItem();
-    if (ti && ti->getType() == TreeItem::Image)
-        return (ImageItem *)ti;
-    else
-        return nullptr;
+    // Return selected image,
+    // if several are selected, return last selected
+    QList<ImageItem *> iis = getSelectedImages();
+    if (iis.count() == 0) return nullptr;
+
+    return iis.last();
+}
+
+QList<ImageItem *> VymModel::getSelectedImages(ImageItem *ii)
+{
+    // Return list of selected images.
+    // If ii != nullptr, return only this one
+    QList<ImageItem *> iis;
+
+    if (ii) {
+        iis << ii;
+        return iis;
+    }
+
+    foreach (TreeItem *ti, getSelectedItems()) {
+        TreeItem::Type type = ti->getType();
+        if (ti->getType() == TreeItem::Image)
+            iis.append((ImageItem *)ti);
+    }
+    return iis;
 }
 
 Task *VymModel::getSelectedTask()

@@ -380,10 +380,11 @@ class VymModel : public TreeModel {
     void setRotationHeading(const int &);
     void setRotationSubtree(const int &);
     void setScalingAutoDesign(const bool &);
-    void setScaleHeading(const qreal &);
+    void setScaleHeading(const qreal &, const bool relative = false);
     qreal getScaleHeading();
     void setScaleSubtree(const qreal &);
     qreal getScaleSubtree();
+    void setScaleImage(const qreal &, const bool relative = false);
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */
@@ -517,7 +518,7 @@ class VymModel : public TreeModel {
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
-    void setScaleFactor(qreal, ImageItem *ii = nullptr);
+    void setScaleFactor(const qreal &f, const bool relative);
     void growSelectionSize();
     void shrinkSelectionSize();
     void resetSelectionSize();
@@ -819,6 +820,7 @@ class VymModel : public TreeModel {
     BranchItem *getSelectedBranch();
     QList<BranchItem *> getSelectedBranches(BranchItem *bi = nullptr);
     ImageItem *getSelectedImage();
+    QList <ImageItem *> getSelectedImages(ImageItem *ii = nullptr);
     Task *getSelectedTask();
     XLinkItem *getSelectedXLinkItem();
     Link *getSelectedXLink();
