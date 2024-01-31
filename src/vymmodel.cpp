@@ -2470,7 +2470,7 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
-void VymModel::setRotationsAutoDesign(const bool &b)    // FIXME-2 no savestate yet
+void VymModel::setRotationsAutoDesign(const bool &b)    // FIXME-0 no savestate yet
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
@@ -2538,11 +2538,12 @@ void VymModel::setScalingAutoDesign (const bool & b) // FIXME-0 savestate: no co
             if (b) {
                 // FIXME-0 save old scale factors. And get factors from MD if needed
             }
+            QString v = b ? "Enable" : "Disable";
             saveState(selbi,
-                      QString("setScalingAutoDesign (%1)")  // FIXME-0 check bool arg here
+                      QString("setScalingAuto (%1)")    // FIXME-0 check command syntax...
                           .arg(toS(!b)),
-                      selbi, QString("setScalingAutoDesign (%1)").arg(toS(b)),
-                      QString("Set automatic scaling to %1").arg(toS(b)));
+                      selbi, QString("setScalingAuto (%1)").arg(toS(b)),
+                      QString("%1 automatic scaling").arg(v));
             bc->setScalingAutoDesign(b);
             branchPropertyEditor->updateControls();
         }
@@ -2729,13 +2730,11 @@ void VymModel::setHideLinkUnselected(bool b)
 {
     TreeItem *ti = getSelectedItem();
     if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch())) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
-
+        QString v = b ? "Hide" : "Show";
         saveState(
-            ti, QString("setHideLinkUnselected (%1)").arg(u), ti,
-            QString("setHideLinkUnselected (%1)").arg(r),
-            QString("Hide link of %1 if unselected").arg(getObjectName(ti)));
+            ti, QString("setHideLinkUnselected (%1)").arg(toS(!b)), ti,
+            QString("setHideLinkUnselected (%1)").arg(toS(b)),
+            QString("%1 link of %2 if unselected").arg(v, getObjectName(ti)));
         ((MapItem *)ti)->setHideLinkUnselected(b);
     }
 }
