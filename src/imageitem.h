@@ -29,8 +29,8 @@ class ImageItem : public MapItem {
     QString originalFilename;
 
   public:
-    void setScaleFactor(qreal);
-    qreal scaleFactor();
+    void setScale(qreal);
+    qreal scale();
     qreal width();
     qreal height();
     void setOriginalFilename(const QString &);

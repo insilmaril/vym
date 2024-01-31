@@ -385,10 +385,14 @@ class VymModel : public TreeModel {
     void setScaleSubtree(const qreal &);
     qreal getScaleSubtree();
     void setScaleImage(const qreal &, const bool relative = false);
+    void setScale(const qreal &f, const bool relative);
+    void growSelectionSize();
+    void shrinkSelectionSize();
+    void resetSelectionSize();
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */
-    void setHideExport(bool, TreeItem *ti = NULL);
+    void setHideExport(bool, TreeItem *ti = nullptr);
 
     /*! Should object be hidden in exports (clouded)? */
     void toggleHideExport();
@@ -518,10 +522,6 @@ class VymModel : public TreeModel {
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
-    void setScaleFactor(const qreal &f, const bool relative);
-    void growSelectionSize();
-    void shrinkSelectionSize();
-    void resetSelectionSize();
     void emitExpandAll();
     void emitExpandOneLevel();
     void emitCollapseOneLevel();

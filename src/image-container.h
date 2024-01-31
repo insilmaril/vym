@@ -27,8 +27,8 @@ class ImageContainer : public Container, public SelectableContainer {
     virtual void copy(ImageContainer*);
     virtual void init();
     void setWidth(qreal w);
-    void setScaleFactor(qreal f);
-    qreal scaleFactor();
+    void setScale(qreal f);
+    qreal scale();
     void select();
 
     bool load(const QString &, bool createClone = false);
