@@ -17,7 +17,7 @@ class XLinkItem : public MapItem {
   public:
     enum XLinkState { undefinedXLink, initXLink, activeXLink, deleteXLink };
 
-    XLinkItem(TreeItem *parent = NULL);
+    XLinkItem(TreeItem *parent = nullptr);
     ~XLinkItem();
     void init();
     void setLink(Link *);

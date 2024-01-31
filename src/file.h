@@ -17,7 +17,7 @@ QString convertToAbs(const QString &, const QString &);
 QString basename(const QString &);
 QString dirname(const QString &);
 
-QString browseDirectory(QWidget *parent = NULL, const QString &caption = "");
+QString browseDirectory(QWidget *parent = nullptr, const QString &caption = "");
 bool confirmDirectoryOverwrite(const QDir &dir);
 
 QString makeTmpDir(bool &ok, const QString &dirPath, const QString &prefix);

@@ -53,9 +53,9 @@ class BranchItem : public MapItem {
     virtual bool toggleScroll(); // scroll or unscroll
     virtual bool isScrolled();   // returns scroll state
     virtual bool hasScrolledParent(
-        BranchItem *start = NULL); // true, if any of the parents is scrolled
+        BranchItem *start = nullptr); // true, if any of the parents is scrolled
     virtual bool tmpUnscroll(
-        BranchItem *start = NULL);   // unscroll scrolled parents temporary e.g.
+        BranchItem *start = nullptr);   // unscroll scrolled parents temporary e.g.
                                      // during "find" process
     virtual bool resetTmpUnscroll(); // scroll all tmp scrolled parents again
                                      // e.g. when unselecting
