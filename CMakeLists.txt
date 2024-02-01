@@ -1,24 +1,30 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
-project(ViewYourMind)
+project(ViewYourMind VERSION 2.9.518 LANGUAGES CXX)
+
+# See also https://doc.qt.io/qt-6.5/cmake-get-started.html
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_COMPILER g++-10)
 
 set(QtComponents
     LinguistTools
     Network
     PrintSupport
-    Script
+    #    Script
     Svg
     Widgets
     Xml
 )
 
 set(QtLibraries
-    Qt5::Network
-    Qt5::PrintSupport
-    Qt5::Script
-    Qt5::Svg
-    Qt5::Widgets
-    Qt5::Xml
+    Qt6::Network
+    Qt6::PrintSupport
+    #    Qt6::Script
+    Qt6::Svg
+    Qt6::Widgets
+    Qt6::Xml
 )
 
 # Switch on Debug mode  on command line with 
@@ -39,7 +45,7 @@ if (UNIX)
 
     if(DBus1_FOUND)
         LIST(APPEND QtComponents DBus)
-        LIST(APPEND QtLibraries Qt5::DBus)
+        LIST(APPEND QtLibraries Qt6::DBus)
     endif()
 endif()
 
@@ -64,15 +70,15 @@ if(WIN32)
 
 include(GNUInstallDirs)
 
-find_package(Qt5 COMPONENTS ${QtComponents} REQUIRED)
+find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
 
 list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/forms")
 
-get_target_property(QtLibraryType Qt5::Widgets TYPE)
+get_target_property(QtLibraryType Qt6::Widgets TYPE)
 
 if(QtLibraryType STREQUAL STATIC_LIBRARY)
     message(STATUS "Static Qt linkage")
-    list(APPEND QtLibraries Qt5::QSvgPlugin)
+    list(APPEND QtLibraries Qt6::QSvgPlugin)
 endif()
 
 include_directories(
@@ -118,7 +124,7 @@ set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINAR
 #QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
 #QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR}/src)
 
-QT5_add_translation(qm_files ${ts_files})
+QT6_add_translation(qm_files ${ts_files})
 add_compile_definitions(CMAKE_SOURCE_DIR)
 
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
