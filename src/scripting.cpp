@@ -15,7 +15,7 @@ extern Main *mainWindow;
 extern QString vymVersion;
 
 ///////////////////////////////////////////////////////////////////////////
-// FIXME-0 Qt6 void logError(QScriptContext *context, QScriptContext::Error error,
+// FIXME-0 Qt6 uncomplete: void logError(QScriptContext *context, QScriptContext::Error error,
 //              const QString &text)
 void logErrorNew(const QString &text)
 {

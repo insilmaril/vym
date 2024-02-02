@@ -3,15 +3,13 @@
 
 #include <QColor>
 #include <QObject>
-// #include <QScriptContext>  // FIXME-0
 #include <QJSValue>
-// #include <QScriptable> // FIXME-0
 #include <QVariant>
 
 class BranchItem;
 class VymModelWrapper;
 
-/* FIXME-0
+/* FIXME-2 old logError, remove...
 void logError(QScriptContext *context, QScriptContext::Error error,
               const QString &text);
 */

@@ -6879,7 +6879,7 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-/* FIXME-0 Qt6
+/* FIXME-0 Qt6 scriptPrint, scriptAbort, scriptStatusMessage
 QJSValue scriptPrint(QScriptContext *context, QScriptEngine *)
 {
     scriptOutput->append(context->argument(0).toString());
@@ -6903,7 +6903,7 @@ QJSValue scriptStatusMessage(QScriptContext *context, QScriptEngine *)
 
 QVariant Main::runScript(const QString &script)
 {
-    /* FIXME-0 Qt6
+    /* FIXME-0 Qt6  script commands: print, abort, statusMessage
     scriptEngine.globalObject().setProperty(
         "print", scriptEngine.newFunction(scriptPrint));
     scriptEngine.globalObject().setProperty(
