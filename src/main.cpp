@@ -124,7 +124,7 @@ QString editorFocusStyle =
     QString(" border-color: #3daee9; border-style:outset; border-width:3px; "
             "color:black;");
 
-#include <QScriptEngine>    // FIXME-1 Switch to QJSEngine and QJSValue for Qt6
+#include <QScriptEngine>    // Will be changed for Qt6
 QScriptValue scriptPrint(QScriptContext *ctx, QScriptEngine *eng);
 
 void msgHandler(QtMsgType type, const QMessageLogContext &context,

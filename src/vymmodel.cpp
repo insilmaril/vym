@@ -2470,13 +2470,26 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
-void VymModel::setRotationsAutoDesign(const bool &b)    // FIXME-0 no savestate yet
+void VymModel::setRotationsAutoDesign(const bool &b)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        bc->setRotationsAutoDesign(b);
+        if (bc->rotationsAutoDesign() != b) {
+            if (b) {
+                setRotationHeading(mapDesignInt->rotationHeading(MapDesign::AutoDesign, selbi->depth()));
+                setRotationSubtree(mapDesignInt->rotationSubtree(MapDesign::AutoDesign, selbi->depth()));
+            }
+            QString v = b ? "Enable" : "Disable";
+            saveState(selbi,
+                      QString("setRotationsAutoDesign (%1)")
+                          .arg(toS(!b)),
+                      selbi, QString("setRotationsAutoDesign (%1)").arg(toS(b)),
+                      QString("%1 automatic rotations").arg(v));
+            bc->setRotationsAutoDesign(b);
+            branchPropertyEditor->updateControls();
+        }
     }
 
     if (!selbis.isEmpty())
@@ -2526,23 +2539,23 @@ void VymModel::setRotationSubtree (const int &i)
         reposition();
 }
 
-void VymModel::setScalingAutoDesign (const bool & b) // FIXME-0 savestate: no command yet
+void VymModel::setScalingAutoDesign (const bool & b)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        qDebug() << "VM::setSAD b=" << b << "   old:" << bc->scalingAutoDesign();
         if (bc->scalingAutoDesign() != b) {
             if (b) {
-                // FIXME-0 save old scale factors. And get factors from MD if needed
+                setScaleHeading(mapDesignInt->scalingHeading(MapDesign::AutoDesign, selbi->depth()));
+                setScaleSubtree(mapDesignInt->scalingSubtree(MapDesign::AutoDesign, selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
-                      QString("setScalingAuto (%1)")    // FIXME-0 check command syntax...
+                      QString("setScalingAutoDesign (%1)")
                           .arg(toS(!b)),
-                      selbi, QString("setScalingAuto (%1)").arg(toS(b)),
+                      selbi, QString("setScalingAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic scaling").arg(v));
             bc->setScalingAutoDesign(b);
             branchPropertyEditor->updateControls();
