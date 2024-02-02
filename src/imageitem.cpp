@@ -10,9 +10,9 @@
 
 bool isImage(const QString &fname)
 {
-    QRegularExpression rx("(jpg|jpeg|png|xmp|gif|svg)$");
-    // FIXME-1 Qt6 rx.setCaseSensitivity(Qt::CaseInsensitive);
-    return fname.contains(rx);
+    QRegularExpression re("(jpg|jpeg|png|xmp|gif|svg)$");
+    re.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    return fname.contains(re);
 }
 
 ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be needed

@@ -248,30 +248,27 @@ bool versionLowerOrEqual(const QString &v, const QString &vstatic)
     int vs2 = 0;
     int vs3 = 0;
 
-    QRegularExpression rx("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");  /* FIXME-0 Qt6
-    int pos = rx.indexIn(v);
-    if (pos > -1) {
-        v1 = rx.cap(1).toInt(&ok);
+    QRegularExpression re("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
+    QRegularExpressionMatch match = re.match(v); 
+    if (match.hasMatch()) {
+        v1 = match.captured(1).toInt(&ok);
         if (ok)
-            v2 = rx.cap(2).toInt(&ok);
+            v2 = match.captured(2).toInt(&ok);
         if (ok)
-            v3 = rx.cap(3).toInt(&ok);
+            v3 = match.captured(3).toInt(&ok);
     }
 
-    pos = rx.indexIn(vstatic);
-    if (ok && pos > -1) {
-        vs1 = rx.cap(1).toInt(&ok);
+    match = re.match(vstatic);
+    if (match.hasMatch()) {
+        vs1 = match.captured(1).toInt(&ok);
         if (ok)
-            vs2 = rx.cap(2).toInt(&ok);
+            vs2 = match.captured(2).toInt(&ok);
         if (ok)
-            vs3 = rx.cap(3).toInt(&ok);
+            vs3 = match.captured(3).toInt(&ok);
     }
-    */ 
+
     if (!ok) {
-        qWarning() << QString(
-                          "Warning: Checking version failed: v=%1  vstatic=%2")
-                          .arg(v)
-                          .arg(vstatic);
+        qWarning() << QString( "Warning: Checking version failed: v=%1  vstatic=%2").arg(v, vstatic);
         return false;
     }
 

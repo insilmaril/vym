@@ -1583,8 +1583,8 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
 
                 // Current command is a repeated one. We only want to "squash" some of these
-                /* FIXME-0 Qt6 QRegularExpression re("<vymnote");
-                if (rcl.startsWith("model.parseVymText") && re.indexIn(redoCommand) > 0) {
+                QRegularExpression re("<vymnote");
+                if (rcl.startsWith("model.parseVymText") && re.match(redoCommand).hasMatch()) {
                     if (debug)
                         qDebug() << "VM::saveState repeated command: " << redoCommand;
 
@@ -1595,7 +1595,6 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
                 } else
                     if (debug)
                         qDebug() << "VM::saveState not repeated command: " << redoCommand;
-                */
             }
         }
     }
