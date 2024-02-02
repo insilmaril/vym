@@ -29,7 +29,7 @@ class TreeModel : public QAbstractItemModel {
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
     void nextBranch(BranchItem *&current, BranchItem *&previous,
-                    bool deepLevelsFirst = false, BranchItem *start = NULL);
+                    bool deepLevelsFirst = false, BranchItem *start = nullptr);
 
     bool removeRows(int row, int count,
                     const QModelIndex &parent = QModelIndex());

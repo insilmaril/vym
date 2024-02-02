@@ -336,9 +336,9 @@ class VymModel : public TreeModel {
 
   public:
     void setHeading(const VymText &vt,
-                    BranchItem *bi = NULL); //!< Set heading of item
+                    BranchItem *bi = nullptr); //!< Set heading of item
     void setHeadingPlainText(const QString &s,
-                             BranchItem *bi = NULL); //!< Set heading of item
+                             BranchItem *bi = nullptr); //!< Set heading of item
     Heading getHeading();                            //!< Get heading of item
     void updateNoteText(
         const VymText &); //!< Signal emmited in NoteEditor via MainWindow
@@ -385,10 +385,14 @@ class VymModel : public TreeModel {
     void setScaleSubtree(const qreal &);
     qreal getScaleSubtree();
     void setScaleImage(const qreal &, const bool relative = false);
+    void setScale(const qreal &f, const bool relative);
+    void growSelectionSize();
+    void shrinkSelectionSize();
+    void resetSelectionSize();
     void setHideLinkUnselected(bool);
 
     /*! Should object be hidden in exports (clouded)? */
-    void setHideExport(bool, TreeItem *ti = NULL);
+    void setHideExport(bool, TreeItem *ti = nullptr);
 
     /*! Should object be hidden in exports (clouded)? */
     void toggleHideExport();
@@ -484,7 +488,7 @@ class VymModel : public TreeModel {
     // -1	insert in children of parent below selection
     // 0..n	insert in children of parent at pos
     */
-    BranchItem *addNewBranch(BranchItem *bi = NULL, int pos = -2);
+    BranchItem *addNewBranch(BranchItem *bi = nullptr, int pos = -2);
     BranchItem *
     addNewBranchBefore(); //!< Insert branch between selection and its parent
 
@@ -518,10 +522,6 @@ class VymModel : public TreeModel {
     bool unscrollBranch(BranchItem *);
     void toggleScroll();
     void unscrollChildren();
-    void setScaleFactor(const qreal &f, const bool relative);
-    void growSelectionSize();
-    void shrinkSelectionSize();
-    void resetSelectionSize();
     void emitExpandAll();
     void emitExpandOneLevel();
     void emitCollapseOneLevel();
@@ -547,7 +547,7 @@ class VymModel : public TreeModel {
     void clearFlags();
 
     void colorBranch(QColor);
-    void colorSubtree(QColor, BranchItem *bi = NULL);
+    void colorSubtree(QColor, BranchItem *bi = nullptr);
     QColor getCurrentHeadingColor();
 
     void note2URLs();                    // get URLs from note
@@ -759,7 +759,7 @@ class VymModel : public TreeModel {
     void displayNetworkError(QAbstractSocket::SocketError);
 
   public:
-    void downloadImage(const QUrl &url, BranchItem *bi = NULL);
+    void downloadImage(const QUrl &url, BranchItem *bi = nullptr);
 
     ////////////////////////////////////////////
     // Selection related

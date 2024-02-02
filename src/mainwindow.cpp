@@ -989,8 +989,20 @@ void Main::setupAPI()
     c->addPar(Command::Int, false, "Rotation angle of heading and subtree");
     modelCommands.append(c);
 
-    c = new Command("setScaleFactor", Command::BranchOrImage);
-    c->addPar(Command::Double, false, "Scale selectgion by factor f");
+    c = new Command("setRotationsAutoDesign", Command::Branch);
+    c->addPar(Command::Bool, false, "Rotate automatically");
+    modelCommands.append(c);
+
+    c = new Command("setScale", Command::BranchOrImage);
+    c->addPar(Command::Double, false, "Scale selection by factor f");
+    modelCommands.append(c);
+
+    c = new Command("setScaleSubtree", Command::Branch);
+    c->addPar(Command::Double, false, "Scale subtree by factor f");
+    modelCommands.append(c);
+
+    c = new Command("setScalingAutoDesign", Command::Branch);
+    c->addPar(Command::Bool, false, "Scale automatically");
     modelCommands.append(c);
 
     c = new Command("setSelectionColor", Command::Any);

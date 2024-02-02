@@ -148,12 +148,12 @@ class TreeItem : public XMLObj {
     Flag *findFlagByUid(const QUuid &uid);
 
     /*! \brief Toggle a Flag
-    If master is not NULL,, only one Flag from FlagRow master may
+    If master is not nullptr,, only one Flag from FlagRow master may
     be active simultanously, the others get deactivated.
     */
     // virtual void toggleFlag(const QString &name, bool useGroups = true);
     Flag *toggleFlagByUid(const QUuid &uid, bool useGroups = true);
-    virtual void toggleSystemFlag(const QString &flag, FlagRow *master = NULL);
+    virtual void toggleSystemFlag(const QString &flag, FlagRow *master = nullptr);
     virtual bool hasActiveFlag(const QString &flag);
     virtual bool hasActiveSystemFlag(const QString &flag);
     QList<QUuid> activeFlagUids();
@@ -176,7 +176,7 @@ class TreeItem : public XMLObj {
     virtual ImageItem *getFirstImage();
     virtual ImageItem *getLastImage();
 
-    /*! Get next branch after current branch. Return NULL if there is no
+    /*! Get next branch after current branch. Return nullptr if there is no
     next branch */
     virtual BranchItem *getNextBranch(BranchItem *currentBranch);
 

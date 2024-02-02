@@ -40,7 +40,7 @@ class ImportFirefoxBookmarks : public ImportBase {
     bool transform();
   private:
     QProgressDialog progressDialog;
-    bool parseJson(QJsonValue jsval, ParseMode mode, BranchItem *selbi = NULL);  
+    bool parseJson(QJsonValue jsval, ParseMode mode, BranchItem *selbi = nullptr);  
 
     uint totalBookmarks;
     uint currentBookmarks;

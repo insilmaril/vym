@@ -778,7 +778,16 @@ void VymReader::readImage()
         }
     }
 
-    s = attributeToString("scaleFactor");
+    s = attributeToString("scale");
+    if (!s.isEmpty()) {
+        x = s.toFloat(&okx);
+        if (!okx) {
+            xml.raiseError("Couldn't read scale of image");
+            return;
+        }
+    }
+
+    s = attributeToString("scaleFactor"); // Legacy: Used in version < 2.9.518
     if (!s.isEmpty()) {
         x = s.toFloat(&okx);
         if (!okx) {
@@ -788,7 +797,7 @@ void VymReader::readImage()
     }
 
     if (x != 1)
-        lastImage->setScaleFactor(x);
+        lastImage->setScale(x);
 
     readOrnamentsAttr();
 

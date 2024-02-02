@@ -62,7 +62,7 @@ void ImageContainer::copy(ImageContainer *other)
             return;
             break;
     }
-    setScaleFactor(other->scaleFactorInt);
+    setScale(other->scaleFactorInt);
 }
 
 void ImageContainer::init()
@@ -93,16 +93,16 @@ void ImageContainer::setWidth(qreal w)
     if (boundingRect().width() == 0)
         return;
 
-    setScaleFactor(w / boundingRect().width());
+    setScale(w / boundingRect().width());
 }
 
-void ImageContainer::setScaleFactor(qreal f)
+void ImageContainer::setScale(qreal f)
 {
     scaleFactorInt = f;
-    setScale(f);
+    QGraphicsItem::setScale(f);
 }
 
-qreal ImageContainer::scaleFactor() { return scaleFactorInt; }
+qreal ImageContainer::scale() { return scaleFactorInt; }
 
 void ImageContainer::select()
 {

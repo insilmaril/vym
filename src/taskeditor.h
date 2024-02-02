@@ -16,7 +16,7 @@ class TaskEditor : public QWidget {
     Q_OBJECT
 
   public:
-    TaskEditor(QWidget *parent = NULL);
+    TaskEditor(QWidget *parent = nullptr);
     ~TaskEditor();
     void setMapName(const QString &);
     bool isUsedFilterMap();

@@ -1189,7 +1189,19 @@ void VymModelWrapper::setRotationSubtree(const int &i)
     model->setRotationSubtree(i);
 }
 
-void VymModelWrapper::setScaleFactor(qreal f) { model->setScaleFactor(f, false); }
+void VymModelWrapper::setRotationsAutoDesign(const bool b)
+{
+    model->setRotationsAutoDesign(b);
+}
+
+void VymModelWrapper::setScale(qreal f) { model->setScale(f, false); }
+
+void VymModelWrapper::setScaleSubtree(qreal f) { model->setScaleSubtree(f); }
+
+void VymModelWrapper::setScalingAutoDesign(const bool b)
+{
+    model->setScalingAutoDesign(b);
+}
 
 void VymModelWrapper::setSelectionBrushColor(const QString &color)
 {

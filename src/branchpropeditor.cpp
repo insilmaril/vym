@@ -95,7 +95,6 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
         foreach (auto s, controls)
             if (w->objectName().contains(s)) {
                 controlWidgets << w;
-                // FIXME-0 qDebug() << "Adding w=" << w->objectName();
                 break;
             }
     }
@@ -455,7 +454,6 @@ void BranchPropertyEditor::frameAutoDesignChanged()
             model->setFrameAutoDesign(true, ui.innerFrameAutoDesignCheckBox->isChecked());
         else
             model->setFrameAutoDesign(false, ui.outerFrameAutoDesignCheckBox->isChecked());
-        // FIXME-0 needed? setItem(branchItem);
         updateControls();
     }
 }
@@ -652,14 +650,10 @@ void BranchPropertyEditor::scalingAutoChanged()
     }
 }
 
-void BranchPropertyEditor::scaleHeadingChanged(qreal f)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
+void BranchPropertyEditor::scaleHeadingChanged(qreal f)    // FIXME-5 Create custom class to sync slider and spinbox and avoid double calls to models
 {
-    qDebug() << __FUNCTION__ << " a)  f=" << f;
     if (model)
         model->setScaleHeading(f);
-
-    // FIXME-0 not needed, done via VM->BPE->updateControls  ui.scaleHeadingSpinBox->setValue(f);
-    qDebug() << __FUNCTION__ << " b) f=" << f;
 }
 
 void BranchPropertyEditor::scaleHeadingSliderPressed()
@@ -670,15 +664,9 @@ void BranchPropertyEditor::scaleHeadingSliderPressed()
 
 void BranchPropertyEditor::scaleHeadingSliderChanged(int i)
 {
-    qDebug() << "BPE::scaleHeadingSliderChanged i=" << i;
     qreal v = (qreal) i / 100 + scaleHeadingInitialValue;
     if (model)
         model->setScaleHeading(v);
-
-    // Update SpinBox
-    ui.scaleHeadingSpinBox->blockSignals(true);
-    ui.scaleHeadingSpinBox->setValue(v);
-    ui.scaleHeadingSpinBox->blockSignals(false);
 }
 
 void BranchPropertyEditor::scaleHeadingSliderReleased()
@@ -692,9 +680,6 @@ void BranchPropertyEditor::scaleSubtreeChanged(qreal f)
 {
     if (model)
         model->setScaleSubtree(f);
-
-    //ui.scaleSubtreeSlider->setValue(f);
-    ui.scaleSubtreeSpinBox->setValue(f);
 }
 
 void BranchPropertyEditor::scaleSubtreeSliderPressed()
@@ -708,11 +693,6 @@ void BranchPropertyEditor::scaleSubtreeSliderChanged(int i)
     qreal v = (qreal) i / 100 + scaleSubtreeInitialValue;
     if (model)
         model->setScaleSubtree(v);
-
-    // Update SpinBox
-    ui.scaleSubtreeSpinBox->blockSignals(true);
-    ui.scaleSubtreeSpinBox->setValue(v);
-    ui.scaleSubtreeSpinBox->blockSignals(false);
 }
 
 void BranchPropertyEditor::scaleSubtreeSliderReleased()

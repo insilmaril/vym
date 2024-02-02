@@ -1175,7 +1175,7 @@ void BranchContainer::setFrameBrushColor(const bool &useInnerFrame, const QColor
     }
 }
 
-QString BranchContainer::saveFrame()    // FIXME-0 save only, if not using autoDesign
+QString BranchContainer::saveFrame()    // FIXME-1 save only, if not using autoDesign
 {
     QString r;
     if (innerFrame && innerFrame->frameType() != FrameContainer::NoFrame)

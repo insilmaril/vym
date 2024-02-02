@@ -17,7 +17,7 @@ class FindResultWidget : public QWidget {
     Q_OBJECT
 
   public:
-    FindResultWidget(QWidget *parent = NULL);
+    FindResultWidget(QWidget *parent = nullptr);
     FindResultModel *getResultModel();
     void addItem(TreeItem *ti);
     void addItem(const QString &s);

@@ -14,7 +14,7 @@ class FindWidget : public QWidget {
   public:
     enum Status { Undefined, Success, Failed };
 
-    FindWidget(QWidget *parent = NULL);
+    FindWidget(QWidget *parent = nullptr);
     QString getFindText();
 
   public slots:
