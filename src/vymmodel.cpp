@@ -2830,7 +2830,6 @@ bool VymModel::cycleTaskStatus(bool reverse)
 bool VymModel::setTaskSleep(const QString &s)
 {
     bool ok = false;
-    /* FIXME-0 Qt6 indexIn
     BranchItem *selbi = getSelectedBranch();
     if (selbi && !s.isEmpty()) {
         Task *task = selbi->getTask();
@@ -2846,66 +2845,59 @@ bool VymModel::setTaskSleep(const QString &s)
             else {
                 QRegularExpression re("^\\s*(\\d+)\\s*$");
                 //FIXME-1 Qt6 re.setMinimal(false);
-                int pos = re.indexIn(s);
-                if (pos >= 0) {
+                QRegularExpressionMatch match = re.match(s);
+                if (match.hasMatch()) {
                     // Found only digit, considered as days
-                    ok = task->setDaysSleep(re.cap(1).toInt());
+                    ok = task->setDaysSleep(match.captured(1).toInt());
                 }
                 else {
                     QRegularExpression re("^\\s*(\\d+)\\s*h\\s*$");
-                    pos = re.indexIn(s);
-                    if (pos >= 0) {
+                    match = re.match(s);
+                    if (match.hasMatch()) {
                         // Found digit followed by "h", considered as hours
-                        ok = task->setHoursSleep(re.cap(1).toInt());
+                        ok = task->setHoursSleep(match.captured(1).toInt());
                     }
                     else {
                         QRegularExpression re("^\\s*(\\d+)\\s*w\\s*$");
-                        pos = re.indexIn(s);
-                        if (pos >= 0) {
+                        match = re.match(s);
+                        if (match.hasMatch()) {
                             // Found digit followed by "w", considered as weeks
-                            ok = task->setDaysSleep(7 * re.cap(1).toInt());
+                            ok = task->setDaysSleep(7 * match.captured(1).toInt());
                         }
                         else {
                             QRegularExpression re("^\\s*(\\d+)\\s*s\\s*$");
-                            pos = re.indexIn(s);
-                            if (pos >= 0) {
+                            match = re.match(s);
+                            if (match.hasMatch()) {
                                 // Found digit followed by "s", considered as
                                 // seconds
-                                ok = task->setSecsSleep(re.cap(1).toInt());
+                                ok = task->setSecsSleep(match.captured(1).toInt());
                             }
                             else {
                                 ok = task->setDateSleep(
                                     s); // ISO date YYYY-MM-DDTHH:mm:ss
 
                                 if (!ok) {
-                                    QRegularExpression re("(\\d+)\\.(\\d+)\\.(\\d+)");
+                                    re.setPattern("(\\d+)\\.(\\d+)\\.(\\d+)");
                                     //FIXME-1 re.setMinimal(false);
-                                    int pos = re.indexIn(s);
-                                    QStringList list = re.capturedTexts();
-                                    QDateTime d;
-                                    if (pos >= 0) {
-                                        d = QDateTime(
-                                            QDate(list.at(3).toInt(),
-                                                  list.at(2).toInt(),
-                                                  list.at(1).toInt()).startOfDay());
-                                        // d = QDate(list.at(3).toInt(),
-                                        // list.at(2).toInt(),
-                                        // list.at(1).toInt()).startOfDay();
-                                        ok = task->setDateSleep(
-                                            d); // German format,
-                                                // e.g. 24.12.2012
+                                    match = re.match(s);
+                                    if (match.hasMatch()) {
+                                        QDateTime d(
+                                            QDate(match.captured(3).toInt(),
+                                                  match.captured(2).toInt(),
+                                                  match.captured(1).toInt()).startOfDay());
+                                        ok = task->setDateSleep(d); 
+                                            // German format,
+                                            // e.g. 24.12.2012
                                     }
                                     else {
                                         re.setPattern("(\\d+)\\.(\\d+)\\.");
-                                        pos = re.indexIn(s);
-                                        list = re.capturedTexts();
-                                        if (pos >= 0) {
-                                            int month = list.at(2).toInt();
-                                            int day = list.at(1).toInt();
+                                        match = re.match(s);
+                                        if (match.hasMatch()) {
+                                            int month = match.captured(2).toInt();
+                                            int day = match.captured(1).toInt();
                                             int year =
                                                 QDate::currentDate().year();
-                                            d = QDateTime(
-                                                QDate(year, month, day).startOfDay());
+                                            QDateTime d(QDate(year, month, day).startOfDay());
                                             // d = QDate(year, month,
                                             // day).startOfDay();
                                             if (QDateTime::currentDateTime()
@@ -2916,22 +2908,20 @@ bool VymModel::setTaskSleep(const QString &s)
                                                 // d = QDate(year, month,
                                                 // day).startOfDay();
                                             }
-                                            ok = task->setDateSleep(
-                                                d); // Short German format,
-                                                    // e.g. 24.12.
+                                            ok = task->setDateSleep(d);
+                                                // Short German format,
+                                                // e.g. 24.12.
                                         }
                                         else {
                                             re.setPattern("(\\d+)\\:(\\d+)");
-                                            pos = re.indexIn(s);
-                                            list = re.capturedTexts();
-                                            if (pos >= 0) {
-                                                int hour = list.at(1).toInt();
-                                                int min = list.at(2).toInt();
-                                                d = QDateTime(
+                                            match = re.match(s);
+                                            if (match.hasMatch()) {
+                                                int hour = match.captured(1).toInt();
+                                                int min = match.captured(2).toInt();
+                                                QDateTime d(
                                                     QDate::currentDate(),
                                                     QTime(hour, min));
-                                                ok = task->setDateSleep(
-                                                    d); // Time HH:MM
+                                                ok = task->setDateSleep(d); // Time HH:MM
                                             }
                                         }
                                     }
@@ -2964,7 +2954,6 @@ bool VymModel::setTaskSleep(const QString &s)
 
         } // Found task
     }     // Found branch
-    */
     return ok;
 }
 
