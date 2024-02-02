@@ -83,10 +83,9 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
         int br = 0; // width of found break, e.g. for <br> it is 4
 
         QRegularExpression re("<br.*/>");
-        // FIXME-1  port re.cap and re.indexIn to Qt6
         t = newLine(s);
-        /*
-        //FIXME-1 re.setMinimal(true);
+        // FIXME-1 re.setMinimal(true);
+        /* FIXME-1 port word wrap of headings to Qt6
         // set the text and wrap lines
         while (s.length() > 0) {
             // ok, some people wanted manual linebreaks, here we go
