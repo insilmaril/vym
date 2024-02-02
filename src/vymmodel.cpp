@@ -4477,19 +4477,24 @@ void VymModel::note2URLs()
         QString n = selbi->getNoteASCII();
         if (n.isEmpty())
             return;
-        /* FIXME-0 QRegularExpression re("(http.*)(\\s|\"|')");
+        QRegularExpression re("(http.*)(\\s|\"|')");
         //FIXME-1 re.setMinimal(true);
 
         BranchItem *bi;
         int pos = 0;
-        while ((pos = re.indexIn(n, pos)) != -1) {
-            bi = createBranch(selbi);
-            bi->setHeadingPlainText(re.cap(1));
-            bi->setURL(re.cap(1));
-            emitDataChanged(bi);
-            pos += re.matchedLength();
+        QRegularExpressionMatch match;
+        while (pos >= 0) {
+            match = re.match(n, pos);
+            if (match.hasMatch()) {
+                bi = addNewBranch(selbi);
+                bi->setHeadingPlainText(match.captured(1));
+                bi->setURL(match.captured(1));
+                emitDataChanged(bi);
+                pos = match.capturedEnd();
+            } else
+                pos = -1;
         }
-        */
+        reposition();
     }
 }
 
