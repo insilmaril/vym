@@ -91,15 +91,15 @@ bool JiraAgent::setTicket(const QString &id)
 {
     // Find ID part in parameter:
     QRegularExpression re("(\\w+[-|\\s]\\d+)");
-    /* FIXME-1 Qt6 indexIn and cap
-    if (re.indexIn(id) < 0) {
+    QRegularExpressionMatch match = re.match(id);
+    if (!match.hasMatch()) {
         qWarning() << "JiraAgent::setTicket invalid ID: " << id;
         abortJob = true;
         return false;
     }
 
-    ticketID = re.cap(1);
-    */
+    ticketID = match.captured(1);
+
     ticketID.replace(" ", "-");
 
     bool foundPattern = false;

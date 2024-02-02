@@ -4521,7 +4521,6 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
     }
 
     BranchItem *selbi = getSelectedBranch();
-    /* FIXME-0 Qt6 QRegularExpression re("(\\w+[-|\\s]\\d+)");
 
     if (selbi) {
         QString url;
@@ -4531,7 +4530,9 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
         while (cur) {
             QString heading = cur->getHeadingPlain();
 
-            if (re.indexIn(heading) >= 0) {
+            QRegularExpression re("(\\w+[-|\\s]\\d+)");
+            QRegularExpressionMatch match = re.match(heading);
+            if (match.hasMatch()) {
                 // Create agent
                 JiraAgent *agent = new JiraAgent;
                 agent->setJobType(JiraAgent::GetTicketInfo);
@@ -4562,7 +4563,6 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
                 cur = nullptr;
         }
     }
-    */
 }
 
 void VymModel::updateJiraData(QJsonObject jsobj)
