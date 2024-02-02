@@ -21,7 +21,7 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
         return r;
 
     QRegularExpression rx;
-    //FIXME-1 rx.setMinimal(true);
+    rx.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     // Remove all <style...> ...</style>
     rx.setPattern("<style.*>.*</style>");

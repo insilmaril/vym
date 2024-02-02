@@ -149,7 +149,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
             if (note.isRichText()) {
                 n = note.getText();
                 QRegularExpression re("<p.*>");
-                //FIXME-1 re.setMinimal(true);
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                 if (current->getNote().getFontHint() == "fixed")
                     n.replace(re, "<p class=\"vym-fixed-note-paragraph\">");
                 else

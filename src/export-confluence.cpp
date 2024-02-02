@@ -152,7 +152,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             if (note.isRichText()) {
                 n = note.getText();
                 QRegularExpression re("<p.*>");
-                //FIXME-1 re.setMinimal(true);
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                 re.setPattern("</?html>");
                 n.replace(re, "");
 

@@ -2844,28 +2844,28 @@ bool VymModel::setTaskSleep(const QString &s)
             }
             else {
                 QRegularExpression re("^\\s*(\\d+)\\s*$");
-                //FIXME-1 Qt6 re.setMinimal(false);
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                 QRegularExpressionMatch match = re.match(s);
                 if (match.hasMatch()) {
                     // Found only digit, considered as days
                     ok = task->setDaysSleep(match.captured(1).toInt());
                 }
                 else {
-                    QRegularExpression re("^\\s*(\\d+)\\s*h\\s*$");
+                    re.setPattern("^\\s*(\\d+)\\s*h\\s*$");
                     match = re.match(s);
                     if (match.hasMatch()) {
                         // Found digit followed by "h", considered as hours
                         ok = task->setHoursSleep(match.captured(1).toInt());
                     }
                     else {
-                        QRegularExpression re("^\\s*(\\d+)\\s*w\\s*$");
+                        re.setPattern("^\\s*(\\d+)\\s*w\\s*$");
                         match = re.match(s);
                         if (match.hasMatch()) {
                             // Found digit followed by "w", considered as weeks
                             ok = task->setDaysSleep(7 * match.captured(1).toInt());
                         }
                         else {
-                            QRegularExpression re("^\\s*(\\d+)\\s*s\\s*$");
+                            re.setPattern("^\\s*(\\d+)\\s*s\\s*$");
                             match = re.match(s);
                             if (match.hasMatch()) {
                                 // Found digit followed by "s", considered as
@@ -2878,7 +2878,6 @@ bool VymModel::setTaskSleep(const QString &s)
 
                                 if (!ok) {
                                     re.setPattern("(\\d+)\\.(\\d+)\\.(\\d+)");
-                                    //FIXME-1 re.setMinimal(false);
                                     match = re.match(s);
                                     if (match.hasMatch()) {
                                         QDateTime d(
@@ -4478,7 +4477,7 @@ void VymModel::note2URLs()
         if (n.isEmpty())
             return;
         QRegularExpression re("(http.*)(\\s|\"|')");
-        //FIXME-1 re.setMinimal(true);
+        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
         BranchItem *bi;
         int pos = 0;

@@ -84,7 +84,7 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
 
         QRegularExpression re("<br.*/>");
         t = newLine(s);
-        // FIXME-1 re.setMinimal(true);
+        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
         /* FIXME-1 port word wrap of headings to Qt6
         // set the text and wrap lines
         while (s.length() > 0) {

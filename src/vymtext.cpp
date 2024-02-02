@@ -104,7 +104,7 @@ QString VymText::getTextASCII(QString indent, const int &width) const
 
     QString s;
     QRegularExpression rx;
-    //FIXME-1 rx.setMinimal(true);
+    rx.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     if (isRichText())
         s = text;

@@ -502,13 +502,12 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
         return;
 
     // Find pageID
-    QRegularExpression rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
-    // FIXME-1 rx.setMinimal(true);
+    QRegularExpression re("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
+    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
-    /* FIXME-1 no indexIn available
-    if (rx.indexIn(fullReply, 0) != -1) {
-        pageID = rx.cap(1);
-    }
+    QRegularExpressionMatch match = re.match(fullReply);
+    if (match.hasMatch())
+        pageID = match.captured(1);
     else {
         qWarning()
             << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
@@ -517,11 +516,11 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
     }
 
     // Find spaceKey 
-    rx.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
+    re.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
                   "name=\"confluence-space-key\"\\s*content=\"(.*)\"");
-    if (rx.indexIn(fullReply, 0) != -1) {
-        spaceKey = rx.cap(1);
-    }
+    match = re.match(fullReply);
+    if (match.hasMatch())
+        spaceKey = match.captured(1);
     else {
         qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find "
                       "space key in response";
@@ -534,7 +533,6 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
         reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
     continueJob();
-    */
 }
 
 void ConfluenceAgent::startGetPageDetailsRequest()

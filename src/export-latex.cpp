@@ -29,12 +29,12 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
 {
     QString r = s;
 
-    QRegularExpression rx;
-    //FIXME-1 rx.setMinimal(true);
+    QRegularExpression re;
+    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     foreach (QString p, esc.keys()) {
-        rx.setPattern(p);
-        r.replace(rx, esc[p]);
+        re.setPattern(p);
+        r.replace(re, esc[p]);
     }
     return r;
 }

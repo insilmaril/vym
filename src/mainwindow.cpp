@@ -7037,6 +7037,17 @@ void Main::testFunction1()
     //#include <QStyleFactory>
     //qApp->setStyle(QStyleFactory::create("windowsvista"));
 
+    QString s ("abc-abx");
+    QRegularExpression re("a.*b");
+    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
+    QRegularExpressionMatch match = re.match(s);
+
+    if (match.hasMatch())
+        qDebug() << "Match: " << match.captured(0);
+    else 
+        qDebug() << "No match.";
+
+    return;
     VymModel *m = currentModel();
     if (m) {
         m->getMapEditor()->testFunction1();
