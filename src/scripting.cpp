@@ -9,16 +9,21 @@
 #include "vymtext.h"
 #include "xlink.h"
 
+#include <QJSValue> 
+
 extern Main *mainWindow;
 extern QString vymVersion;
 
 ///////////////////////////////////////////////////////////////////////////
-void logError(QScriptContext *context, QScriptContext::Error error,
-              const QString &text)
+// FIXME-0 Qt6 void logError(QScriptContext *context, QScriptContext::Error error,
+//              const QString &text)
+void logErrorNew(const QString &text)
 {
+    /*
     if (context)
         context->throwError(error, text);
     else
+    */
         qDebug() << "VymWrapper: " << text;
 }
 
@@ -27,32 +32,42 @@ VymScriptContext::VymScriptContext() {}
 
 QString VymScriptContext::setResult(const QString &r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
     return r;
 }
 
 bool VymScriptContext::setResult(bool r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
     return r;
 }
 
 int VymScriptContext::setResult(int r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
     return r;
 }
 
 uint VymScriptContext::setResult(uint r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
     return r;
 }
 
 qreal VymScriptContext::setResult(qreal r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
     return r;
+}
+
+int VymScriptContext::argumentCount()   // FIXME-0 Qt6 placeholder from QScriptable, no longer available
+{
+    return 1;
+}
+
+QJSValue VymScriptContext::argument(int index)   // FIXME-0 Qt6 placeholder from QScriptable, no longer available
+{
+    return QJSValue("Foobar");
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -88,16 +103,16 @@ bool VymWrapper::loadMap(const QString &filename)
 
 int VymWrapper::mapCount()
 {
-    context()->engine()->globalObject().setProperty("lastResult",
-                                                    mainWindow->modelCount());
+    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult",
+    //                                                mainWindow->modelCount());
     return setResult(mainWindow->modelCount());
 }
 
 void VymWrapper::gotoMap(uint n)
 {
     if (!mainWindow->gotoWindow(n)) {
-        logError(context(), QScriptContext::RangeError,
-                 QString("Map '%1' not available.").arg(n));
+        //logErrorOld(context(), QScriptContext::RangeError,
+        logErrorNew(QString("Map '%1' not available.").arg(n));
     }
 }
 
@@ -105,8 +120,8 @@ bool VymWrapper::closeMapWithID(uint n)
 {
     bool r = mainWindow->closeModelWithID(n);
     if (!r)
-        logError(context(), QScriptContext::RangeError,
-                 QString("Map '%1' not available.").arg(n));
+        //logErrorOld(context(), QScriptContext::RangeError,
+        logErrorNew(QString("Map '%1' not available.").arg(n));
     return setResult(r);
 }
 

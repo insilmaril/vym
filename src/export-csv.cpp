@@ -59,7 +59,6 @@ void ExportCSV::doExport()
         curIndent = "";
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 

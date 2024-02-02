@@ -1,8 +1,9 @@
 #ifndef XMLOBJ_H
 #define XMLOBJ_H
 
-class QString;
-class QStringList;
+#include <QString>
+#include <QStringList>
+
 
 QString quoteMeta(const QString &);
 QString unquoteMeta(const QString &);

@@ -29,8 +29,8 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
 {
     QString r = s;
 
-    QRegExp rx;
-    rx.setMinimal(true);
+    QRegularExpression rx;
+    //FIXME-1 rx.setMinimal(true);
 
     foreach (QString p, esc.keys()) {
         rx.setPattern(p);
@@ -99,7 +99,6 @@ void ExportLaTeX::doExport()
     }
 
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 

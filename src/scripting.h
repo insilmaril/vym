@@ -3,19 +3,23 @@
 
 #include <QColor>
 #include <QObject>
-#include <QScriptContext>
-#include <QScriptValue>
-#include <QScriptable>
+// #include <QScriptContext>  // FIXME-0
+#include <QJSValue>
+// #include <QScriptable> // FIXME-0
 #include <QVariant>
 
 class BranchItem;
 class VymModelWrapper;
 
+/* FIXME-0
 void logError(QScriptContext *context, QScriptContext::Error error,
               const QString &text);
+*/
+
+void logErrorNew(const QString &text);
 
 ///////////////////////////////////////////////////////////////////////////
-class VymScriptContext : public QObject, protected QScriptable {
+class VymScriptContext : public QObject { // FIXME-0 , protected QScriptable {
     Q_OBJECT
   public:
     VymScriptContext();
@@ -24,6 +28,8 @@ class VymScriptContext : public QObject, protected QScriptable {
     int setResult(int r);
     uint setResult(uint r);
     qreal setResult(qreal r);
+    int argumentCount();
+    QJSValue  argument(int index);
 };
 
 ///////////////////////////////////////////////////////////////////////////

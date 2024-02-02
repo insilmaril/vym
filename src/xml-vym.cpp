@@ -471,7 +471,7 @@ void VymReader::readHeadingOrVymNote()
     }
 
     // Save type for later (after reading html)
-    QStringRef textType = xml.name();
+    QString textType = xml.name().toString();  // FIXME-2 check: previously QStringRef, not in Qt6
     htmldata.clear();
     vymtext.clear();
 
@@ -514,7 +514,6 @@ void VymReader::readHeadingOrVymNote()
             return;
         }
         QTextStream stream(&file);
-        stream.setCodec("UTF-8");
         QString lines;
         while (!stream.atEnd()) {
             lines += stream.readLine() + "\n";
@@ -918,7 +917,7 @@ void VymReader::readSlide()
 
         s = attributeToString("mapitem");
         if (!s.isEmpty()) {
-            TreeItem *ti = model->findUuid(s);
+            TreeItem *ti = model->findUuid(QUuid(s));
             if (ti) scriptlines.append(
                 QString("centerOnID(\"%1\")").arg(ti->getUuid().toString()));
         }
@@ -1183,7 +1182,7 @@ void VymReader::readOrnamentsAttr()
     s = attributeToString("uuid");
     if (!s.isEmpty()) {
         // While pasting, check for existing UUID
-        if (loadMode != File::ImportAdd && !model->findUuid(s))
+        if (loadMode != File::ImportAdd && !model->findUuid(QUuid(s)))
             lastMI->setUuid(s);
     }
 }

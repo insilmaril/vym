@@ -4,9 +4,9 @@
 #include "scripting.h"
 #include <QColor>
 #include <QObject>
-#include <QScriptContext>
-#include <QScriptValue>
-#include <QScriptable>
+// FIXME-0 #include <QScriptContext>
+#include <QJSValue>
+// FIXME-0 #include <QScriptable>
 #include <QVariant>
 
 class BranchItem;

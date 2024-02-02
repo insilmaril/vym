@@ -7,6 +7,7 @@
 
 #include <QDebug>
 #include <QDialog>
+#include <QRegularExpression>
 #include <QString>
 
 extern QString vymVersion;
@@ -19,8 +20,8 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
     if (r.isEmpty())
         return r;
 
-    QRegExp rx;
-    rx.setMinimal(true);
+    QRegularExpression rx;
+    //FIXME-1 rx.setMinimal(true);
 
     // Remove all <style...> ...</style>
     rx.setPattern("<style.*>.*</style>");
@@ -219,7 +220,7 @@ void centerDialog(QDialog *dia)
 // #include "version.h"
 
 // #include <QDebug>
-// #include <QRegExp>
+// #include <QRegularExpression>
 
 bool versionLowerThanVym(const QString &v)
 {
@@ -247,7 +248,7 @@ bool versionLowerOrEqual(const QString &v, const QString &vstatic)
     int vs2 = 0;
     int vs3 = 0;
 
-    QRegExp rx("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
+    QRegularExpression rx("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");  /* FIXME-0 Qt6
     int pos = rx.indexIn(v);
     if (pos > -1) {
         v1 = rx.cap(1).toInt(&ok);
@@ -265,7 +266,7 @@ bool versionLowerOrEqual(const QString &v, const QString &vstatic)
         if (ok)
             vs3 = rx.cap(3).toInt(&ok);
     }
-
+    */ 
     if (!ok) {
         qWarning() << QString(
                           "Warning: Checking version failed: v=%1  vstatic=%2")

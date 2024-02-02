@@ -124,8 +124,9 @@ QString editorFocusStyle =
     QString(" border-color: #3daee9; border-style:outset; border-width:3px; "
             "color:black;");
 
-#include <QScriptEngine>
+/* FIXME-0 Qt6 #include <QScriptEngine>
 QScriptValue scriptPrint(QScriptContext *ctx, QScriptEngine *eng);
+*/
 
 void msgHandler(QtMsgType type, const QMessageLogContext &context,
                 const QString &msg)
@@ -177,9 +178,6 @@ int main(int argc, char *argv[])
 
     // Install our own handler for messages
     qInstallMessageHandler(msgHandler);
-
-    // Testing for now
-    vout.setCodec("UTF-8");  //FIXME-4
 
     // Reading and initializing options commandline options
     options.add("batch", Option::Switch, "b", "batch");

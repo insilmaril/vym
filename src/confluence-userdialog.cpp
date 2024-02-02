@@ -1,7 +1,7 @@
 #include "confluence-userdialog.h"
 
 #include <QKeyEvent>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "confluence-agent.h"
 #include "confluence-user.h"

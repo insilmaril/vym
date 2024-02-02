@@ -979,7 +979,7 @@ void VymModel::importDir()
         QFileDialog fd;
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
-        fd.setFileMode(QFileDialog::DirectoryOnly);
+        // FIXME-1 Qt6 fd.setFileMode(QFileDialog::DirectoryOnly);
         fd.setNameFilters(filters);
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
@@ -1583,7 +1583,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
 
                 // Current command is a repeated one. We only want to "squash" some of these
-                QRegExp re("<vymnote");
+                /* FIXME-0 Qt6 QRegularExpression re("<vymnote");
                 if (rcl.startsWith("model.parseVymText") && re.indexIn(redoCommand) > 0) {
                     if (debug)
                         qDebug() << "VM::saveState repeated command: " << redoCommand;
@@ -1595,6 +1595,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
                 } else
                     if (debug)
                         qDebug() << "VM::saveState not repeated command: " << redoCommand;
+                */
             }
         }
     }
@@ -2791,6 +2792,7 @@ bool VymModel::cycleTaskStatus(bool reverse)
 bool VymModel::setTaskSleep(const QString &s)
 {
     bool ok = false;
+    /* FIXME-0 Qt6 indexIn
     BranchItem *selbi = getSelectedBranch();
     if (selbi && !s.isEmpty()) {
         Task *task = selbi->getTask();
@@ -2804,29 +2806,29 @@ bool VymModel::setTaskSleep(const QString &s)
                 ok = task->setSecsSleep(0);
             }
             else {
-                QRegExp re("^\\s*(\\d+)\\s*$");
-                re.setMinimal(false);
+                QRegularExpression re("^\\s*(\\d+)\\s*$");
+                //FIXME-1 Qt6 re.setMinimal(false);
                 int pos = re.indexIn(s);
                 if (pos >= 0) {
                     // Found only digit, considered as days
                     ok = task->setDaysSleep(re.cap(1).toInt());
                 }
                 else {
-                    QRegExp re("^\\s*(\\d+)\\s*h\\s*$");
+                    QRegularExpression re("^\\s*(\\d+)\\s*h\\s*$");
                     pos = re.indexIn(s);
                     if (pos >= 0) {
                         // Found digit followed by "h", considered as hours
                         ok = task->setHoursSleep(re.cap(1).toInt());
                     }
                     else {
-                        QRegExp re("^\\s*(\\d+)\\s*w\\s*$");
+                        QRegularExpression re("^\\s*(\\d+)\\s*w\\s*$");
                         pos = re.indexIn(s);
                         if (pos >= 0) {
                             // Found digit followed by "w", considered as weeks
                             ok = task->setDaysSleep(7 * re.cap(1).toInt());
                         }
                         else {
-                            QRegExp re("^\\s*(\\d+)\\s*s\\s*$");
+                            QRegularExpression re("^\\s*(\\d+)\\s*s\\s*$");
                             pos = re.indexIn(s);
                             if (pos >= 0) {
                                 // Found digit followed by "s", considered as
@@ -2838,8 +2840,8 @@ bool VymModel::setTaskSleep(const QString &s)
                                     s); // ISO date YYYY-MM-DDTHH:mm:ss
 
                                 if (!ok) {
-                                    QRegExp re("(\\d+)\\.(\\d+)\\.(\\d+)");
-                                    re.setMinimal(false);
+                                    QRegularExpression re("(\\d+)\\.(\\d+)\\.(\\d+)");
+                                    //FIXME-1 re.setMinimal(false);
                                     int pos = re.indexIn(s);
                                     QStringList list = re.capturedTexts();
                                     QDateTime d;
@@ -2924,6 +2926,7 @@ bool VymModel::setTaskSleep(const QString &s)
 
         } // Found task
     }     // Found branch
+    */
     return ok;
 }
 
@@ -3199,7 +3202,7 @@ QList <BranchItem*> VymModel::sortBranchesByNum(QList <BranchItem*> unsortedList
 
     QList <BranchItem*> sortedList;
 
-    QMapIterator<int, BranchItem*> i(multimap);
+    QMultiMapIterator<int, BranchItem*> i(multimap);
     if (inverse) {
             i.toBack();
             while (i.hasPrevious()) {
@@ -3255,7 +3258,7 @@ void VymModel::sortChildren(bool inverse)   // FIXME-2 save only once, but not i
                     multimap.insert(selbi->getBranchNum(i)->getHeadingPlain(), selbi->getBranchNum(i));
 
                 int n = 0;
-                QMapIterator<QString, BranchItem*> i(multimap);
+                QMultiMapIterator<QString, BranchItem*> i(multimap);
                 if (inverse) {
                     i.toBack();
                     while (i.hasPrevious()) {
@@ -4501,8 +4504,8 @@ void VymModel::note2URLs()
         QString n = selbi->getNoteASCII();
         if (n.isEmpty())
             return;
-        QRegExp re("(http.*)(\\s|\"|')");
-        re.setMinimal(true);
+        /* FIXME-0 QRegularExpression re("(http.*)(\\s|\"|')");
+        //FIXME-1 re.setMinimal(true);
 
         BranchItem *bi;
         int pos = 0;
@@ -4513,6 +4516,7 @@ void VymModel::note2URLs()
             emitDataChanged(bi);
             pos += re.matchedLength();
         }
+        */
     }
 }
 
@@ -4539,7 +4543,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
     }
 
     BranchItem *selbi = getSelectedBranch();
-    QRegExp re("(\\w+[-|\\s]\\d+)");
+    /* FIXME-0 Qt6 QRegularExpression re("(\\w+[-|\\s]\\d+)");
 
     if (selbi) {
         QString url;
@@ -4580,6 +4584,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
                 cur = nullptr;
         }
     }
+    */
 }
 
 void VymModel::updateJiraData(QJsonObject jsobj)
@@ -5093,7 +5098,6 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
 
     // Write it finally, and write in UTF8, no matter what
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << saveFile;
     file.close();
 

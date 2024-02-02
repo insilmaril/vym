@@ -442,7 +442,7 @@ void ConfluenceAgent::unknownStepWarningFinishJob()
 void ConfluenceAgent::getUsers(const QString &usrQuery)
 {
     userQuery = usrQuery;
-    if (usrQuery.contains(QRegExp("\\W+"))) {
+    if (usrQuery.contains(QRegularExpression("\\W+"))) {
         qWarning() << "ConfluenceAgent::getUsers  Forbidden characters in " << usrQuery;
         return;
     }
@@ -502,9 +502,10 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
         return;
 
     // Find pageID
-    QRegExp rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
-    rx.setMinimal(true);
+    QRegularExpression rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
+    // FIXME-1 rx.setMinimal(true);
 
+    /* FIXME-1 no indexIn available
     if (rx.indexIn(fullReply, 0) != -1) {
         pageID = rx.cap(1);
     }
@@ -533,6 +534,7 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
         reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
     continueJob();
+    */
 }
 
 void ConfluenceAgent::startGetPageDetailsRequest()

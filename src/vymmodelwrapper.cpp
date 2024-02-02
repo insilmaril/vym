@@ -37,7 +37,8 @@ BranchItem *VymModelWrapper::getSelectedBranch()
 {
     BranchItem *selbi = model->getSelectedBranch();
     if (!selbi)
-        logError(context(), QScriptContext::ReferenceError,
+        //logErrorOld(context(), QScriptContext::ReferenceError,
+        logErrorNew(
                  "No branch selected");
     return selbi;
 }
@@ -64,18 +65,20 @@ void VymModelWrapper::addBranch()
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         if (argumentCount() > 1) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      "Too many arguments");
             return;
         }
 
         int pos = -2;
         if (argumentCount() == 1) {
-            pos = argument(0).toInteger();
+            pos = argument(0).toInt();
         }
 
         if (!model->addNewBranch(selbi, pos))
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't add branch to map");
     }
 }
@@ -83,14 +86,16 @@ void VymModelWrapper::addBranch()
 void VymModelWrapper::addBranchBefore()
 {
     if (!model->addNewBranchBefore())
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Couldn't add branch before selection to map");
 }
 
 void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
 {
     if (!model->addMapCenterAtPos(QPointF(x, y)))
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Couldn't add mapcenter");
 }
 
@@ -103,7 +108,8 @@ void VymModelWrapper::addMapInsert(QString fileName, int pos, int contentFilter)
 
     if (File::Aborted ==
         model->loadMap(fileName, File::ImportAdd, File::VymMap, contentFilter, pos))
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Couldn't load %1").arg(fileName));
 }
 
@@ -125,7 +131,8 @@ void VymModelWrapper::addMapReplace(QString fileName)
     model->saveStateBeforeLoad(File::ImportReplace, fileName);
 
     if (File::Aborted == model->loadMap(fileName, File::ImportReplace, File::VymMap))
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Couldn't load %1").arg(fileName));
 }
 
@@ -151,7 +158,8 @@ void VymModelWrapper::addXLink(const QString &begin, const QString &end,
             if (col.isValid())
                 pen.setColor(col);
             else {
-                logError(context(), QScriptContext::UnknownError,
+                //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                          QString("Could not set color to %1").arg(color));
                 return;
             }
@@ -163,15 +171,18 @@ void VymModelWrapper::addXLink(const QString &begin, const QString &end,
                 li->setPen(pen);
             }
             else
-                logError(context(), QScriptContext::UnknownError,
+                //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                          QString("Couldn't set penstyle %1").arg(penstyle));
         }
         else
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Begin or end of xLink are not branch or mapcenter");
     }
     else
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Begin or end of xLink not found");
 }
 
@@ -195,7 +206,8 @@ int VymModelWrapper::centerCount()
 void VymModelWrapper::centerOnID(const QString &id)
 {
     if (!model->centerOnID(id))
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Could not center on ID %1").arg(id));
 }
 
@@ -205,7 +217,8 @@ void VymModelWrapper::colorBranch(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("Could not set color to %1").arg(color));
     else
         model->colorBranch(col);
@@ -215,7 +228,8 @@ void VymModelWrapper::colorSubtree(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("Could not set color to %1").arg(color));
     else
         model->colorSubtree(col);
@@ -228,7 +242,8 @@ void VymModelWrapper::cut() { model->cut(); }
 void VymModelWrapper::cycleTask()
 {
     if (!model->cycleTaskStatus())
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  "Couldn't cycle task status");
 }
 
@@ -251,7 +266,8 @@ bool VymModelWrapper::exportMap()
     bool r = false;
 
     if (argumentCount() == 0) {
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  "Not enough arguments");
         return setResult(r);
     }
@@ -265,7 +281,8 @@ bool VymModelWrapper::exportMap()
             r = true;
         }
         else
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      "Filename missing");
         return setResult(r);
     }
@@ -288,7 +305,8 @@ bool VymModelWrapper::exportMap()
         // 1: URL of parent page (required)
         // 2: page title (required)
         if (argumentCount() < 3) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("Confluence export new page: Only %1 instead of 3 parameters given")
                  .arg(argumentCount()));
             return setResult(r);
@@ -304,7 +322,8 @@ bool VymModelWrapper::exportMap()
         // 1: URL of  page to be updated
         // 2: page title (optional)
         if (argumentCount() == 1) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      "URL of new page missing in Confluence export");
             return setResult(r);
         }
@@ -322,7 +341,8 @@ bool VymModelWrapper::exportMap()
     }
     else if (format == "HTML") {
         if (argumentCount() < 3) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      "Path missing in HTML export");
             return setResult(r);
         }
@@ -344,7 +364,8 @@ bool VymModelWrapper::exportMap()
             formats << "PPM", formats << "TIFF", formats << "XBM",
             formats << "XPM";
         if (formats.indexOf(imgFormat) < 0) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      QString("%1 not one of the known export formats: ")
                          .arg(imgFormat)
                          .arg(formats.join(",")));
@@ -354,7 +375,8 @@ bool VymModelWrapper::exportMap()
     }
     else if (format == "Impress") {
         if (argumentCount() < 3) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      "Template file  missing in export to Impress");
             return setResult(r);
         }
@@ -378,7 +400,8 @@ bool VymModelWrapper::exportMap()
     }
     else if (format == "XML") {
         if (argumentCount() < 3) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      "path missing in export to Impress");
             return setResult(r);
         }
@@ -386,7 +409,8 @@ bool VymModelWrapper::exportMap()
         model->exportXML(filename, dpath, false);
     }
     else {
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("Unknown export format: %1").arg(format));
         return setResult(r);
     }
@@ -399,13 +423,15 @@ QString VymModelWrapper::getStringAttribute(const QString &key)
     AttributeItem *ai = model->getAttributeByKey(key);
     if (ai) {
         if (ai->getAttributeType() != AttributeItem::String) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      QString("Attribute with key '%1' has no type 'String'").arg(key));
             return setResult(QString());
         }
         v = ai->getValue();
     } else {
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("No attribute found with key '%1'").arg(key));
         return setResult(QString());
     }
@@ -418,13 +444,15 @@ int VymModelWrapper::getIntAttribute(const QString &key)
     AttributeItem *ai = model->getAttributeByKey(key);
     if (ai) {
         if (ai->getAttributeType() != AttributeItem::Integer) {
-            logError(context(), QScriptContext::SyntaxError,
+            //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                      QString("Attribute with key '%1' has no type 'Integer'").arg(key));
             return setResult(-1);
         }
         v = ai->getValue();
     } else {
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("No attribute found with key '%1'").arg(key));
         return setResult(-1);
     }
@@ -514,7 +542,8 @@ qreal VymModelWrapper::getPosX()
     if (c)
         return setResult(c->pos().x());
 
-    logError(context(), QScriptContext::UnknownError,
+    //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
              "Could not get x-position from item");
     return 0;
 }
@@ -534,7 +563,8 @@ qreal VymModelWrapper::getPosY()
     if (c)
         return setResult(c->pos().y());
 
-    logError(context(), QScriptContext::UnknownError,
+    //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
              "Could not get y-position from item");
     return 0;
 }
@@ -554,7 +584,8 @@ qreal VymModelWrapper::getScenePosX()
     if (c)
         return setResult(c->scenePos().x());
 
-    logError(context(), QScriptContext::UnknownError,
+    //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
              "Could not get scenePos.x() from item");
     return 0;
 }
@@ -574,7 +605,8 @@ qreal VymModelWrapper::getScenePosY()
     if (c)
         return setResult(c->scenePos().y());
 
-    logError(context(), QScriptContext::UnknownError,
+    //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
              "Could not get scenePos.y() from item");
     return 0;
 }
@@ -616,7 +648,8 @@ QString VymModelWrapper::getTaskSleep()
         if (task)
             r = task->getSleep().toString(Qt::ISODate);
         else
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Branch has no task");
     }
     return setResult(r);
@@ -631,7 +664,8 @@ int VymModelWrapper::getTaskSleepDays()
         if (task)
             r = task->getDaysSleep();
         else
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Branch has no task");
     }
     return setResult(r);
@@ -697,7 +731,8 @@ bool VymModelWrapper::hasTask()
             r = true;
     }
     else
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Selected item is not a branch");
 
     return setResult(r);
@@ -750,7 +785,8 @@ void VymModelWrapper::moveUp() { model->moveUp(); }
 void VymModelWrapper::moveSlideDown(int n)
 {
     if (!model->moveSlideDown(n))
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Could not move slide down");
 }
 
@@ -759,7 +795,8 @@ void VymModelWrapper::moveSlideDown() { moveSlideDown(-1); }
 void VymModelWrapper::moveSlideUp(int n)
 {
     if (!model->moveSlideUp(n))
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Could not move slide up");
 }
 
@@ -783,7 +820,8 @@ bool VymModelWrapper::relinkTo(const QString &parent, int num)
     bool r;
     r = model->relinkTo(parent, num);
     if (!r)
-        logError(context(), QScriptContext::UnknownError, "Could not relink");
+        //logErrorOld(context(), QScriptContext::UnknownError, "Could not relink");
+        logErrorNew("Could not relink");
     return setResult(r);
 }
 
@@ -802,7 +840,8 @@ void VymModelWrapper::removeKeepChildren() { model->deleteKeepChildren(); }
 void VymModelWrapper::removeSlide(int n)
 {
     if (n < 0 || n >= model->slideCount() - 1)
-        logError(context(), QScriptContext::RangeError,
+        //logErrorOld(context(), QScriptContext::RangeError,
+        logErrorNew(
                  QString("Slide '%1' not available.").arg(n));
 }
 
@@ -839,7 +878,8 @@ void VymModelWrapper::scroll()
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
         if (!model->scrollBranch(selbi))
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't scroll branch");
     }
 }
@@ -848,7 +888,8 @@ bool VymModelWrapper::select(const QString &s)
 {
     bool r = model->select(s);
     if (!r)
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Couldn't select %1").arg(s));
     return setResult(r);
 }
@@ -857,7 +898,8 @@ bool VymModelWrapper::selectID(const QString &s)
 {
     bool r = model->selectID(s);
     if (!r)
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Couldn't select ID %1").arg(s));
     return setResult(r);
 }
@@ -869,7 +911,8 @@ bool VymModelWrapper::selectFirstBranch()
     if (selbi) {
         r = model->selectFirstBranch();
         if (!r)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't select first branch");
     }
     return setResult(r);
@@ -882,7 +925,8 @@ bool VymModelWrapper::selectFirstChildBranch()
     if (selbi) {
         r = model->selectFirstChildBranch();
         if (!r)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't select first child branch");
     }
     return setResult(r);
@@ -895,7 +939,8 @@ bool VymModelWrapper::selectLastBranch()
     if (selbi) {
         r = model->selectLastBranch();
         if (!r)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't select last branch");
     }
     return setResult(r);
@@ -908,7 +953,8 @@ bool VymModelWrapper::selectLastChildBranch()
     if (selbi) {
         r = model->selectLastChildBranch();
         if (!r)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't select last child branch");
     }
     return setResult(r);
@@ -920,12 +966,14 @@ bool VymModelWrapper::selectLastImage()
     if (selbi) {
         ImageItem *ii = selbi->getLastImage();
         if (!ii)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't get last image");
         else {
             r = model->select(ii);
             if (!r)
-                logError(context(), QScriptContext::UnknownError,
+                //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                          "Couldn't select last image");
         }
     }
@@ -936,7 +984,8 @@ bool VymModelWrapper::selectParent()
 {
     bool r = model->selectParent();
     if (!r)
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Couldn't select parent item");
     return setResult(r);
 }
@@ -945,7 +994,8 @@ bool VymModelWrapper::selectLatestAdded()
 {
     bool r = model->selectLatestAdded();
     if (!r)
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Couldn't select latest added item");
     return setResult(r);
 }
@@ -954,7 +1004,8 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
 {
     bool r = model->selectToggle(selectString);
     if (!r)
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Couldn't toggle item with select string " + selectString);
     return setResult(r);
 }
@@ -966,12 +1017,14 @@ bool VymModelWrapper::selectXLink(int n)
     if (selbi) {
         XLinkItem *xli = selbi->getXLinkItemNum(n);
         if (!xli)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      QString("Selected branch has no xlink with index %1").arg(n));
         else
             r = model->select((TreeItem*)xli);
     } else
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Selected item is not a branch");
     return setResult(r);
 }
@@ -983,18 +1036,21 @@ bool VymModelWrapper::selectXLinkOtherEnd(int n)
     if (selbi) {
         XLinkItem *xli = selbi->getXLinkItemNum(n);
         if (!xli)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      QString("Selected branch has no xlink with index %1").arg(n));
         else {
             BranchItem *bi = xli->getPartnerBranch();
             if (!bi)
-                logError(context(), QScriptContext::UnknownError,
+                //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                          "Selected xlink has no other end ?!");
             else
                 r = model->select(bi);
         }
     } else
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Selected item is not a branch");
     return setResult(r);
 }
@@ -1010,7 +1066,8 @@ void VymModelWrapper::setDefaultLinkColor(const QString &color)
         model->setDefaultLinkColor(col);
     }
     else
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Could not set color to %1").arg(color));
 }
 
@@ -1040,7 +1097,8 @@ void VymModelWrapper::setHideLinkUnselected(bool b)
 void VymModelWrapper::setMapAnimCurve(int n)
 {
     if (n < 0 || n > QEasingCurve::OutInBounce)
-        logError(context(), QScriptContext::RangeError,
+        //logErrorOld(context(), QScriptContext::RangeError,
+        logErrorNew(
                  "Unknown animation curve type");
     else {
         QEasingCurve c;
@@ -1063,7 +1121,8 @@ void VymModelWrapper::setMapBackgroundColor(const QString &color)
         model->setBackgroundColor(col);
     }
     else
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Could not set color to %1").arg(color));
 }
 
@@ -1072,7 +1131,8 @@ void VymModelWrapper::setMapComment(const QString &s) { model->setComment(s); }
 void VymModelWrapper::setMapLinkStyle(const QString &style)
 {
     if (!model->setLinkStyle(style))
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  QString("Could not set linkstyle to %1").arg(style));
 }
 
@@ -1135,7 +1195,8 @@ void VymModelWrapper::setSelectionBrushColor(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("Could not set color to %1").arg(color));
     else
         model->setSelectionBrushColor(col);
@@ -1145,7 +1206,8 @@ void VymModelWrapper::setSelectionPenColor(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("Could not set color to %1").arg(color));
     else
         model->setSelectionPenColor(col);
@@ -1175,7 +1237,8 @@ void VymModelWrapper::setXLinkColor(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        logError(context(), QScriptContext::SyntaxError,
+        //logErrorOld(context(), QScriptContext::SyntaxError,
+        logErrorNew(
                  QString("Could not set color to %1").arg(color));
     else
         model->setXLinkColor(color); // FIXME-3 try to use QColor here...
@@ -1239,7 +1302,8 @@ bool VymModelWrapper::unscroll()
     if (selbi) {
         r = model->unscrollBranch(selbi);
         if (!r)
-            logError(context(), QScriptContext::UnknownError,
+            //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                      "Couldn't unscroll branch");
     }
     return setResult(r);
@@ -1261,7 +1325,8 @@ int VymModelWrapper::xlinkCount()
     if (selbi) {
         r = selbi->xlinkCount();
     } else
-        logError(context(), QScriptContext::UnknownError,
+        //logErrorOld(context(), QScriptContext::UnknownError,
+        logErrorNew(
                  "Selected item is not a branch");
 
     return setResult(r);

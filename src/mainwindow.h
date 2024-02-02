@@ -4,9 +4,9 @@
 #include <QMainWindow>
 #include <QPrinter>
 #include <QProgressDialog>
-#include <QScriptContext>
-#include <QScriptEngine>
-#include <QScriptValue>
+//#include <QScriptContext>
+#include <QJSEngine>
+#include <QJSValue>
 #include <QTextStream>
 
 #include "branchpropeditor.h"
@@ -396,7 +396,7 @@ class Main : public QMainWindow {
 
     QStringList imageTypes;
 
-    QScriptEngine scriptEngine;
+    QJSEngine scriptEngine;
 
     QString prevSelection;
 

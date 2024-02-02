@@ -87,7 +87,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     highlighterFile->addKeywords(list);
 
     // QAction *a = new QAction( tr( "Save","ScriptEditor" ), ui.editor);
-    // a->setShortcut (Qt::CTRL + Qt::Key_S );
+    // a->setShortcut (Qt::CTRL | Qt::Key_S );
     // a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     // addAction (a);
     // connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );

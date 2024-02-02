@@ -495,23 +495,25 @@ File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)
                                "Std: " + zipProc->getStdout() );
             */
             if (zipProc->exitCode() > 1) {
-                QMessageBox::critical(
-                    0, QObject::tr("Error"),
-                    "Called:" + zipToolPath + "\n" + "Args: " + args.join(" ") +
-                        "\n" + "Exit: " + zipProc->exitCode() + "\n" +
-                        "Err: " + zipProc->getErrout() + "\n" +
-                        "Std: " + zipProc->getStdout());
+                QMessageBox::critical(0, QObject::tr("Error"),
+                     QString("Called: %1").arg(zipToolPath) +
+                     QString("Args: %1").arg(args.join(" ")) +
+                     QString("Exit: %1\n").arg(zipProc->exitCode()) +
+                     QString("Err: %1\n").arg(zipProc->getErrout()) +
+                     QString("Std: %1").arg(zipProc->getStdout())
+                );
                 err = Aborted;
             }
-            else if (zipProc->exitCode() == 1) {
+           else if (zipProc->exitCode() == 1) {    // FIXME-3 cleanup, duplicated code
                 // Non fatal according to internet, but for example
                 // some file was locked and could not be compressed
-                QMessageBox::warning(0, QObject::tr("Error"),
-                                     "Called:" + zipToolPath + "\n" +
-                                         "Args: " + args.join(" ") + "\n" +
-                                         "Exit: " + zipProc->exitCode() + "\n" +
-                                         "Err: " + zipProc->getErrout() + "\n" +
-                                         "Std: " + zipProc->getStdout() + "\n");
+                QMessageBox::warning(0, QObject::tr("Warning"),
+                     QString("Called: %1").arg(zipToolPath) +
+                     QString("Args: %1").arg(args.join(" ")) +
+                     QString("Exit: %1\n").arg(zipProc->exitCode()) +
+                     QString("Err: %1\n").arg(zipProc->getErrout()) +
+                     QString("Std: %1").arg(zipProc->getStdout())
+                );
             }
         }
     }
@@ -546,7 +548,6 @@ bool saveStringToDisk(const QString &fname, const QString &s)
     }
 
     QTextStream out(&file);
-    out.setCodec("UTF-8");
     out << s;
 
     return true;

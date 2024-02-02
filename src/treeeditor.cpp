@@ -2,7 +2,7 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "mainwindow.h"
 #include "vymmodel.h"

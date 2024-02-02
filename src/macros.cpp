@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QMessageBox>
+#include <QRegularExpression>
 #include <QTextStream>
 
 extern Settings settings;
@@ -54,6 +55,6 @@ bool Macros::pathExists(const QString &path)
 
 QString Macros::help()
 {
-    QRegExp re("^//!.*Macro.*F[0-9]{1,2}");
+    QRegularExpression re("^//!.*Macro.*F[0-9]{1,2}");
     return get().split("\n").filter(re).replaceInStrings("//! ", "").join("\n");
 }

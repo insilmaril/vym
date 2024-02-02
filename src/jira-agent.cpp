@@ -90,7 +90,8 @@ bool JiraAgent::setBranch(BranchItem *bi)
 bool JiraAgent::setTicket(const QString &id)
 {
     // Find ID part in parameter:
-    QRegExp re("(\\w+[-|\\s]\\d+)");
+    QRegularExpression re("(\\w+[-|\\s]\\d+)");
+    /* FIXME-1 Qt6 indexIn and cap
     if (re.indexIn(id) < 0) {
         qWarning() << "JiraAgent::setTicket invalid ID: " << id;
         abortJob = true;
@@ -98,6 +99,7 @@ bool JiraAgent::setTicket(const QString &id)
     }
 
     ticketID = re.cap(1);
+    */
     ticketID.replace(" ", "-");
 
     bool foundPattern = false;

@@ -1,13 +1,13 @@
 #include "xmlobj.h"
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 
 // returns masked '<' '>' '&'  '"'
 QString quoteMeta(const QString &s)
 {
     QString r = s;
-    QRegExp rx("&(?!amp;)");
+    QRegularExpression rx("&(?!amp;)");
     r.replace(rx, "&amp;");
     rx.setPattern(">");
     r.replace(rx, "&gt;");
@@ -23,7 +23,7 @@ QString quoteMeta(const QString &s)
 QString unquoteMeta(const QString &s)
 {
     QString r = s;
-    QRegExp rx("&amp;)");
+    QRegularExpression rx("&amp;)");
     r.replace(rx, "&");
     rx.setPattern("&gt;");
     r.replace(rx, ">");
@@ -40,7 +40,7 @@ QString quoteQuotes(const QString &s)
 {
     QString r = s;
 
-    QRegExp rx("\"");
+    QRegularExpression rx("\"");
     r.replace(rx, "\\\"");
 
     rx.setPattern("\n");
@@ -53,7 +53,7 @@ QString unquoteQuotes(const QString &s)
 {
     QString r = s;
 
-    QRegExp rx("\\\\\"");
+    QRegularExpression rx("\\\\\"");
     r.replace(rx, "\"");
 
     rx.setPattern("\\\\n");

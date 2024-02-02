@@ -121,7 +121,7 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
 
     a = new QAction("Add upper branch to selection", this);
-    a->setShortcut(Qt::Key_Up + Qt::SHIFT);
+    a->setShortcut(Qt::Key_Up | Qt::SHIFT);
     a->setShortcutContext(Qt::WidgetShortcut);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorUpToggleSelection()));
@@ -133,7 +133,7 @@ MapEditor::MapEditor(VymModel *vm)
     connect(a, SIGNAL(triggered()), this, SLOT(cursorDown()));
 
     a = new QAction("Add lower branch to selection", this);
-    a->setShortcut(Qt::Key_Down + Qt::SHIFT);
+    a->setShortcut(Qt::Key_Down | Qt::SHIFT);
     a->setShortcutContext(Qt::WidgetShortcut);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorDownToggleSelection()));
@@ -1482,7 +1482,7 @@ void MapEditor::editHeadingFinished()
     } else {
         lineEdit->clearFocus();
         QString s = lineEdit->text();
-        s.replace(QRegExp("\\n"), " "); // Don't paste newline chars
+        s.replace(QRegularExpression("\\n"), " "); // Don't paste newline chars
         if (s.length() == 0)
             s = " "; // Don't allow empty lines, which would screw up drawing
         model->setHeadingPlainText(s);
@@ -1574,7 +1574,7 @@ void MapEditor::keyPressEvent(QKeyEvent *e)
             setCursor(Qt::PointingHandCursor);
             break;
         case Main::ModModeMoveView:
-            setCursor(QPixmap(":/mode-move-view.png"));
+            // FIXME-1 Qt6 setCursor(QPixmap(":/mode-move-view.png"));
             break;
         default:
             setCursor(Qt::ArrowCursor);
@@ -1609,7 +1609,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
     }
 
     // Check if we need to reset zoomFactor for middle button + Ctrl
-    if (e->button() == Qt::MidButton && e->modifiers() & Qt::ControlModifier) {
+    if (e->button() == Qt::MiddleButton && e->modifiers() & Qt::ControlModifier) {
         setZoomFactorTarget(1);
         setRotationTarget(0);
         return;
@@ -1765,7 +1765,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
             //
             // (On Mac OS X this won't work, but we still have
             // a button in the toolbar)
-            if (e->button() == Qt::MidButton)
+            if (e->button() == Qt::MiddleButton)
                 model->toggleScroll();
     } else {
         // No ti_found, we are on the scene itself

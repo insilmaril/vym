@@ -12,8 +12,10 @@ set(QtComponents
     LinguistTools
     Network
     PrintSupport
+    Qml
     #    Script
     Svg
+    SvgWidgets
     Widgets
     Xml
 )
@@ -21,8 +23,10 @@ set(QtComponents
 set(QtLibraries
     Qt6::Network
     Qt6::PrintSupport
+    Qt6::Qml
     #    Qt6::Script
     Qt6::Svg
+    Qt6::SvgWidgets
     Qt6::Widgets
     Qt6::Xml
 )
