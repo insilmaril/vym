@@ -7410,34 +7410,26 @@ bool Main::downloadsEnabled(bool userTriggered)
                    "software tool."
                    "</ul>"
                    "Please allow vym to check for updates :-)");
-            QMessageBox mb(vymName, infotext, QMessageBox::Information,
-                           QMessageBox::Yes | QMessageBox::Default,
-                           QMessageBox::No | QMessageBox::Escape,
-                           QMessageBox::NoButton);
-
-            mb.setButtonText(QMessageBox::Yes, tr("Allow"));
-            mb.setButtonText(QMessageBox::No, tr("Do not allow"));
-            switch (mb.exec()) {
-            case QMessageBox::Yes: {
+            QMessageBox mb(QMessageBox::Information, vymName, infotext);
+            mb.addButton(tr("Allow"), QMessageBox::AcceptRole);
+            mb.addButton(tr("Do not allow"), QMessageBox::RejectRole);
+            mb.exec();
+            if (mb.result() == QMessageBox::AcceptRole) {
                 result = true;
                 QMessageBox msgBox;
                 msgBox.setText(tr("Thank you for enabling downloads!"));
                 msgBox.setStandardButtons(QMessageBox::Close);
                 msgBox.setIconPixmap(QPixmap(":/flag-face-smile.svg"));
                 msgBox.exec();
-                break;
-                                   }
-            default:
+            } else {
                 result = false;
                 QMessageBox msgBox;
                 msgBox.setText(tr("That's ok, though I would be happy to see many users working with vym and also on which platforms."));
                 msgBox.setStandardButtons(QMessageBox::Close);
                 msgBox.setIconPixmap(QPixmap(":/flag-face-sad.svg"));
                 msgBox.exec();
-                break;
             }
-        }
-        else
+        } else
             result = false;
         actionSettingsToggleDownloads->setChecked(result);
         settings.setValue("/downloads/enabled", result);
