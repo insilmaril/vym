@@ -6948,7 +6948,7 @@ QVariant Main::runScript(const QString &script)
 
     if (debug) {
         qDebug() << "MainWindow::runScript finished:";
-        // FIXME-0 Qt6 qDebug() << "   hasException: " << scriptEngine.hasUncaughtException();
+        qDebug() << "        isError: " << result.isError();
         qDebug() << "         result: "
                  << result.toString(); // not used so far...
         qDebug()
@@ -6956,19 +6956,18 @@ QVariant Main::runScript(const QString &script)
             << scriptEngine.globalObject().property("lastResult").toVariant();
     }
 
-    /* FIXME-0 Qt6 if (scriptEngine.hasUncaughtException()) {
+    if (result.isError()) {
         // Warnings, in case that output window is not visible...
         statusMessage("Script execution failed");
-        qWarning() << "Script execution failed";
-
-        int line = scriptEngine.uncaughtExceptionLineNumber();
+        int lineNumber = result.property("lineNumber").toInt();
+        qWarning() << "Script execution failed"
+            << lineNumber
+            << ":" << result.toString();
         scriptOutput->append(QString("uncaught exception at line %1: %2")
-                                 .arg(line)
-                                 .arg(result.toString()));
+                                 .arg(lineNumber).arg(result.toString()));
     }
     else
         return scriptEngine.globalObject().property("lastResult").toVariant();
-    */
 
     return QVariant("");
 }
