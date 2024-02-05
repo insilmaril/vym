@@ -48,7 +48,6 @@ TextEditor::TextEditor()
     e->installEventFilter(this);
     connect(e, SIGNAL(textChanged()), this, SLOT(editorChanged()));
     setCentralWidget(e);
-    statusBar()->showMessage(tr("Ready", "Statusbar message"), statusbarTime);
 
     connect(e, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this,
             SLOT(formatChanged(const QTextCharFormat &)));
@@ -208,16 +207,14 @@ void TextEditor::setFilename(const QString &fn)
     if (state == filledEditor) {
         if (fn.isEmpty()) {
             filename = "";
-            statusBar()->showMessage(
-                tr("No filename available for this note.", "Statusbar message"),
-                statusbarTime);
+            mainWindow->statusMessage(
+                tr("No filename available for this note.", "Statusbar message"));
         }
         else {
             filename = fn;
-            statusBar()->showMessage(
+            mainWindow->statusMessage(
                 tr(QString("Current filename is %1").arg(filename).toUtf8(),
-                   "Statusbar message"),
-                statusbarTime);
+                   "Statusbar message"));
         }
     }
 }
@@ -449,8 +446,8 @@ void TextEditor::setupFormatActions()
     fontToolBar->addWidget(comboFont);
     QFontDatabase fontDB;
     comboFont->insertItems(0, fontDB.families());
-    connect(comboFont, SIGNAL(activated(const QString &)), this,
-            SLOT(textFamily(const QString &)));
+//    connect(comboFont, SIGNAL(activated(const QString &)), this,  // FIXME-0 no signal
+//            SLOT(textFamily(const QString &)));
 
     comboSize = new QComboBox;
     fontToolBar->addWidget(comboSize);
@@ -462,8 +459,8 @@ void TextEditor::setupFormatActions()
         ++it; // increment i before using it
         comboSize->insertItem(i, QString::number(*it));
     }
-    connect(comboSize, SIGNAL(activated(const QString &)), this,
-            SLOT(textSize(const QString &)));
+//    connect(comboSize, SIGNAL(activated(const QString &)), this,  // FIXME-0 no signal
+//            SLOT(textSize(const QString &)));
 
     formatMenu->addSeparator();
 
@@ -602,17 +599,14 @@ void TextEditor::textLoad()
 {
     if (state != inactiveEditor) {
         if (!isEmpty()) {
-            QMessageBox mb(vymName + " - " + tr("Note Editor"),
-                           "Loading will overwrite the existing note",
-                           QMessageBox::Warning,
-                           QMessageBox::Yes | QMessageBox::Default,
-                           QMessageBox::Cancel, 0);
-            mb.setButtonText(QMessageBox::Yes, "Load note");
-            switch (mb.exec()) {
-            case QMessageBox::Cancel:
-                return;
-                break;
-            }
+            QMessageBox mb(
+                   QMessageBox::Warning,
+                   vymName + " - " + tr("Note Editor"),
+                   "Loading will overwrite the existing note");
+            QPushButton *overwriteButton = mb.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
+            mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+            mb.exec();
+            if (mb.clickedButton() != overwriteButton) return;
         }
         // Load note
         QFileDialog *fd = new QFileDialog(this);
@@ -785,24 +779,19 @@ void TextEditor::textSaveAs()
         QFile file(fn);
         if (file.exists()) {
             QMessageBox mb(
+                QMessageBox::Warning,
                 vymName,
                 tr("The file %1\nexists already.\nDo you want to overwrite it?",
-                   "dialog 'save note as'")
-                    .arg(fn),
-                QMessageBox::Warning, QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::Cancel | QMessageBox::Escape, Qt::NoButton);
-            mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-            mb.setButtonText(QMessageBox::No, tr("Cancel"));
-            switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save
-                filename = fn;
-                textSave();
-                return;
-            case QMessageBox::Cancel:
-                // do nothing
-                break;
-            }
+                   "dialog 'save note as'").arg(fn));
+            QPushButton *overwriteButton = mb.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
+            mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+            mb.exec();
+            if (mb.clickedButton() != overwriteButton) return;
+
+            // save
+            filename = fn;
+            textSave();
+            return;
         }
         else {
             filename = fn;
@@ -810,9 +799,8 @@ void TextEditor::textSaveAs()
             return;
         }
     }
-    statusBar()->showMessage(
-        tr("Couldn't export note ", "dialog 'save note as'") + fn,
-        statusbarTime);
+    mainWindow->statusMessage(
+        tr("Couldn't export note ", "dialog 'save note as'") + fn);
 }
 
 void TextEditor::textSave()
@@ -825,8 +813,7 @@ void TextEditor::textSave()
     QString text = e->toHtml(); // FIXME-4 or plaintext? check...
     QFile f(filename);
     if (!f.open(QIODevice::WriteOnly)) {
-        statusBar()->showMessage(QString("Could not write to %1").arg(filename),
-                                 statusbarTime);
+        mainWindow->statusMessage(QString("Could not write to %1").arg(filename));
         return;
     }
 
@@ -836,8 +823,7 @@ void TextEditor::textSave()
 
     e->document()->setModified(false);
 
-    statusBar()->showMessage(QString("Note exported as %1").arg(filename),
-                             statusbarTime);
+    mainWindow->statusMessage(QString("Note exported as %1").arg(filename));
 }
 
 void TextEditor::textExportAsASCII()
@@ -854,36 +840,21 @@ void TextEditor::textExportAsASCII()
     QString caption = tr("Export Note to single file (ASCII)");
     fn = QFileDialog::getSaveFileName(
         this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)");
-    int ret = -1;
 
     if (!fn.isEmpty()) {
         QFile file(fn);
-        if (file.exists()) {
-            QMessageBox mb(
-                vymName,
-                tr("The file %1\nexists already.\nDo you want to overwrite it?",
-                   "dialog 'save note as'")
-                    .arg(fn),
-                QMessageBox::Warning, QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::Cancel | QMessageBox::Escape, Qt::NoButton);
-            mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-            mb.setButtonText(QMessageBox::No, tr("Cancel"));
-            ret = mb.exec();
-        }
-        if (ret == QMessageBox::Cancel)
-            return;
 
-        // save
+        // Already tested in QFileDialog, if we may overwrite in case file exists already
+
         if (!file.open(QIODevice::WriteOnly))
-            statusBar()->showMessage(
-                QString("Could not write to %1").arg(filename), statusbarTime);
+            mainWindow->statusMessage(
+                QString("Could not write to %1").arg(filename));
         else {
             QTextStream t(&file);
             t << getVymText().getTextASCII();
             file.close();
 
-            statusBar()->showMessage(QString("Note exported as %1").arg(fn),
-                                     statusbarTime);
+            mainWindow->statusMessage(QString("Note exported as %1").arg(fn));
         }
     }
 }

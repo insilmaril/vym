@@ -3865,28 +3865,19 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             if (view(i)->getModel()->getFilePath() == fn) {
                 // Already there, ask for confirmation
                 QMessageBox mb(
+                    QMessageBox::Warning,
                     vymName,
                     tr("The map %1\nis already opened."
                        "Opening the same map in multiple editors may lead \n"
                        "to confusion when finishing working with vym."
-                       "Do you want to")
-                        .arg(fn),
-                    QMessageBox::Warning,
-                    QMessageBox::Yes | QMessageBox::Default,
-                    QMessageBox::Cancel | QMessageBox::Escape,
-                    QMessageBox::NoButton);
-                mb.setButtonText(QMessageBox::Yes, tr("Open anyway"));
-                mb.setButtonText(QMessageBox::Cancel, tr("Cancel"));
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
-                    // end loop and load anyway
-                    i = tabWidget->count();
-                    break;
-                case QMessageBox::Cancel:
-                    // do nothing
+                       "Do you want to").arg(fn));
+                QPushButton *openButton = mb.addButton(tr("Open anyway"), QMessageBox::AcceptRole);
+                mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+                mb.exec();
+                if (mb.clickedButton() != openButton)
                     return File::Aborted;
-                    break;
-                }
+
+                i = tabWidget->count();
             }
             i++;
         }
@@ -3940,41 +3931,32 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             }
 
             if (lmode == File::NewMap) {
-                QMessageBox mb(vymName,
-                               tr("This map does not exist:\n  %1\nDo you want "
-                                  "to create a new one?")
-                                   .arg(fn),
-                               QMessageBox::Question, QMessageBox::Yes,
-                               QMessageBox::Cancel | QMessageBox::Default,
-                               QMessageBox::NoButton);
+                QMessageBox mb(
+                       QMessageBox::Warning,
+                       vymName,
+                       tr("This map does not exist:\n  %1\nDo you want "
+                          "to create a new one?").arg(fn));
 
-                mb.setButtonText(QMessageBox::Yes, tr("Create"));
-                mb.setButtonText(QMessageBox::No, tr("Cancel"));
+                QPushButton *createButton = mb.addButton(tr("Create"), QMessageBox::AcceptRole);
+                mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
 
-                vm = currentMapEditor()->getModel();
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
+                mb.exec();
+                if (mb.clickedButton() == createButton) {
                     // Create new map
+                    vm = currentMapEditor()->getModel();
                     vm->setFilePath(fn);
                     updateTabName(vm);
                     statusBar()->showMessage("Created " + fn, statusbarTime);
                     return File::Success;
-
-                case QMessageBox::Cancel:
-                    // don't create new map
-                    statusBar()->showMessage("Loading " + fn + " failed!",
-                                             statusbarTime);
-                    int cur = tabWidget->currentIndex();
-                    tabWidget->setCurrentIndex(tabWidget->count() - 1);
-                    fileCloseMap();
-                    tabWidget->setCurrentIndex(cur);
-                    return File::Aborted;
                 }
 
-                // ImportAdd or ImportReplace
-                qWarning() << QString("Warning:  Could not import %1 into %2")
-                                  .arg(fn)
-                                  .arg(vm->getFilePath());
+                // don't create new map
+                statusBar()->showMessage("Loading " + fn + " failed!",
+                                         statusbarTime);
+                int cur = tabWidget->currentIndex();
+                tabWidget->setCurrentIndex(tabWidget->count() - 1);
+                fileCloseMap();
+                tabWidget->setCurrentIndex(cur);
                 return File::Aborted;
             }
         }
@@ -4211,23 +4193,13 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
             }
 
             QMessageBox mb(
-                vymName,
-                tr("The file %1\nexists already. Do you want to").arg(fn),
                 QMessageBox::Warning,
-                QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::Cancel | QMessageBox::Escape,
-                QMessageBox::NoButton);
-            mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-            mb.setButtonText(QMessageBox::Cancel, tr("Cancel"));
-            switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save
-                break;
-            case QMessageBox::Cancel:
-                // do nothing
-                return;
-                break;
-            }
+                vymName,
+                tr("The file %1\nexists already. Do you want to").arg(fn));
+            QPushButton *overwriteButton = mb.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
+            mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+            mb.exec();
+            if (mb.clickedButton() != overwriteButton) return;
             lastMapDir.setPath(fn.left(fn.lastIndexOf("/")));
         }
         else {
@@ -4302,23 +4274,17 @@ void Main::fileSaveAsDefault()
 
                 // Confirm overwrite of existing file
                 QMessageBox mb(
-                    vymName,
-                    tr("The file %1\nexists already. Do you want to").arg(fn),
                     QMessageBox::Warning,
-                    QMessageBox::Yes | QMessageBox::Default,
-                    QMessageBox::Cancel | QMessageBox::Escape,
-                    QMessageBox::NoButton);
-                mb.setButtonText(QMessageBox::Yes,
-                                 tr("Overwrite as new default map"));
-                mb.setButtonText(QMessageBox::Cancel, tr("Cancel"));
+                    vymName,
+                    tr("The file %1\nexists already. Do you want to").arg(fn));
+                mb.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+                mb.setDefaultButton(QMessageBox::Save);
                 switch (mb.exec()) {
-                case QMessageBox::Yes:
-                    // save
-                    break;
-                case QMessageBox::Cancel:
-                    // do nothing
-                    return;
-                    break;
+                    case QMessageBox::Save:
+                        // save
+                        break;
+                    case QMessageBox::Cancel:
+                        return;
                 }
             }
 
@@ -4653,28 +4619,24 @@ bool Main::fileCloseMap(int i)
     if (m) {
         if (m->hasChanged()) {
             QMessageBox mb(
+                QMessageBox::Warning,
                 vymName,
                 tr("The map %1 has been modified but not saved yet. Do you "
-                   "want to")
-                    .arg(m->getFileName()),
-                QMessageBox::Warning, QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::No, QMessageBox::Cancel | QMessageBox::Escape);
-            mb.setButtonText(QMessageBox::Yes,
-                             tr("Save modified map before closing it"));
-            mb.setButtonText(QMessageBox::No, tr("Discard changes"));
+                   "want to").arg(m->getFileName()));
+            mb.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+            mb.setDefaultButton(QMessageBox::Save);
             mb.setModal(true);
-            mb.show();
             switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save and close
-                fileSave(m, File::CompleteMap);
-                break;
-            case QMessageBox::No:
-                // close  without saving
-                break;
-            case QMessageBox::Cancel:
-                // do nothing
-                return true;
+                case QMessageBox::Save:
+                    // save and close
+                    fileSave(m, File::CompleteMap);
+                    break;
+                case QMessageBox::Discard:
+                    // close  without saving
+                    break;
+                case QMessageBox::Cancel:
+                    // do nothing
+                    return true;
             }
         }
 
