@@ -3474,18 +3474,18 @@ void Main::setupMacros()
     macroActions[35]->setShortcut(Qt::Key_F12 | Qt::CTRL);
 
     // Shift + Ctrl Modifier
-    macroActions[36]->setShortcut(Qt::Key_F1 | Qt::CTRL | Qt::SHIFT);
-    macroActions[37]->setShortcut(Qt::Key_F2 | Qt::CTRL | Qt::SHIFT);
-    macroActions[38]->setShortcut(Qt::Key_F3 | Qt::CTRL | Qt::SHIFT);
-    macroActions[39]->setShortcut(Qt::Key_F4 | Qt::CTRL | Qt::SHIFT);
-    macroActions[40]->setShortcut(Qt::Key_F5 | Qt::CTRL | Qt::SHIFT);
-    macroActions[41]->setShortcut(Qt::Key_F6 | Qt::CTRL | Qt::SHIFT);
-    macroActions[42]->setShortcut(Qt::Key_F7 | Qt::CTRL | Qt::SHIFT);
-    macroActions[43]->setShortcut(Qt::Key_F8 | Qt::CTRL | Qt::SHIFT);
-    macroActions[44]->setShortcut(Qt::Key_F9 | Qt::CTRL | Qt::SHIFT);
-    macroActions[45]->setShortcut(Qt::Key_F10 | Qt::CTRL | Qt::SHIFT);
-    macroActions[46]->setShortcut(Qt::Key_F11 | Qt::CTRL | Qt::SHIFT);
-    macroActions[47]->setShortcut(Qt::Key_F12 | Qt::CTRL | Qt::SHIFT);
+    macroActions[36]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F1);
+    macroActions[37]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F2);
+    macroActions[38]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F3);
+    macroActions[39]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F4);
+    macroActions[40]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F5);
+    macroActions[41]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F6);
+    macroActions[42]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F7);
+    macroActions[43]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F8);
+    macroActions[44]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F9);
+    macroActions[45]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F10);
+    macroActions[46]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F11);
+    macroActions[47]->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F12);
 }
 
 void Main::setupToolbars()
