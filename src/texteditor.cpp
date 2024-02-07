@@ -1141,10 +1141,9 @@ void TextEditor::updateActions()
     }
 }
 
-void TextEditor::setState(EditorState s) // FIXME-2 called 12x when reselecting once in ME
-                                         // 5 alone for HeadingEditor
+void TextEditor::setState(EditorState s)
 {
-    //qDebug() << "TE::setState" << s << editorName;
+    // qDebug() << "TE::setState" << s << editorName;
     QPalette p = qApp->palette();
     QColor baseColor;
     state = s;

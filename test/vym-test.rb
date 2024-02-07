@@ -295,7 +295,7 @@ def test_copy_paste
 
   map.copy
   map.paste
-  map.selectLatestAdded     #FIXME-3 not set for ImportAdd, which is used by paste
+  map.selectLatestAdded     #FIXME-5 not set for ImportAdd, which is used by paste
   s = map.getSelectionString
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
 
@@ -513,8 +513,8 @@ def test_export
   map.exportMap("Last")
   expect "exportLast: XML file exists", File.exists?(filepath), true
 
-  #OpenOffice Impress //FIXME-3
-  #Taskjuggler //FIXME-3
+  #OpenOffice Impress //FIXME-5
+  #Taskjuggler //FIXME-5
 
   close_current_map
 end
@@ -683,7 +683,7 @@ def test_moving_parts
   #map = init_map( vym )
   map.select @main_A
   err = map.relinkTo @branch_0Aa,0,0,0
-  #FIXME-3 disabled, error not supported atm expect_error "RelinkTo myself fails.", err
+  #FIXME-5 disabled, error not supported atm expect_error "RelinkTo myself fails.", err
 
   #map = init_map( vym )
   map.select @branch_0Aa
@@ -808,7 +808,7 @@ def test_notes
   map.setNotePlainText("")
   expect "setNotePlainText(\"\") deletes note", map.hasNote, false
 
-  # Compatibility with version < 2.5.0  # FIXME-3 missing
+  # Compatibility with notes from version < 2.5.0  # FIXME-3 missing
 
   close_current_map
 end
@@ -929,7 +929,6 @@ def test_user_flags
   flagName = "userflag-vym"
   expect "Has active flag '#{flagName}'", map.hasActiveFlag(flagName), true
 
-  # FIXME-3 cont here
   close_current_map
 end
 
@@ -1184,7 +1183,7 @@ def test_load_legacy_maps
   close_current_map
 
   map = init_map "maps/legacy/xlinks.xml"
-  # FIXME-3 add test: xlinks in subitems of branches (pre 1.13.2)
+  # FIXME-5 add test: xlinks in subitems of branches (pre 1.13.2)
   map.select @main_A
   expect "<xlink> within <branch> is read", map.xlinkCount, 1
 

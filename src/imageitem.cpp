@@ -14,7 +14,7 @@ bool isImage(const QString &fname)
     return fname.contains(rx);
 }
 
-ImageItem::ImageItem():MapItem(nullptr) // FIXME-2 MapItem should no longer be needed
+ImageItem::ImageItem():MapItem(nullptr)
 {
     //qDebug() << "Constr ImageItem " << this;
     init();

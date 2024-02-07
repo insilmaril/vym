@@ -49,7 +49,7 @@ MapEditor::MapEditor(VymModel *vm)
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
     mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
-    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-2 Avoiding crashes...
+    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-3 Avoiding crashes...
                                                             // Alternatively call removeFromIndex() in destructor
                                                             // or maybe also prepareGeometryChange()
 
@@ -980,7 +980,7 @@ TreeItem *MapEditor::findMapItem(
             return found;
 
         if (findNearCenter) {
-            // Try to find nearest MapCenter   // FIXME-2 or branch with floating layout.
+            // Try to find nearest MapCenter   // FIXME-3 or branch with floating layout.
                                                // Currently only MapCenters are searched
             Container *hc = bi->getBranchContainer()->getHeadingContainer();
             QPointF q = hc->mapToScene(hc->center());

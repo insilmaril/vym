@@ -420,7 +420,7 @@ bool VymModel::parseVymText(const QString &s)
         repositionBlocked = true;
         saveStateBlocked = true;
 
-        // XML-FIXME-2 VymModel::parseVymText Workaround to pass string to QXmlStreamreader
+        // XML-FIXME-3 VymModel::parseVymText Workaround to pass string to QXmlStreamreader
         // write string to disk, so that it can be used with QIODevice of
         // QXmlStreamReader:VymReader 
         //
@@ -3271,7 +3271,7 @@ QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsorted
     return sortedList;
 }
 
-void VymModel::sortChildren(bool inverse)   // FIXME-2 save only once, but not in relinking
+void VymModel::sortChildren(bool inverse)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
 
@@ -3706,7 +3706,7 @@ BranchItem *VymModel::addNewBranchBefore()
             // Move selection to new branch
             relinkBranch(selbi, newbi, 0);
 
-            // Use color of child instead of parent // FIXME-2 should be done via style
+            // Use color of child instead of parent // FIXME-2 should be done via something like VymModel::updateStyle
             //newbi->setHeadingColor(selbi->getHeadingColor());
             emitDataChanged(newbi);
         }
@@ -4508,7 +4508,7 @@ void VymModel::editHeading2URL()
         setURL(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
+void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
                                          // if jiraClientAvail is set correctly
 {
     if (!JiraAgent::available()) {
@@ -4646,7 +4646,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
 }
 
 
-void VymModel::setHeadingConfluencePageName()   // FIXME-2 always asks for Confluence credentials when adding any URL
+void VymModel::setHeadingConfluencePageName()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -5485,7 +5485,7 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     updateActions();
 }
 
-void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 saveState missing
+void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 saveState missing. No MapDesign yet.
 {
     mapDesignInt->setLinkColorHint(hint);
 
@@ -5577,7 +5577,7 @@ QString VymModel::backgroundImageName()
     return mapDesignInt->backgroundImageName();
 }
 
-void VymModel::setDefXLinkPen(const QPen &p)    // FIXME-2 used? saveState?
+void VymModel::setDefXLinkPen(const QPen &p)
 {
     mapDesignInt->setDefXLinkPen(p);
 }
@@ -6040,7 +6040,7 @@ bool VymModel::selectToggle(TreeItem *ti)
 {
     if (ti) {
         selModel->select(index(ti), QItemSelectionModel::Toggle);
-        // appendSelectionToHistory();	// FIXME-2 selection history not implemented yet
+        // appendSelectionToHistory();	// FIXME-3 selection history not implemented yet
         // for multiselections
         lastToggledUuid = ti->getUuid();
         return true;
@@ -6053,7 +6053,7 @@ bool VymModel::selectToggle(const uint &id)
     TreeItem *ti = findID(id);
     if (ti) {
         selModel->select(index(ti), QItemSelectionModel::Toggle);
-        // appendSelectionToHistory();	// FIXME-2 selection history not implemented yet
+        // appendSelectionToHistory();	// FIXME-3 selection history not implemented yet
         // for multiselections
         lastToggledUuid = ti->getUuid();
         return true;

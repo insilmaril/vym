@@ -177,7 +177,7 @@ void VymView::updateColors()
 
     s += "selection-background-color: " + mapDesign->selectionBrush().color().name() + ";" + "background-color: " + mapDesign->backgroundColor().name();
 
-    // FIXME-2 maybe use gradient with pen/brush colors for selection? //
+    // FIXME-3 maybe use gradient with pen/brush colors for selection? //
     // https://stackoverflow.com/questions/34187874/setting-qtreeview-selected-item-style-in-qss
     // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
     /*
