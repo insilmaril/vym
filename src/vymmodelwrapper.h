@@ -4,9 +4,7 @@
 #include "scripting.h"
 #include <QColor>
 #include <QObject>
-// FIXME-0 #include <QScriptContext>
 #include <QJSValue>
-// FIXME-0 #include <QScriptable>
 #include <QVariant>
 
 class BranchItem;
@@ -17,9 +15,9 @@ class VymModelWrapper : public VymScriptContext {
   public:
     VymModelWrapper(VymModel *m);
     /*
-    QString setResult( QString r );
-    bool setResult( bool r );
-    int setResult( int r );
+    QString setResult( QString r ); // FIXME-0
+    bool setResult( bool r );       // FIXME-0
+    int setResult( int r );         // FIXME-0
     */
 
   private:
@@ -29,6 +27,7 @@ class VymModelWrapper : public VymScriptContext {
 
   public slots:
     void addBranch();
+    void addBranchAt(int pos);
     void addBranchBefore();
     void addMapCenterAtPos(qreal x, qreal y);
     void addMapInsert(QString filename, int pos, int contentFilter);
@@ -49,7 +48,7 @@ class VymModelWrapper : public VymScriptContext {
     void cycleTask();
     int depth();
     void detach();
-    bool exportMap();
+    bool exportMap(QJSValueList args);
     QString getStringAttribute(const QString &key);
     int getIntAttribute(const QString &key);
     int getBranchIndex();

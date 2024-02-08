@@ -64,23 +64,16 @@ void VymModelWrapper::addBranch()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        if (argumentCount() > 1) {
-            //logErrorOld(context(), QScriptContext::SyntaxError,
-        logErrorNew(
-                     "Too many arguments");
-            return;
-        }
-
-        int pos = -2;
-        if (argumentCount() == 1) {
-            pos = argument(0).toInt();
-        }
-
-        if (!model->addNewBranch(selbi, pos))
-            //logErrorOld(context(), QScriptContext::UnknownError,
-        logErrorNew(
-                     "Couldn't add branch to map");
+        if (!model->addNewBranch(selbi, -2))
+        logErrorNew("Couldn't add branch to map");
     }
+}
+
+void VymModelWrapper::addBranchAt(int pos)
+{
+    BranchItem *selbi = getSelectedBranch();
+    if (!model->addNewBranch(selbi, pos))
+    logErrorNew("Couldn't add branch to map");
 }
 
 void VymModelWrapper::addBranchBefore()
@@ -252,8 +245,9 @@ int VymModelWrapper::depth()
     TreeItem *selti = model->getSelectedItem();
     if (selti)
         return setResult(selti->depth());
-    else
-        return setResult (-2);  // FIXME-2 should throw error
+
+    logErrorNew("Nothing selected"); // FIXME-2 depth() should throw error, test please...
+    return -1;
 }
 
 void VymModelWrapper::detach()
@@ -261,21 +255,22 @@ void VymModelWrapper::detach()
     model->detach();
 }
 
-bool VymModelWrapper::exportMap()
+bool VymModelWrapper::exportMap(QJSValueList args)
 {
+    int argumentsCount = args.count();
+
     bool r = false;
 
-    if (argumentCount() == 0) {
+    if (argumentsCount == 0) {
         //logErrorOld(context(), QScriptContext::SyntaxError,
-        logErrorNew(
-                 "Not enough arguments");
+        logErrorNew( "Not enough arguments");
         return setResult(r);
     }
 
     QString format;
-    format = argument(0).toString();
+    format = args[0].toString();
 
-    if (argumentCount() == 1) {
+    if (argumentsCount == 1) {
         if (format == "Last") {
             model->exportLast();
             r = true;
@@ -289,14 +284,14 @@ bool VymModelWrapper::exportMap()
 
     QString filename;
 
-    filename = argument(1).toString();
+    filename = args[1].toString();
 
     if (format == "AO") {
         model->exportAO(filename, false);
     }
     else if (format == "ASCII") {
         bool listTasks = false;
-        if (argumentCount() == 3 && argument(2).toString() == "true")
+        if (argumentsCount == 3 && args[2].toString() == "true") // FIXME-0 string or boolean? Qt6 
             listTasks = true;
         model->exportASCII(filename, listTasks, false);
     }
@@ -304,16 +299,16 @@ bool VymModelWrapper::exportMap()
         // 0: General export format
         // 1: URL of parent page (required)
         // 2: page title (required)
-        if (argumentCount() < 3) {
+        if (argumentsCount < 3) {
             //logErrorOld(context(), QScriptContext::SyntaxError,
         logErrorNew(
                  QString("Confluence export new page: Only %1 instead of 3 parameters given")
-                 .arg(argumentCount()));
+                 .arg(argumentsCount));
             return setResult(r);
         }
 
-        QString url = argument(2).toString();
-        QString pageName = argument(3).toString();
+        QString url = args[2].toString();
+        QString pageName = args[3].toString();
 
         model->exportConfluence(true, url, pageName, false);
     }
@@ -321,17 +316,17 @@ bool VymModelWrapper::exportMap()
         // 0: General export format
         // 1: URL of  page to be updated
         // 2: page title (optional)
-        if (argumentCount() == 1) {
+        if (argumentsCount == 1) {
             //logErrorOld(context(), QScriptContext::SyntaxError,
         logErrorNew(
                      "URL of new page missing in Confluence export");
             return setResult(r);
         }
-        QString url = argument(1).toString();
+        QString url = args[1].toString();
 
         QString title = "";
-        if (argumentCount() == 3) {
-            title = argument(2).toString();
+        if (argumentsCount == 3) {
+            title = args[2].toString();
         }
 
         model->exportConfluence(false, url, title, false);
@@ -340,21 +335,21 @@ bool VymModelWrapper::exportMap()
         model->exportCSV(filename, false);
     }
     else if (format == "HTML") {
-        if (argumentCount() < 3) {
+        if (argumentsCount < 3) {
             //logErrorOld(context(), QScriptContext::SyntaxError,
         logErrorNew(
                      "Path missing in HTML export");
             return setResult(r);
         }
-        QString dpath = argument(2).toString();
+        QString dpath = args[2].toString();
         model->exportHTML(filename, dpath, false);
     }
     else if (format == "Image") {
         QString imgFormat;
-        if (argumentCount() == 2)
+        if (argumentsCount == 2)
             imgFormat = "PNG";
-        else if (argumentCount() == 3)
-            imgFormat = argument(2).toString();
+        else if (argumentsCount == 3)
+            imgFormat = args[2].toString();
 
         QStringList formats;
         formats << "PNG";
@@ -374,13 +369,13 @@ bool VymModelWrapper::exportMap()
         model->exportImage(filename, false, imgFormat);
     }
     else if (format == "Impress") {
-        if (argumentCount() < 3) {
+        if (argumentsCount < 3) {
             //logErrorOld(context(), QScriptContext::SyntaxError,
         logErrorNew(
                      "Template file  missing in export to Impress");
             return setResult(r);
         }
-        QString templ = argument(2).toString();
+        QString templ = args[2].toString();
         model->exportImpress(filename, templ);
     }
     else if (format == "LaTeX") {
@@ -399,13 +394,13 @@ bool VymModelWrapper::exportMap()
         model->exportSVG(filename, false);
     }
     else if (format == "XML") {
-        if (argumentCount() < 3) {
+        if (argumentsCount < 3) {
             //logErrorOld(context(), QScriptContext::SyntaxError,
         logErrorNew(
                      "path missing in export to Impress");
             return setResult(r);
         }
-        QString dpath = argument(2).toString();
+        QString dpath = args[2].toString();
         model->exportXML(filename, dpath, false);
     }
     else {
@@ -1055,7 +1050,7 @@ bool VymModelWrapper::selectXLinkOtherEnd(int n)
     return setResult(r);
 }
 
-void VymModelWrapper::setAttribute(const QString &key, const QString &value)
+void VymModelWrapper::setAttribute(const QString &key, const QString &value)    // FIXME-3 not implemented yet
 {
 }
 

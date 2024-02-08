@@ -26,8 +26,6 @@ class VymScriptContext : public QObject { // FIXME-0 , protected QScriptable {
     int setResult(int r);
     uint setResult(uint r);
     qreal setResult(qreal r);
-    int argumentCount();
-    QJSValue  argument(int index);
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -37,6 +35,7 @@ class VymWrapper : public VymScriptContext {
     VymWrapper();
 
   public slots:
+    void print(const QString &s);
     void clearConsole();
     bool isConfluenceAgentAvailable();
     QObject *currentMap();

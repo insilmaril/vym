@@ -257,7 +257,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                    QString command = QString("vym.currentMap().exportMap([\"ConfluenceUpdatePage\",\"%1\"])")
                         .arg(pageURL);
                     QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"")
                         .arg(pageObj["title"].toString()).arg(pageURL);
@@ -331,7 +331,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                    QString command = QString("vym.currentMap().exportMap([\"ConfluenceUpdatePage\",\"%1\"])")
                         .arg(pageURL);
                     QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString())
                         .arg(pageURL);

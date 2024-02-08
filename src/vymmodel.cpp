@@ -3657,7 +3657,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
 
         if (newbi) {
             saveState(undosel, "remove ()", redosel,
-                      QString("addBranch (%1)").arg(pos),
+                      QString("addBranchAt (%1)").arg(pos),
                       QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
@@ -5248,6 +5248,14 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
 {
     command =
         settings.localValue(filePath, "/export/last/command", "").toString();
+    QRegularExpression re("exportMap\\((\".*)\\)");
+    QRegularExpressionMatch match = re.match(command);
+    if (match.hasMatch()) {
+        QString matched = match.captured(1); // matched == "23 def"
+        command = QString("vym.currentMap().exportMap([%1]);").arg(match.captured(1));
+        settings.setLocalValue(filePath, "/export/last/command", command);
+        qDebug() << "Rewriting last export command to version " << vymVersion << " format: " << command;
+    }
 
     description = settings.localValue(filePath, "/export/last/description", "")
                       .toString();

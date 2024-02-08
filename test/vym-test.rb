@@ -196,8 +196,8 @@ def test_adding_branches
   map.select @main_A
   n = map.branchCount.to_i
   map.select @branch_0Aa
-  map.addBranch( -3 )
-  map.addBranch( -1 )
+  map.addBranchAt( -3 )
+  map.addBranchAt( -1 )
   map.select @main_A
   expect "addBranchAbove/Below", map.branchCount.to_i, n + 2
 

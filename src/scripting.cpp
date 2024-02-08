@@ -30,7 +30,7 @@ void logErrorNew(const QString &text)
 ///////////////////////////////////////////////////////////////////////////
 VymScriptContext::VymScriptContext() {}
 
-QString VymScriptContext::setResult(const QString &r)
+QString VymScriptContext::setResult(const QString &r)   // FIXME-0 Qt6 setResult working?
 {
     // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
     return r;
@@ -60,18 +60,14 @@ qreal VymScriptContext::setResult(qreal r)
     return r;
 }
 
-int VymScriptContext::argumentCount()   // FIXME-0 Qt6 placeholder from QScriptable, no longer available
-{
-    return 1;
-}
-
-QJSValue VymScriptContext::argument(int index)   // FIXME-0 Qt6 placeholder from QScriptable, no longer available
-{
-    return QJSValue("Foobar");
-}
-
 ///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper() {}
+
+void VymWrapper::print(const QString &s)
+{
+    qDebug() << __FUNCTION__ << s;
+    mainWindow->scriptPrint(s);
+}
 
 void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 

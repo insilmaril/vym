@@ -543,6 +543,9 @@ QPrinter *Main::setupPrinter()
 void Main::setupAPI()
 {
     Command *c = new Command("addBranch", Command::Branch);
+    modelCommands.append(c);
+
+    c = new Command("addBranchAt", Command::Branch);
     c->addPar(Command::Int, true, "Index of new branch");
     modelCommands.append(c);
 
@@ -6615,7 +6618,7 @@ void Main::updateActions()
 
         // Export last
         QString desc, com, dest;
-        if (m && m->exportLastAvailable(desc, com, dest))
+        if (m && m->exportLastAvailable(desc, com, dest))   // FIXME-4 Only update, when currentModel changes?
             actionFileExportLast->setEnabled(true);
         else {
             actionFileExportLast->setEnabled(false);
@@ -6853,14 +6856,13 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-/* FIXME-0 Qt6 scriptPrint, scriptAbort, scriptStatusMessage
-QJSValue scriptPrint(QScriptContext *context, QScriptEngine *)
+void Main::scriptPrint(const QString &s)
 {
-    scriptOutput->append(context->argument(0).toString());
-    cout << context->argument(0).toString().toStdString() << endl;
-    return QJSValue();
+    scriptOutput->append(s);
+    cout << s.toStdString() << endl;
 }
 
+/* FIXME-0 Qt6 scriptAbort and scriptStatusMessage not ported yet
 QJSValue scriptAbort(QScriptContext *context, QScriptEngine *engine)
 {
     scriptOutput->append("Abort called: " + context->argument(0).toString());

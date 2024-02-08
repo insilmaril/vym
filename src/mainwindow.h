@@ -342,6 +342,7 @@ class Main : public QMainWindow {
     void updateActions();
     ModMode getModMode();
     bool autoSelectNewBranch();
+    void scriptPrint(const QString &);
     QVariant runScript(const QString &);
     QObject *getCurrentModelWrapper();
     bool gotoWindow(const int &n);
