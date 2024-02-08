@@ -684,35 +684,31 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
     // Look, if we should zip the data:
     if (!zipped)
     {
-        QMessageBox mb(vymName,
-                       tr("The map %1\ndid not use the compressed "
-                          "vym file format.\nWriting it uncompressed will also "
-                          "write images \n"
-                          "and flags and thus may overwrite files into the "
-                          "given directory\n\nDo you want to write the map")
-                           .arg(filePath),
-                       QMessageBox::Warning,
-                       QMessageBox::Yes | QMessageBox::Default, QMessageBox::No,
-                       QMessageBox::Cancel | QMessageBox::Escape);
-        mb.setButtonText(QMessageBox::Yes, tr("compressed (vym default)"));
-        mb.setButtonText(
-            QMessageBox::No,
-            tr("uncompressed, potentially overwrite existing data"));
-        mb.setButtonText(QMessageBox::Cancel, tr("Cancel"));
-        switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save compressed (default file format)
-                zipped = true;
-                break;
-            case QMessageBox::No:
-                // save uncompressed
-                zipped = false;
-                break;
-            case QMessageBox::Cancel:
-                // do nothing
-                return File::Aborted;
-                break;
-        }
+        QMessageBox mb(QMessageBox::Warning, vymName,
+           tr("The map %1\ndid not use the compressed "
+              "vym file format.\nWriting it uncompressed will also "
+              "write images \n"
+              "and flags and thus may overwrite files into the "
+              "given directory\n\nDo you want to write the map")
+               .arg(filePath));
+        QPushButton *compressedButton = mb.addButton(
+            tr("compressed (vym default)"),
+            QMessageBox::AcceptRole);
+        QPushButton *uncompressedButton = mb.addButton(
+            tr("uncompressed, potentially overwrite existing data"),
+            QMessageBox::NoRole);
+        QPushButton *cancelButton = mb.addButton(
+            tr("Cancel"),
+            QMessageBox::RejectRole);
+        mb.exec();
+        if (mb.clickedButton() == compressedButton)
+            // save compressed (default file format)
+            zipped = true;
+        else if (mb.clickedButton() == uncompressedButton)
+            zipped = false; // FIXME-4 Filename suffix still could be .xml instead of .vym
+        else 
+            // do nothing
+            return File::Aborted;
     }
 
     // First backup existing file, we
@@ -876,30 +872,27 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
         if (!fn.isEmpty()) {
             lastImageDir.setPath(fn.left(fn.lastIndexOf("/")));
             if (QFile(fn).exists()) {
-                QMessageBox mb(vymName,
-                               tr("The file %1 exists already.\n"
-                                  "Do you want to overwrite it?")
-                                   .arg(fn),
-                               QMessageBox::Warning,
-                               QMessageBox::Yes | QMessageBox::Default,
-                               QMessageBox::Cancel | QMessageBox::Escape,
-                               QMessageBox::NoButton);
-
-                mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-                mb.setButtonText(QMessageBox::No, tr("Cancel"));
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
-                    // save
-                    break;
-                case QMessageBox::Cancel:
-                    // do nothing
+                QMessageBox mb(
+                   QMessageBox::Warning,
+                   vymName,
+                   tr("The file %1 exists already.\n"
+                      "Do you want to overwrite it?")
+                       .arg(fn));
+                mb.addButton(
+                    tr("Overwrite"),
+                    QMessageBox::AcceptRole);
+                mb.addButton(
+                    tr("Cancel"),
+                    QMessageBox::RejectRole);
+                mb.exec();
+                if (mb.result() != QMessageBox::AcceptRole)
                     return;
-                    break;
-                }
             }
             if (!ii->saveImage(fn))
                 QMessageBox::critical(0, tr("Critical Error"),
                                       tr("Couldn't save %1").arg(fn));
+            else
+                mainWindow->statusMessage(tr("Saved %1").arg(fn));
         }
     }
 }
@@ -1168,28 +1161,28 @@ void VymModel::fileChanged()
                 // FIXME-4 VM switch to current mapeditor and finish
                 // lineedits...
                 QMessageBox mb(
+                    QMessageBox::Question,
                     vymName,
                     tr("The file of the map  on disk has changed:\n\n"
                        "   %1\n\nDo you want to reload that map with the new "
                        "file?")
-                        .arg(filePath),
-                    QMessageBox::Question, QMessageBox::Yes,
-                    QMessageBox::Cancel | QMessageBox::Default,
-                    QMessageBox::NoButton);
+                        .arg(filePath));
 
-                mb.setButtonText(QMessageBox::Yes, tr("Reload"));
-                mb.setButtonText(QMessageBox::No, tr("Ignore"));
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
-                    // Reload map
+                mb.addButton(
+                    tr("Reload"),
+                    QMessageBox::AcceptRole);
+                mb.addButton(
+                    tr("Ignore"),
+                    QMessageBox::RejectRole);
+                mb.exec();
+                if (mb.result() == QMessageBox::AcceptRole) {
+                    // Reload map       // FIXME-2 still might warn about existing lockfile!
                     mainWindow->initProgressCounter(1);
                     loadMap(filePath);
                     mainWindow->removeProgressCounter();
-                    break;
-                case QMessageBox::Cancel:
-                    fileChangedTime =
-                        tmod; // allow autosave to overwrite newer file!
-                }
+                } else
+                    // allow autosave to overwrite newer file!
+                    fileChangedTime = tmod;
             }
         }
     }
