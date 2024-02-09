@@ -2150,39 +2150,31 @@ void VymModel::saveNote(const QString &fn)
         qWarning("VymModel::saveNote no branch selected");
 }
 
-void VymModel::findDuplicateURLs() // FIXME-3 needs GUI
+void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing
 {
-    // Generate map containing _all_ URLs and branches
-    QString u;
-    QMultiMap<QString, BranchItem *> map;
+    // Generate multimap containing _all_ URLs and branches
+    QMultiMap<QString, BranchItem *> multimap;
+    QStringList urls;
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        u = cur->getURL();
-        if (!u.isEmpty())
-            map.insert(u, cur);
+        QString u = cur->getURL();
+        if (!u.isEmpty()) {
+            multimap.insert(u, cur);
+            if (!urls.contains(u))
+                urls << u;
+        }
         nextBranch(cur, prev);
     }
 
     // Extract duplicate URLs
-    QMultiMap<QString, BranchItem *>::const_iterator i = map.constBegin();
-    QMultiMap<QString, BranchItem *>::const_iterator firstdup =
-        map.constEnd(); // invalid
-    while (i != map.constEnd()) {
-        if (i != map.constBegin() && i.key() == firstdup.key()) {
-            if (i - 1 == firstdup) {
-                qDebug() << firstdup.key();
-                qDebug() << " - " << firstdup.value() << " - "
-                         << firstdup.value()->getHeading().getText();
-            }
-            qDebug() << " - " << i.value() << " - "
-                     << i.value()->getHeading().getText();
+    foreach (auto u, urls) {
+        if (multimap.values(u).size() > -1) {
+            qDebug() << "URL: " << u;
+            foreach(auto *bi, multimap.values(u))
+                qDebug() << " - " << bi->getHeadingPlain();
         }
-        else
-            firstdup = i;
-
-        ++i;
     }
 }
 
