@@ -156,9 +156,9 @@ void ExportBase::completeExport(QStringList args)
                       .arg(exportName);
 
         foreach (QString arg, args)
-            command += QString(", \"%1\"]").arg(arg);
+            command += QString(", \"%1\"").arg(arg);
 
-        command += ")";
+        command += "])";
     }
 
     model->setExportLastCommand(command);

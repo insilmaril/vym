@@ -291,7 +291,7 @@ bool VymModelWrapper::exportMap(QJSValueList args)
     }
     else if (format == "ASCII") {
         bool listTasks = false;
-        if (argumentsCount == 3 && args[2].toString() == "true") // FIXME-0 string or boolean? Qt6 
+        if (argumentsCount == 3 && args[2].toString() == "true")
             listTasks = true;
         model->exportASCII(filename, listTasks, false);
     }
