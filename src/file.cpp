@@ -83,25 +83,19 @@ bool confirmDirectoryOverwrite(const QDir &dir)
         eList.pop_front(); // remove "." and ".."
 
     if (!eList.isEmpty()) {
-        QMessageBox mb(vymName,
-                       QObject::tr("The directory %1 is not empty.\nDo you "
-                                   "risk to overwrite its contents?",
-                                   "write directory")
-                           .arg(dir.path()),
-                       QMessageBox::Warning, QMessageBox::Yes,
-                       QMessageBox::Cancel | QMessageBox::Default,
-                       QMessageBox::NoButton);
+        QMessageBox mb(
+               QMessageBox::Warning,
+               vymName,
+               QObject::tr("The directory %1 is not empty.\nDo you "
+                           "risk to overwrite its contents?",
+                           "write directory")
+                   .arg(dir.path()));
 
-        mb.setButtonText(QMessageBox::Yes, QObject::tr("Overwrite"));
-        mb.setButtonText(QMessageBox::No, QObject::tr("Cancel"));
-        switch (mb.exec()) {
-        case QMessageBox::Yes:
-            // save
-            return true;
-        case QMessageBox::Cancel:
-            // do nothing
+        mb.addButton(QObject::tr("Overwrite"), QMessageBox::AcceptRole);
+        mb.addButton(QObject::tr("Cancel"), QMessageBox::RejectRole);
+        mb.exec();
+        if (mb.result() != QMessageBox::AcceptRole)
             return false;
-        }
     }
     return true;
 }
