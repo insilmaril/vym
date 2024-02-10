@@ -17,7 +17,7 @@ void logError(QScriptContext *context, QScriptContext::Error error,
 void logErrorNew(const QString &text);
 
 ///////////////////////////////////////////////////////////////////////////
-class VymScriptContext : public QObject { // FIXME-0 , protected QScriptable {
+class VymScriptContext : public QObject {
     Q_OBJECT
   public:
     VymScriptContext();

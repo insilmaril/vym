@@ -1,7 +1,7 @@
 require 'dbus'
 require 'pp'
 
-$debug = false
+$debug = true
 
 class Vym
   def initialize (name)
@@ -87,7 +87,6 @@ class VymMap
 
     # Getting commands for model via DBUS
     #if mapCount() > 0
-      # m = model(1)
       s = @map.listCommands
       puts "VymMap::initialize Retrieving commands via dbus..." if $debug
       @model_commands = s[0].split ","

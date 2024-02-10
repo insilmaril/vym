@@ -14,6 +14,8 @@
 extern Main *mainWindow;
 extern QString vymVersion;
 
+extern QJSEngine *scriptEngine;
+
 ///////////////////////////////////////////////////////////////////////////
 // FIXME-0 Qt6 uncomplete: void logError(QScriptContext *context, QScriptContext::Error error,
 //              const QString &text)
@@ -30,33 +32,58 @@ void logErrorNew(const QString &text)
 ///////////////////////////////////////////////////////////////////////////
 VymScriptContext::VymScriptContext() {}
 
-QString VymScriptContext::setResult(const QString &r)   // FIXME-0 Qt6 setResult working?
+QString VymScriptContext::setResult(const QString &r)
 {
-    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
+    qDebug() << "VymScriptContext::setResult (QString) r=" << r << " this=" << this;
+    if (scriptEngine) {
+        qDebug() << "Setting lastResult...";
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 bool VymScriptContext::setResult(bool r)
 {
-    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
+    qDebug() << "VymScriptContext::setResult (bool) r=" << r << " this=" << this;
+    if (scriptEngine) {
+        qDebug() << "Setting lastResult...";
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 int VymScriptContext::setResult(int r)
 {
-    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
+    qDebug() << "VymScriptContext::setResult (int) r=" << r << " this=" << this;
+    if (scriptEngine) {
+        qDebug() << "Setting lastResult...";
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 uint VymScriptContext::setResult(uint r)
 {
-    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
+    qDebug() << "VymScriptContext::setResult (uint) r=" << r << " this=" << this;
+    if (scriptEngine) {
+        qDebug() << "Setting lastResult...";
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 qreal VymScriptContext::setResult(qreal r)
 {
-    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult", r);
+    qDebug() << "VymScriptContext::setResult (qreal) r=" << r << " this=" << this;
+    if (scriptEngine) {
+        qDebug() << "Setting lastResult...";
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
@@ -99,8 +126,6 @@ bool VymWrapper::loadMap(const QString &filename)
 
 int VymWrapper::mapCount()
 {
-    // FIXME-0 Qt6 context()->engine()->globalObject().setProperty("lastResult",
-    //                                                mainWindow->modelCount());
     return setResult(mainWindow->modelCount());
 }
 
@@ -155,7 +180,10 @@ void VymWrapper::saveFile(
     saveStringToDisk(filename, s);
 }
 
-QString VymWrapper::version() { return setResult(vymVersion); }
+QString VymWrapper::version() {
+    qDebug() << "VymWrapper::version  v=" << vymVersion;
+    return setResult(vymVersion);
+}
 
 // See also http://doc.qt.io/qt-5/qscriptengine.html#newFunction
 Selection::Selection() { modelWrapper = nullptr; }

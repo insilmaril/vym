@@ -14,11 +14,6 @@ class VymModelWrapper : public VymScriptContext {
     Q_OBJECT
   public:
     VymModelWrapper(VymModel *m);
-    /*
-    QString setResult( QString r ); // FIXME-0
-    bool setResult( bool r );       // FIXME-0
-    int setResult( int r );         // FIXME-0
-    */
 
   private:
     BranchItem *getSelectedBranch();

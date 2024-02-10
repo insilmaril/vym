@@ -16,23 +16,6 @@
 ///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m) { model = m; }
 
-/*
-QString VymModelWrapper::setResult( const QString r )
-{
-    context()->engine()->globalObject().setProperty("lastResult", r );
-}
-
-bool VymModelWrapper::setResult( bool r )
-{
-    context()->engine()->globalObject().setProperty("lastResult", r );
-}
-
-int  VymModelWrapper::setResult( int r )
-{
-    context()->engine()->globalObject().setProperty("lastResult", r );
-}
-*/
-
 BranchItem *VymModelWrapper::getSelectedBranch()
 {
     BranchItem *selbi = model->getSelectedBranch();

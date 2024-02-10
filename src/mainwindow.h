@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QPrinter>
 #include <QProgressDialog>
-//#include <QScriptContext>
 #include <QJSEngine>
 #include <QJSValue>
 #include <QTextStream>
@@ -396,8 +395,6 @@ class Main : public QMainWindow {
     qint64 *browserPID;
 
     QStringList imageTypes;
-
-    QJSEngine scriptEngine;
 
     QString prevSelection;
 

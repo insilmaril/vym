@@ -49,17 +49,18 @@ QString jiraPassword;
 QString confluencePassword;
 
 TaskModel *taskModel;
-TaskEditor *taskEditor;
-ScriptEditor *scriptEditor;
-ScriptOutput *scriptOutput;
 HeadingEditor *headingEditor;
 NoteEditor *noteEditor;
 BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow
 Main *mainWindow;
+QJSEngine *scriptEngine;
+ScriptEditor *scriptEditor;
+ScriptOutput *scriptOutput;
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
+TaskEditor *taskEditor;
 
 FlagRowMaster *systemFlagsMaster;
 FlagRowMaster *standardFlagsMaster;

@@ -74,6 +74,7 @@ QPrinter *printer = nullptr;
 extern NoteEditor *noteEditor;
 extern HeadingEditor *headingEditor;
 extern BranchPropertyEditor *branchPropertyEditor;
+extern QJSEngine *scriptEngine;
 extern ScriptEditor *scriptEditor;
 extern ScriptOutput *scriptOutput;
 extern Main *mainWindow;
@@ -296,6 +297,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     connect(findResultWidget, SIGNAL(findPressed(QString, bool)), this,
             SLOT(editFindNext(QString, bool)));
 
+    scriptEngine = new QJSEngine(this);
     scriptEditor = new ScriptEditor(this);
     dw = new QDockWidget(tr("Script Editor", "ScriptEditor"));
     dw->setWidget(scriptEditor);
@@ -6882,25 +6884,27 @@ QVariant Main::runScript(const QString &script)
     /* FIXME-0 Qt6  script commands: print, abort, statusMessage
     scriptEngine.globalObject().setProperty(
         "print", scriptEngine.newFunction(scriptPrint));
+
+        could work new:
+        QJSEngine engine;
+        QJSValue myExt = engine.newQObject(new MyExtension());
+        engine.globalObject().setProperty("sqrt", myExt.property("sqrt"));
+
     scriptEngine.globalObject().setProperty(
         "abort", scriptEngine.newFunction(scriptAbort));
     scriptEngine.globalObject().setProperty(
         "statusMessage", scriptEngine.newFunction(scriptStatusMessage));
     */
 
-    // Create Wrapper object for VymModel
-    // QJSValue val1 = scriptEngine.newQObject( m->getWrapper() );
-    // scriptEngine.globalObject().setProperty("model", val1);
-
     // Create Wrapper object for vym itself (mainwindow)
     VymWrapper vymWrapper;
-    QJSValue val2 = scriptEngine.newQObject(&vymWrapper);
-    scriptEngine.globalObject().setProperty("vym", val2);
+    QJSValue val2 = scriptEngine->newQObject(&vymWrapper);
+    scriptEngine->globalObject().setProperty("vym", val2);
 
     // Create wrapper object for selection
     Selection selection;
-    QJSValue val3 = scriptEngine.newQObject(&selection);
-    scriptEngine.globalObject().setProperty("selection", val3);
+    QJSValue val3 = scriptEngine->newQObject(&selection);
+    scriptEngine->globalObject().setProperty("selection", val3);
 
     if (debug) {
         cout << "MainWindow::runScript starting to execute:" << endl;
@@ -6908,20 +6912,17 @@ QVariant Main::runScript(const QString &script)
     }
 
     // Run script
-    QJSValue result = scriptEngine.evaluate(script);
+    QJSValue result = scriptEngine->evaluate(script);
 
     if (debug) {
         qDebug() << "MainWindow::runScript finished:";
         qDebug() << "        isError: " << result.isError();
-        qDebug() << "         result: "
-                 << result.toString(); // not used so far...
-        qDebug()
-            << "     lastResult: "
-            << scriptEngine.globalObject().property("lastResult").toVariant();
+        qDebug() << "     lastResult: "
+            << scriptEngine->globalObject().property("lastResult").toVariant();
     }
 
     if (result.isError()) {
-        // Warnings, in case that output window is not visible...
+        // Warnings, in case that output window i not visible...
         statusMessage("Script execution failed");
         int lineNumber = result.property("lineNumber").toInt();
         qWarning() << "Script execution failed"
@@ -6931,8 +6932,9 @@ QVariant Main::runScript(const QString &script)
                                  .arg(lineNumber).arg(result.toString()));
     }
     else
-        return scriptEngine.globalObject().property("lastResult").toVariant();
+        return scriptEngine->globalObject().property("lastResult").toVariant();
 
+    qDebug() << "Main::runScript finished.";
     return QVariant("");
 }
 

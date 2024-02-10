@@ -132,7 +132,7 @@ def test_vym
   #@vym.clearConsole
 
   heading "Mainwindow checks:"
-  version = "2.9.512"
+  version = "2.9.518"
   expect_warning_only "Version is #{version}", @vym.version, version
 
   expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
@@ -1302,7 +1302,7 @@ begin
   #test_adding_maps
   #test_attributes
   #test_bugfixes
-  test_copy_paste
+  #test_copy_paste
   #test_delete_parts
   #test_export
   #test_extrainfo
