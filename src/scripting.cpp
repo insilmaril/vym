@@ -34,9 +34,7 @@ VymScriptContext::VymScriptContext() {}
 
 QString VymScriptContext::setResult(const QString &r)
 {
-    qDebug() << "VymScriptContext::setResult (QString) r=" << r << " this=" << this;
     if (scriptEngine) {
-        qDebug() << "Setting lastResult...";
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
@@ -45,9 +43,7 @@ QString VymScriptContext::setResult(const QString &r)
 
 bool VymScriptContext::setResult(bool r)
 {
-    qDebug() << "VymScriptContext::setResult (bool) r=" << r << " this=" << this;
     if (scriptEngine) {
-        qDebug() << "Setting lastResult...";
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
@@ -56,9 +52,7 @@ bool VymScriptContext::setResult(bool r)
 
 int VymScriptContext::setResult(int r)
 {
-    qDebug() << "VymScriptContext::setResult (int) r=" << r << " this=" << this;
     if (scriptEngine) {
-        qDebug() << "Setting lastResult...";
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
@@ -67,9 +61,7 @@ int VymScriptContext::setResult(int r)
 
 uint VymScriptContext::setResult(uint r)
 {
-    qDebug() << "VymScriptContext::setResult (uint) r=" << r << " this=" << this;
     if (scriptEngine) {
-        qDebug() << "Setting lastResult...";
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
@@ -78,9 +70,7 @@ uint VymScriptContext::setResult(uint r)
 
 qreal VymScriptContext::setResult(qreal r)
 {
-    qDebug() << "VymScriptContext::setResult (qreal) r=" << r << " this=" << this;
     if (scriptEngine) {
-        qDebug() << "Setting lastResult...";
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
@@ -92,8 +82,18 @@ VymWrapper::VymWrapper() {}
 
 void VymWrapper::print(const QString &s)
 {
-    qDebug() << __FUNCTION__ << s;
     mainWindow->scriptPrint(s);
+}
+
+void VymWrapper::statusMessage(const QString &s)
+{
+    mainWindow->statusMessage(s);
+}
+
+void VymWrapper::abortScript(const QString &s)
+{
+    mainWindow->statusMessage(s);
+    scriptEngine->throwError(QString("abortScript(\"%1\") called").arg(s));
 }
 
 void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }

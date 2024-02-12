@@ -36,6 +36,8 @@ class VymWrapper : public VymScriptContext {
 
   public slots:
     void print(const QString &s);
+    void statusMessage(const QString &s);
+    void abortScript(const QString &s);
     void clearConsole();
     bool isConfluenceAgentAvailable();
     QObject *currentMap();

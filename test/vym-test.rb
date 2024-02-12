@@ -15,7 +15,7 @@ def expect (comment, v_real, v_exp)
   if v_exp == v_real
     puts "    Ok: #{comment}".green
     $tests_passed += 1
-    # waitkey
+    #waitkey
   else
     puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'".red
     $tests_failed += 1
@@ -187,7 +187,10 @@ def test_adding_branches
   map.selectLatestAdded
   expect "selectLatestAdded", map.getSelectionString, @main_A + ",bo:3"
 
+  map.selectParent
+  expect "selectParent", map.getSelectionString, @main_A
   map.undo
+
   expect( "Undo: addBranch", map.branchCount.to_i, n )
 
   close_current_map
@@ -1296,9 +1299,9 @@ begin
   end
 
   test_vym
-  test_basics
+  #test_basics
 
-  #test_adding_branches
+  test_adding_branches
   #test_adding_maps
   #test_attributes
   #test_bugfixes
@@ -1310,7 +1313,7 @@ begin
   #test_history
   #test_load_legacy_maps
   #test_modify_branches
-  #test_moving_parts
+  test_moving_parts
   #test_notes
   #test_references
   #test_saving

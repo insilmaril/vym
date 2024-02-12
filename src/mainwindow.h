@@ -405,6 +405,8 @@ class Main : public QMainWindow {
     QDockWidget *scriptEditorDW;
     QDockWidget *branchPropertyEditorDW;
 
+    VymWrapper *vymWrapper;
+
   public:
     QList<QAction *>
         mapEditorActions; //! allows mapEditor to clone actions and shortcuts

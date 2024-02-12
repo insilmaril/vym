@@ -168,8 +168,10 @@ int VymModelWrapper::branchCount()
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
         r = selbi->branchCount();
-    else
+    else {
+        logErrorNew("No branch selected");
         r = -1;
+    }
     return setResult(r);
 }
 

@@ -297,7 +297,14 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     connect(findResultWidget, SIGNAL(findPressed(QString, bool)), this,
             SLOT(editFindNext(QString, bool)));
 
+    // Setup global scriptEngine
     scriptEngine = new QJSEngine(this);
+    //scriptEngine->installExtensions(QJSEngine::ConsoleExtension);
+    vymWrapper = new VymWrapper;
+
+    QJSValue val2 = scriptEngine->newQObject(vymWrapper);
+    scriptEngine->globalObject().setProperty("vym", val2);
+
     scriptEditor = new ScriptEditor(this);
     dw = new QDockWidget(tr("Script Editor", "ScriptEditor"));
     dw->setWidget(scriptEditor);
@@ -453,6 +460,9 @@ Main::~Main()
     delete standardFlagsMaster;
     delete userFlagsMaster;
     delete systemFlagsMaster;
+
+    delete vymWrapper;
+    delete scriptEngine;
 
     // Remove temporary directory
     removeDir(tmpVymDir);
@@ -6864,48 +6874,8 @@ void Main::scriptPrint(const QString &s)
     cout << s.toStdString() << endl;
 }
 
-/* FIXME-0 Qt6 scriptAbort and scriptStatusMessage not ported yet
-QJSValue scriptAbort(QScriptContext *context, QScriptEngine *engine)
-{
-    scriptOutput->append("Abort called: " + context->argument(0).toString());
-    engine->abortEvaluation();
-    return QJSValue();
-}
-
-QJSValue scriptStatusMessage(QScriptContext *context, QScriptEngine *)
-{
-    mainWindow->statusMessage(context->argument(0).toString());
-    return QJSValue();
-}
-*/
-
 QVariant Main::runScript(const QString &script)
 {
-    /* FIXME-0 Qt6  script commands: print, abort, statusMessage
-    scriptEngine.globalObject().setProperty(
-        "print", scriptEngine.newFunction(scriptPrint));
-
-        could work new:
-        QJSEngine engine;
-        QJSValue myExt = engine.newQObject(new MyExtension());
-        engine.globalObject().setProperty("sqrt", myExt.property("sqrt"));
-
-    scriptEngine.globalObject().setProperty(
-        "abort", scriptEngine.newFunction(scriptAbort));
-    scriptEngine.globalObject().setProperty(
-        "statusMessage", scriptEngine.newFunction(scriptStatusMessage));
-    */
-
-    // Create Wrapper object for vym itself (mainwindow)
-    VymWrapper vymWrapper;
-    QJSValue val2 = scriptEngine->newQObject(&vymWrapper);
-    scriptEngine->globalObject().setProperty("vym", val2);
-
-    // Create wrapper object for selection
-    Selection selection;
-    QJSValue val3 = scriptEngine->newQObject(&selection);
-    scriptEngine->globalObject().setProperty("selection", val3);
-
     if (debug) {
         cout << "MainWindow::runScript starting to execute:" << endl;
         cout << qPrintable(script) << endl;
@@ -6934,7 +6904,7 @@ QVariant Main::runScript(const QString &script)
     else
         return scriptEngine->globalObject().property("lastResult").toVariant();
 
-    qDebug() << "Main::runScript finished.";
+    if (debug) qDebug() << "Main::runScript finished.";
     return QVariant("");
 }
 
