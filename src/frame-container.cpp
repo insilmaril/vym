@@ -148,8 +148,8 @@ QString FrameContainer::frameTypeString()
         return "NoFrame";
     default:
         qWarning() << "FrameContainer::setFrameType  unknown frame type " << frameTypeInt;
-        break;
     }
+    return QString();
 }
 
 void FrameContainer::setFrameType(const FrameType &t)

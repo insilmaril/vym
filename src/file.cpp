@@ -18,8 +18,6 @@
 #include "unistd.h"
 #endif
 
-using namespace File;
-
 extern QString zipToolPath;
 extern QString unzipToolPath;
 extern bool zipToolAvailable;
@@ -250,10 +248,10 @@ bool checkUnzipTool()
     return unzipToolAvailable;
 }
 
-ErrorCode zipDir(QDir zipInputDir, QString zipName)
+File::ErrorCode zipDir(QDir zipInputDir, QString zipName)
 {
     zipName = QDir::toNativeSeparators(zipName);
-    ErrorCode err = Success;
+    File::ErrorCode err = File::Success;
 
     QString symLinkTarget;
 
@@ -274,7 +272,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
             QMessageBox::critical(0, QObject::tr("Critical Error"),
                                   QObject::tr("Couldn't move existing file out "
                                               "of the way before saving."));
-            return Aborted;
+            return File::Aborted;
         }
     }
 
@@ -301,7 +299,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                     .arg("Windows zip") +
                 "\n\nziptoolpath: " + zipToolPath +
                 "\nargs: " + args.join(" "));
-        err = Aborted;
+        err = File::Aborted;
     }
     else {
         // zip could be started
@@ -310,7 +308,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
             QMessageBox::critical(0, QObject::tr("Critical Error"),
                                   QObject::tr("zip didn't exit normally") +
                                       "\n" + zipProc->getErrout());
-            err = Aborted;
+            err = File::Aborted;
         }
         else {
             /*
@@ -332,7 +330,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                         "Err: %4\n"
                         "Std: %5").arg(zipToolPath).arg(args.join(" ")).arg(zipProc->exitCode()).arg(zipProc->getErrout()).arg(zipProc->getStdout())
                     );
-                err = Aborted;
+                err = File::Aborted;
             }
             else if (zipProc->exitCode() == 1) {
                 // Non fatal according to internet, but for example
@@ -376,7 +374,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                     .arg("zip") +
                 "\n\nziptoolpath: " + zipToolPath +
                 "\nargs: " + args.join(" "));
-        err = Aborted;
+        err = File::Aborted;
     }
     else {
         // zip could be started
@@ -385,7 +383,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
             QMessageBox::critical(0, QObject::tr("Critical Error"),
                                   QObject::tr("zip didn't exit normally") +
                                       "\n" + zipProc->getErrout());
-            err = Aborted;
+            err = File::Aborted;
         }
         else {
             if (zipProc->exitCode() > 0) {
@@ -393,13 +391,13 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                     0, QObject::tr("Critical Error"),
                     QString("zip exit code:  %1").arg(zipProc->exitCode()) +
                         "\n" + zipProc->getErrout());
-                err = Aborted;
+                err = File::Aborted;
             }
         }
     }
 #endif
     // Try to restore previous file, if zipping failed
-    if (err == Aborted && !newName.isEmpty() && !file.rename(zipName))
+    if (err == File::Aborted && !newName.isEmpty() && !file.rename(zipName))
         QMessageBox::critical(0, QObject::tr("Critical Error"),
                               QObject::tr("Couldn't rename %1 back to %2")
                                   .arg(newName)
@@ -413,7 +411,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                     QObject::tr(
                         "Couldn't remove target of old symbolic link %1")
                         .arg(symLinkTarget));
-                err = Aborted;
+                err = File::Aborted;
                 return err;
             }
 
@@ -423,7 +421,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                     QObject::tr("Couldn't rename output to target of old "
                                 "symbolic link %1")
                         .arg(symLinkTarget));
-                err = Aborted;
+                err = File::Aborted;
                 return err;
             }
             if (!QFile(symLinkTarget).link(zipName)) {
@@ -433,7 +431,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                                 "symbolic link %2")
                         .arg(zipName)
                         .arg(symLinkTarget));
-                err = Aborted;
+                err = File::Aborted;
                 return err;
             }
         }
@@ -452,7 +450,7 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
 
 File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)
 {
-    ErrorCode err = Success;
+    File::ErrorCode err = File::Success;
 
     VymProcess *zipProc = new VymProcess();
     QStringList args;
@@ -478,7 +476,7 @@ File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)
                     .arg("Windows zip") +
                 "\n\nziptoolpath: " + zipToolPath +
                 "\nargs: " + args.join(" "));
-        err = Aborted;
+        err = File::Aborted;
     }
     else {
         zipProc->waitForFinished();
@@ -487,7 +485,7 @@ File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)
                 0, QObject::tr("Critical Error"),
                 QObject::tr("%1 didn't exit normally").arg(zipToolPath) +
                     zipProc->getErrout());
-            err = Aborted;
+            err = File::Aborted;
         }
         else {
             /*
@@ -506,7 +504,7 @@ File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)
                      QString("Err: %1\n").arg(zipProc->getErrout()) +
                      QString("Std: %1").arg(zipProc->getStdout())
                 );
-                err = Aborted;
+                err = File::Aborted;
             }
            else if (zipProc->exitCode() == 1) {    // FIXME-3 cleanup, duplicated code
                 // Non fatal according to internet, but for example
@@ -564,11 +562,11 @@ File::FileType getMapType(const QString &fn)
         QString postfix = fn.mid(i + 1);
         if (postfix == "vym" || postfix == "vyp" || postfix == "xml" ||
             postfix == "vym~")
-            return VymMap;
+            return File::VymMap;
         if (postfix == "mm")
-            return FreemindMap;
+            return File::FreemindMap;
     }
-    return UnknownMap;
+    return File::UnknownMap;
 }
 
 ImageIO::ImageIO()

@@ -6,8 +6,6 @@
 #include <math.h>
 #include "misc.h"
 
-using namespace std;
-
 qreal Geometry::distance(const QPointF &p, const QPointF &q)
 {
     return sqrt( (p.x() - q.x()) * (p.x() - q.x())

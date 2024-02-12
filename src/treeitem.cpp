@@ -8,8 +8,6 @@
 #include "vymmodel.h"
 #include "xlinkitem.h"
 
-using namespace std;
-
 extern ulong itemLastID;
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;

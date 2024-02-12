@@ -2,7 +2,6 @@
 #include <QMultiMap>
 
 #include <iostream>
-using namespace std;
 
 #include "shortcuts.h"
 
@@ -84,13 +83,13 @@ QString Switchboard::getASCII()
     return s;
 }
 
-void Switchboard::printASCII() { cout << qPrintable(getASCII()); }
+void Switchboard::printASCII() { std::cout << qPrintable(getASCII()); }
 
 void Switchboard::printLaTeX()
 {
     QString g;
     foreach (g, actions.uniqueKeys()) {
-        cout << "Group: " << qPrintable(g) << "\\\\ \\hline" << endl;
+        std::cout << "Group: " << qPrintable(g) << "\\\\ \\hline" << std::endl;
         QList<QAction *> values = actions.values(g);
         for (int i = 0; i < values.size(); ++i)
             if (!values.at(i)->shortcut().toString().isEmpty()) {
@@ -98,9 +97,9 @@ void Switchboard::printLaTeX()
                 QString sc = values.at(i)->shortcut().toString();
                 desc = desc.remove('&');
                 desc = desc.remove("...");
-                cout << qPrintable(QString(" %1& %2").arg(sc, 12).arg(desc))
-                     << endl;
+                std::cout << qPrintable(QString(" %1& %2").arg(sc, 12).arg(desc))
+                     << std::endl;
             }
-        cout << endl;
+        std::cout << std::endl;
     }
 }

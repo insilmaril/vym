@@ -4,7 +4,6 @@
 
 #include <cstdlib>
 #include <iostream>
-using namespace std;
 
 #include "command.h"
 #include "debuginfo.h"
@@ -224,7 +223,7 @@ int main(int argc, char *argv[])
         "-v           version       Show vym version\n");
 
     if (options.parse()) {
-        cout << endl << qPrintable(options.getHelpText()) << endl;
+        std::cout << std::endl << qPrintable(options.getHelpText()) << std::endl;
         return 1;
     }
 
@@ -237,7 +236,7 @@ int main(int argc, char *argv[])
         s += "\n";
         s += "   Quality: " + vymCodeQuality + "\n";
         s += "Build date: " + vymBuildDate + "\n";
-        cout << s.toStdString();
+        std::cout << s.toStdString();
 
         return 0;
     }
@@ -329,7 +328,7 @@ int main(int argc, char *argv[])
     lastExportDir = useDir;
 
     if (options.isOn("help")) {
-        cout << qPrintable(options.getHelpText()) << endl;
+        std::cout << qPrintable(options.getHelpText()) << std::endl;
         return 0;
     }
 
@@ -470,26 +469,26 @@ int main(int argc, char *argv[])
 
     if (debug)
         // Show debug info AFTER creating MainWindow
-        cout << debugInfo().toStdString() << endl;
+        std::cout << debugInfo().toStdString() << std::endl;
 
     if (options.isOn("commands")) {
-        cout << "Available commands in map:\n";
-        cout << "=========================:\n";
+        std::cout << "Available commands in map:\n";
+        std::cout << "=========================:\n";
         foreach (Command *c, modelCommands)
-            cout << c->getDescription().toStdString() << endl;
+            std::cout << c->getDescription().toStdString() << std::endl;
 
-        cout << "Available commands in vym:\n";
-        cout << "=========================:\n";
+        std::cout << "Available commands in vym:\n";
+        std::cout << "=========================:\n";
         foreach (Command *c, vymCommands)
-            cout << c->getDescription().toStdString() << endl;
+            std::cout << c->getDescription().toStdString() << std::endl;
         return 0;
     }
 
     if (options.isOn("commandslatex")) {
         foreach (Command *c, modelCommands)
-            cout << c->getDescriptionLaTeX().toStdString() << endl;
+            std::cout << c->getDescriptionLaTeX().toStdString() << std::endl;
         foreach (Command *c, vymCommands)
-            cout << c->getDescriptionLaTeX().toStdString() << endl;
+            std::cout << c->getDescriptionLaTeX().toStdString() << std::endl;
         return 0;
     }
 

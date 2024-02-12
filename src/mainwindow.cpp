@@ -1,9 +1,6 @@
 #include "mainwindow.h"
 
 #include <iostream>
-using namespace std;
-
-#include <typeinfo>
 
 #if defined(VYM_DBUS)
 #include "adaptorvym.h"
@@ -37,7 +34,6 @@ using namespace std;
 #include "file.h"
 #include "findresultmodel.h"
 #include "findresultwidget.h"
-#include "flagrow.h"
 #include "headingeditor.h"
 #include "historywindow.h"
 #include "imports.h"
@@ -3568,17 +3564,17 @@ void Main::setupToolbars()
 
     // Define quickColors
     QColor c;
-    c.setNamedColor ("#ff0000"); quickColors << c;  // Red
-    c.setNamedColor ("#d95100"); quickColors << c;  // Orange
-    c.setNamedColor ("#009900"); quickColors << c;  // Green
-    c.setNamedColor ("#aa00ff"); quickColors << c;  // Purple
-    c.setNamedColor ("#0000ff"); quickColors << c;  // Blue
-    c.setNamedColor ("#00aaff"); quickColors << c;  // LightBlue
+    c = QColor::fromString("#ff0000"); quickColors << c;  // Red
+    c = QColor::fromString("#d95100"); quickColors << c;  // Orange
+    c = QColor::fromString("#009900"); quickColors << c;  // Green
+    c = QColor::fromString("#aa00ff"); quickColors << c;  // Purple
+    c = QColor::fromString("#0000ff"); quickColors << c;  // Blue
+    c = QColor::fromString("#00aaff"); quickColors << c;  // LightBlue
     usingDarkTheme ? vymBlue = c : vymBlue = quickColors.count() - 2;
-    c.setNamedColor ("#000000"); quickColors << c;  // Black
-    c.setNamedColor ("#444444"); quickColors << c;  // Dark gray
-    c.setNamedColor ("#aaaaaa"); quickColors << c;  // Light gray
-    c.setNamedColor ("#ffffff"); quickColors << c;  // White
+    c = QColor::fromString("#000000"); quickColors << c;  // Black
+    c = QColor::fromString("#444444"); quickColors << c;  // Dark gray
+    c = QColor::fromString("#aaaaaa"); quickColors << c;  // Light gray
+    c = QColor::fromString("#ffffff"); quickColors << c;  // White
     //c.setNamedColor ("#00aa7f"); quickColors << c;  // Light green
     //c.setNamedColor ("#c466ff"); quickColors << c;  // Light purple
 
@@ -4520,7 +4516,6 @@ void Main::fileExportImage()
         m->exportImage();
 }
 
-#include "export-impress.h"
 #include "exportoofiledialog.h"
 void Main::fileExportImpress()
 {
@@ -4551,7 +4546,6 @@ void Main::fileExportImpress()
     }
 }
 
-#include "export-latex.h"
 void Main::fileExportLaTeX()
 {
     VymModel *m = currentModel();
@@ -5150,24 +5144,24 @@ void Main::editMapProperties()
     stats += tr("%1 items on map\n", "Info about map")
                  .arg(m->getScene()->items().size(), 6);
 
-    uint b = 0;
-    uint f = 0;
-    uint n = 0;
-    uint xl = 0;
+    uint branchesCount = 0;
+    uint imagesCount = 0;
+    uint notesCount = 0;
+    uint xlinksCount = 0;
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     m->nextBranch(cur, prev);
     while (cur) {
         if (!cur->getNote().isEmpty())
-            n++;
-        f += cur->imageCount();
-        b++;
-        xl += cur->xlinkCount();
+            notesCount++;
+        imagesCount += cur->imageCount();
+        branchesCount++;
+        xlinksCount += cur->xlinkCount();
         m->nextBranch(cur, prev);
     }
 
     stats += QString("%1 %2\n")
-                 .arg(m->branchCount(), 6)
+                 .arg(branchesCount, 6)
                  .arg(tr("branches", "Info about map"));
     stats += QString("%1 %2\n")
                  .arg(taskModel->count(), 6)
@@ -5175,13 +5169,13 @@ void Main::editMapProperties()
     stats += QString("%1 %2\n")
                  .arg(taskModel->count(m), 6)
                  .arg(tr("tasks in map", "Info about map"));
-    stats += QString("%1 %2\n").arg(n, 6).arg(tr("notes", "Info about map"));
-    stats += QString("%1 %2\n").arg(f, 6).arg(tr("images", "Info about map"));
+    stats += QString("%1 %2\n").arg(notesCount, 6).arg(tr("notes", "Info about map"));
+    stats += QString("%1 %2\n").arg(imagesCount, 6).arg(tr("images", "Info about map"));
     stats += QString("%1 %2\n")
                  .arg(m->slideCount(), 6)
                  .arg(tr("slides", "Info about map"));
     stats +=
-        QString("%1 %2\n").arg(xl / 2, 6).arg(tr("xLinks", "Info about map"));
+        QString("%1 %2\n").arg(xlinksCount / 2, 6).arg(tr("xLinks", "Info about map"));
     dia.setStats(stats);
 
     // Finally show dialog
@@ -6871,14 +6865,14 @@ bool Main::autoSelectNewBranch()
 void Main::scriptPrint(const QString &s)
 {
     scriptOutput->append(s);
-    cout << s.toStdString() << endl;
+    std::cout << s.toStdString() << endl;
 }
 
 QVariant Main::runScript(const QString &script)
 {
     if (debug) {
-        cout << "MainWindow::runScript starting to execute:" << endl;
-        cout << qPrintable(script) << endl;
+        std::cout << "MainWindow::runScript starting to execute:" << endl;
+        std::cout << qPrintable(script) << endl;
     }
 
     // Run script
