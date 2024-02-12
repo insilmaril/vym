@@ -1,4 +1,4 @@
-VYM - View Your Mind (c) 2004-2023 by Uwe Drechsel
+VYM - View Your Mind (c) 2004-2024 by Uwe Drechsel
 ==================================================
 
 Documentation
@@ -72,7 +72,7 @@ Installation
 * Compiling
 
     Compiling vym from scratch is pretty easy, if you have the
-    development packages of the Qt5 toolkit installed. (Check also the
+    development packages of the Qt6 toolkit installed. (Check also the
     homepage above for details):
 
     On the command line you can
