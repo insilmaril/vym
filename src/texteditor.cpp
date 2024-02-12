@@ -446,8 +446,8 @@ void TextEditor::setupFormatActions()
     fontToolBar->addWidget(comboFont);
     QFontDatabase fontDB;
     comboFont->insertItems(0, fontDB.families());
-//    connect(comboFont, SIGNAL(activated(const QString &)), this,  // FIXME-0 no signal
-//            SLOT(textFamily(const QString &)));
+    connect(comboFont, SIGNAL(currentTextChanged(const QString &)), this,
+            SLOT(textFamily(const QString &)));
 
     comboSize = new QComboBox;
     fontToolBar->addWidget(comboSize);
@@ -459,8 +459,8 @@ void TextEditor::setupFormatActions()
         ++it; // increment i before using it
         comboSize->insertItem(i, QString::number(*it));
     }
-//    connect(comboSize, SIGNAL(activated(const QString &)), this,  // FIXME-0 no signal
-//            SLOT(textSize(const QString &)));
+    connect(comboSize, SIGNAL(currentTextChanged(const QString &)), this,
+            SLOT(textSize(const QString &)));
 
     formatMenu->addSeparator();
 
