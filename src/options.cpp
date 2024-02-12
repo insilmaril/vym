@@ -3,8 +3,6 @@
 #include <QApplication>
 #include <iostream>
 
-using namespace std;
-
 Option::Option()
 {
     name = "";

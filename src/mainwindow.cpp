@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 
 #include <iostream>
-using namespace std;
 
 #include <typeinfo>
 
@@ -6871,14 +6870,14 @@ bool Main::autoSelectNewBranch()
 void Main::scriptPrint(const QString &s)
 {
     scriptOutput->append(s);
-    cout << s.toStdString() << endl;
+    std::cout << s.toStdString() << endl;
 }
 
 QVariant Main::runScript(const QString &script)
 {
     if (debug) {
-        cout << "MainWindow::runScript starting to execute:" << endl;
-        cout << qPrintable(script) << endl;
+        std::cout << "MainWindow::runScript starting to execute:" << endl;
+        std::cout << qPrintable(script) << endl;
     }
 
     // Run script
