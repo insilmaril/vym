@@ -17,19 +17,6 @@ extern QString vymVersion;
 extern QJSEngine *scriptEngine;
 
 ///////////////////////////////////////////////////////////////////////////
-// FIXME-0 Qt6 uncomplete: void logError(QScriptContext *context, QScriptContext::Error error,
-//              const QString &text)
-void logErrorNew(const QString &text)
-{
-    /*
-    if (context)
-        context->throwError(error, text);
-    else
-    */
-        qDebug() << "VymWrapper: " << text;
-}
-
-///////////////////////////////////////////////////////////////////////////
 VymScriptContext::VymScriptContext() {}
 
 QString VymScriptContext::setResult(const QString &r)
@@ -132,17 +119,22 @@ int VymWrapper::mapCount()
 void VymWrapper::gotoMap(uint n)
 {
     if (!mainWindow->gotoWindow(n)) {
-        //logErrorOld(context(), QScriptContext::RangeError,
-        logErrorNew(QString("Map '%1' not available.").arg(n));
+        scriptEngine->throwError(
+                QJSValue::ReferenceError, 
+                QString("Map '%1' not available.").arg(n));
+        return;
     }
 }
 
 bool VymWrapper::closeMapWithID(uint n)
 {
     bool r = mainWindow->closeModelWithID(n);
-    if (!r)
-        //logErrorOld(context(), QScriptContext::RangeError,
-        logErrorNew(QString("Map '%1' not available.").arg(n));
+    if (!r) {
+        scriptEngine->throwError(
+                QJSValue::ReferenceError, 
+                QString("Map '%1' not available.").arg(n));
+        return false;
+    }
     return setResult(r);
 }
 

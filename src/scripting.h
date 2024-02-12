@@ -9,13 +9,6 @@
 class BranchItem;
 class VymModelWrapper;
 
-/* FIXME-2 old logError, remove...
-void logError(QScriptContext *context, QScriptContext::Error error,
-              const QString &text);
-*/
-
-void logErrorNew(const QString &text);
-
 ///////////////////////////////////////////////////////////////////////////
 class VymScriptContext : public QObject {
     Q_OBJECT

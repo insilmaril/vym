@@ -15,11 +15,6 @@ class VymModelWrapper : public VymScriptContext {
   public:
     VymModelWrapper(VymModel *m);
 
-  private:
-    BranchItem *getSelectedBranch();
-    QVariant getParameter(bool &ok, const QString &key,
-                          const QStringList &parameters);
-
   public slots:
     void addBranch();
     void addBranchAt(int pos);
