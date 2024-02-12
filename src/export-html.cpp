@@ -148,8 +148,8 @@ QString ExportHTML::getBranchText(BranchItem *current)
             QString n;
             if (note.isRichText()) {
                 n = note.getText();
-                QRegExp re("<p.*>");
-                re.setMinimal(true);
+                QRegularExpression re("<p.*>");
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                 if (current->getNote().getFontHint() == "fixed")
                     n.replace(re, "<p class=\"vym-fixed-note-paragraph\">");
                 else
@@ -355,7 +355,6 @@ void ExportHTML::doExport(bool useDialog)
         return;
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
 
     // Hide stuff during export
     model->setExportMode(true);

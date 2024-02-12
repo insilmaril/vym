@@ -148,7 +148,7 @@ void ExportHTMLDialog::dirChanged()
 void ExportHTMLDialog::browseDirectoryPressed()
 {
     QFileDialog fd(this);
-    fd.setFileMode(QFileDialog::DirectoryOnly);
+    // FIXME-1 not avai in Qt6 fd.setFileMode(QFileDialog::DirectoryOnly);
     fd.setWindowTitle(tr("VYM - Export HTML to directory"));
     fd.setModal(true);
     fd.setDirectory(QDir::current());

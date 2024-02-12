@@ -2,7 +2,7 @@
 #include "misc.h"
 
 #include <QDebug>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QTextDocument>
 
 /////////////////////////////////////////////////////////////////
@@ -103,8 +103,8 @@ QString VymText::getTextASCII(QString indent, const int &width) const
         return text;
 
     QString s;
-    QRegExp rx;
-    rx.setMinimal(true);
+    QRegularExpression rx;
+    rx.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     if (isRichText())
         s = text;

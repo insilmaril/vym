@@ -48,7 +48,6 @@ TextEditor::TextEditor()
     e->installEventFilter(this);
     connect(e, SIGNAL(textChanged()), this, SLOT(editorChanged()));
     setCentralWidget(e);
-    statusBar()->showMessage(tr("Ready", "Statusbar message"), statusbarTime);
 
     connect(e, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this,
             SLOT(formatChanged(const QTextCharFormat &)));
@@ -208,16 +207,14 @@ void TextEditor::setFilename(const QString &fn)
     if (state == filledEditor) {
         if (fn.isEmpty()) {
             filename = "";
-            statusBar()->showMessage(
-                tr("No filename available for this note.", "Statusbar message"),
-                statusbarTime);
+            mainWindow->statusMessage(
+                tr("No filename available for this note.", "Statusbar message"));
         }
         else {
             filename = fn;
-            statusBar()->showMessage(
+            mainWindow->statusMessage(
                 tr(QString("Current filename is %1").arg(filename).toUtf8(),
-                   "Statusbar message"),
-                statusbarTime);
+                   "Statusbar message"));
         }
     }
 }
@@ -299,7 +296,7 @@ void TextEditor::setupFileActions()
     QString tag = tr("Texteditor", "Shortcuts");
     QAction *a;
     a = new QAction(QPixmap(":/fileopen.png"), tr("&Import..."), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_O);
+    a->setShortcut(Qt::CTRL | Qt::Key_O);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textLoad", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textLoad()));
@@ -309,7 +306,7 @@ void TextEditor::setupFileActions()
 
     fileMenu->addSeparator();
     a = new QAction(QPixmap(":/filesave.png"), tr("&Export..."), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_S);
+    a->setShortcut(Qt::CTRL | Qt::Key_S);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textSave", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textSave()));
@@ -332,7 +329,7 @@ void TextEditor::setupFileActions()
 
     fileMenu->addSeparator();
     a = new QAction(QPixmap(":/fileprint.png"), tr("&Print..."), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_P);
+    a->setShortcut(Qt::CTRL | Qt::Key_P);
     switchboard.addSwitch("textPrint", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textPrint()));
     tb->addAction(a);
@@ -356,7 +353,7 @@ void TextEditor::setupEditActions()
 
     QAction *a;
     a = new QAction(QPixmap(":/undo.png"), tr("&Undo"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_Z);
+    a->setShortcut(Qt::CTRL | Qt::Key_Z);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textUndo", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), e, SLOT(undo()));
@@ -365,7 +362,7 @@ void TextEditor::setupEditActions()
     actionEditUndo = a;
 
     a = new QAction(QPixmap(":/redo.png"), tr("&Redo"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_Y);
+    a->setShortcut(Qt::CTRL | Qt::Key_Y);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textRedo", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), e, SLOT(redo()));
@@ -376,14 +373,14 @@ void TextEditor::setupEditActions()
     editMenu->addSeparator();
     a = new QAction(QPixmap(), tr("Select and copy &all"), this);
     a->setShortcutContext(Qt::WidgetShortcut);
-    a->setShortcut(Qt::CTRL + Qt::Key_A);
+    a->setShortcut(Qt::CTRL | Qt::Key_A);
     switchboard.addSwitch("textCopyAll", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCopyAll()));
     editMenu->addAction(a);
 
     editMenu->addSeparator();
     a = new QAction(QPixmap(":/editcopy.svg"), tr("&Copy"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_C);
+    a->setShortcut(Qt::CTRL | Qt::Key_C);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textCopy", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), e, SLOT(copy()));
@@ -392,7 +389,7 @@ void TextEditor::setupEditActions()
     actionEditCopy = a;
 
     a = new QAction(QPixmap(":/editcut.png"), tr("Cu&t"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_X);
+    a->setShortcut(Qt::CTRL | Qt::Key_X);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textCut", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), e, SLOT(cut()));
@@ -401,7 +398,7 @@ void TextEditor::setupEditActions()
     actionEditCut = a;
 
     a = new QAction(QPixmap(":/editpaste.png"), tr("&Paste"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_V);
+    a->setShortcut(Qt::CTRL | Qt::Key_V);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textPaste", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), e, SLOT(paste()));
@@ -421,7 +418,7 @@ void TextEditor::setupFormatActions()
     QAction *a;
 
     a = new QAction(QPixmap(":/formatfixedfont.png"), tr("&Font hint"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_H);
+    a->setShortcut(Qt::CTRL | Qt::Key_H);
     a->setCheckable(true);
     a->setChecked(
         settings.value("/noteeditor/fonts/useFixedByDefault", false).toBool());
@@ -433,7 +430,7 @@ void TextEditor::setupFormatActions()
 
     // Original icon: ./share/icons/oxygen/22x22/actions/format-text-color.png
     a = new QAction(QPixmap(":/formatrichtext.svg"), tr("&Richtext"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_R);
+    a->setShortcut(Qt::CTRL | Qt::Key_R);
     //    a->setShortcutContext (Qt::WidgetShortcut);
     a->setCheckable(true);
     switchboard.addSwitch("textToggleRichText", shortcutScope, a, tag);
@@ -449,7 +446,7 @@ void TextEditor::setupFormatActions()
     fontToolBar->addWidget(comboFont);
     QFontDatabase fontDB;
     comboFont->insertItems(0, fontDB.families());
-    connect(comboFont, SIGNAL(activated(const QString &)), this,
+    connect(comboFont, SIGNAL(currentTextChanged(const QString &)), this,
             SLOT(textFamily(const QString &)));
 
     comboSize = new QComboBox;
@@ -462,7 +459,7 @@ void TextEditor::setupFormatActions()
         ++it; // increment i before using it
         comboSize->insertItem(i, QString::number(*it));
     }
-    connect(comboSize, SIGNAL(activated(const QString &)), this,
+    connect(comboSize, SIGNAL(currentTextChanged(const QString &)), this,
             SLOT(textSize(const QString &)));
 
     formatMenu->addSeparator();
@@ -479,7 +476,7 @@ void TextEditor::setupFormatActions()
     actionTextColor = a;
 
     a = new QAction(QPixmap(":/text_bold.png"), tr("&Bold"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_B);
+    a->setShortcut(Qt::CTRL | Qt::Key_B);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleBold", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textBold()));
@@ -489,7 +486,7 @@ void TextEditor::setupFormatActions()
     actionTextBold = a;
 
     a = new QAction(QPixmap(":/text_italic.png"), tr("&Italic"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_I);
+    a->setShortcut(Qt::CTRL | Qt::Key_I);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleItalic", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textItalic()));
@@ -499,7 +496,7 @@ void TextEditor::setupFormatActions()
     actionTextItalic = a;
 
     a = new QAction(QPixmap(":/text_under.png"), tr("&Underline"), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_U);
+    a->setShortcut(Qt::CTRL | Qt::Key_U);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleUnderline", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textUnderline()));
@@ -513,7 +510,7 @@ void TextEditor::setupFormatActions()
     QActionGroup *actGrp2 = new QActionGroup(this);
     actGrp2->setExclusive(true);
     a = new QAction(QPixmap(":/text_sub.png"), tr("Subs&cript"), actGrp2);
-    a->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
+    a->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_B);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     a->setCheckable(true);
     formatToolBar->addAction(a);
@@ -523,7 +520,7 @@ void TextEditor::setupFormatActions()
     actionAlignSubScript = a;
 
     a = new QAction(QPixmap(":/text_super.png"), tr("Su&perscript"), actGrp2);
-    a->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_P);
+    a->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     a->setCheckable(true);
     formatToolBar->addAction(a);
@@ -544,19 +541,19 @@ void TextEditor::setupFormatActions()
     formatMenu->addAction(a);
     actionAlignLeft = a;
     a = new QAction(QPixmap(":/text_center.png"), tr("C&enter"), grp);
-    // a->setShortcut(  Qt::CTRL + Qt::Key_E);
+    // a->setShortcut(  Qt::CTRL | Qt::Key_E);
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
     actionAlignCenter = a;
     a = new QAction(QPixmap(":/text_right.png"), tr("&Right"), grp);
-    // a->setShortcut(Qt::CTRL + Qt::Key_R );
+    // a->setShortcut(Qt::CTRL | Qt::Key_R );
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
     actionAlignRight = a;
     a = new QAction(QPixmap(":/text_block.png"), tr("&Justify"), grp);
-    // a->setShortcut(Qt::CTRL + Qt::Key_J );
+    // a->setShortcut(Qt::CTRL | Qt::Key_J );
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
@@ -602,17 +599,14 @@ void TextEditor::textLoad()
 {
     if (state != inactiveEditor) {
         if (!isEmpty()) {
-            QMessageBox mb(vymName + " - " + tr("Note Editor"),
-                           "Loading will overwrite the existing note",
-                           QMessageBox::Warning,
-                           QMessageBox::Yes | QMessageBox::Default,
-                           QMessageBox::Cancel, 0);
-            mb.setButtonText(QMessageBox::Yes, "Load note");
-            switch (mb.exec()) {
-            case QMessageBox::Cancel:
-                return;
-                break;
-            }
+            QMessageBox mb(
+                   QMessageBox::Warning,
+                   vymName + " - " + tr("Note Editor"),
+                   "Loading will overwrite the existing note");
+            QPushButton *overwriteButton = mb.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
+            mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+            mb.exec();
+            if (mb.clickedButton() != overwriteButton) return;
         }
         // Load note
         QFileDialog *fd = new QFileDialog(this);
@@ -785,24 +779,19 @@ void TextEditor::textSaveAs()
         QFile file(fn);
         if (file.exists()) {
             QMessageBox mb(
+                QMessageBox::Warning,
                 vymName,
                 tr("The file %1\nexists already.\nDo you want to overwrite it?",
-                   "dialog 'save note as'")
-                    .arg(fn),
-                QMessageBox::Warning, QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::Cancel | QMessageBox::Escape, Qt::NoButton);
-            mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-            mb.setButtonText(QMessageBox::No, tr("Cancel"));
-            switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save
-                filename = fn;
-                textSave();
-                return;
-            case QMessageBox::Cancel:
-                // do nothing
-                break;
-            }
+                   "dialog 'save note as'").arg(fn));
+            QPushButton *overwriteButton = mb.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
+            mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+            mb.exec();
+            if (mb.clickedButton() != overwriteButton) return;
+
+            // save
+            filename = fn;
+            textSave();
+            return;
         }
         else {
             filename = fn;
@@ -810,9 +799,8 @@ void TextEditor::textSaveAs()
             return;
         }
     }
-    statusBar()->showMessage(
-        tr("Couldn't export note ", "dialog 'save note as'") + fn,
-        statusbarTime);
+    mainWindow->statusMessage(
+        tr("Couldn't export note ", "dialog 'save note as'") + fn);
 }
 
 void TextEditor::textSave()
@@ -825,20 +813,17 @@ void TextEditor::textSave()
     QString text = e->toHtml(); // FIXME-4 or plaintext? check...
     QFile f(filename);
     if (!f.open(QIODevice::WriteOnly)) {
-        statusBar()->showMessage(QString("Could not write to %1").arg(filename),
-                                 statusbarTime);
+        mainWindow->statusMessage(QString("Could not write to %1").arg(filename));
         return;
     }
 
     QTextStream t(&f);
-    t.setCodec("UTF-8");
     t << text;
     f.close();
 
     e->document()->setModified(false);
 
-    statusBar()->showMessage(QString("Note exported as %1").arg(filename),
-                             statusbarTime);
+    mainWindow->statusMessage(QString("Note exported as %1").arg(filename));
 }
 
 void TextEditor::textExportAsASCII()
@@ -855,36 +840,21 @@ void TextEditor::textExportAsASCII()
     QString caption = tr("Export Note to single file (ASCII)");
     fn = QFileDialog::getSaveFileName(
         this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)");
-    int ret = -1;
 
     if (!fn.isEmpty()) {
         QFile file(fn);
-        if (file.exists()) {
-            QMessageBox mb(
-                vymName,
-                tr("The file %1\nexists already.\nDo you want to overwrite it?",
-                   "dialog 'save note as'")
-                    .arg(fn),
-                QMessageBox::Warning, QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::Cancel | QMessageBox::Escape, Qt::NoButton);
-            mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-            mb.setButtonText(QMessageBox::No, tr("Cancel"));
-            ret = mb.exec();
-        }
-        if (ret == QMessageBox::Cancel)
-            return;
 
-        // save
+        // Already tested in QFileDialog, if we may overwrite in case file exists already
+
         if (!file.open(QIODevice::WriteOnly))
-            statusBar()->showMessage(
-                QString("Could not write to %1").arg(filename), statusbarTime);
+            mainWindow->statusMessage(
+                QString("Could not write to %1").arg(filename));
         else {
             QTextStream t(&file);
             t << getVymText().getTextASCII();
             file.close();
 
-            statusBar()->showMessage(QString("Note exported as %1").arg(fn),
-                                     statusbarTime);
+            mainWindow->statusMessage(QString("Note exported as %1").arg(fn));
         }
     }
 }

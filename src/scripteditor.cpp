@@ -87,7 +87,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     highlighterFile->addKeywords(list);
 
     // QAction *a = new QAction( tr( "Save","ScriptEditor" ), ui.editor);
-    // a->setShortcut (Qt::CTRL + Qt::Key_S );
+    // a->setShortcut (Qt::CTRL | Qt::Key_S );
     // a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     // addAction (a);
     // connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
@@ -200,35 +200,15 @@ void ScriptEditor::saveScriptAs()
     QString filter("VYM scripts (*.vys *.js);;All (*)");
     QString fn = QFileDialog::getSaveFileName(
         this, QString(vymName + " - " + tr("Save script")), QString(),
-        "VYM script (*js *.vys);;All files (*)", 0,
-        QFileDialog::DontConfirmOverwrite);
+        "VYM script (*js *.vys);;All files (*)");
 
     if (!fn.isEmpty()) {
         QFile file(fn);
-        if (file.exists()) {
-            QMessageBox mb(
-                vymName,
-                tr("The file %1\nexists already.\nDo you want to overwrite it?",
-                   "dialog 'save as'")
-                    .arg(fn),
-                QMessageBox::Warning, QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::Cancel | QMessageBox::Escape, Qt::NoButton);
-            mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-            mb.setButtonText(QMessageBox::No, tr("Cancel"));
-            switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save
-                filename = fn;
-                ui.scriptPathLineEdit->setText(filename);
-                lastMapDir.setPath(filename.left(filename.lastIndexOf("/")));
-                saveScript();
-                return;
-            case QMessageBox::Cancel:
-                // do nothing
-                return;
-            }
-        }
+        // Already tested in QFileDialog, if we may overwrite in case file exists already
+
         filename = fn;
+        ui.scriptPathLineEdit->setText(filename);
+        lastMapDir.setPath(filename.left(filename.lastIndexOf("/")));
         saveScript();
     }
 }

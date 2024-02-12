@@ -25,7 +25,6 @@ void ExportOrgMode::doExport()
         return;
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
 
     // Main loop over all branches
     QString s;

@@ -229,10 +229,12 @@ bool Task::setDateSleep(const QString &s)
     else if (setDateSleep(QDateTime().fromString(s, Qt::TextDate)))
         return true;
     else if (setDateSleep(
-                 QDateTime().fromString(s, Qt::DefaultLocaleShortDate)))
+                 QDateTime().fromString(s))) //, QLocale::ShortFormat))) // FIXME-2 check Qt6
+                 // QDateTime().fromString(s, Qt::DefaultLocaleShortDate))) 
         return true;
-    else if (setDateSleep(QDateTime().fromString(s, Qt::DefaultLocaleLongDate)))
-        return true;
+    //else if (setDateSleep(QDateTime().fromString(s, Qt::DefaultLocaleLongDate)))
+//    else if (setDateSleep(QDateTime().fromString(s, QLocale::LongFormat))) // FIXME-2 check Qt6
+//        return true;
     else
         return false;
 }

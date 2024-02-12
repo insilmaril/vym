@@ -106,6 +106,9 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     // Save uuid
     attr += attribute("uuid", uuid.toString());
 
+    // vymLink, Url, hideExport, localTarget
+    attr += getGeneralAttr();
+
     // Update of note is usually done while unselecting a branch
 
     if (scrolled)

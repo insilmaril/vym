@@ -3,19 +3,14 @@
 
 #include <QColor>
 #include <QObject>
-#include <QScriptContext>
-#include <QScriptValue>
-#include <QScriptable>
+#include <QJSValue>
 #include <QVariant>
 
 class BranchItem;
 class VymModelWrapper;
 
-void logError(QScriptContext *context, QScriptContext::Error error,
-              const QString &text);
-
 ///////////////////////////////////////////////////////////////////////////
-class VymScriptContext : public QObject, protected QScriptable {
+class VymScriptContext : public QObject {
     Q_OBJECT
   public:
     VymScriptContext();
@@ -33,6 +28,9 @@ class VymWrapper : public VymScriptContext {
     VymWrapper();
 
   public slots:
+    void print(const QString &s);
+    void statusMessage(const QString &s);
+    void abortScript(const QString &s);
     void clearConsole();
     bool isConfluenceAgentAvailable();
     QObject *currentMap();

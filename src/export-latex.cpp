@@ -29,12 +29,12 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
 {
     QString r = s;
 
-    QRegExp rx;
-    rx.setMinimal(true);
+    QRegularExpression re;
+    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     foreach (QString p, esc.keys()) {
-        rx.setPattern(p);
-        r.replace(rx, esc[p]);
+        re.setPattern(p);
+        r.replace(re, esc[p]);
     }
     return r;
 }
@@ -99,7 +99,6 @@ void ExportLaTeX::doExport()
     }
 
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 

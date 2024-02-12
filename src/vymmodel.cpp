@@ -684,35 +684,31 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
     // Look, if we should zip the data:
     if (!zipped)
     {
-        QMessageBox mb(vymName,
-                       tr("The map %1\ndid not use the compressed "
-                          "vym file format.\nWriting it uncompressed will also "
-                          "write images \n"
-                          "and flags and thus may overwrite files into the "
-                          "given directory\n\nDo you want to write the map")
-                           .arg(filePath),
-                       QMessageBox::Warning,
-                       QMessageBox::Yes | QMessageBox::Default, QMessageBox::No,
-                       QMessageBox::Cancel | QMessageBox::Escape);
-        mb.setButtonText(QMessageBox::Yes, tr("compressed (vym default)"));
-        mb.setButtonText(
-            QMessageBox::No,
-            tr("uncompressed, potentially overwrite existing data"));
-        mb.setButtonText(QMessageBox::Cancel, tr("Cancel"));
-        switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save compressed (default file format)
-                zipped = true;
-                break;
-            case QMessageBox::No:
-                // save uncompressed
-                zipped = false;
-                break;
-            case QMessageBox::Cancel:
-                // do nothing
-                return File::Aborted;
-                break;
-        }
+        QMessageBox mb(QMessageBox::Warning, vymName,
+           tr("The map %1\ndid not use the compressed "
+              "vym file format.\nWriting it uncompressed will also "
+              "write images \n"
+              "and flags and thus may overwrite files into the "
+              "given directory\n\nDo you want to write the map")
+               .arg(filePath));
+        QPushButton *compressedButton = mb.addButton(
+            tr("compressed (vym default)"),
+            QMessageBox::AcceptRole);
+        QPushButton *uncompressedButton = mb.addButton(
+            tr("uncompressed, potentially overwrite existing data"),
+            QMessageBox::NoRole);
+        QPushButton *cancelButton = mb.addButton(
+            tr("Cancel"),
+            QMessageBox::RejectRole);
+        mb.exec();
+        if (mb.clickedButton() == compressedButton)
+            // save compressed (default file format)
+            zipped = true;
+        else if (mb.clickedButton() == uncompressedButton)
+            zipped = false; // FIXME-4 Filename suffix still could be .xml instead of .vym
+        else 
+            // do nothing
+            return File::Aborted;
     }
 
     // First backup existing file, we
@@ -876,30 +872,27 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
         if (!fn.isEmpty()) {
             lastImageDir.setPath(fn.left(fn.lastIndexOf("/")));
             if (QFile(fn).exists()) {
-                QMessageBox mb(vymName,
-                               tr("The file %1 exists already.\n"
-                                  "Do you want to overwrite it?")
-                                   .arg(fn),
-                               QMessageBox::Warning,
-                               QMessageBox::Yes | QMessageBox::Default,
-                               QMessageBox::Cancel | QMessageBox::Escape,
-                               QMessageBox::NoButton);
-
-                mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-                mb.setButtonText(QMessageBox::No, tr("Cancel"));
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
-                    // save
-                    break;
-                case QMessageBox::Cancel:
-                    // do nothing
+                QMessageBox mb(
+                   QMessageBox::Warning,
+                   vymName,
+                   tr("The file %1 exists already.\n"
+                      "Do you want to overwrite it?")
+                       .arg(fn));
+                mb.addButton(
+                    tr("Overwrite"),
+                    QMessageBox::AcceptRole);
+                mb.addButton(
+                    tr("Cancel"),
+                    QMessageBox::RejectRole);
+                mb.exec();
+                if (mb.result() != QMessageBox::AcceptRole)
                     return;
-                    break;
-                }
             }
             if (!ii->saveImage(fn))
                 QMessageBox::critical(0, tr("Critical Error"),
                                       tr("Couldn't save %1").arg(fn));
+            else
+                mainWindow->statusMessage(tr("Saved %1").arg(fn));
         }
     }
 }
@@ -979,7 +972,7 @@ void VymModel::importDir()
         QFileDialog fd;
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
-        fd.setFileMode(QFileDialog::DirectoryOnly);
+        // FIXME-1 Qt6 fd.setFileMode(QFileDialog::DirectoryOnly);
         fd.setNameFilters(filters);
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
@@ -1168,28 +1161,28 @@ void VymModel::fileChanged()
                 // FIXME-4 VM switch to current mapeditor and finish
                 // lineedits...
                 QMessageBox mb(
+                    QMessageBox::Question,
                     vymName,
                     tr("The file of the map  on disk has changed:\n\n"
                        "   %1\n\nDo you want to reload that map with the new "
                        "file?")
-                        .arg(filePath),
-                    QMessageBox::Question, QMessageBox::Yes,
-                    QMessageBox::Cancel | QMessageBox::Default,
-                    QMessageBox::NoButton);
+                        .arg(filePath));
 
-                mb.setButtonText(QMessageBox::Yes, tr("Reload"));
-                mb.setButtonText(QMessageBox::No, tr("Ignore"));
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
-                    // Reload map
+                mb.addButton(
+                    tr("Reload"),
+                    QMessageBox::AcceptRole);
+                mb.addButton(
+                    tr("Ignore"),
+                    QMessageBox::RejectRole);
+                mb.exec();
+                if (mb.result() == QMessageBox::AcceptRole) {
+                    // Reload map       // FIXME-2 still might warn about existing lockfile!
                     mainWindow->initProgressCounter(1);
                     loadMap(filePath);
                     mainWindow->removeProgressCounter();
-                    break;
-                case QMessageBox::Cancel:
-                    fileChangedTime =
-                        tmod; // allow autosave to overwrite newer file!
-                }
+                } else
+                    // allow autosave to overwrite newer file!
+                    fileChangedTime = tmod;
             }
         }
     }
@@ -1583,8 +1576,8 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
 
                 // Current command is a repeated one. We only want to "squash" some of these
-                QRegExp re("<vymnote");
-                if (rcl.startsWith("model.parseVymText") && re.indexIn(redoCommand) > 0) {
+                QRegularExpression re("<vymnote");
+                if (rcl.startsWith("model.parseVymText") && re.match(redoCommand).hasMatch()) {
                     if (debug)
                         qDebug() << "VM::saveState repeated command: " << redoCommand;
 
@@ -2157,39 +2150,31 @@ void VymModel::saveNote(const QString &fn)
         qWarning("VymModel::saveNote no branch selected");
 }
 
-void VymModel::findDuplicateURLs() // FIXME-3 needs GUI
+void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing
 {
-    // Generate map containing _all_ URLs and branches
-    QString u;
-    QMultiMap<QString, BranchItem *> map;
+    // Generate multimap containing _all_ URLs and branches
+    QMultiMap<QString, BranchItem *> multimap;
+    QStringList urls;
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        u = cur->getURL();
-        if (!u.isEmpty())
-            map.insert(u, cur);
+        QString u = cur->getURL();
+        if (!u.isEmpty()) {
+            multimap.insert(u, cur);
+            if (!urls.contains(u))
+                urls << u;
+        }
         nextBranch(cur, prev);
     }
 
     // Extract duplicate URLs
-    QMultiMap<QString, BranchItem *>::const_iterator i = map.constBegin();
-    QMultiMap<QString, BranchItem *>::const_iterator firstdup =
-        map.constEnd(); // invalid
-    while (i != map.constEnd()) {
-        if (i != map.constBegin() && i.key() == firstdup.key()) {
-            if (i - 1 == firstdup) {
-                qDebug() << firstdup.key();
-                qDebug() << " - " << firstdup.value() << " - "
-                         << firstdup.value()->getHeading().getText();
-            }
-            qDebug() << " - " << i.value() << " - "
-                     << i.value()->getHeading().getText();
+    foreach (auto u, urls) {
+        if (multimap.values(u).size() > -1) {
+            qDebug() << "URL: " << u;
+            foreach(auto *bi, multimap.values(u))
+                qDebug() << " - " << bi->getHeadingPlain();
         }
-        else
-            firstdup = i;
-
-        ++i;
     }
 }
 
@@ -2843,68 +2828,60 @@ bool VymModel::setTaskSleep(const QString &s)
                 ok = task->setSecsSleep(0);
             }
             else {
-                QRegExp re("^\\s*(\\d+)\\s*$");
-                re.setMinimal(false);
-                int pos = re.indexIn(s);
-                if (pos >= 0) {
+                QRegularExpression re("^\\s*(\\d+)\\s*$");
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
+                QRegularExpressionMatch match = re.match(s);
+                if (match.hasMatch()) {
                     // Found only digit, considered as days
-                    ok = task->setDaysSleep(re.cap(1).toInt());
+                    ok = task->setDaysSleep(match.captured(1).toInt());
                 }
                 else {
-                    QRegExp re("^\\s*(\\d+)\\s*h\\s*$");
-                    pos = re.indexIn(s);
-                    if (pos >= 0) {
+                    re.setPattern("^\\s*(\\d+)\\s*h\\s*$");
+                    match = re.match(s);
+                    if (match.hasMatch()) {
                         // Found digit followed by "h", considered as hours
-                        ok = task->setHoursSleep(re.cap(1).toInt());
+                        ok = task->setHoursSleep(match.captured(1).toInt());
                     }
                     else {
-                        QRegExp re("^\\s*(\\d+)\\s*w\\s*$");
-                        pos = re.indexIn(s);
-                        if (pos >= 0) {
+                        re.setPattern("^\\s*(\\d+)\\s*w\\s*$");
+                        match = re.match(s);
+                        if (match.hasMatch()) {
                             // Found digit followed by "w", considered as weeks
-                            ok = task->setDaysSleep(7 * re.cap(1).toInt());
+                            ok = task->setDaysSleep(7 * match.captured(1).toInt());
                         }
                         else {
-                            QRegExp re("^\\s*(\\d+)\\s*s\\s*$");
-                            pos = re.indexIn(s);
-                            if (pos >= 0) {
+                            re.setPattern("^\\s*(\\d+)\\s*s\\s*$");
+                            match = re.match(s);
+                            if (match.hasMatch()) {
                                 // Found digit followed by "s", considered as
                                 // seconds
-                                ok = task->setSecsSleep(re.cap(1).toInt());
+                                ok = task->setSecsSleep(match.captured(1).toInt());
                             }
                             else {
                                 ok = task->setDateSleep(
                                     s); // ISO date YYYY-MM-DDTHH:mm:ss
 
                                 if (!ok) {
-                                    QRegExp re("(\\d+)\\.(\\d+)\\.(\\d+)");
-                                    re.setMinimal(false);
-                                    int pos = re.indexIn(s);
-                                    QStringList list = re.capturedTexts();
-                                    QDateTime d;
-                                    if (pos >= 0) {
-                                        d = QDateTime(
-                                            QDate(list.at(3).toInt(),
-                                                  list.at(2).toInt(),
-                                                  list.at(1).toInt()).startOfDay());
-                                        // d = QDate(list.at(3).toInt(),
-                                        // list.at(2).toInt(),
-                                        // list.at(1).toInt()).startOfDay();
-                                        ok = task->setDateSleep(
-                                            d); // German format,
-                                                // e.g. 24.12.2012
+                                    re.setPattern("(\\d+)\\.(\\d+)\\.(\\d+)");
+                                    match = re.match(s);
+                                    if (match.hasMatch()) {
+                                        QDateTime d(
+                                            QDate(match.captured(3).toInt(),
+                                                  match.captured(2).toInt(),
+                                                  match.captured(1).toInt()).startOfDay());
+                                        ok = task->setDateSleep(d); 
+                                            // German format,
+                                            // e.g. 24.12.2012
                                     }
                                     else {
                                         re.setPattern("(\\d+)\\.(\\d+)\\.");
-                                        pos = re.indexIn(s);
-                                        list = re.capturedTexts();
-                                        if (pos >= 0) {
-                                            int month = list.at(2).toInt();
-                                            int day = list.at(1).toInt();
+                                        match = re.match(s);
+                                        if (match.hasMatch()) {
+                                            int month = match.captured(2).toInt();
+                                            int day = match.captured(1).toInt();
                                             int year =
                                                 QDate::currentDate().year();
-                                            d = QDateTime(
-                                                QDate(year, month, day).startOfDay());
+                                            QDateTime d(QDate(year, month, day).startOfDay());
                                             // d = QDate(year, month,
                                             // day).startOfDay();
                                             if (QDateTime::currentDateTime()
@@ -2915,22 +2892,20 @@ bool VymModel::setTaskSleep(const QString &s)
                                                 // d = QDate(year, month,
                                                 // day).startOfDay();
                                             }
-                                            ok = task->setDateSleep(
-                                                d); // Short German format,
-                                                    // e.g. 24.12.
+                                            ok = task->setDateSleep(d);
+                                                // Short German format,
+                                                // e.g. 24.12.
                                         }
                                         else {
                                             re.setPattern("(\\d+)\\:(\\d+)");
-                                            pos = re.indexIn(s);
-                                            list = re.capturedTexts();
-                                            if (pos >= 0) {
-                                                int hour = list.at(1).toInt();
-                                                int min = list.at(2).toInt();
-                                                d = QDateTime(
+                                            match = re.match(s);
+                                            if (match.hasMatch()) {
+                                                int hour = match.captured(1).toInt();
+                                                int min = match.captured(2).toInt();
+                                                QDateTime d(
                                                     QDate::currentDate(),
                                                     QTime(hour, min));
-                                                ok = task->setDateSleep(
-                                                    d); // Time HH:MM
+                                                ok = task->setDateSleep(d); // Time HH:MM
                                             }
                                         }
                                     }
@@ -3238,7 +3213,7 @@ QList <BranchItem*> VymModel::sortBranchesByNum(QList <BranchItem*> unsortedList
 
     QList <BranchItem*> sortedList;
 
-    QMapIterator<int, BranchItem*> i(multimap);
+    QMultiMapIterator<int, BranchItem*> i(multimap);
     if (inverse) {
             i.toBack();
             while (i.hasPrevious()) {
@@ -3294,7 +3269,7 @@ void VymModel::sortChildren(bool inverse)
                     multimap.insert(selbi->getBranchNum(i)->getHeadingPlain(), selbi->getBranchNum(i));
 
                 int n = 0;
-                QMapIterator<QString, BranchItem*> i(multimap);
+                QMultiMapIterator<QString, BranchItem*> i(multimap);
                 if (inverse) {
                     i.toBack();
                     while (i.hasPrevious()) {
@@ -3667,7 +3642,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
 
         if (newbi) {
             saveState(undosel, "remove ()", redosel,
-                      QString("addBranch (%1)").arg(pos),
+                      QString("addBranchAt (%1)").arg(pos),
                       QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
@@ -4486,18 +4461,24 @@ void VymModel::note2URLs()
         QString n = selbi->getNoteASCII();
         if (n.isEmpty())
             return;
-        QRegExp re("(http.*)(\\s|\"|')");
-        re.setMinimal(true);
+        QRegularExpression re("(http.*)(\\s|\"|')");
+        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
         BranchItem *bi;
         int pos = 0;
-        while ((pos = re.indexIn(n, pos)) != -1) {
-            bi = createBranch(selbi);
-            bi->setHeadingPlainText(re.cap(1));
-            bi->setURL(re.cap(1));
-            emitDataChanged(bi);
-            pos += re.matchedLength();
+        QRegularExpressionMatch match;
+        while (pos >= 0) {
+            match = re.match(n, pos);
+            if (match.hasMatch()) {
+                bi = addNewBranch(selbi);
+                bi->setHeadingPlainText(match.captured(1));
+                bi->setURL(match.captured(1));
+                emitDataChanged(bi);
+                pos = match.capturedEnd();
+            } else
+                pos = -1;
         }
+        reposition();
     }
 }
 
@@ -4524,7 +4505,6 @@ void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
     }
 
     BranchItem *selbi = getSelectedBranch();
-    QRegExp re("(\\w+[-|\\s]\\d+)");
 
     if (selbi) {
         QString url;
@@ -4534,7 +4514,9 @@ void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
         while (cur) {
             QString heading = cur->getHeadingPlain();
 
-            if (re.indexIn(heading) >= 0) {
+            QRegularExpression re("(\\w+[-|\\s]\\d+)");
+            QRegularExpressionMatch match = re.match(heading);
+            if (match.hasMatch()) {
                 // Create agent
                 JiraAgent *agent = new JiraAgent;
                 agent->setJobType(JiraAgent::GetTicketInfo);
@@ -5078,7 +5060,6 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
 
     // Write it finally, and write in UTF8, no matter what
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << saveFile;
     file.close();
 
@@ -5252,6 +5233,14 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
 {
     command =
         settings.localValue(filePath, "/export/last/command", "").toString();
+    QRegularExpression re("exportMap\\((\".*)\\)");
+    QRegularExpressionMatch match = re.match(command);
+    if (match.hasMatch()) {
+        QString matched = match.captured(1); // matched == "23 def"
+        command = QString("vym.currentMap().exportMap([%1]);").arg(match.captured(1));
+        settings.setLocalValue(filePath, "/export/last/command", command);
+        qDebug() << "Rewriting last export command to version " << vymVersion << " format: " << command;
+    }
 
     description = settings.localValue(filePath, "/export/last/description", "")
                       .toString();

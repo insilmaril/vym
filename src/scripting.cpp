@@ -9,54 +9,79 @@
 #include "vymtext.h"
 #include "xlink.h"
 
+#include <QJSValue> 
+
 extern Main *mainWindow;
 extern QString vymVersion;
 
-///////////////////////////////////////////////////////////////////////////
-void logError(QScriptContext *context, QScriptContext::Error error,
-              const QString &text)
-{
-    if (context)
-        context->throwError(error, text);
-    else
-        qDebug() << "VymWrapper: " << text;
-}
+extern QJSEngine *scriptEngine;
 
 ///////////////////////////////////////////////////////////////////////////
 VymScriptContext::VymScriptContext() {}
 
 QString VymScriptContext::setResult(const QString &r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    if (scriptEngine) {
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 bool VymScriptContext::setResult(bool r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    if (scriptEngine) {
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 int VymScriptContext::setResult(int r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    if (scriptEngine) {
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 uint VymScriptContext::setResult(uint r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    if (scriptEngine) {
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 qreal VymScriptContext::setResult(qreal r)
 {
-    context()->engine()->globalObject().setProperty("lastResult", r);
+    if (scriptEngine) {
+        scriptEngine->globalObject().setProperty("lastResult", r);
+    } else
+        qWarning() << "VymScriptContext: No scriptEngine defined";
     return r;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper() {}
+
+void VymWrapper::print(const QString &s)
+{
+    mainWindow->scriptPrint(s);
+}
+
+void VymWrapper::statusMessage(const QString &s)
+{
+    mainWindow->statusMessage(s);
+}
+
+void VymWrapper::abortScript(const QString &s)
+{
+    mainWindow->statusMessage(s);
+    scriptEngine->throwError(QString("abortScript(\"%1\") called").arg(s));
+}
 
 void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 
@@ -88,25 +113,28 @@ bool VymWrapper::loadMap(const QString &filename)
 
 int VymWrapper::mapCount()
 {
-    context()->engine()->globalObject().setProperty("lastResult",
-                                                    mainWindow->modelCount());
     return setResult(mainWindow->modelCount());
 }
 
 void VymWrapper::gotoMap(uint n)
 {
     if (!mainWindow->gotoWindow(n)) {
-        logError(context(), QScriptContext::RangeError,
-                 QString("Map '%1' not available.").arg(n));
+        scriptEngine->throwError(
+                QJSValue::ReferenceError, 
+                QString("Map '%1' not available.").arg(n));
+        return;
     }
 }
 
 bool VymWrapper::closeMapWithID(uint n)
 {
     bool r = mainWindow->closeModelWithID(n);
-    if (!r)
-        logError(context(), QScriptContext::RangeError,
-                 QString("Map '%1' not available.").arg(n));
+    if (!r) {
+        scriptEngine->throwError(
+                QJSValue::ReferenceError, 
+                QString("Map '%1' not available.").arg(n));
+        return false;
+    }
     return setResult(r);
 }
 
@@ -144,7 +172,10 @@ void VymWrapper::saveFile(
     saveStringToDisk(filename, s);
 }
 
-QString VymWrapper::version() { return setResult(vymVersion); }
+QString VymWrapper::version() {
+    qDebug() << "VymWrapper::version  v=" << vymVersion;
+    return setResult(vymVersion);
+}
 
 // See also http://doc.qt.io/qt-5/qscriptengine.html#newFunction
 Selection::Selection() { modelWrapper = nullptr; }

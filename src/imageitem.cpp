@@ -1,6 +1,7 @@
 #include "imageitem.h"
 
 #include <QDebug>
+#include <QRegularExpression>
 #include <QString>
 #include <iostream>
 
@@ -9,9 +10,9 @@
 
 bool isImage(const QString &fname)
 {
-    QRegExp rx("(jpg|jpeg|png|xmp|gif|svg)$");
-    rx.setCaseSensitivity(Qt::CaseInsensitive);
-    return fname.contains(rx);
+    QRegularExpression re("(jpg|jpeg|png|xmp|gif|svg)$");
+    re.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    return fname.contains(re);
 }
 
 ImageItem::ImageItem():MapItem(nullptr)

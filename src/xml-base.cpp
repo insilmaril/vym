@@ -76,8 +76,7 @@ void BaseReader::readHtml()
             case QXmlStreamReader::StartElement:
                 htmldata += "<" + xml.name().toString();
                 for (int i = 0; i < xml.attributes().count(); i++) {
-                    htmldata += " " + xml.attributes().at(i).name();
-                    htmldata += "=\"" + xml.attributes().at(i).value() + "\"";
+                    htmldata += QString("\" %1 \"").arg(xml.attributes().at(i).value());
                 }
                 htmldata += ">";
                 break;

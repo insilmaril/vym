@@ -146,20 +146,19 @@ void ExportBase::completeExport(QStringList args)
 
     if (args.isEmpty()) {
         // Add at least filepath as argument. exportName is added anyway
-        command = QString("vym.currentMap().exportMap(\"%1\",\"%2\")")
-                      .arg(exportName)
-                      .arg(filePath);
+        command = QString("vym.currentMap().exportMap([\"%1\",\"%2\")]")
+                      .arg(exportName, filePath);
     }
     else {
         // Only add exportName as default, rest of arguments need to be passed
         // (Cloud exports ahve no filename...)
-        command = QString("vym.currentMap().exportMap(\"%1\"")
+        command = QString("vym.currentMap().exportMap([\"%1\"")
                       .arg(exportName);
 
         foreach (QString arg, args)
             command += QString(", \"%1\"").arg(arg);
 
-        command += ")";
+        command += "])";
     }
 
     model->setExportLastCommand(command);
@@ -177,8 +176,7 @@ void ExportBase::completeExport(QStringList args)
             break;
         case Failed:
             mainWindow->statusMessage(QString("Failed to export as %1 to %2")
-                                      .arg(exportName)
-                                      .arg(displayedDestination));
+                                      .arg(exportName, displayedDestination));
             break;
         case Ongoing:
             break;

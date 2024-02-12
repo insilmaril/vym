@@ -257,7 +257,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                    QString command = QString("vym.currentMap().exportMap([\"ConfluenceUpdatePage\",\"%1\"])")
                         .arg(pageURL);
                     QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"")
                         .arg(pageObj["title"].toString()).arg(pageURL);
@@ -331,7 +331,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                    QString command = QString("vym.currentMap().exportMap([\"ConfluenceUpdatePage\",\"%1\"])")
                         .arg(pageURL);
                     QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString())
                         .arg(pageURL);
@@ -442,7 +442,7 @@ void ConfluenceAgent::unknownStepWarningFinishJob()
 void ConfluenceAgent::getUsers(const QString &usrQuery)
 {
     userQuery = usrQuery;
-    if (usrQuery.contains(QRegExp("\\W+"))) {
+    if (usrQuery.contains(QRegularExpression("\\W+"))) {
         qWarning() << "ConfluenceAgent::getUsers  Forbidden characters in " << usrQuery;
         return;
     }
@@ -502,12 +502,12 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
         return;
 
     // Find pageID
-    QRegExp rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
-    rx.setMinimal(true);
+    QRegularExpression re("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
+    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
-    if (rx.indexIn(fullReply, 0) != -1) {
-        pageID = rx.cap(1);
-    }
+    QRegularExpressionMatch match = re.match(fullReply);
+    if (match.hasMatch())
+        pageID = match.captured(1);
     else {
         qWarning()
             << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
@@ -516,11 +516,11 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
     }
 
     // Find spaceKey 
-    rx.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
+    re.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
                   "name=\"confluence-space-key\"\\s*content=\"(.*)\"");
-    if (rx.indexIn(fullReply, 0) != -1) {
-        spaceKey = rx.cap(1);
-    }
+    match = re.match(fullReply);
+    if (match.hasMatch())
+        spaceKey = match.captured(1);
     else {
         qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find "
                       "space key in response";

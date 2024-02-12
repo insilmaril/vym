@@ -15,7 +15,7 @@ def expect (comment, v_real, v_exp)
   if v_exp == v_real
     puts "    Ok: #{comment}".green
     $tests_passed += 1
-    # waitkey
+    #waitkey
   else
     puts "Failed: #{comment}. Expected '#{v_exp}', but got '#{v_real}'".red
     $tests_failed += 1
@@ -132,7 +132,7 @@ def test_vym
   #@vym.clearConsole
 
   heading "Mainwindow checks:"
-  version = "2.9.512"
+  version = "2.9.518"
   expect_warning_only "Version is #{version}", @vym.version, version
 
   expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
@@ -187,7 +187,10 @@ def test_adding_branches
   map.selectLatestAdded
   expect "selectLatestAdded", map.getSelectionString, @main_A + ",bo:3"
 
+  map.selectParent
+  expect "selectParent", map.getSelectionString, @main_A
   map.undo
+
   expect( "Undo: addBranch", map.branchCount.to_i, n )
 
   close_current_map
@@ -196,8 +199,8 @@ def test_adding_branches
   map.select @main_A
   n = map.branchCount.to_i
   map.select @branch_0Aa
-  map.addBranch( -3 )
-  map.addBranch( -1 )
+  map.addBranchAt( -3 )
+  map.addBranchAt( -1 )
   map.select @main_A
   expect "addBranchAbove/Below", map.branchCount.to_i, n + 2
 
@@ -1295,13 +1298,13 @@ begin
   end
 
   test_vym
-  test_basics
+  #test_basics
 
-  #test_adding_branches
+  test_adding_branches
   #test_adding_maps
   #test_attributes
   #test_bugfixes
-  test_copy_paste
+  #test_copy_paste
   #test_delete_parts
   #test_export
   #test_extrainfo
@@ -1309,7 +1312,7 @@ begin
   #test_history
   #test_load_legacy_maps
   #test_modify_branches
-  #test_moving_parts
+  test_moving_parts
   #test_notes
   #test_references
   #test_saving

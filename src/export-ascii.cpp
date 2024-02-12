@@ -133,7 +133,6 @@ void ExportASCII::doExport()
     }
 
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 
@@ -167,14 +166,14 @@ QString ExportASCII::ensureEmptyLines(QString &text, int n)
 
     // First count trailing line breaks
     int j = 0;
-    int i = text.count() - 1;
-    while (i > -1 && text.at(i) == "\n")  {
+    int i = text.length() - 1;
+    while (i > -1 && text.at(i) == QChar::LineFeed)  {  // FIXME-2 check
         i--;
         j++;
     }
 
     while (j < n + 1) {
-        text = text + "\n";
+        text = text + QChar::LineFeed; // FIXME-2 check
         j++;
     }
 

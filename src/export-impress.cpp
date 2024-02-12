@@ -132,7 +132,6 @@ void ExportOO::exportPresentation()
     }
 
     QTextStream t(&f);
-    t.setCodec("UTF-8");
     t << content;
     f.close();
 

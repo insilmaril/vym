@@ -4,7 +4,8 @@
 
 #include "file.h"
 #include "settings.h"
-#include <qregexp.h>
+
+#include <QRegularExpression>
 
 /////////////////////////////////////////////////////////////////
 // SimpleSettings
@@ -27,7 +28,7 @@ bool SimpleSettings::readSettings(const QString &path)
         return false;
     }
     QStringList lines;
-    lines = s.split(QRegExp("\n"));
+    lines = s.split(QRegularExpression("\n"));
     int i;
     QStringList::Iterator it = lines.begin();
     while (it != lines.end()) {

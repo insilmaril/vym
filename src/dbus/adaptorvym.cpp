@@ -33,7 +33,10 @@ QDBusVariant AdaptorVym::getVersion() { return QDBusVariant(vymVersion); }
 
 QDBusVariant AdaptorVym::execute(const QString &s)
 {
-    return QDBusVariant(mainWindow->runScript(s));
+    //qDebug() << "AdaptorVym::execute s=" << s;
+    QVariant v = mainWindow->runScript(s);
+    //qDebug() << "                    v=" << v;
+    return QDBusVariant(v);
 }
 
 QDBusVariant AdaptorVym::listCommands()

@@ -49,17 +49,18 @@ QString jiraPassword;
 QString confluencePassword;
 
 TaskModel *taskModel;
-TaskEditor *taskEditor;
-ScriptEditor *scriptEditor;
-ScriptOutput *scriptOutput;
 HeadingEditor *headingEditor;
 NoteEditor *noteEditor;
 BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow
 Main *mainWindow;
+QJSEngine *scriptEngine;
+ScriptEditor *scriptEditor;
+ScriptOutput *scriptOutput;
 FindWidget *findWidget;
 FindResultWidget *findResultWidget;
+TaskEditor *taskEditor;
 
 FlagRowMaster *systemFlagsMaster;
 FlagRowMaster *standardFlagsMaster;
@@ -124,9 +125,6 @@ QString editorFocusStyle =
     QString(" border-color: #3daee9; border-style:outset; border-width:3px; "
             "color:black;");
 
-#include <QScriptEngine>    // Will be changed for Qt6
-QScriptValue scriptPrint(QScriptContext *ctx, QScriptEngine *eng);
-
 void msgHandler(QtMsgType type, const QMessageLogContext &context,
                 const QString &msg)
 {
@@ -177,9 +175,6 @@ int main(int argc, char *argv[])
 
     // Install our own handler for messages
     qInstallMessageHandler(msgHandler);
-
-    // Testing for now
-    vout.setCodec("UTF-8");  //FIXME-4
 
     // Reading and initializing options commandline options
     options.add("batch", Option::Switch, "b", "batch");

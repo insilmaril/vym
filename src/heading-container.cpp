@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QRegularExpression>
 
 #include "heading-container.h"
 
@@ -75,14 +76,16 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
         if (s.length() == 0)
             s = "  ";
 
+
         int i = 0;  // index for actual search for ws
         int j = 0;  // index of last ws
         int k = 0;  // index of "<br>" or similar linebreak
         int br = 0; // width of found break, e.g. for <br> it is 4
 
-        QRegExp re("<br.*/>");
-        re.setMinimal(true);
-
+        QRegularExpression re("<br.*/>");
+        t = newLine(s);
+        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
+        /* FIXME-1 port word wrap of headings to Qt6
         // set the text and wrap lines
         while (s.length() > 0) {
             // ok, some people wanted manual linebreaks, here we go
@@ -146,6 +149,7 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
                 }
             }
         }
+        */
     } // ASCII heading with multiple lines
 
     // Align headingLines vertically and find center

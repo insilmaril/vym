@@ -4,9 +4,8 @@
 #include <QMainWindow>
 #include <QPrinter>
 #include <QProgressDialog>
-#include <QScriptContext>
-#include <QScriptEngine>
-#include <QScriptValue>
+#include <QJSEngine>
+#include <QJSValue>
 #include <QTextStream>
 
 #include "branchpropeditor.h"
@@ -342,6 +341,7 @@ class Main : public QMainWindow {
     void updateActions();
     ModMode getModMode();
     bool autoSelectNewBranch();
+    void scriptPrint(const QString &);
     QVariant runScript(const QString &);
     QObject *getCurrentModelWrapper();
     bool gotoWindow(const int &n);
@@ -396,8 +396,6 @@ class Main : public QMainWindow {
 
     QStringList imageTypes;
 
-    QScriptEngine scriptEngine;
-
     QString prevSelection;
 
     HistoryWindow *historyWindow;
@@ -406,6 +404,8 @@ class Main : public QMainWindow {
     QDockWidget *noteEditorDW;
     QDockWidget *scriptEditorDW;
     QDockWidget *branchPropertyEditorDW;
+
+    VymWrapper *vymWrapper;
 
   public:
     QList<QAction *>
