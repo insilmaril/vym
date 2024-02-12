@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(ViewYourMind VERSION 2.9.518 LANGUAGES CXX)
+project(ViewYourMind-develop VERSION 2.9.518 LANGUAGES CXX)
 
 # See also https://doc.qt.io/qt-6.5/cmake-get-started.html
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_COMPILER g++-10)
+#set(CMAKE_CXX_COMPILER g++-10)
 
 set(QtComponents
     LinguistTools

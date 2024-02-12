@@ -5,8 +5,6 @@
 #include <QOperatingSystemVersion>
 #include <QPixmap>
 #include <QTextStream>
-#include <cstdlib>
-#include <iostream>
 
 #include "file.h"
 #include "vymprocess.h"
@@ -325,11 +323,15 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
             */
             if (zipProc->exitCode() > 1) {
                 QMessageBox::critical(
-                    0, QObject::tr("Error"),
-                    "Called:" + zipToolPath + "\n" + "Args: " + args.join(" ") +
-                        "\n" + "Exit: " + zipProc->exitCode() + "\n" +
-                        "Err: " + zipProc->getErrout() + "\n" +
-                        "Std: " + zipProc->getStdout());
+                    0,
+                    QObject::tr("Error"),
+                    QString(
+                        "Called: %1\n"
+                        "Args: %2\n"
+                        "Exit: %3\n"
+                        "Err: %4\n"
+                        "Std: %5").arg(zipToolPath).arg(args.join(" ")).arg(zipProc->exitCode()).arg(zipProc->getErrout()).arg(zipProc->getStdout())
+                    );
                 err = Aborted;
             }
             else if (zipProc->exitCode() == 1) {
@@ -337,14 +339,22 @@ ErrorCode zipDir(QDir zipInputDir, QString zipName)
                 // some file was locked and could not be compressed
                 QMessageBox::warning(
                     0, QObject::tr("Error"),
-                    "Called:" + zipToolPath + "\n" + "Args: " + args.join(" ") +
-                        "\n" + "Exit: " + zipProc->exitCode() + "\n" +
-                        "Err: " + zipProc->getErrout() + "\n" +
-                        "Std: " + zipProc->getStdout() +
-                        "\n"
-                        "Please check the saved map, e.g. by opening in "
-                        "another tab.\n" +
-                        "Workaround if save failed: Export as xml");
+                    QString(
+                        "Called: %1\n"
+                        "Args: %2\n"
+                        "Err: %3\n"
+                        "Std: %4\n"
+                        "%5")
+                            .arg(zipToolPath)
+                            .arg(args.join(" "))
+                            .arg(zipProc->getErrout())
+                            .arg(zipProc->getStdout())
+                            .arg(
+                               "Please check the saved map, e.g. by opening in "
+                               "another tab.\n"
+                               "Workaround if save failed: Export as xml")
+                );
+
             }
         }
     }
