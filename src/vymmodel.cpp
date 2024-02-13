@@ -972,7 +972,7 @@ void VymModel::importDir()
         QFileDialog fd;
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
-        // FIXME-1 Qt6 fd.setFileMode(QFileDialog::DirectoryOnly);
+        fd.setFileMode(QFileDialog::Directory);
         fd.setNameFilters(filters);
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
