@@ -6,7 +6,10 @@ project(ViewYourMind-develop VERSION 2.9.518 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(CMAKE_CXX_COMPILER g++-10)
+
+if (UNIX)
+    set(CMAKE_CXX_COMPILER g++-10)
+endif()
 
 set(QtComponents
     LinguistTools
