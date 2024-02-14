@@ -144,6 +144,10 @@ class MapDesign {
   public:
     QFont defaultFont();
     void setDefaultFont(const QFont &f);
+    QColor branchHeadingColor(
+            const MapDesign::UpdateMode &updateMode,
+            BranchItem *branchItem,
+            bool &updateRequired);
     void updateBranchHeadingColor(
             const MapDesign::UpdateMode &updateMode,
             BranchItem *branchItem,

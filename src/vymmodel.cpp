@@ -612,7 +612,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (err != File::Aborted) {
             if (parsedWell) {
-                // rootItem->updateStylesRecursively(MapDesign::MapLoad); FIXME-3 not used
                 reposition(); // to generate bbox sizes
                 emitSelectionChanged();
 
@@ -2696,8 +2695,10 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
 
     // Links might have been added or removed
     foreach (BranchItem *selbi, selbis)
-        if (selbi)
-            selbi->updateStylesRecursively(MapDesign::LayoutChanged);
+        applyDesign(
+            MapDesign::LayoutChanged,
+            true,   //recursively
+            selbi);
 }
 
 void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
@@ -3804,7 +3805,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         bi->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related branch-container or other view-objects
-        bi->updateStylesRecursively(MapDesign::RelinkedByUser);
+        applyDesign(MapDesign::RelinkedByUser, true, bi);
 
         emitDataChanged(bi);
 
@@ -4395,9 +4396,9 @@ void VymModel::clearFlags()
     }
 }
 
-void VymModel::colorBranch(QColor c)
+void VymModel::colorBranch(QColor c, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         saveState(selbi,
                   QString("colorBranch (\"%1\")")
@@ -5423,6 +5424,50 @@ MapDesign* VymModel::mapDesign()
     return mapDesignInt;
 }
 
+void VymModel::applyDesign(
+        MapDesign::UpdateMode updateMode,
+        bool recursive,
+        TreeItem *ti)
+{
+    // FIXME-2 VM::updateDesign  testing only:
+    QString h;
+    if (ti)
+        h = ti->getHeadingPlain();
+    else
+        h = "nullptr";
+    qDebug() << "VM::updateDesign  mode=" << MapDesign::updateModeString(updateMode) << " of " << h;
+
+    QList<BranchItem *> selbis;
+    if (ti == rootItem) {
+        // Loop over all branches
+        recursive = true;
+        for (int i = 0; i < rootItem->branchCount(); ++i)
+            selbis << rootItem->getBranchNum(i);
+
+    } else {
+        if (ti && ti->hasTypeBranch())
+            selbis << (BranchItem*)ti;
+        else
+            selbis = getSelectedBranches(ti);
+    }
+
+    bool updateRequired;
+    foreach (BranchItem *selbi, selbis) {
+        // Color of heading
+        QColor col = mapDesignInt->branchHeadingColor(
+                        updateMode,
+                        selbi,
+                        updateRequired);
+        if (updateRequired)
+            colorBranch(col, selbi);
+
+        if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
+            qDebug() << "VM::applyDesign  update linkStyles";
+
+        }
+    }
+}
+
 bool VymModel::setLinkStyle(const QString &newStyleString)
 {
     QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(1));
@@ -5436,7 +5481,11 @@ bool VymModel::setLinkStyle(const QString &newStyleString)
     // For whole map set style for d=1
     mapDesignInt->setLinkStyle(style, 1);
 
-    rootItem->updateStylesRecursively(MapDesign::LinkStyleChanged);
+    applyDesign(
+        MapDesign::LinkStyleChanged,
+        true,
+        rootItem
+    );
 
     reposition();
     return true;
@@ -5491,10 +5540,14 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //for (int i = 0; i < cur->imageCount(); ++i)
         //    cur->getImageNum(i)->getLMO()->setLinkColor();
         //
-        rootItem->updateStylesRecursively(MapDesign::LinkStyleChanged);
         nextBranch(cur, prev);
     }
     reposition();
+
+    applyDesign(
+            MapDesign::LinkStyleChanged,
+            true,
+            rootItem);
 }
 
 void VymModel::toggleLinkColorHint()
@@ -6338,23 +6391,22 @@ BranchItem *VymModel::getSelectedBranch()
     return bis.last();
 }
 
-QList<BranchItem *> VymModel::getSelectedBranches(BranchItem *bi)
+QList<BranchItem *> VymModel::getSelectedBranches(TreeItem *ti)
 {
     // Return list of selected branches.
-    // If bi != nullptr, return only this branch
-    QList<BranchItem *> bis;
+    // If ti != nullptr and is branch, return only this one
+    QList<BranchItem *> selbis;
 
-    if (bi) {
-        bis << bi;
-        return bis;
+    if (ti && ti->hasTypeBranch()) {
+        selbis << (BranchItem*)ti;
+        return selbis;
     }
 
     foreach (TreeItem *ti, getSelectedItems()) {
-        TreeItem::Type type = ti->getType();
-        if (type == TreeItem::Branch || type == TreeItem::MapCenter)
-            bis.append((BranchItem *)ti);
+        if (ti->hasTypeBranch())
+            selbis.append((BranchItem *)ti);
     }
-    return bis;
+    return selbis;
 }
 
 ImageItem *VymModel::getSelectedImage()
@@ -6432,15 +6484,21 @@ TreeItem *VymModel::getSelectedItem()
         return nullptr;
 }
 
-QList<TreeItem *> VymModel::getSelectedItems()
+QList<TreeItem *> VymModel::getSelectedItems(TreeItem *ti)
 {
-    QList<TreeItem *> l;
+    QList<TreeItem *> seltis;
+    if (ti) {
+        seltis << ti;
+        return seltis;
+    }
+
     if (!selModel)
-        return l;
+        return seltis;
+
     QModelIndexList list = selModel->selectedIndexes();
     foreach (QModelIndex ix, list)
-        l.append(getItem(ix));
-    return l;
+        seltis.append(getItem(ix));
+    return seltis;
 }
 
 QList<TreeItem *> VymModel::getSelectedItemsReduced()

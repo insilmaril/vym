@@ -546,7 +546,7 @@ class VymModel : public TreeModel {
     void toggleFlagByUid(const QUuid &uid, bool useGroups = true);
     void clearFlags();
 
-    void colorBranch(QColor);
+    void colorBranch(QColor, BranchItem *bi = nullptr);
     void colorSubtree(QColor, BranchItem *bi = nullptr);
     QColor getCurrentHeadingColor();
 
@@ -696,8 +696,13 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
   public:
     MapDesign* mapDesign();
+
   private:
     MapDesign* mapDesignInt;
+    void applyDesign(
+            MapDesign::UpdateMode,
+            bool recursive = false,
+            TreeItem *ti = nullptr);
 
   public:
     bool setLinkStyle(const QString &);   // Set style of link
@@ -818,7 +823,7 @@ class VymModel : public TreeModel {
   public:
     TreeItem::Type selectionType();
     BranchItem *getSelectedBranch();
-    QList<BranchItem *> getSelectedBranches(BranchItem *bi = nullptr);
+    QList<BranchItem *> getSelectedBranches(TreeItem *ti = nullptr);
     ImageItem *getSelectedImage();
     QList <ImageItem *> getSelectedImages(ImageItem *ii = nullptr);
     Task *getSelectedTask();
@@ -826,7 +831,7 @@ class VymModel : public TreeModel {
     Link *getSelectedXLink();
     AttributeItem *getSelectedAttribute();
     TreeItem *getSelectedItem();
-    QList<TreeItem *> getSelectedItems();
+    QList<TreeItem *> getSelectedItems(TreeItem *ti = nullptr);
     QList<TreeItem *> getSelectedItemsReduced();
     QModelIndex getSelectedIndex();
     QList<ulong> getSelectedIDs();

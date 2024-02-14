@@ -330,6 +330,17 @@ void MapDesign::setDefaultFont(const QFont &f)
     defaultFontInt = f;
 }
 
+QColor MapDesign::branchHeadingColor(
+        const MapDesign::UpdateMode &updateMode,
+        BranchItem *branchItem,
+        bool &updateRequired)
+{
+    updateRequired = false;
+    if (!branchItem) return QColor();
+
+    // FIXME-0 cont here...  (see below)
+}
+
 void MapDesign::updateBranchHeadingColor(
         const MapDesign::UpdateMode &updateMode,
         BranchItem *branchItem,
