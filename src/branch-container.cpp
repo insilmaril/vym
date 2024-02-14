@@ -1198,7 +1198,7 @@ void BranchContainer::updateBranchesContainerLayout()
 }
 
 
-void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode)
+void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // FIXME-0 needs to go to VymModel for undo/redo
 {
 
     uint depth = branchItem->depth();
