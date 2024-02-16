@@ -28,8 +28,33 @@ template <typename T> T ConfigList<T>::tryAt(int i) {
         return qlist.at(i);
 }
 
+template <typename T> void ConfigList<T>::replace(int i, const T &other) {
+    qlist.replace(i, other);    // FIXME-2 checks for array boundaries missing
+}
+
 template <typename T> int ConfigList<T>::count() {
     return qlist.count();
+}
+
+template <typename T> void ConfigList<T>::clear() {
+    qlist.clear();
+}
+
+template <typename T> QString ConfigList<T>::save(
+        const QString &attrName,
+        QString (&f)(int)) {
+    XMLObj xml;
+    QString s;
+    for (int i = 0; i < qlist.size(); ++i) 
+        s += xml.singleElement("md",
+                xml.attribute(
+                    attrName,
+                    f(qlist.at(i))) + 
+                xml.attribute(
+                    "depth",
+                    QString("%1").arg(i))
+                );
+    return s;
 }
 
 /*
@@ -223,15 +248,30 @@ LinkObj::Style MapDesign::linkStyle(int depth)
     return linkStyles.tryAt(depth);
 }
 
-bool MapDesign::setLinkStyle(const LinkObj::Style &style, int depth)
+bool MapDesign::setLinkStyle(LinkObj::Style style, int depth)
 {
-    // Special case for now: only set LinkStyle for first levels    // FIXME-3
-    // Only set style for d=1 (Used to be map-wide setting before 3.x)
-
-    if (linkStyles.count() < 2) // FIXME-3 not needed
+    if (depth < 0) {
+        // Set style for rootItem level, meaning *all* levels
+        linkStyles.clear();
+        linkStyles << style;
         return true;
+    }
 
-    return true;
+    if (depth < linkStyles.count()) {
+        // Replace existing level
+        linkStyles.replace(depth, style);
+        return true;
+    }
+
+    if (depth == linkStyles.count()) {
+        // Append level
+        linkStyles << style;
+        return true;
+    }
+
+    // Arbitrary level not allowed
+    qDebug() << "MapDesign::setLinkStyle not allowed to set for depth=" << depth;
+    return false;
 }
 
 qreal MapDesign::linkWidth()
@@ -291,6 +331,8 @@ bool MapDesign::setBackgroundImage(const QString &fileName)
     usesBackgroundImage = true;
     backgroundImageNameInt = basename(fileName);
     backgroundImageBrushInt.setTextureImage(backgroundImage);
+
+    return true;
 }
 
 void MapDesign::setBackgroundImageName(const QString &n)
@@ -496,8 +538,7 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
         s += xml.singleElement("md",
                 xml.attribute("linkColorHint", "HeadingColor"));
 
-    s += xml.singleElement("md",
-            xml.attribute("linkStyle", LinkObj::styleString(linkStyle(1)))); // FIXME-4 only one level saved currently
+    s += linkStyles.save("linkStyle", LinkObj::styleString);
 
     s += xml.singleElement("md",
             xml.attribute("linkColor", defaultLinkColor().name()));

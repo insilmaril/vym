@@ -273,8 +273,22 @@ void VymReader::readMapDesignCompatibleAttributes()
 
     a = "linkStyle";
     s = xml.attributes().value(a).toString();
-    if (!s.isEmpty())
-        model->setLinkStyle(s);
+    if (!s.isEmpty()) {
+        a = "depth";
+        QString t = xml.attributes().value(a).toString();
+        if (t.isEmpty()) {
+            // Legacy Pre 2.9.518: Style defined in <vymmap> for all levels 
+            model->setLinkStyle(s);
+        } else {
+            // Style defined in <mapdesign> for specific level
+            int d = t.toInt(&ok);
+            if (!ok) {
+                xml.raiseError("Could not parse attribute  " + a);
+                return;
+            }
+            model->setLinkStyle(s, d);
+        }
+    }
 
     a = "linkColor";
     s = xml.attributes().value(a).toString();

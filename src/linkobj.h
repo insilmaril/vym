@@ -47,7 +47,7 @@ class LinkObj : public MapObj {
     void setLinkStyle(Style);
     Style getLinkStyle();
     static Style styleFromString(const QString &);
-    static QString styleString(const Style &);
+    static QString styleString(int);
 
     void setLinkColorHint(ColorHint);
     ColorHint getLinkColorHint();

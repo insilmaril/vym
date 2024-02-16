@@ -5443,7 +5443,6 @@ void VymModel::applyDesign(
         recursive = true;
         for (int i = 0; i < rootItem->branchCount(); ++i)
             selbis << rootItem->getBranchNum(i);
-
     } else {
         if (ti && ti->hasTypeBranch())
             selbis << (BranchItem*)ti;
@@ -5453,6 +5452,8 @@ void VymModel::applyDesign(
 
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+
         // Color of heading
         QColor col = mapDesignInt->branchHeadingColor(
                         updateMode,
@@ -5462,15 +5463,26 @@ void VymModel::applyDesign(
             colorBranch(col, selbi);
 
         if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
-            qDebug() << "VM::applyDesign  update linkStyles";
-
+            qDebug() << "VM::applyDesign  update linkStyles for " << selbi->getHeadingPlain();
+            bc->updateUpLink();
         }
+
+        // Go deeper, if required
+        if (recursive)
+            for (int i = 0; i < selbi->branchCount(); ++i)
+                applyDesign(
+                    updateMode,
+                    recursive,
+                    selbi->getBranchNum(i));
     }
 }
 
-bool VymModel::setLinkStyle(const QString &newStyleString)
+bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0 savestate needs to be adapted, command new param depth
 {
-    QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(1));
+    // Default depth == -1 is used for legacy styles from version < 2.9.518
+    // or for using global setting from context menu
+
+    QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(depth));
 
     saveState(QString("setLinkStyle (\"%1\")").arg(newStyleString),
               QString("setLinkStyle (\"%1\")").arg(currentStyleString),
@@ -5478,9 +5490,17 @@ bool VymModel::setLinkStyle(const QString &newStyleString)
 
     auto style = LinkObj::styleFromString(newStyleString);
 
-    // For whole map set style for d=1
-    mapDesignInt->setLinkStyle(style, 1);
+    mapDesignInt->setLinkStyle(style, depth);
 
+    // If whole map is used e.g. for legacy maps, only apply the "thick" part
+    // on first level
+    if (depth < 0) {
+        if (style == LinkObj::PolyLine) 
+            mapDesignInt->setLinkStyle(LinkObj::Line, 1);
+        else if (style == LinkObj::PolyParabel) 
+            mapDesignInt->setLinkStyle(LinkObj::Parabel, 1);
+    }
+    
     applyDesign(
         MapDesign::LinkStyleChanged,
         true,

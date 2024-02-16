@@ -154,7 +154,7 @@ LinkObj::Style LinkObj::styleFromString(const QString &s)
     return  LinkObj::Undefined;
 }
 
-QString LinkObj::styleString(const Style &style)
+QString LinkObj::styleString(int style)
 {
     switch (style) {
         case LinkObj::NoLink:
@@ -304,7 +304,7 @@ void LinkObj::updateLinkGeometry()
             }
             break;
         default:
-            qWarning() << "LinkObj::updateLinkGeometry - Unknown LinkStyle in " << __LINE__;
+            qWarning() << "LinkObj::updateLinkGeometry - Unknown LinkStyle s=" << style << " in " << __LINE__;
             break;
     }
 }

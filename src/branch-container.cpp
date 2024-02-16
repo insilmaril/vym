@@ -745,8 +745,9 @@ void BranchContainer::updateUpLink()
     if (tmpParentBI) {
         if (pbc && pbc->branchesContainerLayout == List)
             upLink->setLinkStyle(LinkObj::NoLink);
-        else
-            upLink->setLinkStyle(tmpParentBI->mapDesign()->linkStyle( 1 + tmpParentBI->depth()));
+        else {
+            upLink->setLinkStyle(tmpParentBI->mapDesign()->linkStyle(tmpParentBI->depth()));
+        }
     }
 
     // Create/delete bottomline, depends on frame and (List-)Layout // FIXME-2 list layout not considered

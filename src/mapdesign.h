@@ -20,8 +20,10 @@ template <typename T> class ConfigList {
     ConfigList <T> & operator<<(const T &other);
     T & operator[](int i);
     T tryAt(int);
+    void replace(int i, const T &other);
     int count();
-    // FIXME-3 not used void setDefault(const T &);
+    void clear();
+    QString save(const QString &attrName, QString (&f)(int));
 
   protected:
     T defaultValue;
@@ -98,7 +100,7 @@ class MapDesign {
     void setDefaultLinkColor(const QColor &col);
 
     LinkObj::Style linkStyle(int depth);
-    bool setLinkStyle(const LinkObj::Style &style, int depth);
+    bool setLinkStyle(LinkObj::Style style, int depth);
 
     qreal linkWidth();
 
