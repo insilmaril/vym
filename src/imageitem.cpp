@@ -7,6 +7,7 @@
 
 #include "branchitem.h"
 #include "image-container.h"
+#include "vymmodel.h"
 
 bool isImage(const QString &fname)
 {
@@ -45,6 +46,13 @@ void ImageItem::init()
 
 BranchItem *ImageItem::parentBranch() { return (BranchItem *)parentItem; }
 
+void ImageItem::setParentBranch(BranchItem *pbi)
+{
+    setModel(pbi->getModel());
+    rootItem = model->getRootItem();
+    parentItem = pbi;
+}
+
 bool ImageItem::load(const QString &fname)
 {
     if (!imageContainer || !imageContainer->load(fname))
@@ -67,6 +75,42 @@ ImageContainer *ImageItem::getImageContainer()
 {
     return imageContainer;
 }
+
+void ImageItem::updateContainerStackingOrder()
+{
+    // After relinking images (also moving up/down), the order of the 
+    // ImageContainers does not match the order of ImageItems any longer
+    // For simplicity we always reparent. The absolute position will not be changed here
+    //
+    // See also BranchItem::updateContainerStackingOrder()
+
+    int n = num();
+
+    QPointF sp = imageContainer->scenePos();
+
+    imageContainer->setParentItem(nullptr);
+
+    parentBranch()->addToImagesContainer(imageContainer);
+
+    while (n < parentBranch()->imageCount() - 1) {
+        // Insert container of this image above others
+
+        // The next sibling container might currently still be temporarily 
+        // linked to tmpParentContainer, in that case it is not a sibling and 
+        // cannot be inserted using QGraphicsItem::stackBefore
+        //
+        // We try the next sibling then, if this fails, just append at the end.
+        if ( (parentBranch()->getImageNum(n + 1))->getContainer()->parentItem() != parentBranch()->getImagesContainer() )
+            n++;
+        else {
+            imageContainer->stackBefore( (parentBranch()->getImageNum(n + 1))->getContainer() );
+            break;
+        }
+    }
+
+    imageContainer->setPos(imageContainer->parentItem()->sceneTransform().inverted().map(sp));
+}
+
 
 void ImageItem::unlinkImageContainer()
 {

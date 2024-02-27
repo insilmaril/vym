@@ -1074,108 +1074,127 @@ void MapEditor::toggleWinter()
     }
 }
 
-BranchItem *MapEditor::getBranchDirectAbove(BranchItem *bi)
+TreeItem *MapEditor::getItemDirectAbove(TreeItem *ti)
 {
-    if (bi) {
-        int i = bi->num();
-        if (i > 0)
-            return bi->parent()->getBranchNum(i - 1);
+    if (ti) {
+        if (ti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)ti;
+          
+            int i = bi->num();
+            if (i > 0)
+                return bi->parent()->getBranchNum(i - 1);
+        } else if (ti->hasTypeImage()) {
+            ImageItem *ii = (ImageItem*)ti;
+          
+            int i = ii->num();
+            if (i > 0)
+                return ii->parent()->getImageNum(i - 1);
+        }
     }
     return nullptr;
 }
 
-BranchItem *MapEditor::getBranchAbove(BranchItem *selbi)
+TreeItem *MapEditor::getItemAbove(TreeItem *selti)
 {
-    if (selbi) {
-        int dz = selbi->depth(); // original depth
+    if (selti) {
+        int dz = selti->depth(); // original depth
         bool invert = false;
-        if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
-            invert = true;
+        //FIXME-0 if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
+        //FIXME-0     invert = true;
 
-        BranchItem *bi;
+        TreeItem *ti = nullptr;
 
         // Look for branch with same parent but directly above
         if (dz == 1 && invert)
-            bi = getBranchDirectBelow(selbi);
+            ti = getItemDirectBelow(selti);
         else
-            bi = getBranchDirectAbove(selbi);
+            ti = getItemDirectAbove(selti);
 
-        if (bi)
+        if (ti)
             // direct predecessor
-            return bi;
+            return ti;
 
         // Go towards center and look for predecessor
-        while (selbi->depth() > 0) {
-            selbi = (BranchItem *)(selbi->parent());
-            if (selbi->depth() == 1 && invert)
-                bi = getBranchDirectBelow(selbi);
+        while (selti->depth() > 0) {
+            selti = selti->parent();
+            if (selti->depth() == 1 && invert)
+                ti = getItemDirectBelow(selti);
             else
-                bi = getBranchDirectAbove(selbi);
-            if (bi) {
+                ti = getItemDirectAbove(selti);
+            if (ti) {
                 // turn
-                selbi = bi;
-                while (selbi->depth() < dz) {
+                selti = ti;
+                while (selti->depth() < dz) {
                     // try to get back to original depth dz
-                    bi = selbi->getLastBranch();
-                    if (!bi) {
-                        return selbi;
+                    ti = selti->getLastItem();
+                    if (!ti) {
+                        return selti;
                     }
-                    selbi = bi;
+                    selti = ti;
                 }
-                return selbi;
+                return selti;
             }
         }
     }
     return nullptr;
 }
 
-BranchItem *MapEditor::getBranchDirectBelow(BranchItem *bi)
+TreeItem *MapEditor::getItemDirectBelow(TreeItem *ti)
 {
-    if (bi) {
-        int i = bi->num();
-        if (i + 1 < bi->parent()->branchCount())
-            return bi->parent()->getBranchNum(i + 1);
+    if (ti) {
+        if (ti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)ti;
+            int i = bi->num();
+            qDebug() << "ME i=" << i << " bc=" << bi->parent()->branchCount();
+            if (i + 1 < bi->parent()->branchCount())
+                return bi->parent()->getBranchNum(i + 1);
+        } else if (ti->hasTypeImage()) {
+            ImageItem *ii = (ImageItem*)ti;
+            int i = ii->num();
+            if (i + 1 < ii->parent()->imageCount())
+                return ii->parent()->getImageNum(i + 1);
+        }
     }
     return nullptr;
 }
 
-BranchItem *MapEditor::getBranchBelow(BranchItem *selbi)
+TreeItem *MapEditor::getItemBelow(TreeItem *selti)
 {
-    if (selbi) {
-        BranchItem *bi;
-        int dz = selbi->depth(); // original depth
+    qDebug() << "ME::getItemBelow  a selti=" << selti;
+    if (selti) {
+        int dz = selti->depth(); // original depth
         bool invert = false;
-        if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
-            invert = true;
+        //FIXME-0 if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
+        //FIXME-0     invert = true;
 
-        // Look for branch with same parent but directly below
+        // Look for mainbranch  // FIXME-3 Better would be to consider scenePos
+        TreeItem *ti = nullptr;
         if (dz == 1 && invert)
-            bi = getBranchDirectAbove(selbi);
+            ti = getItemDirectAbove(selti);
         else
-            bi = getBranchDirectBelow(selbi);
-        if (bi)
-            // direct successor
-            return bi;
+            ti = getItemDirectBelow(selti);
+        if (ti)
+            return ti;
 
         // Go towards center and look for neighbour
-        while (selbi->depth() > 0) {
-            selbi = (BranchItem *)(selbi->parent());
-            if (selbi->depth() == 1 && invert)
-                bi = getBranchDirectAbove(selbi);
+        while (selti->depth() > 0) {
+            selti = selti->parent();
+            qDebug() << "ME::getItemBelow b selti=" << selti->getHeadingPlain();
+            if (selti->depth() == 1 && invert)    // FIXME see above...
+                ti = getItemDirectAbove(selti);
             else
-                bi = getBranchDirectBelow(selbi);
-            if (bi) {
+                ti = getItemDirectBelow(selti);
+            if (ti) {
                 // turn
-                selbi = bi;
-                while (selbi->depth() < dz) {
+                selti = ti;
+                while (selti->depth() < dz) {
                     // try to get back to original depth dz
-                    bi = selbi->getFirstBranch();
-                    if (!bi) {
-                        return selbi;
-                    }
-                    selbi = bi;
+                    ti = selti->getFirstItem();
+                    if (!ti)
+                        return selti;
+                    selti = ti;
                 }
-                return selbi;
+                return selti;
             }
         }
     }
@@ -1260,27 +1279,18 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
     return nullptr;
 }
 
-void MapEditor::cursorUp()
+void MapEditor::cursorUp()  // FIXME-0 adapt for images and container layouts
 {
     if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
-    if (selbi) {
+    TreeItem *selti = model->getSelectedItem();
+    TreeItem *ti;
+    if (selti) {
         // Exactly one branch is currently selected
-        bi = getBranchAbove(selbi);
-        if (bi) {
-            model->select(bi);
-        }
-    } else {
-        // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->hasTypeBranch()) {
-            bi = getBranchAbove( (BranchItem*)ti);
-            if (bi)
-                model->select(bi);
-        }
+        ti = getItemAbove(selti);
+        if (ti)
+            model->select(ti);
     }
 }
 
@@ -1289,24 +1299,23 @@ void MapEditor::cursorUpToggleSelection()
     if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
+    TreeItem *selti = model->getSelectedItem();
+    TreeItem *ti;
 
-    if (selbi) {
-        // Exactly one branch is currently selected
-        bi = getBranchAbove(selbi);
-        if (bi) model->selectToggle(bi);
+    if (selti) {
+        ti = getItemAbove(selti);
+        if (ti) model->selectToggle(ti);
     } else {
         // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->hasTypeBranch()) {
+        TreeItem *last_ti = model->lastToggledItem();
+        if (last_ti && last_ti->hasTypeBranch()) {
             if (lastToggleDirection == toggleUp)
-                bi = getBranchAbove( (BranchItem*)ti);
+                ti = getItemAbove(last_ti);
             else
-                bi = (BranchItem*)ti;
+                ti = last_ti;
 
-            if (bi)
-                model->selectToggle(bi);
+            if (ti)
+                model->selectToggle(ti);
         }
     }
     lastToggleDirection = toggleUp;
@@ -1317,56 +1326,45 @@ void MapEditor::cursorDown()
     if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
-    if (selbi) {
+    TreeItem *selti = model->getSelectedItem();
+    TreeItem *ti;
+    if (selti) {
         // Exactly one branch is currently selected
-        bi = getBranchBelow(selbi);
-        if (bi) {
-            model->select(bi);
-        }
-    } else {
-        // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->hasTypeBranch()) {
-            bi = getBranchBelow( (BranchItem*)ti);
-
-            if (bi)
-                model->select(bi);
-        }
+        ti = getItemBelow(selti);
+        if (ti)
+            model->select(ti);
     }
 }
 
-void MapEditor::cursorDownToggleSelection()
+void MapEditor::cursorDownToggleSelection() // FIXME-0 crashes on 2nd call or so...
 {
     if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
-    if (selbi) {
-        // Exactly one branch is currently selected
-        bi = getBranchBelow(selbi);
-        if (bi) {
-            model->selectToggle(bi);
+    TreeItem *selti = model->getSelectedItem();
+    TreeItem *ti;
+    if (selti) {
+        ti = getItemBelow(selti);
+        if (ti) {
+            model->selectToggle(ti);
         }
     } else {
         // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->hasTypeBranch()) {
+        TreeItem *last_ti = model->lastToggledItem();
+        if (last_ti) {
             if (lastToggleDirection == toggleDown)
-                bi = getBranchBelow( (BranchItem*)ti);
+                ti = getItemBelow(ti);
             else
-                bi = (BranchItem*)ti;
+                ti = last_ti;
 
-            if (bi)
-                model->selectToggle(bi);
+            if (ti)
+                model->selectToggle(ti);
         }
     }
     lastToggleDirection = toggleDown;
 }
 
-void MapEditor::cursorLeft()
+void MapEditor::cursorLeft()  // FIXME-0 adapt for images and container layouts
 {
     TreeItem *ti = model->getSelectedItem();
     if (!ti) {
@@ -1384,7 +1382,7 @@ void MapEditor::cursorLeft()
     }
 }
 
-void MapEditor::cursorRight()
+void MapEditor::cursorRight()  // FIXME-0 adapt for images and container layouts
 {
     TreeItem *ti = model->getSelectedItem();
     if (!ti) {
@@ -1402,9 +1400,9 @@ void MapEditor::cursorRight()
     }
 }
 
-void MapEditor::cursorFirst() { model->selectFirstBranch(); }
+void MapEditor::cursorFirst() { model->selectFirstBranch(); }  // FIXME-0 adapt for images and container layouts
 
-void MapEditor::cursorLast() { model->selectLastBranch(); }
+void MapEditor::cursorLast() { model->selectLastBranch(); }  // FIXME-0 adapt for images and container layouts
 
 void MapEditor::editHeading()
 {

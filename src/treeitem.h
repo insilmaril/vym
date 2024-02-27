@@ -72,6 +72,7 @@ class TreeItem : public XMLObj {
     virtual Type getType();
     virtual bool hasTypeBranch() const;
     virtual bool hasTypeImage() const;
+    virtual bool hasTypeBranchOrImage() const;
     virtual bool hasTypeXLink() const;
     virtual QString getTypeName();
 
@@ -175,6 +176,8 @@ class TreeItem : public XMLObj {
     virtual BranchItem *getLastBranch();
     virtual ImageItem *getFirstImage();
     virtual ImageItem *getLastImage();
+    virtual TreeItem *getFirstItem();
+    virtual TreeItem *getLastItem();
 
     /*! Get next branch after current branch. Return nullptr if there is no
     next branch */

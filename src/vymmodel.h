@@ -430,10 +430,10 @@ class VymModel : public TreeModel {
     void paste(); //!< Paste clipboard to branch and backup
     void cut();   //!< Cut to clipboard (and copy)
 
-    bool canMoveUp(BranchItem *bi);
-    bool canMoveDown(BranchItem *bi);
-    void moveUp(BranchItem *bi = nullptr); //!< Move branch up
-    void moveDown();               //!< Move branch down
+    bool canMoveUp(TreeItem *bi);
+    bool canMoveDown(TreeItem *bi);
+    void moveUp(TreeItem *ti = nullptr); //!< Move branch or image up
+    void moveDown();               //!< Move branch or image down
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
     void detach(BranchItem* bi = nullptr);   //!< Detach branch and use as new mapcenter
@@ -442,6 +442,7 @@ class VymModel : public TreeModel {
     QList <BranchItem*> sortBranchesByHeading(QList <BranchItem*>, bool inverse = false);
   public:
     void sortChildren(bool inverse = false); //!< Sort children lexically
+    QList <ImageItem*> sortImagesByNum(QList <ImageItem*>, bool inverse = false);
 
     // The create methods are used to quickly parse a XML file
     BranchItem *createBranch(BranchItem *dst); //!< Create Branch
@@ -500,7 +501,8 @@ class VymModel : public TreeModel {
     */
     bool relinkBranch(BranchItem *branch, BranchItem *dst, int num_new = -1);
     bool relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_new = -1);
-    bool relinkImage(ImageItem *image, BranchItem *dst);
+    bool relinkImage(ImageItem *image, TreeItem *dst, int num_new = -1);
+    bool relinkImages(QList <ImageItem*> images, TreeItem *dst, int num_new = -1);
 
     bool relinkTo(const QString &dest, int num);
 

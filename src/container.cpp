@@ -151,10 +151,10 @@ QString Container::info (const QString &prefix)
         //+ QString(" a: %1").arg(qRound(rotation()))
         + QString(" scenePos: %1").arg(toS(scenePos(), 0))
         + QString(" pos: %1").arg(toS(pos(), 0))
-        //+ QString(" rect: %1").arg(toS(rect(), 0))
+        + QString(" rect: %1").arg(toS(rect(), 0))
         //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
-        //+ QString(" Layout: %1").arg(getLayoutString())
+        + QString(" Layout: %1").arg(getLayoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
         ;
 }
@@ -252,6 +252,8 @@ Container::Layout Container::getLayoutFromString(const QString &s)
     if (s == "BoundingFloats") return BoundingFloats;
     if (s == "FloatingBounded") return FloatingBounded;
     if (s == "FloatingFree") return FloatingFree;
+    if (s == "GridColumns") return GridColumns;
+    if (s == "GridRows") return GridRows;
     if (s == "List") return List;
     return UndefinedLayout;
 }
@@ -277,6 +279,12 @@ QString Container::getLayoutString(const Layout &l)
             break;
         case FloatingFree:
             r = "FloatingFree";
+            break;
+        case GridColumns:
+            r = "GridColumns";
+            break;
+        case GridRows:
+            r = "GridRows";
             break;
         case List:
             r = "List";
@@ -647,6 +655,82 @@ void Container::reposition()
 
                 // qdbg() << ind() << " * HL Finished for " << info();
             } // Horizontal layout
+            break;
+
+        case GridColumns: {
+                int colCount = 3;   // FIXME-0 fixed for now
+                QList <qreal> maxColWidths;
+                QList <qreal> maxRowHeights;
+
+                // Scan max column widths and row heights
+                int currentCol = 0;
+                int currentRow = 0;
+                foreach (Container *c, childContainers()) {
+                    if (maxColWidths.size() < currentCol + 1)
+                        maxColWidths << 0;
+
+                    if (maxRowHeights.size() < currentRow + 1)
+                        maxRowHeights << 0;
+
+                    QRectF c_bbox = mapRectFromItem(c, c->rect());
+
+                    qreal w = c_bbox.width();
+                    if (maxColWidths.at(currentCol) < w)
+                        maxColWidths.replace(currentCol, w);
+
+                    qreal h = c_bbox.height();
+                    if (maxRowHeights.at(currentRow) < h)
+                        maxRowHeights.replace(currentRow, h);
+
+                    currentCol++;
+                    if (currentCol > colCount - 1) {
+                        currentCol = 0;
+                        currentRow++;
+                    }
+                }
+
+                // Total dimension of grid
+                qreal w_total = 0;
+                foreach (qreal w, maxColWidths)
+                    w_total += w;
+
+                qreal h_total = 0;
+                foreach (qreal h, maxRowHeights)
+                    h_total += h;
+
+                qreal left = - w_total / 2;
+                qreal top  = - h_total / 2;
+                setRect(QRectF(
+                            left,
+                            top,
+                            w_total,
+                            h_total));
+
+                // Position children containers in grid
+                currentCol = 0;
+                currentRow = 0;
+                qreal x = left;
+                qreal y = top + maxRowHeights.at(0) / 2; // There is at least one row!
+                foreach (Container *c, childContainers()) {
+                    x += maxColWidths.at(currentCol) / 2;
+                    c->setPos(x, y);
+                    x += maxColWidths.at(currentCol) / 2;
+
+                    currentCol++;
+                    if (currentCol > colCount - 1) {
+                        currentCol = 0;
+                        x = left;
+                        y += maxRowHeights.at(currentRow) / 2;
+                        currentRow++;
+                        if (currentRow < maxRowHeights.size())
+                            y += maxRowHeights.at(currentRow) / 2;
+                    }
+                }
+
+            }
+            break;
+
+        case GridRows:  // FIXME-0 not implemented yet
             break;
 
         case List:

@@ -286,6 +286,14 @@ bool TreeItem::hasTypeImage() const
         return false;
 }
 
+bool TreeItem::hasTypeBranchOrImage() const
+{
+    if (type == Image || type == Branch || type == MapCenter)
+        return true;
+    else
+        return false;
+}
+
 bool TreeItem::hasTypeXLink() const
 {
     if (type == XLink)
@@ -583,6 +591,28 @@ ImageItem *TreeItem::getLastImage()
         return getImageNum(imageCounter - 1);
     else
         return nullptr;
+}
+
+TreeItem *TreeItem::getFirstItem()
+{
+    if (hasTypeBranch())
+        return getFirstBranch();
+
+    if (hasTypeImage())
+        return getFirstImage();
+
+    return nullptr;
+}
+
+TreeItem *TreeItem::getLastItem()
+{
+    if (hasTypeBranch())
+        return getLastBranch();
+
+    if (hasTypeImage())
+        return getLastImage();
+
+    return nullptr;
 }
 
 BranchItem *TreeItem::getNextBranch(BranchItem *currentBranch)

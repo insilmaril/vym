@@ -158,18 +158,12 @@ class MapEditor : public QGraphicsView {
             bool findNearCenter = false); //! only return BranchItem
     void toggleWinter();
 
-    BranchItem *getBranchDirectAbove(
-        BranchItem *bi); //! get branch direct above bi (in TreeView)
-    BranchItem *
-    getBranchAbove(BranchItem *bi); //! get branch above bi (in TreeView)
-    BranchItem *getBranchDirectBelow(
-        BranchItem *bi); //! bet branch direct below bi (in TreeView)
-    BranchItem *
-    getBranchBelow(BranchItem *bi); //! bet branch below bi (in TreeView)
-    BranchItem *
-    getLeftBranch(TreeItem *ti); //! bet branch left of bi (in TreeView)
-    BranchItem *
-    getRightBranch(TreeItem *ti); //! bet branch right of bi (in TreeView)
+    TreeItem* getItemDirectAbove(TreeItem *ti);
+    TreeItem* getItemAbove(TreeItem *);
+    TreeItem* getItemDirectBelow( TreeItem *ti);
+    TreeItem* getItemBelow(TreeItem *ti);
+    BranchItem* getLeftBranch(TreeItem *ti);
+    BranchItem* getRightBranch(TreeItem *ti);
 
   private:
     // Toggle objects by moving the cursor up/down with shift modifier

@@ -19,9 +19,11 @@ class ImageItem : public MapItem {
 
   public:
     BranchItem* parentBranch();
+    void setParentBranch(BranchItem *);
     virtual bool load(const QString &fname);
     ImageContainer* createImageContainer();
     ImageContainer* getImageContainer();
+    void updateContainerStackingOrder();
     void unlinkImageContainer();
 
   protected:

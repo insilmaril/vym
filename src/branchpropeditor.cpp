@@ -371,8 +371,14 @@ void BranchPropertyEditor::updateLayoutControls()
             case Container::FloatingFree:
                 ui.branchesLayoutsCombo->setCurrentIndex(4);
                 break;
-            case Container::List:
+            case Container::GridColumns:
                 ui.branchesLayoutsCombo->setCurrentIndex(5);
+                break;
+            case Container::GridRows:
+                ui.branchesLayoutsCombo->setCurrentIndex(6);
+                break;
+            case Container::List:
+                ui.branchesLayoutsCombo->setCurrentIndex(7);
                 break;
             default:
                 qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
@@ -396,6 +402,12 @@ void BranchPropertyEditor::updateLayoutControls()
                 break;
             case Container::FloatingFree:
                 ui.imagesLayoutsCombo->setCurrentIndex(4);
+                break;
+            case Container::GridColumns:
+                ui.branchesLayoutsCombo->setCurrentIndex(5);
+                break;
+            case Container::GridRows:
+                ui.branchesLayoutsCombo->setCurrentIndex(6);
                 break;
             default:
                 qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getImagesContainerLayout()));
@@ -578,6 +590,12 @@ void BranchPropertyEditor::branchesLayoutsChanged(int i)
             s = "FloatingFree";
             break;
         case 5:
+            s = "GridColumns";
+            break;
+        case 6:
+            s = "GridRows";
+            break;
+        case 7:
             s = "List";
             break;
         default:
@@ -608,6 +626,12 @@ void BranchPropertyEditor::imagesLayoutsChanged(int i)
             break;
         case 4:
             s = "Floating free";
+            break;
+        case 5:
+            s = "GridColumns";
+            break;
+        case 6:
+            s = "GridRows";
             break;
         default:
             qWarning() << "BranchPropertyEditor unknown layout in line " << __LINE__;

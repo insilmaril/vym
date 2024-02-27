@@ -58,6 +58,8 @@ class Container : public QGraphicsRectItem {
         FloatingReservedSpace,
         FloatingBounded,
         FloatingFree,
+        GridColumns,
+        GridRows,
         List};
 
     enum HorizontalDirection {LeftToRight, RightToLeft};

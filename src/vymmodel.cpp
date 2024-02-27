@@ -795,7 +795,8 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
             err = zipDir(tmpZipDir, destPath);
 
         // Delete tmpDir
-        removeDir(QDir(tmpZipDir));
+        // FIXME-1 testing removeDir(QDir(tmpZipDir));
+        qDebug() << "VM::save keeping zipDir: " << tmpZipDir;
 
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
@@ -3089,47 +3090,73 @@ void VymModel::cut()
     deleteSelection();
 }
 
-bool VymModel::canMoveUp(BranchItem *bi)
+bool VymModel::canMoveUp(TreeItem *ti)
 {
-    if (bi) {
-        BranchItem *pbi = bi->parentBranch();
+    if (ti) {
+        BranchItem *pbi;
+        if (ti->hasTypeBranch())
+            pbi = ((BranchItem*)ti)->parentBranch();
+        else if (ti->hasTypeImage())
+            pbi = ((ImageItem*)ti)->parentBranch();
+        else 
+            return false;
+
         if (pbi == rootItem)
             return false;
 
-        return (pbi->num(bi) > 0);
+        return (pbi->num(ti) > 0);
     }
 
     return false;
 }
 
-bool VymModel::canMoveDown(BranchItem *bi)
+bool VymModel::canMoveDown(TreeItem *ti)
 {
-    if (bi) {
-        BranchItem *pbi = bi->parentBranch();
+    if (ti) {
+        BranchItem *pbi;
         if (pbi == rootItem)
             return false;
 
-        return (pbi->num(bi) < pbi->branchCount() - 1);
+        if (ti->hasTypeBranch()) {
+            pbi = ((BranchItem*)ti)->parentBranch();
+            if (pbi == rootItem)
+                return false;
+            return (pbi->num(ti) < pbi->branchCount() - 1);
+        } else if (ti->hasTypeImage()) {
+            pbi = ((ImageItem*)ti)->parentBranch();
+            return (pbi->num(ti) < pbi->imageCount() - 1);
+        }
     }
 
     return false;
 }
 
-void VymModel::moveUp(BranchItem *bi)
+void VymModel::moveUp(TreeItem *ti)
 {
     if (readonly) return;
 
     QList<BranchItem *> selbis;
-    if (bi)
-        selbis << bi;
+    if (ti && ti->hasTypeBranch())
+        selbis << (BranchItem*)ti;
     else
         selbis = getSelectedBranches();
 
-    if (selbis.isEmpty()) return;
+    if (!selbis.isEmpty())
+        foreach (BranchItem *selbi, sortBranchesByNum(selbis, false))
+            if (canMoveUp(selbi))
+                relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
 
-    foreach (BranchItem *selbi, sortBranchesByNum(selbis, false))
-        if (canMoveUp(selbi))
-            relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
+    QList<ImageItem *> seliis;
+    if (ti && ti->hasTypeImage())
+        seliis << (ImageItem*)ti;
+    else
+        seliis = getSelectedImages();
+
+    if (!seliis.isEmpty())
+        foreach (ImageItem *selii, sortImagesByNum(seliis, true)) {
+            if (canMoveUp(selii))
+                 relinkImage(selii, selii->parentBranch(), selii->num() - 1);
+    }
 }
 
 void VymModel::moveDown()
@@ -3137,11 +3164,18 @@ void VymModel::moveDown()
     if (readonly) return;
 
     QList<BranchItem *> selbis = getSelectedBranches();
-    if (selbis.isEmpty()) return;
+    if (!selbis.isEmpty()) {
+        foreach (BranchItem *selbi, sortBranchesByNum(selbis, true))
+            if (canMoveDown(selbi))
+                 relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
+    }
 
-    foreach (BranchItem *selbi, sortBranchesByNum(selbis, true))
-        if (canMoveDown(selbi))
-            relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
+    QList<ImageItem *> seliis = getSelectedImages();
+    if (!seliis.isEmpty()) {
+        foreach (ImageItem *selii, sortImagesByNum(seliis, true))
+            if (canMoveDown(selii))
+                 relinkImage(selii, selii->parentBranch(), selii->num() + 1);
+    }
 }
 
 void VymModel::moveUpDiagonally()
@@ -3299,6 +3333,36 @@ void VymModel::sortChildren(bool inverse)
             }
         }
     }
+}
+
+QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bool inverse) // FIXME-0 WIP
+{
+    // Shortcut
+    if (unsortedList.count() < 2)
+        return unsortedList;
+
+    // We use QMultiMap because unsortedList might have branches 
+    // with identical depths, but different parentBranches e.g.
+    // when moving up/down. Then parts of the list would be lost.
+    QMultiMap <int, ImageItem*> multimap;
+    foreach (ImageItem *ii, unsortedList)
+        multimap.insert(ii->num(), ii);
+
+    QList <ImageItem*> sortedList;
+
+    QMultiMapIterator<int, ImageItem*> i(multimap);
+    if (inverse) {
+            i.toBack();
+            while (i.hasPrevious()) {
+                i.previous();
+                sortedList << i.value();
+            }
+    } else while (i.hasNext()) {
+        i.next();
+        sortedList << i.value();
+    }
+
+    return sortedList;
 }
 
 BranchItem *VymModel::createBranch(BranchItem *dst)
@@ -3788,14 +3852,14 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         else {
             if (dst->branchCount() == 0)
                 // Append as last branch to dst
-                insertRowNum = 0;   // Still correct even with images and attributes first?
+                insertRowNum = 0;
             else
                 insertRowNum = dst->getFirstBranch()->childNumber() + num_dst;
         }
 
         //qDebug() << "  VM::relink inserting  at " << insertRowNum;
-        beginInsertRows(index(dst), insertRowNum, insertRowNum);
-        dst->insertBranch(insertRowNum, bi);
+        beginInsertRows(index(dst), insertRowNum + num_dst, insertRowNum + num_dst);
+        dst->insertBranch(num_dst, bi);
         endInsertRows();
 
         // Update upLink of BranchContainer to *parent* BC of destination
@@ -3813,8 +3877,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         if (keepPos) {
             bc->setPos(preDetachPos);
         }
-
-        reposition(); // both for moveUp/Down and relinking
 
         // Savestate, but not if just moving up/down
         if (!saveStateBlocked) {
@@ -3857,6 +3919,8 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         bi_prev = bi;
     }   // Iterating over selbis    
 
+    reposition();
+
     if (!saveStateBlocked)
         saveStateEndBlock();
 
@@ -3866,13 +3930,53 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
     return true;
 }
 
-bool VymModel::relinkImage(ImageItem *ii, BranchItem *dst) // FIXME-2 No multiselection yet
+bool VymModel::relinkImage(ImageItem* image, TreeItem *dst_ti, int num_new) {
+    if (!image)
+        return false;
+
+    QList <ImageItem*> images = {image};
+    return relinkImages(images, dst_ti, num_new);
+}
+
+bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new) // FIXME-0 Check undo for multiselection
                                                            // see also call in ME::mouseRelease()
 {
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();
 
-    if (ii && dst) {
+    BranchItem *dst;
+
+    if (images.isEmpty())
+        images = getSelectedImages();
+
+    if (!dst || images.isEmpty())
+        return false;
+
+    if (dst_ti->hasTypeImage()) {
+        // Allow dropping on images,
+        // append at this num in parentBranch then:
+        dst = ((ImageItem*)dst_ti)->parentBranch();
+        if (!dst || dst == rootItem)
+            return false;
+        num_new = dst_ti->num();
+    } else if (dst_ti->hasTypeBranch()) {
+        dst = (BranchItem*)dst_ti;
+    } else
+        return false;
+
+    if (num_new < 0 || num_new >= dst->imageCount())
+        num_new = dst->imageCount();
+
+    if (!saveStateBlocked)
+        // When ordering branches, we already saveState there and not for 
+        // each branch individually
+        saveStateBeginBlock(
+            QString("Relink %1 objects to \"%2\"")
+                .arg(images.count())
+                .arg(dst->getHeadingPlain()));
+
+    BranchItem* bi_prev = nullptr;
+    foreach(ImageItem *ii, images) {
         emit(layoutAboutToBeChanged());
 
         BranchItem *pi = (BranchItem *)(ii->parent());
@@ -3883,28 +3987,43 @@ bool VymModel::relinkImage(ImageItem *ii, BranchItem *dst) // FIXME-2 No multise
         pi->removeChild(n);
         endRemoveRows();
 
-        // Add at dst
+        // Insert again
+        int insertRowNum;
+        if (dst->imageCount() == 0)
+            // Append as last image to dst
+            insertRowNum = 0;
+        else
+            insertRowNum = dst->getFirstImage()->childNumber() + num_new;
         QModelIndex dstix = index(dst);
         n = dst->getRowNumAppend(ii);
-        beginInsertRows(dstix, n, n);
-        dst->appendChild(ii);
+
+        beginInsertRows(dstix, insertRowNum + num_new, insertRowNum + num_new);
+        dst->insertImage(num_new, ii);
         endInsertRows();
 
-        // Set new parent also for lmo
-        dst->addToImagesContainer(ii->getImageContainer());
+        ii->updateContainerStackingOrder();
 
-        emit(layoutChanged());
+        // FIXME-2 relinkImages: What about updating links of images (later)?
+        // FIXME-2 relinkImages: What about updating design (later)?
+
+        emit(layoutChanged());  // FIXME-0 relinkImages: needed? compare relinkBranches...
+
+        emitDataChanged(ii);  // FIXME-0 relinkImages: needed?
+
         saveState(ii, QString("relinkTo (\"%1\")").arg(oldParString), ii,
                   QString("relinkTo (\"%1\")").arg(getSelectString(dst)),
                   QString("Relink floatimage to %1").arg(getObjectName(dst)));
-
-        // Restore selection, which was lost when removing rows
-        unselectAll();
-        select(selectedItems);
-
-        return true;
     }
-    return false;
+
+    reposition();
+
+    if (!saveStateBlocked)
+        saveStateEndBlock();
+
+    // Restore selection, which was lost when removing rows
+    select(selectedItems);  // FIXME-2 replace this with reselect()? lastSelection is stored...
+
+    return true;
 }
 
 bool VymModel::relinkTo(const QString &dstString, int num)
@@ -5435,6 +5554,7 @@ void VymModel::applyDesign(
         h = ti->getHeadingPlain();
     else
         h = "nullptr";
+
     qDebug() << "VM::updateDesign  mode=" << MapDesign::updateModeString(updateMode) << " of " << h;
 
     QList<BranchItem *> selbis;

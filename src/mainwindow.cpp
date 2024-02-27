@@ -6395,34 +6395,33 @@ void Main::changeSelection(VymModel *model, const QItemSelection &,
     if (model && model == currentModel()) {
         int selectedCount = model->getSelectionModel()->selectedIndexes().count();
 
-        if (selectedCount == 0 || selectedCount > 1) {
+        BranchItem *selbi = model->getSelectedBranch();
+
+        // Update satellites
+        if (!selbi || model->getSelectedBranches().size() != 1) {
             noteEditor->setInactive();
             headingEditor->setInactive();
             taskEditor->clearSelection();
-
         } else {
-            BranchItem *bi = model->getSelectedBranch();
-            if (!bi) return;
-
             // Update note editor
-            updateNoteEditor(bi);
+            updateNoteEditor(selbi);
 
             // Show URL and link in statusbar
             QString status;
-            QString s = bi->getURL();
+            QString s = selbi->getURL();
             if (!s.isEmpty())
                 status += "URL: " + s + "  ";
-            s = bi->getVymLink();
+            s = selbi->getVymLink();
             if (!s.isEmpty())
                 status += "Link: " + s;
             if (!status.isEmpty())
                 statusMessage(status);
 
             // Update text in HeadingEditor
-            updateHeadingEditor(bi);
+            updateHeadingEditor(selbi);
 
             // Select in TaskEditor, if necessary
-            Task *t = bi->getTask();
+            Task *t = selbi->getTask();
 
             if (t)
                 taskEditor->select(t);
@@ -6723,16 +6722,6 @@ void Main::updateActions()
                     actionDeleteVymLink->setEnabled(true);
                 }
 
-                if (selbi) {
-                    bool b = m->canMoveUp(selbi);
-                    actionMoveUp->setEnabled(b);
-                    actionMoveUpDiagonally->setEnabled(b);
-                    actionMoveDown->setEnabled(m->canMoveDown(selbi));
-                    if ((selbi->depth() == 0) || selbis.count() > 1)
-                        actionMoveDownDiagonally->setEnabled(false);
-                }
-
-
                 if (selbi && selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
                 {
                     actionMoveDownDiagonally->setIcon(QPixmap(":down-diagonal-right.png"));
@@ -6800,6 +6789,18 @@ void Main::updateActions()
                 actionShrinkSelectionSize->setEnabled(true);
                 actionResetSelectionSize->setEnabled(true);
             } // Image
+
+            if (selti && selti->hasTypeBranchOrImage()) {
+                bool b = m->canMoveUp(selti);
+                actionMoveUp->setEnabled(b);
+                if (selti->hasTypeImage())
+                    b = false;
+                actionMoveUpDiagonally->setEnabled(b);
+                actionMoveDown->setEnabled(m->canMoveDown(selti));
+                if ((selti->depth() == 0) || selbis.count() > 1 || selti->hasTypeImage())
+                    actionMoveDownDiagonally->setEnabled(false);
+            }
+
         } // TreeItem
         else
         {
@@ -6966,17 +6967,6 @@ void Main::testFunction1()
     //#include <QStyleFactory>
     //qApp->setStyle(QStyleFactory::create("windowsvista"));
 
-    QString s ("abc-abx");
-    QRegularExpression re("a.*b");
-    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
-    QRegularExpressionMatch match = re.match(s);
-
-    if (match.hasMatch())
-        qDebug() << "Match: " << match.captured(0);
-    else 
-        qDebug() << "No match.";
-
-    return;
     VymModel *m = currentModel();
     if (m) {
         m->getMapEditor()->testFunction1();

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
+    <width>327</width>
     <height>754</height>
    </rect>
   </property>
@@ -26,7 +26,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabFrame">
       <property name="minimumSize">
@@ -477,6 +477,16 @@
               </item>
               <item>
                <property name="text">
+                <string>Grid based on columns</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Grid based on rows</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>List</string>
                </property>
               </item>
@@ -533,6 +543,16 @@
             <item>
              <property name="text">
               <string>Floating free</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Grid based on columns</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Grid based on rows</string>
              </property>
             </item>
            </widget>

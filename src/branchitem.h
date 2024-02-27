@@ -27,6 +27,7 @@ class BranchItem : public MapItem {
     virtual BranchItem *parentBranch();
 
     virtual void insertBranch(int pos, BranchItem *branch);
+    virtual void insertImage (int pos, ImageItem *image);
 
     virtual QString saveToDir(const QString &tmpdir, const QString &prefix,
                               const QPointF &offset, QList<Link *> &tmpLinks,
@@ -94,6 +95,7 @@ class BranchItem : public MapItem {
     BranchContainer* getBranchContainer();
     void unlinkBranchContainer();
     Container* getBranchesContainer();
+    Container* getImagesContainer();
 
   private:
     BranchContainer *branchContainer;

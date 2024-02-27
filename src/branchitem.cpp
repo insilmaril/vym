@@ -94,6 +94,21 @@ void BranchItem::insertBranch(int pos, BranchItem *branch)
     branchCounter++;
 }
 
+void BranchItem::insertImage(int pos, ImageItem *image)
+{
+    if (pos < 0)
+        pos = 0;
+    if (pos > imageCounter)
+        pos = imageCounter;
+    childItems.insert(pos + imageOffset, image);
+
+    // Set parentItem, rootItem and model
+    image->setParentBranch(this);
+
+    imageCounter++;
+    branchOffset++;
+}
+
 QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
                               const QPointF &offset, QList<Link *> &tmpLinks, const bool &exportBoundingBoxes)
 {
@@ -467,6 +482,11 @@ void BranchItem::unlinkBranchContainer()
 Container* BranchItem::getBranchesContainer()
 {
     return branchContainer->getBranchesContainer();
+}
+
+Container* BranchItem::getImagesContainer()
+{
+    return branchContainer->getImagesContainer();
 }
 
 void BranchItem::updateContainerStackingOrder()

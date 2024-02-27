@@ -72,10 +72,9 @@ VymView::VymView(VymModel *m)
     // Needed to update selbox during animation
     connect(
         model,
-        SIGNAL(
-            selectionChanged(const QItemSelection &, const QItemSelection &)),
+        SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
         mapEditor,
-        SLOT(updateSelection(const QItemSelection &, const QItemSelection &)));
+        SLOT(updateSelection(const QItemSelection &, const QItemSelection &))); // FIXME-2 duplicate with abouve this->changeSelection !! For animation the updates of mainWindow and satellites are not needed...
 
     // Connect data changed signals
     connect(model,
