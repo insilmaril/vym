@@ -229,7 +229,7 @@ void VymReader::readMapDesignCompatibleAttributes()
     a = "selectionColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        col.setNamedColor(s);
+        col = QColor::fromString(s);
         model->setSelectionPenColor(col);
         model->setSelectionBrushColor(col);
     }
@@ -239,7 +239,7 @@ void VymReader::readMapDesignCompatibleAttributes()
     a = "selectionPenColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        col.setNamedColor(s);
+        col = QColor::fromString(s);
         model->setSelectionPenColor(col);
     }
 
@@ -301,7 +301,7 @@ void VymReader::readMapDesignCompatibleAttributes()
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         if (!s.isEmpty()) {
-            col.setNamedColor(s);
+            col = QColor::fromString(s);
             pen.setColor(col);
         }
     }
@@ -649,7 +649,7 @@ void VymReader::readLegacyXLink()
                 s = xml.attributes().value(a).toString();
                 if (!s.isEmpty()) {
                     QColor col;
-                    col.setNamedColor(s);
+                    col = QColor::fromString(s);
                     pen.setColor(col);
                 }
 

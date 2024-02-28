@@ -384,7 +384,7 @@ class VymModel : public TreeModel {
     qreal getScaleHeading();
     void setScaleSubtree(const qreal &);
     qreal getScaleSubtree();
-    void setScaleImage(const qreal &, const bool relative = false);
+    void setScaleImage(const qreal &, const bool relative = false, ImageItem *ii = nullptr);
     void setScale(const qreal &f, const bool relative);
     void growSelectionSize();
     void shrinkSelectionSize();

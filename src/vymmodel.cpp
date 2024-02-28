@@ -791,9 +791,11 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
 
     if (zipped) {
         // zip
-        if (err == File::Success)
+        if (err == File::Success) {
+            mainWindow->statusMessage(tr("Compressing %1").arg(destPath));
+            qDebug() << "Zipping " << destPath; // FIXME-2
             err = zipDir(tmpZipDir, destPath);
-
+        }
         // Delete tmpDir
         // FIXME-1 testing removeDir(QDir(tmpZipDir));
         qDebug() << "VM::save keeping zipDir: " << tmpZipDir;
@@ -2620,15 +2622,19 @@ qreal VymModel::getScaleSubtree ()
     return selbis.first()->getBranchContainer()->scaleSubtree();
 }
 
-void VymModel::setScaleImage(const qreal &f, const bool relative)
+void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
 {
-    QList<ImageItem *> seliis = getSelectedImages();
+    QList<ImageItem *> seliis;
+    if (ii)
+        seliis << ii;
+    else
+        seliis = getSelectedImages();
 
     ImageContainer *ic;
     foreach (ImageItem *selii, seliis) {
         qreal f_old = selii->scale();
         qreal f_new = relative ? f_old + f : f;
-	if (selii->scale() != f_new) {
+        if (selii->scale() != f_new) {
             saveState(selii,
                       QString("setScale (%1)")
                           .arg(f_old),
@@ -2637,7 +2643,7 @@ void VymModel::setScaleImage(const qreal &f, const bool relative)
 
             selii->setScale(f_new);
             branchPropertyEditor->updateControls();
-	}
+        }
     }
 
     if (!seliis.isEmpty())
@@ -3064,8 +3070,9 @@ void VymModel::paste()
                 qWarning() << "VM::paste  Could not save copy of image in system clipboard";
             else {
                 ImageItem *ii = loadImage(selbi, fn);
+                qDebug() << "VM::paste image  fn=" << fn; // FIXME-2
                 if (ii)
-                    setScale(300.0 / image.width(), ii);    // FIXME-3 Better use user-defined fixed width when pasting images
+                    setScaleImage(300.0 / image.width(), false, ii);    // FIXME-3 Better use user-defined fixed width when pasting images
             }
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
