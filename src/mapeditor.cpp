@@ -1099,8 +1099,9 @@ TreeItem *MapEditor::getItemAbove(TreeItem *selti)
     if (selti) {
         int dz = selti->depth(); // original depth
         bool invert = false;
-        //FIXME-0 if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
-        //FIXME-0     invert = true;
+        //FIXME-3 Improve finding the right floating item
+        //if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
+        //FIXME       invert = true;
 
         TreeItem *ti = nullptr;
 
@@ -1121,6 +1122,7 @@ TreeItem *MapEditor::getItemAbove(TreeItem *selti)
                 ti = getItemDirectBelow(selti);
             else
                 ti = getItemDirectAbove(selti);
+
             if (ti) {
                 // turn
                 selti = ti;
@@ -1145,7 +1147,6 @@ TreeItem *MapEditor::getItemDirectBelow(TreeItem *ti)
         if (ti->hasTypeBranch()) {
             BranchItem *bi = (BranchItem*)ti;
             int i = bi->num();
-            qDebug() << "ME i=" << i << " bc=" << bi->parent()->branchCount();
             if (i + 1 < bi->parent()->branchCount())
                 return bi->parent()->getBranchNum(i + 1);
         } else if (ti->hasTypeImage()) {
@@ -1160,12 +1161,12 @@ TreeItem *MapEditor::getItemDirectBelow(TreeItem *ti)
 
 TreeItem *MapEditor::getItemBelow(TreeItem *selti)
 {
-    qDebug() << "ME::getItemBelow  a selti=" << selti;
     if (selti) {
         int dz = selti->depth(); // original depth
         bool invert = false;
-        //FIXME-0 if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
-        //FIXME-0     invert = true;
+        //FIXME-3 Improve finding the right floating item
+        // if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
+        //     invert = true;
 
         // Look for mainbranch  // FIXME-3 Better would be to consider scenePos
         TreeItem *ti = nullptr;
@@ -1173,17 +1174,18 @@ TreeItem *MapEditor::getItemBelow(TreeItem *selti)
             ti = getItemDirectAbove(selti);
         else
             ti = getItemDirectBelow(selti);
+
         if (ti)
             return ti;
 
         // Go towards center and look for neighbour
         while (selti->depth() > 0) {
             selti = selti->parent();
-            qDebug() << "ME::getItemBelow b selti=" << selti->getHeadingPlain();
             if (selti->depth() == 1 && invert)    // FIXME see above...
                 ti = getItemDirectAbove(selti);
             else
                 ti = getItemDirectBelow(selti);
+
             if (ti) {
                 // turn
                 selti = ti;
@@ -1217,8 +1219,7 @@ BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
                 for (int i = 0; i < bi->branchCount(); i++) {
                     newbi = bi->getBranchNum(i);
                     bc = newbi->getBranchContainer();
-                    if (bc &&
-                        bc->getOrientation() == BranchContainer::LeftOfParent)
+                    if (bc && bc->getOrientation() == BranchContainer::LeftOfParent)
                         break;
                 }
             }
@@ -1255,10 +1256,8 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
                 for (int i = 0; i < bi->branchCount(); i++) {
                     newbi = bi->getBranchNum(i);
                     bc = newbi->getBranchContainer();
-                    if (bc &&
-                        bc->getOrientation() == BranchContainer::RightOfParent)
-                        qDebug()
-                            << "BI found right: " << newbi->getHeadingPlain();
+                    if (bc && bc->getOrientation() == BranchContainer::RightOfParent)
+                        break;
                 }
             }
             return newbi;
@@ -1279,7 +1278,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
     return nullptr;
 }
 
-void MapEditor::cursorUp()  // FIXME-0 adapt for images and container layouts
+void MapEditor::cursorUp()
 {
     if (editorState == MapEditor::EditingHeading)
         return;
@@ -1299,16 +1298,19 @@ void MapEditor::cursorUpToggleSelection()
     if (editorState == MapEditor::EditingHeading)
         return;
 
+    QList <TreeItem*> seltis = model->getSelectedItems();
     TreeItem *selti = model->getSelectedItem();
     TreeItem *ti;
 
-    if (selti) {
-        ti = getItemAbove(selti);
+    if (seltis.size() == 0)
+        return;
+    else if (seltis.size() == 1) {
+        ti = getItemAbove(seltis.first());
         if (ti) model->selectToggle(ti);
     } else {
         // Nothing selected or already multiple selections
         TreeItem *last_ti = model->lastToggledItem();
-        if (last_ti && last_ti->hasTypeBranch()) {
+        if (last_ti && (last_ti->hasTypeBranch() || last_ti->hasTypeImage())) {
             if (lastToggleDirection == toggleUp)
                 ti = getItemAbove(last_ti);
             else
@@ -1351,9 +1353,9 @@ void MapEditor::cursorDownToggleSelection() // FIXME-0 crashes on 2nd call or so
     } else {
         // Nothing selected or already multiple selections
         TreeItem *last_ti = model->lastToggledItem();
-        if (last_ti) {
+        if (last_ti && (last_ti->hasTypeBranch() || last_ti->hasTypeImage())) {
             if (lastToggleDirection == toggleDown)
-                ti = getItemBelow(ti);
+                ti = getItemBelow(last_ti);
             else
                 ti = last_ti;
 
@@ -1364,7 +1366,7 @@ void MapEditor::cursorDownToggleSelection() // FIXME-0 crashes on 2nd call or so
     lastToggleDirection = toggleDown;
 }
 
-void MapEditor::cursorLeft()  // FIXME-0 adapt for images and container layouts
+void MapEditor::cursorLeft()
 {
     TreeItem *ti = model->getSelectedItem();
     if (!ti) {
@@ -1382,7 +1384,7 @@ void MapEditor::cursorLeft()  // FIXME-0 adapt for images and container layouts
     }
 }
 
-void MapEditor::cursorRight()  // FIXME-0 adapt for images and container layouts
+void MapEditor::cursorRight()
 {
     TreeItem *ti = model->getSelectedItem();
     if (!ti) {
@@ -1400,9 +1402,9 @@ void MapEditor::cursorRight()  // FIXME-0 adapt for images and container layouts
     }
 }
 
-void MapEditor::cursorFirst() { model->selectFirstBranch(); }  // FIXME-0 adapt for images and container layouts
+void MapEditor::cursorFirst() { model->selectFirstBranch(); }  // FIXME-3 adapt for images and container layouts
 
-void MapEditor::cursorLast() { model->selectLastBranch(); }  // FIXME-0 adapt for images and container layouts
+void MapEditor::cursorLast() { model->selectLastBranch(); }  // FIXME-3 adapt for images and container layouts
 
 void MapEditor::editHeading()
 {
@@ -1591,7 +1593,7 @@ void MapEditor::keyReleaseEvent(QKeyEvent *e)
 void MapEditor::startPanningView(QMouseEvent *e)
 {
     setState(PanningView);
-    panning_initialPointerPos = e->globalPos();
+    panning_initialPointerPos = e->globalPosition().toPoint();
     panning_initialScrollBarValues =                  // Used for scrollbars when moving view
         QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
     setCursor(HandOpenCursor);
@@ -1826,10 +1828,10 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 
     // Pan view
     if (editorState == PanningView) {
-        QPoint p = e->globalPos();
+        QPointF pg = e->globalPosition();
         QPoint v_pan;
-        v_pan.setX(-p.x() + panning_initialPointerPos.x());
-        v_pan.setY(-p.y() + panning_initialPointerPos.y());
+        v_pan.setX(-pg.x() + panning_initialPointerPos.x());
+        v_pan.setY(-pg.y() + panning_initialPointerPos.y());
         horizontalScrollBar()->setSliderPosition(
             (int)(panning_initialScrollBarValues.x() + v_pan.x()));
         verticalScrollBar()->setSliderPosition(
@@ -1859,16 +1861,17 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         int margin = 50;
 
         // Check if we have to scroll
+        QPointF p = e->position();
         vPan.setX(0);
         vPan.setY(0);
-        if (e->y() >= 0 && e->y() <= margin)
-            vPan.setY(e->y() - margin);
-        else if (e->y() <= height() && e->y() > height() - margin)
-            vPan.setY(e->y() - height() + margin);
-        if (e->x() >= 0 && e->x() <= margin)
-            vPan.setX(e->x() - margin);
-        else if (e->x() <= width() && e->x() > width() - margin)
-            vPan.setX(e->x() - width() + margin);
+        if (p.y() >= 0 && p.y() <= margin)
+            vPan.setY(p.y() - margin);
+        else if (p.y() <= height() && p.y() > height() - margin)
+            vPan.setY(p.y() - height() + margin);
+        if (p.x() >= 0 && p.x() <= margin)
+            vPan.setX(p.x() - margin);
+        else if (p.x() <= width() && p.x() > width() - margin)
+            vPan.setX(p.x() - width() + margin);
 
         moveObject(e, p_event);
     } // selection && moving_obj
@@ -2514,7 +2517,7 @@ void MapEditor::dropEvent(QDropEvent *event)
                 QByteArray ba =
                     event->mimeData()->urls().first().path().toLatin1();
                 QByteArray ba2;
-                for (int i = 0; i < ba.count(); i++)
+                for (int i = 0; i < ba.size(); i++)
                     if (ba.at(i) != 0)
                         ba2.append(ba.at(i));
                 url = ba2;

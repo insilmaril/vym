@@ -5602,11 +5602,13 @@ bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0
     // Default depth == -1 is used for legacy styles from version < 2.9.518
     // or for using global setting from context menu
 
-    QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(depth));
+    if (depth >= 0) {
+        QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(depth));
 
-    saveState(QString("setLinkStyle (\"%1\")").arg(newStyleString),
-              QString("setLinkStyle (\"%1\")").arg(currentStyleString),
-              QString("Set map link style (\"%1\")").arg(newStyleString));
+        saveState(QString("setLinkStyle (\"%1\")").arg(newStyleString),
+                  QString("setLinkStyle (\"%1\")").arg(currentStyleString),
+                  QString("Set map link style (\"%1\")").arg(newStyleString));
+    }
 
     auto style = LinkObj::styleFromString(newStyleString);
 
