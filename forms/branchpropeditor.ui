@@ -482,11 +482,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Grid based on rows</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>List</string>
                </property>
               </item>
@@ -548,11 +543,6 @@
             <item>
              <property name="text">
               <string>Grid based on columns</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Grid based on rows</string>
              </property>
             </item>
            </widget>

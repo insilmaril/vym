@@ -622,17 +622,19 @@ void BranchPropertyEditor::imagesLayoutsChanged(int i)
             s = "Horizontal";
             break;
         case 3:
-            s = "Floating bounded";
+            s = "FloatingBounded";
             break;
         case 4:
-            s = "Floating free";
+            s = "FloatingFree";
             break;
         case 5:
             s = "GridColumns";
             break;
+            /*
         case 6:
             s = "GridRows";
             break;
+            */
         default:
             qWarning() << "BranchPropertyEditor unknown layout in line " << __LINE__;
             return;

@@ -730,7 +730,7 @@ void Container::reposition()
             }
             break;
 
-        case GridRows:  // FIXME-0 not implemented yet
+        case GridRows:  // FIXME-4 not implemented yet
             break;
 
         case List:
