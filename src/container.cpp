@@ -659,6 +659,7 @@ void Container::reposition()
 
         case GridColumns: {
                 int colCount = 3;   // FIXME-2 fixed for now for GridColumns layout
+                qreal padding = 5;
                 QList <qreal> maxColWidths;
                 QList <qreal> maxRowHeights;
 
@@ -674,11 +675,11 @@ void Container::reposition()
 
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
 
-                    qreal w = c_bbox.width();
+                    qreal w = c_bbox.width() + 2 * padding;
                     if (maxColWidths.at(currentCol) < w)
                         maxColWidths.replace(currentCol, w);
 
-                    qreal h = c_bbox.height();
+                    qreal h = c_bbox.height() + 2 * padding;
                     if (maxRowHeights.at(currentRow) < h)
                         maxRowHeights.replace(currentRow, h);
 
