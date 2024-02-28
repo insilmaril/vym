@@ -374,9 +374,11 @@ void BranchPropertyEditor::updateLayoutControls()
             case Container::GridColumns:
                 ui.branchesLayoutsCombo->setCurrentIndex(5);
                 break;
+                /*
             case Container::GridRows:
                 ui.branchesLayoutsCombo->setCurrentIndex(6);
                 break;
+                */
             case Container::List:
                 ui.branchesLayoutsCombo->setCurrentIndex(7);
                 break;
@@ -404,11 +406,13 @@ void BranchPropertyEditor::updateLayoutControls()
                 ui.imagesLayoutsCombo->setCurrentIndex(4);
                 break;
             case Container::GridColumns:
-                ui.branchesLayoutsCombo->setCurrentIndex(5);
+                ui.imagesLayoutsCombo->setCurrentIndex(5);
                 break;
+                /*
             case Container::GridRows:
                 ui.branchesLayoutsCombo->setCurrentIndex(6);
                 break;
+                */
             default:
                 qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getImagesContainerLayout()));
                 qDebug() << "branch=" << branchItem->getHeadingPlain();
