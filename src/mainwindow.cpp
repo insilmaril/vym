@@ -483,6 +483,7 @@ void Main::statusMessage(const QString &s)
     // Surpress messages while progressdialog during
     // load is active
     statusBar()->showMessage(s, statusbarTime);
+    qApp->processEvents();
 }
 
 void Main::setProgressMaximum(int max)
