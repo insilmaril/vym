@@ -3052,10 +3052,8 @@ void VymModel::paste()
 
     // Special case: When image is selected and image is pasted, try to append 
     // pasted image to current set of images in parent
-    if (!selbi && selii && mimeData->hasImage()) {
+    if (!selbi && selii && mimeData->hasImage())
         selbi = selii->parentBranch();
-        qDebug() << "Pasting onto image"; // FIXME-2
-    }
 
     if (selbi) {
         if (mimeData->formats().contains("application/x-vym")) {
@@ -3077,7 +3075,6 @@ void VymModel::paste()
                 qWarning() << "VM::paste  Could not save copy of image in system clipboard";
             else {
                 ImageItem *ii = loadImage(selbi, fn);
-                qDebug() << "VM::paste image  fn=" << fn; // FIXME-2
                 if (ii) {
                     setScaleImage(300.0 / image.width(), false, ii);    // FIXME-3 Better use user-defined fixed width when pasting images
 
@@ -3959,8 +3956,7 @@ bool VymModel::relinkImage(ImageItem* image, TreeItem *dst_ti, int num_new) {
     return relinkImages(images, dst_ti, num_new);
 }
 
-bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new) // FIXME-0 Check undo for multiselection
-                                                           // see also call in ME::mouseRelease()
+bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)   // FIXME-1 does not save positions
 {
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();

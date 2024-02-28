@@ -6782,9 +6782,16 @@ void Main::updateActions()
 
                 actionToggleTarget->setEnabled(true);
 
-                actionPaste->setEnabled(false);
                 actionDelete->setEnabled(true);
                 actionDeleteAlt->setEnabled(true);
+
+                // Allow pasting image onto image
+                const QClipboard *clipboard = QApplication::clipboard();
+                const QMimeData *mimeData = clipboard->mimeData();
+                if (mimeData->hasImage())
+                    actionPaste->setEnabled(true);
+                else
+                    actionPaste->setEnabled(false);
 
                 actionGrowSelectionSize->setEnabled(true);
                 actionShrinkSelectionSize->setEnabled(true);
