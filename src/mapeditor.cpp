@@ -1338,7 +1338,7 @@ void MapEditor::cursorDown()
     }
 }
 
-void MapEditor::cursorDownToggleSelection() // FIXME-0 crashes on 2nd call or so...
+void MapEditor::cursorDownToggleSelection()
 {
     if (editorState == MapEditor::EditingHeading)
         return;

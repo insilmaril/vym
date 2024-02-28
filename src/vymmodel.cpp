@@ -797,7 +797,7 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
             err = zipDir(tmpZipDir, destPath);
         }
         // Delete tmpDir
-        // FIXME-1 testing removeDir(QDir(tmpZipDir));
+        // FIXME-2 testing removeDir(QDir(tmpZipDir));
         qDebug() << "VM::save keeping zipDir: " << tmpZipDir;
 
         // Restore original filepath outside of tmp zip dir
@@ -2714,7 +2714,6 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi) {
-            //qDebug() << "VM::setImgLayout s=" << s;
             bc = selbi->getBranchContainer();
             if (s == "Auto") {
                 bc->imagesContainerAutoLayout = true;
@@ -3045,12 +3044,20 @@ void VymModel::paste()
     if (readonly)
         return;
 
+    const QClipboard *clipboard = QApplication::clipboard();
+    const QMimeData *mimeData = clipboard->mimeData();
+
     BranchItem *selbi = getSelectedBranch();
+    ImageItem *selii = getSelectedImage();
+
+    // Special case: When image is selected and image is pasted, try to append 
+    // pasted image to current set of images in parent
+    if (!selbi && selii && mimeData->hasImage()) {
+        selbi = selii->parentBranch();
+        qDebug() << "Pasting onto image"; // FIXME-2
+    }
 
     if (selbi) {
-        const QClipboard *clipboard = QApplication::clipboard();
-        const QMimeData *mimeData = clipboard->mimeData();
-
         if (mimeData->formats().contains("application/x-vym")) {
             QStringList clipboardFiles = QString(mimeData->data("application/x-vym")).split(",");
 
@@ -3071,8 +3078,13 @@ void VymModel::paste()
             else {
                 ImageItem *ii = loadImage(selbi, fn);
                 qDebug() << "VM::paste image  fn=" << fn; // FIXME-2
-                if (ii)
+                if (ii) {
                     setScaleImage(300.0 / image.width(), false, ii);    // FIXME-3 Better use user-defined fixed width when pasting images
+
+                    if (selii)
+                        // In case we pasted onto an existing image, select the new one
+                        select(ii);
+                }
             }
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
@@ -3878,7 +3890,9 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         // reset parObj, fonts, frame, etc in related branch-container or other view-objects
         applyDesign(MapDesign::RelinkedByUser, true, bi);
 
-        emitDataChanged(bi);
+        emit(layoutChanged());
+
+        // emitDataChanged(bi); FIXME-0 needed?
 
         // Keep position when detaching
         if (keepPos) {
@@ -4008,14 +4022,14 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
         dst->insertImage(num_new, ii);
         endInsertRows();
 
+        emit(layoutChanged());
+
         ii->updateContainerStackingOrder();
 
         // FIXME-2 relinkImages: What about updating links of images (later)?
         // FIXME-2 relinkImages: What about updating design (later)?
 
-        emit(layoutChanged());  // FIXME-0 relinkImages: needed? compare relinkBranches...
-
-        emitDataChanged(ii);  // FIXME-0 relinkImages: needed?
+        //emitDataChanged(ii);  // FIXME-0 relinkImages: needed?
 
         saveState(ii, QString("relinkTo (\"%1\")").arg(oldParString), ii,
                   QString("relinkTo (\"%1\")").arg(getSelectString(dst)),

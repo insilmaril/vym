@@ -1176,7 +1176,7 @@ void BranchContainer::setFrameBrushColor(const bool &useInnerFrame, const QColor
     }
 }
 
-QString BranchContainer::saveFrame()    // FIXME-1 save only, if not using autoDesign
+QString BranchContainer::saveFrame()
 {
     QString r;
     if (innerFrame && innerFrame->frameType() != FrameContainer::NoFrame)
@@ -1199,7 +1199,7 @@ void BranchContainer::updateBranchesContainerLayout()
 }
 
 
-void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // FIXME-0 needs to go to VymModel for undo/redo
+void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // FIXME-0 needs to go to VymModel::applyDesign to allow undo/redo
 {
 
     uint depth = branchItem->depth();

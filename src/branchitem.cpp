@@ -181,7 +181,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (!note.isEmpty())
         s += note.saveToDir();
 
-    // Save frame   // FIXME-1 save only, if not using autoDesign? Think...
+    // Save frame
     if (branchContainer->frameType(true) != FrameContainer::NoFrame ||
         branchContainer->frameType(false) != FrameContainer::NoFrame)
         s += branchContainer->saveFrame();
