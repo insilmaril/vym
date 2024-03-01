@@ -634,6 +634,14 @@ BranchItem *TreeItem::getBranchNum(const int &n)
         return nullptr;
 }
 
+QList <BranchItem*> TreeItem::getBranches()
+{
+    QList <BranchItem*> branches;
+    for (int i = 0; i < branchCounter; i++)
+        branches << getBranchNum(i);
+    return branches;
+}
+
 ImageItem *TreeItem::getImageNum(const int &n)
 {
     if (n >= 0 && n < imageCounter)

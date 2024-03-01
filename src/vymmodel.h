@@ -45,7 +45,7 @@ class VymModel : public TreeModel {
     // General housekeeping
     ////////////////////////////////////////////
   private:
-    QString version; //!< version string saved in vym file
+    QString mapVersionInt; //!< version string saved in vym file
     QString title;
     QString author;
     QString comment;
@@ -322,6 +322,8 @@ class VymModel : public TreeModel {
     QString getAuthor();
     void setComment(const QString &);
     QString getComment();
+    void setMapVersion(const QString &);
+    QString mapVersion();
     QString getDate();
     int branchCount();
     int centerCount();

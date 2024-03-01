@@ -88,6 +88,7 @@ void VymReader::readVymMap()
                     .arg(version)
                     .arg(vymVersion));
         }
+        model->setMapVersion(version);
     }
 
     branchesTotal = 0;
@@ -169,8 +170,6 @@ void VymReader::readMapDesign()
             return;
         }
     }
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
 }
 
 void VymReader::readMapDesignElement()
@@ -180,9 +179,6 @@ void VymReader::readMapDesignElement()
     bool ok;
 
     readMapDesignCompatibleAttributes();
-
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
@@ -366,6 +362,13 @@ void VymReader::readSetting()
             // Version < 2.5.0 have value as element attribute
             settings.setLocalValue( model->getDestPath(), k, v);
         }
+    }
+
+    if (xml.tokenType() == QXmlStreamReader::EndElement) return;
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
     }
 }
 
@@ -604,8 +607,7 @@ void VymReader::readHeadingOrVymNote()
     else
         lastBranch->setNote(vymtext);
 
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
+    if (xml.tokenType() == QXmlStreamReader::EndElement) return;
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
@@ -727,9 +729,6 @@ void VymReader::readUserFlagDef()
     if (!s.isEmpty())
         flag->setGroup(s);
 
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
-
     if (xml.readNextStartElement()) {
         raiseUnknownElementError();
         return;
@@ -745,6 +744,11 @@ void VymReader::readUserFlag()
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
         lastBranch->toggleFlagByUid(QUuid(s));
+
+    if (xml.readNextStartElement()) {
+        raiseUnknownElementError();
+        return;
+    }
 }
 
 void VymReader::readImage()
@@ -819,9 +823,6 @@ void VymReader::readImage()
     if (!s.isEmpty())
         lastImage->setOriginalFilename(s);
 
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
-
     if (xml.readNextStartElement())
         raiseUnknownElementError();
 }
@@ -887,9 +888,6 @@ void VymReader::readXLink()
                 xlo->setC1(p);
         }
     }
-
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
@@ -957,8 +955,48 @@ void VymReader::readSlide()
             lastSlide->setOutScript(unquoteMeta(s));
     }
 
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
+    if (xml.readNextStartElement())
+        raiseUnknownElementError();
+}
+
+void VymReader::readTask()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("task"));
+
+    if (lastBranch) {
+        lastTask = taskModel->createTask(lastBranch);
+
+        QString s = attributeToString("status");
+        if (!s.isEmpty())
+            lastTask->setStatus(s);
+
+        s = attributeToString("awake");
+        if (!s.isEmpty())
+            lastTask->setAwake(s);
+
+        s = attributeToString("date_creation");
+        if (!s.isEmpty())
+            lastTask->setDateCreation(s);
+
+        s = attributeToString("date_modification");
+        if (!s.isEmpty())
+            lastTask->setDateModification(s);
+
+        s = attributeToString("date_sleep");
+        if (!s.isEmpty()) {
+            if (!lastTask->setDateSleep(s)) {
+                xml.raiseError("Could not set sleep time for task: " + s);
+                return;
+            }
+        }
+        s = attributeToString("prio_delta");
+        if (!s.isEmpty()) {
+            bool ok;
+            int d = s.toInt(&ok);
+            if (ok)
+                lastTask->setPriorityDelta(d);
+        }
+    }
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
@@ -1287,51 +1325,5 @@ void VymReader::readFrameAttr()
         if (ok)
             bc->setFramePenWidth(useInnerFrame, i);
     }
-}
-
-void VymReader::readTask()
-{
-    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("task"));
-
-    if (lastBranch) {
-        lastTask = taskModel->createTask(lastBranch);
-
-        QString s = attributeToString("status");
-        if (!s.isEmpty())
-            lastTask->setStatus(s);
-
-        s = attributeToString("awake");
-        if (!s.isEmpty())
-            lastTask->setAwake(s);
-
-        s = attributeToString("date_creation");
-        if (!s.isEmpty())
-            lastTask->setDateCreation(s);
-
-        s = attributeToString("date_modification");
-        if (!s.isEmpty())
-            lastTask->setDateModification(s);
-
-        s = attributeToString("date_sleep");
-        if (!s.isEmpty()) {
-            if (!lastTask->setDateSleep(s)) {
-                xml.raiseError("Could not set sleep time for task: " + s);
-                return;
-            }
-        }
-        s = attributeToString("prio_delta");
-        if (!s.isEmpty()) {
-            bool ok;
-            int d = s.toInt(&ok);
-            if (ok)
-                lastTask->setPriorityDelta(d);
-        }
-    }
-
-    if (xml.tokenType() == QXmlStreamReader::EndElement)
-        return;
-
-    if (xml.readNextStartElement())
-        raiseUnknownElementError();
 }
 

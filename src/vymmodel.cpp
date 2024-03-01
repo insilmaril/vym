@@ -273,6 +273,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
 
     QString mapAttr = xml.attribute("version", vymVersion);
+    // Current map version after load still might be original one, change it now.
+    mapVersionInt = vymVersion;
+
     if (!saveSel) {
         mapAttr += xml.attribute("date", getDate()) + "\n";
 
@@ -612,7 +615,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (err != File::Aborted) {
             if (parsedWell) {
-                reposition(); // to generate bbox sizes
                 emitSelectionChanged();
 
                 if (lmode == File::NewMap) // no lockfile for default map!
@@ -640,9 +642,32 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 // returnCode=1;
                 // Still return "success": the map maybe at least
                 // partially read by the parser
+
+                setReadOnly(true);
             }
         } // err != File::Aborted
     }
+
+    reposition();
+
+    // If required, fix positions when importing from old versions
+    if (versionLowerOrEqual(mapVersionInt, "2.9.500")) {
+        qDebug() << "Finished reading vymmap  version=" << mapVersionInt;
+
+        foreach (BranchItem *center, rootItem->getBranches()) {
+            foreach (BranchItem *mainBranch, center->getBranches()) {
+                BranchContainer *bc = mainBranch->getBranchContainer();
+                QRectF rb = bc->ornamentsRect();
+                QPointF offset;
+                offset.setX(rb.width() / 2);
+                offset.setY(rb.height() / 2);
+                bc->setPos(bc->x() + offset.x(), bc->y() + offset.y());
+                qDebug() << "VymModel::loadMap adjusting legacy position of " << mainBranch->getHeadingPlain() << "  offset: " << toS(offset);
+            }
+        }
+        reposition();
+    }
+
 
     // Cleanup
     removeDir(QDir(tmpZipDir));
@@ -1262,10 +1287,10 @@ void VymModel::redo()
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
 
     /* TODO Maybe check for version, if we save the history
-    if (!checkVersion(version))
+    if (!checkVersion(mapVersionInt))
     QMessageBox::warning(0,tr("Warning"),
         tr("Version %1 of saved undo/redo data\ndoes not match current vym
-    version %2.").arg(version).arg(vymVersion));
+    version %2.").arg(mapVersionInt).arg(vymVersion));
     */
 
     if (debug) {
@@ -1382,10 +1407,10 @@ void VymModel::undo()
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
 
     /* TODO Maybe check for version, if we save the history
-    if (!checkVersion(version))
+    if (!checkVersion(mapVersionInt))
     QMessageBox::warning(0,tr("Warning"),
         tr("Version %1 of saved undo/redo data\ndoes not match current vym
-    version %2.").arg(version).arg(vymVersion));
+    version %2.").arg(mapVersionInt).arg(vymVersion));
     */
 
     if (debug) {
@@ -1961,6 +1986,17 @@ void VymModel::setComment(const QString &s)
 }
 
 QString VymModel::getComment() { return comment; }
+
+void VymModel::setMapVersion(const QString &s)
+{
+    // Version stored in file
+    mapVersionInt = s;
+}
+
+QString VymModel::mapVersion()
+{
+    return mapVersionInt;
+}
 
 QString VymModel::getDate()
 {

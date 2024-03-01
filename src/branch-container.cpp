@@ -846,6 +846,12 @@ QRectF BranchContainer::headingRect()
     return headingContainer->mapToScene(headingContainer->rect()).boundingRect();
 }
 
+QRectF BranchContainer::ornamentsRect()
+{
+    // Returns scene coordinates of bounding rectanble
+    return ornamentsContainer->mapToScene(headingContainer->rect()).boundingRect();
+}
+
 void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update)
 {
     rotationsAutoDesignInt = b;

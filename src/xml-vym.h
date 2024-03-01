@@ -31,12 +31,12 @@ class VymReader : public BaseReader {
     void readImage();
     void readXLink();
     void readSlide();
+    void readTask();
 
     void readVymMapAttr();
     void readBranchAttr();
     void readOrnamentsAttr();
     void readFrameAttr();
-    void readTask();
 
     int branchesCounter;
     int branchesTotal;

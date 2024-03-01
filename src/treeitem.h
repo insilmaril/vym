@@ -185,6 +185,9 @@ class TreeItem : public XMLObj {
 
     virtual BranchItem *getBranchNum(const int &n);
 
+    /*! Convenience list of branches */
+    virtual QList <BranchItem*> getBranches();
+
     virtual ImageItem *getImageNum(const int &n);
 
     virtual AttributeItem *getAttributeNum(const int &n);

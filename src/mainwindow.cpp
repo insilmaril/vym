@@ -5138,6 +5138,7 @@ void Main::editMapProperties()
     dia.setMapTitle(m->getTitle());
     dia.setAuthor(m->getAuthor());
     dia.setComment(m->getComment());
+    dia.setMapVersion(m->mapVersion());
     dia.setReadOnly(m->isReadOnly());
 
     // Calc some stats

@@ -31,7 +31,7 @@
     <number>11</number>
    </property>
    <item>
-    <widget class="QLabel" name="textLabel1_2">
+    <widget class="QLabel" name="mapLabel">
      <property name="text">
       <string>Map:</string>
      </property>
@@ -39,25 +39,8 @@
    </item>
    <item>
     <widget class="QLineEdit" name="mapNameLE">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>File location:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLineEdit" name="fileLocationLE">
      <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -65,7 +48,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="authorLabel">
+     <property name="text">
+      <string>Author:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="authorLE"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="titleLable">
      <property name="accessibleDescription">
       <string extracomment="Label for map title"/>
      </property>
@@ -78,14 +71,51 @@
     <widget class="QLineEdit" name="mapTitleLE"/>
    </item>
    <item>
-    <widget class="QLabel" name="textLabel1">
+    <widget class="QLabel" name="commentLabel">
      <property name="text">
-      <string>Author:</string>
+      <string>Comment:</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="authorLE"/>
+    <widget class="QTextEdit" name="commentTE"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="fileLocationLabel">
+     <property name="text">
+      <string>File location:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="fileLocationLE">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="fileVersionLabel">
+     <property name="text">
+      <string>File version:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="fileVersionLE">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -101,17 +131,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QLabel" name="textLabel2">
-     <property name="text">
-      <string>Comment:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTextEdit" name="commentTE"/>
-   </item>
-   <item>
-    <widget class="QLabel" name="textLabel2_2">
+    <widget class="QLabel" name="statisticsLabel">
      <property name="text">
       <string>Statistics:</string>
      </property>
@@ -120,11 +140,11 @@
    <item>
     <widget class="QTextEdit" name="statsTE">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="font">
       <font>
-       <family>DejaVu Sans Mono</family>
+       <family>Misc Fixed</family>
       </font>
      </property>
     </widget>
@@ -175,7 +195,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
-  <tabstop>authorLE</tabstop>
   <tabstop>closeButton</tabstop>
   <tabstop>mapNameLE</tabstop>
  </tabstops>

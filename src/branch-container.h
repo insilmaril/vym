@@ -88,6 +88,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void setBranchesContainerBrush(const QBrush &b);
 
     QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
+    QRectF ornamentsRect();  //! Return rectangle of ornamentsContainer in absolute coordinates
 
     void setRotationsAutoDesign(const bool &, const bool &update = true);
     bool rotationsAutoDesign();
