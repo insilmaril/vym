@@ -36,6 +36,7 @@ File::ErrorCode unzipDir(QDir, QString);
 
 bool loadStringFromDisk(const QString &fn, QString &s);
 bool saveStringToDisk(const QString &fn, const QString &s);
+bool appendStringToFile(const QString &fn, const QString &s);
 
 File::FileType getMapType(const QString &fn);
 

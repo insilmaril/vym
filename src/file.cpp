@@ -527,7 +527,7 @@ bool loadStringFromDisk(const QString &fname, QString &s)
     s = "";
     QFile file(fname);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        qWarning() << QString("loadStringFromDisk: Cannot read file %1\n%2")
+        qWarning() << QString("loadStringFromDisk: Cannot open file %1\n%2")
                           .arg(fname)
                           .arg(file.errorString());
         return false;
@@ -543,7 +543,24 @@ bool saveStringToDisk(const QString &fname, const QString &s)
     QFile file(fname);
     // Write as binary (default), QFile::Text would convert linebreaks
     if (!file.open(QFile::WriteOnly)) {
-        qWarning() << QString("saveStringToDisk: Cannot write file %1:\n%2.")
+        qWarning() << QString("saveStringToDisk: Cannot open file %1:\n%2.")
+                          .arg(fname)
+                          .arg(file.errorString());
+        return false;
+    }
+
+    QTextStream out(&file);
+    out << s;
+
+    return true;
+}
+
+bool appendStringToFile(const QString &fname, const QString &s)
+{
+    QFile file(fname);
+    // Write as binary (default), QFile::Text would convert linebreaks
+    if (!file.open(QFile::WriteOnly | QIODevice::Append)) {
+        qWarning() << QString("appendStringToFile: Cannot open file %1:\n%2.")
                           .arg(fname)
                           .arg(file.errorString());
         return false;

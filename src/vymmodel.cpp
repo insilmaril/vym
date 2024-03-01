@@ -166,6 +166,10 @@ void VymModel::init()
     // Create tmp dirs
     makeTmpDirectories();
 
+    // Write actions passed to saveState to file
+    useActionLog = true;
+    actionLogPath = tmpMapDirPath + "/" + "actions.vys";
+
     // Files
     readonly = false;
     zipped = true;
@@ -652,8 +656,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     // If required, fix positions when importing from old versions
     if (versionLowerOrEqual(mapVersionInt, "2.9.500")) {
-        qDebug() << "Finished reading vymmap  version=" << mapVersionInt;
-
         foreach (BranchItem *center, rootItem->getBranches()) {
             foreach (BranchItem *mainBranch, center->getBranches()) {
                 BranchContainer *bc = mainBranch->getBranchContainer();
@@ -817,6 +819,17 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
     if (zipped) {
         // zip
         if (err == File::Success) {
+
+        if (useActionLog) {
+            QString log;
+
+            log = QString("// %1\n// Saved %2\n// zipDir = %3\n")
+                .arg(QDateTime::currentDateTime().toString())
+                .arg(destPath)
+                .arg(tmpZipDir);
+
+            appendStringToFile(actionLogPath, log);
+        }
             mainWindow->statusMessage(tr("Compressing %1").arg(destPath));
             qDebug() << "Zipping " << destPath; // FIXME-2
             err = zipDir(tmpZipDir, destPath);
@@ -1551,6 +1564,16 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
 
     QString undoCommand;
     QString redoCommand;
+
+    if (useActionLog) {
+        QString log;
+
+        log = QString("// %1\n").arg(QDateTime::currentDateTime().toString());
+        log += QString("model.select(\"%1\");\n").arg(redoSelection);
+        log += QString("model.%1;\n\n").arg(redoCom);
+
+        appendStringToFile(actionLogPath, log);
+    }
 
     if (buildingUndoBlock)
     {
