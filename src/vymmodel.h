@@ -101,7 +101,10 @@ class VymModel : public TreeModel {
     QString mapName; // fileName without ".vym"
                      // example
 
-    QString tmpMapDirPath; // tmp directory with undo history
+    QString tmpMapDirPath;  // tmp directory with undo history
+
+    bool useActionLog;
+    QString actionLogPath;  // Log any action which triggers a call to saveState
 
     QTimer *autosaveTimer;
     QTimer *fileChangedTimer;
