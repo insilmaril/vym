@@ -204,7 +204,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Assume that system has been set up so that
     // Explorer automagically opens up the URL
     // in the user's preferred browser.
-    s = settings.value(p, "explorer").toString();
+    s = settings.value(p, "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").toString();
 #elif defined(Q_OS_MACX)
     s = settings.value(p, "/usr/bin/open").toString();
 #else
