@@ -81,18 +81,21 @@ class MapEditor : public QGraphicsView {
     void stopAllAnimation();
 
     // Animation of zoom
-    Q_PROPERTY(qreal zoomFactor READ getZoomFactor WRITE setZoomFactor)
+    Q_PROPERTY(qreal zoomFactorInt READ zoomFactor WRITE setZoomFactor)
 
   protected:
-    qreal zoomFactor;
-    qreal zoomFactorTarget;
+    qreal zoomDelta;
+    qreal zoomFactorInt;
+    qreal zoomFactorTargetInt;
     QPropertyAnimation zoomAnimation;
 
   public:
+    void zoomIn();
+    void zoomOut();
     void setZoomFactorTarget(const qreal &zf);
-    qreal getZoomFactorTarget();
+    qreal zoomFactorTarget();
     void setZoomFactor(const qreal &zf);
-    qreal getZoomFactor();
+    qreal zoomFactor();
 
     // Animation of rotation
     Q_PROPERTY(qreal rotationInt READ rotation WRITE setRotation)
@@ -101,6 +104,10 @@ class MapEditor : public QGraphicsView {
     qreal rotationInt;
     qreal rotationTargetInt;
     QPropertyAnimation rotationAnimation;
+
+    QPointF transformationOrigin;
+    QPointF transformOriginScene;
+    QPoint transformOriginView;
 
   public:
     void setRotationTarget(const qreal &a);
