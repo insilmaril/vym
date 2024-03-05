@@ -111,6 +111,9 @@ MapEditor::MapEditor(VymModel *vm)
     mapScene->addItem(tmpParentContainer);
     tmpParentContainer->setName("tmpParentContainer");
 
+    // When moving objects, draw then on top of everything else
+    tmpParentContainer->setZValue(10000);
+
     // Shortcuts and actions
     QAction *a;
 
