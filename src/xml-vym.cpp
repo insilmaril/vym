@@ -3,7 +3,7 @@
 #include <QColor>
 #include <QMessageBox>
 #include <QTextStream>
-#include <typeinfo>
+// FIXME-2 not needed #include <typeinfo>
 
 #include "attributeitem.h"
 #include "branchitem.h"
@@ -85,8 +85,7 @@ void VymReader::readVymMap()
                     "The version of this vym is %2. "
                     "If you run into problems after pressing "
                     "the ok-button below, updating vym should help.</p>")
-                    .arg(version)
-                    .arg(vymVersion));
+                    .arg(version, vymVersion));
         }
         model->setMapVersion(version);
     }
@@ -160,8 +159,6 @@ void VymReader::readMapDesign()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("mapdesign"));
 
-    bool ok;
-
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("md"))
             readMapDesignElement();
@@ -175,8 +172,6 @@ void VymReader::readMapDesign()
 void VymReader::readMapDesignElement()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("md"));
-
-    bool ok;
 
     readMapDesignCompatibleAttributes();
 
