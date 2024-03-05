@@ -280,6 +280,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     // Current map version after load still might be original one, change it now.
     mapVersionInt = vymVersion;
 
+    QString design;
+
     if (!saveSel) {
         mapAttr += xml.attribute("date", getDate()) + "\n";
 
@@ -295,10 +297,11 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                      QString().setNum(mapEditor->getZoomFactorTarget()));
         mapAttr += xml.attribute("mapRotation",
                      QString().setNum(mapEditor->rotationTarget()));
+
+        design = mapDesignInt->saveToDir(tmpdir, prefix);
     }
     header += xml.beginElement("vymmap", mapAttr);
 
-    QString design = mapDesignInt->saveToDir(tmpdir, prefix);
 
     xml.incIndent();
 
