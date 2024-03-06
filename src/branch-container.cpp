@@ -7,7 +7,7 @@
 #include "flag-container.h"
 #include "flagrow-container.h"
 #include "frame-container.h"
-#include "geometry.h"
+// FIXME-2 not needed #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
 #include "linkobj.h"
@@ -655,7 +655,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                 case LeftOfParent:
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
-                default: // Shouldn't happen
+                default: // Shouldn't happen // FIXME-1 happens, if branch has temp scrolled parent. Also flags are invisible then.
                     qWarning() << "BC::updateLinkPos  undefined orientation in " << info();
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->bottomCenter());
@@ -1063,7 +1063,6 @@ void BranchContainer::setFrameType(const bool &useInnerFrame, const FrameContain
         } else {
             // Set outerFrame
             if (!outerFrame) {
-                int a = rotationSubtree();
                 outerFrame = new FrameContainer;
                 outerFrame->setUsage(FrameContainer::OuterFrame);
                 Container *c;
@@ -1268,8 +1267,10 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // F
 void BranchContainer::updateVisuals()
 {
     // Update heading
-    if (branchItem)
-        headingContainer->setHeading(branchItem->getHeadingText());
+    if (!branchItem)
+        return;
+
+    headingContainer->setHeading(branchItem->getHeadingText());
 
     // Update standard flags active in TreeItem
     QList<QUuid> TIactiveFlagUids = branchItem->activeFlagUids();
