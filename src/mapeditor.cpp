@@ -1089,10 +1089,23 @@ void MapEditor::testFunction1()
 
     QPointF oldCenter = mapToScene(rect().center() );
     qDebug() << "  oldCenter=" << toS(oldCenter);
+<<<<<<< Updated upstream
+=======
 
 //	= model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->mapToScene( model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->rect().center());
 
+    /*
+    BranchItem *selbi = model->getSelectedBranch();
+    if (selbi) {
+        selbi->getBranchContainer()->printStructure();
+    }
+    transformationOrigin = QPointF(130,0);
+    */
+>>>>>>> Stashed changes
+
+//	= model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->mapToScene( model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->rect().center());
     //autoLayout();
+
 }
 
 void MapEditor::testFunction2()
