@@ -6976,7 +6976,8 @@ void Main::testFunction1()
 
     VymModel *m = currentModel();
     if (m) {
-        m->getMapEditor()->testFunction1();
+        m->test();
+        //m->getMapEditor()->testFunction1();
     }
 }
 

@@ -1021,6 +1021,11 @@ BranchItem *MapEditor::findMapBranchItem(
         return nullptr;
 }
 
+void MapEditor::testFunction1()
+{
+    //autoLayout();
+}
+
 void MapEditor::testFunction2()
 {
     TreeItem *selti = model->getSelectedItem();
@@ -1036,17 +1041,6 @@ void MapEditor::testFunction2()
             qDebug() << "Unknown type";
     } else
         qWarning() << "Nothing selected";
-}
-
-void MapEditor::testFunction1()
-{
-    /*
-    */
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        selbi->getBranchContainer()->printStructure();
-    }
-    //autoLayout();
 }
 
 void MapEditor::toggleWinter()
@@ -1281,7 +1275,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
     return nullptr;
 }
 
-void MapEditor::cursorUp()
+void MapEditor::cursorUp()  // FIXME-1 triggers multiple VM::reposition, VM::updateDesign (!), MW::updateActions
 {
     if (editorState == MapEditor::EditingHeading)
         return;
