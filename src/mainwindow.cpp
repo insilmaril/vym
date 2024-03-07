@@ -204,7 +204,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Assume that system has been set up so that
     // Explorer automagically opens up the URL
     // in the user's preferred browser.
-    s = settings.value(p, "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").toString();
+    s = settings.value(p, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe").toString();
 #elif defined(Q_OS_MACX)
     s = settings.value(p, "/usr/bin/open").toString();
 #else
@@ -331,8 +331,8 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
 
     // Connect NoteEditor, so that we can update flags if text changes
-    connect(noteEditor, SIGNAL(textHasChanged(const VymText &)), this,
-            SLOT(updateNoteText(const VymText &)));
+    connect(noteEditor, SIGNAL(textHasChanged(VymText)), this,
+            SLOT(updateNoteText(VymText)));
     connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     // Connect heading editor
@@ -2989,11 +2989,9 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
         // Maybe introduce dedicate toolbar later,
         // so for now switch to standard flag
         flag->setVisible(false);
-        type = Flag::StandardFlag;
         standardFlagsMaster->addActionToToolbar(a);
 
         connect(a, SIGNAL(triggered()), this, SLOT(flagChanged()));
-        break;
     case Flag::StandardFlag:
         // Hide some old flags, if not used
         if (name == "present" || name == "rose" || name == "phone" ||
@@ -6978,7 +6976,8 @@ void Main::testFunction1()
 
     VymModel *m = currentModel();
     if (m) {
-        m->getMapEditor()->testFunction1();
+        m->test();
+        //m->getMapEditor()->testFunction1();
     }
 }
 

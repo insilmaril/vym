@@ -117,6 +117,9 @@ MapEditor::MapEditor(VymModel *vm)
     mapScene->addItem(tmpParentContainer);
     tmpParentContainer->setName("tmpParentContainer");
 
+    // When moving objects, draw then on top of everything else
+    tmpParentContainer->setZValue(10000);
+
     // Shortcuts and actions
     QAction *a;
 
@@ -461,6 +464,7 @@ QPointF MapEditor::getScrollBarPos()
 
 void MapEditor::animateScrollBars()
 {
+    qDebug() << "ME::animateScrollBars";
     if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
         scrollBarPosAnimation.stop();
 
@@ -546,6 +550,20 @@ void MapEditor::stopAllAnimation()
 void MapEditor::zoomIn()
 {
 
+    QPointF oldCenter = mapToScene(rect().center() );
+    setZoomFactorTarget(zoomFactorTargetInt * (1.1));
+
+
+    QPointF newCenter = mapToScene(rect().center() );
+    qDebug() << "  oldCenter=" << toS(oldCenter);
+    qDebug() << "  newCenter=" << toS(newCenter);
+    qDebug() << "   d_center=" << newCenter - oldCenter;
+
+    centerOn(oldCenter + QPointF(0,0));
+
+    qDebug() << " c updated =" << mapToScene(rect().center() );
+    return;
+
     transformOriginScene = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->mapToScene( model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->rect().center());
     transformOriginView = mapFromScene(transformOriginScene);
     //transformationOrigin = mapToScene( viewport()->rect().center() );
@@ -570,6 +588,7 @@ void MapEditor::setZoomFactorTarget(const qreal &zft)
     zoomFactorTargetInt = zft;
     if (zoomAnimation.state() == QAbstractAnimation::Running)
         zoomAnimation.stop();
+
     if (settings.value("/animation/use/", true).toBool()) {
         zoomAnimation.setTargetObject(this);
         zoomAnimation.setPropertyName("zoomFactorInt");
@@ -709,14 +728,15 @@ void MapEditor::updateMatrix()
     qDebug() << " TOView =" << toS(transformOriginView);
 
 //    qDebug() << "     hSB=" << horizontalScrollBar()->value();
-//    qDebug() << "      t0=" << transform();
+    qDebug() << "transform()=" << transform();
     QTransform t; // = transform();
     t.translate(transformationOrigin.x(), transformationOrigin.y());
     t.scale(zoomFactorInt, zoomFactorInt);
     t.rotate(rotationInt);
     t.translate(- transformationOrigin.x(), - transformationOrigin.y());
-//    qDebug() << "      t1=" << t;
+    qDebug() << "          t=" << t;
     setTransform(t);
+    qDebug() << "transform()=" << transform();
     qDebug() << " TOView =" << toS(mapFromScene(transformOriginScene));
 //    qDebug() << "     hSB=" << horizontalScrollBar()->value();
 }
@@ -1065,13 +1085,12 @@ BranchItem *MapEditor::findMapBranchItem(
 
 void MapEditor::testFunction1()
 {
-    /*
-    */
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        selbi->getBranchContainer()->printStructure();
-    }
-    transformationOrigin = QPointF(130,0);
+    qDebug() << "ME::test";
+
+    QPointF oldCenter = mapToScene(rect().center() );
+    qDebug() << "  oldCenter=" << toS(oldCenter);
+
+//	= model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->mapToScene( model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->rect().center());
 
     //autoLayout();
 }
@@ -1325,7 +1344,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
     return nullptr;
 }
 
-void MapEditor::cursorUp()
+void MapEditor::cursorUp()  // FIXME-1 triggers multiple VM::reposition, VM::updateDesign (!), MW::updateActions
 {
     if (editorState == MapEditor::EditingHeading)
         return;
@@ -2551,11 +2570,11 @@ void MapEditor::dropEvent(QDropEvent *event)
                 qDebug() << "       enc:" << url.toEncoded();
                 qDebug() << "     valid:" << url.isValid();
             }
-            qDebug() << "============== mimeData ===================";
+            qDebug() << "-------------- mimeData -------------------";
             qDebug() << "has-img : " << event->mimeData()->hasImage();
             qDebug() << "has-urls: " << event->mimeData()->hasUrls();
             qDebug() << "    text: " << event->mimeData()->text();
-            qDebug() << "===========================================";
+            qDebug() << "-------------------------------------------";
         }
 
         if (event->mimeData()->hasUrls()) {

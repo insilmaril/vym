@@ -182,6 +182,8 @@ TaskEditor::TaskEditor(QWidget *)
             SIGNAL(customContextMenuRequested(QPoint)),
             SLOT(headerContextMenu()));
 
+    view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+
     view->setStyleSheet("QTableView:focus {" + editorFocusStyle + "}");
 
     updateColumnLayout();
@@ -340,6 +342,8 @@ void TaskEditor::updateColumnLayout()
 {
     // Update column widths and visibility
 
+    qDebug() << "TE::updateColLayout";
+
     QString s = "/taskeditor/column/%1/";
 
     // Priority
@@ -417,11 +421,13 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
                 m->select(bi);
             if (m != mainWindow->currentModel())
                 mainWindow->gotoModel(m);
-            view->setStyleSheet(
+            /*
+            view->setStyleSheet( // FIXME-2 this resets column widths on Windows...
                 "QTableView {selection-background-color: " +
                 m->getSelectionBrushColor().name() +
                 "; selection-color:" + bi->getHeadingColor().name() + "}" +
                 "QTableView:focus {" + editorFocusStyle + "}");
+*/
             view->scrollTo(selected.indexes().first());
         }
     }

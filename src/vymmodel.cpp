@@ -280,6 +280,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     // Current map version after load still might be original one, change it now.
     mapVersionInt = vymVersion;
 
+    QString design;
+
     if (!saveSel) {
         mapAttr += xml.attribute("date", getDate()) + "\n";
 
@@ -295,10 +297,11 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                      QString().setNum(mapEditor->zoomFactorTarget()));
         mapAttr += xml.attribute("mapRotation",
                      QString().setNum(mapEditor->rotationTarget()));
+
+        design = mapDesignInt->saveToDir(tmpdir, prefix);
     }
     header += xml.beginElement("vymmap", mapAttr);
 
-    QString design = mapDesignInt->saveToDir(tmpdir, prefix);
 
     xml.incIndent();
 
@@ -1939,8 +1942,6 @@ TreeItem *VymModel::findUuid(const QUuid &id)
 
 void VymModel::test()
 {
-    qDebug() << "VM::test()";
-
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch())
             ((BranchItem*)ti)->getBranchContainer()->printStructure();
@@ -3096,6 +3097,8 @@ void VymModel::copy()
         mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
         clipboard->setMimeData(mimeData);
     }
+
+    mainWindow->updateActions();
 }
 
 void VymModel::paste()
@@ -3410,7 +3413,7 @@ void VymModel::sortChildren(bool inverse)
     }
 }
 
-QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bool inverse) // FIXME-0 WIP
+QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bool inverse) // FIXME-0 WIP. Useful for moving up/down in lists or grid...
 {
     // Shortcut
     if (unsortedList.count() < 2)
@@ -3948,8 +3951,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
         emit(layoutChanged());
 
-        // emitDataChanged(bi); FIXME-0 needed?
-
         // Keep position when detaching
         if (keepPos) {
             bc->setPos(preDetachPos);
@@ -4083,8 +4084,6 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
 
         // FIXME-2 relinkImages: What about updating links of images (later)?
         // FIXME-2 relinkImages: What about updating design (later)?
-
-        //emitDataChanged(ii);  // FIXME-0 relinkImages: needed?
 
         saveState(ii, QString("relinkTo (\"%1\")").arg(oldParString), ii,
                   QString("relinkTo (\"%1\")").arg(getSelectString(dst)),
@@ -5595,6 +5594,8 @@ void VymModel::reposition()
     if (repositionBlocked)
         return;
 
+    qDebug() << "VM::reposition start";
+
     // Reposition containers
     BranchItem *bi;
     for (int i = 0; i < rootItem->branchCount(); i++) {
@@ -5605,6 +5606,7 @@ void VymModel::reposition()
     repositionXLinks();
 
     mapEditor->minimizeView();
+    qDebug() << "VM::reposition end";
 }
 
 void VymModel::repositionXLinks()
