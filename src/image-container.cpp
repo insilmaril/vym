@@ -42,7 +42,6 @@ void ImageContainer::copy(ImageContainer *other)
             else
                 qWarning() << "ImgObj::copy svg: no svgCachePath available.";
 
-            svgItem->setVisible(isVisible());
             svgItem->setParentItem(this);
             setRect(other->rect());
             break;
@@ -52,7 +51,6 @@ void ImageContainer::copy(ImageContainer *other)
             pixmapItem->setParentItem(this);
             QRectF r = other->pixmapItem->boundingRect();
             pixmapItem->setPos( - r.width() / 2, - r.height() /2);
-            pixmapItem->setVisible(isVisible());
             setRect(other->rect());
             imageType = ImageContainer::Pixmap;
             }
@@ -234,3 +232,4 @@ void ImageContainer::setImageItem(ImageItem* ii) {
 ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
 void ImageContainer::reposition() {}    // No action necessary, but don't use base class
+
