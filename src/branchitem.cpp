@@ -280,6 +280,7 @@ bool BranchItem::toggleScroll()
     }
 
     branchContainer->updateVisibilityOfChildren();
+    branchContainer->updateChildrenStructure();
     return true;
 }
 

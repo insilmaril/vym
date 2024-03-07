@@ -656,7 +656,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
                 default: // Shouldn't happen // FIXME-1 happens, if branch has temp scrolled parent. Also flags are invisible then.
-                    qWarning() << "BC::updateLinkPos  undefined orientation in " << info();
+                    qWarning() << "BC::upLinkPos  framed undefined orientation in " << info();
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->bottomCenter());
             }
@@ -672,6 +672,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->bottomRight());
         default:
+            qWarning() << "BC::upLinkPos  not framed undefined orientation in " << info();
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->bottomLeft());
     }
@@ -684,6 +685,9 @@ void BranchContainer::updateUpLink()
     // from VymModel, when colors change
 
     // MapCenters still might have upLinks: The bottomLine is part of upLink!
+
+    if (!isVisible())
+        return;
 
     QPointF upLinkSelf_sp = upLinkPos(orientation);
     QPointF downLink_sp = downLinkPos();
@@ -1310,15 +1314,6 @@ void BranchContainer::reposition()
     // Set orientation based layout or
     // in the process of being (temporary) relinked
     BranchContainer *pbc = parentBranchContainer();
-    /*
-    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
-    if (pbc) {
-        qdbg() << ind() << "          pbc=" << pbc->info();
-        qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
-    } else
-        qdbg() << ind() << "          pbc=0";
-    qdbg() << ind() << "        state=" << movingStateInt;
-    */
 
     if (movingStateInt == Moving || movingStateInt == TemporaryLinked)
         // I am currently attached to tmpParentContainer
@@ -1337,6 +1332,15 @@ void BranchContainer::reposition()
             orientation = BranchContainerBase::UndefinedOrientation;
     }
 
+    /*
+    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
+    if (pbc) {
+        qdbg() << ind() << "          pbc=" << pbc->info();
+        qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
+    } else
+        qdbg() << ind() << "          pbc=0";
+    */
+    //qdbg() << ind() << "          state=" << movingStateInt;
     // Settings depending on depth
     uint depth = 0;
     if (branchItem)
