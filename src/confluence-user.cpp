@@ -9,13 +9,13 @@ void ConfluenceUser::copy(const ConfluenceUser &other) {
 };
 
 void ConfluenceUser::setTitle(const QString &s) {title = s;}
-void ConfluenceUser::setURL(const QString &s) {url = s;}
+void ConfluenceUser::setUrl(const QString &s) {url = s;}
 void ConfluenceUser::setUserName(const QString &s) {userName = s;}
 void ConfluenceUser::setDisplayName(const QString &s) {displayName = s;}
 void ConfluenceUser::setUserKey(const QString &s) {userKey = s;}
 
 QString ConfluenceUser::getTitle() {return title;}
-QString ConfluenceUser::getURL() {return url;}
+QString ConfluenceUser::getUrl() {return url;}
 QString ConfluenceUser::getUserName() {return userName;}
 QString ConfluenceUser::getDisplayName() {return displayName;}
 QString ConfluenceUser::getUserKey() {return userKey;}

@@ -26,7 +26,7 @@ class ExportConfluenceDialog : public QDialog {
 
     void readSettings();
     void saveSettings();
-    void setURL(const QString &);
+    void setUrl(const QString &);
     void setPageName(const QString &);
 
     void setFilePath(const QString &s);

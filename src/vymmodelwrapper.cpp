@@ -651,7 +651,7 @@ int VymModelWrapper::getTaskSleepDays()
     return setResult(r);
 }
 
-QString VymModelWrapper::getURL() { return setResult(model->getURL()); }
+QString VymModelWrapper::getUrl() { return setResult(model->getUrl()); }
 
 QString VymModelWrapper::getVymLink() { return setResult(model->getVymLink()); }
 
@@ -1220,7 +1220,7 @@ bool VymModelWrapper::setTaskSleep(const QString &s)
     return setResult(r);
 }
 
-void VymModelWrapper::setURL(const QString &s) { model->setURL(s); }
+void VymModelWrapper::setUrl(const QString &s) { model->setUrl(s); }
 
 void VymModelWrapper::setVymLink(const QString &s) { model->setVymLink(s); }
 

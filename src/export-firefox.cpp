@@ -37,8 +37,8 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
         // Rewrite some values, which maybe have been modified in map
         if (key == "index")
             ai->setValue(bi->num());
-        else if (key == "uri" && !bi->getURL().isEmpty())
-            ai->setValue(bi->getURL());
+        else if (key == "uri" && bi->hasUrl())
+            ai->setValue(bi->url());
         else if (key == "title" && !bi->getHeadingPlain().isEmpty())
             ai->setValue(bi->getHeadingPlain());
 

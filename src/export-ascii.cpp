@@ -96,15 +96,15 @@ void ExportASCII::doExport()
                 }
 
                 // If necessary, write URL
-                if (!cur->getURL().isEmpty()) {
+                if (cur->hasUrl()) {
                     ensureNewLine(out);
-                    out += (curIndent + dashIndent + cur->getURL()) + "\n";
+                    out += (curIndent + dashIndent + cur->url()) + "\n";
                 }
 
                 // If necessary, write vymlink
-                if (!cur->getVymLink().isEmpty()) {
+                if (!cur->vymLink().isEmpty()) {
                     ensureNewLine(out);
-                    out += (curIndent + dashIndent + cur->getVymLink()) +
+                    out += (curIndent + dashIndent + cur->vymLink()) +
                            " (vym mindmap)\n";
                 }
 

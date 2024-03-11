@@ -258,7 +258,7 @@ void FreeplaneReader::readNode()
     a = "LINK";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        lastBranch->setURL(s);
+        lastBranch->setUrl(s);
 
     while (xml.readNextStartElement()) {
         qdbg() << "FP::readNode   startElement=" << xml.name();

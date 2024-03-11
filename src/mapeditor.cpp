@@ -2548,7 +2548,7 @@ void MapEditor::dropEvent(QDropEvent *event)
                         if (url.endsWith(".vym", Qt::CaseInsensitive))
                             model->setVymLink(url);
                         else {
-                            model->setURL(url);
+                            model->setUrl(url);
 
                             // Shorten long URLs for heading
                             int i = url.indexOf("?");

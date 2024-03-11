@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QSslSocket>
 
+#include <iostream> // FIXME-5 for debugging...
+
 extern Main *mainWindow;
 extern QDir vymBaseDir;
 extern Settings settings;
@@ -63,6 +65,8 @@ void JiraAgent::init()
     userNameInt = QString();
     passwordInt = QString();
     serverNameInt = QString();
+
+    queryInt.clear();
 
     // Set API rest point. baseUrlInt later on depends on different JIRA system
     apiUrl = "/rest/api/2";
@@ -139,6 +143,33 @@ bool JiraAgent::setTicket(const QString &id)
     return foundPattern;
 }
 
+void JiraAgent::setQuery(const QString &s)  // FIXME-0 extract server from url somehow
+                                            // For now use fixed server
+{
+    settings.beginGroup("/atlassian/jira");
+
+    // Try to find baseUrl of server by looking through patterns in ticket IDs:
+    int size = settings.beginReadArray("servers");
+    for (int i = 0; i < size; ++i) {
+        settings.setArrayIndex(i);
+        if (s.startsWith(settings.value("baseUrl").toString())) {
+            baseUrlInt = settings.value("baseUrl","-").toString();
+            if (authUsingPATInt)
+                personalAccessTokenInt =
+                    settings.value("PAT", "undefined").toString();
+            else {
+                userNameInt =
+                    settings.value("username", "user_johnDoe").toString();
+                passwordInt = 
+                    settings.value("password", "").toString();
+            }
+            break;
+        }
+    }
+    settings.endArray();
+    settings.endGroup();
+}
+
 QString JiraAgent::serverName()
 {
     if (baseUrlInt.isEmpty())
@@ -185,7 +216,7 @@ void JiraAgent::continueJob()
                 case 2: {
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
 
-                    // Insert references to original branch and model
+                    // Insert references to original branch
                     jsobj["vymBranchId"] = QJsonValue(branchID);
                     jsobj["vymTicketUrl"] = QJsonValue(url());
 
@@ -197,6 +228,28 @@ void JiraAgent::continueJob()
                     unknownStepWarning();
                     break;
             };
+        case Query:
+            switch(jobStep) {
+                case 1:
+                    // if (!requestedURL.toString().startsWith("http"))
+                    //    requestedURL.setPath("https://" + requestedURL.path());
+                    startQueryRequest();
+                    break;
+                case 2: {
+                    QJsonDocument jsdoc = QJsonDocument (jsobj);
+
+                    // Insert references to original branch
+                    jsobj["vymBranchId"] = QJsonValue(branchID);
+                    jsobj["vymTicketUrl"] = QJsonValue(url());
+
+                    emit (jiraTicketReady(QJsonObject(jsobj)));
+                    finishJob();
+                    }
+                    break;
+                default:
+                    unknownStepWarning();
+                    break;
+            }
             break;
         default:
             qWarning() << "JiraAgent::continueJob   unknown jobType " << jobType;
@@ -273,9 +326,109 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     continueJob();
 }
 
+void JiraAgent::startQueryRequest()
+{
+    //QUrl u = QUrl(baseUrlInt + apiUrl + "/search/id");
+    QUrl u = QUrl(baseUrlInt + "/rest/api/2" + "/search");
+
+    QNetworkRequest request = QNetworkRequest(u);
+
+    // Basic authentication in header
+    QString headerData;
+    if (authUsingPATInt)
+        headerData = QString("Bearer %1").arg(personalAccessTokenInt);
+    else {
+        QString concatenated = userNameInt + ":" + passwordInt;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+    }
+    request.setRawHeader("Authorization", headerData.toLocal8Bit());
+
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+//  QJsonObject payload
+//    {
+//        {"jql", "project = OKR"},
+//        {"maxResults", 10},
+//        {"startAt", 0},
+//        {"fields", "key"},
+//        {"nextPageToken", "EgQIlMIC"}
+//
+    QString s =
+    "{" 
+      "\"expand\": [ \"names\", \"schema\", \"operations\" ],"
+      "\"fields\": [ \"summary\", \"status\", \"assignee\" ],"
+//      "\"fieldsByKeys\": false,"
+      "\"jql\": \"project = OKR\","
+      "\"maxResults\": 15,"
+      "\"startAt\": 0"
+    "}";
+
+    QJsonDocument doc = QJsonDocument::fromJson(s.toUtf8());
+//    QJsonDocument doc(payload);
+    QByteArray data = doc.toJson();
+
+    if (debug) {
+        qDebug() << "JA::startQueryRequest: url = " + request.url().toString();
+        qDebug() << "s=" << s;
+        std::cout << doc.toJson(QJsonDocument::Indented).toStdString() << Qt::endl;
+    }
+
+    killTimer->start();
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &JiraAgent::queryFinished);
+
+    networkManager->post(request, data);
+}
+
+void JiraAgent::queryFinished(QNetworkReply *reply)
+{
+    qDebug() << "JA::queryFinished";
+
+    killTimer->stop();
+
+    networkManager->disconnect();
+    reply->deleteLater();
+
+    QByteArray fullReply = reply->readAll();
+
+    if (reply->error()) {
+        if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+            QMessageBox::warning(
+                nullptr, tr("Warning"),
+                tr("Authentication problem when contacting JIRA"));
+
+        qWarning() << "JiraAgent::queryFinished reply error";
+
+        qWarning() << "        Error: " << reply->error();
+        qWarning() << "  Errorstring: " <<  reply->errorString();
+        qDebug() << "    Request Url: " << reply->url() ;
+        qDebug() << "      Operation: " << reply->operation() ;
+
+        qDebug() << "      readAll: ";
+        QJsonDocument jsdoc;
+        jsdoc = QJsonDocument::fromJson(fullReply);
+        QString fullReplyFormatted = QString(jsdoc.toJson(QJsonDocument::Indented));
+        vout << fullReplyFormatted;
+
+        finishJob();
+        return;
+    }
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(fullReply);
+    jsobj = jsdoc.object();
+
+    vout << jsdoc.toJson(QJsonDocument::Indented);
+
+    continueJob();
+}
+
 void JiraAgent::timeout() 
 {
     qWarning() << "JiraAgent timeout!!   jobType = " << jobType;
+    deleteLater();   // FIXME-2 needed?
 }
 
 #ifndef QT_NO_SSL

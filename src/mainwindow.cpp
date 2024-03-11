@@ -701,7 +701,7 @@ void Main::setupAPI()
     c = new Command("getTaskSleepDays", Command::Branch, Command::Int);
     modelCommands.append(c);
 
-    c = new Command("getURL", Command::TreeItem, Command::String);
+    c = new Command("url", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
     c = new Command("getVymLink", Command::Branch, Command::String);
@@ -1041,7 +1041,7 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Sleep time of task");
     modelCommands.append(c);
 
-    c = new Command("setURL", Command::TreeItem);
+    c = new Command("setUrl", Command::TreeItem);
     c->addPar(Command::String, false, "URL of TreeItem");
     modelCommands.append(c);
 
@@ -4762,7 +4762,7 @@ void Main::editOpenURL()
     // Open new browser
     VymModel *m = currentModel();
     if (m) {
-        QString url = m->getURL();
+        QString url = m->getUrl();
         if (url == "")
             return;
         openURL(url);
@@ -4773,7 +4773,7 @@ void Main::editOpenURLTab()
     VymModel *m = currentModel();
     if (m) {
         QStringList urls;
-        urls.append(m->getURL());
+        urls.append(m->getUrl());
         openTabs(urls);
     }
 }
@@ -4783,7 +4783,7 @@ void Main::editOpenMultipleVisURLTabs(bool ignoreScrolled)
     VymModel *m = currentModel();
     if (m) {
         QStringList urls;
-        urls = m->getURLs(ignoreScrolled);
+        urls = m->getUrls(ignoreScrolled);
         openTabs(urls);
     }
 }
@@ -4807,12 +4807,12 @@ void Main::editURL()
         dia->setInputMode(QInputDialog::TextInput);
         TreeItem *selti = m->getSelectedItem();
         if (selti)
-            dia->setTextValue(selti->getURL());
+            dia->setTextValue(selti->url());
         dia->resize(width() * 0.6, 80);
         centerDialog(dia);
 
         if (dia->exec())
-            m->setURL(dia->textValue());
+            m->setUrl(dia->textValue());
         delete dia;
     }
 }
@@ -4840,7 +4840,7 @@ void Main::editLocalURL()
                 lastMapDir.setPath(fn.left(fn.lastIndexOf("/")));
                 if (!fn.startsWith("file://"))
                     fn = "file://" + fn;
-                m->setURL(fn);
+                m->setUrl(fn);
             }
         }
     }
@@ -4902,10 +4902,10 @@ void Main::getConfluenceUser()
 
                 ai = new AttributeItem();
                 ai->setKey("ConfluenceUser.url");
-                ai->setValue(user.getURL());
+                ai->setValue(user.getUrl());
                 m->setAttribute(selbi, ai);
 
-                m->setURL(user.getURL(), false);
+                m->setUrl(user.getUrl(), false);
                 m->setHeading(user.getDisplayName());
 
                 m->selectParent();
@@ -5007,8 +5007,8 @@ void Main::editVymLink()
             fd.setLabelText( QFileDialog::Accept, tr("Set as link to vym map"));
             fd.setDirectory(lastMapDir);
             fd.setAcceptMode(QFileDialog::AcceptOpen);
-            if (!bi->getVymLink().isEmpty())
-                fd.selectFile(bi->getVymLink());
+            if (!bi->vymLink().isEmpty())
+                fd.selectFile(bi->vymLink());
             fd.show();
 
             QString fn;
@@ -6408,10 +6408,10 @@ void Main::changeSelection(VymModel *model, const QItemSelection &,
 
             // Show URL and link in statusbar
             QString status;
-            QString s = selbi->getURL();
+            QString s = selbi->url();
             if (!s.isEmpty())
                 status += "URL: " + s + "  ";
-            s = selbi->getVymLink();
+            s = selbi->vymLink();
             if (!s.isEmpty())
                 status += "Link: " + s;
             if (!status.isEmpty())
@@ -6696,7 +6696,7 @@ void Main::updateActions()
                     actionToggleScroll->setChecked(false);
 
                 QString url;
-                if (selti) url = selti->getURL();
+                if (selti) url = selti->url();
                 if (url.isEmpty()) {
                     actionOpenURL->setEnabled(false);
                     actionOpenURLTab->setEnabled(false);
@@ -6711,7 +6711,7 @@ void Main::updateActions()
                         actionGetConfluencePageName->setEnabled(false);
                 }
 
-                if (selti && selti->getVymLink().isEmpty()) {
+                if (selti && selti->vymLink().isEmpty()) {
                     actionOpenVymLink->setEnabled(false);
                     actionOpenVymLinkBackground->setEnabled(false);
                     actionDeleteVymLink->setEnabled(false);

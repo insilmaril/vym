@@ -13,7 +13,7 @@ class JiraAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, GetTicketInfo};
+    enum JobType {Undefined, GetTicketInfo, Query};
 
     static bool available();
 
@@ -24,6 +24,7 @@ class JiraAgent : public QObject {
     void setJobType(JobType jt);
     bool setBranch(BranchItem *bi);
     bool setTicket(const QString &id);
+    void setQuery(const QString &s);
     QString serverName();
     QString url();
 
@@ -36,12 +37,15 @@ class JiraAgent : public QObject {
 
   signals:
     void jiraTicketReady(QJsonObject);
+    void jiraQueryReady(QJsonObject);
 
   private:
     void startGetTicketRequest();
+    void startQueryRequest();
 
   private slots:
     void ticketReceived(QNetworkReply *reply);
+    void queryFinished(QNetworkReply *reply);
     void timeout();
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
@@ -70,6 +74,7 @@ class JiraAgent : public QObject {
     QString apiUrl;
     QString ticketUrl;
     QString ticketID;
+    QString queryInt;
 
     // Backreferences to take action in calling model
     int branchID;

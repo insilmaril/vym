@@ -63,7 +63,7 @@ class VymModelWrapper : public VymScriptContext {
     int getTaskPriorityDelta();
     QString getTaskSleep();
     int getTaskSleepDays();
-    QString getURL();
+    QString getUrl();
     QString getVymLink();
     QString getXLinkColor();
     int getXLinkWidth();
@@ -148,7 +148,7 @@ class VymModelWrapper : public VymScriptContext {
     void setSelectionPenWidth(const qreal &);
     void setTaskPriorityDelta(const int &n);
     bool setTaskSleep(const QString &s);
-    void setURL(const QString &s);
+    void setUrl(const QString &s);
     void setVymLink(const QString &s);
     void setXLinkColor(const QString &color);
     void setXLinkStyle(const QString &style);

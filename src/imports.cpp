@@ -122,7 +122,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
         if (jsobj.contains("uri") && jsobj["uri"].isString()) {
             currentBookmarks++;
             progressDialog.setValue(currentBookmarks);
-            selbi->setURL(jsobj["uri"].toString());
+            selbi->setUrl(jsobj["uri"].toString());
         }
 
         AttributeItem *ai;

@@ -1213,7 +1213,7 @@ void VymReader::readOrnamentsAttr()
 
     s = attributeToString("url");
     if (!s.isEmpty())
-        lastMI->setURL(s);
+        lastMI->setUrl(s);
     s = attributeToString("vymLink");
     if (!s.isEmpty())
         lastMI->setVymLink(s);

@@ -100,18 +100,20 @@ class TreeItem : public XMLObj {
     virtual QColor getHeadingColor(); //! Returns color of heading
 
   protected:
-    QString url;
+    QString urlInt;
 
   public:
-    void setURL(const QString &url); //! Set URL
-    QString getURL();                //! Get URL
+    void setUrl(const QString &url); //! Set Url
+    QString url();                   //! Get Url
+    bool hasUrl();
 
   protected:
-    QString vymLink;
+    QString vymLinkInt;
 
   public:
-    void setVymLink(const QString &url); //! Set URL
-    QString getVymLink();                //! Get URL
+    void setVymLink(const QString &s);  //! Set vymLink
+    QString vymLink();                  //! Get vymLink
+    bool hasVymLink();
 
   protected:
     bool target;

@@ -2086,9 +2086,8 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
         setHeading(vt, bi);
 
         // Set URL
-        if ((s.startsWith("http://") || s.startsWith("https://")) &&
-            bi->getURL().isEmpty())
-            setURL(s);
+    if ((s.startsWith("http://") || s.startsWith("https://")) && !bi->hasUrl())
+            setUrl(s);
     }
 }
 
@@ -2221,7 +2220,7 @@ void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        QString u = cur->getURL();
+        QString u = cur->url();
         if (!u.isEmpty()) {
             multimap.insert(u, cur);
             if (!urls.contains(u))
@@ -2300,18 +2299,18 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     return hit;
 }
 
-void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
+void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
 {
     if (!bi) bi = getSelectedBranch();
-    if (bi->getURL() == url)
+    if (bi->url() == url)
         return;
 
     if (bi) {
-        QString oldurl = bi->getURL();
-        bi->setURL(url);
+        QString oldurl = bi->url();
+        bi->setUrl(url);
         saveState(
-            bi, QString("setURL (\"%1\")").arg(oldurl), bi,
-            QString("setURL (\"%1\")").arg(url),
+            bi, QString("setUrl (\"%1\")").arg(oldurl), bi,
+            QString("setUrl (\"%1\")").arg(url),
             QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
         emitDataChanged(bi);
         reposition();
@@ -2322,16 +2321,16 @@ void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
     }
 }
 
-QString VymModel::getURL()
+QString VymModel::getUrl()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        return selti->getURL();
+        return selti->url();
     else
         return QString();
 }
 
-QStringList VymModel::getURLs(bool ignoreScrolled)
+QStringList VymModel::getUrls(bool ignoreScrolled)
 {
     QStringList urls;
     BranchItem *selbi = getSelectedBranch();
@@ -2339,9 +2338,9 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
-        if (!cur->getURL().isEmpty() &&
+        if (cur->hasUrl() &&
             !(ignoreScrolled && cur->hasScrolledParent()))
-            urls.append(cur->getURL());
+            urls.append(cur->url());
         nextBranch(cur, prev, true, selbi);
     }
     return urls;
@@ -4419,7 +4418,7 @@ ItemList VymModel::getLinkedMaps()
 
     while (cur) {
         if (cur->hasActiveSystemFlag("system-target") &&
-            !cur->getVymLink().isEmpty()) {
+            cur->hasVymLink()) {
             s = cur->getHeading().getTextASCII();
             s.replace(QRegularExpression("\n+"), " ");
             s.replace(QRegularExpression("\\s+"), " ");
@@ -4427,7 +4426,7 @@ ItemList VymModel::getLinkedMaps()
 
             QStringList sl;
             sl << s;
-            sl << cur->getVymLink();
+            sl << cur->vymLink();
 
             targets[cur->getID()] = sl;
         }
@@ -4667,7 +4666,7 @@ void VymModel::note2URLs()
             if (match.hasMatch()) {
                 bi = addNewBranch(selbi);
                 bi->setHeadingPlainText(match.captured(1));
-                bi->setURL(match.captured(1));
+                bi->setUrl(match.captured(1));
                 emitDataChanged(bi);
                 pos = match.capturedEnd();
             } else
@@ -4681,10 +4680,11 @@ void VymModel::editHeading2URL()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        setURL(selti->getHeadingPlain());
+        setUrl(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
+void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existing jira data
+                                         // getJiraData FIXME-3 update error message, check
                                          // if jiraClientAvail is set correctly
 {
     if (!JiraAgent::available()) {
@@ -4712,7 +4712,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
             QRegularExpression re("(\\w+[-|\\s]\\d+)");
             QRegularExpressionMatch match = re.match(heading);
             if (match.hasMatch()) {
-                // Create agent
+                // Create agent to retrieve single ticket
                 JiraAgent *agent = new JiraAgent;
                 agent->setJobType(JiraAgent::GetTicketInfo);
                 if (!agent->setBranch(cur)) {
@@ -4726,13 +4726,25 @@ void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
                     return;
                 }
 
-                //setURL(agent->url(), false, cur);
-
                 connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
 
                 // Start contacting JIRA in background
                 agent->startJob();
                 mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
+            } else if (cur->hasUrl()) {
+                re.setPattern("issues/\\?jql=");
+                match = re.match(cur->url());
+                if (match.hasMatch()) {
+                // Create agent to run query
+                    qDebug() << "VM::getJiraData: Matched jql!";
+		    JiraAgent *agent = new JiraAgent;
+		    agent->setJobType(JiraAgent::Query);
+
+		    agent->setQuery(cur->url());
+		    connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraQueryResult);
+		    agent->startJob();
+		    mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
+                }
             }
 
 
@@ -4788,7 +4800,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         }
 
         setHeadingPlainText(keyName + ": " + summary, bi);
-        setURL(jsobj["vymTicketUrl"].toString());
+        setUrl(jsobj["vymTicketUrl"].toString());
 
         AttributeItem *ai;
 
@@ -4822,12 +4834,16 @@ void VymModel::updateJiraData(QJsonObject jsobj)
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
 }
 
+void VymModel::processJiraQueryResult(QJsonObject jsobj)
+{
+    qDebug() << "VM::processJiraQueryResult...";
+}
 
 void VymModel::setHeadingConfluencePageName()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        QString url = selbi->getURL();
+        QString url = selbi->url();
         if (!url.isEmpty() &&
                 settings.contains("/atlassian/confluence/url") &&
                 url.contains(settings.value("/atlassian/confluence/url").toString())) {
@@ -4845,7 +4861,7 @@ void VymModel::setVymLink(const QString &s)
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         saveState(
-            bi, "setVymLink (\"" + bi->getVymLink() + "\")", bi,
+            bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
             "setVymLink (\"" + s + "\")",
             QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(s));
         bi->setVymLink(s);
@@ -4858,7 +4874,7 @@ void VymModel::deleteVymLink()
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
-        saveState(bi, "setVymLink (\"" + bi->getVymLink() + "\")", bi,
+        saveState(bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
                   "setVymLink (\"\")",
                   QString("Unset vymlink of %1").arg(getObjectName(bi)));
         bi->setVymLink("");
@@ -4872,7 +4888,7 @@ QString VymModel::getVymLink()
 {
     BranchItem *bi = getSelectedBranch();
     if (bi)
-        return bi->getVymLink();
+        return bi->vymLink();
     else
         return "";
 }
@@ -4885,8 +4901,8 @@ QStringList VymModel::getVymLinks()
     BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
-        if (!cur->getVymLink().isEmpty())
-            links.append(cur->getVymLink());
+        if (cur->hasVymLink())
+            links.append(cur->vymLink());
         nextBranch(cur, prev, true, selbi);
     }
     return links;
@@ -5390,7 +5406,7 @@ void VymModel::exportConfluence(bool createPage, const QString &pageURL,
 {
     ExportConfluence ex(this);
     ex.setCreateNewPage(createPage);
-    ex.setURL(pageURL);
+    ex.setUrl(pageURL);
     ex.setPageName(pageName);
     ex.setLastCommand(
         settings.localValue(filePath, "/export/last/command", "").toString());

@@ -368,9 +368,9 @@ class VymModel : public TreeModel {
     QString findString;
 
   public:
-    void setURL(QString url, bool updateFromCloud = true, BranchItem *bi = nullptr);
-    QString getURL(); // returns URL of selection or ""
-    QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
+    void setUrl(QString url, bool updateFromCloud = true, BranchItem *bi = nullptr);
+    QString getUrl(); // returns URL of selection or ""
+    QStringList getUrls(bool ignoreScrolled = true); // returns URLs of subtree
 
     void setFrameAutoDesign(const bool &useInnerFrame, const bool &);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
@@ -563,6 +563,7 @@ class VymModel : public TreeModel {
 
   public slots:
     void updateJiraData(QJsonObject);
+    void processJiraQueryResult(QJsonObject);
 
   public:
     void setHeadingConfluencePageName(); // get page details from Confluence
