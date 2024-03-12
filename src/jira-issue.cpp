@@ -15,9 +15,11 @@ JiraIssue::JiraIssue(const QJsonObject &jsobj)
 
 void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
     // Debug only
+    /*
     qDebug() << __FUNCTION__ << " ***";
     QJsonDocument jsdoc = QJsonDocument (jsobj);
     vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
+    */
 
     keyInt = jsobj["key"].toString();
 
@@ -55,6 +57,25 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
         fixVersionsListInt << fixVersionsObj["name"].toString();
     }
 
+    // For issuelinks see
+    // https://developer.atlassian.com/cloud/jira/platform/issue-linking-model/
+
+    // Experimental
+    qDebug() << "issuelinks for " << keyInt;
+    QJsonArray issuelinksArray = fields["issuelinks"].toArray();
+    for (int i = 0; i < issuelinksArray.size(); ++i) {
+        qDebug() << issuelinksArray[i].toObject().value("inwardIssue")["key"].toString()
+            << issuelinksArray[i].toObject().value("inwardIssue")["fields"]["summary"].toString();
+    }
+
+    // Experimental
+    qDebug() << "subtasks for " << keyInt;
+    QJsonArray subtasksArray = fields["subtasks"].toArray();
+    for (int i = 0; i < subtasksArray.size(); ++i) {
+        qDebug() << subtasksArray[i].toObject().value("key").toString()
+            << subtasksArray[i].toObject().value("fields")["summary"].toString();
+    }
+
     // Guess Jira server from self reference
     QRegularExpression re("(.*)/rest/api");
     QRegularExpressionMatch match = re.match(jsobj["self"].toString());
@@ -64,8 +85,7 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
 
 void JiraIssue::print() const
 {
-    qDebug() << "JI::print called";
-    //vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
+    qDebug() << "JI::print()";
     vout << "        Key: " + keyInt << Qt::endl;
     vout << "       Desc: " + summaryInt << Qt::endl;
     vout << "   Assignee: " + assigneeInt << Qt::endl;

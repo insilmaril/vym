@@ -341,7 +341,7 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     jsdoc = QJsonDocument::fromJson(r.toUtf8());
     jsobj = jsdoc.object();
 
-    vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
+    //vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
 
     continueJob();
 }
@@ -374,9 +374,11 @@ void JiraAgent::startQueryRequest()
          "\"components\","
          "\"fixVersions\","
          "\"issuetype\","
+         "\"issuelinks\","
          "\"resolution\","
          "\"reporter\","
          "\"status\","
+         "\"subtasks\","
          "\"summary\""
       "],"
       "\"jql\": \"%1\","
