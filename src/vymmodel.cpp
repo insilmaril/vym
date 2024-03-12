@@ -37,6 +37,7 @@
 #include "findresultmodel.h"
 #include "heading-container.h"
 #include "jira-agent.h"
+#include "jira-issue.h"
 //#include "link-container.h"
 #include "linkobj.h"
 #include "lockedfiledialog.h"
@@ -4759,104 +4760,45 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
 
 void VymModel::processJiraTicket(QJsonObject jsobj)
 {
-    QJsonDocument jsdoc = QJsonDocument (jsobj);
-    QString key = jsobj["key"].toString();
-    QJsonObject fields = jsobj["fields"].toObject();
-
-    QJsonObject assigneeObj = fields["assignee"].toObject();
-    QString assignee = assigneeObj["emailAddress"].toString();
-
-    QJsonObject reporterObj = fields["reporter"].toObject();
-    QString reporter  = reporterObj["emailAddress"].toString();
-
-    QJsonObject issueTypeObj = fields["issuetype"].toObject();
-    QString issuetype  = issueTypeObj["name"].toString();
-
-    QJsonObject resolutionObj = fields["resolution"].toObject();
-    QString resolution  = resolutionObj["name"].toString();
-
-    QJsonObject statusObj = fields["status"].toObject();
-    QString status  = statusObj["name"].toString();
-
-    QString summary = fields["summary"].toString();
-
-    // FIXME-0 QJsonObject fixVersionsArray = fields["status"].toArray();
-    //QString fixVersions status  = statusObj["name"].toString();
-
-    QJsonArray componentsArray = fields["components"].toArray();
-    QJsonObject compObj;
-    QStringList componentsList;
-    QString components;
-    for (int i = 0; i < componentsArray.size(); ++i) {
-        compObj = componentsArray[i].toObject();
-        componentsList << compObj["name"].toString();
-    }
-    components = componentsList.join(",");
-
-    QJsonArray fixVersionsArray = fields["fixVersions"].toArray();
-    QJsonObject fixVersionsObj;
-    QStringList fixVersionsList;
-    QString fixVersions;
-    for (int i = 0; i < fixVersionsArray.size(); ++i) {
-        fixVersionsObj = fixVersionsArray[i].toObject();
-        fixVersionsList << fixVersionsObj["name"].toString();
-    }
-    fixVersions = fixVersionsList.join(",");
-
+    JiraIssue ji;
+    ji.initFromJsonObject(jsobj);
 
     int branchID = jsobj["vymBranchId"].toInt();
 
-    QStringList solvedStates;
-    solvedStates << "Verification Done";
-    solvedStates << "Resolved";
-    solvedStates << "Closed";
-
-    QString keyName = key;
     BranchItem *bi = (BranchItem*)findID(branchID);
     if (bi) {
-        if (solvedStates.contains(status))    {
+        QString keyName = ji.key();
+        if (ji.isFinished())    {
             keyName = "(" + keyName + ")";
             colorSubtree (Qt::blue, bi);
         }
 
-        setHeadingPlainText(keyName + ": " + summary, bi);
+        setHeadingPlainText(keyName + ": " + ji.summary(), bi);
         setUrl(jsobj["vymJiraTicketUrl"].toString());
 
         AttributeItem *ai;
 
-        ai = new AttributeItem("JIRA.assignee", assignee);
+        ai = new AttributeItem("JIRA.assignee", ji.assignee());
         setAttribute(bi, ai);
 
-        ai = new AttributeItem("JIRA.reporter", reporter);
+        ai = new AttributeItem("JIRA.reporter", ji.reporter());
         setAttribute(bi, ai);
 
-        ai = new AttributeItem("JIRA.resolution", resolution);
+        ai = new AttributeItem("JIRA.resolution", ji.resolution());
         setAttribute(bi, ai);
 
-        ai = new AttributeItem("JIRA.issuetype", issuetype);
+        ai = new AttributeItem("JIRA.issuetype", ji.issueType());
         setAttribute(bi, ai);
 
-        ai = new AttributeItem("JIRA.status", status);
+        ai = new AttributeItem("JIRA.status", ji.status());
         setAttribute(bi, ai);
 
-        ai = new AttributeItem("JIRA.components", components);
+        ai = new AttributeItem("JIRA.components", ji.components());
         setAttribute(bi, ai);
     }
 
     // Pretty print JIRA ticket
-    vout << "Received Jira data:" << Qt::endl;
-    vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
-    /*
-    */
-    vout << "        Key: " + key << Qt::endl;
-    vout << "       Desc: " + summary << Qt::endl;
-    vout << "   Assignee: " + assignee << Qt::endl;
-    vout << " Components: " + components << Qt::endl;
-    vout << "  issuetype: " + issuetype << Qt::endl;
-    vout << "fixVersions: " + fixVersions << Qt::endl;
-    vout << "   Reporter: " + reporter << Qt::endl;
-    vout << " Resolution: " + resolution << Qt::endl;
-    vout << "     Status: " + status << Qt::endl;
+    ji.print();
 
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
 }
@@ -4865,9 +4807,6 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
 {
     // Debugging only
     qDebug() << "VM::processJiraJqlQuery result...";
-    //QJsonDocument jsdoc = QJsonDocument (jsobj);
-    //vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
-
 
     int branchID = jsobj.value("vymBranchId").toInt();
     BranchItem *pbi = (BranchItem*)findID(branchID);
@@ -4878,106 +4817,49 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
     QJsonArray issues = jsobj["issues"].toArray();
 
     saveStateBlocked = true;
-    //repositionBlocked = true;
+    //repositionBlocked = true; // FIXME-0 check...
 
     for (int i = 0; i < issues.size(); ++i) {
         QJsonObject issue = issues[i].toObject();
-        QString key = issue["key"].toString();
-        QJsonObject fields = issue["fields"].toObject();
-
-        QJsonObject assigneeObj = fields["assignee"].toObject();
-        QString assignee = assigneeObj["emailAddress"].toString();
-
-        QJsonObject reporterObj = fields["reporter"].toObject();
-        QString reporter  = reporterObj["emailAddress"].toString();
-
-        QJsonObject issueTypeObj = fields["issuetype"].toObject();
-        QString issuetype  = issueTypeObj["name"].toString();
-
-        QJsonObject resolutionObj = fields["resolution"].toObject();
-        QString resolution  = resolutionObj["name"].toString();
-
-        QJsonObject statusObj = fields["status"].toObject();
-        QString status  = statusObj["name"].toString();
-
-        QString summary = fields["summary"].toString();
-
-        // FIXME-0 QJsonObject fixVersionsArray = fields["status"].toArray();
-        //QString fixVersions status  = statusObj["name"].toString();
-
-        QJsonArray componentsArray = fields["components"].toArray();
-        QJsonObject compObj;
-        QStringList componentsList;
-        QString components;
-        for (int i = 0; i < componentsArray.size(); ++i) {
-            compObj = componentsArray[i].toObject();
-            componentsList << compObj["name"].toString();
-        }
-        components = componentsList.join(",");
-
-        QJsonArray fixVersionsArray = fields["fixVersions"].toArray();
-        QJsonObject fixVersionsObj;
-        QStringList fixVersionsList;
-        QString fixVersions;
-        for (int i = 0; i < fixVersionsArray.size(); ++i) {
-            fixVersionsObj = fixVersionsArray[i].toObject();
-            fixVersionsList << fixVersionsObj["name"].toString();
-        }
-        fixVersions = fixVersionsList.join(",");
-
-        QStringList solvedStates;
-        solvedStates << "Verification Done";
-        solvedStates << "Resolved";
-        solvedStates << "Closed";
-
-        QString keyName = key;
+        JiraIssue ji(issue);
 
         BranchItem *bi = createBranch(pbi);
         if (bi) {
-            if (solvedStates.contains(status))    {
+            QString keyName = ji.key();
+            if (ji.isFinished())    {
                 keyName = "(" + keyName + ")";
                 colorSubtree (Qt::blue, bi);
             }
 
-            setHeadingPlainText(keyName + ": " + summary, bi);
+            setHeadingPlainText(keyName + ": " + ji.summary(), bi);
             setUrl(jsobj["vymJiraServer"].toString() + "/browse/" + keyName, false, bi);
 
             AttributeItem *ai;
 
-            ai = new AttributeItem("JIRA.assignee", assignee);
+            ai = new AttributeItem("JIRA.assignee", ji.assignee());
             setAttribute(bi, ai);
 
-            ai = new AttributeItem("JIRA.reporter", reporter);
+            ai = new AttributeItem("JIRA.reporter", ji.reporter());
             setAttribute(bi, ai);
 
-            ai = new AttributeItem("JIRA.resolution", resolution);
+            ai = new AttributeItem("JIRA.resolution", ji.resolution());
             setAttribute(bi, ai);
 
-            ai = new AttributeItem("JIRA.issuetype", issuetype);
+            ai = new AttributeItem("JIRA.issuetype", ji.issueType());
             setAttribute(bi, ai);
 
-            ai = new AttributeItem("JIRA.fixVersions", fixVersions);
+            ai = new AttributeItem("JIRA.fixVersions", ji.fixVersions());
             setAttribute(bi, ai);
 
-            ai = new AttributeItem("JIRA.status", status);
+            ai = new AttributeItem("JIRA.status", ji.status());
             setAttribute(bi, ai);
 
-            ai = new AttributeItem("JIRA.components", components);
+            ai = new AttributeItem("JIRA.components", ji.components());
             setAttribute(bi, ai);
         }
 
         // Pretty print JIRA ticket
-        /*
-        */
-        vout << "        Key: " + key << Qt::endl;
-        vout << "       Desc: " + summary << Qt::endl;
-        vout << "   Assignee: " + assignee << Qt::endl;
-        vout << " Components: " + components << Qt::endl;
-        vout << "  issuetype: " + issuetype << Qt::endl;
-        vout << "fixVersions: " + fixVersions << Qt::endl;
-        vout << "   Reporter: " + reporter << Qt::endl;
-        vout << " Resolution: " + resolution << Qt::endl;
-        vout << "     Status: " + status << Qt::endl;
+        ji.print();
     }
 
     saveStateBlocked = false;
