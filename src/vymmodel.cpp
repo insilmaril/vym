@@ -37,7 +37,6 @@
 #include "findresultmodel.h"
 #include "heading-container.h"
 #include "jira-agent.h"
-#include "jira-issue.h"
 //#include "link-container.h"
 #include "linkobj.h"
 #include "lockedfiledialog.h"
@@ -4758,15 +4757,50 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
     }
 }
 
+void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
+{
+    if (!bi) {
+        qWarning() << __FUNCTION__ << " called without BranchItem";
+        return;
+    }
+
+    AttributeItem *ai;
+
+    ai = new AttributeItem("Jira.assignee", ji.assignee());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.components", ji.components());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.fixVersions", ji.fixVersions());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.issuetype", ji.issueType());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.status", ji.status());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.reporter", ji.reporter());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.resolution", ji.resolution());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.issueUrl", ji.url());
+    setAttribute(bi, ai);
+}
+
 void VymModel::processJiraTicket(QJsonObject jsobj)
 {
-    JiraIssue ji;
-    ji.initFromJsonObject(jsobj);
-
     int branchID = jsobj["vymBranchId"].toInt();
 
     BranchItem *bi = (BranchItem*)findID(branchID);
     if (bi) {
+        JiraIssue ji;
+        ji.initFromJsonObject(jsobj);
+        initAttributesFromJiraIssue(bi, ji);
+
         QString keyName = ji.key();
         if (ji.isFinished())    {
             keyName = "(" + keyName + ")";
@@ -4774,31 +4808,12 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
         }
 
         setHeadingPlainText(keyName + ": " + ji.summary(), bi);
-        setUrl(jsobj["vymJiraTicketUrl"].toString());
+        setUrl(ji.url());
 
-        AttributeItem *ai;
-
-        ai = new AttributeItem("JIRA.assignee", ji.assignee());
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.reporter", ji.reporter());
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.resolution", ji.resolution());
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.issuetype", ji.issueType());
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.status", ji.status());
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.components", ji.components());
-        setAttribute(bi, ai);
+        // Pretty print JIRA ticket
+        ji.print();
     }
 
-    // Pretty print JIRA ticket
-    ji.print();
 
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
 }
@@ -4832,30 +4847,8 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
             }
 
             setHeadingPlainText(keyName + ": " + ji.summary(), bi);
-            setUrl(jsobj["vymJiraServer"].toString() + "/browse/" + keyName, false, bi);
-
-            AttributeItem *ai;
-
-            ai = new AttributeItem("JIRA.assignee", ji.assignee());
-            setAttribute(bi, ai);
-
-            ai = new AttributeItem("JIRA.reporter", ji.reporter());
-            setAttribute(bi, ai);
-
-            ai = new AttributeItem("JIRA.resolution", ji.resolution());
-            setAttribute(bi, ai);
-
-            ai = new AttributeItem("JIRA.issuetype", ji.issueType());
-            setAttribute(bi, ai);
-
-            ai = new AttributeItem("JIRA.fixVersions", ji.fixVersions());
-            setAttribute(bi, ai);
-
-            ai = new AttributeItem("JIRA.status", ji.status());
-            setAttribute(bi, ai);
-
-            ai = new AttributeItem("JIRA.components", ji.components());
-            setAttribute(bi, ai);
+            setUrl(ji.url(), false, bi);
+            initAttributesFromJiraIssue(bi, ji);
         }
 
         // Pretty print JIRA ticket

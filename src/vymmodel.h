@@ -13,6 +13,7 @@
 #include "branchitem.h"
 #include "file.h"
 #include "imageitem.h"
+#include "jira-issue.h"
 #include "linkobj.h"
 #include "mapeditor.h"
 #include "treeitem.h"
@@ -560,6 +561,9 @@ class VymModel : public TreeModel {
     void note2URLs();                    // get URLs from note
     void editHeading2URL();              // copy heading to URL
     void getJiraData(bool subtree = true);      // get data from Jira
+
+  private:
+    void initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &);
 
   public slots:
     void processJiraTicket(QJsonObject);

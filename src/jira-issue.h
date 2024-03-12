@@ -8,24 +8,24 @@ class JiraIssue{
     JiraIssue ();  
     JiraIssue (const QJsonObject&);  
     void initFromJsonObject(const QJsonObject&);  
-    void print();
-    bool isFinished();
-    QString key();
-    QString assignee();
-    QString reporter();
-    QString issueType();
-    QString resolution();
-    QString status();
-    QString summary();
-    QString components();
-    QString fixVersions();
-    QString url();
+    void print() const;
+    bool isFinished() const;
+    QString assignee() const;
+    QString components() const;
+    QString fixVersions() const;
+    QString issueType() const;
+    QString key() const;
+    QString reporter() const;
+    QString resolution() const;
+    QString status() const;
+    QString summary() const;
+    QString url() const;
 
   private:  
-    QString keyInt;
     QString assigneeInt;
-    QString reporterInt;
     QString issuetypeInt;
+    QString keyInt;
+    QString reporterInt;
     QString resolutionInt;
     QString statusInt;
     QString summaryInt;

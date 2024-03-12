@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QJsonArray>
+#include <QJsonDocument>    // Only for debugging
 
 extern QTextStream vout;
 
@@ -13,9 +14,11 @@ JiraIssue::JiraIssue(const QJsonObject &jsobj)
 }
 
 void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
-    qDebug() << "JI::initFromJSO called";
+    // Debug only
+    qDebug() << __FUNCTION__ << " ***";
+    QJsonDocument jsdoc = QJsonDocument (jsobj);
+    vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
 
-    //QJsonDocument jsdoc = QJsonDocument (jsobj);
     keyInt = jsobj["key"].toString();
 
     QJsonObject fields = jsobj["fields"].toObject();
@@ -52,10 +55,15 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
         fixVersionsListInt << fixVersionsObj["name"].toString();
     }
 
-    jiraServerInt = jsobj["vymJiraServer"].toString();
+    // Guess Jira server from self reference
+    QRegularExpression re("(.*)/rest/api");
+    QRegularExpressionMatch match = re.match(jsobj["self"].toString());
+    if (match.hasMatch())
+        jiraServerInt = match.captured(1);
 }
 
-void JiraIssue::print() {
+void JiraIssue::print() const
+{
     qDebug() << "JI::print called";
     //vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
     vout << "        Key: " + keyInt << Qt::endl;
@@ -67,11 +75,11 @@ void JiraIssue::print() {
     vout << "   Reporter: " + reporterInt << Qt::endl;
     vout << " Resolution: " + resolutionInt << Qt::endl;
     vout << "     Status: " + statusInt << Qt::endl;
-    vout << "     Server: " + jiraServerInt;
-    vout << "        Url: " + url();
+    vout << "     Server: " + jiraServerInt << Qt::endl; 
+    vout << "        Url: " + url() << Qt::endl;
 }
 
-bool JiraIssue::isFinished()
+bool JiraIssue::isFinished() const
 {
     QStringList solvedStates;
     solvedStates << "Verification Done";
@@ -81,52 +89,52 @@ bool JiraIssue::isFinished()
     return solvedStates.contains(statusInt);
 }
 
-QString JiraIssue::key()
-{
-    return keyInt;
-}
-
-QString JiraIssue::assignee()
+QString JiraIssue::assignee() const
 {
     return assigneeInt;
 }
 
-QString JiraIssue::reporter()
-{
-    return reporterInt;
-}
-
-QString JiraIssue::issueType()
-{
-    return issuetypeInt;
-}
-
-QString JiraIssue::resolution()
-{
-    return resolutionInt;
-}
-
-QString JiraIssue::status()
-{
-    return statusInt;
-}
-
-QString JiraIssue::summary()
-{
-    return summaryInt;
-}
-
-QString JiraIssue::components()
+QString JiraIssue::components() const
 {
     return componentsListInt.join(",");
 }
 
-QString JiraIssue::fixVersions()
+QString JiraIssue::fixVersions() const
 {
     return fixVersionsListInt.join(",");
 }
 
-QString JiraIssue::url()
+QString JiraIssue::issueType() const
+{
+    return issuetypeInt;
+}
+
+QString JiraIssue::key() const
+{
+    return keyInt;
+}
+
+QString JiraIssue::reporter() const
+{
+    return reporterInt;
+}
+
+QString JiraIssue::resolution() const
+{
+    return resolutionInt;
+}
+
+QString JiraIssue::status() const
+{
+    return statusInt;
+}
+
+QString JiraIssue::summary() const
+{
+    return summaryInt;
+}
+
+QString JiraIssue::url() const
 {
     return jiraServerInt + "/browse/" + keyInt;
 }
