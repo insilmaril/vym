@@ -24,7 +24,7 @@ class JiraAgent : public QObject {
     void setJobType(JobType jt);
     bool setBranch(BranchItem *bi);
     bool setTicket(const QString &id);
-    void setQuery(const QString &s);
+    bool setQuery(const QString &s);
     QString serverName();
     QString url();
 

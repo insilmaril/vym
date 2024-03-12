@@ -4686,6 +4686,7 @@ void VymModel::editHeading2URL()
 void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existing jira data
                                          // getJiraData FIXME-3 update error message, check
                                          // if jiraClientAvail is set correctly
+                                         // getJiraData FIXME-0 errors in selectedBranches loop not caught correctly
 {
     if (!JiraAgent::available()) {
         WarningDialog dia;
@@ -4726,25 +4727,25 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
                     return;
                 }
 
-                connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
+                connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
 
                 // Start contacting JIRA in background
                 agent->startJob();
                 mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
             } else if (cur->hasUrl()) {
-                re.setPattern("issues/\\?jql=");
-                match = re.match(cur->url());
-                if (match.hasMatch()) {
                 // Create agent to run query
-                    qDebug() << "VM::getJiraData: Matched jql!";
-		    JiraAgent *agent = new JiraAgent;
-		    agent->setJobType(JiraAgent::Query);
+                qDebug() << "VM::getJiraData: Matched jql!";
+                JiraAgent *agent = new JiraAgent;
+                agent->setJobType(JiraAgent::Query);
 
-		    agent->setQuery(cur->url());
-		    connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraQueryResult);
-		    agent->startJob();
-		    mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
+                if (!agent->setQuery(cur->url())) {
+                    mainWindow->statusMessage(tr("Could not find Jira query pattern in %1", "VymModel").arg(cur->url()));
+                    delete agent;
+                    return;
                 }
+                connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
+                agent->startJob();
+                mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
             }
 
 
@@ -4756,7 +4757,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
     }
 }
 
-void VymModel::updateJiraData(QJsonObject jsobj)
+void VymModel::processJiraTicket(QJsonObject jsobj)
 {
     QJsonDocument jsdoc = QJsonDocument (jsobj);
     QString key = jsobj["key"].toString();
@@ -4768,6 +4769,9 @@ void VymModel::updateJiraData(QJsonObject jsobj)
     QJsonObject reporterObj = fields["reporter"].toObject();
     QString reporter  = reporterObj["emailAddress"].toString();
 
+    QJsonObject issueTypeObj = fields["issuetype"].toObject();
+    QString issuetype  = issueTypeObj["name"].toString();
+
     QJsonObject resolutionObj = fields["resolution"].toObject();
     QString resolution  = resolutionObj["name"].toString();
 
@@ -4775,6 +4779,9 @@ void VymModel::updateJiraData(QJsonObject jsobj)
     QString status  = statusObj["name"].toString();
 
     QString summary = fields["summary"].toString();
+
+    // FIXME-0 QJsonObject fixVersionsArray = fields["status"].toArray();
+    //QString fixVersions status  = statusObj["name"].toString();
 
     QJsonArray componentsArray = fields["components"].toArray();
     QJsonObject compObj;
@@ -4800,7 +4807,7 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         }
 
         setHeadingPlainText(keyName + ": " + summary, bi);
-        setUrl(jsobj["vymTicketUrl"].toString());
+        setUrl(jsobj["vymJiraTicketUrl"].toString());
 
         AttributeItem *ai;
 
@@ -4813,6 +4820,9 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         ai = new AttributeItem("JIRA.resolution", resolution);
         setAttribute(bi, ai);
 
+        ai = new AttributeItem("JIRA.issuetype", issuetype);
+        setAttribute(bi, ai);
+
         ai = new AttributeItem("JIRA.status", status);
         setAttribute(bi, ai);
 
@@ -4820,23 +4830,116 @@ void VymModel::updateJiraData(QJsonObject jsobj)
         setAttribute(bi, ai);
     }
 
-    /* Pretty print JIRA ticket
-    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
-    vout << "       Key: " + key << endl;
-    vout << "      Desc: " + summary << endl;
-    vout << "  Assignee: " + assignee << endl;
-    vout << "Components: " + components << endl;
-    vout << "  Reporter: " + reporter << endl;
-    vout << "Resolution: " + resolution << endl;
-    vout << "    Status: " + status << endl;
+    // Pretty print JIRA ticket
+    vout << "Received Jira data:" << Qt::endl;
+    vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
+    /*
     */
+    vout << "       Key: " + key << Qt::endl;
+    vout << "      Desc: " + summary << Qt::endl;
+    vout << "  Assignee: " + assignee << Qt::endl;
+    vout << "Components: " + components << Qt::endl;
+    vout << " issuetype: " + issuetype << Qt::endl;
+    vout << "  Reporter: " + reporter << Qt::endl;
+    vout << "Resolution: " + resolution << Qt::endl;
+    vout << "    Status: " + status << Qt::endl;
 
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
 }
 
-void VymModel::processJiraQueryResult(QJsonObject jsobj)
+void VymModel::processJiraJqlQuery(QJsonObject jsobj)
 {
-    qDebug() << "VM::processJiraQueryResult...";
+    // Debugging only
+    qDebug() << "VM::processJiraJqlQuery result...";
+    //QJsonDocument jsdoc = QJsonDocument (jsobj);
+    //vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
+
+    QJsonArray issues = jsobj["issues"].toArray();
+
+    for (int i = 0; i < issues.size(); ++i) {
+        QJsonObject issue = issues[i].toObject();
+        QString key = issue["key"].toString();
+        QJsonObject fields = issue["fields"].toObject();
+
+        QJsonObject assigneeObj = fields["assignee"].toObject();
+        QString assignee = assigneeObj["emailAddress"].toString();
+
+        QJsonObject reporterObj = fields["reporter"].toObject();
+        QString reporter  = reporterObj["emailAddress"].toString();
+
+        QJsonObject issueTypeObj = fields["issuetype"].toObject();
+        QString issuetype  = issueTypeObj["name"].toString();
+
+        QJsonObject resolutionObj = fields["resolution"].toObject();
+        QString resolution  = resolutionObj["name"].toString();
+
+        QJsonObject statusObj = fields["status"].toObject();
+        QString status  = statusObj["name"].toString();
+
+        QString summary = fields["summary"].toString();
+
+        // FIXME-0 QJsonObject fixVersionsArray = fields["status"].toArray();
+        //QString fixVersions status  = statusObj["name"].toString();
+
+        QJsonArray componentsArray = fields["components"].toArray();
+        QJsonObject compObj;
+        QString components;
+        for (int i = 0; i < componentsArray.size(); ++i) {
+            compObj = componentsArray[i].toObject();
+            components += compObj["name"].toString();
+        }
+
+        int branchID = jsobj.value("vymBranchId").toInt();
+
+        QStringList solvedStates;
+        solvedStates << "Verification Done";
+        solvedStates << "Resolved";
+        solvedStates << "Closed";
+
+        QString keyName = key;
+        BranchItem *bi = (BranchItem*)findID(branchID);
+        if (bi) {
+            if (solvedStates.contains(status))    {
+                keyName = "(" + keyName + ")";
+                colorSubtree (Qt::blue, bi);
+            }
+
+            setHeadingPlainText(keyName + ": " + summary, bi);
+            setUrl(jsobj["vymQueryTicketUrl"].toString());
+
+            AttributeItem *ai;
+
+            ai = new AttributeItem("JIRA.assignee", assignee);
+            setAttribute(bi, ai);
+
+            ai = new AttributeItem("JIRA.reporter", reporter);
+            setAttribute(bi, ai);
+
+            ai = new AttributeItem("JIRA.resolution", resolution);
+            setAttribute(bi, ai);
+
+            ai = new AttributeItem("JIRA.issuetype", issuetype);
+            setAttribute(bi, ai);
+
+            ai = new AttributeItem("JIRA.status", status);
+            setAttribute(bi, ai);
+
+            ai = new AttributeItem("JIRA.components", components);
+            setAttribute(bi, ai);
+        }
+
+        // Pretty print JIRA ticket
+        /*
+        */
+        vout << "       Key: " + key << Qt::endl;
+        vout << "      Desc: " + summary << Qt::endl;
+        vout << "  Assignee: " + assignee << Qt::endl;
+        vout << "Components: " + components << Qt::endl;
+        vout << " issuetype: " + issuetype << Qt::endl;
+        vout << "  Reporter: " + reporter << Qt::endl;
+        vout << "Resolution: " + resolution << Qt::endl;
+        vout << "    Status: " + status << Qt::endl;
+    }
 }
 
 void VymModel::setHeadingConfluencePageName()

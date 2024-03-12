@@ -562,8 +562,8 @@ class VymModel : public TreeModel {
     void getJiraData(bool subtree = true);      // get data from Jira
 
   public slots:
-    void updateJiraData(QJsonObject);
-    void processJiraQueryResult(QJsonObject);
+    void processJiraTicket(QJsonObject);
+    void processJiraJqlQuery(QJsonObject);
 
   public:
     void setHeadingConfluencePageName(); // get page details from Confluence

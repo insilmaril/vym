@@ -143,9 +143,21 @@ bool JiraAgent::setTicket(const QString &id)
     return foundPattern;
 }
 
-void JiraAgent::setQuery(const QString &s)  // FIXME-0 extract server from url somehow
+bool JiraAgent::setQuery(const QString &s)  // FIXME-0 extract server from url somehow
                                             // For now use fixed server
 {
+    QRegularExpression re("jql=(.*)");
+    QRegularExpressionMatch match = re.match(s);
+    if (!match.hasMatch()) {
+        qWarning() << "JiraAgent::setQuery could not find 'jql=' in query";
+        abortJob = true;
+        return false;
+    }
+    queryInt = QUrl::fromPercentEncoding(match.captured(1).toUtf8());
+    qDebug() << " s=" << s;
+    qDebug() << " q=" << queryInt;
+
+    bool foundServer = false;
     settings.beginGroup("/atlassian/jira");
 
     // Try to find baseUrl of server by looking through patterns in ticket IDs:
@@ -163,11 +175,15 @@ void JiraAgent::setQuery(const QString &s)  // FIXME-0 extract server from url s
                 passwordInt = 
                     settings.value("password", "").toString();
             }
+            foundServer = true;
             break;
         }
     }
+
     settings.endArray();
     settings.endGroup();
+
+    return foundServer;
 }
 
 QString JiraAgent::serverName()
@@ -203,7 +219,7 @@ void JiraAgent::continueJob()
 
     jobStep++;
 
-    // qDebug() << "JA::contJob " << jobType << " Step: " << jobStep << "TicketID: " << ticketID;
+    qDebug() << "JA::contJob " << jobType << " Step: " << jobStep << "TicketID: " << ticketID;
 
     switch(jobType) {
         case GetTicketInfo:
@@ -218,7 +234,7 @@ void JiraAgent::continueJob()
 
                     // Insert references to original branch
                     jsobj["vymBranchId"] = QJsonValue(branchID);
-                    jsobj["vymTicketUrl"] = QJsonValue(url());
+                    jsobj["vymJiraTicketUrl"] = QJsonValue(url());
 
                     emit (jiraTicketReady(QJsonObject(jsobj)));
                     finishJob();
@@ -228,6 +244,7 @@ void JiraAgent::continueJob()
                     unknownStepWarning();
                     break;
             };
+            break;
         case Query:
             switch(jobStep) {
                 case 1:
@@ -240,9 +257,9 @@ void JiraAgent::continueJob()
 
                     // Insert references to original branch
                     jsobj["vymBranchId"] = QJsonValue(branchID);
-                    jsobj["vymTicketUrl"] = QJsonValue(url());
+                    jsobj["vymJiraQueryUrl"] = QJsonValue(url());
 
-                    emit (jiraTicketReady(QJsonObject(jsobj)));
+                    emit (jiraQueryReady(QJsonObject(jsobj)));
                     finishJob();
                     }
                     break;
@@ -323,6 +340,9 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(r.toUtf8());
     jsobj = jsdoc.object();
+
+    vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
+
     continueJob();
 }
 
@@ -346,26 +366,26 @@ void JiraAgent::startQueryRequest()
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-//  QJsonObject payload
-//    {
-//        {"jql", "project = OKR"},
-//        {"maxResults", 10},
-//        {"startAt", 0},
-//        {"fields", "key"},
-//        {"nextPageToken", "EgQIlMIC"}
-//
-    QString s =
+    QString s = QString(
     "{" 
-      "\"expand\": [ \"names\", \"schema\", \"operations\" ],"
-      "\"fields\": [ \"summary\", \"status\", \"assignee\" ],"
-//      "\"fieldsByKeys\": false,"
-      "\"jql\": \"project = OKR\","
-      "\"maxResults\": 15,"
+//      "\"expand\": [ \"names\", \"schema\", \"operations\" ],"
+      "\"fields\": ["
+         "\"assignee\","
+         "\"components\","
+         "\"fixVersions\","
+         "\"issuetype\","
+         "\"resolution\","
+         "\"reporter\","
+         "\"status\","
+         "\"summary\""
+      "],"
+      "\"jql\": \"%1\","
+      "\"maxResults\": 200,"
       "\"startAt\": 0"
-    "}";
+    "}").arg(queryInt);
+    // FIXME-0 only testing "}").arg("project = OKRTEST");
 
     QJsonDocument doc = QJsonDocument::fromJson(s.toUtf8());
-//    QJsonDocument doc(payload);
     QByteArray data = doc.toJson();
 
     if (debug) {
@@ -379,6 +399,8 @@ void JiraAgent::startQueryRequest()
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &JiraAgent::queryFinished);
 
+    qDebug() << "JA::starting query";
+    qDebug() << "  s=" << s;
     networkManager->post(request, data);
 }
 
@@ -419,8 +441,6 @@ void JiraAgent::queryFinished(QNetworkReply *reply)
     QJsonDocument jsdoc;
     jsdoc = QJsonDocument::fromJson(fullReply);
     jsobj = jsdoc.object();
-
-    vout << jsdoc.toJson(QJsonDocument::Indented);
 
     continueJob();
 }
