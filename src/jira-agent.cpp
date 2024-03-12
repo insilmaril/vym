@@ -255,9 +255,9 @@ void JiraAgent::continueJob()
                 case 2: {
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
 
-                    // Insert references to original branch
+                    // Insert references to original branch and Jira server
                     jsobj["vymBranchId"] = QJsonValue(branchID);
-                    jsobj["vymJiraQueryUrl"] = QJsonValue(url());
+                    jsobj["vymJiraServer"] = baseUrlInt;
 
                     emit (jiraQueryReady(QJsonObject(jsobj)));
                     finishJob();
