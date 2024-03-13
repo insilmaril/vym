@@ -2,10 +2,13 @@
 #define VYMMODELWRAPPER_H
 
 #include "scripting.h"
+
 #include <QColor>
 #include <QObject>
 #include <QJSValue>
 #include <QVariant>
+
+#include "branch-wrapper.h"
 
 class BranchItem;
 class VymModel;
@@ -103,6 +106,7 @@ class VymModelWrapper : public VymScriptContext {
     void saveSelection(const QString &filename);
     void scroll();
     bool select(const QString &s);
+    BranchWrapper* selectedBranch();      // FIXME-0 better return BranchWrapper
     bool selectID(const QString &s);
     bool selectFirstBranch();
     bool selectFirstChildBranch();

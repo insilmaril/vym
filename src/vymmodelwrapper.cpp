@@ -876,6 +876,16 @@ bool VymModelWrapper::select(const QString &s)
     return setResult(r);
 }
 
+BranchWrapper* VymModelWrapper::selectedBranch()
+{
+    BranchItem *selbi = model->getSelectedBranch();
+
+    if (selbi)
+        return selbi->branchWrapper();
+    else
+        return nullptr; // FIXME-0 Better throw error here?
+}
+
 bool VymModelWrapper::selectID(const QString &s)
 {
     bool r = model->selectID(s);
