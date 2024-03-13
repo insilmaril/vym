@@ -4488,22 +4488,22 @@ Flag* VymModel::findFlagByName(const QString &name)
     return nullptr;
 }
 
-void VymModel::setFlagByName(const QString &name, bool useGroups)
+void VymModel::setFlagByName(const QString &name, BranchItem *bi, bool useGroups)
 {
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi && !bi->hasActiveFlag(name)) {
-        toggleFlagByName(name, useGroups);
-    }
+    foreach (BranchItem* bi, selbis)
+    if (!bi->hasActiveFlag(name))
+        toggleFlagByName(name, bi, useGroups);
 }
 
-void VymModel::unsetFlagByName(const QString &name)
+void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi && bi->hasActiveFlag(name)) {
-        toggleFlagByName(name);
-    }
+    foreach (BranchItem* bi, selbis)
+        if (bi->hasActiveFlag(name))
+            toggleFlagByName(name);
 }
 
 void VymModel::toggleFlagByUid(
@@ -4543,13 +4543,11 @@ void VymModel::toggleFlagByUid(
     }
 }
 
-void VymModel::toggleFlagByName(const QString &name, bool useGroups)
+void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGroups)
 {
-    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-X
-    // maybe rework?
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi) {
+    foreach (BranchItem* bi, selbis) {
         Flag *f = standardFlagsMaster->findFlagByName(name);
         if (!f) {
             f = userFlagsMaster->findFlagByName(name);

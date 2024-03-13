@@ -127,7 +127,7 @@ function macro_shift_f1()
     }
     toggle_frame ( map );
     map.setFrameBrushColor(true, "#ffb3b4");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 //! Macro Shift + F2: Frame background light green
@@ -140,7 +140,7 @@ function macro_shift_f2()
     }
     toggle_frame ( map );
     map.setFrameBrushColor(true, "#bdffd6");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 //! Macro Shift + F3: Frame background light yellow
@@ -153,7 +153,7 @@ function macro_shift_f3()
     }
     toggle_frame ( map );
     map.setFrameBrushColor(true, "#efefb3");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 //! Macro Shift + F4: Frame background light blue
@@ -166,7 +166,7 @@ function macro_shift_f4()
     }
     toggle_frame ( map );
     map.setFrameBrushColor(true, "#e2e6ff");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 //! Macro Shift + F5: Frame background light grey
@@ -179,7 +179,7 @@ function macro_shift_f5()
     }
     toggle_frame ( map );
     map.setFrameBrushColor(true, "#d6d6d6");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 //! Macro Shift + F6: Frame background purple
@@ -192,7 +192,7 @@ function macro_shift_f6()
     }
     toggle_frame ( map );
     map.setFrameBrushColor(true, "#ffaaff");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 //! Macro Shift + F7: Frame background white
@@ -205,7 +205,7 @@ function macro_shift_f7()
     }
     toggle_frame ( map );
     map.setFrameBrushColor("#ffffff");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 //! Macro Shift + F8: Frame background black
@@ -218,7 +218,7 @@ function macro_shift_f8()
     }
     toggle_frame ( map );
     map.setFrameBrushColor(true, "#000000");
-    statusMessage(status);
+    vym.statusMessage(status);
 }
 
 // Macro Shift + F9:
@@ -274,7 +274,7 @@ function macro_shift_f11()
 //! Macro Shift + F12:
 function macro_shift_f12()
 {
-    statusMessage("Macro F12 + Shift triggered");
+    vym.statusMessage("Macro F12 + Shift triggered");
 }
 
 
@@ -282,143 +282,143 @@ function macro_shift_f12()
 //! Macro Ctrl + F1:
 function macro_ctrl_f1()
 {
-    statusMessage("Macro F1 + Ctrl triggered");
+    vym.statusMessage("Macro F1 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F2:
 function macro_ctrl_f2()
 {
-    statusMessage("Macro F2 + Ctrl triggered");
+    vym.statusMessage("Macro F2 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F3:
 function macro_ctrl_f3()
 {
-    statusMessage("Macro F3 + Ctrl triggered");
+    vym.statusMessage("Macro F3 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F4:
 function macro_ctrl_f4()
 {
-    statusMessage("Macro F4 + Ctrl triggered");
+    vym.statusMessage("Macro F4 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F5:
 function macro_ctrl_f5()
 {
-    statusMessage("Macro F5 + Ctrl triggered");
+    vym.statusMessage("Macro F5 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F6:
 function macro_ctrl_f6()
 {
-    statusMessage("Macro F6 + Ctrl triggered");
+    vym.statusMessage("Macro F6 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F7:
 function macro_ctrl_f7()
 {
-    statusMessage("Macro F7 + Ctrl triggered");
+    vym.statusMessage("Macro F7 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F8:
 function macro_ctrl_f8()
 {
-    statusMessage("Macro F8 + Ctrl triggered");
+    vym.statusMessage("Macro F8 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F9:
 function macro_ctrl_f9()
 {
-    statusMessage("Macro F9 + Ctrl triggered");
+    vym.statusMessage("Macro F9 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F10: 
 function macro_ctrl_f10()
 {
-    statusMessage("Macro F10 + Ctrl triggered");
+    vym.statusMessage("Macro F10 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F11:
 function macro_ctrl_f11()
 {
-    statusMessage("Macro F11 + Ctrl triggered");
+    vym.statusMessage("Macro F11 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F12:
 function macro_ctrl_f12()
 {
-    statusMessage("Macro F12 + Ctrl triggered");
+    vym.statusMessage("Macro F12 + Ctrl triggered");
 }
 
 //! Macro Ctrl + Shift + F1:
 function macro_ctrl_shift_f1()
 {
-    statusMessage("Macro F1 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F1 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F2:
 function macro_ctrl_shift_f2()
 {
-    statusMessage("Macro F2 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F2 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F3:
 function macro_ctrl_shift_f3()
 {
-    statusMessage("Macro F3 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F3 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F4:
 function macro_ctrl_shift_f4()
 {
-    statusMessage("Macro F4 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F4 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F5:
 function macro_ctrl_shift_f5()
 {
-    statusMessage("Macro F5 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F5 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F6:
 function macro_ctrl_shift_f6()
 {
-    statusMessage("Macro F6 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F6 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F7:
 function macro_ctrl_shift_f7()
 {
-    statusMessage("Macro F7 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F7 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F8:
 function macro_ctrl_shift_f8()
 {
-    statusMessage("Macro F8 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F8 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F9:
 function macro_ctrl_shift_f9()
 {
-    statusMessage("Macro F9 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F9 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F10: 
 function macro_ctrl_shift_f10()
 {
-    statusMessage("Macro F10 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F10 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F11:
 function macro_ctrl_shift_f11()
 {
-    statusMessage("Macro F11 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F11 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F12:
 function macro_ctrl_shift_f12()
 {
-    statusMessage("Macro F12 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F12 + Ctrl + Shift triggered");
 }

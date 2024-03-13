@@ -14,6 +14,9 @@ class BranchWrapper : public VymScriptContext {
 
   public slots:
     QString headingText();  
+    void setFlagByName(const QString &);
+    void toggleFlagByName(const QString &);
+    void unsetFlagByName(const QString &);
 
   private:
     BranchItem *branchItem;

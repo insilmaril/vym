@@ -26,21 +26,24 @@ class Command {
         Void};
 
     Command(const QString &n, SelectionType st, ParameterType retType = Void);
-    QString getName();
-    QString getDescription();
-    QString getDescriptionLaTeX();
-    void addPar(ParameterType t, bool opt, const QString &c = QString());
-    int parCount();
-    ParameterType getParType(int n);
-    SelectionType getSelectionType();
-    QString getSelectionTypeName();
+    QString name();
+    QString description();
+    QString descriptionLaTeX();
+    void addParameter(ParameterType t, bool opt, const QString &c = QString());
+    int parameterCount();
+    ParameterType parameterType(int n);
+    SelectionType selectionType();
+    QString selectionTypeName();
     QString typeToString(const ParameterType &type);
-    bool isParOptional(int n);
-    QString getParComment(int n);
+    bool isParameterOptional(int n);
+    QString parameterComment(int n);
+    void setComment(const QString&);
+    QString comment();
 
   private:
-    QString name;
-    SelectionType selectionType;
+    QString nameInt;
+    QString commentInt;
+    SelectionType selectionTypeInt;
     QList<ParameterType> parTypes;
     ParameterType returnType;
     QList<bool> parOpts;

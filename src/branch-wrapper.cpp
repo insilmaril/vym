@@ -2,6 +2,8 @@
 
 #include "branchitem.h"
 
+#include "vymmodel.h"
+
 BranchWrapper::BranchWrapper(BranchItem *bi)
 {
     //qDebug() << "Constr BranchWrapper (BI)";
@@ -17,4 +19,18 @@ BranchWrapper::~BranchWrapper()
 QString BranchWrapper::headingText()
 {
     return branchItem->getHeadingPlain();
+}
+
+void BranchWrapper::setFlagByName(const QString &s)
+{
+    branchItem->getModel()->setFlagByName(s, branchItem);
+}
+
+void BranchWrapper::toggleFlagByName(const QString &s)
+{
+    branchItem->getModel()->toggleFlagByName(s, branchItem);
+}
+void BranchWrapper::unsetFlagByName(const QString &s)
+{
+    branchItem->getModel()->unsetFlagByName(s, branchItem);
 }

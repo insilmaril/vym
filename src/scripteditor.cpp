@@ -80,11 +80,11 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     highlighterFile = new Highlighter(codeEditor->document());
     QStringList list;
     foreach (Command *c, vymCommands)
-        list.append(QString("\\b%1\\b").arg(c->getName()));
+        list.append(QString("\\b%1\\b").arg(c->name()));
     foreach (Command *c, modelCommands)
-        list.append(QString("\\b%1\\b").arg(c->getName()));
+        list.append(QString("\\b%1\\b").arg(c->name()));
     foreach (Command *c, branchCommands)
-        list.append(QString("\\b%1\\b").arg(c->getName()));
+        list.append(QString("\\b%1\\b").arg(c->name()));
     highlighterMacro->addKeywords(list);
     highlighterSlide->addKeywords(list);
     highlighterFile->addKeywords(list);
