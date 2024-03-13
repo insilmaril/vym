@@ -102,8 +102,9 @@ extern bool restoreMode;
 extern QStringList ignoredLockedFiles;
 extern QStringList lastSessionFiles;
 
-extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
+extern QList<Command *> modelCommands;
+extern QList<Command *> branchCommands;
 
 extern bool usingDarkTheme;
 
@@ -551,7 +552,58 @@ QPrinter *Main::setupPrinter()
 // Define commands for models
 void Main::setupAPI()
 {
-    Command *c = new Command("addBranch", Command::Branch);
+    //
+    // Below are the commands for vym itself
+    //
+
+    Command *c = new Command("clearConsole", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("closeMapWithID", Command::Any);
+    c->addPar(Command::Int, false, "ID of map (unsigned int)");
+    vymCommands.append(c);
+
+    c = new Command("currentColor", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("currentMap", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("currentMapIndex", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("editHeading", Command::Branch);
+    vymCommands.append(c);
+
+    c = new Command("gotoMap", Command::Any);
+    c->addPar(Command::Int, false, "Index of map");
+    vymCommands.append(c);
+
+    c = new Command("loadMap", Command::Any);
+    c->addPar(Command::String, false, "Path to map");
+    vymCommands.append(c);
+
+    c = new Command("mapCount", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("print", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("selectQuickColor", Command::Any);
+    c->addPar(Command::Int, false, "Index of quick color [0..6]");
+    vymCommands.append(c);
+
+    c = new Command("toggleTreeEditor", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("version", Command::Any);
+    vymCommands.append(c);
+
+    //
+    // Below are the commands for a map
+    //
+
+    c = new Command("addBranch", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("addBranchAt", Command::Branch);
@@ -844,6 +896,9 @@ void Main::setupAPI()
     c->addPar(Command::String, false, "Selection string");
     modelCommands.append(c);
 
+    c = new Command("selectedBranch", Command::Any, Command::BranchItem);
+    modelCommands.append(c);
+
     c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
@@ -1120,49 +1175,13 @@ void Main::setupAPI()
     c = new Command("xlinkCount", Command::Branch, Command::Int);
     modelCommands.append(c);
 
+
     //
-    // Below are the commands for vym itself:
+    // Below are the commands for a branch
     //
 
-    c = new Command("clearConsole", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("closeMapWithID", Command::Any);
-    c->addPar(Command::Int, false, "ID of map (unsigned int)");
-    vymCommands.append(c);
-
-    c = new Command("currentMap", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("currentMapIndex", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("editHeading", Command::Branch);
-    vymCommands.append(c);
-
-    c = new Command("loadMap", Command::Any);
-    c->addPar(Command::String, false, "Path to map");
-    vymCommands.append(c);
-
-    c = new Command("mapCount", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("gotoMap", Command::Any);
-    c->addPar(Command::Int, false, "Index of map");
-    vymCommands.append(c);
-
-    c = new Command("selectQuickColor", Command::Any);
-    c->addPar(Command::Int, false, "Index of quick color [0..6]");
-    vymCommands.append(c);
-
-    c = new Command("currentColor", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("toggleTreeEditor", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("version", Command::Any);
-    vymCommands.append(c);
+    c = new Command("headingText", Command::Branch, Command::String);
+    branchCommands.append(c);
 }
 
 void Main::cloneActionMapEditor(QAction *a, QKeySequence ks)

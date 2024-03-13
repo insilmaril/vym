@@ -65,7 +65,7 @@ BranchItem::~BranchItem()
         taskModel->deleteTask(task);
 
     if (branchWrapperInt) {
-        delete branchWrapperInt;
+        delete branchWrapperInt;    // FIXME-0 maybe deleteLater? And throw error, if BI is gone meanwhile...
         branchWrapperInt = nullptr;
     }
 }

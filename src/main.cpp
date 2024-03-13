@@ -105,8 +105,9 @@ bool unzipToolAvailable = false;
 QString zipToolPath;   // Platform dependant zip tool
 QString unzipToolPath; // For windows same as zipToolPath
 
-QList<Command *> modelCommands;
 QList<Command *> vymCommands;
+QList<Command *> modelCommands;
+QList<Command *> branchCommands;
 
 Options options;
 ImageIO imageIO;

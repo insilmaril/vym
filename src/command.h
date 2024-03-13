@@ -17,11 +17,12 @@ class Command {
     };
     enum ParameterType {
         Undefined,
-        String,
-        Int,
-        Double,
-        Color,
         Bool,
+        BranchItem,
+        Color,
+        Double,
+        Int,
+        String,
         Void};
 
     Command(const QString &n, SelectionType st, ParameterType retType = Void);
