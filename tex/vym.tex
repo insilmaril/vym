@@ -1642,7 +1642,7 @@ directory. The exact position depends on the platform:
 The file can be edited manually, or on Mac~OS~X with Property List
 Editor (installed with xtools). On windows you can use {\tt regedit.exe}.
 
-\subsection{Path to ressources}
+\subsection{Path to ressources} \label{ressources}
 \vym will try to find its ressources (images, stylesheets, filters,
 etc.) in the following places:
 \begin{enumerate}
@@ -1652,6 +1652,15 @@ etc.) in the following places:
     \item {\tt /usr/share/vym}
     \item {\tt /usr/local/share/vym}
 \end{enumerate}
+
+\subsection{User flags}
+User, project, organization, etc.\ specific flags can be stored in the {\tt flags/user}
+subdirectory of the ressources (see \ref{ressources} above).
+This way, they will be available in the user flags toolbar at program start.
+
+The image files can be any of PNG, BMP, XBM, JPG, PNG, XPM, GIF, PNM, SVG, and SVGZ
+format.
+The file name, without the extension, will be used as the name of the flag.
 
 \subsection{Command line options} \label{options} 
 \lstinputlisting{help.tex}
