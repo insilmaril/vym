@@ -12,9 +12,11 @@ class JiraIssue{
     bool isFinished() const;
     QString assignee() const;
     QString components() const;
+    QString desciption() const;
     QString fixVersions() const;
     QString issueType() const;
     QString key() const;
+    QString parentKey() const;
     QString reporter() const;
     QString resolution() const;
     QString status() const;
@@ -23,8 +25,10 @@ class JiraIssue{
 
   private:  
     QString assigneeInt;
-    QString issuetypeInt;
+    QString descriptionInt;
     QString keyInt;
+    QString issuetypeInt;
+    QString parentKeyInt;
     QString reporterInt;
     QString resolutionInt;
     QString statusInt;

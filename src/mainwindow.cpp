@@ -682,6 +682,13 @@ void Main::setupAPI()
               "LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
+    c = new Command("findBranchByAttribute", Command::Any, Command::BranchItem);
+    c->setComment("Find branch with given key/value pair. "
+            "Returns first hit or null.");
+    c->addParameter(Command::String, false, "Key of attribute");
+    c->addParameter(Command::String, false, "Value of attribute");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::Any, Command::String);
     modelCommands.append(c);
 
@@ -1182,6 +1189,11 @@ void Main::setupAPI()
 
     c = new Command("headingText", Command::Branch, Command::String);
     c->setComment("Set heading of branch from plaintext string");
+    branchCommands.append(c);
+
+    c = new Command("relinkTo", Command::Branch);
+    c->setComment("Relink branch to destination branch");
+    c->addParameter(Command::BranchItem, false, "Destination branch");
     branchCommands.append(c);
 
     c = new Command("setFlagByName", Command::TreeItem);

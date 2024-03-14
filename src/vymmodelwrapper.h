@@ -42,6 +42,7 @@ class VymModelWrapper : public VymScriptContext {
     int depth();
     void detach();
     bool exportMap(QJSValueList args);
+    BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
     QString getStringAttribute(const QString &key);
     int getIntAttribute(const QString &key);
     int getBranchIndex();

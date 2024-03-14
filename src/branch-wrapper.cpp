@@ -21,6 +21,12 @@ QString BranchWrapper::headingText()
     return branchItem->getHeadingPlain();
 }
 
+bool BranchWrapper::relinkTo(BranchWrapper *bw)
+{
+    qDebug() << "BW::relinkTo " << bw->headingText();
+    return false;   // FIXME-2
+}
+
 void BranchWrapper::setFlagByName(const QString &s)
 {
     branchItem->getModel()->setFlagByName(s, branchItem);

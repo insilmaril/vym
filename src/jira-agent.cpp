@@ -143,9 +143,11 @@ bool JiraAgent::setTicket(const QString &id)
     return foundPattern;
 }
 
-bool JiraAgent::setQuery(const QString &s)  // FIXME-0 extract server from url somehow
-                                            // For now use fixed server
+bool JiraAgent::setQuery(const QString &s)
 {
+    queryInt = s;
+
+    /*
     QRegularExpression re("jql=(.*)");
     QRegularExpressionMatch match = re.match(s);
     if (!match.hasMatch()) {
@@ -153,11 +155,42 @@ bool JiraAgent::setQuery(const QString &s)  // FIXME-0 extract server from url s
         abortJob = true;
         return false;
     }
+
     queryInt = QUrl::fromPercentEncoding(match.captured(1).toUtf8());
     qDebug() << " s=" << s;
     qDebug() << " q=" << queryInt;
 
-    bool foundServer = false;
+    */
+    bool foundServer = false; // FIXME-0 For now try only first server for queries
+
+    settings.beginGroup("/atlassian/jira/servers/1");
+    bool usePAT = settings.value("authUsingPAT", true).toBool();
+    QString url = settings.value("baseUrl", "").toString();
+    if (!url.isEmpty()) {
+        baseUrlInt = url;
+        if (usePAT) {
+            QString pat = settings.value("PAT", "").toString();
+            if (!pat.isEmpty()) {
+                // Use PAT
+                personalAccessTokenInt = pat;
+                foundServer = true;
+            }
+        } else {
+            // Looking for username and password
+            QString user = settings.value("username", "").toString();
+            if (!user.isEmpty()) {
+                QString pass = settings.value("password", "").toString();
+                if (!pass.isEmpty()) {
+                    userNameInt = user;
+                    passwordInt = pass;
+                    foundServer = true;
+                }
+            }
+        }
+    }
+    settings.endGroup();
+
+    /*
     settings.beginGroup("/atlassian/jira");
 
     // Try to find baseUrl of server by looking through patterns in ticket IDs:
@@ -182,6 +215,7 @@ bool JiraAgent::setQuery(const QString &s)  // FIXME-0 extract server from url s
 
     settings.endArray();
     settings.endGroup();
+    */
 
     return foundServer;
 }
@@ -258,6 +292,7 @@ void JiraAgent::continueJob()
                     // Insert references to original branch and Jira server
                     jsobj["vymBranchId"] = QJsonValue(branchID);
                     jsobj["vymJiraServer"] = baseUrlInt;
+                    jsobj["vymJiraLastQuery"] = queryInt;
 
                     emit (jiraQueryReady(QJsonObject(jsobj)));
                     finishJob();
@@ -366,8 +401,10 @@ void JiraAgent::startQueryRequest()
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
+    //queryInt = "project = OKRTEST";
     QString s = QString(
     "{" 
+      "\"jql\": \"%1\", "
 //      "\"expand\": [ \"names\", \"schema\", \"operations\" ],"
       "\"fields\": ["
          "\"assignee\","
@@ -375,17 +412,16 @@ void JiraAgent::startQueryRequest()
          "\"fixVersions\","
          "\"issuetype\","
          "\"issuelinks\","
+         "\"parent\","
          "\"resolution\","
          "\"reporter\","
          "\"status\","
          "\"subtasks\","
          "\"summary\""
       "],"
-      "\"jql\": \"%1\","
       "\"maxResults\": 200,"
       "\"startAt\": 0"
     "}").arg(queryInt);
-    // FIXME-0 only testing "}").arg("project = OKRTEST");
 
     QJsonDocument doc = QJsonDocument::fromJson(s.toUtf8());
     QByteArray data = doc.toJson();

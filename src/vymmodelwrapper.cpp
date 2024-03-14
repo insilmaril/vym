@@ -384,6 +384,17 @@ bool VymModelWrapper::exportMap(QJSValueList args)
     return setResult(true);
 }
 
+BranchWrapper* VymModelWrapper::findBranchByAttribute(
+        const QString &key,
+        const QString &value)
+{
+    BranchItem *bi = model->findBranchByAttribute(key, value);
+    if (bi)
+        return bi->branchWrapper();
+    else
+        return nullptr;
+}
+
 QString VymModelWrapper::getStringAttribute(const QString &key)
 {
     QVariant v;

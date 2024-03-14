@@ -28,11 +28,15 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
     QJsonObject assigneeObj = fields["assignee"].toObject();
     assigneeInt = assigneeObj["emailAddress"].toString();
 
-    QJsonObject reporterObj = fields["reporter"].toObject();
-    reporterInt = reporterObj["emailAddress"].toString();
-
     QJsonObject issueTypeObj = fields["issuetype"].toObject();
     issuetypeInt  = issueTypeObj["name"].toString();
+
+    descriptionInt = fields["description"].toString();
+
+    parentKeyInt = fields["parent"].toObject().value("key").toString();
+
+    QJsonObject reporterObj = fields["reporter"].toObject();
+    reporterInt = reporterObj["emailAddress"].toString();
 
     QJsonObject resolutionObj = fields["resolution"].toObject();
     resolutionInt  = resolutionObj["name"].toString();
@@ -87,10 +91,12 @@ void JiraIssue::print() const
 {
     qDebug() << "JI::print()";
     vout << "        Key: " + keyInt << Qt::endl;
-    vout << "       Desc: " + summaryInt << Qt::endl;
+    vout << "    Summary: " + summaryInt << Qt::endl;
+    vout << "       Desc: " + descriptionInt.left(20) << Qt::endl;
     vout << "   Assignee: " + assigneeInt << Qt::endl;
     vout << " Components: " + components() << Qt::endl;
     vout << "  issuetype: " + issuetypeInt << Qt::endl;
+    vout << "  parentKey: " + parentKeyInt << Qt::endl;
     vout << "fixVersions: " + fixVersions() << Qt::endl;
     vout << "   Reporter: " + reporterInt << Qt::endl;
     vout << " Resolution: " + resolutionInt << Qt::endl;
@@ -132,6 +138,11 @@ QString JiraIssue::issueType() const
 QString JiraIssue::key() const
 {
     return keyInt;
+}
+
+QString JiraIssue::parentKey() const
+{
+    return parentKeyInt;
 }
 
 QString JiraIssue::reporter() const

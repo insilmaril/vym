@@ -1940,6 +1940,20 @@ TreeItem *VymModel::findUuid(const QUuid &id)
     return nullptr;
 }
 
+BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &value)
+{
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    nextBranch(cur, prev);
+    while (cur) {
+        AttributeItem *ai = cur->getAttributeByKey(key); 
+        if (ai && ai->getValue().toString() == value)
+            return cur;
+        nextBranch(cur, prev);
+    }
+    return nullptr;
+}
+
 void VymModel::test()
 {
     foreach (TreeItem *ti, getSelectedItems()) {
@@ -4730,7 +4744,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
 
                 } else if (cur->hasUrl()) {
                     // Create agent to run query
-                    qDebug() << "VM::getJiraData: Matched jql!";
+                    qDebug() << "VM::getJiraData: Found Url:" << cur->url();
                     agent->setJobType(JiraAgent::Query);
 
                     if (!agent->setQuery(cur->url())) {
@@ -4776,6 +4790,15 @@ void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
     ai = new AttributeItem("Jira.issuetype", ji.issueType());
     setAttribute(bi, ai);
 
+    ai = new AttributeItem("Jira.issueUrl", ji.url());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.key", ji.key());
+    setAttribute(bi, ai);
+
+    ai = new AttributeItem("Jira.parentKey", ji.parentKey());
+    setAttribute(bi, ai);
+
     ai = new AttributeItem("Jira.status", ji.status());
     setAttribute(bi, ai);
 
@@ -4785,8 +4808,6 @@ void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
     ai = new AttributeItem("Jira.resolution", ji.resolution());
     setAttribute(bi, ai);
 
-    ai = new AttributeItem("Jira.issueUrl", ji.url());
-    setAttribute(bi, ai);
 }
 
 void VymModel::processJiraTicket(QJsonObject jsobj)
@@ -4850,8 +4871,11 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
         }
 
         // Pretty print JIRA ticket
-        ji.print();
+        // ji.print();
     }
+
+    AttributeItem *ai = new AttributeItem("Jira.lastQuery", jsobj["vymJiraLastQuery"].toString());
+    setAttribute(pbi, ai);
 
     saveStateBlocked = false;
     repositionBlocked = false;

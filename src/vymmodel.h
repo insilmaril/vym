@@ -313,6 +313,7 @@ class VymModel : public TreeModel {
     TreeItem *findBySelectString(QString s);
     TreeItem *findID(const uint &i);    // find MapObj by unique ID
     TreeItem *findUuid(const QUuid &i); // find MapObj by unique ID
+    BranchItem* findBranchByAttribute(const QString &key, const QString &value);
 
     void test();
 
