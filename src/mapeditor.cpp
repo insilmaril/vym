@@ -2393,11 +2393,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         } // Image moved, but not relinked
 
-        if (repositionNeeded) {
-            model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
-            model->emitSelectionChanged();
-        }
-
         // Finally resize scene, if needed
         scene()->update();
         vPan = QPoint();
@@ -2406,11 +2401,17 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         // maybe we moved View: set old cursor
         setCursor(Qt::ArrowCursor);
 
-    if (editorState != EditingHeading)
+    if (editorState != EditingHeading) {
         setState(Neutral); // Continue editing after double click!
+    }
 
     movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
+
+    if (repositionNeeded) {
+        model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
+        model->emitSelectionChanged();
+    }
 }
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
