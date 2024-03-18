@@ -102,8 +102,8 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         QString url;
         AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
         if (ai) {
-            url = ai->getKey();
-            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->getValue().toString());
+            url = ai->key();
+            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->value().toString());
         } else {
             url = current->url();
 

@@ -32,7 +32,7 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
     AttributeItem *ai;
     for (int i = 0; i < bi->attributeCount(); i++) {
         ai =bi->getAttributeNum(i);
-        key = ai->getKey();
+        key = ai->key();
 
         // Rewrite some values, which maybe have been modified in map
         if (key == "index")
@@ -45,13 +45,13 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
         // Export values
         if (key == "postData")
             jsobj[key] = QJsonValue::Null; 
-        else if (ai->getAttributeType() == AttributeItem::DateTime) 
-            jsobj[key] = QJsonValue(ai->getValue().toDateTime().toMSecsSinceEpoch() * 1000);
-        else if (ai->getAttributeType() == AttributeItem::String)
-            jsobj[key] = ai->getValue().toString();
-        else if (ai->getAttributeType() == AttributeItem::Integer) 
+        else if (ai->value().typeName() == "QDateTime") 
+            jsobj[key] = QJsonValue(ai->value().toDateTime().toMSecsSinceEpoch() * 1000);
+        else if (ai->value().typeName() == "QString") 
+            jsobj[key] = ai->value().toString();
+        else if (ai->value().typeName() == "Integer") 
         {
-            jsobj[key] = QJsonValue(ai->getValue().toInt());
+            jsobj[key] = QJsonValue(ai->value().toInt());
         }
         else
             qWarning() << "ExportFirefox  Unknown attribute type in " << bi->getHeadingPlain() << "Key: " << key;

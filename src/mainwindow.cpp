@@ -1556,16 +1556,6 @@ void Main::setupEditActions()
     actionListItems.append(a);
     actionDeleteAlt = a;
 
-    // Shortcut to add attribute
-    a = new QAction(tr("Add attribute") + " (test)", this);
-    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
-        a->setShortcutContext(Qt::WindowShortcut);
-        switchboard.addSwitch("mapAddAttribute", shortcutScope, a, tag);
-        connect(a, SIGNAL(triggered()), this, SLOT(editAddAttribute()));
-        editMenu->addAction(a);
-    }
-    actionAddAttribute = a;
-
     // Shortcut to add mapcenter
     a = new QAction(QPixmap(":/newmapcenter.png"),
                     tr("Add mapcenter", "Canvas context menu"), this);
@@ -1878,9 +1868,11 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionHeading2URL = a;
 
-    tag = "JIRA";
-    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu"),
-                    this);
+    tag = "Jira";
+    a = new QAction(
+            QPixmap(":/flag-jira.svg"), 
+            tr("Get data from Jira for subtree", "Edit menu"),
+            this);
     a->setShortcut(Qt::Key_J | Qt::SHIFT);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
@@ -1888,6 +1880,18 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
     actionGetJiraDataSubtree = a;
 
+    a = new QAction(
+            QPixmap(":/flag-jira.svg"),
+            tr("Set Jira query", "Edit menu"),
+            this);
+    a->setShortcut(Qt::Key_J | Qt::CTRL);
+    a->setShortcutContext(Qt::WindowShortcut);
+    switchboard.addSwitch("mapSetJiraQuery", shortcutScope, a, tag);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(setJiraQuery()));
+    actionGetJiraDataSubtree = a;
+
+    tag = "Confluence";
     a = new QAction(tr("Get page name from Confluence", "Edit menu"),
                     this);
     //    a->setShortcut ( Qt::Key_J | Qt::CTRL);
@@ -2769,6 +2773,9 @@ void Main::setupFlagActions()
     setupFlag(":/flag-url.svg", Flag::SystemFlag, "system-url",
               tr("URL", "SystemFlag"));
 
+    setupFlag(":/flag-jira.svg", Flag::SystemFlag, "system-jira",
+              tr("Jira", "SystemFlag"));
+
     setupFlag(":/flag-target.svg", Flag::SystemFlag, "system-target",
               tr("Map target", "SystemFlag"));
 
@@ -3350,8 +3357,6 @@ void Main::setupContextMenus()
 
     branchContextMenu->addSeparator();
     branchContextMenu->addAction(actionLoadImage);
-    if (settings.value("/mainwindow/showTestMenu", false).toBool())
-        branchContextMenu->addAction(actionAddAttribute);
 
     branchContextMenu->addSeparator();
 
@@ -4850,7 +4855,7 @@ void Main::editURL()
     VymModel *m = currentModel();
     if (m) {
         QInputDialog *dia = new QInputDialog(this);
-        dia->setLabelText(tr("Enter URL:"));
+        dia->setLabelText(tr("Enter Url:"));
         dia->setWindowTitle(vymName);
         dia->setInputMode(QInputDialog::TextInput);
         TreeItem *selti = m->getSelectedItem();
@@ -4899,6 +4904,28 @@ void Main::editHeading2URL()
     VymModel *m = currentModel();
     if (m)
         m->editHeading2URL();
+}
+
+void Main::setJiraQuery()
+{
+    VymModel *m = currentModel();
+    if (m) {
+        QInputDialog dia;
+        dia.setLabelText(tr("Enter Jira query:"));
+        dia.setWindowTitle(vymName);
+        dia.setInputMode(QInputDialog::TextInput);
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi)  {
+            AttributeItem *ai = selbi->getAttributeByKey("Jira.query");
+            if (ai)
+                dia.setTextValue(ai->value().toString());
+            dia.resize(width() * 0.6, 80);
+            centerDialog(&dia);
+
+            if (dia.exec())
+                m->setJiraQuery(dia.textValue());
+        }
+    }
 }
 
 void Main::getJiraDataSubtree()
@@ -5348,15 +5375,6 @@ void Main::editResetSelectionSize()
     VymModel *m = currentModel();
     if (m)
         m->resetSelectionSize();
-}
-
-void Main::editAddAttribute()
-{
-    VymModel *m = currentModel();
-    if (m) {
-
-        m->setAttribute();
-    }
 }
 
 void Main::editAddMapCenter()

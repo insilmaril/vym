@@ -400,13 +400,13 @@ QString VymModelWrapper::getStringAttribute(const QString &key)
     QVariant v;
     AttributeItem *ai = model->getAttributeByKey(key);
     if (ai) {
-        if (ai->getAttributeType() != AttributeItem::String) {
+        if (ai->value().typeName() != "QString") {
             scriptEngine->throwError(
                     QJSValue::GenericError,
                     QString("Attribute with key '%1' has no type 'String'").arg(key));
             return setResult(QString());
         }
-        v = ai->getValue();
+        v = ai->value();
     } else {
         scriptEngine->throwError(
                 QJSValue::GenericError,
@@ -421,13 +421,13 @@ int VymModelWrapper::getIntAttribute(const QString &key)
     QVariant v;
     AttributeItem *ai = model->getAttributeByKey(key);
     if (ai) {
-        if (ai->getAttributeType() != AttributeItem::Integer) {
+        if (ai->value().typeName() != "Integer") {
             scriptEngine->throwError(
                     QJSValue::GenericError,
                     QString("Attribute with key '%1' has no type 'Integer'").arg(key));
             return setResult(-1);
         }
-        v = ai->getValue();
+        v = ai->value();
     } else {
         scriptEngine->throwError(
                 QJSValue::GenericError,

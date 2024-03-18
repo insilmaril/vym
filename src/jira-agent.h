@@ -16,12 +16,14 @@ class JiraAgent : public QObject {
     enum JobType {Undefined, GetTicketInfo, Query};
 
     static bool available();
+    JobType jobTypeFromText(const QString& text, QString &query);
 
     JiraAgent();
     ~JiraAgent();
 
     void init();
     void setJobType(JobType jt);
+    JiraAgent::JobType jobType();
     bool setBranch(BranchItem *bi);
     bool setTicket(const QString &id);
     bool setQuery(const QString &s);
@@ -54,7 +56,7 @@ class JiraAgent : public QObject {
   private:
     // Job related 
     QTimer *killTimer;
-    JobType jobType;
+    JobType jobTypeInt;
     int jobStep;
     bool abortJob;  // Flag to abort during initialization of job
 

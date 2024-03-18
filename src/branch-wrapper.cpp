@@ -24,7 +24,7 @@ QString BranchWrapper::headingText()
 bool BranchWrapper::relinkTo(BranchWrapper *bw)
 {
     qDebug() << "BW::relinkTo " << bw->headingText();
-    return false;   // FIXME-2
+    return false;   // FIXME-0
 }
 
 void BranchWrapper::setFlagByName(const QString &s)

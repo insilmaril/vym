@@ -373,6 +373,7 @@ class VymModel : public TreeModel {
     void setUrl(QString url, bool updateFromCloud = true, BranchItem *bi = nullptr);
     QString getUrl(); // returns URL of selection or ""
     QStringList getUrls(bool ignoreScrolled = true); // returns URLs of subtree
+    void setJiraQuery(const QString &, BranchItem *bi = nullptr);
 
     void setFrameAutoDesign(const bool &useInnerFrame, const bool &);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
@@ -464,8 +465,8 @@ class VymModel : public TreeModel {
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
-    AttributeItem* setAttribute();
     AttributeItem* setAttribute(BranchItem *dst, AttributeItem *);
+    AttributeItem* setAttribute(BranchItem *dst, const QString &k, const QVariant &v);
     AttributeItem* getAttributeByKey(const QString &key);
 
     //! \brief Add new mapcenter

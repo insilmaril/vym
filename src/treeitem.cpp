@@ -270,6 +270,14 @@ TreeItem::Type TreeItem::getType()
     return type;
 }
 
+bool TreeItem::hasTypeAttribute() const
+{
+    if (type == Attribute)
+        return true;
+    else
+        return false;
+}
+
 bool TreeItem::hasTypeBranch() const
 {
     if (type == Branch || type == MapCenter)
@@ -541,6 +549,16 @@ bool TreeItem::hasActiveSystemFlag(const QString &name)
     return systemFlags.isActive(name);
 }
 
+void TreeItem::activateSystemFlagByName(const QString &name)
+{
+    systemFlags.activate(name);
+}
+
+void TreeItem::deactivateSystemFlagByName(const QString &name)
+{
+    systemFlags.activate(name);
+}
+
 QList<QUuid> TreeItem::activeFlagUids()
 {
     return standardFlags.activeFlagUids() + userFlags.activeFlagUids();
@@ -646,7 +664,7 @@ QList <BranchItem*> TreeItem::getBranches()
     return branches;
 }
 
-ImageItem *TreeItem::getImageNum(const int &n)
+ImageItem* TreeItem::getImageNum(const int &n)
 {
     if (n >= 0 && n < imageCounter)
         return (ImageItem *)getChildNum(imageOffset + n);
@@ -654,7 +672,7 @@ ImageItem *TreeItem::getImageNum(const int &n)
         return nullptr;
 }
 
-AttributeItem *TreeItem::getAttributeNum(const int &n)
+AttributeItem* TreeItem::getAttributeNum(const int &n)
 {
     if (n >= 0 && n < attributeCounter)
         return (AttributeItem *)getChildNum(attributeOffset + n);
@@ -662,17 +680,27 @@ AttributeItem *TreeItem::getAttributeNum(const int &n)
         return nullptr;
 }
 
-AttributeItem *TreeItem::getAttributeByKey(const QString &k)
+AttributeItem* TreeItem::getAttributeByKey(const QString &k)
 {
     AttributeItem *ai;
     for (int i = 0; i < attributeCount(); i++) {
         ai = getAttributeNum(i);
-        if (ai->getKey() == k) return ai;
+        if (ai->key() == k) return ai;
     }
     return nullptr;
 }
 
-XLinkItem *TreeItem::getXLinkItemNum(const int &n)
+QString TreeItem::attributeValueString(const QString &k)
+{
+    AttributeItem *ai;
+    for (int i = 0; i < attributeCount(); i++) {
+        ai = getAttributeNum(i);
+        if (ai->key() == k) return ai->value().toString();
+    }
+    return QString();
+}
+
+XLinkItem* TreeItem::getXLinkItemNum(const int &n)
 {
     if (n >= 0 && n < xlinkCounter)
         return (XLinkItem *)getChildNum(xlinkOffset + n);
