@@ -82,7 +82,7 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
         highlightingRules.append(rule);
     }
 
-    // Funtions
+    // Functions
     /*
     functionFormat.setFontItalic(true);
     functionFormat.setForeground(Qt::blue);

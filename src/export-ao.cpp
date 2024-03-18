@@ -129,9 +129,9 @@ void ExportAO::doExport()
                     out += line;
 
                     // If necessary, write URL
-                    if (!cur->getURL().isEmpty())
+                    if (!cur->url().isEmpty())
                         out += noColString + indent(cur->depth() - 4, false) +
-                               cur->getURL() + "\n";
+                               cur->url() + "\n";
 
                     // If necessary, write note
                     if (!cur->isNoteEmpty()) {

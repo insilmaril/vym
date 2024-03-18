@@ -364,7 +364,7 @@ void ConfluenceAgent::continueJob(int nextStep)
 
                     u = userObj["user"].toObject();
                     user.setTitle( userObj["title"].toString());
-                    user.setURL( "https://" + baseURL + "/"
+                    user.setUrl( "https://" + baseURL + "/"
                             + "display/~" + u["username"].toString());
                     user.setUserKey( u["userKey"].toString());
                     user.setUserName( u["username"].toString());

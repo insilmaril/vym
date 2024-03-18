@@ -304,11 +304,11 @@ void BranchPropertyEditor::updateControls()
         if (ai) {
             attributeModel->insertRow (i, QModelIndex ());
             attributeModel->setData(attributeModel->index(i, 0, QModelIndex()),
-                ai->getKey());
+                ai->key());
             attributeModel->setData(attributeModel->index(i, 1, QModelIndex()),
-                ai->getValue().toString());
+                ai->value().toString());
             attributeModel->setData(attributeModel->index(i, 2, QModelIndex()),
-                ai->getAttributeTypeString());
+                ai->value().typeName());
         }
     }
 

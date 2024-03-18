@@ -56,8 +56,8 @@ void ExportMarkdown::doExport()
             curHeading = cur->getHeadingText();
 
             // If necessary, write heading as URL
-            if (!cur->getURL().isEmpty())
-                curHeading = "[" + curHeading + "](" + cur->getURL() + ")";
+            if (cur->hasUrl())
+                curHeading = "[" + curHeading + "](" + cur->url() + ")";
 
             if (!cur->hasHiddenExportParent()) {
                 // qDebug() << "ExportMarkdown::
@@ -100,8 +100,8 @@ void ExportMarkdown::doExport()
                 }
 
                 // If necessary, write vymlink
-                if (!cur->getVymLink().isEmpty())
-                    out += (curIndent + dashIndent + cur->getVymLink()) +
+                if (cur->hasVymLink())
+                    out += (curIndent + dashIndent + cur->vymLink()) +
                            " (vym mindmap)\n";
 
                 // If necessary, write note

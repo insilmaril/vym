@@ -44,7 +44,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                         .arg(current->depth())
                         .arg(col)
                         .arg(id);
-        QString url = current->getURL();
+        QString url = current->url();
         QString heading = quoteMeta(current->getHeadingPlain());
 
         // Task flags

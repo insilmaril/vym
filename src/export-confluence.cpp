@@ -34,7 +34,7 @@ void ExportConfluence::init()
 
 void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
 
-void ExportConfluence::setURL(const QString &u) { url = u; }
+void ExportConfluence::setUrl(const QString &u) { url = u; }
 
 void ExportConfluence::setPageName(const QString &t) { pageName = t;}
 
@@ -102,10 +102,10 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         QString url;
         AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
         if (ai) {
-            url = ai->getKey();
-            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->getValue().toString());
+            url = ai->key();
+            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->value().toString());
         } else {
-            url = current->getURL();
+            url = current->url();
 
             if (!url.isEmpty()) {
                 if (url.contains(settings.value("/atlassian/confluence/url",
@@ -330,7 +330,7 @@ void ExportConfluence::doExport(bool useDialog)
     // Setup dialog and read settings
     dia.setMapName(model->getMapName());
     dia.setFilePath(model->getFilePath());
-    dia.setURL(url);
+    dia.setUrl(url);
     dia.setPageName(pageName);
     BranchItem *bi = (BranchItem*)(model->findBySelectString("mc0"));
     if (bi)

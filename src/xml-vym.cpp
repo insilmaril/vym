@@ -367,7 +367,7 @@ void VymReader::readSetting()
     }
 }
 
-void VymReader::readAttribute()
+void VymReader::readAttribute() // FIXME-2 Checking types no longer needed. Check with firefox export/import
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("attribute"));
 
@@ -378,13 +378,12 @@ void VymReader::readAttribute()
         AttributeItem *ai = new AttributeItem(lastBranch);
         if (type == "Integer")
             ai->setValue(val.toInt());
-        else if (type == "String")
+        else if (type == "QString" || type == "String")
             ai->setValue(val);
-        else if (type == "DateTime")
+        else if (type == "QDateTime" || type == "DateTime")
             ai->setValue(QDateTime::fromString(val, Qt::ISODate));
         else if (type == "Undefined") {
             ai->setValue(val);
-            ai->setAttributeType(AttributeItem::Undefined);
             qWarning() << "Found attribute type 'Undefined'";
         } else {
             xml.raiseError("readAttribute: Found unknown attribute type");
@@ -1213,7 +1212,7 @@ void VymReader::readOrnamentsAttr()
 
     s = attributeToString("url");
     if (!s.isEmpty())
-        lastMI->setURL(s);
+        lastMI->setUrl(s);
     s = attributeToString("vymLink");
     if (!s.isEmpty())
         lastMI->setVymLink(s);

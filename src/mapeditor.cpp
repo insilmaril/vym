@@ -363,10 +363,12 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
 
     foreach (TreeItem *ti, selis) {
         Container *c = nullptr;
-        if (ti->getType() == TreeItem::Image)
-            c = ((ImageItem*)ti)->getImageContainer();
-        else if (ti->hasTypeBranch())
+        if (ti->hasTypeAttribute())
+            ti = ti->parent();
+        if (ti->hasTypeBranch())
             c = ((BranchItem*)ti)->getBranchContainer()->getHeadingContainer();
+        else if (ti->getType() == TreeItem::Image)
+            c = ((ImageItem*)ti)->getImageContainer();
         if (c) {
             if (firstIteration) {
                 bbox = c->mapToScene(c->rect()).boundingRect();
@@ -2393,11 +2395,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         } // Image moved, but not relinked
 
-        if (repositionNeeded) {
-            model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
-            model->emitSelectionChanged();
-        }
-
         // Finally resize scene, if needed
         scene()->update();
         vPan = QPoint();
@@ -2406,11 +2403,17 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         // maybe we moved View: set old cursor
         setCursor(Qt::ArrowCursor);
 
-    if (editorState != EditingHeading)
+    if (editorState != EditingHeading) {
         setState(Neutral); // Continue editing after double click!
+    }
 
     movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
+
+    if (repositionNeeded) {
+        model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
+        model->emitSelectionChanged();
+    }
 }
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
@@ -2548,7 +2551,7 @@ void MapEditor::dropEvent(QDropEvent *event)
                         if (url.endsWith(".vym", Qt::CaseInsensitive))
                             model->setVymLink(url);
                         else {
-                            model->setURL(url);
+                            model->setUrl(url);
 
                             // Shorten long URLs for heading
                             int i = url.indexOf("?");
@@ -2714,7 +2717,7 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
         mainWindow->statusMessage("");
 }
 
-void MapEditor::updateSelection()
+void MapEditor::updateSelection()   // FIXME-2 why? really needed?
 {
     QList<MapItem *> itemsSelected;
 

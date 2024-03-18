@@ -122,39 +122,35 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
         if (jsobj.contains("uri") && jsobj["uri"].isString()) {
             currentBookmarks++;
             progressDialog.setValue(currentBookmarks);
-            selbi->setURL(jsobj["uri"].toString());
+            selbi->setUrl(jsobj["uri"].toString());
         }
-
-        AttributeItem *ai;
 
         foreach (QString key, jsobj.keys())
         {
+            QVariant v;
             if (key != "children") {
-                ai = new AttributeItem();
-                ai->setKey(key);
                 // Integer types: dateAdded, id, index, lastModified, typeCode
                 // Special: postData
                 if (key == "dateAdded" || key == "lastModified") {
                     qlonglong l = jsobj[key].toVariant().toLongLong();
                     QDateTime dt;
                     dt.setMSecsSinceEpoch(l / 1000);
-                    ai->setValue(dt);
-                    ai->setAttributeType(AttributeItem::DateTime);
+                    v = dt;
                 } else if (key == "id" || key == "index" || 
                         key == "lastModified" || key == "typeCode" ) {
-                    ai->setValue(jsobj[key].toInt());
+                    v = jsobj[key].toInt();
                 } else if (key == "postData") 
-                    ai->setValue(QString("null"));
-                else if (jsobj[key].isString()) 
-                    ai->setValue(jsobj[key].toString());
+                    v = QString("null");
+                else if (jsobj[key].isString())     // FIXME-2 type checks no longer needed qith QVarian
+                    v = jsobj[key].toString();
                 else {
                 // Ignore only the "postdata: null" field for now
                     qWarning() << "Firefox import, unknown key type: " << jsobj[key].type();
                     qDebug() << "                Firefox bookmark: " << key << jsobj[key].toString();
-                    ai->setValue(QString("unknown type."));
+                    v =QString("unknown type.");
                 }
 
-                model->setAttribute(selbi, ai); // FIXME-3 deep copy?
+                model->setAttribute(selbi, key, v);
             }
         }
 

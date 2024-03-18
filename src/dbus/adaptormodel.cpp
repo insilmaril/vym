@@ -59,7 +59,7 @@ QDBusVariant AdaptorModel::listCommands()
     QStringList list;
 
     foreach (Command *command, modelCommands)
-        list << command->getName();
+        list << command->name();
 
     return QDBusVariant(list.join(","));
 }

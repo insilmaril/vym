@@ -577,7 +577,7 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
 
     if (useCircle) {
         // Mapcenter, suggest to put image or mainbranch on circle around center
-        qreal a = -M_PI_4 + M_PI_2 * n + (M_PI_4 / 2) * (n / 4 % 4);
+        qreal a = 5 * M_PI_4 + M_PI_2 * n + (M_PI_4 / 2) * (n / 4 % 4);
         return QPointF (radius * cos(a), radius * sin(a));
     }
 

@@ -384,18 +384,29 @@ bool VymModelWrapper::exportMap(QJSValueList args)
     return setResult(true);
 }
 
+BranchWrapper* VymModelWrapper::findBranchByAttribute(
+        const QString &key,
+        const QString &value)
+{
+    BranchItem *bi = model->findBranchByAttribute(key, value);
+    if (bi)
+        return bi->branchWrapper();
+    else
+        return nullptr;
+}
+
 QString VymModelWrapper::getStringAttribute(const QString &key)
 {
     QVariant v;
     AttributeItem *ai = model->getAttributeByKey(key);
     if (ai) {
-        if (ai->getAttributeType() != AttributeItem::String) {
+        if (ai->value().typeName() != "QString") {
             scriptEngine->throwError(
                     QJSValue::GenericError,
                     QString("Attribute with key '%1' has no type 'String'").arg(key));
             return setResult(QString());
         }
-        v = ai->getValue();
+        v = ai->value();
     } else {
         scriptEngine->throwError(
                 QJSValue::GenericError,
@@ -410,13 +421,13 @@ int VymModelWrapper::getIntAttribute(const QString &key)
     QVariant v;
     AttributeItem *ai = model->getAttributeByKey(key);
     if (ai) {
-        if (ai->getAttributeType() != AttributeItem::Integer) {
+        if (ai->value().typeName() != "Integer") {
             scriptEngine->throwError(
                     QJSValue::GenericError,
                     QString("Attribute with key '%1' has no type 'Integer'").arg(key));
             return setResult(-1);
         }
-        v = ai->getValue();
+        v = ai->value();
     } else {
         scriptEngine->throwError(
                 QJSValue::GenericError,
@@ -651,7 +662,7 @@ int VymModelWrapper::getTaskSleepDays()
     return setResult(r);
 }
 
-QString VymModelWrapper::getURL() { return setResult(model->getURL()); }
+QString VymModelWrapper::getUrl() { return setResult(model->getUrl()); }
 
 QString VymModelWrapper::getVymLink() { return setResult(model->getVymLink()); }
 
@@ -874,6 +885,16 @@ bool VymModelWrapper::select(const QString &s)
                 QJSValue::GenericError,
                 QString("Couldn't select %1").arg(s));
     return setResult(r);
+}
+
+BranchWrapper* VymModelWrapper::selectedBranch()
+{
+    BranchItem *selbi = model->getSelectedBranch();
+
+    if (selbi)
+        return selbi->branchWrapper();
+    else
+        return nullptr; // FIXME-0 Better throw error here?
 }
 
 bool VymModelWrapper::selectID(const QString &s)
@@ -1220,7 +1241,7 @@ bool VymModelWrapper::setTaskSleep(const QString &s)
     return setResult(r);
 }
 
-void VymModelWrapper::setURL(const QString &s) { model->setURL(s); }
+void VymModelWrapper::setUrl(const QString &s) { model->setUrl(s); }
 
 void VymModelWrapper::setVymLink(const QString &s) { model->setVymLink(s); }
 

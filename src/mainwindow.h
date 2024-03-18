@@ -178,6 +178,7 @@ class Main : public QMainWindow {
     void editURL();
     void editLocalURL();
     void editHeading2URL();
+    void setJiraQuery();
     void getJiraDataSubtree();
     void setHeadingConfluencePageName();
     void getConfluenceUser();
@@ -214,7 +215,6 @@ class Main : public QMainWindow {
     void editGrowSelectionSize();
     void editShrinkSelectionSize();
     void editResetSelectionSize();
-    void editAddAttribute();
     void editAddMapCenter();
     void editNewBranch();
     void editNewBranchBefore();
@@ -512,7 +512,6 @@ class Main : public QMainWindow {
     QAction *actionHeading;
     QAction *actionDelete;
     QAction *actionDeleteAlt;
-    QAction *actionAddAttribute;
 
   public:
     QAction *actionAddMapCenter;

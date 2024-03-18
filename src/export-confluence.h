@@ -12,7 +12,7 @@ class ExportConfluence : public ExportBase {
     ExportConfluence(VymModel *m);
     virtual void init();
     void setCreateNewPage(bool);
-    void setURL(const QString &u);
+    void setUrl(const QString &u);
     void setPageName(const QString &t);
     virtual QString createTOC();
     virtual void doExport(bool useDialog = true);

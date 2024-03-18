@@ -1940,6 +1940,20 @@ TreeItem *VymModel::findUuid(const QUuid &id)
     return nullptr;
 }
 
+BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &value)
+{
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    nextBranch(cur, prev);
+    while (cur) {
+        AttributeItem *ai = cur->getAttributeByKey(key); 
+        if (ai && ai->value().toString() == value)
+            return cur;
+        nextBranch(cur, prev);
+    }
+    return nullptr;
+}
+
 void VymModel::test()
 {
     foreach (TreeItem *ti, getSelectedItems()) {
@@ -2086,9 +2100,8 @@ void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
         setHeading(vt, bi);
 
         // Set URL
-        if ((s.startsWith("http://") || s.startsWith("https://")) &&
-            bi->getURL().isEmpty())
-            setURL(s);
+    if ((s.startsWith("http://") || s.startsWith("https://")) && !bi->hasUrl())
+            setUrl(s);
     }
 }
 
@@ -2221,7 +2234,7 @@ void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        QString u = cur->getURL();
+        QString u = cur->url();
         if (!u.isEmpty()) {
             multimap.insert(u, cur);
             if (!urls.contains(u))
@@ -2300,38 +2313,58 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     return hit;
 }
 
-void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
+void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
 {
     if (!bi) bi = getSelectedBranch();
-    if (bi->getURL() == url)
+    if (bi->url() == url)
         return;
 
     if (bi) {
-        QString oldurl = bi->getURL();
-        bi->setURL(url);
-        saveState(
-            bi, QString("setURL (\"%1\")").arg(oldurl), bi,
-            QString("setURL (\"%1\")").arg(url),
-            QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
-        emitDataChanged(bi);
-        reposition();
+        QString oldurl = bi->url();
+        bi->setUrl(url);
+        if (!saveStateBlocked) {
+            saveState(
+                bi, QString("setUrl (\"%1\")").arg(oldurl), bi,
+                QString("setUrl (\"%1\")").arg(url),
+                QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
+            emitDataChanged(bi);
+        }
+        if (updateFromCloud) {    // FIXME-3 use oembed.com also for Youtube and other cloud providers
+            // Check for Jira
+            JiraAgent agent;
+            QString query;
+            agent.jobTypeFromText(url, query);
+            if (agent.jobType() == JiraAgent::GetTicketInfo) { 
+                //setAttribute(bi, "Jira.key", query);    // FIXME-0 which attribute for ticket?
+                bi->activateSystemFlagByName("system-jira");
+            } else if (agent.jobType() == JiraAgent::Query) {
+                setAttribute(bi, "Jira.query", query);
+                bi->activateSystemFlagByName("system-jira");
+            } else {
+                bi->deactivateSystemFlagByName("system-jira");
+                // FIXME-2 Remove Jira attributes"?
+            }
 
-        if (updateFromCloud)    // FIXME-3 use oembed.com also for Youtube and other cloud providers
             // Check for Confluence
             setHeadingConfluencePageName();
+        }
+
+        emitDataChanged(bi);
+        if (!repositionBlocked)
+            reposition();
     }
 }
 
-QString VymModel::getURL()
+QString VymModel::getUrl()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        return selti->getURL();
+        return selti->url();
     else
         return QString();
 }
 
-QStringList VymModel::getURLs(bool ignoreScrolled)
+QStringList VymModel::getUrls(bool ignoreScrolled)
 {
     QStringList urls;
     BranchItem *selbi = getSelectedBranch();
@@ -2339,12 +2372,39 @@ QStringList VymModel::getURLs(bool ignoreScrolled)
     BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
-        if (!cur->getURL().isEmpty() &&
+        if (cur->hasUrl() &&
             !(ignoreScrolled && cur->hasScrolledParent()))
-            urls.append(cur->getURL());
+            urls.append(cur->url());
         nextBranch(cur, prev, true, selbi);
     }
     return urls;
+}
+
+void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi) // FIXME-2 savestate missing
+{
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
+
+    foreach (BranchItem *bi, selbis) {
+        QString query_old;
+        AttributeItem *ai = bi->getAttributeByKey("Jira.query");
+        if (ai) {
+            query_old = ai->value().toString();
+            if (query_new.isEmpty()) {
+                bi->deactivateSystemFlagByName("system-jira");
+                deleteItem(ai);
+                ai = nullptr;
+            } else {
+                ai->setValue(query_new);
+            }
+        } else {
+            if (!query_new.isEmpty()) {
+                ai = new AttributeItem("Jira.query", query_new);
+                setAttribute(bi, ai);
+                bi->activateSystemFlagByName("system-jira");
+            }
+        }
+    }
+    reposition();
 }
 
 void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b) // FIXME-2 no savestate
@@ -3593,22 +3653,8 @@ QString VymModel::getXLinkStyleEnd()
     else
         return QString();
 }
-
-AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missing
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        AttributeItem *ai = new AttributeItem();
-        ai->setAttributeType(AttributeItem::String);
-        ai->setKey("Foo Attrib");
-        ai->setValue(QString("Att val"));
-
-        return setAttribute(selbi, ai);
-    }
-    return nullptr;
-}
-
-AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   // FIXME-3 better pass reference, e.g. from xml-vym
+AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   // FIXME-3 better pass reference, e.g. from xml-vym   
+// AttrItem::setAttribute  FIXME-2 savestate missing // FIXME-2 check missing, if ai == ai_new
 {
     if (dst) {
 
@@ -3616,7 +3662,7 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   
         AttributeItem *ai;
         for (int i = 0; i < dst->attributeCount(); i++) {
             ai = dst->getAttributeNum(i);
-            if (ai->getKey() == ai_new->getKey())
+            if (ai->key() == ai_new->key())
             {
                 // Key exists, overwrite value
                 ai->copy(ai_new);
@@ -3645,13 +3691,19 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   
     return nullptr;
 }
 
+AttributeItem *VymModel::setAttribute(BranchItem *bi, const QString &key, const QVariant &value) // FIXME-2 savestate missing. For bulk changes like Jira maybe save whole branch use use block...
+{
+    AttributeItem *ai = new AttributeItem(key, value);
+    return setAttribute(bi, ai);
+}
+
 AttributeItem *VymModel::getAttributeByKey(const QString &key)
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         for (int i = 0; i < bi->attributeCount(); i++) {
             AttributeItem *ai = bi->getAttributeNum(i);
-            if (ai->getKey() == key)
+            if (ai->key() == key)
                 return ai;
         }
     }
@@ -4245,8 +4297,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
     }
 }
 
-void VymModel::deleteChildren()
-
+void VymModel::deleteChildren() // FIXME-000 Deletes attributes, but not all branches
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -4419,7 +4470,7 @@ ItemList VymModel::getLinkedMaps()
 
     while (cur) {
         if (cur->hasActiveSystemFlag("system-target") &&
-            !cur->getVymLink().isEmpty()) {
+            cur->hasVymLink()) {
             s = cur->getHeading().getTextASCII();
             s.replace(QRegularExpression("\n+"), " ");
             s.replace(QRegularExpression("\\s+"), " ");
@@ -4427,7 +4478,7 @@ ItemList VymModel::getLinkedMaps()
 
             QStringList sl;
             sl << s;
-            sl << cur->getVymLink();
+            sl << cur->vymLink();
 
             targets[cur->getID()] = sl;
         }
@@ -4486,22 +4537,22 @@ Flag* VymModel::findFlagByName(const QString &name)
     return nullptr;
 }
 
-void VymModel::setFlagByName(const QString &name, bool useGroups)
+void VymModel::setFlagByName(const QString &name, BranchItem *bi, bool useGroups)
 {
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi && !bi->hasActiveFlag(name)) {
-        toggleFlagByName(name, useGroups);
-    }
+    foreach (BranchItem* bi, selbis)
+    if (!bi->hasActiveFlag(name))
+        toggleFlagByName(name, bi, useGroups);
 }
 
-void VymModel::unsetFlagByName(const QString &name)
+void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi && bi->hasActiveFlag(name)) {
-        toggleFlagByName(name);
-    }
+    foreach (BranchItem* bi, selbis)
+        if (bi->hasActiveFlag(name))
+            toggleFlagByName(name);
 }
 
 void VymModel::toggleFlagByUid(
@@ -4541,13 +4592,11 @@ void VymModel::toggleFlagByUid(
     }
 }
 
-void VymModel::toggleFlagByName(const QString &name, bool useGroups)
+void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGroups)
 {
-    // Toggling by name only used from vymmodelwrapper for scripting  // FIXME-X
-    // maybe rework?
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi) {
+    foreach (BranchItem* bi, selbis) {
         Flag *f = standardFlagsMaster->findFlagByName(name);
         if (!f) {
             f = userFlagsMaster->findFlagByName(name);
@@ -4667,7 +4716,7 @@ void VymModel::note2URLs()
             if (match.hasMatch()) {
                 bi = addNewBranch(selbi);
                 bi->setHeadingPlainText(match.captured(1));
-                bi->setURL(match.captured(1));
+                bi->setUrl(match.captured(1));
                 emitDataChanged(bi);
                 pos = match.capturedEnd();
             } else
@@ -4681,11 +4730,13 @@ void VymModel::editHeading2URL()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        setURL(selti->getHeadingPlain());
+        setUrl(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
+void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existing jira data
+                                         // getJiraData FIXME-3 update error message, check
                                          // if jiraClientAvail is set correctly
+                                         // getJiraData FIXME-0 errors in selectedBranches loop not caught correctly
 {
     if (!JiraAgent::available()) {
         WarningDialog dia;
@@ -4709,32 +4760,44 @@ void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
         while (cur) {
             QString heading = cur->getHeadingPlain();
 
-            QRegularExpression re("(\\w+[-|\\s]\\d+)");
-            QRegularExpressionMatch match = re.match(heading);
-            if (match.hasMatch()) {
-                // Create agent
-                JiraAgent *agent = new JiraAgent;
-                agent->setJobType(JiraAgent::GetTicketInfo);
-                if (!agent->setBranch(cur)) {
-                    qWarning () << "Could not set branch in JiraAgent to " << cur->getHeadingPlain();
-                    delete agent;
-                    return;
+            QString query = cur->attributeValueString("Jira.query");
+
+            bool startAgent = false;
+            JiraAgent *agent = new JiraAgent;
+            if (!agent->setBranch(cur)) {
+                qWarning () << "Could not set branch in JiraAgent to " << cur->getHeadingPlain();
+                startAgent = false;
+            } else {
+                if (!query.isEmpty() && agent->setQuery(query)) {
+                    // Branch has a query defined in attribute, try to use that
+                    agent->setJobType(JiraAgent::Query);
+                    connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
+                    startAgent = true;
+                } else {
+                    QString key = cur->attributeValueString("Jira.key");
+                    if (!key.isEmpty() && agent->setTicket(key)) {
+                        // Branch has issueKey, get info for ticket
+                    } else {
+                        JiraAgent::JobType jobType = agent->jobTypeFromText(cur->getHeadingPlain(), query);
+                        if (jobType == JiraAgent::GetTicketInfo) {
+                            qDebug() << "VM::getJiraData: Setup agent for ticket info from heading";
+                            connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
+                            startAgent = true;
+                        } else if (jobType == JiraAgent::Query) {
+                            connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
+                            startAgent = true;
+                        } else {
+                            mainWindow->statusMessage(tr("Could not setup JiraAgent to retrieve data from Jira"));
+                        }
+                    }
                 }
-                if (!agent->setTicket(heading)) {
-                    mainWindow->statusMessage(tr("Could not find Jira ticket pattern in %1", "VymModel").arg(cur->getHeadingPlain()));
-                    delete agent;
-                    return;
-                }
+            } // Successfully set branch in agent
 
-                //setURL(agent->url(), false, cur);
-
-                connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
-
-                // Start contacting JIRA in background
+            if (startAgent) {
                 agent->startJob();
                 mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
-            }
-
+            } else
+                delete agent;
 
             if (subtree)
                 nextBranch(cur, prev, true, selbi);
@@ -4744,90 +4807,104 @@ void VymModel::getJiraData(bool subtree) // FIXME-3 update error message, check
     }
 }
 
-void VymModel::updateJiraData(QJsonObject jsobj)
+void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
 {
-    QJsonDocument jsdoc = QJsonDocument (jsobj);
-    QString key = jsobj["key"].toString();
-    QJsonObject fields = jsobj["fields"].toObject();
-
-    QJsonObject assigneeObj = fields["assignee"].toObject();
-    QString assignee = assigneeObj["emailAddress"].toString();
-
-    QJsonObject reporterObj = fields["reporter"].toObject();
-    QString reporter  = reporterObj["emailAddress"].toString();
-
-    QJsonObject resolutionObj = fields["resolution"].toObject();
-    QString resolution  = resolutionObj["name"].toString();
-
-    QJsonObject statusObj = fields["status"].toObject();
-    QString status  = statusObj["name"].toString();
-
-    QString summary = fields["summary"].toString();
-
-    QJsonArray componentsArray = fields["components"].toArray();
-    QJsonObject compObj;
-    QString components;
-    for (int i = 0; i < componentsArray.size(); ++i) {
-        compObj = componentsArray[i].toObject();
-        components += compObj["name"].toString();
+    if (!bi) {
+        qWarning() << __FUNCTION__ << " called without BranchItem";
+        return;
     }
 
+    AttributeItem *ai;
+
+    setAttribute(bi, "Jira.assignee", ji.assignee());
+    setAttribute(bi, "Jira.components", ji.components());
+    setAttribute(bi, "Jira.fixVersions", ji.fixVersions());
+    setAttribute(bi, "Jira.issuetype", ji.issueType());
+    setAttribute(bi, "Jira.issueUrl", ji.url());
+    setAttribute(bi, "Jira.key", ji.key());
+    setAttribute(bi, "Jira.parentKey", ji.parentKey());
+    setAttribute(bi, "Jira.status", ji.status());
+    setAttribute(bi, "Jira.reporter", ji.reporter());
+    setAttribute(bi, "Jira.resolution", ji.resolution());
+}
+
+void VymModel::processJiraTicket(QJsonObject jsobj)
+{
     int branchID = jsobj["vymBranchId"].toInt();
 
-    QStringList solvedStates;
-    solvedStates << "Verification Done";
-    solvedStates << "Resolved";
-    solvedStates << "Closed";
-
-    QString keyName = key;
     BranchItem *bi = (BranchItem*)findID(branchID);
     if (bi) {
-        if (solvedStates.contains(status))    {
+        JiraIssue ji;
+        ji.initFromJsonObject(jsobj);
+        initAttributesFromJiraIssue(bi, ji);
+
+        QString keyName = ji.key();
+        if (ji.isFinished())    {
             keyName = "(" + keyName + ")";
             colorSubtree (Qt::blue, bi);
         }
 
-        setHeadingPlainText(keyName + ": " + summary, bi);
-        setURL(jsobj["vymTicketUrl"].toString());
+        setHeadingPlainText(keyName + ": " + ji.summary(), bi);
+        setUrl(ji.url());
 
-        AttributeItem *ai;
-
-        ai = new AttributeItem("JIRA.assignee", assignee);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.reporter", reporter);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.resolution", resolution);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.status", status);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.components", components);
-        setAttribute(bi, ai);
+        // Pretty print JIRA ticket
+        ji.print();
     }
 
-    /* Pretty print JIRA ticket
-    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
-    vout << "       Key: " + key << endl;
-    vout << "      Desc: " + summary << endl;
-    vout << "  Assignee: " + assignee << endl;
-    vout << "Components: " + components << endl;
-    vout << "  Reporter: " + reporter << endl;
-    vout << "Resolution: " + resolution << endl;
-    vout << "    Status: " + status << endl;
-    */
 
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
 }
 
+void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState missing
+{
+    // Debugging only
+    qDebug() << "VM::processJiraJqlQuery result...";
+
+    int branchID = jsobj.value("vymBranchId").toInt();
+    BranchItem *pbi = (BranchItem*)findID(branchID);
+    if (!pbi) {
+        mainWindow->statusMessage("VM::processJiraJqlQUery could not find branch with ID=" + jsobj.value("vymBranchId").toString());
+        return;
+    }
+    QJsonArray issues = jsobj["issues"].toArray();
+
+    saveStateBlocked = true;
+    //repositionBlocked = true; // FIXME-0 check...
+
+    for (int i = 0; i < issues.size(); ++i) {
+        QJsonObject issue = issues[i].toObject();
+        JiraIssue ji(issue);
+
+        BranchItem *bi = createBranch(pbi);
+        if (bi) {
+            QString keyName = ji.key();
+            if (ji.isFinished())    {
+                keyName = "(" + keyName + ")";
+                colorSubtree (Qt::blue, bi);
+            }
+
+            setHeadingPlainText(keyName + ": " + ji.summary(), bi);
+            setUrl(ji.url(), false, bi);
+            initAttributesFromJiraIssue(bi, ji);
+        }
+
+        // Pretty print JIRA ticket
+        // ji.print();
+    }
+
+    AttributeItem *ai = new AttributeItem("Jira.query", jsobj["vymJiraLastQuery"].toString());
+    setAttribute(pbi, ai);
+
+    saveStateBlocked = false;
+    repositionBlocked = false;
+    reposition();
+}
 
 void VymModel::setHeadingConfluencePageName()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        QString url = selbi->getURL();
+        QString url = selbi->url();
         if (!url.isEmpty() &&
                 settings.contains("/atlassian/confluence/url") &&
                 url.contains(settings.value("/atlassian/confluence/url").toString())) {
@@ -4845,7 +4922,7 @@ void VymModel::setVymLink(const QString &s)
     BranchItem *bi = getSelectedBranch();
     if (bi) {
         saveState(
-            bi, "setVymLink (\"" + bi->getVymLink() + "\")", bi,
+            bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
             "setVymLink (\"" + s + "\")",
             QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(s));
         bi->setVymLink(s);
@@ -4858,7 +4935,7 @@ void VymModel::deleteVymLink()
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
-        saveState(bi, "setVymLink (\"" + bi->getVymLink() + "\")", bi,
+        saveState(bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
                   "setVymLink (\"\")",
                   QString("Unset vymlink of %1").arg(getObjectName(bi)));
         bi->setVymLink("");
@@ -4872,7 +4949,7 @@ QString VymModel::getVymLink()
 {
     BranchItem *bi = getSelectedBranch();
     if (bi)
-        return bi->getVymLink();
+        return bi->vymLink();
     else
         return "";
 }
@@ -4885,8 +4962,8 @@ QStringList VymModel::getVymLinks()
     BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
-        if (!cur->getVymLink().isEmpty())
-            links.append(cur->getVymLink());
+        if (cur->hasVymLink())
+            links.append(cur->vymLink());
         nextBranch(cur, prev, true, selbi);
     }
     return links;
@@ -5390,7 +5467,7 @@ void VymModel::exportConfluence(bool createPage, const QString &pageURL,
 {
     ExportConfluence ex(this);
     ex.setCreateNewPage(createPage);
-    ex.setURL(pageURL);
+    ex.setUrl(pageURL);
     ex.setPageName(pageName);
     ex.setLastCommand(
         settings.localValue(filePath, "/export/last/command", "").toString());
@@ -5606,7 +5683,7 @@ void VymModel::reposition()
     repositionXLinks();
 
     mapEditor->minimizeView();
-    qDebug() << "VM::reposition end";
+    //qDebug() << "VM::reposition end"; // FIXME-2
 }
 
 void VymModel::repositionXLinks()

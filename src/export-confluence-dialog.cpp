@@ -161,7 +161,7 @@ void ExportConfluenceDialog::saveSettings()
     }
 }
 
-void ExportConfluenceDialog::setURL(const QString &u) { url = u; }
+void ExportConfluenceDialog::setUrl(const QString &u) { url = u; }
 
 void ExportConfluenceDialog::setPageName(const QString &s) { pageName = s; }
 

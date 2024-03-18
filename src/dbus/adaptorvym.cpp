@@ -44,7 +44,7 @@ QDBusVariant AdaptorVym::listCommands()
     QStringList list;
 
     foreach (Command *command, vymCommands)
-        list << command->getName();
+        list << command->name();
 
     return QDBusVariant(list.join(","));
 }

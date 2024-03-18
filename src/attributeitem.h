@@ -12,41 +12,24 @@
 */
 class AttributeItem : public BranchItem {
   public:
-    enum Type {
-        Undefined,   //!< Undefined type
-        Integer,     //!< Integer
-        DateTime,    //!< DateTime
-        String       //!< String
-    };
-
     AttributeItem(TreeItem *parent = nullptr);
-    AttributeItem(const QString &k, const QString &v, TreeItem *parent = nullptr);
+    AttributeItem(const QString &k, const QVariant &v, TreeItem *parent = nullptr);
     virtual ~AttributeItem();
     void copy(AttributeItem *other);
-    void set(const QString &k, const QString &v);
-    void get(QString &k, QString &v, Type &t);
     void setKey(const QString &k);
-    QString getKey();
-    void setValue(const QString &v);
-    void setValue(const qlonglong &n);
-    void setValue(const QDateTime &dt);
-    QVariant getValue();
-    QDateTime getValueDateTime();
-    QColor getHeadingColor();
+    QString key();
+    void setValue(const QVariant &v);
+    QVariant value();
+    void updateHeading();
     using BranchItem::setType;
-    virtual void setAttributeType(const Type &t);
-    AttributeItem::Type getAttributeType();
-    QString getAttributeTypeString();
     void setInternal(bool b);
     bool isInternal();
     QString getDataXML();
 
   protected:
-    void createHeading();
     bool internal; //!< Internal attributes cannot be edited by user
-    QString key;
-    QVariant value;
-    Type attrType;
+    QString keyInt;
+    QVariant valueInt;
 };
 
 #endif

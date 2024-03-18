@@ -70,6 +70,7 @@ class TreeItem : public XMLObj {
   public:
     virtual void setType(const Type t);
     virtual Type getType();
+    virtual bool hasTypeAttribute() const;
     virtual bool hasTypeBranch() const;
     virtual bool hasTypeImage() const;
     virtual bool hasTypeBranchOrImage() const;
@@ -100,18 +101,20 @@ class TreeItem : public XMLObj {
     virtual QColor getHeadingColor(); //! Returns color of heading
 
   protected:
-    QString url;
+    QString urlInt;
 
   public:
-    void setURL(const QString &url); //! Set URL
-    QString getURL();                //! Get URL
+    void setUrl(const QString &url); //! Set Url
+    QString url();                   //! Get Url
+    bool hasUrl();
 
   protected:
-    QString vymLink;
+    QString vymLinkInt;
 
   public:
-    void setVymLink(const QString &url); //! Set URL
-    QString getVymLink();                //! Get URL
+    void setVymLink(const QString &s);  //! Set vymLink
+    QString vymLink();                  //! Get vymLink
+    bool hasVymLink();
 
   protected:
     bool target;
@@ -157,6 +160,8 @@ class TreeItem : public XMLObj {
     virtual void toggleSystemFlag(const QString &flag, FlagRow *master = nullptr);
     virtual bool hasActiveFlag(const QString &flag);
     virtual bool hasActiveSystemFlag(const QString &flag);
+    virtual void activateSystemFlagByName(const QString &);
+    virtual void deactivateSystemFlagByName(const QString &);
     QList<QUuid> activeFlagUids();
 
     virtual QList<QUuid> activeSystemFlagUids();
@@ -181,20 +186,21 @@ class TreeItem : public XMLObj {
 
     /*! Get next branch after current branch. Return nullptr if there is no
     next branch */
-    virtual BranchItem *getNextBranch(BranchItem *currentBranch);
+    virtual BranchItem* getNextBranch(BranchItem *currentBranch);
 
-    virtual BranchItem *getBranchNum(const int &n);
+    virtual BranchItem* getBranchNum(const int &n);
 
     /*! Convenience list of branches */
     virtual QList <BranchItem*> getBranches();
 
-    virtual ImageItem *getImageNum(const int &n);
+    virtual ImageItem* getImageNum(const int &n);
 
-    virtual AttributeItem *getAttributeNum(const int &n);
-    virtual AttributeItem *getAttributeByKey(const QString &k);
+    virtual AttributeItem* getAttributeNum(const int &n);
+    virtual AttributeItem* getAttributeByKey(const QString &k);
+    virtual QString attributeValueString(const QString &k);
 
-    virtual XLinkItem *getXLinkItemNum(const int &n);
-    virtual XLinkObj *getXLinkObjNum(const int &n);
+    virtual XLinkItem* getXLinkItemNum(const int &n);
+    virtual XLinkObj* getXLinkObjNum(const int &n);
 
   protected:
     bool hideExport; //! Hide this item in export

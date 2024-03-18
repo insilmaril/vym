@@ -1,6 +1,7 @@
 #include "branchitem.h"
 
 #include "attributeitem.h"
+#include "branch-wrapper.h"
 #include "frame-container.h"
 #include "heading-container.h"
 #include "image-container.h"
@@ -41,6 +42,8 @@ BranchItem::BranchItem(TreeItem *parent)
 
     task = nullptr;
 
+    branchWrapperInt = nullptr;
+
     branchContainer = nullptr;
 }
 
@@ -60,6 +63,11 @@ BranchItem::~BranchItem()
 
     if (task)
         taskModel->deleteTask(task);
+
+    if (branchWrapperInt) {
+        delete branchWrapperInt;    // FIXME-0 maybe deleteLater? And throw error, if BI is gone meanwhile...
+        branchWrapperInt = nullptr;
+    }
 }
 
 void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
@@ -72,6 +80,14 @@ BranchItem *BranchItem::parentBranch()
 {
     // For MapCenters this will return rootItem
     return (BranchItem *)parentItem;
+}
+
+BranchWrapper *BranchItem::branchWrapper()
+{
+    if (!branchWrapperInt)
+        branchWrapperInt = new BranchWrapper(this);
+
+    return branchWrapperInt;
 }
 
 void BranchItem::insertBranch(int pos, BranchItem *branch)

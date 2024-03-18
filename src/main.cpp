@@ -105,8 +105,9 @@ bool unzipToolAvailable = false;
 QString zipToolPath;   // Platform dependant zip tool
 QString unzipToolPath; // For windows same as zipToolPath
 
-QList<Command *> modelCommands;
 QList<Command *> vymCommands;
+QList<Command *> modelCommands;
+QList<Command *> branchCommands;
 
 Options options;
 ImageIO imageIO;
@@ -479,23 +480,31 @@ int main(int argc, char *argv[])
         std::cout << debugInfo().toStdString() << std::endl;
 
     if (options.isOn("commands")) {
-        std::cout << "Available commands in map:\n";
-        std::cout << "=========================:\n";
-        foreach (Command *c, modelCommands)
-            std::cout << c->getDescription().toStdString() << std::endl;
-
         std::cout << "Available commands in vym:\n";
         std::cout << "=========================:\n";
         foreach (Command *c, vymCommands)
-            std::cout << c->getDescription().toStdString() << std::endl;
+            std::cout << c->description().toStdString() << std::endl;
+
+        std::cout << "Available commands in map:\n";
+        std::cout << "=========================:\n";
+        foreach (Command *c, modelCommands)
+            std::cout << c->description().toStdString() << std::endl;
+
+        std::cout << "Available commands for branch:\n";
+        std::cout << "=============================:\n";
+        foreach (Command *c, branchCommands)
+            std::cout << c->description().toStdString() << std::endl;
+
         return 0;
     }
 
     if (options.isOn("commandslatex")) {
-        foreach (Command *c, modelCommands)
-            std::cout << c->getDescriptionLaTeX().toStdString() << std::endl;
         foreach (Command *c, vymCommands)
-            std::cout << c->getDescriptionLaTeX().toStdString() << std::endl;
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
+        foreach (Command *c, modelCommands)
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
+        foreach (Command *c, branchCommands)
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
         return 0;
     }
 

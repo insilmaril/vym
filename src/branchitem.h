@@ -12,6 +12,7 @@
 class QString;
 class QGraphicsScene;
 
+class BranchWrapper;
 class HeadingContainer;
 class Link;
 class XLinkItem;
@@ -25,6 +26,8 @@ class BranchItem : public MapItem {
     virtual ~BranchItem();
     virtual void copy(BranchItem *item);
     virtual BranchItem *parentBranch();
+
+    BranchWrapper *branchWrapper();
 
     virtual void insertBranch(int pos, BranchItem *branch);
     virtual void insertImage (int pos, ImageItem *image);
@@ -47,6 +50,7 @@ class BranchItem : public MapItem {
 
   private:
     Task *task;
+    BranchWrapper *branchWrapperInt;
 
   public:
     virtual void scroll();

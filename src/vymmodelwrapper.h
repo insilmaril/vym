@@ -2,10 +2,13 @@
 #define VYMMODELWRAPPER_H
 
 #include "scripting.h"
+
 #include <QColor>
 #include <QObject>
 #include <QJSValue>
 #include <QVariant>
+
+#include "branch-wrapper.h"
 
 class BranchItem;
 class VymModel;
@@ -39,6 +42,7 @@ class VymModelWrapper : public VymScriptContext {
     int depth();
     void detach();
     bool exportMap(QJSValueList args);
+    BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
     QString getStringAttribute(const QString &key);
     int getIntAttribute(const QString &key);
     int getBranchIndex();
@@ -63,7 +67,7 @@ class VymModelWrapper : public VymScriptContext {
     int getTaskPriorityDelta();
     QString getTaskSleep();
     int getTaskSleepDays();
-    QString getURL();
+    QString getUrl();
     QString getVymLink();
     QString getXLinkColor();
     int getXLinkWidth();
@@ -103,6 +107,7 @@ class VymModelWrapper : public VymScriptContext {
     void saveSelection(const QString &filename);
     void scroll();
     bool select(const QString &s);
+    BranchWrapper* selectedBranch();      // FIXME-0 better return BranchWrapper
     bool selectID(const QString &s);
     bool selectFirstBranch();
     bool selectFirstChildBranch();
@@ -148,7 +153,7 @@ class VymModelWrapper : public VymScriptContext {
     void setSelectionPenWidth(const qreal &);
     void setTaskPriorityDelta(const int &n);
     bool setTaskSleep(const QString &s);
-    void setURL(const QString &s);
+    void setUrl(const QString &s);
     void setVymLink(const QString &s);
     void setXLinkColor(const QString &color);
     void setXLinkStyle(const QString &style);

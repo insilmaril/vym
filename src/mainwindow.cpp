@@ -102,8 +102,9 @@ extern bool restoreMode;
 extern QStringList ignoredLockedFiles;
 extern QStringList lastSessionFiles;
 
-extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
+extern QList<Command *> modelCommands;
+extern QList<Command *> branchCommands;
 
 extern bool usingDarkTheme;
 
@@ -551,40 +552,91 @@ QPrinter *Main::setupPrinter()
 // Define commands for models
 void Main::setupAPI()
 {
-    Command *c = new Command("addBranch", Command::Branch);
+    //
+    // Below are the commands for vym itself
+    //
+
+    Command *c = new Command("clearConsole", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("closeMapWithID", Command::Any);
+    c->addParameter(Command::Int, false, "ID of map (unsigned int)");
+    vymCommands.append(c);
+
+    c = new Command("currentColor", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("currentMap", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("currentMapIndex", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("editHeading", Command::Branch);
+    vymCommands.append(c);
+
+    c = new Command("gotoMap", Command::Any);
+    c->addParameter(Command::Int, false, "Index of map");
+    vymCommands.append(c);
+
+    c = new Command("loadMap", Command::Any);
+    c->addParameter(Command::String, false, "Path to map");
+    vymCommands.append(c);
+
+    c = new Command("mapCount", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("print", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("selectQuickColor", Command::Any);
+    c->addParameter(Command::Int, false, "Index of quick color [0..6]");
+    vymCommands.append(c);
+
+    c = new Command("toggleTreeEditor", Command::Any);
+    vymCommands.append(c);
+
+    c = new Command("version", Command::Any);
+    vymCommands.append(c);
+
+    //
+    // Below are the commands for a map
+    //
+
+    c = new Command("addBranch", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("addBranchAt", Command::Branch);
-    c->addPar(Command::Int, true, "Index of new branch");
+    c->addParameter(Command::Int, true, "Index of new branch");
     modelCommands.append(c);
 
     c = new Command("addBranchBefore", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("addMapCenterAtPos", Command::Any);
-    c->addPar(Command::Double, false, "Position x");
-    c->addPar(Command::Double, false, "Position y");
+    c->addParameter(Command::Double, false, "Position x");
+    c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
     c = new Command("addMapInsert", Command::Any);
-    c->addPar(Command::String, false, "Filename of map to load");
-    c->addPar(Command::Int, true, "Index where map is inserted");
-    c->addPar(Command::Int, true, "Content filter");
+    c->addParameter(Command::String, false, "Filename of map to load");
+    c->addParameter(Command::Int, true, "Index where map is inserted");
+    c->addParameter(Command::Int, true, "Content filter");
     modelCommands.append(c);
 
     c = new Command("addMapReplace", Command::Branch);
-    c->addPar(Command::String, false, "Filename of map to load");
+    c->addParameter(Command::String, false, "Filename of map to load");
     modelCommands.append(c);
 
     c = new Command("addSlide", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("addXLink", Command::BranchLike);
-    c->addPar(Command::String, false, "Begin of XLink");
-    c->addPar(Command::String, false, "End of XLink");
-    c->addPar(Command::Int, true, "Width of XLink");
-    c->addPar(Command::Color, true, "Color of XLink");
-    c->addPar(Command::String, true, "Penstyle of XLink");
+    c->addParameter(Command::String, false, "Begin of XLink");
+    c->addParameter(Command::String, false, "End of XLink");
+    c->addParameter(Command::Int, true, "Width of XLink");
+    c->addParameter(Command::Color, true, "Color of XLink");
+    c->addParameter(Command::String, true, "Penstyle of XLink");
     modelCommands.append(c);
 
     c = new Command("branchCount", Command::Any, Command::Int);
@@ -594,18 +646,18 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("centerOnID", Command::Any);
-    c->addPar(Command::String, false, "UUID of object to center on");
+    c->addParameter(Command::String, false, "UUID of object to center on");
     modelCommands.append(c);
 
     c = new Command("clearFlags", Command::BranchLike);
     modelCommands.append(c);
 
     c = new Command("colorBranch", Command::Branch);
-    c->addPar(Command::Color, true, "New color");
+    c->addParameter(Command::Color, true, "New color");
     modelCommands.append(c);
 
     c = new Command("colorSubtree", Command::Branch);
-    c->addPar(Command::Color, true, "New color");
+    c->addParameter(Command::Color, true, "New color");
     modelCommands.append(c);
 
     c = new Command("copy", Command::BranchOrImage);
@@ -615,7 +667,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("cycleTask", Command::BranchOrImage);
-    c->addPar(Command::Bool, true, "True, if cycling in reverse order");
+    c->addParameter(Command::Bool, true, "True, if cycling in reverse order");
     modelCommands.append(c);
 
     c = new Command("depth", Command::BranchOrImage, Command::Int);
@@ -625,9 +677,16 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("exportMap", Command::Any, Command::Bool);
-    c->addPar(Command::String, false,
+    c->addParameter(Command::String, false,
               "Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, "
               "LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
+    modelCommands.append(c);
+
+    c = new Command("findBranchByAttribute", Command::Any, Command::BranchItem);
+    c->setComment("Find branch with given key/value pair. "
+            "Returns first hit or null.");
+    c->addParameter(Command::String, false, "Key of attribute");
+    c->addParameter(Command::String, false, "Value of attribute");
     modelCommands.append(c);
 
     c = new Command("getDestPath", Command::Any, Command::String);
@@ -649,7 +708,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getIntAttribute", Command::Branch, Command::Int);
-    c->addPar(Command::String, false, "Key of string attribute");
+    c->addParameter(Command::String, false, "Key of string attribute");
     modelCommands.append(c);
 
     c = new Command("getMapAuthor", Command::Any, Command::String);
@@ -689,7 +748,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getStringAttribute", Command::Branch, Command::String);
-    c->addPar(Command::String, false, "Key of integer attribute");
+    c->addParameter(Command::String, false, "Key of integer attribute");
     modelCommands.append(c);
 
     c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
@@ -701,7 +760,7 @@ void Main::setupAPI()
     c = new Command("getTaskSleepDays", Command::Branch, Command::Int);
     modelCommands.append(c);
 
-    c = new Command("getURL", Command::TreeItem, Command::String);
+    c = new Command("url", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
     c = new Command("getVymLink", Command::Branch, Command::String);
@@ -723,7 +782,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("hasActiveFlag", Command::TreeItem, Command::Bool);
-    c->addPar(Command::String, false, "Name of flag");
+    c->addParameter(Command::String, false, "Name of flag");
     modelCommands.append(c);
 
     c = new Command("hasNote", Command::Branch, Command::Bool);
@@ -736,23 +795,23 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("importDir", Command::Branch);
-    c->addPar(Command::String, false, "Directory name to import");
+    c->addParameter(Command::String, false, "Directory name to import");
     modelCommands.append(c);
 
     c = new Command("initIterator", Command::Branch, Command::Bool);
-    c->addPar(Command::String, false, "Name of iterator");
-    c->addPar(Command::Bool, true, "Flag to go deep levels first");
+    c->addParameter(Command::String, false, "Name of iterator");
+    c->addParameter(Command::Bool, true, "Flag to go deep levels first");
     modelCommands.append(c);
 
     c = new Command("isScrolled", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("loadImage", Command::Branch);
-    c->addPar(Command::String, false, "Filename of image");
+    c->addParameter(Command::String, false, "Filename of image");
     modelCommands.append(c);
 
     c = new Command("loadNote", Command::Branch);
-    c->addPar(Command::String, false, "Filename of note");
+    c->addParameter(Command::String, false, "Filename of note");
     modelCommands.append(c);
 
     c = new Command("moveDown", Command::Branch);
@@ -768,17 +827,17 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("move", Command::BranchOrImage);
-    c->addPar(Command::Double, false, "Position x");
-    c->addPar(Command::Double, false, "Position y");
+    c->addParameter(Command::Double, false, "Position x");
+    c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
     c = new Command("moveRel", Command::BranchOrImage);
-    c->addPar(Command::Double, false, "Position x");
-    c->addPar(Command::Double, false, "Position y");
+    c->addParameter(Command::Double, false, "Position x");
+    c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
     c = new Command("nextIterator", Command::Branch, Command::Bool);
-    c->addPar(Command::String, false, "Name of iterator");
+    c->addParameter(Command::String, false, "Name of iterator");
     modelCommands.append(c);
 
     c = new Command("nop", Command::Any);
@@ -789,7 +848,7 @@ void Main::setupAPI()
 
     // internally required for undo/redo of changing VymText:
     c = new Command("parseVymText", Command::Branch, Command::Bool);
-    c->addPar(Command::String, false,
+    c->addParameter(Command::String, false,
               "parse XML of VymText, e.g for Heading or VymNote");
     modelCommands.append(c);
 
@@ -802,10 +861,10 @@ void Main::setupAPI()
     c = new Command("relinkTo",
                     Command::TreeItem,
                     Command::Bool); // FIXME different number of parameters for Image or Branch
-    c->addPar(Command::String, false, "Selection string of parent");
-    c->addPar(Command::Int, false, "Index position");
-    c->addPar(Command::Double, true, "Position x");
-    c->addPar(Command::Double, true, "Position y");
+    c->addParameter(Command::String, false, "Selection string of parent");
+    c->addParameter(Command::Int, false, "Index position");
+    c->addParameter(Command::Double, true, "Position x");
+    c->addParameter(Command::Double, true, "Position y");
     modelCommands.append(c);
 
     c = new Command("remove", Command::TreeItem);
@@ -818,30 +877,33 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("removeSlide", Command::Any);
-    c->addPar(Command::Int, false, "Index of slide to remove");
+    c->addParameter(Command::Int, false, "Index of slide to remove");
     modelCommands.append(c);
 
     c = new Command("repeatLastCommand", Command::Any);
     modelCommands.append(c);
 
     c = new Command("saveImage", Command::Image);
-    c->addPar(Command::String, false, "Filename of image to save");
-    c->addPar(Command::String, false, "Format of image to save");
+    c->addParameter(Command::String, false, "Filename of image to save");
+    c->addParameter(Command::String, false, "Format of image to save");
     modelCommands.append(c);
 
     c = new Command("saveNote", Command::Branch);
-    c->addPar(Command::String, false, "Filename of note to save");
+    c->addParameter(Command::String, false, "Filename of note to save");
     modelCommands.append(c);
 
     c = new Command("saveSelection", Command::BranchOrImage);
-    c->addPar(Command::String, false, "Filename to save branch or image");
+    c->addParameter(Command::String, false, "Filename to save branch or image");
     modelCommands.append(c);
 
     c = new Command("scroll", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("select", Command::Any, Command::Bool);
-    c->addPar(Command::String, false, "Selection string");
+    c->addParameter(Command::String, false, "Selection string");
+    modelCommands.append(c);
+
+    c = new Command("selectedBranch", Command::Any, Command::BranchItem);
     modelCommands.append(c);
 
     c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
@@ -851,7 +913,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("selectID", Command::Any, Command::Bool);
-    c->addPar(Command::String, false, "Unique ID");
+    c->addParameter(Command::String, false, "Unique ID");
     modelCommands.append(c);
 
     c = new Command("selectLastBranch", Command::Branch, Command::Bool);
@@ -873,220 +935,220 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("selectXLink", Command::Branch, Command::Bool);
-    c->addPar(Command::Int, false, "Number of xlink");
+    c->addParameter(Command::Int, false, "Number of xlink");
     modelCommands.append(c);
 
     c = new Command("selectXLinkOtherEnd", Command::Branch, Command::Bool);
-    c->addPar(Command::Int, false, "Number of xlink");
+    c->addParameter(Command::Int, false, "Number of xlink");
     modelCommands.append(c);
 
     c = new Command("setAttribute", Command::Branch);
-    c->addPar(Command::String, false, "Key of attribute as string");
-    c->addPar(Command::String, false, "String Value of attribute");
+    c->addParameter(Command::String, false, "Key of attribute as string");
+    c->addParameter(Command::String, false, "String Value of attribute");
     modelCommands.append(c);
 
-    c = new Command("setFlagByName", Command::TreeItem);
-    c->addPar(Command::String, false, "Name of flag");
+    c = new Command("setFlagByName", Command::TreeItem);    // FIXME-3 DEPRECATED Moved to branch
+    c->addParameter(Command::String, false, "Name of flag");
     modelCommands.append(c);
 
     c = new Command("setTaskPriorityDelta", Command::Branch);
-    c->addPar(Command::String, false, "Manually add value to priority of task");
+    c->addParameter(Command::String, false, "Manually add value to priority of task");
     modelCommands.append(c);
 
     c = new Command("setTaskSleep", Command::Branch);
-    c->addPar(Command::String, false, "Days to sleep");
+    c->addParameter(Command::String, false, "Days to sleep");
     modelCommands.append(c);
 
     c = new Command("setFrameIncludeChildren", Command::BranchOrImage);
-    c->addPar(Command::Bool, false,
+    c->addParameter(Command::Bool, false,
               "Include or don't include children in frame");
     modelCommands.append(c);
 
     c = new Command("setFrameType", Command::BranchOrImage);
-    c->addPar(Command::String, false, "Type of frame");
+    c->addParameter(Command::String, false, "Type of frame");
     modelCommands.append(c);
 
     c = new Command("setFramePenColor", Command::BranchOrImage);
-    c->addPar(Command::Color, false, "Color of frame border line");
+    c->addParameter(Command::Color, false, "Color of frame border line");
     modelCommands.append(c);
 
     c = new Command("setFrameBrushColor", Command::BranchOrImage);
-    c->addPar(Command::Color, false, "Color of frame background");
+    c->addParameter(Command::Color, false, "Color of frame background");
     modelCommands.append(c);
 
     c = new Command("setFramePadding", Command::BranchOrImage);
-    c->addPar(Command::Int, false, "Padding around frame");
+    c->addParameter(Command::Int, false, "Padding around frame");
     modelCommands.append(c);
 
     c = new Command("setFramePenWidth", Command::BranchOrImage);
-    c->addPar(Command::Int, false, "Width of frame pen");
+    c->addParameter(Command::Int, false, "Width of frame pen");
     modelCommands.append(c);
 
     c = new Command("setHeadingConfluencePageName", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("setHeadingPlainText", Command::TreeItem);
-    c->addPar(Command::String, false, "New heading");
+    c->addParameter(Command::String, false, "New heading");
     modelCommands.append(c);
 
     c = new Command("setHideExport", Command::BranchOrImage);
-    c->addPar(Command::Bool, false, "Set if item should be visible in export");
+    c->addParameter(Command::Bool, false, "Set if item should be visible in export");
     modelCommands.append(c);
 
     c = new Command("setHideLinksUnselected", Command::BranchOrImage);
-    c->addPar(Command::Bool, false,
+    c->addParameter(Command::Bool, false,
               "Set if links of items should be visible for unselected items");
     modelCommands.append(c);
 
     c = new Command("setMapAnimCurve", Command::Any);
-    c->addPar(Command::Int, false,
+    c->addParameter(Command::Int, false,
               "EasingCurve used in animation in MapEditor");
     modelCommands.append(c);
 
     c = new Command("setMapAuthor", Command::Any);
-    c->addPar(Command::String, false, "");
+    c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
     c = new Command("setMapAnimDuration", Command::Any);
-    c->addPar(Command::Int, false,
+    c->addParameter(Command::Int, false,
               "Duration of animation in MapEditor in milliseconds");
     modelCommands.append(c);
 
     c = new Command("setMapBackgroundColor", Command::Any);
-    c->addPar(Command::Color, false, "Color of map background");
+    c->addParameter(Command::Color, false, "Color of map background");
     modelCommands.append(c);
 
     c = new Command("setMapComment", Command::Any);
-    c->addPar(Command::String, false, "");
+    c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
     c = new Command("setMapTitle", Command::Any);
-    c->addPar(Command::String, false, "");
+    c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
     c = new Command("setDefaultLinkColor", Command::Any);
-    c->addPar(Command::Color, false, "Default color of links");
+    c->addParameter(Command::Color, false, "Default color of links");
     modelCommands.append(c);
 
     c = new Command("setLinkStyle", Command::Any);
-    c->addPar(Command::String, false, "Link style in map");
+    c->addParameter(Command::String, false, "Link style in map");
     modelCommands.append(c);
 
     c = new Command("setMapRotation", Command::Any);
-    c->addPar(Command::Double, false, "Rotation of map");
+    c->addParameter(Command::Double, false, "Rotation of map");
     modelCommands.append(c);
 
     c = new Command("setMapTitle", Command::Any);
-    c->addPar(Command::String, false, "");
+    c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
     c = new Command("setMapZoom", Command::Any);
-    c->addPar(Command::Double, false, "Zoomfactor of map");
+    c->addParameter(Command::Double, false, "Zoomfactor of map");
     modelCommands.append(c);
 
     c = new Command("setNotePlainText", Command::Branch);
-    c->addPar(Command::String, false, "Note of branch");
+    c->addParameter(Command::String, false, "Note of branch");
     modelCommands.append(c);
 
     c = new Command("setPos", Command::BranchOrImage);
-    c->addPar(Command::Double, false, "Position x");
-    c->addPar(Command::Double, false, "Position y");
+    c->addParameter(Command::Double, false, "Position x");
+    c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
     c = new Command("setRotationHeading", Command::Branch);
-    c->addPar(Command::Int, false, "Rotation angle of heading and flags");
+    c->addParameter(Command::Int, false, "Rotation angle of heading and flags");
     modelCommands.append(c);
 
     c = new Command("setRotationSubtree", Command::Branch);
-    c->addPar(Command::Int, false, "Rotation angle of heading and subtree");
+    c->addParameter(Command::Int, false, "Rotation angle of heading and subtree");
     modelCommands.append(c);
 
     c = new Command("setRotationsAutoDesign", Command::Branch);
-    c->addPar(Command::Bool, false, "Rotate automatically");
+    c->addParameter(Command::Bool, false, "Rotate automatically");
     modelCommands.append(c);
 
     c = new Command("setScale", Command::BranchOrImage);
-    c->addPar(Command::Double, false, "Scale selection by factor f");
+    c->addParameter(Command::Double, false, "Scale selection by factor f");
     modelCommands.append(c);
 
     c = new Command("setScaleSubtree", Command::Branch);
-    c->addPar(Command::Double, false, "Scale subtree by factor f");
+    c->addParameter(Command::Double, false, "Scale subtree by factor f");
     modelCommands.append(c);
 
     c = new Command("setScalingAutoDesign", Command::Branch);
-    c->addPar(Command::Bool, false, "Scale automatically");
+    c->addParameter(Command::Bool, false, "Scale automatically");
     modelCommands.append(c);
 
     c = new Command("setSelectionColor", Command::Any);
-    c->addPar(Command::Color, false, "Color of selection box");
+    c->addParameter(Command::Color, false, "Color of selection box");
     modelCommands.append(c);
 
     c = new Command("setSelectionPenColor", Command::Any);
-    c->addPar(Command::Color, false, "Color of selection box border");
+    c->addParameter(Command::Color, false, "Color of selection box border");
     modelCommands.append(c);
 
     c = new Command("setSelectionPenWidth", Command::Any);
-    c->addPar(Command::Int, false, "Selection box border width ");
+    c->addParameter(Command::Int, false, "Selection box border width ");
     modelCommands.append(c);
 
     c = new Command("setSelectionBrushColor", Command::Any);
-    c->addPar(Command::Color, false, "Color of selection box background");
+    c->addParameter(Command::Color, false, "Color of selection box background");
     modelCommands.append(c);
 
     c = new Command("setTaskPriority", Command::Branch);
-    c->addPar(Command::Int, false, "Priority of task");
+    c->addParameter(Command::Int, false, "Priority of task");
     modelCommands.append(c);
 
     c = new Command("setTaskSleep", Command::Branch, Command::Bool);
-    c->addPar(Command::String, false, "Sleep time of task");
+    c->addParameter(Command::String, false, "Sleep time of task");
     modelCommands.append(c);
 
-    c = new Command("setURL", Command::TreeItem);
-    c->addPar(Command::String, false, "URL of TreeItem");
+    c = new Command("setUrl", Command::TreeItem);
+    c->addParameter(Command::String, false, "URL of TreeItem");
     modelCommands.append(c);
 
     c = new Command("setVymLink", Command::Branch);
-    c->addPar(Command::String, false, "Vymlink of branch");
+    c->addParameter(Command::String, false, "Vymlink of branch");
     modelCommands.append(c);
 
     c = new Command("setXLinkColor", Command::XLink);
-    c->addPar(Command::String, false, "Color of xlink");
+    c->addParameter(Command::String, false, "Color of xlink");
     modelCommands.append(c);
 
     c = new Command("setXLinkStyle", Command::XLink);
-    c->addPar(Command::String, false, "Style of xlink");
+    c->addParameter(Command::String, false, "Style of xlink");
     modelCommands.append(c);
 
     c = new Command("setXLinkStyleBegin", Command::XLink);
-    c->addPar(Command::String, false, "Style of xlink begin");
+    c->addParameter(Command::String, false, "Style of xlink begin");
     modelCommands.append(c);
 
     c = new Command("setXLinkStyleEnd", Command::XLink);
-    c->addPar(Command::String, false, "Style of xlink end");
+    c->addParameter(Command::String, false, "Style of xlink end");
     modelCommands.append(c);
 
     c = new Command("setXLinkWidth", Command::XLink);
-    c->addPar(Command::Int, false, "Width of xlink");
+    c->addParameter(Command::Int, false, "Width of xlink");
     modelCommands.append(c);
 
     c = new Command("sleep", Command::Any);
-    c->addPar(Command::Int, false, "Sleep (seconds)");
+    c->addParameter(Command::Int, false, "Sleep (seconds)");
     modelCommands.append(c);
 
     c = new Command("slideCount", Command::Any, Command::Int);
     modelCommands.append(c);
 
     c = new Command("sortChildren", Command::Branch);
-    c->addPar(Command::Bool, true,
+    c->addParameter(Command::Bool, true,
               "Sort children of branch in revers order if set");
     modelCommands.append(c);
 
     c = new Command("toggleFlagByUid", Command::Branch);
-    c->addPar(Command::String, false, "Uid of flag to toggle");
+    c->addParameter(Command::String, false, "Uid of flag to toggle");
     modelCommands.append(c);
 
-    c = new Command("toggleFlagByName", Command::Branch);
-    c->addPar(Command::String, false, "Name of flag to toggle");
+    c = new Command("toggleFlagByName", Command::Branch);    // FIXME-3 DEPRECATED Moved to branch
+    c->addParameter(Command::String, false, "Name of flag to toggle");
     modelCommands.append(c);
 
     c = new Command("toggleFrameIncludeChildren", Command::Branch);
@@ -1113,56 +1175,42 @@ void Main::setupAPI()
     c = new Command("unselectAll", Command::Any);
     modelCommands.append(c);
 
-    c = new Command("unsetFlagByName", Command::Branch);
-    c->addPar(Command::String, false, "Name of flag to unset");
+    c = new Command("unsetFlagByName", Command::Branch);    // FIXME-3 DEPRECATED Moved to branch
+    c->addParameter(Command::String, false, "Name of flag to unset");
     modelCommands.append(c);
 
     c = new Command("xlinkCount", Command::Branch, Command::Int);
     modelCommands.append(c);
 
+
     //
-    // Below are the commands for vym itself:
+    // Below are the commands for a branch
     //
 
-    c = new Command("clearConsole", Command::Any);
-    vymCommands.append(c);
+    c = new Command("headingText", Command::Branch, Command::String);
+    c->setComment("Set heading of branch from plaintext string");
+    branchCommands.append(c);
 
-    c = new Command("closeMapWithID", Command::Any);
-    c->addPar(Command::Int, false, "ID of map (unsigned int)");
-    vymCommands.append(c);
+    c = new Command("relinkTo", Command::Branch);
+    c->setComment("Relink branch to destination branch");
+    c->addParameter(Command::BranchItem, false, "Destination branch");
+    branchCommands.append(c);
 
-    c = new Command("currentMap", Command::Any);
-    vymCommands.append(c);
+    c = new Command("setFlagByName", Command::TreeItem);
+    c->setComment("Set flag of branch by string with name of flag");
+    c->addParameter(Command::String, false, "Name of flag");
+    branchCommands.append(c);
 
-    c = new Command("currentMapIndex", Command::Any);
-    vymCommands.append(c);
+    c = new Command("toggleFlagByName", Command::Branch);
+    c->setComment("Toggle flag of branch by string with name of flag");
+    c->addParameter(Command::String, false, "Name of flag to toggle");
+    branchCommands.append(c);
 
-    c = new Command("editHeading", Command::Branch);
-    vymCommands.append(c);
+    c = new Command("unsetFlagByName", Command::Branch);
+    c->setComment("Unset flag of branch by string with name of flag");
+    c->addParameter(Command::String, false, "Name of flag to unset");
+    branchCommands.append(c);
 
-    c = new Command("loadMap", Command::Any);
-    c->addPar(Command::String, false, "Path to map");
-    vymCommands.append(c);
-
-    c = new Command("mapCount", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("gotoMap", Command::Any);
-    c->addPar(Command::Int, false, "Index of map");
-    vymCommands.append(c);
-
-    c = new Command("selectQuickColor", Command::Any);
-    c->addPar(Command::Int, false, "Index of quick color [0..6]");
-    vymCommands.append(c);
-
-    c = new Command("currentColor", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("toggleTreeEditor", Command::Any);
-    vymCommands.append(c);
-
-    c = new Command("version", Command::Any);
-    vymCommands.append(c);
 }
 
 void Main::cloneActionMapEditor(QAction *a, QKeySequence ks)
@@ -1508,16 +1556,6 @@ void Main::setupEditActions()
     actionListItems.append(a);
     actionDeleteAlt = a;
 
-    // Shortcut to add attribute
-    a = new QAction(tr("Add attribute") + " (test)", this);
-    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
-        a->setShortcutContext(Qt::WindowShortcut);
-        switchboard.addSwitch("mapAddAttribute", shortcutScope, a, tag);
-        connect(a, SIGNAL(triggered()), this, SLOT(editAddAttribute()));
-        editMenu->addAction(a);
-    }
-    actionAddAttribute = a;
-
     // Shortcut to add mapcenter
     a = new QAction(QPixmap(":/newmapcenter.png"),
                     tr("Add mapcenter", "Canvas context menu"), this);
@@ -1830,9 +1868,11 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionHeading2URL = a;
 
-    tag = "JIRA";
-    a = new QAction(tr("Get data from JIRA for subtree", "Edit menu"),
-                    this);
+    tag = "Jira";
+    a = new QAction(
+            QPixmap(":/flag-jira.svg"), 
+            tr("Get data from Jira for subtree", "Edit menu"),
+            this);
     a->setShortcut(Qt::Key_J | Qt::SHIFT);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, a, tag);
@@ -1840,6 +1880,18 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
     actionGetJiraDataSubtree = a;
 
+    a = new QAction(
+            QPixmap(":/flag-jira.svg"),
+            tr("Set Jira query", "Edit menu"),
+            this);
+    a->setShortcut(Qt::Key_J | Qt::CTRL);
+    a->setShortcutContext(Qt::WindowShortcut);
+    switchboard.addSwitch("mapSetJiraQuery", shortcutScope, a, tag);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(setJiraQuery()));
+    actionGetJiraDataSubtree = a;
+
+    tag = "Confluence";
     a = new QAction(tr("Get page name from Confluence", "Edit menu"),
                     this);
     //    a->setShortcut ( Qt::Key_J | Qt::CTRL);
@@ -2721,6 +2773,9 @@ void Main::setupFlagActions()
     setupFlag(":/flag-url.svg", Flag::SystemFlag, "system-url",
               tr("URL", "SystemFlag"));
 
+    setupFlag(":/flag-jira.svg", Flag::SystemFlag, "system-jira",
+              tr("Jira", "SystemFlag"));
+
     setupFlag(":/flag-target.svg", Flag::SystemFlag, "system-target",
               tr("Map target", "SystemFlag"));
 
@@ -3302,8 +3357,6 @@ void Main::setupContextMenus()
 
     branchContextMenu->addSeparator();
     branchContextMenu->addAction(actionLoadImage);
-    if (settings.value("/mainwindow/showTestMenu", false).toBool())
-        branchContextMenu->addAction(actionAddAttribute);
 
     branchContextMenu->addSeparator();
 
@@ -4762,7 +4815,7 @@ void Main::editOpenURL()
     // Open new browser
     VymModel *m = currentModel();
     if (m) {
-        QString url = m->getURL();
+        QString url = m->getUrl();
         if (url == "")
             return;
         openURL(url);
@@ -4773,7 +4826,7 @@ void Main::editOpenURLTab()
     VymModel *m = currentModel();
     if (m) {
         QStringList urls;
-        urls.append(m->getURL());
+        urls.append(m->getUrl());
         openTabs(urls);
     }
 }
@@ -4783,7 +4836,7 @@ void Main::editOpenMultipleVisURLTabs(bool ignoreScrolled)
     VymModel *m = currentModel();
     if (m) {
         QStringList urls;
-        urls = m->getURLs(ignoreScrolled);
+        urls = m->getUrls(ignoreScrolled);
         openTabs(urls);
     }
 }
@@ -4802,17 +4855,17 @@ void Main::editURL()
     VymModel *m = currentModel();
     if (m) {
         QInputDialog *dia = new QInputDialog(this);
-        dia->setLabelText(tr("Enter URL:"));
+        dia->setLabelText(tr("Enter Url:"));
         dia->setWindowTitle(vymName);
         dia->setInputMode(QInputDialog::TextInput);
         TreeItem *selti = m->getSelectedItem();
         if (selti)
-            dia->setTextValue(selti->getURL());
+            dia->setTextValue(selti->url());
         dia->resize(width() * 0.6, 80);
         centerDialog(dia);
 
         if (dia->exec())
-            m->setURL(dia->textValue());
+            m->setUrl(dia->textValue());
         delete dia;
     }
 }
@@ -4840,7 +4893,7 @@ void Main::editLocalURL()
                 lastMapDir.setPath(fn.left(fn.lastIndexOf("/")));
                 if (!fn.startsWith("file://"))
                     fn = "file://" + fn;
-                m->setURL(fn);
+                m->setUrl(fn);
             }
         }
     }
@@ -4851,6 +4904,28 @@ void Main::editHeading2URL()
     VymModel *m = currentModel();
     if (m)
         m->editHeading2URL();
+}
+
+void Main::setJiraQuery()
+{
+    VymModel *m = currentModel();
+    if (m) {
+        QInputDialog dia;
+        dia.setLabelText(tr("Enter Jira query:"));
+        dia.setWindowTitle(vymName);
+        dia.setInputMode(QInputDialog::TextInput);
+        BranchItem *selbi = m->getSelectedBranch();
+        if (selbi)  {
+            AttributeItem *ai = selbi->getAttributeByKey("Jira.query");
+            if (ai)
+                dia.setTextValue(ai->value().toString());
+            dia.resize(width() * 0.6, 80);
+            centerDialog(&dia);
+
+            if (dia.exec())
+                m->setJiraQuery(dia.textValue());
+        }
+    }
 }
 
 void Main::getJiraDataSubtree()
@@ -4902,10 +4977,10 @@ void Main::getConfluenceUser()
 
                 ai = new AttributeItem();
                 ai->setKey("ConfluenceUser.url");
-                ai->setValue(user.getURL());
+                ai->setValue(user.getUrl());
                 m->setAttribute(selbi, ai);
 
-                m->setURL(user.getURL(), false);
+                m->setUrl(user.getUrl(), false);
                 m->setHeading(user.getDisplayName());
 
                 m->selectParent();
@@ -5007,8 +5082,8 @@ void Main::editVymLink()
             fd.setLabelText( QFileDialog::Accept, tr("Set as link to vym map"));
             fd.setDirectory(lastMapDir);
             fd.setAcceptMode(QFileDialog::AcceptOpen);
-            if (!bi->getVymLink().isEmpty())
-                fd.selectFile(bi->getVymLink());
+            if (!bi->vymLink().isEmpty())
+                fd.selectFile(bi->vymLink());
             fd.show();
 
             QString fn;
@@ -5300,15 +5375,6 @@ void Main::editResetSelectionSize()
     VymModel *m = currentModel();
     if (m)
         m->resetSelectionSize();
-}
-
-void Main::editAddAttribute()
-{
-    VymModel *m = currentModel();
-    if (m) {
-
-        m->setAttribute();
-    }
 }
 
 void Main::editAddMapCenter()
@@ -6408,10 +6474,10 @@ void Main::changeSelection(VymModel *model, const QItemSelection &,
 
             // Show URL and link in statusbar
             QString status;
-            QString s = selbi->getURL();
+            QString s = selbi->url();
             if (!s.isEmpty())
                 status += "URL: " + s + "  ";
-            s = selbi->getVymLink();
+            s = selbi->vymLink();
             if (!s.isEmpty())
                 status += "Link: " + s;
             if (!status.isEmpty())
@@ -6696,7 +6762,7 @@ void Main::updateActions()
                     actionToggleScroll->setChecked(false);
 
                 QString url;
-                if (selti) url = selti->getURL();
+                if (selti) url = selti->url();
                 if (url.isEmpty()) {
                     actionOpenURL->setEnabled(false);
                     actionOpenURLTab->setEnabled(false);
@@ -6711,7 +6777,7 @@ void Main::updateActions()
                         actionGetConfluencePageName->setEnabled(false);
                 }
 
-                if (selti && selti->getVymLink().isEmpty()) {
+                if (selti && selti->vymLink().isEmpty()) {
                     actionOpenVymLink->setEnabled(false);
                     actionOpenVymLinkBackground->setEnabled(false);
                     actionDeleteVymLink->setEnabled(false);
@@ -7121,19 +7187,28 @@ void Main::helpScriptingCommands()
     ShowTextDialog dia;
     dia.useFixedFont(true);
     QString s;
-    s = "Available commands in map:\n";
-    s += "=========================:\n";
-    foreach (Command *c, modelCommands) {
-        s += c->getDescription();
-        s += "\n";
-    }
-
     s += "Available commands in vym:\n";
     s += "=========================:\n";
     foreach (Command *c, vymCommands) {
-        s += c->getDescription();
+        s += c->description();
         s += "\n";
     }
+
+    s = "Available commands in map:\n";
+    s += "=========================:\n";
+    foreach (Command *c, modelCommands) {
+        s += c->description();
+        s += "\n";
+    }
+
+    s = "Available commands of a branch:\n";
+    s += "=============================:\n";
+    foreach (Command *c, branchCommands) {
+        s += c->description();
+        s += "\n";
+    }
+
+
 
     dia.setText(s);
     dia.exec();

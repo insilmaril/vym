@@ -270,6 +270,14 @@ TreeItem::Type TreeItem::getType()
     return type;
 }
 
+bool TreeItem::hasTypeAttribute() const
+{
+    if (type == Attribute)
+        return true;
+    else
+        return false;
+}
+
 bool TreeItem::hasTypeBranch() const
 {
     if (type == Branch || type == MapCenter)
@@ -387,16 +395,18 @@ void TreeItem::setHeadingColor(QColor color) { heading.setColor(color); }
 
 QColor TreeItem::getHeadingColor() { return heading.getColor(); }
 
-void TreeItem::setURL(const QString &u)
+void TreeItem::setUrl(const QString &u)
 {
-    url = u;
-    if (!url.isEmpty())
+    urlInt = u;
+    if (!urlInt.isEmpty())
         systemFlags.activate(QString("system-url"));
     else
         systemFlags.deactivate(QString("system-url"));
 }
 
-QString TreeItem::getURL() { return url; }
+QString TreeItem::url() { return urlInt; }
+
+bool TreeItem::hasUrl() { return !urlInt.isEmpty();}
 
 void TreeItem::setVymLink(const QString &vl)
 {
@@ -407,24 +417,26 @@ void TreeItem::setVymLink(const QString &vl)
 
         QDir d(vl);
         if (d.isAbsolute())
-            vymLink = vl;
+            vymLinkInt = vl;
         else {
             // If we have relative, use path of
             // current map to build absolute path
             // based on path of current map and relative
             // path to linked map
             QString p = dirname(model->getDestPath());
-            vymLink = convertToAbs(p, vl);
+            vymLinkInt = convertToAbs(p, vl);
         }
         systemFlags.activate(QString("system-vymLink"));
     }
     else {
-        vymLink.clear();
+        vymLinkInt.clear();
         systemFlags.deactivate(QString("system-vymLink"));
     }
 }
 
-QString TreeItem::getVymLink() { return vymLink; }
+QString TreeItem::vymLink() { return vymLinkInt; }
+
+bool TreeItem::hasVymLink() { return !vymLinkInt.isEmpty();}
 
 void TreeItem::toggleTarget()
 {
@@ -537,6 +549,16 @@ bool TreeItem::hasActiveSystemFlag(const QString &name)
     return systemFlags.isActive(name);
 }
 
+void TreeItem::activateSystemFlagByName(const QString &name)
+{
+    systemFlags.activate(name);
+}
+
+void TreeItem::deactivateSystemFlagByName(const QString &name)
+{
+    systemFlags.activate(name);
+}
+
 QList<QUuid> TreeItem::activeFlagUids()
 {
     return standardFlags.activeFlagUids() + userFlags.activeFlagUids();
@@ -642,7 +664,7 @@ QList <BranchItem*> TreeItem::getBranches()
     return branches;
 }
 
-ImageItem *TreeItem::getImageNum(const int &n)
+ImageItem* TreeItem::getImageNum(const int &n)
 {
     if (n >= 0 && n < imageCounter)
         return (ImageItem *)getChildNum(imageOffset + n);
@@ -650,7 +672,7 @@ ImageItem *TreeItem::getImageNum(const int &n)
         return nullptr;
 }
 
-AttributeItem *TreeItem::getAttributeNum(const int &n)
+AttributeItem* TreeItem::getAttributeNum(const int &n)
 {
     if (n >= 0 && n < attributeCounter)
         return (AttributeItem *)getChildNum(attributeOffset + n);
@@ -658,17 +680,27 @@ AttributeItem *TreeItem::getAttributeNum(const int &n)
         return nullptr;
 }
 
-AttributeItem *TreeItem::getAttributeByKey(const QString &k)
+AttributeItem* TreeItem::getAttributeByKey(const QString &k)
 {
     AttributeItem *ai;
     for (int i = 0; i < attributeCount(); i++) {
         ai = getAttributeNum(i);
-        if (ai->getKey() == k) return ai;
+        if (ai->key() == k) return ai;
     }
     return nullptr;
 }
 
-XLinkItem *TreeItem::getXLinkItemNum(const int &n)
+QString TreeItem::attributeValueString(const QString &k)
+{
+    AttributeItem *ai;
+    for (int i = 0; i < attributeCount(); i++) {
+        ai = getAttributeNum(i);
+        if (ai->key() == k) return ai->value().toString();
+    }
+    return QString();
+}
+
+XLinkItem* TreeItem::getXLinkItemNum(const int &n)
 {
     if (n >= 0 && n < xlinkCounter)
         return (XLinkItem *)getChildNum(xlinkOffset + n);
@@ -743,10 +775,10 @@ QString TreeItem::getGeneralAttr()
     QString s;
     if (hideExport)
         s += attribute("hideInExport", "true");
-    if (!url.isEmpty())
-        s += attribute("url", url);
-    if (!vymLink.isEmpty())
-        s += attribute("vymLink", convertToRel(model->getDestPath(), vymLink));
+    if (!urlInt.isEmpty())
+        s += attribute("url", urlInt);
+    if (hasVymLink())
+        s += attribute("vymLink", convertToRel(model->getDestPath(), vymLinkInt));
 
     if (target)
         s += attribute("localTarget", "true");

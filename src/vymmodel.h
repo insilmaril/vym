@@ -13,6 +13,7 @@
 #include "branchitem.h"
 #include "file.h"
 #include "imageitem.h"
+#include "jira-issue.h"
 #include "linkobj.h"
 #include "mapeditor.h"
 #include "treeitem.h"
@@ -312,6 +313,7 @@ class VymModel : public TreeModel {
     TreeItem *findBySelectString(QString s);
     TreeItem *findID(const uint &i);    // find MapObj by unique ID
     TreeItem *findUuid(const QUuid &i); // find MapObj by unique ID
+    BranchItem* findBranchByAttribute(const QString &key, const QString &value);
 
     void test();
 
@@ -368,9 +370,10 @@ class VymModel : public TreeModel {
     QString findString;
 
   public:
-    void setURL(QString url, bool updateFromCloud = true, BranchItem *bi = nullptr);
-    QString getURL(); // returns URL of selection or ""
-    QStringList getURLs(bool ignoreScrolled = true); // returns URLs of subtree
+    void setUrl(QString url, bool updateFromCloud = true, BranchItem *bi = nullptr);
+    QString getUrl(); // returns URL of selection or ""
+    QStringList getUrls(bool ignoreScrolled = true); // returns URLs of subtree
+    void setJiraQuery(const QString &, BranchItem *bi = nullptr);
 
     void setFrameAutoDesign(const bool &useInnerFrame, const bool &);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
@@ -462,8 +465,8 @@ class VymModel : public TreeModel {
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
-    AttributeItem* setAttribute();
     AttributeItem* setAttribute(BranchItem *dst, AttributeItem *);
+    AttributeItem* setAttribute(BranchItem *dst, const QString &k, const QVariant &v);
     AttributeItem* getAttributeByKey(const QString &key);
 
     //! \brief Add new mapcenter
@@ -547,9 +550,9 @@ class VymModel : public TreeModel {
   private:
     Flag* findFlagByName(const QString &name);
   public:
-    void setFlagByName(const QString &name, bool useGroups = true);
-    void unsetFlagByName(const QString &name);
-    void toggleFlagByName(const QString &name, bool useGroups = true);
+    void setFlagByName(const QString &name, BranchItem *bi = nullptr, bool useGroups = true);
+    void unsetFlagByName(const QString &name, BranchItem *bi = nullptr);
+    void toggleFlagByName(const QString &name, BranchItem *bi = nullptr, bool useGroups = true);
     void toggleFlagByUid(const QUuid &uid, bool useGroups = true);
     void clearFlags();
 
@@ -561,8 +564,12 @@ class VymModel : public TreeModel {
     void editHeading2URL();              // copy heading to URL
     void getJiraData(bool subtree = true);      // get data from Jira
 
+  private:
+    void initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &);
+
   public slots:
-    void updateJiraData(QJsonObject);
+    void processJiraTicket(QJsonObject);
+    void processJiraJqlQuery(QJsonObject);
 
   public:
     void setHeadingConfluencePageName(); // get page details from Confluence

@@ -16,8 +16,9 @@
 #include "vymmodel.h"
 
 extern QString vymName;
-extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
+extern QList<Command *> modelCommands;
+extern QList<Command *> branchCommands;
 extern QDir lastMapDir;
 extern Macros macros;
 extern Main *mainWindow;
@@ -78,10 +79,12 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     highlighterSlide = new Highlighter(slideEditor->document());
     highlighterFile = new Highlighter(codeEditor->document());
     QStringList list;
-    foreach (Command *c, modelCommands)
-        list.append(c->getName());
     foreach (Command *c, vymCommands)
-        list.append(c->getName());
+        list.append(QString("\\b%1\\b").arg(c->name()));
+    foreach (Command *c, modelCommands)
+        list.append(QString("\\b%1\\b").arg(c->name()));
+    foreach (Command *c, branchCommands)
+        list.append(QString("\\b%1\\b").arg(c->name()));
     highlighterMacro->addKeywords(list);
     highlighterSlide->addKeywords(list);
     highlighterFile->addKeywords(list);
