@@ -363,10 +363,12 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
 
     foreach (TreeItem *ti, selis) {
         Container *c = nullptr;
-        if (ti->getType() == TreeItem::Image)
-            c = ((ImageItem*)ti)->getImageContainer();
-        else if (ti->hasTypeBranch())
+        if (ti->hasTypeAttribute())
+            ti = ti->parent();
+        if (ti->hasTypeBranch())
             c = ((BranchItem*)ti)->getBranchContainer()->getHeadingContainer();
+        else if (ti->getType() == TreeItem::Image)
+            c = ((ImageItem*)ti)->getImageContainer();
         if (c) {
             if (firstIteration) {
                 bbox = c->mapToScene(c->rect()).boundingRect();
@@ -2715,7 +2717,7 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
         mainWindow->statusMessage("");
 }
 
-void MapEditor::updateSelection()
+void MapEditor::updateSelection()   // FIXME-2 why? really needed?
 {
     QList<MapItem *> itemsSelected;
 
