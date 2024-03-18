@@ -9,11 +9,11 @@
 #include "debuginfo.h"
 #include "findresultwidget.h"
 #include "findwidget.h"
-#include "flagrow.h"
+// FIXME-2 not needed #include "flagrow.h"
 #include "headingeditor.h"
 #include "macros.h"
 #include "mainwindow.h"
-#include "mapdesign.h"
+// FIXME-2 not needed #include "mapdesign.h"
 #include "noteeditor.h"
 #include "options.h"
 #include "scripteditor.h"
@@ -350,6 +350,8 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_WINDOWS)
     if (usingDarkTheme) {
         qApp->setStyle(QStyleFactory::create("fusion"));
+        //qApp->setStyle(QStyleFactory::create("Windows"));
+        //qApp->setStyle(QStyleFactory::create("windowsvista"));
 
         // On Windows, there is no dark palette predefined, let's do that on our own
         QPalette palette;
@@ -359,12 +361,17 @@ int main(int argc, char *argv[])
         palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
         palette.setColor(QPalette::ToolTipBase, Qt::white);
         palette.setColor(QPalette::ToolTipText, Qt::white);
+        // Unused: QPalette::PlaceHolderText
         palette.setColor(QPalette::Text, Qt::white);
         palette.setColor(QPalette::Button, QColor(53,53,53));
         palette.setColor(QPalette::ButtonText, Qt::white);
         palette.setColor(QPalette::BrightText, Qt::red);
         palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
         palette.setColor(QPalette::HighlightedText, Qt::black);
+
+        // FIXME-2 palette experiments on Windows
+        //palette.setColor(QPalette::Light, Qt::green);
+        //palette.setColor(QPalette::Midlight, Qt::red);
         qApp->setPalette(palette);
     }
 #endif
@@ -529,7 +536,6 @@ int main(int argc, char *argv[])
 
     // Run script
     if (options.isOn("run")) {
-        QString script;
         QString fn = options.getArg("run");
         if (!scriptEditor->loadScript(fn)) {
             QString error(QObject::tr("Error"));
