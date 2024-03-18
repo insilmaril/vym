@@ -73,8 +73,10 @@ bool JiraAgent::available()
     return true;
 }
 
-JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text, QString &query) // FIXME-0000 cont here. not yet used.
+JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text, QString &query)
 {
+    jobTypeInt = Undefined;
+
     bool searchBaseUrl = text.startsWith("https");
 
     QString ticketKey;
@@ -82,13 +84,14 @@ JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text, QString &quer
         // Find ticket key in text
         QRegularExpression re("(\\w+[-|\\s]\\d+)");
         QRegularExpressionMatch match = re.match(text);
-        if (!match.hasMatch()) {
+        if (match.hasMatch()) {
+            ticketKey = match.captured(1);
+            ticketKey.replace(" ", "-");
+        } else {
             qWarning() << "JiraAgent::jobTypeFromText failed for text=" << text;
             return JiraAgent::Undefined;
         }
 
-        ticketKey = match.captured(1);
-        ticketKey.replace(" ", "-");
     }
 
     settings.beginGroup("/atlassian/jira");
@@ -102,7 +105,8 @@ JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text, QString &quer
             if (searchBaseUrl)
                 ok = text.contains(settings.value("baseUrl","-").toString());
             else
-                ok =ticketKey.contains(pattern);
+                ok = ticketKey.contains(pattern);
+            qDebug() << "JA:  pattern=" << pattern << " searchBaseUrl = " << searchBaseUrl << "  ok=" << ok;
 
             if (ok) {
                 baseUrlInt = settings.value("baseUrl","-").toString();
@@ -121,16 +125,16 @@ JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text, QString &quer
                         settings.value("password", "").toString();
                 }
 
-                if (searchBaseUrl)
-                    jobTypeInt = GetTicketInfo;
-                else
-                    jobTypeInt = Query;
+                jobTypeInt = GetTicketInfo;
+                keyInt = ticketKey;
+                i = size;
                 break;
             }
         }
     }
     settings.endArray();
     settings.endGroup();
+
     return jobTypeInt;
 }
 
@@ -157,7 +161,7 @@ bool JiraAgent::setBranch(BranchItem *bi)
 }
 
 
-bool JiraAgent::setTicket(const QString &id)
+bool JiraAgent::setTicket(const QString &id)    // FIXME-0 should be mostly obsolete by jobTypeFrom Text
 {
     // Find ID part in parameter:
     QRegularExpression re("(\\w+[-|\\s]\\d+)");
@@ -168,9 +172,9 @@ bool JiraAgent::setTicket(const QString &id)
         return false;
     }
 
-    ticketID = match.captured(1);
+    keyInt = match.captured(1);
 
-    ticketID.replace(" ", "-");
+    keyInt.replace(" ", "-");
 
     bool foundPattern = false;
 
@@ -181,7 +185,7 @@ bool JiraAgent::setTicket(const QString &id)
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
         foreach (QString p, settings.value("pattern").toString().split(",")) {
-            if (ticketID.contains(p)) {
+            if (keyInt.contains(p)) {
                 foundPattern = true;
 
                 baseUrlInt = settings.value("baseUrl","-").toString();
@@ -256,33 +260,6 @@ bool JiraAgent::setQuery(const QString &s)  // FIXME-0 return value not used?
     }
     settings.endGroup();
 
-    /*
-    settings.beginGroup("/atlassian/jira");
-
-    // Try to find baseUrl of server by looking through patterns in ticket IDs:
-    int size = settings.beginReadArray("servers");
-    for (int i = 0; i < size; ++i) {
-        settings.setArrayIndex(i);
-        if (s.startsWith(settings.value("baseUrl").toString())) {
-            baseUrlInt = settings.value("baseUrl","-").toString();
-            if (authUsingPATInt)
-                personalAccessTokenInt =
-                    settings.value("PAT", "undefined").toString();
-            else {
-                userNameInt =
-                    settings.value("username", "user_johnDoe").toString();
-                passwordInt = 
-                    settings.value("password", "").toString();
-            }
-            foundServer = true;
-            break;
-        }
-    }
-
-    settings.endArray();
-    settings.endGroup();
-    */
-
     return foundServer;
 }
 
@@ -296,7 +273,7 @@ QString JiraAgent::serverName()
 
 QString JiraAgent::url()
 {
-    return baseUrlInt + "/browse/" + ticketID;
+    return baseUrlInt + "/browse/" + keyInt;
 }
 
 void JiraAgent::startJob()
@@ -319,7 +296,7 @@ void JiraAgent::continueJob()
 
     jobStep++;
 
-    qDebug() << "JA::contJob " << jobTypeInt << " Step: " << jobStep << "TicketID: " << ticketID;
+    //qDebug() << "JA::contJob " << jobTypeInt << " Step: " << jobStep << "keyInt: " << keyInt;
 
     switch(jobTypeInt) {
         case GetTicketInfo:
@@ -388,7 +365,7 @@ void JiraAgent::unknownStepWarning()
 
 void JiraAgent::startGetTicketRequest()
 {
-    QUrl u = QUrl(baseUrlInt + apiUrl + "/issue/" + ticketID);
+    QUrl u = QUrl(baseUrlInt + apiUrl + "/issue/" + keyInt);
 
     QNetworkRequest request = QNetworkRequest(u);
 
@@ -442,7 +419,7 @@ void JiraAgent::ticketReceived(QNetworkReply *reply)
     jsdoc = QJsonDocument::fromJson(r.toUtf8());
     jsobj = jsdoc.object();
 
-    //vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
+    // vout << jsdoc.toJson(QJsonDocument::Indented) << Qt::endl;
 
     continueJob();
 }

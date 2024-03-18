@@ -75,7 +75,7 @@ class JiraAgent : public QObject {
     QString serverNameInt;
     QString apiUrl;
     QString ticketUrl;
-    QString ticketID;
+    QString keyInt;
     QString queryInt;
 
     // Backreferences to take action in calling model

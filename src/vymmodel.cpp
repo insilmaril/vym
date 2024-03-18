@@ -2330,11 +2330,12 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
             emitDataChanged(bi);
         }
         if (updateFromCloud) {    // FIXME-3 use oembed.com also for Youtube and other cloud providers
-            // Check for Jira   // FIXME-000
+            // Check for Jira
             JiraAgent agent;
             QString query;
+            agent.jobTypeFromText(url, query);
             if (agent.jobType() == JiraAgent::GetTicketInfo) { 
-                //setAttribute(bi, "Jira.issueKey", query);    // FIXME-0 which attribute for ticket?
+                //setAttribute(bi, "Jira.key", query);    // FIXME-0 which attribute for ticket?
                 bi->activateSystemFlagByName("system-jira");
             } else if (agent.jobType() == JiraAgent::Query) {
                 setAttribute(bi, "Jira.query", query);
@@ -4751,7 +4752,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
 
     BranchItem *selbi = getSelectedBranch();
 
-    if (selbi) {    // FIXME-0 Prefered order: query -> URL -> Heading
+    if (selbi) {
         QString url;
         BranchItem *prev = nullptr;
         BranchItem *cur = nullptr;
@@ -4767,22 +4768,27 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
                 qWarning () << "Could not set branch in JiraAgent to " << cur->getHeadingPlain();
                 startAgent = false;
             } else {
-                qDebug() << "VYM::getJD  query=" << query;
                 if (!query.isEmpty() && agent->setQuery(query)) {
-                    // Setup query
-                    qDebug() << "VM::getJiraData: Creating query for" << query;
+                    // Branch has a query defined in attribute, try to use that
                     agent->setJobType(JiraAgent::Query);
                     connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
                     startAgent = true;
                 } else {
-                    // Setup agent based on text
-                    qDebug() << "VM::getJiraData: Setup agent..." << query;
-                    if (agent->setTicket(cur->url())) {  // FIXME-0 change to attribute...
-                        agent->setJobType(JiraAgent::Query);
-                        connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
-                        startAgent = true;
+                    QString key = cur->attributeValueString("Jira.key");
+                    if (!key.isEmpty() && agent->setTicket(key)) {
+                        // Branch has issueKey, get info for ticket
                     } else {
-                        mainWindow->statusMessage(tr("Could not setup JiraAgent to retrieve data from Jira"));
+                        JiraAgent::JobType jobType = agent->jobTypeFromText(cur->getHeadingPlain(), query);
+                        if (jobType == JiraAgent::GetTicketInfo) {
+                            qDebug() << "VM::getJiraData: Setup agent for ticket info from heading";
+                            connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
+                            startAgent = true;
+                        } else if (jobType == JiraAgent::Query) {
+                            connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
+                            startAgent = true;
+                        } else {
+                            mainWindow->statusMessage(tr("Could not setup JiraAgent to retrieve data from Jira"));
+                        }
                     }
                 }
             } // Successfully set branch in agent
