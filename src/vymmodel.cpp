@@ -6415,8 +6415,7 @@ bool VymModel::select(const QModelIndex &index)
         if (ti->hasTypeBranch()) {
             if (((BranchItem *)ti)->tmpUnscroll())
                 reposition();
-        } else if (ti->hasTypeAttribute())
-            qWarning() << "VM::select attributeItem";   // FIXME-0 center on  parentBranch
+        }
         selModel->select(index, QItemSelectionModel::ClearAndSelect);
         appendSelectionToHistory();
         return true;
