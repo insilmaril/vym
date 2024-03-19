@@ -4297,17 +4297,17 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
     }
 }
 
-void VymModel::deleteChildren() // FIXME-000 Deletes attributes, but not all branches
+void VymModel::deleteChildren()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
         saveStateChangingPart(
             selbi, selbi, "removeChildren ()",
             QString("Remove children of branch %1").arg(getObjectName(selbi)));
         emit(layoutAboutToBeChanged());
 
         QModelIndex ix = index(selbi);
-        int n = selbi->branchCount() - 1;
+        int n = selbi->childCount() - 1;
         beginRemoveRows(ix, 0, n);
         removeRows(0, n + 1, ix);
         endRemoveRows();
