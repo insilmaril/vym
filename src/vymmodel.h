@@ -467,7 +467,7 @@ class VymModel : public TreeModel {
 
     AttributeItem* setAttribute(BranchItem *dst, AttributeItem *);
     AttributeItem* setAttribute(BranchItem *dst, const QString &k, const QVariant &v);
-    AttributeItem* getAttributeByKey(const QString &key);
+    AttributeItem* getAttributeByKey(const QString &key, BranchItem *bi = nullptr);
 
     //! \brief Add new mapcenter
     BranchItem *addMapCenter(bool saveStateFlag = true);
@@ -523,7 +523,8 @@ class VymModel : public TreeModel {
     void deleteKeepChildren(
         bool saveStateFlag = true); //!< remove branch, but keep children
   public:
-    void deleteChildren(); //!< keep branch, but remove children
+    void deleteChildren();      //!< Delete all children, including attributes
+    void deleteChildBranches(); //!< Delete only branches
 
     TreeItem *deleteItem(
         TreeItem *); //!< Delete item and return parent (if parent!= rootItem)
@@ -836,7 +837,7 @@ class VymModel : public TreeModel {
 
   public:
     TreeItem::Type selectionType();
-    BranchItem *getSelectedBranch();
+    BranchItem *getSelectedBranch(BranchItem *bi = nullptr);
     QList<BranchItem *> getSelectedBranches(TreeItem *ti = nullptr);
     ImageItem *getSelectedImage();
     QList <ImageItem *> getSelectedImages(ImageItem *ii = nullptr);

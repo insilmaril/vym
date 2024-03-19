@@ -4297,7 +4297,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
     }
 }
 
-void VymModel::deleteChildren()
+void VymModel::deleteChildren() // FIXME-0 updateJiraFlag missing
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
@@ -4313,8 +4313,39 @@ void VymModel::deleteChildren()
         endRemoveRows();
         if (selbi->isScrolled()) unscrollBranch(selbi);
 
+        updateJiraFlag(selbi);
         emit(layoutChanged());
+
+        emitDataChanged(selbi);
         reposition();
+    }
+}
+
+void VymModel::deleteChildBranches()
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi->branchCount() == 0) 
+            deleteChildren();
+        else {
+            int n_first = selbi->getFirstBranch()->childNum();
+            int n_last  = selbi->getLastBranch()->childNum();
+
+            saveStateChangingPart(
+                selbi, selbi, "removeChildBranches()",  // FIXME-0 command missing
+                QString("Remove child branches of branch %1").arg(getObjectName(selbi)));
+            emit(layoutAboutToBeChanged());
+
+            QModelIndex ix = index(selbi);
+            beginRemoveRows(ix, n_first, n_last);
+            if (!removeRows(n_first, n_last - n_first + 1, ix))
+                qWarning() << "VymModel::deleteChildBranches removeRows() failed";
+            endRemoveRows();
+            if (selbi->isScrolled()) unscrollBranch(selbi);
+
+            emit(layoutChanged());
+            reposition();
+        }
     }
 }
 
@@ -6678,8 +6709,10 @@ TreeItem::Type VymModel::selectionType()
         return TreeItem::Undefined;
 }
 
-BranchItem *VymModel::getSelectedBranch()
+BranchItem *VymModel::getSelectedBranch(BranchItem *bi)
 {
+    if (bi) return bi;
+
     // Return selected branch,
     // if several are selected, return last selected
     QList<BranchItem *> bis = getSelectedBranches();

@@ -5483,7 +5483,7 @@ void Main::editDeleteChildren()
 {
     VymModel *m = currentModel();
     if (m)
-        m->deleteChildren();
+        m->deleteChildBranches();
 }
 
 void Main::editDeleteSelection()
