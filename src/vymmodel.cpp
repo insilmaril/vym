@@ -2064,44 +2064,49 @@ void VymModel::setSortFilter(const QString &s)
 
 QString VymModel::getSortFilter() { return sortFilter; }
 
-void VymModel::setHeading(const VymText &vt, BranchItem *bi)
+void VymModel::setHeading(const VymText &vt, TreeItem *ti)
 {
     Heading h_old;
     Heading h_new;
     h_new = vt;
     QString s = vt.getTextASCII();
-    if (!bi)
-        bi = getSelectedBranch();
-    if (bi) {
-        h_old = bi->getHeading();
+
+    TreeItem *selti = getSelectedItem(ti);
+
+    if (selti && selti->hasTypeBranchOrImage()) {
+        h_old = selti->getHeading();
         if (h_old == h_new)
             return;
-        saveState(bi, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", bi,
+        saveState(selti, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", selti,
                   "parseVymText (\"" + quoteQuotes(h_new.saveToDir()) + "\")",
                   QString("Set heading of %1 to \"%2\"")
-                      .arg(getObjectName(bi), s));
-        bi->setHeading(vt);
-        emitDataChanged(bi);
+                      .arg(getObjectName(selti), s));
+        selti->setHeading(vt);
+        emitDataChanged(selti);
         emitUpdateQueries();
-        mainWindow->updateHeadingEditor(bi);    // Update HeadingEditor with new heading
+        mainWindow->updateHeadingEditor(selti);    // Update HeadingEditor with new heading
         reposition();
-    }
+    } else
+        qWarning() << "VM::setHeading has no branch or image selected!";
 }
 
-void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
+void VymModel::setHeadingPlainText(const QString &s, TreeItem *ti)
 {
-    if (!bi)
-        bi = getSelectedBranch();
-    if (bi) {
-        VymText vt = bi->getHeading();
+    TreeItem *selti = getSelectedItem(ti);
+    if (selti && selti->hasTypeBranchOrImage()) {
+        VymText vt = selti->getHeading();
         vt.setPlainText(s);
-        if (bi->getHeading() == vt)
+        if (selti->getHeading() == vt)
             return;
-        setHeading(vt, bi);
+        setHeading(vt, selti);
 
         // Set URL
-    if ((s.startsWith("http://") || s.startsWith("https://")) && !bi->hasUrl())
-            setUrl(s);
+        if (selti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)selti;
+
+            if ((s.startsWith("http://") || s.startsWith("https://")) && !bi->hasUrl())
+                    setUrl(s, true, bi);
+        }
     }
 }
 
@@ -2112,6 +2117,14 @@ Heading VymModel::getHeading()
         return selti->getHeading();
     qWarning() << "VymModel::getHeading Nothing selected.";
     return Heading();
+}
+
+QString VymModel::headingText(TreeItem *ti)
+{
+    if (ti)
+        return ti->getHeadingPlain();
+    else
+        return QString("No treeItem available");
 }
 
 void VymModel::updateNoteText(const VymText &vt)
@@ -2327,23 +2340,20 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
                 bi, QString("setUrl (\"%1\")").arg(oldurl), bi,
                 QString("setUrl (\"%1\")").arg(url),
                 QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
-            emitDataChanged(bi);
         }
         if (updateFromCloud) {    // FIXME-3 use oembed.com also for Youtube and other cloud providers
             // Check for Jira
             JiraAgent agent;
             QString query;
-            agent.jobTypeFromText(url, query);
+            agent.jobTypeFromText(url);
             if (agent.jobType() == JiraAgent::GetTicketInfo) { 
-                //setAttribute(bi, "Jira.key", query);    // FIXME-0 which attribute for ticket?
-                bi->activateSystemFlagByName("system-jira");
+                setAttribute(bi, "Jira.key", agent.key());
             } else if (agent.jobType() == JiraAgent::Query) {
-                setAttribute(bi, "Jira.query", query);
-                bi->activateSystemFlagByName("system-jira");
+                setAttribute(bi, "Jira.query", agent.query());  // FIXME-2 currently "Query" is not a result of calling jobTypeFromText! Maybe rename it or use setTicket instead?
             } else {
-                bi->deactivateSystemFlagByName("system-jira");
                 // FIXME-2 Remove Jira attributes"?
             }
+            updateJiraFlag(bi);
 
             // Check for Confluence
             setHeadingConfluencePageName();
@@ -2380,31 +2390,15 @@ QStringList VymModel::getUrls(bool ignoreScrolled)
     return urls;
 }
 
-void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi) // FIXME-2 savestate missing
+void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi)
 {
     QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    foreach (BranchItem *bi, selbis) {
-        QString query_old;
-        AttributeItem *ai = bi->getAttributeByKey("Jira.query");
-        if (ai) {
-            query_old = ai->value().toString();
-            if (query_new.isEmpty()) {
-                bi->deactivateSystemFlagByName("system-jira");
-                deleteItem(ai);
-                ai = nullptr;
-            } else {
-                ai->setValue(query_new);
-            }
-        } else {
-            if (!query_new.isEmpty()) {
-                ai = new AttributeItem("Jira.query", query_new);
-                setAttribute(bi, ai);
-                bi->activateSystemFlagByName("system-jira");
-            }
-        }
-    }
-    reposition();
+    foreach (BranchItem *bi, selbis)
+        if (query_new.isEmpty())
+            deleteAttribute(bi, "Jira.query");
+        else
+            setAttribute(bi, "Jira.query", query_new);
 }
 
 void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b) // FIXME-2 no savestate
@@ -3653,56 +3647,68 @@ QString VymModel::getXLinkStyleEnd()
     else
         return QString();
 }
-AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)   // FIXME-3 better pass reference, e.g. from xml-vym   
-// AttrItem::setAttribute  FIXME-2 savestate missing // FIXME-2 check missing, if ai == ai_new
+AttributeItem *VymModel::setAttribute(BranchItem *dst, const QString &key, const QVariant &value) // FIXME-2 savestate missing. For bulk changes like Jira maybe save whole branch use block...
 {
-    if (dst) {
+    if (!dst) return nullptr;
 
+    bool changed = false;
+    AttributeItem *ai;
+
+    for (int i = 0; i < dst->attributeCount(); i++) {
         // Check if there is already an attribute with same key
-        AttributeItem *ai;
-        for (int i = 0; i < dst->attributeCount(); i++) {
-            ai = dst->getAttributeNum(i);
-            if (ai->key() == ai_new->key())
-            {
-                // Key exists, overwrite value
-                ai->copy(ai_new);
-
-                // Delete original attribute, this is basically a move...
-                delete ai_new;
-                emitDataChanged(dst);
-                return ai;
-            }
+        ai = dst->getAttributeNum(i);
+        if (ai->key() == key)
+        {
+            // Key exists, overwrite value
+            ai->setValue(value);
+            changed = true;
+            break;
         }
-
+    }
+    if (!changed) {
         // Create new attribute
+        ai = new AttributeItem(key, value);
+
         emit(layoutAboutToBeChanged());
 
         QModelIndex parix = index(dst);
-        int n = dst->getRowNumAppend(ai_new);
+        int n = dst->getRowNumAppend(ai);
         beginInsertRows(parix, n, n);
-        dst->appendChild(ai_new);
+        dst->appendChild(ai);
         endInsertRows();
-
         emit(layoutChanged());
-
-        emitDataChanged(dst);
-        return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
     }
-    return nullptr;
+
+    updateJiraFlag(dst);
+    emitDataChanged(dst);
+    reposition();
+
+    return ai;
 }
 
-AttributeItem *VymModel::setAttribute(BranchItem *bi, const QString &key, const QVariant &value) // FIXME-2 savestate missing. For bulk changes like Jira maybe save whole branch use use block...
+void VymModel::deleteAttribute(BranchItem *dst, const QString &key)
 {
-    AttributeItem *ai = new AttributeItem(key, value);
-    return setAttribute(bi, ai);
+    bool changed = false;
+    AttributeItem *ai;
+
+    for (int i = 0; i < dst->attributeCount(); i++) {
+        // Check if there is already an attribute with same key
+        ai = dst->getAttributeNum(i);
+        if (ai->key() == key)
+        {
+            // Key exists, delete attribute
+            deleteItem(ai);
+            break;
+        }
+    }
 }
 
-AttributeItem *VymModel::getAttributeByKey(const QString &key)
+AttributeItem *VymModel::getAttributeByKey(const QString &key, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        for (int i = 0; i < bi->attributeCount(); i++) {
-            AttributeItem *ai = bi->getAttributeNum(i);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+        for (int i = 0; i < selbi->attributeCount(); i++) {
+            AttributeItem *ai = selbi->getAttributeNum(i);
             if (ai->key() == key)
                 return ai;
         }
@@ -4356,6 +4362,9 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         // qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->getHeading()<<"
         // pi="<<pi<<"="<<pi->getHeading();
 
+        bool wasAttribute = ti->hasTypeAttribute();
+        TreeItem *parentItem = ti->parent();
+
         QModelIndex parentIndex = index(pi);
 
         emit(layoutAboutToBeChanged());
@@ -4365,10 +4374,16 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         removeRows(n, 1, parentIndex);  // Deletes object!
         endRemoveRows();
 
-        reposition();
-
         emit(layoutChanged());
         emitUpdateQueries();
+
+        if (wasAttribute) {
+            updateJiraFlag(parentItem);
+            emitDataChanged(parentItem);
+        }
+        reposition();
+
+
         if (!cleaningUpLinks)
             cleanupItems();
 
@@ -4809,7 +4824,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
                     if (!key.isEmpty() && agent->setTicket(key)) {
                         // Branch has issueKey, get info for ticket
                     } else {
-                        JiraAgent::JobType jobType = agent->jobTypeFromText(cur->getHeadingPlain(), query);
+                        JiraAgent::JobType jobType = agent->jobTypeFromText(cur->getHeadingPlain());
                         if (jobType == JiraAgent::GetTicketInfo) {
                             qDebug() << "VM::getJiraData: Setup agent for ticket info from heading";
                             connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
@@ -4858,6 +4873,22 @@ void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
     setAttribute(bi, "Jira.reporter", ji.reporter());
     setAttribute(bi, "Jira.resolution", ji.resolution());
 }
+
+void VymModel::updateJiraFlag(TreeItem *ti)
+{
+    if(!ti) return;
+
+    AttributeItem *ai = getAttributeByKey("Jira.query");
+    if (!ai) {
+        ai = getAttributeByKey("Jira.key");
+        if (!ai) {
+            ti->deactivateSystemFlagByName("system-jira");
+            return;
+        }
+    }
+    ti->activateSystemFlagByName("system-jira");
+}
+
 
 void VymModel::processJiraTicket(QJsonObject jsobj)
 {
@@ -4923,8 +4954,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
         // ji.print();
     }
 
-    AttributeItem *ai = new AttributeItem("Jira.query", jsobj["vymJiraLastQuery"].toString());
-    setAttribute(pbi, ai);
+    setAttribute(pbi, "Jira.query", jsobj["vymJiraLastQuery"].toString());
 
     saveStateBlocked = false;
     repositionBlocked = false;
@@ -6803,8 +6833,10 @@ AttributeItem *VymModel::getSelectedAttribute()
         return nullptr;
 }
 
-TreeItem *VymModel::getSelectedItem()
+TreeItem *VymModel::getSelectedItem(TreeItem *ti)
 {
+    if (ti) return ti;
+
     if (!selModel)
         return nullptr;
     QModelIndexList list = selModel->selectedIndexes();

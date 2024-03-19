@@ -73,7 +73,7 @@ bool JiraAgent::available()
     return true;
 }
 
-JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text, QString &query)
+JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text)
 {
     jobTypeInt = Undefined;
 
@@ -91,7 +91,6 @@ JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text, QString &quer
             qWarning() << "JiraAgent::jobTypeFromText failed for text=" << text;
             return JiraAgent::Undefined;
         }
-
     }
 
     settings.beginGroup("/atlassian/jira");
@@ -199,10 +198,11 @@ bool JiraAgent::setTicket(const QString &id)    // FIXME-0 should be mostly obso
                         settings.value("PAT", "undefined").toString();
                 else {
                     userNameInt =
-                        settings.value("username", "user_johnDoe").toString();
+                        
                     passwordInt = 
                         settings.value("password", "").toString();
                 }
+                i = size;
                 break;
             }
         }
@@ -213,23 +213,16 @@ bool JiraAgent::setTicket(const QString &id)    // FIXME-0 should be mostly obso
     return foundPattern;
 }
 
+QString JiraAgent::key()
+{
+    return keyInt;
+}
+
 bool JiraAgent::setQuery(const QString &s)  // FIXME-0 return value not used?
 {
     queryInt = s;
 
-    /*
-    QRegularExpression re("jql=(.*)");
-    QRegularExpressionMatch match = re.match(s);
-    if (!match.hasMatch()) {
-        qWarning() << "JiraAgent::setQuery could not find 'jql=' in query";
-        abortJob = true;
-        return false;
-    }
-
-    queryInt = QUrl::fromPercentEncoding(match.captured(1).toUtf8());
-    */
-
-    bool foundServer = false; // FIXME-0 For now try only first server for queries. Better: 
+    bool foundServer = false; // FIXME-3 For now try only first server for queries. Better: 
                               // Search for project = PATTERN and use resulting server
 
     settings.beginGroup("/atlassian/jira/servers/1");
@@ -261,6 +254,11 @@ bool JiraAgent::setQuery(const QString &s)  // FIXME-0 return value not used?
     settings.endGroup();
 
     return foundServer;
+}
+
+QString JiraAgent::query()
+{
+    return queryInt;
 }
 
 QString JiraAgent::serverName()

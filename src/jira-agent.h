@@ -16,7 +16,7 @@ class JiraAgent : public QObject {
     enum JobType {Undefined, GetTicketInfo, Query};
 
     static bool available();
-    JobType jobTypeFromText(const QString& text, QString &query);
+    JobType jobTypeFromText(const QString& text);
 
     JiraAgent();
     ~JiraAgent();
@@ -26,7 +26,9 @@ class JiraAgent : public QObject {
     JiraAgent::JobType jobType();
     bool setBranch(BranchItem *bi);
     bool setTicket(const QString &id);
+    QString key();
     bool setQuery(const QString &s);
+    QString query();
     QString serverName();
     QString url();
 

@@ -167,6 +167,7 @@ bool FlagRow::activate(const QUuid &uid)
 bool FlagRow::deactivate(const QString &name)
 {
     Flag *flag = masterRow->findFlagByName(name);
+    // qDebug() << "FlagRow::deactivate " << name << "  uuid=" << flag;
     return deactivate(flag->getUuid());
 }
 

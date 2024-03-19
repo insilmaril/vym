@@ -14,14 +14,6 @@
 
 extern TaskModel *taskModel;
 
-QString headingText(BranchItem *bi)
-{
-    if (bi)
-        return bi->getHeadingPlain();
-    else
-        return QString("No branch available");
-}
-
 BranchItem::BranchItem(TreeItem *parent)
     : MapItem(parent)
 {

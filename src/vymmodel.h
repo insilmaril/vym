@@ -343,17 +343,17 @@ class VymModel : public TreeModel {
 
   public:
     void setHeading(const VymText &vt,
-                    BranchItem *bi = nullptr); //!< Set heading of item
+                    TreeItem *ti = nullptr); //!< Set heading of item
     void setHeadingPlainText(const QString &s,
-                             BranchItem *bi = nullptr); //!< Set heading of item
-    Heading getHeading();                            //!< Get heading of item
-    void updateNoteText(
-        const VymText &); //!< Signal emmited in NoteEditor via MainWindow
-    void setNote(const VymNote &vn);  //!< Set note text
-    VymNote getNote();                //!< Get note text
-    bool hasRichTextNote();           //!< Check type of vymText used
-    void loadNote(const QString &fn); //!< Load note from file
-    void saveNote(const QString &fn); //!< Save note to file
+                             TreeItem *ti = nullptr); //!< Set heading of item
+    Heading getHeading();               //!< Get heading of item
+    QString headingText(TreeItem*);     //!< For debugging. Also works for nullptr
+    void updateNoteText(const VymText &); //!< Signal emmited in NoteEditor via MainWindow
+    void setNote(const VymNote &vn);    //!< Set note text
+    VymNote getNote();                  //!< Get note text
+    bool hasRichTextNote();             //!< Check type of vymText used
+    void loadNote(const QString &fn);   //!< Load note from file
+    void saveNote(const QString &fn);   //!< Save note to file
 
   private:
     BranchItem *findCurrent;  // next object in find process
@@ -465,8 +465,8 @@ class VymModel : public TreeModel {
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
-    AttributeItem* setAttribute(BranchItem *dst, AttributeItem *);
     AttributeItem* setAttribute(BranchItem *dst, const QString &k, const QVariant &v);
+    void deleteAttribute(BranchItem *dst, const QString &k);
     AttributeItem* getAttributeByKey(const QString &key, BranchItem *bi = nullptr);
 
     //! \brief Add new mapcenter
@@ -567,6 +567,7 @@ class VymModel : public TreeModel {
 
   private:
     void initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &);
+    void updateJiraFlag(TreeItem*);
 
   public slots:
     void processJiraTicket(QJsonObject);
@@ -845,7 +846,7 @@ class VymModel : public TreeModel {
     XLinkItem *getSelectedXLinkItem();
     Link *getSelectedXLink();
     AttributeItem *getSelectedAttribute();
-    TreeItem *getSelectedItem();
+    TreeItem *getSelectedItem(TreeItem *ti = nullptr);
     QList<TreeItem *> getSelectedItems(TreeItem *ti = nullptr);
     QList<TreeItem *> getSelectedItemsReduced();
     QModelIndex getSelectedIndex();

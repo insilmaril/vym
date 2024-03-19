@@ -4958,31 +4958,12 @@ void Main::getConfluenceUser()
 
                 ConfluenceUser user = dia->getSelectedUser();
 
-                AttributeItem *ai;
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.displayName");
-                ai->setValue(user.getDisplayName());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.userKey");
-                ai->setValue(user.getUserKey());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.userName");
-                ai->setValue(user.getUserName());
-                m->setAttribute(selbi, ai);
-
-                ai = new AttributeItem();
-                ai->setKey("ConfluenceUser.url");
-                ai->setValue(user.getUrl());
-                m->setAttribute(selbi, ai);
-
+                m->setAttribute(selbi, "ConfluenceUser.displayName", user.getDisplayName());
+                m->setAttribute(selbi, "ConfluenceUser.userKey", user.getUserKey());
+                m->setAttribute(selbi, "ConfluenceUser.userName", user.getUserName());
+                m->setAttribute(selbi, "ConfluenceUser.url", user.getUrl());
                 m->setUrl(user.getUrl(), false);
                 m->setHeading(user.getDisplayName());
-
                 m->selectParent();
             }
             dia->clearFocus();
@@ -6416,25 +6397,24 @@ void Main::updateNoteEditor(TreeItem *ti)
     noteEditor->setInactive();
 }
 
-void Main::updateHeadingEditor(BranchItem *bi)  // FIXME-3 move to HeadingEditor
+void Main::updateHeadingEditor(TreeItem *ti)  // FIXME-3 move to HeadingEditor
 {
-    if (!bi) {
-        VymModel *m = currentModel();
-        if (!m) return;
+    VymModel *m = currentModel();
+    if (!m) return;
 
-        bi = m->getSelectedBranch();
+    TreeItem *selti = m->getSelectedItem(ti);
+
+    if (ti && ti->hasTypeBranchOrImage()) {
+        // Color settings, also to prepare switching to RichText later
+        if (ti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)ti;
+            headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
+            headingEditor->setColorRichTextDefaultForeground(bi->getHeadingColor());
+        }
+
+        headingEditor->setVymText(selti->getHeading());
+        headingEditor->setEditorTitle();
     }
-
-    // Give up, if not a single branch is selected
-    if (!bi) return;
-
-    // Color settings, also to prepare switching to RichText later
-    headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
-    headingEditor->setColorRichTextDefaultForeground(bi->getHeadingColor());
-
-    headingEditor->setVymText(bi->getHeading());
-    headingEditor->setEditorTitle();
-
 }
 
 void Main::selectInNoteEditor(QString s, int i)

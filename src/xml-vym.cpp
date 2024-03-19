@@ -372,28 +372,26 @@ void VymReader::readAttribute() // FIXME-2 Checking types no longer needed. Chec
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("attribute"));
 
     QString key = xml.attributes().value("key").toString();
-    QString val = xml.attributes().value("value").toString();
     QString type = xml.attributes().value("type").toString();   // May be empty!
+    QVariant val;
     if (lastBranch && !key.isEmpty() && !type.isEmpty()) {
-        AttributeItem *ai = new AttributeItem(lastBranch);
         if (type == "Integer")
-            ai->setValue(val.toInt());
+            val = xml.attributes().value("value").toInt();
         else if (type == "QString" || type == "String")
-            ai->setValue(val);
+            val = xml.attributes().value("value").toString();
         else if (type == "QDateTime" || type == "DateTime")
-            ai->setValue(QDateTime::fromString(val, Qt::ISODate));
+            val = QDateTime::fromString(
+                    xml.attributes().value("value").toString(),
+                    Qt::ISODate);
         else if (type == "Undefined") {
-            ai->setValue(val);
-            qWarning() << "Found attribute type 'Undefined'";
+            val = xml.attributes().value("value").toString();
+            qWarning() << "Found attribute type 'Undefined': " << val;
         } else {
             xml.raiseError("readAttribute: Found unknown attribute type");
             return;
         }
 
-        ai->setKey(key);
-
-        // Insert this attribute into model
-        model->setAttribute(lastBranch, ai);
+        model->setAttribute(lastBranch, key, val);
     }
 
     if (xml.readNextStartElement()) {
@@ -468,7 +466,7 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
     lastBranch->setLastSelectedBranch(0);
 }
 
-void VymReader::readHeadingOrVymNote()
+void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (pasted) images
 {
     Q_ASSERT(xml.isStartElement() &&
             (xml.name() == QLatin1String("heading") ||

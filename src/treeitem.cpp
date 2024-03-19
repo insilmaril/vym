@@ -556,7 +556,7 @@ void TreeItem::activateSystemFlagByName(const QString &name)
 
 void TreeItem::deactivateSystemFlagByName(const QString &name)
 {
-    systemFlags.activate(name);
+    systemFlags.deactivate(name);
 }
 
 QList<QUuid> TreeItem::activeFlagUids()

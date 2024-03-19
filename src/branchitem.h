@@ -17,9 +17,6 @@ class HeadingContainer;
 class Link;
 class XLinkItem;
 
-// Get heading in a safe form, works also for nullptr
-QString headingText(BranchItem *bi);
-
 class BranchItem : public MapItem {
   public:
     BranchItem(TreeItem *parent = nullptr);

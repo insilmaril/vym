@@ -2616,16 +2616,7 @@ void MapEditor::updateData(const QModelIndex &sel)
 {
     TreeItem *ti = static_cast<TreeItem *>(sel.internalPointer());
 
-    /* testing
-        qDebug() << "ME::updateData";
-        if (!ti)
-        {
-        qDebug() << "  ti=nullptr";
-        return;
-        }
-        qDebug() << "  ti="<<ti;
-        qDebug() << "  h="<<ti->getHeadingPlain();
-    */
+    // qDebug() << "ME::updateData for " << model->headingText(ti);
 
     if (ti && ti->hasTypeBranch())
         ((BranchItem*)ti)->updateVisuals();
