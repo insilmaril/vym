@@ -194,7 +194,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         branchContainer->frameType(false) != FrameContainer::NoFrame)
         s += branchContainer->saveFrame();
 
-    // save names of flags set
+    // save names of flag set
     s += standardFlags.saveState();
     s += userFlags.saveState();
 

@@ -655,7 +655,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                 case LeftOfParent:
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
-                default: // Shouldn't happen // FIXME-1 happens, if branch has temp scrolled parent. Also flags are invisible then.
+                default: // Shouldn't happen // FIXME-1 BC::uplinkPos - happens, if mapcenter is moved
                     qWarning() << "BC::upLinkPos  framed undefined orientation in " << info();
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->bottomCenter());

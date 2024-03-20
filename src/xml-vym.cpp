@@ -499,11 +499,14 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
     a = "textColor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        // For compatibility with <= 2.4.0 set both branch and
-        // heading color
         QColor col(s);
-        lastBranch->setHeadingColor(col);   
         vymtext.setColor(col);
+        if (lastBranch == lastMI)
+            // For compatibility with <= 2.4.0 set both branch and
+            // heading color
+            // Beginning in 2.9.523 images can also have headings,
+            // then lastMI != lastBranch
+            lastBranch->setHeadingColor(col);
     }
 
     QString t = xml.attributes().value("href").toString();
@@ -595,7 +598,7 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
     }
 
     if (textType == "heading")
-        lastBranch->setHeading(vymtext);
+        lastMI->setHeading(vymtext);
     else
         lastBranch->setNote(vymtext);
 
@@ -815,8 +818,14 @@ void VymReader::readImage()
     if (!s.isEmpty())
         lastImage->setOriginalFilename(s);
 
-    if (xml.readNextStartElement())
-        raiseUnknownElementError();
+    while (xml.readNextStartElement()) {    // FIXME-000 cont here
+        if (xml.name() == QLatin1String("heading"))
+            readHeadingOrVymNote();
+        else {
+            raiseUnknownElementError();
+            return;
+        }
+    }
 }
 
 void VymReader::readXLink()

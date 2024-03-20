@@ -187,28 +187,37 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     }
 
     if (hidden)
-        return "";
+        return QString();
 
-    // Save uuid
-    QString idAttr = attribute("uuid", uuid.toString());
-
-    QString url;
-
-    url = "images/" + prefix + "image-" + QString().number(itemID) +
+    QString url = "images/" + prefix + "image-" + QString().number(itemID) +
           imageContainer->getExtension();
+
+    QString attributes;
+
+    if (!originalFilename.isEmpty())
+        attributes += attribute("originalName", originalFilename);
+
+    attributes += attribute("href", QString("file:") + url);
+    attributes += attribute("scale", QString().setNum(imageContainer->scale()));
+    attributes += MapItem::getPosAttr() +
+                  MapItem::getLinkableAttr() +
+                  TreeItem::getGeneralAttr();
+
+    attributes += attribute("uuid", uuid.toString());
 
     // And really save the image  (svgs will be copied from cache!)
     imageContainer->save(tmpdir + "/" + url);
 
-    QString nameAttr = attribute("originalName", originalFilename);
 
-    QString scaleAttr =
-        attribute("scale", QString().setNum(imageContainer->scale()));
-
-    return singleElement("floatimage",
-                MapItem::getPosAttr() +
-                MapItem::getLinkableAttr() +
-                TreeItem::getGeneralAttr() +
-                attribute("href", QString("file:") + url) +
-                nameAttr + scaleAttr + idAttr);
+    qDebug() << "image:  " << getHeadingPlain();
+    if (originalFilename == getHeadingPlain())
+        return singleElement("floatimage", attributes);
+    else {
+        QString s = beginElement("floatimage", attributes);
+        incIndent();
+        s += heading.saveToDir();
+        decIndent();
+        s += endElement("floatimage");
+        return s;
+    }
 }

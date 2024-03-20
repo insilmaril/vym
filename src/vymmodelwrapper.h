@@ -99,6 +99,7 @@ class VymModelWrapper : public VymScriptContext {
     bool relinkTo(const QString &parent);
     void remove();
     void removeChildren();
+    void removeChildBranches();
     void removeKeepChildren();
     void removeSlide(int n);
     QVariant repeatLastCommand();

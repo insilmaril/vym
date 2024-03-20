@@ -827,6 +827,8 @@ void VymModelWrapper::remove() { model->deleteSelection(); }
 
 void VymModelWrapper::removeChildren() { model->deleteChildren(); }
 
+void VymModelWrapper::removeChildBranches() { model->deleteChildBranches(); }
+
 void VymModelWrapper::removeKeepChildren() { model->deleteKeepChildren(); }
 
 void VymModelWrapper::removeSlide(int n)

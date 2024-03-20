@@ -34,14 +34,6 @@ void AttributeItem::copy(AttributeItem *other)
     valueInt = other->valueInt;
 }
 
-/* void AttributeItem::set(const QString &k, const QString &v) // FIXME-0 remove
-{
-    keyInt = k;
-    valueInt = QVariant(v);
-    updateHeading();
-}
-*/
-
 void AttributeItem::setKey(const QString &k)
 {
     keyInt = k;

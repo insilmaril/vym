@@ -873,6 +873,9 @@ void Main::setupAPI()
     c = new Command("removeChildren", Command::Branch);
     modelCommands.append(c);
 
+    c = new Command("removeChildBranches", Command::Branch);
+    modelCommands.append(c);
+
     c = new Command("removeKeepChildren", Command::Branch);
     modelCommands.append(c);
 

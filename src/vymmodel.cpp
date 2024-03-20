@@ -4338,7 +4338,7 @@ void VymModel::deleteChildBranches()
             int n_last  = selbi->getLastBranch()->childNum();
 
             saveStateChangingPart(
-                selbi, selbi, "removeChildBranches()",  // FIXME-0 command missing
+                selbi, selbi, "removeChildBranches()",
                 QString("Remove child branches of branch %1").arg(getObjectName(selbi)));
             emit(layoutAboutToBeChanged());
 
