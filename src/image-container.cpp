@@ -108,6 +108,9 @@ void ImageContainer::select()
 	    this,
 	    imageItem->mapDesign()->selectionPen(),
 	    imageItem->mapDesign()->selectionBrush());
+    float d = 10;
+    QRectF r = rect();
+    selectionContainer->setRect(QRectF(r.x() - d, r.y() - d, r.width() + 2 * d, r.height() + 2 * d));
 }
 
 bool ImageContainer::load(const QString &fn, bool createClone)
