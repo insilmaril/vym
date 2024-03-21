@@ -16,6 +16,16 @@ extern Settings settings;
 extern QTextStream vout;
 extern bool debug;
 
+bool JiraAgent::available()
+{
+    if (!QSslSocket::supportsSsl())
+        return false;
+    if ( settings.value("/atlassian/jira/servers/size", 0).toInt() < 1)
+        return false;
+
+    return true;
+}
+
 JiraAgent::JiraAgent()
 {
     //qDebug ()<< "Constr. JiraAgent";
@@ -63,78 +73,38 @@ void JiraAgent::init()
 
 }
 
-bool JiraAgent::available()
+bool JiraAgent::setJiraServer(int n)
 {
-    if (!QSslSocket::supportsSsl())
-        return false;
-    if ( settings.value("/atlassian/jira/servers/size", 0).toInt() < 1)
-        return false;
+    bool foundServer = false;
 
-    return true;
-}
-
-JiraAgent::JobType JiraAgent::jobTypeFromText(const QString &text)
-{
-    jobTypeInt = Undefined;
-
-    bool searchBaseUrl = text.startsWith("https");
-
-    QString ticketKey;
-    if (!searchBaseUrl) {
-        // Find ticket key in text
-        QRegularExpression re("(\\w+[-|\\s]\\d+)");
-        QRegularExpressionMatch match = re.match(text);
-        if (match.hasMatch()) {
-            ticketKey = match.captured(1);
-            ticketKey.replace(" ", "-");
+    bool usePAT = settings.value("authUsingPAT", true).toBool();
+    QString url = settings.value("baseUrl", "").toString();
+    if (!url.isEmpty()) {
+        baseUrlInt = url;
+        serverNameInt = settings.value("name","-").toString();
+        if (usePAT) {
+            QString pat = settings.value("PAT", "").toString();
+            if (!pat.isEmpty()) {
+                // Use PAT
+                authUsingPATInt = true;
+                personalAccessTokenInt = pat;
+                foundServer = true;
+            }
         } else {
-            qWarning() << "JiraAgent::jobTypeFromText failed for text=" << text;
-            return JiraAgent::Undefined;
-        }
-    }
-
-    settings.beginGroup("/atlassian/jira");
-
-    // Try to find server by looking through baseUrls or patterns
-    int size = settings.beginReadArray("servers");
-    for (int i = 0; i < size; ++i) {
-        settings.setArrayIndex(i);
-        foreach (QString pattern, settings.value("pattern").toString().split(",")) {
-            bool ok = false;
-            if (searchBaseUrl)
-                ok = text.contains(settings.value("baseUrl","-").toString());
-            else
-                ok = ticketKey.contains(pattern);
-            qDebug() << "JA:  pattern=" << pattern << " searchBaseUrl = " << searchBaseUrl << "  ok=" << ok;
-
-            if (ok) {
-                baseUrlInt = settings.value("baseUrl","-").toString();
-                serverNameInt = settings.value("name","-").toString();
-
-                // Read credentials for this server   
-                authUsingPATInt = 
-                    settings.value("authUsingPAT", true).toBool();
-                if (authUsingPATInt)
-                    personalAccessTokenInt =
-                        settings.value("PAT", "undefined").toString();
-                else {
-                    userNameInt =
-                        settings.value("username", "user_johnDoe").toString();
-                    passwordInt = 
-                        settings.value("password", "").toString();
+            // Looking for username and password
+            QString user = settings.value("username", "").toString();
+            if (!user.isEmpty()) {
+                QString pass = settings.value("password", "").toString();
+                if (!pass.isEmpty()) {
+                    userNameInt = user;
+                    passwordInt = pass;
+                    foundServer = true;
                 }
-
-                jobTypeInt = GetTicketInfo;
-                keyInt = ticketKey;
-                i = size;
-                break;
             }
         }
     }
-    settings.endArray();
-    settings.endGroup();
 
-    return jobTypeInt;
+    return foundServer;
 }
 
 void JiraAgent::setJobType(JobType jt)
@@ -160,48 +130,42 @@ bool JiraAgent::setBranch(BranchItem *bi)
 }
 
 
-bool JiraAgent::setTicket(const QString &id)    // FIXME-0 should be mostly obsolete by jobTypeFrom Text
+QString JiraAgent::key()
 {
-    // Find ID part in parameter:
+    return keyInt;
+}
+
+bool JiraAgent::setTicket(const QString &text)
+{
+    bool foundTicket = false;
+
+    bool searchBaseUrl = text.startsWith("https");
+
+    QString ticketKey;
+    // Find ticket key in text
     QRegularExpression re("(\\w+[-|\\s]\\d+)");
-    QRegularExpressionMatch match = re.match(id);
-    if (!match.hasMatch()) {
-        qWarning() << "JiraAgent::setTicket invalid ID: " << id;
-        abortJob = true;
+    QRegularExpressionMatch match = re.match(text);
+    if (match.hasMatch()) {
+        ticketKey = match.captured(1);
+        ticketKey.replace(" ", "-");
+    } else {
+        qWarning() << "JiraAgent::jobTypeFromText failed for text=" << text;
         return false;
     }
 
-    keyInt = match.captured(1);
-
-    keyInt.replace(" ", "-");
-
-    bool foundPattern = false;
-
     settings.beginGroup("/atlassian/jira");
 
-    // Try to find baseUrl of server by looking through patterns in ticket IDs:
+    // Try to find server by looking through baseUrls or patterns
     int size = settings.beginReadArray("servers");
+    qDebug() << "  size1=" << size;
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
-        foreach (QString p, settings.value("pattern").toString().split(",")) {
-            if (keyInt.contains(p)) {
-                foundPattern = true;
+        foreach (QString pattern, settings.value("pattern").toString().split(",")) {
+            bool ok = ticketKey.contains(pattern);
 
-                baseUrlInt = settings.value("baseUrl","-").toString();
-                serverNameInt = settings.value("name","-").toString();
-
-                // Read credentials for this server   
-                authUsingPATInt = 
-                    settings.value("authUsingPAT", true).toBool();
-                if (authUsingPATInt)
-                    personalAccessTokenInt =
-                        settings.value("PAT", "undefined").toString();
-                else {
-                    userNameInt =
-                        
-                    passwordInt = 
-                        settings.value("password", "").toString();
-                }
+            if (ok && setJiraServer(i)) {
+                foundTicket = true;
+                keyInt = ticketKey; // Might still be empty if looking for Url...
                 i = size;
                 break;
             }
@@ -210,15 +174,15 @@ bool JiraAgent::setTicket(const QString &id)    // FIXME-0 should be mostly obso
     settings.endArray();
     settings.endGroup();
 
-    return foundPattern;
+    if (foundTicket) 
+        jobTypeInt = JiraAgent::GetTicketInfo;
+    else
+        jobTypeInt = JiraAgent::Undefined;
+
+    return foundTicket;
 }
 
-QString JiraAgent::key()
-{
-    return keyInt;
-}
-
-bool JiraAgent::setQuery(const QString &s)  // FIXME-0 return value not used?
+bool JiraAgent::setQuery(const QString &s)
 {
     queryInt = s;
 
@@ -300,8 +264,6 @@ void JiraAgent::continueJob()
         case GetTicketInfo:
             switch(jobStep) {
                 case 1:
-                    // if (!requestedURL.toString().startsWith("http"))
-                    //    requestedURL.setPath("https://" + requestedURL.path());
                     startGetTicketRequest();
                     break;
                 case 2: {
@@ -379,8 +341,10 @@ void JiraAgent::startGetTicketRequest()
 
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
-    if (debug)
+    if (debug) {
         qDebug() << "JA::startGetTicketRequest: url = " + request.url().toString();
+        qDebug() << "                  authUsingPAT = " << authUsingPATInt;
+    }
 
     killTimer->start();
 

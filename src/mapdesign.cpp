@@ -380,7 +380,7 @@ QColor MapDesign::branchHeadingColor(
     updateRequired = false;
     if (!branchItem) return QColor();
 
-    // FIXME-0 cont here...  (see below)
+    // FIXME-0 cont here...  (see below in updateBranchHeadingCol)
 }
 
 void MapDesign::updateBranchHeadingColor(

@@ -690,14 +690,14 @@ AttributeItem* TreeItem::getAttributeByKey(const QString &k)
     return nullptr;
 }
 
-QString TreeItem::attributeValueString(const QString &k)
+QVariant TreeItem::attributeValue(const QString &k)
 {
     AttributeItem *ai;
     for (int i = 0; i < attributeCount(); i++) {
         ai = getAttributeNum(i);
-        if (ai->key() == k) return ai->value().toString();
+        if (ai->key() == k) return ai->value();
     }
-    return QString();
+    return QVariant();
 }
 
 XLinkItem* TreeItem::getXLinkItemNum(const int &n)

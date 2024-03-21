@@ -563,7 +563,7 @@ class VymModel : public TreeModel {
 
     void note2URLs();                    // get URLs from note
     void editHeading2URL();              // copy heading to URL
-    void getJiraData(bool subtree = true);      // get data from Jira
+    void getJiraData(bool subtree = true, BranchItem *bi = nullptr);
 
   private:
     void initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &);

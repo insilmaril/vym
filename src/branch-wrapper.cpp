@@ -21,10 +21,10 @@ QString BranchWrapper::headingText()
     return branchItem->getHeadingPlain();
 }
 
-bool BranchWrapper::relinkTo(BranchWrapper *bw)
+bool BranchWrapper::relinkTo(BranchWrapper *bw)   // FIXME-000 cont here
 {
     qDebug() << "BW::relinkTo " << bw->headingText();
-    return false;   // FIXME-0
+    return false;
 }
 
 void BranchWrapper::setFlagByName(const QString &s)

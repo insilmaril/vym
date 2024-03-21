@@ -2345,13 +2345,9 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
             // Check for Jira
             JiraAgent agent;
             QString query;
-            agent.jobTypeFromText(url);
-            if (agent.jobType() == JiraAgent::GetTicketInfo) { 
+            if (agent.setTicket(url)) {
                 setAttribute(bi, "Jira.key", agent.key());
-            } else if (agent.jobType() == JiraAgent::Query) {
-                setAttribute(bi, "Jira.query", agent.query());  // FIXME-2 currently "Query" is not a result of calling jobTypeFromText! Maybe rename it or use setTicket instead?
-            } else {
-                // FIXME-2 Remove Jira attributes"?
+                getJiraData(false, bi);
             }
             updateJiraFlag(bi);
 
@@ -4779,10 +4775,8 @@ void VymModel::editHeading2URL()
         setUrl(selti->getHeadingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existing jira data
-                                         // getJiraData FIXME-3 update error message, check
-                                         // if jiraClientAvail is set correctly
-                                         // getJiraData FIXME-0 errors in selectedBranches loop not caught correctly
+void VymModel::getJiraData(bool subtree, BranchItem *bi)
+// getJiraData FIXME-3 check if jiraClientAvail is set correctly
 {
     if (!JiraAgent::available()) {
         WarningDialog dia;
@@ -4796,7 +4790,7 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
             return;
     }
 
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
 
     if (selbi) {
         QString url;
@@ -4806,31 +4800,27 @@ void VymModel::getJiraData(bool subtree) // FIXME-1 check attributes for existin
         while (cur) {
             QString heading = cur->getHeadingPlain();
 
-            QString query = cur->attributeValueString("Jira.query");
+            QString query = cur->attributeValue("Jira.query").toString();
 
             bool startAgent = false;
             JiraAgent *agent = new JiraAgent;
-            if (!agent->setBranch(cur)) {
+            if (!agent->setBranch(cur))
                 qWarning () << "Could not set branch in JiraAgent to " << cur->getHeadingPlain();
-                startAgent = false;
-            } else {
+            else {
                 if (!query.isEmpty() && agent->setQuery(query)) {
                     // Branch has a query defined in attribute, try to use that
                     agent->setJobType(JiraAgent::Query);
                     connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
                     startAgent = true;
                 } else {
-                    QString key = cur->attributeValueString("Jira.key");
+                    QString key = cur->attributeValue("Jira.key").toString();
                     if (!key.isEmpty() && agent->setTicket(key)) {
                         // Branch has issueKey, get info for ticket
+                        startAgent = true;
+                        connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
                     } else {
-                        JiraAgent::JobType jobType = agent->jobTypeFromText(cur->getHeadingPlain());
-                        if (jobType == JiraAgent::GetTicketInfo) {
-                            qDebug() << "VM::getJiraData: Setup agent for ticket info from heading";
+                        if (agent->setTicket(cur->getHeadingPlain())) {
                             connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
-                            startAgent = true;
-                        } else if (jobType == JiraAgent::Query) {
-                            connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
                             startAgent = true;
                         } else {
                             mainWindow->statusMessage(tr("Could not setup JiraAgent to retrieve data from Jira"));

@@ -818,7 +818,7 @@ void VymReader::readImage()
     if (!s.isEmpty())
         lastImage->setOriginalFilename(s);
 
-    while (xml.readNextStartElement()) {    // FIXME-000 cont here
+    while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("heading"))
             readHeadingOrVymNote();
         else {

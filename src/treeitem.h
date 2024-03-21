@@ -197,7 +197,7 @@ class TreeItem : public XMLObj {
 
     virtual AttributeItem* getAttributeNum(const int &n);
     virtual AttributeItem* getAttributeByKey(const QString &k);
-    virtual QString attributeValueString(const QString &k);
+    virtual QVariant attributeValue(const QString &k);
 
     virtual XLinkItem* getXLinkItemNum(const int &n);
     virtual XLinkObj* getXLinkObjNum(const int &n);
