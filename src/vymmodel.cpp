@@ -4862,6 +4862,8 @@ void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
     setAttribute(bi, "Jira.status", ji.status());
     setAttribute(bi, "Jira.reporter", ji.reporter());
     setAttribute(bi, "Jira.resolution", ji.resolution());
+    setAttribute(bi, "Jira.issueLinks", ji.issueLinks());
+    setAttribute(bi, "Jira.subTasks", ji.subTasks());
 }
 
 void VymModel::updateJiraFlag(TreeItem *ti)

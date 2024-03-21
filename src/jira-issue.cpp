@@ -48,6 +48,7 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
 
     QJsonArray componentsArray = fields["components"].toArray();
     QJsonObject compObj;
+    componentsListInt.clear();
     for (int i = 0; i < componentsArray.size(); ++i) {
         compObj = componentsArray[i].toObject();
         componentsListInt << compObj["name"].toString();
@@ -55,7 +56,7 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
 
     QJsonArray fixVersionsArray = fields["fixVersions"].toArray();
     QJsonObject fixVersionsObj;
-    QStringList fixVersionsList;
+    fixVersionsListInt.clear();
     for (int i = 0; i < fixVersionsArray.size(); ++i) {
         fixVersionsObj = fixVersionsArray[i].toObject();
         fixVersionsListInt << fixVersionsObj["name"].toString();
@@ -65,19 +66,23 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
     // https://developer.atlassian.com/cloud/jira/platform/issue-linking-model/
 
     // Experimental
-    qDebug() << "issuelinks for " << keyInt;
+    qDebug() << "JiraIssue: issuelinks for " << keyInt;
     QJsonArray issuelinksArray = fields["issuelinks"].toArray();
+    issueLinksListInt.clear();
     for (int i = 0; i < issuelinksArray.size(); ++i) {
         qDebug() << issuelinksArray[i].toObject().value("inwardIssue")["key"].toString()
             << issuelinksArray[i].toObject().value("inwardIssue")["fields"]["summary"].toString();
+        issueLinksListInt << issuelinksArray[i].toObject().value("inwardIssue")["key"].toString();
     }
 
     // Experimental
-    qDebug() << "subtasks for " << keyInt;
+    qDebug() << "JiraIssue: subtasks for " << keyInt;
     QJsonArray subtasksArray = fields["subtasks"].toArray();
+    subTasksListInt.clear();
     for (int i = 0; i < subtasksArray.size(); ++i) {
         qDebug() << subtasksArray[i].toObject().value("key").toString()
             << subtasksArray[i].toObject().value("fields")["summary"].toString();
+        subTasksListInt << subtasksArray[i].toObject().value("key").toString();
     }
 
     // Guess Jira server from self reference
@@ -103,6 +108,8 @@ void JiraIssue::print() const
     vout << "     Status: " + statusInt << Qt::endl;
     vout << "     Server: " + jiraServerInt << Qt::endl; 
     vout << "        Url: " + url() << Qt::endl;
+    vout << " issueLinks: " + issueLinks() << Qt::endl;
+    vout << "   subTasks: " + subTasks() << Qt::endl;
 }
 
 bool JiraIssue::isFinished() const
@@ -168,5 +175,15 @@ QString JiraIssue::summary() const
 QString JiraIssue::url() const
 {
     return jiraServerInt + "/browse/" + keyInt;
+}
+
+QString JiraIssue::issueLinks() const
+{
+    return issueLinksListInt.join(",");
+}
+
+QString JiraIssue::subTasks() const
+{
+    return subTasksListInt.join(",");
 }
 

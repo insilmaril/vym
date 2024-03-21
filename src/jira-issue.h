@@ -22,6 +22,8 @@ class JiraIssue{
     QString status() const;
     QString summary() const;
     QString url() const;
+    QString issueLinks() const;
+    QString subTasks() const;
 
   private:  
     QString assigneeInt;
@@ -35,6 +37,8 @@ class JiraIssue{
     QString summaryInt;
     QStringList componentsListInt;
     QStringList fixVersionsListInt;
+    QStringList subTasksListInt;
+    QStringList issueLinksListInt;
 
     QString jiraServerInt;
 };
