@@ -4299,7 +4299,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
     }
 }
 
-void VymModel::deleteChildren() // FIXME-0 updateJiraFlag missing
+void VymModel::deleteChildren()
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
@@ -4923,7 +4923,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
     QJsonArray issues = jsobj["issues"].toArray();
 
     saveStateBlocked = true;
-    //repositionBlocked = true; // FIXME-0 check...
+    //repositionBlocked = true; // FIXME-2 block reposition during bulk processing of Jira query?
 
     for (int i = 0; i < issues.size(); ++i) {
         QJsonObject issue = issues[i].toObject();

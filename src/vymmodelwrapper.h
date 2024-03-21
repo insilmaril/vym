@@ -108,7 +108,7 @@ class VymModelWrapper : public VymScriptContext {
     void saveSelection(const QString &filename);
     void scroll();
     bool select(const QString &s);
-    BranchWrapper* selectedBranch();      // FIXME-0 better return BranchWrapper
+    BranchWrapper* selectedBranch();
     bool selectID(const QString &s);
     bool selectFirstBranch();
     bool selectFirstChildBranch();
