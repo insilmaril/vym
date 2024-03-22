@@ -1,8 +1,12 @@
 #include "branch-wrapper.h"
 
+#include "attributeitem.h"
 #include "branchitem.h"
 
 #include "vymmodel.h"
+
+#include <QJSEngine>
+extern QJSEngine *scriptEngine;
 
 BranchWrapper::BranchWrapper(BranchItem *bi)
 {
@@ -15,15 +19,57 @@ BranchWrapper::~BranchWrapper()
     //qDebug() << "Destr BranchWrapper";
 }
 
+int BranchWrapper::attributeAsInt(const QString &key)
+{
+    QVariant v;
+    AttributeItem *ai = branchItem->getModel()->getAttributeByKey(key);
+    if (ai) {
+        v = ai->value();
+    } else {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("No attribute found with key '%1'").arg(key));
+        return setResult(-1);
+    }
+
+    bool ok;
+    int i = v.toInt(&ok);
+    if (ok)
+        return setResult(v.toInt());
+    else {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("Could not convert attribute  with key '%1' to int.").arg(key));
+        return setResult(-1);
+    }
+}
+
+QString BranchWrapper::attributeAsString(const QString &key)
+{
+    QVariant v;
+    AttributeItem *ai = branchItem->getModel()->getAttributeByKey(key);
+    if (ai) {
+        v = ai->value();
+    } else {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("No attribute found with key '%1'").arg(key));
+        return setResult(QString());
+    }
+    //
+    // Returned string will be empty for unsupported variant types
+    return setResult(v.toString());
+}
+
 
 QString BranchWrapper::headingText()
 {
     return branchItem->getHeadingPlain();
 }
 
-bool BranchWrapper::relinkTo(BranchWrapper *bw)   // FIXME-000 cont here
+bool BranchWrapper::relinkTo(BranchWrapper *bw)
 {
-    qDebug() << "BW::relinkTo " << bw->headingText();
+    branchItem->getModel()->relinkBranch(branchItem, bw->branchItem);
     return false;
 }
 

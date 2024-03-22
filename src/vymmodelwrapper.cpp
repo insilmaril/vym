@@ -395,48 +395,6 @@ BranchWrapper* VymModelWrapper::findBranchByAttribute(
         return nullptr;
 }
 
-QString VymModelWrapper::getStringAttribute(const QString &key)
-{
-    QVariant v;
-    AttributeItem *ai = model->getAttributeByKey(key);
-    if (ai) {
-        if (ai->value().typeName() != "QString") {
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    QString("Attribute with key '%1' has no type 'String'").arg(key));
-            return setResult(QString());
-        }
-        v = ai->value();
-    } else {
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("No attribute found with key '%1'").arg(key));
-        return setResult(QString());
-    }
-    return setResult(v.toString());
-}
-
-int VymModelWrapper::getIntAttribute(const QString &key)
-{
-    QVariant v;
-    AttributeItem *ai = model->getAttributeByKey(key);
-    if (ai) {
-        if (ai->value().typeName() != "Integer") {
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    QString("Attribute with key '%1' has no type 'Integer'").arg(key));
-            return setResult(-1);
-        }
-        v = ai->value();
-    } else {
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("No attribute found with key '%1'").arg(key));
-        return setResult(-1);
-    }
-    return setResult(v.toInt());
-}
-
 int VymModelWrapper::getBranchIndex()
 {
     int r;

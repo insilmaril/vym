@@ -1951,6 +1951,7 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
             return cur;
         nextBranch(cur, prev);
     }
+
     return nullptr;
 }
 

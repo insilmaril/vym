@@ -747,10 +747,6 @@ void Main::setupAPI()
     c = new Command("getSelectionString", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getStringAttribute", Command::Branch, Command::String);
-    c->addParameter(Command::String, false, "Key of integer attribute");
-    modelCommands.append(c);
-
     c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
     modelCommands.append(c);
 
@@ -1189,6 +1185,16 @@ void Main::setupAPI()
     //
     // Below are the commands for a branch
     //
+
+    c = new Command("attributeAsInt", Command::Branch, Command::Int);
+    c->setComment("Get integer value of attribute with given key");
+    c->addParameter(Command::String, false, "Key of integer attribute");
+    branchCommands.append(c);
+
+    c = new Command("attributeAsString", Command::Branch, Command::String);
+    c->setComment("Get string value of attribute with given key");
+    c->addParameter(Command::String, false, "Key of string attribute");
+    branchCommands.append(c);
 
     c = new Command("headingText", Command::Branch, Command::String);
     c->setComment("Set heading of branch from plaintext string");

@@ -2,7 +2,7 @@
 #define VERSION_H
 
 #define __VYM_VERSION "2.9.524"
-#define __VYM_BUILD_DATE "2024-03-20"
+#define __VYM_BUILD_DATE "2024-03-22"
 
 #define __VYM_NAME "VYM"
 #define __VYM_HOME "http://www.insilmaril.de/vym"

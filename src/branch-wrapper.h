@@ -13,6 +13,8 @@ class BranchWrapper : public VymScriptContext {
     ~BranchWrapper();
 
   public slots:
+    int attributeAsInt(const QString &key);
+    QString attributeAsString(const QString &key);
     QString headingText();  
     bool relinkTo(BranchWrapper*);
     void setFlagByName(const QString &);
