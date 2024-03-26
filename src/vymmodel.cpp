@@ -4081,7 +4081,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
     if (images.isEmpty())
         images = getSelectedImages();
 
-    if (!dst || images.isEmpty())
+    if (!dst_ti || images.isEmpty())
         return false;
 
     if (dst_ti->hasTypeImage()) {
