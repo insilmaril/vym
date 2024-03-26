@@ -54,8 +54,7 @@ MapEditor::MapEditor(VymModel *vm)
                                                             // or maybe also prepareGeometryChange()
 
     // Origin for view transformations (rotation, scaling)
-    setTransformationAnchor(QGraphicsView::NoAnchor);
-    //setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+    setTransformationAnchor(QGraphicsView::AnchorViewCenter);
     transformationOrigin = QPointF(0, 0);
     zoomDelta = 0.20;
 
@@ -549,28 +548,16 @@ void MapEditor::stopAllAnimation()
 
 void MapEditor::zoomIn()
 {
+    HeadingContainer *hc = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer();
+    transformationOrigin = hc->mapToScene(hc->rect().center());
+    qreal f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
+    qreal f_zf = 1 + zoomDelta + 0.046;   // view transformation grows
 
-    QPointF oldCenter = mapToScene(rect().center() );
-    setZoomFactorTarget(zoomFactorTargetInt * (1.1));
+    transformationOrigin = mapToScene(e->position().toPoint());
+    vp_center = mapToScene(viewport()->rect().center());
 
-
-    QPointF newCenter = mapToScene(rect().center() );
-    qDebug() << "  oldCenter=" << toS(oldCenter);
-    qDebug() << "  newCenter=" << toS(newCenter);
-    qDebug() << "   d_center=" << newCenter - oldCenter;
-
-    centerOn(oldCenter + QPointF(0,0));
-
-    qDebug() << " c updated =" << mapToScene(rect().center() );
-    return;
-
-    transformOriginScene = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->mapToScene( model->getSelectedBranch()->getBranchContainer()->getHeadingContainer()->rect().center());
-    transformOriginView = mapFromScene(transformOriginScene);
-    //transformationOrigin = mapToScene( viewport()->rect().center() );
-    //transformationOrigin = QPointF(200,0);
-    transformationOrigin = transformOriginScene;
-
-    qDebug() << "zoom: origin=" << toS(transformationOrigin);
+    // Calculate center of scaled viewport with p as transformation origin
+    vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
 
     setZoomFactorTarget(zoomFactorTargetInt * (1 + zoomDelta));
 }
@@ -723,22 +710,17 @@ QPointF MapEditor::getViewCenter() { return viewCenter; }
 void MapEditor::updateMatrix()
 {
     qDebug() << "ME::updateMatrix";
-    qDebug() << " TO     =" << toS(transformationOrigin);
-    qDebug() << " TOScene=" << toS(transformOriginScene);
-    qDebug() << " TOView =" << toS(transformOriginView);
+    qDebug() << " TO       =" << toS(transformationOrigin);
+    qDebug() << " vp_center=" << toS(vp_center);
 
-//    qDebug() << "     hSB=" << horizontalScrollBar()->value();
-    qDebug() << "transform()=" << transform();
-    QTransform t; // = transform();
-    t.translate(transformationOrigin.x(), transformationOrigin.y());
-    t.scale(zoomFactorInt, zoomFactorInt);
+    centerOn(transformationOrigin);
+
+    QTransform t;
     t.rotate(rotationInt);
-    t.translate(- transformationOrigin.x(), - transformationOrigin.y());
-    qDebug() << "          t=" << t;
+    t.scale(zoomFactorInt, zoomFactorInt);
     setTransform(t);
-    qDebug() << "transform()=" << transform();
-    qDebug() << " TOView =" << toS(mapFromScene(transformOriginScene));
-//    qDebug() << "     hSB=" << horizontalScrollBar()->value();
+
+    centerOn(vp_center);
 }
 
 void MapEditor::minimizeView() {
@@ -748,6 +730,7 @@ void MapEditor::minimizeView() {
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
+    qDebug() << "ME::minimizeView";
 }
 
 void MapEditor::print()
@@ -1086,6 +1069,13 @@ BranchItem *MapEditor::findMapBranchItem(
 void MapEditor::testFunction1()
 {
     //autoLayout();
+    qDebug() << "ME::test";
+    qDebug() << "  hor_scrollbar=" << horizontalScrollBar()->value();
+    qDebug() << "  ver_scrollbar=" << verticalScrollBar()->value();
+    qDebug() << "           rect=" << toS(rect());
+    qDebug() << "      sceneRect=" << toS(sceneRect());
+    qDebug() << "             tf=" << zoomFactorInt;
+    qDebug() << "       pageStep=" << horizontalScrollBar()->pageStep();
 }
 
 void MapEditor::testFunction2()
@@ -2511,14 +2501,28 @@ void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-0 for zooming use current p
 {
     if (e->modifiers() & Qt::ControlModifier &&
         e->angleDelta().y() != 0) {
-        QPointF p = mapToScene(e->position().toPoint());
-        transformationOrigin = p;
-        qDebug() << "ME::wheel p=" << toS(p) << "  zf=" << zoomFactorInt;
 
-        if (e->angleDelta().y() > 0)
-	    setZoomFactorTarget(zoomFactorTargetInt * (1 + zoomDelta));
-        else
-	    setZoomFactorTarget(zoomFactorTargetInt * (1 - zoomDelta));
+        qreal f_vp;
+        qreal f_zf;
+        qDebug() << "ME::wheelEvent ad=" << e->angleDelta().y();
+        if (e->angleDelta().y() > 0) {
+            // Zoom in
+	    f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
+	    f_zf = 1 + zoomDelta + 0.046;   // view transformation grows
+        } else {
+            // Zoom out
+	    f_vp = 1 + zoomDelta;
+	    f_zf = 1 - zoomDelta - 0.046;
+        }
+
+
+        transformationOrigin = mapToScene(e->position().toPoint());
+        vp_center = mapToScene(viewport()->rect().center());
+
+        // Calculate center of scaled viewport with p as transformation origin
+        vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+
+        setZoomFactorTarget(zoomFactorTargetInt * f_zf);
     }
     else {
         scrollBarPosAnimation.stop();

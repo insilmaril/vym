@@ -1942,6 +1942,9 @@ TreeItem *VymModel::findUuid(const QUuid &id)
 
 void VymModel::test()
 {
+    mapEditor->testFunction1();
+    return;
+
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch())
             ((BranchItem*)ti)->getBranchContainer()->printStructure();

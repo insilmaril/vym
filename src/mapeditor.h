@@ -106,8 +106,7 @@ class MapEditor : public QGraphicsView {
     QPropertyAnimation rotationAnimation;
 
     QPointF transformationOrigin;
-    QPointF transformOriginScene;
-    QPoint transformOriginView;
+    QPointF vp_center;   // Calculated before transformation to center on later
 
   public:
     void setRotationTarget(const qreal &a);
