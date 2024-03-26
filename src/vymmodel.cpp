@@ -3282,7 +3282,7 @@ void VymModel::moveUp(TreeItem *ti)
         seliis = getSelectedImages();
 
     if (!seliis.isEmpty())
-        foreach (ImageItem *selii, sortImagesByNum(seliis, true)) {
+        foreach (ImageItem *selii, sortImagesByNum(seliis, false)) {
             if (canMoveUp(selii))
                  relinkImage(selii, selii->parentBranch(), selii->num() - 1);
     }
@@ -3464,9 +3464,9 @@ void VymModel::sortChildren(bool inverse)
     }
 }
 
-QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bool inverse) // FIXME-0 WIP. Useful for moving up/down in lists or grid...
-{
-    // Shortcut
+QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bool inverse)
+{   // for moving up/down *multiple* images in lists or grid...
+
     if (unsortedList.count() < 2)
         return unsortedList;
 
