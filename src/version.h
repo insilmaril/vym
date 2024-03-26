@@ -4,7 +4,7 @@
 #define __VYM_VERSION "2.9.525"
 #define __VYM_BUILD_DATE "2024-03-26"
 
-#define __VYM_NAME "VYM"
+#define __VYM_NAME "VYM ng"     // FIXME-2 "next generation" in in window title
 #define __VYM_HOME "http://www.insilmaril.de/vym"
 //
 //#define __VYM_CODE_QUALITY "Production"

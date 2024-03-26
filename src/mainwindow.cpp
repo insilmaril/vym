@@ -141,7 +141,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 {
     mainWindow = this;
 
-    setWindowTitle("VYM - View Your Mind");
+    setWindowTitle(vymName + " - View Your Mind");
 
     shortcutScope = tr("Main window", "Shortcut scope");
 
