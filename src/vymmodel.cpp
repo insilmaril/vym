@@ -294,7 +294,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
         mapAttr += xml.attribute("branchCount", QString().number(branchCount()));
         mapAttr += xml.attribute("mapZoomFactor",
-                     QString().setNum(mapEditor->getZoomFactorTarget()));
+                     QString().setNum(mapEditor->zoomFactorTarget()));
         mapAttr += xml.attribute("mapRotation",
                      QString().setNum(mapEditor->rotationTarget()));
 
@@ -473,7 +473,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     // Get updated zoomFactor, before applying one read from file in the end
     if (mapEditor) {
-        zoomFactor = mapEditor->getZoomFactorTarget();
+        zoomFactor = mapEditor->zoomFactorTarget();
         mapRotationInt = mapEditor->rotationTarget();
     }
 
@@ -1957,6 +1957,9 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
+    mapEditor->testFunction1();
+    return;
+
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch())
             ((BranchItem*)ti)->getBranchContainer()->printStructure();
@@ -6998,7 +7001,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
 
             inScript.replace(
                 "CURRENT_ZOOM",
-                QString().setNum(getMapEditor()->getZoomFactorTarget()));
+                QString().setNum(getMapEditor()->zoomFactorTarget()));
             inScript.replace("CURRENT_ANGLE",
                              QString().setNum(getMapEditor()->rotationTarget()));
             inScript.replace("CURRENT_ID",

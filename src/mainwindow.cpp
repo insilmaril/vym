@@ -5947,14 +5947,14 @@ void Main::viewZoomIn()
 {
     MapEditor *me = currentMapEditor();
     if (me)
-        me->setZoomFactorTarget(me->getZoomFactorTarget() * 1.15);
+        me->zoomIn();
 }
 
 void Main::viewZoomOut()
 {
     MapEditor *me = currentMapEditor();
     if (me)
-        me->setZoomFactorTarget(me->getZoomFactorTarget() * 0.85);
+        me->zoomOut();
 }
 
 void Main::viewRotateCounterClockwise() // FIXME-4 move to ME

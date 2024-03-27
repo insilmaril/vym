@@ -53,6 +53,12 @@ MapEditor::MapEditor(VymModel *vm)
                                                             // Alternatively call removeFromIndex() in destructor
                                                             // or maybe also prepareGeometryChange()
 
+    // Origin for view transformations (rotation, scaling)
+    setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+    transformationOrigin = QPointF(0, 0);
+    useTransformationOrigin = false;
+    zoomDelta = 0.20;
+
     if (debug) {
         // Add cross in origin for debugging
         QPointF p;
@@ -68,7 +74,7 @@ MapEditor::MapEditor(VymModel *vm)
         mapScene->addItem(y_axis);
 
         // Add another cross
-        p = QPointF(130,0);
+        p = QPointF(200,0);
         size = 20;
         QGraphicsRectItem *x_axis2 = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
         QGraphicsRectItem *y_axis2 = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
@@ -81,7 +87,7 @@ MapEditor::MapEditor(VymModel *vm)
         mapScene->addItem(y_axis2);
     }
 
-    zoomFactor = zoomFactorTarget = 1;
+    zoomFactorInt = zoomFactorTargetInt = 1;
     rotationInt = rotationTargetInt = 0;
 
     model = vm;
@@ -304,7 +310,7 @@ void MapEditor::ensureAreaVisibleAnimated(
     QEasingCurve easingCurve = QEasingCurve::OutQuint;
     
     //qDebug() << " zoom out: " << zoomOutRequired;
-    //qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactor << " zf=" << zf;
+    //qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactorInt << " zf=" << zf;
     if (zoomOutRequired || scaled) {
         setViewCenterTarget(
                 area.center(), 
@@ -335,7 +341,7 @@ void MapEditor::ensureAreaVisibleAnimated(
     if (abs(view_dx) > 5 || abs(view_dy) > 5 || rotated)
         setViewCenterTarget(
                 mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
-                zoomFactor,
+                zoomFactorInt,
                 new_rotation,
                 animDuration,
                 easingCurve);
@@ -410,7 +416,7 @@ void MapEditor::setScrollBarPosTarget(QRectF rect)
     qreal width = viewport()->width();
     qreal height = viewport()->height();
     QRectF viewRect = transform().
-        scale(zoomFactorTarget, zoomFactorTarget).
+        scale(zoomFactorTargetInt, zoomFactorTargetInt).
         mapRect(rect);
 
     qreal left = horizontalScrollBar()->value();
@@ -457,6 +463,7 @@ QPointF MapEditor::getScrollBarPos()
 
 void MapEditor::animateScrollBars()
 {
+    qDebug() << "ME::animateScrollBars";
     if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
         scrollBarPosAnimation.stop();
 
@@ -539,18 +546,47 @@ void MapEditor::stopAllAnimation()
     }
 }
 
+void MapEditor::zoomIn()
+{
+    HeadingContainer *hc = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer();
+    transformationOrigin = hc->mapToScene(hc->rect().center());
+    qreal f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
+    qreal f_zf = 1 + zoomDelta + 0.046;   // view transformation grows
+
+    // Calculate center of scaled viewport with p as transformation origin
+    vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+
+    useTransformationOrigin = false;
+    setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+}
+
+void MapEditor::zoomOut()
+{
+    HeadingContainer *hc = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer();
+    transformationOrigin = hc->mapToScene(hc->rect().center());
+    qreal f_vp = 1 + zoomDelta;           // vector to center of viewport shrinks
+    qreal f_zf = 1 - zoomDelta - 0.046;   // view transformation grows
+
+    // Calculate center of scaled viewport with p as transformation origin
+    vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+
+    useTransformationOrigin = false;
+    setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+}
+
 void MapEditor::setZoomFactorTarget(const qreal &zft)
 {
-    zoomFactorTarget = zft;
+    zoomFactorTargetInt = zft;
     if (zoomAnimation.state() == QAbstractAnimation::Running)
         zoomAnimation.stop();
+
     if (settings.value("/animation/use/", true).toBool()) {
         zoomAnimation.setTargetObject(this);
-        zoomAnimation.setPropertyName("zoomFactor");
+        zoomAnimation.setPropertyName("zoomFactorInt");
         zoomAnimation.setDuration(
             settings.value("/animation/duration/zoom", 2000).toInt());
         zoomAnimation.setEasingCurve(QEasingCurve::OutQuint);
-        zoomAnimation.setStartValue(zoomFactor);
+        zoomAnimation.setStartValue(zoomFactorInt);
         zoomAnimation.setEndValue(zft);
         zoomAnimation.start();
     }
@@ -558,15 +594,15 @@ void MapEditor::setZoomFactorTarget(const qreal &zft)
         setZoomFactor(zft);
 }
 
-qreal MapEditor::getZoomFactorTarget() { return zoomFactorTarget; }
+qreal MapEditor::zoomFactorTarget() { return zoomFactorTargetInt; }
 
 void MapEditor::setZoomFactor(const qreal &zf)
 {
-    zoomFactor = zf;
+    zoomFactorInt = zf;
     updateMatrix();
 }
 
-qreal MapEditor::getZoomFactor() { return zoomFactor; }
+qreal MapEditor::zoomFactor() { return zoomFactorInt; }
 
 void MapEditor::setRotationTarget(const qreal &at)
 {
@@ -604,7 +640,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
                                     const QEasingCurve &easingCurve)
 {
     viewCenterTarget = p;
-    zoomFactorTarget = zft;
+    zoomFactorTargetInt = zft;
     rotationTargetInt = at;
 
     viewCenter = mapToScene(viewport()->geometry()).boundingRect().center();
@@ -636,15 +672,14 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
         rotationAnimation.start();
 
         zoomAnimation.setTargetObject(this);
-        zoomAnimation.setPropertyName("zoomFactor");
+        zoomAnimation.setPropertyName("zoomFactorInt");
         zoomAnimation.setDuration(
             settings.value("/animation/duration/zoom", duration).toInt());
         zoomAnimation.setEasingCurve(easingCurve);
-        zoomAnimation.setStartValue(zoomFactor);
-        zoomAnimation.setEndValue(zoomFactorTarget);
+        zoomAnimation.setStartValue(zoomFactorInt);
+        zoomAnimation.setEndValue(zoomFactorTargetInt);
         zoomAnimation.start();
-    }
-    else {
+    } else {
         setRotation(rotationTargetInt);
         setZoomFactor(zft);
         setViewCenter(viewCenterTarget);
@@ -668,17 +703,29 @@ void MapEditor::setViewCenterTarget()
 
 QPointF MapEditor::getViewCenterTarget() { return viewCenterTarget; }
 
-void MapEditor::setViewCenter(const QPointF &vc) { centerOn(vc); }
+void MapEditor::setViewCenter(const QPointF &vc) {
+    // For wheel events // useTransFormationOrigin == true
+    // and thus we will need vp_center in updateMatrix() later
+    vp_center = vc; 
+    centerOn(vc);
+}
 
 QPointF MapEditor::getViewCenter() { return viewCenter; }
 
 void MapEditor::updateMatrix()
 {
-    QTransform t_zoom;
-    t_zoom.scale(zoomFactor, zoomFactor);
-    QTransform t_rot;
-    t_rot.rotate(rotationInt);
-    setTransform(t_zoom * t_rot);
+    if (useTransformationOrigin) {
+        //qDebug() << " vp_center=" << toS(vp_center);
+        centerOn(transformationOrigin);
+    }
+
+    QTransform t;
+    t.rotate(rotationInt);
+    t.scale(zoomFactorInt, zoomFactorInt);
+    setTransform(t);
+
+    if (useTransformationOrigin)
+        centerOn(vp_center);
 }
 
 void MapEditor::minimizeView() {
@@ -688,6 +735,7 @@ void MapEditor::minimizeView() {
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
+    qDebug() << "ME::minimizeView";
 }
 
 void MapEditor::print()
@@ -1026,6 +1074,13 @@ BranchItem *MapEditor::findMapBranchItem(
 void MapEditor::testFunction1()
 {
     //autoLayout();
+    qDebug() << "ME::test";
+    qDebug() << "  hor_scrollbar=" << horizontalScrollBar()->value();
+    qDebug() << "  ver_scrollbar=" << verticalScrollBar()->value();
+    qDebug() << "           rect=" << toS(rect());
+    qDebug() << "      sceneRect=" << toS(sceneRect());
+    qDebug() << "             tf=" << zoomFactorInt;
+    qDebug() << "       pageStep=" << horizontalScrollBar()->pageStep();
 }
 
 void MapEditor::testFunction2()
@@ -2447,17 +2502,35 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-1 for zooming use current pos as center, not middle of view
+void MapEditor::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier &&
         e->angleDelta().y() != 0) {
-        QPointF p = mapToScene(e->position().toPoint());
-        if (e->angleDelta().y() > 0)
-            // setZoomFactorTarget (zoomFactorTarget*1.15);
-            setViewCenterTarget(p, zoomFactorTarget * 1.15, rotationTargetInt);
-        else
-            // setZoomFactorTarget (zoomFactorTarget*0.85);
-            setViewCenterTarget(p, zoomFactorTarget * 0.85, rotationTargetInt);
+
+        qreal f_vp;
+        qreal f_zf;
+        if (e->angleDelta().y() > 0) {
+            // Zoom in
+	    f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
+	    f_zf = 1 + zoomDelta + 0.046;   // view transformation grows
+        } else {
+            // Zoom out
+	    f_vp = 1 + zoomDelta;
+	    f_zf = 1 - zoomDelta + 0.046;
+        }
+
+        if (rotationAnimation.state() == QAbstractAnimation::Running)
+            rotationAnimation.stop();
+
+        transformationOrigin = mapToScene(e->position().toPoint());
+        vp_center = mapToScene(viewport()->rect().center());
+
+        // Calculate center of scaled viewport with p as transformation origin
+        vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+
+        useTransformationOrigin = true;
+        //setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+        setViewCenterTarget(vp_center, zoomFactorTargetInt * f_zf, rotationTargetInt);
     }
     else {
         scrollBarPosAnimation.stop();
@@ -2502,11 +2575,11 @@ void MapEditor::dropEvent(QDropEvent *event)
                 qDebug() << "       enc:" << url.toEncoded();
                 qDebug() << "     valid:" << url.isValid();
             }
-            qDebug() << "============== mimeData ===================";
+            qDebug() << "-------------- mimeData -------------------";
             qDebug() << "has-img : " << event->mimeData()->hasImage();
             qDebug() << "has-urls: " << event->mimeData()->hasUrls();
             qDebug() << "    text: " << event->mimeData()->text();
-            qDebug() << "===========================================";
+            qDebug() << "-------------------------------------------";
         }
 
         if (event->mimeData()->hasUrls()) {
