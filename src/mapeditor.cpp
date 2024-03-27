@@ -56,6 +56,7 @@ MapEditor::MapEditor(VymModel *vm)
     // Origin for view transformations (rotation, scaling)
     setTransformationAnchor(QGraphicsView::AnchorViewCenter);
     transformationOrigin = QPointF(0, 0);
+    useTransformationOrigin = false;
     zoomDelta = 0.20;
 
     if (debug) {
@@ -278,8 +279,6 @@ void MapEditor::ensureAreaVisibleAnimated(
     // but with animation and (if necessary)
     // zooming
 
-    qDebug() << "ME::ensureAreaVisibleAnimated";
-
     int xmargin = settings.value("/mapeditor/scrollToMarginX/", 50).toInt();
     int ymargin = settings.value("/mapeditor/scrollToMarginY/", 50).toInt();
 
@@ -359,7 +358,6 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
     // Similar to QGraphicsItem::ensureVisible, but with animation and (if necessary)
     // zooming
 
-    qDebug() << "ME::ensureSelVisibleAnimated";
     QList <TreeItem*> selis = model->getSelectedItems();
 
     // Nothing to do, if nothing is selected
@@ -553,21 +551,25 @@ void MapEditor::zoomIn()
     qreal f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
     qreal f_zf = 1 + zoomDelta + 0.046;   // view transformation grows
 
-    transformationOrigin = mapToScene(e->position().toPoint());
-    vp_center = mapToScene(viewport()->rect().center());
-
     // Calculate center of scaled viewport with p as transformation origin
     vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
 
-    setZoomFactorTarget(zoomFactorTargetInt * (1 + zoomDelta));
+    useTransformationOrigin = false;
+    setZoomFactorTarget(zoomFactorTargetInt * f_zf);
 }
 
 void MapEditor::zoomOut()
 {
-    //transformationOrigin = mapToScene( viewport()->rect().center() );
-    transformationOrigin = QPointF(200,0);
-    qDebug() << "zoom: origin=" << toS(transformationOrigin);
-    setZoomFactorTarget(zoomFactorTargetInt * (1 - zoomDelta));
+    HeadingContainer *hc = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer();
+    transformationOrigin = hc->mapToScene(hc->rect().center());
+    qreal f_vp = 1 + zoomDelta;           // vector to center of viewport shrinks
+    qreal f_zf = 1 - zoomDelta - 0.046;   // view transformation grows
+
+    // Calculate center of scaled viewport with p as transformation origin
+    vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+
+    useTransformationOrigin = false;
+    setZoomFactorTarget(zoomFactorTargetInt * f_zf);
 }
 
 void MapEditor::setZoomFactorTarget(const qreal &zft)
@@ -602,8 +604,6 @@ qreal MapEditor::zoomFactor() { return zoomFactorInt; }
 
 void MapEditor::setRotationTarget(const qreal &at)
 {
-    //transformationOrigin = mapToScene( viewport()->rect().center() );
-    qDebug() << "rotate: o=" << toS(transformationOrigin);
     rotationTargetInt = at;
     if (rotationAnimation.state() == QAbstractAnimation::Running)
         rotationAnimation.stop();
@@ -626,7 +626,6 @@ qreal MapEditor::rotationTarget() { return rotationTargetInt; }
 void MapEditor::setRotation(const qreal &a)
 {
     rotationInt = a;
-    //transformationOrigin = QPointF(200,0);
     updateMatrix();
     if (winter)
         winter->updateView();
@@ -671,15 +670,14 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
         rotationAnimation.start();
 
         zoomAnimation.setTargetObject(this);
-        zoomAnimation.setPropertyName("zoomFactor");
+        zoomAnimation.setPropertyName("zoomFactorInt");
         zoomAnimation.setDuration(
             settings.value("/animation/duration/zoom", duration).toInt());
         zoomAnimation.setEasingCurve(easingCurve);
         zoomAnimation.setStartValue(zoomFactorInt);
         zoomAnimation.setEndValue(zoomFactorTargetInt);
         zoomAnimation.start();
-    }
-    else {
+    } else {
         setRotation(rotationTargetInt);
         setZoomFactor(zft);
         setViewCenter(viewCenterTarget);
@@ -703,24 +701,29 @@ void MapEditor::setViewCenterTarget()
 
 QPointF MapEditor::getViewCenterTarget() { return viewCenterTarget; }
 
-void MapEditor::setViewCenter(const QPointF &vc) { centerOn(vc); }
+void MapEditor::setViewCenter(const QPointF &vc) {
+    // For wheel events // useTransFormationOrigin == true
+    // and thus we will need vp_center in updateMatrix() later
+    vp_center = vc; 
+    centerOn(vc);
+}
 
 QPointF MapEditor::getViewCenter() { return viewCenter; }
 
 void MapEditor::updateMatrix()
 {
-    qDebug() << "ME::updateMatrix";
-    qDebug() << " TO       =" << toS(transformationOrigin);
-    qDebug() << " vp_center=" << toS(vp_center);
-
-    centerOn(transformationOrigin);
+    if (useTransformationOrigin) {
+        //qDebug() << " vp_center=" << toS(vp_center);
+        centerOn(transformationOrigin);
+    }
 
     QTransform t;
     t.rotate(rotationInt);
     t.scale(zoomFactorInt, zoomFactorInt);
     setTransform(t);
 
-    centerOn(vp_center);
+    if (useTransformationOrigin)
+        centerOn(vp_center);
 }
 
 void MapEditor::minimizeView() {
@@ -2496,15 +2499,13 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-0 for zooming use current pos as center, not middle of view
-// FIXME-0 Mouse wheel event: stop other view animations
+void MapEditor::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier &&
         e->angleDelta().y() != 0) {
 
         qreal f_vp;
         qreal f_zf;
-        qDebug() << "ME::wheelEvent ad=" << e->angleDelta().y();
         if (e->angleDelta().y() > 0) {
             // Zoom in
 	    f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
@@ -2512,9 +2513,11 @@ void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-0 for zooming use current p
         } else {
             // Zoom out
 	    f_vp = 1 + zoomDelta;
-	    f_zf = 1 - zoomDelta - 0.046;
+	    f_zf = 1 - zoomDelta + 0.046;
         }
 
+        if (rotationAnimation.state() == QAbstractAnimation::Running)
+            rotationAnimation.stop();
 
         transformationOrigin = mapToScene(e->position().toPoint());
         vp_center = mapToScene(viewport()->rect().center());
@@ -2522,7 +2525,9 @@ void MapEditor::wheelEvent(QWheelEvent *e)  // FIXME-0 for zooming use current p
         // Calculate center of scaled viewport with p as transformation origin
         vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
 
-        setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+        useTransformationOrigin = true;
+        //setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+        setViewCenterTarget(vp_center, zoomFactorTargetInt * f_zf, rotationTargetInt);
     }
     else {
         scrollBarPosAnimation.stop();
