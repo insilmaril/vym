@@ -51,7 +51,7 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeitem.h"
-#include "vymprocess.h"
+//FIXME-2 not needed #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
@@ -726,7 +726,7 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
         QPushButton *uncompressedButton = mb.addButton(
             tr("uncompressed, potentially overwrite existing data"),
             QMessageBox::NoRole);
-        QPushButton *cancelButton = mb.addButton(
+        mb.addButton(
             tr("Cancel"),
             QMessageBox::RejectRole);
         mb.exec();
@@ -2744,7 +2744,6 @@ void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
     else
         seliis = getSelectedImages();
 
-    ImageContainer *ic;
     foreach (ImageItem *selii, seliis) {
         qreal f_old = selii->scale();
         qreal f_new = relative ? f_old + f : f;
@@ -3246,8 +3245,6 @@ bool VymModel::canMoveDown(TreeItem *ti)
 {
     if (ti) {
         BranchItem *pbi;
-        if (pbi == rootItem)
-            return false;
 
         if (ti->hasTypeBranch()) {
             pbi = ((BranchItem*)ti)->parentBranch();
@@ -3273,10 +3270,12 @@ void VymModel::moveUp(TreeItem *ti)
     else
         selbis = getSelectedBranches();
 
-    if (!selbis.isEmpty())
-        foreach (BranchItem *selbi, sortBranchesByNum(selbis, false))
+    if (!selbis.isEmpty()){
+        foreach (BranchItem *selbi, sortBranchesByNum(selbis, false)){
             if (canMoveUp(selbi))
                 relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
+        }
+    }
 
     QList<ImageItem *> seliis;
     if (ti && ti->hasTypeImage())
@@ -3284,10 +3283,11 @@ void VymModel::moveUp(TreeItem *ti)
     else
         seliis = getSelectedImages();
 
-    if (!seliis.isEmpty())
+    if (!seliis.isEmpty()){
         foreach (ImageItem *selii, sortImagesByNum(seliis, false)) {
             if (canMoveUp(selii))
                  relinkImage(selii, selii->parentBranch(), selii->num() - 1);
+        }
     }
 }
 
@@ -3356,10 +3356,8 @@ void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
         selbis << bi;
     else
         selbis = getSelectedBranches();
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         if (selbi->depth() > 0) {
-            bc = selbi->getBranchContainer();
             relinkBranch(selbi, rootItem, -1);
         }
     }
@@ -3688,7 +3686,6 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, const QString &key, const
 
 void VymModel::deleteAttribute(BranchItem *dst, const QString &key)
 {
-    bool changed = false;
     AttributeItem *ai;
 
     for (int i = 0; i < dst->attributeCount(); i++) {
@@ -4110,7 +4107,6 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
                 .arg(images.count())
                 .arg(dst->getHeadingPlain()));
 
-    BranchItem* bi_prev = nullptr;
     foreach(ImageItem *ii, images) {
         emit(layoutAboutToBeChanged());
 
@@ -4545,12 +4541,16 @@ ItemList VymModel::getTargets()
 
     QString s;
 
+    QRegularExpression re;
     while (cur) {
         if (cur->hasActiveSystemFlag("system-target")) {
             s = cur->getHeading().getTextASCII();
-            s.replace(QRegularExpression("\n+"), " ");
-            s.replace(QRegularExpression("\\s+"), " ");
-            s.replace(QRegularExpression("^\\s+"), "");
+            re.setPattern("\n+");
+            s.replace(re, " ");
+            re.setPattern("\\s+");
+            s.replace(re, " ");
+            re.setPattern("^\\s+");
+            s.replace(re, "");
 
             QStringList sl;
             sl << s;
@@ -4610,7 +4610,6 @@ void VymModel::toggleFlagByUid(
     QStringList itemList = getSelectedUUIDs();
 
     if (itemList.count() > 0) {
-        QString fn;
         TreeItem *ti;
         BranchItem *bi;
         Flag *f;
@@ -4660,11 +4659,10 @@ void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGro
         if (f) {
             QString u = "toggleFlag";
             QString name = f->getName();
-            saveState(bi, QString("%1 (\"%2\")").arg(u).arg(name), bi,
-                      QString("%1 (\"%2\")").arg(u).arg(name),
+            saveState(bi, QString("%1 (\"%2\")").arg(u, name), bi,
+                      QString("%1 (\"%2\")").arg(u, name),
                       QString("Toggling flag \"%1\" of %2")
-                          .arg(name)
-                          .arg(getObjectName(bi)));
+                          .arg(name, getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
         }
@@ -4694,8 +4692,7 @@ void VymModel::colorBranch(QColor c, BranchItem *bi)
                       .arg(selbi->getHeadingColor().name()),
                   selbi, QString("colorBranch (\"%1\")").arg(c.name()),
                   QString("Set color of %1 to %2")
-                      .arg(getObjectName(selbi))
-                      .arg(c.name()));
+                      .arg(getObjectName(selbi), c.name()));
         selbi->setHeadingColor(c); // color branch
         selbi->getBranchContainer()->updateUpLink();
         emitDataChanged(selbi);
@@ -4853,8 +4850,6 @@ void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
         qWarning() << __FUNCTION__ << " called without BranchItem";
         return;
     }
-
-    AttributeItem *ai;
 
     setAttribute(bi, "Jira.assignee", ji.assignee());
     setAttribute(bi, "Jira.components", ji.components());
@@ -6787,8 +6782,7 @@ QList<ImageItem *> VymModel::getSelectedImages(ImageItem *ii)
     }
 
     foreach (TreeItem *ti, getSelectedItems()) {
-        TreeItem::Type type = ti->getType();
-        if (ti->getType() == TreeItem::Image)
+        if (ti->hasTypeImage())
             iis.append((ImageItem *)ti);
     }
     return iis;
