@@ -98,7 +98,7 @@ QStringList lastSessionFiles;   //! Will be overwritten in setting after load, s
 
 Switchboard switchboard;
 
-Settings settings("InSilmaril", __VYM_NAME); // Organization, Application name
+Settings settings("InSilmaril", QString(__VYM_NAME).toLower()); // Organization, Application name
 
 bool zipToolAvailable = false;
 bool unzipToolAvailable = false;
