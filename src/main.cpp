@@ -98,7 +98,7 @@ QStringList lastSessionFiles;   //! Will be overwritten in setting after load, s
 
 Switchboard switchboard;
 
-Settings settings("InSilmaril", "vym"); // Organization, Application name
+Settings settings("InSilmaril", __VYM_NAME); // Organization, Application name
 
 bool zipToolAvailable = false;
 bool unzipToolAvailable = false;
@@ -524,6 +524,8 @@ int main(int argc, char *argv[])
             .printASCII(); // FIXME-3 global switchboard and exit after listing
 
     m.loadCmdLine();
+
+    //m.resize(1600, 900);    // FIXME-2 only for screencasts
 
     // Restore last session
     if (options.isOn("restore"))
