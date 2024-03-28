@@ -548,13 +548,7 @@ void MapEditor::stopAllAnimation()
 
 void MapEditor::zoomIn()
 {
-    HeadingContainer *hc = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer();
-    transformationOrigin = hc->mapToScene(hc->rect().center());
-    qreal f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
-    qreal f_zf = 1 + zoomDelta + 0.046;   // view transformation grows
-
-    // Calculate center of scaled viewport with p as transformation origin
-    vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+    qreal f_zf = 1 + zoomDelta;   // view transformation grows
 
     useTransformationOrigin = false;
     setZoomFactorTarget(zoomFactorTargetInt * f_zf);
@@ -562,13 +556,7 @@ void MapEditor::zoomIn()
 
 void MapEditor::zoomOut()
 {
-    HeadingContainer *hc = model->getSelectedBranch()->getBranchContainer()->getHeadingContainer();
-    transformationOrigin = hc->mapToScene(hc->rect().center());
-    qreal f_vp = 1 + zoomDelta;           // vector to center of viewport shrinks
-    qreal f_zf = 1 - zoomDelta - 0.046;   // view transformation grows
-
-    // Calculate center of scaled viewport with p as transformation origin
-    vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+    qreal f_zf = 1 - zoomDelta;   // view transformation grows
 
     useTransformationOrigin = false;
     setZoomFactorTarget(zoomFactorTargetInt * f_zf);
