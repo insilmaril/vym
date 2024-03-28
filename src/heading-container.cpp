@@ -41,13 +41,13 @@ QGraphicsTextItem *HeadingContainer::newLine(QString s)
     return t;
 }
 
-void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong position
+void HeadingContainer::setHeading(QString s)
 {
     if (headingText == s) return;
 
     headingText = s;
 
-    // Textwidth Hardcoded for now // FIXME-1   See also new setting BranchPropertyEditor
+    // Textwidth Hardcoded for now // FIXME-0   See also new setting BranchPropertyEditor
                                    // Maybe use both number of chars (for wordwrap) and 
                                    // also pixels (for size of OrnamentsContainer)
     int textWidth = 40;
@@ -82,20 +82,9 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
         int k = 0;  // index of "<br>" or similar linebreak
         int br = 0; // width of found break, e.g. for <br> it is 4
 
-        QRegularExpression re("<br.*/>");
-        t = newLine(s);
-        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
-        /* FIXME-1 port word wrap of headings to Qt6
         // set the text and wrap lines
         while (s.length() > 0) {
-            // ok, some people wanted manual linebreaks, here we go
-            k = re.indexIn(s, i);
-            if (k >= 0) {
-                br = re.cap(0).length();
-                i = k;
-            }
-            else
-                i = s.indexOf(" ", i);
+            i = s.indexOf(" ", i);
             if (i < 0 && j == 0) { // no ws found at all in s
                 // append whole s
                 t = newLine(s);
@@ -149,7 +138,6 @@ void HeadingContainer::setHeading(QString s)// FIXME-2 richtext has wrong positi
                 }
             }
         }
-        */
     } // ASCII heading with multiple lines
 
     // Align headingLines vertically and find center
