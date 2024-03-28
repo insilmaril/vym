@@ -622,6 +622,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (err != File::Aborted) {
             if (parsedWell) {
+                reposition();
+
                 emitSelectionChanged();
 
                 if (lmode == File::NewMap) // no lockfile for default map!
@@ -654,8 +656,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             }
         } // err != File::Aborted
     }
-
-    reposition();
 
     // If required, fix positions when importing from old versions
     if (versionLowerOrEqual(mapVersionInt, "2.9.500")) {
