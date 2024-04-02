@@ -44,7 +44,7 @@ void ExportASCII::doExport()
             cur->getType() == TreeItem::MapCenter) {
             if (!cur->hasHiddenExportParent()) {
                 // qDebug() << "ExportASCII::
-                // "<<curIndent.toStdString()<<cur->getHeadingPlain().toStdString();
+                // "<<curIndent.toStdString()<<cur->headingPlain().toStdString();
 
                 // Insert newline after previous list
                 //if (cur->depth() < lastDepth)
@@ -61,7 +61,7 @@ void ExportASCII::doExport()
                     if (!out.isEmpty())
                         // Add extra line breaks for 2nd, 3rd, ... MapCenter
                         ensureEmptyLines(out, 2);
-                    out += underline(cur->getHeadingPlain(), QString("="));
+                    out += underline(cur->headingPlain(), QString("="));
 
                     // Empty line below "====" of MapCenters
                     ensureEmptyLines(out, 1);
@@ -70,7 +70,7 @@ void ExportASCII::doExport()
                 case 1:
                     ensureNewLine(out);
                     out += (underline(getSectionString(cur) +
-                        cur->getHeadingPlain(),
+                        cur->headingPlain(),
                         QString("-")));
                     // Empty line below "----" of MainBranches
                     ensureEmptyLines(out, 1);
@@ -78,12 +78,12 @@ void ExportASCII::doExport()
                     break;
                 case 2:
                     ensureNewLine(out);
-                    out += (curIndent + "* " + cur->getHeadingPlain());
+                    out += (curIndent + "* " + cur->headingPlain());
                     dashIndent = "  ";
                     break;
                 default:
                     ensureNewLine(out);
-                    out += (curIndent + "- " + cur->getHeadingPlain());
+                    out += (curIndent + "- " + cur->headingPlain());
                     dashIndent = "  ";
                     break;
                 }
@@ -92,7 +92,7 @@ void ExportASCII::doExport()
                 if (listTasks && cur->getTask()) {
                     tasks.append(QString("[%1]: %2")
                                      .arg(cur->getTask()->getStatusString())
-                                     .arg(cur->getHeadingPlain()));
+                                     .arg(cur->headingPlain()));
                 }
 
                 // If necessary, write URL

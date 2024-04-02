@@ -384,7 +384,7 @@ void BranchPropertyEditor::updateLayoutControls()
                 break;
             default:
                 qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
-                qDebug() << "branch=" << branchItem->getHeadingPlain();
+                qDebug() << "branch=" << branchItem->headingPlain();
         }
     }
 
@@ -415,7 +415,7 @@ void BranchPropertyEditor::updateLayoutControls()
                 */
             default:
                 qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getImagesContainerLayout()));
-                qDebug() << "branch=" << branchItem->getHeadingPlain();
+                qDebug() << "branch=" << branchItem->headingPlain();
         }
     }
 }
@@ -647,6 +647,23 @@ void BranchPropertyEditor::imagesLayoutsChanged(int i)
     model->setImagesLayout(s);
 }
 
+void BranchPropertyEditor::headingTextWidthAutoChanged()
+{
+    if (model) {
+        model->setHeadingTextWidthAutoDesign(ui.headingTextWidthAutoCheckBox->isChecked());
+        updateControls();
+    }
+}
+
+void BranchPropertyEditor::headingTextWidthChanged(int i)
+{
+    if (model)
+        model->setHeadingTextWidth(i);
+
+    ui.headingTextWidthSlider->setValue(i);
+    ui.headingTextWidthSpinBox->setValue(i);
+}
+
 void BranchPropertyEditor::rotationsAutoChanged()
 {
     if (model) {
@@ -820,6 +837,13 @@ void BranchPropertyEditor::connectSignals()
             this, SLOT(branchesLayoutsChanged(int)));
     connect(ui.imagesLayoutsCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(imagesLayoutsChanged(int)));
+
+    connect(ui.headingTextWidthAutoCheckBox, SIGNAL(clicked()),
+            this, SLOT(headingTextWidthAutoChanged()));
+    connect(ui.headingTextWidthSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(headingTextWidthChanged(int)));
+    connect(ui.headingTextWidthSpinBox, SIGNAL(valueChanged(int)),
+            this, SLOT(headingTextWidthChanged(int)));
 
     connect(ui.rotationsAutoCheckBox, SIGNAL(clicked()),
             this, SLOT(rotationsAutoChanged()));

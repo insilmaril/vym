@@ -667,7 +667,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 offset.setX(rb.width() / 2);
                 offset.setY(rb.height() / 2);
                 bc->setPos(bc->x() + offset.x(), bc->y() + offset.y());
-                qDebug() << "VymModel::loadMap adjusting legacy position of " << mainBranch->getHeadingPlain() << "  offset: " << toS(offset);
+                qDebug() << "VymModel::loadMap adjusting legacy position of " << mainBranch->headingPlain() << "  offset: " << toS(offset);
             }
         }
         reposition();
@@ -1268,7 +1268,7 @@ QString VymModel::getObjectName(TreeItem *ti)
     QString s;
     if (!ti)
         return QString("Error: nullptr has no name!");
-    s = ti->getHeadingPlain();
+    s = ti->headingPlain();
     if (s == "")
         s = "unnamed";
 
@@ -2078,7 +2078,7 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
     TreeItem *selti = getSelectedItem(ti);
 
     if (selti && selti->hasTypeBranchOrImage()) {
-        h_old = selti->getHeading();
+        h_old = selti->heading();
         if (h_old == h_new)
             return;
         saveState(selti, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", selti,
@@ -2098,9 +2098,9 @@ void VymModel::setHeadingPlainText(const QString &s, TreeItem *ti)
 {
     TreeItem *selti = getSelectedItem(ti);
     if (selti && selti->hasTypeBranchOrImage()) {
-        VymText vt = selti->getHeading();
+        VymText vt = selti->heading();
         vt.setPlainText(s);
-        if (selti->getHeading() == vt)
+        if (selti->heading() == vt)
             return;
         setHeading(vt, selti);
 
@@ -2118,15 +2118,15 @@ Heading VymModel::getHeading()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        return selti->getHeading();
-    qWarning() << "VymModel::getHeading Nothing selected.";
+        return selti->heading();
+    qWarning() << "VymModel::heading Nothing selected.";
     return Heading();
 }
 
 QString VymModel::headingText(TreeItem *ti)
 {
     if (ti)
-        return ti->getHeadingPlain();
+        return ti->headingPlain();
     else
         return QString("No treeItem available");
 }
@@ -2265,7 +2265,7 @@ void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing
         if (multimap.values(u).size() > -1) {
             qDebug() << "URL: " << u;
             foreach(auto *bi, multimap.values(u))
-                qDebug() << " - " << bi->getHeadingPlain();
+                qDebug() << " - " << bi->headingPlain();
         }
     }
 }
@@ -2286,7 +2286,7 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     FindResultItem *lastParent = nullptr;
     while (cur) {
         lastParent = nullptr;
-        if (cur->getHeading().getTextASCII().contains(s, cs)) {
+        if (cur->heading().getTextASCII().contains(s, cs)) {
             lastParent = rmodel->addItem(cur);
             hit = true;
         }
@@ -2569,6 +2569,59 @@ void VymModel::setFramePenWidth(
         }
     }
     reposition();
+}
+
+void VymModel::setHeadingTextWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-0 not implemented yet
+{
+    qDebug() << "VM::" << __FUNCTION__;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    /*
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        if (bc->rotationsAutoDesign() != b) {
+            if (b) {
+                setRotationHeading(mapDesignInt->rotationHeading(MapDesign::AutoDesign, selbi->depth()));
+                setRotationSubtree(mapDesignInt->rotationSubtree(MapDesign::AutoDesign, selbi->depth()));
+            }
+            QString v = b ? "Enable" : "Disable";
+            saveState(selbi,
+                      QString("setRotationsAutoDesign (%1)")
+                          .arg(toS(!b)),
+                      selbi, QString("setRotationsAutoDesign (%1)").arg(toS(b)),
+                      QString("%1 automatic rotations").arg(v));
+            bc->setRotationsAutoDesign(b);
+            branchPropertyEditor->updateControls();
+        }
+    }
+
+    if (!selbis.isEmpty())
+        reposition();
+        */
+}
+
+void VymModel::setHeadingTextWidth (const int &i, BranchItem *bi) // FIXME-0 not implemented yet
+{
+    qDebug() << "VM::" << __FUNCTION__;
+    /*
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+	if (bc->rotationHeading() != i) {
+
+            saveState(selbi,
+                      QString("setRotationHeading (\"%1\")")
+                          .arg(bc->rotationHeading()),
+                      selbi, QString("setRotationHeading (\"%1\")").arg(i),
+                      QString("Set rotation angle of heading and flags to %1").arg(i));
+
+            bc->setRotationHeading(i);
+        }
+    }
+
+    if (!selbis.isEmpty())
+        reposition();
+    */
 }
 
 void VymModel::setRotationsAutoDesign(const bool &b)
@@ -3397,7 +3450,7 @@ QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsorted
 {
     QMap <QString, BranchItem*> map;
     foreach (BranchItem *bi, unsortedList)
-        map.insert(bi->getHeadingPlain(), bi);
+        map.insert(bi->headingPlain(), bi);
 
     QList <BranchItem*> sortedList;
 
@@ -3431,7 +3484,7 @@ void VymModel::sortChildren(bool inverse)
 
                 QMultiMap <QString, BranchItem*> multimap;
                 for (int i = 0; i < selbi->branchCount(); i++)
-                    multimap.insert(selbi->getBranchNum(i)->getHeadingPlain(), selbi->getBranchNum(i));
+                    multimap.insert(selbi->getBranchNum(i)->headingPlain(), selbi->getBranchNum(i));
 
                 int n = 0;
                 QMultiMapIterator<QString, BranchItem*> i(multimap);
@@ -3880,7 +3933,7 @@ BranchItem *VymModel::addNewBranchBefore()
             relinkBranch(selbi, newbi, 0);
 
             // Use color of child instead of parent // FIXME-2 should be done via something like VymModel::updateStyle
-            //newbi->setHeadingColor(selbi->getHeadingColor());
+            //newbi->setHeadingColor(selbi->headingColor());
             emitDataChanged(newbi);
         }
     }
@@ -3918,13 +3971,13 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         saveStateBeginBlock(
             QString("Relink %1 objects to \"%2\"")
                 .arg(branches.count())
-                .arg(dst->getHeadingPlain()));
+                .arg(dst->headingPlain()));
 
     BranchItem* bi_prev = nullptr;
     foreach (BranchItem *bi, branches) {
         // Check if we link to ourself
         if (dst == bi) {
-            qWarning() << "VM::relinkBranch  Attempting to relink to myself: " << bi->getHeadingPlain();
+            qWarning() << "VM::relinkBranch  Attempting to relink to myself: " << bi->headingPlain();
             return false;
         }
 
@@ -3972,7 +4025,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         // Remove at current position
         int removeRowNum = bi->childNum();
 
-        //qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->getHeadingPlain();
+        //qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->headingPlain();
         beginRemoveRows(index(branchpi), removeRowNum, removeRowNum);
         branchpi->removeChild(removeRowNum);
         endRemoveRows();
@@ -4105,7 +4158,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
         saveStateBeginBlock(
             QString("Relink %1 objects to \"%2\"")
                 .arg(images.count())
-                .arg(dst->getHeadingPlain()));
+                .arg(dst->headingPlain()));
 
     foreach(ImageItem *ii, images) {
         emit(layoutAboutToBeChanged());
@@ -4355,8 +4408,8 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
 {
     if (ti) {
         TreeItem *pi = ti->parent();
-        // qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->getHeading()<<"
-        // pi="<<pi<<"="<<pi->getHeading();
+        // qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->heading()<<"
+        // pi="<<pi<<"="<<pi->heading();
 
         bool wasAttribute = ti->hasTypeAttribute();
         TreeItem *parentItem = ti->parent();
@@ -4513,7 +4566,7 @@ ItemList VymModel::getLinkedMaps()
     while (cur) {
         if (cur->hasActiveSystemFlag("system-target") &&
             cur->hasVymLink()) {
-            s = cur->getHeading().getTextASCII();
+            s = cur->heading().getTextASCII();
             s.replace(QRegularExpression("\n+"), " ");
             s.replace(QRegularExpression("\\s+"), " ");
             s.replace(QRegularExpression("^\\s+"), "");
@@ -4544,7 +4597,7 @@ ItemList VymModel::getTargets()
     QRegularExpression re;
     while (cur) {
         if (cur->hasActiveSystemFlag("system-target")) {
-            s = cur->getHeading().getTextASCII();
+            s = cur->heading().getTextASCII();
             re.setPattern("\n+");
             s.replace(re, " ");
             re.setPattern("\\s+");
@@ -4689,7 +4742,7 @@ void VymModel::colorBranch(QColor c, BranchItem *bi)
     foreach (BranchItem *selbi, selbis) {
         saveState(selbi,
                   QString("colorBranch (\"%1\")")
-                      .arg(selbi->getHeadingColor().name()),
+                      .arg(selbi->headingColor().name()),
                   selbi, QString("colorBranch (\"%1\")").arg(c.name()),
                   QString("Set color of %1 to %2")
                       .arg(getObjectName(selbi), c.name()));
@@ -4729,7 +4782,7 @@ QColor VymModel::getCurrentHeadingColor()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
-        return selbi->getHeadingColor();
+        return selbi->headingColor();
 
     QMessageBox::warning(
         0, "Warning",
@@ -4773,7 +4826,7 @@ void VymModel::editHeading2URL()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        setUrl(selti->getHeadingPlain());
+        setUrl(selti->headingPlain());
 }
 
 void VymModel::getJiraData(bool subtree, BranchItem *bi)
@@ -4799,14 +4852,14 @@ void VymModel::getJiraData(bool subtree, BranchItem *bi)
         BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, selbi);
         while (cur) {
-            QString heading = cur->getHeadingPlain();
+            QString heading = cur->headingPlain();
 
             QString query = cur->attributeValue("Jira.query").toString();
 
             bool startAgent = false;
             JiraAgent *agent = new JiraAgent;
             if (!agent->setBranch(cur))
-                qWarning () << "Could not set branch in JiraAgent to " << cur->getHeadingPlain();
+                qWarning () << "Could not set branch in JiraAgent to " << cur->headingPlain();
             else {
                 if (!query.isEmpty() && agent->setQuery(query)) {
                     // Branch has a query defined in attribute, try to use that
@@ -4820,7 +4873,7 @@ void VymModel::getJiraData(bool subtree, BranchItem *bi)
                         startAgent = true;
                         connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
                     } else {
-                        if (agent->setTicket(cur->getHeadingPlain())) {
+                        if (agent->setTicket(cur->headingPlain())) {
                             connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
                             startAgent = true;
                         } else {
@@ -5758,7 +5811,7 @@ void VymModel::applyDesign(
     // FIXME-2 VM::updateDesign  testing only:
     QString h;
     if (ti)
-        h = ti->getHeadingPlain();
+        h = ti->headingPlain();
     else
         h = "nullptr";
 
@@ -5790,7 +5843,7 @@ void VymModel::applyDesign(
             colorBranch(col, selbi);
 
         if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
-            qDebug() << "VM::applyDesign  update linkStyles for " << selbi->getHeadingPlain();
+            qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
             bc->updateUpLink();
         }
 
@@ -6285,7 +6338,7 @@ bool VymModel::nextIterator(const QString &iname)
         return false;
     }
 
-    qDebug() << "  " << iname << "selecting " << cur->getHeadingPlain();
+    qDebug() << "  " << iname << "selecting " << cur->headingPlain();
     select(cur);
 
     if (!selIterActive.value(iname)) {
@@ -7002,7 +7055,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
                              "\"" + seli->getUuid().toString() + "\"");
 
             si->setInScript(inScript);
-            slideModel->setData(slideModel->index(si), seli->getHeadingPlain());
+            slideModel->setData(slideModel->index(si), seli->headingPlain());
         }
 
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";

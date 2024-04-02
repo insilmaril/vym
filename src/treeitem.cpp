@@ -28,11 +28,11 @@ TreeItem::TreeItem(TreeItem *parent)
 
 TreeItem::~TreeItem()
 {
-    //qDebug() << "Destr TreeItem begin: this=" << this << getHeadingPlain();
+    //qDebug() << "Destr TreeItem begin: this=" << this << headingPlain();
     TreeItem *ti;
     while (!childItems.isEmpty()) {
         ti = childItems.takeFirst();
-        //qDebug() << "  In destr TI going to delete ti=" << ti << ti->getHeadingPlain();
+        //qDebug() << "  In destr TI going to delete ti=" << ti << ti->headingPlain();
         delete ti;
     }
 }
@@ -60,8 +60,8 @@ void TreeItem::init()
 
     target = false;
 
-    heading.clear();
-    heading.setText(" ");
+    headingInt.clear();
+    headingInt.setText(" ");
     note.setText("");
 
     hidden = false;
@@ -213,7 +213,7 @@ int TreeItem::depth()
 
 TreeItem *TreeItem::parent()
 {
-    // qDebug() << "TI::parent of "<<getHeadingStd()<<"  is "<<parentItem;
+    // qDebug() << "TI::parent of "<<headingStd()<<"  is "<<parentItem;
     return parentItem;
 }
 
@@ -334,8 +334,8 @@ QVariant TreeItem::data(int column) const { return itemData.value(column); }
 
 void TreeItem::setHeading(const VymText &vt)
 {
-    heading = vt;
-    itemData[0] = getHeadingPlain().replace("\n"," "); // used in TreeEditor
+    headingInt = vt;
+    itemData[0] = headingPlain().replace("\n"," "); // used in TreeEditor
 }
 
 void TreeItem::setHeadingPlainText(const QString &s)
@@ -344,37 +344,37 @@ void TreeItem::setHeadingPlainText(const QString &s)
 
     vt.setPlainText(s);
 
-    if (!heading.isRichText())
+    if (!headingInt.isRichText())
         // Keep current color
-        vt.setColor(heading.getColor());
+        vt.setColor(headingInt.getColor());
     setHeading(vt);
 }
 
-Heading TreeItem::getHeading() const { return heading; }
+Heading TreeItem::heading() const { return headingInt; }
 
-QString TreeItem::getHeadingText() { return heading.getText(); }
+QString TreeItem::headingText() { return headingInt.getText(); }
 
-std::string TreeItem::getHeadingStd() const
+std::string TreeItem::headingStd() const
 {
-    return getHeadingPlain().toStdString();
+    return headingPlain().toStdString();
 }
 
-QString TreeItem::getHeadingPlain() const
+QString TreeItem::headingPlain() const
 {
     // strip beginning and tailing WS
-    return heading.getTextASCII().trimmed();
+    return headingInt.getTextASCII().trimmed();
 }
 
-QString TreeItem::getHeadingPlainWithParents(uint numberOfParents = 0)
+QString TreeItem::headingPlainWithParents(uint numberOfParents = 0)
 {
-    QString s = getHeadingPlain();
+    QString s = headingPlain();
     if (numberOfParents > 0) {
         TreeItem *ti = this;
         int l = numberOfParents;
         while (l > 0 && ti->depth() > 0) {
             ti = ti->parent();
             if (ti)
-                s = ti->getHeadingPlain() + " -> " + s;
+                s = ti->headingPlain() + " -> " + s;
             else
                 l = 0;
             l--;
@@ -383,17 +383,17 @@ QString TreeItem::getHeadingPlainWithParents(uint numberOfParents = 0)
     return s;
 }
 
-QString TreeItem::getHeadingDepth() // Indent by depth for debugging    // FIXME-4 rename
+QString TreeItem::headingDepth() // Indent by depth for debugging    // FIXME-4 rename
 {
     QString ds;
     for (int i = 0; i < depth(); i++)
         ds += "  ";
-    return ds + getHeadingPlain();
+    return ds + headingPlain();
 }
 
-void TreeItem::setHeadingColor(QColor color) { heading.setColor(color); }
+void TreeItem::setHeadingColor(QColor color) { headingInt.setColor(color); }
 
-QColor TreeItem::getHeadingColor() { return heading.getColor(); }
+QColor TreeItem::headingColor() { return headingInt.getColor(); }
 
 void TreeItem::setUrl(const QString &u)
 {

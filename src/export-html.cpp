@@ -39,13 +39,13 @@ QString ExportHTML::getBranchText(BranchItem *current)
         QString id = model->getSelectString(current);
         if (dia.useTextColor)
             col = QString("style='color:%1'")
-                      .arg(current->getHeadingColor().name());
+                      .arg(current->headingColor().name());
         QString s = QString("<span class='vym-branch-%1' %2 id='%3'>")
                         .arg(current->depth())
                         .arg(col)
                         .arg(id);
         QString url = current->url();
-        QString heading = quoteMeta(current->getHeadingPlain());
+        QString heading = quoteMeta(current->headingPlain());
 
         // Task flags
         QString taskFlags;
@@ -273,7 +273,7 @@ QString ExportHTML::createTOC()
             toc += QString("<a href=\"#%1\"> %2 %3</a></br>\n")
                        .arg(model->getSelectString(cur))
                        .arg(number)
-                       .arg(quoteMeta(cur->getHeadingPlain()));
+                       .arg(quoteMeta(cur->headingPlain()));
             toc += "</div>";
         }
         model->nextBranch(cur, prev);

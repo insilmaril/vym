@@ -53,7 +53,7 @@ void ExportMarkdown::doExport()
             for (i = 1; i < cur->depth() - 1; i++)
                 curIndent += indentPerDepth;
 
-            curHeading = cur->getHeadingText();
+            curHeading = cur->headingText();
 
             // If necessary, write heading as URL
             if (cur->hasUrl())

@@ -49,7 +49,7 @@ void FindResultWidget::addItem(TreeItem *ti)
              ++column) {
             QModelIndex child =
                 resultsModel->index(index.row() + 1, column, index.parent());
-            resultsModel->setData(child, QVariant(ti->getHeadingPlain()),
+            resultsModel->setData(child, QVariant(ti->headingPlain()),
                                   Qt::EditRole);
             resultsModel->getItem(child)->setOriginal(ti);
         }

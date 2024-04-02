@@ -208,7 +208,7 @@ FindResultItem *FindResultModel::addItem(TreeItem *ti)
         int n = rowCount(parix);
         beginInsertRows(parix, n, n);
         if (rootItem->insertChildren(n, 1, 0)) {
-            QString h = ti->getHeadingPlainWithParents(showParentsLevel);
+            QString h = ti->headingPlainWithParents(showParentsLevel);
             QModelIndex ix = index(n, 0, QModelIndex());
             setData(ix, QVariant(h), Qt::EditRole);
             ni = getItem(ix);

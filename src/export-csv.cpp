@@ -52,7 +52,7 @@ void ExportCSV::doExport()
                 curIndent += "\"\",";
 
             // Write heading
-            out += curIndent + "\"" + cur->getHeadingPlain() + "\"\n";
+            out += curIndent + "\"" + cur->headingPlain() + "\"\n";
         }
 
         model->nextBranch(cur, prev);

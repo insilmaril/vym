@@ -38,7 +38,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-2 n
 
     if (role == Qt::ForegroundRole) {
         if (bi)
-            return bi->getHeadingColor();
+            return bi->headingColor();
         else
             return qApp->palette().color(QPalette::Text);
     }

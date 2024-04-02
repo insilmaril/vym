@@ -54,7 +54,7 @@ XLinkObj *XLinkItem::getXLinkObj()
     return nullptr;
 }
 
-QColor XLinkItem::getHeadingColor()
+QColor XLinkItem::headingColor()
 {
     // Used in TreeModel::data() to get colors
     return link->getPen().color();

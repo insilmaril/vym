@@ -81,24 +81,23 @@ class TreeItem : public XMLObj {
     virtual QVariant data(int column) const;
 
   protected:
-    Heading heading;
+    Heading headingInt;
 
   public:
     virtual void setHeading(const VymText &vt);
     virtual void setHeadingPlainText(const QString &s);
-    Heading getHeading() const;
-    virtual QString getHeadingText();
+    Heading heading() const;
+    virtual QString headingText();
     virtual std::string
-    getHeadingStd() const; //! convenience function used for debugging
-    virtual QString
-    getHeadingPlain() const; //! Some views or methods can't cope with RichText
-    virtual QString getHeadingPlainWithParents(
+    headingStd() const; //! convenience function used for debugging
+    virtual QString headingPlain() const; //! Some views or methods can't cope with RichText
+    virtual QString headingPlainWithParents(
         uint numberOfParents); //! Show also some of the parents
-    virtual QString getHeadingDepth();
+    virtual QString headingDepth();
     virtual void
     setHeadingColor(QColor color);    //! Set color of heading. In BranchItem
                                       //! overloaded to update QGraphicsView
-    virtual QColor getHeadingColor(); //! Returns color of heading
+    virtual QColor headingColor(); //! Returns color of heading
 
   protected:
     QString urlInt;

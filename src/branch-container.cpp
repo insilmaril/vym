@@ -149,7 +149,7 @@ BranchItem *BranchContainer::getBranchItem() const { return branchItem; }
 
 QString BranchContainer::getName() {
     if (branchItem)
-        return Container::getName() + " '" + branchItem->getHeadingPlain() + "'";
+        return Container::getName() + " '" + branchItem->headingPlain() + "'";
     else
         return Container::getName() + " - ?";
 }
@@ -425,7 +425,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
             bulletPointContainer = new HeadingContainer;    // FIXME-4 create new type or re-use LinkObj and set type 
             // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
             bulletPointContainer->setHeading(" • ");
-            bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
+            bulletPointContainer->setHeadingColor(headingContainer->headingColor());
             if (ornamentsContainer)
                 ornamentsContainer->addContainer(bulletPointContainer, Z_BULLETPOINT);
         }
@@ -454,7 +454,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
 
             // Insert at end, especially behind innerFrame or ornamentsContainer
             innerContainer->addContainer(listContainer, Z_LIST);
-            //qDebug() << "... Created listContainer in branch " << branchItem->getHeadingPlain();
+            //qDebug() << "... Created listContainer in branch " << branchItem->headingPlain();
 
         }
     } else {
@@ -739,7 +739,7 @@ void BranchContainer::updateUpLink()
 
     // Color of link (depends on current parent)
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
-        upLink->setLinkColor(headingContainer->getColor());
+        upLink->setLinkColor(headingContainer->color());
     else {
         if (branchItem)
             upLink->setLinkColor(branchItem->mapDesign()->defaultLinkColor());
@@ -1221,7 +1221,7 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // F
 
     // bulletpoint color should match heading color
     if (bulletPointContainer)
-        bulletPointContainer->setHeadingColor(headingContainer->getHeadingColor());
+        bulletPointContainer->setHeadingColor(headingContainer->headingColor());
 
     // Set frame
     md->updateFrames(updateMode, this, depth);  // FIXME-1 No check for AutoDesign? Also: No savestate when e.g. relinking or toggling autodesign
@@ -1274,7 +1274,7 @@ void BranchContainer::updateVisuals()
     if (!branchItem)
         return;
 
-    headingContainer->setHeading(branchItem->getHeadingText());
+    headingContainer->setHeading(branchItem->headingText());
 
     // Update standard flags active in TreeItem
     QList<QUuid> TIactiveFlagUids = branchItem->activeFlagUids();

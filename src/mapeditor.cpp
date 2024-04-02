@@ -878,7 +878,7 @@ void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review 
                 polys.append(p);
                 vectors.append(QPointF(0, 0));
                 orgpos.append(p.at(0));
-                headings.append(bi->getHeadingPlain());
+                headings.append(bi->headingPlain());
             }
             for (int j = 0; j < bi->branchCount(); ++j) {
                 bi2 = bi->getBranchNum(j);
@@ -890,7 +890,7 @@ void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review 
                     polys.append(p);
                     vectors.append(QPointF(0, 0));
                     orgpos.append(p.at(0));
-                    headings.append(bi2->getHeadingPlain());
+                    headings.append(bi2->headingPlain());
                 }
             }
         }
@@ -1457,8 +1457,8 @@ void MapEditor::editHeading()
 
     BranchItem *bi = model->getSelectedBranch();
     if (bi) {
-        VymText heading = bi->getHeading();
-        if (heading.isRichText() || bi->getHeadingPlain().contains("\n")) {
+        VymText heading = bi->heading();
+        if (heading.isRichText() || bi->headingPlain().contains("\n")) {
             mainWindow->windowShowHeadingEditor();
             ensureSelectionVisibleAnimated();
             return;
@@ -1676,7 +1676,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
     qDebug() << "ME::mouse pressed\n";
     qDebug() << "   ti_found=" << ti_found;
     */
-    //if (ti_found) qDebug() << "   ti_found="<<ti_found->getHeading();
+    //if (ti_found) qDebug() << "   ti_found="<<ti_found->heading();
 
     // If Modifier mode "view" is set, all other clicks can be ignored,
     // nothing will be selected
@@ -1713,11 +1713,11 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if
         if (e->modifiers() & Qt::ShiftModifier) {
             if (mainWindow->getModMode() == Main::ModModeColor) {
                 setState(PickingColor);
-                mainWindow->setCurrentColor(ti_found->getHeadingColor());
+                mainWindow->setCurrentColor(ti_found->headingColor());
                 if (e->modifiers() & Qt::ControlModifier)
-                    model->colorBranch(ti_found->getHeadingColor());
+                    model->colorBranch(ti_found->headingColor());
                 else
-                    model->colorSubtree(ti_found->getHeadingColor());
+                    model->colorSubtree(ti_found->headingColor());
                 return;
             }
 
@@ -1943,7 +1943,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     if (targetItem) {
         foreach (TreeItem *ti, movingItems) {
             if (targetItem->isChildOf(ti)) {
-                // qWarning() << "ME::moveObject " << targetItem->getHeadingPlain() << "is child of " << ti->getHeadingPlain();
+                // qWarning() << "ME::moveObject " << targetItem->headingPlain() << "is child of " << ti->headingPlain();
                 targetItem = nullptr;
                 break;
             }
@@ -2746,7 +2746,7 @@ void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
     // Unselect objects (if not part of selection)
     foreach (QModelIndex ix, dsel.indexes()) {
         MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        //qDebug() << "ME::updateSel   deselecting mi=" << mi << mi->getHeadingPlain();
+        //qDebug() << "ME::updateSel   deselecting mi=" << mi << mi->headingPlain();
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
             mi->getType() == TreeItem::XLink) {
             if (!itemsSelected.contains(mi)) {

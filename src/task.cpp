@@ -256,7 +256,7 @@ qint64 Task::getDaysSleep()
         d = QDateTime::currentDateTime().daysTo(date_sleep);
     else {
         // qWarning() << "Task::getDaysSleep date_sleep is invalid for branch "
-        // << branch->getHeadingPlain();
+        // << branch->headingPlain();
         return -1;
     }
     return d;
@@ -287,7 +287,7 @@ BranchItem *Task::getBranch() { return branch; }
 QString Task::getName()
 {
     if (branch)
-        return branch->getHeadingPlain();
+        return branch->headingPlain();
     else {
         qWarning() << "Task::getName  no branch!";
         return "UNDEFINED";

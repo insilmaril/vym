@@ -17,15 +17,17 @@ class HeadingContainer : public Container {
     QGraphicsTextItem *newLine(QString); // generate new textline
 
   public:
-    void setHeading(QString);
-    QString getHeading();
+    void setHeading(QString);   // FIXME-3 use reference to TreeItem::heading()
+    QString heading();
     void clearHeading();
     void setHeadingColor(const QColor &);
-    QColor getHeadingColor();
+    QColor headingColor();
     void setFont(const QFont &);
-    QFont getFont();
+    QFont font();
     void setColor(const QColor &);
-    QColor getColor();
+    QColor color();
+    void setTextWidth(const int &);
+    int textWidth();
 
     virtual QString getName();
 
@@ -35,10 +37,11 @@ class HeadingContainer : public Container {
     virtual void reposition();
 
   protected:
-    QString headingText;
+    QString headingTextInt;
     QList<QGraphicsTextItem *> headingLines;
-    QColor headingColor;
-    QFont headingFont;
+    QColor headingColorInt;
+    QFont headingFontInt;
+    int textWidthInt;
 };
 
 #endif

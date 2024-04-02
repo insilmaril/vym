@@ -64,7 +64,7 @@ QString BranchWrapper::attributeAsString(const QString &key)
 
 QString BranchWrapper::headingText()
 {
-    return branchItem->getHeadingPlain();
+    return branchItem->headingPlain();
 }
 
 bool BranchWrapper::relinkTo(BranchWrapper *bw)

@@ -402,7 +402,7 @@ void MapDesign::updateBranchHeadingColor(
                 //qDebug() << " - InheritedColor "; // FIXME-4 testing...
                 BranchItem *pbi = branchItem->parentBranch();
                 if (pbi) {
-                    col = pbi->getHeadingColor();
+                    col = pbi->headingColor();
                 //qDebug() << " - " << col.name();
                     break;
                 }

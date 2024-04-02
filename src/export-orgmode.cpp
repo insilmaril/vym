@@ -36,7 +36,7 @@ void ExportOrgMode::doExport()
         if (!cur->hasHiddenExportParent()) {
             for (i = 0; i <= cur->depth(); i++)
                 ts << ("*");
-            ts << (" " + cur->getHeadingPlain() + "\n");
+            ts << (" " + cur->headingPlain() + "\n");
             // If necessary, write note
             if (!cur->isNoteEmpty()) {
                 ts << (cur->getNoteASCII(0, 80));

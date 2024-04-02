@@ -81,7 +81,7 @@ void ExportLaTeX::doExport()
     while (cur) {
         if (!cur->hasHiddenExportParent()) {
             int d = cur->depth();
-            s = escapeLaTeX(cur->getHeadingPlain());
+            s = escapeLaTeX(cur->headingPlain());
             if (sectionNames.at(d).isEmpty() || d >= sectionNames.count())
                 out += s + "\n";
             else {

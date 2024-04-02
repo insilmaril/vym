@@ -425,7 +425,7 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
             view->setStyleSheet( // FIXME-2 this resets column widths on Windows...
                 "QTableView {selection-background-color: " +
                 m->getSelectionBrushColor().name() +
-                "; selection-color:" + bi->getHeadingColor().name() + "}" +
+                "; selection-color:" + bi->headingColor().name() + "}" +
                 "QTableView:focus {" + editorFocusStyle + "}");
 */
             view->scrollTo(selected.indexes().first());

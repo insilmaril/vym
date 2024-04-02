@@ -129,7 +129,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 8) {
             BranchItem *bi = tasks.at(index.row())->getBranch();
-            return bi->getHeadingPlainWithParents(showParentsLevel);
+            return bi->headingPlainWithParents(showParentsLevel);
         }
     }
     else if (role == Qt::DecorationRole && index.column() == 2) {
@@ -176,7 +176,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         if (role == Qt::EditRole && index.column() == 1) // DeltaPrio
             return t->getPriorityDelta();
         if (role == Qt::ForegroundRole && bi)
-            return bi->getHeadingColor();
+            return bi->headingColor();
         if (role == Qt::BackgroundRole && bi) {
             return bi->getBackgroundColor(bi);
         }
@@ -384,7 +384,7 @@ void TaskModel::recalcPriorities()
         }
 
         // Color (importance)
-        QColor c = bi->getHeadingColor();
+        QColor c = bi->headingColor();
 
         // light blueish green
         if (c == QColor("#00aa7f"))
@@ -465,7 +465,7 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
         Task *task = getTask(indexes.first());
 
         // Field 0: Heading
-        QString text = task->getBranch()->getHeadingPlain();
+        QString text = task->getBranch()->headingPlain();
         stream << text;
 
         // Field 1: task row
@@ -505,8 +505,8 @@ bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     Task *dst = getTask(parent);
     Task *src = getTask(newItems[1].toInt());
 
-    // qDebug() << "Dropping: " <<  src->getBranch()->getHeadingPlain() << " on
-    // " << dst->getBranch()->getHeadingPlain();
+    // qDebug() << "Dropping: " <<  src->getBranch()->headingPlain() << " on
+    // " << dst->getBranch()->headingPlain();
 
     int delta_p = dst->getPriority() - src->getPriority();
 

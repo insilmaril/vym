@@ -557,7 +557,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QCheckBox" name="dimensionsAutoCheckBox">
+           <widget class="QCheckBox" name="headingTextWidthAutoCheckBox">
             <property name="text">
              <string>Automatic</string>
             </property>
@@ -573,14 +573,14 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
-             <widget class="QSlider" name="headingWidthSlider">
+             <widget class="QSlider" name="headingTextWidthSlider">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="headingWidthSpinBox"/>
+             <widget class="QSpinBox" name="headingTextWidthSpinBox"/>
             </item>
            </layout>
           </item>

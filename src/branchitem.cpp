@@ -41,7 +41,7 @@ BranchItem::BranchItem(TreeItem *parent)
 
 BranchItem::~BranchItem()
 {
-    //qDebug() << "Destr. BranchItem: this=" << this << "  " << getHeadingPlain() << "branchContainer=" << branchContainer;
+    //qDebug() << "Destr. BranchItem: this=" << this << "  " << headingPlain() << "branchContainer=" << branchContainer;
     if (branchContainer) {
         // This deletes only the first container here.
         // All other containers deeper down in tree will unlink themselves 
@@ -183,7 +183,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     incIndent();
 
     // save heading
-    s += heading.saveToDir();
+    s += headingInt.saveToDir();
 
     // save note
     if (!note.isEmpty())
@@ -481,7 +481,7 @@ BranchContainer* BranchItem::getBranchContainer()
 
 void BranchItem::unlinkBranchContainer()
 {
-    //qDebug() << "BI::unlinkBC in " << this << getHeadingPlain();
+    //qDebug() << "BI::unlinkBC in " << this << headingPlain();
 
     // Called from destructor of containers to 
     // avoid double deletion 

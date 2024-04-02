@@ -42,7 +42,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
 {
     if (current) {
         QString id = model->getSelectString(current);
-        QString heading = quoteMeta(current->getHeadingPlain());
+        QString heading = quoteMeta(current->headingPlain());
 
         // Numbering
         QString number;
@@ -52,7 +52,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         heading = heading.replace("\\n", " ");
 
         if (dia.useTextColor()) {
-            QColor c = current->getHeadingColor();
+            QColor c = current->headingColor();
             QString cs = QString("rgb(%1,%2,%3);")
                              .arg(c.red())
                              .arg(c.green())
@@ -310,7 +310,7 @@ QString ExportConfluence::createTOC()
             toc += QString("<a href=\"#%1\"> %2 %3</a><br />\n")
                        .arg(model->getSelectString(cur))
                        .arg(number)
-                       .arg(quoteMeta(cur->getHeadingPlain()));
+                       .arg(quoteMeta(cur->headingPlain()));
             toc += "</div>";
         }
         model->nextBranch(cur, prev);
@@ -334,7 +334,7 @@ void ExportConfluence::doExport(bool useDialog)
     dia.setPageName(pageName);
     BranchItem *bi = (BranchItem*)(model->findBySelectString("mc0"));
     if (bi)
-        dia.setPageNameHint(bi->getHeadingPlain());
+        dia.setPageNameHint(bi->headingPlain());
 
     dia.readSettings();
 

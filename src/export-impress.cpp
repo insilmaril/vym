@@ -29,7 +29,7 @@ QString ExportOO::buildList(TreeItem *current)
         while (bi) {
             if (!bi->hasHiddenExportParent()) {
                 r += "<text:list-item><text:p >";
-                r += quoteMeta(bi->getHeadingPlain());
+                r += quoteMeta(bi->headingPlain());
                 // If necessary, write note
                 if (!bi->isNoteEmpty())
                     r += "<text:line-break/>" + bi->getNoteASCII();
@@ -60,7 +60,7 @@ void ExportOO::exportPresentation()
     // Insert new content
     // FIXME add extra title in mapinfo for vym 1.13.x
     content.replace("<!-- INSERT TITLE -->",
-                    quoteMeta(firstMCO->getHeadingPlain()));
+                    quoteMeta(firstMCO->headingPlain()));
     content.replace("<!-- INSERT AUTHOR -->", quoteMeta(model->getAuthor()));
 
     QString onePage;
@@ -85,7 +85,7 @@ void ExportOO::exportPresentation()
             // Add page with section title
             onePage = sectionTemplate;
             onePage.replace("<!-- INSERT PAGE HEADING -->",
-                            quoteMeta(sectionBI->getHeadingPlain()));
+                            quoteMeta(sectionBI->headingPlain()));
             allPages += onePage;
             pagesBI = sectionBI->getFirstBranch();
         }
@@ -101,7 +101,7 @@ void ExportOO::exportPresentation()
             // Add page with list of items
             onePage = pageTemplate;
             onePage.replace("<!-- INSERT PAGE HEADING -->",
-                            quoteMeta(pagesBI->getHeadingPlain()));
+                            quoteMeta(pagesBI->headingPlain()));
             list = buildList(pagesBI);
             onePage.replace("<!-- INSERT LIST -->", list);
             allPages += onePage;

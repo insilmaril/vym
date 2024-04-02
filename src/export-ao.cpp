@@ -60,7 +60,7 @@ void ExportAO::doExport()
             curIndent = indent(cur->depth() - 4, true);
 
             if (!cur->hasHiddenExportParent()) {
-                col = cur->getHeadingColor();
+                col = cur->headingColor();
                 if (col == QColor(255, 0, 0))
                     colString = "[R] ";
                 else if (col == QColor(217, 81, 0))
@@ -82,12 +82,12 @@ void ExportAO::doExport()
                     break; // Mainbranch "Archive" (Ignored)
                 case 2:    // Title: "Current week number..."
                     out += "\n";
-                    out += underline(cur->getHeadingPlain(), QString("="));
+                    out += underline(cur->headingPlain(), QString("="));
                     out += "\n";
                     break;
                 case 3: // Headings: "Achievement", "Bonus", "Objective", ...
                     out += "\n";
-                    out += underline(cur->getHeadingPlain(), "-");
+                    out += underline(cur->headingPlain(), "-");
                     out += "\n";
                     break;
                 default: // depth 4 and higher are the items we need to know
@@ -118,7 +118,7 @@ void ExportAO::doExport()
                     line += colString;
                     line += curIndent;
                     if (cur->depth() > 3)
-                        line += cur->getHeadingPlain();
+                        line += cur->headingPlain();
 
                     // Pad line width before status
                     i = 80 - line.length() - statusString.length() - 1;

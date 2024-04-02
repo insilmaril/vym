@@ -47,6 +47,9 @@ class BranchPropertyEditor : public QDialog {
 
     void linkHideUnselectedChanged(int);
 
+    void headingTextWidthAutoChanged();
+    void headingTextWidthChanged(int);
+
     void rotationsAutoChanged();
     void rotationHeadingChanged(int);
     void rotationSubtreeChanged(int);

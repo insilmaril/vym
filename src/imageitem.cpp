@@ -209,13 +209,13 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     imageContainer->save(tmpdir + "/" + url);
 
 
-    qDebug() << "image:  " << getHeadingPlain();
-    if (originalFilename == getHeadingPlain())
+    qDebug() << "image:  " << headingPlain();
+    if (originalFilename == headingPlain())
         return singleElement("floatimage", attributes);
     else {
         QString s = beginElement("floatimage", attributes);
         incIndent();
-        s += heading.saveToDir();
+        s += headingInt.saveToDir();
         decIndent();
         s += endElement("floatimage");
         return s;

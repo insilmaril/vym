@@ -39,8 +39,8 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
             ai->setValue(bi->num());
         else if (key == "uri" && bi->hasUrl())
             ai->setValue(bi->url());
-        else if (key == "title" && !bi->getHeadingPlain().isEmpty())
-            ai->setValue(bi->getHeadingPlain());
+        else if (key == "title" && !bi->headingPlain().isEmpty())
+            ai->setValue(bi->headingPlain());
 
         // Export values
         if (key == "postData")
@@ -54,7 +54,7 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
             jsobj[key] = QJsonValue(ai->value().toInt());
         }
         else
-            qWarning() << "ExportFirefox  Unknown attribute type in " << bi->getHeadingPlain() << "Key: " << key;
+            qWarning() << "ExportFirefox  Unknown attribute type in " << bi->headingPlain() << "Key: " << key;
     }
 
     return jsobj;

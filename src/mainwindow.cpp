@@ -6418,10 +6418,10 @@ void Main::updateHeadingEditor(TreeItem *ti)  // FIXME-3 move to HeadingEditor
         if (ti->hasTypeBranch()) {
             BranchItem *bi = (BranchItem*)ti;
             headingEditor->setColorMapBackground(bi->getBackgroundColor(bi));
-            headingEditor->setColorRichTextDefaultForeground(bi->getHeadingColor());
+            headingEditor->setColorRichTextDefaultForeground(bi->headingColor());
         }
 
-        headingEditor->setVymText(selti->getHeading());
+        headingEditor->setVymText(selti->heading());
         headingEditor->setEditorTitle();
     }
 }
@@ -6494,7 +6494,7 @@ void Main::updateDockWidgetTitles(VymModel *model)
     if (model && !model->isRepositionBlocked()) {
         BranchItem *bi = model->getSelectedBranch();
         if (bi) {
-            s = bi->getHeadingPlain();
+            s = bi->headingPlain();
             noteEditor->setVymText(bi->getNote());
         }
 
@@ -6728,7 +6728,7 @@ void Main::updateActions()
                     for (int i = 0; i < selbi->xlinkCount(); ++i) {
                         bi = selbi->getXLinkItemNum(i)->getPartnerBranch();
                         if (bi) {
-                            s = bi->getHeadingPlain();
+                            s = bi->headingPlain();
                             if (s.length() > xLinkMenuWidth)
                                 s = s.left(xLinkMenuWidth) + "...";
                             branchXLinksContextMenuEdit->addAction(s);
