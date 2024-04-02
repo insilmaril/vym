@@ -63,6 +63,8 @@ void BranchContainer::init()
 
     scrollOpacity = 1;
 
+    columnWidthAutoDesignInt = true;
+
     rotationsAutoDesignInt = true;
     rotationHeadingInt = 0;
     rotationSubtreeInt = 0;
@@ -422,10 +424,11 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
         // Parent has list layout
         if (!bulletPointContainer) {
             //qDebug() << "... Creating bulletPointContainer";
-            bulletPointContainer = new HeadingContainer;    // FIXME-4 create new type or re-use LinkObj and set type 
+            bulletPointContainer = new HeadingContainer;    // FIXME-3 create new type or re-use LinkObj and set type 
             // See also https://www.w3schools.com/charsets/ref_utf_punctuation.asp
-            bulletPointContainer->setHeading(" • ");
-            bulletPointContainer->setHeadingColor(headingContainer->headingColor());
+            VymText vt(" • ");
+            vt.setColor(branchItem->headingColor());
+            bulletPointContainer->setHeading(vt);
             if (ornamentsContainer)
                 ornamentsContainer->addContainer(bulletPointContainer, Z_BULLETPOINT);
         }
@@ -494,7 +497,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
                 linkSpaceContainer = new HeadingContainer ();
                 linkSpaceContainer->setContainerType(LinkSpace);
                 linkSpaceContainer->zPos = Z_LINKSPACE;
-                linkSpaceContainer->setHeading("   ");  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
+                linkSpaceContainer->setHeading(VymText("   "));  // FIXME-2 introduce minWidth later in Container instead of a pseudo heading here  see oc.pos
 
                 if (listContainer)
                     listContainer->addContainer(linkSpaceContainer);
@@ -739,7 +742,7 @@ void BranchContainer::updateUpLink()
 
     // Color of link (depends on current parent)
     if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
-        upLink->setLinkColor(headingContainer->color());
+        upLink->setLinkColor(branchItem->headingColor());
     else {
         if (branchItem)
             upLink->setLinkColor(branchItem->mapDesign()->defaultLinkColor());
@@ -856,13 +859,38 @@ QRectF BranchContainer::ornamentsRect()
     return ornamentsContainer->mapToScene(headingContainer->rect()).boundingRect();
 }
 
+void BranchContainer::setColumnWidthAutoDesign(const bool &b, const bool &update)
+{
+    columnWidthAutoDesignInt = b;
+
+    /* FIXME-0 update colWidth
+    if (update)
+        updateTransformations();
+        */
+}
+
+bool BranchContainer::columnWidthAutoDesign()
+{
+    return columnWidthAutoDesignInt;
+}
+
+void BranchContainer::setColumnWidth(const int &i)
+{
+    headingContainer->setColumnWidth(i);
+    headingContainer->setHeading(branchItem->heading());
+}
+
+int BranchContainer::columnWidth()
+{
+    return headingContainer->columnWidth();
+}
+
 void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update)
 {
     rotationsAutoDesignInt = b;
 
-    if (update) {
+    if (update)
         updateTransformations();
-    }
 }
 
 bool BranchContainer::rotationsAutoDesign()
@@ -1220,8 +1248,11 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // F
     md->updateBranchHeadingColor(updateMode, branchItem, depth);
 
     // bulletpoint color should match heading color
-    if (bulletPointContainer)
-        bulletPointContainer->setHeadingColor(headingContainer->headingColor());
+    if (bulletPointContainer) {    // FIXME-3 duplicated code in updateChildrenStructure
+            VymText vt(" • ");
+            vt.setColor(branchItem->headingColor());
+            bulletPointContainer->setHeading(vt);
+    }
 
     // Set frame
     md->updateFrames(updateMode, this, depth);  // FIXME-1 No check for AutoDesign? Also: No savestate when e.g. relinking or toggling autodesign
@@ -1274,7 +1305,7 @@ void BranchContainer::updateVisuals()
     if (!branchItem)
         return;
 
-    headingContainer->setHeading(branchItem->headingText());
+    headingContainer->setHeading(branchItem->heading());
 
     // Update standard flags active in TreeItem
     QList<QUuid> TIactiveFlagUids = branchItem->activeFlagUids();

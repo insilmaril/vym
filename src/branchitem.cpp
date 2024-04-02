@@ -176,6 +176,10 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         attr += attribute("scaleSubtree", QString("%1").arg(branchContainer->scaleSubtree()));
     }
 
+    // width of heading
+    if (!branchContainer->columnWidthAutoDesign())
+        attr += attribute("colWidth", QString("%1").arg(branchContainer->getHeadingContainer()->columnWidth()));
+
     if (parentItem == rootItem || branchContainer->isFloating())
         attr += getPosAttr();
 
@@ -233,7 +237,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
-    branchContainer->getHeadingContainer()->setHeadingColor(color);
+    branchContainer->getHeadingContainer()->setColor(color);    // FIXME-0 remove? Or leave for optimization and avoid setHeading
     branchContainer->updateStyles(MapDesign::StyleChanged);
 }
 

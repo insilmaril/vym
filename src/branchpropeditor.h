@@ -31,6 +31,7 @@ class BranchPropertyEditor : public QDialog {
 
   private:
     void updateLayoutControls();
+    void updateDimensionControls();
     void updateRotationControls();
     void updateScalingControls();
 
@@ -47,8 +48,8 @@ class BranchPropertyEditor : public QDialog {
 
     void linkHideUnselectedChanged(int);
 
-    void headingTextWidthAutoChanged();
-    void headingTextWidthChanged(int);
+    void columnWidthAutoChanged();
+    void columnWidthChanged(int);
 
     void rotationsAutoChanged();
     void rotationHeadingChanged(int);

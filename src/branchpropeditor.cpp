@@ -242,6 +242,7 @@ void BranchPropertyEditor::updateControls()
 
 
         updateLayoutControls();
+        updateDimensionControls();
         updateRotationControls();
         updateScalingControls();
 
@@ -417,6 +418,19 @@ void BranchPropertyEditor::updateLayoutControls()
                 qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getImagesContainerLayout()));
                 qDebug() << "branch=" << branchItem->headingPlain();
         }
+    }
+}
+
+void BranchPropertyEditor::updateDimensionControls()
+{
+    bool b;
+    if (branchContainer) {
+        b = branchContainer->columnWidthAutoDesign();
+        ui.columnWidthAutoCheckBox->setChecked(b);
+        ui.columnWidthSpinBox->setEnabled(!b);
+        ui.columnWidthSlider->setEnabled(!b);
+        ui.columnWidthSpinBox->setValue(branchContainer->columnWidth());
+        ui.columnWidthSlider->setValue(branchContainer->columnWidth());
     }
 }
 
@@ -647,21 +661,21 @@ void BranchPropertyEditor::imagesLayoutsChanged(int i)
     model->setImagesLayout(s);
 }
 
-void BranchPropertyEditor::headingTextWidthAutoChanged()
+void BranchPropertyEditor::columnWidthAutoChanged()
 {
     if (model) {
-        model->setHeadingTextWidthAutoDesign(ui.headingTextWidthAutoCheckBox->isChecked());
-        updateControls();
+        model->setHeadingColumnWidthAutoDesign(ui.columnWidthAutoCheckBox->isChecked());
+        updateDimensionControls();
     }
 }
 
-void BranchPropertyEditor::headingTextWidthChanged(int i)
+void BranchPropertyEditor::columnWidthChanged(int i)
 {
     if (model)
-        model->setHeadingTextWidth(i);
+        model->setHeadingColumnWidth(i);
 
-    ui.headingTextWidthSlider->setValue(i);
-    ui.headingTextWidthSpinBox->setValue(i);
+    ui.columnWidthSlider->setValue(i);
+    ui.columnWidthSpinBox->setValue(i);
 }
 
 void BranchPropertyEditor::rotationsAutoChanged()
@@ -838,12 +852,12 @@ void BranchPropertyEditor::connectSignals()
     connect(ui.imagesLayoutsCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(imagesLayoutsChanged(int)));
 
-    connect(ui.headingTextWidthAutoCheckBox, SIGNAL(clicked()),
-            this, SLOT(headingTextWidthAutoChanged()));
-    connect(ui.headingTextWidthSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(headingTextWidthChanged(int)));
-    connect(ui.headingTextWidthSpinBox, SIGNAL(valueChanged(int)),
-            this, SLOT(headingTextWidthChanged(int)));
+    connect(ui.columnWidthAutoCheckBox, SIGNAL(clicked()),
+            this, SLOT(columnWidthAutoChanged()));
+    connect(ui.columnWidthSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(columnWidthChanged(int)));
+    connect(ui.columnWidthSpinBox, SIGNAL(valueChanged(int)),
+            this, SLOT(columnWidthChanged(int)));
 
     connect(ui.rotationsAutoCheckBox, SIGNAL(clicked()),
             this, SLOT(rotationsAutoChanged()));

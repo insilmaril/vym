@@ -90,6 +90,12 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
     QRectF ornamentsRect();  //! Return rectangle of ornamentsContainer in absolute coordinates
 
+    void setColumnWidthAutoDesign(const bool &, const bool &update = true);
+    bool columnWidthAutoDesign(); // FIXME-0 needed?
+
+    void setColumnWidth(const int &);
+    int columnWidth();  // FIXME-0 not needed.
+
     void setRotationsAutoDesign(const bool &, const bool &update = true);
     bool rotationsAutoDesign();
     void setRotationHeading(const int &);
@@ -107,6 +113,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     qreal scaleSubtree();
 
   protected:
+    bool columnWidthAutoDesignInt;
     bool rotationsAutoDesignInt;
     qreal rotationHeadingInt;
     qreal rotationSubtreeInt;

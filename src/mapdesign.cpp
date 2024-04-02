@@ -380,7 +380,8 @@ QColor MapDesign::branchHeadingColor(
     updateRequired = false;
     if (!branchItem) return QColor();
 
-    // FIXME-0 cont here...  (see below in updateBranchHeadingCol)
+    // FIXME-0 MD::branchHeadingColor   cont here...  (see below in updateBranchHeadingCol)
+    return QColor();
 }
 
 void MapDesign::updateBranchHeadingColor(
@@ -423,7 +424,7 @@ void MapDesign::updateBranchHeadingColor(
         }
         // Don't call BranchItem, this would again call back BC::updateStyles!
         branchItem->TreeItem::setHeadingColor(col);
-        branchItem->getBranchContainer()->getHeadingContainer()->setHeadingColor(col);
+        branchItem->getBranchContainer()->getHeadingContainer()->setColor(col);
         branchItem->getBranchContainer()->updateUpLink();
     }
 }

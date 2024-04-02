@@ -1247,6 +1247,18 @@ void VymReader::readOrnamentsAttr()
         if (loadMode != File::ImportAdd && !model->findUuid(QUuid(s)))
             lastMI->setUuid(s);
     }
+
+    s = attributeToString("colWidth");
+    if (!s.isEmpty()) {
+        int i = s.toInt(&okx);
+        if (okx) {
+            lastBranch->getBranchContainer()->setColumnWidthAutoDesign(false);
+            lastBranch->getBranchContainer()->setColumnWidth(i);
+        } else {
+            xml.raiseError("Couldn't read colWidth of branch");
+            return;
+        }
+    }
 }
 
 void VymReader::readFrameAttr()

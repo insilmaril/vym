@@ -2571,57 +2571,61 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
-void VymModel::setHeadingTextWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-0 not implemented yet
+void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-0 not implemented yet
 {
     qDebug() << "VM::" << __FUNCTION__;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    /*
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        if (bc->rotationsAutoDesign() != b) {
+        if (bc->columnWidthAutoDesign() != b) {
             if (b) {
+                /* FIXME-0 get colWidth from MapDesign
                 setRotationHeading(mapDesignInt->rotationHeading(MapDesign::AutoDesign, selbi->depth()));
                 setRotationSubtree(mapDesignInt->rotationSubtree(MapDesign::AutoDesign, selbi->depth()));
+                */
             }
+            /* FIXME-2 No savestate
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
                       QString("setRotationsAutoDesign (%1)")
                           .arg(toS(!b)),
                       selbi, QString("setRotationsAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic rotations").arg(v));
-            bc->setRotationsAutoDesign(b);
+                      */
+            bc->setColumnWidthAutoDesign(b);
             branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
         }
     }
 
     if (!selbis.isEmpty())
         reposition();
-        */
 }
 
-void VymModel::setHeadingTextWidth (const int &i, BranchItem *bi) // FIXME-0 not implemented yet
+void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-0 no savestate
 {
-    qDebug() << "VM::" << __FUNCTION__;
-    /*
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-	if (bc->rotationHeading() != i) {
+	if (bc->columnWidth() != i) {
 
+            /*
             saveState(selbi,
                       QString("setRotationHeading (\"%1\")")
                           .arg(bc->rotationHeading()),
                       selbi, QString("setRotationHeading (\"%1\")").arg(i),
                       QString("Set rotation angle of heading and flags to %1").arg(i));
+                      */
 
-            bc->setRotationHeading(i);
+            bc->setColumnWidth(i);
+            emitDataChanged(selbi);
         }
     }
 
-    if (!selbis.isEmpty())
+    if (!selbis.isEmpty()) {
         reposition();
-    */
+    }
 }
 
 void VymModel::setRotationsAutoDesign(const bool &b)

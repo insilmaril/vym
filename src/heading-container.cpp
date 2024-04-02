@@ -23,13 +23,13 @@ void HeadingContainer::init()
 {
     containerType = Container::Heading;
 
-    setHeading(" ");
+    // FIXME-0 setHeading(" ");
     headingColorInt = QColor(Qt::black);
 
     layout = Vertical;
     horizontalAlignment = AlignedLeft;
 
-    textWidthInt = 40;  // FIXME-0 get from mapDesign
+    columnWidthInt = 40;  // FIXME-0 get from mapDesign. Maybe in BC::updateVisuals()
 }
 
 QGraphicsTextItem *HeadingContainer::newLine(QString s)
@@ -43,17 +43,13 @@ QGraphicsTextItem *HeadingContainer::newLine(QString s)
     return t;
 }
 
-void HeadingContainer::setHeading(QString s)
+void HeadingContainer::setHeading(const VymText &vt)
 {
-    if (headingTextInt == s) return;
-
-    headingTextInt = s;
-
-    // Textwidth Hardcoded for now // FIXME-0   See also new setting BranchPropertyEditor
-                                   // Maybe use both number of chars (for wordwrap) and 
-                                   // also pixels (for size of OrnamentsContainer)
+    headingInt = vt;
 
     QGraphicsTextItem *t;
+
+    QString s = vt.getText();    // FIXME-0 only for porting QString to Heading
 
     // remove old textlines and prepare generating new ones
     clearHeading();
@@ -62,9 +58,11 @@ void HeadingContainer::setHeading(QString s)
         s.startsWith("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
                      "\"http://www.w3.org/TR/REC-html40/strict.dtd\">")) {
         t = new QGraphicsTextItem(this);
-        t->setFont(headingFontInt);
+        // FIXME-0 t->setFont(headingFontInt);
+        // FIXME-0 t->setFont(headingInt->getFontHint()); ???  no getFont() in VymText...
         t->setHtml(s);
-        t->setDefaultTextColor(headingColorInt);
+        // FIXME-0 t->setDefaultTextColor(headingColorInt);
+        t->setDefaultTextColor(headingInt.getColor());
         headingLines.append(t);
 
        // Translate line to move center to origin
@@ -93,7 +91,7 @@ void HeadingContainer::setHeading(QString s)
             }
             else {
                 if (i < 0 && j > 0) { // no ws found in actual search
-                    if (s.length() <= textWidthInt) {
+                    if (s.length() <= columnWidthInt) {
                         t = newLine(s);
                         s = "";
                     }
@@ -106,7 +104,7 @@ void HeadingContainer::setHeading(QString s)
                 else {
                     if (i >= 0 &&
                         i <= static_cast<int>(
-                                 textWidthInt)) { // there is a ws in textWidth
+                                 columnWidthInt)) { // there is a ws in columnWidth
                         if (br > 0) {
                             // here is a linebreak
                             t = newLine(s.left(i));
@@ -121,8 +119,8 @@ void HeadingContainer::setHeading(QString s)
                         }
                     }
                     else {
-                        if (i > static_cast<int>(textWidthInt)) {
-                            if (j > 0) { // a ws out of textWidth, but we have
+                        if (i > static_cast<int>(columnWidthInt)) {
+                            if (j > 0) { // a ws out of columnWidth, but we have
                                          // also one in
                                 t = newLine(s.left(j));
                                 s = s.mid(j + 1, s.length());
@@ -171,27 +169,11 @@ void HeadingContainer::clearHeading()
     setRect(QRectF());
 }
 
-void HeadingContainer::setHeadingColor(const QColor &col)
-{
-    if (headingColorInt != col) {
-        headingColorInt = col;
-        for (int i = 0; i < headingLines.size(); ++i)
-            // TextItem
-            headingLines.at(i)->setDefaultTextColor(headingColorInt);
-        // SimpleTextItem
-        // headingLines.at(i)->setBrush(headingColor);
-    }
-}
-
-QColor HeadingContainer::headingColor() {
-    return headingColorInt;
-}
-
 void HeadingContainer::setFont(const QFont &f)
 {
     if (headingFontInt != f) {
         headingFontInt = f;
-        setHeading(headingTextInt);
+        // FIXME-0 setHeading(headingTextInt);
     }
 }
 
@@ -199,29 +181,25 @@ QFont HeadingContainer::font() {return headingFontInt;}
 
 void HeadingContainer::setColor(const QColor &c)
 {
-    if (headingColorInt != c) {
+    headingInt.setColor(c); 
+    if (headingColorInt != c) { // FIXME-0 use headingInt.color() instead of headingColorInt
         headingColorInt = c;
         for (int i = 0; i < headingLines.size(); ++i)
             // TextItem
             headingLines.at(i)->setDefaultTextColor(headingColorInt);
-        // SimpleTextItem
-        // headingLines.at(i)->setBrush(c);
     }
 }
 
-QColor HeadingContainer::color()
+void HeadingContainer::setColumnWidth(const int &i)
 {
-    return headingColorInt;
+    qDebug() << "HC::setColWidth i=" <<i;
+    columnWidthInt = i;
+    setHeading(headingInt);
 }
 
-void HeadingContainer::setTextWidth(const int &i)
+int HeadingContainer::columnWidth()
 {
-    textWidthInt = i;
-}
-
-int HeadingContainer::textWidth()
-{
-    return textWidthInt;
+    return columnWidthInt;
 }
 
 QString HeadingContainer::getName() {
