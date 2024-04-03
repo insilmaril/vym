@@ -574,13 +574,20 @@
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
              <widget class="QSlider" name="columnWidthSlider">
+              <property name="maximum">
+               <number>150</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="columnWidthSpinBox"/>
+             <widget class="QSpinBox" name="columnWidthSpinBox">
+              <property name="maximum">
+               <number>150</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

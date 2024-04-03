@@ -2571,21 +2571,16 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
-void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-0 not implemented yet
+void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-2 No savestate
 {
-    qDebug() << "VM::" << __FUNCTION__;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
         if (bc->columnWidthAutoDesign() != b) {
-            if (b) {
-                /* FIXME-0 get colWidth from MapDesign
-                setRotationHeading(mapDesignInt->rotationHeading(MapDesign::AutoDesign, selbi->depth()));
-                setRotationSubtree(mapDesignInt->rotationSubtree(MapDesign::AutoDesign, selbi->depth()));
-                */
-            }
-            /* FIXME-2 No savestate
+            if (b)
+                bc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
+            /* 
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
                       QString("setRotationsAutoDesign (%1)")
@@ -2603,7 +2598,7 @@ void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) //
         reposition();
 }
 
-void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-0 no savestate
+void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-2 no savestate
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
@@ -3873,7 +3868,10 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     emit(layoutChanged());
 
     // Create Container
-    newbi->createBranchContainer(getScene());
+    BranchContainer *bc = newbi->createBranchContainer(getScene());
+
+    // Apply default design
+    bc->getHeadingContainer()->setColumnWidth(mapDesignInt->headingColumnWidth(newbi->depth()));
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();

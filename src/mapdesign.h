@@ -146,6 +146,8 @@ class MapDesign {
   public:
     QFont defaultFont();
     void setDefaultFont(const QFont &f);
+    int headingColumnWidth(const int &depth);
+
     QColor branchHeadingColor(
             const MapDesign::UpdateMode &updateMode,
             BranchItem *branchItem,
@@ -158,6 +160,7 @@ class MapDesign {
   private:
     QFont defaultFontInt;
 
+    ConfigList <int> headingColumnWidths;
     ConfigList <MapDesign::HeadingColorHint> headingColorHints;
     ConfigList <QColor> headingColors;
     ConfigList <bool> headingColorUpdateTriggerRelinking;

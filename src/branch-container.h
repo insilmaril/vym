@@ -90,11 +90,11 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
     QRectF ornamentsRect();  //! Return rectangle of ornamentsContainer in absolute coordinates
 
-    void setColumnWidthAutoDesign(const bool &, const bool &update = true);
-    bool columnWidthAutoDesign(); // FIXME-0 needed?
+    void setColumnWidthAutoDesign(const bool &);
+    bool columnWidthAutoDesign();
 
     void setColumnWidth(const int &);
-    int columnWidth();  // FIXME-0 not needed.
+    int columnWidth();
 
     void setRotationsAutoDesign(const bool &, const bool &update = true);
     bool rotationsAutoDesign();

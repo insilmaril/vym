@@ -54,7 +54,7 @@ void HeadingContainer::setHeading(const VymText &vt)
     // remove old textlines and prepare generating new ones
     clearHeading();
 
-    if (s.startsWith("<html>") ||
+    if (s.startsWith("<html>") ||   // FIXME-0 Review RichText headings
         s.startsWith("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
                      "\"http://www.w3.org/TR/REC-html40/strict.dtd\">")) {
         t = new QGraphicsTextItem(this);
@@ -74,7 +74,6 @@ void HeadingContainer::setHeading(const VymText &vt)
         // visible for this heading
         if (s.length() == 0)
             s = "  ";
-
 
         int i = 0;  // index for actual search for ws
         int j = 0;  // index of last ws
@@ -173,7 +172,7 @@ void HeadingContainer::setFont(const QFont &f)
 {
     if (headingFontInt != f) {
         headingFontInt = f;
-        // FIXME-0 setHeading(headingTextInt);
+        // FIXME-0 setHeading(headingTextInt);  // Needed to set font after all?
     }
 }
 
@@ -192,7 +191,6 @@ void HeadingContainer::setColor(const QColor &c)
 
 void HeadingContainer::setColumnWidth(const int &i)
 {
-    qDebug() << "HC::setColWidth i=" <<i;
     columnWidthInt = i;
     setHeading(headingInt);
 }

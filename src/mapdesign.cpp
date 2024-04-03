@@ -77,9 +77,6 @@ MapDesign::MapDesign()  // FIXME-1 add options to update styles when relinking (
 
 void MapDesign::init()
 {
-    // Font
-    defaultFontInt.setPointSizeF(16);
-
     // Selection
     selectionPenInt = QPen(QColor(255,255,0,255), 3);
     selectionBrushInt = QBrush(QColor(255,255,0,120));
@@ -90,6 +87,12 @@ void MapDesign::init()
 
     // NewBranch: Layout of children images 
     imageContainerLayouts << Container::FloatingFree;
+
+    // Font
+    defaultFontInt.setPointSizeF(16);
+
+    // Dimensions
+    headingColumnWidths << 42;
 
     // Heading colors
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
@@ -372,6 +375,11 @@ void MapDesign::setDefaultFont(const QFont &f)
     defaultFontInt = f;
 }
 
+int MapDesign::headingColumnWidth(const int &depth)
+{
+    return headingColumnWidths.tryAt(depth);
+}
+
 QColor MapDesign::branchHeadingColor(
         const MapDesign::UpdateMode &updateMode,
         BranchItem *branchItem,
@@ -384,7 +392,8 @@ QColor MapDesign::branchHeadingColor(
     return QColor();
 }
 
-void MapDesign::updateBranchHeadingColor(
+void MapDesign::updateBranchHeadingColor(   // FIXME-0 only called from BC::updateStyles, should go to VM for undo/redo?
+                                            // (if called at all...)
         const MapDesign::UpdateMode &updateMode,
         BranchItem *branchItem,
         int depth)

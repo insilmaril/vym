@@ -859,14 +859,9 @@ QRectF BranchContainer::ornamentsRect()
     return ornamentsContainer->mapToScene(headingContainer->rect()).boundingRect();
 }
 
-void BranchContainer::setColumnWidthAutoDesign(const bool &b, const bool &update)
+void BranchContainer::setColumnWidthAutoDesign(const bool &b)
 {
     columnWidthAutoDesignInt = b;
-
-    /* FIXME-0 update colWidth
-    if (update)
-        updateTransformations();
-        */
 }
 
 bool BranchContainer::columnWidthAutoDesign()
