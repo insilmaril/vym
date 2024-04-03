@@ -75,6 +75,7 @@ void ConfluenceSettingsDialog::updateSettings()
     settings.beginGroup("/atlassian/confluence");
     settings.setValue("authUsingPAT", ui.usePATCheckBox->isChecked());
     settings.setValue("username", ui.userLineEdit->text());
+    settings.setValue("url", ui.urlLineEdit->text());
     if (ui.usePATCheckBox->isChecked()) {
         // Don't save password if PAT is used
         settings.remove("savePassword");
