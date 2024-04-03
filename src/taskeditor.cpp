@@ -341,9 +341,6 @@ void TaskEditor::headerContextMenu()
 void TaskEditor::updateColumnLayout()
 {
     // Update column widths and visibility
-
-    qDebug() << "TE::updateColLayout";
-
     QString s = "/taskeditor/column/%1/";
 
     // Priority

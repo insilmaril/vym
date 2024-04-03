@@ -205,12 +205,12 @@ void VymReader::readMapDesignCompatibleAttributes()
         model->setBackgroundImageName(s);
     }
 
-    a = "defaultFont";
+    a = "font";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         QFont font;
         font.fromString(s);
-        model->mapDesign()->setDefaultFont(font);
+        model->mapDesign()->setFont(font);
     }
 
     QColor col;

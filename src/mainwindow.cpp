@@ -5915,9 +5915,9 @@ void Main::formatSelectFont()
     VymModel *m = currentModel();
     if (m) {
         bool ok;
-        QFont font = QFontDialog::getFont(&ok, m->mapDesign()->defaultFont(), this);
+        QFont font = QFontDialog::getFont(&ok, m->mapDesign()->font(), this);
         if (ok)
-            m->mapDesign()->setDefaultFont(font);
+            m->setDefaultFont(font);
     }
 }
 

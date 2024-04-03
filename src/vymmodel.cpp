@@ -3872,6 +3872,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
 
     // Apply default design
     bc->getHeadingContainer()->setColumnWidth(mapDesignInt->headingColumnWidth(newbi->depth()));
+    bc->getHeadingContainer()->setFont(mapDesignInt->font());
 
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
@@ -5857,6 +5858,11 @@ void VymModel::applyDesign(
                     recursive,
                     selbi->getBranchNum(i));
     }
+}
+
+void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no savestate, no updates of existing headings ("applyDesign")
+{
+    mapDesignInt->setFont(font);
 }
 
 bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0 savestate needs to be adapted, command new param depth

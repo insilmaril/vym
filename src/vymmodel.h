@@ -723,6 +723,7 @@ class VymModel : public TreeModel {
             TreeItem *ti = nullptr);
 
   public:
+    void setDefaultFont(const QFont &);
     bool setLinkStyle(const QString &m, int depth = -1);   // Set style of link
     void setDefaultLinkColor(const QColor&);         // default color of links
     void setLinkColorHint(const LinkObj::ColorHint &);

@@ -82,6 +82,7 @@ void BranchWrapper::toggleFlagByName(const QString &s)
 {
     branchItem->getModel()->toggleFlagByName(s, branchItem);
 }
+
 void BranchWrapper::unsetFlagByName(const QString &s)
 {
     branchItem->getModel()->unsetFlagByName(s, branchItem);

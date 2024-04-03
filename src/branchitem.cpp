@@ -237,7 +237,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
-    branchContainer->getHeadingContainer()->setColor(color);    // FIXME-0 remove? Or leave for optimization and avoid setHeading
+    branchContainer->getHeadingContainer()->setColor(color);
     branchContainer->updateStyles(MapDesign::StyleChanged);
 }
 

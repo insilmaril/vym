@@ -144,8 +144,8 @@ class MapDesign {
 
 // Heading & Fonts
   public:
-    QFont defaultFont();
-    void setDefaultFont(const QFont &f);
+    QFont font();
+    void setFont(const QFont &f);
     int headingColumnWidth(const int &depth);
 
     QColor branchHeadingColor(
@@ -158,7 +158,7 @@ class MapDesign {
             int depth);
 
   private:
-    QFont defaultFontInt;
+    QFont fontInt;
 
     ConfigList <int> headingColumnWidths;
     ConfigList <MapDesign::HeadingColorHint> headingColorHints;

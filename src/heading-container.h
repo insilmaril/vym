@@ -16,15 +16,13 @@ class HeadingContainer : public Container {
     QGraphicsTextItem *newLine(QString); // generate new textline
 
   public:
-    void setHeading(const VymText &);  // FIXME-0 switch to Heading instead of QString. Also remove color, font, textWidth here
-    void setHeading(QString);  // FIXME-0 switch to Heading instead of QString. Also remove color, font, textWidth here
-    QString heading();  // FIXME-0 Really a getter needed?
+    void setHeading(const VymText &);
     void clearHeading();
     void setFont(const QFont &);
     QFont font();
     void setColor(const QColor &);
     void setColumnWidth(const int &);
-    int columnWidth();  // FIXME-0 really a getter needed?
+    int columnWidth();
 
     virtual QString getName();
 
@@ -35,11 +33,10 @@ class HeadingContainer : public Container {
 
   protected:
     VymText headingInt;
-    QString headingTextInt;         // FIXME-0 remove
     QList<QGraphicsTextItem *> headingLines;
-    QColor headingColorInt;         // FIXME-0 remove
-    QFont headingFontInt;           // FIXME-0 remove
-    int columnWidthInt;             // FIXME-0 remove
+    QColor headingColorInt;
+    QFont headingFontInt;
+    int columnWidthInt;
 };
 
 #endif

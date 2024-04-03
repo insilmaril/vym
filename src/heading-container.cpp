@@ -23,13 +23,13 @@ void HeadingContainer::init()
 {
     containerType = Container::Heading;
 
-    // FIXME-0 setHeading(" ");
+    headingInt.setText(" ");
     headingColorInt = QColor(Qt::black);
 
     layout = Vertical;
     horizontalAlignment = AlignedLeft;
 
-    columnWidthInt = 40;  // FIXME-0 get from mapDesign. Maybe in BC::updateVisuals()
+    columnWidthInt = 40;  // Will be set from MapDesign in VymModel later
 }
 
 QGraphicsTextItem *HeadingContainer::newLine(QString s)
@@ -49,27 +49,21 @@ void HeadingContainer::setHeading(const VymText &vt)
 
     QGraphicsTextItem *t;
 
-    QString s = vt.getText();    // FIXME-0 only for porting QString to Heading
+    QString s = vt.getText();
 
     // remove old textlines and prepare generating new ones
     clearHeading();
 
-    if (s.startsWith("<html>") ||   // FIXME-0 Review RichText headings
-        s.startsWith("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" "
-                     "\"http://www.w3.org/TR/REC-html40/strict.dtd\">")) {
+    if (vt.isRichText()) {
         t = new QGraphicsTextItem(this);
-        // FIXME-0 t->setFont(headingFontInt);
-        // FIXME-0 t->setFont(headingInt->getFontHint()); ???  no getFont() in VymText...
         t->setHtml(s);
-        // FIXME-0 t->setDefaultTextColor(headingColorInt);
-        t->setDefaultTextColor(headingInt.getColor());
+        t->setDefaultTextColor(headingColorInt);
         headingLines.append(t);
 
        // Translate line to move center to origin
         t->setPos(-t->boundingRect().center());
         setRect(t->boundingRect());
-    }
-    else {
+    } else {
         // prevent empty headingLines, so at least a small selection stays
         // visible for this heading
         if (s.length() == 0)
@@ -159,8 +153,6 @@ void HeadingContainer::setHeading(const VymText &vt)
     setName(QString("HC (%1)").arg(s));
 }
 
-QString HeadingContainer::heading() { return headingTextInt; }
-
 void HeadingContainer::clearHeading()
 {
     while (!headingLines.isEmpty())
@@ -170,10 +162,7 @@ void HeadingContainer::clearHeading()
 
 void HeadingContainer::setFont(const QFont &f)
 {
-    if (headingFontInt != f) {
-        headingFontInt = f;
-        // FIXME-0 setHeading(headingTextInt);  // Needed to set font after all?
-    }
+    headingFontInt = f;
 }
 
 QFont HeadingContainer::font() {return headingFontInt;}
@@ -181,7 +170,7 @@ QFont HeadingContainer::font() {return headingFontInt;}
 void HeadingContainer::setColor(const QColor &c)
 {
     headingInt.setColor(c); 
-    if (headingColorInt != c) { // FIXME-0 use headingInt.color() instead of headingColorInt
+    if (headingColorInt != c) {
         headingColorInt = c;
         for (int i = 0; i < headingLines.size(); ++i)
             // TextItem
@@ -201,7 +190,7 @@ int HeadingContainer::columnWidth()
 }
 
 QString HeadingContainer::getName() {
-    return Container::getName() + QString(" '%1'").arg(headingTextInt);
+    return Container::getName() + QString(" '%1'").arg(headingInt.getTextASCII());
 }
 
 void HeadingContainer::setScrollOpacity(qreal o) // FIXME-3 needed?

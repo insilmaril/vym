@@ -89,7 +89,7 @@ void MapDesign::init()
     imageContainerLayouts << Container::FloatingFree;
 
     // Font
-    defaultFontInt.setPointSizeF(16);
+    fontInt.setPointSizeF(16);
 
     // Dimensions
     headingColumnWidths << 42;
@@ -365,14 +365,14 @@ QBrush MapDesign::backgroundImageBrush()
 }
 
 
-QFont MapDesign::defaultFont()
+QFont MapDesign::font()
 {
-    return defaultFontInt;
+    return fontInt;
 }
 
-void MapDesign::setDefaultFont(const QFont &f)
+void MapDesign::setFont(const QFont &f)
 {
-    defaultFontInt = f;
+    fontInt = f;
 }
 
 int MapDesign::headingColumnWidth(const int &depth)
@@ -535,7 +535,7 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
     }
 
     s += xml.singleElement("md",
-            xml.attribute("defaultFont", defaultFontInt.toString()));
+            xml.attribute("font", fontInt.toString()));
 
     s += xml.singleElement("md",
             xml.attribute("selectionPenColor", selectionPenInt.color().name(QColor::HexArgb)));
