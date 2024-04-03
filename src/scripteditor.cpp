@@ -44,6 +44,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     connect(ui.fileRunButton, SIGNAL(clicked()), this, SLOT(runScript()));
     connect(ui.macroLoadButton, SIGNAL(clicked()), this, SLOT(reloadMacros()));
     connect(ui.macroSaveButton, SIGNAL(clicked()), this, SLOT(saveMacros()));
+    connect(ui.fileReloadButton, SIGNAL(clicked()), this, SLOT(reloadScript()));
     connect(ui.fileLoadButton, SIGNAL(clicked()), this, SLOT(loadScript()));
     connect(ui.fileSaveButton, SIGNAL(clicked()), this, SLOT(saveScript()));
     connect(ui.fileSaveAsButton, SIGNAL(clicked()), this, SLOT(saveScriptAs()));
@@ -176,6 +177,28 @@ bool ScriptEditor::loadScript(QString fn)
             QString error(QObject::tr("Error"));
             QString msg(
                 QObject::tr("Couldn't read script from \"%1\"\n.").arg(fn));
+            QMessageBox::warning(0, error, msg);
+        }
+    }
+    return false;
+}
+
+bool ScriptEditor::reloadScript()
+{
+    if (filename.isEmpty())
+        return false;
+    else {
+        QString s;
+        if (loadStringFromDisk(filename, s)) {
+            codeEditor->setPlainText(s);
+            ui.scriptPathLineEdit->setText(filename);
+            lastMapDir.setPath(filename.left(filename.lastIndexOf("/")));
+            return true;
+        }
+        else {
+            QString error(QObject::tr("Error"));
+            QString msg(
+                QObject::tr("Couldn't read script from \"%1\"\n.").arg(filename));
             QMessageBox::warning(0, error, msg);
         }
     }

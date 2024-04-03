@@ -31,6 +31,7 @@ class ScriptEditor : public QWidget {
     void reloadMacros();
     void saveMacros();
     bool loadScript(QString fn = "");
+    bool reloadScript();
     void saveScript();
     void saveScriptAs();
 

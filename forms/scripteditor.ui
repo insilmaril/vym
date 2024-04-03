@@ -88,8 +88,8 @@
               <string>Save to selected slide</string>
              </property>
              <property name="icon">
-              <iconset resource="../vym.qrc">
-               <normaloff>:/filesave.png</normaloff>:/filesave.png</iconset>
+              <iconset theme="document-save">
+               <normaloff>.</normaloff>.</iconset>
              </property>
              <property name="shortcut">
               <string/>
@@ -144,8 +144,8 @@
               <string>Reload</string>
              </property>
              <property name="icon">
-              <iconset resource="../vym.qrc">
-               <normaloff>:/script-reload.svg</normaloff>:/script-reload.svg</iconset>
+              <iconset theme="view-refresh">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -155,8 +155,8 @@
               <string>Save</string>
              </property>
              <property name="icon">
-              <iconset resource="../vym.qrc">
-               <normaloff>:/filesave.png</normaloff>:/filesave.png</iconset>
+              <iconset theme="document-save">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -225,6 +225,17 @@
             </spacer>
            </item>
            <item>
+            <widget class="QPushButton" name="fileReloadButton">
+             <property name="text">
+              <string>Reload</string>
+             </property>
+             <property name="icon">
+              <iconset theme="view-refresh">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="fileLoadButton">
              <property name="text">
               <string>Load</string>
@@ -241,8 +252,8 @@
               <string>Save</string>
              </property>
              <property name="icon">
-              <iconset resource="../vym.qrc">
-               <normaloff>:/filesave.png</normaloff>:/filesave.png</iconset>
+              <iconset theme="document-save">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -264,8 +275,8 @@
               <string>Save as</string>
              </property>
              <property name="icon">
-              <iconset resource="../vym.qrc">
-               <normaloff>:/filesaveas.png</normaloff>:/filesaveas.png</iconset>
+              <iconset theme="document-save-as">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
