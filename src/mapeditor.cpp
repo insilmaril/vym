@@ -1900,6 +1900,16 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
          editorState == MovingObjectTmpLinked ||
          editorState == MovingObjectWithoutLinking ||
          editorState == DrawingXLink)) {
+
+        if (!(e->buttons() & Qt::LeftButton)) {
+            // Sometimes at least within a VM there might be a
+            // release event lost, while still the mousePress event is processed
+            //
+            // So moving without a pressed left button is considered a "release"
+            mouseReleaseEvent(e);
+            return;
+        }
+
         int margin = 50;
 
         // Check if we have to scroll
