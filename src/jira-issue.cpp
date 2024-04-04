@@ -66,22 +66,22 @@ void JiraIssue::initFromJsonObject(const QJsonObject &jsobj) {
     // https://developer.atlassian.com/cloud/jira/platform/issue-linking-model/
 
     // Experimental
-    qDebug() << "JiraIssue: issuelinks for " << keyInt;
+    // qDebug() << "JiraIssue: issuelinks for " << keyInt;
     QJsonArray issuelinksArray = fields["issuelinks"].toArray();
     issueLinksListInt.clear();
     for (int i = 0; i < issuelinksArray.size(); ++i) {
-        qDebug() << issuelinksArray[i].toObject().value("inwardIssue")["key"].toString()
-            << issuelinksArray[i].toObject().value("inwardIssue")["fields"]["summary"].toString();
+        //qDebug() << issuelinksArray[i].toObject().value("inwardIssue")["key"].toString()
+        //    << issuelinksArray[i].toObject().value("inwardIssue")["fields"]["summary"].toString();
         issueLinksListInt << issuelinksArray[i].toObject().value("inwardIssue")["key"].toString();
     }
 
     // Experimental
-    qDebug() << "JiraIssue: subtasks for " << keyInt;
+    // qDebug() << "JiraIssue: subtasks for " << keyInt;
     QJsonArray subtasksArray = fields["subtasks"].toArray();
     subTasksListInt.clear();
     for (int i = 0; i < subtasksArray.size(); ++i) {
-        qDebug() << subtasksArray[i].toObject().value("key").toString()
-            << subtasksArray[i].toObject().value("fields")["summary"].toString();
+        //qDebug() << subtasksArray[i].toObject().value("key").toString()
+        //    << subtasksArray[i].toObject().value("fields")["summary"].toString();
         subTasksListInt << subtasksArray[i].toObject().value("key").toString();
     }
 
@@ -130,6 +130,11 @@ QString JiraIssue::assignee() const
 QString JiraIssue::components() const
 {
     return componentsListInt.join(",");
+}
+
+QString JiraIssue::description() const
+{
+    return descriptionInt;
 }
 
 QString JiraIssue::fixVersions() const

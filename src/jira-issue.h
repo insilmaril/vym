@@ -12,7 +12,7 @@ class JiraIssue{
     bool isFinished() const;
     QString assignee() const;
     QString components() const;
-    QString desciption() const;
+    QString description() const;
     QString fixVersions() const;
     QString issueType() const;
     QString key() const;

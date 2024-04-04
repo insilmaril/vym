@@ -6406,7 +6406,8 @@ void Main::updateNoteEditor(TreeItem *ti)
     noteEditor->setInactive();
 }
 
-void Main::updateHeadingEditor(TreeItem *ti)  // FIXME-3 move to HeadingEditor
+void Main::updateHeadingEditor(TreeItem *ti)  // FIXME-2 If (ti && ti != selectedItem) return : no need to update HE then
+    // FIXME-3 move to HeadingEditor
 {
     VymModel *m = currentModel();
     if (!m) return;

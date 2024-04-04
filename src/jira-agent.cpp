@@ -157,7 +157,6 @@ bool JiraAgent::setTicket(const QString &text)
 
     // Try to find server by looking through baseUrls or patterns
     int size = settings.beginReadArray("servers");
-    qDebug() << "  size1=" << size;
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
         foreach (QString pattern, settings.value("pattern").toString().split(",")) {
@@ -258,7 +257,7 @@ void JiraAgent::continueJob()
 
     jobStep++;
 
-    //qDebug() << "JA::contJob " << jobTypeInt << " Step: " << jobStep << "keyInt: " << keyInt;
+    //qDebug() << "JA::contJob " << jobTypeInt << " Step: " << jobStep << "keyInt: " << keyInt << " this=" << this;
 
     switch(jobTypeInt) {
         case GetTicketInfo:
@@ -356,7 +355,7 @@ void JiraAgent::startGetTicketRequest()
 
 void JiraAgent::ticketReceived(QNetworkReply *reply)
 {
-    // qDebug() << "JA::ticketReceived";
+    //qDebug() << "JA::ticketReceived";
 
     killTimer->stop();
 
@@ -415,6 +414,7 @@ void JiraAgent::startQueryRequest()
                                             // For now use fixed server
          "\"assignee\","
          "\"components\","
+         "\"description\","
          "\"fixVersions\","
          "\"issuetype\","
          "\"issuelinks\","

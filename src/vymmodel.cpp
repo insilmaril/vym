@@ -4909,6 +4909,8 @@ void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
 
     setAttribute(bi, "Jira.assignee", ji.assignee());
     setAttribute(bi, "Jira.components", ji.components());
+    //setAttribute(bi, "Jira.description", ji.description());
+    bi->setNote(VymText(ji.description()));
     setAttribute(bi, "Jira.fixVersions", ji.fixVersions());
     setAttribute(bi, "Jira.issuetype", ji.issueType());
     setAttribute(bi, "Jira.issueUrl", ji.url());
@@ -4941,6 +4943,9 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
 {
     int branchID = jsobj["vymBranchId"].toInt();
 
+    saveStateBlocked = true;
+    repositionBlocked = true; // FIXME-2 block reposition during processing of Jira query?
+
     BranchItem *bi = (BranchItem*)findID(branchID);
     if (bi) {
         JiraIssue ji;
@@ -4954,20 +4959,24 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
         }
 
         setHeadingPlainText(keyName + ": " + ji.summary(), bi);
-        setUrl(ji.url());
+        setUrl(ji.url(), false, bi);
 
         // Pretty print JIRA ticket
         ji.print();
     }
 
+    saveStateBlocked = false;
+    repositionBlocked = false;
 
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
+
+    reposition();
 }
 
 void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState missing
 {
     // Debugging only
-    qDebug() << "VM::processJiraJqlQuery result...";
+    //qDebug() << "VM::processJiraJqlQuery result...";
 
     int branchID = jsobj.value("vymBranchId").toInt();
     BranchItem *pbi = (BranchItem*)findID(branchID);
@@ -4978,7 +4987,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
     QJsonArray issues = jsobj["issues"].toArray();
 
     saveStateBlocked = true;
-    //repositionBlocked = true; // FIXME-2 block reposition during bulk processing of Jira query?
+    repositionBlocked = true; // FIXME-2 block reposition during bulk processing of Jira query?
 
     for (int i = 0; i < issues.size(); ++i) {
         QJsonObject issue = issues[i].toObject();
@@ -5005,6 +5014,9 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
 
     saveStateBlocked = false;
     repositionBlocked = false;
+
+    mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
+
     reposition();
 }
 
@@ -6668,7 +6680,7 @@ void VymModel::emitNoteChanged(TreeItem *ti)
 void VymModel::emitDataChanged(TreeItem *ti)
 {
     //qDebug() << "VM::emitDataChanged ti=" << ti;
-    if (ti && !repositionBlocked) {
+    if (ti) { // FIXME-0 needed to update heading while reposition blocked  && !repositionBlocked) {
         QModelIndex ix = index(ti);
         emit(dataChanged(ix, ix));
 
