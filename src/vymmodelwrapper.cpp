@@ -692,14 +692,18 @@ void VymModelWrapper::importDir(const QString &path)
         path); // FIXME-3 error handling missing (in vymmodel and here)
 }
 
-bool VymModelWrapper::initIterator(const QString &iname, bool deepLevelsFirst)
+bool VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
 {
-    return model->initIterator(iname, deepLevelsFirst);
+    return model->newBranchIterator(itname, deepLevelsFirst);
 }
 
-bool VymModelWrapper::nextIterator(const QString &iname)
+BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)
 {
-    return model->nextIterator(iname);
+    BranchItem *bi = model->nextBranchIterator(itname);
+    if (bi)
+        return bi->branchWrapper();
+    else
+        return nullptr;
 }
 
 bool VymModelWrapper::isScrolled()

@@ -73,6 +73,11 @@ bool BranchWrapper::relinkTo(BranchWrapper *bw)
     return false;
 }
 
+void BranchWrapper::select()
+{
+    branchItem->getModel()->select(branchItem);
+}
+
 void BranchWrapper::setFlagByName(const QString &s)
 {
     branchItem->getModel()->setFlagByName(s, branchItem);

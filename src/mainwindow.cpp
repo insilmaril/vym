@@ -794,7 +794,7 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Directory name to import");
     modelCommands.append(c);
 
-    c = new Command("initIterator", Command::Branch, Command::Bool);
+    c = new Command("newBranchIterator", Command::Branch, Command::Bool);
     c->addParameter(Command::String, false, "Name of iterator");
     c->addParameter(Command::Bool, true, "Flag to go deep levels first");
     modelCommands.append(c);
@@ -832,7 +832,7 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("nextIterator", Command::Branch, Command::Bool);
+    c = new Command("nextBranch", Command::Branch, Command::BranchItem);
     c->addParameter(Command::String, false, "Name of iterator");
     modelCommands.append(c);
 
@@ -1210,6 +1210,10 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Name of flag");
     branchCommands.append(c);
 
+    c = new Command("select", Command::Branch);
+    c->setComment("Select (only) this branch");
+    branchCommands.append(c);
+
     c = new Command("toggleFlagByName", Command::Branch);
     c->setComment("Toggle flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag to toggle");
@@ -1219,7 +1223,6 @@ void Main::setupAPI()
     c->setComment("Unset flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag to unset");
     branchCommands.append(c);
-
 }
 
 void Main::cloneActionMapEditor(QAction *a, QKeySequence ks)

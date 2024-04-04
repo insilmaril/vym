@@ -890,14 +890,12 @@ class VymModel : public TreeModel {
     // Iterating and selecting branches
     ////////////////////////////////////////////
   public:
-    bool initIterator(const QString &iname,
-                      bool deepLevelsFirst = false); //! Named iterator
-    bool nextIterator(const QString &iname);         //! Select next iterator
+    bool newBranchIterator(const QString &itname,
+                      bool deepLevelsFirst = false);        //! Named iterator
+    BranchItem* nextBranchIterator(const QString &itname);  //! next branch via iterator
   private:
-    QHash<QString, QUuid> selIterCur;
-    QHash<QString, QUuid> selIterPrev;
-    QHash<QString, QUuid> selIterStart;
-    QHash<QString, bool> selIterActive;
+    QHash <QString, QList <QUuid>> branchIterators;
+    int branchIteratorsCurrentIndex;
 
     ////////////////////////////////////////////
     // Slide related

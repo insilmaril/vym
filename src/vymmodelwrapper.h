@@ -77,7 +77,6 @@ class VymModelWrapper : public VymScriptContext {
     bool hasRichTextNote();
     bool hasTask();
     void importDir(const QString &path);
-    bool initIterator(const QString &iname, bool deepLevelsFirst = false);
     bool isScrolled();
     void loadImage(const QString &filename);
     void loadNote(const QString &filename);
@@ -87,7 +86,8 @@ class VymModelWrapper : public VymScriptContext {
     void moveSlideDown();
     void moveSlideUp(int n);
     void moveSlideUp();
-    bool nextIterator(const QString &iname);
+    bool newBranchIterator(const QString &itname, bool deepLevelsFirst = false);
+    BranchWrapper* nextBranch(const QString &itname);
     void nop();
     void note2URLs();
     bool parseVymText(const QString &text);

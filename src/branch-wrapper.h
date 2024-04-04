@@ -17,6 +17,7 @@ class BranchWrapper : public VymScriptContext {
     QString attributeAsString(const QString &key);
     QString headingText();  
     bool relinkTo(BranchWrapper*);
+    void select();
     void setFlagByName(const QString &);
     void toggleFlagByName(const QString &);
     void unsetFlagByName(const QString &);

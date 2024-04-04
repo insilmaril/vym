@@ -6315,49 +6315,55 @@ QColor VymModel::getSelectionBrushColor() {
     return mapDesignInt->selectionBrush().color();
 }
 
-bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst)
+bool VymModel::newBranchIterator(const QString &itname, bool deepLevelsFirst)
 {
     Q_UNUSED(deepLevelsFirst);
 
     // Remove existing iterators first
-    selIterCur.remove(iname);
-    selIterPrev.remove(iname);
-    selIterStart.remove(iname);
-    selIterActive.remove(iname);
+    branchIterators.remove(itname);
+    branchIteratorsCurrentIndex = -1;
 
     QList<BranchItem *> selbis;
     selbis = getSelectedBranches();
     if (selbis.count() == 1) {
-        BranchItem *prev = nullptr;
         BranchItem *cur = nullptr;
-        nextBranch(cur, prev, false, selbis.first());
-        if (cur) {
-            selIterCur.insert(iname, cur->getUuid());
-            selIterPrev.insert(iname, prev->getUuid());
-            selIterStart.insert(iname, selbis.first()->getUuid());
-            selIterActive.insert(iname, false);
-            // qDebug() << "Created iterator " << iname;
-            return true;
+        BranchItem *prev = nullptr;
+        BranchItem *start = selbis.first();
+        nextBranch(cur, prev, true, start);
+        while (cur) {
+            branchIterators[itname].append(cur->getUuid());
+            qDebug() << "Adding b: " << headingText(cur);
+            nextBranch(cur, prev, true, start);
         }
     }
-    return false;
+    return false;   // FIXME-2 could be removed
 }
 
-bool VymModel::nextIterator(const QString &iname)
+BranchItem* VymModel::nextBranchIterator(const QString &itname)
 {
-    if (selIterCur.keys().indexOf(iname) < 0) {
+    qDebug() << "VM::nBI itname=" << itname << " index=" << branchIteratorsCurrentIndex;
+    if (branchIterators.keys().indexOf(itname) < 0) {
         qWarning()
             << QString("VM::nextIterator couldn't find %1 in hash of iterators")
-                   .arg(iname);
-        return false;
+                   .arg(itname);
+        return nullptr;
     }
 
-    BranchItem *cur = (BranchItem *)(findUuid(selIterCur.value(iname)));
-    if (!cur) {
-        qWarning() << "VM::nextIterator couldn't find cur" << selIterCur;
-        return false;
+    branchIteratorsCurrentIndex++;
+
+    if (branchIteratorsCurrentIndex < 0 || branchIteratorsCurrentIndex > branchIterators[itname].size() - 1) {
+        //qDebug() << "out of range";
+        return nullptr;
     }
 
+    BranchItem *bi = (BranchItem *)(findUuid(branchIterators[itname].at(branchIteratorsCurrentIndex)));
+    if (!bi) {
+        qWarning() << "VM::nextIterator couldn't find branch with Uuid in list.";
+        return nullptr;
+    }
+
+    return bi;
+    /*
     qDebug() << "  " << iname << "selecting " << cur->headingPlain();
     select(cur);
 
@@ -6389,6 +6395,7 @@ bool VymModel::nextIterator(const QString &iname)
             return false;
     }
     return false;
+    */
 }
 
 void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)
