@@ -21,6 +21,7 @@ class BranchWrapper : public VymScriptContext {
     QString headingText();  
     bool isScrolled();
     bool relinkTo(BranchWrapper*);
+    void remove();
     void scroll();
     void select();
     void setFlagByName(const QString &);

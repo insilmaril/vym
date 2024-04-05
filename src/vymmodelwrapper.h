@@ -90,7 +90,7 @@ class VymModelWrapper : public VymScriptContext {
     void paste();   // FIXME copy to BranchWrappe (use without selecting in VymModel!)
     void redo();
     bool relinkTo(const QString &parent, int num);// FIXME-3 move to BranchWrapper
-    void remove();// FIXME-3 copy to BranchWrapper, ImageWrapper, leave for VymModel
+    void remove();// FIXME-3 copy to ImageWrapper, leave for VymModel (already in BranchWrapper)
     void removeChildren();// FIXME-3 move to BranchWrapper
     void removeChildBranches();// FIXME-3 move to BranchWrapper
     void removeKeepChildren();// FIXME-3 move to BranchWrapper

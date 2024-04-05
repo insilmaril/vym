@@ -274,8 +274,9 @@ class VymModel : public TreeModel {
   public:
     /*! Save branch using BranchWrapper */
     void saveStateBranch(
-            BranchItem *,
+            BranchItem *undoSel,
             const QString &undoCommand,
+            BranchItem *redoSel,
             const QString &redoCommand,
             const QString &comment);
   private:

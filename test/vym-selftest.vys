@@ -2,25 +2,25 @@
 
 vym.clearConsole();
 
-let tests_total  = 0;
-let tests_passed = 0;
-let tests_failed = 0;
+var tests_total  = 0;
+var tests_passed = 0;
+var tests_failed = 0;
 
-let testDir = "selftests";
-let currentMapPath = "undefined."
-let testMapDefault = "maps/test-default.vym";
+var testDir = "selftests";
+var currentMapPath = "undefined."
+var testMapDefault = "maps/test-default.vym";
 
-let  center_0 = "mc:0";
-let  main_A = "mc:0,bo:0";
-let    branch_0Aa = main_A + ",bo:0";
-let    branch_0Ab = main_A + ",bo:1";
-let    branch_0Ac = main_A + ",bo:2";
-let  main_B="mc:0,bo:1";
-let    branch_0Ba = main_B + ",bo:0";
-let    branch_0Bb = main_B + ",bo:1";
-let  center_1 = "mc:1";
-let  center_2 = "mc:2";
-let  center_3 = "mc:3";
+const  center_0 = "mc:0";
+const  main_A = "mc:0,bo:0";
+const    branch_0Aa = main_A + ",bo:0";
+const    branch_0Ab = main_A + ",bo:1";
+const    branch_0Ac = main_A + ",bo:2";
+const  main_B="mc:0,bo:1";
+const    branch_0Ba = main_B + ",bo:0";
+const    branch_0Bb = main_B + ",bo:1";
+const  center_1 = "mc:1";
+const  center_2 = "mc:2";
+const  center_3 = "mc:3";
 
 
 // Compare and log values

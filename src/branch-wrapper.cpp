@@ -102,8 +102,12 @@ bool BranchWrapper::isScrolled()
 
 bool BranchWrapper::relinkTo(BranchWrapper *bw)
 {
-    branchItem->getModel()->relinkBranch(branchItem, bw->branchItem);
-    return false;
+    return setResult(branchItem->getModel()->relinkBranch(branchItem, bw->branchItem));
+}
+
+void BranchWrapper::remove()
+{
+    branchItem->getModel()->deleteSelection(branchItem->getID());
 }
 
 void BranchWrapper::scroll()

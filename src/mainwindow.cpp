@@ -1227,6 +1227,10 @@ void Main::setupAPI()
     c->addParameter(Command::BranchItem, false, "Destination branch");
     branchCommands.append(c);
 
+    c = new Command("remove", Command::Branch);
+    c->setComment("Remove branch");
+    modelCommands.append(c);
+
     c = new Command("scroll", Command::Branch);
     c->setComment("Scroll branch");
     branchCommands.append(c);
