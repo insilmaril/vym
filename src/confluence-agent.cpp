@@ -799,7 +799,6 @@ void ConfluenceAgent::startCreateAttachmentRequest()
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
-
     QHttpPart imagePart;
     imagePart.setHeader(
             QNetworkRequest::ContentDispositionHeader,
@@ -817,7 +816,7 @@ void ConfluenceAgent::startCreateAttachmentRequest()
         qWarning() << "Problem opening attachment: " << currentAttachmentPath;
         QMessageBox::warning(
             nullptr, tr("Warning"),
-            QString("Could not open attachment file \"%1\" in page with ID: %2").arg(currentAttachmentTitle).arg(pageID));
+            QString("Could not open attachment file \"%1\" in page with ID: %2").arg(currentAttachmentTitle, pageID));
         finishJob();
         return;
     }
