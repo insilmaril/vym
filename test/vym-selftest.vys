@@ -1,11 +1,27 @@
 // vym selftest script
 
 vym.clearConsole();
-m1 = vym.currentMap();
 
-tests_total  = 0;
-tests_passed = 0;
-tests_failed = 0;
+let tests_total  = 0;
+let tests_passed = 0;
+let tests_failed = 0;
+
+let testDir = "selftests";
+let currentMapPath = "undefined."
+let testMapDefault = "maps/test-default.vym";
+
+let  center_0 = "mc:0";
+let  main_A = "mc:0,bo:0";
+let    branch_0Aa = main_A + ",bo:0";
+let    branch_0Ab = main_A + ",bo:1";
+let    branch_0Ac = main_A + ",bo:2";
+let  main_B="mc:0,bo:1";
+let    branch_0Ba = main_B + ",bo:0";
+let    branch_0Bb = main_B + ",bo:1";
+let  center_1 = "mc:1";
+let  center_2 = "mc:2";
+let  center_3 = "mc:3";
+
 
 // Compare and log values
 function expect(comment, v_real, v_expected) {
@@ -14,42 +30,221 @@ function expect(comment, v_real, v_expected) {
         vym.print ("PASS: " + comment);
 		tests_passed = tests_passed +1;
     } else {
-        vym.print ("FAIL: '" + comment + "' - Expected " + v_expected + ", but got " + v_real);
+        vym.print ("FAIL: '" + comment + "' - Expected \"" + v_expected + "\", but got \"" + v_real + "\"");
 		tests_failed = tests_failed +1;
+    throw "Test failed.";
     }
 }
+
 function expectNot(comment, v_real, v_expected) {
 	tests_total = tests_total +1;
     if (v_real != v_expected) {
-        vym.print ("PASS: " + comment);
+        vym.print("PASS: " + comment);
 		tests_passed = tests_passed +1;
     } else {
-        vym.print ("FAIL: '" + comment + "' - Expected differemt values, but got " + v_expected + " and " + v_real);
+        vym.print("FAIL: '" + comment + "' - Expected differemt values, but got " + v_expected + " and " + v_real);
 		tests_failed = tests_failed +1;
     }
 }
 
-// Summary
+function initMap(mapPath)  // FIXME not fully ported yet
+{
+  // Copy the map referenced above to @testDir/test-current.[vym|xml]
+  // and try to load it
+  currentMapPath = testDir + "/" + mapPath;
+
+    /*
+  begin
+    FileUtils.cp mapPath, @currentMapPath
+  rescue
+    puts "Failed to copy #{mapPath} to #{@currentMapPath}".red
+    exit
+  end
+
+  files.each do |fn|
+    begin
+      FileUtils.cp fn, @testDir
+      puts "# Copied #{fn} to #{@testDir}".light_black
+    rescue
+      puts "Failed to copy #{fn} to #{@testDir}".red
+      exit
+    end
+  end
+  */
+
+  if (vym.loadMap(currentMapPath)) {
+    let id = vym.currentMapID();
+    vym.print("# Loaded " + mapPath + " -> " + currentMapPath + " (id: " + id + ")");
+    vym.gotoMap(id);
+    return vym.currentMap();
+  }
+
+  vym.print("Failed to load #{mapPath}");
+}
+
+function closeCurrentMap()
+{
+  id = vym.currentMapID();
+  if(vym.closeMapWithID(id)) {
+    vym.print("# Closed map (id: #{id})");
+  } else {
+    vym.print("# Failed to close map with id = #{id}. CurrentMapID = #{id}");
+  }
+}
+
+function heading(h)
+{
+    vym.print("\n=== " + h + "===\n");
+}
+
 function summary()
 {
+  heading("Summary");
 	vym.print ("Tests total: " + tests_total);
 	vym.print ("Tests passed: " + tests_passed);
 	vym.print ("Tests failed: " + tests_failed);
 }
-center_0 = "mc:0";
-center_1 = "mc:1";
-main_a = "mc:0,bo:0";
-  branch_a = main_a + ",bo:0";
-  branch_b = main_a + ",bo:1";
-  branch_c = main_a + ",bo:2";
-main_b = "mc:0,bo:1"
 
-n_centers = 2
+function test_vym()
+{
+
+  heading("Mainwindow checks:");
+  version = "2.9.518"
+  // FIXME expect_warning_only "Version is #{version}", @vym.version, version
+
+  // FIXME expect "Temporary directory exists at '#{@testDir}'", File.exists?(@testDir), true
 
 
-// Testing the test function
-expectNot ("1 should not equal 4", 1, 4);
-expect ("2 should equal 2", 2, 2);
+  map = initMap(testMapDefault);
+  //expect ("init_map copies default testmap to '#{@currentMapPath}'", File.file?(@currentMapPath), true);
+  //expect ("Title of copied map title is accessible and not empty", map.getMapTitle.length > 0, true);
 
+  closeCurrentMap();
+}
+
+function test_basics()
+{
+  heading("Basic checks:");
+  map = initMap(testMapDefault);
+  title = "vym map used for testing";
+  expect("map title is \"" + title +"\"", map.getMapTitle(), title);
+  author ="Uwe Drechsel";
+  expect("Author is \"" + author + "\"", map.getMapAuthor(), author);
+
+  map.select(main_A);
+  expect ("select mainbranch A", map.getSelectionString(), main_A);
+  expect ("getHeadingPlainText", map.getHeadingPlainText(), "Main A");
+  expect ("branchCount", map.branchCount(), 3);
+
+  map.selectLastBranch();
+  expect("selectLastBranch", map.getHeadingPlainText(), "Main B");
+
+  map.selectFirstBranch();
+  expect("selectFirstBranch", map.getHeadingPlainText(), "Main A");
+
+  map.selectParent();
+  expect("selectParent", map.getHeadingPlainText(), "MapCenter 0");
+
+  //expect("getDestPath", map.getDestPath(), testDir + "/test-current.vym");
+  //expect("getFileDir", map.getFileDir(), testDir + "/");
+
+  closeCurrentMap();
+}
+
+function test_adding_branches()
+{
+  heading("Adding branches:");
+  map = initMap(testMapDefault);
+  
+  map.select(main_A);
+  let b = map.selectedBranch();
+  let n = map.branchCount();
+  b.addBranch();
+  expect("addBranch", map.branchCount(), n + 1 );
+
+  map.selectLatestAdded();
+  expect("selectLatestAdded", map.getSelectionString(), main_A + ",bo:3");
+
+  map.selectParent();
+  expect("selectParent", map.getSelectionString(), main_A);
+
+  map.undo();
+
+  expect( "Undo: addBranch", map.branchCount(), n );
+
+  closeCurrentMap();
+
+  map = initMap(testMapDefault);
+
+  map.select(main_A);
+  n = map.branchCount();
+  map.select(branch_0Aa);
+  map.addBranchAt( -3 );
+  map.addBranchAt( -1 );
+  map.select(main_A);
+  expect("addBranchAbove/Below", map.branchCount(), n + 2);
+
+  map.undo();
+  map.undo();
+  expect("Undo: addBranchAbove/Below", map.branchCount(), n);
+
+  closeCurrentMap();
+
+  map = initMap(testMapDefault);
+
+  map.select(branch_0Aa);
+  map.addBranchBefore();
+  map.select(main_A);
+  expect( "addBranchBefore: check branchcount",  map.branchCount(), n);
+  map.select(branch_0Aa);
+  expect("addBranchBefore: check heading", map.getHeadingPlainText(), " ");
+
+  // Undo twice: addBranchNew and relinkTo
+  map.undo();
+  map.undo();
+  map.select(main_A);
+  expect("Undo: addBranchBefore", map.branchCount(), n);
+
+  closeCurrentMap();
+}
+
+function test_scrolling()
+{
+  heading("Scrolling and unscrolling:");
+  map = initMap(testMapDefault);
+  
+  map.select(main_A);
+ 
+  let b = map.selectedBranch();
+  map.toggleScroll();
+  expect("toggleScroll", map.isScrolled(), true);
+  map.undo()
+  expect("undo toggleScroll", map.isScrolled(), false);
+  b.scroll();
+  expect("scroll", map.isScrolled(), true);
+  b.unscroll();
+  expect("unscroll", map.isScrolled(), false);
+
+  b.scroll();
+  map.select(branch_0Aa);
+  map.scroll();
+  map.select(main_A);
+  map.unscrollChildren();
+  map.select(branch_0Aa);
+  expect("unscrollChildren", map.isScrolled(), false);
+  map.undo();
+  map.select(branch_0Aa);
+  expect("undo unscrollChildren", map.isScrolled(), true);
+
+  closeCurrentMap();
+}
+
+///////////////////////////////////////////////////////////////
+
+
+test_vym();
+test_basics();
+test_adding_branches();
+test_scrolling();
 
 summary();

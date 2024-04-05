@@ -124,7 +124,7 @@ bool JiraAgent::setBranch(BranchItem *bi)
         return false;
     } else {
         branchID = bi->getID();
-        modelID = bi->getModel()->getModelID();
+        modelID = bi->getModel()->modelId();
         return true;
     }
 }

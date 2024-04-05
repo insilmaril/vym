@@ -118,7 +118,7 @@ int VymWrapper::mapCount()
 
 void VymWrapper::gotoMap(uint n)
 {
-    if (!mainWindow->gotoWindow(n)) {
+    if (!mainWindow->gotoModelWithId(n)) {
         scriptEngine->throwError(
                 QJSValue::ReferenceError, 
                 QString("Map '%1' not available.").arg(n));
@@ -128,7 +128,7 @@ void VymWrapper::gotoMap(uint n)
 
 bool VymWrapper::closeMapWithID(uint n)
 {
-    bool r = mainWindow->closeModelWithID(n);
+    bool r = mainWindow->closeModelWithId(n);
     if (!r) {
         scriptEngine->throwError(
                 QJSValue::ReferenceError, 
@@ -150,7 +150,7 @@ QString VymWrapper::currentColor()
 
 uint VymWrapper::currentMapID()
 {
-    uint id = mainWindow->currentMapID();
+    uint id = mainWindow->currentMapId();
     return setResult(id);
 }
 

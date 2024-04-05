@@ -370,7 +370,7 @@ void ExportConfluence::doExport(bool useDialog)
     agent->setPageURL(url);
     agent->setNewPageName(pageName);
     agent->setUploadPagePath(filePath);
-    agent->setModelID(model->getModelID());
+    agent->setModelID(model->modelId());
 
     // Include image of map
     QString mapImageFilePath = tmpDir.path() + "/mapImage.png";

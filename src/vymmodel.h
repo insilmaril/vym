@@ -53,7 +53,7 @@ class VymModel : public TreeModel {
     QDate date;
 
     static uint idLast; //! the last used unique ID
-    uint modelID;
+    uint modelIdInt;
     VymModelWrapper *wrapper;
 
   public:
@@ -66,7 +66,7 @@ class VymModel : public TreeModel {
     QString tmpDirPath(); //!< Return path to temporary directory
 
     MapEditor *getMapEditor();
-    uint getModelID(); //! Return unique ID of model
+    uint modelId(); //! Return unique ID of model
     VymModelWrapper *getWrapper();
 
     void setView(VymView *); //! Set vymView for resizing editors after load

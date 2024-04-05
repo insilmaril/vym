@@ -150,7 +150,7 @@ void VymModel::init()
 
     // States and IDs
     idLast++;
-    modelID = idLast;
+    modelIdInt = idLast;
     mapChanged = false;
     mapDefault = true;
     mapUnsaved = false;
@@ -215,7 +215,7 @@ void VymModel::init()
     // Announce myself on DBUS
     new AdaptorModel(this); // Created and not deleted as documented in Qt
     if (!QDBusConnection::sessionBus().registerObject(
-            QString("/vymmodel_%1").arg(modelID), this))
+            QString("/vymmodel_%1").arg(modelIdInt), this))
         qWarning("VymModel: Couldn't register DBUS object!");
 #endif
 }
@@ -223,7 +223,7 @@ void VymModel::init()
 void VymModel::makeTmpDirectories()
 {
     // Create unique temporary directories
-    tmpMapDirPath = tmpVymDir.path() + QString("/model-%1").arg(modelID);
+    tmpMapDirPath = tmpVymDir.path() + QString("/model-%1").arg(modelIdInt);
     histPath = tmpMapDirPath + "/history";
     QDir d;
     d.mkdir(tmpMapDirPath);
@@ -5973,7 +5973,7 @@ bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0
     return true;
 }
 
-uint VymModel::getModelID() { return modelID; }
+uint VymModel::modelId() { return modelIdInt; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
@@ -7238,7 +7238,7 @@ void VymModel::updateSlideSelection(QItemSelection newsel, QItemSelection)
         QString inScript = si->getInScript();
 
         // show inScript in ScriptEditor
-        scriptEditor->setSlideScript(modelID, si->getID(), inScript);
+        scriptEditor->setSlideScript(modelIdInt, si->getID(), inScript);
 
         // Execute inScript
         execute(inScript);

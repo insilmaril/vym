@@ -3777,11 +3777,11 @@ MapEditor *Main::currentMapEditor() const
     return nullptr;
 }
 
-uint Main::currentMapID() const
+uint Main::currentMapId() const
 {
     VymModel *m = currentModel();
     if (m)
-        return m->getModelID();
+        return m->modelId();
     else
         return 0;
 }
@@ -3803,7 +3803,7 @@ VymModel *Main::getModel(uint id) // Used in BugAgent
         return nullptr;
 
     for (int i = 0; i < tabWidget->count(); i++) {
-        if (view(i)->getModel()->getModelID() == id)
+        if (view(i)->getModel()->modelId() == id)
             return view(i)->getModel();
     }
     return nullptr;
@@ -3819,12 +3819,12 @@ bool Main::gotoModel(VymModel *m)
     return false;
 }
 
-bool Main::gotoModelWithID(uint id)
+bool Main::gotoModelWithId(uint id)
 {
     VymModel *vm;
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
-        if (vm && vm->getModelID() == id) {
+        if (vm && vm->modelId() == id) {
             tabWidget->setCurrentIndex(i);
             return true;
         }
@@ -3832,12 +3832,12 @@ bool Main::gotoModelWithID(uint id)
     return false;
 }
 
-bool Main::closeModelWithID(uint id)
+bool Main::closeModelWithId(uint id)
 {
     VymModel *vm;
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
-        if (vm && vm->getModelID() == id) {
+        if (vm && vm->modelId() == id) {
             tabWidget->removeTab(i);
 
             // Destroy stuff, order is important
