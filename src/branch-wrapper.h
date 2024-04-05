@@ -14,9 +14,12 @@ class BranchWrapper : public VymScriptContext {
 
   public slots:
     void addBranch();
+    void addBranchAt(int pos);
+    void addBranchBefore();
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
     QString headingText();  
+    bool isScrolled();
     bool relinkTo(BranchWrapper*);
     void scroll();
     void select();

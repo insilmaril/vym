@@ -1302,9 +1302,9 @@ begin
 
   test_adding_branches    # DONE - ported to vym script
   #test_adding_maps
-  #test_attributes
-  #test_bugfixes
-  #test_copy_paste
+  #test_attributes        # DONE - ported to vym script
+  #test_bugfixes          # No tests available so far
+  #test_copy_paste        # DONE - ported to vym script
   #test_delete_parts
   #test_export
   #test_extrainfo

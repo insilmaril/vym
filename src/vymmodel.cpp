@@ -3975,10 +3975,10 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore()
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi)
 {
     BranchItem *newbi = nullptr;
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi && selbi->getType() == TreeItem::Branch)
     // We accept no MapCenter here, so we _have_ a parent
     {

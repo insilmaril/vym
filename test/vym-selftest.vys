@@ -79,7 +79,7 @@ function initMap(mapPath)  // FIXME not fully ported yet
     return vym.currentMap();
   }
 
-  vym.print("Failed to load #{mapPath}");
+  throw "Failed to load \"" + mapPath + "\"";
 }
 
 function closeCurrentMap()
@@ -208,6 +208,56 @@ function test_adding_branches()
   closeCurrentMap();
 }
 
+function test_attributes()
+{
+  heading("Attributes:");
+  
+  map = initMap("maps/test-attributes.xml");
+
+  map.select(main_A);
+  b = map.selectedBranch();
+  expect("String attribute is '6 * 9'", b.attributeAsString("string-attribute"), "6 * 9");
+  expect("Integer attribute is 42", b.attributeAsInt("int-attribute"), 42);
+
+  closeCurrentMap();
+}
+
+function test_copy_paste()
+{
+  heading("Copy and paste:");
+  map = initMap(testMapDefault);
+  
+  map.select(main_A);
+
+  n = map.branchCount();
+
+  map.copy();
+  map.paste();
+  map.selectLatestAdded();     //FIXME-5 not set for ImportAdd, which is used by paste
+  s = map.getSelectionString();
+  expect("Normal paste of branch, check heading of #{s}", map.getHeadingPlainText(), "Main A");
+
+  map.undo()
+  map.select(main_A);
+  expect("Undo paste: branchCount of #{@main_A}", map.branchCount(), n);
+
+  map.redo()
+  map.select(s);
+  expect("redo paste: check heading", map.getHeadingPlainText(), "Main A");
+
+  map.select(branch_0Aa);
+  map.cut();
+  map.select(main_A);
+  expect("cut: branchCount of #{@main_A}", map.branchCount(), n);
+
+  map.paste();
+  map.selectLastChildBranch();
+  s = map.getSelectionString();
+  expect("Normal paste of branch, check heading of #{s}", map.getHeadingPlainText(), "branch a");
+
+  closeCurrentMap();
+}
+ 
 function test_scrolling()
 {
   heading("Scrolling and unscrolling:");
@@ -217,13 +267,13 @@ function test_scrolling()
  
   let b = map.selectedBranch();
   map.toggleScroll();
-  expect("toggleScroll", map.isScrolled(), true);
+  expect("toggleScroll", b.isScrolled(), true);
   map.undo()
-  expect("undo toggleScroll", map.isScrolled(), false);
+  expect("undo toggleScroll", b.isScrolled(), false);
   b.scroll();
-  expect("scroll", map.isScrolled(), true);
+  expect("scroll", b.isScrolled(), true);
   b.unscroll();
-  expect("unscroll", map.isScrolled(), false);
+  expect("unscroll", b.isScrolled(), false);
 
   b.scroll();
   map.select(branch_0Aa);
@@ -244,7 +294,10 @@ function test_scrolling()
 
 test_vym();
 test_basics();
+
 test_adding_branches();
+test_attributes();
+test_copy_paste();
 test_scrolling();
 
 summary();
