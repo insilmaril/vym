@@ -19,6 +19,18 @@ BranchWrapper::~BranchWrapper()
     //qDebug() << "Destr BranchWrapper";
 }
 
+void BranchWrapper::addBranch()
+{
+    if (branchItem) {
+        if (!branchItem->getModel()->addNewBranch(branchItem, -2))
+        scriptEngine->throwError(QJSValue::GenericError,"Couldn't add branch to map");
+        return;
+    } else {
+        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
+        return;
+    }
+}
+
 int BranchWrapper::attributeAsInt(const QString &key)
 {
     QVariant v;
@@ -91,6 +103,11 @@ void BranchWrapper::setFlagByName(const QString &s)
 void BranchWrapper::toggleFlagByName(const QString &s)
 {
     branchItem->getModel()->toggleFlagByName(s, branchItem);
+}
+
+void BranchWrapper::toggleScroll()
+{
+    branchItem->getModel()->toggleScroll(branchItem);
 }
 
 void BranchWrapper::unscroll()

@@ -4558,9 +4558,9 @@ bool VymModel::unscrollBranch(BranchItem *bi)
     return false;
 }
 
-void VymModel::toggleScroll()
+void VymModel::toggleScroll(BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
 	if (selbi) {
 	    if (selbi->isScrolled())

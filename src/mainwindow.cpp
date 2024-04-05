@@ -1228,6 +1228,10 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Name of flag to toggle");
     branchCommands.append(c);
 
+    c = new Command("toggleScroll", Command::Branch);
+    c->setComment("Toggle scroll state of branch");
+    branchCommands.append(c);
+
     c = new Command("unscroll", Command::Branch);
     c->setComment("Unscroll branch");
     branchCommands.append(c);

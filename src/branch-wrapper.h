@@ -13,6 +13,7 @@ class BranchWrapper : public VymScriptContext {
     ~BranchWrapper();
 
   public slots:
+    void addBranch();
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
     QString headingText();  
@@ -21,6 +22,7 @@ class BranchWrapper : public VymScriptContext {
     void select();
     void setFlagByName(const QString &);
     void toggleFlagByName(const QString &);
+    void toggleScroll();
     void unscroll();
     void unsetFlagByName(const QString &);
 

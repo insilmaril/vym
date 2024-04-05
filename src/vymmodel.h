@@ -549,7 +549,7 @@ class VymModel : public TreeModel {
     void deleteLink(Link *); //!< Remove Link and related LinkItems in TreeModel
     bool scrollBranch(BranchItem *);
     bool unscrollBranch(BranchItem *);
-    void toggleScroll();
+    void toggleScroll(BranchItem * bi = nullptr);
     void unscrollChildren();
     void emitExpandAll();
     void emitExpandOneLevel();
