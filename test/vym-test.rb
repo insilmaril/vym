@@ -1316,7 +1316,7 @@ begin
   #test_notes
   #test_references
   #test_saving
-  #test_scrolling
+  #test_scrolling         # DONE - ported to vym script
   #test_slides
   #test_standard_flags
   #test_tasks
