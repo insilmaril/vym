@@ -22,7 +22,7 @@ QDBusVariant AdaptorVym::mapCount()
     return QDBusVariant(mainWindow->modelCount());
 }
 
-void AdaptorVym::gotoMapID(const uint &id) { mainWindow->gotoModelWithID(id); }
+void AdaptorVym::gotoMapID(const uint &id) { mainWindow->gotoModelWithId(id); }
 
 QDBusVariant AdaptorVym::getInstanceName()
 {
@@ -51,5 +51,5 @@ QDBusVariant AdaptorVym::listCommands()
 
 QDBusVariant AdaptorVym::currentMapID()
 {
-    return QDBusVariant(mainWindow->currentMapID());
+    return QDBusVariant(mainWindow->currentMapId());
 }

@@ -52,23 +52,26 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 
     // Single line comments
     if (usingDarkTheme)
-        singleLineCommentFormat.setForeground(Qt::magenta);
+        singleLineCommentFormat.setForeground(Qt::green);
     else
-        singleLineCommentFormat.setForeground(Qt::darkMagenta);
+        singleLineCommentFormat.setForeground(Qt::darkGreen);
     rule.pattern = QRegularExpression("//[^\n]*");
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
     // multiline comments
     if (usingDarkTheme)
-        multiLineCommentFormat.setForeground(Qt::magenta);
+        multiLineCommentFormat.setForeground(Qt::green);
     else
-        multiLineCommentFormat.setForeground(Qt::darkMagenta);
+        multiLineCommentFormat.setForeground(Qt::darkGreen);
     commentStartExpression = QRegularExpression("/\\*");
     commentEndExpression = QRegularExpression("\\*/");
 
     // Quotations
-    quotationFormat.setForeground(Qt::red);
+    if (usingDarkTheme)
+        quotationFormat.setForeground(Qt::magenta);
+    else
+        quotationFormat.setForeground(Qt::darkMagenta);
     rule.pattern = QRegularExpression("\".*\"");
     rule.format = quotationFormat;
     highlightingRules.append(rule);

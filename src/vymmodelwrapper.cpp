@@ -395,6 +395,15 @@ BranchWrapper* VymModelWrapper::findBranchByAttribute(
         return nullptr;
 }
 
+BranchWrapper* VymModelWrapper::findBranchById(const QString &u)
+{
+    TreeItem *ti = model->findUuid(QUuid(u));
+    if (ti && ti->hasTypeBranch())
+        return ((BranchItem*)ti)->branchWrapper();
+    else
+        return nullptr;
+}
+
 int VymModelWrapper::getBranchIndex()
 {
     int r;
@@ -1018,7 +1027,7 @@ bool VymModelWrapper::selectXLinkOtherEnd(int n)
     return setResult(r);
 }
 
-void VymModelWrapper::setAttribute(const QString &key, const QString &value)    // FIXME-3 not implemented yet
+void VymModelWrapper::setAttribute(const QString &key, const QString &value)    // FIXME-2 not implemented yet
 {
 }
 
@@ -1239,7 +1248,7 @@ void VymModelWrapper::setXLinkWidth(int w) { model->setXLinkWidth(w); }
 
 void VymModelWrapper::sleep(int n)
 {
-    // sleep is not avail on windows VCEE, workaround could be using
+    // FIXME-5 sleep is not avail on windows VCEE, workaround could be using
     // this->thread()->wait(x ms)
     sleep(n);
 }

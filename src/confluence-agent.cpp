@@ -120,7 +120,7 @@ void ConfluenceAgent::setBranch(BranchItem *bi)
     } else {
         branchID = bi->getID();
         VymModel *model = bi->getModel();
-        modelID = model->getModelID();
+        modelID = model->modelId();
     }
 }
 

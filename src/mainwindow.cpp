@@ -689,6 +689,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Value of attribute");
     modelCommands.append(c);
 
+    c = new Command("findBranchById", Command::Any, Command::BranchItem);
+    c->setComment("Find branch with given unique Uuid. ");
+    c->addParameter(Command::String, false, "Uuid of branch");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::Any, Command::String);
     modelCommands.append(c);
 
@@ -1205,6 +1210,10 @@ void Main::setupAPI()
     c->addParameter(Command::BranchItem, false, "Destination branch");
     branchCommands.append(c);
 
+    c = new Command("scroll", Command::Branch);
+    c->setComment("Scroll branch");
+    branchCommands.append(c);
+
     c = new Command("setFlagByName", Command::TreeItem);
     c->setComment("Set flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag");
@@ -1217,6 +1226,14 @@ void Main::setupAPI()
     c = new Command("toggleFlagByName", Command::Branch);
     c->setComment("Toggle flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag to toggle");
+    branchCommands.append(c);
+
+    c = new Command("toggleScroll", Command::Branch);
+    c->setComment("Toggle scroll state of branch");
+    branchCommands.append(c);
+
+    c = new Command("unscroll", Command::Branch);
+    c->setComment("Unscroll branch");
     branchCommands.append(c);
 
     c = new Command("unsetFlagByName", Command::Branch);
@@ -3760,11 +3777,11 @@ MapEditor *Main::currentMapEditor() const
     return nullptr;
 }
 
-uint Main::currentMapID() const
+uint Main::currentMapId() const
 {
     VymModel *m = currentModel();
     if (m)
-        return m->getModelID();
+        return m->modelId();
     else
         return 0;
 }
@@ -3786,7 +3803,7 @@ VymModel *Main::getModel(uint id) // Used in BugAgent
         return nullptr;
 
     for (int i = 0; i < tabWidget->count(); i++) {
-        if (view(i)->getModel()->getModelID() == id)
+        if (view(i)->getModel()->modelId() == id)
             return view(i)->getModel();
     }
     return nullptr;
@@ -3802,12 +3819,12 @@ bool Main::gotoModel(VymModel *m)
     return false;
 }
 
-bool Main::gotoModelWithID(uint id)
+bool Main::gotoModelWithId(uint id)
 {
     VymModel *vm;
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
-        if (vm && vm->getModelID() == id) {
+        if (vm && vm->modelId() == id) {
             tabWidget->setCurrentIndex(i);
             return true;
         }
@@ -3815,12 +3832,12 @@ bool Main::gotoModelWithID(uint id)
     return false;
 }
 
-bool Main::closeModelWithID(uint id)
+bool Main::closeModelWithId(uint id)
 {
     VymModel *vm;
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
-        if (vm && vm->getModelID() == id) {
+        if (vm && vm->modelId() == id) {
             tabWidget->removeTab(i);
 
             // Destroy stuff, order is important

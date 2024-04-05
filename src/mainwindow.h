@@ -99,12 +99,12 @@ class Main : public QMainWindow {
   public:
     MapEditor *currentMapEditor() const;
     VymModel *currentModel() const;
-    uint currentMapID() const;
+    uint currentMapId() const;
     int currentMapIndex() const;
     VymModel *getModel(uint);
     bool gotoModel(VymModel *m);
-    bool gotoModelWithID(uint id);
-    bool closeModelWithID(uint id);
+    bool gotoModelWithId(uint id);
+    bool closeModelWithId(uint id);
     int modelCount();
     void updateTabName(VymModel *vm);
 

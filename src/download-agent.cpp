@@ -60,7 +60,7 @@ QString DownloadAgent::getResultMessage() { return resultMessage; }
 
 void DownloadAgent::setFinishedAction(VymModel *m, const QString &script)
 {
-    finishedScriptModelID = m->getModelID();
+    finishedScriptModelID = m->modelId();
     finishedScript = script;
 }
 
