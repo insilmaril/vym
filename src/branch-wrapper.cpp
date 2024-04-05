@@ -73,6 +73,11 @@ bool BranchWrapper::relinkTo(BranchWrapper *bw)
     return false;
 }
 
+void BranchWrapper::scroll()
+{
+    branchItem->getModel()->scrollBranch(branchItem);
+}
+
 void BranchWrapper::select()
 {
     branchItem->getModel()->select(branchItem);
@@ -86,6 +91,11 @@ void BranchWrapper::setFlagByName(const QString &s)
 void BranchWrapper::toggleFlagByName(const QString &s)
 {
     branchItem->getModel()->toggleFlagByName(s, branchItem);
+}
+
+void BranchWrapper::unscroll()
+{
+    branchItem->getModel()->unscrollBranch(branchItem);
 }
 
 void BranchWrapper::unsetFlagByName(const QString &s)

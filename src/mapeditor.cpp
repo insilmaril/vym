@@ -2297,7 +2297,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             tmpLink->updateLink();
             if (model->createLink(tmpLink)) {
                 model->saveState(
-                    tmpLink->getBeginLinkItem(), "remove ()", seli,
+                    tmpLink->getBeginLinkItem(),
+                    "remove ()",
+                    seli,
                     QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")").arg(
                         model->getSelectString(tmpLink->getBeginBranch()),
                         model->getSelectString(tmpLink->getEndBranch()),
@@ -2403,9 +2405,11 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             // MapCenter
                             bc->setPos(bc->getHeadingContainer()->mapToScene(QPointF(0, 0)));
                         // Save position change
-                        model->saveState(
-                            bi, QString("setPos%1").arg(toS(bc->getOriginalPos())),
-                            bi, QString("setPos%1").arg(toS(bc->pos())));
+                        model->saveStateBranch(
+                            bi,
+                            QString("setPos%1").arg(toS(bc->getOriginalPos(), 5)),
+                            QString("setPos%1").arg(toS(bc->pos(), 5)),
+                            QString("Move branch to %1").arg(toS(bc->pos())));
                     } else {
 			if (!(e->modifiers() & Qt::ControlModifier)) {
 			    // only animate snappack if not Ctrl-moving e.g. MC
@@ -2441,10 +2445,10 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
             QString pold = toS(ic->getOriginalPos());
             QString pnow = toS(ic->pos());
-            model->saveState(ii, "setPos " + pold, ii,
-                             "setPos " + pnow,
-                             QString("Move %1 to %2")
-                                 .arg(model->getObjectName(ii),  pnow));
+            model->saveState(
+                    ii, "setPos " + pold,
+                    ii, "setPos " + pnow,
+                    QString("Move %1 to %2") .arg(model->getObjectName(ii),  pnow));
 
         } // Image moved, but not relinked
 

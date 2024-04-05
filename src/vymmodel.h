@@ -226,7 +226,8 @@ class VymModel : public TreeModel {
     bool repositionBlocked; //!< block while load or undo
     bool saveStateBlocked;  //!< block saving current state
     bool updateStylesBlocked; //! While loading a new map, don't update container styles    // FIXME-2 needed?
-  public:
+
+  public:   // FIXME-3 much of below should be private!
     void blockReposition();   //! Block reposition while bigger changes, e.g. an import
     void unblockReposition(); //! Unblock reposition and do repositon
     bool isDefault();   //!< true, if map is still the empty default map
@@ -254,6 +255,7 @@ class VymModel : public TreeModel {
     QString getHistoryPath(); //!< Path to directory containing the history
     void resetHistory();      //!< Initialize history
 
+  private:  
     /*! \brief Save the current changes in map
 
     Two commands and selections are saved:
@@ -269,6 +271,14 @@ class VymModel : public TreeModel {
                    const QString &redoCommand, const QString &comment = "",
                    TreeItem *saveSelection = nullptr, QString dataXML = "");
 
+  public:
+    /*! Save branch using BranchWrapper */
+    void saveStateBranch(
+            BranchItem *,
+            const QString &undoCommand,
+            const QString &redoCommand,
+            const QString &comment);
+  private:
     /*! Overloaded for convenience */
     void saveStateChangingPart(TreeItem *undoSelection, TreeItem *redoSelection,
                                const QString &redoCommand,
@@ -277,11 +287,12 @@ class VymModel : public TreeModel {
     /*! Overloaded for convenience */
     void saveStateRemovingPart(TreeItem *redoSelection, const QString &comment);
 
+  public:  
     /*! Overloaded for convenience */
     void saveState(TreeItem *undoSelection, const QString &undoCommand,
                    TreeItem *redoSelection, const QString &redoCommand,
                    const QString &comment = "");
-
+  private:
     /*! Overloaded for convenience */
     void saveState(const QString &undoSelection, const QString &undoCommand,
                    const QString &redoSelection, const QString &redoCommand,
@@ -297,6 +308,7 @@ class VymModel : public TreeModel {
                           TreeItem *redoSelection, const QString &redoCommand,
                           const QString &comment);
 
+  public:
     /*! Save state before loading a map */
     void saveStateBeforeLoad(File::LoadMode lmode, const QString &fname);
 
@@ -467,7 +479,11 @@ class VymModel : public TreeModel {
     QString getXLinkStyleBegin();
     QString getXLinkStyleEnd();
 
-    AttributeItem* setAttribute(BranchItem *dst, const QString &k, const QVariant &v);
+    AttributeItem* setAttribute(
+            BranchItem *dst,
+            const QString &k,
+            const QVariant &v,
+            bool removeIfEmpty = true);
     void deleteAttribute(BranchItem *dst, const QString &k);
     AttributeItem* getAttributeByKey(const QString &key, BranchItem *bi = nullptr);
 

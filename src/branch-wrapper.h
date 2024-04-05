@@ -17,9 +17,11 @@ class BranchWrapper : public VymScriptContext {
     QString attributeAsString(const QString &key);
     QString headingText();  
     bool relinkTo(BranchWrapper*);
+    void scroll();
     void select();
     void setFlagByName(const QString &);
     void toggleFlagByName(const QString &);
+    void unscroll();
     void unsetFlagByName(const QString &);
 
   private:

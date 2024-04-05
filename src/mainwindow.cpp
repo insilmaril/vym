@@ -689,6 +689,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Value of attribute");
     modelCommands.append(c);
 
+    c = new Command("findBranchById", Command::Any, Command::BranchItem);
+    c->setComment("Find branch with given unique Uuid. ");
+    c->addParameter(Command::String, false, "Uuid of branch");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::Any, Command::String);
     modelCommands.append(c);
 
@@ -1205,6 +1210,10 @@ void Main::setupAPI()
     c->addParameter(Command::BranchItem, false, "Destination branch");
     branchCommands.append(c);
 
+    c = new Command("scroll", Command::Branch);
+    c->setComment("Scroll branch");
+    branchCommands.append(c);
+
     c = new Command("setFlagByName", Command::TreeItem);
     c->setComment("Set flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag");
@@ -1217,6 +1226,10 @@ void Main::setupAPI()
     c = new Command("toggleFlagByName", Command::Branch);
     c->setComment("Toggle flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag to toggle");
+    branchCommands.append(c);
+
+    c = new Command("unscroll", Command::Branch);
+    c->setComment("Unscroll branch");
     branchCommands.append(c);
 
     c = new Command("unsetFlagByName", Command::Branch);

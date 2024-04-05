@@ -1272,7 +1272,7 @@ QString VymModel::getObjectName(TreeItem *ti)
     if (s == "")
         s = "unnamed";
 
-    return QString("%1 (%2)").arg(ti->getTypeName(), s);
+    return QString("%1 \"%2\"").arg(ti->getTypeName(), s);
 }
 
 void VymModel::redo()
@@ -1456,8 +1456,13 @@ void VymModel::undo()
 
     // bool noErr;
     QString errMsg;
-    QString undoScript =
-        QString("model = vym.currentMap();%1").arg(undoCommand);
+    QString undoScript;
+    if (!undoCommand.contains("currentMap()"))
+        // "Old" saveState without complete command
+        undoScript = QString("model = vym.currentMap();%1").arg(undoCommand);
+    else
+        undoScript = undoCommand;
+
     errMsg = QVariant(execute(undoScript)).toString();
 
     undosAvail--;
@@ -1542,17 +1547,28 @@ void VymModel::resetHistory()
     mainWindow->updateHistory(undoSet);
 }
 
+// FIXME-1 VymModel::saveState   Make undo/redo selection part of the related commands. WIP
 void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSelection,
                          const QString &undoCom, const QString &redoSelection,
                          const QString &redoCom, const QString &comment,
                          TreeItem *saveSel, QString dataXML)
 {
-    sendData(redoCom); // FIXME-3 testing
+    // sendData(redoCom); // FIXME-4 testing network
 
     // Main saveState
 
     if (saveStateBlocked)
         return;
+
+    // "Old" saveState calls require to prefix undo/redo command with 
+    // getting currentMap and eventually selection
+    // In newer code like saveStateBranch() this is part of 
+    // the undo/redo commands already
+    bool setupNeeded;
+    if (undoCom.contains("currentMap") || redoCom.contains("currentMap"))
+        setupNeeded = false;
+    else
+        setupNeeded = true;
 
     /*
     */
@@ -1563,6 +1579,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
         qDebug() << "  undoCom: " << undoCom;
         qDebug() << "  redoSel: " << redoSelection;
         qDebug() << "  redoCom: " << redoCom;
+        qDebug() << "  comment: " << comment;
     }
 
     QString undoCommand;
@@ -1572,8 +1589,11 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
         QString log;
 
         log = QString("// %1\n").arg(QDateTime::currentDateTime().toString());
-        log += QString("model.select(\"%1\");\n").arg(redoSelection);
-        log += QString("model.%1;\n\n").arg(redoCom);
+        if (setupNeeded) {
+            log += QString("model.select(\"%1\");\n").arg(redoSelection);
+            log += QString("model.%1;\n\n").arg(redoCom);
+        } else
+            log += redoCom;
 
         appendStringToFile(actionLogPath, log);
     }
@@ -1602,19 +1622,32 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
         undoCommand = undoCom;
         redoCommand = redoCom;
     } else {
-        // Not part of a saveStateBlock, prefix non-empty commands with "model."
-
-        if (!undoCom.isEmpty())
-            undoCommand = QString("model.%1").arg(undoCom);
-        if (!redoCom.isEmpty())
-            redoCommand = QString("model.%1").arg(redoCom);
+        // Not part of a saveStateBlock, prefix non-empty commands
+        if (!undoCom.isEmpty()) {
+            if (!undoCom.contains("currentMap"))
+                // FIXME-2 old saveStates didn't use reference in command.
+                // Should become obsolete
+                undoCommand = QString("model.%1").arg(undoCom);
+            else
+                undoCommand = undoCom;
+        } else
+            qWarning() << __FUNCTION__ << "  empty undoCommand ?!";
+        if (!redoCom.isEmpty()) {
+            if (!redoCom.contains("currentMap"))
+                // FIXME-2 old saveStates didn't use reference in command.
+                // Should become obsolete
+                redoCommand = QString("model.%1").arg(redoCom);
+            else
+                redoCommand = redoCom;
+        } else
+            qWarning() << __FUNCTION__ << "  empty redoCommand ?!";
     }
 
     if (debug) {
         qDebug() << "  undoCommand: " << undoCommand;
         qDebug() << "  redoCommand: " << redoCommand;
-//        qDebug() << "  redoSel: " << redoSelection;
-//        qDebug() << "  redoCom: " << redoCom;
+        qDebug() << "  redoSel: " << redoSelection;
+        qDebug() << "  redoCom: " << redoCom;
     }
 
     // Increase undo steps, but check for repeated actions
@@ -1686,14 +1719,15 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
     undoSet.setValue("/history/curStep", QString::number(curStep));
     undoSet.setValue(QString("/history/step-%1/undoCommand").arg(curStep),
                      undoCommand);
-    undoSet.setValue(QString("/history/step-%1/undoSelection").arg(curStep),
-                     undoSelection);
+    if (setupNeeded) {
+        undoSet.setValue(QString("/history/step-%1/undoSelection").arg(curStep),
+                         undoSelection);
+        undoSet.setValue(QString("/history/step-%1/redoSelection").arg(curStep),
+                         redoSelection);
+    }
     undoSet.setValue(QString("/history/step-%1/redoCommand").arg(curStep),
                      redoCommand);
-    undoSet.setValue(QString("/history/step-%1/redoSelection").arg(curStep),
-                     redoSelection);
     undoSet.setValue(QString("/history/step-%1/comment").arg(curStep), comment);
-    undoSet.setValue(QString("/history/version"), vymVersion);
     undoSet.writeSettings(histPath);
 
     /*
@@ -1717,6 +1751,21 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
     mainWindow->updateHistory(undoSet);
 
     setChanged();
+}
+
+void VymModel::saveStateBranch(
+        BranchItem *bi,
+        const QString &uc,
+        const QString &rc,
+        const QString &comment)
+{
+    if (!bi || !bi->hasTypeBranch()) {
+        qWarning() << "VymModel::saveStateBranch no branch provided";
+        return;
+    }
+
+    QString setup = QString("b=vym.currentMap().findBranchById(\"%1\");b.").arg(bi->getUuid().toString());
+    saveState( File::CodeBlock, "", setup + uc, "", setup + rc, comment);
 }
 
 void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
@@ -3697,11 +3746,15 @@ QString VymModel::getXLinkStyleEnd()
     else
         return QString();
 }
-AttributeItem *VymModel::setAttribute(BranchItem *dst, const QString &key, const QVariant &value) // FIXME-2 savestate missing. For bulk changes like Jira maybe save whole branch use block...
+AttributeItem *VymModel::setAttribute( // FIXME-2 savestate missing. For bulk changes like Jira maybe save whole branch use block...
+        BranchItem *dst,
+        const QString &key,
+        const QVariant &value,
+        bool removeIfEmpty)
 {
     if (!dst) return nullptr;
 
-    bool changed = false;
+    bool keyFound = false;
     AttributeItem *ai;
 
     for (int i = 0; i < dst->attributeCount(); i++) {
@@ -3709,13 +3762,20 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, const QString &key, const
         ai = dst->getAttributeNum(i);
         if (ai->key() == key)
         {
-            // Key exists, overwrite value
-            ai->setValue(value);
-            changed = true;
+            keyFound = true;
+            if (value.toString().isEmpty() && removeIfEmpty) {
+                // Remove attribute
+                deleteAttribute(dst, key);
+                ai = nullptr;
+            } else {
+                // Set new value (if required)
+                if (value != ai->value())
+                    ai->setValue(value);
+            }
             break;
         }
     }
-    if (!changed) {
+    if (!keyFound) {
         // Create new attribute
         ai = new AttributeItem(key, value);
 
@@ -3736,7 +3796,7 @@ AttributeItem *VymModel::setAttribute(BranchItem *dst, const QString &key, const
     return ai;
 }
 
-void VymModel::deleteAttribute(BranchItem *dst, const QString &key)
+void VymModel::deleteAttribute(BranchItem *dst, const QString &key) // FIXME-2 No savestate
 {
     AttributeItem *ai;
 
@@ -4465,7 +4525,7 @@ bool VymModel::scrollBranch(BranchItem *bi)
             QString u, r;
             r = "scroll";
             u = "unscroll";
-            saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
+            saveStateBranch(bi, QString("%1();").arg(u), QString("%1();").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
@@ -4484,7 +4544,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             QString u, r;
             u = "scroll";
             r = "unscroll";
-            saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
+            saveStateBranch(bi, QString("%1();").arg(u), QString("%1();").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
 
