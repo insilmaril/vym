@@ -258,6 +258,65 @@ function test_copy_paste()
   closeCurrentMap();
 }
  
+function test_delete_parts()
+{
+  heading("Deleting parts:");
+  map = initMap(testMapDefault);
+  
+  map.select(main_A);
+  let n = map.branchCount();
+  map.select(branch_0Aa);
+  let m = map.branchCount();
+  map.remove();
+  map.select(main_A);
+  expect( "Remove branch: branchcount",  map.branchCount(), n - 1);
+  map.undo();
+  map.select(main_A);
+  expect( "Undo Remove branch: branchcount parent", map.branchCount(), n);
+  map.select(branch_0Aa);
+  expect( "Undo Remove branch: branchcount restored branch", map.branchCount(), m);
+
+  closeCurrentMap();
+
+  map = initMap(testMapDefault);
+  map.select(branch_0Aa);
+  n = map.branchCount();
+  map.removeChildren();
+  map.select(branch_0Aa);
+  expect( "removeChildren: branchcount", map.branchCount(), 0);
+  map.undo();
+  map.select(branch_0Aa);
+  expect( "Undo: removeChildren: branchcount", map.branchCount(), n);
+
+  closeCurrentMap();
+
+  map = initMap(testMapDefault);
+  map.select(main_A);
+  n = map.branchCount();
+  map.select(branch_0Aa);
+  map.removeKeepChildren();
+  map.select(main_A);
+  expect( "removeKeepChildren: branchcount", map.branchCount(), n + m - 1);
+  map.undo()
+  map.select(main_A);
+  expect( "Undo: removeKeepChildren: branchcount of parent", map.branchCount(), n);
+  map.select(branch_0Aa);
+  expect( "Undo: removeKeepChildren: branchcount of branch", map.branchCount(), m);
+
+  closeCurrentMap();
+
+  map = initMap(testMapDefault);
+
+  n = map.centerCount();
+  map.select(center_1);
+  map.remove();
+  expect( "remove mapCenter: number of centers decreased", map.centerCount(), n - 1);
+  map.undo();
+  expect( "Undo remove mapCenter: number of centers increased", map.centerCount(), n);
+
+  closeCurrentMap();
+}
+
 function test_scrolling()
 {
   heading("Scrolling and unscrolling:");
@@ -298,6 +357,7 @@ test_basics();
 test_adding_branches();
 test_attributes();
 test_copy_paste();
+test_delete_parts();
 test_scrolling();
 
 summary();

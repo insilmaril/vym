@@ -1305,7 +1305,7 @@ begin
   #test_attributes        # DONE - ported to vym script
   #test_bugfixes          # No tests available so far
   #test_copy_paste        # DONE - ported to vym script
-  #test_delete_parts
+  #test_delete_parts      # DONE - ported to vym script
   #test_export
   #test_extrainfo
   #test_frames
