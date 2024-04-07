@@ -1308,8 +1308,8 @@ begin
   #test_delete_parts      # DONE - ported to vym script
   #test_export
   #test_extrainfo
-  #test_frames
-  #test_history
+  #test_frames            # DONE - ported to vym script
+  #test_history           # DONE - ported to vym script
   #test_load_legacy_maps
   #test_modify_branches
   test_moving_parts

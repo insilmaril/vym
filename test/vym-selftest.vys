@@ -9,6 +9,7 @@ var tests_failed = 0;
 var testDir = "selftests";
 var currentMapPath = "undefined."
 var testMapDefault = "maps/test-default.vym";
+var testMapFrames  = "maps/test-frames.vym";
 
 const  center_0 = "mc:0";
 const  main_A = "mc:0,bo:0";
@@ -317,6 +318,60 @@ function test_delete_parts()
   closeCurrentMap();
 }
 
+function  test_frames()
+{
+  heading("Frames:");
+  map = initMap(testMapFrames);
+
+  map.select(center_0);
+  expect("Mapcenter of " + center_0 + " has no inner frame", map.getFrameType(true), "NoFrame");
+  expect("Mapcenter of " + center_0 + " has no outer frame", map.getFrameType(true), "NoFrame");
+
+  map.select(center_1);
+  expect("Mapcenter of " + center_1 + " has no inner frame", map.getFrameType(true), "NoFrame");
+  expectNot("Mapcenter of " + center_1 + " has outer frame", map.getFrameType(false), "NoFrame");
+
+  map.select(center_2);
+  expectNot("Mapcenter of " + center_2 + " has inner frame", map.getFrameType(true), "NoFrame");
+  expect("Mapcenter of " + center_2 + " has no outer frame", map.getFrameType(false), "NoFrame");
+
+  map.select(center_3);
+  expectNot("Mapcenter of " + center_3 + " has inner frame", map.getFrameType(true), "NoFrame");
+  expectNot("Mapcenter of " + center_3 + " has outer frame", map.getFrameType(false), "NoFrame");
+  closeCurrentMap();
+}
+
+function test_history()
+{
+  heading("History");
+
+  map = initMap(testMapDefault);
+
+  map.select(main_A);
+  let b = map.selectedBranch();
+  map.setHeadingPlainText("A");
+  map.setHeadingPlainText("B");
+  map.setHeadingPlainText("C");
+  map.undo();
+  map.undo();
+  map.undo();
+  expect("Undo 3 times, after changing heading -> 'A' -> 'B' -> 'C'", b.headingText(), "Main A");
+  map.redo();
+  expect("Redo once", map.getHeadingPlainText(), "A");
+  map.copy();
+  map.redo();
+  expect("Redo once more", map.getHeadingPlainText(), "B");
+  map.redo();
+  expect("Redo yet again", map.getHeadingPlainText(), "C");
+  map.setHeadingPlainText("Main A");
+  map.paste();
+  map.selectLastChildBranch()
+  expect("Paste from the past", map.getHeadingPlainText(), "A");
+  map.remove();
+
+  closeCurrentMap();
+}
+
 function test_scrolling()
 {
   heading("Scrolling and unscrolling:");
@@ -358,6 +413,8 @@ test_adding_branches();
 test_attributes();
 test_copy_paste();
 test_delete_parts();
+test_frames();
+test_history(); // FIXME-0 crashes
 test_scrolling();
 
 summary();
