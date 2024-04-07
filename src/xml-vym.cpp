@@ -33,6 +33,9 @@ VymReader::VymReader(VymModel* m)
 
     branchesTotal = 0;
     useProgress = false;
+
+    lastBranch = nullptr;
+    lastMI = nullptr;
 }
 
 bool VymReader::read(QIODevice *device)
@@ -50,6 +53,7 @@ bool VymReader::read(QIODevice *device)
                 version = "0.0.0";
             if (!lastBranch) {
                 lastBranch = model->getSelectedBranch();
+                lastMI = lastBranch;
                 if (!lastBranch) {
                     xml.raiseError("Found heading element but no branch is selected!");
                     return !xml.error();
@@ -128,6 +132,8 @@ void VymReader::readVymMap()
     if (!lastBranch)
         // Make sure, that mapcenters can be pasted on empty map e.g. for undo
         lastBranch = model->getRootItem();
+
+    lastMI = lastBranch;
 
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("mapdesign"))
@@ -421,6 +427,9 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             }
         }
     }
+    // Prepare parsing heading later
+    lastMI = lastBranch;
+
     readBranchAttr();
 
     // While going deeper, no longer "import" but just load as usual
@@ -474,8 +483,8 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
              xml.name() == QLatin1String("htmlnote") ||
              xml.name() == QLatin1String("note") ));
 
-    if (!lastBranch) {
-        xml.raiseError("No lastBranch available to set <heading>, <vymnote>, or <htmlnote>.");
+    if (!lastMI) {
+        xml.raiseError("No lastMI available to set <heading>, <vymnote>, or <htmlnote>.");
         return;
     }
 
@@ -501,12 +510,10 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
     if (!s.isEmpty()) {
         QColor col(s);
         vymtext.setColor(col);
-        if (lastBranch == lastMI)
-            // For compatibility with <= 2.4.0 set both branch and
-            // heading color
-            // Beginning in 2.9.523 images can also have headings,
-            // then lastMI != lastBranch
-            lastBranch->setHeadingColor(col);
+
+        // For compatibility with <= 2.4.0 set both branch and
+        // heading color
+        lastMI->setHeadingColor(col);
     }
 
     QString t = xml.attributes().value("href").toString();
@@ -599,8 +606,15 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
 
     if (textType == "heading")
         lastMI->setHeading(vymtext);
-    else
-        lastBranch->setNote(vymtext);
+    else {
+        if (lastMI->hasTypeBranch() && textType == "vymnote")
+            lastMI->setNote(vymtext);
+        else {
+            xml.raiseError("Trying to set note for lastMI which is not a branch");
+            return;
+        }
+    }
+
 
     if (xml.tokenType() == QXmlStreamReader::EndElement) return;
 
