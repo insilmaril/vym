@@ -516,16 +516,16 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
         lastMI->setHeadingColor(col);
     }
 
-    QString t = xml.attributes().value("href").toString();
+    QString href = xml.attributes().value("href").toString();
     a = "text";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         vymtext.setText(unquoteQuotes(s));
-    } else if (!t.isEmpty()) {
+    } else if (!href.isEmpty()) {
         // <note> element using an external file with href="..."
         // only for backward compatibility (<1.4.6).
         // Later htmlnote was used and meanwhile vymnote.
-        QString fn = parseHREF(t);
+        QString fn = parseHREF(href);
         QFile file(fn);
 
         if (!file.open(QIODevice::ReadOnly)) {
@@ -562,6 +562,10 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
         bool finished = false;
         while (!finished) {
             xml.readNext();
+            if (xml.tokenType() == 1) {
+                xml.raiseError(QString("Invalid token  found: " +  xml.errorString()));
+                return;
+            }
             switch(xml.tokenType())
             {
                 case QXmlStreamReader::StartElement:
@@ -607,11 +611,14 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
     if (textType == "heading")
         lastMI->setHeading(vymtext);
     else {
-        if (lastMI->hasTypeBranch() && textType == "vymnote")
-            lastMI->setNote(vymtext);
-        else {
-            xml.raiseError("Trying to set note for lastMI which is not a branch");
-            return;
+        if (lastMI->hasTypeBranch()) {
+            if (textType == "vymnote" || textType == "note" || textType == "htmlnote")
+                lastMI->setNote(vymtext);
+            else {
+                qDebug() << "texttype=" << textType << " in line " << xml.lineNumber() << lastMI->headingText();
+                xml.raiseError("Trying to set note for lastMI which is not a branch");
+                return;
+            }
         }
     }
 
