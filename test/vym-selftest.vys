@@ -102,7 +102,7 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 function closeCurrentMap()
 {
   id = vym.currentMapID();
-  name = vym.currentMap().getMapTitle();
+  name = vym.currentMap().getFileName();
   if(vym.closeMapWithID(id)) {
     vym.print("# Closed map \"" + name + "\" (id: #{id})");
   } else {
@@ -376,6 +376,146 @@ function test_delete_parts()
   closeCurrentMap();
 }
 
+function test_export()
+{
+  heading("Export:");
+  let map = initMap(testMapDefault);
+
+  //HTML
+  let exportdir = testDir + "/export-html";
+  vym.mkdir(exportdir);
+  let htmlpath = exportdir + "/output.html";
+  let flagdir  = exportdir + "/flags";
+  let pngpath = exportdir + "/output.png";
+  let csspath = exportdir + "/vym.css";
+  map.exportMap(["HTML", htmlpath, exportdir]);
+  expect("exportHTML: HTML file exists", vym.fileExists(htmlpath), true);
+  expect("exportHTML: HTML image exists", vym.fileExists(pngpath), true);
+  expect("exportHTML: HTML flags dir exists", vym.directoryExists(flagdir), true);
+  if (vym.directoryExists(flagdir))
+    expect("exportHTML: HTML flags dir not empty", vym.directoryIsEmpty(flagdir), false);
+
+  expect("exportHTML: HTML CSS exists", vym.fileExists(csspath), true);
+  vym.fileExists(htmlpath);
+  vym.removeDirectory(flagdir);
+  vym.fileExists(pngpath);
+  vym.fileExists(csspath);
+  map.exportMap(["Last"]);
+  expect("exportLast: HTML #{htmlpath} file exists", vym.fileExists(htmlpath), true);
+  expect("exportLast: HTML image exists", vym.fileExists(pngpath), true);
+  expect("exportHTML: HTML flags dir exists", vym.directoryExists(flagdir), true);
+  if (vym.directoryExists(flagdir))
+    expect("exportHTML: HTML flags dir not empty", vym.directoryIsEmpty(flagdir), false);
+
+  expect("exportLast: HTML CSS exists", vym.fileExists(csspath), true);
+
+  //AO
+  exportdir = testDir + "/export-ao";
+  vym.mkdir(exportdir);
+  filepath = exportdir + "/output.txt";
+  vym.print("filepath is " + filepath);
+  map.exportMap(["AO", filepath]);
+  expect("exportAO:    AO file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap("Last");
+  expect("exportLast:  AO file exists", vym.fileExists(filepath), true);
+
+  //ASCII
+  exportdir = testDir + "/export-ascii";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.txt";
+  map.exportMap("ASCII", filepath, false);
+  expect("exportASCII: ASCII file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast:  ASCII file exists", vym.fileExists(filepath), true);
+
+  //CSV
+  exportdir = testDir + "/export-csv";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.csv";
+  map.exportMap(["CSV", filepath]);
+  expect("exportCSV:    CSV file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast:  CSV file exists", vym.fileExists(filepath), true);
+
+  //Image
+  exportdir = testDir + "/export-image";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.png";
+  map.exportMap(["Image", filepath,"PNG"]);
+  expect("exportImage: PNG file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast:  PNG file exists", vym.fileExists(filepath), true);
+
+  //LaTeX
+  exportdir = testDir + "/export-latex";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.tex";
+  map.exportMap(["LaTeX", filepath]);
+  expect("exportLaTeX:  LaTeX file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast:   LaTeX file exists", vym.fileExists(filepath), true);
+
+  //Markdown
+  exportdir = testDiri + "/export-markdown";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.md";
+  map.exportMap("Markdown", filepath);
+  expect("exportMarkdown:  Markdown file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast:     Markdown file exists", vym.fileExists(filepath), true);
+
+  //OrgMode
+  exportdir = testDir + "/export-orgmode"
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.org";
+  map.exportMap(["OrgMode", filepath]);
+  expect("exportOrgMode:  OrgMode file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast:     OrgMode file exists", vym.fileExists(filepath), true);
+
+  //PDF
+  exportdir = testDir + "/export-pdf";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.pdf";
+  map.exportMap(["PDF", filepath]);
+  expect("exportPDF:  PDF file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast: PDF file exists", vym.fileExists(filepath), true);
+
+  //SVG
+  exportdir = testDir + "/export-svg";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.svg";
+  map.exportMap(["SVG", filepath]);
+  expect("exportSVG:  SVG file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast: SVG file exists", vym.fileExists(filepath), true);
+
+  //XML
+  exportdir = testDir  + "/export-xml";
+  Dir.mkdir(exportdir);
+  filepath = exportdir + "/output.xml";
+  map.exportMap(["XML", filepath, testDir]);
+  expect("exportXML: XML file exists", vym.fileExists(filepath), true);
+  vym.removeFile(filepath);
+  map.exportMap(["Last"]);
+  expect("exportLast: XML file exists", vym.fileExists(filepath), true);
+
+  //OpenOffice Impress //FIXME-5
+  //Taskjuggler //FIXME-5
+
+  closeCurrentMap();
+}
+
 function test_extrainfo()
 {
   heading("Extra information");
@@ -592,152 +732,6 @@ function test_scrolling()
   closeCurrentMap();
 }
 
-///////////////////////////////////////////////////////////////
-//  Auto porting start
-///////////////////////////////////////////////////////////////
-
-/*
-
-function test_export()
-{
-  heading "Export:"
-  let map = initMap(testMapDefault);
-
-  //HTML
-  exportdir = "#{@testDir}/export-html"
-  Dir.mkdir(exportdir)
-  htmlpath = "#{exportdir}/output.html"
-  flagdir  = "#{exportdir}/flags"
-  pngpath = "#{exportdir}/output.png"
-  csspath = "#{exportdir}/vym.css"
-  map.exportMap("HTML", htmlpath, exportdir);
-  expect("exportHTML: HTML file exists", File.exists?(htmlpath), true);
-  expect("exportHTML: HTML image exists", File.exists?(pngpath), true);
-  expect("exportHTML: HTML flags dir exists", Dir.exists?(flagdir), true);
-  if Dir.exists?(flagdir)
-    expect("exportHTML: HTML flags dir not empty", Dir.empty?(flagdir), false);
-  end
-  expect("exportHTML: HTML CSS exists", File.exists?(csspath), true);
-  File.delete(htmlpath);
-  FileUtils.rm_r(flagdir);
-  File.delete(pngpath);
-  File.delete(csspath);
-  map.exportMap("Last");
-  expect("exportLast: HTML #{htmlpath} file exists", File.exists?(htmlpath), true);
-  expect("exportLast: HTML image exists", File.exists?(pngpath), true);
-  expect("exportHTML: HTML flags dir exists", Dir.exists?(flagdir), true);
-  if Dir.exists?(flagdir)
-    expect("exportHTML: HTML flags dir not empty", Dir.empty?(flagdir), false);
-  end
-  expect("exportLast: HTML CSS exists", File.exists?(csspath), true);
-
-  #AO
-  exportdir = "#{@testDir}/export-ao"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.txt"
-  map.exportMap("AO", filepath);
-  expect("exportAO:    AO file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast:  AO file exists", File.exists?(filepath), true);
-
-  //ASCII
-  exportdir = "#{@testDir}/export-ascii"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.txt"
-  map.exportMap("ASCII", filepath, false);
-  expect("exportASCII: ASCII file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast:  ASCII file exists", File.exists?(filepath), true);
-
-  //CSV
-  exportdir = "#{@testDir}/export-csv"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.csv"
-  map.exportMap("CSV", filepath);
-  expect("exportCSV:    CSV file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast:  CSV file exists", File.exists?(filepath), true);
-
-  //Image
-  exportdir = "#{@testDir}/export-image"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.png"
-  map.exportMap("Image", filepath,"PNG");
-  expect("exportImage: PNG file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast:  PNG file exists", File.exists?(filepath), true);
-
-  //LaTeX
-  exportdir = "#{@testDir}/export-latex"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.tex"
-  map.exportMap("LaTeX", filepath);
-  expect("exportLaTeX:  LaTeX file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast:   LaTeX file exists", File.exists?(filepath), true);
-
-  //Markdown
-  exportdir = "#{@testDir}/export-markdown"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.md"
-  map.exportMap("Markdown", filepath);
-  expect("exportMarkdown:  Markdown file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast:     Markdown file exists", File.exists?(filepath), true);
-
-  //OrgMode
-  exportdir = "#{@testDir}/export-orgmode"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.org"
-  map.exportMap("OrgMode", filepath);
-  expect("exportOrgMode:  OrgMode file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast:     OrgMode file exists", File.exists?(filepath), true);
-
-  //PDF
-  exportdir = "#{@testDir}/export-pdf"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.pdf"
-  map.exportMap("PDF", filepath);
-  expect("exportPDF:  PDF file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast: PDF file exists", File.exists?(filepath), true);
-
-  //SVG
-  exportdir = "#{@testDir}/export-svg"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.svg"
-  map.exportMap("SVG", filepath);
-  expect("exportSVG:  SVG file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast: SVG file exists", File.exists?(filepath), true);
-
-  //XML
-  exportdir = "#{@testDir}/export-xml"
-  Dir.mkdir(exportdir);
-  filepath = "#{exportdir}/output.xml"
-  map.exportMap("XML", filepath, @testDir);
-  expect("exportXML: XML file exists", File.exists?(filepath), true);
-  File.delete(filepath);
-  map.exportMap("Last");
-  expect("exportLast: XML file exists", File.exists?(filepath), true);
-
-  //OpenOffice Impress //FIXME-5
-  #Taskjuggler //FIXME-5
-
-  closeCurrentMap();
-}
-*/
-
 function test_modify_branches()
 {
   heading("Modifying branches");
@@ -809,199 +803,244 @@ function test_moving_parts()
 
   closeCurrentMap();
 }
-/*
+
 function test_notes()
 {
-  heading "Notes:"
+  heading("Notes:");
 
   // Plaintext notes basic actions
   let map = initMap(testMapDefault);
 
   map.select(main_A);
-  note_plain = "vymnote plaintext"
-  map.setNotePlainText(note_plain)
-  expect("Set note to \"#{note_plain}\". Still plaintext?", map.hasRichTextNote, false);
+  note_plain = "vymnote plaintext";
+  map.setNotePlainText(note_plain);
+  expect("Set note to \"#{note_plain}\". Still plaintext?", map.hasRichTextNote(), false);
   map.select(center_0);
   map.select(main_A);
-  expect("After reselect, is note plaintext?", map.hasRichTextNote, false););
+  expect("After reselect, is note plaintext?", map.hasRichTextNote(), false);
 
   note_plain = "<b>plaintext, not bold!</b>"
   map.setNotePlainText(note_plain);
-  expect("Set note to plaintext containing html tags. Still plaintext", map.hasRichTextNote, false);
-  note_new = map.getNotePlainText
+  expect("Set note to plaintext containing html tags. Still plaintext", map.hasRichTextNote(), false);
+  note_new = map.getNotePlainText();
   map.select(center_0);
   map.select(main_A);
-  expect("After reselect, is note text unchanged?", map.getNotePlainText, note_new););
-  expect("After reselect, is note plaintext?", map.hasRichTextNote, false););
+  expect("After reselect, is note text unchanged?", map.getNotePlainText(), note_new);
+  expect("After reselect, is note plaintext?", map.hasRichTextNote(), false);
 
   // Plaintext notes copy & paste
-  map.copy
-  map.paste
-  map.selectLastChildBranch);
-  s=map.getselectionString);
-  expect("After copy& paste: New note unchanged?", map.getNotePlainText, note_plain);
-  expect("After copy& paste: New note Still plaintext?", map.hasRichTextNote, false);
-  map.remove
+  map.copy();
+  map.paste();
+  map.selectLastChildBranch();
+  s = map.getSelectionString();
+  expect("After copy& paste: New note unchanged?", map.getNotePlainText(), note_plain);
+  expect("After copy& paste: New note Still plaintext?", map.hasRichTextNote(), false);
+  map.remove();
 
   // Plaintext notes undo & redo
   map.select(main_A);
   map.setNotePlainText('Foobar');
-  map.undo
-  expect("Undo after setNotePlainText restores previous note", map.getNotePlainText, note_plain);
-  map.redo
+  map.undo();
+  expect("Undo after setNotePlainText restores previous note", map.getNotePlainText(), note_plain);
+  map.redo();
   map.select(main_A);
-  expect("Redo restores previous note", map.getNotePlainText, 'Foobar');
+  expect("Redo restores previous note", map.getNotePlainText(), 'Foobar');
 
   // Plaintext notes load & save
-  note_org = IO.read('notes/note-plain.txt');
+  note_org = vym.loadFile('notes/note-plain.txt');
   map.loadNote("test/notes/note-plain.txt");
-  expect("Load plain text note from file. Still plaintext?", map.hasRichTextNote, false);
-  expect("Note contains 'not bold'", map.getNotePlainText.include?("not bold"), true);
-  filepath = "#{@testDir}/save-note.txt"
+  expect("Load plain text note from file. Still plaintext?", map.hasRichTextNote(), false);
+  expect("Note contains 'not bold'", map.getNotePlainText().includes("not bold"), true);
+  filepath = testDir + "/save-note.txt";
   map.saveNote(filepath);
-  expect("Save note to file. Check if it contains 'textMode=\"plainText\"'", IO.read(filepath).include?("textMode=\"plainText\""), true);
-  expect("Save note to file. Check if it contains 'not bold'", IO.read(filepath).include?("not bold"), true);
-  expect("Save note to file. Check new format: no longer contains '<b>' element", IO.read(filepath).include?("<b>"), false);
-  expect("Save note to file. Check new format: no longer contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), false);
-  expect("Save note to file. Check new format: contains 'text=\"Plaintext'", IO.read(filepath).include?("text=\"Plaintext"), true);
+  expect("Save note to file. Check if it contains 'textMode=\"plainText\"'", vym.loadFile(filepath).includes("textMode=\"plainText\""), true);
+  expect("Save note to file. Check if it contains 'not bold'", vym.loadFile(filepath).includes("not bold"), true);
+  expect("Save note to file. Check new format: no longer contains '<b>' element",vym.loadFile(filepath).includes("<b>"), false);
+  expect("Save note to file. Check new format: no longer contains '<![CDATA['",vym.loadFile(filepath).includes("<![CDATA["), false);
+  expect("Save note to file. Check new format: contains 'text=\"Plaintext'",vym.loadFile(filepath).includes("text=\"Plaintext"), true);
 
   // Delete note
   map.setNotePlainText("");
-  expect("setNotePlainText(\"\") deletes note", map.hasNote, false);
+  expect("setNotePlainText(\"\") deletes note", map.hasNote(), false);
 
   closeCurrentMap();
 
   // RichText basic actions
-  let map = initMap(testMapDefault);
+  map = initMap(testMapDefault);
   map.select(main_A);
   rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
   map.parseVymText(rt_note);
-  expect("parseVymText of richText note produces note", map.hasNote, true);
-  expect("parseVymText of richText note produces richText note", map.hasRichTextNote, true);
+  expect("parseVymText of richText note produces note", map.hasNote(), true);
+  expect("parseVymText of richText note produces richText note", map.hasRichTextNote(), true);
   map.select(center_0);
   map.select(main_A);
-  expect("After reselect, is note RichText?", map.hasRichTextNote, true););
+  expect("After reselect, is note RichText?", map.hasRichTextNote(), true);
 
 
   // RichText notes copy & paste
-  rt_note = map.getNoteXML
-  map.copy
-  map.paste
-  map.selectLastChildBranch);
-  s = map.getselectionString);
-  expect("After copy & paste: New note Still RichText?", map.hasRichTextNote, true);
-  expect("After copy & paste: New note unchanged?", map.getNoteXML, rt_note);
-  map.remove
+  rt_note = map.getNoteXML();
+  map.copy();
+  map.paste();
+  map.selectLastChildBranch();
+  s = map.getSelectionString();
+  expect("After copy & paste: New note Still RichText?", map.hasRichTextNote(), true);
+  expect("After copy & paste: New note unchanged?", map.getNoteXML(), rt_note);
+  map.remove();
 
   // RichText notes undo & redo
   map.select(main_A);
   map.setNotePlainText('Foobar');
-  map.undo
-  expect("Undo after setNotePlainText restores RichText note", map.getNoteXML, rt_note);
-  map.redo
+  map.undo();
+  expect("Undo after setNotePlainText restores RichText note", map.getNoteXML(), rt_note);
+  map.redo();
   map.select(main_A);
-  expect("Redo restores previous plaintext note", map.getNotePlainText, 'Foobar');
+  expect("Redo restores previous plaintext note", map.getNotePlainText(), 'Foobar');
 
   // RichText notes load & save
   map.loadNote("test/notes/note.html");
-  expect("Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote, true);
-  filepath = "#{@testDir}/save-note.txt"
+  expect("Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote(), true);
+  filepath = testDir + "/save-note.txt";
   map.saveNote(filepath);
-  expect("Save note to file. Check if it contains 'textMode=\"richText\"'", IO.read(filepath).include?("textMode=\"richText\""), true);
-  expect("Save note to file. Check if it contains 'bold'", IO.read(filepath).include?("bold"), true);
-  expect("Save note to file. Check new format: no longer contains '<b>' element", IO.read(filepath).include?("<b>"), false);
-  expect("Save note to file. Check new format: no longer contains '<![CDATA['", IO.read(filepath).include?("<![CDATA["), false);
-  expect("Save note to file. Check new format: contains 'text=\"&lt;'", IO.read(filepath).include?("text=\"&lt;"), true);
+  expect("Save note to file. Check if it contains 'textMode=\"richText\"'", vym.loadFile(filepath).includes("textMode=\"richText\""), true);
+  expect("Save note to file. Check if it contains 'bold'", vym.loadFile(filepath).includes("bold"), true);
+  expect("Save note to file. Check new format: no longer contains '<b>' element", vym.loadFile(filepath).includes("<b>"), false);
+  expect("Save note to file. Check new format: no longer contains '<![CDATA['", vym.loadFile(filepath).includes("<![CDATA["), false);
+  expect("Save note to file. Check new format: contains 'text=\"&lt;'", vym.loadFile(filepath).includes("text=\"&lt;"), true);
 
   // Delete note
   map.setNotePlainText("");
-  expect("setNotePlainText(\"\") deletes note", map.hasNote, false);
+  expect("setNotePlainText(\"\") deletes note", map.hasNote(), false);
 
   // Compatibility with notes from version < 2.5.0  # FIXME-3 missing
 
   closeCurrentMap();
 }
 
-#######################
 function test_references()
 {
-  heading "References"
+  heading("References");
   let map = initMap(testMapDefault);
 
   map.select(main_A);
-  url = "www.insilmaril.de"
-  map.setURL url
-  expect("setURL to '#{url}'", map.getURL, url);
+  url = "www.insilmaril.de";
+  map.setUrl(url);
+  expect("setUrl to '#{url}'", map.getUrl(), url);
 
-  map.undo
-  expect("undo setURL", map.getURL, "");
-  map.redo
-  expect("redo setURL", map.getURL, url);
-  map.setURL ""
-  expect("setURL: unset URL with empty string", map.getURL, "");
+  map.undo();
+  expect("undo setUrl", map.getUrl(), "");
+  map.redo();
+  expect("redo setUrl", map.getUrl(), url);
+  map.setUrl("");
+  expect("setUrl: unset Url with empty string", map.getUrl(), "");
 
-  vl = "default.vym"
-  map.setVymLink vl
-  s = map.getVymLink
-  expect("setVymLink returns absolute path", map.getFileDir + vl, s);
-  map.undo
-  expect("undo: setVymLink", map.getVymLink, "");
-  map.redo
-  expect("redo: setVymLink", map.getVymLink, s);
+  vl = "default.vym";
+  map.setVymLink(vl);
+  s = map.getVymLink();
+  expect("setVymLink returns absolute path", map.getFileDir() + vl, s);
+  map.undo();
+  expect("undo: setVymLink", map.getVymLink(), "");
+  map.redo();
+  expect("redo: setVymLink", map.getVymLink(), s);
   map.undo
 
   closeCurrentMap();
 }
 
-#######################
+function test_saving()
+{
+  heading("Saving");
+  let map = initMap(testMapDefault);
+
+  // Save selection without overwriting original map);
+  map.select(branch_0Aa);
+  let mapName = "test-saveSelection.vyp";
+  let fn = testDir + "/" + mapName;
+  map.saveSelection(fn);
+  expect(
+      "Save selection: '" + branch_0Aa + "' to '" + fn + "'",
+      vym.fileExists(fn),
+      true);
+
+  closeCurrentMap();
+
+  map = initMap(mapName);
+  map.select(center_0);
+  expect(
+      "Save selection: After loading of '" + mapName + "' '" + center_0 + "' is ok",
+      map.getHeadingPlainText(),
+      "branch a");
+  map.select(main_A);
+  expect(
+      "Save selection: After loading of '" + mapName + "' '" + main_A + "'  is ok",
+      map.getHeadingPlainText(),
+      "branch a1");
+
+  closeCurrentMap();
+}
+
+function test_slides()
+{
+  heading("Slides");
+  let map = initMap("maps/test-slides.xml");
+
+  map.select(main_A);
+  expect("Successfully loaded map with slides", map.slideCount(), 3);
+
+  closeCurrentMap()
+}
+
 function test_standard_flags()
 {
-  heading "Standard flags"
+  heading("Standard flags");
   let map = initMap(testMapDefault);
   map.select(main_A);
 
-  function set_flags (map, flags)()
-                                    {
-    flags.each do |f|
-      map.setFlagByName( f );
-      expect("Flag set: #{f}", map.hasActiveFlag( f ), true);
-    end
+  function set_flag (f, index, array)
+  {
+    map.setFlagByName(f);
+    vym.print("#Setting flag: " + f);  
+    expect("Flag set: '" + f +"'", map.hasActiveFlag(f), true);
   }
 
-  function unset_flags (map, flags)()
-                                        {
-    flags.each do |f|
-      map.unsetFlagByName( f );
-      expect("Flag unset: #{f}", map.hasActiveFlag( f ), false);
-    end
+  function unset_flag (f, index, array)
+  {
+    map.unsetFlagByName(f);
+    vym.print("#Unetting flag: " + f);  
+    expect("Flag unset: '" + f +"'", map.hasActiveFlag(f), false);
   }
 
   // Group standard-mark
-  set_flags( map, [ "exclamationmark","questionmark"] );
+  for (flag of [ "exclamationmark","questionmark"])
+    set_flag(flag);
 
   // Group standard-status
-  set_flags( map, [ "hook-green",
+  for( flag of [ "hook-green",
     "wip",
     "cross-red",
-    "stopsign" ] );
+    "stopsign" ] )
+    unset_flag(flag);	
 
   // Group standard-smiley
   smileys = [ "smiley-good",
       "smiley-sad",
-      "smiley-omb" ]
-  set_flags( map, smileys );
+      "smiley-omb" ];
+  for (flag of smileys )
+    set_flag(flag);
 
   // Group standard-arrow
-  set_flags( map, [ "arrow-up",
+  arrows = [ "arrow-up",
     "arrow-down",
     "2arrow-up",
-    "2arrow-down" ] );
+    "2arrow-down" ];
+  for (flag of arrows)
+    set_flag(flag);
 
   // Group standard-thumb
-  set_flags( map, [ "thumb-up", "thumb-down" ] );
+  for (flag of [ "thumb-up", "thumb-down" ] )
+    set_flag(flag);
 
   // Without group
-  set_flags( map, [ "clock",
+  divflags = [ "clock",
     "phone",
     "lamp",
     "rose",
@@ -1009,110 +1048,127 @@ function test_standard_flags()
     "present",
     "flash",
     "info",
-    "lifebelt" ] );
 
-  unset_flags( map, smileys );
+    "lifebelt" ];
+  for (flag of divflags)  
+    set_flag(flag);
 
-  map.clearFlags
+  expect(
+      "Heart flag is set",
+      map.hasActiveFlag("heart"),
+      true);
+      
+  for (flag of smileys )
+    unset_flag(flag);
+
+  expect(
+      "Smiley flag is no longerset",
+      map.hasActiveFlag("smiley"),
+      false);
+      
+  map.clearFlags();
 
   expect("clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false);
   expect("clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false);
 
 
   // Toggling flags
-  a = ["stopsign", "lifebelt"]
-  a.each do |flag|
-    //puts "Flag is now: #{flag}"
-    map.toggleFlagByName flag
-    expect("toggleFlag: flag #{flag} activated", map.hasActiveFlag(flag), true);
+  flags = ["stopsign", "lifebelt"]
+  for (flag of flags) {
+    map.toggleFlagByName(flag);
+    expect("toggleFlag: flag '" + flag + "' activated", map.hasActiveFlag(flag), true);
 
-    map.toggleFlagByName flag
-    expect("toggleFlag: flag #{flag} deactivated", map.hasActiveFlag(flag), false);
-  end
+    map.toggleFlagByName(flag);
+    expect("toggleFlag: flag '" + flag + "' deactivated", map.hasActiveFlag(flag), false);
+  }
 
   closeCurrentMap();
 }
 
-#######################
+
 function test_user_flags()
 {
-  heading "User flags"
-  let map = init_map "maps/test-userflag.vym"
+  heading("User flags");
+  let map = initMap("maps/test-userflag.vym");
 
   map.select(branch_0Aa);
-  flagName = "userflag-vym"
-  expect("Has active flag '#{flagName}'", map.hasActiveFlag(flagName), true);
+  flagName = "userflag-vym";
+  expect("Has active flag '" + flagName + "'", map.hasActiveFlag(flagName), true);
 
   closeCurrentMap();
 }
 
-#######################
-function test_xlinks();
+
+function test_xlinks()
 {
-  heading "XLinks:"
+  heading("XLinks:");
   let map = initMap(testMapDefault);
 
   map.select(main_A);
-  n = map.xlinkCount
-  map.addXLink(@main_A, @main_B, 2,"#ff0000","Qt::DashDotLine");
-  expect("xlink count increased after creating xlink", map.xlinkCount, n + 1);
-  map.selectXLink 0);
-  expect("Default color of XLink", map.getXLinkColor, "#ff0000");
+  n = map.xlinkCount()
+  map.addXLink(main_A, main_B, 2,"#ff0000","Qt::DashDotLine");
+  expect("xlink count increased after creating xlink", map.xlinkCount(), n + 1);
+  map.selectXLink(0);
+  expect("Default color of XLink", map.getXLinkColor(), "#ff0000");
   expect("Default width of XLink", map.getXLinkWidth(), 2);
-  expect("Default style of XLink", map.getXLinkPenStyle, "Qt::DashDotLine");
-  expect("Default style of XLink begin", map.getXLinkStyleBegin, "HeadFull");
-  expect("Default style of XLink end",   map.getXLinkStyleEnd, "HeadFull");
+  expect("Default style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
+  expect("Default style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
+  expect("Default style of XLink end",   map.getXLinkStyleEnd(), "HeadFull");
 
   map.setXLinkWidth(3);
   expect("New width of XLink", map.getXLinkWidth(), 3);
-  map.undo
+  map.undo();
   expect("Undo width of XLink", map.getXLinkWidth(), 2);
 
   map.setXLinkColor("#00ff00");
-  expect("New color of XLink", map.getXLinkColor, "#00ff00");
-  map.undo
-  expect("Undo color of XLink", map.getXLinkColor, "#ff0000");
+  expect("New color of XLink", map.getXLinkColor(), "#00ff00");
+  map.undo();
+  expect("Undo color of XLink", map.getXLinkColor(), "#ff0000");
 
   map.setXLinkStyle("Qt::SolidLine");
-  expect("New style of XLink", map.getXLinkPenStyle, "Qt::SolidLine");
-  map.undo
-  expect("Undo style of XLink", map.getXLinkPenStyle, "Qt::DashDotLine");
+  expect("New style of XLink", map.getXLinkPenStyle(), "Qt::SolidLine");
+  map.undo();
+  expect("Undo style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
 
   map.setXLinkStyleBegin("None");
-  expect("New style of XLink begin", map.getXLinkStyleBegin, "None");
-  map.undo
-  expect("Undo style of XLink begin", map.getXLinkStyleBegin, "HeadFull");
+  expect("New style of XLink begin", map.getXLinkStyleBegin(), "None");
+  map.undo();
+  expect("Undo style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
 
   map.setXLinkStyleEnd("None");
-  expect("New style of XLink end", map.getXLinkStyleEnd, "None");
-  map.undo
-  expect("Undo style of XLink end", map.getXLinkStyleEnd, "HeadFull");
+  expect("New style of XLink end", map.getXLinkStyleEnd(), "None");
+  map.undo();
+  expect("Undo style of XLink end", map.getXLinkStyleEnd(), "HeadFull");
 
   map.select(main_A);
-  map.selectXLinkOtherEnd 0);
-  expect("xlink connects  '#{@main_A}' and '#{@main_B}'", map.getselectionString, @main_B););
+  map.selectXLinkOtherEnd(0);
+  expect(
+      "xlink connects  '" + main_A + "'' and '" + main_B + "'",
+      map.getSelectionString(),
+      main_B);
 
   closeCurrentMap();
 }
 
-#######################
 function test_tasks()
 {
-  heading "Tasks:"
-  let map = init_map "maps/test-tasks.xml"
+  heading("Tasks");
+  let map = initMap("maps/test-tasks.xml");
 
   map.select(branch_0Aa);
-  expect("After loading #{@branch_0Aa} has no task", map.hasTask, false);
+  expect("After loading '" +branch_0Aa + "' has no task", map.hasTask(), false);
 
   map.select(branch_0Ab);
-  expect("After loading #{@branch_0Ab} has task", map.hasTask, true);
-  expect("After loading #{@branch_0Ab} task sleeps more than 1000 days",);
-    map.getTaskSleepDays() > 1000, true
+  expect("After loading '" + branch_0Ab + "' has task", map.hasTask(), true);
+  expect("After loading '" + branch_0Ab + "' task sleeps more than 1000 days",
+	map.getTaskSleepDays() > 1000,
+	true);
 
   map.select(branch_0Aa);
-  map.toggleTask
-  expect("Toggle task", map.hasTask, true);
+  map.toggleTask();
+  expect("Toggle task", map.hasTask(), true);
 
+/* FIXME-2 Date functions used in ruby tests not available here yet
   date_today = DateTime.now
   delta_days = 123
   date_later = date_today + delta_days
@@ -1176,34 +1232,12 @@ function test_tasks()
   expect("Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true);
   expect("Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'",);
     map.getTaskSleep, date_later_iso
+    */
 
   closeCurrentMap();
 }
 
-######################
-function test_saving()
-{
-  heading "Saving:"
-  let let map = initMap(testMapDefault);
 
-  // Save selection without overwriting original map);
-  map.select(branch_0Aa);
-  let fn = testDir + "/test-saveSelection.vyp"
-  map.saveSelection(fn);
-  expect("#Save selection: #{@branch_0Aa} to #{fn}", File.file?(fn), true);
-
-  closeCurrentMap();
-
-  let map = initMap(fn);
-  map.select(center_0);
-  expect("Save selection: After loading of #{fn} #{@center_0} is ok", map.getHeadingPlainText, "branch a");
-  map.select(main_A);
-  expect("Save selection: After loading of #{fn} #{@main_A} is ok", map.getHeadingPlainText, "branch a1");
-
-  closeCurrentMap();
-}
-
-*/
 ///////////////////////////////////////////////////////////////
 //  Auto porting end
 ///////////////////////////////////////////////////////////////
@@ -1212,28 +1246,32 @@ function test_saving()
 ///////////////////////////////////////////////////////////////
 
 test_vym();
-//test_basics();
 
-//test_adding_branches();
+/*
+test_basics();
+test_adding_branches();
 test_adding_maps();
-//test_attributes();
-//test_copy_paste();
-//test_delete_parts();
-// FIXME not ported yet test_export();     // Requires file functions
-//test_extrainfo();
-//test_frames();
-//test_history();
-//test_load_legacy_maps();
-//test_modify_branches();
-//test_moving_parts();
-// FIXME not ported yet   #test_notes();
-// FIXME not ported yet   #test_references();
-// FIXME not ported yet   #test_saving();
-//test_scrolling();
-// FIXME not ported yet   #test_slides();
-// FIXME not ported yet   #test_standard_flags();
-// FIXME not ported yet   #test_tasks();
-// FIXME not ported yet   #test_user_flags();
-// FIXME not ported yet   #test_xlinks();
+test_attributes();
+test_copy_paste();
+test_delete_parts();
+*/
+test_export(); // FIXME WIP
+/*
+test_extrainfo();
+test_frames();
+test_history();
+test_load_legacy_maps();
+test_modify_branches();
+test_moving_parts();
+test_notes();
+test_references();
+test_saving();
+test_scrolling();
+test_slides();
+test_standard_flags();
+test_tasks();	// FIXME-2 uncomplete (date calculations)
+test_user_flags();
+test_xlinks();
+*/
 
 summary();

@@ -101,6 +101,42 @@ void VymWrapper::editHeading()
     if (me) me->editHeading();
 }
 
+bool VymWrapper::directoryIsEmpty(const QString &directoryName)
+{
+    QDir d(directoryName);
+    return d.isEmpty();
+}
+
+bool VymWrapper::directoryExists(const QString &directoryName)
+{
+    QDir d(directoryName);
+    return d.exists();
+}
+
+bool VymWrapper::removeDirectory(const QString &directoryName)
+{
+    QDir d(directoryName);
+    qWarning() << "VW::removeDir " << directoryName;
+    return false;
+    return d.removeRecursively();
+}
+
+bool VymWrapper::mkdir(const QString &directoryName)
+{
+    QDir d;
+    return d.mkpath(directoryName);
+}
+
+bool VymWrapper::fileExists(const QString &fileName)
+{
+    return QFile::exists(fileName);
+}
+
+bool VymWrapper::removeFile(const QString &fileName)
+{
+    return QFile::remove(fileName);
+}
+
 bool VymWrapper::loadMap(const QString &filename)
 {
     bool r;

@@ -1297,26 +1297,26 @@ begin
     exit
   end
 
-  test_vym                # DONE - ported to vym script
-  #test_basics            # DONE - ported to vym script
+  test_vym
+  #test_basics
 
-  test_adding_branches    # DONE - ported to vym script
+  test_adding_branches
   #test_adding_maps
-  #test_attributes        # DONE - ported to vym script
-  #test_bugfixes          # No tests available so far
-  #test_copy_paste        # DONE - ported to vym script
-  #test_delete_parts      # DONE - ported to vym script
+  #test_attributes
+  #test_bugfixes
+  #test_copy_paste
+  #test_delete_parts
   #test_export
-  #test_extrainfo
-  #test_frames            # DONE - ported to vym script
-  #test_history           # DONE - ported to vym script
+  test_extrainfo
+  #test_frames
+  #test_history
   #test_load_legacy_maps
   #test_modify_branches
   test_moving_parts
   #test_notes
   #test_references
   #test_saving
-  #test_scrolling         # DONE - ported to vym script
+  #test_scrolling
   #test_slides
   #test_standard_flags
   #test_tasks
