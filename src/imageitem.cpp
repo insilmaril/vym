@@ -206,10 +206,11 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     attributes += attribute("uuid", uuid.toString());
 
     // And really save the image  (svgs will be copied from cache!)
-    imageContainer->save(tmpdir + "/" + url);
+    QString fn = tmpdir + "/" + url;
+    imageContainer->save(fn);
 
-
-    qDebug() << "image:  " << headingPlain();
+    qDebug() << "ImageItem::saveToDir:  " << headingPlain() << " to fn=" << fn;
+    qDebug() << "  tmpdir=" << tmpdir << "  prefix=" << prefix;
     if (originalFilename == headingPlain())
         return singleElement("floatimage", attributes);
     else {
