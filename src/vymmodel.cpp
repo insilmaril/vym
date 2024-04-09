@@ -1754,17 +1754,18 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
 }
 
 void VymModel::saveStateBranch(
-        BranchItem *bi,
+        BranchItem *undoSel,
         const QString &uc,
+        BranchItem *redoSel,
         const QString &rc,
         const QString &comment)
 {
-    if (!bi || !bi->hasTypeBranch()) {
+    if (!undoSel || !undoSel->hasTypeBranch()) {
         qWarning() << "VymModel::saveStateBranch no branch provided";
         return;
     }
 
-    QString setup = QString("b=vym.currentMap().findBranchById(\"%1\");b.").arg(bi->getUuid().toString());
+    QString setup = QString("b=vym.currentMap().findBranchById(\"%1\");b.").arg(undoSel->getUuid().toString());
     saveState( File::CodeBlock, "", setup + uc, "", setup + rc, comment);
 }
 
@@ -3955,8 +3956,8 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         QString undosel = getSelectString(newbi);
 
         if (newbi) {
-            saveState(undosel, "remove ()", redosel,
-                      QString("addBranchAt (%1)").arg(pos),
+            saveStateBranch(newbi, "remove ()",
+                      pi, QString("addBranchAt (%1)").arg(pos),
                       QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
@@ -3975,10 +3976,10 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore()
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi)
 {
     BranchItem *newbi = nullptr;
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi && selbi->getType() == TreeItem::Branch)
     // We accept no MapCenter here, so we _have_ a parent
     {
@@ -4525,7 +4526,7 @@ bool VymModel::scrollBranch(BranchItem *bi)
             QString u, r;
             r = "scroll";
             u = "unscroll";
-            saveStateBranch(bi, QString("%1();").arg(u), QString("%1();").arg(r),
+            saveStateBranch(bi, QString("%1();").arg(u), bi, QString("%1();").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
@@ -4544,7 +4545,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             QString u, r;
             u = "scroll";
             r = "unscroll";
-            saveStateBranch(bi, QString("%1();").arg(u), QString("%1();").arg(r),
+            saveStateBranch(bi, QString("%1();").arg(u), bi, QString("%1();").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
 

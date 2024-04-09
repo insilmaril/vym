@@ -19,8 +19,6 @@ class VymModelWrapper : public VymScriptContext {
     VymModelWrapper(VymModel *m);
 
   public slots:
-    void addBranchAt(int pos);// FIXME-3 move to BranchWrapper
-    void addBranchBefore();// FIXME-3 move to BranchWrapper
     void addMapCenterAtPos(qreal x, qreal y);
     void addMapInsert(QString filename, int pos, int contentFilter);
     void addMapInsert(const QString &filename, int pos);
@@ -35,8 +33,8 @@ class VymModelWrapper : public VymScriptContext {
     void clearFlags();// FIXME-3 move to BranchWrapper
     void colorBranch(const QString &color);// FIXME-3 move to BranchWrapper
     void colorSubtree(const QString &color);// FIXME-3 move to BranchWrapper
-    void copy();// FIXME-3 copy to BranchWrapper
-    void cut();// FIXME-3 copy to BranchWrapper
+    void copy();// FIXME-3 copy to BranchWrapper (use without selecting in VymModel!)
+    void cut();// FIXME-3 copy to BranchWrapper  (use without selecting in VymModel!)
     void cycleTask();// FIXME-3 move to BranchWrapper
     int depth();// FIXME-3 move to BranchWrapper
     void detach();// FIXME-3 move to BranchWrapper
@@ -76,7 +74,6 @@ class VymModelWrapper : public VymScriptContext {
     bool hasRichTextNote();// FIXME-3 move to BranchWrapper
     bool hasTask();// FIXME-3 move to BranchWrapper
     void importDir(const QString &path);
-    bool isScrolled();// FIXME-3 move to BranchWrapper
     void loadImage(const QString &filename);// FIXME-3 move to BranchWrapper
     void loadNote(const QString &filename);// FIXME-3 move to BranchWrapper
     void moveDown();// FIXME-3 move to BranchWrapper
@@ -90,10 +87,10 @@ class VymModelWrapper : public VymScriptContext {
     void nop(); // FIXME-3 remove?
     void note2URLs();// FIXME-3 move to BranchWrapper
     bool parseVymText(const QString &text);
-    void paste();
+    void paste();   // FIXME copy to BranchWrappe (use without selecting in VymModel!)
     void redo();
     bool relinkTo(const QString &parent, int num);// FIXME-3 move to BranchWrapper
-    void remove();// FIXME-3 copy to BranchWrapper, ImageWrapper, leave for VymModel
+    void remove();// FIXME-3 copy to ImageWrapper, leave for VymModel (already in BranchWrapper)
     void removeChildren();// FIXME-3 move to BranchWrapper
     void removeChildBranches();// FIXME-3 move to BranchWrapper
     void removeKeepChildren();// FIXME-3 move to BranchWrapper
@@ -172,7 +169,10 @@ class VymModelWrapper : public VymScriptContext {
 
     // FIXME-2 duplicated in BranchWrapper. Remove from VymModelWrapper and test scripts
     void addBranch();
+    void addBranchAt(int pos);
+    void addBranchBefore();
     QString getHeadingPlainText();          // in BranchWrapper: headingText()
+    bool isScrolled();
     bool relinkTo(const QString &parent);   // in BranchWrapper: relinkTo
     void scroll();
     void toggleScroll();

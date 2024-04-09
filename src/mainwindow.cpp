@@ -1191,6 +1191,19 @@ void Main::setupAPI()
     // Below are the commands for a branch
     //
 
+    c = new Command("addBranch", Command::Branch);
+    c->setComment("Add branch as child branch to current branch");
+    branchCommands.append(c);
+
+    c = new Command("addBranchAt", Command::Branch);
+    c->setComment("Add branch at position to current branch");
+    c->addParameter(Command::Int, true, "Index of new branch");
+    branchCommands.append(c);
+
+    c = new Command("addBranchBefore", Command::Branch);
+    c->setComment("Add branch as parent before current branch");
+    branchCommands.append(c);
+
     c = new Command("attributeAsInt", Command::Branch, Command::Int);
     c->setComment("Get integer value of attribute with given key");
     c->addParameter(Command::String, false, "Key of integer attribute");
@@ -1205,10 +1218,18 @@ void Main::setupAPI()
     c->setComment("Set heading of branch from plaintext string");
     branchCommands.append(c);
 
+    c = new Command("isScrolled", Command::Branch, Command::Bool);
+    c->setComment("Check if branch is scrolled");
+    branchCommands.append(c);
+
     c = new Command("relinkTo", Command::Branch);
     c->setComment("Relink branch to destination branch");
     c->addParameter(Command::BranchItem, false, "Destination branch");
     branchCommands.append(c);
+
+    c = new Command("remove", Command::Branch);
+    c->setComment("Remove branch");
+    modelCommands.append(c);
 
     c = new Command("scroll", Command::Branch);
     c->setComment("Scroll branch");

@@ -2408,6 +2408,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                         model->saveStateBranch(
                             bi,
                             QString("setPos%1").arg(toS(bc->getOriginalPos(), 5)),
+                            bi,
                             QString("setPos%1").arg(toS(bc->pos(), 5)),
                             QString("Move branch to %1").arg(toS(bc->pos())));
                     } else {

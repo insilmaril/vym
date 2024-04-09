@@ -1297,17 +1297,17 @@ begin
     exit
   end
 
-  test_vym                # DONE - ported to vym script
-  #test_basics            # DONE - ported to vym script
+  test_vym
+  #test_basics
 
-  test_adding_branches    # DONE - ported to vym script
+  test_adding_branches
   #test_adding_maps
   #test_attributes
   #test_bugfixes
   #test_copy_paste
   #test_delete_parts
   #test_export
-  #test_extrainfo
+  test_extrainfo
   #test_frames
   #test_history
   #test_load_legacy_maps

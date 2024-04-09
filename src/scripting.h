@@ -35,6 +35,12 @@ class VymWrapper : public VymScriptContext {
     bool isConfluenceAgentAvailable();
     QObject *currentMap();
     void editHeading();
+    bool directoryIsEmpty(const QString &dirName);
+    bool directoryExists(const QString &dirName);
+    bool mkdir(const QString &dirName);
+    bool removeDirectory(const QString &dirName);
+    bool fileExists(const QString &fileName);
+    bool removeFile(const QString &fileName);
     bool loadMap(const QString &filename);
     int mapCount();
     void gotoMap(uint n);

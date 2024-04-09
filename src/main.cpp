@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
         "Usage: vym [OPTION]... [FILE]... \n"
         "Open FILEs with vym\n\n"
         "-b           batch         batch mode: hide windows\n"
-        "-c           commands	    List all available commands\n"
+        "-c           commands      List all available commands\n"
         "-cl          commandslatex List commands in LaTeX format\n"
         "-d           debug         Show debugging output\n"
         "-h           help          Show this help text\n"

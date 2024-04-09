@@ -274,8 +274,9 @@ class VymModel : public TreeModel {
   public:
     /*! Save branch using BranchWrapper */
     void saveStateBranch(
-            BranchItem *,
+            BranchItem *undoSel,
             const QString &undoCommand,
+            BranchItem *redoSel,
             const QString &redoCommand,
             const QString &comment);
   private:
@@ -517,7 +518,7 @@ class VymModel : public TreeModel {
     */
     BranchItem *addNewBranch(BranchItem *bi = nullptr, int pos = -2);
     BranchItem *
-    addNewBranchBefore(); //!< Insert branch between selection and its parent
+    addNewBranchBefore(BranchItem *bi = nullptr); //!< Insert branch between selection and its parent
 
     /*! \brief Relink a branch to a new destination dst
         Relinks branch to dst at branch position pos. There is no saveState

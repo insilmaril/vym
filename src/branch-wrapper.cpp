@@ -31,6 +31,22 @@ void BranchWrapper::addBranch()
     }
 }
 
+void BranchWrapper::addBranchAt(int pos)
+{
+    if (!branchItem->getModel()->addNewBranch(branchItem, pos))
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("Could not add  branch at position %1").arg(pos));
+}
+
+void BranchWrapper::addBranchBefore()
+{
+    if (!branchItem->getModel()->addNewBranchBefore(branchItem))
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "Couldn't add branch before selection to map");
+}
+
 int BranchWrapper::attributeAsInt(const QString &key)
 {
     QVariant v;
@@ -76,13 +92,22 @@ QString BranchWrapper::attributeAsString(const QString &key)
 
 QString BranchWrapper::headingText()
 {
-    return branchItem->headingPlain();
+    return setResult(branchItem->headingPlain());
+}
+
+bool BranchWrapper::isScrolled()
+{
+    return setResult(branchItem->isScrolled());
 }
 
 bool BranchWrapper::relinkTo(BranchWrapper *bw)
 {
-    branchItem->getModel()->relinkBranch(branchItem, bw->branchItem);
-    return false;
+    return setResult(branchItem->getModel()->relinkBranch(branchItem, bw->branchItem));
+}
+
+void BranchWrapper::remove()
+{
+    branchItem->getModel()->deleteSelection(branchItem->getID());
 }
 
 void BranchWrapper::scroll()
