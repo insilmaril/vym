@@ -2007,9 +2007,100 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
-    mapEditor->testFunction1();
+    // Do animation step. All BranchContainers
+    QList <BranchContainer*> bc_list;
+
+    qDebug() << "Calculating forces...";
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    nextBranch(cur, prev);
+    while (cur) {
+        //qDebug() << "Adding branch: " << cur->headingText();
+        BranchContainer *bc = cur->getBranchContainer();
+        bc->v_anim = QPointF(0,0);
+        bc_list << bc;
+        nextBranch(cur, prev);
+    }
+
+    foreach (BranchContainer *bc, bc_list) {
+        HeadingContainer *hc = bc->getHeadingContainer();
+        HeadingContainer *ohc;
+
+        // Forces pushing apart
+        /*
+        */
+        foreach (BranchContainer *obc, bc_list) {
+            if (bc != obc) {
+                
+                ohc = obc->getHeadingContainer();
+
+                QPointF vec = hc->mapFromItem(ohc, ohc->pos());
+                qreal dx = vec.x();
+                qreal dy = vec.y();
+                double l = 2.0 * (dx * dx + dy * dy);
+
+                if (l > 25) {
+                    bc->v_anim += QPointF(- (dx *150) / l, - (dy * 150) / l);
+                    qDebug() << "Push "<< hc->info() << " <- " << ohc->info() << " vec=" << toS(vec) << " l=" << l;
+                }
+            }
+        }
+
+        // Forces pulling together
+        BranchItem *bi = bc->getBranchItem();
+        double weight = (bi->branchCount() + 1) * 10;
+
+        /*
+        for (int i = 0; i < bi->branchCount(); i++) {
+            BranchItem *obi = bi->getBranchNum(i);
+            BranchContainer *obc = obi->getBranchContainer();
+            ohc = obc->getHeadingContainer();
+
+            // Parent pulled by child
+            QPointF vec = hc->mapFromItem(ohc, ohc->pos());
+            bc->v_anim += QPointF( vec.x() / weight, vec.y() / weight);
+            qDebug() << "  Child Pull  from " << obi->headingText() << " to " << bi->headingText() << toS(vec);
+
+            // Child pulled by parent
+            vec = ohc->mapFromItem(hc, ohc->pos());
+            obc->v_anim += QPointF( vec.x() / weight, vec.y() / weight);
+            qDebug() << "  Parent Pull from " << bi->headingText() << " to " << obi->headingText() << toS(vec);
+        }
+        */
+
+        // Move MapCenters towards center
+        if (bi->depth() == 0) {
+            QPointF vec = hc->mapToScene(QPointF(0,0));
+            qreal dx = vec.x();
+            qreal dy = vec.y();
+            double l = sqrt( dx * dx + dy * dy);
+            if (l > 5) {
+                bc->v_anim += QPointF(- (dx ) / l, - (dy ) / l);
+                qDebug() << "Moving to center: " << bc->info() << "l=" << l;
+            }
+        }
+
+        // Ignore too small vector
+        if (qAbs(bc->v_anim.x()) < 0.1 && qAbs(bc->v_anim.y()) < 0.1)
+            bc->v_anim = QPointF(0, 0);
+    }
+
+    foreach (BranchContainer *bc, bc_list) {
+        // Show vector
+        bc->v.setLine(0, 0, bc->v_anim.x() * 10, bc->v_anim.y() * 10);
+
+        // Now actually move items
+        bc->setPos( bc->pos() + bc->v_anim);
+    }
+
+    reposition();
     return;
 
+
+    //mapEditor->testFunction1();
+    //return;
+
+    // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch())
             ((BranchItem*)ti)->getBranchContainer()->printStructure();
@@ -2018,11 +2109,7 @@ void VymModel::test()
     }
     return;
 
-
-    QString fileName = "/home/uwe/vym/branches/xml-streamreader/test.xml";
-    if (fileName.isEmpty())
-        return;
-
+    // Read bookmarks
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
@@ -5863,7 +5950,7 @@ void VymModel::reposition()
 
     repositionXLinks();
 
-    mapEditor->minimizeView();
+    // FIXME-2 needed? everytime? mapEditor->minimizeView();
     //qDebug() << "VM::reposition end"; // FIXME-2
 }
 
