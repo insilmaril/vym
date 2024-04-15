@@ -98,6 +98,11 @@ bool ImportFirefoxBookmarks::transform()
     return false;
 }
 
+//FIXME-2 Check importing Firefox bookmarks. Switch from JSON to HTML?
+//        Or include lz4 to decompress FF json bookmarks?
+//        https://unix.stackexchange.com/questions/326897/how-to-decompress-jsonlz4-files-firefox-bookmark-backups-using-the-command-lin
+//        HTML is not valid XML :-(
+
 bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchItem *selbi)
 {
     if (!selbi) {
@@ -141,7 +146,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     v = jsobj[key].toInt();
                 } else if (key == "postData") 
                     v = QString("null");
-                else if (jsobj[key].isString())     // FIXME-2 type checks no longer needed qith QVarian
+                else if (jsobj[key].isString())     // FIXME-2 type checks no longer needed qith QVariant
                     v = jsobj[key].toString();
                 else {
                 // Ignore only the "postdata: null" field for now

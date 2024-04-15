@@ -885,8 +885,6 @@ class VymModel : public TreeModel {
                           const QItemSelection &oldsel);
 
   public:
-    void emitSelectionChanged(const QItemSelection &oldsel);
-    void emitSelectionChanged();
     void selectMapLinkColor();
 
   private:

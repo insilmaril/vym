@@ -973,8 +973,6 @@ void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review 
 
         // orientationChanged=false;
     } // loop if orientation has changed
-
-    model->emitSelectionChanged();
     */
 }
 
@@ -2029,7 +2027,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 if (xlo) {
                     xlo->setSelectedCtrlPoint(p_event); // FIXME-3 Missing savestate
                     model->setChanged();
-                    model->emitSelectionChanged();
                 }
             }
             else
@@ -2468,10 +2465,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
 
-    if (repositionNeeded) {
+    if (repositionNeeded)
         model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
-        model->emitSelectionChanged();
-    }
 }
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
@@ -2726,8 +2721,8 @@ void MapEditor::togglePresentationMode()
 // FIXME-3 Feature: updateSelection - New settings (maybe with keys to toggle) autorotation to adapt view to selection: Adapt to heading/subtree
 void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
-    /*
     qDebug() << "ME::updateSel";
+    /*
     qDebug() << "  newsel=" << newsel;
     qDebug() << "  dsel=" << dsel;
     */

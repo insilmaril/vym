@@ -37,7 +37,6 @@
 #include "findresultmodel.h"
 #include "heading-container.h"
 #include "jira-agent.h"
-//#include "link-container.h"
 #include "linkobj.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
@@ -51,7 +50,6 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeitem.h"
-//FIXME-2 not needed #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
@@ -624,9 +622,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             if (parsedWell) {
                 reposition();
 
-                emitSelectionChanged();
-
-                if (lmode == File::NewMap) // no lockfile for default map!
+                if (lmode == File::NewMap)  // no lockfile for default map!
                 {
                     mapDefault = false;
                     mapChanged = false;
@@ -3062,7 +3058,6 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
                       .arg(getObjectName(ti))
                       .arg(r));
         emitDataChanged(ti);
-        emitSelectionChanged();
         reposition();
     }
 }
@@ -3094,7 +3089,6 @@ void VymModel::toggleTask()
             taskModel->deleteTask(task);
 
         emitDataChanged(selbi);
-        emitSelectionChanged();
         reposition();
     }
 }
@@ -4375,10 +4369,9 @@ bool VymModel::relinkTo(const QString &dstString, int num)
     if (selti->hasTypeBranch()) {
         BranchItem *selbi = (BranchItem *)selti;
 
-        if (relinkBranch(selbi, (BranchItem *)dst, num)) {
-            emitSelectionChanged();
+        if (relinkBranch(selbi, (BranchItem *)dst, num))
             return true;
-        }
+
     } else if (selti->hasTypeImage()) {
         if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
             return true;
@@ -6231,8 +6224,6 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 only u
         }
     }
     reposition();
-
-    emitSelectionChanged();
 }
 
 void VymModel::sendSelection()
@@ -6391,18 +6382,6 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     connect(agent, SIGNAL(downloadFinished()), mainWindow,
             SLOT(downloadFinished()));
     QTimer::singleShot(0, agent, SLOT(execute()));
-}
-
-void VymModel::emitSelectionChanged(const QItemSelection &newsel)
-{
-    emit(selectionChanged(newsel, newsel)); // needed e.g. to update geometry in editor
-    sendSelection();
-}
-
-void VymModel::emitSelectionChanged()
-{
-    QItemSelection newsel = selModel->selection();
-    emitSelectionChanged(newsel);
 }
 
 void VymModel::setSelectionPenColor(QColor col)
@@ -6566,6 +6545,9 @@ void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)
 
 void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
+    // Set selection status in objects
+    // Temporary unscroll or rescroll as required
+
     //qDebug() << "VM::updateSel  newsel=" << newsel << " dsel=" << dsel;
     QModelIndex ix;
     MapItem *mi;

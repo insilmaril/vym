@@ -15,8 +15,6 @@
 #include <QTextEdit>
 #include <QToolBar>
 
-// FIXME-2 not needed #include <typeinfo>
-
 #include "mainwindow.h"
 #include "settings.h"
 #include "shortcuts.h"

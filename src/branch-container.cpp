@@ -7,7 +7,6 @@
 #include "flag-container.h"
 #include "flagrow-container.h"
 #include "frame-container.h"
-// FIXME-2 not needed #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
 #include "linkobj.h"

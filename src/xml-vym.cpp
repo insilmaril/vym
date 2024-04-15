@@ -3,7 +3,6 @@
 #include <QColor>
 #include <QMessageBox>
 #include <QTextStream>
-// FIXME-2 not needed #include <typeinfo>
 
 #include "attributeitem.h"
 #include "branchitem.h"
@@ -373,7 +372,7 @@ void VymReader::readSetting()
     }
 }
 
-void VymReader::readAttribute() // FIXME-2 Checking types no longer needed. Check with firefox export/import
+void VymReader::readAttribute() // FIXME-3 Checking types no longer needed. Check with firefox export/import
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("attribute"));
 
