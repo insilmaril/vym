@@ -7,7 +7,6 @@
 #include "flag-container.h"
 #include "flagrow-container.h"
 #include "frame-container.h"
-// FIXME-2 not needed #include "geometry.h"
 #include "heading-container.h"
 #include "link-container.h"
 #include "linkobj.h"
@@ -120,6 +119,10 @@ void BranchContainer::init()
 
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
+
+    // Experimenting only
+    v.setParentItem(this);
+    v.setPen(QPen(Qt::red));
 
     /* Uncomment for testing
     QGraphicsEllipseItem *center = new QGraphicsEllipseItem (0, 0, 5, 5, this);

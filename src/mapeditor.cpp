@@ -369,19 +369,26 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
 
     foreach (TreeItem *ti, selis) {
         Container *c = nullptr;
+        QRectF c_bbox;
         if (ti->hasTypeAttribute())
             ti = ti->parent();
-        if (ti->hasTypeBranch())
+        if (ti->hasTypeBranch()) {
             c = ((BranchItem*)ti)->getBranchContainer()->getHeadingContainer();
-        else if (ti->getType() == TreeItem::Image)
+            c_bbox = c->mapToScene(c->rect()).boundingRect();
+        } else if (ti->getType() == TreeItem::Image) {
             c = ((ImageItem*)ti)->getImageContainer();
-        if (c) {
-            if (firstIteration) {
-                bbox = c->mapToScene(c->rect()).boundingRect();
-                firstIteration = false;
-            } else
-                bbox = bbox.united(c->mapToScene(c->rect()).boundingRect());
+            c_bbox = c->mapToScene(c->rect()).boundingRect();
+        } else if (ti->hasTypeXLink()) {
+            XLinkObj *xlo = ((XLinkItem*)ti)->getXLinkObj();
+            if (xlo)
+                c_bbox = xlo->boundingRect();
         }
+
+        if (firstIteration) {
+            bbox = c_bbox;
+            firstIteration = false;
+        } else
+            bbox = bbox.united(c_bbox);
     }
     int new_rotation = round_int(rotationInt) % 360;
 
@@ -973,8 +980,6 @@ void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review 
 
         // orientationChanged=false;
     } // loop if orientation has changed
-
-    model->emitSelectionChanged();
     */
 }
 
@@ -2029,7 +2034,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 if (xlo) {
                     xlo->setSelectedCtrlPoint(p_event); // FIXME-3 Missing savestate
                     model->setChanged();
-                    model->emitSelectionChanged();
                 }
             }
             else
@@ -2468,10 +2472,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
 
-    if (repositionNeeded) {
+    if (repositionNeeded)
         model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
-        model->emitSelectionChanged();
-    }
 }
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
@@ -2722,86 +2724,3 @@ void MapEditor::togglePresentationMode()
 {
     mainWindow->togglePresentationMode();
 }
-
-// FIXME-3 Feature: updateSelection - New settings (maybe with keys to toggle) autorotation to adapt view to selection: Adapt to heading/subtree
-void MapEditor::updateSelection(QItemSelection newsel, QItemSelection dsel)
-{
-    /*
-    qDebug() << "ME::updateSel";
-    qDebug() << "  newsel=" << newsel;
-    qDebug() << "  dsel=" << dsel;
-    */
-    QList<MapItem *> itemsSelected;
-
-    // Select objects
-    foreach (QModelIndex ix, newsel.indexes()) {
-        MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
-            mi->getType() == TreeItem::XLink) {
-            if (!itemsSelected.contains(mi)) {
-                itemsSelected.append(mi);
-                if (mi->hasTypeBranch())
-                    ((BranchItem*)mi)->getBranchContainer()->select();
-                if (mi->hasTypeImage())
-                    ((ImageItem*)mi)->getImageContainer()->select();
-                if (mi->hasTypeXLink())
-                    ((XLinkItem*)mi)->getXLinkObj()->select(
-			model->mapDesign()->selectionPen(),
-			model->mapDesign()->selectionBrush());
-            }
-        }
-        /* FIXME-2 ME::updateSelection - hide links of unselected objects
-         * also for unselect below
-        lmo = mi->getLMO(); // FIXME-X xlink does return nullptr
-        if (lmo)
-            mi->getLMO()->updateVisibility();
-        */
-    }
-
-    // Unselect objects (if not part of selection)
-    foreach (QModelIndex ix, dsel.indexes()) {
-        MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        //qDebug() << "ME::updateSel   deselecting mi=" << mi << mi->headingPlain();
-        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
-            mi->getType() == TreeItem::XLink) {
-            if (!itemsSelected.contains(mi)) {
-                if (mi->hasTypeBranch())
-                    ((BranchItem*)mi)->getBranchContainer()->unselect();
-                if (mi->hasTypeImage())
-                    ((ImageItem*)mi)->getImageContainer()->unselect();
-                if (mi->hasTypeXLink())
-                    ((XLinkItem*)mi)->getXLinkObj()->unselect();
-            }
-        }
-    }
-
-    // Show count of multiple selected items
-    int selCount = model->getSelectionModel()->selection().indexes().count();
-    if (selCount > 1)
-        mainWindow->statusMessage(
-            tr("%1 items selected","Status message when selecting multiple items").arg(selCount));
-    else
-        mainWindow->statusMessage("");
-}
-
-void MapEditor::updateSelection()   // FIXME-2 why? really needed?
-{
-    QList<MapItem *> itemsSelected;
-
-    // Select objects
-    foreach (QModelIndex ix, model->getSelectionModel()->selection().indexes()) {
-        MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image ||
-            mi->getType() == TreeItem::XLink) {
-                if (mi->hasTypeBranch())
-                    ((BranchItem*)mi)->getBranchContainer()->select();
-                if (mi->hasTypeImage())
-                    ((ImageItem*)mi)->getImageContainer()->select();
-                if (mi->hasTypeXLink())
-                    ((XLinkItem*)mi)->getXLinkObj()->select(
-			model->mapDesign()->selectionPen(),
-			model->mapDesign()->selectionBrush());
-        }
-    }
-}
-

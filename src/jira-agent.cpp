@@ -492,7 +492,7 @@ void JiraAgent::queryFinished(QNetworkReply *reply)
 void JiraAgent::timeout() 
 {
     qWarning() << "JiraAgent timeout!!   jobType = " << jobTypeInt;
-    deleteLater();   // FIXME-2 needed?
+    deleteLater();
 }
 
 #ifndef QT_NO_SSL

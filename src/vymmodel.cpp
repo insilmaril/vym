@@ -37,7 +37,6 @@
 #include "findresultmodel.h"
 #include "heading-container.h"
 #include "jira-agent.h"
-//#include "link-container.h"
 #include "linkobj.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
@@ -51,7 +50,6 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeitem.h"
-//FIXME-2 not needed #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
@@ -624,9 +622,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             if (parsedWell) {
                 reposition();
 
-                emitSelectionChanged();
-
-                if (lmode == File::NewMap) // no lockfile for default map!
+                if (lmode == File::NewMap)  // no lockfile for default map!
                 {
                     mapDefault = false;
                     mapChanged = false;
@@ -2007,9 +2003,100 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
-    mapEditor->testFunction1();
+    // Do animation step. All BranchContainers
+    QList <BranchContainer*> bc_list;
+
+    qDebug() << "Calculating forces...";
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    nextBranch(cur, prev);
+    while (cur) {
+        //qDebug() << "Adding branch: " << cur->headingText();
+        BranchContainer *bc = cur->getBranchContainer();
+        bc->v_anim = QPointF(0,0);
+        bc_list << bc;
+        nextBranch(cur, prev);
+    }
+
+    foreach (BranchContainer *bc, bc_list) {
+        HeadingContainer *hc = bc->getHeadingContainer();
+        HeadingContainer *ohc;
+
+        // Forces pushing apart
+        /*
+        */
+        foreach (BranchContainer *obc, bc_list) {
+            if (bc != obc) {
+                
+                ohc = obc->getHeadingContainer();
+
+                QPointF vec = hc->mapFromItem(ohc, ohc->pos());
+                qreal dx = vec.x();
+                qreal dy = vec.y();
+                double l = 2.0 * (dx * dx + dy * dy);
+
+                if (l > 25) {
+                    bc->v_anim += QPointF(- (dx *150) / l, - (dy * 150) / l);
+                    qDebug() << "Push "<< hc->info() << " <- " << ohc->info() << " vec=" << toS(vec) << " l=" << l;
+                }
+            }
+        }
+
+        // Forces pulling together
+        BranchItem *bi = bc->getBranchItem();
+        double weight = (bi->branchCount() + 1) * 10;
+
+        /*
+        for (int i = 0; i < bi->branchCount(); i++) {
+            BranchItem *obi = bi->getBranchNum(i);
+            BranchContainer *obc = obi->getBranchContainer();
+            ohc = obc->getHeadingContainer();
+
+            // Parent pulled by child
+            QPointF vec = hc->mapFromItem(ohc, ohc->pos());
+            bc->v_anim += QPointF( vec.x() / weight, vec.y() / weight);
+            qDebug() << "  Child Pull  from " << obi->headingText() << " to " << bi->headingText() << toS(vec);
+
+            // Child pulled by parent
+            vec = ohc->mapFromItem(hc, ohc->pos());
+            obc->v_anim += QPointF( vec.x() / weight, vec.y() / weight);
+            qDebug() << "  Parent Pull from " << bi->headingText() << " to " << obi->headingText() << toS(vec);
+        }
+        */
+
+        // Move MapCenters towards center
+        if (bi->depth() == 0) {
+            QPointF vec = hc->mapToScene(QPointF(0,0));
+            qreal dx = vec.x();
+            qreal dy = vec.y();
+            double l = sqrt( dx * dx + dy * dy);
+            if (l > 5) {
+                bc->v_anim += QPointF(- (dx ) / l, - (dy ) / l);
+                qDebug() << "Moving to center: " << bc->info() << "l=" << l;
+            }
+        }
+
+        // Ignore too small vector
+        if (qAbs(bc->v_anim.x()) < 0.1 && qAbs(bc->v_anim.y()) < 0.1)
+            bc->v_anim = QPointF(0, 0);
+    }
+
+    foreach (BranchContainer *bc, bc_list) {
+        // Show vector
+        bc->v.setLine(0, 0, bc->v_anim.x() * 10, bc->v_anim.y() * 10);
+
+        // Now actually move items
+        bc->setPos( bc->pos() + bc->v_anim);
+    }
+
+    reposition();
     return;
 
+
+    //mapEditor->testFunction1();
+    //return;
+
+    // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch())
             ((BranchItem*)ti)->getBranchContainer()->printStructure();
@@ -2018,11 +2105,7 @@ void VymModel::test()
     }
     return;
 
-
-    QString fileName = "/home/uwe/vym/branches/xml-streamreader/test.xml";
-    if (fileName.isEmpty())
-        return;
-
+    // Read bookmarks
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
@@ -2975,7 +3058,6 @@ void VymModel::setHideExport(bool b, TreeItem *ti)
                       .arg(getObjectName(ti))
                       .arg(r));
         emitDataChanged(ti);
-        emitSelectionChanged();
         reposition();
     }
 }
@@ -3007,7 +3089,6 @@ void VymModel::toggleTask()
             taskModel->deleteTask(task);
 
         emitDataChanged(selbi);
-        emitSelectionChanged();
         reposition();
     }
 }
@@ -4288,10 +4369,9 @@ bool VymModel::relinkTo(const QString &dstString, int num)
     if (selti->hasTypeBranch()) {
         BranchItem *selbi = (BranchItem *)selti;
 
-        if (relinkBranch(selbi, (BranchItem *)dst, num)) {
-            emitSelectionChanged();
+        if (relinkBranch(selbi, (BranchItem *)dst, num))
             return true;
-        }
+
     } else if (selti->hasTypeImage()) {
         if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
             return true;
@@ -5863,7 +5943,7 @@ void VymModel::reposition()
 
     repositionXLinks();
 
-    mapEditor->minimizeView();
+    // FIXME-2 needed? everytime? mapEditor->minimizeView();
     //qDebug() << "VM::reposition end"; // FIXME-2
 }
 
@@ -6144,8 +6224,6 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 only u
         }
     }
     reposition();
-
-    emitSelectionChanged();
 }
 
 void VymModel::sendSelection()
@@ -6304,18 +6382,6 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     connect(agent, SIGNAL(downloadFinished()), mainWindow,
             SLOT(downloadFinished()));
     QTimer::singleShot(0, agent, SLOT(execute()));
-}
-
-void VymModel::emitSelectionChanged(const QItemSelection &newsel)
-{
-    emit(selectionChanged(newsel, newsel)); // needed e.g. to update geometry in editor
-    sendSelection();
-}
-
-void VymModel::emitSelectionChanged()
-{
-    QItemSelection newsel = selModel->selection();
-    emitSelectionChanged(newsel);
 }
 
 void VymModel::setSelectionPenColor(QColor col)
@@ -6479,26 +6545,36 @@ void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)
 
 void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
+    // Set selection status in objects
+    // Temporary unscroll or rescroll as required
+
     //qDebug() << "VM::updateSel  newsel=" << newsel << " dsel=" << dsel;
     QModelIndex ix;
     MapItem *mi;
     BranchItem *bi;
     bool do_reposition = false;
+    // Unselect objects (if not part of selection)
     foreach (ix, dsel.indexes()) {
         mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->hasTypeBranch())
-            do_reposition =
-                do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
-        if (mi->getType() == TreeItem::XLink) {
-            Link *li = ((XLinkItem *)mi)->getLink();
-            XLinkObj *xlo = li->getXLinkObj();
-            if (xlo)
-                xlo->setSelection(XLinkObj::Empty);
 
-            do_reposition =
-                do_reposition || li->getBeginBranch()->resetTmpUnscroll();
-            do_reposition =
-                do_reposition || li->getEndBranch()->resetTmpUnscroll();
+        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image || mi->getType() == TreeItem::XLink) {
+            if (mi->hasTypeBranch()) {
+                ((BranchItem*)mi)->getBranchContainer()->unselect();
+                do_reposition =
+                    do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
+            }
+            if (mi->hasTypeImage())
+                ((ImageItem*)mi)->getImageContainer()->unselect();
+            if (mi->hasTypeXLink()) {
+                ((XLinkItem*)mi)->getXLinkObj()->unselect();
+                Link *li = ((XLinkItem *)mi)->getLink();
+                XLinkObj *xlo = li->getXLinkObj();
+
+                do_reposition =
+                    do_reposition || li->getBeginBranch()->resetTmpUnscroll();
+                do_reposition =
+                    do_reposition || li->getEndBranch()->resetTmpUnscroll();
+            }
         }
     }
 
@@ -6506,13 +6582,21 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
         mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch()) {
             bi = (BranchItem *)mi;
+            bi->getBranchContainer()->select();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
             }
         }
+        if (mi->hasTypeImage())
+            ((ImageItem*)mi)->getImageContainer()->select();
+
         if (mi->getType() == TreeItem::XLink) {
-            ((XLinkItem *)mi)->setSelection();
+            XLinkItem *xli = (XLinkItem*)mi;
+            xli->setSelectionType();
+            xli->getXLinkObj()->select(
+                mapDesign()->selectionPen(),
+                mapDesign()->selectionBrush());
 
             // begin/end branches need to be tmp unscrolled
             Link *li = ((XLinkItem *)mi)->getLink();
@@ -6527,7 +6611,22 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
                 do_reposition = true;
             }
         }
+        /* FIXME-2 ME::updateSelection - hide links of unselected objects
+         * also for unselect below
+        lmo = mi->getLMO(); // FIXME-X xlink does return nullptr
+        if (lmo)
+            mi->getLMO()->updateVisibility();
+        */
     }
+
+    // Show count of multiple selected items
+    int selCount = selModel->selection().indexes().count();
+    if (selCount > 1)
+        mainWindow->statusMessage(
+            tr("%1 items selected","Status message when selecting multiple items").arg(selCount));
+    else
+        mainWindow->statusMessage("");
+
     if (do_reposition)
         reposition();
 }

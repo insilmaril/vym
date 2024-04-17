@@ -32,7 +32,7 @@ class XLinkObj : public MapObj {
     QPointF getBeginPos();
     QPointF getEndPos();
     virtual void setEnd(QPointF);
-    void setSelection(SelectionType s);
+    void setSelectionType(SelectionType s);
     void updateGeometry();
     void updateVisibility();
     void setVisibility(bool);
@@ -43,6 +43,7 @@ class XLinkObj : public MapObj {
     void setC1(const QPointF &p);
     QPointF getC1();
     void setSelectedCtrlPoint(const QPointF &);
+    QRectF boundingRect();
 
     SelectionType couldSelect(const QPointF &);
     void select(const QPen &pen, const QBrush &brush);
@@ -72,7 +73,7 @@ class XLinkObj : public MapObj {
     QGraphicsEllipseItem *c1_ellipse;
     QGraphicsEllipseItem *selection_ellipse;
 
-    SelectionType curSelection;
+    SelectionType selectionTypeInt;
 
     BranchItem *visBranch; // the "visible" part of a partially scrolled li
     Link *link;

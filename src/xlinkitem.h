@@ -25,7 +25,7 @@ class XLinkItem : public MapItem {
     void updateXLink();
     XLinkObj *getXLinkObj();
     QColor headingColor();
-    void setSelection();
+    void setSelectionType();
     BranchItem *getPartnerBranch();
 
   private:

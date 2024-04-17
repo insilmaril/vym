@@ -60,15 +60,15 @@ QColor XLinkItem::headingColor()
     return link->getPen().color();
 }
 
-void XLinkItem::setSelection()
+void XLinkItem::setSelectionType()
 {
     if (link) {
         XLinkObj *xlo = getXLinkObj();
         if (xlo) {
             if (parentItem == link->getBeginBranch())
-                xlo->setSelection(XLinkObj::C0);
+                xlo->setSelectionType(XLinkObj::C0);
             else if (parentItem == link->getEndBranch())
-                xlo->setSelection(XLinkObj::C1);
+                xlo->setSelectionType(XLinkObj::C1);
         }
     }
 }

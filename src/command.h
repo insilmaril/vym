@@ -6,14 +6,10 @@
 
 class Command {
   public:
-    enum SelectionType {
-        Any,
-        TreeItem,
-        Branch,
-        BranchLike,
-        Image,
-        BranchOrImage,
-        XLink
+    enum ObjectType{
+        VymObject,
+        MapObject,
+        BranchObject
     };
     enum ParameterType {
         Undefined,
@@ -24,6 +20,15 @@ class Command {
         Int,
         String,
         Void};
+    enum SelectionType {
+        Any,
+        TreeItem,
+        Branch,
+        BranchLike,
+        Image,
+        BranchOrImage,
+        XLink
+    };
 
     Command(const QString &n, SelectionType st, ParameterType retType = Void);
     QString name();
@@ -37,6 +42,8 @@ class Command {
     QString typeToString(const ParameterType &type);
     bool isParameterOptional(int n);
     QString parameterComment(int n);
+    void setObjectType(const ObjectType &);
+    QString objectTypeName();
     void setComment(const QString&);
     QString comment();
 
@@ -46,6 +53,7 @@ class Command {
     SelectionType selectionTypeInt;
     QList<ParameterType> parTypes;
     ParameterType returnType;
+    ObjectType objectTypeInt;
     QList<bool> parOpts;
     QStringList parComments;
 };

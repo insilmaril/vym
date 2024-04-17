@@ -87,14 +87,14 @@ void XLinkObj::init()
     pen.setWidth(1);
     pen.setStyle(Qt::DashLine);
 
-    curSelection = Empty;
+    selectionTypeInt = Empty;
 
     setVisibility(true);
 }
 
 QPointF XLinkObj::getAbsPos()
 {
-    switch (curSelection) {
+    switch (selectionTypeInt) {
     case C0:
         return c0;
         break;
@@ -138,9 +138,9 @@ QPointF XLinkObj::getEndPos() { return endPos; }
 
 void XLinkObj::setEnd(QPointF p) { endPos = p; }
 
-void XLinkObj::setSelection(SelectionType s)
+void XLinkObj::setSelectionType(SelectionType s)
 {
-    curSelection = s;
+    selectionTypeInt = s;
     updateVisibility();
 }
 
@@ -275,7 +275,7 @@ void XLinkObj::updateVisibility()
         if (beginBC->isVisible() &&
             endBC->isVisible()) { // Both ends are visible
             visBranch = nullptr;
-            if (curSelection != Empty)
+            if (selectionTypeInt != Empty)
                 stateVis = FullShowControls;
             else
                 stateVis = Full;
@@ -396,7 +396,7 @@ QPointF XLinkObj::getC1() { return c1; }
 // FIXME-3 XLO::setSelection only needed in VM and XLI to "update" selection  
 void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
 {
-    switch (curSelection) {
+    switch (selectionTypeInt) {
         case C0:
             c0 = p - beginPos;
             break;
@@ -406,6 +406,18 @@ void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
         default:
             break; }
     updateGeometry();
+}
+
+QRectF XLinkObj::boundingRect() {
+    // Return bounding box in scene coordinates of selected ctrl point
+    switch (selectionTypeInt) {
+        case C0:
+            [[fallthrough]]; // intentional fallthrough
+        case C1:
+            return selection_ellipse->mapToScene(selection_ellipse->boundingRect()).boundingRect();
+        default:
+            return QRectF();
+    }
 }
 
 XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
@@ -418,14 +430,14 @@ XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
             v = c0_ellipse->pos() - p;
             d = Geometry::distance(c0_ellipse->pos(), p);
             if (d < d_max) {
-                setSelection(C0);
+                setSelectionType(C0);
                 return C0;
             }
 
             v = c1_ellipse->pos() - p;
             d = Geometry::distance(c1_ellipse->pos(), p);
             if (d < d_max) {
-                setSelection(C1);
+                setSelectionType(C1);
                 return C1;
             }
             break;
@@ -456,13 +468,9 @@ void XLinkObj::select(const QPen &pen, const QBrush &brush)
         qreal r = clickBorder * 2.5;
         selection_ellipse = scene->addEllipse(-r / 2 , -r / 2, r, r, pen, brush);
         selection_ellipse->setFlag(QGraphicsItem::ItemStacksBehindParent);
-    } else {
-        // Update colors
-        selection_ellipse->setPen(pen);
-        selection_ellipse->setBrush(brush);
     }
 
-    switch (curSelection) {
+    switch (selectionTypeInt) {
         case C0:
             selection_ellipse->setParentItem(c0_ellipse);
             break;
@@ -478,5 +486,6 @@ void XLinkObj::unselect()
 {
     delete selection_ellipse;
     selection_ellipse = nullptr;
+    setSelectionType(Empty);
 }
 

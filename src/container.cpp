@@ -149,12 +149,12 @@ QString Container::info (const QString &prefix)
         + getName()
         //+ QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
-        + QString(" scenePos: %1").arg(toS(scenePos(), 0))
-        + QString(" pos: %1").arg(toS(pos(), 0))
-        + QString(" rect: %1").arg(toS(rect(), 0))
+        //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
+        //+ QString(" pos: %1").arg(toS(pos(), 0))
+        //+ QString(" rect: %1").arg(toS(rect(), 0))
         //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
-        + QString(" Layout: %1").arg(getLayoutString())
+        //+ QString(" Layout: %1").arg(getLayoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
         ;
 }

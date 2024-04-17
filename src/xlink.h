@@ -11,7 +11,6 @@ class QGraphicsScene;
 class QString;
 
 class BranchItem;
-class MapObj;
 class VymModel;
 class XLinkItem;
 class XLinkObj;

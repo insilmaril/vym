@@ -6,8 +6,6 @@
 #include "treeitem.h"
 
 class Container;
-class MapObj;
-
 /*! /brief MapItem is used to maintain geometrical information of images and branches
  *  resp. their containers
 */
