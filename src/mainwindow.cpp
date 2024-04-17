@@ -599,18 +599,27 @@ void Main::setupAPI()
     c = new Command("version", Command::Any);
     vymCommands.append(c);
 
+    foreach (Command *c, vymCommands)
+        c->setObjectType(Command::VymObject);
+
     //
     // Below are the commands for a map
     //
 
+    // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper
+    QString DEPRECATED(" DEPRECATED - use branch command.");
+
     c = new Command("addBranch", Command::Branch);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("addBranchAt", Command::Branch);
+    c->setComment(DEPRECATED);
     c->addParameter(Command::Int, true, "Index of new branch");
     modelCommands.append(c);
 
     c = new Command("addBranchBefore", Command::Branch);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("addMapCenterAtPos", Command::Any);
@@ -707,6 +716,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getHeadingPlainText", Command::TreeItem, Command::String);
+    c->setComment(DEPRECATED + " use Branch::headingText()");
     modelCommands.append(c);
 
     c = new Command("getHeadingXML", Command::TreeItem, Command::String);
@@ -805,6 +815,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("isScrolled", Command::Branch, Command::Bool);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("loadImage", Command::Branch);
@@ -862,6 +873,7 @@ void Main::setupAPI()
     c = new Command("relinkTo",
                     Command::TreeItem,
                     Command::Bool); // FIXME different number of parameters for Image or Branch
+    c->setComment(DEPRECATED);
     c->addParameter(Command::String, false, "Selection string of parent");
     c->addParameter(Command::Int, false, "Index position");
     c->addParameter(Command::Double, true, "Position x");
@@ -901,6 +913,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("scroll", Command::Branch);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("select", Command::Any, Command::Bool);
@@ -1159,6 +1172,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("toggleScroll", Command::Branch);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("toggleTarget", Command::Branch);
@@ -1171,6 +1185,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("unscroll", Command::Branch, Command::Bool);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("unscrollChildren", Command::Branch);
@@ -1185,6 +1200,9 @@ void Main::setupAPI()
 
     c = new Command("xlinkCount", Command::Branch, Command::Int);
     modelCommands.append(c);
+
+    foreach (Command *c, modelCommands)
+        c->setObjectType(Command::MapObject);
 
 
     //
@@ -1261,6 +1279,10 @@ void Main::setupAPI()
     c->setComment("Unset flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag to unset");
     branchCommands.append(c);
+
+    foreach (Command *c, branchCommands)
+        c->setObjectType(Command::BranchObject);
+
 }
 
 void Main::cloneActionMapEditor(QAction *a, QKeySequence ks)
@@ -4717,7 +4739,7 @@ void Main::fileExportLast()
         m->exportLast();
 }
 
-bool Main::fileCloseMap(int i)
+bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed, if readonly is because of unsupported  version?
 {
     VymModel *m;
     VymView *vv;
@@ -4753,7 +4775,7 @@ bool Main::fileCloseMap(int i)
 
         tabWidget->removeTab(i);
 
-        // Destroy stuff, order is important
+        // Destroy stuff, order is important    // FIXME-2 Cleanup NoteEditor etc.
         delete (m->getMapEditor());
         delete (vv);
         delete (m);
@@ -7218,22 +7240,24 @@ void Main::helpScriptingCommands()
     ShowTextDialog dia;
     dia.useFixedFont(true);
     QString s;
-    s += "Available commands in vym:\n";
-    s += "=========================:\n";
+    s  = "Available commands in vym\n";
+    s += "=========================\n";
     foreach (Command *c, vymCommands) {
         s += c->description();
         s += "\n";
     }
+    s += "\n";
 
-    s = "Available commands in map:\n";
-    s += "=========================:\n";
+    s += "Available commands in map\n";
+    s += "=========================\n";
     foreach (Command *c, modelCommands) {
         s += c->description();
         s += "\n";
     }
+    s += "\n";
 
-    s = "Available commands of a branch:\n";
-    s += "=============================:\n";
+    s += "Available commands of a branch\n";
+    s += "==============================\n";
     foreach (Command *c, branchCommands) {
         s += c->description();
         s += "\n";

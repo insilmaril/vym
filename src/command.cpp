@@ -13,17 +13,19 @@ QString Command::name() { return nameInt; }
 QString Command::description()
 {
     QString s;
-    s = QString("Command: \"%1\"\n").arg(nameInt);
+    s  = QString("        Command: \"%1\"\n").arg(nameInt);
+    s += QString("         Object: %1\n").arg(objectTypeName());
     s += QString("        Comment: %1\n").arg(commentInt);
-    s += QString("  SelectionType: %1\n").arg(selectionTypeName());
+    if (objectTypeInt == MapObject)
+        s += QString("  SelectionType: %1\n").arg(selectionTypeName());
     s += QString("    Return type: %1\n").arg(typeToString(returnType));
     s += QString("     Parameters: %1\n").arg(parameterCount());
     // s+=QString(" Parameters: %1\n").arg(parameterCount() );
     for (int i = 0; i < parameterCount(); i++) {
-        s += QString("    Parameter %1:\n").arg(i + 1);
-        s += QString("        Comment: %1\n").arg(parameterComment(i));
-        s += QString("           Type: %1\n").arg(typeToString(parameterType(i)));
-        s += QString("       Optional: ");
+        s += QString("       Parameter #%1:\n").arg(i + 1);
+        s += QString("             Comment: %1\n").arg(parameterComment(i));
+        s += QString("                Type: %1\n").arg(typeToString(parameterType(i)));
+        s += QString("  Param. is optional: ");
         isParameterOptional(i) ? s += "yes\n" : s += "No\n";
     }
     return s;
@@ -130,6 +132,23 @@ QString Command::parameterComment(int n)
     }
     qDebug() << "Command::parameterComment n out of range";
     return QString();
+}
+
+void  Command::setObjectType(const ObjectType &ot) {
+    objectTypeInt = ot;
+}
+
+QString  Command::objectTypeName() {
+    switch (objectTypeInt) {
+    case VymObject:
+        return "Vym program";
+    case MapObject:
+        return "Vym map";
+    case BranchObject:
+        return "Branch in a map";
+    default:
+        return "Undefined";
+    }
 }
 
 void  Command::setComment(const QString &s) {
