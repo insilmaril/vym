@@ -261,9 +261,5 @@ class MapEditor : public QGraphicsView {
   public slots:
     void updateData(const QModelIndex &);                 // update data
     void togglePresentationMode();
-    void updateSelection(QItemSelection, QItemSelection); // update selection
-                                                          //
-  public:  
-    void updateSelection(); // update selection after selection style changed
 };
 #endif

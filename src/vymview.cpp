@@ -157,7 +157,7 @@ void VymView::updateColors()
         "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
         */
 
-    mapEditor->updateSelection();
+    // FIXME-0 mapEditor->updateSelection();
 
     MapDesign *mapDesign = model->mapDesign();
 
@@ -202,7 +202,6 @@ void VymView::changeSelection(const QItemSelection &newsel,
     model->updateSelection(newsel, desel);
     mainWindow->changeSelection(model, newsel, desel);
     mainWindow->updateDockWidgetTitles(model);
-    mapEditor->updateSelection(newsel, desel);
 
     showSelection(false, false);
 }

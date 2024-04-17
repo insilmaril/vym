@@ -6553,21 +6553,28 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
     MapItem *mi;
     BranchItem *bi;
     bool do_reposition = false;
+    // Unselect objects (if not part of selection)
     foreach (ix, dsel.indexes()) {
         mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->hasTypeBranch())
-            do_reposition =
-                do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
-        if (mi->getType() == TreeItem::XLink) {
-            Link *li = ((XLinkItem *)mi)->getLink();
-            XLinkObj *xlo = li->getXLinkObj();
-            if (xlo)
-                xlo->setSelection(XLinkObj::Empty);
 
-            do_reposition =
-                do_reposition || li->getBeginBranch()->resetTmpUnscroll();
-            do_reposition =
-                do_reposition || li->getEndBranch()->resetTmpUnscroll();
+        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image || mi->getType() == TreeItem::XLink) {
+            if (mi->hasTypeBranch()) {
+                ((BranchItem*)mi)->getBranchContainer()->unselect();
+                do_reposition =
+                    do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
+            }
+            if (mi->hasTypeImage())
+                ((ImageItem*)mi)->getImageContainer()->unselect();
+            if (mi->hasTypeXLink()) {
+                ((XLinkItem*)mi)->getXLinkObj()->unselect();
+                Link *li = ((XLinkItem *)mi)->getLink();
+                XLinkObj *xlo = li->getXLinkObj();
+
+                do_reposition =
+                    do_reposition || li->getBeginBranch()->resetTmpUnscroll();
+                do_reposition =
+                    do_reposition || li->getEndBranch()->resetTmpUnscroll();
+            }
         }
     }
 
@@ -6575,13 +6582,21 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
         mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch()) {
             bi = (BranchItem *)mi;
+            bi->getBranchContainer()->select();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
             }
         }
+        if (mi->hasTypeImage())
+            ((ImageItem*)mi)->getImageContainer()->select();
+
         if (mi->getType() == TreeItem::XLink) {
-            ((XLinkItem *)mi)->setSelection();
+            XLinkItem *xli = (XLinkItem*)mi;
+            xli->setSelectionType();
+            xli->getXLinkObj()->select(
+                mapDesign()->selectionPen(),
+                mapDesign()->selectionBrush());
 
             // begin/end branches need to be tmp unscrolled
             Link *li = ((XLinkItem *)mi)->getLink();
@@ -6596,7 +6611,22 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
                 do_reposition = true;
             }
         }
+        /* FIXME-2 ME::updateSelection - hide links of unselected objects
+         * also for unselect below
+        lmo = mi->getLMO(); // FIXME-X xlink does return nullptr
+        if (lmo)
+            mi->getLMO()->updateVisibility();
+        */
     }
+
+    // Show count of multiple selected items
+    int selCount = selModel->selection().indexes().count();
+    if (selCount > 1)
+        mainWindow->statusMessage(
+            tr("%1 items selected","Status message when selecting multiple items").arg(selCount));
+    else
+        mainWindow->statusMessage("");
+
     if (do_reposition)
         reposition();
 }
