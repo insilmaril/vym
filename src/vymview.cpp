@@ -157,7 +157,7 @@ void VymView::updateColors()
         "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
         */
 
-    // FIXME-0 mapEditor->updateSelection();
+    // FIXME-3 mapEditor->updateSelection();    // Meanwhile moved to VymModel
 
     MapDesign *mapDesign = model->mapDesign();
 
