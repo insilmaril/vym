@@ -6847,7 +6847,7 @@ void VymModel::emitNoteChanged(TreeItem *ti)
 void VymModel::emitDataChanged(TreeItem *ti)
 {
     //qDebug() << "VM::emitDataChanged ti=" << ti;
-    if (ti) { // FIXME-0 needed to update heading while reposition blocked  && !repositionBlocked) {
+    if (ti) {
         QModelIndex ix = index(ti);
         emit(dataChanged(ix, ix));
 
