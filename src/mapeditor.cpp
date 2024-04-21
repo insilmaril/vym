@@ -1250,7 +1250,9 @@ TreeItem *MapEditor::getItemBelow(TreeItem *selti)
     return nullptr;
 }
 
-BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
+BranchItem *MapEditor::getLeftBranch(TreeItem *ti)  // FIXME-2 Adapt navigation to support floating layouts
+                                                    // up/down/left/right - build lists to neares branch in 
+                                                    // each direction.  See issue #103
 {
     if (!ti)
         return nullptr;
