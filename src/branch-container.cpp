@@ -120,9 +120,10 @@ void BranchContainer::init()
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
 
-    // Experimenting only
+    // Elastic layout experiments FIXME-2
     v.setParentItem(this);
     v.setPen(QPen(Qt::red));
+    v.setVisible(false);
 
     /* Uncomment for testing
     QGraphicsEllipseItem *center = new QGraphicsEllipseItem (0, 0, 5, 5, this);
@@ -386,6 +387,10 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
     if (branchesContainerLayout != FloatingBounded && imagesContainerLayout != FloatingBounded) {
         // a) No FloatingBounded images or branches
         deleteOuterContainer();
+        if (listContainer)
+            innerContainer->setLayout(Vertical);
+        else
+            innerContainer->setLayout(Horizontal);
     } else if (branchesContainerLayout == FloatingBounded && imagesContainerLayout != FloatingBounded) {
         // b) Only branches are FloatingBounded
         deleteOuterContainer();
@@ -662,7 +667,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
                 default: // Shouldn't happen // FIXME-1 BC::uplinkPos - happens, if mapcenter is moved
-                    qWarning() << "BC::upLinkPos  framed undefined orientation in " << info();
+                    //qWarning() << "BC::upLinkPos  framed undefined orientation in " << info();
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->bottomCenter());
             }
@@ -1222,7 +1227,7 @@ QString BranchContainer::saveFrame()
     return r;
 }
 
-void BranchContainer::updateBranchesContainerLayout()
+void BranchContainer::updateBranchesContainerLayout()   // FIXME-0 mapDesign should move to VM::applyDesign
 {
     // Set container layouts
     if (branchItem && branchesContainerAutoLayout)
@@ -1234,16 +1239,16 @@ void BranchContainer::updateBranchesContainerLayout()
 }
 
 
-void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // FIXME-0 needs to go to VymModel::applyDesign to allow undo/redo
+void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // FIXME-0 moved to VymModel::applyDesign already
 {
 
     uint depth = branchItem->depth();
     MapDesign *md = branchItem->mapDesign();
 
-    // qDebug() << "BC::updateStyles mode=" << MapDesign::updateModeString(updateMode) << " of " << info(); // FIXME-4 testing
-                                                                            //
+    //qDebug() << "BC::updateStyles mode=" << MapDesign::updateModeString(updateMode) << " of " << info(); // FIXME-4 testing
+
     // Set heading color (might depend on parentBranch, so pass the branchItem)
-    md->updateBranchHeadingColor(updateMode, branchItem, depth);
+    //md->updateBranchHeadingColor(updateMode, branchItem, depth);
 
     // bulletpoint color should match heading color
     if (bulletPointContainer) {    // FIXME-3 duplicated code in updateChildrenStructure
@@ -1253,7 +1258,7 @@ void BranchContainer::updateStyles(const MapDesign::UpdateMode &updateMode) // F
     }
 
     // Set frame
-    md->updateFrames(updateMode, this, depth);  // FIXME-1 No check for AutoDesign? Also: No savestate when e.g. relinking or toggling autodesign
+    //md->updateFrames(updateMode, this, depth);
 
     updateBranchesContainerLayout();
 

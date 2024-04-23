@@ -154,7 +154,7 @@ QString Container::info (const QString &prefix)
         //+ QString(" rect: %1").arg(toS(rect(), 0))
         //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
-        //+ QString(" Layout: %1").arg(getLayoutString())
+        + QString(" Layout: %1").arg(getLayoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
         ;
 }

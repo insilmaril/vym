@@ -39,7 +39,7 @@ class ImageItem : public MapItem {
     QString getOriginalFilename();
     QString getUniqueFilename();
     bool saveImage(const QString &fn);
-    QString saveToDir(const QString &, const QString &);
+    QString saveToDir(const QString &tmpdir, const QString &prefix);
 };
 
 #endif

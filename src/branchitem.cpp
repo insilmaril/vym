@@ -238,7 +238,6 @@ void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
     branchContainer->getHeadingContainer()->setColor(color);
-    branchContainer->updateStyles(MapDesign::StyleChanged);
 }
 
 void BranchItem::updateTaskFlag()

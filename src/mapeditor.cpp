@@ -730,7 +730,7 @@ void MapEditor::minimizeView() {
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
-    qDebug() << "ME::minimizeView";
+    //qDebug() << "ME::minimizeView";   // FIXME-2 check when and how often minimizeView is called
 }
 
 void MapEditor::print()
