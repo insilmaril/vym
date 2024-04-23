@@ -2003,6 +2003,15 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
+    // Print item structure
+    foreach (TreeItem *ti, getSelectedItems()) {
+        if (ti->hasTypeBranch())
+            ((BranchItem*)ti)->getBranchContainer()->printStructure();
+        if (ti->hasTypeImage())
+            ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
+    }
+    return;
+
     // Do animation step. All BranchContainers
     QList <BranchContainer*> bc_list;
 
@@ -2095,15 +2104,6 @@ void VymModel::test()
 
     //mapEditor->testFunction1();
     //return;
-
-    // Print item structure
-    foreach (TreeItem *ti, getSelectedItems()) {
-        if (ti->hasTypeBranch())
-            ((BranchItem*)ti)->getBranchContainer()->printStructure();
-        if (ti->hasTypeImage())
-            ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
-    }
-    return;
 
     // Read bookmarks
     QFile file(fileName);
@@ -3964,8 +3964,7 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
     if (bc) {
         bc->setPos(absPos);
 
-        if (!updateStylesBlocked)
-            bc->updateStyles(MapDesign::CreatedByUser);
+        applyDesign(MapDesign::CreatedByUser, false, newbi);
     }
 
     return newbi;
@@ -4012,10 +4011,6 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Create Container
     BranchContainer *bc = newbi->createBranchContainer(getScene());
 
-    // Apply default design
-    bc->getHeadingContainer()->setColumnWidth(mapDesignInt->headingColumnWidth(newbi->depth()));
-    bc->getHeadingContainer()->setFont(mapDesignInt->font());
-
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
 
@@ -4052,7 +4047,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         }
 
         // Required to initialize styles
-        newbi->getBranchContainer()->updateStyles(MapDesign::CreatedByUser);
+        applyDesign(MapDesign::CreatedByUser, false, newbi);
     }
     return newbi;
 }
@@ -5932,7 +5927,7 @@ void VymModel::reposition()
     if (repositionBlocked)
         return;
 
-    qDebug() << "VM::reposition start";
+    qDebug() << "VM::reposition start"; // FIXME-2 check when and how often reposition  is called
 
     // Reposition containers
     BranchItem *bi;
@@ -5959,23 +5954,19 @@ MapDesign* VymModel::mapDesign()
     return mapDesignInt;
 }
 
-void VymModel::applyDesign(
+void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         MapDesign::UpdateMode updateMode,
         bool recursive,
         TreeItem *ti)
 {
-    // FIXME-2 VM::updateDesign  testing only:
-    QString h;
-    if (ti)
-        h = ti->headingPlain();
-    else
-        h = "nullptr";
-
-    qDebug() << "VM::updateDesign  mode=" << MapDesign::updateModeString(updateMode) << " of " << h;
+    qDebug() << "VM::applyDesign  mode="
+        << MapDesign::updateModeString(updateMode)
+        << " of " << headingText(ti)
+        << " recurse: " << recursive;
 
     QList<BranchItem *> selbis;
     if (ti == rootItem) {
-        // Loop over all branches
+        // For rootItem loop over all MapCenters
         recursive = true;
         for (int i = 0; i < rootItem->branchCount(); ++i)
             selbis << rootItem->getBranchNum(i);
@@ -5988,20 +5979,56 @@ void VymModel::applyDesign(
 
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
+        int depth = selbi->depth();
         BranchContainer *bc = selbi->getBranchContainer();
 
         // Color of heading
-        QColor col = mapDesignInt->branchHeadingColor(
+        QColor col = mapDesignInt->headingColor(
                         updateMode,
                         selbi,
                         updateRequired);
+
         if (updateRequired)
             colorBranch(col, selbi);
+
+        // Frames   // FIXME-2 mapDesign missing for penWidth
+        if (updateMode == MapDesign::CreatedByUser ||
+                (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(true, depth))) {
+            bc->setFrameType(true, mapDesignInt->frameType(true, depth));
+            bc->setFrameBrushColor(true, mapDesignInt->frameBrushColor(true, depth));
+            bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
+        }
+        if (updateMode == MapDesign::CreatedByUser ||
+                (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
+            bc->setFrameType(false, mapDesignInt->frameType(false, depth));
+            bc->setFrameBrushColor(false, mapDesignInt->frameBrushColor(false, depth));
+            bc->setFramePenColor(false, mapDesignInt->framePenColor(false, depth));
+        }
+
+        // Column width and font
+        if (updateMode & MapDesign::CreatedByUser) {
+            bc->getHeadingContainer()->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
+            bc->getHeadingContainer()->setFont(mapDesignInt->font());
+        }
 
         if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
             qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
             bc->updateUpLink();
         }
+
+
+        // Layouts
+        // FIXME-0 applyDesgin - updateBranchesContainerLayout
+        if (bc->branchesContainerAutoLayout) {
+//            setBranchesLayout("Auto", selbi); // FIXME-0 that would be an endless loop...
+                qDebug() << "VM::applyDesign  bc->setBCLayout ...";            
+                bc->setBranchesContainerLayout(
+                        mapDesignInt->branchesContainerLayout(selbi->depth()));
+                emitDataChanged(selbi);
+        }
+
+        // FIXME-0 applyDesgin - updateImagesContainerLayout
+
 
         // Go deeper, if required
         if (recursive)
@@ -6010,6 +6037,7 @@ void VymModel::applyDesign(
                     updateMode,
                     recursive,
                     selbi->getBranchNum(i));
+        reposition();   // FIXME-0 Not for all BIs when done recursively
     }
 }
 
