@@ -5927,7 +5927,7 @@ void VymModel::reposition()
     if (repositionBlocked)
         return;
 
-    qDebug() << "VM::reposition start"; // FIXME-2 check when and how often reposition  is called
+    //qDebug() << "VM::reposition start"; // FIXME-2 check when and how often reposition  is called
 
     // Reposition containers
     BranchItem *bi;
@@ -6018,16 +6018,15 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
 
         // Layouts
-        // FIXME-0 applyDesgin - updateBranchesContainerLayout
+        // FIXME-0 applyDesign - updateBranchesContainerLayout
         if (bc->branchesContainerAutoLayout) {
 //            setBranchesLayout("Auto", selbi); // FIXME-0 that would be an endless loop...
-                qDebug() << "VM::applyDesign  bc->setBCLayout ...";            
                 bc->setBranchesContainerLayout(
                         mapDesignInt->branchesContainerLayout(selbi->depth()));
                 emitDataChanged(selbi);
         }
 
-        // FIXME-0 applyDesgin - updateImagesContainerLayout
+        // FIXME-0 applyDesign - updateImagesContainerLayout
 
 
         // Go deeper, if required

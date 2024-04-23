@@ -666,10 +666,10 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                 case LeftOfParent:
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
-                default: // Shouldn't happen // FIXME-1 BC::uplinkPos - happens, if mapcenter is moved
+                default: // mapcenter is moved, use bottomLeft corner
                     //qWarning() << "BC::upLinkPos  framed undefined orientation in " << info();
                     return ornamentsContainer->mapToScene(
-                            ornamentsContainer->bottomCenter());
+                            ornamentsContainer->bottomLeft());
             }
         }
     }
