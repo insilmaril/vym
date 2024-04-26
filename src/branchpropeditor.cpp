@@ -118,7 +118,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     branchContainer = nullptr;
     imageItem = nullptr;
 
-    qDebug() << "BPE:.setItem start";
     if (!ti)
         ui.tabWidget->setEnabled(false);
     else if (ti->hasTypeBranch()) {
@@ -139,7 +138,6 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         imageItem = (ImageItem*)ti;
 
     updateControls();
-    qDebug() << "BPE:.setItem end";
 }
 
 void BranchPropertyEditor::updateControls()

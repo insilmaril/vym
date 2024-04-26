@@ -59,6 +59,7 @@ void BranchContainer::init()
     imagesContainerAutoLayout = true;
 
     branchesContainerAutoLayout = true;
+    branchesContainerLayoutInt = Container::Vertical;
 
     scrollOpacity = 1;
 
@@ -978,7 +979,6 @@ qreal BranchContainer::scaleSubtree()
 
 void BranchContainer::setColor(const QColor &col)
 {
-    qDebug() << "BC::setCOl of " << info();
     headingContainer->setColor(col);
     if (bulletPointContainer) // FIXME-3 duplicated code in updateChildrenStructure
         bulletPointContainer->setColor(col);
