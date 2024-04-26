@@ -44,7 +44,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     qreal scrollOpacity;
 
   public:
-    void addToBranchesContainer(Container *c);
+    void addToBranchesContainer(BranchContainer *bc);
 
   private:
     void updateImagesContainer();       //! Remove unused containers and add needed ones
@@ -77,12 +77,12 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     bool imagesContainerAutoLayout;
     void setImagesContainerLayout(const Layout &l);
-    Container::Layout getImagesContainerLayout();
+    Container::Layout imagesContainerLayout();
     bool hasFloatingImagesLayout(); //! Checks, if children images are or should be floating
 
     bool branchesContainerAutoLayout;
     void setBranchesContainerLayout(const Layout &l);
-    Container::Layout getBranchesContainerLayout();
+    Container::Layout branchesContainerLayout();
     bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
     void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
     void setBranchesContainerBrush(const QBrush &b);
@@ -111,6 +111,8 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     qreal scaleHeading();
     void setScaleSubtree(const qreal &);
     qreal scaleSubtree();
+
+    void setColor(const QColor &);
 
   protected:
     bool columnWidthAutoDesignInt;
@@ -156,9 +158,6 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void updateBranchesContainerLayout();
 
   public:
-    /*! Update styles (frame, links, fonts, colors, ...) */
-    void updateStyles(const MapDesign::UpdateMode &);
-
     /*! Update flags and heading */
     void updateVisuals();
 
@@ -173,8 +172,8 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     // Save layout, alignment and brush of children containers 
     // even before containers are created on demand
-    Layout imagesContainerLayout;
-    Layout branchesContainerLayout;
+    Layout imagesContainerLayoutInt;
+    Layout branchesContainerLayoutInt;
     HorizontalAlignment branchesContainerHorizontalAlignment;
     QBrush branchesContainerBrush;
 

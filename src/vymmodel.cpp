@@ -2974,29 +2974,38 @@ void VymModel::resetSelectionSize()
         setScale(1, false);
 }
 
-void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save: positions, auto, layout!)
 {
+    qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
+    bool repositionRequired = false;
     foreach (BranchItem *selbi, selbis) {
+        Container::Layout layout;
         if (selbi) {
             bc = selbi->getBranchContainer();
 
             if (s == "Auto") {
                 bc->branchesContainerAutoLayout = true;
-                bc->setBranchesContainerLayout(
-                        mapDesignInt->branchesContainerLayout(selbi->depth()));
+                layout = mapDesignInt->branchesContainerLayout(selbi->depth());
+                if (bc->branchesContainerLayout() != layout) {
+                    bc->setBranchesContainerLayout(layout);
+                    repositionRequired = true;
+                }
             } else {
                 bc->branchesContainerAutoLayout = false;
-                Container::Layout layout = Container::getLayoutFromString(s);
-                if (layout != Container::UndefinedLayout)
+                layout = Container::getLayoutFromString(s);
+                if (layout != Container::UndefinedLayout) {
                     bc->setBranchesContainerLayout(layout);
+                    repositionRequired = true;
+                }
             }
         }
     }
 
     // Create and delete containers, update their structure
-    reposition();
+    if (repositionRequired)
+        reposition();
 
     // Links might have been added or removed
     foreach (BranchItem *selbi, selbis)
@@ -5927,7 +5936,7 @@ void VymModel::reposition()
     if (repositionBlocked)
         return;
 
-    //qDebug() << "VM::reposition start"; // FIXME-2 check when and how often reposition  is called
+    qDebug() << "VM::reposition start"; // FIXME-2 check when and how often reposition  is called
 
     // Reposition containers
     BranchItem *bi;
@@ -6018,15 +6027,17 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
 
         // Layouts
-        // FIXME-0 applyDesign - updateBranchesContainerLayout
         if (bc->branchesContainerAutoLayout) {
-//            setBranchesLayout("Auto", selbi); // FIXME-0 that would be an endless loop...
                 bc->setBranchesContainerLayout(
                         mapDesignInt->branchesContainerLayout(selbi->depth()));
                 emitDataChanged(selbi);
         }
 
-        // FIXME-0 applyDesign - updateImagesContainerLayout
+        if (bc->imagesContainerAutoLayout) {
+                bc->setImagesContainerLayout(
+                        mapDesignInt->imagesContainerLayout(selbi->depth()));
+                emitDataChanged(selbi);
+        }
 
 
         // Go deeper, if required

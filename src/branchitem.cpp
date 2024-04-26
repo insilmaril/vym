@@ -158,11 +158,11 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     // Free positioning of children
     if (!branchContainer->branchesContainerAutoLayout)
         // Save the manually set layout for children branches
-        attr += attribute("branchesLayout", branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
+        attr += attribute("branchesLayout", branchContainer->getLayoutString(branchContainer->branchesContainerLayout()));
 
     if (!branchContainer->imagesContainerAutoLayout)
         // Save the manually set layout for children Images
-        attr += attribute("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->getImagesContainerLayout()));
+        attr += attribute("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->imagesContainerLayout()));
 
     if (!branchContainer->rotationsAutoDesign()) {
         attr += attribute("rotHeading", QString("%1").arg(branchContainer->rotationHeading()));
@@ -237,7 +237,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
-    branchContainer->getHeadingContainer()->setColor(color);
+    branchContainer->setColor(color);
 }
 
 void BranchItem::updateTaskFlag()
