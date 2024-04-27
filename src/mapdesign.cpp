@@ -476,7 +476,7 @@ void MapDesign::setSelectionBrush(const QBrush &b)
     selectionBrushInt = b;
 }
 
-int MapDesign::rotationHeading(const UpdateMode &updateMode, int depth)
+int MapDesign::rotationHeading(const UpdateMode &updateMode, int depth) // FIXME-2 updateMode not used in methods here
 {
     return rotationHeadingInt.tryAt(depth);
 }

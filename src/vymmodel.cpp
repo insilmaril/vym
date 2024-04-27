@@ -2005,8 +2005,13 @@ void VymModel::test()
 {
     // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
-        if (ti->hasTypeBranch())
-            ((BranchItem*)ti)->getBranchContainer()->printStructure();
+        if (ti->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
+            bc->printStructure();
+            qDebug() << "Scale heading = " << bc->scaleHeading();
+            qDebug() << "Scale subtree = " << bc->scaleSubtree();
+            qDebug() << "Font          = " << bc->getHeadingContainer()->font();
+        }
         if (ti->hasTypeImage())
             ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
     }
@@ -5999,6 +6004,13 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
         if (updateRequired)
             colorBranch(col, selbi);
+
+        // Scaling
+        if (updateMode == MapDesign::CreatedByUser ) { // FIXME-0 new branches too big
+                //(updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateScaleHeadingWhenRelinking(true, depth))) {
+
+            bc->setScaleHeading(mapDesignInt->scalingHeading(MapDesign::AutoDesign, depth));
+        }
 
         // Frames   // FIXME-2 mapDesign missing for penWidth
         if (updateMode == MapDesign::CreatedByUser ||

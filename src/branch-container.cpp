@@ -240,7 +240,6 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         branchesContainer->containerType = Container::BranchesContainer;
         branchesContainer->zPos = Z_BRANCHES;
         branchesContainer->setLayout(branchesContainerLayoutInt);
-        qDebug () << "BC::addToBC " << info() << " creating bC with layout " << Container::getLayoutString(branchesContainerLayoutInt);
 
         updateVisibilityOfChildren();   // FIXME-2 needed?
 
@@ -1238,17 +1237,6 @@ QString BranchContainer::saveFrame()
     if (outerFrame && outerFrame->frameType() != FrameContainer::NoFrame)
         r += outerFrame->saveFrame();
     return r;
-}
-
-void BranchContainer::updateBranchesContainerLayout()   // FIXME-0 mapDesign should move to VM::applyDesign
-{
-    // Set container layouts
-    if (branchItem && branchesContainerAutoLayout)
-        setBranchesContainerLayout(
-            branchItem->mapDesign()->branchesContainerLayout(
-                branchItem->depth()));
-    else
-        setBranchesContainerLayout(branchesContainerLayoutInt);
 }
 
 void BranchContainer::updateVisuals()

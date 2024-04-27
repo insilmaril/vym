@@ -154,9 +154,6 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     QString saveFrame();
 
-  private:
-    void updateBranchesContainerLayout();
-
   public:
     /*! Update flags and heading */
     void updateVisuals();
