@@ -112,7 +112,7 @@ VymModel::~VymModel()
     // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor = nullptr;
     repositionBlocked = true;
-    updateStylesBlocked = true;
+    updateStylesBlocked = true; // FIXME-0 not used anywhere
     autosaveTimer->stop();
     fileChangedTimer->stop();
 
@@ -3694,10 +3694,15 @@ QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bo
 
 BranchItem *VymModel::createBranch(BranchItem *dst)
 {
+    BranchItem *newbi;
     if (!dst || dst == rootItem)
-        return addMapCenterAtPos(QPointF(0, 0));
+        newbi = addMapCenterAtPos(QPointF(0, 0));
     else
-        return addNewBranchInt(dst, -2);
+        newbi = addNewBranchInt(dst, -2);
+
+    // Set default design styles, e.g. font
+    applyDesign(MapDesign::CreatedByUser, false, newbi);// FIXME-0 better MD::CreatedWhileLoading)
+    return newbi;
 }
 
 ImageItem *VymModel::createImage(BranchItem *dst)
@@ -5143,7 +5148,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
         QJsonObject issue = issues[i].toObject();
         JiraIssue ji(issue);
 
-        BranchItem *bi = createBranch(pbi);
+        BranchItem *bi = addNewBranchInt(pbi, -2);  // FIXME-2 check, used to be createBranch(pbi);
         if (bi) {
             QString keyName = ji.key();
             if (ji.isFinished())    {
@@ -6004,6 +6009,11 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
         if (updateRequired)
             colorBranch(col, selbi);
+
+        // Font
+        if (updateMode == MapDesign::CreatedByUser ) {
+            bc->getHeadingContainer()->setFont(mapDesignInt->font());
+        }
 
         // Scaling
         if (updateMode == MapDesign::CreatedByUser ) { // FIXME-0 new branches too big

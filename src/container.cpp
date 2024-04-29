@@ -156,6 +156,7 @@ QString Container::info (const QString &prefix)
         //+ QString(" vis: %1").arg(isVisible());
         + QString(" Layout: %1").arg(getLayoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
+        + QString(" Scale: %1").arg(scale())
         ;
 }
 

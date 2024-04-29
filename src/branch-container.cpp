@@ -294,8 +294,9 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
-void BranchContainer::updateTransformations()
+void BranchContainer::updateTransformations()   // FIXME-0 called multiple times when adding a branch or during load
 {
+    qDebug() << "BC::updateTrafos of " << info() << "  scAD=" <<scalingAutoDesignInt;
     MapDesign *md = nullptr;
     int depth = 0;
     if (branchItem)  {
@@ -307,7 +308,7 @@ void BranchContainer::updateTransformations()
     if (!md)
         return;
 
-    // Reset transformations, if AutoDesign is used
+    // Reset transformations, if AutoDesign is used // FIXME-000 move to VymModel
     if (rotationsAutoDesignInt) {
         rotationHeadingInt = md->rotationHeading(MapDesign::AutoDesign, depth);
         rotationSubtreeInt = md->rotationSubtree(MapDesign::AutoDesign, depth);
@@ -326,7 +327,7 @@ void BranchContainer::updateTransformations()
     // Scale of heading
     headingContainer->setScale(scaleHeadingInt);
 
-    // Rotation of outer container or outerFrame
+    // Rotation and scaling of subtree
     if (outerFrame) {
         outerFrame->setRotation(rotationSubtreeInt);
         outerFrame->setScale(scaleSubtreeInt);
@@ -352,6 +353,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
 // When a map with list layout is loaded and 
 // layout is switched to e.g. Vertical, the links 
 // are not drawn. Has to be saved/loaded first
+// Also: bullet points have bottomlines
 {
     if (branchesContainerLayoutInt == List) {
         if (!listContainer) {
