@@ -87,6 +87,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "  <ul>"
             "    <li>Edward Wang: adding close tab buttons</li>"
             "    <li>p0llox (Pierre): various patches for Debian packaging</li>"
+            "    <li>Markus Seilnacht: Markdown improvements</li>"
             "  </ul>"
             "</li>"
             "<li> Patches in previous vym versions"
