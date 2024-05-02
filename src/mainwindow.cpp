@@ -4739,7 +4739,7 @@ void Main::fileExportLast()
         m->exportLast();
 }
 
-bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed, if readonly is because of unsupported  version?
+bool Main::fileCloseMap(int i)
 {
     VymModel *m;
     VymView *vv;

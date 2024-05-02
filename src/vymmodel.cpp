@@ -112,7 +112,6 @@ VymModel::~VymModel()
     // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor = nullptr;
     repositionBlocked = true;
-    updateStylesBlocked = true; // FIXME-0 not used anywhere
     autosaveTimer->stop();
     fileChangedTimer->stop();
 
@@ -176,7 +175,6 @@ void VymModel::init()
     mapName = fileName;
     repositionBlocked = false;
     saveStateBlocked = false;
-    updateStylesBlocked = false;
 
     autosaveTimer = new QTimer(this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
@@ -603,9 +601,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                         file.errorString()));
             err = File::Aborted;
         } else {
-            if (lmode != File::ImportAdd && lmode != File::ImportReplace)
-                updateStylesBlocked = true;
-
             // Here we actually parse the XML file
             parsedWell = reader->read(&file);
 
@@ -613,7 +608,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         }
 
         // Aftermath
-        updateStylesBlocked = false;
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
         mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
@@ -4286,7 +4280,7 @@ bool VymModel::relinkImage(ImageItem* image, TreeItem *dst_ti, int num_new) {
     return relinkImages(images, dst_ti, num_new);
 }
 
-bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)   // FIXME-1 does not save positions
+bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)   // FIXME-2 does not save positions
 {
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();
@@ -4645,9 +4639,6 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             saveStateBranch(bi, QString("%1();").arg(u), bi, QString("%1();").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
-
-            // Create linkSpaceContainer (e.g. after loading), if missing
-            bi->getBranchContainer()->updateChildrenStructure();
 
             reposition();
             return true;
@@ -6013,18 +6004,6 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         if (updateRequired)
             colorBranch(col, selbi);
 
-        // Font
-        if (updateMode == MapDesign::CreatedByUser ) {
-            bc->getHeadingContainer()->setFont(mapDesignInt->font());
-        }
-
-        // Scaling
-        if (updateMode == MapDesign::CreatedByUser ) { // FIXME-0 new branches too big
-                //(updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateScaleHeadingWhenRelinking(true, depth))) {
-
-            bc->setScaleHeading(mapDesignInt->scalingHeading(MapDesign::AutoDesign, depth));
-        }
-
         // Frames   // FIXME-2 mapDesign missing for penWidth
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(true, depth))) {
@@ -6041,8 +6020,10 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
         // Column width and font
         if (updateMode & MapDesign::CreatedByUser) {
-            bc->getHeadingContainer()->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
-            bc->getHeadingContainer()->setFont(mapDesignInt->font());
+            HeadingContainer *hc = bc->getHeadingContainer();
+            hc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
+            hc->setFont(mapDesignInt->font());
+            bc->setScaleHeading(mapDesignInt->scalingHeading(MapDesign::AutoDesign, depth));
         }
 
         if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing

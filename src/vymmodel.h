@@ -225,7 +225,6 @@ class VymModel : public TreeModel {
     int undosAvail;         //!< Available number of undo steps
     bool repositionBlocked; //!< block while load or undo
     bool saveStateBlocked;  //!< block saving current state
-    bool updateStylesBlocked; //! While loading a new map, don't update container styles    // FIXME-2 needed?
 
   public:   // FIXME-3 much of below should be private!
     void blockReposition();   //! Block reposition while bigger changes, e.g. an import

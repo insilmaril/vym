@@ -241,8 +241,6 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         branchesContainer->zPos = Z_BRANCHES;
         branchesContainer->setLayout(branchesContainerLayoutInt);
 
-        updateVisibilityOfChildren();   // FIXME-2 needed?
-
         if (listContainer)
             listContainer->addContainer(branchesContainer);
         else
@@ -252,9 +250,6 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         updateChildrenStructure();
     } else
         branchesContainer->addContainer(bc);
-
-    // For bullet points insert bulletContainer
-    bc->updateChildrenStructure();  // FIXME-0 should only be necessary, if layout changes or branchesContainer is created?
 }
 
 void BranchContainer::updateImagesContainer()
