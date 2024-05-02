@@ -9,7 +9,14 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - November 2023
+Uwe Drechsel - May 2024
+
+## Version 2.9.26
+### Bugfixes
+ * Bugfix: Markdown improvements by Markus Seilnacht
+ * Bugfix: Allow saving of readonly maps
+ * Bugfix: Use vymBaseDir when setting up libreoffice export
+ * Bugfix: Resetting task delta prio not limited to visible tasks
 
 
 ## Version 2.9.26
