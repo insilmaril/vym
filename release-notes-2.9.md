@@ -11,7 +11,7 @@ Thanks for using vym!
 
 Uwe Drechsel - May 2024
 
-## Version 2.9.26
+## Version 2.9.27
 ### Bugfixes
  * Bugfix: Markdown improvements by Markus Seilnacht
  * Bugfix: Allow saving of readonly maps
