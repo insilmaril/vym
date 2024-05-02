@@ -9,7 +9,7 @@ extern Main *mainWindow;
 ExportMarkdown::ExportMarkdown()
 {
     exportName = "Markdown";
-    filter = "TXT (*.txt);;All (* *.*)";
+    filter = "Markdown (*.md);;All (* *.*)";
     caption = vymName + " -" + QObject::tr("Export as Markdown");
 }
 
@@ -66,26 +66,37 @@ void ExportMarkdown::doExport()
                 dashIndent = "";
                 switch (cur->depth()) {
                 case 0:
-                    out += underline(curHeading, QString("="));
+                    out += "\n";
+                    out += ("# " + curHeading);
                     out += "\n";
                     break;
                 case 1:
                     out += "\n";
-                    out += (underline(curHeading, QString("-")));
+                    out += ("## " + curHeading);
                     out += "\n";
                     break;
                 case 2:
                     out += "\n";
-                    out += (curIndent + "### " + curHeading);
+                    out += ("### " + curHeading);
                     out += "\n";
-                    dashIndent = "  ";
                     break;
                 case 3:
-                    out += (curIndent + "- " + curHeading);
                     out += "\n";
-                    dashIndent = "  ";
+                    out += ("#### " + curHeading);
+                    out += "\n";
+                    break;
+                case 4:
+                    out += "\n";
+                    out += ("##### " + curHeading);
+                    out += "\n";
+                    break;
+                case 5:
+                    out += "\n";
+                    out += ("###### " + curHeading);
+                    out += "\n";
                     break;
                 default:
+                    out += "\n";
                     out += (curIndent + "- " + curHeading);
                     out += "\n";
                     dashIndent = "  ";

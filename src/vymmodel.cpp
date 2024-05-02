@@ -1127,6 +1127,8 @@ bool VymModel::renameMap(const QString &newPath)
             qWarning() << "VymModel::renameMap failed to release lock for " << oldPath;
         vymLock = newLock;
         setFilePath(newPath);
+        if (readonly)
+            setReadOnly(false);
         return true;
     }
     qWarning() << "VymModel::renameMap failed to get lockfile. state=" << vymLock.getState();
@@ -1186,13 +1188,14 @@ void VymModel::fileChanged()
 {
     // Check if file on disk has changed meanwhile
     if (!filePath.isEmpty()) {
-        if (readonly) {
+        if (readonly && vymLock.getState() != VymLock::LockedByMyself) {
             // unset readonly if lockfile is gone
+            // but only, if map was LockedByOther before
             if (vymLock.tryLock())
                 setReadOnly(false);
         }
         else {
-            // We could check, if somebody else removed/replaced lockfile
+            // FIXME-5 We could check, if somebody else removed/replaced lockfile
             // (A unique vym ID would be needed)
 
             QDateTime tmod = QFileInfo(filePath).lastModified();
