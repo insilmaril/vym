@@ -3005,16 +3005,14 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
         }
     }
 
+    // Links might have been added or removed, Nested lists, etc...
+    foreach (BranchItem *selbi, selbis)
+        applyDesignRecursively(MapDesign::LayoutChanged, selbi);
+
     // Create and delete containers, update their structure
-    if (repositionRequired)
+    if (repositionRequired) // FIXME-2 test not needed
         reposition();
 
-    // Links might have been added or removed
-    foreach (BranchItem *selbi, selbis)
-        applyDesign(
-            MapDesign::LayoutChanged,
-            true,   //recursively
-            selbi);
 }
 
 void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
@@ -3698,7 +3696,7 @@ BranchItem *VymModel::createBranch(BranchItem *dst)
         newbi = addNewBranchInt(dst, -2);
 
     // Set default design styles, e.g. font
-    applyDesign(MapDesign::CreatedByUser, false, newbi);// FIXME-0 better MD::CreatedWhileLoading)
+    applyDesign(MapDesign::CreatedByUser, newbi);// FIXME-0 better MD::CreatedWhileLoading)
     return newbi;
 }
 
@@ -3980,9 +3978,10 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
     if (bc) {
         bc->setPos(absPos);
 
-        applyDesign(MapDesign::CreatedByUser, false, newbi);
+        applyDesign(MapDesign::CreatedByUser, newbi);
     }
 
+    reposition();
     return newbi;
 }
 
@@ -4036,7 +4035,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
+BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos) // FIXME-2 reposition required in the end?
 {
     BranchItem *newbi = nullptr;
     if (!pi)
@@ -4063,7 +4062,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         }
 
         // Required to initialize styles
-        applyDesign(MapDesign::CreatedByUser, false, newbi);
+        applyDesign(MapDesign::CreatedByUser, newbi);
     }
     return newbi;
 }
@@ -4211,7 +4210,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         bi->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related branch-container or other view-objects
-        applyDesign(MapDesign::RelinkedByUser, true, bi);
+        applyDesign(MapDesign::RelinkedByUser, bi);
 
         emit(layoutChanged());
 
@@ -5969,26 +5968,13 @@ MapDesign* VymModel::mapDesign()
 
 void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         MapDesign::UpdateMode updateMode,
-        bool recursive,
-        TreeItem *ti)
+        BranchItem *bi)
 {
     qDebug() << "VM::applyDesign  mode="
         << MapDesign::updateModeString(updateMode)
-        << " of " << headingText(ti)
-        << " recurse: " << recursive;
+        << " of " << headingText(bi);
 
-    QList<BranchItem *> selbis;
-    if (ti == rootItem) {
-        // For rootItem loop over all MapCenters
-        recursive = true;
-        for (int i = 0; i < rootItem->branchCount(); ++i)
-            selbis << rootItem->getBranchNum(i);
-    } else {
-        if (ti && ti->hasTypeBranch())
-            selbis << (BranchItem*)ti;
-        else
-            selbis = getSelectedBranches(ti);
-    }
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
@@ -6044,17 +6030,17 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
                         mapDesignInt->imagesContainerLayout(selbi->depth()));
                 emitDataChanged(selbi);
         }
-
-
-        // Go deeper, if required
-        if (recursive)
-            for (int i = 0; i < selbi->branchCount(); ++i)
-                applyDesign(
-                    updateMode,
-                    recursive,
-                    selbi->getBranchNum(i));
-        reposition();   // FIXME-0 Not for all BIs when done recursively
     }
+}
+
+void VymModel::applyDesignRecursively(
+        MapDesign::UpdateMode updateMode,
+        BranchItem *bi)
+{
+    if (!bi) return;
+
+    for (int i = 0; i < bi->branchCount(); ++i)
+        applyDesign(updateMode, bi->getBranchNum(i));
 }
 
 void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no savestate, no updates of existing headings ("applyDesign")
@@ -6087,14 +6073,10 @@ bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0
         else if (style == LinkObj::PolyParabel) 
             mapDesignInt->setLinkStyle(LinkObj::Parabel, 1);
     }
-    
-    applyDesign(
-        MapDesign::LinkStyleChanged,
-        true,
-        rootItem
-    );
 
+    applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
     reposition();
+
     return true;
 }
 
@@ -6149,12 +6131,9 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //
         nextBranch(cur, prev);
     }
-    reposition();
 
-    applyDesign(
-            MapDesign::LinkStyleChanged,
-            true,
-            rootItem);
+    applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
+    reposition();
 }
 
 void VymModel::toggleLinkColorHint()

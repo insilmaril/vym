@@ -735,8 +735,10 @@ class VymModel : public TreeModel {
     MapDesign* mapDesignInt;
     void applyDesign(
             MapDesign::UpdateMode,
-            bool recursive = false,
-            TreeItem *ti = nullptr);
+            BranchItem *bi = nullptr);
+    void applyDesignRecursively(
+            MapDesign::UpdateMode,
+            BranchItem *bi = nullptr);
 
   public:
     void setDefaultFont(const QFont &);
