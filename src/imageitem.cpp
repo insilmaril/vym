@@ -34,6 +34,11 @@ ImageItem::~ImageItem()
         if (parentBranch())
             parentBranch()->getBranchContainer()->updateChildrenStructure();
     }
+
+    if (!currentFilename.isEmpty() && QFile(currentFilename).exists())
+        // Remove file used to compress map
+        if (!QFile(currentFilename).remove())
+            qWarning() << "Destr ImageItem failed to remove " << currentFilename;
 }
 
 void ImageItem::init()
@@ -42,6 +47,7 @@ void ImageItem::init()
     setType(Image);
     hideLinkUnselected = true;  // FIXME-2 needed?
     originalFilename = "no original name available";
+    currentFilename.clear();
 }
 
 BranchItem *ImageItem::parentBranch() { return (BranchItem *)parentItem; }
@@ -192,6 +198,12 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     QString url = "images/" + prefix + "image-" + QString().number(itemID) +
           imageContainer->getExtension();
 
+    // And really save the image  (svgs will be copied from cache!)
+    currentFilename = tmpdir + "/" + url;
+    if (!QFile(currentFilename).exists())
+        // Only save, if not already there
+        imageContainer->save(currentFilename);
+
     QString attributes;
 
     if (!originalFilename.isEmpty())
@@ -205,11 +217,8 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
 
     attributes += attribute("uuid", uuid.toString());
 
-    // And really save the image  (svgs will be copied from cache!)
-    QString fn = tmpdir + "/" + url;
-    imageContainer->save(fn);
 
-    qDebug() << "ImageItem::saveToDir:  " << headingPlain() << " to fn=" << fn;
+    qDebug() << "ImageItem::saveToDir:  " << headingPlain() << " to fn=" << currentFilename;
     qDebug() << "  tmpdir=" << tmpdir << "  prefix=" << prefix;
     if (originalFilename == headingPlain())
         return singleElement("floatimage", attributes);

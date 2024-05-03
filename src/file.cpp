@@ -248,7 +248,9 @@ bool checkUnzipTool()
     return unzipToolAvailable;
 }
 
-File::ErrorCode zipDir(QDir zipInputDir, QString zipName)
+File::ErrorCode zipDir(QDir zipInputDir, QString zipName)   // FIXME-3 Does not support deleting unused files
+                                                            // Not supported in Windows tar.
+                                                            // Probably supported with -FS option on Linux
 {
     zipName = QDir::toNativeSeparators(zipName);
     File::ErrorCode err = File::Success;
@@ -359,6 +361,7 @@ File::ErrorCode zipDir(QDir zipInputDir, QString zipName)
     // qDebug() <<"Output: " << zipProc->getStdout()<<flush;
 #else
     zipProc->setWorkingDirectory(QDir::toNativeSeparators(zipInputDir.path()));
+//    args << "--filesync"; // FIXME-3 Doesn't seem to change much, should delete vanished files from archive
     args << "-r";
     args << zipName;
     args << ".";
