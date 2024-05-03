@@ -460,7 +460,7 @@ void BranchPropertyEditor::updateScalingControls()
 {
     bool b;
     if (branchContainer) {
-        b = branchContainer->scalingAutoDesign();
+        b = branchContainer->scaleAutoDesign();
         ui.scalingAutoCheckBox->setEnabled(true);
         ui.scaleHeadingSpinBox->setValue(branchContainer->scaleHeading());
         ui.scaleSubtreeSpinBox->setValue(branchContainer->scaleSubtree());

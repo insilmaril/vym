@@ -105,8 +105,8 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void setRotationSubtree(const int &);
     int rotationSubtree();
 
-    void setScalingAutoDesign(const bool &, const bool &update = true);
-    bool scalingAutoDesign();
+    void setScaleAutoDesign(const bool &, const bool &update = true);
+    bool scaleAutoDesign();
     void setScaleHeading(const qreal &);
     qreal scaleHeading();
     void setScaleSubtree(const qreal &);
@@ -119,7 +119,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     bool rotationsAutoDesignInt;
     qreal rotationHeadingInt;
     qreal rotationSubtreeInt;
-    bool scalingAutoDesignInt;
+    bool scaleAutoDesignInt;
     qreal scaleHeadingInt;
     qreal scaleSubtreeInt;
 

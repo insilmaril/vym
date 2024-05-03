@@ -395,8 +395,8 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
     if (rotated && selis.count() == 1) {
         if (selis.first()->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)selis.first())->getBranchContainer();
-            
-            // Avoid rotations > 360Â°
+
+            // Avoid rotations > 360Â
             setRotation(new_rotation);
 
             qreal rotScene = bc->rotationHeadingInScene();

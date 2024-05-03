@@ -476,22 +476,22 @@ void MapDesign::setSelectionBrush(const QBrush &b)
     selectionBrushInt = b;
 }
 
-int MapDesign::rotationHeading(const UpdateMode &updateMode, int depth) // FIXME-2 updateMode not used in methods here
+int MapDesign::rotationHeading(const int &depth)
 {
     return rotationHeadingInt.tryAt(depth);
 }
 
-int MapDesign::rotationSubtree(const UpdateMode &updateMode, int depth)
+int MapDesign::rotationSubtree(const int &depth)
 {
     return rotationSubtreeInt.tryAt(depth);
 }
 
-qreal MapDesign::scalingHeading(const UpdateMode &updateMode, int depth)
+qreal MapDesign::scalingHeading(const int &depth)
 {
     return scalingHeadingInt.tryAt(depth);
 }
 
-qreal MapDesign::scalingSubtree(const UpdateMode &updateMode, int depth)
+qreal MapDesign::scalingSubtree(const int &depth)
 {
     return scalingSubtreeInt.tryAt(depth);
 }

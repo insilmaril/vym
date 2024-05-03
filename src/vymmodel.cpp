@@ -2766,8 +2766,8 @@ void VymModel::setRotationsAutoDesign(const bool &b)
         bc = selbi->getBranchContainer();
         if (bc->rotationsAutoDesign() != b) {
             if (b) {
-                setRotationHeading(mapDesignInt->rotationHeading(MapDesign::AutoDesign, selbi->depth()));
-                setRotationSubtree(mapDesignInt->rotationSubtree(MapDesign::AutoDesign, selbi->depth()));
+                setRotationHeading(mapDesignInt->rotationHeading(selbi->depth()));
+                setRotationSubtree(mapDesignInt->rotationSubtree(selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
@@ -2827,25 +2827,25 @@ void VymModel::setRotationSubtree (const int &i)
         reposition();
 }
 
-void VymModel::setScalingAutoDesign (const bool & b)
+void VymModel::setScaleAutoDesign (const bool & b)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        if (bc->scalingAutoDesign() != b) {
+        if (bc->scaleAutoDesign() != b) {
             if (b) {
-                setScaleHeading(mapDesignInt->scalingHeading(MapDesign::AutoDesign, selbi->depth()));
-                setScaleSubtree(mapDesignInt->scalingSubtree(MapDesign::AutoDesign, selbi->depth()));
+                setScaleHeading(mapDesignInt->scalingHeading(selbi->depth()));
+                setScaleSubtree(mapDesignInt->scalingSubtree(selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
-                      QString("setScalingAutoDesign (%1)")
+                      QString("setScaleAutoDesign (%1)")
                           .arg(toS(!b)),
-                      selbi, QString("setScalingAutoDesign (%1)").arg(toS(b)),
+                      selbi, QString("setScaleAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic scaling").arg(v));
-            bc->setScalingAutoDesign(b);
+            bc->setscaleAutoDesign(b);
             branchPropertyEditor->updateControls();
         }
     }
@@ -2954,7 +2954,7 @@ void VymModel::setScale(const qreal &f, const bool relative)
 {
     // Scale branches and/or images
     // Called from scripting or to grow/shrink via shortcuts
-    setScalingAutoDesign(false);
+    setscaleAutoDesign(false);
     setScaleHeading(f, relative);
     setScaleImage(f, relative);
 }
@@ -5979,6 +5979,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
         int depth = selbi->depth();
+        bool selbiChanged = false;
         BranchContainer *bc = selbi->getBranchContainer();
 
         // Color of heading
@@ -6009,7 +6010,6 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             HeadingContainer *hc = bc->getHeadingContainer();
             hc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
             hc->setFont(mapDesignInt->font());
-            bc->setScaleHeading(mapDesignInt->scalingHeading(MapDesign::AutoDesign, depth));
         }
 
         if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
@@ -6017,19 +6017,48 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             bc->updateUpLink();
         }
 
-
         // Layouts
         if (bc->branchesContainerAutoLayout) {
                 bc->setBranchesContainerLayout(
                         mapDesignInt->branchesContainerLayout(selbi->depth()));
-                emitDataChanged(selbi);
+                selbiChanged = true;
         }
 
         if (bc->imagesContainerAutoLayout) {
                 bc->setImagesContainerLayout(
                         mapDesignInt->imagesContainerLayout(selbi->depth()));
-                emitDataChanged(selbi);
+                selbiChanged = true;
         }
+
+        // Rotations
+        if (bc->rotationsAutoDesign()) {
+            qreal a = mapDesignInt->rotationHeading(depth);
+            if (a != bc->rotationHeading()) {
+                bc->setRotationHeading(a);
+                selbiChanged = true;
+            }
+            a = mapDesignInt->rotationSubtree(depth);
+            if (a != bc->rotationHeading()) {
+                bc->setRotationHeading(a);
+                selbiChanged = true;
+            }
+        }
+
+        if (bc->scaleAutoDesign()) {
+            qreal z = mapDesignInt->scaleHeading();
+            if (z != bc->scaleHeading()) {
+                bc->setScaleHeading(z);
+                selbiChanged = true;
+            }
+            z = mapDesignInt->scaleSubtree();
+            if (z != bc->scaleSubtree()) {
+                bc->setScaleSubtree(z);
+                selbiChanged = true;
+            }
+        }
+
+        if (selbiChanged)
+            emitDataChanged(selbi);
     }
 }
 

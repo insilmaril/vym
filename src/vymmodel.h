@@ -401,7 +401,7 @@ class VymModel : public TreeModel {
     void setRotationsAutoDesign(const bool &);
     void setRotationHeading(const int &);
     void setRotationSubtree(const int &);
-    void setScalingAutoDesign(const bool &);
+    void setScaleAutoDesign(const bool &);
     void setScaleHeading(const qreal &, const bool relative = false);
     qreal getScaleHeading();
     void setScaleSubtree(const qreal &);

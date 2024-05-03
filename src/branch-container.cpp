@@ -69,7 +69,7 @@ void BranchContainer::init()
     rotationHeadingInt = 0;
     rotationSubtreeInt = 0;
 
-    scalingAutoDesignInt = true;
+    scaleAutoDesignInt = true;
     scaleHeadingInt = 1;
     scaleSubtreeInt = 1;
 
@@ -289,9 +289,8 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
-void BranchContainer::updateTransformations()   // FIXME-0 called multiple times when adding a branch or during load
+void BranchContainer::updateTransformations()
 {
-    qDebug() << "BC::updateTrafos of " << info() << "  scAD=" <<scalingAutoDesignInt;
     MapDesign *md = nullptr;
     int depth = 0;
     if (branchItem)  {
@@ -302,16 +301,6 @@ void BranchContainer::updateTransformations()   // FIXME-0 called multiple times
 
     if (!md)
         return;
-
-    // Reset transformations, if AutoDesign is used // FIXME-000 move to VymModel
-    if (rotationsAutoDesignInt) {
-        rotationHeadingInt = md->rotationHeading(MapDesign::AutoDesign, depth);
-        rotationSubtreeInt = md->rotationSubtree(MapDesign::AutoDesign, depth);
-    }
-    if (scalingAutoDesignInt) {
-        scaleHeadingInt = md->scalingHeading(MapDesign::AutoDesign, depth);
-        scaleSubtreeInt = md->scalingSubtree(MapDesign::AutoDesign, depth);
-    }
 
     // Rotation of heading
     if (innerFrame)
@@ -890,7 +879,7 @@ int BranchContainer::columnWidth()
     return headingContainer->columnWidth();
 }
 
-void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update)
+void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update) // FIXME-2 "update" parameter needed?
 {
     rotationsAutoDesignInt = b;
 
@@ -928,16 +917,16 @@ int BranchContainer::rotationHeadingInScene()
     return qRound(r);
 }
 
-void BranchContainer::setScalingAutoDesign(const bool &b, const bool &update)
+void BranchContainer::setScaleAutoDesign(const bool &b, const bool &update)
 {
-    scalingAutoDesignInt = b;
+    scaleAutoDesignInt = b;
     if (update)
         updateTransformations();
 }
 
-bool BranchContainer::scalingAutoDesign()
+bool BranchContainer::scaleAutoDesign()
 {
-    return scalingAutoDesignInt;
+    return scaleAutoDesignInt;
 }
 
 void BranchContainer::setScaleHeading(const qreal &f)

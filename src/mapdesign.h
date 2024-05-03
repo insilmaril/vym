@@ -194,10 +194,10 @@ class MapDesign {
 
 // Transformations
   public:  
-    int rotationHeading(const UpdateMode &updateMode, int depth);
-    int rotationSubtree(const UpdateMode &updateMode, int depth);
-    qreal scalingHeading(const UpdateMode &updateMode, int depth);
-    qreal scalingSubtree(const UpdateMode &updateMode, int depth);
+    int rotationHeading(const int &depth);
+    int rotationSubtree(const int &depth);
+    qreal scalingHeading(const int &depth);
+    qreal scalingSubtree(const int &depth);
 
   private:
     ConfigList <int> rotationHeadingInt;

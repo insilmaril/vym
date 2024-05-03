@@ -1092,7 +1092,7 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Scale subtree by factor f");
     modelCommands.append(c);
 
-    c = new Command("setScalingAutoDesign", Command::Branch);
+    c = new Command("setScaleAutoDesign", Command::Branch);
     c->addParameter(Command::Bool, false, "Scale automatically");
     modelCommands.append(c);
 

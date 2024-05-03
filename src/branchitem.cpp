@@ -170,7 +170,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         attr += attribute("rotSubtree", QString("%1").arg(branchContainer->rotationSubtree()));
     }
 
-    if (!branchContainer->scalingAutoDesign()) {
+    if (!branchContainer->scaleAutoDesign()) {
         attr += attribute("scaleHeading", QString("%1").arg(branchContainer->scaleHeading()));
 
         attr += attribute("scaleSubtree", QString("%1").arg(branchContainer->scaleSubtree()));
