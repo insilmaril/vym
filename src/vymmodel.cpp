@@ -222,7 +222,14 @@ void VymModel::makeTmpDirectories()
     tmpMapDirPath = tmpVymDir.path() + QString("/model-%1").arg(modelIdInt);
     histPath = tmpMapDirPath + "/history";
     QDir d;
-    d.mkdir(tmpMapDirPath);
+    if (!d.mkdir(tmpMapDirPath))
+        qWarning() << "Couldn't create tmpMapDir=" << tmpMapDirPath;
+
+    QString s = tmpMapDirPath + "/zipDir";
+    if (!d.mkpath(s))
+        qWarning() << "Couldn't create zipDirInt=" << s;
+
+    zipDirInt.setPath(s);
 }
 
 QString VymModel::tmpDirPath() { return tmpMapDirPath; }
@@ -501,7 +508,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     // Create temporary directory for packing
     bool ok;
-    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
+    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");  // FIXME-3 use zipDirInt?
     if (!ok) {
         QMessageBox::critical(
             0, tr("Critical Load Error"),
@@ -687,7 +694,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
 File::ErrorCode VymModel::save(const File::SaveMode &savemode)
 {
-    QString tmpZipDir;
     QString mapFileName;
     QString saveFilePath;
 
@@ -756,17 +762,15 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
 
     if (zipped) {
         // Create temporary directory for packing
-        bool ok;
-        tmpZipDir = makeTmpDir(ok, tmpDirPath(), "zip");
-        if (!ok) {
+        if (!zipDirInt.exists()) {
             QMessageBox::critical(
                 0, tr("Critical Save Error"),
-                tr("Couldn't create temporary directory before save\n"));
+                tr("Couldn't access zipDir %1\n").arg(zipDirInt.path()));
             return File::Aborted;
         }
 
         saveFilePath = filePath;
-        setFilePath(tmpZipDir + "/" + mapName + ".xml", saveFilePath);
+        setFilePath(zipDirInt.path() + "/" + mapName + ".xml", saveFilePath);
     } // zipped
 
     // Create mapName and fileDir
@@ -816,20 +820,17 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
         if (useActionLog) {
             QString log;
 
-            log = QString("// %1\n// Saved %2\n// zipDir = %3\n")
+            log = QString("// %1\n// Saved %2\n// zipDirInt = %3\n")
                 .arg(QDateTime::currentDateTime().toString())
                 .arg(destPath)
-                .arg(tmpZipDir);
+                .arg(zipDirInt.path());
 
             appendStringToFile(actionLogPath, log);
         }
             mainWindow->statusMessage(tr("Compressing %1").arg(destPath));
             qDebug() << "Zipping " << destPath; // FIXME-2
-            err = zipDir(tmpZipDir, destPath);
+            err = zipDir(zipDirInt.path(), destPath);
         }
-        // Delete tmpDir
-        // FIXME-2 testing removeDir(QDir(tmpZipDir));
-        qDebug() << "VM::save keeping zipDir: " << tmpZipDir;
 
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);

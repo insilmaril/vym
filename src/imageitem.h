@@ -29,6 +29,7 @@ class ImageItem : public MapItem {
   protected:
     ImageContainer *imageContainer;
     QString originalFilename;
+    QString currentFilename;
 
   public:
     void setScale(qreal);
