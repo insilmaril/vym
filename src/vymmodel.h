@@ -103,6 +103,7 @@ class VymModel : public TreeModel {
                      // example
 
     QString tmpMapDirPath;  // tmp directory with undo history
+    QDir zipDirInt;         // dir used for compressing the map
 
     bool useActionLog;
     QString actionLogPath;  // Log any action which triggers a call to saveState
