@@ -44,7 +44,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     qreal scrollOpacity;
 
   public:
-    void addToBranchesContainer(Container *c);
+    void addToBranchesContainer(BranchContainer *bc);
 
   private:
     void updateImagesContainer();       //! Remove unused containers and add needed ones
@@ -77,12 +77,12 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     bool imagesContainerAutoLayout;
     void setImagesContainerLayout(const Layout &l);
-    Container::Layout getImagesContainerLayout();
+    Container::Layout imagesContainerLayout();
     bool hasFloatingImagesLayout(); //! Checks, if children images are or should be floating
 
     bool branchesContainerAutoLayout;
     void setBranchesContainerLayout(const Layout &l);
-    Container::Layout getBranchesContainerLayout();
+    Container::Layout branchesContainerLayout();
     bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
     void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
     void setBranchesContainerBrush(const QBrush &b);
@@ -105,19 +105,21 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void setRotationSubtree(const int &);
     int rotationSubtree();
 
-    void setScalingAutoDesign(const bool &, const bool &update = true);
-    bool scalingAutoDesign();
+    void setScaleAutoDesign(const bool &, const bool &update = true);
+    bool scaleAutoDesign();
     void setScaleHeading(const qreal &);
     qreal scaleHeading();
     void setScaleSubtree(const qreal &);
     qreal scaleSubtree();
+
+    void setColor(const QColor &);
 
   protected:
     bool columnWidthAutoDesignInt;
     bool rotationsAutoDesignInt;
     qreal rotationHeadingInt;
     qreal rotationSubtreeInt;
-    bool scalingAutoDesignInt;
+    bool scaleAutoDesignInt;
     qreal scaleHeadingInt;
     qreal scaleSubtreeInt;
 
@@ -152,13 +154,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     QString saveFrame();
 
-  private:
-    void updateBranchesContainerLayout();
-
   public:
-    /*! Update styles (frame, links, fonts, colors, ...) */
-    void updateStyles(const MapDesign::UpdateMode &);
-
     /*! Update flags and heading */
     void updateVisuals();
 
@@ -173,8 +169,8 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     // Save layout, alignment and brush of children containers 
     // even before containers are created on demand
-    Layout imagesContainerLayout;
-    Layout branchesContainerLayout;
+    Layout imagesContainerLayoutInt;
+    Layout branchesContainerLayoutInt;
     HorizontalAlignment branchesContainerHorizontalAlignment;
     QBrush branchesContainerBrush;
 
@@ -197,7 +193,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     bool originalFloating;                      //! Save, if floating before linked temporary
     QPointF originalParentPos;                  // used in ME to determine orientation during move: scene coord of orig, parent
 
-  public:   // FIXME-1 v_anim public only for experimenting  
+  public:   // FIXME-2 v_anim public only for experimenting  
     QPointF v_anim;                     // Animation vector. Added to current pos in each animation step
     QGraphicsLineItem v;
 };

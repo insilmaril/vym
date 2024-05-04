@@ -148,14 +148,10 @@ class MapDesign {
     void setFont(const QFont &f);
     int headingColumnWidth(const int &depth);
 
-    QColor branchHeadingColor(
+    QColor headingColor(
             const MapDesign::UpdateMode &updateMode,
             BranchItem *branchItem,
             bool &updateRequired);
-    void updateBranchHeadingColor(
-            const MapDesign::UpdateMode &updateMode,
-            BranchItem *branchItem,
-            int depth);
 
   private:
     QFont fontInt;
@@ -163,27 +159,27 @@ class MapDesign {
     ConfigList <int> headingColumnWidths;
     ConfigList <MapDesign::HeadingColorHint> headingColorHints;
     ConfigList <QColor> headingColors;
-    ConfigList <bool> headingColorUpdateTriggerRelinking;
+    ConfigList <bool> headingColorUpdateWhenRelinking;
 
 // Frames
   public:
-    FrameContainer::FrameType frameType(bool useInnerFrame, int depth);
-    void updateFrames(
-            const UpdateMode &updateMode,
-            BranchContainer *branchContainer,
-            int depth);
+    FrameContainer::FrameType frameType(bool useInnerFrame, const int &depth);
+    QColor frameBrushColor(bool useInnerFrame, const int &depth);
+    QColor framePenColor(bool useInnerFrame, const int &depth);
+    bool updateFrameWhenRelinking(bool useInnerFrame, const int &depth);
+
   private:
     ConfigList <FrameContainer::FrameType> innerFrameTypes;
     ConfigList <QColor> innerFramePenColors;
     ConfigList <QColor> innerFrameBrushColors;
     ConfigList <int> innerFramePenWidths;
-    ConfigList <bool> innerFrameUpdateTriggerRelinking;
+    ConfigList <bool> innerFrameUpdateWhenRelinking;
 
     ConfigList <FrameContainer::FrameType> outerFrameTypes;
     ConfigList <QColor> outerFramePenColors;
     ConfigList <QColor> outerFrameBrushColors;
     ConfigList <int> outerFramePenWidths;
-    ConfigList <bool> outerFrameUpdateTriggerRelinking;
+    ConfigList <bool> outerFrameUpdateWhenRelinking;
 
 // Selections
   public:  
@@ -198,10 +194,10 @@ class MapDesign {
 
 // Transformations
   public:  
-    int rotationHeading(const UpdateMode &updateMode, int depth);
-    int rotationSubtree(const UpdateMode &updateMode, int depth);
-    qreal scalingHeading(const UpdateMode &updateMode, int depth);
-    qreal scalingSubtree(const UpdateMode &updateMode, int depth);
+    int rotationHeading(const int &depth);
+    int rotationSubtree(const int &depth);
+    qreal scalingHeading(const int &depth);
+    qreal scalingSubtree(const int &depth);
 
   private:
     ConfigList <int> rotationHeadingInt;

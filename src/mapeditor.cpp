@@ -395,8 +395,8 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
     if (rotated && selis.count() == 1) {
         if (selis.first()->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)selis.first())->getBranchContainer();
-            
-            // Avoid rotations > 360Â°
+
+            // Avoid rotations > 360Â
             setRotation(new_rotation);
 
             qreal rotScene = bc->rotationHeadingInScene();
@@ -730,7 +730,7 @@ void MapEditor::minimizeView() {
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
-    qDebug() << "ME::minimizeView";
+    //qDebug() << "ME::minimizeView";   // FIXME-2 check when and how often minimizeView is called
 }
 
 void MapEditor::print()
@@ -1250,7 +1250,9 @@ TreeItem *MapEditor::getItemBelow(TreeItem *selti)
     return nullptr;
 }
 
-BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
+BranchItem *MapEditor::getLeftBranch(TreeItem *ti)  // FIXME-2 Adapt navigation to support floating layouts
+                                                    // up/down/left/right - build lists to neares branch in 
+                                                    // each direction.  See issue #103
 {
     if (!ti)
         return nullptr;
@@ -1621,7 +1623,7 @@ void MapEditor::keyPressEvent(QKeyEvent *e)
             setCursor(Qt::PointingHandCursor);
             break;
         case Main::ModModeMoveView:
-            // FIXME-1 Qt6 setCursor(QPixmap(":/mode-move-view.png"));
+            // FIXME-2 Qt6 setCursor(QPixmap(":/mode-move-view.png"));
             break;
         default:
             setCursor(Qt::ArrowCursor);
@@ -1646,7 +1648,7 @@ void MapEditor::startPanningView(QMouseEvent *e)
     setCursor(HandOpenCursor);
 }
 
-void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-1  Drop down dialog, if multiple tree items are found to select the "right" one
+void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if multiple tree items are found to select the "right" one
 {
     // Ignore right clicks
     if (e->button() == Qt::RightButton) {

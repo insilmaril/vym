@@ -97,7 +97,7 @@ void MapDesign::init()
     // Heading colors
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
     headingColorHints << MapDesign::InheritedColor;        // Use color of parent
-    headingColorUpdateTriggerRelinking << true;
+    headingColorUpdateWhenRelinking << true;
 
     headingColors << QColor(Qt::white);
     headingColors << QColor(Qt::green);
@@ -107,7 +107,7 @@ void MapDesign::init()
     innerFrameTypes << FrameContainer::Rectangle;
     innerFrameTypes << FrameContainer::NoFrame;
     innerFramePenWidths << 2;
-    innerFrameUpdateTriggerRelinking << true;   // MapCenters inner frame
+    innerFrameUpdateWhenRelinking << true;   // MapCenters inner frame
 
     outerFrameTypes << FrameContainer::NoFrame;
     /*
@@ -117,8 +117,8 @@ void MapDesign::init()
     outerFrameTypes << FrameContainer::Rectangle;
     outerFrameTypes << FrameContainer::NoFrame;
     */
-    outerFrameUpdateTriggerRelinking << true;   // MapCenters outer frame
-    outerFrameUpdateTriggerRelinking << false;
+    outerFrameUpdateWhenRelinking << true;   // MapCenters outer frame
+    outerFrameUpdateWhenRelinking << false;
 
     usesBackgroundImage = false;
 
@@ -380,65 +380,51 @@ int MapDesign::headingColumnWidth(const int &depth)
     return headingColumnWidths.tryAt(depth);
 }
 
-QColor MapDesign::branchHeadingColor(
+QColor MapDesign::headingColor(
         const MapDesign::UpdateMode &updateMode,
         BranchItem *branchItem,
         bool &updateRequired)
 {
     updateRequired = false;
-    if (!branchItem) return QColor();
+    QColor col;
 
-    // FIXME-0 MD::branchHeadingColor   cont here...  (see below in updateBranchHeadingCol)
-    return QColor();
-}
+    if (!branchItem) return col;
 
-void MapDesign::updateBranchHeadingColor(   // FIXME-0 only called from BC::updateStyles, should go to VM for undo/redo?
-                                            // (if called at all...)
-        const MapDesign::UpdateMode &updateMode,
-        BranchItem *branchItem,
-        int depth)
-{
-    if (!branchItem)
-    return;
-
+    int depth = branchItem->depth();
     if (updateMode == CreatedByUser || 
-            (updateMode == RelinkedByUser && headingColorUpdateTriggerRelinking.tryAt(depth)))
+            (updateMode == RelinkedByUser && headingColorUpdateWhenRelinking.tryAt(depth)))
     {
         HeadingColorHint colHint = headingColorHints.tryAt(depth);
 
-        QColor col;
         switch (colHint) {
             case InheritedColor: {
-                //qDebug() << " - InheritedColor "; // FIXME-4 testing...
                 BranchItem *pbi = branchItem->parentBranch();
                 if (pbi) {
                     col = pbi->headingColor();
-                //qDebug() << " - " << col.name();
+                    //qDebug() << " - Inherited color: " << col.name();
                     break;
                 }
                 // If there is no parent branch, mapCenter should 
                 // have a specific color, thus continue
             }
             case SpecificColor: {
-                //qDebug() << " - SpecificColor";
                 col = headingColors.tryAt(depth);
-
+                //qDebug() << " - SpecificColor:" << col.name();
                 break;
             }
             case UnchangedColor:
-                qDebug() << " - UnchangedColor";
-                return;
+                //qDebug() << " - UnchangedColor";
+                break;
             default:
-                qWarning() << "MapDesign::updateBranchHeadingColor no branchHeadingColorHint defined";
+                qWarning() << "MapDesign::branchHeadingColor no branchHeadingColorHint defined";
         }
-        // Don't call BranchItem, this would again call back BC::updateStyles!
-        branchItem->TreeItem::setHeadingColor(col);
-        branchItem->getBranchContainer()->getHeadingContainer()->setColor(col);
-        branchItem->getBranchContainer()->updateUpLink();
+        if (col != branchItem->headingColor()) 
+            updateRequired = true;
     }
+    return col;
 }
 
-FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, int depth)
+FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, const int &depth)
 {
     if (useInnerFrame)
         return innerFrameTypes.tryAt(depth);
@@ -446,29 +432,28 @@ FrameContainer::FrameType MapDesign::frameType(bool useInnerFrame, int depth)
         return outerFrameTypes.tryAt(depth);
 }
 
-void MapDesign::updateFrames(
-    const UpdateMode &updateMode,
-    BranchContainer *branchContainer,
-    int depth)
+QColor MapDesign::frameBrushColor( bool useInnerFrame, const int &depth)
 {
-    if (!branchContainer)
-        return;
+    if (useInnerFrame)
+        return innerFrameBrushColors.tryAt(depth);
+    else
+        return outerFrameBrushColors.tryAt(depth);
+}
 
-    if (updateMode == CreatedByUser || 
-        (updateMode == RelinkedByUser && innerFrameUpdateTriggerRelinking.tryAt(depth))) {
-        // Inner frame
-        branchContainer->setFrameType(true, frameType(true, depth));
-        branchContainer->setFrameBrushColor(true, innerFrameBrushColors.tryAt(depth));
-        branchContainer->setFramePenColor(true, innerFramePenColors.tryAt(depth));
-    }
+QColor MapDesign::framePenColor( bool useInnerFrame, const int &depth)
+{
+    if (useInnerFrame)
+        return innerFramePenColors.tryAt(depth);
+    else
+        return outerFramePenColors.tryAt(depth);
+}
 
-    if (updateMode == CreatedByUser || 
-        (updateMode == RelinkedByUser && outerFrameUpdateTriggerRelinking.tryAt(depth))) {
-        // Outer frame
-        branchContainer->setFrameType(false, frameType(false, depth));
-        branchContainer->setFrameBrushColor(false, outerFrameBrushColors.tryAt(depth));
-        branchContainer->setFramePenColor(false, outerFramePenColors.tryAt(depth));
-    }
+bool MapDesign::updateFrameWhenRelinking(bool useInnerFrame, const int &depth)
+{
+    if (useInnerFrame)
+        return innerFrameUpdateWhenRelinking.tryAt(depth);
+    else
+        return outerFrameUpdateWhenRelinking.tryAt(depth);
 }
 
 QPen MapDesign::selectionPen()
@@ -491,22 +476,22 @@ void MapDesign::setSelectionBrush(const QBrush &b)
     selectionBrushInt = b;
 }
 
-int MapDesign::rotationHeading(const UpdateMode &updateMode, int depth)
+int MapDesign::rotationHeading(const int &depth)
 {
     return rotationHeadingInt.tryAt(depth);
 }
 
-int MapDesign::rotationSubtree(const UpdateMode &updateMode, int depth)
+int MapDesign::rotationSubtree(const int &depth)
 {
     return rotationSubtreeInt.tryAt(depth);
 }
 
-qreal MapDesign::scalingHeading(const UpdateMode &updateMode, int depth)
+qreal MapDesign::scalingHeading(const int &depth)
 {
     return scalingHeadingInt.tryAt(depth);
 }
 
-qreal MapDesign::scalingSubtree(const UpdateMode &updateMode, int depth)
+qreal MapDesign::scalingSubtree(const int &depth)
 {
     return scalingSubtreeInt.tryAt(depth);
 }

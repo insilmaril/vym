@@ -29,6 +29,7 @@ class ImageItem : public MapItem {
   protected:
     ImageContainer *imageContainer;
     QString originalFilename;
+    QString currentFilename;
 
   public:
     void setScale(qreal);
@@ -39,7 +40,7 @@ class ImageItem : public MapItem {
     QString getOriginalFilename();
     QString getUniqueFilename();
     bool saveImage(const QString &fn);
-    QString saveToDir(const QString &, const QString &);
+    QString saveToDir(const QString &tmpdir, const QString &prefix);
 };
 
 #endif

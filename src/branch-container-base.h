@@ -48,7 +48,7 @@ class BranchContainerBase : public Container {
      *  The linkSpaceContainer is existing, only if a !Floating layout is used AND 
      *  there is a branchesContainer 
      */
-    virtual void addToBranchesContainer(Container *c);
+    virtual void addToBranchesContainer(BranchContainer *);
     Container* getBranchesContainer();
 
     int imageCount();

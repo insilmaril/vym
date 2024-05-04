@@ -62,7 +62,7 @@ int BranchContainerBase::branchCount()
         return branchesContainer->childItems().count();
 }
 
-void BranchContainerBase::addToBranchesContainer(Container *c) {}
+void BranchContainerBase::addToBranchesContainer(BranchContainer *bc) {}
 
 Container* BranchContainerBase::getBranchesContainer()
 {

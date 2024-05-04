@@ -112,7 +112,6 @@ VymModel::~VymModel()
     // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
     mapEditor = nullptr;
     repositionBlocked = true;
-    updateStylesBlocked = true;
     autosaveTimer->stop();
     fileChangedTimer->stop();
 
@@ -176,7 +175,6 @@ void VymModel::init()
     mapName = fileName;
     repositionBlocked = false;
     saveStateBlocked = false;
-    updateStylesBlocked = false;
 
     autosaveTimer = new QTimer(this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
@@ -224,7 +222,14 @@ void VymModel::makeTmpDirectories()
     tmpMapDirPath = tmpVymDir.path() + QString("/model-%1").arg(modelIdInt);
     histPath = tmpMapDirPath + "/history";
     QDir d;
-    d.mkdir(tmpMapDirPath);
+    if (!d.mkdir(tmpMapDirPath))
+        qWarning() << "Couldn't create tmpMapDir=" << tmpMapDirPath;
+
+    QString s = tmpMapDirPath + "/zipDir";
+    if (!d.mkpath(s))
+        qWarning() << "Couldn't create zipDirInt=" << s;
+
+    zipDirInt.setPath(s);
 }
 
 QString VymModel::tmpDirPath() { return tmpMapDirPath; }
@@ -503,7 +508,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     // Create temporary directory for packing
     bool ok;
-    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
+    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");  // FIXME-3 use zipDirInt?
     if (!ok) {
         QMessageBox::critical(
             0, tr("Critical Load Error"),
@@ -603,9 +608,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                         file.errorString()));
             err = File::Aborted;
         } else {
-            if (lmode != File::ImportAdd && lmode != File::ImportReplace)
-                updateStylesBlocked = true;
-
             // Here we actually parse the XML file
             parsedWell = reader->read(&file);
 
@@ -613,7 +615,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         }
 
         // Aftermath
-        updateStylesBlocked = false;
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
         mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
@@ -693,7 +694,6 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
 File::ErrorCode VymModel::save(const File::SaveMode &savemode)
 {
-    QString tmpZipDir;
     QString mapFileName;
     QString saveFilePath;
 
@@ -762,17 +762,15 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
 
     if (zipped) {
         // Create temporary directory for packing
-        bool ok;
-        tmpZipDir = makeTmpDir(ok, tmpDirPath(), "zip");
-        if (!ok) {
+        if (!zipDirInt.exists()) {
             QMessageBox::critical(
                 0, tr("Critical Save Error"),
-                tr("Couldn't create temporary directory before save\n"));
+                tr("Couldn't access zipDir %1\n").arg(zipDirInt.path()));
             return File::Aborted;
         }
 
         saveFilePath = filePath;
-        setFilePath(tmpZipDir + "/" + mapName + ".xml", saveFilePath);
+        setFilePath(zipDirInt.path() + "/" + mapName + ".xml", saveFilePath);
     } // zipped
 
     // Create mapName and fileDir
@@ -822,20 +820,17 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
         if (useActionLog) {
             QString log;
 
-            log = QString("// %1\n// Saved %2\n// zipDir = %3\n")
+            log = QString("// %1\n// Saved %2\n// zipDirInt = %3\n")
                 .arg(QDateTime::currentDateTime().toString())
                 .arg(destPath)
-                .arg(tmpZipDir);
+                .arg(zipDirInt.path());
 
             appendStringToFile(actionLogPath, log);
         }
             mainWindow->statusMessage(tr("Compressing %1").arg(destPath));
             qDebug() << "Zipping " << destPath; // FIXME-2
-            err = zipDir(tmpZipDir, destPath);
+            err = zipDir(zipDirInt.path(), destPath);
         }
-        // Delete tmpDir
-        // FIXME-2 testing removeDir(QDir(tmpZipDir));
-        qDebug() << "VM::save keeping zipDir: " << tmpZipDir;
 
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
@@ -1127,6 +1122,8 @@ bool VymModel::renameMap(const QString &newPath)
             qWarning() << "VymModel::renameMap failed to release lock for " << oldPath;
         vymLock = newLock;
         setFilePath(newPath);
+        if (readonly)
+            setReadOnly(false);
         return true;
     }
     qWarning() << "VymModel::renameMap failed to get lockfile. state=" << vymLock.getState();
@@ -1186,13 +1183,14 @@ void VymModel::fileChanged()
 {
     // Check if file on disk has changed meanwhile
     if (!filePath.isEmpty()) {
-        if (readonly) {
+        if (readonly && vymLock.getState() != VymLock::LockedByMyself) {
             // unset readonly if lockfile is gone
+            // but only, if map was LockedByOther before
             if (vymLock.tryLock())
                 setReadOnly(false);
         }
         else {
-            // We could check, if somebody else removed/replaced lockfile
+            // FIXME-5 We could check, if somebody else removed/replaced lockfile
             // (A unique vym ID would be needed)
 
             QDateTime tmod = QFileInfo(filePath).lastModified();
@@ -2003,6 +2001,20 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
+    // Print item structure
+    foreach (TreeItem *ti, getSelectedItems()) {
+        if (ti->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
+            bc->printStructure();
+            qDebug() << "Scale heading = " << bc->scaleHeading();
+            qDebug() << "Scale subtree = " << bc->scaleSubtree();
+            qDebug() << "Font          = " << bc->getHeadingContainer()->font();
+        }
+        if (ti->hasTypeImage())
+            ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
+    }
+    return;
+
     // Do animation step. All BranchContainers
     QList <BranchContainer*> bc_list;
 
@@ -2095,15 +2107,6 @@ void VymModel::test()
 
     //mapEditor->testFunction1();
     //return;
-
-    // Print item structure
-    foreach (TreeItem *ti, getSelectedItems()) {
-        if (ti->hasTypeBranch())
-            ((BranchItem*)ti)->getBranchContainer()->printStructure();
-        if (ti->hasTypeImage())
-            ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
-    }
-    return;
 
     // Read bookmarks
     QFile file(fileName);
@@ -2764,8 +2767,8 @@ void VymModel::setRotationsAutoDesign(const bool &b)
         bc = selbi->getBranchContainer();
         if (bc->rotationsAutoDesign() != b) {
             if (b) {
-                setRotationHeading(mapDesignInt->rotationHeading(MapDesign::AutoDesign, selbi->depth()));
-                setRotationSubtree(mapDesignInt->rotationSubtree(MapDesign::AutoDesign, selbi->depth()));
+                setRotationHeading(mapDesignInt->rotationHeading(selbi->depth()));
+                setRotationSubtree(mapDesignInt->rotationSubtree(selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
@@ -2825,25 +2828,25 @@ void VymModel::setRotationSubtree (const int &i)
         reposition();
 }
 
-void VymModel::setScalingAutoDesign (const bool & b)
+void VymModel::setScaleAutoDesign (const bool & b)
 {
     QList<BranchItem *> selbis = getSelectedBranches();
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-        if (bc->scalingAutoDesign() != b) {
+        if (bc->scaleAutoDesign() != b) {
             if (b) {
-                setScaleHeading(mapDesignInt->scalingHeading(MapDesign::AutoDesign, selbi->depth()));
-                setScaleSubtree(mapDesignInt->scalingSubtree(MapDesign::AutoDesign, selbi->depth()));
+                setScaleHeading(mapDesignInt->scalingHeading(selbi->depth()));
+                setScaleSubtree(mapDesignInt->scalingSubtree(selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
-                      QString("setScalingAutoDesign (%1)")
+                      QString("setScaleAutoDesign (%1)")
                           .arg(toS(!b)),
-                      selbi, QString("setScalingAutoDesign (%1)").arg(toS(b)),
+                      selbi, QString("setScaleAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic scaling").arg(v));
-            bc->setScalingAutoDesign(b);
+            bc->setscaleAutoDesign(b);
             branchPropertyEditor->updateControls();
         }
     }
@@ -2952,7 +2955,7 @@ void VymModel::setScale(const qreal &f, const bool relative)
 {
     // Scale branches and/or images
     // Called from scripting or to grow/shrink via shortcuts
-    setScalingAutoDesign(false);
+    setscaleAutoDesign(false);
     setScaleHeading(f, relative);
     setScaleImage(f, relative);
 }
@@ -2974,36 +2977,43 @@ void VymModel::resetSelectionSize()
         setScale(1, false);
 }
 
-void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save: positions, auto, layout!)
 {
+    qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
+    bool repositionRequired = false;
     foreach (BranchItem *selbi, selbis) {
+        Container::Layout layout;
         if (selbi) {
             bc = selbi->getBranchContainer();
 
             if (s == "Auto") {
                 bc->branchesContainerAutoLayout = true;
-                bc->setBranchesContainerLayout(
-                        mapDesignInt->branchesContainerLayout(selbi->depth()));
+                layout = mapDesignInt->branchesContainerLayout(selbi->depth());
+                if (bc->branchesContainerLayout() != layout) {
+                    bc->setBranchesContainerLayout(layout);
+                    repositionRequired = true;
+                }
             } else {
                 bc->branchesContainerAutoLayout = false;
-                Container::Layout layout = Container::getLayoutFromString(s);
-                if (layout != Container::UndefinedLayout)
+                layout = Container::getLayoutFromString(s);
+                if (layout != Container::UndefinedLayout) {
                     bc->setBranchesContainerLayout(layout);
+                    repositionRequired = true;
+                }
             }
         }
     }
 
-    // Create and delete containers, update their structure
-    reposition();
-
-    // Links might have been added or removed
+    // Links might have been added or removed, Nested lists, etc...
     foreach (BranchItem *selbi, selbis)
-        applyDesign(
-            MapDesign::LayoutChanged,
-            true,   //recursively
-            selbi);
+        applyDesignRecursively(MapDesign::LayoutChanged, selbi);
+
+    // Create and delete containers, update their structure
+    if (repositionRequired) // FIXME-2 test not needed
+        reposition();
+
 }
 
 void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
@@ -3680,10 +3690,15 @@ QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bo
 
 BranchItem *VymModel::createBranch(BranchItem *dst)
 {
+    BranchItem *newbi;
     if (!dst || dst == rootItem)
-        return addMapCenterAtPos(QPointF(0, 0));
+        newbi = addMapCenterAtPos(QPointF(0, 0));
     else
-        return addNewBranchInt(dst, -2);
+        newbi = addNewBranchInt(dst, -2);
+
+    // Set default design styles, e.g. font
+    applyDesign(MapDesign::CreatedByUser, newbi);// FIXME-0 better MD::CreatedWhileLoading)
+    return newbi;
 }
 
 ImageItem *VymModel::createImage(BranchItem *dst)
@@ -3964,10 +3979,10 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
     if (bc) {
         bc->setPos(absPos);
 
-        if (!updateStylesBlocked)
-            bc->updateStyles(MapDesign::CreatedByUser);
+        applyDesign(MapDesign::CreatedByUser, newbi);
     }
 
+    reposition();
     return newbi;
 }
 
@@ -4012,10 +4027,6 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Create Container
     BranchContainer *bc = newbi->createBranchContainer(getScene());
 
-    // Apply default design
-    bc->getHeadingContainer()->setColumnWidth(mapDesignInt->headingColumnWidth(newbi->depth()));
-    bc->getHeadingContainer()->setFont(mapDesignInt->font());
-
     // Update parent item and stacking order of container to match order in model
     newbi->updateContainerStackingOrder();
 
@@ -4025,7 +4036,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
+BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos) // FIXME-2 reposition required in the end?
 {
     BranchItem *newbi = nullptr;
     if (!pi)
@@ -4052,7 +4063,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         }
 
         // Required to initialize styles
-        newbi->getBranchContainer()->updateStyles(MapDesign::CreatedByUser);
+        applyDesign(MapDesign::CreatedByUser, newbi);
     }
     return newbi;
 }
@@ -4200,7 +4211,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         bi->updateContainerStackingOrder();
 
         // reset parObj, fonts, frame, etc in related branch-container or other view-objects
-        applyDesign(MapDesign::RelinkedByUser, true, bi);
+        applyDesign(MapDesign::RelinkedByUser, bi);
 
         emit(layoutChanged());
 
@@ -4269,7 +4280,7 @@ bool VymModel::relinkImage(ImageItem* image, TreeItem *dst_ti, int num_new) {
     return relinkImages(images, dst_ti, num_new);
 }
 
-bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)   // FIXME-1 does not save positions
+bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)   // FIXME-2 does not save positions
 {
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();
@@ -4628,9 +4639,6 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             saveStateBranch(bi, QString("%1();").arg(u), bi, QString("%1();").arg(r),
                       QString("%1 %2").arg(r).arg(getObjectName(bi)));
             emitDataChanged(bi);
-
-            // Create linkSpaceContainer (e.g. after loading), if missing
-            bi->getBranchContainer()->updateChildrenStructure();
 
             reposition();
             return true;
@@ -5134,7 +5142,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
         QJsonObject issue = issues[i].toObject();
         JiraIssue ji(issue);
 
-        BranchItem *bi = createBranch(pbi);
+        BranchItem *bi = addNewBranchInt(pbi, -2);  // FIXME-2 check, used to be createBranch(pbi);
         if (bi) {
             QString keyName = ji.key();
             if (ji.isFinished())    {
@@ -5932,7 +5940,7 @@ void VymModel::reposition()
     if (repositionBlocked)
         return;
 
-    qDebug() << "VM::reposition start";
+    qDebug() << "VM::reposition start"; // FIXME-2 check when and how often reposition  is called
 
     // Reposition containers
     BranchItem *bi;
@@ -5959,58 +5967,110 @@ MapDesign* VymModel::mapDesign()
     return mapDesignInt;
 }
 
-void VymModel::applyDesign(
+void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         MapDesign::UpdateMode updateMode,
-        bool recursive,
-        TreeItem *ti)
+        BranchItem *bi)
 {
-    // FIXME-2 VM::updateDesign  testing only:
-    QString h;
-    if (ti)
-        h = ti->headingPlain();
-    else
-        h = "nullptr";
+    qDebug() << "VM::applyDesign  mode="
+        << MapDesign::updateModeString(updateMode)
+        << " of " << headingText(bi);
 
-    qDebug() << "VM::updateDesign  mode=" << MapDesign::updateModeString(updateMode) << " of " << h;
-
-    QList<BranchItem *> selbis;
-    if (ti == rootItem) {
-        // Loop over all branches
-        recursive = true;
-        for (int i = 0; i < rootItem->branchCount(); ++i)
-            selbis << rootItem->getBranchNum(i);
-    } else {
-        if (ti && ti->hasTypeBranch())
-            selbis << (BranchItem*)ti;
-        else
-            selbis = getSelectedBranches(ti);
-    }
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
+        int depth = selbi->depth();
+        bool selbiChanged = false;
         BranchContainer *bc = selbi->getBranchContainer();
 
         // Color of heading
-        QColor col = mapDesignInt->branchHeadingColor(
+        QColor col = mapDesignInt->headingColor(
                         updateMode,
                         selbi,
                         updateRequired);
+
         if (updateRequired)
             colorBranch(col, selbi);
+
+        // Frames   // FIXME-2 mapDesign missing for penWidth
+        if (updateMode == MapDesign::CreatedByUser ||
+                (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(true, depth))) {
+            bc->setFrameType(true, mapDesignInt->frameType(true, depth));
+            bc->setFrameBrushColor(true, mapDesignInt->frameBrushColor(true, depth));
+            bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
+        }
+        if (updateMode == MapDesign::CreatedByUser ||
+                (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
+            bc->setFrameType(false, mapDesignInt->frameType(false, depth));
+            bc->setFrameBrushColor(false, mapDesignInt->frameBrushColor(false, depth));
+            bc->setFramePenColor(false, mapDesignInt->framePenColor(false, depth));
+        }
+
+        // Column width and font
+        if (updateMode & MapDesign::CreatedByUser) {
+            HeadingContainer *hc = bc->getHeadingContainer();
+            hc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
+            hc->setFont(mapDesignInt->font());
+        }
 
         if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
             qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
             bc->updateUpLink();
         }
 
-        // Go deeper, if required
-        if (recursive)
-            for (int i = 0; i < selbi->branchCount(); ++i)
-                applyDesign(
-                    updateMode,
-                    recursive,
-                    selbi->getBranchNum(i));
+        // Layouts
+        if (bc->branchesContainerAutoLayout) {
+                bc->setBranchesContainerLayout(
+                        mapDesignInt->branchesContainerLayout(selbi->depth()));
+                selbiChanged = true;
+        }
+
+        if (bc->imagesContainerAutoLayout) {
+                bc->setImagesContainerLayout(
+                        mapDesignInt->imagesContainerLayout(selbi->depth()));
+                selbiChanged = true;
+        }
+
+        // Rotations
+        if (bc->rotationsAutoDesign()) {
+            qreal a = mapDesignInt->rotationHeading(depth);
+            if (a != bc->rotationHeading()) {
+                bc->setRotationHeading(a);
+                selbiChanged = true;
+            }
+            a = mapDesignInt->rotationSubtree(depth);
+            if (a != bc->rotationHeading()) {
+                bc->setRotationHeading(a);
+                selbiChanged = true;
+            }
+        }
+
+        if (bc->scaleAutoDesign()) {
+            qreal z = mapDesignInt->scaleHeading();
+            if (z != bc->scaleHeading()) {
+                bc->setScaleHeading(z);
+                selbiChanged = true;
+            }
+            z = mapDesignInt->scaleSubtree();
+            if (z != bc->scaleSubtree()) {
+                bc->setScaleSubtree(z);
+                selbiChanged = true;
+            }
+        }
+
+        if (selbiChanged)
+            emitDataChanged(selbi);
     }
+}
+
+void VymModel::applyDesignRecursively(
+        MapDesign::UpdateMode updateMode,
+        BranchItem *bi)
+{
+    if (!bi) return;
+
+    for (int i = 0; i < bi->branchCount(); ++i)
+        applyDesign(updateMode, bi->getBranchNum(i));
 }
 
 void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no savestate, no updates of existing headings ("applyDesign")
@@ -6043,14 +6103,10 @@ bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0
         else if (style == LinkObj::PolyParabel) 
             mapDesignInt->setLinkStyle(LinkObj::Parabel, 1);
     }
-    
-    applyDesign(
-        MapDesign::LinkStyleChanged,
-        true,
-        rootItem
-    );
 
+    applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
     reposition();
+
     return true;
 }
 
@@ -6105,12 +6161,9 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         //
         nextBranch(cur, prev);
     }
-    reposition();
 
-    applyDesign(
-            MapDesign::LinkStyleChanged,
-            true,
-            rootItem);
+    applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
+    reposition();
 }
 
 void VymModel::toggleLinkColorHint()
@@ -6847,7 +6900,7 @@ void VymModel::emitNoteChanged(TreeItem *ti)
 void VymModel::emitDataChanged(TreeItem *ti)
 {
     //qDebug() << "VM::emitDataChanged ti=" << ti;
-    if (ti) { // FIXME-0 needed to update heading while reposition blocked  && !repositionBlocked) {
+    if (ti) {
         QModelIndex ix = index(ti);
         emit(dataChanged(ix, ix));
 

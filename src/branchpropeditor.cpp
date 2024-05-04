@@ -359,7 +359,7 @@ void BranchPropertyEditor::updateLayoutControls()
     if (branchContainer->branchesContainerAutoLayout)
         ui.branchesLayoutsCombo->setCurrentIndex(0);
     else {
-        switch (branchContainer->getBranchesContainerLayout()) {
+        switch (branchContainer->branchesContainerLayout()) {
             case Container::Vertical:
                 ui.branchesLayoutsCombo->setCurrentIndex(1);
                 break;
@@ -381,10 +381,10 @@ void BranchPropertyEditor::updateLayoutControls()
                 break;
                 */
             case Container::List:
-                ui.branchesLayoutsCombo->setCurrentIndex(7);
+                ui.branchesLayoutsCombo->setCurrentIndex(6);
                 break;
             default:
-                qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getBranchesContainerLayout()));
+                qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(branchContainer->getLayoutString(branchContainer->branchesContainerLayout()));
                 qDebug() << "branch=" << branchItem->headingPlain();
         }
     }
@@ -393,7 +393,7 @@ void BranchPropertyEditor::updateLayoutControls()
     if (branchContainer->imagesContainerAutoLayout)
         ui.imagesLayoutsCombo->setCurrentIndex(0);
     else {
-        switch (branchContainer->getImagesContainerLayout()) {
+        switch (branchContainer->imagesContainerLayout()) {
             case Container::Vertical:
                 ui.imagesLayoutsCombo->setCurrentIndex(1);
                 break;
@@ -415,7 +415,7 @@ void BranchPropertyEditor::updateLayoutControls()
                 break;
                 */
             default:
-                qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->getImagesContainerLayout()));
+                qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->imagesContainerLayout()));
                 qDebug() << "branch=" << branchItem->headingPlain();
         }
     }
@@ -460,7 +460,7 @@ void BranchPropertyEditor::updateScalingControls()
 {
     bool b;
     if (branchContainer) {
-        b = branchContainer->scalingAutoDesign();
+        b = branchContainer->scaleAutoDesign();
         ui.scalingAutoCheckBox->setEnabled(true);
         ui.scaleHeadingSpinBox->setValue(branchContainer->scaleHeading());
         ui.scaleSubtreeSpinBox->setValue(branchContainer->scaleSubtree());
@@ -611,9 +611,6 @@ void BranchPropertyEditor::branchesLayoutsChanged(int i)
             s = "GridColumns";
             break;
         case 6:
-            s = "GridRows";
-            break;
-        case 7:
             s = "List";
             break;
         default:
@@ -621,7 +618,10 @@ void BranchPropertyEditor::branchesLayoutsChanged(int i)
             return;
     }
 
-    model->setBranchesLayout(s);
+    qDebug() << "BPE ok0";
+    if (branchItem)
+        model->setBranchesLayout(s, branchItem);
+    qDebug() << "BPE ok1";
 }
 
 void BranchPropertyEditor::imagesLayoutsChanged(int i)
