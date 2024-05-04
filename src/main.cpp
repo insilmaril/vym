@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
         "-d           debug         Show debugging output\n"
         "-h           help          Show this help text\n"
         "-L           load          Load script\n"
-        "-l           local         Run with ressources in current directory\n"
+        "-l           local         Run with resources in current directory\n"
         "--locale     locale        Override system locale setting to select\n"
         "                           language\n"
         "-n  STRING   name          Set name of instance for DBus access\n"
