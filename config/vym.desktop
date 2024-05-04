@@ -36,5 +36,5 @@ X-AppInstall-Popcon=430
 X-AppInstall-Section=universe
 X-Ubuntu-Gettext-Domain=app-install-data
 Categories=Qt;KDE;Office;
-
+Keywords=mindmap;taskmanager;brainstorming;
 
