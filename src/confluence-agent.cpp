@@ -433,7 +433,7 @@ void ConfluenceAgent::finishJob()
 
 void ConfluenceAgent::unknownStepWarningFinishJob()
 {
-    qWarning() << "CA::contJob  unknow step in jobType = " 
+    qWarning() << "CA::contJob  unknown step in jobType = " 
         << jobType 
         << "jobStep = " << jobStep;
     finishJob();

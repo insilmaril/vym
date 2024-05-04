@@ -208,7 +208,7 @@ void JiraAgent::finishJob()
 
 void JiraAgent::unknownStepWarning()
 {
-    qWarning() << "JA::contJob  unknow step in jobType = " 
+    qWarning() << "JA::contJob  unknown step in jobType = " 
         << jobType 
         << "jobStep = " << jobStep;
 }
