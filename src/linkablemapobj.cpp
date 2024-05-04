@@ -544,7 +544,7 @@ void LinkableMapObj::requestReposition()
 
 void LinkableMapObj::forceReposition()
 {
-    // Sometimes a reposition has to be done immediatly: For example
+    // Sometimes a reposition has to be done immediately: For example
     // if the note editor flag changes, there is no user event in mapeditor
     // which could collect requests for a reposition.
     // Then we have to call forceReposition()

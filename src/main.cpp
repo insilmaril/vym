@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
         "--locale     locale        Override system locale setting to select\n"
         "                           language\n"
         "-n  STRING   name          Set name of instance for DBus access\n"
-        "-q           quit          Quit immediatly after start for benchmarking\n"
+        "-q           quit          Quit immediately after start for benchmarking\n"
         "-R  FILE     run           Run script\n"
         "-r           restore       Restore last session\n"
         "--recover    recover       Delete lockfiles during initial loading of\n"
