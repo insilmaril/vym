@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(ViewYourMind)
+project(ViewYourMind-release)
 
 find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 
