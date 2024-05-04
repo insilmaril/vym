@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=vym
+Exec=vym %F
 Name=VYM - View Your Mind
 Name[de]=VYM - View Your Mind
 Name[zh_TW]=心智檢視
