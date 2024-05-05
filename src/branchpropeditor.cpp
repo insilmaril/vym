@@ -707,7 +707,7 @@ void BranchPropertyEditor::rotationSubtreeChanged(int i)
 void BranchPropertyEditor::scalingAutoChanged()
 {
     if (model) {
-        model->setScalingAutoDesign(ui.scalingAutoCheckBox->isChecked());
+        model->setScaleAutoDesign(ui.scalingAutoCheckBox->isChecked());
     }
 }
 

@@ -2837,8 +2837,8 @@ void VymModel::setScaleAutoDesign (const bool & b)
         bc = selbi->getBranchContainer();
         if (bc->scaleAutoDesign() != b) {
             if (b) {
-                setScaleHeading(mapDesignInt->scalingHeading(selbi->depth()));
-                setScaleSubtree(mapDesignInt->scalingSubtree(selbi->depth()));
+                setScaleHeading(mapDesignInt->scaleHeading(selbi->depth()));
+                setScaleSubtree(mapDesignInt->scaleSubtree(selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
             saveState(selbi,
@@ -2846,7 +2846,7 @@ void VymModel::setScaleAutoDesign (const bool & b)
                           .arg(toS(!b)),
                       selbi, QString("setScaleAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic scaling").arg(v));
-            bc->setscaleAutoDesign(b);
+            bc->setScaleAutoDesign(b);
             branchPropertyEditor->updateControls();
         }
     }
@@ -2955,7 +2955,7 @@ void VymModel::setScale(const qreal &f, const bool relative)
 {
     // Scale branches and/or images
     // Called from scripting or to grow/shrink via shortcuts
-    setscaleAutoDesign(false);
+    setScaleAutoDesign(false);
     setScaleHeading(f, relative);
     setScaleImage(f, relative);
 }
@@ -6046,12 +6046,12 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         }
 
         if (bc->scaleAutoDesign()) {
-            qreal z = mapDesignInt->scaleHeading();
+            qreal z = mapDesignInt->scaleHeading(depth);
             if (z != bc->scaleHeading()) {
                 bc->setScaleHeading(z);
                 selbiChanged = true;
             }
-            z = mapDesignInt->scaleSubtree();
+            z = mapDesignInt->scaleSubtree(depth);
             if (z != bc->scaleSubtree()) {
                 bc->setScaleSubtree(z);
                 selbiChanged = true;

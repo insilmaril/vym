@@ -1169,7 +1169,7 @@ void VymReader::readBranchAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
-        lastBC->setScalingAutoDesign(false, false);
+        lastBC->setScaleAutoDesign(false, false);
         lastBC->setScaleHeading(r);
     }
 
@@ -1181,7 +1181,7 @@ void VymReader::readBranchAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
-        lastBC->setScalingAutoDesign(false, false);
+        lastBC->setScaleAutoDesign(false, false);
         lastBC->setScaleSubtree(r);
     }
 }

@@ -196,14 +196,14 @@ class MapDesign {
   public:  
     int rotationHeading(const int &depth);
     int rotationSubtree(const int &depth);
-    qreal scalingHeading(const int &depth);
-    qreal scalingSubtree(const int &depth);
+    qreal scaleHeading(const int &depth);
+    qreal scaleSubtree(const int &depth);
 
   private:
     ConfigList <int> rotationHeadingInt;
     ConfigList <int> rotationSubtreeInt;
-    ConfigList <double> scalingHeadingInt;
-    ConfigList <double> scalingSubtreeInt;
+    ConfigList <double> scaleHeadingInt;
+    ConfigList <double> scaleSubtreeInt;
 
   public:
     QString saveToDir(const QString &tmpdir, const QString &prefix);
