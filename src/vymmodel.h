@@ -20,6 +20,7 @@
 #include "treemodel.h"
 #include "vymlock.h"
 #include "vymmodelwrapper.h"
+#include "zip-agent.h"
 
 class AttributeItem;
 class BranchItem;
@@ -169,6 +170,12 @@ class VymModel : public TreeModel {
   public:
     /*! \brief Save the map to file */
     File::ErrorCode save(const File::SaveMode &);
+
+  private slots:
+    void zipFinished (int exitCode, QProcess::ExitStatus exitStatus);
+
+  private:
+    ZipAgent *zipAgent;
 
   public:
     ImageItem* loadImage(

@@ -56,6 +56,7 @@
 #include "xml-freeplane.h"
 #include "xml-vym.h"
 #include "xmlobj.h"
+#include "zip-agent.h"
 
 #ifdef Q_OS_WINDOWS
 #include <windows.h>
@@ -138,6 +139,9 @@ void VymModel::init()
 {
     // No MapEditor yet
     mapEditor = nullptr;
+
+    // No ZipAgent yet
+    zipAgent = nullptr;
 
     // Use default author
     author = settings
@@ -835,6 +839,12 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
         }
             mainWindow->statusMessage(tr("Compressing %1").arg(destPath));
             qDebug() << "Zipping " << destPath; // FIXME-2
+
+            zipAgent = new ZipAgent(zipDirInt, destPath);
+            connect(zipAgent, SIGNAL(finished(int, QProcess::ExitStatus)),
+                    this, SLOT(zipFinished(int, QProcess::ExitStatus)));
+            zipAgent->startZip();
+
             err = zipDir(zipDirInt.path(), destPath);
         }
 
@@ -846,6 +856,11 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode)
 
     fileChangedTime = QFileInfo(destPath).lastModified();
     return err;
+}
+
+void VymModel::zipFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qDebug() << "VM::zipFinished exitCode=" << exitCode;  // FIXME-0 cont here...
 }
 
 ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
@@ -2007,6 +2022,11 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
+    qDebug() << "zipAgent  state=" <<zipAgent->state() 
+        << " error=" << zipAgent->error()
+        << " exitStatus=" << zipAgent->exitStatus();
+    return;
+
     // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch()) {
