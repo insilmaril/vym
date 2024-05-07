@@ -4281,18 +4281,7 @@ void Main::fileSave(VymModel *m, const File::SaveMode &savemode)
         return; // avoid saving twice...
     }
 
-    // Notification, that we start to save
-    statusBar()->showMessage(tr("Saving  %1...").arg(m->getFilePath()),
-                         statusbarTime);
-    qApp->processEvents();
-
-    if (m->save(savemode) == File::Success) {
-        statusBar()->showMessage(tr("Saved  %1").arg(m->getFilePath()),
-                                 statusbarTime);
-    }
-    else
-        statusBar()->showMessage(tr("Couldn't save ").arg(m->getFilePath()),
-                                 statusbarTime);
+    m->save(savemode);
 }
 
 void Main::fileSave() { fileSave(currentModel(), File::CompleteMap); }
@@ -6715,7 +6704,7 @@ void Main::updateActions()
             actionSelectNothing->setEnabled(false);
 
         // Save
-        if (!m->hasChanged())
+        if (!m->hasChanged() || m->zipRunning())
             actionFileSave->setEnabled(false);
 
         // Undo/Redo

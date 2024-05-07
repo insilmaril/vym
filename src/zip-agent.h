@@ -20,8 +20,11 @@ class ZipAgent : public QProcess {
     void startZip();
 
   signals:
-    void finished();
+    void zipFinished();
     void zipError();
+
+  private slots:
+    void zipProcessFinished (int exitCode, QProcess::ExitStatus exitStatus);
 
   private:
     QDir zipDirInt;

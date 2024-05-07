@@ -136,7 +136,7 @@ void ExportOO::exportPresentation()
     f.close();
 
     // zip tmpdir to destination
-    zipDir(tmpDir, filePath);
+    zipDir(tmpDir, filePath);   // FIXME-00 Use zipAgent
 
     displayedDestination = filePath;
 

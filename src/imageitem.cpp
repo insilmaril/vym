@@ -217,9 +217,6 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
 
     attributes += attribute("uuid", uuid.toString());
 
-
-    qDebug() << "ImageItem::saveToDir:  " << headingPlain() << " to fn=" << currentFilename;
-    qDebug() << "  tmpdir=" << tmpdir << "  prefix=" << prefix;
     if (originalFilename == headingPlain())
         return singleElement("floatimage", attributes);
     else {

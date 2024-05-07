@@ -11,33 +11,24 @@ ZipAgent::ZipAgent(QDir zipDir, QString zipName)   // FIXME-4 Does not support d
 
 ZipAgent::~ZipAgent()
 {
-    qDebug() << "Dest ZipAgent";
+    qDebug() << "Destr ZipAgent";
 }
 
 void ZipAgent::startZip()
 {
     qDebug() << "ZipAgent::start";
-
-    //setProgram("/usr/bin/sleep");
-    setProgram("/usr/bin/sleep");
-    QStringList args;
-    args << "8";
-    setArguments(args);
-    qDebug() << "a) status=" << state();
-    start("/usr/bin/sleep", args);
-    qDebug() << "b) status=" << state();
-
-    /*
-    File::ErrorCode err = File::Success;
+    connect(this, SIGNAL(finished(int, QProcess::ExitStatus)),
+            this, SLOT(zipProcessFinished(int, QProcess::ExitStatus)));
 
     QString symLinkTarget;
 
     QString newName;
     // Move existing file away
-    QFile file(zipName);
+    QFile file(zipNameInt);
     if (file.exists()) {
-        symLinkTarget = file.symLinkTarget();
-        QString zipNameTmp = zipName + ".tmp";
+        /*
+        symLinkTarget = file.symLinkTarget();   // FIXME-00 Review symlinks
+        QString zipNameTmp = zipNameInt + ".tmp";
         newName = zipNameTmp;
         int n = 0;
         while (!file.rename(newName) && n < 5) {
@@ -49,180 +40,92 @@ void ZipAgent::startZip()
             QMessageBox::critical(0, QObject::tr("Critical Error"),
                                   QObject::tr("Couldn't move existing file out "
                                               "of the way before saving."));
-            // FIXME-00 return File::Aborted;
         }
+        */
     }
-
-    // zip the temporary directory
-    VymProcess *zipProc = new VymProcess();
-    QStringList args;
 
 #if defined(Q_OS_WINDOWS)
-    zipProc->setWorkingDirectory(
-        QDir::toNativeSeparators(zipInputDir.path() + "\\"));
-
-    args << "-a" << "-c" << "--format" << "zip" << "-f" << zipName << "*";
-
-    zipProc->start(zipToolPath, args);
-
-    if (!zipProc->waitForStarted()) {
-        // zip could not be started
-        QMessageBox::critical(
-            0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't start %1 tool to compress data!\n"
-                        "The map could not be saved, please check if "
-
-                        "backup file is available or export as XML file!")
-                    .arg("Windows zip") +
-                "\n\nziptoolpath: " + zipToolPath +
-                "\nargs: " + args.join(" "));
-        err = File::Aborted;
-    }
-    else {
-        // zip could be started
-        zipProc->waitForFinished();
-        if (zipProc->exitStatus() != QProcess::NormalExit) {
-            QMessageBox::critical(0, QObject::tr("Critical Error"),
-                                  QObject::tr("zip didn't exit normally") +
-                                      "\n" + zipProc->getErrout());
-            err = File::Aborted;
-        }
-        else {
-            //QMessageBox::information( 0, QObject::tr( "Debug" ),
-            //                   "Called:" + zipToolPath + "\n" +
-            //                   "Args: "  + args.join(" ") + "\n" +
-            //                   "Exit: "  + zipProc->exitCode() + "\n" +
-            //                   "Err: " + zipProc->getErrout()  + "\n" +
-            //                   "Std: " + zipProc->getStdout() );
-
-            if (zipProc->exitCode() > 1) {
-                QMessageBox::critical(
-                    0,
-                    QObject::tr("Error"),
-                    QString(
-                        "Called: %1\n"
-                        "Args: %2\n"
-                        "Exit: %3\n"
-                        "Err: %4\n"
-                        "Std: %5").arg(zipToolPath).arg(args.join(" ")).arg(zipProc->exitCode()).arg(zipProc->getErrout()).arg(zipProc->getStdout())
-                    );
-                err = File::Aborted;
-            }
-            else if (zipProc->exitCode() == 1) {
-                // Non fatal according to internet, but for example
-                // some file was locked and could not be compressed
-                QMessageBox::warning(
-                    0, QObject::tr("Error"),
-                    QString(
-                        "Called: %1\n"
-                        "Args: %2\n"
-                        "Err: %3\n"
-                        "Std: %4\n"
-                        "%5")
-                            .arg(zipToolPath)
-                            .arg(args.join(" "))
-                            .arg(zipProc->getErrout())
-                            .arg(zipProc->getStdout())
-                            .arg(
-                               "Please check the saved map, e.g. by opening in "
-                               "another tab.\n"
-                               "Workaround if save failed: Export as xml")
-                );
-
-            }
-        }
-    }
-    // qDebug() <<"Output: " << zipProc->getStdout()<<flush;
 #else
-    zipProc->setWorkingDirectory(QDir::toNativeSeparators(zipInputDir.path()));
-//    args << "--filesync"; // FIXME-3 Doesn't seem to change much, should delete vanished files from archive
+    setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path()));
+    QStringList args;
+    setProgram(zipToolPath);
     args << "-r";
-    args << zipName;
+    args << zipNameInt;
     args << ".";
+    setArguments(args);
+    start();
+#endif
+}
 
-    zipProc->start(zipToolPath, args);
-    if (!zipProc->waitForStarted()) {
-        // zip could not be started
-        QMessageBox::critical(
-            0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't start %1 tool to compress data!\n"
-                        "The map could not be saved, please check if "
-                        "backup file is available or export as XML file!")
-                    .arg("zip") +
-                "\n\nziptoolpath: " + zipToolPath +
-                "\nargs: " + args.join(" "));
+void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qDebug() << "ZA::zipProcessFinished  exitCode=" << exitCode << " exitStatus=" << exitStatus;
+
+#if defined(Q_OS_WINDOWS)
+    // zip could be started
+    if (exitStatus != QProcess::NormalExit) {
+        QMessageBox::critical(0, QObject::tr("Critical Error"),
+                              QObject::tr("zip didn't exit normally") +
+                                  "\n" + getErrout());
         err = File::Aborted;
     }
     else {
-        // zip could be started
-        zipProc->waitForFinished();
-        if (zipProc->exitStatus() != QProcess::NormalExit) {
-            QMessageBox::critical(0, QObject::tr("Critical Error"),
-                                  QObject::tr("zip didn't exit normally") +
-                                      "\n" + zipProc->getErrout());
+        //QMessageBox::information( 0, QObject::tr( "Debug" ),
+        //                   "Called:" + zipToolPath + "\n" +
+        //                   "Args: "  + args.join(" ") + "\n" +
+        //                   "Exit: "  + exitCode + "\n" +
+        //                   "Err: " + getErrout()  + "\n" +
+        //                   "Std: " + getStdout() );
+
+        if (exitCode > 1) {
+            QMessageBox::critical(
+                0,
+                QObject::tr("Error"),
+                QString(
+                    "Called: %1\n"
+                    "Args: %2\n"
+                    "Exit: %3\n"
+                    "Err: %4\n"
+                    "Std: %5").arg(zipToolPath).arg(args.join(" ")).arg(exitCode).arg(getErrout()).arg(getStdout())
+                );
             err = File::Aborted;
         }
-        else {
-            if (zipProc->exitCode() > 0) {
-                QMessageBox::critical(
-                    0, QObject::tr("Critical Error"),
-                    QString("zip exit code:  %1").arg(zipProc->exitCode()) +
-                        "\n" + zipProc->getErrout());
-                err = File::Aborted;
-            }
+        else if (exitCode == 1) {
+            // Non fatal according to internet, but for example
+            // some file was locked and could not be compressed
+            QMessageBox::warning(
+                0, QObject::tr("Error"),
+                QString(
+                    "Called: %1\n"
+                    "Args: %2\n"
+                    "Err: %3\n"
+                    "Std: %4\n"
+                    "%5")
+                        .arg(zipToolPath)
+                        .arg(args.join(" "))
+                        .arg(getErrout())
+                        .arg(getStdout())
+                        .arg(
+                           "Please check the saved map, e.g. by opening in "
+                           "another tab.\n"
+                           "Workaround if save failed: Export as xml")
+            );
+
+        }
+    }
+#else
+    // zip could be started
+    if (exitStatus != QProcess::NormalExit) {
+        QMessageBox::critical(0, QObject::tr("Critical Error"),
+                              QObject::tr("zip didn't exit normally"));
+    }
+    else {
+        if (exitCode > 0) {
+            QMessageBox::critical(
+                0, QObject::tr("Critical Error"),
+                QString("zip exit code:  %1").arg(exitCode));
         }
     }
 #endif
-    // Try to restore previous file, if zipping failed
-    if (err == File::Aborted && !newName.isEmpty() && !file.rename(zipName))
-        QMessageBox::critical(0, QObject::tr("Critical Error"),
-                              QObject::tr("Couldn't rename %1 back to %2")
-                                  .arg(newName)
-                                  .arg(zipName));
-    else {
-        // Take care of symbolic link
-        if (!symLinkTarget.isEmpty()) {
-            if (!QFile(symLinkTarget).remove()) {
-                QMessageBox::critical(
-                    0, QObject::tr("Critical Error"),
-                    QObject::tr(
-                        "Couldn't remove target of old symbolic link %1")
-                        .arg(symLinkTarget));
-                err = File::Aborted;
-                // FIXME-00 return err;
-            }
-
-            if (!QFile(zipName).rename(symLinkTarget)) {
-                QMessageBox::critical(
-                    0, QObject::tr("Critical Error"),
-                    QObject::tr("Couldn't rename output to target of old "
-                                "symbolic link %1")
-                        .arg(symLinkTarget));
-                err = File::Aborted;
-                // FIXME-00 return err;
-            }
-            if (!QFile(symLinkTarget).link(zipName)) {
-                QMessageBox::critical(
-                    0, QObject::tr("Critical Error"),
-                    QObject::tr("Couldn't link from %1 to target of old "
-                                "symbolic link %2")
-                        .arg(zipName)
-                        .arg(symLinkTarget));
-                err = File::Aborted;
-                // FIXME-00 return err;
-            }
-        }
-
-        // Remove temporary file
-        if (!newName.isEmpty() && !file.remove())
-            QMessageBox::critical(
-                0, QObject::tr("Critical Error"),
-                QObject::tr("Saved %1, but couldn't remove %2")
-                    .arg(zipName)
-                    .arg(newName));
-    }
-
-    // FIXME-00 return err;
-    */
+    emit(zipFinished());
 }
-

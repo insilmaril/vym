@@ -170,9 +170,10 @@ class VymModel : public TreeModel {
   public:
     /*! \brief Save the map to file */
     File::ErrorCode save(const File::SaveMode &);
+    bool zipRunning();
 
   private slots:
-    void zipFinished (int exitCode, QProcess::ExitStatus exitStatus);
+    void zipFinished ();
 
   private:
     ZipAgent *zipAgent;
