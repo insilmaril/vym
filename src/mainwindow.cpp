@@ -498,7 +498,7 @@ void Main::setProgressMaximum(int max)
     progressCounter++; // Another map is loaded
 
     progressMax = max * 1000;
-    QApplication::processEvents(); // FIXME-00 
+    QApplication::processEvents();
 }
 
 void Main::addProgressValue(float v)
@@ -4743,8 +4743,7 @@ bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed,
 
     if (m) {
         if (m->isSaving()) {
-            qDebug() << "MW::fileCloseMap ignoring request to close because of running zip process"; // FIXME-00
-            qDebug() << "saving: " << m->isSaving();
+            //qDebug() << "MW::fileCloseMap ignoring request to close because of running zip process";
             return false;
         }
 
@@ -4777,10 +4776,7 @@ bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed,
         noteEditor->clear();
         delete (m->getMapEditor());
         delete (vv);
-
-        qDebug() << "MW::fileCloseMap pre"; // FIXME-00
         delete (m);
-        qDebug() << "MW::fileCloseMap post";
 
         updateActions();
         return true;

@@ -108,9 +108,9 @@ VymModel::VymModel()
     wrapper = new VymModelWrapper(this);
 }
 
-VymModel::~VymModel()   // FIXME-000 Check for running zipProcess!
+VymModel::~VymModel()
 {
-    qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
+    //qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
 
     mapEditor = nullptr;
     repositionBlocked = true;
@@ -146,7 +146,7 @@ VymModel::~VymModel()   // FIXME-000 Check for running zipProcess!
     delete (wrapper);
     delete mapDesignInt;
 
-    qDebug() << "Destr VymModel end this=" << this;
+    //qDebug() << "Destr VymModel end this=" << this;
 }
 
 void VymModel::clear()
@@ -738,7 +738,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     return err;
 }
 
-File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remove return value
+void VymModel::save(const File::SaveMode &savemode)
 {
     // Block closing the map while saving, esp. while zipping
     isSavingInt = true;
@@ -780,9 +780,11 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remov
             zipped = true;
         else if (mb.clickedButton() == uncompressedButton)
             zipped = false; // FIXME-4 Filename suffix still could be .xml instead of .vym
-        else 
+        else  {
             // do nothing
-            return File::Aborted;
+            isSavingInt = false;
+            return; 
+        }
     }
 
     // First backup existing file, we
@@ -815,7 +817,8 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remov
             QMessageBox::critical(
                 0, tr("Critical Save Error"),
                 tr("Couldn't access zipDir %1\n").arg(zipDirInt.path()));
-            return File::Aborted;
+            isSavingInt = false;
+            return;
         }
 
         saveFilePath = filePath;
@@ -824,7 +827,6 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remov
 
     // Notification, that we start to save
     mainWindow->statusMessage(tr("Saving  %1...").arg(saveFilePath));
-    //qApp->processEvents();  // FIXME-00 needed when saving? Probably yes...
 
     // Create mapName and fileDir
     makeSubDirs(fileDir);
@@ -895,12 +897,10 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remov
         setFilePath(saveFilePath);
     }
 
-    updateActions();    // FIXME-00 should consider running zip process
+    updateActions();
 
     if (!zipped)
         isSavingInt = false;
-
-    return err;
 }
 
 bool VymModel::isSaving()
@@ -1221,7 +1221,6 @@ bool VymModel::isReadOnly() { return readonly; }
 
 void VymModel::autosave()
 {
-    qDebug() << "VM::autosave...  zipAgent=" << zipAgent;   // FIXME-00
     // Check if autosave is disabled due to testmode or current zip process
     if (testmode)
         return;
@@ -1236,8 +1235,8 @@ void VymModel::autosave()
         return;
     }
 
-    if (zipAgent) {
-        qDebug() << "VymModel::autosave blocked by zipAgent";
+    if (zipAgent || isSavingInt) {
+        qDebug() << "VymModel::autosave blocked by zipAgent or ongoing save";   // FIXME-2
         return;
     }
 

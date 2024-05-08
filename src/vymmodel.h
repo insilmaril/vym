@@ -169,7 +169,7 @@ class VymModel : public TreeModel {
 
   public:
     /*! \brief Save the map to file */
-    File::ErrorCode save(const File::SaveMode &);
+    void save(const File::SaveMode &);
     bool isSaving();
 
   private slots:
