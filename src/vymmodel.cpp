@@ -110,37 +110,43 @@ VymModel::VymModel()
 
 VymModel::~VymModel()   // FIXME-000 Check for running zipProcess!
 {
-    qDebug() << "Destr VymModel begin this=" << this << "  " << mapName;
-
-    if (zipAgent) {
-        qDebug() << "zipAgent still running, waiting to finish...";
-        zipAgent->waitForFinished();
-        if (zipAgent->exitStatus() != QProcess::NormalExit) {
-            QMessageBox::critical(0, QObject::tr("Critical Error"),
-                                  QObject::tr("zip didn't exit normally"));
-        }
-        else {
-            if (zipAgent->exitCode() > 0) {
-                QMessageBox::critical(
-                    0, QObject::tr("Critical Error"),
-                    QString("zip exit code:  %1").arg(zipAgent->exitCode()));
-            }
-        }
-    }
+    qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
 
     mapEditor = nullptr;
     repositionBlocked = true;
     updateStylesBlocked = true; // FIXME-0 not used anywhere
     autosaveTimer->stop();
+    filePath.clear();
     fileChangedTimer->stop();
 
-    // qApp->processEvents();	// Update view (scene()->update() is not enough)
-    // qDebug() << "Destr VymModel end   this="<<this;
+    if (zipAgent) {
+        mainWindow->statusMessage(tr("Waiting until map is completely saved and compressed..."));
+        zipAgent->waitForFinished();
+        
+        // zipAgent might be set to nullptr already in VymModel::zipFinished
+        if (zipAgent) {
+            if (zipAgent->exitStatus() != QProcess::NormalExit) {
+                QMessageBox::critical(0, QObject::tr("Critical Error"),
+                                      QObject::tr("zip didn't exit normally"));
+            }
+            else {
+                if (zipAgent->exitCode() > 0) {
+                    QMessageBox::critical(
+                        0, QObject::tr("Critical Error"),
+                        QString("zip exit code:  %1").arg(zipAgent->exitCode()));
+                }
+            }
+            zipAgent->deleteLater();
+            zipAgent = nullptr;
+        }
+    }
 
     vymLock.releaseLock();
 
     delete (wrapper);
     delete mapDesignInt;
+
+    qDebug() << "Destr VymModel end this=" << this;
 }
 
 void VymModel::clear()
@@ -157,8 +163,9 @@ void VymModel::init()
     // No MapEditor yet
     mapEditor = nullptr;
 
-    // No ZipAgent yet
+    // No ZipAgent yet and not saving
     zipAgent = nullptr;
+    isSavingInt = false;
 
     // Use default author
     author = settings
@@ -549,7 +556,19 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     }
     else {
         // Try to unzip file
+        QFile file(fname);
+        if (file.size() > 2000000)
+            // Inform user that unzipping might take a while.
+            // Detailed estimation about number of branches required for progress bar 
+            // is within the zipfile and cannot be used yet.
+            mainWindow->statusMessage(tr("Uncompressing %1").arg(fname));
+
         err = unzipDir(tmpZipDir, fname);
+        if (file.size() > 2000000)
+            // Inform user that unzipping might take a while.
+            // Detailed estimation about number of branches required for progress bar 
+            // is within the zipfile and cannot be used yet.
+            mainWindow->statusMessage(tr("Loading %1").arg(fname), 0);
     }
 
     if (zipped) {
@@ -721,6 +740,9 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
 File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remove return value
 {
+    // Block closing the map while saving, esp. while zipping
+    isSavingInt = true;
+
     QString mapFileName;
     QString saveFilePath;
 
@@ -802,7 +824,7 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remov
 
     // Notification, that we start to save
     mainWindow->statusMessage(tr("Saving  %1...").arg(saveFilePath));
-    qApp->processEvents();  // FIXME-00 needed? Probably yes...
+    //qApp->processEvents();  // FIXME-00 needed when saving? Probably yes...
 
     // Create mapName and fileDir
     makeSubDirs(fileDir);
@@ -861,18 +883,13 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remov
 
         if (zipped) {
             // zip
-
-            mainWindow->statusMessage(tr("Compressing %1").arg(destPath));
-            qDebug() << "Zipping " << destPath; // FIXME-2
+            mainWindow->statusMessage(tr("Compressing %1").arg(destPath), 0);
 
             zipAgent = new ZipAgent(zipDirInt, destPath);
             connect(zipAgent, SIGNAL(zipFinished()), this, SLOT(zipFinished()));
             zipAgent->startZip();
-
-            // FIXME-00 err = zipDir(zipDirInt.path(), destPath);
         } else
             mainWindow->statusMessage(tr("Saved %1").arg(saveFilePath));
-
 
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
@@ -880,29 +897,30 @@ File::ErrorCode VymModel::save(const File::SaveMode &savemode) // FIXME-00 remov
 
     updateActions();    // FIXME-00 should consider running zip process
 
+    if (!zipped)
+        isSavingInt = false;
+
     return err;
 }
 
-bool VymModel::zipRunning()
+bool VymModel::isSaving()
 {
-    if (zipAgent)
-        return true;
-    else
-        return false;
+    return isSavingInt;
 }
 
 void VymModel::zipFinished()
 {
     qDebug() << "VM::zipFinished exitStatus=" << zipAgent->exitStatus() << " exitCode=" << zipAgent->exitCode();  // FIXME-0 cont here...
-                                                          //
     // Cleanup
     zipAgent->deleteLater();
     zipAgent = nullptr;
+    isSavingInt = false;
 
     mainWindow->statusMessage(tr("Saved %1").arg(filePath));
 
-    updateActions();
     fileChangedTime = QFileInfo(destPath).lastModified();
+
+    updateActions();
 }
 
 ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
@@ -1201,16 +1219,12 @@ void VymModel::setReadOnly(bool b)
 
 bool VymModel::isReadOnly() { return readonly; }
 
-void VymModel::autosave() // FIXME-00 check for running zipProcess
+void VymModel::autosave()
 {
+    qDebug() << "VM::autosave...  zipAgent=" << zipAgent;   // FIXME-00
     // Check if autosave is disabled due to testmode or current zip process
     if (testmode)
         return;
-
-    if (zipAgent) {
-        qDebug() << "autosave blocked by zipAgent"; // FIXME-00 testing...
-        return;
-    }
 
     // Check if autosave is disabled globally
     if (!mainWindow->useAutosave()) {
@@ -1219,6 +1233,11 @@ void VymModel::autosave() // FIXME-00 check for running zipProcess
             << QString("VymModel::autosave disabled globally!  Current map: %1")
                    .arg(filePath);
         */
+        return;
+    }
+
+    if (zipAgent) {
+        qDebug() << "VymModel::autosave blocked by zipAgent";
         return;
     }
 

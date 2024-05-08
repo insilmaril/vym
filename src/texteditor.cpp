@@ -20,7 +20,6 @@
 #include "shortcuts.h"
 
 extern Main *mainWindow;
-extern int statusbarTime;
 extern Settings settings;
 
 extern QAction *actionViewToggleNoteEditor;

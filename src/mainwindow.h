@@ -44,7 +44,7 @@ class Main : public QMainWindow {
     int progressCounterTotal;
 
   public:
-    void statusMessage(const QString &);
+    void statusMessage(const QString &, int timeout = 10000);
     void setProgressMaximum(int max);
     void addProgressValue(float v);
     void initProgressCounter(uint n = 1);
@@ -454,9 +454,11 @@ class Main : public QMainWindow {
     QAction *actionFileNew;
     QAction *actionFileNewCopy;
     QAction *actionFileOpen;
+    QAction *actionFileClose;
     QAction *actionFileRestoreSession;
     QAction *actionFileSave;
     QAction *actionFilePrint;
+    QAction *actionFileExitVym;
     QAction *actionMapProperties;
     QAction *actionFileExportLast;
     QAction *actionFileExportConfluence;

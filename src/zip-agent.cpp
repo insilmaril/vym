@@ -14,6 +14,11 @@ ZipAgent::~ZipAgent()
     qDebug() << "Destr ZipAgent";
 }
 
+void ZipAgent::setBackgroundProcess(bool b)
+{
+    isBackgroundProcessInt = b;
+}
+
 void ZipAgent::startZip()
 {
     qDebug() << "ZipAgent::start";
@@ -23,7 +28,7 @@ void ZipAgent::startZip()
     QString symLinkTarget;
 
     QString newName;
-    // Move existing file away
+    // Move existing file away  // FIXME-00 needed?
     QFile file(zipNameInt);
     if (file.exists()) {
         /*
@@ -44,7 +49,7 @@ void ZipAgent::startZip()
         */
     }
 
-#if defined(Q_OS_WINDOWS)
+#if defined(Q_OS_WINDOWS)   // FIXME-00 Implementation missing
 #else
     setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path()));
     QStringList args;

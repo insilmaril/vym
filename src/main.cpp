@@ -110,8 +110,6 @@ QList<Command *> branchCommands;
 Options options;
 ImageIO imageIO;
 
-int statusbarTime = 10000;
-
 bool usingDarkTheme;
 QColor vymBlue;
 

@@ -248,9 +248,10 @@ bool checkUnzipTool()
     return unzipToolAvailable;
 }
 
-File::ErrorCode zipDir(QDir zipInputDir, QString zipName)   // FIXME-4 Does not support deleting unused files
-                                                            // Not supported in Windows tar.
-                                                            // Probably supported with -FS option on Linux
+File::ErrorCode zipDir(QDir zipInputDir, QString zipName)   // FIXME-2 remove here and only use ZipAgent
+    // FIXME-4 Does not support deleting unused files
+    // Not supported in Windows tar.
+    // Probably supported with -FS option on Linux
 {
     zipName = QDir::toNativeSeparators(zipName);
     File::ErrorCode err = File::Success;
@@ -279,7 +280,7 @@ File::ErrorCode zipDir(QDir zipInputDir, QString zipName)   // FIXME-4 Does not 
     }
 
     // zip the temporary directory
-    VymProcess *zipProc = new VymProcess(); // FIXME-0 never deleted?
+    VymProcess *zipProc = new VymProcess(); // FIXME-2 never deleted?
     QStringList args;
 
 #if defined(Q_OS_WINDOWS)
@@ -451,11 +452,11 @@ File::ErrorCode zipDir(QDir zipInputDir, QString zipName)   // FIXME-4 Does not 
     return err;
 }
 
-File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)
+File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)    // FIXME-2 move to ZipAgent
 {
     File::ErrorCode err = File::Success;
 
-    VymProcess *zipProc = new VymProcess(); // FIXME-0 never deleted?
+    VymProcess *zipProc = new VymProcess(); // FIXME-2 never deleted?
     QStringList args;
 
 #if defined(Q_OS_WINDOWS)

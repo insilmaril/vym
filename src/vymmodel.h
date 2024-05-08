@@ -170,13 +170,14 @@ class VymModel : public TreeModel {
   public:
     /*! \brief Save the map to file */
     File::ErrorCode save(const File::SaveMode &);
-    bool zipRunning();
+    bool isSaving();
 
   private slots:
     void zipFinished ();
 
   private:
     ZipAgent *zipAgent;
+    bool isSavingInt;
 
   public:
     ImageItem* loadImage(

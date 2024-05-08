@@ -17,6 +17,7 @@ class ZipAgent : public QProcess {
     ~ZipAgent();
 
   public:
+    void setBackgroundProcess(bool);
     void startZip();
 
   signals:
@@ -29,5 +30,7 @@ class ZipAgent : public QProcess {
   private:
     QDir zipDirInt;
     QString zipNameInt;
+
+    bool isBackgroundProcessInt;
 };
 #endif

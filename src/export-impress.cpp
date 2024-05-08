@@ -136,7 +136,16 @@ void ExportOO::exportPresentation()
     f.close();
 
     // zip tmpdir to destination
-    zipDir(tmpDir, filePath);   // FIXME-00 Use zipAgent
+    ZipAgent zipAgent(tmpDir, filePath);
+    zipAgent.setBackgroundProcess(true);
+    zipAgent.startZip();
+    if(zipAgent.exitStatus() != QProcess::NormalExit ||
+            zipAgent.exitCode() > 0) {
+        QMessageBox::critical(
+            0, QObject::tr("Critical Export Error"),
+            QObject::tr("Could not compress file %1").arg(filePath));
+    }
+
 
     displayedDestination = filePath;
 

@@ -82,7 +82,6 @@ extern QDir tmpVymDir;
 extern QDir cacheDir;
 extern QString clipboardDir;
 extern QString clipboardFile;
-extern int statusbarTime;
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
@@ -402,7 +401,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
 Main::~Main()
 {
-    // qDebug()<<"Destr Mainwindow"<<flush;
+    qDebug() << "Destr Mainwindow";
 
     // Make sure there is no focus elsewhere, e.g. in BranchPropertyEditor
     // which could cause a crash.  (Qt bug?)
@@ -479,11 +478,12 @@ void Main::loadCmdLine()
     removeProgressCounter();
 }
 
-void Main::statusMessage(const QString &s)
+void Main::statusMessage(const QString &s, int timeout)
 {
     // Surpress messages while progressdialog during
     // load is active
-    statusBar()->showMessage(s, statusbarTime);
+    statusBar()->showMessage(s, timeout);
+    statusBar()->update();
     qApp->processEvents();
 }
 
@@ -498,7 +498,7 @@ void Main::setProgressMaximum(int max)
     progressCounter++; // Another map is loaded
 
     progressMax = max * 1000;
-    QApplication::processEvents();
+    QApplication::processEvents(); // FIXME-00 
 }
 
 void Main::addProgressValue(float v)
@@ -1521,12 +1521,14 @@ void Main::setupFileActions()
     switchboard.addSwitch("fileMapClose", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileCloseMap()));
     fileMenu->addAction(a);
+    actionFileClose = a;
 
     a = new QAction(QPixmap(":/exit.svg"), tr("E&xit", "File menu"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_Q);
     switchboard.addSwitch("fileExit", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExitVYM()));
     fileMenu->addAction(a);
+    actionFileExitVym = a;
 
     a = new QAction("Toggle winter mode", this);
     a->setShortcut(Qt::CTRL | Qt::Key_Asterisk);
@@ -3959,6 +3961,7 @@ void Main::fileNew()
     }
     else {
         vm = currentModel();
+        update();
     }
 
     // Switch to new tab    
@@ -4081,13 +4084,12 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
                     vm = currentMapEditor()->getModel();
                     vm->setFilePath(fn);
                     updateTabName(vm);
-                    statusBar()->showMessage("Created " + fn, statusbarTime);
+                    statusBar()->showMessage("Created " + fn);
                     return File::Success;
                 }
 
                 // don't create new map
-                statusBar()->showMessage("Loading " + fn + " failed!",
-                                         statusbarTime);
+                statusBar()->showMessage("Loading " + fn + " failed!");
                 int cur = tabWidget->currentIndex();
                 tabWidget->setCurrentIndex(tabWidget->count() - 1);
                 fileCloseMap();
@@ -4122,7 +4124,7 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
         if (err == File::Aborted) {
             if (lmode == File::NewMap)
                 fileCloseMap();
-            statusBar()->showMessage("Could not load " + fn, statusbarTime);
+            statusBar()->showMessage("Could not load " + fn);
         }
         else {
             if (lmode == File::NewMap) {
@@ -4137,7 +4139,7 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             }
             editorChanged();
             vm->emitShowSelection();
-            statusBar()->showMessage(tr("Loaded %1").arg(fn), statusbarTime);
+            statusBar()->showMessage(tr("Loaded %1").arg(fn));
         }
     }
 
@@ -4730,6 +4732,7 @@ void Main::fileExportLast()
 
 bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed, if readonly is because of unsupported  version?
 {
+
     VymModel *m;
     VymView *vv;
     if (i < 0)
@@ -4739,6 +4742,12 @@ bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed,
     m = vv->getModel();
 
     if (m) {
+        if (m->isSaving()) {
+            qDebug() << "MW::fileCloseMap ignoring request to close because of running zip process"; // FIXME-00
+            qDebug() << "saving: " << m->isSaving();
+            return false;
+        }
+
         if (m->hasChanged()) {
             QMessageBox mb(
                 QMessageBox::Warning,
@@ -4758,7 +4767,7 @@ bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed,
                     break;
                 case QMessageBox::Cancel:
                     // do nothing
-                    return true;
+                    return false;
             }
         }
 
@@ -4768,12 +4777,15 @@ bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed,
         noteEditor->clear();
         delete (m->getMapEditor());
         delete (vv);
+
+        qDebug() << "MW::fileCloseMap pre"; // FIXME-00
         delete (m);
+        qDebug() << "MW::fileCloseMap post";
 
         updateActions();
-        return false;
+        return true;
     }
-    return true; // Better don't exit vym if there is no currentModel()...
+    return false; // Better don't exit vym if there is no currentModel()...
 }
 
 void Main::filePrint()
@@ -4789,9 +4801,10 @@ bool Main::fileExitVYM()
     // Check if one or more editors have changed
     while (tabWidget->count() > 0) {
         tabWidget->setCurrentIndex(0);
-        if (fileCloseMap())
+        if (!fileCloseMap())
             return true;
-        qApp->processEvents(); // Update widgets to show progress
+        // Update widgets to show progress
+        // qApp->processEvents(); // FIXME-0  in fileExitVym
     }
     qApp->quit();
     return false;
@@ -6703,9 +6716,20 @@ void Main::updateActions()
         if (!m->getSelectedItem())
             actionSelectNothing->setEnabled(false);
 
-        // Save
-        if (!m->hasChanged() || m->zipRunning())
+        // Save and exit
+        if (m->isSaving()) {
             actionFileSave->setEnabled(false);
+            actionFileClose->setEnabled(false);
+            actionFileExitVym->setEnabled(false);
+        } else {
+            if (!m->hasChanged())
+                actionFileSave->setEnabled(false);
+            else
+                actionFileSave->setEnabled(true);
+            actionFileClose->setEnabled(true);
+            actionFileExitVym->setEnabled(true);
+        }
+        
 
         // Undo/Redo
         if (!m->isUndoAvailable())
