@@ -105,8 +105,8 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void setRotationSubtree(const int &);
     int rotationSubtree();
 
-    void setScalingAutoDesign(const bool &, const bool &update = true);
-    bool scalingAutoDesign();
+    void setScaleAutoDesign(const bool &, const bool &update = true);
+    bool scaleAutoDesign();
     void setScaleHeading(const qreal &);
     qreal scaleHeading();
     void setScaleSubtree(const qreal &);
@@ -119,7 +119,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     bool rotationsAutoDesignInt;
     qreal rotationHeadingInt;
     qreal rotationSubtreeInt;
-    bool scalingAutoDesignInt;
+    bool scaleAutoDesignInt;
     qreal scaleHeadingInt;
     qreal scaleSubtreeInt;
 
@@ -193,7 +193,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     bool originalFloating;                      //! Save, if floating before linked temporary
     QPointF originalParentPos;                  // used in ME to determine orientation during move: scene coord of orig, parent
 
-  public:   // FIXME-1 v_anim public only for experimenting  
+  public:   // FIXME-2 v_anim public only for experimenting  
     QPointF v_anim;                     // Animation vector. Added to current pos in each animation step
     QGraphicsLineItem v;
 };

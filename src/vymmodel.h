@@ -235,7 +235,6 @@ class VymModel : public TreeModel {
     int undosAvail;         //!< Available number of undo steps
     bool repositionBlocked; //!< block while load or undo
     bool saveStateBlocked;  //!< block saving current state
-    bool updateStylesBlocked; //! While loading a new map, don't update container styles    // FIXME-2 needed?
 
   public:   // FIXME-3 much of below should be private!
     void blockReposition();   //! Block reposition while bigger changes, e.g. an import
@@ -412,7 +411,7 @@ class VymModel : public TreeModel {
     void setRotationsAutoDesign(const bool &);
     void setRotationHeading(const int &);
     void setRotationSubtree(const int &);
-    void setScalingAutoDesign(const bool &);
+    void setScaleAutoDesign(const bool &);
     void setScaleHeading(const qreal &, const bool relative = false);
     qreal getScaleHeading();
     void setScaleSubtree(const qreal &);
@@ -746,8 +745,10 @@ class VymModel : public TreeModel {
     MapDesign* mapDesignInt;
     void applyDesign(
             MapDesign::UpdateMode,
-            bool recursive = false,
-            TreeItem *ti = nullptr);
+            BranchItem *bi = nullptr);
+    void applyDesignRecursively(
+            MapDesign::UpdateMode,
+            BranchItem *bi = nullptr);
 
   public:
     void setDefaultFont(const QFont &);

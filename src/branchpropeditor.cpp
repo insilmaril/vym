@@ -460,7 +460,7 @@ void BranchPropertyEditor::updateScalingControls()
 {
     bool b;
     if (branchContainer) {
-        b = branchContainer->scalingAutoDesign();
+        b = branchContainer->scaleAutoDesign();
         ui.scalingAutoCheckBox->setEnabled(true);
         ui.scaleHeadingSpinBox->setValue(branchContainer->scaleHeading());
         ui.scaleSubtreeSpinBox->setValue(branchContainer->scaleSubtree());
@@ -707,7 +707,7 @@ void BranchPropertyEditor::rotationSubtreeChanged(int i)
 void BranchPropertyEditor::scalingAutoChanged()
 {
     if (model) {
-        model->setScalingAutoDesign(ui.scalingAutoCheckBox->isChecked());
+        model->setScaleAutoDesign(ui.scalingAutoCheckBox->isChecked());
     }
 }
 

@@ -162,11 +162,11 @@ void MapDesign::init()
 
     rotationSubtreeInt << 0;
 
-    scalingHeadingInt << 1.3;
-    scalingHeadingInt << 1.0;
-    scalingHeadingInt << 0.8;
+    scaleHeadingInt << 1.3;
+    scaleHeadingInt << 1.0;
+    scaleHeadingInt << 0.8;
 
-    scalingSubtreeInt << 1.0;
+    scaleSubtreeInt << 1.0;
 
     // Should links of branches use a default color or the color of heading?
     linkColorHintInt = LinkObj::DefaultColor;
@@ -476,24 +476,24 @@ void MapDesign::setSelectionBrush(const QBrush &b)
     selectionBrushInt = b;
 }
 
-int MapDesign::rotationHeading(const UpdateMode &updateMode, int depth) // FIXME-2 updateMode not used in methods here
+int MapDesign::rotationHeading(const int &depth)
 {
     return rotationHeadingInt.tryAt(depth);
 }
 
-int MapDesign::rotationSubtree(const UpdateMode &updateMode, int depth)
+int MapDesign::rotationSubtree(const int &depth)
 {
     return rotationSubtreeInt.tryAt(depth);
 }
 
-qreal MapDesign::scalingHeading(const UpdateMode &updateMode, int depth)
+qreal MapDesign::scaleHeading(const int &depth)
 {
-    return scalingHeadingInt.tryAt(depth);
+    return scaleHeadingInt.tryAt(depth);
 }
 
-qreal MapDesign::scalingSubtree(const UpdateMode &updateMode, int depth)
+qreal MapDesign::scaleSubtree(const int &depth)
 {
-    return scalingSubtreeInt.tryAt(depth);
+    return scaleSubtreeInt.tryAt(depth);
 }
 
 QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)

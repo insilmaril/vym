@@ -1092,7 +1092,7 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Scale subtree by factor f");
     modelCommands.append(c);
 
-    c = new Command("setScalingAutoDesign", Command::Branch);
+    c = new Command("setScaleAutoDesign", Command::Branch);
     c->addParameter(Command::Bool, false, "Scale automatically");
     modelCommands.append(c);
 
@@ -4730,7 +4730,7 @@ void Main::fileExportLast()
         m->exportLast();
 }
 
-bool Main::fileCloseMap(int i)  // FIXME-0 Lockfile of readonly map not removed, if readonly is because of unsupported  version?
+bool Main::fileCloseMap(int i)
 {
 
     VymModel *m;

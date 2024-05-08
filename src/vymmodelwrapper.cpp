@@ -1172,7 +1172,7 @@ void VymModelWrapper::setScaleSubtree(qreal f) { model->setScaleSubtree(f); }
 
 void VymModelWrapper::setScalingAutoDesign(const bool b)
 {
-    model->setScalingAutoDesign(b);
+    model->setScaleAutoDesign(b);
 }
 
 void VymModelWrapper::setSelectionBrushColor(const QString &color)
