@@ -171,13 +171,15 @@ add_custom_target(make-translations-directory ALL
 add_dependencies(vym make-translations-directory)
 
 install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
-install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR} FILES_MATCHING PATTERN "*.pdf")
 install(FILES doc/vym.1.gz DESTINATION ${CMAKE_INSTALL_MANDIR})
 install(FILES README.md LICENSE.txt DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
+    file(CREATE_LINK ../apps/vym.png application-x-vym.png SYMBOLIC)
+    install(FILES ${CMAKE_BINARY_DIR}/application-x-vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/mimetypes)
     install(FILES config/vym.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/mime/packages)
     install(FILES config/vym.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 endif()

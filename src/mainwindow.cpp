@@ -7142,6 +7142,8 @@ void Main::helpDoc()
     QString docname;
     if (locale.left(2) == "es")
         docname = "vym_es.pdf";
+    else if (locale.left(2) == "fr")
+        docname = "vym_fr.pdf";
     else
         docname = "vym.pdf";
 
