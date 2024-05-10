@@ -32,5 +32,6 @@ class ZipAgent : public QProcess {
     QString zipNameInt;
 
     bool isBackgroundProcessInt;
+    QStringList args;
 };
 #endif

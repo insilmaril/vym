@@ -27,14 +27,11 @@ void ZipAgent::startZip()
             this, SLOT(zipProcessFinished(int, QProcess::ExitStatus)));
 
     setProgram(zipToolPath);
-    QStringList args;
 
 #if defined(Q_OS_WINDOWS)
-    setWorkingDirectory(QDir::toNativeSeparators(zipInputDir.path() + "\\"));
-    args << "-a" << "-c" << "--format" << "zip" << "-f" << zipName << "*";
-    args << "-r";
-    args << zipNameInt;
-    args << ".";
+    qDebug() << "ZA::setWorkingDir: " << QDir::toNativeSeparators(zipDirInt.path() + "\\");
+    setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path() + "\\"));
+    args << "-a" << "-c" << "--format" << "zip" << "-f" << zipNameInt << "*";
 #else
     setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path()));
     args << "-r";
@@ -83,9 +80,7 @@ void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
     // zip could be started
     if (exitStatus != QProcess::NormalExit) {
         QMessageBox::critical(0, QObject::tr("Critical Error"),
-                              QObject::tr("zip didn't exit normally") +
-                                  "\n" + getErrout());
-        err = File::Aborted;
+                              QObject::tr("zip didn't exit normally"));
     }
     else {
         //QMessageBox::information( 0, QObject::tr( "Debug" ),
@@ -96,39 +91,30 @@ void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
         //                   "Std: " + getStdout() );
 
         if (exitCode > 1) {
+            QString output = readAllStandardError() +"\n" + readAllStandardOutput();
             QMessageBox::critical(
                 0,
                 QObject::tr("Error"),
                 QString(
-                    "Called: %1\n"
-                    "Args: %2\n"
+                    "Called: %1 with %2\n"
                     "Exit: %3\n"
-                    "Err: %4\n"
-                    "Std: %5").arg(zipToolPath).arg(args.join(" ")).arg(exitCode).arg(getErrout()).arg(getStdout())
+                    "%4").arg(zipToolPath).arg(args.join(" ")).arg(exitCode).arg(output)
                 );
-            err = File::Aborted;
         }
         else if (exitCode == 1) {
+            QString output = readAllStandardError() +"\n" + readAllStandardOutput();
             // Non fatal according to internet, but for example
             // some file was locked and could not be compressed
             QMessageBox::warning(
                 0, QObject::tr("Error"),
                 QString(
-                    "Called: %1\n"
-                    "Args: %2\n"
-                    "Err: %3\n"
-                    "Std: %4\n"
-                    "%5")
-                        .arg(zipToolPath)
-                        .arg(args.join(" "))
-                        .arg(getErrout())
-                        .arg(getStdout())
-                        .arg(
-                           "Please check the saved map, e.g. by opening in "
-                           "another tab.\n"
-                           "Workaround if save failed: Export as xml")
+                    "Called: %1 with %2\n"
+                    "Exit: %3\n"
+                    "%4").arg(zipToolPath)
+                    .arg(args.join(" ")).arg(exitCode).arg(output)
+                    .arg("Please check the saved map, e.g. by opening inanother tab.\n"
+                         "Workaround if save failed: Export as xml")
             );
-
         }
     }
 #else
