@@ -7,6 +7,7 @@ ZipAgent::ZipAgent(QDir zipDir, QString zipName)   // FIXME-4 Does not support d
     qDebug() << "Constr ZipAgent";
     zipNameInt = QDir::toNativeSeparators(zipName);
     zipDirInt = zipDir;
+    isBackgroundProcessInt = true;
 }
 
 ZipAgent::~ZipAgent()
@@ -21,45 +22,57 @@ void ZipAgent::setBackgroundProcess(bool b)
 
 void ZipAgent::startZip()
 {
-    qDebug() << "ZipAgent::start";
+    //qDebug() << "ZipAgent::start";
     connect(this, SIGNAL(finished(int, QProcess::ExitStatus)),
             this, SLOT(zipProcessFinished(int, QProcess::ExitStatus)));
 
-    QString symLinkTarget;
-
-    QString newName;
-    // Move existing file away  // FIXME-00 needed?
-    QFile file(zipNameInt);
-    if (file.exists()) {
-        /*
-        symLinkTarget = file.symLinkTarget();   // FIXME-00 Review symlinks
-        QString zipNameTmp = zipNameInt + ".tmp";
-        newName = zipNameTmp;
-        int n = 0;
-        while (!file.rename(newName) && n < 5) {
-            newName =
-                zipNameTmp + QString().setNum(n);
-            n++;
-        }
-        if (n >= 5) {
-            QMessageBox::critical(0, QObject::tr("Critical Error"),
-                                  QObject::tr("Couldn't move existing file out "
-                                              "of the way before saving."));
-        }
-        */
-    }
-
-#if defined(Q_OS_WINDOWS)   // FIXME-00 Implementation missing
-#else
-    setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path()));
-    QStringList args;
     setProgram(zipToolPath);
+    QStringList args;
+
+#if defined(Q_OS_WINDOWS)
+    setWorkingDirectory(QDir::toNativeSeparators(zipInputDir.path() + "\\"));
+    args << "-a" << "-c" << "--format" << "zip" << "-f" << zipName << "*";
     args << "-r";
     args << zipNameInt;
     args << ".";
+#else
+    setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path()));
+    args << "-r";
+    args << zipNameInt;
+    args << ".";
+#endif
     setArguments(args);
     start();
-#endif
+
+    if (!isBackgroundProcessInt) {
+        qDebug() << "ZA::startZip as foreground process"; // FIXME-00 check
+        if (!waitForStarted()) {
+            // zip could not be started
+            QMessageBox::critical(
+                0, QObject::tr("Critical Error"),
+                QObject::tr("Couldn't start %1 tool to compress data!\n"
+                            "The map could not be saved, please check if "
+                            "backup file is available or export as XML file!")
+                        .arg("zip") +
+                    "\n\nziptoolpath: " + zipToolPath +
+                    "\nargs: " + args.join(" "));
+        }
+        else {
+            // zip could be started
+            waitForFinished();
+            if (exitStatus() != QProcess::NormalExit) {
+                QMessageBox::critical(0, QObject::tr("Critical Error"),
+                                      QObject::tr("zip didn't exit normally"));
+            }
+            else {
+                if (exitCode() > 0) {
+                    QMessageBox::critical(
+                        0, QObject::tr("Critical Error"),
+                        QString("zip exit code:  %1").arg(exitCode()));
+                }
+            }
+        }
+    }
 }
 
 void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)

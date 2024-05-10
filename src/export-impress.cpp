@@ -32,7 +32,7 @@ QString ExportOO::buildList(TreeItem *current)
                 r += quoteMeta(bi->headingPlain());
                 // If necessary, write note
                 if (!bi->isNoteEmpty())
-                    r += "<text:line-break/>" + bi->getNoteASCII();
+                    r += "<text:line-break/>" + bi->getNoteASCII(); // FIXME-2 Quote missing for ampersands in notes, e.g. R&D, Q&A, ...
                 r += "</text:p>";
                 r += buildList(bi); // recursivly add deeper branches
                 r += "</text:list-item>\n";
@@ -137,7 +137,7 @@ void ExportOO::exportPresentation()
 
     // zip tmpdir to destination
     ZipAgent zipAgent(tmpDir, filePath);
-    zipAgent.setBackgroundProcess(true);
+    zipAgent.setBackgroundProcess(false);
     zipAgent.startZip();
     if(zipAgent.exitStatus() != QProcess::NormalExit ||
             zipAgent.exitCode() > 0) {
