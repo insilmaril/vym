@@ -1273,6 +1273,9 @@ void VymModel::fileChanged()
             // FIXME-5 We could check, if somebody else removed/replaced lockfile
             // (A unique vym ID would be needed)
 
+            if (isSavingInt)
+                return;
+
             QDateTime tmod = QFileInfo(filePath).lastModified();
             if (tmod > fileChangedTime) {
                 // FIXME-4 VM switch to current mapeditor and finish
