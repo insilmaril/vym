@@ -659,7 +659,7 @@ void Container::reposition()
             break;
 
         case GridColumns: {
-                int colCount = 3;   // FIXME-2 fixed for now for GridColumns layout
+                int colCount = 3;   // FIXME-4 fixed for now for GridColumns layout
                 qreal padding = 5;
                 QList <qreal> maxColWidths;
                 QList <qreal> maxRowHeights;

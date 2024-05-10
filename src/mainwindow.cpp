@@ -3683,7 +3683,7 @@ void Main::setupToolbars()
 
     // Format and colors
     colorsToolbar = new QToolBar(tr("Colors toolbar", "Colors toolbar name"));
-    colorsToolbar->setObjectName("colorsTB");   // FIXME-2 Add/rework buttons to color heading, inner/outer frame pen/brush
+    colorsToolbar->setObjectName("colorsTB");
 
     actionGroupQuickColors = new QActionGroup(this);
     actionGroupQuickColors->setExclusive(true);
@@ -4800,7 +4800,7 @@ bool Main::fileExitVYM()
         if (!fileCloseMap())
             return true;
         // Update widgets to show progress
-        // qApp->processEvents(); // FIXME-0  in fileExitVym
+        qApp->processEvents(); // FIXME-0  in fileExitVym
     }
     qApp->quit();
     return false;
@@ -6562,10 +6562,6 @@ void Main::updateDockWidgetTitles(VymModel *model)
         }
 
         noteEditor->setEditorTitle(s);
-
-        //qDebug() << "Main::updateDockWidgetTitles";
-        // FIXME-2 review. Also already called in MW::changeSelection, not necessary, right?
-        // branchPropertyEditor->setModel(model);
     }
 }
 
@@ -6676,7 +6672,7 @@ void Main::updateActions()
             actionListItems.at(i)->setEnabled(false);
 
         // Link style in context menu
-        switch (m->mapDesign()->linkStyle(0)) { // FIXME-2 what about other depths?
+        switch (m->mapDesign()->linkStyle(0)) { // FIXME-4 Currently global for map, all depths
             case LinkObj::Line:
                 actionFormatLinkStyleLine->setChecked(true);
                 break;

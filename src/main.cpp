@@ -366,7 +366,7 @@ int main(int argc, char *argv[])
         palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
         palette.setColor(QPalette::HighlightedText, Qt::black);
 
-        // FIXME-2 palette experiments on Windows
+        // FIXME-3 palette experiments on Windows
         //palette.setColor(QPalette::Light, Qt::green);
         //palette.setColor(QPalette::Midlight, Qt::red);
         qApp->setPalette(palette);
@@ -521,7 +521,7 @@ int main(int argc, char *argv[])
 
     m.loadCmdLine();
 
-    //m.resize(1600, 900);    // FIXME-2 only for screencasts
+    //m.resize(1600, 900);    // FIXME-4 only for screencasts
 
     // Restore last session
     if (options.isOn("restore"))

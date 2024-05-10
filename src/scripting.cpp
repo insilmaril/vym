@@ -219,8 +219,10 @@ Selection::Selection() { modelWrapper = nullptr; }
 void Selection::test()
 {
     qDebug() << "Selection::testSelection called"; // TODO debug
+    /*
     if (modelWrapper)
-        modelWrapper->setHeadingPlainText("huhu!"); // FIXME-2 debugging only... remove?
+        modelWrapper->setHeadingPlainText("huhu!");
+    */
 }
 
 void Selection::setModel(VymModelWrapper *mw)

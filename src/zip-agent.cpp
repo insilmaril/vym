@@ -42,7 +42,6 @@ void ZipAgent::startZip()
     start();
 
     if (!isBackgroundProcessInt) {
-        qDebug() << "ZA::startZip as foreground process"; // FIXME-00 check
         if (!waitForStarted()) {
             // zip could not be started
             QMessageBox::critical(

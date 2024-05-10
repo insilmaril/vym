@@ -29,7 +29,7 @@ template <typename T> T ConfigList<T>::tryAt(int i) {
 }
 
 template <typename T> void ConfigList<T>::replace(int i, const T &other) {
-    qlist.replace(i, other);    // FIXME-2 checks for array boundaries missing
+    qlist.replace(i, other);    // FIXME-4 checks for array boundaries missing
 }
 
 template <typename T> int ConfigList<T>::count() {

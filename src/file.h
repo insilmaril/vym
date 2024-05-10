@@ -31,7 +31,6 @@ void makeSubDirs(const QString &);
 
 bool checkZipTool();
 bool checkUnzipTool();
-File::ErrorCode zipDir(QDir, QString);
 File::ErrorCode unzipDir(QDir, QString);
 
 bool loadStringFromDisk(const QString &fn, QString &s);

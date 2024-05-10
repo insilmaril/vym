@@ -904,7 +904,7 @@ bool VymModel::isSaving()
 
 void VymModel::zipFinished()
 {
-    qDebug() << "VM::zipFinished exitStatus=" << zipAgent->exitStatus() << " exitCode=" << zipAgent->exitCode();  // FIXME-0 cont here...
+    //qDebug() << "VM::zipFinished exitStatus=" << zipAgent->exitStatus() << " exitCode=" << zipAgent->exitCode();
     // Cleanup
     zipAgent->deleteLater();
     zipAgent = nullptr;
@@ -1221,16 +1221,12 @@ void VymModel::autosave()
 
     // Check if autosave is disabled globally
     if (!mainWindow->useAutosave()) {
-        /*
-        qWarning()
-            << QString("VymModel::autosave disabled globally!  Current map: %1")
-                   .arg(filePath);
-        */
+        // qWarning() << QString("VymModel::autosave disabled globally!  Current map: %1").arg(filePath);
         return;
     }
 
     if (zipAgent || isSavingInt) {
-        qDebug() << "VymModel::autosave blocked by zipAgent or ongoing save";   // FIXME-2
+        //qDebug() << "VymModel::autosave blocked by zipAgent or ongoing save";
         return;
     }
 
@@ -1296,7 +1292,7 @@ void VymModel::fileChanged()
                     QMessageBox::RejectRole);
                 mb.exec();
                 if (mb.result() == QMessageBox::AcceptRole) {
-                    // Reload map       // FIXME-2 still might warn about existing lockfile!
+                    // Reload map
                     mainWindow->initProgressCounter(1);
                     loadMap(filePath);
                     mainWindow->removeProgressCounter();
@@ -6040,7 +6036,7 @@ void VymModel::reposition()
     repositionXLinks();
 
     // FIXME-2 needed? everytime? mapEditor->minimizeView();
-    //qDebug() << "VM::reposition end"; // FIXME-2
+    //qDebug() << "VM::reposition end";
 }
 
 void VymModel::repositionXLinks()
@@ -6167,6 +6163,7 @@ void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no savestate, no 
 }
 
 bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0 savestate needs to be adapted, command new param depth
+                                                                      // See also mainWindow->updateActions context menu
 {
     // Default depth == -1 is used for legacy styles from version < 2.9.518
     // or for using global setting from context menu

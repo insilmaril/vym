@@ -867,7 +867,7 @@ BranchWrapper* VymModelWrapper::selectedBranch()
     if (selbi)
         return selbi->branchWrapper();
     else
-        return nullptr; // FIXME-2 Better throw error here? Could work, caught by QJSEngine
+        return nullptr; // caught by QJSEngine
 }
 
 bool VymModelWrapper::selectID(const QString &s)
