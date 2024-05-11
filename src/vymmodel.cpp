@@ -561,7 +561,12 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             // is within the zipfile and cannot be used yet.
             mainWindow->statusMessage(tr("Uncompressing %1").arg(fname));
 
-        err = unzipDir(tmpZipDir, fname);
+        ZipAgent zipAgent(tmpZipDir, fname);
+        zipAgent.setBackgroundProcess(false);
+        zipAgent.startUnzip();
+        if (zipAgent.exitStatus() != QProcess::NormalExit)
+            err = File::Aborted;
+
         if (file.size() > 2000000)
             // Inform user that unzipping might take a while.
             // Detailed estimation about number of branches required for progress bar 

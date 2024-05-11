@@ -182,8 +182,10 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
 bool ImportMM::transform()
 {
     // try to unzip
-    if (File::Success == unzipDir(tmpDir, inputFile)) {
-
+    ZipAgent zipAgent(tmpDir, inputFile);
+    zipAgent.setBackgroundProcess(false);
+    zipAgent.startUnzip();
+    if (zipAgent.exitStatus() == QProcess::NormalExit) {
         // Set short name, too. Search from behind:
         transformedFile = inputFile;
         int i = transformedFile.lastIndexOf("/");

@@ -100,8 +100,8 @@ Settings settings("InSilmaril", QString(__VYM_NAME).toLower()); // Organization,
 
 bool zipToolAvailable = false;
 bool unzipToolAvailable = false;
-QString zipToolPath;   // Platform dependant zip tool
-QString unzipToolPath; // For windows same as zipToolPath
+QString zipToolPath;	// Platform dependant zip tool
+QString unzipToolPath;  // Platform dependant unzip tool
 
 QList<Command *> vymCommands;
 QList<Command *> modelCommands;
@@ -296,7 +296,8 @@ int main(int argc, char *argv[])
     vymPlatform = QSysInfo::prettyProductName();
 
 #if defined(Q_OS_WINDOWS)
-    // Only Windows 10 has tar. Older windows versions not supported.
+    // Only Windows 10 has tar for zip and unzip.
+    // Older windows versions not supported.
     zipToolPath = "tar";
 #else
     zipToolPath = "/usr/bin/zip";
@@ -445,26 +446,21 @@ int main(int argc, char *argv[])
     Main m;
 
     // Check for zip tools
-    checkZipTool();
-    checkUnzipTool();
+    zipToolAvailable = ZipAgent::checkZipTool();
+    unzipToolAvailable = ZipAgent::checkUnzipTool();
 
 #if defined(Q_OS_WINDOWS)
     if (!zipToolAvailable || QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10) {
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't find tool to unzip data,"
+            QObject::tr("Couldn't find tool to zip/unzip data,"
                         "or your Windows version is older than Windows 10."));
-        //m.settingsZipTool();
     }
 #else
     if (!zipToolAvailable || !unzipToolAvailable) {
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't find tool to zip/unzip data. "
-                        "Please install on your platform and set"
-                        "path in Settings menu:\n ",
-                        "zip tool missing on Linux/Mac platform"));
-        //m.settingsZipTool();
+            QObject::tr("Couldn't find tar tool to zip/unzip data. "));
     }
 #endif
 

@@ -132,7 +132,6 @@ extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
 extern QDir vymInstallDir;
 #endif
-extern QString zipToolPath;
 
 extern QColor vymBlue;
 

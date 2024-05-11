@@ -18,11 +18,6 @@
 #include "unistd.h"
 #endif
 
-extern QString zipToolPath;
-extern QString unzipToolPath;
-extern bool zipToolAvailable;
-extern bool unzipToolAvailable;
-
 QString convertToRel(const QString &src, const QString &dst)
 {
     // Creates a relative path pointing from src to dst
@@ -217,109 +212,6 @@ void makeSubDirs(const QString &s)
     d.mkdir("flags");
     d.mkdir("flags/user");
     d.mkdir("flags/standard");
-}
-
-bool checkZipTool()
-{
-    zipToolAvailable = false;
-#if defined(Q_OS_WINDOWS)
-    if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10)
-        zipToolAvailable = true;
-#else
-
-    QFile tool(zipToolPath);
-
-    zipToolAvailable = tool.exists();
-#endif
-    return zipToolAvailable;
-}
-
-bool checkUnzipTool()
-{
-    unzipToolAvailable = false;
-#if defined(Q_OS_WINDOWS)
-    if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10)
-        zipToolAvailable = true;
-#else
-    QFile tool(unzipToolPath);
-
-    unzipToolAvailable = tool.exists();
-#endif
-    return unzipToolAvailable;
-}
-
-File::ErrorCode unzipDir(QDir zipOutputDir, QString zipName)    // FIXME-2 move to ZipAgent
-{
-    File::ErrorCode err = File::Success;
-
-    VymProcess *zipProc = new VymProcess(); // FIXME-3 never deleted!
-    QStringList args;
-
-#if defined(Q_OS_WINDOWS)
-    zipProc->setWorkingDirectory(
-        QDir::toNativeSeparators(zipOutputDir.path() + "\\"));
-    args << "-x" << "-f" << zipName.toUtf8() << "-C" << zipOutputDir.path();
-    zipProc->start(zipToolPath, args);
-#else
-    zipProc->setWorkingDirectory(QDir::toNativeSeparators(zipOutputDir.path()));
-    args << "-o"; // overwrite existing files!
-    args << zipName;
-    args << "-d";
-    args << zipOutputDir.path();
-
-    zipProc->start(unzipToolPath, args);
-#endif
-    if (!zipProc->waitForStarted()) {
-        QMessageBox::critical(
-            0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't start %1 tool to decompress data!\n")
-                    .arg("Windows zip") +
-                "\n\nziptoolpath: " + zipToolPath +
-                "\nargs: " + args.join(" "));
-        err = File::Aborted;
-    }
-    else {
-        zipProc->waitForFinished();
-        if (zipProc->exitStatus() != QProcess::NormalExit) {
-            QMessageBox::critical(
-                0, QObject::tr("Critical Error"),
-                QObject::tr("%1 didn't exit normally").arg(zipToolPath) +
-                    zipProc->getErrout());
-            err = File::Aborted;
-        }
-        else {
-            /*
-            QMessageBox::information( 0, QObject::tr( "Debug" ),
-                               "Called:" + zipToolPath + "\n" +
-                               "Args: "  + args.join(" ") + "\n" +
-                               "Exit: "  + zipProc->exitCode() + "\n" +
-                               "Err: " + zipProc->getErrout()  + "\n" +
-                               "Std: " + zipProc->getStdout() );
-            */
-            if (zipProc->exitCode() > 1) {
-                QMessageBox::critical(0, QObject::tr("Error"),
-                     QString("Called: %1").arg(zipToolPath) +
-                     QString("Args: %1").arg(args.join(" ")) +
-                     QString("Exit: %1\n").arg(zipProc->exitCode()) +
-                     QString("Err: %1\n").arg(zipProc->getErrout()) +
-                     QString("Std: %1").arg(zipProc->getStdout())
-                );
-                err = File::Aborted;
-            }
-           else if (zipProc->exitCode() == 1) {    // FIXME-3 cleanup, duplicated code
-                // Non fatal according to internet, but for example
-                // some file was locked and could not be compressed
-                QMessageBox::warning(0, QObject::tr("Warning"),
-                     QString("Called: %1").arg(zipToolPath) +
-                     QString("Args: %1").arg(args.join(" ")) +
-                     QString("Exit: %1\n").arg(zipProc->exitCode()) +
-                     QString("Err: %1\n").arg(zipProc->getErrout()) +
-                     QString("Std: %1").arg(zipProc->getStdout())
-                );
-            }
-        }
-    }
-    return err;
 }
 
 bool loadStringFromDisk(const QString &fname, QString &s)
