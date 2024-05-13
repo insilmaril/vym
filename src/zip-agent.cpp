@@ -29,7 +29,6 @@ void ZipAgent::startZip()
     setProgram(zipToolPath);
 
 #if defined(Q_OS_WINDOWS)
-    qDebug() << "ZA::setWorkingDir: " << QDir::toNativeSeparators(zipDirInt.path() + "\\");
     setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path() + "\\"));
     args << "-a" << "-c" << "--format" << "zip" << "-f" << zipNameInt << "*";
 #else
