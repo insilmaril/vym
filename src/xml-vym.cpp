@@ -474,7 +474,7 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
     lastBranch->setLastSelectedBranch(0);
 }
 
-void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (pasted) images
+void VymReader::readHeadingOrVymNote()
 {
     Q_ASSERT(xml.isStartElement() &&
             (xml.name() == QLatin1String("heading") ||

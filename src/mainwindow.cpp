@@ -605,7 +605,7 @@ void Main::setupAPI()
     // Below are the commands for a map
     //
 
-    // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper
+    // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper. See vymmodelwrapper.h
     QString DEPRECATED(" DEPRECATED - use branch command.");
 
     c = new Command("addBranch", Command::Branch);
