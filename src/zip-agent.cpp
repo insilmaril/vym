@@ -1,3 +1,5 @@
+#include <QOperatingSystemVersion>
+
 #include "zip-agent.h"
 
 extern QString zipToolPath;
@@ -183,13 +185,13 @@ void ZipAgent::startUnzip()
     setArguments(args);
     start();
 
-    qDebug() << "ZA::unzip started " << zipToolPath << args.join(" ") << "status:" << state();
+    qDebug() << "ZA::unzip started " << unzipToolPath << args.join(" ") << "status:" << state();
     if (!isBackgroundProcessInt) {
         if (!waitForStarted()) {
             // zip could not be started
             QMessageBox::critical(
                 0, QObject::tr("Critical Error"),
-                QObject::tr("Couldn't start to decompress data!\n\n")
+                QObject::tr("Couldn't start tool to decompress data!\n\n")
                         + unzipToolPath + args.join(" "));
         }
         else {

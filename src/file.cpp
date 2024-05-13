@@ -2,12 +2,10 @@
 #include <QDir>
 #include <QLabel>
 #include <QMessageBox>
-#include <QOperatingSystemVersion>
 #include <QPixmap>
 #include <QTextStream>
 
 #include "file.h"
-#include "vymprocess.h"
 
 #if defined(Q_OS_WINDOWS)
 #include "mkdtemp.h"

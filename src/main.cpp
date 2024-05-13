@@ -299,6 +299,7 @@ int main(int argc, char *argv[])
     // Only Windows 10 has tar for zip and unzip.
     // Older windows versions not supported.
     zipToolPath = "tar";
+    unzipToolPath = "tar";
 #else
     zipToolPath = "/usr/bin/zip";
     unzipToolPath = "/usr/bin/unzip";
