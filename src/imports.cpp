@@ -146,7 +146,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     v = jsobj[key].toInt();
                 } else if (key == "postData") 
                     v = QString("null");
-                else if (jsobj[key].isString())     // FIXME-2 type checks no longer needed qith QVariant
+                else if (jsobj[key].isString())     // FIXME-4 type checks no longer needed qith QVariant
                     v = jsobj[key].toString();
                 else {
                 // Ignore only the "postdata: null" field for now

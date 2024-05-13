@@ -6040,7 +6040,7 @@ void VymModel::reposition()
 
     repositionXLinks();
 
-    // FIXME-2 needed? everytime? mapEditor->minimizeView();
+    // FIXME-4 needed? everytime? mapEditor->minimizeView();
     //qDebug() << "VM::reposition end";
 }
 

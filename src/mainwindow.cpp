@@ -4799,7 +4799,7 @@ bool Main::fileExitVYM()
         if (!fileCloseMap())
             return true;
         // Update widgets to show progress
-        qApp->processEvents(); // FIXME-0  in fileExitVym
+        qApp->processEvents();
     }
     qApp->quit();
     return false;
