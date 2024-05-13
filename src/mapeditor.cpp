@@ -731,6 +731,7 @@ void MapEditor::minimizeView() {
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
     //qDebug() << "ME::minimizeView";   // FIXME-2 check when and how often minimizeView is called
+    // Used to be called also from VymModel::reposition()
 }
 
 void MapEditor::print()
@@ -1250,7 +1251,7 @@ TreeItem *MapEditor::getItemBelow(TreeItem *selti)
     return nullptr;
 }
 
-BranchItem *MapEditor::getLeftBranch(TreeItem *ti)  // FIXME-2 Adapt navigation to support floating layouts
+BranchItem *MapEditor::getLeftBranch(TreeItem *ti)  // FIXME-3 Adapt navigation to support floating layouts
                                                     // up/down/left/right - build lists to neares branch in 
                                                     // each direction.  See issue #103
 {
@@ -2065,32 +2066,34 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         QPointF linkOffset;                     // Distance for temporary link
 
         BranchContainer *tbc = targetBranchContainer->parentBranchContainer();
-        if (e->modifiers() & Qt::ShiftModifier && tbc) {            // FIXME-2 better center instead of bottom for movingRef
+        if (e->modifiers() & Qt::ShiftModifier && tbc) {
+            qreal dy = targetBranchContainer->rect().height() / 2;
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
 
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
                 // Shift modifier: Link right above
-                targetRefPointName = Container::TopRight;
+                targetRefPointName = Container::BottomRight;
                 movingRefPointName = Container::BottomLeft;
-                linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                linkOffset = QPointF(model->mapDesign()->linkWidth(), - dy);
             } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
                     // Shift modifier: Link left above
                     targetRefPointName = Container::TopLeft;
                     movingRefPointName = Container::BottomRight;
-                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), dy);
             }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
-        } else if (e->modifiers() & Qt::ControlModifier && tbc) {   // FIXME-2 better center instead of top for movingRef
+        } else if (e->modifiers() & Qt::ControlModifier && tbc) {
+            qreal dy = targetBranchContainer->rect().height() / 2;
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
-                // Shift modifier: Link right below
-                targetRefPointName = Container::BottomRight;
+                // Control modifier: Link right below
+                targetRefPointName = Container::TopRight;
                 movingRefPointName = Container::TopLeft;
-                linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                linkOffset = QPointF(model->mapDesign()->linkWidth(), dy);
             } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
-                    // Shift modifier: Link left below
-                    targetRefPointName = Container::BottomLeft;
+                    // Control modifier: Link left below
+                    targetRefPointName = Container::TopLeft;
                     movingRefPointName = Container::TopRight;
-                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), dy);
             }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
         } else {
             // No modifier used, temporary link to target itself
