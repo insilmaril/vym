@@ -250,7 +250,7 @@ void MapEditor::panView()
         QRectF r = QRectF(q, QPointF(q.x() + 1, q.y() + 1));
 
         // Expand view if necessary
-        setScrollBarPosTarget(r);   // FIXME-2   mapToScene first?   
+        setScrollBarPosTarget(r);
 
         // Stop possible other animations
         if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
@@ -1609,34 +1609,14 @@ void MapEditor::keyPressEvent(QKeyEvent *e)
         // Ignore PageUP/Down to avoid scrolling with keys
         return;
 
-    if (e->modifiers() & Qt::ShiftModifier) {
-        switch (mainWindow->getModMode()) {
-        case Main::ModModePoint:
-            setCursor(Qt::ArrowCursor);
-            break;
-        case Main::ModModeColor:
-            setCursor(PickColorCursor);
-            break;
-        case Main::ModModeXLink:
-            setCursor(XLinkCursor);
-            break;
-        case Main::ModModeMoveObject:
-            setCursor(Qt::PointingHandCursor);
-            break;
-        case Main::ModModeMoveView:
-            // FIXME-2 Qt6 setCursor(QPixmap(":/mode-move-view.png"));
-            break;
-        default:
-            setCursor(Qt::ArrowCursor);
-            break;
-        }
-    }
+    if (e->modifiers() & Qt::ShiftModifier)
+        updateCursor();
     QGraphicsView::keyPressEvent(e);
 }
 
 void MapEditor::keyReleaseEvent(QKeyEvent *e)
 {
-    if (!(e->modifiers() & Qt::ControlModifier))
+    if (!(e->modifiers() & Qt::ShiftModifier))
         setCursor(Qt::ArrowCursor);
 }
 
@@ -1646,7 +1626,7 @@ void MapEditor::startPanningView(QMouseEvent *e)
     panning_initialPointerPos = e->globalPosition().toPoint();
     panning_initialScrollBarValues =                  // Used for scrollbars when moving view
         QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
-    setCursor(HandOpenCursor);
+    setCursor(Qt::ClosedHandCursor);
 }
 
 void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if multiple tree items are found to select the "right" one
@@ -2466,13 +2446,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         scene()->update();
         vPan = QPoint();
     } // MovingObject or MovingObjectTmpLinked
-    else
-        // maybe we moved View: set old cursor
-        setCursor(Qt::ArrowCursor);
 
     if (editorState != EditingHeading) {
         setState(Neutral); // Continue editing after double click!
     }
+
+    // Restore cursor // FIXME-00
+    updateCursor();
 
     movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
@@ -2651,6 +2631,34 @@ void MapEditor::dropEvent(QDropEvent *event)
         }
     }
     event->acceptProposedAction();
+}
+
+void MapEditor::updateCursor()
+{
+    if (qApp->queryKeyboardModifiers() & Qt::ShiftModifier) {
+        switch (mainWindow->getModMode()) {
+            case Main::ModModePoint:
+                setCursor(Qt::ArrowCursor);
+                break;
+            case Main::ModModeColor:
+                setCursor(PickColorCursor);
+                break;
+            case Main::ModModeXLink:
+                setCursor(XLinkCursor);
+                break;
+            case Main::ModModeMoveObject:
+                setCursor(Qt::PointingHandCursor);
+                break;
+            case Main::ModModeMoveView:
+                setCursor(Qt::OpenHandCursor);
+                break;
+            default:
+                setCursor(Qt::ArrowCursor);
+                break;
+        }
+    } else {
+        setCursor(Qt::ArrowCursor);
+    }
 }
 
 void MapEditor::setState(EditorState s)

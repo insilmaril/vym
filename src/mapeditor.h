@@ -212,6 +212,7 @@ class MapEditor : public QGraphicsView {
     void dragLeaveEvent(QDragLeaveEvent *);
     void dropEvent(QDropEvent *);
 
+    void updateCursor();
   private:
     QGraphicsScene *mapScene;
     VymModel *model; //!< Vym Map, includding several mapCenters
