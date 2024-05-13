@@ -488,7 +488,7 @@ void VymReader::readHeadingOrVymNote()  // FIXME-1 also read/write heading for (
     }
 
     // Save type for later (after reading html)
-    QString textType = xml.name().toString();  // FIXME-2 check: previously QStringRef, not in Qt6
+    QString textType = xml.name().toString();
     htmldata.clear();
     vymtext.clear();
 

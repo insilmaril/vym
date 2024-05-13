@@ -7,8 +7,6 @@
 
 #include "file.h"
 
-extern QString zipToolPath;
-
 class ZipAgent : public QProcess {
     Q_OBJECT
 
@@ -17,8 +15,12 @@ class ZipAgent : public QProcess {
     ~ZipAgent();
 
   public:
+    static bool checkZipTool();
+    static bool checkUnzipTool();
+
     void setBackgroundProcess(bool);
     void startZip();
+    void startUnzip();
 
   signals:
     void zipFinished();

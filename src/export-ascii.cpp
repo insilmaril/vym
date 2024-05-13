@@ -167,13 +167,13 @@ QString ExportASCII::ensureEmptyLines(QString &text, int n)
     // First count trailing line breaks
     int j = 0;
     int i = text.length() - 1;
-    while (i > -1 && text.at(i) == QChar::LineFeed)  {  // FIXME-2 check
+    while (i > -1 && text.at(i) == QChar::LineFeed)  {
         i--;
         j++;
     }
 
     while (j < n + 1) {
-        text = text + QChar::LineFeed; // FIXME-2 check
+        text = text + QChar::LineFeed;
         j++;
     }
 

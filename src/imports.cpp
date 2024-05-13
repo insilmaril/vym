@@ -146,7 +146,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     v = jsobj[key].toInt();
                 } else if (key == "postData") 
                     v = QString("null");
-                else if (jsobj[key].isString())     // FIXME-2 type checks no longer needed qith QVariant
+                else if (jsobj[key].isString())     // FIXME-4 type checks no longer needed qith QVariant
                     v = jsobj[key].toString();
                 else {
                 // Ignore only the "postdata: null" field for now
@@ -182,8 +182,10 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
 bool ImportMM::transform()
 {
     // try to unzip
-    if (File::Success == unzipDir(tmpDir, inputFile)) {
-
+    ZipAgent zipAgent(tmpDir, inputFile);
+    zipAgent.setBackgroundProcess(false);
+    zipAgent.startUnzip();
+    if (zipAgent.exitStatus() == QProcess::NormalExit) {
         // Set short name, too. Search from behind:
         transformedFile = inputFile;
         int i = transformedFile.lastIndexOf("/");

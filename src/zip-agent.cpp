@@ -1,10 +1,13 @@
 #include "zip-agent.h"
 
+extern QString zipToolPath;
+extern QString unzipToolPath;
+
 ZipAgent::ZipAgent(QDir zipDir, QString zipName)   // FIXME-4 Does not support deleting unused files
                                                    // Not supported in Windows tar.
                                                    // Probably supported with -FS option on Linux
 {
-    qDebug() << "Constr ZipAgent";
+    //qDebug() << "Constr ZipAgent";
     zipNameInt = QDir::toNativeSeparators(zipName);
     zipDirInt = zipDir;
     isBackgroundProcessInt = true;
@@ -12,7 +15,33 @@ ZipAgent::ZipAgent(QDir zipDir, QString zipName)   // FIXME-4 Does not support d
 
 ZipAgent::~ZipAgent()
 {
-    qDebug() << "Destr ZipAgent";
+    //qDebug() << "Destr ZipAgent";
+}
+
+bool ZipAgent::checkZipTool()
+{
+    bool zipToolAvailable = false;
+#if defined(Q_OS_WINDOWS)
+    if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10)
+        zipToolAvailable = true;
+#else
+    QFile tool(zipToolPath);
+    zipToolAvailable = tool.exists();
+#endif
+    return zipToolAvailable;
+}
+
+bool ZipAgent::checkUnzipTool()
+{
+    bool unzipToolAvailable = false;
+#if defined(Q_OS_WINDOWS)
+    if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10)
+        unzipToolAvailable = true;
+#else
+    QFile tool(unzipToolPath);
+    unzipToolAvailable = tool.exists();
+#endif
+    return unzipToolAvailable;
 }
 
 void ZipAgent::setBackgroundProcess(bool b)
@@ -22,7 +51,7 @@ void ZipAgent::setBackgroundProcess(bool b)
 
 void ZipAgent::startZip()
 {
-    //qDebug() << "ZipAgent::start";
+    //qDebug() << "ZipAgent::startZip";
     connect(this, SIGNAL(finished(int, QProcess::ExitStatus)),
             this, SLOT(zipProcessFinished(int, QProcess::ExitStatus)));
 
@@ -41,17 +70,14 @@ void ZipAgent::startZip()
     start();
 
     if (!isBackgroundProcessInt) {
-        qDebug() << "ZA::startZip as foreground process"; // FIXME-00 check
         if (!waitForStarted()) {
             // zip could not be started
             QMessageBox::critical(
                 0, QObject::tr("Critical Error"),
-                QObject::tr("Couldn't start %1 tool to compress data!\n"
+                QObject::tr("Couldn't start to compress data!\n"
                             "The map could not be saved, please check if "
-                            "backup file is available or export as XML file!")
-                        .arg("zip") +
-                    "\n\nziptoolpath: " + zipToolPath +
-                    "\nargs: " + args.join(" "));
+                            "backup file is available or export as XML file!\n\n")
+                        + zipToolPath + args.join(" "));
         }
         else {
             // zip could be started
@@ -73,7 +99,7 @@ void ZipAgent::startZip()
 
 void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qDebug() << "ZA::zipProcessFinished  exitCode=" << exitCode << " exitStatus=" << exitStatus;
+    //qDebug() << "ZA::zipProcessFinished  exitCode=" << exitCode << " exitStatus=" << exitStatus;
 
 #if defined(Q_OS_WINDOWS)
     // zip could be started
@@ -132,3 +158,56 @@ void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 #endif
     emit(zipFinished());
 }
+
+void ZipAgent::startUnzip()
+{
+    qDebug() << "ZipAgent::startUnzip";
+
+    // For now only as blocking foreground process
+    isBackgroundProcessInt = false;
+    //connect(this, SIGNAL(finished(int, QProcess::ExitStatus)),
+    //        this, SLOT(unzipProcessFinished(int, QProcess::ExitStatus)));
+
+    setProgram(unzipToolPath);
+
+#if defined(Q_OS_WINDOWS)
+    setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path() + "\\"));
+    args << "-x" << "-f" << zipNameInt.toUtf8() << "-C" << zipDirInt.path();
+#else
+    setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path()));
+    args << "-o"; // overwrite existing files!
+    args << zipNameInt;
+    args << "-d";
+    args << zipDirInt.path();
+#endif
+    setArguments(args);
+    start();
+
+    qDebug() << "ZA::unzip started " << zipToolPath << args.join(" ") << "status:" << state();
+    if (!isBackgroundProcessInt) {
+        if (!waitForStarted()) {
+            // zip could not be started
+            QMessageBox::critical(
+                0, QObject::tr("Critical Error"),
+                QObject::tr("Couldn't start to decompress data!\n\n")
+                        + unzipToolPath + args.join(" "));
+        }
+        else {
+            // zip could be started
+            qDebug() << "ZA wait for unzip to finish";
+            waitForFinished();
+            if (exitStatus() != QProcess::NormalExit) {
+                QMessageBox::critical(0, QObject::tr("Critical Error"),
+                                      QObject::tr("zip didn't exit normally"));
+            }
+            else {
+                if (exitCode() > 0) {
+                    QMessageBox::critical(
+                        0, QObject::tr("Critical Error"),
+                        QString("zip exit code:  %1").arg(exitCode()));
+                }
+            }
+        }
+    }
+}
+

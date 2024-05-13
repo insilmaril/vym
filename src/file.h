@@ -29,11 +29,6 @@ bool copyDir(QDir src, QDir dst, const bool &override = false);
 bool subDirsExist();
 void makeSubDirs(const QString &);
 
-bool checkZipTool();
-bool checkUnzipTool();
-File::ErrorCode zipDir(QDir, QString);
-File::ErrorCode unzipDir(QDir, QString);
-
 bool loadStringFromDisk(const QString &fn, QString &s);
 bool saveStringToDisk(const QString &fn, const QString &s);
 bool appendStringToFile(const QString &fn, const QString &s);

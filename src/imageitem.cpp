@@ -45,7 +45,7 @@ void ImageItem::init()
 {
     imageContainer = nullptr;
     setType(Image);
-    hideLinkUnselected = true;  // FIXME-2 needed?
+    hideLinkUnselected = true;
     originalFilename = "no original name available";
     currentFilename.clear();
 }

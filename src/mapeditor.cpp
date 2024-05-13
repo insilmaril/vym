@@ -250,7 +250,7 @@ void MapEditor::panView()
         QRectF r = QRectF(q, QPointF(q.x() + 1, q.y() + 1));
 
         // Expand view if necessary
-        setScrollBarPosTarget(r);   // FIXME-2   mapToScene first?   
+        setScrollBarPosTarget(r);
 
         // Stop possible other animations
         if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
@@ -731,6 +731,7 @@ void MapEditor::minimizeView() {
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
     //qDebug() << "ME::minimizeView";   // FIXME-2 check when and how often minimizeView is called
+    // Used to be called also from VymModel::reposition()
 }
 
 void MapEditor::print()
@@ -1250,7 +1251,7 @@ TreeItem *MapEditor::getItemBelow(TreeItem *selti)
     return nullptr;
 }
 
-BranchItem *MapEditor::getLeftBranch(TreeItem *ti)  // FIXME-2 Adapt navigation to support floating layouts
+BranchItem *MapEditor::getLeftBranch(TreeItem *ti)  // FIXME-3 Adapt navigation to support floating layouts
                                                     // up/down/left/right - build lists to neares branch in 
                                                     // each direction.  See issue #103
 {
@@ -1608,34 +1609,14 @@ void MapEditor::keyPressEvent(QKeyEvent *e)
         // Ignore PageUP/Down to avoid scrolling with keys
         return;
 
-    if (e->modifiers() & Qt::ShiftModifier) {
-        switch (mainWindow->getModMode()) {
-        case Main::ModModePoint:
-            setCursor(Qt::ArrowCursor);
-            break;
-        case Main::ModModeColor:
-            setCursor(PickColorCursor);
-            break;
-        case Main::ModModeXLink:
-            setCursor(XLinkCursor);
-            break;
-        case Main::ModModeMoveObject:
-            setCursor(Qt::PointingHandCursor);
-            break;
-        case Main::ModModeMoveView:
-            // FIXME-2 Qt6 setCursor(QPixmap(":/mode-move-view.png"));
-            break;
-        default:
-            setCursor(Qt::ArrowCursor);
-            break;
-        }
-    }
+    if (e->modifiers() & Qt::ShiftModifier)
+        updateCursor();
     QGraphicsView::keyPressEvent(e);
 }
 
 void MapEditor::keyReleaseEvent(QKeyEvent *e)
 {
-    if (!(e->modifiers() & Qt::ControlModifier))
+    if (!(e->modifiers() & Qt::ShiftModifier))
         setCursor(Qt::ArrowCursor);
 }
 
@@ -1645,7 +1626,7 @@ void MapEditor::startPanningView(QMouseEvent *e)
     panning_initialPointerPos = e->globalPosition().toPoint();
     panning_initialScrollBarValues =                  // Used for scrollbars when moving view
         QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
-    setCursor(HandOpenCursor);
+    setCursor(Qt::ClosedHandCursor);
 }
 
 void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if multiple tree items are found to select the "right" one
@@ -2065,32 +2046,34 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         QPointF linkOffset;                     // Distance for temporary link
 
         BranchContainer *tbc = targetBranchContainer->parentBranchContainer();
-        if (e->modifiers() & Qt::ShiftModifier && tbc) {            // FIXME-2 better center instead of bottom for movingRef
+        if (e->modifiers() & Qt::ShiftModifier && tbc) {
+            qreal dy = targetBranchContainer->rect().height() / 2;
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
 
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
                 // Shift modifier: Link right above
-                targetRefPointName = Container::TopRight;
+                targetRefPointName = Container::BottomRight;
                 movingRefPointName = Container::BottomLeft;
-                linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                linkOffset = QPointF(model->mapDesign()->linkWidth(), - dy);
             } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
                     // Shift modifier: Link left above
                     targetRefPointName = Container::TopLeft;
                     movingRefPointName = Container::BottomRight;
-                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), dy);
             }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
-        } else if (e->modifiers() & Qt::ControlModifier && tbc) {   // FIXME-2 better center instead of top for movingRef
+        } else if (e->modifiers() & Qt::ControlModifier && tbc) {
+            qreal dy = targetBranchContainer->rect().height() / 2;
             targetBranchContainer = targetBranchContainer->parentBranchContainer();
             if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
-                // Shift modifier: Link right below
-                targetRefPointName = Container::BottomRight;
+                // Control modifier: Link right below
+                targetRefPointName = Container::TopRight;
                 movingRefPointName = Container::TopLeft;
-                linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                linkOffset = QPointF(model->mapDesign()->linkWidth(), dy);
             } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
-                    // Shift modifier: Link left below
-                    targetRefPointName = Container::BottomLeft;
+                    // Control modifier: Link left below
+                    targetRefPointName = Container::TopLeft;
                     movingRefPointName = Container::TopRight;
-                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), dy);
             }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
         } else {
             // No modifier used, temporary link to target itself
@@ -2463,13 +2446,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         scene()->update();
         vPan = QPoint();
     } // MovingObject or MovingObjectTmpLinked
-    else
-        // maybe we moved View: set old cursor
-        setCursor(Qt::ArrowCursor);
 
     if (editorState != EditingHeading) {
         setState(Neutral); // Continue editing after double click!
     }
+
+    // Restore cursor // FIXME-00
+    updateCursor();
 
     movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
@@ -2648,6 +2631,34 @@ void MapEditor::dropEvent(QDropEvent *event)
         }
     }
     event->acceptProposedAction();
+}
+
+void MapEditor::updateCursor()
+{
+    if (qApp->queryKeyboardModifiers() & Qt::ShiftModifier) {
+        switch (mainWindow->getModMode()) {
+            case Main::ModModePoint:
+                setCursor(Qt::ArrowCursor);
+                break;
+            case Main::ModModeColor:
+                setCursor(PickColorCursor);
+                break;
+            case Main::ModModeXLink:
+                setCursor(XLinkCursor);
+                break;
+            case Main::ModModeMoveObject:
+                setCursor(Qt::PointingHandCursor);
+                break;
+            case Main::ModModeMoveView:
+                setCursor(Qt::OpenHandCursor);
+                break;
+            default:
+                setCursor(Qt::ArrowCursor);
+                break;
+        }
+    } else {
+        setCursor(Qt::ArrowCursor);
+    }
 }
 
 void MapEditor::setState(EditorState s)

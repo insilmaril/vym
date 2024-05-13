@@ -100,8 +100,8 @@ Settings settings("InSilmaril", QString(__VYM_NAME).toLower()); // Organization,
 
 bool zipToolAvailable = false;
 bool unzipToolAvailable = false;
-QString zipToolPath;   // Platform dependant zip tool
-QString unzipToolPath; // For windows same as zipToolPath
+QString zipToolPath;	// Platform dependant zip tool
+QString unzipToolPath;  // Platform dependant unzip tool
 
 QList<Command *> vymCommands;
 QList<Command *> modelCommands;
@@ -205,11 +205,11 @@ int main(int argc, char *argv[])
         "-d           debug         Show debugging output\n"
         "-h           help          Show this help text\n"
         "-L           load          Load script\n"
-        "-l           local         Run with ressources in current directory\n"
+        "-l           local         Run with resources in current directory\n"
         "--locale     locale        Override system locale setting to select\n"
         "                           language\n"
         "-n  STRING   name          Set name of instance for DBus access\n"
-        "-q           quit          Quit immediatly after start for benchmarking\n"
+        "-q           quit          Quit immediately after start for benchmarking\n"
         "-R  FILE     run           Run script\n"
         "-r           restore       Restore last session\n"
         "--recover    recover       Delete lockfiles during initial loading of\n"
@@ -296,7 +296,8 @@ int main(int argc, char *argv[])
     vymPlatform = QSysInfo::prettyProductName();
 
 #if defined(Q_OS_WINDOWS)
-    // Only Windows 10 has tar. Older windows versions not supported.
+    // Only Windows 10 has tar for zip and unzip.
+    // Older windows versions not supported.
     zipToolPath = "tar";
 #else
     zipToolPath = "/usr/bin/zip";
@@ -366,7 +367,7 @@ int main(int argc, char *argv[])
         palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
         palette.setColor(QPalette::HighlightedText, Qt::black);
 
-        // FIXME-2 palette experiments on Windows
+        // FIXME-3 palette experiments on Windows
         //palette.setColor(QPalette::Light, Qt::green);
         //palette.setColor(QPalette::Midlight, Qt::red);
         qApp->setPalette(palette);
@@ -445,26 +446,21 @@ int main(int argc, char *argv[])
     Main m;
 
     // Check for zip tools
-    checkZipTool();
-    checkUnzipTool();
+    zipToolAvailable = ZipAgent::checkZipTool();
+    unzipToolAvailable = ZipAgent::checkUnzipTool();
 
 #if defined(Q_OS_WINDOWS)
     if (!zipToolAvailable || QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10) {
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't find tool to unzip data,"
+            QObject::tr("Couldn't find tool to zip/unzip data,"
                         "or your Windows version is older than Windows 10."));
-        //m.settingsZipTool();
     }
 #else
     if (!zipToolAvailable || !unzipToolAvailable) {
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't find tool to zip/unzip data. "
-                        "Please install on your platform and set"
-                        "path in Settings menu:\n ",
-                        "zip tool missing on Linux/Mac platform"));
-        //m.settingsZipTool();
+            QObject::tr("Couldn't find tar tool to zip/unzip data. "));
     }
 #endif
 
@@ -521,7 +517,7 @@ int main(int argc, char *argv[])
 
     m.loadCmdLine();
 
-    //m.resize(1600, 900);    // FIXME-2 only for screencasts
+    //m.resize(1600, 900);    // FIXME-4 only for screencasts
 
     // Restore last session
     if (options.isOn("restore"))
