@@ -2451,7 +2451,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         setState(Neutral); // Continue editing after double click!
     }
 
-    // Restore cursor // FIXME-00
+    // Restore cursor
     updateCursor();
 
     movingItems.clear();
