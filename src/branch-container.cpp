@@ -879,7 +879,7 @@ int BranchContainer::columnWidth()
     return headingContainer->columnWidth();
 }
 
-void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update) // FIXME-2 "update" parameter needed?
+void BranchContainer::setRotationsAutoDesign(const bool &b, const bool &update)
 {
     rotationsAutoDesignInt = b;
 
@@ -896,7 +896,6 @@ void BranchContainer::setRotationHeading(const int &a)
 {
     rotationHeadingInt = a;
     updateTransformations();
-    //headingContainer->setScale(f + a * 1.1);      // FIXME-2 what about scaling?? Which transformCenter?
 }
 
 int BranchContainer::rotationHeading()

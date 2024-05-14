@@ -95,7 +95,7 @@ void VymText::setAutoText(const QString &s)
 
 QString VymText::getText() const { return text; }
 
-QString VymText::getTextASCII() const { return getTextASCII("", 0); } // FIXME-2 use setting, see TreeItem::setHeading
+QString VymText::getTextASCII() const { return getTextASCII("", 0); }
 
 QString VymText::getTextASCII(QString indent, const int &width) const
 {

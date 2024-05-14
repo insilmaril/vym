@@ -167,7 +167,8 @@ class VymModelWrapper : public VymScriptContext {
     void unsetFlagByName(const QString &s);// FIXME-3 move to BranchWrapper
     int xlinkCount();// FIXME-3 move to BranchWrapper
 
-    // FIXME-2 duplicated in BranchWrapper. Remove from VymModelWrapper and test scripts
+    // FIXME-2 commands below are duplicated in BranchWrapper. Remove here 
+    // and update tests
     void addBranch();
     void addBranchAt(int pos);
     void addBranchBefore();

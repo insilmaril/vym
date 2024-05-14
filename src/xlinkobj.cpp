@@ -160,6 +160,7 @@ void XLinkObj::updateGeometry()
         endBC = bi->getBranchContainer();
 
     /* FIXME-2 check orientation to position xlink ctrl point
+    */
     if (beginBC) {
         if (beginOrient != BranchContainer::UndefinedOrientation &&
             beginOrient != beginBC->getOrientation())
@@ -172,7 +173,6 @@ void XLinkObj::updateGeometry()
             c1.setX(-c1.x());
         endOrient = endBC->getOrientation();
     }
-    */
 
     if (visBranch) {
         // Only one of the linked branches is visible
