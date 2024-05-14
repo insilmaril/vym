@@ -31,8 +31,13 @@ QString ExportOO::buildList(TreeItem *current)
                 r += "<text:list-item><text:p >";
                 r += quoteMeta(bi->headingPlain());
                 // If necessary, write note
-                if (!bi->isNoteEmpty())
-                    r += "<text:line-break/>" + bi->getNoteASCII(); // FIXME-2 Quote missing for ampersands in notes, e.g. R&D, Q&A, ...
+                if (!bi->isNoteEmpty()) {
+                    QString n = bi->getNoteASCII();
+                    n.replace("&", "&amp;");
+                    n.replace("<", "&lt;");
+                    n.replace(">", "&gt;");
+                    r += "<text:line-break/>" + n;
+                }
                 r += "</text:p>";
                 r += buildList(bi); // recursivly add deeper branches
                 r += "</text:list-item>\n";
