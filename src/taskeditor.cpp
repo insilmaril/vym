@@ -418,13 +418,12 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
                 m->select(bi);
             if (m != mainWindow->currentModel())
                 mainWindow->gotoModel(m);
-            /*
-            view->setStyleSheet( // FIXME-2 this resets column widths on Windows...
+            /* view->setStyleSheet( // FIXME-4 this resets column widths on Windows...
                 "QTableView {selection-background-color: " +
                 m->getSelectionBrushColor().name() +
                 "; selection-color:" + bi->headingColor().name() + "}" +
                 "QTableView:focus {" + editorFocusStyle + "}");
-*/
+            */
             view->scrollTo(selected.indexes().first());
         }
     }

@@ -23,8 +23,8 @@ class MapEditor : public QGraphicsView {
     enum EditorState {
         Neutral,
         EditingHeading,
-        DrawingLink,
-        DrawingXLink,
+        CreatingXLink,
+        EditingXLink,
         MovingObject,
         MovingObjectTmpLinked,
         MovingObjectWithoutLinking,

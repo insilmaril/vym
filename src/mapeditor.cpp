@@ -1682,7 +1682,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
         // XLink modifier, create new XLink
         if (mainWindow->getModMode() == Main::ModModeXLink &&
             (e->modifiers() & Qt::ShiftModifier)) {
-            setState(DrawingLink);
+            setState(CreatingXLink);
             tmpLink = new Link(model);
             tmpLink->setBeginBranch(selbi);
             tmpLink->createXLinkObj();
@@ -1726,7 +1726,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
             model->select(ti_found);
             if (e->modifiers() & Qt::ControlModifier) {
                 if (e->modifiers() & Qt::ShiftModifier)
-                    model->deleteVymLink(); // FIXME-2 document deleting vymLink
+                    model->deleteVymLink();
                 else
                     mainWindow->editOpenVymLink(true);
             } else
@@ -1745,7 +1745,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
             if (model->getSelectedItems().count() < 2 || !model->getSelectedItems().contains(ti_found))
                 // Only add ti_found, if we don't have multi-selection yet, which we
                 // want to move around. In that case we would ignore the "pressed" event
-                model->select(ti_found);    // FIXME-2 Selecting "ends" of xLinks does not work properly, scrolls to center of the two end points
+                model->select(ti_found);
         }
         movingItems = model->getSelectedItemsReduced();
 
@@ -1815,7 +1815,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
             // systemFlag clicked
             if (sysFlagName.contains("system-url")) {
                 if (e->modifiers() & Qt::ControlModifier)
-                    mainWindow->editOpenURLTab(); // FIXME-2 Document opening in tabs
+                    mainWindow->editOpenURLTab();
                 else
                     mainWindow->editOpenURL();
             } else if (sysFlagName == "system-note")
@@ -1831,9 +1831,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
         if (ti_found) {
             if (ti_found->getType() == TreeItem::XLink) {
                 XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
-                if (xlo) {
-                    setState(DrawingXLink); // FIXME-2 state correct? creating new xlink or editing existing?
-                }
+                if (xlo)
+                    setState(EditingXLink);
             }
         }
     }
@@ -1887,7 +1886,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         (editorState == MovingObject ||
          editorState == MovingObjectTmpLinked ||
          editorState == MovingObjectWithoutLinking ||
-         editorState == DrawingXLink)) {
+         editorState == EditingXLink)) {
 
         if (!(e->buttons() & Qt::LeftButton)) {
             // Sometimes at least within a VM there might be a
@@ -1917,7 +1916,7 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
     } // selection && moving_obj
 
     // Draw a link from one branch to another
-    if (editorState == DrawingLink) {
+    if (editorState == CreatingXLink) {
         tmpLink->setEndPoint(p_event);
         tmpLink->updateLink();
     }
@@ -2270,7 +2269,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been drawing a link?
-    if (editorState == DrawingLink) {
+    if (editorState == CreatingXLink) {
         setState(Neutral);
 
         TreeItem *seli;
@@ -2688,8 +2687,8 @@ void MapEditor::setState(EditorState s)
             case PickingColor:
                 s = "PickingColor";
                 break;
-            case DrawingLink:
-                s = "DrawingLink";
+            case CreatingXLink:
+                s = "CreatingXLink";
                 break;
             default:
                 s = "Unknown editor state";
