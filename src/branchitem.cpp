@@ -290,8 +290,8 @@ bool BranchItem::toggleScroll()
         systemFlags.activate(QString("system-scrolledright"));
     }
 
+    branchContainer->updateChildrenStructure();     // needed to insert linkSpaceContainer
     branchContainer->updateVisibilityOfChildren();
-    branchContainer->updateChildrenStructure();
     return true;
 }
 

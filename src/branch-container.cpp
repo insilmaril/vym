@@ -249,6 +249,7 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
 
         branchesContainer->addContainer(bc);
         updateChildrenStructure();
+        updateVisibilityOfChildren();   // children might be scrolled and invisible
     } else
         branchesContainer->addContainer(bc);
 }

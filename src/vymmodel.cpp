@@ -1701,7 +1701,7 @@ void VymModel::saveStateNew(const File::SaveMode &savemode,
     QString undoCommand;
     QString redoCommand;
 
-    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) { // FIXME-0 check.  model -> map
+    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) { // FIXME-0 check.  model -> map . Also check if still needed in new implementation!
         // After creating saveStateBlock, no "model." prefix needed for commands
         undoCommand = undoCom;
         redoCommand = redoCom;
@@ -4330,9 +4330,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos) // FIXME-2 repositio
 
     if (pi) {
         QString redosel = getSelectString(pi);
-        qDebug () << " pre  addNewBI " << repositionBlocked;
         newbi = addNewBranchInt(pi, pos);
-        qDebug () << " post addNewBI ";
         QString undosel = getSelectString(newbi);
 
         if (newbi) {
