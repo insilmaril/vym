@@ -808,7 +808,7 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Directory name to import");
     modelCommands.append(c);
 
-    c = new Command("newBranchIterator", Command::Branch, Command::Bool);
+    c = new Command("newBranchIterator", Command::Branch);
     c->addParameter(Command::String, false, "Name of iterator");
     c->addParameter(Command::Bool, true, "Flag to go deep levels first");
     modelCommands.append(c);
@@ -849,9 +849,6 @@ void Main::setupAPI()
 
     c = new Command("nextBranch", Command::Branch, Command::BranchItem);
     c->addParameter(Command::String, false, "Name of iterator");
-    modelCommands.append(c);
-
-    c = new Command("nop", Command::Any);
     modelCommands.append(c);
 
     c = new Command("note2URLs", Command::Branch);
@@ -956,11 +953,6 @@ void Main::setupAPI()
 
     c = new Command("selectXLinkOtherEnd", Command::Branch, Command::Bool);
     c->addParameter(Command::Int, false, "Number of xlink");
-    modelCommands.append(c);
-
-    c = new Command("setAttribute", Command::Branch);
-    c->addParameter(Command::String, false, "Key of attribute as string");
-    c->addParameter(Command::String, false, "String Value of attribute");
     modelCommands.append(c);
 
     c = new Command("setFlagByName", Command::TreeItem);    // FIXME-3 DEPRECATED Moved to branch
@@ -1231,6 +1223,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Key of string attribute");
     branchCommands.append(c);
 
+    c = new Command("getJiraData", Command::Branch, Command::String);
+    c->setComment("Get data from Jira server, either ticket or run defined query");
+    c->addParameter(Command::Bool, false, "Update every branch in subtree");
+    branchCommands.append(c);
+
     c = new Command("headingText", Command::Branch, Command::String);
     c->setComment("Set heading of branch from plaintext string");
     branchCommands.append(c);
@@ -1250,6 +1247,11 @@ void Main::setupAPI()
 
     c = new Command("scroll", Command::Branch);
     c->setComment("Scroll branch");
+    branchCommands.append(c);
+
+    c = new Command("setAttribute", Command::Branch);
+    c->addParameter(Command::String, false, "Key of attribute as string");
+    c->addParameter(Command::String, false, "String Value of attribute");
     branchCommands.append(c);
 
     c = new Command("setFlagByName", Command::TreeItem);
@@ -7012,7 +7014,7 @@ QVariant Main::runScript(const QString &script)
 
     if (debug) {
         qDebug() << "MainWindow::runScript finished:";
-        qDebug() << "        isError: " << result.isError();
+        qDebug() << "       hasError: " << result.isError();
         qDebug() << "     lastResult: "
             << scriptEngine->globalObject().property("lastResult").toVariant();
     }
@@ -7031,6 +7033,7 @@ QVariant Main::runScript(const QString &script)
         return scriptEngine->globalObject().property("lastResult").toVariant();
 
     if (debug) qDebug() << "Main::runScript finished.";
+
     return QVariant("");
 }
 

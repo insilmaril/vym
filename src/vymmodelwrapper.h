@@ -82,9 +82,8 @@ class VymModelWrapper : public VymScriptContext {
     void moveSlideDown();
     void moveSlideUp(int n);
     void moveSlideUp();
-    bool newBranchIterator(const QString &itname, bool deepLevelsFirst = false);
+    void newBranchIterator(const QString &itname, bool deepLevelsFirst = false);
     BranchWrapper* nextBranch(const QString &itname);
-    void nop(); // FIXME-3 remove?
     void note2URLs();// FIXME-3 move to BranchWrapper
     bool parseVymText(const QString &text);
     void paste();   // FIXME copy to BranchWrappe (use without selecting in VymModel!)
@@ -113,7 +112,6 @@ class VymModelWrapper : public VymScriptContext {
     bool selectXLink(int n);// FIXME-3 move to BranchWrapper
     bool selectXLinkOtherEnd(int n);// FIXME-3 move to BranchWrapper
     void setDefaultLinkColor(const QString &color); // FIXME-3-4 maybe also rename other setMap* methods?
-    void setAttribute(const QString &key, const QString &value);// FIXME-3 move to BranchWrapper
     void setFlagByName(const QString &s);// FIXME-3 move to BranchWrapper
     void setHeadingConfluencePageName();
     void setHeadingPlainText(const QString &s);// FIXME-3 move to BranchWrapper and ImageWrapper

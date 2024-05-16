@@ -89,6 +89,10 @@ QString BranchWrapper::attributeAsString(const QString &key)
     return setResult(v.toString());
 }
 
+void BranchWrapper::getJiraData(bool subtree)
+{
+    branchItem->getModel()->getJiraData(subtree, branchItem);
+}
 
 QString BranchWrapper::headingText()
 {
@@ -118,6 +122,11 @@ void BranchWrapper::scroll()
 void BranchWrapper::select()
 {
     branchItem->getModel()->select(branchItem);
+}
+
+void BranchWrapper::setAttribute(const QString &key, const QString &value)
+{
+    branchItem->getModel()->setAttribute(branchItem, key, value);
 }
 
 void BranchWrapper::setFlagByName(const QString &s)

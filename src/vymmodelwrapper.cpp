@@ -701,9 +701,9 @@ void VymModelWrapper::importDir(const QString &path)
         path); // FIXME-3 error handling missing (in vymmodel and here)
 }
 
-bool VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
+void VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
 {
-    return model->newBranchIterator(itname, deepLevelsFirst);
+    model->newBranchIterator(itname, deepLevelsFirst);
 }
 
 BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)
@@ -765,8 +765,6 @@ void VymModelWrapper::moveSlideUp(int n)
 }
 
 void VymModelWrapper::moveSlideUp() { moveSlideUp(-1); }
-
-void VymModelWrapper::nop() {}
 
 void VymModelWrapper::note2URLs() { model->note2URLs(); }
 
@@ -1025,10 +1023,6 @@ bool VymModelWrapper::selectXLinkOtherEnd(int n)
         scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
 
     return setResult(r);
-}
-
-void VymModelWrapper::setAttribute(const QString &key, const QString &value)    // FIXME-2 not implemented yet
-{
 }
 
 void VymModelWrapper::setDefaultLinkColor(const QString &color)

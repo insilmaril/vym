@@ -18,12 +18,14 @@ class BranchWrapper : public VymScriptContext {
     void addBranchBefore();
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
+    void getJiraData(bool subtree);
     QString headingText();  
     bool isScrolled();
     bool relinkTo(BranchWrapper*);
     void remove();
     void scroll();
     void select();
+    void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
     void toggleFlagByName(const QString &);
     void toggleScroll();

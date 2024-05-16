@@ -265,6 +265,8 @@ class VymModel : public TreeModel {
     void resetHistory();      //!< Initialize history
 
   private:  
+    QString selectCommand(TreeItem*);           //!< Returns command to select BranchObject
+    QString selectBranchCommand(BranchItem*);   //!< Returns command to select MapObject
     /*! \brief Save the current changes in map
 
     Two commands and selections are saved:
@@ -275,6 +277,11 @@ class VymModel : public TreeModel {
     Additionally a comment is logged.
 
     */
+    void saveStateNew(const File::SaveMode &savemode,
+                   const QString &undoCommand,
+                   const QString &redoCommand, const QString &comment = "",
+                   TreeItem *saveSelection = nullptr, QString dataXML = "");
+
     void saveState(const File::SaveMode &savemode, const QString &undoSelection,
                    const QString &undoCommand, const QString &redoSelection,
                    const QString &redoCommand, const QString &comment = "",
@@ -916,7 +923,7 @@ class VymModel : public TreeModel {
     // Iterating and selecting branches
     ////////////////////////////////////////////
   public:
-    bool newBranchIterator(const QString &itname,
+    void newBranchIterator(const QString &itname,
                       bool deepLevelsFirst = false);        //! Named iterator
     BranchItem* nextBranchIterator(const QString &itname);  //! next branch via iterator
   private:

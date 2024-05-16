@@ -112,7 +112,7 @@ void TextEditor::init(const QString &scope)
         e->setCurrentFont(varFont);
     }
 
-    // Default colors for RichText  //FIXME-2 here? Though we use plainText as default?
+    // Default colors for RichText
     QPixmap pix(16, 16);
     colorRichTextDefaultBackground.fromString(
         settings.value(n + "colors/richTextDefaultBackground", "#ffffff").toString());

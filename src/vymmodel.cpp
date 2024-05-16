@@ -1397,9 +1397,9 @@ void VymModel::redo()
         qDebug() << "    undoSel=" << undoSelection;
         qDebug() << "    redoSel=" << redoSelection;
         qDebug() << "    undoCom:";
-        cout << qPrintable(undoCommand);
+        cout << qPrintable(undoCommand) << endl;
         qDebug() << "    redoCom=";
-        cout << qPrintable(redoCommand);
+        cout << qPrintable(redoCommand) << endl;
         qDebug() << "    ---------------------------";
     }
 
@@ -1412,7 +1412,7 @@ void VymModel::redo()
 
     QString errMsg;
     QString redoScript =
-        QString("model = vym.currentMap();%1").arg(redoCommand);
+        QString("map = vym.currentMap();%1").arg(redoCommand);
     errMsg = QVariant(execute(redoScript)).toString();
     saveStateBlocked = saveStateBlockedOrg;
 
@@ -1431,12 +1431,12 @@ void VymModel::redo()
     updateActions();
 
     /* TODO remove testing
-    qDebug() << "ME::redo() end\n";
-    qDebug() << "    undosAvail="<<undosAvail;
-    qDebug() << "    redosAvail="<<redosAvail;
-    qDebug() << "       curStep="<<curStep;
-    qDebug() << "    ---------------------------";
     */
+    qDebug() << "ME::redo() end\n";
+    qDebug() << "    undosAvail=" << undosAvail;
+    qDebug() << "    redosAvail=" << redosAvail;
+    qDebug() << "       curStep=" << curStep;
+    qDebug() << "    ---------------------------";
 }
 
 bool VymModel::isRedoAvailable()
@@ -1526,7 +1526,7 @@ void VymModel::undo()
     // Save current selection
     QList <ulong> selectedIDs = getSelectedIDs();
 
-    // select  object before undo
+    // select  object before undo   // FIXME-0 not needed, or?
     if (!undoSelection.isEmpty() && !select(undoSelection)) {
         qWarning("VymModel::undo()  Could not select object for undo");
         return;
@@ -1537,7 +1537,7 @@ void VymModel::undo()
     QString undoScript;
     if (!undoCommand.contains("currentMap()"))
         // "Old" saveState without complete command
-        undoScript = QString("model = vym.currentMap();%1").arg(undoCommand);
+        undoScript = QString("map = vym.currentMap();%1").arg(undoCommand);
     else
         undoScript = undoCommand;
 
@@ -1625,15 +1625,212 @@ void VymModel::resetHistory()
     mainWindow->updateHistory(undoSet);
 }
 
-// FIXME-1 VymModel::saveState   Make undo/redo selection part of the related commands. WIP
+QString VymModel::selectCommand(TreeItem* ti)   
+{
+    QString r;
+    if (!ti)
+    {
+        qWarning() << "VM::selectCommand ti == nullptr";
+        return r;
+    }
+
+    // FIXME-00 Implementation missing, no command yet to select TreeItem by ID
+    return r;
+}
+
+QString VymModel::selectBranchCommand(BranchItem* bi)
+{
+    QString r;
+    if (!bi)
+        qWarning() << "VM::selectBranchCommand bi == nullptr";
+    else
+        r = QString("b = map.findBranchById(\"%1\");").arg(bi->getUuid().toString());
+
+    return r;
+}
+
+// FIXME-0 VymModel::saveState   Make undo/redo selection part of the related commands. WIP
+// // FIXME-0 Check model vs map in scripts...
+// FIXME-0 SaveMode still needed?
+void VymModel::saveStateNew(const File::SaveMode &savemode,
+                         const QString &undoCom,
+                         const QString &redoCom,
+                         const QString &comment,
+                         TreeItem *saveSel, QString dataXML)
+{
+    // Main saveState
+
+    // sendData(redoCom); // FIXME-4 testing network
+
+    if (saveStateBlocked)
+        return;
+
+    /*
+    */
+    if (debug) {
+        qDebug() << "VM::saveStateNew() for map " << mapName;
+        qDebug() << "  comment: " << comment;
+        qDebug() << "  block:   " << buildingUndoBlock;
+        qDebug() << "  undoCom: " << undoCom;
+        qDebug() << "  redoCom: " << redoCom;
+    }
+
+    if (useActionLog) {
+        QString log;
+
+        log = QString("// %1\n").arg(QDateTime::currentDateTime().toString());
+        log += QString("// %1\n").arg(comment);
+        log += redoCom;
+
+        appendStringToFile(actionLogPath, log);
+    }
+
+    if (buildingUndoBlock)
+    {
+        // Build string with all commands
+        undoBlock = undoCom + undoBlock;
+        redoBlock = redoBlock + redoCom;
+
+        if (debug) {
+            qDebug() << "VM::saveState  undoBlock = " << undoBlock;
+            qDebug() << "VM::saveState  redoBlock = " << redoBlock;
+        }
+        return;
+    }
+
+    QString undoCommand;
+    QString redoCommand;
+
+    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) { // FIXME-0 check.  model -> map
+        // After creating saveStateBlock, no "model." prefix needed for commands
+        undoCommand = undoCom;
+        redoCommand = redoCom;
+    } else {
+        // Not part of a saveStateBlock, prefix non-empty commands
+        if (undoCom.isEmpty())
+            qWarning() << __FUNCTION__ << "  empty undoCommand ?!";
+        else
+            undoCommand = undoCom;
+        if (redoCom.isEmpty())
+            qWarning() << __FUNCTION__ << "  empty redoCommand ?!";
+        else
+            redoCommand = redoCom;
+    }
+
+    if (debug) {
+        qDebug() << "  undoCommand: " << undoCommand;
+        qDebug() << "  redoCommand: " << redoCommand;
+        qDebug() << "  redoCom: " << redoCom;
+    }
+
+    // Increase undo steps, but check for repeated actions
+    // like editing a vymNote - then do not increase but replace last command
+    //
+    bool repeatedCommand = false;
+
+    /* FIXME-0 Repeated command not supported yet in saveState
+    // Undo blocks start with "model.select" - do not consider these for repeated actions
+    if (!undoCommand.startsWith("{")) {
+        if (curStep > 0 && redoSelection == lastRedoSelection()) {
+            int i = redoCommand.indexOf("(");
+            QString rcl = redoCommand.left(i-1);
+            if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
+
+                // Current command is a repeated one. We only want to "squash" some of these
+                QRegularExpression re("<vymnote");
+                if (rcl.startsWith("model.parseVymText") && re.match(redoCommand).hasMatch()) {
+                    if (debug)
+                        qDebug() << "VM::saveState repeated command: " << redoCommand;
+
+                    // Do not increase undoCommand counter
+                    repeatedCommand = true;
+                    undoCommand = undoSet.value(
+                        QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
+                } else
+                    if (debug)
+                        qDebug() << "VM::saveState not repeated command: " << redoCommand;
+            }
+        }
+    }
+    */
+    if (!repeatedCommand) {
+        if (undosAvail < stepsTotal)
+            undosAvail++;
+
+        curStep++;
+        if (curStep > stepsTotal)
+            curStep = 1;
+    }
+
+    QString histDir = getHistoryPath();
+    QString bakMapPath = histDir + "/map.xml";
+
+    // Create histDir if not available
+    QDir d(histDir);
+    if (!d.exists())
+        makeSubDirs(histDir);
+
+    // Save depending on how much needs to be saved
+    if (saveSel)
+        dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+                            saveSel);
+
+    if (savemode == File::PartOfMap) {
+        undoCommand.replace("PATH", bakMapPath);
+        redoCommand.replace("PATH", bakMapPath);
+    }
+
+    if (!dataXML.isEmpty())
+        // Write XML Data to disk
+        saveStringToDisk(bakMapPath, dataXML);
+
+    // We would have to save all actions in a tree, to keep track of
+    // possible redos after a action. Possible, but we are too lazy: forget
+    // about redos.
+    redosAvail = 0;
+
+    // Write the current state to disk
+    undoSet.setValue("/history/undosAvail", QString::number(undosAvail));
+    undoSet.setValue("/history/redosAvail", QString::number(redosAvail));
+    undoSet.setValue("/history/curStep", QString::number(curStep));
+    undoSet.setValue(QString("/history/step-%1/undoCommand").arg(curStep),
+                     undoCommand);
+    undoSet.setValue(QString("/history/step-%1/redoCommand").arg(curStep),
+                     redoCommand);
+    undoSet.setValue(QString("/history/step-%1/comment").arg(curStep), comment);
+    undoSet.writeSettings(histPath);
+
+    /*
+    if (debug) {
+        // qDebug() << "          into="<< histPath;
+        qDebug() << "    stepsTotal=" << stepsTotal
+                 << ", undosAvail=" << undosAvail
+                 << ", redosAvail=" << redosAvail << ", curStep=" << curStep;
+        cout << "    ---------------------------" << endl;
+        qDebug() << "    comment=" << comment;
+        qDebug() << "    undoSel=" << undoSelection;
+        qDebug() << "    redoSel=" << redoSelection;
+        if (saveSel)
+            qDebug() << "    saveSel=" << qPrintable(getSelectString(saveSel));
+        cout << "    undoCom:" <<  qPrintable(undoCommand) << "\n";
+        cout << "    redoCom:" <<  qPrintable(redoCommand) << "\n";
+        cout << "    ---------------------------\n";
+    }
+    */
+
+    mainWindow->updateHistory(undoSet);
+
+    setChanged();
+}
+
 void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSelection,
                          const QString &undoCom, const QString &redoSelection,
                          const QString &redoCom, const QString &comment,
                          TreeItem *saveSel, QString dataXML)
 {
-    // sendData(redoCom); // FIXME-4 testing network
-
     // Main saveState
+
+    // sendData(redoCom); // FIXME-4 testing network
 
     if (saveStateBlocked)
         return;
@@ -1652,12 +1849,12 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
     */
     if (debug) {
         qDebug() << "VM::saveState() for map " << mapName;
-        qDebug() << "  block:   " << buildingUndoBlock;
+        qDebug() << "  comment: " << comment;
+        qDebug() << "    block: " << buildingUndoBlock;
         qDebug() << "  undoSel: " << undoSelection;
         qDebug() << "  undoCom: " << undoCom;
         qDebug() << "  redoSel: " << redoSelection;
         qDebug() << "  redoCom: " << redoCom;
-        qDebug() << "  comment: " << comment;
     }
 
     QString undoCommand;
@@ -1668,8 +1865,8 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
 
         log = QString("// %1\n").arg(QDateTime::currentDateTime().toString());
         if (setupNeeded) {
-            log += QString("model.select(\"%1\");\n").arg(redoSelection);
-            log += QString("model.%1;\n\n").arg(redoCom);
+            log += QString("map.select(\"%1\");\n").arg(redoSelection);
+            log += QString("map.%1;\n\n").arg(redoCom);
         } else
             log += redoCom;
 
@@ -1680,11 +1877,11 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
     {
         // Build string with all commands
         if (!undoCom.isEmpty()) {
-            undoCommand = QString("model.select(\"%1\");model.%2;").arg(undoSelection, undoCom);
+            undoCommand = QString("map.select(\"%1\");map.%2;").arg(undoSelection, undoCom);
             undoBlock = undoCommand + undoBlock;
         }
         if (!redoCom.isEmpty()) {
-            redoCommand = QString("model.select(\"%1\");model.%2;").arg(redoSelection, redoCom);
+            redoCommand = QString("map.select(\"%1\");map.%2;").arg(redoSelection, redoCom);
             redoBlock = redoBlock + redoCommand;
         }
 
@@ -1695,7 +1892,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
         return;
     }
 
-    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) {
+    if (undoCom.startsWith("map.")  || undoCom.startsWith("{")) {
         // After creating saveStateBlock, no "model." prefix needed for commands
         undoCommand = undoCom;
         redoCommand = redoCom;
@@ -1705,7 +1902,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             if (!undoCom.contains("currentMap"))
                 // FIXME-2 old saveStates didn't use reference in command.
                 // Should become obsolete
-                undoCommand = QString("model.%1").arg(undoCom);
+                undoCommand = QString("map.%1").arg(undoCom);
             else
                 undoCommand = undoCom;
         } else
@@ -1714,7 +1911,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
             if (!redoCom.contains("currentMap"))
                 // FIXME-2 old saveStates didn't use reference in command.
                 // Should become obsolete
-                redoCommand = QString("model.%1").arg(redoCom);
+                redoCommand = QString("map.%1").arg(redoCom);
             else
                 redoCommand = redoCom;
         } else
@@ -1741,7 +1938,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
 
                 // Current command is a repeated one. We only want to "squash" some of these
                 QRegularExpression re("<vymnote");
-                if (rcl.startsWith("model.parseVymText") && re.match(redoCommand).hasMatch()) {
+                if (rcl.startsWith("map.parseVymText") && re.match(redoCommand).hasMatch()) {
                     if (debug)
                         qDebug() << "VM::saveState repeated command: " << redoCommand;
 
@@ -1831,7 +2028,7 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
     setChanged();
 }
 
-void VymModel::saveStateBranch(
+void VymModel::saveStateBranch( // FIXME-0 still needed?
         BranchItem *undoSel,
         const QString &uc,
         BranchItem *redoSel,
@@ -4133,13 +4330,16 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos) // FIXME-2 repositio
 
     if (pi) {
         QString redosel = getSelectString(pi);
+        qDebug () << " pre  addNewBI " << repositionBlocked;
         newbi = addNewBranchInt(pi, pos);
+        qDebug () << " post addNewBI ";
         QString undosel = getSelectString(newbi);
 
         if (newbi) {
-            saveStateBranch(newbi, "remove ()",
-                      pi, QString("addBranchAt (%1)").arg(pos),
-                      QString("Add new branch to %1").arg(getObjectName(pi)));
+            QString u, r;
+            u = selectBranchCommand(newbi) + " b.remove();";
+            r = selectBranchCommand(pi) + QString(" b.addBranchAt(%1);").arg(pos);
+            saveStateNew(File::CodeBlock, u, r, QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
             // In Network mode, the client needs to know where the new branch
@@ -4540,7 +4740,7 @@ void VymModel::deleteSelection(ulong selID)
                         deleteItem(ti);
                         emitDataChanged(pi);
                         select(pi);
-                        reposition();
+                        reposition();   // FIXME-2 reposition only once in the end
                     }
                     else
                         qWarning(
@@ -4588,7 +4788,7 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
                 num_dst++;
             }
             deleteItem(selbi);
-            reposition();
+            reposition();   // FIXME-2 reposition only once in the end
             emitDataChanged(pi);
             select(sel);
             saveStateBlocked = oldSaveState;
@@ -4616,7 +4816,7 @@ void VymModel::deleteChildren()
         emit(layoutChanged());
 
         emitDataChanged(selbi);
-        reposition();
+        reposition();   // FIXME-2 reposition only once in the end
     }
 }
 
@@ -4643,7 +4843,7 @@ void VymModel::deleteChildBranches()
             if (selbi->isScrolled()) unscrollBranch(selbi);
 
             emit(layoutChanged());
-            reposition();
+            reposition();   // FIXME-2 reposition only once in the end
         }
     }
 }
@@ -4676,7 +4876,6 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         }
         reposition();
 
-
         if (!cleaningUpLinks)
             cleanupItems();
 
@@ -4704,10 +4903,9 @@ bool VymModel::scrollBranch(BranchItem *bi)
             return false;
         if (bi->toggleScroll()) {
             QString u, r;
-            r = "scroll";
-            u = "unscroll";
-            saveStateBranch(bi, QString("%1();").arg(u), bi, QString("%1();").arg(r),
-                      QString("%1 %2").arg(r).arg(getObjectName(bi)));
+            r = selectBranchCommand(bi) + " b.scroll();";
+            u = selectBranchCommand(bi) + " b.unscroll();";
+            saveStateNew(File::CodeBlock, u, r, QString("Scroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
             return true;
@@ -4723,10 +4921,9 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             return false;
         if (bi->toggleScroll()) {
             QString u, r;
-            u = "scroll";
-            r = "unscroll";
-            saveStateBranch(bi, QString("%1();").arg(u), bi, QString("%1();").arg(r),
-                      QString("%1 %2").arg(r).arg(getObjectName(bi)));
+            u = selectBranchCommand(bi) + " b.scroll();";
+            r = selectBranchCommand(bi) + " b.unscroll();";
+            saveStateNew(File::CodeBlock, u, r, QString("Uncroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
 
             reposition();
@@ -5211,7 +5408,7 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
     reposition();
 }
 
-void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState missing
+void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState: check 
 {
     // Debugging only
     //qDebug() << "VM::processJiraJqlQuery result...";
@@ -5223,6 +5420,11 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState mis
         return;
     }
     QJsonArray issues = jsobj["issues"].toArray();
+
+    saveStateChangingPart(pbi, pbi,
+                          QString("getJiraData ()"),
+                          QString("Get data from Jira for %1")
+                              .arg(getObjectName(pbi)));
 
     saveStateBlocked = true;
     repositionBlocked = true; // FIXME-2 block reposition during bulk processing of Jira query?
@@ -6585,7 +6787,7 @@ QColor VymModel::getSelectionBrushColor() {
     return mapDesignInt->selectionBrush().color();
 }
 
-bool VymModel::newBranchIterator(const QString &itname, bool deepLevelsFirst)
+void VymModel::newBranchIterator(const QString &itname, bool deepLevelsFirst)
 {
     Q_UNUSED(deepLevelsFirst);
 
@@ -6606,7 +6808,6 @@ bool VymModel::newBranchIterator(const QString &itname, bool deepLevelsFirst)
             nextBranch(cur, prev, true, start);
         }
     }
-    return false;   // FIXME-2 could be removed
 }
 
 BranchItem* VymModel::nextBranchIterator(const QString &itname)

@@ -81,6 +81,7 @@ void BranchContainer::init()
 
     // Setup children containers
     headingContainer = new HeadingContainer;
+    headingContainer->setHeading(VymText(" "));
 
     innerFrame = nullptr;
     outerFrame = nullptr;
