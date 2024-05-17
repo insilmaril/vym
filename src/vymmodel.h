@@ -264,9 +264,10 @@ class VymModel : public TreeModel {
     QString getHistoryPath(); //!< Path to directory containing the history
     void resetHistory();      //!< Initialize history
 
-  private:  
     QString selectCommand(TreeItem*);           //!< Returns command to select BranchObject
     QString selectBranchCommand(BranchItem*);   //!< Returns command to select MapObject
+
+  private:
     /*! \brief Save the current changes in map
 
     Two commands and selections are saved:
@@ -288,11 +289,10 @@ class VymModel : public TreeModel {
                    TreeItem *saveSelection = nullptr, QString dataXML = "");
 
   public:
-    /*! Save branch using BranchWrapper */
+    /*! Save branch using BranchWrapper.
+     *  public: Called from MapEditor::mouseReleased() */
     void saveStateBranch(
-            BranchItem *undoSel,
             const QString &undoCommand,
-            BranchItem *redoSel,
             const QString &redoCommand,
             const QString &comment);
   private:

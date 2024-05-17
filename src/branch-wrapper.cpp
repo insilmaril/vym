@@ -134,6 +134,11 @@ void BranchWrapper::setFlagByName(const QString &s)
     branchItem->getModel()->setFlagByName(s, branchItem);
 }
 
+void BranchWrapper::setPos(qreal x, qreal y)
+{
+    branchItem->getModel()->setPos(QPointF(x, y), branchItem);
+}
+
 void BranchWrapper::toggleFlagByName(const QString &s)
 {
     branchItem->getModel()->toggleFlagByName(s, branchItem);

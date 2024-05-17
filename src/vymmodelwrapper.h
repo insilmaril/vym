@@ -127,7 +127,6 @@ class VymModelWrapper : public VymScriptContext {
     void setMapTitle(const QString &s);
     void setMapZoom(float z); // tested: ok
     void setNotePlainText(const QString &s);// FIXME-3 move to BranchWrapper
-    void setPos(qreal x, qreal y);// FIXME-3 move to BranchWrapper and ImageWrapper
     void setFramePenWidth(const bool & useInnerFrame, int w);// FIXME-3 move to BranchWrapper
     void setFrameBrushColor(const bool & useInnerFrame, const QString &color);// FIXME-3 move to BranchWrapper
     void setFramePadding(const bool & useInnerFrame, int padding);// FIXME-3 move to BranchWrapper

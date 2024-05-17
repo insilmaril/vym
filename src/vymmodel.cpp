@@ -2028,20 +2028,12 @@ void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSele
     setChanged();
 }
 
-void VymModel::saveStateBranch( // FIXME-0 still needed?
-        BranchItem *undoSel,
+void VymModel::saveStateBranch(
         const QString &uc,
-        BranchItem *redoSel,
         const QString &rc,
         const QString &comment)
 {
-    if (!undoSel || !undoSel->hasTypeBranch()) {
-        qWarning() << "VymModel::saveStateBranch no branch provided";
-        return;
-    }
-
-    QString setup = QString("b=vym.currentMap().findBranchById(\"%1\");b.").arg(undoSel->getUuid().toString());
-    saveState( File::CodeBlock, "", setup + uc, "", setup + rc, comment);
+    saveStateNew(File::CodeBlock, uc, rc, comment);
 }
 
 void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
@@ -2153,7 +2145,7 @@ void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
     }
 }
 
-void VymModel::saveStateBeginBlock(const QString &comment)
+void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-09 Check where this is used. Rewrite everywhere for saveStateNew format
     // - if only used for single command, don't build block and adapt comment
     // - add checks, that block is really ended!
     // - Currently used for moving/relinking in MapEditor
@@ -2171,9 +2163,9 @@ void VymModel::saveStateEndBlock()
     // Drop whole block, if empty
     if (undoBlock.isEmpty() && redoBlock.isEmpty()) return;
 
-    saveState(File::CodeBlock,
-            "", QString("{%1}").arg(undoBlock),
-            "", QString("{%1}").arg(redoBlock),
+    saveStateNew(File::CodeBlock,
+            QString("{%1}").arg(undoBlock),
+            QString("{%1}").arg(redoBlock),
             undoBlockComment, nullptr);
 }
 
@@ -4322,7 +4314,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos) // FIXME-2 reposition required in the end?
+BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
 {
     BranchItem *newbi = nullptr;
     if (!pi)
@@ -6540,7 +6532,7 @@ void VymModel::setDefXLinkStyleEnd(const QString &s)
     mapDesignInt->setDefXLinkStyleEnd(s);
 }
 
-void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 only used in scripting...)
+void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
 {
     QList<TreeItem *> selItems;
     if (selti)
@@ -6551,7 +6543,6 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 only u
     foreach (TreeItem *ti, selItems) {
         if (ti->hasTypeBranch() || ti->hasTypeImage())
         {
-            /* FIXME pos of HeadingContainer for branches?
             Container *c = ((MapItem*)ti)->getContainer();
             QPointF pos_old = c->getOriginalPos();
             QString pos_new_str = toS(pos_new);
@@ -6562,8 +6553,6 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 only u
                           .arg(getObjectName(ti))
                           .arg(pos_new_str));
             c->setPos(pos_new);
-            */
-            qDebug() << "VM::setPos - no originalPos available...";
         }
     }
     reposition();

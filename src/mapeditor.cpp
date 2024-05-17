@@ -2393,12 +2393,12 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                             // MapCenter
                             bc->setPos(bc->getHeadingContainer()->mapToScene(QPointF(0, 0)));
                         // Save position change
-                        model->saveStateBranch(
-                            bi,
-                            QString("setPos%1").arg(toS(bc->getOriginalPos(), 5)),
-                            bi,
-                            QString("setPos%1").arg(toS(bc->pos(), 5)),
-                            QString("Move branch to %1").arg(toS(bc->pos())));
+                        QString uc, rc;
+                        uc = model->selectBranchCommand(bi)
+                            + QString("b.setPos%1;").arg(toS(bc->getOriginalPos(), 5));
+                        rc = model->selectBranchCommand(bi)
+                            + QString("b.setPos%1;").arg(toS(bc->pos(), 5)),
+                        model->saveStateBranch(uc, rc, QString("Move branch to %1").arg(toS(bc->pos())));
                     } else {
 			if (!(e->modifiers() & Qt::ControlModifier)) {
 			    // only animate snappack if not Ctrl-moving e.g. MC

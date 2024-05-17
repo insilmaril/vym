@@ -27,6 +27,7 @@ class BranchWrapper : public VymScriptContext {
     void select();
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
+    void setPos(qreal x, qreal y);// FIXME-2 copy to ImageWrapper
     void toggleFlagByName(const QString &);
     void toggleScroll();
     void unscroll();

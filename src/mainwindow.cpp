@@ -1058,11 +1058,6 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Note of branch");
     modelCommands.append(c);
 
-    c = new Command("setPos", Command::BranchOrImage);
-    c->addParameter(Command::Double, false, "Position x");
-    c->addParameter(Command::Double, false, "Position y");
-    modelCommands.append(c);
-
     c = new Command("setRotationHeading", Command::Branch);
     c->addParameter(Command::Int, false, "Rotation angle of heading and flags");
     modelCommands.append(c);
@@ -1261,6 +1256,11 @@ void Main::setupAPI()
 
     c = new Command("select", Command::Branch);
     c->setComment("Select (only) this branch");
+    branchCommands.append(c);
+
+    c = new Command("setPos", Command::Branch);
+    c->addParameter(Command::Double, false, "Position x");
+    c->addParameter(Command::Double, false, "Position y");
     branchCommands.append(c);
 
     c = new Command("toggleFlagByName", Command::Branch);

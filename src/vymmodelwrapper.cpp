@@ -1115,11 +1115,6 @@ void VymModelWrapper::setNotePlainText(const QString &s)
     model->setNote(vn);
 }
 
-void VymModelWrapper::setPos(qreal x, qreal y)
-{
-    model->setPos(QPointF(x, y));
-}
-
 void VymModelWrapper::setFramePenWidth(const bool &useInnerFrame, int width)
 {
     model->setFramePenWidth(useInnerFrame, width);

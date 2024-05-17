@@ -410,7 +410,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
     // qDebug() << "BC::updateChildrenStructure() of " << info();
 
     if (branchesContainerLayoutInt != FloatingBounded && imagesContainerLayoutInt != FloatingBounded) {
-        // a) No FloatingBounded images or branches
+        // a) No FloatingBounded images or branches // FIXME-2 MapDesign to define where imagesContainer is in relation to branchesCOntainer (left/right/above/below)
         deleteOuterContainer();
         if (listContainer)
             innerContainer->setLayout(Vertical);
