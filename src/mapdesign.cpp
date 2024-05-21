@@ -86,7 +86,7 @@ void MapDesign::init()
     branchContainerLayouts << Container::Vertical;
 
     // NewBranch: Layout of children images 
-    imageContainerLayouts << Container::FloatingFree;
+    imageContainerLayouts << Container::GridColumns;
 
     // Font
     fontInt.setPointSizeF(16);
