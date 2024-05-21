@@ -6091,7 +6091,7 @@ void Main::downloadFinished() // only used for drop events in mapeditor and
     agent->deleteLater();
 }
 
-bool Main::settingsPDF()
+bool Main::settingsPDF()    // FIXME-2 Use filedialog
 {
     // Default browser is set in constructor
     bool ok;
@@ -6103,7 +6103,7 @@ bool Main::settingsPDF()
     return ok;
 }
 
-bool Main::settingsURL()
+bool Main::settingsURL()    // FIXME-2 Use filedialog
 {
     // Default browser is set in constructor
     bool ok;
