@@ -174,11 +174,19 @@ void VymReader::readMapDesign()
     }
 }
 
-void VymReader::readMapDesignElement()
+void VymReader::readMapDesignElement()  // FIXME-2 parse the elements, either in VymModel or directly (generic) in MapDesign
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("md"));
 
     readMapDesignCompatibleAttributes();
+
+    bool ok;
+    QString k = xml.attributes().value("key").toString();
+    QString v = xml.attributes().value("val").toString();
+    QString d = xml.attributes().value("d").toString();
+    if (!v.isEmpty()) {
+        model->mapDesign()->setElement(k, v, d);    // FIXME-2 Check return val for error
+    }
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
@@ -270,20 +278,8 @@ void VymReader::readMapDesignCompatibleAttributes()
     a = "linkStyle";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        a = "depth";
-        QString t = xml.attributes().value(a).toString();
-        if (t.isEmpty()) {
-            // Legacy Pre 2.9.518: Style defined in <vymmap> for all levels 
-            model->setLinkStyle(s);
-        } else {
-            // Style defined in <mapdesign> for specific level
-            int d = t.toInt(&ok);
-            if (!ok) {
-                xml.raiseError("Could not parse attribute  " + a);
-                return;
-            }
-            model->setLinkStyle(s, d);
-        }
+        // Legacy Pre 2.9.518: Style defined in <vymmap> for all levels
+        model->setLinkStyle(s);
     }
 
     a = "linkColor";

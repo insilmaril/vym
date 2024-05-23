@@ -3275,7 +3275,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
                 }
             } else {
                 bc->branchesContainerAutoLayout = false;
-                layout = Container::getLayoutFromString(s);
+                layout = Container::layoutFromString(s);
                 if (layout != Container::UndefinedLayout) {
                     bc->setBranchesContainerLayout(layout);
                     repositionRequired = true;
@@ -3308,7 +3308,7 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
             } else {
                 bc->imagesContainerAutoLayout = false;
                 Container::Layout layout;
-                layout = Container::getLayoutFromString(s);
+                layout = Container::layoutFromString(s);
                 if (layout != Container::UndefinedLayout)
                     bc->setImagesContainerLayout(layout);
             }
@@ -6361,6 +6361,8 @@ void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no savestate, no 
 
 bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0 savestate needs to be adapted, command new param depth
                                                                       // See also mainWindow->updateActions context menu
+                                                                      // FIXME MapDesign setting with depth passed as argument is moved to MapDesign when parsing .xml
+                                                                      // Somehow MD needs to return undo command when setting an element
 {
     // Default depth == -1 is used for legacy styles from version < 2.9.518
     // or for using global setting from context menu

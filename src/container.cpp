@@ -154,7 +154,7 @@ QString Container::info (const QString &prefix)
         //+ QString(" rect: %1").arg(toS(rect(), 0))
         //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
-        + QString(" Layout: %1").arg(getLayoutString())
+        + QString(" Layout: %1").arg(layoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
         + QString(" Scale: %1").arg(scale())
         ;
@@ -245,7 +245,7 @@ Container::Layout Container::getLayout()
     return layout;
 }
 
-Container::Layout Container::getLayoutFromString(const QString &s)
+Container::Layout Container::layoutFromString(const QString &s)
 {
     if (s == "Horizontal") return Horizontal;
     if (s == "Vertical") return Vertical;
@@ -259,7 +259,7 @@ Container::Layout Container::getLayoutFromString(const QString &s)
     return UndefinedLayout;
 }
 
-QString Container::getLayoutString(const Layout &l)
+QString Container::layoutString(int l)  // Pass layout
 {
     QString r;
     switch (l) {
@@ -300,9 +300,9 @@ QString Container::getLayoutString(const Layout &l)
     return r;
 }
 
-QString Container::getLayoutString()
+QString Container::layoutString()
 {
-    return getLayoutString(layout);
+    return layoutString(layout);
 }
 
 bool Container::isFloating()

@@ -28,8 +28,19 @@ template <typename T> T ConfigList<T>::tryAt(int i) {
         return qlist.at(i);
 }
 
-template <typename T> void ConfigList<T>::replace(int i, const T &other) {
-    qlist.replace(i, other);    // FIXME-4 checks for array boundaries missing
+template <typename T> void ConfigList<T>::setAt(int i, const T &val) {
+    if (i < 0) {
+        // Set val for first level and clear all others
+        qlist.clear();
+        qlist << val;
+    } else if (i >= qlist.count()) {
+        // Fill all values between last and new one with last one
+        for (int j = qlist.count(); j < i; j++)
+            qlist << qlist.last();
+        qlist << val;
+    } else
+        qlist.replace(i, val);
+
 }
 
 template <typename T> int ConfigList<T>::count() {
@@ -47,12 +58,9 @@ template <typename T> QString ConfigList<T>::save(
     QString s;
     for (int i = 0; i < qlist.size(); ++i) 
         s += xml.singleElement("md",
-                xml.attribute(
-                    attrName,
-                    f(qlist.at(i))) + 
-                xml.attribute(
-                    "depth",
-                    QString("%1").arg(i))
+                xml.attribute( "key", attrName) + 
+                xml.attribute( "val", f(qlist.at(i))) + 
+                xml.attribute( "d", QString("%1").arg(i))
                 );
     return s;
 }
@@ -216,6 +224,33 @@ QString MapDesign::updateModeString(const UpdateMode &mode)
     }
 }
 
+bool MapDesign::setElement(const QString &key, const QString &val, const QString &d)    // FIXME-2 should also return undo/redo commands to VymModel, if called from there
+{
+    qDebug() << "MD::setElement k=" << key << " v=" << val << " d=" << d;
+    
+    int depth;
+    bool ok;
+
+    depth = d.toInt(&ok);
+    if (!ok) {
+        qWarning() << "MD::setElement k=" << key << " v=" << val << " Failed to parse d=" << d;
+        return false;
+    }
+
+    if (key == "imagesLayout") {
+        qDebug() << "   Found imagesLayout";
+        imageContainerLayouts.setAt(depth, Container::layoutFromString(val));
+        return true;
+        
+    } else if (key == "linkStyle") {
+        auto style = LinkObj::styleFromString(val);
+        setLinkStyle(style, depth);
+        return true;
+    }
+
+    return false;
+}
+
 Container::Layout MapDesign::branchesContainerLayout(int depth)
 {
     return branchContainerLayouts.tryAt(depth);
@@ -262,7 +297,7 @@ bool MapDesign::setLinkStyle(LinkObj::Style style, int depth)
 
     if (depth < linkStyles.count()) {
         // Replace existing level
-        linkStyles.replace(depth, style);
+        linkStyles.setAt(depth, style);
         return true;
     }
 
@@ -533,23 +568,24 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
         s += xml.singleElement("md",
                 xml.attribute("linkColorHint", "HeadingColor"));
 
-    s += linkStyles.save("linkStyle", LinkObj::styleString);
-
     s += xml.singleElement("md",
             xml.attribute("linkColor", defaultLinkColor().name()));
 
-        s += xml.singleElement("md",
-                xml.attribute("defXLinkColor", defXLinkPenInt.color().name()));
-        s += xml.singleElement("md",
-                xml.attribute("defXLinkWidth",
-                     QString().setNum(defXLinkPenInt.width(), 10)));
-        s += xml.singleElement("md",
-                xml.attribute("defXLinkPenStyle",
-                     penStyleToString(defXLinkPenInt.style())));
-        s += xml.singleElement("md",
-                xml.attribute("defXLinkStyleBegin", defXLinkStyleBeginInt));
-        s += xml.singleElement("md",
-                xml.attribute("defXLinkStyleEnd", defXLinkStyleEndInt));
+    s += xml.singleElement("md",
+            xml.attribute("defXLinkColor", defXLinkPenInt.color().name()));
+    s += xml.singleElement("md",
+            xml.attribute("defXLinkWidth",
+                 QString().setNum(defXLinkPenInt.width(), 10)));
+    s += xml.singleElement("md",
+            xml.attribute("defXLinkPenStyle",
+                 penStyleToString(defXLinkPenInt.style())));
+    s += xml.singleElement("md",
+            xml.attribute("defXLinkStyleBegin", defXLinkStyleBeginInt));
+    s += xml.singleElement("md",
+            xml.attribute("defXLinkStyleEnd", defXLinkStyleEndInt));
+
+    s += linkStyles.save("linkStyle", LinkObj::styleString);
+    s += imageContainerLayouts.save("imagesLayout", Container::layoutString);
 
     xml.decIndent();
     s += xml.endElement("mapdesign");

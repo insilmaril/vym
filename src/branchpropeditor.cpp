@@ -384,7 +384,7 @@ void BranchPropertyEditor::updateLayoutControls()
                 ui.branchesLayoutsCombo->setCurrentIndex(6);
                 break;
             default:
-                qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(branchContainer->getLayoutString(branchContainer->branchesContainerLayout()));
+                qWarning() << QString("BranchPropEditor: Unknown branches layout '%1'").arg(branchContainer->layoutString(branchContainer->branchesContainerLayout()));
                 qDebug() << "branch=" << branchItem->headingPlain();
         }
     }
@@ -415,7 +415,7 @@ void BranchPropertyEditor::updateLayoutControls()
                 break;
                 */
             default:
-                qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->getLayoutString(branchContainer->imagesContainerLayout()));
+                qWarning() << QString("BranchPropEditor: Unknown images layout '%1'").arg(branchContainer->layoutString(branchContainer->imagesContainerLayout()));
                 qDebug() << "branch=" << branchItem->headingPlain();
         }
     }

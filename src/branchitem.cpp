@@ -158,11 +158,11 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     // Free positioning of children
     if (!branchContainer->branchesContainerAutoLayout)
         // Save the manually set layout for children branches
-        attr += attribute("branchesLayout", branchContainer->getLayoutString(branchContainer->branchesContainerLayout()));
+        attr += attribute("branchesLayout", branchContainer->layoutString(branchContainer->branchesContainerLayout()));
 
     if (!branchContainer->imagesContainerAutoLayout)
         // Save the manually set layout for children Images
-        attr += attribute("imagesLayout", branchContainer->Container::getLayoutString(branchContainer->imagesContainerLayout()));
+        attr += attribute("imagesLayout", branchContainer->Container::layoutString(branchContainer->imagesContainerLayout()));
 
     if (!branchContainer->rotationsAutoDesign()) {
         attr += attribute("rotHeading", QString("%1").arg(branchContainer->rotationHeading()));
@@ -361,12 +361,12 @@ bool BranchItem::resetTmpUnscroll()
 
 void BranchItem::setBranchesLayout(const QString &s)
 {
-    branchContainer->setBranchesContainerLayout(Container::getLayoutFromString(s));
+    branchContainer->setBranchesContainerLayout(Container::layoutFromString(s));
 }
 
 void BranchItem::setImagesLayout(const QString &s)
 {
-    branchContainer->setImagesContainerLayout(Container::getLayoutFromString(s));
+    branchContainer->setImagesContainerLayout(Container::layoutFromString(s));
 }
 
 QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)

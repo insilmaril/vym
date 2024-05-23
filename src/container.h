@@ -108,9 +108,9 @@ class Container : public QGraphicsRectItem {
     void setLayout(const Layout &ltype);
 
     Layout getLayout();
-    static QString getLayoutString(const Layout &);
-    static Layout getLayoutFromString(const QString &s);
-    QString getLayoutString();
+    static QString layoutString(int);
+    static Layout layoutFromString(const QString &s);
+    QString layoutString();
 
     bool isFloating();          //! returns true, if parent container has Floating layout
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout

@@ -20,7 +20,7 @@ template <typename T> class ConfigList {
     ConfigList <T> & operator<<(const T &other);
     T & operator[](int i);
     T tryAt(int);
-    void replace(int i, const T &other);
+    void setAt(int i, const T &val);
     int count();
     void clear();
     QString save(const QString &attrName, QString (&f)(int));
@@ -82,6 +82,10 @@ class MapDesign {
 
   private:
     QString name;
+
+// Parse MapDesign when read from map file or undo/redo command
+  public:
+    bool setElement(const QString &k, const QString &v, const QString &d);
 
 // Container layouts
   public:  
