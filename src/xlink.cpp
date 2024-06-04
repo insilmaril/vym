@@ -229,9 +229,9 @@ QString Link::saveToDir()
                 break;
             }
             QString begSelAttr =
-                attribute("beginID", model->getSelectString(beginBranch));
+                attribute("beginID", beginBranch->getUuid().toString());
             QString endSelAttr =
-                attribute("endID", model->getSelectString(endBranch));
+                attribute("endID", endBranch->getUuid().toString());
             QString styleAttr;
             if (xlo) {
                 styleAttr =

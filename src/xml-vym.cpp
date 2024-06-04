@@ -850,8 +850,21 @@ void VymReader::readXLink() // FIXME-1 switch to UUID, see https://github.com/in
 
     QString s;
 
-    TreeItem *beginBI = model->findBySelectString(xml.attributes().value("beginID").toString());
-    TreeItem *endBI = model->findBySelectString(xml.attributes().value("endID").toString());
+    QString beginID = xml.attributes().value("beginID").toString();
+    QString endID = xml.attributes().value("endID").toString();
+    TreeItem *beginBI;
+    TreeItem *endBI;
+
+    if (beginID.contains(":")) {
+        // Legacy versions <= 2.9.533
+        beginBI = model->findBySelectString(beginID);
+        endBI = model->findBySelectString(endID);
+    } else {
+        // Version >= 2.9.534
+        beginBI = model->findUuid(QUuid(beginID));
+        endBI = model->findUuid(QUuid(endID));
+    }
+
     if (beginBI && endBI && beginBI->hasTypeBranch() && endBI->hasTypeBranch()) {
         Link *li = new Link(model);
         li->setBeginBranch((BranchItem *)beginBI);
