@@ -1810,10 +1810,11 @@ void VymModel::saveStateNew(const File::SaveMode &savemode,
     setChanged();
 }
 
-void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSelection,
-                         const QString &undoCom, const QString &redoSelection,
-                         const QString &redoCom, const QString &comment,
-                         TreeItem *saveSel, QString dataXML)
+void VymModel::saveStateOld( // FIXME-0 rewrite all callers to use saveStateNew instead
+        const File::SaveMode &savemode, const QString &undoSelection,
+        const QString &undoCom, const QString &redoSelection,
+        const QString &redoCom, const QString &comment,
+        TreeItem *saveSel, QString dataXML)
 {
     // Main saveState
 
@@ -2038,7 +2039,7 @@ void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
     else
         qWarning("VymModel::saveStateChangingPart  no redoSel given!");
 
-    saveState(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
+    saveStateOld(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
               redoSelection, rc, comment, undoSel);
 }
 
@@ -2054,7 +2055,7 @@ void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
         // save the selected branch of the map, Undo will insert part of map
         if (redoSel->depth() > 0)
             undoSelection = getSelectString(redoSel->parent());
-        saveState(File::PartOfMap, undoSelection,
+        saveStateOld(File::PartOfMap, undoSelection,
                   QString("addMapInsert (\"PATH\",%1,%2)")
                       .arg(redoSel->num())
                       .arg(VymReader::SlideContent),
@@ -2077,7 +2078,7 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &undoSel, const QString &uc,
@@ -2087,7 +2088,7 @@ void VymModel::saveState(const QString &undoSel, const QString &uc,
     // "Normal" savestate: save commands, selections and comment
     // so just save commands for undo and redo
     // and use current selection
-    saveState(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &uc, const QString &rc,
@@ -2095,7 +2096,7 @@ void VymModel::saveState(const QString &uc, const QString &rc,
 {
     // "Normal" savestate applied to model (no selection needed):
     // save commands  and comment
-    saveState(File::CodeBlock, nullptr, uc, nullptr, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, nullptr, uc, nullptr, rc, comment, nullptr);
 }
 
 void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
@@ -2110,7 +2111,7 @@ void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
 void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
@@ -7567,7 +7568,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
 
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveState(File::PartOfMap, getSelectString(),
+        saveStateOld(File::PartOfMap, getSelectString(),
                   QString("removeSlide (%1)").arg(pos), getSelectString(),
                   QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
                   s);
@@ -7580,7 +7581,7 @@ void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 undo/redo not working
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveState(File::PartOfMap, getSelectString(),
+        saveStateOld(File::PartOfMap, getSelectString(),
                   QString("addMapInsert (\"PATH\",%1)").arg(pos),
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
                   "Remove slide", nullptr, s);

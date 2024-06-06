@@ -282,7 +282,7 @@ class VymModel : public TreeModel {
                    const QString &redoCommand, const QString &comment = "",
                    TreeItem *saveSelection = nullptr, QString dataXML = "");
 
-    void saveState(const File::SaveMode &savemode, const QString &undoSelection,
+    void saveStateOld(const File::SaveMode &savemode, const QString &undoSelection,
                    const QString &undoCommand, const QString &redoSelection,
                    const QString &redoCommand, const QString &comment = "",
                    TreeItem *saveSelection = nullptr, QString dataXML = "");
