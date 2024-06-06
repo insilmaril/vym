@@ -1526,7 +1526,7 @@ void VymModel::undo()
     // Save current selection
     QList <ulong> selectedIDs = getSelectedIDs();
 
-    // select  object before undo   // FIXME-0 not needed, or?
+    // select  object before undo   // FIXME-4 Ultimately should no longer be needed
     if (!undoSelection.isEmpty() && !select(undoSelection)) {
         qWarning("VymModel::undo()  Could not select object for undo");
         return;
@@ -1625,24 +1625,11 @@ void VymModel::resetHistory()
     mainWindow->updateHistory(undoSet);
 }
 
-QString VymModel::selectCommand(TreeItem* ti)   
-{
-    QString r;
-    if (!ti)
-    {
-        qWarning() << "VM::selectCommand ti == nullptr";
-        return r;
-    }
-
-    // FIXME-00 Implementation missing, no command yet to select TreeItem by ID
-    return r;
-}
-
-QString VymModel::selectBranchCommand(BranchItem* bi)
+QString VymModel::setBranchVar(BranchItem* bi)
 {
     QString r;
     if (!bi)
-        qWarning() << "VM::selectBranchCommand bi == nullptr";
+        qWarning() << "VM::setBranchVar bi == nullptr";
     else
         r = QString("b = map.findBranchById(\"%1\");").arg(bi->getUuid().toString());
 
@@ -1728,7 +1715,7 @@ void VymModel::saveStateNew(const File::SaveMode &savemode,
     //
     bool repeatedCommand = false;
 
-    /* FIXME-0 Repeated command not supported yet in saveState
+    /* FIXME-1 Repeated command not supported yet in saveState
     // Undo blocks start with "model.select" - do not consider these for repeated actions
     if (!undoCommand.startsWith("{")) {
         if (curStep > 0 && redoSelection == lastRedoSelection()) {
@@ -4327,8 +4314,8 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
 
         if (newbi) {
             QString u, r;
-            u = selectBranchCommand(newbi) + " b.remove();";
-            r = selectBranchCommand(pi) + QString(" b.addBranchAt(%1);").arg(pos);
+            u = setBranchVar(newbi) + " b.remove();";
+            r = setBranchVar(pi) + QString(" b.addBranchAt(%1);").arg(pos);
             saveStateNew(File::CodeBlock, u, r, QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
@@ -4893,8 +4880,8 @@ bool VymModel::scrollBranch(BranchItem *bi)
             return false;
         if (bi->toggleScroll()) {
             QString u, r;
-            r = selectBranchCommand(bi) + " b.scroll();";
-            u = selectBranchCommand(bi) + " b.unscroll();";
+            r = setBranchVar(bi) + " b.scroll();";
+            u = setBranchVar(bi) + " b.unscroll();";
             saveStateNew(File::CodeBlock, u, r, QString("Scroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
@@ -4911,8 +4898,8 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             return false;
         if (bi->toggleScroll()) {
             QString u, r;
-            u = selectBranchCommand(bi) + " b.scroll();";
-            r = selectBranchCommand(bi) + " b.unscroll();";
+            u = setBranchVar(bi) + " b.scroll();";
+            r = setBranchVar(bi) + " b.unscroll();";
             saveStateNew(File::CodeBlock, u, r, QString("Uncroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
 

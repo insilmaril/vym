@@ -264,8 +264,7 @@ class VymModel : public TreeModel {
     QString getHistoryPath(); //!< Path to directory containing the history
     void resetHistory();      //!< Initialize history
 
-    QString selectCommand(TreeItem*);           //!< Returns command to select BranchObject
-    QString selectBranchCommand(BranchItem*);   //!< Returns command to select MapObject
+    QString setBranchVar(BranchItem*);   //!< Returns command to set BranchItem in scripts for undo/redo
 
   private:
     /*! \brief Save the current changes in map
