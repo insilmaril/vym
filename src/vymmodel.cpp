@@ -58,10 +58,6 @@
 #include "xmlobj.h"
 #include "zip-agent.h"
 
-#ifdef Q_OS_WINDOWS
-#include <windows.h>
-#endif
-
 extern bool debug;
 extern bool testmode;
 extern bool restoreMode;
