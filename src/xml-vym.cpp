@@ -500,17 +500,6 @@ void VymReader::readHeadingOrVymNote()
     else
         vymtext.setRichText(false);
 
-    a = "textColor";
-    s = xml.attributes().value(a).toString();
-    if (!s.isEmpty()) {
-        QColor col(s);
-        vymtext.setColor(col);
-
-        // For compatibility with <= 2.4.0 set both branch and
-        // heading color
-        lastMI->setHeadingColor(col);
-    }
-
     QString href = xml.attributes().value("href").toString();
     a = "text";
     s = xml.attributes().value(a).toString();
@@ -603,9 +592,20 @@ void VymReader::readHeadingOrVymNote()
             vymtext.setText(htmldata);
     }
 
-    if (textType == "heading")
+    if (textType == "heading") {
+        a = "textColor";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            QColor col(s);
+            vymtext.setColor(col);
+
+            // For compatibility with <= 2.4.0 set both branch and
+            // heading color
+            lastMI->setHeadingColor(col);
+        }
+
         lastMI->setHeading(vymtext);
-    else {
+    } else {
         if (lastMI->hasTypeBranch()) {
             if (textType == "vymnote" || textType == "note" || textType == "htmlnote")
                 lastMI->setNote(vymtext);
