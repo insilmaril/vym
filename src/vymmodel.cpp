@@ -3643,6 +3643,7 @@ void VymModel::paste()
             }
             zipped = zippedOrg;
         } else if (mimeData->hasImage()) {
+            qDebug() << "VM::paste  mimeData->hasImage
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
             QString fn = clipboardDir + "/" + "image.png";
             if (!image.save(fn))
@@ -3660,11 +3661,11 @@ void VymModel::paste()
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
             //setTextFormat(Qt::RichText);
-            //qDebug() << "VM::paste found html...";
+            qDebug() << "VM::paste found html...";
         } else if (mimeData->hasText()) {
             //setText(mimeData->text());
             //setTextFormat(Qt::PlainText);
-            //qDebug() << "VM::paste found text...";
+            qDebug() << "VM::paste found text...";
         } else {
             qWarning() << "VM::paste Cannot paste data, mimeData->formats=" << mimeData->formats();
         }
