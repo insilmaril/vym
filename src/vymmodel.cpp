@@ -2258,19 +2258,11 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
-    qDebug() << "zipAgent  state=" <<zipAgent->state() 
-        << " error=" << zipAgent->error()
-        << " exitStatus=" << zipAgent->exitStatus();
-    return;
-
     // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch()) {
             BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
             bc->printStructure();
-            qDebug() << "Scale heading = " << bc->scaleHeading();
-            qDebug() << "Scale subtree = " << bc->scaleSubtree();
-            qDebug() << "Font          = " << bc->getHeadingContainer()->font();
         }
         if (ti->hasTypeImage())
             ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
