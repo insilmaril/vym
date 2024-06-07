@@ -1522,7 +1522,7 @@ void VymModel::undo()
     // Save current selection
     QList <ulong> selectedIDs = getSelectedIDs();
 
-    // select  object before undo   // FIXME-0 not needed, or?
+    // select  object before undo   // FIXME-4 Ultimately should no longer be needed
     if (!undoSelection.isEmpty() && !select(undoSelection)) {
         qWarning("VymModel::undo()  Could not select object for undo");
         return;
@@ -1621,24 +1621,11 @@ void VymModel::resetHistory()
     mainWindow->updateHistory(undoSet);
 }
 
-QString VymModel::selectCommand(TreeItem* ti)   
-{
-    QString r;
-    if (!ti)
-    {
-        qWarning() << "VM::selectCommand ti == nullptr";
-        return r;
-    }
-
-    // FIXME-00 Implementation missing, no command yet to select TreeItem by ID
-    return r;
-}
-
-QString VymModel::selectBranchCommand(BranchItem* bi)
+QString VymModel::setBranchVar(BranchItem* bi)
 {
     QString r;
     if (!bi)
-        qWarning() << "VM::selectBranchCommand bi == nullptr";
+        qWarning() << "VM::setBranchVar bi == nullptr";
     else
         r = QString("b = map.findBranchById(\"%1\");").arg(bi->getUuid().toString());
 
@@ -1724,7 +1711,7 @@ void VymModel::saveStateNew(const File::SaveMode &savemode,
     //
     bool repeatedCommand = false;
 
-    /* FIXME-0 Repeated command not supported yet in saveState
+    /* FIXME-1 Repeated command not supported yet in saveState
     // Undo blocks start with "model.select" - do not consider these for repeated actions
     if (!undoCommand.startsWith("{")) {
         if (curStep > 0 && redoSelection == lastRedoSelection()) {
@@ -1819,10 +1806,11 @@ void VymModel::saveStateNew(const File::SaveMode &savemode,
     setChanged();
 }
 
-void VymModel::saveState(const File::SaveMode &savemode, const QString &undoSelection,
-                         const QString &undoCom, const QString &redoSelection,
-                         const QString &redoCom, const QString &comment,
-                         TreeItem *saveSel, QString dataXML)
+void VymModel::saveStateOld( // FIXME-0 rewrite all callers to use saveStateNew instead
+        const File::SaveMode &savemode, const QString &undoSelection,
+        const QString &undoCom, const QString &redoSelection,
+        const QString &redoCom, const QString &comment,
+        TreeItem *saveSel, QString dataXML)
 {
     // Main saveState
 
@@ -2047,7 +2035,7 @@ void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
     else
         qWarning("VymModel::saveStateChangingPart  no redoSel given!");
 
-    saveState(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
+    saveStateOld(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
               redoSelection, rc, comment, undoSel);
 }
 
@@ -2063,7 +2051,7 @@ void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
         // save the selected branch of the map, Undo will insert part of map
         if (redoSel->depth() > 0)
             undoSelection = getSelectString(redoSel->parent());
-        saveState(File::PartOfMap, undoSelection,
+        saveStateOld(File::PartOfMap, undoSelection,
                   QString("addMapInsert (\"PATH\",%1,%2)")
                       .arg(redoSel->num())
                       .arg(VymReader::SlideContent),
@@ -2086,7 +2074,7 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &undoSel, const QString &uc,
@@ -2096,7 +2084,7 @@ void VymModel::saveState(const QString &undoSel, const QString &uc,
     // "Normal" savestate: save commands, selections and comment
     // so just save commands for undo and redo
     // and use current selection
-    saveState(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);
 }
 
 void VymModel::saveState(const QString &uc, const QString &rc,
@@ -2104,7 +2092,7 @@ void VymModel::saveState(const QString &uc, const QString &rc,
 {
     // "Normal" savestate applied to model (no selection needed):
     // save commands  and comment
-    saveState(File::CodeBlock, nullptr, uc, nullptr, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, nullptr, uc, nullptr, rc, comment, nullptr);
 }
 
 void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
@@ -2119,7 +2107,7 @@ void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveState(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
 }
 
 void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
@@ -3651,6 +3639,7 @@ void VymModel::paste()
             }
             zipped = zippedOrg;
         } else if (mimeData->hasImage()) {
+            qDebug() << "VM::paste  mimeData->hasImage
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
             QString fn = clipboardDir + "/" + "image.png";
             if (!image.save(fn))
@@ -3668,11 +3657,11 @@ void VymModel::paste()
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
             //setTextFormat(Qt::RichText);
-            //qDebug() << "VM::paste found html...";
+            qDebug() << "VM::paste found html...";
         } else if (mimeData->hasText()) {
             //setText(mimeData->text());
             //setTextFormat(Qt::PlainText);
-            //qDebug() << "VM::paste found text...";
+            qDebug() << "VM::paste found text...";
         } else {
             qWarning() << "VM::paste Cannot paste data, mimeData->formats=" << mimeData->formats();
         }
@@ -4323,8 +4312,8 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
 
         if (newbi) {
             QString u, r;
-            u = selectBranchCommand(newbi) + " b.remove();";
-            r = selectBranchCommand(pi) + QString(" b.addBranchAt(%1);").arg(pos);
+            u = setBranchVar(newbi) + " b.remove();";
+            r = setBranchVar(pi) + QString(" b.addBranchAt(%1);").arg(pos);
             saveStateNew(File::CodeBlock, u, r, QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
@@ -4889,8 +4878,8 @@ bool VymModel::scrollBranch(BranchItem *bi)
             return false;
         if (bi->toggleScroll()) {
             QString u, r;
-            r = selectBranchCommand(bi) + " b.scroll();";
-            u = selectBranchCommand(bi) + " b.unscroll();";
+            r = setBranchVar(bi) + " b.scroll();";
+            u = setBranchVar(bi) + " b.unscroll();";
             saveStateNew(File::CodeBlock, u, r, QString("Scroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
@@ -4907,8 +4896,8 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             return false;
         if (bi->toggleScroll()) {
             QString u, r;
-            u = selectBranchCommand(bi) + " b.scroll();";
-            r = selectBranchCommand(bi) + " b.unscroll();";
+            u = setBranchVar(bi) + " b.scroll();";
+            r = setBranchVar(bi) + " b.unscroll();";
             saveStateNew(File::CodeBlock, u, r, QString("Uncroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
 
@@ -7576,7 +7565,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
 
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveState(File::PartOfMap, getSelectString(),
+        saveStateOld(File::PartOfMap, getSelectString(),
                   QString("removeSlide (%1)").arg(pos), getSelectString(),
                   QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
                   s);
@@ -7589,7 +7578,7 @@ void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 undo/redo not working
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveState(File::PartOfMap, getSelectString(),
+        saveStateOld(File::PartOfMap, getSelectString(),
                   QString("addMapInsert (\"PATH\",%1)").arg(pos),
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
                   "Remove slide", nullptr, s);
