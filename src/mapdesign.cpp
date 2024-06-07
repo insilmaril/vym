@@ -105,7 +105,7 @@ void MapDesign::init()
     // Heading colors
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
     headingColorHints << MapDesign::InheritedColor;        // Use color of parent
-    headingColorUpdateWhenRelinking << true;
+    headingColorUpdateWhenRelinking << false;
 
     headingColors << QColor(Qt::white);
     headingColors << QColor(Qt::green);
