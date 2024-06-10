@@ -35,10 +35,11 @@ site:
 
 https://sourceforge.net/projects/vym/
 
-The latest development drops can be found in the Files/Development folder there.
+The latest development drops for all platforms can be found there in the
+folder Files->Development.
 
-The latest binaries for Linux, Debian and Ubuntu are built and available in the authors
-Open Build Service project:
+The latest binaries for Linux, Debian and Ubuntu are built and available
+in the authors Open Build Service project:
 
 https://software.opensuse.org/download.html?project=home%3Ainsilmaril&package=vym
 
@@ -90,11 +91,10 @@ Installation
 Questions and feedback
 ----------------------
 
-Please direct support questions to the mailinglist first:
-
-  vym-forum@lists.sourceforge.net
-
 Bugs and feature requests will be taken care of in
 
   https://github.com/insilmaril/vym/issues
 
+Please direct support questions to the mailinglist first:
+
+  vym-forum@lists.sourceforge.net
