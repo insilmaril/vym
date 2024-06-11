@@ -7,6 +7,7 @@
 
 #include "branchitem.h"
 #include "image-container.h"
+#include "image-wrapper.h"
 #include "vymmodel.h"
 
 bool isImage(const QString &fname)
@@ -39,11 +40,17 @@ ImageItem::~ImageItem()
         // Remove file used to compress map
         if (!QFile(currentFilename).remove())
             qWarning() << "Destr ImageItem failed to remove " << currentFilename;
+
+    if (imageWrapperInt) {
+        delete imageWrapperInt;
+        imageWrapperInt = nullptr;
+    }
 }
 
 void ImageItem::init()
 {
     imageContainer = nullptr;
+    imageWrapperInt = nullptr;
     setType(Image);
     hideLinkUnselected = true;
     originalFilename = "no original name available";
@@ -57,6 +64,14 @@ void ImageItem::setParentBranch(BranchItem *pbi)
     setModel(pbi->getModel());
     rootItem = model->getRootItem();
     parentItem = pbi;
+}
+
+ImageWrapper* ImageItem::imageWrapper()
+{
+    if (!imageWrapperInt)
+        imageWrapperInt = new ImageWrapper(this);
+
+    return imageWrapperInt;
 }
 
 bool ImageItem::load(const QString &fname)

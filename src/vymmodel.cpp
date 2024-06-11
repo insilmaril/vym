@@ -448,50 +448,6 @@ QString VymModel::getMapName() { return mapName; }
 
 QString VymModel::getDestPath() { return destPath; }
 
-bool VymModel::parseVymText(const QString &s)
-{
-    bool ok = false;
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        bool saveStateBlockedOrg = saveStateBlocked;
-        repositionBlocked = true;
-        saveStateBlocked = true;
-
-        // XML-FIXME-3 VymModel::parseVymText Workaround to pass string to QXmlStreamreader
-        // write string to disk, so that it can be used with QIODevice of
-        // QXmlStreamReader:VymReader 
-        //
-        // In theory constructor of QXmlStreamreader should also accept a QString!  
-        saveStringToDisk("testdata.xml", s);
-
-        QFile file("testdata.xml");
-        if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
-                    QString("Cannot read file %1:\n%2.")
-                    .arg(QDir::toNativeSeparators(fileName),
-                        file.errorString()));
-            return false;
-        }
-
-        VymReader vymReader(this);
-        vymReader.setLoadMode(File::ImportReplace, 0);
-
-        ok = vymReader.read(&file);
-        repositionBlocked = false;
-        saveStateBlocked = saveStateBlockedOrg;
-        if (ok) {
-            if (s.startsWith("<vymnote"))
-                emitNoteChanged(bi);
-            emitDataChanged(bi);
-            reposition();
-        }
-        else
-            QMessageBox::critical(0, tr("Critical Parse Error"),
-                                    vymReader.errorString());
-    }
-    return ok;
-}
-
 File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                                   const File::FileType &ftype,
                                   const int &contentFilter, int pos)
@@ -1419,7 +1375,8 @@ void VymModel::redo()
 
     mainWindow->updateHistory(undoSet);
 
-    // Selection might have changed. Also force update in BranchPropertyEditor
+    // Selection might have changed.    // FIXME-1 This should no longer be necessary with new commands
+    // Also force update in BranchPropertyEditor
     unselectAll();
     foreach (ulong id, selectedIDs)
         selectToggle(id);
@@ -1562,7 +1519,8 @@ void VymModel::undo()
 
     mainWindow->updateHistory(undoSet);
 
-    // Selection might have changed. Also force update in BranchPropertyEditor
+    // Selection might have changed.    // FIXME-1 This should no longer be necessary with new commands
+    // Also force update in BranchPropertyEditor
     unselectAll();
     foreach (ulong id, selectedIDs)
         selectToggle(id);
@@ -1632,14 +1590,25 @@ QString VymModel::setBranchVar(BranchItem* bi)
     return r;
 }
 
+QString VymModel::setImageVar(ImageItem* ii)
+{
+    QString r;
+    if (!ii)
+        qWarning() << "VM::setImageVar ii == nullptr";
+    else
+        r = QString("ii = map.findImageById(\"%1\");").arg(ii->getUuid().toString());
+
+    return r;
+}
+
 // FIXME-0 VymModel::saveState   Make undo/redo selection part of the related commands. WIP
 // // FIXME-0 Check model vs map in scripts...
 // FIXME-0 SaveMode still needed?
-void VymModel::saveStateNew(const File::SaveMode &savemode,
-                         const QString &undoCom,
-                         const QString &redoCom,
-                         const QString &comment,
-                         TreeItem *saveSel, QString dataXML)
+void VymModel::saveStateNew(
+         const QString &undoCom,
+         const QString &redoCom,
+         const QString &comment,
+         TreeItem *saveSel, QString dataXML)
 {
     // Main saveState
 
@@ -1758,10 +1727,12 @@ void VymModel::saveStateNew(const File::SaveMode &savemode,
         dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
                             saveSel);
 
-    if (savemode == File::PartOfMap) {
+    // if (savemode == File::PartOfMap) {  FIXME-0 savemode is always File::Code now!
+    /*
         undoCommand.replace("PATH", bakMapPath);
         redoCommand.replace("PATH", bakMapPath);
     }
+    */
 
     if (!dataXML.isEmpty())
         // Write XML Data to disk
@@ -2017,7 +1988,7 @@ void VymModel::saveStateBranch(
         const QString &rc,
         const QString &comment)
 {
-    saveStateNew(File::CodeBlock, uc, rc, comment);
+    saveStateNew(uc, rc, comment);
 }
 
 void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
@@ -2147,7 +2118,7 @@ void VymModel::saveStateEndBlock()
     // Drop whole block, if empty
     if (undoBlock.isEmpty() && redoBlock.isEmpty()) return;
 
-    saveStateNew(File::CodeBlock,
+    saveStateNew(
             QString("{%1}").arg(undoBlock),
             QString("{%1}").arg(redoBlock),
             undoBlockComment, nullptr);
@@ -2471,10 +2442,23 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
         h_old = selti->heading();
         if (h_old == h_new)
             return;
-        saveState(selti, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", selti,
-                  "parseVymText (\"" + quoteQuotes(h_new.saveToDir()) + "\")",
-                  QString("Set heading of %1 to \"%2\"")
-                      .arg(getObjectName(selti), s));
+
+        QString tiv;    // ti variable in script
+        if (selti->hasTypeBranch())
+            tiv = setBranchVar((BranchItem*)selti) + "b.select();b.";
+        else
+            tiv = setImageVar((ImageItem*)selti) + "i.select();i."; // FIXME-000 select missing for ImageWrapper
+
+        QString uc, rc;
+        if (h_old.isRichText())
+            uc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
+        else
+            uc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
+        if (h_new.isRichText())
+            rc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
+        else
+            rc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
+        saveStateNew( uc, rc, QString("Set heading of %1 to \"%2\"").arg(getObjectName(selti), s));
         selti->setHeading(vt);
         emitDataChanged(selti);
         emitUpdateQueries();
@@ -2523,59 +2507,59 @@ QString VymModel::headingText(TreeItem *ti)
 
 void VymModel::updateNoteText(const VymText &vt)
 {
-    bool editorStateChanged = false;
+    VymNote note_new(vt);
+    setNote(note_new, nullptr, true);
+}
 
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        VymNote note_old = selti->getNote();
-        VymNote note_new(vt);
+void VymModel::setNote(const VymNote &note_new, BranchItem *bi, bool senderIsNoteEditor)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    qDebug() << "VM::setNote  selbi=" << selbi->headingText() << " n=" << note_new.getText();
+    if (selbi) {
+        VymNote note_old;
+        note_old = selbi->getNote();
+        if (note_old == note_new)
+            return;
+
+        bool editorStateChanged = false;
         if (note_new.getText() != note_old.getText()) {
             if ((note_new.isEmpty() && !note_old.isEmpty()) ||
                 (!note_new.isEmpty() && note_old.isEmpty()))
                 editorStateChanged = true;
-
-            VymNote vn;
-            vn.copy(vt);
-
-            saveState(selti, "parseVymText (\"" + quoteQuotes(note_old.saveToDir()) + "\")",
-                      selti, "parseVymText (\"" + quoteQuotes(note_new.saveToDir()) + "\")",
-                      QString("Set note of %1 to \"%2\"")
-                          .arg(
-                              getObjectName(selti),
-                              note_new.getTextASCII().left(20)));
-
-            selti->setNote(vn);
         }
 
-        // Update also flags after changes in NoteEditor
-        emitDataChanged(selti);
+        qDebug() << "VM::setNote  selbi=" << selbi->headingText() << " n=" << note_new.getText();
+
+        // branch variable in script
+        QString bv = setBranchVar(selbi) + "b.";
+
+        QString uc, rc;
+        if (note_old.isRichText())
+            uc = QString("%1setNoteRichText(\"%2\");").arg(bv, quoteQuotes(note_old.getText()));
+        else
+            uc = QString("%1setNoteText(\"%2\");").arg(bv, quoteQuotes(note_old.getText()));
+        if (note_new.isRichText())
+            rc = QString("%1setNoteRichText(\"%2\");").arg(bv, quoteQuotes(note_new.getText()));
+        else
+            rc = QString("%1setNoteText(\"%2\");").arg(bv, quoteQuotes(note_new.getText()));
+
+        saveStateNew( uc, rc, QString("Set note of %1 to \"%2\"")
+                .arg(getObjectName(selbi), note_new.getTextASCII().left(40)));
+
+        selbi->setNote(note_new);
+        if (!senderIsNoteEditor)
+            emitNoteChanged(selbi);
+
+        emitDataChanged(selbi);
 
         // Only update flag, if state has changed
         if (editorStateChanged)
             reposition();
+
     }
 }
 
-void VymModel::setNote(const VymNote &vn)
-{
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        VymNote n_old;
-        VymNote n_new;
-        n_old = selti->getNote();
-        n_new = vn;
-        saveState(selti, "parseVymText (\"" + quoteQuotes(n_old.saveToDir()) + "\")", selti,
-                  "parseVymText (\"" + quoteQuotes(n_new.saveToDir()) + "\")",
-                  QString("Set note of %1 to \"%2\"")
-                      .arg(getObjectName(selti))
-                      .arg(n_new.getTextASCII().left(40)));
-        selti->setNote(n_new);
-        emitNoteChanged(selti);
-        emitDataChanged(selti);
-    }
-}
-
-VymNote VymModel::getNote()
+VymNote VymModel::getNote() // FIXME-2 still needed? No longer for scripting...
 {
     TreeItem *selti = getSelectedItem();
     if (selti) {
@@ -2586,7 +2570,7 @@ VymNote VymModel::getNote()
     return VymNote();
 }
 
-bool VymModel::hasRichTextNote()
+bool VymModel::hasRichTextNote() // FIXME-2 still needed? No longer for scripting...
 {
     TreeItem *selti = getSelectedItem();
     if (selti) {
@@ -4305,8 +4289,11 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         if (newbi) {
             QString u, r;
             u = setBranchVar(newbi) + " b.remove();";
-            r = setBranchVar(pi) + QString(" b.addBranchAt(%1);").arg(pos);
-            saveStateNew(File::CodeBlock, u, r, QString("Add new branch to %1").arg(getObjectName(pi)));
+            r = setBranchVar(pi) + QString(" b.addBranchAt(%1);").arg(pos); // FIXME-0 QUuid is lost here. Better insertMapAt
+            saveStateNew(
+                u,
+                r,
+                QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;
             // In Network mode, the client needs to know where the new branch
@@ -4872,7 +4859,7 @@ bool VymModel::scrollBranch(BranchItem *bi)
             QString u, r;
             r = setBranchVar(bi) + " b.scroll();";
             u = setBranchVar(bi) + " b.unscroll();";
-            saveStateNew(File::CodeBlock, u, r, QString("Scroll %1").arg(getObjectName(bi)));
+            saveStateNew(u, r, QString("Scroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
             return true;
@@ -4890,7 +4877,7 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             QString u, r;
             u = setBranchVar(bi) + " b.scroll();";
             r = setBranchVar(bi) + " b.unscroll();";
-            saveStateNew(File::CodeBlock, u, r, QString("Uncroll %1").arg(getObjectName(bi)));
+            saveStateNew(u, r, QString("Uncroll %1").arg(getObjectName(bi)));
             emitDataChanged(bi);
 
             reposition();

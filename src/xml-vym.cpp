@@ -44,21 +44,6 @@ bool VymReader::read(QIODevice *device)
     if (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("vymmap")) {
             readVymMap();
-        } else if (xml.name() == QLatin1String("heading") ||
-                   xml.name() == QLatin1String("vymnote"))  {
-            // Only read some stuff like VymNote or Heading
-            // e.g. for undo/redo
-            if (version.isEmpty())
-                version = "0.0.0";
-            if (!lastBranch) {
-                lastBranch = model->getSelectedBranch();
-                lastMI = lastBranch;
-                if (!lastBranch) {
-                    xml.raiseError("Found heading element but no branch is selected!");
-                    return !xml.error();
-                }
-            }
-            readHeadingOrVymNote();
         } else {
             xml.raiseError("No vymmap or heading as next element.");
         }

@@ -93,7 +93,11 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
     let id = vym.currentMapID();
     vym.print("# Loaded " + mapPath + " -> " + currentMapPath + " (id: " + id + ")");
     vym.gotoMap(id);
-    return vym.currentMap();
+
+    map = vym.currentMap();
+    b_main_A = map.findBranchById("{19840979-9f88-475c-8627-02e3066c8216}");
+
+    return map;
   }
 
   throw "Failed to load \"" + mapPath + "\"";
@@ -867,24 +871,22 @@ function test_notes()
 
   // RichText basic actions
   map = initMap(testMapDefault);
-  map.select(main_A);
-  rt_note = '<vymnote  textMode="richText"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"> <html><head><meta name="qrichtext" content="1" /><style type="text/css"> p, li { white-space: pre-wrap; } </style></head><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
-  map.parseVymText(rt_note);
-  expect("parseVymText of richText note produces note", map.hasNote(), true);
-  expect("parseVymText of richText note produces richText note", map.hasRichTextNote(), true);
-  map.select(center_0);
-  map.select(main_A);
-  expect("After reselect, is note RichText?", map.hasRichTextNote(), true);
+  rt_note = '<html><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
+  b_main_A.setNoteRichText(rt_note);
+  expect("b.setNoteRichText produces note", b_main_A.hasNote(), true);
+  expect("b.setNoteRichText produces richText note", b_main_A.hasRichTextNote(), true);
+  expect("After reselect, is note RichText?", b_main_A.hasRichTextNote(), true);
 
 
   // RichText notes copy & paste
+  b_main_A.select();
   rt_note = map.getNoteXML();
   map.copy();
   map.paste();
   map.selectLastChildBranch();
-  s = map.getSelectionString();
-  expect("After copy & paste: New note Still RichText?", map.hasRichTextNote(), true);
-  expect("After copy & paste: New note unchanged?", map.getNoteXML(), rt_note);
+  b = map.selectedBranch();
+  expect("After copy & paste: New note still RichText?", b.hasRichTextNote(), true);
+  expect("After copy & paste: New note unchanged?", b.getNoteXML(), rt_note);
   map.remove();
 
   // RichText notes undo & redo
@@ -1255,7 +1257,8 @@ test_attributes();
 test_copy_paste();
 test_delete_parts();
 */
-test_export(); // FIXME WIP
+//test_export(); // FIXME WIP
+test_notes();
 /*
 test_extrainfo();
 test_frames();

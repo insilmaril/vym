@@ -4,6 +4,7 @@
 #include "mapitem.h"
 
 class ImageContainer;
+class ImageWrapper;
 class QGraphicsScene;
 
 bool isImage(const QString &fname);
@@ -20,6 +21,7 @@ class ImageItem : public MapItem {
   public:
     BranchItem* parentBranch();
     void setParentBranch(BranchItem *);
+    ImageWrapper* imageWrapper();
     virtual bool load(const QString &fname);
     ImageContainer* createImageContainer();
     ImageContainer* getImageContainer();
@@ -28,6 +30,7 @@ class ImageItem : public MapItem {
 
   protected:
     ImageContainer *imageContainer;
+    ImageWrapper *imageWrapperInt;
     QString originalFilename;
     QString currentFilename;
 

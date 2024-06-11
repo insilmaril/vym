@@ -150,8 +150,6 @@ class VymModel : public TreeModel {
     QString getMapName();      //!< e.g. "map"
     QString getDestPath();     //!< e.g. "/home/tux/map.vym"
 
-    bool parseVymText(const QString &s);
-
     /*! \brief Load map
 
     The data is read from file. Depending on LoadMode the current
@@ -264,7 +262,8 @@ class VymModel : public TreeModel {
     QString getHistoryPath(); //!< Path to directory containing the history
     void resetHistory();      //!< Initialize history
 
-    QString setBranchVar(BranchItem*);   //!< Returns command to set BranchItem in scripts for undo/redo
+    QString setBranchVar(BranchItem*);  //!< Returns command to set BranchItem in scripts for undo/redo
+    QString setImageVar(ImageItem*);    //!< Returns command to set ImageItem in scripts for undo/redo
 
   private:
     /*! \brief Save the current changes in map
@@ -277,7 +276,7 @@ class VymModel : public TreeModel {
     Additionally a comment is logged.
 
     */
-    void saveStateNew(const File::SaveMode &savemode,
+    void saveStateNew(
                    const QString &undoCommand,
                    const QString &redoCommand, const QString &comment = "",
                    TreeItem *saveSelection = nullptr, QString dataXML = "");
@@ -377,7 +376,9 @@ class VymModel : public TreeModel {
     Heading getHeading();               //!< Get heading of item
     QString headingText(TreeItem*);     //!< For debugging. Also works for nullptr
     void updateNoteText(const VymText &); //!< Signal emmited in NoteEditor via MainWindow
-    void setNote(const VymNote &vn);    //!< Set note text
+    void setNote(const VymNote &vn,     //!< Set note text
+                         BranchItem *bi = nullptr,
+                         bool senderIsNoteEditor = false);
     VymNote getNote();                  //!< Get note text
     bool hasRichTextNote();             //!< Check type of vymText used
     void loadNote(const QString &fn);   //!< Load note from file

@@ -8,9 +8,9 @@
 #include <QJSValue>
 #include <QVariant>
 
-#include "branch-wrapper.h"
-
 class BranchItem;
+class BranchWrapper;
+class ImageWrapper;
 class VymModel;
 
 class VymModelWrapper : public VymScriptContext {
@@ -41,6 +41,7 @@ class VymModelWrapper : public VymScriptContext {
     bool exportMap(QJSValueList args);
     BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
     BranchWrapper* findBranchById(const QString &);
+    ImageWrapper* findImageById(const QString &);
     int getBranchIndex();// FIXME-3 move to BranchWrapper
     QString getDestPath();
     QString getFileDir();
@@ -85,7 +86,6 @@ class VymModelWrapper : public VymScriptContext {
     void newBranchIterator(const QString &itname, bool deepLevelsFirst = false);
     BranchWrapper* nextBranch(const QString &itname);
     void note2URLs();// FIXME-3 move to BranchWrapper
-    bool parseVymText(const QString &text);
     void paste();   // FIXME copy to BranchWrappe (use without selecting in VymModel!)
     void redo();
     bool relinkTo(const QString &parent, int num);// FIXME-3 move to BranchWrapper

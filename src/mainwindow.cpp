@@ -104,6 +104,7 @@ extern QStringList lastSessionFiles;
 extern QList<Command *> vymCommands;
 extern QList<Command *> modelCommands;
 extern QList<Command *> branchCommands;
+extern QList<Command *> imageCommands;
 
 extern bool usingDarkTheme;
 
@@ -595,6 +596,9 @@ void Main::setupAPI()
     c = new Command("toggleTreeEditor", Command::Any);
     vymCommands.append(c);
 
+    c = new Command("usesDarkTheme", Command::Any, Command::Bool);
+    vymCommands.append(c);
+
     c = new Command("version", Command::Any);
     vymCommands.append(c);
 
@@ -606,7 +610,7 @@ void Main::setupAPI()
     //
 
     // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper. See vymmodelwrapper.h
-    QString DEPRECATED(" DEPRECATED - use branch command.");
+    QString DEPRECATED(" DEPRECATED. Commands moved to branch or image. ");
 
     c = new Command("addBranch", Command::Branch);
     c->setComment(DEPRECATED);
@@ -702,6 +706,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Uuid of branch");
     modelCommands.append(c);
 
+    c = new Command("findImageById", Command::Any, Command::ImageItem);
+    c->setComment("Find image with given unique Uuid. ");
+    c->addParameter(Command::String, false, "Uuid of image");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::Any, Command::String);
     modelCommands.append(c);
 
@@ -715,7 +724,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getHeadingPlainText", Command::TreeItem, Command::String);
-    c->setComment(DEPRECATED + " use Branch::headingText()");
+    c->setComment(DEPRECATED + "Branch::headingText()");
     modelCommands.append(c);
 
     c = new Command("getHeadingXML", Command::TreeItem, Command::String);
@@ -735,9 +744,11 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getNotePlainText", Command::TreeItem, Command::String);
+    c->setComment(DEPRECATED + " b.getNoteText");
     modelCommands.append(c);
 
     c = new Command("getNoteXML", Command::TreeItem, Command::String);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("getPosX", Command::TreeItem);
@@ -796,9 +807,11 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("hasNote", Command::Branch, Command::Bool);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("hasRichTextNote", Command::Branch, Command::Bool);
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("hasTask", Command::Branch, Command::Bool);
@@ -852,12 +865,6 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("note2URLs", Command::Branch);
-    modelCommands.append(c);
-
-    // internally required for undo/redo of changing VymText:
-    c = new Command("parseVymText", Command::Branch, Command::Bool);
-    c->addParameter(Command::String, false,
-              "parse XML of VymText, e.g for Heading or VymNote");
     modelCommands.append(c);
 
     c = new Command("paste", Command::Branch);
@@ -955,8 +962,9 @@ void Main::setupAPI()
     c->addParameter(Command::Int, false, "Number of xlink");
     modelCommands.append(c);
 
-    c = new Command("setFlagByName", Command::TreeItem);    // FIXME-3 DEPRECATED Moved to branch
+    c = new Command("setFlagByName", Command::TreeItem);
     c->addParameter(Command::String, false, "Name of flag");
+    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("setTaskPriorityDelta", Command::Branch);
@@ -997,6 +1005,7 @@ void Main::setupAPI()
 
     c = new Command("setHeadingPlainText", Command::TreeItem);
     c->addParameter(Command::String, false, "New heading");
+    c->setComment(DEPRECATED + "branch.setHeadingText() or image.setHeadingText()");
     modelCommands.append(c);
 
     c = new Command("setHideExport", Command::BranchOrImage);
@@ -1056,6 +1065,8 @@ void Main::setupAPI()
 
     c = new Command("setNotePlainText", Command::Branch);
     c->addParameter(Command::String, false, "Note of branch");
+    c->setComment(DEPRECATED + "branch.setNoteText()");
+
     modelCommands.append(c);
 
     c = new Command("setRotationHeading", Command::Branch);
@@ -1244,6 +1255,10 @@ void Main::setupAPI()
     c->setComment("Scroll branch");
     branchCommands.append(c);
 
+    c = new Command("select", Command::Branch);
+    c->setComment("Select (only) this branch");
+    branchCommands.append(c);
+
     c = new Command("setAttribute", Command::Branch);
     c->addParameter(Command::String, false, "Key of attribute as string");
     c->addParameter(Command::String, false, "String Value of attribute");
@@ -1254,8 +1269,22 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Name of flag");
     branchCommands.append(c);
 
-    c = new Command("select", Command::Branch);
-    c->setComment("Select (only) this branch");
+    c = new Command("setHeadingRichText", Command::Branch);
+    c->addParameter(Command::String, false, "New heading");
+    c->setComment("Set heading of branch as HTML-like string");
+    branchCommands.append(c);
+
+    c = new Command("setHeadingText", Command::Branch);
+    c->addParameter(Command::String, false, "New heading");
+    c->setComment("Set heading of branch as plain text string");
+    branchCommands.append(c);
+
+    c = new Command("setNoteRichText", Command::Branch);
+    c->addParameter(Command::String, false, "Note of branch");
+    branchCommands.append(c);
+
+    c = new Command("setNoteText", Command::Branch);
+    c->addParameter(Command::String, false, "Note of branch");
     branchCommands.append(c);
 
     c = new Command("setPos", Command::Branch);
@@ -1283,6 +1312,24 @@ void Main::setupAPI()
 
     foreach (Command *c, branchCommands)
         c->setObjectType(Command::BranchObject);
+
+    //
+    // Below are the commands for a branch
+    //
+    c = new Command("headingText", Command::Image, Command::String);
+    c->setComment("Set heading of image from plaintext string");
+    imageCommands.append(c);
+
+    c = new Command("setHeadingRichText", Command::Image);
+    c->addParameter(Command::String, false, "New heading");
+    c->setComment("Set heading of image as HTML-like string");
+    imageCommands.append(c);
+
+    c = new Command("setHeadingText", Command::Image);
+    c->addParameter(Command::String, false, "New heading");
+    c->setComment("Set heading of image as plain text string");
+    imageCommands.append(c);
+
 
 }
 
@@ -7272,7 +7319,14 @@ void Main::helpScriptingCommands()
         s += c->description();
         s += "\n";
     }
+    s += "\n";
 
+    s += "Available commands of an image\n";
+    s += "==============================\n";
+    foreach (Command *c, imageCommands) {
+        s += c->description();
+        s += "\n";
+    }
 
 
     dia.setText(s);

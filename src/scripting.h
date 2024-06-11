@@ -28,29 +28,30 @@ class VymWrapper : public VymScriptContext {
     VymWrapper();
 
   public slots:
-    void print(const QString &s);
-    void statusMessage(const QString &s);
     void abortScript(const QString &s);
     void clearConsole();
-    bool isConfluenceAgentAvailable();
+    bool closeMapWithID(uint n);
+    QString currentColor();
     QObject *currentMap();
+    uint currentMapID();
     void editHeading();
     bool directoryIsEmpty(const QString &dirName);
     bool directoryExists(const QString &dirName);
-    bool mkdir(const QString &dirName);
-    bool removeDirectory(const QString &dirName);
     bool fileExists(const QString &fileName);
-    bool removeFile(const QString &fileName);
+    void gotoMap(uint n);
+    bool isConfluenceAgentAvailable();
+    QString loadFile(const QString &filename);
     bool loadMap(const QString &filename);
     int mapCount();
-    void gotoMap(uint n);
-    bool closeMapWithID(uint n);
+    bool mkdir(const QString &dirName);
+    void print(const QString &s);
+    bool removeDirectory(const QString &dirName);
+    bool removeFile(const QString &fileName);
     void selectQuickColor(int n);
-    QString currentColor();
-    uint currentMapID();
-    void toggleTreeEditor();
-    QString loadFile(const QString &filename);
+    void statusMessage(const QString &s);
     void saveFile(const QString &filename, const QString &s);
+    void toggleTreeEditor();
+    bool usesDarkTheme();
     QString version();
 };
 

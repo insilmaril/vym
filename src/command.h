@@ -15,6 +15,7 @@ class Command {
         Undefined,
         Bool,
         BranchItem,
+        ImageItem,
         Color,
         Double,
         Int,

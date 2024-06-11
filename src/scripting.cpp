@@ -16,6 +16,8 @@ extern QString vymVersion;
 
 extern QJSEngine *scriptEngine;
 
+extern bool usingDarkTheme;
+
 ///////////////////////////////////////////////////////////////////////////
 VymScriptContext::VymScriptContext() {}
 
@@ -67,16 +69,6 @@ qreal VymScriptContext::setResult(qreal r)
 ///////////////////////////////////////////////////////////////////////////
 VymWrapper::VymWrapper() {}
 
-void VymWrapper::print(const QString &s)
-{
-    mainWindow->scriptPrint(s);
-}
-
-void VymWrapper::statusMessage(const QString &s)
-{
-    mainWindow->statusMessage(s);
-}
-
 void VymWrapper::abortScript(const QString &s)
 {
     mainWindow->statusMessage(s);
@@ -85,9 +77,21 @@ void VymWrapper::abortScript(const QString &s)
 
 void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 
-bool VymWrapper::isConfluenceAgentAvailable()
+bool VymWrapper::closeMapWithID(uint n)
 {
-    return setResult(ConfluenceAgent::available());
+    bool r = mainWindow->closeModelWithId(n);
+    if (!r) {
+        scriptEngine->throwError(
+                QJSValue::ReferenceError, 
+                QString("Map '%1' not available.").arg(n));
+        return false;
+    }
+    return setResult(r);
+}
+
+QString VymWrapper::currentColor()
+{
+    return setResult(mainWindow->getCurrentColor().name());
 }
 
 QObject *VymWrapper::currentMap()
@@ -113,28 +117,33 @@ bool VymWrapper::directoryExists(const QString &directoryName)
     return d.exists();
 }
 
-bool VymWrapper::removeDirectory(const QString &directoryName)
-{
-    QDir d(directoryName);
-    qWarning() << "VW::removeDir " << directoryName;
-    return false;
-    return d.removeRecursively();
-}
-
-bool VymWrapper::mkdir(const QString &directoryName)
-{
-    QDir d;
-    return d.mkpath(directoryName);
-}
-
 bool VymWrapper::fileExists(const QString &fileName)
 {
     return QFile::exists(fileName);
 }
 
-bool VymWrapper::removeFile(const QString &fileName)
+void VymWrapper::gotoMap(uint n)
 {
-    return QFile::remove(fileName);
+    if (!mainWindow->gotoModelWithId(n)) {
+        scriptEngine->throwError(
+                QJSValue::ReferenceError, 
+                QString("Map '%1' not available.").arg(n));
+        return;
+    }
+}
+
+bool VymWrapper::isConfluenceAgentAvailable()
+{
+    return setResult(ConfluenceAgent::available());
+}
+
+QString VymWrapper::loadFile(
+    const QString
+        &filename) // FIXME-3 error handling missing (in vymmodel and here)
+{
+    QString s;
+    loadStringFromDisk(filename, s);
+    return setResult(s);
 }
 
 bool VymWrapper::loadMap(const QString &filename)
@@ -152,36 +161,38 @@ int VymWrapper::mapCount()
     return setResult(mainWindow->modelCount());
 }
 
-void VymWrapper::gotoMap(uint n)
+bool VymWrapper::mkdir(const QString &directoryName)
 {
-    if (!mainWindow->gotoModelWithId(n)) {
-        scriptEngine->throwError(
-                QJSValue::ReferenceError, 
-                QString("Map '%1' not available.").arg(n));
-        return;
-    }
+    QDir d;
+    return d.mkpath(directoryName);
 }
 
-bool VymWrapper::closeMapWithID(uint n)
+void VymWrapper::print(const QString &s)
 {
-    bool r = mainWindow->closeModelWithId(n);
-    if (!r) {
-        scriptEngine->throwError(
-                QJSValue::ReferenceError, 
-                QString("Map '%1' not available.").arg(n));
-        return false;
-    }
-    return setResult(r);
+    mainWindow->scriptPrint(s);
+}
+
+bool VymWrapper::removeDirectory(const QString &directoryName)
+{
+    QDir d(directoryName);
+    qWarning() << "VW::removeDir " << directoryName;
+    return false;
+    return d.removeRecursively();
+}
+
+bool VymWrapper::removeFile(const QString &fileName)
+{
+    return QFile::remove(fileName);
+}
+
+void VymWrapper::statusMessage(const QString &s)
+{
+    mainWindow->statusMessage(s);
 }
 
 void VymWrapper::selectQuickColor(int n)
 {
     mainWindow->selectQuickColor(n);
-}
-
-QString VymWrapper::currentColor()
-{
-    return setResult(mainWindow->getCurrentColor().name());
 }
 
 uint VymWrapper::currentMapID()
@@ -192,20 +203,15 @@ uint VymWrapper::currentMapID()
 
 void VymWrapper::toggleTreeEditor() { mainWindow->windowToggleTreeEditor(); }
 
-QString VymWrapper::loadFile(
-    const QString
-        &filename) // FIXME-3 error handling missing (in vymmodel and here)
-{
-    QString s;
-    loadStringFromDisk(filename, s);
-    return setResult(s);
-}
-
 void VymWrapper::saveFile(
     const QString &filename,
     const QString &s) // FIXME-3 error handling missing (in vymmodel and here)
 {
     saveStringToDisk(filename, s);
+}
+
+bool VymWrapper::usesDarkTheme() {
+    return usingDarkTheme;
 }
 
 QString VymWrapper::version() {

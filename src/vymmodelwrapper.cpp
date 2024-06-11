@@ -4,7 +4,9 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "branch-wrapper.h"
 #include "imageitem.h"
+#include "image-wrapper.h"
 #include "misc.h"
 #include "scripting.h"
 #include "vymmodel.h"
@@ -404,6 +406,15 @@ BranchWrapper* VymModelWrapper::findBranchById(const QString &u)
         return nullptr;
 }
 
+ImageWrapper* VymModelWrapper::findImageById(const QString &u)
+{
+    TreeItem *ti = model->findUuid(QUuid(u));
+    if (ti && ti->hasTypeImage())
+        return ((ImageItem*)ti)->imageWrapper();
+    else
+        return nullptr;
+}
+
 int VymModelWrapper::getBranchIndex()
 {
     int r;
@@ -768,11 +779,6 @@ void VymModelWrapper::moveSlideUp() { moveSlideUp(-1); }
 
 void VymModelWrapper::note2URLs() { model->note2URLs(); }
 
-bool VymModelWrapper::parseVymText(const QString &text)
-{
-    return setResult(model->parseVymText(unquoteQuotes(text)));
-}
-
 void VymModelWrapper::paste() { model->paste(); }
 
 void VymModelWrapper::redo() { model->redo(); }
@@ -1048,7 +1054,7 @@ void VymModelWrapper::setHeadingConfluencePageName()
 }
 
 void VymModelWrapper::setHeadingPlainText(
-    const QString &text) // FIXME-3  what about RT?
+    const QString &text)
 {
     model->setHeadingPlainText(text);
 }

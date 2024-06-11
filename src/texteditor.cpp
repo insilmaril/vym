@@ -237,9 +237,23 @@ VymText TextEditor::getVymText()
 {
     VymText vt;
 
-    if (actionFormatRichText->isChecked())
-        vt.setRichText(e->toHtml());
-    else
+    if (actionFormatRichText->isChecked()) {
+        // Remove some QTextEdit specific tags and markers from RichText
+        QString t = e->toHtml();
+
+        // Remove <!DOCTYPE settings in the beginning
+        QRegularExpression re("(<!DOCTYPE.*)<html>");
+        re.setPatternOptions(
+                QRegularExpression::InvertedGreedinessOption |
+                QRegularExpression::DotMatchesEverythingOption |
+                QRegularExpression::MultilineOption);
+        t.replace(re, "<html>");
+
+        // Remove heading with characters that might cause problems in undo scripts
+        re.setPattern("<head>.*head>");
+        t.replace(re, "");
+        vt.setRichText(t);
+    } else
         vt.setPlainText(e->toPlainText());
 
     if (actionFormatUseFixedFont->isChecked())

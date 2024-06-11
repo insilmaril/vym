@@ -93,7 +93,9 @@ void VymText::setAutoText(const QString &s)
         setPlainText(s);
 }
 
-QString VymText::getText() const { return text; }
+QString VymText::getText() const {
+    return text;
+}
 
 QString VymText::getTextASCII() const { return getTextASCII("", 0); }
 
@@ -243,7 +245,7 @@ QStringList VymText::getAttributes() const
             ret << attribute("fonthint", fonthint);
     }
     ret << attribute("textColor", color.name());
-    ret << attribute("text", quoteQuotes(text));
+    ret << attribute("text", quoteQuotes(getText()));
     return ret;
 }
 

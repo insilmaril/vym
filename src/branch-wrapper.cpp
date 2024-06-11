@@ -94,6 +94,27 @@ void BranchWrapper::getJiraData(bool subtree)
     branchItem->getModel()->getJiraData(subtree, branchItem);
 }
 
+QString BranchWrapper::getNoteText()
+{
+    return setResult(branchItem->getNote().getTextASCII());
+}
+
+QString BranchWrapper::getNoteXML()
+{
+    return setResult(branchItem->getNote().saveToDir());
+}
+
+bool BranchWrapper::hasNote()
+{
+    bool r = !branchItem->getNote().isEmpty();
+    return setResult(r);
+}
+
+bool BranchWrapper::hasRichTextNote()
+{
+    return setResult(branchItem->getNote().isRichText());
+}
+
 QString BranchWrapper::headingText()
 {
     return setResult(branchItem->headingPlain());
@@ -132,6 +153,34 @@ void BranchWrapper::setAttribute(const QString &key, const QString &value)
 void BranchWrapper::setFlagByName(const QString &s)
 {
     branchItem->getModel()->setFlagByName(s, branchItem);
+}
+
+void BranchWrapper::setHeadingRichText(const QString &text)
+{
+    // Set plaintext heading
+    VymText vt;
+    vt.setRichText(text);
+    branchItem->getModel()->setHeading(vt, branchItem);
+}
+
+void BranchWrapper::setHeadingText(const QString &text)
+{
+    // Set plaintext heading
+    branchItem->getModel()->setHeadingPlainText(text, branchItem);
+}
+
+void BranchWrapper::setNoteRichText(const QString &s)
+{
+    VymNote vn;
+    vn.setRichText(s);
+    branchItem->getModel()->setNote(vn, branchItem);
+}
+
+void BranchWrapper::setNoteText(const QString &s)
+{
+    VymNote vn;
+    vn.setPlainText(s);
+    branchItem->getModel()->setNote(vn, branchItem);
 }
 
 void BranchWrapper::setPos(qreal x, qreal y)

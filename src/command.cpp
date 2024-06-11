@@ -25,7 +25,7 @@ QString Command::description()
         s += QString("       Parameter #%1:\n").arg(i + 1);
         s += QString("             Comment: %1\n").arg(parameterComment(i));
         s += QString("                Type: %1\n").arg(typeToString(parameterType(i)));
-        s += QString("  Param. is optional: ");
+        s += QString("            Optional: ");
         isParameterOptional(i) ? s += "yes\n" : s += "No\n";
     }
     return s;

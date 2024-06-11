@@ -19,6 +19,10 @@ class BranchWrapper : public VymScriptContext {
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
     void getJiraData(bool subtree);
+    QString getNoteText();
+    QString getNoteXML();
+    bool hasNote();
+    bool hasRichTextNote();
     QString headingText();  
     bool isScrolled();
     bool relinkTo(BranchWrapper*);
@@ -27,6 +31,10 @@ class BranchWrapper : public VymScriptContext {
     void select();
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
+    void setHeadingRichText(const QString &);
+    void setHeadingText(const QString &);
+    void setNoteRichText(const QString &);
+    void setNoteText(const QString &);
     void setPos(qreal x, qreal y);// FIXME-2 copy to ImageWrapper
     void toggleFlagByName(const QString &);
     void toggleScroll();

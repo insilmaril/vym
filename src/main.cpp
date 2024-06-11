@@ -106,6 +106,7 @@ QString unzipToolPath;  // Platform dependant unzip tool
 QList<Command *> vymCommands;
 QList<Command *> modelCommands;
 QList<Command *> branchCommands;
+QList<Command *> imageCommands;
 
 Options options;
 ImageIO imageIO;
@@ -497,6 +498,8 @@ int main(int argc, char *argv[])
         foreach (Command *c, modelCommands)
             std::cout << c->descriptionLaTeX().toStdString() << std::endl;
         foreach (Command *c, branchCommands)
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
+        foreach (Command *c, imageCommands)
             std::cout << c->descriptionLaTeX().toStdString() << std::endl;
         return 0;
     }
