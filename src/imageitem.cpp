@@ -25,7 +25,7 @@ ImageItem::ImageItem():MapItem(nullptr)
 
 ImageItem::~ImageItem()
 {
-    // qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer;
+    qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer << "  cfn=" << currentFilename;
 
     if (imageContainer) {
         delete imageContainer;
@@ -214,7 +214,8 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
           imageContainer->getExtension();
 
     // And really save the image  (svgs will be copied from cache!)
-    currentFilename = tmpdir + "/" + url;
+    currentFilename = tmpdir + "/" + url;   // FIXME-00 Destr will remove this file e.g. from history, cannot be undone!
+    qDebug() << "II::saveToDir     cfn=" << currentFilename;
     if (!QFile(currentFilename).exists())
         // Only save, if not already there
         imageContainer->save(currentFilename);

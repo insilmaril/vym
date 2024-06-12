@@ -1602,8 +1602,7 @@ QString VymModel::setImageVar(ImageItem* ii)
 }
 
 // FIXME-0 VymModel::saveState   Make undo/redo selection part of the related commands. WIP
-// // FIXME-0 Check model vs map in scripts...
-// FIXME-0 SaveMode still needed?
+// FIXME-0 Check VymModelWrapper vs BranchWrapper  in scripts...
 void VymModel::saveStateNew(
          const QString &undoCom,
          const QString &redoCom,
@@ -1618,7 +1617,6 @@ void VymModel::saveStateNew(
         return;
 
     /*
-    */
     if (debug) {
         qDebug() << "VM::saveStateNew() for map " << mapName;
         qDebug() << "  comment: " << comment;
@@ -1626,6 +1624,7 @@ void VymModel::saveStateNew(
         qDebug() << "  undoCom: " << undoCom;
         qDebug() << "  redoCom: " << redoCom;
     }
+    */
 
     if (useActionLog) {
         QString log;
@@ -7544,7 +7543,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
 
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveStateOld(File::PartOfMap, getSelectString(),
+        saveStateOld(File::PartOfMap, getSelectString(),    // FIXME addAddSlide
                   QString("removeSlide (%1)").arg(pos), getSelectString(),
                   QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
                   s);
@@ -7557,7 +7556,7 @@ void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 undo/redo not working
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveStateOld(File::PartOfMap, getSelectString(),
+        saveStateOld(File::PartOfMap, getSelectString(),    // FIXME deleteAddSlide
                   QString("addMapInsert (\"PATH\",%1)").arg(pos),
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
                   "Remove slide", nullptr, s);
