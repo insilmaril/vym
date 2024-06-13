@@ -116,6 +116,8 @@ void MapDesign::init()
     innerFrameTypes << FrameContainer::NoFrame;
     innerFramePenWidths << 2;
     innerFrameUpdateWhenRelinking << true;   // MapCenters inner frame
+    innerFrameUpdateWhenRelinking << true;   // Mainbranches inner frame
+    innerFrameUpdateWhenRelinking << false;
 
     outerFrameTypes << FrameContainer::NoFrame;
     /*
