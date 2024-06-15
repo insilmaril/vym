@@ -106,7 +106,7 @@ VymModel::VymModel()
 
 VymModel::~VymModel()
 {
-    //qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
+    qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
 
     mapEditor = nullptr;
     repositionBlocked = true;
@@ -138,10 +138,14 @@ VymModel::~VymModel()
 
     vymLock.releaseLock();
 
+    // Delete rootItem already now, while VymModel is still around
+    // ImageItems can ask VymModel for a path in their destructor then.
+    delete rootItem;
+
     delete (wrapper);
     delete mapDesignInt;
 
-    //qDebug() << "Destr VymModel end this=" << this;
+    qDebug() << "Destr VymModel end this=" << this;
 }
 
 void VymModel::clear()

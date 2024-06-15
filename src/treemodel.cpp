@@ -19,8 +19,10 @@ TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent)
 
 TreeModel::~TreeModel()
 {
-    //qDebug()<<"Destr TreeModel  this="<<this;
-    delete rootItem;
+    // qDebug()<<"Destr TreeModel  this="<<this;
+
+    // rootItem is deleted in VymModel
+    // treeItems still might want to ask VymModel about paths
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-2 no foreground color for imageItem and attr. item (use color of parentBranch)
