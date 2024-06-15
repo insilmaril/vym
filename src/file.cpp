@@ -150,6 +150,25 @@ bool removeDir(QDir d)
     return d.removeRecursively();
 }
 
+/*
+bool removeDirContent(QDir d) FIXME-2 not used atm
+{
+        // (might still contain no longer needed images from unzipping before)
+        qDebug() << "removeDirContent" << d.path();
+
+        d.setFilter( QDir::NoDotAndDotDot | QDir::Files );
+        foreach( QString dirItem, d.entryList() )
+            d.remove( dirItem );
+
+        d.setFilter( QDir::NoDotAndDotDot | QDir::Dirs );
+        foreach( QString dirItem, d.entryList() )
+        {
+            QDir subDir( d.absoluteFilePath( dirItem ) );
+            subDir.removeRecursively();
+        }
+}
+*/
+
 bool copyDir(QDir src, QDir dst, const bool &override)
 {
     QStringList dirs =
