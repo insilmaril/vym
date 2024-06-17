@@ -25,7 +25,7 @@ ImageItem::ImageItem():MapItem(nullptr)
 
 ImageItem::~ImageItem()
 {
-    qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer << "  fpInZipDir=" << filePathInZipDir;
+    //qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer << "  fpInZipDir=" << filePathInZipDir;
 
     if (imageContainer) {
         delete imageContainer;
@@ -38,11 +38,8 @@ ImageItem::~ImageItem()
 
     if (!filePathInZipDir.isEmpty() && QFile(filePathInZipDir).exists()) {
         // Remove file used to compress map
-        qDebug() << "zipDirPath=" << filePathInZipDir << "  model tmpDir:" << model->tmpDirPath();
         if (!QFile(filePathInZipDir).remove())
             qWarning() << "Destr ImageItem failed to remove " << filePathInZipDir;
-        else
-            qDebug() << "Destr ImageItem removed " << filePathInZipDir;
     }
 
     if (imageWrapperInt) {
@@ -82,7 +79,6 @@ void ImageItem::setFilePathInZipDir()
 {
     filePathInZipDir = model->zipDirPath() + "/images/" + 
         "image-" + QString().number(itemID) + imageContainer->getExtension();
-    qDebug() << "II::setFilePathInZipDir to " << filePathInZipDir;
 }
 
 bool ImageItem::load(const QString &fname)
@@ -227,12 +223,9 @@ QString ImageItem::saveToDir(const QString &tmpdir)
 
     // And really save the image  (svgs will be copied from cache!)
     QString currentPath = tmpdir + url;
-    qDebug() << "II::saveToDir     cp=" << currentPath << " zipPath=" << filePathInZipDir;
     if (!QFile(currentPath).exists())
         // Only save, if not already there
         imageContainer->save(currentPath);
-    else
-        qDebug() << "II::saveToDir  file exists already: " << currentPath;
 
     QString attributes;
 

@@ -171,7 +171,6 @@ bool ImageContainer::load(const QString &fn, bool createClone)
 
 bool ImageContainer::save(const QString &fn)
 {
-    qDebug() << "IC::save fn=" << fn << imageType;
     switch (imageType) {
         case ImageContainer::SVG:
         case ImageContainer::ClonedSVG:
@@ -182,14 +181,11 @@ bool ImageContainer::save(const QString &fn)
                                << " to " << fn;
                     return false;
                 }
-                    else
-                        qDebug() << "IC::save copied " << svgCachePath << " to " << fn;
             }
             return true;
             break;
         case ImageContainer::Pixmap: {
             bool b = pixmapItem->pixmap().save(fn, "PNG", 100);
-            qDebug() << "Saving pixmap returned: " <<  b;
             return b;
                                      }
             break;

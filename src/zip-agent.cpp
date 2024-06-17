@@ -166,7 +166,7 @@ void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 
 void ZipAgent::startUnzip()
 {
-    qDebug() << "ZipAgent::startUnzip";
+    // qDebug() << "ZipAgent::startUnzip";
 
     // For now only as blocking foreground process
     isBackgroundProcessInt = false;
@@ -188,7 +188,7 @@ void ZipAgent::startUnzip()
     setArguments(args);
     start();
 
-    qDebug() << "ZA::unzip started " << unzipToolPath << args.join(" ") << "status:" << state();
+    // qDebug() << "ZA::unzip started " << unzipToolPath << args.join(" ") << "status:" << state();
     if (!isBackgroundProcessInt) {
         if (!waitForStarted()) {
             // zip could not be started
@@ -199,7 +199,7 @@ void ZipAgent::startUnzip()
         }
         else {
             // zip could be started
-            qDebug() << "ZA wait for unzip to finish";
+            // qDebug() << "ZA wait for unzip to finish";
             waitForFinished();
             if (exitStatus() != QProcess::NormalExit) {
                 QMessageBox::critical(0, QObject::tr("Critical Error"),
