@@ -9,6 +9,14 @@ function toggle_frame(map)
         map.setFrameType (true, "NoFrame");
 }
 
+function colorBranchWithQuickColor(n)
+{
+    map = vym.currentMap();
+    vym.selectQuickColor(n);
+    c = vym.currentColor();
+    map.colorBranch(c);
+}
+
 function colorSubtreeWithQuickColor(n)
 {
     map = vym.currentMap();
@@ -103,7 +111,10 @@ function macro_f12()
         map.unsetFlagByName("2arrow-up");
         map.unsetFlagByName("stopsign");
         map.setFlagByName("hook-green");
-        map.colorBranch("#0000ff");
+        if (vym.usesDarkTheme())
+            colorBranchWithQuickColor(5);
+        else
+            colorBranchWithQuickColor(3);
     } else {
         if (map.hasActiveFlag("hook-green")) {
             // Switch to state 0
