@@ -182,6 +182,8 @@ bool ImageContainer::save(const QString &fn)
                                << " to " << fn;
                     return false;
                 }
+                    else
+                        qDebug() << "IC::save copied " << svgCachePath << " to " << fn;
             }
             return true;
             break;

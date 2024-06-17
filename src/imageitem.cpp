@@ -25,7 +25,7 @@ ImageItem::ImageItem():MapItem(nullptr)
 
 ImageItem::~ImageItem()
 {
-    qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer << "  cfn=" << currentFilename;
+    qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer << "  fpInZipDir=" << filePathInZipDir;
 
     if (imageContainer) {
         delete imageContainer;
@@ -36,10 +36,14 @@ ImageItem::~ImageItem()
             parentBranch()->getBranchContainer()->updateChildrenStructure();
     }
 
-    if (!currentFilename.isEmpty() && QFile(currentFilename).exists())
+    if (!filePathInZipDir.isEmpty() && QFile(filePathInZipDir).exists()) {
         // Remove file used to compress map
-        if (!QFile(currentFilename).remove())
-            qWarning() << "Destr ImageItem failed to remove " << currentFilename;
+        qDebug() << "zipDirPath=" << filePathInZipDir << "  model tmpDir:" << model->tmpDirPath();
+        if (!QFile(filePathInZipDir).remove())
+            qWarning() << "Destr ImageItem failed to remove " << filePathInZipDir;
+        else
+            qDebug() << "Destr ImageItem removed " << filePathInZipDir;
+    }
 
     if (imageWrapperInt) {
         delete imageWrapperInt;
@@ -54,7 +58,7 @@ void ImageItem::init()
     setType(Image);
     hideLinkUnselected = true;
     originalFilename = "no original name available";
-    currentFilename.clear();
+    filePathInZipDir.clear();
 }
 
 BranchItem *ImageItem::parentBranch() { return (BranchItem *)parentItem; }
@@ -74,12 +78,20 @@ ImageWrapper* ImageItem::imageWrapper()
     return imageWrapperInt;
 }
 
+void ImageItem::setFilePathInZipDir()
+{
+    filePathInZipDir = model->zipDirPath() + "/images/" + 
+        "image-" + QString().number(itemID) + imageContainer->getExtension();
+    qDebug() << "II::setFilePathInZipDir to " << filePathInZipDir;
+}
+
 bool ImageItem::load(const QString &fname)
 {
     if (!imageContainer || !imageContainer->load(fname))
         return false;
 
     setOriginalFilename(fname);
+    setFilePathInZipDir();
     setHeadingPlainText(originalFilename);
     return true;
 }
@@ -200,7 +212,7 @@ bool ImageItem::saveImage(const QString &fn)
         return false;
 }
 
-QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
+QString ImageItem::saveToDir(const QString &tmpdir)
 {
     if (!imageContainer) {
         qWarning() << "ImageItem::saveToDir  no imageContainer!";
@@ -210,15 +222,17 @@ QString ImageItem::saveToDir(const QString &tmpdir, const QString &prefix)
     if (hidden)
         return QString();
 
-    QString url = "images/" + prefix + "image-" + QString().number(itemID) +
+    QString url = "images/image-" + QString().number(itemID) +
           imageContainer->getExtension();
 
     // And really save the image  (svgs will be copied from cache!)
-    currentFilename = tmpdir + "/" + url;   // FIXME-00 Destr will remove this file e.g. from history, cannot be undone!
-    qDebug() << "II::saveToDir     cfn=" << currentFilename;
-    if (!QFile(currentFilename).exists())
+    QString currentPath = tmpdir + url;
+    qDebug() << "II::saveToDir     cp=" << currentPath << " zipPath=" << filePathInZipDir;
+    if (!QFile(currentPath).exists())
         // Only save, if not already there
-        imageContainer->save(currentFilename);
+        imageContainer->save(currentPath);
+    else
+        qDebug() << "II::saveToDir  file exists already: " << currentPath;
 
     QString attributes;
 

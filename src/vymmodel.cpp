@@ -262,6 +262,8 @@ void VymModel::makeTmpDirectories()
 
 QString VymModel::tmpDirPath() { return tmpMapDirPath; }
 
+QString VymModel::zipDirPath() { return zipDirInt.path(); }
+
 MapEditor *VymModel::getMapEditor() { return mapEditor; }
 
 VymModelWrapper *VymModel::getWrapper() { return wrapper; }
@@ -365,7 +367,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                 break;
             case TreeItem::Image:
                 // Save Image
-                tree += ((ImageItem *)saveSel)->saveToDir(tmpdir, prefix);
+                tree += ((ImageItem *)saveSel)->saveToDir(tmpdir);
                 break;
             default:
                 // other types shouldn't be safed directly...
@@ -490,9 +492,9 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     bool zipped_org = zipped;
 
-    // Create temporary directory for packing
+    // Create temporary directory for unzip
     bool ok;
-    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");  // FIXME-3 use zipDirInt?
+    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");  // FIXME-0 use zipDirInt?
     if (!ok) {
         QMessageBox::critical(
             0, tr("Critical Load Error"),
@@ -693,7 +695,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     return err;
 }
 
-void VymModel::save(const File::SaveMode &savemode)
+void VymModel::saveMap(const File::SaveMode &savemode)
 {
     // Block closing the map while saving, esp. while zipping
     isSavingInt = true;
@@ -788,7 +790,7 @@ void VymModel::save(const File::SaveMode &savemode)
 
     QString mapStringData;
     if (savemode == File::CompleteMap || selModel->selection().isEmpty()) {
-        // Save complete map
+        // Save complete map    // FIXME-2 prefix still needed? all treeItems from all models have unique number in filename already...
         if (zipped)
             // Use defined name for map within zipfile to avoid problems
             // with zip library and umlauts (see #98)
@@ -1141,6 +1143,10 @@ bool VymModel::tryVymLock()
 }
 
 bool VymModel::renameMap(const QString &newPath)
+// map is renamed before fileSaveAs() or from VymModelWrapper::saveSelection()
+// Usually renamed back to original name again. Purpose here is to adapt the lockfile 
+// new name of map.
+// Internally the paths in ImageItems pointing to zipDirInt do not need to be adapted.
 {
     QString oldPath = filePath;
     if (vymLock.getState() == VymLock::LockedByMyself || vymLock.getState() == VymLock::Undefined) {

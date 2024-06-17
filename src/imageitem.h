@@ -22,6 +22,7 @@ class ImageItem : public MapItem {
     BranchItem* parentBranch();
     void setParentBranch(BranchItem *);
     ImageWrapper* imageWrapper();
+    void setFilePathInZipDir();
     virtual bool load(const QString &fname);
     ImageContainer* createImageContainer();
     ImageContainer* getImageContainer();
@@ -32,7 +33,7 @@ class ImageItem : public MapItem {
     ImageContainer *imageContainer;
     ImageWrapper *imageWrapperInt;
     QString originalFilename;
-    QString currentFilename;
+    QString filePathInZipDir;
 
   public:
     void setScale(qreal);
@@ -43,7 +44,7 @@ class ImageItem : public MapItem {
     QString getOriginalFilename();
     QString getUniqueFilename();
     bool saveImage(const QString &fn);
-    QString saveToDir(const QString &tmpdir, const QString &prefix);
+    QString saveToDir(const QString &tmpdir);
 };
 
 #endif

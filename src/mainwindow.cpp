@@ -4331,7 +4331,7 @@ void Main::fileSave(VymModel *m, const File::SaveMode &savemode)
         return; // avoid saving twice...
     }
 
-    m->save(savemode);
+    m->saveMap(savemode);
 }
 
 void Main::fileSave() { fileSave(currentModel(), File::CompleteMap); }

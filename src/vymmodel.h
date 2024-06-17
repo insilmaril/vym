@@ -65,6 +65,7 @@ class VymModel : public TreeModel {
     void
     makeTmpDirectories(); //!< create temporary directories e.g. for history
     QString tmpDirPath(); //!< Return path to temporary directory
+    QString zipDirPath(); //!< Return path to zip directory
 
     MapEditor *getMapEditor();
     uint modelId(); //! Return unique ID of model
@@ -167,7 +168,7 @@ class VymModel : public TreeModel {
 
   public:
     /*! \brief Save the map to file */
-    void save(const File::SaveMode &);
+    void saveMap(const File::SaveMode &);
     bool isSaving();
 
   private slots:

@@ -204,7 +204,7 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
 
     // Save Images
     for (int i = 0; i < imageCount(); ++i)
-        s += getImageNum(i)->saveToDir(tmpdir, prefix);
+        s += getImageNum(i)->saveToDir(tmpdir);
 
     // save attributes
     for (int i = 0; i < attributeCount(); ++i)

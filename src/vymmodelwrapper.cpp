@@ -839,8 +839,8 @@ void VymModelWrapper::saveSelection(const QString &filename)
         scriptEngine->throwError(QJSValue::GenericError, s);
         return;
     }
-    model->save(File::PartOfMap);
-    model->renameMap(filename_org);
+    model->saveMap(File::PartOfMap);
+    model->renameMap(filename_org); // FIXME-0 check if this is ok, renaming map and data 2 times...
 }
 
 void VymModelWrapper::scroll()
