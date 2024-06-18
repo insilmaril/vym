@@ -314,16 +314,6 @@ class VymModel : public TreeModel {
                    const QString &redoSelection, const QString &redoCommand,
                    const QString &comment = "");
 
-    /*! Overloaded for convenience */
-    void saveState(const QString &undoCommand, const QString &redoCommand,
-                   const QString &comment = "");
-
-    /*! Save a change in string and merge
-    minor sequential  changes  */
-    void saveStateMinimal(TreeItem *undoSelection, const QString &undoCommand,
-                          TreeItem *redoSelection, const QString &redoCommand,
-                          const QString &comment);
-
   public:
     /*! Save state before loading a map */
     void saveStateBeforeLoad(File::LoadMode lmode, const QString &fname);

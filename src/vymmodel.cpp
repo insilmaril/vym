@@ -1612,7 +1612,7 @@ QString VymModel::setImageVar(ImageItem* ii)
 }
 
 // FIXME-0 VymModel::saveState   Make undo/redo selection part of the related commands. WIP
-// FIXME-0 Check VymModelWrapper vs BranchWrapper  in scripts...
+// FIXME-2 Check VymModelWrapper vs BranchWrapper  in scripts...
 void VymModel::saveStateNew(
          const QString &undoCom,
          const QString &redoCom,
@@ -1621,7 +1621,7 @@ void VymModel::saveStateNew(
 {
     // Main saveState
 
-    // sendData(redoCom); // FIXME-4 testing network
+    // sendData(redoCom); // FIXME-5 testing network
 
     if (saveStateBlocked)
         return;
@@ -2054,7 +2054,7 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     if (undoSel)
         undoSelection = getSelectString(undoSel);
 
-    saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);  // "Normal" saveState (TI *undoSel, uc, TI *redoSel, rc, comment)
 }
 
 void VymModel::saveState(const QString &undoSel, const QString &uc,
@@ -2064,30 +2064,7 @@ void VymModel::saveState(const QString &undoSel, const QString &uc,
     // "Normal" savestate: save commands, selections and comment
     // so just save commands for undo and redo
     // and use current selection
-    saveStateOld(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);
-}
-
-void VymModel::saveState(const QString &uc, const QString &rc,
-                         const QString &comment)
-{
-    // "Normal" savestate applied to model (no selection needed):
-    // save commands  and comment
-    saveStateOld(File::CodeBlock, nullptr, uc, nullptr, rc, comment, nullptr);
-}
-
-void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
-                                TreeItem *redoSel, const QString &rc,
-                                const QString &comment)
-{ //  Save a change in string and merge
-    //  minor sequential  changes  */
-    QString redoSelection = "";
-    if (redoSel)
-        redoSelection = getSelectString(redoSel);
-    QString undoSelection = "";
-    if (undoSel)
-        undoSelection = getSelectString(undoSel);
-
-    saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);
+    saveStateOld(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);  // "Normal" saveState (undoSel, uc, redoSel, rc, comment)
 }
 
 void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
@@ -2368,36 +2345,36 @@ void VymModel::test()
 //////////////////////////////////////////////
 // Interface
 //////////////////////////////////////////////
-
-void VymModel::setTitle(const QString &s)
+    
+void VymModel::setTitle(const QString &s) // FIXME-2 Missing command
 {
-    saveState(QString("setMapTitle (\"%1\")").arg(title),
-              QString("setMapTitle (\"%1\")").arg(s),
+    saveStateNew(QString("map.setMapTitle (\"%1\");").arg(title),
+              QString("map.setMapTitle (\"%1\");").arg(s),
               QString("Set title of map to \"%1\"").arg(s));
     title = s;
 }
 
-QString VymModel::getTitle() { return title; }
+QString VymModel::getTitle() { return title; } // FIXME-2 Missing command?
 
-void VymModel::setAuthor(const QString &s)
+void VymModel::setAuthor(const QString &s) // FIXME-2 Missing command?
 {
-    saveState(QString("setMapAuthor (\"%1\")").arg(author),
-              QString("setMapAuthor (\"%1\")").arg(s),
+    saveStateNew(QString("map.setMapAuthor (\"%1\");").arg(author),
+              QString("map.setMapAuthor (\"%1\");").arg(s),
               QString("Set author of map to \"%1\"").arg(s));
     author = s;
 }
 
-QString VymModel::getAuthor() { return author; }
+QString VymModel::getAuthor() { return author; } // FIXME-2 Missing command?
 
-void VymModel::setComment(const QString &s)
+void VymModel::setComment(const QString &s) // FIXME-2 Missing command?
 {
-    saveState(QString("setMapComment (\"%1\")").arg(comment),
-              QString("setMapComment (\"%1\")").arg(s),
+    saveStateNew(QString("map.setMapComment (\"%1\")").arg(comment),
+              QString("map.setMapComment (\"%1\")").arg(s),
               QString("Set comment of map"));
     comment = s;
 }
 
-QString VymModel::getComment() { return comment; }
+QString VymModel::getComment() { return comment; } // FIXME-2 Missing command?
 
 void VymModel::setMapVersion(const QString &s)
 {
@@ -2410,7 +2387,7 @@ QString VymModel::mapVersion()
     return mapVersionInt;
 }
 
-QString VymModel::getDate()
+QString VymModel::getDate() // FIXME-2 Missing command? Should be in vym, not model
 {
     return QDate::currentDate().toString("yyyy-MM-dd");
 }
@@ -6343,8 +6320,8 @@ bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0
     if (depth >= 0) {
         QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(depth));
 
-        saveState(QString("setLinkStyle (\"%1\")").arg(newStyleString),
-                  QString("setLinkStyle (\"%1\")").arg(currentStyleString),
+        saveStateNew(QString("map.setLinkStyle (\"%1\");").arg(newStyleString),
+                  QString("map.setLinkStyle (\"%1\");").arg(currentStyleString),
                   QString("Set map link style (\"%1\")").arg(newStyleString));
     }
 
@@ -6371,13 +6348,13 @@ uint VymModel::modelId() { return modelIdInt; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
-void VymModel::setDefaultLinkColor(const QColor &col)
+void VymModel::setDefaultLinkColor(const QColor &col)   // FIXME-2 Missing command?
 {
     if (!col.isValid()) return;
 
-    saveState(
-        QString("setDefaultLinkColor (\"%1\")").arg(mapDesignInt->defaultLinkColor().name()),
-        QString("setDefaultLinkColor (\"%1\")").arg(col.name()),
+    saveStateNew(
+        QString("map.setDefaultLinkColor (\"%1\");").arg(mapDesignInt->defaultLinkColor().name()),
+        QString("map.setDefaultLinkColor (\"%1\");").arg(col.name()),
         QString("Set map link color to %1").arg(col.name()));
 
     mapDesignInt->setDefaultLinkColor(col);
@@ -6431,11 +6408,11 @@ void VymModel::toggleLinkColorHint()
         setLinkColorHint(LinkObj::HeadingColor);
 }
 
-void VymModel::setBackgroundColor(QColor col)
+void VymModel::setBackgroundColor(QColor col)   // FIXME-2 Missing command?
 {
     QColor oldcol = mapDesignInt->backgroundColor();
-    saveState(QString("setBackgroundColor (\"%1\")").arg(oldcol.name()),
-              QString("setBackgroundColor (\"%1\")").arg(col.name()),
+    saveStateNew(QString("map.setBackgroundColor (\"%1\");").arg(oldcol.name()),
+              QString("map.setBackgroundColor (\"%1\");").arg(col.name()),
               QString("Set background color of map to %1").arg(col.name()));
     mapDesignInt->setBackgroundColor(col);  // Used for backroundRole in TreeModel::data()
     vymView->updateColors();
@@ -6691,15 +6668,15 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::setSelectionPenColor(QColor col)
+void VymModel::setSelectionPenColor(QColor col) // FIXME-2 command missing?
 {
     if (!col.isValid())
         return;
 
     QPen selPen = mapDesignInt->selectionPen();
-    saveState(QString("setSelectionPenColor (\"%1\")")
+    saveStateNew(QString("map.setSelectionPenColor (\"%1\");")
                   .arg(selPen.color().name()),
-              QString("setSelectionPenColor (\"%1\")").arg(col.name()),
+              QString("map.setSelectionPenColor (\"%1\");").arg(col.name()),
               QString("Set pen color of selection box to %1").arg(col.name()));
 
     selPen.setColor(col);
@@ -6711,13 +6688,13 @@ QColor VymModel::getSelectionPenColor() {
     return mapDesignInt->selectionPen().color();
 }
 
-void VymModel::setSelectionPenWidth(qreal w)
+void VymModel::setSelectionPenWidth(qreal w) // FIXME-2 command missing?
 {
     QPen selPen = mapDesignInt->selectionPen();
     
-    saveState(QString("setSelectionPenWidth (\"%1\")")
+    saveStateNew(QString("map.setSelectionPenWidth (\"%1\");")
                   .arg(mapDesignInt->selectionPen().width()),
-              QString("setSelectionPenWidth (\"%1\")").arg(w),
+              QString("map.setSelectionPenWidth (\"%1\");").arg(w),
               QString("Set pen width of selection box to %1").arg(w));
 
     selPen.setWidth(w);
@@ -6729,15 +6706,15 @@ qreal VymModel::getSelectionPenWidth() {
     return mapDesignInt->selectionPen().width();
 }
 
-void VymModel::setSelectionBrushColor(QColor col)
+void VymModel::setSelectionBrushColor(QColor col)   // FIXME-2 command missing?
 {
     if (!col.isValid())
         return;
 
     QBrush selBrush = mapDesignInt->selectionBrush();
-    saveState(QString("setSelectionBrushColor (\"%1\")")
+    saveStateNew(QString("map.setSelectionBrushColor (\"%1\");")
                   .arg(selBrush.color().name()),
-              QString("setSelectionBrushColor (\"%1\")").arg(col.name()),
+              QString("map.setSelectionBrushColor (\"%1\");").arg(col.name()),
               QString("Set Brush color of selection box to %1").arg(col.name()));
 
     selBrush.setColor(col);
