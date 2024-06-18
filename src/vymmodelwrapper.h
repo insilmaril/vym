@@ -112,21 +112,21 @@ class VymModelWrapper : public VymScriptContext {
     bool selectXLink(int n);// FIXME-3 move to BranchWrapper
     bool selectXLinkOtherEnd(int n);// FIXME-3 move to BranchWrapper
     void setDefaultLinkColor(const QString &color); // FIXME-3-4 maybe also rename other setMap* methods?
-    void setFlagByName(const QString &s);// FIXME-3 move to BranchWrapper
+    void setFlagByName(const QString &s);// FIXME-3 OBSOLETE moved to BranchWrapper
     void setHeadingConfluencePageName();
-    void setHeadingPlainText(const QString &s);// FIXME-3 move to BranchWrapper and ImageWrapper
+    void setHeadingPlainText(const QString &s);// FIXME-3 OBSOLETE moved to BranchWrapper and ImageWrapper
     void setHideExport(bool b);// FIXME-3 move to BranchWrapper
     void setHideLinkUnselected(bool b);// FIXME-3 move to BranchWrapper and ImageWrapper
-    void setMapAnimCurve(int n);
-    void setMapAnimDuration(int n);
-    void setMapAuthor(const QString &s);
-    void setMapBackgroundColor(const QString &color);
-    void setMapComment(const QString &s);
-    void setMapLinkStyle(const QString &style);
-    void setMapRotation(float a); // tested: ok
-    void setMapTitle(const QString &s);
-    void setMapZoom(float z); // tested: ok
-    void setNotePlainText(const QString &s);// FIXME-3 move to BranchWrapper
+    void setMapAnimCurve(int n);    // FIXME-3 rename
+    void setMapAnimDuration(int n); // FIXME-3 rename
+    void setMapAuthor(const QString &s);// FIXME-3 rename setAuthor
+    void setMapBackgroundColor(const QString &color);// FIXME-3 rename 
+    void setMapComment(const QString &s);// FIXME-3 rename 
+    void setMapLinkStyle(const QString &style);// FIXME-3 rename 
+    void setMapRotation(float a); // tested: ok// FIXME-3 rename 
+    void setMapTitle(const QString &s);// FIXME-3 rename 
+    void setMapZoom(float z); // tested: ok// FIXME-3 rename 
+    void setNotePlainText(const QString &s);// FIXME-3 OBSOLETE moved to BranchWrapper
     void setFramePenWidth(const bool & useInnerFrame, int w);// FIXME-3 move to BranchWrapper
     void setFrameBrushColor(const bool & useInnerFrame, const QString &color);// FIXME-3 move to BranchWrapper
     void setFramePadding(const bool & useInnerFrame, int padding);// FIXME-3 move to BranchWrapper
@@ -155,7 +155,7 @@ class VymModelWrapper : public VymScriptContext {
     void sortChildren(bool b);// FIXME-3 move to BranchWrapper
     void sortChildren();// FIXME-3 move to BranchWrapper
     void toggleFlagByUid(const QString &s);// FIXME-3 move to BranchWrapper
-    void toggleFlagByName(const QString &s);// FIXME-3 move to BranchWrapper
+    void toggleFlagByName(const QString &s);// FIXME-3 OBSOLETE moved to BranchWrapper
     void toggleTarget();// FIXME-3 move to BranchWrapper
     void toggleTask();// FIXME-3 move to BranchWrapper
     void undo();
