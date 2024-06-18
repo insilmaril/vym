@@ -1993,11 +1993,13 @@ void VymModel::saveStateOld( // FIXME-0 rewrite all callers to use saveStateNew 
 }
 
 void VymModel::saveStateBranch(
+        BranchItem *bi,
         const QString &uc,
         const QString &rc,
         const QString &comment)
 {
-    saveStateNew(uc, rc, comment);
+    QString branchVar = setBranchVar(bi) + "b.";
+    saveStateNew(branchVar + uc, branchVar + rc, comment);
 }
 
 void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,

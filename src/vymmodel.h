@@ -291,6 +291,7 @@ class VymModel : public TreeModel {
     /*! Save branch using BranchWrapper.
      *  public: Called from MapEditor::mouseReleased() */
     void saveStateBranch(
+            BranchItem *bi,
             const QString &undoCommand,
             const QString &redoCommand,
             const QString &comment);
