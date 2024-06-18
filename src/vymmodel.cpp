@@ -896,11 +896,11 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imag
                 ii = createImage(parentBranch);
                 if (ii && ii->load(s)) {
                     saveState((TreeItem *)ii, "remove()", parentBranch,
-                              QString("loadImage (\"%1\")").arg(s),
+                              QString("loadImage (\"%1\")").arg(s), // FIXME-2 This needs internal history path, not original one!
+                                                                    // Better use saveStateRemovePart()?
                               QString("Add image %1 to %2")
                                   .arg(s, getObjectName(parentBranch)));
 
-                    // FIXME-3 Find nice position for new image, e.g. below last image?
                     ImageContainer *ic = ii->getImageContainer();
                     QPointF pos_new = parentBranch->getBranchContainer()->getPositionHintNewChild(ic);
                     ic->setPos(pos_new);
@@ -2933,7 +2933,7 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
-void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-2 No savestate
+void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-2  missing savestate
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
