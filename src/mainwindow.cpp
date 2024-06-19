@@ -651,25 +651,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, true, "Penstyle of XLink");
     modelCommands.append(c);
 
-    c = new Command("branchCount", Command::Any, Command::Int);
-    modelCommands.append(c);
-
     c = new Command("centerCount", Command::BranchLike, Command::Int);
     modelCommands.append(c);
 
     c = new Command("centerOnID", Command::Any);
     c->addParameter(Command::String, false, "UUID of object to center on");
-    modelCommands.append(c);
-
-    c = new Command("clearFlags", Command::BranchLike);
-    modelCommands.append(c);
-
-    c = new Command("colorBranch", Command::Branch);
-    c->addParameter(Command::Color, true, "New color");
-    modelCommands.append(c);
-
-    c = new Command("colorSubtree", Command::Branch);
-    c->addParameter(Command::Color, true, "New color");
     modelCommands.append(c);
 
     c = new Command("copy", Command::BranchOrImage);
@@ -926,17 +912,11 @@ void Main::setupAPI()
     c = new Command("selectedBranch", Command::Any, Command::BranchItem);
     modelCommands.append(c);
 
-    c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
-    modelCommands.append(c);
-
     c = new Command("selectFirstChildBranch", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("selectID", Command::Any, Command::Bool);
     c->addParameter(Command::String, false, "Unique ID");
-    modelCommands.append(c);
-
-    c = new Command("selectLastBranch", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("selectLastChildBranch", Command::Branch, Command::Bool);
@@ -946,9 +926,6 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("selectLatestAdded", Command::Any, Command::Bool);
-    modelCommands.append(c);
-
-    c = new Command("selectParent", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("selectToggle", Command::BranchOrImage, Command::Bool);
@@ -1229,6 +1206,24 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Key of string attribute");
     branchCommands.append(c);
 
+    c = new Command("branchCount", Command::Branch, Command::Int);
+    c->setComment("Return number of child branches");
+    modelCommands.append(c);
+
+    c = new Command("clearFlags", Command::Branch);
+    c->setComment("Clear all flags of branch");
+    modelCommands.append(c);
+
+    c = new Command("colorBranch", Command::Branch);
+    c->addParameter(Command::Color, true, "New color");
+    c->setComment("Set color of heading of branch");
+    modelCommands.append(c);
+
+    c = new Command("colorSubtree", Command::Branch);
+    c->addParameter(Command::Color, true, "New color");
+    c->setComment("Set color of headings of all child branches and all their children");
+    modelCommands.append(c);
+
     c = new Command("getJiraData", Command::Branch, Command::String);
     c->setComment("Get data from Jira server, either ticket or run defined query");
     c->addParameter(Command::Bool, false, "Update every branch in subtree");
@@ -1257,6 +1252,18 @@ void Main::setupAPI()
 
     c = new Command("select", Command::Branch);
     c->setComment("Select (only) this branch");
+    branchCommands.append(c);
+
+    c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
+    c->setComment("Select the first of all child branches");
+    modelCommands.append(c);
+
+    c = new Command("selectLastBranch", Command::Branch, Command::Bool);
+    c->setComment("Select the last of all child branches");
+    modelCommands.append(c);
+
+    c = new Command("selectParent", Command::Branch, Command::Bool);
+    c->setComment("Select parent of branch");
     branchCommands.append(c);
 
     c = new Command("setAttribute", Command::Branch);
@@ -1318,6 +1325,10 @@ void Main::setupAPI()
     //
     c = new Command("headingText", Command::Image, Command::String);
     c->setComment("Set heading of image from plaintext string");
+    imageCommands.append(c);
+
+    c = new Command("selectParent", Command::Image, Command::Bool);
+    c->setComment("Select parent of image");
     imageCommands.append(c);
 
     c = new Command("setHeadingRichText", Command::Image);

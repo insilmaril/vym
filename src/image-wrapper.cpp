@@ -23,6 +23,16 @@ QString ImageWrapper::headingText()
     return setResult(imageItem->headingPlain());
 }
 
+bool ImageWrapper::selectParent()
+{
+    bool r = imageItem->getModel()->selectParent(imageItem);
+    if (!r)
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "Couldn't select parent item");
+    return setResult(r);
+}
+
 void ImageWrapper::setHeadingRichText(const QString &text)
 {
     VymText vt;

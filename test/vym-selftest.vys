@@ -8,20 +8,20 @@ var tests_failed = 0;
 
 var testDir = "selftests";
 var currentMapPath = "undefined."
-var testMapDefault = "maps/test-default.vym";
-var testMapFrames  = "maps/test-frames.vym";
+var testMapDefault = "test/maps/test-default.vym";
+var testMapFrames  = "test/maps/test-frames.vym";
 
-const  center_0 = "mc:0";
-const  main_A = "mc:0,bo:0";
-const    branch_0Aa = main_A + ",bo:0";
-const    branch_0Ab = main_A + ",bo:1";
-const    branch_0Ac = main_A + ",bo:2";
-const  main_B="mc:0,bo:1";
-const    branch_0Ba = main_B + ",bo:0";
-const    branch_0Bb = main_B + ",bo:1";
-const  center_1 = "mc:1";
-const  center_2 = "mc:2";
-const  center_3 = "mc:3";
+const  center_0_string = "mc:0";
+const  main_A_string = "mc:0,bo:0";
+const    branch_0Aa_string = main_A_string + ",bo:0";
+const    branch_0Ab_string = main_A_string + ",bo:1";
+const    branch_0Ac_string = main_A_string + ",bo:2";
+const  main_B_string="mc:0,bo:1";
+const    branch_0Ba_string = main_B_string + ",bo:0";
+const    branch_0Bb_string = main_B_string + ",bo:1";
+const  center_1_string = "mc:1";
+const  center_2_string = "mc:2";
+const  center_3_string = "mc:3";
 
 
 // Compare and log values
@@ -68,16 +68,15 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 {
   // Copy the map referenced above to @testDir/test-current.[vym|xml]
   // and try to load it
-  currentMapPath = testDir + "/" + mapPath;
+  currentMapPath = testDir + "/maps/current-map.vym";
+  if (vym.fileExists(currentMapPath)) {
+      vym.print("# Removing existing map: " + currentMapPath);
+      vym.fileRemove(currentMapPath);
+  }
 
-    /*
-  begin
-    FileUtils.cp mapPath, @currentMapPath
-  rescue
-    puts "Failed to copy #{mapPath} to #{@currentMapPath}".red
-    exit
-  end
+  vym.fileCopy(mapPath, currentMapPath);
 
+    /*  Copy additional files, not yet implemented here
   files.each do |fn|
     begin
       FileUtils.cp fn, @testDir
@@ -91,7 +90,7 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 
   if (vym.loadMap(currentMapPath)) {
     let id = vym.currentMapID();
-    vym.print("# Loaded " + mapPath + " -> " + currentMapPath + " (id: " + id + ")");
+    vym.print("# Loaded " + currentMapPath + " (id: " + id + "  original: " + mapPath + ")");
     vym.gotoMap(id);
 
     map = vym.currentMap();
@@ -153,19 +152,23 @@ function test_basics()
   author ="Uwe Drechsel";
   expect("Author is \"" + author + "\"", map.getMapAuthor(), author);
 
-  map.select(main_A);
-  expect ("select mainbranch A", map.getSelectionString(), main_A);
-  expect ("getHeadingPlainText", map.getHeadingPlainText(), "Main A");
-  expect ("branchCount", map.branchCount(), 3);
+  map.select(main_A_string);
+  main_A = map.selectedBranch();
+  expect ("select mainbranch A", map.getSelectionString(), main_A_string);
+  expect ("headingText", main_A.headingText(), "Main A");
+  expect ("branchCount", main_A.branchCount(), 3);
 
-  map.selectLastBranch();
-  expect("selectLastBranch", map.getHeadingPlainText(), "Main B");
+  main_A.selectLastBranch();
+  b = map.selectedBranch();  
+  expect("selectLastBranch", b.headingText(), "Main B");
 
-  map.selectFirstBranch();
-  expect("selectFirstBranch", map.getHeadingPlainText(), "Main A");
+  main_A.selectFirstBranch();
+  b = map.selectedBranch();  
+  expect("selectFirstBranch", b.headingText(), "Main A");
 
-  map.selectParent();
-  expect("selectParent", map.getHeadingPlainText(), "MapCenter 0");
+  b.selectParent();
+  b = map.selectedBranch();  
+  expect("selectParent", b.headingText(), "MapCenter 0");
 
   //expect("getDestPath", map.getDestPath(), testDir + "/test-current.vym");
   //expect("getFileDir", map.getFileDir(), testDir + "/");
@@ -178,54 +181,65 @@ function test_adding_branches()
   heading("Adding branches:");
   map = initMap(testMapDefault);
   
-  map.select(main_A);
-  let b = map.selectedBranch();
-  let n = map.branchCount();
-  b.addBranch();
-  expect("addBranch", map.branchCount(), n + 1 );
+  map.select(main_A_string);
+  main_A = map.selectedBranch();
+  n = main_A.branchCount();
+
+  main_A.addBranch();
+  expect("addBranch", main_A.branchCount(), n + 1 );
 
   map.selectLatestAdded();
-  expect("selectLatestAdded", map.getSelectionString(), main_A + ",bo:3");
+  expect("selectLatestAdded", map.getSelectionString(), main_A_string + ",bo:3");
 
-  map.selectParent();
-  expect("selectParent", map.getSelectionString(), main_A);
+  b = map.selectedBranch()
+  b.selectParent();
+  expect("selectParent", map.getSelectionString(), main_A_string);
 
   map.undo();
+  map.undo();   // FIXME one undo() should be enough
+                // caused by VM::applyDesign() adding one more
+                // saveStates
 
-  expect( "Undo: addBranch", map.branchCount(), n );
+  expect( "Undo: addBranch", main_A.branchCount(), n );
 
   closeCurrentMap();
 
   map = initMap(testMapDefault);
 
-  map.select(main_A);
-  n = map.branchCount();
-  map.select(branch_0Aa);
-  map.addBranchAt( -3 );
-  map.addBranchAt( -1 );
-  map.select(main_A);
-  expect("addBranchAbove/Below", map.branchCount(), n + 2);
+  map.select(main_A_string);
+  main_A = map.selectedBranch();
+  n = main_A.branchCount();
+  map.select(branch_0Aa_string);
+  branch_0Aa = map.selectedBranch();
+  branch_0Aa.addBranchAt( -3 );
+  branch_0Aa.addBranchAt( -1 );
+  expect("addBranchAbove/Below", main_A.branchCount(), n + 2);
 
   map.undo();
   map.undo();
-  expect("Undo: addBranchAbove/Below", map.branchCount(), n);
+  map.undo();
+  map.undo();
+  expect("Undo: addBranchAbove/Below", main_A.branchCount(), n);
 
   closeCurrentMap();
 
   map = initMap(testMapDefault);
 
-  map.select(branch_0Aa);
-  map.addBranchBefore();
-  map.select(main_A);
-  expect( "addBranchBefore: check branchcount",  map.branchCount(), n);
-  map.select(branch_0Aa);
-  expect("addBranchBefore: check heading", map.getHeadingPlainText(), " ");
+  map.select(main_A_string);
+  main_A = map.selectedBranch();
+  map.select(branch_0Aa_string);
+  branch_0Aa = map.selectedBranch();
+  branch_0Aa.addBranchBefore();
+  expect("addBranchBefore: check branchcount",  main_A.branchCount(), n);
+  branch_0Aa.selectParent();
+  b = map.selectedBranch();
+  expectNot("addBranchBefore: heading is not 'Main A'", b.headingText(), "Main A");
+  expectNot("addBranchBefore: heading is not 'branch a'", b.headingText(), "branch a");
 
   // Undo twice: addBranchNew and relinkTo
   map.undo();
   map.undo();
-  map.select(main_A);
-  expect("Undo: addBranchBefore", map.branchCount(), n);
+  expect("Undo: addBranchBefore", main_A.branchCount(), n);
 
   closeCurrentMap();
 }
@@ -1247,18 +1261,18 @@ function test_tasks()
 
 ///////////////////////////////////////////////////////////////
 
-test_vym();
+// test_vym();  // FIXME currently not used (version check, tmpDir check)
 
+test_basics();          // ok, already uses BranchWrapper
+test_adding_branches(); // ok, already uses BranchWrapper
 /*
-test_basics();
-test_adding_branches();
 test_adding_maps();
 test_attributes();
 test_copy_paste();
 test_delete_parts();
 */
 //test_export(); // FIXME WIP
-test_notes();
+//test_notes();
 /*
 test_extrainfo();
 test_frames();

@@ -117,9 +117,35 @@ bool VymWrapper::directoryExists(const QString &directoryName)
     return d.exists();
 }
 
+bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
+{
+    qDebug() << "VymWrapper::fileCopy " << srcPath << " -> " << dstPath;
+    QFile file(srcPath);
+    if (!file.exists()) {
+        qDebug() << "fileCopy - does not exist:" << srcPath;
+        scriptEngine->throwError(
+                QJSValue::ReferenceError, 
+                QString("File '%1' does not exist.").arg(srcPath));
+        return setResult(false);
+    }
+
+    bool r = file.copy(dstPath);
+    qDebug() << "result of VymWrapper::fileCopy is " << r;
+    return setResult(r);
+    //return setResult(file.copy(dstPath));
+}
+
 bool VymWrapper::fileExists(const QString &fileName)
 {
-    return QFile::exists(fileName);
+    return setResult(QFile::exists(fileName));
+}
+
+bool VymWrapper::fileRemove(const QString &fileName)
+{
+    QFile file(fileName);
+    bool r = file.remove();
+    qDebug() << "VymWrapper::fileRemove " << fileName << " returns " << r;
+    return setResult(r);
 }
 
 void VymWrapper::gotoMap(uint n)

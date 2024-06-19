@@ -4294,7 +4294,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         }
 
         // Required to initialize styles
-        applyDesign(MapDesign::CreatedByUser, newbi);
+        applyDesign(MapDesign::CreatedByUser, newbi);   // FIXME-0 creates additional undoStep, which let's tests fail...
     }
     return newbi;
 }
@@ -4303,15 +4303,14 @@ BranchItem *VymModel::addNewBranchBefore(BranchItem *bi)
 {
     BranchItem *newbi = nullptr;
     BranchItem *selbi = getSelectedBranch(bi);
-    if (selbi && selbi->getType() == TreeItem::Branch)
+    if (selbi && selbi->getType() == TreeItem::Branch)  // FIXME-2 Better check for depth...
     // We accept no MapCenter here, so we _have_ a parent
     {
         // add below selection
         newbi = addNewBranchInt(selbi, -1);
 
         if (newbi) {
-            saveState(
-                newbi, "remove ()", newbi, "addBranchBefore ()",
+            saveStateBranch(newbi, "remove ()", "addBranchBefore ()",
                 QString("Add branch before %1").arg(getObjectName(selbi)));
 
             // newbi->move2RelPos (p);
@@ -5105,9 +5104,9 @@ void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGro
     }
 }
 
-void VymModel::clearFlags()
+void VymModel::clearFlags(BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         selbi->deactivateAllStandardFlags();
         reposition();
@@ -7157,11 +7156,11 @@ void VymModel::emitUpdateLayout()
         emit(updateLayout());
 }
 
-bool VymModel::selectFirstBranch()
+bool VymModel::selectFirstBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        TreeItem *par = ti->parent();
+    BranchItem* selbi = getSelectedBranch(bi);
+    if (selbi) {
+        TreeItem *par = selbi->parent();
         if (par) {
             TreeItem *ti2 = par->getFirstBranch();
             if (ti2)
@@ -7182,11 +7181,11 @@ bool VymModel::selectFirstChildBranch()
     return false;
 }
 
-bool VymModel::selectLastBranch()
+bool VymModel::selectLastBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        TreeItem *par = ti->parent();
+    BranchItem* selbi = getSelectedBranch(bi);
+    if (selbi) {
+        TreeItem *par = selbi->parent();
         if (par) {
             TreeItem *ti2 = par->getLastBranch();
             if (ti2)
@@ -7234,12 +7233,12 @@ bool VymModel::selectLastImage()
 
 bool VymModel::selectLatestAdded() { return select(latestAddedItem); }
 
-bool VymModel::selectParent()
+bool VymModel::selectParent(TreeItem *ti)
 {
-    TreeItem *ti = getSelectedItem();
+    TreeItem *selti = getSelectedItem(ti);
     TreeItem *par;
-    if (ti) {
-        par = ti->parent();
+    if (selti) {
+        par = selti->parent();
         if (par)
             return select(par);
     }

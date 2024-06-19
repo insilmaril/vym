@@ -21,36 +21,6 @@ extern QJSEngine *scriptEngine;
 ///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m) { model = m; }
 
-void VymModelWrapper::addBranch()
-{
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        if (!model->addNewBranch(selbi, -2))
-        scriptEngine->throwError(QJSValue::GenericError,"Couldn't add branch to map");
-        return;
-    } else {
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-        return;
-    }
-}
-
-void VymModelWrapper::addBranchAt(int pos)
-{
-    BranchItem *selbi = model->getSelectedBranch();
-    if (!model->addNewBranch(selbi, pos))
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("Could not add  branch at position %1").arg(pos));
-}
-
-void VymModelWrapper::addBranchBefore()
-{
-    if (!model->addNewBranchBefore())
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                "Couldn't add branch before selection to map");
-}
-
 void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
 {
     if (!model->addMapCenterAtPos(QPointF(x, y)))
@@ -884,20 +854,6 @@ bool VymModelWrapper::selectID(const QString &s)
     return setResult(r);
 }
 
-bool VymModelWrapper::selectFirstBranch()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = model->selectFirstBranch();
-        if (!r)
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Couldn't select first branch");
-    }
-    return setResult(r);
-}
-
 bool VymModelWrapper::selectFirstChildBranch()
 {
     bool r = false;
@@ -908,20 +864,6 @@ bool VymModelWrapper::selectFirstChildBranch()
             scriptEngine->throwError(
                     QJSValue::GenericError,
                     "Couldn't select first child branch");
-    }
-    return setResult(r);
-}
-
-bool VymModelWrapper::selectLastBranch()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = model->selectLastBranch();
-        if (!r)
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Couldn't select last branch");
     }
     return setResult(r);
 }
@@ -957,16 +899,6 @@ bool VymModelWrapper::selectLastImage()
                         "Couldn't select last image");
         }
     }
-    return setResult(r);
-}
-
-bool VymModelWrapper::selectParent()
-{
-    bool r = model->selectParent();
-    if (!r)
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                "Couldn't select parent item");
     return setResult(r);
 }
 

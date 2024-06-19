@@ -582,7 +582,7 @@ class VymModel : public TreeModel {
     void unsetFlagByName(const QString &name, BranchItem *bi = nullptr);
     void toggleFlagByName(const QString &name, BranchItem *bi = nullptr, bool useGroups = true);
     void toggleFlagByUid(const QUuid &uid, bool useGroups = true);
-    void clearFlags();
+    void clearFlags(BranchItem *bi = nullptr);
 
     void colorBranch(QColor, BranchItem *bi = nullptr);
     void colorSubtree(QColor, BranchItem *bi = nullptr);
@@ -857,14 +857,14 @@ class VymModel : public TreeModel {
 
   public:
     TreeItem *lastToggledItem();
-    bool selectFirstBranch();
+    bool selectFirstBranch(BranchItem *bi = nullptr);
     bool selectFirstChildBranch();
-    bool selectLastBranch();
+    bool selectLastBranch(BranchItem *bi = nullptr);
     bool selectLastChildBranch();
     bool selectLastSelectedBranch();
     bool selectLastImage();
     bool selectLatestAdded();
-    bool selectParent();
+    bool selectParent(TreeItem *ti = nullptr);
 
   public:
     TreeItem::Type selectionType();

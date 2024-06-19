@@ -27,12 +27,8 @@ class VymModelWrapper : public VymScriptContext {
     void addSlide();
     void addXLink(const QString &begin, const QString &end, int width,
                   const QString &color, const QString &penstyle);
-    int branchCount();// FIXME-3 move to BranchWrapper
     int centerCount();
     void centerOnID(const QString &id); // tested: ok
-    void clearFlags();// FIXME-3 move to BranchWrapper
-    void colorBranch(const QString &color);// FIXME-3 move to BranchWrapper
-    void colorSubtree(const QString &color);// FIXME-3 move to BranchWrapper
     void copy();// FIXME-3 copy to BranchWrapper (use without selecting in VymModel!)
     void cut();// FIXME-3 copy to BranchWrapper  (use without selecting in VymModel!)
     void cycleTask();// FIXME-3 move to BranchWrapper
@@ -101,12 +97,9 @@ class VymModelWrapper : public VymScriptContext {
     bool select(const QString &s);
     BranchWrapper* selectedBranch();
     bool selectID(const QString &s);
-    bool selectFirstBranch();// FIXME-3 move to BranchWrapper
     bool selectFirstChildBranch();// FIXME-3 move to BranchWrapper
-    bool selectLastBranch();// FIXME-3 move to BranchWrapper
     bool selectLastChildBranch();// FIXME-3 move to BranchWrapper
     bool selectLastImage();// FIXME-3 move to BranchWrapper
-    bool selectParent();// FIXME-3 move to BranchWrapper, copy to ImageWrapper
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper
     bool selectXLink(int n);// FIXME-3 move to BranchWrapper
@@ -164,11 +157,14 @@ class VymModelWrapper : public VymScriptContext {
     void unsetFlagByName(const QString &s);// FIXME-3 move to BranchWrapper
     int xlinkCount();// FIXME-3 move to BranchWrapper
 
-    // FIXME-2 commands below are duplicated in BranchWrapper. Remove here 
-    // and update tests
-    void addBranch();
-    void addBranchAt(int pos);
-    void addBranchBefore();
+    // FIXME-2 commands below are duplicated in BranchWrapper  (cleanup WIP)
+    // Before removing here from VymModelWrapper, 
+    //   - rework calls for saveState in VymModel
+    //   - rework tests in test/vym-selftest.vys
+    int branchCount();
+    void clearFlags();
+    void colorBranch(const QString &color);
+    void colorSubtree(const QString &color);
     QString getHeadingPlainText();          // in BranchWrapper: headingText()
     bool isScrolled();
     bool relinkTo(const QString &parent);   // in BranchWrapper: relinkTo

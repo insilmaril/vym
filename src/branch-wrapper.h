@@ -18,6 +18,10 @@ class BranchWrapper : public VymScriptContext {
     void addBranchBefore();
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
+    int branchCount();
+    void clearFlags();
+    void colorBranch(const QString &color);
+    void colorSubtree(const QString &color);
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
@@ -29,6 +33,9 @@ class BranchWrapper : public VymScriptContext {
     void remove();
     void scroll();
     void select();
+    bool selectFirstBranch();// FIXME-3 move to BranchWrapper
+    bool selectLastBranch();// FIXME-3 move to BranchWrapper
+    bool selectParent();
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
     void setHeadingRichText(const QString &);

@@ -89,6 +89,35 @@ QString BranchWrapper::attributeAsString(const QString &key)
     return setResult(v.toString());
 }
 
+int BranchWrapper::branchCount()
+{
+    return setResult(branchItem->branchCount());
+}
+
+void BranchWrapper::clearFlags() { branchItem->getModel()->clearFlags(branchItem); }
+
+void BranchWrapper::colorBranch(const QString &color)
+{
+    QColor col(color);
+    if (!col.isValid())
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("Could not set color to %1").arg(color));
+    else
+        branchItem->getModel()->colorBranch(col, branchItem);
+}
+
+void BranchWrapper::colorSubtree(const QString &color)
+{
+    QColor col(color);
+    if (!col.isValid())
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("Could not set color to %1").arg(color));
+    else
+        branchItem->getModel()->colorSubtree(col, branchItem);
+}
+
 void BranchWrapper::getJiraData(bool subtree)
 {
     branchItem->getModel()->getJiraData(subtree, branchItem);
@@ -143,6 +172,35 @@ void BranchWrapper::scroll()
 void BranchWrapper::select()
 {
     branchItem->getModel()->select(branchItem);
+}
+
+bool BranchWrapper::selectFirstBranch()
+{
+    bool r = branchItem->getModel()->selectFirstBranch(branchItem);
+    if (!r)
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "Couldn't select first branch");
+    return setResult(r);
+}
+
+bool BranchWrapper::selectLastBranch()
+{
+    bool r = branchItem->getModel()->selectLastBranch(branchItem);
+    if (!r)
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "Couldn't select last branch");
+    return setResult(r);
+}
+bool BranchWrapper::selectParent()
+{
+    bool r = branchItem->getModel()->selectParent(branchItem);
+    if (!r)
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "Couldn't select parent item");
+    return setResult(r);
 }
 
 void BranchWrapper::setAttribute(const QString &key, const QString &value)
