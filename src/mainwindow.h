@@ -421,6 +421,8 @@ class Main : public QMainWindow {
     QList<QAction *> actionListFiles; //! File related actions, e.g. load, save,
                                       //! restore session
     QList<QAction *> actionListBranches;
+    QList<QAction *> actionListImages;
+    QList<QAction *> actionListBranchesAndImages;
     QList<QAction *> actionListItems;
 
     int xLinkMenuWidth;
