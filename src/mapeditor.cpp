@@ -1328,9 +1328,7 @@ BranchItem *MapEditor::getRightBranch(TreeItem *ti)
     return nullptr;
 }
 
-void MapEditor::cursorUp()  // FIXME-1 triggers multiple VM::reposition, VM::updateDesign (!), MW::updateActions
-                            // At least when going beyond siblings to other subtree. Same for cursorLeft
-                            // NOT triggered via updateSelection signal. reposition happens after that.
+void MapEditor::cursorUp()
 {
     if (editorState == MapEditor::EditingHeading)
         return;

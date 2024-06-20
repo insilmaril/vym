@@ -142,7 +142,7 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
 
 void BranchPropertyEditor::updateControls()
 {
-    setSignalsEnabled(false);
+    setSignalsBlocked(true);
 
     if (branchItem) {
         // Inner frame
@@ -334,7 +334,7 @@ void BranchPropertyEditor::updateControls()
     } else {
         ui.tabWidget->setEnabled(false);
     }
-    setSignalsEnabled(true);
+    setSignalsBlocked(false);
 }
 
 void BranchPropertyEditor::setModel(VymModel *m)
@@ -917,10 +917,8 @@ void BranchPropertyEditor::connectSignals()
     ui.deleteAttributeButton->hide();
 }
 
-void BranchPropertyEditor::setSignalsEnabled(const bool b)
+void BranchPropertyEditor::setSignalsBlocked(const bool b)
 {
-    return;
-
     QMutableListIterator <QWidget*> it(controlWidgets);
     while (it.hasNext()) {
         QWidget *w = it.next();

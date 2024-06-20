@@ -79,7 +79,7 @@ class BranchPropertyEditor : public QDialog {
 
   private:
     void connectSignals();
-    void setSignalsEnabled(const bool);
+    void setSignalsBlocked(const bool);
 
     Ui::BranchPropertyEditor ui;
 
