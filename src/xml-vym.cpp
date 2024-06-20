@@ -829,7 +829,7 @@ void VymReader::readImage()
     }
 }
 
-void VymReader::readXLink() // FIXME-1 switch to UUID, see https://github.com/insilmaril/vym/issues/112
+void VymReader::readXLink()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("xlink"));
 

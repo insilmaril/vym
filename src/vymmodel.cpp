@@ -494,7 +494,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     // Create temporary directory for unzip
     bool ok;
-    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");  // FIXME-0 use zipDirInt?
+    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
     if (!ok) {
         QMessageBox::critical(
             0, tr("Critical Load Error"),
@@ -1385,7 +1385,7 @@ void VymModel::redo()
 
     mainWindow->updateHistory(undoSet);
 
-    // Selection might have changed.    // FIXME-1 This should no longer be necessary with new commands
+    // Selection might have changed.    // FIXME-2 This should no longer be necessary with new commands
     // Also force update in BranchPropertyEditor
     unselectAll();
     foreach (ulong id, selectedIDs)
@@ -1529,7 +1529,7 @@ void VymModel::undo()
 
     mainWindow->updateHistory(undoSet);
 
-    // Selection might have changed.    // FIXME-1 This should no longer be necessary with new commands
+    // Selection might have changed.    // FIXME-2 This should no longer be necessary with new commands
     // Also force update in BranchPropertyEditor
     unselectAll();
     foreach (ulong id, selectedIDs)
@@ -6310,7 +6310,7 @@ void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no savestate, no 
     mapDesignInt->setFont(font);
 }
 
-bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-0 savestate needs to be adapted, command new param depth
+bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-1 savestate needs to be adapted, command new param depth
                                                                       // See also mainWindow->updateActions context menu
                                                                       // FIXME MapDesign setting with depth passed as argument is moved to MapDesign when parsing .xml
                                                                       // Somehow MD needs to return undo command when setting an element
