@@ -107,9 +107,6 @@ class VymModel : public TreeModel {
     QString tmpMapDirPath;  // tmp directory with undo history
     QDir zipDirInt;         // dir used for compressing the map
 
-    bool useActionLog;
-    QString actionLogPath;  // Log any action which triggers a call to saveState
-
     QTimer *autosaveTimer;
     QTimer *fileChangedTimer;
     QDateTime fileChangedTime;
@@ -941,6 +938,12 @@ class VymModel : public TreeModel {
   private:
     SlideModel *slideModel;
     bool blockSlideSelection;
+
+    ////////////////////////////////////////////
+    // Logfile related
+    ////////////////////////////////////////////
+    void logInfo(const QString &comment, const QString &caller = "");
+    void logCommand(const QString &command, const QString &comment, const QString &caller = QString());
 };
 
 #endif

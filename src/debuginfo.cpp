@@ -28,6 +28,9 @@ extern QDir tmpVymDir;          // All temp files go there, created in mainwindo
 extern QDir vymTranslationsDir;
 extern QTranslator vymTranslator;
 
+extern bool useActionLog;
+extern QString actionLogPath;
+
 extern QString zipToolPath;
 
 QString debugInfo()
@@ -45,6 +48,8 @@ QString debugInfo()
     s += QString("  currentPath: %1\n").arg(QDir::currentPath());
     s += QString("   appDirPath: %1\n")
             .arg(QCoreApplication::applicationDirPath());
+    s += QString("use actionLog: %1\n").arg(useActionLog);
+    s += QString("actionLogPath: %1\n").arg(actionLogPath);
     s += QString("     Settings: %1\n\n").arg(settings.fileName());
     s += QString("   Dark theme: %1\n").arg(usingDarkTheme);
     s += QString("Avail. styles: %1\n\n").arg(QStyleFactory::keys().join(","));

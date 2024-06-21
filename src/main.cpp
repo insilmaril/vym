@@ -75,6 +75,9 @@ QString clipboardFile;   // Clipboard used in all mapEditors
 
 QDir vymBaseDir;            // Containing all styles, scripts, images, ...
 
+bool useActionLog;          // Write logfile. No GUI yet to enable, only for debugging
+QString actionLogPath;      // Path to logfile
+
 QDir vymTranslationsDir;    // Translation files (*.qm)
 QTranslator vymTranslator;
 
@@ -445,6 +448,11 @@ int main(int argc, char *argv[])
     lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
 
 
+    // Logfiles (no GUI yet for settings)
+    useActionLog = settings.value("/logfile/enabled", false).toBool();
+    actionLogPath = settings.value("/logfile/path", QDir::homePath() + "/vym.log").toString();
+
+    // Create MainWindow
     Main m;
 
     // Check for zip tools

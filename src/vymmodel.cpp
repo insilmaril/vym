@@ -68,6 +68,9 @@ extern Main *mainWindow;
 
 extern QDir tmpVymDir;
 
+extern bool useActionLog;
+extern QString actionLogPath;
+
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
 extern ScriptEditor *scriptEditor;
@@ -146,6 +149,8 @@ VymModel::~VymModel()
     delete mapDesignInt;
 
     //qDebug() << "Destr VymModel end this=" << this;
+
+    logInfo("VymModel destroyed", __func__);
 }
 
 void VymModel::clear()
@@ -190,10 +195,6 @@ void VymModel::init()
 
     // Create tmp dirs
     makeTmpDirectories();
-
-    // Write actions passed to saveState to file
-    useActionLog = true;
-    actionLogPath = tmpMapDirPath + "/" + "actions.vys";
 
     // Files
     readonly = false;
@@ -645,6 +646,9 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
                 // Recalc priorities and sort
                 taskModel->recalcPriorities();
+
+                // Log
+                logInfo(QString("Map loaded successfully from \"%1\"").arg(fname), __func__);
             } else {
                 QMessageBox::critical(0, tr("Critical Parse Error"),
                                         reader->errorString());
@@ -830,14 +834,10 @@ void VymModel::saveMap(const File::SaveMode &savemode)
         mainWindow->statusMessage(tr("Couldn't save ").arg(saveFilePath));
     else {
         if (useActionLog) {
-            QString log;
-
-            log = QString("// %1\n// Saved %2\n// zipDirInt = %3\n")
-                .arg(QDateTime::currentDateTime().toString())
+            QString log = QString("Saved %1\n// zipDirInt = %3")
                 .arg(destPath)
                 .arg(zipDirInt.path());
-
-            appendStringToFile(actionLogPath, log);
+            logInfo(log, __func__);
         }
 
         if (zipped) {
@@ -878,6 +878,8 @@ void VymModel::zipFinished()
     fileChangedTime = QFileInfo(destPath).lastModified();
 
     updateActions();
+
+    logInfo("zip process finished.", __func__);
 }
 
 ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
@@ -1197,8 +1199,6 @@ void VymModel::autosave()
         return;
     }
 
-    QDateTime now = QDateTime().currentDateTime();
-
     // Disable autosave, while we have gone back in history
     int redosAvail = undoSet.numValue(QString("/history/redosAvail"));
     if (redosAvail > 0)
@@ -1214,9 +1214,10 @@ void VymModel::autosave()
     }
 
     if (mapUnsaved && mapChanged && mainWindow->useAutosave() && !testmode) {
-        if (QFileInfo(filePath).lastModified() <= fileChangedTime)
+        if (QFileInfo(filePath).lastModified() <= fileChangedTime) {
+            logInfo("Autosave starting", __func__);
             mainWindow->fileSave(this);
-        else if (debug)
+        } else if (debug)
             qDebug() << "  ME::autosave  rejected, file on disk is newer than "
                         "last save.\n";
     }
@@ -1636,15 +1637,7 @@ void VymModel::saveStateNew(
     }
     */
 
-    if (useActionLog) {
-        QString log;
-
-        log = QString("// %1\n").arg(QDateTime::currentDateTime().toString());
-        log += QString("// %1\n").arg(comment);
-        log += redoCom;
-
-        appendStringToFile(actionLogPath, log);
-    }
+    logCommand(redoCom, comment, __func__);
 
     if (buildingUndoBlock)
     {
@@ -1824,18 +1817,7 @@ void VymModel::saveStateOld( // FIXME-0 rewrite all callers to use saveStateNew 
     QString undoCommand;
     QString redoCommand;
 
-    if (useActionLog) {
-        QString log;
-
-        log = QString("// %1\n").arg(QDateTime::currentDateTime().toString());
-        if (setupNeeded) {
-            log += QString("map.select(\"%1\");\n").arg(redoSelection);
-            log += QString("map.%1;\n\n").arg(redoCom);
-        } else
-            log += redoCom;
-
-        appendStringToFile(actionLogPath, log);
-    }
+    logCommand(redoCom, comment, __func__);
 
     if (buildingUndoBlock)
     {
@@ -7627,4 +7609,28 @@ void VymModel::updateSlideSelection(QItemSelection newsel, QItemSelection)
         // Execute inScript
         execute(inScript);
     }
+}
+
+void VymModel::logInfo(const QString &comment, const QString &caller)
+{
+    if (!useActionLog) return;
+
+    QString place = QString("\"%1\"").arg(fileName);
+    if (!caller.isEmpty()) place += " " + caller + "()";
+
+    QString log = QString("\n// %1 [Info] Map: %2 %3").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), QString::number(modelIdInt), place);
+
+    appendStringToFile(actionLogPath, log + "\n// " + comment + "\n");
+}
+
+void VymModel::logCommand(const QString &command, const QString &comment, const QString &caller)
+{
+    if (!useActionLog) return;
+
+    QString place = QString("\"%1\"").arg(fileName);
+    if (!caller.isEmpty()) place += " " + caller + "()";
+
+    QString log = QString("\n// %1 [Command] Map: %2 %3").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), QString::number(modelIdInt), place);
+
+    appendStringToFile(actionLogPath, log + "\n" + command + "\n");
 }
