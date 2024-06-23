@@ -3515,7 +3515,7 @@ Do you want to overwrite it?</source>
     <message>
         <location line="+8"/>
         <source>&amp;Print...</source>
-        <translation>&amp;PПечать...</translation>
+        <translation>&amp;Печать...</translation>
     </message>
     <message>
         <location line="+24"/>
