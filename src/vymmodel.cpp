@@ -3645,11 +3645,7 @@ void VymModel::moveUp(TreeItem *ti)
 {
     if (readonly) return;
 
-    QList<BranchItem *> selbis;
-    if (ti && ti->hasTypeBranch())
-        selbis << (BranchItem*)ti;
-    else
-        selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(ti);
 
     if (!selbis.isEmpty()){
         foreach (BranchItem *selbi, sortBranchesByNum(selbis, false)){
@@ -3658,11 +3654,7 @@ void VymModel::moveUp(TreeItem *ti)
         }
     }
 
-    QList<ImageItem *> seliis;
-    if (ti && ti->hasTypeImage())
-        seliis << (ImageItem*)ti;
-    else
-        seliis = getSelectedImages();
+    QList<ImageItem *> seliis = getSelectedImages(ti);
 
     if (!seliis.isEmpty()){
         foreach (ImageItem *selii, sortImagesByNum(seliis, false)) {
@@ -3672,18 +3664,18 @@ void VymModel::moveUp(TreeItem *ti)
     }
 }
 
-void VymModel::moveDown()
+void VymModel::moveDown(TreeItem *ti)
 {
     if (readonly) return;
 
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(ti);
     if (!selbis.isEmpty()) {
         foreach (BranchItem *selbi, sortBranchesByNum(selbis, true))
             if (canMoveDown(selbi))
                  relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
     }
 
-    QList<ImageItem *> seliis = getSelectedImages();
+    QList<ImageItem *> seliis = getSelectedImages(ti);
     if (!seliis.isEmpty()) {
         foreach (ImageItem *selii, sortImagesByNum(seliis, true))
             if (canMoveDown(selii))
@@ -4332,9 +4324,8 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
             return false;
 
         // Save old selection for savestate
-        QString preSelString = getSelectString(bi);
-        QString preNum = QString::number(bi->num(), 10);
-        QString preParString = getSelectString(bi->parent());
+        QString preNumString = QString::number(bi->num(), 10);
+        QString preParUidString = bi->parent()->getUuid().toString();
 
         // Remember original position for saveState
         bool rememberPos = false;
@@ -4412,37 +4403,39 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
         // Savestate, but not if just moving up/down
         if (!saveStateBlocked) {
+            QString uc, rc;
+
             if (rememberPos) {
                 // For undo move back to original position in old floating layout
-                saveState(  // FIXME-1 saveState: relinkBranches
-                    preSelString,
-                    QString("setPos %1;").arg(toS(bc->getOriginalPos())),
-                    "",
-                    "",
-                    QString("Move %1") .arg(headingText(bi)));
+                uc = QString("setPos %1;").arg(toS(bc->getOriginalPos()));
+                rc = "";
+
+                saveStateBranch( bi, uc, rc, QString("Move %1") .arg(headingText(bi)));
             }
 
-            QString postSelStr = getSelectString(bi);
-            QString postNum = QString::number(bi->num(), 10);
+            QString postNumString = QString::number(bi->num(), 10);
 
             QString undoCom;
             QString redoCom;
 
+            QString bv = setBranchVar(bi);
             if (pbi == rootItem)
-                undoCom = "detach ()";
-            else
-                undoCom = "relinkTo (\"" + preParString + "\"," + preNum + ")";
-            redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
+                uc = bv + " detach ()";
+            else {
+                uc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(preParUidString);
+                uc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(preNumString);
+            }
+            rc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(dst->getUuid().toString());
+            rc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(postNumString);
 
-            saveState(postSelStr, undoCom, preSelString, redoCom,   // FIXME-1 saveState: relinkBranches
+            saveStateNew(uc, rc,
                       QString("Relink %1 to %2")
                           .arg(getObjectName(bi))
                           .arg(getObjectName(dst)));
 
             if (dstBC && dstBC->hasFloatingBranchesLayout()) {
                 // Save current position for redo
-                saveState("", "",   // FIXME-1 saveState: relinkBranches
-                          postSelStr,
+                saveStateBranch(bi, "", 
                           QString("setPos %1;").arg(toS(bc->pos())),
                           QString("Move %1")
                               .arg(getObjectName(bi)));
@@ -7226,14 +7219,14 @@ ImageItem *VymModel::getSelectedImage()
     return iis.last();
 }
 
-QList<ImageItem *> VymModel::getSelectedImages(ImageItem *ii)
+QList<ImageItem *> VymModel::getSelectedImages(TreeItem *ti)
 {
     // Return list of selected images.
     // If ii != nullptr, return only this one
     QList<ImageItem *> iis;
 
-    if (ii) {
-        iis << ii;
+    if (ti && ti->hasTypeImage()) {
+        iis << (ImageItem*)ti;
         return iis;
     }
 

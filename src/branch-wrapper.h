@@ -25,13 +25,17 @@ class BranchWrapper : public VymScriptContext {
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
-    QString getUrl();// FIXME-3 move to BranchWrapper
-    QString getVymLink();// FIXME-3 move to BranchWrapper
+    int getNum();
+    QString getUrl();
+    QString getVymLink();
     bool hasNote();
     bool hasRichTextNote();
     QString headingText();  
     bool isScrolled();
-    bool relinkTo(BranchWrapper*);
+    void moveDown();
+    void moveUp();
+    bool relinkToBranch(BranchWrapper*);
+    bool relinkToBranchAt(BranchWrapper*, int pos);
     void remove();
     void scroll();
     void select();

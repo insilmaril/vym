@@ -719,9 +719,6 @@ void VymModelWrapper::loadNote(const QString &filename)
     model->loadNote(
         filename); // FIXME-3 error handling missing (in vymmodel and here)
 }
-void VymModelWrapper::moveDown() { model->moveDown(); }
-
-void VymModelWrapper::moveUp() { model->moveUp(); }
 
 void VymModelWrapper::moveSlideDown(int n)
 {

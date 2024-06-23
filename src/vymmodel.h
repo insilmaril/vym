@@ -461,7 +461,7 @@ class VymModel : public TreeModel {
     bool canMoveUp(TreeItem *bi);
     bool canMoveDown(TreeItem *bi);
     void moveUp(TreeItem *ti = nullptr); //!< Move branch or image up
-    void moveDown();               //!< Move branch or image down
+    void moveDown(TreeItem *ti = nullptr);               //!< Move branch or image down
     void moveUpDiagonally();       //!< Move branch up diagonally: Branchs becomes child of branch above
     void moveDownDiagonally();     //!< Move branch down diagonally: Branchs becomes sibling of parent
     void detach(BranchItem* bi = nullptr);   //!< Detach branch and use as new mapcenter
@@ -868,7 +868,7 @@ class VymModel : public TreeModel {
     BranchItem *getSelectedBranch(BranchItem *bi = nullptr);
     QList<BranchItem *> getSelectedBranches(TreeItem *ti = nullptr);
     ImageItem *getSelectedImage();
-    QList <ImageItem *> getSelectedImages(ImageItem *ii = nullptr);
+    QList <ImageItem *> getSelectedImages(TreeItem *ti = nullptr);
     Task *getSelectedTask();
     XLinkItem *getSelectedXLinkItem();
     Link *getSelectedXLink();

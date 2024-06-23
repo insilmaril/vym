@@ -71,8 +71,6 @@ class VymModelWrapper : public VymScriptContext {
     void importDir(const QString &path);
     void loadImage(const QString &filename);// FIXME-3 move to BranchWrapper
     void loadNote(const QString &filename);// FIXME-3 move to BranchWrapper
-    void moveDown();// FIXME-3 move to BranchWrapper
-    void moveUp();// FIXME-3 move to BranchWrapper
     void moveSlideDown(int n);
     void moveSlideDown();
     void moveSlideUp(int n);

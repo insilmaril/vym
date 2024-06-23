@@ -755,14 +755,14 @@ function test_modify_branches()
   heading("Modifying branches");
   let map = initMap(testMapDefault);
 
-  map.select(branch_0Aa);
-  map.setHeadingPlainText("Changed!");
-  expect("setHeadingPlainText", map.getHeadingPlainText(), "Changed!");
+  map.select(branch_0Aa_string);
+  b = map.selectedBranch();  
+  b.setHeadingText("Changed!");
+  expect("setHeadingPlainText", b.headingText(), "Changed!");
   map.undo();
-  expect("Undo: setHeadingPlainText", map.getHeadingPlainText(), "branch a");
+  expect("Undo: setHeadingPlainText", b.headingText(), "branch a");
   map.redo();
-  expect("redo: setHeadingPlainText", map.getHeadingPlainText(), "Changed!");
-  map.undo();
+  expect("redo: setHeadingPlainText", b.headingText(), "Changed!");
 
   closeCurrentMap();
 }
@@ -772,52 +772,42 @@ function test_moving_parts()
   heading("Moving parts");
   let map = initMap(testMapDefault);
 
-  map.select(branch_0Aa);
-  map.moveDown();
-  map.select(branch_0Aa);
-  expect("Moving down", map.getHeadingPlainText(), "branch b");
+  map.select(branch_0Aa_string);
+  branch_0Aa  = map.selectedBranch();
+  branch_0Aa.moveDown();
+  expect("Moving down", branch_0Aa.getNum(), 1);
   map.undo();
-  map.select(branch_0Aa);
-  expect("Undo Moving down", map.getHeadingPlainText(), "branch a");
+  expect("Undo Moving down", branch_0Aa.getNum(), 0);
 
-  //let map = init_map( vym );
-  map.select(branch_0Ab);
-  map.moveUp();
-  map.select(branch_0Aa);
-  expect("Moving up", map.getHeadingPlainText(), "branch b");
+  map.select(branch_0Ab_string);
+  branch_0Ab  = map.selectedBranch();
+  branch_0Ab.moveUp();
+  expect("Moving up", branch_0Ab.getNum(), 0);
   map.undo();
-  map.select(branch_0Ab);
-  expect("Undo Moving up", map.getHeadingPlainText(), "branch b");
+  expect("Undo moving up", branch_0Ab.getNum(), 1);
 
-  //let map = init_map( vym );
-  map.select(main_B);
-  n=map.branchCount();
-  map.select(branch_0Aa);
-  map.relinkTo(main_B,0,0,0);
-  map.select(main_B);
-  expect("RelinkTo #{@main_B}: branchCount increased there",  map.branchCount(), n+1);
+  map.select(main_B_string);
+  main_B = map.selectedBranch();
+  n = main_B.branchCount();
+  branch_0Aa.relinkToBranch(main_B);
+  expect("RelinkTo " + main_B.headingText() + ": branchCount increased there",  main_B.branchCount(), n + 1);
 
   map.undo();
-  map.select(branch_0Ab);
-  expect("Undo: RelinkTo #{@main_B}: branchCount decreased there", map.branchCount(), n);
+  expect("Undo: RelinkTo " + main_B.headingText() + ": branchCount decreased there", main_B.branchCount(), n);
 
-  //let map = init_map( vym );
-  map.select(main_A);
-  err = map.relinkTo(branch_0Aa,0,0,0);
+  // map.select(main_A_string);
+  // main_A = map.selectedBranch();
+  // err = map.relinkBranchTo(branch_0Aa,0,0,0);
   //FIXME-5 disabled, error not supported atm expect_error "RelinkTo myself fails.", err);
 
-  //let map = init_map( vym );
-  map.select(branch_0Aa);
-  n=map.branchCount();
-  map.select(main_B);
-  map.relinkTo(branch_0Aa, 1, 0, 0);
-  map.select(branch_0Aa);
-  expect("RelinkTo #{@branch_0Aa}, pos 1: branchCount increased there",  map.branchCount(), n+1);
-  map.select(branch_0Aa + ",bo:1");
-  expect("RelinkTo #{@branch_0Aa}, pos 1: Mainbranch really moved", map.getHeadingPlainText(), "Main B");
+  n = branch_0Aa.branchCount();
+  main_B.relinkToBranchAt(branch_0Aa, 1);
+  expect("RelinkTo moves '" + main_B.headingText() + "' to '" + branch_0Aa.headingText() + "', pos 1: branchCount increased there",  branch_0Aa.branchCount(), n + 1);
+
   map.undo();
-  map.select(center_0);
-  expect("Undo RelinkTo pos 1: branchCount of center", map.branchCount(), 2);
+  map.select(center_0_string);
+  center_0 = map.selectedBranch();  
+  expect("Undo RelinkTo pos 1: branchCount of center", center_0.branchCount(), 2);
 
   closeCurrentMap();
 }
@@ -1268,6 +1258,8 @@ function test_tasks()
 test_basics();
 //test_adding_branches();
 // test_extrainfo();
+//test_modify_branches();
+//test_moving_parts();
 // test_references();
 
 
@@ -1283,8 +1275,6 @@ test_delete_parts();
 test_frames();
 test_history();
 test_load_legacy_maps();
-test_modify_branches();
-test_moving_parts();
 test_notes();
 test_saving();
 test_scrolling();

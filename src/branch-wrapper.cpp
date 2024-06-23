@@ -133,6 +133,11 @@ QString BranchWrapper::getNoteXML()
     return setResult(branchItem->getNote().saveToDir());
 }
 
+int BranchWrapper::getNum()
+{
+    return setResult(branchItem->num());
+}
+
 QString BranchWrapper::getUrl()
 {
     return setResult(branchItem->url());
@@ -159,14 +164,29 @@ QString BranchWrapper::headingText()
     return setResult(branchItem->headingPlain());
 }
 
+void BranchWrapper::moveDown()
+{
+    branchItem->getModel()->moveDown(branchItem);
+}
+
+void BranchWrapper::moveUp()
+{
+    branchItem->getModel()->moveUp(branchItem);
+}
+
 bool BranchWrapper::isScrolled()
 {
     return setResult(branchItem->isScrolled());
 }
 
-bool BranchWrapper::relinkTo(BranchWrapper *bw)
+bool BranchWrapper::relinkToBranch(BranchWrapper *dst)
 {
-    return setResult(branchItem->getModel()->relinkBranch(branchItem, bw->branchItem));
+    return setResult(branchItem->getModel()->relinkBranch(branchItem, dst->branchItem));
+}
+
+bool BranchWrapper::relinkToBranchAt(BranchWrapper *dst, int pos)
+{
+    return setResult(branchItem->getModel()->relinkBranch(branchItem, dst->branchItem, pos));
 }
 
 void BranchWrapper::remove()

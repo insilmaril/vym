@@ -818,12 +818,6 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Filename of note");
     modelCommands.append(c);
 
-    c = new Command("moveDown", Command::Branch);
-    modelCommands.append(c);
-
-    c = new Command("moveUp", Command::Branch);
-    modelCommands.append(c);
-
     c = new Command("moveSlideDown", Command::Any);
     modelCommands.append(c);
 
@@ -1215,6 +1209,10 @@ void Main::setupAPI()
     c->addParameter(Command::Bool, false, "Update every branch in subtree");
     branchCommands.append(c);
 
+    c = new Command("getNum", Command::Branch, Command::Int);
+    c->setComment("Return position of branch in subtree");
+    modelCommands.append(c);
+
     c = new Command("headingText", Command::Branch, Command::String);
     c->setComment("Set heading of branch from plaintext string");
     branchCommands.append(c);
@@ -1223,9 +1221,23 @@ void Main::setupAPI()
     c->setComment("Check if branch is scrolled");
     branchCommands.append(c);
 
-    c = new Command("relinkTo", Command::Branch);
+    c = new Command("moveDown", Command::Branch);
+    c->setComment("Move branch down");
+    branchCommands.append(c);
+
+    c = new Command("moveUp", Command::Branch);
+    c->setComment("Move branch up");
+    branchCommands.append(c);
+
+    c = new Command("relinkToBranch", Command::Branch);
     c->setComment("Relink branch to destination branch");
     c->addParameter(Command::BranchItem, false, "Destination branch");
+    branchCommands.append(c);
+
+    c = new Command("relinkToBranchAt", Command::Branch);
+    c->setComment("Relink branch to destination branch at position");
+    c->addParameter(Command::BranchItem, false, "Destination branch");
+    c->addParameter(Command::Int, false, "Position (0 is first)");
     branchCommands.append(c);
 
     c = new Command("remove", Command::Branch);
