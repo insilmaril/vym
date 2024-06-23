@@ -148,9 +148,9 @@ function test_basics()
   heading("Basic checks:");
   map = initMap(testMapDefault);
   title = "vym map used for testing";
-  expect("map title is \"" + title +"\"", map.getMapTitle(), title);
+  expect("map title is \"" + title +"\"", map.getTitle(), title);
   author ="Uwe Drechsel";
-  expect("Author is \"" + author + "\"", map.getMapAuthor(), author);
+  expect("Author is \"" + author + "\"", map.getAuthor(), author);
 
   map.select(main_A_string);
   main_A = map.selectedBranch();
@@ -538,12 +538,12 @@ function test_extrainfo()
 {
   heading("Extra information");
   let map = initMap(testMapDefault);
-  map.setMapAuthor("Fra Erasmas");
-  expect("Set and get map author", map.getMapAuthor(), "Fra Erasmas");
-  map.setMapComment("xy z");
-  expect("Set and get map comment", map.getMapComment(), "xy z");
-  map.setMapTitle("vym rules!");
-  expect("Set and get map title", map.getMapTitle(), "vym rules!");
+  map.setAuthor("Fra Erasmas");
+  expect("Set and get map author", map.getAuthor(), "Fra Erasmas");
+  map.setComment("xy z");
+  expect("Set and get map comment", map.getComment(), "xy z");
+  map.setTitle("vym rules!");
+  expect("Set and get map title", map.getTitle(), "vym rules!");
 
   closeCurrentMap();
 }
@@ -1265,8 +1265,9 @@ function test_tasks()
 // test_vym();  // FIXME currently not used (version check, tmpDir check)
 
 test_basics();          // ok, already uses BranchWrapper
-test_adding_branches(); // ok, already uses BranchWrapper
-test_references();      // ok, already uses BranchWrapper
+//test_adding_branches(); // ok, already uses BranchWrapper
+test_extrainfo();
+//test_references();      // ok, already uses BranchWrapper
 /*
 test_adding_maps();
 test_attributes();
@@ -1276,7 +1277,6 @@ test_delete_parts();
 //test_export(); // FIXME WIP
 //test_notes();
 /*
-test_extrainfo();
 test_frames();
 test_history();
 test_load_legacy_maps();

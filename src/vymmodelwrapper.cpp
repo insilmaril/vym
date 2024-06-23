@@ -435,17 +435,17 @@ QString VymModelWrapper::getHeadingXML()
     return setResult(r);
 }
 
-QString VymModelWrapper::getMapAuthor()
+QString VymModelWrapper::getAuthor()
 {
     return setResult(model->getAuthor());
 }
 
-QString VymModelWrapper::getMapComment()
+QString VymModelWrapper::getComment()
 {
     return setResult(model->getComment());
 }
 
-QString VymModelWrapper::getMapTitle() { return setResult(model->getTitle()); }
+QString VymModelWrapper::getTitle() { return setResult(model->getTitle()); }
 
 QString VymModelWrapper::getNotePlainText()
 {
@@ -1012,7 +1012,7 @@ void VymModelWrapper::setMapAnimDuration(int n)
     model->setMapAnimDuration(n);
 }
 
-void VymModelWrapper::setMapAuthor(const QString &s) { model->setAuthor(s); }
+void VymModelWrapper::setAuthor(const QString &s) { model->setAuthor(s); }
 
 void VymModelWrapper::setMapBackgroundColor(const QString &color)
 {
@@ -1026,7 +1026,7 @@ void VymModelWrapper::setMapBackgroundColor(const QString &color)
                 QString("Could not set color to %1").arg(color));
 }
 
-void VymModelWrapper::setMapComment(const QString &s) { model->setComment(s); }
+void VymModelWrapper::setComment(const QString &s) { model->setComment(s); }
 
 void VymModelWrapper::setMapLinkStyle(const QString &style)
 {
@@ -1038,7 +1038,7 @@ void VymModelWrapper::setMapLinkStyle(const QString &style)
 
 void VymModelWrapper::setMapRotation(float a) { model->setMapRotation(a); }
 
-void VymModelWrapper::setMapTitle(const QString &s) { model->setTitle(s); }
+void VymModelWrapper::setTitle(const QString &s) { model->setTitle(s); }
 
 void VymModelWrapper::setMapZoom(float z) { model->setMapZoomFactor(z); }
 

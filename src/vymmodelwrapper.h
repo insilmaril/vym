@@ -44,9 +44,9 @@ class VymModelWrapper : public VymScriptContext {
     QString getFileName();
     QString getFrameType(const bool & useInnerFrame);// FIXME-3 move to BranchWrapper
     QString getHeadingXML();// FIXME-3 move to BranchWrapper
-    QString getMapAuthor();
-    QString getMapComment();
-    QString getMapTitle();
+    QString getAuthor();
+    QString getComment();
+    QString getTitle();
     QString getNotePlainText();// FIXME-3 move to BranchWrapper
     QString getNoteXML();// FIXME-3 move to BranchWrapper
     qreal getPosX();// FIXME-3 move to BranchWrapper, copy for image
@@ -110,12 +110,12 @@ class VymModelWrapper : public VymScriptContext {
     void setHideLinkUnselected(bool b);// FIXME-3 move to BranchWrapper and ImageWrapper
     void setMapAnimCurve(int n);    // FIXME-3 rename
     void setMapAnimDuration(int n); // FIXME-3 rename
-    void setMapAuthor(const QString &s);// FIXME-3 rename setAuthor
+    void setAuthor(const QString &s);
     void setMapBackgroundColor(const QString &color);// FIXME-3 rename 
-    void setMapComment(const QString &s);// FIXME-3 rename 
+    void setComment(const QString &s);
     void setMapLinkStyle(const QString &style);// FIXME-3 rename 
     void setMapRotation(float a); // tested: ok// FIXME-3 rename 
-    void setMapTitle(const QString &s);// FIXME-3 rename 
+    void setTitle(const QString &s);
     void setMapZoom(float z); // tested: ok// FIXME-3 rename 
     void setNotePlainText(const QString &s);// FIXME-3 OBSOLETE moved to BranchWrapper
     void setFramePenWidth(const bool & useInnerFrame, int w);// FIXME-3 move to BranchWrapper
