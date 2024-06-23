@@ -6355,11 +6355,11 @@ void VymModel::setBackgroundColor(QColor col)   // FIXME-2 Missing command?
     vymView->updateColors();
 }
 
-bool VymModel::setBackgroundImage( const QString &fn)
+bool VymModel::setBackgroundImage( const QString &fn)   // FIXME-2 missing saveState
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
-    saveState( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
+    saveStateNew( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
     selection,
     QString ("setBackgroundImage (%1)").arg(col.name()),
     QString("Set background color of map to %1").arg(col.name()));
@@ -6379,11 +6379,11 @@ void VymModel::setBackgroundImageName( const QString &s) // FIXME-2 missing save
     mapDesignInt->setBackgroundImageName(s);
 }
 
-void VymModel::unsetBackgroundImage()
+void VymModel::unsetBackgroundImage()   // FIXME-2 missing saveState
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
-    saveState( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
+    saveStateNew( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
     selection,
     QString ("setBackgroundImage (%1)").arg(col.name()),
     QString("Set background color of map to %1").arg(col.name()));
