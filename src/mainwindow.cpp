@@ -7150,7 +7150,7 @@ void Main::flagChanged()
     MapEditor *me = currentMapEditor();
     VymModel *m = currentModel();
     if (me && m && me->state() != MapEditor::EditingHeading) {
-        m->toggleFlagByUid(QUuid(sender()->objectName()),
+        m->toggleFlagByUid(QUuid(sender()->objectName()), nullptr,
                            actionSettingsUseFlagGroups->isChecked());
         updateActions();
     }

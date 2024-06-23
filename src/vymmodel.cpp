@@ -5017,36 +5017,28 @@ void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
 
 void VymModel::toggleFlagByUid(
     const QUuid &uid,
+    BranchItem *bi,
     bool useGroups)
     // FIXME-2  saveState not correct when toggling flags in groups
     // (previous flags not saved!)
 {
-    QStringList itemList = getSelectedUUIDs();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (itemList.count() > 0) {
+    foreach (BranchItem* bi, selbis) {
         TreeItem *ti;
-        BranchItem *bi;
-        Flag *f;
-        foreach (QString id, itemList) {
-            ti = findUuid(QUuid(id));
-            if (ti && ti->hasTypeBranch()) {
-                    bi = (BranchItem*)ti;
-                f = bi->toggleFlagByUid(uid, useGroups);
-
-                if (f) {
-                    QString u = "toggleFlagByUid";
-                    QString name = f->getName();
-                    saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
-                              QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
-                              QString("Toggling flag \"%1\" of %2")
-                                  .arg(name)
-                                  .arg(getObjectName(bi)));
-                    emitDataChanged(bi);
-                } else
-                    qWarning() << "VymModel::toggleFlag failed for flag with uid "
-                               << uid;
-            }
-        }
+        Flag *f = bi->toggleFlagByUid(uid, useGroups);
+        if (f) {
+            QString u = "toggleFlagByUid";
+            QString name = f->getName();
+            saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
+                      QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
+                      QString("Toggling flag \"%1\" of %2")
+                          .arg(name)
+                          .arg(getObjectName(bi)));
+            emitDataChanged(bi);
+        } else
+            qWarning() << "VymModel::toggleFlag failed for flag with uid "
+                       << uid;
         reposition();
     }
 }

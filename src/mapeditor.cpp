@@ -2284,7 +2284,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             tmpLink->activate();
             tmpLink->updateLink();
             if (model->createLink(tmpLink)) {
-                model->saveState(
+                model->saveState( // FIXME-1 saveState:  create XLink-Wrapper to select/remove
                     tmpLink->getBeginLinkItem(),
                     "remove ()",
                     seli,
@@ -2432,7 +2432,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
             QString pold = toS(ic->getOriginalPos());
             QString pnow = toS(ic->pos());
-            model->saveState(
+            model->saveState( // FIXME-1 saveState: add setPos to ImageWrapper
                     ii, "setPos " + pold,
                     ii, "setPos " + pnow,
                     QString("Move %1 to %2") .arg(model->getObjectName(ii),  pnow));

@@ -578,7 +578,7 @@ class VymModel : public TreeModel {
     void setFlagByName(const QString &name, BranchItem *bi = nullptr, bool useGroups = true);
     void unsetFlagByName(const QString &name, BranchItem *bi = nullptr);
     void toggleFlagByName(const QString &name, BranchItem *bi = nullptr, bool useGroups = true);
-    void toggleFlagByUid(const QUuid &uid, bool useGroups = true);
+    void toggleFlagByUid(const QUuid &uid, BranchItem *bi = nullptr, bool useGroups = true);
     void clearFlags(BranchItem *bi = nullptr);
 
     void colorBranch(QColor, BranchItem *bi = nullptr);

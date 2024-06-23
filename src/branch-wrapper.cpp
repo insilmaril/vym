@@ -251,6 +251,11 @@ void BranchWrapper::toggleFlagByName(const QString &s)
     branchItem->getModel()->toggleFlagByName(s, branchItem);
 }
 
+void BranchWrapper::toggleFlagByUid(const QString &s)
+{
+    branchItem->getModel()->toggleFlagByUid(QUuid(s), branchItem);
+}
+
 void BranchWrapper::toggleScroll()
 {
     branchItem->getModel()->toggleScroll(branchItem);

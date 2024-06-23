@@ -33,8 +33,8 @@ class BranchWrapper : public VymScriptContext {
     void remove();
     void scroll();
     void select();
-    bool selectFirstBranch();// FIXME-3 move to BranchWrapper
-    bool selectLastBranch();// FIXME-3 move to BranchWrapper
+    bool selectFirstBranch();
+    bool selectLastBranch();
     bool selectParent();
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
@@ -44,6 +44,7 @@ class BranchWrapper : public VymScriptContext {
     void setNoteText(const QString &);
     void setPos(qreal x, qreal y);// FIXME-2 copy to ImageWrapper
     void toggleFlagByName(const QString &);
+    void toggleFlagByUid(const QString &);
     void toggleScroll();
     void unscroll();
     void unsetFlagByName(const QString &);
