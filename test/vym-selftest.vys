@@ -937,26 +937,27 @@ function test_references()
   heading("References");
   let map = initMap(testMapDefault);
 
-  map.select(main_A);
+  map.select(main_A_string);
+  main_A = map.selectedBranch();
   url = "www.insilmaril.de";
-  map.setUrl(url);
-  expect("setUrl to '#{url}'", map.getUrl(), url);
+  main_A.setUrl(url);
+  expect("setUrl to '#{url}'", main_A.getUrl(), url);
 
   map.undo();
-  expect("undo setUrl", map.getUrl(), "");
+  expect("undo setUrl", main_A.getUrl(), "");
   map.redo();
-  expect("redo setUrl", map.getUrl(), url);
-  map.setUrl("");
-  expect("setUrl: unset Url with empty string", map.getUrl(), "");
+  expect("redo setUrl", main_A.getUrl(), url);
+  main_A.setUrl("");
+  expect("setUrl: unset Url with empty string", main_A.getUrl(), "");
 
   vl = "default.vym";
-  map.setVymLink(vl);
-  s = map.getVymLink();
+  main_A.setVymLink(vl);
+  s = main_A.getVymLink();
   expect("setVymLink returns absolute path", map.getFileDir() + vl, s);
   map.undo();
-  expect("undo: setVymLink", map.getVymLink(), "");
+  expect("undo: setVymLink", main_A.getVymLink(), "");
   map.redo();
-  expect("redo: setVymLink", map.getVymLink(), s);
+  expect("redo: setVymLink", main_A.getVymLink(), s);
   map.undo
 
   closeCurrentMap();
@@ -1265,6 +1266,7 @@ function test_tasks()
 
 test_basics();          // ok, already uses BranchWrapper
 test_adding_branches(); // ok, already uses BranchWrapper
+test_references();      // ok, already uses BranchWrapper
 /*
 test_adding_maps();
 test_attributes();
@@ -1281,7 +1283,6 @@ test_load_legacy_maps();
 test_modify_branches();
 test_moving_parts();
 test_notes();
-test_references();
 test_saving();
 test_scrolling();
 test_slides();

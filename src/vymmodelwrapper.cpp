@@ -610,10 +610,6 @@ int VymModelWrapper::getTaskSleepDays()
     return setResult(r);
 }
 
-QString VymModelWrapper::getUrl() { return setResult(model->getUrl()); }
-
-QString VymModelWrapper::getVymLink() { return setResult(model->getVymLink()); }
-
 QString VymModelWrapper::getXLinkColor()
 {
     return setResult(model->getXLinkColor().name());
@@ -1141,10 +1137,6 @@ bool VymModelWrapper::setTaskSleep(const QString &s)
     return setResult(r);
 }
 
-void VymModelWrapper::setUrl(const QString &s) { model->setUrl(s); }
-
-void VymModelWrapper::setVymLink(const QString &s) { model->setVymLink(s); }
-
 void VymModelWrapper::setXLinkColor(const QString &color)
 {
     QColor col(color);
@@ -1188,11 +1180,6 @@ int VymModelWrapper::slideCount()
 void VymModelWrapper::sortChildren(bool b) { model->sortChildren(b); }
 
 void VymModelWrapper::sortChildren() { sortChildren(false); }
-
-void VymModelWrapper::toggleFlagByUid(const QString &s)
-{
-    model->toggleFlagByUid(QUuid(s));
-}
 
 void VymModelWrapper::toggleFlagByName(const QString &s)
 {

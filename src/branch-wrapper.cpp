@@ -133,6 +133,16 @@ QString BranchWrapper::getNoteXML()
     return setResult(branchItem->getNote().saveToDir());
 }
 
+QString BranchWrapper::getUrl()
+{
+    return setResult(branchItem->url());
+}
+
+QString BranchWrapper::getVymLink()
+{
+    return setResult(branchItem->vymLink());
+}
+
 bool BranchWrapper::hasNote()
 {
     bool r = !branchItem->getNote().isEmpty();
@@ -244,6 +254,16 @@ void BranchWrapper::setNoteText(const QString &s)
 void BranchWrapper::setPos(qreal x, qreal y)
 {
     branchItem->getModel()->setPos(QPointF(x, y), branchItem);
+}
+
+void BranchWrapper::setUrl(const QString &s)
+{
+    branchItem->getModel()->setUrl(s, true, branchItem);
+}
+
+void BranchWrapper::setVymLink(const QString &s)
+{
+    branchItem->getModel()->setVymLink(s, branchItem);
 }
 
 void BranchWrapper::toggleFlagByName(const QString &s)

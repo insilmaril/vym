@@ -599,7 +599,7 @@ class VymModel : public TreeModel {
 
   public:
     void setHeadingConfluencePageName(); // get page details from Confluence
-    void setVymLink(const QString &);    // Set vymLink for selection
+    void setVymLink(const QString &, BranchItem *bi = nullptr);    // Set vymLink for selection
     void deleteVymLink();                // delete link to another map
     QString getVymLink();                // return path to map
     QStringList getVymLinks();           // return paths in subtree

@@ -2684,9 +2684,9 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
         QString oldurl = bi->url();
         bi->setUrl(url);
         if (!saveStateBlocked) {
-            saveState(  // FIXME-1 saveState: setUrl for bi
-                bi, QString("setUrl (\"%1\")").arg(oldurl), bi,
-                QString("setUrl (\"%1\")").arg(url),
+            QString uc = QString("setUrl(\"%1\");").arg(oldurl);
+            QString rc = QString("setUrl(\"%1\");").arg(url);
+            saveStateBranch(bi, uc, rc,
                 QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
         }
         if (updateFromCloud) {    // FIXME-3 use oembed.com also for Youtube and other cloud providers
@@ -5368,31 +5368,23 @@ void VymModel::setHeadingConfluencePageName()
     }
 }
 
-void VymModel::setVymLink(const QString &s)
+void VymModel::setVymLink(const QString &s, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        saveState(bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
-            "setVymLink (\"" + s + "\")",
-            QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(s));
-        bi->setVymLink(s);
-        emitDataChanged(bi);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+        QString uc = QString("setVymLink(\"%1\");").arg(selbi->vymLink());
+        QString rc = QString("setVymLink(\"%1\");").arg(s);
+        saveStateBranch(selbi, uc, rc,
+            QString("Set vymlink of %1 to %2").arg(getObjectName(selbi)).arg(s));
+        selbi->setVymLink(s);
+        emitDataChanged(selbi);
         reposition();
     }
 }
 
 void VymModel::deleteVymLink()
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        saveState(bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
-                  "setVymLink (\"\")",
-                  QString("Unset vymlink of %1").arg(getObjectName(bi)));
-        bi->setVymLink("");
-        emitDataChanged(bi);
-        reposition();
-        updateActions();
-    }
+    setVymLink("");
 }
 
 QString VymModel::getVymLink()

@@ -59,8 +59,6 @@ class VymModelWrapper : public VymScriptContext {
     int getTaskPriorityDelta();// FIXME-3 move to BranchWrapper
     QString getTaskSleep();// FIXME-3 move to BranchWrapper
     int getTaskSleepDays();// FIXME-3 move to BranchWrapper
-    QString getUrl();// FIXME-3 move to BranchWrapper
-    QString getVymLink();// FIXME-3 move to BranchWrapper
     QString getXLinkColor();// FIXME-3 move to BranchWrapper
     int getXLinkWidth();// FIXME-3 move to BranchWrapper
     QString getXLinkPenStyle();// FIXME-3 move to BranchWrapper
@@ -136,8 +134,6 @@ class VymModelWrapper : public VymScriptContext {
     void setSelectionPenWidth(const qreal &);
     void setTaskPriorityDelta(const int &n);// FIXME-3 move to BranchWrapper
     bool setTaskSleep(const QString &s);// FIXME-3 move to BranchWrapper
-    void setUrl(const QString &s);// FIXME-3 move to BranchWrapper
-    void setVymLink(const QString &s);// FIXME-3 move to BranchWrapper
     void setXLinkColor(const QString &color);// FIXME-3 move to XLinkWrapper
     void setXLinkStyle(const QString &style);// FIXME-3 move to XLinkWrapper
     void setXLinkStyleBegin(const QString &style);// FIXME-3 move to XLinkWrapper
@@ -147,7 +143,6 @@ class VymModelWrapper : public VymScriptContext {
     int slideCount();
     void sortChildren(bool b);// FIXME-3 move to BranchWrapper
     void sortChildren();// FIXME-3 move to BranchWrapper
-    void toggleFlagByUid(const QString &s);// FIXME-3 move to BranchWrapper
     void toggleFlagByName(const QString &s);// FIXME-3 OBSOLETE moved to BranchWrapper
     void toggleTarget();// FIXME-3 move to BranchWrapper
     void toggleTask();// FIXME-3 move to BranchWrapper

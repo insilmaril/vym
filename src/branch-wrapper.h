@@ -25,6 +25,8 @@ class BranchWrapper : public VymScriptContext {
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
+    QString getUrl();// FIXME-3 move to BranchWrapper
+    QString getVymLink();// FIXME-3 move to BranchWrapper
     bool hasNote();
     bool hasRichTextNote();
     QString headingText();  
@@ -43,6 +45,8 @@ class BranchWrapper : public VymScriptContext {
     void setNoteRichText(const QString &);
     void setNoteText(const QString &);
     void setPos(qreal x, qreal y);// FIXME-2 copy to ImageWrapper
+    void setUrl(const QString &s);
+    void setVymLink(const QString &s);
     void toggleFlagByName(const QString &);
     void toggleFlagByUid(const QString &);
     void toggleScroll();
