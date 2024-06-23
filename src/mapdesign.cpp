@@ -226,9 +226,9 @@ QString MapDesign::updateModeString(const UpdateMode &mode)
     }
 }
 
-bool MapDesign::setElement(const QString &key, const QString &val, const QString &d)    // FIXME-2 should also return undo/redo commands to VymModel, if called from there
+bool MapDesign::setElement(const QString &key, const QString &val, const QString &d)    // FIXME-2 should also return undo/redo commands to VymModel, if called from there?
 {
-    qDebug() << "MD::setElement k=" << key << " v=" << val << " d=" << d;
+    //qDebug() << "MD::setElement k=" << key << " v=" << val << " d=" << d;
     
     int depth;
     bool ok;
@@ -240,7 +240,6 @@ bool MapDesign::setElement(const QString &key, const QString &val, const QString
     }
 
     if (key == "imagesLayout") {
-        qDebug() << "   Found imagesLayout";
         imageContainerLayouts.setAt(depth, Container::layoutFromString(val));
         return true;
         
