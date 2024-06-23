@@ -2684,7 +2684,7 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
         QString oldurl = bi->url();
         bi->setUrl(url);
         if (!saveStateBlocked) {
-            saveState(
+            saveState(  // FIXME-1 saveState: setUrl for bi
                 bi, QString("setUrl (\"%1\")").arg(oldurl), bi,
                 QString("setUrl (\"%1\")").arg(url),
                 QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
@@ -2745,7 +2745,7 @@ void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi)
             setAttribute(bi, "Jira.query", query_new);
 }
 
-void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b) // FIXME-2 no savestate
+void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b) // FIXME-2 missing saveState
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     BranchContainer *bc;
@@ -2793,17 +2793,14 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
                     QString("set background color of frame to %1").arg(colorName));
 
             int i = bc->framePenWidth(useInnerFrame);
-            saveState(selbi,
-                      QString("setFramePenWidth (%1, \"%2\")")
+            saveState(selbi, QString("setFramePenWidth (%1, \"%2\")")
                         .arg(uif)
                         .arg(i),
                       selbi, "",
                       QString("set pen width of frame to %1").arg(i));
 
             i = bc->framePadding(useInnerFrame);
-            saveState(
-                selbi,
-                QString("setFramePadding (%1, \"%2\")")
+            saveState(selbi, QString("setFramePadding (%1, \"%2\")")
                   .arg(uif)
                   .arg(bc->framePadding(i)),
                 selbi, "",
@@ -2814,8 +2811,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         bc->setFrameType(useInnerFrame, t);
         newName = bc->frameTypeString(useInnerFrame);
 
-        saveState(
-            selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(oldName),
+        saveState(selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(oldName),
             selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(newName),
             QString("set type of frame to %1").arg(newName));
 
@@ -2840,8 +2836,7 @@ void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, Br
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState(selbi,
-                      QString("setFramePenColor (%1, \"%2\")")
+            saveState(selbi, QString("setFramePenColor (%1, \"%2\")")
                         .arg(uif)
                         .arg(bc->framePenColor(useInnerFrame).name()),
                       selbi, QString("setFramePenColor (%1, \"%2\")")
@@ -2861,8 +2856,7 @@ void VymModel::setFrameBrushColor(
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState(selbi,
-                      QString("setFrameBrushColor (%1, \"%2\")")
+            saveState(selbi, QString("setFrameBrushColor (%1, \"%2\")")
                         .arg(uif)
                         .arg(bc->frameBrushColor(useInnerFrame).name()),
                       selbi, QString("setFrameBrushColor (%1, \"%2\")")
@@ -2883,9 +2877,7 @@ void VymModel::setFramePadding(
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState(
-                selbi,
-                QString("setFramePadding (%1, \"%2\")")
+            saveState( selbi, QString("setFramePadding (%1, \"%2\")")
                   .arg(uif)
                   .arg(bc->framePadding(useInnerFrame)),
                 selbi, QString("setFramePadding (%1, \"%2\")").arg(uif).arg(i),
@@ -2903,8 +2895,7 @@ void VymModel::setFramePenWidth(
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState(selbi,
-                      QString("setFramePenWidth (%1, \"%2\")")
+            saveState(selbi, QString("setFramePenWidth (%1, \"%2\")")
                         .arg(uif)
                         .arg(bc->framePenWidth(useInnerFrame)),
                       selbi, QString("setFramePenWidth (%1, \"%2\")").arg(uif).arg(i),
@@ -2915,7 +2906,7 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
-void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-2  missing savestate
+void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-2  missing saveState
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -2926,8 +2917,7 @@ void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) //
                 bc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
             /* 
             QString v = b ? "Enable" : "Disable";
-            saveState(selbi,
-                      QString("setRotationsAutoDesign (%1)")
+            saveState(selbi, QString("setRotationsAutoDesign (%1)")
                           .arg(toS(!b)),
                       selbi, QString("setRotationsAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic rotations").arg(v));
@@ -2942,7 +2932,7 @@ void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) //
         reposition();
 }
 
-void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-2 no savestate
+void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-2 no saveState
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
@@ -2950,8 +2940,7 @@ void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-2 n
 	if (bc->columnWidth() != i) {
 
             /*
-            saveState(selbi,
-                      QString("setRotationHeading (\"%1\")")
+            saveState(selbi, QString("setRotationHeading (\"%1\")")
                           .arg(bc->rotationHeading()),
                       selbi, QString("setRotationHeading (\"%1\")").arg(i),
                       QString("Set rotation angle of heading and flags to %1").arg(i));
@@ -2979,8 +2968,7 @@ void VymModel::setRotationsAutoDesign(const bool &b)
                 setRotationSubtree(mapDesignInt->rotationSubtree(selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
-            saveState(selbi,
-                      QString("setRotationsAutoDesign (%1)")
+            saveState(selbi, QString("setRotationsAutoDesign (%1)")
                           .arg(toS(!b)),
                       selbi, QString("setRotationsAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic rotations").arg(v));
@@ -3001,8 +2989,7 @@ void VymModel::setRotationHeading (const int &i)
         BranchContainer *bc = selbi->getBranchContainer();
 	if (bc->rotationHeading() != i) {
 
-            saveState(selbi,
-                      QString("setRotationHeading (\"%1\")")
+            saveState(selbi, QString("setRotationHeading (\"%1\")")
                           .arg(bc->rotationHeading()),
                       selbi, QString("setRotationHeading (\"%1\")").arg(i),
                       QString("Set rotation angle of heading and flags to %1").arg(i));
@@ -3022,8 +3009,7 @@ void VymModel::setRotationSubtree (const int &i)
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
 	if (bc->rotationSubtree() != i) {
-            saveState(selbi,
-                      QString("setRotationSubtree (\"%1\")")
+            saveState(selbi, QString("setRotationSubtree (\"%1\")")
                           .arg(bc->rotationSubtree()),
                       selbi, QString("setRotationSubtree (\"%1\")").arg(i),
                       QString("Set rotation angle of heading and subtree to %1").arg(i));
@@ -3049,8 +3035,7 @@ void VymModel::setScaleAutoDesign (const bool & b)
                 setScaleSubtree(mapDesignInt->scaleSubtree(selbi->depth()));
             }
             QString v = b ? "Enable" : "Disable";
-            saveState(selbi,
-                      QString("setScaleAutoDesign (%1)")
+            saveState(selbi, QString("setScaleAutoDesign (%1)")
                           .arg(toS(!b)),
                       selbi, QString("setScaleAutoDesign (%1)").arg(toS(b)),
                       QString("%1 automatic scaling").arg(v));
@@ -3075,8 +3060,7 @@ void VymModel::setScaleHeading (const qreal &f, const bool relative)
         qreal f_new = relative ? f_old + f : f;
 
 	if (bc->scaleHeading() != f_new) {
-            saveState(selbi,
-                      QString("setScale (%1)")
+            saveState(selbi, QString("setScale (%1)")
                           .arg(f_old),
                       selbi, QString("setScale (%1)").arg(f_new),
                       QString("Set scale factor to %1").arg(f_new));
@@ -3108,8 +3092,7 @@ void VymModel::setScaleSubtree (const qreal &f)
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
 	if (bc->scaleSubtree() != f) {
-            saveState(selbi,
-                      QString("setScaleSubtree (%1)")
+            saveState(selbi, QString("setScaleSubtree (%1)")
                           .arg(bc->scaleSubtree()),
                       selbi, QString("setScaleSubtree (%1)").arg(f),
                       QString("Set scale of subtree and flags to %1").arg(f));
@@ -3144,8 +3127,7 @@ void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
         qreal f_old = selii->scale();
         qreal f_new = relative ? f_old + f : f;
         if (selii->scale() != f_new) {
-            saveState(selii,
-                      QString("setScale (%1)")
+            saveState(selii, QString("setScale (%1)")
                           .arg(f_old),
                       selii, QString("setScale (%1)").arg(f_new),
                       QString("Set scale of image to %1").arg(f_new));
@@ -3185,7 +3167,7 @@ void VymModel::resetSelectionSize()
         setScale(1, false);
 }
 
-void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save: positions, auto, layout!)
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save: positions, auto, layout!)
 {
     qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -3224,7 +3206,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
 
 }
 
-void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no savestate yet (save positions, too!)
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save positions, too!)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -3252,8 +3234,7 @@ void VymModel::setHideLinkUnselected(bool b)
     TreeItem *ti = getSelectedItem();
     if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch())) {
         QString v = b ? "Hide" : "Show";
-        saveState(
-            ti, QString("setHideLinkUnselected (%1)").arg(toS(!b)), ti,
+        saveState(ti, QString("setHideLinkUnselected (%1)").arg(toS(!b)), ti,
             QString("setHideLinkUnselected (%1)").arg(toS(b)),
             QString("%1 link of %2 if unselected").arg(v, getObjectName(ti)));
         ((MapItem *)ti)->setHideLinkUnselected(b);
@@ -3449,8 +3430,7 @@ bool VymModel::setTaskSleep(const QString &s)
                 task->setDateModification();
                 selbi->updateTaskFlag(); // If tasks changes awake mode, then
                                          // flag needs to change
-                saveState(
-                    selbi, QString("setTaskSleep (\"%1\")").arg(oldSleepString),
+                saveState(selbi, QString("setTaskSleep (\"%1\")").arg(oldSleepString),
                     selbi, QString("setTaskSleep (\"%1\")").arg(newSleepString),
                     QString("setTaskSleep (\"%1\")").arg(newSleepString));
                 emitDataChanged(selbi);
@@ -3469,8 +3449,7 @@ void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
     foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            saveState(selbi,
-                      QString("setTaskPriorityDelta (%1)")
+            saveState(selbi, QString("setTaskPriorityDelta (%1)")
                           .arg(task->getPriorityDelta()),
                       selbi,
                       QString("setTaskPriorityDelta (%1)")
@@ -4052,7 +4031,7 @@ QString VymModel::getXLinkStyleEnd()
     else
         return QString();
 }
-AttributeItem *VymModel::setAttribute( // FIXME-2 savestate missing. For bulk changes like Jira maybe save whole branch use block...
+AttributeItem *VymModel::setAttribute( // FIXME-2 saveState( missing. For bulk changes like Jira maybe save whole branch use block...
         BranchItem *dst,
         const QString &key,
         const QVariant &value,
@@ -4102,7 +4081,7 @@ AttributeItem *VymModel::setAttribute( // FIXME-2 savestate missing. For bulk ch
     return ai;
 }
 
-void VymModel::deleteAttribute(BranchItem *dst, const QString &key) // FIXME-2 No savestate
+void VymModel::deleteAttribute(BranchItem *dst, const QString &key) // FIXME-2 No saveState yet
 {
     AttributeItem *ai;
 
@@ -4154,8 +4133,7 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag)
     updateActions();
     emitShowSelection();
     if (saveStateFlag)
-        saveState(bi, "remove()", nullptr,
-                  QString("addMapCenterAtPos (%1,%2)")
+        saveState(bi, "remove()", nullptr, QString("addMapCenterAtPos (%1,%2)")
                       .arg(contextPos.x())
                       .arg(contextPos.y()),
                   QString("Adding MapCenter to (%1,%2)")
@@ -4436,7 +4414,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         if (!saveStateBlocked) {
             if (rememberPos) {
                 // For undo move back to original position in old floating layout
-                saveState(
+                saveState(  // FIXME-1 saveState: relinkBranches
                     preSelString,
                     QString("setPos %1;").arg(toS(bc->getOriginalPos())),
                     "",
@@ -4456,14 +4434,14 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
                 undoCom = "relinkTo (\"" + preParString + "\"," + preNum + ")";
             redoCom = "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + ")";
 
-            saveState(postSelStr, undoCom, preSelString, redoCom,
+            saveState(postSelStr, undoCom, preSelString, redoCom,   // FIXME-1 saveState: relinkBranches
                       QString("Relink %1 to %2")
                           .arg(getObjectName(bi))
                           .arg(getObjectName(dst)));
 
             if (dstBC && dstBC->hasFloatingBranchesLayout()) {
                 // Save current position for redo
-                saveState("", "",
+                saveState("", "",   // FIXME-1 saveState: relinkBranches
                           postSelStr,
                           QString("setPos %1;").arg(toS(bc->pos())),
                           QString("Move %1")
@@ -5026,14 +5004,14 @@ void VymModel::toggleFlagByUid(
 
     foreach (BranchItem* bi, selbis) {
         TreeItem *ti;
-        Flag *f = bi->toggleFlagByUid(uid, useGroups);
-        if (f) {
-            QString u = "toggleFlagByUid";
-            QString name = f->getName();
-            saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
-                      QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
+        Flag *flag = bi->toggleFlagByUid(uid, useGroups);
+        if (flag) {
+            QString fname = flag->getName();
+            QString uids  = uid.toString();
+            QString com = QString("toggleFlagByUid(\"%1\");").arg(uids);
+            saveStateBranch(bi, com, com,
                       QString("Toggling flag \"%1\" of %2")
-                          .arg(name)
+                          .arg(fname)
                           .arg(getObjectName(bi)));
             emitDataChanged(bi);
         } else
@@ -5048,33 +5026,31 @@ void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGro
     QList <BranchItem*> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem* bi, selbis) {
-        Flag *f = standardFlagsMaster->findFlagByName(name);
-        if (!f) {
-            f = userFlagsMaster->findFlagByName(name);
-            if (!f) {
+        Flag *flag = standardFlagsMaster->findFlagByName(name);
+        if (!flag) {
+            flag = userFlagsMaster->findFlagByName(name);
+            if (!flag) {
                 qWarning() << "VymModel::toggleFlag failed for flag named "
                            << name;
                 return;
             }
         }
 
-        QUuid uid = f->getUuid();
+        QUuid uid = flag->getUuid();
 
-        f = bi->toggleFlagByUid(uid, useGroups);
+        flag = bi->toggleFlagByUid(uid, useGroups);
 
-        if (f) {
-            QString u = "toggleFlag";
-            QString name = f->getName();
-            saveState(bi, QString("%1 (\"%2\")").arg(u, name), bi,
-                      QString("%1 (\"%2\")").arg(u, name),
+        if (flag) {
+            QString fname = flag->getName();
+            QString com  = QString("toggleFlag(\"%1\");").arg(fname);
+            saveStateBranch(bi, com, com,
                       QString("Toggling flag \"%1\" of %2")
                           .arg(name, getObjectName(bi)));
             emitDataChanged(bi);
             reposition();
         }
         else
-            qWarning() << "VymModel::toggleFlag failed for flag named " << name
-                       << " with uid " << uid;
+            qWarning() << "VymModel::toggleFlag failed for flag with uid " << uid;
     }
 }
 
@@ -5093,10 +5069,10 @@ void VymModel::colorBranch(QColor c, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        saveState(selbi,
-                  QString("colorBranch (\"%1\")")
-                      .arg(selbi->headingColor().name()),
-                  selbi, QString("colorBranch (\"%1\")").arg(c.name()),
+        QString uc = QString("colorBranch (\"%1\");")
+                      .arg(selbi->headingColor().name());
+        QString rc = QString("colorBranch (\"%1\");").arg(c.name());
+        saveStateBranch(selbi, uc, rc,
                   QString("Set color of %1 to %2")
                       .arg(getObjectName(selbi), c.name()));
         selbi->setHeadingColor(c); // color branch
@@ -5396,8 +5372,7 @@ void VymModel::setVymLink(const QString &s)
 {
     BranchItem *bi = getSelectedBranch();
     if (bi) {
-        saveState(
-            bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
+        saveState(bi, "setVymLink (\"" + bi->vymLink() + "\")", bi,
             "setVymLink (\"" + s + "\")",
             QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(s));
         bi->setVymLink(s);
@@ -5481,8 +5456,7 @@ void VymModel::setXLinkColor(const QString &new_col)
             return;
         pen.setColor(new_color);
         l->setPen(pen);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkColor(\"%1\")").arg(old_color.name()),
+        saveState(l->getBeginLinkItem(), QString("setXLinkColor(\"%1\")").arg(old_color.name()),
                   l->getBeginLinkItem(),
                   QString("setXLinkColor(\"%1\")").arg(new_color.name()),
                   QString("set color of xlink to %1").arg(new_color.name()));
@@ -5500,8 +5474,7 @@ void VymModel::setXLinkStyle(const QString &new_style)
         bool ok;
         pen.setStyle(penStyle(new_style, ok));
         l->setPen(pen);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkStyle(\"%1\")").arg(old_style),
+        saveState(l->getBeginLinkItem(), QString("setXLinkStyle(\"%1\")").arg(old_style),
                   l->getBeginLinkItem(),
                   QString("setXLinkStyle(\"%1\")").arg(new_style),
                   QString("set style of xlink to %1").arg(new_style));
@@ -5516,8 +5489,7 @@ void VymModel::setXLinkStyleBegin(const QString &new_style)
         if (new_style == old_style)
             return;
         l->setStyleBegin(new_style);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkStyleBegin(\"%1\")").arg(old_style),
+        saveState(l->getBeginLinkItem(), QString("setXLinkStyleBegin(\"%1\")").arg(old_style),
                   l->getBeginLinkItem(),
                   QString("setXLinkStyleBegin(\"%1\")").arg(new_style),
                   "set style of xlink begin");
@@ -5532,8 +5504,7 @@ void VymModel::setXLinkStyleEnd(const QString &new_style)
         if (new_style == old_style)
             return;
         l->setStyleEnd(new_style);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkStyleEnd(\"%1\")").arg(old_style),
+        saveState(l->getBeginLinkItem(), QString("setXLinkStyleEnd(\"%1\")").arg(old_style),
                   l->getBeginLinkItem(),
                   QString("setXLinkStyleEnd(\"%1\")").arg(new_style),
                   "set style of xlink end");
@@ -5550,8 +5521,7 @@ void VymModel::setXLinkWidth(int new_width)
             return;
         pen.setWidth(new_width);
         l->setPen(pen);
-        saveState(
-            l->getBeginLinkItem(), QString("setXLinkWidth(%1)").arg(old_width),
+        saveState( l->getBeginLinkItem(), QString("setXLinkWidth(%1)").arg(old_width),
             l->getBeginLinkItem(), QString("setXLinkWidth(%1)").arg(new_width),
             "set width of xlink");
     }
@@ -6279,7 +6249,7 @@ void VymModel::applyDesignRecursively(
         applyDesign(updateMode, bi->getBranchNum(i));
 }
 
-void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no savestate, no updates of existing headings ("applyDesign")
+void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no saveState, no updates of existing headings ("applyDesign")
 {
     mapDesignInt->setFont(font);
 }
@@ -6393,13 +6363,11 @@ void VymModel::setBackgroundColor(QColor col)   // FIXME-2 Missing command?
     vymView->updateColors();
 }
 
-bool VymModel::setBackgroundImage( const QString &fn) // FIXME-2 missing savestate
+bool VymModel::setBackgroundImage( const QString &fn)
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
-    saveState(
-    selection,
-    QString ("setBackgroundImage (%1)").arg(oldcol.name()),
+    saveState( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
     selection,
     QString ("setBackgroundImage (%1)").arg(col.name()),
     QString("Set background color of map to %1").arg(col.name()));
@@ -6414,18 +6382,16 @@ bool VymModel::setBackgroundImage( const QString &fn) // FIXME-2 missing savesta
         return false;
 }
 
-void VymModel::setBackgroundImageName( const QString &s) // FIXME-2 missing savestate
+void VymModel::setBackgroundImageName( const QString &s) // FIXME-2 missing saveState
 {
     mapDesignInt->setBackgroundImageName(s);
 }
 
-void VymModel::unsetBackgroundImage() // FIXME-2 missing savestate
+void VymModel::unsetBackgroundImage()
 {
     /*
     QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
-    saveState(
-    selection,
-    QString ("setBackgroundImage (%1)").arg(oldcol.name()),
+    saveState( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
     selection,
     QString ("setBackgroundImage (%1)").arg(col.name()),
     QString("Set background color of map to %1").arg(col.name()));
@@ -7470,7 +7436,7 @@ SlideModel *VymModel::getSlideModel() { return slideModel; }
 
 int VymModel::slideCount() { return slideModel->count(); }
 
-SlideItem *VymModel::addSlide()     // FIXME-2 savestate: undo/redo not working
+SlideItem *VymModel::addSlide()     // FIXME-2 saveState: undo/redo not working
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)
