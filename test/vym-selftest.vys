@@ -1264,11 +1264,14 @@ function test_tasks()
 
 // test_vym();  // FIXME currently not used (version check, tmpDir check)
 
-test_basics();          // ok, already uses BranchWrapper
-//test_adding_branches(); // ok, already uses BranchWrapper
-test_extrainfo();
-//test_references();      // ok, already uses BranchWrapper
-/*
+// ok, already using new Wrapper functions
+test_basics();
+//test_adding_branches();
+// test_extrainfo();
+// test_references();
+
+
+/* FIXME Not ported yet
 test_adding_maps();
 test_attributes();
 test_copy_paste();

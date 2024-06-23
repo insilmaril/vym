@@ -767,12 +767,6 @@ void Main::setupAPI()
     c = new Command("getTaskSleepDays", Command::Branch, Command::Int);
     modelCommands.append(c);
 
-    c = new Command("url", Command::TreeItem, Command::String);
-    modelCommands.append(c);
-
-    c = new Command("getVymLink", Command::Branch, Command::String);
-    modelCommands.append(c);
-
     c = new Command("getXLinkColor", Command::XLink, Command::String);
     modelCommands.append(c);
 
@@ -1094,14 +1088,6 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Sleep time of task");
     modelCommands.append(c);
 
-    c = new Command("setUrl", Command::TreeItem);
-    c->addParameter(Command::String, false, "URL of TreeItem");
-    modelCommands.append(c);
-
-    c = new Command("setVymLink", Command::Branch);
-    c->addParameter(Command::String, false, "Vymlink of branch");
-    modelCommands.append(c);
-
     c = new Command("setXLinkColor", Command::XLink);
     c->addParameter(Command::String, false, "Color of xlink");
     modelCommands.append(c);
@@ -1299,6 +1285,16 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Position y");
     branchCommands.append(c);
 
+    c = new Command("setUrl", Command::Branch);
+    c->addParameter(Command::String, false, "Url of TreeItem");
+    c->setComment("Set Url of branch");
+    branchCommands.append(c);
+
+    c = new Command("setVymLink", Command::Branch);
+    c->addParameter(Command::String, false, "Vymlink of branch");
+    c->setComment("Set VymLink of branch");
+    branchCommands.append(c);
+
     c = new Command("toggleFlagByName", Command::Branch);
     c->setComment("Toggle flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag to toggle");
@@ -1323,6 +1319,14 @@ void Main::setupAPI()
     //
     // Below are the commands for a branch
     //
+    c = new Command("getUrl", Command::Branch, Command::String);
+    c->setComment("Get url of branch");
+    branchCommands.append(c);
+
+    c = new Command("getVymLink", Command::Branch, Command::String);
+    c->setComment("Get vymLink of branch");
+    branchCommands.append(c);
+
     c = new Command("headingText", Command::Image, Command::String);
     c->setComment("Set heading of image from plaintext string");
     imageCommands.append(c);
