@@ -7509,8 +7509,9 @@ bool VymModel::moveSlideDown(int n)
         blockSlideSelection = true;
         slideModel->relinkSlide(si, si->parent(), n + 1);
         blockSlideSelection = false;
-        saveState(getSelectString(), QString("moveSlideUp (%1)").arg(n + 1),
-                  getSelectString(), QString("moveSlideDown (%1)").arg(n),
+        QString uc = QString("map.moveSlideUp (%1);").arg(n + 1);
+        QString rc = QString("map.moveSlideDown (%1);").arg(n);
+        saveStateNew(uc, rc,
                   QString("Move slide %1 down").arg(n));
         return true;
     }
@@ -7535,8 +7536,9 @@ bool VymModel::moveSlideUp(int n)
         blockSlideSelection = true;
         slideModel->relinkSlide(si, si->parent(), n - 1);
         blockSlideSelection = false;
-        saveState(getSelectString(), QString("moveSlideDown (%1)").arg(n - 1),
-                  getSelectString(), QString("moveSlideUp (%1)").arg(n),
+        QString uc = QString("map.moveSlideDown (%1);").arg(n - 1);
+        QString rc = QString("map.moveSlideUp  (%1);").arg(n);
+        saveStateNew(uc, rc,
                   QString("Move slide %1 up").arg(n));
         return true;
     }
