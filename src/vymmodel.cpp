@@ -2041,16 +2041,6 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);  // "Normal" saveState (TI *undoSel, uc, TI *redoSel, rc, comment)
 }
 
-void VymModel::saveState(const QString &undoSel, const QString &uc,
-                         const QString &redoSel, const QString &rc,
-                         const QString &comment)
-{
-    // "Normal" savestate: save commands, selections and comment
-    // so just save commands for undo and redo
-    // and use current selection
-    saveStateOld(File::CodeBlock, undoSel, uc, redoSel, rc, comment, nullptr);  // "Normal" saveState (undoSel, uc, redoSel, rc, comment)
-}
-
 void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
 {
     BranchItem *selbi = getSelectedBranch();
