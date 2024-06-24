@@ -209,6 +209,8 @@ QString MapDesign::updateModeString(const UpdateMode &mode)
     switch (mode) {
         case Undefined:
             return "Update mode Undefined!";
+        case LoadingMap:
+            return "LoadingMap";
         case CreatedByUser:
             return "CreatedByUser";
         case RelinkedByUser:

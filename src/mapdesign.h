@@ -50,7 +50,7 @@ class MapDesign {
 
     enum UpdateMode : unsigned int {
         Undefined           = 0x0000,
-        //MapLoad             = 0x0001,
+        LoadingMap          = 0x0001,
         //MapImport         = 0x0002
         CreatedByUser       = 0x0004,
         RelinkedByUser      = 0x0008,

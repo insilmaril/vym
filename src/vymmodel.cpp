@@ -3867,7 +3867,7 @@ BranchItem *VymModel::createBranch(BranchItem *dst)
         newbi = addNewBranchInt(dst, -2);
 
     // Set default design styles, e.g. font
-    applyDesign(MapDesign::CreatedByUser, newbi);// FIXME-0 better MD::CreatedWhileLoading)
+    applyDesign(MapDesign::LoadingMap, newbi);// FIXME-0 better MD::CreatedWhileLoading)
     return newbi;
 }
 
