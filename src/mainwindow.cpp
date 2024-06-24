@@ -2979,7 +2979,7 @@ void Main::setupSettingsActions()
         tr("Set application to zip/unzip files", "Settings action") + "...",
         this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsZipTool()));
-    // FIXME-2 Disabled for now  settingsMenu->addAction(a);
+    // FIXME-2 zipSettings Disabled for now  settingsMenu->addAction(a);
 
     a = new QAction(tr("Confluence Credentials", "Settings action") + "...",
                     this);
