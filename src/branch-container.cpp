@@ -660,7 +660,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->rightCenter());
                 default: // mapcenter is moved, use bottomLeft corner
-                    //qWarning() << "BC::upLinkPos  framed undefined orientation in " << info();
+                    // qWarning() << "BC::upLinkPos a)  framed undefined orientation in " << info();
                     return ornamentsContainer->mapToScene(
                             ornamentsContainer->bottomLeft());
             }
@@ -676,7 +676,7 @@ QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->bottomRight());
         default:
-            qWarning() << "BC::upLinkPos  not framed undefined orientation in " << info();
+            // qWarning() << "BC::upLinkPos b) not framed undefined orientation in " << info() << branchItem->depth();
             return ornamentsContainer->mapToScene(
                     ornamentsContainer->bottomLeft());
     }
@@ -1291,12 +1291,12 @@ void BranchContainer::reposition()
     }
 
     /*
-    qdbg() << ind() << "BC::reposition  bc=" <<      info() << "  orient=" << orientation;
+    qdbg() << ind() << "BC::reposition  bc=" << info() << "  orientation=" << orientation;
     if (pbc) {
         qdbg() << ind() << "          pbc=" << pbc->info();
         qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
     } else
-        qdbg() << ind() << "          pbc=0";
+        qdbg() << ind() << "          pbc=0  children=" << branchItem->branchCount();
     */
     //qdbg() << ind() << "          state=" << movingStateInt;
     // Settings depending on depth
