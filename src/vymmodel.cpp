@@ -3857,7 +3857,7 @@ QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bo
     return sortedList;
 }
 
-BranchItem *VymModel::createBranch(BranchItem *dst)
+BranchItem *VymModel::createBranchWhileLoading(BranchItem *dst)
 {
     BranchItem *newbi;
     if (!dst || dst == rootItem)
@@ -3866,7 +3866,7 @@ BranchItem *VymModel::createBranch(BranchItem *dst)
         newbi = addNewBranchInt(dst, -2);
 
     // Set default design styles, e.g. font
-    applyDesign(MapDesign::LoadingMap, newbi);// FIXME-0 better MD::CreatedWhileLoading)
+    applyDesign(MapDesign::LoadingMap, newbi);
     return newbi;
 }
 

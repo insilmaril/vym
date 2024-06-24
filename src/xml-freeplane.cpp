@@ -210,14 +210,14 @@ void FreeplaneReader::readNode()
     QString elementName = "node";
     foundElement(elementName);
 
-    lastBranch = model->createBranch(lastBranch);
+    lastBranch = model->createBranchWhileLoading(lastBranch);
 
     if (lastBranch->depth() == 0) {
         // I am a mapcenter:
         // Create two "helper" branches, because Freeplane seems to haves no
         // relative positioning for mainbranches
-        mainBranchLeft = model->createBranch(lastBranch);
-        mainBranchRight = model->createBranch(lastBranch);
+        mainBranchLeft = model->createBranchWhileLoading(lastBranch);
+        mainBranchRight = model->createBranchWhileLoading(lastBranch);
 
         mainBranchLeft->setPos(QPointF(-200, 0));
         mainBranchLeft->setHeadingPlainText(" ");

@@ -467,7 +467,7 @@ class VymModel : public TreeModel {
     QList <ImageItem*> sortImagesByNum(QList <ImageItem*>, bool inverse = false);
 
     // The create methods are used to quickly parse a XML file
-    BranchItem *createBranch(BranchItem *dst); //!< Create Branch
+    BranchItem *createBranchWhileLoading(BranchItem *dst); //!< Create Branch
     ImageItem *createImage(BranchItem *dst);   //!< Create image
 
   public:

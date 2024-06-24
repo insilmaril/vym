@@ -394,14 +394,14 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
 
     // Create branch or mapCenter
     if (loadModeBranch == File::NewMap || loadModeBranch == File::DefaultMap)
-        lastBranch = model->createBranch(lastBranch);
+        lastBranch = model->createBranchWhileLoading(lastBranch);
     else {
         // For Imports create branch at insertPos
         // (Here we only use ImportInsert, replacements already have
         // been done before)
         if (loadModeBranch == File::ImportAdd) {
             if (insertPosBranch < 0)
-                lastBranch = model->createBranch(lastBranch);
+                lastBranch = model->createBranchWhileLoading(lastBranch);
             else {
                 lastBranch = model->addNewBranch(lastBranch, insertPosBranch);
             }
