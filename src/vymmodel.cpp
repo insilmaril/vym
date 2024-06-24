@@ -2765,6 +2765,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
             break;
 
         QString uif = toS(useInnerFrame);
+        QString uc, rc;
 
         bool saveCompleteFrame = false;
 
@@ -2775,31 +2776,23 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         if (saveCompleteFrame) {
             saveStateBeginBlock("Set frame parameters");
             QString colorName = bc->framePenColor(useInnerFrame).name();
-            saveState(selbi, QString("setFramePenColor (%1, \"%2\")")
-                      .arg(uif)
-                      .arg(colorName),
-                    selbi, "",
+            uc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorName);
+            saveStateBranch(selbi, uc, "",
                     QString("set pen color of frame to %1").arg(colorName));
 
             colorName = bc->frameBrushColor(useInnerFrame).name();
-            saveState(selbi, QString("setFrameBrushColor (%1, \"%2\")")
-                      .arg(uif)
-                      .arg(colorName),
-                    selbi, "",
+            uc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorName);
+            saveStateBranch(bi, uc, "",
                     QString("set background color of frame to %1").arg(colorName));
 
             int i = bc->framePenWidth(useInnerFrame);
-            saveState(selbi, QString("setFramePenWidth (%1, \"%2\")")
-                        .arg(uif)
-                        .arg(i),
-                      selbi, "",
+            uc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
+            saveStateBranch(selbi, uc, "",
                       QString("set pen width of frame to %1").arg(i));
 
             i = bc->framePadding(useInnerFrame);
-            saveState(selbi, QString("setFramePadding (%1, \"%2\")")
-                  .arg(uif)
-                  .arg(bc->framePadding(i)),
-                selbi, "",
+            uc = QString("setFramePadding (%1, \"%2\");").arg(uif, i);
+            saveStateBranch(selbi, uc, "",
                 QString("set padding of frame to %1").arg(i));
         }
 
@@ -2807,8 +2800,9 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         bc->setFrameType(useInnerFrame, t);
         newName = bc->frameTypeString(useInnerFrame);
 
-        saveState(selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(oldName),
-            selbi, QString("setFrameType (%1, \"%2\")").arg(uif).arg(newName),
+        uc = QString("setFrameType(%1, \"%2\");").arg(uif, oldName);
+        rc = QString("setFrameType(%1, \"%2\");").arg(uif, newName);
+        saveStateBranch(selbi, uc, rc,
             QString("set type of frame to %1").arg(newName));
 
         if (saveCompleteFrame)
@@ -2819,9 +2813,9 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
     reposition();
 }
 
-void VymModel::setFrameType(const bool &useInnerFrame, const QString &s)
+void VymModel::setFrameType(const bool &useInnerFrame, const QString &s, BranchItem *bi)
 {
-    setFrameType(useInnerFrame, FrameContainer::frameTypeFromString(s));
+    setFrameType(useInnerFrame, FrameContainer::frameTypeFromString(s), bi);
 }
 
 void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, BranchItem *bi)
@@ -2832,13 +2826,13 @@ void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, Br
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState(selbi, QString("setFramePenColor (%1, \"%2\")")
-                        .arg(uif)
-                        .arg(bc->framePenColor(useInnerFrame).name()),
-                      selbi, QString("setFramePenColor (%1, \"%2\")")
-                        .arg(uif)
-                        .arg(col.name()),
-                      QString("set pen color of frame to %1").arg(col.name()));
+            QString colorNameOld = bc->framePenColor(useInnerFrame).name();
+            QString uc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorNameOld);
+            QString colorNameNew = col.name();
+            QString rc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorNameNew);
+            saveStateBranch(selbi, uc, rc,
+                    QString("set pen color of frame to %1").arg(colorNameNew));
+
             bc->setFramePenColor(useInnerFrame, col);
         }
     }
@@ -2852,13 +2846,13 @@ void VymModel::setFrameBrushColor(
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState(selbi, QString("setFrameBrushColor (%1, \"%2\")")
-                        .arg(uif)
-                        .arg(bc->frameBrushColor(useInnerFrame).name()),
-                      selbi, QString("setFrameBrushColor (%1, \"%2\")")
-                        .arg(uif)
-                        .arg(col.name()),
-                      QString("set brush color of frame to %1").arg(col.name()));
+            QString colorNameOld = bc->framePenColor(useInnerFrame).name();
+            QString uc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorNameOld);
+            QString colorNameNew = col.name();
+            QString rc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorNameNew);
+            saveStateBranch(selbi, uc, rc,
+                    QString("Set background color of frame to %1").arg(colorNameNew));
+
             bc->setFrameBrushColor(useInnerFrame, col);
         }
         emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
@@ -2873,10 +2867,9 @@ void VymModel::setFramePadding(
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState( selbi, QString("setFramePadding (%1, \"%2\")")
-                  .arg(uif)
-                  .arg(bc->framePadding(useInnerFrame)),
-                selbi, QString("setFramePadding (%1, \"%2\")").arg(uif).arg(i),
+            QString uc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(bc->framePadding(useInnerFrame));
+            QString rc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(i);
+            saveStateBranch(selbi, uc, rc,
                 QString("set padding of frame to %1").arg(i));
             bc->setFramePadding(useInnerFrame, i);
         }
@@ -2891,11 +2884,11 @@ void VymModel::setFramePenWidth(
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
             QString uif = toS(useInnerFrame);
-            saveState(selbi, QString("setFramePenWidth (%1, \"%2\")")
-                        .arg(uif)
-                        .arg(bc->framePenWidth(useInnerFrame)),
-                      selbi, QString("setFramePenWidth (%1, \"%2\")").arg(uif).arg(i),
-                      QString("set pen width of frame to %1").arg(i));
+            QString uc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(bc->framePenWidth(useInnerFrame));
+            QString rc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
+            saveStateBranch(selbi, uc, rc,
+                QString("Set pen width of frame to %1").arg(i));
+
             bc->setFramePenWidth(useInnerFrame, i);
         }
     }
@@ -4154,7 +4147,9 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos)
     if (bc) {
         bc->setPos(absPos);
 
-        applyDesign(MapDesign::CreatedByUser, newbi);
+        if (!saveStateBlocked)
+            // Don't apply design while loading map
+            applyDesign(MapDesign::CreatedByUser, newbi);
     }
 
     reposition();
@@ -4242,7 +4237,9 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         }
 
         // Required to initialize styles
-        applyDesign(MapDesign::CreatedByUser, newbi);   // FIXME-0 creates additional undoStep, which let's tests fail...
+        if (!saveStateBlocked)
+            // Don't apply design while loading map
+            applyDesign(MapDesign::CreatedByUser, newbi);   // FIXME-1 creates additional undoStep, which let's tests fail...
     }
     return newbi;
 }
@@ -6152,12 +6149,14 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         // Frames   // FIXME-2 mapDesign missing for penWidth
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(true, depth))) {
+            qDebug() << "  updatingframe a";
             bc->setFrameType(true, mapDesignInt->frameType(true, depth));
             bc->setFrameBrushColor(true, mapDesignInt->frameBrushColor(true, depth));
             bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
         }
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
+            qDebug() << "  updatingframe b";
             bc->setFrameType(false, mapDesignInt->frameType(false, depth));
             bc->setFrameBrushColor(false, mapDesignInt->frameBrushColor(false, depth));
             bc->setFramePenColor(false, mapDesignInt->framePenColor(false, depth));

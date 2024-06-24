@@ -118,6 +118,21 @@ void BranchWrapper::colorSubtree(const QString &color)
         branchItem->getModel()->colorSubtree(col, branchItem);
 }
 
+int BranchWrapper::getFramePadding(const bool &useInnerFrame)
+{
+    return setResult(branchItem->getBranchContainer()->framePadding(useInnerFrame));
+}
+
+int BranchWrapper::getFramePenWidth(const bool &useInnerFrame)
+{
+    return setResult(branchItem->getBranchContainer()->framePenWidth(useInnerFrame));
+}
+
+QString BranchWrapper::getFrameType(const bool &useInnerFrame)
+{
+    return setResult(branchItem->getBranchContainer()->frameTypeString(useInnerFrame));
+}
+
 void BranchWrapper::getJiraData(bool subtree)
 {
     branchItem->getModel()->getJiraData(subtree, branchItem);
@@ -241,6 +256,31 @@ void BranchWrapper::setAttribute(const QString &key, const QString &value)
 void BranchWrapper::setFlagByName(const QString &s)
 {
     branchItem->getModel()->setFlagByName(s, branchItem);
+}
+
+void BranchWrapper::setFrameBrushColor(const bool &useInnerFrame, const QString &color)
+{
+    branchItem->getModel()->setFrameBrushColor(useInnerFrame, color, branchItem);
+}
+
+void BranchWrapper::setFramePadding(const bool &useInnerFrame, int padding)
+{
+    branchItem->getModel()->setFramePadding(useInnerFrame, padding, branchItem);
+}
+
+void BranchWrapper::setFramePenColor(const bool &useInnerFrame, const QString &color)
+{
+    branchItem->getModel()->setFramePenColor(useInnerFrame, color, branchItem);
+}
+
+void BranchWrapper::setFramePenWidth(const bool &useInnerFrame, int width)
+{
+    branchItem->getModel()->setFramePenWidth(useInnerFrame, width, branchItem);
+}
+
+void BranchWrapper::setFrameType(const bool &useInnerFrame, const QString &type)
+{
+    branchItem->getModel()->setFrameType(useInnerFrame, type, branchItem);
 }
 
 void BranchWrapper::setHeadingRichText(const QString &text)

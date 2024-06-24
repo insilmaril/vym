@@ -389,7 +389,7 @@ class VymModel : public TreeModel {
 
     void setFrameAutoDesign(const bool &useInnerFrame, const bool &);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
-    void setFrameType(const bool &useInnerFrame, const QString &);
+    void setFrameType(const bool &useInnerFrame, const QString &, BranchItem *bi = nullptr);
     void setFramePenColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);
     void setFrameBrushColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);
     void setFramePadding(const bool &useInnerFrame, const int &, BranchItem *bi = nullptr);

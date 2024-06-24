@@ -553,21 +553,46 @@ function  test_frames()
   heading("Frames:");
   map = initMap(testMapFrames);
 
-  map.select(center_0);
-  expect("Mapcenter of " + center_0 + " has no inner frame", map.getFrameType(true), "NoFrame");
-  expect("Mapcenter of " + center_0 + " has no outer frame", map.getFrameType(true), "NoFrame");
+  map.select(center_0_string);
+  center_0 = map.selectedBranch();
+  expect("Mapcenter of " + center_0_string + " has no inner frame", center_0.getFrameType(true), "NoFrame");
+  expect("Mapcenter of " + center_0_string + " has no outer frame", center_0.getFrameType(true), "NoFrame");
 
-  map.select(center_1);
-  expect("Mapcenter of " + center_1 + " has no inner frame", map.getFrameType(true), "NoFrame");
-  expectNot("Mapcenter of " + center_1 + " has outer frame", map.getFrameType(false), "NoFrame");
+  map.select(center_1_string);
+  center_1 = map.selectedBranch();
+  expect("Mapcenter of " + center_1_string + " has no inner frame", center_1.getFrameType(true), "NoFrame");
+  expectNot("Mapcenter of " + center_1_string + " has outer frame", center_1.getFrameType(false), "NoFrame");
 
-  map.select(center_2);
-  expectNot("Mapcenter of " + center_2 + " has inner frame", map.getFrameType(true), "NoFrame");
-  expect("Mapcenter of " + center_2 + " has no outer frame", map.getFrameType(false), "NoFrame");
+  map.select(center_2_string);
+  center_2 = map.selectedBranch();
+  expectNot("Mapcenter of " + center_2_string + " has inner frame", center_2.getFrameType(true), "NoFrame");
+  expect("Mapcenter of " + center_2_string + " has no outer frame", center_2.getFrameType(false), "NoFrame");
 
-  map.select(center_3);
-  expectNot("Mapcenter of " + center_3 + " has inner frame", map.getFrameType(true), "NoFrame");
-  expectNot("Mapcenter of " + center_3 + " has outer frame", map.getFrameType(false), "NoFrame");
+  map.select(center_3_string);
+  center_3 = map.selectedBranch();
+  expectNot("Mapcenter of " + center_3_string + " has inner frame", center_3.getFrameType(true), "NoFrame");
+  expectNot("Mapcenter of " + center_3_string + " has outer frame", center_3.getFrameType(false), "NoFrame");
+
+
+  // Test changing frame types
+  frameTypes = ["Rectangle", "RoundedRectangle", "Ellipse", "Circle", "Cloud"];
+  for (ft of frameTypes) {
+      center_0.setFrameType(true, ft);
+      expect("Type changed to '" + ft + "'", center_0.getFrameType(true), ft);
+  }
+
+  i = center_0.getFramePenWidth(true);  
+  center_0.setFramePenWidth(true, 10);  
+  expect("Pen width is 10", center_0.getFramePenWidth(true), 10);  
+  map.undo();  
+  expect("Undo setFramePenWidth", center_0.getFramePenWidth(true), i);  
+
+  i = center_0.getFramePadding(true);  
+  center_0.setFramePadding(true, 20);  
+  expect("Padding is 20", center_0.getFramePadding(true), 20);  
+  map.undo();  
+  expect("Undo setFramePadding", center_0.getFramePadding(true), i);  
+
   closeCurrentMap();
 }
 
@@ -1257,10 +1282,11 @@ function test_tasks()
 // ok, already using new Wrapper functions
 test_basics();
 //test_adding_branches();
-// test_extrainfo();
+//test_extrainfo();
+//test_frames();
 //test_modify_branches();
 //test_moving_parts();
-// test_references();
+//test_references();
 
 
 /* FIXME Not ported yet
@@ -1272,7 +1298,6 @@ test_delete_parts();
 //test_export(); // FIXME WIP
 //test_notes();
 /*
-test_frames();
 test_history();
 test_load_legacy_maps();
 test_notes();

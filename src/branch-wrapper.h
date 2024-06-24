@@ -22,6 +22,9 @@ class BranchWrapper : public VymScriptContext {
     void clearFlags();
     void colorBranch(const QString &color);
     void colorSubtree(const QString &color);
+    int getFramePadding(const bool & useInnerFrame);
+    int getFramePenWidth(const bool & useInnerFrame);
+    QString getFrameType(const bool & useInnerFrame);
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
@@ -44,6 +47,11 @@ class BranchWrapper : public VymScriptContext {
     bool selectParent();
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
+    void setFrameBrushColor(const bool & useInnerFrame, const QString &color);
+    void setFramePadding(const bool & useInnerFrame, int padding);
+    void setFramePenColor(const bool & useInnerFrame, const QString &color);
+    void setFramePenWidth(const bool & useInnerFrame, int w);
+    void setFrameType(const bool & useInnerFrame, const QString &type);
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
     void setNoteRichText(const QString &);

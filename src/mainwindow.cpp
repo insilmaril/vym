@@ -612,19 +612,6 @@ void Main::setupAPI()
     // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper. See vymmodelwrapper.h
     QString DEPRECATED(" DEPRECATED. Commands moved to branch or image. ");
 
-    c = new Command("addBranch", Command::Branch);
-    c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
-    c = new Command("addBranchAt", Command::Branch);
-    c->setComment(DEPRECATED);
-    c->addParameter(Command::Int, true, "Index of new branch");
-    modelCommands.append(c);
-
-    c = new Command("addBranchBefore", Command::Branch);
-    c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
     c = new Command("addMapCenterAtPos", Command::Any);
     c->addParameter(Command::Double, false, "Position x");
     c->addParameter(Command::Double, false, "Position y");
@@ -706,9 +693,6 @@ void Main::setupAPI()
     c = new Command("getFileName", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getFrameType", Command::Branch, Command::String);
-    modelCommands.append(c);
-
     c = new Command("getHeadingPlainText", Command::TreeItem, Command::String);
     c->setComment(DEPRECATED + "Branch::headingText()");
     modelCommands.append(c);
@@ -720,13 +704,13 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Key of string attribute");
     modelCommands.append(c);
 
-    c = new Command("getMapAuthor", Command::Any, Command::String);
+    c = new Command("getAuthor", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getMapComment", Command::Any, Command::String);
+    c = new Command("getComment", Command::Any, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getMapTitle", Command::Any, Command::String);
+    c = new Command("getTitle", Command::Any, Command::String);
     modelCommands.append(c);
 
     c = new Command("getNotePlainText", Command::TreeItem, Command::String);
@@ -927,11 +911,6 @@ void Main::setupAPI()
     c->addParameter(Command::Int, false, "Number of xlink");
     modelCommands.append(c);
 
-    c = new Command("setFlagByName", Command::TreeItem);
-    c->addParameter(Command::String, false, "Name of flag");
-    c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
     c = new Command("setTaskPriorityDelta", Command::Branch);
     c->addParameter(Command::String, false, "Manually add value to priority of task");
     modelCommands.append(c);
@@ -940,37 +919,7 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Days to sleep");
     modelCommands.append(c);
 
-    c = new Command("setFrameIncludeChildren", Command::BranchOrImage);
-    c->addParameter(Command::Bool, false,
-              "Include or don't include children in frame");
-    modelCommands.append(c);
-
-    c = new Command("setFrameType", Command::BranchOrImage);
-    c->addParameter(Command::String, false, "Type of frame");
-    modelCommands.append(c);
-
-    c = new Command("setFramePenColor", Command::BranchOrImage);
-    c->addParameter(Command::Color, false, "Color of frame border line");
-    modelCommands.append(c);
-
-    c = new Command("setFrameBrushColor", Command::BranchOrImage);
-    c->addParameter(Command::Color, false, "Color of frame background");
-    modelCommands.append(c);
-
-    c = new Command("setFramePadding", Command::BranchOrImage);
-    c->addParameter(Command::Int, false, "Padding around frame");
-    modelCommands.append(c);
-
-    c = new Command("setFramePenWidth", Command::BranchOrImage);
-    c->addParameter(Command::Int, false, "Width of frame pen");
-    modelCommands.append(c);
-
     c = new Command("setHeadingConfluencePageName", Command::Branch);
-    modelCommands.append(c);
-
-    c = new Command("setHeadingPlainText", Command::TreeItem);
-    c->addParameter(Command::String, false, "New heading");
-    c->setComment(DEPRECATED + "branch.setHeadingText() or image.setHeadingText()");
     modelCommands.append(c);
 
     c = new Command("setHideExport", Command::BranchOrImage);
@@ -1118,13 +1067,6 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Uid of flag to toggle");
     modelCommands.append(c);
 
-    c = new Command("toggleFlagByName", Command::Branch);    // FIXME-3 DEPRECATED Moved to branch
-    c->addParameter(Command::String, false, "Name of flag to toggle");
-    modelCommands.append(c);
-
-    c = new Command("toggleFrameIncludeChildren", Command::Branch);
-    modelCommands.append(c);
-
     c = new Command("toggleScroll", Command::Branch);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
@@ -1146,10 +1088,6 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("unselectAll", Command::Any);
-    modelCommands.append(c);
-
-    c = new Command("unsetFlagByName", Command::Branch);    // FIXME-3 DEPRECATED Moved to branch
-    c->addParameter(Command::String, false, "Name of flag to unset");
     modelCommands.append(c);
 
     c = new Command("xlinkCount", Command::Branch, Command::Int);
@@ -1203,6 +1141,9 @@ void Main::setupAPI()
     c->addParameter(Command::Color, true, "New color");
     c->setComment("Set color of headings of all child branches and all their children");
     modelCommands.append(c);
+
+    c = new Command("getFrameType", Command::Branch, Command::String);
+    branchCommands.append(c);
 
     c = new Command("getJiraData", Command::Branch, Command::String);
     c->setComment("Get data from Jira server, either ticket or run defined query");
@@ -1272,6 +1213,31 @@ void Main::setupAPI()
     c = new Command("setFlagByName", Command::TreeItem);
     c->setComment("Set flag of branch by string with name of flag");
     c->addParameter(Command::String, false, "Name of flag");
+    branchCommands.append(c);
+
+    c = new Command("setFrameType", Command::BranchOrImage);
+    c->addParameter(Command::String, false, "Type of frame");
+    c->setComment("Set type of frame");
+    branchCommands.append(c);
+
+    c = new Command("setFramePenColor", Command::BranchOrImage);
+    c->addParameter(Command::Color, false, "Color of frame border line");
+    c->setComment("Set color of frame border");
+    branchCommands.append(c);
+
+    c = new Command("setFrameBrushColor", Command::BranchOrImage);
+    c->addParameter(Command::Color, false, "Color of frame background");
+    c->setComment("Set color of frame background");
+    branchCommands.append(c);
+
+    c = new Command("setFramePadding", Command::BranchOrImage);
+    c->addParameter(Command::Int, false, "Padding around frame");
+    c->setComment("Set padding of frame");
+    branchCommands.append(c);
+
+    c = new Command("setFramePenWidth", Command::BranchOrImage);
+    c->addParameter(Command::Int, false, "Width of frame pen");
+    c->setComment("Set width of frame border");
     branchCommands.append(c);
 
     c = new Command("setHeadingRichText", Command::Branch);

@@ -116,21 +116,6 @@ void VymModelWrapper::addXLink(const QString &begin, const QString &end,
             "Begin or end of xLink not found");
 }
 
-int VymModelWrapper::branchCount()
-{
-    int r;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        r = selbi->branchCount();
-    else {
-        scriptEngine->throwError(
-                QJSValue::RangeError,
-                "No branch selected");
-        r = -1;
-    }
-    return setResult(r);
-}
-
 int VymModelWrapper::centerCount()
 {
     int r = model->centerCount();
@@ -143,30 +128,6 @@ void VymModelWrapper::centerOnID(const QString &id)
         scriptEngine->throwError(
                 QJSValue::GenericError,
                 QString("Could not center on ID %1").arg(id));
-}
-
-void VymModelWrapper::clearFlags() { model->clearFlags(); }
-
-void VymModelWrapper::colorBranch(const QString &color)
-{
-    QColor col(color);
-    if (!col.isValid())
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("Could not set color to %1").arg(color));
-    else
-        model->colorBranch(col);
-}
-
-void VymModelWrapper::colorSubtree(const QString &color)
-{
-    QColor col(color);
-    if (!col.isValid())
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("Could not set color to %1").arg(color));
-    else
-        model->colorSubtree(col);
 }
 
 void VymModelWrapper::copy() { model->copy(); }
@@ -385,21 +346,6 @@ ImageWrapper* VymModelWrapper::findImageById(const QString &u)
         return nullptr;
 }
 
-int VymModelWrapper::getBranchIndex()
-{
-    int r;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = selbi->num();
-    } else {
-        scriptEngine->throwError(
-                QJSValue::RangeError,
-                "No branch selected");
-        r = -1;
-    }
-    return setResult(r);
-}
-
 QString VymModelWrapper::getDestPath()
 {
     QString r = model->getDestPath();
@@ -411,22 +357,6 @@ QString VymModelWrapper::getFileDir() { return setResult(model->getFileDir()); }
 QString VymModelWrapper::getFileName()
 {
     return setResult(model->getFileName());
-}
-
-QString VymModelWrapper::getFrameType(const bool &useInnerFrame)
-{
-    QString r;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = selbi->getBranchContainer()->frameTypeString(useInnerFrame);
-    }
-    return setResult(r);
-}
-
-QString VymModelWrapper::getHeadingPlainText()
-{
-    QString r = model->getHeading().getTextASCII();
-    return setResult(r);
 }
 
 QString VymModelWrapper::getHeadingXML()
@@ -692,17 +622,6 @@ BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)
         return nullptr;
 }
 
-bool VymModelWrapper::isScrolled()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        r = selbi->isScrolled();
-    else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-    return setResult(r);
-}
-
 void VymModelWrapper::loadImage(const QString &filename)
 {
     BranchItem *selbi = model->getSelectedBranch();
@@ -745,21 +664,6 @@ void VymModelWrapper::note2URLs() { model->note2URLs(); }
 void VymModelWrapper::paste() { model->paste(); }
 
 void VymModelWrapper::redo() { model->redo(); }
-
-bool VymModelWrapper::relinkTo(const QString &parent, int num)
-{
-    bool r;
-    r = model->relinkTo(parent, num);
-    if (!r)
-        scriptEngine->throwError(QJSValue::GenericError,"Could not relink");
-    return setResult(r);
-}
-
-bool VymModelWrapper::relinkTo(const QString &parent)
-{
-    bool r = relinkTo(parent, -1);
-    return setResult(r);
-}
 
 void VymModelWrapper::remove() { model->deleteSelection(); }
 
@@ -804,17 +708,6 @@ void VymModelWrapper::saveSelection(const QString &filename)
     }
     model->saveMap(File::PartOfMap);
     model->renameMap(filename_org); // FIXME-0 check if this is ok, renaming map and data 2 times...
-}
-
-void VymModelWrapper::scroll()
-{
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        if (!model->scrollBranch(selbi))
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Couldn't scroll branch");
-    }
 }
 
 bool VymModelWrapper::select(const QString &s)
@@ -968,20 +861,9 @@ void VymModelWrapper::setDefaultLinkColor(const QString &color)
                 QString("Could not set color to %1").arg(color));
 }
 
-void VymModelWrapper::setFlagByName(const QString &s)
-{
-    model->setFlagByName(s);
-}
-
 void VymModelWrapper::setHeadingConfluencePageName()
 {
     model->setHeadingConfluencePageName();
-}
-
-void VymModelWrapper::setHeadingPlainText(
-    const QString &text)
-{
-    model->setHeadingPlainText(text);
 }
 
 void VymModelWrapper::setHideExport(bool b) { model->setHideExport(b); }
@@ -1044,31 +926,6 @@ void VymModelWrapper::setNotePlainText(const QString &s)
     VymNote vn;
     vn.setPlainText(s);
     model->setNote(vn);
-}
-
-void VymModelWrapper::setFramePenWidth(const bool &useInnerFrame, int width)
-{
-    model->setFramePenWidth(useInnerFrame, width);
-}
-
-void VymModelWrapper::setFrameBrushColor(const bool &useInnerFrame, const QString &color)
-{
-    model->setFrameBrushColor(useInnerFrame, color);
-}
-
-void VymModelWrapper::setFramePadding(const bool &useInnerFrame, int padding)
-{
-    model->setFramePadding(useInnerFrame, padding);
-}
-
-void VymModelWrapper::setFramePenColor(const bool &useInnerFrame, const QString &color)
-{
-    model->setFramePenColor(useInnerFrame, color);
-}
-
-void VymModelWrapper::setFrameType(const bool &useInnerFrame, const QString &type)
-{
-    model->setFrameType(useInnerFrame, type);
 }
 
 void VymModelWrapper::setRotationHeading(const int &i)
@@ -1178,41 +1035,15 @@ void VymModelWrapper::sortChildren(bool b) { model->sortChildren(b); }
 
 void VymModelWrapper::sortChildren() { sortChildren(false); }
 
-void VymModelWrapper::toggleFlagByName(const QString &s)
-{
-    model->toggleFlagByName(s);
-}
-
-void VymModelWrapper::toggleScroll() { model->toggleScroll(); }
-
 void VymModelWrapper::toggleTarget() { model->toggleTarget(); }
 
 void VymModelWrapper::toggleTask() { model->toggleTask(); }
 
 void VymModelWrapper::undo() { model->undo(); }
 
-bool VymModelWrapper::unscroll()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = model->unscrollBranch(selbi);
-        if (!r)
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Couldn't unscroll branch");
-    }
-    return setResult(r);
-}
-
 void VymModelWrapper::unscrollChildren() { model->unscrollChildren(); }
 
 void VymModelWrapper::unselectAll() { model->unselectAll(); }
-
-void VymModelWrapper::unsetFlagByName(const QString &s)
-{
-    model->unsetFlagByName(s);
-}
 
 int VymModelWrapper::xlinkCount()
 {
