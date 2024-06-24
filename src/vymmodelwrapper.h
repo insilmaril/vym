@@ -62,7 +62,6 @@ class VymModelWrapper : public VymScriptContext {
     QString getXLinkPenStyle(); // FIXME-3 move to XLinkWrapper
     QString getXLinkStyleBegin();// FIXME-3 move to XLinkWrapper
     QString getXLinkStyleEnd();// FIXME-3 move to XLinkhWrapper
-    bool hasActiveFlag(const QString &flag);// FIXME-3 move to BranchWrapper
     bool hasNote();             // FIXME-3 move to BranchWrapper
     bool hasRichTextNote();     // FIXME-3 move to BranchWrapper
     bool hasTask();             // FIXME-3 move to BranchWrapper

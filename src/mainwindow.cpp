@@ -766,10 +766,6 @@ void Main::setupAPI()
     c = new Command("getXLinkStyleEnd", Command::XLink, Command::String);
     modelCommands.append(c);
 
-    c = new Command("hasActiveFlag", Command::TreeItem, Command::Bool);
-    c->addParameter(Command::String, false, "Name of flag");
-    modelCommands.append(c);
-
     c = new Command("hasNote", Command::Branch, Command::Bool);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
@@ -1153,6 +1149,11 @@ void Main::setupAPI()
     c = new Command("getNum", Command::Branch, Command::Int);
     c->setComment("Return position of branch in subtree");
     modelCommands.append(c);
+
+    c = new Command("hasActiveFlag", Command::TreeItem, Command::Bool);
+    c->addParameter(Command::String, false, "Name of flag");
+    c->setComment("Check if branch has an active flag with given name");
+    branchCommands.append(c);
 
     c = new Command("headingText", Command::Branch, Command::String);
     c->setComment("Set heading of branch from plaintext string");

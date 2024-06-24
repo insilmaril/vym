@@ -566,17 +566,6 @@ QString VymModelWrapper::getXLinkStyleEnd()
     return setResult(model->getXLinkStyleEnd());
 }
 
-bool VymModelWrapper::hasActiveFlag(const QString &flag)
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        r = selbi->hasActiveFlag(flag);
-    else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-    return setResult(r);
-}
-
 bool VymModelWrapper::hasNote()
 {
     bool r = !model->getNote().isEmpty();

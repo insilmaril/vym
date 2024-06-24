@@ -31,6 +31,7 @@ class BranchWrapper : public VymScriptContext {
     int getNum();
     QString getUrl();
     QString getVymLink();
+    bool hasActiveFlag(const QString &flag);
     bool hasNote();
     bool hasRichTextNote();
     QString headingText();  

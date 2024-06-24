@@ -163,6 +163,11 @@ QString BranchWrapper::getVymLink()
     return setResult(branchItem->vymLink());
 }
 
+bool BranchWrapper::hasActiveFlag(const QString &flag)
+{
+    return setResult(branchItem->hasActiveFlag(flag));
+}
+
 bool BranchWrapper::hasNote()
 {
     bool r = !branchItem->getNote().isEmpty();
