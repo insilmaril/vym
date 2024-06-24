@@ -401,7 +401,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
 Main::~Main()
 {
-    qDebug() << "Destr Mainwindow";
+    //qDebug() << "Destr Mainwindow";
 
     // Make sure there is no focus elsewhere, e.g. in BranchPropertyEditor
     // which could cause a crash.  (Qt bug?)
@@ -3921,11 +3921,12 @@ bool Main::closeModelWithId(uint id)
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
         if (vm && vm->modelId() == id) {
+            VymView *vv = view(i);
             tabWidget->removeTab(i);
 
             // Destroy stuff, order is important
             delete (vm->getMapEditor());
-            delete (view(i));
+            delete (vv);
             delete (vm);
 
             updateActions();
