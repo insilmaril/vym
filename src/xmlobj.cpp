@@ -23,7 +23,7 @@ QString quoteMeta(const QString &s)
 QString unquoteMeta(const QString &s)
 {
     QString r = s;
-    QRegularExpression rx("&amp;)");
+    QRegularExpression rx("&amp;");
     r.replace(rx, "&");
     rx.setPattern("&gt;");
     r.replace(rx, ">");
