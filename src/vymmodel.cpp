@@ -2320,35 +2320,41 @@ void VymModel::test()
 // Interface
 //////////////////////////////////////////////
     
-void VymModel::setTitle(const QString &s) // FIXME-2 Missing command
+void VymModel::setTitle(const QString &s)
 {
-    saveStateNew(QString("map.setMapTitle (\"%1\");").arg(title),
-              QString("map.setMapTitle (\"%1\");").arg(s),
-              QString("Set title of map to \"%1\"").arg(s));
-    title = s;
+    if (title != s) {
+        saveStateNew(QString("map.setTitle (\"%1\");").arg(title),
+                  QString("map.setTitle (\"%1\");").arg(s),
+                  QString("Set title of map to \"%1\"").arg(s));
+        title = s;
+    }
 }
 
-QString VymModel::getTitle() { return title; } // FIXME-2 Missing command?
+QString VymModel::getTitle() { return title; }
 
-void VymModel::setAuthor(const QString &s) // FIXME-2 Missing command?
+void VymModel::setAuthor(const QString &s)
 {
-    saveStateNew(QString("map.setMapAuthor (\"%1\");").arg(author),
-              QString("map.setMapAuthor (\"%1\");").arg(s),
-              QString("Set author of map to \"%1\"").arg(s));
-    author = s;
+    if (author != s) {
+        saveStateNew(QString("map.setAuthor (\"%1\");").arg(author),
+                  QString("map.setAuthor (\"%1\");").arg(s),
+                  QString("Set author of map to \"%1\"").arg(s));
+        author = s;
+    }
 }
 
-QString VymModel::getAuthor() { return author; } // FIXME-2 Missing command?
+QString VymModel::getAuthor() { return author; }
 
-void VymModel::setComment(const QString &s) // FIXME-2 Missing command?
+void VymModel::setComment(const QString &s)
 {
-    saveStateNew(QString("map.setMapComment (\"%1\")").arg(comment),
-              QString("map.setMapComment (\"%1\")").arg(s),
-              QString("Set comment of map"));
-    comment = s;
+    if (comment != s) {
+        saveStateNew(QString("map.setComment (\"%1\")").arg(comment),
+                  QString("map.setComment (\"%1\")").arg(s),
+                  QString("Set comment of map"));
+        comment = s;
+    }
 }
 
-QString VymModel::getComment() { return comment; } // FIXME-2 Missing command?
+QString VymModel::getComment() { return comment; }
 
 void VymModel::setMapVersion(const QString &s)
 {
