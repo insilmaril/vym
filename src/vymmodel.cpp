@@ -6176,7 +6176,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         }
 
         // Column width and font
-        if (updateMode & MapDesign::CreatedByUser) {
+        if (updateMode & MapDesign::CreatedByUser || updateMode & MapDesign::LoadingMap) {
             HeadingContainer *hc = bc->getHeadingContainer();
             hc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
             hc->setFont(mapDesignInt->font());
