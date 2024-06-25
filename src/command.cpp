@@ -146,6 +146,8 @@ QString  Command::objectTypeName() {
         return "Vym map";
     case BranchObject:
         return "Branch in a map";
+    case ImageObject:
+        return "Image in a map";
     default:
         return "Undefined";
     }

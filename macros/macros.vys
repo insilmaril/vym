@@ -113,9 +113,9 @@ function macro_f12()
 	// 2 - done task without arrows, but green hook
     map = vym.currentMap();
     b = map.selectedBranch();
-    if (map.hasTask() ) {
+    if (b.hasTask() ) {
         // Switch to state 2 
-        map.toggleTask();
+        b.toggleTask();
         b.unsetFlagByName("2arrow-up");
         b.unsetFlagByName("stopsign");
         b.setFlagByName("hook-green");
@@ -130,7 +130,7 @@ function macro_f12()
         } else {
             // Switch to state 1
             b.setFlagByName("2arrow-up");
-            map.toggleTask();
+            b.toggleTask();
         }
     }
 }

@@ -651,10 +651,6 @@ void Main::setupAPI()
     c = new Command("cut", Command::BranchOrImage);
     modelCommands.append(c);
 
-    c = new Command("cycleTask", Command::BranchOrImage);
-    c->addParameter(Command::Bool, true, "True, if cycling in reverse order");
-    modelCommands.append(c);
-
     c = new Command("depth", Command::BranchOrImage, Command::Int);
     modelCommands.append(c);
 
@@ -742,15 +738,6 @@ void Main::setupAPI()
     c = new Command("getSelectionString", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
-    c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
-    modelCommands.append(c);
-
-    c = new Command("getTaskSleep", Command::Branch, Command::String);
-    modelCommands.append(c);
-
-    c = new Command("getTaskSleepDays", Command::Branch, Command::Int);
-    modelCommands.append(c);
-
     c = new Command("getXLinkColor", Command::XLink, Command::String);
     modelCommands.append(c);
 
@@ -772,9 +759,6 @@ void Main::setupAPI()
 
     c = new Command("hasRichTextNote", Command::Branch, Command::Bool);
     c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
-    c = new Command("hasTask", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("importDir", Command::Branch);
@@ -907,14 +891,6 @@ void Main::setupAPI()
     c->addParameter(Command::Int, false, "Number of xlink");
     modelCommands.append(c);
 
-    c = new Command("setTaskPriorityDelta", Command::Branch);
-    c->addParameter(Command::String, false, "Manually add value to priority of task");
-    modelCommands.append(c);
-
-    c = new Command("setTaskSleep", Command::Branch);
-    c->addParameter(Command::String, false, "Days to sleep");
-    modelCommands.append(c);
-
     c = new Command("setHeadingConfluencePageName", Command::Branch);
     modelCommands.append(c);
 
@@ -1019,14 +995,6 @@ void Main::setupAPI()
     c->addParameter(Command::Color, false, "Color of selection box background");
     modelCommands.append(c);
 
-    c = new Command("setTaskPriority", Command::Branch);
-    c->addParameter(Command::Int, false, "Priority of task");
-    modelCommands.append(c);
-
-    c = new Command("setTaskSleep", Command::Branch, Command::Bool);
-    c->addParameter(Command::String, false, "Sleep time of task");
-    modelCommands.append(c);
-
     c = new Command("setXLinkColor", Command::XLink);
     c->addParameter(Command::String, false, "Color of xlink");
     modelCommands.append(c);
@@ -1070,9 +1038,6 @@ void Main::setupAPI()
     c = new Command("toggleTarget", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("toggleTask", Command::Branch);
-    modelCommands.append(c);
-
     c = new Command("undo", Command::Any);
     modelCommands.append(c);
 
@@ -1088,9 +1053,6 @@ void Main::setupAPI()
 
     c = new Command("xlinkCount", Command::Branch, Command::Int);
     modelCommands.append(c);
-
-    foreach (Command *c, modelCommands)
-        c->setObjectType(Command::MapObject);
 
 
     //
@@ -1122,23 +1084,28 @@ void Main::setupAPI()
 
     c = new Command("branchCount", Command::Branch, Command::Int);
     c->setComment("Return number of child branches");
-    modelCommands.append(c);
+    branchCommands.append(c);
 
     c = new Command("clearFlags", Command::Branch);
     c->setComment("Clear all flags of branch");
-    modelCommands.append(c);
+    branchCommands.append(c);
 
     c = new Command("colorBranch", Command::Branch);
     c->addParameter(Command::Color, true, "New color");
     c->setComment("Set color of heading of branch");
-    modelCommands.append(c);
+    branchCommands.append(c);
 
     c = new Command("colorSubtree", Command::Branch);
     c->addParameter(Command::Color, true, "New color");
     c->setComment("Set color of headings of all child branches and all their children");
-    modelCommands.append(c);
+    branchCommands.append(c);
 
-    c = new Command("getFrameType", Command::Branch, Command::String);
+    c = new Command("cycleTask", Command::BranchOrImage, Command::Bool);
+    c->addParameter(Command::Bool, true, "Flag to cycle in reverse order");
+    c->setComment("Cycle states of task in branch. Returns false, if branch has no task");
+    branchCommands.append(c);
+
+    c = new Command("getFrameType", Command::Branch, Command::String);  // FIXME-2 set Comment
     branchCommands.append(c);
 
     c = new Command("getJiraData", Command::Branch, Command::String);
@@ -1148,11 +1115,35 @@ void Main::setupAPI()
 
     c = new Command("getNum", Command::Branch, Command::Int);
     c->setComment("Return position of branch in subtree");
-    modelCommands.append(c);
+    branchCommands.append(c);
+
+    c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
+    c->setComment("Return delta of priority of task");
+    branchCommands.append(c);
+
+    c = new Command("getTaskSleep", Command::Branch, Command::String);// FIXME-2 set comment
+    branchCommands.append(c);
+
+    c = new Command("getTaskSleepDays", Command::Branch, Command::Int);// FIXME-2 set comment
+    branchCommands.append(c);
+
+    c = new Command("getTaskStatus", Command::Branch, Command::String);// FIXME-2 set comment
+    branchCommands.append(c);
+
+    c = new Command("getUrl", Command::Branch, Command::String);
+    c->setComment("Return  url of branch");
+    branchCommands.append(c);
+
+    c = new Command("getVymLink", Command::Branch, Command::String);
+    c->setComment("Get vymLink of branch");
+    branchCommands.append(c);
 
     c = new Command("hasActiveFlag", Command::TreeItem, Command::Bool);
     c->addParameter(Command::String, false, "Name of flag");
     c->setComment("Check if branch has an active flag with given name");
+    branchCommands.append(c);
+
+    c = new Command("hasTask", Command::Branch, Command::Bool);
     branchCommands.append(c);
 
     c = new Command("headingText", Command::Branch, Command::String);
@@ -1184,7 +1175,7 @@ void Main::setupAPI()
 
     c = new Command("remove", Command::Branch);
     c->setComment("Remove branch");
-    modelCommands.append(c);
+    branchCommands.append(c);
 
     c = new Command("scroll", Command::Branch);
     c->setComment("Scroll branch");
@@ -1196,11 +1187,11 @@ void Main::setupAPI()
 
     c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
     c->setComment("Select the first of all child branches");
-    modelCommands.append(c);
+    branchCommands.append(c);
 
     c = new Command("selectLastBranch", Command::Branch, Command::Bool);
     c->setComment("Select the last of all child branches");
-    modelCommands.append(c);
+    branchCommands.append(c);
 
     c = new Command("selectParent", Command::Branch, Command::Bool);
     c->setComment("Select parent of branch");
@@ -1264,6 +1255,14 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Position y");
     branchCommands.append(c);
 
+    c = new Command("setTaskPriorityDelta", Command::Branch); // FIXME-2 Set comment
+    c->addParameter(Command::String, false, "Manually add value to priority of task");
+    branchCommands.append(c);
+
+    c = new Command("setTaskSleep", Command::Branch); // FIXME-2 Set comment
+    c->addParameter(Command::String, false, "Days to sleep");
+    branchCommands.append(c);
+
     c = new Command("setUrl", Command::Branch);
     c->addParameter(Command::String, false, "Url of TreeItem");
     c->setComment("Set Url of branch");
@@ -1283,6 +1282,9 @@ void Main::setupAPI()
     c->setComment("Toggle scroll state of branch");
     branchCommands.append(c);
 
+    c = new Command("toggleTask", Command::Branch); // FIXME-2 set comment
+    branchCommands.append(c);
+
     c = new Command("unscroll", Command::Branch);
     c->setComment("Unscroll branch");
     branchCommands.append(c);
@@ -1292,20 +1294,9 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Name of flag to unset");
     branchCommands.append(c);
 
-    foreach (Command *c, branchCommands)
-        c->setObjectType(Command::BranchObject);
-
     //
-    // Below are the commands for a branch
+    // Below are the commands for an image
     //
-    c = new Command("getUrl", Command::Branch, Command::String);
-    c->setComment("Get url of branch");
-    branchCommands.append(c);
-
-    c = new Command("getVymLink", Command::Branch, Command::String);
-    c->setComment("Get vymLink of branch");
-    branchCommands.append(c);
-
     c = new Command("headingText", Command::Image, Command::String);
     c->setComment("Set heading of image from plaintext string");
     imageCommands.append(c);
@@ -1324,6 +1315,16 @@ void Main::setupAPI()
     c->setComment("Set heading of image as plain text string");
     imageCommands.append(c);
 
+
+    // Finally set objectTypes in all defined commands
+    foreach (Command *c, branchCommands)
+        c->setObjectType(Command::BranchObject);
+
+    foreach (Command *c, modelCommands)
+        c->setObjectType(Command::MapObject);
+
+    foreach (Command *c, imageCommands)
+        c->setObjectType(Command::ImageObject);
 
 }
 

@@ -22,6 +22,7 @@ class BranchWrapper : public VymScriptContext {
     void clearFlags();
     void colorBranch(const QString &color);
     void colorSubtree(const QString &color);
+    bool cycleTask(bool reverse = false);
     int getFramePadding(const bool & useInnerFrame);
     int getFramePenWidth(const bool & useInnerFrame);
     QString getFrameType(const bool & useInnerFrame);
@@ -29,11 +30,16 @@ class BranchWrapper : public VymScriptContext {
     QString getNoteText();
     QString getNoteXML();
     int getNum();
+    int getTaskPriorityDelta();
+    QString getTaskSleep();
+    int getTaskSleepDays();
+    QString getTaskStatus();
     QString getUrl();
     QString getVymLink();
     bool hasActiveFlag(const QString &flag);
     bool hasNote();
     bool hasRichTextNote();
+    bool hasTask();
     QString headingText();  
     bool isScrolled();
     void moveDown();
@@ -58,11 +64,14 @@ class BranchWrapper : public VymScriptContext {
     void setNoteRichText(const QString &);
     void setNoteText(const QString &);
     void setPos(qreal x, qreal y);// FIXME-2 copy to ImageWrapper
+    void setTaskPriorityDelta(const int &n);
+    bool setTaskSleep(const QString &s);
     void setUrl(const QString &s);
     void setVymLink(const QString &s);
     void toggleFlagByName(const QString &);
     void toggleFlagByUid(const QString &);
     void toggleScroll();
+    void toggleTask();
     void unscroll();
     void unsetFlagByName(const QString &);
 

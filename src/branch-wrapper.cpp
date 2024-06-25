@@ -118,6 +118,13 @@ void BranchWrapper::colorSubtree(const QString &color)
         branchItem->getModel()->colorSubtree(col, branchItem);
 }
 
+bool BranchWrapper::cycleTask(bool reverse)
+{
+    bool r = branchItem->getModel()->cycleTaskStatus(branchItem, reverse);
+
+    return setResult(r);
+}
+
 int BranchWrapper::getFramePadding(const bool &useInnerFrame)
 {
     return setResult(branchItem->getBranchContainer()->framePadding(useInnerFrame));
@@ -153,6 +160,47 @@ int BranchWrapper::getNum()
     return setResult(branchItem->num());
 }
 
+int BranchWrapper::getTaskPriorityDelta()
+{
+    return branchItem->getModel()->getTaskPriorityDelta(branchItem);
+}
+
+QString BranchWrapper::getTaskSleep()
+{
+    QString r;
+    Task *task = branchItem->getTask();
+    if (task)
+        r = task->getSleep().toString(Qt::ISODate);
+    else
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "Branch has no task");
+    return setResult(r);
+}
+
+int BranchWrapper::getTaskSleepDays()
+{
+    int r = -1;
+        Task *task = branchItem->getTask();
+    if (task)
+        r = task->getDaysSleep();
+    else
+        scriptEngine->throwError(QJSValue::GenericError, "Branch has no task");
+    return setResult(r);
+}
+
+QString BranchWrapper::getTaskStatus()
+{
+    QString r;
+    Task *task = branchItem->getTask();
+    if (task) 
+        r = task->getStatusString();
+    else
+        scriptEngine->throwError(QJSValue::GenericError, "Branch has no task");
+
+    return setResult(r);
+}
+
 QString BranchWrapper::getUrl()
 {
     return setResult(branchItem->url());
@@ -177,6 +225,16 @@ bool BranchWrapper::hasNote()
 bool BranchWrapper::hasRichTextNote()
 {
     return setResult(branchItem->getNote().isRichText());
+}
+
+bool BranchWrapper::hasTask()
+{
+    bool r = false;
+    Task *task = branchItem->getTask();
+    if (task)
+        r = true;
+
+    return setResult(r);
 }
 
 QString BranchWrapper::headingText()
@@ -321,6 +379,16 @@ void BranchWrapper::setPos(qreal x, qreal y)
     branchItem->getModel()->setPos(QPointF(x, y), branchItem);
 }
 
+void BranchWrapper::setTaskPriorityDelta(const int &n)
+{
+    branchItem->getModel()->setTaskPriorityDelta(n, branchItem);
+}
+
+bool BranchWrapper::setTaskSleep(const QString &s)
+{
+    return setResult(branchItem->getModel()->setTaskSleep(s, branchItem));
+}
+
 void BranchWrapper::setUrl(const QString &s)
 {
     branchItem->getModel()->setUrl(s, true, branchItem);
@@ -346,6 +414,10 @@ void BranchWrapper::toggleScroll()
     branchItem->getModel()->toggleScroll(branchItem);
 }
 
+void BranchWrapper::toggleTask() {
+    branchItem->getModel()->toggleTask(branchItem);
+}
+
 void BranchWrapper::unscroll()
 {
     branchItem->getModel()->unscrollBranch(branchItem);
@@ -355,3 +427,4 @@ void BranchWrapper::unsetFlagByName(const QString &s)
 {
     branchItem->getModel()->unsetFlagByName(s, branchItem);
 }
+

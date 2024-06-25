@@ -31,12 +31,12 @@ class VymModelWrapper : public VymScriptContext {
     void centerOnID(const QString &id); // tested: ok
     void copy();        // FIXME-3 copy to BranchWrapper (use without selecting in VymModel!)
     void cut();         // FIXME-3 copy to BranchWrapper  (use without selecting in VymModel!)
-    void cycleTask();   // FIXME-3 move to BranchWrapper
     int depth();        // FIXME-3 move to BranchWrapper
     void detach();      // FIXME-3 move to BranchWrapper
     bool exportMap(QJSValueList args);
     BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
     BranchWrapper* findBranchById(const QString &);
+    BranchWrapper* findBranchBySelection(const QString &);
     ImageWrapper* findImageById(const QString &);
     QString getDestPath();
     QString getFileDir();
@@ -45,7 +45,7 @@ class VymModelWrapper : public VymScriptContext {
     QString getAuthor();
     QString getComment();
     QString getTitle();
-    QString getNotePlainText(); // FIXME-3 move to BranchWrapper
+    QString getNotePlainText(); // FIXME-3 getNoteText in BranchWrapper. Rework test scripts
     QString getNoteXML();       // FIXME-3 move to BranchWrapper
     qreal getPosX();            // FIXME-3 move to BranchWrapper, copy for image
     qreal getPosY();            // FIXME-3 move to BranchWrapper, copy for image
@@ -54,17 +54,13 @@ class VymModelWrapper : public VymScriptContext {
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
     int getRotationSubtree();   // FIXME-3 move to BranchWrapper
     QString getSelectionString();//FIXME-3 copy to BranchWrapper?
-    int getTaskPriorityDelta(); // FIXME-3 move to BranchWrapper
-    QString getTaskSleep();     // FIXME-3 move to BranchWrapper
-    int getTaskSleepDays();     // FIXME-3 move to BranchWrapper
     QString getXLinkColor();    // FIXME-3 move to XLinkWrapper
-    int getXLinkWidth();        // FIXME-3 move to XLinkWrapper
+    int getXLinkWidth();        // FIXME-2 move to XLinkWrapper
     QString getXLinkPenStyle(); // FIXME-3 move to XLinkWrapper
     QString getXLinkStyleBegin();// FIXME-3 move to XLinkWrapper
     QString getXLinkStyleEnd();// FIXME-3 move to XLinkhWrapper
     bool hasNote();             // FIXME-3 move to BranchWrapper
     bool hasRichTextNote();     // FIXME-3 move to BranchWrapper
-    bool hasTask();             // FIXME-3 move to BranchWrapper
     void importDir(const QString &path);
     void loadImage(const QString &filename);// FIXME-3 move to BranchWrapper
     void loadNote(const QString &filename); // FIXME-3 move to BranchWrapper
@@ -119,8 +115,6 @@ class VymModelWrapper : public VymScriptContext {
     void setSelectionBrushColor(const QString &color);
     void setSelectionPenColor(const QString &color);
     void setSelectionPenWidth(const qreal &);
-    void setTaskPriorityDelta(const int &n);    // FIXME-3 move to BranchWrapper
-    bool setTaskSleep(const QString &s);        // FIXME-3 move to BranchWrapper
     void setXLinkColor(const QString &color);   // FIXME-3 move to XLinkWrapper
     void setXLinkStyle(const QString &style);   // FIXME-3 move to XLinkWrapper
     void setXLinkStyleBegin(const QString &style);// FIXME-3 move to XLinkWrapper
@@ -131,7 +125,6 @@ class VymModelWrapper : public VymScriptContext {
     void sortChildren(bool b);  // FIXME-3 move to BranchWrapper
     void sortChildren();        // FIXME-3 move to BranchWrapper
     void toggleTarget();        // FIXME-3 move to BranchWrapper
-    void toggleTask();          // FIXME-3 move to BranchWrapper
     void undo();
     void unscrollChildren();    // FIXME-3 move to BranchWrapper
     void unselectAll();

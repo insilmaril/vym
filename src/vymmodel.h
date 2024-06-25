@@ -420,19 +420,19 @@ class VymModel : public TreeModel {
     void toggleHideExport();
 
     /*! Toggle task for branch */
-    void toggleTask();
+    void toggleTask(BranchItem *bi = nullptr);
 
     /*! Cycle through task states */
-    bool cycleTaskStatus(bool reverse = false);
+    bool cycleTaskStatus(BranchItem *bi = nullptr, bool reverse = false);
 
     /*! Set task to sleep for number of days or until a given date*/
-    bool setTaskSleep(const QString &s);
+    bool setTaskSleep(const QString &s, BranchItem *bi = nullptr);
 
     /*! Set manual delta for priority of task */
     void setTaskPriorityDelta(const int &n, BranchItem *bi = nullptr);
 
     /*! Get manual delta for priority of task */
-    int getTaskPriorityDelta();
+    int getTaskPriorityDelta(BranchItem *bi = nullptr);
 
     /*! count tasks in this model */
     int taskCount();

@@ -9,7 +9,8 @@ class Command {
     enum ObjectType{
         VymObject,
         MapObject,
-        BranchObject
+        BranchObject,
+        ImageObject
     };
     enum ParameterType {
         Undefined,

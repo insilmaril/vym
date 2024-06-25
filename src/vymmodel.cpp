@@ -3197,22 +3197,20 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
 
 void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save positions, too!)
 {
-    QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        if (selbi) {
-            bc = selbi->getBranchContainer();
-            if (s == "Auto") {
-                bc->imagesContainerAutoLayout = true;
-                bc->setImagesContainerLayout(
-                        mapDesignInt->imagesContainerLayout(selbi->depth()));
-            } else {
-                bc->imagesContainerAutoLayout = false;
-                Container::Layout layout;
-                layout = Container::layoutFromString(s);
-                if (layout != Container::UndefinedLayout)
-                    bc->setImagesContainerLayout(layout);
-            }
+        bc = selbi->getBranchContainer();
+        if (s == "Auto") {
+            bc->imagesContainerAutoLayout = true;
+            bc->setImagesContainerLayout(
+                    mapDesignInt->imagesContainerLayout(selbi->depth()));
+        } else {
+            bc->imagesContainerAutoLayout = false;
+            Container::Layout layout;
+            layout = Container::layoutFromString(s);
+            if (layout != Container::UndefinedLayout)
+                bc->setImagesContainerLayout(layout);
         }
     }
     reposition();
@@ -3261,12 +3259,13 @@ void VymModel::toggleHideExport()
     }
 }
 
-void VymModel::toggleTask()
+void VymModel::toggleTask(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        saveStateChangingPart(
-            selbi, selbi, QString("toggleTask()"),
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (auto selbi, selbis) {
+        QString uc = "toggleTask();";
+        saveStateBranch(
+            selbi, uc, uc,
             QString("Toggle task of %1").arg(getObjectName(selbi)));
         Task *task = selbi->getTask();
         if (!task) {
@@ -3281,33 +3280,45 @@ void VymModel::toggleTask()
     }
 }
 
-bool VymModel::cycleTaskStatus(bool reverse)
+bool VymModel::cycleTaskStatus(BranchItem *bi, bool reverse)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    bool repositionRequired = false;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            saveStateChangingPart(
-                selbi, selbi, QString("cycleTask()"),
-                QString("Toggle task of %1").arg(getObjectName(selbi)));
+            QString uc, rc;
+            if (!reverse) {
+                uc = "cycleTask(true);";
+                rc = "cycleTask();";
+            } else {
+                uc = "cycleTask();";
+                rc = "cycleTask(true);";
+            }
+            saveStateBranch(
+                selbi, uc, rc,
+                QString("Cycle task of %1").arg(getObjectName(selbi)));
             task->cycleStatus(reverse);
             task->setDateModification();
 
-            // make sure task is still visible
+            // make sure task is still visible  // FIXME-2 for multi-selections?
             taskEditor->select(task);
             emitDataChanged(selbi);
-            reposition();
-            return true;
+            repositionRequired = true;
         }
+    }
+    if (repositionRequired) {
+        reposition();
+        return true;
     }
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)
+bool VymModel::setTaskSleep(const QString &s, BranchItem *bi)
 {
     bool ok = false;
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi && !s.isEmpty()) {
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (auto selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
             QDateTime oldSleep = task->getSleep();
@@ -3427,7 +3438,9 @@ bool VymModel::setTaskSleep(const QString &s)
             }
 
         } // Found task
-    }     // Found branch
+        if (!ok)
+            return false;
+    }     // Looping over selected branches
     return ok;
 }
 
@@ -3450,9 +3463,9 @@ void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
     }
 }
 
-int VymModel::getTaskPriorityDelta()
+int VymModel::getTaskPriorityDelta(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
         Task *task = selbi->getTask();
         if (task)
@@ -3637,7 +3650,7 @@ void VymModel::moveUp(TreeItem *ti)
     QList<BranchItem *> selbis = getSelectedBranches(ti);
 
     if (!selbis.isEmpty()){
-        foreach (BranchItem *selbi, sortBranchesByNum(selbis, false)){
+        foreach (BranchItem *selbi, sortBranchesByNum(selbis, false)) {
             if (canMoveUp(selbi))
                 relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
         }

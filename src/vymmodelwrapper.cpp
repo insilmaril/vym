@@ -134,14 +134,6 @@ void VymModelWrapper::copy() { model->copy(); }
 
 void VymModelWrapper::cut() { model->cut(); }
 
-void VymModelWrapper::cycleTask()
-{
-    if (!model->cycleTaskStatus())
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                "Couldn't cycle task status");
-}
-
 int VymModelWrapper::depth()
 {
     TreeItem *selti = model->getSelectedItem();
@@ -337,6 +329,15 @@ BranchWrapper* VymModelWrapper::findBranchById(const QString &u)
         return nullptr;
 }
 
+BranchWrapper* VymModelWrapper::findBranchBySelection(const QString &s)
+{
+    TreeItem *ti = model->findBySelectString(s);
+    if (ti && ti->hasTypeBranch())
+        return ((BranchItem*)ti)->branchWrapper();
+    else
+        return nullptr;
+}
+
 ImageWrapper* VymModelWrapper::findImageById(const QString &u)
 {
     TreeItem *ti = model->findUuid(QUuid(u));
@@ -501,45 +502,6 @@ QString VymModelWrapper::getSelectionString()
     return setResult(model->getSelectString());
 }
 
-int VymModelWrapper::getTaskPriorityDelta()
-{
-    return model->getTaskPriorityDelta();
-}
-
-QString VymModelWrapper::getTaskSleep()
-{
-    QString r;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        Task *task = selbi->getTask();
-        if (task)
-            r = task->getSleep().toString(Qt::ISODate);
-        else
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Branch has no task");
-    } else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-    return setResult(r);
-}
-
-int VymModelWrapper::getTaskSleepDays()
-{
-    int r = -1;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        Task *task = selbi->getTask();
-        if (task)
-            r = task->getDaysSleep();
-        else
-            //logErrorOld(context(), QScriptContext::UnknownError,
-        scriptEngine->throwError(QJSValue::GenericError,
-                     "Branch has no task");
-    } else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-    return setResult(r);
-}
-
 QString VymModelWrapper::getXLinkColor()
 {
     return setResult(model->getXLinkColor().name());
@@ -575,20 +537,6 @@ bool VymModelWrapper::hasNote()
 bool VymModelWrapper::hasRichTextNote()
 {
     return setResult(model->hasRichTextNote());
-}
-
-bool VymModelWrapper::hasTask()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        Task *task = selbi->getTask();
-        if (task)
-            r = true;
-    } else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-
-    return setResult(r);
 }
 
 void VymModelWrapper::importDir(const QString &path)
@@ -969,17 +917,6 @@ void VymModelWrapper::setSelectionPenWidth(const qreal &w)
     model->setSelectionPenWidth(w);
 }
 
-void VymModelWrapper::setTaskPriorityDelta(const int &n)
-{
-    model->setTaskPriorityDelta(n);
-}
-
-bool VymModelWrapper::setTaskSleep(const QString &s)
-{
-    bool r = model->setTaskSleep(s);
-    return setResult(r);
-}
-
 void VymModelWrapper::setXLinkColor(const QString &color)
 {
     QColor col(color);
@@ -1025,8 +962,6 @@ void VymModelWrapper::sortChildren(bool b) { model->sortChildren(b); }
 void VymModelWrapper::sortChildren() { sortChildren(false); }
 
 void VymModelWrapper::toggleTarget() { model->toggleTarget(); }
-
-void VymModelWrapper::toggleTask() { model->toggleTask(); }
 
 void VymModelWrapper::undo() { model->undo(); }
 

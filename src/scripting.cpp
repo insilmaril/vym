@@ -122,7 +122,7 @@ bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
     qDebug() << "VymWrapper::fileCopy " << srcPath << " -> " << dstPath;
     QFile file(srcPath);
     if (!file.exists()) {
-        qDebug() << "fileCopy - does not exist:" << srcPath;
+        qDebug() << "VymWrapper::fileCopy()   srcPath does not exist:" << srcPath;
         scriptEngine->throwError(
                 QJSValue::ReferenceError, 
                 QString("File '%1' does not exist.").arg(srcPath));

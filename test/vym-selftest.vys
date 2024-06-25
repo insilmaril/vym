@@ -68,7 +68,13 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 {
   // Copy the map referenced above to @testDir/test-current.[vym|xml]
   // and try to load it
-  currentMapPath = testDir + "/maps/current-map.vym";
+  if (mapPath.endsWith(".vym") )
+      postfix = ".vym";
+  else
+      postfix = ".xml";
+
+  currentMapPath = testDir + "/maps/current-map" + postfix;
+
   if (vym.fileExists(currentMapPath)) {
       vym.print("# Removing existing map: " + currentMapPath);
       vym.fileRemove(currentMapPath);
@@ -1185,20 +1191,30 @@ function test_xlinks()
 function test_tasks()
 {
   heading("Tasks");
-  let map = initMap("maps/test-tasks.xml");
+  let map = initMap("test/maps/test-tasks.xml");
 
-  map.select(branch_0Aa);
-  expect("After loading '" +branch_0Aa + "' has no task", map.hasTask(), false);
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  ha = branch_0Aa.headingText();
+  expect("After loading '" + ha + "' has no task", branch_0Aa.hasTask(), false);
 
-  map.select(branch_0Ab);
-  expect("After loading '" + branch_0Ab + "' has task", map.hasTask(), true);
-  expect("After loading '" + branch_0Ab + "' task sleeps more than 1000 days",
-	map.getTaskSleepDays() > 1000,
+  branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
+  hb = branch_0Ab.headingText();
+
+  expect("After loading '" + hb + "' has task", branch_0Ab.hasTask(), true);
+  expect("After loading '" + hb + "' task sleeps more than 1000 days",
+	branch_0Ab.getTaskSleepDays() > 1000,
 	true);
 
-  map.select(branch_0Aa);
-  map.toggleTask();
-  expect("Toggle task", map.hasTask(), true);
+  branch_0Aa.toggleTask();
+  expect("Toggle task of '" + ha + "'" , branch_0Aa.hasTask(), true);
+
+  branch_0Aa.cycleTask();
+  branch_0Aa.cycleTask();
+  branch_0Aa.cycleTask();
+  expect("After three cycles, task is 'Finished'", branch_0Aa.getTaskStatus(), "Finished");
+  map.undo();
+  map.undo();
+  expect("After two undos, task is 'NotStarted'", branch_0Aa.getTaskStatus(), "NotStarted");
 
 /* FIXME-2 Date functions used in ruby tests not available here yet
   date_today = DateTime.now
@@ -1287,6 +1303,7 @@ test_basics();
 //test_modify_branches();
 //test_moving_parts();
 //test_references();
+test_tasks();	// FIXME-2 uncomplete (date calculations)
 
 
 /* FIXME Not ported yet
@@ -1305,7 +1322,6 @@ test_saving();
 test_scrolling();
 test_slides();
 test_standard_flags();
-test_tasks();	// FIXME-2 uncomplete (date calculations)
 test_user_flags();
 test_xlinks();
 */
