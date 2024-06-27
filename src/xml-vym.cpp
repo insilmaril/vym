@@ -930,25 +930,25 @@ void VymReader::readSlide()
         s = attributeToString("zoom");
         if (!s.isEmpty()) {
             r = s.toDouble(&ok);
-            if (ok) scriptlines.append(QString("setMapZoom(%1)").arg(r));
+            if (ok) scriptlines.append(QString("setZoom(%1)").arg(r));
         }
 
         s = attributeToString("rotation");
         if (!s.isEmpty()) {
             r = s.toDouble(&ok);
-            if (ok) scriptlines.append(QString("setMapRotation(%1)").arg(r));
+            if (ok) scriptlines.append(QString("setRotation(%1)").arg(r));
         }
 
         s = attributeToString("duration");
         if (!s.isEmpty()) {
             i = s.toInt(&ok);
-            if (ok) scriptlines.append(QString("setMapAnimCurve(%1)").arg(i));
+            if (ok) scriptlines.append(QString("setAnimCurve(%1)").arg(i));
         }
 
         s = attributeToString("curve");
         if (!s.isEmpty()) {
             i = s.toInt(&ok);
-            if (ok) scriptlines.append(QString("setMapAnimDuration(%1)").arg(i));
+            if (ok) scriptlines.append(QString("setAnimDuration(%1)").arg(i));
         }
 
         s = attributeToString("mapitem");

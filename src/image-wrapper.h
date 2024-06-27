@@ -13,6 +13,7 @@ class ImageWrapper : public VymScriptContext {
     ~ImageWrapper();
 
   public slots:
+    bool hasRichTextHeading();
     QString headingText();  
     bool selectParent();
     void setHeadingRichText(const QString &);

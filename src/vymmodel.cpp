@@ -910,8 +910,9 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imag
                     select(parentBranch);
                 }
                 else {
-                    qWarning() << "vymmodel: Failed to load " + s;
+                    qWarning() << QString("vymmodel: Failed to load '%1'").arg(s);
                     deleteItem(ii);
+                    return nullptr;
                 }
             }
 
@@ -2411,9 +2412,9 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
 
         QString tiv;    // ti variable in script
         if (selti->hasTypeBranch())
-            tiv = setBranchVar((BranchItem*)selti) + "b.select();b.";
+            tiv = setBranchVar((BranchItem*)selti) + "b.";
         else
-            tiv = setImageVar((ImageItem*)selti) + "i.select();i."; // FIXME-000 select missing for ImageWrapper
+            tiv = setImageVar((ImageItem*)selti) + "i.";
 
         QString uc, rc;
         if (h_old.isRichText())
@@ -2545,13 +2546,13 @@ bool VymModel::hasRichTextNote() // FIXME-2 still needed? No longer for scriptin
     return false;
 }
 
-void VymModel::loadNote(const QString &fn)
+bool VymModel::loadNote(const QString &fn, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
         QString n;
         if (!loadStringFromDisk(fn, n))
-            qWarning() << "VymModel::loadNote Couldn't load " << fn;
+            qWarning() << QString("VymModel::loadNote Couldn't load '%1'").arg(fn);
         else {
             VymNote vn;
             vn.setAutoText(n);
@@ -2559,13 +2560,15 @@ void VymModel::loadNote(const QString &fn)
             emitDataChanged(selbi);
             emitUpdateQueries();
             reposition();
+            return true;
         }
     }
     else
         qWarning("VymModel::loadNote no branch selected");
+    return false;
 }
 
-void VymModel::saveNote(const QString &fn)
+bool VymModel::saveNote(const QString &fn)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -2576,10 +2579,13 @@ void VymModel::saveNote(const QString &fn)
         else {
             if (!saveStringToDisk(fn, n.saveToDir()))
                 qWarning() << "VymModel::saveNote Couldn't save " << fn;
+            else
+                return true;
         }
     }
     else
         qWarning("VymModel::saveNote no branch selected");
+    return false;
 }
 
 void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing

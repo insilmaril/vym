@@ -280,7 +280,7 @@ bool VymModelWrapper::exportMap(QJSValueList args)
     }
     else if (format == "Markdown") {
         model->exportMarkdown(filename, false);
-    }
+    }    
     else if (format == "OrgMode") {
         model->exportOrgMode(filename, false);
     }
@@ -341,6 +341,15 @@ BranchWrapper* VymModelWrapper::findBranchBySelection(const QString &s)
 ImageWrapper* VymModelWrapper::findImageById(const QString &u)
 {
     TreeItem *ti = model->findUuid(QUuid(u));
+    if (ti && ti->hasTypeImage())
+        return ((ImageItem*)ti)->imageWrapper();
+    else
+        return nullptr;
+}
+
+ImageWrapper* VymModelWrapper::findImageBySelection(const QString &s)
+{
+    TreeItem *ti = model->findBySelectString(s);
     if (ti && ti->hasTypeImage())
         return ((ImageItem*)ti)->imageWrapper();
     else
@@ -528,17 +537,6 @@ QString VymModelWrapper::getXLinkStyleEnd()
     return setResult(model->getXLinkStyleEnd());
 }
 
-bool VymModelWrapper::hasNote()
-{
-    bool r = !model->getNote().isEmpty();
-    return setResult(r);
-}
-
-bool VymModelWrapper::hasRichTextNote()
-{
-    return setResult(model->hasRichTextNote());
-}
-
 void VymModelWrapper::importDir(const QString &path)
 {
     model->importDir(
@@ -557,23 +555,6 @@ BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)
         return bi->branchWrapper();
     else
         return nullptr;
-}
-
-void VymModelWrapper::loadImage(const QString &filename)
-{
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        model->loadImage(
-            selbi,
-            filename); // FIXME-3 error handling missing (in vymmodel and here)
-    } else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-}
-
-void VymModelWrapper::loadNote(const QString &filename)
-{
-    model->loadNote(
-        filename); // FIXME-3 error handling missing (in vymmodel and here)
 }
 
 void VymModelWrapper::moveSlideDown(int n)
@@ -810,7 +791,7 @@ void VymModelWrapper::setHideLinkUnselected(bool b)
     model->setHideLinkUnselected(b);
 }
 
-void VymModelWrapper::setMapAnimCurve(int n)
+void VymModelWrapper::setAnimCurve(int n)
 {
     if (n < 0 || n > QEasingCurve::OutInBounce)
         scriptEngine->throwError(
@@ -823,14 +804,14 @@ void VymModelWrapper::setMapAnimCurve(int n)
     }
 }
 
-void VymModelWrapper::setMapAnimDuration(int n)
+void VymModelWrapper::setAnimDuration(int n)
 {
     model->setMapAnimDuration(n);
 }
 
 void VymModelWrapper::setAuthor(const QString &s) { model->setAuthor(s); }
 
-void VymModelWrapper::setMapBackgroundColor(const QString &color)
+void VymModelWrapper::setBackgroundColor(const QString &color)
 {
     QColor col(color);
     if (col.isValid()) {
@@ -844,7 +825,7 @@ void VymModelWrapper::setMapBackgroundColor(const QString &color)
 
 void VymModelWrapper::setComment(const QString &s) { model->setComment(s); }
 
-void VymModelWrapper::setMapLinkStyle(const QString &style)
+void VymModelWrapper::setLinkStyle(const QString &style)
 {
     if (!model->setLinkStyle(style))
         scriptEngine->throwError(
@@ -852,11 +833,11 @@ void VymModelWrapper::setMapLinkStyle(const QString &style)
                 QString("Could not set linkstyle to %1").arg(style));
 }
 
-void VymModelWrapper::setMapRotation(float a) { model->setMapRotation(a); }
+void VymModelWrapper::setRotation(float a) { model->setMapRotation(a); }
 
 void VymModelWrapper::setTitle(const QString &s) { model->setTitle(s); }
 
-void VymModelWrapper::setMapZoom(float z) { model->setMapZoomFactor(z); }
+void VymModelWrapper::setZoom(float z) { model->setMapZoomFactor(z); }
 
 void VymModelWrapper::setNotePlainText(const QString &s)
 {

@@ -29,8 +29,8 @@ class VymModelWrapper : public VymScriptContext {
                   const QString &color, const QString &penstyle);
     int centerCount();
     void centerOnID(const QString &id); // tested: ok
-    void copy();        // FIXME-3 copy to BranchWrapper (use without selecting in VymModel!)
-    void cut();         // FIXME-3 copy to BranchWrapper  (use without selecting in VymModel!)
+    void copy();
+    void cut();
     int depth();        // FIXME-3 move to BranchWrapper
     void detach();      // FIXME-3 move to BranchWrapper
     bool exportMap(QJSValueList args);
@@ -38,6 +38,7 @@ class VymModelWrapper : public VymScriptContext {
     BranchWrapper* findBranchById(const QString &);
     BranchWrapper* findBranchBySelection(const QString &);
     ImageWrapper* findImageById(const QString &);
+    ImageWrapper* findImageBySelection(const QString &);
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
@@ -59,11 +60,7 @@ class VymModelWrapper : public VymScriptContext {
     QString getXLinkPenStyle(); // FIXME-3 move to XLinkWrapper
     QString getXLinkStyleBegin();// FIXME-3 move to XLinkWrapper
     QString getXLinkStyleEnd();// FIXME-3 move to XLinkhWrapper
-    bool hasNote();             // FIXME-3 move to BranchWrapper
-    bool hasRichTextNote();     // FIXME-3 move to BranchWrapper
     void importDir(const QString &path);
-    void loadImage(const QString &filename);// FIXME-3 move to BranchWrapper
-    void loadNote(const QString &filename); // FIXME-3 move to BranchWrapper
     void moveSlideDown(int n);
     void moveSlideDown();
     void moveSlideUp(int n);
@@ -71,7 +68,7 @@ class VymModelWrapper : public VymScriptContext {
     void newBranchIterator(const QString &itname, bool deepLevelsFirst = false);
     BranchWrapper* nextBranch(const QString &itname);
     void note2URLs();       // FIXME-3 move to BranchWrapper
-    void paste();           // FIXME copy to BranchWrappe (use without selecting in VymModel!)
+    void paste();
     void redo();
     void remove();          // FIXME-3 copy to ImageWrapper, leave for VymModel (already in BranchWrapper)
     void removeChildren();      // FIXME-3 move to BranchWrapper
@@ -96,15 +93,15 @@ class VymModelWrapper : public VymScriptContext {
     void setHeadingConfluencePageName();// FIXME-3 move to BranchWrapper
     void setHideExport(bool b);         // FIXME-3 move to BranchWrapper
     void setHideLinkUnselected(bool b); // FIXME-3 move to BranchWrapper and ImageWrapper
-    void setMapAnimCurve(int n);        // FIXME-3 rename
-    void setMapAnimDuration(int n);     // FIXME-3 rename
+    void setAnimCurve(int n);
+    void setAnimDuration(int n);
     void setAuthor(const QString &s);
-    void setMapBackgroundColor(const QString &color);// FIXME-3 rename 
+    void setBackgroundColor(const QString &color);
     void setComment(const QString &s);
-    void setMapLinkStyle(const QString &style); // FIXME-3 rename 
-    void setMapRotation(float a);               // FIXME-3 rename 
+    void setLinkStyle(const QString &style);
+    void setRotation(float a);
     void setTitle(const QString &s);
-    void setMapZoom(float z);                   // FIXME-3 rename 
+    void setZoom(float z);
     void setNotePlainText(const QString &s);    // FIXME-3 OBSOLETE moved to BranchWrapper
     void setRotationHeading(const int &i);      // FIXME-3 move to BranchWrapper
     void setRotationSubtree(const int &i);      // FIXME-3 move to BranchWrapper

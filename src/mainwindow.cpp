@@ -675,6 +675,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Uuid of branch");
     modelCommands.append(c);
 
+    c = new Command("findBranchBySelection", Command::Any, Command::BranchItem);
+    c->setComment("Find branch with given selection string. ");
+    c->addParameter(Command::String, false, "Selection string");
+    modelCommands.append(c);
+
     c = new Command("findImageById", Command::Any, Command::ImageItem);
     c->setComment("Find image with given unique Uuid. ");
     c->addParameter(Command::String, false, "Uuid of image");
@@ -753,10 +758,6 @@ void Main::setupAPI()
     c = new Command("getXLinkStyleEnd", Command::XLink, Command::String);
     modelCommands.append(c);
 
-    c = new Command("hasNote", Command::Branch, Command::Bool);
-    c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
     c = new Command("hasRichTextNote", Command::Branch, Command::Bool);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
@@ -772,14 +773,6 @@ void Main::setupAPI()
 
     c = new Command("isScrolled", Command::Branch, Command::Bool);
     c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
-    c = new Command("loadImage", Command::Branch);
-    c->addParameter(Command::String, false, "Filename of image");
-    modelCommands.append(c);
-
-    c = new Command("loadNote", Command::Branch);
-    c->addParameter(Command::String, false, "Filename of note");
     modelCommands.append(c);
 
     c = new Command("moveSlideDown", Command::Any);
@@ -903,29 +896,29 @@ void Main::setupAPI()
               "Set if links of items should be visible for unselected items");
     modelCommands.append(c);
 
-    c = new Command("setMapAnimCurve", Command::Any);
+    c = new Command("setAnimCurve", Command::Any);
     c->addParameter(Command::Int, false,
               "EasingCurve used in animation in MapEditor");
     modelCommands.append(c);
 
-    c = new Command("setMapAuthor", Command::Any);
+    c = new Command("setAuthor", Command::Any);
     c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
-    c = new Command("setMapAnimDuration", Command::Any);
+    c = new Command("setAnimDuration", Command::Any);
     c->addParameter(Command::Int, false,
               "Duration of animation in MapEditor in milliseconds");
     modelCommands.append(c);
 
-    c = new Command("setMapBackgroundColor", Command::Any);
+    c = new Command("setBackgroundColor", Command::Any);
     c->addParameter(Command::Color, false, "Color of map background");
     modelCommands.append(c);
 
-    c = new Command("setMapComment", Command::Any);
+    c = new Command("setComment", Command::Any);
     c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
-    c = new Command("setMapTitle", Command::Any);
+    c = new Command("setTitle", Command::Any);
     c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
@@ -937,15 +930,15 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Link style in map");
     modelCommands.append(c);
 
-    c = new Command("setMapRotation", Command::Any);
+    c = new Command("setRotation", Command::Any);
     c->addParameter(Command::Double, false, "Rotation of map");
     modelCommands.append(c);
 
-    c = new Command("setMapTitle", Command::Any);
+    c = new Command("setTitle", Command::Any);
     c->addParameter(Command::String, false, "");
     modelCommands.append(c);
 
-    c = new Command("setMapZoom", Command::Any);
+    c = new Command("setZoom", Command::Any);
     c->addParameter(Command::Double, false, "Zoomfactor of map");
     modelCommands.append(c);
 
@@ -1143,11 +1136,33 @@ void Main::setupAPI()
     c->setComment("Check if branch has an active flag with given name");
     branchCommands.append(c);
 
+    c = new Command("hasNote", Command::Branch, Command::Bool);
+    c->setComment("Check if branch has a note");
+    branchCommands.append(c);
+
+    c = new Command("hasRichTextHeading", Command::Branch, Command::Bool);
+    c->setComment("Check if branch has a RichText heading or just plain text");
+    branchCommands.append(c);
+
     c = new Command("hasTask", Command::Branch, Command::Bool);
     branchCommands.append(c);
 
     c = new Command("headingText", Command::Branch, Command::String);
     c->setComment("Set heading of branch from plaintext string");
+    branchCommands.append(c);
+
+    c = new Command("imageCount", Command::Branch, Command::Int);
+    c->setComment("Return number of child images");
+    branchCommands.append(c);
+
+    c = new Command("loadImage", Command::Branch);
+    c->addParameter(Command::String, false, "Filename of image");
+    c->setComment("Load an image with given path and attach to branch");
+    branchCommands.append(c);
+
+    c = new Command("loadNote", Command::Branch);
+    c->addParameter(Command::String, false, "Filename of note");
+    c->setComment("Load a note with given path and attach to branch");
     branchCommands.append(c);
 
     c = new Command("isScrolled", Command::Branch, Command::Bool);
@@ -1297,6 +1312,10 @@ void Main::setupAPI()
     //
     // Below are the commands for an image
     //
+    c = new Command("hasRichTextHeading", Command::Branch, Command::Bool);
+    c->setComment("Check if image has a RichText heading or just plain text");
+    imageCommands.append(c);
+
     c = new Command("headingText", Command::Image, Command::String);
     c->setComment("Set heading of image from plaintext string");
     imageCommands.append(c);

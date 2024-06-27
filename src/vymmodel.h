@@ -364,8 +364,8 @@ class VymModel : public TreeModel {
                          bool senderIsNoteEditor = false);
     VymNote getNote();                  //!< Get note text
     bool hasRichTextNote();             //!< Check type of vymText used
-    void loadNote(const QString &fn);   //!< Load note from file
-    void saveNote(const QString &fn);   //!< Save note to file
+    bool loadNote(const QString &fn, BranchItem *bi = nullptr);   //!< Load note from file
+    bool saveNote(const QString &fn);   //!< Save note to file
 
   private:
     BranchItem *findCurrent;  // next object in find process

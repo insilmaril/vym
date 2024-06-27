@@ -18,6 +18,11 @@ ImageWrapper::~ImageWrapper()
     //qDebug() << "Destr ImageWrapper";
 }
 
+bool ImageWrapper::hasRichTextHeading()
+{
+    return setResult(imageItem->heading().isRichText());
+}
+
 QString ImageWrapper::headingText()
 {
     return setResult(imageItem->headingPlain());

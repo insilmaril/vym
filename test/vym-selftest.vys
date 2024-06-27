@@ -786,14 +786,100 @@ function test_modify_branches()
   heading("Modifying branches");
   let map = initMap(testMapDefault);
 
-  map.select(branch_0Aa_string);
-  b = map.selectedBranch();  
+  b = map.findBranchBySelection(branch_0Aa_string);
   b.setHeadingText("Changed!");
   expect("setHeadingPlainText", b.headingText(), "Changed!");
   map.undo();
   expect("Undo: setHeadingPlainText", b.headingText(), "branch a");
   map.redo();
   expect("redo: setHeadingPlainText", b.headingText(), "Changed!");
+
+  s = "<html><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'DejaVu Sans Mono'; font-size:24pt; font-weight:700; font-style:italic; color:#ffffff;\">Image</span></p></body></html>";
+
+  b.setHeadingRichText(s);
+  expect("Branch has RichText heading", b.hasRichTextHeading(), true);
+
+  map.undo();
+  expect("After undo branch no longer has RichText heading", b.hasRichTextHeading(), false);
+
+  closeCurrentMap();
+}
+
+function test_modify_images()
+{
+  heading("Modifying images");
+  let map = initMap(testMapDefault);
+
+  b = map.findBranchBySelection(branch_0Aa_string);
+  n = b.imageCount();
+
+  success = b.loadImage("icons/vym.png");
+  expect("loadImage() returns true for existing image", success, true);
+
+  success = b.loadImage("foobar");
+  expect("loadImage() returns false for not existing image", success, false);
+
+  i = map.findImageBySelection(branch_0Aa_string + ",fi:0");
+  h = i.headingText();  
+  i.setHeadingText("Changed!");   
+  expect("setHeadingPlainText", i.headingText(), "Changed!");
+  map.undo();
+  expect("Undo: setHeadingPlainText", i.headingText(), h);
+  map.redo();
+  expect("redo: setHeadingPlainText", i.headingText(), "Changed!");
+
+  s = "<html><body style=\" font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'DejaVu Sans Mono'; font-size:24pt; font-weight:700; font-style:italic; color:#ffffff;\">Image</span></p></body></html>";
+
+  i.setHeadingRichText(s);
+  expect("Image has RichText heading", i.hasRichTextHeading(), true);
+
+  map.undo();
+  expect("After undo image no longer has RichText heading", i.hasRichTextHeading(), false);
+
+  closeCurrentMap();
+}
+
+function test_moving_parts()
+{
+  heading("Moving parts");
+  let map = initMap(testMapDefault);
+
+  map.select(branch_0Aa_string);
+  branch_0Aa  = map.selectedBranch();
+  branch_0Aa.moveDown();
+  expect("Moving down", branch_0Aa.getNum(), 1);
+  map.undo();
+  expect("Undo Moving down", branch_0Aa.getNum(), 0);
+
+  map.select(branch_0Ab_string);
+  branch_0Ab  = map.selectedBranch();
+  branch_0Ab.moveUp();
+  expect("Moving up", branch_0Ab.getNum(), 0);
+  map.undo();
+  expect("Undo moving up", branch_0Ab.getNum(), 1);
+
+  map.select(main_B_string);
+  main_B = map.selectedBranch();
+  n = main_B.branchCount();
+  branch_0Aa.relinkToBranch(main_B);
+  expect("RelinkTo " + main_B.headingText() + ": branchCount increased there",  main_B.branchCount(), n + 1);
+
+  map.undo();
+  expect("Undo: RelinkTo " + main_B.headingText() + ": branchCount decreased there", main_B.branchCount(), n);
+
+  // map.select(main_A_string);
+  // main_A = map.selectedBranch();
+  // err = map.relinkBranchTo(branch_0Aa,0,0,0);
+  //FIXME-5 disabled, error not supported atm expect_error "RelinkTo myself fails.", err);
+
+  n = branch_0Aa.branchCount();
+  main_B.relinkToBranchAt(branch_0Aa, 1);
+  expect("RelinkTo moves '" + main_B.headingText() + "' to '" + branch_0Aa.headingText() + "', pos 1: branchCount increased there",  branch_0Aa.branchCount(), n + 1);
+
+  map.undo();
+  map.select(center_0_string);
+  center_0 = map.selectedBranch();  
+  expect("Undo RelinkTo pos 1: branchCount of center", center_0.branchCount(), 2);
 
   closeCurrentMap();
 }
@@ -971,10 +1057,11 @@ function test_references()
   main_A.setUrl("");
   expect("setUrl: unset Url with empty string", main_A.getUrl(), "");
 
-  vl = "default.vym";
+  // Try to link to myself using a relative path
+  vl = "selftests/maps/current-map.vym";
   main_A.setVymLink(vl);
   s = main_A.getVymLink();
-  expect("setVymLink returns absolute path", map.getFileDir() + vl, s);
+  expect("setVymLink returns absolute path", map.getFileDir() + "/" + vl, s);
   map.undo();
   expect("undo: setVymLink", main_A.getVymLink(), "");
   map.redo();
@@ -1297,13 +1384,14 @@ function test_tasks()
 
 // ok, already using new Wrapper functions
 test_basics();
-//test_adding_branches();
-//test_extrainfo();
-//test_frames();
-//test_modify_branches();
-//test_moving_parts();
-//test_references();
-test_tasks();	// FIXME-2 uncomplete (date calculations)
+test_adding_branches();
+test_extrainfo();
+test_frames();
+test_modify_branches();
+test_modify_images();
+test_moving_parts();
+test_references();
+test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
 
 
 /* FIXME Not ported yet

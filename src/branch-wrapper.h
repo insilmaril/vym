@@ -38,10 +38,14 @@ class BranchWrapper : public VymScriptContext {
     QString getVymLink();
     bool hasActiveFlag(const QString &flag);
     bool hasNote();
+    bool hasRichTextHeading();
     bool hasRichTextNote();
     bool hasTask();
     QString headingText();  
+    int imageCount();
     bool isScrolled();
+    bool loadImage(const QString &filename);
+    bool loadNote(const QString &filename);
     void moveDown();
     void moveUp();
     bool relinkToBranch(BranchWrapper*);

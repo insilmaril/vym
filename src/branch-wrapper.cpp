@@ -222,6 +222,11 @@ bool BranchWrapper::hasNote()
     return setResult(r);
 }
 
+bool BranchWrapper::hasRichTextHeading()
+{
+    return setResult(branchItem->heading().isRichText());
+}
+
 bool BranchWrapper::hasRichTextNote()
 {
     return setResult(branchItem->getNote().isRichText());
@@ -240,6 +245,24 @@ bool BranchWrapper::hasTask()
 QString BranchWrapper::headingText()
 {
     return setResult(branchItem->headingPlain());
+}
+
+int BranchWrapper::imageCount()
+{
+    return setResult(branchItem->imageCount());
+}
+
+bool BranchWrapper::loadImage(const QString &filename)
+{
+    bool r;
+    ImageItem *ii = branchItem->getModel()->loadImage(branchItem, filename);
+    r= (ii) ? true : false;
+    return setResult(r);
+}
+
+bool BranchWrapper::loadNote(const QString &filename)
+{
+    return setResult(branchItem->getModel()->loadNote(filename, branchItem));
 }
 
 void BranchWrapper::moveDown()
