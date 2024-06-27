@@ -108,6 +108,9 @@ extern QList<Command *> imageCommands;
 
 extern bool usingDarkTheme;
 
+extern bool useActionLog;
+extern QString actionLogPath;
+
 QMenu *branchAddContextMenu;
 QMenu *branchContextMenu;
 QMenu *branchLinksContextMenu;
@@ -431,6 +434,9 @@ Main::~Main()
                           actionSettingsAutoSelectNewBranch->isChecked());
         settings.setValue("/system/writeBackupFile",
                           actionSettingsWriteBackupFile->isChecked());
+
+        settings.setValue("/logfile/enabled", useActionLog);
+        settings.setValue("/logfile/path", actionLogPath);
 
         if (printer) {
             settings.setValue("/system/printerName", printer->printerName());
