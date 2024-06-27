@@ -644,7 +644,7 @@ void VymModelWrapper::saveSelection(const QString &filename)
         return;
     }
     model->saveMap(File::PartOfMap);
-    model->renameMap(filename_org); // FIXME-0 check if this is ok, renaming map and data 2 times...
+    model->renameMap(filename_org);
 }
 
 bool VymModelWrapper::select(const QString &s)
