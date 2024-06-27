@@ -57,6 +57,7 @@ void BranchContainer::init()
     setLayout(Container::Horizontal);
 
     imagesContainerAutoLayout = true;
+    imagesContainerLayoutInt = Container::GridColumns;
 
     branchesContainerAutoLayout = true;
     branchesContainerLayoutInt = Container::Vertical;
