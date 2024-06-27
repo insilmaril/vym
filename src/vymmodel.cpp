@@ -384,8 +384,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
         // Definitions
         flags += userFlagsMaster->saveDef(flagMode);
 
-        userFlagsMaster->saveDataToDir(tmpdir + "flags/user/", flagMode);
-        standardFlagsMaster->saveDataToDir(tmpdir + "flags/standard/",
+        userFlagsMaster->saveDataToDir(tmpdir + "/flags/user", flagMode);
+        standardFlagsMaster->saveDataToDir(tmpdir + "/flags/standard",
                                            flagMode);
     }
 
@@ -432,7 +432,7 @@ void VymModel::setFilePath(QString fpath, QString destname)
 
         // If fpath is not an absolute path, complete it
         filePath = QDir(fpath).absolutePath();
-        fileDir = filePath.left(1 + filePath.lastIndexOf("/"));
+        fileDir = filePath.left(filePath.lastIndexOf("/"));
 
         // Set short name, too. Search from behind:
         fileName = basename(fileName);
@@ -820,10 +820,10 @@ void VymModel::saveMap(const File::SaveMode &savemode)
     QString saveFileName;
     if (zipped)
         // Use defined map name "map.xml", if zipped. Introduce in 2.6.6
-        saveFileName = fileDir + "map.xml";
+        saveFileName = fileDir + "/map.xml";
     else
         // Use regular mapName, when saved as XML
-        saveFileName = fileDir + mapFileName;
+        saveFileName = fileDir + "/" + mapFileName;
 
     if (!saveStringToDisk(saveFileName, mapStringData)) {
         qWarning("ME::saveStringToDisk failed!");
@@ -4231,12 +4231,10 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
         QString undosel = getSelectString(newbi);
 
         if (newbi) {
-            QString u, r;
-            u = setBranchVar(newbi) + " b.remove();";
-            r = setBranchVar(pi) + QString(" b.addBranchAt(%1);").arg(pos); // FIXME-0 QUuid is lost here. Better insertMapAt
-            saveStateNew(
-                u,
-                r,
+            QString uc, rc;
+            uc = setBranchVar(newbi) + " b.remove();";
+            rc = setBranchVar(pi) + QString(" b.addBranchAt(%1);").arg(pos); // FIXME-0 QUuid is lost here. Better insertMapAt
+            saveStateNew( uc, rc,
                 QString("Add new branch to %1").arg(getObjectName(pi)));
 
             latestAddedItem = newbi;

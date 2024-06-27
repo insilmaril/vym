@@ -222,7 +222,7 @@ QString ImageItem::saveToDir(const QString &tmpdir)
           imageContainer->getExtension();
 
     // And really save the image  (svgs will be copied from cache!)
-    QString currentPath = tmpdir + url;
+    QString currentPath = tmpdir + "/" + url;
     if (!QFile(currentPath).exists())
         // Only save, if not already there
         imageContainer->save(currentPath);
