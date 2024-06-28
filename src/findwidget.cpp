@@ -35,7 +35,7 @@ FindWidget::FindWidget(QWidget *)
             SLOT(findTextChanged(const QString &)));
 
     nextButton = new QPushButton;
-    nextButton->setIcon(QPixmap(":/find.png"));
+    nextButton->setIcon(QPixmap(":/find.svg"));
     // nextButton->setText (tr("Find","Find widget"));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(nextPressed()));
 
