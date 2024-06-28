@@ -13,10 +13,10 @@ HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
 
     QTableWidgetItem *item;
 
-    item = new QTableWidgetItem(tr("Action", "Table with actions"));
+    item = new QTableWidgetItem(tr("Comment", "Table with actions"));
     ui.historyTable->setHorizontalHeaderItem(0, item);
 
-    item = new QTableWidgetItem(tr("Comment", "Table with actions"));
+    item = new QTableWidgetItem(tr("Action", "Table with actions"));
     ui.historyTable->setHorizontalHeaderItem(1, item);
 
     item = new QTableWidgetItem(tr("Undo action", "Table with actions"));
@@ -43,11 +43,11 @@ HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
 
     ui.historyTable->setColumnWidth(
         0,
-        settings.value("/satellite/historywindow/geometry/columnWidth/0", 250)
+        settings.value("/satellite/historywindow/geometry/columnWidth/0", 350)
             .toInt());
     ui.historyTable->setColumnWidth(
         1,
-        settings.value("/satellite/historywindow/geometry/columnWidth/1", 350)
+        settings.value("/satellite/historywindow/geometry/columnWidth/1", 250)
             .toInt());
     ui.historyTable->setColumnWidth(
         2,
@@ -86,11 +86,11 @@ void HistoryWindow::updateRow(int row, int step, SimpleSettings &set)
     QTableWidgetItem *item;
 
     item = new QTableWidgetItem(
-        set.value(QString("/history/step-%1/redoCommand").arg(step)));
+        set.value(QString("/history/step-%1/comment").arg(step)));
     ui.historyTable->setItem(row, 0, item);
 
     item = new QTableWidgetItem(
-        set.value(QString("/history/step-%1/comment").arg(step)));
+        set.value(QString("/history/step-%1/redoCommand").arg(step)));
     ui.historyTable->setItem(row, 1, item);
 
     item = new QTableWidgetItem(
