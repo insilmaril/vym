@@ -510,8 +510,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         if (lmode == File::NewMap || lmode == File::DefaultMap)
             zipped_org = false;
-    }
-    else {
+    } else {
         // Try to unzip file
         QFile file(fname);
         if (file.size() > 2000000)
@@ -549,16 +548,13 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             if (flist.count() == 1) {
                 // Only one entry, take this one
                 xmlfile = tmpZipDir + "/" + flist.first();
-            }
-            else {
-                for (QStringList::Iterator it = flist.begin();
-                     it != flist.end(); ++it)
-                    *it = tmpZipDir + "/" + *it;
+            } else {
+
                 // FIXME-4 Multiple entries, load all (but only the first one
                 // into this ME)
                 // mainWindow->fileLoadFromTmp (flist);
                 // returnCode = 1;	// Silently forget this attempt to load
-                qWarning("MainWindow::loadMap multimap found");
+                qWarning() << "VymModel::loadMap multimap found " << flist;
             }
 
             if (flist.isEmpty()) {
@@ -679,7 +675,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
 
     // Cleanup
-    removeDir(QDir(tmpZipDir));
+    // FIXME-0  only testing removeDir(QDir(tmpZipDir));
     delete reader;
 
     // Restore original zip state
@@ -1058,6 +1054,48 @@ void VymModel::importDir()
             reposition();
         }
     }
+}
+
+bool VymModel::addMapInsert(QString fpath, int pos, BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+       //FIXME-0 Ideally VymModel::loadMap would have branchItem as parameter 
+       //        instead of having to select it first
+       select(selbi);
+
+       QString bv = setBranchVar(bi);
+       QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+       QString rc = bv + QString("b.addMapInsert(\"%1\", %2);").arg(fpath).arg(pos);
+       QString comment = QString("Add map %1 to \"%2\"").arg(fpath).arg(bi->headingText());
+       saveStateNew(uc, rc, comment, bi);
+
+       if (File::Aborted != loadMap(fpath, File::ImportAdd, File::VymMap, 0x0000, pos))
+           return true;
+    }
+    return false;
+}
+
+bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+       //FIXME-0 Ideally VymModel::loadMap would have branchItem as parameter 
+       //        instead of having to select it first
+       select(selbi);
+
+       QString bv = setBranchVar(bi);
+       QString pbv = setBranchVar(bi->parentBranch(), "pb");
+       QString uc = pbv + QString("map.addMapReplace(\"UNDO_PATH\", pb);");
+       QString rc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+       QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
+       saveStateNew(uc, rc, comment, bi->parentBranch());
+
+
+       if (File::Aborted != loadMap(fpath, File::ImportReplace, File::VymMap))
+           return true;
+    }
+    return false;
 }
 
 bool VymModel::removeVymLock()
@@ -1591,13 +1629,13 @@ void VymModel::resetHistory()
     mainWindow->updateHistory(undoSet);
 }
 
-QString VymModel::setBranchVar(BranchItem* bi)
+QString VymModel::setBranchVar(BranchItem* bi, QString varName)
 {
     QString r;
     if (!bi)
         qWarning() << "VM::setBranchVar bi == nullptr";
     else
-        r = QString("b = map.findBranchById(\"%1\");").arg(bi->getUuid().toString());
+        r = QString("%1 = map.findBranchById(\"%2\");").arg(varName, bi->getUuid().toString());
 
     return r;
 }
@@ -1619,7 +1657,9 @@ void VymModel::saveStateNew(
          const QString &undoCom,
          const QString &redoCom,
          const QString &comment,
-         TreeItem *saveSel, QString dataXML)
+         TreeItem *saveUndoItem,
+         TreeItem *saveRedoItem,
+         QString dataXML)   // FIXME-0 needed?
 {
     // Main saveState
 
@@ -1718,7 +1758,6 @@ void VymModel::saveStateNew(
     }
 
     QString histDir = getHistoryPath();
-    QString bakMapPath = histDir + "/map.xml";
 
     // Create histDir if not available
     QDir d(histDir);
@@ -1726,20 +1765,22 @@ void VymModel::saveStateNew(
         makeSubDirs(histDir);
 
     // Save depending on how much needs to be saved
-    if (saveSel)
+    if (saveUndoItem) {
         dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
-                            saveSel);
+                            saveUndoItem);
 
-    // if (savemode == File::PartOfMap) {  FIXME-0 savemode is always File::Code now!
-    /*
-        undoCommand.replace("PATH", bakMapPath);
-        redoCommand.replace("PATH", bakMapPath);
+        QString xmlUndoPath = histDir + "/undo.xml";
+        undoCommand.replace("UNDO_PATH", xmlUndoPath);
+        saveStringToDisk(xmlUndoPath, dataXML);
     }
-    */
+    if (saveRedoItem) {
+        dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+                            saveRedoItem);
 
-    if (!dataXML.isEmpty())
-        // Write XML Data to disk
-        saveStringToDisk(bakMapPath, dataXML);
+        QString xmlRedoPath = histDir + "/redo.xml";
+        redoCommand.replace("REDO_PATH", xmlRedoPath);
+        saveStringToDisk(xmlRedoPath, dataXML);
+    }
 
     // We would have to save all actions in a tree, to keep track of
     // possible redos after a action. Possible, but we are too lazy: forget
@@ -2001,7 +2042,7 @@ void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
         qWarning("VymModel::saveStateChangingPart  no redoSel given!");
 
     saveStateOld(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
-              redoSelection, rc, comment, undoSel);
+              redoSelection, rc, comment, undoSel);  // FIXME-000 use new syntax
 }
 
 void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
@@ -2017,7 +2058,7 @@ void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
         if (redoSel->depth() > 0)
             undoSelection = getSelectString(redoSel->parent());
         saveStateOld(File::PartOfMap, undoSelection,
-                  QString("addMapInsert (\"PATH\",%1,%2)")
+                  QString("addMapInsert (\"PATH\",%1,%2)")  // FIXME-000 use new syntax
                       .arg(redoSel->num())
                       .arg(VymReader::SlideContent),
                   redoSelection, "remove ()", comment, redoSel);
@@ -2040,25 +2081,6 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
         undoSelection = getSelectString(undoSel);
 
     saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);  // "Normal" saveState (TI *undoSel, uc, TI *redoSel, rc, comment)
-}
-
-void VymModel::saveStateBeforeLoad(File::LoadMode lmode, const QString &fname)
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        if (lmode == File::ImportAdd)
-            saveStateChangingPart(selbi, selbi,
-                                  QString("addMapInsert (\"%1\")").arg(fname),
-                                  QString("Add map %1 to %2")
-                                      .arg(fname, getObjectName(selbi)));
-        if (lmode == File::ImportReplace) {
-            BranchItem *pi = (BranchItem *)(selbi->parent());
-            saveStateChangingPart(pi, pi,
-                                  QString("addMapReplace(%1)").arg(fname),
-                                  QString("Add map %1 to %2")
-                                      .arg(fname, getObjectName(selbi)));
-        }
-    }
 }
 
 void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-09 Check where this is used. Rewrite everywhere for saveStateNew format
@@ -4225,7 +4247,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
+BranchItem *VymModel::addNewBranch(BranchItem *pi, int num)
 {
     BranchItem *newbi = nullptr;
     if (!pi)
@@ -4233,15 +4255,16 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int pos)
 
     if (pi) {
         QString redosel = getSelectString(pi);
-        newbi = addNewBranchInt(pi, pos);
+        newbi = addNewBranchInt(pi, num);
         QString undosel = getSelectString(newbi);
 
         if (newbi) {
             QString uc, rc;
             uc = setBranchVar(newbi) + " b.remove();";
-            rc = setBranchVar(pi) + QString(" b.addBranchAt(%1);").arg(pos); // FIXME-0 QUuid is lost here. Better insertMapAt
+            rc = setBranchVar(pi) + QString(" b.addMapInsert(\"REDO_PATH\", %1);").arg(num); // FIXME-0 QUuid is lost here. Better insertMapAt
             saveStateNew( uc, rc,
-                QString("Add new branch to %1").arg(getObjectName(pi)));
+                QString("Add new branch to %1").arg(getObjectName(pi)),
+                nullptr, pi);
 
             latestAddedItem = newbi;
             // In Network mode, the client needs to know where the new branch
@@ -5091,11 +5114,19 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *bi, selbis) {
+        QString bv = setBranchVar(bi);
+        QString uc = bv + "map.addMapReplace(\"UNDO_PATH\", b);";
+        QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
         saveStateChangingPart(bi, bi,
                               QString("colorSubtree (\"%1\")").arg(c.name()),
                               QString("Set color of %1 and children to %2")
                                   .arg(getObjectName(bi))
                                   .arg(c.name()));
+        saveStateNew(uc, rc,
+                        QString("Set color of %1 and children to %2")
+                          .arg(getObjectName(bi))
+                          .arg(c.name()),
+                        bi, nullptr);
         BranchItem *prev = nullptr;
         BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, bi);
@@ -7470,7 +7501,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 saveState: undo/redo not working
         int pos = si->childNumber();
         saveStateOld(File::PartOfMap, getSelectString(),    // FIXME addAddSlide
                   QString("removeSlide (%1)").arg(pos), getSelectString(),
-                  QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
+                  QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr, // FIXME-000  review. Partly moved to BranchWrapper
                   s);
     }
     return si;
@@ -7482,7 +7513,7 @@ void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 undo/redo not working
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
         saveStateOld(File::PartOfMap, getSelectString(),    // FIXME deleteAddSlide
-                  QString("addMapInsert (\"PATH\",%1)").arg(pos),
+                  QString("addMapInsert (\"PATH\",%1)").arg(pos),   // FIXME-000  review. Partly moved to BranchWrapper
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
                   "Remove slide", nullptr, s);
         slideModel->deleteSlide(si);

@@ -1258,7 +1258,13 @@ void VymReader::readOrnamentsAttr()
     s = attributeToString("uuid");
     if (!s.isEmpty()) {
         // While pasting, check for existing UUID
-        if (loadMode != File::ImportAdd && !model->findUuid(QUuid(s)))
+        if (loadMode == File::ImportAdd || loadMode == File::ImportReplace) {
+            bool x = model->findUuid(QUuid(s));
+            if (!x)
+                // Only set Uuid if not adding replacing in map - then duplicate Uuids might cause problems
+                // In testing one map will import itself - no new Uuids then.
+                lastMI->setUuid(s);
+        } else
             lastMI->setUuid(s);
     }
 

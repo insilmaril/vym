@@ -416,9 +416,10 @@ Main::~Main()
 #if defined(Q_OS_WIN32)
         settings.setValue("/mainwindow/geometry/maximized", isMaximized());
 #endif
-        settings.setValue("/mainwindow/geometry/size", size());
+        settings.setValue("/mainwindow/geometry/size", size()); 
         settings.setValue("/mainwindow/geometry/pos", pos());
-        settings.setValue("/mainwindow/state", saveState(0));
+        settings.setValue("/mainwindow/state", saveState(0)); // FIXME-2 use saveState and saveGeometry
+                                                              // https://doc.qt.io/qt-6/qmainwindow.html#saveState
 
         settings.setValue("/mainwindow/view/AntiAlias",
                           actionViewToggleAntiAlias->isChecked());
@@ -623,14 +624,16 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("addMapInsert", Command::Any);
+    c = new Command("addMapInsert", Command::Any);  // FIXME-0 check - still needed in this form? Partly moved to BranchWrapper
     c->addParameter(Command::String, false, "Filename of map to load");
     c->addParameter(Command::Int, true, "Index where map is inserted");
     c->addParameter(Command::Int, true, "Content filter");
     modelCommands.append(c);
 
-    c = new Command("addMapReplace", Command::Branch);
+    c = new Command("addMapReplace", Command::Any, Command::Bool);
     c->addParameter(Command::String, false, "Filename of map to load");
+    c->addParameter(Command::BranchItem, false, "Branch to be replaced by map");
+    c->setComment("Replace branch by map with given path");
     modelCommands.append(c);
 
     c = new Command("addSlide", Command::Branch);
@@ -1069,6 +1072,17 @@ void Main::setupAPI()
 
     c = new Command("addBranchBefore", Command::Branch);
     c->setComment("Add branch as parent before current branch");
+    branchCommands.append(c);
+
+    c = new Command("addMapInsert", Command::Branch);
+    c->addParameter(Command::String, false, "Filename of map to load");
+    c->addParameter(Command::Int, true, "Index where map is inserted");
+    c->setComment("Add map with given path to branch at index");
+    branchCommands.append(c);
+
+    c = new Command("addMapReplace", Command::Branch);  // FIXME-0 should not work on branch
+    c->addParameter(Command::String, false, "Filename of map to load");
+    c->setComment("Replace branch by map with given path");
     branchCommands.append(c);
 
     c = new Command("attributeAsInt", Command::Branch, Command::Int);
@@ -4162,7 +4176,7 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
                 tabWidget->setCurrentIndex(cur);
                 return File::Aborted;
             }
-        }
+        } // File does not exist
 
         if (err != File::Aborted) {
             // Save existing filename in case  we import
@@ -4171,7 +4185,9 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             if (lmode != File::DefaultMap) {
 
                 vm->setFilePath(fn);
-                vm->saveStateBeforeLoad(lmode, fn);
+                // FIXME-0 not needed? vm->saveStateBeforeLoad(lmode, fn);
+                // In case of importing better call the related (new) functions
+                // in VymModel, instead of loading directly
 
                 progressDialog.setLabelText(
                     tr("Loading: %1", "Progress dialog while loading maps")
@@ -4179,7 +4195,7 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             }
 
             // Finally load map into mapEditor
-            err = vm->loadMap(fn, lmode, ftype);
+            err = vm->loadMap(fn, lmode, ftype);    // FIXME-0 Maybe add interface to loadMap in VM and leave original one as private, thus masking e.g. ContentFilter and other parameters?
 
             // Restore old (maybe empty) filepath, if this is an import
             if (lmode == File::ImportAdd || lmode == File::ImportReplace)

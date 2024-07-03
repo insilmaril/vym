@@ -20,10 +20,7 @@ class VymModelWrapper : public VymScriptContext {
 
   public slots:
     void addMapCenterAtPos(qreal x, qreal y);
-    void addMapInsert(QString filename, int pos, int contentFilter);
-    void addMapInsert(const QString &filename, int pos);
-    void addMapInsert(const QString &filename);
-    void addMapReplace(QString filename);
+    bool addMapReplace(QString filename, BranchWrapper *bw);
     void addSlide();
     void addXLink(const QString &begin, const QString &end, int width,// FIXME-3 move to BranchWrapper
                   const QString &color, const QString &penstyle);

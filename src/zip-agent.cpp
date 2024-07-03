@@ -9,10 +9,11 @@ ZipAgent::ZipAgent(QDir zipDir, QString zipName)   // FIXME-4 Does not support d
                                                    // Not supported in Windows tar.
                                                    // Probably supported with -FS option on Linux
 {
-    //qDebug() << "Constr ZipAgent";
+    // qDebug() << "Constr ZipAgent  zipNameInt=" << zipName;
     zipNameInt = QDir::toNativeSeparators(zipName);
     zipDirInt = zipDir;
     isBackgroundProcessInt = true;
+
 }
 
 ZipAgent::~ZipAgent()
@@ -166,7 +167,7 @@ void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 
 void ZipAgent::startUnzip()
 {
-    // qDebug() << "ZipAgent::startUnzip";
+    // qDebug() << "ZipAgent::startUnzip "  << zipNameInt << zipDirInt.path();
 
     // For now only as blocking foreground process
     isBackgroundProcessInt = false;
@@ -204,8 +205,7 @@ void ZipAgent::startUnzip()
             if (exitStatus() != QProcess::NormalExit) {
                 QMessageBox::critical(0, QObject::tr("Critical Error"),
                                       QObject::tr("zip didn't exit normally"));
-            }
-            else {
+            } else {
                 if (exitCode() > 0) {
                     QMessageBox::critical(
                         0, QObject::tr("Critical Error"),

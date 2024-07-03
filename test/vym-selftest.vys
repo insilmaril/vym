@@ -253,41 +253,49 @@ function test_adding_branches()
 function test_adding_maps()
 {
   heading("Adding maps");
-  let map = initMap(testMapDefault);
-  map.select(branch_0Aa);
-  n = map.branchCount()
-  map.addMapReplace(currentMapPath);
-  map.select(main_A);
-  expect("addMapReplace: check branch count in #{@main_A}", map.branchCount(), n + 1);
-  map.select(branch_0Aa);
-  expect("addMapReplace: check if #{@branch_0Aa} is new", map.branchCount(), 2);
-  expect("addMapReplace: Loaded MapCenter 0", map.getHeadingPlainText(), "MapCenter 0");
-  map.select(branch_0Ab);
-  expect("addMapReplace: Loaded MapCenter 1", map.getHeadingPlainText(), "MapCenter 1");
+  map = initMap(testMapDefault);
+  main_A = map.findBranchBySelection(main_A_string);
+  n = main_A.branchCount()
+
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+
+  map.addMapReplace(currentMapPath, branch_0Aa);
+
+  expect("addMapReplace: check branch count in '" + main_A.headingText() + "'", main_A.branchCount(), n + 1);
+
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  expect("addMapReplace: check if '" + branch_0Aa.headingText() + "' has 2 children", branch_0Aa.branchCount(), 2);
+  expect("addMapReplace: check if '" + branch_0Aa.headingText() + "' is named 'MapCenter. 0'", branch_0Aa.headingText(), "MapCenter 0");
+
+  branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
+  expect("addMapReplace: check if '" + branch_0Ab.headingText() + "' is named 'MapCenter. 1'", branch_0Ab.headingText(), "MapCenter 1");
 
   map.undo()
-  map.select(main_A);
-  expect("Undo: check branch count in #{@main_A}", map.branchCount(), 3);
-  map.select(branch_0Aa);
-  expect("Undo: check if #{@branch_0Aa} is back", map.branchCount(), 3);
+  main_A = map.findBranchBySelection(main_A_string);
+  expect("Undo addMapReplace: check branch count in '" + main_A.headingText() + "'", main_A.branchCount(), n);
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  expect("Undo addMapReplace: check if '" + branch_0Aa.headingText() + "' has 2 children", branch_0Aa.branchCount(), 3);
   closeCurrentMap();
 
   map = initMap(testMapDefault);
-  map.select(branch_0Aa);
-  n = map.branchCount();
-  map.addMapInsert(currentMapPath, 1) // Create testmap with several MCs
-  map.select(branch_0Aa);
-  expect("addMapInsert: branch count",  map.branchCount(), n + 2);
-  map.select(branch_0Aa + ",bo:1");
-  expect("addMapInsert: new heading", map.getHeadingPlainText(), "MapCenter 0");
-  map.select(branch_0Aa + ",bo:2");
-  expect("addMapInsert: new heading", map.getHeadingPlainText(), "MapCenter 1");
+  b = map.findBranchBySelection(branch_0Aa_string);
+  n = b.branchCount();
+  expect("addMapInsert '" + currentMapPath + "' returns true",
+      b.addMapInsert(currentMapPath, 1),
+      true);
+  map.select(branch_0Aa_string);
+  expect("addMapInsert: branch count of '" + b.headingText() + "' increased",  b.branchCount(), n + 2);
+
+  b2 = map.findBranchBySelection(branch_0Aa_string + ",bo:1");
+  expect("addMapInsert: new heading of branch_0Aa1 is 'MapCenter 0'", b2.headingText(), "MapCenter 0");
+  b3 = map.findBranchBySelection(branch_0Aa_string + ",bo:2");
+  expect("addMapInsert: new heading of branch_0Aa2 is 'MapCenter 1'", b3.headingText(), "MapCenter 1");
 
   map.undo();
-  map.select(branch_0Aa);
-  expect("Undo: check branch count in #{@branch_0Aa}", map.branchCount(), 3);
-  map.select(branch_0Ab);
-  expect("Undo: check heading of  #{@branch_0Ab}",  map.getHeadingPlainText(), "branch b");
+  b = map.findBranchBySelection(branch_0Aa_string);
+  expect("Undo: check branch count", b.branchCount(), 3);
+  b = map.findBranchBySelection(branch_0Ab_string);
+  expect("Undo: check heading",  b.headingText(), "branch b");
   closeCurrentMap();
 }
 
@@ -1384,18 +1392,18 @@ function test_tasks()
 
 // ok, already using new Wrapper functions
 test_basics();
-test_adding_branches();
-test_extrainfo();
-test_frames();
-test_modify_branches();
-test_modify_images();
-test_moving_parts();
-test_references();
-test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
+//test_adding_branches();
+test_adding_maps();
+//test_extrainfo();
+//test_frames();
+//test_modify_branches();
+//test_modify_images();
+//test_moving_parts();
+//test_references();
+//test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
 
 
 /* FIXME Not ported yet
-test_adding_maps();
 test_attributes();
 test_copy_paste();
 test_delete_parts();

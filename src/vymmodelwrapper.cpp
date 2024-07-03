@@ -29,40 +29,12 @@ void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
                 "Couldn't add mapcenter");
 }
 
-void VymModelWrapper::addMapInsert(QString fileName, int pos, int contentFilter)
+bool VymModelWrapper::addMapReplace(QString fileName, BranchWrapper *bw)
 {
     if (QDir::isRelativePath(fileName))
         fileName = QDir::currentPath() + "/" + fileName;
 
-    model->saveStateBeforeLoad(File::ImportAdd, fileName);
-
-    if (File::Aborted ==
-        model->loadMap(fileName, File::ImportAdd, File::VymMap, contentFilter, pos))
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("Couldn't load %1").arg(fileName));
-}
-
-void VymModelWrapper::addMapInsert(const QString &fileName, int pos)
-{
-    addMapInsert(fileName, pos, 0x0000);
-}
-
-void VymModelWrapper::addMapInsert(const QString &fileName)
-{
-    addMapInsert(fileName, -1, 0x0000);
-}
-
-void VymModelWrapper::addMapReplace(QString fileName)
-{
-    if (QDir::isRelativePath(fileName))
-        fileName = QDir::currentPath() + "/" + fileName;
-
-    model->saveStateBeforeLoad(File::ImportReplace, fileName);
-
-    if (File::Aborted == model->loadMap(fileName, File::ImportReplace, File::VymMap))
-        scriptEngine->throwError(QJSValue::GenericError,
-                 QString("Couldn't load %1").arg(fileName));
+    return setResult(model->addMapReplace(fileName, bw->branchItem()));
 }
 
 void VymModelWrapper::addSlide() { model->addSlide(); }

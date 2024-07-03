@@ -190,6 +190,8 @@ class VymModel : public TreeModel {
   public:
     void importDir(const QString &);
     void importDir();
+    bool addMapInsert(QString filepath, int pos, BranchItem *bi = nullptr);
+    bool addMapReplace(QString filepath, BranchItem *bi = nullptr);
 
   private:
     bool removeVymLock();
@@ -260,7 +262,7 @@ class VymModel : public TreeModel {
     QString getHistoryPath(); //!< Path to directory containing the history
     void resetHistory();      //!< Initialize history
 
-    QString setBranchVar(BranchItem*);  //!< Returns command to set BranchItem in scripts for undo/redo
+    QString setBranchVar(BranchItem*, QString varName ="b");  //!< Returns command to set BranchItem in scripts for undo/redo
     QString setImageVar(ImageItem*);    //!< Returns command to set ImageItem in scripts for undo/redo
 
   private:
@@ -276,8 +278,11 @@ class VymModel : public TreeModel {
     */
     void saveStateNew(
                    const QString &undoCommand,
-                   const QString &redoCommand, const QString &comment = "",
-                   TreeItem *saveSelection = nullptr, QString dataXML = "");
+                   const QString &redoCommand,
+                   const QString &comment = "",
+                   TreeItem *saveUndoItem = nullptr,
+                   TreeItem *saveRedoItem = nullptr,
+                   QString dataXML = "");
 
     void saveStateOld(const File::SaveMode &savemode, const QString &undoSelection,
                    const QString &undoCommand, const QString &redoSelection,
@@ -306,9 +311,6 @@ class VymModel : public TreeModel {
     void saveState(TreeItem *undoSelection, const QString &undoCommand,
                    TreeItem *redoSelection, const QString &redoCommand,
                    const QString &comment = "");
-
-    /*! Save state before loading a map */
-    void saveStateBeforeLoad(File::LoadMode lmode, const QString &fname);
 
     /*! Put several states into one block for a single undo step */
     void saveStateBeginBlock(const QString &comment);

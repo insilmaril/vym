@@ -11,7 +11,7 @@ extern QJSEngine *scriptEngine;
 BranchWrapper::BranchWrapper(BranchItem *bi)
 {
     //qDebug() << "Constr BranchWrapper (BI)";
-    branchItem = bi;
+    branchItemInt = bi;
 }
 
 BranchWrapper::~BranchWrapper()
@@ -19,10 +19,20 @@ BranchWrapper::~BranchWrapper()
     //qDebug() << "Destr BranchWrapper";
 }
 
+BranchItem* BranchWrapper::branchItem()
+{
+    return branchItemInt;
+}
+
+VymModel* BranchWrapper::model()
+{
+    return branchItemInt->getModel();
+}
+
 void BranchWrapper::addBranch()
 {
-    if (branchItem) {
-        if (!branchItem->getModel()->addNewBranch(branchItem, -2))
+    if (branchItemInt) {
+        if (!model()->addNewBranch(branchItemInt, -2))
         scriptEngine->throwError(QJSValue::GenericError,"Couldn't add branch to map");
         return;
     } else {
@@ -33,7 +43,7 @@ void BranchWrapper::addBranch()
 
 void BranchWrapper::addBranchAt(int pos)
 {
-    if (!branchItem->getModel()->addNewBranch(branchItem, pos))
+    if (!model()->addNewBranch(branchItemInt, pos))
         scriptEngine->throwError(
                 QJSValue::GenericError,
                 QString("Could not add  branch at position %1").arg(pos));
@@ -41,16 +51,24 @@ void BranchWrapper::addBranchAt(int pos)
 
 void BranchWrapper::addBranchBefore()
 {
-    if (!branchItem->getModel()->addNewBranchBefore(branchItem))
+    if (!model()->addNewBranchBefore(branchItemInt))
         scriptEngine->throwError(
                 QJSValue::GenericError,
                 "Couldn't add branch before selection to map");
 }
 
+bool BranchWrapper::addMapInsert(QString fileName, int pos)
+{
+    if (QDir::isRelativePath(fileName))
+        fileName = QDir::currentPath() + "/" + fileName;
+
+    return setResult(model()->addMapInsert(fileName, pos, branchItemInt));
+}
+
 int BranchWrapper::attributeAsInt(const QString &key)
 {
     QVariant v;
-    AttributeItem *ai = branchItem->getModel()->getAttributeByKey(key);
+    AttributeItem *ai = model()->getAttributeByKey(key);
     if (ai) {
         v = ai->value();
     } else {
@@ -75,7 +93,7 @@ int BranchWrapper::attributeAsInt(const QString &key)
 QString BranchWrapper::attributeAsString(const QString &key)
 {
     QVariant v;
-    AttributeItem *ai = branchItem->getModel()->getAttributeByKey(key);
+    AttributeItem *ai = model()->getAttributeByKey(key);
     if (ai) {
         v = ai->value();
     } else {
@@ -91,10 +109,10 @@ QString BranchWrapper::attributeAsString(const QString &key)
 
 int BranchWrapper::branchCount()
 {
-    return setResult(branchItem->branchCount());
+    return setResult(branchItemInt->branchCount());
 }
 
-void BranchWrapper::clearFlags() { branchItem->getModel()->clearFlags(branchItem); }
+void BranchWrapper::clearFlags() { model()->clearFlags(branchItemInt); }
 
 void BranchWrapper::colorBranch(const QString &color)
 {
@@ -104,7 +122,7 @@ void BranchWrapper::colorBranch(const QString &color)
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
     else
-        branchItem->getModel()->colorBranch(col, branchItem);
+        model()->colorBranch(col, branchItemInt);
 }
 
 void BranchWrapper::colorSubtree(const QString &color)
@@ -115,60 +133,60 @@ void BranchWrapper::colorSubtree(const QString &color)
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
     else
-        branchItem->getModel()->colorSubtree(col, branchItem);
+        model()->colorSubtree(col, branchItemInt);
 }
 
 bool BranchWrapper::cycleTask(bool reverse)
 {
-    bool r = branchItem->getModel()->cycleTaskStatus(branchItem, reverse);
+    bool r = model()->cycleTaskStatus(branchItemInt, reverse);
 
     return setResult(r);
 }
 
 int BranchWrapper::getFramePadding(const bool &useInnerFrame)
 {
-    return setResult(branchItem->getBranchContainer()->framePadding(useInnerFrame));
+    return setResult(branchItemInt->getBranchContainer()->framePadding(useInnerFrame));
 }
 
 int BranchWrapper::getFramePenWidth(const bool &useInnerFrame)
 {
-    return setResult(branchItem->getBranchContainer()->framePenWidth(useInnerFrame));
+    return setResult(branchItemInt->getBranchContainer()->framePenWidth(useInnerFrame));
 }
 
 QString BranchWrapper::getFrameType(const bool &useInnerFrame)
 {
-    return setResult(branchItem->getBranchContainer()->frameTypeString(useInnerFrame));
+    return setResult(branchItemInt->getBranchContainer()->frameTypeString(useInnerFrame));
 }
 
 void BranchWrapper::getJiraData(bool subtree)
 {
-    branchItem->getModel()->getJiraData(subtree, branchItem);
+    model()->getJiraData(subtree, branchItemInt);
 }
 
 QString BranchWrapper::getNoteText()
 {
-    return setResult(branchItem->getNote().getTextASCII());
+    return setResult(branchItemInt->getNote().getTextASCII());
 }
 
 QString BranchWrapper::getNoteXML()
 {
-    return setResult(branchItem->getNote().saveToDir());
+    return setResult(branchItemInt->getNote().saveToDir());
 }
 
 int BranchWrapper::getNum()
 {
-    return setResult(branchItem->num());
+    return setResult(branchItemInt->num());
 }
 
 int BranchWrapper::getTaskPriorityDelta()
 {
-    return branchItem->getModel()->getTaskPriorityDelta(branchItem);
+    return model()->getTaskPriorityDelta(branchItemInt);
 }
 
 QString BranchWrapper::getTaskSleep()
 {
     QString r;
-    Task *task = branchItem->getTask();
+    Task *task = branchItemInt->getTask();
     if (task)
         r = task->getSleep().toString(Qt::ISODate);
     else
@@ -181,7 +199,7 @@ QString BranchWrapper::getTaskSleep()
 int BranchWrapper::getTaskSleepDays()
 {
     int r = -1;
-        Task *task = branchItem->getTask();
+        Task *task = branchItemInt->getTask();
     if (task)
         r = task->getDaysSleep();
     else
@@ -192,7 +210,7 @@ int BranchWrapper::getTaskSleepDays()
 QString BranchWrapper::getTaskStatus()
 {
     QString r;
-    Task *task = branchItem->getTask();
+    Task *task = branchItemInt->getTask();
     if (task) 
         r = task->getStatusString();
     else
@@ -203,39 +221,39 @@ QString BranchWrapper::getTaskStatus()
 
 QString BranchWrapper::getUrl()
 {
-    return setResult(branchItem->url());
+    return setResult(branchItemInt->url());
 }
 
 QString BranchWrapper::getVymLink()
 {
-    return setResult(branchItem->vymLink());
+    return setResult(branchItemInt->vymLink());
 }
 
 bool BranchWrapper::hasActiveFlag(const QString &flag)
 {
-    return setResult(branchItem->hasActiveFlag(flag));
+    return setResult(branchItemInt->hasActiveFlag(flag));
 }
 
 bool BranchWrapper::hasNote()
 {
-    bool r = !branchItem->getNote().isEmpty();
+    bool r = !branchItemInt->getNote().isEmpty();
     return setResult(r);
 }
 
 bool BranchWrapper::hasRichTextHeading()
 {
-    return setResult(branchItem->heading().isRichText());
+    return setResult(branchItemInt->heading().isRichText());
 }
 
 bool BranchWrapper::hasRichTextNote()
 {
-    return setResult(branchItem->getNote().isRichText());
+    return setResult(branchItemInt->getNote().isRichText());
 }
 
 bool BranchWrapper::hasTask()
 {
     bool r = false;
-    Task *task = branchItem->getTask();
+    Task *task = branchItemInt->getTask();
     if (task)
         r = true;
 
@@ -244,70 +262,72 @@ bool BranchWrapper::hasTask()
 
 QString BranchWrapper::headingText()
 {
-    return setResult(branchItem->headingPlain());
+    return setResult(branchItemInt->headingPlain());
 }
 
 int BranchWrapper::imageCount()
 {
-    return setResult(branchItem->imageCount());
+    return setResult(branchItemInt->imageCount());
 }
 
 bool BranchWrapper::loadImage(const QString &filename)
 {
     bool r;
-    ImageItem *ii = branchItem->getModel()->loadImage(branchItem, filename);
+    ImageItem *ii = model()->loadImage(branchItemInt, filename);
     r= (ii) ? true : false;
     return setResult(r);
 }
 
 bool BranchWrapper::loadNote(const QString &filename)
 {
-    return setResult(branchItem->getModel()->loadNote(filename, branchItem));
+    return setResult(model()->loadNote(filename, branchItemInt));
 }
 
 void BranchWrapper::moveDown()
 {
-    branchItem->getModel()->moveDown(branchItem);
+    model()->moveDown(branchItemInt);
 }
 
 void BranchWrapper::moveUp()
 {
-    branchItem->getModel()->moveUp(branchItem);
+    model()->moveUp(branchItemInt);
 }
 
 bool BranchWrapper::isScrolled()
 {
-    return setResult(branchItem->isScrolled());
+    return setResult(branchItemInt->isScrolled());
 }
 
 bool BranchWrapper::relinkToBranch(BranchWrapper *dst)
 {
-    return setResult(branchItem->getModel()->relinkBranch(branchItem, dst->branchItem));
+    return setResult(model()->relinkBranch(branchItemInt, dst->branchItemInt));
 }
 
 bool BranchWrapper::relinkToBranchAt(BranchWrapper *dst, int pos)
 {
-    return setResult(branchItem->getModel()->relinkBranch(branchItem, dst->branchItem, pos));
+    return setResult(model()->relinkBranch(branchItemInt, dst->branchItemInt, pos));
 }
 
-void BranchWrapper::remove()
+void BranchWrapper::remove()    // FIXME-000 what about BranchWrapper itself? when removed?
 {
-    branchItem->getModel()->deleteSelection(branchItem->getID());
+    qDebug() << "BW::remove a";
+    model()->deleteSelection(branchItemInt->getID());
+    qDebug() << "BW::remove b";
 }
 
 void BranchWrapper::scroll()
 {
-    branchItem->getModel()->scrollBranch(branchItem);
+    model()->scrollBranch(branchItemInt);
 }
 
 void BranchWrapper::select()
 {
-    branchItem->getModel()->select(branchItem);
+    model()->select(branchItemInt);
 }
 
 bool BranchWrapper::selectFirstBranch()
 {
-    bool r = branchItem->getModel()->selectFirstBranch(branchItem);
+    bool r = model()->selectFirstBranch(branchItemInt);
     if (!r)
         scriptEngine->throwError(
                 QJSValue::GenericError,
@@ -317,7 +337,7 @@ bool BranchWrapper::selectFirstBranch()
 
 bool BranchWrapper::selectLastBranch()
 {
-    bool r = branchItem->getModel()->selectLastBranch(branchItem);
+    bool r = model()->selectLastBranch(branchItemInt);
     if (!r)
         scriptEngine->throwError(
                 QJSValue::GenericError,
@@ -326,7 +346,7 @@ bool BranchWrapper::selectLastBranch()
 }
 bool BranchWrapper::selectParent()
 {
-    bool r = branchItem->getModel()->selectParent(branchItem);
+    bool r = model()->selectParent(branchItemInt);
     if (!r)
         scriptEngine->throwError(
                 QJSValue::GenericError,
@@ -336,37 +356,37 @@ bool BranchWrapper::selectParent()
 
 void BranchWrapper::setAttribute(const QString &key, const QString &value)
 {
-    branchItem->getModel()->setAttribute(branchItem, key, value);
+    model()->setAttribute(branchItemInt, key, value);
 }
 
 void BranchWrapper::setFlagByName(const QString &s)
 {
-    branchItem->getModel()->setFlagByName(s, branchItem);
+    model()->setFlagByName(s, branchItemInt);
 }
 
 void BranchWrapper::setFrameBrushColor(const bool &useInnerFrame, const QString &color)
 {
-    branchItem->getModel()->setFrameBrushColor(useInnerFrame, color, branchItem);
+    model()->setFrameBrushColor(useInnerFrame, color, branchItemInt);
 }
 
 void BranchWrapper::setFramePadding(const bool &useInnerFrame, int padding)
 {
-    branchItem->getModel()->setFramePadding(useInnerFrame, padding, branchItem);
+    model()->setFramePadding(useInnerFrame, padding, branchItemInt);
 }
 
 void BranchWrapper::setFramePenColor(const bool &useInnerFrame, const QString &color)
 {
-    branchItem->getModel()->setFramePenColor(useInnerFrame, color, branchItem);
+    model()->setFramePenColor(useInnerFrame, color, branchItemInt);
 }
 
 void BranchWrapper::setFramePenWidth(const bool &useInnerFrame, int width)
 {
-    branchItem->getModel()->setFramePenWidth(useInnerFrame, width, branchItem);
+    model()->setFramePenWidth(useInnerFrame, width, branchItemInt);
 }
 
 void BranchWrapper::setFrameType(const bool &useInnerFrame, const QString &type)
 {
-    branchItem->getModel()->setFrameType(useInnerFrame, type, branchItem);
+    model()->setFrameType(useInnerFrame, type, branchItemInt);
 }
 
 void BranchWrapper::setHeadingRichText(const QString &text)
@@ -374,80 +394,80 @@ void BranchWrapper::setHeadingRichText(const QString &text)
     // Set plaintext heading
     VymText vt;
     vt.setRichText(text);
-    branchItem->getModel()->setHeading(vt, branchItem);
+    model()->setHeading(vt, branchItemInt);
 }
 
 void BranchWrapper::setHeadingText(const QString &text)
 {
     // Set plaintext heading
-    branchItem->getModel()->setHeadingPlainText(text, branchItem);
+    model()->setHeadingPlainText(text, branchItemInt);
 }
 
 void BranchWrapper::setNoteRichText(const QString &s)
 {
     VymNote vn;
     vn.setRichText(s);
-    branchItem->getModel()->setNote(vn, branchItem);
+    model()->setNote(vn, branchItemInt);
 }
 
 void BranchWrapper::setNoteText(const QString &s)
 {
     VymNote vn;
     vn.setPlainText(s);
-    branchItem->getModel()->setNote(vn, branchItem);
+    model()->setNote(vn, branchItemInt);
 }
 
 void BranchWrapper::setPos(qreal x, qreal y)
 {
-    branchItem->getModel()->setPos(QPointF(x, y), branchItem);
+    model()->setPos(QPointF(x, y), branchItemInt);
 }
 
 void BranchWrapper::setTaskPriorityDelta(const int &n)
 {
-    branchItem->getModel()->setTaskPriorityDelta(n, branchItem);
+    model()->setTaskPriorityDelta(n, branchItemInt);
 }
 
 bool BranchWrapper::setTaskSleep(const QString &s)
 {
-    return setResult(branchItem->getModel()->setTaskSleep(s, branchItem));
+    return setResult(model()->setTaskSleep(s, branchItemInt));
 }
 
 void BranchWrapper::setUrl(const QString &s)
 {
-    branchItem->getModel()->setUrl(s, true, branchItem);
+    model()->setUrl(s, true, branchItemInt);
 }
 
 void BranchWrapper::setVymLink(const QString &s)
 {
-    branchItem->getModel()->setVymLink(s, branchItem);
+    model()->setVymLink(s, branchItemInt);
 }
 
 void BranchWrapper::toggleFlagByName(const QString &s)
 {
-    branchItem->getModel()->toggleFlagByName(s, branchItem);
+    model()->toggleFlagByName(s, branchItemInt);
 }
 
 void BranchWrapper::toggleFlagByUid(const QString &s)
 {
-    branchItem->getModel()->toggleFlagByUid(QUuid(s), branchItem);
+    model()->toggleFlagByUid(QUuid(s), branchItemInt);
 }
 
 void BranchWrapper::toggleScroll()
 {
-    branchItem->getModel()->toggleScroll(branchItem);
+    model()->toggleScroll(branchItemInt);
 }
 
 void BranchWrapper::toggleTask() {
-    branchItem->getModel()->toggleTask(branchItem);
+    model()->toggleTask(branchItemInt);
 }
 
 void BranchWrapper::unscroll()
 {
-    branchItem->getModel()->unscrollBranch(branchItem);
+    model()->unscrollBranch(branchItemInt);
 }
 
 void BranchWrapper::unsetFlagByName(const QString &s)
 {
-    branchItem->getModel()->unsetFlagByName(s, branchItem);
+    model()->unsetFlagByName(s, branchItemInt);
 }
 

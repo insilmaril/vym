@@ -11,11 +11,14 @@ class BranchWrapper : public VymScriptContext {
   public:
     BranchWrapper(BranchItem*);
     ~BranchWrapper();
+    BranchItem* branchItem();
+    VymModel* model();
 
   public slots:
     void addBranch();
     void addBranchAt(int pos);
     void addBranchBefore();
+    bool addMapInsert(QString filename, int pos);
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
     int branchCount();
@@ -80,7 +83,7 @@ class BranchWrapper : public VymScriptContext {
     void unsetFlagByName(const QString &);
 
   private:
-    BranchItem *branchItem;
+    BranchItem *branchItemInt;
 };
 
 #endif
