@@ -10,13 +10,13 @@ extern QJSEngine *scriptEngine;
 
 BranchWrapper::BranchWrapper(BranchItem *bi)
 {
-    //qDebug() << "Constr BranchWrapper (BI)";
+    // qDebug() << "Constr BranchWrapper (BI)";
     branchItemInt = bi;
 }
 
 BranchWrapper::~BranchWrapper()
 {
-    //qDebug() << "Destr BranchWrapper";
+    // qDebug() << "Destr BranchWrapper";
 }
 
 BranchItem* BranchWrapper::branchItem()
@@ -158,6 +158,11 @@ QString BranchWrapper::getFrameType(const bool &useInnerFrame)
     return setResult(branchItemInt->getBranchContainer()->frameTypeString(useInnerFrame));
 }
 
+QString BranchWrapper::getUid()
+{
+    return setResult(branchItemInt->getUuid().toString());
+}
+
 void BranchWrapper::getJiraData(bool subtree)
 {
     model()->getJiraData(subtree, branchItemInt);
@@ -176,6 +181,16 @@ QString BranchWrapper::getNoteXML()
 int BranchWrapper::getNum()
 {
     return setResult(branchItemInt->num());
+}
+
+qreal BranchWrapper::getPosX()
+{
+    return setResult(branchItemInt->getBranchContainer()->pos().x());
+}
+
+qreal BranchWrapper::getPosY()
+{
+    return setResult(branchItemInt->getBranchContainer()->pos().y());
 }
 
 int BranchWrapper::getTaskPriorityDelta()
@@ -308,11 +323,14 @@ bool BranchWrapper::relinkToBranchAt(BranchWrapper *dst, int pos)
     return setResult(model()->relinkBranch(branchItemInt, dst->branchItemInt, pos));
 }
 
-void BranchWrapper::remove()    // FIXME-000 what about BranchWrapper itself? when removed?
+void BranchWrapper::removeChildren()
 {
-    qDebug() << "BW::remove a";
-    model()->deleteSelection(branchItemInt->getID());
-    qDebug() << "BW::remove b";
+    branchItemInt->getModel()->deleteChildren(branchItemInt);
+}
+
+void BranchWrapper::removeChildrenBranches()
+{
+    branchItemInt->getModel()->deleteChildrenBranches(branchItemInt);
 }
 
 void BranchWrapper::scroll()

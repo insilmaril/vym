@@ -369,51 +369,6 @@ QString VymModelWrapper::getNoteXML()
     return setResult(model->getNote().saveToDir());
 }
 
-qreal VymModelWrapper::getPosX()
-{
-    Container *c = nullptr;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        c = (Container*)(selbi->getBranchContainer());
-    else {
-        ImageItem *selii = model->getSelectedImage();
-        if (selii)
-            c = (Container*)(selii->getImageContainer());
-            scriptEngine->throwError(
-                    QJSValue::RangeError,
-                    "No branch selected");
-    }
-
-    if (c)
-        return setResult(c->pos().x());
-
-    scriptEngine->throwError(
-         QJSValue::GenericError,
-         "Could not get x-position from item");
-    return 0;
-}
-
-qreal VymModelWrapper::getPosY()
-{
-    Container *c = nullptr;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        c = (Container*)(selbi->getBranchContainer());
-    else {
-        ImageItem *selii = model->getSelectedImage();
-        if (selii)
-            c = (Container*)(selii->getImageContainer());
-    }
-
-    if (c)
-        return setResult(c->pos().y());
-
-    scriptEngine->throwError(
-         QJSValue::GenericError,
-         "Could not get y-position from item");
-    return 0;
-}
-
 qreal VymModelWrapper::getScenePosX()
 {
     Container *c = nullptr;
@@ -557,11 +512,21 @@ void VymModelWrapper::redo() { model->redo(); }
 
 void VymModelWrapper::remove() { model->deleteSelection(); }
 
-void VymModelWrapper::removeChildren() { model->deleteChildren(); }
+void VymModelWrapper::removeBranch(BranchWrapper *bw)
+{
+    if (!bw) {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "VymModelWrapper::removeBranch(b) b is invalid");
+        return;
+    }
+    model->deleteSelection(bw->branchItem()->getID());
+}
 
-void VymModelWrapper::removeChildBranches() { model->deleteChildBranches(); }
-
-void VymModelWrapper::removeKeepChildren() { model->deleteKeepChildren(); }
+void VymModelWrapper::removeKeepChildren(BranchWrapper *bw)
+{
+    model->deleteKeepChildren(bw->branchItem());
+}
 
 void VymModelWrapper::removeSlide(int n)
 {
@@ -657,6 +622,7 @@ bool VymModelWrapper::selectLastChildBranch()
     }
     return setResult(r);
 }
+
 bool VymModelWrapper::selectLastImage()
 {
     bool r = false;

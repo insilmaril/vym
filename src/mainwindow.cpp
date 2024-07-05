@@ -731,12 +731,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("getPosX", Command::TreeItem);
-    modelCommands.append(c);
-
-    c = new Command("getPosY", Command::TreeItem);
-    modelCommands.append(c);
-
     c = new Command("getScenePosX", Command::TreeItem);
     modelCommands.append(c);
 
@@ -826,13 +820,13 @@ void Main::setupAPI()
     c = new Command("remove", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command("removeChildren", Command::Branch);
-    modelCommands.append(c);
-
-    c = new Command("removeChildBranches", Command::Branch);
+    c = new Command("removeBranch", Command::Branch);
+    c->addParameter(Command::BranchItem, false, "Branch to be removed");
+    c->setComment("Remove branch");
     modelCommands.append(c);
 
     c = new Command("removeKeepChildren", Command::Branch);
+    c->setComment("Remove branch but keep its children");
     modelCommands.append(c);
 
     c = new Command("removeSlide", Command::Any);
@@ -1080,11 +1074,6 @@ void Main::setupAPI()
     c->setComment("Add map with given path to branch at index");
     branchCommands.append(c);
 
-    c = new Command("addMapReplace", Command::Branch);  // FIXME-0 should not work on branch
-    c->addParameter(Command::String, false, "Filename of map to load");
-    c->setComment("Replace branch by map with given path");
-    branchCommands.append(c);
-
     c = new Command("attributeAsInt", Command::Branch, Command::Int);
     c->setComment("Get integer value of attribute with given key");
     c->addParameter(Command::String, false, "Key of integer attribute");
@@ -1121,6 +1110,10 @@ void Main::setupAPI()
     c = new Command("getFrameType", Command::Branch, Command::String);  // FIXME-2 set Comment
     branchCommands.append(c);
 
+    c = new Command("getUid", Command::Branch, Command::String);
+    c->setComment("Get Uuid of branch as string");
+    branchCommands.append(c);
+
     c = new Command("getJiraData", Command::Branch, Command::String);
     c->setComment("Get data from Jira server, either ticket or run defined query");
     c->addParameter(Command::Bool, false, "Update every branch in subtree");
@@ -1128,6 +1121,14 @@ void Main::setupAPI()
 
     c = new Command("getNum", Command::Branch, Command::Int);
     c->setComment("Return position of branch in subtree");
+    branchCommands.append(c);
+
+    c = new Command("getPosX", Command::TreeItem);
+    c->setComment("get x position of branch relative to parent");
+    branchCommands.append(c);
+
+    c = new Command("getPosY", Command::TreeItem);
+    c->setComment("get y position of branch relative to parent");
     branchCommands.append(c);
 
     c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
@@ -1208,8 +1209,12 @@ void Main::setupAPI()
     c->addParameter(Command::Int, false, "Position (0 is first)");
     branchCommands.append(c);
 
-    c = new Command("remove", Command::Branch);
-    c->setComment("Remove branch");
+    c = new Command("removeChildren", Command::Branch);
+    c->setComment("Remove all children of branch");
+    branchCommands.append(c);
+
+    c = new Command("removeChildrenBranches", Command::Branch);
+    c->setComment("Remove all children branches of branch");
     branchCommands.append(c);
 
     c = new Command("scroll", Command::Branch);
@@ -4185,7 +4190,6 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             if (lmode != File::DefaultMap) {
 
                 vm->setFilePath(fn);
-                // FIXME-0 not needed? vm->saveStateBeforeLoad(lmode, fn);
                 // In case of importing better call the related (new) functions
                 // in VymModel, instead of loading directly
 
@@ -5617,7 +5621,7 @@ void Main::editDeleteChildren()
 {
     VymModel *m = currentModel();
     if (m)
-        m->deleteChildBranches();
+        m->deleteChildrenBranches();
 }
 
 void Main::editDeleteSelection()

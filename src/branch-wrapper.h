@@ -29,10 +29,13 @@ class BranchWrapper : public VymScriptContext {
     int getFramePadding(const bool & useInnerFrame);
     int getFramePenWidth(const bool & useInnerFrame);
     QString getFrameType(const bool & useInnerFrame);
+    QString getUid();
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
     int getNum();
+    qreal getPosX();            // FIXME-3 copy for image
+    qreal getPosY();            // FIXME-3 copy for image
     int getTaskPriorityDelta();
     QString getTaskSleep();
     int getTaskSleepDays();
@@ -53,7 +56,8 @@ class BranchWrapper : public VymScriptContext {
     void moveUp();
     bool relinkToBranch(BranchWrapper*);
     bool relinkToBranchAt(BranchWrapper*, int pos);
-    void remove();
+    void removeChildren();
+    void removeChildrenBranches();
     void scroll();
     void select();
     bool selectFirstBranch();

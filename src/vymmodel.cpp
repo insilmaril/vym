@@ -593,7 +593,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         reader->setTmpDir(tmpdir);
 
-        if (lmode == File::ImportReplace)
+        if (lmode == File::ImportReplace)   // FIXME-0 this if makes no sense...
             reader->setLoadMode(File::ImportReplace, pos);
         else
             reader->setLoadMode(lmode, pos);
@@ -675,7 +675,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
 
     // Cleanup
-    // FIXME-0  only testing removeDir(QDir(tmpZipDir));
+    removeDir(QDir(tmpZipDir));
     delete reader;
 
     // Restore original zip state
@@ -2026,7 +2026,7 @@ void VymModel::saveStateBranch(
     saveStateNew(branchVar + uc, branchVar + rc, comment);
 }
 
-void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
+void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,  // FIXME-000 use new syntax (WIP)
                                      const QString &rc, const QString &comment)
 {
     // save the selected part of the map, Undo will replace part of map
@@ -2042,27 +2042,7 @@ void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
         qWarning("VymModel::saveStateChangingPart  no redoSel given!");
 
     saveStateOld(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
-              redoSelection, rc, comment, undoSel);  // FIXME-000 use new syntax
-}
-
-void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
-{
-    if (!redoSel) {
-        qWarning("VymModel::saveStateRemovingPart  no redoSel given!");
-        return;
-    }
-    QString undoSelection;
-    QString redoSelection = getSelectString(redoSel);
-    if (redoSel->hasTypeBranch()) {
-        // save the selected branch of the map, Undo will insert part of map
-        if (redoSel->depth() > 0)
-            undoSelection = getSelectString(redoSel->parent());
-        saveStateOld(File::PartOfMap, undoSelection,
-                  QString("addMapInsert (\"PATH\",%1,%2)")  // FIXME-000 use new syntax
-                      .arg(redoSel->num())
-                      .arg(VymReader::SlideContent),
-                  redoSelection, "remove ()", comment, redoSel);
-    }
+              redoSelection, rc, comment, undoSel);
 }
 
 void VymModel::saveState(TreeItem *undoSel, const QString &uc,
@@ -2192,6 +2172,11 @@ TreeItem *VymModel::findUuid(const QUuid &id)
         }
         nextBranch(cur, prev);
     }
+
+    // For restoring MapCenters we might want to add to rootItem
+    if (rootItem->getUuid() == id)
+        return rootItem;
+
     return nullptr;
 }
 
@@ -3898,13 +3883,17 @@ QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bo
     return sortedList;
 }
 
-BranchItem *VymModel::createBranchWhileLoading(BranchItem *dst)
+BranchItem *VymModel::createBranchWhileLoading(BranchItem *dst, int insertPos)
 {
     BranchItem *newbi;
     if (!dst || dst == rootItem)
         newbi = addMapCenterAtPos(QPointF(0, 0));
-    else
-        newbi = addNewBranchInt(dst, -2);
+    else {
+        if (insertPos < 0)
+            newbi = addNewBranchInt(dst, -2);
+        else
+            newbi = addNewBranchInt(dst, insertPos);
+    }
 
     // Set default design styles, e.g. font
     applyDesign(MapDesign::LoadingMap, newbi);
@@ -4260,8 +4249,9 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int num)
 
         if (newbi) {
             QString uc, rc;
-            uc = setBranchVar(newbi) + " b.remove();";
-            rc = setBranchVar(pi) + QString(" b.addMapInsert(\"REDO_PATH\", %1);").arg(num); // FIXME-0 QUuid is lost here. Better insertMapAt
+            QString bv = setBranchVar(newbi);
+            uc = " map.removeBranch(b);";
+            rc = setBranchVar(pi) + QString(" b.addMapInsert(\"REDO_PATH\", %1);").arg(num);
             saveStateNew( uc, rc,
                 QString("Add new branch to %1").arg(getObjectName(pi)),
                 nullptr, pi);
@@ -4279,7 +4269,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int num)
         // Required to initialize styles
         if (!saveStateBlocked)
             // Don't apply design while loading map
-            applyDesign(MapDesign::CreatedByUser, newbi);   // FIXME-1 creates additional undoStep, which let's tests fail...
+            applyDesign(MapDesign::CreatedByUser, newbi);   // FIXME-1 creates additional undoStep, which let's tests fail...   // FIXME-1 really? still?
     }
     return newbi;
 }
@@ -4295,7 +4285,9 @@ BranchItem *VymModel::addNewBranchBefore(BranchItem *bi)
         newbi = addNewBranchInt(selbi, -1);
 
         if (newbi) {
-            saveStateBranch(newbi, "remove ()", "addBranchBefore ()",
+            QString uc = setBranchVar(newbi) + "map.removeBranch(b);";
+            QString rc = setBranchVar(selbi) + "b.addBranchBefore();";
+            saveStateNew(uc, rc,
                 QString("Add branch before %1").arg(getObjectName(selbi)));
 
             // newbi->move2RelPos (p);
@@ -4638,11 +4630,18 @@ void VymModel::deleteSelection(ulong selID)
         TreeItem *ti = findID(id);
         if (ti) {
             if (ti->hasTypeBranch()) { // Delete branch
-                BranchItem *selbi = (BranchItem *)ti;
-                saveStateRemovingPart(
-                    selbi, QString("remove %1").arg(getObjectName(selbi)));
+                BranchItem *bi = (BranchItem *)ti;
+                BranchItem *pbi = bi->parentBranch();   // FIXME-00 Check if pbi == rootItem (removing MC)
+                QString bv = setBranchVar(bi);
+                QString pbv = setBranchVar(pbi, "pb");
+                QString uc = pbv + QString("pb.addMapInsert(\"UNDO_PATH\", %1)").arg(bi->num());
+                QString rc;
+                rc = bv + "map.removeBranch(b);";
+                saveStateNew(uc, rc,
+                        QString("Remove branch \"%1\"").arg(bi->headingText()),
+                            bi, nullptr);
 
-                BranchItem *pi = (BranchItem *)(deleteItem(selbi));
+                BranchItem *pi = (BranchItem *)(deleteItem(bi));
                 if (pi) {
                     if (pi->isScrolled() && pi->branchCount() == 0)
                         pi->unScroll();
@@ -4678,12 +4677,12 @@ void VymModel::deleteSelection(ulong selID)
     }
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)
+void VymModel::deleteKeepChildren(BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         if (selbi->depth() < 1) {
-            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-3 cont here. Undo script fails
+            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-2 cont here. Undo script fails
             while (selbi->branchCount() > 0)
                 detach(selbi->getBranchNum(0));
 
@@ -4691,45 +4690,50 @@ void VymModel::deleteKeepChildren(bool saveStateFlag)
             //saveStateEndBlock();
         } else {
             // Check if we have children at all to keep
-            if (selbi->branchCount() == 0) {
+            if (selbi->branchCount() == 0)
                 deleteSelection();
-                break;
+            else {
+                BranchItem *pi = (BranchItem *)(selbi->parent());
+
+                QString pbv = setBranchVar(pi, "pb");
+                QString bv = setBranchVar(selbi);
+                QString uc = pbv + "map.addMapReplace(\"UNDO_PATH\", pb);";
+                QString rc = bv + "b.removeKeepChildren();";
+                saveStateNew(uc, rc,
+                    QString("Remove branch \"%1\" and keep children").arg(selbi->headingText()),
+                    pi);
+
+                QString sel = getSelectString(selbi);
+                unselectAll();
+                bool oldSaveState = saveStateBlocked;
+                saveStateBlocked = true;
+                int num_dst = selbi->num();
+                BranchItem *bi = selbi->getFirstBranch();
+                while (bi) {
+                    relinkBranch(bi, pi, num_dst);
+                    bi = selbi->getFirstBranch();
+                    num_dst++;
+                }
+                deleteItem(selbi);
+                reposition();   // FIXME-2 reposition only once in the end
+                emitDataChanged(pi);
+                select(sel);
+                saveStateBlocked = oldSaveState;
             }
-
-            BranchItem *pi = (BranchItem *)(selbi->parent());
-
-            if (saveStateFlag)
-                saveStateChangingPart(pi, pi, "removeKeepChildren ()",
-                                      QString("Remove %1 and keep its children")
-                                          .arg(getObjectName(selbi)));
-
-            QString sel = getSelectString(selbi);
-            unselectAll();
-            bool oldSaveState = saveStateBlocked;
-            saveStateBlocked = true;
-            int num_dst = selbi->num();
-            BranchItem *bi = selbi->getFirstBranch();
-            while (bi) {
-                relinkBranch(bi, pi, num_dst);
-                bi = selbi->getFirstBranch();
-                num_dst++;
-            }
-            deleteItem(selbi);
-            reposition();   // FIXME-2 reposition only once in the end
-            emitDataChanged(pi);
-            select(sel);
-            saveStateBlocked = oldSaveState;
         }
     }
 }
 
-void VymModel::deleteChildren()
+void VymModel::deleteChildren(BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        saveStateChangingPart(
-            selbi, selbi, "removeChildren ()",
-            QString("Remove children of branch %1").arg(getObjectName(selbi)));
+        QString bv = setBranchVar(selbi);
+        QString uc = bv + "map.addMapReplace(\"UNDO_PATH\", b);";
+        QString rc = bv + "b.removeChildren();";
+        saveStateNew(uc, rc,
+                QString("Remove children of \"%1\"").arg(selbi->headingText()),
+                selbi);
         emit(layoutAboutToBeChanged());
 
         QModelIndex ix = index(selbi);
@@ -4747,9 +4751,9 @@ void VymModel::deleteChildren()
     }
 }
 
-void VymModel::deleteChildBranches()
+void VymModel::deleteChildrenBranches(BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         if (selbi->branchCount() == 0) 
             deleteChildren();
@@ -4757,9 +4761,13 @@ void VymModel::deleteChildBranches()
             int n_first = selbi->getFirstBranch()->childNum();
             int n_last  = selbi->getLastBranch()->childNum();
 
-            saveStateChangingPart(
-                selbi, selbi, "removeChildBranches()",
-                QString("Remove child branches of branch %1").arg(getObjectName(selbi)));
+            QString bv = setBranchVar(selbi);
+            QString uc = bv + "map.addMapReplace(\"UNDO_PATH\", b);";
+            QString rc = bv + "b.removeChildrenBranches();";
+            saveStateNew(uc, rc,
+                    QString("Remove children branches of \"%1\"").arg(selbi->headingText()),
+                    selbi);
+
             emit(layoutAboutToBeChanged());
 
             QModelIndex ix = index(selbi);
@@ -6227,6 +6235,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
                 bc->setBranchesContainerLayout(
                         mapDesignInt->branchesContainerLayout(selbi->depth()));
                 selbiChanged = true;
+                        mapDesignInt->branchesContainerLayout(selbi->depth());
         }
 
         if (bc->imagesContainerAutoLayout) {

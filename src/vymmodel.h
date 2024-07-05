@@ -303,9 +303,6 @@ class VymModel : public TreeModel {
                                const QString &redoCommand,
                                const QString &comment);
 
-    /*! Overloaded for convenience */
-    void saveStateRemovingPart(TreeItem *redoSelection, const QString &comment);
-
   public:  
     /*! Overloaded for convenience */
     void saveState(TreeItem *undoSelection, const QString &undoCommand,
@@ -469,7 +466,9 @@ class VymModel : public TreeModel {
     QList <ImageItem*> sortImagesByNum(QList <ImageItem*>, bool inverse = false);
 
     // The create methods are used to quickly parse a XML file
-    BranchItem *createBranchWhileLoading(BranchItem *dst); //!< Create Branch
+    BranchItem *createBranchWhileLoading( //!< Create Branch. Append for  insPos < 0
+            BranchItem *dst,
+            int insertPos = -1);
     ImageItem *createImage(BranchItem *dst);   //!< Create image
 
   public:
@@ -540,11 +539,10 @@ class VymModel : public TreeModel {
     void cleanupItems();    //!< Delete orphaned Items
     void deleteLater(uint); //!< Delete later with new beginRemoveRow
     void deleteSelection(ulong selID = 0); //!< Delete selection
-    void deleteKeepChildren(
-        bool saveStateFlag = true); //!< remove branch, but keep children
+    void deleteKeepChildren(BranchItem *bi = nullptr); //!< remove branch, but keep children
   public:
-    void deleteChildren();      //!< Delete all children, including attributes
-    void deleteChildBranches(); //!< Delete only branches
+    void deleteChildren(BranchItem *bi = nullptr);  //!< Delete all children, including attributes
+    void deleteChildrenBranches(BranchItem *bi = nullptr);  //!< Delete only branches
 
     TreeItem *deleteItem(
         TreeItem *); //!< Delete item and return parent (if parent!= rootItem)

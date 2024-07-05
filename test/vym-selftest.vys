@@ -354,56 +354,65 @@ function test_delete_parts()
   heading("Deleting parts:");
   map = initMap(testMapDefault);
   
-  map.select(main_A);
-  let n = map.branchCount();
-  map.select(branch_0Aa);
-  let m = map.branchCount();
-  map.remove();
-  map.select(main_A);
-  expect( "Remove branch: branchcount",  map.branchCount(), n - 1);
+  main_A = map.findBranchBySelection(main_A_string);
+  n = main_A.branchCount();
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  m = branch_0Aa.branchCount();
+  h = branch_0Aa.headingText();  
+  map.removeBranch(branch_0Aa);
+  expect( "Remove branch: branchcount",  main_A.branchCount(), n - 1);
   map.undo();
-  map.select(main_A);
-  expect( "Undo Remove branch: branchcount parent", map.branchCount(), n);
-  map.select(branch_0Aa);
-  expect( "Undo Remove branch: branchcount restored branch", map.branchCount(), m);
+  expect( "Undo Remove branch: branchcount parent", main_A.branchCount(), n);
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  expect( "Undo Remove branch: branchcount restored branch", branch_0Aa.branchCount(), m);
+  expect( "Undo Remove branch: heading is restored to \"" + h + "\"", branch_0Aa.headingText(), h);
 
   closeCurrentMap();
 
   map = initMap(testMapDefault);
-  map.select(branch_0Aa);
-  n = map.branchCount();
-  map.removeChildren();
-  map.select(branch_0Aa);
-  expect( "removeChildren: branchcount", map.branchCount(), 0);
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  n = branch_0Aa.branchCount();
+
+  branch_0Aa.removeChildrenBranches();
+  expect( "removeChildren: branchcount", branch_0Aa.branchCount(), 0);
   map.undo();
-  map.select(branch_0Aa);
-  expect( "Undo: removeChildren: branchcount", map.branchCount(), n);
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  expect( "Undo: removeChildren: branchcount", branch_0Aa.branchCount(), n);
 
   closeCurrentMap();
 
   map = initMap(testMapDefault);
-  map.select(main_A);
-  n = map.branchCount();
-  map.select(branch_0Aa);
-  map.removeKeepChildren();
-  map.select(main_A);
-  expect( "removeKeepChildren: branchcount", map.branchCount(), n + m - 1);
+  main_A = map.findBranchBySelection(main_A_string);
+  n = main_A.branchCount();
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  map.removeKeepChildren(branch_0Aa);
+
+  expect( "removeKeepChildren: branchcount changed", main_A.branchCount(), n + m - 1);
   map.undo()
-  map.select(main_A);
-  expect( "Undo: removeKeepChildren: branchcount of parent", map.branchCount(), n);
-  map.select(branch_0Aa);
-  expect( "Undo: removeKeepChildren: branchcount of branch", map.branchCount(), m);
+  main_A = map.findBranchBySelection(main_A_string);
+  expect( "Undo: removeKeepChildren: branchcount of parent", main_A.branchCount(), n);
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  expect( "Undo: removeKeepChildren: branchcount of branch", branch_0Aa.branchCount(), m);
 
   closeCurrentMap();
 
   map = initMap(testMapDefault);
 
   n = map.centerCount();
-  map.select(center_1);
-  map.remove();
-  expect( "remove mapCenter: number of centers decreased", map.centerCount(), n - 1);
+  center_1 = map.findBranchBySelection(center_1_string);
+     
+  x = center_1.getPosX();
+  y = center_1.getPosY();
+
+  map.removeBranch(center_1);
+
+  expect("remove mapCenter: number of centers decreased", map.centerCount(), n - 1);
   map.undo();
-  expect( "Undo remove mapCenter: number of centers increased", map.centerCount(), n);
+
+  center_1 = map.findBranchBySelection(center_1_string);
+  expect("Undo remove mapCenter: number of centers increased", map.centerCount(), n);
+  expect("Undo remove mapCenter: x position is unchanged", center_1.getPosX(), x);
+  expect("Undo remove mapCenter: y position is unchanged", center_1.getPosY(), y);
 
   closeCurrentMap();
 }
@@ -1392,21 +1401,21 @@ function test_tasks()
 
 // ok, already using new Wrapper functions
 test_basics();
-//test_adding_branches();
+test_adding_branches();
 test_adding_maps();
-//test_extrainfo();
-//test_frames();
-//test_modify_branches();
-//test_modify_images();
-//test_moving_parts();
-//test_references();
-//test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
+test_delete_parts();
+test_extrainfo();
+test_frames();
+test_modify_branches();
+test_modify_images();
+test_moving_parts();
+test_references();
+test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
 
 
 /* FIXME Not ported yet
 test_attributes();
 test_copy_paste();
-test_delete_parts();
 */
 //test_export(); // FIXME WIP
 //test_notes();

@@ -45,8 +45,6 @@ class VymModelWrapper : public VymScriptContext {
     QString getTitle();
     QString getNotePlainText(); // FIXME-3 getNoteText in BranchWrapper. Rework test scripts
     QString getNoteXML();       // FIXME-3 move to BranchWrapper
-    qreal getPosX();            // FIXME-3 move to BranchWrapper, copy for image
-    qreal getPosY();            // FIXME-3 move to BranchWrapper, copy for image
     qreal getScenePosX();       // FIXME-3 move to BranchWrapper, copy for image
     qreal getScenePosY();       // FIXME-3 move to BranchWrapper, copy for image
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
@@ -67,10 +65,9 @@ class VymModelWrapper : public VymScriptContext {
     void note2URLs();       // FIXME-3 move to BranchWrapper
     void paste();
     void redo();
-    void remove();          // FIXME-3 copy to ImageWrapper, leave for VymModel (already in BranchWrapper)
-    void removeChildren();      // FIXME-3 move to BranchWrapper
-    void removeChildBranches(); // FIXME-3 move to BranchWrapper
-    void removeKeepChildren();  // FIXME-3 move to BranchWrapper
+    void remove();              // FIXME-3 still needed? Rename to removeSelection()?
+    void removeBranch(BranchWrapper *bw);
+    void removeKeepChildren(BranchWrapper *bw);
     void removeSlide(int n);
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);// FIXME-3 move to ImageWrapper

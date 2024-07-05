@@ -1294,12 +1294,12 @@ void BranchContainer::reposition()
     /*
     qdbg() << ind() << "BC::reposition  bc=" << info() << "  orientation=" << orientation;
     if (pbc) {
-        qdbg() << ind() << "          pbc=" << pbc->info();
-        qdbg() << ind() << "          pbc->orientation=" << pbc->orientation;
+        qdbg() << ind() << "          pbc=" << pbc->info() << " pbc->orientation=" << pbc->orientation;
     } else
         qdbg() << ind() << "          pbc=0  children=" << branchItem->branchCount();
-    */
     //qdbg() << ind() << "          state=" << movingStateInt;
+    */
+
     // Settings depending on depth
     uint depth = 0;
     if (branchItem)
@@ -1326,7 +1326,7 @@ void BranchContainer::reposition()
                 setBranchesContainerHorizontalAlignment(AlignedLeft);
                 break;
             case UndefinedOrientation:
-                qWarning() << "BC::reposition - UndefinedOrientation in " << info();
+                qWarning() << "BC::reposition - Undefined orientation in " << info();
                 break;
             default:
                 qWarning() << "BC::reposition - Unknown orientation " << orientation << " in " << info();

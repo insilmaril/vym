@@ -119,7 +119,6 @@ bool VymWrapper::directoryExists(const QString &directoryName)
 
 bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
 {
-    qDebug() << "VymWrapper::fileCopy " << srcPath << " -> " << dstPath;
     QFile file(srcPath);
     if (!file.exists()) {
         qDebug() << "VymWrapper::fileCopy()   srcPath does not exist:" << srcPath;
@@ -130,9 +129,7 @@ bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
     }
 
     bool r = file.copy(dstPath);
-    qDebug() << "result of VymWrapper::fileCopy is " << r;
     return setResult(r);
-    //return setResult(file.copy(dstPath));
 }
 
 bool VymWrapper::fileExists(const QString &fileName)
@@ -144,7 +141,6 @@ bool VymWrapper::fileRemove(const QString &fileName)
 {
     QFile file(fileName);
     bool r = file.remove();
-    qDebug() << "VymWrapper::fileRemove " << fileName << " returns " << r;
     return setResult(r);
 }
 

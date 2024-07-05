@@ -119,6 +119,7 @@ void VymReader::readVymMap()
 
     lastMI = lastBranch;
 
+
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("mapdesign"))
             readMapDesign();
@@ -399,13 +400,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
         // For Imports create branch at insertPos
         // (Here we only use ImportInsert, replacements already have
         // been done before)
-        if (loadModeBranch == File::ImportAdd) {
-            if (insertPosBranch < 0)
-                lastBranch = model->createBranchWhileLoading(lastBranch);
-            else {
-                lastBranch = model->addNewBranch(lastBranch, insertPosBranch);
-            }
-        }
+        if (loadModeBranch == File::ImportAdd)
+            lastBranch = model->createBranchWhileLoading(lastBranch, insertPos);
     }
     // Prepare parsing heading later
     lastMI = lastBranch;
