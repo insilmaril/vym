@@ -593,10 +593,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         reader->setTmpDir(tmpdir);
 
-        if (lmode == File::ImportReplace)   // FIXME-0 this if makes no sense...
-            reader->setLoadMode(File::ImportReplace, pos);
-        else
-            reader->setLoadMode(lmode, pos);
+        reader->setLoadMode(lmode, pos);
 
         bool parsedWell = false;
 
@@ -1658,8 +1655,7 @@ void VymModel::saveStateNew(
          const QString &redoCom,
          const QString &comment,
          TreeItem *saveUndoItem,
-         TreeItem *saveRedoItem,
-         QString dataXML)   // FIXME-0 needed?
+         TreeItem *saveRedoItem)
 {
     // Main saveState
 
@@ -1766,7 +1762,7 @@ void VymModel::saveStateNew(
 
     // Save depending on how much needs to be saved
     if (saveUndoItem) {
-        dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+        QString dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
                             saveUndoItem);
 
         QString xmlUndoPath = histDir + "/undo.xml";
@@ -1774,7 +1770,7 @@ void VymModel::saveStateNew(
         saveStringToDisk(xmlUndoPath, dataXML);
     }
     if (saveRedoItem) {
-        dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+        QString dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
                             saveRedoItem);
 
         QString xmlRedoPath = histDir + "/redo.xml";
