@@ -88,8 +88,8 @@ void VymReader::readVymMap()
 
         readVymMapAttr();
     } else {
-        // Imports need a selection
-        lastBranch = model->getSelectedBranch();
+        // Imports need a dedicated branch
+        lastBranch = insertBranch;
 
         if (loadMode == File::ImportReplace) {
             if (!lastBranch) {
@@ -108,6 +108,7 @@ void VymReader::readVymMap()
             lastBranch = pb;
             loadMode = File::ImportAdd;
         } else {
+            // ImportAdd
             if (insertPos < 0)
                 insertPos = 0;
         }

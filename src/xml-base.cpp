@@ -9,6 +9,8 @@ BaseReader::BaseReader(VymModel *vm)
     //qDebug() << "Constr. BaseReader (VymModel*)";
     model = vm;
     lastBranch = nullptr;
+    insertBranch = nullptr;
+    insertPos = -1;
 }
 
 BaseReader::~BaseReader()
@@ -47,10 +49,19 @@ void BaseReader::setTmpDir(QString tp)
 
 void BaseReader::setInputString(const QString &s) { inputString = s; }
 
-void BaseReader::setLoadMode(const File::LoadMode &lm, int p)
+void BaseReader::setLoadMode(const File::LoadMode &lm)
 {
     loadMode = lm;
-    insertPos = p;
+}
+
+void BaseReader::setInsertBranch(BranchItem *bi)
+{
+    insertBranch = bi;
+}
+
+void BaseReader::setInsertPos(int ip)
+{
+    insertPos = ip;
 }
 
 void  BaseReader::raiseUnknownElementError()

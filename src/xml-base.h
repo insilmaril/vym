@@ -37,7 +37,9 @@ class BaseReader {
     void setModel(VymModel *);
     void setTmpDir(QString);
     void setInputString(const QString &);
-    void setLoadMode(const File::LoadMode &, int p = -1);
+    void setLoadMode(const File::LoadMode &);
+    void setInsertBranch(BranchItem *ib = nullptr);
+    void setInsertPos(int p = -1);
     void raiseUnknownElementError();
 
     QString attributeToString(const QString &a);
@@ -60,6 +62,7 @@ class BaseReader {
     VymText vymtext;
 
     BranchItem *lastBranch;
+    BranchItem *insertBranch;
     Task *lastTask;
     MapItem *lastMI;
 

@@ -160,7 +160,8 @@ class VymModel : public TreeModel {
             const File::FileType &ftype = File::VymMap, //!< VymMap or FreeMind
             const int &contentFilter =
                 0x0000,  //!< For undo types of content can be filterd
-            int pos = -1 //!< Optionally tell position where to add data
+            BranchItem *bi = nullptr,   //!< Branch to replace or add to
+            int insertPos = -1          //!< Optionally tell position where to add data
     );
 
   public:

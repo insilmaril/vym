@@ -457,7 +457,9 @@ QString VymModel::getDestPath() { return destPath; }
 
 File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                                   const File::FileType &ftype,
-                                  const int &contentFilter, int pos)
+                                  const int &contentFilter,
+                                  BranchItem *insertBranch,
+                                  int insertPos)
 {
     File::ErrorCode err = File::Success;
 
@@ -473,7 +475,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         case File::VymMap:
             reader = new VymReader(this);
             // For imports we might want to ignore slides
-            reader->setContentFilter(contentFilter);
+            reader->setContentFilter(contentFilter);// FIXME-2 Maybe ignore slides hardcoded, when parsing and remove contentFilter?
             break;
         case File::FreemindMap:
             reader = new FreeplaneReader(this);
@@ -593,7 +595,13 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         reader->setTmpDir(tmpdir);
 
-        reader->setLoadMode(lmode, pos);
+        reader->setLoadMode(lmode);
+
+        if (lmode == File::ImportReplace || lmode == File::ImportAdd)
+            reader->setInsertBranch(insertBranch);
+
+        if (lmode == File::ImportAdd)
+            reader->setInsertPos(insertPos);
 
         bool parsedWell = false;
 
@@ -1053,46 +1061,53 @@ void VymModel::importDir()
     }
 }
 
-bool VymModel::addMapInsert(QString fpath, int pos, BranchItem *bi)
+bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *insertBranch)
 {
-    BranchItem *selbi = getSelectedBranch(bi);
-    if (selbi) {
-       //FIXME-0 Ideally VymModel::loadMap would have branchItem as parameter 
-       //        instead of having to select it first
-       select(selbi);
-
-       QString bv = setBranchVar(bi);
-       QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
-       QString rc = bv + QString("b.addMapInsert(\"%1\", %2);").arg(fpath).arg(pos);
-       QString comment = QString("Add map %1 to \"%2\"").arg(fpath).arg(bi->headingText());
-       saveStateNew(uc, rc, comment, bi);
-
-       if (File::Aborted != loadMap(fpath, File::ImportAdd, File::VymMap, 0x0000, pos))
-           return true;
+    if (!insertBranch) {
+        qWarning() << "VymModel::addMapInsert No branch provided";
+        return false;
     }
-    return false;
+
+    QString bv = setBranchVar(insertBranch);
+    QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.addMapInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
+    QString comment = QString("Add map %1 to \"%2\"").arg(fpath).arg(insertBranch->headingText());
+    saveStateNew(uc, rc, comment, insertBranch);
+
+    if (File::Aborted != loadMap(fpath,
+                File::ImportAdd,
+                File::VymMap,
+                0x0000,
+                insertBranch,
+                insertPos))
+        return true;
+    else
+        return false;
 }
 
 bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch(bi);
-    if (selbi) {
-       //FIXME-0 Ideally VymModel::loadMap would have branchItem as parameter 
-       //        instead of having to select it first
-       select(selbi);
-
-       QString bv = setBranchVar(bi);
-       QString pbv = setBranchVar(bi->parentBranch(), "pb");
-       QString uc = pbv + QString("map.addMapReplace(\"UNDO_PATH\", pb);");
-       QString rc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
-       QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
-       saveStateNew(uc, rc, comment, bi->parentBranch());
-
-
-       if (File::Aborted != loadMap(fpath, File::ImportReplace, File::VymMap))
-           return true;
+    if (!bi) {
+        qWarning() << "VymModel::addMapReplace No branch provided";
+        return false;
     }
-    return false;
+
+    QString bv = setBranchVar(bi);
+    QString pbv = setBranchVar(bi->parentBranch(), "pb");
+    QString uc = pbv + QString("map.addMapReplace(\"UNDO_PATH\", pb);");
+    QString rc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+    QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
+    saveStateNew(uc, rc, comment, bi->parentBranch());
+
+
+    if (File::Aborted != loadMap(fpath,
+               File::ImportReplace,
+               File::VymMap,
+               0x0000,
+               bi))
+        return true;
+    else
+        return false;
 }
 
 bool VymModel::removeVymLock()
@@ -3570,7 +3585,12 @@ void VymModel::paste()
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
-                if (File::Success != loadMap(fn, File::ImportAdd, File::VymMap, VymReader::SlideContent, selbi->branchCount()))
+                if (File::Success != loadMap(fn,
+                            File::ImportAdd,
+                            File::VymMap,
+                            VymReader::SlideContent,
+                            selbi,
+                            selbi->branchCount()))
                     qWarning() << "VM::paste Loading clipboard failed: " << fn;
             }
             zipped = zippedOrg;

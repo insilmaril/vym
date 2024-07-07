@@ -187,8 +187,7 @@ function test_adding_branches()
   heading("Adding branches:");
   map = initMap(testMapDefault);
   
-  map.select(main_A_string);
-  main_A = map.selectedBranch();
+  main_A = map.findBranchBySelection(main_A_string);
   n = main_A.branchCount();
 
   main_A.addBranch();
@@ -212,11 +211,9 @@ function test_adding_branches()
 
   map = initMap(testMapDefault);
 
-  map.select(main_A_string);
-  main_A = map.selectedBranch();
+  main_A = map.findBranchBySelection(main_A_string);
   n = main_A.branchCount();
-  map.select(branch_0Aa_string);
-  branch_0Aa = map.selectedBranch();
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
   branch_0Aa.addBranchAt( -3 );
   branch_0Aa.addBranchAt( -1 );
   expect("addBranchAbove/Below", main_A.branchCount(), n + 2);
@@ -231,10 +228,8 @@ function test_adding_branches()
 
   map = initMap(testMapDefault);
 
-  map.select(main_A_string);
-  main_A = map.selectedBranch();
-  map.select(branch_0Aa_string);
-  branch_0Aa = map.selectedBranch();
+  main_A = map.findBranchBySelection(main_A_string);
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
   branch_0Aa.addBranchBefore();
   expect("addBranchBefore: check branchcount",  main_A.branchCount(), n);
   branch_0Aa.selectParent();
