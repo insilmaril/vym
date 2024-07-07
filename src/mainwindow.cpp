@@ -624,12 +624,6 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("addMapInsert", Command::Any);  // FIXME-0 check - still needed in this form? Partly moved to BranchWrapper
-    c->addParameter(Command::String, false, "Filename of map to load");
-    c->addParameter(Command::Int, true, "Index where map is inserted");
-    c->addParameter(Command::Int, true, "Content filter");
-    modelCommands.append(c);
-
     c = new Command("addMapReplace", Command::Any, Command::Bool);
     c->addParameter(Command::String, false, "Filename of map to load");
     c->addParameter(Command::BranchItem, false, "Branch to be replaced by map");
@@ -4199,7 +4193,7 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             }
 
             // Finally load map into mapEditor
-            err = vm->loadMap(fn, lmode, ftype);    // FIXME-0 Maybe add interface to loadMap in VM and leave original one as private, thus masking e.g. ContentFilter and other parameters?
+            err = vm->loadMap(fn, lmode, ftype);
 
             // Restore old (maybe empty) filepath, if this is an import
             if (lmode == File::ImportAdd || lmode == File::ImportReplace)

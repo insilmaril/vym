@@ -4627,7 +4627,7 @@ void VymModel::deleteSelection(ulong selID)
         if (ti) {
             if (ti->hasTypeBranch()) { // Delete branch
                 BranchItem *bi = (BranchItem *)ti;
-                BranchItem *pbi = bi->parentBranch();   // FIXME-00 Check if pbi == rootItem (removing MC)
+                BranchItem *pbi = bi->parentBranch();
                 QString bv = setBranchVar(bi);
                 QString pbv = setBranchVar(pbi, "pb");
                 QString uc = pbv + QString("pb.addMapInsert(\"UNDO_PATH\", %1)").arg(bi->num());
@@ -7469,7 +7469,7 @@ SlideModel *VymModel::getSlideModel() { return slideModel; }
 
 int VymModel::slideCount() { return slideModel->count(); }
 
-SlideItem *VymModel::addSlide()     // FIXME-2 saveState: undo/redo not working
+SlideItem *VymModel::addSlide()     // FIXME-2 missing saveState
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)
@@ -7502,25 +7502,29 @@ SlideItem *VymModel::addSlide()     // FIXME-2 saveState: undo/redo not working
             slideModel->setData(slideModel->index(si), seli->headingPlain());
         }
 
+        /*
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveStateOld(File::PartOfMap, getSelectString(),    // FIXME addAddSlide
+        saveStateold(File::PartOfMap, getSelectString(),    // FIXME addAddSlide
                   QString("removeSlide (%1)").arg(pos), getSelectString(),
-                  QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr, // FIXME-000  review. Partly moved to BranchWrapper
+                  QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
                   s);
+          */
     }
     return si;
 }
 
-void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 undo/redo not working
+void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 missing saveState
 {
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->childNumber();
-        saveStateOld(File::PartOfMap, getSelectString(),    // FIXME deleteAddSlide
-                  QString("addMapInsert (\"PATH\",%1)").arg(pos),   // FIXME-000  review. Partly moved to BranchWrapper
+        /*
+        saveStateold(File::PartOfMap, getSelectString(),    // FIXME deleteAddSlide
+                  QString("addMapInsert (\"PATH\",%1)").arg(pos),
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
                   "Remove slide", nullptr, s);
+                  */
         slideModel->deleteSlide(si);
     }
 }
