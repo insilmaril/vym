@@ -4713,7 +4713,7 @@ void VymModel::deleteSelection(ulong selID)
                     if (ti->getType() == TreeItem::Image ||
                         ti->getType() == TreeItem::Attribute ||
                         ti->getType() == TreeItem::XLink) {
-                        saveStateChangingPart(
+                        saveStateChangingPart(  // Remove img, attr or xlink. How to restore xlink?
                             pi, ti, "remove ()",
                             QString("Remove %1").arg(getObjectName(ti)));
 
@@ -4940,7 +4940,7 @@ void VymModel::unscrollChildren()
 {
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
-        saveStateChangingPart(
+        saveStateChangingPart(  // unscrollChildren. No command.
             selbi, selbi, QString("unscrollChildren ()"),
             QString("unscroll all children of %1").arg(getObjectName(selbi)));
         BranchItem *prev = nullptr;
@@ -5179,11 +5179,6 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
         QString bv = setBranchVar(bi);
         QString uc = bv + "map.addMapReplace(\"UNDO_PATH\", b);";
         QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
-        saveStateChangingPart(bi, bi,
-                              QString("colorSubtree (\"%1\")").arg(c.name()),
-                              QString("Set color of %1 and children to %2")
-                                  .arg(getObjectName(bi))
-                                  .arg(c.name()));
         saveStateNew(uc, rc,
                         QString("Set color of %1 and children to %2")
                           .arg(getObjectName(bi))
@@ -5219,7 +5214,7 @@ void VymModel::note2URLs()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
-        saveStateChangingPart(
+        saveStateChangingPart(  // note2Urls
             selbi, selbi, QString("note2URLs()"),
             QString("Extract URLs from note of %1").arg(getObjectName(selbi)));
 
@@ -5408,7 +5403,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState: ch
     }
     QJsonArray issues = jsobj["issues"].toArray();
 
-    saveStateChangingPart(pbi, pbi,
+    saveStateChangingPart(pbi, pbi, // JiraJqlQuery
                           QString("getJiraData ()"),
                           QString("Get data from Jira for %1")
                               .arg(getObjectName(pbi)));
