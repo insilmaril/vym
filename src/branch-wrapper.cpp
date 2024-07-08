@@ -285,6 +285,11 @@ int BranchWrapper::imageCount()
     return setResult(branchItemInt->imageCount());
 }
 
+void BranchWrapper::importDir(const QString &path) // FIXME-4 error handling missing (in vymmodel and here)
+{
+    branchItemInt->getModel()->importDir(path, branchItemInt);
+}
+
 bool BranchWrapper::loadImage(const QString &filename)
 {
     bool r;

@@ -759,10 +759,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("importDir", Command::Branch);
-    c->addParameter(Command::String, false, "Directory name to import");
-    modelCommands.append(c);
-
     c = new Command("newBranchIterator", Command::Branch);
     c->addParameter(Command::String, false, "Name of iterator");
     c->addParameter(Command::Bool, true, "Flag to go deep levels first");
@@ -1168,6 +1164,11 @@ void Main::setupAPI()
 
     c = new Command("imageCount", Command::Branch, Command::Int);
     c->setComment("Return number of child images");
+    branchCommands.append(c);
+
+    c = new Command("importDir", Command::Branch);
+    c->addParameter(Command::String, false, "Directory name to import");
+    c->setComment("Add directory structure to branch (experimental)");
     branchCommands.append(c);
 
     c = new Command("loadImage", Command::Branch);

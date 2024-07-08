@@ -97,6 +97,8 @@ extern QDir lastExportDir;
 extern Settings settings;
 extern QTextStream vout;
 
+extern bool usingDarkTheme;
+
 uint VymModel::idLast = 0; // make instance
 
 VymModel::VymModel()
@@ -973,7 +975,7 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
     }
 }
 
-void VymModel::importDirInt(BranchItem *dst, QDir d)
+void VymModel::importDirInt(QDir d, BranchItem *dst)
 {
     bool oldSaveState = saveStateBlocked;
     saveStateBlocked = true;
@@ -985,13 +987,23 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
         QFileInfoList list = d.entryInfoList();
         QFileInfo fi;
 
+        QColor dirColor;
+        QColor fileColor;
+        if (usingDarkTheme) {
+            dirColor = QColor::fromString("#00aaff");
+            fileColor = QColor::fromString("#ffffff");
+        } else {
+            dirColor = QColor::fromString("#0000ff");
+            fileColor = QColor::fromString("#000000");
+        }
+
         // Traverse directories
         for (int i = 0; i < list.size(); ++i) {
             fi = list.at(i);
             if (fi.isDir() && fi.fileName() != "." && fi.fileName() != "..") {
                 bi = addNewBranchInt(dst, -2);
                 bi->setHeadingPlainText(fi.fileName());
-                bi->setHeadingColor(QColor("blue"));
+                bi->setHeadingColor(dirColor);
                 if (debug)
                     qDebug() << "Added subdir: " << fi.fileName();
                 if (!d.cd(fi.fileName()))
@@ -1000,7 +1012,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
                         tr("Cannot find the directory %1").arg(fi.fileName()));
                 else {
                     // Recursively add subdirs
-                    importDirInt(bi, d);
+                    importDirInt(d, bi);
                     d.cdUp();
                 }
                 emitDataChanged(bi);
@@ -1012,7 +1024,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
             if (fi.isFile()) {
                 bi = addNewBranchInt(dst, -2);
                 bi->setHeadingPlainText(fi.fileName());
-                bi->setHeadingColor(QColor("black"));
+                bi->setHeadingColor(fileColor);
                 if (fi.fileName().right(4) == ".vym")
                     bi->setVymLink(fi.filePath());
                 emitDataChanged(bi);
@@ -1026,16 +1038,18 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
     saveStateBlocked = oldSaveState;
 }
 
-void VymModel::importDir(const QString &s)
+void VymModel::importDir(const QString &dirPath, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
-        saveStateChangingPart(
-            selbi, selbi, QString("importDir (\"%1\")").arg(s),
-            QString("Import directory structure from %1").arg(s));
+        QString bv = setBranchVar(selbi);
+        QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+        QString rc = bv + QString("b.importDir(\"%1\");").arg(dirPath);
+        QString comment = QString("Import directory structure from \"%1\" to branch \"%2\"").arg(dirPath, selbi->headingText());
+        saveStateNew(uc, rc, comment, selbi);
 
-        QDir d(s);
-        importDirInt(selbi, d);
+        QDir d(dirPath);
+        importDirInt(d, selbi);
     }
 }
 
@@ -1098,7 +1112,6 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
     QString rc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
     QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
     saveStateNew(uc, rc, comment, bi->parentBranch());
-
 
     if (File::Aborted != loadMap(fpath,
                File::ImportReplace,

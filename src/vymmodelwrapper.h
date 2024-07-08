@@ -55,7 +55,6 @@ class VymModelWrapper : public VymScriptContext {
     QString getXLinkPenStyle(); // FIXME-3 move to XLinkWrapper
     QString getXLinkStyleBegin();// FIXME-3 move to XLinkWrapper
     QString getXLinkStyleEnd();// FIXME-3 move to XLinkhWrapper
-    void importDir(const QString &path);
     void moveSlideDown(int n);
     void moveSlideDown();
     void moveSlideUp(int n);

@@ -464,12 +464,6 @@ QString VymModelWrapper::getXLinkStyleEnd()
     return setResult(model->getXLinkStyleEnd());
 }
 
-void VymModelWrapper::importDir(const QString &path)
-{
-    model->importDir(
-        path); // FIXME-3 error handling missing (in vymmodel and here)
-}
-
 void VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
 {
     model->newBranchIterator(itname, deepLevelsFirst);

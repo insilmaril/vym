@@ -49,6 +49,7 @@ class BranchWrapper : public VymScriptContext {
     bool hasTask();
     QString headingText();  
     int imageCount();
+    void importDir(const QString &path);
     bool isScrolled();
     bool loadImage(const QString &filename);
     bool loadNote(const QString &filename);

@@ -186,10 +186,10 @@ class VymModel : public TreeModel {
     void saveImage(ImageItem *ii = nullptr, QString fn = "");
 
   private:
-    void importDirInt(BranchItem *, QDir);
+    void importDirInt(QDir d, BranchItem *dst);
 
   public:
-    void importDir(const QString &);
+    void importDir(const QString &, BranchItem *bi = nullptr);
     void importDir();
     bool addMapInsert(QString filepath, int pos, BranchItem *bi = nullptr);
     bool addMapReplace(QString filepath, BranchItem *bi = nullptr);
