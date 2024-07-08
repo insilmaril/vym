@@ -83,6 +83,8 @@ class BranchWrapper : public VymScriptContext {
     bool setTaskSleep(const QString &s);
     void setUrl(const QString &s);
     void setVymLink(const QString &s);
+    void sortChildren(bool b);
+    void sortChildren();
     void toggleFlagByName(const QString &);
     void toggleFlagByUid(const QString &);
     void toggleScroll();

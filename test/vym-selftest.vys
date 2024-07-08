@@ -854,7 +854,7 @@ function test_scrolling()
 function test_modify_branches()
 {
   heading("Modifying branches");
-  let map = initMap(testMapDefault);
+  map = initMap(testMapDefault);
 
   b = map.findBranchBySelection(branch_0Aa_string);
   b.setHeadingText("Changed!");
@@ -873,6 +873,36 @@ function test_modify_branches()
   expect("After undo branch no longer has RichText heading", b.hasRichTextHeading(), false);
 
   closeCurrentMap();
+
+  // Sorting
+  map = initMap(testMapDefault);
+  main_A = map.findBranchBySelection(main_A_string);
+  main_A.sortChildren(true);
+  ha = "branch a";
+  hc = "branch c";
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
+  expect("After inverse sorting first child of \"Main A\" is \"" + hc + "\"", branch_0Aa.headingText(), hc);
+  expect("After inverse sorting last child of \"Main A\" is \"" + ha + "\"", branch_0Ac.headingText(), ha);
+
+  main_A.sortChildren();
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
+  expect("After sorting first child of \"Main A\" is \"" + ha + "\"", branch_0Aa.headingText(), ha);
+  expect("After sorting last child of \"Main A\" is \"" + hc + "\"", branch_0Ac.headingText(), hc);
+  closeCurrentMap();
+
+  // Undo inverse sorting
+  map = initMap(testMapDefault);
+  main_A = map.findBranchBySelection(main_A_string);
+  main_A.sortChildren(true);
+  map.undo();
+  ha = "branch a";
+  hc = "branch c";
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
+  expect("After undo of inverse sorting first child of \"Main A\" is \"" + ha + "\"", branch_0Aa.headingText(), ha);
+  expect("After undo of inverse sorting last child of \"Main A\" is \"" + hc + "\"", branch_0Ac.headingText(), hc);
 }
 
 function test_modify_images()
@@ -1456,11 +1486,11 @@ function test_tasks()
 test_basics();
 //test_adding_branches();
 //test_adding_maps();
-test_copy_paste();
+//test_copy_paste();
 //test_delete_parts();
 //test_extrainfo();
 //test_frames();
-//test_modify_branches();
+test_modify_branches();
 //test_modify_images();
 //test_moving_parts();
 //test_references();

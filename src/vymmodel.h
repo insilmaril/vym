@@ -462,7 +462,7 @@ class VymModel : public TreeModel {
     QList <BranchItem*> sortBranchesByNum(QList <BranchItem*>, bool inverse = false);
     QList <BranchItem*> sortBranchesByHeading(QList <BranchItem*>, bool inverse = false);
   public:
-    void sortChildren(bool inverse = false); //!< Sort children lexically
+    void sortChildren(bool inverse = false, BranchItem *bi = nullptr); //!< Sort children lexically
     QList <ImageItem*> sortImagesByNum(QList <ImageItem*>, bool inverse = false);
 
     // The create methods are used to quickly parse a XML file

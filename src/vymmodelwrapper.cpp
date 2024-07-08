@@ -834,10 +834,6 @@ int VymModelWrapper::slideCount()
     return setResult(model->slideCount());
 }
 
-void VymModelWrapper::sortChildren(bool b) { model->sortChildren(b); }
-
-void VymModelWrapper::sortChildren() { sortChildren(false); }
-
 void VymModelWrapper::toggleTarget() { model->toggleTarget(); }
 
 void VymModelWrapper::undo() { model->undo(); }

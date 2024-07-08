@@ -999,11 +999,6 @@ void Main::setupAPI()
     c = new Command("slideCount", Command::Any, Command::Int);
     modelCommands.append(c);
 
-    c = new Command("sortChildren", Command::Branch);
-    c->addParameter(Command::Bool, true,
-              "Sort children of branch in revers order if set");
-    modelCommands.append(c);
-
     c = new Command("toggleFlagByUid", Command::Branch);
     c->addParameter(Command::String, false, "Uid of flag to toggle");
     modelCommands.append(c);
@@ -1304,6 +1299,12 @@ void Main::setupAPI()
     c = new Command("setVymLink", Command::Branch);
     c->addParameter(Command::String, false, "Vymlink of branch");
     c->setComment("Set VymLink of branch");
+    branchCommands.append(c);
+
+    c = new Command("sortChildren", Command::Branch);
+    c->addParameter(Command::Bool, true,
+              "Sort children of branch in revers order if set");
+    c->setComment("Sort children of branch");
     branchCommands.append(c);
 
     c = new Command("toggleFlagByName", Command::Branch);

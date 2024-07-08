@@ -3847,23 +3847,29 @@ QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsorted
     return sortedList;
 }
 
-void VymModel::sortChildren(bool inverse)
+void VymModel::sortChildren(bool inverse, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     if (selbis.isEmpty()) return;
 
     foreach (BranchItem *selbi, selbis) {
         if (selbi) {
             if (selbi->branchCount() > 1) {
-                if (!inverse)
-                    saveStateChangingPart(
-                        selbi, selbi, "sortChildren ()",
-                        QString("Sort children of %1").arg(getObjectName(selbi)));
-                else
-                    saveStateChangingPart(selbi, selbi, "sortChildren (false)",
-                                          QString("Inverse sort children of %1")
-                                              .arg(getObjectName(selbi)));
+                QString bv = setBranchVar(selbi);
+                QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+                QString com;
+                QString rc;
+                if (!inverse) {
+                    rc = bv + QString("b.sortChildren(false);");
+                    com = QString("Sort children of \"%1\"").arg(getObjectName(selbi));
+                } else {
+                    bv = setBranchVar(selbi);
+                    uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+                    rc = bv + QString("b.sortChildren(false);");
+                    com = QString("Inverse sort children of \"%1\"").arg(getObjectName(selbi));
+                }
+                saveStateNew(uc, rc, com, selbi);
 
                 QMultiMap <QString, BranchItem*> multimap;
                 for (int i = 0; i < selbi->branchCount(); i++)

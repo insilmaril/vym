@@ -470,6 +470,16 @@ void BranchWrapper::setVymLink(const QString &s)
     model()->setVymLink(s, branchItemInt);
 }
 
+void BranchWrapper::sortChildren(bool b)
+{
+    branchItemInt->getModel()->sortChildren(b, branchItemInt);
+}
+
+void BranchWrapper::sortChildren()
+{
+    sortChildren(false);
+}
+
 void BranchWrapper::toggleFlagByName(const QString &s)
 {
     model()->toggleFlagByName(s, branchItemInt);
