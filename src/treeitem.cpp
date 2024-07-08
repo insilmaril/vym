@@ -410,7 +410,6 @@ bool TreeItem::hasUrl() { return !urlInt.isEmpty();}
 
 void TreeItem::setVymLink(const QString &vl)
 {
-    qDebug() << "TI::setVL vl=" << vl;
     if (!vl.isEmpty()) {
         // We need the relative (from loading)
         // or absolute path (from User event)
