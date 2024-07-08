@@ -313,35 +313,91 @@ function test_attributes()
 function test_copy_paste()
 {
   heading("Copy and paste:");
+
+  // Copy
   map = initMap(testMapDefault);
   
-  map.select(main_A);
+  main_A = map.findBranchBySelection(main_A_string);  
+  main_A.select();
 
-  n = map.branchCount();
+  n = main_A.branchCount();
 
   map.copy();
   map.paste();
   map.selectLatestAdded();     //FIXME-5 not set for ImportAdd, which is used by paste
+  b = map.selectedBranch();
   s = map.getSelectionString();
-  expect("Normal paste of branch, check heading of #{s}", map.getHeadingPlainText(), "Main A");
+  expect("Normal paste of branch, check heading of #{s}", b.headingText(), "Main A");
 
   map.undo()
-  map.select(main_A);
-  expect("Undo paste: branchCount of #{@main_A}", map.branchCount(), n);
+  main_A = map.findBranchBySelection(main_A_string);  
+  expect("Undo paste: branchCount of \"" + main_A.headingText() + "\"", main_A.branchCount(), n);
 
   map.redo()
   map.select(s);
-  expect("redo paste: check heading", map.getHeadingPlainText(), "Main A");
+  b = map.selectedBranch();  
+  expect("redo paste: check heading", b.headingText(), "Main A");
 
-  map.select(branch_0Aa);
-  map.cut();
-  map.select(main_A);
-  expect("cut: branchCount of #{@main_A}", map.branchCount(), n);
+  closeCurrentMap();
 
+  // Multiple copy & paste
+  map = initMap(testMapDefault);
+  branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
+  branch_0Ab.select();
+  map.copy();
   map.paste();
-  map.selectLastChildBranch();
-  s = map.getSelectionString();
-  expect("Normal paste of branch, check heading of #{s}", map.getHeadingPlainText(), "branch a");
+
+  branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
+  branch_0Ac.select();
+  map.copy();
+  map.paste();
+
+  map.undo();
+  map.undo();
+  map.undo();
+  map.undo();
+  branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
+  branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
+  expect("Undo paste 4 times: \"" + branch_0Ab.headingText() + "\" has no children", branch_0Ab.branchCount(), 0);
+  expect("Undo paste 4 times: \"" + branch_0Ac.headingText() + "\" has no children", branch_0Ac.branchCount(), 0);
+
+  map.redo();
+  map.redo();
+  map.redo();
+  map.redo();
+  
+  n = branch_0Ab.branchCount();
+  expect("Redo paste 4 times: \"" + branch_0Ab.headingText() + "\" has child", n, 1);
+  if (n == 1) {
+    branch_0Ab.selectFirstChildBranch();
+    b = map.selectedBranch();
+    expect("Redo paste 4 times: 1st pasted branch has heading of parent", b.headingText(), b.parentBranch().headingText());
+  }
+
+  n = branch_0Ac.branchCount();
+  expect("Redo paste 4 times: \"" + branch_0Ac.headingText() + "\" has child", n, 1);
+  if (n == 1) {
+    branch_0Ac.selectFirstChildBranch();
+    b = map.selectedBranch();
+    expect("Redo paste 4 times: 2nd pasted branch has heading of parent", b.headingText(), b.parentBranch().headingText());
+  }
+
+  closeCurrentMap();
+
+  // Cut
+  map = initMap(testMapDefault);
+
+  main_A = map.findBranchBySelection(main_A_string);
+  n = main_A.branchCount();
+  map.select(branch_0Aa_string);
+  map.cut();
+  expect("cut: branchCount of \"" + main_A.headingText() + "\" decreased", main_A.branchCount(), n - 1);
+
+  main_A.select();
+  map.paste();
+  main_A.selectLastChildBranch();
+  pasted = map.selectedBranch();
+  expect("Normal paste of branch, check heading of pasted branch", pasted.headingText(), "branch a");
 
   closeCurrentMap();
 }
@@ -1400,6 +1456,7 @@ function test_tasks()
 test_basics();
 //test_adding_branches();
 //test_adding_maps();
+test_copy_paste();
 //test_delete_parts();
 //test_extrainfo();
 //test_frames();
@@ -1412,7 +1469,6 @@ test_basics();
 
 /* FIXME Not ported yet
 test_attributes();
-test_copy_paste();
 */
 //test_export(); // FIXME WIP
 //test_notes();

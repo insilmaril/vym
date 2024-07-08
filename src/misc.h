@@ -21,6 +21,8 @@ QString toS(const QPointF &p, int d = 1);
 QString toS(const QRectF &r, int d = 1);
 QString toS(const Vector &p);
 
+QString pluralize(const QString &, qsizetype count);
+
 extern ostream &operator<<(ostream &stream, QPoint const &p);
 extern ostream &operator<<(ostream &stream, QPointF const &p);
 extern ostream &operator<<(ostream &stream, QRectF const &r);

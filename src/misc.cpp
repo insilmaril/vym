@@ -99,6 +99,15 @@ QString toS(const Vector &p)
     return QString("(%1, %2)").arg(p.x()).arg(p.y());
 }
 
+QString pluralize(const QString &s, qsizetype count)
+{
+    // Very primitive implementation of pluralize :-/
+    if (count > 1)
+        return s + "s";
+    else
+        return s;
+}
+
 ostream &operator<<(ostream &stream, QPoint const &p)
 {
     stream << "(" << p.x() << ", " << p.y() << ")";

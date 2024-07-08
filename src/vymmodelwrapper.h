@@ -74,10 +74,7 @@ class VymModelWrapper : public VymScriptContext {
     void saveSelection(const QString &filename);
     bool select(const QString &s);
     BranchWrapper* selectedBranch();
-    bool selectID(const QString &s);
-    bool selectFirstChildBranch();  // FIXME-3 move to BranchWrapper
-    bool selectLastChildBranch();   // FIXME-3 move to BranchWrapper
-    bool selectLastImage();         // FIXME-3 move to BranchWrapper
+    bool selectUids(QJSValueList args);
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper
     bool selectXLink(int n);        // FIXME-3 move to BranchWrapper

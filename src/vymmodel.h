@@ -807,7 +807,7 @@ class VymModel : public TreeModel {
     // Selection related
     ////////////////////////////////////////////
   private:
-    TreeItem *latestAddedItem; // latest added object, reset on setChanged()
+    QUuid latestAddedItemUuid; // latest added object, reset on setChanged()
     QUuid lastToggledUuid;     // Latest toggled object 
     QList<uint> selectionHistory;
     int currentSelection;
@@ -824,9 +824,10 @@ class VymModel : public TreeModel {
     bool isSelectionBlocked();
 
     bool select(const QString &);           //! Select by string
-    bool selectID(const QString &);         //! select by unique ID (QUuid)
+    bool selectUids(QStringList uids);      //! select by unique ID (QUuid)
     bool selectToggle(TreeItem *ti);        //! Toggle select state
     bool selectToggle(const uint &id);      //! Overloaded function to toggle select state
+    bool selectToggle(const QUuid &uid);    //! Overloaded function to toggle select state
     bool selectToggle(const QString &selectString); //! Overloaded function to toggle select state
     bool select(TreeItem *ti);              //! Select by pointer to TreeItem
     bool select(const QModelIndex &index);  //! Select by ModelIndex
@@ -849,11 +850,10 @@ class VymModel : public TreeModel {
   public:
     TreeItem *lastToggledItem();
     bool selectFirstBranch(BranchItem *bi = nullptr);
-    bool selectFirstChildBranch();
+    bool selectFirstChildBranch(BranchItem *bi = nullptr);
     bool selectLastBranch(BranchItem *bi = nullptr);
-    bool selectLastChildBranch();
+    bool selectLastChildBranch(BranchItem *bi = nullptr);
     bool selectLastSelectedBranch();
-    bool selectLastImage();
     bool selectLatestAdded();
     bool selectParent(TreeItem *ti = nullptr);
 
@@ -878,8 +878,6 @@ class VymModel : public TreeModel {
     QString getSelectString(TreeItem *item);
     QString getSelectString(BranchItem *item);
     QString getSelectString(const uint &i);
-    void setLatestAddedItem(TreeItem *ti);
-    TreeItem *getLatestAddedItem();
 
   signals:
     void selectionChanged(const QItemSelection &newsel,

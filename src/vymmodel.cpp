@@ -1725,6 +1725,9 @@ void VymModel::saveStateNew(
         undoCommand = undoCom;
         redoCommand = redoCom;
     } else {
+        undoCommand = undoCom;
+        redoCommand = redoCom;
+        /* FIXME-0 no longer needed for saveStateBlock?  
         // Not part of a saveStateBlock, prefix non-empty commands
         if (undoCom.isEmpty())
             qWarning() << __FUNCTION__ << "  empty undoCommand ?!";
@@ -1734,12 +1737,13 @@ void VymModel::saveStateNew(
             qWarning() << __FUNCTION__ << "  empty redoCommand ?!";
         else
             redoCommand = redoCom;
+            */
     }
 
     if (debug) {
         qDebug() << "  undoCommand: " << undoCommand;
         qDebug() << "  redoCommand: " << redoCommand;
-        qDebug() << "  redoCom: " << redoCom;
+        qDebug() << "      Comment: " << comment;
     }
 
     // Increase undo steps, but check for repeated actions
@@ -3547,9 +3551,13 @@ void VymModel::copy()
     QStringList clipboardFiles;
 
     if (itemList.count() > 0) {
+
+        QStringList uids;
+
         uint i = 1;
         QString fn;
         foreach (TreeItem *ti, itemList) {
+            uids << QString("\"%1\"").arg(ti->getUuid().toString());
             fn = QString("%1/%2-%3.xml")
                      .arg(clipboardDir)
                      .arg(clipboardFile)
@@ -3568,6 +3576,14 @@ void VymModel::copy()
         QMimeData *mimeData = new QMimeData;
         mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
         clipboard->setMimeData(mimeData);
+
+        QString rc = QString("map.selectUids([%1]); map.copy();").arg(uids.join(","));
+        QString comment = QString("Copy %1 selected %2 to clipboard: [%3]")
+            .arg(itemList.count())
+            .arg(pluralize(QString("item"), itemList.count()))
+            .arg(uids.join(","));
+        saveStateNew("", rc, comment);
+
     }
 
     mainWindow->updateActions();
@@ -3593,8 +3609,11 @@ void VymModel::paste()
         if (mimeData->formats().contains("application/x-vym")) {
             QStringList clipboardFiles = QString(mimeData->data("application/x-vym")).split(",");
 
-            saveStateChangingPart(selbi, selbi, QString("paste ()"),
-                                  QString("Paste"));
+            QString bv = setBranchVar(selbi);
+            QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+            QString rc = bv + QString("b.select(); map.paste();");
+            QString comment = QString("Paste to branch \"%1\"").arg(selbi->headingText());
+            saveStateNew(uc, rc, comment, selbi);
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
@@ -3951,7 +3970,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
 
         dst->addToImagesContainer(newii->createImageContainer());
 
-        latestAddedItem = newii;
+        latestAddedItemUuid = newii->getUuid();
         reposition();
         return newii;
     }
@@ -4013,7 +4032,7 @@ bool VymModel::createLink(Link *link)
     xlinks.append(link);
     link->activate();
 
-    latestAddedItem = newli;
+    latestAddedItemUuid = newli->getUuid();
 
     if (!link->getXLinkObj()) {
         link->createXLinkObj();
@@ -4285,7 +4304,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int num)
                 QString("Add new branch to %1").arg(getObjectName(pi)),
                 nullptr, pi);
 
-            latestAddedItem = newbi;
+            latestAddedItemUuid = newbi->getUuid();
             // In Network mode, the client needs to know where the new branch
             // is, so we have to pass on this information via saveState.
             // TODO: Get rid of this positioning workaround
@@ -6947,14 +6966,19 @@ bool VymModel::select(const QString &s)
     return true;
 }
 
-bool VymModel::selectID(const QString &s)
+bool VymModel::selectUids(QStringList  uids)
 {
-    if (s.isEmpty())
+    if (uids.isEmpty())
         return false;
-    TreeItem *ti = findUuid(QUuid(s));
-    if (ti)
-        return select(index(ti));
-    return false;
+
+    unselectAll();
+    foreach (auto uid, uids) {
+        TreeItem *ti = findUuid(QUuid(uid));
+        if (!ti)
+            return false;
+        selectToggle(ti);
+    }
+    return true;
 }
 
 bool VymModel::selectToggle(TreeItem *ti)
@@ -6972,14 +6996,13 @@ bool VymModel::selectToggle(TreeItem *ti)
 bool VymModel::selectToggle(const uint &id)
 {
     TreeItem *ti = findID(id);
-    if (ti) {
-        selModel->select(index(ti), QItemSelectionModel::Toggle);
-        // appendSelectionToHistory();	// FIXME-3 selection history not implemented yet
-        // for multiselections
-        lastToggledUuid = ti->getUuid();
-        return true;
-    }
-    return false;
+    return selectToggle(ti);
+}
+
+bool VymModel::selectToggle(const QUuid &uid)
+{
+    TreeItem *ti = findUuid(uid);
+    return selectToggle(ti);
 }
 
 bool VymModel::selectToggle(const QString &selectString)
@@ -7176,13 +7199,13 @@ bool VymModel::selectFirstBranch(BranchItem *bi)
     return false;
 }
 
-bool VymModel::selectFirstChildBranch()
+bool VymModel::selectFirstChildBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        BranchItem *bi = ti->getFirstBranch();
-        if (bi)
-            return select(bi);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+        BranchItem *bi2 = selbi->getFirstBranch();
+        if (bi2)
+            return select(bi2);
     }
     return false;
 }
@@ -7193,21 +7216,21 @@ bool VymModel::selectLastBranch(BranchItem *bi)
     if (selbi) {
         TreeItem *par = selbi->parent();
         if (par) {
-            TreeItem *ti2 = par->getLastBranch();
-            if (ti2)
-                return select(ti2);
+            BranchItem *bi2 = par->getLastBranch();
+            if (bi2)
+                return select(bi2);
         }
     }
     return false;
 }
 
-bool VymModel::selectLastChildBranch()
+bool VymModel::selectLastChildBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        BranchItem *bi = ti->getLastBranch();
-        if (bi)
-            return select(bi);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+        BranchItem *bi2 = selbi->getLastBranch();
+        if (bi2)
+            return select(bi2);
     }
     return false;
 }
@@ -7223,21 +7246,11 @@ bool VymModel::selectLastSelectedBranch()
     return false;
 }
 
-bool VymModel::selectLastImage()
+bool VymModel::selectLatestAdded()
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        TreeItem *par = ti->parent();
-        if (par) {
-            TreeItem *ti2 = par->getLastImage();
-            if (ti2)
-                return select(ti2);
-        }
-    }
-    return false;
+    TreeItem *ti = findUuid(latestAddedItemUuid);
+        return select(ti);
 }
-
-bool VymModel::selectLatestAdded() { return select(latestAddedItem); }
 
 bool VymModel::selectParent(TreeItem *ti)
 {
@@ -7493,10 +7506,6 @@ QString VymModel::getSelectString(const uint &i)
 {
     return getSelectString(findID(i));
 }
-
-void VymModel::setLatestAddedItem(TreeItem *ti) { latestAddedItem = ti; }
-
-TreeItem *VymModel::getLatestAddedItem() { return latestAddedItem; }
 
 SlideModel *VymModel::getSlideModel() { return slideModel; }
 

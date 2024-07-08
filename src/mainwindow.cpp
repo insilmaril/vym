@@ -850,17 +850,8 @@ void Main::setupAPI()
     c = new Command("selectedBranch", Command::Any, Command::BranchItem);
     modelCommands.append(c);
 
-    c = new Command("selectFirstChildBranch", Command::Branch, Command::Bool);
-    modelCommands.append(c);
-
     c = new Command("selectID", Command::Any, Command::Bool);
     c->addParameter(Command::String, false, "Unique ID");
-    modelCommands.append(c);
-
-    c = new Command("selectLastChildBranch", Command::Branch, Command::Bool);
-    modelCommands.append(c);
-
-    c = new Command("selectLastImage", Command::Branch, Command::Bool);
     modelCommands.append(c);
 
     c = new Command("selectLatestAdded", Command::Any, Command::Bool);
@@ -1221,11 +1212,18 @@ void Main::setupAPI()
     branchCommands.append(c);
 
     c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
+    c->setComment("Select the first of all sibling branches");
+    branchCommands.append(c);
+
+    c = new Command("selectFirstChildBranch", Command::Branch, Command::Bool);
     c->setComment("Select the first of all child branches");
     branchCommands.append(c);
 
+    c = new Command("selectLastChildBranch", Command::Branch, Command::Bool);
+    branchCommands.append(c);
+
     c = new Command("selectLastBranch", Command::Branch, Command::Bool);
-    c->setComment("Select the last of all child branches");
+    c->setComment("Select the last of all sibling branches");
     branchCommands.append(c);
 
     c = new Command("selectParent", Command::Branch, Command::Bool);

@@ -55,6 +55,7 @@ class BranchWrapper : public VymScriptContext {
     bool loadNote(const QString &filename);
     void moveDown();
     void moveUp();
+    BranchWrapper* parentBranch();
     bool relinkToBranch(BranchWrapper*);
     bool relinkToBranchAt(BranchWrapper*, int pos);
     void removeChildren();
@@ -62,7 +63,9 @@ class BranchWrapper : public VymScriptContext {
     void scroll();
     void select();
     bool selectFirstBranch();
+    bool selectFirstChildBranch();
     bool selectLastBranch();
+    bool selectLastChildBranch();
     bool selectParent();
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);

@@ -313,6 +313,11 @@ void BranchWrapper::moveUp()
     model()->moveUp(branchItemInt);
 }
 
+BranchWrapper* BranchWrapper::parentBranch()
+{
+    return branchItemInt->parentBranch()->branchWrapper();
+}
+
 bool BranchWrapper::isScrolled()
 {
     return setResult(branchItemInt->isScrolled());
@@ -350,22 +355,22 @@ void BranchWrapper::select()
 
 bool BranchWrapper::selectFirstBranch()
 {
-    bool r = model()->selectFirstBranch(branchItemInt);
-    if (!r)
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                "Couldn't select first branch");
-    return setResult(r);
+    return setResult(model()->selectFirstBranch(branchItemInt));
+}
+
+bool BranchWrapper::selectFirstChildBranch()
+{
+    return setResult(model()->selectFirstChildBranch(branchItemInt));
+}
+
+bool BranchWrapper::selectLastChildBranch()
+{
+    return setResult(model()->selectLastChildBranch(branchItemInt));
 }
 
 bool BranchWrapper::selectLastBranch()
 {
-    bool r = model()->selectLastBranch(branchItemInt);
-    if (!r)
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                "Couldn't select last branch");
-    return setResult(r);
+    return setResult(model()->selectLastBranch(branchItemInt));
 }
 bool BranchWrapper::selectParent()
 {

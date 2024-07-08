@@ -579,62 +579,26 @@ BranchWrapper* VymModelWrapper::selectedBranch()
         return nullptr; // caught by QJSEngine
 }
 
-bool VymModelWrapper::selectID(const QString &s)
+bool VymModelWrapper::selectUids(QJSValueList args)
 {
-    bool r = model->selectID(s);
+    int argumentsCount = args.count();
+
+    if (argumentsCount == 0) {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "Not enough arguments");
+        return setResult(false);
+    }
+
+    QStringList uids;
+    foreach (auto arg, args)
+        uids << arg.toString();
+
+    bool r = model->selectUids(uids);
     if (!r)
         scriptEngine->throwError(
                 QJSValue::GenericError,
-                QString("Couldn't select ID %1").arg(s));
-    return setResult(r);
-}
-
-bool VymModelWrapper::selectFirstChildBranch()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = model->selectFirstChildBranch();
-        if (!r)
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Couldn't select first child branch");
-    }
-    return setResult(r);
-}
-
-bool VymModelWrapper::selectLastChildBranch()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = model->selectLastChildBranch();
-        if (!r)
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Couldn't select last child branch");
-    }
-    return setResult(r);
-}
-
-bool VymModelWrapper::selectLastImage()
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        ImageItem *ii = selbi->getLastImage();
-        if (!ii)
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Couldn't get last image");
-        else {
-            r = model->select(ii);
-            if (!r)
-                scriptEngine->throwError(
-                        QJSValue::GenericError,
-                        "Couldn't select last image");
-        }
-    }
+                QString("Couldn't select Uuids: %1").arg(uids.join(",")));
     return setResult(r);
 }
 
