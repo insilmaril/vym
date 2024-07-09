@@ -51,7 +51,7 @@ void JiraAgent::init()
 
     networkManager = new QNetworkAccessManager(this);
 
-    modelID = 0;    // invalid ID
+    modelId = 0;    // invalid ID
 
     killTimer = new QTimer(this);
     killTimer->setInterval(15000);
@@ -123,8 +123,8 @@ bool JiraAgent::setBranch(BranchItem *bi)
         abortJob = true;
         return false;
     } else {
-        branchID = bi->getID();
-        modelID = bi->getModel()->modelId();
+        branchId = bi->getID();
+        modelId = bi->getModel()->modelId();
         return true;
     }
 }
@@ -179,6 +179,11 @@ bool JiraAgent::setTicket(const QString &text)
         jobTypeInt = JiraAgent::Undefined;
 
     return foundTicket;
+}
+
+void JiraAgent::setDoSubtree(bool b)
+{
+    doSubtreeInt = b;
 }
 
 bool JiraAgent::setQuery(const QString &s)
@@ -269,7 +274,7 @@ void JiraAgent::continueJob()
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
 
                     // Insert references to original branch
-                    jsobj["vymBranchId"] = QJsonValue(branchID);
+                    jsobj["vymBranchId"] = QJsonValue(branchId);
                     jsobj["vymJiraTicketUrl"] = QJsonValue(url());
 
                     emit (jiraTicketReady(QJsonObject(jsobj)));
@@ -292,9 +297,10 @@ void JiraAgent::continueJob()
                     QJsonDocument jsdoc = QJsonDocument (jsobj);
 
                     // Insert references to original branch and Jira server
-                    jsobj["vymBranchId"] = QJsonValue(branchID);
+                    jsobj["vymBranchId"] = QJsonValue(branchId);
                     jsobj["vymJiraServer"] = baseUrlInt;
                     jsobj["vymJiraLastQuery"] = queryInt;
+                    jsobj["doSubtree"] = doSubtreeInt;
 
                     emit (jiraQueryReady(QJsonObject(jsobj)));
                     finishJob();

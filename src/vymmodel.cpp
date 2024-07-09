@@ -5390,49 +5390,51 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
     reposition();
 }
 
-void VymModel::processJiraJqlQuery(QJsonObject jsobj)   // FIXME-2 saveState: check 
+void VymModel::processJiraJqlQuery(QJsonObject jsobj)
 {
     // Debugging only
     //qDebug() << "VM::processJiraJqlQuery result...";
 
-    int branchID = jsobj.value("vymBranchId").toInt();
-    BranchItem *pbi = (BranchItem*)findID(branchID);
-    if (!pbi) {
+    int branchId = jsobj.value("vymBranchId").toInt();
+    BranchItem *bi = (BranchItem*)findID(branchId);
+    if (!bi) {
         mainWindow->statusMessage("VM::processJiraJqlQUery could not find branch with ID=" + jsobj.value("vymBranchId").toString());
         return;
     }
     QJsonArray issues = jsobj["issues"].toArray();
 
-    saveStateChangingPart(pbi, pbi, // JiraJqlQuery
-                          QString("getJiraData ()"),
-                          QString("Get data from Jira for %1")
-                              .arg(getObjectName(pbi)));
+    QString bv = setBranchVar(bi);
+    QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.getJiraData(%1);").arg(toS(jsobj["doSubtree"].toBool()));
+    QString comment = QString("Process Jira Jql query on \"%1\"").arg(bi->headingText());
+    saveStateNew(uc, rc, comment, bi->parentBranch());
+
 
     saveStateBlocked = true;
-    repositionBlocked = true; // FIXME-2 block reposition during bulk processing of Jira query?
+    repositionBlocked = true;
 
     for (int i = 0; i < issues.size(); ++i) {
         QJsonObject issue = issues[i].toObject();
         JiraIssue ji(issue);
 
-        BranchItem *bi = addNewBranchInt(pbi, -2);  // FIXME-2 check, used to be createBranch(pbi);
-        if (bi) {
+        BranchItem *bi2 = addNewBranchInt(bi, -2);
+        if (bi2) {
             QString keyName = ji.key();
             if (ji.isFinished())    {
                 keyName = "(" + keyName + ")";
-                colorSubtree (Qt::blue, bi);
+                colorSubtree (Qt::blue, bi2);
             }
 
-            setHeadingPlainText(keyName + ": " + ji.summary(), bi);
-            setUrl(ji.url(), false, bi);
-            initAttributesFromJiraIssue(bi, ji);
+            setHeadingPlainText(keyName + ": " + ji.summary(), bi2);
+            setUrl(ji.url(), false, bi2);
+            initAttributesFromJiraIssue(bi2, ji);
         }
 
         // Pretty print JIRA ticket
         // ji.print();
     }
 
-    setAttribute(pbi, "Jira.query", jsobj["vymJiraLastQuery"].toString());
+    setAttribute(bi, "Jira.query", jsobj["vymJiraLastQuery"].toString());
 
     saveStateBlocked = false;
     repositionBlocked = false;

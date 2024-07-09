@@ -29,6 +29,7 @@ class JiraAgent : public QObject {
     JiraAgent::JobType jobType();
     bool setBranch(BranchItem *bi);
     bool setTicket(const QString &id);
+    void setDoSubtree(bool b);
     QString key();
     bool setQuery(const QString &s);
     QString query();
@@ -84,7 +85,10 @@ class JiraAgent : public QObject {
     QString queryInt;
 
     // Backreferences to take action in calling model
-    int branchID;
-    int modelID;
+    int branchId;
+    int modelId;
+
+    // For redoCommand remember need for recursion
+    bool doSubtreeInt;
 };
 #endif
