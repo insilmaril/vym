@@ -903,6 +903,7 @@ function test_modify_branches()
   branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
   expect("After undo of inverse sorting first child of \"Main A\" is \"" + ha + "\"", branch_0Aa.headingText(), ha);
   expect("After undo of inverse sorting last child of \"Main A\" is \"" + hc + "\"", branch_0Ac.headingText(), hc);
+  closeCurrentMap();
 }
 
 function test_modify_images()
@@ -1483,14 +1484,14 @@ function test_tasks()
 // test_vym();  // FIXME currently not used (version check, tmpDir check)
 
 // ok, already using new Wrapper functions
-test_basics();
+//test_basics();
 //test_adding_branches();
-//test_adding_maps();
+test_adding_maps();
 //test_copy_paste();
 //test_delete_parts();
 //test_extrainfo();
 //test_frames();
-test_modify_branches();
+//test_modify_branches();
 //test_modify_images();
 //test_moving_parts();
 //test_references();

@@ -1109,9 +1109,9 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
     QString bv = setBranchVar(bi);
     QString pbv = setBranchVar(bi->parentBranch(), "pb");
     QString uc = pbv + QString("map.addMapReplace(\"UNDO_PATH\", pb);");
-    QString rc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");  // FIXME-0 really UNDO_PATH here or better REDO_PATH?
+    QString rc = bv + QString("map.addMapReplace(\"REDO_PATH\", b);");
     QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
-    saveStateNew(uc, rc, comment, bi->parentBranch());
+    saveStateNew(uc, rc, comment, bi->parentBranch(), bi);
 
     if (File::Aborted != loadMap(fpath,
                File::ImportReplace,
