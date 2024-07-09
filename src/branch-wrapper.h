@@ -18,7 +18,6 @@ class BranchWrapper : public VymScriptContext {
     void addBranch();
     void addBranchAt(int pos);
     void addBranchBefore();
-    bool addMapInsert(QString filename, int pos);
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
     int branchCount();
@@ -51,6 +50,7 @@ class BranchWrapper : public VymScriptContext {
     int imageCount();
     void importDir(const QString &path);
     bool isScrolled();
+    bool loadBranchInsert(QString filename, int pos);
     bool loadImage(const QString &filename);
     bool loadNote(const QString &filename);
     void moveDown();

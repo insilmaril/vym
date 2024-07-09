@@ -29,14 +29,6 @@ void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
                 "Couldn't add mapcenter");
 }
 
-bool VymModelWrapper::addMapReplace(QString fileName, BranchWrapper *bw)
-{
-    if (QDir::isRelativePath(fileName))
-        fileName = QDir::currentPath() + "/" + fileName;
-
-    return setResult(model->addMapReplace(fileName, bw->branchItem()));
-}
-
 void VymModelWrapper::addSlide() { model->addSlide(); }
 
 void VymModelWrapper::addXLink(const QString &begin, const QString &end,
@@ -464,6 +456,22 @@ QString VymModelWrapper::getXLinkStyleEnd()
     return setResult(model->getXLinkStyleEnd());
 }
 
+bool VymModelWrapper::loadBranchReplace(QString fileName, BranchWrapper *bw)
+{
+    if (QDir::isRelativePath(fileName))
+        fileName = QDir::currentPath() + "/" + fileName;
+
+    return setResult(model->addMapReplace(fileName, bw->branchItem()));
+}
+
+bool VymModelWrapper::loadDataInsert(QString fileName)
+{
+    if (QDir::isRelativePath(fileName))
+        fileName = QDir::currentPath() + "/" + fileName;
+
+    return setResult(model->addMapInsert(fileName));
+}
+
 void VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
 {
     model->newBranchIterator(itname, deepLevelsFirst);
@@ -515,6 +523,17 @@ void VymModelWrapper::removeBranch(BranchWrapper *bw)
         return;
     }
     model->deleteSelection(bw->branchItem()->getID());
+}
+
+void VymModelWrapper::removeImage(ImageWrapper *iw)
+{
+    if (!iw) {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "VymModelWrapper::removeImage(i) i is invalid");
+        return;
+    }
+    model->deleteSelection(iw->imageItem()->getID());
 }
 
 void VymModelWrapper::removeKeepChildren(BranchWrapper *bw)

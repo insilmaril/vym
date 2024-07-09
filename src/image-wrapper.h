@@ -11,6 +11,8 @@ class ImageWrapper : public VymScriptContext {
   public:
     ImageWrapper(ImageItem*);
     ~ImageWrapper();
+    VymModel* model();
+    ImageItem* imageItem();
 
   public slots:
     bool hasRichTextHeading();
@@ -20,7 +22,7 @@ class ImageWrapper : public VymScriptContext {
     void setHeadingText(const QString &);
 
   private:
-    ImageItem *imageItem;
+    ImageItem *imageItemInt;
 };
 
 #endif

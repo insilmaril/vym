@@ -191,7 +191,7 @@ class VymModel : public TreeModel {
   public:
     void importDir(const QString &, BranchItem *bi = nullptr);
     void importDir();
-    bool addMapInsert(QString filepath, int pos, BranchItem *bi = nullptr);
+    bool addMapInsert(QString filepath, int pos = -1, BranchItem *bi = nullptr);
     bool addMapReplace(QString filepath, BranchItem *bi = nullptr);
 
   private:
@@ -264,7 +264,8 @@ class VymModel : public TreeModel {
     void resetHistory();      //!< Initialize history
 
     QString setBranchVar(BranchItem*, QString varName ="b");  //!< Returns command to set BranchItem in scripts for undo/redo
-    QString setImageVar(ImageItem*);    //!< Returns command to set ImageItem in scripts for undo/redo
+    QString setImageVar(ImageItem*, QString varName = "i");   //!< Returns command to set ImageItem in scripts for undo/redo
+    QString setXLinkVar(XLinkItem*, QString varName = "x");   //!< Returns command to set XLinkItem in scripts for undo/redo
 
   private:
     /*! \brief Save the current changes in map
@@ -297,13 +298,7 @@ class VymModel : public TreeModel {
             const QString &undoCommand,
             const QString &redoCommand,
             const QString &comment);
-  private:
-    /*! Overloaded for convenience */
-    void saveStateChangingPart(TreeItem *undoSelection, TreeItem *redoSelection,
-                               const QString &redoCommand,
-                               const QString &comment);
 
-  public:  
     /*! Overloaded for convenience */
     void saveState(TreeItem *undoSelection, const QString &undoCommand,
                    TreeItem *redoSelection, const QString &redoCommand,

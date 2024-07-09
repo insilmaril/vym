@@ -57,14 +57,6 @@ void BranchWrapper::addBranchBefore()
                 "Couldn't add branch before selection to map");
 }
 
-bool BranchWrapper::addMapInsert(QString fileName, int pos)
-{
-    if (QDir::isRelativePath(fileName))
-        fileName = QDir::currentPath() + "/" + fileName;
-
-    return setResult(model()->addMapInsert(fileName, pos, branchItemInt));
-}
-
 int BranchWrapper::attributeAsInt(const QString &key)
 {
     QVariant v;
@@ -288,6 +280,14 @@ int BranchWrapper::imageCount()
 void BranchWrapper::importDir(const QString &path) // FIXME-4 error handling missing (in vymmodel and here)
 {
     model()->importDir(path, branchItemInt);
+}
+
+bool BranchWrapper::loadBranchInsert(QString fileName, int pos)
+{
+    if (QDir::isRelativePath(fileName))
+        fileName = QDir::currentPath() + "/" + fileName;
+
+    return setResult(model()->addMapInsert(fileName, pos, branchItemInt));
 }
 
 bool BranchWrapper::loadImage(const QString &filename)

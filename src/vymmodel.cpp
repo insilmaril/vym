@@ -900,6 +900,7 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imag
                 s = imagePaths.at(j);
                 ii = createImage(parentBranch);
                 if (ii && ii->load(s)) {
+                    
                     saveState((TreeItem *)ii, "remove()", parentBranch,
                               QString("loadImage (\"%1\")").arg(s), // FIXME-2 This needs internal history path, not original one!
                                                                     // Better use saveStateRemovePart()?
@@ -1043,7 +1044,7 @@ void VymModel::importDir(const QString &dirPath, BranchItem *bi)
     BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
         QString bv = setBranchVar(selbi);
-        QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+        QString uc = bv + QString("map.loadMapReplace(\"UNDO_PATH\", b);");
         QString rc = bv + QString("b.importDir(\"%1\");").arg(dirPath);
         QString comment = QString("Import directory structure from \"%1\" to branch \"%2\"").arg(dirPath, selbi->headingText());
         saveStateNew(uc, rc, comment, selbi);
@@ -1083,8 +1084,8 @@ bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *insertBran
     }
 
     QString bv = setBranchVar(insertBranch);
-    QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
-    QString rc = bv + QString("b.addMapInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
+    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
     QString comment = QString("Add map %1 to \"%2\"").arg(fpath).arg(insertBranch->headingText());
     saveStateNew(uc, rc, comment, insertBranch);
 
@@ -1108,8 +1109,8 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
 
     QString bv = setBranchVar(bi);
     QString pbv = setBranchVar(bi->parentBranch(), "pb");
-    QString uc = pbv + QString("map.addMapReplace(\"UNDO_PATH\", pb);");
-    QString rc = bv + QString("map.addMapReplace(\"REDO_PATH\", b);");
+    QString uc = pbv + QString("map.loadBranchReplace(\"UNDO_PATH\", pb);");
+    QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
     QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
     saveStateNew(uc, rc, comment, bi->parentBranch(), bi);
 
@@ -1665,13 +1666,24 @@ QString VymModel::setBranchVar(BranchItem* bi, QString varName)
     return r;
 }
 
-QString VymModel::setImageVar(ImageItem* ii)
+QString VymModel::setImageVar(ImageItem* ii, QString varName)
 {
     QString r;
     if (!ii)
         qWarning() << "VM::setImageVar ii == nullptr";
     else
-        r = QString("ii = map.findImageById(\"%1\");").arg(ii->getUuid().toString());
+        r = QString("%1 = map.findImageById(\"%2\");").arg(varName, ii->getUuid().toString());
+
+    return r;
+}
+
+QString VymModel::setXLinkVar(XLinkItem* xli, QString varName)
+{
+    QString r;
+    if (!xli)
+        qWarning() << "VM::setXLinkVar xli == nullptr";
+    else
+        r = QString("%1 = map.findXLinkById(\"%2\");").arg(varName, xli->getUuid().toString());
 
     return r;
 }
@@ -1740,12 +1752,6 @@ void VymModel::saveStateNew(
             */
     }
 
-    if (debug) {
-        qDebug() << "  undoCommand: " << undoCommand;
-        qDebug() << "  redoCommand: " << redoCommand;
-        qDebug() << "      Comment: " << comment;
-    }
-
     // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
     //
@@ -1808,6 +1814,12 @@ void VymModel::saveStateNew(
         QString xmlRedoPath = histDir + "/redo.xml";
         redoCommand.replace("REDO_PATH", xmlRedoPath);
         saveStringToDisk(xmlRedoPath, dataXML);
+    }
+
+    if (debug) {
+        qDebug() << "  undoCommand: " << undoCommand;
+        qDebug() << "  redoCommand: " << redoCommand;
+        qDebug() << "      Comment: " << comment;
     }
 
     // We would have to save all actions in a tree, to keep track of
@@ -2054,25 +2066,6 @@ void VymModel::saveStateBranch(
     saveStateNew(branchVar + uc, branchVar + rc, comment);
 }
 
-void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,  // FIXME-000 use new syntax (WIP)
-                                     const QString &rc, const QString &comment)
-{
-    // save the selected part of the map, Undo will replace part of map
-    QString undoSelection = "";
-    if (undoSel)
-        undoSelection = getSelectString(undoSel);
-    else
-        qWarning("VymModel::saveStateChangingPart  no undoSel given!");
-    QString redoSelection = "";
-    if (redoSel)
-        redoSelection = getSelectString(undoSel);
-    else
-        qWarning("VymModel::saveStateChangingPart  no redoSel given!");
-
-    saveStateOld(File::PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
-              redoSelection, rc, comment, undoSel);
-}
-
 void VymModel::saveState(TreeItem *undoSel, const QString &uc,
                          TreeItem *redoSel, const QString &rc,
                          const QString &comment)
@@ -2225,6 +2218,9 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
+    qDebug() << "Xlink var= " << setXLinkVar((XLinkItem*)getSelectedItem());
+    return;
+
     // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch()) {
@@ -3610,7 +3606,7 @@ void VymModel::paste()
             QStringList clipboardFiles = QString(mimeData->data("application/x-vym")).split(",");
 
             QString bv = setBranchVar(selbi);
-            QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+            QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
             QString rc = bv + QString("b.select(); map.paste();");
             QString comment = QString("Paste to branch \"%1\"").arg(selbi->headingText());
             saveStateNew(uc, rc, comment, selbi);
@@ -3857,7 +3853,7 @@ void VymModel::sortChildren(bool inverse, BranchItem *bi)
         if (selbi) {
             if (selbi->branchCount() > 1) {
                 QString bv = setBranchVar(selbi);
-                QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+                QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
                 QString com;
                 QString rc;
                 if (!inverse) {
@@ -3865,7 +3861,7 @@ void VymModel::sortChildren(bool inverse, BranchItem *bi)
                     com = QString("Sort children of \"%1\"").arg(getObjectName(selbi));
                 } else {
                     bv = setBranchVar(selbi);
-                    uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+                    uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
                     rc = bv + QString("b.sortChildren(false);");
                     com = QString("Inverse sort children of \"%1\"").arg(getObjectName(selbi));
                 }
@@ -4305,7 +4301,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *pi, int num)
             QString uc, rc;
             QString bv = setBranchVar(newbi);
             uc = " map.removeBranch(b);";
-            rc = setBranchVar(pi) + QString(" b.addMapInsert(\"REDO_PATH\", %1);").arg(num);
+            rc = setBranchVar(pi) + QString(" b.loadBranchInsert(\"REDO_PATH\", %1);").arg(num);
             saveStateNew( uc, rc,
                 QString("Add new branch to %1").arg(getObjectName(pi)),
                 nullptr, pi);
@@ -4682,13 +4678,18 @@ void VymModel::deleteSelection(ulong selID)
 
     foreach (ulong id, selectedIDs) {
         TreeItem *ti = findID(id);
+        BranchItem *pbi;
         if (ti) {
+            pbi = (BranchItem*)(ti->parent());
+            if (pbi && !pbi->hasTypeBranch())
+                pbi = nullptr;
+
             if (ti->hasTypeBranch()) { // Delete branch
                 BranchItem *bi = (BranchItem *)ti;
                 BranchItem *pbi = bi->parentBranch();
                 QString bv = setBranchVar(bi);
                 QString pbv = setBranchVar(pbi, "pb");
-                QString uc = pbv + QString("pb.addMapInsert(\"UNDO_PATH\", %1)").arg(bi->num());
+                QString uc = pbv + QString("pb.loadBranchInsert(\"UNDO_PATH\", %1)").arg(bi->num());
                 QString rc;
                 rc = bv + "map.removeBranch(b);";
                 saveStateNew(uc, rc,
@@ -4705,30 +4706,33 @@ void VymModel::deleteSelection(ulong selID)
                 else
                     emitDataChanged(rootItem);
                 ti = nullptr;
-            }
-            else {
-                // Delete other item
-                TreeItem *pi = ti->parent();
-                if (pi) {
-                    if (ti->getType() == TreeItem::Image ||
-                        ti->getType() == TreeItem::Attribute ||
-                        ti->getType() == TreeItem::XLink) {
-                        saveStateChangingPart(  // Remove img, attr or xlink. How to restore xlink?
-                            pi, ti, "remove ()",
-                            QString("Remove %1").arg(getObjectName(ti)));
+            } else if (ti->getType() == TreeItem::Image) {
+                QString iv = setImageVar((ImageItem*)ti);
+                QString bv = setBranchVar(pbi);
+                QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+                QString rc = iv + QString("map.removeImage(i);");
+                QString com = QString("Remove image \"%1\" from branch \"%2\"").arg(getObjectName(ti), getObjectName(pbi));
+                saveStateNew(uc, rc, com, pbi);
 
-                        deleteItem(ti);
-                        emitDataChanged(pi);
-                        select(pi);
-                        reposition();   // FIXME-2 reposition only once in the end
-                    }
-                    else
-                        qWarning(
-                            "VymmModel::deleteSelection()  unknown type?!");
-                }
-            }
-        }
-    }
+                deleteItem(ti);
+                emitDataChanged(pbi);
+                select(pbi);
+            } else if (ti->getType() == TreeItem::XLink) {
+                QString bv = setBranchVar(pbi);
+                QString xv = setXLinkVar((XLinkItem*)ti);
+                QString uc = bv + QString("map.addMapInsert(\"UNDO_PATH\", b);");
+                QString rc = xv + QString("map.removeImage(x);");
+
+                QString com = QString("Remove XLink from branch \"%1\"").arg(getObjectName(pbi));
+                saveStateNew(uc, rc, com, ti);
+                deleteItem(ti); // FIXME-2 No saveState yet to remove XLink
+            } else if (ti->getType() == TreeItem::Attribute) {
+                deleteItem(ti); // FIXME-2 No saveState yet to remove Attribute
+            } else
+                qWarning("VymmModel::deleteSelection()  unknown type?!");
+        } // ti found
+    } // Loop over selectedIDs
+    reposition();
 }
 
 void VymModel::deleteKeepChildren(BranchItem *bi)
@@ -4751,7 +4755,7 @@ void VymModel::deleteKeepChildren(BranchItem *bi)
 
                 QString pbv = setBranchVar(pi, "pb");
                 QString bv = setBranchVar(selbi);
-                QString uc = pbv + "map.addMapReplace(\"UNDO_PATH\", pb);";
+                QString uc = pbv + "map.loadBranchReplace(\"UNDO_PATH\", pb);";
                 QString rc = bv + "b.removeKeepChildren();";
                 saveStateNew(uc, rc,
                     QString("Remove branch \"%1\" and keep children").arg(selbi->headingText()),
@@ -4783,7 +4787,7 @@ void VymModel::deleteChildren(BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         QString bv = setBranchVar(selbi);
-        QString uc = bv + "map.addMapReplace(\"UNDO_PATH\", b);";
+        QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
         QString rc = bv + "b.removeChildren();";
         saveStateNew(uc, rc,
                 QString("Remove children of \"%1\"").arg(selbi->headingText()),
@@ -4816,7 +4820,7 @@ void VymModel::deleteChildrenBranches(BranchItem *bi)
             int n_last  = selbi->getLastBranch()->childNum();
 
             QString bv = setBranchVar(selbi);
-            QString uc = bv + "map.addMapReplace(\"UNDO_PATH\", b);";
+            QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
             QString rc = bv + "b.removeChildrenBranches();";
             saveStateNew(uc, rc,
                     QString("Remove children branches of \"%1\"").arg(selbi->headingText()),
@@ -4841,8 +4845,8 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
 {
     if (ti) {
         TreeItem *pi = ti->parent();
-        // qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->heading()<<"
-        // pi="<<pi<<"="<<pi->heading();
+        qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->headingText();
+        //<< " pi="<<pi<<"="<<pi->heading();
 
         bool wasAttribute = ti->hasTypeAttribute();
         TreeItem *parentItem = ti->parent();
@@ -4941,7 +4945,7 @@ void VymModel::unscrollSubtree(BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         QString bv = setBranchVar(selbi);
-        QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+        QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
         QString rc = bv + QString("b.unscrollSubtree();");
         QString comment = QString("Unscroll branch \"%1\" and all its scrolled children").arg(selbi->headingText());
         saveStateNew(uc, rc, comment, selbi);
@@ -5180,7 +5184,7 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
 
     foreach (BranchItem *bi, selbis) {
         QString bv = setBranchVar(bi);
-        QString uc = bv + "map.addMapReplace(\"UNDO_PATH\", b);";
+        QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
         QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
         saveStateNew(uc, rc,
                         QString("Set color of %1 and children to %2")
@@ -5213,13 +5217,15 @@ QColor VymModel::getCurrentHeadingColor()
     return Qt::black;
 }
 
-void VymModel::note2URLs()
+void VymModel::note2URLs() // FIXME-2 No saveState yet
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
+        /*
         saveStateChangingPart(  // note2Urls
             selbi, selbi, QString("note2URLs()"),
             QString("Extract URLs from note of %1").arg(getObjectName(selbi)));
+        */
 
         QString n = selbi->getNoteASCII();
         if (n.isEmpty())
@@ -5407,7 +5413,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)
     QJsonArray issues = jsobj["issues"].toArray();
 
     QString bv = setBranchVar(bi);
-    QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
     QString rc = bv + QString("b.getJiraData(%1);").arg(toS(jsobj["doSubtree"].toBool()));
     QString comment = QString("Process Jira Jql query on \"%1\"").arg(bi->headingText());
     saveStateNew(uc, rc, comment, bi->parentBranch());

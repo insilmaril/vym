@@ -624,12 +624,6 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("addMapReplace", Command::Any, Command::Bool);
-    c->addParameter(Command::String, false, "Filename of map to load");
-    c->addParameter(Command::BranchItem, false, "Branch to be replaced by map");
-    c->setComment("Replace branch by map with given path");
-    modelCommands.append(c);
-
     c = new Command("addSlide", Command::Branch);
     modelCommands.append(c);
 
@@ -759,6 +753,12 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
+    c = new Command("loadBranchReplace", Command::Any, Command::Bool);
+    c->addParameter(Command::String, false, "Filename of map to load");
+    c->addParameter(Command::BranchItem, false, "Branch to be replaced by map");
+    c->setComment("Replace branch with data from given path");
+    modelCommands.append(c);
+
     c = new Command("newBranchIterator", Command::Branch);
     c->addParameter(Command::String, false, "Name of iterator");
     c->addParameter(Command::Bool, true, "Flag to go deep levels first");
@@ -810,9 +810,14 @@ void Main::setupAPI()
     c = new Command("remove", Command::TreeItem);
     modelCommands.append(c);
 
-    c = new Command("removeBranch", Command::Branch);
+    c = new Command("removeBranch", Command::Any);
     c->addParameter(Command::BranchItem, false, "Branch to be removed");
     c->setComment("Remove branch");
+    modelCommands.append(c);
+
+    c = new Command("removeImage", Command::Any);
+    c->addParameter(Command::ImageItem, false, "Branch to be removed");
+    c->setComment("Remove image");
     modelCommands.append(c);
 
     c = new Command("removeKeepChildren", Command::Branch);
@@ -1041,12 +1046,6 @@ void Main::setupAPI()
     c->setComment("Add branch as parent before current branch");
     branchCommands.append(c);
 
-    c = new Command("addMapInsert", Command::Branch);
-    c->addParameter(Command::String, false, "Filename of map to load");
-    c->addParameter(Command::Int, true, "Index where map is inserted");
-    c->setComment("Add map with given path to branch at index");
-    branchCommands.append(c);
-
     c = new Command("attributeAsInt", Command::Branch, Command::Int);
     c->setComment("Get integer value of attribute with given key");
     c->addParameter(Command::String, false, "Key of integer attribute");
@@ -1152,6 +1151,12 @@ void Main::setupAPI()
     c = new Command("importDir", Command::Branch);
     c->addParameter(Command::String, false, "Directory name to import");
     c->setComment("Add directory structure to branch (experimental)");
+    branchCommands.append(c);
+
+    c = new Command("loadBranchInsert", Command::Branch);
+    c->addParameter(Command::String, false, "Filename of map to load");
+    c->addParameter(Command::Int, true, "Index where map is inserted");
+    c->setComment("Insert branch with given path to branch at index");
     branchCommands.append(c);
 
     c = new Command("loadImage", Command::Branch);

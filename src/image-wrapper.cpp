@@ -10,7 +10,7 @@ extern QJSEngine *scriptEngine;
 ImageWrapper::ImageWrapper(ImageItem *ii)
 {
     //qDebug() << "Constr ImageWrapper (ii)";
-    imageItem = ii;
+    imageItemInt = ii;
 }
 
 ImageWrapper::~ImageWrapper()
@@ -18,19 +18,23 @@ ImageWrapper::~ImageWrapper()
     //qDebug() << "Destr ImageWrapper";
 }
 
+VymModel* ImageWrapper::model() {return imageItemInt->getModel();}
+
+ImageItem* ImageWrapper::imageItem() {return imageItemInt;}
+
 bool ImageWrapper::hasRichTextHeading()
 {
-    return setResult(imageItem->heading().isRichText());
+    return setResult(imageItemInt->heading().isRichText());
 }
 
 QString ImageWrapper::headingText()
 {
-    return setResult(imageItem->headingPlain());
+    return setResult(imageItemInt->headingPlain());
 }
 
 bool ImageWrapper::selectParent()
 {
-    bool r = imageItem->getModel()->selectParent(imageItem);
+    bool r = model()->selectParent(imageItemInt);
     if (!r)
         scriptEngine->throwError(
                 QJSValue::GenericError,
@@ -42,11 +46,11 @@ void ImageWrapper::setHeadingRichText(const QString &text)
 {
     VymText vt;
     vt.setRichText(text);
-    imageItem->getModel()->setHeading(vt, imageItem);
+    model()->setHeading(vt, imageItemInt);
 }
 
 void ImageWrapper::setHeadingText(const QString &text)
 {
-    imageItem->getModel()->setHeadingPlainText(text, imageItem);
+    model()->setHeadingPlainText(text, imageItemInt);
 }
 

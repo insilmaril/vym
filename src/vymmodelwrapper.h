@@ -20,7 +20,6 @@ class VymModelWrapper : public VymScriptContext {
 
   public slots:
     void addMapCenterAtPos(qreal x, qreal y);
-    bool addMapReplace(QString filename, BranchWrapper *bw);
     void addSlide();
     void addXLink(const QString &begin, const QString &end, int width,// FIXME-3 move to BranchWrapper
                   const QString &color, const QString &penstyle);
@@ -55,6 +54,8 @@ class VymModelWrapper : public VymScriptContext {
     QString getXLinkPenStyle(); // FIXME-3 move to XLinkWrapper
     QString getXLinkStyleBegin();// FIXME-3 move to XLinkWrapper
     QString getXLinkStyleEnd();// FIXME-3 move to XLinkhWrapper
+    bool loadBranchReplace(QString filename, BranchWrapper *bw);
+    bool loadDataInsert(QString filename);
     void moveSlideDown(int n);
     void moveSlideDown();
     void moveSlideUp(int n);
@@ -66,6 +67,7 @@ class VymModelWrapper : public VymScriptContext {
     void redo();
     void remove();              // FIXME-3 still needed? Rename to removeSelection()?
     void removeBranch(BranchWrapper *bw);
+    void removeImage(ImageWrapper *iw);
     void removeKeepChildren(BranchWrapper *bw);
     void removeSlide(int n);
     QVariant repeatLastCommand();

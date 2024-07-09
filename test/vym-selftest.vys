@@ -256,37 +256,37 @@ function test_adding_maps()
 
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
 
-  map.addMapReplace(currentMapPath, branch_0Aa);
+  map.loadBranchReplace(currentMapPath, branch_0Aa);
 
-  expect("addMapReplace: check branch count in '" + main_A.headingText() + "'", main_A.branchCount(), n + 1);
+  expect("loadBranchReplace: check branch count in '" + main_A.headingText() + "'", main_A.branchCount(), n + 1);
 
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
-  expect("addMapReplace: check if '" + branch_0Aa.headingText() + "' has 2 children", branch_0Aa.branchCount(), 2);
-  expect("addMapReplace: check if '" + branch_0Aa.headingText() + "' is named 'MapCenter. 0'", branch_0Aa.headingText(), "MapCenter 0");
+  expect("loadBranchReplace: check if '" + branch_0Aa.headingText() + "' has 2 children", branch_0Aa.branchCount(), 2);
+  expect("loadBranchReplace: check if '" + branch_0Aa.headingText() + "' is named 'MapCenter. 0'", branch_0Aa.headingText(), "MapCenter 0");
 
   branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
-  expect("addMapReplace: check if '" + branch_0Ab.headingText() + "' is named 'MapCenter. 1'", branch_0Ab.headingText(), "MapCenter 1");
+  expect("loadBranchReplace: check if '" + branch_0Ab.headingText() + "' is named 'MapCenter. 1'", branch_0Ab.headingText(), "MapCenter 1");
 
   map.undo()
   main_A = map.findBranchBySelection(main_A_string);
-  expect("Undo addMapReplace: check branch count in '" + main_A.headingText() + "'", main_A.branchCount(), n);
+  expect("Undo loadBranchReplace: check branch count in '" + main_A.headingText() + "'", main_A.branchCount(), n);
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
-  expect("Undo addMapReplace: check if '" + branch_0Aa.headingText() + "' has 2 children", branch_0Aa.branchCount(), 3);
+  expect("Undo loadBranchReplace: check if '" + branch_0Aa.headingText() + "' has 2 children", branch_0Aa.branchCount(), 3);
   closeCurrentMap();
 
   map = initMap(testMapDefault);
   b = map.findBranchBySelection(branch_0Aa_string);
   n = b.branchCount();
-  expect("addMapInsert '" + currentMapPath + "' returns true",
-      b.addMapInsert(currentMapPath, 1),
+  expect("loadBranchInsert '" + currentMapPath + "' returns true",
+      b.loadBranchInsert(currentMapPath, 1),
       true);
   map.select(branch_0Aa_string);
-  expect("addMapInsert: branch count of '" + b.headingText() + "' increased",  b.branchCount(), n + 2);
+  expect("loadBranchInsert: branch count of '" + b.headingText() + "' increased",  b.branchCount(), n + 2);
 
   b2 = map.findBranchBySelection(branch_0Aa_string + ",bo:1");
-  expect("addMapInsert: new heading of branch_0Aa1 is 'MapCenter 0'", b2.headingText(), "MapCenter 0");
+  expect("loadBranchInsert: new heading of branch_0Aa1 is 'MapCenter 0'", b2.headingText(), "MapCenter 0");
   b3 = map.findBranchBySelection(branch_0Aa_string + ",bo:2");
-  expect("addMapInsert: new heading of branch_0Aa2 is 'MapCenter 1'", b3.headingText(), "MapCenter 1");
+  expect("loadBranchInsert: new heading of branch_0Aa2 is 'MapCenter 1'", b3.headingText(), "MapCenter 1");
 
   map.undo();
   b = map.findBranchBySelection(branch_0Aa_string);
@@ -937,6 +937,15 @@ function test_modify_images()
   map.undo();
   expect("After undo image no longer has RichText heading", i.hasRichTextHeading(), false);
 
+  b = map.findBranchBySelection(branch_0Aa_string);
+  n = b.imageCount();
+  map.removeImage(i);  
+  expect("After removing image, image count decreased", b.imageCount(), n - 1);  
+
+  map.undo();  
+  b = map.findBranchBySelection(branch_0Aa_string);
+  n = b.imageCount();
+  expect("Undo removing image, image count increased", b.imageCount(), n);  
   closeCurrentMap();
 }
 
@@ -1485,14 +1494,14 @@ function test_tasks()
 
 // ok, already using new Wrapper functions
 //test_basics();
-//test_adding_branches();
+test_adding_branches();
 test_adding_maps();
 //test_copy_paste();
-//test_delete_parts();
+test_delete_parts();
 //test_extrainfo();
 //test_frames();
 //test_modify_branches();
-//test_modify_images();
+test_modify_images();
 //test_moving_parts();
 //test_references();
 //test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
