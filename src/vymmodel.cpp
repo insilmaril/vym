@@ -369,8 +369,10 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                             ->saveToDir(tmpdir, prefix, offset, tmpLinks, exportBoundingBoxes);
                 break;
             case TreeItem::Image:
-                // Save Image
                 tree += ((ImageItem *)saveSel)->saveToDir(tmpdir);
+                break;
+            case TreeItem::XLink:
+                tree += ((XLinkItem *)saveSel)->getLink()->saveToDir();
                 break;
             default:
                 // other types shouldn't be safed directly...
@@ -1078,16 +1080,16 @@ void VymModel::importDir()
 
 bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *insertBranch)
 {
-    if (!insertBranch) {
-        qWarning() << "VymModel::addMapInsert No branch provided";
-        return false;
+    if (insertBranch) {
+        // Only saveState if a branch is inserted
+        // Other data like XLink is only used for undo/redo operations and currently
+        // does not need a saveState
+        QString bv = setBranchVar(insertBranch);
+        QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+        QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
+        QString comment = QString("Add map %1 to \"%2\"").arg(fpath).arg(insertBranch->headingText());
+        saveStateNew(uc, rc, comment, insertBranch);
     }
-
-    QString bv = setBranchVar(insertBranch);
-    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
-    QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
-    QString comment = QString("Add map %1 to \"%2\"").arg(fpath).arg(insertBranch->headingText());
-    saveStateNew(uc, rc, comment, insertBranch);
 
     if (File::Aborted != loadMap(fpath,
                 File::ImportAdd,
@@ -4718,12 +4720,11 @@ void VymModel::deleteSelection(ulong selID)
                 emitDataChanged(pbi);
                 select(pbi);
             } else if (ti->getType() == TreeItem::XLink) {
-                QString bv = setBranchVar(pbi);
                 QString xv = setXLinkVar((XLinkItem*)ti);
-                QString uc = bv + QString("map.addMapInsert(\"UNDO_PATH\", b);");
-                QString rc = xv + QString("map.removeImage(x);");
+                QString uc = QString("map.loadDataInsert(\"UNDO_PATH\");");
+                QString rc = xv + QString("map.removeXLink not implemented(x);");
 
-                QString com = QString("Remove XLink from branch \"%1\"").arg(getObjectName(pbi));
+                QString com = QString("Remove XLink");
                 saveStateNew(uc, rc, com, ti);
                 deleteItem(ti); // FIXME-2 No saveState yet to remove XLink
             } else if (ti->getType() == TreeItem::Attribute) {

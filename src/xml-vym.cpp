@@ -861,25 +861,25 @@ void VymReader::readXLink()
             pen.setColor(QColor(s));
 
         s = attributeToString("type");
-        if (s.isEmpty())
+        if (!s.isEmpty())
             li->setLinkType(s);
 
         s = attributeToString("width");
-        if (s.isEmpty())
+        if (!s.isEmpty())
             pen.setWidth(s.toInt(&ok, 10));
 
         s = attributeToString("penstyle");
-        if (s.isEmpty())
+        if (!s.isEmpty())
             pen.setStyle(penStyle(s, ok));
 
         li->setPen(pen);
 
         s = attributeToString("styleBegin");
-        if (s.isEmpty())
+        if (!s.isEmpty())
             li->setStyleBegin(s);
 
         s = attributeToString("styleEnd");
-        if (s.isEmpty())
+        if (!s.isEmpty())
             li->setStyleEnd(s);
 
         /* FIXME-3 better set control points via VymModel for saveState
