@@ -287,7 +287,7 @@ int BranchWrapper::imageCount()
 
 void BranchWrapper::importDir(const QString &path) // FIXME-4 error handling missing (in vymmodel and here)
 {
-    branchItemInt->getModel()->importDir(path, branchItemInt);
+    model()->importDir(path, branchItemInt);
 }
 
 bool BranchWrapper::loadImage(const QString &filename)
@@ -335,12 +335,12 @@ bool BranchWrapper::relinkToBranchAt(BranchWrapper *dst, int pos)
 
 void BranchWrapper::removeChildren()
 {
-    branchItemInt->getModel()->deleteChildren(branchItemInt);
+    model()->deleteChildren(branchItemInt);
 }
 
 void BranchWrapper::removeChildrenBranches()
 {
-    branchItemInt->getModel()->deleteChildrenBranches(branchItemInt);
+    model()->deleteChildrenBranches(branchItemInt);
 }
 
 void BranchWrapper::scroll()
@@ -472,7 +472,7 @@ void BranchWrapper::setVymLink(const QString &s)
 
 void BranchWrapper::sortChildren(bool b)
 {
-    branchItemInt->getModel()->sortChildren(b, branchItemInt);
+    model()->sortChildren(b, branchItemInt);
 }
 
 void BranchWrapper::sortChildren()
@@ -502,6 +502,11 @@ void BranchWrapper::toggleTask() {
 void BranchWrapper::unscroll()
 {
     model()->unscrollBranch(branchItemInt);
+}
+
+void BranchWrapper::unscrollSubtree()
+{
+    model()->unscrollSubtree(branchItemInt);
 }
 
 void BranchWrapper::unsetFlagByName(const QString &s)

@@ -1109,7 +1109,7 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
     QString bv = setBranchVar(bi);
     QString pbv = setBranchVar(bi->parentBranch(), "pb");
     QString uc = pbv + QString("map.addMapReplace(\"UNDO_PATH\", pb);");
-    QString rc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");  // FIXME-0 really UNDO_PATH here or better REDO_PATH?
     QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
     saveStateNew(uc, rc, comment, bi->parentBranch());
 
@@ -4936,13 +4936,16 @@ void VymModel::toggleScroll(BranchItem *bi)
     }
 }
 
-void VymModel::unscrollChildren()
+void VymModel::unscrollSubtree(BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        saveStateChangingPart(  // unscrollChildren. No command.
-            selbi, selbi, QString("unscrollChildren ()"),
-            QString("unscroll all children of %1").arg(getObjectName(selbi)));
+        QString bv = setBranchVar(selbi);
+        QString uc = bv + QString("map.addMapReplace(\"UNDO_PATH\", b);");
+        QString rc = bv + QString("b.unscrollSubtree();");
+        QString comment = QString("Unscroll branch \"%1\" and all its scrolled children").arg(selbi->headingText());
+        saveStateNew(uc, rc, comment, selbi);
+
         BranchItem *prev = nullptr;
         BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, selbi);

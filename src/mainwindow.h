@@ -211,7 +211,7 @@ class Main : public QMainWindow {
     void editExpandOneLevel();
     void editCollapseOneLevel();
     void editCollapseUnselected();
-    void editUnscrollChildren();
+    void editUnscrollSubtree();
     void editGrowSelectionSize();
     void editShrinkSelectionSize();
     void editResetSelectionSize();

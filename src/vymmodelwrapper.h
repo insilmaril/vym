@@ -111,7 +111,6 @@ class VymModelWrapper : public VymScriptContext {
     int slideCount();
     void toggleTarget();        // FIXME-3 move to BranchWrapper
     void undo();
-    void unscrollChildren();    // FIXME-3 move to BranchWrapper
     void unselectAll();
     int xlinkCount();           // FIXME-3 move to BranchWrapper
 

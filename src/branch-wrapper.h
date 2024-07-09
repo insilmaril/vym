@@ -90,6 +90,7 @@ class BranchWrapper : public VymScriptContext {
     void toggleScroll();
     void toggleTask();
     void unscroll();
+    void unscrollSubtree();
     void unsetFlagByName(const QString &);
 
   private:

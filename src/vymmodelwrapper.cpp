@@ -838,8 +838,6 @@ void VymModelWrapper::toggleTarget() { model->toggleTarget(); }
 
 void VymModelWrapper::undo() { model->undo(); }
 
-void VymModelWrapper::unscrollChildren() { model->unscrollChildren(); }
-
 void VymModelWrapper::unselectAll() { model->unselectAll(); }
 
 int VymModelWrapper::xlinkCount()

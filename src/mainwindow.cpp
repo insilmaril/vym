@@ -1017,9 +1017,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("unscrollChildren", Command::Branch);
-    modelCommands.append(c);
-
     c = new Command("unselectAll", Command::Any);
     modelCommands.append(c);
 
@@ -1321,6 +1318,10 @@ void Main::setupAPI()
 
     c = new Command("unscroll", Command::Branch);
     c->setComment("Unscroll branch");
+    branchCommands.append(c);
+
+    c = new Command("unscrollSubtree", Command::Branch);
+    c->setComment("Unscroll branch and all children in its subtree");
     branchCommands.append(c);
 
     c = new Command("unsetFlagByName", Command::Branch);
@@ -1873,9 +1874,9 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionToggleScroll = a;
 
-    a = new QAction(tr("Unscroll children", "Edit menu"), this);
+    a = new QAction(tr("Unscroll branch and subtree", "Edit menu"), this);
     editMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editUnscrollChildren()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editUnscrollSubtree()));
     actionListBranches.append(a);
 
     a = new QAction(tr("Grow selection", "Edit menu"), this);
@@ -5481,11 +5482,11 @@ void Main::editCollapseUnselected()
         m->emitCollapseUnselected();
 }
 
-void Main::editUnscrollChildren()
+void Main::editUnscrollSubtree()
 {
     VymModel *m = currentModel();
     if (m)
-        m->unscrollChildren();
+        m->unscrollSubtree();
 }
 
 void Main::editGrowSelectionSize()
