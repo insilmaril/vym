@@ -178,8 +178,9 @@ install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations sc
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
-    file(CREATE_LINK ../apps/vym.png application-x-vym.png SYMBOLIC)
-    install(FILES ${CMAKE_BINARY_DIR}/application-x-vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/mimetypes)
+    # Disabling PR #109 for now:
+    # file(CREATE_LINK ../apps/vym.png application-x-vym.png SYMBOLIC)
+    # install(FILES ${CMAKE_BINARY_DIR}/application-x-vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/mimetypes)
     install(FILES config/vym.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/mime/packages)
     install(FILES config/vym.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 endif()
