@@ -73,22 +73,28 @@ Command::ParameterType Command::parameterType(int n)
 QString Command::typeToString(const ParameterType &type)
 {
     switch (type) {
-    case String:
-        return "String";
-    case Int:
-        return "Int";
-    case Double:
-        return "Double";
-    case Color:
-        return "Color";
-    case Bool:
-        return "Bool";
-    case Void:
-        return "Void";
-    case Undefined:
-        return "Undefined";
-    default:
-        return "not defined in class Command.";
+        case Bool:
+            return "Bool";
+        case BranchItem:
+            return "Branch";
+        case Color:
+            return "Color";
+        case Double:
+            return "Double";
+        case ImageItem:
+            return "Image";
+        case Int:
+            return "Int";
+        case String:
+            return "String";
+        case Undefined:
+            return "Undefined";
+        case Void:
+            return "Void";
+        case XLinkItem:
+            return "XLink";
+        default:
+            return "not defined in class Command.";
     }
 }
 

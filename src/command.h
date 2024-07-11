@@ -10,18 +10,21 @@ class Command {
         VymObject,
         MapObject,
         BranchObject,
-        ImageObject
+        ImageObject,
+        XLinkObject
     };
     enum ParameterType {
-        Undefined,
         Bool,
         BranchItem,
-        ImageItem,
         Color,
         Double,
+        ImageItem,
         Int,
         String,
-        Void};
+        Undefined,
+        Void,
+        XLinkItem
+    };
     enum SelectionType {
         Any,
         TreeItem,
@@ -32,7 +35,7 @@ class Command {
         XLink
     };
 
-    Command(const QString &n, SelectionType st, ParameterType retType = Void);
+    Command(const QString &n, SelectionType st = Command::Any, ParameterType retType = Void);
     QString name();
     QString description();
     QString descriptionLaTeX();
