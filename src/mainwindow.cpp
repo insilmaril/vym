@@ -105,6 +105,7 @@ extern QList<Command *> vymCommands;
 extern QList<Command *> modelCommands;
 extern QList<Command *> branchCommands;
 extern QList<Command *> imageCommands;
+extern QList<Command *> xlinkCommands;
 
 extern bool usingDarkTheme;
 
@@ -609,9 +610,6 @@ void Main::setupAPI()
     c = new Command("version", Command::Any);
     vymCommands.append(c);
 
-    foreach (Command *c, vymCommands)
-        c->setObjectType(Command::VymObject);
-
     //
     // Below are the commands for a map
     //
@@ -680,6 +678,11 @@ void Main::setupAPI()
     c = new Command("findImageById", Command::Any, Command::ImageItem);
     c->setComment("Find image with given unique Uuid. ");
     c->addParameter(Command::String, false, "Uuid of image");
+    modelCommands.append(c);
+
+    c = new Command("findXLinkById", Command::Any, Command::XLinkItem);
+    c->setComment("Find xlink given unique Uuid. ");
+    c->addParameter(Command::String, false, "Uuid of xlink");
     modelCommands.append(c);
 
     c = new Command("getDestPath", Command::Any, Command::String);
@@ -1359,8 +1362,19 @@ void Main::setupAPI()
     c->setComment("Set heading of image as plain text string");
     imageCommands.append(c);
 
+    //
+    // Below are the commands for an xlink
+    //
+    
+    c = new Command("setColor");
+    c->addParameter(Command::String, true, "Color of xlink as string");
+    c->setComment("Set color of xlink");
+    xlinkCommands.append(c);
 
     // Finally set objectTypes in all defined commands
+    foreach (Command *c, vymCommands)
+        c->setObjectType(Command::VymObject);
+
     foreach (Command *c, branchCommands)
         c->setObjectType(Command::BranchObject);
 
@@ -1369,6 +1383,9 @@ void Main::setupAPI()
 
     foreach (Command *c, imageCommands)
         c->setObjectType(Command::ImageObject);
+
+    foreach (Command *c, xlinkCommands)
+        c->setObjectType(Command::XLinkObject);
 
 }
 
@@ -7099,7 +7116,7 @@ QVariant Main::runScript(const QString &script)
 {
     if (debug) {
         std::cout << "MainWindow::runScript starting to execute:" << endl;
-        std::cout << qPrintable(script) << endl;
+        std::cout << qPrintable("----------\n" + script + "\n----------") << endl;
     }
 
     // Run script
@@ -7370,6 +7387,13 @@ void Main::helpScriptingCommands()
     s += "Available commands of an image\n";
     s += "==============================\n";
     foreach (Command *c, imageCommands) {
+        s += c->description();
+        s += "\n";
+    }
+
+    s += "Available commands of an xlink\n";
+    s += "==============================\n";
+    foreach (Command *c, xlinkCommands) {
         s += c->description();
         s += "\n";
     }

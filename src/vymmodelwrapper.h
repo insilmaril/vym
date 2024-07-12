@@ -1,5 +1,5 @@
-#ifndef VYMMODELWRAPPER_H
-#define VYMMODELWRAPPER_H
+#ifndef VYMMODEL_WRAPPER_H
+#define VYMMODEL_WRAPPER_H
 
 #include "scripting.h"
 
@@ -9,8 +9,10 @@
 #include <QVariant>
 
 class BranchItem;
+class AttributeWrapper;
 class BranchWrapper;
 class ImageWrapper;
+class XLinkWrapper;
 class VymModel;
 
 class VymModelWrapper : public VymScriptContext {
@@ -35,6 +37,7 @@ class VymModelWrapper : public VymScriptContext {
     BranchWrapper* findBranchBySelection(const QString &);
     ImageWrapper* findImageById(const QString &);
     ImageWrapper* findImageBySelection(const QString &);
+    //XLinkWrapper* findXLinkById(const QString &);
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
@@ -70,12 +73,15 @@ class VymModelWrapper : public VymScriptContext {
     void removeImage(ImageWrapper *iw);
     void removeKeepChildren(BranchWrapper *bw);
     void removeSlide(int n);
+    //void removeXLink(XLinkWrapper *xlw);
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);// FIXME-3 move to ImageWrapper
     void saveNote(const QString &filename); // FIXME-3 move to BranchWrapper
     void saveSelection(const QString &filename);
     bool select(const QString &s);
+    AttributeWrapper* selectedAttribute();
     BranchWrapper* selectedBranch();
+    //XLinkWrapper* selectedXLink();
     bool selectUids(QJSValueList args);
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper

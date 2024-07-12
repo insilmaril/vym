@@ -4,6 +4,7 @@
 #include "branchitem.h"
 #include "vymmodel.h"
 #include "xlinkobj.h"
+#include "xlink-wrapper.h"
 
 /////////////////////////////////////////////////////////////////
 // XLinkItem
@@ -27,6 +28,11 @@ XLinkItem::~XLinkItem()
             model->deleteLater(xli->getID());
         model->deleteLink(link);
     }
+
+    if (xlinkWrapperInt) {
+        delete xlinkWrapperInt;
+        xlinkWrapperInt = nullptr;
+    }
     //    qDebug() << "Destr XLinkItem end";
 }
 
@@ -35,11 +41,22 @@ void XLinkItem::init()
     setType(XLink);
     link = nullptr;
     itemData[0] = "XLink";
+    xlinkWrapperInt = nullptr;
 }
 
 void XLinkItem::setLink(Link *l) { link = l; }
 
 Link *XLinkItem::getLink() { return link; }
+
+/*
+XLinkWrapper* XLinkItem::xlinkWrapper()
+{
+    if (!xlinkWrapperInt)
+        xlinkWrapperInt = new XLinkWrapper(this);
+
+    return xlinkWrapperInt;
+}
+*/
 
 void XLinkItem::updateXLink()
 {

@@ -1,5 +1,7 @@
 #include "attributeitem.h"
 
+#include "attribute-wrapper.h"
+
 #include <QApplication>
 #include <QDebug>
 
@@ -9,17 +11,14 @@ AttributeItem::AttributeItem(TreeItem *parent)
     : BranchItem(parent)
 {
     //qDebug() << "Constr. AttrItem (parent)";
-    TreeItem::setType(Attribute);
-    internal = false;
+    init();
 }
 
 AttributeItem::AttributeItem(const QString &k, const QVariant &v, TreeItem *parent)
     : BranchItem(parent)
 {
     //qDebug() << "Constr. AttrItem (k, v, parent)";
-    TreeItem::setType(Attribute);
-    internal = false;
-
+    init();
     keyInt = k;
     setValue(v);
 }
@@ -34,10 +33,18 @@ void AttributeItem::copy(AttributeItem *other)
     valueInt = other->valueInt;
 }
 
-void AttributeItem::setKey(const QString &k)
+void AttributeItem::init() {
+    TreeItem::setType(Attribute);
+    internal = false;
+    attributeWrapperInt = nullptr;
+}
+
+AttributeWrapper* AttributeItem::attributeWrapper()
 {
-    keyInt = k;
-    updateHeading();
+    if (!attributeWrapperInt)
+        attributeWrapperInt = new AttributeWrapper(this);
+
+    return attributeWrapperInt;
 }
 
 QString AttributeItem::key()

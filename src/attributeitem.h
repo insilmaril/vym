@@ -6,6 +6,8 @@
 
 #include "branchitem.h"
 
+class AttributeWrapper;
+
 /*! \brief A key and a value
     The data itself is stored in Attribute Definitions (AttributeDef).
     A list of these tables AttributeTable is maintained for every MapEditor.
@@ -16,6 +18,8 @@ class AttributeItem : public BranchItem {
     AttributeItem(const QString &k, const QVariant &v, TreeItem *parent = nullptr);
     virtual ~AttributeItem();
     void copy(AttributeItem *other);
+    void init();
+    AttributeWrapper* attributeWrapper();
     void setKey(const QString &k);
     QString key();
     void setValue(const QVariant &v);
@@ -30,6 +34,7 @@ class AttributeItem : public BranchItem {
     bool internal; //!< Internal attributes cannot be edited by user
     QString keyInt;
     QVariant valueInt;
+    AttributeWrapper *attributeWrapperInt;
 };
 
 #endif

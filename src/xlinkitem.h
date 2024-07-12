@@ -4,6 +4,7 @@
 class BranchItem;
 class QGraphicsScene;
 class XLinkObj;
+class XLinkWrapper;
 
 #include "mapitem.h"
 #include "xlink.h"
@@ -22,6 +23,7 @@ class XLinkItem : public MapItem {
     void init();
     void setLink(Link *);
     Link *getLink();
+//    XLinkWrapper *xlinkWrapper();
     void updateXLink();
     XLinkObj *getXLinkObj();
     QColor headingColor();
@@ -30,6 +32,7 @@ class XLinkItem : public MapItem {
 
   private:
     Link *link;
+    XLinkWrapper *xlinkWrapperInt;
 };
 
 #endif

@@ -2283,22 +2283,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             tmpLink->setEndBranch(destinationBranch);
             tmpLink->activate();
             tmpLink->updateLink();
-            if (model->createLink(tmpLink)) {
-                model->saveState( // FIXME-1 saveState:  create XLink-Wrapper to select/remove
-                    tmpLink->getBeginLinkItem(),
-                    "remove ()",
-                    seli,
-                    QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")").arg(
-                        model->getSelectString(tmpLink->getBeginBranch()),
-                        model->getSelectString(tmpLink->getEndBranch()),
-                        QString::number(tmpLink->getPen().width()),
-                        tmpLink->getPen().color().name(),
-                        penStyleToString(tmpLink->getPen().style())),
-                    QString("Adding Link from %1 to %2").arg(
-                                model->getObjectName(seli),
-                                model->getObjectName(destinationBranch)));
-                return;
-            }
+            if (model->createLink(tmpLink)) return;
         }
         delete (tmpLink);
         tmpLink = nullptr;

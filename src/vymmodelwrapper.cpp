@@ -3,6 +3,7 @@
 #include <QMessageBox>
 
 #include "attributeitem.h"
+#include "attribute-wrapper.h"
 #include "branchitem.h"
 #include "branch-wrapper.h"
 #include "imageitem.h"
@@ -13,6 +14,7 @@
 #include "vymtext.h"
 #include "xlink.h"
 #include "xlinkitem.h"
+#include "xlink-wrapper.h"
 #include "xmlobj.h" // include quoteQuotes
 
 #include <QJSEngine>
@@ -320,6 +322,17 @@ ImageWrapper* VymModelWrapper::findImageBySelection(const QString &s)
         return nullptr;
 }
 
+/*
+XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
+{
+    TreeItem *ti = model->findUuid(QUuid(u));
+    qDebug() << "VMW::findXLink  ti=" << ti;
+    if (ti && ti->hasTypeXLink())
+        return ((XLinkItem*)ti)->xlinkWrapper();
+    else
+        return nullptr;
+}
+*/
 QString VymModelWrapper::getDestPath()
 {
     QString r = model->getDestPath();
@@ -549,6 +562,19 @@ void VymModelWrapper::removeSlide(int n)
                 QString("Slide '%1' not available.").arg(n));
 }
 
+/*
+void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
+{
+    if (!xlw) {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                "VymModelWrapper::removeXLink(xl) xl is invalid");
+        return;
+    }
+    model->deleteSelection(xlw->xlinkItem()->getID());
+}
+*/
+
 QVariant VymModelWrapper::repeatLastCommand()
 {
     return model->repeatLastCommand();
@@ -588,6 +614,16 @@ bool VymModelWrapper::select(const QString &s)
     return setResult(r);
 }
 
+AttributeWrapper* VymModelWrapper::selectedAttribute()
+{
+    AttributeItem *ai = model->getSelectedAttribute();
+
+    if (ai)
+        return ai->attributeWrapper();
+    else
+        return nullptr;
+}
+
 BranchWrapper* VymModelWrapper::selectedBranch()
 {
     BranchItem *selbi = model->getSelectedBranch();
@@ -597,6 +633,18 @@ BranchWrapper* VymModelWrapper::selectedBranch()
     else
         return nullptr; // caught by QJSEngine
 }
+
+/*
+XLinkWrapper* VymModelWrapper::selectedXLink()
+{
+    XLinkItem *xli = model->getSelectedXLinkItem();
+
+    if (xli)
+        return xli->xlinkWrapper();
+    else
+        return nullptr;
+}
+*/
 
 bool VymModelWrapper::selectUids(QJSValueList args)
 {

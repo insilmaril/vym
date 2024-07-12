@@ -15,9 +15,9 @@ class BranchWrapper : public VymScriptContext {
     VymModel* model();
 
   public slots:
-    void addBranch();
-    void addBranchAt(int pos);
-    void addBranchBefore();
+    BranchWrapper* addBranch();
+    BranchWrapper* addBranchAt(int pos);
+    BranchWrapper* addBranchBefore();
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
     int branchCount();

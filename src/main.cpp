@@ -110,6 +110,7 @@ QList<Command *> vymCommands;
 QList<Command *> modelCommands;
 QList<Command *> branchCommands;
 QList<Command *> imageCommands;
+QList<Command *> xlinkCommands;
 
 Options options;
 ImageIO imageIO;
@@ -481,7 +482,7 @@ int main(int argc, char *argv[])
         // Show debug info AFTER creating MainWindow
         std::cout << debugInfo().toStdString() << std::endl;
 
-    if (options.isOn("commands")) {
+    if (options.isOn("commands")) { // FIXME-2 Merge with Main::helpScriptingCommands
         std::cout << "Available commands in vym:\n";
         std::cout << "=========================:\n";
         foreach (Command *c, vymCommands)

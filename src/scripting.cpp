@@ -5,7 +5,6 @@
 #include "imageitem.h"
 #include "mainwindow.h"
 #include "misc.h"
-#include "vymmodelwrapper.h"
 #include "vymtext.h"
 #include "xlink.h"
 
@@ -67,7 +66,9 @@ qreal VymScriptContext::setResult(qreal r)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-VymWrapper::VymWrapper() {}
+#include "vymmodelwrapper.h"
+
+VymWrapper::VymWrapper() {} // FIXME-2 Move to extra files like the other wrappers
 
 void VymWrapper::abortScript(const QString &s)
 {

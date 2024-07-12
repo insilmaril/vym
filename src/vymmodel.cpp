@@ -4048,6 +4048,28 @@ bool VymModel::createLink(Link *link)
 
     link->setStyleBegin(mapDesignInt->defXLinkStyleBegin());
     link->setStyleEnd(mapDesignInt->defXLinkStyleEnd());
+
+    QString xv = setXLinkVar(newli, "xl");
+    QString uc = xv + "map.removeXLink(xl);";
+    QString rc = "TODO..."; // FIXME-0
+    QString com = QString("Add XLink from \"%1\" to \"%2\"")
+        .arg(getObjectName(begin), getObjectName(end));
+    saveStateNew(uc, rc, com);
+    /*
+                model->saveState( // FIXME-0 saveState:  create XLink-Wrapper to select/remove
+                    tmpLink->getBeginLinkItem(),
+                    "remove ()",
+                    seli,
+                    QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")").arg(
+                        model->getSelectString(tmpLink->getBeginBranch()),
+                        model->getSelectString(tmpLink->getEndBranch()),
+                        QString::number(tmpLink->getPen().width()),
+                        tmpLink->getPen().color().name(),
+                        penStyleToString(tmpLink->getPen().style())),
+                    QString("Adding Link from %1 to %2").arg(
+                                model->getObjectName(seli),
+                                model->getObjectName(destinationBranch)));
+        */
     return true;
 }
 
@@ -4727,7 +4749,7 @@ void VymModel::deleteSelection(ulong selID)
 
                 QString com = QString("Remove XLink");
                 saveStateNew(uc, rc, com, ti);
-                deleteItem(ti); // FIXME-2 No saveState yet to remove XLink
+                deleteItem(ti);
             } else if (ti->getType() == TreeItem::Attribute) {
                 deleteItem(ti); // FIXME-2 No saveState yet to remove Attribute
             } else

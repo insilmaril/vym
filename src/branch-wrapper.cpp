@@ -29,32 +29,36 @@ VymModel* BranchWrapper::model()
     return branchItemInt->getModel();
 }
 
-void BranchWrapper::addBranch()
+BranchWrapper* BranchWrapper::addBranch()
 {
-    if (branchItemInt) {
-        if (!model()->addNewBranch(branchItemInt, -2))
+    BranchItem* newbi = model()->addNewBranch(branchItemInt, -2);
+    if (!newbi) {
         scriptEngine->throwError(QJSValue::GenericError,"Couldn't add branch to map");
-        return;
-    } else {
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-        return;
-    }
+        return nullptr;
+    } else
+        return newbi->branchWrapper();
 }
 
-void BranchWrapper::addBranchAt(int pos)
+BranchWrapper* BranchWrapper::addBranchAt(int pos)
 {
-    if (!model()->addNewBranch(branchItemInt, pos))
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("Could not add  branch at position %1").arg(pos));
+    BranchItem* newbi = model()->addNewBranch(branchItemInt, -2);
+    if (!newbi) {
+        scriptEngine->throwError(QJSValue::GenericError,"Couldn't add branch to map");
+        return nullptr;
+    } else
+        return newbi->branchWrapper();
 }
 
-void BranchWrapper::addBranchBefore()
+BranchWrapper* BranchWrapper::addBranchBefore()
 {
-    if (!model()->addNewBranchBefore(branchItemInt))
+    BranchItem* newbi = model()->addNewBranchBefore(branchItemInt);
+    if (!newbi) {
         scriptEngine->throwError(
                 QJSValue::GenericError,
                 "Couldn't add branch before selection to map");
+        return nullptr;
+    } else
+        return newbi->branchWrapper();
 }
 
 int BranchWrapper::attributeAsInt(const QString &key)
