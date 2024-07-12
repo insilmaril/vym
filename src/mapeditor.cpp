@@ -1002,14 +1002,14 @@ TreeItem *MapEditor::findMapItem(
                     qreal d0 = Geometry::distance(p, xlo->getBeginPos());
                     qreal d1 = Geometry::distance(p, xlo->getEndPos());
                     if (d0 < d1)
-                        return link->getBeginLinkItem();
+                        return link->beginXLinkItem();
                     else
-                        return link->getEndLinkItem();
+                        return link->endXLinkItem();
                 }
                 if (xlinkSelection == XLinkObj::C0)
-                    return link->getBeginLinkItem();
+                    return link->beginXLinkItem();
                 if (xlinkSelection == XLinkObj::C1)
-                    return link->getEndLinkItem();
+                    return link->endXLinkItem();
             }
         }
     }

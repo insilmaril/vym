@@ -31,7 +31,7 @@ class MapEditor;
 class SlideItem;
 class SlideModel;
 class Task;
-class XLinkItem;
+class Link;
 class VymView;
 
 class QGraphicsScene;
@@ -265,7 +265,7 @@ class VymModel : public TreeModel {
 
     QString setBranchVar(BranchItem*, QString varName ="b");  //!< Returns command to set BranchItem in scripts for undo/redo
     QString setImageVar(ImageItem*, QString varName = "i");   //!< Returns command to set ImageItem in scripts for undo/redo
-    QString setXLinkVar(XLinkItem*, QString varName = "x");   //!< Returns command to set XLinkItem in scripts for undo/redo
+    QString setXLinkVar(Link*, QString varName = "x");        //!< Returns command to set XLink in scripts for undo/redo
 
   private:
     /*! \brief Save the current changes in map
@@ -528,11 +528,7 @@ class VymModel : public TreeModel {
 
     bool relinkTo(const QString &dest, int num);
 
-  private:
-    bool cleaningUpLinks; //!< True while cleaning up to avoid recursion
   public:
-    void cleanupItems();    //!< Delete orphaned Items
-    void deleteLater(uint); //!< Delete later with new beginRemoveRow
     void deleteSelection(ulong selID = 0); //!< Delete selection
     void deleteKeepChildren(BranchItem *bi = nullptr); //!< remove branch, but keep children
   public:
@@ -541,7 +537,8 @@ class VymModel : public TreeModel {
 
     TreeItem *deleteItem(
         TreeItem *); //!< Delete item and return parent (if parent!= rootItem)
-    void deleteLink(Link *); //!< Remove Link and related LinkItems in TreeModel
+
+    void deleteXLink(Link *); //!< Delete XLink and saveState
     bool scrollBranch(BranchItem *);
     bool unscrollBranch(BranchItem *);
     void toggleScroll(BranchItem *bi = nullptr);

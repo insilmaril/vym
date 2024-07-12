@@ -37,7 +37,7 @@ class VymModelWrapper : public VymScriptContext {
     BranchWrapper* findBranchBySelection(const QString &);
     ImageWrapper* findImageById(const QString &);
     ImageWrapper* findImageBySelection(const QString &);
-    //XLinkWrapper* findXLinkById(const QString &);
+    XLinkWrapper* findXLinkById(const QString &);
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
@@ -73,7 +73,7 @@ class VymModelWrapper : public VymScriptContext {
     void removeImage(ImageWrapper *iw);
     void removeKeepChildren(BranchWrapper *bw);
     void removeSlide(int n);
-    //void removeXLink(XLinkWrapper *xlw);
+    void removeXLink(XLinkWrapper *xlw);
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);// FIXME-3 move to ImageWrapper
     void saveNote(const QString &filename); // FIXME-3 move to BranchWrapper

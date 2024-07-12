@@ -322,17 +322,16 @@ ImageWrapper* VymModelWrapper::findImageBySelection(const QString &s)
         return nullptr;
 }
 
-/*
 XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
 {
     TreeItem *ti = model->findUuid(QUuid(u));
     qDebug() << "VMW::findXLink  ti=" << ti;
     if (ti && ti->hasTypeXLink())
-        return ((XLinkItem*)ti)->xlinkWrapper();
+        return ((XLinkItem*)ti)->getLink()->xlinkWrapper();
     else
         return nullptr;
 }
-*/
+
 QString VymModelWrapper::getDestPath()
 {
     QString r = model->getDestPath();
@@ -562,18 +561,16 @@ void VymModelWrapper::removeSlide(int n)
                 QString("Slide '%1' not available.").arg(n));
 }
 
-/*
 void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
 {
     if (!xlw) {
         scriptEngine->throwError(
                 QJSValue::GenericError,
-                "VymModelWrapper::removeXLink(xl) xl is invalid");
+                "VymModelWrapper::removeXLink(xl) xlink is invalid");
         return;
     }
-    model->deleteSelection(xlw->xlinkItem()->getID());
+    model->deleteXLink(xlw->xlink());
 }
-*/
 
 QVariant VymModelWrapper::repeatLastCommand()
 {

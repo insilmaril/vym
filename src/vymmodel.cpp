@@ -233,9 +233,6 @@ void VymModel::init()
     slideModel = new SlideModel(this);
     blockSlideSelection = false;
 
-    // Avoid recursions later
-    cleaningUpLinks = false;
-
     // Network
     netstate = Offline;
 
@@ -1680,13 +1677,13 @@ QString VymModel::setImageVar(ImageItem* ii, QString varName)
     return r;
 }
 
-QString VymModel::setXLinkVar(XLinkItem* xli, QString varName)
+QString VymModel::setXLinkVar(Link* xl, QString varName)
 {
     QString r;
-    if (!xli)
-        qWarning() << "VM::setXLinkVar xli == nullptr";
+    if (!xl)
+        qWarning() << "VM::setXLinkVar xl == nullptr";
     else
-        r = QString("%1 = map.findXLinkById(\"%2\");").arg(varName, xli->getUuid().toString());
+        r = QString("%1 = map.findXLinkById(\"%2\");").arg(varName, xl->getUuid().toString());
 
     return r;
 }
@@ -2197,6 +2194,12 @@ TreeItem *VymModel::findUuid(const QUuid &id)
         nextBranch(cur, prev);
     }
 
+    // Special case: XLinks (not XLinkItems!) are no TreeItem, if Uuid matches,
+    // return one of the XLinkItems. Used in VymModelWrapper::findXLinkById
+    foreach (auto xl, xlinks)
+        if (xl->getUuid() == id)
+            return xl->beginXLinkItem();
+
     // For restoring MapCenters we might want to add to rootItem
     if (rootItem->getUuid() == id)
         return rootItem;
@@ -2221,9 +2224,6 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
 
 void VymModel::test()
 {
-    qDebug() << "Xlink var= " << setXLinkVar((XLinkItem*)getSelectedItem());
-    return;
-
     // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch()) {
@@ -3982,10 +3982,10 @@ ImageItem *VymModel::createImage(BranchItem *dst)
     return nullptr;
 }
 
-bool VymModel::createLink(Link *link)
+bool VymModel::createLink(Link *xlink)
 {
-    BranchItem *begin = link->getBeginBranch();
-    BranchItem *end = link->getEndBranch();
+    BranchItem *begin = xlink->getBeginBranch();
+    BranchItem *end = xlink->getEndBranch();
 
     if (!begin || !end) {
         qWarning() << "VM::createXLinkNew part of XLink is nullptr";
@@ -4011,8 +4011,8 @@ bool VymModel::createLink(Link *link)
     int n;
 
     XLinkItem *newli = new XLinkItem();
-    newli->setLink(link);
-    link->setBeginLinkItem(newli);
+    newli->setLink(xlink);
+    xlink->setBeginXLinkItem(newli);
 
     emit(layoutAboutToBeChanged());
 
@@ -4023,8 +4023,8 @@ bool VymModel::createLink(Link *link)
     endInsertRows();
 
     newli = new XLinkItem();
-    newli->setLink(link);
-    link->setEndLinkItem(newli);
+    newli->setLink(xlink);
+    xlink->setEndXLinkItem(newli);
 
     parix = index(end);
     n = end->getRowNumAppend(newli);
@@ -4034,42 +4034,28 @@ bool VymModel::createLink(Link *link)
 
     emit(layoutChanged());
 
-    xlinks.append(link);
-    link->activate();
+    xlinks.append(xlink);
+    xlink->activate();
 
     latestAddedItemUuid = newli->getUuid();
 
-    if (!link->getXLinkObj()) {
-        link->createXLinkObj();
+    if (!xlink->getXLinkObj()) {
+        xlink->createXLinkObj();
         reposition();
     }
     else
-        link->updateLink();
+        xlink->updateLink();
 
-    link->setStyleBegin(mapDesignInt->defXLinkStyleBegin());
-    link->setStyleEnd(mapDesignInt->defXLinkStyleEnd());
+    xlink->setStyleBegin(mapDesignInt->defXLinkStyleBegin());
+    xlink->setStyleEnd(mapDesignInt->defXLinkStyleEnd());
 
-    QString xv = setXLinkVar(newli, "xl");
+    QString xv = setXLinkVar(xlink, "xl");
     QString uc = xv + "map.removeXLink(xl);";
-    QString rc = "TODO..."; // FIXME-0
+    QString rc = QString("map.loadDataInsert(\"REDO_PATH\");");
     QString com = QString("Add XLink from \"%1\" to \"%2\"")
         .arg(getObjectName(begin), getObjectName(end));
-    saveStateNew(uc, rc, com);
-    /*
-                model->saveState( // FIXME-0 saveState:  create XLink-Wrapper to select/remove
-                    tmpLink->getBeginLinkItem(),
-                    "remove ()",
-                    seli,
-                    QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")").arg(
-                        model->getSelectString(tmpLink->getBeginBranch()),
-                        model->getSelectString(tmpLink->getEndBranch()),
-                        QString::number(tmpLink->getPen().width()),
-                        tmpLink->getPen().color().name(),
-                        penStyleToString(tmpLink->getPen().style())),
-                    QString("Adding Link from %1 to %2").arg(
-                                model->getObjectName(seli),
-                                model->getObjectName(destinationBranch)));
-        */
+    saveStateNew(uc, rc, com, xlink->beginXLinkItem());
+
     return true;
 }
 
@@ -4673,21 +4659,6 @@ bool VymModel::relinkTo(const QString &dstString, int num)
     return false; // Relinking failed
 }
 
-void VymModel::cleanupItems()
-{
-    while (!deleteLaterIDs.isEmpty()) {
-        TreeItem *ti = findID(deleteLaterIDs.takeFirst());
-        if (ti)
-            deleteItem(ti);
-    }
-}
-
-void VymModel::deleteLater(uint id)
-{
-    if (!deleteLaterIDs.contains(id))
-        deleteLaterIDs.append(id);
-}
-
 void VymModel::deleteSelection(ulong selID)
 {
     QList<ulong> selectedIDs;
@@ -4742,14 +4713,8 @@ void VymModel::deleteSelection(ulong selID)
                 deleteItem(ti);
                 emitDataChanged(pbi);
                 select(pbi);
-            } else if (ti->getType() == TreeItem::XLink) {
-                QString xv = setXLinkVar((XLinkItem*)ti);
-                QString uc = QString("map.loadDataInsert(\"UNDO_PATH\");");
-                QString rc = xv + QString("map.removeXLink not implemented(x);");
-
-                QString com = QString("Remove XLink");
-                saveStateNew(uc, rc, com, ti);
-                deleteItem(ti);
+            } else if (ti->getType() == TreeItem::XLink) {  // FIXME-3 Maybe rename XLink to XLinkItem to avoid confusing with Link class?
+                deleteXLink(((XLinkItem*)ti)->getLink());
             } else if (ti->getType() == TreeItem::Attribute) {
                 deleteItem(ti); // FIXME-2 No saveState yet to remove Attribute
             } else
@@ -4893,9 +4858,6 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         }
         reposition();
 
-        if (!cleaningUpLinks)
-            cleanupItems();
-
         // qDebug()<<"VM::deleteItem  end   ti="<<ti;
         if (pi->depth() >= 0)
             return pi;
@@ -4903,10 +4865,30 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
     return nullptr;
 }
 
-void VymModel::deleteLink(Link *l)
+void VymModel::deleteXLink(Link *xlink)
 {
-    if (xlinks.removeOne(l))
-        delete (l);
+    qDebug() << "VM::deleteXLink start";
+
+
+    QString xv = setXLinkVar(xlink);
+    QString uc = QString("map.loadDataInsert(\"UNDO_PATH\");");
+    QString rc = xv + QString("map.removeXLink(x);");
+
+    QString com = QString("Remove XLink");
+    saveStateNew(uc, rc, com, xlink->beginXLinkItem());
+
+    // Remove XLinkItems from TreeModel
+    XLinkItem *xli;
+    xli = xlink->beginXLinkItem();
+    if (xli)
+        deleteItem(xli);
+    xli = xlink->endXLinkItem();
+    if (xli)
+        deleteItem(xli);
+
+    // Remove from list of items and delete xlink itself, including XLinkObj
+    if (xlinks.removeOne(xlink))
+        delete (xlink);
 }
 
 bool VymModel::scrollBranch(BranchItem *bi)
@@ -5574,8 +5556,8 @@ void VymModel::setXLinkColor(const QString &new_col)
             return;
         pen.setColor(new_color);
         l->setPen(pen);
-        saveState(l->getBeginLinkItem(), QString("setXLinkColor(\"%1\")").arg(old_color.name()),
-                  l->getBeginLinkItem(),
+        saveState(l->beginXLinkItem(), QString("setXLinkColor(\"%1\")").arg(old_color.name()),
+                  l->beginXLinkItem(),
                   QString("setXLinkColor(\"%1\")").arg(new_color.name()),
                   QString("set color of xlink to %1").arg(new_color.name()));
     }
@@ -5592,8 +5574,8 @@ void VymModel::setXLinkStyle(const QString &new_style)
         bool ok;
         pen.setStyle(penStyle(new_style, ok));
         l->setPen(pen);
-        saveState(l->getBeginLinkItem(), QString("setXLinkStyle(\"%1\")").arg(old_style),
-                  l->getBeginLinkItem(),
+        saveState(l->beginXLinkItem(), QString("setXLinkStyle(\"%1\")").arg(old_style),
+                  l->beginXLinkItem(),
                   QString("setXLinkStyle(\"%1\")").arg(new_style),
                   QString("set style of xlink to %1").arg(new_style));
     }
@@ -5607,8 +5589,8 @@ void VymModel::setXLinkStyleBegin(const QString &new_style)
         if (new_style == old_style)
             return;
         l->setStyleBegin(new_style);
-        saveState(l->getBeginLinkItem(), QString("setXLinkStyleBegin(\"%1\")").arg(old_style),
-                  l->getBeginLinkItem(),
+        saveState(l->beginXLinkItem(), QString("setXLinkStyleBegin(\"%1\")").arg(old_style),
+                  l->beginXLinkItem(),
                   QString("setXLinkStyleBegin(\"%1\")").arg(new_style),
                   "set style of xlink begin");
     }
@@ -5622,8 +5604,8 @@ void VymModel::setXLinkStyleEnd(const QString &new_style)
         if (new_style == old_style)
             return;
         l->setStyleEnd(new_style);
-        saveState(l->getBeginLinkItem(), QString("setXLinkStyleEnd(\"%1\")").arg(old_style),
-                  l->getBeginLinkItem(),
+        saveState(l->beginXLinkItem(), QString("setXLinkStyleEnd(\"%1\")").arg(old_style),
+                  l->beginXLinkItem(),
                   QString("setXLinkStyleEnd(\"%1\")").arg(new_style),
                   "set style of xlink end");
     }
@@ -5639,8 +5621,8 @@ void VymModel::setXLinkWidth(int new_width)
             return;
         pen.setWidth(new_width);
         l->setPen(pen);
-        saveState( l->getBeginLinkItem(), QString("setXLinkWidth(%1)").arg(old_width),
-            l->getBeginLinkItem(), QString("setXLinkWidth(%1)").arg(new_width),
+        saveState( l->beginXLinkItem(), QString("setXLinkWidth(%1)").arg(old_width),
+            l->beginXLinkItem(), QString("setXLinkWidth(%1)").arg(new_width),
             "set width of xlink");
     }
 }

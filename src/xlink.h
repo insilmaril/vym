@@ -3,6 +3,7 @@
 
 #include <QColor>
 #include <QPen>
+#include <QUuid>
 
 #include "scripting.h"
 
@@ -26,6 +27,8 @@ class Link : public XMLObj {
     Link(VymModel *m);
     virtual ~Link();
     virtual void init();
+    void setUuid(const QString &id);
+    QUuid getUuid();
     VymModel *getModel();
     XLinkWrapper *xlinkWrapper();
     void setBeginBranch(BranchItem *);
@@ -33,10 +36,10 @@ class Link : public XMLObj {
     void setEndBranch(BranchItem *);
     void setEndPoint(QPointF);
     BranchItem *getEndBranch();
-    void setBeginLinkItem(XLinkItem *);
-    XLinkItem *getBeginLinkItem();
-    void setEndLinkItem(XLinkItem *);
-    XLinkItem *getEndLinkItem();
+    void setBeginXLinkItem(XLinkItem *);
+    XLinkItem *beginXLinkItem();
+    void setEndXLinkItem(XLinkItem *);
+    XLinkItem *endXLinkItem();
     XLinkItem *getOtherEnd(XLinkItem *);
     void setPen(const QPen &p);
     QPen getPen();
@@ -46,15 +49,15 @@ class Link : public XMLObj {
     void setStyleEnd(const QString &s);
     QString getStyleEndString();
     bool activate();
-    void deactivate();
     XLinkState getState();
-    void removeXLinkItem(XLinkItem *xli);
     void updateLink();
     QString saveToDir();
     XLinkObj *getXLinkObj();
     XLinkObj *createXLinkObj();
 
   private:
+    QUuid uuid;
+
     XLinkState xLinkState; // init during drawing or active
     LinkType type;
     QPen pen;
@@ -64,8 +67,8 @@ class Link : public XMLObj {
 
     BranchItem *beginBranch;
     BranchItem *endBranch;
-    XLinkItem *beginLinkItem;
-    XLinkItem *endLinkItem;
+    XLinkItem *beginXLinkItemInt;
+    XLinkItem *endXLinkItemInt;
 
     XLinkWrapper *xlinkWrapperInt;
 };

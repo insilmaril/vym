@@ -44,7 +44,6 @@ class TreeModel : public QAbstractItemModel {
     BranchItem *rootItem;
 
     QList<Link *> xlinks;
-    QList<uint> deleteLaterIDs;
 };
 
 #endif

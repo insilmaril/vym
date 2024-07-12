@@ -23,7 +23,6 @@ class XLinkItem : public MapItem {
     void init();
     void setLink(Link *);
     Link *getLink();
-//    XLinkWrapper *xlinkWrapper();
     void updateXLink();
     XLinkObj *getXLinkObj();
     QColor headingColor();
@@ -31,8 +30,7 @@ class XLinkItem : public MapItem {
     BranchItem *getPartnerBranch();
 
   private:
-    Link *link;
-    XLinkWrapper *xlinkWrapperInt;
+    Link *xlinkInt;
 };
 
 #endif

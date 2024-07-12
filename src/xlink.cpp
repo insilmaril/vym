@@ -24,15 +24,16 @@ Link::Link(VymModel *m)
 
 Link::~Link()
 {
-    //    qDebug()<<"* Destr Link begin this="<<this<<"  bLI="<<beginLinkItem<<"
-    //    eLI="<<endLinkItem;
-    deactivate();
-    //    qDebug()<<"* Destr Link end   this="<<this;
+    //qDebug() << "* Destr Link begin this=" << this;
+
+    delete (xlo);
 
     if (xlinkWrapperInt) {
         delete xlinkWrapperInt;
         xlinkWrapperInt = nullptr;
     }
+    
+    // XLinkItems are deleted in VymModel::deleteXLink()
 }
 
 void Link::init()
@@ -40,8 +41,8 @@ void Link::init()
     xlo = nullptr;
     beginBranch = nullptr;
     endBranch = nullptr;
-    beginLinkItem = nullptr;
-    endLinkItem = nullptr;
+    beginXLinkItemInt = nullptr;
+    endXLinkItemInt = nullptr;
     xLinkState = Link::undefinedXLink;
 
     type = Bezier;
@@ -49,6 +50,10 @@ void Link::init()
 
     xlinkWrapperInt = nullptr;
 }
+
+void Link::setUuid(const QString &id) { uuid = QUuid(id); }
+
+QUuid Link::getUuid() { return uuid; }
 
 VymModel* Link::getModel() { return model; }
 
@@ -84,32 +89,32 @@ void Link::setEndPoint(QPointF p)
         xlo->setEnd(p);
 }
 
-void Link::setBeginLinkItem(XLinkItem *li)
+void Link::setBeginXLinkItem(XLinkItem *li)
 {
     if (li) {
         xLinkState = initXLink;
-        beginLinkItem = li;
+        beginXLinkItemInt = li;
     }
 }
 
-XLinkItem *Link::getBeginLinkItem() { return beginLinkItem; }
+XLinkItem *Link::beginXLinkItem() { return beginXLinkItemInt;}
 
-void Link::setEndLinkItem(XLinkItem *li)
+void Link::setEndXLinkItem(XLinkItem *li)
 {
     if (li) {
         xLinkState = initXLink;
-        endLinkItem = li;
+        endXLinkItemInt = li;
     }
 }
 
-XLinkItem *Link::getEndLinkItem() { return endLinkItem; }
+XLinkItem *Link::endXLinkItem() { return endXLinkItemInt; }
 
 XLinkItem *Link::getOtherEnd(XLinkItem *xli)
 {
-    if (xli == beginLinkItem)
-        return endLinkItem;
-    if (xli == endLinkItem)
-        return beginLinkItem;
+    if (xli == beginXLinkItemInt)
+        return endXLinkItemInt;
+    if (xli == endXLinkItemInt)
+        return beginXLinkItemInt;
     return nullptr;
 }
 
@@ -178,34 +183,7 @@ bool Link::activate()
         return false;
 }
 
-void Link::deactivate()
-{
-    // Remove pointers from XLinkItem to Link and
-    // delete XLinkObj
-
-    //    qDebug()<<"Link::deactivate ******************************";
-    xLinkState = deleteXLink;
-    if (beginLinkItem)
-        beginLinkItem->setLink(nullptr);
-    if (endLinkItem)
-        endLinkItem->setLink(nullptr);
-    if (xlo) {
-        delete (xlo);
-        xlo = nullptr;
-    }
-}
-
 Link::XLinkState Link::getState() { return xLinkState; }
-
-void Link::removeXLinkItem(XLinkItem *xli)
-{
-    // Only mark _one_ end for removal here!
-    if (xli == beginLinkItem)
-        beginLinkItem = nullptr;
-    if (xli == endLinkItem)
-        endLinkItem = nullptr;
-    xLinkState = deleteXLink;
-}
 
 void Link::updateLink()
 {

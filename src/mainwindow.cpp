@@ -5681,7 +5681,7 @@ void Main::editEditXLink(QAction *a)
                           ->getXLinkItemNum(
                               branchXLinksContextMenuEdit->actions().indexOf(a))
                           ->getLink();
-            if (l && m->select(l->getBeginLinkItem()))
+            if (l && m->select(l->beginXLinkItem()))
                 m->editXLink();
         }
     }
