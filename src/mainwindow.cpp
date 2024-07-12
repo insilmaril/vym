@@ -1973,7 +1973,7 @@ void Main::setupEditActions()
     tag = tr("References Context menu", "Shortcuts");
     a = new QAction(QPixmap(":/flag-url.svg"), tr("Open URL", "Edit menu"),
                     this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_U);
+    a->setShortcut(Qt::CTRL | Qt::Key_U);
     switchboard.addSwitch("mapOpenUrl", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenURL()));
@@ -1991,7 +1991,6 @@ void Main::setupEditActions()
     a = new QAction(tr("Open all URLs in subtree (including scrolled branches)",
                        "Edit menu"),
                     this);
-    a->setShortcut(Qt::CTRL | Qt::Key_U);
     switchboard.addSwitch("mapOpenUrlsSubTree", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVisURLTabs()));
@@ -2025,7 +2024,7 @@ void Main::setupEditActions()
     actionURLNew = a;
 
     a = new QAction(QPixmap(), tr("Edit local URL...", "Edit menu"), this);
-    // a->setShortcut (Qt::SHIFT +  Qt::Key_U );
+    a->setShortcut(Qt::SHIFT | Qt::Key_U);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditLocalURL", shortcutScope, a, tag);
     addAction(a);
