@@ -7,6 +7,7 @@
 #include "vymmodel.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
+#include "xlink-wrapper.h"
 
 class VymModel;
 
@@ -27,6 +28,11 @@ Link::~Link()
     //    eLI="<<endLinkItem;
     deactivate();
     //    qDebug()<<"* Destr Link end   this="<<this;
+
+    if (xlinkWrapperInt) {
+        delete xlinkWrapperInt;
+        xlinkWrapperInt = nullptr;
+    }
 }
 
 void Link::init()
@@ -40,9 +46,18 @@ void Link::init()
 
     type = Bezier;
     pen = model->mapDesign()->defXLinkPen();
+
+    xlinkWrapperInt = nullptr;
 }
 
-VymModel *Link::getModel() { return model; }
+VymModel* Link::getModel() { return model; }
+
+XLinkWrapper* Link::xlinkWrapper()
+{
+    if (!xlinkWrapperInt)
+        xlinkWrapperInt = new XLinkWrapper(this);
+    return xlinkWrapperInt;
+}
 
 void Link::setBeginBranch(BranchItem *bi)
 {

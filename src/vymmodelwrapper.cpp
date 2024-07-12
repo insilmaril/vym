@@ -634,17 +634,15 @@ BranchWrapper* VymModelWrapper::selectedBranch()
         return nullptr; // caught by QJSEngine
 }
 
-/*
 XLinkWrapper* VymModelWrapper::selectedXLink()
 {
     XLinkItem *xli = model->getSelectedXLinkItem();
 
     if (xli)
-        return xli->xlinkWrapper();
+        return xli->getLink()->xlinkWrapper();
     else
         return nullptr;
 }
-*/
 
 bool VymModelWrapper::selectUids(QJSValueList args)
 {

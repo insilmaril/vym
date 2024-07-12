@@ -4,7 +4,10 @@
 #include <QColor>
 #include <QPen>
 
+#include "scripting.h"
+
 #include "xmlobj.h"
+#include "xlink-wrapper.h"
 
 class QPointF;
 class QGraphicsScene;
@@ -24,6 +27,7 @@ class Link : public XMLObj {
     virtual ~Link();
     virtual void init();
     VymModel *getModel();
+    XLinkWrapper *xlinkWrapper();
     void setBeginBranch(BranchItem *);
     BranchItem *getBeginBranch();
     void setEndBranch(BranchItem *);
@@ -62,6 +66,8 @@ class Link : public XMLObj {
     BranchItem *endBranch;
     XLinkItem *beginLinkItem;
     XLinkItem *endLinkItem;
+
+    XLinkWrapper *xlinkWrapperInt;
 };
 
 #endif

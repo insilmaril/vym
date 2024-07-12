@@ -81,7 +81,7 @@ class VymModelWrapper : public VymScriptContext {
     bool select(const QString &s);
     AttributeWrapper* selectedAttribute();
     BranchWrapper* selectedBranch();
-    //XLinkWrapper* selectedXLink();
+    XLinkWrapper* selectedXLink();
     bool selectUids(QJSValueList args);
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper
