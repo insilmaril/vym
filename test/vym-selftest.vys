@@ -1,3 +1,5 @@
+// vim: set ts=2 sw=2 syn=javascript fdm=syntax
+
 // vym selftest script
 
 vym.clearConsole();
@@ -820,37 +822,6 @@ function test_load_legacy_maps()
   closeCurrentMap();
 }
 
-function test_scrolling()
-{
-  heading("Scrolling and unscrolling:");
-  map = initMap(testMapDefault);
-  
-  map.select(main_A);
- 
-  let b = map.selectedBranch();
-  map.toggleScroll();
-  expect("toggleScroll", b.isScrolled(), true);
-  map.undo()
-  expect("undo toggleScroll", b.isScrolled(), false);
-  b.scroll();
-  expect("scroll", b.isScrolled(), true);
-  b.unscroll();
-  expect("unscroll", b.isScrolled(), false);
-
-  b.scroll();
-  map.select(branch_0Aa);
-  map.scroll();
-  map.select(main_A);
-  map.unscrollChildren();
-  map.select(branch_0Aa);
-  expect("unscrollChildren", map.isScrolled(), false);
-  map.undo();
-  map.select(branch_0Aa);
-  expect("undo unscrollChildren", map.isScrolled(), true);
-
-  closeCurrentMap();
-}
-
 function test_modify_branches()
 {
   heading("Modifying branches");
@@ -1213,6 +1184,37 @@ function test_saving()
   closeCurrentMap();
 }
 
+function test_scrolling()
+{
+  heading("Scrolling and unscrolling:");
+  map = initMap(testMapDefault);
+  
+  map.select(main_A);
+ 
+  let b = map.selectedBranch();
+  map.toggleScroll();
+  expect("toggleScroll", b.isScrolled(), true);
+  map.undo()
+  expect("undo toggleScroll", b.isScrolled(), false);
+  b.scroll();
+  expect("scroll", b.isScrolled(), true);
+  b.unscroll();
+  expect("unscroll", b.isScrolled(), false);
+
+  b.scroll();
+  map.select(branch_0Aa);
+  map.scroll();
+  map.select(main_A);
+  map.unscrollChildren();
+  map.select(branch_0Aa);
+  expect("unscrollChildren", map.isScrolled(), false);
+  map.undo();
+  map.select(branch_0Aa);
+  expect("undo unscrollChildren", map.isScrolled(), true);
+
+  closeCurrentMap();
+}
+
 function test_slides()
 {
   heading("Slides");
@@ -1334,57 +1336,6 @@ function test_user_flags()
 }
 
 
-function test_xlinks()
-{
-  heading("XLinks:");
-  let map = initMap(testMapDefault);
-
-  map.select(main_A);
-  n = map.xlinkCount()
-  map.addXLink(main_A, main_B, 2,"#ff0000","Qt::DashDotLine");
-  expect("xlink count increased after creating xlink", map.xlinkCount(), n + 1);
-  map.selectXLink(0);
-  expect("Default color of XLink", map.getXLinkColor(), "#ff0000");
-  expect("Default width of XLink", map.getXLinkWidth(), 2);
-  expect("Default style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
-  expect("Default style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
-  expect("Default style of XLink end",   map.getXLinkStyleEnd(), "HeadFull");
-
-  map.setXLinkWidth(3);
-  expect("New width of XLink", map.getXLinkWidth(), 3);
-  map.undo();
-  expect("Undo width of XLink", map.getXLinkWidth(), 2);
-
-  map.setXLinkColor("#00ff00");
-  expect("New color of XLink", map.getXLinkColor(), "#00ff00");
-  map.undo();
-  expect("Undo color of XLink", map.getXLinkColor(), "#ff0000");
-
-  map.setXLinkStyle("Qt::SolidLine");
-  expect("New style of XLink", map.getXLinkPenStyle(), "Qt::SolidLine");
-  map.undo();
-  expect("Undo style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
-
-  map.setXLinkStyleBegin("None");
-  expect("New style of XLink begin", map.getXLinkStyleBegin(), "None");
-  map.undo();
-  expect("Undo style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
-
-  map.setXLinkStyleEnd("None");
-  expect("New style of XLink end", map.getXLinkStyleEnd(), "None");
-  map.undo();
-  expect("Undo style of XLink end", map.getXLinkStyleEnd(), "HeadFull");
-
-  map.select(main_A);
-  map.selectXLinkOtherEnd(0);
-  expect(
-      "xlink connects  '" + main_A + "'' and '" + main_B + "'",
-      map.getSelectionString(),
-      main_B);
-
-  closeCurrentMap();
-}
-
 function test_tasks()
 {
   heading("Tasks");
@@ -1482,6 +1433,57 @@ function test_tasks()
   closeCurrentMap();
 }
 
+function test_xlinks()
+{
+  heading("XLinks:");
+  let map = initMap(testMapDefault);
+
+  map.select(main_A);
+  n = map.xlinkCount()
+  map.addXLink(main_A, main_B, 2,"#ff0000","Qt::DashDotLine");
+  expect("xlink count increased after creating xlink", map.xlinkCount(), n + 1);
+  map.selectXLink(0);
+  expect("Default color of XLink", map.getXLinkColor(), "#ff0000");
+  expect("Default width of XLink", map.getXLinkWidth(), 2);
+  expect("Default style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
+  expect("Default style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
+  expect("Default style of XLink end",   map.getXLinkStyleEnd(), "HeadFull");
+
+  map.setXLinkWidth(3);
+  expect("New width of XLink", map.getXLinkWidth(), 3);
+  map.undo();
+  expect("Undo width of XLink", map.getXLinkWidth(), 2);
+
+  map.setXLinkColor("#00ff00");
+  expect("New color of XLink", map.getXLinkColor(), "#00ff00");
+  map.undo();
+  expect("Undo color of XLink", map.getXLinkColor(), "#ff0000");
+
+  map.setXLinkStyle("Qt::SolidLine");
+  expect("New style of XLink", map.getXLinkPenStyle(), "Qt::SolidLine");
+  map.undo();
+  expect("Undo style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
+
+  map.setXLinkStyleBegin("None");
+  expect("New style of XLink begin", map.getXLinkStyleBegin(), "None");
+  map.undo();
+  expect("Undo style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
+
+  map.setXLinkStyleEnd("None");
+  expect("New style of XLink end", map.getXLinkStyleEnd(), "None");
+  map.undo();
+  expect("Undo style of XLink end", map.getXLinkStyleEnd(), "HeadFull");
+
+  map.select(main_A);
+  map.selectXLinkOtherEnd(0);
+  expect(
+      "xlink connects  '" + main_A + "'' and '" + main_B + "'",
+      map.getSelectionString(),
+      main_B);
+
+  closeCurrentMap();
+}
+
 
 ///////////////////////////////////////////////////////////////
 //  Auto porting end
@@ -1494,34 +1496,27 @@ function test_tasks()
 
 // ok, already using new Wrapper functions
 //test_basics();
-test_adding_branches();
-test_adding_maps();
+//test_adding_branches();
+//test_adding_maps();
+//test_attributes();        // FIXME not nported yet
 //test_copy_paste();
-test_delete_parts();
+//test_delete_parts();
+//test_export();            // FIXME WIP
 //test_extrainfo();
 //test_frames();
+//test_history();           // FIXME not ported yet
+//test_load_legacy_maps();  // FIXME not ported yet
 //test_modify_branches();
-test_modify_images();
+//test_modify_images();
 //test_moving_parts();
+//test_notes();             // FIXME not ported yet
 //test_references();
+//test_saving();            // FIXME not ported yet
+//test_scrolling();         // FIXME not ported yet
+//test_slides();            // FIXME not ported yet
+//test_standard_flags();    // FIXME not ported yet
+//test_user_flags();        // FIXME not ported yet
 //test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
-
-
-/* FIXME Not ported yet
-test_attributes();
-*/
-//test_export(); // FIXME WIP
-//test_notes();
-/*
-test_history();
-test_load_legacy_maps();
-test_notes();
-test_saving();
-test_scrolling();
-test_slides();
-test_standard_flags();
-test_user_flags();
 test_xlinks();
-*/
 
 summary();
