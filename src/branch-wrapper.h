@@ -5,6 +5,7 @@
 
 class BranchItem;
 class VymModel;
+class XLinkWrapper;
 
 class BranchWrapper : public VymScriptContext {
     Q_OBJECT
@@ -18,6 +19,8 @@ class BranchWrapper : public VymScriptContext {
     BranchWrapper* addBranch();
     BranchWrapper* addBranchAt(int pos);
     BranchWrapper* addBranchBefore();
+    XLinkWrapper*  addXLink(BranchWrapper *bwEnd, int width,
+                  const QString &color, const QString &penstyle);
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
     int branchCount();
@@ -67,6 +70,8 @@ class BranchWrapper : public VymScriptContext {
     bool selectLastBranch();
     bool selectLastChildBranch();
     bool selectParent();
+    bool selectXLink(int n);
+    bool selectXLinkOtherEnd(int n);
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
     void setFrameBrushColor(const bool & useInnerFrame, const QString &color);
@@ -92,6 +97,7 @@ class BranchWrapper : public VymScriptContext {
     void unscroll();
     void unscrollSubtree();
     void unsetFlagByName(const QString &);
+    int xlinkCount();
 
   private:
     BranchItem *branchItemInt;

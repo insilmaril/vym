@@ -467,7 +467,7 @@ class VymModel : public TreeModel {
     ImageItem *createImage(BranchItem *dst);   //!< Create image
 
   public:
-    bool createLink(
+    bool createXLink(
         Link *l); //!< Create XLink, will create MO automatically if needed
     QColor getXLinkColor();
     int getXLinkWidth();
@@ -591,11 +591,11 @@ class VymModel : public TreeModel {
     QStringList getVymLinks();           // return paths in subtree
     void followXLink(int);
     void editXLink();
-    void setXLinkColor(const QString &);
-    void setXLinkStyle(const QString &);
-    void setXLinkStyleBegin(const QString &);
-    void setXLinkStyleEnd(const QString &);
-    void setXLinkWidth(int);
+    void setXLinkColor(const QString &, Link *xl = nullptr);
+    void setXLinkStyle(const QString &, Link *xl = nullptr);
+    void setXLinkStyleBegin(const QString &, Link *xl = nullptr);
+    void setXLinkStyleEnd(const QString &, Link *xl = nullptr);
+    void setXLinkWidth(int, Link *xl = nullptr);
 
     ////////////////////////////////////////////
     // Scripting
@@ -857,7 +857,7 @@ class VymModel : public TreeModel {
     QList <ImageItem *> getSelectedImages(TreeItem *ti = nullptr);
     Task *getSelectedTask();
     XLinkItem *getSelectedXLinkItem();
-    Link *getSelectedXLink();
+    Link *getSelectedXLink(Link *xl = nullptr);
     AttributeItem *getSelectedAttribute();
     TreeItem *getSelectedItem(TreeItem *ti = nullptr);
     QList<TreeItem *> getSelectedItems(TreeItem *ti = nullptr);

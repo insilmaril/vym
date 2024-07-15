@@ -15,7 +15,16 @@ class XLinkWrapper : public VymScriptContext {
     Link* xlink();
 
   public slots:
-    QString headingText();  
+    QString getColor();
+    int getWidth();
+    QString getPenStyle();
+    QString getStyleBegin();
+    QString getStyleEnd();
+    void setColor(const QString &color);
+    void setStyle(const QString &styGle);
+    void setStyleBegin(const QString &style);
+    void setStyleEnd(const QString &style);
+    void setWidth(int w);
 
   private:
     Link *xlinkInt;

@@ -33,55 +33,6 @@ void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
 
 void VymModelWrapper::addSlide() { model->addSlide(); }
 
-void VymModelWrapper::addXLink(const QString &begin, const QString &end,
-                               int width, const QString &color,
-                               const QString &penstyle)
-{
-    BranchItem *bbegin = (BranchItem *)(model->findBySelectString(begin));
-    BranchItem *bend = (BranchItem *)(model->findBySelectString(end));
-    if (bbegin && bend) {
-        if (bbegin->hasTypeBranch() && bend->hasTypeBranch()) {
-            Link *li = new Link(model);
-            li->setBeginBranch((BranchItem *)bbegin);
-            li->setEndBranch((BranchItem *)bend);
-
-            model->createLink(li);
-            QPen pen = li->getPen();
-            if (width > 0)
-                pen.setWidth(width);
-            QColor col(color);
-            if (col.isValid())
-                pen.setColor(col);
-            else {
-                scriptEngine->throwError(
-                        QJSValue::GenericError,
-                        QString("Could not set color to %1").arg(color));
-                return;
-            }
-
-            bool ok;
-            Qt::PenStyle st1 = penStyle(penstyle, ok);
-            if (ok) {
-                pen.setStyle(st1);
-                li->setPen(pen);
-            }
-            else
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    QString("Couldn't set penstyle %1").arg(penstyle));
-            return;
-        }
-        else
-            scriptEngine->throwError(
-                    QJSValue::GenericError,
-                    "Begin or end of xLink are not branch or mapcenter");
-    }
-    else
-        scriptEngine->throwError(
-            QJSValue::GenericError,
-            "Begin or end of xLink not found");
-}
-
 int VymModelWrapper::centerCount()
 {
     int r = model->centerCount();
@@ -325,7 +276,6 @@ ImageWrapper* VymModelWrapper::findImageBySelection(const QString &s)
 XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
 {
     TreeItem *ti = model->findUuid(QUuid(u));
-    qDebug() << "VMW::findXLink  ti=" << ti;
     if (ti && ti->hasTypeXLink())
         return ((XLinkItem*)ti)->getLink()->xlinkWrapper();
     else
@@ -440,32 +390,6 @@ int VymModelWrapper::getRotationSubtree()
 QString VymModelWrapper::getSelectionString()
 {
     return setResult(model->getSelectString());
-}
-
-QString VymModelWrapper::getXLinkColor()
-{
-    return setResult(model->getXLinkColor().name());
-}
-
-int VymModelWrapper::getXLinkWidth()
-{
-    return setResult(model->getXLinkWidth());
-}
-
-QString VymModelWrapper::getXLinkPenStyle()
-{
-    QString r = penStyleToString(model->getXLinkStyle());
-    return setResult(r);
-}
-
-QString VymModelWrapper::getXLinkStyleBegin()
-{
-    return setResult(model->getXLinkStyleBegin());
-}
-
-QString VymModelWrapper::getXLinkStyleEnd()
-{
-    return setResult(model->getXLinkStyleEnd());
 }
 
 bool VymModelWrapper::loadBranchReplace(QString fileName, BranchWrapper *bw)
@@ -684,47 +608,6 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
     return setResult(r);
 }
 
-bool VymModelWrapper::selectXLink(int n)
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        XLinkItem *xli = selbi->getXLinkItemNum(n);
-        if (!xli)
-            scriptEngine->throwError(QJSValue::RangeError,
-                 QString("Selected branch has no xlink with index %1").arg(n));
-        else
-            r = model->select((TreeItem*)xli);
-    } else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-    return setResult(r);
-}
-
-bool VymModelWrapper::selectXLinkOtherEnd(int n)
-{
-    bool r = false;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        XLinkItem *xli = selbi->getXLinkItemNum(n);
-        if (!xli) {
-            scriptEngine->throwError(
-                    QJSValue::RangeError,
-                    QString("Selected branch has no xlink with index %1").arg(n));
-        } else {
-            BranchItem *bi = xli->getPartnerBranch();
-            if (!bi) {
-                scriptEngine->throwError(
-                        QJSValue::RangeError,
-                        "Selected xlink has no other end ?!");
-            } else
-                r = model->select(bi);
-        }
-    } else
-        scriptEngine->throwError(QJSValue::RangeError, QString("No branch selected"));
-
-    return setResult(r);
-}
-
 void VymModelWrapper::setDefaultLinkColor(const QString &color)
 {
     QColor col(color);
@@ -856,34 +739,6 @@ void VymModelWrapper::setSelectionPenWidth(const qreal &w)
     model->setSelectionPenWidth(w);
 }
 
-void VymModelWrapper::setXLinkColor(const QString &color)
-{
-    QColor col(color);
-    if (!col.isValid())
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                QString("Could not set color to %1").arg(color));
-    else
-        model->setXLinkColor(color); // FIXME-3 try to use QColor here...
-}
-
-void VymModelWrapper::setXLinkStyle(const QString &style)
-{
-    model->setXLinkStyle(style);
-}
-
-void VymModelWrapper::setXLinkStyleBegin(const QString &style)
-{
-    model->setXLinkStyleBegin(style);
-}
-
-void VymModelWrapper::setXLinkStyleEnd(const QString &style)
-{
-    model->setXLinkStyleEnd(style);
-}
-
-void VymModelWrapper::setXLinkWidth(int w) { model->setXLinkWidth(w); }
-
 void VymModelWrapper::sleep(int n)
 {
     // FIXME-5 sleep is not avail on windows VCEE, workaround could be using
@@ -902,18 +757,3 @@ void VymModelWrapper::undo() { model->undo(); }
 
 void VymModelWrapper::unselectAll() { model->unselectAll(); }
 
-int VymModelWrapper::xlinkCount()
-{
-    int r;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi) {
-        r = selbi->xlinkCount();
-    } else {
-        scriptEngine->throwError(
-                QJSValue::GenericError,
-                "Selected item is not a branch");
-        r = -1;
-    }
-
-    return setResult(r);
-}

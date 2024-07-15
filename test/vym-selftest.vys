@@ -270,8 +270,10 @@ function test_adding_maps()
   expect("loadBranchReplace: check if '" + branch_0Ab.headingText() + "' is named 'MapCenter. 1'", branch_0Ab.headingText(), "MapCenter 1");
 
   map.undo()
+  // FIXME reassignment  should not be necessary
   main_A = map.findBranchBySelection(main_A_string);
   expect("Undo loadBranchReplace: check branch count in '" + main_A.headingText() + "'", main_A.branchCount(), n);
+  // FIXME reassignment  should not be necessary
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
   expect("Undo loadBranchReplace: check if '" + branch_0Aa.headingText() + "' has 2 children", branch_0Aa.branchCount(), 3);
   closeCurrentMap();
@@ -291,8 +293,10 @@ function test_adding_maps()
   expect("loadBranchInsert: new heading of branch_0Aa2 is 'MapCenter 1'", b3.headingText(), "MapCenter 1");
 
   map.undo();
+  // FIXME reassignment  should not be necessary
   b = map.findBranchBySelection(branch_0Aa_string);
   expect("Undo: check branch count", b.branchCount(), 3);
+  // FIXME reassignment  should not be necessary
   b = map.findBranchBySelection(branch_0Ab_string);
   expect("Undo: check heading",  b.headingText(), "branch b");
   closeCurrentMap();
@@ -332,6 +336,7 @@ function test_copy_paste()
   expect("Normal paste of branch, check heading of #{s}", b.headingText(), "Main A");
 
   map.undo()
+  // FIXME reassignment  should not be necessary
   main_A = map.findBranchBySelection(main_A_string);  
   expect("Undo paste: branchCount of \"" + main_A.headingText() + "\"", main_A.branchCount(), n);
 
@@ -358,6 +363,7 @@ function test_copy_paste()
   map.undo();
   map.undo();
   map.undo();
+  // FIXME reassignment  should not be necessary
   branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
   branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
   expect("Undo paste 4 times: \"" + branch_0Ab.headingText() + "\" has no children", branch_0Ab.branchCount(), 0);
@@ -418,6 +424,7 @@ function test_delete_parts()
   expect( "Remove branch: branchcount",  main_A.branchCount(), n - 1);
   map.undo();
   expect( "Undo Remove branch: branchcount parent", main_A.branchCount(), n);
+  // FIXME reassignment  should not be necessary
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
   expect( "Undo Remove branch: branchcount restored branch", branch_0Aa.branchCount(), m);
   expect( "Undo Remove branch: heading is restored to \"" + h + "\"", branch_0Aa.headingText(), h);
@@ -431,6 +438,7 @@ function test_delete_parts()
   branch_0Aa.removeChildrenBranches();
   expect( "removeChildren: branchcount", branch_0Aa.branchCount(), 0);
   map.undo();
+  // FIXME reassignment  should not be necessary
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
   expect( "Undo: removeChildren: branchcount", branch_0Aa.branchCount(), n);
 
@@ -444,8 +452,10 @@ function test_delete_parts()
 
   expect( "removeKeepChildren: branchcount changed", main_A.branchCount(), n + m - 1);
   map.undo()
+  // FIXME reassignment  should not be necessary
   main_A = map.findBranchBySelection(main_A_string);
   expect( "Undo: removeKeepChildren: branchcount of parent", main_A.branchCount(), n);
+  // FIXME reassignment  should not be necessary
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
   expect( "Undo: removeKeepChildren: branchcount of branch", branch_0Aa.branchCount(), m);
 
@@ -464,6 +474,7 @@ function test_delete_parts()
   expect("remove mapCenter: number of centers decreased", map.centerCount(), n - 1);
   map.undo();
 
+  // FIXME reassignment  should not be necessary
   center_1 = map.findBranchBySelection(center_1_string);
   expect("Undo remove mapCenter: number of centers increased", map.centerCount(), n);
   expect("Undo remove mapCenter: x position is unchanged", center_1.getPosX(), x);
@@ -870,6 +881,7 @@ function test_modify_branches()
   map.undo();
   ha = "branch a";
   hc = "branch c";
+  // FIXME reassignment  should not be necessary
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
   branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
   expect("After undo of inverse sorting first child of \"Main A\" is \"" + ha + "\"", branch_0Aa.headingText(), ha);
@@ -1436,50 +1448,55 @@ function test_tasks()
 function test_xlinks()
 {
   heading("XLinks:");
-  let map = initMap(testMapDefault);
+  map = initMap(testMapDefault);
 
-  map.select(main_A);
-  n = map.xlinkCount()
-  map.addXLink(main_A, main_B, 2,"#ff0000","Qt::DashDotLine");
-  expect("xlink count increased after creating xlink", map.xlinkCount(), n + 1);
-  map.selectXLink(0);
-  expect("Default color of XLink", map.getXLinkColor(), "#ff0000");
-  expect("Default width of XLink", map.getXLinkWidth(), 2);
-  expect("Default style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
-  expect("Default style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
-  expect("Default style of XLink end",   map.getXLinkStyleEnd(), "HeadFull");
+  main_A = map.findBranchBySelection(main_A_string);
+  main_B = map.findBranchBySelection(main_B_string);
+  n = main_A.xlinkCount()
+  xl = main_A.addXLink(main_B, 2,"#ff0000","Qt::DashDotLine");
+  expect("xlink count increased after creating xlink", main_A.xlinkCount(), n + 1);
 
-  map.setXLinkWidth(3);
-  expect("New width of XLink", map.getXLinkWidth(), 3);
+  expect("Default color of XLink", xl.getColor(), "#ff0000");
+  expect("Default width of XLink", xl.getWidth(), 2);
+  expect("Default style of XLink", xl.getPenStyle(), "Qt::DashDotLine");
+  expect("Default style of XLink begin", xl.getStyleBegin(), "HeadFull");
+  expect("Default style of XLink end",   xl.getStyleEnd(), "HeadFull");
+  /// Cont here
+
+  xl.setWidth(3);
+  expect("New width of XLink", xl.getWidth(), 3);
   map.undo();
-  expect("Undo width of XLink", map.getXLinkWidth(), 2);
+  expect("Undo width of XLink", xl.getWidth(), 2);
 
-  map.setXLinkColor("#00ff00");
-  expect("New color of XLink", map.getXLinkColor(), "#00ff00");
+  xl.setColor("#00ff00");
+  expect("New color of XLink", xl.getColor(), "#00ff00");
   map.undo();
-  expect("Undo color of XLink", map.getXLinkColor(), "#ff0000");
+  expect("Undo color of XLink", xl.getColor(), "#ff0000");
 
-  map.setXLinkStyle("Qt::SolidLine");
-  expect("New style of XLink", map.getXLinkPenStyle(), "Qt::SolidLine");
+  xl.setStyle("Qt::SolidLine");
+  expect("New style of XLink", xl.getPenStyle(), "Qt::SolidLine");
   map.undo();
-  expect("Undo style of XLink", map.getXLinkPenStyle(), "Qt::DashDotLine");
+  expect("Undo style of XLink", xl.getPenStyle(), "Qt::DashDotLine");
 
-  map.setXLinkStyleBegin("None");
-  expect("New style of XLink begin", map.getXLinkStyleBegin(), "None");
+  xl.setStyleBegin("None");
+  expect("New style of XLink begin", xl.getStyleBegin(), "None");
   map.undo();
-  expect("Undo style of XLink begin", map.getXLinkStyleBegin(), "HeadFull");
+  expect("Undo style of XLink begin", xl.getStyleBegin(), "HeadFull");
 
-  map.setXLinkStyleEnd("None");
-  expect("New style of XLink end", map.getXLinkStyleEnd(), "None");
+  xl.setStyleEnd("None");
+  expect("New style of XLink end", xl.getStyleEnd(), "None");
   map.undo();
-  expect("Undo style of XLink end", map.getXLinkStyleEnd(), "HeadFull");
+  expect("Undo style of XLink end", xl.getStyleEnd(), "HeadFull");
 
-  map.select(main_A);
-  map.selectXLinkOtherEnd(0);
+  // FIXME reassignment  should not be necessary
+  main_A = map.findBranchBySelection(main_A_string);
+  main_B = map.findBranchBySelection(main_B_string);
+
+  main_A.selectXLinkOtherEnd(0);
   expect(
-      "xlink connects  '" + main_A + "'' and '" + main_B + "'",
+      "xlink connects  '" + main_A.headingText() + "'' and '" + main_B.headingText() + "'",
       map.getSelectionString(),
-      main_B);
+      main_B_string);
 
   closeCurrentMap();
 }

@@ -38,6 +38,8 @@ Link::~Link()
 
 void Link::init()
 {
+    uuid = QUuid::createUuid();
+
     xlo = nullptr;
     beginBranch = nullptr;
     endBranch = nullptr;
@@ -202,41 +204,32 @@ QString Link::saveToDir()
             qWarning(
                 "Link::saveToDir  ignored, because beginBranch==endBranch, ");
         else {
-            QString colAttr = attribute("color", pen.color().name());
-            QString widAttr =
-                attribute("width", QString().setNum(pen.width(), 10));
-            QString styAttr =
-                attribute("penstyle", penStyleToString(pen.style()));
-            QString ctrlAttr;
-            QString typeAttr;
+            QStringList attrs;
+
+            attrs << attribute("color", pen.color().name());
+            attrs << attribute("width", QString().setNum(pen.width(), 10));
+            attrs << attribute("penstyle", penStyleToString(pen.style()));
             switch (type) {
-            case Linear:
-                typeAttr = attribute("type", "Linear");
-                break;
-            case Bezier:
-                typeAttr = attribute("type", "Bezier");
-                if (xlo) {
-                    ctrlAttr += attribute("c0", pointToString(xlo->getC0()));
-                    ctrlAttr += attribute("c1", pointToString(xlo->getC1()));
-                }
-                break;
+                case Linear:
+                    attrs << attribute("type", "Linear");
+                    break;
+                case Bezier:
+                    attrs << attribute("type", "Bezier");
+                    if (xlo) {
+                         attrs << attribute("c0", pointToString(xlo->getC0()));
+                         attrs << attribute("c1", pointToString(xlo->getC1()));
+                    }
+                    break;
             }
-            QString begSelAttr =
-                attribute("beginID", beginBranch->getUuid().toString());
-            QString endSelAttr =
-                attribute("endID", endBranch->getUuid().toString());
-            QString styleAttr;
+            attrs << attribute("beginID", beginBranch->getUuid().toString());
+            attrs << attribute("endID", endBranch->getUuid().toString());
             if (xlo) {
-                styleAttr =
-                    QString(" styleBegin=\"%1\"")
-                        .arg(ArrowObj::styleToString(xlo->getStyleBegin()));
-                styleAttr +=
-                    QString(" styleEnd=\"%1\"")
-                        .arg(ArrowObj::styleToString(xlo->getStyleEnd()));
+                attrs << attribute("styleBegin", ArrowObj::styleToString(xlo->getStyleBegin()));
+                attrs << attribute("styleEnd", ArrowObj::styleToString(xlo->getStyleEnd()));
             }
-            s = singleElement("xlink", colAttr + widAttr + styAttr + typeAttr +
-                                           ctrlAttr + begSelAttr + endSelAttr +
-                                           styleAttr);
+            attrs << attribute("uuid", uuid.toString());
+
+            s = singleElement("xlink", attrs.join(""));
         }
     }
     return s;

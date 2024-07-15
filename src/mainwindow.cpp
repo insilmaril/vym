@@ -626,12 +626,12 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("addXLink", Command::BranchLike);
-    c->addParameter(Command::String, false, "Begin of XLink");
     c->addParameter(Command::String, false, "End of XLink");
     c->addParameter(Command::Int, true, "Width of XLink");
     c->addParameter(Command::Color, true, "Color of XLink");
     c->addParameter(Command::String, true, "Penstyle of XLink");
-    modelCommands.append(c);
+    c->setComment("Add xlink from this branch to another branch");
+    branchCommands.append(c);
 
     c = new Command("centerCount", Command::BranchLike, Command::Int);
     modelCommands.append(c);
@@ -735,21 +735,6 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getSelectionString", Command::TreeItem, Command::String);
-    modelCommands.append(c);
-
-    c = new Command("getXLinkColor", Command::XLink, Command::String);
-    modelCommands.append(c);
-
-    c = new Command("getXLinkWidth", Command::XLink, Command::Int);
-    modelCommands.append(c);
-
-    c = new Command("getXLinkPenStyle", Command::XLink, Command::String);
-    modelCommands.append(c);
-
-    c = new Command("getXLinkStyleBegin", Command::XLink, Command::String);
-    modelCommands.append(c);
-
-    c = new Command("getXLinkStyleEnd", Command::XLink, Command::String);
     modelCommands.append(c);
 
     c = new Command("hasRichTextNote", Command::Branch, Command::Bool);
@@ -868,14 +853,6 @@ void Main::setupAPI()
     c = new Command("selectToggle", Command::BranchOrImage, Command::Bool);
     modelCommands.append(c);
 
-    c = new Command("selectXLink", Command::Branch, Command::Bool);
-    c->addParameter(Command::Int, false, "Number of xlink");
-    modelCommands.append(c);
-
-    c = new Command("selectXLinkOtherEnd", Command::Branch, Command::Bool);
-    c->addParameter(Command::Int, false, "Number of xlink");
-    modelCommands.append(c);
-
     c = new Command("setHeadingConfluencePageName", Command::Branch);
     modelCommands.append(c);
 
@@ -980,26 +957,6 @@ void Main::setupAPI()
     c->addParameter(Command::Color, false, "Color of selection box background");
     modelCommands.append(c);
 
-    c = new Command("setXLinkColor", Command::XLink);
-    c->addParameter(Command::String, false, "Color of xlink");
-    modelCommands.append(c);
-
-    c = new Command("setXLinkStyle", Command::XLink);
-    c->addParameter(Command::String, false, "Style of xlink");
-    modelCommands.append(c);
-
-    c = new Command("setXLinkStyleBegin", Command::XLink);
-    c->addParameter(Command::String, false, "Style of xlink begin");
-    modelCommands.append(c);
-
-    c = new Command("setXLinkStyleEnd", Command::XLink);
-    c->addParameter(Command::String, false, "Style of xlink end");
-    modelCommands.append(c);
-
-    c = new Command("setXLinkWidth", Command::XLink);
-    c->addParameter(Command::Int, false, "Width of xlink");
-    modelCommands.append(c);
-
     c = new Command("sleep", Command::Any);
     c->addParameter(Command::Int, false, "Sleep (seconds)");
     modelCommands.append(c);
@@ -1026,9 +983,6 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("unselectAll", Command::Any);
-    modelCommands.append(c);
-
-    c = new Command("xlinkCount", Command::Branch, Command::Int);
     modelCommands.append(c);
 
 
@@ -1230,6 +1184,16 @@ void Main::setupAPI()
     c->setComment("Select parent of branch");
     branchCommands.append(c);
 
+    c = new Command("selectXLink", Command::Branch, Command::Bool);
+    c->addParameter(Command::Int, false, "Number of xlink");
+    c->setComment("Select the xlink with given index attached to this branch");
+    branchCommands.append(c);
+
+    c = new Command("selectXLinkOtherEnd", Command::Branch, Command::Bool);
+    c->addParameter(Command::Int, false, "Number of xlink");
+    c->setComment("Select the branch, which is the the other end of xlink with given index attached to this branch");
+    branchCommands.append(c);
+
     c = new Command("setAttribute", Command::Branch);
     c->addParameter(Command::String, false, "Key of attribute as string");
     c->addParameter(Command::String, false, "String Value of attribute");
@@ -1306,6 +1270,31 @@ void Main::setupAPI()
     c->setComment("Set VymLink of branch");
     branchCommands.append(c);
 
+    c = new Command("setXLinkColor", Command::XLink);
+    c->addParameter(Command::String, false, "Color of xlink");
+    c->setComment("Set color of xlink");
+    branchCommands.append(c);
+
+    c = new Command("setXLinkStyle", Command::XLink);
+    c->addParameter(Command::String, false, "Style of xlink");
+    c->setComment("Set style of xlink");
+    branchCommands.append(c);
+
+    c = new Command("setXLinkStyleBegin", Command::XLink);
+    c->addParameter(Command::String, false, "Style of xlink begin");
+    c->setComment("Set begin style of xlink");
+    branchCommands.append(c);
+
+    c = new Command("setXLinkStyleEnd", Command::XLink);
+    c->addParameter(Command::String, false, "Style of xlink end");
+    c->setComment("Set end style of xlink");
+    branchCommands.append(c);
+
+    c = new Command("setXLinkWidth", Command::XLink);
+    c->addParameter(Command::Int, false, "Width of xlink");
+    c->setComment("Set width of xlink");
+    branchCommands.append(c);
+
     c = new Command("sortChildren", Command::Branch);
     c->addParameter(Command::Bool, true,
               "Sort children of branch in revers order if set");
@@ -1337,6 +1326,10 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Name of flag to unset");
     branchCommands.append(c);
 
+    c = new Command("xlinkCount", Command::Branch, Command::Int);
+    c->setComment("Return number of xlinks connected to branch");
+    branchCommands.append(c);
+
     //
     // Below are the commands for an image
     //
@@ -1366,6 +1359,26 @@ void Main::setupAPI()
     // Below are the commands for an xlink
     //
     
+    c = new Command("getColor", Command::XLink, Command::String);
+    c->setComment("Get color of xlink");
+    xlinkCommands.append(c);
+
+    c = new Command("getWidth", Command::XLink, Command::Int);
+    c->setComment("Get width of xlink");
+    xlinkCommands.append(c);
+
+    c = new Command("getPenStyle", Command::XLink, Command::String);
+    c->setComment("Get style of xlink as string (QPenStyle)");
+    xlinkCommands.append(c);
+
+    c = new Command("getStyleBegin", Command::XLink, Command::String);
+    c->setComment("Get style of xlink start as string");
+    xlinkCommands.append(c);
+
+    c = new Command("getStyleEnd", Command::XLink, Command::String);
+    c->setComment("Get style of xlink end as string");
+    xlinkCommands.append(c);
+
     c = new Command("setColor");
     c->addParameter(Command::String, true, "Color of xlink as string");
     c->setComment("Set color of xlink");

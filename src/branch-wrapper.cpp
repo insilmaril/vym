@@ -3,7 +3,10 @@
 #include "attributeitem.h"
 #include "branchitem.h"
 
+#include "misc.h"
 #include "vymmodel.h"
+#include "xlinkitem.h"
+#include "xlink-wrapper.h"
 
 #include <QJSEngine>
 extern QJSEngine *scriptEngine;
@@ -59,6 +62,43 @@ BranchWrapper* BranchWrapper::addBranchBefore()
         return nullptr;
     } else
         return newbi->branchWrapper();
+}
+
+XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
+                               int width, const QString &color,
+                               const QString &penstyle)
+{
+    BranchItem *biEnd = bwEnd->branchItem();
+    Link *li = new Link(model());
+    li->setBeginBranch(branchItemInt);
+    li->setEndBranch(biEnd);
+
+    model()->createXLink(li);
+    QPen pen = li->getPen();
+    if (width > 0)
+        pen.setWidth(width);
+    QColor col(color);
+    if (col.isValid())
+        pen.setColor(col);
+    else {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("Could not set color to %1").arg(color));
+        return nullptr;
+    }
+
+    bool ok;
+    Qt::PenStyle st1 = penStyle(penstyle, ok);
+    if (ok) {
+        pen.setStyle(st1);
+        li->setPen(pen);
+    } else {
+        scriptEngine->throwError(
+                QJSValue::GenericError,
+                QString("Couldn't set penstyle %1").arg(penstyle));
+        return nullptr;
+    }
+    return li->xlinkWrapper();
 }
 
 int BranchWrapper::attributeAsInt(const QString &key)
@@ -386,6 +426,38 @@ bool BranchWrapper::selectParent()
     return setResult(r);
 }
 
+bool BranchWrapper::selectXLink(int n)
+{
+    bool r = false;
+        XLinkItem *xli = branchItemInt->getXLinkItemNum(n);
+    if (!xli)
+        scriptEngine->throwError(QJSValue::RangeError,
+             QString("Selected branch has no xlink with index %1").arg(n));
+    else
+        r = model()->select((TreeItem*)xli);
+    return setResult(r);
+}
+
+bool BranchWrapper::selectXLinkOtherEnd(int n)
+{
+    bool r = false;
+    XLinkItem *xli = branchItemInt->getXLinkItemNum(n);
+    if (!xli) {
+        scriptEngine->throwError(
+                QJSValue::RangeError,
+                QString("Selected branch has no xlink with index %1").arg(n));
+    } else {
+        BranchItem *bi = xli->getPartnerBranch();
+        if (!bi) {
+            scriptEngine->throwError(
+                    QJSValue::RangeError,
+                    "Selected xlink has no other end ?!");
+        } else
+            r = model()->select(bi);
+    }
+    return setResult(r);
+}
+
 void BranchWrapper::setAttribute(const QString &key, const QString &value)
 {
     model()->setAttribute(branchItemInt, key, value);
@@ -518,3 +590,7 @@ void BranchWrapper::unsetFlagByName(const QString &s)
     model()->unsetFlagByName(s, branchItemInt);
 }
 
+int BranchWrapper::xlinkCount()
+{
+    return setResult(branchItemInt->xlinkCount());
+}

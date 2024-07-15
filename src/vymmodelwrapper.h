@@ -23,8 +23,6 @@ class VymModelWrapper : public VymScriptContext {
   public slots:
     void addMapCenterAtPos(qreal x, qreal y);
     void addSlide();
-    void addXLink(const QString &begin, const QString &end, int width,// FIXME-3 move to BranchWrapper
-                  const QString &color, const QString &penstyle);
     int centerCount();
     void centerOnID(const QString &id); // tested: ok
     void copy();
@@ -52,11 +50,6 @@ class VymModelWrapper : public VymScriptContext {
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
     int getRotationSubtree();   // FIXME-3 move to BranchWrapper
     QString getSelectionString();//FIXME-3 copy to BranchWrapper?
-    QString getXLinkColor();    // FIXME-3 move to XLinkWrapper
-    int getXLinkWidth();        // FIXME-2 move to XLinkWrapper
-    QString getXLinkPenStyle(); // FIXME-3 move to XLinkWrapper
-    QString getXLinkStyleBegin();// FIXME-3 move to XLinkWrapper
-    QString getXLinkStyleEnd();// FIXME-3 move to XLinkhWrapper
     bool loadBranchReplace(QString filename, BranchWrapper *bw);
     bool loadDataInsert(QString filename);
     void moveSlideDown(int n);
@@ -85,8 +78,6 @@ class VymModelWrapper : public VymScriptContext {
     bool selectUids(QJSValueList args);
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper
-    bool selectXLink(int n);        // FIXME-3 move to BranchWrapper
-    bool selectXLinkOtherEnd(int n);// FIXME-3 move to XLinkWrapper
     void setDefaultLinkColor(const QString &color); // FIXME-3-4 maybe also rename other setMap* methods?
     void setHeadingConfluencePageName();// FIXME-3 move to BranchWrapper
     void setHideExport(bool b);         // FIXME-3 move to BranchWrapper
@@ -110,17 +101,11 @@ class VymModelWrapper : public VymScriptContext {
     void setSelectionBrushColor(const QString &color);
     void setSelectionPenColor(const QString &color);
     void setSelectionPenWidth(const qreal &);
-    void setXLinkColor(const QString &color);   // FIXME-3 move to XLinkWrapper
-    void setXLinkStyle(const QString &style);   // FIXME-3 move to XLinkWrapper
-    void setXLinkStyleBegin(const QString &style);// FIXME-3 move to XLinkWrapper
-    void setXLinkStyleEnd(const QString &style);// FIXME-3 move to XLinkWrapper
-    void setXLinkWidth(int w);// FIXME-3 move to XLinkWrapper
     void sleep(int n);
     int slideCount();
     void toggleTarget();        // FIXME-3 move to BranchWrapper
     void undo();
     void unselectAll();
-    int xlinkCount();           // FIXME-3 move to BranchWrapper
 
   private:
     VymModel *model;

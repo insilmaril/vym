@@ -3982,7 +3982,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
     return nullptr;
 }
 
-bool VymModel::createLink(Link *xlink)
+bool VymModel::createXLink(Link *xlink)
 {
     BranchItem *begin = xlink->getBeginBranch();
     BranchItem *end = xlink->getEndBranch();
@@ -3994,7 +3994,7 @@ bool VymModel::createLink(Link *xlink)
 
     if (begin == end) {
         if (debug)
-            qDebug() << "VymModel::createLink begin==end, aborting";
+            qDebug() << "VymModel::createXLink begin==end, aborting";
         return false;
     }
 
@@ -4002,7 +4002,7 @@ bool VymModel::createLink(Link *xlink)
     foreach (Link *l, xlinks) {
         if ((l->getBeginBranch() == begin && l->getEndBranch() == end) ||
             (l->getBeginBranch() == end && l->getEndBranch() == begin)) {
-            qWarning() << "VymModel::createLink link exists already, aborting";
+            qWarning() << "VymModel::createXLink link exists already, aborting";
             return false;
         }
     }
@@ -4834,8 +4834,7 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
 {
     if (ti) {
         TreeItem *pi = ti->parent();
-        qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->headingText();
-        //<< " pi="<<pi<<"="<<pi->heading();
+        //qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->headingText();
 
         bool wasAttribute = ti->hasTypeAttribute();
         TreeItem *parentItem = ti->parent();
@@ -5545,85 +5544,95 @@ void VymModel::editXLink()
     }
 }
 
-void VymModel::setXLinkColor(const QString &new_col)
+void VymModel::setXLinkColor(const QString &new_col, Link *xl)
 {
-    Link *l = getSelectedXLink();
-    if (l) {
-        QPen pen = l->getPen();
+    Link *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QPen pen = xlink->getPen();
         QColor new_color = QColor(new_col);
         QColor old_color = pen.color();
         if (new_color == old_color)
             return;
+        QString xv = setXLinkVar(xl, "xl");
+        QString uc = xv + QString("xl.setColor(\"%1\");").arg(old_color.name());
+        QString rc = xv + QString("xl.setColor(\"%1\");").arg(new_color.name());
+        QString com = QString("Set xlink color to \"%1\"").arg(new_color.name());
+        saveStateNew(uc, rc, com);
+
         pen.setColor(new_color);
-        l->setPen(pen);
-        saveState(l->beginXLinkItem(), QString("setXLinkColor(\"%1\")").arg(old_color.name()),
-                  l->beginXLinkItem(),
-                  QString("setXLinkColor(\"%1\")").arg(new_color.name()),
-                  QString("set color of xlink to %1").arg(new_color.name()));
+        xlink->setPen(pen);
     }
 }
 
-void VymModel::setXLinkStyle(const QString &new_style)
+void VymModel::setXLinkStyle(const QString &new_style, Link *xl)
 {
-    Link *l = getSelectedXLink();
+    Link *l = getSelectedXLink(xl);
     if (l) {
         QPen pen = l->getPen();
         QString old_style = penStyleToString(pen.style());
         if (new_style == old_style)
             return;
+        QString xv = setXLinkVar(l, "xl");
+        QString uc = xv + QString("xl.setStyle(\"%1\");").arg(old_style);
+        QString rc = xv + QString("xl.setStyle(\"%1\");").arg(new_style);
+        QString com = QString("Set xlink style to \"%1\"").arg(new_style);
+        saveStateNew(uc, rc, com);
+
         bool ok;
         pen.setStyle(penStyle(new_style, ok));
         l->setPen(pen);
-        saveState(l->beginXLinkItem(), QString("setXLinkStyle(\"%1\")").arg(old_style),
-                  l->beginXLinkItem(),
-                  QString("setXLinkStyle(\"%1\")").arg(new_style),
-                  QString("set style of xlink to %1").arg(new_style));
     }
 }
 
-void VymModel::setXLinkStyleBegin(const QString &new_style)
+void VymModel::setXLinkStyleBegin(const QString &new_style, Link *xl)
 {
-    Link *l = getSelectedXLink();
+    Link *l = getSelectedXLink(xl);
     if (l) {
         QString old_style = l->getStyleBeginString();
         if (new_style == old_style)
             return;
+        QString xv = setXLinkVar(l, "xl");
+        QString uc = xv + QString("xl.setStyleBegin(\"%1\");").arg(old_style);
+        QString rc = xv + QString("xl.setStyleBegin(\"%1\");").arg(new_style);
+        QString com = QString("Set xlink begin style to \"%1\"").arg(new_style);
+        saveStateNew(uc, rc, com);
         l->setStyleBegin(new_style);
-        saveState(l->beginXLinkItem(), QString("setXLinkStyleBegin(\"%1\")").arg(old_style),
-                  l->beginXLinkItem(),
-                  QString("setXLinkStyleBegin(\"%1\")").arg(new_style),
-                  "set style of xlink begin");
     }
 }
 
-void VymModel::setXLinkStyleEnd(const QString &new_style)
+void VymModel::setXLinkStyleEnd(const QString &new_style, Link *xl)
 {
-    Link *l = getSelectedXLink();
+    Link *l = getSelectedXLink(xl);
     if (l) {
         QString old_style = l->getStyleEndString();
         if (new_style == old_style)
             return;
+
+        QString xv = setXLinkVar(l, "xl");
+        QString uc = xv + QString("xl.setStyleEnd(\"%1\");").arg(old_style);
+        QString rc = xv + QString("xl.setStyleEnd(\"%1\");").arg(new_style);
+        QString com = QString("Set xlink end style to \"%1\"").arg(new_style);
+        saveStateNew(uc, rc, com);
         l->setStyleEnd(new_style);
-        saveState(l->beginXLinkItem(), QString("setXLinkStyleEnd(\"%1\")").arg(old_style),
-                  l->beginXLinkItem(),
-                  QString("setXLinkStyleEnd(\"%1\")").arg(new_style),
-                  "set style of xlink end");
     }
 }
 
-void VymModel::setXLinkWidth(int new_width)
+void VymModel::setXLinkWidth(int new_width, Link *xl)
 {
-    Link *l = getSelectedXLink();
+    Link *l = getSelectedXLink(xl);
     if (l) {
         QPen pen = l->getPen();
         int old_width = pen.width();
         if (new_width == old_width)
             return;
+        QString xv = setXLinkVar(l, "xl");
+        QString uc = xv + QString("xl.setWidth(%1);").arg(old_width);
+        QString rc = xv + QString("xl.setWidth(%1);").arg(new_width);
+        QString com = QString("Add xlink width to \"%1\"").arg(new_width);
+        saveStateNew(uc, rc, com);
+
         pen.setWidth(new_width);
         l->setPen(pen);
-        saveState( l->beginXLinkItem(), QString("setXLinkWidth(%1)").arg(old_width),
-            l->beginXLinkItem(), QString("setXLinkWidth(%1)").arg(new_width),
-            "set width of xlink");
     }
 }
 
@@ -6247,9 +6256,11 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         MapDesign::UpdateMode updateMode,
         BranchItem *bi)
 {
+    /*
     qDebug() << "VM::applyDesign  mode="
         << MapDesign::updateModeString(updateMode)
         << " of " << headingText(bi);
+        */
 
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
@@ -7358,8 +7369,11 @@ Task *VymModel::getSelectedTask()
         return nullptr;
 }
 
-Link *VymModel::getSelectedXLink()
+Link *VymModel::getSelectedXLink(Link *xl)
 {
+    if (xl)
+        return xl;
+
     XLinkItem *xli = getSelectedXLinkItem();
     if (xli)
         return xli->getLink();

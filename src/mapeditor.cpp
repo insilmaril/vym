@@ -2283,7 +2283,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             tmpLink->setEndBranch(destinationBranch);
             tmpLink->activate();
             tmpLink->updateLink();
-            if (model->createLink(tmpLink)) return;
+            if (model->createXLink(tmpLink)) return;
         }
         delete (tmpLink);
         tmpLink = nullptr;

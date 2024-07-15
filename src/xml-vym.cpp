@@ -636,7 +636,7 @@ void VymReader::readLegacyXLink()
                 Link *li = new Link(model);
                 li->setBeginBranch((BranchItem *)beginBI);
                 li->setEndBranch((BranchItem *)endBI);
-                model->createLink(li);
+                model->createXLink(li);
 
                 QPen pen = li->getPen();
 
@@ -852,7 +852,7 @@ void VymReader::readXLink()
         li->setBeginBranch((BranchItem *)beginBI);
         li->setEndBranch((BranchItem *)endBI);
 
-        model->createLink(li);
+        model->createXLink(li);
 
         QPen pen = li->getPen();
         bool ok;
@@ -899,6 +899,10 @@ void VymReader::readXLink()
             if (ok)
                 xlo->setC1(p);
         }
+        s = attributeToString("uuid");
+        if (!s.isEmpty())
+            li->setUuid(s);
+
     }
 
     if (xml.readNextStartElement())
