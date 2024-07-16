@@ -4298,7 +4298,7 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *pi, int num)
+BranchItem *VymModel::addNewBranch(BranchItem *pi, int num) // FIXME-0 undo not working for above/below    FIXME-0 reorder arguments?
 {
     BranchItem *newbi = nullptr;
     if (!pi)
