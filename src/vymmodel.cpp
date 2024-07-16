@@ -51,6 +51,7 @@
 #include "taskmodel.h"
 #include "treeitem.h"
 #include "warningdialog.h"
+#include "xlink.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
 #include "xml-freeplane.h"
@@ -343,13 +344,13 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     resetUsedFlags();
 
     // Temporary list of links
-    QList<Link *> tmpLinks;
+    QList<XLink *> tmpXLinks;
 
     QString tree;
     // Build xml recursivly
     if (!saveSel) {
         // Save all mapcenters as complete map, if saveSel not set
-        tree += saveTreeToDir(tmpdir, prefix, offset, tmpLinks);
+        tree += saveTreeToDir(tmpdir, prefix, offset, tmpXLinks);
 
         // Save local settings
         tree += settings.getDataXML(destPath);
@@ -364,13 +365,13 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             case TreeItem::MapCenter:
                 // Save Subtree
                 tree += ((BranchItem *)saveSel)
-                            ->saveToDir(tmpdir, prefix, offset, tmpLinks, exportBoundingBoxes);
+                            ->saveToDir(tmpdir, prefix, offset, tmpXLinks, exportBoundingBoxes);
                 break;
             case TreeItem::Image:
                 tree += ((ImageItem *)saveSel)->saveToDir(tmpdir);
                 break;
-            case TreeItem::XLink:
-                tree += ((XLinkItem *)saveSel)->getLink()->saveToDir();
+            case TreeItem::XLinkType:
+                tree += ((XLinkItem *)saveSel)->getXLink()->saveToDir();
                 break;
             default:
                 // other types shouldn't be safed directly...
@@ -393,8 +394,8 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
     QString footer;
     // Save XLinks
-    for (int i = 0; i < tmpLinks.count(); ++i)
-        footer += tmpLinks.at(i)->saveToDir();
+    for (int i = 0; i < tmpXLinks.count(); ++i)
+        footer += tmpXLinks.at(i)->saveToDir();
 
     // Save slides
     footer += slideModel->saveToDir();
@@ -406,7 +407,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 }
 
 QString VymModel::saveTreeToDir(const QString &tmpdir, const QString &prefix,
-                                const QPointF &offset, QList<Link *> &tmpLinks)
+                                const QPointF &offset, QList<XLink *> &tmpXLinks)
 {
     QString s;
     for (int i = 0; i < rootItem->branchCount(); i++)
@@ -414,7 +415,7 @@ QString VymModel::saveTreeToDir(const QString &tmpdir, const QString &prefix,
                 tmpdir,
                 prefix,
                 offset,
-                tmpLinks,
+                tmpXLinks,
                 exportBoundingBoxes);
     return s;
 }
@@ -1677,7 +1678,7 @@ QString VymModel::setImageVar(ImageItem* ii, QString varName)
     return r;
 }
 
-QString VymModel::setXLinkVar(Link* xl, QString varName)
+QString VymModel::setXLinkVar(XLink* xl, QString varName)
 {
     QString r;
     if (!xl)
@@ -3982,7 +3983,7 @@ ImageItem *VymModel::createImage(BranchItem *dst)
     return nullptr;
 }
 
-bool VymModel::createXLink(Link *xlink)
+bool VymModel::createXLink(XLink *xlink)
 {
     BranchItem *begin = xlink->getBeginBranch();
     BranchItem *end = xlink->getEndBranch();
@@ -3999,7 +4000,7 @@ bool VymModel::createXLink(Link *xlink)
     }
 
     // check, if link already exists
-    foreach (Link *l, xlinks) {
+    foreach (XLink *l, xlinks) {
         if ((l->getBeginBranch() == begin && l->getEndBranch() == end) ||
             (l->getBeginBranch() == end && l->getEndBranch() == begin)) {
             qWarning() << "VymModel::createXLink link exists already, aborting";
@@ -4011,7 +4012,7 @@ bool VymModel::createXLink(Link *xlink)
     int n;
 
     XLinkItem *newli = new XLinkItem();
-    newli->setLink(xlink);
+    newli->setXLink(xlink);
     xlink->setBeginXLinkItem(newli);
 
     emit(layoutAboutToBeChanged());
@@ -4023,7 +4024,7 @@ bool VymModel::createXLink(Link *xlink)
     endInsertRows();
 
     newli = new XLinkItem();
-    newli->setLink(xlink);
+    newli->setXLink(xlink);
     xlink->setEndXLinkItem(newli);
 
     parix = index(end);
@@ -4044,7 +4045,7 @@ bool VymModel::createXLink(Link *xlink)
         reposition();
     }
     else
-        xlink->updateLink();
+        xlink->updateXLink();
 
     xlink->setStyleBegin(mapDesignInt->defXLinkStyleBegin());
     xlink->setStyleEnd(mapDesignInt->defXLinkStyleEnd());
@@ -4061,45 +4062,45 @@ bool VymModel::createXLink(Link *xlink)
 
 QColor VymModel::getXLinkColor()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getPen().color();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getPen().color();
     else
         return QColor();
 }
 
 int VymModel::getXLinkWidth()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getPen().width();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getPen().width();
     else
         return -1;
 }
 
 Qt::PenStyle VymModel::getXLinkStyle()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getPen().style();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getPen().style();
     else
         return Qt::NoPen;
 }
 
 QString VymModel::getXLinkStyleBegin()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getStyleBeginString();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getStyleBeginString();
     else
         return QString();
 }
 
 QString VymModel::getXLinkStyleEnd()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getStyleEndString();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getStyleEndString();
     else
         return QString();
 }
@@ -4713,8 +4714,8 @@ void VymModel::deleteSelection(ulong selID)
                 deleteItem(ti);
                 emitDataChanged(pbi);
                 select(pbi);
-            } else if (ti->getType() == TreeItem::XLink) {  // FIXME-3 Maybe rename XLink to XLinkItem to avoid confusing with Link class?
-                deleteXLink(((XLinkItem*)ti)->getLink());
+            } else if (ti->getType() == TreeItem::XLinkType) {  // FIXME-3 Maybe rename XLink to XLinkItem to avoid confusing with Link class?
+                deleteXLink(((XLinkItem*)ti)->getXLink());
             } else if (ti->getType() == TreeItem::Attribute) {
                 deleteItem(ti); // FIXME-2 No saveState yet to remove Attribute
             } else
@@ -4864,7 +4865,7 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
     return nullptr;
 }
 
-void VymModel::deleteXLink(Link *xlink)
+void VymModel::deleteXLink(XLink *xlink)
 {
     qDebug() << "VM::deleteXLink start";
 
@@ -5530,30 +5531,30 @@ void VymModel::followXLink(int i)
 
 void VymModel::editXLink()
 {
-    Link *l = getSelectedXLink();
-    if (l) {
+    XLink *xlink = getSelectedXLink();
+    if (xlink) {
         EditXLinkDialog dia;
-        dia.setLink(l);
+        dia.setLink(xlink);
         if (dia.exec() == QDialog::Accepted) {
             if (dia.useSettingsGlobal()) {
-                setDefXLinkPen(l->getPen());
-                setDefXLinkStyleBegin(l->getStyleBeginString());
-                setDefXLinkStyleEnd(l->getStyleEndString());
+                setDefXLinkPen(xlink->getPen());
+                setDefXLinkStyleBegin(xlink->getStyleBeginString());
+                setDefXLinkStyleEnd(xlink->getStyleEndString());
             }
         }
     }
 }
 
-void VymModel::setXLinkColor(const QString &new_col, Link *xl)
+void VymModel::setXLinkColor(const QString &new_col, XLink *xl)
 {
-    Link *xlink = getSelectedXLink(xl);
+    XLink *xlink = getSelectedXLink(xl);
     if (xlink) {
         QPen pen = xlink->getPen();
         QColor new_color = QColor(new_col);
         QColor old_color = pen.color();
         if (new_color == old_color)
             return;
-        QString xv = setXLinkVar(xl, "xl");
+        QString xv = setXLinkVar(xlink, "xl");
         QString uc = xv + QString("xl.setColor(\"%1\");").arg(old_color.name());
         QString rc = xv + QString("xl.setColor(\"%1\");").arg(new_color.name());
         QString com = QString("Set xlink color to \"%1\"").arg(new_color.name());
@@ -5564,15 +5565,15 @@ void VymModel::setXLinkColor(const QString &new_col, Link *xl)
     }
 }
 
-void VymModel::setXLinkStyle(const QString &new_style, Link *xl)
+void VymModel::setXLinkStyle(const QString &new_style, XLink *xl)
 {
-    Link *l = getSelectedXLink(xl);
-    if (l) {
-        QPen pen = l->getPen();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QPen pen = xlink->getPen();
         QString old_style = penStyleToString(pen.style());
         if (new_style == old_style)
             return;
-        QString xv = setXLinkVar(l, "xl");
+        QString xv = setXLinkVar(xlink, "xl");
         QString uc = xv + QString("xl.setStyle(\"%1\");").arg(old_style);
         QString rc = xv + QString("xl.setStyle(\"%1\");").arg(new_style);
         QString com = QString("Set xlink style to \"%1\"").arg(new_style);
@@ -5580,59 +5581,59 @@ void VymModel::setXLinkStyle(const QString &new_style, Link *xl)
 
         bool ok;
         pen.setStyle(penStyle(new_style, ok));
-        l->setPen(pen);
+        xlink->setPen(pen);
     }
 }
 
-void VymModel::setXLinkStyleBegin(const QString &new_style, Link *xl)
+void VymModel::setXLinkStyleBegin(const QString &new_style, XLink *xl)
 {
-    Link *l = getSelectedXLink(xl);
-    if (l) {
-        QString old_style = l->getStyleBeginString();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QString old_style = xlink->getStyleBeginString();
         if (new_style == old_style)
             return;
-        QString xv = setXLinkVar(l, "xl");
+        QString xv = setXLinkVar(xlink, "xl");
         QString uc = xv + QString("xl.setStyleBegin(\"%1\");").arg(old_style);
         QString rc = xv + QString("xl.setStyleBegin(\"%1\");").arg(new_style);
         QString com = QString("Set xlink begin style to \"%1\"").arg(new_style);
         saveStateNew(uc, rc, com);
-        l->setStyleBegin(new_style);
+        xlink->setStyleBegin(new_style);
     }
 }
 
-void VymModel::setXLinkStyleEnd(const QString &new_style, Link *xl)
+void VymModel::setXLinkStyleEnd(const QString &new_style, XLink *xl)
 {
-    Link *l = getSelectedXLink(xl);
-    if (l) {
-        QString old_style = l->getStyleEndString();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QString old_style = xlink->getStyleEndString();
         if (new_style == old_style)
             return;
 
-        QString xv = setXLinkVar(l, "xl");
+        QString xv = setXLinkVar(xlink, "xl");
         QString uc = xv + QString("xl.setStyleEnd(\"%1\");").arg(old_style);
         QString rc = xv + QString("xl.setStyleEnd(\"%1\");").arg(new_style);
         QString com = QString("Set xlink end style to \"%1\"").arg(new_style);
         saveStateNew(uc, rc, com);
-        l->setStyleEnd(new_style);
+        xlink->setStyleEnd(new_style);
     }
 }
 
-void VymModel::setXLinkWidth(int new_width, Link *xl)
+void VymModel::setXLinkWidth(int new_width, XLink *xl)
 {
-    Link *l = getSelectedXLink(xl);
-    if (l) {
-        QPen pen = l->getPen();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QPen pen = xlink->getPen();
         int old_width = pen.width();
         if (new_width == old_width)
             return;
-        QString xv = setXLinkVar(l, "xl");
+        QString xv = setXLinkVar(xlink, "xl");
         QString uc = xv + QString("xl.setWidth(%1);").arg(old_width);
         QString rc = xv + QString("xl.setWidth(%1);").arg(new_width);
         QString com = QString("Add xlink width to \"%1\"").arg(new_width);
         saveStateNew(uc, rc, com);
 
         pen.setWidth(new_width);
-        l->setPen(pen);
+        xlink->setPen(pen);
     }
 }
 
@@ -6243,8 +6244,8 @@ void VymModel::reposition()
 void VymModel::repositionXLinks()
 {
     // Reposition xlinks
-    foreach (Link *link, xlinks)
-        link->updateLink();
+    foreach (XLink *xlink, xlinks)
+        xlink->updateXLink();
 }
 
 MapDesign* VymModel::mapDesign()
@@ -6895,7 +6896,7 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
     foreach (ix, dsel.indexes()) {
         mi = static_cast<MapItem *>(ix.internalPointer());
 
-        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image || mi->getType() == TreeItem::XLink) {
+        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image || mi->getType() == TreeItem::XLinkType) {
             if (mi->hasTypeBranch()) {
                 ((BranchItem*)mi)->getBranchContainer()->unselect();
                 do_reposition =
@@ -6905,7 +6906,7 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
                 ((ImageItem*)mi)->getImageContainer()->unselect();
             if (mi->hasTypeXLink()) {
                 ((XLinkItem*)mi)->getXLinkObj()->unselect();
-                Link *li = ((XLinkItem *)mi)->getLink();
+                XLink *li = ((XLinkItem *)mi)->getXLink();
                 XLinkObj *xlo = li->getXLinkObj();
 
                 do_reposition =
@@ -6929,7 +6930,7 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
         if (mi->hasTypeImage())
             ((ImageItem*)mi)->getImageContainer()->select();
 
-        if (mi->getType() == TreeItem::XLink) {
+        if (mi->getType() == TreeItem::XLinkType) {
             XLinkItem *xli = (XLinkItem*)mi;
             xli->setSelectionType();
             xli->getXLinkObj()->select(
@@ -6937,13 +6938,13 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
                 mapDesign()->selectionBrush());
 
             // begin/end branches need to be tmp unscrolled
-            Link *li = ((XLinkItem *)mi)->getLink();
-            bi = li->getBeginBranch();
+            XLink *xl = ((XLinkItem *)mi)->getXLink();
+            bi = xl->getBeginBranch();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
             }
-            bi = li->getEndBranch();
+            bi = xl->getEndBranch();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
@@ -7369,21 +7370,21 @@ Task *VymModel::getSelectedTask()
         return nullptr;
 }
 
-Link *VymModel::getSelectedXLink(Link *xl)
+XLink *VymModel::getSelectedXLink(XLink *xl)
 {
     if (xl)
         return xl;
 
     XLinkItem *xli = getSelectedXLinkItem();
     if (xli)
-        return xli->getLink();
+        return xli->getXLink();
     return nullptr;
 }
 
 XLinkItem *VymModel::getSelectedXLinkItem()
 {
     TreeItem *ti = getSelectedItem();
-    if (ti && ti->getType() == TreeItem::XLink)
+    if (ti && ti->getType() == TreeItem::XLinkType)
         return (XLinkItem *)ti;
     else
         return nullptr;
@@ -7515,7 +7516,7 @@ QString VymModel::getSelectString(TreeItem *ti)
     case TreeItem::Attribute:
         s = "ai:";
         break;
-    case TreeItem::XLink:
+    case TreeItem::XLinkType:
         s = "xl:";
         break;
     default:

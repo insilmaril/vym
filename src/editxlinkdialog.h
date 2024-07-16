@@ -3,6 +3,8 @@
 
 #include "ui_editxlinkdialog.h"
 
+#include "xlink.h"
+
 /*! \brief Dialog to edit or delete XLinks
 
 Using xLinks one can link one branch to any other, just like attaching a rope
@@ -16,7 +18,7 @@ class EditXLinkDialog : public QDialog {
     Q_OBJECT
   public:
     EditXLinkDialog(QWidget *parent = 0);
-    void setLink(Link *);
+    void setLink(XLink *);
     bool useSettingsGlobal();
 
   private slots:
@@ -33,7 +35,7 @@ class EditXLinkDialog : public QDialog {
 
     Ui::EditXLinkDialog ui;
     bool delink;
-    Link *link;
+    XLink *xlink;
 };
 
 #endif // EDITXLINKDIALOG_H

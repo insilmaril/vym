@@ -1,12 +1,14 @@
 #include "branch-wrapper.h"
 
 #include "attributeitem.h"
-#include "branchitem.h"
+//#include "branchitem.h"
 
 #include "misc.h"
 #include "vymmodel.h"
+
+// #include "xlink.h"
 #include "xlinkitem.h"
-#include "xlink-wrapper.h"
+// #include "xlink-wrapper.h"
 
 #include <QJSEngine>
 extern QJSEngine *scriptEngine;
@@ -69,7 +71,7 @@ XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
                                const QString &penstyle)
 {
     BranchItem *biEnd = bwEnd->branchItem();
-    Link *li = new Link(model());
+    XLink *li = new XLink(model());
     li->setBeginBranch(branchItemInt);
     li->setEndBranch(biEnd);
 

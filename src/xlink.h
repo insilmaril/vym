@@ -1,5 +1,5 @@
-#ifndef LINK_H
-#define LINK_H
+#ifndef XLINK_H
+#define XLINK_H
 
 #include <QColor>
 #include <QPen>
@@ -8,7 +8,6 @@
 #include "scripting.h"
 
 #include "xmlobj.h"
-#include "xlink-wrapper.h"
 
 class QPointF;
 class QGraphicsScene;
@@ -18,14 +17,15 @@ class BranchItem;
 class VymModel;
 class XLinkItem;
 class XLinkObj;
+class XLinkWrapper;
 
-class Link : public XMLObj {
+class XLink: public XMLObj {
   public:
     enum XLinkState { undefinedXLink, initXLink, activeXLink, deleteXLink };
     enum LinkType { Linear, Bezier };
 
-    Link(VymModel *m);
-    virtual ~Link();
+    XLink(VymModel *m);
+    virtual ~XLink();
     virtual void init();
     void setUuid(const QString &id);
     QUuid getUuid();
@@ -50,7 +50,7 @@ class Link : public XMLObj {
     QString getStyleEndString();
     bool activate();
     XLinkState getState();
-    void updateLink();
+    void updateXLink();
     QString saveToDir();
     XLinkObj *getXLinkObj();
     XLinkObj *createXLinkObj();

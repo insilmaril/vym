@@ -7,7 +7,7 @@
 
 class BranchItem;
 class TreeItem;
-class Link;
+class XLink;
 class LinkableMapObj;
 
 class TreeModel : public QAbstractItemModel {
@@ -38,12 +38,12 @@ class TreeModel : public QAbstractItemModel {
     BranchItem *getRootItem();
 
     virtual int xlinkCount();
-    virtual Link *getXLinkNum(const int &n);
+    virtual XLink *getXLinkNum(const int &n);
 
   protected:
     BranchItem *rootItem;
 
-    QList<Link *> xlinks;
+    QList<XLink *> xlinks;
 };
 
 #endif

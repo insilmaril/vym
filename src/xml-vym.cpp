@@ -13,6 +13,7 @@
 #include "slideitem.h"
 #include "task.h"
 #include "taskmodel.h"
+#include "xlink.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
 
@@ -633,12 +634,12 @@ void VymReader::readLegacyXLink()
         if (!s.isEmpty()) {
             TreeItem *endBI = model->findBySelectString(s);
             if (beginBI && endBI && beginBI->hasTypeBranch() && endBI->hasTypeBranch()) {
-                Link *li = new Link(model);
-                li->setBeginBranch((BranchItem *)beginBI);
-                li->setEndBranch((BranchItem *)endBI);
-                model->createXLink(li);
+                XLink *xl = new XLink(model);
+                xl->setBeginBranch((BranchItem *)beginBI);
+                xl->setEndBranch((BranchItem *)endBI);
+                model->createXLink(xl);
 
-                QPen pen = li->getPen();
+                QPen pen = xl->getPen();
 
                 a = "color";
                 s = xml.attributes().value(a).toString();
@@ -654,7 +655,7 @@ void VymReader::readLegacyXLink()
                     bool okx;
                     pen.setWidth(s.toInt(&okx, 10));
                 }
-                li->setPen(pen);
+                xl->setPen(pen);
             }
         }
     }
@@ -848,13 +849,13 @@ void VymReader::readXLink()
     }
 
     if (beginBI && endBI && beginBI->hasTypeBranch() && endBI->hasTypeBranch()) {
-        Link *li = new Link(model);
-        li->setBeginBranch((BranchItem *)beginBI);
-        li->setEndBranch((BranchItem *)endBI);
+        XLink *xl = new XLink(model);
+        xl->setBeginBranch((BranchItem *)beginBI);
+        xl->setEndBranch((BranchItem *)endBI);
 
-        model->createXLink(li);
+        model->createXLink(xl);
 
-        QPen pen = li->getPen();
+        QPen pen = xl->getPen();
         bool ok;
         s = attributeToString("color");
         if (!s.isEmpty())
@@ -862,7 +863,7 @@ void VymReader::readXLink()
 
         s = attributeToString("type");
         if (!s.isEmpty())
-            li->setLinkType(s);
+            xl->setLinkType(s);
 
         s = attributeToString("width");
         if (!s.isEmpty())
@@ -872,21 +873,21 @@ void VymReader::readXLink()
         if (!s.isEmpty())
             pen.setStyle(penStyle(s, ok));
 
-        li->setPen(pen);
+        xl->setPen(pen);
 
         s = attributeToString("styleBegin");
         if (!s.isEmpty())
-            li->setStyleBegin(s);
+            xl->setStyleBegin(s);
 
         s = attributeToString("styleEnd");
         if (!s.isEmpty())
-            li->setStyleEnd(s);
+            xl->setStyleEnd(s);
 
         /* FIXME-3 better set control points via VymModel for saveState
          * (no longer include XLO then...)
         */
 
-        XLinkObj *xlo = li->getXLinkObj();
+        XLinkObj *xlo = xl->getXLinkObj();
         s = attributeToString("c0");
         if (xlo && !s.isEmpty()) {
             QPointF p = point(s, ok);
@@ -901,7 +902,7 @@ void VymReader::readXLink()
         }
         s = attributeToString("uuid");
         if (!s.isEmpty())
-            li->setUuid(s);
+            xl->setUuid(s);
 
     }
 

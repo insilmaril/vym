@@ -15,6 +15,7 @@ class QGraphicsScene;
 class BranchWrapper;
 class HeadingContainer;
 class Link;
+class XLink;
 class XLinkItem;
 
 class BranchItem : public MapItem {
@@ -30,7 +31,7 @@ class BranchItem : public MapItem {
     virtual void insertImage (int pos, ImageItem *image);
 
     virtual QString saveToDir(const QString &tmpdir, const QString &prefix,
-                              const QPointF &offset, QList<Link *> &tmpLinks,
+                              const QPointF &offset, QList<XLink *> &tmpXLinks,
                               const bool &exportBoundingBoxes);
 
     virtual void setHeadingColor(

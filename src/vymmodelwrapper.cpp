@@ -277,7 +277,7 @@ XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
 {
     TreeItem *ti = model->findUuid(QUuid(u));
     if (ti && ti->hasTypeXLink())
-        return ((XLinkItem*)ti)->getLink()->xlinkWrapper();
+        return ((XLinkItem*)ti)->getXLink()->xlinkWrapper();
     else
         return nullptr;
 }
@@ -560,7 +560,7 @@ XLinkWrapper* VymModelWrapper::selectedXLink()
     XLinkItem *xli = model->getSelectedXLinkItem();
 
     if (xli)
-        return xli->getLink()->xlinkWrapper();
+        return xli->getXLink()->xlinkWrapper();
     else
         return nullptr;
 }

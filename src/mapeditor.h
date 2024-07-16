@@ -236,7 +236,7 @@ class MapEditor : public QGraphicsView {
     bool objectMoved; // true if object was not clicked, but moved with mouse
 
     // Temporary used for linkx
-    Link *tmpLink;
+    XLink *tmpXLink;
 
     // Temporary used for panning view
     QPoint panning_initialPointerPos;           // initial pos in pointer coordinates

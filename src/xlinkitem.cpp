@@ -3,6 +3,7 @@
 
 #include "branchitem.h"
 #include "vymmodel.h"
+#include "xlink.h"
 #include "xlinkobj.h"
 #include "xlink-wrapper.h"
 
@@ -27,19 +28,19 @@ XLinkItem::~XLinkItem()
 
 void XLinkItem::init()
 {
-    setType(XLink);
+    setType(XLinkType);
     xlinkInt = nullptr;
     itemData[0] = "XLink";
 }
 
-void XLinkItem::setLink(Link *l) { xlinkInt = l; }
+void XLinkItem::setXLink(XLink *l) { xlinkInt = l; }
 
-Link *XLinkItem::getLink() { return xlinkInt; }
+XLink *XLinkItem::getXLink() { return xlinkInt; }
 
 void XLinkItem::updateXLink()
 {
     if (xlinkInt)
-        xlinkInt->updateLink();
+        xlinkInt->updateXLink();
 }
 
 XLinkObj *XLinkItem::getXLinkObj()

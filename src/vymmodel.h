@@ -31,7 +31,7 @@ class MapEditor;
 class SlideItem;
 class SlideModel;
 class Task;
-class Link;
+class XLink;
 class VymView;
 
 class QGraphicsScene;
@@ -126,7 +126,7 @@ class VymModel : public TreeModel {
     /*! Save all data in tree*/
     QString
     saveTreeToDir(const QString &, const QString &, const QPointF &,
-                  QList<Link *> &tmpLinks); // Save data recursivly to tempdir
+                  QList<XLink *> &tmpXLinks); // Save data recursivly to tempdir
 
     /*! \brief Sets filepath, filename and mapname
 
@@ -265,7 +265,7 @@ class VymModel : public TreeModel {
 
     QString setBranchVar(BranchItem*, QString varName ="b");  //!< Returns command to set BranchItem in scripts for undo/redo
     QString setImageVar(ImageItem*, QString varName = "i");   //!< Returns command to set ImageItem in scripts for undo/redo
-    QString setXLinkVar(Link*, QString varName = "x");        //!< Returns command to set XLink in scripts for undo/redo
+    QString setXLinkVar(XLink*, QString varName = "x");        //!< Returns command to set XLink in scripts for undo/redo
 
   private:
     /*! \brief Save the current changes in map
@@ -467,8 +467,7 @@ class VymModel : public TreeModel {
     ImageItem *createImage(BranchItem *dst);   //!< Create image
 
   public:
-    bool createXLink(
-        Link *l); //!< Create XLink, will create MO automatically if needed
+    bool createXLink(XLink *l); //!< Create XLink, will create MO automatically if needed
     QColor getXLinkColor();
     int getXLinkWidth();
     Qt::PenStyle getXLinkStyle();
@@ -538,7 +537,7 @@ class VymModel : public TreeModel {
     TreeItem *deleteItem(
         TreeItem *); //!< Delete item and return parent (if parent!= rootItem)
 
-    void deleteXLink(Link *); //!< Delete XLink and saveState
+    void deleteXLink(XLink *); //!< Delete XLink and saveState
     bool scrollBranch(BranchItem *);
     bool unscrollBranch(BranchItem *);
     void toggleScroll(BranchItem *bi = nullptr);
@@ -591,11 +590,11 @@ class VymModel : public TreeModel {
     QStringList getVymLinks();           // return paths in subtree
     void followXLink(int);
     void editXLink();
-    void setXLinkColor(const QString &, Link *xl = nullptr);
-    void setXLinkStyle(const QString &, Link *xl = nullptr);
-    void setXLinkStyleBegin(const QString &, Link *xl = nullptr);
-    void setXLinkStyleEnd(const QString &, Link *xl = nullptr);
-    void setXLinkWidth(int, Link *xl = nullptr);
+    void setXLinkColor(const QString &, XLink *xl = nullptr);
+    void setXLinkStyle(const QString &, XLink *xl = nullptr);
+    void setXLinkStyleBegin(const QString &, XLink *xl = nullptr);
+    void setXLinkStyleEnd(const QString &, XLink *xl = nullptr);
+    void setXLinkWidth(int, XLink *xl = nullptr);
 
     ////////////////////////////////////////////
     // Scripting
@@ -857,7 +856,7 @@ class VymModel : public TreeModel {
     QList <ImageItem *> getSelectedImages(TreeItem *ti = nullptr);
     Task *getSelectedTask();
     XLinkItem *getSelectedXLinkItem();
-    Link *getSelectedXLink(Link *xl = nullptr);
+    XLink *getSelectedXLink(XLink *xl = nullptr);
     AttributeItem *getSelectedAttribute();
     TreeItem *getSelectedItem(TreeItem *ti = nullptr);
     QList<TreeItem *> getSelectedItems(TreeItem *ti = nullptr);

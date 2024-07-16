@@ -8,7 +8,7 @@
 
 extern QJSEngine *scriptEngine;
 
-XLinkWrapper::XLinkWrapper(Link *xl)
+XLinkWrapper::XLinkWrapper(XLink *xl)
 {
     //qDebug() << "Constr XLinkWrapper (ii)";
     xlinkInt = xl;
@@ -21,7 +21,7 @@ XLinkWrapper::~XLinkWrapper()
 
 VymModel* XLinkWrapper::model() {return xlinkInt->getModel();}
 
-Link* XLinkWrapper::xlink() {return xlinkInt;}
+XLink* XLinkWrapper::xlink() {return xlinkInt;}
 
 QString XLinkWrapper::getColor()
 {

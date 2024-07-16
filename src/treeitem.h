@@ -24,7 +24,7 @@ class XLinkObj;
 
 class TreeItem : public XMLObj {
   public:
-    enum Type { Undefined, MapCenter, Branch, Image, Attribute, XLink };
+    enum Type { Undefined, MapCenter, Branch, Image, Attribute, XLinkType };
     enum HideTmpMode { HideNone, HideExport };
 
     TreeItem(TreeItem *parent = nullptr);

@@ -18,8 +18,8 @@ class BranchItem;
 class XLinkObj : public MapObj {
   public:
     enum SelectionType { Empty, Path, C0, C1 };
-    XLinkObj(Link*);
-    XLinkObj(QGraphicsItem *, Link *l);
+    XLinkObj(XLink*);
+    XLinkObj(QGraphicsItem *, XLink *l);
     virtual ~XLinkObj();
     virtual void init();
     virtual QPointF getAbsPos();
@@ -76,7 +76,7 @@ class XLinkObj : public MapObj {
     SelectionType selectionTypeInt;
 
     BranchItem *visBranch; // the "visible" part of a partially scrolled li
-    Link *link;
+    XLink *xlink;
 };
 
 #endif

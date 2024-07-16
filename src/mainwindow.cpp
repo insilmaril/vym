@@ -5689,11 +5689,11 @@ void Main::editEditXLink(QAction *a)
     if (m) {
         BranchItem *selbi = m->getSelectedBranch();
         if (selbi) {
-            Link *l = selbi
+            XLink *xl = selbi
                           ->getXLinkItemNum(
                               branchXLinksContextMenuEdit->actions().indexOf(a))
-                          ->getLink();
-            if (l && m->select(l->beginXLinkItem()))
+                          ->getXLink();
+            if (xl && m->select(xl->beginXLinkItem()))
                 m->editXLink();
         }
     }

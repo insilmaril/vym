@@ -16,17 +16,17 @@ int XLinkObj::clickBorder = 8;
 int XLinkObj::pointRadius = 10;
 int XLinkObj::d_control = 300;
 
-XLinkObj::XLinkObj(Link *l)
+XLinkObj::XLinkObj(XLink *xl)
 {
-    //qDebug()<< "Const XLinkObj (link)";
-    link = l;
+    //qDebug()<< "Const XLinkObj (XLink)";
+    xlink = xl;
     init();
 }
 
-XLinkObj::XLinkObj(QGraphicsItem *parent, Link *l) : MapObj(parent)
+XLinkObj::XLinkObj(QGraphicsItem *parent, XLink *xl) : MapObj(parent)
 {
-    //qDebug()<< "Const XLinkObj (Link, parent)";
-    link = l;
+    //qDebug()<< "Const XLinkObj (XLink, parent)";
+    xlink = xl;
     init();
 }
 
@@ -51,9 +51,9 @@ void XLinkObj::init()
 
     stateVis = Hidden;
 
-    QPen pen = link->getPen();
+    QPen pen = xlink->getPen();
 
-    QGraphicsScene *scene = link->getBeginBranch()->getBranchContainer()->scene();
+    QGraphicsScene *scene = xlink->getBeginBranch()->getBranchContainer()->scene();
     scene->addItem(this);
 
     path = scene->addPath(QPainterPath(), pen, Qt::NoBrush);
@@ -152,10 +152,10 @@ void XLinkObj::updateGeometry()
     //qDebug() << "XLO::updateGeometry";
     BranchContainer *beginBC = nullptr;
     BranchContainer *endBC = nullptr;
-    BranchItem *bi = link->getBeginBranch();
+    BranchItem *bi = xlink->getBeginBranch();
     if (bi)
         beginBC = bi->getBranchContainer();
-    bi = link->getEndBranch();
+    bi = xlink->getEndBranch();
     if (bi)
         endBC = bi->getBranchContainer();
 
@@ -230,7 +230,7 @@ void XLinkObj::updateGeometry()
     // needed for intersection check:
     clickPath.cubicTo(endPos + c1, beginPos + c0, beginPos);
 
-    QPen pen = link->getPen();
+    QPen pen = xlink->getPen();
     path->setPen(pen);
     poly->setBrush(pen.color());
 
@@ -249,8 +249,8 @@ void XLinkObj::updateGeometry()
     c1_ellipse->setPen(pen);
     c1_ellipse->setBrush(pen.color());
 
-    BranchItem *bi_begin = link->getBeginBranch();
-    BranchItem *bi_end = link->getEndBranch();
+    BranchItem *bi_begin = xlink->getBeginBranch();
+    BranchItem *bi_end = xlink->getEndBranch();
 
     // called often during drawing, but needed during reposition
     // caused by toggling scroll state
@@ -260,11 +260,11 @@ void XLinkObj::updateGeometry()
 void XLinkObj::updateVisibility()
 {
     BranchContainer *beginBC = nullptr;
-    BranchItem *beginBI = link->getBeginBranch();
+    BranchItem *beginBI = xlink->getBeginBranch();
     if (beginBI)
         beginBC = beginBI->getBranchContainer();
 
-    BranchItem *endBI = link->getEndBranch();
+    BranchItem *endBI = xlink->getEndBranch();
     BranchContainer *endBC = nullptr;
     if (endBI)
         endBC = endBI->getBranchContainer();
@@ -352,9 +352,9 @@ void XLinkObj::setVisibility(bool b)
 
 void XLinkObj::initC0()
 {
-    if (!link)
+    if (!xlink)
         return;
-    BranchItem *beginBranch = link->getBeginBranch();
+    BranchItem *beginBranch = xlink->getBeginBranch();
     if (!beginBranch)
         return;
     BranchContainer *bc = beginBranch->getBranchContainer();
@@ -368,9 +368,9 @@ void XLinkObj::initC0()
 
 void XLinkObj::initC1()
 {
-    if (!link)
+    if (!xlink)
         return;
-    BranchItem *endBranch = link->getEndBranch();
+    BranchItem *endBranch = xlink->getEndBranch();
     if (!endBranch)
         return;
     BranchContainer *bc =endBranch->getBranchContainer();
@@ -464,7 +464,7 @@ XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
 void XLinkObj::select(const QPen &pen, const QBrush &brush)
 {
     if (!selection_ellipse) {
-        QGraphicsScene *scene = link->getBeginBranch()->getBranchContainer()->scene();
+        QGraphicsScene *scene = xlink->getBeginBranch()->getBranchContainer()->scene();
         qreal r = clickBorder * 2.5;
         selection_ellipse = scene->addEllipse(-r / 2 , -r / 2, r, r, pen, brush);
         selection_ellipse->setFlag(QGraphicsItem::ItemStacksBehindParent);

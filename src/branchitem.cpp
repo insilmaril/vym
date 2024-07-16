@@ -118,7 +118,7 @@ void BranchItem::insertImage(int pos, ImageItem *image)
 }
 
 QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
-                              const QPointF &offset, QList<Link *> &tmpLinks, const bool &exportBoundingBoxes)
+                              const QPointF &offset, QList<XLink *> &tmpXLinks, const bool &exportBoundingBoxes)
 {
     // Cloudy stuff can be hidden during exports
     if (hidden)
@@ -218,16 +218,16 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     int i = 0;
     TreeItem *ti = getBranchNum(i);
     while (ti) {
-        s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpLinks, exportBoundingBoxes);
+        s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpXLinks, exportBoundingBoxes);
         i++;
         ti = getBranchNum(i);
     }
 
     // Mark Links for save
     for (int i = 0; i < xlinkCount(); ++i) {
-        Link *l = getXLinkItemNum(i)->getLink();
-        if (l && !tmpLinks.contains(l))
-            tmpLinks.append(l);
+        XLink *xl = getXLinkItemNum(i)->getXLink();
+        if (xl && !tmpXLinks.contains(xl))
+            tmpXLinks.append(xl);
     }
     decIndent();
     s += endElement(elementName);

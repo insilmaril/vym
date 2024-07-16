@@ -3,16 +3,16 @@
 
 #include "scripting.h"
 
-class Link;
+class XLink;
 class VymModel;
 
 class XLinkWrapper : public VymScriptContext {
     Q_OBJECT
   public:
-    XLinkWrapper(Link*);
+    XLinkWrapper(XLink*);
     ~XLinkWrapper();
     VymModel* model();
-    Link* xlink();
+    XLink* xlink();
 
   public slots:
     QString getColor();
@@ -27,7 +27,7 @@ class XLinkWrapper : public VymScriptContext {
     void setWidth(int w);
 
   private:
-    Link *xlinkInt;
+    XLink *xlinkInt;
 };
 
 #endif

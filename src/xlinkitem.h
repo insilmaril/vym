@@ -1,16 +1,20 @@
 #ifndef XLINKITEM_H
 #define XLINKITEM_H
 
+#include "mapitem.h"
+
 class BranchItem;
 class QGraphicsScene;
+class XLink;
 class XLinkObj;
 class XLinkWrapper;
 
-#include "mapitem.h"
-#include "xlink.h"
+// #include "xlink.h"
 
 /*! \brief xlinks are used to draw arbitrary connections between branches
  * (BranchObj) in the map. */
+
+// #include "xlink.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -21,8 +25,8 @@ class XLinkItem : public MapItem {
     XLinkItem(TreeItem *parent = nullptr);
     ~XLinkItem();
     void init();
-    void setLink(Link *);
-    Link *getLink();
+    void setXLink(XLink *);
+    XLink* getXLink();
     void updateXLink();
     XLinkObj *getXLinkObj();
     QColor headingColor();
@@ -30,7 +34,7 @@ class XLinkItem : public MapItem {
     BranchItem *getPartnerBranch();
 
   private:
-    Link *xlinkInt;
+    XLink *xlinkInt;
 };
 
 #endif

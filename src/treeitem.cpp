@@ -86,7 +86,7 @@ int TreeItem::getRowNumAppend(TreeItem *item)
     switch (item->type) {
         case Attribute:
             return attributeOffset + attributeCounter;
-        case XLink:
+        case XLinkType:
             return xlinkOffset + xlinkCounter;
         case Image:
             return imageOffset + imageCounter;
@@ -114,7 +114,7 @@ void TreeItem::appendChild(TreeItem *item)
         branchOffset++;
     }
 
-    if (item->type == XLink) {
+    if (item->type == XLinkType) {
         childItems.insert(xlinkCounter + xlinkOffset, item);
         xlinkCounter++;
         imageOffset++;
@@ -151,7 +151,7 @@ void TreeItem::removeChild(int row)
             imageOffset--;
             branchOffset--;
         }
-        if (childItems.at(row)->type == XLink) {
+        if (childItems.at(row)->type == XLinkType) {
             xlinkCounter--;
             imageOffset--;
             branchOffset--;
@@ -252,7 +252,7 @@ int TreeItem::num(TreeItem *item)
         return childItems.indexOf(item) - imageOffset;
     case Attribute:
         return childItems.indexOf(item) - attributeOffset;
-    case XLink:
+    case XLinkType:
         return childItems.indexOf(item) - xlinkOffset;
     default:
         return -1;
@@ -304,7 +304,7 @@ bool TreeItem::hasTypeBranchOrImage() const
 
 bool TreeItem::hasTypeXLink() const
 {
-    if (type == XLink)
+    if (type == XLinkType)
         return true;
     else
         return false;
@@ -323,7 +323,7 @@ QString TreeItem::getTypeName()
             return QString("Image");
         case Attribute:
             return QString("Attribute");
-        case XLink:
+        case XLinkType:
             return QString("XLink");
         default:
             return QString("TreeItem::getTypeName no typename defined?!");
@@ -713,7 +713,7 @@ XLinkObj *TreeItem::getXLinkObjNum(const int &n)
     if (xlinkCounter > 0) {
         XLinkItem *xli = getXLinkItemNum(n);
         if (xli) {
-            Link *l = xli->getLink();
+            XLink *l = xli->getXLink();
             if (l)
                 return l->getXLinkObj();
         }

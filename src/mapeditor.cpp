@@ -990,11 +990,11 @@ TreeItem *MapEditor::findMapItem(
         bool findNearCenter)
 {
     // Search XLinks
-    Link *link;
+    XLink *xlink;
     for (int i = 0; i < model->xlinkCount(); i++) {
-        link = model->getXLinkNum(i);
-        if (link) {
-            XLinkObj *xlo = link->getXLinkObj();
+        xlink = model->getXLinkNum(i);
+        if (xlink) {
+            XLinkObj *xlo = xlink->getXLinkObj();
             if (xlo) {
                 XLinkObj::SelectionType xlinkSelection = xlo->couldSelect(p);
                 if (xlinkSelection == XLinkObj::Path) {
@@ -1002,14 +1002,14 @@ TreeItem *MapEditor::findMapItem(
                     qreal d0 = Geometry::distance(p, xlo->getBeginPos());
                     qreal d1 = Geometry::distance(p, xlo->getEndPos());
                     if (d0 < d1)
-                        return link->beginXLinkItem();
+                        return xlink->beginXLinkItem();
                     else
-                        return link->endXLinkItem();
+                        return xlink->endXLinkItem();
                 }
                 if (xlinkSelection == XLinkObj::C0)
-                    return link->beginXLinkItem();
+                    return xlink->beginXLinkItem();
                 if (xlinkSelection == XLinkObj::C1)
-                    return link->endXLinkItem();
+                    return xlink->endXLinkItem();
             }
         }
     }
@@ -1683,13 +1683,13 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
         if (mainWindow->getModMode() == Main::ModModeXLink &&
             (e->modifiers() & Qt::ShiftModifier)) {
             setState(CreatingXLink);
-            tmpLink = new Link(model);
-            tmpLink->setBeginBranch(selbi);
-            tmpLink->createXLinkObj();
-            tmpLink->setStyleBegin("None");
-            tmpLink->setStyleEnd("None");
-            tmpLink->setEndPoint(movingObj_initialScenePos);
-            tmpLink->updateLink();
+            tmpXLink = new XLink(model);
+            tmpXLink->setBeginBranch(selbi);
+            tmpXLink->createXLinkObj();
+            tmpXLink->setStyleBegin("None");
+            tmpXLink->setStyleEnd("None");
+            tmpXLink->setEndPoint(movingObj_initialScenePos);
+            tmpXLink->updateXLink();
             return;
         }
     }
@@ -1829,8 +1829,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
     }   // system flags or modModes
     else { // No selbc found, check XLinks
         if (ti_found) {
-            if (ti_found->getType() == TreeItem::XLink) {
-                XLinkObj *xlo = ((XLinkItem *)ti_found)->getLink()->getXLinkObj();
+            if (ti_found->getType() == TreeItem::XLinkType) {
+                XLinkObj *xlo = ((XLinkItem *)ti_found)->getXLink()->getXLinkObj();
                 if (xlo)
                     setState(EditingXLink);
             }
@@ -1917,8 +1917,8 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
 
     // Draw a link from one branch to another
     if (editorState == CreatingXLink) {
-        tmpLink->setEndPoint(p_event);
-        tmpLink->updateLink();
+        tmpXLink->setEndPoint(p_event);
+        tmpXLink->updateXLink();
     }
 }
 
@@ -2010,7 +2010,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     tmpParentContainer->addToImagesContainer(ic);
                 }
         }
-            else if (ti->getType() == TreeItem::XLink) {
+            else if (ti->getType() == TreeItem::XLinkType) {
                 // Move XLink control point
                 XLinkObj *xlo = ((XLinkItem *)ti)->getXLinkObj();
                 if (xlo) {
@@ -2280,13 +2280,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
         // Check if we are over another branch
         if (destinationBranch) {
-            tmpLink->setEndBranch(destinationBranch);
-            tmpLink->activate();
-            tmpLink->updateLink();
-            if (model->createXLink(tmpLink)) return;
+            tmpXLink->setEndBranch(destinationBranch);
+            tmpXLink->activate();
+            tmpXLink->updateXLink();
+            if (model->createXLink(tmpXLink)) return;
         }
-        delete (tmpLink);
-        tmpLink = nullptr;
+        delete (tmpXLink);
+        tmpXLink = nullptr;
         return;
     }
 
@@ -2427,7 +2427,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         // Finally resize scene, if needed
         scene()->update();
         vPan = QPoint();
-    } // MovingObject or MovingObjectTmpLinked
+    } // MovingObject or MovingObjecttmpXLinked
 
     if (editorState != EditingHeading) {
         setState(Neutral); // Continue editing after double click!
