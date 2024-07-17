@@ -1770,6 +1770,7 @@ void Main::setupEditActions()
 
     // Add branch by inserting it at selection
     a = new QAction(tr("Add branch (insert)", "Edit menu"), this);
+    a->setShortcut(Qt::SHIFT | Qt::CTRL | Qt::Key_A);
     switchboard.addSwitch("mapEditAddBranchBefore", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editNewBranchBefore()));
     editMenu->addAction(a);
@@ -1778,7 +1779,7 @@ void Main::setupEditActions()
 
     // Add branch above
     a = new QAction(tr("Add branch above", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_Insert);
+    a->setShortcut(Qt::SHIFT | Qt::Key_A);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditAddBranchAbove", shortcutScope, a, tag);
     addAction(a);
@@ -1788,7 +1789,7 @@ void Main::setupEditActions()
     actionAddBranchAbove = a;
 
     a = new QAction(tr("Add branch above", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_A);
+    a->setShortcut(Qt::SHIFT | Qt::Key_Insert);
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditAddBranchAboveAlt", shortcutScope, a, tag);
     addAction(a);
@@ -5598,7 +5599,7 @@ void Main::editNewBranchAbove()
         if (!actionSettingsAutoSelectNewBranch->isChecked())
             prevSelection = m->getSelectString();
 
-        BranchItem *selbi = m->getSelectedBranch();
+        BranchItem *selbi = m->getSelectedBranch(); // FIXME-2 selectedBranch also in VM::addNewBranch()
         if (selbi) {
             BranchItem *bi = m->addNewBranch(selbi, -3);
 
