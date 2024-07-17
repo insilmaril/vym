@@ -4298,41 +4298,47 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *pi, int num) // FIXME-0 undo not working for above/below    FIXME-0 reorder arguments?
+BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos) // FIXME-0 undo not working for above/below    FIXME-0 reorder arguments?
 {
-    BranchItem *newbi = nullptr;
-    if (!pi)
-        pi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi)
+        return nullptr;
 
-    if (pi) {
-        QString redosel = getSelectString(pi);
-        newbi = addNewBranchInt(pi, num);
-        QString undosel = getSelectString(newbi);
+    BranchItem *newbi = addNewBranchInt(selbi, pos);
 
-        if (newbi) {
-            QString uc, rc;
-            QString bv = setBranchVar(newbi);
-            uc = " map.removeBranch(b);";
-            rc = setBranchVar(pi) + QString(" b.loadBranchInsert(\"REDO_PATH\", %1);").arg(num);
-            saveStateNew( uc, rc,
-                QString("Add new branch to %1").arg(getObjectName(pi)),
-                nullptr, pi);
-
-            latestAddedItemUuid = newbi->getUuid();
-            // In Network mode, the client needs to know where the new branch
-            // is, so we have to pass on this information via saveState.
-            // TODO: Get rid of this positioning workaround
-            /* FIXME-4  network problem:  QString ps=toS
-               (newbo->getAbsPos()); sendData ("selectLatestAdded ()"); sendData
-               (QString("move %1").arg(ps)); sendSelection();
-               */
+    if (newbi) {
+        QString uc, rc, com;
+        BranchItem *pbi;
+        if (pos == -2) {
+            pbi = selbi;
+            com = QString("Add new branch to %1").arg(getObjectName(selbi));
+        } else {
+            pbi = selbi->parentBranch();
+            if (pos < -2)
+                com = QString("Add new branch above %1").arg(getObjectName(selbi));
+            else
+                com = QString("Add new branch below %1").arg(getObjectName(selbi));
         }
 
-        // Required to initialize styles
-        if (!saveStateBlocked)
-            // Don't apply design while loading map
-            applyDesign(MapDesign::CreatedByUser, newbi);   // FIXME-1 creates additional undoStep, which let's tests fail...   // FIXME-1 really? still?
+        uc = setBranchVar(newbi) + "map.removeBranch(b);";
+        rc = setBranchVar(pbi) + QString(" b.loadBranchInsert(\"REDO_PATH\", %1);").arg(newbi->num());
+        saveStateNew( uc, rc, com, nullptr, newbi);
+
+        latestAddedItemUuid = newbi->getUuid();
+        // In Network mode, the client needs to know where the new branch
+        // is, so we have to pass on this information via saveState.
+        // TODO: Get rid of this positioning workaround
+        /* FIXME-4  network problem:  QString ps=toS
+           (newbo->getAbsPos()); sendData ("selectLatestAdded ()"); sendData
+           (QString("move %1").arg(ps)); sendSelection();
+           */
     }
+
+    // Required to initialize styles
+    if (!saveStateBlocked)
+        // Don't apply design while loading map
+        applyDesign(MapDesign::CreatedByUser, newbi);
+
     return newbi;
 }
 
@@ -6258,10 +6264,10 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         BranchItem *bi)
 {
     /*
+    */
     qDebug() << "VM::applyDesign  mode="
         << MapDesign::updateModeString(updateMode)
         << " of " << headingText(bi);
-        */
 
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
