@@ -10,29 +10,28 @@
 #include "adaptormodel.h"
 #endif
 
-#include "branchitem.h"
 #include "file.h"
+#include "flagrow-master.h"
+#include "frame-container.h"
 #include "imageitem.h"
 #include "jira-issue.h"
 #include "linkobj.h"
-#include "mapeditor.h"
-#include "treeitem.h"
+#include "mapdesign.h"
+#include "settings.h"
 #include "treemodel.h"
 #include "vymlock.h"
-#include "vymmodelwrapper.h"
-#include "zip-agent.h"
 
 class AttributeItem;
 class BranchItem;
 class FindResultModel;
-class Link;
-class MapDesign;
 class MapEditor;
 class SlideItem;
 class SlideModel;
 class Task;
 class XLink;
 class VymView;
+class VymModelWrapper;
+class ZipAgent;
 
 class QGraphicsScene;
 class QJsonObject;

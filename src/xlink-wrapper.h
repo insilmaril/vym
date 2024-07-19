@@ -9,7 +9,7 @@ class VymModel;
 class XLinkWrapper : public VymScriptContext {
     Q_OBJECT
   public:
-    XLinkWrapper(XLink*);
+    Q_INVOKABLE XLinkWrapper(XLink*);
     ~XLinkWrapper();
     VymModel* model();
     XLink* xlink();
@@ -30,4 +30,6 @@ class XLinkWrapper : public VymScriptContext {
     XLink *xlinkInt;
 };
 
+Q_DECLARE_METATYPE(XLinkWrapper)
+Q_DECLARE_METATYPE(XLinkWrapper*)
 #endif

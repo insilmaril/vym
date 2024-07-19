@@ -1,20 +1,19 @@
 #ifndef BRANCHITEM_H
 #define BRANCHITEM_H
 
-#include "branch-container.h"
-#include "image-container.h"
-#include "mapdesign.h"
 #include "mapitem.h"
-#include "task.h"
 
 #include <QList>
 
 class QString;
 class QGraphicsScene;
 
+class BranchContainer;
 class BranchWrapper;
 class HeadingContainer;
+class ImageContainer;
 class Link;
+class Task;
 class XLink;
 class XLinkItem;
 

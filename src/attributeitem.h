@@ -4,7 +4,7 @@
 #include <QStringList>
 #include <QVariant>
 
-#include "branchitem.h"
+#include "mapitem.h"
 
 class AttributeWrapper;
 
@@ -12,7 +12,7 @@ class AttributeWrapper;
     The data itself is stored in Attribute Definitions (AttributeDef).
     A list of these tables AttributeTable is maintained for every MapEditor.
 */
-class AttributeItem : public BranchItem {
+class AttributeItem : public MapItem {
   public:
     AttributeItem(TreeItem *parent = nullptr);
     AttributeItem(const QString &k, const QVariant &v, TreeItem *parent = nullptr);
@@ -25,7 +25,7 @@ class AttributeItem : public BranchItem {
     void setValue(const QVariant &v);
     QVariant value();
     void updateHeading();
-    using BranchItem::setType;
+//    using BranchItem::setType;
     void setInternal(bool b);
     bool isInternal();
     QString getDataXML();

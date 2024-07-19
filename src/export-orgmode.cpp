@@ -1,7 +1,10 @@
 #include "export-orgmode.h"
 
-#include "mainwindow.h"
 #include <QMessageBox>
+
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "vymmodel.h"
 
 extern Main *mainWindow;
 

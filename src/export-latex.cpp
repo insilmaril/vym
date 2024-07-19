@@ -1,7 +1,13 @@
 #include "export-latex.h"
 
-#include "mainwindow.h"
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
+#include <QRegularExpression>
+
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "vymmodel.h"
 
 extern Main *mainWindow;
 extern Settings settings;

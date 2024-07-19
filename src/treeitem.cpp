@@ -6,6 +6,7 @@
 #include "misc.h"
 #include "treeitem.h"
 #include "vymmodel.h"
+#include "xlink.h"
 #include "xlinkitem.h"
 
 extern ulong itemLastID;

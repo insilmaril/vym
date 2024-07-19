@@ -14,6 +14,7 @@
 class AttributeItem;
 class BranchObj;
 class BranchItem;
+class Flag;
 class FloatImageObj;
 class ImageItem;
 class MapDesign;

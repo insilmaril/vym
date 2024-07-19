@@ -5,8 +5,6 @@
 #include <QPixmap>
 #include <QUuid>
 
-#include "flag.h"
-
 #include "image-container.h"
 
 /*! \brief One flag which is visible in the map.

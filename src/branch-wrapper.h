@@ -10,7 +10,7 @@ class XLinkWrapper;
 class BranchWrapper : public VymScriptContext {
     Q_OBJECT
   public:
-    BranchWrapper(BranchItem*);
+    Q_INVOKABLE BranchWrapper(BranchItem*);
     ~BranchWrapper();
     BranchItem* branchItem();
     VymModel* model();
@@ -19,7 +19,7 @@ class BranchWrapper : public VymScriptContext {
     BranchWrapper* addBranch();
     BranchWrapper* addBranchAt(int pos);
     BranchWrapper* addBranchBefore();
-    XLinkWrapper*  addXLink(BranchWrapper *bwEnd, int width,
+    XLinkWrapper* addXLink(BranchWrapper *bwEnd, int width,
                   const QString &color, const QString &penstyle);
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);

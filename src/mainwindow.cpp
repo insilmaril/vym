@@ -12,6 +12,7 @@
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QMenuBar>
+#include <QPrinter>
 #include <QJSEngine>
 #include <QSslSocket>
 #include <QStatusBar>
@@ -20,6 +21,7 @@
 #include "aboutdialog.h"
 #include "attributeitem.h"
 #include "background-dialog.h"
+#include "branch-container.h"
 #include "branchitem.h"
 #include "branchpropeditor.h"
 #include "command.h"
@@ -31,11 +33,13 @@
 #include "debuginfo.h"
 #include "default-map-settings-dialog.h"
 #include "download-agent.h"
+#include "extrainfodialog.h"
 #include "file.h"
 #include "findresultmodel.h"
 #include "findresultwidget.h"
 #include "headingeditor.h"
 #include "historywindow.h"
+#include "image-container.h"
 #include "imports.h"
 #include "jira-agent.h"
 #include "jira-settings-dialog.h"
@@ -55,8 +59,11 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeeditor.h"
+#include "vymmodelwrapper.h"
 #include "vymprocess.h"
+#include "vymview.h"
 #include "warningdialog.h"
+#include "xlink.h"
 #include "xlinkitem.h"
 
 QPrinter *printer = nullptr;

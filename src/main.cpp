@@ -1,14 +1,17 @@
-#include <QApplication>
-#include <QMessageBox>
-#include <QStyleFactory>
-
 #include <cstdlib>
 #include <iostream>
 
+#include <QApplication>
+#include <QJSEngine>
+#include <QMessageBox>
+#include <QStyleFactory>
+
+#include "branchpropeditor.h"
 #include "command.h"
 #include "debuginfo.h"
 #include "findresultwidget.h"
 #include "findwidget.h"
+#include "flagrow-master.h"
 #include "headingeditor.h"
 #include "macros.h"
 #include "mainwindow.h"
@@ -22,6 +25,7 @@
 #include "taskmodel.h"
 #include "version.h"
 #include "warningdialog.h"
+#include "zip-agent.h"
 
 #if defined(VYM_DBUS)
 #include <QtDBus/QDBusConnection>

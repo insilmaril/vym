@@ -1,5 +1,7 @@
 #include <QDebug>
+#include <QPen>
 
+#include "branch-container.h"
 #include "container.h"
 #include "tmp-parent-container.h"
 

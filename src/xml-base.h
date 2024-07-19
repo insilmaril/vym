@@ -5,7 +5,6 @@
 
 #include "file.h"
 
-#include "task.h"
 #include "vymtext.h"
 
 
@@ -14,6 +13,7 @@ class BranchItem;
 class ImageItem;
 class MapItem;
 class SlideItem;
+class Task;
 
 /*! \brief Base class for parsing maps from XML documents */
 

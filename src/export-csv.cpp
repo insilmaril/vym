@@ -1,7 +1,12 @@
-#include "mainwindow.h"
+#include "export-csv.h"
+
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
 
-#include "export-csv.h"
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;

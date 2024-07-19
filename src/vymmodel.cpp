@@ -20,6 +20,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "branchpropeditor.h"
 #include "confluence-agent.h"
 #include "download-agent.h"
 #include "editxlinkdialog.h"
@@ -36,11 +37,13 @@
 #include "file.h"
 #include "findresultmodel.h"
 #include "heading-container.h"
+#include "image-container.h"
 #include "jira-agent.h"
 #include "linkobj.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
 #include "mapdesign.h"
+#include "mapeditor.h"
 #include "misc.h"
 #include "noteeditor.h"
 #include "options.h"
@@ -50,6 +53,8 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeitem.h"
+#include "vymmodelwrapper.h"
+#include "vymview.h"
 #include "warningdialog.h"
 #include "xlink.h"
 #include "xlinkitem.h"
@@ -6264,10 +6269,10 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         BranchItem *bi)
 {
     /*
-    */
     qDebug() << "VM::applyDesign  mode="
         << MapDesign::updateModeString(updateMode)
         << " of " << headingText(bi);
+    */
 
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 

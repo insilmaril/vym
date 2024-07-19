@@ -9,8 +9,8 @@
 #include "tmp-parent-container.h"
 #include "settings.h"
 #include "vymmodel.h"
-#include "xlink.h"
 
+class XLink;
 class XLinkItem;
 class Winter;
 

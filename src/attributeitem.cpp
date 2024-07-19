@@ -8,14 +8,14 @@
 extern bool debug;
 
 AttributeItem::AttributeItem(TreeItem *parent)
-    : BranchItem(parent)
+    : MapItem(parent)
 {
     //qDebug() << "Constr. AttrItem (parent)";
     init();
 }
 
 AttributeItem::AttributeItem(const QString &k, const QVariant &v, TreeItem *parent)
-    : BranchItem(parent)
+    : MapItem(parent)
 {
     //qDebug() << "Constr. AttrItem (k, v, parent)";
     init();

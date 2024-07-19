@@ -1,7 +1,11 @@
 #include <QMessageBox>
 
 #include "export-impress.h"
+
+#include "branchitem.h"
 #include "mainwindow.h"
+#include "vymmodel.h"
+#include "zip-agent.h"
 
 extern QString vymName;
 extern Main *mainWindow;

@@ -1,4 +1,7 @@
 #include "historywindow.h"
+
+#include <QCloseEvent>
+
 #include "mainwindow.h"
 
 extern Settings settings;

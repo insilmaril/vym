@@ -5,6 +5,7 @@
 #include "attributeitem.h"
 #include "attribute-wrapper.h"
 #include "branchitem.h"
+#include "branch-container.h"
 #include "branch-wrapper.h"
 #include "imageitem.h"
 #include "image-wrapper.h"

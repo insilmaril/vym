@@ -3,7 +3,7 @@
 
 #include "ui_editxlinkdialog.h"
 
-#include "xlink.h"
+class XLink;
 
 /*! \brief Dialog to edit or delete XLinks
 

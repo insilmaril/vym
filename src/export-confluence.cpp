@@ -3,8 +3,10 @@
 #include <QMessageBox>
 
 #include "attributeitem.h"
+#include "branchitem.h"
 #include "mainwindow.h"
 #include "settings.h"
+#include "vymmodel.h"
 #include "warningdialog.h"
 #include "xmlobj.h"
 

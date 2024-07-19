@@ -4,6 +4,8 @@
 #include "export-base.h"
 #include "export-html-dialog.h"
 
+class BranchItem;
+
 class ExportHTML : public ExportBase {
   public:
     ExportHTML();

@@ -7,6 +7,7 @@
 #include "misc.h"
 #include "vymmodel.h"
 #include "xsltproc.h"
+#include "zip-agent.h"
 
 #include <QMessageBox>
 

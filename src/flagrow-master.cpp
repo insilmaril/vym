@@ -1,5 +1,6 @@
 #include <QDebug>
 
+#include "flag.h"
 #include "flagrow-master.h"
 #include "mainwindow.h"
 

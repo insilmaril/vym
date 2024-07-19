@@ -13,6 +13,7 @@
 #include "slideitem.h"
 #include "task.h"
 #include "taskmodel.h"
+#include "vymmodel.h"
 #include "xlink.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"

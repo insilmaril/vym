@@ -6,10 +6,10 @@
 #include "arrowobj.h"
 #include "branch-container.h"
 #include "mapobj.h"
-#include "xlink.h"
 
 class BranchObj;
 class BranchItem;
+class XLink;
 
 /*! \brief xlinks are used to draw arbitrary connections between branches
  * (BranchObj) in the map. */

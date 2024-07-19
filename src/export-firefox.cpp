@@ -3,7 +3,9 @@
 #include "export-firefox.h"
 
 #include "attributeitem.h"
+#include "branchitem.h"
 #include "mainwindow.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;

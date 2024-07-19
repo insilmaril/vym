@@ -1,5 +1,6 @@
 #include "mapitem.h"
 
+#include "branch-container.h"
 #include "branchitem.h"
 #include "image-container.h"
 #include "imageitem.h"

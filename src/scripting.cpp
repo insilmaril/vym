@@ -1,14 +1,17 @@
 #include "scripting.h"
 
+#include <QJSEngine> 
+#include <QJSValue> 
+
 #include "branchitem.h"
 #include "confluence-agent.h"
 #include "imageitem.h"
 #include "mainwindow.h"
+#include "mapeditor.h"
 #include "misc.h"
 #include "vymtext.h"
 #include "xlink.h"
 
-#include <QJSValue> 
 
 extern Main *mainWindow;
 extern QString vymVersion;

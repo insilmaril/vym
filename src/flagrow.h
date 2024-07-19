@@ -5,8 +5,7 @@
 #include <QStringList>
 #include <QToolBar>
 
-#include "flagrow-master.h"
-#include "xmlobj.h"
+class FlagRowMaster;
 
 class FlagRow
 {

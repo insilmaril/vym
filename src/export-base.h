@@ -6,8 +6,8 @@
 #include <QString>
 #include <iostream>
 
-#include "settings.h"
-#include "vymmodel.h"
+class TreeItem;
+class VymModel;
 
 /*! \brief Base class for all exports
  */

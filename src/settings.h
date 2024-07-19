@@ -1,9 +1,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <qsettings.h>
-#include <qstring.h>
-#include <qstringlist.h>
+#include <QSettings>
+#include <QStringList>
 
 #include "xmlobj.h"
 

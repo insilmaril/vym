@@ -1,5 +1,6 @@
 #include "export-taskjuggler.h"
 
+#include "vymmodel.h"
 #include "xsltproc.h"
 
 extern QDir vymBaseDir;

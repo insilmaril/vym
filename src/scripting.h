@@ -1,10 +1,7 @@
 #ifndef SCRIPTING_H
 #define SCRIPTING_H
 
-#include <QColor>
 #include <QObject>
-#include <QJSValue>
-#include <QVariant>
 
 class BranchItem;
 class VymModelWrapper;

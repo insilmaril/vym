@@ -10,6 +10,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPrintDialog>
+#include <QPushButton>
 #include <QPrinter>
 #include <QStatusBar>
 #include <QTextEdit>

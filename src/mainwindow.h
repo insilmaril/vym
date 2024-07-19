@@ -1,22 +1,25 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QItemSelection>
 #include <QMainWindow>
-#include <QPrinter>
 #include <QProgressDialog>
-#include <QJSEngine>
-#include <QJSValue>
 #include <QTextStream>
 
-#include "branchpropeditor.h"
-#include "extrainfodialog.h"
 #include "file.h"
 #include "flag.h"
-#include "historywindow.h"
-#include "mapeditor.h"
-#include "scripting.h"
-#include "texteditor.h"
-#include "vymview.h"
+
+#include "settings.h"
+
+class QPrinter;
+
+class HistoryWindow;
+class MapEditor;
+class TreeItem;
+class VymText;
+class VymModel;
+class VymView;
+class VymWrapper;
 
 class Main : public QMainWindow {
     Q_OBJECT

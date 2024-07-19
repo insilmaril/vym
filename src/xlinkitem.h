@@ -9,12 +9,9 @@ class XLink;
 class XLinkObj;
 class XLinkWrapper;
 
-// #include "xlink.h"
 
 /*! \brief xlinks are used to draw arbitrary connections between branches
  * (BranchObj) in the map. */
-
-// #include "xlink.h"
 
 /////////////////////////////////////////////////////////////////////////////
 

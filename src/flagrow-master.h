@@ -5,8 +5,9 @@
 #include <QStringList>
 #include <QToolBar>
 
-#include "flag.h"
 #include "xmlobj.h"
+
+class Flag;
 
 /*! \brief A set of flags (Flag).
 

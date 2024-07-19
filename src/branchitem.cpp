@@ -1,6 +1,7 @@
 #include "branchitem.h"
 
 #include "attributeitem.h"
+#include "branch-container.h"
 #include "branch-wrapper.h"
 #include "frame-container.h"
 #include "heading-container.h"

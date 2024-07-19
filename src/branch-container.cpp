@@ -4,8 +4,10 @@
 #include "branch-container.h"
 
 #include "branchitem.h"
+#include "flag.h"
 #include "flag-container.h"
 #include "flagrow-container.h"
+#include "flagrow-master.h"
 #include "frame-container.h"
 #include "heading-container.h"
 #include "link-container.h"

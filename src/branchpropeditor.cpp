@@ -6,6 +6,7 @@
 #include "branch-container.h"
 #include "branchitem.h"
 #include "settings.h"
+#include "task.h"
 #include "vymmodel.h"
 
 extern Settings settings;

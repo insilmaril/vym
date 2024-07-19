@@ -1,16 +1,16 @@
 #ifndef TASKEDITOR_H
 #define TASKEDITOR_H
 
-#include <QTableView>
 #include <QWidget>
 
-#include "taskfiltermodel.h"
+class QItemSelection;
+class QSortFilterProxyModel;
 
 class BranchItem;
 class QTableView;
 class Task;
+class TaskFilterModel;
 class TaskModel;
-class QSortFilterProxyModel;
 
 class TaskEditor : public QWidget {
     Q_OBJECT

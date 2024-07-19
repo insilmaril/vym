@@ -2,10 +2,12 @@
 
 #include <QAbstractTableModel>
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QDebug>
 #include <QHeaderView>
 #include <QMenu>
 #include <QSortFilterProxyModel>
+#include <QTableView>
 #include <QTextEdit>
 #include <QToolBar>
 #include <QVBoxLayout>
@@ -13,6 +15,7 @@
 #include "branchitem.h"
 #include "mainwindow.h"
 #include "task.h"
+#include "taskfiltermodel.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
 

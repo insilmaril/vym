@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "branchitem.h"
+#include "branch-container.h"
 #include "image-container.h"
 #include "image-wrapper.h"
 #include "vymmodel.h"

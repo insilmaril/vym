@@ -2,8 +2,10 @@
 
 #include <QColorDialog>
 #include <QFileDialog>
+#include <QStyle>
 
 #include "mainwindow.h"
+#include "mapeditor.h"
 #include "vymmodel.h"
 
 extern QDir lastImageDir;

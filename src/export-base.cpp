@@ -11,6 +11,7 @@
 #include "file.h"
 #include "mainwindow.h"
 #include "misc.h"
+#include "vymmodel.h"
 #include "vymprocess.h"
 #include "warningdialog.h"
 #include "xsltproc.h"

@@ -1,14 +1,16 @@
 #include "branch-wrapper.h"
 
 #include "attributeitem.h"
-//#include "branchitem.h"
+#include "branchitem.h"
+#include "branch-container.h"
 
 #include "misc.h"
 #include "vymmodel.h"
 
-// #include "xlink.h"
+#include "task.h"
+#include "xlink.h"
 #include "xlinkitem.h"
-// #include "xlink-wrapper.h"
+#include "xlink-wrapper.h"
 
 #include <QJSEngine>
 extern QJSEngine *scriptEngine;

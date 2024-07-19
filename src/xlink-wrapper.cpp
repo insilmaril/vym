@@ -3,6 +3,8 @@
 #include "attributeitem.h"
 #include "misc.h"
 #include "vymmodel.h"
+#include "xlink.h"
+//#include "xlinkitem.h"
 
 #include <QJSEngine>
 

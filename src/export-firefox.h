@@ -3,6 +3,8 @@
 
 #include "export-base.h"
 
+class BranchItem;
+
 class ExportFirefox : public ExportBase {
   public:
     ExportFirefox();

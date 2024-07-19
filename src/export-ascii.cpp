@@ -1,7 +1,13 @@
 #include "export-ascii.h"
 
-#include "mainwindow.h"
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
+
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "task.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;

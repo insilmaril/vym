@@ -1,11 +1,13 @@
-#include <QDebug>
-
 #include "xlinkobj.h"
+
+#include <QDebug>
+#include <QGraphicsScene>
 
 #include "branchitem.h"
 #include "geometry.h"
 #include "math.h" // atan
 #include "misc.h" // max
+#include "xlink.h"
 
 /////////////////////////////////////////////////////////////////
 // XLinkObj

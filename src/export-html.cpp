@@ -2,8 +2,13 @@
 
 #include <QMessageBox>
 
+#include "branch-container.h"
+#include "branchitem.h"
 #include "heading-container.h"
+#include "image-container.h"
 #include "mainwindow.h"
+#include "task.h"
+#include "vymmodel.h"
 #include "warningdialog.h"
 
 extern QString flagsPath;
