@@ -218,8 +218,8 @@ function test_adding_branches()
   main_A = map.findBranchBySelection(main_A_string);
   n = main_A.branchCount();
   branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
-  branch_0Aa.addBranchAt( -3 );
-  branch_0Aa.addBranchAt( -1 );
+  main_A.addBranchAt( -3 );
+  main_A.addBranchAt( -1 );
   expect("addBranchAbove/Below", main_A.branchCount(), n + 2);
 
   map.undo();
