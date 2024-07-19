@@ -1,6 +1,8 @@
 #ifndef BRANCH_WRAPPER_H
 #define BRANCH_WRAPPER_H
 
+#include <QObject>
+
 #include "scripting.h"
 
 class BranchItem;

@@ -1,6 +1,8 @@
 #ifndef XLINK_WRAPPER_H
 #define XLINK_WRAPPER_H
 
+#include <QObject>
+
 #include "scripting.h"
 
 class XLink;

@@ -12,10 +12,8 @@ class BranchContainer;
 class BranchWrapper;
 class HeadingContainer;
 class ImageContainer;
-class Link;
 class Task;
 class XLink;
-class XLinkItem;
 
 class BranchItem : public MapItem {
   public:
