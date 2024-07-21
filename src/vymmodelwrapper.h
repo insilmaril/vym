@@ -13,7 +13,7 @@ class AttributeWrapper;
 class BranchWrapper;
 class ImageWrapper;
 class VymModel;
-class FooWrapper;
+class XLinkWrapper;
 
 class VymModelWrapper : public VymScriptContext {
     Q_OBJECT
@@ -74,7 +74,7 @@ class VymModelWrapper : public VymScriptContext {
     bool select(const QString &s);
     AttributeWrapper* selectedAttribute();
     BranchWrapper* selectedBranch();
-    FooWrapper* selectedFoo();
+    XLinkWrapper* selectedFoo();
     bool selectUids(QJSValueList args);
     bool selectLatestAdded();
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper

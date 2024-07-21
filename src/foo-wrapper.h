@@ -6,11 +6,11 @@
 class VymModel;
 class XLink;
 
-class FooWrapper : public VymScriptContext {
+class XLinkWrapper : public VymScriptContext {
     Q_OBJECT
   public:
-    FooWrapper();
-    ~FooWrapper();
+    XLinkWrapper();
+    ~XLinkWrapper();
     VymModel* model();
     XLink* xlink();
 

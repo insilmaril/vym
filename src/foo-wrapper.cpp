@@ -7,20 +7,20 @@
 #include <QJSEngine>
 extern QJSEngine *scriptEngine;
 
-FooWrapper::FooWrapper()
+XLinkWrapper::XLinkWrapper()
 {
-    qDebug() << "Constr FooWrapper (ii)";
+    qDebug() << "Constr XLinkWrapper (ii)";
     xlinkInt = nullptr;
 }
 
-FooWrapper::~FooWrapper()
+XLinkWrapper::~XLinkWrapper()
 {
-    qDebug() << "Destr FooWrapper";
+    qDebug() << "Destr XLinkWrapper";
 }
 
-VymModel* FooWrapper::model() {return xlinkInt->getModel();}
+VymModel* XLinkWrapper::model() {return xlinkInt->getModel();}
 
-XLink* FooWrapper::xlink() {return xlinkInt;}
+XLink* XLinkWrapper::xlink() {return xlinkInt;}
 
-int FooWrapper::getWidth() {return 123;}
+int XLinkWrapper::getWidth() {return 123;}
 

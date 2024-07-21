@@ -558,9 +558,9 @@ BranchWrapper* VymModelWrapper::selectedBranch()
         return nullptr; // caught by QJSEngine
 }
 
-FooWrapper* VymModelWrapper::selectedFoo()
+XLinkWrapper* VymModelWrapper::selectedFoo()
 {
-    return new FooWrapper();
+    return new XLinkWrapper();
 }
 
 /*
