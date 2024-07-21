@@ -10,7 +10,6 @@
 #include "task.h"
 #include "xlink.h"
 #include "xlinkitem.h"
-#include "xlink-wrapper.h"
 
 #include <QJSEngine>
 extern QJSEngine *scriptEngine;
@@ -68,6 +67,7 @@ BranchWrapper* BranchWrapper::addBranchBefore()
         return newbi->branchWrapper();
 }
 
+/*
 XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
                                int width, const QString &color,
                                const QString &penstyle)
@@ -104,7 +104,7 @@ XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
     }
     return li->xlinkWrapper();
 }
-
+*/
 int BranchWrapper::attributeAsInt(const QString &key)
 {
     QVariant v;

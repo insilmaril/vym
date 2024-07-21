@@ -7,6 +7,7 @@
 #include "branchitem.h"
 #include "branch-container.h"
 #include "branch-wrapper.h"
+#include "foo-wrapper.h"
 #include "imageitem.h"
 #include "image-wrapper.h"
 #include "misc.h"
@@ -15,7 +16,6 @@
 #include "vymtext.h"
 #include "xlink.h"
 #include "xlinkitem.h"
-#include "xlink-wrapper.h"
 #include "xmlobj.h" // include quoteQuotes
 
 #include <QJSEngine>
@@ -274,6 +274,7 @@ ImageWrapper* VymModelWrapper::findImageBySelection(const QString &s)
         return nullptr;
 }
 
+/*
 XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
 {
     TreeItem *ti = model->findUuid(QUuid(u));
@@ -282,7 +283,7 @@ XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
     else
         return nullptr;
 }
-
+*/
 QString VymModelWrapper::getDestPath()
 {
     QString r = model->getDestPath();
@@ -486,6 +487,7 @@ void VymModelWrapper::removeSlide(int n)
                 QString("Slide '%1' not available.").arg(n));
 }
 
+/*
 void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
 {
     if (!xlw) {
@@ -496,7 +498,7 @@ void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
     }
     model->deleteXLink(xlw->xlink());
 }
-
+*/
 QVariant VymModelWrapper::repeatLastCommand()
 {
     return model->repeatLastCommand();
@@ -556,6 +558,12 @@ BranchWrapper* VymModelWrapper::selectedBranch()
         return nullptr; // caught by QJSEngine
 }
 
+FooWrapper* VymModelWrapper::selectedFoo()
+{
+    return new FooWrapper();
+}
+
+/*
 XLinkWrapper* VymModelWrapper::selectedXLink()
 {
     XLinkItem *xli = model->getSelectedXLinkItem();
@@ -565,6 +573,7 @@ XLinkWrapper* VymModelWrapper::selectedXLink()
     else
         return nullptr;
 }
+*/
 
 bool VymModelWrapper::selectUids(QJSValueList args)
 {
