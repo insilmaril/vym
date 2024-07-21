@@ -7,7 +7,6 @@
 #include "branchitem.h"
 #include "branch-container.h"
 #include "branch-wrapper.h"
-#include "foo-wrapper.h"
 #include "imageitem.h"
 #include "image-wrapper.h"
 #include "misc.h"
@@ -16,6 +15,7 @@
 #include "vymtext.h"
 #include "xlink.h"
 #include "xlinkitem.h"
+#include "foo-wrapper.h"
 #include "xmlobj.h" // include quoteQuotes
 
 #include <QJSEngine>
