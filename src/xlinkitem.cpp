@@ -5,7 +5,7 @@
 #include "vymmodel.h"
 #include "xlink.h"
 #include "xlinkobj.h"
-#include "xlink-wrapper.h"
+//#include "xlink-wrapper.h"
 
 /////////////////////////////////////////////////////////////////
 // XLinkItem
