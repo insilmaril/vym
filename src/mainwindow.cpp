@@ -5846,13 +5846,17 @@ void Main::editMoveToTarget()
                         // If branch below exists, select that one
                         // Makes it easier to quickly resort using the MoveTo function
                         BranchItem *below = pi->getBranchNum(selbi->num() + 1);
-
-                        if (model->relinkBranch(selbi, (BranchItem *)dsti, -1)) {
-                            if (below)
-                                model->select(below);
+                        if (below)
+                            model->select(below);
+                        else {
+                            BranchItem *above = pi->getBranchNum(selbi->num() - 1);
+                            if (above)
+                                model->select(above);
                             else if (pi)
                                 model->select(pi);
                         }
+
+                        model->relinkBranch(selbi, (BranchItem *)dsti, -1);
                     }
                 }
             }
