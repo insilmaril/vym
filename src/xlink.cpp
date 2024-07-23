@@ -4,10 +4,10 @@
 
 #include "branchitem.h"
 #include "misc.h"
+#include "scripting-xlink-wrapper.h"
 #include "vymmodel.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
-//#include "xlink-wrapper.h"
 
 class VymModel;
 
@@ -28,12 +28,10 @@ XLink::~XLink()
 
     delete (xlo);
 
-    /*
     if (xlinkWrapperInt) {
         delete xlinkWrapperInt;
         xlinkWrapperInt = nullptr;
     }
-    */    
     // XLinkItems are deleted in VymModel::deleteXLink()
 }
 
@@ -51,7 +49,7 @@ void XLink::init()
     type = Bezier;
     pen = model->mapDesign()->defXLinkPen();
 
-    //xlinkWrapperInt = nullptr;
+    xlinkWrapperInt = nullptr;
 }
 
 void XLink::setUuid(const QString &id) { uuid = QUuid(id); }
@@ -60,14 +58,12 @@ QUuid XLink::getUuid() { return uuid; }
 
 VymModel* XLink::getModel() { return model; }
 
-/*
 XLinkWrapper* XLink::xlinkWrapper()
 {
     if (!xlinkWrapperInt)
         xlinkWrapperInt = new XLinkWrapper(this);
     return xlinkWrapperInt;
 }
-*/
 
 void XLink::setBeginBranch(BranchItem *bi)
 {

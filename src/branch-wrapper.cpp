@@ -5,9 +5,9 @@
 #include "branch-container.h"
 
 #include "misc.h"
-#include "vymmodel.h"
-
+#include "scripting-xlink-wrapper.h"
 #include "task.h"
+#include "vymmodel.h"
 #include "xlink.h"
 #include "xlinkitem.h"
 
@@ -67,7 +67,6 @@ BranchWrapper* BranchWrapper::addBranchBefore()
         return newbi->branchWrapper();
 }
 
-/*
 XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
                                int width, const QString &color,
                                const QString &penstyle)
@@ -104,7 +103,7 @@ XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
     }
     return li->xlinkWrapper();
 }
-*/
+
 int BranchWrapper::attributeAsInt(const QString &key)
 {
     QVariant v;

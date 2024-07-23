@@ -17,7 +17,7 @@ class BranchItem;
 class VymModel;
 class XLinkItem;
 class XLinkObj;
-//class XLinkWrapper;
+class XLinkWrapper;
 
 class XLink: public XMLObj {
   public:
@@ -30,7 +30,7 @@ class XLink: public XMLObj {
     void setUuid(const QString &id);
     QUuid getUuid();
     VymModel *getModel();
-//    XLinkWrapper *xlinkWrapper();
+    XLinkWrapper *xlinkWrapper();
     void setBeginBranch(BranchItem *);
     BranchItem *getBeginBranch();
     void setEndBranch(BranchItem *);
@@ -70,7 +70,7 @@ class XLink: public XMLObj {
     XLinkItem *beginXLinkItemInt;
     XLinkItem *endXLinkItemInt;
 
-//    XLinkWrapper *xlinkWrapperInt;
+    XLinkWrapper *xlinkWrapperInt;
 };
 
 #endif
