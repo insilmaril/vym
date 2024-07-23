@@ -155,20 +155,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     shortcutScope = tr("Main window", "Shortcut scope");
 
-// Load window settings
-#if defined(Q_OS_WIN32)
-    if (settings.value("/mainwindow/geometry/maximized", false).toBool()) {
-        setWindowState(Qt::WindowMaximized);
-    }
-    else
-#endif
-    {
-        resize(settings.value("/mainwindow/geometry/size", QSize(1024, 900))
-                   .toSize());
-        move(settings.value("/mainwindow/geometry/pos", QPoint(50, 50))
-                 .toPoint());
-    }
-
     // Sometimes we may need to remember old selections
     prevSelection = "";
 
@@ -393,7 +379,9 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // mainwindo to update and slows down
     progressDialog.setCancelButton(nullptr);
 
+    // Load window settings
     restoreState(settings.value("/mainwindow/state", 0).toByteArray());
+    restoreGeometry(settings.value("/mainwindow/geometry").toByteArray());
 
     updateGeometry();
 
@@ -422,10 +410,8 @@ Main::~Main()
 
     if (!testmode) {
 #if defined(Q_OS_WIN32)
-        settings.setValue("/mainwindow/geometry/maximized", isMaximized());
 #endif
-        settings.setValue("/mainwindow/geometry/size", size()); 
-        settings.setValue("/mainwindow/geometry/pos", pos());
+        settings.setValue("/mainwindow/geometry", saveGeometry());
         settings.setValue("/mainwindow/state", saveState(0)); // FIXME-2 use saveState and saveGeometry
                                                               // https://doc.qt.io/qt-6/qmainwindow.html#saveState
 
