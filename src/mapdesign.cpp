@@ -65,6 +65,19 @@ template <typename T> QString ConfigList<T>::save(
     return s;
 }
 
+template <typename T> QString ConfigList<T>::saveBool(
+        const QString &attrName) {
+    XMLObj xml;
+    QString s;
+    for (int i = 0; i < qlist.size(); ++i) 
+        s += xml.singleElement("md",
+                xml.attribute( "key", attrName) + 
+                xml.attribute( "val", toS(qlist.at(i))) + 
+                xml.attribute( "d", QString("%1").arg(i))
+                );
+    return s;
+}
+
 /*
 FIXME-3 currently not used template <typename T> void ConfigList<T>::setDefault(const T &d) {
     defaultValue = d;
@@ -85,22 +98,75 @@ MapDesign::MapDesign()  // FIXME-1 add options to update styles when relinking (
 
 void MapDesign::init()
 {
-    // Selection
-    selectionPenInt = QPen(QColor(255,255,0,255), 3);
-    selectionBrushInt = QBrush(QColor(255,255,0,120));
+    //
+    // Design elements not depending on depth, incl. legacy map attributes
+    //
 
-    // NewBranch: Layout of children branches 
-    branchContainerLayouts << Container::FloatingBounded;
-    branchContainerLayouts << Container::Vertical;
+    // Background
+    usesBackgroundImage = false;
 
-    // NewBranch: Layout of children images 
-    imageContainerLayouts << Container::GridColumns;
+    // Colors
+    if (usingDarkTheme) {
+        QPalette palette = qApp->palette();
+        backgroundColorInt = QColor(palette.color(QPalette::Base));
+
+        innerFramePenColors << QColor(Qt::white);
+        innerFrameBrushColors << QColor(85, 85, 127);
+
+        innerFramePenColors << QColor(Qt::blue);
+        innerFrameBrushColors << QColor(25, 25, 127);
+
+        outerFramePenColors << QColor(Qt::green);
+        outerFramePenColors << QColor(Qt::red);
+        outerFramePenColors << QColor(Qt::green);
+        outerFramePenColors << QColor(Qt::red);
+        outerFrameBrushColors << QColor(85, 85, 127);
+        outerFrameBrushColors << QColor(25, 25, 117);
+        outerFrameBrushColors << QColor(85, 85, 127);
+        outerFrameBrushColors << QColor(25, 25, 117);
+    } else {
+        backgroundColorInt = QColor(Qt::white);
+        innerFramePenColors << QColor(Qt::black);
+        innerFrameBrushColors << QColor(Qt::white);
+        outerFramePenColors << QColor(Qt::green);
+        outerFrameBrushColors << QColor(85, 85, 127);
+    }
 
     // Font
     fontInt.setPointSizeF(16);
 
     // Dimensions
     headingColumnWidths << 42;
+
+    // Selection
+    selectionPenInt = QPen(QColor(255,255,0,255), 3);
+    selectionBrushInt = QBrush(QColor(255,255,0,120));
+
+    // Should links of branches use a default color or the color of heading?
+    linkColorHintInt = LinkObj::DefaultColor;
+    defaultLinkCol = Qt::blue;
+
+    // XLinks
+    defXLinkPenInt.setWidth(1);
+    defXLinkPenInt.setColor(QColor(50, 50, 255));
+    defXLinkPenInt.setStyle(Qt::DashLine);
+    defXLinkStyleBeginInt = "HeadFull";
+    defXLinkStyleEndInt = "HeadFull";
+
+    //
+    // Design elements depending on depth
+    //
+
+    // Layout of children branches 
+    branchesContainerLayouts << Container::FloatingBounded;
+    branchesContainerLayouts << Container::Vertical;
+
+    // Layout of children images 
+    imagesContainerLayouts << Container::GridColumns;
+
+    // Layout children branches below heading or side by side?
+    branchesContainerBelowOrnamentsInt << false;
+    branchesContainerVerticalAlignmentsInt << Container::VertAlignedCentered;
 
     // Heading colors
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
@@ -130,34 +196,6 @@ void MapDesign::init()
     outerFrameUpdateWhenRelinking << true;   // MapCenters outer frame
     outerFrameUpdateWhenRelinking << false;
 
-    usesBackgroundImage = false;
-
-    if (usingDarkTheme) {
-        QPalette palette = qApp->palette();
-        backgroundColorInt = QColor(palette.color(QPalette::Base));
-
-        innerFramePenColors << QColor(Qt::white);
-        innerFrameBrushColors << QColor(85, 85, 127);
-
-        innerFramePenColors << QColor(Qt::blue);
-        innerFrameBrushColors << QColor(25, 25, 127);
-
-        outerFramePenColors << QColor(Qt::green);
-        outerFramePenColors << QColor(Qt::red);
-        outerFramePenColors << QColor(Qt::green);
-        outerFramePenColors << QColor(Qt::red);
-        outerFrameBrushColors << QColor(85, 85, 127);
-        outerFrameBrushColors << QColor(25, 25, 117);
-        outerFrameBrushColors << QColor(85, 85, 127);
-        outerFrameBrushColors << QColor(25, 25, 117);
-    } else {
-        backgroundColorInt = QColor(Qt::white);
-        innerFramePenColors << QColor(Qt::black);
-        innerFrameBrushColors << QColor(Qt::white);
-        outerFramePenColors << QColor(Qt::green);
-        outerFrameBrushColors << QColor(85, 85, 127);
-    }
-
     outerFrameTypes << FrameContainer::NoFrame;
     /*
     outerFramePenColors;
@@ -178,17 +216,7 @@ void MapDesign::init()
 
     scaleSubtreeInt << 1.0;
 
-    // Should links of branches use a default color or the color of heading?
-    linkColorHintInt = LinkObj::DefaultColor;
-    defaultLinkCol = Qt::blue;
-
     // XLinks
-    defXLinkPenInt.setWidth(1);
-    defXLinkPenInt.setColor(QColor(50, 50, 255));
-    defXLinkPenInt.setStyle(Qt::DashLine);
-    defXLinkStyleBeginInt = "HeadFull";
-    defXLinkStyleEndInt = "HeadFull";
-
     linkStyles << LinkObj::NoLink;
     linkStyles << LinkObj::PolyParabel;
     linkStyles << LinkObj::Parabel;
@@ -241,8 +269,17 @@ bool MapDesign::setElement(const QString &key, const QString &val, const QString
         return false;
     }
 
-    if (key == "imagesLayout") {
-        imageContainerLayouts.setAt(depth, Container::layoutFromString(val));
+    if (key == "branchesLayout") {
+        branchesContainerLayouts.setAt(depth, Container::layoutFromString(val));
+        return true;
+    } else if (key == "childrenBelowHeading") {
+        branchesContainerBelowOrnamentsInt.setAt(depth, QVariant(val).toBool());
+        return true;
+    } else if (key == "childrenVertAlignment") {
+        branchesContainerVerticalAlignmentsInt.setAt(depth, Container::verticalAlignmentFromString(val));
+        return true;
+    } else if (key == "imagesLayout") {
+        imagesContainerLayouts.setAt(depth, Container::layoutFromString(val));
         return true;
         
     } else if (key == "linkStyle") {
@@ -256,12 +293,22 @@ bool MapDesign::setElement(const QString &key, const QString &val, const QString
 
 Container::Layout MapDesign::branchesContainerLayout(int depth)
 {
-    return branchContainerLayouts.tryAt(depth);
+    return branchesContainerLayouts.tryAt(depth);
+}
+
+Container::VerticalAlignment MapDesign::branchesContainerVerticalAlignment(int depth)
+{
+    return branchesContainerVerticalAlignmentsInt.tryAt(depth);
 }
 
 Container::Layout MapDesign::imagesContainerLayout(int depth)
 {
-    return imageContainerLayouts.tryAt(depth);
+    return imagesContainerLayouts.tryAt(depth);
+}
+
+bool MapDesign::branchesContainerBelowOrnaments(int depth)
+{
+    return branchesContainerBelowOrnamentsInt.tryAt(depth);
 }
 
 LinkObj::ColorHint MapDesign::linkColorHint()
@@ -588,7 +635,11 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
             xml.attribute("defXLinkStyleEnd", defXLinkStyleEndInt));
 
     s += linkStyles.save("linkStyle", LinkObj::styleString);
-    s += imageContainerLayouts.save("imagesLayout", Container::layoutString);
+    s += imagesContainerLayouts.save("imagesLayout", Container::layoutString);
+
+    s += branchesContainerLayouts.save("branchesLayout", Container::layoutString);
+    s += branchesContainerBelowOrnamentsInt.saveBool("childrenBelowHeading");
+    s += branchesContainerVerticalAlignmentsInt.save("childrenVertAlignment", Container::verticalAlignmentString);
 
     xml.decIndent();
     s += xml.endElement("mapdesign");

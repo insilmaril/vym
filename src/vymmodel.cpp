@@ -2090,7 +2090,7 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);  // "Normal" saveState (TI *undoSel, uc, TI *redoSel, rc, comment)
 }
 
-void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-09 Check where this is used. Rewrite everywhere for saveStateNew format
+void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-00 Check where this is used. Rewrite everywhere for saveStateNew format
     // - if only used for single command, don't build block and adapt comment
     // - add checks, that block is really ended!
     // - Currently used for moving/relinking in MapEditor
@@ -6310,7 +6310,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         // Column width and font
         if (updateMode & MapDesign::CreatedByUser || updateMode & MapDesign::LoadingMap) {
             HeadingContainer *hc = bc->getHeadingContainer();
-            hc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
+            hc->setColumnWidth(mapDesignInt->headingColumnWidth(depth));
             hc->setFont(mapDesignInt->font());
         }
 
@@ -6322,16 +6322,20 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         // Layouts
         if (bc->branchesContainerAutoLayout) {
                 bc->setBranchesContainerLayout(
-                        mapDesignInt->branchesContainerLayout(selbi->depth()));
+                        mapDesignInt->branchesContainerLayout(depth));
                 selbiChanged = true;
-                        mapDesignInt->branchesContainerLayout(selbi->depth());
+                        mapDesignInt->branchesContainerLayout(depth);
         }
 
         if (bc->imagesContainerAutoLayout) {
                 bc->setImagesContainerLayout(
-                        mapDesignInt->imagesContainerLayout(selbi->depth()));
+                        mapDesignInt->imagesContainerLayout(depth));
                 selbiChanged = true;
         }
+	bc->setBranchesContainerVerticalAlignment(
+		mapDesignInt->branchesContainerVerticalAlignment(depth));
+	bc->setBranchesContainerBelowOrnaments(
+		mapDesignInt->branchesContainerBelowOrnaments(depth));
 
         // Rotations
         if (bc->rotationsAutoDesign()) {

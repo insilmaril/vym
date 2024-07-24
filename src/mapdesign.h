@@ -24,6 +24,7 @@ template <typename T> class ConfigList {
     int count();
     void clear();
     QString save(const QString &attrName, QString (&f)(int));
+    QString saveBool(const QString &attrName);
 
   protected:
     T defaultValue;
@@ -90,11 +91,16 @@ class MapDesign {
 // Container layouts
   public:  
     Container::Layout branchesContainerLayout(int depth);
+    Container::VerticalAlignment branchesContainerVerticalAlignment(int depth);
+
     Container::Layout imagesContainerLayout(int depth);
+    bool branchesContainerBelowOrnaments(int depth);
 
   private:
-    ConfigList <Container::Layout> branchContainerLayouts;
-    ConfigList <Container::Layout> imageContainerLayouts;
+    ConfigList <Container::Layout> branchesContainerLayouts;
+    ConfigList <Container::Layout> imagesContainerLayouts;
+    ConfigList <bool> branchesContainerBelowOrnamentsInt;
+    ConfigList <Container::VerticalAlignment> branchesContainerVerticalAlignmentsInt;
 
 // Links
   public:

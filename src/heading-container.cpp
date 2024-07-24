@@ -27,7 +27,7 @@ void HeadingContainer::init()
     headingColorInt = QColor(Qt::black);
 
     layout = Vertical;
-    horizontalAlignment = AlignedLeft;
+    horizontalAlignmentInt = HorAlignedLeft;
 
     columnWidthInt = 40;  // Will be set from MapDesign in VymModel later
 }

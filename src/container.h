@@ -63,7 +63,8 @@ class Container : public QGraphicsRectItem {
         List};
 
     enum HorizontalDirection {LeftToRight, RightToLeft};
-    enum HorizontalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
+    enum HorizontalAlignment {HorAlignedLeft, HorAlignedCentered, HorAlignedRight};
+    enum VerticalAlignment {VertAlignedTop, VertAlignedCentered, VertAlignedBottom, VertAlignedUndefined};
 
     /*! Names of special points and */
     enum PointName {
@@ -112,6 +113,10 @@ class Container : public QGraphicsRectItem {
     static Layout layoutFromString(const QString &s);
     QString layoutString();
 
+    static QString verticalAlignmentString(int);
+    static VerticalAlignment verticalAlignmentFromString(const QString&);
+
+
     bool isFloating();          //! returns true, if parent container has Floating layout
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout
 
@@ -123,6 +128,7 @@ class Container : public QGraphicsRectItem {
     HorizontalDirection getHorizontalDirection();
 
     void setHorizontalAlignment(const HorizontalAlignment &a);
+    void setVerticalAlignment(const VerticalAlignment &a);
 
     /*! Aligns ownPoint of myself to targetPoint of target and returns 
         the position in coordinate system of myself.
@@ -172,7 +178,8 @@ class Container : public QGraphicsRectItem {
     qreal minimumWidth;
 
     HorizontalDirection horizontalDirection;
-    HorizontalAlignment horizontalAlignment;
+    HorizontalAlignment horizontalAlignmentInt;
+    VerticalAlignment verticalAlignmentInt;
 };
 
 #endif

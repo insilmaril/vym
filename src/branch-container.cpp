@@ -63,6 +63,7 @@ void BranchContainer::init()
 
     branchesContainerAutoLayout = true;
     branchesContainerLayoutInt = Container::Vertical;
+    branchesContainerBelowOrnamentsInt = false;
 
     scrollOpacity = 1;
 
@@ -244,6 +245,7 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         branchesContainer->containerType = Container::BranchesContainer;
         branchesContainer->zPos = Z_BRANCHES;
         branchesContainer->setLayout(branchesContainerLayoutInt);
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignmentInt);
 
         if (listContainer)
             listContainer->addContainer(branchesContainer);
@@ -348,7 +350,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
         if (!listContainer) {
             // Create and setup a listContainer *below* the ornamentsContainer
             innerContainer->setLayout(Vertical);
-            innerContainer->setHorizontalAlignment(AlignedLeft);
+            innerContainer->setHorizontalAlignment(HorAlignedLeft);
 
             // listContainer has one linkSpaceContainer left of branchesContainer
             listContainer = new Container;
@@ -417,8 +419,12 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
         deleteOuterContainer();
         if (listContainer)
             innerContainer->setLayout(Vertical);
-        else
-            innerContainer->setLayout(Horizontal);
+        else {
+            if (branchesContainerBelowOrnamentsInt)
+                innerContainer->setLayout(Vertical);
+            else
+                innerContainer->setLayout(Horizontal);
+        }
     } else if (branchesContainerLayoutInt == FloatingBounded && imagesContainerLayoutInt != FloatingBounded) {
         // b) Only branches are FloatingBounded
         deleteOuterContainer();
@@ -839,16 +845,33 @@ bool BranchContainer::hasFloatingBranchesLayout()
 
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &a)
 {
-    branchesContainerHorizontalAlignment = a;
+    branchesContainerHorizontalAlignmentInt = a;
     if (branchesContainer)
-        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
+        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignmentInt);
 }
 
-void BranchContainer::setBranchesContainerBrush(const QBrush &b)
+void BranchContainer::setBranchesContainerVerticalAlignment(const VerticalAlignment &a)
 {
-    branchesContainerBrush = b;
+    branchesContainerVerticalAlignmentInt = a;
     if (branchesContainer)
-        branchesContainer->setBrush(branchesContainerBrush);
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignmentInt);
+}
+
+void BranchContainer::setBranchesContainerBrush(const QBrush &b)    // FIXME-2 not used
+{
+    branchesContainerBrushInt = b;
+    if (branchesContainer)
+        branchesContainer->setBrush(branchesContainerBrushInt);
+}
+
+void BranchContainer::setBranchesContainerBelowOrnaments(bool b)
+{
+    branchesContainerBelowOrnamentsInt = b;
+}
+
+bool BranchContainer::branchesContainerBelowOrnaments()
+{
+    return branchesContainerBelowOrnamentsInt;
 }
 
 QRectF BranchContainer::headingRect()
@@ -1320,12 +1343,12 @@ void BranchContainer::reposition()
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                setBranchesContainerHorizontalAlignment(AlignedRight);
+                setBranchesContainerHorizontalAlignment(HorAlignedRight);
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerHorizontalAlignment(AlignedLeft);
+                setBranchesContainerHorizontalAlignment(HorAlignedLeft);
                 break;
             case UndefinedOrientation:
                 qWarning() << "BC::reposition - Undefined orientation in " << info();

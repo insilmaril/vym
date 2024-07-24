@@ -15,8 +15,7 @@ FlagRowContainer::FlagRowContainer()
     containerType = FlagRowCont;
     layout = Horizontal;
     horizontalDirection = LeftToRight;
-    horizontalAlignment = AlignedCentered;
-
+    horizontalAlignmentInt = HorAlignedCentered;
 }
 
 FlagRowContainer::~FlagRowContainer()
