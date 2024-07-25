@@ -63,7 +63,7 @@ class Container : public QGraphicsRectItem {
         List};
 
     enum HorizontalDirection {LeftToRight, RightToLeft};
-    enum HorizontalAlignment {HorAlignedLeft, HorAlignedCentered, HorAlignedRight};
+    enum HorizontalAlignment {HorAlignedLeft, HorAlignedCentered, HorAlignedRight, HorAlignedUndefined};
     enum VerticalAlignment {VertAlignedTop, VertAlignedCentered, VertAlignedBottom, VertAlignedUndefined};
 
     /*! Names of special points and */
@@ -113,6 +113,8 @@ class Container : public QGraphicsRectItem {
     static Layout layoutFromString(const QString &s);
     QString layoutString();
 
+    static QString horizontalAlignmentString(int);
+    static HorizontalAlignment horizontalAlignmentFromString(const QString&);
     static QString verticalAlignmentString(int);
     static VerticalAlignment verticalAlignmentFromString(const QString&);
 

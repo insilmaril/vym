@@ -156,12 +156,13 @@ QString Container::info (const QString &prefix)
         //+ QString(" a: %1").arg(qRound(rotation()))
         //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
         //+ QString(" pos: %1").arg(toS(pos(), 0))
-        //+ QString(" rect: %1").arg(toS(rect(), 0))
+        + QString(" rect: %1").arg(toS(rect(), 0))
         //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
         + QString(" Layout: %1").arg(layoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
         + QString(" valign: %1").arg(verticalAlignmentString(verticalAlignmentInt))
+        + QString(" halign: %1").arg(horizontalAlignmentString(horizontalAlignmentInt))
         //+ QString(" Scale: %1").arg(scale())
         ;
 }
@@ -311,6 +312,29 @@ QString Container::layoutString()
     return layoutString(layout);
 }
 
+QString Container::horizontalAlignmentString(int a)  // Pass horAlignment
+{
+    switch (a) {
+        case HorAlignedLeft:
+            return "HorAlignedLeft";
+        case HorAlignedRight:
+            return "HorAlignedRight";
+        case HorAlignedCentered:
+            return "HorAlignedCentered";
+        default:
+            break;
+    }
+    return QString("undefinded hor aligment: %1").arg(a);
+}
+
+Container::HorizontalAlignment Container::horizontalAlignmentFromString(const QString &s)
+{
+    if (s == "HorAlignedLeft") return HorAlignedLeft;
+    if (s == "HorAlignedRight") return HorAlignedRight;
+    if (s == "HorAlignedCentered") return HorAlignedCentered;
+    return HorAlignedUndefined;
+}
+
 QString Container::verticalAlignmentString(int a)  // Pass vertAlignment
 {
     switch (a) {
@@ -323,7 +347,7 @@ QString Container::verticalAlignmentString(int a)  // Pass vertAlignment
         default:
             break;
     }
-    return "undefinded vert aligment";
+    return QString("undefinded vert aligment: %1").arg(a);
 }
 
 Container::VerticalAlignment Container::verticalAlignmentFromString(const QString &s)

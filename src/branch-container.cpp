@@ -246,6 +246,7 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         branchesContainer->zPos = Z_BRANCHES;
         branchesContainer->setLayout(branchesContainerLayoutInt);
         branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignmentInt);
+        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignmentInt);
 
         if (listContainer)
             listContainer->addContainer(branchesContainer);
@@ -1343,12 +1344,24 @@ void BranchContainer::reposition()
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                setBranchesContainerHorizontalAlignment(HorAlignedRight);
+                if (branchesContainerBelowOrnamentsInt) {
+                    setBranchesContainerHorizontalAlignment(HorAlignedCentered);
+                    innerContainer->setHorizontalAlignment(HorAlignedCentered);
+                } else {
+                    setBranchesContainerHorizontalAlignment(HorAlignedRight);
+                }
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerHorizontalAlignment(HorAlignedLeft);
+
+                // Playing...
+                if (branchesContainerBelowOrnamentsInt) {
+                    setBranchesContainerHorizontalAlignment(HorAlignedCentered);
+                    innerContainer->setHorizontalAlignment(HorAlignedCentered);
+                } else {
+                    setBranchesContainerHorizontalAlignment(HorAlignedLeft);
+                }
                 break;
             case UndefinedOrientation:
                 qWarning() << "BC::reposition - Undefined orientation in " << info();
