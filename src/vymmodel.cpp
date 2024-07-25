@@ -2738,7 +2738,10 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
             if (agent.setTicket(url)) {
                 setAttribute(bi, "Jira.key", agent.key());
                 getJiraData(false, bi);
-            }
+
+            } else
+                setHeading(agent.key(), bi);
+
             updateJiraFlag(bi);
 
             // Check for Confluence
