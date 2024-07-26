@@ -29,7 +29,7 @@ template <typename T> T ConfigList<T>::tryAt(int i) {
 }
 
 template <typename T> void ConfigList<T>::setAt(int i, const T &val) {
-    if (i < 0) {
+    if (i <= 0) {
         // Set val for first level and clear all others
         qlist.clear();
         qlist << val;
@@ -59,8 +59,8 @@ template <typename T> QString ConfigList<T>::save(
     for (int i = 0; i < qlist.size(); ++i) 
         s += xml.singleElement("md",
                 xml.attribute( "key", attrName) + 
-                xml.attribute( "val", f(qlist.at(i))) + 
-                xml.attribute( "d", QString("%1").arg(i))
+                xml.attribute( "d", QString("%1").arg(i)) +
+                xml.attribute( "val", f(qlist.at(i)))
                 );
     return s;
 }
@@ -72,8 +72,34 @@ template <typename T> QString ConfigList<T>::saveBool(
     for (int i = 0; i < qlist.size(); ++i) 
         s += xml.singleElement("md",
                 xml.attribute( "key", attrName) + 
-                xml.attribute( "val", toS(qlist.at(i))) + 
-                xml.attribute( "d", QString("%1").arg(i))
+                xml.attribute( "d", QString("%1").arg(i)) +
+                xml.attribute( "val", toS(qlist.at(i)))
+                );
+    return s;
+}
+
+template <typename T> QString ConfigList<T>::saveColor(
+        const QString &attrName) {
+    XMLObj xml;
+    QString s;
+    for (int i = 0; i < qlist.size(); ++i) 
+        s += xml.singleElement("md",
+                xml.attribute( "key", attrName) + 
+                xml.attribute( "d", QString("%1").arg(i)) +
+                xml.attribute( "val", qlist.at(i).name(QColor::HexArgb))
+                );
+    return s;
+}
+
+template <typename T> QString ConfigList<T>::saveInt(
+        const QString &attrName) {
+    XMLObj xml;
+    QString s;
+    for (int i = 0; i < qlist.size(); ++i) 
+        s += xml.singleElement("md",
+                xml.attribute( "key", attrName) + 
+                xml.attribute( "d", QString("%1").arg(i)) +
+                xml.attribute( "val", QString("%1").arg(qlist.at(i)))
                 );
     return s;
 }
@@ -110,12 +136,14 @@ void MapDesign::init()
         QPalette palette = qApp->palette();
         backgroundColorInt = QColor(palette.color(QPalette::Base));
 
+        innerFramePenWidths << 2;
         innerFramePenColors << QColor(Qt::white);
         innerFrameBrushColors << QColor(85, 85, 127);
 
         innerFramePenColors << QColor(Qt::blue);
         innerFrameBrushColors << QColor(25, 25, 127);
 
+        outerFramePenWidths << 2;
         outerFramePenColors << QColor(Qt::green);
         outerFramePenColors << QColor(Qt::red);
         outerFramePenColors << QColor(Qt::green);
@@ -164,8 +192,8 @@ void MapDesign::init()
     // Layout of children images 
     imagesContainerLayouts << Container::GridColumns;
 
-    // Layout children branches below heading or side by side?
-    branchesContainerBelowOrnamentsInt << false;
+    // Layout children branches above/below heading or side by side?
+    branchesContainerAndOrnamentsVerticalInt << false;
     branchesContainerVerticalAlignmentsInt << Container::VertAlignedCentered;
 
     // Heading colors
@@ -256,7 +284,7 @@ QString MapDesign::updateModeString(const UpdateMode &mode)
     }
 }
 
-bool MapDesign::setElement(const QString &key, const QString &val, const QString &d)    // FIXME-2 should also return undo/redo commands to VymModel, if called from there?
+bool MapDesign::setElement(const QString &key, const QString &val, const QString &d)    // FIXME-3 should also return undo/redo commands to VymModel, if called from there?
 {
     //qDebug() << "MD::setElement k=" << key << " v=" << val << " d=" << d;
     
@@ -272,8 +300,8 @@ bool MapDesign::setElement(const QString &key, const QString &val, const QString
     if (key == "branchesLayout") {
         branchesContainerLayouts.setAt(depth, Container::layoutFromString(val));
         return true;
-    } else if (key == "childrenBelowHeading") {
-        branchesContainerBelowOrnamentsInt.setAt(depth, QVariant(val).toBool());
+    } else if (key == "childrenAndHeadingVertical") {
+        branchesContainerAndOrnamentsVerticalInt.setAt(depth, QVariant(val).toBool());
         return true;
     } else if (key == "childrenVertAlignment") {
         branchesContainerVerticalAlignmentsInt.setAt(depth, Container::verticalAlignmentFromString(val));
@@ -281,10 +309,39 @@ bool MapDesign::setElement(const QString &key, const QString &val, const QString
     } else if (key == "imagesLayout") {
         imagesContainerLayouts.setAt(depth, Container::layoutFromString(val));
         return true;
-        
+    } else if (key == "innerFrameType") {
+        innerFrameTypes.setAt(depth, FrameContainer::frameTypeFromString(val));
+        return true;
+    } else if (key == "innerFrameBrushColor") {
+        innerFrameBrushColors.setAt(depth, QColor(val));
+        return true;
+    } else if (key == "innerFramePenColor") {
+        innerFramePenColors.setAt(depth, QColor(val));
+        return true;
+    } else if (key == "innerFramePenWidth") {
+        innerFramePenWidths.setAt(depth, val.toInt());
+        return true;
+    } else if (key == "innerFrameUpdateWhenRelinking") {
+        innerFrameUpdateWhenRelinking.setAt(depth, QVariant(val).toBool());
+        return true;
+    } else if (key == "outerFrameType") {
+        outerFrameTypes.setAt(depth, FrameContainer::frameTypeFromString(val));
+        return true;
+    } else if (key == "outerFrameBrushColor") {
+        outerFrameBrushColors.setAt(depth, QColor(val));
+        return true;
+    } else if (key == "outerFramePenColor") {
+        outerFramePenColors.setAt(depth, QColor(val));
+        return true;
+    } else if (key == "outerFramePenWidth") {
+        outerFramePenWidths.setAt(depth, val.toInt());
+        return true;
+    } else if (key == "outerFrameUpdateWhenRelinking") {
+        outerFrameUpdateWhenRelinking.setAt(depth, QVariant(val).toBool());
+        return true;
     } else if (key == "linkStyle") {
         auto style = LinkObj::styleFromString(val);
-        setLinkStyle(style, depth);
+        linkStyles.setAt(depth, style);
         return true;
     }
 
@@ -306,9 +363,9 @@ Container::Layout MapDesign::imagesContainerLayout(int depth)
     return imagesContainerLayouts.tryAt(depth);
 }
 
-bool MapDesign::branchesContainerBelowOrnaments(int depth)
+bool MapDesign::branchesContainerAndOrnamentsVertical(int depth)
 {
-    return branchesContainerBelowOrnamentsInt.tryAt(depth);
+    return branchesContainerAndOrnamentsVerticalInt.tryAt(depth);
 }
 
 LinkObj::ColorHint MapDesign::linkColorHint()
@@ -336,30 +393,9 @@ LinkObj::Style MapDesign::linkStyle(int depth)
     return linkStyles.tryAt(depth);
 }
 
-bool MapDesign::setLinkStyle(LinkObj::Style style, int depth)
+void MapDesign::setLinkStyle(LinkObj::Style style, int depth)
 {
-    if (depth < 0) {
-        // Set style for rootItem level, meaning *all* levels
-        linkStyles.clear();
-        linkStyles << style;
-        return true;
-    }
-
-    if (depth < linkStyles.count()) {
-        // Replace existing level
-        linkStyles.setAt(depth, style);
-        return true;
-    }
-
-    if (depth == linkStyles.count()) {
-        // Append level
-        linkStyles << style;
-        return true;
-    }
-
-    // Arbitrary level not allowed
-    qDebug() << "MapDesign::setLinkStyle not allowed to set for depth=" << depth;
-    return false;
+    linkStyles.setAt(depth, style);
 }
 
 qreal MapDesign::linkWidth()
@@ -533,6 +569,14 @@ QColor MapDesign::framePenColor( bool useInnerFrame, const int &depth)
         return outerFramePenColors.tryAt(depth);
 }
 
+int MapDesign::framePenWidth( bool useInnerFrame, const int &depth)
+{
+    if (useInnerFrame)
+        return innerFramePenWidths.tryAt(depth);
+    else
+        return outerFramePenWidths.tryAt(depth);
+}
+
 bool MapDesign::updateFrameWhenRelinking(bool useInnerFrame, const int &depth)
 {
     if (useInnerFrame)
@@ -638,8 +682,20 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
     s += imagesContainerLayouts.save("imagesLayout", Container::layoutString);
 
     s += branchesContainerLayouts.save("branchesLayout", Container::layoutString);
-    s += branchesContainerBelowOrnamentsInt.saveBool("childrenBelowHeading");
+    s += branchesContainerAndOrnamentsVerticalInt.saveBool("childrenAndHeadingVertical");
     s += branchesContainerVerticalAlignmentsInt.save("childrenVertAlignment", Container::verticalAlignmentString);
+
+    s += innerFrameTypes.save("innerFrameType", FrameContainer::frameTypeString);
+    s += innerFrameBrushColors.saveColor("innerFrameBrushColor");
+    s += innerFramePenColors.saveColor("innerFramePenColor");
+    s += innerFramePenWidths.saveInt("innerFramePenWidth");
+    s += innerFrameUpdateWhenRelinking.saveBool("innerFrameUpdateWhenRelinking");
+
+    s += outerFrameTypes.save("outerFrameType", FrameContainer::frameTypeString);
+    s += outerFrameBrushColors.saveColor("outerFrameBrushColor");
+    s += outerFramePenColors.saveColor("outerFramePenColor");
+    s += outerFramePenWidths.saveInt("outerFramePenWidth");
+    s += outerFrameUpdateWhenRelinking.saveBool("outerFrameUpdateWhenRelinking");
 
     xml.decIndent();
     s += xml.endElement("mapdesign");

@@ -3,6 +3,7 @@
 
 #include "branch-container.h"
 #include "container.h"
+#include "geometry.h"
 #include "tmp-parent-container.h"
 
 #include "branchitem.h"
@@ -233,14 +234,33 @@ QPointF Container::pointByName(PointName pn)
 }
 
 QPointF Container::topLeft() {return rect().topLeft();}
+
 QPointF Container::topCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().top());}
+
 QPointF Container::topRight() {return rect().topRight();}
+
 QPointF Container::leftCenter() {return QPointF(rect().left(), (rect().bottom() + rect().top() ) /2);}
+
 QPointF Container::center() {return rect().center();}
+
 QPointF Container::rightCenter() {return QPointF(rect().right(), (rect().bottom() + rect().top() ) /2);}
+
 QPointF Container::bottomLeft() {return rect().bottomLeft();}
+
 QPointF Container::bottomCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().bottom());}
+
 QPointF Container::bottomRight() {return rect().bottomRight();}
+
+QPointF Container::nearestEdge(const QPointF &sp)
+{
+    QList <QPointF> edges;
+    edges << mapToScene(topCenter());
+    edges << mapToScene(bottomCenter());
+    edges << mapToScene(leftCenter());
+    edges << mapToScene(rightCenter());
+
+    return edges.at(nearestPoint(edges, sp));
+}
 
 void Container::setLayout(const Layout &l)
 {

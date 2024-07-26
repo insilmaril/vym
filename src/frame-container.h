@@ -27,6 +27,7 @@ class FrameContainer : public XMLObj, public Container {
     // Interfaces
     FrameType frameType();
     static FrameType frameTypeFromString(const QString &);
+    static QString frameTypeString(int);
     QString frameTypeString();
     void setFrameDesignAuto(const bool &);
     void setFrameType(const FrameType &);

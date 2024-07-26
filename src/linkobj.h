@@ -24,6 +24,12 @@ class LinkObj : public MapObj {
         Undefined
     };
 
+    enum PosHint {
+        BottomInnerCorner,
+        BottomOuterCorner,
+        NearestEdge,
+        Center};
+
     /*! Hint if link should use the default link color or the color of heading
      */
     enum ColorHint {

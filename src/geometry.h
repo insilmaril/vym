@@ -10,6 +10,8 @@ qreal distance(const QPointF &p, const QPointF &q);
 
 qreal getAngle(const QPointF &);
 
+int nearestPoint(QList <QPointF> &points, const QPointF &rp);
+
 class Vector : public QPointF {
   public:
     Vector();

@@ -105,6 +105,7 @@ class Container : public QGraphicsRectItem {
     QPointF bottomLeft();
     QPointF bottomCenter();
     QPointF bottomRight();
+    QPointF nearestEdge(const QPointF &sp); // Return middle of nearest edge in relation to p (scene coord)
 
     void setLayout(const Layout &ltype);
 

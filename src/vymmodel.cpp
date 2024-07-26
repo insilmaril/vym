@@ -6301,6 +6301,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             bc->setFrameType(true, mapDesignInt->frameType(true, depth));
             bc->setFrameBrushColor(true, mapDesignInt->frameBrushColor(true, depth));
             bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
+            bc->setFramePenWidth(true, mapDesignInt->framePenWidth(true, depth));
         }
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
@@ -6308,6 +6309,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             bc->setFrameType(false, mapDesignInt->frameType(false, depth));
             bc->setFrameBrushColor(false, mapDesignInt->frameBrushColor(false, depth));
             bc->setFramePenColor(false, mapDesignInt->framePenColor(false, depth));
+            bc->setFramePenWidth(false, mapDesignInt->framePenWidth(false, depth));
         }
 
         // Column width and font
@@ -6315,11 +6317,6 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             HeadingContainer *hc = bc->getHeadingContainer();
             hc->setColumnWidth(mapDesignInt->headingColumnWidth(depth));
             hc->setFont(mapDesignInt->font());
-        }
-
-        if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
-            qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
-            bc->updateUpLink();
         }
 
         // Layouts
@@ -6337,8 +6334,15 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         }
 	bc->setBranchesContainerVerticalAlignment(
 		mapDesignInt->branchesContainerVerticalAlignment(depth));
-	bc->setBranchesContainerBelowOrnaments(
-		mapDesignInt->branchesContainerBelowOrnaments(depth));
+	bc->setBranchesContainerAndOrnamentsVertical(
+		mapDesignInt->branchesContainerAndOrnamentsVertical(depth));
+
+        // Links and bottomlines
+        if (updateMode & MapDesign::LinkStyleChanged) {
+            qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
+            bc->updateUpLink();
+        }
+
 
         // Rotations
         if (bc->rotationsAutoDesign()) {

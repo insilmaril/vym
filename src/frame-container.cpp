@@ -131,25 +131,30 @@ FrameContainer::FrameType FrameContainer::frameTypeFromString(const QString &s)
     return NoFrame;
 }
 
-QString FrameContainer::frameTypeString()
+QString FrameContainer::frameTypeString(int ftype)
 {
-    switch (frameTypeInt) {
-    case Rectangle:
-        return "Rectangle";
-    case RoundedRectangle:
-        return "RoundedRectangle";
-    case Ellipse:
-        return "Ellipse";
-    case Circle:
-        return "Circle";
-    case Cloud:
-        return "Cloud";
-    case NoFrame:
-        return "NoFrame";
-    default:
-        qWarning() << "FrameContainer::setFrameType  unknown frame type " << frameTypeInt;
+    switch (ftype) {
+        case Rectangle:
+            return "Rectangle";
+        case RoundedRectangle:
+            return "RoundedRectangle";
+        case Ellipse:
+            return "Ellipse";
+        case Circle:
+            return "Circle";
+        case Cloud:
+            return "Cloud";
+        case NoFrame:
+            return "NoFrame";
+        default:
+            qWarning() << "FrameContainer::setFrameType  unknown frame type " << ftype;
     }
     return QString();
+}
+
+QString FrameContainer::frameTypeString()
+{
+    return frameTypeString(frameTypeInt);
 }
 
 void FrameContainer::setFrameType(const FrameType &t)
