@@ -1211,6 +1211,49 @@ TreeItem *MapEditor::getItemDirectBelow(TreeItem *ti)
 
 TreeItem *MapEditor::getItemBelow(TreeItem *selti)
 {
+    // Create list of items below currently selected on
+    // "below" considers rotation of view
+
+    qDebug() << "Get item below " << selti->headingText() << "  a=" << rotationInt;
+    if (selti) {
+        QList <TreeItem*> items;
+        QList <QPointF> points;
+
+        QTransform t;
+        t.rotate( - rotationInt);
+        // Calculate reference point: Center of selected item
+        QPointF rp;
+        Container *c;
+        if (selti->hasTypeBranch()) {
+            c = ((BranchItem*)selti)->getBranchContainer()->getHeadingContainer();
+            rp = mapFromScene(c->mapToScene(c->center()));
+        }
+
+        // Branches
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
+        model->nextBranch(cur, prev);
+        while (cur) {
+            BranchContainer *bc;
+            bc = cur->getBranchContainer();
+            if (bc && bc->isVisible()) {
+                HeadingContainer *hc = bc->getHeadingContainer();
+                QPointF p = mapFromScene(hc->mapToScene(hc->center())) - rp;
+
+                if (abs(p.x()) < p.y() && cur != selti) {
+                    items << cur;
+                    points << p;
+                }
+            }
+            model->nextBranch(cur, prev);
+        }
+
+        if (!points.empty())
+            return items.at(nearestPoint(points, QPointF(0,0)));
+    }
+    return nullptr;
+
+    // Old implementation, still needed? FIXME-2
     if (selti) {
         int dz = selti->depth(); // original depth
         bool invert = false;

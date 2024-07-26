@@ -59,11 +59,9 @@ int nearestPoint(QList <QPointF> &points, const QPointF &rp)
                 d_min = d;
                 r = i;
             }
-        i++;
         qDebug() << "  d_min=" << d_min << "  r=" << r;
     }
 
-    qDebug() << "nearestPoint: " << points << " rp=" << rp << "r=" << r;
     return r;
 }
 
