@@ -4355,7 +4355,8 @@ void Main::fileLoadRecent()
         initProgressCounter();
         QString fn = action->data().toString();
         File::FileType type = getMapType(fn);
-        fileLoad(fn, File::NewMap, type);
+        if( File::Success == fileLoad(fn, File::NewMap, type) )
+            lastMapDir.setPath(fn.left(fn.lastIndexOf("/")));
         removeProgressCounter();
         tabWidget->setCurrentIndex(tabWidget->count() - 1);
     }
@@ -4416,6 +4417,8 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
         this, tr("Save map as"), lastMapDir.path(), filter, nullptr,
         QFileDialog::DontConfirmOverwrite);
     if (!fn.isEmpty()) {
+        lastMapDir.setPath(fn.left(fn.lastIndexOf("/"))); // Always update last directory
+
         // Check for existing file
         if (QFile(fn).exists()) {
             // Check if the existing file is writable
@@ -4435,7 +4438,6 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
             mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
             mb.exec();
             if (mb.clickedButton() != overwriteButton) return;
-            lastMapDir.setPath(fn.left(fn.lastIndexOf("/")));
         }
         else {
             // New file, add extension to filename, if missing
@@ -4497,6 +4499,8 @@ void Main::fileSaveAsDefault()
             "VYM map (*.vym)", nullptr, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
+            lastMapDir.setPath(fn.left(fn.lastIndexOf("/"))); // Always update last directory
+
             // Check for existing file
             if (QFile(fn).exists()) {
                 // Check if the existing file is writable
