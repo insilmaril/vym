@@ -25,7 +25,7 @@ class XLinkObj;
 
 class TreeItem : public XMLObj {
   public:
-    enum Type { Undefined, MapCenter, Branch, Image, Attribute, XLinkType };
+    enum Type { Undefined, MapCenter, Branch, Image, Attribute, XLinkType };    // FIXME-3 Remove type MapCenter, not needed.
     enum HideTmpMode { HideNone, HideExport };
 
     TreeItem(TreeItem *parent = nullptr);

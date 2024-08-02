@@ -26,7 +26,7 @@ void HeadingContainer::init()
     headingInt.setText(" ");
     headingColorInt = QColor(Qt::black);
 
-    layout = Vertical;
+    layoutInt = Vertical;
     horizontalAlignmentInt = HorAlignedLeft;
 
     columnWidthInt = 40;  // Will be set from MapDesign in VymModel later
@@ -142,6 +142,7 @@ void HeadingContainer::setHeading(const VymText &vt)
         w = ti->boundingRect().width();
         w_max = (w_max < w) ? w : w_max;
     }
+
     // Translate all lines to move center to origin
     QPointF v(-w_max / 2, - h / 2);
 

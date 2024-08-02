@@ -165,12 +165,21 @@ class MapEditor : public QGraphicsView {
             bool findNearCenter = false); //! only return BranchItem
     void toggleWinter();
 
+    enum RadarDirection {
+        UpDirection,
+        DownDirection,
+        LeftDirection,
+        RightDirection
+    };
+
+    bool isContainerCloserInDirection(Container *c1, Container *c2, const qreal &d_min, const QPoint &v, RadarDirection radarDir);
+    TreeItem* getItemInDirection(TreeItem *ti, RadarDirection);
+    TreeItem* getItemFromGeometry(TreeItem *ti, RadarDirection);
+    TreeItem* getItemFromOrgChart(TreeItem *ti, RadarDirection);
+    TreeItem* getItemFromClassicMap(TreeItem *ti, RadarDirection);
+
     TreeItem* getItemDirectAbove(TreeItem *ti);
-    TreeItem* getItemAbove(TreeItem *);
     TreeItem* getItemDirectBelow( TreeItem *ti);
-    TreeItem* getItemBelow(TreeItem *ti);
-    BranchItem* getLeftBranch(TreeItem *ti);
-    BranchItem* getRightBranch(TreeItem *ti);
 
   private:
     // Toggle objects by moving the cursor up/down with shift modifier
@@ -256,6 +265,19 @@ class MapEditor : public QGraphicsView {
     QPoint exportOffset; // set before export, used in save
 
     //////////// Selection related
+  public:
+    enum SelectionMode {
+        AutoSelection,
+        ClassicSelection,
+        OrgChartSelection,
+        GeometricSelection
+    };
+
+  SelectionMode currentSelectionMode(TreeItem *);
+
+  private:
+    SelectionMode selectionMode;
+
   signals:
     void selectionChanged(const QItemSelection &, const QItemSelection &);
 

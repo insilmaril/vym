@@ -31,7 +31,7 @@ void Container::copy(Container *other)
     originalPos = other->originalPos;
     name = other->name;
 
-    layout = other->layout;
+    layoutInt = other->layoutInt;
     horizontalDirection = other->horizontalDirection;
     horizontalAlignmentInt = other->horizontalAlignmentInt;
     verticalAlignmentInt = other->verticalAlignmentInt;
@@ -40,7 +40,7 @@ void Container::copy(Container *other)
 void Container::init()
 {
     containerType = UndefinedType;
-    layout = Horizontal;
+    layoutInt = Horizontal;
 
     // subcontainers usually may influence position
     // Only mapCenters will stay where they are
@@ -251,6 +251,31 @@ QPointF Container::bottomCenter() {return QPointF((rect().right() + rect().left(
 
 QPointF Container::bottomRight() {return rect().bottomRight();}
 
+qreal Container::distance(Container *other)
+{
+    QList <QPointF> p_list;
+    p_list << mapToScene(topLeft());
+    p_list << mapToScene(topRight());
+    p_list << mapToScene(bottomRight());
+    p_list << mapToScene(bottomLeft());
+
+    QList <QPointF> q_list;
+    q_list << other->mapToScene(other->topLeft());
+    q_list << other->mapToScene(other->topRight());
+    q_list << other->mapToScene(other->bottomRight());
+    q_list << other->mapToScene(other->bottomLeft());
+
+    qreal d_min = -1;
+    foreach (auto p, p_list) {
+        foreach (auto q, q_list) {
+            qreal d = Geometry::distance(p, q);
+            if (d_min < 0 || d < d_min)
+                d_min = d;
+        }
+    }
+    return d_min;
+}
+
 QPointF Container::nearestEdge(const QPointF &sp)
 {
     QList <QPointF> edges;
@@ -264,12 +289,12 @@ QPointF Container::nearestEdge(const QPointF &sp)
 
 void Container::setLayout(const Layout &l)
 {
-    layout = l;
+    layoutInt = l;
 }
 
-Container::Layout Container::getLayout()
+Container::Layout Container::layout()
 {
-    return layout;
+    return layoutInt;
 }
 
 Container::Layout Container::layoutFromString(const QString &s)
@@ -329,7 +354,7 @@ QString Container::layoutString(int l)  // Pass layout
 
 QString Container::layoutString()
 {
-    return layoutString(layout);
+    return layoutString(layoutInt);
 }
 
 QString Container::horizontalAlignmentString(int a)  // Pass horAlignment
@@ -388,7 +413,7 @@ bool Container::isFloating()
 }
 
 bool Container::hasFloatingLayout() {
-    if (layout == FloatingBounded || layout == FloatingFree)
+    if (layoutInt == FloatingBounded || layoutInt == FloatingFree)
         return true;
     else
         return false;
@@ -538,7 +563,7 @@ void Container::reposition()
 
     // c) Align my own containers
 
-    switch (layout) {
+    switch (layoutInt) {
         case BoundingFloats:
             {
                 // qdbg() << ind() << " - BF starting for " << info();

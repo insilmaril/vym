@@ -75,7 +75,7 @@ void ImageContainer::init()
     imageID = imageLastID;
 
     imageType = ImageContainer::Undefined;
-    layout =  Container::Horizontal;
+    layoutInt =  Container::Horizontal;
 
     svgItem = nullptr;
     pixmapItem = nullptr;

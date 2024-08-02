@@ -105,11 +105,12 @@ class Container : public QGraphicsRectItem {
     QPointF bottomLeft();
     QPointF bottomCenter();
     QPointF bottomRight();
+    qreal distance(Container* other);       // Minimum distance to other container in scene coordinates
     QPointF nearestEdge(const QPointF &sp); // Return middle of nearest edge in relation to p (scene coord)
 
     void setLayout(const Layout &ltype);
 
-    Layout getLayout();
+    Layout layout();
     static QString layoutString(int);
     static Layout layoutFromString(const QString &s);
     QString layoutString();
@@ -176,7 +177,7 @@ class Container : public QGraphicsRectItem {
     Container* centralContainer;  //! Center of this container should be in origin of a set of containers 
     QString name;
 
-    Layout layout;
+    Layout layoutInt;
 
     qreal minimumWidth;
 
