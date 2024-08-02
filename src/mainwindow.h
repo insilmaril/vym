@@ -124,6 +124,7 @@ class Main : public QMainWindow {
     void fileRestoreSession();
   private slots:
     void fileLoadRecent();
+    void fileClearRecent();
     void addRecentMap(const QString &);
     void fileSave(VymModel *, const File::SaveMode &);
     void fileSave();
@@ -433,6 +434,7 @@ class Main : public QMainWindow {
     QMenu *recentFilesMenu;
     enum { MaxRecentFiles = 20 };
     QAction *recentFileActions[MaxRecentFiles];
+    QAction *actionRecentFilesClear;
 
     QAction *macroActions[48];
     QStringList macro;
@@ -464,6 +466,7 @@ class Main : public QMainWindow {
     QAction *actionFileSave;
     QAction *actionFilePrint;
     QAction *actionFileExitVym;
+    QAction *actionClearRecent;
     QAction *actionMapProperties;
     QAction *actionFileExportLast;
     QAction *actionFileExportConfluence;

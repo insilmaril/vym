@@ -1444,6 +1444,12 @@ void Main::setupFileActions()
     fileLastMapsMenu = fileMenu->addMenu(tr("Open Recent", "File menu"));
     fileMenu->addSeparator();
 
+    a = new QAction(tr("&Clear Menu", "Open Recent menu"), this);
+    a->setEnabled(false);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileClearRecent()));
+    fileLastMapsMenu->addAction(a);
+    actionClearRecent = a;
+
     a = new QAction(QPixmap(":/filesave.svg"), tr("&Save...", "File menu"),
                     this);
     switchboard.addSwitch("fileMapSave", shortcutScope, a, tag);
@@ -3648,6 +3654,9 @@ void Main::setupContextMenus()
         connect(recentFileActions[i], SIGNAL(triggered()), this,
                 SLOT(fileLoadRecent()));
     }
+    fileLastMapsMenu->addSeparator();
+    fileLastMapsMenu->addAction(actionClearRecent); // See Main::fileClearRecent()
+
     setupRecentMapsMenu();
 }
 
@@ -3666,6 +3675,8 @@ void Main::setupRecentMapsMenu()
     }
     for (int j = numRecentFiles; j < MaxRecentFiles; ++j)
         recentFileActions[j]->setVisible(false);
+
+    actionClearRecent->setEnabled(!files.empty());
 }
 
 void Main::setupMacros()
@@ -4364,6 +4375,12 @@ void Main::fileLoadRecent()
     }
 }
 
+void Main::fileClearRecent()
+{
+    settings.setValue("/mainwindow/recentFileList", QStringList());
+    setupRecentMapsMenu();
+}
+
 void Main::addRecentMap(const QString &fileName)
 {
 
@@ -4476,7 +4493,10 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
 
         // Set name of tab
         if (savemode == File::CompleteMap)
+        {
+            addRecentMap(m->getFileName());
             updateTabName(m);
+        }
         else { // Renaming map to original name, because we only saved the
                // selected part of it
             m->setFilePath(fn_org);
