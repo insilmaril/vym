@@ -2090,7 +2090,7 @@ void VymModel::saveState(TreeItem *undoSel, const QString &uc,
     saveStateOld(File::CodeBlock, undoSelection, uc, redoSelection, rc, comment, nullptr);  // "Normal" saveState (TI *undoSel, uc, TI *redoSel, rc, comment)
 }
 
-void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-09 Check where this is used. Rewrite everywhere for saveStateNew format
+void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-00 Check where this is used. Rewrite everywhere for saveStateNew format
     // - if only used for single command, don't build block and adapt comment
     // - add checks, that block is really ended!
     // - Currently used for moving/relinking in MapEditor
@@ -2738,7 +2738,10 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
             if (agent.setTicket(url)) {
                 setAttribute(bi, "Jira.key", agent.key());
                 getJiraData(false, bi);
-            }
+
+            } else
+                setHeading(agent.key(), bi);
+
             updateJiraFlag(bi);
 
             // Check for Confluence
@@ -6298,6 +6301,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             bc->setFrameType(true, mapDesignInt->frameType(true, depth));
             bc->setFrameBrushColor(true, mapDesignInt->frameBrushColor(true, depth));
             bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
+            bc->setFramePenWidth(true, mapDesignInt->framePenWidth(true, depth));
         }
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
@@ -6305,33 +6309,40 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             bc->setFrameType(false, mapDesignInt->frameType(false, depth));
             bc->setFrameBrushColor(false, mapDesignInt->frameBrushColor(false, depth));
             bc->setFramePenColor(false, mapDesignInt->framePenColor(false, depth));
+            bc->setFramePenWidth(false, mapDesignInt->framePenWidth(false, depth));
         }
 
         // Column width and font
         if (updateMode & MapDesign::CreatedByUser || updateMode & MapDesign::LoadingMap) {
             HeadingContainer *hc = bc->getHeadingContainer();
-            hc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
+            hc->setColumnWidth(mapDesignInt->headingColumnWidth(depth));
             hc->setFont(mapDesignInt->font());
-        }
-
-        if (updateMode & MapDesign::LinkStyleChanged) { // FIXME-2 testing
-            qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
-            bc->updateUpLink();
         }
 
         // Layouts
         if (bc->branchesContainerAutoLayout) {
                 bc->setBranchesContainerLayout(
-                        mapDesignInt->branchesContainerLayout(selbi->depth()));
+                        mapDesignInt->branchesContainerLayout(depth));
                 selbiChanged = true;
-                        mapDesignInt->branchesContainerLayout(selbi->depth());
+                        mapDesignInt->branchesContainerLayout(depth);
         }
 
         if (bc->imagesContainerAutoLayout) {
                 bc->setImagesContainerLayout(
-                        mapDesignInt->imagesContainerLayout(selbi->depth()));
+                        mapDesignInt->imagesContainerLayout(depth));
                 selbiChanged = true;
         }
+	bc->setBranchesContainerVerticalAlignment(
+		mapDesignInt->branchesContainerVerticalAlignment(depth));
+	bc->setBranchesContainerAndOrnamentsVertical(
+		mapDesignInt->branchesContainerAndOrnamentsVertical(depth));
+
+        // Links and bottomlines
+        if (updateMode & MapDesign::LinkStyleChanged) {
+            qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
+            bc->updateUpLink();
+        }
+
 
         // Rotations
         if (bc->rotationsAutoDesign()) {

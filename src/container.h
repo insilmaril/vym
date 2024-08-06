@@ -63,7 +63,8 @@ class Container : public QGraphicsRectItem {
         List};
 
     enum HorizontalDirection {LeftToRight, RightToLeft};
-    enum HorizontalAlignment {AlignedLeft, AlignedCentered, AlignedRight};
+    enum HorizontalAlignment {HorAlignedLeft, HorAlignedCentered, HorAlignedRight, HorAlignedUndefined};
+    enum VerticalAlignment {VertAlignedTop, VertAlignedCentered, VertAlignedBottom, VertAlignedUndefined};
 
     /*! Names of special points and */
     enum PointName {
@@ -104,13 +105,21 @@ class Container : public QGraphicsRectItem {
     QPointF bottomLeft();
     QPointF bottomCenter();
     QPointF bottomRight();
+    qreal distance(Container* other);       // Minimum distance to other container in scene coordinates
+    QPointF nearestEdge(const QPointF &sp); // Return middle of nearest edge in relation to p (scene coord)
 
     void setLayout(const Layout &ltype);
 
-    Layout getLayout();
+    Layout layout();
     static QString layoutString(int);
     static Layout layoutFromString(const QString &s);
     QString layoutString();
+
+    static QString horizontalAlignmentString(int);
+    static HorizontalAlignment horizontalAlignmentFromString(const QString&);
+    static QString verticalAlignmentString(int);
+    static VerticalAlignment verticalAlignmentFromString(const QString&);
+
 
     bool isFloating();          //! returns true, if parent container has Floating layout
     bool hasFloatingLayout();   //! returns true, if this container has Floating layout
@@ -123,6 +132,7 @@ class Container : public QGraphicsRectItem {
     HorizontalDirection getHorizontalDirection();
 
     void setHorizontalAlignment(const HorizontalAlignment &a);
+    void setVerticalAlignment(const VerticalAlignment &a);
 
     /*! Aligns ownPoint of myself to targetPoint of target and returns 
         the position in coordinate system of myself.
@@ -167,12 +177,13 @@ class Container : public QGraphicsRectItem {
     Container* centralContainer;  //! Center of this container should be in origin of a set of containers 
     QString name;
 
-    Layout layout;
+    Layout layoutInt;
 
     qreal minimumWidth;
 
     HorizontalDirection horizontalDirection;
-    HorizontalAlignment horizontalAlignment;
+    HorizontalAlignment horizontalAlignmentInt;
+    VerticalAlignment verticalAlignmentInt;
 };
 
 #endif

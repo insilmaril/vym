@@ -100,6 +100,8 @@ MapEditor::MapEditor(VymModel *vm)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
+    selectionMode = AutoSelection;
+
     setStyleSheet("QGraphicsView:focus {" + editorFocusStyle + "}");
 
     // Create bitmap cursors, platform dependant
@@ -1124,30 +1126,141 @@ void MapEditor::toggleWinter()
     }
 }
 
-TreeItem *MapEditor::getItemDirectAbove(TreeItem *ti)
+bool MapEditor::isContainerCloserInDirection(Container *c1, Container *c2, const qreal &d_min, const QPoint &v, RadarDirection radarDir)
 {
+    qreal d = c1->distance(c2);
+
+    switch(radarDir) {
+        case UpDirection:
+            if (v.y() < 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+
+        case DownDirection:
+            if (v.y() > 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+
+        case LeftDirection:
+            if (v.x() < 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+
+        case RightDirection:
+            if (v.x() > 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+        default:
+            qWarning() << "MapEditor::isContainerCloserInDirection undefined radar";
+    }
+    return false;
+}
+
+TreeItem* MapEditor::getItemInDirection(TreeItem *ti, RadarDirection radarDir)
+{
+    SelectionMode selMode = currentSelectionMode(ti);
+
+    if (selMode == GeometricSelection)
+        return getItemFromGeometry(ti, radarDir);
+
+    if (selMode == OrgChartSelection)
+        return getItemFromOrgChart(ti, radarDir);
+
+    return getItemFromClassicMap(ti, radarDir);
+}
+
+TreeItem* MapEditor::getItemFromGeometry(TreeItem *ti, RadarDirection radarDir)
+{
+    TreeItem *nearestItem = nullptr;
     if (ti) {
-        if (ti->hasTypeBranch()) {
-            BranchItem *bi = (BranchItem*)ti;
-          
-            int i = bi->num();
-            if (i > 0)
-                return bi->parent()->getBranchNum(i - 1);
-        } else if (ti->hasTypeImage()) {
-            ImageItem *ii = (ImageItem*)ti;
-          
-            int i = ii->num();
-            if (i > 0)
-                return ii->parent()->getImageNum(i - 1);
+        // Calculate reference points: Nearest corners of selected towards radarDir
+        QPoint rp_view;
+        Container *c = nullptr;
+        if (ti->hasTypeBranch())
+            c = ((BranchItem*)ti)->getBranchContainer()->getHeadingContainer();
+        else if (ti->hasTypeImage())
+            c = ((ImageItem*)ti)->getImageContainer();
+
+        if (!c) {
+            qWarning() << __func__ << "No container found";
+            return nullptr;
+        }
+
+        rp_view = mapFromScene(c->mapToScene(c->center()));
+
+        qreal d_min = -1;
+        qreal d;
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
+        model->nextBranch(cur, prev);
+        while (cur) {
+            // Interate over all branches in map
+            BranchContainer *bc;
+            bc = cur->getBranchContainer();
+            if (bc && bc->isVisible()) {
+                HeadingContainer *hc = bc->getHeadingContainer();
+
+                QPointF p_scene = hc->mapToScene(hc->center());
+                QPoint v = mapFromScene(p_scene) - rp_view; // Direction between centers
+                d = c->distance(hc);
+                if (cur != ti && isContainerCloserInDirection(c, hc, d_min, v, radarDir)) {
+                    d_min = d;
+                    nearestItem = cur;
+                }
+
+                // Iterate over images
+                for (int i = 0; i < cur->imageCount(); i++) {
+                    ImageItem *ii = cur->getImageNum(i);
+                    ImageContainer *ic = ii->getImageContainer();
+                    p_scene = ic->mapToScene(ic->center());
+                    v = mapFromScene(p_scene) - rp_view;
+                    d = c->distance(ic);
+                    if (ii != ti && isContainerCloserInDirection(c, ic, d_min, v, radarDir)) {
+                        d_min = d;
+                        nearestItem = ii;
+                    }
+                }
+            }
+            model->nextBranch(cur, prev);
         }
     }
+
+    return nearestItem;
+}
+
+TreeItem* MapEditor::getItemFromOrgChart(TreeItem *ti, RadarDirection radarDir)
+{
+    BranchItem *bi = nullptr;
+    if (ti->hasTypeBranch())
+        bi = (BranchItem*)ti;
+
+    if (!bi)
+        return nullptr;
+
+    if (radarDir == UpDirection)
+        return bi->parentBranch();
+    else if (radarDir == DownDirection)
+        return bi->getLastSelectedBranch();
+    else if (radarDir == LeftDirection)
+        return getItemFromClassicMap(ti, UpDirection);
+    else if (radarDir == RightDirection)
+        return getItemFromClassicMap(ti, DownDirection);
+
     return nullptr;
 }
 
-TreeItem *MapEditor::getItemAbove(TreeItem *selti)
+TreeItem* MapEditor::getItemFromClassicMap(TreeItem *selti, RadarDirection radarDir)
 {
-    if (selti) {
-        int dz = selti->depth(); // original depth
+    if (!selti)
+        return nullptr;
+
+    BranchItem * bi = nullptr;
+    if (selti->hasTypeBranch())
+        bi = (BranchItem*)selti;
+
+    int d = selti->depth(); // original depth
+
+    if (radarDir == UpDirection) {
         bool invert = false;
         //FIXME-3 Improve finding the right floating item
         //if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
@@ -1156,7 +1269,7 @@ TreeItem *MapEditor::getItemAbove(TreeItem *selti)
         TreeItem *ti = nullptr;
 
         // Look for branch with same parent but directly above
-        if (dz == 1 && invert)
+        if (d == 1 && invert)
             ti = getItemDirectBelow(selti);
         else
             ti = getItemDirectAbove(selti);
@@ -1176,7 +1289,7 @@ TreeItem *MapEditor::getItemAbove(TreeItem *selti)
             if (ti) {
                 // turn
                 selti = ti;
-                while (selti->depth() < dz) {
+                while (selti->depth() < d) {
                     // try to get back to original depth dz
                     ti = selti->getLastItem();
                     if (!ti) {
@@ -1186,6 +1299,129 @@ TreeItem *MapEditor::getItemAbove(TreeItem *selti)
                 }
                 return selti;
             }
+        }
+
+    } else if (radarDir == DownDirection) {
+        bool invert = false;    // FIXME-0 currently not used
+        //FIXME-3 Improve finding the right floating item
+        // if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
+        //     invert = true;
+
+        // Look for mainbranch  // FIXME-3 Better would be to consider scenePos
+        TreeItem *ti = nullptr;
+        if (d == 1 && invert)
+            ti = getItemDirectAbove(selti);
+        else
+            ti = getItemDirectBelow(selti);
+
+        if (ti) return ti;
+
+        // Go towards center and look for siblings
+        while (selti->depth() > 0) {
+            selti = selti->parent();
+            if (selti->depth() == 1 && invert)    // FIXME see above...
+                ti = getItemDirectAbove(selti);
+            else
+                ti = getItemDirectBelow(selti);
+
+            if (ti) {
+                // turn
+                selti = ti;
+                while (selti->depth() < d) {
+                    // try to get back to original depth d
+                    ti = selti->getFirstItem();
+                    if (!ti)
+                        return selti;
+                    selti = ti;
+                }
+                return selti;
+            }
+        }
+
+    } else if (radarDir == LeftDirection) {
+        if (bi) {
+            // Branch selected
+            if (d == 0) {
+                // Special case: use alternative selection index
+                BranchItem *newbi = bi->getLastSelectedBranchAlt();
+                if (!newbi) {
+                    BranchContainer *bc;
+                    // Try to find a mainbranch left of center
+                    for (int i = 0; i < bi->branchCount(); i++) {
+                        newbi = bi->getBranchNum(i);
+                        bc = newbi->getBranchContainer();
+                        if (bc && bc->getOrientation() == BranchContainer::LeftOfParent)
+                            break;
+                    }
+                }
+                return newbi;
+            }
+            if (bi->getBranchContainer()->getOrientation() ==
+                BranchContainer::RightOfParent)
+                // right of center
+                return bi->parentBranch();
+            else {
+                // left of center
+                TreeItem *ri = bi->getLastSelectedBranch();
+                if (ri)
+                    // Return last selected branch
+                    return ri;
+                else
+                    // Look for image
+                    return getItemFromGeometry(bi, LeftDirection);
+            }
+        }
+    } else if (radarDir == RightDirection) {
+        if (bi) {
+            // Branch selected
+            if (d == 0) {
+                // Special case: use alternative selection index
+                BranchItem *newbi = bi->getLastSelectedBranch();
+                if (!newbi) {
+                    BranchContainer *bc;
+                    // Try to find a mainbranch right of center
+                    for (int i = 0; i < bi->branchCount(); i++) {
+                        newbi = bi->getBranchNum(i);
+                        bc = newbi->getBranchContainer();
+                        if (bc && bc->getOrientation() == BranchContainer::RightOfParent)
+                            break;
+                    }
+                }
+                return newbi;
+            }
+            if (bi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
+                // left of center
+                return bi->parentBranch();
+            else {
+                // right of center
+                TreeItem *ri = bi->getLastSelectedBranch();
+                if (ri)
+                    // Return last selected branch
+                    return ri;
+                else
+                    // Look for image
+                    return getItemFromGeometry(bi, RightDirection);
+            }
+        }
+    }
+    return nullptr;
+}
+
+TreeItem *MapEditor::getItemDirectAbove(TreeItem *ti)
+{
+    if (ti) {
+        if (ti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)ti;
+          
+            int i = bi->num();
+            if (i > 0)
+                return bi->parent()->getBranchNum(i - 1);
+        } else if (ti->hasTypeImage()) {
+            ImageItem *ii = (ImageItem*)ti;
+          
+            int i = ii->num();
+            if (i > 0)
+                return ii->parent()->getImageNum(i - 1);
         }
     }
     return nullptr;
@@ -1209,139 +1445,16 @@ TreeItem *MapEditor::getItemDirectBelow(TreeItem *ti)
     return nullptr;
 }
 
-TreeItem *MapEditor::getItemBelow(TreeItem *selti)
-{
-    if (selti) {
-        int dz = selti->depth(); // original depth
-        bool invert = false;
-        //FIXME-3 Improve finding the right floating item
-        // if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
-        //     invert = true;
-
-        // Look for mainbranch  // FIXME-3 Better would be to consider scenePos
-        TreeItem *ti = nullptr;
-        if (dz == 1 && invert)
-            ti = getItemDirectAbove(selti);
-        else
-            ti = getItemDirectBelow(selti);
-
-        if (ti)
-            return ti;
-
-        // Go towards center and look for neighbour
-        while (selti->depth() > 0) {
-            selti = selti->parent();
-            if (selti->depth() == 1 && invert)    // FIXME see above...
-                ti = getItemDirectAbove(selti);
-            else
-                ti = getItemDirectBelow(selti);
-
-            if (ti) {
-                // turn
-                selti = ti;
-                while (selti->depth() < dz) {
-                    // try to get back to original depth dz
-                    ti = selti->getFirstItem();
-                    if (!ti)
-                        return selti;
-                    selti = ti;
-                }
-                return selti;
-            }
-        }
-    }
-    return nullptr;
-}
-
-BranchItem *MapEditor::getLeftBranch(TreeItem *ti)  // FIXME-3 Adapt navigation to support floating layouts
-                                                    // up/down/left/right - build lists to neares branch in 
-                                                    // each direction.  See issue #103
-{
-    if (!ti)
-        return nullptr;
-
-    if (ti->hasTypeBranch()) {
-        BranchItem *bi = (BranchItem *)ti;
-        if (bi->depth() == 0) {
-            // Special case: use alternative selection index
-            BranchItem *newbi = bi->getLastSelectedBranchAlt();
-            if (!newbi) {
-                BranchContainer *bc;
-                // Try to find a mainbranch left of center
-                for (int i = 0; i < bi->branchCount(); i++) {
-                    newbi = bi->getBranchNum(i);
-                    bc = newbi->getBranchContainer();
-                    if (bc && bc->getOrientation() == BranchContainer::LeftOfParent)
-                        break;
-                }
-            }
-            return newbi;
-        }
-        if (bi->getBranchContainer()->getOrientation() ==
-            BranchContainer::RightOfParent)
-            // right of center
-            return (BranchItem *)(bi->parent());
-        else
-            // left of center
-            if (bi->getType() == TreeItem::Branch)
-            return bi->getLastSelectedBranch();
-    }
-
-    if (ti->parent() && ti->parent()->hasTypeBranch())
-        return (BranchItem *)(ti->parent());
-    return nullptr;
-}
-
-BranchItem *MapEditor::getRightBranch(TreeItem *ti)
-{
-    if (!ti)
-        return nullptr;
-
-    if (ti->hasTypeBranch()) {
-        BranchItem *bi = (BranchItem *)ti;
-        if (bi->depth() == 0) {
-            // Special case: use alternative selection index
-            BranchItem *newbi = bi->getLastSelectedBranch();
-            if (!newbi) {
-                BranchContainer *bc;
-                // Try to find a mainbranch right of center
-                for (int i = 0; i < bi->branchCount(); i++) {
-                    newbi = bi->getBranchNum(i);
-                    bc = newbi->getBranchContainer();
-                    if (bc && bc->getOrientation() == BranchContainer::RightOfParent)
-                        break;
-                }
-            }
-            return newbi;
-        }
-        if (bi->getBranchContainer()->getOrientation() ==
-            BranchContainer::LeftOfParent)
-            // left of center
-            return (BranchItem *)(bi->parent());
-        else
-            // right of center
-            if (bi->getType() == TreeItem::Branch)
-            return (BranchItem *)bi->getLastSelectedBranch();
-    }
-
-    if (ti->parent() && ti->parent()->hasTypeBranch())
-        return (BranchItem *)(ti->parent());
-
-    return nullptr;
-}
-
 void MapEditor::cursorUp()
 {
     if (editorState == MapEditor::EditingHeading)
         return;
 
     TreeItem *selti = model->getSelectedItem();
-    TreeItem *ti;
     if (selti) {
-        // Exactly one branch is currently selected
-        ti = getItemAbove(selti);
-        if (ti)
-            model->select(ti);
+        selti = getItemInDirection(selti, UpDirection);
+        if (selti)
+            model->select(selti);
     }
 }
 
@@ -1357,14 +1470,14 @@ void MapEditor::cursorUpToggleSelection()
     if (seltis.size() == 0)
         return;
     else if (seltis.size() == 1) {
-        ti = getItemAbove(seltis.first());
+        ti = getItemInDirection(seltis.first(), UpDirection);
         if (ti) model->selectToggle(ti);
     } else {
         // Nothing selected or already multiple selections
         TreeItem *last_ti = model->lastToggledItem();
         if (last_ti && (last_ti->hasTypeBranch() || last_ti->hasTypeImage())) {
             if (lastToggleDirection == toggleUp)
-                ti = getItemAbove(last_ti);
+                ti = getItemInDirection(last_ti, UpDirection);
             else
                 ti = last_ti;
 
@@ -1381,12 +1494,10 @@ void MapEditor::cursorDown()
         return;
 
     TreeItem *selti = model->getSelectedItem();
-    TreeItem *ti;
     if (selti) {
-        // Exactly one branch is currently selected
-        ti = getItemBelow(selti);
-        if (ti)
-            model->select(ti);
+        selti = getItemInDirection(selti, DownDirection);
+        if (selti)
+            model->select(selti);
     }
 }
 
@@ -1398,7 +1509,7 @@ void MapEditor::cursorDownToggleSelection()
     TreeItem *selti = model->getSelectedItem();
     TreeItem *ti;
     if (selti) {
-        ti = getItemBelow(selti);
+        ti = getItemInDirection(selti, DownDirection);
         if (ti) {
             model->selectToggle(ti);
         }
@@ -1407,7 +1518,7 @@ void MapEditor::cursorDownToggleSelection()
         TreeItem *last_ti = model->lastToggledItem();
         if (last_ti && (last_ti->hasTypeBranch() || last_ti->hasTypeImage())) {
             if (lastToggleDirection == toggleDown)
-                ti = getItemBelow(last_ti);
+                ti = getItemInDirection(last_ti, DownDirection);
             else
                 ti = last_ti;
 
@@ -1420,17 +1531,18 @@ void MapEditor::cursorDownToggleSelection()
 
 void MapEditor::cursorLeft()
 {
-    TreeItem *ti = model->getSelectedItem();
-    if (!ti) {
-        ti = model->lastToggledItem();
-        if (!ti) return;
+    TreeItem *selti = model->getSelectedItem();
+    if (!selti) {
+        // If multiple items are selected, select the next to last toggled one
+        selti = model->lastToggledItem();
+        if (!selti) return;
     }
 
-    BranchItem *bi = getLeftBranch(ti);
-    if (bi)
-        model->select(bi);
+    TreeItem *ti = getItemInDirection(selti, LeftDirection);
+    if (ti)
+        model->select(ti);
     else {
-        ImageItem *ii = ti->getFirstImage();
+        ImageItem *ii = selti->getFirstImage();    // FIXME-0 should go to getLeftItem?
         if (ii)
             model->select(ii);
     }
@@ -1438,17 +1550,19 @@ void MapEditor::cursorLeft()
 
 void MapEditor::cursorRight()
 {
-    TreeItem *ti = model->getSelectedItem();
-    if (!ti) {
-        ti = model->lastToggledItem();
-        if (!ti) return;
+    TreeItem *selti = model->getSelectedItem();
+
+    if (!selti) {
+        // If multiple items are selected, select the next to last toggled one
+        selti = model->lastToggledItem();
+        if (!selti) return;
     }
 
-    BranchItem *bi = getRightBranch(ti);
-    if (bi)
-        model->select(bi);
+    TreeItem *ti = getItemInDirection(selti, RightDirection);
+    if (ti)
+        model->select(ti);
     else {
-        ImageItem *ii = ti->getFirstImage();
+        ImageItem *ii = selti->getFirstImage();
         if (ii)
             model->select(ii);
     }
@@ -2686,6 +2800,47 @@ void MapEditor::setState(EditorState s)
 
 MapEditor::EditorState MapEditor::state() { return editorState; }
 
+
+MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
+{
+    // Selections should consider logical relations, e.g. siblings and parents
+    // but also geometric. Return the most appropriate mode depending on 
+    // rotation of view and layout of selected item.
+    if (!selti) {
+        qDebug() << "ME::selectionMode: Classic";
+        return ClassicSelection;
+    }
+
+    if (rotationInt != 0) {
+        qDebug() << "ME::selectionMode: Geometric";
+        return GeometricSelection;
+    }
+
+    Container *c = nullptr;
+    if (selti->hasTypeBranch()) {
+        BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
+        if (bc->branchesContainerLayout() == Container::Horizontal) {
+            qDebug() << "ME::selectionMode: OrgChart";
+            return OrgChartSelection;
+        }
+    } else if (selti->hasTypeImage()) {
+        qDebug() << "ME::selectionMode: Geometric";
+        return GeometricSelection;
+    }
+
+    if (!c) {
+        qDebug() << "ME::selectionMode: Classic";
+        return ClassicSelection;
+    }
+
+    if (c->isFloating()) {
+        qDebug() << "ME::selectionMode: Geometric";
+        return GeometricSelection;
+    }
+
+    qDebug() << "ME::selectionMode: Classic";
+    return ClassicSelection;
+}
 
 void MapEditor::updateData(const QModelIndex &sel)
 {

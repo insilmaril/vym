@@ -3,6 +3,7 @@
 
 #include "branch-container.h"
 #include "container.h"
+#include "geometry.h"
 #include "tmp-parent-container.h"
 
 #include "branchitem.h"
@@ -30,15 +31,16 @@ void Container::copy(Container *other)
     originalPos = other->originalPos;
     name = other->name;
 
-    layout = other->layout;
+    layoutInt = other->layoutInt;
     horizontalDirection = other->horizontalDirection;
-    horizontalAlignment = other->horizontalAlignment;
+    horizontalAlignmentInt = other->horizontalAlignmentInt;
+    verticalAlignmentInt = other->verticalAlignmentInt;
 }
 
 void Container::init()
 {
     containerType = UndefinedType;
-    layout = Horizontal;
+    layoutInt = Horizontal;
 
     // subcontainers usually may influence position
     // Only mapCenters will stay where they are
@@ -46,6 +48,8 @@ void Container::init()
     minimumWidth = 0;   // FIXME-3 currently unused, maybe for linkSpaceContainer
 
     horizontalDirection = LeftToRight;
+    horizontalAlignmentInt = HorAlignedLeft;
+    verticalAlignmentInt = VertAlignedCentered;
 
     centralContainer = nullptr;
 
@@ -153,12 +157,14 @@ QString Container::info (const QString &prefix)
         //+ QString(" a: %1").arg(qRound(rotation()))
         //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
         //+ QString(" pos: %1").arg(toS(pos(), 0))
-        //+ QString(" rect: %1").arg(toS(rect(), 0))
+        + QString(" rect: %1").arg(toS(rect(), 0))
         //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
         + QString(" Layout: %1").arg(layoutString())
         //+ QString(" horDir: %1").arg(horizontalDirection)
-        + QString(" Scale: %1").arg(scale())
+        + QString(" valign: %1").arg(verticalAlignmentString(verticalAlignmentInt))
+        + QString(" halign: %1").arg(horizontalAlignmentString(horizontalAlignmentInt))
+        //+ QString(" Scale: %1").arg(scale())
         ;
 }
 
@@ -228,23 +234,67 @@ QPointF Container::pointByName(PointName pn)
 }
 
 QPointF Container::topLeft() {return rect().topLeft();}
+
 QPointF Container::topCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().top());}
+
 QPointF Container::topRight() {return rect().topRight();}
+
 QPointF Container::leftCenter() {return QPointF(rect().left(), (rect().bottom() + rect().top() ) /2);}
+
 QPointF Container::center() {return rect().center();}
+
 QPointF Container::rightCenter() {return QPointF(rect().right(), (rect().bottom() + rect().top() ) /2);}
+
 QPointF Container::bottomLeft() {return rect().bottomLeft();}
+
 QPointF Container::bottomCenter() {return QPointF((rect().right() + rect().left() ) /2, rect().bottom());}
+
 QPointF Container::bottomRight() {return rect().bottomRight();}
+
+qreal Container::distance(Container *other)
+{
+    QList <QPointF> p_list;
+    p_list << mapToScene(topLeft());
+    p_list << mapToScene(topRight());
+    p_list << mapToScene(bottomRight());
+    p_list << mapToScene(bottomLeft());
+
+    QList <QPointF> q_list;
+    q_list << other->mapToScene(other->topLeft());
+    q_list << other->mapToScene(other->topRight());
+    q_list << other->mapToScene(other->bottomRight());
+    q_list << other->mapToScene(other->bottomLeft());
+
+    qreal d_min = -1;
+    foreach (auto p, p_list) {
+        foreach (auto q, q_list) {
+            qreal d = Geometry::distance(p, q);
+            if (d_min < 0 || d < d_min)
+                d_min = d;
+        }
+    }
+    return d_min;
+}
+
+QPointF Container::nearestEdge(const QPointF &sp)
+{
+    QList <QPointF> edges;
+    edges << mapToScene(topCenter());
+    edges << mapToScene(bottomCenter());
+    edges << mapToScene(leftCenter());
+    edges << mapToScene(rightCenter());
+
+    return edges.at(nearestPoint(edges, sp));
+}
 
 void Container::setLayout(const Layout &l)
 {
-    layout = l;
+    layoutInt = l;
 }
 
-Container::Layout Container::getLayout()
+Container::Layout Container::layout()
 {
-    return layout;
+    return layoutInt;
 }
 
 Container::Layout Container::layoutFromString(const QString &s)
@@ -304,7 +354,53 @@ QString Container::layoutString(int l)  // Pass layout
 
 QString Container::layoutString()
 {
-    return layoutString(layout);
+    return layoutString(layoutInt);
+}
+
+QString Container::horizontalAlignmentString(int a)  // Pass horAlignment
+{
+    switch (a) {
+        case HorAlignedLeft:
+            return "HorAlignedLeft";
+        case HorAlignedRight:
+            return "HorAlignedRight";
+        case HorAlignedCentered:
+            return "HorAlignedCentered";
+        default:
+            break;
+    }
+    return QString("undefinded hor aligment: %1").arg(a);
+}
+
+Container::HorizontalAlignment Container::horizontalAlignmentFromString(const QString &s)
+{
+    if (s == "HorAlignedLeft") return HorAlignedLeft;
+    if (s == "HorAlignedRight") return HorAlignedRight;
+    if (s == "HorAlignedCentered") return HorAlignedCentered;
+    return HorAlignedUndefined;
+}
+
+QString Container::verticalAlignmentString(int a)  // Pass vertAlignment
+{
+    switch (a) {
+        case VertAlignedTop:
+            return "VertAlignedTop";
+        case VertAlignedCentered:
+            return  "VertAlignedCentered";
+        case VertAlignedBottom:
+            return "VertAlignedBottom";
+        default:
+            break;
+    }
+    return QString("undefinded vert aligment: %1").arg(a);
+}
+
+Container::VerticalAlignment Container::verticalAlignmentFromString(const QString &s)
+{
+    if (s == "VertAlignedTop") return VertAlignedTop;
+    if (s == "VertAlignedCentered") return VertAlignedCentered;
+    if (s == "VertAlignedBottom") return VertAlignedBottom;
+    return VertAlignedUndefined;
 }
 
 bool Container::isFloating()
@@ -317,7 +413,7 @@ bool Container::isFloating()
 }
 
 bool Container::hasFloatingLayout() {
-    if (layout == FloatingBounded || layout == FloatingFree)
+    if (layoutInt == FloatingBounded || layoutInt == FloatingFree)
         return true;
     else
         return false;
@@ -340,7 +436,12 @@ Container::HorizontalDirection Container::getHorizontalDirection()
 
 void Container::setHorizontalAlignment(const HorizontalAlignment &a)
 {
-    horizontalAlignment = a;
+    horizontalAlignmentInt = a;
+}
+
+void Container::setVerticalAlignment(const VerticalAlignment &a)
+{
+    verticalAlignmentInt = a;
 }
 
 QPointF Container::alignTo(PointName ownPointName, Container* targetContainer, PointName targetPointName)
@@ -462,7 +563,7 @@ void Container::reposition()
 
     // c) Align my own containers
 
-    switch (layout) {
+    switch (layoutInt) {
         case BoundingFloats:
             {
                 // qdbg() << ind() << " - BF starting for " << info();
@@ -617,14 +718,22 @@ void Container::reposition()
 
                         // qdbg() << ind() << "    HL x=" << x << " offset=" << offset << " c: " << c->info();
 
-                        // Align vertically centered, consider mapped(!) dimensions
-                        c->setPos (x + offset, 0);
+                        switch (verticalAlignmentInt) {
+                            case VertAlignedTop:
+                                c->setPos (x + offset, - (h_max - c_bbox.height()) / 2);
+                                break;
+                            case VertAlignedBottom:
+                                c->setPos (x + offset, + (h_max - c_bbox.height()) / 2);
+                                break;
+                            case VertAlignedCentered:
+                                // consider mapped(!) dimensions
+                                c->setPos (x + offset, 0);
+                                break;
+                            default:
 
-                        // Align vertically to top
-                        // c->setPos (x + offset, - (h_max - c_bbox.height()) / 2);
+                                qWarning() << "Container::reposition horizontally - undefined vertical alignment:" << verticalAlignmentInt << " in " << info();
+                        }
 
-                        // Align vertically to bottom
-                        // c->setPos (x + offset, + (h_max - c_bbox.height()) / 2);
 
                         // Post alignment
                         if (horizontalDirection == LeftToRight) {
@@ -760,18 +869,18 @@ void Container::reposition()
                     QRectF c_bbox = mapRectFromItem(c, c->rect());
                     offset += c_bbox.height() / 2;
                     //offset += - c->rect().top();
-		    switch (horizontalAlignment) {
-			case AlignedLeft:
+		    switch (horizontalAlignmentInt) {
+			case HorAlignedLeft:
                             c->setPos((- w_max + c_bbox.width()) / 2, offset);
 			    break;
-			case AlignedRight:
+			case HorAlignedRight:
                             c->setPos((w_max - c_bbox.width()) / 2, offset);
 			    break;
-			case AlignedCentered:
+			case HorAlignedCentered:
 			    c->setPos (0, offset);
 			    break;
                         default:
-                            qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignment << " in " << info();
+                            qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignmentInt << " in " << info();
                             if (containerType == BranchesContainer)
                                 qWarning() << "  orient=" << ((BranchContainer*)this)->getOrientation();
 		    }

@@ -63,6 +63,7 @@ void BranchContainer::init()
 
     branchesContainerAutoLayout = true;
     branchesContainerLayoutInt = Container::Vertical;
+    branchesContainerAndOrnamentsVerticalInt = false;
 
     scrollOpacity = 1;
 
@@ -244,6 +245,8 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         branchesContainer->containerType = Container::BranchesContainer;
         branchesContainer->zPos = Z_BRANCHES;
         branchesContainer->setLayout(branchesContainerLayoutInt);
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignmentInt);
+        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignmentInt);
 
         if (listContainer)
             listContainer->addContainer(branchesContainer);
@@ -348,7 +351,7 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
         if (!listContainer) {
             // Create and setup a listContainer *below* the ornamentsContainer
             innerContainer->setLayout(Vertical);
-            innerContainer->setHorizontalAlignment(AlignedLeft);
+            innerContainer->setHorizontalAlignment(HorAlignedLeft);
 
             // listContainer has one linkSpaceContainer left of branchesContainer
             listContainer = new Container;
@@ -417,8 +420,12 @@ void BranchContainer::updateChildrenStructure() // FIXME-2 check if still a prob
         deleteOuterContainer();
         if (listContainer)
             innerContainer->setLayout(Vertical);
-        else
-            innerContainer->setLayout(Horizontal);
+        else {
+            if (branchesContainerAndOrnamentsVerticalInt)
+                innerContainer->setLayout(Vertical);
+            else
+                innerContainer->setLayout(Horizontal);
+        }
     } else if (branchesContainerLayoutInt == FloatingBounded && imagesContainerLayoutInt != FloatingBounded) {
         // b) Only branches are FloatingBounded
         deleteOuterContainer();
@@ -603,6 +610,16 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     }
 }
 
+void BranchContainer::setUpLinkPosHint(const LinkObj::PosHint &ph)
+{
+    upLinkPosHintInt = ph;
+}
+
+void BranchContainer::setDownLinkPosHint(const LinkObj::PosHint &ph)
+{
+    downLinkPosHintInt = ph;
+}
+
 QPointF BranchContainer::downLinkPos()
 {
     return downLinkPos(orientation);
@@ -610,6 +627,13 @@ QPointF BranchContainer::downLinkPos()
 
 QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
 {
+    if (branchesContainerAndOrnamentsVerticalInt)
+        return ornamentsContainer->mapToScene(
+                ornamentsContainer->bottomCenter());
+
+    if (branchItem->branchCount() > 0 && branchesContainer)
+        return ornamentsContainer->nearestEdge(branchesContainer->center());
+
     if (frameType(true) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
             // Framed MapCenter: Use center of frame    // FIXME-2 should depend on layout, not depth
@@ -647,6 +671,10 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
 
 QPointF BranchContainer::upLinkPos(const Orientation &orientationChild)
 {
+    if (branchesContainerAndOrnamentsVerticalInt)
+        return ornamentsContainer->mapToScene(
+                ornamentsContainer->topCenter());
+
     if (frameType(true) != FrameContainer::NoFrame ||
         frameType(false) != FrameContainer::NoFrame) {
         if (!parentBranchContainer() && movingStateInt != Moving ) {
@@ -761,16 +789,18 @@ void BranchContainer::updateUpLink()
         }
     }
 
-    // Create/delete bottomline, depends on frame and (List-)Layout // FIXME-2 list layout not considered
-                                                                    // also missing: if branch has children
-    if (frameType(true) != FrameContainer::NoFrame) {
+    // Create/delete bottomline, depends on frame and (List-)Layout
+    if (frameType(true) != FrameContainer::NoFrame ||
+            branchesContainerAndOrnamentsVerticalInt || 
+            (pbc && pbc->branchesContainerLayoutInt == List)) {
         if (upLink->hasBottomLine())
             upLink->deleteBottomLine();
     } else {
         if (!upLink->hasBottomLine())
             upLink->createBottomLine();
     }
-    // Finally geometry
+
+    // Finally update geometry
     upLink->updateLinkGeometry();
 }
 
@@ -839,16 +869,28 @@ bool BranchContainer::hasFloatingBranchesLayout()
 
 void BranchContainer::setBranchesContainerHorizontalAlignment(const HorizontalAlignment &a)
 {
-    branchesContainerHorizontalAlignment = a;
+    branchesContainerHorizontalAlignmentInt = a;
     if (branchesContainer)
-        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignment);
+        branchesContainer->setHorizontalAlignment(branchesContainerHorizontalAlignmentInt);
 }
 
-void BranchContainer::setBranchesContainerBrush(const QBrush &b)
+void BranchContainer::setBranchesContainerVerticalAlignment(const VerticalAlignment &a)
 {
-    branchesContainerBrush = b;
+    branchesContainerVerticalAlignmentInt = a;
     if (branchesContainer)
-        branchesContainer->setBrush(branchesContainerBrush);
+        branchesContainer->setVerticalAlignment(branchesContainerVerticalAlignmentInt);
+}
+
+void BranchContainer::setBranchesContainerBrush(const QBrush &b)    // FIXME-2 not used
+{
+    branchesContainerBrushInt = b;
+    if (branchesContainer)
+        branchesContainer->setBrush(branchesContainerBrushInt);
+}
+
+void BranchContainer::setBranchesContainerAndOrnamentsVertical(bool b)
+{
+    branchesContainerAndOrnamentsVerticalInt = b;
 }
 
 QRectF BranchContainer::headingRect()
@@ -1320,12 +1362,24 @@ void BranchContainer::reposition()
             case LeftOfParent:
                 setHorizontalDirection(RightToLeft);
                 innerContainer->setHorizontalDirection(RightToLeft);
-                setBranchesContainerHorizontalAlignment(AlignedRight);
+                if (branchesContainerAndOrnamentsVerticalInt) {
+                    setBranchesContainerHorizontalAlignment(HorAlignedCentered);
+                    innerContainer->setHorizontalAlignment(HorAlignedCentered);
+                } else {
+                    setBranchesContainerHorizontalAlignment(HorAlignedRight);
+                }
                 break;
             case RightOfParent:
                 setHorizontalDirection(LeftToRight);
                 innerContainer->setHorizontalDirection(LeftToRight);
-                setBranchesContainerHorizontalAlignment(AlignedLeft);
+
+                // Playing...
+                if (branchesContainerAndOrnamentsVerticalInt) {
+                    setBranchesContainerHorizontalAlignment(HorAlignedCentered);
+                    innerContainer->setHorizontalAlignment(HorAlignedCentered);
+                } else {
+                    setBranchesContainerHorizontalAlignment(HorAlignedLeft);
+                }
                 break;
             case UndefinedOrientation:
                 qWarning() << "BC::reposition - Undefined orientation in " << info();

@@ -24,6 +24,9 @@ template <typename T> class ConfigList {
     int count();
     void clear();
     QString save(const QString &attrName, QString (&f)(int));
+    QString saveBool(const QString &attrName);
+    QString saveColor(const QString &attrName);
+    QString saveInt(const QString &attrName);
 
   protected:
     T defaultValue;
@@ -90,11 +93,16 @@ class MapDesign {
 // Container layouts
   public:  
     Container::Layout branchesContainerLayout(int depth);
+    Container::VerticalAlignment branchesContainerVerticalAlignment(int depth);
+
     Container::Layout imagesContainerLayout(int depth);
+    bool branchesContainerAndOrnamentsVertical(int depth);
 
   private:
-    ConfigList <Container::Layout> branchContainerLayouts;
-    ConfigList <Container::Layout> imageContainerLayouts;
+    ConfigList <Container::Layout> branchesContainerLayouts;
+    ConfigList <Container::Layout> imagesContainerLayouts;
+    ConfigList <bool> branchesContainerAndOrnamentsVerticalInt;
+    ConfigList <Container::VerticalAlignment> branchesContainerVerticalAlignmentsInt;
 
 // Links
   public:
@@ -104,7 +112,7 @@ class MapDesign {
     void setDefaultLinkColor(const QColor &col);
 
     LinkObj::Style linkStyle(int depth);
-    bool setLinkStyle(LinkObj::Style style, int depth);
+    void setLinkStyle(LinkObj::Style style, int depth);
 
     qreal linkWidth();
 
@@ -170,6 +178,7 @@ class MapDesign {
     FrameContainer::FrameType frameType(bool useInnerFrame, const int &depth);
     QColor frameBrushColor(bool useInnerFrame, const int &depth);
     QColor framePenColor(bool useInnerFrame, const int &depth);
+    int framePenWidth(bool useInnerFrame, const int &depth);
     bool updateFrameWhenRelinking(bool useInnerFrame, const int &depth);
 
   private:

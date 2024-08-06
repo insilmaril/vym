@@ -45,6 +45,26 @@ qreal getAngle(const QPointF &p)
     }
 }
 
+int nearestPoint(QList <QPointF> &points, const QPointF &rp)
+{
+    int r = 0;
+    int i = 0;
+    qreal d_min;
+    foreach (auto p, points) {
+        qreal d = Geometry::distance(rp, p);
+        if (i == 0)
+            d_min = d;
+        else
+            if (d < d_min) {
+                d_min = d;
+                r = i;
+            }
+        i++;
+    }
+
+    return r;
+}
+
 Vector::Vector() : QPointF() {}
 
 Vector::Vector(const QPointF &p) : QPointF(p) {}

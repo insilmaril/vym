@@ -78,11 +78,11 @@ void TmpParentContainer::reposition()
     switch (orientation) {
         case LeftOfParent:
             setHorizontalDirection(RightToLeft);
-            branchesContainer->setHorizontalAlignment(AlignedRight);
+            branchesContainer->setHorizontalAlignment(HorAlignedRight);
             break;
         case RightOfParent:
             setHorizontalDirection(LeftToRight);
-            branchesContainer->setHorizontalAlignment(AlignedLeft);
+            branchesContainer->setHorizontalAlignment(HorAlignedLeft);
             break;
         case UndefinedOrientation:
             qWarning() << "TPC::reposition tPC - UndefinedOrientation in " << info();

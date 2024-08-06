@@ -65,11 +65,20 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     /*! Get suggestion where new child could be positioned (scene coord) */
     QPointF getPositionHintNewChild(Container*);
 
+    /*! Set hints where to place links between branches */
+    void setUpLinkPosHint(const LinkObj::PosHint &);
+    void setDownLinkPosHint(const LinkObj::PosHint &);
+
     /*! Get scene positions for links depending on frameType and orientation*/
     QPointF downLinkPos();
     QPointF downLinkPos(const Orientation &orientationChild);
     QPointF upLinkPos(const Orientation &orientationChild);
 
+  private:
+    LinkObj::PosHint upLinkPosHintInt;
+    LinkObj::PosHint downLinkPosHintInt;
+
+  public:
     /*! Update "upwards" links in LinkContainer */
     void updateUpLink();
 
@@ -84,8 +93,11 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     void setBranchesContainerLayout(const Layout &l);
     Container::Layout branchesContainerLayout();
     bool hasFloatingBranchesLayout(); //! Checks, if children branches are or should be floating
-    void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &valign);
+    void setBranchesContainerHorizontalAlignment(const HorizontalAlignment &);
+    void setBranchesContainerVerticalAlignment(const VerticalAlignment &);
     void setBranchesContainerBrush(const QBrush &b);
+
+    void setBranchesContainerAndOrnamentsVertical(bool);
 
     QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
     QRectF ornamentsRect();  //! Return rectangle of ornamentsContainer in absolute coordinates
@@ -171,9 +183,12 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     // even before containers are created on demand
     Layout imagesContainerLayoutInt;
     Layout branchesContainerLayoutInt;
-    HorizontalAlignment branchesContainerHorizontalAlignment;
-    QBrush branchesContainerBrush;
+    HorizontalAlignment branchesContainerHorizontalAlignmentInt;
+    VerticalAlignment branchesContainerVerticalAlignmentInt;
+    QBrush branchesContainerBrushInt;
 
+    bool branchesContainerAndOrnamentsVerticalInt;    // Position branchesContainer e.g. for orgcharts
+                                                // Affects layout if innerContainer in BC
     FrameContainer *innerFrame;         // Frame container around ornamentsContainer
     FrameContainer *outerFrame;         // Frame container around whole BranchContainer
     HeadingContainer *headingContainer; // Heading of this branch

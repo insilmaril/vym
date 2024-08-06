@@ -153,6 +153,9 @@ bool JiraAgent::setTicket(const QString &text)
         return false;
     }
 
+    // Set key even if we haven't looked for server yet
+    keyInt = ticketKey;
+
     settings.beginGroup("/atlassian/jira");
 
     // Try to find server by looking through baseUrls or patterns
