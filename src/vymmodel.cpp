@@ -1720,8 +1720,6 @@ void VymModel::saveStateNew(
     }
     */
 
-    logCommand(redoCom, comment, __func__);
-
     if (buildingUndoBlock)
     {
         // Build string with all commands
@@ -1757,6 +1755,8 @@ void VymModel::saveStateNew(
             redoCommand = redoCom;
             */
     }
+
+    logCommand(redoCommand, comment, __func__);
 
     // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
@@ -7724,7 +7724,7 @@ void VymModel::logCommand(const QString &command, const QString &comment, const 
     QString place = QString("\"%1\"").arg(fileName);
     if (!caller.isEmpty()) place += " " + caller + "()";
 
-    QString log = QString("\n// %1 [Command] Map: %2 %3").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), QString::number(modelIdInt), place);
+    QString log = QString("\n// %1 [Command] MapID: %2 Map: %3").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), QString::number(modelIdInt), place);
 
     appendStringToFile(actionLogPath, log + "\n" + command + "\n");
 }
