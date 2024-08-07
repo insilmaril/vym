@@ -6338,7 +6338,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 		mapDesignInt->branchesContainerAndOrnamentsVertical(depth));
 
         // Links and bottomlines
-        if (updateMode & MapDesign::LinkStyleChanged) {
+        if (true) { // FIXME-0 updateMode & MapDesign::LinkStyleChanged) {
             qDebug() << "VM::applyDesign  update linkStyles for " << selbi->headingPlain();
             bc->updateUpLink();
         }

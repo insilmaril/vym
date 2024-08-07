@@ -631,8 +631,8 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
         return ornamentsContainer->mapToScene(
                 ornamentsContainer->bottomCenter());
 
-    if (branchItem->branchCount() > 0 && branchesContainer)
-        return ornamentsContainer->nearestEdge(branchesContainer->center());
+    //FIXME-0   why? if (branchItem->branchCount() > 0 && branchesContainer)
+    //       return ornamentsContainer->nearestEdge(branchesContainer->center());
 
     if (frameType(true) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
