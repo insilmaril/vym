@@ -6237,12 +6237,12 @@ void VymModel::unsetContextPos()
     hasContextPos = false;
 }
 
-void VymModel::reposition()
+void VymModel::reposition(bool force)
 {
-    if (repositionBlocked)
+    if (!force && repositionBlocked)
         return;
 
-    qDebug() << "VM::reposition start"; // FIXME-2 check when and how often reposition  is called
+    qDebug() << "VM::reposition start force=" << force; // FIXME-2 check when and how often reposition  is called
 
     // Reposition containers
     BranchItem *bi;
@@ -6255,6 +6255,8 @@ void VymModel::reposition()
 
     // FIXME-4 needed? everytime? mapEditor->minimizeView();
     //qDebug() << "VM::reposition end";
+    if (force)
+        qApp->processEvents();
 }
 
 void VymModel::repositionXLinks()

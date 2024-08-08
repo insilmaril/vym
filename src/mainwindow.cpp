@@ -4166,6 +4166,7 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
             VymView *vv = new VymView(vm);
 
             tabWidget->addTab(vv, fn);
+            tabWidget->setCurrentIndex(tabWidget->count() - 1);
             vv->initFocus();
         }
 
