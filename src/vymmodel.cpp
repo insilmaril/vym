@@ -97,7 +97,6 @@ extern QString vymVersion;
 extern QDir vymBaseDir;
 
 extern QDir lastImageDir;
-extern QDir lastMapDir;
 extern QDir lastExportDir;
 
 extern Settings settings;

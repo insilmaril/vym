@@ -4246,6 +4246,8 @@ File::ErrorCode Main::fileLoad(QString fn, const File::LoadMode &lmode,
                 vm->makeDefault();
                 updateTabName(vm);
             }
+	    lastMapDir.setPath(vm->getFileDir());
+
             editorChanged();
             vm->emitShowSelection();
             statusBar()->showMessage(tr("Loaded %1").arg(fn));
@@ -4289,7 +4291,6 @@ void Main::fileLoad(const File::LoadMode &lmode)
 
     if (!fns.isEmpty()) {
         initProgressCounter(fns.count());
-        lastMapDir.setPath(fns.first().left(fns.first().lastIndexOf("/")));
         foreach (QString fn, fns)
             fileLoad(fn, lmode, getMapType(fn));
     }
@@ -4417,8 +4418,6 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
         this, tr("Save map as"), lastMapDir.path(), filter, nullptr,
         QFileDialog::DontConfirmOverwrite);
     if (!fn.isEmpty()) {
-        lastMapDir.setPath(fn.left(fn.lastIndexOf("/"))); // Always update last directory
-
         // Check for existing file
         if (QFile(fn).exists()) {
             // Check if the existing file is writable
@@ -4485,6 +4484,7 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
                                       "Couldn't rename map back to " + fn_org);
             }
         }
+        lastMapDir.setPath(m->getFileDir());
         return;
     }
 }
@@ -4499,7 +4499,6 @@ void Main::fileSaveAsDefault()
             "VYM map (*.vym)", nullptr, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
-            lastMapDir.setPath(fn.left(fn.lastIndexOf("/"))); // Always update last directory
 
             // Check for existing file
             if (QFile(fn).exists()) {
@@ -4547,6 +4546,7 @@ void Main::fileSaveAsDefault()
                                       tr("Couldn't save as default, failed to rename to\n%1").arg(fn));
                 return;
             }
+	    lastMapDir.setPath(m->getFileDir());
 
             fileSave(m, File::CompleteMap);
 
