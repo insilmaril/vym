@@ -4966,6 +4966,11 @@ bool Main::openURL(const QString &url)
     if (url.isEmpty())
         return false;
 
+    // Use system settings to open file
+    bool b = QDesktopServices::openUrl(QUrl(url, QUrl::TolerantMode));
+    if (b) return true;
+
+    // Fallback to old vym method to open Url
     QString browser = settings.value("/system/readerURL").toString();
     QStringList args;
     args << url;
@@ -5076,7 +5081,7 @@ void Main::editLocalURL()
             if (!fn.isEmpty()) {
                 lastMapDir.setPath(fn.left(fn.lastIndexOf("/")));
                 if (!fn.startsWith("file://"))
-                    fn = "file://" + fn;
+                    fn = "file:///" + fn;
                 m->setUrl(fn);
             }
         }

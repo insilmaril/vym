@@ -2736,10 +2736,13 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
             QString query;
             if (agent.setTicket(url)) {
                 setAttribute(bi, "Jira.key", agent.key());
-                getJiraData(false, bi);
 
-            } else
+                // Initially set heading with ticket Id
                 setHeading(agent.key(), bi);
+
+                // Then try to update heading from Jira
+                getJiraData(false, bi);
+            }
 
             updateJiraFlag(bi);
 
