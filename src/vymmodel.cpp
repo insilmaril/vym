@@ -877,6 +877,8 @@ void VymModel::zipFinished()
 {
     //qDebug() << "VM::zipFinished exitStatus=" << zipAgent->exitStatus() << " exitCode=" << zipAgent->exitCode();
     // Cleanup
+    logInfo("zip process finished.", __func__);
+
     zipAgent->deleteLater();
     zipAgent = nullptr;
     isSavingInt = false;
@@ -887,7 +889,6 @@ void VymModel::zipFinished()
 
     updateActions();
 
-    logInfo("zip process finished.", __func__);
 }
 
 ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
