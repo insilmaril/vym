@@ -36,6 +36,8 @@ class BranchPropertyEditor : public QDialog {
     void updateScalingControls();
 
   private slots:
+    void colorChanged(QColor);
+
     void frameAutoDesignChanged();
     void frameTypeChanged(int i);
     void framePenColorClicked();

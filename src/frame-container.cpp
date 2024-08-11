@@ -47,16 +47,21 @@ void FrameContainer::clear()
     switch (frameTypeInt) {
         case NoFrame:
             break;
+
         case Rectangle:
             delete rectFrame;
             break;
+
         case RoundedRectangle:
             delete pathFrame;
             break;
+
         case Ellipse:
         case Circle:
             delete ellipseFrame;
             break;
+
+        case Pipe:
         case Cloud:
             delete pathFrame;
             break;
@@ -72,19 +77,24 @@ void FrameContainer::repaint()
             rectFrame->setPen(framePen);
             rectFrame->setBrush(frameBrush);
             break;
+
         case RoundedRectangle:
             pathFrame->setPen(framePen);
             pathFrame->setBrush(frameBrush);
             break;
+
         case Ellipse:
         case Circle:
             ellipseFrame->setPen(framePen);
             ellipseFrame->setBrush(frameBrush);
             break;
+
+        case Pipe:
         case Cloud:
             pathFrame->setPen(framePen);
             pathFrame->setBrush(frameBrush);
             break;
+
         default:
             qWarning() << "FrameContainer::repaint  unknown frame type " << frameTypeInt;
             break;
@@ -122,6 +132,8 @@ FrameContainer::FrameType FrameContainer::frameTypeFromString(const QString &s)
         return Rectangle;
     else if (s == "RoundedRectangle")
         return RoundedRectangle;
+    else if (s == "Pipe")
+        return Pipe;
     else if (s == "Ellipse")
         return Ellipse;
     else if (s == "Circle")
@@ -138,6 +150,8 @@ QString FrameContainer::frameTypeString(int ftype)
             return "Rectangle";
         case RoundedRectangle:
             return "RoundedRectangle";
+        case Pipe:
+            return "Pipe";
         case Ellipse:
             return "Ellipse";
         case Circle:
@@ -165,6 +179,7 @@ void FrameContainer::setFrameType(const FrameType &t)
         switch (frameTypeInt) {
             case NoFrame:
                 break;
+
             case Rectangle:
                 rectFrame = new QGraphicsRectItem;  // FIXME-3 Use my own Container QGraphicsRectItem!
                 rectFrame->setPen(framePen);
@@ -173,6 +188,7 @@ void FrameContainer::setFrameType(const FrameType &t)
                 rectFrame->setParentItem(this);
                 rectFrame->show();
                 break;
+
             case Ellipse:
             case Circle:
                 ellipseFrame = scene()->addEllipse(QRectF(0, 0, 0, 0),
@@ -183,6 +199,7 @@ void FrameContainer::setFrameType(const FrameType &t)
                 ellipseFrame->setParentItem(this);
                 ellipseFrame->show();
                 break;
+
             case RoundedRectangle: {
                 QPainterPath path;
                 pathFrame = new QGraphicsPathItem;
@@ -192,6 +209,8 @@ void FrameContainer::setFrameType(const FrameType &t)
                 pathFrame->setParentItem(this);
                 pathFrame->show();
             } break;
+
+            case Pipe:
             case Cloud: {
                 QPainterPath path;
                 pathFrame = scene()->addPath(path, framePen, frameBrush);
@@ -202,6 +221,7 @@ void FrameContainer::setFrameType(const FrameType &t)
                 pathFrame->show();
             }
             break;
+
             default:
                 qWarning() << "FrameContainer::setframeType  unknown frame type " << frameTypeInt;
                 break;
@@ -216,6 +236,8 @@ void FrameContainer::setFrameType(const QString &t)
         setFrameType(Rectangle);
     else if (t == "RoundedRectangle")
         setFrameType(RoundedRectangle);
+    else if (t == "Pipe")
+        setFrameType(Pipe);
     else if (t == "Ellipse")
         setFrameType(Ellipse);
     else if (t == "Circle")
@@ -281,6 +303,46 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
                     childRect.width() + pad * 4 + radius_h * 2,
                     childRect.height() + pad * 4 + radius_h * 2);
         } break;
+
+        case Pipe: {
+            QPointF tl = childRect.topLeft() + QPointF( - pad, - pad);
+            QPointF tr = childRect.topRight() + QPointF(  pad, - pad);
+            QPointF br = childRect.bottomRight() + QPointF( pad, + pad);
+            QPointF bl = childRect.bottomLeft() + QPointF( - pad, + pad);
+            QPainterPath path;
+            path.moveTo(tl);
+
+            float w = tr.x() - tl.x();
+            float h = bl.y() - tl.y();
+
+            // Top path
+            path.lineTo(tr);
+
+            // Right path
+            path.cubicTo(tr + QPointF(h, 0), br + QPointF(h, 0), br);
+
+            // Bottom path
+            path.lineTo(bl);
+
+            // Left path
+            path.cubicTo(bl + QPointF( - h, 0), tl + QPointF( - h, 0), tl);
+ 
+            pathFrame->setPath(path);
+            QRectF r = path.boundingRect();
+
+            // center of pathFrame might be outside of origin, due to cloud not completely symmetrical
+            // Correct position of pathFrame and child
+            QPointF p(pad / 2, 0);
+            pathFrame->setPos(- r.center() + p);
+            childContainers().first()->setPos(- r.center() + p);
+
+            r.setRect(
+                    - (r.width() + pad) / 2,
+                    - (r.height() + pad) / 2,  // Vertically centered anyway later...
+                    r.width() + 2 * pad,
+                    r.height() + 2 * pad);
+            }
+            break;
 
         case Ellipse: {
             // This approach assumes, that proportions in childRect are
