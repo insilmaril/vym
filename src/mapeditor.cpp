@@ -1261,18 +1261,7 @@ TreeItem* MapEditor::getItemFromClassicMap(TreeItem *selti, RadarDirection radar
     int d = selti->depth(); // original depth
 
     if (radarDir == UpDirection) {
-        bool invert = false;
-        //FIXME-3 Improve finding the right floating item
-        //if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
-        //FIXME       invert = true;
-
-        TreeItem *ti = nullptr;
-
-        // Look for branch with same parent but directly above
-        if (d == 1 && invert)
-            ti = getItemDirectBelow(selti);
-        else
-            ti = getItemDirectAbove(selti);
+        TreeItem *ti = getItemDirectAbove(selti);
 
         if (ti)
             // direct predecessor
@@ -1281,10 +1270,7 @@ TreeItem* MapEditor::getItemFromClassicMap(TreeItem *selti, RadarDirection radar
         // Go towards center and look for predecessor
         while (selti->depth() > 0) {
             selti = selti->parent();
-            if (selti->depth() == 1 && invert)
-                ti = getItemDirectBelow(selti);
-            else
-                ti = getItemDirectAbove(selti);
+            ti = getItemDirectAbove(selti);
 
             if (ti) {
                 // turn
@@ -1292,9 +1278,9 @@ TreeItem* MapEditor::getItemFromClassicMap(TreeItem *selti, RadarDirection radar
                 while (selti->depth() < d) {
                     // try to get back to original depth dz
                     ti = selti->getLastItem();
-                    if (!ti) {
+                    if (!ti)
                         return selti;
-                    }
+
                     selti = ti;
                 }
                 return selti;
@@ -1302,27 +1288,14 @@ TreeItem* MapEditor::getItemFromClassicMap(TreeItem *selti, RadarDirection radar
         }
 
     } else if (radarDir == DownDirection) {
-        bool invert = false;    // FIXME-0 currently not used
-        //FIXME-3 Improve finding the right floating item
-        // if (selbi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
-        //     invert = true;
-
-        // Look for mainbranch  // FIXME-3 Better would be to consider scenePos
-        TreeItem *ti = nullptr;
-        if (d == 1 && invert)
-            ti = getItemDirectAbove(selti);
-        else
-            ti = getItemDirectBelow(selti);
+        TreeItem *ti = getItemDirectBelow(selti);
 
         if (ti) return ti;
 
         // Go towards center and look for siblings
         while (selti->depth() > 0) {
             selti = selti->parent();
-            if (selti->depth() == 1 && invert)    // FIXME see above...
-                ti = getItemDirectAbove(selti);
-            else
-                ti = getItemDirectBelow(selti);
+            ti = getItemDirectBelow(selti);
 
             if (ti) {
                 // turn
@@ -1332,6 +1305,7 @@ TreeItem* MapEditor::getItemFromClassicMap(TreeItem *selti, RadarDirection radar
                     ti = selti->getFirstItem();
                     if (!ti)
                         return selti;
+
                     selti = ti;
                 }
                 return selti;
@@ -1541,11 +1515,6 @@ void MapEditor::cursorLeft()
     TreeItem *ti = getItemInDirection(selti, LeftDirection);
     if (ti)
         model->select(ti);
-    else {
-        ImageItem *ii = selti->getFirstImage();    // FIXME-0 should go to getLeftItem?
-        if (ii)
-            model->select(ii);
-    }
 }
 
 void MapEditor::cursorRight()
