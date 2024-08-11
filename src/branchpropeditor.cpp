@@ -180,14 +180,17 @@ void BranchPropertyEditor::updateControls()
             case FrameContainer::RoundedRectangle:
                 ui.innerFrameTypeCombo->setCurrentIndex(2);
                 break;
-            case FrameContainer::Ellipse:
+            case FrameContainer::Pipe:
                 ui.innerFrameTypeCombo->setCurrentIndex(3);
                 break;
-            case FrameContainer::Circle:
+            case FrameContainer::Ellipse:
                 ui.innerFrameTypeCombo->setCurrentIndex(4);
                 break;
-            case FrameContainer::Cloud:
+            case FrameContainer::Circle:
                 ui.innerFrameTypeCombo->setCurrentIndex(5);
+                break;
+            case FrameContainer::Cloud:
+                ui.innerFrameTypeCombo->setCurrentIndex(6);
                 break;
             default:
                 break;
@@ -226,14 +229,17 @@ void BranchPropertyEditor::updateControls()
             case FrameContainer::RoundedRectangle:
                 ui.outerFrameTypeCombo->setCurrentIndex(2);
                 break;
-            case FrameContainer::Ellipse:
+            case FrameContainer::Pipe:
                 ui.outerFrameTypeCombo->setCurrentIndex(3);
                 break;
-            case FrameContainer::Circle:
+            case FrameContainer::Ellipse:
                 ui.outerFrameTypeCombo->setCurrentIndex(4);
                 break;
-            case FrameContainer::Cloud:
+            case FrameContainer::Circle:
                 ui.outerFrameTypeCombo->setCurrentIndex(5);
+                break;
+            case FrameContainer::Cloud:
+                ui.outerFrameTypeCombo->setCurrentIndex(6);
                 break;
             default:
                 break;
@@ -528,12 +534,15 @@ void BranchPropertyEditor::frameTypeChanged(int i)
                 model->setFrameType(useInnerFrame, FrameContainer::RoundedRectangle);
                 break;
             case 3:
-                model->setFrameType(useInnerFrame, FrameContainer::Ellipse);
+                model->setFrameType(useInnerFrame, FrameContainer::Pipe);
                 break;
             case 4:
-                model->setFrameType(useInnerFrame, FrameContainer::Circle);
+                model->setFrameType(useInnerFrame, FrameContainer::Ellipse);
                 break;
             case 5:
+                model->setFrameType(useInnerFrame, FrameContainer::Circle);
+                break;
+            case 6:
                 model->setFrameType(useInnerFrame, FrameContainer::Cloud);
                 break;
         }

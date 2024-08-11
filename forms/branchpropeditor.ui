@@ -26,7 +26,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabFrame">
       <property name="minimumSize">
@@ -79,6 +79,11 @@
             <item>
              <property name="text">
               <string>Rounded Rectangle</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pipe</string>
              </property>
             </item>
             <item>
@@ -268,6 +273,11 @@
             <item>
              <property name="text">
               <string>Rounded Rectangle</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pipe</string>
              </property>
             </item>
             <item>
