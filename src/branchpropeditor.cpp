@@ -478,6 +478,30 @@ void BranchPropertyEditor::updateScalingControls()
     ui.scalingAutoCheckBox->setChecked(b);
 }
 
+void BranchPropertyEditor::colorChanged(QColor col)
+{
+    if (model) {
+        if (branchItem) {
+            BranchContainer *bc = branchItem->getBranchContainer();
+
+            QString n = sender()->objectName();
+            if (n == "innerFrameBrush")
+                model->setFrameBrushColor(true, col);
+            else if (n == "outerFrameBrush")
+                model->setFrameBrushColor(false, col);
+            else if (n == "innerFramePen")
+                model->setFramePenColor(true, col);
+            else if (n == "outerFramePen")
+                model->setFramePenColor(false, col);
+            else
+                qDebug() << "BPE::colorChanged  Unknown sender=" << sender()->objectName();
+
+            // update color buttons
+            updateControls();
+        }
+    }
+}
+
 void BranchPropertyEditor::frameAutoDesignChanged()
 {
     if (model) {
@@ -524,17 +548,31 @@ void BranchPropertyEditor::framePenColorClicked()
     bool useInnerFrame = (sender() == ui.innerFramePenColorButton) ? true : false;
 
     if (model) {
-        QColor col = Qt::white;
+        // Default col
+        QColor orgCol = Qt::white;
+
         if (branchItem) {
             BranchContainer *bc = branchItem->getBranchContainer();
             if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)
-                col = bc->framePenColor(useInnerFrame);
+                orgCol = bc->framePenColor(useInnerFrame);
 
-            col = QColorDialog::getColor(col, this);
-            if (col.isValid()) {
-                model->setFramePenColor(useInnerFrame, col);
+            QColorDialog colorDialog(orgCol);
+            colorDialog.setOption(QColorDialog::ShowAlphaChannel);
+            colorDialog.setWindowTitle(
+                    tr("Frame border color","Branch property dialog"));
 
-                // update color button
+            colorDialog.disconnect();
+
+            if (useInnerFrame)
+                colorDialog.setObjectName("innerFramePen");
+            else
+                colorDialog.setObjectName("outerFramePen");
+
+            connect(&colorDialog, SIGNAL(currentColorChanged(QColor)),
+                    this, SLOT(colorChanged(QColor)));
+                    
+            if (colorDialog.exec() != QDialog::Accepted) {
+                model->setFramePenColor(useInnerFrame, orgCol);
                 updateControls();
             }
         }
@@ -545,21 +583,30 @@ void BranchPropertyEditor::frameBrushColorClicked()
 {
     if (model) {
         bool useInnerFrame = (sender() == ui.innerFrameBrushColorButton) ? true : false;
-        QColor col = Qt::white;
+
+        // Default col
+        QColor orgCol = Qt::white;
+
         if (branchItem) {
             BranchContainer *bc = branchItem->getBranchContainer();
             if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)
-                col = bc->frameBrushColor(useInnerFrame);
+                orgCol = bc->frameBrushColor(useInnerFrame);
 
-            col = QColorDialog::getColor(
-                    col,
-                    this,
-                    tr("Background color of frame","Branch property dialog"),
-                    QColorDialog::ShowAlphaChannel);
-            if (col.isValid()) {
-                model->setFrameBrushColor(useInnerFrame, col);
+            QColorDialog colorDialog(orgCol);
+            colorDialog.setOption(QColorDialog::ShowAlphaChannel);
+            colorDialog.setWindowTitle(
+                    tr("Color of frame background","Branch property dialog"));
 
-                // update color button
+            if (useInnerFrame)
+                colorDialog.setObjectName("innerFrameBrush");
+            else
+                colorDialog.setObjectName("outerFrameBrush");
+
+            connect(&colorDialog, SIGNAL(currentColorChanged(QColor)),
+                    this, SLOT(colorChanged(QColor)));
+                    
+            if (colorDialog.exec() != QDialog::Accepted) {
+                model->setFrameBrushColor(useInnerFrame, orgCol);
                 updateControls();
             }
         }

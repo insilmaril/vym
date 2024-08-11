@@ -793,6 +793,7 @@ class VymModel : public TreeModel {
   public:
     void downloadImage(const QUrl &url, BranchItem *bi = nullptr);
 
+
     ////////////////////////////////////////////
     // Selection related
     ////////////////////////////////////////////
@@ -914,6 +915,7 @@ class VymModel : public TreeModel {
     bool moveSlideDown(int n = -1);
     bool moveSlideUp(int n = -1);
     SlideItem *findSlideID(uint id);
+
   public slots:
     void updateSlideSelection(QItemSelection, QItemSelection);
 
