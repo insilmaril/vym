@@ -2792,6 +2792,10 @@ MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
             qDebug() << "ME::selectionMode: OrgChart";
             return OrgChartSelection;
         }
+        if (bc->isFloating()) {
+            qDebug() << "ME::selectionMode: Geometric";
+            return GeometricSelection;
+        }
     } else if (selti->hasTypeImage()) {
         qDebug() << "ME::selectionMode: Geometric";
         return GeometricSelection;
