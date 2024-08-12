@@ -131,19 +131,20 @@ void MapDesign::init()
     // Background
     usesBackgroundImage = false;
 
+    innerFramePenWidths << 2;
+    outerFramePenWidths << 2;
+
     // Colors
     if (usingDarkTheme) {
         QPalette palette = qApp->palette();
         backgroundColorInt = QColor(palette.color(QPalette::Base));
 
-        innerFramePenWidths << 2;
         innerFramePenColors << QColor(Qt::white);
         innerFrameBrushColors << QColor(85, 85, 127);
 
         innerFramePenColors << QColor(Qt::blue);
         innerFrameBrushColors << QColor(25, 25, 127);
 
-        outerFramePenWidths << 2;
         outerFramePenColors << QColor(Qt::green);
         outerFramePenColors << QColor(Qt::red);
         outerFramePenColors << QColor(Qt::green);
