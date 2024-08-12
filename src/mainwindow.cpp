@@ -1444,7 +1444,7 @@ void Main::setupFileActions()
     fileLastMapsMenu = fileMenu->addMenu(tr("Open Recent", "File menu"));
     fileMenu->addSeparator();
 
-    a = new QAction(tr("&Clear", "Open Recent menu"), this);
+    a = new QAction(QPixmap(":/edit-clear-list.svg"), tr("&Clear", "Clear recent files menu"), this);
     a->setEnabled(false);
     connect(a, SIGNAL(triggered()), this, SLOT(fileClearRecent()));
     fileLastMapsMenu->addAction(a);
