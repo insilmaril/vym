@@ -6203,8 +6203,13 @@ void VymModel::setMapZoomFactor(const double &d)
 
 void VymModel::setMapRotation(const double &a)
 {
-    mapRotationInt = a;
-    mapEditor->setRotationTarget(a);
+    if (a < 1)
+        // Round to zero, otherwise selectionMode in MapEditor might be 
+        // "Geometric" when it should be "Classic"
+        mapRotationInt = 0;
+    else
+        mapRotationInt = a;
+    mapEditor->setRotationTarget(mapRotationInt);
 }
 
 void VymModel::setMapAnimDuration(const int &d) { animDuration = d; }
