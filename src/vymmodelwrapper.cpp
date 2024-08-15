@@ -325,48 +325,6 @@ QString VymModelWrapper::getNoteXML()
     return setResult(model->getNote().saveToDir());
 }
 
-qreal VymModelWrapper::getScenePosX()
-{
-    Container *c = nullptr;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        c = (Container*)(selbi->getBranchContainer());
-    else {
-        ImageItem *selii = model->getSelectedImage();
-        if (selii)
-            c = (Container*)(selii->getImageContainer());
-    }
-
-    if (c)
-        return setResult(c->scenePos().x());
-
-    scriptEngine->throwError(
-            QJSValue::GenericError,
-            "Could not get scenePos.x() from item");
-    return 0;
-}
-
-qreal VymModelWrapper::getScenePosY()
-{
-    Container *c = nullptr;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        c = (Container*)(selbi->getBranchContainer());
-    else {
-        ImageItem *selii = model->getSelectedImage();
-        if (selii)
-            c = (Container*)(selii->getImageContainer());
-    }
-
-    if (c)
-        return setResult(c->scenePos().y());
-
-    scriptEngine->throwError(
-            QJSValue::GenericError,
-            "Could not get scenePos.y() from item");
-    return 0;
-}
-
 int VymModelWrapper::getRotationHeading()
 {
     int r = -1;
@@ -412,7 +370,7 @@ bool VymModelWrapper::loadDataInsert(QString fileName)
 
 void VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
 {
-    model->newBranchIterator(itname, deepLevelsFirst);
+    model->newBranchIterator(itname, nullptr, deepLevelsFirst);
 }
 
 BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)

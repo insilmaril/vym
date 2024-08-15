@@ -127,9 +127,10 @@ void BranchContainer::init()
     setCentralContainer(headingContainer);
 
     // Elastic layout experiments FIXME-2
+    v_anim = QPointF(0, 0);
     v.setParentItem(this);
     v.setPen(QPen(Qt::red));
-    v.setVisible(false);
+    v.setVisible(true);
 
     /* Uncomment for testing
     QGraphicsEllipseItem *center = new QGraphicsEllipseItem (0, 0, 5, 5, this);

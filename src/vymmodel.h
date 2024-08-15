@@ -898,11 +898,12 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
   public:
     void newBranchIterator(const QString &itname,
+                      BranchItem *bi = nullptr,             //! All branches or only subtree
                       bool deepLevelsFirst = false);        //! Named iterator
     BranchItem* nextBranchIterator(const QString &itname);  //! next branch via iterator
   private:
     QHash <QString, QList <QUuid>> branchIterators;
-    int branchIteratorsCurrentIndex;
+    QHash <QString, int> branchIteratorsCurrentIndex;
 
     ////////////////////////////////////////////
     // Slide related

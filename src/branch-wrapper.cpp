@@ -35,6 +35,27 @@ VymModel* BranchWrapper::model()
     return branchItemInt->getModel();
 }
 
+QPointF BranchWrapper::v_anim() // FIXME-3 experimental, no highlighting
+{
+    return branchItemInt->getBranchContainer()->v_anim;
+}
+
+qreal BranchWrapper::v_animX()  // FIXME-3 experimental, no highlighting
+{
+    return branchItemInt->getBranchContainer()->v_anim.x();
+}
+
+qreal BranchWrapper::v_animY()  // FIXME-3 experimental, no highlighting
+{
+    return branchItemInt->getBranchContainer()->v_anim.y();
+}
+
+void BranchWrapper::setV_anim(qreal x, qreal y) // FIXME-2 playing with elastic animation
+{
+    branchItemInt->getBranchContainer()->v_anim = QPointF(x, y);
+    branchItemInt->getBranchContainer()->v.setLine(0, 0, x * 40, y * 40);
+}
+
 BranchWrapper* BranchWrapper::addBranch()
 {
     BranchItem* newbi = model()->addNewBranch(branchItemInt, -2);
@@ -230,6 +251,21 @@ qreal BranchWrapper::getPosX()
 qreal BranchWrapper::getPosY()
 {
     return setResult(branchItemInt->getBranchContainer()->pos().y());
+}
+
+QPointF BranchWrapper::getScenePos()
+{
+    return branchItemInt->getBranchContainer()->scenePos();
+}
+
+qreal BranchWrapper::getScenePosX()
+{
+    return setResult(branchItemInt->getBranchContainer()->scenePos().x());
+}
+
+qreal BranchWrapper::getScenePosY()
+{
+    return setResult(branchItemInt->getBranchContainer()->scenePos().y());
 }
 
 int BranchWrapper::getTaskPriorityDelta()
@@ -592,6 +628,7 @@ void BranchWrapper::unsetFlagByName(const QString &s)
 {
     model()->unsetFlagByName(s, branchItemInt);
 }
+
 
 int BranchWrapper::xlinkCount()
 {

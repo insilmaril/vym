@@ -277,6 +277,7 @@ bool appendStringToFile(const QString &fname, const QString &s)
 
     QTextStream out(&file);
     out << s;
+    file.close();
 
     return true;
 }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>278</width>
-    <height>181</height>
+    <height>187</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -59,6 +59,9 @@
           <property name="text">
            <string>Never use dark theme</string>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>

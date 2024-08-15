@@ -715,12 +715,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("getScenePosX", Command::TreeItem);
-    modelCommands.append(c);
-
-    c = new Command("getScenePosY", Command::TreeItem);
-    modelCommands.append(c);
-
     c = new Command("getRotationHeading", Command::Branch);
     modelCommands.append(c);
 
@@ -1053,6 +1047,18 @@ void Main::setupAPI()
     c->setComment("get y position of branch relative to parent");
     branchCommands.append(c);
 
+    c = new Command("getScenePos", Command::Branch);
+    c->setComment("get position of branch in scene coordinates");
+    branchCommands.append(c);
+
+    c = new Command("getScenePosX", Command::Branch);
+    c->setComment("get x position of branch in scene coordinates");
+    branchCommands.append(c);
+
+    c = new Command("getScenePosY", Command::Branch);
+    c->setComment("get y position of branch in scene coordinates");
+    branchCommands.append(c);
+
     c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
     c->setComment("Return delta of priority of task");
     branchCommands.append(c);
@@ -1328,6 +1334,22 @@ void Main::setupAPI()
     //
     c = new Command("hasRichTextHeading", Command::Branch, Command::Bool);
     c->setComment("Check if image has a RichText heading or just plain text");
+    imageCommands.append(c);
+
+    c = new Command("getPosX", Command::TreeItem);
+    c->setComment("get x position of image relative to parent");
+    imageCommands.append(c);
+
+    c = new Command("getPosY", Command::TreeItem);
+    c->setComment("get y position of image relative to parent");
+    imageCommands.append(c);
+
+    c = new Command("getScenePosX", Command::TreeItem);
+    c->setComment("get x position of image in scene coordinates");
+    imageCommands.append(c);
+
+    c = new Command("getScenePosY", Command::TreeItem);
+    c->setComment("get y position of image in scene coordinates");
     imageCommands.append(c);
 
     c = new Command("headingText", Command::Image, Command::String);
