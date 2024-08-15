@@ -45,8 +45,6 @@ class VymModelWrapper : public VymScriptContext {
     QString getTitle();
     QString getNotePlainText(); // FIXME-3 getNoteText in BranchWrapper. Rework test scripts
     QString getNoteXML();       // FIXME-3 move to BranchWrapper
-    qreal getScenePosX();       // FIXME-3 move to BranchWrapper, copy for image
-    qreal getScenePosY();       // FIXME-3 move to BranchWrapper, copy for image
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
     int getRotationSubtree();   // FIXME-3 move to BranchWrapper
     QString getSelectionString();//FIXME-3 copy to BranchWrapper?

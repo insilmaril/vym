@@ -18,6 +18,11 @@ class BranchWrapper : public VymScriptContext {
     VymModel* model();
 
   public slots:
+    QPointF v_anim();
+    qreal v_animX();
+    qreal v_animY();
+    void setV_anim(qreal, qreal);
+
     BranchWrapper* addBranch();
     BranchWrapper* addBranchAt(int pos);
     BranchWrapper* addBranchBefore();
@@ -38,8 +43,11 @@ class BranchWrapper : public VymScriptContext {
     QString getNoteText();
     QString getNoteXML();
     int getNum();
-    qreal getPosX();            // FIXME-3 copy for image
-    qreal getPosY();            // FIXME-3 copy for image
+    qreal getPosX();
+    qreal getPosY();
+    QPointF getScenePos();
+    qreal getScenePosX();
+    qreal getScenePosY();
     int getTaskPriorityDelta();
     QString getTaskSleep();
     int getTaskSleepDays();

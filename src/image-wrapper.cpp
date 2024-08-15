@@ -1,6 +1,7 @@
 #include "image-wrapper.h"
 
 #include "imageitem.h"
+#include "image-container.h"
 
 #include "vymmodel.h"
 
@@ -25,6 +26,26 @@ ImageItem* ImageWrapper::imageItem() {return imageItemInt;}
 bool ImageWrapper::hasRichTextHeading()
 {
     return setResult(imageItemInt->heading().isRichText());
+}
+
+qreal ImageWrapper::getPosX()
+{
+    return setResult(imageItemInt->getImageContainer()->pos().x());
+}
+
+qreal ImageWrapper::getPosY()
+{
+    return setResult(imageItemInt->getImageContainer()->pos().y());
+}
+
+qreal ImageWrapper::getScenePosX()
+{
+    return setResult(imageItemInt->getImageContainer()->scenePos().x());
+}
+
+qreal ImageWrapper::getScenePosY()
+{
+    return setResult(imageItemInt->getImageContainer()->scenePos().y());
 }
 
 QString ImageWrapper::headingText()

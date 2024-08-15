@@ -6810,32 +6810,30 @@ QColor VymModel::getSelectionBrushColor() {
     return mapDesignInt->selectionBrush().color();
 }
 
-void VymModel::newBranchIterator(const QString &itname, bool deepLevelsFirst)
+void VymModel::newBranchIterator(
+        const QString &itname,
+        BranchItem *bi,
+        bool deepLevelsFirst)
 {
     Q_UNUSED(deepLevelsFirst);
 
     // Remove existing iterators first
     branchIterators.remove(itname);
-    branchIteratorsCurrentIndex = -1;
+    branchIteratorsCurrentIndex[itname] = -1;
 
-    QList<BranchItem *> selbis;
-    selbis = getSelectedBranches();
-    if (selbis.count() == 1) {
-        BranchItem *cur = nullptr;
-        BranchItem *prev = nullptr;
-        BranchItem *start = selbis.first();
-        nextBranch(cur, prev, true, start);
-        while (cur) {
-            branchIterators[itname].append(cur->getUuid());
-            qDebug() << "Adding b: " << headingText(cur);
-            nextBranch(cur, prev, true, start);
-        }
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    nextBranch(cur, prev);
+    while (cur) {
+        branchIterators[itname].append(cur->getUuid());
+        //qDebug() << "VM::newBranchIterator Adding " << headingText(cur) << " to " << itname;
+        nextBranch(cur, prev);
     }
 }
 
-BranchItem* VymModel::nextBranchIterator(const QString &itname)
+BranchItem* VymModel::nextBranchIterator(const QString &itname)  // FIXME-0 remove unused code...
 {
-    qDebug() << "VM::nBI itname=" << itname << " index=" << branchIteratorsCurrentIndex;
+    //qDebug() << "VM::nextBranchIterator itname=" << itname << " index=" << branchIteratorsCurrentIndex;
     if (branchIterators.keys().indexOf(itname) < 0) {
         qWarning()
             << QString("VM::nextIterator couldn't find %1 in hash of iterators")
@@ -6843,14 +6841,12 @@ BranchItem* VymModel::nextBranchIterator(const QString &itname)
         return nullptr;
     }
 
-    branchIteratorsCurrentIndex++;
+    branchIteratorsCurrentIndex[itname]++;
 
-    if (branchIteratorsCurrentIndex < 0 || branchIteratorsCurrentIndex > branchIterators[itname].size() - 1) {
-        //qDebug() << "out of range";
+    if (branchIteratorsCurrentIndex[itname] < 0 || branchIteratorsCurrentIndex[itname] > branchIterators[itname].size() - 1)
         return nullptr;
-    }
 
-    BranchItem *bi = (BranchItem *)(findUuid(branchIterators[itname].at(branchIteratorsCurrentIndex)));
+    BranchItem *bi = (BranchItem *)(findUuid(branchIterators[itname].at(branchIteratorsCurrentIndex[itname])));
     if (!bi) {
         qWarning() << "VM::nextIterator couldn't find branch with Uuid in list.";
         return nullptr;

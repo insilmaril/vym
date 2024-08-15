@@ -15,6 +15,10 @@ class ImageWrapper : public VymScriptContext {
     ImageItem* imageItem();
 
   public slots:
+    qreal getPosX();
+    qreal getPosY();
+    qreal getScenePosX();
+    qreal getScenePosY();
     bool hasRichTextHeading();
     QString headingText();  
     bool selectParent();
