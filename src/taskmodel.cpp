@@ -173,8 +173,15 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     }
     else // role != Qt::DisplayRole
     {
-        if (role == Qt::EditRole && index.column() == 1) // DeltaPrio
-            return t->getPriorityDelta();
+        if (role == Qt::EditRole)
+        {
+            if (index.column() == 1) // DeltaPrio
+                return t->getPriorityDelta();
+            else if (index.column() == 8) {
+                BranchItem *bi = tasks.at(index.row())->getBranch();
+                return bi->headingPlainWithParents(showParentsLevel);
+            }
+        }
         if (role == Qt::ForegroundRole && bi)
             return bi->headingColor();
         if (role == Qt::BackgroundRole && bi) {
@@ -295,8 +302,13 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
+    // Editable columns should match those in the setData method
+    if (index.column() == 1 || index.column() == 8)
+        return QAbstractTableModel::flags(index) | Qt::ItemIsDragEnabled |
+               Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
+
     return QAbstractTableModel::flags(index) | Qt::ItemIsDragEnabled |
-           Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
+           Qt::ItemIsDropEnabled;
 }
 
 int TaskModel::count(VymModel *model) const
