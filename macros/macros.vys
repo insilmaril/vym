@@ -1,5 +1,8 @@
 // vim:syntax=javascript
 
+// Macros called when function keys are pressed
+
+
 //! Helper function to toggle frame
 function toggle_frame(map)
 {
