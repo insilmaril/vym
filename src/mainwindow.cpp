@@ -479,6 +479,15 @@ void Main::loadCmdLine()
     removeProgressCounter();
 }
 
+void Main::logInfo(const QString &comment, const QString &caller)
+{
+    if (!useActionLog) return;
+
+    QString log = QString("\n// %1 [Info] MainWindow").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs));
+
+    appendStringToFile(actionLogPath, log + "\n// " + comment + "\n");
+}
+
 void Main::statusMessage(const QString &s, int timeout)
 {
     // Surpress messages while progressdialog during
@@ -7180,9 +7189,12 @@ QVariant Main::runScript(const QString &script)
         std::cout << "MainWindow::runScript starting to execute:" << endl;
         std::cout << qPrintable("----------\n" + script + "\n----------") << endl;
     }
+    logInfo("Starting to execute: " + script.left(30), __func__);
 
     // Run script
     QJSValue result = scriptEngine->evaluate(script);
+
+    logInfo("Finished executing: " + script.left(30), __func__);
 
     if (debug) {
         qDebug() << "MainWindow::runScript finished:";
@@ -7492,7 +7504,6 @@ void Main::callMacro()
     QAction *action = qobject_cast<QAction *>(sender());
     int i = -1;
     if (action) {
-        QString s = macros.get();
         QString modifiers;
 
         i = action->data().toInt();
@@ -7511,7 +7522,9 @@ void Main::callMacro()
         // Function keys start at "1", not "0"
         i++;
 
-        s += QString("macro_%1f%2();").arg(modifiers).arg(i);
+        QString s = QString("macro_%1f%2();\n").arg(modifiers).arg(i);
+
+        s += macros.get();
 
         VymModel *m = currentModel();
         if (m)

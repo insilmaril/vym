@@ -47,6 +47,7 @@ class Main : public QMainWindow {
     int progressCounterTotal;
 
   public:
+    void logInfo(const QString &comment, const QString &caller = "");
     void statusMessage(const QString &, int timeout = 10000);
     void setProgressMaximum(int max);
     void addProgressValue(float v);
