@@ -54,6 +54,7 @@ void BranchWrapper::setV_anim(qreal x, qreal y) // FIXME-2 playing with elastic 
 {
     branchItemInt->getBranchContainer()->v_anim = QPointF(x, y);
     branchItemInt->getBranchContainer()->v.setLine(0, 0, x * 40, y * 40);
+    branchItemInt->getBranchContainer()->v.setVisible(true);
 }
 
 BranchWrapper* BranchWrapper::addBranch()

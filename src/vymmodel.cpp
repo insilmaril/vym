@@ -6819,6 +6819,7 @@ void VymModel::newBranchIterator(
 
     // Remove existing iterators first
     branchIterators.remove(itname);
+    branchIteratorsCurrentIndex.remove(itname);
     branchIteratorsCurrentIndex[itname] = -1;
 
     BranchItem *cur = nullptr;

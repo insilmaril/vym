@@ -130,7 +130,7 @@ void BranchContainer::init()
     v_anim = QPointF(0, 0);
     v.setParentItem(this);
     v.setPen(QPen(Qt::red));
-    v.setVisible(true);
+    v.setVisible(false);
 
     /* Uncomment for testing
     QGraphicsEllipseItem *center = new QGraphicsEllipseItem (0, 0, 5, 5, this);
