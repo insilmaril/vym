@@ -483,7 +483,7 @@ void Main::logInfo(const QString &comment, const QString &caller)
 {
     if (!useActionLog) return;
 
-    QString log = QString("\n// %1 [Info] MainWindow").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs));
+    QString log = QString("\n// %1 [Info MainWindow]").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs));
 
     appendStringToFile(actionLogPath, log + "\n// " + comment + "\n");
 }

@@ -7713,9 +7713,13 @@ void VymModel::logInfo(const QString &comment, const QString &caller)
     if (!useActionLog) return;
 
     QString place = QString("\"%1\"").arg(fileName);
-    if (!caller.isEmpty()) place += " " + caller + "()";
+    if (!caller.isEmpty()) place += "  Called by: " + caller + "()";
 
-    QString log = QString("\n// %1 [Info] Map: %2 %3").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), QString::number(modelIdInt), place);
+    QString log = QString("\n// %1 [Info VymModel] %2\n// MapID: %3 Map: %4").arg(
+            QDateTime::currentDateTime().toString(Qt::ISODateWithMs),
+            comment,
+            QString::number(modelIdInt),
+            place);
 
     appendStringToFile(actionLogPath, log + "\n// " + comment + "\n");
 }
@@ -7725,9 +7729,13 @@ void VymModel::logCommand(const QString &command, const QString &comment, const 
     if (!useActionLog) return;
 
     QString place = QString("\"%1\"").arg(fileName);
-    if (!caller.isEmpty()) place += " " + caller + "()";
+    if (!caller.isEmpty()) place += "  Called by: " + caller + "()";
 
-    QString log = QString("\n// %1 [Command] MapID: %2 Map: %3").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), QString::number(modelIdInt), place);
+    QString log = QString("\n// %1 [Command] %2\n// MapID: %3 Map: %4").arg(
+            QDateTime::currentDateTime().toString(Qt::ISODateWithMs),
+            comment,
+            QString::number(modelIdInt),
+            place);
 
     appendStringToFile(actionLogPath, log + "\n" + command + "\n");
 }
