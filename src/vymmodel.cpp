@@ -2747,7 +2747,7 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
             updateJiraFlag(bi);
 
             // Check for Confluence
-            setHeadingConfluencePageName();
+            setHeadingConfluencePageName(); // FIXME-2 Only, if not Jira above?
         }
 
         emitDataChanged(bi);
@@ -5417,6 +5417,9 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
     repositionBlocked = false;
 
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
+
+    // Update note
+    reselect();
 
     reposition();
 }
