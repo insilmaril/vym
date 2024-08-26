@@ -172,6 +172,8 @@ class VymModel : public TreeModel {
     void zipFinished ();
 
   private:
+
+
     ZipAgent *zipAgent;
     bool isSavingInt;
 
