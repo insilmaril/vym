@@ -1,5 +1,6 @@
 #include "mapeditor.h"
 
+#include <QApplication>
 #include <QGraphicsProxyWidget>
 #include <QMenuBar>
 #include <QObject>
