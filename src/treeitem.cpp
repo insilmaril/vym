@@ -71,6 +71,9 @@ void TreeItem::init()
     itemData.clear();
     itemData << "";
 
+    urlInt = QString();
+    urlTypeInt = GeneralUrl;
+
     standardFlags.setMasterRow(standardFlagsMaster);
     userFlags.setMasterRow(userFlagsMaster);
     systemFlags.setMasterRow(systemFlagsMaster);
@@ -408,6 +411,16 @@ void TreeItem::setUrl(const QString &u)
 QString TreeItem::url() { return urlInt; }
 
 bool TreeItem::hasUrl() { return !urlInt.isEmpty();}
+
+void TreeItem::setUrlType(UrlType ut)
+{
+    urlTypeInt = ut;
+}
+
+TreeItem::UrlType TreeItem::urlType()
+{
+    return urlTypeInt;
+}
 
 void TreeItem::setVymLink(const QString &vl)
 {

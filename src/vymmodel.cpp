@@ -2745,7 +2745,7 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
                 getJiraData(false, bi);
             }
 
-            updateJiraFlag(bi);
+            updateJiraFlag(bi); // FIXME-0 needed? or updateUrlType?
 
             // Check for Confluence
             setHeadingConfluencePageName(); // FIXME-2 Only, if not Jira above?
@@ -4156,9 +4156,14 @@ AttributeItem *VymModel::setAttribute( // FIXME-2 saveState( missing. For bulk c
         dst->appendChild(ai);
         endInsertRows();
         emit(layoutChanged());
+
+        // Jira attributes
+        if (ai->key() == "Jira.issueUrl") {
+            dst->setUrlType(TreeItem::JiraUrl);
+            updateJiraFlag(dst);
+        }
     }
 
-    updateJiraFlag(dst);
     emitDataChanged(dst);
     reposition();
 
@@ -4181,12 +4186,12 @@ void VymModel::deleteAttribute(BranchItem *dst, const QString &key) // FIXME-2 N
     }
 }
 
-AttributeItem *VymModel::getAttributeByKey(const QString &key, BranchItem *bi)
+AttributeItem *VymModel::getAttributeByKey(const QString &key, TreeItem *ti)
 {
-    BranchItem *selbi = getSelectedBranch(bi);
-    if (selbi) {
-        for (int i = 0; i < selbi->attributeCount(); i++) {
-            AttributeItem *ai = selbi->getAttributeNum(i);
+    TreeItem *selti = getSelectedItem(ti);
+    if (selti) {
+        for (int i = 0; i < selti->attributeCount(); i++) {
+            AttributeItem *ai = selti->getAttributeNum(i);
             if (ai->key() == key)
                 return ai;
         }
@@ -5376,15 +5381,28 @@ void VymModel::updateJiraFlag(TreeItem *ti)
 {
     if(!ti) return;
 
-    AttributeItem *ai = getAttributeByKey("Jira.query");
-    if (!ai) {
-        ai = getAttributeByKey("Jira.key");
-        if (!ai) {
-            ti->deactivateSystemFlagByName("system-jira");
-            return;
-        }
+    AttributeItem *ai = getAttributeByKey("Jira.issueUrl", ti);
+    if (ai)
+        ti->setUrlType(TreeItem::JiraUrl);
+    else {
+        ai = getAttributeByKey("Jira.query");
+        if (ai)
+            ti->setUrlType(TreeItem::JiraUrl);  // FIXME-3 Dedicated flag for query missing
+        else
+            ti->setUrlType(TreeItem::GeneralUrl);
     }
-    ti->activateSystemFlagByName("system-jira");
+
+    // Update UrlType
+    if (ti->urlType() == TreeItem::JiraUrl) {
+        ti->activateSystemFlagByName("system-jira");
+        ti->deactivateSystemFlagByName("system-url");
+        qDebug() << "uJF: jira" << ti->headingText(); 
+    } else {
+        ti->deactivateSystemFlagByName("system-jira");
+        ti->activateSystemFlagByName("system-url");
+        qDebug() << "uJF: url" << ti->headingText(); 
+    }
+    emitDataChanged(ti);
 }
 
 
@@ -5392,7 +5410,6 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
 {
     int branchID = jsobj["vymBranchId"].toInt();
 
-    saveStateBlocked = true;
     repositionBlocked = true; // FIXME-2 block reposition during processing of Jira query?
 
     BranchItem *bi = (BranchItem*)findID(branchID);
@@ -5409,12 +5426,15 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
 
         setHeadingPlainText(keyName + ": " + ji.summary(), bi);
         setUrl(ji.url(), false, bi);
+        bi->setUrlType(TreeItem::JiraUrl);
+        updateJiraFlag(bi);
+
+        emitDataChanged(bi);
 
         // Pretty print JIRA ticket
         ji.print();
     }
 
-    saveStateBlocked = false;
     repositionBlocked = false;
 
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));

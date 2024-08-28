@@ -1897,7 +1897,8 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
     if (selbc) {
         if (!sysFlagName.isEmpty()) {
             // systemFlag clicked
-            if (sysFlagName.contains("system-url")) {
+            if (sysFlagName.contains("system-url") ||
+                sysFlagName.contains("system-jira") ) {
                 if (e->modifiers() & Qt::ControlModifier)
                     mainWindow->editOpenURLTab();
                 else

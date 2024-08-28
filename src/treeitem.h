@@ -100,13 +100,19 @@ class TreeItem : public XMLObj {
                                       //! overloaded to update QGraphicsView
     virtual QColor headingColor(); //! Returns color of heading
 
+  public:
+    enum UrlType{GeneralUrl, JiraUrl};
+
   protected:
     QString urlInt;
+    UrlType urlTypeInt;
 
   public:
     void setUrl(const QString &url); //! Set Url
     QString url();                   //! Get Url
     bool hasUrl();
+    void setUrlType(UrlType);
+    UrlType urlType();
 
   protected:
     QString vymLinkInt;

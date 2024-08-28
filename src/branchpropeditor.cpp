@@ -675,10 +675,8 @@ void BranchPropertyEditor::branchesLayoutsChanged(int i)
             return;
     }
 
-    qDebug() << "BPE ok0";
     if (branchItem)
         model->setBranchesLayout(s, branchItem);
-    qDebug() << "BPE ok1";
 }
 
 void BranchPropertyEditor::imagesLayoutsChanged(int i)
