@@ -3,13 +3,13 @@
     <id>io.github.insilmaril.vym</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>LGPL-2.1-or-later</project_license>
-    <name>vym</name>
+    <name>VYM</name>
     <summary>Tool for generating and manipulating mind maps</summary>
     <description>
 	<p>
-	    VYM (View Your Mind) allows you to easily and intuitively
-            organize your ideas in a structured way. You can create 
-            metal maps and export them to multiple formats.
+	    VYM (View Your Mind) allows you to organize your ideas easily and intuitively. 
+            It is a powerful personal task manager that lets you create mind maps and export
+            them to multiple formats.
 	</p>
     </description>
     <screenshots>
