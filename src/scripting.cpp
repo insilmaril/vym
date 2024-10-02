@@ -16,8 +16,6 @@
 extern Main *mainWindow;
 extern QString vymVersion;
 
-extern QJSEngine *scriptEngine;
-
 extern bool usingDarkTheme;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -25,58 +23,73 @@ VymScriptContext::VymScriptContext() {}
 
 QString VymScriptContext::setResult(const QString &r)
 {
+    /* FIXME-0 how to return results using setResult
+     * setResult really needed?
+
     if (scriptEngine) {
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
+        */
     return r;
 }
 
 bool VymScriptContext::setResult(bool r)
 {
+    /*
     if (scriptEngine) {
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
+        */
     return r;
 }
 
 int VymScriptContext::setResult(int r)
 {
+    /*
     if (scriptEngine) {
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
+        */
     return r;
 }
 
 uint VymScriptContext::setResult(uint r)
 {
+    /*
     if (scriptEngine) {
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
+        */
     return r;
 }
 
 qreal VymScriptContext::setResult(qreal r)
 {
+    /*
     if (scriptEngine) {
         scriptEngine->globalObject().setProperty("lastResult", r);
     } else
         qWarning() << "VymScriptContext: No scriptEngine defined";
+        */
     return r;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 #include "vymmodelwrapper.h"
 
-VymWrapper::VymWrapper() {} // FIXME-2 Move to extra files like the other wrappers
+VymWrapper::VymWrapper()
+{
+    qDebug() << "Constr. VymWrapper";
+}
 
-void VymWrapper::abortScript(const QString &s)
+void VymWrapper::abortScript(const QString &s)  // FIXME-0 needed? other wrappers call mainWindow directly...
 {
     mainWindow->statusMessage(s);
-    scriptEngine->throwError(QString("abortScript(\"%1\") called").arg(s));
+    mainWindow->abortScript(QString("abortScript(\"%1\") called").arg(s));
 }
 
 void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
@@ -85,7 +98,7 @@ bool VymWrapper::closeMapWithID(uint n)
 {
     bool r = mainWindow->closeModelWithId(n);
     if (!r) {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::ReferenceError, 
                 QString("Map '%1' not available.").arg(n));
         return false;
@@ -126,7 +139,7 @@ bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
     QFile file(srcPath);
     if (!file.exists()) {
         qDebug() << "VymWrapper::fileCopy()   srcPath does not exist:" << srcPath;
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::ReferenceError, 
                 QString("File '%1' does not exist.").arg(srcPath));
         return setResult(false);
@@ -151,7 +164,7 @@ bool VymWrapper::fileRemove(const QString &fileName)
 void VymWrapper::gotoMap(uint n)
 {
     if (!mainWindow->gotoModelWithId(n)) {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::ReferenceError, 
                 QString("Map '%1' not available.").arg(n));
         return;

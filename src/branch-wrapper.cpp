@@ -8,11 +8,11 @@
 #include "scripting-xlink-wrapper.h"
 #include "task.h"
 #include "vymmodel.h"
+#include "mainwindow.h"
 #include "xlink.h"
 #include "xlinkitem.h"
 
-#include <QJSEngine>
-extern QJSEngine *scriptEngine;
+extern Main *mainWindow;
 
 BranchWrapper::BranchWrapper(BranchItem *bi)
 {
@@ -61,7 +61,7 @@ BranchWrapper* BranchWrapper::addBranch()
 {
     BranchItem* newbi = model()->addNewBranch(branchItemInt, -2);
     if (!newbi) {
-        scriptEngine->throwError(QJSValue::GenericError,"Couldn't add branch to map");
+        mainWindow->abortScript(QJSValue::GenericError,"Couldn't add branch to map");
         return nullptr;
     } else
         return newbi->branchWrapper();
@@ -71,7 +71,7 @@ BranchWrapper* BranchWrapper::addBranchAt(int pos)
 {
     BranchItem* newbi = model()->addNewBranch(branchItemInt, -2);
     if (!newbi) {
-        scriptEngine->throwError(QJSValue::GenericError,"Couldn't add branch to map");
+        mainWindow->abortScript(QJSValue::GenericError,"Couldn't add branch to map");
         return nullptr;
     } else
         return newbi->branchWrapper();
@@ -81,7 +81,7 @@ BranchWrapper* BranchWrapper::addBranchBefore()
 {
     BranchItem* newbi = model()->addNewBranchBefore(branchItemInt);
     if (!newbi) {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Couldn't add branch before selection to map");
         return nullptr;
@@ -106,7 +106,7 @@ XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
     if (col.isValid())
         pen.setColor(col);
     else {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
         return nullptr;
@@ -118,7 +118,7 @@ XLinkWrapper* BranchWrapper::addXLink(BranchWrapper *bwEnd,
         pen.setStyle(st1);
         li->setPen(pen);
     } else {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Couldn't set penstyle %1").arg(penstyle));
         return nullptr;
@@ -133,7 +133,7 @@ int BranchWrapper::attributeAsInt(const QString &key)
     if (ai) {
         v = ai->value();
     } else {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("No attribute found with key '%1'").arg(key));
         return setResult(-1);
@@ -144,7 +144,7 @@ int BranchWrapper::attributeAsInt(const QString &key)
     if (ok)
         return setResult(v.toInt());
     else {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not convert attribute  with key '%1' to int.").arg(key));
         return setResult(-1);
@@ -158,7 +158,7 @@ QString BranchWrapper::attributeAsString(const QString &key)
     if (ai) {
         v = ai->value();
     } else {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("No attribute found with key '%1'").arg(key));
         return setResult(QString());
@@ -179,7 +179,7 @@ void BranchWrapper::colorBranch(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
     else
@@ -190,7 +190,7 @@ void BranchWrapper::colorSubtree(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
     else
@@ -281,7 +281,7 @@ QString BranchWrapper::getTaskSleep()
     if (task)
         r = task->getSleep().toString(Qt::ISODate);
     else
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Branch has no task");
     return setResult(r);
@@ -294,7 +294,7 @@ int BranchWrapper::getTaskSleepDays()
     if (task)
         r = task->getDaysSleep();
     else
-        scriptEngine->throwError(QJSValue::GenericError, "Branch has no task");
+        mainWindow->abortScript(QJSValue::GenericError, "Branch has no task");
     return setResult(r);
 }
 
@@ -305,7 +305,7 @@ QString BranchWrapper::getTaskStatus()
     if (task) 
         r = task->getStatusString();
     else
-        scriptEngine->throwError(QJSValue::GenericError, "Branch has no task");
+        mainWindow->abortScript(QJSValue::GenericError, "Branch has no task");
 
     return setResult(r);
 }
@@ -460,7 +460,7 @@ bool BranchWrapper::selectParent()
 {
     bool r = model()->selectParent(branchItemInt);
     if (!r)
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Couldn't select parent item");
     return setResult(r);
@@ -471,7 +471,7 @@ bool BranchWrapper::selectXLink(int n)
     bool r = false;
         XLinkItem *xli = branchItemInt->getXLinkItemNum(n);
     if (!xli)
-        scriptEngine->throwError(QJSValue::RangeError,
+        mainWindow->abortScript(QJSValue::RangeError,
              QString("Selected branch has no xlink with index %1").arg(n));
     else
         r = model()->select((TreeItem*)xli);
@@ -483,13 +483,13 @@ bool BranchWrapper::selectXLinkOtherEnd(int n)
     bool r = false;
     XLinkItem *xli = branchItemInt->getXLinkItemNum(n);
     if (!xli) {
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::RangeError,
                 QString("Selected branch has no xlink with index %1").arg(n));
     } else {
         BranchItem *bi = xli->getPartnerBranch();
         if (!bi) {
-            scriptEngine->throwError(
+            mainWindow->abortScript(
                     QJSValue::RangeError,
                     "Selected xlink has no other end ?!");
         } else

@@ -290,13 +290,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     connect(findResultWidget, SIGNAL(findPressed(QString, bool)), this,
             SLOT(editFindNext(QString, bool)));
 
-    // Setup global scriptEngine
-    scriptEngine = new QJSEngine(this);
-    //scriptEngine->installExtensions(QJSEngine::ConsoleExtension);
-    vymWrapper = new VymWrapper;
-
-    QJSValue val2 = scriptEngine->newQObject(vymWrapper);
-    scriptEngine->globalObject().setProperty("vym", val2);
 
     scriptEditor = new ScriptEditor(this);
     dw = new QDockWidget(tr("Script Editor", "ScriptEditor"));
@@ -365,6 +358,9 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     if (settings.value("/mainwindow/showTestMenu", false).toBool())
         setupTestActions();
     setupHelpActions();
+
+    // Scripting interface
+    vymWrapper = new VymWrapper;
 
     // Status bar and progress bar there
     statusBar();
@@ -459,7 +455,6 @@ Main::~Main()
     delete systemFlagsMaster;
 
     delete vymWrapper;
-    delete scriptEngine;
 
     // Remove temporary directory
     removeDir(tmpVymDir);
@@ -7192,6 +7187,16 @@ QVariant Main::runScript(const QString &script)
     logInfo("Starting to execute: " + script.left(30), __func__);
 
     // Run script
+
+    // Setup local scriptEngine
+    QJSEngine *scriptEngine = new QJSEngine(this);
+    scriptEngines << scriptEngine;
+
+    //scriptEngine->installExtensions(QJSEngine::ConsoleExtension);
+
+    QJSValue val2 = scriptEngine->newQObject(vymWrapper);
+    scriptEngine->globalObject().setProperty("vym", val2);
+
     QJSValue result = scriptEngine->evaluate(script);
 
     logInfo("Finished executing: " + script.left(30), __func__);
@@ -7204,7 +7209,7 @@ QVariant Main::runScript(const QString &script)
     }
 
     if (result.isError()) {
-        // Warnings, in case that output window i not visible...
+        // Warnings, in case that output window is not visible...
         statusMessage("Script execution failed");
         int lineNumber = result.property("lineNumber").toInt();
         qWarning() << "Script execution failed"
@@ -7218,7 +7223,30 @@ QVariant Main::runScript(const QString &script)
 
     if (debug) qDebug() << "Main::runScript finished.";
 
+    if (scriptEngines.isEmpty())
+        qWarning() << "MainWindow::runScript  has empty scriptEngines!";
+    else
+        scriptEngines.removeLast();
+
+    delete scriptEngine;
+
     return QVariant("");
+}
+
+void Main::abortScript(const QJSValue::ErrorType &err, const QString &msg)
+{
+    if (scriptEngines.isEmpty()) {
+        qWarning() << "MainWindow::abortScript  has empty scriptEngines!";
+        return;
+    }
+
+    scriptEngines.last()->throwError(err, msg);
+    qDebug() << "MW::abortScript  msg=" << msg; // FIXME-0
+}
+
+void Main::abortScript(const QString &msg)
+{
+    abortScript(QJSValue::GenericError, msg);
 }
 
 QObject *Main::getCurrentModelWrapper()

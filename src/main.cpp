@@ -56,7 +56,6 @@ BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow
 Main *mainWindow;
-QJSEngine *scriptEngine;
 ScriptEditor *scriptEditor;
 ScriptOutput *scriptOutput;
 FindWidget *findWidget;

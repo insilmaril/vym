@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QItemSelection>
+#include <QJSValue>
 #include <QMainWindow>
 #include <QProgressDialog>
 #include <QTextStream>
@@ -346,8 +347,16 @@ class Main : public QMainWindow {
     void updateActions();
     ModMode getModMode();
     bool autoSelectNewBranch();
+
     void scriptPrint(const QString &);
     QVariant runScript(const QString &);
+    void abortScript(const QJSValue::ErrorType &err, const QString &msg);
+    void abortScript(const QString &msg);
+  private:
+    VymWrapper *vymWrapper;
+    QList <QJSEngine*> scriptEngines;
+
+  public slots:
     QObject *getCurrentModelWrapper();
     bool gotoWindow(const int &n);
 
@@ -409,8 +418,6 @@ class Main : public QMainWindow {
     QDockWidget *noteEditorDW;
     QDockWidget *scriptEditorDW;
     QDockWidget *branchPropertyEditorDW;
-
-    VymWrapper *vymWrapper;
 
   public:
     QList<QAction *>

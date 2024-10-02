@@ -4,9 +4,9 @@
 #include "image-container.h"
 
 #include "vymmodel.h"
+#include "mainwindow.h"
 
-#include <QJSEngine>
-extern QJSEngine *scriptEngine;
+extern Main *mainWindow;
 
 ImageWrapper::ImageWrapper(ImageItem *ii)
 {
@@ -57,7 +57,7 @@ bool ImageWrapper::selectParent()
 {
     bool r = model()->selectParent(imageItemInt);
     if (!r)
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Couldn't select parent item");
     return setResult(r);

@@ -3,12 +3,11 @@
 #include "attributeitem.h"
 #include "misc.h"
 #include "vymmodel.h"
+#include "mainwindow.h"
 #include "xlink.h"
 //#include "xlinkitem.h"
 
-#include <QJSEngine>
-
-extern QJSEngine *scriptEngine;
+extern Main *mainWindow;
 
 XLinkWrapper::XLinkWrapper(XLink *xl)
 {
@@ -54,7 +53,7 @@ void XLinkWrapper::setColor(const QString &color)
 {
     QColor col(color);
     if (!col.isValid())
-        scriptEngine->throwError(
+        mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
     else
