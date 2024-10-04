@@ -21,13 +21,7 @@ extern bool usingDarkTheme;
 
 VymWrapper::VymWrapper()
 {
-    qDebug() << "Constr. VymWrapper";
-}
-
-void VymWrapper::abortScript(const QString &s)  // FIXME-0 needed? other wrappers call mainWindow directly...
-{
-    mainWindow->statusMessage(s);
-    mainWindow->abortScript(QString("abortScript(\"%1\") called").arg(s));
+    // qDebug() << "Constr. VymWrapper";
 }
 
 void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }

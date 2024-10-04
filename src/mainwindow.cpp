@@ -7243,7 +7243,6 @@ void Main::abortScript(const QJSValue::ErrorType &err, const QString &msg)
     }
 
     scriptEngines.last()->throwError(err, msg);
-    qDebug() << "MW::abortScript  msg=" << msg; // FIXME-0
 }
 
 void Main::abortScript(const QString &msg)

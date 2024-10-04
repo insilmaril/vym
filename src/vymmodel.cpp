@@ -1736,14 +1736,14 @@ void VymModel::saveStateNew(
     QString undoCommand;
     QString redoCommand;
 
-    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) { // FIXME-0 check.  model -> map . Also check if still needed in new implementation!
+    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) { // FIXME-1 check.  model -> map . Also check if still needed in new implementation!
         // After creating saveStateBlock, no "model." prefix needed for commands
         undoCommand = undoCom;
         redoCommand = redoCom;
     } else {
         undoCommand = undoCom;
         redoCommand = redoCom;
-        /* FIXME-0 no longer needed for saveStateBlock?  
+        /* FIXME-1 no longer needed for saveStateBlock?  
         // Not part of a saveStateBlock, prefix non-empty commands
         if (undoCom.isEmpty())
             qWarning() << __FUNCTION__ << "  empty undoCommand ?!";
@@ -2745,10 +2745,11 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
                 getJiraData(false, bi);
             }
 
-            updateJiraFlag(bi); // FIXME-0 needed? or updateUrlType?
+            updateJiraFlag(bi);
 
             // Check for Confluence
-            setHeadingConfluencePageName(); // FIXME-2 Only, if not Jira above?
+            if (bi->urlType() != TreeItem::JiraUrl)
+                setHeadingConfluencePageName();
         }
 
         emitDataChanged(bi);
@@ -5396,11 +5397,9 @@ void VymModel::updateJiraFlag(TreeItem *ti)
     if (ti->urlType() == TreeItem::JiraUrl) {
         ti->activateSystemFlagByName("system-jira");
         ti->deactivateSystemFlagByName("system-url");
-        qDebug() << "uJF: jira" << ti->headingText(); 
     } else {
         ti->deactivateSystemFlagByName("system-jira");
         ti->activateSystemFlagByName("system-url");
-        qDebug() << "uJF: url" << ti->headingText(); 
     }
     emitDataChanged(ti);
 }

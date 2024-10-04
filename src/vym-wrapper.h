@@ -13,7 +13,6 @@ class VymWrapper : public QObject {
     VymWrapper();
 
   public slots:
-    void abortScript(const QString &s);
     void clearConsole();
     bool closeMapWithID(uint n);
     QString currentColor();

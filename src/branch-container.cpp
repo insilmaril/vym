@@ -632,9 +632,6 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
         return ornamentsContainer->mapToScene(
                 ornamentsContainer->bottomCenter());
 
-    //FIXME-0   why? if (branchItem->branchCount() > 0 && branchesContainer)
-    //       return ornamentsContainer->nearestEdge(branchesContainer->center());
-
     if (frameType(true) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
             // Framed MapCenter: Use center of frame    // FIXME-2 should depend on layout, not depth
