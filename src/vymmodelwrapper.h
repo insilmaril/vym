@@ -15,7 +15,7 @@ class ImageWrapper;
 class VymModel;
 class XLinkWrapper;
 
-class VymModelWrapper : public VymScriptContext {
+class VymModelWrapper : public QObject {
     Q_OBJECT
   public:
     VymModelWrapper(VymModel *m);

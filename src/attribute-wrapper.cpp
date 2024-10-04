@@ -2,10 +2,10 @@
 
 #include "attributeitem.h"
 
+#include "mainwindow.h"
 #include "vymmodel.h"
 
-#include <QJSEngine>
-extern QJSEngine *scriptEngine;
+extern Main *mainWindow;
 
 AttributeWrapper::AttributeWrapper(AttributeItem *ai)
 {
@@ -24,25 +24,27 @@ AttributeItem* AttributeWrapper::attributeItem() {return attributeItemInt;}
 
 bool AttributeWrapper::hasRichTextHeading()
 {
-    return setResult(attributeItemInt->heading().isRichText());
+    bool r = attributeItemInt->heading().isRichText();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString AttributeWrapper::headingText()
 {
-    return setResult(attributeItemInt->headingPlain());
+    QString r = attributeItemInt->headingPlain();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool AttributeWrapper::selectParent()
 {
-    /*
     bool r = model()->selectParent(attributeItemInt);
     if (!r)
-        scriptEngine->throwError(
+	mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Couldn't select parent item");
-    return setResult(r);
-    */
-    return false;
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void AttributeWrapper::setHeadingRichText(const QString &text)

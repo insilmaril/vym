@@ -37,7 +37,8 @@ void VymModelWrapper::addSlide() { model->addSlide(); }
 int VymModelWrapper::centerCount()
 {
     int r = model->centerCount();
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void VymModelWrapper::centerOnID(const QString &id)
@@ -55,8 +56,11 @@ void VymModelWrapper::cut() { model->cut(); }
 int VymModelWrapper::depth()
 {
     TreeItem *selti = model->getSelectedItem();
-    if (selti)
-        return setResult(selti->depth());
+    if (selti) {
+	int r = selti->depth();
+	mainWindow->setScriptResult(r);
+	return r;
+    }
 
     mainWindow->abortScript(
             QJSValue::GenericError,
@@ -79,7 +83,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Not enough arguments");
-        return setResult(r);
+        mainWindow->setScriptResult(r);
+	return r;
     }
 
     QString format;
@@ -89,12 +94,12 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         if (format == "Last") {
             model->exportLast();
             r = true;
-        }
-        else
+        } else
             mainWindow->abortScript(
                     QJSValue::GenericError,
                     "Filename missing");
-        return setResult(r);
+        mainWindow->setScriptResult(r);
+	return r;
     }
 
     QString filename;
@@ -119,7 +124,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
                     QJSValue::GenericError,
                     QString("Confluence export new page: Only %1 instead of 3 parameters given")
                      .arg(argumentsCount));
-            return setResult(r);
+            mainWindow->setScriptResult(r);
+	    return r;
         }
 
         QString url = args[2].toString();
@@ -135,7 +141,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             mainWindow->abortScript(
                     QJSValue::GenericError,
                     "URL of new page missing in Confluence export");
-            return setResult(r);
+            mainWindow->setScriptResult(r);
+	    return r;
         }
         QString url = args[1].toString();
 
@@ -154,7 +161,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             mainWindow->abortScript(
                     QJSValue::GenericError,
                     "Path missing in HTML export");
-            return setResult(r);
+            mainWindow->setScriptResult(r);
+	    return r;
         }
         QString dpath = args[2].toString();
         model->exportHTML(filename, dpath, false);
@@ -179,7 +187,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
                     QString("%1 not one of the known export formats: ")
                          .arg(imgFormat)
                          .arg(formats.join(",")));
-            return setResult(r);
+            mainWindow->setScriptResult(r);
+	    return r;
         }
         model->exportImage(filename, false, imgFormat);
     }
@@ -188,7 +197,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             mainWindow->abortScript(
                     QJSValue::GenericError,
                     "Template file  missing in export to Impress");
-            return setResult(r);
+            mainWindow->setScriptResult(r);
+	    return r;
         }
         QString templ = args[2].toString();
         model->exportImpress(filename, templ);
@@ -213,7 +223,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             mainWindow->abortScript(
                     QJSValue::GenericError,
                     "path missing in export to Impress");
-            return setResult(r);
+            mainWindow->setScriptResult(r);
+	    return r;
         }
         QString dpath = args[2].toString();
         model->exportXML(filename, dpath, false);
@@ -222,9 +233,11 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Unknown export format: %1").arg(format));
-        return setResult(r);
+        mainWindow->setScriptResult(r);
+	return r;
     }
-    return setResult(true);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 BranchWrapper* VymModelWrapper::findBranchByAttribute(
@@ -286,42 +299,64 @@ XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
 QString VymModelWrapper::getDestPath()
 {
     QString r = model->getDestPath();
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
-QString VymModelWrapper::getFileDir() { return setResult(model->getFileDir()); }
+QString VymModelWrapper::getFileDir()
+{
+    QString r = model->getFileDir();
+    mainWindow->setScriptResult(r);
+    return r;
+}
 
 QString VymModelWrapper::getFileName()
 {
-    return setResult(model->getFileName());
+    QString r = model->getFileName();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString VymModelWrapper::getHeadingXML()
 {
     QString r = model->getHeading().saveToDir();
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString VymModelWrapper::getAuthor()
 {
-    return setResult(model->getAuthor());
+    QString r = model->getAuthor();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString VymModelWrapper::getComment()
 {
-    return setResult(model->getComment());
+    QString r = model->getComment();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
-QString VymModelWrapper::getTitle() { return setResult(model->getTitle()); }
+QString VymModelWrapper::getTitle()
+{
+    QString r = model->getTitle();
+    mainWindow->setScriptResult(r);
+    return r;
+}
 
 QString VymModelWrapper::getNotePlainText()
 {
-    return setResult(model->getNote().getTextASCII());
+    QString r = model->getNote().getTextASCII();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString VymModelWrapper::getNoteXML()
 {
-    return setResult(model->getNote().saveToDir());
+    QString r = model->getNote().saveToDir();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 int VymModelWrapper::getRotationHeading()
@@ -332,7 +367,8 @@ int VymModelWrapper::getRotationHeading()
         r = selbi->getBranchContainer()->rotationHeading();
     else
         mainWindow->abortScript(QJSValue::RangeError, QString("No branch selected"));
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 int VymModelWrapper::getRotationSubtree()
@@ -343,12 +379,15 @@ int VymModelWrapper::getRotationSubtree()
         r = selbi->getBranchContainer()->rotationSubtree();
     else
         mainWindow->abortScript(QJSValue::RangeError, QString("No branch selected"));
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString VymModelWrapper::getSelectionString()
 {
-    return setResult(model->getSelectString());
+    QString r = model->getSelectString();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymModelWrapper::loadBranchReplace(QString fileName, BranchWrapper *bw)
@@ -356,7 +395,9 @@ bool VymModelWrapper::loadBranchReplace(QString fileName, BranchWrapper *bw)
     if (QDir::isRelativePath(fileName))
         fileName = QDir::currentPath() + "/" + fileName;
 
-    return setResult(model->addMapReplace(fileName, bw->branchItem()));
+    bool r = model->addMapReplace(fileName, bw->branchItem());
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymModelWrapper::loadDataInsert(QString fileName)
@@ -364,7 +405,9 @@ bool VymModelWrapper::loadDataInsert(QString fileName)
     if (QDir::isRelativePath(fileName))
         fileName = QDir::currentPath() + "/" + fileName;
 
-    return setResult(model->addMapInsert(fileName));
+    bool r = model->addMapInsert(fileName);  // FIXME-2 No selectedBranch passed as arg like in replace above?
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
@@ -491,7 +534,8 @@ bool VymModelWrapper::select(const QString &s)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Couldn't select %1").arg(s));
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 AttributeWrapper* VymModelWrapper::selectedAttribute()
@@ -528,23 +572,26 @@ bool VymModelWrapper::selectUids(QJSValueList args)
 {
     int argumentsCount = args.count();
 
+    bool r = false;
     if (argumentsCount == 0) {
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Not enough arguments");
-        return setResult(false);
+	mainWindow->setScriptResult(r);
+	return r;
     }
 
     QStringList uids;
     foreach (auto arg, args)
         uids << arg.toString();
 
-    bool r = model->selectUids(uids);
+    r = model->selectUids(uids);
     if (!r)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Couldn't select Uuids: %1").arg(uids.join(",")));
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymModelWrapper::selectLatestAdded()
@@ -554,7 +601,8 @@ bool VymModelWrapper::selectLatestAdded()
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Couldn't select latest added item");
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymModelWrapper::selectToggle(const QString &selectString)
@@ -564,7 +612,8 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Couldn't toggle item with select string \"%1\"").arg(selectString));
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void VymModelWrapper::setDefaultLinkColor(const QString &color)
@@ -707,7 +756,9 @@ void VymModelWrapper::sleep(int n)
 
 int VymModelWrapper::slideCount()
 {
-    return setResult(model->slideCount());
+    int r = model->slideCount();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void VymModelWrapper::toggleTarget() { model->toggleTarget(); }

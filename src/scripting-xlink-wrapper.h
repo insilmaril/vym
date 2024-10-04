@@ -8,7 +8,7 @@
 class XLink;
 class VymModel;
 
-class XLinkWrapper : public VymScriptContext {
+class XLinkWrapper : public QObject {
     Q_OBJECT
   public:
     Q_INVOKABLE XLinkWrapper(XLink*);

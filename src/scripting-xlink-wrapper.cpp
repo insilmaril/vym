@@ -26,27 +26,37 @@ XLink* XLinkWrapper::xlink() {return xlinkInt;}
 
 QString XLinkWrapper::getColor()
 {
-    return setResult(xlinkInt->getPen().color().name());
+    QString r = xlinkInt->getPen().color().name();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 int XLinkWrapper::getWidth()
 {
-    return setResult(xlinkInt->getPen().width());
+    int r = xlinkInt->getPen().width();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString XLinkWrapper::getPenStyle()
 {
-    return setResult(penStyleToString(xlinkInt->getPen().style()));
+    QString r = penStyleToString(xlinkInt->getPen().style());
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString XLinkWrapper::getStyleBegin()
 {
-    return setResult(xlinkInt->getStyleBeginString());
+    QString r =  xlinkInt->getStyleBeginString();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString XLinkWrapper::getStyleEnd()
 {
-    return setResult(xlinkInt->getStyleEndString());
+    QString r =  xlinkInt->getStyleEndString();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void XLinkWrapper::setColor(const QString &color)

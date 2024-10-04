@@ -25,32 +25,44 @@ ImageItem* ImageWrapper::imageItem() {return imageItemInt;}
 
 bool ImageWrapper::hasRichTextHeading()
 {
-    return setResult(imageItemInt->heading().isRichText());
+    bool r = imageItemInt->heading().isRichText();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 qreal ImageWrapper::getPosX()
 {
-    return setResult(imageItemInt->getImageContainer()->pos().x());
+    qreal r = imageItemInt->getImageContainer()->pos().x();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 qreal ImageWrapper::getPosY()
 {
-    return setResult(imageItemInt->getImageContainer()->pos().y());
+    qreal r = imageItemInt->getImageContainer()->pos().y();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 qreal ImageWrapper::getScenePosX()
 {
-    return setResult(imageItemInt->getImageContainer()->scenePos().x());
+    qreal r = imageItemInt->getImageContainer()->scenePos().x();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 qreal ImageWrapper::getScenePosY()
 {
-    return setResult(imageItemInt->getImageContainer()->scenePos().y());
+    qreal r = imageItemInt->getImageContainer()->scenePos().y();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString ImageWrapper::headingText()
 {
-    return setResult(imageItemInt->headingPlain());
+    QString r = imageItemInt->headingPlain();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool ImageWrapper::selectParent()
@@ -60,7 +72,8 @@ bool ImageWrapper::selectParent()
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Couldn't select parent item");
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void ImageWrapper::setHeadingRichText(const QString &text)

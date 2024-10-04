@@ -6,7 +6,7 @@
 class ImageItem;
 class VymModel;
 
-class ImageWrapper : public VymScriptContext {
+class ImageWrapper : public QObject {
     Q_OBJECT
   public:
     ImageWrapper(ImageItem*);

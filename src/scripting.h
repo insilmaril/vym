@@ -7,19 +7,7 @@ class BranchItem;
 class VymModelWrapper;
 
 ///////////////////////////////////////////////////////////////////////////
-class VymScriptContext : public QObject {
-    Q_OBJECT
-  public:
-    VymScriptContext();
-    QString setResult(const QString &r);
-    bool setResult(bool r);
-    int setResult(int r);
-    uint setResult(uint r);
-    qreal setResult(qreal r);
-};
-
-///////////////////////////////////////////////////////////////////////////
-class VymWrapper : public VymScriptContext {
+class VymWrapper : public QObject {
     Q_OBJECT
   public:
     VymWrapper();
@@ -54,7 +42,7 @@ class VymWrapper : public VymScriptContext {
     QString version();
 };
 
-class Selection : public VymScriptContext {
+class Selection : public QObject {
     Q_OBJECT
   public:
     Selection();

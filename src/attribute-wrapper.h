@@ -6,7 +6,7 @@
 class AttributeItem;
 class VymModel;
 
-class AttributeWrapper : public VymScriptContext {
+class AttributeWrapper : public QObject {
     Q_OBJECT
   public:
     AttributeWrapper(AttributeItem*);

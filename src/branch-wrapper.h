@@ -9,7 +9,7 @@ class BranchItem;
 class VymModel;
 class XLinkWrapper;
 
-class BranchWrapper : public VymScriptContext {
+class BranchWrapper : public QObject {
     Q_OBJECT
   public:
     Q_INVOKABLE BranchWrapper(BranchItem*);

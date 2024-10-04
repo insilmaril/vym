@@ -1,6 +1,5 @@
 #include "scripting.h"
 
-#include <QJSEngine> 
 #include <QJSValue> 
 
 #include "branchitem.h"
@@ -18,67 +17,6 @@ extern QString vymVersion;
 
 extern bool usingDarkTheme;
 
-///////////////////////////////////////////////////////////////////////////
-VymScriptContext::VymScriptContext() {}
-
-QString VymScriptContext::setResult(const QString &r)
-{
-    /* FIXME-0 how to return results using setResult
-     * setResult really needed?
-
-    if (scriptEngine) {
-        scriptEngine->globalObject().setProperty("lastResult", r);
-    } else
-        qWarning() << "VymScriptContext: No scriptEngine defined";
-        */
-    return r;
-}
-
-bool VymScriptContext::setResult(bool r)
-{
-    /*
-    if (scriptEngine) {
-        scriptEngine->globalObject().setProperty("lastResult", r);
-    } else
-        qWarning() << "VymScriptContext: No scriptEngine defined";
-        */
-    return r;
-}
-
-int VymScriptContext::setResult(int r)
-{
-    /*
-    if (scriptEngine) {
-        scriptEngine->globalObject().setProperty("lastResult", r);
-    } else
-        qWarning() << "VymScriptContext: No scriptEngine defined";
-        */
-    return r;
-}
-
-uint VymScriptContext::setResult(uint r)
-{
-    /*
-    if (scriptEngine) {
-        scriptEngine->globalObject().setProperty("lastResult", r);
-    } else
-        qWarning() << "VymScriptContext: No scriptEngine defined";
-        */
-    return r;
-}
-
-qreal VymScriptContext::setResult(qreal r)
-{
-    /*
-    if (scriptEngine) {
-        scriptEngine->globalObject().setProperty("lastResult", r);
-    } else
-        qWarning() << "VymScriptContext: No scriptEngine defined";
-        */
-    return r;
-}
-
-///////////////////////////////////////////////////////////////////////////
 #include "vymmodelwrapper.h"
 
 VymWrapper::VymWrapper()
@@ -103,12 +41,15 @@ bool VymWrapper::closeMapWithID(uint n)
                 QString("Map '%1' not available.").arg(n));
         return false;
     }
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString VymWrapper::currentColor()
 {
-    return setResult(mainWindow->getCurrentColor().name());
+    QString r = mainWindow->getCurrentColor().name();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QObject *VymWrapper::currentMap()
@@ -137,28 +78,33 @@ bool VymWrapper::directoryExists(const QString &directoryName)
 bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
 {
     QFile file(srcPath);
+    bool r; 
     if (!file.exists()) {
         qDebug() << "VymWrapper::fileCopy()   srcPath does not exist:" << srcPath;
         mainWindow->abortScript(
                 QJSValue::ReferenceError, 
                 QString("File '%1' does not exist.").arg(srcPath));
-        return setResult(false);
-    }
+        r = false;
+    } else
+        r = file.copy(dstPath);
 
-    bool r = file.copy(dstPath);
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymWrapper::fileExists(const QString &fileName)
 {
-    return setResult(QFile::exists(fileName));
+    bool r = QFile::exists(fileName);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymWrapper::fileRemove(const QString &fileName)
 {
     QFile file(fileName);
     bool r = file.remove();
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void VymWrapper::gotoMap(uint n)
@@ -173,16 +119,19 @@ void VymWrapper::gotoMap(uint n)
 
 bool VymWrapper::isConfluenceAgentAvailable()
 {
-    return setResult(ConfluenceAgent::available());
+    bool r = ConfluenceAgent::available();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 QString VymWrapper::loadFile(
     const QString
         &filename) // FIXME-3 error handling missing (in vymmodel and here)
 {
-    QString s;
-    loadStringFromDisk(filename, s);
-    return setResult(s);
+    QString r;
+    loadStringFromDisk(filename, r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymWrapper::loadMap(const QString &filename)
@@ -192,12 +141,15 @@ bool VymWrapper::loadMap(const QString &filename)
         r = true;
     else
         r = false;
-    return setResult(r);
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 int VymWrapper::mapCount()
 {
-    return setResult(mainWindow->modelCount());
+    int r = mainWindow->modelCount();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 bool VymWrapper::mkdir(const QString &directoryName)
@@ -236,8 +188,9 @@ void VymWrapper::selectQuickColor(int n)
 
 uint VymWrapper::currentMapID()
 {
-    uint id = mainWindow->currentMapId();
-    return setResult(id);
+    uint r = mainWindow->currentMapId();
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 void VymWrapper::toggleTreeEditor() { mainWindow->windowToggleTreeEditor(); }
@@ -250,12 +203,15 @@ void VymWrapper::saveFile(
 }
 
 bool VymWrapper::usesDarkTheme() {
+    mainWindow->setScriptResult(usingDarkTheme);
     return usingDarkTheme;
 }
 
 QString VymWrapper::version() {
     qDebug() << "VymWrapper::version  v=" << vymVersion;
-    return setResult(vymVersion);
+    QString r = vymVersion;
+    mainWindow->setScriptResult(r);
+    return r;
 }
 
 // See also http://doc.qt.io/qt-5/qscriptengine.html#newFunction
