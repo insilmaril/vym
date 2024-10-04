@@ -1513,27 +1513,27 @@ function test_xlinks()
 
     // ok, already using new Wrapper functions
 test_basics();
-//test_adding_branches();
-//test_adding_maps();
+test_adding_branches();
+test_adding_maps();
   //test_attributes();        // FIXME not nported yet
-//test_copy_paste();
-//test_delete_parts();
+test_copy_paste();
+test_delete_parts();
   //test_export();            // FIXME WIP
-//test_extrainfo();
-//test_frames();
+test_extrainfo();
+test_frames();
   //test_history();           // FIXME not ported yet
   //test_load_legacy_maps();  // FIXME not ported yet
-//test_modify_branches();
-//test_modify_images();
-//test_moving_parts();
+test_modify_branches();
+test_modify_images();
+test_moving_parts();
   //test_notes();             // FIXME not ported yet
-//test_references();
+test_references();
   //test_saving();            // FIXME not ported yet
   //test_scrolling();         // FIXME not ported yet
   //test_slides();            // FIXME not ported yet
   //test_standard_flags();    // FIXME not ported yet
   //test_user_flags();        // FIXME not ported yet
-//test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
+test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
 test_xlinks();
 
 summary();

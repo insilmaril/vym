@@ -352,9 +352,12 @@ class Main : public QMainWindow {
     QVariant runScript(const QString &);
     void abortScript(const QJSValue::ErrorType &err, const QString &msg);
     void abortScript(const QString &msg);
+    QVariant setScriptResult(const QVariant &r);
+
   private:
     VymWrapper *vymWrapper;
     QList <QJSEngine*> scriptEngines;
+    QVariant scriptResult;
 
   public slots:
     QObject *getCurrentModelWrapper();

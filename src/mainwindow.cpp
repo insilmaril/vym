@@ -7194,6 +7194,8 @@ QVariant Main::runScript(const QString &script)
 
     //scriptEngine->installExtensions(QJSEngine::ConsoleExtension);
 
+    scriptResult.clear();
+
     QJSValue val2 = scriptEngine->newQObject(vymWrapper);
     scriptEngine->globalObject().setProperty("vym", val2);
 
@@ -7219,7 +7221,7 @@ QVariant Main::runScript(const QString &script)
                                  .arg(lineNumber).arg(result.toString()));
     }
     else
-        return scriptEngine->globalObject().property("lastResult").toVariant();
+        return scriptResult;
 
     if (debug) qDebug() << "Main::runScript finished.";
 
@@ -7247,6 +7249,12 @@ void Main::abortScript(const QJSValue::ErrorType &err, const QString &msg)
 void Main::abortScript(const QString &msg)
 {
     abortScript(QJSValue::GenericError, msg);
+}
+
+QVariant Main::setScriptResult(const QVariant &r)
+{
+    scriptResult = r;
+    return r;
 }
 
 QObject *Main::getCurrentModelWrapper()
