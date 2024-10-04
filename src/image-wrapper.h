@@ -1,10 +1,10 @@
 #ifndef IMAGE_WRAPPER_H
 #define IMAGE_WRAPPER_H
 
-#include "scripting.h"
-
 class ImageItem;
 class VymModel;
+
+#include <QObject>
 
 class ImageWrapper : public QObject {
     Q_OBJECT

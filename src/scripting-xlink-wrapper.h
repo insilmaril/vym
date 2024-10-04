@@ -3,8 +3,6 @@
 
 #include <QObject>
 
-#include "scripting.h"
-
 class XLink;
 class VymModel;
 

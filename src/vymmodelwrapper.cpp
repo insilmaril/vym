@@ -11,7 +11,7 @@
 #include "image-wrapper.h"
 #include "mainwindow.h"
 #include "misc.h"
-#include "scripting.h"
+#include "vym-wrapper.h"
 #include "scripting-xlink-wrapper.h"
 #include "vymmodel.h"
 #include "vymtext.h"

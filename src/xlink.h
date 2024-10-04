@@ -5,8 +5,6 @@
 #include <QPen>
 #include <QUuid>
 
-#include "scripting.h"
-
 #include "xmlobj.h"
 
 class QPointF;

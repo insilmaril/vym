@@ -1,8 +1,6 @@
 #ifndef VYMMODEL_WRAPPER_H
 #define VYMMODEL_WRAPPER_H
 
-#include "scripting.h"
-
 #include <QColor>
 #include <QObject>
 #include <QJSValue>

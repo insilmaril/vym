@@ -1,10 +1,10 @@
 #ifndef ATTRIBUTE_WRAPPER_H
 #define ATTRIBUTE_WRAPPER_H
 
-#include "scripting.h"
-
 class AttributeItem;
 class VymModel;
+
+#include <QObject>
 
 class AttributeWrapper : public QObject {
     Q_OBJECT

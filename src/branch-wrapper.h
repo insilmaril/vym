@@ -3,8 +3,6 @@
 
 #include <QObject>
 
-#include "scripting.h"
-
 class BranchItem;
 class VymModel;
 class XLinkWrapper;

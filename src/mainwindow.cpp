@@ -50,7 +50,7 @@
 #include "noteeditor.h"
 #include "options.h"
 #include "scripteditor.h"
-#include "scripting.h"
+#include "vym-wrapper.h"
 #include "scriptoutput.h"
 #include "settings.h"
 #include "shortcuts.h"

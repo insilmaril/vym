@@ -1,4 +1,4 @@
-#include "scripting.h"
+#include "vym-wrapper.h"
 
 #include <QJSValue> 
 
