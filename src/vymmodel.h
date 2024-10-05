@@ -286,11 +286,6 @@ class VymModel : public TreeModel {
                    TreeItem *saveUndoItem = nullptr,
                    TreeItem *saveRedoItem = nullptr);
 
-    void saveStateOld(const File::SaveMode &savemode, const QString &undoSelection,
-                   const QString &undoCommand, const QString &redoSelection,
-                   const QString &redoCommand, const QString &comment = "",
-                   TreeItem *saveSelection = nullptr, QString dataXML = "");
-
   public:
     /*! Save branch using BranchWrapper.
      *  public: Called from MapEditor::mouseReleased() */
@@ -299,11 +294,6 @@ class VymModel : public TreeModel {
             const QString &undoCommand,
             const QString &redoCommand,
             const QString &comment);
-
-    /*! Overloaded for convenience */
-    void saveState(TreeItem *undoSelection, const QString &undoCommand,
-                   TreeItem *redoSelection, const QString &redoCommand,
-                   const QString &comment = "");
 
     /*! Put several states into one block for a single undo step */
     void saveStateBeginBlock(const QString &comment);
