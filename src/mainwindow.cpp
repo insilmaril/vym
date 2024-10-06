@@ -1028,7 +1028,8 @@ void Main::setupAPI()
     c->setComment("Cycle states of task in branch. Returns false, if branch has no task");
     branchCommands.append(c);
 
-    c = new Command("getFrameType", Command::Branch, Command::String);  // FIXME-2 set Comment
+    c = new Command("getFrameType", Command::Branch, Command::String);
+    c->setComment("Set frame type");
     branchCommands.append(c);
 
     c = new Command("getUid", Command::Branch, Command::String);
@@ -1068,13 +1069,16 @@ void Main::setupAPI()
     c->setComment("Return delta of priority of task");
     branchCommands.append(c);
 
-    c = new Command("getTaskSleep", Command::Branch, Command::String);// FIXME-2 set comment
+    c = new Command("getTaskSleep", Command::Branch, Command::String);
+    c->setComment("Return sleep time of task");
     branchCommands.append(c);
 
-    c = new Command("getTaskSleepDays", Command::Branch, Command::Int);// FIXME-2 set comment
+    c = new Command("getTaskSleepDays", Command::Branch, Command::Int);
+    c->setComment("Return sleep time of task in days");
     branchCommands.append(c);
 
-    c = new Command("getTaskStatus", Command::Branch, Command::String);// FIXME-2 set comment
+    c = new Command("getTaskStatus", Command::Branch, Command::String);
+    c->setComment("Return status of task");
     branchCommands.append(c);
 
     c = new Command("getUrl", Command::Branch, Command::String);
@@ -1256,12 +1260,14 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Position y");
     branchCommands.append(c);
 
-    c = new Command("setTaskPriorityDelta", Command::Branch); // FIXME-2 Set comment
+    c = new Command("setTaskPriorityDelta", Command::Branch);
     c->addParameter(Command::String, false, "Manually add value to priority of task");
+    c->setComment("Set value to be added on priority of task");
     branchCommands.append(c);
 
-    c = new Command("setTaskSleep", Command::Branch); // FIXME-2 Set comment
+    c = new Command("setTaskSleep", Command::Branch);
     c->addParameter(Command::String, false, "Days to sleep");
+    c->setComment("Set how long task should sleep");
     branchCommands.append(c);
 
     c = new Command("setUrl", Command::Branch);
@@ -1314,7 +1320,8 @@ void Main::setupAPI()
     c->setComment("Toggle scroll state of branch");
     branchCommands.append(c);
 
-    c = new Command("toggleTask", Command::Branch); // FIXME-2 set comment
+    c = new Command("toggleTask", Command::Branch);
+    c->setComment("Set if branch should or should not have a task");
     branchCommands.append(c);
 
     c = new Command("unscroll", Command::Branch);
