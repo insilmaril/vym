@@ -38,7 +38,7 @@ class XLink: public XMLObj {
     XLinkItem *beginXLinkItem();
     void setEndXLinkItem(XLinkItem *);
     XLinkItem *endXLinkItem();
-    XLinkItem *getOtherEnd(XLinkItem *);
+    void unsetXLinkItem(XLinkItem *);
     void setPen(const QPen &p);
     QPen getPen();
     void setLinkType(const QString &s);

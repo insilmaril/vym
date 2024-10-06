@@ -24,7 +24,7 @@ XLink::XLink(VymModel *m)
 
 XLink::~XLink()
 {
-    //qDebug() << "* Destr Link begin this=" << this;
+    // qDebug() << "* Destr Link begin this=" << this;
 
     delete (xlo);
 
@@ -32,7 +32,7 @@ XLink::~XLink()
         delete xlinkWrapperInt;
         xlinkWrapperInt = nullptr;
     }
-    // XLinkItems are deleted in VymModel::deleteXLink()
+    // XLinkItems are deleted in VymModel::deleteXLinkInt()
 }
 
 void XLink::init()
@@ -110,20 +110,22 @@ void XLink::setEndXLinkItem(XLinkItem *li)
 
 XLinkItem *XLink::endXLinkItem() { return endXLinkItemInt; }
 
-XLinkItem *XLink::getOtherEnd(XLinkItem *xli)
-{
-    if (xli == beginXLinkItemInt)
-        return endXLinkItemInt;
-    if (xli == endXLinkItemInt)
-        return beginXLinkItemInt;
-    return nullptr;
-}
-
 void XLink::setPen(const QPen &p)
 {
     pen = p;
     if (xlo)
         xlo->updateGeometry();
+}
+
+void XLink::unsetXLinkItem(XLinkItem *xli)
+{
+    if (xli == beginXLinkItemInt) {
+        beginXLinkItemInt = nullptr;
+        xLinkState = deleteXLink;
+    } else if (xli == endXLinkItemInt) {
+        endXLinkItemInt = nullptr;
+        xLinkState = deleteXLink;
+    }
 }
 
 QPen XLink::getPen() { return pen; }

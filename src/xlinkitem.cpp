@@ -21,9 +21,13 @@ XLinkItem::XLinkItem(TreeItem *parent)
 
 XLinkItem::~XLinkItem()
 {
-    // qDebug() << "Destr XLinkItem begin  "<< this << "  pI=" << parentItem << " xlink=" << xlinkInt;
-    if (xlinkInt)
-        xlinkInt = nullptr;
+    //qDebug() << "Destr XLinkItem begin  "<< this << "  pI=" << parentItem << " xlink=" << xlinkInt;
+    if (xlinkInt) {
+        xlinkInt->unsetXLinkItem(this);
+
+        // This will remove both XLink and other XLinkItem
+        model->deleteXLinkInt(xlinkInt);
+    }
 }
 
 void XLinkItem::init()

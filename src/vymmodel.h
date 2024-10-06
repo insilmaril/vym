@@ -42,6 +42,8 @@ class VymModel : public TreeModel {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.insilmaril.vym.VymModel-h")
 
+    friend class XLinkItem;
+
     ////////////////////////////////////////////
     // General housekeeping
     ////////////////////////////////////////////
@@ -529,6 +531,11 @@ class VymModel : public TreeModel {
         TreeItem *); //!< Delete item and return parent (if parent!= rootItem)
 
     void deleteXLink(XLink *); //!< Delete XLink and saveState
+
+  private:
+    void deleteXLinkInt(XLink *); //!< Delete XLink internal
+
+  public:
     bool scrollBranch(BranchItem *);
     bool unscrollBranch(BranchItem *);
     void toggleScroll(BranchItem *bi = nullptr);

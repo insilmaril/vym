@@ -4654,11 +4654,11 @@ void VymModel::deleteChildrenBranches(BranchItem *bi)
     }
 }
 
-TreeItem *VymModel::deleteItem(TreeItem *ti)    // FIXME-0 does not delete xLink :-(
+TreeItem *VymModel::deleteItem(TreeItem *ti)
 {
     if (ti) {
         TreeItem *pi = ti->parent();
-        //qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->headingText();
+        // qDebug()<<"VM::deleteItem  start ti=" << ti << "  " << ti->headingText();
 
         bool wasAttribute = ti->hasTypeAttribute();
         TreeItem *parentItem = ti->parent();
@@ -4681,7 +4681,7 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)    // FIXME-0 does not delete xLink
         }
         reposition();
 
-        // qDebug()<<"VM::deleteItem  end   ti="<<ti;
+        qDebug()<<"VM::deleteItem  end   ti="<<ti;
         if (pi->depth() >= 0)
             return pi;
     }
@@ -4690,7 +4690,7 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)    // FIXME-0 does not delete xLink
 
 void VymModel::deleteXLink(XLink *xlink)
 {
-    qDebug() << "VM::deleteXLink start";
+    //qDebug() << "VM::deleteXLink start";
 
 
     QString xv = setXLinkVar(xlink);
@@ -4700,14 +4700,30 @@ void VymModel::deleteXLink(XLink *xlink)
     QString com = QString("Remove XLink");
     saveStateNew(uc, rc, com, xlink->beginXLinkItem());
 
+    deleteXLinkInt(xlink);
+}
+
+void VymModel::deleteXLinkInt(XLink *xlink)
+{
+   // qDebug() << "VM::deleteXLinkInt start";
+
+    if (!xlink) {
+        qWarning() << __FUNCTION__ << "No xlink ?!";
+        return;
+    }
+
     // Remove XLinkItems from TreeModel
     XLinkItem *xli;
     xli = xlink->beginXLinkItem();
-    if (xli)
+    if (xli) {
+        xlink->unsetXLinkItem(xli);
         deleteItem(xli);
+    }
     xli = xlink->endXLinkItem();
-    if (xli)
+    if (xli) {
+        xlink->unsetXLinkItem(xli);
         deleteItem(xli);
+    }
 
     // Remove from list of items and delete xlink itself, including XLinkObj
     if (xlinks.removeOne(xlink))
