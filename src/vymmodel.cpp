@@ -1665,6 +1665,7 @@ void VymModel::resetHistory()
 
 QString VymModel::setBranchVar(BranchItem* bi, QString varName)
 {
+    // Default varName: "b"
     QString r;
     if (!bi)
         qWarning() << "VM::setBranchVar bi == nullptr";
@@ -1676,6 +1677,7 @@ QString VymModel::setBranchVar(BranchItem* bi, QString varName)
 
 QString VymModel::setImageVar(ImageItem* ii, QString varName)
 {
+    // Default varName: "i"
     QString r;
     if (!ii)
         qWarning() << "VM::setImageVar ii == nullptr";
@@ -6442,7 +6444,7 @@ void VymModel::setDefXLinkStyleEnd(const QString &s)
     mapDesignInt->setDefXLinkStyleEnd(s);
 }
 
-void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 missing saveState
+void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
 {
     QList<TreeItem *> selItems;
     if (selti)
@@ -6450,6 +6452,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 missin
     else
         selItems = getSelectedItems();
 
+    saveStateBeginScript("Move items (non-interactive)");
     foreach (TreeItem *ti, selItems) {
         if (ti->hasTypeBranch() || ti->hasTypeImage())
         {
@@ -6457,15 +6460,18 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti) // FIXME-2 missin
             QPointF pos_old = c->getOriginalPos();
             QString pos_new_str = toS(pos_new);
 
-            /*saveState(ti, "setPos " + toS(pos_old),
-                      ti, "setPos " + pos_new_str,
-                      QString("Set position of %1 to %2")
-                          .arg(getObjectName(ti))
-                          .arg(pos_new_str));
-                          */
+            QString uc, rc, itemVar;
+            if (ti->hasTypeBranch())
+                itemVar = setBranchVar((BranchItem*)ti) + "b.";
+            else 
+                itemVar = setImageVar((ImageItem*)ti) + "i.";
+            uc = QString("%1.setPos%2;").arg(itemVar, toS(c->getOriginalPos(), 5));
+            rc = QString("%1.setPos%2;").arg(itemVar, toS(c->pos(), 5)),
+            saveStateNew(uc, rc); 
             c->setPos(pos_new);
         }
     }
+    saveStateEndScript();
     reposition();
 }
 
