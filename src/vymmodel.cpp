@@ -386,14 +386,13 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     QString flags;
 
     // Write images and definitions of used user flags
+    standardFlagsMaster->saveDataToDir(tmpdir + "/flags/standard/", FlagRowMaster::UsedFlags);
     if (flagMode != FlagRowMaster::NoFlags) {
         // First find out, which flags are used
         // Definitions
         flags += userFlagsMaster->saveDef(flagMode);
 
-        userFlagsMaster->saveDataToDir(tmpdir + "/flags/user", flagMode);
-        standardFlagsMaster->saveDataToDir(tmpdir + "/flags/standard",
-                                           flagMode);
+        userFlagsMaster->saveDataToDir(tmpdir + "/flags/user/", flagMode);
     }
 
     QString footer;
