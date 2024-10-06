@@ -4626,9 +4626,7 @@ void VymModel::deleteChildrenBranches(BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        if (selbi->branchCount() == 0) 
-            deleteChildren();
-        else {
+        if (selbi->branchCount() > 0) {
             int n_first = selbi->getFirstBranch()->childNum();
             int n_last  = selbi->getLastBranch()->childNum();
 
@@ -4649,9 +4647,11 @@ void VymModel::deleteChildrenBranches(BranchItem *bi)
             if (selbi->isScrolled()) unscrollBranch(selbi);
 
             emit(layoutChanged());
-            reposition();   // FIXME-2 reposition only once in the end
         }
     }
+
+    if (selbis.count() > 0)
+        reposition();
 }
 
 TreeItem *VymModel::deleteItem(TreeItem *ti)
@@ -4681,7 +4681,6 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         }
         reposition();
 
-        qDebug()<<"VM::deleteItem  end   ti="<<ti;
         if (pi->depth() >= 0)
             return pi;
     }
