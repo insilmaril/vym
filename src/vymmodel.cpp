@@ -1731,17 +1731,6 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
     } else {
         undoCommand = undoCom;
         redoCommand = redoCom;
-        /* FIXME-2 no longer needed for saveStateScript?
-        // Not part of a saveStateScript, prefix non-empty commands
-        if (undoCom.isEmpty())
-            qWarning() << __FUNCTION__ << "  empty undoCommand ?!";
-        else
-            undoCommand = undoCom;
-        if (redoCom.isEmpty())
-            qWarning() << __FUNCTION__ << "  empty redoCommand ?!";
-        else
-            redoCommand = redoCom;
-            */
     }
 
     if (buildingUndoScript)
