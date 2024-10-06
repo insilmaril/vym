@@ -1743,7 +1743,7 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
     } else {
         undoCommand = undoCom;
         redoCommand = redoCom;
-        /* FIXME-1 no longer needed for saveStateBlock?  
+        /* FIXME-2 no longer needed for saveStateBlock?
         // Not part of a saveStateBlock, prefix non-empty commands
         if (undoCom.isEmpty())
             qWarning() << __FUNCTION__ << "  empty undoCommand ?!";
@@ -1763,7 +1763,7 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
     //
     bool repeatedCommand = false;
 
-    /* FIXME-1 Repeated command not supported yet in saveState
+    /* FIXME-2 Repeated command not supported yet in saveState
     // Undo blocks start with "model.select" - do not consider these for repeated actions
     if (!undoCommand.startsWith("{")) {
         if (curStep > 0 && redoSelection == lastRedoSelection()) {
