@@ -105,8 +105,10 @@ void FlagRowMaster::saveDataToDir(const QString &tmpdir, WriteMode mode)
     // Userflags are written anyway (if master flagrow)
 
     for (int i = 0; i < flags.size(); ++i)
-        if ((mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed()))
+        if ((mode == AllFlags) || (mode == UsedFlags && flags.at(i)->isUsed())) {
+            qDebug() << "Writing flag " << flags.at(i)->getName() << " to " << tmpdir;
             flags.at(i)->saveDataToDir(tmpdir);
+        }
 }
 
 void FlagRowMaster::setName(const QString &n) { rowName = n; }
