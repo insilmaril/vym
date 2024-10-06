@@ -2777,12 +2777,12 @@ MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
     // but also geometric. Return the most appropriate mode depending on 
     // rotation of view and layout of selected item.
     if (!selti) {
-        qDebug() << "ME::selectionMode: Classic";
+        // qDebug() << "ME::selectionMode: Classic";
         return ClassicSelection;
     }
 
     if (rotationInt != 0) {
-        qDebug() << "ME::selectionMode: Geometric";
+        // qDebug() << "ME::selectionMode: Geometric";
         return GeometricSelection;
     }
 
@@ -2790,25 +2790,25 @@ MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
     if (selti->hasTypeBranch()) {
         BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
         if (bc->branchesContainerLayout() == Container::Horizontal) {
-            qDebug() << "ME::selectionMode: OrgChart";
+            // qDebug() << "ME::selectionMode: OrgChart";
             return OrgChartSelection;
         }
         if (bc->isFloating()) {
-            qDebug() << "ME::selectionMode: Geometric";
+            // qDebug() << "ME::selectionMode: Geometric";
             return GeometricSelection;
         }
     } else if (selti->hasTypeImage()) {
-        qDebug() << "ME::selectionMode: Geometric";
+        // qDebug() << "ME::selectionMode: Geometric";
         return GeometricSelection;
     }
 
     if (!c) {
-        qDebug() << "ME::selectionMode: Classic";
+        // qDebug() << "ME::selectionMode: Classic";
         return ClassicSelection;
     }
 
     if (c->isFloating()) {
-        qDebug() << "ME::selectionMode: Geometric";
+        // qDebug() << "ME::selectionMode: Geometric";
         return GeometricSelection;
     }
 
