@@ -1548,7 +1548,6 @@ void MapEditor::editHeading(BranchItem *selbi)
     }
 
     if (!selbi) selbi = model->getSelectedBranch();
-    qDebug() << "ME::editHeading of selbi=" << model->headingText(selbi);
     if (selbi) {
         VymText heading = selbi->heading();
         if (heading.isRichText() || selbi->headingPlain().contains("\n")) {

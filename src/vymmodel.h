@@ -492,9 +492,9 @@ class VymModel : public TreeModel {
     */
 
   private:
-    BranchItem *addNewBranchInt(BranchItem *dst,
-                                int pos); // pos allows to add above/below
-                                          // selection, or as child  at pos
+    BranchItem *addNewBranchInt(BranchItem *dst, int pos);
+        // pos allows to add above/below
+        // selection, or as child  at pos
   public:
     /*! \Add new branch
 
@@ -504,7 +504,7 @@ class VymModel : public TreeModel {
     // -1	insert in children of parent below selection
     // 0..n	insert in children of parent at pos
     */
-    BranchItem *addNewBranch(BranchItem *bi = nullptr, int pos = -2);
+    BranchItem *addNewBranch(BranchItem *bi = nullptr, int pos = -2, bool interactive = false);
     BranchItem *
     addNewBranchBefore(BranchItem *bi = nullptr); //!< Insert branch between selection and its parent
 

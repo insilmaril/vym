@@ -1466,12 +1466,12 @@ void VymModel::redo()
     updateActions();
 
     /* TODO remove testing
-    */
     qDebug() << "ME::redo() end\n";
     qDebug() << "    undosAvail=" << undosAvail;
     qDebug() << "    redosAvail=" << redosAvail;
     qDebug() << "       curStep=" << curStep;
     qDebug() << "    ---------------------------";
+    */
 }
 
 bool VymModel::isRedoAvailable()
@@ -2259,7 +2259,7 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
             rc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
         saveStateNew( uc, rc, QString("Set heading of %1 to \"%2\"").arg(getObjectName(selti), s));
 
-        // After adding brancnes or MapCenters interactively we might want to end an undo script
+        // After adding branches or MapCenters interactively we might want to end an undo script
         saveStateEndScript();
 
         selti->setHeading(vt);
@@ -4007,7 +4007,7 @@ AttributeItem *VymModel::getAttributeByKey(const QString &key, TreeItem *ti)
     return nullptr;
 }
 
-BranchItem *VymModel::addMapCenter(bool saveStateFlag, bool interactive) // FIXME-2 missing saveState
+BranchItem *VymModel::addMapCenter(bool saveStateFlag, bool interactive) // FIXME-2 missing saveState // FIXME-2 saveStateFlag not used
 {
     if (interactive) {
         // Start to build undo/redo scripts
@@ -4038,20 +4038,12 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag, bool interactive) // FIXM
 
     BranchItem *newbi = addMapCenterAtPos(contextPos, interactive);
 
-    qDebug() << "VM::aMC i=" << interactive;
     if (interactive)
         mapEditor->editHeading(newbi);
 
     updateActions();
     emitShowSelection();
-    if (saveStateFlag)
-        /*saveState(bi, "remove()", nullptr, QString("addMapCenterAtPos (%1,%2)")
-                      .arg(contextPos.x())
-                      .arg(contextPos.y()),
-                  QString("Adding MapCenter to (%1,%2)")
-                      .arg(contextPos.x())
-                      .arg(contextPos.y()));
-                      */
+
     emitUpdateLayout();
     return newbi;
 }
@@ -4145,13 +4137,22 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos)
+BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
 {
     BranchItem *selbi = getSelectedBranch(bi);
     if (!selbi)
         return nullptr;
 
+    if (interactive)
+        // saveStateEndScript will be called in VymModel::setHeading()
+        saveStateBeginScript("Add new branch");
+
     BranchItem *newbi = addNewBranchInt(selbi, pos);
+
+    // Required to initialize styles
+    if (!saveStateBlocked)
+        // Don't apply design while loading map
+        applyDesign(MapDesign::CreatedByUser, newbi);
 
     if (newbi) {
         QString uc, rc, com;
@@ -4181,15 +4182,15 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos)
            */
     }
 
-    // Required to initialize styles
-    if (!saveStateBlocked)
-        // Don't apply design while loading map
-        applyDesign(MapDesign::CreatedByUser, newbi);
+    if (interactive) {
+        select(newbi);
+        mapEditor->editHeading();
+    }
 
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore(BranchItem *bi)
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi)    // FIXME-2 enable one history step
 {
     BranchItem *newbi = nullptr;
     BranchItem *selbi = getSelectedBranch(bi);
@@ -6179,7 +6180,6 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         // Frames   // FIXME-2 mapDesign missing for penWidth
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(true, depth))) {
-            qDebug() << "  updatingframe a";
             bc->setFrameType(true, mapDesignInt->frameType(true, depth));
             bc->setFrameBrushColor(true, mapDesignInt->frameBrushColor(true, depth));
             bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
@@ -6187,7 +6187,6 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         }
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
-            qDebug() << "  updatingframe b";
             bc->setFrameType(false, mapDesignInt->frameType(false, depth));
             bc->setFrameBrushColor(false, mapDesignInt->frameBrushColor(false, depth));
             bc->setFramePenColor(false, mapDesignInt->framePenColor(false, depth));

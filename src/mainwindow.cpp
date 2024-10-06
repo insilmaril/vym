@@ -5615,15 +5615,8 @@ void Main::editNewBranch()
 {
     VymModel *m = currentModel();
     if (m) {
-        BranchItem *bi = m->addNewBranch();
-        if (!bi)
-            return;
-
-        if (!actionSettingsAutoSelectNewBranch->isChecked())
-            prevSelection = m->getSelectString();
-
-        m->select(bi);
-        currentMapEditor()->editHeading();
+        BranchItem *bi = m->addNewBranch(nullptr, -2, true);
+        if (!bi) return;
     }
 }
 
@@ -5654,7 +5647,7 @@ void Main::editNewBranchAbove()
 
         BranchItem *selbi = m->getSelectedBranch(); // FIXME-2 selectedBranch also in VM::addNewBranch()
         if (selbi) {
-            BranchItem *bi = m->addNewBranch(selbi, -3);
+            BranchItem *bi = m->addNewBranch(selbi, -3, true);
 
             if (bi)
                 m->select(bi);
@@ -5672,7 +5665,7 @@ void Main::editNewBranchBelow()
     if (m) {
         BranchItem *selbi = m->getSelectedBranch();
         if (selbi) {
-            BranchItem *bi = m->addNewBranch(selbi, -1);
+            BranchItem *bi = m->addNewBranch(selbi, -1, true);
 
             if (bi)
                 m->select(bi);
