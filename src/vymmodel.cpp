@@ -4659,7 +4659,7 @@ void VymModel::deleteChildren(BranchItem *bi)
         emit(layoutChanged());
 
         emitDataChanged(selbi);
-        reposition();   // FIXME-2 reposition only once in the end
+        reposition();
     }
 }
 
