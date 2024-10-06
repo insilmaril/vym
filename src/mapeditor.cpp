@@ -1540,17 +1540,18 @@ void MapEditor::cursorFirst() { model->selectFirstBranch(); }  // FIXME-3 adapt 
 
 void MapEditor::cursorLast() { model->selectLastBranch(); }  // FIXME-3 adapt for images and container layouts
 
-void MapEditor::editHeading()
+void MapEditor::editHeading(BranchItem *selbi)
 {
     if (editorState == EditingHeading) {
         editHeadingFinished();
         return;
     }
 
-    BranchItem *bi = model->getSelectedBranch();
-    if (bi) {
-        VymText heading = bi->heading();
-        if (heading.isRichText() || bi->headingPlain().contains("\n")) {
+    if (!selbi) selbi = model->getSelectedBranch();
+    qDebug() << "ME::editHeading of selbi=" << model->headingText(selbi);
+    if (selbi) {
+        VymText heading = selbi->heading();
+        if (heading.isRichText() || selbi->headingPlain().contains("\n")) {
             mainWindow->windowShowHeadingEditor();
             ensureSelectionVisibleAnimated();
             return;
@@ -1574,7 +1575,7 @@ void MapEditor::editHeading()
         qreal w = 230;
         qreal h = 30;
 
-        BranchContainer *bc = bi->getBranchContainer();
+        BranchContainer *bc = selbi->getBranchContainer();
         if (bc->getOrientation() == BranchContainer::RightOfParent) {
             tl = bc->headingRect().topLeft();
             br = tl + QPointF(w, h);
@@ -2436,9 +2437,9 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             if (!childBranches.isEmpty()) {
                 repositionNeeded = true;
 
-                // We begin a saveStateBlock. If nothing is really moved, this
-                // block will be discarded later
-                model->saveStateBeginBlock(
+                // We begin a saveStateScript. If nothing is really moved, this
+                // Script will be discarded later
+                model->saveStateBeginScript(
                     QString("Move %1 branch(es)").arg(childBranches.count())
                 );
 
@@ -2475,7 +2476,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 			}
                     }
                 } // children of tmpParentContainer
-                model->saveStateEndBlock();
+                model->saveStateEndScript();
             }   // Empty tmpParenContainer
 
             if (animationUse && animationContainers.count() > 0) {

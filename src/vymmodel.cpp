@@ -192,7 +192,7 @@ void VymModel::init()
     mapChanged = false;
     mapDefault = true;
     mapUnsaved = false;
-    buildingUndoBlock = false;
+    buildingUndoScript = false;
 
     // Selection history
     selModel = nullptr;
@@ -1647,7 +1647,7 @@ void VymModel::gotoHistoryStep(int i)
 
 QString VymModel::getHistoryPath()
 {
-    QString histName(QString("history-%1").arg(curStep));
+    QString histName(QString("history-%1").arg(dataStep));
     return (tmpMapDirPath + "/" + histName);
 }
 
@@ -1656,6 +1656,7 @@ void VymModel::resetHistory()
     curStep = 0;
     redosAvail = 0;
     undosAvail = 0;
+    dataStep = 0;
 
     stepsTotal = settings.value("/history/stepsTotal", 100).toInt();
     undoSet.setValue("/history/stepsTotal", QString::number(stepsTotal));
@@ -1714,37 +1715,24 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
     if (debug) {
         qDebug() << "VM::saveStateNew() for map " << mapName;
         qDebug() << "  comment: " << comment;
-        qDebug() << "  block:   " << buildingUndoBlock;
+        qDebug() << "  Script:   " << buildingUndoScript;
         qDebug() << "  undoCom: " << undoCom;
         qDebug() << "  redoCom: " << redoCom;
     }
     */
 
-    if (buildingUndoBlock)
-    {
-        // Build string with all commands
-        undoBlock = undoCom + undoBlock;
-        redoBlock = redoBlock + redoCom;
-
-        if (debug) {
-            qDebug() << "VM::saveState  undoBlock = " << undoBlock;
-            qDebug() << "VM::saveState  redoBlock = " << redoBlock;
-        }
-        return;
-    }
-
     QString undoCommand;
     QString redoCommand;
 
     if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) { // FIXME-1 check.  model -> map . Also check if still needed in new implementation!
-        // After creating saveStateBlock, no "model." prefix needed for commands
+        // After creating saveStateScript, no "model." prefix needed for commands
         undoCommand = undoCom;
         redoCommand = redoCom;
     } else {
         undoCommand = undoCom;
         redoCommand = redoCom;
-        /* FIXME-2 no longer needed for saveStateBlock?
-        // Not part of a saveStateBlock, prefix non-empty commands
+        /* FIXME-2 no longer needed for saveStateScript?
+        // Not part of a saveStateScript, prefix non-empty commands
         if (undoCom.isEmpty())
             qWarning() << __FUNCTION__ << "  empty undoCommand ?!";
         else
@@ -1756,7 +1744,10 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
             */
     }
 
-    logCommand(redoCommand, comment, __func__);
+    if (buildingUndoScript)
+        logCommand("// Building script: " + redoCommand, comment, __func__);
+    else
+        logCommand(redoCommand, comment, __func__);
 
     // Increase undo steps, but check for repeated actions
     // like editing a vymNote - then do not increase but replace last command
@@ -1764,7 +1755,7 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
     bool repeatedCommand = false;
 
     /* FIXME-2 Repeated command not supported yet in saveState
-    // Undo blocks start with "model.select" - do not consider these for repeated actions
+    // Undo Scripts start with "model.select" - do not consider these for repeated actions
     if (!undoCommand.startsWith("{")) {
         if (curStep > 0 && redoSelection == lastRedoSelection()) {
             int i = redoCommand.indexOf("(");
@@ -1788,21 +1779,15 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
         }
     }
     */
-    if (!repeatedCommand) {
-        if (undosAvail < stepsTotal)
-            undosAvail++;
-
-        curStep++;
-        if (curStep > stepsTotal)
-            curStep = 1;
-    }
-
     QString histDir = getHistoryPath();
 
-    // Create histDir if not available
-    QDir d(histDir);
-    if (!d.exists())
-        makeSubDirs(histDir);
+    // Create histDir if not available and required
+    if (saveUndoItem || saveRedoItem) {
+        dataStep++;
+        QDir d(histDir);
+        if (!d.exists())
+            makeSubDirs(histDir);
+    }
 
     // Save depending on how much needs to be saved
     if (saveUndoItem) {
@@ -1828,9 +1813,32 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
         qDebug() << "      Comment: " << comment;
     }
 
+    if (buildingUndoScript)
+    {
+        // Build string with all commands
+        undoScript = undoCommand + undoScript;
+        redoScript = redoScript + redoCommand;
+
+        if (debug) {
+            qDebug() << "VM::saveState  building scripts:";
+            qDebug() << "  undoScript = " << undoScript;
+            qDebug() << "  redoScript = " << redoScript;
+        }
+        return;
+    }
+
+    if (!repeatedCommand) {
+        if (undosAvail < stepsTotal)
+            undosAvail++;
+
+        curStep++;
+        if (curStep > stepsTotal)
+            curStep = 1;
+    }
+
     // We would have to save all actions in a tree, to keep track of
-    // possible redos after a action. Possible, but we are too lazy: forget
-    // about redos.
+    // possible redos after an action. Possible, but we are too lazy: forget
+    // about redos
     redosAvail = 0;
 
     // Write the current state to disk
@@ -1877,28 +1885,35 @@ void VymModel::saveStateBranch(
     saveStateNew(branchVar + uc, branchVar + rc, comment);
 }
 
-void VymModel::saveStateBeginBlock(const QString &comment)  // FIXME-00 Check where this is used. Rewrite everywhere for saveStateNew format
-    // - if only used for single command, don't build block and adapt comment
-    // - add checks, that block is really ended!
+void VymModel::saveStateBeginScript(const QString &comment)  // FIXME-00 Check where this is used. Rewrite everywhere for saveStateNew format
+    // - if only used for single command, don't build Script and adapt comment
+    // - add checks, that Script is really ended!
     // - Currently used for moving/relinking in MapEditor
+    //
+    // Used in
+    // - MapEditor::mouseRelease  when moving multiple branches
+    // - setFrameType
+    // - relinkBranches
+    // - relinkImages
+    // - deleteKeepChildren
 {
-    buildingUndoBlock = true;
-    undoBlockComment = comment;
-    undoBlock.clear();
-    redoBlock.clear();
+    buildingUndoScript = true;
+    undoScriptComment = comment;
+    undoScript.clear();
+    redoScript.clear();
 }
 
-void VymModel::saveStateEndBlock()
+void VymModel::saveStateEndScript()
 {
-    buildingUndoBlock = false;
+    buildingUndoScript = false;
 
-    // Drop whole block, if empty
-    if (undoBlock.isEmpty() && redoBlock.isEmpty()) return;
+    // Drop whole Script, if empty
+    if (undoScript.isEmpty() && redoScript.isEmpty()) return;
 
     saveStateNew(
-            QString("{%1}").arg(undoBlock),
-            QString("{%1}").arg(redoBlock),
-            undoBlockComment, nullptr);
+            QString("{%1}").arg(undoScript),
+            QString("{%1}").arg(redoScript),
+            undoScriptComment, nullptr);
 }
 
 QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }
@@ -2253,6 +2268,10 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
         else
             rc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
         saveStateNew( uc, rc, QString("Set heading of %1 to \"%2\"").arg(getObjectName(selti), s));
+
+        // After adding brancnes or MapCenters interactively we might want to end an undo script
+        saveStateEndScript();
+
         selti->setHeading(vt);
         emitDataChanged(selti);
         emitUpdateQueries();
@@ -2614,7 +2633,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
             saveCompleteFrame = true;
 
         if (saveCompleteFrame) {
-            saveStateBeginBlock("Set frame parameters");
+            saveStateBeginScript("Set frame parameters");
             QString colorName = bc->framePenColor(useInnerFrame).name();
             uc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorName);
             saveStateBranch(selbi, uc, "",
@@ -2646,7 +2665,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
             QString("set type of frame to %1").arg(newName));
 
         if (saveCompleteFrame)
-            saveStateEndBlock();
+            saveStateEndScript();
 
         emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
     }
@@ -3914,7 +3933,7 @@ QString VymModel::getXLinkStyleEnd()
     else
         return QString();
 }
-AttributeItem *VymModel::setAttribute( // FIXME-2 saveState( missing. For bulk changes like Jira maybe save whole branch use block...
+AttributeItem *VymModel::setAttribute( // FIXME-2 saveState( missing. For bulk changes like Jira maybe save whole branch use Script...
         BranchItem *dst,
         const QString &key,
         const QVariant &value,
@@ -3998,8 +4017,18 @@ AttributeItem *VymModel::getAttributeByKey(const QString &key, TreeItem *ti)
     return nullptr;
 }
 
-BranchItem *VymModel::addMapCenter(bool saveStateFlag) // FIXME-2 missing saveState
+BranchItem *VymModel::addMapCenter(bool saveStateFlag, bool interactive) // FIXME-2 missing saveState
 {
+    if (interactive) {
+        // Start to build undo/redo scripts
+        // These script will be finished later when setHeading() is called
+        if (hasContextPos)
+            saveStateBeginScript(
+                    QString("Add new MapCenter at (%1)").arg(toS(contextPos)));
+        else
+            saveStateBeginScript("Add new MapCenter");
+    }
+
     if (!hasContextPos) {
         // E.g. when called via keypresss:
         // Place new MCO in middle of existing ones,
@@ -4017,7 +4046,12 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag) // FIXME-2 missing saveSt
             contextPos *= 1 / (qreal)(rootItem->branchCount());
     }
 
-    BranchItem *bi = addMapCenterAtPos(contextPos);
+    BranchItem *newbi = addMapCenterAtPos(contextPos, interactive);
+
+    qDebug() << "VM::aMC i=" << interactive;
+    if (interactive)
+        mapEditor->editHeading(newbi);
+
     updateActions();
     emitShowSelection();
     if (saveStateFlag)
@@ -4029,17 +4063,16 @@ BranchItem *VymModel::addMapCenter(bool saveStateFlag) // FIXME-2 missing saveSt
                       .arg(contextPos.y()));
                       */
     emitUpdateLayout();
-    return bi;
+    return newbi;
 }
 
-BranchItem *VymModel::addMapCenterAtPos(QPointF absPos) // FIXME-2 missing saveState
+BranchItem *VymModel::addMapCenterAtPos(QPointF absPos, bool interactive)
 // createMapCenter could then probably be merged with createBranch
 {
     // Create TreeItem
     QModelIndex parix = index(rootItem);
 
     BranchItem *newbi = new BranchItem(rootItem);
-    newbi->setHeadingPlainText(tr("New map", "New map"));
     int n = rootItem->getRowNumAppend(newbi);
 
     emit(layoutAboutToBeChanged());
@@ -4055,9 +4088,17 @@ BranchItem *VymModel::addMapCenterAtPos(QPointF absPos) // FIXME-2 missing saveS
     if (bc) {
         bc->setPos(absPos);
 
-        if (!saveStateBlocked)
+        if (!saveStateBlocked) {
             // Don't apply design while loading map
             applyDesign(MapDesign::CreatedByUser, newbi);
+
+            QString uc, rc, com;
+            com = QString("Add new MapCenter at (%1)").arg(toS(absPos));
+            uc = setBranchVar(newbi) + "map.removeBranch(b);";
+            rc = setBranchVar(rootItem) + QString(" b.loadBranchInsert(\"REDO_PATH\", %1);").arg(newbi->num());
+            saveStateNew( uc, rc, com, nullptr, newbi);
+
+        }
     }
 
     reposition();
@@ -4215,7 +4256,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
     if (!saveStateBlocked)
         // When ordering branches, we already saveState there and not for 
         // each branch individually
-        saveStateBeginBlock(
+        saveStateBeginScript(
             QString("Relink %1 objects to \"%2\"")
                 .arg(branches.count())
                 .arg(dst->headingPlain()));
@@ -4356,7 +4397,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
     reposition();
 
     if (!saveStateBlocked)
-        saveStateEndBlock();
+        saveStateEndScript();
 
     // Restore selection, which was lost when removing rows
     select(selectedItems);
@@ -4403,7 +4444,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
     if (!saveStateBlocked)
         // When ordering branches, we already saveState there and not for 
         // each branch individually
-        saveStateBeginBlock(
+        saveStateBeginScript(
             QString("Relink %1 objects to \"%2\"")
                 .arg(images.count())
                 .arg(dst->headingPlain()));
@@ -4449,7 +4490,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
     reposition();
 
     if (!saveStateBlocked)
-        saveStateEndBlock();
+        saveStateEndScript();
 
     // Restore selection, which was lost when removing rows
     select(selectedItems);  // FIXME-2 replace this with reselect()? lastSelection is stored...
@@ -4553,12 +4594,12 @@ void VymModel::deleteKeepChildren(BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         if (selbi->depth() < 1) {
-            //saveStateBeginBlock("Remove mapCenter and keep children"); // FIXME-2 cont here. Undo script fails
+            //saveStateBeginScript("Remove mapCenter and keep children"); // FIXME-2 cont here. Undo script fails
             while (selbi->branchCount() > 0)
                 detach(selbi->getBranchNum(0));
 
             deleteSelection(selbi->getID());
-            //saveStateEndBlock();
+            //saveStateEndScript();
         } else {
             // Check if we have children at all to keep
             if (selbi->branchCount() == 0)
@@ -6127,6 +6168,9 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
+    bool saveStateBlockedOrg = saveStateBlocked;
+    saveStateBlocked = true;
+
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
         int depth = selbi->depth();
@@ -6219,6 +6263,8 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         if (selbiChanged)
             emitDataChanged(selbi);
     }
+
+    saveStateBlocked = saveStateBlockedOrg;
 }
 
 void VymModel::applyDesignRecursively(

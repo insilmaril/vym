@@ -611,13 +611,14 @@ void Main::setupAPI()
     // Below are the commands for a map
     //
 
-    // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper. See vymmodelwrapper.h
-    QString DEPRECATED(" DEPRECATED. Commands moved to branch or image. ");
-
     c = new Command("addMapCenterAtPos", Command::Any);
     c->addParameter(Command::Double, false, "Position x");
     c->addParameter(Command::Double, false, "Position y");
+    c->setComment("Add MapCenter at position (x, y)");
     modelCommands.append(c);
+
+    // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper. See vymmodelwrapper.h
+    QString DEPRECATED(" DEPRECATED. Commands moved to branch or image. ");
 
     c = new Command("addSlide", Command::Branch);
     modelCommands.append(c);
@@ -5598,12 +5599,8 @@ void Main::editAddMapCenter()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->select(m->addMapCenter());
-        MapEditor *me = currentMapEditor();
-        if (me) {
-            m->setHeadingPlainText("");
-            me->editHeading();
-        }
+        // Set interactive=true to edit new heading
+        m->select(m->addMapCenter(true, true));
     }
 }
 

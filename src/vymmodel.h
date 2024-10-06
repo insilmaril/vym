@@ -224,15 +224,16 @@ class VymModel : public TreeModel {
 
     QString histPath;       //!< Path to history file
     SimpleSettings undoSet; //!< undo/redo commands, saved in histPath
-    QString undoBlockComment;//!< Comment for a set of undo commands in history
-    QString undoBlock;      //!< undo commands in saveStateBeginBlock, including select statements
-    QString redoBlock;      //!< redo commands in saveStateBeginBlock, including select statements
-    bool buildingUndoBlock; //!< true, while a set of undo commands is built
+    QString undoScriptComment;//!< Comment for a set of undo commands in history
+    QString undoScript;      //!< undo commands in saveStateBeginScript, including select statements
+    QString redoScript;      //!< redo commands in saveStateBeginScript, including select statements
+    bool buildingUndoScript; //!< true, while a set of undo commands is built
 
     int stepsTotal;         //!< total number of steps (undos+redos)
     int curStep;            //!< Current step in history (ring buffer)
     int curClipboard;       //!< number of history step, which is the current
                             //!< clipboard
+    uint dataStep;          //!< Step of saved data
     int redosAvail;         //!< Available number of redo steps
     int undosAvail;         //!< Available number of undo steps
     bool repositionBlocked; //!< block while load or undo
@@ -297,9 +298,9 @@ class VymModel : public TreeModel {
             const QString &redoCommand,
             const QString &comment);
 
-    /*! Put several states into one block for a single undo step */
-    void saveStateBeginBlock(const QString &comment);
-    void saveStateEndBlock();
+    /*! Put several states into one Script for a single undo step */
+    void saveStateBeginScript(const QString &comment);
+    void saveStateEndScript();
 
     ////////////////////////////////////////////
     // unsorted so far
@@ -476,8 +477,8 @@ class VymModel : public TreeModel {
     AttributeItem* getAttributeByKey(const QString &key, TreeItem *ti = nullptr);
 
     //! \brief Add new mapcenter
-    BranchItem *addMapCenter(bool saveStateFlag = true);
-    BranchItem *addMapCenterAtPos(QPointF absPos);
+    BranchItem *addMapCenter(bool saveStateFlag = true, bool interactive = false);
+    BranchItem *addMapCenterAtPos(QPointF absPos, bool interactive = false);
 
     /*! \brief Add new branch
 
