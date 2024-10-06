@@ -5758,7 +5758,7 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
     // write to directory   //FIXME-3 check totalBBox here...
     exportBoundingBoxes = true;
     QString saveFile =
-        saveToDir(dpath, mname + "-", FlagRowMaster::NoFlags, offset, nullptr);
+        saveToDir(dpath, mname + "-", FlagRowMaster::AllFlags, offset, nullptr);
     exportBoundingBoxes = false;
 
     QFile file;
