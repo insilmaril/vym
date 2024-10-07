@@ -5607,7 +5607,7 @@ void Main::editAddMapCenter()
     VymModel *m = currentModel();
     if (m) {
         // Set interactive=true to edit new heading
-        m->select(m->addMapCenter(true, true));
+        m->select(m->addMapCenter(true));
     }
 }
 

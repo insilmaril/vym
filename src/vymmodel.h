@@ -477,7 +477,7 @@ class VymModel : public TreeModel {
     AttributeItem* getAttributeByKey(const QString &key, TreeItem *ti = nullptr);
 
     //! \brief Add new mapcenter
-    BranchItem *addMapCenter(bool saveStateFlag = true, bool interactive = false);
+    BranchItem *addMapCenter(bool interactive = false);
     BranchItem *addMapCenterAtPos(QPointF absPos, bool interactive = false);
 
     /*! \brief Add new branch

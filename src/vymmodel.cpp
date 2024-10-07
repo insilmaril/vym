@@ -4007,7 +4007,7 @@ AttributeItem *VymModel::getAttributeByKey(const QString &key, TreeItem *ti)
     return nullptr;
 }
 
-BranchItem *VymModel::addMapCenter(bool saveStateFlag, bool interactive) // FIXME-2 missing saveState // FIXME-2 saveStateFlag not used
+BranchItem *VymModel::addMapCenter(bool interactive)
 {
     if (interactive) {
         // Start to build undo/redo scripts
