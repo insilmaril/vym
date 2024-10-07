@@ -222,10 +222,10 @@ class Main : public QMainWindow {
     void editShrinkSelectionSize();
     void editResetSelectionSize();
     void editAddMapCenter();
-    void editNewBranch();
-    void editNewBranchBefore();
-    void editNewBranchAbove();
-    void editNewBranchBelow();
+    void editAddBranch();
+    void editAddBranchBefore();
+    void editAddBranchAbove();
+    void editAddBranchBelow();
     void editImportAdd();
     void editImportReplace();
     void editSaveBranch();
@@ -413,7 +413,7 @@ class Main : public QMainWindow {
 
     QStringList imageTypes;
 
-    QString prevSelection;
+    QUuid prevSelection;
 
     HistoryWindow *historyWindow;
 

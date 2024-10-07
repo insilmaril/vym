@@ -156,7 +156,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     shortcutScope = tr("Main window", "Shortcut scope");
 
     // Sometimes we may need to remember old selections
-    prevSelection = "";
+    prevSelection = QUuid();
 
     // Create unique temporary directory
     bool ok;
@@ -1794,8 +1794,8 @@ void Main::setupEditActions()
     // Shortcut to add branch
     a = new QAction(QPixmap(":/newbranch.png"),
                     tr("Add branch as child", "Edit menu"), this);
-    switchboard.addSwitch("mapEditNewBranch", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(editNewBranch()));
+    switchboard.addSwitch("mapeditAddBranch", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editAddBranch()));
     cloneActionMapEditor(a, Qt::Key_A);
     taskEditorActions.append(a);
     actionListBranches.append(a);
@@ -1805,7 +1805,7 @@ void Main::setupEditActions()
     a = new QAction(tr("Add branch (insert)", "Edit menu"), this);
     a->setShortcut(Qt::SHIFT | Qt::CTRL | Qt::Key_A);
     switchboard.addSwitch("mapEditAddBranchBefore", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(editNewBranchBefore()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBefore()));
     editMenu->addAction(a);
     actionListBranches.append(a);
     actionAddBranchBefore = a;
@@ -1816,7 +1816,7 @@ void Main::setupEditActions()
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditAddBranchAbove", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editNewBranchAbove()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchAbove()));
     a->setEnabled(false);
     actionListBranches.append(a);
     actionAddBranchAbove = a;
@@ -1826,7 +1826,7 @@ void Main::setupEditActions()
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditAddBranchAboveAlt", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editNewBranchAbove()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchAbove()));
     actionListBranches.append(a);
     editMenu->addAction(a);
 
@@ -1836,7 +1836,7 @@ void Main::setupEditActions()
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditAddBranchBelow", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editNewBranchBelow()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBelow()));
     a->setEnabled(false);
     actionListBranches.append(a);
 
@@ -1845,7 +1845,7 @@ void Main::setupEditActions()
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditAddBranchBelowAlt", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editNewBranchBelow()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBelow()));
     actionListBranches.append(a);
     actionAddBranchBelow = a;
 
@@ -5229,9 +5229,9 @@ void Main::editHeadingFinished(VymModel *m)
 {
     if (m) {
         if (!actionSettingsAutoSelectNewBranch->isChecked() &&
-            !prevSelection.isEmpty())
+            !prevSelection.isNull())
             m->select(prevSelection);
-        prevSelection = "";
+        prevSelection = QUuid();
     }
 }
 
@@ -5611,72 +5611,57 @@ void Main::editAddMapCenter()
     }
 }
 
-void Main::editNewBranch()
+void Main::editAddBranch()
 {
     VymModel *m = currentModel();
     if (m) {
-        BranchItem *bi = m->addNewBranch(nullptr, -2, true);
-        if (!bi) return;
-    }
-}
-
-void Main::editNewBranchBefore()
-{
-    VymModel *m = currentModel();
-    if (m) {
-        if (!actionSettingsAutoSelectNewBranch->isChecked())
-            prevSelection = m->getSelectString();
-
-        BranchItem *bi = m->addNewBranchBefore();
-
-        if (bi)
-            m->select(bi);
-        else
-            return;
-
-        currentMapEditor()->editHeading();
-    }
-}
-
-void Main::editNewBranchAbove()
-{
-    VymModel *m = currentModel();
-    if (m) {
-        if (!actionSettingsAutoSelectNewBranch->isChecked())
-            prevSelection = m->getSelectString();
-
-        BranchItem *selbi = m->getSelectedBranch(); // FIXME-2 selectedBranch also in VM::addNewBranch()
-        if (selbi) {
-            BranchItem *bi = m->addNewBranch(selbi, -3, true);
-
+        if (!actionSettingsAutoSelectNewBranch->isChecked()) {
+            BranchItem *bi = m->getSelectedBranch();
             if (bi)
-                m->select(bi);
-            else
-                return;
-
-            currentMapEditor()->editHeading();
+                prevSelection = bi->getUuid();
         }
+        m->addNewBranch(nullptr, -2, true);
     }
 }
 
-void Main::editNewBranchBelow()
+void Main::editAddBranchBefore()
 {
     VymModel *m = currentModel();
     if (m) {
-        BranchItem *selbi = m->getSelectedBranch();
-        if (selbi) {
-            BranchItem *bi = m->addNewBranch(selbi, -1, true);
-
+        if (!actionSettingsAutoSelectNewBranch->isChecked()) {
+            BranchItem *bi = m->getSelectedBranch();
             if (bi)
-                m->select(bi);
-            else
-                return;
-
-            if (!actionSettingsAutoSelectNewBranch->isChecked())
-                prevSelection = m->getSelectString(bi);
-
-            currentMapEditor()->editHeading();
+                prevSelection = bi->getUuid();
         }
+
+        m->addNewBranchBefore(nullptr, true);
+    }
+}
+
+void Main::editAddBranchAbove()
+{
+    VymModel *m = currentModel();
+    if (m) {
+        if (!actionSettingsAutoSelectNewBranch->isChecked()) {
+            BranchItem *bi = m->getSelectedBranch();
+            if (bi)
+                prevSelection = bi->getUuid();
+        }
+
+        m->addNewBranch(nullptr, -3, true);
+    }
+}
+
+void Main::editAddBranchBelow()
+{
+    VymModel *m = currentModel();
+    if (m) {
+        if (!actionSettingsAutoSelectNewBranch->isChecked()) {
+            BranchItem *bi = m->getSelectedBranch();
+            if (bi)
+                prevSelection = bi->getUuid();
+        }
+        m->addNewBranch(nullptr, -1, true);
     }
 }
 

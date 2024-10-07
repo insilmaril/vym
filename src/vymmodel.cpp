@@ -4143,9 +4143,17 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
     if (!selbi)
         return nullptr;
 
-    if (interactive)
+    QString comment;
+    if (interactive) {
         // saveStateEndScript will be called in VymModel::setHeading()
-        saveStateBeginScript("Add new branch");
+        if (pos == -2)
+            comment = QString("Add new branch to %1").arg(getObjectName(selbi));
+        else if (pos < -2)
+            comment = QString("Add new branch above %1").arg(getObjectName(selbi));
+        else
+            comment = QString("Add new branch below %1").arg(getObjectName(selbi));
+        saveStateBeginScript(comment);
+    }
 
     BranchItem *newbi = addNewBranchInt(selbi, pos);
 
@@ -4155,22 +4163,16 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
         applyDesign(MapDesign::CreatedByUser, newbi);
 
     if (newbi) {
-        QString uc, rc, com;
+        QString uc, rc;
         BranchItem *pbi;
-        if (pos == -2) {
+        if (pos == -2)
             pbi = selbi;
-            com = QString("Add new branch to %1").arg(getObjectName(selbi));
-        } else {
+        else
             pbi = selbi->parentBranch();
-            if (pos < -2)
-                com = QString("Add new branch above %1").arg(getObjectName(selbi));
-            else
-                com = QString("Add new branch below %1").arg(getObjectName(selbi));
-        }
 
         uc = setBranchVar(newbi) + "map.removeBranch(b);";
         rc = setBranchVar(pbi) + QString(" b.loadBranchInsert(\"REDO_PATH\", %1);").arg(newbi->num());
-        saveStateNew( uc, rc, com, nullptr, newbi);
+        saveStateNew( uc, rc, "", nullptr, newbi);
 
         latestAddedItemUuid = newbi->getUuid();
         // In Network mode, the client needs to know where the new branch
@@ -4190,32 +4192,53 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore(BranchItem *bi)    // FIXME-2 enable one history step
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-2 enable one history step    // FIXME-0 does not work, might crash
 {
     BranchItem *newbi = nullptr;
     BranchItem *selbi = getSelectedBranch(bi);
     if (selbi && selbi->getType() == TreeItem::Branch)  // FIXME-2 Better check for depth...
     // We accept no MapCenter here, so we _have_ a parent
     {
+        QString comment;
+        if (interactive) {
+            // saveStateEndScript will be called in VymModel::setHeading()
+            comment = QString("Add new branch before %1").arg(getObjectName(selbi));
+            saveStateBeginScript(comment);
+        }
+
         // add below selection
         newbi = addNewBranchInt(selbi, -1);
 
         if (newbi) {
-            QString uc = setBranchVar(newbi) + "map.removeBranch(b);";
+            // Required to initialize styles
+            if (!saveStateBlocked)
+                // Don't apply design while loading map
+                applyDesign(MapDesign::CreatedByUser, newbi);
+
+            QString uc = setBranchVar(newbi) + "b.removeKeepChildren();";
             QString rc = setBranchVar(selbi) + "b.addBranchBefore();";
-            saveStateNew(uc, rc,
-                QString("Add branch before %1").arg(getObjectName(selbi)));
+            saveStateNew(uc, rc, nullptr, newbi);
 
             // newbi->move2RelPos (p);
 
             // Move selection to new branch
+            // relink() would create another saveStateScript, block saveState for now
+            bool saveStateBlockedOrg = saveStateBlocked;
+            saveStateBlocked = true;
             relinkBranch(selbi, newbi, 0);
+            saveStateBlocked = saveStateBlockedOrg;
 
             // Use color of child instead of parent // FIXME-2 should be done via something like VymModel::updateStyle
             //newbi->setHeadingColor(selbi->headingColor());
             emitDataChanged(newbi);
         }
     }
+
+    if (interactive) {
+        select(newbi);
+        mapEditor->editHeading();
+    }
+
     return newbi;
 }
 
@@ -4580,7 +4603,7 @@ void VymModel::deleteSelection(ulong selID)
     reposition();
 }
 
-void VymModel::deleteKeepChildren(BranchItem *bi)
+void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-0 crashes
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
@@ -4618,13 +4641,13 @@ void VymModel::deleteKeepChildren(BranchItem *bi)
                     num_dst++;
                 }
                 deleteItem(selbi);
-                reposition();   // FIXME-2 reposition only once in the end
+                saveStateBlocked = oldSaveState;
                 emitDataChanged(pi);
                 select(sel);
-                saveStateBlocked = oldSaveState;
             }
         }
     }
+    reposition();
 }
 
 void VymModel::deleteChildren(BranchItem *bi)
@@ -6918,6 +6941,12 @@ bool VymModel::select(TreeItem *ti)
         return select(index(ti));
     else
         return false;
+}
+
+bool VymModel::select(const QUuid &uuid)
+{
+    TreeItem *ti = findUuid(uuid);
+    return select(ti);
 }
 
 bool VymModel::select(const QModelIndex &index)

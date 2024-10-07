@@ -506,7 +506,7 @@ class VymModel : public TreeModel {
     */
     BranchItem *addNewBranch(BranchItem *bi = nullptr, int pos = -2, bool interactive = false);
     BranchItem *
-    addNewBranchBefore(BranchItem *bi = nullptr); //!< Insert branch between selection and its parent
+    addNewBranchBefore(BranchItem *bi = nullptr, bool interactive = false); //!< Insert branch between selection and its parent
 
     /*! \brief Relink a branch to a new destination dst
         Relinks branch to dst at branch position pos. There is no saveState
@@ -821,6 +821,7 @@ class VymModel : public TreeModel {
     bool selectToggle(const QUuid &uid);    //! Overloaded function to toggle select state
     bool selectToggle(const QString &selectString); //! Overloaded function to toggle select state
     bool select(TreeItem *ti);              //! Select by pointer to TreeItem
+    bool select(const QUuid&);              //! Select by Uuid
     bool select(const QModelIndex &index);  //! Select by ModelIndex
     void select(QList <BranchItem*> selbis);//! Used to restore selections
     void select(QList <TreeItem*> tis);     //! Select list of pointers e.g. when relinking
