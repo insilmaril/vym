@@ -81,26 +81,27 @@ QString MapItem::getMapAttr()
     if (parentItem == rootItem)
         posMode = Absolute;
     else {
-        if (type == TreeItem::Image || depth() == 1 || lmo->getUseRelPos())
+        if (type == TreeItem::Image || depth() == 1 || (lmo && lmo->getUseRelPos()))
             posMode = Relative; // FiXME-2 shouldn't this be replaced by relPos?
         else
             posMode = Unused;
     }
+
     switch (posMode) {
-    case Relative:
-        if (lmo)
-            pos = lmo->getRelPos();
-        s = attribut("relPosX", QString().setNum(pos.x())) +
-            attribut("relPosY", QString().setNum(pos.y()));
-        break;
-    case Absolute:
-        if (mo)
-            pos = mo->getAbsPos();
-        s = attribut("absPosX", QString().setNum(pos.x())) +
-            attribut("absPosY", QString().setNum(pos.y()));
-        break;
-    default:
-        break;
+        case Relative:
+            if (lmo)
+                pos = lmo->getRelPos();
+            s = attribut("relPosX", QString().setNum(pos.x())) +
+                attribut("relPosY", QString().setNum(pos.y()));
+            break;
+        case Absolute:
+            if (mo)
+                pos = mo->getAbsPos();
+            s = attribut("absPosX", QString().setNum(pos.x())) +
+                attribut("absPosY", QString().setNum(pos.y()));
+            break;
+        default:
+            break;
     }
     if (hideLinkUnselected)
         s += attribut("hideLink", "true");
