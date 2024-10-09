@@ -4192,7 +4192,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-2 enable one history step    // FIXME-0 does not work, might crash
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-2 enable one history step
 {
     BranchItem *newbi = nullptr;
     BranchItem *selbi = getSelectedBranch(bi);
@@ -4215,10 +4215,6 @@ BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    //
                 // Don't apply design while loading map
                 applyDesign(MapDesign::CreatedByUser, newbi);
 
-            QString uc = setBranchVar(newbi) + "b.removeKeepChildren();";
-            QString rc = setBranchVar(selbi) + "b.addBranchBefore();";
-            saveStateNew(uc, rc, nullptr, newbi);
-
             // newbi->move2RelPos (p);
 
             // Move selection to new branch
@@ -4228,8 +4224,10 @@ BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    //
             relinkBranch(selbi, newbi, 0);
             saveStateBlocked = saveStateBlockedOrg;
 
-            // Use color of child instead of parent // FIXME-2 should be done via something like VymModel::updateStyle
-            //newbi->setHeadingColor(selbi->headingColor());
+            QString uc = setBranchVar(newbi) + "map.removeKeepChildren(b);";
+            QString rc = setBranchVar(selbi) + "map.loadBranchReplace(\"REDO_PATH\",b);";
+            saveStateNew(uc, rc, "", nullptr, newbi);
+
             emitDataChanged(newbi);
         }
     }
@@ -4253,7 +4251,7 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst)
 
 bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst)   
 {
-    // qDebug() << "VM::relink " << branches.count() << " branches to  num_dst=" << num_dst;
+    // qDebug() << "VM::relink " << branches.count() << " branches to " << headingText(dst) << "num_dst=" << num_dst;
 
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();
@@ -4320,13 +4318,13 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         // What kind of relinking are we doing? Important for style updates
         MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-2 not used later   also not considering detaching
 
-        emit(layoutAboutToBeChanged());
         BranchItem *branchpi = (BranchItem *)bi->parent();
 
         // Remove at current position
         int removeRowNum = bi->childNum();
 
         //qDebug() << "  VM::relink removing at n=" << removeRowNum << bi->headingPlain();
+        emit(layoutAboutToBeChanged());
         beginRemoveRows(index(branchpi), removeRowNum, removeRowNum);
         branchpi->removeChild(removeRowNum);
         endRemoveRows();
@@ -4624,7 +4622,7 @@ void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-0 crashes
                 QString pbv = setBranchVar(pi, "pb");
                 QString bv = setBranchVar(selbi);
                 QString uc = pbv + "map.loadBranchReplace(\"UNDO_PATH\", pb);";
-                QString rc = bv + "b.removeKeepChildren();";
+                QString rc = bv + "map.removeKeepChildren(b);";
                 saveStateNew(uc, rc,
                     QString("Remove branch \"%1\" and keep children").arg(selbi->headingText()),
                     pi);
@@ -4641,13 +4639,13 @@ void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-0 crashes
                     num_dst++;
                 }
                 deleteItem(selbi);
+                reposition();
                 saveStateBlocked = oldSaveState;
                 emitDataChanged(pi);
                 select(sel);
             }
         }
     }
-    reposition();
 }
 
 void VymModel::deleteChildren(BranchItem *bi)
