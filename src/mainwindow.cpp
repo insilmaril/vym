@@ -663,6 +663,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Value of attribute");
     modelCommands.append(c);
 
+    c = new Command("findAttributeById", Command::Any, Command::AttributeItem);
+    c->setComment("Find Attribute with given unique Uuid. ");
+    c->addParameter(Command::String, false, "Uuid of attribute");
+    modelCommands.append(c);
+
     c = new Command("findBranchById", Command::Any, Command::BranchItem);
     c->setComment("Find branch with given unique Uuid. ");
     c->addParameter(Command::String, false, "Uuid of branch");
@@ -788,6 +793,11 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("remove", Command::TreeItem);
+    modelCommands.append(c);
+
+    c = new Command("removeAttribute", Command::Any);
+    c->addParameter(Command::AttributeItem, false, "Attribute to be removed");
+    c->setComment("Remove attribute");
     modelCommands.append(c);
 
     c = new Command("removeBranch", Command::Any);

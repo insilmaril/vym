@@ -1662,6 +1662,19 @@ void VymModel::resetHistory()
     mainWindow->updateHistory(undoSet);
 }
 
+QString VymModel::setAttributeVar(AttributeItem* ai, QString varName)
+{
+    // Default varName: "a"
+    QString r;
+    if (!ai)
+        qWarning() << "VM::setAttributeVar ai == nullptr";
+    else
+
+        r = QString("%1 = map.findAttributeById(\"%2\");").arg(varName, ai->getUuid().toString());
+
+    return r;
+}
+
 QString VymModel::setBranchVar(BranchItem* bi, QString varName)
 {
     // Default varName: "b"
@@ -1960,6 +1973,13 @@ TreeItem *VymModel::findID(const uint &id)
             ImageItem *ii = cur->getImageNum(j);
             if (id == ii->getID())
                 return ii;
+            j++;
+        }
+        j = 0;
+        while (j < cur->attributeCount()) {
+            AttributeItem *ai = cur->getAttributeNum(j);
+            if (id == ai->getID())
+                return ai;
             j++;
         }
         nextBranch(cur, prev);
@@ -4590,10 +4610,17 @@ void VymModel::deleteSelection(ulong selID)
                 deleteItem(ti);
                 emitDataChanged(pbi);
                 select(pbi);
-            } else if (ti->getType() == TreeItem::XLinkType) {  // FIXME-3 Maybe rename XLink to XLinkItem to avoid confusing with Link class?
+            } else if (ti->getType() == TreeItem::XLinkType) {
                 deleteXLink(((XLinkItem*)ti)->getXLink());
-            } else if (ti->getType() == TreeItem::Attribute) {
-                deleteItem(ti); // FIXME-2 No saveState yet to remove Attribute
+            } else if (ti->getType() == AttributeItem::Attribute && pbi) {
+                AttributeItem *ai = (AttributeItem*)ti;
+                QString av = setAttributeVar((AttributeItem*)ti);
+                QString bv = setBranchVar(pbi);
+                QString uc = bv + QString("b.setAttribute(\"%1\",\"%2\");").arg(ai->key(), ai->value().toString());
+                QString rc = QString("map.removeImage(i);");
+                QString com = QString("Remove image \"%1\" from branch \"%2\"").arg(getObjectName(ti), getObjectName(pbi));
+                saveStateNew(uc, rc, com, pbi);
+                deleteItem(ti);
             } else
                 qWarning("VymmModel::deleteSelection()  unknown type?!");
         } // ti found
@@ -4601,12 +4628,11 @@ void VymModel::deleteSelection(ulong selID)
     reposition();
 }
 
-void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-0 crashes
+void VymModel::deleteKeepChildren(BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         if (selbi->depth() < 1) {
-            //saveStateBeginScript("Remove mapCenter and keep children"); // FIXME-2 cont here. Undo script fails
             while (selbi->branchCount() > 0)
                 detach(selbi->getBranchNum(0));
 

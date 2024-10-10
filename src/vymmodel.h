@@ -267,6 +267,7 @@ class VymModel : public TreeModel {
     QString getHistoryPath(); //!< Path to directory containing the history
     void resetHistory();      //!< Initialize history
 
+    QString setAttributeVar(AttributeItem*, QString varName ="b");  //!< Returns command to set AttributeItem in scripts for undo/redo
     QString setBranchVar(BranchItem*, QString varName ="b");  //!< Returns command to set BranchItem in scripts for undo/redo
     QString setImageVar(ImageItem*, QString varName = "i");   //!< Returns command to set ImageItem in scripts for undo/redo
     QString setXLinkVar(XLink*, QString varName = "x");        //!< Returns command to set XLink in scripts for undo/redo

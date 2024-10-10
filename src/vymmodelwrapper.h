@@ -29,6 +29,7 @@ class VymModelWrapper : public QObject {
     void detach();      // FIXME-3 move to BranchWrapper
     bool exportMap(QJSValueList args);
     BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
+    AttributeWrapper* findAttributeById(const QString &);
     BranchWrapper* findBranchById(const QString &);
     BranchWrapper* findBranchBySelection(const QString &);
     ImageWrapper* findImageById(const QString &);
@@ -58,6 +59,7 @@ class VymModelWrapper : public QObject {
     void paste();
     void redo();
     void remove();              // FIXME-3 still needed? Rename to removeSelection()?
+    void removeAttribute(AttributeWrapper *aw);
     void removeBranch(BranchWrapper *bw);
     void removeImage(ImageWrapper *iw);
     void removeKeepChildren(BranchWrapper *bw);

@@ -251,6 +251,15 @@ BranchWrapper* VymModelWrapper::findBranchByAttribute(
         return nullptr;
 }
 
+AttributeWrapper* VymModelWrapper::findAttributeById(const QString &u)
+{
+    TreeItem *ti = model->findUuid(QUuid(u));
+    if (ti && ti->hasTypeAttribute())
+        return ((AttributeItem*)ti)->attributeWrapper();
+    else
+        return nullptr;
+}
+
 BranchWrapper* VymModelWrapper::findBranchById(const QString &u)
 {
     TreeItem *ti = model->findUuid(QUuid(u));
@@ -451,6 +460,17 @@ void VymModelWrapper::paste() { model->paste(); }
 void VymModelWrapper::redo() { model->redo(); }
 
 void VymModelWrapper::remove() { model->deleteSelection(); }
+
+void VymModelWrapper::removeAttribute(AttributeWrapper *aw)
+{
+    if (!aw) {
+        mainWindow->abortScript(
+                QJSValue::GenericError,
+                "VymModelWrapper::removeAttribute(a) a is invalid");
+        return;
+    }
+    model->deleteSelection(aw->attributeItem()->getID());
+}
 
 void VymModelWrapper::removeBranch(BranchWrapper *bw)
 {
