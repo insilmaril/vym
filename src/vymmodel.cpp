@@ -7461,7 +7461,7 @@ SlideModel *VymModel::getSlideModel() { return slideModel; }
 
 int VymModel::slideCount() { return slideModel->count(); }
 
-SlideItem *VymModel::addSlide()     // FIXME-2 missing saveState
+SlideItem *VymModel::addSlide()     // FIXME-3 missing saveState
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)
@@ -7506,7 +7506,7 @@ SlideItem *VymModel::addSlide()     // FIXME-2 missing saveState
     return si;
 }
 
-void VymModel::deleteSlide(SlideItem *si)  // FIXME-2 missing saveState
+void VymModel::deleteSlide(SlideItem *si)  // FIXME-3 missing saveState
 {
     if (si) {
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
