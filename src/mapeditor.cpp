@@ -2500,8 +2500,13 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // in parent branch
             pi->addToImagesContainer(ic);
 
-            QString pold = toS(ic->getOriginalPos());
-            QString pnow = toS(ic->pos());
+            QString pold = toS(ic->getOriginalPos(), 5);
+            QString pnew = toS(ic->pos(), 5);
+            QString com = QString("Move image to %1").arg(pnew);
+            QString iv = model->setImageVar(ii);
+            QString uc = iv + QString("i.setPos%1;").arg(pold);
+            QString rc = iv + QString("i.setPos%1;").arg(pnew);
+            model->saveStateNew(uc, rc, com);
             /* FIXME-2 missing model->saveState( // FIXME-1 saveState: add setPos to ImageWrapper
                     ii, "setPos " + pold,
                     ii, "setPos " + pnow,

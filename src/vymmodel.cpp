@@ -1888,17 +1888,7 @@ void VymModel::saveStateBranch(
     saveStateNew(branchVar + uc, branchVar + rc, comment);
 }
 
-void VymModel::saveStateBeginScript(const QString &comment)  // FIXME-00 Check where this is used. Rewrite everywhere for saveStateNew format
-    // - if only used for single command, don't build Script and adapt comment
-    // - add checks, that Script is really ended!
-    // - Currently used for moving/relinking in MapEditor
-    //
-    // Used in
-    // - ok MapEditor::mouseRelease  when moving multiple branches
-    // - ok setFrameType
-    // - ok relinkBranches
-    // - ok relinkImages
-    // - deleteKeepChildren
+void VymModel::saveStateBeginScript(const QString &comment)
 {
     buildingUndoScript = true;
     undoScriptComment = comment;

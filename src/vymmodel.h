@@ -272,7 +272,6 @@ class VymModel : public TreeModel {
     QString setImageVar(ImageItem*, QString varName = "i");   //!< Returns command to set ImageItem in scripts for undo/redo
     QString setXLinkVar(XLink*, QString varName = "x");        //!< Returns command to set XLink in scripts for undo/redo
 
-  private:
     /*! \brief Save the current changes in map
 
     Two commands and selections are saved:
