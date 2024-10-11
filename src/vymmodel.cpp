@@ -1894,10 +1894,10 @@ void VymModel::saveStateBeginScript(const QString &comment)  // FIXME-00 Check w
     // - Currently used for moving/relinking in MapEditor
     //
     // Used in
-    // - MapEditor::mouseRelease  when moving multiple branches
-    // - setFrameType
-    // - relinkBranches
-    // - relinkImages
+    // - ok MapEditor::mouseRelease  when moving multiple branches
+    // - ok setFrameType
+    // - ok relinkBranches
+    // - ok relinkImages
     // - deleteKeepChildren
 {
     buildingUndoScript = true;
@@ -4445,7 +4445,7 @@ bool VymModel::relinkImage(ImageItem* image, TreeItem *dst_ti, int num_new) {
     return relinkImages(images, dst_ti, num_new);
 }
 
-bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)   // FIXME-2 does not save positions // FIXME-2 missing saveState
+bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)
 {
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();
@@ -4509,14 +4509,17 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
         emit(layoutChanged());
 
         ii->updateContainerStackingOrder();
-
         // FIXME-2 relinkImages: What about updating links of images (later)?
         // FIXME-2 relinkImages: What about updating design (later)?
+        // FIXME-2 in ImageWrapper: num_new missing
+        // FIXME-2 does not save positions
 
-        /* saveState(ii, QString("relinkTo (\"%1\")").arg(oldParString), ii,
-                  QString("relinkTo (\"%1\")").arg(getSelectString(dst)),
-                  QString("Relink floatimage to %1").arg(getObjectName(dst)));
-                  */
+        QString iv = setImageVar(ii);
+        QString uc = setBranchVar(pi) + iv + "i.relinkToBranch(b);";
+        QString rc = setBranchVar(dst) + iv + "i.relinkToBranch(b);";
+        QString com = QString("Relink image to %1").arg(getObjectName(dst));
+
+        saveStateNew(uc, rc, com);
     }
 
     reposition();

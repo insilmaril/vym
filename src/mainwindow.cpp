@@ -1378,6 +1378,17 @@ void Main::setupAPI()
     c->setComment("Set heading of image from plaintext string");
     imageCommands.append(c);
 
+    c = new Command("relinkToBranch", Command::Image);
+    c->setComment("Relink image to destination branch");
+    c->addParameter(Command::BranchItem, false, "Destination branch");
+    imageCommands.append(c);
+
+    c = new Command("relinkToBranchAt", Command::Image);
+    c->setComment("Relink image to destination branch at position");
+    c->addParameter(Command::BranchItem, false, "Destination branch");
+    c->addParameter(Command::Int, false, "Position (0 is first)");
+    imageCommands.append(c);
+
     c = new Command("selectParent", Command::Image, Command::Bool);
     c->setComment("Select parent of image");
     imageCommands.append(c);
