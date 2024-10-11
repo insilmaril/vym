@@ -68,14 +68,14 @@ QString ImageWrapper::headingText()
 
 bool ImageWrapper::relinkToBranch(BranchWrapper *dst)
 {
-    bool r = model()->relinkImage(imageItemInt, ((TreeItem*)(dst->branchItem())));
+    bool r = model()->relinkImage(imageItemInt, (TreeItem*)(dst->branchItem()));
     mainWindow->setScriptResult(r);
     return r;
 }
 
 bool ImageWrapper::relinkToBranchAt(BranchWrapper *dst, int pos)
 {
-    bool r = model()->relinkImage(imageItemInt, ((TreeItem*)(dst->branchItem(), pos)));
+    bool r = model()->relinkImage(imageItemInt, (TreeItem*)(dst->branchItem()), pos);
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -101,5 +101,10 @@ void ImageWrapper::setHeadingRichText(const QString &text)
 void ImageWrapper::setHeadingText(const QString &text)
 {
     model()->setHeadingPlainText(text, imageItemInt);
+}
+
+void ImageWrapper::setPos(qreal x, qreal y)
+{
+    model()->setPos(QPointF(x, y), imageItemInt);
 }
 

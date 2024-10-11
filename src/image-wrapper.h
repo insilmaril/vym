@@ -27,6 +27,7 @@ class ImageWrapper : public QObject {
     bool selectParent();
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
+    void setPos(qreal x, qreal y);
 
   private:
     ImageItem *imageItemInt;

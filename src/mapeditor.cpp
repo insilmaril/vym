@@ -2507,12 +2507,6 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             QString uc = iv + QString("i.setPos%1;").arg(pold);
             QString rc = iv + QString("i.setPos%1;").arg(pnew);
             model->saveStateNew(uc, rc, com);
-            /* FIXME-2 missing model->saveState( // FIXME-1 saveState: add setPos to ImageWrapper
-                    ii, "setPos " + pold,
-                    ii, "setPos " + pnow,
-                    QString("Move %1 to %2") .arg(model->getObjectName(ii),  pnow));
-                    */
-
         } // Image moved, but not relinked
 
         // Finally resize scene, if needed
