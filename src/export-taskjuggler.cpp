@@ -8,6 +8,7 @@ extern QDir vymBaseDir;
 void ExportTaskjuggler::doExport()  // FIXME-1 Needs to export to XML first, check paths
 {
     model->exportXML(filePath + ".xml", tmpDir.path(), false);
+    qDebug() << "exported xml: " << filePath + ".xml" << tmpDir.path();
 
     XSLTProc p;
     p.setInputFile(tmpDir.path() + "/" + model->getMapName() + ".xml");

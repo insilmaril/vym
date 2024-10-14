@@ -1712,8 +1712,8 @@ QString VymModel::setXLinkVar(XLink* xl, QString varName)
 
 // FIXME-2 saveState: Check VymModelWrapper vs BranchWrapper  in scripts...
 void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
-         const QString &undoCom,
-         const QString &redoCom,
+         QString undoCommand,
+         QString redoCommand,
          const QString &comment,
          TreeItem *saveUndoItem,
          TreeItem *saveRedoItem)
@@ -1730,22 +1730,10 @@ void VymModel::saveStateNew(    // FIXME-2 rename to "saveState(" everywhere...
         qDebug() << "VM::saveStateNew() for map " << mapName;
         qDebug() << "  comment: " << comment;
         qDebug() << "  Script:   " << buildingUndoScript;
-        qDebug() << "  undoCom: " << undoCom;
-        qDebug() << "  redoCom: " << redoCom;
+        qDebug() << "  undoCom: " << undoCommand;
+        qDebug() << "  redoCom: " << redoCommand;
     }
     */
-
-    QString undoCommand;
-    QString redoCommand;
-
-    if (undoCom.startsWith("model.")  || undoCom.startsWith("{")) { // FIXME-1 check.  model -> map . Also check if still needed in new implementation!
-        // After creating saveStateScript, no "model." prefix needed for commands
-        undoCommand = undoCom;
-        redoCommand = redoCom;
-    } else {
-        undoCommand = undoCom;
-        redoCommand = redoCom;
-    }
 
     if (buildingUndoScript)
         logCommand("// Building script: " + redoCommand, comment, __func__);
