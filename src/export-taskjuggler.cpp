@@ -1,22 +1,31 @@
 #include "export-taskjuggler.h"
 
+#include "file.h"
 #include "vymmodel.h"
 #include "xsltproc.h"
 
 extern QDir vymBaseDir;
 
-void ExportTaskjuggler::doExport()  // FIXME-1 Needs to export to XML first, check paths
+void ExportTaskJuggler::doExport()
 {
-    model->exportXML(filePath + ".xml", tmpDir.path(), false);
-    qDebug() << "exported xml: " << filePath + ".xml" << tmpDir.path();
+    exportName = "TaskJuggler";
+
+    bool ok;
+    QString xmlPath = model->getMapName() + ".xml";
+    QString dpath = makeTmpDir(ok, model->tmpDirPath(), "export");
+    xmlPath = dpath + "/" + xmlPath;
+    model->exportXML(xmlPath, false);
 
     XSLTProc p;
-    p.setInputFile(tmpDir.path() + "/" + model->getMapName() + ".xml");
+    if (!p.setInputFile(xmlPath))
+        return;
     p.setOutputFile(filePath);
-    p.setXSLFile(vymBaseDir.path() + "/styles/vym2taskjuggler.xsl");
-    p.process();
-
-    result = ExportBase::Success;
+    if (!p.setXSLFile(vymBaseDir.path() + "/styles/vym2taskjuggler.xsl"))
+        return;
+    if (p.process())
+        result = ExportBase::Success;
+    else
+        result = ExportBase::Failed;
 
     displayedDestination = filePath;
     completeExport();

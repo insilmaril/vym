@@ -623,8 +623,11 @@ class VymModel : public TreeModel {
     /*! Save as SVG  . Returns offset to upper left corner of image */
     QPointF exportSVG(QString fname = "", bool askForName = true);
 
+    /*! Save as TaskJuggler input file */
+    void exportTaskJuggler(QString fname = "", bool askForName = true);
+
     /*! Export as XML to directory */
-    void exportXML(QString fname = "", QString dir = "", bool useDialog = true);
+    void exportXML(QString fname = "", bool useDialog = true);
 
     /*! Export as A&O report text to file */
     void exportAO(QString fname = "", bool askForName = true);

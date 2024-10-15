@@ -63,7 +63,7 @@ extern QString vymName;
 bool confirmDirectoryOverwrite(const QDir &dir)
 {
     if (!dir.exists()) {
-        qWarning() << "Directory does not exist: " << dir.path();
+        qWarning() << "confirmDirectoryOverwrite:  Directory does not exist: " << dir.path();
         return false;
     }
 

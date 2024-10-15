@@ -139,6 +139,7 @@ extern ImageIO imageIO;
 
 extern QDir vymBaseDir;
 extern QDir vymTranslationsDir;
+extern QDir lastExportDir;
 extern QDir lastImageDir;
 extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
@@ -1652,7 +1653,7 @@ void Main::setupFileActions()
     actionListFiles.append(a);
 
     a = new QAction("Taskjuggler... " + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportTaskjuggler()));
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportTaskJuggler()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
 
@@ -4781,14 +4782,14 @@ void Main::fileExportConfluence()
 }
 
 #include "export-csv.h"
-void Main::fileExportCSV() // FIXME-3 not scriptable yet
+void Main::fileExportCSV() // FIXME-2 not scriptable yet, move to model
 {
     VymModel *m = currentModel();
     if (m) {
         ExportCSV ex;
         ex.setModel(m);
         ex.addFilter("CSV (*.csv)");
-        ex.setDirPath(lastImageDir.absolutePath());
+        ex.setDirPath(lastExportDir.absolutePath());
         ex.setWindowTitle(vymName + " -" + tr("Export as CSV") + " " +
                           tr("(still experimental)"));
         if (ex.execDialog()) {
@@ -4821,7 +4822,7 @@ void Main::fileExportImage()
 }
 
 #include "exportoofiledialog.h"
-void Main::fileExportImpress()
+void Main::fileExportImpress() // FIXME-2 check if scriptable, move to model
 {
     ExportOOFileDialog fd;
     // TODO add preview in dialog
@@ -4836,7 +4837,7 @@ void Main::fileExportImpress()
                 if (!fn.contains(".odp"))
                     fn += ".odp";
 
-                // lastImageDir=fn.left(fn.findRev ("/"));
+                // lastExportDir = fn.left(fn.findRev ("/"));
                 VymModel *m = currentModel();
                 if (m)
                     m->exportImpress(fn, fd.selectedConfig());
@@ -4885,24 +4886,11 @@ void Main::fileExportSVG()
         m->exportSVG();
 }
 
-#include "export-taskjuggler.h"
-void Main::fileExportTaskjuggler() // FIXME-3 not scriptable yet
+void Main::fileExportTaskJuggler()
 {
-    ExportTaskjuggler ex;
     VymModel *m = currentModel();
-    if (m) {
-        ex.setModel(m);
-        ex.setWindowTitle(vymName + " - " + tr("Export to") + " Taskjuggler" +
-                          tr("(still experimental)"));
-        ex.setDirPath(lastImageDir.absolutePath());
-        ex.addFilter("Taskjuggler (*.tjp)");
-
-        if (ex.execDialog()) {
-            m->setExportMode(true);
-            ex.doExport();
-            m->setExportMode(false);
-        }
-    }
+    if (m) 
+        m->exportTaskJuggler();
 }
 
 void Main::fileExportXML()

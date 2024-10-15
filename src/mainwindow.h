@@ -154,7 +154,7 @@ class Main : public QMainWindow {
     void fileExportOrgMode();
     void fileExportPDF();
     void fileExportSVG();
-    void fileExportTaskjuggler();
+    void fileExportTaskJuggler();
     void fileExportXML();
     void fileExportLast();
     bool fileCloseMap(int i = -1); // Optionally pass number of tab

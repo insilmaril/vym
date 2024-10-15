@@ -102,18 +102,18 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	return r;
     }
 
-    QString filename;
+    QString filePath;
 
-    filename = args[1].toString();
+    filePath = args[1].toString();
 
     if (format == "AO") {
-        model->exportAO(filename, false);
+        model->exportAO(filePath, false);
     }
     else if (format == "ASCII") {
         bool listTasks = false;
         if (argumentsCount == 3 && args[2].toString() == "true")
             listTasks = true;
-        model->exportASCII(filename, listTasks, false);
+        model->exportASCII(filePath, listTasks, false);
     }
     else if (format == "ConfluenceNewPage") {
         // 0: General export format
@@ -152,11 +152,9 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         }
 
         model->exportConfluence(false, url, title, false);
-    }
-    else if (format == "CSV") {
-        model->exportCSV(filename, false);
-    }
-    else if (format == "HTML") {
+    } else if (format == "CSV") {
+        model->exportCSV(filePath, false);
+    } else if (format == "HTML") {
         if (argumentsCount < 3) {
             mainWindow->abortScript(
                     QJSValue::GenericError,
@@ -165,9 +163,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	    return r;
         }
         QString dpath = args[2].toString();
-        model->exportHTML(filename, dpath, false);
-    }
-    else if (format == "Image") {
+        model->exportHTML(filePath, dpath, false);
+    } else if (format == "Image") {
         QString imgFormat;
         if (argumentsCount == 2)
             imgFormat = "PNG";
@@ -190,9 +187,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             mainWindow->setScriptResult(r);
 	    return r;
         }
-        model->exportImage(filename, false, imgFormat);
-    }
-    else if (format == "Impress") {
+        model->exportImage(filePath, false, imgFormat);
+    } else if (format == "Impress") {
         if (argumentsCount < 3) {
             mainWindow->abortScript(
                     QJSValue::GenericError,
@@ -201,35 +197,22 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	    return r;
         }
         QString templ = args[2].toString();
-        model->exportImpress(filename, templ);
-    }
-    else if (format == "LaTeX") {
-        model->exportLaTeX(filename, false);
-    }
-    else if (format == "Markdown") {
-        model->exportMarkdown(filename, false);
-    }    
-    else if (format == "OrgMode") {
-        model->exportOrgMode(filename, false);
-    }
-    else if (format == "PDF") {
-        model->exportPDF(filename, false);
-    }
-    else if (format == "SVG") {
-        model->exportSVG(filename, false);
-    }
-    else if (format == "XML") {
-        if (argumentsCount < 3) {
-            mainWindow->abortScript(
-                    QJSValue::GenericError,
-                    "path missing in export to Impress");
-            mainWindow->setScriptResult(r);
-	    return r;
-        }
-        QString dpath = args[2].toString();
-        model->exportXML(filename, dpath, false);
-    }
-    else {
+        model->exportImpress(filePath, templ);
+    } else if (format == "LaTeX") {
+        model->exportLaTeX(filePath, false);
+    } else if (format == "Markdown") {
+        model->exportMarkdown(filePath, false);
+    } else if (format == "OrgMode") {
+        model->exportOrgMode(filePath, false);
+    } else if (format == "PDF") {
+        model->exportPDF(filePath, false);
+    } else if (format == "SVG") {
+        model->exportSVG(filePath, false);
+    } else if (format == "TaskJuggler") {
+        model->exportTaskJuggler(filePath, false);
+    } else if (format == "XML") {
+        model->exportXML(filePath, false);
+    } else {
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Unknown export format: %1").arg(format));

@@ -34,6 +34,7 @@
 #include "export-latex.h"
 #include "export-markdown.h"
 #include "export-orgmode.h"
+#include "export-taskjuggler.h"
 #include "file.h"
 #include "findresultmodel.h"
 #include "heading-container.h"
@@ -5732,7 +5733,42 @@ QPointF VymModel::exportSVG(QString fname, bool askName)
     return offset;
 }
 
-void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
+void VymModel::exportTaskJuggler(QString fname, bool askForName) // FIXME-3 not scriptable yet
+{
+    if (fname == "") {
+        if (!askForName) {
+            qWarning("VymModel::exportTaskJuggler called without filename (and "
+                     "askName==false)");
+            return;
+        }
+
+        fname = lastImageDir.absolutePath() + "/" + getMapName() + ".svg";
+    }
+
+    ExportTaskJuggler ex;
+    ex.setModel(this);
+    ex.setFilePath(fname);
+    ex.setWindowTitle(vymName + " - " + tr("Export to") + " Taskjuggler" +
+                          tr("(still experimental)"));
+    ex.addFilter("Taskjuggler (*.tjp)");
+
+    if (askForName) {
+        if (!ex.execDialog())
+            return;
+        fname = ex.getFilePath();
+        lastImageDir = QDir(fname);
+    }
+
+    setExportMode(true);
+
+    ex.doExport();
+
+    setExportMode(false);
+
+    ex.completeExport();
+}
+
+void VymModel::exportXML(QString fpath, bool useDialog)
 {
     ExportBase ex;
     ex.setName("XML");
@@ -5757,11 +5793,12 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
             return;
 
         fpath = fd.selectedFiles().first();
-        dpath = fpath.left(fpath.lastIndexOf("/"));
 
-        if (!confirmDirectoryOverwrite(QDir(dpath)))
-            return;
     }
+    QString dpath = fpath.left(fpath.lastIndexOf("/"));
+    if (!confirmDirectoryOverwrite(QDir(dpath)))
+        return;
+
     ex.setFilePath(fpath);
 
     QString mname = basename(fpath);
@@ -5804,6 +5841,9 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
     QTextStream ts(&file);
     ts << saveFile;
     file.close();
+
+
+    ex.setResult(ExportBase::Success);
 
     setExportMode(false);
 
