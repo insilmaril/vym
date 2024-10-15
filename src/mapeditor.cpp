@@ -2506,7 +2506,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             QString iv = model->setImageVar(ii);
             QString uc = iv + QString("i.setPos%1;").arg(pold);
             QString rc = iv + QString("i.setPos%1;").arg(pnew);
-            model->saveStateNew(uc, rc, com);
+            model->saveState(uc, rc, com);
         } // Image moved, but not relinked
 
         // Finally resize scene, if needed

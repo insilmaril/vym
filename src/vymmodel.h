@@ -282,7 +282,7 @@ class VymModel : public TreeModel {
     Additionally a comment is logged.
 
     */
-    void saveStateNew(
+    void saveState(
                    QString undoCommand,
                    QString redoCommand,
                    const QString &comment = "",
