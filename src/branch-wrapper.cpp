@@ -637,6 +637,30 @@ void BranchWrapper::setPos(qreal x, qreal y)
     model()->setPos(QPointF(x, y), branchItemInt);
 }
 
+void BranchWrapper::setRotationAutoDesign(const bool b)
+{
+    model()->setRotationAutoDesign(b, branchItemInt);
+}
+
+void BranchWrapper::setRotationHeading(const int &i)
+{
+    model()->setRotationHeading(i, branchItemInt);
+}
+
+void BranchWrapper::setRotationSubtree(const int &i)
+{
+    model()->setRotationSubtree(i, branchItemInt);
+}
+
+void BranchWrapper::setScaleAutoDesign(const bool b)
+{
+    model()->setScaleAutoDesign(b, branchItemInt);
+}
+
+void BranchWrapper::setScaleHeading(qreal f) { model()->setScaleHeading(f, false, branchItemInt); }
+
+void BranchWrapper::setScaleSubtree(qreal f) { model()->setScaleSubtree(f, branchItemInt); }
+
 void BranchWrapper::setTaskPriorityDelta(const int &n)
 {
     model()->setTaskPriorityDelta(n, branchItemInt);

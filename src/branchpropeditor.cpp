@@ -736,7 +736,7 @@ void BranchPropertyEditor::columnWidthChanged(int i)
 void BranchPropertyEditor::rotationsAutoChanged()
 {
     if (model) {
-        model->setRotationsAutoDesign(ui.rotationsAutoCheckBox->isChecked());
+        model->setRotationAutoDesign(ui.rotationsAutoCheckBox->isChecked());
         updateControls();
     }
 }

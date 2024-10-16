@@ -726,12 +726,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("getRotationHeading", Command::Branch);
-    modelCommands.append(c);
-
-    c = new Command("getRotationSubtree", Command::Branch);
-    modelCommands.append(c);
-
     c = new Command("getSelectionString", Command::TreeItem, Command::String);
     modelCommands.append(c);
 
@@ -902,8 +896,8 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Link style in map");
     modelCommands.append(c);
 
-    c = new Command("setRotation", Command::Any);
-    c->addParameter(Command::Double, false, "Rotation of map");
+    c = new Command("setRotationView", Command::Any);
+    c->addParameter(Command::Double, false, "Rotation of view of map");
     modelCommands.append(c);
 
     c = new Command("setTitle", Command::Any);
@@ -918,30 +912,6 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Note of branch");
     c->setComment(DEPRECATED + "branch.setNoteText()");
 
-    modelCommands.append(c);
-
-    c = new Command("setRotationHeading", Command::Branch);
-    c->addParameter(Command::Int, false, "Rotation angle of heading and flags");
-    modelCommands.append(c);
-
-    c = new Command("setRotationSubtree", Command::Branch);
-    c->addParameter(Command::Int, false, "Rotation angle of heading and subtree");
-    modelCommands.append(c);
-
-    c = new Command("setRotationsAutoDesign", Command::Branch);
-    c->addParameter(Command::Bool, false, "Rotate automatically");
-    modelCommands.append(c);
-
-    c = new Command("setScale", Command::BranchOrImage);
-    c->addParameter(Command::Double, false, "Scale selection by factor f");
-    modelCommands.append(c);
-
-    c = new Command("setScaleSubtree", Command::Branch);
-    c->addParameter(Command::Double, false, "Scale subtree by factor f");
-    modelCommands.append(c);
-
-    c = new Command("setScaleAutoDesign", Command::Branch);
-    c->addParameter(Command::Bool, false, "Scale automatically");
     modelCommands.append(c);
 
     c = new Command("setSelectionColor", Command::Any);
@@ -1062,6 +1032,14 @@ void Main::setupAPI()
 
     c = new Command("getPosY", Command::TreeItem);
     c->setComment("get y position of branch relative to parent");
+    branchCommands.append(c);
+
+    c = new Command("getRotationHeading", Command::Branch);
+    c->setComment("get rotation of heading");
+    branchCommands.append(c);
+
+    c = new Command("getRotationSubtree", Command::Branch);
+    c->setComment("get rotation of subttree");
     branchCommands.append(c);
 
     c = new Command("getScenePos", Command::Branch);
@@ -1269,6 +1247,30 @@ void Main::setupAPI()
     c = new Command("setPos", Command::Branch);
     c->addParameter(Command::Double, false, "Position x");
     c->addParameter(Command::Double, false, "Position y");
+    branchCommands.append(c);
+
+    c = new Command("setRotationAutoDesign", Command::Branch);
+    c->addParameter(Command::Bool, false, "Rotate automatically");
+    branchCommands.append(c);
+
+    c = new Command("setRotationHeading", Command::Branch);
+    c->addParameter(Command::Int, false, "Rotation angle of heading and flags");
+    branchCommands.append(c);
+
+    c = new Command("setRotationSubtree", Command::Branch);
+    c->addParameter(Command::Int, false, "Rotation angle of heading and subtree");
+    branchCommands.append(c);
+
+    c = new Command("setScaleAutoDesign", Command::Branch);
+    c->addParameter(Command::Bool, false, "Scale automatically");
+    branchCommands.append(c);
+
+    c = new Command("setScaleHeading", Command::BranchOrImage);
+    c->addParameter(Command::Double, false, "Scale heading of branch by factor f");
+    branchCommands.append(c);
+
+    c = new Command("setScaleSubtree", Command::Branch);
+    c->addParameter(Command::Double, false, "Scale subtree by factor f");
     branchCommands.append(c);
 
     c = new Command("setTaskPriorityDelta", Command::Branch);

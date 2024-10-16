@@ -685,7 +685,7 @@ void VymModelWrapper::setLinkStyle(const QString &style)
                 QString("Could not set linkstyle to %1").arg(style));
 }
 
-void VymModelWrapper::setRotation(float a) { model->setMapRotation(a); }
+void VymModelWrapper::setRotationView(float a) { model->setMapRotation(a); }
 
 void VymModelWrapper::setTitle(const QString &s) { model->setTitle(s); }
 
@@ -696,30 +696,6 @@ void VymModelWrapper::setNotePlainText(const QString &s)
     VymNote vn;
     vn.setPlainText(s);
     model->setNote(vn);
-}
-
-void VymModelWrapper::setRotationHeading(const int &i)
-{
-    model->setRotationHeading(i);
-}
-
-void VymModelWrapper::setRotationSubtree(const int &i)
-{
-    model->setRotationSubtree(i);
-}
-
-void VymModelWrapper::setRotationsAutoDesign(const bool b)
-{
-    model->setRotationsAutoDesign(b);
-}
-
-void VymModelWrapper::setScale(qreal f) { model->setScale(f, false); }
-
-void VymModelWrapper::setScaleSubtree(qreal f) { model->setScaleSubtree(f); }
-
-void VymModelWrapper::setScalingAutoDesign(const bool b)
-{
-    model->setScaleAutoDesign(b);
 }
 
 void VymModelWrapper::setSelectionBrushColor(const QString &color)

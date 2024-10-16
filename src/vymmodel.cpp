@@ -1873,8 +1873,8 @@ void VymModel::saveStateBranch(
         const QString &rc,
         const QString &comment)
 {
-    QString branchVar = setBranchVar(bi) + "b.";
-    saveState(branchVar + uc, branchVar + rc, comment);
+    QString prefix = setBranchVar(bi) + "b.";
+    saveState(prefix + uc, prefix + rc, comment);
 }
 
 void VymModel::saveStateBeginScript(const QString &comment)
@@ -2793,25 +2793,27 @@ void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-2 n
     }
 }
 
-void VymModel::setRotationsAutoDesign(const bool &b) // FIXME-2 missing saveState
+void VymModel::setRotationAutoDesign(const bool &b, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
-    BranchContainer *bc;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
     foreach (BranchItem *selbi, selbis) {
-        bc = selbi->getBranchContainer();
+        BranchContainer *bc = selbi->getBranchContainer();
         if (bc->rotationsAutoDesign() != b) {
+            QString s = b ? "Enable" : "Disable";
+            QString c = QString("%1 automatic rotation heading and subtree").arg(s);
+            saveStateBeginScript(c);
             if (b) {
                 setRotationHeading(mapDesignInt->rotationHeading(selbi->depth()));
                 setRotationSubtree(mapDesignInt->rotationSubtree(selbi->depth()));
             }
-            QString v = b ? "Enable" : "Disable";
-            /* saveState(selbi, QString("setRotationsAutoDesign (%1)")
-                          .arg(toS(!b)),
-                      selbi, QString("setRotationsAutoDesign (%1)").arg(toS(b)),
-                      QString("%1 automatic rotations").arg(v));
-                      */
+            QString uc = QString("setRotationAutoDesign(%1);").arg(toS(bc->rotationsAutoDesign()));
+            QString rc = QString("setRotationAutoDesign(%1);").arg(toS(b));
+            saveStateBranch(selbi, uc, rc);
             bc->setRotationsAutoDesign(b);
             branchPropertyEditor->updateControls();
+
+            saveStateEndScript();
         }
     }
 
@@ -2819,19 +2821,18 @@ void VymModel::setRotationsAutoDesign(const bool &b) // FIXME-2 missing saveStat
         reposition();
 }
 
-void VymModel::setRotationHeading (const int &i) // FIXME-2 missing saveState
+void VymModel::setRotationHeading (const int &i, BranchItem* bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
 	if (bc->rotationHeading() != i) {
 
-            /*saveState(selbi, QString("setRotationHeading (\"%1\")")
-                          .arg(bc->rotationHeading()),
-                      selbi, QString("setRotationHeading (\"%1\")").arg(i),
+            QString uc = QString("setRotationHeading(\"%1\");").arg(toS(bc->rotationHeading(), 1));
+            QString rc = QString("setRotationHeading(\"%1\");").arg(i);
+            saveStateBranch(selbi, uc, rc,
                       QString("Set rotation angle of heading and flags to %1").arg(i));
-                      */
 
             bc->setRotationHeading(i);
         }
@@ -2841,18 +2842,17 @@ void VymModel::setRotationHeading (const int &i) // FIXME-2 missing saveState
         reposition();
 }
 
-void VymModel::setRotationSubtree (const int &i)    // FIXME-2 missing saveState
+void VymModel::setRotationSubtree (const int &i, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
 	if (bc->rotationSubtree() != i) {
-            /*saveState(selbi, QString("setRotationSubtree (\"%1\")")
-                          .arg(bc->rotationSubtree()),
-                      selbi, QString("setRotationSubtree (\"%1\")").arg(i),
-                      QString("Set rotation angle of heading and subtree to %1").arg(i));
-                      */
+            QString uc = QString("setRotationSubtree(\"%1\");").arg(toS(bc->rotationSubtree(), 1));
+            QString rc = QString("setRotationSubtree(\"%1\");").arg(i);
+            saveStateBranch(selbi, uc, rc,
+                      QString("Set rotation angle of subtree to %1").arg(i));
 
             bc->setRotationSubtree(i);
 	}
@@ -2862,26 +2862,28 @@ void VymModel::setRotationSubtree (const int &i)    // FIXME-2 missing saveState
         reposition();
 }
 
-void VymModel::setScaleAutoDesign (const bool & b) // FIXME-2 missing saveState
+void VymModel::setScaleAutoDesign (const bool & b, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
         if (bc->scaleAutoDesign() != b) {
+            QString s = b ? "Enable" : "Disable";
+            QString c = QString("%1 automatic scaling").arg(s);
+            saveStateBeginScript(c);
             if (b) {
                 setScaleHeading(mapDesignInt->scaleHeading(selbi->depth()));
                 setScaleSubtree(mapDesignInt->scaleSubtree(selbi->depth()));
             }
-            QString v = b ? "Enable" : "Disable";
-            /* saveState(selbi, QString("setScaleAutoDesign (%1)")
-                          .arg(toS(!b)),
-                      selbi, QString("setScaleAutoDesign (%1)").arg(toS(b)),
-                      QString("%1 automatic scaling").arg(v));
-                      */
+            QString uc = QString("setScaleAutoDesign(%1);").arg(toS(bc->scaleAutoDesign()));
+            QString rc = QString("setScaleAutoDesign(%1);").arg(toS(b));
+            saveStateBranch(selbi, uc, rc);
             bc->setScaleAutoDesign(b);
             branchPropertyEditor->updateControls();
+
+            saveStateEndScript();
         }
     }
 
@@ -2890,9 +2892,9 @@ void VymModel::setScaleAutoDesign (const bool & b) // FIXME-2 missing saveState
     }
 }
 
-void VymModel::setScaleHeading (const qreal &f, const bool relative) // FIXME-2 missing saveState
+void VymModel::setScaleHeading (const qreal &f, const bool relative, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
@@ -2901,11 +2903,10 @@ void VymModel::setScaleHeading (const qreal &f, const bool relative) // FIXME-2 
         qreal f_new = relative ? f_old + f : f;
 
 	if (bc->scaleHeading() != f_new) {
-            /*saveState(selbi, QString("setScale (%1)")
-                          .arg(f_old),
-                      selbi, QString("setScale (%1)").arg(f_new),
-                      QString("Set scale factor to %1").arg(f_new));
-                      */
+            QString uc = QString("setScaleHeading(%1);").arg(toS(f_old, 3));
+            QString rc = QString("setScaleHeading(%1);").arg(toS(f_new, 3));
+            QString c  = QString("Set heading scale factor to %1").arg(f_new);
+            saveStateBranch(selbi, uc, rc, c);
 
             bc->setScaleHeading(f_new);
             branchPropertyEditor->updateControls();
@@ -2926,21 +2927,22 @@ qreal VymModel::getScaleHeading ()
 }
 
 
-void VymModel::setScaleSubtree (const qreal &f) // FIXME-2 missing saveState
+void VymModel::setScaleSubtree (const qreal &f_new, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
-	if (bc->scaleSubtree() != f) {
-            /*saveState(selbi, QString("setScaleSubtree (%1)")
-                          .arg(bc->scaleSubtree()),
-                      selbi, QString("setScaleSubtree (%1)").arg(f),
-                      QString("Set scale of subtree and flags to %1").arg(f));
-                      */
+        qreal f_old = bc->scaleSubtree();
 
-            bc->setScaleSubtree(f);
+	if (f_new != f_old) {
+            QString uc = QString("setScaleSubtree(%1);").arg(toS(f_old, 3));
+            QString rc = QString("setScaleSubtree(%1);").arg(toS(f_new,3));
+            QString c  = QString("Set subtree scale factor to %1").arg(toS(f_new, 3));
+            saveStateBranch(selbi, uc, rc, c);
+
+            bc->setScaleSubtree(f_new);
             branchPropertyEditor->updateControls();
 	}
     }
@@ -2960,11 +2962,7 @@ qreal VymModel::getScaleSubtree ()
 
 void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii) // FIXME-2 missing saveState
 {
-    QList<ImageItem *> seliis;
-    if (ii)
-        seliis << ii;
-    else
-        seliis = getSelectedImages();
+    QList<ImageItem *> seliis = getSelectedImages(ii);
 
     foreach (ImageItem *selii, seliis) {
         qreal f_old = selii->scale();

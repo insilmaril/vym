@@ -91,7 +91,13 @@ class BranchWrapper : public QObject {
     void setHeadingText(const QString &);
     void setNoteRichText(const QString &);
     void setNoteText(const QString &);
-    void setPos(qreal x, qreal y);// FIXME-2 copy to ImageWrapper
+    void setPos(qreal x, qreal y);
+    void setRotationAutoDesign(const bool b);
+    void setRotationHeading(const int &i);
+    void setRotationSubtree(const int &i);
+    void setScaleAutoDesign(const bool b);
+    void setScaleHeading(qreal f);
+    void setScaleSubtree(qreal f);
     void setTaskPriorityDelta(const int &n);
     bool setTaskSleep(const QString &s);
     void setUrl(const QString &s);

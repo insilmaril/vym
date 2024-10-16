@@ -86,16 +86,10 @@ class VymModelWrapper : public QObject {
     void setBackgroundColor(const QString &color);
     void setComment(const QString &s);
     void setLinkStyle(const QString &style);
-    void setRotation(float a);
+    void setRotationView(float a);
     void setTitle(const QString &s);
     void setZoom(float z);
     void setNotePlainText(const QString &s);    // FIXME-3 OBSOLETE moved to BranchWrapper
-    void setRotationHeading(const int &i);      // FIXME-3 move to BranchWrapper
-    void setRotationSubtree(const int &i);      // FIXME-3 move to BranchWrapper
-    void setRotationsAutoDesign(const bool b);  // FIXME-3 move to BranchWrapper
-    void setScale(qreal f);                     // FIXME-3 move to BranchWrapper and ImageWrapper
-    void setScaleSubtree(qreal f);              // FIXME-3 move to BranchWrapper
-    void setScalingAutoDesign(const bool b);    // FIXME-3 move to BranchWrapper and ImageWrapper
     void setSelectionBrushColor(const QString &color);
     void setSelectionPenColor(const QString &color);
     void setSelectionPenWidth(const qreal &);

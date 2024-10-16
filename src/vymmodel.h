@@ -296,7 +296,7 @@ class VymModel : public TreeModel {
             BranchItem *bi,
             const QString &undoCommand,
             const QString &redoCommand,
-            const QString &comment);
+            const QString &comment = "");
 
     /*! Put several states into one Script for a single undo step */
     void saveStateBeginScript(const QString &comment);
@@ -386,13 +386,13 @@ class VymModel : public TreeModel {
     void setImagesLayout(const QString &, BranchItem *bi = nullptr);
     void setHeadingColumnWidthAutoDesign(const bool &, BranchItem *bi = nullptr);
     void setHeadingColumnWidth(const int &, BranchItem *bi = nullptr);
-    void setRotationsAutoDesign(const bool &);
-    void setRotationHeading(const int &);
-    void setRotationSubtree(const int &);
-    void setScaleAutoDesign(const bool &);
-    void setScaleHeading(const qreal &, const bool relative = false);
+    void setRotationAutoDesign(const bool &, BranchItem *bi = nullptr);
+    void setRotationHeading(const int &, BranchItem *bi = nullptr);
+    void setRotationSubtree(const int &, BranchItem *bi = nullptr);
+    void setScaleAutoDesign(const bool &, BranchItem *bi = nullptr);
+    void setScaleHeading(const qreal &, const bool relative = false, BranchItem *bi = nullptr);
     qreal getScaleHeading();
-    void setScaleSubtree(const qreal &);
+    void setScaleSubtree(const qreal &, BranchItem *bi = nullptr);
     qreal getScaleSubtree();
     void setScaleImage(const qreal &, const bool relative = false, ImageItem *ii = nullptr);
     void setScale(const qreal &f, const bool relative);
