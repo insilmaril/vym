@@ -945,9 +945,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("toggleTarget", Command::Branch);
-    modelCommands.append(c);
-
     c = new Command("undo", Command::Any);
     modelCommands.append(c);
 
@@ -1331,6 +1328,10 @@ void Main::setupAPI()
 
     c = new Command("toggleScroll", Command::Branch);
     c->setComment("Toggle scroll state of branch");
+    branchCommands.append(c);
+
+    c = new Command("toggleTarget", Command::Branch);
+    c->setComment("Toggle target flag of branch");
     branchCommands.append(c);
 
     c = new Command("toggleTask", Command::Branch);

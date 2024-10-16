@@ -552,7 +552,7 @@ class VymModel : public TreeModel {
     void collapseUnselected();
 
   public:
-    void toggleTarget();
+    void toggleTarget(BranchItem *bi = nullptr);
     ItemList getLinkedMaps();
     ItemList getTargets();
 

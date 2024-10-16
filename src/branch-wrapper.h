@@ -107,6 +107,7 @@ class BranchWrapper : public QObject {
     void toggleFlagByName(const QString &);
     void toggleFlagByUid(const QString &);
     void toggleScroll();
+    void toggleTarget();
     void toggleTask();
     void unscroll();
     void unscrollSubtree();

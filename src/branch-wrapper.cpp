@@ -708,6 +708,11 @@ void BranchWrapper::toggleScroll()
     model()->toggleScroll(branchItemInt);
 }
 
+void BranchWrapper::toggleTarget()
+{
+    model()->toggleTarget(branchItemInt);
+}
+
 void BranchWrapper::toggleTask() {
     model()->toggleTask(branchItemInt);
 }

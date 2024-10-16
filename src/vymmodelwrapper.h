@@ -95,7 +95,6 @@ class VymModelWrapper : public QObject {
     void setSelectionPenWidth(const qreal &);
     void sleep(int n);
     int slideCount();
-    void toggleTarget();        // FIXME-3 move to BranchWrapper
     void undo();
     void unselectAll();
 

@@ -740,8 +740,6 @@ int VymModelWrapper::slideCount()
     return r;
 }
 
-void VymModelWrapper::toggleTarget() { model->toggleTarget(); }
-
 void VymModelWrapper::undo() { model->undo(); }
 
 void VymModelWrapper::unselectAll() { model->unselectAll(); }

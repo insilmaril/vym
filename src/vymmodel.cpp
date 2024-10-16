@@ -4793,13 +4793,11 @@ void VymModel::toggleScroll(BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-	if (selbi) {
-	    if (selbi->isScrolled())
-		unscrollBranch(selbi);
-	    else
-		scrollBranch(selbi);
-	    // Note: saveState & reposition are called in above functions
-	}
+        if (selbi->isScrolled())
+            unscrollBranch(selbi);
+        else
+            scrollBranch(selbi);
+        // Note: saveState & reposition are called in above functions
     }
 }
 
@@ -4836,15 +4834,16 @@ void VymModel::emitCollapseOneLevel() { emit(collapseOneLevel()); }
 
 void VymModel::emitCollapseUnselected() { emit(collapseUnselected()); }
 
-void VymModel::toggleTarget() // FIXME-2 missing saveState
+void VymModel::toggleTarget(BranchItem *bi)
 {
-    foreach (TreeItem *ti, getSelectedItems()) {
-        if (ti->hasTypeBranch()) {
-            ((BranchItem*)ti)->toggleTarget();
-            /*saveState(ti, "toggleTarget()", ti, "toggleTarget()",
-                      "Toggle target");
-              */
-        }
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        selbi->toggleTarget();
+        saveStateBranch(
+                selbi,
+                QString("toggleTarget(%1);").arg(toS(!selbi->isTarget())),
+                QString("toggleTarget(%1);").arg(toS(selbi->isTarget())),
+                "Toggle target flag of branch");
     }
     reposition();
 }
