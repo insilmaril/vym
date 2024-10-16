@@ -1406,12 +1406,8 @@ void VymModel::redo()
         curStep = 1;
     QString undoCommand =
         undoSet.value(QString("/history/step-%1/undoCommand").arg(curStep));
-    QString undoSelection =
-        undoSet.value(QString("/history/step-%1/undoSelection").arg(curStep));
     QString redoCommand =
         undoSet.value(QString("/history/step-%1/redoCommand").arg(curStep));
-    QString redoSelection =
-        undoSet.value(QString("/history/step-%1/redoSelection").arg(curStep));
     QString comment =
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
 
@@ -1429,21 +1425,12 @@ void VymModel::redo()
         qDebug() << "       curStep=" << curStep;
         qDebug() << "    ---------------------------";
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoSel=" << redoSelection;
         qDebug() << "    undoCom:";
         cout << qPrintable(undoCommand) << endl;
         qDebug() << "    redoCom=";
         cout << qPrintable(redoCommand) << endl;
         qDebug() << "    ---------------------------";
     }
-
-    // Save current selection
-    QList <ulong> selectedIDs = getSelectedIDs();
-
-    // select  object before redo
-    if (!redoSelection.isEmpty())
-        select(redoSelection);
 
     QString errMsg;
     QString redoScript =
@@ -1457,12 +1444,6 @@ void VymModel::redo()
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory(undoSet);
-
-    // Selection might have changed.    // FIXME-2 This should no longer be necessary with new commands
-    // Also force update in BranchPropertyEditor
-    unselectAll();
-    foreach (ulong id, selectedIDs)
-        selectToggle(id);
 
     updateActions();
 
@@ -1527,12 +1508,8 @@ void VymModel::undo()
 
     QString undoCommand =
         undoSet.value(QString("/history/step-%1/undoCommand").arg(curStep));
-    QString undoSelection =
-        undoSet.value(QString("/history/step-%1/undoSelection").arg(curStep));
     QString redoCommand =
         undoSet.value(QString("/history/step-%1/redoCommand").arg(curStep));
-    QString redoSelection =
-        undoSet.value(QString("/history/step-%1/redoSelection").arg(curStep));
     QString comment =
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
 
@@ -1550,22 +1527,11 @@ void VymModel::undo()
         qDebug() << "       curStep=" << curStep;
         cout << "    ---------------------------" << endl;
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoSel=" << redoSelection;
         cout << "    undoCom:" << endl;
         cout << qPrintable(undoCommand) << endl;
         cout << "    redoCom:" << endl;
         cout << qPrintable(redoCommand) << endl;
         cout << "    ---------------------------" << endl;
-    }
-
-    // Save current selection
-    QList <ulong> selectedIDs = getSelectedIDs();
-
-    // select  object before undo   // FIXME-4 Ultimately should no longer be needed
-    if (!undoSelection.isEmpty() && !select(undoSelection)) {
-        qWarning("VymModel::undo()  Could not select object for undo");
-        return;
     }
 
     // bool noErr;
@@ -1601,12 +1567,6 @@ void VymModel::undo()
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory(undoSet);
-
-    // Selection might have changed.    // FIXME-2 This should no longer be necessary with new commands
-    // Also force update in BranchPropertyEditor
-    unselectAll();
-    foreach (ulong id, selectedIDs)
-        selectToggle(id);
 
     updateActions();
 }
@@ -6624,7 +6584,7 @@ void VymModel::sendData(const QString &s)
     }
 }
 
-void VymModel::readData()
+void VymModel::readData()   // FIXME-5 not used currently
 {
     while (clientSocket->bytesAvailable() >= (int)sizeof(quint16)) {
         if (debug)
@@ -6645,7 +6605,7 @@ void VymModel::readData()
             qDebug() << "VymModel::readData  command=" << qPrintable(t);
         // bool noErr;
         // QString errMsg;
-        // parseAtom (t,noErr,errMsg);    //FIXME-4 needs rework using scripts
+        // parseAtom (t,noErr,errMsg);
     }
     return;
 }
