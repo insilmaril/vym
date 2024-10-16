@@ -6396,7 +6396,7 @@ void VymModel::toggleLinkColorHint()
         setLinkColorHint(LinkObj::HeadingColor);
 }
 
-void VymModel::setBackgroundColor(QColor col)   // FIXME-2 Missing command?
+void VymModel::setBackgroundColor(QColor col)   // FIXME-2 Missing saveState command?
 {
     QColor oldcol = mapDesignInt->backgroundColor();
     saveState(QString("map.setBackgroundColor (\"%1\");").arg(oldcol.name()),
