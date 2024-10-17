@@ -429,9 +429,13 @@ bool BranchWrapper::loadImage(const QString &filename)
 {
     bool r;
     ImageItem *ii = model()->loadImage(branchItemInt, filename);
-    r= (ii) ? true : false;
+    r = (ii) ? true : false;
     mainWindow->setScriptResult(r);
-    return r;
+    if (ii)
+        return true;
+
+    mainWindow->abortScript("Failed to load " + filename);
+    return false;
 }
 
 bool BranchWrapper::loadNote(const QString &filename)

@@ -907,18 +907,18 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imag
                 ii = createImage(parentBranch);
                 if (ii && ii->load(s)) {
                     
-                    /* FIXME-2 missing saveState((TreeItem *)ii, "remove()", parentBranch,
-                              QString("loadImage (\"%1\")").arg(s), // FIXME-2 This needs internal history path, not original one!
-                                                                    // Better use saveStateRemovePart()?
-                              QString("Add image %1 to %2")
-                                  .arg(s, getObjectName(parentBranch)));
-                                  */
-
                     ImageContainer *ic = ii->getImageContainer();
                     QPointF pos_new = parentBranch->getBranchContainer()->getPositionHintNewChild(ic);
                     ic->setPos(pos_new);
 
-                    select(parentBranch);
+                    QString bv = setBranchVar(parentBranch);
+                    QString uc = setImageVar(ii) + "map.removeImage(i);";
+                    QString rc = bv + "b.loadBranchInsert(\"REDO_PATH\", 0);";
+                    saveState(
+                            uc, rc,
+                            QString("load image %1").arg(ii->getOriginalFilename()),
+                            nullptr,
+                            ii);
                 }
                 else {
                     qWarning() << QString("vymmodel: Failed to load '%1'").arg(s);
@@ -1742,6 +1742,9 @@ void VymModel::saveState(
     }
 
     // Save depending on how much needs to be saved
+    //
+    // FIXME-5 saveState: userFlags are not written, but still in memory. Could
+    //         lead to problem, if one day removed from userFlags toolbar AND memory
     if (saveUndoItem) {
         QString dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
                             saveUndoItem);
@@ -3935,7 +3938,7 @@ AttributeItem *VymModel::setAttribute( // FIXME-2 saveState( missing. For bulk c
     return ai;
 }
 
-void VymModel::deleteAttribute(BranchItem *dst, const QString &key) // FIXME-2 No saveState yet
+void VymModel::deleteAttribute(BranchItem *dst, const QString &key)
 {
     AttributeItem *ai;
 
