@@ -89,6 +89,8 @@ class BranchWrapper : public QObject {
     void setFrameType(const bool & useInnerFrame, const QString &type);
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
+    void setHideExport(bool b);
+    void setHideLinkUnselected(bool b);
     void setNoteRichText(const QString &);
     void setNoteText(const QString &);
     void setPos(qreal x, qreal y);

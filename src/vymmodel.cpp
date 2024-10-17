@@ -3032,48 +3032,61 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no 
     reposition();
 }
 
-void VymModel::setHideLinkUnselected(bool b) // FIXME-2 missing saveState
+void VymModel::setHideLinkUnselected(bool b, TreeItem *ti)
 {
-    TreeItem *ti = getSelectedItem();
-    if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch())) {
-        QString v = b ? "Hide" : "Show";
-        /*saveState(ti, QString("setHideLinkUnselected (%1)").arg(toS(!b)), ti,
-            QString("setHideLinkUnselected (%1)").arg(toS(b)),
-            QString("%1 link of %2 if unselected").arg(v, getObjectName(ti)));
-            */
-        ((MapItem *)ti)->setHideLinkUnselected(b);
+    QList <TreeItem*> seltis = getSelectedItems(ti);
+
+    foreach (TreeItem *selti, seltis) {
+        if (selti->getType() == TreeItem::Image || selti->hasTypeBranch()) {
+            QString v = b ? "Hide" : "Show";
+            QString tiv;
+            if (selti->hasTypeBranch())
+                tiv = setBranchVar((BranchItem*)selti, "ti");
+            else if (selti->hasTypeImage())
+                tiv = setImageVar((ImageItem*)selti, "ti");
+            else {
+                qWarning() << "VymModel::setHideLinkUnselected  no branch or image";
+                return;
+            }
+            QString uc = tiv + QString("ti.setHideLinkUnselected(%1);").arg(toS(!b));
+            QString rc = tiv + QString("ti.setHideLinkUnselected(%1);").arg(toS(b));
+            saveState(
+                    uc, rc,
+                    QString("%1 link if item %2 is not selected").arg(v, getObjectName(selti)));
+            ((MapItem *)selti)->setHideLinkUnselected(b);
+        }
     }
+    branchPropertyEditor->updateControls();
 }
 
-void VymModel::setHideExport(bool b, TreeItem *ti) // FIXME-2 missing saveState
+void VymModel::setHideExport(bool b, BranchItem *bi)
 {
-    if (!ti)
-        ti = getSelectedItem();
-    if (ti && (ti->getType() == TreeItem::Image || ti->hasTypeBranch()) &&
-        ti->hideInExport() != b) {
-        ti->setHideInExport(b);
-        QString u = toS(!b);
-        QString r = toS(b);
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-        /*saveState(ti, QString("setHideExport (%1)").arg(u), ti,
-                  QString("setHideExport (%1)").arg(r),
-                  QString("Set HideExport flag of %1 to %2")
-                      .arg(getObjectName(ti))
-                      .arg(r));
-                      */
-        emitDataChanged(ti);
-        reposition();
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi->hideInExport() != b) {
+            selbi->setHideInExport(b);
+            QString u = toS(!b);
+            QString r = toS(b);
+
+            saveStateBranch(selbi,
+                    QString("setHideExport (%1)").arg(u),
+                    QString("setHideExport (%1)").arg(r),
+                    "Set hide export of " + getObjectName(selbi) + " to " + r);
+            emitDataChanged(selbi);
+        }
     }
+
+    if (!selbis.isEmpty())
+        reposition();
 }
 
 void VymModel::toggleHideExport()
 {
-    QList<TreeItem *> selItems = getSelectedItems();
-    if (selItems.count() > 0) {
-        foreach (TreeItem *ti, selItems) {
-            bool b = !ti->hideInExport();
-            setHideExport(b, ti);
-        }
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+        bool b = !selbi->hideInExport();
+        setHideExport(b, selbi);
     }
 }
 

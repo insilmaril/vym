@@ -103,6 +103,11 @@ void ImageWrapper::setHeadingText(const QString &text)
     model()->setHeadingPlainText(text, imageItemInt);
 }
 
+void ImageWrapper::setHideLinkUnselected(bool b)
+{
+    model()->setHideLinkUnselected(b, imageItemInt);
+}
+
 void ImageWrapper::setPos(qreal x, qreal y)
 {
     model()->setPos(QPointF(x, y), imageItemInt);

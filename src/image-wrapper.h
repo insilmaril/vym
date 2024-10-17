@@ -27,6 +27,7 @@ class ImageWrapper : public QObject {
     bool selectParent();
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
+    void setHideLinkUnselected(bool b); // FIXME-3 move to BranchWrapper and ImageWrapper
     void setPos(qreal x, qreal y);
 
   private:

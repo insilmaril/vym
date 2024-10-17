@@ -78,8 +78,6 @@ class VymModelWrapper : public QObject {
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper
     void setDefaultLinkColor(const QString &color); // FIXME-3-4 maybe also rename other setMap* methods?
     void setHeadingConfluencePageName();// FIXME-3 move to BranchWrapper
-    void setHideExport(bool b);         // FIXME-3 move to BranchWrapper
-    void setHideLinkUnselected(bool b); // FIXME-3 move to BranchWrapper and ImageWrapper
     void setAnimCurve(int n);
     void setAnimDuration(int n);
     void setAuthor(const QString &s);
@@ -89,7 +87,6 @@ class VymModelWrapper : public QObject {
     void setRotationView(float a);
     void setTitle(const QString &s);
     void setZoom(float z);
-    void setNotePlainText(const QString &s);    // FIXME-3 OBSOLETE moved to BranchWrapper
     void setSelectionBrushColor(const QString &color);
     void setSelectionPenColor(const QString &color);
     void setSelectionPenWidth(const qreal &);

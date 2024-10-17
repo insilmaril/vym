@@ -636,13 +636,6 @@ void VymModelWrapper::setHeadingConfluencePageName()
     model->setHeadingConfluencePageName();
 }
 
-void VymModelWrapper::setHideExport(bool b) { model->setHideExport(b); }
-
-void VymModelWrapper::setHideLinkUnselected(bool b)
-{
-    model->setHideLinkUnselected(b);
-}
-
 void VymModelWrapper::setAnimCurve(int n)
 {
     if (n < 0 || n > QEasingCurve::OutInBounce)
@@ -690,13 +683,6 @@ void VymModelWrapper::setRotationView(float a) { model->setMapRotation(a); }
 void VymModelWrapper::setTitle(const QString &s) { model->setTitle(s); }
 
 void VymModelWrapper::setZoom(float z) { model->setMapZoomFactor(z); }
-
-void VymModelWrapper::setNotePlainText(const QString &s)
-{
-    VymNote vn;
-    vn.setPlainText(s);
-    model->setNote(vn);
-}
 
 void VymModelWrapper::setSelectionBrushColor(const QString &color)
 {

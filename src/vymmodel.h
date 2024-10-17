@@ -399,10 +399,10 @@ class VymModel : public TreeModel {
     void growSelectionSize();
     void shrinkSelectionSize();
     void resetSelectionSize();
-    void setHideLinkUnselected(bool);
+    void setHideLinkUnselected(bool, TreeItem *ti = nullptr);
 
     /*! Should object be hidden in exports (clouded)? */
-    void setHideExport(bool, TreeItem *ti = nullptr);
+    void setHideExport(bool, BranchItem *bi = nullptr);
 
     /*! Should object be hidden in exports (clouded)? */
     void toggleHideExport();

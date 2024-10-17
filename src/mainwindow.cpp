@@ -853,15 +853,6 @@ void Main::setupAPI()
     c = new Command("setHeadingConfluencePageName", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("setHideExport", Command::BranchOrImage);
-    c->addParameter(Command::Bool, false, "Set if item should be visible in export");
-    modelCommands.append(c);
-
-    c = new Command("setHideLinksUnselected", Command::BranchOrImage);
-    c->addParameter(Command::Bool, false,
-              "Set if links of items should be visible for unselected items");
-    modelCommands.append(c);
-
     c = new Command("setAnimCurve", Command::Any);
     c->addParameter(Command::Int, false,
               "EasingCurve used in animation in MapEditor");
@@ -907,10 +898,6 @@ void Main::setupAPI()
     c = new Command("setZoom", Command::Any);
     c->addParameter(Command::Double, false, "Zoomfactor of map");
     modelCommands.append(c);
-
-    c = new Command("setNotePlainText", Command::Branch);
-    c->addParameter(Command::String, false, "Note of branch");
-    c->setComment(DEPRECATED + "branch.setNoteText()");
 
     modelCommands.append(c);
 
@@ -1233,6 +1220,15 @@ void Main::setupAPI()
     c->setComment("Set heading of branch as plain text string");
     branchCommands.append(c);
 
+    c = new Command("setHideExport", Command::Branch);
+    c->addParameter(Command::Bool, false, "Set if branch should be visible in export");
+    branchCommands.append(c);
+
+    c = new Command("setHideLinksUnselected", Command::Branch);
+    c->addParameter(Command::Bool, false,
+              "Set if links of items should be visible for unselected items");
+    branchCommands.append(c);
+
     c = new Command("setNoteRichText", Command::Branch);
     c->addParameter(Command::String, false, "Note of branch");
     branchCommands.append(c);
@@ -1405,6 +1401,11 @@ void Main::setupAPI()
     c = new Command("setHeadingText", Command::Image);
     c->addParameter(Command::String, false, "New heading");
     c->setComment("Set heading of image as plain text string");
+    imageCommands.append(c);
+
+    c = new Command("setHideLinksUnselected", Command::Image);
+    c->addParameter(Command::Bool, false,
+              "Set if links of items should be visible for unselected items");
     imageCommands.append(c);
 
     //

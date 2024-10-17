@@ -622,6 +622,16 @@ void BranchWrapper::setHeadingText(const QString &text)
     model()->setHeadingPlainText(text, branchItemInt);
 }
 
+void BranchWrapper::setHideExport(bool b)
+{
+    model()->setHideExport(b, branchItemInt);
+}
+
+void BranchWrapper::setHideLinkUnselected(bool b)
+{
+    model()->setHideLinkUnselected(b, branchItemInt);
+}
+
 void BranchWrapper::setNoteRichText(const QString &s)
 {
     VymNote vn;
