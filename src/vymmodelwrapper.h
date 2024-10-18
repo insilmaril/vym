@@ -38,12 +38,9 @@ class VymModelWrapper : public QObject {
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
-    QString getHeadingXML();    // FIXME-3 move to BranchWrapper
     QString getAuthor();
     QString getComment();
     QString getTitle();
-    QString getNotePlainText(); // FIXME-3 getNoteText in BranchWrapper. Rework test scripts
-    QString getNoteXML();       // FIXME-3 move to BranchWrapper
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
     int getRotationSubtree();   // FIXME-3 move to BranchWrapper
     QString getSelectionString();//FIXME-3 copy to BranchWrapper?

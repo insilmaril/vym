@@ -702,9 +702,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED + "Branch::headingText()");
     modelCommands.append(c);
 
-    c = new Command("getHeadingXML", Command::TreeItem, Command::String);
-    modelCommands.append(c);
-
     c = new Command("getIntAttribute", Command::Branch, Command::Int);
     c->addParameter(Command::String, false, "Key of string attribute");
     modelCommands.append(c);
@@ -995,6 +992,14 @@ void Main::setupAPI()
 
     c = new Command("getFrameType", Command::Branch, Command::String);
     c->setComment("Set frame type");
+    branchCommands.append(c);
+
+    c = new Command("getHeading", Command::Branch, Command::String);
+    c->setComment("Get heading of branch as text");
+    branchCommands.append(c);
+
+    c = new Command("getHeadingXML", Command::Branch, Command::String);
+    c->setComment("Get heading of branch as XML");
     branchCommands.append(c);
 
     c = new Command("getUid", Command::Branch, Command::String);

@@ -4,6 +4,7 @@
 
 #include "branchitem.h"
 #include "confluence-agent.h"
+#include "file.h"
 #include "imageitem.h"
 #include "mainwindow.h"
 #include "mapeditor.h"
@@ -69,9 +70,17 @@ bool VymWrapper::directoryExists(const QString &directoryName)
     return d.exists();
 }
 
-bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
+bool VymWrapper::fileCopy(const QString &srcPath, QString dstPath)
 {
     QFile file(srcPath);
+    if (dstPath.endsWith("/"))
+        dstPath = dstPath + basename(srcPath);
+
+    QFile dst(dstPath);
+    if (dst.exists())
+        // Overwrite dst!
+        dst.remove();
+
     bool r; 
     if (!file.exists()) {
         qDebug() << "VymWrapper::fileCopy()   srcPath does not exist:" << srcPath;
@@ -81,6 +90,11 @@ bool VymWrapper::fileCopy(const QString &srcPath, const QString &dstPath)
         r = false;
     } else
         r = file.copy(dstPath);
+
+    if (!r) {
+        QString msg = QString("VymWrapper::fileCopy:  Failed to copy %1 to %2").arg(srcPath, dstPath);
+        mainWindow->abortScript(msg);
+    }
 
     mainWindow->setScriptResult(r);
     return r;

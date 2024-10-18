@@ -309,13 +309,6 @@ QString VymModelWrapper::getFileName()
     return r;
 }
 
-QString VymModelWrapper::getHeadingXML()
-{
-    QString r = model->getHeading().saveToDir();
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
 QString VymModelWrapper::getAuthor()
 {
     QString r = model->getAuthor();
@@ -333,20 +326,6 @@ QString VymModelWrapper::getComment()
 QString VymModelWrapper::getTitle()
 {
     QString r = model->getTitle();
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
-QString VymModelWrapper::getNotePlainText()
-{
-    QString r = model->getNote().getTextASCII();
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
-QString VymModelWrapper::getNoteXML()
-{
-    QString r = model->getNote().saveToDir();
     mainWindow->setScriptResult(r);
     return r;
 }

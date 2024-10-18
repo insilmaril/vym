@@ -344,14 +344,11 @@ class VymModel : public TreeModel {
                     TreeItem *ti = nullptr); //!< Set heading of item
     void setHeadingPlainText(const QString &s,
                              TreeItem *ti = nullptr); //!< Set heading of item
-    Heading getHeading();               //!< Get heading of item
     QString headingText(TreeItem*);     //!< For debugging. Also works for nullptr
     void updateNoteText(const VymText &); //!< Signal emmited in NoteEditor via MainWindow
     void setNote(const VymNote &vn,     //!< Set note text
                          BranchItem *bi = nullptr,
                          bool senderIsNoteEditor = false);
-    VymNote getNote();                  //!< Get note text
-    bool hasRichTextNote();             //!< Check type of vymText used
     bool loadNote(const QString &fn, BranchItem *bi = nullptr);   //!< Load note from file
     bool saveNote(const QString &fn);   //!< Save note to file
 

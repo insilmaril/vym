@@ -229,9 +229,16 @@ QString BranchWrapper::getFrameType(const bool &useInnerFrame)
     return r;
 }
 
-QString BranchWrapper::getUid()
+QString BranchWrapper::getHeading()
 {
-    QString r = branchItemInt->getUuid().toString();
+    QString r = branchItemInt->heading().getText();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+QString BranchWrapper::getHeadingXML()    // FIXME-2 (adjust tests!)
+{
+    QString r = branchItemInt->heading().saveToDir();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -339,6 +346,13 @@ QString BranchWrapper::getTaskStatus()
     else
         mainWindow->abortScript(QJSValue::GenericError, "Branch has no task");
 
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+QString BranchWrapper::getUid()
+{
+    QString r = branchItemInt->getUuid().toString();
     mainWindow->setScriptResult(r);
     return r;
 }

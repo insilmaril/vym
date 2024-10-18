@@ -36,7 +36,8 @@ class BranchWrapper : public QObject {
     int getFramePadding(const bool & useInnerFrame);
     int getFramePenWidth(const bool & useInnerFrame);
     QString getFrameType(const bool & useInnerFrame);
-    QString getUid();
+    QString getHeading();
+    QString getHeadingXML();
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
@@ -50,6 +51,7 @@ class BranchWrapper : public QObject {
     QString getTaskSleep();
     int getTaskSleepDays();
     QString getTaskStatus();
+    QString getUid();
     QString getUrl();
     QString getVymLink();
     bool hasActiveFlag(const QString &flag);

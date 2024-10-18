@@ -2253,16 +2253,7 @@ void VymModel::setHeadingPlainText(const QString &s, TreeItem *ti)
     }
 }
 
-Heading VymModel::getHeading()
-{
-    TreeItem *selti = getSelectedItem();
-    if (selti)
-        return selti->heading();
-    qWarning() << "VymModel::heading Nothing selected.";
-    return Heading();
-}
-
-QString VymModel::headingText(TreeItem *ti)
+QString VymModel::headingText(TreeItem *ti) // FIXME-2 still needed?
 {
     if (ti)
         return ti->headingPlain();
@@ -2322,26 +2313,6 @@ void VymModel::setNote(const VymNote &note_new, BranchItem *bi, bool senderIsNot
             reposition();
 
     }
-}
-
-VymNote VymModel::getNote() // FIXME-2 still needed? No longer for scripting...
-{
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        VymNote n = selti->getNote();
-        return n;
-    }
-    qWarning() << "VymModel::getNote Nothing selected.";
-    return VymNote();
-}
-
-bool VymModel::hasRichTextNote() // FIXME-2 still needed? No longer for scripting...
-{
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        return selti->getNote().isRichText();
-    }
-    return false;
 }
 
 bool VymModel::loadNote(const QString &fn, BranchItem *bi)

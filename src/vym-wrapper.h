@@ -21,7 +21,7 @@ class VymWrapper : public QObject {
     void editHeading();
     bool directoryIsEmpty(const QString &dirName);
     bool directoryExists(const QString &dirName);
-    bool fileCopy(const QString &srcPath, const QString &dstPath);
+    bool fileCopy(const QString &srcPath, QString dstPath);
     bool fileExists(const QString &fileName);
     bool fileRemove(const QString &fileName);
     void gotoMap(uint n);
