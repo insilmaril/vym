@@ -869,7 +869,7 @@ void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review 
     ConvexPolygon p;
     QList<Vector> vectors;
     QList<Vector> orgpos;
-    QStringList headings; // FIXME-4 testing only
+    QStringList headings; // FIXME testing only
     Vector v;
     BranchItem *bi;
     BranchItem *bi2;
@@ -934,7 +934,7 @@ void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review 
                         vectors[j] = v * 10000 / polys.at(j).weight();
                         vectors[i] = v * 10000 / polys.at(i).weight();
                         vectors[i].invert();
-                        // FIXME-4 outer loop, "i" get's changed several
+                        // FIXME outer loop, "i" get's changed several
                         // times...
                         // Better not move away from centroid of 2 colliding
                         // polys, but from centroid of _all_

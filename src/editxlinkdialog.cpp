@@ -32,8 +32,6 @@ EditXLinkDialog::EditXLinkDialog(QWidget *parent) : QDialog(parent)
             SLOT(beginStyleChanged(int)));
     connect(ui.checkBoxArrowEnd, SIGNAL(stateChanged(int)), this,
             SLOT(endStyleChanged(int)));
-    // FIXME-4 connect ( ui.setColorHeadingButton, SIGNAL (clicked( )), this,
-    // SLOT (setColorHeadingButtonPressed()));
     ui.setColorHeadingButton->hide();
 }
 
@@ -91,13 +89,6 @@ void EditXLinkDialog::colorChanged(QColor c)
     QPixmap pix(16, 16);
     pix.fill(c);
     ui.colorButton->setIcon(pix);
-}
-
-void EditXLinkDialog::setColorHeadingButtonPressed() // FIXME-4 not implemented
-                                                     // yet
-{
-    if (xlink) {
-    }
 }
 
 void EditXLinkDialog::lineStyleChanged(int i)

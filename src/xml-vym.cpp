@@ -357,7 +357,7 @@ void VymReader::readSetting()
     }
 }
 
-void VymReader::readAttribute() // FIXME-3 Checking types no longer needed. Check with firefox export/import
+void VymReader::readAttribute() // FIXME-5 Checking types no longer needed. Check with firefox export/import
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("attribute"));
 
@@ -886,7 +886,7 @@ void VymReader::readXLink()
         if (!s.isEmpty())
             xl->setStyleEnd(s);
 
-        /* FIXME-3 better set control points via VymModel for saveState
+        /* FIXME-4 better set control points via VymModel for saveState
          * (no longer include XLO then...)
         */
 
@@ -917,7 +917,7 @@ void VymReader::readSlide()
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("slide"));
 
-    QStringList scriptlines; // FIXME-3 needed for switching to inScript
+    QStringList scriptlines; // FIXME-5 needed for switching to inScript
                              // Most attributes are obsolete with inScript
 
     QString s;
@@ -968,7 +968,7 @@ void VymReader::readSlide()
         if (!s.isEmpty())
             lastSlide->setInScript(unquoteMeta(s));
         else
-            lastSlide->setInScript(unquoteMeta(scriptlines.join(";\n"))); // FIXME-3 unquote needed? Not used currently anyway
+            lastSlide->setInScript(unquoteMeta(scriptlines.join(";\n"))); // FIXME-5 unquote needed? Not used currently anyway
 
         s = attributeToString("outScript");
         if (!s.isEmpty())

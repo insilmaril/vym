@@ -178,7 +178,7 @@ void XLinkObj::updateGeometry()
 
     if (visBranch) {
         // Only one of the linked branches is visible
-        // Draw arrowhead   //FIXME-3 missing shaft of arrow
+        // Draw arrowhead   //FIXME-5 missing shaft of arrow
         BranchContainer *bc = visBranch->getBranchContainer();
         if (!bc)
             return;
@@ -395,7 +395,6 @@ void XLinkObj::setC1(const QPointF &p)
 
 QPointF XLinkObj::getC1() { return c1; }
 
-// FIXME-3 XLO::setSelection only needed in VM and XLI to "update" selection  
 void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
 {
     switch (selectionTypeInt) {

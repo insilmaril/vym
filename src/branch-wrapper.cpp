@@ -236,7 +236,7 @@ QString BranchWrapper::getHeading()
     return r;
 }
 
-QString BranchWrapper::getHeadingXML()    // FIXME-2 (adjust tests!)
+QString BranchWrapper::getHeadingXML()
 {
     QString r = branchItemInt->heading().saveToDir();
     mainWindow->setScriptResult(r);
@@ -424,7 +424,7 @@ int BranchWrapper::imageCount()
     return r;
 }
 
-void BranchWrapper::importDir(const QString &path) // FIXME-4 error handling missing (in vymmodel and here)
+void BranchWrapper::importDir(const QString &path) // FIXME-5 error handling missing (in vymmodel and here)
 {
     model()->importDir(path, branchItemInt);
 }

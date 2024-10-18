@@ -76,7 +76,7 @@ VymView::VymView(VymModel *m)
 
     connect(model,
             SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
-            SLOT(updateDockWidgetTitles())); // FIXME-3 connect directly to
+            SLOT(updateDockWidgetTitles())); // FIXME-5 connect directly to
                                              // MainWindow and rename method
                                              // (also updates selection in BPE)
 
@@ -157,8 +157,6 @@ void VymView::updateColors()
         "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
         */
 
-    // FIXME-3 mapEditor->updateSelection();    // Meanwhile moved to VymModel
-
     MapDesign *mapDesign = model->mapDesign();
 
     // Background image
@@ -169,7 +167,7 @@ void VymView::updateColors()
 
     s += "selection-background-color: " + mapDesign->selectionBrush().color().name() + ";" + "background-color: " + mapDesign->backgroundColor().name();
 
-    // FIXME-3 maybe use gradient with pen/brush colors for selection? //
+    // FIXME-5 maybe use gradient with pen/brush colors for selection? //
     // https://stackoverflow.com/questions/34187874/setting-qtreeview-selected-item-style-in-qss
     // https://doc.qt.io/qt-6/stylesheet-examples.html#customizing-qtreeview
     /*
@@ -197,7 +195,7 @@ void VymView::updateColors()
 void VymView::changeSelection(const QItemSelection &newsel,
                               const QItemSelection &desel)
 {
-    // Update note editor and heading editor // FIXME-3 improve this, evtl. move
+    // Update note editor and heading editor // FIXME-5 improve this, evtl. move
     // from mainwindow to here
     model->updateSelection(newsel, desel);
     mainWindow->changeSelection(model, newsel, desel);

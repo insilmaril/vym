@@ -73,7 +73,7 @@ bool FreeplaneReader::read(QIODevice *device)
     }
     qdbg() << "Ignored elements from readToEnd(): " << ignoredElements.join(",");
 
-    // FIXME-3 FreeplaneReader implementation uncomplete: ICON, NOTE, ...
+    // FIXME-5 FreeplaneReader implementation uncomplete: ICON, NOTE, ...
     return !xml.error();
 }
 
@@ -172,7 +172,7 @@ void FreeplaneReader::readMap()
     QString elementName = "map";
     foundElement(elementName);
 
-    // Check version// FIXME-3 How to deal with Freeplane versions???
+    // Check version// FIXME-5 How to deal with Freeplane versions???
     QString a = "version";
     QString s = xml.attributes().value(a).toString();
     if (s.isEmpty()) {

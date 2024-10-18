@@ -25,7 +25,7 @@ TreeModel::~TreeModel()
     // treeItems still might want to ask VymModel about paths
 }
 
-QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-2 no foreground color for imageItem and attr. item (use color of parentBranch)
+QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-3 no foreground color for imageItem and attr. item (use color of parentBranch)
 {
     if (!index.isValid())
         return QVariant();
@@ -50,7 +50,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-2 n
             return bi->getBackgroundColor(bi);
         else
             // Selected XLink does not have a branchItem
-            return qApp->palette().color(QPalette::Window); // FIXME-2 Better return map background, just like in BranchItem
+            return qApp->palette().color(QPalette::Window); // FIXME-3 Better return map background, just like in BranchItem
     }
 
     return QVariant();

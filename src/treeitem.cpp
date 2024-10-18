@@ -356,7 +356,17 @@ void TreeItem::setHeadingPlainText(const QString &s)
 
 Heading TreeItem::heading() const { return headingInt; }
 
-QString TreeItem::headingText() { return headingInt.getText(); }
+QString TreeItem::headingText(bool indented)
+{
+    if (!indented)
+        return headingInt.getText();
+    else {
+        QString ds;
+        for (int i = 0; i < depth(); i++)
+            ds += "  ";
+        return ds + headingPlain();
+    }
+}
 
 std::string TreeItem::headingStd() const
 {
@@ -385,14 +395,6 @@ QString TreeItem::headingPlainWithParents(uint numberOfParents = 0)
         }
     }
     return s;
-}
-
-QString TreeItem::headingDepth() // Indent by depth for debugging    // FIXME-4 rename
-{
-    QString ds;
-    for (int i = 0; i < depth(); i++)
-        ds += "  ";
-    return ds + headingPlain();
 }
 
 void TreeItem::setHeadingColor(QColor color) { headingInt.setColor(color); }

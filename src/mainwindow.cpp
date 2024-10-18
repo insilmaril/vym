@@ -6159,8 +6159,7 @@ void Main::formatToggleLinkColorHint()
         m->toggleLinkColorHint();
 }
 
-void Main::formatHideLinkUnselected() // FIXME-4 get rid of this with
-                                      // imagepropertydialog
+void Main::formatHideLinkUnselected()
 {
     VymModel *m = currentModel();
     if (m)
@@ -6188,14 +6187,14 @@ void Main::viewZoomOut()
         me->zoomOut();
 }
 
-void Main::viewRotateCounterClockwise() // FIXME-4 move to ME
+void Main::viewRotateCounterClockwise()
 {
     MapEditor *me = currentMapEditor();
     if (me)
         me->setRotationTarget(me->rotationTarget() - 10);
 }
 
-void Main::viewRotateClockwise() // FIXME-4 move to ME
+void Main::viewRotateClockwise()
 {
     MapEditor *me = currentMapEditor();
     if (me)
@@ -6920,7 +6919,7 @@ void Main::updateActions()
 
         // Export last
         QString desc, com, dest;
-        if (m && m->exportLastAvailable(desc, com, dest))   // FIXME-4 Only update, when currentModel changes?
+        if (m && m->exportLastAvailable(desc, com, dest))   // FIXME Only update, when currentModel changes?
             actionFileExportLast->setEnabled(true);
         else {
             actionFileExportLast->setEnabled(false);
@@ -6957,7 +6956,7 @@ void Main::updateActions()
                 if (selbi) actionGetURLsFromNote->setEnabled(!selbi->getNote().isEmpty());
 
                 // Take care of xlinks
-                // FIXME-4 similar code in mapeditor mousePressEvent
+                // FIXME-5 similar code in mapeditor mousePressEvent
                 bool b = false;
                 if (selbi && selbi->xlinkCount() > 0)
                     b = true;
@@ -7116,7 +7115,7 @@ void Main::updateActions()
             actionToggleHideExport->setEnabled(false);
         }
 
-        // Check (at least for some) multiple selection //FIXME-4
+        // Check (at least for some) multiple selection
         if (seltis.count() > 0) {
             actionDelete->setEnabled(true);
             actionDeleteAlt->setEnabled(true);

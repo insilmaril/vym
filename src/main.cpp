@@ -529,11 +529,11 @@ int main(int argc, char *argv[])
 
     if (options.isOn("shortcuts"))
         switchboard
-            .printASCII(); // FIXME-3 global switchboard and exit after listing
+            .printASCII(); // FIXME-5 global switchboard and exit after listing
 
     m.loadCmdLine();
 
-    //m.resize(1600, 900);    // FIXME-4 only for screencasts
+    //m.resize(1600, 900);    // only for screencasts
 
     // Restore last session
     if (options.isOn("restore"))

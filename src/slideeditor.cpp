@@ -83,7 +83,7 @@ void SlideEditor::nextSlide()
 
 void SlideEditor::addSlide() { vymModel->addSlide(); }
 
-void SlideEditor::editSlide() // FIXME-4 not used yet
+void SlideEditor::editSlide() // FIXME-5 not used yet
 {
 }
 
@@ -99,5 +99,5 @@ void SlideEditor::moveSlideDown() { vymModel->moveSlideDown(); }
 
 void SlideEditor::updateSelection(QItemSelection, QItemSelection)
 {
-    // FIXME-3 updateActions missing, e.g. state for moveUp/down
+    // FIXME-4 updateActions missing, e.g. state for moveUp/down
 }

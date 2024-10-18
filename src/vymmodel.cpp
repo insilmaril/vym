@@ -482,7 +482,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         case File::VymMap:
             reader = new VymReader(this);
             // For imports we might want to ignore slides
-            reader->setContentFilter(contentFilter);// FIXME-2 Maybe ignore slides hardcoded, when parsing and remove contentFilter?
+            reader->setContentFilter(contentFilter);// FIXME-4 Maybe ignore slides hardcoded, when parsing and remove contentFilter?
             break;
         case File::FreemindMap:
             reader = new FreeplaneReader(this);
@@ -559,7 +559,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 xmlfile = tmpZipDir + "/" + flist.first();
             } else {
 
-                // FIXME-4 Multiple entries, load all (but only the first one
+                // FIXME-5 Multiple entries, load all (but only the first one
                 // into this ME)
                 // mainWindow->fileLoadFromTmp (flist);
                 // returnCode = 1;	// Silently forget this attempt to load
@@ -748,7 +748,7 @@ void VymModel::saveMap(const File::SaveMode &savemode)
             // save compressed (default file format)
             zipped = true;
         else if (mb.clickedButton() == uncompressedButton)
-            zipped = false; // FIXME-4 Filename suffix still could be .xml instead of .vym
+            zipped = false; // FIXME-5 Filename suffix still could be .xml instead of .vym
         else  {
             // do nothing
             isSavingInt = false;
@@ -1314,7 +1314,7 @@ void VymModel::fileChanged()
 
             QDateTime tmod = QFileInfo(filePath).lastModified();
             if (tmod > fileChangedTime) {
-                // FIXME-4 VM switch to current mapeditor and finish
+                // FIXME-5 VM switch to current mapeditor and finish
                 // lineedits...
                 QMessageBox mb(
                     QMessageBox::Question,
@@ -3592,7 +3592,7 @@ QList <BranchItem*> VymModel::sortBranchesByNum(QList <BranchItem*> unsortedList
     return sortedList;
 }
 
-QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsortedList, bool inverse) // FIXME-4 Never used.
+QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsortedList, bool inverse) // FIXME-4 This funcion is currently never called
 {
     QMap <QString, BranchItem*> map;
     foreach (BranchItem *bi, unsortedList)
@@ -4122,7 +4122,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
         // In Network mode, the client needs to know where the new branch
         // is, so we have to pass on this information via saveState.
         // TODO: Get rid of this positioning workaround
-        /* FIXME-4  network problem:  QString ps=toS
+        /* FIXME  network problem:  QString ps=toS
            (newbo->getAbsPos()); sendData ("selectLatestAdded ()"); sendData
            (QString("move %1").arg(ps)); sendSelection();
            */
@@ -4494,7 +4494,7 @@ void VymModel::deleteSelection(ulong selID)
     unselectAll();
     QString fn;
 
-    mapEditor->stopAllAnimation();  // FIXME-4 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
+    mapEditor->stopAllAnimation();  // FIXME-5 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
 
     foreach (ulong id, selectedIDs) {
         TreeItem *ti = findID(id);
@@ -7043,7 +7043,7 @@ void VymModel::resetSelectionHistory()
     appendSelectionToHistory();
 }
 
-void VymModel::appendSelectionToHistory() // FIXME-4 history unable to cope with multiple
+void VymModel::appendSelectionToHistory() // FIXME-3 history unable to cope with multiple
                                           // selections
 {
     uint id = 0;
