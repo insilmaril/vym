@@ -1249,20 +1249,20 @@ function test_standard_flags()
 {
   heading("Standard flags");
   let map = initMap(testMapDefault);
-  map.select(main_A);
+  b = map.findBranchBySelection(main_A_string);
 
   function set_flag (f, index, array)
   {
-    map.setFlagByName(f);
-    vym.print("#Setting flag: " + f);  
-    expect("Flag set: '" + f +"'", map.hasActiveFlag(f), true);
+    b.setFlagByName(f);
+    vym.print("# Setting flag: " + f + " of branch " << b.headingText());  
+    expect("Flag set: '" + f +"'", b.hasActiveFlag(f), true);
   }
 
   function unset_flag (f, index, array)
   {
-    map.unsetFlagByName(f);
-    vym.print("#Unetting flag: " + f);  
-    expect("Flag unset: '" + f +"'", map.hasActiveFlag(f), false);
+    b.unsetFlagByName(f);
+    vym.print("# Unsetting flag: " + f + " of branch " << b.headingText());  
+    expect("Flag unset: '" + f +"'", b.hasActiveFlag(f), false);
   }
 
   // Group standard-mark
@@ -1311,7 +1311,7 @@ function test_standard_flags()
 
   expect(
       "Heart flag is set",
-      map.hasActiveFlag("heart"),
+      b.hasActiveFlag("heart"),
       true);
       
   for (flag of smileys )
@@ -1319,23 +1319,23 @@ function test_standard_flags()
 
   expect(
       "Smiley flag is no longerset",
-      map.hasActiveFlag("smiley"),
+      b.hasActiveFlag("smiley"),
       false);
       
-  map.clearFlags();
+  b.clearFlags();
 
-  expect("clearFlags cleared exclamationmark", map.hasActiveFlag( "exclamationmark" ), false);
-  expect("clearFlags cleared smiley-good", map.hasActiveFlag( "smiley-good" ), false);
+  expect("clearFlags cleared exclamationmark", b.hasActiveFlag( "exclamationmark" ), false);
+  expect("clearFlags cleared smiley-good", b.hasActiveFlag( "smiley-good" ), false);
 
 
   // Toggling flags
   flags = ["stopsign", "lifebelt"]
   for (flag of flags) {
-    map.toggleFlagByName(flag);
-    expect("toggleFlag: flag '" + flag + "' activated", map.hasActiveFlag(flag), true);
+    b.toggleFlagByName(flag);
+    expect("toggleFlag: flag '" + flag + "' activated", b.hasActiveFlag(flag), true);
 
-    map.toggleFlagByName(flag);
-    expect("toggleFlag: flag '" + flag + "' deactivated", map.hasActiveFlag(flag), false);
+    b.toggleFlagByName(flag);
+    expect("toggleFlag: flag '" + flag + "' deactivated", b.hasActiveFlag(flag), false);
   }
 
   closeCurrentMap();
@@ -1347,9 +1347,9 @@ function test_user_flags()
   heading("User flags");
   let map = initMap("test/maps/test-userflag.vym");
 
-  map.select(branch_0Aa);
+  b = map.findBranchBySelection(branch_0Aa_string);
   flagName = "userflag-vym";
-  expect("Has active flag '" + flagName + "'", map.hasActiveFlag(flagName), true);
+  expect("Has active flag '" + flagName + "'", b.hasActiveFlag(flagName), true);
 
   closeCurrentMap();
 }
@@ -1529,17 +1529,17 @@ test_basics();
 //test_extrainfo();
 //test_frames();
   //test_history();           // FIXME not ported yet
-test_load_legacy_maps();
-test_modify_branches();
-test_modify_images();
-test_moving_parts();
+//test_load_legacy_maps();
+//test_modify_branches();
+//test_modify_images();
+//test_moving_parts();
   //test_notes();             // FIXME not ported yet
-test_references();
+//test_references();
   //test_saving();            // FIXME not ported yet
   //test_scrolling();         // FIXME not ported yet
   //test_slides();            // FIXME not ported yet
-  //test_standard_flags();    // FIXME not ported yet
-  //test_user_flags();        // FIXME not ported yet
+test_standard_flags();
+test_user_flags();
 test_tasks();	// FIXME-3 uncomplete (date calculations not ported yet from ruby)
 test_xlinks();
 

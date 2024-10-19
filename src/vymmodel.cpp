@@ -4924,18 +4924,18 @@ void VymModel::setFlagByName(const QString &name, BranchItem *bi, bool useGroups
 {
     QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    foreach (BranchItem* bi, selbis)
-    if (!bi->hasActiveFlag(name))
-        toggleFlagByName(name, bi, useGroups);
+    foreach (BranchItem* selbi, selbis)
+    if (!selbi->hasActiveFlag(name))
+        toggleFlagByName(name, selbi, useGroups);
 }
 
 void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
 {
     QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    foreach (BranchItem* bi, selbis)
-        if (bi->hasActiveFlag(name))
-            toggleFlagByName(name);
+    foreach (BranchItem* selbi, selbis)
+        if (selbi->hasActiveFlag(name))
+            toggleFlagByName(name, selbi);
 }
 
 void VymModel::toggleFlagByUid( const QUuid &uid, BranchItem *bi, bool useGroups)
