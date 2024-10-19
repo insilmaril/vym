@@ -4938,10 +4938,7 @@ void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
             toggleFlagByName(name);
 }
 
-void VymModel::toggleFlagByUid(
-    const QUuid &uid,
-    BranchItem *bi,
-    bool useGroups)
+void VymModel::toggleFlagByUid( const QUuid &uid, BranchItem *bi, bool useGroups)
     // FIXME-2  saveState not correct when toggling flags in groups
     // (previous flags not saved!)
 {
@@ -4975,7 +4972,7 @@ void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGro
         if (!flag) {
             flag = userFlagsMaster->findFlagByName(name);
             if (!flag) {
-                qWarning() << "VymModel::toggleFlag failed for flag named "
+                qWarning() << "VymModel::toggleFlag failed to find flag named "
                            << name;
                 return;
             }
@@ -4983,19 +4980,7 @@ void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGro
 
         QUuid uid = flag->getUuid();
 
-        flag = bi->toggleFlagByUid(uid, useGroups);
-
-        if (flag) {
-            QString fname = flag->getName();
-            QString com  = QString("toggleFlag(\"%1\");").arg(fname);
-            saveStateBranch(bi, com, com,
-                      QString("Toggling flag \"%1\" of %2")
-                          .arg(name, getObjectName(bi)));
-            emitDataChanged(bi);
-            reposition();
-        }
-        else
-            qWarning() << "VymModel::toggleFlag failed for flag with uid " << uid;
+        toggleFlagByUid(uid, bi, useGroups);
     }
 }
 
