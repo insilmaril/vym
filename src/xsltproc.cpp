@@ -1,6 +1,7 @@
 #include "xsltproc.h"
 
 #include <QDebug>
+#include <QFile>
 #include <QMessageBox>
 #include <iostream>
 
@@ -23,17 +24,39 @@ void XSLTProc::addStringParam(const QString &k, const QString &v)
     stringParamVal.append(v);
 }
 
-void XSLTProc::setOutputFile(const QString &s) { outputFile = s; }
+void XSLTProc::setOutputFile(const QString &s)
+{
+    outputFile = s;
+}
 
-void XSLTProc::setXSLFile(const QString &s) { xslFile = s; }
+bool XSLTProc::setXSLFile(const QString &s)
+{
+    xslFile = s;
+    QFile file(inputFile);
+    if (!file.exists()) {
+        qWarning() << "XSLTProc: xslFile does not exist: " << xslFile;
+        return false;
+    } else
+        return true;
+}
 
-void XSLTProc::setInputFile(const QString &s) { inputFile = s; }
+bool XSLTProc::setInputFile(const QString &s)
+{
+    inputFile = s;
+    QFile file(inputFile);
+    if (!file.exists()) {
+        qWarning() << "XSLTProc: inputFile does not exist: " << inputFile;
+        return false;
+    } else
+        return true;
+}
 
 void XSLTProc::addOutput(const QString &s) { dia->append(s); }
 
-void XSLTProc::process()
+bool XSLTProc::process()
 {
     ShowTextDialog dia;
+    bool r = true;
     dia.useFixedFont(true);
     QStringList args;
     VymProcess *xsltProc = new VymProcess();
@@ -61,6 +84,7 @@ void XSLTProc::process()
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
             QObject::tr("Could not start %1").arg(xsltprocessor));
+        return false;
     }
     else {
         if (!xsltProc->waitForFinished()) {
@@ -70,12 +94,16 @@ void XSLTProc::process()
                     xsltProc->getErrout());
             if (xsltProc->exitStatus() > 0)
                 showOutput = true;
+            r = false;
         }
     }
-    dia.append("\n");
-    dia.append(xsltProc->getErrout());
-    dia.append(xsltProc->getStdout());
 
-    if (showOutput)
+    if (showOutput) {
+        dia.append("\n");
+        dia.append(xsltProc->getErrout());
+        dia.append(xsltProc->getStdout());
+
         dia.exec();
+    }
+    return r;
 }

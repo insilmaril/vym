@@ -139,6 +139,7 @@ extern ImageIO imageIO;
 
 extern QDir vymBaseDir;
 extern QDir vymTranslationsDir;
+extern QDir lastExportDir;
 extern QDir lastImageDir;
 extern QDir lastMapDir;
 #if defined(Q_OS_WIN32)
@@ -663,6 +664,11 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Value of attribute");
     modelCommands.append(c);
 
+    c = new Command("findAttributeById", Command::Any, Command::AttributeItem);
+    c->setComment("Find Attribute with given unique Uuid. ");
+    c->addParameter(Command::String, false, "Uuid of attribute");
+    modelCommands.append(c);
+
     c = new Command("findBranchById", Command::Any, Command::BranchItem);
     c->setComment("Find branch with given unique Uuid. ");
     c->addParameter(Command::String, false, "Uuid of branch");
@@ -696,9 +702,6 @@ void Main::setupAPI()
     c->setComment(DEPRECATED + "Branch::headingText()");
     modelCommands.append(c);
 
-    c = new Command("getHeadingXML", Command::TreeItem, Command::String);
-    modelCommands.append(c);
-
     c = new Command("getIntAttribute", Command::Branch, Command::Int);
     c->addParameter(Command::String, false, "Key of string attribute");
     modelCommands.append(c);
@@ -718,12 +721,6 @@ void Main::setupAPI()
 
     c = new Command("getNoteXML", Command::TreeItem, Command::String);
     c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
-    c = new Command("getRotationHeading", Command::Branch);
-    modelCommands.append(c);
-
-    c = new Command("getRotationSubtree", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("getSelectionString", Command::TreeItem, Command::String);
@@ -790,6 +787,11 @@ void Main::setupAPI()
     c = new Command("remove", Command::TreeItem);
     modelCommands.append(c);
 
+    c = new Command("removeAttribute", Command::Any);
+    c->addParameter(Command::AttributeItem, false, "Attribute to be removed");
+    c->setComment("Remove attribute");
+    modelCommands.append(c);
+
     c = new Command("removeBranch", Command::Any);
     c->addParameter(Command::BranchItem, false, "Branch to be removed");
     c->setComment("Remove branch");
@@ -848,15 +850,6 @@ void Main::setupAPI()
     c = new Command("setHeadingConfluencePageName", Command::Branch);
     modelCommands.append(c);
 
-    c = new Command("setHideExport", Command::BranchOrImage);
-    c->addParameter(Command::Bool, false, "Set if item should be visible in export");
-    modelCommands.append(c);
-
-    c = new Command("setHideLinksUnselected", Command::BranchOrImage);
-    c->addParameter(Command::Bool, false,
-              "Set if links of items should be visible for unselected items");
-    modelCommands.append(c);
-
     c = new Command("setAnimCurve", Command::Any);
     c->addParameter(Command::Int, false,
               "EasingCurve used in animation in MapEditor");
@@ -891,8 +884,8 @@ void Main::setupAPI()
     c->addParameter(Command::String, false, "Link style in map");
     modelCommands.append(c);
 
-    c = new Command("setRotation", Command::Any);
-    c->addParameter(Command::Double, false, "Rotation of map");
+    c = new Command("setRotationView", Command::Any);
+    c->addParameter(Command::Double, false, "Rotation of view of map");
     modelCommands.append(c);
 
     c = new Command("setTitle", Command::Any);
@@ -903,34 +896,6 @@ void Main::setupAPI()
     c->addParameter(Command::Double, false, "Zoomfactor of map");
     modelCommands.append(c);
 
-    c = new Command("setNotePlainText", Command::Branch);
-    c->addParameter(Command::String, false, "Note of branch");
-    c->setComment(DEPRECATED + "branch.setNoteText()");
-
-    modelCommands.append(c);
-
-    c = new Command("setRotationHeading", Command::Branch);
-    c->addParameter(Command::Int, false, "Rotation angle of heading and flags");
-    modelCommands.append(c);
-
-    c = new Command("setRotationSubtree", Command::Branch);
-    c->addParameter(Command::Int, false, "Rotation angle of heading and subtree");
-    modelCommands.append(c);
-
-    c = new Command("setRotationsAutoDesign", Command::Branch);
-    c->addParameter(Command::Bool, false, "Rotate automatically");
-    modelCommands.append(c);
-
-    c = new Command("setScale", Command::BranchOrImage);
-    c->addParameter(Command::Double, false, "Scale selection by factor f");
-    modelCommands.append(c);
-
-    c = new Command("setScaleSubtree", Command::Branch);
-    c->addParameter(Command::Double, false, "Scale subtree by factor f");
-    modelCommands.append(c);
-
-    c = new Command("setScaleAutoDesign", Command::Branch);
-    c->addParameter(Command::Bool, false, "Scale automatically");
     modelCommands.append(c);
 
     c = new Command("setSelectionColor", Command::Any);
@@ -962,9 +927,6 @@ void Main::setupAPI()
 
     c = new Command("toggleScroll", Command::Branch);
     c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
-    c = new Command("toggleTarget", Command::Branch);
     modelCommands.append(c);
 
     c = new Command("undo", Command::Any);
@@ -1032,6 +994,14 @@ void Main::setupAPI()
     c->setComment("Set frame type");
     branchCommands.append(c);
 
+    c = new Command("getHeading", Command::Branch, Command::String);
+    c->setComment("Get heading of branch as text");
+    branchCommands.append(c);
+
+    c = new Command("getHeadingXML", Command::Branch, Command::String);
+    c->setComment("Get heading of branch as XML");
+    branchCommands.append(c);
+
     c = new Command("getUid", Command::Branch, Command::String);
     c->setComment("Get Uuid of branch as string");
     branchCommands.append(c);
@@ -1051,6 +1021,14 @@ void Main::setupAPI()
 
     c = new Command("getPosY", Command::TreeItem);
     c->setComment("get y position of branch relative to parent");
+    branchCommands.append(c);
+
+    c = new Command("getRotationHeading", Command::Branch);
+    c->setComment("get rotation of heading");
+    branchCommands.append(c);
+
+    c = new Command("getRotationSubtree", Command::Branch);
+    c->setComment("get rotation of subttree");
     branchCommands.append(c);
 
     c = new Command("getScenePos", Command::Branch);
@@ -1247,6 +1225,15 @@ void Main::setupAPI()
     c->setComment("Set heading of branch as plain text string");
     branchCommands.append(c);
 
+    c = new Command("setHideExport", Command::Branch);
+    c->addParameter(Command::Bool, false, "Set if branch should be visible in export");
+    branchCommands.append(c);
+
+    c = new Command("setHideLinksUnselected", Command::Branch);
+    c->addParameter(Command::Bool, false,
+              "Set if links of items should be visible for unselected items");
+    branchCommands.append(c);
+
     c = new Command("setNoteRichText", Command::Branch);
     c->addParameter(Command::String, false, "Note of branch");
     branchCommands.append(c);
@@ -1258,6 +1245,30 @@ void Main::setupAPI()
     c = new Command("setPos", Command::Branch);
     c->addParameter(Command::Double, false, "Position x");
     c->addParameter(Command::Double, false, "Position y");
+    branchCommands.append(c);
+
+    c = new Command("setRotationAutoDesign", Command::Branch);
+    c->addParameter(Command::Bool, false, "Rotate automatically");
+    branchCommands.append(c);
+
+    c = new Command("setRotationHeading", Command::Branch);
+    c->addParameter(Command::Int, false, "Rotation angle of heading and flags");
+    branchCommands.append(c);
+
+    c = new Command("setRotationSubtree", Command::Branch);
+    c->addParameter(Command::Int, false, "Rotation angle of heading and subtree");
+    branchCommands.append(c);
+
+    c = new Command("setScaleAutoDesign", Command::Branch);
+    c->addParameter(Command::Bool, false, "Scale automatically");
+    branchCommands.append(c);
+
+    c = new Command("setScaleHeading", Command::BranchOrImage);
+    c->addParameter(Command::Double, false, "Scale heading of branch by factor f");
+    branchCommands.append(c);
+
+    c = new Command("setScaleSubtree", Command::Branch);
+    c->addParameter(Command::Double, false, "Scale subtree by factor f");
     branchCommands.append(c);
 
     c = new Command("setTaskPriorityDelta", Command::Branch);
@@ -1320,6 +1331,10 @@ void Main::setupAPI()
     c->setComment("Toggle scroll state of branch");
     branchCommands.append(c);
 
+    c = new Command("toggleTarget", Command::Branch);
+    c->setComment("Toggle target flag of branch");
+    branchCommands.append(c);
+
     c = new Command("toggleTask", Command::Branch);
     c->setComment("Set if branch should or should not have a task");
     branchCommands.append(c);
@@ -1368,6 +1383,17 @@ void Main::setupAPI()
     c->setComment("Set heading of image from plaintext string");
     imageCommands.append(c);
 
+    c = new Command("relinkToBranch", Command::Image);
+    c->setComment("Relink image to destination branch");
+    c->addParameter(Command::BranchItem, false, "Destination branch");
+    imageCommands.append(c);
+
+    c = new Command("relinkToBranchAt", Command::Image);
+    c->setComment("Relink image to destination branch at position");
+    c->addParameter(Command::BranchItem, false, "Destination branch");
+    c->addParameter(Command::Int, false, "Position (0 is first)");
+    imageCommands.append(c);
+
     c = new Command("selectParent", Command::Image, Command::Bool);
     c->setComment("Select parent of image");
     imageCommands.append(c);
@@ -1380,6 +1406,11 @@ void Main::setupAPI()
     c = new Command("setHeadingText", Command::Image);
     c->addParameter(Command::String, false, "New heading");
     c->setComment("Set heading of image as plain text string");
+    imageCommands.append(c);
+
+    c = new Command("setHideLinksUnselected", Command::Image);
+    c->addParameter(Command::Bool, false,
+              "Set if links of items should be visible for unselected items");
     imageCommands.append(c);
 
     //
@@ -1631,7 +1662,7 @@ void Main::setupFileActions()
     actionListFiles.append(a);
 
     a = new QAction("Taskjuggler... " + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportTaskjuggler()));
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportTaskJuggler()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
 
@@ -4760,14 +4791,14 @@ void Main::fileExportConfluence()
 }
 
 #include "export-csv.h"
-void Main::fileExportCSV() // FIXME-3 not scriptable yet
+void Main::fileExportCSV() // FIXME-2 not scriptable yet, move to model
 {
     VymModel *m = currentModel();
     if (m) {
         ExportCSV ex;
         ex.setModel(m);
         ex.addFilter("CSV (*.csv)");
-        ex.setDirPath(lastImageDir.absolutePath());
+        ex.setDirPath(lastExportDir.absolutePath());
         ex.setWindowTitle(vymName + " -" + tr("Export as CSV") + " " +
                           tr("(still experimental)"));
         if (ex.execDialog()) {
@@ -4800,7 +4831,7 @@ void Main::fileExportImage()
 }
 
 #include "exportoofiledialog.h"
-void Main::fileExportImpress()
+void Main::fileExportImpress() // FIXME-2 check if scriptable, move to model
 {
     ExportOOFileDialog fd;
     // TODO add preview in dialog
@@ -4815,7 +4846,7 @@ void Main::fileExportImpress()
                 if (!fn.contains(".odp"))
                     fn += ".odp";
 
-                // lastImageDir=fn.left(fn.findRev ("/"));
+                // lastExportDir = fn.left(fn.findRev ("/"));
                 VymModel *m = currentModel();
                 if (m)
                     m->exportImpress(fn, fd.selectedConfig());
@@ -4864,24 +4895,11 @@ void Main::fileExportSVG()
         m->exportSVG();
 }
 
-#include "export-taskjuggler.h"
-void Main::fileExportTaskjuggler() // FIXME-3 not scriptable yet
+void Main::fileExportTaskJuggler()
 {
-    ExportTaskjuggler ex;
     VymModel *m = currentModel();
-    if (m) {
-        ex.setModel(m);
-        ex.setWindowTitle(vymName + " - " + tr("Export to") + " Taskjuggler" +
-                          tr("(still experimental)"));
-        ex.setDirPath(lastImageDir.absolutePath());
-        ex.addFilter("Taskjuggler (*.tjp)");
-
-        if (ex.execDialog()) {
-            m->setExportMode(true);
-            ex.doExport();
-            m->setExportMode(false);
-        }
-    }
+    if (m) 
+        m->exportTaskJuggler();
 }
 
 void Main::fileExportXML()
@@ -6141,8 +6159,7 @@ void Main::formatToggleLinkColorHint()
         m->toggleLinkColorHint();
 }
 
-void Main::formatHideLinkUnselected() // FIXME-4 get rid of this with
-                                      // imagepropertydialog
+void Main::formatHideLinkUnselected()
 {
     VymModel *m = currentModel();
     if (m)
@@ -6170,14 +6187,14 @@ void Main::viewZoomOut()
         me->zoomOut();
 }
 
-void Main::viewRotateCounterClockwise() // FIXME-4 move to ME
+void Main::viewRotateCounterClockwise()
 {
     MapEditor *me = currentMapEditor();
     if (me)
         me->setRotationTarget(me->rotationTarget() - 10);
 }
 
-void Main::viewRotateClockwise() // FIXME-4 move to ME
+void Main::viewRotateClockwise()
 {
     MapEditor *me = currentMapEditor();
     if (me)
@@ -6902,7 +6919,7 @@ void Main::updateActions()
 
         // Export last
         QString desc, com, dest;
-        if (m && m->exportLastAvailable(desc, com, dest))   // FIXME-4 Only update, when currentModel changes?
+        if (m && m->exportLastAvailable(desc, com, dest))   // FIXME Only update, when currentModel changes?
             actionFileExportLast->setEnabled(true);
         else {
             actionFileExportLast->setEnabled(false);
@@ -6939,7 +6956,7 @@ void Main::updateActions()
                 if (selbi) actionGetURLsFromNote->setEnabled(!selbi->getNote().isEmpty());
 
                 // Take care of xlinks
-                // FIXME-4 similar code in mapeditor mousePressEvent
+                // FIXME-5 similar code in mapeditor mousePressEvent
                 bool b = false;
                 if (selbi && selbi->xlinkCount() > 0)
                     b = true;
@@ -7098,7 +7115,7 @@ void Main::updateActions()
             actionToggleHideExport->setEnabled(false);
         }
 
-        // Check (at least for some) multiple selection //FIXME-4
+        // Check (at least for some) multiple selection
         if (seltis.count() > 0) {
             actionDelete->setEnabled(true);
             actionDeleteAlt->setEnabled(true);

@@ -29,6 +29,7 @@ class VymModelWrapper : public QObject {
     void detach();      // FIXME-3 move to BranchWrapper
     bool exportMap(QJSValueList args);
     BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
+    AttributeWrapper* findAttributeById(const QString &);
     BranchWrapper* findBranchById(const QString &);
     BranchWrapper* findBranchBySelection(const QString &);
     ImageWrapper* findImageById(const QString &);
@@ -37,12 +38,9 @@ class VymModelWrapper : public QObject {
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
-    QString getHeadingXML();    // FIXME-3 move to BranchWrapper
     QString getAuthor();
     QString getComment();
     QString getTitle();
-    QString getNotePlainText(); // FIXME-3 getNoteText in BranchWrapper. Rework test scripts
-    QString getNoteXML();       // FIXME-3 move to BranchWrapper
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
     int getRotationSubtree();   // FIXME-3 move to BranchWrapper
     QString getSelectionString();//FIXME-3 copy to BranchWrapper?
@@ -58,6 +56,7 @@ class VymModelWrapper : public QObject {
     void paste();
     void redo();
     void remove();              // FIXME-3 still needed? Rename to removeSelection()?
+    void removeAttribute(AttributeWrapper *aw);
     void removeBranch(BranchWrapper *bw);
     void removeImage(ImageWrapper *iw);
     void removeKeepChildren(BranchWrapper *bw);
@@ -76,30 +75,20 @@ class VymModelWrapper : public QObject {
     bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper
     void setDefaultLinkColor(const QString &color); // FIXME-3-4 maybe also rename other setMap* methods?
     void setHeadingConfluencePageName();// FIXME-3 move to BranchWrapper
-    void setHideExport(bool b);         // FIXME-3 move to BranchWrapper
-    void setHideLinkUnselected(bool b); // FIXME-3 move to BranchWrapper and ImageWrapper
     void setAnimCurve(int n);
     void setAnimDuration(int n);
     void setAuthor(const QString &s);
     void setBackgroundColor(const QString &color);
     void setComment(const QString &s);
     void setLinkStyle(const QString &style);
-    void setRotation(float a);
+    void setRotationView(float a);
     void setTitle(const QString &s);
     void setZoom(float z);
-    void setNotePlainText(const QString &s);    // FIXME-3 OBSOLETE moved to BranchWrapper
-    void setRotationHeading(const int &i);      // FIXME-3 move to BranchWrapper
-    void setRotationSubtree(const int &i);      // FIXME-3 move to BranchWrapper
-    void setRotationsAutoDesign(const bool b);  // FIXME-3 move to BranchWrapper
-    void setScale(qreal f);                     // FIXME-3 move to BranchWrapper and ImageWrapper
-    void setScaleSubtree(qreal f);              // FIXME-3 move to BranchWrapper
-    void setScalingAutoDesign(const bool b);    // FIXME-3 move to BranchWrapper and ImageWrapper
     void setSelectionBrushColor(const QString &color);
     void setSelectionPenColor(const QString &color);
     void setSelectionPenWidth(const qreal &);
     void sleep(int n);
     int slideCount();
-    void toggleTarget();        // FIXME-3 move to BranchWrapper
     void undo();
     void unselectAll();
 

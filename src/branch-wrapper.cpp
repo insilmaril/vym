@@ -229,9 +229,16 @@ QString BranchWrapper::getFrameType(const bool &useInnerFrame)
     return r;
 }
 
-QString BranchWrapper::getUid()
+QString BranchWrapper::getHeading()
 {
-    QString r = branchItemInt->getUuid().toString();
+    QString r = branchItemInt->heading().getText();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+QString BranchWrapper::getHeadingXML()
+{
+    QString r = branchItemInt->heading().saveToDir();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -343,6 +350,13 @@ QString BranchWrapper::getTaskStatus()
     return r;
 }
 
+QString BranchWrapper::getUid()
+{
+    QString r = branchItemInt->getUuid().toString();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 QString BranchWrapper::getUrl()
 {
     QString r = branchItemInt->url();
@@ -410,7 +424,7 @@ int BranchWrapper::imageCount()
     return r;
 }
 
-void BranchWrapper::importDir(const QString &path) // FIXME-4 error handling missing (in vymmodel and here)
+void BranchWrapper::importDir(const QString &path) // FIXME-5 error handling missing (in vymmodel and here)
 {
     model()->importDir(path, branchItemInt);
 }
@@ -429,9 +443,13 @@ bool BranchWrapper::loadImage(const QString &filename)
 {
     bool r;
     ImageItem *ii = model()->loadImage(branchItemInt, filename);
-    r= (ii) ? true : false;
+    r = (ii) ? true : false;
     mainWindow->setScriptResult(r);
-    return r;
+    if (ii)
+        return true;
+
+    mainWindow->abortScript("Failed to load " + filename);
+    return false;
 }
 
 bool BranchWrapper::loadNote(const QString &filename)
@@ -618,6 +636,16 @@ void BranchWrapper::setHeadingText(const QString &text)
     model()->setHeadingPlainText(text, branchItemInt);
 }
 
+void BranchWrapper::setHideExport(bool b)
+{
+    model()->setHideExport(b, branchItemInt);
+}
+
+void BranchWrapper::setHideLinkUnselected(bool b)
+{
+    model()->setHideLinkUnselected(b, branchItemInt);
+}
+
 void BranchWrapper::setNoteRichText(const QString &s)
 {
     VymNote vn;
@@ -636,6 +664,30 @@ void BranchWrapper::setPos(qreal x, qreal y)
 {
     model()->setPos(QPointF(x, y), branchItemInt);
 }
+
+void BranchWrapper::setRotationAutoDesign(const bool b)
+{
+    model()->setRotationAutoDesign(b, branchItemInt);
+}
+
+void BranchWrapper::setRotationHeading(const int &i)
+{
+    model()->setRotationHeading(i, branchItemInt);
+}
+
+void BranchWrapper::setRotationSubtree(const int &i)
+{
+    model()->setRotationSubtree(i, branchItemInt);
+}
+
+void BranchWrapper::setScaleAutoDesign(const bool b)
+{
+    model()->setScaleAutoDesign(b, branchItemInt);
+}
+
+void BranchWrapper::setScaleHeading(qreal f) { model()->setScaleHeading(f, false, branchItemInt); }
+
+void BranchWrapper::setScaleSubtree(qreal f) { model()->setScaleSubtree(f, branchItemInt); }
 
 void BranchWrapper::setTaskPriorityDelta(const int &n)
 {
@@ -682,6 +734,11 @@ void BranchWrapper::toggleFlagByUid(const QString &s)
 void BranchWrapper::toggleScroll()
 {
     model()->toggleScroll(branchItemInt);
+}
+
+void BranchWrapper::toggleTarget()
+{
+    model()->toggleTarget(branchItemInt);
 }
 
 void BranchWrapper::toggleTask() {

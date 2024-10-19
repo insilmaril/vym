@@ -99,7 +99,7 @@ bool ImportFirefoxBookmarks::transform()
     return false;
 }
 
-//FIXME-2 Check importing Firefox bookmarks. Switch from JSON to HTML?
+//FIXME-4 Check importing Firefox bookmarks. Switch from JSON to HTML?
 //        Or include lz4 to decompress FF json bookmarks?
 //        https://unix.stackexchange.com/questions/326897/how-to-decompress-jsonlz4-files-firefox-bookmark-backups-using-the-command-lin
 //        HTML is not valid XML :-(
@@ -147,7 +147,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
                     v = jsobj[key].toInt();
                 } else if (key == "postData") 
                     v = QString("null");
-                else if (jsobj[key].isString())     // FIXME-4 type checks no longer needed qith QVariant
+                else if (jsobj[key].isString())     // FIXME-5 type checks no longer needed qith QVariant
                     v = jsobj[key].toString();
                 else {
                 // Ignore only the "postdata: null" field for now
@@ -160,7 +160,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
             }
         }
 
-        model->emitDataChanged(selbi); // FIXME-4 required, but can reposition in between be blocked?
+        model->emitDataChanged(selbi); // FIXME-5 required, but can reposition in between be blocked?
     } // build bookmakrs
 
     if (jsobj.contains("children") && jsobj["children"].isArray()) {
@@ -172,7 +172,7 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
 
         if (selbi->depth() > 2) {
             selbi->scroll();
-            model->emitDataChanged(selbi); // FIXME-4 required, but can reposition in between be blocked?
+            model->emitDataChanged(selbi); // FIXME-5 required, but can reposition in between be blocked?
         }
     } 
 

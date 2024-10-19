@@ -3,7 +3,7 @@
 
 #include "export-base.h"
 
-class ExportTaskjuggler : public ExportBase {
+class ExportTaskJuggler : public ExportBase {
   public:
     virtual void doExport();
 };

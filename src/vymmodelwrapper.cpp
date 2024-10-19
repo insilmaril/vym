@@ -102,18 +102,18 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	return r;
     }
 
-    QString filename;
+    QString filePath;
 
-    filename = args[1].toString();
+    filePath = args[1].toString();
 
     if (format == "AO") {
-        model->exportAO(filename, false);
+        model->exportAO(filePath, false);
     }
     else if (format == "ASCII") {
         bool listTasks = false;
         if (argumentsCount == 3 && args[2].toString() == "true")
             listTasks = true;
-        model->exportASCII(filename, listTasks, false);
+        model->exportASCII(filePath, listTasks, false);
     }
     else if (format == "ConfluenceNewPage") {
         // 0: General export format
@@ -152,11 +152,9 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         }
 
         model->exportConfluence(false, url, title, false);
-    }
-    else if (format == "CSV") {
-        model->exportCSV(filename, false);
-    }
-    else if (format == "HTML") {
+    } else if (format == "CSV") {
+        model->exportCSV(filePath, false);
+    } else if (format == "HTML") {
         if (argumentsCount < 3) {
             mainWindow->abortScript(
                     QJSValue::GenericError,
@@ -165,9 +163,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	    return r;
         }
         QString dpath = args[2].toString();
-        model->exportHTML(filename, dpath, false);
-    }
-    else if (format == "Image") {
+        model->exportHTML(filePath, dpath, false);
+    } else if (format == "Image") {
         QString imgFormat;
         if (argumentsCount == 2)
             imgFormat = "PNG";
@@ -190,9 +187,8 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             mainWindow->setScriptResult(r);
 	    return r;
         }
-        model->exportImage(filename, false, imgFormat);
-    }
-    else if (format == "Impress") {
+        model->exportImage(filePath, false, imgFormat);
+    } else if (format == "Impress") {
         if (argumentsCount < 3) {
             mainWindow->abortScript(
                     QJSValue::GenericError,
@@ -201,35 +197,22 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	    return r;
         }
         QString templ = args[2].toString();
-        model->exportImpress(filename, templ);
-    }
-    else if (format == "LaTeX") {
-        model->exportLaTeX(filename, false);
-    }
-    else if (format == "Markdown") {
-        model->exportMarkdown(filename, false);
-    }    
-    else if (format == "OrgMode") {
-        model->exportOrgMode(filename, false);
-    }
-    else if (format == "PDF") {
-        model->exportPDF(filename, false);
-    }
-    else if (format == "SVG") {
-        model->exportSVG(filename, false);
-    }
-    else if (format == "XML") {
-        if (argumentsCount < 3) {
-            mainWindow->abortScript(
-                    QJSValue::GenericError,
-                    "path missing in export to Impress");
-            mainWindow->setScriptResult(r);
-	    return r;
-        }
-        QString dpath = args[2].toString();
-        model->exportXML(filename, dpath, false);
-    }
-    else {
+        model->exportImpress(filePath, templ);
+    } else if (format == "LaTeX") {
+        model->exportLaTeX(filePath, false);
+    } else if (format == "Markdown") {
+        model->exportMarkdown(filePath, false);
+    } else if (format == "OrgMode") {
+        model->exportOrgMode(filePath, false);
+    } else if (format == "PDF") {
+        model->exportPDF(filePath, false);
+    } else if (format == "SVG") {
+        model->exportSVG(filePath, false);
+    } else if (format == "TaskJuggler") {
+        model->exportTaskJuggler(filePath, false);
+    } else if (format == "XML") {
+        model->exportXML(filePath, false);
+    } else {
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Unknown export format: %1").arg(format));
@@ -247,6 +230,15 @@ BranchWrapper* VymModelWrapper::findBranchByAttribute(
     BranchItem *bi = model->findBranchByAttribute(key, value);
     if (bi)
         return bi->branchWrapper();
+    else
+        return nullptr;
+}
+
+AttributeWrapper* VymModelWrapper::findAttributeById(const QString &u)
+{
+    TreeItem *ti = model->findUuid(QUuid(u));
+    if (ti && ti->hasTypeAttribute())
+        return ((AttributeItem*)ti)->attributeWrapper();
     else
         return nullptr;
 }
@@ -317,13 +309,6 @@ QString VymModelWrapper::getFileName()
     return r;
 }
 
-QString VymModelWrapper::getHeadingXML()
-{
-    QString r = model->getHeading().saveToDir();
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
 QString VymModelWrapper::getAuthor()
 {
     QString r = model->getAuthor();
@@ -341,20 +326,6 @@ QString VymModelWrapper::getComment()
 QString VymModelWrapper::getTitle()
 {
     QString r = model->getTitle();
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
-QString VymModelWrapper::getNotePlainText()
-{
-    QString r = model->getNote().getTextASCII();
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
-QString VymModelWrapper::getNoteXML()
-{
-    QString r = model->getNote().saveToDir();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -451,6 +422,17 @@ void VymModelWrapper::paste() { model->paste(); }
 void VymModelWrapper::redo() { model->redo(); }
 
 void VymModelWrapper::remove() { model->deleteSelection(); }
+
+void VymModelWrapper::removeAttribute(AttributeWrapper *aw)
+{
+    if (!aw) {
+        mainWindow->abortScript(
+                QJSValue::GenericError,
+                "VymModelWrapper::removeAttribute(a) a is invalid");
+        return;
+    }
+    model->deleteSelection(aw->attributeItem()->getID());
+}
 
 void VymModelWrapper::removeBranch(BranchWrapper *bw)
 {
@@ -633,13 +615,6 @@ void VymModelWrapper::setHeadingConfluencePageName()
     model->setHeadingConfluencePageName();
 }
 
-void VymModelWrapper::setHideExport(bool b) { model->setHideExport(b); }
-
-void VymModelWrapper::setHideLinkUnselected(bool b)
-{
-    model->setHideLinkUnselected(b);
-}
-
 void VymModelWrapper::setAnimCurve(int n)
 {
     if (n < 0 || n > QEasingCurve::OutInBounce)
@@ -682,42 +657,11 @@ void VymModelWrapper::setLinkStyle(const QString &style)
                 QString("Could not set linkstyle to %1").arg(style));
 }
 
-void VymModelWrapper::setRotation(float a) { model->setMapRotation(a); }
+void VymModelWrapper::setRotationView(float a) { model->setMapRotation(a); }
 
 void VymModelWrapper::setTitle(const QString &s) { model->setTitle(s); }
 
 void VymModelWrapper::setZoom(float z) { model->setMapZoomFactor(z); }
-
-void VymModelWrapper::setNotePlainText(const QString &s)
-{
-    VymNote vn;
-    vn.setPlainText(s);
-    model->setNote(vn);
-}
-
-void VymModelWrapper::setRotationHeading(const int &i)
-{
-    model->setRotationHeading(i);
-}
-
-void VymModelWrapper::setRotationSubtree(const int &i)
-{
-    model->setRotationSubtree(i);
-}
-
-void VymModelWrapper::setRotationsAutoDesign(const bool b)
-{
-    model->setRotationsAutoDesign(b);
-}
-
-void VymModelWrapper::setScale(qreal f) { model->setScale(f, false); }
-
-void VymModelWrapper::setScaleSubtree(qreal f) { model->setScaleSubtree(f); }
-
-void VymModelWrapper::setScalingAutoDesign(const bool b)
-{
-    model->setScaleAutoDesign(b);
-}
 
 void VymModelWrapper::setSelectionBrushColor(const QString &color)
 {
@@ -760,8 +704,6 @@ int VymModelWrapper::slideCount()
     mainWindow->setScriptResult(r);
     return r;
 }
-
-void VymModelWrapper::toggleTarget() { model->toggleTarget(); }
 
 void VymModelWrapper::undo() { model->undo(); }
 

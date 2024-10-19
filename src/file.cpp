@@ -63,7 +63,7 @@ extern QString vymName;
 bool confirmDirectoryOverwrite(const QDir &dir)
 {
     if (!dir.exists()) {
-        qWarning() << "Directory does not exist: " << dir.path();
+        qWarning() << "confirmDirectoryOverwrite:  Directory does not exist: " << dir.path();
         return false;
     }
 
@@ -108,7 +108,7 @@ bool isInTmpDir(QString fn)
     return fn.left(l) == temp;
 }
 
-QString makeUniqueDir(bool &ok, QString s) // FIXME-3 use QTemporaryDir
+QString makeUniqueDir(bool &ok, QString s) // FIXME-4 use QTemporaryDir
 {
     ok = true;
 
@@ -151,7 +151,7 @@ bool removeDir(QDir d)
 }
 
 /*
-bool removeDirContent(QDir d) FIXME-2 not used atm
+bool removeDirContent(QDir d) FIXME-5 currently unused
 {
         // (might still contain no longer needed images from unzipping before)
         qDebug() << "removeDirContent" << d.path();

@@ -7,7 +7,7 @@
 #include "settings.h"
 
 extern Settings settings;
-extern QString iconPath; // FIXME-4 embed vym logo as ressource?
+extern QString iconPath;
 extern QString vymVersion;
 extern QString vymBuildDate;
 extern QString vymCodeName;

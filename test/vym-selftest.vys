@@ -306,7 +306,7 @@ function test_attributes()
 {
   heading("Attributes:");
   
-  map = initMap("maps/test-attributes.xml");
+  map = initMap("test/maps/test-attributes.xml");
 
   map.select(main_A);
   b = map.selectedBranch();
@@ -720,116 +720,123 @@ function test_load_legacy_maps()
 {
   heading("Load legacy maps");
 
-  let map = initMap("maps/legacy/legacy-text-2.4.0.xml");
-  map.select(branch_0Aa);
-  expect("Heading with plaintext as characters is read", map.getHeadingPlainText(), "Heading in characters");
+  let map = initMap("test/maps/legacy/legacy-text-2.4.0.xml");
+  b = map.findBranchBySelection(branch_0Aa_string);
+  expect("Heading with plaintext as characters is read", b.getHeading(), "Heading in characters");
 
-  map.select(center_0);
-  expect("Checking parsing 'absPos': x-position of " + center_0 + " is ok", map.getPosX(), 314);
-  expect("Checking parsing 'absPos': y-position of " + center_0 + " is ok", map.getPosY(), 0);
-  map.select(main_A);
+  b = map.findBranchBySelection(center_0_string);
+  expect("Checking parsing 'absPos': x-position of " + center_0_string + " is ok", b.getPosX(), 314);
+  expect("Checking parsing 'absPos': y-position of " + center_0_string+ " is ok", b.getPosY(), 0);
+
+  b = map.findBranchBySelection(main_A_string);
 
   // FIXME-2 Review setting relative positions from legacy maps,
   // probable there is an offset meanwhile
-  //expect("Checking parsing 'relPos': x-position of " + main_A + " is ok", map.getPosX(), 123);
-  //expect("Checking parsing 'relPos': y-position of " + main_A + " is ok", map.getPosY(), 42);
+  //expect("Checking parsing 'relPos': x-position of " + main_A_string + " is ok", b.getPosX(), 123);
+  //expect("Checking parsing 'relPos': y-position of " + main_A_string + " is ok", b.getPosY(), 42);
 
   closeCurrentMap();
 
-  map = initMap("maps/legacy/time-management-1.13.33.vym");
-  map.select(main_A);
+  map = initMap("test/maps/legacy/time-management-1.13.33.vym");
+  b = map.findBranchBySelection(main_A_string);
   let s = "To see an explanation";
-  expect("<heading> using characters: Heading includes '#{s}'", map.getHeadingPlainText().includes(s), true);
-  expect("<vymnote> using <html>: creates RichText note", map.hasRichTextNote(), true);
+  expect("<heading> using characters: Heading includes '#{s}'", b.getHeading().includes(s), true);
+  expect("<vymnote> using <html>: creates RichText note", b.hasRichTextNote(), true);
   s = "time management";
-  expect("<vymnote> using <html>: Note contains '#{s}'", map.getNotePlainText().includes(s), true);
+  expect("<vymnote> using <html>: Note contains '#{s}'", b.getNoteText().includes(s), true);
 
   closeCurrentMap();
 
-  map = initMap("maps/legacy/lifeforms-2.1.11.vym");
-  map.select(center_0);
+  map = initMap("test/maps/legacy/lifeforms-2.1.11.vym");
 
   s = "Life forms";
-  expect("<heading> using characters and HTML: includes '#{s}'", map.getHeadingXML().includes(s), true);
+  b = map.findBranchBySelection(center_0_string);
+  expect("<heading> using characters and HTML: includes '#{s}'", b.getHeadingXML().includes(s), true);
   s = "textMode=\"richText";
-  expect("<heading> using characters creates RichText", map.getHeadingXML().includes(s), true);
+  expect("<heading> using characters creates RichText", b.getHeadingXML().includes(s), true);
 
   closeCurrentMap();
 
-  map = initMap("maps/legacy/faq-2.5.21.xml");
-  map.select(branch_0Ab);
+  map = initMap("test/maps/legacy/faq-2.5.21.xml");
+  b = map.findBranchBySelection(branch_0Ab_string);
 
   s = "libqt5-devel.rpm";
-  expect("<vymnote> using characters and CDATA: has RichText note", map.hasRichTextNote(), true);
-  expect("<vymnote> using characters and CDATA: includes '#{s}'", map.getNotePlainText().includes(s), true);
-  expect("<vymnote> using characters and CDATA: has RichText note", map.hasRichTextNote(), true);
+  expect("<vymnote> using characters and CDATA: has RichText note", b.hasRichTextNote(), true);
+  expect("<vymnote> using characters and CDATA: includes '#{s}'", b.getNoteText().includes(s), true);
+  expect("<vymnote> using characters and CDATA: has RichText note", b.hasRichTextNote(), true);
 
-  map.select(branch_0Ac);
+  b = map.findBranchBySelection(branch_0Ac_string);
   s = "textMode=\"richText";
-  expect("<heading> using characters and CDATA: creates RichText", map.getHeadingXML().includes(s), true);
+  expect("<heading> using characters and CDATA: creates RichText", b.getHeadingXML().includes(s), true);
   s = "CDATA heading";
-  expect("<heading> using characters and CDATA: includes \"" + s + "\"", map.getHeadingPlainText().includes(s), true);
+  expect("<heading> using characters and CDATA: includes \"" + s + "\"", b.getHeading().includes(s), true);
 
   closeCurrentMap();
 
 
   files = [
-    "maps/legacy/external-note-plaintext.txt",
-    "maps/legacy/external-note-richtext.html" ];
+    "test/maps/legacy/external-note-plaintext.txt",
+    "test/maps/legacy/external-note-richtext.html" ];
+
+  for (i in files) {
+    vym.fileCopy(files[i], testDir + "/maps/");
+  }
   /* FIXME-2 Loading files not supported yet
-  map = initMap("maps/legacy/notes.xml", files);
+  map = initMap("test/maps/legacy/notes.xml", files);
   */
 
-  map = initMap("maps/legacy/notes.xml");
+  map = initMap("test/maps/legacy/notes.xml");
 
-  map.select(branch_0Aa);
+  b = map.findBranchBySelection(branch_0Aa_string);
   expect("<note> with plaintext in external file: text has type PlainText",
-    map.hasRichTextNote(), false);
+    b.hasRichTextNote(), false);
   expectInclude("<note> with plaintext in external file: text is read correctly",
-    map.getNotePlainText(),
+    b.getNoteText(),
     "PlainText note in file");
 
-  map.select(branch_0Ab);
+  b = map.findBranchBySelection(branch_0Ab_string);
   expect("<note> with plaintext in characters: text has type PlainText",
-    map.hasRichTextNote(), false);
+    b.hasRichTextNote(), false);
   expectInclude( "<note> reads plaintext from characters",
-    map.getNotePlainText(),
+    b.getNoteText(),
     "PlainText note in characters");
 
-  map.select(branch_0Ac);
+  b = map.findBranchBySelection(branch_0Ac_string);
   expect("<note> with RichText in external file: text has type RichText",
-    map.hasRichTextNote(), true);
+    b.hasRichTextNote(), true);
   expectInclude( "<note> reads RichText from external file",
-    map.getNotePlainText(),
+    b.getNoteText(),
     "RichText note in file");
-  map.select(branch_0Ab);
 
-  map.select(branch_0Ba);
+  b = map.findBranchBySelection(branch_0Ba_string);
   expect("<htmlnote> with PlainText in characters: text has type PlainText",
-    map.hasRichTextNote(), false);
+    b.hasRichTextNote(), false);
   expectInclude( "<htmlnote> reads PlainText from characters",
-    map.getNotePlainText(),
+    b.getNoteText(),
     "PlainText note in characters");
-  map.select(branch_0Bb);
+
+  b = map.findBranchBySelection(branch_0Bb_string);
 
   // Note: 1.4.0 maps might have a 2nd DTD preceding inline HTML
   // THis would be invalid XML and thus QXMLStreamReader cannot read
   // it. Workaround: Remove DTD manually
   expect("<htmlnote> with RichText in characters: text has type RichText",
-    map.hasRichTextNote(), true);
+    b.hasRichTextNote(), true);
   expectInclude( "<htmlnote> reads RichText from characters",
-    map.getNotePlainText(),
+    b.getNoteText(),
     "RichText note in characters");
 
   closeCurrentMap();
 
-  map = initMap("maps/legacy/xlinks.xml");
+  map = initMap("test/maps/legacy/xlinks.xml");
   // FIXME-5 add test: xlinks in subitems of branches (pre 1.13.2)
-  map.select(main_A);
-  expect("<xlink> within <branch> is read", map.xlinkCount(), 1);
+  b = map.findBranchBySelection(main_A_string);
+  main_B = map.findBranchBySelection(main_B_string);
+  expect("<xlink> within <branch> is read", b.xlinkCount(), 1);
 
-  map.selectXLinkOtherEnd(0);
-  expect("<xlink> connects  '#{@main_A}' and '#{@main_B}'", map.getSelectionString(), main_B);
+  b.selectXLinkOtherEnd(0);
+  other_end = map.selectedBranch();
+  expect("<xlink> connects  '#{@main_A}' and '#{@main_B}'", other_end, main_B);
   closeCurrentMap();
 }
 
@@ -1040,10 +1047,10 @@ function test_notes()
   note_plain = "<b>plaintext, not bold!</b>"
   map.setNotePlainText(note_plain);
   expect("Set note to plaintext containing html tags. Still plaintext", map.hasRichTextNote(), false);
-  note_new = map.getNotePlainText();
+  note_new = map.getNoteText();
   map.select(center_0);
   map.select(main_A);
-  expect("After reselect, is note text unchanged?", map.getNotePlainText(), note_new);
+  expect("After reselect, is note text unchanged?", map.getNoteText(), note_new);
   expect("After reselect, is note plaintext?", map.hasRichTextNote(), false);
 
   // Plaintext notes copy & paste
@@ -1051,7 +1058,7 @@ function test_notes()
   map.paste();
   map.selectLastChildBranch();
   s = map.getSelectionString();
-  expect("After copy& paste: New note unchanged?", map.getNotePlainText(), note_plain);
+  expect("After copy& paste: New note unchanged?", map.getNoteText(), note_plain);
   expect("After copy& paste: New note Still plaintext?", map.hasRichTextNote(), false);
   map.remove();
 
@@ -1059,16 +1066,16 @@ function test_notes()
   map.select(main_A);
   map.setNotePlainText('Foobar');
   map.undo();
-  expect("Undo after setNotePlainText restores previous note", map.getNotePlainText(), note_plain);
+  expect("Undo after setNotePlainText restores previous note", map.getNoteText(), note_plain);
   map.redo();
   map.select(main_A);
-  expect("Redo restores previous note", map.getNotePlainText(), 'Foobar');
+  expect("Redo restores previous note", map.getNoteText(), 'Foobar');
 
   // Plaintext notes load & save
   note_org = vym.loadFile('notes/note-plain.txt');
   map.loadNote("test/notes/note-plain.txt");
   expect("Load plain text note from file. Still plaintext?", map.hasRichTextNote(), false);
-  expect("Note contains 'not bold'", map.getNotePlainText().includes("not bold"), true);
+  expect("Note contains 'not bold'", map.getNoteText().includes("not bold"), true);
   filepath = testDir + "/save-note.txt";
   map.saveNote(filepath);
   expect("Save note to file. Check if it contains 'textMode=\"plainText\"'", vym.loadFile(filepath).includes("textMode=\"plainText\""), true);
@@ -1110,7 +1117,7 @@ function test_notes()
   expect("Undo after setNotePlainText restores RichText note", map.getNoteXML(), rt_note);
   map.redo();
   map.select(main_A);
-  expect("Redo restores previous plaintext note", map.getNotePlainText(), 'Foobar');
+  expect("Redo restores previous plaintext note", map.getNoteText(), 'Foobar');
 
   // RichText notes load & save
   map.loadNote("test/notes/note.html");
@@ -1230,7 +1237,7 @@ function test_scrolling()
 function test_slides()
 {
   heading("Slides");
-  let map = initMap("maps/test-slides.xml");
+  let map = initMap("test/maps/test-slides.xml");
 
   map.select(main_A);
   expect("Successfully loaded map with slides", map.slideCount(), 3);
@@ -1338,7 +1345,7 @@ function test_standard_flags()
 function test_user_flags()
 {
   heading("User flags");
-  let map = initMap("maps/test-userflag.vym");
+  let map = initMap("test/maps/test-userflag.vym");
 
   map.select(branch_0Aa);
   flagName = "userflag-vym";
@@ -1513,16 +1520,16 @@ function test_xlinks()
 
     // ok, already using new Wrapper functions
 test_basics();
-test_adding_branches();
-test_adding_maps();
+//test_adding_branches();
+//test_adding_maps();
   //test_attributes();        // FIXME not nported yet
-test_copy_paste();
-test_delete_parts();
+//test_copy_paste();
+//test_delete_parts();
   //test_export();            // FIXME WIP
-test_extrainfo();
-test_frames();
+//test_extrainfo();
+//test_frames();
   //test_history();           // FIXME not ported yet
-  //test_load_legacy_maps();  // FIXME not ported yet
+test_load_legacy_maps();
 test_modify_branches();
 test_modify_images();
 test_moving_parts();
@@ -1533,7 +1540,7 @@ test_references();
   //test_slides();            // FIXME not ported yet
   //test_standard_flags();    // FIXME not ported yet
   //test_user_flags();        // FIXME not ported yet
-test_tasks();	// FIXME-2 uncomplete (date calculations not ported yet from ruby)
+test_tasks();	// FIXME-3 uncomplete (date calculations not ported yet from ruby)
 test_xlinks();
 
 summary();

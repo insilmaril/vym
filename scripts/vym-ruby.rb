@@ -41,7 +41,7 @@ class Vym
           ret = @main.execute( com )
         end
 
-        #FIXME-4  err = m.errorLevel[0]
+        #FIXME  err = m.errorLevel[0]
         if $debug
           puts "     Returned: #{ret[0]}" if ret[0] != ""
           pp ret
@@ -116,7 +116,7 @@ class VymMap
             puts "Done calling" if $debug
           end
 
-          #FIXME-3 err = m.errorLevel[0]
+          #FIXME err = m.errorLevel[0]
           if $debug
             puts "     Returned: #{ret[0]}" if ret[0] != ""
             #puts "        Error: #{err}" if err > 0

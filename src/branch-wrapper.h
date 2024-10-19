@@ -36,7 +36,8 @@ class BranchWrapper : public QObject {
     int getFramePadding(const bool & useInnerFrame);
     int getFramePenWidth(const bool & useInnerFrame);
     QString getFrameType(const bool & useInnerFrame);
-    QString getUid();
+    QString getHeading();
+    QString getHeadingXML();
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
@@ -50,6 +51,7 @@ class BranchWrapper : public QObject {
     QString getTaskSleep();
     int getTaskSleepDays();
     QString getTaskStatus();
+    QString getUid();
     QString getUrl();
     QString getVymLink();
     bool hasActiveFlag(const QString &flag);
@@ -89,9 +91,17 @@ class BranchWrapper : public QObject {
     void setFrameType(const bool & useInnerFrame, const QString &type);
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
+    void setHideExport(bool b);
+    void setHideLinkUnselected(bool b);
     void setNoteRichText(const QString &);
     void setNoteText(const QString &);
-    void setPos(qreal x, qreal y);// FIXME-2 copy to ImageWrapper
+    void setPos(qreal x, qreal y);
+    void setRotationAutoDesign(const bool b);
+    void setRotationHeading(const int &i);
+    void setRotationSubtree(const int &i);
+    void setScaleAutoDesign(const bool b);
+    void setScaleHeading(qreal f);
+    void setScaleSubtree(qreal f);
     void setTaskPriorityDelta(const int &n);
     bool setTaskSleep(const QString &s);
     void setUrl(const QString &s);
@@ -101,6 +111,7 @@ class BranchWrapper : public QObject {
     void toggleFlagByName(const QString &);
     void toggleFlagByUid(const QString &);
     void toggleScroll();
+    void toggleTarget();
     void toggleTask();
     void unscroll();
     void unscrollSubtree();

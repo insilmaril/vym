@@ -267,11 +267,11 @@ class VymModel : public TreeModel {
     QString getHistoryPath(); //!< Path to directory containing the history
     void resetHistory();      //!< Initialize history
 
+    QString setAttributeVar(AttributeItem*, QString varName ="b");  //!< Returns command to set AttributeItem in scripts for undo/redo
     QString setBranchVar(BranchItem*, QString varName ="b");  //!< Returns command to set BranchItem in scripts for undo/redo
     QString setImageVar(ImageItem*, QString varName = "i");   //!< Returns command to set ImageItem in scripts for undo/redo
     QString setXLinkVar(XLink*, QString varName = "x");        //!< Returns command to set XLink in scripts for undo/redo
 
-  private:
     /*! \brief Save the current changes in map
 
     Two commands and selections are saved:
@@ -282,9 +282,9 @@ class VymModel : public TreeModel {
     Additionally a comment is logged.
 
     */
-    void saveStateNew(
-                   const QString &undoCommand,
-                   const QString &redoCommand,
+    void saveState(
+                   QString undoCommand,
+                   QString redoCommand,
                    const QString &comment = "",
                    TreeItem *saveUndoItem = nullptr,
                    TreeItem *saveRedoItem = nullptr);
@@ -296,7 +296,7 @@ class VymModel : public TreeModel {
             BranchItem *bi,
             const QString &undoCommand,
             const QString &redoCommand,
-            const QString &comment);
+            const QString &comment = "");
 
     /*! Put several states into one Script for a single undo step */
     void saveStateBeginScript(const QString &comment);
@@ -344,14 +344,11 @@ class VymModel : public TreeModel {
                     TreeItem *ti = nullptr); //!< Set heading of item
     void setHeadingPlainText(const QString &s,
                              TreeItem *ti = nullptr); //!< Set heading of item
-    Heading getHeading();               //!< Get heading of item
     QString headingText(TreeItem*);     //!< For debugging. Also works for nullptr
     void updateNoteText(const VymText &); //!< Signal emmited in NoteEditor via MainWindow
     void setNote(const VymNote &vn,     //!< Set note text
                          BranchItem *bi = nullptr,
                          bool senderIsNoteEditor = false);
-    VymNote getNote();                  //!< Get note text
-    bool hasRichTextNote();             //!< Check type of vymText used
     bool loadNote(const QString &fn, BranchItem *bi = nullptr);   //!< Load note from file
     bool saveNote(const QString &fn);   //!< Save note to file
 
@@ -386,23 +383,23 @@ class VymModel : public TreeModel {
     void setImagesLayout(const QString &, BranchItem *bi = nullptr);
     void setHeadingColumnWidthAutoDesign(const bool &, BranchItem *bi = nullptr);
     void setHeadingColumnWidth(const int &, BranchItem *bi = nullptr);
-    void setRotationsAutoDesign(const bool &);
-    void setRotationHeading(const int &);
-    void setRotationSubtree(const int &);
-    void setScaleAutoDesign(const bool &);
-    void setScaleHeading(const qreal &, const bool relative = false);
+    void setRotationAutoDesign(const bool &, BranchItem *bi = nullptr);
+    void setRotationHeading(const int &, BranchItem *bi = nullptr);
+    void setRotationSubtree(const int &, BranchItem *bi = nullptr);
+    void setScaleAutoDesign(const bool &, BranchItem *bi = nullptr);
+    void setScaleHeading(const qreal &, const bool relative = false, BranchItem *bi = nullptr);
     qreal getScaleHeading();
-    void setScaleSubtree(const qreal &);
+    void setScaleSubtree(const qreal &, BranchItem *bi = nullptr);
     qreal getScaleSubtree();
     void setScaleImage(const qreal &, const bool relative = false, ImageItem *ii = nullptr);
     void setScale(const qreal &f, const bool relative);
     void growSelectionSize();
     void shrinkSelectionSize();
     void resetSelectionSize();
-    void setHideLinkUnselected(bool);
+    void setHideLinkUnselected(bool, TreeItem *ti = nullptr);
 
     /*! Should object be hidden in exports (clouded)? */
-    void setHideExport(bool, TreeItem *ti = nullptr);
+    void setHideExport(bool, BranchItem *bi = nullptr);
 
     /*! Should object be hidden in exports (clouded)? */
     void toggleHideExport();
@@ -552,7 +549,7 @@ class VymModel : public TreeModel {
     void collapseUnselected();
 
   public:
-    void toggleTarget();
+    void toggleTarget(BranchItem *bi = nullptr);
     ItemList getLinkedMaps();
     ItemList getTargets();
 
@@ -623,8 +620,11 @@ class VymModel : public TreeModel {
     /*! Save as SVG  . Returns offset to upper left corner of image */
     QPointF exportSVG(QString fname = "", bool askForName = true);
 
+    /*! Save as TaskJuggler input file */
+    void exportTaskJuggler(QString fname = "", bool askForName = true);
+
     /*! Export as XML to directory */
-    void exportXML(QString fname = "", QString dir = "", bool useDialog = true);
+    void exportXML(QString fname = "", bool useDialog = true);
 
     /*! Export as A&O report text to file */
     void exportAO(QString fname = "", bool askForName = true);

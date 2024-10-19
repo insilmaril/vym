@@ -1174,7 +1174,7 @@ def test_load_legacy_maps
     map.getNotePlainText,
     "RichText note in characters"
 
-  # FIXME-4 implement and add test: xlinks in subitems of branches (pre 1.13.2)
+  # TODO implement and add test: xlinks in subitems of branches (pre 1.13.2)
   close_current_map
 end
 

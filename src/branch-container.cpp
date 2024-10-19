@@ -22,9 +22,9 @@ extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
 
-qreal BranchContainer::linkWidth = 20;  // FIXME-3 testing
+qreal BranchContainer::linkWidth = 20;  // FIXME-5 testing
 
-BranchContainer::BranchContainer(QGraphicsScene *scene, BranchItem *bi)  // FIXME-4 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
+BranchContainer::BranchContainer(QGraphicsScene *scene, BranchItem *bi)  // FIXME-3 scene and addItem should not be required, only for mapCenters without parent:  setParentItem automatically sets scene!
 {
     // qDebug() << "* Const BranchContainer begin this = " << this << "  branchitem = " << bi;
     scene->addItem(this);
@@ -214,7 +214,7 @@ void BranchContainer::updateVisibilityOfChildren()
 }
 
 #include <QTransform>
-void BranchContainer::setScrollOpacity(qreal o)   // FIXME-3 testing for potential later animation
+void BranchContainer::setScrollOpacity(qreal o)   // FIXME-4 testing for potential later animation
 {
     scrollOpacity = o;
     //headingContainer->setScrollOpacity(a);

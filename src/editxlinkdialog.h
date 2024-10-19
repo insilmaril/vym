@@ -25,7 +25,6 @@ class EditXLinkDialog : public QDialog {
     void widthChanged(int);
     void colorButtonPressed();
     void colorChanged(QColor c);
-    void setColorHeadingButtonPressed();
     void lineStyleChanged(int);
     void beginStyleChanged(int);
     void endStyleChanged(int);

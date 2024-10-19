@@ -13,9 +13,7 @@ extern Settings settings;
 extern QString vymName;
 
 BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
-    : QDialog(parent) // FIXME-4 not updating when data is set elsewhere
-                      // (connect to dataCHanged)
-
+    : QDialog(parent)
 {
     ui.setupUi(this);
 
@@ -39,7 +37,7 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
         ui.tabWidget->widget(3)->hide();
 
     //Create Model and View to hold attributes
-    attributeModel = new QStandardItemModel (1, 3, this);   // FIXME-4 used and needed?
+    attributeModel = new QStandardItemModel (1, 3, this);   // FIXME-5 used and needed?
     attributeModel->setHeaderData(0,
             Qt::Horizontal,
             tr("Name","Branchprop window: Attribute name"));
@@ -736,12 +734,12 @@ void BranchPropertyEditor::columnWidthChanged(int i)
 void BranchPropertyEditor::rotationsAutoChanged()
 {
     if (model) {
-        model->setRotationsAutoDesign(ui.rotationsAutoCheckBox->isChecked());
+        model->setRotationAutoDesign(ui.rotationsAutoCheckBox->isChecked());
         updateControls();
     }
 }
 
-void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-4 Create custom class to sync slider and spinbox and avoid double calls to models
+void BranchPropertyEditor::rotationHeadingChanged(int i)    // FIXME-5 Create custom class to sync slider and spinbox and avoid double calls to models
 {
     if (model)
         model->setRotationHeading(i);
@@ -832,7 +830,7 @@ void BranchPropertyEditor::closeEvent(QCloseEvent *ce)
     return;
 }
 
-void BranchPropertyEditor::addAttributeClicked()    // FIXME-4 not used currently
+void BranchPropertyEditor::addAttributeClicked()    // FIXME-5 not used currently
 {
     qDebug() << "BranchPropEditor::addAttribute";
 

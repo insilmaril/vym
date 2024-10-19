@@ -1,5 +1,6 @@
 #include "image-wrapper.h"
 
+#include "branch-wrapper.h"
 #include "imageitem.h"
 #include "image-container.h"
 
@@ -65,6 +66,20 @@ QString ImageWrapper::headingText()
     return r;
 }
 
+bool ImageWrapper::relinkToBranch(BranchWrapper *dst)
+{
+    bool r = model()->relinkImage(imageItemInt, (TreeItem*)(dst->branchItem()));
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+bool ImageWrapper::relinkToBranchAt(BranchWrapper *dst, int pos)
+{
+    bool r = model()->relinkImage(imageItemInt, (TreeItem*)(dst->branchItem()), pos);
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 bool ImageWrapper::selectParent()
 {
     bool r = model()->selectParent(imageItemInt);
@@ -86,5 +101,15 @@ void ImageWrapper::setHeadingRichText(const QString &text)
 void ImageWrapper::setHeadingText(const QString &text)
 {
     model()->setHeadingPlainText(text, imageItemInt);
+}
+
+void ImageWrapper::setHideLinkUnselected(bool b)
+{
+    model()->setHideLinkUnselected(b, imageItemInt);
+}
+
+void ImageWrapper::setPos(qreal x, qreal y)
+{
+    model()->setPos(QPointF(x, y), imageItemInt);
 }
 

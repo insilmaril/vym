@@ -770,7 +770,7 @@ void Container::reposition()
             break;
 
         case GridColumns: {
-                int colCount = 3;   // FIXME-4 fixed for now for GridColumns layout
+                int colCount = 3;   // FIXME-5 fixed for now for GridColumns layout
                 qreal padding = 5;
                 QList <qreal> maxColWidths;
                 QList <qreal> maxRowHeights;
@@ -843,7 +843,7 @@ void Container::reposition()
             }
             break;
 
-        case GridRows:  // FIXME-4 not implemented yet
+        case GridRows:  // FIXME-5 not implemented yet - remove?
             break;
 
         case List:

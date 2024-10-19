@@ -14,6 +14,7 @@ class Command {
         XLinkObject
     };
     enum ParameterType {
+        AttributeItem,
         Bool,
         BranchItem,
         Color,
