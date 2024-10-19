@@ -419,11 +419,16 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             xml.name() == QLatin1String("note"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch")) {
+            if (lastBranch && lastBranch->depth() < 3) {
+                // Some graphical repainting during loading of map
+                lastBranch->updateVisuals();
+                model->select(lastBranch);
+                model->reposition(true);
+            }
+
             // Going deeper we regard incoming data as "new", no inserts/replacements
             readBranchOrMapCenter(File::NewMap, -1);
 
-            if (lastBranch->depth() < 2)
-                model->reposition(true);
         } else if (xml.name() == QLatin1String("frame"))
             readFrame();
         else if (xml.name() == QLatin1String("standardFlag") ||
