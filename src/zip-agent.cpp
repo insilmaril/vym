@@ -60,7 +60,7 @@ void ZipAgent::startZip()
 
     setProgram(zipToolPath);
 
-#if defined(Q_OS_WINDOWS) // FIXME-1 tar same result as with zip -FS (delete unused files) on Win 11. Retest on Win 10
+#if defined(Q_OS_WINDOWS)
     // Uses tar
     setWorkingDirectory(QDir::toNativeSeparators(zipDirInt.path() + "\\"));
     args << "-a" << "-c" << "--format" << "zip" << "-f" << zipNameInt << "*";
