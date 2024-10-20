@@ -14,29 +14,30 @@ class Command {
         XLinkObject
     };
     enum ParameterType {
-        AttributeItem,
-        Bool,
-        BranchItem,
-        Color,
-        Double,
-        ImageItem,
-        Int,
-        String,
-        Undefined,
-        Void,
-        XLinkItem
+        AttributePar,
+        BoolPar,
+        BranchPar,
+        ColorPar,
+        DoublePar,
+        ImagePar,
+        IntPar,
+        StringPar,
+        StringListPar,
+        UndefinedPar,
+        VoidPar,
+        XLinkPar
     };
     enum SelectionType {
-        Any,
-        TreeItem,
-        Branch,
-        BranchLike,
-        Image,
-        BranchOrImage,
-        XLink
+        AnySel,
+        TreeItemSel,    // used 14x 
+        BranchSel,
+        BranchLikeSel,  // used 2x
+        ImageSel,       // used 9x
+        BranchOrImageSel,   // used 14x
+        XLinkSel
     };
 
-    Command(const QString &n, SelectionType st = Command::Any, ParameterType retType = Void);
+    Command(const QString &n, SelectionType st = Command::AnySel, ParameterType retType = VoidPar);
     QString name();
     QString description();
     QString descriptionLaTeX();

@@ -1,7 +1,7 @@
 #include "command.h"
 
 #include <QDebug>
-Command::Command(const QString &n, SelectionType st, ParameterType retType)
+Command::Command(const QString &n, SelectionType st, ParameterType retType) // FIXME-3 selectionType no longer needed with wrappers
 {
     nameInt = n;
     selectionTypeInt = st;
@@ -67,31 +67,31 @@ Command::ParameterType Command::parameterType(int n)
         return parTypes.at(n);
     }
     qDebug() << "Command::parameterType n out of range";
-    return Undefined;
+    return UndefinedPar;
 }
 
 QString Command::typeToString(const ParameterType &type)
 {
     switch (type) {
-        case Bool:
+        case BoolPar:
             return "Bool";
-        case BranchItem:
+        case BranchPar:
             return "Branch";
-        case Color:
+        case ColorPar:
             return "Color";
-        case Double:
+        case DoublePar:
             return "Double";
-        case ImageItem:
+        case ImagePar:
             return "Image";
-        case Int:
+        case IntPar:
             return "Int";
-        case String:
+        case StringPar:
             return "String";
-        case Undefined:
+        case UndefinedPar:
             return "Undefined";
-        case Void:
+        case VoidPar:
             return "Void";
-        case XLinkItem:
+        case XLinkPar:
             return "XLink";
         default:
             return "not defined in class Command.";
@@ -103,19 +103,19 @@ Command::SelectionType Command::selectionType() { return selectionTypeInt; }
 QString Command::selectionTypeName()
 {
     switch (selectionType()) {
-    case Any:
+    case AnySel:
         return "Any";
-    case TreeItem:
+    case TreeItemSel:
         return "TreeItem";
-    case Branch:
+    case BranchSel:
         return "Branch";
-    case BranchLike:
+    case BranchLikeSel:
         return "BranchLike";
-    case Image:
+    case ImageSel:
         return "Image";
-    case BranchOrImage:
+    case BranchOrImageSel:
         return "BranchOrImage";
-    case XLink:
+    case XLinkSel:
         return "XLink";
     default:
         return "Undefined";

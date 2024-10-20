@@ -562,381 +562,381 @@ void Main::setupAPI()
     // Below are the commands for vym itself
     //
 
-    Command *c = new Command("clearConsole", Command::Any);
+    Command *c = new Command("clearConsole", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("closeMapWithID", Command::Any);
-    c->addParameter(Command::Int, false, "ID of map (unsigned int)");
+    c = new Command("closeMapWithID", Command::AnySel);
+    c->addParameter(Command::IntPar, false, "ID of map (unsigned int)");
     vymCommands.append(c);
 
-    c = new Command("currentColor", Command::Any);
+    c = new Command("currentColor", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("currentMap", Command::Any);
+    c = new Command("currentMap", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("currentMapIndex", Command::Any);
+    c = new Command("currentMapIndex", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("editHeading", Command::Branch);
+    c = new Command("editHeading", Command::BranchSel);
     vymCommands.append(c);
 
-    c = new Command("gotoMap", Command::Any);
-    c->addParameter(Command::Int, false, "Index of map");
+    c = new Command("gotoMap", Command::AnySel);
+    c->addParameter(Command::IntPar, false, "Index of map");
     vymCommands.append(c);
 
-    c = new Command("loadMap", Command::Any);
-    c->addParameter(Command::String, false, "Path to map");
+    c = new Command("loadMap", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "Path to map");
     vymCommands.append(c);
 
-    c = new Command("mapCount", Command::Any);
+    c = new Command("mapCount", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("print", Command::Any);
+    c = new Command("print", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("selectQuickColor", Command::Any);
-    c->addParameter(Command::Int, false, "Index of quick color [0..6]");
+    c = new Command("selectQuickColor", Command::AnySel);
+    c->addParameter(Command::IntPar, false, "Index of quick color [0..6]");
     vymCommands.append(c);
 
-    c = new Command("toggleTreeEditor", Command::Any);
+    c = new Command("toggleTreeEditor", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("usesDarkTheme", Command::Any, Command::Bool);
+    c = new Command("usesDarkTheme", Command::AnySel, Command::BoolPar);
     vymCommands.append(c);
 
-    c = new Command("version", Command::Any);
+    c = new Command("version", Command::AnySel);
     vymCommands.append(c);
 
     //
     // Below are the commands for a map
     //
 
-    c = new Command("addMapCenterAtPos", Command::Any);
-    c->addParameter(Command::Double, false, "Position x");
-    c->addParameter(Command::Double, false, "Position y");
+    c = new Command("addMapCenterAtPos", Command::AnySel);
+    c->addParameter(Command::DoublePar, false, "Position x");
+    c->addParameter(Command::DoublePar, false, "Position y");
     c->setComment("Add MapCenter at position (x, y)");
     modelCommands.append(c);
 
     // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper. See vymmodelwrapper.h
     QString DEPRECATED(" DEPRECATED. Commands moved to branch or image. ");
 
-    c = new Command("addSlide", Command::Branch);
+    c = new Command("addSlide", Command::BranchSel);
     modelCommands.append(c);
 
-    c = new Command("addXLink", Command::BranchLike);
-    c->addParameter(Command::String, false, "End of XLink");
-    c->addParameter(Command::Int, true, "Width of XLink");
-    c->addParameter(Command::Color, true, "Color of XLink");
-    c->addParameter(Command::String, true, "Penstyle of XLink");
+    c = new Command("addXLink", Command::BranchLikeSel);
+    c->addParameter(Command::StringPar, false, "End of XLink");
+    c->addParameter(Command::IntPar, true, "Width of XLink");
+    c->addParameter(Command::ColorPar, true, "Color of XLink");
+    c->addParameter(Command::StringPar, true, "Penstyle of XLink");
     c->setComment("Add xlink from this branch to another branch");
     branchCommands.append(c);
 
-    c = new Command("centerCount", Command::BranchLike, Command::Int);
+    c = new Command("centerCount", Command::BranchLikeSel, Command::IntPar);
     modelCommands.append(c);
 
-    c = new Command("centerOnID", Command::Any);
-    c->addParameter(Command::String, false, "UUID of object to center on");
+    c = new Command("centerOnID", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "UUID of object to center on");
     modelCommands.append(c);
 
-    c = new Command("copy", Command::BranchOrImage);
+    c = new Command("copy", Command::BranchOrImageSel);
     modelCommands.append(c);
 
-    c = new Command("cut", Command::BranchOrImage);
+    c = new Command("cut", Command::BranchOrImageSel);
     modelCommands.append(c);
 
-    c = new Command("depth", Command::BranchOrImage, Command::Int);
+    c = new Command("depth", Command::BranchOrImageSel, Command::IntPar);
     modelCommands.append(c);
 
-    c = new Command("detach", Command::Branch);
+    c = new Command("detach", Command::BranchSel);
     modelCommands.append(c);
 
-    c = new Command("exportMap", Command::Any, Command::Bool);
-    c->addParameter(Command::String, false,
+    c = new Command("exportMap", Command::AnySel, Command::BoolPar);
+    c->addParameter(Command::StringPar, false,
               "Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, "
               "LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
     modelCommands.append(c);
 
-    c = new Command("findBranchByAttribute", Command::Any, Command::BranchItem);
+    c = new Command("findBranchByAttribute", Command::AnySel, Command::BranchPar);
     c->setComment("Find branch with given key/value pair. "
             "Returns first hit or null.");
-    c->addParameter(Command::String, false, "Key of attribute");
-    c->addParameter(Command::String, false, "Value of attribute");
+    c->addParameter(Command::StringPar, false, "Key of attribute");
+    c->addParameter(Command::StringPar, false, "Value of attribute");
     modelCommands.append(c);
 
-    c = new Command("findAttributeById", Command::Any, Command::AttributeItem);
+    c = new Command("findAttributeById", Command::AnySel, Command::AttributePar);
     c->setComment("Find Attribute with given unique Uuid. ");
-    c->addParameter(Command::String, false, "Uuid of attribute");
+    c->addParameter(Command::StringPar, false, "Uuid of attribute");
     modelCommands.append(c);
 
-    c = new Command("findBranchById", Command::Any, Command::BranchItem);
+    c = new Command("findBranchById", Command::AnySel, Command::BranchPar);
     c->setComment("Find branch with given unique Uuid. ");
-    c->addParameter(Command::String, false, "Uuid of branch");
+    c->addParameter(Command::StringPar, false, "Uuid of branch");
     modelCommands.append(c);
 
-    c = new Command("findBranchBySelection", Command::Any, Command::BranchItem);
+    c = new Command("findBranchBySelection", Command::AnySel, Command::BranchPar);
     c->setComment("Find branch with given selection string. ");
-    c->addParameter(Command::String, false, "Selection string");
+    c->addParameter(Command::StringPar, false, "Selection string");
     modelCommands.append(c);
 
-    c = new Command("findImageById", Command::Any, Command::ImageItem);
+    c = new Command("findImageById", Command::AnySel, Command::ImagePar);
     c->setComment("Find image with given unique Uuid. ");
-    c->addParameter(Command::String, false, "Uuid of image");
+    c->addParameter(Command::StringPar, false, "Uuid of image");
     modelCommands.append(c);
 
-    c = new Command("findXLinkById", Command::Any, Command::XLinkItem);
+    c = new Command("findXLinkById", Command::AnySel, Command::XLinkPar);
     c->setComment("Find xlink given unique Uuid. ");
-    c->addParameter(Command::String, false, "Uuid of xlink");
+    c->addParameter(Command::StringPar, false, "Uuid of xlink");
     modelCommands.append(c);
 
-    c = new Command("getDestPath", Command::Any, Command::String);
+    c = new Command("getDestPath", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("getFileDir", Command::Any, Command::String);
+    c = new Command("getFileDir", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("getFileName", Command::Any, Command::String);
+    c = new Command("getFileName", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("getHeadingPlainText", Command::TreeItem, Command::String);
+    c = new Command("getHeadingPlainText", Command::TreeItemSel, Command::StringPar);
     c->setComment(DEPRECATED + "Branch::headingText()");
     modelCommands.append(c);
 
-    c = new Command("getIntAttribute", Command::Branch, Command::Int);
-    c->addParameter(Command::String, false, "Key of string attribute");
+    c = new Command("getIntAttribute", Command::BranchSel, Command::IntPar);
+    c->addParameter(Command::StringPar, false, "Key of string attribute");
     modelCommands.append(c);
 
-    c = new Command("getAuthor", Command::Any, Command::String);
+    c = new Command("getAuthor", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("getComment", Command::Any, Command::String);
+    c = new Command("getComment", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("getTitle", Command::Any, Command::String);
+    c = new Command("getTitle", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("getNotePlainText", Command::TreeItem, Command::String);
+    c = new Command("getNotePlainText", Command::TreeItemSel, Command::StringPar);
     c->setComment(DEPRECATED + " b.getNoteText");
     modelCommands.append(c);
 
-    c = new Command("getNoteXML", Command::TreeItem, Command::String);
+    c = new Command("getNoteXML", Command::TreeItemSel, Command::StringPar);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("getSelectionString", Command::TreeItem, Command::String);
+    c = new Command("getSelectionString", Command::TreeItemSel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("hasRichTextNote", Command::Branch, Command::Bool);
+    c = new Command("hasRichTextNote", Command::BranchSel, Command::BoolPar);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("loadBranchReplace", Command::Any, Command::Bool);
-    c->addParameter(Command::String, false, "Filename of map to load");
-    c->addParameter(Command::BranchItem, false, "Branch to be replaced by map");
+    c = new Command("loadBranchReplace", Command::AnySel, Command::BoolPar);
+    c->addParameter(Command::StringPar, false, "Filename of map to load");
+    c->addParameter(Command::BranchPar, false, "Branch to be replaced by map");
     c->setComment("Replace branch with data from given path");
     modelCommands.append(c);
 
-    c = new Command("newBranchIterator", Command::Branch);
-    c->addParameter(Command::String, false, "Name of iterator");
-    c->addParameter(Command::Bool, true, "Flag to go deep levels first");
+    c = new Command("newBranchIterator", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Name of iterator");
+    c->addParameter(Command::BoolPar, true, "Flag to go deep levels first");
     modelCommands.append(c);
 
-    c = new Command("isScrolled", Command::Branch, Command::Bool);
+    c = new Command("isScrolled", Command::BranchSel, Command::BoolPar);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("moveSlideDown", Command::Any);
+    c = new Command("moveSlideDown", Command::AnySel);
     modelCommands.append(c);
 
-    c = new Command("moveSlideUp", Command::Any);
+    c = new Command("moveSlideUp", Command::AnySel);
     modelCommands.append(c);
 
-    c = new Command("move", Command::BranchOrImage);
-    c->addParameter(Command::Double, false, "Position x");
-    c->addParameter(Command::Double, false, "Position y");
+    c = new Command("move", Command::BranchOrImageSel);
+    c->addParameter(Command::DoublePar, false, "Position x");
+    c->addParameter(Command::DoublePar, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("moveRel", Command::BranchOrImage);
-    c->addParameter(Command::Double, false, "Position x");
-    c->addParameter(Command::Double, false, "Position y");
+    c = new Command("moveRel", Command::BranchOrImageSel);
+    c->addParameter(Command::DoublePar, false, "Position x");
+    c->addParameter(Command::DoublePar, false, "Position y");
     modelCommands.append(c);
 
-    c = new Command("nextBranch", Command::Branch, Command::BranchItem);
-    c->addParameter(Command::String, false, "Name of iterator");
+    c = new Command("nextBranch", Command::BranchSel, Command::BranchPar);
+    c->addParameter(Command::StringPar, false, "Name of iterator");
     modelCommands.append(c);
 
-    c = new Command("note2URLs", Command::Branch);
+    c = new Command("note2URLs", Command::BranchSel);
     modelCommands.append(c);
 
-    c = new Command("paste", Command::Branch);
+    c = new Command("paste", Command::BranchSel);
     modelCommands.append(c);
 
-    c = new Command("redo", Command::Any);
+    c = new Command("redo", Command::AnySel);
     modelCommands.append(c);
 
     c = new Command("relinkTo",
-                    Command::TreeItem,
-                    Command::Bool); // FIXME different number of parameters for Image or Branch
+                    Command::TreeItemSel,
+                    Command::BoolPar); // FIXME different number of parameters for Image or Branch
     c->setComment(DEPRECATED);
-    c->addParameter(Command::String, false, "Selection string of parent");
-    c->addParameter(Command::Int, false, "Index position");
-    c->addParameter(Command::Double, true, "Position x");
-    c->addParameter(Command::Double, true, "Position y");
+    c->addParameter(Command::StringPar, false, "Selection string of parent");
+    c->addParameter(Command::IntPar, false, "Index position");
+    c->addParameter(Command::DoublePar, true, "Position x");
+    c->addParameter(Command::DoublePar, true, "Position y");
     modelCommands.append(c);
 
-    c = new Command("remove", Command::TreeItem);
+    c = new Command("remove", Command::TreeItemSel);
     modelCommands.append(c);
 
-    c = new Command("removeAttribute", Command::Any);
-    c->addParameter(Command::AttributeItem, false, "Attribute to be removed");
+    c = new Command("removeAttribute", Command::AnySel);
+    c->addParameter(Command::AttributePar, false, "Attribute to be removed");
     c->setComment("Remove attribute");
     modelCommands.append(c);
 
-    c = new Command("removeBranch", Command::Any);
-    c->addParameter(Command::BranchItem, false, "Branch to be removed");
+    c = new Command("removeBranch", Command::AnySel);
+    c->addParameter(Command::BranchPar, false, "Branch to be removed");
     c->setComment("Remove branch");
     modelCommands.append(c);
 
-    c = new Command("removeImage", Command::Any);
-    c->addParameter(Command::ImageItem, false, "Branch to be removed");
+    c = new Command("removeImage", Command::AnySel);
+    c->addParameter(Command::ImagePar, false, "Branch to be removed");
     c->setComment("Remove image");
     modelCommands.append(c);
 
-    c = new Command("removeKeepChildren", Command::Branch);
+    c = new Command("removeKeepChildren", Command::BranchSel);
     c->setComment("Remove branch but keep its children");
     modelCommands.append(c);
 
-    c = new Command("removeSlide", Command::Any);
-    c->addParameter(Command::Int, false, "Index of slide to remove");
+    c = new Command("removeSlide", Command::AnySel);
+    c->addParameter(Command::IntPar, false, "Index of slide to remove");
     modelCommands.append(c);
 
-    c = new Command("repeatLastCommand", Command::Any);
+    c = new Command("repeatLastCommand", Command::AnySel);
     modelCommands.append(c);
 
-    c = new Command("saveImage", Command::Image);
-    c->addParameter(Command::String, false, "Filename of image to save");
-    c->addParameter(Command::String, false, "Format of image to save");
+    c = new Command("saveImage", Command::ImageSel);
+    c->addParameter(Command::StringPar, false, "Filename of image to save");
+    c->addParameter(Command::StringPar, false, "Format of image to save");
     modelCommands.append(c);
 
-    c = new Command("saveNote", Command::Branch);
-    c->addParameter(Command::String, false, "Filename of note to save");
+    c = new Command("saveNote", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Filename of note to save");
     modelCommands.append(c);
 
-    c = new Command("saveSelection", Command::BranchOrImage);
-    c->addParameter(Command::String, false, "Filename to save branch or image");
+    c = new Command("saveSelection", Command::BranchOrImageSel);
+    c->addParameter(Command::StringPar, false, "Filename to save branch or image");
     modelCommands.append(c);
 
-    c = new Command("scroll", Command::Branch);
+    c = new Command("scroll", Command::BranchSel);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("select", Command::Any, Command::Bool);
-    c->addParameter(Command::String, false, "Selection string");
+    c = new Command("select", Command::AnySel, Command::BoolPar);
+    c->addParameter(Command::StringPar, false, "Selection string");
     modelCommands.append(c);
 
-    c = new Command("selectedBranch", Command::Any, Command::BranchItem);
+    c = new Command("selectedBranch", Command::AnySel, Command::BranchPar);
     modelCommands.append(c);
 
-    c = new Command("selectID", Command::Any, Command::Bool);
-    c->addParameter(Command::String, false, "Unique ID");
+    c = new Command("selectID", Command::AnySel, Command::BoolPar);
+    c->addParameter(Command::StringPar, false, "Unique ID");
     modelCommands.append(c);
 
-    c = new Command("selectLatestAdded", Command::Any, Command::Bool);
+    c = new Command("selectLatestAdded", Command::AnySel, Command::BoolPar);
     modelCommands.append(c);
 
-    c = new Command("selectToggle", Command::BranchOrImage, Command::Bool);
+    c = new Command("selectToggle", Command::BranchOrImageSel, Command::BoolPar);
     modelCommands.append(c);
 
-    c = new Command("setHeadingConfluencePageName", Command::Branch);
+    c = new Command("setHeadingConfluencePageName", Command::BranchSel);
     modelCommands.append(c);
 
-    c = new Command("setAnimCurve", Command::Any);
-    c->addParameter(Command::Int, false,
+    c = new Command("setAnimCurve", Command::AnySel);
+    c->addParameter(Command::IntPar, false,
               "EasingCurve used in animation in MapEditor");
     modelCommands.append(c);
 
-    c = new Command("setAuthor", Command::Any);
-    c->addParameter(Command::String, false, "");
+    c = new Command("setAuthor", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "");
     modelCommands.append(c);
 
-    c = new Command("setAnimDuration", Command::Any);
-    c->addParameter(Command::Int, false,
+    c = new Command("setAnimDuration", Command::AnySel);
+    c->addParameter(Command::IntPar, false,
               "Duration of animation in MapEditor in milliseconds");
     modelCommands.append(c);
 
-    c = new Command("setBackgroundColor", Command::Any);
-    c->addParameter(Command::Color, false, "Color of map background");
+    c = new Command("setBackgroundColor", Command::AnySel);
+    c->addParameter(Command::ColorPar, false, "Color of map background");
     modelCommands.append(c);
 
-    c = new Command("setComment", Command::Any);
-    c->addParameter(Command::String, false, "");
+    c = new Command("setComment", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "");
     modelCommands.append(c);
 
-    c = new Command("setTitle", Command::Any);
-    c->addParameter(Command::String, false, "");
+    c = new Command("setTitle", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "");
     modelCommands.append(c);
 
-    c = new Command("setDefaultLinkColor", Command::Any);
-    c->addParameter(Command::Color, false, "Default color of links");
+    c = new Command("setDefaultLinkColor", Command::AnySel);
+    c->addParameter(Command::ColorPar, false, "Default color of links");
     modelCommands.append(c);
 
-    c = new Command("setLinkStyle", Command::Any);
-    c->addParameter(Command::String, false, "Link style in map");
+    c = new Command("setLinkStyle", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "Link style in map");
     modelCommands.append(c);
 
-    c = new Command("setRotationView", Command::Any);
-    c->addParameter(Command::Double, false, "Rotation of view of map");
+    c = new Command("setRotationView", Command::AnySel);
+    c->addParameter(Command::DoublePar, false, "Rotation of view of map");
     modelCommands.append(c);
 
-    c = new Command("setTitle", Command::Any);
-    c->addParameter(Command::String, false, "");
+    c = new Command("setTitle", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "");
     modelCommands.append(c);
 
-    c = new Command("setZoom", Command::Any);
-    c->addParameter(Command::Double, false, "Zoomfactor of map");
+    c = new Command("setZoom", Command::AnySel);
+    c->addParameter(Command::DoublePar, false, "Zoomfactor of map");
     modelCommands.append(c);
 
     modelCommands.append(c);
 
-    c = new Command("setSelectionColor", Command::Any);
-    c->addParameter(Command::Color, false, "Color of selection box");
+    c = new Command("setSelectionColor", Command::AnySel);
+    c->addParameter(Command::ColorPar, false, "Color of selection box");
     modelCommands.append(c);
 
-    c = new Command("setSelectionPenColor", Command::Any);
-    c->addParameter(Command::Color, false, "Color of selection box border");
+    c = new Command("setSelectionPenColor", Command::AnySel);
+    c->addParameter(Command::ColorPar, false, "Color of selection box border");
     modelCommands.append(c);
 
-    c = new Command("setSelectionPenWidth", Command::Any);
-    c->addParameter(Command::Int, false, "Selection box border width ");
+    c = new Command("setSelectionPenWidth", Command::AnySel);
+    c->addParameter(Command::IntPar, false, "Selection box border width ");
     modelCommands.append(c);
 
-    c = new Command("setSelectionBrushColor", Command::Any);
-    c->addParameter(Command::Color, false, "Color of selection box background");
+    c = new Command("setSelectionBrushColor", Command::AnySel);
+    c->addParameter(Command::ColorPar, false, "Color of selection box background");
     modelCommands.append(c);
 
-    c = new Command("sleep", Command::Any);
-    c->addParameter(Command::Int, false, "Sleep (seconds)");
+    c = new Command("sleep", Command::AnySel);
+    c->addParameter(Command::IntPar, false, "Sleep (seconds)");
     modelCommands.append(c);
 
-    c = new Command("slideCount", Command::Any, Command::Int);
+    c = new Command("slideCount", Command::AnySel, Command::IntPar);
     modelCommands.append(c);
 
-    c = new Command("toggleFlagByUid", Command::Branch);
-    c->addParameter(Command::String, false, "Uid of flag to toggle");
+    c = new Command("toggleFlagByUid", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Uid of flag to toggle");
     modelCommands.append(c);
 
-    c = new Command("toggleScroll", Command::Branch);
+    c = new Command("toggleScroll", Command::BranchSel);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("undo", Command::Any);
+    c = new Command("undo", Command::AnySel);
     modelCommands.append(c);
 
-    c = new Command("unscroll", Command::Branch, Command::Bool);
+    c = new Command("unscroll", Command::BranchSel, Command::BoolPar);
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
-    c = new Command("unselectAll", Command::Any);
+    c = new Command("unselectAll", Command::AnySel);
     modelCommands.append(c);
 
 
@@ -944,472 +944,478 @@ void Main::setupAPI()
     // Below are the commands for a branch
     //
 
-    c = new Command("addBranch", Command::Branch);
+    c = new Command("addBranch", Command::BranchSel);
     c->setComment("Add branch as child branch to current branch");
     branchCommands.append(c);
 
-    c = new Command("addBranchAt", Command::Branch);
+    c = new Command("addBranchAt", Command::BranchSel);
     c->setComment("Add branch at position to current branch");
-    c->addParameter(Command::Int, true, "Index of new branch");
+    c->addParameter(Command::IntPar, true, "Index of new branch");
     branchCommands.append(c);
 
-    c = new Command("addBranchBefore", Command::Branch);
+    c = new Command("addBranchBefore", Command::BranchSel);
     c->setComment("Add branch as parent before current branch");
     branchCommands.append(c);
 
-    c = new Command("attributeAsInt", Command::Branch, Command::Int);
+    c = new Command("attributeAsInt", Command::BranchSel, Command::IntPar);
     c->setComment("Get integer value of attribute with given key");
-    c->addParameter(Command::String, false, "Key of integer attribute");
+    c->addParameter(Command::StringPar, false, "Key of integer attribute");
     branchCommands.append(c);
 
-    c = new Command("attributeAsString", Command::Branch, Command::String);
+    c = new Command("attributeAsString", Command::BranchSel, Command::StringPar);
     c->setComment("Get string value of attribute with given key");
-    c->addParameter(Command::String, false, "Key of string attribute");
+    c->addParameter(Command::StringPar, false, "Key of string attribute");
     branchCommands.append(c);
 
-    c = new Command("branchCount", Command::Branch, Command::Int);
+    c = new Command("branchCount", Command::BranchSel, Command::IntPar);
     c->setComment("Return number of child branches");
     branchCommands.append(c);
 
-    c = new Command("clearFlags", Command::Branch);
+    c = new Command("clearFlags", Command::BranchSel);
     c->setComment("Clear all flags of branch");
     branchCommands.append(c);
 
-    c = new Command("colorBranch", Command::Branch);
-    c->addParameter(Command::Color, true, "New color");
+    c = new Command("colorBranch", Command::BranchSel);
+    c->addParameter(Command::ColorPar, true, "New color");
     c->setComment("Set color of heading of branch");
     branchCommands.append(c);
 
-    c = new Command("colorSubtree", Command::Branch);
-    c->addParameter(Command::Color, true, "New color");
+    c = new Command("colorSubtree", Command::BranchSel);
+    c->addParameter(Command::ColorPar, true, "New color");
     c->setComment("Set color of headings of all child branches and all their children");
     branchCommands.append(c);
 
-    c = new Command("cycleTask", Command::BranchOrImage, Command::Bool);
-    c->addParameter(Command::Bool, true, "Flag to cycle in reverse order");
+    c = new Command("cycleTask", Command::BranchOrImageSel, Command::BoolPar);
+    c->addParameter(Command::BoolPar, true, "Flag to cycle in reverse order");
     c->setComment("Cycle states of task in branch. Returns false, if branch has no task");
     branchCommands.append(c);
 
-    c = new Command("getFrameType", Command::Branch, Command::String);
+    c = new Command("getFrameType", Command::BranchSel, Command::StringPar);
     c->setComment("Set frame type");
     branchCommands.append(c);
 
-    c = new Command("getHeading", Command::Branch, Command::String);
+    c = new Command("getHeading", Command::BranchSel, Command::StringPar);
     c->setComment("Get heading of branch as text");
     branchCommands.append(c);
 
-    c = new Command("getHeadingXML", Command::Branch, Command::String);
+    c = new Command("getHeadingXML", Command::BranchSel, Command::StringPar);
     c->setComment("Get heading of branch as XML");
     branchCommands.append(c);
 
-    c = new Command("getUid", Command::Branch, Command::String);
+    c = new Command("getUid", Command::BranchSel, Command::StringPar);
     c->setComment("Get Uuid of branch as string");
     branchCommands.append(c);
 
-    c = new Command("getJiraData", Command::Branch, Command::String);
+    c = new Command("getJiraData", Command::BranchSel, Command::StringPar);
     c->setComment("Get data from Jira server, either ticket or run defined query");
-    c->addParameter(Command::Bool, false, "Update every branch in subtree");
+    c->addParameter(Command::BoolPar, false, "Update every branch in subtree");
     branchCommands.append(c);
 
-    c = new Command("getNum", Command::Branch, Command::Int);
+    c = new Command("getNum", Command::BranchSel, Command::IntPar);
     c->setComment("Return position of branch in subtree");
     branchCommands.append(c);
 
-    c = new Command("getPosX", Command::TreeItem);
+    c = new Command("getPosX", Command::TreeItemSel);
     c->setComment("get x position of branch relative to parent");
     branchCommands.append(c);
 
-    c = new Command("getPosY", Command::TreeItem);
+    c = new Command("getPosY", Command::TreeItemSel);
     c->setComment("get y position of branch relative to parent");
     branchCommands.append(c);
 
-    c = new Command("getRotationHeading", Command::Branch);
+    c = new Command("getRotationHeading", Command::BranchSel);
     c->setComment("get rotation of heading");
     branchCommands.append(c);
 
-    c = new Command("getRotationSubtree", Command::Branch);
+    c = new Command("getRotationSubtree", Command::BranchSel);
     c->setComment("get rotation of subttree");
     branchCommands.append(c);
 
-    c = new Command("getScenePos", Command::Branch);
+    c = new Command("getScenePos", Command::BranchSel);
     c->setComment("get position of branch in scene coordinates");
     branchCommands.append(c);
 
-    c = new Command("getScenePosX", Command::Branch);
+    c = new Command("getScenePosX", Command::BranchSel);
     c->setComment("get x position of branch in scene coordinates");
     branchCommands.append(c);
 
-    c = new Command("getScenePosY", Command::Branch);
+    c = new Command("getScenePosY", Command::BranchSel);
     c->setComment("get y position of branch in scene coordinates");
     branchCommands.append(c);
 
-    c = new Command("getTaskPriorityDelta", Command::Branch, Command::Int);
+    c = new Command("getTaskPriorityDelta", Command::BranchSel, Command::IntPar);
     c->setComment("Return delta of priority of task");
     branchCommands.append(c);
 
-    c = new Command("getTaskSleep", Command::Branch, Command::String);
+    c = new Command("getTaskSleep", Command::BranchSel, Command::StringPar);
     c->setComment("Return sleep time of task");
     branchCommands.append(c);
 
-    c = new Command("getTaskSleepDays", Command::Branch, Command::Int);
+    c = new Command("getTaskSleepDays", Command::BranchSel, Command::IntPar);
     c->setComment("Return sleep time of task in days");
     branchCommands.append(c);
 
-    c = new Command("getTaskStatus", Command::Branch, Command::String);
+    c = new Command("getTaskStatus", Command::BranchSel, Command::StringPar);
     c->setComment("Return status of task");
     branchCommands.append(c);
 
-    c = new Command("getUrl", Command::Branch, Command::String);
+    c = new Command("getUrl", Command::BranchSel, Command::StringPar);
     c->setComment("Return  url of branch");
     branchCommands.append(c);
 
-    c = new Command("getVymLink", Command::Branch, Command::String);
+    c = new Command("getVymLink", Command::BranchSel, Command::StringPar);
     c->setComment("Get vymLink of branch");
     branchCommands.append(c);
 
-    c = new Command("hasActiveFlag", Command::TreeItem, Command::Bool);
-    c->addParameter(Command::String, false, "Name of flag");
+    c = new Command("hasActiveFlag", Command::TreeItemSel, Command::BoolPar);
+    c->addParameter(Command::StringPar, false, "Name of flag");
     c->setComment("Check if branch has an active flag with given name");
     branchCommands.append(c);
 
-    c = new Command("hasNote", Command::Branch, Command::Bool);
+    c = new Command("hasNote", Command::BranchSel, Command::BoolPar);
     c->setComment("Check if branch has a note");
     branchCommands.append(c);
 
-    c = new Command("hasRichTextHeading", Command::Branch, Command::Bool);
+    c = new Command("hasRichTextHeading", Command::BranchSel, Command::BoolPar);
     c->setComment("Check if branch has a RichText heading or just plain text");
     branchCommands.append(c);
 
-    c = new Command("hasTask", Command::Branch, Command::Bool);
+    c = new Command("hasTask", Command::BranchSel, Command::BoolPar);
     branchCommands.append(c);
 
-    c = new Command("headingText", Command::Branch, Command::String);
+    c = new Command("headingText", Command::BranchSel, Command::StringPar);
     c->setComment("Set heading of branch from plaintext string");
     branchCommands.append(c);
 
-    c = new Command("imageCount", Command::Branch, Command::Int);
+    c = new Command("imageCount", Command::BranchSel, Command::IntPar);
     c->setComment("Return number of child images");
     branchCommands.append(c);
 
-    c = new Command("importDir", Command::Branch);
-    c->addParameter(Command::String, false, "Directory name to import");
+    c = new Command("importDir", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Directory name to import");
     c->setComment("Add directory structure to branch (experimental)");
     branchCommands.append(c);
 
-    c = new Command("loadBranchInsert", Command::Branch);
-    c->addParameter(Command::String, false, "Filename of map to load");
-    c->addParameter(Command::Int, true, "Index where map is inserted");
+    c = new Command("loadBranchInsert", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Filename of map to load");
+    c->addParameter(Command::IntPar, true, "Index where map is inserted");
     c->setComment("Insert branch with given path to branch at index");
     branchCommands.append(c);
 
-    c = new Command("loadImage", Command::Branch);
-    c->addParameter(Command::String, false, "Filename of image");
+    c = new Command("loadImage", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Filename of image");
     c->setComment("Load an image with given path and attach to branch");
     branchCommands.append(c);
 
-    c = new Command("loadNote", Command::Branch);
-    c->addParameter(Command::String, false, "Filename of note");
+    c = new Command("loadNote", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Filename of note");
     c->setComment("Load a note with given path and attach to branch");
     branchCommands.append(c);
 
-    c = new Command("isScrolled", Command::Branch, Command::Bool);
+    c = new Command("isScrolled", Command::BranchSel, Command::BoolPar);
     c->setComment("Check if branch is scrolled");
     branchCommands.append(c);
 
-    c = new Command("moveDown", Command::Branch);
+    c = new Command("moveDown", Command::BranchSel);
     c->setComment("Move branch down");
     branchCommands.append(c);
 
-    c = new Command("moveUp", Command::Branch);
+    c = new Command("moveUp", Command::BranchSel);
     c->setComment("Move branch up");
     branchCommands.append(c);
 
-    c = new Command("relinkToBranch", Command::Branch);
+    c = new Command("relinkToBranch", Command::BranchSel);
     c->setComment("Relink branch to destination branch");
-    c->addParameter(Command::BranchItem, false, "Destination branch");
+    c->addParameter(Command::BranchPar, false, "Destination branch");
     branchCommands.append(c);
 
-    c = new Command("relinkToBranchAt", Command::Branch);
+    c = new Command("relinkToBranchAt", Command::BranchSel);
     c->setComment("Relink branch to destination branch at position");
-    c->addParameter(Command::BranchItem, false, "Destination branch");
-    c->addParameter(Command::Int, false, "Position (0 is first)");
+    c->addParameter(Command::BranchPar, false, "Destination branch");
+    c->addParameter(Command::IntPar, false, "Position (0 is first)");
     branchCommands.append(c);
 
-    c = new Command("removeChildren", Command::Branch);
+    c = new Command("removeChildren", Command::BranchSel);
     c->setComment("Remove all children of branch");
     branchCommands.append(c);
 
-    c = new Command("removeChildrenBranches", Command::Branch);
+    c = new Command("removeChildrenBranches", Command::BranchSel);
     c->setComment("Remove all children branches of branch");
     branchCommands.append(c);
 
-    c = new Command("scroll", Command::Branch);
+    c = new Command("scroll", Command::BranchSel);
     c->setComment("Scroll branch");
     branchCommands.append(c);
 
-    c = new Command("select", Command::Branch);
+    c = new Command("select", Command::BranchSel);
     c->setComment("Select (only) this branch");
     branchCommands.append(c);
 
-    c = new Command("selectFirstBranch", Command::Branch, Command::Bool);
+    c = new Command("selectFirstBranch", Command::BranchSel, Command::BoolPar);
     c->setComment("Select the first of all sibling branches");
     branchCommands.append(c);
 
-    c = new Command("selectFirstChildBranch", Command::Branch, Command::Bool);
+    c = new Command("selectFirstChildBranch", Command::BranchSel, Command::BoolPar);
     c->setComment("Select the first of all child branches");
     branchCommands.append(c);
 
-    c = new Command("selectLastChildBranch", Command::Branch, Command::Bool);
+    c = new Command("selectLastChildBranch", Command::BranchSel, Command::BoolPar);
     branchCommands.append(c);
 
-    c = new Command("selectLastBranch", Command::Branch, Command::Bool);
+    c = new Command("selectLastBranch", Command::BranchSel, Command::BoolPar);
     c->setComment("Select the last of all sibling branches");
     branchCommands.append(c);
 
-    c = new Command("selectParent", Command::Branch, Command::Bool);
+    c = new Command("selectParent", Command::BranchSel, Command::BoolPar);
     c->setComment("Select parent of branch");
     branchCommands.append(c);
 
-    c = new Command("selectXLink", Command::Branch, Command::Bool);
-    c->addParameter(Command::Int, false, "Number of xlink");
+    c = new Command("selectXLink", Command::BranchSel, Command::BoolPar);
+    c->addParameter(Command::IntPar, false, "Number of xlink");
     c->setComment("Select the xlink with given index attached to this branch");
     branchCommands.append(c);
 
-    c = new Command("selectXLinkOtherEnd", Command::Branch, Command::Bool);
-    c->addParameter(Command::Int, false, "Number of xlink");
+    c = new Command("selectXLinkOtherEnd", Command::BranchSel, Command::BoolPar);
+    c->addParameter(Command::IntPar, false, "Number of xlink");
     c->setComment("Select the branch, which is the the other end of xlink with given index attached to this branch");
     branchCommands.append(c);
 
-    c = new Command("setAttribute", Command::Branch);
-    c->addParameter(Command::String, false, "Key of attribute as string");
-    c->addParameter(Command::String, false, "String Value of attribute");
+    c = new Command("setAttribute", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Key of attribute as string");
+    c->addParameter(Command::StringPar, false, "String Value of attribute");
     branchCommands.append(c);
 
-    c = new Command("setFlagByName", Command::TreeItem);
+    c = new Command("setFlagByName", Command::TreeItemSel);
     c->setComment("Set flag of branch by string with name of flag");
-    c->addParameter(Command::String, false, "Name of flag");
+    c->addParameter(Command::StringPar, false, "Name of flag");
     branchCommands.append(c);
 
-    c = new Command("setFrameType", Command::BranchOrImage);
-    c->addParameter(Command::String, false, "Type of frame");
+    c = new Command("setFrameType", Command::BranchOrImageSel);
+    c->addParameter(Command::StringPar, false, "Type of frame");
     c->setComment("Set type of frame");
     branchCommands.append(c);
 
-    c = new Command("setFramePenColor", Command::BranchOrImage);
-    c->addParameter(Command::Color, false, "Color of frame border line");
+    c = new Command("setFramePenColor", Command::BranchOrImageSel);
+    c->addParameter(Command::ColorPar, false, "Color of frame border line");
     c->setComment("Set color of frame border");
     branchCommands.append(c);
 
-    c = new Command("setFrameBrushColor", Command::BranchOrImage);
-    c->addParameter(Command::Color, false, "Color of frame background");
+    c = new Command("setFrameBrushColor", Command::BranchOrImageSel);
+    c->addParameter(Command::ColorPar, false, "Color of frame background");
     c->setComment("Set color of frame background");
     branchCommands.append(c);
 
-    c = new Command("setFramePadding", Command::BranchOrImage);
-    c->addParameter(Command::Int, false, "Padding around frame");
+    c = new Command("setFramePadding", Command::BranchOrImageSel);
+    c->addParameter(Command::IntPar, false, "Padding around frame");
     c->setComment("Set padding of frame");
     branchCommands.append(c);
 
-    c = new Command("setFramePenWidth", Command::BranchOrImage);
-    c->addParameter(Command::Int, false, "Width of frame pen");
+    c = new Command("setFramePenWidth", Command::BranchOrImageSel);
+    c->addParameter(Command::IntPar, false, "Width of frame pen");
     c->setComment("Set width of frame border");
     branchCommands.append(c);
 
-    c = new Command("setHeadingRichText", Command::Branch);
-    c->addParameter(Command::String, false, "New heading");
+    c = new Command("setHeadingRichText", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "New heading");
     c->setComment("Set heading of branch as HTML-like string");
     branchCommands.append(c);
 
-    c = new Command("setHeadingText", Command::Branch);
-    c->addParameter(Command::String, false, "New heading");
+    c = new Command("setHeadingText", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "New heading");
     c->setComment("Set heading of branch as plain text string");
     branchCommands.append(c);
 
-    c = new Command("setHideExport", Command::Branch);
-    c->addParameter(Command::Bool, false, "Set if branch should be visible in export");
+    c = new Command("setHideExport", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Set if branch should be visible in export");
     branchCommands.append(c);
 
-    c = new Command("setHideLinksUnselected", Command::Branch);
-    c->addParameter(Command::Bool, false,
+    c = new Command("setHideLinksUnselected", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false,
               "Set if links of items should be visible for unselected items");
     branchCommands.append(c);
 
-    c = new Command("setNoteRichText", Command::Branch);
-    c->addParameter(Command::String, false, "Note of branch");
+    c = new Command("setNoteRichText", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Note of branch");
     branchCommands.append(c);
 
-    c = new Command("setNoteText", Command::Branch);
-    c->addParameter(Command::String, false, "Note of branch");
+    c = new Command("setNoteText", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Note of branch");
+    c->setComment("Set note of branch to plain text");
     branchCommands.append(c);
 
-    c = new Command("setPos", Command::Branch);
-    c->addParameter(Command::Double, false, "Position x");
-    c->addParameter(Command::Double, false, "Position y");
+    c = new Command("setOnlyFlags", Command::BranchSel);
+    c->setComment("Set only given flags in branch (used for undo)");
     branchCommands.append(c);
 
-    c = new Command("setRotationAutoDesign", Command::Branch);
-    c->addParameter(Command::Bool, false, "Rotate automatically");
+    c = new Command("setPos", Command::BranchSel);
+    c->addParameter(Command::DoublePar, false, "Position x");
+    c->addParameter(Command::DoublePar, false, "Position y");
+    c->setComment("Set position of branch to (x,y) in local coordinates");
     branchCommands.append(c);
 
-    c = new Command("setRotationHeading", Command::Branch);
-    c->addParameter(Command::Int, false, "Rotation angle of heading and flags");
+    c = new Command("setRotationAutoDesign", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Rotate automatically");
     branchCommands.append(c);
 
-    c = new Command("setRotationSubtree", Command::Branch);
-    c->addParameter(Command::Int, false, "Rotation angle of heading and subtree");
+    c = new Command("setRotationHeading", Command::BranchSel);
+    c->addParameter(Command::IntPar, false, "Rotation angle of heading and flags");
     branchCommands.append(c);
 
-    c = new Command("setScaleAutoDesign", Command::Branch);
-    c->addParameter(Command::Bool, false, "Scale automatically");
+    c = new Command("setRotationSubtree", Command::BranchSel);
+    c->addParameter(Command::IntPar, false, "Rotation angle of heading and subtree");
     branchCommands.append(c);
 
-    c = new Command("setScaleHeading", Command::BranchOrImage);
-    c->addParameter(Command::Double, false, "Scale heading of branch by factor f");
+    c = new Command("setScaleAutoDesign", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Scale automatically");
     branchCommands.append(c);
 
-    c = new Command("setScaleSubtree", Command::Branch);
-    c->addParameter(Command::Double, false, "Scale subtree by factor f");
+    c = new Command("setScaleHeading", Command::BranchOrImageSel);
+    c->addParameter(Command::DoublePar, false, "Scale heading of branch by factor f");
     branchCommands.append(c);
 
-    c = new Command("setTaskPriorityDelta", Command::Branch);
-    c->addParameter(Command::String, false, "Manually add value to priority of task");
+    c = new Command("setScaleSubtree", Command::BranchSel);
+    c->addParameter(Command::DoublePar, false, "Scale subtree by factor f");
+    branchCommands.append(c);
+
+    c = new Command("setTaskPriorityDelta", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Manually add value to priority of task");
     c->setComment("Set value to be added on priority of task");
     branchCommands.append(c);
 
-    c = new Command("setTaskSleep", Command::Branch);
-    c->addParameter(Command::String, false, "Days to sleep");
+    c = new Command("setTaskSleep", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Days to sleep");
     c->setComment("Set how long task should sleep");
     branchCommands.append(c);
 
-    c = new Command("setUrl", Command::Branch);
-    c->addParameter(Command::String, false, "Url of TreeItem");
+    c = new Command("setUrl", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Url of TreeItem");
     c->setComment("Set Url of branch");
     branchCommands.append(c);
 
-    c = new Command("setVymLink", Command::Branch);
-    c->addParameter(Command::String, false, "Vymlink of branch");
+    c = new Command("setVymLink", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Vymlink of branch");
     c->setComment("Set VymLink of branch");
     branchCommands.append(c);
 
-    c = new Command("setXLinkColor", Command::XLink);
-    c->addParameter(Command::String, false, "Color of xlink");
+    c = new Command("setXLinkColor", Command::XLinkSel);
+    c->addParameter(Command::StringPar, false, "Color of xlink");
     c->setComment("Set color of xlink");
     branchCommands.append(c);
 
-    c = new Command("setXLinkStyle", Command::XLink);
-    c->addParameter(Command::String, false, "Style of xlink");
+    c = new Command("setXLinkStyle", Command::XLinkSel);
+    c->addParameter(Command::StringPar, false, "Style of xlink");
     c->setComment("Set style of xlink");
     branchCommands.append(c);
 
-    c = new Command("setXLinkStyleBegin", Command::XLink);
-    c->addParameter(Command::String, false, "Style of xlink begin");
+    c = new Command("setXLinkStyleBegin", Command::XLinkSel);
+    c->addParameter(Command::StringPar, false, "Style of xlink begin");
     c->setComment("Set begin style of xlink");
     branchCommands.append(c);
 
-    c = new Command("setXLinkStyleEnd", Command::XLink);
-    c->addParameter(Command::String, false, "Style of xlink end");
+    c = new Command("setXLinkStyleEnd", Command::XLinkSel);
+    c->addParameter(Command::StringPar, false, "Style of xlink end");
     c->setComment("Set end style of xlink");
     branchCommands.append(c);
 
-    c = new Command("setXLinkWidth", Command::XLink);
-    c->addParameter(Command::Int, false, "Width of xlink");
+    c = new Command("setXLinkWidth", Command::XLinkSel);
+    c->addParameter(Command::IntPar, false, "Width of xlink");
     c->setComment("Set width of xlink");
     branchCommands.append(c);
 
-    c = new Command("sortChildren", Command::Branch);
-    c->addParameter(Command::Bool, true,
+    c = new Command("sortChildren", Command::BranchSel);
+    c->addParameter(Command::BoolPar, true,
               "Sort children of branch in revers order if set");
     c->setComment("Sort children of branch");
     branchCommands.append(c);
 
-    c = new Command("toggleFlagByName", Command::Branch);
+    c = new Command("toggleFlagByName", Command::BranchSel);
     c->setComment("Toggle flag of branch by string with name of flag");
-    c->addParameter(Command::String, false, "Name of flag to toggle");
+    c->addParameter(Command::StringPar, false, "Name of flag to toggle");
     branchCommands.append(c);
 
-    c = new Command("toggleScroll", Command::Branch);
+    c = new Command("toggleScroll", Command::BranchSel);
     c->setComment("Toggle scroll state of branch");
     branchCommands.append(c);
 
-    c = new Command("toggleTarget", Command::Branch);
+    c = new Command("toggleTarget", Command::BranchSel);
     c->setComment("Toggle target flag of branch");
     branchCommands.append(c);
 
-    c = new Command("toggleTask", Command::Branch);
+    c = new Command("toggleTask", Command::BranchSel);
     c->setComment("Set if branch should or should not have a task");
     branchCommands.append(c);
 
-    c = new Command("unscroll", Command::Branch);
+    c = new Command("unscroll", Command::BranchSel);
     c->setComment("Unscroll branch");
     branchCommands.append(c);
 
-    c = new Command("unscrollSubtree", Command::Branch);
+    c = new Command("unscrollSubtree", Command::BranchSel);
     c->setComment("Unscroll branch and all children in its subtree");
     branchCommands.append(c);
 
-    c = new Command("unsetFlagByName", Command::Branch);
+    c = new Command("unsetFlagByName", Command::BranchSel);
     c->setComment("Unset flag of branch by string with name of flag");
-    c->addParameter(Command::String, false, "Name of flag to unset");
+    c->addParameter(Command::StringPar, false, "Name of flag to unset");
     branchCommands.append(c);
 
-    c = new Command("xlinkCount", Command::Branch, Command::Int);
+    c = new Command("xlinkCount", Command::BranchSel, Command::IntPar);
     c->setComment("Return number of xlinks connected to branch");
     branchCommands.append(c);
 
     //
     // Below are the commands for an image
     //
-    c = new Command("hasRichTextHeading", Command::Branch, Command::Bool);
+    c = new Command("hasRichTextHeading", Command::BranchSel, Command::BoolPar);
     c->setComment("Check if image has a RichText heading or just plain text");
     imageCommands.append(c);
 
-    c = new Command("getPosX", Command::TreeItem);
+    c = new Command("getPosX", Command::TreeItemSel);
     c->setComment("get x position of image relative to parent");
     imageCommands.append(c);
 
-    c = new Command("getPosY", Command::TreeItem);
+    c = new Command("getPosY", Command::TreeItemSel);
     c->setComment("get y position of image relative to parent");
     imageCommands.append(c);
 
-    c = new Command("getScenePosX", Command::TreeItem);
+    c = new Command("getScenePosX", Command::TreeItemSel);
     c->setComment("get x position of image in scene coordinates");
     imageCommands.append(c);
 
-    c = new Command("getScenePosY", Command::TreeItem);
+    c = new Command("getScenePosY", Command::TreeItemSel);
     c->setComment("get y position of image in scene coordinates");
     imageCommands.append(c);
 
-    c = new Command("headingText", Command::Image, Command::String);
+    c = new Command("headingText", Command::ImageSel, Command::StringPar);
     c->setComment("Set heading of image from plaintext string");
     imageCommands.append(c);
 
-    c = new Command("relinkToBranch", Command::Image);
+    c = new Command("relinkToBranch", Command::ImageSel);
     c->setComment("Relink image to destination branch");
-    c->addParameter(Command::BranchItem, false, "Destination branch");
+    c->addParameter(Command::BranchPar, false, "Destination branch");
     imageCommands.append(c);
 
-    c = new Command("relinkToBranchAt", Command::Image);
+    c = new Command("relinkToBranchAt", Command::ImageSel);
     c->setComment("Relink image to destination branch at position");
-    c->addParameter(Command::BranchItem, false, "Destination branch");
-    c->addParameter(Command::Int, false, "Position (0 is first)");
+    c->addParameter(Command::BranchPar, false, "Destination branch");
+    c->addParameter(Command::IntPar, false, "Position (0 is first)");
     imageCommands.append(c);
 
-    c = new Command("selectParent", Command::Image, Command::Bool);
+    c = new Command("selectParent", Command::ImageSel, Command::BoolPar);
     c->setComment("Select parent of image");
     imageCommands.append(c);
 
-    c = new Command("setHeadingRichText", Command::Image);
-    c->addParameter(Command::String, false, "New heading");
+    c = new Command("setHeadingRichText", Command::ImageSel);
+    c->addParameter(Command::StringPar, false, "New heading");
     c->setComment("Set heading of image as HTML-like string");
     imageCommands.append(c);
 
-    c = new Command("setHeadingText", Command::Image);
-    c->addParameter(Command::String, false, "New heading");
+    c = new Command("setHeadingText", Command::ImageSel);
+    c->addParameter(Command::StringPar, false, "New heading");
     c->setComment("Set heading of image as plain text string");
     imageCommands.append(c);
 
-    c = new Command("setHideLinksUnselected", Command::Image);
-    c->addParameter(Command::Bool, false,
+    c = new Command("setHideLinksUnselected", Command::ImageSel);
+    c->addParameter(Command::BoolPar, false,
               "Set if links of items should be visible for unselected items");
     imageCommands.append(c);
 
@@ -1417,28 +1423,28 @@ void Main::setupAPI()
     // Below are the commands for an xlink
     //
     
-    c = new Command("getColor", Command::XLink, Command::String);
+    c = new Command("getColor", Command::XLinkSel, Command::StringPar);
     c->setComment("Get color of xlink");
     xlinkCommands.append(c);
 
-    c = new Command("getWidth", Command::XLink, Command::Int);
+    c = new Command("getWidth", Command::XLinkSel, Command::IntPar);
     c->setComment("Get width of xlink");
     xlinkCommands.append(c);
 
-    c = new Command("getPenStyle", Command::XLink, Command::String);
+    c = new Command("getPenStyle", Command::XLinkSel, Command::StringPar);
     c->setComment("Get style of xlink as string (QPenStyle)");
     xlinkCommands.append(c);
 
-    c = new Command("getStyleBegin", Command::XLink, Command::String);
+    c = new Command("getStyleBegin", Command::XLinkSel, Command::StringPar);
     c->setComment("Get style of xlink start as string");
     xlinkCommands.append(c);
 
-    c = new Command("getStyleEnd", Command::XLink, Command::String);
+    c = new Command("getStyleEnd", Command::XLinkSel, Command::StringPar);
     c->setComment("Get style of xlink end as string");
     xlinkCommands.append(c);
 
     c = new Command("setColor");
-    c->addParameter(Command::String, true, "Color of xlink as string");
+    c->addParameter(Command::StringPar, true, "Color of xlink as string");
     c->setComment("Set color of xlink");
     xlinkCommands.append(c);
 
