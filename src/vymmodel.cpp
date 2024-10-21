@@ -6304,7 +6304,7 @@ void VymModel::setDefaultFont(const QFont &font)    // FIXME-2 no saveState, no 
     mapDesignInt->setFont(font);
 }
 
-bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-1 savestate needs to be adapted, command new param depth
+bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-2 saveState needs to be adapted, command new param depth
                                                                       // See also mainWindow->updateActions context menu
                                                                       // FIXME MapDesign setting with depth passed as argument is moved to MapDesign when parsing .xml
                                                                       // Somehow MD needs to return undo command when setting an element
