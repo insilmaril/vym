@@ -1318,7 +1318,7 @@ function test_standard_flags()
     unset_flag(flag);
 
   expect(
-      "Smiley flag is no longerset",
+      "Smiley flag is no longer set",
       b.hasActiveFlag("smiley"),
       false);
       

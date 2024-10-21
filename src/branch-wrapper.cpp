@@ -660,6 +660,14 @@ void BranchWrapper::setNoteText(const QString &s)
     model()->setNote(vn, branchItemInt);
 }
 
+void BranchWrapper::setOnlyFlags(QJSValueList args)
+{
+    QList <QUuid> uids;
+    foreach (QJSValue v, args)
+        uids << QUuid(v.toString());
+    model()->setOnlyFlags(uids, branchItemInt);
+}
+
 void BranchWrapper::setPos(qreal x, qreal y)
 {
     model()->setPos(QPointF(x, y), branchItemInt);

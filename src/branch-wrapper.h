@@ -2,6 +2,7 @@
 #define BRANCH_WRAPPER_H
 
 #include <QObject>
+#include <QJSValueList>
 
 class BranchItem;
 class VymModel;
@@ -95,6 +96,7 @@ class BranchWrapper : public QObject {
     void setHideLinkUnselected(bool b);
     void setNoteRichText(const QString &);
     void setNoteText(const QString &);
+    void setOnlyFlags(QJSValueList args);
     void setPos(qreal x, qreal y);
     void setRotationAutoDesign(const bool b);
     void setRotationHeading(const int &i);

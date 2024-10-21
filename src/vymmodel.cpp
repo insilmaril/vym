@@ -4939,28 +4939,30 @@ void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
 }
 
 void VymModel::toggleFlagByUid( const QUuid &uid, BranchItem *bi, bool useGroups)
-    // FIXME-2  saveState not correct when toggling flags in groups
-    // (previous flags not saved!)
 {
     QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    foreach (BranchItem* bi, selbis) {
-        TreeItem *ti;
-        Flag *flag = bi->toggleFlagByUid(uid, useGroups);
+    foreach (BranchItem* selbi, selbis) {
+        // For undo save all currently set flags. (Independely of usage of flag groups)
+        QList <QUuid> oldFlags = selbi->activeFlagUids();
+        QStringList sl;
+        foreach (QUuid id, oldFlags)
+            sl << QString("\"%1\"").arg(id.toString());
+
+        QString uc = QString("setOnlyFlags([%1]);").arg(sl.join(","));
+
+        Flag *flag = selbi->toggleFlagByUid(uid, useGroups);
         if (flag) {
             QString fname = flag->getName();
-            QString uids  = uid.toString();
-            QString com = QString("toggleFlagByUid(\"%1\");").arg(uids);
-            saveStateBranch(bi, com, com,
-                      QString("Toggling flag \"%1\" of %2")
-                          .arg(fname)
-                          .arg(getObjectName(bi)));
-            emitDataChanged(bi);
+            QString rc = QString("toggleFlagByUid(\"%1\");").arg(uid.toString());
+            QString com = QString("Toggle flag %1 of %2").arg(fname, getObjectName(selbi));
+            saveStateBranch(selbi, uc, rc, com);
+            emitDataChanged(selbi);
         } else
             qWarning() << "VymModel::toggleFlag failed for flag with uid "
                        << uid;
-        reposition();
     }
+    reposition();
 }
 
 void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGroups)
@@ -4982,6 +4984,40 @@ void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGro
 
         toggleFlagByUid(uid, bi, useGroups);
     }
+}
+
+void VymModel::setOnlyFlags(QList <QUuid> uids, BranchItem *bi)
+{
+    if (!bi) {
+        qWarning() << __FUNCTION__ << "bi == nullptr";
+        return;
+    }
+
+    QList <QUuid> oldUids = bi->activeFlagUids();
+    foreach (QUuid uid, oldUids)
+        if (!uids.contains(uid))
+            // Unset flag
+            bi->toggleFlagByUid(uid);
+
+    foreach (QUuid uid, uids)
+        if (!oldUids.contains(uid))
+            // Set flag
+            bi->toggleFlagByUid(uid);
+
+        QStringList sl_old;
+        QStringList sl_new;
+        foreach (QUuid id, oldUids)
+            sl_old << QString("\"%1\"").arg(id.toString());
+        foreach (QUuid id, uids)
+            sl_new << QString("\"%1\"").arg(id.toString());
+
+        QString uc = QString("setOnlyFlags([%1]);").arg(sl_old.join(","));
+        QString rc = QString("setOnlyFlags([%1]);").arg(sl_new.join(","));
+
+            QString com = QString("Set only some flags %1").arg(getObjectName(bi));
+            saveStateBranch(bi, uc, rc, com);
+    emitDataChanged(bi);
+    reposition();
 }
 
 void VymModel::clearFlags(BranchItem *bi)

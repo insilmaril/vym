@@ -652,9 +652,10 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("exportMap", Command::AnySel, Command::BoolPar);
-    c->addParameter(Command::StringPar, false,
+    c->addParameter(Command::ArrayPar, false,
               "Format (AO, ASCII, CONFLUENCE, CSV, HTML, Image, Impress, Last, "
               "LaTeX, Markdown, OrgMode, PDF, SVG, XML)");
+    c->setComment("Export map in various formats. Format, filename, destination can be passed as array");
     modelCommands.append(c);
 
     c = new Command("findBranchByAttribute", Command::AnySel, Command::BranchPar);
@@ -1244,6 +1245,7 @@ void Main::setupAPI()
     branchCommands.append(c);
 
     c = new Command("setOnlyFlags", Command::BranchSel);
+    c->addParameter(Command::ArrayPar, false, "Array with Uuids of flags to be set");
     c->setComment("Set only given flags in branch (used for undo)");
     branchCommands.append(c);
 
@@ -3158,7 +3160,7 @@ void Main::setupFlagActions()
                      "freemind-warning", tr("Important", "Freemind flag"));
 
     for (int i = 1; i < 8; i++) {
-        setupFlag(QString(":/freemind/priority-%1.png").arg(i),
+        flag = setupFlag(QString(":/freemind/priority-%1.png").arg(i),
                          Flag::FreemindFlag,
                          QString("freemind-priority-%1").arg(i),
                          tr("Important", "Freemind flag"));
