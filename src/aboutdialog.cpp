@@ -116,7 +116,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "<li> Packaging"
             "</li>"
             "  <ul>"
-            "    <li>Jon Ciesla: Sourceforge file releases</li>"
+            "    <li>Gwyn Ciesla: Fedora packaging</li>"
             "    <li>Xavier Oswald, Christoph Thielecke, Pierre, and Steffen "
             "Joeris: Debian packaging</li>"
             "  </ul>"
