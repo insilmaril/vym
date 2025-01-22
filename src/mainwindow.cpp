@@ -1825,7 +1825,7 @@ void Main::setupEditActions()
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
 #if defined(Q_OS_MACX)
     a->setShortcut(Qt::Key_Backspace);
-#elif
+#else
     a->setShortcut(Qt::Key_Delete);
 #endif
     ADD_SHORTCUT
