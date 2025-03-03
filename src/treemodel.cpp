@@ -75,9 +75,8 @@ QModelIndex TreeModel::index(TreeItem *ti)
 {
     if (!ti->parent())
         return QModelIndex();
-    else { // FIXME-0 debugging here...
-        QModelIndex ix = createIndex(ti->row(), 0, ti);
-        return ix;
+    else {
+        return createIndex(ti->row(), 0, ti);
     }
 }
 

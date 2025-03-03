@@ -1462,7 +1462,7 @@ void VymModel::redo()
     QString errMsg;
     QString redoScript =
         QString("map = vym.currentMap();%1").arg(redoCommand);
-    errMsg = QVariant(execute(redoScript)).toString();
+    errMsg = QVariant(execute(redoScript)).toString();  // FIXME-0 execute via MainWindow::runScript()   (compare undo() )
     saveStateBlocked = saveStateBlockedOrg;
 
     undoSet.setValue("/history/undosAvail", QString::number(undosAvail));
@@ -1570,9 +1570,7 @@ void VymModel::undo()
     else
         undoScript = undoCommand;
 
-    // FIXME-0 errMsg = QVariant(execute(undoScript)).toString();
     errMsg = mainWindow->runScript(undoScript).toString();
-    // FIXME-0 errMsg = QVariant(execute(undoScript)).toString();
 
     undosAvail--;
     curStep--;
@@ -5633,12 +5631,11 @@ void VymModel::setXLinkWidth(int new_width, XLink *xl)
 // Scripting
 //////////////////////////////////////////////
 
-QVariant VymModel::execute( const QString &script) // FIXME-0 really still needed?
+QVariant VymModel::execute( const QString &script) // FIXME-2 really still needed?
                            // Called from these places:
                            //
                            // scripts/vym-ruby.rb  (and adaptormodel) used for
                            // testing Main::callMacro Main::checkReleaseNotes
-                           // VymModel::undo
                            // VymModel::redo
                            // VymModel::exportLast
                            // VymModel::updateSlideSelection

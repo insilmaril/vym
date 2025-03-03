@@ -354,7 +354,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     addDockWidget(Qt::TopDockWidgetArea, dw);
     connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
-    // FIXME -0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT
+    // FIXME-0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT
     // (setFocusMapEditor()));
 
     if (options.isActive("shortcutsLaTeX"))
@@ -363,9 +363,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     if (settings.value("/mainwindow/showTestMenu", false).toBool())
         setupTestActions();
     setupHelpActions();
-
-    // Scripting interface
-    // FIXME-0 vymWrapper = new VymWrapper;
 
     // Status bar and progress bar there
     statusBar();
@@ -458,8 +455,6 @@ Main::~Main()
     delete standardFlagsMaster;
     delete userFlagsMaster;
     delete systemFlagsMaster;
-
-    // FIXME-0 delete vymWrapper;
 
     // Remove temporary directory
     removeDir(tmpVymDir);
@@ -7318,7 +7313,6 @@ QVariant Main::runScript(const QString &script)
 
     // Make sure that deleting scriptEngine later does not delete vymWrapper, too
     scriptEngine->setObjectOwnership(vymWrapper, QJSEngine::CppOwnership);
-    //scriptEngine->setObjectOwnership(vymWrapper, QJSEngine::JavaScriptOwnership);   // FIXME-0 really?
 
     if (debug)
         std:cout << "      vymWrapper: " << vymWrapper << "  " << vymWrapper->mapCount() << " maps   version:" << vymWrapper->version().toStdString() << endl;
