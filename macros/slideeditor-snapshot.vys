@@ -1,6 +1,6 @@
 // Template for taking snapshots in slideeditor
 
 map = vym.currentMap();
-map.setMapZoom(CURRENT_ZOOM);
-map.setMapRotation(CURRENT_ANGLE);
+map.setZoom(CURRENT_ZOOM);
+map.setRotationView(CURRENT_ANGLE);
 map.centerOnID(CURRENT_ID);

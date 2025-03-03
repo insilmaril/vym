@@ -1462,7 +1462,9 @@ void VymModel::redo()
     QString errMsg;
     QString redoScript =
         QString("map = vym.currentMap();%1").arg(redoCommand);
-    errMsg = QVariant(execute(redoScript)).toString();  // FIXME-0 execute via MainWindow::runScript()   (compare undo() )
+
+    errMsg = mainWindow->runScript(redoScript).toString();
+
     saveStateBlocked = saveStateBlockedOrg;
 
     undoSet.setValue("/history/undosAvail", QString::number(undosAvail));
@@ -5631,14 +5633,12 @@ void VymModel::setXLinkWidth(int new_width, XLink *xl)
 // Scripting
 //////////////////////////////////////////////
 
-QVariant VymModel::execute( const QString &script) // FIXME-2 really still needed?
+QVariant VymModel::execute( const QString &script) // FIXME-1 really still needed?
                            // Called from these places:
                            //
                            // scripts/vym-ruby.rb  (and adaptormodel) used for
                            // testing Main::callMacro Main::checkReleaseNotes
                            // VymModel::redo
-                           // VymModel::exportLast
-                           // VymModel::updateSlideSelection
 {
     // qDebug()<<"VM::execute called: "<<script;
     return mainWindow->runScript(script);
@@ -6159,6 +6159,7 @@ void VymModel::exportLast()
     if (exportLastAvailable(desc, command, dest)) {
         //qDebug() << "VM::exportLast: " << command;
         execute(command);
+        mainWindow->runScript(command);
     }
 }
 
@@ -7734,7 +7735,7 @@ void VymModel::updateSlideSelection(QItemSelection newsel, QItemSelection)
         scriptEditor->setSlideScript(modelIdInt, si->getID(), inScript);
 
         // Execute inScript
-        execute(inScript);
+        mainWindow->runScript(inScript);
     }
 }
 
