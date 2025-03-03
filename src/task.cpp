@@ -20,7 +20,7 @@ Task::Task(TaskModel *tm)
 
 Task::~Task()
 {
-    //    qDebug()<<"Destr. Task";
+    // qDebug()<<"Destr. Task " << this;
     if (branch)
         branch->setTask(nullptr);
 }

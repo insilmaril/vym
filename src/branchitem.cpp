@@ -42,6 +42,9 @@ BranchItem::BranchItem(TreeItem *parent)
 BranchItem::~BranchItem()
 {
     // std::cout << "Destr. BranchItem: this=" << this << "  " << headingPlain().toStdString() << "  branchContainer=" << branchContainer << std::endl;
+    if (task)
+        taskModel->deleteTask(task);
+
     if (branchContainer) {
         // This deletes only the first container here.
         // All other containers deeper down in tree will unlink themselves 
@@ -52,9 +55,6 @@ BranchItem::~BranchItem()
         // themselves
         delete branchContainer;
     }
-
-    if (task)
-        taskModel->deleteTask(task);
 
     if (branchWrapperInt) {
         delete branchWrapperInt;
@@ -371,6 +371,9 @@ void BranchItem::setImagesLayout(const QString &s)
 
 QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)
 {
+    if (!branchContainer)
+        return QColor();
+
     // Determine background color in taskEditor, first try inner frame
     if (checkInnerFrame && branchContainer->frameType(true) != FrameContainer::NoFrame)
             return branchContainer->frameBrushColor(true);

@@ -1554,7 +1554,7 @@ test_modify_images();
   //test_slides();            // FIXME not ported yet
 //test_standard_flags();
 //test_user_flags();
-//test_tasks();	// FIXME-3 uncomplete (date calculations not ported yet from ruby)
+test_tasks();	// FIXME-3 uncomplete (date calculations not ported yet from ruby)
 //test_xlinks();
 
 summary();
