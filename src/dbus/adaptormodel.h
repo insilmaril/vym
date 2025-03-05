@@ -25,7 +25,6 @@ class AdaptorModel : public QDBusAbstractAdaptor {
 
   public slots: // METHODS
     QDBusVariant branchCount();
-    QDBusVariant execute(const QString &s);
     QDBusVariant errorLevel();
     QDBusVariant errorDescription();
     QDBusVariant listCommands();

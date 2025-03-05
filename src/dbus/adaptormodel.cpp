@@ -37,11 +37,6 @@ QDBusVariant AdaptorModel::branchCount()
         return QDBusVariant(-1);
 }
 
-QDBusVariant AdaptorModel::execute(const QString &s)
-{
-    return QDBusVariant(model->execute(s));
-}
-
 QDBusVariant AdaptorModel::errorLevel()
 {
     return QDBusVariant(); // model->parser.errorLevel() );     // FIXME

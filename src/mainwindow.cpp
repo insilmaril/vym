@@ -6375,7 +6375,7 @@ void Main::downloadFinished() // only used for drop events in mapeditor and
     VymModel *model = getModel(agent->getFinishedScriptModelID());
     if (!script.isEmpty() && model) {
         script.replace("$TMPFILE", agent->getDestination());
-        model->execute(script);
+        runScript(script);
     }
     agent->deleteLater();
 }
@@ -7680,9 +7680,7 @@ void Main::callMacro()
 
         s += macros.get();
 
-        VymModel *m = currentModel();
-        if (m)
-            m->execute(s);
+        runScript(s);
     }
 }
 

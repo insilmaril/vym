@@ -1,7 +1,7 @@
 require 'dbus'
 require 'pp'
 
-$debug = false
+$debug = true
 
 class Vym
   def initialize (name)
@@ -24,7 +24,7 @@ class Vym
           # No parameters
           com = "vym.#{c}();"
           puts " * Calling vym: \"#{com}\":" if $debug
-          ret = @main.execute( com )
+          ret = @main.runScript( com )
         else
           # with parameters
           p = "";
@@ -38,7 +38,7 @@ class Vym
           end
           com = "vym.#{c} (#{a.join(',')});"
           puts " * Calling vym: \"#{com}\":" if $debug
-          ret = @main.execute( com )
+          ret = @main.runScript( com )
         end
 
         #FIXME  err = m.errorLevel[0]
@@ -97,7 +97,7 @@ class VymMap
             # No parameters
             com = "vym.currentMap().#{c}();"
             puts " * Calling model: \"#{com}\":" if $debug
-            ret = @map.execute( com )
+            ret = @main.runScript( com )
           else
             # Build string with parameters
             p = "";
@@ -112,7 +112,7 @@ class VymMap
             # com = "vym.clearConsole(); print( vym.currentMap().#{c} (#{a.join(',')}));"
             com = " vym.currentMap().#{c} (#{a.join(',')});"
             puts " ** Calling model: \"#{com}\":" if $debug
-            ret = @map.execute( com )
+            ret = @main.runScript( com )
             puts "Done calling" if $debug
           end
 

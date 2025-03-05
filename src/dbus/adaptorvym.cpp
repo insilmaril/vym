@@ -17,23 +17,23 @@ AdaptorVym::AdaptorVym(QObject *obj) : QDBusAbstractAdaptor(obj)
     setAutoRelaySignals(true);
 }
 
-QDBusVariant AdaptorVym::mapCount()
+QDBusVariant AdaptorVym::mapCount() // FIXME-4 duplicate in VymWrapper
 {
     return QDBusVariant(mainWindow->modelCount());
 }
 
-void AdaptorVym::gotoMapID(const uint &id) { mainWindow->gotoModelWithId(id); }
+void AdaptorVym::gotoMapID(const uint &id) { mainWindow->gotoModelWithId(id); } // FIXME-4 duplicate in VymWrapper
 
 QDBusVariant AdaptorVym::getInstanceName()
 {
     return QDBusVariant(vymInstanceName);
 }
 
-QDBusVariant AdaptorVym::getVersion() { return QDBusVariant(vymVersion); }
+QDBusVariant AdaptorVym::getVersion() { return QDBusVariant(vymVersion); } // FIXME-4 duplicate in VymWrapper
 
-QDBusVariant AdaptorVym::execute(const QString &s)
+QDBusVariant AdaptorVym::runScript(const QString &s)
 {
-    //qDebug() << "AdaptorVym::execute s=" << s;
+    //qDebug() << "AdaptorVym::runScript s=" << s;
     QVariant v = mainWindow->runScript(s);
     //qDebug() << "                    v=" << v;
     return QDBusVariant(v);
@@ -46,10 +46,12 @@ QDBusVariant AdaptorVym::listCommands()
     foreach (Command *command, vymCommands)
         list << command->name();
 
+    list << "runScript";
+
     return QDBusVariant(list.join(","));
 }
 
-QDBusVariant AdaptorVym::currentMapID()
+QDBusVariant AdaptorVym::currentMapID() // FIXME-4 duplicate in VymWrapper
 {
     return QDBusVariant(mainWindow->currentMapId());
 }

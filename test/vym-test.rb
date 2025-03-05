@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require "#{ENV['PWD']}/../scripts/vym-ruby"
-require 'colorize'
+require 'colored'
 require 'date'
 require 'fileutils'
 require 'optparse'
@@ -93,7 +93,7 @@ def init_map( mapPath, files = [])
   files.each do |fn|
     begin
       FileUtils.cp fn, @testDir
-      puts "# Copied #{fn} to #{@testDir}".light_black
+      puts "# Copied #{fn} to #{@testDir}".blue
     rescue
       puts "Failed to copy #{fn} to #{@testDir}".red
       exit
@@ -102,7 +102,7 @@ def init_map( mapPath, files = [])
 
   if @vym.loadMap (@currentMapPath)
     id = @vym.currentMapID
-    puts "# Loaded #{mapPath} -> #{@currentMapPath} (id: #{id})".light_black
+    puts "# Loaded #{mapPath} -> #{@currentMapPath} (id: #{id})".blue
     return @vym.map (id)
   end
 
@@ -114,7 +114,7 @@ def close_current_map
   id = @vym.currentMapID
   r = @vym.closeMapWithID(id)
   if r
-    puts "# Closed map (id: #{id})".light_black
+    puts "# Closed map (id: #{id})".blue
   else
     puts "# Failed to close map with id = #{id}. CurrentMapID = #{id}".red
   end
@@ -140,7 +140,7 @@ def test_vym
 
   map = init_map @testMapDefault
   expect "init_map copies default testmap to '#{@currentMapPath}'", File.file?(@currentMapPath), true
-  expect "Title of copied map title is accessible and not empty", map.getMapTitle.length > 0, true
+  expect "Title of copied map title is accessible and not empty", map.getTitle.length > 0, true
 
   close_current_map
 end

@@ -18,7 +18,7 @@ class AdaptorVym : public QDBusAbstractAdaptor {
     void gotoMapID(const uint &id);
     QDBusVariant getInstanceName();
     QDBusVariant getVersion();
-    QDBusVariant execute(const QString &s);
+    QDBusVariant runScript(const QString &s);
     QDBusVariant listCommands();
     QDBusVariant currentMapID();
 

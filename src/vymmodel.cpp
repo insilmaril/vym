@@ -1513,7 +1513,7 @@ QString VymModel::lastRedoCommand()
 
 QVariant VymModel::repeatLastCommand()
 {
-    QString command = "m = vym.currentMap();";
+    QString command = QString("vym.gotoMap(%1); m = vym.currentMap();").arg(modelIdInt);
     QString redoCommand = undoSet.value(
        QString("/history/step-%1/redoCommand").arg(curStep));
     if (isUndoAvailable() && !redoCommand.startsWith("model."))
@@ -1521,7 +1521,7 @@ QVariant VymModel::repeatLastCommand()
         command += "m." + redoCommand + ";";
     else
         return false;
-    return execute(command);
+    return mainWindow->runScript(command);
 }
 
 void VymModel::undo()
@@ -5629,21 +5629,6 @@ void VymModel::setXLinkWidth(int new_width, XLink *xl)
     }
 }
 
-//////////////////////////////////////////////
-// Scripting
-//////////////////////////////////////////////
-
-QVariant VymModel::execute( const QString &script) // FIXME-1 really still needed?
-                           // Called from these places:
-                           //
-                           // scripts/vym-ruby.rb  (and adaptormodel) used for
-                           // testing Main::callMacro Main::checkReleaseNotes
-                           // VymModel::redo
-{
-    // qDebug()<<"VM::execute called: "<<script;
-    return mainWindow->runScript(script);
-}
-
 void VymModel::setExportMode(bool b)
 {
     // should be called before and after exports
@@ -6157,8 +6142,7 @@ void VymModel::exportLast()
     QString desc, command,
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
-        //qDebug() << "VM::exportLast: " << command;
-        execute(command);
+        qDebug() << "VM::exportLast: " << command;
         mainWindow->runScript(command);
     }
 }
