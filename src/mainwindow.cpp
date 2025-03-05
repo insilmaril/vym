@@ -2755,7 +2755,7 @@ void Main::setupViewActions()
             tr("Toggle Presentation mode", "View action") + " " +
             tr("(still experimental)"),
             this);
-    //a->setShortcut(Qt::Key_Asterisk); // FIXME-2 + is used for zoom, maybe Key_Asterisk + shift instead?
+    a->setShortcut(Qt::Key_Asterisk || Qt::SHIFT);
     ADD_SHORTCUT
     viewMenu->addAction(a);
     switchboard.addSwitch ("presentationMode", shortcutScope, a, tag);
@@ -2968,7 +2968,7 @@ void Main::setupViewActions()
     switchboard.addSwitch("mapNextSlide", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(nextSlide()));
 
-    a = new QAction(tr("Previous slide", "View action"), this); //FIXME-2 no shortcut yet
+    a = new QAction(tr("Previous slide", "View action"), this); //FIXME-3 no shortcut yet
     a->setStatusTip(a->text());
     //a->setShortcut(Qt::Key_Backspace);
     viewMenu->addAction(a);

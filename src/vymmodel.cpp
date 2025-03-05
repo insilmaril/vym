@@ -6270,12 +6270,12 @@ void VymModel::unsetContextPos()
     hasContextPos = false;
 }
 
-void VymModel::reposition(bool force)
+void VymModel::reposition(bool force) // FIXME-2 check when and how often reposition  is called
 {
     if (!force && repositionBlocked)
         return;
 
-    // qDebug() << "VM::reposition start force=" << force; // FIXME-2 check when and how often reposition  is called
+    // qDebug() << "VM::reposition start force=" << force;
     // Check also ME->minimizeView below
 
     // Reposition containers
