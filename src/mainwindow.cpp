@@ -354,8 +354,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     addDockWidget(Qt::TopDockWidgetArea, dw);
     connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
-    // FIXME-0 connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT
-    // (setFocusMapEditor()));
+    connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));  // FIXME-4 needed?
 
     if (options.isActive("shortcutsLaTeX"))
         switchboard.printLaTeX();
@@ -7346,9 +7345,6 @@ QVariant Main::runScript(const QString &script)
         scriptOutput->append(QString("uncaught exception at line %1: %2")
                                  .arg(lineNumber).arg(result.toString()));
     }
-    //else
-    //    return scriptResult; // FIXME-0 scriptEngine never deleted! scriptResult never defined??
-
 
     if (debug) {
         std::cout << "Main::runScript finished  scriptEngine: " << scriptEngine << endl;
