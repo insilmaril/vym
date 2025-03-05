@@ -291,8 +291,7 @@ TreeItem *TreeModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
         TreeItem *item = static_cast<TreeItem *>(index.internalPointer());
-        if (item)   // FIXME-2 if condition not necessary
-            return item;
+        return item;
     }
     return nullptr;
 }

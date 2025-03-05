@@ -54,7 +54,7 @@ void TreeItem::init()
     imageCounter = 0;
 
     attributeCounter = 0;
-    attributeOffsetInt = 0;    // FIXME-2 will always be 0, never incremented
+    attributeOffsetInt = 0;    // FIXME-4 will always be 0, never incremented
 
     xlinkCounter = 0;
     xlinkOffsetInt = 0;

@@ -1315,7 +1315,9 @@ void VymModel::autosave()
     if (mapUnsaved && mapChanged && !testmode) {
         if (QFileInfo(filePath).lastModified() <= fileChangedTime) {
             logInfo("Autosave starting", __func__);
-            mainWindow->fileSave(this);	// FIXME-2 why redirecting via mainWindow?
+
+            // Call save via MainWindow to check for filename and readonly status
+            mainWindow->fileSave(this);
         } else if (debug)
             qDebug() << "  VM::autosave  rejected, file on disk is newer than "
                         "last save.\n";
@@ -2980,7 +2982,7 @@ void VymModel::resetSelectionSize() // FIXME-3 missing saveState. Switch (back?)
 
 void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-3 no saveState yet (save: positions, auto, layout!)
 {
-    qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
+    // qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     bool repositionRequired = false;
@@ -3012,7 +3014,7 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-3 n
         applyDesignRecursively(MapDesign::LayoutChanged, selbi);
 
     // Create and delete containers, update their structure
-    if (repositionRequired) // FIXME-2 test not needed
+    if (repositionRequired)
         reposition();
 
 }
@@ -3138,7 +3140,7 @@ bool VymModel::cycleTaskStatus(BranchItem *bi, bool reverse)
             task->cycleStatus(reverse);
             task->setDateModification();
 
-            // make sure task is still visible  // FIXME-2 for multi-selections?
+            // make sure task is still visible  // FIXME-3 for multi-selections?
             taskEditor->select(task);
             emitDataChanged(selbi);
             repositionRequired = true;
@@ -4188,11 +4190,11 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-2 enable one history step
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-2 enable one history step    // FIXME-3 Use position of selbi for newbi, if floating
 {
     BranchItem *newbi = nullptr;
     BranchItem *selbi = getSelectedBranch(bi);
-    if (selbi && selbi->getType() == TreeItem::Branch)  // FIXME-2 Better check for depth...
+    if (selbi && selbi->depth() > 0)
     // We accept no MapCenter here, so we _have_ a parent
     {
         QString comment;
@@ -4226,11 +4228,11 @@ BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    //
 
             emitDataChanged(newbi);
         }
-    }
 
-    if (interactive) {
-        select(newbi);
-        mapEditor->editHeading();
+        if (interactive) {
+            select(newbi);
+            mapEditor->editHeading();
+        }
     }
 
     return newbi;
@@ -4629,7 +4631,6 @@ void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-3 does not work rea
                 detach(selbi->getBranchNum(0));
 
             deleteSelection(selbi->getID());
-            //saveStateEndScript(); // FIXME-2 needed?
         } else {
             // Check if we have children at all to keep
             if (selbi->branchCount() == 0)
@@ -6275,6 +6276,7 @@ void VymModel::reposition(bool force)
         return;
 
     // qDebug() << "VM::reposition start force=" << force; // FIXME-2 check when and how often reposition  is called
+    // Check also ME->minimizeView below
 
     // Reposition containers
     BranchItem *bi;
@@ -6285,7 +6287,7 @@ void VymModel::reposition(bool force)
 
     repositionXLinks();
 
-    mapEditor->minimizeView();  // FIXME-2 really needed every time?
+    mapEditor->minimizeView();  // FIXME-3 really needed every time?
 
     // FIXME-4 needed? everytime? mapEditor->minimizeView();
     //qDebug() << "VM::reposition end";
