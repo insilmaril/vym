@@ -2,6 +2,41 @@
 
 // vym selftest script
 
+// test_vym();  // FIXME currently not used (version check, tmpDir check)
+
+all_tests = [
+  "basics",
+  "adding_branches",
+  "adding_maps",
+  "copy_paste",
+  "delete_parts",
+  "export",         // FIXME WIP
+  "extrainfo",
+  "frames",
+  "load_legacy_maps",
+  "modify_branches",
+  "modify_images",
+  "moving_parts",
+  "references",
+  "standard_flags",
+  "user_flags",
+  "tasks",	        // FIXME-3 uncomplete (date calculations not ported yet from ruby)
+  "xlinks",
+];
+
+not_yet_ported_tests = [
+  "attributes",
+  "history",
+  "notes",
+  "saving",
+  "scrolling",
+  "slides"
+];
+
+// tests = all_tests;
+tests = ["basics", "frames"];
+
+
 vym.clearConsole();
 
 
@@ -536,14 +571,14 @@ function test_export()
   map.exportMap(["AO", filepath]);
   expect("exportAO:    AO file exists", vym.fileExists(filepath), true);
   vym.removeFile(filepath);
-  map.exportMap("Last");
+  map.exportMap(["Last"]);
   expect("exportLast:  AO file exists", vym.fileExists(filepath), true);
 
   //ASCII
   exportdir = testDir + "/export-ascii";
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.txt";
-  map.exportMap("ASCII", filepath, false);
+  map.exportMap(["ASCII", filepath], false);
   expect("exportASCII: ASCII file exists", vym.fileExists(filepath), true);
   vym.removeFile(filepath);
   map.exportMap(["Last"]);
@@ -551,7 +586,7 @@ function test_export()
 
   //CSV
   exportdir = testDir + "/export-csv";
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.csv";
   map.exportMap(["CSV", filepath]);
   expect("exportCSV:    CSV file exists", vym.fileExists(filepath), true);
@@ -561,7 +596,7 @@ function test_export()
 
   //Image
   exportdir = testDir + "/export-image";
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.png";
   map.exportMap(["Image", filepath,"PNG"]);
   expect("exportImage: PNG file exists", vym.fileExists(filepath), true);
@@ -571,7 +606,7 @@ function test_export()
 
   //LaTeX
   exportdir = testDir + "/export-latex";
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.tex";
   map.exportMap(["LaTeX", filepath]);
   expect("exportLaTeX:  LaTeX file exists", vym.fileExists(filepath), true);
@@ -580,10 +615,10 @@ function test_export()
   expect("exportLast:   LaTeX file exists", vym.fileExists(filepath), true);
 
   //Markdown
-  exportdir = testDiri + "/export-markdown";
-  Dir.mkdir(exportdir);
+  exportdir = testDir + "/export-markdown";
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.md";
-  map.exportMap("Markdown", filepath);
+  map.exportMap(["Markdown", filepath]);
   expect("exportMarkdown:  Markdown file exists", vym.fileExists(filepath), true);
   vym.removeFile(filepath);
   map.exportMap(["Last"]);
@@ -591,7 +626,7 @@ function test_export()
 
   //OrgMode
   exportdir = testDir + "/export-orgmode"
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.org";
   map.exportMap(["OrgMode", filepath]);
   expect("exportOrgMode:  OrgMode file exists", vym.fileExists(filepath), true);
@@ -601,7 +636,7 @@ function test_export()
 
   //PDF
   exportdir = testDir + "/export-pdf";
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.pdf";
   map.exportMap(["PDF", filepath]);
   expect("exportPDF:  PDF file exists", vym.fileExists(filepath), true);
@@ -611,7 +646,7 @@ function test_export()
 
   //SVG
   exportdir = testDir + "/export-svg";
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.svg";
   map.exportMap(["SVG", filepath]);
   expect("exportSVG:  SVG file exists", vym.fileExists(filepath), true);
@@ -621,7 +656,7 @@ function test_export()
 
   //XML
   exportdir = testDir  + "/export-xml";
-  Dir.mkdir(exportdir);
+  vym.mkdir(exportdir);
   filepath = exportdir + "/output.xml";
   map.exportMap(["XML", filepath, testDir]);
   expect("exportXML: XML file exists", vym.fileExists(filepath), true);
@@ -1528,33 +1563,28 @@ function test_xlinks()
 ///////////////////////////////////////////////////////////////
 
 
-///////////////////////////////////////////////////////////////
-
-// test_vym();  // FIXME currently not used (version check, tmpDir check)
-
-    // ok, already using new Wrapper functions
-test_basics();
-test_adding_branches();
-//test_adding_maps();
-  //test_attributes();        // FIXME not ported yet
-//test_copy_paste();
-test_delete_parts();
-  //test_export();            // FIXME WIP
-//test_extrainfo();
-//test_frames();
-  //test_history();           // FIXME not ported yet
-//test_load_legacy_maps();
-//test_modify_branches();
-test_modify_images();
-//test_moving_parts();
-  //test_notes();             // FIXME not ported yet
-//test_references();
-  //test_saving();            // FIXME not ported yet
-  //test_scrolling();         // FIXME not ported yet
-  //test_slides();            // FIXME not ported yet
-//test_standard_flags();
-//test_user_flags();
-test_tasks();	// FIXME-3 uncomplete (date calculations not ported yet from ruby)
-//test_xlinks();
+if (tests.includes("basics")) { test_basics(); }
+if (tests.includes("adding_branches")) { test_adding_branches(); }
+if (tests.includes("adding_maps"))    { test_adding_maps(); }
+if (tests.includes("attributes"))     { test_adding_branches(); }
+if (tests.includes("copy_paste"))     { test_copy_paste(); }
+if (tests.includes("delete_parts"))   { test_delete_parts(); }
+if (tests.includes("export"))         { test_export(); }
+if (tests.includes("extrainfo"))      { test_extrainfo(); }
+if (tests.includes("frames"))         { test_frames(); }
+if (tests.includes("history"))        { test_history(); }
+if (tests.includes("load_legacy_maps")) { test_load_legacy_maps(); }
+if (tests.includes("modify_branches")) { test_modify_branches(); }
+if (tests.includes("modify_images"))  { test_modify_images(); }
+if (tests.includes("moving_parts"))   { test_moving_parts(); }
+if (tests.includes("notes"))          { test_notes(); }
+if (tests.includes("references"))     { test_references(); }
+if (tests.includes("saving"))         { test_saving(); }
+if (tests.includes("scrolling"))      { test_scrolling(); }
+if (tests.includes("slides"))         { test_slides(); }
+if (tests.includes("standard_flags")) { test_standard_flags(); }
+if (tests.includes("user_flags"))     { test_user_flags(); }
+if (tests.includes("tasks"))          { test_tasks(); }
+if (tests.includes("xlinks"))         { test_xlinks(); }
 
 summary();
