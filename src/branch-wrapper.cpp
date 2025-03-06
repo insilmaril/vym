@@ -53,7 +53,7 @@ qreal BranchWrapper::v_animY()  // FIXME-3 experimental, no highlighting
     return branchItemInt->getBranchContainer()->v_anim.y();
 }
 
-void BranchWrapper::setV_anim(qreal x, qreal y) // FIXME-2 playing with elastic animation
+void BranchWrapper::setV_anim(qreal x, qreal y) // FIXME-3 playing with elastic animation
 {
     branchItemInt->getBranchContainer()->v_anim = QPointF(x, y);
     branchItemInt->getBranchContainer()->v.setLine(0, 0, x * 40, y * 40);

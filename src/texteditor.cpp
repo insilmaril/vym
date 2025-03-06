@@ -594,7 +594,7 @@ void TextEditor::setupFormatActions()
 
     formatMenu->addSeparator();
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "format-justify-left.svg"), tr("&Left"), grp);   // FIXME-2 "dark" is hardcoded here, needs to consider setting!
+    a = new QAction(QPixmap(":/" + iconPrefix + "format-justify-left.svg"), tr("&Left"), grp);
     // a->setShortcut( Qt::CTRL+Qt::Key_L );
     a->setCheckable(true);
     formatToolBar->addAction(a);

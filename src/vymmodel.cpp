@@ -5360,7 +5360,7 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
 {
     int branchID = jsobj["vymBranchId"].toInt();
 
-    repositionBlocked = true; // FIXME-2 block reposition during processing of Jira query?
+    repositionBlocked = true; // FIXME-4 block reposition during processing of Jira query?
 
     BranchItem *bi = (BranchItem*)findID(branchID);
     if (bi) {
@@ -6470,7 +6470,7 @@ uint VymModel::modelId() { return modelIdInt; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
-void VymModel::setDefaultLinkColor(const QColor &col)   // FIXME-2 Missing command?
+void VymModel::setDefaultLinkColor(const QColor &col)   // FIXME-2 saveState: Missing command?
 {
     if (!col.isValid()) return;
 
@@ -6790,7 +6790,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::setSelectionPenColor(QColor col) // FIXME-2 command missing?
+void VymModel::setSelectionPenColor(QColor col) // FIXME-2 saveState: command missing?
 {
     if (!col.isValid())
         return;
@@ -6810,7 +6810,7 @@ QColor VymModel::getSelectionPenColor() {
     return mapDesignInt->selectionPen().color();
 }
 
-void VymModel::setSelectionPenWidth(qreal w) // FIXME-2 command missing?
+void VymModel::setSelectionPenWidth(qreal w) // FIXME-2 saveState: command missing?
 {
     QPen selPen = mapDesignInt->selectionPen();
     
@@ -6828,7 +6828,7 @@ qreal VymModel::getSelectionPenWidth() {
     return mapDesignInt->selectionPen().width();
 }
 
-void VymModel::setSelectionBrushColor(QColor col)   // FIXME-2 command missing?
+void VymModel::setSelectionBrushColor(QColor col)   // FIXME-2 saveState: command missing?
 {
     if (!col.isValid())
         return;
