@@ -117,7 +117,6 @@ extern QList<Command *> imageCommands;
 extern QList<Command *> xlinkCommands;
 
 extern bool usingDarkTheme;
-extern QString iconPrefix;
 extern QString iconTheme;
 
 extern bool useActionLog;
@@ -2491,7 +2490,7 @@ void Main::setupEditActions()
     actionListFiles.append(a);
     actionMapInfo = a;
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "insert-image.svg"), tr("Add image", "Edit and context menus") + "...", this);
+    a = new QAction(QPixmap(QString(":/insert-image-%1.svg").arg(iconTheme)), tr("Add image", "Edit and context menus") + "...", this);
     a->setShortcutContext(Qt::WindowShortcut);
     a->setShortcut(Qt::Key_I | Qt::SHIFT);
     ADD_SHORTCUT

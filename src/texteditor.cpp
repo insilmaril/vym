@@ -23,7 +23,6 @@
 
 extern Main *mainWindow;
 extern Settings settings;
-extern QString iconPrefix;
 extern QString iconTheme;
 
 extern QAction *actionViewToggleNoteEditor;
@@ -442,7 +441,7 @@ void TextEditor::setupEditActions()
     filledEditorActions << a;
     actionEditPaste = a;
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "insert-image.svg"), tr("Insert image", "TextEditor") + "...", this);
+    a = new QAction(QPixmap(QString(":/insert-image-%1.svg").arg(iconTheme)), tr("Insert image", "TextEditor") + "...", this);
     editMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(insertImage()));
     editMenu->addAction(a);
@@ -530,7 +529,7 @@ void TextEditor::setupFormatActions()
     filledEditorRichTextActions << a;
     actionTextBGColor = a;
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "format-text-bold.svg"), tr("&Bold"), this);
+    a = new QAction(QPixmap(QString(":/format-text-bold-%1.svg").arg(iconTheme)), tr("&Bold"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_B);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleBold", shortcutScope, a, tag);
@@ -541,7 +540,7 @@ void TextEditor::setupFormatActions()
     filledEditorRichTextActions << a;
     actionTextBold = a;
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "format-text-italic.svg"), tr("&Italic"), this);
+    a = new QAction(QPixmap(QString(":/format-text-italic-%1.svg").arg(iconTheme)), tr("&Italic"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_I);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleItalic", shortcutScope, a, tag);
@@ -552,7 +551,7 @@ void TextEditor::setupFormatActions()
     filledEditorRichTextActions << a;
     actionTextItalic = a;
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "text-format-underline.svg"), tr("&Underline"), this);
+    a = new QAction(QPixmap(QString(":/text-format-underline-%1.svg").arg(iconTheme)), tr("&Underline"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_U);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textToggleUnderline", shortcutScope, a, tag);
@@ -567,7 +566,7 @@ void TextEditor::setupFormatActions()
 
     QActionGroup *actGrp2 = new QActionGroup(this);
     actGrp2->setExclusive(true);
-    a = new QAction(QPixmap(":/" + iconPrefix + "text-format-subscript.svg"), tr("Subs&cript"), actGrp2);
+    a = new QAction(QPixmap(QString(":/text-format-subscript-%1.svg").arg(iconTheme)), tr("Subs&cript"), actGrp2);
     a->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_B);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     a->setCheckable(true);
@@ -578,7 +577,7 @@ void TextEditor::setupFormatActions()
     filledEditorRichTextActions << a;
     actionAlignSubScript = a;
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "text-format-superscript.svg"), tr("Su&perscript"), actGrp2);
+    a = new QAction(QPixmap(QString(":/text-format-superscript-%1.svg").arg(iconTheme)), tr("Su&perscript"), actGrp2);
     a->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     a->setCheckable(true);
@@ -594,28 +593,28 @@ void TextEditor::setupFormatActions()
 
     formatMenu->addSeparator();
 
-    a = new QAction(QPixmap(":/" + iconPrefix + "format-justify-left.svg"), tr("&Left"), grp);
+    a = new QAction(QPixmap(QString(":/format-justify-left-%1.svg").arg(iconTheme)), tr("&Left"), grp);
     // a->setShortcut( Qt::CTRL+Qt::Key_L );
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
     filledEditorRichTextActions << a;
     actionAlignLeft = a;
-    a = new QAction(QPixmap(":/" + iconPrefix + "format-justify-center.svg"), tr("C&enter"), grp);
+    a = new QAction(QPixmap(QString(":/format-justify-center-%1.svg").arg(iconTheme)), tr("C&enter"), grp);
     // a->setShortcut(  Qt::CTRL | Qt::Key_E);
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
     filledEditorRichTextActions << a;
     actionAlignCenter = a;
-    a = new QAction(QPixmap(":/" + iconPrefix + "format-justify-right.svg"), tr("&Right"), grp);
+    a = new QAction(QPixmap(QString(":/format-justify-right-%1.svg").arg(iconTheme)), tr("&Right"), grp);
     // a->setShortcut(Qt::CTRL | Qt::Key_R );
     a->setCheckable(true);
     formatToolBar->addAction(a);
     formatMenu->addAction(a);
     filledEditorRichTextActions << a;
     actionAlignRight = a;
-    a = new QAction(QPixmap(":/" + iconPrefix + "format-justify-fill.svg"), tr("&Justify"), grp);
+    a = new QAction(QPixmap(QString(":/format-justify-fill-%1.svg").arg(iconTheme)), tr("&Justify"), grp);
     // a->setShortcut(Qt::CTRL | Qt::Key_J );
     a->setCheckable(true);
     formatToolBar->addAction(a);
