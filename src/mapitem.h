@@ -23,14 +23,14 @@ class MapItem : public TreeItem {
     virtual void setPos(const QPointF &);
 
   protected:
-    bool hideLinkUnselected;
+    bool hideLinkUnselectedInt;
 
   public:
     /*! Hide link if item is not selected */
     virtual void setHideLinkUnselected(bool);
 
     /*! Check if link is hidden for unselected items */
-    virtual bool getHideLinkUnselected();
+    virtual bool hideLinkUnselected();
 
     virtual QString getPosAttr();       //! Get position attributes shared by Images and Branches
     virtual QString getLinkableAttr();  //! Get attributes shared by Images and Branches

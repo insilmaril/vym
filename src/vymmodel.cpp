@@ -6922,7 +6922,7 @@ void VymModel::toggleHideTmpMode() {
 // Selection related
 //////////////////////////////////////////////
 
-void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
+void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel) // FIXME-2 hide links of unselected images
 {
     // Set selection status in objects
     // Temporary unscroll or rescroll as required
@@ -6938,7 +6938,9 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 
         if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image || mi->getType() == TreeItem::XLinkItemType) {
             if (mi->hasTypeBranch()) {
-                ((BranchItem*)mi)->getBranchContainer()->unselect();
+                BranchContainer *bc = ((BranchItem*)mi)->getBranchContainer();
+                bc->unselect();
+                bc->updateVisibility();
                 do_reposition =
                     do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
             }
@@ -6960,7 +6962,9 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
         mi = static_cast<MapItem *>(ix.internalPointer());
         if (mi->hasTypeBranch()) {
             bi = (BranchItem *)mi;
-            bi->getBranchContainer()->select();
+            BranchContainer *bc = bi->getBranchContainer();
+            bc->select();
+            bc->updateVisibility();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
@@ -6989,12 +6993,6 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
                 do_reposition = true;
             }
         }
-        /* FIXME-2 ME::updateSelection - hide links of unselected objects
-         * also for unselect below
-        lmo = mi->getLMO(); // FIXME-X xlink does return nullptr
-        if (lmo)
-            mi->getLMO()->updateVisibility();
-        */
     }
 
     // Show count of multiple selected items

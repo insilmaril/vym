@@ -54,7 +54,7 @@ void ImageItem::init()
     imageContainer = nullptr;
     imageWrapperInt = nullptr;
     setType(Image);
-    hideLinkUnselected = true;
+    hideLinkUnselectedInt = true;
     originalFilename = "no original name available";
     filePathInZipDir.clear();
 }

@@ -132,6 +132,9 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     // vymLink, Url, hideExport, localTarget
     attr += getGeneralAttr();
 
+    // Linkable attributes
+    attr += getLinkableAttr();
+
     // Update of note is usually done while unselecting a branch
 
     if (scrolled)

@@ -16,7 +16,7 @@ MapItem::MapItem(TreeItem *parent)
 
 void MapItem::init()
 {
-    hideLinkUnselected = false;
+    hideLinkUnselectedInt = false;
 }
 
 Container* MapItem::getContainer()
@@ -40,12 +40,16 @@ void MapItem::setPos(const QPointF &p)
         ((ImageItem*)this)->getImageContainer()->setPos(p);
 }
 
-void MapItem::setHideLinkUnselected(bool b) // FIXME-2 not working yet with containers
+void MapItem::setHideLinkUnselected(bool b) // FIXME-2 upLink not available for images yet
 {
-    hideLinkUnselected = b;
+    hideLinkUnselectedInt = b;
+    if (hasTypeBranch()) {
+        ((BranchItem*)this)->getBranchContainer()->updateVisibility();
+        return;
+    }
 }
 
-bool MapItem::getHideLinkUnselected() { return hideLinkUnselected; }
+bool MapItem::hideLinkUnselected() { return hideLinkUnselectedInt; }
 
 QString MapItem::getPosAttr()
 {
@@ -61,7 +65,7 @@ QString MapItem::getLinkableAttr()
 {
     QString s;
 
-    if (hideLinkUnselected)
+    if (hideLinkUnselectedInt)
         s += attribute("hideLink", "true");
 
     return s;

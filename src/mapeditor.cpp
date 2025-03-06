@@ -1119,7 +1119,7 @@ void MapEditor::toggleWinter()
         BranchItem *prev = nullptr;
         model->nextBranch(cur, prev);
         while (cur) {
-            if (!cur->hasHiddenParent()) { // FIXME-2 avoid recursive calls here in winter
+            if (!cur->hasHiddenParent()) { // FIXME-3 avoid recursive calls here in winter
                 // Branches
                 bc = cur->getBranchContainer();
                 if (bc->isVisible()) {
@@ -2824,9 +2824,8 @@ MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
 
 void MapEditor::updateData(const QModelIndex &sel)
 {
+    qDebug() << "ME::updateData";
     TreeItem *ti = static_cast<TreeItem *>(sel.internalPointer());
-
-    qDebug() << "ME::updateData for " << model->headingText(ti);
 
     if (ti && ti->hasTypeBranch())
         ((BranchItem*)ti)->updateVisuals();

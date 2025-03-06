@@ -209,10 +209,16 @@ void BranchContainer::updateVisibility()
             return;
         }
 
+        if (branchItem->hideLinkUnselected()) {
+            if (!SelectableContainer::isSelected())
+                upLink->setVisible(false);
+            else
+                upLink->setVisible(true);
+        } else
+            upLink->setVisible(true);
+
         // Ensure I am visible myself
         setVisible(true);
-        upLink->setVisible(true);
-
         if (!branchesContainer)
             return;
 

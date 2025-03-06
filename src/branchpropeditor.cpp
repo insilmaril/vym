@@ -252,7 +252,7 @@ void BranchPropertyEditor::updateControls()
         updateScalingControls();
 
         // Link
-        if (branchItem->getHideLinkUnselected())
+        if (branchItem->hideLinkUnselected())
             ui.hideLinkIfUnselectedCheckBox->setCheckState(Qt::Checked);
         else
             ui.hideLinkIfUnselectedCheckBox->setCheckState(Qt::Unchecked);

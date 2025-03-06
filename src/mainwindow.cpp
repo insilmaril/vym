@@ -7064,7 +7064,7 @@ void Main::updateActions()
 
             if (selti && selti->getType() == TreeItem::Image) {
                 actionFormatHideLinkUnselected->setChecked(
-                    ((MapItem *)selti)->getHideLinkUnselected());
+                    ((MapItem *)selti)->hideLinkUnselected());
                 actionFormatHideLinkUnselected->setEnabled(true);
             }
 
