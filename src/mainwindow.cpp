@@ -354,7 +354,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     addDockWidget(Qt::TopDockWidgetArea, dw);
     connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
-    connect (taskEditor, SIGNAL (focusReleased() ), this, SLOT (setFocusMapEditor()));  // FIXME-4 needed?
 
     if (options.isActive("shortcutsLaTeX"))
         switchboard.printLaTeX();
@@ -4740,8 +4739,7 @@ void Main::fileSaveAsDefault()
 
             // Save now as new default
             VymModel *m = currentModel();
-            // FIXME-2 unused QString fn_org = m->getFilePath(); // Restore fn later, if savemode
-                                               // != File::CompleteMap
+
             // Check for existing lockfile
             QFile lockFile(fn + ".lock");
             if (lockFile.exists()) {
@@ -6763,8 +6761,7 @@ void Main::updateNoteEditor(TreeItem *ti)
     noteEditor->setInactive();
 }
 
-void Main::updateHeadingEditor(TreeItem *ti)  // FIXME-2 If (ti && ti != selectedItem) return : no need to update HE then
-    // FIXME-3 move to HeadingEditor
+void Main::updateHeadingEditor(TreeItem *ti)
 {
     VymModel *m = currentModel();
     if (!m) return;
@@ -6776,7 +6773,7 @@ void Main::updateHeadingEditor(TreeItem *ti)  // FIXME-2 If (ti && ti != selecte
         if (ti->hasTypeBranch()) {
             BranchItem *bi = (BranchItem*)ti;
             headingEditor->setMapBackgroundColor(bi->getBackgroundColor(bi));
-            headingEditor->setRichTextForegroundColor(bi->headingColor());  // FIXME-2 what about background color?? Frame background col?
+            headingEditor->setRichTextForegroundColor(bi->headingColor());  // FIXME-3 what about background color?? Frame background col?
         }
 
         headingEditor->setVymText(selti->heading());
@@ -7982,7 +7979,7 @@ void Main::togglePresentationMode()
 
 }
 
-void Main::toggleHideTmpMode()  // FIXME-2 does not update yet state of PushButton in toolbar
+void Main::toggleHideTmpMode()
 {
     VymModel *m = currentModel();
     if (m)
