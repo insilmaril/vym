@@ -82,12 +82,12 @@ void Container::setContainerType(const Container::ContainerType &t)
     containerType = t;
 }
 
-void Container::setName(const QString &n)   // FIXME-3 debugging only
+void Container::setName(const QString &n)   // FIXME-4 debugging only
 {
     name = n;
 }
 
-QString Container::getName()    // FIXME-3 debugging only
+QString Container::getName()    // FIXME-4 debugging only
 {
     QString t;
     switch (containerType) {
