@@ -4271,7 +4271,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
                 .arg(branches.count())
                 .arg(dst->headingPlain()));
 
-    BranchItem* bi_prev = nullptr;  // FIXME-2 never really set and thus used
     foreach (BranchItem *bi, branches) {
         // Check if we link to ourself
         if (dst == bi) {
@@ -4410,7 +4409,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
                               .arg(getObjectName(bi)));
             }
         } // saveState not blocked
-        bi_prev = bi;
     }   // Iterating over selbis    
 
     reposition();
@@ -5640,7 +5638,7 @@ void VymModel::setExportMode(bool b)
         setHideTmpMode(TreeItem::HideNone);
 }
 
-QPointF VymModel::exportImage(QString fname, bool askName, QString format)  // FIXME-2 Ignores hiddenExportParent
+QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 {
     QPointF offset; // set later, when getting image from MapEditor
 
@@ -6790,7 +6788,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::setSelectionPenColor(QColor col) // FIXME-2 saveState: command missing?
+void VymModel::setSelectionPenColor(QColor col)
 {
     if (!col.isValid())
         return;
@@ -6810,7 +6808,7 @@ QColor VymModel::getSelectionPenColor() {
     return mapDesignInt->selectionPen().color();
 }
 
-void VymModel::setSelectionPenWidth(qreal w) // FIXME-2 saveState: command missing?
+void VymModel::setSelectionPenWidth(qreal w)
 {
     QPen selPen = mapDesignInt->selectionPen();
     
@@ -6828,7 +6826,7 @@ qreal VymModel::getSelectionPenWidth() {
     return mapDesignInt->selectionPen().width();
 }
 
-void VymModel::setSelectionBrushColor(QColor col)   // FIXME-2 saveState: command missing?
+void VymModel::setSelectionBrushColor(QColor col)
 {
     if (!col.isValid())
         return;
