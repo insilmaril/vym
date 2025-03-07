@@ -6,6 +6,7 @@
 #include <QGraphicsSvgItem>
 
 #include "container.h"
+#include "linkable-container.h"
 #include "selectable-container.h"
 
 class ImageItem;
@@ -18,7 +19,7 @@ class ImageItem;
  * Both of these types are actually drawn onto the map
  */
 
-class ImageContainer : public Container, public SelectableContainer {
+class ImageContainer : public Container, public LinkableContainer, public SelectableContainer {
   public:
     enum ImageType { Undefined, Pixmap, SVG, ClonedSVG };
 
@@ -40,6 +41,8 @@ class ImageContainer : public Container, public SelectableContainer {
     void setImageItem(ImageItem*);
     ImageItem* getImageItem();
 
+    void updateUpLink();
+    void updateVisibility();
     void reposition();
 
   protected:

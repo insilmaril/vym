@@ -2076,7 +2076,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                         foreach(BranchContainer *bc2, bc->childBranches())
                             bc2->setOriginalScenePos();
                     }
-                                                                            //
+
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
                     tmpParentContainer->addToBranchesContainer(bc);
@@ -2326,8 +2326,11 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     }
 
     if (updateUpLinksRequired) {
-        foreach(BranchContainer *bc, tmpParentContainer->childBranches())   
+        foreach(BranchContainer *bc, tmpParentContainer->childBranches())
             bc->updateUpLink();
+
+        foreach(ImageContainer *ic, tmpParentContainer->childImages())
+            ic->updateUpLink();
     }
 
     model->repositionXLinks();

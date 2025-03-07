@@ -14,6 +14,7 @@
 #include "linkobj.h"
 #include "mapdesign.h"
 #include "misc.h"
+
 #include "xlinkobj.h"
 
 #define qdbg() qDebug().nospace().noquote()
@@ -137,10 +138,10 @@ void BranchContainer::init()
 
 BranchContainer *BranchContainer::parentBranchContainer()
 {
-    if (movingStateInt == TemporaryLinked && tmpLinkedParentContainer)
+    if (SelectableContainer::movingStateInt == SelectableContainer::TemporaryLinked && tmpLinkedParentContainer)
         return tmpLinkedParentContainer;
 
-    if (movingStateInt == Moving)
+    if (SelectableContainer::movingStateInt == Moving)
         // Parent is tmpParentContainer, which technically is not a
         // BranchContainer, so don't return it here
         return nullptr;

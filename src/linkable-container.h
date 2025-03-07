@@ -15,8 +15,6 @@ class LinkableContainer
     virtual ~LinkableContainer();
 
 /*
-    void updateVisibility();    // consider scroll hidden state for branchesCont and imagesCont
-
 
   public:
     // FIXME needed? LinkContainer* getLinkContainer();

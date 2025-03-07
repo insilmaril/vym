@@ -7,6 +7,9 @@
 SelectableContainer::SelectableContainer()
 {
     selectionContainer = nullptr;
+    movingStateInt = NotMoving;
+    tmpLinkedParentContainer = nullptr;
+    originalParentBranchContainer = nullptr;
 }
 
 void SelectableContainer::select(Container *parent, const QPen &pen, const QBrush &brush)
@@ -41,5 +44,16 @@ bool SelectableContainer::isSelected()
         return true;
     else
         return false;
+}
+
+void SelectableContainer::setMovingState(const MovingState &ms, BranchContainer *tpc)
+{
+    movingStateInt = ms;
+    tmpLinkedParentContainer = tpc;
+}
+
+SelectableContainer::MovingState SelectableContainer::movingState()
+{
+    return SelectableContainer::movingStateInt;
 }
 

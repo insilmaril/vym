@@ -3,17 +3,17 @@
 
 #include <QBrush>
 
+#include "branch-container-base.h"
 #include "container.h"
 #include "mapdesign.h"
 #include "linkable-container.h"
-#include "selectable-container.h"
 
 class BranchItem;
 class FlagRowContainer;
 class HeadingContainer;
 class LinkContainer;
 
-class BranchContainer : public BranchContainerBase, public SelectableContainer, public LinkableContainer {
+class BranchContainer : public BranchContainerBase, public LinkableContainer {
   public:
     BranchContainer(
             QGraphicsScene *scene,

@@ -19,10 +19,6 @@ void BranchContainerBase::init()
     branchesContainer = nullptr;
     imagesAndBranchesContainer = nullptr;
 
-    movingStateInt = NotMoving;
-    tmpLinkedParentContainer = nullptr;
-    originalParentBranchContainer = nullptr;
-
     setBrush(Qt::NoBrush);
     setPen(QPen(Qt::NoPen));
 
@@ -37,17 +33,6 @@ void BranchContainerBase::setOrientation(const Orientation &o)
 BranchContainerBase::Orientation BranchContainerBase::getOrientation()
 {
     return orientation;
-}
-
-void BranchContainerBase::setMovingState(const MovingState &ms, BranchContainer *tpc)
-{
-    movingStateInt = ms;
-    tmpLinkedParentContainer = tpc;
-}
-
-BranchContainerBase::MovingState  BranchContainerBase::movingState()
-{
-    return movingStateInt;
 }
 
 int BranchContainerBase::childrenCount()

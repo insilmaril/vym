@@ -6944,8 +6944,11 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel) // FI
                 do_reposition =
                     do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
             }
-            if (mi->hasTypeImage())
-                ((ImageItem*)mi)->getImageContainer()->unselect();
+            if (mi->hasTypeImage()) {
+                ImageContainer *ic = ((ImageItem*)mi)->getImageContainer();
+                ic->unselect();
+                ic->updateVisibility();
+            }
             if (mi->hasTypeXLink()) {
                 ((XLinkItem*)mi)->getXLinkObj()->unselect();
                 XLink *li = ((XLinkItem *)mi)->getXLink();
@@ -6970,8 +6973,11 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel) // FI
                 do_reposition = true;
             }
         }
-        if (mi->hasTypeImage())
-            ((ImageItem*)mi)->getImageContainer()->select();
+        if (mi->hasTypeImage()) {
+            ImageContainer *ic = ((ImageItem*)mi)->getImageContainer();
+            ic->select();
+            ic->updateVisibility();
+        }
 
         if (mi->getType() == TreeItem::XLinkItemType) {
             XLinkItem *xli = (XLinkItem*)mi;

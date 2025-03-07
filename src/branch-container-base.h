@@ -1,11 +1,13 @@
 #ifndef BRANCH_CONTAINER_BASE_H
 #define BRANCH_CONTAINER_BASE_H
 
-#include <QBrush>
 
 #include "container.h"
+#include "selectable-container.h"
 
-class BranchContainerBase : public Container {
+class BranchContainerBase : public Container, public SelectableContainer {
+  friend class SelectableContainer;
+
   public:
     /*! Orientation relative to parent branch container */
     enum Orientation {
@@ -14,28 +16,11 @@ class BranchContainerBase : public Container {
         RightOfParent
     };
 
-    /*! States related to moving around */
-    enum MovingState {
-        NotMoving,
-        Moving,
-        TemporaryLinked
-    };
-
     BranchContainerBase ();
     virtual void init();
 
     void setOrientation(const Orientation &);
     Orientation getOrientation();
-
-
-  protected:
-    MovingState movingStateInt;
-    BranchContainer *tmpLinkedParentContainer;
-    BranchContainer *originalParentBranchContainer;
-
-  public:
-    void setMovingState(const MovingState &, BranchContainer *tpc = nullptr);
-    MovingState movingState();
 
   public:
     int childrenCount();    //! Sum of branch and image children
