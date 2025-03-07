@@ -145,6 +145,7 @@
      <property name="font">
       <font>
        <family>Misc Fixed</family>
+       <kerning>false</kerning>
       </font>
      </property>
     </widget>
