@@ -49,9 +49,6 @@ BranchContainer::~BranchContainer()
         // when the BranchItem will be deleted later
         branchItem->unlinkBranchContainer();
     }
-
-    if (upLink)
-        delete upLink;
 }
 
 void BranchContainer::init()
@@ -121,12 +118,6 @@ void BranchContainer::init()
     outerContainer = nullptr;
 
     addContainer(innerContainer);
-
-    // Create an uplink for every branch
-    // This link will become the child of my parents
-    // linkContainer later. This will allow moving when parent moves,
-    // without recalculating geometry.
-    upLink = new LinkObj;
 
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
@@ -667,8 +658,6 @@ HeadingContainer *BranchContainer::getHeadingContainer()
 
 LinkContainer *BranchContainer::getLinkContainer() { return linkContainer; }
 
-LinkObj *BranchContainer::getLink() { return upLink; }
-
 void BranchContainer::linkTo(BranchContainer *pbc)
 {
 
@@ -716,16 +705,6 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
         return QPointF(r.left(), r.center().y());
         break;
     }
-}
-
-void BranchContainer::setUpLinkPosHint(const LinkObj::PosHint &ph)
-{
-    upLinkPosHintInt = ph;
-}
-
-void BranchContainer::setDownLinkPosHint(const LinkObj::PosHint &ph)
-{
-    downLinkPosHintInt = ph;
 }
 
 QPointF BranchContainer::downLinkPos() { return downLinkPos(orientation); }

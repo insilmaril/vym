@@ -5,6 +5,7 @@
 
 #include "container.h"
 #include "mapdesign.h"
+#include "linkable-container.h"
 #include "selectable-container.h"
 
 class BranchItem;
@@ -12,9 +13,7 @@ class FlagRowContainer;
 class HeadingContainer;
 class LinkContainer;
 
-class LinkObj;
-
-class BranchContainer : public BranchContainerBase, public SelectableContainer {
+class BranchContainer : public BranchContainerBase, public SelectableContainer, public LinkableContainer {
   public:
     BranchContainer(
             QGraphicsScene *scene,
@@ -66,15 +65,10 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
 
     HeadingContainer* getHeadingContainer();
     LinkContainer* getLinkContainer();
-    LinkObj* getLink();
     void linkTo(BranchContainer *);
 
     /*! Get suggestion where new child could be positioned (scene coord) */
     QPointF getPositionHintNewChild(Container*);
-
-    /*! Set hints where to place links between branches */
-    void setUpLinkPosHint(const LinkObj::PosHint &);
-    void setDownLinkPosHint(const LinkObj::PosHint &);
 
     /*! Get scene positions for links depending on frameType and orientation*/
     QPointF downLinkPos();
@@ -183,9 +177,6 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     static qreal linkWidth;
     BranchItem *branchItem; //! Crossreference to "parent" BranchItem 
 
-    // Uplink to parent
-    LinkObj *upLink;
-
     // Save layout, alignment and brush of children containers 
     // even before containers are created on demand
     Layout imagesContainerLayoutInt;
@@ -200,7 +191,7 @@ class BranchContainer : public BranchContainerBase, public SelectableContainer {
     FrameContainer *outerFrame;         // Frame container around whole BranchContainer
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
-    LinkContainer *linkContainer;       // uplink to parent
+    LinkContainer *linkContainer;       // uplink to parent // FIXME-2 or to children???
     Container *listContainer;           // Container for bullet point lists, if used
     HeadingContainer *bulletPointContainer;  // if lists are used, contains bulletpoint
     Container *ornamentsContainer;      // Flags and heading

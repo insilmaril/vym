@@ -1,8 +1,6 @@
 #ifndef SELECTABLE_H
 #define SELECTABLE_H
 
-//#include "branch-container.h"
-//#include "container.h"
 #include "branch-container-base.h"
 
 class BranchContainer;
