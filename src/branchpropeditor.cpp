@@ -486,8 +486,6 @@ void BranchPropertyEditor::colorChanged(QColor col)
 {
     if (model) {
         if (branchItem) {
-            BranchContainer *bc = branchItem->getBranchContainer();
-
             QString n = sender()->objectName();
             if (n == "innerFrameBrush")
                 model->setFrameBrushColor(true, col);
@@ -724,6 +722,7 @@ void BranchPropertyEditor::columnWidthAutoChanged()
 
 void BranchPropertyEditor::columnWidthChanged(int i)
 {
+    qDebug() << __func__;
     if (model)
         model->setHeadingColumnWidth(i);
 

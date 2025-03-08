@@ -1202,27 +1202,34 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Name of flag");
     branchCommands.append(c);
 
-    c = new Command("setFrameType", Command::BranchOrImageSel);
+    c = new Command("setFrameAutoDesign", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    c->addParameter(Command::BoolPar, false, "Enable automatic frame design");
+    c->setComment("Set type of frame");
+    branchCommands.append(c);
+
+    c = new Command("setFrameType", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     c->addParameter(Command::StringPar, false, "Type of frame");
     c->setComment("Set type of frame");
     branchCommands.append(c);
 
-    c = new Command("setFramePenColor", Command::BranchOrImageSel);
+    c = new Command("setFramePenColor", Command::BranchSel);
     c->addParameter(Command::ColorPar, false, "Color of frame border line");
     c->setComment("Set color of frame border");
     branchCommands.append(c);
 
-    c = new Command("setFrameBrushColor", Command::BranchOrImageSel);
+    c = new Command("setFrameBrushColor", Command::BranchSel);
     c->addParameter(Command::ColorPar, false, "Color of frame background");
     c->setComment("Set color of frame background");
     branchCommands.append(c);
 
-    c = new Command("setFramePadding", Command::BranchOrImageSel);
+    c = new Command("setFramePadding", Command::BranchSel);
     c->addParameter(Command::IntPar, false, "Padding around frame");
     c->setComment("Set padding of frame");
     branchCommands.append(c);
 
-    c = new Command("setFramePenWidth", Command::BranchOrImageSel);
+    c = new Command("setFramePenWidth", Command::BranchSel);
     c->addParameter(Command::IntPar, false, "Width of frame pen");
     c->setComment("Set width of frame border");
     branchCommands.append(c);

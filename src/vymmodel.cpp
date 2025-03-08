@@ -2560,15 +2560,23 @@ void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi)
             setAttribute(bi, "Jira.query", query_new);
 }
 
-void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b) // FIXME-2 missing saveState
+void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, BranchItem *bi) // FIXME-2 missing saveState (incl. all frame settings?)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
         bc = selbi->getBranchContainer();
         bc->setFrameAutoDesign(useInnerFrame, b);
-        if (b && mapDesignInt->frameType(useInnerFrame, selbi->depth()) != bc->frameType(useInnerFrame))
+        if (b && mapDesignInt->frameType(useInnerFrame, selbi->depth()) != bc->frameType(useInnerFrame)) {
             setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
+	    /*
+	    QString uif = toS(useInnesFrame);
+	    QString uc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(bc->framePenWidth(useInnerFrame));
+	    QString rc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
+            saveStateBranch(selbi, uc, rc,
+                QString("Set pen width of frame to %1").arg(i));
+		*/
+	}
     }
 }
 
@@ -2714,7 +2722,7 @@ void VymModel::setFramePenWidth(
     reposition();
 }
 
-void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) // FIXME-2  missing saveState
+void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -2723,13 +2731,10 @@ void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) //
         if (bc->columnWidthAutoDesign() != b) {
             if (b)
                 bc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
-            /* 
-            QString v = b ? "Enable" : "Disable";
-            saveState(selbi, QString("setRotationsAutoDesign (%1)")
-                          .arg(toS(!b)),
-                      selbi, QString("setRotationsAutoDesign (%1)").arg(toS(b)),
-                      QString("%1 automatic rotations").arg(v));
-                      */
+	    QString v = b ? "Enable" : "Disable";
+	    QString uc = QString("setHeadingColumnWidthAutoDesign (%1);").arg(toS(!b));
+	    QString rc = QString("setHeadingColumnWidthAutoDesign (%1);").arg(toS(b));
+            saveStateBranch(selbi, uc, rc, QString("%1 automatic heading width").arg(v));
             bc->setColumnWidthAutoDesign(b);
             branchPropertyEditor->updateControls();
             emitDataChanged(selbi);
@@ -2740,22 +2745,19 @@ void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi) //
         reposition();
 }
 
-void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi) // FIXME-2 no saveState
+void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
 	if (bc->columnWidth() != i) {
-
-            /*
-            saveState(selbi, QString("setRotationHeading (\"%1\")")
-                          .arg(bc->rotationHeading()),
-                      selbi, QString("setRotationHeading (\"%1\")").arg(i),
-                      QString("Set rotation angle of heading and flags to %1").arg(i));
-                      */
+	    QString uc = QString("setHeadingColumnWidth (%1);").arg(bc->columnWidth());
+	    QString rc = QString("setHeadingColumnWidth (%1);").arg(i);
+            saveStateBranch(selbi, uc, rc, QString("Set heading column width to %1").arg(i));
 
             bc->setColumnWidth(i);
             emitDataChanged(selbi);
+            branchPropertyEditor->updateControls();
         }
     }
 

@@ -35,8 +35,10 @@ class BranchWrapper : public QObject {
     void colorSubtree(const QString &color);
     bool cycleTask(bool reverse = false);
     void deleteConfluencePageLabel(const QString &labelName);
+    QString getFrameBrushColor(const bool & useInnerFrame);
     int getFramePadding(const bool & useInnerFrame);
     int getFramePenWidth(const bool & useInnerFrame);
+    QString getFramePenColor(const bool & useInnerFrame);
     QString getFrameType(const bool & useInnerFrame);
     QString getHeading();
     QString getHeadingXML();
@@ -87,11 +89,14 @@ class BranchWrapper : public QObject {
     bool selectXLinkOtherEnd(int n);
     void setAttribute(const QString &key, const QString &value);
     void setFlagByName(const QString &);
+    void setFrameAutoDesign(const bool, const bool);
     void setFrameBrushColor(const bool & useInnerFrame, const QString &color);
     void setFramePadding(const bool & useInnerFrame, int padding);
     void setFramePenColor(const bool & useInnerFrame, const QString &color);
     void setFramePenWidth(const bool & useInnerFrame, int w);
     void setFrameType(const bool & useInnerFrame, const QString &type);
+    void setHeadingColumnWidth(const int &w);
+    void setHeadingColumnWidthAutoDesign(const bool);
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
     void setHideExport(bool b);

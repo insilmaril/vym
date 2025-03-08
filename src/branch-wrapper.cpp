@@ -233,9 +233,23 @@ void BranchWrapper::deleteConfluencePageLabel(const QString &labelName)
     }
 }
 
+QString BranchWrapper::getFrameBrushColor(const bool &useInnerFrame)
+{
+    QString r =  branchItemInt->getBranchContainer()->frameBrushColor(useInnerFrame).name(QColor::HexArgb);
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 int BranchWrapper::getFramePadding(const bool &useInnerFrame)
 {
     int r =  branchItemInt->getBranchContainer()->framePadding(useInnerFrame);
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+QString BranchWrapper::getFramePenColor(const bool &useInnerFrame)
+{
+    QString r =  branchItemInt->getBranchContainer()->framePenColor(useInnerFrame).name(QColor::HexArgb);
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -631,6 +645,11 @@ void BranchWrapper::setFlagByName(const QString &s)
     model()->setFlagByName(s, branchItemInt);
 }
 
+void BranchWrapper::setFrameAutoDesign(const bool useInnerFrame, const bool b)
+{
+    model()->setFrameAutoDesign(useInnerFrame, b, branchItemInt);
+}
+
 void BranchWrapper::setFrameBrushColor(const bool &useInnerFrame, const QString &color)
 {
     model()->setFrameBrushColor(useInnerFrame, color, branchItemInt);
@@ -654,6 +673,16 @@ void BranchWrapper::setFramePenWidth(const bool &useInnerFrame, int width)
 void BranchWrapper::setFrameType(const bool &useInnerFrame, const QString &type)
 {
     model()->setFrameType(useInnerFrame, type, branchItemInt);
+}
+
+void BranchWrapper::setHeadingColumnWidth(const int &w)
+{
+    model()->setHeadingColumnWidth(w, branchItemInt);
+}
+
+void BranchWrapper::setHeadingColumnWidthAutoDesign(const bool b)
+{
+    model()->setHeadingColumnWidthAutoDesign(b, branchItemInt);
 }
 
 void BranchWrapper::setHeadingRichText(const QString &text)

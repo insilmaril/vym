@@ -371,7 +371,7 @@ class VymModel : public TreeModel {
     QStringList getUrls(bool ignoreScrolled = true); // returns URLs of subtree
     void setJiraQuery(const QString &, BranchItem *bi = nullptr);
 
-    void setFrameAutoDesign(const bool &useInnerFrame, const bool &);
+    void setFrameAutoDesign(const bool &useInnerFrame, const bool &, BranchItem *bi = nullptr);
     void setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &, BranchItem *bi = nullptr);
     void setFrameType(const bool &useInnerFrame, const QString &, BranchItem *bi = nullptr);
     void setFramePenColor(const bool &useInnerFrame, const QColor &, BranchItem *bi = nullptr);
