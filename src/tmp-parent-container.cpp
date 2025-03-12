@@ -59,6 +59,7 @@ void TmpParentContainer::addToImagesContainer(Container *c)
 
     QPointF sp = c->scenePos();
     imagesContainer->addContainer(c, Z_IMAGE);
+    qDebug() << "tpc_ic=" << imagesContainer << "  ic=" << c << "  ic_par=" << c->parentItem();
 
     // For TmpParentContainer keep position
     c->setPos(imagesContainer->sceneTransform().inverted().map(sp));

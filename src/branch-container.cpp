@@ -645,6 +645,7 @@ void BranchContainer::addToImagesContainer(Container *c)
 
     QPointF sp = c->scenePos();
     imagesContainer->addContainer(c, Z_IMAGE);
+    
 
     c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
 
@@ -827,7 +828,7 @@ void BranchContainer::updateUpLink()
         tmpParentBI = pbc->getBranchItem();
         QPointF upLinkParent_sp;
 
-        upLinkParent_sp = pbc->downLinkPos();
+        upLinkParent_sp = pbc->downLinkPos();   // FIXME-2 duplicated with below line
         upLinkParent_sp = pbc->downLinkPos(orientation);
 
         QGraphicsItem *upLinkParent = upLink->parentItem();

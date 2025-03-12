@@ -60,7 +60,7 @@ MapEditor::MapEditor(VymModel *vm)
     useTransformationOrigin = false;
     zoomDelta = 0.20;
 
-    if (false) {
+    if (debug) {
         // Add cross in origin for debugging
         QPointF p;
         qreal size = 100;
@@ -2104,6 +2104,8 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
                     ic->setOriginalPos();
                     tmpParentContainer->addToImagesContainer(ic);
+                    qDebug() << "ME::moveObj adding ic " << ic << " to tPC:  ";
+                    ic->updateUpLink(); // FIXME-2 debugging only
                 }
         }
             else if (ti->getType() == TreeItem::XLinkItemType) {
@@ -2224,7 +2226,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
         if (tmpParentContainer->movingState() != BranchContainerBase::TemporaryLinked) {
             // Link tmpParentContainer temporarily to targetBranchContainer
 
-            tmpParentContainer->setMovingState(BranchContainerBase::TemporaryLinked, targetBranchContainer);
+            tmpParentContainer->setMovingState(SelectableContainer::TemporaryLinked, targetBranchContainer);
             setState(MovingObjectTmpLinked);
         }
 
@@ -2242,7 +2244,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             setState(MovingObject);
 
         if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
-            tmpParentContainer->setMovingState(BranchContainerBase::Moving);
+            tmpParentContainer->setMovingState(SelectableContainer::Moving);
 
         updateUpLinksRequired = true;
     }
@@ -2250,9 +2252,15 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Update states of children branch containers (for updating links later)
     foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
         if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
-            bc->setMovingState(BranchContainerBase::TemporaryLinked, targetBranchContainer);
+            bc->setMovingState(SelectableContainer::TemporaryLinked, targetBranchContainer);
         else
-            bc->setMovingState(BranchContainerBase::Moving);
+            bc->setMovingState(SelectableContainer::Moving);
+    }
+    foreach (ImageContainer *ic, tmpParentContainer->childImages()) {
+        if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
+            ic->setMovingState(SelectableContainer::TemporaryLinked, targetBranchContainer);
+        else
+            ic->setMovingState(SelectableContainer::Moving);
     }
 
     // Set orientation
@@ -2408,7 +2416,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
             // Tell VymModel to relink
             QList <BranchItem*> movingBranches;
             foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
-                bc->setMovingState(BranchContainerBase::NotMoving);
+                bc->setMovingState(SelectableContainer::NotMoving);
                 movingBranches << bc->getBranchItem();
             }
 
@@ -2455,7 +2463,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 foreach(BranchContainer *bc, childBranches) {
                     BranchItem *bi = bc->getBranchItem();
 
-                    bc->setMovingState(BranchContainerBase::NotMoving);
+                    bc->setMovingState(SelectableContainer::NotMoving);
 
                     if (bc->isAnimated()) 
                         bc->stopAnimation();
@@ -2827,7 +2835,7 @@ MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
 
 void MapEditor::updateData(const QModelIndex &sel)
 {
-    qDebug() << "ME::updateData";
+    //qDebug() << "ME::updateData";   // FIXME-2 called 3x when adding a branch
     TreeItem *ti = static_cast<TreeItem *>(sel.internalPointer());
 
     if (ti && ti->hasTypeBranch())

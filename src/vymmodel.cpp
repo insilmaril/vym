@@ -6512,9 +6512,11 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
             upLink->setLinkColorHint(hint);
 
         // FIXME-2 setLinkColorHint: image link color not supported yet
-        //for (int i = 0; i < cur->imageCount(); ++i)
-        //    cur->getImageNum(i)->getLMO()->setLinkColor();
-        //
+        for (int i = 0; i < cur->imageCount(); ++i) {
+            upLink = cur->getImageNum(i)->getImageContainer()->getLink();
+            if (upLink)
+                upLink->setLinkColorHint(hint);
+        }
         nextBranch(cur, prev);
     }
 
