@@ -97,10 +97,16 @@ ImageContainer *ImageItem::createImageContainer()
 {
     imageContainer = new ImageContainer();
     imageContainer->setImageItem(this);
-    qDebug() << "II::createImageContainer for " << this << "IC=" << imageContainer << "  parBranch=" << parentBranch();
+    //qDebug() << "II::createImageContainer for " << this << "IC=" << imageContainer << "  parBranch=" << parentBranch();
 
-    if (parentBranch())
+    if (parentBranch()) {
         imageContainer->linkTo(parentBranch()->getBranchContainer());
+        imageContainer->updateVisibility();
+
+        // Style of link
+        imageContainer->getLink()->setLinkStyle(LinkObj::Parabel);
+
+    }
 
     //imageContainer->linkTo(parentBranch()->getImage
     return imageContainer;

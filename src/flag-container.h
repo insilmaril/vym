@@ -13,7 +13,9 @@
 */
 
 /////////////////////////////////////////////////////////////////////////////
-class FlagContainer : public ImageContainer {
+class FlagContainer : public ImageContainer {   // FIXME-4 inherits LinkableContainear, SelectableContainer and updateUpLink :-(
+                                                // SelectableContainer: Not used because flags not selected
+                                                // LinkableContainer: Not initialized due to missing parentBranch/ImageItem
   public:
     FlagContainer();
     ~FlagContainer();

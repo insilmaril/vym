@@ -1702,7 +1702,7 @@ QString VymModel::setXLinkVar(XLink* xl, QString varName)
     return r;
 }
 
-// FIXME-2 saveState: Check VymModelWrapper vs BranchWrapper  in scripts...
+// FIXME-2 saveState: Check VymModelWrapper vs BranchWrapper  in scripts. see vymmodelwrapper.h FIXME-3
 void VymModel::saveState(
          QString undoCommand,
          QString redoCommand,

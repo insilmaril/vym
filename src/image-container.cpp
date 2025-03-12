@@ -247,7 +247,7 @@ void ImageContainer::linkTo(BranchContainer *pbc)
     pbc->getLinkContainer()->addLink(upLink);
 }
 
-void ImageContainer::updateUpLink() // FIXME-0 Cont here with enabling links for images...
+void ImageContainer::updateUpLink()
 {
     /*
     if (imageItem)
@@ -270,10 +270,7 @@ void ImageContainer::updateUpLink() // FIXME-0 Cont here with enabling links for
     if (imageItem)
         pbc = imageItem->parentBranch()->getBranchContainer();
 
-    BranchItem *tmpParentBI = nullptr;  // FIXME-2 not used
-
     if (pbc) {
-        tmpParentBI = pbc->getBranchItem();
         QPointF upLinkParent_sp;
 
         upLinkParent_sp = pbc->downLinkPos();
@@ -303,16 +300,20 @@ void ImageContainer::updateUpLink() // FIXME-0 Cont here with enabling links for
             upLink->setLinkColor(pb->mapDesign()->defaultLinkColor());
     }
 
-    // Style of link
-    upLink->setLinkStyle(LinkObj::Parabel); // FIXME-2 every time updateUpLink is called?
-
     // Finally update geometry
     upLink->updateLinkGeometry();
 }
 
 void ImageContainer::updateVisibility()
 {
-    qDebug() << "IC::updateVisibility";
+    //qDebug() << "IC::updateVisibility";
+    if (imageItem->hideLinkUnselected()) {
+        if (!SelectableContainer::isSelected())
+            upLink->setVisible(false);
+        else
+            upLink->setVisible(true);
+    } else
+        upLink->setVisible(true);
 }
 
 void ImageContainer::reposition()

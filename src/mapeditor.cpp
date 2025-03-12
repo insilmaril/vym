@@ -2104,8 +2104,6 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
                     ic->setOriginalPos();
                     tmpParentContainer->addToImagesContainer(ic);
-                    qDebug() << "ME::moveObj adding ic " << ic << " to tPC:  ";
-                    ic->updateUpLink(); // FIXME-2 debugging only
                 }
         }
             else if (ti->getType() == TreeItem::XLinkItemType) {
