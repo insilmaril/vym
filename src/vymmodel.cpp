@@ -1567,12 +1567,7 @@ void VymModel::undo()
 
     // bool noErr;
     QString errMsg;
-    QString undoScript;
-    if (!undoCommand.contains("currentMap()"))
-        // "Old" saveState without complete command // FIXME-2 saveState: remove finally old syntax
-        undoScript = QString("map = vym.currentMap();%1").arg(undoCommand);
-    else
-        undoScript = undoCommand;
+    QString undoScript = QString("map = vym.currentMap();%1").arg(undoCommand);
 
     errMsg = mainWindow->runScript(undoScript).toString();
 
@@ -6926,7 +6921,7 @@ void VymModel::toggleHideTmpMode() {
 // Selection related
 //////////////////////////////////////////////
 
-void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel) // FIXME-2 hide links of unselected images
+void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
     // Set selection status in objects
     // Temporary unscroll or rescroll as required

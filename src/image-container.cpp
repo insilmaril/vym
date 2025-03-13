@@ -287,7 +287,7 @@ void ImageContainer::updateUpLink()
             upLinkParent->sceneTransform().inverted().map(downLink_sp));
     }
     else {
-        qWarning() << "ImageContainer::updateUpLink - No parent branch container ?!";
+        // FIXME-3  flags have no upLink...   qWarning() << "ImageContainer::updateUpLink - No parent branch container ?!";
         return;
     }
 
