@@ -1567,12 +1567,7 @@ void VymModel::undo()
 
     // bool noErr;
     QString errMsg;
-    QString undoScript;
-    if (!undoCommand.contains("currentMap()"))
-        // "Old" saveState without complete command // FIXME-2 saveState: remove finally old syntax
-        undoScript = QString("map = vym.currentMap();%1").arg(undoCommand);
-    else
-        undoScript = undoCommand;
+    QString undoScript = QString("map = vym.currentMap();%1").arg(undoCommand);
 
     errMsg = mainWindow->runScript(undoScript).toString();
 
@@ -1702,7 +1697,7 @@ QString VymModel::setXLinkVar(XLink* xl, QString varName)
     return r;
 }
 
-// FIXME-2 saveState: Check VymModelWrapper vs BranchWrapper  in scripts...
+// FIXME-2 saveState: Check VymModelWrapper vs BranchWrapper  in scripts. see vymmodelwrapper.h FIXME-3
 void VymModel::saveState(
          QString undoCommand,
          QString redoCommand,
@@ -6512,9 +6507,11 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
             upLink->setLinkColorHint(hint);
 
         // FIXME-2 setLinkColorHint: image link color not supported yet
-        //for (int i = 0; i < cur->imageCount(); ++i)
-        //    cur->getImageNum(i)->getLMO()->setLinkColor();
-        //
+        for (int i = 0; i < cur->imageCount(); ++i) {
+            upLink = cur->getImageNum(i)->getImageContainer()->getLink();
+            if (upLink)
+                upLink->setLinkColorHint(hint);
+        }
         nextBranch(cur, prev);
     }
 
@@ -6924,7 +6921,7 @@ void VymModel::toggleHideTmpMode() {
 // Selection related
 //////////////////////////////////////////////
 
-void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel) // FIXME-2 hide links of unselected images
+void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
     // Set selection status in objects
     // Temporary unscroll or rescroll as required
@@ -6977,6 +6974,11 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel) // FI
         }
         if (mi->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)mi)->getImageContainer();
+
+            // Make sure that images have correct upLinkPosSelf_sp
+            // (Could be off after loading and IF no sibling branches are following)
+            ic->updateUpLink();
+
             ic->select();
             ic->updateVisibility();
         }

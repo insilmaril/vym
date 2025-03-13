@@ -264,6 +264,7 @@ void LinkObj::updateLinkGeometry()
             l->setLine(par_x, par_y, self_x, self_y);
             break;
         case Parabel:
+            //qDebug() << "LO::updateLG for parabel  x,y=" << QPointF(par_x, par_y) << QPointF(self_x, self_y);
             parabel(pa0, par_x, par_y, self_x, self_y);
             for (int i = 0; i < segments.size(); ++i) {
                 segments.at(i)->setLine(QLineF(

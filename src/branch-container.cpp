@@ -645,6 +645,7 @@ void BranchContainer::addToImagesContainer(Container *c)
 
     QPointF sp = c->scenePos();
     imagesContainer->addContainer(c, Z_IMAGE);
+    
 
     c->setPos(imagesContainer->sceneTransform().inverted().map(sp));
 
@@ -718,8 +719,7 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
 
     if (frameType(true) != FrameContainer::NoFrame) {
         if (!parentBranchContainer())
-            // Framed MapCenter: Use center of frame    // FIXME-2 should depend
-            // on layout, not depth
+            // Framed MapCenter: Use center of frame    // FIXME-3 downLinkPos should depend on layout, not depth
             return ornamentsContainer->mapToScene(ornamentsContainer->center());
         else {
             // Framed branch: Use left or right edge
@@ -827,7 +827,6 @@ void BranchContainer::updateUpLink()
         tmpParentBI = pbc->getBranchItem();
         QPointF upLinkParent_sp;
 
-        upLinkParent_sp = pbc->downLinkPos();
         upLinkParent_sp = pbc->downLinkPos(orientation);
 
         QGraphicsItem *upLinkParent = upLink->parentItem();
@@ -1432,12 +1431,13 @@ void BranchContainer::reposition()
     }
 
     /*
-    qdbg() << ind() << "BC::reposition  bc=" << info() << "  orientation=" <<
-    orientation; if (pbc) { qdbg() << ind() << "          pbc=" << pbc->info()
-    << " pbc->orientation=" << pbc->orientation; } else qdbg() << ind() << "
-    pbc=0  children=" << branchItem->branchCount();
-    //qdbg() << ind() << "          state=" << movingStateInt;
+    qdbg() << ind() << "BC::reposition  bc=" << info() << "  orientation=" << orientation; 
+    if (pbc)
+        qdbg() << ind() << "          pbc=" << pbc->info() << " pbc->orientation=" << pbc->orientation;
+    else
+        qdbg() << ind() << " pbc=0  children=" << branchItem->branchCount();
     */
+    //qdbg() << ind() << "          state=" << movingStateInt;
 
     // Settings depending on depth
     uint depth = 0;

@@ -41,6 +41,7 @@ class ImageContainer : public Container, public LinkableContainer, public Select
     void setImageItem(ImageItem*);
     ImageItem* getImageItem();
 
+    void linkTo(BranchContainer *pbc);
     void updateUpLink();
     void updateVisibility();
     void reposition();

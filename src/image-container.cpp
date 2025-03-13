@@ -3,8 +3,11 @@
 #include <QDebug>
 #include <QIcon>
 
+#include "branch-container.h"
+#include "branchitem.h"
 #include "file.h"
 #include "imageitem.h"
+#include "link-container.h"
 #include "mapdesign.h"
 
 extern QDir cacheDir;
@@ -236,9 +239,22 @@ void ImageContainer::setImageItem(ImageItem* ii) {
 
 ImageItem* ImageContainer::getImageItem() { return imageItem;}
 
-void ImageContainer::updateUpLink() // FIXME-0 Cont here with enabling links for images...
+void ImageContainer::linkTo(BranchContainer *pbc)
 {
-    qDebug() << "IC::updateUpLink()";
+    if (!pbc)
+        return;
+
+    pbc->getLinkContainer()->addLink(upLink);
+}
+
+void ImageContainer::updateUpLink()
+{
+    /*
+    if (imageItem)
+        qDebug() << "IC::updateUpLink()  ii=" << imageItem->headingText()  << "  vis=" << isVisible() << " par_item=" << parentItem();
+    else
+        qDebug() << "IC::updateUpLink() No ii.";
+    */
 
     // Sets geometry
     // Called from MapEditor e.g. during animation or
@@ -247,31 +263,17 @@ void ImageContainer::updateUpLink() // FIXME-0 Cont here with enabling links for
     if (!isVisible())
         return;
 
-    /*
-    QPointF upLinkSelf_sp = upLinkPos(orientation);
-    QPointF downLink_sp = downLinkPos();
+    QPointF upLinkSelf_sp = mapToScene(center());   // upLinkPos();     // FIXME-4 use nearest corner?
+    QPointF downLink_sp = mapToScene(center());     // downLinkPos();   // Could be needed for bottomline later.
 
     BranchContainer *pbc = nullptr;
-
-    if (tmpLinkedParentContainer) {
-        // I am temporarily linked to tmpLinkedParentContainer
-        pbc = tmpLinkedParentContainer;
-    }
-    else if (originalParentBranchContainer)
-        // I am moving with tmpParent, use original parent for link
-        pbc = originalParentBranchContainer;
-    else
-        // Regular update, e.g. when linkStyle changes
-        pbc = parentBranchContainer();
-
-    BranchItem *tmpParentBI = nullptr;
+    if (imageItem)
+        pbc = imageItem->parentBranch()->getBranchContainer();
 
     if (pbc) {
-        tmpParentBI = pbc->getBranchItem();
         QPointF upLinkParent_sp;
 
         upLinkParent_sp = pbc->downLinkPos();
-        upLinkParent_sp = pbc->downLinkPos(orientation);
 
         QGraphicsItem *upLinkParent = upLink->parentItem();
         if (!upLinkParent)
@@ -285,56 +287,33 @@ void ImageContainer::updateUpLink() // FIXME-0 Cont here with enabling links for
             upLinkParent->sceneTransform().inverted().map(downLink_sp));
     }
     else {
-        // I am a MapCenter without parent. Add LinkObj to my own LinkContainer,
-        // so that at least positions are updated and bottomLine can be drawn
-        linkContainer->addLink(upLink);
-
-        upLink->setLinkStyle(LinkObj::NoLink);
-
-        upLink->setUpLinkPosSelf(
-            linkContainer->sceneTransform().inverted().map(upLinkSelf_sp));
-        upLink->setDownLinkPos(
-            linkContainer->sceneTransform().inverted().map(downLink_sp));
+        // FIXME-3  flags have no upLink...   qWarning() << "ImageContainer::updateUpLink - No parent branch container ?!";
+        return;
     }
 
     // Color of link (depends on current parent)
-    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
-        upLink->setLinkColor(branchItem->headingColor());
-    else {
-        if (branchItem)
-            upLink->setLinkColor(branchItem->mapDesign()->defaultLinkColor());
-    }
-
-    // Style of link
-    if (tmpParentBI) {
-        if (pbc && pbc->branchesContainerLayoutInt == List)
-            upLink->setLinkStyle(LinkObj::NoLink);
-        else {
-            upLink->setLinkStyle(
-                tmpParentBI->mapDesign()->linkStyle(tmpParentBI->depth()));
-        }
-    }
-
-    // Create/delete bottomline, depends on frame and (List-)Layout
-    if (frameType(true) != FrameContainer::NoFrame ||
-        branchesContainerAndOrnamentsVerticalInt ||
-        (pbc && pbc->branchesContainerLayoutInt == List)) {
-        if (upLink->hasBottomLine())
-            upLink->deleteBottomLine();
-    }
-    else {
-        if (!upLink->hasBottomLine())
-            upLink->createBottomLine();
+    BranchItem *pb = imageItem->parentBranch();
+    if (pb) {
+        if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
+            upLink->setLinkColor(pb->headingColor());
+        else
+            upLink->setLinkColor(pb->mapDesign()->defaultLinkColor());
     }
 
     // Finally update geometry
     upLink->updateLinkGeometry();
-*/
 }
 
 void ImageContainer::updateVisibility()
 {
-    qDebug() << "IC::updateVisibility";
+    //qDebug() << "IC::updateVisibility";
+    if (imageItem->hideLinkUnselected()) {
+        if (!SelectableContainer::isSelected())
+            upLink->setVisible(false);
+        else
+            upLink->setVisible(true);
+    } else
+        upLink->setVisible(true);
 }
 
 void ImageContainer::reposition()
