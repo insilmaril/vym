@@ -11,6 +11,6 @@
 #define __VYM_CODE_QUALITY "*Experimental*"
 //#define __VYM_CODE_QUALITY "*Beta*"
 //#define __VYM_CODENAME "Alpha 1 of upcoming 3.0.0"
-#define __VYM_CODENAME "2024 20 year anniversary edition"
+#define __VYM_CODENAME "2024 21 year anniversary edition"
 
 #endif
