@@ -6979,6 +6979,11 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel) // FI
         }
         if (mi->hasTypeImage()) {
             ImageContainer *ic = ((ImageItem*)mi)->getImageContainer();
+
+            // Make sure that images have correct upLinkPosSelf_sp
+            // (Could be off after loading and IF no sibling branches are following)
+            ic->updateUpLink();
+
             ic->select();
             ic->updateVisibility();
         }

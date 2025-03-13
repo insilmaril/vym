@@ -1433,12 +1433,13 @@ void BranchContainer::reposition()
     }
 
     /*
-    qdbg() << ind() << "BC::reposition  bc=" << info() << "  orientation=" <<
-    orientation; if (pbc) { qdbg() << ind() << "          pbc=" << pbc->info()
-    << " pbc->orientation=" << pbc->orientation; } else qdbg() << ind() << "
-    pbc=0  children=" << branchItem->branchCount();
-    //qdbg() << ind() << "          state=" << movingStateInt;
+    qdbg() << ind() << "BC::reposition  bc=" << info() << "  orientation=" << orientation; 
+    if (pbc)
+        qdbg() << ind() << "          pbc=" << pbc->info() << " pbc->orientation=" << pbc->orientation;
+    else
+        qdbg() << ind() << " pbc=0  children=" << branchItem->branchCount();
     */
+    //qdbg() << ind() << "          state=" << movingStateInt;
 
     // Settings depending on depth
     uint depth = 0;

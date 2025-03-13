@@ -97,7 +97,6 @@ ImageContainer *ImageItem::createImageContainer()
 {
     imageContainer = new ImageContainer();
     imageContainer->setImageItem(this);
-    //qDebug() << "II::createImageContainer for " << this << "IC=" << imageContainer << "  parBranch=" << parentBranch();
 
     if (parentBranch()) {
         imageContainer->linkTo(parentBranch()->getBranchContainer());
@@ -105,10 +104,8 @@ ImageContainer *ImageItem::createImageContainer()
 
         // Style of link
         imageContainer->getLink()->setLinkStyle(LinkObj::Parabel);
-
     }
 
-    //imageContainer->linkTo(parentBranch()->getImage
     return imageContainer;
 }
 
