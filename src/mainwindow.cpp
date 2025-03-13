@@ -997,12 +997,24 @@ void Main::setupAPI()
     c->setComment("Remove label from the a branch with Confluence page details");
     branchCommands.append(c);
 
+    c = new Command("getFramePadding", Command::BranchSel);
+    c->setComment("Get padding between frame border and heading");
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    branchCommands.append(c);
+
+    c = new Command("getFramePenWidth", Command::BranchSel);
+    c->setComment("Get width of frame pen");
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    branchCommands.append(c);
+
     c = new Command("getFrameType", Command::BranchSel, Command::StringPar);
-    c->setComment("Set frame type");
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    c->setComment("Get frame type");
     branchCommands.append(c);
 
     c = new Command("getHeading", Command::BranchSel, Command::StringPar);
     c->setComment("Get heading of branch as text");
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     branchCommands.append(c);
 
     c = new Command("getHeadingXML", Command::BranchSel, Command::StringPar);
@@ -1205,7 +1217,7 @@ void Main::setupAPI()
     c = new Command("setFrameAutoDesign", Command::BranchSel);
     c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     c->addParameter(Command::BoolPar, false, "Enable automatic frame design");
-    c->setComment("Set type of frame");
+    c->setComment("Set automatic design of frame");
     branchCommands.append(c);
 
     c = new Command("setFrameType", Command::BranchSel);
@@ -1215,21 +1227,25 @@ void Main::setupAPI()
     branchCommands.append(c);
 
     c = new Command("setFramePenColor", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     c->addParameter(Command::ColorPar, false, "Color of frame border line");
     c->setComment("Set color of frame border");
     branchCommands.append(c);
 
     c = new Command("setFrameBrushColor", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     c->addParameter(Command::ColorPar, false, "Color of frame background");
     c->setComment("Set color of frame background");
     branchCommands.append(c);
 
     c = new Command("setFramePadding", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     c->addParameter(Command::IntPar, false, "Padding around frame");
     c->setComment("Set padding of frame");
     branchCommands.append(c);
 
     c = new Command("setFramePenWidth", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     c->addParameter(Command::IntPar, false, "Width of frame pen");
     c->setComment("Set width of frame border");
     branchCommands.append(c);
