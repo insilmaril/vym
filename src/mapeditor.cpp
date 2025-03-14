@@ -2833,7 +2833,6 @@ MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
 
 void MapEditor::updateData(const QModelIndex &sel)
 {
-    //qDebug() << "ME::updateData";   // FIXME-2 called 3x when adding a branch
     TreeItem *ti = static_cast<TreeItem *>(sel.internalPointer());
 
     if (ti && ti->hasTypeBranch())
@@ -2846,7 +2845,7 @@ void MapEditor::updateData(const QModelIndex &sel)
         BranchItem *prev = nullptr;
         model->nextBranch(cur, prev);
         while (cur) {
-            if (!cur->hasHiddenParent()) { // FIXME-2 avoid recursive calls here in winter
+            if (!cur->hasHiddenParent()) { // FIXME-4 avoid recursive calls here in winter
                 // Branches
                 bc = cur->getBranchContainer();
                 if (bc && bc->isVisible()) {

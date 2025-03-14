@@ -1447,10 +1447,10 @@ void BranchContainer::reposition()
     if (depth == 0) {
         // MapCenter
         setHorizontalDirection(LeftToRight);
-        // FIXME-2 set in updateChildrenStructure:
+        // FIXME-3 set in updateChildrenStructure:
         // innerContainer->setHorizontalDirection(LeftToRight);
 
-        // FIXME-2 set in updateChildrenStructure:
+        // FIXME-3 set in updateChildrenStructure:
         // innerContainer->setLayout(BoundingFloats);
     }
     else {

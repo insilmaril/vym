@@ -219,6 +219,7 @@ void VymModel::init()
     mapName = fileName;
     repositionBlocked = false;
     saveStateBlocked = false;
+    dataChangedBlocked = false;
 
     autosaveTimer = new QTimer(this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
@@ -6316,6 +6317,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
+        dataChangedBlocked = true;
         int depth = selbi->depth();
         bool selbiChanged = false;
         BranchContainer *bc = selbi->getBranchContainer();
@@ -6373,7 +6375,6 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         // Links and bottomlines
         bc->updateUpLink();
 
-
         // Rotations
         if (bc->rotationsAutoDesign()) {
             qreal a = mapDesignInt->rotationHeading(depth);
@@ -6401,6 +6402,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             }
         }
 
+        dataChangedBlocked = false;
         if (selbiChanged)
             emitDataChanged(selbi);
     }
@@ -7235,7 +7237,7 @@ void VymModel::emitNoteChanged(TreeItem *ti)
 void VymModel::emitDataChanged(TreeItem *ti)
 {
     //qDebug() << "VM::emitDataChanged ti=" << ti;
-    if (ti) {
+    if (!dataChangedBlocked && ti) {
         QModelIndex ix = index(ti);
         emit dataChanged(ix, ix);
 
