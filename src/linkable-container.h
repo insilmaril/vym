@@ -53,7 +53,7 @@ class LinkableContainer
 /*
     // Save layout, alignment and brush of children containers 
     // even before containers are created on demand
-    LinkContainer *linkContainer;       // uplink to parent // FIXME-2 or to children???
+    LinkContainer *linkContainer;
 */
 };
 

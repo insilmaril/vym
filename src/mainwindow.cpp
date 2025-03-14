@@ -3100,24 +3100,11 @@ void Main::addUserFlag()
     VymModel *m = currentModel();
 
     if (m) {
-        QFileDialog fd;
-        QStringList filters;
-        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
-                                  "*.pnm *.svg *.svgz)";
-        filters << tr("All", "Filedialog") + " (*.*)";
-        fd.setFileMode(QFileDialog::ExistingFiles);
-        fd.setNameFilters(filters);
-        fd.setWindowTitle(vymName + " - " + "Load user flag");
-        fd.setAcceptMode(QFileDialog::AcceptOpen);
+        QStringList imagePaths = openImageDialog(tr("Load user flag"));
 
-        QString fn;
-        if (fd.exec() == QDialog::Accepted) {
-            lastMapDir = fd.directory();
-            QStringList flist = fd.selectedFiles();
-            QStringList::Iterator it = flist.begin();
-            initProgressCounter(flist.count());
-            while (it != flist.end()) {
-                fn = *it;
+        if (!imagePaths.isEmpty()) {
+            QStringList::Iterator it = imagePaths.begin();
+            while (it != imagePaths.end()) {
                 setupFlag(*it, Flag::UserFlag, *it, "");
                 ++it;
             }
@@ -5512,17 +5499,20 @@ void Main::editCycleTaskStatus()
 
 void Main::editTaskResetDeltaPrio()
 {
-    QList <BranchItem*> taskBranches;
-    Task *task;
-    for (int i = 0; i < taskModel->count(); i++)
-    {
-        task = taskModel->getTask(i);
-        if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0)
-            taskBranches << task->getBranch();
-    }
+    VymModel *m = currentModel();
+    if (m) {
+        QList <BranchItem*> taskBranches;
+        Task *task;
+        for (int i = 0; i < taskModel->count(); i++)
+        {
+            task = taskModel->getTask(i);
+            if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0)
+                taskBranches << task->getBranch();
+        }
 
-    foreach (BranchItem *bi, taskBranches)
-        bi->getModel()->setTaskPriorityDelta(0, bi);
+        foreach (BranchItem *bi, taskBranches)
+            bi->getModel()->setTaskPriorityDelta(0, bi);
+    }
 }
 
 void Main::editTaskSleepN()
@@ -5860,11 +5850,10 @@ void Main::editLoadImage()
                                  " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
                                  "*.pnm *.svg *.svgz);;" +
                                  tr("All", "Filedialog") + " (*.*)");
-        QStringList imagePaths = QFileDialog::getOpenFileNames(
-            nullptr, vymName + " - " + tr("Load image"), lastImageDir.path(),
-            filter);
+        QStringList imagePaths = openImageDialog(tr("Load images"));
 
-        m->loadImage(nullptr, imagePaths);
+        if (!imagePaths.isEmpty())
+            m->loadImage(nullptr, imagePaths);
     }
 }
 
@@ -7602,12 +7591,9 @@ void Main::helpMacros()
     dia.exec();
 }
 
-void Main::helpScriptingCommands()
+QString Main::scriptingCommands()
 {
-    ShowTextDialog dia;
-    dia.useFixedFont(true);
-    QString s;
-    s  = "Available commands in vym\n";
+    QString s  = "Available commands in vym\n";
     s += "=========================\n";
     foreach (Command *c, vymCommands) {
         s += c->description();
@@ -7645,7 +7631,14 @@ void Main::helpScriptingCommands()
         s += "\n";
     }
 
+    return s;
+}
 
+void Main::helpScriptingCommands()
+{
+    ShowTextDialog dia;
+    dia.useFixedFont(true);
+    QString s = scriptingCommands();
     dia.setText(s);
     dia.exec();
 }

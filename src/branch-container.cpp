@@ -243,7 +243,7 @@ void BranchContainer::setScrollOpacity(
     t.scale(1, o);
     setTransform(t);
 
-    qDebug() << "BC::sSO  o=" << o << " flags=" << flags();
+    qDebug() << "BC::sSO  o=" << o << " flags=" << flags(); // FIXME-4 playing only
     setOpacity(o);
 }
 
@@ -970,7 +970,7 @@ void BranchContainer::setBranchesContainerVerticalAlignment(
 }
 
 void BranchContainer::setBranchesContainerBrush(
-    const QBrush &b) // FIXME-2 not used
+    const QBrush &b)
 {
     branchesContainerBrushInt = b;
     if (branchesContainer)
@@ -1447,10 +1447,10 @@ void BranchContainer::reposition()
     if (depth == 0) {
         // MapCenter
         setHorizontalDirection(LeftToRight);
-        // FIXME-2 set in updateChildrenStructure:
+        // FIXME-3 set in updateChildrenStructure:
         // innerContainer->setHorizontalDirection(LeftToRight);
 
-        // FIXME-2 set in updateChildrenStructure:
+        // FIXME-3 set in updateChildrenStructure:
         // innerContainer->setLayout(BoundingFloats);
     }
     else {

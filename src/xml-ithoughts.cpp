@@ -60,7 +60,7 @@ void IThoughtsReader::readIThoughtsMap()
 
         if (loadMode == File::ImportReplace) {
             if (!lastBranch) {
-                xml.raiseError("readIThoughtsMap - ImportReplace map, but nothing selected!");    // FIXME-2 not working, even if something is selected
+                xml.raiseError("readIThoughtsMap - ImportReplace map, but nothing selected!");    // FIXME-4 not working, even if something is selected
                 return;
             }
 

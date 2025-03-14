@@ -191,7 +191,7 @@ class BranchContainer : public BranchContainerBase, public LinkableContainer {
     FrameContainer *outerFrame;         // Frame container around whole BranchContainer
     HeadingContainer *headingContainer; // Heading of this branch
     HeadingContainer *linkSpaceContainer; // space for downLinks
-    LinkContainer *linkContainer;       // uplink to parent // FIXME-2 or to children???
+    LinkContainer *linkContainer;       // Container with upLinks from child images and branches to myself
     Container *listContainer;           // Container for bullet point lists, if used
     HeadingContainer *bulletPointContainer;  // if lists are used, contains bulletpoint
     Container *ornamentsContainer;      // Flags and heading

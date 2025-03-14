@@ -500,22 +500,8 @@ int main(int argc, char *argv[])
         // Show debug info AFTER creating MainWindow
         std::cout << debugInfo().toStdString() << std::endl;
 
-    if (options.isActive("commands")) { // FIXME-2 Merge with Main::helpScriptingCommands
-        std::cout << "Available commands in vym:\n";
-        std::cout << "=========================:\n";
-        foreach (Command *c, vymCommands)
-            std::cout << c->description().toStdString() << std::endl;
-
-        std::cout << "Available commands in map:\n";
-        std::cout << "=========================:\n";
-        foreach (Command *c, modelCommands)
-            std::cout << c->description().toStdString() << std::endl;
-
-        std::cout << "Available commands for branch:\n";
-        std::cout << "=============================:\n";
-        foreach (Command *c, branchCommands)
-            std::cout << c->description().toStdString() << std::endl;
-
+    if (options.isActive("commands")) {
+        std::cout << mainWindow->scriptingCommands().toStdString() << std::endl;
         return 0;
     }
 

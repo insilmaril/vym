@@ -175,6 +175,7 @@ void VymModel::clear()
         // ri->count()="<<rootItem->childCount();
         deleteItem(rootItem->childItemByRow(0));
     }
+    reposition();
 }
 
 void VymModel::init()
@@ -219,6 +220,7 @@ void VymModel::init()
     mapName = fileName;
     repositionBlocked = false;
     saveStateBlocked = false;
+    dataChangedBlocked = false;
 
     autosaveTimer = new QTimer(this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
@@ -305,7 +307,7 @@ void VymModel::resetUsedFlags()
     userFlagsMaster->resetUsedCounter();
 }
 
-QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
+QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // FIXME-2 background image not saved
                             FlagRowMaster::WriteMode flagMode, const QPointF &offset,
                             TreeItem *saveSel)
 {
@@ -2514,8 +2516,7 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
 
 
         emitDataChanged(bi);
-        if (!repositionBlocked)
-            reposition();
+        reposition();
     }
 }
 
@@ -3282,20 +3283,17 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing
     return ok;
 }
 
-void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi) // FIXME-2 missing saveState
+void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            /*saveState(selbi, QString("setTaskPriorityDelta (%1)")
-                          .arg(task->getPriorityDelta()),
-                      selbi,
-                      QString("setTaskPriorityDelta (%1)")
-                          .arg(pd),
-                      "Set delta for priority of task");
-                      */
+            QString bv = setBranchVar(selbi);
+            QString uc = QString("setTaskPriorityDelta (%1)").arg(task->getPriorityDelta());
+            QString rc = QString("setTaskPriorityDelta (%1)").arg(pd);
+            saveStateBranch(selbi, uc, rc, "Set delta for priority of task");
             task->setPriorityDelta(pd);
             emitDataChanged(selbi);
         }
@@ -4656,6 +4654,7 @@ void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-3 does not work rea
                 saveStateBlocked = oldSaveState;
 
                 deleteItem(selbi);
+                reposition();
 
                 // Select the "new" branch  // FIXME-4 not really working with multiple selected branches...
                 select(sel);
@@ -4754,7 +4753,7 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
             updateJiraFlag(parentItem);
 
         emitDataChanged(parentItem);
-        reposition();   // FIXME-2 Maybe move reposition back to calling functions and call less
+        // reposition() is triggered in calling functions!
 
         if (pi->depth() >= 0)
             return pi;
@@ -4830,6 +4829,8 @@ void VymModel::deleteXLinkInt(XLink *xlink)
         //qDebug() << "  Removing xlink from xlinksTrash";
         delete (xlink);
     }
+
+    reposition();
 }
 
 bool VymModel::scrollBranch(BranchItem *bi)
@@ -6319,6 +6320,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
 
     bool updateRequired;
     foreach (BranchItem *selbi, selbis) {
+        dataChangedBlocked = true;
         int depth = selbi->depth();
         bool selbiChanged = false;
         BranchContainer *bc = selbi->getBranchContainer();
@@ -6376,7 +6378,6 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         // Links and bottomlines
         bc->updateUpLink();
 
-
         // Rotations
         if (bc->rotationsAutoDesign()) {
             qreal a = mapDesignInt->rotationHeading(depth);
@@ -6404,6 +6405,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             }
         }
 
+        dataChangedBlocked = false;
         if (selbiChanged)
             emitDataChanged(selbi);
     }
@@ -6486,7 +6488,7 @@ void VymModel::setDefaultLinkColor(const QColor &col)   // FIXME-2 saveState: Mi
         BranchContainer *bc = cur->getBranchContainer();
         bc->updateUpLink();
         // for (int i = 0; i < cur->imageCount(); ++i)
-        // FIXME-2 images not supported yet cur->getImageNum(i)->getLMO()->setLinkColor(col);
+        // FIXME-4 setLinkColorHint: images currently use branch link color
 
         nextBranch(cur, prev);
     }
@@ -6506,7 +6508,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         if (upLink)
             upLink->setLinkColorHint(hint);
 
-        // FIXME-2 setLinkColorHint: image link color not supported yet
+        // FIXME-4 setLinkColorHint: images currently use branch link color
         for (int i = 0; i < cur->imageCount(); ++i) {
             upLink = cur->getImageNum(i)->getImageContainer()->getLink();
             if (upLink)
@@ -7238,7 +7240,7 @@ void VymModel::emitNoteChanged(TreeItem *ti)
 void VymModel::emitDataChanged(TreeItem *ti)
 {
     //qDebug() << "VM::emitDataChanged ti=" << ti;
-    if (ti) {
+    if (!dataChangedBlocked && ti) {
         QModelIndex ix = index(ti);
         emit dataChanged(ix, ix);
 

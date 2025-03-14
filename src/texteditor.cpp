@@ -1263,7 +1263,7 @@ void TextEditor::selectRichTextBackgroundColor()
 
 void TextEditor::insertImage()
 {
-    QStringList imagePaths = openImageDialog();
+    QStringList imagePaths = openImageDialog(tr("Load image", "TextEditor"));
 
     foreach (QString path, imagePaths) {
 	QUrl Uri ( QString ( "file://%1" ).arg (path));

@@ -700,7 +700,12 @@ class VymModel : public TreeModel {
     void toggleHideTmpMode();
 
     void emitNoteChanged(TreeItem *ti);
+
     void emitDataChanged(TreeItem *ti);
+  private:
+    bool dataChangedBlocked;    //! Block emitting dataChanged during applyDesign, only emit once...
+
+  public:
     void emitUpdateQueries(); //!< tell MainWindow to update find results...
     void emitUpdateLayout();
 
