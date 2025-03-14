@@ -175,6 +175,7 @@ void VymModel::clear()
         // ri->count()="<<rootItem->childCount();
         deleteItem(rootItem->childItemByRow(0));
     }
+    reposition();
 }
 
 void VymModel::init()
@@ -2515,8 +2516,7 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
 
 
         emitDataChanged(bi);
-        if (!repositionBlocked)
-            reposition();
+        reposition();
     }
 }
 
@@ -4654,6 +4654,7 @@ void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-3 does not work rea
                 saveStateBlocked = oldSaveState;
 
                 deleteItem(selbi);
+                reposition();
 
                 // Select the "new" branch  // FIXME-4 not really working with multiple selected branches...
                 select(sel);
@@ -4752,7 +4753,7 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
             updateJiraFlag(parentItem);
 
         emitDataChanged(parentItem);
-        reposition();   // FIXME-2 Maybe move reposition back to calling functions and call less
+        // reposition() is triggered in calling functions!
 
         if (pi->depth() >= 0)
             return pi;
@@ -4828,6 +4829,8 @@ void VymModel::deleteXLinkInt(XLink *xlink)
         //qDebug() << "  Removing xlink from xlinksTrash";
         delete (xlink);
     }
+
+    reposition();
 }
 
 bool VymModel::scrollBranch(BranchItem *bi)
