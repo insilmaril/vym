@@ -5494,7 +5494,7 @@ void Main::editCycleTaskStatus()
         m->cycleTaskStatus();
 }
 
-void Main::editTaskResetDeltaPrio()
+void Main::editTaskResetDeltaPrio() // FIXME-2 move to model, add saveState
 {
     QList <BranchItem*> taskBranches;
     Task *task;
