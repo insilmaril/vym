@@ -306,7 +306,7 @@ void VymModel::resetUsedFlags()
     userFlagsMaster->resetUsedCounter();
 }
 
-QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
+QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // FIXME-2 background image not saved
                             FlagRowMaster::WriteMode flagMode, const QPointF &offset,
                             TreeItem *saveSel)
 {

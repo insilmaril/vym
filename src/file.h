@@ -17,7 +17,7 @@ QString convertToAbs(const QString &, const QString &);
 QString basename(const QString &);
 QString dirname(const QString &);
 
-QStringList openImageDialog();
+QStringList openImageDialog(const QString &windowTitle);
 
 bool confirmDirectoryOverwrite(const QDir &dir);
 

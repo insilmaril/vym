@@ -66,15 +66,20 @@ QString basename(const QString &path) { return path.section('/', -1); }
 
 QString dirname(const QString &path) { return path.section('/', 0, -2); }
 
-QStringList openImageDialog()   // FIXME-2 Use for all places, where images are loaded
+QStringList openImageDialog(const QString &windowTitle)
 {
-    QString filter = QString(QObject::tr("Images", "Filedialog") +
-                             " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
-                             "*.pnm *.svg *.svgz);;" +
-                             QObject::tr("All", "Filedialog") + " (*.*)");
-    return QFileDialog::getOpenFileNames(
-        nullptr, vymName + " - " + QObject::tr("Load image"), lastImageDir.path(),
-        filter);
+    QFileDialog fd;
+    fd.setFileMode(QFileDialog::ExistingFiles);
+    fd.setNameFilter (QObject::tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm *.svg *.svgz)");
+    fd.setWindowTitle(vymName + " - " + windowTitle);
+    fd.setDirectory(lastImageDir);
+    fd.setAcceptMode(QFileDialog::AcceptOpen);
+
+    if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
+        lastImageDir = QDir(fd.directory().path());
+        return fd.selectedFiles();
+    }
+    return QStringList();
 }
 
 bool confirmDirectoryOverwrite(const QDir &dir)

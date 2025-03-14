@@ -3084,24 +3084,11 @@ void Main::addUserFlag()
     VymModel *m = currentModel();
 
     if (m) {
-        QFileDialog fd;
-        QStringList filters;
-        filters << tr("Images") + " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
-                                  "*.pnm *.svg *.svgz)";
-        filters << tr("All", "Filedialog") + " (*.*)";
-        fd.setFileMode(QFileDialog::ExistingFiles);
-        fd.setNameFilters(filters);
-        fd.setWindowTitle(vymName + " - " + "Load user flag");
-        fd.setAcceptMode(QFileDialog::AcceptOpen);
+        QStringList imagePaths = openImageDialog(tr("Load user flag"));
 
-        QString fn;
-        if (fd.exec() == QDialog::Accepted) {
-            lastMapDir = fd.directory();
-            QStringList flist = fd.selectedFiles();
-            QStringList::Iterator it = flist.begin();
-            initProgressCounter(flist.count());
-            while (it != flist.end()) {
-                fn = *it;
+        if (!imagePaths.isEmpty()) {
+            QStringList::Iterator it = imagePaths.begin();
+            while (it != imagePaths.end()) {
                 setupFlag(*it, Flag::UserFlag, *it, "");
                 ++it;
             }
@@ -5847,11 +5834,10 @@ void Main::editLoadImage()
                                  " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
                                  "*.pnm *.svg *.svgz);;" +
                                  tr("All", "Filedialog") + " (*.*)");
-        QStringList imagePaths = QFileDialog::getOpenFileNames(
-            nullptr, vymName + " - " + tr("Load image"), lastImageDir.path(),
-            filter);
+        QStringList imagePaths = openImageDialog(tr("Load images"));
 
-        m->loadImage(nullptr, imagePaths);
+        if (!imagePaths.isEmpty())
+            m->loadImage(nullptr, imagePaths);
     }
 }
 

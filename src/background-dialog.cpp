@@ -64,20 +64,9 @@ void BackgroundDialog::toggleBackgroundImage()
 
 void BackgroundDialog::selectBackgroundImage()
 {
-    QStringList filters;
-    filters << tr("Images") +
-                   " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-    QFileDialog fd;
-    fd.setFileMode(QFileDialog::ExistingFile);
-    fd.setWindowTitle(vymName + " - " + tr("Load background image"));
-    fd.setDirectory(lastImageDir);
-    fd.setAcceptMode(QFileDialog::AcceptOpen);
-
-    if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
-        lastImageDir = QDir(fd.directory().path());
-        if (model->setBackgroundImage(fd.selectedFiles().first()))
-            updateBackgroundImageControls();
-    }
+    QStringList images = openImageDialog( tr("Load background image"));
+    if (!images.isEmpty() && model->setBackgroundImage(images.first()))
+        updateBackgroundImageControls();
 }
 
 void BackgroundDialog::updateBackgroundColorButton()

@@ -40,7 +40,7 @@ void MapItem::setPos(const QPointF &p)
         ((ImageItem*)this)->getImageContainer()->setPos(p);
 }
 
-void MapItem::setHideLinkUnselected(bool b) // FIXME-2 upLink not available for images yet
+void MapItem::setHideLinkUnselected(bool b)
 {
     hideLinkUnselectedInt = b;
     if (hasTypeBranch()) {
