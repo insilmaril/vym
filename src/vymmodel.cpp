@@ -3282,20 +3282,17 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing
     return ok;
 }
 
-void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi) // FIXME-2 missing saveState
+void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            /*saveState(selbi, QString("setTaskPriorityDelta (%1)")
-                          .arg(task->getPriorityDelta()),
-                      selbi,
-                      QString("setTaskPriorityDelta (%1)")
-                          .arg(pd),
-                      "Set delta for priority of task");
-                      */
+            QString bv = setBranchVar(selbi);
+            QString uc = QString("setTaskPriorityDelta (%1)").arg(task->getPriorityDelta());
+            QString rc = QString("setTaskPriorityDelta (%1)").arg(pd);
+            saveStateBranch(selbi, uc, rc, "Set delta for priority of task");
             task->setPriorityDelta(pd);
             emitDataChanged(selbi);
         }

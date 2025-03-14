@@ -5494,19 +5494,22 @@ void Main::editCycleTaskStatus()
         m->cycleTaskStatus();
 }
 
-void Main::editTaskResetDeltaPrio() // FIXME-2 move to model, add saveState
+void Main::editTaskResetDeltaPrio()
 {
-    QList <BranchItem*> taskBranches;
-    Task *task;
-    for (int i = 0; i < taskModel->count(); i++)
-    {
-        task = taskModel->getTask(i);
-        if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0)
-            taskBranches << task->getBranch();
-    }
+    VymModel *m = currentModel();
+    if (m) {
+        QList <BranchItem*> taskBranches;
+        Task *task;
+        for (int i = 0; i < taskModel->count(); i++)
+        {
+            task = taskModel->getTask(i);
+            if (taskEditor->taskVisible(task) && task->getPriorityDelta() != 0)
+                taskBranches << task->getBranch();
+        }
 
-    foreach (BranchItem *bi, taskBranches)
-        bi->getModel()->setTaskPriorityDelta(0, bi);
+        foreach (BranchItem *bi, taskBranches)
+            bi->getModel()->setTaskPriorityDelta(0, bi);
+    }
 }
 
 void Main::editTaskSleepN()
