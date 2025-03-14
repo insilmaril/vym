@@ -6488,7 +6488,7 @@ void VymModel::setDefaultLinkColor(const QColor &col)   // FIXME-2 saveState: Mi
         BranchContainer *bc = cur->getBranchContainer();
         bc->updateUpLink();
         // for (int i = 0; i < cur->imageCount(); ++i)
-        // FIXME-2 images not supported yet cur->getImageNum(i)->getLMO()->setLinkColor(col);
+        // FIXME-4 setLinkColorHint: images currently use branch link color
 
         nextBranch(cur, prev);
     }
@@ -6508,7 +6508,7 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         if (upLink)
             upLink->setLinkColorHint(hint);
 
-        // FIXME-2 setLinkColorHint: image link color not supported yet
+        // FIXME-4 setLinkColorHint: images currently use branch link color
         for (int i = 0; i < cur->imageCount(); ++i) {
             upLink = cur->getImageNum(i)->getImageContainer()->getLink();
             if (upLink)
