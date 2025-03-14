@@ -7575,12 +7575,9 @@ void Main::helpMacros()
     dia.exec();
 }
 
-void Main::helpScriptingCommands()
+QString Main::scriptingCommands()
 {
-    ShowTextDialog dia;
-    dia.useFixedFont(true);
-    QString s;
-    s  = "Available commands in vym\n";
+    QString s  = "Available commands in vym\n";
     s += "=========================\n";
     foreach (Command *c, vymCommands) {
         s += c->description();
@@ -7618,7 +7615,14 @@ void Main::helpScriptingCommands()
         s += "\n";
     }
 
+    return s;
+}
 
+void Main::helpScriptingCommands()
+{
+    ShowTextDialog dia;
+    dia.useFixedFont(true);
+    QString s = scriptingCommands();
     dia.setText(s);
     dia.exec();
 }

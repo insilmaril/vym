@@ -384,11 +384,13 @@ class Main : public QMainWindow {
     void helpDemo();
     void helpShortcuts();
     void helpMacros();
+  public:
+    QString scriptingCommands();
+  private slots:
     void helpScriptingCommands();
     void helpDebugInfo();
     void helpAbout();
     void helpAboutQT();
-
     void callMacro();
     void downloadReleaseNotesFinished();
 
