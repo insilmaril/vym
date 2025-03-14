@@ -243,7 +243,7 @@ void BranchContainer::setScrollOpacity(
     t.scale(1, o);
     setTransform(t);
 
-    qDebug() << "BC::sSO  o=" << o << " flags=" << flags();
+    qDebug() << "BC::sSO  o=" << o << " flags=" << flags(); // FIXME-4 playing only
     setOpacity(o);
 }
 
@@ -970,7 +970,7 @@ void BranchContainer::setBranchesContainerVerticalAlignment(
 }
 
 void BranchContainer::setBranchesContainerBrush(
-    const QBrush &b) // FIXME-2 not used
+    const QBrush &b)
 {
     branchesContainerBrushInt = b;
     if (branchesContainer)
