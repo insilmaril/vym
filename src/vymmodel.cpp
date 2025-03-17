@@ -1879,7 +1879,9 @@ void VymModel::saveStateBeginScript(const QString &comment)
 void VymModel::saveStateEndScript()
 {
     if (debug)
-        std::cout << "VM::saveStateEndScript  buildingScript=" << buildingUndoScript << " undoScript=" << undoScript.toStdString() << endl;
+        std::cout << "VM::saveStateEndScript" << endl 
+            << "  buildingScript=" << buildingUndoScript << endl
+            << "  undoScript=" << undoScript.toStdString() << endl;
 
     if (buildingUndoScript) {
         buildingUndoScript = false;
@@ -2561,18 +2563,26 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, Bran
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
+        QString comment = "Toggle automatic design of frame";
+        saveStateBeginScript(comment);
         bc = selbi->getBranchContainer();
         bc->setFrameAutoDesign(useInnerFrame, b);
-        if (b && mapDesignInt->frameType(useInnerFrame, selbi->depth()) != bc->frameType(useInnerFrame)) {
+        if (b) {
+            //&& mapDesignInt->frameType(useInnerFrame, selbi->depth()) != bc->frameType(useInnerFrame)) {
             setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
-	    /*
-	    QString uif = toS(useInnesFrame);
-	    QString uc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(bc->framePenWidth(useInnerFrame));
-	    QString rc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
-            saveStateBranch(selbi, uc, rc,
-                QString("Set pen width of frame to %1").arg(i));
-		*/
+            setFramePenColor(useInnerFrame, mapDesignInt->framePenColor(useInnerFrame, selbi->depth()), selbi);
+            setFramePenWidth(useInnerFrame, mapDesignInt->framePenWidth(useInnerFrame, selbi->depth()), selbi);
+            setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
 	}
+
+        QString uif = toS(useInnerFrame);
+        QString b_undo = toS(!b);
+        QString b_redo = toS(b);
+        QString uc = QString("setFrameAutoDesign (%1, \"%2\");").arg(uif).arg(b_undo);
+        QString rc = QString("setFrameAutoDesign (%1, \"%2\");").arg(uif).arg(b_redo);
+        saveStateBranch(selbi, uc, rc, comment);
+
+        saveStateEndScript();
     }
 }
 

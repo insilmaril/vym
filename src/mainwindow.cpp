@@ -997,8 +997,37 @@ void Main::setupAPI()
     c->setComment("Remove label from the a branch with Confluence page details");
     branchCommands.append(c);
 
+    // Same parameter for all frame commands
+    QString useInnerFrameDesc = "Use setting for heading if true, for subtree if false";
+
+    c = new Command("getFrameAutoDesign", Command::BranchSel, Command::BoolPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Flag if automatic design is used for frame of heading or subtree");
+    branchCommands.append(c);
+
+    c = new Command("getFrameBrushColor", Command::BranchSel, Command::StringPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Get color of frame background");
+    branchCommands.append(c);
+
+    c = new Command("getFramePadding", Command::BranchSel, Command::IntPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Get width of frame padding");
+    branchCommands.append(c);
+
+    c = new Command("getFramePenColor", Command::BranchSel, Command::StringPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Get color of frame border");
+    branchCommands.append(c);
+
+    c = new Command("getFramePenWidth", Command::BranchSel, Command::IntPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Get width of frame border");
+    branchCommands.append(c);
+
     c = new Command("getFrameType", Command::BranchSel, Command::StringPar);
-    c->setComment("Set frame type");
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Get frame type");
     branchCommands.append(c);
 
     c = new Command("getHeading", Command::BranchSel, Command::StringPar);
@@ -1203,33 +1232,37 @@ void Main::setupAPI()
     branchCommands.append(c);
 
     c = new Command("setFrameAutoDesign", Command::BranchSel);
-    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
-    c->addParameter(Command::BoolPar, false, "Enable automatic frame design");
-    c->setComment("Set type of frame");
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->addParameter(Command::BoolPar, false, "Flag for using automatic frame design");
+    c->setComment("Toggle automatic frame design");
     branchCommands.append(c);
 
     c = new Command("setFrameType", Command::BranchSel);
-    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->addParameter(Command::StringPar, false, "Type of frame");
     c->setComment("Set type of frame");
     branchCommands.append(c);
 
     c = new Command("setFramePenColor", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->addParameter(Command::ColorPar, false, "Color of frame border line");
     c->setComment("Set color of frame border");
     branchCommands.append(c);
 
     c = new Command("setFrameBrushColor", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->addParameter(Command::ColorPar, false, "Color of frame background");
     c->setComment("Set color of frame background");
     branchCommands.append(c);
 
     c = new Command("setFramePadding", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->addParameter(Command::IntPar, false, "Padding around frame");
     c->setComment("Set padding of frame");
     branchCommands.append(c);
 
     c = new Command("setFramePenWidth", Command::BranchSel);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->addParameter(Command::IntPar, false, "Width of frame pen");
     c->setComment("Set width of frame border");
     branchCommands.append(c);

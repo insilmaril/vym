@@ -33,8 +33,8 @@ not_yet_ported_tests = [
   "slides"
 ];
 
-tests = all_tests;
-//tests = ["basics", "frames"];
+//tests = all_tests;
+tests = ["basics", "frames"];
 
 
 vym.clearConsole();
@@ -729,6 +729,22 @@ function  test_frames()
   map.undo();  
   expect("Undo setFramePadding", center_0.getFramePadding(true), i);  
 
+  closeCurrentMap();
+
+  // Test toggling auto design for frame
+  map = initMap(testMapFrames);
+
+  main_A = map.findBranchBySelection(main_A_string);
+  expect("AutoDesign enabled for main branch A", main_A.getFrameAutoDesign(true), true);
+
+  main_B = map.findBranchBySelection(main_B_string);
+  expect("AutoDesign disabled for main branch B", main_B.getFrameAutoDesign(true), false);
+
+  main_A.setFrameAutoDesign(true, false);
+  expect("AutoDesign toggled for main branch A", main_A.getFrameAutoDesign(true), false);
+
+  map.undo();
+  expect("Undo: AutoDesign toggling for main branch A", main_A.getFrameAutoDesign(true), true);
   closeCurrentMap();
 }
 

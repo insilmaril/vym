@@ -233,6 +233,13 @@ void BranchWrapper::deleteConfluencePageLabel(const QString &labelName)
     }
 }
 
+bool BranchWrapper::getFrameAutoDesign(const bool &useInnerFrame)
+{
+    bool r =  branchItemInt->getBranchContainer()->frameAutoDesign(useInnerFrame);
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 QString BranchWrapper::getFrameBrushColor(const bool &useInnerFrame)
 {
     QString r =  branchItemInt->getBranchContainer()->frameBrushColor(useInnerFrame).name(QColor::HexArgb);

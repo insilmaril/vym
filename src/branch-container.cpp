@@ -1189,6 +1189,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame,
             if (!innerFrame) {
                 innerFrame = new FrameContainer;
                 innerFrame->setUsage(FrameContainer::InnerFrame);
+                innerFrame->setParentBranchContainer(this);
                 innerFrame->addContainer(ornamentsContainer, Z_ORNAMENTS);
                 innerFrame->setRotation(ornamentsContainer->rotation());
                 innerFrame->setPos(ornamentsContainer->pos());
@@ -1220,6 +1221,7 @@ void BranchContainer::setFrameType(const bool &useInnerFrame,
             if (!outerFrame) {
                 outerFrame = new FrameContainer;
                 outerFrame->setUsage(FrameContainer::OuterFrame);
+                outerFrame->setParentBranchContainer(this);
                 Container *c;
                 if (outerContainer)
                     c = outerContainer;

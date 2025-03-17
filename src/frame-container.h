@@ -9,6 +9,8 @@
 /*! \brief This class adds a frame to a Container.
  */
 
+class BranchContainer; 
+
 class FrameContainer : public XMLObj, public Container {
   public:
     /*! \brief Supported frame types */
@@ -37,7 +39,6 @@ class FrameContainer : public XMLObj, public Container {
     static FrameType frameTypeFromString(const QString &);
     static QString frameTypeString(int);
     QString frameTypeString();
-    void setFrameDesignAuto(const bool &);
     void setFrameType(const FrameType &);
     void setFrameType(const QString &);
 
@@ -53,10 +54,12 @@ class FrameContainer : public XMLObj, public Container {
     void setFramePenColor(const QColor&);
     QColor frameBrushColor();
     void setFrameBrushColor(const QColor &);
+    void setParentBranchContainer(BranchContainer *pbc);    //! ask BranchContainer about autodesign when saving
     void setUsage(FrameUsage u);
     QString saveFrame();
 
   protected:
+    BranchContainer *parentBranchContainer;
     FrameType frameTypeInt; //! Frame type
     int framePaddingInt;    //! Distance text - frame
     QPen framePen;
