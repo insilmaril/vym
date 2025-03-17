@@ -4233,6 +4233,7 @@ bool Main::closeModelWithId(uint id)
             return true;
         }
     }
+
     return false;
 }
 

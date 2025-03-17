@@ -5748,6 +5748,7 @@ void VymModel::exportPDF(QString fname, bool askName)
 
     setExportMode(false);
 
+    ex.setResult(ExportBase::Success);
     ex.completeExport();
 }
 
@@ -5792,6 +5793,8 @@ QPointF VymModel::exportSVG(QString fname, bool askName)
     delete svgPainter;
 
     setExportMode(false);
+
+    ex.setResult(ExportBase::Success);
     ex.completeExport();
 
     return offset;

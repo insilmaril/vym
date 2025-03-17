@@ -214,12 +214,15 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         model->exportOrgMode(filePath, false);
     } else if (format == "PDF") {
         model->exportPDF(filePath, false);
+        r = true;
     } else if (format == "SVG") {
         model->exportSVG(filePath, false);
+        r = true;
     } else if (format == "TaskJuggler") {
         model->exportTaskJuggler(filePath, false);
     } else if (format == "XML") {
         model->exportXML(filePath, false);
+        r = true;
     } else {
         mainWindow->abortScript(
                 QJSValue::GenericError,

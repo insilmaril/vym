@@ -40,6 +40,9 @@ bool VymWrapper::closeMapWithID(uint n)
                 QString("Map '%1' not available.").arg(n));
         return false;
     }
+    // Remove progress counter while testing
+    mainWindow->removeProgressCounter();
+
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -93,7 +96,7 @@ bool VymWrapper::fileCopy(const QString &srcPath, QString dstPath)
 
     bool r; 
     if (!file.exists()) {
-        qDebug() << "VymWrapper::fileCopy()   srcPath does not exist:" << srcPath;
+        qWarning() << "VymWrapper::fileCopy()   srcPath does not exist:" << srcPath;
         mainWindow->abortScript(
                 QJSValue::ReferenceError, 
                 QString("File '%1' does not exist.").arg(srcPath));
@@ -188,8 +191,7 @@ void VymWrapper::print(const QString &s)
 bool VymWrapper::removeDirectory(const QString &directoryName)
 {
     QDir d(directoryName);
-    qWarning() << "VW::removeDir " << directoryName;
-    return false;
+    // qWarning() << "VW::removeDir " << directoryName << "  exists: " << d.exists();
     return d.removeRecursively();
 }
 
