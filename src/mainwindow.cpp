@@ -594,6 +594,14 @@ void Main::setupAPI()
     vymCommands.append(c);
 
     c = new Command("print", Command::AnySel);
+    c->setComment("Print string to console");
+    c->addParameter(Command::StringPar, false, "String to print");
+    vymCommands.append(c);
+
+    c = new Command("printCol", Command::AnySel);
+    c->setComment("Print string to console with ANSI color");
+    c->addParameter(Command::StringPar, false, "String to print");
+    c->addParameter(Command::StringPar, false, "Color [red|green|yellow|blue|magenta|cyan|white]");
     vymCommands.append(c);
 
     c = new Command("selectQuickColor", Command::AnySel);
@@ -7313,10 +7321,29 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-void Main::scriptPrint(const QString &s)
+void Main::scriptPrint(const QString &s, const QString &color)
 {
     scriptOutput->append(s);
-    std::cout << s.toStdString() << endl;
+
+    std::string prefix;
+    std::string postfix = "\033[0m";
+
+    if (color == "red")
+        prefix = "\033[1;31m";
+    else if (color == "green")
+        prefix = "\033[1;32m";
+    else if (color == "blue")
+        prefix = "\033[1;34m";
+    else if (color == "yellow")
+        prefix = "\033[1;33m";
+    else if (color == "magenta")
+        prefix = "\033[1;35m";
+    else if (color == "cyan")
+        prefix = "\033[1;36m";
+    else if (color == "white")
+        prefix = "\033[1;37m";
+
+    std::cout << prefix << s.toStdString()  << postfix << endl;
 }
 
 QVariant Main::runScript(const QString &script)

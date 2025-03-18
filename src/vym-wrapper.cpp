@@ -188,6 +188,11 @@ void VymWrapper::print(const QString &s)
     mainWindow->scriptPrint(s);
 }
 
+void VymWrapper::printCol(const QString &color, const QString &s)
+{
+    mainWindow->scriptPrint(s, color);
+}
+
 bool VymWrapper::removeDirectory(const QString &directoryName)
 {
     QDir d(directoryName);

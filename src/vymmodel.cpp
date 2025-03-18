@@ -2558,7 +2558,7 @@ void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi)
             setAttribute(bi, "Jira.query", query_new);
 }
 
-void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, BranchItem *bi) // FIXME-2 missing saveState (incl. all frame settings?)
+void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -2939,7 +2939,7 @@ qreal VymModel::getScaleSubtree ()
     return selbis.first()->getBranchContainer()->scaleSubtree();
 }
 
-void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii) // FIXME-2 missing saveState
+void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii) // FIXME-0 missing saveState
 {
     QList<ImageItem *> seliis = getSelectedImages(ii);
 
@@ -2947,6 +2947,11 @@ void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
         qreal f_old = selii->scale();
         qreal f_new = relative ? f_old + f : f;
         if (selii->scale() != f_new) {
+            QString iv = setImageVar(selii);
+            QString uc = QString("setScaleSubtree(%1);").arg(toS(f_old, 3));
+            QString rc = QString("setScaleSubtree(%1);").arg(toS(f_new,3));
+            QString c  = QString("Set subtree scale factor to %1").arg(toS(f_new, 3));
+            saveState(uc, rc, c);
             /*saveState(selii, QString("setScale (%1)")
                           .arg(f_old),
                       selii, QString("setScale (%1)").arg(f_new),
@@ -3161,7 +3166,7 @@ bool VymModel::cycleTaskStatus(BranchItem *bi, bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing saveState
+bool VymModel::setTaskSleep(const QString &s, BranchItem *bi)
 {
     bool ok = false;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -3174,45 +3179,48 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing
             // time formats
 
             if (s == "0") {
+                // Reset sleep time and wake up task
                 ok = task->setSecsSleep(0);
             }
             else {
                 static QRegularExpression re;
+
+                // Only digits considered as days
                 re.setPattern("^\\s*(\\d+)\\s*$");
                 re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                 QRegularExpressionMatch match = re.match(s);
                 if (match.hasMatch()) {
-                    // Found only digit, considered as days
                     ok = task->setDaysSleep(match.captured(1).toInt());
                 }
                 else {
+                    // Digit followed by "h", considered as hours
                     re.setPattern("^\\s*(\\d+)\\s*h\\s*$");
                     match = re.match(s);
                     if (match.hasMatch()) {
-                        // Found digit followed by "h", considered as hours
                         ok = task->setHoursSleep(match.captured(1).toInt());
                     }
                     else {
+                        // Digits followed by "w", considered as weeks
                         re.setPattern("^\\s*(\\d+)\\s*w\\s*$");
                         match = re.match(s);
                         if (match.hasMatch()) {
-                            // Found digit followed by "w", considered as weeks
                             ok = task->setDaysSleep(7 * match.captured(1).toInt());
                         }
                         else {
+                            // Digits followed by "s", considered as seconds
                             re.setPattern("^\\s*(\\d+)\\s*s\\s*$");
                             match = re.match(s);
                             if (match.hasMatch()) {
-                                // Found digit followed by "s", considered as
-                                // seconds
                                 ok = task->setSecsSleep(match.captured(1).toInt());
                             }
                             else {
-                                ok = task->setDateSleep(
-                                    s); // ISO date YYYY-MM-DDTHH:mm:ss
+                                // Try setting ISO date YYYY-MM-DDTHH:mm:ss
+                                ok = task->setDateSleep(s);
 
                                 if (!ok) {
+                                    // German format, e.g. "24.12.2012"
                                     re.setPattern("(\\d+)\\.(\\d+)\\.(\\d+)");
+                                    re.setPatternOptions(QRegularExpression::NoPatternOption);
                                     match = re.match(s);
                                     if (match.hasMatch()) {
                                         QDateTime d(
@@ -3220,11 +3228,11 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing
                                                   match.captured(2).toInt(),
                                                   match.captured(1).toInt()).startOfDay());
                                         ok = task->setDateSleep(d); 
-                                            // German format,
-                                            // e.g. 24.12.2012
                                     }
                                     else {
+                                        // Short German format, e.g. "24.12."
                                         re.setPattern("(\\d+)\\.(\\d+)\\.");
+                                        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                                         match = re.match(s);
                                         if (match.hasMatch()) {
                                             int month = match.captured(2).toInt();
@@ -3243,10 +3251,9 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing
                                                 // day).startOfDay();
                                             }
                                             ok = task->setDateSleep(d);
-                                                // Short German format,
-                                                // e.g. 24.12.
                                         }
                                         else {
+                                            // Time HH:MM
                                             re.setPattern("(\\d+)\\:(\\d+)");
                                             match = re.match(s);
                                             if (match.hasMatch()) {
@@ -3255,7 +3262,7 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing
                                                 QDateTime d(
                                                     QDate::currentDate(),
                                                     QTime(hour, min));
-                                                ok = task->setDateSleep(d); // Time HH:MM
+                                                ok = task->setDateSleep(d);
                                             }
                                         }
                                     }
@@ -3278,10 +3285,11 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 missing
                 task->setDateModification();
                 selbi->updateTaskFlag(); // If tasks changes awake mode, then
                                          // flag needs to change
-                /*saveState(selbi, QString("setTaskSleep (\"%1\")").arg(oldSleepString),
-                    selbi, QString("setTaskSleep (\"%1\")").arg(newSleepString),
-                    QString("setTaskSleep (\"%1\")").arg(newSleepString));
-                    */
+                QString bv = setBranchVar(selbi);
+                QString uc = QString("setTaskSleep (\"%1\")").arg(oldSleepString);
+                QString rc = QString("setTaskSleep (\"%1\")").arg(newSleepString);
+                saveStateBranch(selbi, uc, rc, "Set sleep time for task");
+
                 emitDataChanged(selbi);
                 reposition();
             }

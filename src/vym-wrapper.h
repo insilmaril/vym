@@ -32,6 +32,7 @@ class VymWrapper : public QObject {
     int mapCount();
     bool mkdir(const QString &dirName);
     void print(const QString &s);
+    void printCol(const QString &color, const QString &s);
     bool removeDirectory(const QString &dirName);
     bool removeFile(const QString &fileName);
     void selectQuickColor(int n);
