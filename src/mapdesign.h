@@ -151,7 +151,8 @@ class MapDesign {
     void setBackgroundColor(const QColor &);
     QColor backgroundColor();
 
-    bool setBackgroundImage(const QString &fileName);
+    bool loadBackgroundImage(const QString &fileName);
+    bool saveBackgroundImage(const QString &imagePath);
     void setBackgroundImageName(const QString &);
     void unsetBackgroundImage();
     bool hasBackgroundImage();
@@ -231,7 +232,6 @@ class MapDesign {
 
   public:
     QString saveToDir(const QString &tmpdir, const QString &prefix);
-
 };
 
 /////////////////////////////////////////////////////////////////////////////

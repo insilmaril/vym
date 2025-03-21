@@ -201,7 +201,7 @@ void VymReader::readMapDesignCompatibleAttributes()
     a = "backgroundImage";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setBackgroundImage(parseHREF(s));
+        model->loadBackgroundImage(parseHREF(s));
 
     a = "backgroundImageName";
     s = xml.attributes().value(a).toString();

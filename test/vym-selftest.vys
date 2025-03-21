@@ -8,6 +8,7 @@ all_tests = [
   "basics",
   "adding_branches",
   "adding_maps",
+  "backgrounds",
   "copy_paste",
   "delete_parts",
   "export",         // FIXME WIP
@@ -34,8 +35,10 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-tests = ["basics", "tasks"];
+//tests = ["basics", "backgrounds"];
 
+
+var verbosity = 0;
 
 vym.clearConsole();
 
@@ -122,9 +125,10 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
   currentMapPath = testDir + "/maps/current-map" + postfix;
 
   if (vym.fileExists(currentMapPath)) {
-      if (vym.fileRemove(currentMapPath))
+      if (vym.fileRemove(currentMapPath)) {
+        if (verbosity > 0)
 				  vym.print("# Removed existing map: " + currentMapPath);
-			else
+      } else
 				  vym.print("# Failed to remove existing map: " + currentMapPath);
   }
 
@@ -145,7 +149,9 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 
   if (vym.loadMap(currentMapPath)) {
     let id = vym.currentMapID();
-    vym.print("# Loaded " + currentMapPath + " (id: " + id + "  original: " + mapPath + ")");
+    if (verbosity > 0)
+      vym.print("# Loaded " + currentMapPath + " (id: " + id + "  original: " + mapPath + ")");
+    
     vym.gotoMap(id);
 
     map = vym.currentMap();
@@ -162,7 +168,8 @@ function closeCurrentMap()
   id = vym.currentMapID();
   name = vym.currentMap().getFileName();
   if(vym.closeMapWithID(id)) {
-    vym.print("# Closed map \"" + name + "\" (id: #{id})");
+    if (verbosity > 0)
+      vym.print("# Closed map \"" + name + "\" (id: #{id})");
   } else {
     vym.print("# Failed to close map with id = #{id}. CurrentMapID = #{id}");
   }
@@ -171,11 +178,13 @@ function closeCurrentMap()
 function initDir(dirPath)
 {
    if (vym.directoryExists(dirPath)) {
-     vym.print("# Removing directory " + dirPath);
+      if (verbosity > 0)
+         vym.print("# Removing directory " + dirPath);
      vym.removeDirectory(dirPath);
    }
 
-   vym.print("# Creating directory " + dirPath);
+   if (verbosity > 0)
+     vym.print("# Creating directory " + dirPath);
    vym.mkdir(dirPath);
 }
 
@@ -364,6 +373,49 @@ function test_adding_maps()
   expect("Undo: check heading",  b.headingText(), "branch b");
   closeCurrentMap();
 }
+
+function test_backgrounds()
+{
+  heading("Backgrounds");
+  map = initMap(testMapDefault);
+
+  expect("Map does not use background image", map.hasBackgroundImage(), false);
+
+  col = "#1b1e20";
+  expect("Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Switch from color to image
+  imagePath = vymBaseDir + "/images/background-grid.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Switch to another image
+  imagePath = vymBaseDir + "/icons/down.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "down.png");
+
+  // Undo to previous image
+  map.undo();
+  expect("Undo once: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Undo once: Background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Undo to original color
+  map.undo();
+  expect("Undo twice: Map does not use background image", map.hasBackgroundImage(), false);
+  expect("Undo twice: Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Redo to first image
+  map.redo();
+  expect("Redo: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Redo: background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  closeCurrentMap();
+}
+
 
 function test_attributes()
 {
@@ -1622,6 +1674,7 @@ function test_xlinks()
 if (tests.includes("basics")) { test_basics(); }
 if (tests.includes("adding_branches")) { test_adding_branches(); }
 if (tests.includes("adding_maps"))    { test_adding_maps(); }
+if (tests.includes("backgrounds"))    { test_backgrounds(); }
 if (tests.includes("attributes"))     { test_adding_branches(); }
 if (tests.includes("copy_paste"))     { test_copy_paste(); }
 if (tests.includes("delete_parts"))   { test_delete_parts(); }

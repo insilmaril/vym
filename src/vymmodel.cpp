@@ -307,8 +307,11 @@ void VymModel::resetUsedFlags()
     userFlagsMaster->resetUsedCounter();
 }
 
-QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // FIXME-2 background image not saved
+QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                             FlagRowMaster::WriteMode flagMode, const QPointF &offset,
+                            bool writeMapAttr,
+                            bool writeMapDesign,
+                            bool writeCompleteTree,
                             TreeItem *saveSel)
 {
     // tmpdir	    temporary directory to which data will be written
@@ -328,9 +331,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // F
     // Current map version after load still might be original one, change it now.
     mapVersionInt = vymVersion;
 
-    QString design;
-
-    if (!saveSel) {
+    if (writeMapAttr) {
         mapAttr += xml.attribute("date", toS(QDate::currentDate())) + "\n";
 
         if (!author.isEmpty())
@@ -345,11 +346,13 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // F
                      QString().setNum(mapEditor->zoomFactorTarget()));
         mapAttr += xml.attribute("mapRotation",
                      QString().setNum(mapEditor->rotationTarget()));
-
-        design = mapDesignInt->saveToDir(tmpdir, prefix);
     }
     header += xml.beginElement("vymmap", mapAttr);
 
+    QString design;
+
+    if (writeMapDesign)
+        design = mapDesignInt->saveToDir(tmpdir, prefix);
 
     xml.incIndent();
 
@@ -361,7 +364,7 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // F
 
     QString tree;
     // Build xml recursivly
-    if (!saveSel) {
+    if (writeCompleteTree) {
         // Save all mapcenters as complete map, if saveSel not set
         tree += saveTreeToDir(tmpdir, prefix, offset, tmpXLinks);
 
@@ -371,24 +374,26 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // F
         // Save selection
         if (getSelectedItems().count() > 0 && !saveSel)
             tree += xml.valueElement("select", getSelectString());
-    }
-    else {
-        switch (saveSel->getType()) {
-            case TreeItem::Branch:
-            case TreeItem::MapCenter:
-                // Save Subtree
-                tree += ((BranchItem *)saveSel)
-                            ->saveToDir(tmpdir, prefix, offset, tmpXLinks, exportBoundingBoxes);
-                break;
-            case TreeItem::Image:
-                tree += ((ImageItem *)saveSel)->saveToDir(tmpdir);
-                break;
-            case TreeItem::XLinkItemType:
-                tree += ((XLinkItem *)saveSel)->getXLink()->saveToDir();
-                break;
-            default:
-                // other types shouldn't be safed directly...
-                break;
+    } else
+    {
+        if (saveSel) {
+            switch (saveSel->getType()) {
+                case TreeItem::Branch:
+                case TreeItem::MapCenter:
+                    // Save Subtree
+                    tree += ((BranchItem *)saveSel)
+                                ->saveToDir(tmpdir, prefix, offset, tmpXLinks, exportBoundingBoxes);
+                    break;
+                case TreeItem::Image:
+                    tree += ((ImageItem *)saveSel)->saveToDir(tmpdir);
+                    break;
+                case TreeItem::XLinkItemType:
+                    tree += ((XLinkItem *)saveSel)->getXLink()->saveToDir();
+                    break;
+                default:
+                    // other types shouldn't be saved directly...
+                    break;
+            }
         }
     }
 
@@ -409,8 +414,9 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,   // F
     for (int i = 0; i < tmpXLinks.count(); ++i)
         footer += tmpXLinks.at(i)->saveToDir();
 
-    // Save slides
-    footer += slideModel->saveToDir();
+    if (writeCompleteTree)
+        // Save slides
+        footer += slideModel->saveToDir();
 
     xml.decIndent();
     footer += xml.endElement("vymmap");
@@ -831,10 +837,9 @@ void VymModel::saveMap(const File::SaveMode &savemode)
             // Use defined name for map within zipfile to avoid problems
             // with zip library and umlauts (see #98)
             mapStringData =
-                saveToDir(fileDir, "", FlagRowMaster::UsedFlags, QPointF(), nullptr);
+                saveToDir(fileDir, "", FlagRowMaster::UsedFlags, QPointF());
         else
-            mapStringData = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
-                                 QPointF(), nullptr);
+            mapStringData = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags, QPointF());
         mapChanged = false;
         mapUnsaved = false;
         autosaveTimer->stop();
@@ -845,7 +850,7 @@ void VymModel::saveMap(const File::SaveMode &savemode)
             saveImage();
         else
             mapStringData = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
-                                 QPointF(), getSelectedBranch());
+                                 QPointF(), false, false, false, getSelectedBranch());
         // FIXME-3 take care of multiselections when saving parts
     }
 
@@ -1700,19 +1705,20 @@ QString VymModel::setXLinkVar(XLink* xl, QString varName)
 }
 
 // FIXME-2 saveState: Check VymModelWrapper vs BranchWrapper  in scripts. see vymmodelwrapper.h FIXME-3
-void VymModel::saveState(
+QString VymModel::saveState(
          QString undoCommand,
          QString redoCommand,
          const QString &comment,
          TreeItem *saveUndoItem,
-         TreeItem *saveRedoItem)
+         TreeItem *saveRedoItem,
+         bool createHistoryDir)
 {
     // Main saveState
 
     // sendData(redoCom); // FIXME-5 testing network
 
     if (saveStateBlocked)
-        return;
+        return QString();
 
     /*
     if (debug) {
@@ -1759,14 +1765,15 @@ void VymModel::saveState(
         }
     }
     */
-    QString histDir = getHistoryPath();
+    QString historyPath = getHistoryPath();
 
-    // Create histDir if not available and required
-    if (saveUndoItem || saveRedoItem) {
+    // Create historyPath if not available and required
+    if (saveUndoItem || saveRedoItem || createHistoryDir) {
         dataStep++;
-        QDir d(histDir);
+        QDir d(historyPath);
+        qDebug() << "Trying to create subdirs in " << historyPath;
         if (!d.exists())
-            makeSubDirs(histDir);
+            makeSubDirs(historyPath);   // FIXME-3 Only create subDirs on demand, e.g. when saving imageItem
     }
 
     // Save depending on how much needs to be saved
@@ -1774,21 +1781,24 @@ void VymModel::saveState(
     // FIXME-5 saveState: userFlags are not written, but still in memory. Could
     //         lead to problem, if one day removed from userFlags toolbar AND memory
     if (saveUndoItem) {
-        QString dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
-                            saveUndoItem);
+        QString dataXML = saveToDir(historyPath, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+                            false, false, false, saveUndoItem);
 
-        QString xmlUndoPath = histDir + "/undo.xml";
+        QString xmlUndoPath = historyPath + "/undo.xml";
         undoCommand.replace("UNDO_PATH", xmlUndoPath);
         saveStringToDisk(xmlUndoPath, dataXML);
     }
     if (saveRedoItem) {
-        QString dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
-                            saveRedoItem);
+        QString dataXML = saveToDir(historyPath, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+                            false, false, false, saveRedoItem);
 
-        QString xmlRedoPath = histDir + "/redo.xml";
+        QString xmlRedoPath = historyPath + "/redo.xml";
         redoCommand.replace("REDO_PATH", xmlRedoPath);
         saveStringToDisk(xmlRedoPath, dataXML);
     }
+
+    undoCommand.replace("HISTORY_PATH", historyPath);
+    redoCommand.replace("HISTORY_PATH", historyPath);
 
     if (debug) {
         qDebug() << "  undoCommand: " << undoCommand;
@@ -1807,7 +1817,7 @@ void VymModel::saveState(
             qDebug() << "  undoScript = " << undoScript;
             qDebug() << "  redoScript = " << redoScript;
         }
-        return;
+        return historyPath + "/";
     }
 
     if (!repeatedCommand) {
@@ -1856,16 +1866,18 @@ void VymModel::saveState(
     mainWindow->updateHistory(undoSet);
 
     setChanged();
+
+    return historyPath + "/";
 }
 
-void VymModel::saveStateBranch(
+QString VymModel::saveStateBranch(
         BranchItem *bi,
         const QString &uc,
         const QString &rc,
         const QString &comment)
 {
     QString prefix = setBranchVar(bi) + "b.";
-    saveState(prefix + uc, prefix + rc, comment);
+    return saveState(prefix + uc, prefix + rc, comment);
 }
 
 void VymModel::saveStateBeginScript(const QString &comment)
@@ -3377,7 +3389,7 @@ void VymModel::copy()
                      .arg(clipboardFile)
                      .arg(i);
             QString content = saveToDir(clipboardDir, clipboardFile,
-                                        FlagRowMaster::NoFlags, QPointF(), ti);
+                                        FlagRowMaster::NoFlags, QPointF(), false, false, false,  ti);
 
             if (!saveStringToDisk(fn, content))
                 qWarning() << "ME::saveStringToDisk failed: " << fn;
@@ -5897,7 +5909,7 @@ void VymModel::exportXML(QString fpath, bool useDialog)
     // write to directory   //FIXME-3 check totalBBox here...
     exportBoundingBoxes = true;
     QString saveFile =
-        saveToDir(dpath, mname + "-", FlagRowMaster::AllFlags, offset, nullptr);
+        saveToDir(dpath, mname + "-", FlagRowMaster::AllFlags, offset);
     exportBoundingBoxes = false;
 
     QFile file;
@@ -6550,51 +6562,124 @@ void VymModel::toggleLinkColorHint()
         setLinkColorHint(LinkObj::HeadingColor);
 }
 
-void VymModel::setBackgroundColor(QColor col)   // FIXME-3 Missing saveState command?
+QColor VymModel::backgroundColor()
+{
+    return mapDesignInt->backgroundColor();
+}
+
+void VymModel::setBackgroundColor(QColor col)
 {
     QColor oldcol = mapDesignInt->backgroundColor();
-    saveState(QString("map.setBackgroundColor (\"%1\");").arg(oldcol.name()),
-              QString("map.setBackgroundColor (\"%1\");").arg(col.name()),
-              QString("Set background color of map to %1").arg(col.name()));
+
+    saveStateBeginScript("Set background color");
+
+    if (hasBackgroundImage())
+        unsetBackgroundImage();
+
+    QString uc = QString("map.setBackgroundColor(\"%1\");").arg(mapDesignInt->backgroundColor().name());
+    QString rc = QString("map.setBackgroundColor(\"%1\");").arg(col.name());
+    saveState(uc, rc, QString("Set background color of map to %1").arg(col.name()));
+
+    saveStateEndScript();
+
     mapDesignInt->setBackgroundColor(col);  // Used for backroundRole in TreeModel::data()
+
     vymView->updateColors();
 }
 
-bool VymModel::setBackgroundImage( const QString &fn)   // FIXME-3 missing saveState
+bool VymModel::loadBackgroundImage( const QString &imagePath)
 {
-    /*
-    QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
-    saveState( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
-    selection,
-    QString ("setBackgroundImage (%1)").arg(col.name()),
-    QString("Set background color of map to %1").arg(col.name()));
-    */
+    // FIXME-4 maybe also use: view.setCacheMode(QGraphicsView::CacheBackground);
 
-    // FIXME-3 maybe also use: view.setCacheMode(QGraphicsView::CacheBackground);
+    if (!saveStateBlocked) {
+        QString uc, rc;
+        
+        QString comment = QString("Load background image: \"%1\"").arg(imagePath);
 
-    if (mapDesignInt->setBackgroundImage(fn)) {
+        saveStateBeginScript(comment);
+
+        bool saveOldImage = false;
+
+        QString oldImagePath = "images/background-image-old.png";
+        QString newImagePath = "images/background-image-new.png";
+
+        if (hasBackgroundImage()) {
+            saveOldImage = true;
+            uc = QString("map.loadBackgroundImage(\"HISTORY_PATH/%1\");").arg(oldImagePath);
+        } else
+            uc = QString("map.unsetBackgroundImage();");
+
+        QFile newImage (imagePath);
+        if (!newImage.exists()) {
+            qWarning() << __FUNCTION__ << " Image to load as background does not exist: " << imagePath;
+            return false;
+        }
+
+        rc = QString("map.loadBackgroundImage(\"HISTORY_PATH/%1\");").arg(newImagePath);
+
+        QString historyPath = saveState(uc, rc, comment, nullptr, nullptr, true);
+        if (saveOldImage) {
+            if (!mapDesignInt->saveBackgroundImage(historyPath + oldImagePath)) {
+                qWarning() << __FUNCTION__ << " Failed to save existing background image to: " << historyPath + oldImagePath;
+                return false;   // FIXME-4 For all aborts, drop last history step...
+            }
+        }
+
+        // Copy new image to historyPath and (if previously) used also old image
+        if (!newImage.copy(historyPath + newImagePath)) {
+            qWarning() << __FUNCTION__ << " failed to copy new background image to " << historyPath + newImagePath;
+            return false;
+        }
+        
+        setBackgroundImageName(basename(imagePath));
+
+        saveStateEndScript();
+    }
+
+    if (mapDesignInt->loadBackgroundImage(imagePath)) {
         vymView->updateColors();
         return true;
-    } else
-        return false;
+    }
+
+    qWarning() << __FUNCTION__ << " failed to load new background image from " << imagePath;
+
+    return false;
 }
 
-void VymModel::setBackgroundImageName( const QString &s) // FIXME-3 missing saveState
+void VymModel::setBackgroundImageName( const QString &newName)
 {
-    mapDesignInt->setBackgroundImageName(s);
+    QString oldName = mapDesignInt->backgroundImageName();
+
+    mapDesignInt->setBackgroundImageName(newName);
+
+    saveState(QString("map.setBackgroundImageName(\"%1\");").arg(oldName),
+              QString("map.setBackgroundImageName(\"%1\");").arg(newName),
+              QString("Set name of background image to \"%1\"").arg(newName));
 }
 
-void VymModel::unsetBackgroundImage()   // FIXME-3 missing saveState
+void VymModel::unsetBackgroundImage()
 {
-    /*
-    QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
-    saveState( selection, QString ("setBackgroundImage (%1)").arg(oldcol.name()),
-    selection,
-    QString ("setBackgroundImage (%1)").arg(col.name()),
-    QString("Set background color of map to %1").arg(col.name()));
-    */
-    mapDesignInt->unsetBackgroundImage();
-    vymView->updateColors();
+    if (mapDesignInt->hasBackgroundImage()) {
+        if (!saveStateBlocked) {
+            QString uc, rc;
+
+            bool saveOldImage = false;
+
+            QString oldImagePath = "images/background-image-old.png";
+
+            uc = QString("map.loadBackgroundImage(\"HISTORY_PATH/%1\");").arg(oldImagePath);
+            rc = QString("map.unsetBackgroundImage();");
+
+            QString historyPath = saveState(uc, rc, QString("Unset background image"), nullptr, nullptr, true);
+            if (!mapDesignInt->saveBackgroundImage(historyPath + oldImagePath)) {
+                qWarning() << __FUNCTION__ << " Failed to save existing background image to: " << historyPath + oldImagePath;
+                return;   // FIXME-4 For all aborts, drop last history step...
+            }
+        }
+
+        mapDesignInt->unsetBackgroundImage();
+        vymView->updateColors();
+    }
 }
 
 bool VymModel::hasBackgroundImage()

@@ -699,6 +699,10 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Uuid of xlink");
     modelCommands.append(c);
 
+    c = new Command("getBackgroundColor", Command::AnySel, Command::StringPar);
+    c->setComment("Get color of map background");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
@@ -736,8 +740,17 @@ void Main::setupAPI()
     c = new Command("getSelectionString", Command::TreeItemSel, Command::StringPar);
     modelCommands.append(c);
 
+    c = new Command("hasBackgroundImage", Command::AnySel, Command::BoolPar);
+    c->setComment("Returns true, if map uses an image as background");
+    modelCommands.append(c);
+
     c = new Command("hasRichTextNote", Command::BranchSel, Command::BoolPar);
     c->setComment(DEPRECATED);
+    modelCommands.append(c);
+
+    c = new Command("loadBackgroundImage", Command::AnySel);
+    c->setComment("Load background image");
+    c->addParameter(Command::StringPar, false, "Path to background iamge");
     modelCommands.append(c);
 
     c = new Command("loadBranchReplace", Command::AnySel, Command::BoolPar);
@@ -875,6 +888,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("setBackgroundColor", Command::AnySel);
+    c->setComment("Set color of map background and use it instead of an image");
     c->addParameter(Command::ColorPar, false, "Color of map background");
     modelCommands.append(c);
 
@@ -947,6 +961,11 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("unselectAll", Command::AnySel);
+    modelCommands.append(c);
+
+    c = new Command("unsetBackgroundImage", Command::AnySel);
+    c->setComment("Use background color instead of background image");
+    c->addParameter(Command::ColorPar, false, "Background color");
     modelCommands.append(c);
 
 

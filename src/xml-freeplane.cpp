@@ -310,7 +310,7 @@ void FreeplaneReader::readProperties()
     QString a = "backgroundImageURI";
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
-        model->setBackgroundImage(s);
+        model->loadBackgroundImage(s);
     }
 
     readToEnd();
