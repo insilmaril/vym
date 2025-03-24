@@ -35,7 +35,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["basics", "standard_flags"];
+tests = ["basics", "copy_paste"];
 
 
 var verbosity = 0;
@@ -445,10 +445,7 @@ function test_copy_paste()
 
   map.copy();
   map.paste();
-  map.selectLatestAdded();     //FIXME-5 not set for ImportAdd, which is used by paste
-  b = map.selectedBranch();
-  s = map.getSelectionString();
-  expect("Normal paste of branch, check heading of #{s}", b.headingText(), "Main A");
+  expect("Branch count increased after copy/paste", main_A.branchCount(), n + 1);
 
   map.undo()
   // FIXME reassignment  should not be necessary
@@ -456,9 +453,7 @@ function test_copy_paste()
   expect("Undo paste: branchCount of \"" + main_A.headingText() + "\"", main_A.branchCount(), n);
 
   map.redo()
-  map.select(s);
-  b = map.selectedBranch();  
-  expect("redo paste: check heading", b.headingText(), "Main A");
+  expect("redo paste: check heading", main_A.headingText(), "Main A");
 
   closeCurrentMap();
 
