@@ -23,14 +23,14 @@ extern Main *mainWindow;
 ///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m)
 {
-    // std::cout << "Constr VMWrapper" << this << endl;
+    //std::cout << "Constr VMWrapper" << this << endl;
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     model = m;
 }
 
 VymModelWrapper::~VymModelWrapper()
 {
-    // std::cout << "Destr VMWrapper" << this << endl;
+    //std::cout << "Destr VMWrapper" << this << endl;
 }
 
 void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)

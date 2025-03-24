@@ -149,7 +149,7 @@ bool JiraAgent::setTicket(const QString &text)
         ticketKey = match.captured(1);
         ticketKey.replace(" ", "-");
     } else {
-        qWarning() << "JiraAgent::jobTypeFromText failed for text=" << text;
+        //qWarning() << "JiraAgent::jobTypeFromText failed for text=" << text;
         return false;
     }
 

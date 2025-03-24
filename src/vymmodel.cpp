@@ -706,7 +706,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 offset.setX(rb.width() / 2);
                 offset.setY(rb.height() / 2);
                 bc->setPos(bc->x() + offset.x(), bc->y() + offset.y());
-                qDebug() << "VymModel::loadMap() adjusting legacy position of " << mainBranch->headingPlain() << "  offset: " << toS(offset);
+                //qDebug() << "VymModel::loadMap() adjusting legacy position of " << mainBranch->headingPlain() << "  offset: " << toS(offset);
             }
         }
         reposition();
@@ -955,7 +955,7 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imag
                             ii);
                 }
                 else {
-                    qWarning() << QString("vymmodel: Failed to load '%1'").arg(s);
+                    //qWarning() << QString("vymmodel: Failed to load '%1'").arg(s);
                     deleteItem(ii);
                     return nullptr;
                 }
@@ -1771,7 +1771,6 @@ QString VymModel::saveState(
     if (saveUndoItem || saveRedoItem || createHistoryDir) {
         dataStep++;
         QDir d(historyPath);
-        qDebug() << "Trying to create subdirs in " << historyPath;
         if (!d.exists())
             makeSubDirs(historyPath);   // FIXME-3 Only create subDirs on demand, e.g. when saving imageItem
     }
@@ -6166,7 +6165,6 @@ void VymModel::exportLast()
     QString desc, command,
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
-        qDebug() << "VM::exportLast: " << command;
         mainWindow->runScript(command);
     }
 }
@@ -6494,7 +6492,7 @@ uint VymModel::modelId() { return modelIdInt; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
-void VymModel::setDefaultLinkColor(const QColor &col)   // FIXME-2 saveState: Missing command?
+void VymModel::setDefaultLinkColor(const QColor &col)
 {
     if (!col.isValid()) return;
 
@@ -7879,7 +7877,8 @@ void VymModel::logCommand(const QString &command, const QString &comment, const 
             QString::number(modelIdInt),
             place);
 
-    std::cout << log.toStdString() << std::endl << std::flush;
+    if (debug)
+        std::cout << log.toStdString() << std::endl << std::flush;
 
     if (!useActionLog) return;
 

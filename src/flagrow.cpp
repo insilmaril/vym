@@ -29,10 +29,8 @@ const QList<QUuid> FlagRow::activeFlagUids() { return activeUids; }
 bool FlagRow::isActive(const QString &name)
 {
     Flag *f = masterRow->findFlagByName(name);
-    if (!f) {
-        qWarning() << "FlagRow::isActive couldn't find flag named " << name;
+    if (!f)
         return false;
-    }
 
     return isActive(f->getUuid());
 }

@@ -636,7 +636,6 @@ function test_export()
   initDir(exportdir);
 
   filepath = exportdir + "/output.txt";
-  vym.print("filepath is " + filepath);
 
   map.exportMap(["AO", filepath]);
   expect("exportAO:    AO file exists", vym.fileExists(filepath), true);
@@ -1408,14 +1407,12 @@ function test_standard_flags()
   function set_flag (f, index, array)
   {
     b.setFlagByName(f);
-    vym.print("# Setting flag: " + f + " of branch " << b.headingText());  
     expect("Flag set: '" + f +"'", b.hasActiveFlag(f), true);
   }
 
   function unset_flag (f, index, array)
   {
     b.unsetFlagByName(f);
-    vym.print("# Unsetting flag: " + f + " of branch " << b.headingText());  
     expect("Flag unset: '" + f +"'", b.hasActiveFlag(f), false);
   }
 

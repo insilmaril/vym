@@ -81,7 +81,6 @@ Flag *FlagRowMaster::findFlagByName(const QString &name)
             return flags.at(i);
         i++;
     }
-    qDebug() << "FR::findFlagByName failed for name " << name;
     return nullptr;
 }
 
