@@ -35,7 +35,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["basics", "backgrounds"];
+//tests = ["basics", "standard_flags"];
 
 
 var verbosity = 0;
@@ -1072,6 +1072,14 @@ function test_modify_images()
 
   map.undo();
   expect("After undo image no longer has RichText heading", i.hasRichTextHeading(), false);
+
+  expect("Scale factor initially equals 1", i.getScale(), 1);
+  i.setScale(2);
+  expect("After enlarging scale factor  equals 2", i.getScale(), 2);
+  map.undo();
+  expect("Undo: Scale factor initially equals 1 again", i.getScale(), 1);
+  map.redo();
+  expect("Redo: Scale factor  equals 2", i.getScale(), 2);
 
   b = map.findBranchBySelection(branch_0Aa_string);
   n = b.imageCount();

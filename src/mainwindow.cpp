@@ -1351,10 +1351,12 @@ void Main::setupAPI()
 
     c = new Command("setScaleHeading", Command::BranchOrImageSel);
     c->addParameter(Command::DoublePar, false, "Scale heading of branch by factor f");
+    c->setComment("Scale heading of a branch");
     branchCommands.append(c);
 
     c = new Command("setScaleSubtree", Command::BranchSel);
     c->addParameter(Command::DoublePar, false, "Scale subtree by factor f");
+    c->setComment("Scale branch and its children");
     branchCommands.append(c);
 
     c = new Command("setTaskPriorityDelta", Command::BranchSel);
@@ -1445,24 +1447,28 @@ void Main::setupAPI()
     //
     // Below are the commands for an image
     //
-    c = new Command("hasRichTextHeading", Command::BranchSel, Command::BoolPar);
+    c = new Command("hasRichTextHeading", Command::ImageSel, Command::BoolPar);
     c->setComment("Check if image has a RichText heading or just plain text");
     imageCommands.append(c);
 
-    c = new Command("getPosX", Command::TreeItemSel);
-    c->setComment("get x position of image relative to parent");
+    c = new Command("getPosX", Command::ImageSel);
+    c->setComment("Get x position of image relative to parent");
     imageCommands.append(c);
 
-    c = new Command("getPosY", Command::TreeItemSel);
-    c->setComment("get y position of image relative to parent");
+    c = new Command("getPosY", Command::ImageSel);
+    c->setComment("Get y position of image relative to parent");
     imageCommands.append(c);
 
-    c = new Command("getScenePosX", Command::TreeItemSel);
-    c->setComment("get x position of image in scene coordinates");
+    c = new Command("getScale", Command::ImageSel);
+    c->setComment("Get x scale factor of image");
     imageCommands.append(c);
 
-    c = new Command("getScenePosY", Command::TreeItemSel);
-    c->setComment("get y position of image in scene coordinates");
+    c = new Command("getScenePosX", Command::ImageSel);
+    c->setComment("Get x position of image in scene coordinates");
+    imageCommands.append(c);
+
+    c = new Command("getScenePosY", Command::ImageSel);
+    c->setComment("Get y position of image in scene coordinates");
     imageCommands.append(c);
 
     c = new Command("headingText", Command::ImageSel, Command::StringPar);
@@ -1497,6 +1503,11 @@ void Main::setupAPI()
     c = new Command("setHideLinksUnselected", Command::ImageSel);
     c->addParameter(Command::BoolPar, false,
               "Set if links of items should be visible for unselected items");
+    imageCommands.append(c);
+
+    c = new Command("setScale", Command::ImageSel);
+    c->addParameter(Command::DoublePar, false, "Scale image of branch by factor f");
+    c->setComment("Scale image");
     imageCommands.append(c);
 
     //

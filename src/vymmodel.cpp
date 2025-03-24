@@ -2951,7 +2951,7 @@ qreal VymModel::getScaleSubtree ()
     return selbis.first()->getBranchContainer()->scaleSubtree();
 }
 
-void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii) // FIXME-0 missing saveState
+void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
 {
     QList<ImageItem *> seliis = getSelectedImages(ii);
 
@@ -2960,15 +2960,10 @@ void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
         qreal f_new = relative ? f_old + f : f;
         if (selii->scale() != f_new) {
             QString iv = setImageVar(selii);
-            QString uc = QString("setScaleSubtree(%1);").arg(toS(f_old, 3));
-            QString rc = QString("setScaleSubtree(%1);").arg(toS(f_new,3));
-            QString c  = QString("Set subtree scale factor to %1").arg(toS(f_new, 3));
+            QString uc = iv + QString("i.setScale(%1);").arg(toS(f_old, 3));
+            QString rc = iv + QString("i.setScale(%1);").arg(toS(f_new,3));
+            QString c  = QString("Set image scale factor to %1").arg(toS(f_new, 3));
             saveState(uc, rc, c);
-            /*saveState(selii, QString("setScale (%1)")
-                          .arg(f_old),
-                      selii, QString("setScale (%1)").arg(f_new),
-                      QString("Set scale of image to %1").arg(f_new));
-                      */
 
             selii->setScale(f_new);
             branchPropertyEditor->updateControls();
@@ -2981,8 +2976,7 @@ void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
 
 void VymModel::setScale(const qreal &f, const bool relative)
 {
-    // Scale branches and/or images
-    // Called from scripting or to grow/shrink via shortcuts
+    // Grow/shring branches and/or images using shortcuts
     setScaleAutoDesign(false);
     setScaleHeading(f, relative);
     setScaleImage(f, relative);

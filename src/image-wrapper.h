@@ -12,12 +12,13 @@ class ImageWrapper : public QObject {
   public:
     Q_INVOKABLE ImageWrapper(ImageItem*);
     ~ImageWrapper();
-    VymModel* model();
-    ImageItem* imageItem();
+    Q_INVOKABLE VymModel* model();
+    Q_INVOKABLE ImageItem* imageItem();
 
   public slots:
     qreal getPosX();
     qreal getPosY();
+    qreal getScale();
     qreal getScenePosX();
     qreal getScenePosY();
     bool hasRichTextHeading();
@@ -29,6 +30,7 @@ class ImageWrapper : public QObject {
     void setHeadingText(const QString &);
     void setHideLinkUnselected(bool b); // FIXME-3 move to BranchWrapper and ImageWrapper
     void setPos(qreal x, qreal y);
+    void setScale(const qreal &f);
 
   private:
     ImageItem *imageItemInt;

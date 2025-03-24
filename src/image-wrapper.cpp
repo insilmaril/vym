@@ -1,5 +1,7 @@
 #include "image-wrapper.h"
 
+#include <QQmlEngine>
+
 #include "branch-wrapper.h"
 #include "imageitem.h"
 #include "image-container.h"
@@ -12,6 +14,7 @@ extern Main *mainWindow;
 ImageWrapper::ImageWrapper(ImageItem *ii)
 {
     //qDebug() << "Constr ImageWrapper (ii)";
+    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     imageItemInt = ii;
 }
 
@@ -41,6 +44,13 @@ qreal ImageWrapper::getPosX()
 qreal ImageWrapper::getPosY()
 {
     qreal r = imageItemInt->getImageContainer()->pos().y();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+qreal ImageWrapper::getScale()
+{
+    qreal r = imageItemInt->getImageContainer()->scale();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -111,5 +121,10 @@ void ImageWrapper::setHideLinkUnselected(bool b)
 void ImageWrapper::setPos(qreal x, qreal y)
 {
     model()->setPos(QPointF(x, y), imageItemInt);
+}
+
+void ImageWrapper::setScale(const qreal &f)
+{
+    model()->setScaleImage(f, false, imageItemInt);
 }
 
