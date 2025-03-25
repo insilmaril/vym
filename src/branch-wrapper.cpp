@@ -565,6 +565,13 @@ void BranchWrapper::removeChildrenBranches()
     model()->deleteChildrenBranches(branchItemInt);
 }
 
+bool BranchWrapper::saveNote(const QString &filename)
+{
+    bool r = model()->saveNote(filename);
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 void BranchWrapper::scroll()
 {
     model()->scrollBranch(branchItemInt);

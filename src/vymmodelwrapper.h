@@ -70,7 +70,6 @@ class VymModelWrapper : public QObject {
     void removeXLink(XLinkWrapper *xlw);
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);// FIXME-3 move to ImageWrapper
-    void saveNote(const QString &filename); // FIXME-3 move to BranchWrapper
     void saveSelection(const QString &filename);
     bool select(const QString &s);
     Q_INVOKABLE AttributeWrapper* selectedAttribute();

@@ -2367,7 +2367,7 @@ bool VymModel::loadNote(const QString &fn, BranchItem *bi)
         else {
             VymNote vn;
             vn.setAutoText(n);
-            setNote(vn);
+            setNote(vn, selbi);
             emitDataChanged(selbi);
             emitUpdateQueries();
             reposition();
@@ -3446,6 +3446,7 @@ void VymModel::paste()
                             selbi->branchCount()))
                     qWarning() << "VM::paste Loading clipboard failed: " << fn;
             }
+            select(selbi);
             zipped = zippedOrg;
         } else if (mimeData->hasImage()) {
             //qDebug() << "VM::paste  mimeData->hasImage";

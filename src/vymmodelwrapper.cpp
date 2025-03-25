@@ -547,11 +547,6 @@ void VymModelWrapper::saveImage(const QString &filename)
     model->saveImage(nullptr, filename);
 }
 
-void VymModelWrapper::saveNote(const QString &filename)
-{
-    model->saveNote(filename);
-}
-
 void VymModelWrapper::saveSelection(const QString &filename)
 {
     QString filename_org = model->getFilePath(); // Restore filename later

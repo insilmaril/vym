@@ -80,6 +80,7 @@ class BranchWrapper : public QObject {
     bool relinkToBranchAt(BranchWrapper*, int pos);
     void removeChildren();
     void removeChildrenBranches();
+    bool saveNote(const QString &filename);
     void scroll();
     void select();
     bool selectFirstBranch();

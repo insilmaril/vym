@@ -20,6 +20,7 @@ all_tests = [
   "modify_branches",
   "modify_images",
   "moving_parts",
+  "notes",
   "references",
   "standard_flags",
   "user_flags",
@@ -28,14 +29,13 @@ all_tests = [
 ];
 
 not_yet_ported_tests = [
-  "notes",
   "saving",
   "scrolling",
   "slides"
 ];
 
 tests = all_tests;
-tests = ["basics", "copy_paste"];
+//tests = ["basics", "notes"];
 
 
 var verbosity = 0;
@@ -1211,103 +1211,141 @@ function test_notes()
   // Plaintext notes basic actions
   let map = initMap(testMapDefault);
 
-  map.select(main_A);
+  b = map.findBranchBySelection(main_A_string);
   note_plain = "vymnote plaintext";
-  map.setNotePlainText(note_plain);
-  expect("Set note to \"#{note_plain}\". Still plaintext?", map.hasRichTextNote(), false);
-  map.select(center_0);
-  map.select(main_A);
-  expect("After reselect, is note plaintext?", map.hasRichTextNote(), false);
+  b.setNoteText(note_plain);
+  expect("Set note to \"" + note_plain + "\". Still plaintext?", b.hasRichTextNote(), false);
+
+  center_0 = map.findBranchBySelection(center_0_string);
+  map.select(center_0_string);
+  b.select();
+  expect("After reselect, is note plaintext?", b.hasRichTextNote(), false);
 
   note_plain = "<b>plaintext, not bold!</b>"
-  map.setNotePlainText(note_plain);
-  expect("Set note to plaintext containing html tags. Still plaintext", map.hasRichTextNote(), false);
-  note_new = map.getNoteText();
-  map.select(center_0);
-  map.select(main_A);
-  expect("After reselect, is note text unchanged?", map.getNoteText(), note_new);
-  expect("After reselect, is note plaintext?", map.hasRichTextNote(), false);
+  b.setNoteText(note_plain);
+  expect("Set note to plaintext containing html tags. Still plaintext", b.hasRichTextNote(), false);
+
+  note_new = b.getNoteText();
+  map.select(center_0_string);
+  b.select();
+  expect("After reselect, is note text unchanged?", b.getNoteText(), note_new);
+  expect("After reselect, is note plaintext?", b.hasRichTextNote(), false);
 
   // Plaintext notes copy & paste
+  b = map.findBranchBySelection(main_A_string);
+  b.select();
   map.copy();
   map.paste();
-  map.selectLastChildBranch();
-  s = map.getSelectionString();
-  expect("After copy& paste: New note unchanged?", map.getNoteText(), note_plain);
-  expect("After copy& paste: New note Still plaintext?", map.hasRichTextNote(), false);
-  map.remove();
+  b = map.findBranchBySelection(main_A_string);
+  b.selectLastChildBranch();
+  b_pasted = map.selectedBranch();
+
+  expect("After copy/paste: New note unchanged?", b_pasted.getNoteText(), note_plain);
+  expect("After copy/paste: New note Still plaintext?", b_pasted.hasRichTextNote(), false);
 
   // Plaintext notes undo & redo
-  map.select(main_A);
-  map.setNotePlainText('Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  b.setNoteText('Foobar');
   map.undo();
-  expect("Undo after setNotePlainText restores previous note", map.getNoteText(), note_plain);
+  expect("Undo after setNotePlainText restores previous note", b.getNoteText(), note_plain);
   map.redo();
-  map.select(main_A);
-  expect("Redo restores previous note", map.getNoteText(), 'Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  expect("Redo restores previous note", b.getNoteText(), 'Foobar');
 
   // Plaintext notes load & save
-  note_org = vym.loadFile('notes/note-plain.txt');
-  map.loadNote("test/notes/note-plain.txt");
-  expect("Load plain text note from file. Still plaintext?", map.hasRichTextNote(), false);
-  expect("Note contains 'not bold'", map.getNoteText().includes("not bold"), true);
-  filepath = testDir + "/save-note.txt";
-  map.saveNote(filepath);
-  expect("Save note to file. Check if it contains 'textMode=\"plainText\"'", vym.loadFile(filepath).includes("textMode=\"plainText\""), true);
-  expect("Save note to file. Check if it contains 'not bold'", vym.loadFile(filepath).includes("not bold"), true);
-  expect("Save note to file. Check new format: no longer contains '<b>' element",vym.loadFile(filepath).includes("<b>"), false);
-  expect("Save note to file. Check new format: no longer contains '<![CDATA['",vym.loadFile(filepath).includes("<![CDATA["), false);
-  expect("Save note to file. Check new format: contains 'text=\"Plaintext'",vym.loadFile(filepath).includes("text=\"Plaintext"), true);
+  note_org = vym.loadFile(vymBaseDir + "/test/" + "notes/note-plain.txt");
+  b = map.findBranchBySelection(main_A_string);
+  ok = b.loadNote("test/notes/note-plain.txt");
+  expect("Load note succeeded", ok, true);
+  expect("Load plain text note from file. Still plaintext?", b.hasRichTextNote(), false);
+  expect("Note contains 'not bold'", b.getNoteText().includes("not bold"), true);
+
+  filePath = testDir + "/save-note.txt";
+  if (vym.fileExists(filePath)) {
+      if (vym.fileRemove(filePath)) {
+        if (verbosity > 0)
+				  vym.print("# Removed existing note file: " + filePath);
+      } else
+				  vym.print("# Failed to remove existing map: " + filePath);
+  }
+
+  // Save note
+  b.saveNote(filePath);
+
+  expect("Note successfully saved to '" + filePath + "'", vym.fileExists(filePath), true);
+
+  expect("Save note to file. Check if it contains 'textMode=\"plainText\"'", vym.loadFile(filePath).includes("textMode=\"plainText\""), true);
+  expect("Save note to file. Check if it contains 'not bold'", vym.loadFile(filePath).includes("not bold"), true);
+  expect("Save note to file. Check new format: no longer contains '<b>' element",vym.loadFile(filePath).includes("<b>"), false);
+  expect("Save note to file. Check new format: no longer contains '<![CDATA['",vym.loadFile(filePath).includes("<![CDATA["), false);
+  expect("Save note to file. Check new format: contains 'textMode=\"plainText'",vym.loadFile(filePath).includes("textMode=\"plainText"), true);
 
   // Delete note
-  map.setNotePlainText("");
-  expect("setNotePlainText(\"\") deletes note", map.hasNote(), false);
+  b.setNoteText("");
+  expect("setNoteText(\"\") deletes note", b.hasNote(), false);
 
   closeCurrentMap();
 
   // RichText basic actions
   map = initMap(testMapDefault);
-  rt_note = '<html><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
-  b_main_A.setNoteRichText(rt_note);
-  expect("b.setNoteRichText produces note", b_main_A.hasNote(), true);
-  expect("b.setNoteRichText produces richText note", b_main_A.hasRichTextNote(), true);
-  expect("After reselect, is note RichText?", b_main_A.hasRichTextNote(), true);
+  rt_note = '<html><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>bold</b> and not &lt;bold&gt; text</span></p></body></html></vymnote>'
 
+  b = map.findBranchBySelection(main_A_string);
+  b.setNoteRichText(rt_note);
+  expect("b.setNoteRichText produces note", b.hasNote(), true);
+  expect("b.setNoteRichText produces richText note", b.hasRichTextNote(), true);
+
+  map.select(center_0_string);
+  map.select(main_A_string);
+  b = map.selectedBranch();
+  expect("After reselect, is note RichText?", b.hasRichTextNote(), true);
 
   // RichText notes copy & paste
-  b_main_A.select();
-  rt_note = map.getNoteXML();
+  b = map.findBranchBySelection(main_A_string);
+  rt_note = b.getNoteXML();
+  b.select();
   map.copy();
   map.paste();
-  map.selectLastChildBranch();
+  b.selectLastChildBranch();
   b = map.selectedBranch();
   expect("After copy & paste: New note still RichText?", b.hasRichTextNote(), true);
   expect("After copy & paste: New note unchanged?", b.getNoteXML(), rt_note);
-  map.remove();
 
   // RichText notes undo & redo
-  map.select(main_A);
-  map.setNotePlainText('Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  b.setNoteText('Foobar');
   map.undo();
-  expect("Undo after setNotePlainText restores RichText note", map.getNoteXML(), rt_note);
+  expect("Undo after setNotePlainText restores RichText note", b.getNoteXML(), rt_note);
   map.redo();
-  map.select(main_A);
-  expect("Redo restores previous plaintext note", map.getNoteText(), 'Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  expect("Redo restores previous plaintext note", b.getNoteText(), 'Foobar');
 
   // RichText notes load & save
-  map.loadNote("test/notes/note.html");
-  expect("Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote(), true);
-  filepath = testDir + "/save-note.txt";
-  map.saveNote(filepath);
-  expect("Save note to file. Check if it contains 'textMode=\"richText\"'", vym.loadFile(filepath).includes("textMode=\"richText\""), true);
-  expect("Save note to file. Check if it contains 'bold'", vym.loadFile(filepath).includes("bold"), true);
-  expect("Save note to file. Check new format: no longer contains '<b>' element", vym.loadFile(filepath).includes("<b>"), false);
-  expect("Save note to file. Check new format: no longer contains '<![CDATA['", vym.loadFile(filepath).includes("<![CDATA["), false);
-  expect("Save note to file. Check new format: contains 'text=\"&lt;'", vym.loadFile(filepath).includes("text=\"&lt;"), true);
+  b = map.findBranchBySelection(main_A_string);
+  b.loadNote("test/notes/note.html");
+  expect("Load HTML note from file and try to detect textMode. Is RichText?", b.hasRichTextNote(), true);
+
+  filePath = testDir + "/save-note.html";
+  if (vym.fileExists(filePath)) {
+      if (vym.fileRemove(filePath)) {
+        if (verbosity > 0)
+				  vym.print("# Removed existing note file: " + filePath);
+      } else
+				  vym.print("# Failed to remove existing map: " + filePath);
+  }
+
+  b.saveNote(filePath);
+  expect("Note successfully saved to '" + filePath + "'", vym.fileExists(filePath), true);
+
+  expect("Save note to file. Check if it contains 'textMode=\"richText\"'", vym.loadFile(filePath).includes("textMode=\"richText\""), true);
+  expect("Save note to file. Check if it contains 'bold'", vym.loadFile(filePath).includes("bold"), true);
+  expect("Save note to file. Check new format: no longer contains '<b>' element", vym.loadFile(filePath).includes("<b>"), false);
+  expect("Save note to file. Check new format: no longer contains '<![CDATA['", vym.loadFile(filePath).includes("<![CDATA["), false);
+  expect("Save note to file. Check new format: contains 'text=\"&lt;'", vym.loadFile(filePath).includes("text=\"&lt;"), true);
 
   // Delete note
-  map.setNotePlainText("");
-  expect("setNotePlainText(\"\") deletes note", map.hasNote(), false);
+  b.setNoteText("");
+  expect("setNoteText(\"\") deletes note", b.hasNote(), false);
 
   // Compatibility with notes from version < 2.5.0  # FIXME-3 missing
 
