@@ -6520,10 +6520,23 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     updateActions();
 }
 
-void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 saveState missing. No MapDesign yet.
+void VymModel::setLinkColorHint(const LinkObj::ColorHint &newHint)
 {
-    mapDesignInt->setLinkColorHint(hint);
+    LinkObj::ColorHint oldHint = mapDesignInt->linkColorHint();
 
+    if (oldHint == newHint)
+        return;
+
+    mapDesignInt->setLinkColorHint(newHint);
+
+    QString oldHintName = LinkObj::linkColorHintName(oldHint);
+    QString newHintName = LinkObj::linkColorHintName(newHint);
+
+    saveState(
+        QString("map.setLinkColorHint (\"%1\");").arg(oldHintName),
+        QString("map.setLinkColorHint (\"%1\");").arg(newHintName),
+        QString("Set link color hint to %1").arg(newHintName));
+    
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
@@ -6531,13 +6544,13 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         BranchContainer *bc = cur->getBranchContainer();
         LinkObj *upLink = bc->getLink();
         if (upLink)
-            upLink->setLinkColorHint(hint);
+            upLink->setLinkColorHint(newHint);
 
         // FIXME-4 setLinkColorHint: images currently use branch link color
         for (int i = 0; i < cur->imageCount(); ++i) {
             upLink = cur->getImageNum(i)->getImageContainer()->getLink();
             if (upLink)
-                upLink->setLinkColorHint(hint);
+                upLink->setLinkColorHint(newHint);
         }
         nextBranch(cur, prev);
     }

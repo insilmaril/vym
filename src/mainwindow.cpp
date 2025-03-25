@@ -729,6 +729,10 @@ void Main::setupAPI()
     c = new Command("getTitle", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
+    c = new Command("getLinkColorHint", Command::AnySel);
+    c->setComment("Returns 'DefaultColor' for links or 'HeadingColor'");
+    modelCommands.append(c);
+
     c = new Command("getNotePlainText", Command::TreeItemSel, Command::StringPar);
     c->setComment(DEPRECATED + " b.getNoteText");
     modelCommands.append(c);
@@ -902,6 +906,11 @@ void Main::setupAPI()
 
     c = new Command("setDefaultLinkColor", Command::AnySel);
     c->addParameter(Command::ColorPar, false, "Default color of links");
+    modelCommands.append(c);
+
+    c = new Command("setLinkColorHint", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "Name of color hint to use");
+    c->setComment("Use 'DefaultColor' for links or 'HeadingColor'");
     modelCommands.append(c);
 
     c = new Command("setLinkStyle", Command::AnySel);

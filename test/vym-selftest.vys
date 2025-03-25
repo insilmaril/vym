@@ -8,13 +8,13 @@ all_tests = [
   "basics",
   "adding_branches",
   "adding_maps",
-  "backgrounds",
   "copy_paste",
   "delete_parts",
   "export",         // FIXME WIP
   "extrainfo",
   "frames",
   "load_legacy_maps",
+  "mapdesign",
   "modify_branches",
   "modify_images",
   "moving_parts",
@@ -35,7 +35,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-tests = ["basics", "copy_paste"];
+//tests = ["basics", "mapdesign"];
 
 
 var verbosity = 0;
@@ -195,7 +195,7 @@ function deltaDays(d1, d2)
 
 function heading(h)
 {
-    vym.printCol("yellow", "\n=== " + h + "===\n");
+    vym.printCol("yellow", "\n=== " + h + " ===\n");
 }
 
 function summary()
@@ -373,49 +373,6 @@ function test_adding_maps()
   expect("Undo: check heading",  b.headingText(), "branch b");
   closeCurrentMap();
 }
-
-function test_backgrounds()
-{
-  heading("Backgrounds");
-  map = initMap(testMapDefault);
-
-  expect("Map does not use background image", map.hasBackgroundImage(), false);
-
-  col = "#1b1e20";
-  expect("Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
-
-  // Switch from color to image
-  imagePath = vymBaseDir + "/images/background-grid.png";
-  success = map.loadBackgroundImage(imagePath);
-  expect("Map has successfully loaded " + imagePath, success, true);
-  expect("Map does use background image", map.hasBackgroundImage(), true);
-  expect("background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
-
-  // Switch to another image
-  imagePath = vymBaseDir + "/icons/down.png";
-  success = map.loadBackgroundImage(imagePath);
-  expect("Map has successfully loaded " + imagePath, success, true);
-  expect("Map does use background image", map.hasBackgroundImage(), true);
-  expect("background image has basename of file", map.getBackgroundImageName(), "down.png");
-
-  // Undo to previous image
-  map.undo();
-  expect("Undo once: Map does use background image", map.hasBackgroundImage(), true);
-  expect("Undo once: Background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
-
-  // Undo to original color
-  map.undo();
-  expect("Undo twice: Map does not use background image", map.hasBackgroundImage(), false);
-  expect("Undo twice: Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
-
-  // Redo to first image
-  map.redo();
-  expect("Redo: Map does use background image", map.hasBackgroundImage(), true);
-  expect("Redo: background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
-
-  closeCurrentMap();
-}
-
 
 function test_attributes()
 {
@@ -979,6 +936,58 @@ function test_load_legacy_maps()
   expect("<xlink> connects  '#{@main_A}' and '#{@main_B}'", other_end, main_B);
   closeCurrentMap();
 }
+
+function test_mapdesign()
+{
+  heading("Mapdesign");
+  map = initMap(testMapDefault);
+
+  expect("Map does not use background image", map.hasBackgroundImage(), false);
+
+  col = "#1b1e20";
+  expect("Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Switch from color to image
+  imagePath = vymBaseDir + "/images/background-grid.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Switch to another image
+  imagePath = vymBaseDir + "/icons/down.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "down.png");
+
+  // Undo to previous image
+  map.undo();
+  expect("Undo once: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Undo once: Background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Undo to original color
+  map.undo();
+  expect("Undo twice: Map does not use background image", map.hasBackgroundImage(), false);
+  expect("Undo twice: Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Redo to first image
+  map.redo();
+  expect("Redo: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Redo: background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // link colors
+  expect("Links use default color", map.getLinkColorHint(), "DefaultColor");
+  map.setLinkColorHint("HeadingColor");
+  expect("Switch to heading color", map.getLinkColorHint(), "HeadingColor");
+  map.undo();
+  expect("Undo: Switch to heading color", map.getLinkColorHint(), "DefaultColor");
+  map.redo();
+  expect("Redo: Switch to heading color", map.getLinkColorHint(), "HeadingColor");
+
+  closeCurrentMap();
+}
+
 
 function test_modify_branches()
 {
@@ -1674,7 +1683,6 @@ function test_xlinks()
 if (tests.includes("basics")) { test_basics(); }
 if (tests.includes("adding_branches")) { test_adding_branches(); }
 if (tests.includes("adding_maps"))    { test_adding_maps(); }
-if (tests.includes("backgrounds"))    { test_backgrounds(); }
 if (tests.includes("attributes"))     { test_adding_branches(); }
 if (tests.includes("copy_paste"))     { test_copy_paste(); }
 if (tests.includes("delete_parts"))   { test_delete_parts(); }
@@ -1683,6 +1691,7 @@ if (tests.includes("extrainfo"))      { test_extrainfo(); }
 if (tests.includes("frames"))         { test_frames(); }
 if (tests.includes("history"))        { test_history(); }
 if (tests.includes("load_legacy_maps")) { test_load_legacy_maps(); }
+if (tests.includes("mapdesign"))      { test_mapdesign(); }
 if (tests.includes("modify_branches")) { test_modify_branches(); }
 if (tests.includes("modify_images"))  { test_modify_images(); }
 if (tests.includes("moving_parts"))   { test_moving_parts(); }

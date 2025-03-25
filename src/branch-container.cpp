@@ -854,7 +854,7 @@ void BranchContainer::updateUpLink()
     }
 
     // Color of link (depends on current parent)
-    if (upLink->getLinkColorHint() == LinkObj::HeadingColor)
+    if (upLink->linkColorHint() == LinkObj::HeadingColor)
         upLink->setLinkColor(branchItem->headingColor());
     else {
         if (branchItem)

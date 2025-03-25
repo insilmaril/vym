@@ -179,9 +179,27 @@ void LinkObj::setLinkColorHint(ColorHint hint)
     colorHint = hint;
 }
 
-LinkObj::ColorHint LinkObj::getLinkColorHint()
+LinkObj::ColorHint LinkObj::linkColorHint()
 {
     return colorHint;
+}
+
+LinkObj::ColorHint LinkObj::linkColorHint(const QString &s)
+{
+    if (s == "HeadingColor")
+        return HeadingColor;
+    else
+        return DefaultColor;
+}
+
+QString LinkObj::linkColorHintName(ColorHint hint)
+{
+    QString s;
+
+    if (hint == LinkObj::HeadingColor)
+        return "HeadingColor";
+    else
+        return "DefaultColor";
 }
 
 void LinkObj::setLinkColor(QColor col)

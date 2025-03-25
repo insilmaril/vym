@@ -348,6 +348,12 @@ QString VymModelWrapper::getComment()
     return r;
 }
 
+QString VymModelWrapper::getLinkColorHint()
+{
+    LinkObj::ColorHint hint = model->mapDesign()->linkColorHint();
+    return LinkObj::linkColorHintName(hint);
+}
+
 QString VymModelWrapper::getTitle()
 {
     QString r = model->getTitle();
@@ -704,6 +710,12 @@ void VymModelWrapper::setHeadingConfluencePageName()
 }
 
 void VymModelWrapper::setComment(const QString &s) { model->setComment(s); }
+
+void VymModelWrapper::setLinkColorHint(const QString &hintName)
+{
+    LinkObj::ColorHint hint = LinkObj::linkColorHint(hintName);
+    model->setLinkColorHint(hint);
+}
 
 void VymModelWrapper::setLinkStyle(const QString &style)
 {
