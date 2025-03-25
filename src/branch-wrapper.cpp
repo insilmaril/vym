@@ -211,6 +211,11 @@ bool BranchWrapper::cycleTask(bool reverse)
     return r;
 }
 
+void BranchWrapper::deleteAttribute(const QString &key)
+{
+    model()->deleteAttribute(branchItemInt, key);
+}
+
 #include "confluence-agent.h"
 void BranchWrapper::deleteConfluencePageLabel(const QString &labelName)
 {

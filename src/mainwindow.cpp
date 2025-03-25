@@ -654,6 +654,16 @@ void Main::setupAPI()
     c = new Command("cut", Command::BranchOrImageSel);
     modelCommands.append(c);
 
+    c = new Command("deleteAttribute", Command::BranchSel, Command::IntPar);
+    c->setComment("Delete attribute with given key");
+    c->addParameter(Command::StringPar, false, "Key of attribute to delete");
+    modelCommands.append(c);
+
+    c = new Command("deleteConfluencePageLabel", Command::BranchSel, Command::IntPar);
+    c->setComment("Delete label from Confluence page given in branch attributes");
+    c->addParameter(Command::StringPar, false, "Label to be removed from Confluence page");
+    modelCommands.append(c);
+
     c = new Command("depth", Command::BranchOrImageSel, Command::IntPar);
     modelCommands.append(c);
 

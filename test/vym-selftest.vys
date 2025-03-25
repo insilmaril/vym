@@ -35,7 +35,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["basics", "mapdesign"];
+tests = ["basics", "attributes"];
 
 
 var verbosity = 0;
@@ -380,10 +380,26 @@ function test_attributes()
   
   map = initMap("test/maps/test-attributes.xml");
 
-  map.select(main_A);
-  b = map.selectedBranch();
+  b = map.findBranchBySelection(main_A_string);
+
+  // Check attributes by key
+  key = "string-attribute";
+  expect("Branch has attribute with key '" + key + "'",  b.hasAttributeWithKey(key), true);
+  key = "int-attribute";
+  expect("Branch has attribute with key '" + key + "'",  b.hasAttributeWithKey(key), true);
+
+  // Read attributes
   expect("String attribute is '6 * 9'", b.attributeAsString("string-attribute"), "6 * 9");
   expect("Integer attribute is 42", b.attributeAsInt("int-attribute"), 42);
+
+  // Write attributes
+  key = "universe-is-ok";
+  b.setAttribute(key, "no");
+  expect("Set string attribute", b.attributeAsString(key), "no");
+
+  // Delete attributes
+  b.deleteAttribute(key);
+  expect("Attribute deleted",  b.hasAttributeWithKey(key), false);
 
   closeCurrentMap();
 }
@@ -1683,7 +1699,7 @@ function test_xlinks()
 if (tests.includes("basics")) { test_basics(); }
 if (tests.includes("adding_branches")) { test_adding_branches(); }
 if (tests.includes("adding_maps"))    { test_adding_maps(); }
-if (tests.includes("attributes"))     { test_adding_branches(); }
+if (tests.includes("attributes"))     { test_attributes(); }
 if (tests.includes("copy_paste"))     { test_copy_paste(); }
 if (tests.includes("delete_parts"))   { test_delete_parts(); }
 if (tests.includes("export"))         { test_export(); }
