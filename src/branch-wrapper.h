@@ -34,6 +34,7 @@ class BranchWrapper : public QObject {
     void colorBranch(const QString &color);
     void colorSubtree(const QString &color);
     bool cycleTask(bool reverse = false);
+    void deleteAttribute(const QString &key);
     void deleteConfluencePageLabel(const QString &labelName);
     bool getFrameAutoDesign(const bool & useInnerFrame);
     QString getFrameBrushColor(const bool & useInnerFrame);
@@ -79,6 +80,7 @@ class BranchWrapper : public QObject {
     bool relinkToBranchAt(BranchWrapper*, int pos);
     void removeChildren();
     void removeChildrenBranches();
+    bool saveNote(const QString &filename);
     void scroll();
     void select();
     bool selectFirstBranch();

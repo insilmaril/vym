@@ -44,6 +44,7 @@ class VymModelWrapper : public QObject {
     QString getAuthor();
     QString getComment();
     QString getTitle();
+    QString getLinkColorHint();
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
     int getRotationSubtree();   // FIXME-3 move to BranchWrapper
     QString getSelectionString();//FIXME-3 copy to BranchWrapper?
@@ -69,8 +70,7 @@ class VymModelWrapper : public QObject {
     void removeXLink(XLinkWrapper *xlw);
     QVariant repeatLastCommand();
     void saveImage(const QString &filename);// FIXME-3 move to ImageWrapper
-    void saveNote(const QString &filename); // FIXME-3 move to BranchWrapper
-    void saveSelection(const QString &filename);
+    bool saveSelection(const QString &filename);
     bool select(const QString &s);
     Q_INVOKABLE AttributeWrapper* selectedAttribute();
     Q_INVOKABLE BranchWrapper* selectedBranch();
@@ -87,6 +87,7 @@ class VymModelWrapper : public QObject {
     void setBackgroundImageName(const QString &name);
     void setComment(const QString &s);
     void setLinkStyle(const QString &style);
+    void setLinkColorHint(const QString &hint);
     void setRotationView(float a);
     void setTitle(const QString &s);
     void setZoom(float z);

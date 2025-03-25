@@ -237,7 +237,6 @@ bool VymWrapper::usesDarkTheme() {
 }
 
 QString VymWrapper::version() {
-    qDebug() << "VymWrapper::version  v=" << vymVersion;
     QString r = vymVersion;
     mainWindow->setScriptResult(r);
     return r;

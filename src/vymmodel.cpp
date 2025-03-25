@@ -733,7 +733,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     return err;
 }
 
-void VymModel::saveMap(const File::SaveMode &savemode)
+bool VymModel::saveMap(const File::SaveMode &savemode)
 {
     // Block closing the map while saving, esp. while zipping
     isSavingInt = true;
@@ -778,7 +778,7 @@ void VymModel::saveMap(const File::SaveMode &savemode)
         else  {
             // do nothing
             isSavingInt = false;
-            return; 
+            return false; 
         }
     }
 
@@ -813,7 +813,7 @@ void VymModel::saveMap(const File::SaveMode &savemode)
                 0, tr("Critical Save Error"),
                 tr("Couldn't access zipDir %1\n").arg(zipDirInt.path()));
             isSavingInt = false;
-            return;
+            return false;
         }
 
         saveFilePath = filePath;
@@ -900,6 +900,8 @@ void VymModel::saveMap(const File::SaveMode &savemode)
 
     if (!zipped)
         isSavingInt = false;
+
+    return (err == File::Success);
 }
 
 bool VymModel::isSaving()
@@ -2367,7 +2369,7 @@ bool VymModel::loadNote(const QString &fn, BranchItem *bi)
         else {
             VymNote vn;
             vn.setAutoText(n);
-            setNote(vn);
+            setNote(vn, selbi);
             emitDataChanged(selbi);
             emitUpdateQueries();
             reposition();
@@ -3396,6 +3398,8 @@ void VymModel::copy()
         mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
         clipboard->setMimeData(mimeData);
 
+        /*
+        */
         QString rc = QString("map.selectUids([%1]); map.copy();").arg(uids.join(","));
         QString comment = QString("Copy %1 selected %2 to clipboard: [%3]")
             .arg(itemList.count())
@@ -3432,7 +3436,7 @@ void VymModel::paste()
             QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
             QString rc = bv + QString("b.select(); map.paste();");
             QString comment = QString("Paste to branch \"%1\"").arg(selbi->headingText());
-            saveState(uc, rc, comment, selbi);
+            saveState(uc, rc, comment, selbi, selbi);
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
@@ -3444,6 +3448,7 @@ void VymModel::paste()
                             selbi->branchCount()))
                     qWarning() << "VM::paste Loading clipboard failed: " << fn;
             }
+            select(selbi);
             zipped = zippedOrg;
         } else if (mimeData->hasImage()) {
             //qDebug() << "VM::paste  mimeData->hasImage";
@@ -3965,7 +3970,7 @@ AttributeItem *VymModel::setAttribute( // FIXME-3 saveState( missing. For bulk c
         endInsertRows();
         emit layoutChanged();
 
-        // Jira attributes
+        // Special case: Jira attributes
         if (ai->key() == "Jira.issueUrl") {
             dst->setUrlType(TreeItem::JiraUrl);
             updateJiraFlag(dst);
@@ -6520,10 +6525,23 @@ void VymModel::setDefaultLinkColor(const QColor &col)
     updateActions();
 }
 
-void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 saveState missing. No MapDesign yet.
+void VymModel::setLinkColorHint(const LinkObj::ColorHint &newHint)
 {
-    mapDesignInt->setLinkColorHint(hint);
+    LinkObj::ColorHint oldHint = mapDesignInt->linkColorHint();
 
+    if (oldHint == newHint)
+        return;
+
+    mapDesignInt->setLinkColorHint(newHint);
+
+    QString oldHintName = LinkObj::linkColorHintName(oldHint);
+    QString newHintName = LinkObj::linkColorHintName(newHint);
+
+    saveState(
+        QString("map.setLinkColorHint (\"%1\");").arg(oldHintName),
+        QString("map.setLinkColorHint (\"%1\");").arg(newHintName),
+        QString("Set link color hint to %1").arg(newHintName));
+    
     BranchItem *cur = nullptr;
     BranchItem *prev = nullptr;
     nextBranch(cur, prev);
@@ -6531,13 +6549,13 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &hint)  // FIXME-2 save
         BranchContainer *bc = cur->getBranchContainer();
         LinkObj *upLink = bc->getLink();
         if (upLink)
-            upLink->setLinkColorHint(hint);
+            upLink->setLinkColorHint(newHint);
 
         // FIXME-4 setLinkColorHint: images currently use branch link color
         for (int i = 0; i < cur->imageCount(); ++i) {
             upLink = cur->getImageNum(i)->getImageContainer()->getLink();
             if (upLink)
-                upLink->setLinkColorHint(hint);
+                upLink->setLinkColorHint(newHint);
         }
         nextBranch(cur, prev);
     }

@@ -56,7 +56,9 @@ class LinkObj : public MapObj {
     static QString styleString(int);
 
     void setLinkColorHint(ColorHint);
-    ColorHint getLinkColorHint();
+    ColorHint linkColorHint();
+    static ColorHint linkColorHint(const QString &);
+    static QString linkColorHintName(ColorHint);
 
     void setLinkColor(QColor);
     QColor getLinkColor();

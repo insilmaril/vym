@@ -654,6 +654,16 @@ void Main::setupAPI()
     c = new Command("cut", Command::BranchOrImageSel);
     modelCommands.append(c);
 
+    c = new Command("deleteAttribute", Command::BranchSel, Command::IntPar);
+    c->setComment("Delete attribute with given key");
+    c->addParameter(Command::StringPar, false, "Key of attribute to delete");
+    modelCommands.append(c);
+
+    c = new Command("deleteConfluencePageLabel", Command::BranchSel, Command::IntPar);
+    c->setComment("Delete label from Confluence page given in branch attributes");
+    c->addParameter(Command::StringPar, false, "Label to be removed from Confluence page");
+    modelCommands.append(c);
+
     c = new Command("depth", Command::BranchOrImageSel, Command::IntPar);
     modelCommands.append(c);
 
@@ -727,6 +737,10 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("getTitle", Command::AnySel, Command::StringPar);
+    modelCommands.append(c);
+
+    c = new Command("getLinkColorHint", Command::AnySel);
+    c->setComment("Returns 'DefaultColor' for links or 'HeadingColor'");
     modelCommands.append(c);
 
     c = new Command("getNotePlainText", Command::TreeItemSel, Command::StringPar);
@@ -841,10 +855,6 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Format of image to save");
     modelCommands.append(c);
 
-    c = new Command("saveNote", Command::BranchSel);
-    c->addParameter(Command::StringPar, false, "Filename of note to save");
-    modelCommands.append(c);
-
     c = new Command("saveSelection", Command::BranchOrImageSel);
     c->addParameter(Command::StringPar, false, "Filename to save branch or image");
     modelCommands.append(c);
@@ -902,6 +912,11 @@ void Main::setupAPI()
 
     c = new Command("setDefaultLinkColor", Command::AnySel);
     c->addParameter(Command::ColorPar, false, "Default color of links");
+    modelCommands.append(c);
+
+    c = new Command("setLinkColorHint", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "Name of color hint to use");
+    c->setComment("Use 'DefaultColor' for links or 'HeadingColor'");
     modelCommands.append(c);
 
     c = new Command("setLinkStyle", Command::AnySel);
@@ -1210,6 +1225,10 @@ void Main::setupAPI()
 
     c = new Command("removeChildrenBranches", Command::BranchSel);
     c->setComment("Remove all children branches of branch");
+    branchCommands.append(c);
+
+    c = new Command("saveNote", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Filename of note to save");
     branchCommands.append(c);
 
     c = new Command("scroll", Command::BranchSel);
@@ -7397,8 +7416,10 @@ QVariant Main::runScript(const QString &script)
     // Make sure that deleting scriptEngine later does not delete vymWrapper, too
     scriptEngine->setObjectOwnership(vymWrapper, QJSEngine::CppOwnership);
 
+    /*
     if (debug)
         std:cout << "      vymWrapper: " << vymWrapper << "  " << vymWrapper->mapCount() << " maps   version:" << vymWrapper->version().toStdString() << endl;
+    */
 
     QJSValue vwrapper = scriptEngine->newQObject(vymWrapper);
 

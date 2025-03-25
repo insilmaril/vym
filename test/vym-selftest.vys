@@ -5,20 +5,25 @@
 // test_vym();  // FIXME currently not used (version check, tmpDir check)
 
 all_tests = [
+  "attributes",
   "basics",
   "adding_branches",
   "adding_maps",
-  "backgrounds",
   "copy_paste",
   "delete_parts",
   "export",         // FIXME WIP
   "extrainfo",
   "frames",
+  "history",
   "load_legacy_maps",
+  "mapdesign",
   "modify_branches",
   "modify_images",
   "moving_parts",
+  "notes",
   "references",
+  "saving",
+  "scrolling",
   "standard_flags",
   "user_flags",
   "tasks",	        // FIXME-3 uncomplete (date calculations not ported yet from ruby)
@@ -26,16 +31,11 @@ all_tests = [
 ];
 
 not_yet_ported_tests = [
-  "attributes",
-  "history",
-  "notes",
-  "saving",
-  "scrolling",
   "slides"
 ];
 
 tests = all_tests;
-tests = ["basics", "copy_paste"];
+//tests = ["scrolling"];
 
 
 var verbosity = 0;
@@ -111,8 +111,10 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 {
   // Copy the map referenced above to @testDir/test-current.[vym|xml]
   // and try to load it
-  if (mapPath.endsWith(".vym") )
+  if (mapPath.endsWith(".vym"))
       postfix = ".vym";
+  else if (mapPath.endsWith(".vyp") )
+      postfix = ".vyp";
   else
       postfix = ".xml";
 
@@ -132,7 +134,9 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 				  vym.print("# Failed to remove existing map: " + currentMapPath);
   }
 
-  // vym.print("# Copying " + mapPath + " to " + currentMapPath);
+  if (verbosity > 1 )
+    vym.print("# Copying " + mapPath + " to " + currentMapPath);
+
   vym.fileCopy(mapPath, currentMapPath);
 
     /*  Copy additional files, not yet implemented here
@@ -195,7 +199,7 @@ function deltaDays(d1, d2)
 
 function heading(h)
 {
-    vym.printCol("yellow", "\n=== " + h + "===\n");
+    vym.printCol("yellow", "\n=== " + h + " ===\n");
 }
 
 function summary()
@@ -374,59 +378,32 @@ function test_adding_maps()
   closeCurrentMap();
 }
 
-function test_backgrounds()
-{
-  heading("Backgrounds");
-  map = initMap(testMapDefault);
-
-  expect("Map does not use background image", map.hasBackgroundImage(), false);
-
-  col = "#1b1e20";
-  expect("Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
-
-  // Switch from color to image
-  imagePath = vymBaseDir + "/images/background-grid.png";
-  success = map.loadBackgroundImage(imagePath);
-  expect("Map has successfully loaded " + imagePath, success, true);
-  expect("Map does use background image", map.hasBackgroundImage(), true);
-  expect("background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
-
-  // Switch to another image
-  imagePath = vymBaseDir + "/icons/down.png";
-  success = map.loadBackgroundImage(imagePath);
-  expect("Map has successfully loaded " + imagePath, success, true);
-  expect("Map does use background image", map.hasBackgroundImage(), true);
-  expect("background image has basename of file", map.getBackgroundImageName(), "down.png");
-
-  // Undo to previous image
-  map.undo();
-  expect("Undo once: Map does use background image", map.hasBackgroundImage(), true);
-  expect("Undo once: Background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
-
-  // Undo to original color
-  map.undo();
-  expect("Undo twice: Map does not use background image", map.hasBackgroundImage(), false);
-  expect("Undo twice: Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
-
-  // Redo to first image
-  map.redo();
-  expect("Redo: Map does use background image", map.hasBackgroundImage(), true);
-  expect("Redo: background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
-
-  closeCurrentMap();
-}
-
-
 function test_attributes()
 {
   heading("Attributes:");
   
   map = initMap("test/maps/test-attributes.xml");
 
-  map.select(main_A);
-  b = map.selectedBranch();
+  b = map.findBranchBySelection(main_A_string);
+
+  // Check attributes by key
+  key = "string-attribute";
+  expect("Branch has attribute with key '" + key + "'",  b.hasAttributeWithKey(key), true);
+  key = "int-attribute";
+  expect("Branch has attribute with key '" + key + "'",  b.hasAttributeWithKey(key), true);
+
+  // Read attributes
   expect("String attribute is '6 * 9'", b.attributeAsString("string-attribute"), "6 * 9");
   expect("Integer attribute is 42", b.attributeAsInt("int-attribute"), 42);
+
+  // Write attributes
+  key = "universe-is-ok";
+  b.setAttribute(key, "no");
+  expect("Set string attribute", b.attributeAsString(key), "no");
+
+  // Delete attributes
+  b.deleteAttribute(key);
+  expect("Attribute deleted",  b.hasAttributeWithKey(key), false);
 
   closeCurrentMap();
 }
@@ -831,27 +808,21 @@ function test_history()
 
   map = initMap(testMapDefault);
 
-  map.select(main_A);
-  let b = map.selectedBranch();
-  map.setHeadingPlainText("A");
-  map.setHeadingPlainText("B");
-  map.setHeadingPlainText("C");
+  b = map.findBranchBySelection(main_A_string);
+  b.setHeadingText("A");
+  b.setHeadingText("B");
+  b.setHeadingText("C");
   map.undo();
   map.undo();
   map.undo();
-  expect("Undo 3 times, after changing heading -> 'A' -> 'B' -> 'C'", b.headingText(), "Main A");
+  expect("3x Undo: Changing heading -> 'A' -> 'B' -> 'C'  Heading is again 'Main A'", b.headingText(), "Main A");
   map.redo();
-  expect("Redo once", map.getHeadingPlainText(), "A");
-  map.copy();
+  expect("1x Redo: Heading is 'A'", b.headingText(), "A");
+
   map.redo();
-  expect("Redo once more", map.getHeadingPlainText(), "B");
+  expect("2x Redo: Heading is 'B'", b.headingText(), "B");
   map.redo();
-  expect("Redo yet again", map.getHeadingPlainText(), "C");
-  map.setHeadingPlainText("Main A");
-  map.paste();
-  map.selectLastChildBranch()
-  expect("Paste from the past", map.getHeadingPlainText(), "A");
-  map.remove();
+  expect("3x Redo: Heading is 'C'", b.headingText(), "C");
 
   closeCurrentMap();
 }
@@ -979,6 +950,58 @@ function test_load_legacy_maps()
   expect("<xlink> connects  '#{@main_A}' and '#{@main_B}'", other_end, main_B);
   closeCurrentMap();
 }
+
+function test_mapdesign()
+{
+  heading("Mapdesign");
+  map = initMap(testMapDefault);
+
+  expect("Map does not use background image", map.hasBackgroundImage(), false);
+
+  col = "#1b1e20";
+  expect("Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Switch from color to image
+  imagePath = vymBaseDir + "/images/background-grid.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Switch to another image
+  imagePath = vymBaseDir + "/icons/down.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "down.png");
+
+  // Undo to previous image
+  map.undo();
+  expect("Undo once: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Undo once: Background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Undo to original color
+  map.undo();
+  expect("Undo twice: Map does not use background image", map.hasBackgroundImage(), false);
+  expect("Undo twice: Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Redo to first image
+  map.redo();
+  expect("Redo: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Redo: background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // link colors
+  expect("Links use default color", map.getLinkColorHint(), "DefaultColor");
+  map.setLinkColorHint("HeadingColor");
+  expect("Switch to heading color", map.getLinkColorHint(), "HeadingColor");
+  map.undo();
+  expect("Undo: Switch to heading color", map.getLinkColorHint(), "DefaultColor");
+  map.redo();
+  expect("Redo: Switch to heading color", map.getLinkColorHint(), "HeadingColor");
+
+  closeCurrentMap();
+}
+
 
 function test_modify_branches()
 {
@@ -1184,103 +1207,141 @@ function test_notes()
   // Plaintext notes basic actions
   let map = initMap(testMapDefault);
 
-  map.select(main_A);
+  b = map.findBranchBySelection(main_A_string);
   note_plain = "vymnote plaintext";
-  map.setNotePlainText(note_plain);
-  expect("Set note to \"#{note_plain}\". Still plaintext?", map.hasRichTextNote(), false);
-  map.select(center_0);
-  map.select(main_A);
-  expect("After reselect, is note plaintext?", map.hasRichTextNote(), false);
+  b.setNoteText(note_plain);
+  expect("Set note to \"" + note_plain + "\". Still plaintext?", b.hasRichTextNote(), false);
+
+  center_0 = map.findBranchBySelection(center_0_string);
+  map.select(center_0_string);
+  b.select();
+  expect("After reselect, is note plaintext?", b.hasRichTextNote(), false);
 
   note_plain = "<b>plaintext, not bold!</b>"
-  map.setNotePlainText(note_plain);
-  expect("Set note to plaintext containing html tags. Still plaintext", map.hasRichTextNote(), false);
-  note_new = map.getNoteText();
-  map.select(center_0);
-  map.select(main_A);
-  expect("After reselect, is note text unchanged?", map.getNoteText(), note_new);
-  expect("After reselect, is note plaintext?", map.hasRichTextNote(), false);
+  b.setNoteText(note_plain);
+  expect("Set note to plaintext containing html tags. Still plaintext", b.hasRichTextNote(), false);
+
+  note_new = b.getNoteText();
+  map.select(center_0_string);
+  b.select();
+  expect("After reselect, is note text unchanged?", b.getNoteText(), note_new);
+  expect("After reselect, is note plaintext?", b.hasRichTextNote(), false);
 
   // Plaintext notes copy & paste
+  b = map.findBranchBySelection(main_A_string);
+  b.select();
   map.copy();
   map.paste();
-  map.selectLastChildBranch();
-  s = map.getSelectionString();
-  expect("After copy& paste: New note unchanged?", map.getNoteText(), note_plain);
-  expect("After copy& paste: New note Still plaintext?", map.hasRichTextNote(), false);
-  map.remove();
+  b = map.findBranchBySelection(main_A_string);
+  b.selectLastChildBranch();
+  b_pasted = map.selectedBranch();
+
+  expect("After copy/paste: New note unchanged?", b_pasted.getNoteText(), note_plain);
+  expect("After copy/paste: New note Still plaintext?", b_pasted.hasRichTextNote(), false);
 
   // Plaintext notes undo & redo
-  map.select(main_A);
-  map.setNotePlainText('Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  b.setNoteText('Foobar');
   map.undo();
-  expect("Undo after setNotePlainText restores previous note", map.getNoteText(), note_plain);
+  expect("Undo after setNotePlainText restores previous note", b.getNoteText(), note_plain);
   map.redo();
-  map.select(main_A);
-  expect("Redo restores previous note", map.getNoteText(), 'Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  expect("Redo restores previous note", b.getNoteText(), 'Foobar');
 
   // Plaintext notes load & save
-  note_org = vym.loadFile('notes/note-plain.txt');
-  map.loadNote("test/notes/note-plain.txt");
-  expect("Load plain text note from file. Still plaintext?", map.hasRichTextNote(), false);
-  expect("Note contains 'not bold'", map.getNoteText().includes("not bold"), true);
-  filepath = testDir + "/save-note.txt";
-  map.saveNote(filepath);
-  expect("Save note to file. Check if it contains 'textMode=\"plainText\"'", vym.loadFile(filepath).includes("textMode=\"plainText\""), true);
-  expect("Save note to file. Check if it contains 'not bold'", vym.loadFile(filepath).includes("not bold"), true);
-  expect("Save note to file. Check new format: no longer contains '<b>' element",vym.loadFile(filepath).includes("<b>"), false);
-  expect("Save note to file. Check new format: no longer contains '<![CDATA['",vym.loadFile(filepath).includes("<![CDATA["), false);
-  expect("Save note to file. Check new format: contains 'text=\"Plaintext'",vym.loadFile(filepath).includes("text=\"Plaintext"), true);
+  note_org = vym.loadFile(vymBaseDir + "/test/" + "notes/note-plain.txt");
+  b = map.findBranchBySelection(main_A_string);
+  ok = b.loadNote("test/notes/note-plain.txt");
+  expect("Load note succeeded", ok, true);
+  expect("Load plain text note from file. Still plaintext?", b.hasRichTextNote(), false);
+  expect("Note contains 'not bold'", b.getNoteText().includes("not bold"), true);
+
+  filePath = testDir + "/save-note.txt";
+  if (vym.fileExists(filePath)) {
+      if (vym.fileRemove(filePath)) {
+        if (verbosity > 0)
+				  vym.print("# Removed existing note file: " + filePath);
+      } else
+				  vym.print("# Failed to remove existing map: " + filePath);
+  }
+
+  // Save note
+  b.saveNote(filePath);
+
+  expect("Note successfully saved to '" + filePath + "'", vym.fileExists(filePath), true);
+
+  expect("Save note to file. Check if it contains 'textMode=\"plainText\"'", vym.loadFile(filePath).includes("textMode=\"plainText\""), true);
+  expect("Save note to file. Check if it contains 'not bold'", vym.loadFile(filePath).includes("not bold"), true);
+  expect("Save note to file. Check new format: no longer contains '<b>' element",vym.loadFile(filePath).includes("<b>"), false);
+  expect("Save note to file. Check new format: no longer contains '<![CDATA['",vym.loadFile(filePath).includes("<![CDATA["), false);
+  expect("Save note to file. Check new format: contains 'textMode=\"plainText'",vym.loadFile(filePath).includes("textMode=\"plainText"), true);
 
   // Delete note
-  map.setNotePlainText("");
-  expect("setNotePlainText(\"\") deletes note", map.hasNote(), false);
+  b.setNoteText("");
+  expect("setNoteText(\"\") deletes note", b.hasNote(), false);
 
   closeCurrentMap();
 
   // RichText basic actions
   map = initMap(testMapDefault);
-  rt_note = '<html><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>not bold text</b></span></p></body></html>]]></vymnote>'
-  b_main_A.setNoteRichText(rt_note);
-  expect("b.setNoteRichText produces note", b_main_A.hasNote(), true);
-  expect("b.setNoteRichText produces richText note", b_main_A.hasRichTextNote(), true);
-  expect("After reselect, is note RichText?", b_main_A.hasRichTextNote(), true);
+  rt_note = '<html><body style=" font-family:"Arial"; font-size:12pt; font-weight:400; font-style:normal;"> <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:"DejaVu Sans Mono"; color:#000000;">Rich Text note with <b>bold</b> and not &lt;bold&gt; text</span></p></body></html></vymnote>'
 
+  b = map.findBranchBySelection(main_A_string);
+  b.setNoteRichText(rt_note);
+  expect("b.setNoteRichText produces note", b.hasNote(), true);
+  expect("b.setNoteRichText produces richText note", b.hasRichTextNote(), true);
+
+  map.select(center_0_string);
+  map.select(main_A_string);
+  b = map.selectedBranch();
+  expect("After reselect, is note RichText?", b.hasRichTextNote(), true);
 
   // RichText notes copy & paste
-  b_main_A.select();
-  rt_note = map.getNoteXML();
+  b = map.findBranchBySelection(main_A_string);
+  rt_note = b.getNoteXML();
+  b.select();
   map.copy();
   map.paste();
-  map.selectLastChildBranch();
+  b.selectLastChildBranch();
   b = map.selectedBranch();
   expect("After copy & paste: New note still RichText?", b.hasRichTextNote(), true);
   expect("After copy & paste: New note unchanged?", b.getNoteXML(), rt_note);
-  map.remove();
 
   // RichText notes undo & redo
-  map.select(main_A);
-  map.setNotePlainText('Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  b.setNoteText('Foobar');
   map.undo();
-  expect("Undo after setNotePlainText restores RichText note", map.getNoteXML(), rt_note);
+  expect("Undo after setNotePlainText restores RichText note", b.getNoteXML(), rt_note);
   map.redo();
-  map.select(main_A);
-  expect("Redo restores previous plaintext note", map.getNoteText(), 'Foobar');
+  b = map.findBranchBySelection(main_A_string);
+  expect("Redo restores previous plaintext note", b.getNoteText(), 'Foobar');
 
   // RichText notes load & save
-  map.loadNote("test/notes/note.html");
-  expect("Load HTML note from file and try to detect textMode. Is RichText?", map.hasRichTextNote(), true);
-  filepath = testDir + "/save-note.txt";
-  map.saveNote(filepath);
-  expect("Save note to file. Check if it contains 'textMode=\"richText\"'", vym.loadFile(filepath).includes("textMode=\"richText\""), true);
-  expect("Save note to file. Check if it contains 'bold'", vym.loadFile(filepath).includes("bold"), true);
-  expect("Save note to file. Check new format: no longer contains '<b>' element", vym.loadFile(filepath).includes("<b>"), false);
-  expect("Save note to file. Check new format: no longer contains '<![CDATA['", vym.loadFile(filepath).includes("<![CDATA["), false);
-  expect("Save note to file. Check new format: contains 'text=\"&lt;'", vym.loadFile(filepath).includes("text=\"&lt;"), true);
+  b = map.findBranchBySelection(main_A_string);
+  b.loadNote("test/notes/note.html");
+  expect("Load HTML note from file and try to detect textMode. Is RichText?", b.hasRichTextNote(), true);
+
+  filePath = testDir + "/save-note.html";
+  if (vym.fileExists(filePath)) {
+      if (vym.fileRemove(filePath)) {
+        if (verbosity > 0)
+				  vym.print("# Removed existing note file: " + filePath);
+      } else
+				  vym.print("# Failed to remove existing map: " + filePath);
+  }
+
+  b.saveNote(filePath);
+  expect("Note successfully saved to '" + filePath + "'", vym.fileExists(filePath), true);
+
+  expect("Save note to file. Check if it contains 'textMode=\"richText\"'", vym.loadFile(filePath).includes("textMode=\"richText\""), true);
+  expect("Save note to file. Check if it contains 'bold'", vym.loadFile(filePath).includes("bold"), true);
+  expect("Save note to file. Check new format: no longer contains '<b>' element", vym.loadFile(filePath).includes("<b>"), false);
+  expect("Save note to file. Check new format: no longer contains '<![CDATA['", vym.loadFile(filePath).includes("<![CDATA["), false);
+  expect("Save note to file. Check new format: contains 'text=\"&lt;'", vym.loadFile(filePath).includes("text=\"&lt;"), true);
 
   // Delete note
-  map.setNotePlainText("");
-  expect("setNotePlainText(\"\") deletes note", map.hasNote(), false);
+  b.setNoteText("");
+  expect("setNoteText(\"\") deletes note", b.hasNote(), false);
 
   // Compatibility with notes from version < 2.5.0  # FIXME-3 missing
 
@@ -1322,31 +1383,28 @@ function test_references()
 function test_saving()
 {
   heading("Saving");
-  let map = initMap(testMapDefault);
+  map = initMap(testMapDefault);
 
   // Save selection without overwriting original map);
-  map.select(branch_0Aa);
-  let mapName = "test-saveSelection.vyp";
-  let fn = testDir + "/" + mapName;
-  map.saveSelection(fn);
-  expect(
-      "Save selection: '" + branch_0Aa + "' to '" + fn + "'",
-      vym.fileExists(fn),
-      true);
+  map.select(branch_0Aa_string);
+
+  mapName = "test-saveSelection.vyp";
+  fn = testDir + "/" + mapName;
+  ok = map.saveSelection(fn);
+  expect("Saved selection successfully to '" + fn + "'", ok, true);
+
+  b = map.findBranchBySelection(branch_0Aa_string);
+  expect( "File '" + fn + "' exists", vym.fileExists(fn), true);
 
   closeCurrentMap();
 
-  map = initMap(mapName);
-  map.select(center_0);
-  expect(
-      "Save selection: After loading of '" + mapName + "' '" + center_0 + "' is ok",
-      map.getHeadingPlainText(),
-      "branch a");
-  map.select(main_A);
-  expect(
-      "Save selection: After loading of '" + mapName + "' '" + main_A + "'  is ok",
-      map.getHeadingPlainText(),
-      "branch a1");
+  map = initMap(testDir + "/" + mapName);
+
+  b = map.findBranchBySelection(center_0_string);
+  expect( "Save selection: After loading of '" + mapName + " the center is named 'branch a'", b.headingText(), "branch a");
+
+  b = map.findBranchBySelection(main_A_string);
+  expect( "Save selection: After loading of '" + mapName + " the main branch is named 'branch a1'", b.headingText(), "branch a1");
 
   closeCurrentMap();
 }
@@ -1356,28 +1414,30 @@ function test_scrolling()
   heading("Scrolling and unscrolling:");
   map = initMap(testMapDefault);
   
-  map.select(main_A);
- 
-  let b = map.selectedBranch();
-  map.toggleScroll();
+  b = map.findBranchBySelection(main_A_string);
+  b.toggleScroll();
   expect("toggleScroll", b.isScrolled(), true);
   map.undo()
-  expect("undo toggleScroll", b.isScrolled(), false);
-  b.scroll();
-  expect("scroll", b.isScrolled(), true);
-  b.unscroll();
-  expect("unscroll", b.isScrolled(), false);
+
+  expect("Undo: toggleScroll", b.isScrolled(), false);
 
   b.scroll();
-  map.select(branch_0Aa);
-  map.scroll();
-  map.select(main_A);
-  map.unscrollChildren();
-  map.select(branch_0Aa);
-  expect("unscrollChildren", map.isScrolled(), false);
+  expect("scroll branch", b.isScrolled(), true);
+  b.unscroll();
+  expect("unscroll branch", b.isScrolled(), false);
+
+  b.scroll();
+
+  b = map.findBranchBySelection(main_A_string);
+  b2 = map.findBranchBySelection(branch_0Aa_string);
+  b2.scroll();
+
+  b.unscrollSubtree();
+  expect("unscrollSubtree of branch really unscrolls", b2.isScrolled(), false);
+
   map.undo();
-  map.select(branch_0Aa);
-  expect("undo unscrollChildren", map.isScrolled(), true);
+  b2 = map.findBranchBySelection(branch_0Aa_string);
+  expect("Undo: unscrollSubtree", b2.isScrolled(), true);
 
   closeCurrentMap();
 }
@@ -1674,8 +1734,7 @@ function test_xlinks()
 if (tests.includes("basics")) { test_basics(); }
 if (tests.includes("adding_branches")) { test_adding_branches(); }
 if (tests.includes("adding_maps"))    { test_adding_maps(); }
-if (tests.includes("backgrounds"))    { test_backgrounds(); }
-if (tests.includes("attributes"))     { test_adding_branches(); }
+if (tests.includes("attributes"))     { test_attributes(); }
 if (tests.includes("copy_paste"))     { test_copy_paste(); }
 if (tests.includes("delete_parts"))   { test_delete_parts(); }
 if (tests.includes("export"))         { test_export(); }
@@ -1683,6 +1742,7 @@ if (tests.includes("extrainfo"))      { test_extrainfo(); }
 if (tests.includes("frames"))         { test_frames(); }
 if (tests.includes("history"))        { test_history(); }
 if (tests.includes("load_legacy_maps")) { test_load_legacy_maps(); }
+if (tests.includes("mapdesign"))      { test_mapdesign(); }
 if (tests.includes("modify_branches")) { test_modify_branches(); }
 if (tests.includes("modify_images"))  { test_modify_images(); }
 if (tests.includes("moving_parts"))   { test_moving_parts(); }

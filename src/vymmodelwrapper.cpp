@@ -348,6 +348,12 @@ QString VymModelWrapper::getComment()
     return r;
 }
 
+QString VymModelWrapper::getLinkColorHint()
+{
+    LinkObj::ColorHint hint = model->mapDesign()->linkColorHint();
+    return LinkObj::linkColorHintName(hint);
+}
+
 QString VymModelWrapper::getTitle()
 {
     QString r = model->getTitle();
@@ -541,12 +547,7 @@ void VymModelWrapper::saveImage(const QString &filename)
     model->saveImage(nullptr, filename);
 }
 
-void VymModelWrapper::saveNote(const QString &filename)
-{
-    model->saveNote(filename);
-}
-
-void VymModelWrapper::saveSelection(const QString &filename)
+bool VymModelWrapper::saveSelection(const QString &filename)
 {
     QString filename_org = model->getFilePath(); // Restore filename later
     if (!model->renameMap(filename)) {
@@ -554,10 +555,20 @@ void VymModelWrapper::saveSelection(const QString &filename)
         QMessageBox::critical(0,
             tr("Critical Error"), s);
         mainWindow->abortScript(QJSValue::GenericError, s);
-        return;
+        return false;
     }
-    model->saveMap(File::PartOfMap);
-    model->renameMap(filename_org);
+
+    bool r = model->saveMap(File::PartOfMap);
+
+    if (!model->renameMap(filename_org)) {
+        QString s = tr("Saving the selection in map failed:\nCouldn't rename map to %1").arg(filename);
+        QMessageBox::critical(0,
+            tr("Critical Error"), s);
+        mainWindow->abortScript(QJSValue::GenericError, s);
+        return false;
+    }
+
+    return r;
 }
 
 bool VymModelWrapper::select(const QString &s)
@@ -704,6 +715,12 @@ void VymModelWrapper::setHeadingConfluencePageName()
 }
 
 void VymModelWrapper::setComment(const QString &s) { model->setComment(s); }
+
+void VymModelWrapper::setLinkColorHint(const QString &hintName)
+{
+    LinkObj::ColorHint hint = LinkObj::linkColorHint(hintName);
+    model->setLinkColorHint(hint);
+}
 
 void VymModelWrapper::setLinkStyle(const QString &style)
 {
