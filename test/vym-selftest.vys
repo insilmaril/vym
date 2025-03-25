@@ -22,6 +22,8 @@ all_tests = [
   "moving_parts",
   "notes",
   "references",
+  "saving",
+  "scrolling",
   "standard_flags",
   "user_flags",
   "tasks",	        // FIXME-3 uncomplete (date calculations not ported yet from ruby)
@@ -29,13 +31,11 @@ all_tests = [
 ];
 
 not_yet_ported_tests = [
-  "saving",
-  "scrolling",
   "slides"
 ];
 
 tests = all_tests;
-//tests = ["history"];
+//tests = ["scrolling"];
 
 
 var verbosity = 0;
@@ -111,8 +111,10 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 {
   // Copy the map referenced above to @testDir/test-current.[vym|xml]
   // and try to load it
-  if (mapPath.endsWith(".vym") )
+  if (mapPath.endsWith(".vym"))
       postfix = ".vym";
+  else if (mapPath.endsWith(".vyp") )
+      postfix = ".vyp";
   else
       postfix = ".xml";
 
@@ -132,7 +134,9 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 				  vym.print("# Failed to remove existing map: " + currentMapPath);
   }
 
-  // vym.print("# Copying " + mapPath + " to " + currentMapPath);
+  if (verbosity > 1 )
+    vym.print("# Copying " + mapPath + " to " + currentMapPath);
+
   vym.fileCopy(mapPath, currentMapPath);
 
     /*  Copy additional files, not yet implemented here
@@ -1379,31 +1383,28 @@ function test_references()
 function test_saving()
 {
   heading("Saving");
-  let map = initMap(testMapDefault);
+  map = initMap(testMapDefault);
 
   // Save selection without overwriting original map);
-  map.select(branch_0Aa);
-  let mapName = "test-saveSelection.vyp";
-  let fn = testDir + "/" + mapName;
-  map.saveSelection(fn);
-  expect(
-      "Save selection: '" + branch_0Aa + "' to '" + fn + "'",
-      vym.fileExists(fn),
-      true);
+  map.select(branch_0Aa_string);
+
+  mapName = "test-saveSelection.vyp";
+  fn = testDir + "/" + mapName;
+  ok = map.saveSelection(fn);
+  expect("Saved selection successfully to '" + fn + "'", ok, true);
+
+  b = map.findBranchBySelection(branch_0Aa_string);
+  expect( "File '" + fn + "' exists", vym.fileExists(fn), true);
 
   closeCurrentMap();
 
-  map = initMap(mapName);
-  map.select(center_0);
-  expect(
-      "Save selection: After loading of '" + mapName + "' '" + center_0 + "' is ok",
-      map.getHeadingPlainText(),
-      "branch a");
-  map.select(main_A);
-  expect(
-      "Save selection: After loading of '" + mapName + "' '" + main_A + "'  is ok",
-      map.getHeadingPlainText(),
-      "branch a1");
+  map = initMap(testDir + "/" + mapName);
+
+  b = map.findBranchBySelection(center_0_string);
+  expect( "Save selection: After loading of '" + mapName + " the center is named 'branch a'", b.headingText(), "branch a");
+
+  b = map.findBranchBySelection(main_A_string);
+  expect( "Save selection: After loading of '" + mapName + " the main branch is named 'branch a1'", b.headingText(), "branch a1");
 
   closeCurrentMap();
 }
@@ -1413,28 +1414,30 @@ function test_scrolling()
   heading("Scrolling and unscrolling:");
   map = initMap(testMapDefault);
   
-  map.select(main_A);
- 
-  let b = map.selectedBranch();
-  map.toggleScroll();
+  b = map.findBranchBySelection(main_A_string);
+  b.toggleScroll();
   expect("toggleScroll", b.isScrolled(), true);
   map.undo()
-  expect("undo toggleScroll", b.isScrolled(), false);
-  b.scroll();
-  expect("scroll", b.isScrolled(), true);
-  b.unscroll();
-  expect("unscroll", b.isScrolled(), false);
+
+  expect("Undo: toggleScroll", b.isScrolled(), false);
 
   b.scroll();
-  map.select(branch_0Aa);
-  map.scroll();
-  map.select(main_A);
-  map.unscrollChildren();
-  map.select(branch_0Aa);
-  expect("unscrollChildren", map.isScrolled(), false);
+  expect("scroll branch", b.isScrolled(), true);
+  b.unscroll();
+  expect("unscroll branch", b.isScrolled(), false);
+
+  b.scroll();
+
+  b = map.findBranchBySelection(main_A_string);
+  b2 = map.findBranchBySelection(branch_0Aa_string);
+  b2.scroll();
+
+  b.unscrollSubtree();
+  expect("unscrollSubtree of branch really unscrolls", b2.isScrolled(), false);
+
   map.undo();
-  map.select(branch_0Aa);
-  expect("undo unscrollChildren", map.isScrolled(), true);
+  b2 = map.findBranchBySelection(branch_0Aa_string);
+  expect("Undo: unscrollSubtree", b2.isScrolled(), true);
 
   closeCurrentMap();
 }

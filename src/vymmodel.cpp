@@ -733,7 +733,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     return err;
 }
 
-void VymModel::saveMap(const File::SaveMode &savemode)
+bool VymModel::saveMap(const File::SaveMode &savemode)
 {
     // Block closing the map while saving, esp. while zipping
     isSavingInt = true;
@@ -778,7 +778,7 @@ void VymModel::saveMap(const File::SaveMode &savemode)
         else  {
             // do nothing
             isSavingInt = false;
-            return; 
+            return false; 
         }
     }
 
@@ -813,7 +813,7 @@ void VymModel::saveMap(const File::SaveMode &savemode)
                 0, tr("Critical Save Error"),
                 tr("Couldn't access zipDir %1\n").arg(zipDirInt.path()));
             isSavingInt = false;
-            return;
+            return false;
         }
 
         saveFilePath = filePath;
@@ -900,6 +900,8 @@ void VymModel::saveMap(const File::SaveMode &savemode)
 
     if (!zipped)
         isSavingInt = false;
+
+    return (err == File::Success);
 }
 
 bool VymModel::isSaving()

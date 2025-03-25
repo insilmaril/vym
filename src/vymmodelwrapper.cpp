@@ -547,7 +547,7 @@ void VymModelWrapper::saveImage(const QString &filename)
     model->saveImage(nullptr, filename);
 }
 
-void VymModelWrapper::saveSelection(const QString &filename)
+bool VymModelWrapper::saveSelection(const QString &filename)
 {
     QString filename_org = model->getFilePath(); // Restore filename later
     if (!model->renameMap(filename)) {
@@ -555,10 +555,20 @@ void VymModelWrapper::saveSelection(const QString &filename)
         QMessageBox::critical(0,
             tr("Critical Error"), s);
         mainWindow->abortScript(QJSValue::GenericError, s);
-        return;
+        return false;
     }
-    model->saveMap(File::PartOfMap);
-    model->renameMap(filename_org);
+
+    bool r = model->saveMap(File::PartOfMap);
+
+    if (!model->renameMap(filename_org)) {
+        QString s = tr("Saving the selection in map failed:\nCouldn't rename map to %1").arg(filename);
+        QMessageBox::critical(0,
+            tr("Critical Error"), s);
+        mainWindow->abortScript(QJSValue::GenericError, s);
+        return false;
+    }
+
+    return r;
 }
 
 bool VymModelWrapper::select(const QString &s)
