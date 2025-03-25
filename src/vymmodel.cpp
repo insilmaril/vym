@@ -3396,6 +3396,8 @@ void VymModel::copy()
         mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
         clipboard->setMimeData(mimeData);
 
+        /*
+        */
         QString rc = QString("map.selectUids([%1]); map.copy();").arg(uids.join(","));
         QString comment = QString("Copy %1 selected %2 to clipboard: [%3]")
             .arg(itemList.count())
@@ -3432,7 +3434,7 @@ void VymModel::paste()
             QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
             QString rc = bv + QString("b.select(); map.paste();");
             QString comment = QString("Paste to branch \"%1\"").arg(selbi->headingText());
-            saveState(uc, rc, comment, selbi);
+            saveState(uc, rc, comment, selbi, selbi);
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
@@ -3965,7 +3967,7 @@ AttributeItem *VymModel::setAttribute( // FIXME-3 saveState( missing. For bulk c
         endInsertRows();
         emit layoutChanged();
 
-        // Jira attributes
+        // Special case: Jira attributes
         if (ai->key() == "Jira.issueUrl") {
             dst->setUrlType(TreeItem::JiraUrl);
             updateJiraFlag(dst);

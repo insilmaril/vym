@@ -5,6 +5,7 @@
 // test_vym();  // FIXME currently not used (version check, tmpDir check)
 
 all_tests = [
+  "attributes",
   "basics",
   "adding_branches",
   "adding_maps",
@@ -13,6 +14,7 @@ all_tests = [
   "export",         // FIXME WIP
   "extrainfo",
   "frames",
+  "history",
   "load_legacy_maps",
   "mapdesign",
   "modify_branches",
@@ -26,8 +28,6 @@ all_tests = [
 ];
 
 not_yet_ported_tests = [
-  "attributes",
-  "history",
   "notes",
   "saving",
   "scrolling",
@@ -35,7 +35,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-tests = ["basics", "attributes"];
+tests = ["basics", "copy_paste"];
 
 
 var verbosity = 0;
@@ -804,26 +804,28 @@ function test_history()
 
   map = initMap(testMapDefault);
 
-  map.select(main_A);
-  let b = map.selectedBranch();
-  map.setHeadingPlainText("A");
-  map.setHeadingPlainText("B");
-  map.setHeadingPlainText("C");
+  b = map.findBranchBySelection(main_A_string);
+  b.setHeadingText("A");
+  b.setHeadingText("B");
+  b.setHeadingText("C");
   map.undo();
   map.undo();
   map.undo();
-  expect("Undo 3 times, after changing heading -> 'A' -> 'B' -> 'C'", b.headingText(), "Main A");
+  expect("3x Undo: Changing heading -> 'A' -> 'B' -> 'C'  Heading is again 'Main A'", b.headingText(), "Main A");
   map.redo();
-  expect("Redo once", map.getHeadingPlainText(), "A");
+  expect("1x Redo: Heading is 'A'", b.headingText(), "A");
+
+  b.select();
   map.copy();
   map.redo();
-  expect("Redo once more", map.getHeadingPlainText(), "B");
+  expect("2x Redo: Heading is 'B'", b.headingText(), "B");
   map.redo();
-  expect("Redo yet again", map.getHeadingPlainText(), "C");
-  map.setHeadingPlainText("Main A");
+  expect("3x Redo: Heading is 'C'", b.headingText(), "C");
+
+  b.setHeadingPlainText("Main A");
   map.paste();
   map.selectLastChildBranch()
-  expect("Paste from the past", map.getHeadingPlainText(), "A");
+  expect("Paste from the past", b.headingText(), "A");
   map.remove();
 
   closeCurrentMap();
