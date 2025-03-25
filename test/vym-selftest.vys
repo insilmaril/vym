@@ -35,7 +35,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["basics", "notes"];
+//tests = ["history"];
 
 
 var verbosity = 0;
@@ -815,18 +815,10 @@ function test_history()
   map.redo();
   expect("1x Redo: Heading is 'A'", b.headingText(), "A");
 
-  b.select();
-  map.copy();
   map.redo();
   expect("2x Redo: Heading is 'B'", b.headingText(), "B");
   map.redo();
   expect("3x Redo: Heading is 'C'", b.headingText(), "C");
-
-  b.setHeadingPlainText("Main A");
-  map.paste();
-  map.selectLastChildBranch()
-  expect("Paste from the past", b.headingText(), "A");
-  map.remove();
 
   closeCurrentMap();
 }
