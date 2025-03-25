@@ -352,7 +352,7 @@ class Main : public QMainWindow {
     ModMode getModMode();
     bool autoSelectNewBranch();
 
-    void scriptPrint(const QString &);
+    void scriptPrint(const QString &, const QString &color = "");
     QVariant runScript(const QString &);
     void abortScript(const QJSValue::ErrorType &err, const QString &msg);
     void abortScript(const QString &msg);

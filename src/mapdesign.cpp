@@ -444,6 +444,7 @@ QString MapDesign::defXLinkStyleEnd()
 void MapDesign::setBackgroundColor(const QColor &col)
 {
     backgroundColorInt = col;
+    usesBackgroundImage = false;
 }
 
 QColor MapDesign::backgroundColor()
@@ -451,7 +452,7 @@ QColor MapDesign::backgroundColor()
     return backgroundColorInt;
 }
 
-bool MapDesign::setBackgroundImage(const QString &fileName)
+bool MapDesign::loadBackgroundImage(const QString &fileName)
 {
     backgroundImage.load(fileName);
     if (backgroundImage.isNull()) {
@@ -460,10 +461,14 @@ bool MapDesign::setBackgroundImage(const QString &fileName)
     }
 
     usesBackgroundImage = true;
-    backgroundImageNameInt = basename(fileName);
     backgroundImageBrushInt.setTextureImage(backgroundImage);
 
     return true;
+}
+
+bool MapDesign::saveBackgroundImage(const QString &imagePath)
+{
+    return backgroundImage.save(imagePath, "PNG", 100);
 }
 
 void MapDesign::setBackgroundImageName(const QString &n)
@@ -646,12 +651,13 @@ QString MapDesign::saveToDir(const QString &tmpdir, const QString &prefix)
 
     // Save background image
     if (usesBackgroundImage && !backgroundImage.isNull()) {
-        QString fn = "images/image-0-background";
-        if (!backgroundImage.save(tmpdir + fn, "PNG", 100))
-            qWarning() << "md::saveToDir failed to save background image to " << fn;
+        QString img_path = "images/0-background";
+        QString img_fullpath = tmpdir + "/" + img_path;
+        if (!saveBackgroundImage(img_fullpath))
+            qWarning() << "md::saveToDir failed to save background image to " << img_fullpath;
         else
             s += xml.singleElement("md",
-                xml.attribute("backgroundImage", "file:" + fn) +
+                xml.attribute("backgroundImage", "file:" + img_path) +
                 xml.attribute("backgroundImageName", backgroundImageNameInt));
     }
 

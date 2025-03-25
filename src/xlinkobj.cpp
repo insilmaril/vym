@@ -161,7 +161,9 @@ void XLinkObj::updateGeometry()
     if (bi)
         endBC = bi->getBranchContainer();
 
-    /* FIXME-2 check orientation to position xlink ctrl point
+    /* FIXME-3 check orientation to position xlink ctrl point
+    if (beginBC && endBC)
+        qDebug() << "XLO::updateGeo   beginOrient=" << beginBC->getOrientation() << "  endOrient=" << endBC->getOrientation();
     */
     if (beginBC) {
         if (beginOrient != BranchContainer::UndefinedOrientation &&

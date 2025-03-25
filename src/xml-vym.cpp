@@ -201,7 +201,7 @@ void VymReader::readMapDesignCompatibleAttributes()
     a = "backgroundImage";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setBackgroundImage(parseHREF(s));
+        model->loadBackgroundImage(parseHREF(s));
 
     a = "backgroundImageName";
     s = xml.attributes().value(a).toString();
@@ -1332,46 +1332,57 @@ void VymReader::readFrameAttr()
             useInnerFrame = true;
         }
 
-        a = "frameType";
-        s = attributeToString(a);
-        if (s.isEmpty())
-            s = "Rectangle";
 
         // We will override AutoDesign
-        bc->setFrameAutoDesign(useInnerFrame, false);
+        // bc->setFrameAutoDesign(useInnerFrame, false);
 
-        // Start with setting/creating frame. 
-        // assuming that there is no "NoFrame" frame in the xml
-        bc->setFrameType(useInnerFrame, s);
-
-        a = "penColor";
+        a = "autoDesign";
         s = attributeToString(a);
-        if (!s.isEmpty())
-            bc->setFramePenColor(useInnerFrame, s);
+        if (s == "true")
+            // bc->setFrameAutoDesign(useInnerFrame, true);
+            // Set all frame parameters via model
+            model->setFrameAutoDesign(useInnerFrame, true, lastBranch);
+        else {
+            a = "frameType";
+            s = attributeToString(a);
+            if (s.isEmpty())
+                s = "Rectangle";
 
-        a = "brushColor";
-        s = attributeToString(a);
-        if (!s.isEmpty())
-            bc->setFrameBrushColor(useInnerFrame, s);
+            // Start with setting/creating frame. 
+            // assuming that there is no "NoFrame" frame in the xml
+            bc->setFrameType(useInnerFrame, s);
 
-        int i;
-        a = "padding";
-        s = attributeToString(a);
-        i = s.toInt(&ok);
-        if (ok)
-            bc->setFramePadding(useInnerFrame, i);
+            bc->setFrameAutoDesign(useInnerFrame, false);
 
-        a = "borderWidth";
-        s = attributeToString(a);
-        i = s.toInt(&ok);
-        if (ok)
-            bc->setFramePenWidth(useInnerFrame, i);
+            a = "penColor";
+            s = attributeToString(a);
+            if (!s.isEmpty())
+                bc->setFramePenColor(useInnerFrame, s);
 
-        a = "penWidth";
-        s = attributeToString(a);
-        i = s.toInt(&ok);
-        if (ok)
-            bc->setFramePenWidth(useInnerFrame, i);
-    }
+            a = "brushColor";
+            s = attributeToString(a);
+            if (!s.isEmpty())
+                bc->setFrameBrushColor(useInnerFrame, s);
+
+            int i;
+            a = "padding";
+            s = attributeToString(a);
+            i = s.toInt(&ok);
+            if (ok)
+                bc->setFramePadding(useInnerFrame, i);
+
+            a = "borderWidth";
+            s = attributeToString(a);
+            i = s.toInt(&ok);
+            if (ok)
+                bc->setFramePenWidth(useInnerFrame, i);
+
+            a = "penWidth";
+            s = attributeToString(a);
+            i = s.toInt(&ok);
+            if (ok)
+                bc->setFramePenWidth(useInnerFrame, i);
+        }
+    }   // lastBranch available
 }
 

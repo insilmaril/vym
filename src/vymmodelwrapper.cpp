@@ -23,14 +23,14 @@ extern Main *mainWindow;
 ///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m)
 {
-    // std::cout << "Constr VMWrapper" << this << endl;
+    //std::cout << "Constr VMWrapper" << this << endl;
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     model = m;
 }
 
 VymModelWrapper::~VymModelWrapper()
 {
-    // std::cout << "Destr VMWrapper" << this << endl;
+    //std::cout << "Destr VMWrapper" << this << endl;
 }
 
 void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
@@ -214,12 +214,15 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         model->exportOrgMode(filePath, false);
     } else if (format == "PDF") {
         model->exportPDF(filePath, false);
+        r = true;
     } else if (format == "SVG") {
         model->exportSVG(filePath, false);
+        r = true;
     } else if (format == "TaskJuggler") {
         model->exportTaskJuggler(filePath, false);
     } else if (format == "XML") {
         model->exportXML(filePath, false);
+        r = true;
     } else {
         mainWindow->abortScript(
                 QJSValue::GenericError,
@@ -296,6 +299,20 @@ XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
         return nullptr;
 }
 
+QString VymModelWrapper::getBackgroundColor()
+{
+    QString r = model->backgroundColor().name();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+QString VymModelWrapper::getBackgroundImageName()
+{
+    QString r = model->backgroundImageName();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 QString VymModelWrapper::getDestPath()
 {
     QString r = model->getDestPath();
@@ -366,6 +383,23 @@ QString VymModelWrapper::getSelectionString()
 {
     QString r = model->getSelectString();
     mainWindow->setScriptResult(r);
+    return r;
+}
+
+bool VymModelWrapper::hasBackgroundImage()
+{
+    bool r = model->hasBackgroundImage();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+bool VymModelWrapper::loadBackgroundImage(const QString &imagePath)
+{
+    bool r =model->loadBackgroundImage(imagePath);
+    if (!r)
+        mainWindow->abortScript(
+                QJSValue::GenericError,
+                QString("Failed to load background image \"%1\"").arg(imagePath));
     return r;
 }
 
@@ -615,23 +649,6 @@ bool VymModelWrapper::selectToggle(const QString &selectString)
     return r;
 }
 
-void VymModelWrapper::setDefaultLinkColor(const QString &color)
-{
-    QColor col(color);
-    if (col.isValid()) {
-        model->setDefaultLinkColor(col);
-    }
-    else
-        mainWindow->abortScript(
-                QJSValue::GenericError,
-                QString("Could not set color to %1").arg(color));
-}
-
-void VymModelWrapper::setHeadingConfluencePageName()
-{
-    model->setConfluencePageDetails(false);
-}
-
 void VymModelWrapper::setAnimCurve(int n)
 {
     if (n < 0 || n > QEasingCurve::OutInBounce)
@@ -662,6 +679,28 @@ void VymModelWrapper::setBackgroundColor(const QString &color)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
+}
+
+void VymModelWrapper::setBackgroundImageName(const QString &name)
+{
+    model->setBackgroundImageName(name);
+}
+
+void VymModelWrapper::setDefaultLinkColor(const QString &color)
+{
+    QColor col(color);
+    if (col.isValid()) {
+        model->setDefaultLinkColor(col);
+    }
+    else
+        mainWindow->abortScript(
+                QJSValue::GenericError,
+                QString("Could not set color to %1").arg(color));
+}
+
+void VymModelWrapper::setHeadingConfluencePageName()
+{
+    model->setConfluencePageDetails(false);
 }
 
 void VymModelWrapper::setComment(const QString &s) { model->setComment(s); }
@@ -726,3 +765,7 @@ void VymModelWrapper::undo() { model->undo(); }
 
 void VymModelWrapper::unselectAll() { model->unselectAll(); }
 
+void VymModelWrapper::unsetBackgroundImage()
+{
+    model->unsetBackgroundImage();
+}

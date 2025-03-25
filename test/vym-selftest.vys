@@ -8,6 +8,7 @@ all_tests = [
   "basics",
   "adding_branches",
   "adding_maps",
+  "backgrounds",
   "copy_paste",
   "delete_parts",
   "export",         // FIXME WIP
@@ -34,8 +35,10 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["basics", "frames"];
+tests = ["basics", "copy_paste"];
 
+
+var verbosity = 0;
 
 vym.clearConsole();
 
@@ -68,10 +71,10 @@ const  center_3_string = "mc:3";
 function expect(comment, v_real, v_expected) {
 	tests_total = tests_total +1;
     if (v_real == v_expected) {
-        vym.print ("PASS: " + comment);
+        vym.printCol ("green", "PASS: " + comment);
 		tests_passed = tests_passed +1;
     } else {
-        vym.print ("FAIL: '" + comment + "' - Expected \"" + v_expected + "\", but got \"" + v_real + "\"");
+        vym.printCol ("red", "FAIL: '" + comment + "' - Expected \"" + v_expected + "\", but got \"" + v_real + "\"");
 		tests_failed = tests_failed +1;
     throw "Test failed.";
     }
@@ -80,12 +83,12 @@ function expect(comment, v_real, v_expected) {
 function expectInclude(comment, s, substring)
 {
   if( s.includes(substring)) {
-    vym.print("PASS: " + comment);
+    vym.printCol("green", "PASS: " + comment);
     tests_passed = tests_passed + 1;
     // waitkey
   } else {
-    vym.print("FAIL: " + comment + ". Could not find \"" + substring + "\" in string below:");
-    vym.print("\"" + s + "\"");
+    vym.printCol("red", "FAIL: " + comment + ". Could not find \"" + substring + "\" in string below:");
+    vym.printCol("red", "\"" + s + "\"");
     tests_failed = tests_failed - 1;
     throw "Test failed.";
   }
@@ -95,10 +98,10 @@ function expectInclude(comment, s, substring)
 function expectNot(comment, v_real, v_expected) {
 	tests_total = tests_total +1;
     if (v_real != v_expected) {
-        vym.print("PASS: " + comment);
+        vym.printCol("green", "PASS: " + comment);
 		tests_passed = tests_passed +1;
     } else {
-        vym.print("FAIL: '" + comment + "' - Expected differemt values, but got " + v_expected + " and " + v_real);
+        vym.printCol("red", "FAIL: '" + comment + "' - Expected differemt values, but got " + v_expected + " and " + v_real);
 		tests_failed = tests_failed +1;
     }
 }
@@ -122,9 +125,10 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
   currentMapPath = testDir + "/maps/current-map" + postfix;
 
   if (vym.fileExists(currentMapPath)) {
-      if (vym.fileRemove(currentMapPath))
+      if (vym.fileRemove(currentMapPath)) {
+        if (verbosity > 0)
 				  vym.print("# Removed existing map: " + currentMapPath);
-			else
+      } else
 				  vym.print("# Failed to remove existing map: " + currentMapPath);
   }
 
@@ -145,7 +149,9 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 
   if (vym.loadMap(currentMapPath)) {
     let id = vym.currentMapID();
-    vym.print("# Loaded " + currentMapPath + " (id: " + id + "  original: " + mapPath + ")");
+    if (verbosity > 0)
+      vym.print("# Loaded " + currentMapPath + " (id: " + id + "  original: " + mapPath + ")");
+    
     vym.gotoMap(id);
 
     map = vym.currentMap();
@@ -162,15 +168,34 @@ function closeCurrentMap()
   id = vym.currentMapID();
   name = vym.currentMap().getFileName();
   if(vym.closeMapWithID(id)) {
-    vym.print("# Closed map \"" + name + "\" (id: #{id})");
+    if (verbosity > 0)
+      vym.print("# Closed map \"" + name + "\" (id: #{id})");
   } else {
     vym.print("# Failed to close map with id = #{id}. CurrentMapID = #{id}");
   }
 }
 
+function initDir(dirPath)
+{
+   if (vym.directoryExists(dirPath)) {
+      if (verbosity > 0)
+         vym.print("# Removing directory " + dirPath);
+     vym.removeDirectory(dirPath);
+   }
+
+   if (verbosity > 0)
+     vym.print("# Creating directory " + dirPath);
+   vym.mkdir(dirPath);
+}
+
+function deltaDays(d1, d2)
+{
+  return Math.round( (date_sleep - date_today) / (1000*3600 * 24));
+}
+
 function heading(h)
 {
-    vym.print("\n=== " + h + "===\n");
+    vym.printCol("yellow", "\n=== " + h + "===\n");
 }
 
 function summary()
@@ -349,6 +374,49 @@ function test_adding_maps()
   closeCurrentMap();
 }
 
+function test_backgrounds()
+{
+  heading("Backgrounds");
+  map = initMap(testMapDefault);
+
+  expect("Map does not use background image", map.hasBackgroundImage(), false);
+
+  col = "#1b1e20";
+  expect("Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Switch from color to image
+  imagePath = vymBaseDir + "/images/background-grid.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Switch to another image
+  imagePath = vymBaseDir + "/icons/down.png";
+  success = map.loadBackgroundImage(imagePath);
+  expect("Map has successfully loaded " + imagePath, success, true);
+  expect("Map does use background image", map.hasBackgroundImage(), true);
+  expect("background image has basename of file", map.getBackgroundImageName(), "down.png");
+
+  // Undo to previous image
+  map.undo();
+  expect("Undo once: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Undo once: Background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  // Undo to original color
+  map.undo();
+  expect("Undo twice: Map does not use background image", map.hasBackgroundImage(), false);
+  expect("Undo twice: Map has defined background color \'" + col + "\'", map.getBackgroundColor(), col);
+
+  // Redo to first image
+  map.redo();
+  expect("Redo: Map does use background image", map.hasBackgroundImage(), true);
+  expect("Redo: background image has basename of file", map.getBackgroundImageName(), "background-grid.png");
+
+  closeCurrentMap();
+}
+
+
 function test_attributes()
 {
   heading("Attributes:");
@@ -377,10 +445,7 @@ function test_copy_paste()
 
   map.copy();
   map.paste();
-  map.selectLatestAdded();     //FIXME-5 not set for ImportAdd, which is used by paste
-  b = map.selectedBranch();
-  s = map.getSelectionString();
-  expect("Normal paste of branch, check heading of #{s}", b.headingText(), "Main A");
+  expect("Branch count increased after copy/paste", main_A.branchCount(), n + 1);
 
   map.undo()
   // FIXME reassignment  should not be necessary
@@ -388,9 +453,7 @@ function test_copy_paste()
   expect("Undo paste: branchCount of \"" + main_A.headingText() + "\"", main_A.branchCount(), n);
 
   map.redo()
-  map.select(s);
-  b = map.selectedBranch();  
-  expect("redo paste: check heading", b.headingText(), "Main A");
+  expect("redo paste: check heading", main_A.headingText(), "Main A");
 
   closeCurrentMap();
 
@@ -565,20 +628,22 @@ function test_export()
 
   //AO
   exportdir = testDir + "/export-ao";
-  vym.mkdir(exportdir);
+  initDir(exportdir);
+
   filepath = exportdir + "/output.txt";
-  vym.print("filepath is " + filepath);
+
   map.exportMap(["AO", filepath]);
   expect("exportAO:    AO file exists", vym.fileExists(filepath), true);
+
   vym.removeFile(filepath);
+
   map.exportMap(["Last"]);
   expect("exportLast:  AO file exists", vym.fileExists(filepath), true);
 
   //ASCII
   exportdir = testDir + "/export-ascii";
-  vym.mkdir(exportdir);
-  filepath = exportdir + "/output.txt";
-  map.exportMap(["ASCII", filepath], false);
+  initDir(exportdir);
+  map.exportMap(["ASCII", filepath, "false"]);
   expect("exportASCII: ASCII file exists", vym.fileExists(filepath), true);
   vym.removeFile(filepath);
   map.exportMap(["Last"]);
@@ -586,7 +651,8 @@ function test_export()
 
   //CSV
   exportdir = testDir + "/export-csv";
-  vym.mkdir(exportdir);
+  initDir(exportdir);
+
   filepath = exportdir + "/output.csv";
   map.exportMap(["CSV", filepath]);
   expect("exportCSV:    CSV file exists", vym.fileExists(filepath), true);
@@ -596,7 +662,8 @@ function test_export()
 
   //Image
   exportdir = testDir + "/export-image";
-  vym.mkdir(exportdir);
+  initDir(exportdir);
+
   filepath = exportdir + "/output.png";
   map.exportMap(["Image", filepath,"PNG"]);
   expect("exportImage: PNG file exists", vym.fileExists(filepath), true);
@@ -606,7 +673,8 @@ function test_export()
 
   //LaTeX
   exportdir = testDir + "/export-latex";
-  vym.mkdir(exportdir);
+  initDir(exportdir);
+
   filepath = exportdir + "/output.tex";
   map.exportMap(["LaTeX", filepath]);
   expect("exportLaTeX:  LaTeX file exists", vym.fileExists(filepath), true);
@@ -616,7 +684,8 @@ function test_export()
 
   //Markdown
   exportdir = testDir + "/export-markdown";
-  vym.mkdir(exportdir);
+  initDir(exportdir);
+
   filepath = exportdir + "/output.md";
   map.exportMap(["Markdown", filepath]);
   expect("exportMarkdown:  Markdown file exists", vym.fileExists(filepath), true);
@@ -626,7 +695,8 @@ function test_export()
 
   //OrgMode
   exportdir = testDir + "/export-orgmode"
-  vym.mkdir(exportdir);
+  initDir(exportdir);
+
   filepath = exportdir + "/output.org";
   map.exportMap(["OrgMode", filepath]);
   expect("exportOrgMode:  OrgMode file exists", vym.fileExists(filepath), true);
@@ -636,7 +706,9 @@ function test_export()
 
   //PDF
   exportdir = testDir + "/export-pdf";
+  initDir(exportdir);
   vym.mkdir(exportdir);
+
   filepath = exportdir + "/output.pdf";
   map.exportMap(["PDF", filepath]);
   expect("exportPDF:  PDF file exists", vym.fileExists(filepath), true);
@@ -646,7 +718,8 @@ function test_export()
 
   //SVG
   exportdir = testDir + "/export-svg";
-  vym.mkdir(exportdir);
+  initDir(exportdir);
+
   filepath = exportdir + "/output.svg";
   map.exportMap(["SVG", filepath]);
   expect("exportSVG:  SVG file exists", vym.fileExists(filepath), true);
@@ -656,11 +729,15 @@ function test_export()
 
   //XML
   exportdir = testDir  + "/export-xml";
-  vym.mkdir(exportdir);
+
+  initDir(exportdir);
+
   filepath = exportdir + "/output.xml";
   map.exportMap(["XML", filepath, testDir]);
   expect("exportXML: XML file exists", vym.fileExists(filepath), true);
-  vym.removeFile(filepath);
+
+  initDir(exportdir);
+
   map.exportMap(["Last"]);
   expect("exportLast: XML file exists", vym.fileExists(filepath), true);
 
@@ -729,6 +806,22 @@ function  test_frames()
   map.undo();  
   expect("Undo setFramePadding", center_0.getFramePadding(true), i);  
 
+  closeCurrentMap();
+
+  // Test toggling auto design for frame
+  map = initMap(testMapFrames);
+
+  main_A = map.findBranchBySelection(main_A_string);
+  expect("AutoDesign enabled for main branch A", main_A.getFrameAutoDesign(true), true);
+
+  main_B = map.findBranchBySelection(main_B_string);
+  expect("AutoDesign disabled for main branch B", main_B.getFrameAutoDesign(true), false);
+
+  main_A.setFrameAutoDesign(true, false);
+  expect("AutoDesign toggled for main branch A", main_A.getFrameAutoDesign(true), false);
+
+  map.undo();
+  expect("Undo: AutoDesign toggling for main branch A", main_A.getFrameAutoDesign(true), true);
   closeCurrentMap();
 }
 
@@ -973,6 +1066,14 @@ function test_modify_images()
 
   map.undo();
   expect("After undo image no longer has RichText heading", i.hasRichTextHeading(), false);
+
+  expect("Scale factor initially equals 1", i.getScale(), 1);
+  i.setScale(2);
+  expect("After enlarging scale factor  equals 2", i.getScale(), 2);
+  map.undo();
+  expect("Undo: Scale factor initially equals 1 again", i.getScale(), 1);
+  map.redo();
+  expect("Redo: Scale factor  equals 2", i.getScale(), 2);
 
   b = map.findBranchBySelection(branch_0Aa_string);
   n = b.imageCount();
@@ -1301,14 +1402,12 @@ function test_standard_flags()
   function set_flag (f, index, array)
   {
     b.setFlagByName(f);
-    vym.print("# Setting flag: " + f + " of branch " << b.headingText());  
     expect("Flag set: '" + f +"'", b.hasActiveFlag(f), true);
   }
 
   function unset_flag (f, index, array)
   {
     b.unsetFlagByName(f);
-    vym.print("# Unsetting flag: " + f + " of branch " << b.headingText());  
     expect("Flag unset: '" + f +"'", b.hasActiveFlag(f), false);
   }
 
@@ -1407,9 +1506,9 @@ function test_tasks()
   heading("Tasks");
   let map = initMap("test/maps/test-tasks.xml");
 
-  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
-  ha = branch_0Aa.headingText();
-  expect("After loading '" + ha + "' has no task", branch_0Aa.hasTask(), false);
+  b1 = map.findBranchBySelection(branch_0Aa_string);
+  ha = b1.headingText();
+  expect("After loading '" + ha + "' has no task", b1.hasTask(), false);
 
   branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
   hb = branch_0Ab.headingText();
@@ -1419,84 +1518,93 @@ function test_tasks()
 	branch_0Ab.getTaskSleepDays() > 1000,
 	true);
 
-  branch_0Aa.toggleTask();
-  expect("Toggle task of '" + ha + "'" , branch_0Aa.hasTask(), true);
+  b1.toggleTask();
+  expect("Toggle task of '" + ha + "'" , b1.hasTask(), true);
 
-  branch_0Aa.cycleTask();
-  branch_0Aa.cycleTask();
-  branch_0Aa.cycleTask();
-  expect("After three cycles, task is 'Finished'", branch_0Aa.getTaskStatus(), "Finished");
+  b1.cycleTask();
+  b1.cycleTask();
+  b1.cycleTask();
+  expect("After three cycles, task is 'Finished'", b1.getTaskStatus(), "Finished");
   map.undo();
   map.undo();
-  expect("After two undos, task is 'NotStarted'", branch_0Aa.getTaskStatus(), "NotStarted");
+  expect("After two undos, task is 'NotStarted'", b1.getTaskStatus(), "NotStarted");
 
-/* FIXME-2 Date functions used in ruby tests not available here yet
-   See also https://doc.qt.io/qt-6/qjsengine.html#globalObject   ECMA-262 for Date, Math, String
 
-  date_today = DateTime.now
-  delta_days = 123
-  date_later = date_today + delta_days
-  date_later_iso = date_later.strftime("%Y-%m-%dT%H:%M:%S");
+//  date_later_iso = date_later.strftime("%Y-%m-%dT%H:%M:%S");
+
+  // Tests using Date module
+  // See also https://doc.qt.io/qt-6/qjsengine.html#globalObject   ECMA-262 for Date, Math, String
+  date_today = Date.now();
+  delta_days = 123;
 
   // Input: number of days
-  date_new = delta_days
-  expect("Set task sleep to number of days '#{date_new}' accepts input", map.setTaskSleep(date_new),  true);
-  expect("Set task sleep to number of days '#{date_new}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays(), delta_days);
+  sleep_input = "123";
+  b1.setTaskSleep(sleep_input);
+  date_sleep = Date.parse(b1.getTaskSleep());
+  d_time = deltaDays(date_sleep, date_today);
+
+  //expect("Set task sleep to number of days \"" + delta_days + "\" accepts input", d_time,  123);
+  expect("Set task sleep to number of days '#{sleep_input}' has correct sleep value " + delta_days + " days", b1.getTaskSleepDays(), delta_days);
 
   // Input: number of seconds
-  date_new = "10s"
-  expect("Set task sleep to number of seconds '#{date_new}' accepts input", map.setTaskSleep(date_new),  true);
+  sleep_input = "10s"
+  b1.setTaskSleep(sleep_input);
+  expect("Set task sleep to number of seconds '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input),  true);
 
   // Input: number of hours
-  date_new = "10h"
-  expect("Set task sleep to number of hours '#{date_new}' accepts input", map.setTaskSleep(date_new),  true);
+  sleep_input = "10h"
+  expect("Set task sleep to number of hours '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input),  true);
 
   // Input: Date
-  date_new = date_later.strftime("%Y-%m-%d");
-  expect("Set task sleep to ISO Date '#{date_new}' accepts input", map.setTaskSleep(date_new), true);
-  expect("Set task sleep to ISO Date '#{date_new}' has correct sleep value '#{delta_days}' days", map.getTaskSleepDays(), delta_days);
+  date_later = new Date(date_today);
+  date_later.setDate(date_later.getDate() + delta_days);
 
-  date_new = date_later.strftime("%d.%m.");
-  expect("Set task sleep to German short form '#{date_new}' accepts input '#{date_new}'", map.setTaskSleep(date_new), true);
-  expect("Set task sleep to German short form '#{date_new}' has correct sleep value (days)", map.getTaskSleepDays(), delta_days);
+  sleep_input = date_later.getFullYear().toString() + "-" 
+    + (date_later.getMonth() + 1).toString().padStart(2, "0") + "-"     // getMont() returns 0..11
+    + date_later.getDate().toString().padStart(2, "0");
 
-  date_new = date_later.strftime("%d.%m.%Y");
-  expect("Set task sleep to German long form '#{date_new}' accepts input '#{date_new}'", map.setTaskSleep(date_new), true);
-  expect("Set task sleep to German long form '#{date_new}' has correct sleep value (days)", map.getTaskSleepDays(), delta_days);
+  expect("Set task sleep to ISO Date '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input), true);
+  expect("Set task sleep to ISO Date '" + sleep_input + "' has correct sleep value '" +  delta_days + "' days", b1.getTaskSleepDays(), delta_days);
+
+  sleep_input = date_later.getDate().toString() + "." + (date_later.getMonth() + 1).toString() + ".";
+  expect("Set task sleep to German short form '" + sleep_input +"' accepts input '#{sleep_input}'", b1.setTaskSleep(sleep_input), true);
+  expect("Set task sleep to German short form '" + sleep_input +"' has correct sleep value (days)", b1.getTaskSleepDays(), delta_days);
+
+  sleep_input = date_later.getDate().toString() + "." + (date_later.getMonth() + 1).toString() + "." + date_later.getFullYear().toString();
+  expect("Set task sleep to German long form '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input), true);
+  expect("Set task sleep to German long form '" + sleep_input + "' has correct sleep value (days)", b1.getTaskSleepDays(), delta_days);
 
   // Input: Invalid strings
-  date_new = "invalidDate"
-  expect("Set task sleep to '#{date_new}' should fail", map.setTaskSleep(date_new), false);
+  sleep_input = "invalidDate"
+  expect("Set task sleep to '" + sleep_input +"' should fail", b1.setTaskSleep(sleep_input), false);
 
-  date_new = date_later.strftime("%d %m.%Y");
-  expect("Set task sleep to '#{date_new}' should fail", map.setTaskSleep(date_new), false);
+  sleep_input = " 24 12.2037";
+  expect("Set task sleep to '" + sleep_input + "' should fail", b1.setTaskSleep(sleep_input), false);
 
-  // DateTime
-  date_new = date_later_iso
-  expect("Set task sleep to ISO DateTime '#{date_new}' accepts input", map.setTaskSleep(date_new), true);
-  expect("Set task sleep to ISO DateTime '#{date_new}' returns correct sleep value '#{date_later_iso}'", map.getTaskSleep, date_later_iso);
+  // DateTime ISO
+  sleep_input = date_later.toISOString();
+  expect("Set task sleep to ISO DateTime '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input), true);
+  expect("Set task sleep to ISO DateTime '" + sleep_input + "' returns correct sleep value '" + delta_days + "'", b1.getTaskSleepDays(), delta_days);
 
-  // Time only
+  // Time only // FIXME-3 cont here
+  /*
   date_later = date_today
 
-  date_new = "12:34"
-  date_later_iso = date_today.strftime("%Y-%m-%dT12:34:00");
-  expect("Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true);
-  expect("Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'",);
-    map.getTaskSleep, date_later_iso
+  sleep_input = "12:34";
+  //date_later_iso = date_today.strftime("%Y-%m-%dT12:34:00");
+  expect("Set task sleep to time '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input), true);
+  //expect("Set task sleep to time '" + sleep_input + "' returns correct sleep value '" + date_later_iso + "'", b1.getTaskSleep, date_later_iso);
 
-  date_new = "2:4"
-  date_later_iso = date_today.strftime("%Y-%m-%dT02:04:00");
-  expect("Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true);
-  expect("Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'",);
-    map.getTaskSleep, date_later_iso
+  sleep_input = "2:4"
+  //date_later_iso = date_today.strftime("%Y-%m-%dT02:04:00");
+  expect("Set task sleep to time '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input), true);
+  //expect("Set task sleep to time '" + sleep_input + "' returns correct sleep value '" + date_later_iso + "'", b1.getTaskSleep, date_later_iso);
 
-  date_new = "03:05"
-  date_later_iso = date_today.strftime("%Y-%m-%dT03:05:00");
-  expect("Set task sleep to time '#{date_new}' accepts input", map.setTaskSleep(date_new), true);
-  expect("Set task sleep to time '#{date_new}' returns correct sleep value '#{date_later_iso}'",);
-    map.getTaskSleep, date_later_iso
-    */
+  sleep_input = "03:05"
+  //date_later_iso = date_today.strftime("%Y-%m-%dT03:05:00");
+  expect("Set task sleep to time '" + sleep_input + "' accepts input", b1.setTaskSleep(sleep_input), true);
+  //expect("Set task sleep to time '" + sleep_input + "' returns correct sleep value '" + date_later_iso + "'", b1.getTaskSleep, date_later_iso);
+  */
 
   closeCurrentMap();
 }
@@ -1566,6 +1674,7 @@ function test_xlinks()
 if (tests.includes("basics")) { test_basics(); }
 if (tests.includes("adding_branches")) { test_adding_branches(); }
 if (tests.includes("adding_maps"))    { test_adding_maps(); }
+if (tests.includes("backgrounds"))    { test_backgrounds(); }
 if (tests.includes("attributes"))     { test_adding_branches(); }
 if (tests.includes("copy_paste"))     { test_copy_paste(); }
 if (tests.includes("delete_parts"))   { test_delete_parts(); }

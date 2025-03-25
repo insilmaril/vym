@@ -6,6 +6,7 @@
 
 #include <math.h>
 
+#include "branch-container.h"
 #include "misc.h" //for roof function
 
 /////////////////////////////////////////////////////////////////
@@ -40,6 +41,7 @@ void FrameContainer::init()
     setVisible(true);
 
     usage = Undefined;
+    parentBranchContainer = nullptr;
 }
 
 void FrameContainer::clear()
@@ -499,6 +501,11 @@ void FrameContainer::setFrameBrushColor(const QColor &col)
     repaint();
 }
 
+void FrameContainer::setParentBranchContainer(BranchContainer *pbc)
+{
+    parentBranchContainer = pbc;
+}
+
 void FrameContainer::setUsage(FrameUsage u)
 {
     usage = u;
@@ -512,9 +519,18 @@ QString FrameContainer::saveFrame()
     else if (usage == OuterFrame)
         attrList << attribute("frameUsage", "outerFrame");
 
-    attrList <<  attribute("frameType", frameTypeString());
+    bool ad;
+    if (parentBranchContainer) {
+        if (usage == InnerFrame)
+            ad = parentBranchContainer->frameAutoDesign(true);
+        else
+            ad = parentBranchContainer->frameAutoDesign(false);
+    }
 
-    if (frameTypeInt != NoFrame) {
+    attrList << attribute("autoDesign", toS(ad));
+
+    if(!ad) {
+        attrList << attribute("frameType", frameTypeString());
         attrList <<  attribute("penColor", framePen.color().name(QColor::HexArgb));
         attrList <<  attribute("brushColor", frameBrush.color().name(QColor::HexArgb));
         attrList <<  attribute("padding", QString::number(framePaddingInt));

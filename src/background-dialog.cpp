@@ -50,6 +50,7 @@ void BackgroundDialog::selectBackgroundColor()
 
     // Update local and maybe also global color button
     updateBackgroundColorButton();
+    updateBackgroundImageControls();
     mainWindow->updateActions();
 }
 
@@ -65,7 +66,7 @@ void BackgroundDialog::toggleBackgroundImage()
 void BackgroundDialog::selectBackgroundImage()
 {
     QStringList images = openImageDialog( tr("Load background image"));
-    if (!images.isEmpty() && model->setBackgroundImage(images.first()))
+    if (!images.isEmpty() && model->loadBackgroundImage(images.first()))
         updateBackgroundImageControls();
 }
 

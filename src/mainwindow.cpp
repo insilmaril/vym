@@ -594,6 +594,14 @@ void Main::setupAPI()
     vymCommands.append(c);
 
     c = new Command("print", Command::AnySel);
+    c->setComment("Print string to console");
+    c->addParameter(Command::StringPar, false, "String to print");
+    vymCommands.append(c);
+
+    c = new Command("printCol", Command::AnySel);
+    c->setComment("Print string to console with ANSI color");
+    c->addParameter(Command::StringPar, false, "String to print");
+    c->addParameter(Command::StringPar, false, "Color [red|green|yellow|blue|magenta|cyan|white]");
     vymCommands.append(c);
 
     c = new Command("selectQuickColor", Command::AnySel);
@@ -691,6 +699,10 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Uuid of xlink");
     modelCommands.append(c);
 
+    c = new Command("getBackgroundColor", Command::AnySel, Command::StringPar);
+    c->setComment("Get color of map background");
+    modelCommands.append(c);
+
     c = new Command("getDestPath", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
@@ -728,8 +740,17 @@ void Main::setupAPI()
     c = new Command("getSelectionString", Command::TreeItemSel, Command::StringPar);
     modelCommands.append(c);
 
+    c = new Command("hasBackgroundImage", Command::AnySel, Command::BoolPar);
+    c->setComment("Returns true, if map uses an image as background");
+    modelCommands.append(c);
+
     c = new Command("hasRichTextNote", Command::BranchSel, Command::BoolPar);
     c->setComment(DEPRECATED);
+    modelCommands.append(c);
+
+    c = new Command("loadBackgroundImage", Command::AnySel);
+    c->setComment("Load background image");
+    c->addParameter(Command::StringPar, false, "Path to background iamge");
     modelCommands.append(c);
 
     c = new Command("loadBranchReplace", Command::AnySel, Command::BoolPar);
@@ -867,6 +888,7 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("setBackgroundColor", Command::AnySel);
+    c->setComment("Set color of map background and use it instead of an image");
     c->addParameter(Command::ColorPar, false, "Color of map background");
     modelCommands.append(c);
 
@@ -941,6 +963,11 @@ void Main::setupAPI()
     c = new Command("unselectAll", Command::AnySel);
     modelCommands.append(c);
 
+    c = new Command("unsetBackgroundImage", Command::AnySel);
+    c->setComment("Use background color instead of background image");
+    c->addParameter(Command::ColorPar, false, "Background color");
+    modelCommands.append(c);
+
 
     //
     // Below are the commands for a branch
@@ -997,18 +1024,36 @@ void Main::setupAPI()
     c->setComment("Remove label from the a branch with Confluence page details");
     branchCommands.append(c);
 
-    c = new Command("getFramePadding", Command::BranchSel);
-    c->setComment("Get padding between frame border and heading");
-    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    // Same parameter for all frame commands
+    QString useInnerFrameDesc = "Use setting for heading if true, for subtree if false";
+
+    c = new Command("getFrameAutoDesign", Command::BranchSel, Command::BoolPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Flag if automatic design is used for frame of heading or subtree");
     branchCommands.append(c);
 
-    c = new Command("getFramePenWidth", Command::BranchSel);
+    c = new Command("getFrameBrushColor", Command::BranchSel, Command::StringPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Get color of frame background");
+    branchCommands.append(c);
+
+    c = new Command("getFramePadding", Command::BranchSel, Command::IntPar);
+    c->setComment("Get padding between frame border and heading");
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    branchCommands.append(c);
+
+    c = new Command("getFramePenColor", Command::BranchSel, Command::StringPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->setComment("Get color of frame border");
+    branchCommands.append(c);
+
+    c = new Command("getFramePenWidth", Command::BranchSel, Command::IntPar);
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->setComment("Get width of frame pen");
-    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     branchCommands.append(c);
 
     c = new Command("getFrameType", Command::BranchSel, Command::StringPar);
-    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->setComment("Get frame type");
     branchCommands.append(c);
 
@@ -1215,13 +1260,13 @@ void Main::setupAPI()
     branchCommands.append(c);
 
     c = new Command("setFrameAutoDesign", Command::BranchSel);
-    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
-    c->addParameter(Command::BoolPar, false, "Enable automatic frame design");
-    c->setComment("Set automatic design of frame");
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
+    c->addParameter(Command::BoolPar, false, "Flag for using automatic frame design");
+    c->setComment("Toggle automatic frame design");
     branchCommands.append(c);
 
     c = new Command("setFrameType", Command::BranchSel);
-    c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
+    c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->addParameter(Command::StringPar, false, "Type of frame");
     c->setComment("Set type of frame");
     branchCommands.append(c);
@@ -1307,10 +1352,12 @@ void Main::setupAPI()
 
     c = new Command("setScaleHeading", Command::BranchOrImageSel);
     c->addParameter(Command::DoublePar, false, "Scale heading of branch by factor f");
+    c->setComment("Scale heading of a branch");
     branchCommands.append(c);
 
     c = new Command("setScaleSubtree", Command::BranchSel);
     c->addParameter(Command::DoublePar, false, "Scale subtree by factor f");
+    c->setComment("Scale branch and its children");
     branchCommands.append(c);
 
     c = new Command("setTaskPriorityDelta", Command::BranchSel);
@@ -1401,24 +1448,28 @@ void Main::setupAPI()
     //
     // Below are the commands for an image
     //
-    c = new Command("hasRichTextHeading", Command::BranchSel, Command::BoolPar);
+    c = new Command("hasRichTextHeading", Command::ImageSel, Command::BoolPar);
     c->setComment("Check if image has a RichText heading or just plain text");
     imageCommands.append(c);
 
-    c = new Command("getPosX", Command::TreeItemSel);
-    c->setComment("get x position of image relative to parent");
+    c = new Command("getPosX", Command::ImageSel);
+    c->setComment("Get x position of image relative to parent");
     imageCommands.append(c);
 
-    c = new Command("getPosY", Command::TreeItemSel);
-    c->setComment("get y position of image relative to parent");
+    c = new Command("getPosY", Command::ImageSel);
+    c->setComment("Get y position of image relative to parent");
     imageCommands.append(c);
 
-    c = new Command("getScenePosX", Command::TreeItemSel);
-    c->setComment("get x position of image in scene coordinates");
+    c = new Command("getScale", Command::ImageSel);
+    c->setComment("Get x scale factor of image");
     imageCommands.append(c);
 
-    c = new Command("getScenePosY", Command::TreeItemSel);
-    c->setComment("get y position of image in scene coordinates");
+    c = new Command("getScenePosX", Command::ImageSel);
+    c->setComment("Get x position of image in scene coordinates");
+    imageCommands.append(c);
+
+    c = new Command("getScenePosY", Command::ImageSel);
+    c->setComment("Get y position of image in scene coordinates");
     imageCommands.append(c);
 
     c = new Command("headingText", Command::ImageSel, Command::StringPar);
@@ -1453,6 +1504,11 @@ void Main::setupAPI()
     c = new Command("setHideLinksUnselected", Command::ImageSel);
     c->addParameter(Command::BoolPar, false,
               "Set if links of items should be visible for unselected items");
+    imageCommands.append(c);
+
+    c = new Command("setScale", Command::ImageSel);
+    c->addParameter(Command::DoublePar, false, "Scale image of branch by factor f");
+    c->setComment("Scale image");
     imageCommands.append(c);
 
     //
@@ -4216,6 +4272,7 @@ bool Main::closeModelWithId(uint id)
             return true;
         }
     }
+
     return false;
 }
 
@@ -7295,10 +7352,29 @@ bool Main::autoSelectNewBranch()
     return actionSettingsAutoSelectNewBranch->isChecked();
 }
 
-void Main::scriptPrint(const QString &s)
+void Main::scriptPrint(const QString &s, const QString &color)
 {
     scriptOutput->append(s);
-    std::cout << s.toStdString() << endl;
+
+    std::string prefix;
+    std::string postfix = "\033[0m";
+
+    if (color == "red")
+        prefix = "\033[1;31m";
+    else if (color == "green")
+        prefix = "\033[1;32m";
+    else if (color == "blue")
+        prefix = "\033[1;34m";
+    else if (color == "yellow")
+        prefix = "\033[1;33m";
+    else if (color == "magenta")
+        prefix = "\033[1;35m";
+    else if (color == "cyan")
+        prefix = "\033[1;36m";
+    else if (color == "white")
+        prefix = "\033[1;37m";
+
+    std::cout << prefix << s.toStdString()  << postfix << endl;
 }
 
 QVariant Main::runScript(const QString &script)

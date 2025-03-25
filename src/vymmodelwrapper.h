@@ -36,6 +36,8 @@ class VymModelWrapper : public QObject {
     Q_INVOKABLE ImageWrapper* findImageById(const QString &);
     Q_INVOKABLE ImageWrapper* findImageBySelection(const QString &);
     Q_INVOKABLE XLinkWrapper* findXLinkById(const QString &);
+    QString getBackgroundColor();
+    QString getBackgroundImageName();
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
@@ -45,6 +47,8 @@ class VymModelWrapper : public QObject {
     int getRotationHeading();   // FIXME-3 move to BranchWrapper
     int getRotationSubtree();   // FIXME-3 move to BranchWrapper
     QString getSelectionString();//FIXME-3 copy to BranchWrapper?
+    bool hasBackgroundImage();
+    bool loadBackgroundImage(const QString &imagePath);
     bool loadBranchReplace(QString filename, BranchWrapper *bw);
     bool loadDataInsert(QString filename, int pos = -1, BranchWrapper *bw = nullptr);
     void moveSlideDown(int n);
@@ -80,6 +84,7 @@ class VymModelWrapper : public QObject {
     void setAnimDuration(int n);
     void setAuthor(const QString &s);
     void setBackgroundColor(const QString &color);
+    void setBackgroundImageName(const QString &name);
     void setComment(const QString &s);
     void setLinkStyle(const QString &style);
     void setRotationView(float a);
@@ -92,6 +97,7 @@ class VymModelWrapper : public QObject {
     int slideCount();
     void undo();
     void unselectAll();
+    void unsetBackgroundImage();
 
   private:
     VymModel *model;

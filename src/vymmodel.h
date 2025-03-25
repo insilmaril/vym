@@ -122,7 +122,10 @@ class VymModel : public TreeModel {
     */
     QString saveToDir(const QString &tmpdir, const QString &prefix,
                       FlagRowMaster::WriteMode flagMode, const QPointF &offset,
-                      TreeItem *saveSel);
+                      bool writeMapAttr = true,
+                      bool writeMapDesign = true,
+                      bool writeCompleteTree = true,
+                      TreeItem *saveSel = nullptr);
 
     /*! Save all data in tree*/
     QString
@@ -272,6 +275,7 @@ class VymModel : public TreeModel {
     QString setImageVar(ImageItem*, QString varName = "i");   //!< Returns command to set ImageItem in scripts for undo/redo
     QString setXLinkVar(XLink*, QString varName = "x");        //!< Returns command to set XLink in scripts for undo/redo
 
+  public:
     /*! \brief Save the current changes in map
 
     Two commands and selections are saved:
@@ -281,18 +285,20 @@ class VymModel : public TreeModel {
 
     Additionally a comment is logged.
 
+    public: saveState() and saveStateBranch() saveStateBegin/EndScript are called from MapEditor::mouseReleased()
+
     */
-    void saveState(
+
+    QString saveState(
                    QString undoCommand,
                    QString redoCommand,
                    const QString &comment = "",
                    TreeItem *saveUndoItem = nullptr,
-                   TreeItem *saveRedoItem = nullptr);
+                   TreeItem *saveRedoItem = nullptr,
+                   bool createHistoryDir = false);
 
-  public:
-    /*! Save branch using BranchWrapper.
-     *  public: Called from MapEditor::mouseReleased() */
-    void saveStateBranch(
+    //! Save branch using BranchWrapper.
+    QString saveStateBranch(
             BranchItem *bi,
             const QString &undoCommand,
             const QString &redoCommand,
@@ -744,8 +750,9 @@ class VymModel : public TreeModel {
     void setDefXLinkStyleBegin(const QString &s);
     void setDefXLinkStyleEnd(const QString &s);
 
+    QColor backgroundColor();
     void setBackgroundColor(QColor);
-    bool setBackgroundImage(const QString &);
+    bool loadBackgroundImage(const QString &);
     void setBackgroundImageName(const QString &);
     void unsetBackgroundImage();
     bool hasBackgroundImage();
