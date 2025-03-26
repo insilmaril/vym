@@ -943,14 +943,15 @@ ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imag
             for (int j = 0; j < imagePaths.count(); j++) {
                 s = imagePaths.at(j);
 
+                ii = createImage(parentBranch);
+
                 QString bv = setBranchVar(parentBranch);
                 QString uc = setImageVar(ii) + "map.removeImage(i);";
                 QString rc = bv + "b.loadBranchInsert(\"REDO_PATH\", 0);";
                 QString comment = QString("Load image %1").arg(s);
 
-                logCommand(rc, comment, __func__);
+                logAction(rc, comment, __func__);
 
-                ii = createImage(parentBranch);
 
 
                 if (ii && ii->load(s)) {
@@ -1096,7 +1097,7 @@ void VymModel::importDir(const QString &dirPath, BranchItem *bi)
         QString rc = bv + QString("b.importDir(\"%1\");").arg(dirPath);
         QString comment = QString("Import directory structure from \"%1\" to branch \"%2\"").arg(dirPath, selbi->headingText());
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveState(uc, rc, comment, selbi);
 
@@ -1138,7 +1139,7 @@ bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *insertBran
         QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
         QString comment = QString("Add map %1 to \"%2\"").arg(fpath, insertBranch->headingText());
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveState(uc, rc, comment, insertBranch);
     }
@@ -1163,7 +1164,7 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
     QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
     QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
 
-    logCommand(rc, comment, __func__);
+    logAction(rc, comment, __func__);
 
     saveState(uc, rc, comment, bi->parentBranch(), bi);
 
@@ -2185,7 +2186,7 @@ void VymModel::setMapTitle(const QString &s)
         QString rc = QString("map.setTitle (\"%1\");").arg(s);
         QString comment = QString("Set title of map to \"%1\"").arg(s);
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveState(uc, rc, comment);
         titleInt = s;
@@ -2201,7 +2202,7 @@ void VymModel::setMapAuthor(const QString &s)
         QString rc = QString("map.setAuthor (\"%1\");").arg(s);
         QString comment = QString("Set author of map to \"%1\"").arg(s);
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveState(uc, rc, comment);
 
@@ -2218,7 +2219,7 @@ void VymModel::setMapComment(const QString &s)
         QString rc = QString("map.setComment (\"%1\");").arg(s);
         QString c = QString("Set comment of map to \"%1\"").arg(s);
 
-        logCommand(rc, c, __func__);
+        logAction(rc, c, __func__);
 
         saveState(uc, rc, c);
 
@@ -2294,7 +2295,7 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
 
         QString comment = QString("Set heading of %1 to \"%2\"").arg(getObjectName(selti), s);
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveState( uc, rc, comment);
 
@@ -2379,7 +2380,7 @@ void VymModel::setNote(const VymNote &note_new, BranchItem *bi, bool senderIsNot
 
         QString comment = QString("Set note of %1 to \"%2\"").arg(getObjectName(selbi), note_new.getTextASCII().left(40));
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveState(uc, rc, comment);
 
@@ -2540,7 +2541,7 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
 
         QString comment = QString("set URL of %1 to %2").arg(getObjectName(bi), url);
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveStateBranch(bi, uc, rc, comment);
 
@@ -2628,7 +2629,7 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, Bran
 
         QString comment = QString("Set automatic design of frame to '%1'").arg(toS(b));
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         saveStateBeginScript(comment);
 
@@ -2663,7 +2664,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         QString rc = QString("setFrameType(%1, \"%2\");").arg(uif, newFrameTypeName);
         QString comment = QString("Set type of frame to %1").arg(newFrameTypeName);
 
-        logCommand(rc, comment, __func__);
+        logAction(rc, comment, __func__);
 
         bool saveCompleteFrame = false;
 
@@ -2729,7 +2730,7 @@ void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, Br
             QString rc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorNameNew);
             QString comment = QString("Set pen color of frame to %1").arg(colorNameNew);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2752,7 +2753,7 @@ void VymModel::setFrameBrushColor(
             QString rc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorNameNew);
             QString comment = QString("Set background color of frame to %1").arg(colorNameNew);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2774,7 +2775,7 @@ void VymModel::setFramePadding(
             QString rc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(i);
             QString comment = QString("Set padding of frame to '%1").arg(i);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2795,7 +2796,7 @@ void VymModel::setFramePenWidth(
             QString rc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
             QString comment = QString("Set pen width of frame to '%1").arg(i);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2819,7 +2820,7 @@ void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi)
 	    QString rc = QString("setHeadingColumnWidthAutoDesign (%1);").arg(toS(b));
             QString comment = QString("%1 automatic heading width").arg(v);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
             bc->setColumnWidthAutoDesign(b);
@@ -2842,7 +2843,7 @@ void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi)
 	    QString rc = QString("setHeadingColumnWidth (%1);").arg(i);
             QString comment = QString("Set heading column width to %1").arg(i);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2869,7 +2870,7 @@ void VymModel::setRotationAutoDesign(const bool &b, BranchItem *bi)
             QString rc = QString("setRotationAutoDesign(%1);").arg(toS(b));
             QString comment = QString("%1 automatic rotation heading and subtree").arg(s);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBeginScript(comment);
             if (b) {
@@ -2902,7 +2903,7 @@ void VymModel::setRotationHeading (const int &i, BranchItem* bi)
             QString rc = QString("setRotationHeading(\"%1\");").arg(i);
             QString comment = QString("Set rotation angle of heading and flags to %1").arg(i);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2925,7 +2926,7 @@ void VymModel::setRotationSubtree (const int &i, BranchItem *bi)
             QString rc = QString("setRotationSubtree(\"%1\");").arg(i);
             QString comment = QString("Set rotation angle of subtree to %1").arg(i);
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2950,7 +2951,7 @@ void VymModel::setScaleAutoDesign (const bool & b, BranchItem *bi)
             QString rc = QString("setScaleAutoDesign(%1);").arg(toS(b));
             QString c = QString("%1 automatic scaling").arg(s);
 
-            logCommand(rc, c, __func__);
+            logAction(rc, c, __func__);
 
             saveStateBeginScript(c);
             if (b) {
@@ -2985,7 +2986,7 @@ void VymModel::setScaleHeading (const qreal &f, const bool relative, BranchItem 
             QString rc = QString("setScaleHeading(%1);").arg(toS(f_new, 3));
             QString c  = QString("Set heading scale factor to %1").arg(f_new);
 
-            logCommand(rc, c, __func__);
+            logAction(rc, c, __func__);
 
             saveStateBranch(selbi, uc, rc, c);
 
@@ -3021,7 +3022,7 @@ void VymModel::setScaleSubtree (const qreal &f_new, BranchItem *bi)
             QString uc = QString("setScaleSubtree(%1);").arg(toS(f_old, 3));
             QString rc = QString("setScaleSubtree(%1);").arg(toS(f_new,3));
             QString c  = QString("Set subtree scale factor to %1").arg(toS(f_new, 3));
-            logCommand(rc, c, __func__);
+            logAction(rc, c, __func__);
             saveStateBranch(selbi, uc, rc, c);
 
             bc->setScaleSubtree(f_new);
@@ -3054,7 +3055,7 @@ void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
             QString uc = iv + QString("i.setScale(%1);").arg(toS(f_old, 3));
             QString rc = iv + QString("i.setScale(%1);").arg(toS(f_new,3));
             QString c  = QString("Set image scale factor to %1").arg(toS(f_new, 3));
-            logCommand(rc, c, __func__);
+            logAction(rc, c, __func__);
             saveState(uc, rc, c);
 
             selii->setScale(f_new);
@@ -3171,7 +3172,7 @@ void VymModel::setHideLinkUnselected(bool b, TreeItem *ti)
             QString rc = tiv + QString("ti.setHideLinkUnselected(%1);").arg(toS(b));
             QString comment = QString("%1 link if item %2 is not selected").arg(v, getObjectName(selti));
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveState( uc, rc, comment);
             ((MapItem *)selti)->setHideLinkUnselected(b);
@@ -3194,7 +3195,7 @@ void VymModel::setHideExport(bool b, BranchItem *bi)
 
             QString comment = "Set hide export of " + getObjectName(selbi) + " to " + r;
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, uc, comment);
 
@@ -3222,7 +3223,7 @@ void VymModel::toggleTask(BranchItem *bi)
         QString uc = "toggleTask();";
         QString comment = QString("Toggle task of %1").arg(getObjectName(selbi));
 
-        logCommand(uc, comment, __func__);
+        logAction(uc, comment, __func__);
 
         saveStateBranch( selbi, uc, uc, comment);
         Task *task = selbi->getTask();
@@ -3255,7 +3256,7 @@ bool VymModel::cycleTaskStatus(BranchItem *bi, bool reverse)
             }
             QString comment = QString("Cycle task of %1").arg(getObjectName(selbi));
 
-            logCommand(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -3398,7 +3399,7 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 (WIP) R
                 QString rc = QString("setTaskSleep (\"%1\")").arg(newAlarmTimeString);
                 QString comment = "Set sleep time for task";
 
-                logCommand(rc, comment, __func__);  // FIXME-3 Logging command should be done before actual change. 
+                logAction(rc, comment, __func__);  // FIXME-3 Logging command should be done before actual change. 
                                                     // Would require separate checks in task, if new alarmTime is valid
 
                 saveStateBranch(selbi, uc, rc, comment);
@@ -3414,7 +3415,7 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 (WIP) R
     return ok;
 }
 
-void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi) //////////// FIXME-0 cont here with introducing logCommands
+void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
@@ -3424,7 +3425,9 @@ void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi) //////////// 
             QString bv = setBranchVar(selbi);
             QString uc = QString("setTaskPriorityDelta (%1)").arg(task->getPriorityDelta());
             QString rc = QString("setTaskPriorityDelta (%1)").arg(pd);
-            saveStateBranch(selbi, uc, rc, "Set delta for priority of task");
+            QString comment = "Set delta for priority of task";
+            logAction(rc, comment, __func__);
+            saveStateBranch(selbi, uc, rc, comment);
             task->setPriorityDelta(pd);
             emitDataChanged(selbi);
         }
@@ -3474,7 +3477,7 @@ BranchItem *VymModel::addTimestamp()
     return selbi;
 }
 
-void VymModel::copy() //////////// FIXME-0 cont here with introducing logCommands
+void VymModel::copy()
 {
     if (readonly)
         return;
@@ -3510,13 +3513,13 @@ void VymModel::copy() //////////// FIXME-0 cont here with introducing logCommand
         mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
         clipboard->setMimeData(mimeData);
 
-        /*
-        */
         QString rc = QString("map.selectUids([%1]); map.copy();").arg(uids.join(","));
         QString comment = QString("Copy %1 selected %2 to clipboard: [%3]")
             .arg(itemList.count())
             .arg(pluralize(QString("item"), itemList.count()))
             .arg(uids.join(","));
+
+        logAction(rc, "Copy selection", __func__);
         saveState("", rc, comment);
 
     }
@@ -3548,6 +3551,9 @@ void VymModel::paste()
             QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
             QString rc = bv + QString("b.select(); map.paste();");
             QString comment = QString("Paste to branch \"%1\"").arg(selbi->headingText());
+
+            logAction(rc, comment, __func__);
+
             saveState(uc, rc, comment, selbi, selbi);
 
             bool zippedOrg = zipped;
@@ -3558,7 +3564,7 @@ void VymModel::paste()
                             VymReader::SlideContent,
                             selbi,
                             selbi->branchCount()))
-                    qWarning() << "VM::paste Loading clipboard failed: " << fn;
+                    logWarning("Failed to load clipboard from " + fn, __func__);
             }
             select(selbi);
             zipped = zippedOrg;
@@ -3567,7 +3573,7 @@ void VymModel::paste()
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
             QString fn = clipboardDir + "/" + "image.png";
             if (!image.save(fn))
-                qWarning() << "VM::paste  Could not save copy of image in system clipboard";
+                logWarning("Could not save copy of image in system clipboard " + fn, __func__);
             else {
                 ImageItem *ii = loadImage(selbi, fn);
                 if (ii) {
@@ -3587,7 +3593,7 @@ void VymModel::paste()
             //setTextFormat(Qt::PlainText);
             qDebug() << "VM::paste found text...";
         } else {
-            qWarning() << "VM::paste Cannot paste data, mimeData->formats=" << mimeData->formats();
+            logWarning("Cannot paste data, mimeData->formats=" + mimeData->formats().join(","), __func__);
         }
     }
 }
@@ -3644,12 +3650,15 @@ void VymModel::moveUp(TreeItem *ti)
 {
     if (readonly) return;
 
+
     QList<BranchItem *> selbis = getSelectedBranches(ti);
 
     if (!selbis.isEmpty()){
         foreach (BranchItem *selbi, sortBranchesByNum(selbis, false)) {
-            if (canMoveUp(selbi))
+            if (canMoveUp(selbi)) {
+                logAction("", "Starting to move branch up: " + headingText(selbi), __func__);
                 relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
+            }
         }
     }
 
@@ -3657,8 +3666,10 @@ void VymModel::moveUp(TreeItem *ti)
 
     if (!seliis.isEmpty()){
         foreach (ImageItem *selii, sortImagesByNum(seliis, false)) {
-            if (canMoveUp(selii))
-                 relinkImage(selii, selii->parentBranch(), selii->num() - 1);
+            if (canMoveUp(selii)) {
+                logAction("", "Starting to move image up: " + headingText(selii), __func__);
+                relinkImage(selii, selii->parentBranch(), selii->num() - 1);
+            }
         }
     }
 }
@@ -3670,15 +3681,19 @@ void VymModel::moveDown(TreeItem *ti)
     QList<BranchItem *> selbis = getSelectedBranches(ti);
     if (!selbis.isEmpty()) {
         foreach (BranchItem *selbi, sortBranchesByNum(selbis, true))
-            if (canMoveDown(selbi))
-                 relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
+            if (canMoveDown(selbi)) {
+                logAction("", "Starting to move branch down: " + headingText(selbi), __func__);
+                relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
+            }
     }
 
     QList<ImageItem *> seliis = getSelectedImages(ti);
     if (!seliis.isEmpty()) {
         foreach (ImageItem *selii, sortImagesByNum(seliis, true))
-            if (canMoveDown(selii))
-                 relinkImage(selii, selii->parentBranch(), selii->num() + 1);
+            if (canMoveDown(selii)) {
+                logAction("", "Starting to move image down: " + headingText(selii), __func__);
+                relinkImage(selii, selii->parentBranch(), selii->num() + 1);
+            }
     }
 }
 
@@ -3690,6 +3705,7 @@ void VymModel::moveUpDiagonally()
     QList<BranchItem *> selbis = getSelectedBranches();
 
     foreach (BranchItem *selbi, selbis) {
+        logAction("", "Starting to move up diagonally: " + headingText(selbi), __func__);
         BranchItem *pbi = selbi->parentBranch();
         if (pbi == rootItem) break;
 
@@ -3707,8 +3723,10 @@ void VymModel::moveDownDiagonally()
 {
     if (readonly) return;
 
+
     QList<BranchItem *> selbis = getSelectedBranches();
     foreach (BranchItem *selbi, selbis) {
+        logAction("", "Starting to move down diagonally: " + headingText(selbi), __func__);
         BranchItem *pbi = selbi->parentBranch();
         if (pbi == rootItem) break;
         BranchItem *parentParent = pbi->parentBranch();
@@ -3805,6 +3823,7 @@ void VymModel::sortChildren(bool inverse, BranchItem *bi)
                     rc = bv + QString("b.sortChildren(false);");
                     com = QString("Inverse sort children of \"%1\"").arg(getObjectName(selbi));
                 }
+                logAction(rc, com, __func__);
                 saveState(uc, rc, com, selbi);
 
                 QMultiMap <QString, BranchItem*> multimap;
@@ -4051,6 +4070,8 @@ AttributeItem *VymModel::setAttribute( // FIXME-3 saveState( missing. For bulk c
     bool keyFound = false;
     AttributeItem *ai;
 
+    logAction("", "Set attribute " + key + " of " + headingText(dst) + " to '" + value.toString() + "'", __func__);
+
     for (int i = 0; i < dst->attributeCount(); i++) {
         // Check if there is already an attribute with same key
         ai = dst->getAttributeNum(i);
@@ -4104,6 +4125,8 @@ void VymModel::deleteAttribute(BranchItem *dst, const QString &key)
         ai = dst->getAttributeNum(i);
         if (ai->key() == key)
         {
+            logAction("", "Delete attribute '" + key + "' of " + headingText(dst), __func__);
+
             // Key exists, delete attribute
             deleteItem(ai);
             break;
@@ -4115,6 +4138,9 @@ void VymModel::deleteAttributesKeyStartingWith(BranchItem *dst, const QString &k
 {
     AttributeItem *ai;
 
+    if (!dst) return;
+
+    logAction("", "Delete attribute starting with '" + key_start + "' of " + headingText(dst), __func__);
     for (int i = 0; i < dst->attributeCount(); i++) {
         // Check if there is already an attribute with same key
         ai = dst->getAttributeNum(i);
@@ -4140,7 +4166,7 @@ AttributeItem *VymModel::getAttributeByKey(const QString &key, TreeItem *ti)
     return nullptr;
 }
 
-BranchItem *VymModel::addMapCenter(bool interactive)
+BranchItem *VymModel::addMapCenter(bool interactive) //////////// FIXME-0 cont here with introducing logActions
 {
     if (interactive) {
         // Start to build undo/redo scripts
@@ -8015,12 +8041,12 @@ void VymModel::logWarning(const QString &comment, const QString &caller)
     appendStringToFile(actionLogPath, log);
 }
 
-void VymModel::logCommand(const QString &command, const QString &comment, const QString &caller)
+void VymModel::logAction(const QString &command, const QString &comment, const QString &caller)
 {
     QString place = QString("\"%1\"").arg(fileName);
     if (!caller.isEmpty()) place += "  Called by: " + caller + "()";
 
-    QString log = QString("\n// %1 [Command] %2\n// MapID: %3 Map: %4").arg(
+    QString log = QString("\n// %1 [Action] %2\n// MapID: %3 Map: %4").arg(
             QDateTime::currentDateTime().toString(Qt::ISODateWithMs),
             comment,
             QString::number(modelIdInt),

@@ -941,7 +941,7 @@ class VymModel : public TreeModel {
     void logDebug(const QString &comment, const QString &caller = "");
     void logInfo(const QString &comment, const QString &caller = "");
     void logWarning(const QString &comment, const QString &caller = "");
-    void logCommand(const QString &command, const QString &comment, const QString &caller = QString());
+    void logAction(const QString &command, const QString &comment, const QString &caller = QString());
 };
 
 #endif
