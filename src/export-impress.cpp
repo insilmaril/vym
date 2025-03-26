@@ -70,7 +70,7 @@ void ExportImpress::exportPresentation()
     // FIXME add extra title in mapinfo for vym 1.13.x
     content.replace("<!-- INSERT TITLE -->",
                     quoteMeta(firstMCO->headingPlain()));
-    content.replace("<!-- INSERT AUTHOR -->", quoteMeta(model->getAuthor()));
+    content.replace("<!-- INSERT AUTHOR -->", quoteMeta(model->mapAuthor()));
 
     QString onePage;
     QString list;

@@ -336,14 +336,14 @@ QString VymModelWrapper::getFileName()
 
 QString VymModelWrapper::getAuthor()
 {
-    QString r = model->getAuthor();
+    QString r = model->mapAuthor();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getComment()
 {
-    QString r = model->getComment();
+    QString r = model->mapComment();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -356,7 +356,7 @@ QString VymModelWrapper::getLinkColorHint()
 
 QString VymModelWrapper::getTitle()
 {
-    QString r = model->getTitle();
+    QString r = model->mapTitle();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -678,7 +678,7 @@ void VymModelWrapper::setAnimDuration(int n)
     model->setMapAnimDuration(n);
 }
 
-void VymModelWrapper::setAuthor(const QString &s) { model->setAuthor(s); }
+void VymModelWrapper::setAuthor(const QString &s) { model->setMapAuthor(s); }
 
 void VymModelWrapper::setBackgroundColor(const QString &color)
 {
@@ -714,7 +714,7 @@ void VymModelWrapper::setHeadingConfluencePageName()
     model->setConfluencePageDetails(false);
 }
 
-void VymModelWrapper::setComment(const QString &s) { model->setComment(s); }
+void VymModelWrapper::setComment(const QString &s) { model->setMapComment(s); }
 
 void VymModelWrapper::setLinkColorHint(const QString &hintName)
 {
@@ -732,7 +732,7 @@ void VymModelWrapper::setLinkStyle(const QString &style)
 
 void VymModelWrapper::setRotationView(float a) { model->setMapRotation(a); }
 
-void VymModelWrapper::setTitle(const QString &s) { model->setTitle(s); }
+void VymModelWrapper::setTitle(const QString &s) { model->setMapTitle(s); }
 
 void VymModelWrapper::setZoom(float z) { model->setMapZoomFactor(z); }
 

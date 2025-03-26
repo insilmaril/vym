@@ -15,7 +15,7 @@ Task::Task(TaskModel *tm)
     prio = 0;
     prio_delta = 0;
     model = tm;
-    date_creation = QDateTime::currentDateTime();
+    creationTimeInt = QDateTime::currentDateTime();
 }
 
 Task::~Task()
@@ -173,35 +173,35 @@ int Task::getPriority() { return prio; }
 
 int Task::getAgeCreation()
 {
-    return date_creation.daysTo(QDateTime::currentDateTime());
+    return creationTimeInt.daysTo(QDateTime::currentDateTime());
 }
 
 int Task::getAgeModification()
 {
-    if (date_modification.isValid())
-        return date_modification.daysTo(QDateTime::currentDateTime());
+    if (modificationTimeInt.isValid())
+        return modificationTimeInt.daysTo(QDateTime::currentDateTime());
     else
         return getAgeCreation();
 }
 
 void Task::setDateCreation(const QString &s)
 {
-    date_creation = QDateTime().fromString(s, Qt::ISODate);
+    creationTimeInt = QDateTime().fromString(s, Qt::ISODate);
 }
 
-QDateTime Task::getDateCreation() { return date_creation; }
+QDateTime Task::getDateCreation() { return creationTimeInt; }
 
 void Task::setDateModification()
 {
-    date_modification = QDateTime::currentDateTime();
+    modificationTimeInt = QDateTime::currentDateTime();
 }
 
 void Task::setDateModification(const QString &s)
 {
-    date_modification = QDateTime().fromString(s, Qt::ISODate);
+    modificationTimeInt = QDateTime().fromString(s, Qt::ISODate);
 }
 
-QDateTime Task::getDateModification() { return date_modification; }
+QDateTime Task::getDateModification() { return modificationTimeInt; }
 
 bool Task::setDaysSleep(qint64 n)
 {
@@ -239,7 +239,7 @@ bool Task::setDateSleep(const QDateTime &d)
     if (!d.isValid())
         return false;
 
-    date_sleep = d;
+    alarmInt = d;
     updateAwake();
     return true;
 }
@@ -247,10 +247,10 @@ bool Task::setDateSleep(const QDateTime &d)
 qint64 Task::getDaysSleep()
 {
     qint64 d = 1;
-    if (date_sleep.isValid())
-        d = QDateTime::currentDateTime().daysTo(date_sleep);
+    if (alarmInt.isValid())
+        d = QDateTime::currentDateTime().daysTo(alarmInt);
     else {
-        // qWarning() << "Task::getDaysSleep date_sleep is invalid for branch "
+        // qWarning() << "Task::getDaysSleep alarmInt is invalid for branch "
         // << branch->headingPlain();
         return -1;
     }
@@ -260,12 +260,12 @@ qint64 Task::getDaysSleep()
 qint64 Task::getSecsSleep()
 {
     qint64 d = 0; // Meaning: No sleep time set so far
-    if (date_sleep.isValid())
-        d = QDateTime::currentDateTime().secsTo(date_sleep);
+    if (alarmInt.isValid())
+        d = QDateTime::currentDateTime().secsTo(alarmInt);
     return d;
 }
 
-QDateTime Task::getSleep() { return date_sleep; }
+QDateTime Task::alarmTime() { return alarmInt; }
 
 void Task::setPriorityDelta(const int &n) { prio_delta = n; }
 
@@ -291,13 +291,13 @@ QString Task::getName()
 
 QString Task::getMapName() { return mapName; }
 
-QString Task::saveToDir()
+QString Task::saveToDir()   // FIXME-2 Rename creation/ modification time in XML (also in parser!)
 {
     QString sleepAttr;
-    if (date_sleep.isValid())
-        sleepAttr = attribute("date_sleep", date_sleep.toString(Qt::ISODate));
+    if (alarmInt.isValid())
+        sleepAttr = attribute("alarmInt", alarmInt.toString(Qt::ISODate));
     else
-        sleepAttr = attribute("date_sleep", "2018-01-01T00:00:00");
+        sleepAttr = attribute("alarmInt", "2018-01-01T00:00:00");
 
     // Experimental: Also output priority based on arrow flags for external
     // sorting
@@ -316,8 +316,8 @@ QString Task::saveToDir()
         "task",
         attribute("status", getStatusString()) +
             attribute("awake", getAwakeString()) +
-            attribute("date_creation", date_creation.toString(Qt::ISODate)) +
+            attribute("date_creation", creationTimeInt.toString(Qt::ISODate)) + 
             attribute("date_modification",
-                     date_modification.toString(Qt::ISODate)) +
+                     modificationTimeInt.toString(Qt::ISODate)) +
             prioDeltaAttr + sleepAttr + prioAttr);
 }

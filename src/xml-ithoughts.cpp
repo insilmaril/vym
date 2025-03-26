@@ -163,7 +163,7 @@ void IThoughtsReader::readMapAttr()
     QString a = "author";
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setAuthor(s);
+        model->setMapAuthor(s);
 
     QString comment = "Map imported from ithoughts:\n\n";
     for (int i = 0; i < xml.attributes().count(); i++) {
@@ -172,7 +172,7 @@ void IThoughtsReader::readMapAttr()
             comment += QString("%1: %2\n").arg(a, xml.attributes().at(i).value().toString());
     }
 
-    model->setComment(comment);
+    model->setMapComment(comment);
 }
 
 void IThoughtsReader::readBranchAttr()

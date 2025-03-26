@@ -49,9 +49,9 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
   private:
     QString mapVersionInt; //!< version string saved in vym file
-    QString title;
-    QString author;
-    QString comment;
+    QString titleInt;
+    QString authorInt;
+    QString commentInt;
     QDate date;
 
     static uint idLast; //! the last used unique ID
@@ -325,12 +325,12 @@ class VymModel : public TreeModel {
     // Interface
     ////////////////////////////////////////////
   public:
-    void setTitle(const QString &);
-    QString getTitle();
-    void setAuthor(const QString &);
-    QString getAuthor();
-    void setComment(const QString &);
-    QString getComment();
+    void setMapTitle(const QString &);
+    QString mapTitle();
+    void setMapAuthor(const QString &);
+    QString mapAuthor();
+    void setMapComment(const QString &);
+    QString mapComment();
     void setMapVersion(const QString &);
     QString mapVersion();
     int branchCount();
@@ -940,6 +940,7 @@ class VymModel : public TreeModel {
 
     void logDebug(const QString &comment, const QString &caller = "");
     void logInfo(const QString &comment, const QString &caller = "");
+    void logWarning(const QString &comment, const QString &caller = "");
     void logCommand(const QString &command, const QString &comment, const QString &caller = QString());
 };
 

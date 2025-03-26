@@ -1069,6 +1069,7 @@ function test_modify_images()
 
   success = b.loadImage(vymBaseDir + "/icons/vym.png");
   expect("loadImage() returns true for existing image", success, true);
+  expect("Image cound increased after loading", b.imageCount(), n + 1);
 
   success = b.loadImage(vymBaseDir + "/foobar");
   expect("loadImage() returns false for not existing image", success, false);

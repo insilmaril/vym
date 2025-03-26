@@ -371,13 +371,13 @@ void ExportHTML::doExport(bool useDialog)
           "charset=UTF-8\"> ";
     ts << "\n<meta name=\"generator=\" content=\" vym - view your mind - " +
               vymVersion + " - " + vymHome + "\">";
-    ts << "\n<meta name=\"author\" content=\"" + quoteMeta(model->getAuthor()) +
+    ts << "\n<meta name=\"author\" content=\"" + quoteMeta(model->mapAuthor()) +
               "\"> ";
     ts << "\n<meta name=\"description\" content=\"" +
-              quoteMeta(model->getComment()) + "\"> ";
+              quoteMeta(model->mapComment()) + "\"> ";
     ts << "\n<link rel='stylesheet' id='css.stylesheet' href='"
        << basename(cssDst) << "' />\n";
-    QString title = model->getTitle();
+    QString title = model->mapTitle();
     if (title.isEmpty())
         title = model->getMapName();
     ts << "\n<head><title>" + quoteMeta(title) + "</title></head>";

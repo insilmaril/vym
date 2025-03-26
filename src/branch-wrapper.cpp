@@ -367,7 +367,7 @@ QString BranchWrapper::getTaskSleep()
     QString r;
     Task *task = branchItemInt->getTask();
     if (task)
-        r = task->getSleep().toString(Qt::ISODate);
+        r = task->alarmTime().toString(Qt::ISODate);
     else
         mainWindow->abortScript(
                 QJSValue::GenericError,

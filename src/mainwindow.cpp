@@ -5602,7 +5602,7 @@ void Main::editTaskSleepN()
             QString s;
             if (n < 0) {
                 QString currentSleep;
-                QDateTime d = task->getSleep();
+                QDateTime d = task->alarmTime();
                 n = task->getSecsSleep();
                 if (n <= 0)
                     currentSleep = "0";
@@ -5659,9 +5659,9 @@ void Main::editMapProperties()
     ExtraInfoDialog dia;
     dia.setMapName(m->getFileName());
     dia.setFileLocation(m->getFilePath());
-    dia.setMapTitle(m->getTitle());
-    dia.setAuthor(m->getAuthor());
-    dia.setComment(m->getComment());
+    dia.setMapTitle(m->mapTitle());
+    dia.setAuthor(m->mapAuthor());
+    dia.setComment(m->mapComment());
     dia.setMapVersion(m->mapVersion());
     dia.setReadOnly(m->isReadOnly());
 
@@ -5706,9 +5706,9 @@ void Main::editMapProperties()
 
     // Finally show dialog
     if (dia.exec() == QDialog::Accepted) {
-        m->setAuthor(dia.getAuthor());
-        m->setComment(dia.getComment());
-        m->setTitle(dia.getMapTitle());
+        m->setMapAuthor(dia.getAuthor());
+        m->setMapComment(dia.getComment());
+        m->setMapTitle(dia.getMapTitle());
     }
 }
 

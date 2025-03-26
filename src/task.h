@@ -49,7 +49,7 @@ class Task : public XMLObj {
     bool setDateSleep(const QDateTime &d);
     qint64 getDaysSleep();
     qint64 getSecsSleep();
-    QDateTime getSleep();
+    QDateTime alarmTime();
     QString getName();
     void setPriorityDelta(const int &n);
     int getPriorityDelta();
@@ -66,9 +66,9 @@ class Task : public XMLObj {
     int prio_delta;
     BranchItem *branch;
     QString mapName;
-    QDateTime date_creation;
-    QDateTime date_modification;
-    QDateTime date_sleep;
+    QDateTime creationTimeInt;
+    QDateTime modificationTimeInt;
+    QDateTime alarmInt;
 };
 
 #endif

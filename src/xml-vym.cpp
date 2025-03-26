@@ -1039,17 +1039,17 @@ void VymReader::readVymMapAttr()
     QString a = "author";
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setAuthor(s);
+        model->setMapAuthor(s);
 
     a = "title";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setTitle(s);
+        model->setMapTitle(s);
 
     a = "comment";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        model->setComment(unquoteMeta(s));
+        model->setMapComment(unquoteMeta(s));
 
     a = "branchCount";
     s = xml.attributes().value(a).toString();

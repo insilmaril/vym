@@ -277,7 +277,7 @@ void BranchPropertyEditor::updateControls()
                 ui.dateModificationLineEdit->setText("");
             }
 
-            dt = task->getSleep();
+            dt = task->alarmTime();
             if (dt.isValid()) {
                 QString s;
                 qint64 daysSleep = task->getDaysSleep();
