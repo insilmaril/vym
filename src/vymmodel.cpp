@@ -3453,22 +3453,28 @@ void VymModel::updateTasksAlarm(bool force)
 
 BranchItem *VymModel::addTimestamp()
 {
-    BranchItem *selbi = addNewBranch();
+    BranchItem *selbi = getSelectedBranch();
+
     if (selbi) {
         QDate today = QDate::currentDate();
         QChar c = '0';
-        selbi->setHeadingPlainText(QString("%1-%2-%3")
-                                       .arg(today.year(), 4, 10, c)
-                                       .arg(today.month(), 2, 10, c)
-                                       .arg(today.day(), 2, 10, c));
-        emitDataChanged(selbi);
-        reposition();
-        select(selbi);
+        QString s = QString("%1-%2-%3")
+                       .arg(today.year(), 4, 10, c)
+                       .arg(today.month(), 2, 10, c)
+                       .arg(today.day(), 2, 10, c);
+        QString comment = "Add branch with current date as heading: " + s;
+
+        saveStateBeginScript(comment);
+        BranchItem *newbi = addNewBranch(selbi);
+        setHeadingPlainText(s, newbi);
+        saveStateEndScript();
+
+        select(newbi);
     }
     return selbi;
 }
 
-void VymModel::copy()
+void VymModel::copy() //////////// FIXME-0 cont here with introducing logCommands
 {
     if (readonly)
         return;
