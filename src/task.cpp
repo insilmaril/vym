@@ -291,13 +291,13 @@ QString Task::getName()
 
 QString Task::getMapName() { return mapName; }
 
-QString Task::saveToDir()   // FIXME-2 Rename creation/ modification time in XML (also in parser!)
+QString Task::saveToDir()
 {
     QString sleepAttr;
     if (alarmInt.isValid())
-        sleepAttr = attribute("alarmInt", alarmInt.toString(Qt::ISODate));
+        sleepAttr = attribute("date_sleep", alarmInt.toString(Qt::ISODate));
     else
-        sleepAttr = attribute("alarmInt", "2018-01-01T00:00:00");
+        sleepAttr = attribute("date_sleep", "2018-01-01T00:00:00");
 
     // Experimental: Also output priority based on arrow flags for external
     // sorting
