@@ -337,14 +337,6 @@ void TextEditor::setupFileActions()
     filledEditorActions << a;
     actionFileExport = a;
 
-    /*
-    a = new QAction(tr("Export &As... (HTML)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(textExportHtml()));  //FIXME-2 slot not available??? Difference to textEport???
-    fileMenu->addAction(a);
-    filledEditorActions << a;
-    actionFileExportHtml = a;
-    */
-
     a = new QAction(tr("Export &As...(ASCII)"), this);
     switchboard.addSwitch("textExportAsASCII", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(textExportText()));
@@ -387,7 +379,7 @@ void TextEditor::setupEditActions()
     connect(a, SIGNAL(triggered()), editor, SLOT(undo()));
     editMenu->addAction(a);
     editToolBar->addAction(a);
-    // filledEditorActions << a;  // FIXME-2  Use undoAvailable instead?
+    filledEditorActions << a;  // QTextEdit does not seem to have a method to check if undo/redo is available currently
     actionEditUndo = a;
 
     a = new QAction(QPixmap(":/redo.png"), tr("&Redo"), this);

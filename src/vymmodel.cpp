@@ -3276,7 +3276,7 @@ bool VymModel::cycleTaskStatus(BranchItem *bi, bool reverse)
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-2 (WIP) Rename "sleep" to "alarm" in code, commands, doc
+bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-4 (WIP) Rename "sleep" to "alarm" in code, commands, doc
 {
     bool ok = false;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -4354,7 +4354,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-2 enable one history step    // FIXME-3 Use position of selbi for newbi, if floating
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-3 Use position of selbi for newbi, if floating
 {
     BranchItem *newbi = nullptr;
     BranchItem *selbi = getSelectedBranch(bi);
@@ -6539,7 +6539,7 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
         if (updateRequired)
             colorBranch(col, selbi);
 
-        // Frames   // FIXME-2 mapDesign missing for penWidth
+        // Inner frame
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(true, depth))) {
             bc->setFrameType(true, mapDesignInt->frameType(true, depth));
@@ -6547,6 +6547,8 @@ void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
             bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
             bc->setFramePenWidth(true, mapDesignInt->framePenWidth(true, depth));
         }
+
+        // Outer frame
         if (updateMode == MapDesign::CreatedByUser ||
                 (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
             bc->setFrameType(false, mapDesignInt->frameType(false, depth));

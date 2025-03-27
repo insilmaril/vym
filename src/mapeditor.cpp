@@ -1177,7 +1177,7 @@ TreeItem* MapEditor::getItemInDirection(TreeItem *ti, RadarDirection radarDir)
     return getItemFromClassicMap(ti, radarDir);
 }
 
-TreeItem* MapEditor::getItemFromGeometry(TreeItem *ti, RadarDirection radarDir) // FIXME-2 does not really work
+TreeItem* MapEditor::getItemFromGeometry(TreeItem *ti, RadarDirection radarDir) // FIXME-3 does not really work
 {
     TreeItem *nearestItem = nullptr;
     if (ti) {
