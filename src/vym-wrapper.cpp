@@ -246,19 +246,3 @@ QString VymWrapper::vymBaseDir() {
     return ::vymBaseDir.path();
 }
 
-Selection::Selection() { modelWrapper = nullptr; }  // FIXME-2 needed?
-
-void Selection::test()
-{
-    qDebug() << "Selection::testSelection called"; // TODO debug
-    /*
-    if (modelWrapper)
-        modelWrapper->setHeadingPlainText("huhu!");
-    */
-}
-
-void Selection::setModel(VymModelWrapper *mw)
-{
-    qDebug() << "Selection::setModel called: " << mw; // TODO debug
-    modelWrapper = mw;
-}

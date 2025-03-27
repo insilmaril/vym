@@ -44,17 +44,4 @@ class VymWrapper : public QObject {
     QString vymBaseDir();
 };
 
-class Selection : public QObject {
-    Q_OBJECT
-  public:
-    Selection();
-
-  public slots:
-    void test();
-    void setModel(VymModelWrapper *mw);
-
-  private:
-    VymModelWrapper *modelWrapper;
-};
-
 #endif
