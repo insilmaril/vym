@@ -395,7 +395,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
 Main::~Main()
 {
-    //qDebug() << "Destr Mainwindow";
+    // qDebug() << "Destr Mainwindow";
 
     // Make sure there is no focus elsewhere, e.g. in BranchPropertyEditor
     // which could cause a crash.  (Qt bug?)
@@ -404,8 +404,6 @@ Main::~Main()
     // Save Settings
 
     if (!testmode) {
-#if defined(Q_OS_WIN32)
-#endif
         settings.setValue("/mainwindow/geometry", saveGeometry());
         settings.setValue("/mainwindow/state", saveState(0)); // FIXME-2 use saveState and saveGeometry
                                                               // https://doc.qt.io/qt-6/qmainwindow.html#saveState
@@ -481,6 +479,8 @@ void Main::logInfo(const QString &comment, const QString &caller)
 
     QString log = QString("\n// %1 [Info MainWindow%2] %3\n")
         .arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), c, comment);
+
+    std::cout << log.toStdString() << std::endl << std::flush;
 
     appendStringToFile(actionLogPath, log);
 }
@@ -4591,13 +4591,14 @@ void Main::fileLoad()
     tabWidget->setCurrentIndex(tabWidget->count() - 1);
 }
 
-void Main::fileSaveSession()
+void Main::fileSaveSession()    // FIXME-2 Often no session list available
 {
     QStringList flist;
     for (int i = 0; i < tabWidget->count(); i++)
         flist.append(view(i)->getModel()->getFilePath());
 
     settings.setValue("/mainwindow/sessionFileList", flist);
+    //logInfo("Current session list: " + flist.join(","), __func__);
 
     // Also called by event loop regulary, but apparently not often enough
     settings.sync();
@@ -5178,7 +5179,10 @@ void Main::filePrint()
 
 bool Main::fileExitVYM()
 {
-    fileSaveSession();
+    // fileExit Vym calls itself via qApp->quit() and closeEvent()
+    // Only save session if there still are tabs open
+    if (tabWidget->count() > 0)
+        fileSaveSession();
 
     // Check if one or more editors have changed
     while (tabWidget->count() > 0) {

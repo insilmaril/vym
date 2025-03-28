@@ -1894,7 +1894,7 @@ void VymModel::saveStateBeginScript(const QString &comment)
     if (buildingUndoScript)
         logWarning("Nested saveState scripts found", __func__);  // FIXME-2 e.g. for setFrameAutoDesign...
     else {
-        logInfo("Starting to build saveStateScript: '" + comment + "'", __func__);
+        logDebug("Starting to build saveStateScript: '" + comment + "'", __func__);
 
         buildingUndoScript = true;
         undoScriptComment = comment;
@@ -1913,7 +1913,7 @@ void VymModel::saveStateEndScript()
     if (buildingUndoScript) {
         buildingUndoScript = false;
 
-        logInfo("Finished building saveStateScript: '" + undoScriptComment + "'", __func__);
+        logDebug("Finished building saveStateScript: '" + undoScriptComment + "'", __func__);
 
         // Drop whole Script, if empty
         if (undoScript.isEmpty() && redoScript.isEmpty()) return;
@@ -8060,7 +8060,8 @@ void VymModel::logDebug(const QString &comment, const QString &caller)
             QString::number(modelIdInt),
             place);
 
-    std::cout << log.toStdString() << std::endl << std::flush;
+    if (debug)
+        std::cout << log.toStdString() << std::endl << std::flush;
 
     if (!useActionLog) return;
 
@@ -8079,7 +8080,7 @@ void VymModel::logInfo(const QString &comment, const QString &caller)
 //            QString::number(modelIdInt)
     );
 
-    std::cout << log.toStdString() << std::endl << std::flush;
+    // std::cout << log.toStdString() << std::endl << std::flush;
 
     appendStringToFile(actionLogPath, log);
 }
