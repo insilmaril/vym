@@ -162,10 +162,7 @@ bool VymWrapper::loadMap(QString filename)
     if (fi.isRelative())
         filename = ::vymBaseDir.path() + "/" + filename;
 
-    if (File::Success == mainWindow->fileLoad(filename, File::NewMap, File::VymMap))
-        r = true;
-    else
-        r = false;
+    r = mainWindow->fileLoad(filename, File::NewMap, File::VymMap);
     mainWindow->setScriptResult(r);
     return r;
 }

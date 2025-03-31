@@ -118,7 +118,7 @@ class Main : public QMainWindow {
     void editorChanged();
 
   public slots:
-    File::ErrorCode fileLoad(QString, const File::LoadMode &, const File::FileType &ftype);
+    bool fileLoad(QString, const File::LoadMode &, const File::FileType &ftype);
     void fileLoad(const File::LoadMode &);
   private slots:
     void fileLoad();

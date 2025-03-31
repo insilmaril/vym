@@ -476,13 +476,13 @@ QString VymModel::getMapName() { return mapName; }
 
 QString VymModel::getDestPath() { return destPath; }
 
-File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
+bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                                   const File::FileType &ftype,
                                   const int &contentFilter,
                                   BranchItem *insertBranch,
                                   int insertPos)
 {
-    File::ErrorCode err = File::Success;
+    bool noError = true;
 
     // Get updated zoomFactor, before applying one read from file in the end
     if (mapEditor) {
@@ -507,7 +507,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         default:
             QMessageBox::critical(0, tr("Critical Parse Error"),
                                   "Unknown FileType in VymModel::load()");
-            return File::Aborted;
+            return false;
     }
 
     if (lmode == File::NewMap) {
@@ -526,7 +526,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         QMessageBox::critical(
             0, tr("Critical Load Error"),
             tr("Couldn't create temporary directory before load\n"));
-        return File::Aborted;
+        return false;
     }
 
     QString xmlfile;
@@ -549,7 +549,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         zipAgent.setBackgroundProcess(false);
         zipAgent.startUnzip();
         if (zipAgent.exitStatus() != QProcess::NormalExit)
-            err = File::Aborted;
+            noError = false;
 
         if (file.size() > 2000000)
             // Inform user that unzipping might take a while.
@@ -584,7 +584,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                         QMessageBox::critical(
                             0, tr("Critical Load Error"),
                             tr("Couldn't find %1 in map file.\n").arg("mapdata.xml"));
-                        err = File::Aborted;
+                        noError = false;
                     }
                     else
                         xmlfile = tmpZipDir + "/mapdata.xml";
@@ -597,7 +597,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 QMessageBox::critical(
                     0, tr("Critical Load Error"),
                     tr("Couldn't find a map (*.xml) in .vym archive.\n"));
-                err = File::Aborted;
+                noError = false;
             }
         } // file doesn't exist
         else
@@ -612,7 +612,8 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         QMessageBox::critical(
             0, tr("Critical Parse Error"),
             tr(QString("Couldn't open map %1").arg(file.fileName()).toUtf8()));
-        err = File::Aborted;
+        noError = false;
+        noError = false;
     }
     else {
         bool saveStateBlockedOrg = saveStateBlocked;
@@ -631,7 +632,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
         reader->setLoadMode(lmode);
 
-        if (lmode == File::ImportReplace || lmode == File::ImportAdd)
+        if (lmode == File::ImportReplace || lmode == File::ImportAdd) 
             reader->setInsertBranch(insertBranch);
 
         if (lmode == File::ImportAdd)
@@ -645,7 +646,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                     QString("Cannot read file %1:\n%2.")
                     .arg(QDir::toNativeSeparators(fileName),
                         file.errorString()));
-            err = File::Aborted;
+            noError = false;
         } else {
             // Here we actually parse the XML file
             parsedWell = reader->read(&file);
@@ -658,7 +659,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         saveStateBlocked = saveStateBlockedOrg;
         mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 
-        if (err != File::Aborted) {
+        if (noError) {
             if (parsedWell) {
                 reposition();
 
@@ -693,7 +694,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
                 setReadOnly(true);
             }
-        } // err != File::Aborted
+        } // noError so far
     }
 
     // If required, fix positions when importing from old versions
@@ -706,7 +707,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                 offset.setX(rb.width() / 2);
                 offset.setY(rb.height() / 2);
                 bc->setPos(bc->x() + offset.x(), bc->y() + offset.y());
-                //qDebug() << "VymModel::loadMap() adjusting legacy position of " << mainBranch->headingPlain() << "  offset: " << toS(offset);
+                logInfo("Adjusting legacy position of " + mainBranch->headingPlain() + "  offset: " + toS(offset), __func__);
             }
         }
         reposition();
@@ -730,7 +731,7 @@ File::ErrorCode VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     }
 
     qApp->processEvents(); // Update view (scene()->update() is not enough)
-    return err;
+    return noError;
 }
 
 bool VymModel::saveMap(const File::SaveMode &savemode)
@@ -741,7 +742,7 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
     QString mapFileName;
     QString saveFilePath;
 
-    File::ErrorCode err = File::Success;
+    bool noError = true;
 
     if (zipped)
         // save as .xml
@@ -867,10 +868,10 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
 
     if (!saveStringToDisk(saveFileName, mapStringData)) {
         qWarning("ME::saveStringToDisk failed!");
-        err = File::Aborted;
+        noError = false;
     }
 
-    if (err != File::Success)
+    if (!noError)
         mainWindow->statusMessage(tr("Couldn't save ").arg(saveFilePath));
     else {
         if (useActionLog) {
@@ -901,7 +902,7 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
     if (!zipped)
         isSavingInt = false;
 
-    return (err == File::Success);
+    return noError;
 }
 
 bool VymModel::isSaving()
@@ -1128,23 +1129,27 @@ void VymModel::importDir()
     }
 }
 
-bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *insertBranch)
+bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *bi)
 {
-    if (insertBranch) {
-        // Only saveState if a branch is inserted
-        // Other data like XLink is only used for undo/redo operations and currently
-        // does not need a saveState
-        QString bv = setBranchVar(insertBranch);
-        QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
-        QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
-        QString comment = QString("Add map %1 to \"%2\"").arg(fpath, insertBranch->headingText());
-
-        logAction(rc, comment, __func__);
-
-        saveState(uc, rc, comment, insertBranch);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi) {
+        logWarning("Failed: No branch provided");
+        return false;
     }
 
-    if (File::Aborted != loadMap(fpath, File::ImportAdd, File::VymMap, 0x0000, insertBranch, insertPos))
+    // Only saveState if a branch is inserted
+    // Other data like XLink is only used for undo/redo operations and currently
+    // does not need a saveState
+    QString bv = setBranchVar(selbi);
+    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
+    QString comment = QString("Add map %1 to \"%2\"").arg(fpath, selbi->headingText());
+
+    logAction(rc, comment, __func__);
+
+    saveState(uc, rc, comment, selbi);
+
+    if (loadMap(fpath, File::ImportAdd, File::VymMap, 0x0000, selbi, insertPos))
         return true;
 
     logWarning("Failed: Loading from " + fpath, __func__);
@@ -1153,22 +1158,23 @@ bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *insertBran
 
 bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
 {
-    if (!bi) {
-        qWarning() << "VymModel::addMapReplace No branch provided";
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi) {
+        logWarning("Failed: No branch provided");
         return false;
     }
 
-    QString bv = setBranchVar(bi);
-    QString pbv = setBranchVar(bi->parentBranch(), "pb");
+    QString bv = setBranchVar(selbi);
+    QString pbv = setBranchVar(selbi->parentBranch(), "pb");
     QString uc = pbv + QString("map.loadBranchReplace(\"UNDO_PATH\", pb);");
     QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
-    QString comment = QString("Replace \"%1\" with \"%2\"").arg(bi->headingText(), fpath);
+    QString comment = QString("Replace \"%1\" with \"%2\"").arg(selbi->headingText(), fpath);
 
     logAction(rc, comment, __func__);
 
-    saveState(uc, rc, comment, bi->parentBranch(), bi);
+    saveState(uc, rc, comment, selbi->parentBranch(), selbi);
 
-    if (File::Aborted != loadMap(fpath, File::ImportReplace, File::VymMap, 0x0000, bi))
+    if (loadMap(fpath, File::ImportReplace, File::VymMap, 0x0000, selbi))
         return true;
 
     logWarning("Failed: " + comment, __func__);
@@ -3558,7 +3564,7 @@ void VymModel::paste()
 
             bool zippedOrg = zipped;
             foreach(QString fn, clipboardFiles) {
-                if (File::Success != loadMap(fn,
+                if (!loadMap(fn,
                             File::ImportAdd,
                             File::VymMap,
                             VymReader::SlideContent,

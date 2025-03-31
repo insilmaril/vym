@@ -157,8 +157,7 @@ class VymModel : public TreeModel {
     The data is read from file. Depending on LoadMode the current
     selection gets replaced by data or the data is appended.
     */
-    File::ErrorCode
-    loadMap(QString, //!< Path
+    bool loadMap(QString, //!< Path
             const File::LoadMode &lmode =
                 File::NewMap, //!< New map, replace or add to selection
             const File::FileType &ftype = File::VymMap, //!< VymMap or FreeMind

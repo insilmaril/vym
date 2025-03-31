@@ -4,8 +4,6 @@
 #include <QDir>
 
 namespace File {
-    enum ErrorCode { Success, Aborted, NoZip };
-
     enum LoadMode { NewMap, DefaultMap, ImportAdd, ImportReplace };
     enum SaveMode { PartOfMap, CompleteMap, CodeBlock };
     enum FileType { VymMap, FreemindMap, IThoughtsMap, UnknownMap };
