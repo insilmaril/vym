@@ -37,7 +37,7 @@ extern bool debug;
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-TextEditor::TextEditor()    // FIXME-2 feature insert images with drag & drop
+TextEditor::TextEditor()    // FEATURE #137 insert images with drag & drop
 			    // https://stackoverflow.com/questions/3254652/several-ways-of-placing-an-image-in-a-qtextedit
 {
     statusBar()->hide(); // Hide sizeGrip on default, which comes with statusBar
