@@ -95,7 +95,7 @@ void VymReader::readVymMap()
 
         if (loadMode == File::ImportReplace) {
             if (!lastBranch) {
-                xml.raiseError("readVymMap - ImportReplace map, but nothing selected!");    // FIXME-2 not working, even if something is selected
+                xml.raiseError("readVymMap - ImportReplace map, but nothing selected!");
                 return;
             }
 
