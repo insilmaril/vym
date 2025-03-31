@@ -741,7 +741,6 @@ void MapEditor::minimizeView() {
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
-    //qDebug() << "ME::minimizeView";   // FIXME-2 check when and how often minimizeView is called
     // Used to be called also from VymModel::reposition()
 }
 
@@ -827,9 +826,9 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    // FIXME-2 really needed? Overlaps with scene and VM... (compare getImage)
+QRectF MapEditor::getTotalBBox()    // return (minimal) size of view before printing or creating pdfs
 {
-    minimizeView();
+    minimizeView();     // Before returning size of view, minimize view
     return sceneRect();
 }
 
@@ -1599,7 +1598,7 @@ void MapEditor::editHeading(BranchItem *selbi)
         lineEdit->setGeometry(r.toRect());
         proxyWidget->setGeometry(r.toRect());
 
-        minimizeView();
+        minimizeView(); // LineEdit might exceed current view size, enlarge view if required
 
         // Set focus to MapEditor first
         // To avoid problems with Cursor up/down
@@ -2538,10 +2537,8 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
 
-    if (repositionNeeded) {
-        model->reposition();    // FIXME-3 really reposition whole model? Or only affected MapCenters?
-        minimizeView();
-    }
+    if (repositionNeeded)
+        model->reposition();
 }
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)

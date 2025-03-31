@@ -5879,7 +5879,7 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 
     setExportMode(true);
 
-    mapEditor->minimizeView();
+    mapEditor->minimizeView();  // Export minimal image
 
     QImage img(mapEditor->getImage(offset));
     if (!img.save(fname, format.toLocal8Bit())) {
@@ -6477,13 +6477,12 @@ void VymModel::unsetContextPos()
     hasContextPos = false;
 }
 
-void VymModel::reposition(bool force) // FIXME-2 check when and how often reposition  is called
+void VymModel::reposition(bool force)
 {
     if (!force && repositionBlocked)
         return;
 
-    // qDebug() << "VM::reposition start force=" << force;
-    // Check also ME->minimizeView below
+    //qDebug() << "VM::reposition start force=" << force;
 
     // Reposition containers
     BranchItem *bi;
@@ -6494,9 +6493,8 @@ void VymModel::reposition(bool force) // FIXME-2 check when and how often reposi
 
     repositionXLinks();
 
-    mapEditor->minimizeView();  // FIXME-3 really needed every time?
+    mapEditor->minimizeView();  // Optimize view when geometry changes in reposition()
 
-    // FIXME-4 needed? everytime? mapEditor->minimizeView();
     //qDebug() << "VM::reposition end";
     if (force)
         qApp->processEvents();
