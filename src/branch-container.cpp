@@ -370,12 +370,7 @@ void BranchContainer::updateTransformations()
     }
 }
 
-void BranchContainer::updateChildrenStructure() // FIXME-2 check if list layout
-                                                // still a problem:
-// When a map with list layout is loaded and
-// layout is switched to e.g. Vertical, the links
-// are not drawn. Has to be saved/loaded first
-// Also: bullet points have bottomlines
+void BranchContainer::updateChildrenStructure()
 {
     if (branchesContainerLayoutInt == List) {
         if (!listContainer) {

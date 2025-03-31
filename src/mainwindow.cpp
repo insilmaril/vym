@@ -4591,7 +4591,7 @@ void Main::fileLoad()
     tabWidget->setCurrentIndex(tabWidget->count() - 1);
 }
 
-void Main::fileSaveSession()    // FIXME-2 Often no session list available
+void Main::fileSaveSession()
 {
     QStringList flist;
     for (int i = 0; i < tabWidget->count(); i++)

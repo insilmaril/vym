@@ -1741,7 +1741,7 @@ QString VymModel::saveState(
     */
 
     if (buildingUndoScript)
-        logInfo("// Building script: " + redoCommand + " " +  comment, __func__);    // FIXME-2 remove logging from saveState
+        logInfo("// Building script: " + redoCommand + " " +  comment, __func__);    // FIXME-3 Use logDebug instead? Remove logging completely from saveState?
     else
         logInfo("saveState: " + comment + " " + redoCommand, __func__);
 
