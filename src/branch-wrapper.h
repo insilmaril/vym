@@ -36,6 +36,8 @@ class BranchWrapper : public QObject {
     bool cycleTask(bool reverse = false);
     void deleteAttribute(const QString &key);
     void deleteConfluencePageLabel(const QString &labelName);
+    int depth();
+    void detach();
     bool getFrameAutoDesign(const bool & useInnerFrame);
     QString getFrameBrushColor(const bool & useInnerFrame);
     int getFramePadding(const bool & useInnerFrame);
@@ -50,6 +52,8 @@ class BranchWrapper : public QObject {
     int getNum();
     qreal getPosX();
     qreal getPosY();
+    int getRotationHeading();
+    int getRotationSubtree();
     QPointF getScenePos();
     qreal getScenePosX();
     qreal getScenePosY();
@@ -75,6 +79,7 @@ class BranchWrapper : public QObject {
     bool loadNote(const QString &filename);
     void moveDown();
     void moveUp();
+    void note2URLs();
     Q_INVOKABLE BranchWrapper* parentBranch();
     bool relinkToBranch(BranchWrapper*);
     bool relinkToBranchAt(BranchWrapper*, int pos);
@@ -100,6 +105,7 @@ class BranchWrapper : public QObject {
     void setFrameType(const bool & useInnerFrame, const QString &type);
     void setHeadingColumnWidth(const int &w);
     void setHeadingColumnWidthAutoDesign(const bool);
+    void setHeadingConfluencePageName();
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
     void setHideExport(bool b);

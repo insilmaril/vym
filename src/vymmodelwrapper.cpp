@@ -62,26 +62,6 @@ void VymModelWrapper::copy() { model->copy(); }
 
 void VymModelWrapper::cut() { model->cut(); }
 
-int VymModelWrapper::depth()
-{
-    TreeItem *selti = model->getSelectedItem();
-    if (selti) {
-	int r = selti->depth();
-	mainWindow->setScriptResult(r);
-	return r;
-    }
-
-    mainWindow->abortScript(
-            QJSValue::GenericError,
-            "Nothing selected");
-    return -1;
-}
-
-void VymModelWrapper::detach()
-{
-    model->detach();
-}
-
 bool VymModelWrapper::exportMap(QJSValueList args)
 {
     int argumentsCount = args.count();
@@ -361,30 +341,6 @@ QString VymModelWrapper::getTitle()
     return r;
 }
 
-int VymModelWrapper::getRotationHeading()
-{
-    int r = -1;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        r = selbi->getBranchContainer()->rotationHeading();
-    else
-        mainWindow->abortScript(QJSValue::RangeError, QString("No branch selected"));
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
-int VymModelWrapper::getRotationSubtree()
-{
-    int r = -1;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi)
-        r = selbi->getBranchContainer()->rotationSubtree();
-    else
-        mainWindow->abortScript(QJSValue::RangeError, QString("No branch selected"));
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
 QString VymModelWrapper::getSelectionString()
 {
     QString r = model->getSelectString();
@@ -472,8 +428,6 @@ void VymModelWrapper::moveSlideUp(int n)
 
 void VymModelWrapper::moveSlideUp() { moveSlideUp(-1); }
 
-void VymModelWrapper::note2URLs() { model->note2URLs(); }
-
 void VymModelWrapper::paste() { model->paste(); }
 
 void VymModelWrapper::redo() { model->redo(); }
@@ -540,11 +494,6 @@ void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
 QVariant VymModelWrapper::repeatLastCommand()
 {
     return model->repeatLastCommand();
-}
-
-void VymModelWrapper::saveImage(const QString &filename)
-{
-    model->saveImage(nullptr, filename);
 }
 
 bool VymModelWrapper::saveSelection(const QString &filename)
@@ -649,17 +598,6 @@ bool VymModelWrapper::selectLatestAdded()
     return r;
 }
 
-bool VymModelWrapper::selectToggle(const QString &selectString)
-{
-    bool r = model->selectToggle(selectString);
-    if (!r)
-        mainWindow->abortScript(
-                QJSValue::GenericError,
-                QString("Couldn't toggle item with select string \"%1\"").arg(selectString));
-    mainWindow->setScriptResult(r);
-    return r;
-}
-
 void VymModelWrapper::setAnimCurve(int n)
 {
     if (n < 0 || n > QEasingCurve::OutInBounce)
@@ -707,11 +645,6 @@ void VymModelWrapper::setDefaultLinkColor(const QString &color)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
-}
-
-void VymModelWrapper::setHeadingConfluencePageName()
-{
-    model->setConfluencePageDetails(false);
 }
 
 void VymModelWrapper::setComment(const QString &s) { model->setMapComment(s); }

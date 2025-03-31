@@ -575,7 +575,7 @@ class VymModel : public TreeModel {
     void colorSubtree(QColor, BranchItem *bi = nullptr);
     QColor getCurrentHeadingColor();
 
-    void note2URLs();                    // get URLs from note
+    void note2URLs(BranchItem *bi = nullptr); // get URLs from note
     void editHeading2URL();              // copy heading to URL
     void getJiraData(bool subtree = true, BranchItem *bi = nullptr);
 
@@ -588,7 +588,7 @@ class VymModel : public TreeModel {
     void processJiraJqlQuery(QJsonObject);
 
   public:
-    void setConfluencePageDetails(bool recursive); // get page details from Confluence
+    void setConfluencePageDetails(bool recursive, BranchItem *bi = nullptr); // get page details from Confluence
     void setVymLink(const QString &, BranchItem *bi = nullptr);    // Set vymLink for selection
     void deleteVymLink();                // delete link to another map
     QString getVymLink();                // return path to map

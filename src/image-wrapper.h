@@ -25,10 +25,11 @@ class ImageWrapper : public QObject {
     QString headingText();  
     bool relinkToBranch(BranchWrapper *dst);
     bool relinkToBranchAt(BranchWrapper *dst, int pos);
+    void saveImage(const QString &filename);
     bool selectParent();
     void setHeadingRichText(const QString &);
     void setHeadingText(const QString &);
-    void setHideLinkUnselected(bool b); // FIXME-3 move to BranchWrapper and ImageWrapper
+    void setHideLinkUnselected(bool b);
     void setPos(qreal x, qreal y);
     void setScale(const qreal &f);
 

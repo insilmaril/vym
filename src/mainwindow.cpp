@@ -480,7 +480,7 @@ void Main::logInfo(const QString &comment, const QString &caller)
     QString log = QString("\n// %1 [Info MainWindow%2] %3\n")
         .arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs), c, comment);
 
-    std::cout << log.toStdString() << std::endl << std::flush;
+    // std::cout << log.toStdString() << std::endl << std::flush;
 
     appendStringToFile(actionLogPath, log);
 }
@@ -627,7 +627,6 @@ void Main::setupAPI()
     c->setComment("Add MapCenter at position (x, y)");
     modelCommands.append(c);
 
-    // FIXME-2 move branch commands from VymModelWrapper to BranchWrapper. See vymmodelwrapper.h
     QString DEPRECATED(" DEPRECATED. Commands moved to branch or image. ");
 
     c = new Command("addSlide", Command::BranchSel);
@@ -662,12 +661,6 @@ void Main::setupAPI()
     c = new Command("deleteConfluencePageLabel", Command::BranchSel, Command::IntPar);
     c->setComment("Delete label from Confluence page given in branch attributes");
     c->addParameter(Command::StringPar, false, "Label to be removed from Confluence page");
-    modelCommands.append(c);
-
-    c = new Command("depth", Command::BranchOrImageSel, Command::IntPar);
-    modelCommands.append(c);
-
-    c = new Command("detach", Command::BranchSel);
     modelCommands.append(c);
 
     c = new Command("exportMap", Command::AnySel, Command::BoolPar);
@@ -802,9 +795,6 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Name of iterator");
     modelCommands.append(c);
 
-    c = new Command("note2URLs", Command::BranchSel);
-    modelCommands.append(c);
-
     c = new Command("paste", Command::BranchSel);
     modelCommands.append(c);
 
@@ -850,11 +840,6 @@ void Main::setupAPI()
     c = new Command("repeatLastCommand", Command::AnySel);
     modelCommands.append(c);
 
-    c = new Command("saveImage", Command::ImageSel);
-    c->addParameter(Command::StringPar, false, "Filename of image to save");
-    c->addParameter(Command::StringPar, false, "Format of image to save");
-    modelCommands.append(c);
-
     c = new Command("saveSelection", Command::BranchOrImageSel);
     c->addParameter(Command::StringPar, false, "Filename to save branch or image");
     modelCommands.append(c);
@@ -875,12 +860,6 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("selectLatestAdded", Command::AnySel, Command::BoolPar);
-    modelCommands.append(c);
-
-    c = new Command("selectToggle", Command::BranchOrImageSel, Command::BoolPar);
-    modelCommands.append(c);
-
-    c = new Command("setHeadingConfluencePageName", Command::BranchSel);    // FIXME-3 adapt name and add recursie command
     modelCommands.append(c);
 
     c = new Command("setAnimCurve", Command::AnySel);
@@ -1039,6 +1018,14 @@ void Main::setupAPI()
     c->setComment("Remove label from the a branch with Confluence page details");
     branchCommands.append(c);
 
+    c = new Command("depth", Command::BranchOrImageSel, Command::IntPar);
+    c->setComment("Return depth of branch");
+    branchCommands.append(c);
+
+    c = new Command("detach", Command::BranchSel);
+    c->setComment("Detach branch and turn it into a map center");
+    branchCommands.append(c);
+
     // Same parameter for all frame commands
     QString useInnerFrameDesc = "Use setting for heading if true, for subtree if false";
 
@@ -1180,6 +1167,10 @@ void Main::setupAPI()
     c->setComment("Add directory structure to branch (experimental)");
     branchCommands.append(c);
 
+    c = new Command("isScrolled", Command::BranchSel, Command::BoolPar);
+    c->setComment("Check if branch is scrolled");
+    branchCommands.append(c);
+
     c = new Command("loadBranchInsert", Command::BranchSel);
     c->addParameter(Command::StringPar, false, "Filename of map to load");
     c->addParameter(Command::IntPar, true, "Index where map is inserted");
@@ -1196,16 +1187,16 @@ void Main::setupAPI()
     c->setComment("Load a note with given path and attach to branch");
     branchCommands.append(c);
 
-    c = new Command("isScrolled", Command::BranchSel, Command::BoolPar);
-    c->setComment("Check if branch is scrolled");
-    branchCommands.append(c);
-
     c = new Command("moveDown", Command::BranchSel);
     c->setComment("Move branch down");
     branchCommands.append(c);
 
     c = new Command("moveUp", Command::BranchSel);
     c->setComment("Move branch up");
+    branchCommands.append(c);
+
+    c = new Command("note2URLs", Command::BranchSel);
+    c->setComment("Extract URLs from note of branch");
     branchCommands.append(c);
 
     c = new Command("relinkToBranch", Command::BranchSel);
@@ -1312,6 +1303,10 @@ void Main::setupAPI()
     c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     c->addParameter(Command::IntPar, false, "Width of frame pen");
     c->setComment("Set width of frame border");
+    branchCommands.append(c);
+
+    c = new Command("setHeadingConfluencePageName", Command::BranchSel);    // FIXME-3 adapt name and add recursie command
+    c->setComment("Get page name and details for URL in branch from Confluence");
     branchCommands.append(c);
 
     c = new Command("setHeadingRichText", Command::BranchSel);
@@ -1493,6 +1488,11 @@ void Main::setupAPI()
 
     c = new Command("headingText", Command::ImageSel, Command::StringPar);
     c->setComment("Set heading of image from plaintext string");
+    imageCommands.append(c);
+
+    c = new Command("saveImage", Command::ImageSel);
+    c->addParameter(Command::StringPar, false, "Filename of image to save");
+    c->addParameter(Command::StringPar, false, "Format of image to save");
     imageCommands.append(c);
 
     c = new Command("relinkToBranch", Command::ImageSel);

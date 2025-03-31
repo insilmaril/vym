@@ -1720,7 +1720,6 @@ QString VymModel::setXLinkVar(XLink* xl, QString varName)
     return r;
 }
 
-// FIXME-2 saveState: Check VymModelWrapper vs BranchWrapper  in scripts. see vymmodelwrapper.h FIXME-3
 QString VymModel::saveState(
          QString undoCommand,
          QString redoCommand,
@@ -5388,9 +5387,9 @@ QColor VymModel::getCurrentHeadingColor()
     return Qt::black;
 }
 
-void VymModel::note2URLs() // FIXME-3 No saveState yet
+void VymModel::note2URLs(BranchItem *bi) // FIXME-3 No saveState yet
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
         /*
         saveStateChangingPart(  // note2Urls
@@ -5646,9 +5645,9 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)
     reposition();
 }
 
-void VymModel::setConfluencePageDetails(bool recursive)
+void VymModel::setConfluencePageDetails(bool recursive, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
         QString url = selbi->url();
         if (!url.isEmpty() &&

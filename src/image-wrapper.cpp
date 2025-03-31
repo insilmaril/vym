@@ -90,6 +90,11 @@ bool ImageWrapper::relinkToBranchAt(BranchWrapper *dst, int pos)
     return r;
 }
 
+void ImageWrapper::saveImage(const QString &filename)
+{
+    model()->saveImage(imageItemInt, filename);
+}
+
 bool ImageWrapper::selectParent()
 {
     bool r = model()->selectParent(imageItemInt);

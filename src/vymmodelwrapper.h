@@ -26,8 +26,6 @@ class VymModelWrapper : public QObject {
     void centerOnID(const QString &id); // tested: ok
     void copy();
     void cut();
-    int depth();        // FIXME-3 move to BranchWrapper
-    void detach();      // FIXME-3 move to BranchWrapper
     bool exportMap(QJSValueList args);
     Q_INVOKABLE BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
     Q_INVOKABLE AttributeWrapper* findAttributeById(const QString &);
@@ -45,9 +43,7 @@ class VymModelWrapper : public QObject {
     QString getComment();
     QString getTitle();
     QString getLinkColorHint();
-    int getRotationHeading();   // FIXME-3 move to BranchWrapper
-    int getRotationSubtree();   // FIXME-3 move to BranchWrapper
-    QString getSelectionString();//FIXME-3 copy to BranchWrapper?
+    QString getSelectionString();
     bool hasBackgroundImage();
     bool loadBackgroundImage(const QString &imagePath);
     bool loadBranchReplace(QString filename, BranchWrapper *bw);
@@ -58,10 +54,9 @@ class VymModelWrapper : public QObject {
     void moveSlideUp();
     void newBranchIterator(const QString &itname, bool deepLevelsFirst = false);
     Q_INVOKABLE BranchWrapper* nextBranch(const QString &itname);
-    void note2URLs();       // FIXME-3 move to BranchWrapper
     void paste();
     void redo();
-    void remove();              // FIXME-3 still needed? Rename to removeSelection()?
+    void remove();
     void removeAttribute(AttributeWrapper *aw);
     void removeBranch(BranchWrapper *bw);
     void removeImage(ImageWrapper *iw);
@@ -69,7 +64,6 @@ class VymModelWrapper : public QObject {
     void removeSlide(int n);
     void removeXLink(XLinkWrapper *xlw);
     QVariant repeatLastCommand();
-    void saveImage(const QString &filename);// FIXME-3 move to ImageWrapper
     bool saveSelection(const QString &filename);
     bool select(const QString &s);
     Q_INVOKABLE AttributeWrapper* selectedAttribute();
@@ -77,9 +71,7 @@ class VymModelWrapper : public QObject {
     Q_INVOKABLE XLinkWrapper* selectedXLink();
     bool selectUids(QJSValueList args);
     bool selectLatestAdded();
-    bool selectToggle(const QString &selectString); // FIXME-3 move to BranchWrapper and ImageWrapper
     void setDefaultLinkColor(const QString &color); // FIXME-3-4 maybe also rename other setMap* methods?
-    void setHeadingConfluencePageName();// FIXME-3 move to BranchWrapper
     void setAnimCurve(int n);
     void setAnimDuration(int n);
     void setAuthor(const QString &s);

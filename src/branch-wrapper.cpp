@@ -238,6 +238,18 @@ void BranchWrapper::deleteConfluencePageLabel(const QString &labelName)
     }
 }
 
+int BranchWrapper::depth()
+{
+    int r = branchItemInt->depth();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+void BranchWrapper::detach()
+{
+    model()->detach(branchItemInt);
+}
+
 bool BranchWrapper::getFrameAutoDesign(const bool &useInnerFrame)
 {
     bool r =  branchItemInt->getBranchContainer()->frameAutoDesign(useInnerFrame);
@@ -330,6 +342,20 @@ qreal BranchWrapper::getPosX()
 qreal BranchWrapper::getPosY()
 {
     qreal r = branchItemInt->getBranchContainer()->pos().y();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+int BranchWrapper::getRotationHeading()
+{
+    int r = branchItemInt->getBranchContainer()->rotationHeading();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+int BranchWrapper::getRotationSubtree()
+{
+    int r = branchItemInt->getBranchContainer()->rotationSubtree();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -529,6 +555,11 @@ void BranchWrapper::moveUp()
     model()->moveUp(branchItemInt);
 }
 
+void BranchWrapper::note2URLs()
+{
+    model()->note2URLs(branchItemInt);
+}
+
 BranchWrapper* BranchWrapper::parentBranch()
 {
     return branchItemInt->parentBranch()->branchWrapper();
@@ -702,6 +733,11 @@ void BranchWrapper::setHeadingColumnWidth(const int &w)
 void BranchWrapper::setHeadingColumnWidthAutoDesign(const bool b)
 {
     model()->setHeadingColumnWidthAutoDesign(b, branchItemInt);
+}
+
+void BranchWrapper::setHeadingConfluencePageName()
+{
+    model()->setConfluencePageDetails(false, branchItemInt);
 }
 
 void BranchWrapper::setHeadingRichText(const QString &text)
