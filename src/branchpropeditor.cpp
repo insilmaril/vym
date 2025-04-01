@@ -119,6 +119,8 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
 
     if (!ti) {
         ui.tabWidget->setEnabled(false);
+        ui.tabWidget->hide();
+        ui.emptyEditorLabel->show();
     }
     else if (ti->hasTypeBranch()) {
         branchItem = (BranchItem *)ti;
@@ -134,6 +136,8 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         for (int i = 0; i < 4; ++i)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
+        ui.tabWidget->show();
+        ui.emptyEditorLabel->hide();
     } else if (ti->hasTypeImage())
         imageItem = (ImageItem*)ti;
 

@@ -31,10 +31,23 @@
         <x>0</x>
         <y>0</y>
         <width>327</width>
-        <height>746</height>
+        <height>849</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="emptyEditorLabel">
+         <property name="text">
+          <string extracomment="Text is shown in BranchPropertyEditor if nothing is selected">Please select an item in map first.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignHCenter|Qt::AlignTop</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="tabShape">
