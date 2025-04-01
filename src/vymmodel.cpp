@@ -2629,8 +2629,8 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, Bran
         QString uif = toS(useInnerFrame);
         QString b_undo = toS(!b);
         QString b_redo = toS(b);
-        QString uc = QString("setFrameAutoDesign (%1, \"%2\");").arg(uif).arg(b_undo);
-        QString rc = QString("setFrameAutoDesign (%1, \"%2\");").arg(uif).arg(b_redo);
+        QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif).arg(b_undo);
+        QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif).arg(b_redo);
 
         QString comment = QString("Set automatic design of frame to '%1'").arg(toS(b));
 
@@ -2647,12 +2647,15 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, Bran
             setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
 	}
 
+        emitDataChanged(selbi);
+        branchPropertyEditor->updateControls();
+
         saveStateBranch(selbi, uc, rc, comment);
         saveStateEndScript();
     }
 }
 
-void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &t, BranchItem *bi)   // FIXME-2 update autoDesign and BranchPropertyWindow (similar for other values)
+void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &t, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
@@ -2663,8 +2666,8 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
 
         QString uif = toS(useInnerFrame);
 
-        QString oldFrameTypeName = bc->frameTypeString(useInnerFrame);
-        QString newFrameTypeName = bc->frameTypeString(useInnerFrame);
+        QString oldFrameTypeName = bc->frameTypeString(bc->frameType(useInnerFrame));
+        QString newFrameTypeName = FrameContainer::frameTypeString(t);
         QString uc = QString("setFrameType(%1, \"%2\");").arg(uif, oldFrameTypeName);
         QString rc = QString("setFrameType(%1, \"%2\");").arg(uif, newFrameTypeName);
         QString comment = QString("Set type of frame to %1").arg(newFrameTypeName);
@@ -2711,7 +2714,12 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
         if (saveCompleteFrame)
             saveStateEndScript();
 
-        emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
+        emitDataChanged(selbi);
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
     }
     reposition();
 }
@@ -2736,6 +2744,9 @@ void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, Br
             QString comment = QString("Set pen color of frame to %1").arg(colorNameNew);
 
             logAction(rc, comment, __func__);
+
+            emitDataChanged(selbi);
+            branchPropertyEditor->updateControls();
 
             saveStateBranch(selbi, uc, rc, comment);
 
@@ -2765,6 +2776,7 @@ void VymModel::setFrameBrushColor(
             bc->setFrameBrushColor(useInnerFrame, col);
         }
         emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
+        branchPropertyEditor->updateControls();
     }
 }
 
@@ -2785,9 +2797,13 @@ void VymModel::setFramePadding(
             saveStateBranch(selbi, uc, rc, comment);
 
             bc->setFramePadding(useInnerFrame, i);
+            emitDataChanged(selbi);
         }
     }
-    reposition();
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
 }
 void VymModel::setFramePenWidth(
     const bool &useInnerFrame, const int &i, BranchItem *bi)
@@ -2806,9 +2822,14 @@ void VymModel::setFramePenWidth(
             saveStateBranch(selbi, uc, rc, comment);
 
             bc->setFramePenWidth(useInnerFrame, i);
+            emitDataChanged(selbi);
         }
     }
-    reposition();
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
 }
 
 void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi)
@@ -2834,8 +2855,10 @@ void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi)
         }
     }
 
-    if (!selbis.isEmpty())
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
+    }
 }
 
 void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi)
@@ -2854,11 +2877,11 @@ void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi)
 
             bc->setColumnWidth(i);
             emitDataChanged(selbi);
-            branchPropertyEditor->updateControls();
         }
     }
 
     if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
     }
 }
@@ -2885,15 +2908,16 @@ void VymModel::setRotationAutoDesign(const bool &b, BranchItem *bi)
             saveStateBranch(selbi, uc, rc);
 
             bc->setRotationsAutoDesign(b);
-
-            branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
 
             saveStateEndScript();
         }
     }
 
-    if (!selbis.isEmpty())
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
+    }
 }
 
 void VymModel::setRotationHeading (const int &i, BranchItem* bi)
@@ -2913,11 +2937,14 @@ void VymModel::setRotationHeading (const int &i, BranchItem* bi)
             saveStateBranch(selbi, uc, rc, comment);
 
             bc->setRotationHeading(i);
+            emitDataChanged(selbi);
         }
     }
 
-    if (!selbis.isEmpty())
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
+    }
 }
 
 void VymModel::setRotationSubtree (const int &i, BranchItem *bi)
@@ -2936,11 +2963,14 @@ void VymModel::setRotationSubtree (const int &i, BranchItem *bi)
             saveStateBranch(selbi, uc, rc, comment);
 
             bc->setRotationSubtree(i);
+            emitDataChanged(selbi);
 	}
     }
 
-    if (!selbis.isEmpty())
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
+    }
 }
 
 void VymModel::setScaleAutoDesign (const bool & b, BranchItem *bi)
@@ -2965,13 +2995,14 @@ void VymModel::setScaleAutoDesign (const bool & b, BranchItem *bi)
             }
             saveStateBranch(selbi, uc, rc);
             bc->setScaleAutoDesign(b);
-            branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
 
             saveStateEndScript();
         }
     }
 
     if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
     }
 }
@@ -2996,12 +3027,14 @@ void VymModel::setScaleHeading (const qreal &f, const bool relative, BranchItem 
             saveStateBranch(selbi, uc, rc, c);
 
             bc->setScaleHeading(f_new);
-            branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
 	}
     }
 
-    if (!selbis.isEmpty())
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
+    }
 }
 
 qreal VymModel::getScaleHeading ()
@@ -3032,11 +3065,14 @@ void VymModel::setScaleSubtree (const qreal &f_new, BranchItem *bi)
 
             bc->setScaleSubtree(f_new);
             branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
 	}
     }
 
-    if (!selbis.isEmpty())
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
+    }
 }
 
 qreal VymModel::getScaleSubtree ()
@@ -3064,12 +3100,14 @@ void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
             saveState(uc, rc, c);
 
             selii->setScale(f_new);
-            branchPropertyEditor->updateControls();
+            emitDataChanged(selii);
         }
     }
 
-    if (!seliis.isEmpty())
+    if (!seliis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
+    }
 }
 
 void VymModel::setScale(const qreal &f, const bool relative)
@@ -3097,46 +3135,46 @@ void VymModel::resetSelectionSize() // FIXME-3 missing saveState. Switch (back?)
         setScale(1, false);
 }
 
-void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-3 no saveState yet (save: positions, auto, layout!)
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save: positions, auto, layout!)
 {
     // qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     BranchContainer *bc;
-    bool repositionRequired = false;
     foreach (BranchItem *selbi, selbis) {
         Container::Layout layout;
-        if (selbi) {
-            bc = selbi->getBranchContainer();
+        bc = selbi->getBranchContainer();
 
-            if (s == "Auto") {
-                bc->branchesContainerAutoLayout = true;
-                layout = mapDesignInt->branchesContainerLayout(selbi->depth());
-                if (bc->branchesContainerLayout() != layout) {
-                    bc->setBranchesContainerLayout(layout);
-                    repositionRequired = true;
-                }
-            } else {
-                bc->branchesContainerAutoLayout = false;
-                layout = Container::layoutFromString(s);
-                if (layout != Container::UndefinedLayout) {
-                    bc->setBranchesContainerLayout(layout);
-                    repositionRequired = true;
-                }
-            }
+        if (s == "Auto") {
+            // Set layout to "auto"
+            bc->branchesContainerAutoLayout = true;
+
+            // Get layout from mapDesign
+            layout = mapDesignInt->branchesContainerLayout(selbi->depth());
+            if (bc->branchesContainerLayout() != layout)
+                bc->setBranchesContainerLayout(layout);
+        } else {
+            bc->branchesContainerAutoLayout = false;
+            layout = Container::layoutFromString(s);
+            if (layout != Container::UndefinedLayout)
+                bc->setBranchesContainerLayout(layout);
         }
+        emitDataChanged(selbi);
     }
 
     // Links might have been added or removed, Nested lists, etc...
     foreach (BranchItem *selbi, selbis)
         applyDesignRecursively(MapDesign::LayoutChanged, selbi);
 
-    // Create and delete containers, update their structure
-    if (repositionRequired)
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+
+        // Create and delete containers, update their structure
         reposition();
+    }
 
 }
 
-void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-3 no saveState yet (save positions, too!)
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save positions, too!)
 {
     BranchContainer *bc;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -3153,8 +3191,13 @@ void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-3 no 
             if (layout != Container::UndefinedLayout)
                 bc->setImagesContainerLayout(layout);
         }
+        emitDataChanged(selbi);
     }
-    reposition();
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
 }
 
 void VymModel::setHideLinkUnselected(bool b, TreeItem *ti)
@@ -3182,8 +3225,13 @@ void VymModel::setHideLinkUnselected(bool b, TreeItem *ti)
             saveState( uc, rc, comment);
             ((MapItem *)selti)->setHideLinkUnselected(b);
         }
+        emitDataChanged(selti);
     }
-    branchPropertyEditor->updateControls();
+
+    if (!seltis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
 }
 
 void VymModel::setHideExport(bool b, BranchItem *bi)
