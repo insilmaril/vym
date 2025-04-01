@@ -25,6 +25,9 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
 
     ui.tabWidget->setEnabled(false);
 
+    // Attributes currently not used
+    ui.tabWidget->setTabVisible(ui.tabWidget->indexOf(ui.tabAttributes), false);
+
     QPixmap pix(16, 16);
     pix.fill(QColor(Qt::black));
     ui.innerFramePenColorButton->setIcon(pix);
@@ -136,10 +139,15 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
         for (int i = 0; i < 4; ++i)
             ui.tabWidget->setTabEnabled(i, true);
         ui.tabWidget->setTabEnabled(4, false);
+
+        ui.tabWidget->setTabVisible(ui.tabWidget->indexOf(ui.tabTasks), branchItem->getTask());
+
         ui.tabWidget->show();
         ui.emptyEditorLabel->hide();
-    } else if (ti->hasTypeImage())
+    } else if (ti->hasTypeImage()) {
         imageItem = (ImageItem*)ti;
+        ui.tabTasks->hide();
+    }
 
     updateControls();
 }

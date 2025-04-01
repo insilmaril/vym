@@ -54,9 +54,9 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>3</number>
          </property>
-         <widget class="QWidget" name="tabFrame">
+         <widget class="QWidget" name="tabFrames">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -464,7 +464,7 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tabLayout">
+         <widget class="QWidget" name="tabLayouts">
           <attribute name="title">
            <string>Layout</string>
           </attribute>
@@ -863,7 +863,7 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tabLink">
+         <widget class="QWidget" name="tabLinks">
           <attribute name="title">
            <string>Link</string>
           </attribute>
@@ -890,7 +890,7 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tabTask">
+         <widget class="QWidget" name="tabTasks">
           <attribute name="title">
            <string>Task</string>
           </attribute>
