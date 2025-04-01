@@ -162,8 +162,7 @@ VymModel::~VymModel()
     delete (wrapper);
     delete mapDesignInt;
 
-
-    //qDebug() << "Destr VymModel end this=" << this;
+    // qDebug() << "Destr VymModel end this=" << this;
 
     logInfo("VymModel destroyed", __func__);
 }

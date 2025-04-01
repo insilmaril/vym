@@ -4283,6 +4283,7 @@ bool Main::closeModelWithId(uint id)
             tabWidget->removeTab(i);
 
             // Destroy stuff, order is important
+            branchPropertyEditor->setModel(nullptr);
             delete (vm->getMapEditor());
             delete (vv);
             delete (vm);
@@ -5164,6 +5165,7 @@ bool Main::fileCloseMap(int i)
 
         // Destroy stuff, order is important
         noteEditor->clear();
+        branchPropertyEditor->setModel(nullptr);
         delete (m->getMapEditor());
         delete (vv);
         delete (m);

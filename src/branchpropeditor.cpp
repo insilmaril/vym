@@ -117,8 +117,9 @@ void BranchPropertyEditor::setItem(TreeItem *ti)
     branchContainer = nullptr;
     imageItem = nullptr;
 
-    if (!ti)
+    if (!ti) {
         ui.tabWidget->setEnabled(false);
+    }
     else if (ti->hasTypeBranch()) {
         branchItem = (BranchItem *)ti;
         branchContainer = branchItem->getBranchContainer();
@@ -352,7 +353,9 @@ void BranchPropertyEditor::setModel(VymModel *m)
             return;
         }
     }
-    ui.tabWidget->setEnabled(false);
+
+    // Disable and reset controls
+    setItem(nullptr);
 }
 
 void BranchPropertyEditor::updateLayoutControls()
