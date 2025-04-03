@@ -586,6 +586,8 @@ class VymModel : public TreeModel {
   public slots:
     void processJiraTicket(QJsonObject);
     void processJiraJqlQuery(QJsonObject);
+    void syncTrello();
+    void receivedTrelloData(QJsonDocument);
 
   public:
     void setConfluencePageDetails(bool recursive, BranchItem *bi = nullptr); // get page details from Confluence

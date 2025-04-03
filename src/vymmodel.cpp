@@ -55,6 +55,7 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeitem.h"
+#include "trello-agent.h"
 #include "vymmodelwrapper.h"
 #include "vymview.h"
 #include "warningdialog.h"
@@ -5690,6 +5691,53 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)
     mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
 
     reposition();
+}
+
+void VymModel::syncTrello()
+{
+    if (!TrelloAgent::available()) {
+        WarningDialog dia;
+        QString w = QObject::tr("Trello agent not setup.");
+        dia.setText(w);
+        dia.setWindowTitle( tr("Warning") + ": " + w);
+        dia.setShowAgainName("/TrelloAgent/notdefined");
+        dia.exec();
+
+        // FIXME-2 if (!mainWindow->settingsTrello()) return;
+    }
+
+    BranchItem *selbi = getSelectedBranch();
+
+    if (selbi) {
+        // Create agent
+        TrelloAgent *agent = new TrelloAgent;
+        if (!agent->setBranch(selbi)) {
+            // Abort
+            delete agent;
+            return;
+        }
+
+        agent->setBoard("627a201d7d74b04fba065a07");    // FIXME-2 still hardcoded
+        //agent->setJobType(TrelloAgent::GetMyBoards);
+        //agent->setJobType(TrelloAgent::GetBoardLists);
+        agent->setJobType(TrelloAgent::GetBoardActions);
+        //agent->setJobType(TrelloAgent::SyncBoardToBranch);
+
+        connect(agent, &TrelloAgent::trelloBoardDataReady, this, &VymModel::receivedTrelloData);
+
+        // Start contacting JIRA in background
+        agent->startJob();
+        mainWindow->statusMessage(tr("Contacting trello...", "VymModel"));
+    }
+}
+
+void VymModel::receivedTrelloData(QJsonDocument jsdoc)
+{
+    /* Pretty print trello data
+    */
+    qDebug() << "VM::receivedTrelloData";
+    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString() << endl;
+
 }
 
 void VymModel::setConfluencePageDetails(bool recursive, BranchItem *bi)
