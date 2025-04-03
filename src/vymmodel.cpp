@@ -1896,7 +1896,7 @@ QString VymModel::saveStateBranch(
 void VymModel::saveStateBeginScript(const QString &comment)
 {
     if (buildingUndoScript)
-        logWarning("Nested saveState scripts found", __func__);  // FIXME-2 e.g. for setFrameAutoDesign...
+        logWarning("Nested saveState scripts found", __func__);
     else {
         logDebug("Starting to build saveStateScript: '" + comment + "'", __func__);
 
