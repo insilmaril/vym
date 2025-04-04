@@ -82,27 +82,25 @@ bool JiraAgent::setJiraServer(int n)
     if (!url.isEmpty()) {
         baseUrlInt = url;
         serverNameInt = settings.value("name","-").toString();
-        if (usePAT) {
-            QString pat = settings.value("PAT", "").toString();
-            if (!pat.isEmpty()) {
-                // Use PAT
-                authUsingPATInt = true;
-                personalAccessTokenInt = pat;
+        QString pat = settings.value("PAT", "").toString();
+        if (!pat.isEmpty()) {
+            authUsingPATInt = true;
+            personalAccessTokenInt = pat;
+            foundServer = true;
+        }
+
+        // Looking for username and password
+        QString user = settings.value("username", "").toString();
+        if (!user.isEmpty()) {
+            QString pass = settings.value("password", "").toString();
+            if (!pass.isEmpty()) {
+                userNameInt = user;
+                passwordInt = pass;
                 foundServer = true;
-            }
-        } else {
-            // Looking for username and password
-            QString user = settings.value("username", "").toString();
-            if (!user.isEmpty()) {
-                QString pass = settings.value("password", "").toString();
-                if (!pass.isEmpty()) {
-                    userNameInt = user;
-                    passwordInt = pass;
-                    foundServer = true;
-                }
             }
         }
     }
+    qDebug() << __func__ << " n=" << n << "usePAT=" << authUsingPATInt << " userName=" << userNameInt;
 
     return foundServer;
 }
@@ -189,7 +187,7 @@ void JiraAgent::setDoSubtree(bool b)
     doSubtreeInt = b;
 }
 
-bool JiraAgent::setQuery(const QString &s)
+bool JiraAgent::setQuery(const QString &s)  // FIXME-3 only works for first server!
 {
     queryInt = s;
 
@@ -197,28 +195,25 @@ bool JiraAgent::setQuery(const QString &s)
                               // Search for project = PATTERN and use resulting server
 
     settings.beginGroup("/atlassian/jira/servers/1");
-    bool usePAT = settings.value("authUsingPAT", true).toBool();
+    bool usePAT = settings.value("authUsingPAT", true).toBool();    // FIXME-3 should be done in setJiraServer
     QString url = settings.value("baseUrl", "").toString();
     if (!url.isEmpty()) {
         baseUrlInt = url;
-        qDebug() << "JA::setQuery  url=" <<url;
-        if (usePAT) {
-            QString pat = settings.value("PAT", "").toString();
-            if (!pat.isEmpty()) {
-                // Use PAT
-                personalAccessTokenInt = pat;
+        //qDebug() << "JA::setQuery  url=" <<url;
+        QString pat = settings.value("PAT", "").toString();
+        if (!pat.isEmpty()) {
+            // Use PAT
+            personalAccessTokenInt = pat;
+            foundServer = true;
+        }
+
+        QString user = settings.value("username", "").toString();
+        if (!user.isEmpty()) {
+            QString pass = settings.value("password", "").toString();
+            if (!pass.isEmpty()) {
+                userNameInt = user;
+                passwordInt = pass;
                 foundServer = true;
-            }
-        } else {
-            // Looking for username and password
-            QString user = settings.value("username", "").toString();
-            if (!user.isEmpty()) {
-                QString pass = settings.value("password", "").toString();
-                if (!pass.isEmpty()) {
-                    userNameInt = user;
-                    passwordInt = pass;
-                    foundServer = true;
-                }
             }
         }
     }
@@ -339,12 +334,18 @@ void JiraAgent::startGetTicketRequest()
 
     // Basic authentication in header
     QString headerData;
-    if (authUsingPATInt)
-        headerData = QString("Bearer %1").arg(personalAccessTokenInt);
-    else {
+
+    if (authUsingPATInt) {
+        //headerData = QString("Bearer %1").arg(personalAccessTokenInt);
+        QString concatenated = userNameInt + ":" + personalAccessTokenInt;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+        // qDebug() << " - UN + PAT: " << concatenated;
+    } else {
         QString concatenated = userNameInt + ":" + passwordInt;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
+        // qDebug() << " - UN + PW: " << concatenated;
     }
 
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
@@ -403,18 +404,22 @@ void JiraAgent::startQueryRequest()
 
     // Basic authentication in header
     QString headerData;
-    if (authUsingPATInt)
-        headerData = QString("Bearer %1").arg(personalAccessTokenInt);
-    else {
+    if (authUsingPATInt) {
+        //headerData = QString("Bearer %1").arg(personalAccessTokenInt);
+        QString concatenated = userNameInt + ":" + personalAccessTokenInt;
+        QByteArray data = concatenated.toLocal8Bit().toBase64();
+        headerData = "Basic " + data;
+        // qDebug() << " - UN + PAT: " << concatenated;
+    } else {
         QString concatenated = userNameInt + ":" + passwordInt;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
+        // qDebug() << " - UN + PW: " << concatenated;
     }
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    //queryInt = "project = OKRTEST";
     QString s = QString(
     "{" 
       "\"jql\": \"%1\", "
@@ -452,14 +457,12 @@ void JiraAgent::startQueryRequest()
     connect(networkManager, &QNetworkAccessManager::finished,
         this, &JiraAgent::queryFinished);
 
-    qDebug() << "JA::starting query";
-    qDebug() << "  s=" << s;
     networkManager->post(request, data);
 }
 
 void JiraAgent::queryFinished(QNetworkReply *reply)
 {
-    qDebug() << "JA::queryFinished";
+    //qDebug() << "JA::queryFinished";
 
     killTimer->stop();
 
@@ -474,14 +477,14 @@ void JiraAgent::queryFinished(QNetworkReply *reply)
                 nullptr, tr("Warning"),
                 tr("Authentication problem when contacting JIRA"));
 
-        qWarning() << "JiraAgent::queryFinished reply error";
+        QString warning = "JiraAgent::queryFinished reply error\n";
 
-        qWarning() << "        Error: " << reply->error();
-        qWarning() << "  Errorstring: " <<  reply->errorString();
-        qDebug() << "    Request Url: " << reply->url() ;
-        qDebug() << "      Operation: " << reply->operation() ;
+        warning += QString("        Error: %1").arg(reply->error());
+        warning += QString("  Errorstring: %1").arg(reply->errorString());
+        warning += QString("    Request Url: %1").arg(reply->url().toString());
+        warning += QString("      Operation: %1").arg(reply->operation());
+        //qDebug() << "      readAll: ";
 
-        qDebug() << "      readAll: ";
         QJsonDocument jsdoc;
         jsdoc = QJsonDocument::fromJson(fullReply);
         QString fullReplyFormatted = QString(jsdoc.toJson(QJsonDocument::Indented));
