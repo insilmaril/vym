@@ -5626,7 +5626,7 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
         emitDataChanged(bi);
 
         // Pretty print JIRA ticket
-        ji.print();
+        // ji.print();
     }
 
     repositionBlocked = false;
