@@ -2051,7 +2051,11 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":up-diagonal-right.png"), tr("Move branch diagonally up", "Edit menu"),
                     this);
+#if defined(Q_OS_MACX)
+    a->setShortcut(Qt::SHIFT | Qt::Key_PageUp);
+#else
     a->setShortcut(Qt::CTRL | Qt::Key_PageUp);
+#endif
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
@@ -2065,7 +2069,11 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":down-diagonal-left.png"), tr("Move branch diagonally down", "Edit menu"),
                     this);
+#if defined(Q_OS_MACX)
+    a->setShortcut(Qt::SHIFT | Qt::Key_PageDown);
+#else
     a->setShortcut(Qt::CTRL | Qt::Key_PageDown);
+#endif 
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);

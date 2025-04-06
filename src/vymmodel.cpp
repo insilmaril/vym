@@ -892,6 +892,7 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
         } else
             mainWindow->statusMessage(tr("Saved %1").arg(saveFilePath));
 
+        logInfo("Finishing saving map " + destPath, __func__);  // FIXME-2 debugging
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
     }
@@ -1344,6 +1345,7 @@ void VymModel::autosave()
             qDebug() << "  VM::autosave  rejected, file on disk is newer than "
                         "last save.\n";
     }
+    logInfo("Autosave finished", __func__); // FIXME-2 remove after debugging
 }
 
 void VymModel::fileChanged()

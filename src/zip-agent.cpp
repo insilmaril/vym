@@ -1,9 +1,11 @@
 #include <QOperatingSystemVersion>
 
+#include "mainwindow.h" // logInfo()
 #include "zip-agent.h"
 
 extern QString zipToolPath;
 extern QString unzipToolPath;
+extern Main* mainWindow;
 
 ZipAgent::ZipAgent(QDir zipDir, QString zipName)   // FIXME-4 Does not support deleting unused files
                                                    // Not supported in Windows tar.
@@ -54,7 +56,6 @@ void ZipAgent::setBackgroundProcess(bool b)
 
 void ZipAgent::startZip()
 {
-    //qDebug() << "ZipAgent::startZip";
     connect(this, SIGNAL(finished(int, QProcess::ExitStatus)),
             this, SLOT(zipProcessFinished(int, QProcess::ExitStatus)));
 
@@ -73,6 +74,8 @@ void ZipAgent::startZip()
     args << ".";
 #endif
     setArguments(args);
+    mainWindow->logInfo("Starting compressing " + zipDirInt.path() + " : " + zipToolPath + " " + args.join(" "));
+
     start();
 
     if (!isBackgroundProcessInt) {
@@ -105,7 +108,7 @@ void ZipAgent::startZip()
 
 void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    //qDebug() << "ZA::zipProcessFinished  exitCode=" << exitCode << " exitStatus=" << exitStatus;
+    mainWindow->logInfo(QString("ZA::zipProcessFinished  exitCode=%1 exitStatus=%2").arg(exitCode, exitStatus), __func__);
 
 #if defined(Q_OS_WINDOWS)
     // zip could be started
