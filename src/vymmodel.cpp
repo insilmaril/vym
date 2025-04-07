@@ -520,7 +520,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 
     // Create temporary directory for unzip
     bool ok;
-    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
+    QString tmpUnzipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
     if (!ok) {
         QMessageBox::critical(
             0, tr("Critical Load Error"),
@@ -544,7 +544,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             // is within the zipfile and cannot be used yet.
             mainWindow->statusMessage(tr("Uncompressing %1").arg(fname));
 
-        ZipAgent zipAgent(tmpZipDir, fname);
+        ZipAgent zipAgent(tmpUnzipDir, fname);
         zipAgent.setBackgroundProcess(false);
         zipAgent.startUnzip();
         if (zipAgent.exitStatus() != QProcess::NormalExit)
@@ -558,50 +558,61 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     }
 
     if (zipped) {
-        // Look for mapname.xml
-        xmlfile = fname.left(fname.lastIndexOf(".", -1, Qt::CaseSensitive));
-        xmlfile = xmlfile.section('/', -1);
-        QFile mfile(tmpZipDir + "/" + xmlfile + ".xml");
-        if (!mfile.exists()) {
-            // mapname.xml does not exist, well,
-            // maybe someone renamed the mapname.vym file...
-            // Try to find any .xml in the toplevel
-            // directory of the .vym file
-            QStringList filters;
-            filters << "*.xml";
-            QStringList flist = QDir(tmpZipDir).entryList(filters);
-            if (flist.count() == 1) {
-                // Only one entry, take this one
-                xmlfile = tmpZipDir + "/" + flist.first();
-            } else {
-                // FIXME-5 Multiple entries, load all (but only the first one
-                // into this ME)
-                // mainWindow->fileLoadFromTmp (flist);
-                // returnCode = 1;	// Silently forget this attempt to load
-                if (fileType == File::IThoughtsMap) {
-                    if (!flist.contains("mapdata.xml")) {
+        QStringList filters;
+        filters << "*.xml";
+        QStringList xmlFileList = QDir(tmpUnzipDir).entryList(filters);
+        if (xmlFileList.count() == 1) {
+            // Only one xml file in zip archive, take this one
+            xmlfile = tmpUnzipDir + "/" + xmlFileList.first();
+        } else {
+            // Multiple xml files - which one to choose?
+            // Sometimes (at least on Windows) a zipped (!) $MAPNAME.xml also ends up in archive,
+            // which prevented subsequent loading
+            QString warning = QString("Found multiple .xml files in %1: %2").arg(fname, xmlFileList.join(", "));
+            logWarning(warning, __func__);
+            QMessageBox::warning (0, "Multiple xml files found", warning + "\n\nWilll try to keep only map.xml");
+
+            // mainWindow->fileLoadFromTmp (xmlFileList);
+            // returnCode = 1;	// Silently forget this attempt to load
+            if (fileType == File::VymMap) {
+                // Default map name
+                QString xfile = "map.xml";
+                if (xmlFileList.contains(xfile))
+                    xmlfile = tmpUnzipDir + "/" + xfile;
+                else {
+                    // Try $MAPNAME.xml
+                    xfile = basename(fname);
+                    xfile = tmpUnzipDir + "/" + xfile.left(xfile.lastIndexOf(".", -1, Qt::CaseSensitive)) + ".xml";
+                    QFile mfile(xfile);
+                    if (!mfile.exists()) {
+                        // $MAPNAME.xml does not exist, well, ...
                         QMessageBox::critical(
-                            0, tr("Critical Load Error"),
-                            tr("Couldn't find %1 in map file.\n").arg("mapdata.xml"));
+                            0, tr("Critical Load Error"), "Multiple maps found, but no map.xml or " + xfile);
                         noError = false;
                     }
-                    else
-                        xmlfile = tmpZipDir + "/mapdata.xml";
+                }
+            } else if (fileType == File::IThoughtsMap) {
+                if (!xmlFileList.contains("mapdata.xml")) {
+                    QMessageBox::critical(
+                        0, tr("Critical Load Error"),
+                        tr("Couldn't find %1 in map file.\n").arg("mapdata.xml"));
+                    noError = false;
                 }
                 else
-                    qWarning() << "VymModel::loadMap multimap found " << flist;
-            }
-
-            if (flist.isEmpty()) {
+                    xmlfile = tmpUnzipDir + "/mapdata.xml";
+            } else {
                 QMessageBox::critical(
-                    0, tr("Critical Load Error"),
-                    tr("Couldn't find a map (*.xml) in .vym archive.\n"));
+                    0, tr("Critical Load Error"), "Multiple maps found in zip archive and no clue about file type");
                 noError = false;
             }
-        } // file doesn't exist
-        else
-            xmlfile = mfile.fileName();
-    }
+        }
+        if (xmlFileList.isEmpty()) {
+            QMessageBox::critical(
+                0, tr("Critical Load Error"),
+                tr("Couldn't find a map (*.xml) in .vym archive.\n"));
+            noError = false;
+        }
+    } // zipped
 
     QFile file(xmlfile);
 
@@ -610,8 +621,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     if (!file.exists()) {
         QMessageBox::critical(
             0, tr("Critical Parse Error"),
-            tr(QString("Couldn't open map %1").arg(file.fileName()).toUtf8()));
-        noError = false;
+            tr(QString("Couldn't open map \"%1\"").arg(file.fileName()).toUtf8()));
         noError = false;
     }
     else {
@@ -623,7 +633,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         // We need to set the tmpDir in order  to load files with rel. path
         QString tmpdir;
         if (zipped)
-            tmpdir = tmpZipDir;
+            tmpdir = tmpUnzipDir;
         else
             tmpdir = fname.left(fname.lastIndexOf("/", -1));
 
@@ -713,7 +723,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     }
 
     // Cleanup
-    removeDir(QDir(tmpZipDir));
+    removeDir(QDir(tmpUnzipDir));
     delete reader;
 
     // Restore original zip state
