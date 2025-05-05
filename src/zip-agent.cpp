@@ -108,7 +108,7 @@ void ZipAgent::startZip()
 
 void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    mainWindow->logInfo(QString("ZA::zipProcessFinished  exitCode=%1 exitStatus=%2").arg(exitCode, exitStatus), __func__);
+    mainWindow->logInfo(QString("ZA::zipProcessFinished  exitCode=%1 exitStatus=%2").arg(exitCode).arg(exitStatus), __func__);
 
 #if defined(Q_OS_WINDOWS)
     // zip could be started
