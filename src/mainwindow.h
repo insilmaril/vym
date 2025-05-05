@@ -458,6 +458,7 @@ class Main : public QMainWindow {
     QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
+    QMenu *windowsMenu;
     QToolBar *fileToolbar;
     QToolBar *clipboardToolbar;
     QToolBar *editActionsToolbar;

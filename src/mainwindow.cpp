@@ -1798,7 +1798,7 @@ void Main::setupFileActions()
 
     fileMenu->addSeparator();
 
-    a = new QAction(tr("Properties"), this);
+    a = new QAction(tr("Map properties"), this);
     switchboard.addSwitch("editMapProperties", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMapProperties()));
     fileMenu->addAction(a);
@@ -2607,7 +2607,7 @@ void Main::setupEditActions()
     actionLoadImage = a;
 
     a = new QAction(
-        tr("Property window", "Dialog to edit properties of selection") +
+        tr("Item property window", "Dialog to edit properties of selected item") +
             QString("..."),
         this);
     a->setShortcut(Qt::Key_P);
@@ -2615,7 +2615,7 @@ void Main::setupEditActions()
     a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     addAction(a);
-    switchboard.addSwitch("mapTogglePropertEditor", shortcutScope, a, tag);
+    switchboard.addSwitch("mapTogglePropertyEditor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleProperty()));
     actionViewTogglePropertyEditor = a;
 }
@@ -2849,11 +2849,14 @@ void Main::setupViewActions()
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
     toolbarsMenu =
         viewMenu->addMenu(tr("Toolbars", "Toolbars overview in view menu"));
-    QString tag = tr("Views", "Shortcuts");
+    windowsMenu =
+        viewMenu->addMenu(tr("Windows", "Editor windows overview in view menu"));
 
     viewMenu->addSeparator();
 
     QAction *a;
+
+    QString tag = tr("Views", "Shortcuts");
 
     a = new QAction(QPixmap(":view-video-projector.png"), 
             tr("Toggle Presentation mode", "View action") + " " +
@@ -2946,7 +2949,10 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenterRotated()));
     actionCenterOnRotated = a;
 
+
     viewMenu->addSeparator();
+
+    // Editor and other windows
 
     // a=noteEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/flag-note.svg"),
@@ -2954,7 +2960,7 @@ void Main::setupViewActions()
     a->setShortcut(Qt::Key_N);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     mapEditorActions.append(a);
     switchboard.addSwitch("mapToggleNoteEditor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleNoteEditor()));
@@ -2968,7 +2974,7 @@ void Main::setupViewActions()
     a->setShortcut(Qt::Key_E);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleHeadingEditor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHeadingEditor()));
     actionViewToggleHeadingEditor = a;
@@ -2978,7 +2984,7 @@ void Main::setupViewActions()
                     tr("Tree editor", "View action"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_T);
     a->setCheckable(true);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleTreeEditor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTreeEditor()));
     actionViewToggleTreeEditor = a;
@@ -2989,7 +2995,7 @@ void Main::setupViewActions()
     a->setShortcut(Qt::Key_Q);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleTaskEditor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTaskEditor()));
     actionViewToggleTaskEditor = a;
@@ -2997,7 +3003,7 @@ void Main::setupViewActions()
     a = new QAction(QPixmap(":/slideeditor.png"),
                     tr("Slide editor", "View action"), this);
     a->setCheckable(true);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleSlideEditor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSlideEditor()));
     actionViewToggleSlideEditor = a;
@@ -3006,7 +3012,7 @@ void Main::setupViewActions()
                     tr("Script editor", "View action"), this);
     a->setShortcut(Qt::SHIFT | Qt::Key_S);
     a->setCheckable(true);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleScriptEditor", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptEditor()));
     actionViewToggleScriptEditor = a;
@@ -3014,7 +3020,7 @@ void Main::setupViewActions()
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
     a->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_S);
     a->setCheckable(true);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleScriptOutput", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptOutput()));
     actionViewToggleScriptOutput = a;
@@ -3024,16 +3030,17 @@ void Main::setupViewActions()
     a->setShortcut(Qt::CTRL | Qt::Key_H);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
-    viewMenu->addAction(a);
+    windowsMenu->addAction(a);
     mapEditorActions.append(a);
     switchboard.addSwitch("mapToggleHistoryWindow", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHistory()));
     actionViewToggleHistoryWindow = a;
 
-    viewMenu->addAction(actionViewTogglePropertyEditor);
+    windowsMenu->addAction(actionViewTogglePropertyEditor);
 
     viewMenu->addSeparator();
 
+    // Switches 
     a = new QAction(tr("Antialiasing", "View action"), this);
     a->setCheckable(true);
     a->setChecked(settings.value("/mainwindow/view/AntiAlias", true).toBool());
@@ -3051,6 +3058,9 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSmoothPixmap()));
     actionViewToggleSmoothPixmapTransform = a;
 
+    viewMenu->addSeparator();
+
+    // Map and slides
     a = new QAction(tr("Next Map", "View action"), this);
     a->setStatusTip(a->text());
     a->setShortcut(Qt::SHIFT | Qt::Key_Right);
@@ -3798,8 +3808,6 @@ void Main::setupContextMenus()
 
     // Context Menu for branch or mapcenter
     branchContextMenu = new QMenu(this);
-    branchContextMenu->addAction(actionViewTogglePropertyEditor);
-    branchContextMenu->addSeparator();
 
     // Submenu "Add"
     branchAddContextMenu = branchContextMenu->addMenu(tr("Add"));
@@ -3891,6 +3899,9 @@ void Main::setupContextMenus()
     connect(branchXLinksContextMenuFollow, SIGNAL(triggered(QAction *)), this,
             SLOT(editFollowXLink(QAction *)));
 
+    branchContextMenu->addSeparator();
+    branchContextMenu->addAction(actionViewTogglePropertyEditor);
+
     // Context menu for floatimage
     floatimageContextMenu = new QMenu(this);
     a = new QAction(tr("Save image", "Context action"), this);
@@ -3913,7 +3924,6 @@ void Main::setupContextMenus()
 
     canvasContextMenu->addSeparator();
 
-    canvasContextMenu->addAction(actionMapProperties);
     canvasContextMenu->addAction(actionFormatFont);
 
     canvasContextMenu->addSeparator();
@@ -3929,6 +3939,9 @@ void Main::setupContextMenus()
     canvasContextMenu->addAction(actionFormatLinkColor);
     canvasContextMenu->addAction(actionFormatSelectionColor);
     canvasContextMenu->addAction(actionFormatBackground);
+
+    canvasContextMenu->addSeparator();
+    canvasContextMenu->addAction(actionMapProperties);
 
     // Menu for last opened files
     // Create actions
