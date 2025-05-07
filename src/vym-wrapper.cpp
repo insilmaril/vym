@@ -17,7 +17,6 @@ extern QString vymVersion;
 
 extern bool usingDarkTheme;
 
-#include "vymmodelwrapper.h"
 
 VymWrapper::VymWrapper()
 {
@@ -219,7 +218,7 @@ uint VymWrapper::currentMapID()
     return r;
 }
 
-void VymWrapper::toggleTreeEditor() { mainWindow->windowToggleTreeEditor(); }
+void VymWrapper::toggleTreeEditor() { mainWindow->windowToggleTreeEditors(); }
 
 void VymWrapper::saveFile(
     const QString &filename,

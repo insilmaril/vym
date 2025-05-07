@@ -1,6 +1,11 @@
 #include "dockeditor.h"
 
+#include "mainwindow.h"
 #include "vymmodel.h"
+
+#include <QCloseEvent>
+
+extern Main *mainWindow;
 
 DockEditor::DockEditor() { init(); }
 DockEditor::DockEditor(QString title, QWidget *p, VymModel *m)
@@ -23,4 +28,10 @@ void DockEditor::changeTopLevel(bool topLevel)
         setWindowTitle(editorTitle + ": " + model->getFileName());
     else
         setWindowTitle(editorTitle);
+}
+
+void DockEditor::closeEvent(QCloseEvent *event)
+{
+    // Pass event on to overloaded editors (TreeEditor, SlideEditor)
+    ((DockEditor*)widget())->closeEvent(event);
 }

@@ -102,6 +102,11 @@ void TreeEditor::contextMenuEvent(QContextMenuEvent *e) {
     e->accept();
 }
 
+void TreeEditor::closeEvent(QCloseEvent *event)
+{
+    mainWindow->windowSetTreeEditorsVisibility(false);
+}
+
 void TreeEditor::cursorUp()
 {
     QModelIndex ix = getSelectedIndex();

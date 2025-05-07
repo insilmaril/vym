@@ -16,12 +16,8 @@ class VymView : public QMainWindow {
     Q_OBJECT
   public:
     VymView(VymModel *model);
-    ~VymView();
-    void readSettings();
     VymModel *getModel();
     MapEditor *getMapEditor();
-    bool treeEditorIsVisible();
-    bool slideEditorIsVisible();
     void initFocus();
     void nextSlide();
     void previousSlide();
@@ -36,8 +32,8 @@ class VymView : public QMainWindow {
     void collapseOneLevel();
     void collapseUnselected();
     void showSelection(bool scaled, bool rotated);
-    void toggleTreeEditor();
-    void toggleSlideEditor();
+    void setTreeEditorVisibility(bool);
+    void setSlideEditorVisibility(bool);
     void setFocusMapEditor();
 
   private:

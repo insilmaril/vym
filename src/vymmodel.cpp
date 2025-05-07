@@ -682,9 +682,6 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                     resetHistory();
                     resetSelectionHistory();
 
-                    // Set treeEditor and slideEditor visibility per map
-                    vymView->readSettings();
-
                     if (!tryVymLock() && debug)
                         qWarning() << "VM::loadMap  no lockfile created!";
                 }

@@ -3,6 +3,8 @@
 
 #include <QDockWidget>
 
+class QCloseEvent;
+
 class VymModel;
 
 class DockEditor : public QDockWidget {
@@ -14,6 +16,9 @@ class DockEditor : public QDockWidget {
 
   public slots:
     void changeTopLevel(bool topLevel);
+
+  protected:
+    void closeEvent(QCloseEvent *event);
 
   private:
     QString editorTitle;

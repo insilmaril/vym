@@ -323,9 +323,11 @@ class Main : public QMainWindow {
     bool settingsJIRA();
 
     void windowToggleNoteEditor();
-    void windowToggleTreeEditor();
+    void windowToggleTreeEditors();
+    void windowSetTreeEditorsVisibility(bool);
     void windowToggleTaskEditor();
-    void windowToggleSlideEditor();
+    void windowToggleSlideEditors();
+    void windowSetSlideEditorsVisibility(bool);
     void windowToggleScriptEditor();
     void windowToggleScriptOutput();
     void windowToggleHistory();
@@ -613,9 +615,13 @@ class Main : public QMainWindow {
 
     QAction *actionViewToggleNoteEditor;
     QAction *actionViewToggleHeadingEditor;
-    QAction *actionViewToggleTreeEditor;
     QAction *actionViewToggleTaskEditor;
+  
+  public: // Allow VymView class to check visibility  
+    QAction *actionViewToggleTreeEditor;
     QAction *actionViewToggleSlideEditor;
+
+  private:  
     QAction *actionViewToggleScriptEditor;
     QAction *actionViewToggleScriptOutput;
     QAction *actionViewToggleHistoryWindow;

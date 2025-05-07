@@ -62,6 +62,11 @@ SlideEditor::SlideEditor(VymModel *m)
     //    (expandAll() ));
 }
 
+void SlideEditor::closeEvent(QCloseEvent *event)
+{
+    mainWindow->windowSetSlideEditorsVisibility(false);
+}
+
 void SlideEditor::previousSlide()
 {
     QModelIndex ix = slideModel->getSelectedIndex();

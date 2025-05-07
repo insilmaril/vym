@@ -380,6 +380,9 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     updateGeometry();
 
+    actionViewToggleTreeEditor->setChecked(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
+    actionViewToggleSlideEditor->setChecked(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
+
     // After startup, schedule looking for updates AFTER
     // release notes have been downloaded
     // (avoid race condition with simultanously receiving cookies)
@@ -407,6 +410,11 @@ Main::~Main()
         settings.setValue("/mainwindow/geometry", saveGeometry());
         settings.setValue("/mainwindow/state", saveState(0)); // FIXME-2 use saveState and saveGeometry
                                                               // https://doc.qt.io/qt-6/qmainwindow.html#saveState
+
+        settings.setValue("/mainwindow/view/showTreeEditors",
+                actionViewToggleTreeEditor->isChecked());
+        settings.setValue("/mainwindow/view/showSlideEditors",
+                actionViewToggleSlideEditor->isChecked());
 
         settings.setValue("/mainwindow/view/AntiAlias",
                           actionViewToggleAntiAlias->isChecked());
@@ -2986,7 +2994,7 @@ void Main::setupViewActions()
     a->setCheckable(true);
     windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleTreeEditor", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTreeEditor()));
+    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTreeEditors()));
     actionViewToggleTreeEditor = a;
 
     a = new QAction(QPixmap(":/taskeditor.png"),
@@ -3005,7 +3013,7 @@ void Main::setupViewActions()
     a->setCheckable(true);
     windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleSlideEditor", shortcutScope, a, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSlideEditor()));
+    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSlideEditors()));
     actionViewToggleSlideEditor = a;
 
     a = new QAction(QPixmap(":/scripteditor.png"),
@@ -6737,10 +6745,16 @@ void Main::windowToggleNoteEditor()
     }
 }
 
-void Main::windowToggleTreeEditor()
+void Main::windowToggleTreeEditors()
 {
-    if (tabWidget->currentWidget())
-        currentView()->toggleTreeEditor();
+    windowSetTreeEditorsVisibility(actionViewToggleTreeEditor->isChecked());
+}
+
+void Main::windowSetTreeEditorsVisibility(bool b)
+{
+    actionViewToggleTreeEditor->setChecked(b);
+    for (int i = 0; i < tabWidget->count(); i++)
+        ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
 }
 
 void Main::windowToggleTaskEditor()
@@ -6755,10 +6769,16 @@ void Main::windowToggleTaskEditor()
     }
 }
 
-void Main::windowToggleSlideEditor()
+void Main::windowToggleSlideEditors()  // FIXME-2 not ported yet like TreeEditor
 {
-    if (tabWidget->currentWidget())
-        currentView()->toggleSlideEditor();
+    windowSetSlideEditorsVisibility(actionViewToggleSlideEditor->isChecked());
+}
+
+void Main::windowSetSlideEditorsVisibility(bool b)
+{
+    actionViewToggleSlideEditor->setChecked(b);
+    for (int i = 0; i < tabWidget->count(); i++)
+        ((VymView*)tabWidget->widget(i))->setSlideEditorVisibility(b);
 }
 
 void Main::windowToggleScriptEditor()
@@ -7003,16 +7023,6 @@ void Main::updateActions()
         actionGetConfluencePageDetailsRecursively->setEnabled(false);
         actionConnectGetConfluenceUser->setEnabled(false);
         actionFileExportConfluence->setEnabled(false);
-    }
-
-    VymView *vv = currentView();
-    if (vv) {
-        actionViewToggleTreeEditor->setChecked(vv->treeEditorIsVisible());
-        actionViewToggleSlideEditor->setChecked(vv->slideEditorIsVisible());
-    }
-    else {
-        actionViewToggleTreeEditor->setChecked(false);
-        actionViewToggleSlideEditor->setChecked(false);
     }
 
     VymModel *m = currentModel();

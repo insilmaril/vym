@@ -50,6 +50,7 @@ QString debugInfo()
     s += QString("  currentPath: %1\n").arg(QDir::currentPath());
     s += QString("   appDirPath: %1\n")
             .arg(QCoreApplication::applicationDirPath());
+    s += QString("       config: %1\n").arg(settings.fileName());
     s += QString("use actionLog: %1\n").arg(useActionLog);
     s += QString("actionLogPath: %1\n").arg(actionLogPath);
     s += QString("     Settings: %1\n\n").arg(settings.fileName());

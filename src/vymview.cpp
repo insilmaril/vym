@@ -35,11 +35,9 @@ VymView::VymView(VymModel *m)
                         this, model);
     de->setWidget(treeEditor);
     de->setAllowedAreas(Qt::AllDockWidgetAreas);
+    de->setVisible(mainWindow->actionViewToggleTreeEditor->isChecked());
     addDockWidget(Qt::LeftDockWidgetArea, de);
     treeEditorDE = de;
-
-    connect(treeEditorDE, SIGNAL(visibilityChanged(bool)), mainWindow,
-            SLOT(updateActions()));
 
     // Create good old MapEditor
     mapEditor = model->getMapEditor();
@@ -54,9 +52,9 @@ VymView::VymView(VymModel *m)
                         this, model);
     de->setWidget(slideEditor);
     de->setAllowedAreas(Qt::AllDockWidgetAreas);
+    de->setVisible(mainWindow->actionViewToggleSlideEditor->isChecked());
     addDockWidget(Qt::RightDockWidgetArea, de);
     slideEditorDE = de;
-    slideEditorDE->hide();
     connect(slideEditorDE, SIGNAL(visibilityChanged(bool)), mainWindow,
             SLOT(updateActions()));
 
@@ -102,41 +100,11 @@ VymView::VymView(VymModel *m)
 
     mapEditor->setAntiAlias(mainWindow->isAliased());
     mapEditor->setSmoothPixmap(mainWindow->hasSmoothPixmapTransform());
-
-    readSettings();
-}
-
-VymView::~VymView()
-{
-    settings.setLocalValue(model->getFilePath(), "/treeEditor/visible",
-                               treeEditorIsVisible());
-    settings.setLocalValue(model->getFilePath(), "/slideEditor/visible",
-                               slideEditorIsVisible());
-}
-
-void VymView::readSettings()
-{
-    if (settings
-            .localValue(model->getFilePath(), "/slideEditor/visible", "false")
-            .toBool())
-        slideEditorDE->show();
-    else
-        slideEditorDE->hide();
-
-    if (settings.localValue(model->getFilePath(), "/treeEditor/visible", "true")
-            .toBool())
-        treeEditorDE->show();
-    else
-        treeEditorDE->hide();
 }
 
 VymModel *VymView::getModel() { return model; }
 
 MapEditor *VymView::getMapEditor() { return mapEditor; }
-
-bool VymView::treeEditorIsVisible() { return treeEditorDE->isVisible(); }
-
-bool VymView::slideEditorIsVisible() { return slideEditorDE->isVisible(); }
 
 void VymView::initFocus() { mapEditor->setFocus(); }
 
@@ -315,21 +283,20 @@ void VymView::showSelection(bool scaled, bool rotated)
     mapEditor->ensureSelectionVisibleAnimated(scaled, rotated);
 }
 
-void VymView::toggleTreeEditor()
+void VymView::setTreeEditorVisibility(bool b)
 {
-    if (treeEditorDE->isVisible())
-        treeEditorDE->hide();
-    else
+    if (b)
         treeEditorDE->show();
-    model->setChanged();
+    else
+        treeEditorDE->hide();
 }
 
-void VymView::toggleSlideEditor()
+void VymView::setSlideEditorVisibility(bool b)
 {
-    if (slideEditorDE->isVisible())
-        slideEditorDE->hide();
-    else
+    if (b)
         slideEditorDE->show();
+    else
+        slideEditorDE->hide();
 }
 
 void VymView::setFocusMapEditor() { mapEditor->setFocus(); }
