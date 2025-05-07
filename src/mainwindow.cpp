@@ -418,7 +418,7 @@ Main::~Main()
 
         settings.setValue("/mainwindow/view/AntiAlias",
                           actionViewToggleAntiAlias->isChecked());
-        settings.setValue("/mainwindow/view/SmoothPixmapTransform",
+        settings.setValue("/mainwindow/view/SmoothPixmapTransformations",
                           actionViewToggleSmoothPixmapTransform->isChecked());
         settings.setValue("/system/autosave/use",
                           actionSettingsToggleAutosave->isChecked());
@@ -3060,7 +3060,7 @@ void Main::setupViewActions()
     a->setStatusTip(a->text());
     a->setCheckable(true);
     a->setChecked(
-        settings.value("/mainwindow/view/SmoothPixmapTransformation", true)
+        settings.value("/mainwindow/view/SmoothPixmapTransformations", true)
             .toBool());
     viewMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSmoothPixmap()));
