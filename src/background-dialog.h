@@ -17,6 +17,9 @@ class BackgroundDialog : public QDialog {
     void toggleBackgroundImage();
     void selectBackgroundImage();
 
+  private slots:
+    void colorChanged(QColor);
+
   private:
     void updateBackgroundColorButton();
     void updateBackgroundImageControls();

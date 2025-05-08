@@ -42,11 +42,20 @@ int BackgroundDialog::exec()
 
 void BackgroundDialog::selectBackgroundColor()
 {
-    QColor col = QColorDialog::getColor(
-        model->getMapEditor()->getScene()->backgroundBrush().color(), nullptr);
-    if (!col.isValid())
+    QColor orgCol = model->getMapEditor()->getScene()->backgroundBrush().color();
+
+    QColorDialog colorDialog(orgCol);
+    colorDialog.setOption(QColorDialog::ShowAlphaChannel);
+    colorDialog.setWindowTitle( tr("Map backgroundcolor","Map background dialog"));
+
+    //colorDialog.disconnect();
+
+    connect(&colorDialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(colorChanged(QColor)));
+
+    if (colorDialog.exec() != QDialog::Accepted) {
+        model->setBackgroundColor(orgCol);
         return;
-    model->setBackgroundColor(col);
+    }
 
     // Update local and maybe also global color button
     updateBackgroundColorButton();
@@ -68,6 +77,11 @@ void BackgroundDialog::selectBackgroundImage()
     QStringList images = openImageDialog( tr("Load background image"));
     if (!images.isEmpty() && model->loadBackgroundImage(images.first()))
         updateBackgroundImageControls();
+}
+
+void BackgroundDialog::colorChanged(QColor col)
+{
+    model->setBackgroundColor(col);
 }
 
 void BackgroundDialog::updateBackgroundColorButton()

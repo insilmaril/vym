@@ -843,7 +843,7 @@ QImage MapEditor::getImage(QPointF &offset)
     imageRect.setHeight(sceneRect.height() + 2 * d);
 
     offset = QPointF(sceneRect.left() - d, sceneRect.top() - d);
-    QImage pix(imageRect.width(), imageRect.height(), QImage::Format_RGB32);
+    QImage pix(imageRect.width(), imageRect.height(), QImage::Format_ARGB32);
 
     //qDebug() << "ME::getImage   offset="<< offset << " imageRect=" << toS(imageRect,0) << " sceneRect=" << toS(sceneRect,0);
     QPainter pp(&pix);
