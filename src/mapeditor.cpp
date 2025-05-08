@@ -50,7 +50,7 @@ MapEditor::MapEditor(VymModel *vm)
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
     mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
-    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-3 Avoiding crashes...
+    //mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-3 Avoiding crashes...
                                                             // Alternatively call removeFromIndex() in destructor
                                                             // or maybe also prepareGeometryChange()
 
