@@ -10,7 +10,7 @@ self-organization and sorting through new ideas and complex contexts.
 
 You can use the scripting capabilities for interesting presentations. 
 VYM can also retrieve data from the Jira issue tracking system and 
-talk Concluence documentation system.
+talk to the Concluence documentation system.
 
 VYM runs on Apple and Windows and of course mose Linux platforms.
 
