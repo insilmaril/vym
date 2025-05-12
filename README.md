@@ -1,6 +1,19 @@
 VYM - View Your Mind (c) 2004-2025 by Uwe Drechsel
 ==================================================
 
+About
+-----
+
+VYM is a mind mapping application. You can use it to visualize your 
+thoughts in tree-like structures. It is also useful for time management, 
+self-organization and sorting through new ideas and complex contexts.
+
+You can use the scripting capabilities for interesting presentations. 
+VYM can also retrieve data from the Jira issue tracking system and 
+talk Concluence documentation system.
+
+VYM runs on Apple and Windows and of course mose Linux platforms.
+
 Documentation
 -------------
 
