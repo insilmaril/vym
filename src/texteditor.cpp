@@ -403,7 +403,7 @@ void TextEditor::setupEditActions()
     actionSelectAll = a;
 
     editMenu->addSeparator();
-    a = new QAction(QPixmap(":/editcopy.svg"), tr("&Copy"), this);
+    a = new QAction(QPixmap(QString(":/edit-copy-%1.svg").arg(iconTheme)), tr("&Copy", "Edit menu"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_C);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textCopy", shortcutScope, a, tag);
@@ -413,7 +413,7 @@ void TextEditor::setupEditActions()
     filledEditorActions << a;
     actionEditCopy = a;
 
-    a = new QAction(QPixmap(":/editcut.png"), tr("Cu&t"), this);
+    a = new QAction(QPixmap(QString(":/edit-cut-%1.svg").arg(iconTheme)), tr("Cu&t", "Edit menu"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_X);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textCut", shortcutScope, a, tag);
@@ -423,7 +423,7 @@ void TextEditor::setupEditActions()
     filledEditorActions << a;
     actionEditCut = a;
 
-    a = new QAction(QPixmap(":/editpaste.png"), tr("&Paste"), this);
+    a = new QAction(QPixmap(QString(":/edit-paste-%1.svg").arg(iconTheme)), tr("&Paste", "Edit menu"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_V);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addSwitch("textPaste", shortcutScope, a, tag);
@@ -1097,7 +1097,7 @@ void TextEditor::fontChanged(const QFont &f)
 
 void TextEditor::colorFGChanged(const QColor &c)
 {
-    QImage image("icons/color-text.svg");
+    QImage image(":color-text.svg");
     QPainter painter;
     painter.begin(&image);
     painter.setBrush(c);
@@ -1109,7 +1109,7 @@ void TextEditor::colorFGChanged(const QColor &c)
 
 void TextEditor::colorBGChanged(const QColor &c)
 {
-    QImage image("icons/draw-brush.svg");
+    QImage image(":draw-brush.svg");
     QPainter painter;
     painter.begin(&image);
     painter.setBrush(c);
