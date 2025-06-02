@@ -899,7 +899,7 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
         } else
             mainWindow->statusMessage(tr("Saved %1").arg(saveFilePath));
 
-        logInfo("Finishing saving map " + destPath, __func__);  // FIXME-2 debugging
+        logInfo("Finishing saving map " + destPath, __func__);  // FIXME-3 debugging
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
     }
@@ -1352,7 +1352,7 @@ void VymModel::autosave()
             qDebug() << "  VM::autosave  rejected, file on disk is newer than "
                         "last save.\n";
     }
-    logInfo("Autosave finished", __func__); // FIXME-2 remove after debugging
+    logInfo("Autosave finished", __func__); // FIXME-3 remove after debugging
 }
 
 void VymModel::fileChanged()
@@ -1905,7 +1905,7 @@ QString VymModel::saveStateBranch(
 void VymModel::saveStateBeginScript(const QString &comment)
 {
     if (buildingUndoScript)
-        logWarning("Nested saveState scripts found", __func__);  // FIXME-2 e.g. for setFrameAutoDesign...
+        logWarning("Nested saveState scripts found", __func__);  // FIXME-3 e.g. for setFrameAutoDesign...
     else {
         logDebug("Starting to build saveStateScript: '" + comment + "'", __func__);
 
@@ -4723,7 +4723,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
         emit layoutChanged();
 
         ii->updateContainerStackingOrder();
-        // FIXME-2 relinkImages issues:
+        // FIXME-3 relinkImages issues:
         // - What about updating links of images (later)?
         // - What about updating design (later)?
         // - in ImageWrapper: num_new missing

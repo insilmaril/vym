@@ -408,7 +408,7 @@ Main::~Main()
 
     if (!testmode) {
         settings.setValue("/mainwindow/geometry", saveGeometry());
-        settings.setValue("/mainwindow/state", saveState(0)); // FIXME-2 use saveState and saveGeometry
+        settings.setValue("/mainwindow/state", saveState(0)); // FIXME-3 use saveState and saveGeometry
                                                               // https://doc.qt.io/qt-6/qmainwindow.html#saveState
 
         settings.setValue("/mainwindow/view/showTreeEditors",
