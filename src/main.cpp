@@ -464,9 +464,8 @@ int main(int argc, char *argv[])
     userFlagsMaster->setPrefix("user/");
 
     // Initialize editors
-    noteEditor = new NoteEditor("noteeditor");
-    noteEditor->setWindowIcon(QPixmap(":/vym-editor.png"));
-    headingEditor = new HeadingEditor("headingeditor");
+    noteEditor = new NoteEditor(QObject::tr("Note Editor", "Name of editor shown as window title"));
+    headingEditor = new HeadingEditor(QObject::tr("Heading Editor", "Name of editor shown as window title"));
     branchPropertyEditor = new BranchPropertyEditor();
 
     // Initially read filenames of last session, before settings are 

@@ -2,19 +2,18 @@
 #define TEXTEDITOR_H
 
 #include <QMainWindow>
+#include <QString>
 #include <QtGui>
-
+#include "vymtext.h"
 class QTextEdit;
 class QComboBox;
-
-#include "vymtext.h"
 
 enum EditorState { inactiveEditor, emptyEditor, filledEditor };
 
 class TextEditor : public QMainWindow {
     Q_OBJECT
   public:
-    TextEditor();
+    TextEditor(const QString eName = "undefinedEditorName");
     ~TextEditor();
 
     void init(const QString &ename);

@@ -58,9 +58,11 @@ QString Switchboard::getASCII()
         for (int i = 0; i < values.size(); ++i) {
             QString desc = values.at(i).name;
             QString sc = values.at(i).keySequence.toString();
-            desc = desc.remove('&');
-            desc = desc.remove("...");
-            s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
+            if (!sc.isEmpty()) {
+                desc = desc.remove('&');
+                desc = desc.remove("...");
+                s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
+            }
         }
         s += "\n";
     }

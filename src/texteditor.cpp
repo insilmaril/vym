@@ -39,8 +39,8 @@ extern bool debug;
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-TextEditor::TextEditor()    // FEATURE #137 insert images with drag & drop
-			    // https://stackoverflow.com/questions/3254652/several-ways-of-placing-an-image-in-a-qtextedit
+TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with drag & drop
+                           // https://stackoverflow.com/questions/3254652/several-ways-of-placing-an-image-in-a-qtextedit
 {
     statusBar()->hide(); // Hide sizeGrip on default, which comes with statusBar
 
@@ -58,11 +58,9 @@ TextEditor::TextEditor()    // FEATURE #137 insert images with drag & drop
     // Don't show menubar per default
     menuBar()->hide();
 
-    // Toolbars
-    setupFileActions();
-    setupEditActions();
-    setupFormatActions();
-    setupSettingsActions();
+    // Load settings
+    init (eName);
+    setWindowIcon(QPixmap(":/vym-editor.png"));
 
     // Various states
     blockChangedSignal = false;
@@ -98,6 +96,13 @@ TextEditor::~TextEditor()
 void TextEditor::init(const QString &scope)
 {
     shortcutScope = scope;
+
+    // Toolbars
+    setupFileActions();
+    setupEditActions();
+    setupFormatActions();
+    setupSettingsActions();
+
     QString n = QString("/satellite/%1/").arg(shortcutScope);
     restoreState(settings.value(n + "state", 0).toByteArray());
     filenameHint = "";

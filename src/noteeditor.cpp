@@ -8,17 +8,13 @@
 extern Settings settings;
 extern QString vymName;
 
-NoteEditor::NoteEditor(QString scope) : TextEditor()
+NoteEditor::NoteEditor(const QString &eName) : TextEditor(eName)
 {
-    editorName = tr("Note Editor", "Name of editor shown as window title");
     setWindowTitle("");
 
     menuBar()->show();
 
     setUseMapBackgroundColor(false);
-
-    // Load Settings
-    init(scope);
 }
 
 NoteEditor::~NoteEditor() {}
