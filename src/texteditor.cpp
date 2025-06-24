@@ -365,7 +365,7 @@ void TextEditor::setupFileActions()
     actionFileDeleteAll = a;
 }
 
-void TextEditor::setupEditActions()
+void TextEditor::setupEditActions() // FIXME-2 Rework (default) toolbars and RT colors
 {
     QString tag = tr("Texteditor", "Shortcuts");
     QToolBar *editToolBar = addToolBar(tr("Edit Actions"));

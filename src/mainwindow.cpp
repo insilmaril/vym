@@ -3366,7 +3366,7 @@ void Main::setupFlagActions()
     // Original khelpcenter.png
     setupFlag(":/flag-lifebelt.svg", Flag::StandardFlag, "lifebelt",
                      tr("This will help", "Standardflag"));
-
+    // FIXME-2 lifebelt.svg seems to cause warnings about buffer size
     setupFlag(":/flag-phone.svg", Flag::StandardFlag, "phone",
                      tr("Call...", "Standardflag"));
 
