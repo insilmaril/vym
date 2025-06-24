@@ -57,6 +57,8 @@ QString debugInfo()
     s += QString("     Settings: %1\n\n").arg(settings.fileName());
     s += QString("   Dark theme: %1   System seems dark: %2\n").arg(usingDarkTheme).arg(systemSeemsDark);
     s += QString("Avail. styles: %1\n\n").arg(QStyleFactory::keys().join(","));
+    const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    s += QString(" Fixed font: %1\n").arg(fixedFont.toString());
     s += " SSL status: ";
     QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
     s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";
