@@ -116,7 +116,7 @@
     <file alias="document-close-classic.svg">icons/classic/document-close.png</file>
     <file alias="document-close-dark.svg">icons/dark/document-close.svg</file>
     <file alias="document-export-bright.svg">icons/bright/document-export.svg</file>
-    <file alias="document-export-classic.svg">icons/classic/document-export.svg</file>
+    <file alias="document-export-classic.svg">icons/classic/document-export.png</file>
     <file alias="document-export-dark.svg">icons/dark/document-export.svg</file>
     <file alias="document-new-bright.svg">icons/bright/document-new.svg</file>
     <file alias="document-new-classic.svg">icons/classic/document-new.svg</file>
