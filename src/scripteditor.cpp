@@ -25,6 +25,7 @@ extern Macros macros;
 extern Main *mainWindow;
 extern Options options;
 extern Settings settings;
+extern QFont fixedFont;
 
 ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
 {
@@ -53,17 +54,12 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     vymModelID = -1;
 
     // Initialize Editor
-    QFont font;
-    font.setFamily("Courier");
-    font.setFixedPitch(true);
-    font.setPointSize(12);
-    slideEditor->setFont(font);
-    macroEditor->setFont(font);
-    codeEditor->setFont(font);
+    slideEditor->setFont(fixedFont);
+    macroEditor->setFont(fixedFont);
+    codeEditor->setFont(fixedFont);
 
     // Define tab width
     const qreal d = 20; // unit is pixels
-    QFontMetrics metrics(font);
     codeEditor->setTabStopDistance(d);
     slideEditor->setTabStopDistance(d);
     macroEditor->setTabStopDistance(d);

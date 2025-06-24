@@ -118,6 +118,7 @@ void ImageContainer::select()
 
 bool ImageContainer::load(const QString &fn, bool createClone)
 {
+    // qDebug() << "IC::load " << fn;  // FIXME-2 lifebelt.svg seems to cause warnings about buffer size
     // createClone == true, if called via copy()
     if (imageType != ImageContainer::Undefined) {
         qWarning() << "ImageContainer::load (" << fn

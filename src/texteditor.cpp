@@ -23,6 +23,8 @@
 
 extern Main *mainWindow;
 extern Settings settings;
+extern QFont fixedFont;
+extern QFont varFont;
 extern QString iconTheme;
 
 extern QAction *actionViewToggleNoteEditor;
@@ -85,8 +87,8 @@ TextEditor::~TextEditor()
     else
         s = "variable";
     settings.setValue(n + "fonts/fonthintDefault", s);
-    settings.setValue(n + "fonts/varFont", varFont.toString());
-    settings.setValue(n + "fonts/fixedFont", fixedFont.toString());
+    settings.setValue(n + "fonts/varFont", varFontInt.toString());
+    settings.setValue(n + "fonts/fixedFont", fixedFontInt.toString());
 
     settings.setValue(n + "colors/richTextEditorBackground", colorRichTextEditorBackground.name());
     settings.setValue(n + "colors/richTextBackground", colorRichTextBackground.name());
@@ -99,22 +101,17 @@ void TextEditor::init(const QString &scope)
     QString n = QString("/satellite/%1/").arg(shortcutScope);
     restoreState(settings.value(n + "state", 0).toByteArray());
     filenameHint = "";
-    fixedFont.fromString(
-        settings.value(n + "fonts/fixedFont", "Courier,12,-1,5,48,0,0,0,1,0")// FIXME-2 Replace all occurences of Courier on Mac
-            .toString());
-    varFont.fromString(
-        settings
-            .value(n + "fonts/varFont", "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0")
-            .toString());
+    fixedFontInt = fixedFont;
+    varFontInt = varFont;
     QString s =
         settings.value(n + "fonts/fonthintDefault", "variable").toString();
     if (s == "fixed") {
         actionSettingsFonthintDefault->setChecked(true);
-        editor->setCurrentFont(fixedFont);
+        editor->setCurrentFont(fixedFontInt);
     }
     else {
         actionSettingsFonthintDefault->setChecked(false);
-        editor->setCurrentFont(varFont);
+        editor->setCurrentFont(varFontInt);
     }
 
     // Default colors for RichText
@@ -174,7 +171,7 @@ void TextEditor::setFont(const QFont &font)
     format.setFont(font);
     tc.setCharFormat(format);
     tc.clearSelection();
-    fontChanged(fixedFont);
+    fontChanged(fixedFontInt);
 
     blockChangedSignal = false;
 }
@@ -183,13 +180,13 @@ void TextEditor::setFontHint(const QString &fh)
 {
     if (fh == "fixed") {
         actionFormatUseFixedFont->setChecked(true);
-        editor->setCurrentFont(fixedFont);
-        setFont(fixedFont);
+        editor->setCurrentFont(fixedFontInt);
+        setFont(fixedFontInt);
     }
     else {
         actionFormatUseFixedFont->setChecked(false);
-        editor->setCurrentFont(varFont);
-        setFont(varFont);
+        editor->setCurrentFont(varFontInt);
+        setFont(varFontInt);
     }
 }
 
@@ -481,14 +478,13 @@ void TextEditor::setupFormatActions()
 
     comboFont = new QComboBox;
     fontToolBar->addWidget(comboFont);
-    QFontDatabase fontDB;
-    comboFont->insertItems(0, fontDB.families());
-    connect(comboFont, SIGNAL(currentTextChanged(const QString &)), this,
+    comboFont->insertItems(0, QFontDatabase::families()); connect(comboFont,
+            SIGNAL(currentTextChanged(const QString &)), this,
             SLOT(textFamily(const QString &)));
 
     comboSize = new QComboBox;
     fontToolBar->addWidget(comboSize);
-    QList<int> sizes = fontDB.standardSizes();
+    QList<int> sizes = QFontDatabase::standardSizes();
     QList<int>::iterator it = sizes.begin();
     int i = 0;
     while (it != sizes.end()) {
@@ -769,7 +765,7 @@ void TextEditor::setPlainText(const QString &t)
     // Reset also text format
     QTextCharFormat textformat;
     textformat.setForeground(qApp->palette().color(QPalette::WindowText));
-    textformat.setFont(varFont);
+    textformat.setFont(varFontInt);
     editor->setCurrentCharFormat(textformat);
 
     // Update state including colors
@@ -948,12 +944,12 @@ void TextEditor::textEditUndo() {}
 void TextEditor::toggleFonthint()
 {
     if (!actionFormatUseFixedFont->isChecked()) {
-        editor->setCurrentFont(varFont);
-        setFont(varFont);
+        editor->setCurrentFont(varFontInt);
+        setFont(varFontInt);
     }
     else {
-        editor->setCurrentFont(fixedFont);
-        setFont(fixedFont);
+        editor->setCurrentFont(fixedFontInt);
+        setFont(fixedFontInt);
     }
     emit textHasChanged(getVymText());
 }
@@ -989,17 +985,17 @@ void TextEditor::toggleRichText()
 void TextEditor::setFixedFont()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, fixedFont, this);
+    QFont font = QFontDialog::getFont(&ok, fixedFontInt, this);
     if (ok)
-        fixedFont = font;
+        fixedFontInt = font;
 }
 
 void TextEditor::setVarFont()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, varFont, this);
+    QFont font = QFontDialog::getFont(&ok, varFontInt, this);
     if (ok)
-        varFont = font;
+        varFontInt = font;
 }
 
 void TextEditor::textBold()

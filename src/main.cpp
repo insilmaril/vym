@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <QApplication>
+#include <QFontDatabase>
 #include <QJSEngine>
 #include <QMessageBox>
 #include <QStyleFactory>
@@ -105,6 +106,8 @@ QStringList lastSessionFiles;   //! Will be overwritten in setting after load, s
 Switchboard switchboard;
 
 Settings settings("InSilmaril", QString(__VYM_NAME).toLower()); // Organization, Application name
+QFont fixedFont;
+QFont varFont;
 
 bool zipToolAvailable = false;
 bool unzipToolAvailable = false;
@@ -181,6 +184,13 @@ int main(int argc, char *argv[])
     vymCodeQuality = __VYM_CODE_QUALITY;
     vymHome = __VYM_HOME;
 
+    // Fonts
+    fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+        //    Linux: "Courier,12,-1,5,48,0,0,0,1,0"
+        //    Mac  :  "Menlo"
+    varFont = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+        //    Linux:  "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0"
+                                                    //
     // Install our own handler for messages
     qInstallMessageHandler(msgHandler);
 

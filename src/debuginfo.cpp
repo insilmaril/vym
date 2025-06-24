@@ -2,7 +2,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
-#include <QFontDatabase>
+#include <QFont>
 #include <QProcessEnvironment>
 #include <QSslSocket>
 #include <QString>
@@ -22,6 +22,8 @@ extern QString vymCodeName;
 extern QString vymBuildDate;
 
 extern Settings settings;
+extern QFont fixedFont;
+extern QFont varFont;
 
 extern QString localeName;
 
@@ -57,8 +59,8 @@ QString debugInfo()
     s += QString("     Settings: %1\n\n").arg(settings.fileName());
     s += QString("   Dark theme: %1   System seems dark: %2\n").arg(usingDarkTheme).arg(systemSeemsDark);
     s += QString("Avail. styles: %1\n\n").arg(QStyleFactory::keys().join(","));
-    const QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     s += QString(" Fixed font: %1\n").arg(fixedFont.toString());
+    s += QString("   Var font: %1\n").arg(varFont.toString());
     s += " SSL status: ";
     QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
     s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";

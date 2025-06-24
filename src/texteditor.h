@@ -127,8 +127,8 @@ class TextEditor : public QMainWindow {
     QColor colorMapBackground;
     bool useColorMapBackground;
 
-    QFont varFont;
-    QFont fixedFont;
+    QFont varFontInt;
+    QFont fixedFontInt;
     QComboBox *comboFont, *comboSize;
 
     QToolBar *editToolBar;
