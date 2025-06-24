@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QFontDatabase>
 #include <QProcessEnvironment>
 #include <QSslSocket>
 #include <QString>
@@ -71,7 +72,7 @@ QString debugInfo()
     s += QString("            localeName: %1\n").arg(localeName);
     s += QString("                system: %1\n").arg(QLocale::system().name());
     s += QString("              language: %1\n").arg(QLocale::languageToString(QLocale::system().language()));
-    s += QString("               country: %1\n").arg(QLocale::countryToString(QLocale::system().country()));
+    s += QString("               country: %1\n").arg(QLocale::territoryToString(QLocale::system().territory()));
     s += QString("           uiLanguages: %1\n").arg(QLocale::system().uiLanguages().join(","));
     s += QString("                  LANG: %1\n")
         .arg(QProcessEnvironment::systemEnvironment().value("LANG", "not set."));
