@@ -570,7 +570,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
             // which prevented subsequent loading
             QString warning = QString("Found multiple .xml files in %1: %2").arg(fname, xmlFileList.join(", "));
             logWarning(warning, __func__);
-            QMessageBox::warning (0, "Multiple xml files found", warning + "\n\nWilll try to keep only map.xml");
+            QMessageBox::warning (0, "Multiple xml files found", warning + "\n\nWill try to keep only map.xml");
 
             // mainWindow->fileLoadFromTmp (xmlFileList);
             // returnCode = 1;	// Silently forget this attempt to load
