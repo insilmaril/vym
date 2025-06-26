@@ -8,11 +8,14 @@ VYM is a mind mapping application. You can use it to visualize your
 thoughts in tree-like structures. It is also useful for time management, 
 self-organization and sorting through new ideas and complex contexts.
 
+VYM includes a powerful personal task manager, which allows to adjust
+priorities or reminds you after easily defined time spans.
+
 You can use the scripting capabilities for interesting presentations. 
 VYM can also retrieve data from the Jira issue tracking system and 
 talk to the Concluence documentation system.
 
-VYM runs on Apple and Windows and of course mose Linux platforms.
+VYM runs on Apple and Windows and of course most Linux platforms.
 
 Documentation
 -------------
