@@ -467,7 +467,8 @@ class Main : public QMainWindow {
     QToolBar *selectionToolbar;
     QToolBar *editorsToolbar;
     QToolBar *colorsToolbar;
-    QToolBar *zoomToolbar;
+    QToolBar *viewTransformationsToolbar;
+    QToolBar *limitedViewToolbar;
     QToolBar *modModesToolbar;
     QToolBar *referencesToolbar;
     QToolBar *standardFlagsToolbar;

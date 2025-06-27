@@ -4153,17 +4153,21 @@ void Main::setupToolbars()
     else
         addToolBar (colorsToolbar);
 
-    // Zoom
-    zoomToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
-    zoomToolbar->setObjectName("viewTB");
-    zoomToolbar->addAction(actionTogglePresentationMode);
-    zoomToolbar->addAction(actionToggleHideTmpMode);
-    zoomToolbar->addAction(actionZoomIn);
-    zoomToolbar->addAction(actionZoomOut);
-    zoomToolbar->addAction(actionZoomReset);
-    zoomToolbar->addAction(actionCenterOn);
-    zoomToolbar->addAction(actionRotateCounterClockwise);
-    zoomToolbar->addAction(actionRotateClockwise);
+    // View transformations (shrink/grow/rotate)
+    viewTransformationsToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
+    viewTransformationsToolbar->setObjectName("viewTB");
+    viewTransformationsToolbar->addAction(actionZoomIn);
+    viewTransformationsToolbar->addAction(actionZoomOut);
+    viewTransformationsToolbar->addAction(actionZoomReset);
+    viewTransformationsToolbar->addAction(actionCenterOn);
+    viewTransformationsToolbar->addAction(actionRotateCounterClockwise);
+    viewTransformationsToolbar->addAction(actionRotateClockwise);
+
+    // Modified special view, e.g. presentation mode or temporary hiding of branches
+    limitedViewToolbar = addToolBar(tr("Limited view toolbar", "View Toolbar name"));
+    limitedViewToolbar->setObjectName("limitedViewTB");
+    limitedViewToolbar->addAction(actionTogglePresentationMode);
+    limitedViewToolbar->addAction(actionToggleHideTmpMode);
 
     // Editors
     editorsToolbar = addToolBar(tr("Editors toolbar", "Editor Toolbar name"));
@@ -4205,7 +4209,8 @@ void Main::setupToolbars()
     toolbarsMenu->addAction(editActionsToolbar->toggleViewAction());
     toolbarsMenu->addAction(selectionToolbar->toggleViewAction());
     toolbarsMenu->addAction(colorsToolbar->toggleViewAction());
-    toolbarsMenu->addAction(zoomToolbar->toggleViewAction());
+    toolbarsMenu->addAction(viewTransformationsToolbar->toggleViewAction());
+    toolbarsMenu->addAction(limitedViewToolbar->toggleViewAction());
     toolbarsMenu->addAction(modModesToolbar->toggleViewAction());
     toolbarsMenu->addAction(referencesToolbar->toggleViewAction());
     toolbarsMenu->addAction(editorsToolbar->toggleViewAction());
@@ -4218,12 +4223,13 @@ void Main::setupToolbars()
     toolbarStates[editActionsToolbar] = true;
     toolbarStates[selectionToolbar] = false;
     toolbarStates[colorsToolbar] = true;
-    toolbarStates[zoomToolbar] = true;
+    toolbarStates[viewTransformationsToolbar] = true;
+    toolbarStates[limitedViewToolbar] = false;
     toolbarStates[modModesToolbar] = false;
-    toolbarStates[referencesToolbar] = true;
+    toolbarStates[referencesToolbar] = false;
     toolbarStates[editorsToolbar] = false;
     toolbarStates[standardFlagsToolbar] = true;
-    toolbarStates[userFlagsToolbar] = true;
+    toolbarStates[userFlagsToolbar] = false;
 
     // Initialize toolbar visibilities and switch off presentation mode
     presentationMode = true;
@@ -7045,7 +7051,8 @@ void Main::updateActions()
             selectionToolbar->setEnabled(false);
             editorsToolbar->setEnabled(false);
             colorsToolbar->setEnabled(false);
-            zoomToolbar->setEnabled(false);
+            viewTransformationsToolbar->setEnabled(false);
+            limitedViewToolbar->setEnabled(false);
             modModesToolbar->setEnabled(false);
             referencesToolbar->setEnabled(false);
             standardFlagsToolbar->setEnabled(false);
@@ -7066,7 +7073,8 @@ void Main::updateActions()
             selectionToolbar->setEnabled(true);
             editorsToolbar->setEnabled(true);
             colorsToolbar->setEnabled(true);
-            zoomToolbar->setEnabled(true);
+            viewTransformationsToolbar->setEnabled(true);
+            limitedViewToolbar->setEnabled(true);
             modModesToolbar->setEnabled(true);
             referencesToolbar->setEnabled(true);
             standardFlagsToolbar->setEnabled(true);
@@ -7383,7 +7391,8 @@ void Main::updateActions()
         selectionToolbar->setEnabled(false);
         editorsToolbar->setEnabled(false);
         colorsToolbar->setEnabled(false);
-        zoomToolbar->setEnabled(false);
+        viewTransformationsToolbar->setEnabled(false);
+        limitedViewToolbar->setEnabled(false);
         modModesToolbar->setEnabled(false);
         referencesToolbar->setEnabled(false);
         standardFlagsToolbar->setEnabled(false);
