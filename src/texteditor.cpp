@@ -478,6 +478,8 @@ void TextEditor::setupFormatActions()
     filledEditorActions << a;
     actionFormatRichText = a;
 
+    addToolBarBreak();
+
     fontToolBar = addToolBar(tr("Fonts", "toolbar in texteditor"));
     fontToolBar->setObjectName("noteEditorFontToolBar");
 
@@ -501,6 +503,8 @@ void TextEditor::setupFormatActions()
             SLOT(textSize(const QString &)));
 
     formatMenu->addSeparator();
+
+    addToolBarBreak();
 
     formatToolBar = addToolBar(tr("Format", "toolbar in texteditor"));
     formatToolBar->setObjectName("noteEditorFormatToolBar");
