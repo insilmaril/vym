@@ -120,6 +120,8 @@ class TextEditor : public QMainWindow {
     bool blockChangedSignal;
     bool blockTextUpdate;       // Set *while* textHasChanged is still being emitted
 
+    bool richTextMode;
+
     QColor colorRichTextEditorBackground;
     QColor colorRichTextBackground;
     QColor colorRichTextForeground;
