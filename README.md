@@ -98,10 +98,17 @@ Installation
       make
       make install
 
-    or using Qt Creator:
+    or using Qt Creator (recommended on Mac and Windows):
 
     In "File" do "Open file or project" and select the
     "CMakeLists.txt". This will setup the project.
+
+    
+    For testing you probably need to tell vym where to find various
+    files like macros, demos, etc. On the commandline you can do this
+    with the "-l" option. Using Qt Creator you can add a variable
+    VYMHOME to the execution environment pointing to your path to vym
+    sources.
 
 
 Questions and feedback
