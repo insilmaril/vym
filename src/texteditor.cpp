@@ -42,7 +42,7 @@ extern bool debug;
 TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with drag & drop
                            // https://stackoverflow.com/questions/3254652/several-ways-of-placing-an-image-in-a-qtextedit
 {
-    qDebug() << "TE::constr of " << eName;
+    //qDebug() << "TE::constr of " << eName;
     statusBar()->hide(); // Hide sizeGrip on default, which comes with statusBar
 
     editor = new QTextEdit(this);

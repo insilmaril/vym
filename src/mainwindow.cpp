@@ -4737,6 +4737,7 @@ void Main::fileSave(VymModel *m) { fileSave(m, File::CompleteMap); }
 
 void Main::fileSaveAs(const File::SaveMode &savemode)
 {
+    std::cout << __func__ << " ok0" << std::endl; // FIXME-2 debugging
     VymModel *m = currentModel();
     if (!m) return;
 
@@ -4751,6 +4752,7 @@ void Main::fileSaveAs(const File::SaveMode &savemode)
     QString fn = QFileDialog::getSaveFileName(
         this, tr("Save map as"), lastMapDir.path(), filter, nullptr,
         QFileDialog::DontConfirmOverwrite);
+    std::cout << __func__ << " ok1" << std::endl; // FIXME-2 debugging
     if (!fn.isEmpty()) {
         // Check for existing file
         if (QFile(fn).exists()) {
