@@ -3136,11 +3136,9 @@ void VymModel::shrinkSelectionSize()
     setScale(- 0.05, true);
 }
 
-void VymModel::resetSelectionSize() // FIXME-3 missing saveState. Switch (back?) to autodesign?
+void VymModel::resetSelectionSize()
 {
-    ImageItem *selii = getSelectedImage();
-    if (selii)
-        setScale(1, false);
+    setScale(1, false);
 }
 
 void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save: positions, auto, layout!)
