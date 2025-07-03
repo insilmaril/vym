@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QGraphicsProxyWidget>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QObject>
 #include <QPrintDialog>
 #include <QPrinter>
@@ -26,6 +27,7 @@ extern QString clipboardDir;
 extern QString clipboardFile;
 extern bool debug;
 extern QPrinter *printer;
+extern QDir tmpVymDir;
 
 extern QMenu *branchContextMenu;
 extern QMenu *canvasContextMenu;
@@ -2652,7 +2654,19 @@ void MapEditor::dropEvent(QDropEvent *event)
             qDebug() << "-------------------------------------------";
         }
 
-        if (event->mimeData()->hasUrls()) {
+        if (event->mimeData()->hasImage()) {
+            QImage image = qvariant_cast<QImage>(event->mimeData()->imageData());
+            QTemporaryFile tmpFile(tmpVymDir.path() + "/pasted-image-XXXXXX");
+            tmpFile.setAutoRemove( false); // tmpFile is within tmpDir, removed automatically later
+            if (!tmpFile.open())
+                QMessageBox::warning(0, tr("Warning"),
+                                     "Couldn't open tmpFile " + tmpFile.fileName());
+            else {
+                image.save(tmpFile.fileName(), "PNG", 100);
+                model->loadImage(selbi, tmpFile.fileName());
+            }
+
+        } else if (event->mimeData()->hasUrls()) {
             // Try text representation first, which works on windows, but in
             // Linux only for https, not local images
             QString url = event->mimeData()->text();
