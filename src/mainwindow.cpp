@@ -5284,17 +5284,37 @@ void Main::editCut()
         m->cut();
 }
 
-bool Main::openURL(const QString &url)  // FIXME-3 settings for URL and PDF are not really any longer used, only fallback below
+bool Main::openURL(const QString &url, bool privateMode)  // FIXME-3 settings for URL and PDF are not really any longer used, only fallback below
 {
     if (url.isEmpty())
         return false;
+
+    if (privateMode) {  // FIXME-3 Currently only Firefox is supported to open private Urls
+        QString browser = settings.value(
+                "/system/readerUrlPrivate",
+                "/Applications/Firefox.app/Contents/MacOS/firefox").toString();
+        QStringList args;
+        args << "--private-window";
+        args << url;
+        if (!QProcess::startDetached(browser, args, QDir::currentPath())) {
+            // try to set path to browser
+            QMessageBox::warning(
+                0, tr("Warning"),
+                tr("Couldn't find a viewer to open %1.\n").arg(url) +
+                    tr("Please use Settings->") +
+                    tr("Set application to open an URL"));
+            settingsURL();
+            return false;
+        }
+        return true;
+    }
 
     // Use system settings to open file
     bool b = QDesktopServices::openUrl(QUrl(url, QUrl::TolerantMode));
     if (b) return true;
 
     // Fallback to old vym method to open Url
-    QString browser = settings.value("/system/readerURL").toString();
+    QString browser = settings.value("/system/readerUrl").toString();
     QStringList args;
     args << url;
     if (!QProcess::startDetached(browser, args, QDir::currentPath(),
@@ -5322,7 +5342,7 @@ void Main::openTabs(QStringList urls)
         openURL(u);
 }
 
-void Main::editOpenURL()
+void Main::editOpenURL() // FIXME-2 still needed?
 {
     // Open new browser
     VymModel *m = currentModel();
@@ -5333,7 +5353,7 @@ void Main::editOpenURL()
         openURL(url);
     }
 }
-void Main::editOpenURLTab()
+void Main::editOpenURLTab() // FIXME-2 still needed?
 {
     VymModel *m = currentModel();
     if (m) {

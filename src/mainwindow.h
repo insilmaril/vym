@@ -174,7 +174,7 @@ class Main : public QMainWindow {
 
   public slots:
     void updateQueries(VymModel *);
-    bool openURL(const QString &url);
+    bool openURL(const QString &url, bool privateMode = false);
     void openTabs(QStringList);
     void editOpenURL();
     void editOpenURLTab();

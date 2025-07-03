@@ -1910,10 +1910,13 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
             // systemFlag clicked
             if (sysFlagName.contains("system-url") ||
                 sysFlagName.contains("system-jira") ) {
-                if (e->modifiers() & Qt::ControlModifier)
-                    mainWindow->editOpenURLTab();
-                else
-                    mainWindow->editOpenURL();
+                //if (e->modifiers() & Qt::ControlModifier)
+                //    mainWindow->editOpenURLTab();
+                //else
+                    // Open in private mode if shift is pressed
+                    mainWindow->openURL(
+                            model->getUrl(),
+                            e->modifiers() & Qt::AltModifier);
             } else if (sysFlagName == "system-note")
                 mainWindow->windowToggleNoteEditor();
             else if (sysFlagName == "hideInExport")
