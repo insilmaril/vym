@@ -863,10 +863,6 @@ void Main::setupAPI()
     c = new Command("selectedBranch", Command::AnySel, Command::BranchPar);
     modelCommands.append(c);
 
-    c = new Command("selectID", Command::AnySel, Command::BoolPar);
-    c->addParameter(Command::StringPar, false, "Unique ID");
-    modelCommands.append(c);
-
     c = new Command("selectLatestAdded", Command::AnySel, Command::BoolPar);
     modelCommands.append(c);
 

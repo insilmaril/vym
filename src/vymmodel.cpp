@@ -7138,12 +7138,11 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
         return;
     }
 
-    // FIXME-3 download img to tmpfile and delete after running script in
-    // mainWindow
+    // FIXME-4 delete tmp file of image download after running script
     QString script;
-    script += QString("m = vym.currentMap();m.selectID(\"%1\");")
+    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")
                   .arg(bi->getUuid().toString());
-    script += QString("m.loadImage(\"$TMPFILE\");");
+    script += QString("b.loadImage(\"$TMPFILE\");");
 
     DownloadAgent *agent = new DownloadAgent(url);
     agent->setFinishedAction(this, script);
