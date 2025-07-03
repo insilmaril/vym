@@ -6581,7 +6581,7 @@ MapDesign* VymModel::mapDesign()
     return mapDesignInt;
 }
 
-void VymModel::applyDesign(     // FIXME-1 Check handling of autoDesign option
+void VymModel::applyDesign(     // FIXME-2 Check handling of autoDesign option
         MapDesign::UpdateMode updateMode,
         BranchItem *bi)
 {
