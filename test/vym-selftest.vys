@@ -49,7 +49,8 @@ var tests_failed = 0;
 
 var vymBaseDir = vym.vymBaseDir();
 
-var testDir = vymBaseDir + "/selftests";
+var testDirName = "selftests";
+var testDir = vymBaseDir + "/" + testDirName;
 var currentMapPath = "undefined."
 var testMapDefault = vymBaseDir + "/test/maps/test-default.vym";
 var testMapFrames  = vymBaseDir + "/test/maps/test-frames.vym";
@@ -1368,7 +1369,7 @@ function test_references()
   expect("setUrl: unset Url with empty string", main_A.getUrl(), "");
 
   // Try to link to myself using a relative path
-  vl = "selftests/maps/current-map.vym";
+  vl = testDirName + "/maps/current-map.vym";
   main_A.setVymLink(vl);
   s = main_A.getVymLink();
   expect("setVymLink returns absolute path", map.getFileDir() + "/" + vl, s);
