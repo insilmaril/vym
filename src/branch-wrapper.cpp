@@ -250,6 +250,13 @@ void BranchWrapper::detach()
     model()->detach(branchItemInt);
 }
 
+QString BranchWrapper::getBranchesLayout()
+{
+    QString r = Container::layoutString(branchItemInt->getBranchContainer()->branchesContainerLayout());
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 bool BranchWrapper::getFrameAutoDesign(const bool &useInnerFrame)
 {
     bool r =  branchItemInt->getBranchContainer()->frameAutoDesign(useInnerFrame);
@@ -302,6 +309,13 @@ QString BranchWrapper::getHeading()
 QString BranchWrapper::getHeadingXML()
 {
     QString r = branchItemInt->heading().saveToDir();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
+QString BranchWrapper::getImagesLayout()
+{
+    QString r = branchItemInt->getImagesContainer()->layoutString();
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -690,6 +704,11 @@ void BranchWrapper::setAttribute(const QString &key, const QString &value)
     model()->setAttribute(branchItemInt, key, value);
 }
 
+void BranchWrapper::setBranchesLayout(const QString &layout)
+{
+    model()->setBranchesLayout(layout, branchItemInt);
+}
+
 void BranchWrapper::setFlagByName(const QString &s)
 {
     model()->setFlagByName(s, branchItemInt);
@@ -762,6 +781,11 @@ void BranchWrapper::setHideExport(bool b)
 void BranchWrapper::setHideLinkUnselected(bool b)
 {
     model()->setHideLinkUnselected(b, branchItemInt);
+}
+
+void BranchWrapper::setImagesLayout(const QString &layout)
+{
+    model()->setImagesLayout(layout, branchItemInt);
 }
 
 void BranchWrapper::setNoteRichText(const QString &s)

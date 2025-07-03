@@ -1273,6 +1273,10 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Name of flag");
     branchCommands.append(c);
 
+    c = new Command("setBranchesLayout", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Layout of branches in subtree");
+    branchCommands.append(c);
+
     c = new Command("setFrameAutoDesign", Command::BranchSel);
     c->addParameter(Command::BoolPar, false, useInnerFrameDesc);
     c->addParameter(Command::BoolPar, false, "Flag for using automatic frame design");
@@ -1330,6 +1334,10 @@ void Main::setupAPI()
     c = new Command("setHideLinksUnselected", Command::BranchSel);
     c->addParameter(Command::BoolPar, false,
               "Set if links of items should be visible for unselected items");
+    branchCommands.append(c);
+
+    c = new Command("setImagesLayout", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Layout of images");
     branchCommands.append(c);
 
     c = new Command("setNoteRichText", Command::BranchSel);

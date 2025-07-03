@@ -1,15 +1,17 @@
 #!/bin/bash
 
-SRCDIR=test
+SRCDIR=$PWD
 VYMTESTDIR=$(mktemp -d /tmp/vym-test-XXXX)
 
-DEFAULTMAP=$SRCDIR/test/default.vym
+DEFAULTMAP=$SRCDIR/test/maps/test-default.vym
 TESTMAP=$VYMTESTDIR/testmap.vym
 
 echo Copying $DEFAULTMAP to $TESTMAP
 cp $DEFAULTMAP $TESTMAP
 
-vym  -l -t -n test -R test/vym-selftest.vys $TESTMAP -geometry 768x576-0+0 &
+echo "Copy ok. $PWD"
+vym  -l -t -n test -R test/vym-selftest.vys $TESTMAP #-geometry 768x576-0+0 &
+#vym  -l -t -n test -R test/vym-selftest.vys $TESTMAP -geometry 768x576-0+0 &
 
 #PID=$!
 

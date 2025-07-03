@@ -15,6 +15,7 @@ all_tests = [
   "extrainfo",
   "frames",
   "history",
+  "layouts",
   "load_legacy_maps",
   "mapdesign",
   "modify_branches",
@@ -35,7 +36,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["scrolling"];
+//tests = ["layouts"];
 
 
 var verbosity = 0;
@@ -828,6 +829,56 @@ function test_history()
   closeCurrentMap();
 }
 
+function test_layouts()
+{
+  heading("Layouts");
+
+  map = initMap(testMapDefault);
+
+  // branchesContainerLayout
+  b = map.findBranchBySelection(main_A_string);
+  expect("Initial branches layout is vertical", b.getBranchesLayout(), "Vertical");
+
+  layout = "Horizontal";
+  b.setBranchesLayout(layout);
+  expect(layout + " layout of branches in subtree", b.getBranchesLayout(), layout);
+  map.undo();
+  b = map.findBranchBySelection(main_A_string);
+  expect("After undo layout of branches in subtree is Vertical", b.getBranchesLayout(), "Vertical");
+
+  map.redo();
+  b = map.findBranchBySelection(main_A_string);
+  expect("After redo layout of branches in subtree is " + layout, b.getBranchesLayout(), layout);
+
+  // imagesContainerLayout
+  b = map.findBranchBySelection(branch_0Aa_string);
+  n = b.imageCount();
+
+  success = b.loadImage(vymBaseDir + "/icons/vym.png");
+  expect("loadImage() returns true for first image", success, true);
+  expect("Image count increased after for first image loading", b.imageCount(), n + 1);
+
+  success = b.loadImage(vymBaseDir + "/icons/vym.png");
+  expect("loadImage() returns true for second image", success, true);
+  expect("Image count increased after for second image loading", b.imageCount(), n + 2);
+
+  expect("Initial images layout is grid", b.getImagesLayout(), "GridColumns");
+
+  layout = "Vertical";
+  b.setImagesLayout(layout);
+  expect(layout + " layout of images", b.getImagesLayout(), layout);
+
+  map.undo();
+  b = map.findBranchBySelection(branch_0Aa_string);
+  expect("After undo layout of images is restored", b.getImagesLayout(), "GridColumns");
+
+  map.redo();
+  b = map.findBranchBySelection(branch_0Aa_string);
+  expect("After redo layout of images is " + layout, b.getImagesLayout(), layout);
+
+  closeCurrentMap();
+}
+
 function test_load_legacy_maps()
 {
   heading("Load legacy maps");
@@ -1070,7 +1121,7 @@ function test_modify_images()
 
   success = b.loadImage(vymBaseDir + "/icons/vym.png");
   expect("loadImage() returns true for existing image", success, true);
-  expect("Image cound increased after loading", b.imageCount(), n + 1);
+  expect("Image count increased after loading", b.imageCount(), n + 1);
 
   success = b.loadImage(vymBaseDir + "/foobar");
   expect("loadImage() returns false for not existing image", success, false);
@@ -1743,6 +1794,7 @@ if (tests.includes("export"))         { test_export(); }
 if (tests.includes("extrainfo"))      { test_extrainfo(); }
 if (tests.includes("frames"))         { test_frames(); }
 if (tests.includes("history"))        { test_history(); }
+if (tests.includes("layouts"))        { test_layouts(); }
 if (tests.includes("load_legacy_maps")) { test_load_legacy_maps(); }
 if (tests.includes("mapdesign"))      { test_mapdesign(); }
 if (tests.includes("modify_branches")) { test_modify_branches(); }

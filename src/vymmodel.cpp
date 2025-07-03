@@ -3141,7 +3141,7 @@ void VymModel::resetSelectionSize()
     setScale(1, false);
 }
 
-void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save: positions, auto, layout!)
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)
 {
     // qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
@@ -3156,15 +3156,22 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
 
             // Get layout from mapDesign
             layout = mapDesignInt->branchesContainerLayout(selbi->depth());
-            if (bc->branchesContainerLayout() != layout)
-                bc->setBranchesContainerLayout(layout);
         } else {
             bc->branchesContainerAutoLayout = false;
             layout = Container::layoutFromString(s);
-            if (layout != Container::UndefinedLayout)
-                bc->setBranchesContainerLayout(layout);
         }
-        emitDataChanged(selbi);
+        if (bc->branchesContainerLayout() != layout  && layout != Container::UndefinedLayout) {
+            QString bv = setBranchVar(bi);
+            QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+            QString rc = bv + QString("b.setBranchesLayout (\"%1\")").arg(s);
+            QString com = QString("Set branches layout of %1 to %2").arg(getObjectName(bi), layout);
+            logAction(rc, com, __func__);
+
+            saveState(uc, rc, com, bi);
+
+            bc->setBranchesContainerLayout(layout);
+            emitDataChanged(selbi);
+        }
     }
 
     // Links might have been added or removed, Nested lists, etc...
@@ -3180,24 +3187,33 @@ void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)  // FIXME-2 n
 
 }
 
-void VymModel::setImagesLayout(const QString &s, BranchItem *bi)  // FIXME-2 no saveState yet (save positions, too!)
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)
 {
     BranchContainer *bc;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
+        Container::Layout layout;
         bc = selbi->getBranchContainer();
         if (s == "Auto") {
             bc->imagesContainerAutoLayout = true;
-            bc->setImagesContainerLayout(
-                    mapDesignInt->imagesContainerLayout(selbi->depth()));
+            layout = mapDesignInt->imagesContainerLayout(selbi->depth());
         } else {
             bc->imagesContainerAutoLayout = false;
-            Container::Layout layout;
             layout = Container::layoutFromString(s);
-            if (layout != Container::UndefinedLayout)
-                bc->setImagesContainerLayout(layout);
         }
-        emitDataChanged(selbi);
+
+        if (bc->imagesContainerLayout() != layout  && layout != Container::UndefinedLayout) {
+            QString bv = setBranchVar(selbi);
+            QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+            QString rc = bv + QString("b.setImagesLayout (\"%1\")").arg(s);
+            QString com = QString("Set images layout of %1 to %2").arg(getObjectName(selbi), s);
+            logAction(rc, com, __func__);
+
+            saveState(uc, rc, com, selbi);
+
+            bc->setImagesContainerLayout(layout);
+            emitDataChanged(selbi);
+        }
     }
 
     if (!selbis.isEmpty()) {
