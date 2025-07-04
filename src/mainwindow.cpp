@@ -2231,33 +2231,25 @@ void Main::setupEditActions()
     ADD_SHORTCUT
     switchboard.addSwitch("mapOpenUrl", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editOpenURL()));
+    connect(a, SIGNAL(triggered()), this, SLOT(openUrl()));
     actionListBranches.append(a);
-    actionOpenURL = a;
-
-    a = new QAction(tr("Open URL in new tab", "Edit menu"), this);
-    // a->setShortcut (Qt::CTRL+Qt::Key_U );
-    switchboard.addSwitch("mapOpenUrlTab", shortcutScope, a, tag);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editOpenURLTab()));
-    actionListBranches.append(a);
-    actionOpenURLTab = a;
+    actionOpenUrl = a;
 
     a = new QAction(tr("Open all URLs in subtree (including scrolled branches)",
                        "Edit menu"),
                     this);
     switchboard.addSwitch("mapOpenUrlsSubTree", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVisURLTabs()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVisUrlTabs()));
     actionListBranches.append(a);
-    actionOpenMultipleVisURLTabs = a;
+    actionOpenMultipleVisUrlTabs = a;   // FIXME-2 needed? Menu entry equal to related action?
 
     a = new QAction(tr("Open all URLs in subtree", "Edit menu"), this);
     switchboard.addSwitch("mapOpenMultipleUrlTabs", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleURLTabs()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleUrlTabs()));
     actionListBranches.append(a);
-    actionOpenMultipleURLTabs = a;
+    actionOpenMultipleUrlTabs = a;
 
     a = new QAction(QPixmap(), tr("Extract URLs from note", "Edit menu"), this);
     a->setShortcut(Qt::SHIFT | Qt::Key_N);
@@ -3873,10 +3865,9 @@ void Main::setupContextMenus()
 
     branchLinksContextMenu = branchContextMenu->addMenu(
         tr("References (URLs, vymLinks, ...)", "Context menu name"));
-    branchLinksContextMenu->addAction(actionOpenURL);
-    branchLinksContextMenu->addAction(actionOpenURLTab);
-    branchLinksContextMenu->addAction(actionOpenMultipleVisURLTabs);
-    branchLinksContextMenu->addAction(actionOpenMultipleURLTabs);
+    branchLinksContextMenu->addAction(actionOpenUrl);
+    branchLinksContextMenu->addAction(actionOpenMultipleVisUrlTabs);
+    branchLinksContextMenu->addAction(actionOpenMultipleUrlTabs);
     branchLinksContextMenu->addAction(actionURLNew);
     branchLinksContextMenu->addAction(actionLocalURL);
     branchLinksContextMenu->addAction(actionGetURLsFromNote);
@@ -5284,10 +5275,17 @@ void Main::editCut()
         m->cut();
 }
 
-bool Main::openURL(const QString &url, bool privateMode)  // FIXME-3 settings for URL and PDF are not really any longer used, only fallback below
+bool Main::openUrl(const QString &url, bool privateMode)  // FIXME-3 settings for URL and PDF are not really any longer used, only fallback below
 {
-    if (url.isEmpty())
-        return false;
+    if (url.isEmpty()) {
+        VymModel *m = currentModel();
+        if (m) {
+            QString url = m->getUrl();
+            if (url == "")
+                return false;
+        } else
+            return false;
+    }
 
     if (privateMode) {  // FIXME-3 Currently only Firefox is supported to open private Urls
         QString browser = settings.value(
@@ -5339,31 +5337,10 @@ void Main::openTabs(QStringList urls)
     // Other browser, e.g. xdg-open
     // Just open all urls and leave it to the system to cope with it
     foreach (QString u, urls)
-        openURL(u);
+        openUrl(u);
 }
 
-void Main::editOpenURL() // FIXME-2 still needed?
-{
-    // Open new browser
-    VymModel *m = currentModel();
-    if (m) {
-        QString url = m->getUrl();
-        if (url == "")
-            return;
-        openURL(url);
-    }
-}
-void Main::editOpenURLTab() // FIXME-2 still needed?
-{
-    VymModel *m = currentModel();
-    if (m) {
-        QStringList urls;
-        urls.append(m->getUrl());
-        openTabs(urls);
-    }
-}
-
-void Main::editOpenMultipleVisURLTabs(bool ignoreScrolled)
+void Main::editOpenMultipleVisUrlTabs(bool ignoreScrolled)
 {
     VymModel *m = currentModel();
     if (m) {
@@ -5373,7 +5350,7 @@ void Main::editOpenMultipleVisURLTabs(bool ignoreScrolled)
     }
 }
 
-void Main::editOpenMultipleURLTabs() { editOpenMultipleVisURLTabs(false); }
+void Main::editOpenMultipleUrlTabs() { editOpenMultipleVisUrlTabs(false); }
 
 void Main::editNote2URLs()
 {
@@ -6801,7 +6778,7 @@ void Main::windowToggleTaskEditor()
     }
 }
 
-void Main::windowToggleSlideEditors()  // FIXME-2 not ported yet like TreeEditor
+void Main::windowToggleSlideEditors()
 {
     windowSetSlideEditorsVisibility(actionViewToggleSlideEditor->isChecked());
 }
@@ -7280,13 +7257,11 @@ void Main::updateActions()
                 QString url;
                 if (selti) url = selti->url();
                 if (url.isEmpty()) {
-                    actionOpenURL->setEnabled(false);
-                    actionOpenURLTab->setEnabled(false);
+                    actionOpenUrl->setEnabled(false);
                     actionGetConfluencePageDetails->setEnabled(false);
                 }
                 else {
-                    actionOpenURL->setEnabled(true);
-                    actionOpenURLTab->setEnabled(true);
+                    actionOpenUrl->setEnabled(true);
                     if (ConfluenceAgent::available())
                         actionGetConfluencePageDetails->setEnabled(true);
                     else
@@ -7355,7 +7330,7 @@ void Main::updateActions()
                 standardFlagsMaster->setEnabled(false);
                 userFlagsMaster->setEnabled(false);
 
-                actionOpenURL->setEnabled(false);
+                actionOpenUrl->setEnabled(false);
                 actionOpenVymLink->setEnabled(false);
                 actionOpenVymLinkBackground->setEnabled(false);
                 actionDeleteVymLink->setEnabled(false);

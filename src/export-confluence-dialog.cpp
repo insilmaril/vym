@@ -45,7 +45,7 @@ bool ExportConfluenceDialog::getCreateNewPage() { return ui.createPageButton->is
 
 void ExportConfluenceDialog::openUrl()
 {
-    mainWindow->openURL(ui.lineEditURL->text());
+    mainWindow->openUrl(ui.lineEditURL->text());
 }
 
 QString ExportConfluenceDialog::getUrl() { return url; }
