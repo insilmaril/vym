@@ -175,11 +175,12 @@ class Main : public QMainWindow {
   public slots:
     void updateQueries(VymModel *);
     bool openUrl(const QString &url = "", bool privateMode = false);
-    void openTabs(QStringList);
+    void openTabs(QStringList, bool privateMode = false);
 
   private slots:
-    void editOpenMultipleVisUrlTabs(bool ignoreScrolled = true);
-    void editOpenMultipleUrlTabs();
+    void editOpenMultipleVisUrls(bool ignoreScrolled = true, bool privateMode = false);
+    void editOpenMultipleUrls();
+    void editOpenMultipleUrlsPrivate();
     void editNote2URLs();
     void editURL();
     void editLocalURL();
@@ -506,8 +507,9 @@ class Main : public QMainWindow {
     QAction *actionCollapseOneLevel;
     QAction *actionCollapseUnselected;
     QAction *actionOpenUrl;
-    QAction *actionOpenMultipleVisUrlTabs;
-    QAction *actionOpenMultipleUrlTabs;
+    QAction *actionOpenMultipleVisUrls;
+    QAction *actionOpenMultipleUrls;
+    QAction *actionOpenMultipleUrlsPrivate;
     QAction *actionGetURLsFromNote;
     QAction *actionURLNew;
     QAction *actionLocalURL;

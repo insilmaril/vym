@@ -2240,16 +2240,25 @@ void Main::setupEditActions()
                     this);
     switchboard.addSwitch("mapOpenUrlsSubTree", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVisUrlTabs()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVisUrls()));
     actionListBranches.append(a);
-    actionOpenMultipleVisUrlTabs = a;   // FIXME-2 needed? Menu entry equal to related action?
+    actionOpenMultipleVisUrls = a;   // FIXME-2 needed? Menu entry equal to related action?
 
     a = new QAction(tr("Open all URLs in subtree", "Edit menu"), this);
-    switchboard.addSwitch("mapOpenMultipleUrlTabs", shortcutScope, a, tag);
+    switchboard.addSwitch("mapOpenMultipleUrls", shortcutScope, a, tag);
     addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleUrlTabs()));
+    connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleUrls()));
     actionListBranches.append(a);
-    actionOpenMultipleUrlTabs = a;
+    actionOpenMultipleUrls = a;
+
+    a = new QAction(tr("Open all URLs in subtree in private mode", "Edit menu"), this);
+    if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
+        switchboard.addSwitch("mapOpenMultipleUrls", shortcutScope, a, tag);
+        addAction(a);
+        connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleUrlsPrivate()));
+        actionListBranches.append(a);
+    }
+    actionOpenMultipleUrlsPrivate = a;
 
     a = new QAction(QPixmap(), tr("Extract URLs from note", "Edit menu"), this);
     a->setShortcut(Qt::SHIFT | Qt::Key_N);
@@ -3866,8 +3875,9 @@ void Main::setupContextMenus()
     branchLinksContextMenu = branchContextMenu->addMenu(
         tr("References (URLs, vymLinks, ...)", "Context menu name"));
     branchLinksContextMenu->addAction(actionOpenUrl);
-    branchLinksContextMenu->addAction(actionOpenMultipleVisUrlTabs);
-    branchLinksContextMenu->addAction(actionOpenMultipleUrlTabs);
+    branchLinksContextMenu->addAction(actionOpenMultipleVisUrls);
+    branchLinksContextMenu->addAction(actionOpenMultipleUrls);
+    branchLinksContextMenu->addAction(actionOpenMultipleUrlsPrivate);
     branchLinksContextMenu->addAction(actionURLNew);
     branchLinksContextMenu->addAction(actionLocalURL);
     branchLinksContextMenu->addAction(actionGetURLsFromNote);
@@ -5329,7 +5339,7 @@ bool Main::openUrl(const QString &url, bool privateMode)  // FIXME-3 settings fo
     return true;
 }
 
-void Main::openTabs(QStringList urls)
+void Main::openTabs(QStringList urls, bool privateMode)
 {
     if (urls.isEmpty())
         return;
@@ -5337,20 +5347,22 @@ void Main::openTabs(QStringList urls)
     // Other browser, e.g. xdg-open
     // Just open all urls and leave it to the system to cope with it
     foreach (QString u, urls)
-        openUrl(u);
+        openUrl(u, privateMode);
 }
 
-void Main::editOpenMultipleVisUrlTabs(bool ignoreScrolled)
+void Main::editOpenMultipleVisUrls(bool ignoreScrolled, bool privateMode)  // FIXME-2 Check scrolled option
 {
     VymModel *m = currentModel();
     if (m) {
         QStringList urls;
         urls = m->getUrls(ignoreScrolled);
-        openTabs(urls);
+        openTabs(urls, privateMode);
     }
 }
 
-void Main::editOpenMultipleUrlTabs() { editOpenMultipleVisUrlTabs(false); }
+void Main::editOpenMultipleUrls() { editOpenMultipleVisUrls(false); }
+
+void Main::editOpenMultipleUrlsPrivate() { editOpenMultipleVisUrls(false, true); }
 
 void Main::editNote2URLs()
 {
@@ -7595,6 +7607,12 @@ void Main::testFunction1()
     // Windows: windowsvista,Windows,Fusion
     //#include <QStyleFactory>
     //qApp->setStyle(QStyleFactory::create("windowsvista"));
+
+    const char *s1 = "Foo";
+    const char *s2 = "Foo";
+
+    qDebug() << strcmp(s1,s2);
+    return;
 
     VymModel *m = currentModel();
     if (m) {
