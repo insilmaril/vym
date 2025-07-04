@@ -206,7 +206,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Explorer automagically opens up the URL
     // in the user's preferred browser.
     s = settings.value(p, "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe").toString();
-#elif defined(Q_OS_MACX)
+#elif defined(Q_OS_MACOS)
     s = settings.value(p, "/usr/bin/open").toString();
 #else
     s = settings.value(p, "xdg-open").toString();
@@ -217,7 +217,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     p = "/system/readerPDF";
 #if defined(Q_OS_WIN)
     s = settings.value(p, "explorer").toString();
-#elif defined(Q_OS_MACX)
+#elif defined(Q_OS_MACOS)
     s = settings.value(p, "/usr/bin/open").toString();
 #else
     s = settings.value(p, "xdg-open").toString();
@@ -1929,7 +1929,7 @@ void Main::setupEditActions()
 
     // Shortcut to delete selection
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MACOS)
     a->setShortcut(Qt::Key_Backspace);
 #else
     a->setShortcut(Qt::Key_Delete);
@@ -2063,7 +2063,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":up-diagonal-right.png"), tr("Move branch diagonally up", "Edit menu"),
                     this);
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MACOS)
     a->setShortcut(Qt::SHIFT | Qt::Key_PageUp);
 #else
     a->setShortcut(Qt::CTRL | Qt::Key_PageUp);
@@ -2081,7 +2081,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":down-diagonal-left.png"), tr("Move branch diagonally down", "Edit menu"),
                     this);
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MACOS)
     a->setShortcut(Qt::SHIFT | Qt::Key_PageDown);
 #else
     a->setShortcut(Qt::CTRL | Qt::Key_PageDown);
@@ -7670,7 +7670,7 @@ void Main::helpDoc()
         docname = "vym.pdf";
 
     QStringList searchList;
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MACOS)
     searchList << vymBaseDir.path() + "/doc";
 #elif defined(Q_OS_WIN32)
     searchList << vymInstallDir.path() + "doc/" + docname;

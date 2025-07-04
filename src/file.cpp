@@ -13,7 +13,7 @@
 #include <windows.h>
 #endif
 
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MACOS)
 #include "unistd.h"
 #endif
 
