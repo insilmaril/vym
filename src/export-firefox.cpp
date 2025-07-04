@@ -47,14 +47,12 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
         // Export values
         if (key == "postData")
             jsobj[key] = QJsonValue::Null; 
-        else if (ai->value().typeName() == "QDateTime") 
+        else if (strcmp(ai->value().typeName(), "QDateTime") == 0)
             jsobj[key] = QJsonValue(ai->value().toDateTime().toMSecsSinceEpoch() * 1000);
-        else if (ai->value().typeName() == "QString") 
+        else if (strcmp(ai->value().typeName(), "QString") == 0)
             jsobj[key] = ai->value().toString();
-        else if (ai->value().typeName() == "Integer") 
-        {
+        else if (strcmp(ai->value().typeName(), "Integer") == 0)
             jsobj[key] = QJsonValue(ai->value().toInt());
-        }
         else
             qWarning() << "ExportFirefox  Unknown attribute type in " << bi->headingPlain() << "Key: " << key;
     }
