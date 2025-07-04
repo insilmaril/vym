@@ -149,7 +149,7 @@ extern QDir lastMapDir;
 extern QDir vymInstallDir;
 #endif
 
-extern QColor vymBlue;
+extern QColor vymBlueColor;
 
 Main::Main(QWidget *parent) : QMainWindow(parent)
 {
@@ -4124,7 +4124,7 @@ void Main::setupToolbars()
     c = QColor::fromString("#aa00ff"); quickColors << c;  // Purple
     c = QColor::fromString("#0000ff"); quickColors << c;  // Blue
     c = QColor::fromString("#00aaff"); quickColors << c;  // LightBlue
-    usingDarkTheme ? vymBlue = c : vymBlue = quickColors.count() - 2;
+    usingDarkTheme ? vymBlueColor = c : vymBlueColor = quickColors.count() - 2;
     c = QColor::fromString("#000000"); quickColors << c;  // Black
     c = QColor::fromString("#444444"); quickColors << c;  // Dark gray
     c = QColor::fromString("#aaaaaa"); quickColors << c;  // Light gray
@@ -5988,7 +5988,7 @@ void Main::editDeleteSelection()
         m->deleteSelection();
 }
 
-void Main::editLoadImage()
+void Main::editLoadImage()  // FIXME-2 filter is not used
 {
     VymModel *m = currentModel();
     if (m) {

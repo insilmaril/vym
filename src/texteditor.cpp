@@ -26,7 +26,8 @@ extern Settings settings;
 extern QFont fixedFont;
 extern QFont varFont;
 extern QString iconTheme;
-
+extern QColor vymForegroundColor;
+extern QColor vymBaseColor;
 extern QAction *actionViewToggleNoteEditor;
 
 extern QString vymName;
@@ -98,16 +99,22 @@ void TextEditor::init(const QString &scope)
 {
     shortcutScope = scope;
 
-    // FIXME-2 Default colors should come from bright/dark settings, not be stored permanently
     QString n = QString("/satellite/%1/").arg(shortcutScope);
     colorRichTextEditorBackground = QColor::fromString(
-        settings.value(n + "colors/richTextEditorBackground", "#00000000").toString());
+        settings.value(n + "colors/richTextEditorBackground", vymBaseColor.name()).toString());
 
     colorRichTextForeground = QColor::fromString(
-        settings.value(n + "colors/richTextForeground", "#ffffffff").toString());
+        settings.value(n + "colors/richTextForeground", vymForegroundColor.name()).toString());
 
     colorRichTextBackground = QColor::fromString(
-        settings.value(n + "colors/richTextBackground", "#00000000").toString());
+        settings.value(n + "colors/richTextBackground", vymBaseColor.name()).toString());
+
+    /*
+    qDebug() << "TE::init" << scope;
+    qDebug() << "  TEBG=" << colorRichTextEditorBackground.name() << vymBaseColor.name(); 
+    qDebug() << "  RTFG=" << colorRichTextForeground.name() << vymForegroundColor.name();
+    qDebug() << "  RTBG=" << colorRichTextBackground.name();
+    */
 
     // Toolbars
     setupFileActions();
@@ -775,7 +782,7 @@ void TextEditor::setPlainText(const QString &t)
 
     // Reset also text format
     QTextCharFormat textformat;
-    textformat.setForeground(qApp->palette().color(QPalette::WindowText));
+    textformat.setForeground(vymForegroundColor);
     textformat.setFont(varFontInt);
     editor->setCurrentCharFormat(textformat);
 
@@ -1230,7 +1237,7 @@ void TextEditor::setState(EditorState s)
                 else
                     baseColor = colorRichTextEditorBackground;
             } else {
-                baseColor = p.color(QPalette::Base);
+                baseColor = vymBaseColor;
             }
             editor->setReadOnly(false);
             break;

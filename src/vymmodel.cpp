@@ -106,7 +106,7 @@ extern Settings settings;
 extern QTextStream vout;
 
 extern bool usingDarkTheme;
-extern QColor vymBlue;
+extern QColor vymBlueColor;
 
 uint VymModel::idLast = 0; // make instance
 
@@ -5636,7 +5636,7 @@ void VymModel::processJiraTicket(QJsonObject jsobj)
         QString keyName = ji.key();
         if (ji.isFinished())    {
             keyName = "(" + keyName + ")";
-            colorSubtree (vymBlue, bi);
+            colorSubtree (vymBlueColor, bi);
         }
 
         setHeadingPlainText(keyName + ": " + ji.summary(), bi);
@@ -5693,7 +5693,7 @@ void VymModel::processJiraJqlQuery(QJsonObject jsobj)
             QString keyName = ji.key();
             if (ji.isFinished())    {
                 keyName = "(" + keyName + ")";
-                colorSubtree (vymBlue, bi2);
+                colorSubtree (vymBlueColor, bi2);
             }
 
             setHeadingPlainText(keyName + ": " + ji.summary(), bi2);

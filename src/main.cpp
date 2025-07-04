@@ -126,7 +126,11 @@ ImageIO imageIO;
 bool usingDarkTheme;    // Influences some color schemes
 bool systemSeemsDark;   // Text brighter than background?
 QString iconTheme;      // "bright" or "dark" depending on usingDarkTheme
-QColor vymBlue;
+
+// Some colors used more often and depending on dark mode
+QColor vymBlueColor;
+QColor vymForegroundColor;
+QColor vymBaseColor;
 
 int warningCount = 0;
 int criticalCount = 0;
@@ -374,13 +378,13 @@ int main(int argc, char *argv[])
         }
     }
 
+    QPalette palette;
     if (usingDarkTheme && settingsDarkTheme == "always") {
         qApp->setStyle(QStyleFactory::create("fusion"));
         //qApp->setStyle(QStyleFactory::create("Windows"));
         //qApp->setStyle(QStyleFactory::create("windowsvista"));
 
         // On Windows, there is no dark palette predefined, let's do that on our own
-        QPalette palette;
         palette.setColor(QPalette::Window, QColor(53,53,53));
         palette.setColor(QPalette::WindowText, Qt::white);
         palette.setColor(QPalette::Base, QColor(27, 30, 32));
@@ -399,7 +403,13 @@ int main(int argc, char *argv[])
         //palette.setColor(QPalette::Light, Qt::green);
         //palette.setColor(QPalette::Midlight, Qt::red);
         qApp->setPalette(palette);
-    }
+
+        vymBlueColor =QColor::fromString("#00aaff");
+    } else
+        vymBlueColor =QColor::fromString("#0000ff");
+
+    vymForegroundColor = palette.color(QPalette::WindowText);
+    vymBaseColor = palette.color(QPalette::Base);
 
     // Prepare and check translations
     vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
