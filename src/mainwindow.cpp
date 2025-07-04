@@ -2235,14 +2235,12 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionOpenUrl = a;
 
-    a = new QAction(tr("Open all URLs in subtree (including scrolled branches)",
-                       "Edit menu"),
-                    this);
+    a = new QAction(tr("Open all visible URLs in subtree", "Edit menu"), this);
     switchboard.addSwitch("mapOpenUrlsSubTree", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVisUrls()));
     actionListBranches.append(a);
-    actionOpenMultipleVisUrls = a;   // FIXME-2 needed? Menu entry equal to related action?
+    actionOpenMultipleVisUrls = a;
 
     a = new QAction(tr("Open all URLs in subtree", "Edit menu"), this);
     switchboard.addSwitch("mapOpenMultipleUrls", shortcutScope, a, tag);
@@ -5350,7 +5348,7 @@ void Main::openTabs(QStringList urls, bool privateMode)
         openUrl(u, privateMode);
 }
 
-void Main::editOpenMultipleVisUrls(bool ignoreScrolled, bool privateMode)  // FIXME-2 Check scrolled option
+void Main::editOpenMultipleVisUrls(bool ignoreScrolled, bool privateMode)
 {
     VymModel *m = currentModel();
     if (m) {
