@@ -53,10 +53,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Linux)
 
         LIST(APPEND QtComponents DBus)
         LIST(APPEND QtLibraries Qt6::DBus)
-
-        list(APPEND VymSources src/dbus/adaptormodel.cpp src/dbus/adaptorvym.cpp)
-        include_directories(${CMAKE_SOURCE_DIR}/src/dbus ${CMAKE_SOURCE_DIR}/src)
-        ADD_COMPILE_DEFINITIONS(VYM_DBUS)
     endif()
 endif()
 
@@ -107,6 +103,12 @@ if(WIN32)
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
 endif()
 
+# Add DBUS interfaces to sources, if DBUS is available on platform
+if(DBus1_FOUND)
+    list(APPEND VymSources src/dbus/adaptormodel.cpp src/dbus/adaptorvym.cpp)
+    include_directories(${CMAKE_SOURCE_DIR}/src/dbus ${CMAKE_SOURCE_DIR}/src)
+    ADD_COMPILE_DEFINITIONS(VYM_DBUS)
+endif()
 
 # Translations  (release)
 
