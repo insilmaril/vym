@@ -357,7 +357,7 @@ function macro_ctrl_f3()
     b = map.selectedBranch();
     status = "Subtree background off";
     if (b.getFrameType(true) == "NoFrame") {
-        status = "SUbtree background light yellow";
+        status = "Subtree background light yellow";
     }
     toggle_frame_branch ( map );
     b.setFrameBrushColor(true, "#efefb3");
@@ -371,7 +371,7 @@ function macro_ctrl_f4()
     b = map.selectedBranch();
     status = "Subtree background off";
     if (b.getFrameType(true) == "NoFrame") {
-        status = "SUbtree background light yellow";
+        status = "Subtree background light yellow";
     }
     toggle_frame_branch ( map );
     b.setFrameBrushColor(true, "#efefb3");
