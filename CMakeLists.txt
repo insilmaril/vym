@@ -137,6 +137,14 @@ message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "ts_files: ${ts_files}")
 message(STATUS "qm_files: ${qm_files}")
 
+# Collection of files for later installation
+file(GLOB vymDemos RELATIVE ${CMAKE_SOURCE_DIR} "demos/*.*")
+file(GLOB vymMacros RELATIVE ${CMAKE_SOURCE_DIR} "macros/*.vys")
+file(GLOB vymScripts RELATIVE ${CMAKE_SOURCE_DIR} "demos/scripts/*.*")
+message(STATUS "  vymDemos: ${vymDemos}")
+message(STATUS " vymMacros: ${vymMacros}")
+message(STATUS "vymScripts: ${vymScripts}")
+
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
 add_executable(vym ${VymSources} vym.qrc ${qm_files})
@@ -154,9 +162,7 @@ if(APPLE)
 
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME})
 
-
     # Add property to Info.plist
-    #set(MACOSX_BUNDLE_ICON_FILE vym.icns)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
@@ -179,40 +185,17 @@ if(APPLE)
         MACOSX_PACKAGE_LOCATION "Resources"
     )
 
-    set(APP_VYM_DEMOS
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/default-dark.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/default.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/frames.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/lifeforms.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/math.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/new-flags.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/task-management.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/time-management.vym
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/vym-contribute.vym
-    )
-    target_sources(vym PRIVATE ${APP_VYM_DEMOS})
-    set_source_files_properties(${APP_VYM_DEMOS} PROPERTIES
+    target_sources(vym PRIVATE ${vymDemos})
+    set_source_files_properties(${vymDemos} PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources/demos"
     )
-    set(APP_VYM_SCRIPTS
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/confluence-delete-labels.vys
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/confluence-find-labels.vys
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/examplescript.vys
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/export-image.vys
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/iterating-branches.vys
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/setSelectionBoxDarkTheme.vys
-        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/strip-url.vys
-    )
-    target_sources(vym PRIVATE ${APP_VYM_SCRIPTS})
-    set_source_files_properties(${APP_VYM_SCRIPTS} PROPERTIES
+    target_sources(vym PRIVATE ${vymScripts})
+    set_source_files_properties(${vymScripts} PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources/demos/scripts"
     )
-    set(APP_VYM_MACROS
-        ${CMAKE_CURRENT_SOURCE_DIR}/macros/macros.vys
-        ${CMAKE_CURRENT_SOURCE_DIR}/macros/slideeditor-snapshot.vys
-    )
-    target_sources(vym PRIVATE ${APP_VYM_MACROS})
-    set_source_files_properties(${APP_VYM_MACROS} PROPERTIES
+
+    target_sources(vym PRIVATE ${vymMacros})
+    set_source_files_properties(${vymMacros} PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources/macros"
     )
     #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
