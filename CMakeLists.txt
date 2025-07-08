@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(ViewYourMind-develop LANGUAGES CXX)
+project(vym LANGUAGES CXX)
 
 # See also https://doc.qt.io/qt-6.5/cmake-get-started.html
 
@@ -151,15 +151,74 @@ endif()
 
 if(APPLE)
     message(STATUS "Detected APPLE")
-    set_target_properties(vym PROPERTIES MACOSX_BUNDLE TRUE )
+
+    set(MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME})
+
 
     # Add property to Info.plist
-    set(MACOSX_BUNDLE_ICON_FILE vym.icns)
+    #set(MACOSX_BUNDLE_ICON_FILE vym.icns)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.insilmaril.vym"
+        MACOSX_BUNDLE_ICON_FILE "vym.icns"
+        MACOSX_BUNDLE TRUE
+    )
 
     # tell CMake where to find and install the file itself
     set(APP_ICON_MACOSX ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
     set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
            MACOSX_PACKAGE_LOCATION "Resources")
+
+    set(APP_RESOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns
+    )
+    target_sources(vym PRIVATE ${APP_RESOURCES})
+    set_source_files_properties(${APP_RESOURCES} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources"
+    )
+
+    set(APP_VYM_DEMOS
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/default-dark.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/default.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/frames.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/lifeforms.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/math.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/new-flags.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/task-management.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/time-management.vym
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/vym-contribute.vym
+    )
+    target_sources(vym PRIVATE ${APP_VYM_DEMOS})
+    set_source_files_properties(${APP_VYM_DEMOS} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/demos"
+    )
+    set(APP_VYM_SCRIPTS
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/confluence-delete-labels.vys
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/confluence-find-labels.vys
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/examplescript.vys
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/export-image.vys
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/iterating-branches.vys
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/setSelectionBoxDarkTheme.vys
+        ${CMAKE_CURRENT_SOURCE_DIR}/demos/scripts/strip-url.vys
+    )
+    target_sources(vym PRIVATE ${APP_VYM_SCRIPTS})
+    set_source_files_properties(${APP_VYM_SCRIPTS} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/demos/scripts"
+    )
+    set(APP_VYM_MACROS
+        ${CMAKE_CURRENT_SOURCE_DIR}/macros/macros.vys
+        ${CMAKE_CURRENT_SOURCE_DIR}/macros/slideeditor-snapshot.vys
+    )
+    target_sources(vym PRIVATE ${APP_VYM_MACROS})
+    set_source_files_properties(${APP_VYM_MACROS} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/macros"
+    )
+    #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    #    COMMAND codesign -f -s - "${CMAKE_CURRENT_SOURC_DIR}/${PROJECT_NAME}.app"
+    #    COMMENT "Signing the .app bundle"
+    #)
 
 #FIXME-0    add_executable(vym MACOSX_BUNDLE main.cpp ${APP_ICON_MACOSX})
 target_sources(vym PUBLIC ${APP_ICON_MACOSX})
