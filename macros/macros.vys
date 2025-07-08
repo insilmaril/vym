@@ -342,11 +342,11 @@ function macro_ctrl_f2()
     map = vym.currentMap();
     b = map.selectedBranch();
     status = "Subtree background off";
-    if (b.getFrameType(true) == "NoFrame") {
+    if (b.getFrameType(false) == "NoFrame") {
         status = "Subtree background light green";
     }
-    toggle_frame_branch ( map );
-    b.setFrameBrushColor(true, "#bdffd6");
+    toggle_frame_subtree ( map );
+    b.setFrameBrushColor(false, "#bdffd6");
     vym.statusMessage(status);
 }
 
@@ -356,11 +356,11 @@ function macro_ctrl_f3()
     map = vym.currentMap();
     b = map.selectedBranch();
     status = "Subtree background off";
-    if (b.getFrameType(true) == "NoFrame") {
-        status = "Subtree background light yellow";
+    if (b.getFrameType(false) == "NoFrame") {
+        status = "SUbtree background light yellow";
     }
-    toggle_frame_branch ( map );
-    b.setFrameBrushColor(true, "#efefb3");
+    toggle_frame_subtree ( map );
+    b.setFrameBrushColor(false, "#efefb3");
     vym.statusMessage(status);
 }
 
@@ -370,11 +370,11 @@ function macro_ctrl_f4()
     map = vym.currentMap();
     b = map.selectedBranch();
     status = "Subtree background off";
-    if (b.getFrameType(true) == "NoFrame") {
-        status = "Subtree background light yellow";
+    if (b.getFrameType(false) == "NoFrame") {
+        status = "Subtree background light bluex";
     }
-    toggle_frame_branch ( map );
-    b.setFrameBrushColor(true, "#efefb3");
+    toggle_frame_subtree ( map );
+    b.setFrameBrushColor(false, "#e2e6ff");
     vym.statusMessage(status);
 }
 
@@ -384,11 +384,11 @@ function macro_ctrl_f5()
     map = vym.currentMap();
     b = map.selectedBranch();
     status = "Subtree background off";
-    if (b.getType(true) == "NoFrame") {
+    if (b.getFrameType(false) == "NoFrame") {
         status = "Subtree background light grey";
     }
-    toggle_frame_branch ( map );
-    b.setFrameBrushColor(true, "#d6d6d6");
+    toggle_frame_subtree ( map );
+    b.setFrameBrushColor(false, "#d6d6d6");
     vym.statusMessage(status);
 }
 
@@ -398,11 +398,11 @@ function macro_ctrl_f6()
     map = vym.currentMap();
     b = map.selectedBranch();
     status = "Subtree background off";
-    if (b.getFrameType(true) == "NoFrame") {
+    if (b.getFrameType(false) == "NoFrame") {
         status = "Subtree background purple";
     }
-    toggle_frame_branch ( map );
-    b.setFrameBrushColor(true, "#ffaaff");
+    toggle_frame_subtree ( map );
+    b.setFrameBrushColor(false, "#ffaaff");
     vym.statusMessage(status);
 }
 
@@ -412,11 +412,11 @@ function macro_ctrl_f7()
     map = vym.currentMap();
     b = map.selectedBranch();
     status = "Subtree background off";
-    if (b.getFrameType() == "NoFrame") {
+    if (b.getFrameType(false) == "NoFrame") {
         status = "Subtree background white";
     }
-    toggle_frame_branch ( map );
-    b.setFrameBrushColor("#ffffff");
+    toggle_frame_subtree ( map );
+    b.setFrameBrushColor(false, "#ffffff");
     vym.statusMessage(status);
 }
 
@@ -426,11 +426,11 @@ function macro_ctrl_f8()
     map = vym.currentMap();
     b = map.selectedBranch();
     status = "Subtree background off";
-    if (b.getFrameType(true) == "NoFrame") {
+    if (b.getFrameType(false) == "NoFrame") {
         status = "Subtree background black";
     }
-    toggle_frame_branch ( map );
-    b.setFrameBrushColor(true, "#000000");
+    toggle_frame_subtree ( map );
+    b.setFrameBrushColor(false, "#000000");
     vym.statusMessage(status);
 }
 
