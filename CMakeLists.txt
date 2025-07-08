@@ -162,7 +162,7 @@ if(APPLE)
 
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME})
 
-    # Add property to Info.plist
+    # Prepare Info.plist
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
@@ -172,18 +172,10 @@ if(APPLE)
         MACOSX_BUNDLE TRUE
     )
 
-    # tell CMake where to find and install the file itself
-    set(APP_ICON_MACOSX ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
-    set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
-           MACOSX_PACKAGE_LOCATION "Resources")
-
-    set(APP_RESOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns
-    )
-    target_sources(vym PRIVATE ${APP_RESOURCES})
-    set_source_files_properties(${APP_RESOURCES} PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources"
-    )
+    set(vymIconMac ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
+    target_sources(vym PRIVATE ${vymIconMac})
+    set_source_files_properties(${vymIconMac} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources")
 
     target_sources(vym PRIVATE ${vymDemos})
     set_source_files_properties(${vymDemos} PROPERTIES
@@ -203,8 +195,6 @@ if(APPLE)
     #    COMMENT "Signing the .app bundle"
     #)
 
-#FIXME-0    add_executable(vym MACOSX_BUNDLE main.cpp ${APP_ICON_MACOSX})
-target_sources(vym PUBLIC ${APP_ICON_MACOSX})
 endif()
 
 add_custom_target(make-translations-directory ALL
