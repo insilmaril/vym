@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(ViewYourMind-develop LANGUAGES CXX)
+project(vym LANGUAGES CXX)
 
 # See also https://doc.qt.io/qt-6.5/cmake-get-started.html
 
@@ -137,6 +137,14 @@ message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "ts_files: ${ts_files}")
 message(STATUS "qm_files: ${qm_files}")
 
+# Collection of files for later installation
+file(GLOB vymDemos RELATIVE ${CMAKE_SOURCE_DIR} "demos/*.*")
+file(GLOB vymMacros RELATIVE ${CMAKE_SOURCE_DIR} "macros/*.vys")
+file(GLOB vymScripts RELATIVE ${CMAKE_SOURCE_DIR} "demos/scripts/*.*")
+message(STATUS "  vymDemos: ${vymDemos}")
+message(STATUS " vymMacros: ${vymMacros}")
+message(STATUS "vymScripts: ${vymScripts}")
+
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
 add_executable(vym ${VymSources} vym.qrc ${qm_files})
@@ -151,18 +159,42 @@ endif()
 
 if(APPLE)
     message(STATUS "Detected APPLE")
-    set_target_properties(vym PROPERTIES MACOSX_BUNDLE TRUE )
 
-    # Add property to Info.plist
-    set(MACOSX_BUNDLE_ICON_FILE vym.icns)
+    set(MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME})
 
-    # tell CMake where to find and install the file itself
-    set(APP_ICON_MACOSX ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
-    set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
-           MACOSX_PACKAGE_LOCATION "Resources")
+    # Prepare Info.plist
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.insilmaril.vym"
+        MACOSX_BUNDLE_ICON_FILE "vym.icns"
+        MACOSX_BUNDLE TRUE
+    )
 
-#FIXME-0    add_executable(vym MACOSX_BUNDLE main.cpp ${APP_ICON_MACOSX})
-target_sources(vym PUBLIC ${APP_ICON_MACOSX})
+    set(vymIconMac ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
+    target_sources(vym PRIVATE ${vymIconMac})
+    set_source_files_properties(${vymIconMac} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources")
+
+    target_sources(vym PRIVATE ${vymDemos})
+    set_source_files_properties(${vymDemos} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/demos"
+    )
+    target_sources(vym PRIVATE ${vymScripts})
+    set_source_files_properties(${vymScripts} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/demos/scripts"
+    )
+
+    target_sources(vym PRIVATE ${vymMacros})
+    set_source_files_properties(${vymMacros} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/macros"
+    )
+    #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    #    COMMAND codesign -f -s - "${CMAKE_CURRENT_SOURC_DIR}/${PROJECT_NAME}.app"
+    #    COMMENT "Signing the .app bundle"
+    #)
+
 endif()
 
 add_custom_target(make-translations-directory ALL
