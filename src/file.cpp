@@ -130,7 +130,7 @@ bool isInTmpDir(QString fn)
     return fn.left(l) == temp;
 }
 
-QString makeUniqueDir(bool &ok, QString s) // FIXME-4 use QTemporaryDir
+QString makeUniqueDir(bool &ok, QString s) // FIXME-2 use QTemporaryDir
 {
     ok = true;
 
@@ -141,7 +141,7 @@ QString makeUniqueDir(bool &ok, QString s) // FIXME-4 use QTemporaryDir
 #else
     // On Linux and friends use cstdlib
 
-    // Convert QString to string
+    // Convert QString to string // FIXME-2 needed???
     ok = true;
     char *p;
     int bytes = s.length();
