@@ -40,7 +40,10 @@ void ImageContainer::copy(ImageContainer *other)
         case ImageContainer::ClonedSVG:
             if (!other->svgCachePath.isEmpty()) {
                 // Loading here will also set imageType
-                load(other->svgCachePath, true);
+                load(other->svgCachePath, true);    // FIXME-2 Re-parsing svgs is slow
+                        //
+                        // Maybe use setSharedRenderer() and orgSVG.renderer() for flags
+                        //Replace createClone flag by original imageContainer
             }
             else
                 qWarning() << "ImgObj::copy svg: no svgCachePath available.";
