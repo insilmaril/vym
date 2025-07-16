@@ -144,7 +144,8 @@ TaskEditor::TaskEditor(QWidget *)
     view->setDragEnabled(true);
     view->setAcceptDrops(true);
     view->setDropIndicatorShown(true);
-    view->setAutoScroll(false);
+    view->setAutoScroll(false); // Autopscroll while dragging tasks
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     blockExternalSelect = false;
 
@@ -410,9 +411,11 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
         // Avoid segfault on quit, when selected is empty
         return;
 
-    QItemSelection sel0 = filterActiveModel->mapSelectionToSource(selected);
-    QModelIndex ix = sel0.indexes().first();
-    Task *t = taskModel->getTask(ix);
+    QItemSelection selMapped = filterActiveModel->mapSelectionToSource(selected);
+    QModelIndex ixMapped = selMapped.indexes().first();
+    Task *t = taskModel->getTask(ixMapped);
+
+    // If ixMapped is invalid, returned t will be nullptr
     if (t) {
         BranchItem *bi = t->getBranch();
         if (bi) {
@@ -427,7 +430,21 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
                 "; selection-color:" + bi->headingColor().name() + "}" +
                 "QTableView:focus {" + editorFocusStyle + "}");
             */
-            view->scrollTo(selected.indexes().first());
+	    /* Remove debug output, if no longer crashes  FIXME-2
+            qDebug() << __func__ ;
+            qDebug() << "  indexes=" << selected.indexes();
+            if (selected.indexes().isEmpty())
+                qDebug() << "    selected.indexes() is =empty";
+            else
+                qDebug() << "    ixOrg=" << selected.indexes().first();
+            //qDebug() << "     selMapped=" << selMapped;
+            qDebug() << "       ixMapped=" << ixMapped;
+            view->scrollTo(ixMapped);
+            //view->scrollTo(selected.indexes().first()); // Seems to crash sometimes. Is this index really the right one?
+                                                        // Reproduce: Multiple maps with multiple "new" tasks.
+                                                        // Toggle tasks state in TE
+                                                        // -> crash (sometimes)
+	    */
         }
     }
 }

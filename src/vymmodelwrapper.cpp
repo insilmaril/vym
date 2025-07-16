@@ -11,6 +11,7 @@
 #include "imageitem.h"
 #include "image-wrapper.h"
 #include "mainwindow.h"
+#include "mapeditor.h"
 #include "misc.h"
 #include "vym-wrapper.h"
 #include "scripting-xlink-wrapper.h"
@@ -346,6 +347,11 @@ QString VymModelWrapper::getSelectionString()
     QString r = model->getSelectString();
     mainWindow->setScriptResult(r);
     return r;
+}
+
+double VymModelWrapper::getZoom()
+{
+    model->getMapEditor()->zoomFactorTarget();
 }
 
 bool VymModelWrapper::hasBackgroundImage()

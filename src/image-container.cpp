@@ -118,7 +118,7 @@ void ImageContainer::select()
 
 bool ImageContainer::load(const QString &fn, bool createClone)
 {
-    // qDebug() << "IC::load " << fn;
+    qDebug() << "IC::load " << fn;  // FIXME-2 Re-reading cached flags significantly increases loading time of bigger maps
     // createClone == true, if called via copy()
     if (imageType != ImageContainer::Undefined) {
         qWarning() << "ImageContainer::load (" << fn

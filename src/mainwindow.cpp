@@ -755,6 +755,9 @@ void Main::setupAPI()
     c = new Command("getSelectionString", Command::TreeItemSel, Command::StringPar);
     modelCommands.append(c);
 
+    c = new Command("getZoom", Command::AnySel, Command::DoublePar);
+    modelCommands.append(c);
+
     c = new Command("hasBackgroundImage", Command::AnySel, Command::BoolPar);
     c->setComment("Returns true, if map uses an image as background");
     modelCommands.append(c);
@@ -3367,9 +3370,10 @@ void Main::setupFlagActions()
                      tr("I do not like this", "Standardflag"));
 
     // Original khelpcenter.png
-    setupFlag(":/flag-lifebelt.svg", Flag::StandardFlag, "lifebelt",
+    //setupFlag(":/flag-lifebelt.svg", Flag::StandardFlag, "lifebelt",
+    setupFlag(":/flag-phone.svg", Flag::StandardFlag, "lifebelt",
                      tr("This will help", "Standardflag"));
-    // FIXME-2 lifebelt.svg seems to cause warnings about buffer size
+    // FIXME-2 lifebelt.svg seems to cause warnings about buffer size. Replacedby phone for now
     setupFlag(":/flag-phone.svg", Flag::StandardFlag, "phone",
                      tr("Call...", "Standardflag"));
 

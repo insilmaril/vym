@@ -44,6 +44,7 @@ class VymModelWrapper : public QObject {
     QString getTitle();
     QString getLinkColorHint();
     QString getSelectionString();
+    double getZoom();
     bool hasBackgroundImage();
     bool loadBackgroundImage(const QString &imagePath);
     bool loadBranchReplace(QString filename, BranchWrapper *bw);

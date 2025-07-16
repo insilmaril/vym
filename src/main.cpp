@@ -188,6 +188,10 @@ int main(int argc, char *argv[])
     vymCodeQuality = __VYM_CODE_QUALITY;
     vymHome = __VYM_HOME;
 
+    QTemporaryDir td;
+    qDebug() << "td=" << td.path(); // FIXME-2 Debug vanishing tmpDir files on Mac
+
+
     // Fonts
     fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
         //    Linux: "Courier,12,-1,5,48,0,0,0,1,0"
