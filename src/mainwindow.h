@@ -161,9 +161,9 @@ class Main : public QMainWindow {
     void fileExportLast();
     bool fileCloseMap(int i = -1); // Optionally pass number of tab
     void filePrint();
-    bool fileExitVYM();
 
   public slots:
+    bool fileExitVYM();
     void editUndo();
     void editRedo();
     void gotoHistoryStep(int);

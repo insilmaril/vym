@@ -188,10 +188,6 @@ int main(int argc, char *argv[])
     vymCodeQuality = __VYM_CODE_QUALITY;
     vymHome = __VYM_HOME;
 
-    QTemporaryDir td;
-    qDebug() << "td=" << td.path(); // FIXME-2 Debug vanishing tmpDir files on Mac
-
-
     // Fonts
     fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
         //    Linux: "Courier,12,-1,5,48,0,0,0,1,0"
@@ -592,14 +588,14 @@ int main(int argc, char *argv[])
         m.runScript(scriptEditor->getScriptFile());
     }
 
-    // For benchmarking we may want to quit instead of entering event loop
-    if (options.isActive("quit"))
-        return 0;
-
     // Enable some last minute cleanup
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 
-    app.exec();
+    // For benchmarking we may want to quit instead of entering event loop
+    if (options.isActive("quit"))
+        m.fileExitVYM();
+    else
+        app.exec();
 
     // Cleanup
     delete noteEditor;

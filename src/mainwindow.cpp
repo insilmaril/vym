@@ -551,7 +551,8 @@ void Main::removeProgressCounter()
 
 void Main::closeEvent(QCloseEvent *event)
 {
-    if (fileExitVYM())
+    if (tabWidget->count() > 0 && fileExitVYM())
+        // Some problem when closing tabs
         event->ignore();
     else
         event->accept();
@@ -5228,7 +5229,6 @@ void Main::filePrint()
 
 bool Main::fileExitVYM()
 {
-    // fileExit Vym calls itself via qApp->quit() and closeEvent()
     // Only save session if there still are tabs open
     if (tabWidget->count() > 0)
         fileSaveSession();
