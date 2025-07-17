@@ -25,6 +25,7 @@ class ImageContainer : public Container, public LinkableContainer, public Select
 
     ImageContainer();
     virtual ~ImageContainer();
+    virtual QSvgRenderer* svgRenderer();
     virtual void copy(ImageContainer*);
     virtual void init();
     void setWidth(qreal w);
@@ -32,7 +33,7 @@ class ImageContainer : public Container, public LinkableContainer, public Select
     qreal scale();
     void select();
 
-    bool load(const QString &, bool createClone = false);
+    bool load(const QString &);
     bool save(const QString &);
     QString getExtension();
     ImageType getType();

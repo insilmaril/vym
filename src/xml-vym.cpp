@@ -597,7 +597,6 @@ void VymReader::readHeadingOrVymNote()
             // For compatibility with <= 2.4.0 set both branch and
             // heading color
             lastMI->setHeadingColor(col);
-            qDebug() << __func__ << "Parsing line " << xml.lineNumber();   // FIXME-2 debug - find where load lags
         }
 
         lastMI->setHeading(vymtext);

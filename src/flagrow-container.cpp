@@ -70,7 +70,7 @@ void FlagRowContainer::activateFlag(Flag *flag)
         // qDebug() << "FRC::activateFlag  visible="<< visible << "  Qtvis=" << isVisible();
 
         // Loading an image  will *copy* it
-        // and thus read the flag from cash
+        // and will create a shared renderer
         fc->copy(flag->getImageContainer());
         fc->setUuid(flag->getUuid());
         fc->setZValue(QGraphicsItem::zValue());

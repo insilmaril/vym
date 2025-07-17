@@ -28,8 +28,17 @@ ImageContainer::~ImageContainer()
     if (imageItem) imageItem->unlinkImageContainer();
 }
 
+QSvgRenderer* ImageContainer::svgRenderer()
+{
+    if (svgItem)
+        return svgItem->renderer();
+    else
+        return nullptr;
+}
+
 void ImageContainer::copy(ImageContainer *other)
 {
+    //qDebug() << "IC::copy";
     prepareGeometryChange();
     if (imageType != ImageContainer::Undefined)
         qWarning() << "ImageContainer::copy into existing image of type "
@@ -39,17 +48,19 @@ void ImageContainer::copy(ImageContainer *other)
         case ImageContainer::SVG:
         case ImageContainer::ClonedSVG:
             if (!other->svgCachePath.isEmpty()) {
-                // Loading here will also set imageType
-                load(other->svgCachePath, true);    // FIXME-2 Re-parsing svgs is slow
-                        //
-                        // Maybe use setSharedRenderer() and orgSVG.renderer() for flags
-                        //Replace createClone flag by original imageContainer
+                //qDebug() << __func__ << "copying from " << other->svgCachePath;
+                svgItem = new QGraphicsSvgItem(this);
+                svgItem->setSharedRenderer(other->svgRenderer());
+                imageType = ImageContainer::ClonedSVG;
+                QRectF r = svgItem->boundingRect();
+
+                // Center svg
+                svgItem->setPos( -r.width() / 2, - r.height() / 2);
+                setRect(mapFromItem(svgItem, svgItem->boundingRect()).boundingRect());
             }
             else
                 qWarning() << "ImgObj::copy svg: no svgCachePath available.";
 
-            svgItem->setParentItem(this);
-            setRect(other->rect());
             break;
         case ImageContainer::Pixmap: {
             pixmapItem = new QGraphicsPixmapItem();
@@ -119,10 +130,9 @@ void ImageContainer::select()
     selectionContainer->setRect(QRectF(r.x() - d, r.y() - d, r.width() + 2 * d, r.height() + 2 * d));
 }
 
-bool ImageContainer::load(const QString &fn, bool createClone)
+bool ImageContainer::load(const QString &fn)
 {
-    qDebug() << "IC::load " << fn;  // FIXME-2 Re-reading cached flags significantly increases loading time of bigger maps
-    // createClone == true, if called via copy()
+    //qDebug() << "IC::load " << fn;
     if (imageType != ImageContainer::Undefined) {
         qWarning() << "ImageContainer::load (" << fn
                    << ") into existing image of type " << imageType;
@@ -132,23 +142,18 @@ bool ImageContainer::load(const QString &fn, bool createClone)
     if (fn.toLower().endsWith(".svg")) {
         svgItem = new QGraphicsSvgItem(fn, this);
 
-        if (createClone) {
-            imageType = ImageContainer::ClonedSVG;
-            svgCachePath = fn;
-        } else {
-            imageType = ImageContainer::SVG;
+        imageType = ImageContainer::SVG;
 
-            // Copy original file to cache
-            QFile svgFile(fn);
-            QString newPath = cacheDir.path() + "/" + QString().number(imageID) +
-                              "-" + basename(fn);
-            if (!svgFile.copy(newPath)) {
-                qWarning() << "ImageContainer::load (" << fn
-                           << ") could not be copied to " << newPath;
-            }
+        // Copy original file to cache
+        QFile svgFile(fn);
+        QString newPath = cacheDir.path() + "/" + QString().number(imageID) +
+                          "-" + basename(fn);
+        if (!svgFile.copy(newPath)) {
+            qWarning() << "ImageContainer::load (" << fn
+                       << ") could not be copied to " << newPath;
+        }
 
-            svgCachePath = newPath;
-        }   // No clone created
+        svgCachePath = newPath;
         QRectF r = svgItem->boundingRect();
 
         // Center svg
