@@ -6569,8 +6569,6 @@ void Main::settingsMacroPath()
     fd.setNameFilters(filters);
     fd.setWindowTitle(vymName + " - " + tr("Load vym script"));
     fd.setAcceptMode(QFileDialog::AcceptOpen);
-    fd.show();              // FIXME-2 added to debug #146
-    fd.activateWindow();    // FIXME-2 added to debug #146
 
     if (fd.exec() == QDialog::Accepted) {
         if (macros.setPath( fd.selectedFiles().first()))
