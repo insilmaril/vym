@@ -5979,14 +5979,10 @@ void Main::editDeleteSelection()
         m->deleteSelection();
 }
 
-void Main::editLoadImage()  // FIXME-2 filter is not used
+void Main::editLoadImage()
 {
     VymModel *m = currentModel();
     if (m) {
-        QString filter = QString(tr("Images", "Filedialog") +
-                                 " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
-                                 "*.pnm *.svg *.svgz);;" +
-                                 tr("All", "Filedialog") + " (*.*)");
         QStringList imagePaths = openImageDialog(tr("Load images"));
 
         if (!imagePaths.isEmpty())

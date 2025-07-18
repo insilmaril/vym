@@ -430,21 +430,6 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
                 "; selection-color:" + bi->headingColor().name() + "}" +
                 "QTableView:focus {" + editorFocusStyle + "}");
             */
-	    /* Remove debug output, if no longer crashes  FIXME-2
-            qDebug() << __func__ ;
-            qDebug() << "  indexes=" << selected.indexes();
-            if (selected.indexes().isEmpty())
-                qDebug() << "    selected.indexes() is =empty";
-            else
-                qDebug() << "    ixOrg=" << selected.indexes().first();
-            //qDebug() << "     selMapped=" << selMapped;
-            qDebug() << "       ixMapped=" << ixMapped;
-            view->scrollTo(ixMapped);
-            //view->scrollTo(selected.indexes().first()); // Seems to crash sometimes. Is this index really the right one?
-                                                        // Reproduce: Multiple maps with multiple "new" tasks.
-                                                        // Toggle tasks state in TE
-                                                        // -> crash (sometimes)
-	    */
         }
     }
 }
