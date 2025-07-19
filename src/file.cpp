@@ -111,14 +111,14 @@ bool confirmDirectoryOverwrite(const QDir &dir)
     return true;
 }
 
-QString makeTmpDir(bool &ok, const QString &dirPath,
+QString makeTmpDir(bool &ok, const QString &dirPath,    // FIXME-2 obsolete?
                    const QString &prefix)
 {
     QString path = makeUniqueDir(ok, dirPath + "/" + prefix + "-XXXXXX");
     return path;
 }
 
-QString makeTmpDir(bool &ok, const QString &prefix)
+QString makeTmpDir(bool &ok, const QString &prefix) // FIXME-2 obsolete?
 {
     return makeTmpDir(ok, QDir::tempPath(), prefix);
 }
@@ -136,6 +136,7 @@ QString makeUniqueDir(bool &ok, QString s) // FIXME-2 use QTemporaryDir and remo
     ok = true;
 
     QString r;
+    qDebug() << "makeUiqueDir s=" << s;
 
 #if defined(Q_OS_WINDOWS)
     r = mkdtemp(s);

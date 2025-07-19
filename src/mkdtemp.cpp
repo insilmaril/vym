@@ -14,7 +14,7 @@ pid_t getpid(void);
 #include <time.h>
 #endif
 
-QString mkdtemp(QString tmpl)
+QString mkdtemp(QString tmpl)   // FIXME-2 obsolete with QTemporaryDir
 {
     static const char letters[] =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
