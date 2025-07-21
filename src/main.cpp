@@ -327,7 +327,9 @@ int main(int argc, char *argv[])
 
     bool ok;
     if (!vymUserDir.exists()) {
-        ok = vymUserDir.mkpath(vymUserDir.path());
+        ok = QDir::home().mkdir(
+                basename(vymUserDir.path()),
+                QFileDevice::ReadOwner| QFileDevice::WriteOwner | QFileDevice::ExeOwner);
         if (!ok) {
             QString msg = "Failed to create vymUserDir=" + vymUserDir.path();
             qWarning() << msg;
@@ -335,9 +337,9 @@ int main(int argc, char *argv[])
             exit (1);
         }
     }
-    tmpVymDir.setPath(makeTmpDir(ok, "vym-tmp"));
 
-    if (!tmpVymDir.mkpath(tmpVymDir.path())) {  // FIXME-2 Set permissions to 700 on all platforms
+    tmpVymDir.setPath(makeTmpDir(ok, "vym-tmp"));
+    if (!ok) {
         QString msg = "Failed to create temporary directory tmpVymDir=" + tmpVymDir.path();
         qWarning() << msg;
         QMessageBox::warning(0, "Critical Error", msg);
