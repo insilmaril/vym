@@ -87,10 +87,6 @@ extern FindResultWidget *findResultWidget;
 extern TaskEditor *taskEditor;
 extern TaskModel *taskModel;
 extern Macros macros;
-extern QDir tmpVymDir;
-extern QDir cacheDir;
-extern QString clipboardDir;
-extern QString clipboardFile;
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
 extern FlagRowMaster *systemFlagsMaster;
@@ -153,6 +149,7 @@ extern QColor vymBlueColor;
 
 Main::Main(QWidget *parent) : QMainWindow(parent)
 {
+    // qDebug() << "Constr. MainWindow";
     mainWindow = this;
 
     setWindowTitle(vymName + " - View Your Mind");
@@ -162,32 +159,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Sometimes we may need to remember old selections
     prevSelection = QUuid();
 
-    // Create unique temporary directory
-    bool ok;
-    QString tmpVymDirPath = makeTmpDir(ok, "vym");
-    if (!ok) {
-        qWarning("Mainwindow: Could not create temporary directory, failed to "
-                 "start vym");
-        exit(1);
-    }
-    if (debug)
-        qDebug() << "tmpVymDirPath = " << tmpVymDirPath;
-    tmpVymDir.setPath(tmpVymDirPath);
-
-    // Create direcctory for clipboard
-    clipboardDir = tmpVymDirPath + "/clipboard";
-    clipboardFile = "clipboard";
-    QDir d(clipboardDir);
-    d.mkdir(clipboardDir);
-    makeSubDirs(clipboardDir);
-
-    // Create directory for cached files, e.g. svg images
-    if (!tmpVymDir.mkdir("cache")) {
-        qWarning(
-            "Mainwindow: Could not create cache directory, failed to start vym");
-        exit(1);
-    }
-    cacheDir = QDir(tmpVymDirPath + "/cache");
 
     // Remember PID of our friendly webbrowser
     browserPID = new qint64;
@@ -458,9 +429,6 @@ Main::~Main()
     delete standardFlagsMaster;
     delete userFlagsMaster;
     delete systemFlagsMaster;
-
-    // Remove temporary directory
-    removeDir(tmpVymDir);
 }
 
 void Main::loadCmdLine()
@@ -5325,8 +5293,7 @@ bool Main::openUrl(const QString &url, bool privateMode)  // FIXME-3 settings fo
     QString browser = settings.value("/system/readerUrl").toString();
     QStringList args;
     args << url;
-    if (!QProcess::startDetached(browser, args, QDir::currentPath(),
-                                 browserPID)) {
+    if (!QProcess::startDetached(browser, args, QDir::currentPath(), browserPID)) { // FIXME-2 browserPID never read again...
         // try to set path to browser
         QMessageBox::warning(
             0, tr("Warning"),

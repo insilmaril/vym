@@ -351,7 +351,7 @@ QString VymModelWrapper::getSelectionString()
 
 double VymModelWrapper::getZoom()
 {
-    model->getMapEditor()->zoomFactorTarget();
+    return model->getMapEditor()->zoomFactorTarget();
 }
 
 bool VymModelWrapper::hasBackgroundImage()

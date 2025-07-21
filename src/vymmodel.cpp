@@ -88,8 +88,8 @@ extern FlagRowMaster *userFlagsMaster;
 
 extern Options options;
 
-extern QString clipboardDir;
-extern QString clipboardFile;
+extern QDir clipboardDir;
+extern QString clipboardFileName;
 
 extern ImageIO imageIO;
 
@@ -3559,7 +3559,7 @@ void VymModel::copy()
 
     QList<TreeItem *> itemList = getSelectedItems();
 
-    QStringList clipboardFiles;
+    QStringList clipboardFileNames;
 
     if (itemList.count() > 0) {
 
@@ -3570,22 +3570,22 @@ void VymModel::copy()
         foreach (TreeItem *ti, itemList) {
             uids << QString("\"%1\"").arg(ti->getUuid().toString());
             fn = QString("%1/%2-%3.xml")
-                     .arg(clipboardDir)
-                     .arg(clipboardFile)
+                     .arg(clipboardDir.path())
+                     .arg(clipboardFileName)
                      .arg(i);
-            QString content = saveToDir(clipboardDir, clipboardFile,
+            QString content = saveToDir(clipboardDir.path(), clipboardFileName,
                                         FlagRowMaster::NoFlags, QPointF(), false, false, false,  ti);
 
             if (!saveStringToDisk(fn, content))
                 qWarning() << "ME::saveStringToDisk failed: " << fn;
             else {
                 i++;
-                clipboardFiles.append(fn);
+                clipboardFileNames.append(fn);
             }
         }
         QClipboard *clipboard = QApplication::clipboard();
         QMimeData *mimeData = new QMimeData;
-        mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
+        mimeData->setData("application/x-vym", clipboardFileNames.join(",").toLatin1());
         clipboard->setMimeData(mimeData);
 
         QString rc = QString("map.selectUids([%1]); map.copy();").arg(uids.join(","));
@@ -3620,7 +3620,7 @@ void VymModel::paste()
 
     if (selbi) {
         if (mimeData->formats().contains("application/x-vym")) {
-            QStringList clipboardFiles = QString(mimeData->data("application/x-vym")).split(",");
+            QStringList clipboardFileNames = QString(mimeData->data("application/x-vym")).split(",");
 
             QString bv = setBranchVar(selbi);
             QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
@@ -3632,7 +3632,7 @@ void VymModel::paste()
             saveState(uc, rc, comment, selbi, selbi);
 
             bool zippedOrg = zipped;
-            foreach(QString fn, clipboardFiles) {
+            foreach(QString fn, clipboardFileNames) {
                 if (!loadMap(fn,
                             File::ImportAdd,
                             File::VymMap,
@@ -3646,7 +3646,7 @@ void VymModel::paste()
         } else if (mimeData->hasImage()) {
             //qDebug() << "VM::paste  mimeData->hasImage";
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
-            QString fn = clipboardDir + "/" + "image.png";
+            QString fn = clipboardDir.path() + "/" + "image.png";
             if (!image.save(fn))
                 logWarning("Could not save copy of image in system clipboard " + fn, __func__);
             else {

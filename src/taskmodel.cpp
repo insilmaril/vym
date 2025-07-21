@@ -488,7 +488,7 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
     return mimeData;
 }
 
-bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
+bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,  // FIXME-2 crash...
                              int row, int column, const QModelIndex &parent)
 {
     Q_UNUSED(row);

@@ -4,14 +4,10 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QPixmap>
+#include <QTemporaryDir>
 #include <QTextStream>
 
 #include "file.h"
-
-#if defined(Q_OS_WINDOWS)
-#include "mkdtemp.h"
-#include <windows.h>
-#endif
 
 #if defined(Q_OS_MACOS)
 #include "unistd.h"
@@ -19,6 +15,8 @@
 
 extern QString vymName;
 extern QDir lastImageDir;
+extern QDir vymUserDir;
+extern QDir tmpVymDir;
 
 QString convertToRel(const QString &src, const QString &dst)
 {
@@ -111,55 +109,26 @@ bool confirmDirectoryOverwrite(const QDir &dir)
     return true;
 }
 
-QString makeTmpDir(bool &ok, const QString &dirPath,    // FIXME-2 obsolete?
+QString makeTmpDir(bool &ok, const QString &dirPath,
                    const QString &prefix)
 {
-    QString path = makeUniqueDir(ok, dirPath + "/" + prefix + "-XXXXXX");
-    return path;
+    QTemporaryDir tmpDir(dirPath + "/" + prefix + "-XXXXXX");
+    tmpDir.setAutoRemove(false);
+    ok = tmpDir.isValid();
+    return tmpDir.path();
 }
 
-QString makeTmpDir(bool &ok, const QString &prefix) // FIXME-2 obsolete?
+QString makeTmpDir(bool &ok, const QString &prefix)
 {
-    return makeTmpDir(ok, QDir::tempPath(), prefix);
+
+    return makeTmpDir(ok, vymUserDir.path(), prefix);
 }
 
 bool isInTmpDir(QString fn)
 {
-    QString temp = QDir::tempPath();
+    QString temp = tmpVymDir.path(); 
     int l = temp.length();
     return fn.left(l) == temp;
-}
-
-QString makeUniqueDir(bool &ok, QString s) // FIXME-2 use QTemporaryDir and remove code below
-                                           // ideally where system does not delete it see #151
-{
-    ok = true;
-
-    QString r;
-    qDebug() << "makeUiqueDir s=" << s;
-
-#if defined(Q_OS_WINDOWS)
-    r = mkdtemp(s);
-#else
-    // On Linux and friends use cstdlib
-
-    // Convert QString to string // FIXME-3 needed??? Use QTemporaryDir or conversion functions
-    ok = true;
-    char *p;
-    int bytes = s.length();
-    p = (char *)malloc(bytes + 1);
-    int i;
-    for (i = 0; i < bytes; i++)
-        p[i] = s.at(i).unicode();
-    p[bytes] = 0;
-
-    r = mkdtemp(p);
-    free(p);
-#endif
-
-    if (r.isEmpty())
-        ok = false;
-    return r;
 }
 
 bool removeDir(QDir d)

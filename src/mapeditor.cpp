@@ -23,8 +23,6 @@
 #include "xlinkobj.h"
 
 extern Main *mainWindow;
-extern QString clipboardDir;
-extern QString clipboardFile;
 extern bool debug;
 extern QPrinter *printer;
 extern QDir tmpVymDir;

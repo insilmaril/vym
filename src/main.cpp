@@ -69,15 +69,16 @@ FlagRowMaster *userFlagsMaster;
 
 Macros macros;
 
-ulong itemLastID = 0;  // Unique ID for all items in all models
-ulong imageLastID = 0; // Unique ID for caching images, also flags not in tree
+ulong itemLastID = 0;       // Unique ID for all items in all models
+ulong imageLastID = 0;      // Unique ID for caching images, also flags not in tree
 
-QDir tmpVymDir;          // All temp files go there, created in mainwindow
-QDir cacheDir;            // tmp dir with cached svg files in tmpVymDir
-QString clipboardDir;    // Clipboard used in all mapEditors
-QString clipboardFile;   // Clipboard used in all mapEditors
+QDir tmpVymDir;             // All temp files go there, created in mainwindow
+QDir cacheDir;              // tmp dir with cached svg files in tmpVymDir
+QDir clipboardDir;          // Clipboard used in all mapEditors
+QString clipboardFileName;  // Clipboard used in all mapEditors
 
 QDir vymBaseDir;            // Containing all styles, scripts, images, ...
+QDir vymUserDir;            // User directory with temporary files
 
 bool useActionLog;          // Write logfile. No GUI yet to enable, only for debugging
 QString actionLogPath;      // Path to logfile
@@ -315,6 +316,58 @@ int main(int argc, char *argv[])
             vymBaseDir.setPath(VYMBASEDIR);
 #endif
         }
+
+    // Temporary directories
+
+    // vymUserDir has temporary files (later maybe more data)
+    // in users home to avoid deleting still
+    // required files by system (see #151)
+
+    vymUserDir.setPath(QDir::homePath() + "/.vym");
+
+    bool ok;
+    if (!vymUserDir.exists()) {
+        ok = vymUserDir.mkpath(vymUserDir.path());
+        if (!ok) {
+            QString msg = "Failed to create vymUserDir=" + vymUserDir.path();
+            qWarning() << msg;
+            QMessageBox::warning(0, "Critical Error", msg);
+            exit (1);
+        }
+    }
+    tmpVymDir.setPath(makeTmpDir(ok, "vym-tmp"));
+
+    if (!tmpVymDir.mkpath(tmpVymDir.path())) {
+        QString msg = "Failed to create temporary directory tmpVymDir=" + tmpVymDir.path();
+        qWarning() << msg;
+        QMessageBox::warning(0, "Critical Error", msg);
+        exit(1);
+    }
+    if (debug)
+        qDebug() << "tmpVymDirPath = " << tmpVymDir.path();
+
+    // Create directory for clipboard
+    clipboardDir.setPath(tmpVymDir.path() + "/clipboard");
+    clipboardFileName = "clipboard";
+    if (!clipboardDir.mkpath(clipboardDir.path())) {
+        QString msg = "Failed to create clipboardDir=" + clipboardDir.path();
+        qWarning() << msg;
+        QMessageBox::warning(0, "Critical Error", msg);
+        exit(1);
+    }
+
+    makeSubDirs(clipboardDir.path());
+
+    // Create directory for cached files, e.g. svg images
+    cacheDir.setPath(tmpVymDir.path() + "/cache");
+    if (!tmpVymDir.mkpath(cacheDir.path())) {
+        QString msg = "Failed to create cache directory cacheDir=" + cacheDir.path();
+        qWarning() << msg;
+        QMessageBox::warning(0, "Critical Error", msg);
+        exit(1);
+    }
+
+
 
     // Platform specific settings
     vymPlatform = QSysInfo::prettyProductName();
@@ -599,6 +652,7 @@ int main(int argc, char *argv[])
 
     // Cleanup
     delete noteEditor;
+    //   removeDir(tmpVymDir); // FIXME-2 enable again
 
     int s = warningCount + criticalCount + fatalCount;
     if (s > 0)
