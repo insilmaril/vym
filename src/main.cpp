@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
     }
     tmpVymDir.setPath(makeTmpDir(ok, "vym-tmp"));
 
-    if (!tmpVymDir.mkpath(tmpVymDir.path())) {
+    if (!tmpVymDir.mkpath(tmpVymDir.path())) {  // FIXME-2 Set permissions to 700 on all platforms
         QString msg = "Failed to create temporary directory tmpVymDir=" + tmpVymDir.path();
         qWarning() << msg;
         QMessageBox::warning(0, "Critical Error", msg);
