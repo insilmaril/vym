@@ -140,6 +140,7 @@ bool removeDir(QDir d)
         return false;
     }
 
+    //qDebug() << __func__ << d.path();
     return d.removeRecursively();
 }
 

@@ -654,7 +654,7 @@ int main(int argc, char *argv[])
 
     // Cleanup
     delete noteEditor;
-    //   removeDir(tmpVymDir); // FIXME-2 enable again
+    removeDir(tmpVymDir);
 
     int s = warningCount + criticalCount + fatalCount;
     if (s > 0)
