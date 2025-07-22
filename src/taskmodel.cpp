@@ -488,13 +488,19 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
     return mimeData;
 }
 
-bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,  // FIXME-2 crash...
+bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
                              int row, int column, const QModelIndex &parent)
 {
     Q_UNUSED(row);
 
+    //qDebug() << "TM::dropMimeData " << row << column << parent << data;
     if (action == Qt::IgnoreAction)
         return true;
+
+    if (!parent.isValid()) {
+        qWarning() << __func__ << " parent is invalid";
+        return false;
+    }
 
     if (!data->hasFormat("application/vnd.text.list"))
         return false;
@@ -517,8 +523,12 @@ bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,  // F
     Task *dst = getTask(parent);
     Task *src = getTask(newItems[1].toInt());
 
-    // qDebug() << "Dropping: " <<  src->getBranch()->headingPlain() << " on
-    // " << dst->getBranch()->headingPlain();
+    if (!dst || !src) {
+        qWarning() << __func__ << " invalid src or dst";
+        qDebug() << "dst=" << dst << "  src=" << src;
+        return false;
+    }
+    //qDebug() << "Dropping: " <<  src->getBranch()->headingPlain() << " on " << dst->getBranch()->headingPlain();
 
     int delta_p = dst->getPriority() - src->getPriority();
 
