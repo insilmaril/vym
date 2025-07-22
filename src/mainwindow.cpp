@@ -159,11 +159,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Sometimes we may need to remember old selections
     prevSelection = QUuid();
 
-
-    // Remember PID of our friendly webbrowser
-    browserPID = new qint64;
-    *browserPID = 0;
-
     // Define commands in API (used globally)
     setupAPI();
 
@@ -5293,7 +5288,7 @@ bool Main::openUrl(const QString &url, bool privateMode)  // FIXME-3 settings fo
     QString browser = settings.value("/system/readerUrl").toString();
     QStringList args;
     args << url;
-    if (!QProcess::startDetached(browser, args, QDir::currentPath(), browserPID)) { // FIXME-2 browserPID never read again...
+    if (!QProcess::startDetached(browser, args, QDir::currentPath())) {
         // try to set path to browser
         QMessageBox::warning(
             0, tr("Warning"),

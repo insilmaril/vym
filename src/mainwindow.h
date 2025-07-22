@@ -416,7 +416,6 @@ class Main : public QMainWindow {
   private:
     QString shortcutScope; //! For listing shortcuts
     QTabWidget *tabWidget;
-    qint64 *browserPID;
 
     QStringList imageTypes;
 
