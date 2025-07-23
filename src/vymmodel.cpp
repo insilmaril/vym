@@ -3813,8 +3813,8 @@ void VymModel::moveDownDiagonally()
 
 void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
                                         // sometines linkSpaceCont and/or reposition missing 
-                                        // -1 does not remove link for MainBranch
-                                        // does not save old position in relinkBranch()
+                                        // -1 does not remove link for MainBranch: updating links missing after relinking?
+                                        // does not save old positions in relinkBranch()
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -4613,10 +4613,10 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
         // Keep position when detaching
         if (keepPos) {
-            bc->setPos(preDetachPos);
+            bc->setPos(preDetachPos);   // FIXME-2  isn't preDetachPos in scene and setPos relative?
         }
 
-        // Savestate, but not if just moving up/down
+        // Savestate, but not if just moving up/down    // FIXME-2 But maybe with floating layout and up/down??
         if (!saveStateBlocked) {
             QString uc, rc;
 
