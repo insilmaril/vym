@@ -2204,9 +2204,10 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 
         // Align tmpParentContainer
         if (targetBranchContainer->hasFloatingBranchesLayout()) {
-            // When temporary linking e.g. to MapCenter, position on a circle around MC
+            // When temporary linking e.g. to MapCenter, position on a circle
+            // bigger than ornamensContainer
 
-            qreal radius = 80;
+            qreal radius = 100 + targetBranchContainer->ornamentsRect().width();
 
             QPointF center_sp = targetBranchContainer->getHeadingContainer()->mapToScene(QPointF(0,0));
             qreal a = getAngle(p_event - center_sp);
