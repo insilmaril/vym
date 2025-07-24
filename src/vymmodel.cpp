@@ -5217,7 +5217,7 @@ ItemList VymModel::getLinkedMaps()
             s.replace(re, " ");
             re.setPattern("\\s+");
             s.replace(re, " ");
-            re.setPattern("\\s+");
+            re.setPattern("^\\s+");
             s.replace(re, "");
 
             QStringList sl;
