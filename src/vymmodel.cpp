@@ -4534,11 +4534,12 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         BranchItem *pbi = bi->parentBranch();
         if (pbi == rootItem)
         {
-            // Remember position of MapCenter
+            // Remember position before MapCenter is relinked
             rememberPos = true;
         } else {
             BranchContainer *pbc = pbi->getBranchContainer();
             if (pbc->hasFloatingBranchesLayout())
+                // Remember position, if relinked branch is floating
                 rememberPos = true;
         }
 
@@ -4547,13 +4548,13 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         BranchContainer *dstBC = dst->getBranchContainer(); // might be nullptr for MC!
 
         // Keep position when detaching
-        bool keepPos;
+        bool detaching;
         QPointF preDetachPos;
         if (dst == rootItem) {
-            keepPos = true;
+            detaching = true;
             preDetachPos = bc->getHeadingContainer()->scenePos();
         } else
-            keepPos = false;
+            detaching = false;
 
         // What kind of relinking are we doing? Important for style updates
         MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-2 not used later   also not considering detaching
@@ -4612,7 +4613,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
 
         // Keep position when detaching
-        if (keepPos) {
+        if (detaching) {
             bc->setPos(preDetachPos);   // FIXME-2  isn't preDetachPos in scene and setPos relative?
         }
 

@@ -7566,12 +7566,6 @@ void Main::testFunction1()
     //#include <QStyleFactory>
     //qApp->setStyle(QStyleFactory::create("windowsvista"));
 
-    const char *s1 = "Foo";
-    const char *s2 = "Foo";
-
-    qDebug() << strcmp(s1,s2);
-    return;
-
     VymModel *m = currentModel();
     if (m) {
         m->test();
