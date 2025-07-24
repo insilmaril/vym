@@ -751,11 +751,13 @@ void Container::reposition()
 		    // - I am in a floating layout or
 		    // - I am a MapCenter myself
                     if ((parentContainer() && parentContainer()->hasFloatingLayout()) || !parentContainer() ) {
-			    v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-                            if (!v_central.isNull())
-                                foreach (Container *c, childContainers())
-                                    if (!c->overlay)
-                                        c->setPos(c->pos() - v_central);
+                        v_central = mapFromItem(centralContainer, centralContainer->rect().center());
+                        if (!v_central.isNull()) {
+                            foreach (Container *c, childContainers()) {
+                                if (!c->overlay)
+                                    c->setPos(c->pos() - v_central);
+                            }
+                        }
 		    }
                 }
 
