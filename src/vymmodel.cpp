@@ -3814,7 +3814,8 @@ void VymModel::moveDownDiagonally()
 void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
                                         // sometines linkSpaceCont and/or reposition missing 
                                         // -1 does not remove link for MainBranch: updating links missing after relinking?
-                                        // does not save old positions in relinkBranch()
+                                        // does not save old (scene) positions in relinkBranch()
+                                        // undo/redo currently uncomplete wrt. positions, esp. with floating stuff
 {
     QList<BranchItem *> selbis;
     if (bi)
