@@ -147,11 +147,9 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
             if (start) {
                 current = start;
                 previous = current->parentBranch();
-            }
-            else {
+            } else {
                 previous = (BranchItem *)rootItem;
                 current = previous->getFirstBranch();
-                return;
             }
         }
 
