@@ -1,7 +1,7 @@
 vym.clearConsole();
 map = vym.currentMap();
 
-map.newBranchIterator("it");
+map.newBranchIteratorSelection("it");
 b = map.nextBranch("it");
 vym.print ("Starting with branch: " + b.getHeading() );
 

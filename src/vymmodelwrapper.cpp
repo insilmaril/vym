@@ -392,17 +392,19 @@ bool VymModelWrapper::loadDataInsert(QString fileName, int pos, BranchWrapper *b
     return r;
 }
 
-void VymModelWrapper::newBranchIterator(const QString &itname, bool deepLevelsFirst)
+BranchWrapper* VymModelWrapper::resetBranch(const QString &itnam) // FIXME-2 uncomplete
 {
-    BranchItem *bi = model->getSelectedBranch();
-    if (!bi) {
-        mainWindow->abortScript(
-                QJSValue::GenericError,
-                "No branch selected");
-        return;
-    }
+    return nullptr;
+}
 
-    model->newBranchIterator(itname, bi, deepLevelsFirst);
+bool VymModelWrapper::newBranchIteratorMap(const QString &itname, bool deepLevelsFirst)
+{
+    return model->newBranchIterator(itname, false, deepLevelsFirst);
+}
+
+bool VymModelWrapper::newBranchIteratorSelection(const QString &itname, bool deepLevelsFirst)
+{
+    return model->newBranchIterator(itname, true, deepLevelsFirst);
 }
 
 BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)

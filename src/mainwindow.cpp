@@ -741,9 +741,16 @@ void Main::setupAPI()
     c->setComment("Replace branch with data from given path");
     modelCommands.append(c);
 
-    c = new Command("newBranchIterator", Command::BranchSel);
+    c = new Command("newBranchIteratorSelection", Command::BranchSel, Command::BoolPar);
     c->addParameter(Command::StringPar, false, "Name of iterator");
-    c->addParameter(Command::BoolPar, true, "Flag to go deep levels first");
+    c->addParameter(Command::BoolPar, true, "Flag to go deep levels first (currently unused)");
+    c->setComment("Create new iterator for branches. Iteration starts and ends with currently selected branch");
+    modelCommands.append(c);
+
+    c = new Command("newBranchIteratorMap", Command::BranchSel, Command::BoolPar);
+    c->addParameter(Command::StringPar, false, "Name of iterator");
+    c->addParameter(Command::BoolPar, true, "Flag to go deep levels first (currently unused)");
+    c->setComment("Create new iterator for branches. Iteration starts with first MapCenter");
     modelCommands.append(c);
 
     c = new Command("isScrolled", Command::BranchSel, Command::BoolPar);
@@ -815,11 +822,16 @@ void Main::setupAPI()
     c = new Command("repeatLastCommand", Command::AnySel);
     modelCommands.append(c);
 
+    c = new Command("resetBranchIterator", Command::BranchSel, Command::BoolPar);
+    c->addParameter(Command::StringPar, false, "Name of iterator");
+    c->setComment("Move iterator to first MapCenter in map");
+    modelCommands.append(c);
+
     c = new Command("saveSelection", Command::BranchOrImageSel);
     c->addParameter(Command::StringPar, false, "Filename to save branch or image");
     modelCommands.append(c);
 
-    c = new Command("scroll", Command::BranchSel);
+    c = new Command("scroll", Command::BranchSel);  // FIXME-2 Remove DEPRECATED commands from model
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 

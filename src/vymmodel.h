@@ -904,10 +904,11 @@ class VymModel : public TreeModel {
     // Iterating and selecting branches
     ////////////////////////////////////////////
   public:
-    void newBranchIterator(const QString &itname,
-                      BranchItem *bi = nullptr,             //! All branches or only subtree
-                      bool deepLevelsFirst = false);        //! Named iterator
+    bool newBranchIterator(const QString &itname,           //! Named iterator
+                      bool selectedBranchesOnly = false,    //! All branches or only selected subtrees
+                      bool deepLevelsFirst = false);
     BranchItem* nextBranchIterator(const QString &itname);  //! next branch via iterator
+    bool removeBranchIterator(const QString &itname);       //! Remove branch iterator
   private:
     QHash <QString, QList <QUuid>> branchIterators;
     QHash <QString, int> branchIteratorsCurrentIndex;

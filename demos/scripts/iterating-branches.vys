@@ -1,11 +1,34 @@
 vym.clearConsole();
 map = vym.currentMap();
 
-map.newBranchIterator("foobar");
-b = map.nextBranch("foobar");
-vym.print ("Starting with branch: " + b.headingText() );
+vym.print("Iterate over selected subtrees");
+map.newBranchIteratorSelection("subtrees");
 
-while (map.nextBranch("foobar") )
+while (b = map.nextBranch("subtrees") )
 {
-    vym.print ("Current branch: " + map.headingText() );
+    vym.print ("Current branch: " + b.headingText() );
+}
+
+vym.print("Iterate over selected subtrees, deep levels first");
+map.newBranchIteratorSelection("subtrees", true);
+
+while (b = map.nextBranch("subtrees") )
+{
+    vym.print ("Current branch: " + b.headingText() );
+}
+
+vym.print("Iterate over complete map");
+map.newBranchIteratorMap("completeMap");
+
+while (b = map.nextBranch("completeMap") )
+{
+    vym.print ("Current branch: " + b.headingText() );
+}
+
+vym.print("Iterate over complete map, deep levels first");
+map.newBranchIteratorMap("completeMapDeepFirst", true);
+
+while (b = map.nextBranch("completeMapDeepFirst") )
+{
+    vym.print ("Current branch: " + b.headingText() );
 }
