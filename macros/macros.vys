@@ -269,54 +269,18 @@ function macro_shift_f9()
 }
 
 //! Macro Shift + F10: 
-// Useful for timestamps created on last entry
 function macro_shift_f10()
 {
 }
 
-//! Macro Shift + F11: Replace "@..." by mutt aliases
+//! Macro Shift + F11:
 function macro_shift_f11()
 {
-	map     = vym.currentMap();
-	lines   = vym.loadFile("/home/uwe/.mutt/eb-aliases").split('\n');
-
-
-	if (map.getHeadingPlainText() == "parts") {
-		map.setHeadingPlainText("Participants");
-	}
-
-	map.initIterator("foobar");
-
-	while (map.nextIterator("foobar") ) {
-		heading = map.getHeadingPlainText();
-
-		// Search for "@alias" at beginning of heading
-		if (heading.search(/^@\w/) == 0) {
-			alias_map = heading.replace(/@/,"");
-
-			for(var i = 0;i < lines.length;i++){
-				if (lines[i].search(/^alias/) == 0) {
-					if (lines[i].search(alias_map) == 6) {
-						name = lines[i].replace(/^.+?\"/, "");
-						name = name.replace(/\".+/, "");
-
-						email = lines[i].replace(/^.+?</, "");
-						email = email.replace(/>.*/, "");
-
-						map.setHeadingPlainText(name);
-					}
-				}
-			}
-		} else {
-			print ("No alias found");
-        }
-	}
 }
 
 //! Macro Shift + F12:
 function macro_shift_f12()
 {
-    vym.statusMessage("Macro F12 + Shift triggered");
 }
 
 

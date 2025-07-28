@@ -53,7 +53,8 @@ class VymModelWrapper : public QObject {
     void moveSlideDown();
     void moveSlideUp(int n);
     void moveSlideUp();
-    void newBranchIterator(const QString &itname, bool deepLevelsFirst = false);
+    bool newBranchIteratorSelection(const QString &itname, bool deepLevelsFirst = false);
+    bool newBranchIteratorMap(const QString &itname, bool deepLevelsFirst = false);
     Q_INVOKABLE BranchWrapper* nextBranch(const QString &itname);
     void paste();
     void redo();
@@ -65,6 +66,7 @@ class VymModelWrapper : public QObject {
     void removeSlide(int n);
     void removeXLink(XLinkWrapper *xlw);
     QVariant repeatLastCommand();
+    Q_INVOKABLE BranchWrapper* resetBranch(const QString &itname);
     bool saveSelection(const QString &filename);
     bool select(const QString &s);
     Q_INVOKABLE AttributeWrapper* selectedAttribute();

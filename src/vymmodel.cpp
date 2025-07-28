@@ -7230,26 +7230,50 @@ QColor VymModel::getSelectionBrushColor() {
     return mapDesignInt->selectionBrush().color();
 }
 
-void VymModel::newBranchIterator(
+bool VymModel::newBranchIterator(   // FIXME-2 Check if itname already exists, return false 
         const QString &itname,
-        BranchItem *bi,
+        bool selectedBranchesOnly,
         bool deepLevelsFirst)
 {
     Q_UNUSED(deepLevelsFirst);
 
-    // Remove existing iterators first
+    // Remove existing iterators first  // FIXME-2 Add command to remove existing iterator
     branchIterators.remove(itname);
     branchIteratorsCurrentIndex.remove(itname);
     branchIteratorsCurrentIndex[itname] = -1;
 
-    BranchItem *cur = nullptr;
-    BranchItem *prev = nullptr;
-    nextBranch(cur, prev, true, bi);
-    while (cur) {
-        branchIterators[itname].append(cur->getUuid());
-        //qDebug() << "VM::newBranchIterator Adding " << headingText(cur) << " to " << itname;
-        nextBranch(cur, prev, true, bi);
+
+    QList<BranchItem *> selbis;
+    if (selectedBranchesOnly)
+        selbis = getSelectedBranches();
+    else
+        selbis << nullptr;
+
+    foreach (BranchItem *bi, selbis) {
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
+        nextBranch(cur, prev, deepLevelsFirst, bi);
+        while (cur) {
+            branchIterators[itname].append(cur->getUuid());
+            //qDebug() << "VM::newBranchIterator Adding " << headingText(cur) << " to " << itname << headingText(bi);
+            nextBranch(cur, prev, deepLevelsFirst, bi);
+        }
     }
+
+    return true;
+}
+
+BranchItem* VymModel::resetBranchIterator(const QString &itname)
+{
+    //qDebug() << "VM::resetBranchIterator itname=" << itname << " index=" << branchIteratorsCurrentIndex;
+    if (branchIterators.keys().indexOf(itname) < 0) {
+        qWarning()
+            << QString("VM::resetBranchIterator couldn't find %1 in hash of iterators")
+                   .arg(itname);
+        return nullptr;
+    }
+
+    return nullptr;     // FIXME-2 resetBranchIterator uncomplete
 }
 
 BranchItem* VymModel::nextBranchIterator(const QString &itname)
@@ -7257,7 +7281,7 @@ BranchItem* VymModel::nextBranchIterator(const QString &itname)
     //qDebug() << "VM::nextBranchIterator itname=" << itname << " index=" << branchIteratorsCurrentIndex;
     if (branchIterators.keys().indexOf(itname) < 0) {
         qWarning()
-            << QString("VM::nextIterator couldn't find %1 in hash of iterators")
+            << QString("VM::nextBranchIterator couldn't find %1 in hash of iterators")
                    .arg(itname);
         return nullptr;
     }
@@ -7269,7 +7293,7 @@ BranchItem* VymModel::nextBranchIterator(const QString &itname)
 
     BranchItem *bi = (BranchItem *)(findUuid(branchIterators[itname].at(branchIteratorsCurrentIndex[itname])));
     if (!bi) {
-        qWarning() << "VM::nextIterator couldn't find branch with Uuid in list.";
+        qWarning() << "VM::nextBranchIterator couldn't find branch with Uuid in list.";
         return nullptr;
     }
 
