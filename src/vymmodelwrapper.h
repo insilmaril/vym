@@ -10,6 +10,7 @@ class BranchItem;
 class AttributeWrapper;
 class BranchWrapper;
 class ImageWrapper;
+class ItemListWrapper;
 class VymModel;
 class XLinkWrapper;
 
@@ -18,6 +19,7 @@ class VymModelWrapper : public QObject {
   public:
     Q_INVOKABLE VymModelWrapper(VymModel *m);
     ~VymModelWrapper();
+    VymModel* getModel();
 
   public slots:
     void addMapCenterAtPos(qreal x, qreal y);
@@ -56,6 +58,7 @@ class VymModelWrapper : public QObject {
     bool newBranchIteratorSelection(const QString &itname, bool deepLevelsFirst = false);
     bool newBranchIteratorMap(const QString &itname, bool deepLevelsFirst = false);
     Q_INVOKABLE BranchWrapper* nextBranch(const QString &itname);
+    Q_INVOKABLE ItemListWrapper* newItemListMap();
     void paste();
     void redo();
     void remove();

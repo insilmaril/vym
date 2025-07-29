@@ -10,6 +10,7 @@
 #include "branch-wrapper.h"
 #include "imageitem.h"
 #include "image-wrapper.h"
+#include "itemlist-wrapper.h"
 #include "mainwindow.h"
 #include "mapeditor.h"
 #include "misc.h"
@@ -32,6 +33,11 @@ VymModelWrapper::VymModelWrapper(VymModel *m)
 VymModelWrapper::~VymModelWrapper()
 {
     //std::cout << "Destr VMWrapper" << this << endl;
+}
+
+VymModel* VymModelWrapper::getModel()   // FIXME-2  rename model -> modelInt, getModel() -> model()
+{
+    return model;
 }
 
 void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
@@ -414,6 +420,11 @@ BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)
         return bi->branchWrapper();
     else
         return nullptr;
+}
+
+ItemListWrapper* VymModelWrapper::newItemListMap()
+{
+    return new ItemListWrapper(model);
 }
 
 void VymModelWrapper::moveSlideDown(int n)

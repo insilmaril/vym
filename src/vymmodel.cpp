@@ -7289,21 +7289,17 @@ BranchItem* VymModel::nextBranchIterator(const QString &itname)
     return bi;
 }
 
-BranchItem* VymModel::removeBranchIterator(const QString &itname)
+bool VymModel::removeBranchIterator(const QString &itname)
 {
     //qDebug() << "VM::removeBranchIterator itname=" << itname << " index=" << branchIteratorsCurrentIndex;
     if (branchIterators.keys().indexOf(itname) < 0) {
         qWarning()
             << QString("VM::resetBranchIterator couldn't find %1 in hash of iterators")
                    .arg(itname);
-        return nullptr;
+        return false;
     }
 
-    return nullptr;     // FIXME-2 removeBranchIterator uncomplete
-}
-
-bool VymModel::removeBranchIterator(const QString &itname)
-{
+    return false;     // FIXME-2 removeBranchIterator uncomplete
 }
 
 void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)
