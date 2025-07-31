@@ -36,6 +36,8 @@ class ZipAgent;
 class QGraphicsScene;
 class QJsonObject;
 
+// Used for getTargets() and getLinkedMaps()
+// For each ID store heading and optionally also vymLink
 typedef QMap<uint, QStringList> ItemList;
 
 class VymModel : public TreeModel {
