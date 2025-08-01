@@ -303,8 +303,8 @@ void MapEditor::ensureAreaVisibleAnimated(
     qreal a = new_rotation / 180 * M_PI;
     qreal area_w_viewCoord = abs(sin(a) * area.height()) + abs(cos(a) * area.width());
     qreal area_h_viewCoord = abs(sin(a) * area.width()) + abs(cos(a) * area.height());
-    qreal z_x = 1.0 * visibleViewCoord.width() / area_w_viewCoord;
-    qreal z_y = 1.0 * visibleViewCoord.height() / area_h_viewCoord;
+    qreal z_x = abs(1.0 * visibleViewCoord.width() / area_w_viewCoord);
+    qreal z_y = abs(1.0 * visibleViewCoord.height() / area_h_viewCoord);
 
     qreal zf = min (z_x, z_y);
 
@@ -315,8 +315,8 @@ void MapEditor::ensureAreaVisibleAnimated(
     int animDuration = 2000;
     QEasingCurve easingCurve = QEasingCurve::OutQuint;
     
-    //qDebug() << " zoom out: " << zoomOutRequired;
-    //qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactorInt << " zf=" << zf;
+    //qDebug() << __func__ << " zoom out: " << zoomOutRequired << " zoomFactor=" << zoomFactorInt << " zf=" << zf;
+    //qDebug() << "z_xy=" << toS(QPointF(z_x, z_y));
     if (zoomOutRequired || scaled) {
         setViewCenterTarget(
                 area.center(), 
@@ -585,8 +585,9 @@ void MapEditor::zoomOut()
     setZoomFactorTarget(zoomFactorTargetInt * f_zf);
 }
 
-void MapEditor::setZoomFactorTarget(const qreal &zft)
+void MapEditor::setZoomFactorTarget(const qreal &zft)   // FIXME-2 check if zf==zft
 {
+    qDebug() << __func__ << "zft=" << zft << " zf=" << zoomFactorInt;
     zoomFactorTargetInt = zft;
     if (zoomAnimation.state() == QAbstractAnimation::Running)
         zoomAnimation.stop();
@@ -605,15 +606,20 @@ void MapEditor::setZoomFactorTarget(const qreal &zft)
         setZoomFactor(zft);
 }
 
-qreal MapEditor::zoomFactorTarget() { return zoomFactorTargetInt; }
+qreal MapEditor::zoomFactorTarget() {
+    return zoomFactorTargetInt;
+}
 
 void MapEditor::setZoomFactor(const qreal &zf)
 {
+    //qDebug() << __func__ << "zf=" << zf;
     zoomFactorInt = zf;
     updateMatrix();
 }
 
-qreal MapEditor::zoomFactor() { return zoomFactorInt; }
+qreal MapEditor::zoomFactor() {
+    return zoomFactorInt;
+}
 
 void MapEditor::setRotationTarget(const qreal &at)
 {
@@ -694,6 +700,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
 
 void MapEditor::setViewCenterTarget()
 {
+    qDebug() << __func__;
     MapItem *selti = (MapItem *)(model->getSelectedItem());
     if (selti) {
         Container *c = nullptr;
