@@ -58,7 +58,7 @@ class VymModelWrapper : public QObject {
     bool newBranchIteratorSelection(const QString &itname, bool deepLevelsFirst = false);
     bool newBranchIteratorMap(const QString &itname, bool deepLevelsFirst = false);
     Q_INVOKABLE BranchWrapper* nextBranch(const QString &itname);
-    Q_INVOKABLE ItemListWrapper* newItemListMap();
+    Q_INVOKABLE ItemListWrapper* itemList();
     void paste();
     void redo();
     void remove();

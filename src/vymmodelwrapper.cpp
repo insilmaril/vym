@@ -422,7 +422,7 @@ BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)
         return nullptr;
 }
 
-ItemListWrapper* VymModelWrapper::newItemListMap()
+ItemListWrapper* VymModelWrapper::itemList()
 {
     return new ItemListWrapper(model);
 }
