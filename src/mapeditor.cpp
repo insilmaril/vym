@@ -585,9 +585,12 @@ void MapEditor::zoomOut()
     setZoomFactorTarget(zoomFactorTargetInt * f_zf);
 }
 
-void MapEditor::setZoomFactorTarget(const qreal &zft)   // FIXME-2 check if zf==zft
+void MapEditor::setZoomFactorTarget(const qreal &zft)
 {
-    qDebug() << __func__ << "zft=" << zft << " zf=" << zoomFactorInt;
+    // qDebug() << __func__ << "zft=" << zft << " zf=" << zoomFactorInt;
+    if (zoomFactorTargetInt == zft)
+        return;
+
     zoomFactorTargetInt = zft;
     if (zoomAnimation.state() == QAbstractAnimation::Running)
         zoomAnimation.stop();
