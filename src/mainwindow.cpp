@@ -1562,7 +1562,7 @@ void Main::setupAPI()
     c->setComment("Set iteration mode to include all selected branches in map");
     itemListCommands.append(c);
 
-    c = new Command("setModeSubtrees");
+    c = new Command("setModeSelectedSubtrees");
     c->setComment("Set iteration mode to include all selected branches and their children in map");
     c->addParameter(Command::BoolPar, true, "Deep levels first");
     itemListCommands.append(c);
