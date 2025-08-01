@@ -398,30 +398,6 @@ bool VymModelWrapper::loadDataInsert(QString fileName, int pos, BranchWrapper *b
     return r;
 }
 
-BranchWrapper* VymModelWrapper::resetBranch(const QString &itnam) // FIXME-2 uncomplete
-{
-    return nullptr;
-}
-
-bool VymModelWrapper::newBranchIteratorMap(const QString &itname, bool deepLevelsFirst)
-{
-    return model->newBranchIterator(itname, false, deepLevelsFirst);
-}
-
-bool VymModelWrapper::newBranchIteratorSelection(const QString &itname, bool deepLevelsFirst)
-{
-    return model->newBranchIterator(itname, true, deepLevelsFirst);
-}
-
-BranchWrapper* VymModelWrapper::nextBranch(const QString &itname)
-{
-    BranchItem *bi = model->nextBranchIterator(itname);
-    if (bi)
-        return bi->branchWrapper();
-    else
-        return nullptr;
-}
-
 ItemListWrapper* VymModelWrapper::itemList()
 {
     return new ItemListWrapper(model);

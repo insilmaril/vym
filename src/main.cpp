@@ -120,6 +120,7 @@ QList<Command *> modelCommands;
 QList<Command *> branchCommands;
 QList<Command *> imageCommands;
 QList<Command *> xlinkCommands;
+QList<Command *> itemListCommands;
 
 Options options;
 ImageIO imageIO;

@@ -903,19 +903,6 @@ class VymModel : public TreeModel {
     QColor getSelectionBrushColor();
 
     ////////////////////////////////////////////
-    // Iterating and selecting branches
-    ////////////////////////////////////////////
-  public:
-    bool newBranchIterator(const QString &itname,           //! Named iterator
-                      bool selectedBranchesOnly = false,    //! All branches or only selected subtrees
-                      bool deepLevelsFirst = false);
-    BranchItem* nextBranchIterator(const QString &itname);  //! next branch via iterator
-    bool removeBranchIterator(const QString &itname);       //! Remove branch iterator
-  private:
-    QHash <QString, QList <QUuid>> branchIterators;
-    QHash <QString, int> branchIteratorsCurrentIndex;
-
-    ////////////////////////////////////////////
     // Slide related
     ////////////////////////////////////////////
   public:

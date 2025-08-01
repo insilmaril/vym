@@ -5,7 +5,7 @@ Command::Command(const QString &n, SelectionType st, ParameterType retType) // F
 {
     nameInt = n;
     selectionTypeInt = st;
-    returnType = retType;
+    returnTypeInt = retType;
 }
 
 QString Command::name() { return nameInt; }
@@ -18,7 +18,7 @@ QString Command::description()
     s += QString("        Comment: %1\n").arg(commentInt);
     if (objectTypeInt == MapObject)
         s += QString("  SelectionType: %1\n").arg(selectionTypeName());
-    s += QString("    Return type: %1\n").arg(typeToString(returnType));
+    s += QString("    Return type: %1\n").arg(typeToString(returnTypeInt));
     s += QString("     Parameters: %1\n").arg(parameterCount());
     // s+=QString(" Parameters: %1\n").arg(parameterCount() );
     for (int i = 0; i < parameterCount(); i++) {
@@ -38,7 +38,7 @@ QString Command::descriptionLaTeX()
     s += "\\begin{tabular}{rl}\n";
     s += QString("        Comment: & %1\\\\\n").arg(commentInt);
     s += QString("  SelectionType: & %1\\\\\n").arg(selectionTypeName());
-    s += QString("    Return Type: & %1\\\\\n").arg(typeToString(returnType));
+    s += QString("    Return Type: & %1\\\\\n").arg(typeToString(returnTypeInt));
 
     s += QString("     Parameters: & %1\\\\\n").arg(parameterCount());
     for (int i = 0; i < parameterCount(); i++) {
@@ -159,11 +159,20 @@ QString  Command::objectTypeName() {
     }
 }
 
-void  Command::setComment(const QString &s) {
+void Command::setComment(const QString &s) {
     commentInt = s;
 }
 
 QString Command::comment()
 {
     return commentInt;
+}
+void Command::setReturnType(const ParameterType &type)
+{
+    returnTypeInt = type;
+}
+
+Command::ParameterType Command::returnType()
+{
+    return returnTypeInt;
 }

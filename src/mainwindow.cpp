@@ -110,6 +110,7 @@ extern QList<Command *> vymCommands;
 extern QList<Command *> modelCommands;
 extern QList<Command *> branchCommands;
 extern QList<Command *> imageCommands;
+extern QList<Command *> itemListCommands;
 extern QList<Command *> xlinkCommands;
 
 extern bool usingDarkTheme;
@@ -730,6 +731,11 @@ void Main::setupAPI()
     c->setComment(DEPRECATED);
     modelCommands.append(c);
 
+    c = new Command("itemList", Command::AnySel, Command::BoolPar);
+    c->addParameter(Command::BoolPar, true, "Flag to go deep levels first (currently unused)");
+    c->setComment("Create new itemList to iterate over branches");
+    modelCommands.append(c);
+
     c = new Command("loadBackgroundImage", Command::AnySel);
     c->setComment("Load background image");
     c->addParameter(Command::StringPar, false, "Path to background iamge");
@@ -739,18 +745,6 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Filename of map to load");
     c->addParameter(Command::BranchPar, false, "Branch to be replaced by map");
     c->setComment("Replace branch with data from given path");
-    modelCommands.append(c);
-
-    c = new Command("newBranchIteratorSelection", Command::BranchSel, Command::BoolPar);
-    c->addParameter(Command::StringPar, false, "Name of iterator");
-    c->addParameter(Command::BoolPar, true, "Flag to go deep levels first (currently unused)");
-    c->setComment("Create new iterator for branches. Iteration starts and ends with currently selected branch");
-    modelCommands.append(c);
-
-    c = new Command("newBranchIteratorMap", Command::BranchSel, Command::BoolPar);
-    c->addParameter(Command::StringPar, false, "Name of iterator");
-    c->addParameter(Command::BoolPar, true, "Flag to go deep levels first (currently unused)");
-    c->setComment("Create new iterator for branches. Iteration starts with first MapCenter");
     modelCommands.append(c);
 
     c = new Command("isScrolled", Command::BranchSel, Command::BoolPar);
@@ -1550,6 +1544,29 @@ void Main::setupAPI()
     c->setComment("Set color of xlink");
     xlinkCommands.append(c);
 
+    //
+    // Below are the commands for an itemList
+    //
+    
+    c = new Command("count");
+    c->setComment("Return number of items in list");
+    c->setReturnType(Command::IntPar);
+    itemListCommands.append(c);
+
+    c = new Command("setModeBranches");
+    c->setComment("Set iteration mode to include all branches in map");
+    c->addParameter(Command::BoolPar, true, "Deep levels first");
+    itemListCommands.append(c);
+
+    c = new Command("setModeSelectedBranches");
+    c->setComment("Set iteration mode to include all selected branches in map");
+    itemListCommands.append(c);
+
+    c = new Command("setModeSubtrees");
+    c->setComment("Set iteration mode to include all selected branches and their children in map");
+    c->addParameter(Command::BoolPar, true, "Deep levels first");
+    itemListCommands.append(c);
+
     // Finally set objectTypes in all defined commands
     foreach (Command *c, vymCommands)
         c->setObjectType(Command::VymObject);
@@ -1565,6 +1582,9 @@ void Main::setupAPI()
 
     foreach (Command *c, xlinkCommands)
         c->setObjectType(Command::XLinkObject);
+
+    foreach (Command *c, itemListCommands)
+        c->setObjectType(Command::ItemListObject);
 
 }
 

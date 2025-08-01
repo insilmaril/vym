@@ -11,6 +11,7 @@ class Command {
         MapObject,
         BranchObject,
         ImageObject,
+        ItemListObject,
         XLinkObject
     };
     enum ParameterType {
@@ -21,6 +22,7 @@ class Command {
         ColorPar,
         DoublePar,
         ImagePar,
+        ItemListPar,
         IntPar,
         StringPar,
         StringListPar,
@@ -54,13 +56,15 @@ class Command {
     QString objectTypeName();
     void setComment(const QString&);
     QString comment();
+    void setReturnType(const ParameterType &type);
+    ParameterType returnType();
 
   private:
     QString nameInt;
     QString commentInt;
     SelectionType selectionTypeInt;
     QList<ParameterType> parTypes;
-    ParameterType returnType;
+    ParameterType returnTypeInt;
     ObjectType objectTypeInt;
     QList<bool> parOpts;
     QStringList parComments;
