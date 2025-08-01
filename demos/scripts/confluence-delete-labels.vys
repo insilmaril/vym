@@ -1,16 +1,15 @@
 vym.clearConsole();
 map = vym.currentMap();
 
-map.newBranchIteratorSelection("it");
-b = map.nextBranch("it");
-vym.print ("Starting with branch: " + b.getHeading() );
+il = map.itemList();
+il.setModeSelectedSubtrees();
 
 label = "deletion_candidate";
 
 dc_count = 0;
 total_count = 0;
 
-while (b)
+while (b = il.nextBranch())
 {
   total_count++;
 
@@ -33,7 +32,6 @@ while (b)
       }
     }
   }
-  b = map.nextBranch("it");
 }
 
 vym.print("Triggered removal of " + dc_count + " '" + label + "' labels in " + total_count + " pages");
