@@ -1,16 +1,18 @@
 //Example function definition
+
 function foofunction(s) {
-  print ("Foofunction output: " +  s); 
+  vym.print ("Foofunction output: " +  s); 
   s = "changed par";
   return {a: "ret-value", b: "bla"};
 }
 
 par = "I am a parameter!";
-print (foofunction(par));
-print ("par is now: " + par);
+vym.print (foofunction(par));
+vym.print ("par is now: " + par);
 //abort("xxx");
-print ("bar");
+vym.print ("bar");
 
-m=vym.currentMap();
-m.setHeadingPlainText("foobar");
-print( m.getHeadingPlainText());
+map = vym.currentMap();
+branch = map.selectedBranch();
+branch.setHeadingText("foobar");
+vym.print( branch.headingText());

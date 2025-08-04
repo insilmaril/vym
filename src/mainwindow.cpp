@@ -600,8 +600,6 @@ void Main::setupAPI()
     c->setComment("Add MapCenter at position (x, y)");
     modelCommands.append(c);
 
-    QString DEPRECATED(" DEPRECATED. Commands moved to branch or image. ");
-
     c = new Command("addSlide", Command::BranchSel);
     modelCommands.append(c);
 
@@ -688,10 +686,6 @@ void Main::setupAPI()
     c = new Command("getFileName", Command::AnySel, Command::StringPar);
     modelCommands.append(c);
 
-    c = new Command("getHeadingPlainText", Command::TreeItemSel, Command::StringPar);
-    c->setComment(DEPRECATED + "Branch::headingText()");
-    modelCommands.append(c);
-
     c = new Command("getIntAttribute", Command::BranchSel, Command::IntPar);
     c->addParameter(Command::StringPar, false, "Key of string attribute");
     modelCommands.append(c);
@@ -709,14 +703,6 @@ void Main::setupAPI()
     c->setComment("Returns 'DefaultColor' for links or 'HeadingColor'");
     modelCommands.append(c);
 
-    c = new Command("getNotePlainText", Command::TreeItemSel, Command::StringPar);
-    c->setComment(DEPRECATED + " b.getNoteText");
-    modelCommands.append(c);
-
-    c = new Command("getNoteXML", Command::TreeItemSel, Command::StringPar);
-    c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
     c = new Command("getSelectionString", Command::TreeItemSel, Command::StringPar);
     modelCommands.append(c);
 
@@ -725,10 +711,6 @@ void Main::setupAPI()
 
     c = new Command("hasBackgroundImage", Command::AnySel, Command::BoolPar);
     c->setComment("Returns true, if map uses an image as background");
-    modelCommands.append(c);
-
-    c = new Command("hasRichTextNote", Command::BranchSel, Command::BoolPar);
-    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("itemList", Command::AnySel, Command::BoolPar);
@@ -745,10 +727,6 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Filename of map to load");
     c->addParameter(Command::BranchPar, false, "Branch to be replaced by map");
     c->setComment("Replace branch with data from given path");
-    modelCommands.append(c);
-
-    c = new Command("isScrolled", Command::BranchSel, Command::BoolPar);
-    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("moveSlideDown", Command::AnySel);
@@ -775,16 +753,6 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("redo", Command::AnySel);
-    modelCommands.append(c);
-
-    c = new Command("relinkTo",
-                    Command::TreeItemSel,
-                    Command::BoolPar); // FIXME different number of parameters for Image or Branch
-    c->setComment(DEPRECATED);
-    c->addParameter(Command::StringPar, false, "Selection string of parent");
-    c->addParameter(Command::IntPar, false, "Index position");
-    c->addParameter(Command::DoublePar, true, "Position x");
-    c->addParameter(Command::DoublePar, true, "Position y");
     modelCommands.append(c);
 
     c = new Command("remove", Command::TreeItemSel);
@@ -823,10 +791,6 @@ void Main::setupAPI()
 
     c = new Command("saveSelection", Command::BranchOrImageSel);
     c->addParameter(Command::StringPar, false, "Filename to save branch or image");
-    modelCommands.append(c);
-
-    c = new Command("scroll", Command::BranchSel);  // FIXME-2 Remove DEPRECATED commands from model
-    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("select", Command::AnySel, Command::BoolPar);
@@ -920,15 +884,7 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Uid of flag to toggle");
     modelCommands.append(c);
 
-    c = new Command("toggleScroll", Command::BranchSel);
-    c->setComment(DEPRECATED);
-    modelCommands.append(c);
-
     c = new Command("undo", Command::AnySel);
-    modelCommands.append(c);
-
-    c = new Command("unscroll", Command::BranchSel, Command::BoolPar);
-    c->setComment(DEPRECATED);
     modelCommands.append(c);
 
     c = new Command("unselectAll", Command::AnySel);
