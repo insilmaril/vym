@@ -27,7 +27,7 @@ VymModelWrapper::VymModelWrapper(VymModel *m)
 {
     //std::cout << "Constr VMWrapper" << this << endl;
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
-    model = m;
+    modelInt = m;
 }
 
 VymModelWrapper::~VymModelWrapper()
@@ -35,39 +35,34 @@ VymModelWrapper::~VymModelWrapper()
     //std::cout << "Destr VMWrapper" << this << endl;
 }
 
-VymModel* VymModelWrapper::getModel()   // FIXME-2  rename model -> modelInt, getModel() -> model()
-{
-    return model;
-}
-
 void VymModelWrapper::addMapCenterAtPos(qreal x, qreal y)
 {
-    if (!model->addMapCenterAtPos(QPointF(x, y)))
+    if (!modelInt->addMapCenterAtPos(QPointF(x, y)))
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Couldn't add mapcenter");
 }
 
-void VymModelWrapper::addSlide() { model->addSlide(); }
+void VymModelWrapper::addSlide() { modelInt->addSlide(); }
 
 int VymModelWrapper::centerCount()
 {
-    int r = model->centerCount();
+    int r = modelInt->centerCount();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 void VymModelWrapper::centerOnID(const QString &id)
 {
-    if (!model->centerOnID(id))
+    if (!modelInt->centerOnID(id))
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not center on ID %1").arg(id));
 }
 
-void VymModelWrapper::copy() { model->copy(); }
+void VymModelWrapper::copy() { modelInt->copy(); }
 
-void VymModelWrapper::cut() { model->cut(); }
+void VymModelWrapper::cut() { modelInt->cut(); }
 
 bool VymModelWrapper::exportMap(QJSValueList args)
 {
@@ -88,7 +83,7 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 
     if (argumentsCount == 1) {
         if (format == "Last") {
-            model->exportLast();
+            modelInt->exportLast();
             r = true;
         } else
             mainWindow->abortScript(
@@ -103,13 +98,13 @@ bool VymModelWrapper::exportMap(QJSValueList args)
     filePath = args[1].toString();
 
     if (format == "AO") {
-        model->exportAO(filePath, false);
+        modelInt->exportAO(filePath, false);
     }
     else if (format == "ASCII") {
         bool listTasks = false;
         if (argumentsCount == 3 && args[2].toString() == "true")
             listTasks = true;
-        model->exportASCII(filePath, listTasks, false);
+        modelInt->exportASCII(filePath, listTasks, false);
     }
     else if (format == "ConfluenceNewPage") {
         // 0: General export format
@@ -127,7 +122,7 @@ bool VymModelWrapper::exportMap(QJSValueList args)
         QString url = args[2].toString();
         QString pageName = args[3].toString();
 
-        model->exportConfluence(true, url, pageName, false);
+        modelInt->exportConfluence(true, url, pageName, false);
     }
     else if (format == "ConfluenceUpdatePage") {
         // 0: General export format
@@ -147,9 +142,9 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             title = args[2].toString();
         }
 
-        model->exportConfluence(false, url, title, false);
+        modelInt->exportConfluence(false, url, title, false);
     } else if (format == "CSV") {
-        model->exportCSV(filePath, false);
+        modelInt->exportCSV(filePath, false);
     } else if (format == "HTML") {
         if (argumentsCount < 3) {
             mainWindow->abortScript(
@@ -159,7 +154,7 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	    return r;
         }
         QString dpath = args[2].toString();
-        model->exportHTML(filePath, dpath, false);
+        modelInt->exportHTML(filePath, dpath, false);
     } else if (format == "Image") {
         QString imgFormat;
         if (argumentsCount == 2)
@@ -182,7 +177,7 @@ bool VymModelWrapper::exportMap(QJSValueList args)
             mainWindow->setScriptResult(r);
 	    return r;
         }
-        model->exportImage(filePath, false, imgFormat);
+        modelInt->exportImage(filePath, false, imgFormat);
     } else if (format == "Impress") {
         if (argumentsCount < 3) {
             mainWindow->abortScript(
@@ -192,23 +187,23 @@ bool VymModelWrapper::exportMap(QJSValueList args)
 	    return r;
         }
         QString templ = args[2].toString();
-        model->exportImpress(filePath, templ, false);
+        modelInt->exportImpress(filePath, templ, false);
     } else if (format == "LaTeX") {
-        model->exportLaTeX(filePath, false);
+        modelInt->exportLaTeX(filePath, false);
     } else if (format == "Markdown") {
-        model->exportMarkdown(filePath, false);
+        modelInt->exportMarkdown(filePath, false);
     } else if (format == "OrgMode") {
-        model->exportOrgMode(filePath, false);
+        modelInt->exportOrgMode(filePath, false);
     } else if (format == "PDF") {
-        model->exportPDF(filePath, false);
+        modelInt->exportPDF(filePath, false);
         r = true;
     } else if (format == "SVG") {
-        model->exportSVG(filePath, false);
+        modelInt->exportSVG(filePath, false);
         r = true;
     } else if (format == "TaskJuggler") {
-        model->exportTaskJuggler(filePath, false);
+        modelInt->exportTaskJuggler(filePath, false);
     } else if (format == "XML") {
-        model->exportXML(filePath, false);
+        modelInt->exportXML(filePath, false);
         r = true;
     } else {
         mainWindow->abortScript(
@@ -225,7 +220,7 @@ BranchWrapper* VymModelWrapper::findBranchByAttribute(
         const QString &key,
         const QString &value)
 {
-    BranchItem *bi = model->findBranchByAttribute(key, value);
+    BranchItem *bi = modelInt->findBranchByAttribute(key, value);
     if (bi)
         return bi->branchWrapper();
     else
@@ -234,7 +229,7 @@ BranchWrapper* VymModelWrapper::findBranchByAttribute(
 
 AttributeWrapper* VymModelWrapper::findAttributeById(const QString &u)
 {
-    TreeItem *ti = model->findUuid(QUuid(u));
+    TreeItem *ti = modelInt->findUuid(QUuid(u));
     if (ti && ti->hasTypeAttribute())
         return ((AttributeItem*)ti)->attributeWrapper();
     else
@@ -243,7 +238,7 @@ AttributeWrapper* VymModelWrapper::findAttributeById(const QString &u)
 
 BranchWrapper* VymModelWrapper::findBranchById(const QString &u)
 {
-    TreeItem *ti = model->findUuid(QUuid(u));
+    TreeItem *ti = modelInt->findUuid(QUuid(u));
     if (ti && ti->hasTypeBranch())
         return ((BranchItem*)ti)->branchWrapper();
     else
@@ -252,7 +247,7 @@ BranchWrapper* VymModelWrapper::findBranchById(const QString &u)
 
 BranchWrapper* VymModelWrapper::findBranchBySelection(const QString &s)
 {
-    TreeItem *ti = model->findBySelectString(s);
+    TreeItem *ti = modelInt->findBySelectString(s);
     if (ti && ti->hasTypeBranch())
         return ((BranchItem*)ti)->branchWrapper();
     else
@@ -261,7 +256,7 @@ BranchWrapper* VymModelWrapper::findBranchBySelection(const QString &s)
 
 ImageWrapper* VymModelWrapper::findImageById(const QString &u)
 {
-    TreeItem *ti = model->findUuid(QUuid(u));
+    TreeItem *ti = modelInt->findUuid(QUuid(u));
     if (ti && ti->hasTypeImage())
         return ((ImageItem*)ti)->imageWrapper();
     else
@@ -270,7 +265,7 @@ ImageWrapper* VymModelWrapper::findImageById(const QString &u)
 
 ImageWrapper* VymModelWrapper::findImageBySelection(const QString &s)
 {
-    TreeItem *ti = model->findBySelectString(s);
+    TreeItem *ti = modelInt->findBySelectString(s);
     if (ti && ti->hasTypeImage())
         return ((ImageItem*)ti)->imageWrapper();
     else
@@ -279,7 +274,7 @@ ImageWrapper* VymModelWrapper::findImageBySelection(const QString &s)
 
 XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
 {
-    TreeItem *ti = model->findUuid(QUuid(u));
+    TreeItem *ti = modelInt->findUuid(QUuid(u));
     if (ti && ti->hasTypeXLink())
         return ((XLinkItem*)ti)->getXLink()->xlinkWrapper();
     else
@@ -288,88 +283,88 @@ XLinkWrapper* VymModelWrapper::findXLinkById(const QString &u)
 
 QString VymModelWrapper::getBackgroundColor()
 {
-    QString r = model->backgroundColor().name();
+    QString r = modelInt->backgroundColor().name();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getBackgroundImageName()
 {
-    QString r = model->backgroundImageName();
+    QString r = modelInt->backgroundImageName();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getDestPath()
 {
-    QString r = model->getDestPath();
+    QString r = modelInt->getDestPath();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getFileDir()
 {
-    QString r = model->getFileDir();
+    QString r = modelInt->getFileDir();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getFileName()
 {
-    QString r = model->getFileName();
+    QString r = modelInt->getFileName();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getAuthor()
 {
-    QString r = model->mapAuthor();
+    QString r = modelInt->mapAuthor();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getComment()
 {
-    QString r = model->mapComment();
+    QString r = modelInt->mapComment();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getLinkColorHint()
 {
-    LinkObj::ColorHint hint = model->mapDesign()->linkColorHint();
+    LinkObj::ColorHint hint = modelInt->mapDesign()->linkColorHint();
     return LinkObj::linkColorHintName(hint);
 }
 
 QString VymModelWrapper::getTitle()
 {
-    QString r = model->mapTitle();
+    QString r = modelInt->mapTitle();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 QString VymModelWrapper::getSelectionString()
 {
-    QString r = model->getSelectString();
+    QString r = modelInt->getSelectString();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 double VymModelWrapper::getZoom()
 {
-    return model->getMapEditor()->zoomFactorTarget();
+    return modelInt->getMapEditor()->zoomFactorTarget();
 }
 
 bool VymModelWrapper::hasBackgroundImage()
 {
-    bool r = model->hasBackgroundImage();
+    bool r = modelInt->hasBackgroundImage();
     mainWindow->setScriptResult(r);
     return r;
 }
 
 bool VymModelWrapper::loadBackgroundImage(const QString &imagePath)
 {
-    bool r =model->loadBackgroundImage(imagePath);
+    bool r =modelInt->loadBackgroundImage(imagePath);
     if (!r)
         mainWindow->abortScript(
                 QJSValue::GenericError,
@@ -382,7 +377,7 @@ bool VymModelWrapper::loadBranchReplace(QString fileName, BranchWrapper *bw)
     if (QDir::isRelativePath(fileName))
         fileName = QDir::currentPath() + "/" + fileName;
 
-    bool r = model->addMapReplace(fileName, bw->branchItem());
+    bool r = modelInt->addMapReplace(fileName, bw->branchItem());
     mainWindow->setScriptResult(r);
     return r;
 }
@@ -393,19 +388,19 @@ bool VymModelWrapper::loadDataInsert(QString fileName, int pos, BranchWrapper *b
         fileName = QDir::currentPath() + "/" + fileName;
 
     BranchItem * bi = bw ? bw->branchItem() : nullptr;
-    bool r = model->addMapInsert(fileName, pos, bi);
+    bool r = modelInt->addMapInsert(fileName, pos, bi);
     mainWindow->setScriptResult(r);
     return r;
 }
 
 ItemListWrapper* VymModelWrapper::itemList()
 {
-    return new ItemListWrapper(model);
+    return new ItemListWrapper(modelInt);
 }
 
 void VymModelWrapper::moveSlideDown(int n)
 {
-    if (!model->moveSlideDown(n))
+    if (!modelInt->moveSlideDown(n))
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Could not move slide down");
@@ -415,7 +410,7 @@ void VymModelWrapper::moveSlideDown() { moveSlideDown(-1); }
 
 void VymModelWrapper::moveSlideUp(int n)
 {
-    if (!model->moveSlideUp(n))
+    if (!modelInt->moveSlideUp(n))
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 "Could not move slide up");
@@ -423,11 +418,11 @@ void VymModelWrapper::moveSlideUp(int n)
 
 void VymModelWrapper::moveSlideUp() { moveSlideUp(-1); }
 
-void VymModelWrapper::paste() { model->paste(); }
+void VymModelWrapper::paste() { modelInt->paste(); }
 
-void VymModelWrapper::redo() { model->redo(); }
+void VymModelWrapper::redo() { modelInt->redo(); }
 
-void VymModelWrapper::remove() { model->deleteSelection(); }
+void VymModelWrapper::remove() { modelInt->deleteSelection(); }
 
 void VymModelWrapper::removeAttribute(AttributeWrapper *aw)
 {
@@ -437,7 +432,7 @@ void VymModelWrapper::removeAttribute(AttributeWrapper *aw)
                 "VymModelWrapper::removeAttribute(a) a is invalid");
         return;
     }
-    model->deleteSelection(aw->attributeItem()->getID());
+    modelInt->deleteSelection(aw->attributeItem()->getID());
 }
 
 void VymModelWrapper::removeBranch(BranchWrapper *bw)
@@ -448,7 +443,7 @@ void VymModelWrapper::removeBranch(BranchWrapper *bw)
                 "VymModelWrapper::removeBranch(b) b is invalid");
         return;
     }
-    model->deleteSelection(bw->branchItem()->getID());
+    modelInt->deleteSelection(bw->branchItem()->getID());
 }
 
 void VymModelWrapper::removeImage(ImageWrapper *iw)
@@ -459,17 +454,17 @@ void VymModelWrapper::removeImage(ImageWrapper *iw)
                 "VymModelWrapper::removeImage(i) i is invalid");
         return;
     }
-    model->deleteSelection(iw->imageItem()->getID());
+    modelInt->deleteSelection(iw->imageItem()->getID());
 }
 
 void VymModelWrapper::removeKeepChildren(BranchWrapper *bw)
 {
-    model->deleteKeepChildren(bw->branchItem());
+    modelInt->deleteKeepChildren(bw->branchItem());
 }
 
 void VymModelWrapper::removeSlide(int n)
 {
-    if (n < 0 || n >= model->slideCount() - 1)
+    if (n < 0 || n >= modelInt->slideCount() - 1)
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Slide '%1' not available.").arg(n));
@@ -483,18 +478,18 @@ void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
                 "VymModelWrapper::removeXLink(xl) xlink is invalid");
         return;
     }
-    model->deleteXLink(xlw->xlink());
+    modelInt->deleteXLink(xlw->xlink());
 }
 
 QVariant VymModelWrapper::repeatLastCommand()
 {
-    return model->repeatLastCommand();
+    return modelInt->repeatLastCommand();
 }
 
 bool VymModelWrapper::saveSelection(const QString &filename)
 {
-    QString filename_org = model->getFilePath(); // Restore filename later
-    if (!model->renameMap(filename)) {
+    QString filename_org = modelInt->getFilePath(); // Restore filename later
+    if (!modelInt->renameMap(filename)) {
         QString s = tr("Saving the selection in map failed:\nCouldn't rename map to %1").arg(filename);
         QMessageBox::critical(0,
             tr("Critical Error"), s);
@@ -502,9 +497,9 @@ bool VymModelWrapper::saveSelection(const QString &filename)
         return false;
     }
 
-    bool r = model->saveMap(File::PartOfMap);
+    bool r = modelInt->saveMap(File::PartOfMap);
 
-    if (!model->renameMap(filename_org)) {
+    if (!modelInt->renameMap(filename_org)) {
         QString s = tr("Saving the selection in map failed:\nCouldn't rename map to %1").arg(filename);
         QMessageBox::critical(0,
             tr("Critical Error"), s);
@@ -517,7 +512,7 @@ bool VymModelWrapper::saveSelection(const QString &filename)
 
 bool VymModelWrapper::select(const QString &s)
 {
-    bool r = model->select(s);
+    bool r = modelInt->select(s);
     if (!r)
         mainWindow->abortScript(
                 QJSValue::GenericError,
@@ -528,7 +523,7 @@ bool VymModelWrapper::select(const QString &s)
 
 AttributeWrapper* VymModelWrapper::selectedAttribute()
 {
-    AttributeItem *ai = model->getSelectedAttribute();
+    AttributeItem *ai = modelInt->getSelectedAttribute();
 
     if (ai)
         return ai->attributeWrapper();
@@ -538,7 +533,7 @@ AttributeWrapper* VymModelWrapper::selectedAttribute()
 
 BranchWrapper* VymModelWrapper::selectedBranch()
 {
-    BranchItem *selbi = model->getSelectedBranch();
+    BranchItem *selbi = modelInt->getSelectedBranch();
 
     if (selbi)
         return selbi->branchWrapper();
@@ -548,7 +543,7 @@ BranchWrapper* VymModelWrapper::selectedBranch()
 
 XLinkWrapper* VymModelWrapper::selectedXLink()
 {
-    XLinkItem *xli = model->getSelectedXLinkItem();
+    XLinkItem *xli = modelInt->getSelectedXLinkItem();
 
     if (xli)
         return xli->getXLink()->xlinkWrapper();
@@ -573,7 +568,7 @@ bool VymModelWrapper::selectUids(QJSValueList args)
     foreach (auto arg, args)
         uids << arg.toString();
 
-    r = model->selectUids(uids);
+    r = modelInt->selectUids(uids);
     if (!r)
         mainWindow->abortScript(
                 QJSValue::GenericError,
@@ -584,7 +579,7 @@ bool VymModelWrapper::selectUids(QJSValueList args)
 
 bool VymModelWrapper::selectLatestAdded()
 {
-    bool r = model->selectLatestAdded();
+    bool r = modelInt->selectLatestAdded();
     if (!r)
         mainWindow->abortScript(
                 QJSValue::GenericError,
@@ -602,22 +597,22 @@ void VymModelWrapper::setAnimCurve(int n)
     else {
         QEasingCurve c;
         c.setType((QEasingCurve::Type)n);
-        model->setMapAnimCurve(c);
+        modelInt->setMapAnimCurve(c);
     }
 }
 
 void VymModelWrapper::setAnimDuration(int n)
 {
-    model->setMapAnimDuration(n);
+    modelInt->setMapAnimDuration(n);
 }
 
-void VymModelWrapper::setAuthor(const QString &s) { model->setMapAuthor(s); }
+void VymModelWrapper::setAuthor(const QString &s) { modelInt->setMapAuthor(s); }
 
 void VymModelWrapper::setBackgroundColor(const QString &color)
 {
     QColor col(color);
     if (col.isValid()) {
-        model->setBackgroundColor(col);
+        modelInt->setBackgroundColor(col);
     }
     else
         mainWindow->abortScript(
@@ -627,14 +622,14 @@ void VymModelWrapper::setBackgroundColor(const QString &color)
 
 void VymModelWrapper::setBackgroundImageName(const QString &name)
 {
-    model->setBackgroundImageName(name);
+    modelInt->setBackgroundImageName(name);
 }
 
 void VymModelWrapper::setDefaultLinkColor(const QString &color)
 {
     QColor col(color);
     if (col.isValid()) {
-        model->setDefaultLinkColor(col);
+        modelInt->setDefaultLinkColor(col);
     }
     else
         mainWindow->abortScript(
@@ -642,27 +637,27 @@ void VymModelWrapper::setDefaultLinkColor(const QString &color)
                 QString("Could not set color to %1").arg(color));
 }
 
-void VymModelWrapper::setComment(const QString &s) { model->setMapComment(s); }
+void VymModelWrapper::setComment(const QString &s) { modelInt->setMapComment(s); }
 
 void VymModelWrapper::setLinkColorHint(const QString &hintName)
 {
     LinkObj::ColorHint hint = LinkObj::linkColorHint(hintName);
-    model->setLinkColorHint(hint);
+    modelInt->setLinkColorHint(hint);
 }
 
 void VymModelWrapper::setLinkStyle(const QString &style)
 {
-    if (!model->setLinkStyle(style))
+    if (!modelInt->setLinkStyle(style))
         mainWindow->abortScript(
                 QJSValue::GenericError,
                 QString("Could not set linkstyle to %1").arg(style));
 }
 
-void VymModelWrapper::setRotationView(float a) { model->setMapRotation(a); }
+void VymModelWrapper::setRotationView(float a) { modelInt->setMapRotation(a); }
 
-void VymModelWrapper::setTitle(const QString &s) { model->setMapTitle(s); }
+void VymModelWrapper::setTitle(const QString &s) { modelInt->setMapTitle(s); }
 
-void VymModelWrapper::setZoom(float z) { model->setMapZoomFactor(z); }
+void VymModelWrapper::setZoom(float z) { modelInt->setMapZoomFactor(z); }
 
 void VymModelWrapper::setSelectionBrushColor(const QString &color)
 {
@@ -673,7 +668,7 @@ void VymModelWrapper::setSelectionBrushColor(const QString &color)
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
     else
-        model->setSelectionBrushColor(col);
+        modelInt->setSelectionBrushColor(col);
 }
 
 void VymModelWrapper::setSelectionPenColor(const QString &color)
@@ -684,12 +679,12 @@ void VymModelWrapper::setSelectionPenColor(const QString &color)
                 QJSValue::GenericError,
                 QString("Could not set color to %1").arg(color));
     else
-        model->setSelectionPenColor(col);
+        modelInt->setSelectionPenColor(col);
 }
 
 void VymModelWrapper::setSelectionPenWidth(const qreal &w)
 {
-    model->setSelectionPenWidth(w);
+    modelInt->setSelectionPenWidth(w);
 }
 
 void VymModelWrapper::sleep(int n)
@@ -701,16 +696,16 @@ void VymModelWrapper::sleep(int n)
 
 int VymModelWrapper::slideCount()
 {
-    int r = model->slideCount();
+    int r = modelInt->slideCount();
     mainWindow->setScriptResult(r);
     return r;
 }
 
-void VymModelWrapper::undo() { model->undo(); }
+void VymModelWrapper::undo() { modelInt->undo(); }
 
-void VymModelWrapper::unselectAll() { model->unselectAll(); }
+void VymModelWrapper::unselectAll() { modelInt->unselectAll(); }
 
 void VymModelWrapper::unsetBackgroundImage()
 {
-    model->unsetBackgroundImage();
+    modelInt->unsetBackgroundImage();
 }

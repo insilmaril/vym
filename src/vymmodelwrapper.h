@@ -19,7 +19,6 @@ class VymModelWrapper : public QObject {
   public:
     Q_INVOKABLE VymModelWrapper(VymModel *m);
     ~VymModelWrapper();
-    VymModel* getModel();
 
   public slots:
     void addMapCenterAtPos(qreal x, qreal y);
@@ -95,7 +94,7 @@ class VymModelWrapper : public QObject {
     void unsetBackgroundImage();
 
   private:
-    VymModel *model;
+    VymModel *modelInt;
 };
 
 #endif
