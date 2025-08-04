@@ -71,7 +71,6 @@ void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
 BranchItem *BranchItem::parentBranch()
 {
     // For MapCenters this will return rootItem
-    // qDebug() << "  BI::" << __func__ << " this=" << this << " pi=" << parentItem << "  ri=" << rootItem;  // FIXME-2
     return (BranchItem *)parentItem;
 }
 
@@ -493,7 +492,7 @@ BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
 BranchContainer* BranchItem::getBranchContainer()
 {
     if (this == rootItem && branchContainer)
-        qWarning() << __func__ << "rootItem should not have BranchCOntainer"; // FIXME-2
+        qWarning() << __func__ << "rootItem should not have BranchCOntainer";
     return branchContainer;
 }
 
