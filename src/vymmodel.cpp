@@ -4557,9 +4557,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         } else
             detaching = false;
 
-        // What kind of relinking are we doing? Important for style updates
-        MapDesign::UpdateMode updateMode = MapDesign::RelinkedByUser; // FIXME-2 not used later   also not considering detaching
-
         BranchItem *branchpi = bi->parentBranch();
 
         // Remove at current position
@@ -4611,7 +4608,6 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
         // reset parObj, fonts, frame, etc in related branch-container or other view-objects
         applyDesign(MapDesign::RelinkedByUser, bi);
-
 
         // Keep position when detaching
         if (detaching)
@@ -6582,7 +6578,7 @@ MapDesign* VymModel::mapDesign()
     return mapDesignInt;
 }
 
-void VymModel::applyDesign(     // FIXME-2 Check handling of autoDesign option
+void VymModel::applyDesign(
         MapDesign::UpdateMode updateMode,
         BranchItem *bi)
 {
