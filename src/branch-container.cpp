@@ -657,11 +657,10 @@ LinkContainer *BranchContainer::getLinkContainer() { return linkContainer; }
 
 void BranchContainer::linkTo(BranchContainer *pbc)
 {
+    originalParentBranchContainer = nullptr;
 
     if (!pbc)
         return;
-
-    originalParentBranchContainer = nullptr;
 
     pbc->linkContainer->addLink(upLink);
 }
@@ -805,10 +804,9 @@ void BranchContainer::updateUpLink()
 
     BranchContainer *pbc = nullptr;
 
-    if (tmpLinkedParentContainer) {
+    if (tmpLinkedParentContainer)
         // I am temporarily linked to tmpLinkedParentContainer
         pbc = tmpLinkedParentContainer;
-    }
     else if (originalParentBranchContainer)
         // I am moving with tmpParent, use original parent for link
         pbc = originalParentBranchContainer;

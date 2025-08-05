@@ -3811,8 +3811,7 @@ void VymModel::moveDownDiagonally()
     }
 }
 
-void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
-                                        // -1 does not remove link for MainBranch: updating links missing after relinking?
+void VymModel::detach(BranchItem *bi)
 {
     QList<BranchItem *> selbis;
     if (bi)
@@ -3825,6 +3824,7 @@ void VymModel::detach(BranchItem *bi)   // FIXME-2 Various issues
             if (bc)
                 bc->setOriginalPos();
             relinkBranch(selbi, rootItem, -1);
+            bc->updateUpLink();
         }
     }
 }
