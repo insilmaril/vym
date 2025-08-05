@@ -7061,7 +7061,7 @@ void Main::updateActions()
             a->setEnabled(false);
 
         // Link style in context menu
-        switch (m->mapDesign()->linkStyle(0)) { // FIXME-4 Currently global for map, all depths
+        switch (m->mapDesign()->linkStyle(1)) { // FIXME-4 Currently global for map, all depths
             case LinkObj::Line:
                 actionFormatLinkStyleLine->setChecked(true);
                 break;

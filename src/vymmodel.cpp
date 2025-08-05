@@ -6725,16 +6725,18 @@ bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-2
 
     auto style = LinkObj::styleFromString(newStyleString);
 
-    mapDesignInt->setLinkStyle(style, depth);
-
     // If whole map is used e.g. for legacy maps, only apply the "thick" part
     // on first level
     if (depth < 0) {
+        mapDesignInt->setLinkStyle(LinkObj::NoLink, 0);
+        mapDesignInt->setLinkStyle(style, 1);
         if (style == LinkObj::PolyLine) 
-            mapDesignInt->setLinkStyle(LinkObj::Line, 1);
+            mapDesignInt->setLinkStyle(LinkObj::Line, 2);
         else if (style == LinkObj::PolyParabel) 
-            mapDesignInt->setLinkStyle(LinkObj::Parabel, 1);
-    }
+            mapDesignInt->setLinkStyle(LinkObj::Parabel, 2);
+    } else
+        mapDesignInt->setLinkStyle(style, depth);
+
 
     applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
     reposition();

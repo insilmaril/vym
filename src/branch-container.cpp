@@ -860,7 +860,7 @@ void BranchContainer::updateUpLink()
             upLink->setLinkStyle(LinkObj::NoLink);
         else {
             upLink->setLinkStyle(
-                tmpParentBI->mapDesign()->linkStyle(tmpParentBI->depth()));
+                branchItem->mapDesign()->linkStyle(branchItem->depth()));
         }
     }
 
