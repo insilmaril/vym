@@ -79,7 +79,7 @@ class VymModelWrapper : public QObject {
     void setBackgroundColor(const QString &color);
     void setBackgroundImageName(const QString &name);
     void setComment(const QString &s);
-    void setLinkStyle(const QString &style);
+    void setLinkStyle(const QString &style, int depth = -1);
     void setLinkColorHint(const QString &hint);
     void setRotationView(float a);
     void setTitle(const QString &s);

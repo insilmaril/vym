@@ -6705,37 +6705,47 @@ void VymModel::setDefaultFont(const QFont &font)    // FIXME-3 no saveState, no 
     mapDesignInt->setFont(font);
 }
 
-bool VymModel::setLinkStyle(const QString &newStyleString, int depth) // FIXME-2 saveState needs to be adapted, command new param depth
-                                                                      // See also mainWindow->updateActions context menu
-                                                                      // FIXME MapDesign setting with depth passed as argument is moved to MapDesign when parsing .xml
-                                                                      // Somehow MD needs to return undo command when setting an element
+bool VymModel::setLinkStyle(const QString &newStyleString, int depth)
 {
-    // Default depth == -1 is used for legacy styles from version < 2.9.518
-    // or for using global setting from context menu
+    auto style = LinkObj::styleFromString(newStyleString);
 
     if (depth >= 0) {
         QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(depth));
 
-        QString uc = QString("map.setLinkStyle (\"%1\");").arg(newStyleString);
-        QString rc = QString("map.setLinkStyle (\"%1\");").arg(currentStyleString);
-        QString com = QString("Set map link style (\"%1\")").arg(newStyleString);
+        QString uc = QString("map.setLinkStyle (\"%1\", %2);").arg(newStyleString, depth);
+        QString rc = QString("map.setLinkStyle (\"%1\", %2);").arg(currentStyleString, depth);
+        QString com = QString("Set map link style (\"%1\", %2)").arg(newStyleString, depth);
         logAction(rc, com, __func__);
         saveState(uc, rc, com);
-    }
-
-    auto style = LinkObj::styleFromString(newStyleString);
-
-    // If whole map is used e.g. for legacy maps, only apply the "thick" part
-    // on first level
-    if (depth < 0) {
-        mapDesignInt->setLinkStyle(LinkObj::NoLink, 0);
-        mapDesignInt->setLinkStyle(style, 1);
-        if (style == LinkObj::PolyLine) 
-            mapDesignInt->setLinkStyle(LinkObj::Line, 2);
-        else if (style == LinkObj::PolyParabel) 
-            mapDesignInt->setLinkStyle(LinkObj::Parabel, 2);
-    } else
         mapDesignInt->setLinkStyle(style, depth);
+    } else {
+        // Default depth == -1 is used for legacy styles from version < 2.9.518
+        // or for using global setting from context menu
+        // Only apply the "thick" part on first level
+        QString com = QString("Set link styles for map to \"%1\"").arg(newStyleString);
+        QString currentStyleString0 = LinkObj::styleString(mapDesignInt->linkStyle(0));
+        QString currentStyleString1 = LinkObj::styleString(mapDesignInt->linkStyle(1));
+        QString currentStyleString2 = LinkObj::styleString(mapDesignInt->linkStyle(2));
+        QString uc0 = QString("map.setLinkStyle (\"%1\", 0);").arg(currentStyleString0);
+        QString uc1 = QString("map.setLinkStyle (\"%1\", 1);").arg(currentStyleString1);
+        QString uc2 = QString("map.setLinkStyle (\"%1\", 2);").arg(currentStyleString2);
+
+        QString rc0 = QString("map.setLinkStyle (\"StyleNoLink\", 0);");
+        mapDesignInt->setLinkStyle(LinkObj::NoLink, 0);
+
+        QString rc1 = QString("map.setLinkStyle (\"%1\", 1);").arg(newStyleString);
+        mapDesignInt->setLinkStyle(style, 1);
+
+        QString rc2;
+        if (style == LinkObj::PolyLine) {
+            rc2 = QString("map.setLinkStyle (\"StyleLine\", 2);");
+            mapDesignInt->setLinkStyle(LinkObj::Line, 2);
+        } else if (style == LinkObj::PolyParabel) {
+            rc2 = QString("map.setLinkStyle (\"StyleParabel\", 2);");
+            mapDesignInt->setLinkStyle(LinkObj::Parabel, 2);
+        }
+        saveState(uc0 + uc1 + uc2, rc0 + rc1 +  rc2, com);
+    }
 
 
     applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);

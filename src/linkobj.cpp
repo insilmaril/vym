@@ -140,7 +140,9 @@ LinkObj::Style LinkObj::getLinkStyle() { return style; }
 LinkObj::Style LinkObj::styleFromString(const QString &s)
 {
     LinkObj::Style style;
-     if (s == "StyleLine")
+    if (s == "StyleNoLink")
+        return LinkObj::NoLink;
+    else if (s == "StyleLine")
         return LinkObj::Line;
     else if (s == "StyleParabel")
         return LinkObj::Parabel;

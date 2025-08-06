@@ -645,12 +645,12 @@ void VymModelWrapper::setLinkColorHint(const QString &hintName)
     modelInt->setLinkColorHint(hint);
 }
 
-void VymModelWrapper::setLinkStyle(const QString &style)
+void VymModelWrapper::setLinkStyle(const QString &style, int depth)
 {
-    if (!modelInt->setLinkStyle(style))
+    if (!modelInt->setLinkStyle(style, depth))
         mainWindow->abortScript(
                 QJSValue::GenericError,
-                QString("Could not set linkstyle to %1").arg(style));
+                QString("Could not set linkstyle to %1 with d=%2").arg(style, depth));
 }
 
 void VymModelWrapper::setRotationView(float a) { modelInt->setMapRotation(a); }

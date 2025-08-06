@@ -841,6 +841,7 @@ void Main::setupAPI()
 
     c = new Command("setLinkStyle", Command::AnySel);
     c->addParameter(Command::StringPar, false, "Link style in map");
+    c->addParameter(Command::IntPar, true, "Depth of branch with this style");
     modelCommands.append(c);
 
     c = new Command("setRotationView", Command::AnySel);
