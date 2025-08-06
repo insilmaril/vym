@@ -46,7 +46,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         if (dia.useTextColor)
             col = QString("style='color:%1'")
                       .arg(current->headingColor().name());
-        QString s = QString("<span class='vym-branch-%1' %2 id='%3'>")
+        QString s = QString("<div class='vym-branch-%1' %2 id='%3'>")
                         .arg(current->depth())
                         .arg(col)
                         .arg(id);
@@ -60,10 +60,9 @@ QString ExportHTML::getBranchText(BranchItem *current)
             if (task) {
                 QString taskName = task->getIconString();
                 taskFlags +=
-                    QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
+                    QString("<img style=\"vertical-align: middle\" src=\"flags/flag-%1.png\" alt=\"%2\">")
                         .arg(taskName)
-                        .arg(QObject::tr("Flag: %1", "Alt tag in HTML export")
-                                 .arg(taskName));
+                        .arg(QObject::tr("Flag: %1", "Alt tag in HTML export").arg(taskName));
             }
         }
 
@@ -81,12 +80,9 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 if (f)
                     flags +=
                         QString(
-                            "<img width=\"32px\" alt=\"%1\" src=\"flags/%2\">")
-                            .arg(QObject::tr("Flag: %1",
-                                             "Alt tag in HTML export")
-                                     .arg(f->getName()))
-                            .arg(uid.toString() +
-                                 f->getImageContainer()->getExtension());
+                            "<img style=\"vertical-align: middle\" width=\"32px\" alt=\"%1\" src=\"flags/%2\">")
+                            .arg(QObject::tr("Flag: %1", "Alt tag in HTML export").arg(f->getName()))
+                            .arg(f->getImageContainer()->originalFilename());
             }
         }
 
@@ -97,7 +93,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // URL
         if (!url.isEmpty()) {
-            s += QString("<a href=\"%1\">%2<img src=\"flags/flag-url.png\" "
+            s += QString("<a href=\"%1\">%2<img style=\"vertical-align: middle\" src=\"flags/flag-url.png\" "
                          "alt=\"%3\"></a>")
                      .arg(url)
                      .arg(number + taskFlags + heading + flags)
@@ -117,7 +113,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
         else
             s += number + taskFlags + heading + flags;
 
-        s += "</span>";
+        s += "</div>";
 
         // Create imagemap
         if (vis && dia.includeMapImage) // FIXME-3 maybe use polygons instead of QRectF for shapes
@@ -143,7 +139,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 s += "</br><img src=\"" + imageName;
                 s += "\" alt=\"" +
                      QObject::tr("Image: %1", "Alt tag in HTML export")
-                         .arg(image->getOriginalFilename());
+                         .arg(image->originalFilename());
                 s += "\"></br>";
             }
         }
@@ -289,7 +285,7 @@ QString ExportHTML::createTOC()
     return toc;
 }
 
-void ExportHTML::doExport(bool useDialog)
+void ExportHTML::doExport(bool useDialog) // FIXME-2 System flags not written. (URL, task, scrolled, ...)
 {
     // Setup dialog and read settings
     dia.setMapName(model->getMapName());
@@ -442,10 +438,9 @@ void ExportHTML::doExport(bool useDialog)
             f = userFlagsMaster->findFlagByUid(uid);
 
         if (f) {
-            ImageContainer *io = f->getImageContainer();
-            if (io)
-                io->save(flagsBasePath + "/" + uid.toString() +
-                         io->getExtension());
+            ImageContainer *ic = f->getImageContainer();
+            if (ic)
+                ic->save(flagsBasePath + "/" + ic->originalFilename());
         }
     }
 

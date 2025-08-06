@@ -84,6 +84,8 @@ void ImageContainer::init()
 {
     containerType = Image;
 
+    originalFilenameInt = "";
+
     imageItem = nullptr;
     selectionContainer = nullptr;
 
@@ -178,6 +180,7 @@ bool ImageContainer::load(const QString &fn)
         setRect(mapFromItem(pixmapItem, pixmapItem->boundingRect()).boundingRect());
     }
 
+    setOriginalFilename(fn);
     return true;
 }
 
@@ -207,7 +210,18 @@ bool ImageContainer::save(const QString &fn)
     return false;
 }
 
-QString ImageContainer::getExtension()
+void ImageContainer::setOriginalFilename(const QString &fn)
+{
+  originalFilenameInt = fn;
+    // Set short name. Search from behind:
+    int i = originalFilenameInt.lastIndexOf("/");
+    if (i >= 0)
+        originalFilenameInt = originalFilenameInt.remove(0, i + 1);
+}
+
+QString ImageContainer::originalFilename() { return originalFilenameInt; }
+
+QString ImageContainer::extension()
 {
     QString s;
     switch (imageType) {

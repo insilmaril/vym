@@ -35,7 +35,9 @@ class ImageContainer : public Container, public LinkableContainer, public Select
 
     bool load(const QString &);
     bool save(const QString &);
-    QString getExtension();
+    void setOriginalFilename(const QString &);
+    QString originalFilename();
+    QString extension();
     ImageType getType();
     QIcon getIcon();
 
@@ -49,6 +51,8 @@ class ImageContainer : public Container, public LinkableContainer, public Select
 
   protected:
     ImageContainer::ImageType imageType;
+
+    QString originalFilenameInt;
 
     QGraphicsSvgItem *svgItem;
     QString svgCachePath;

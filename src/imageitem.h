@@ -32,7 +32,6 @@ class ImageItem : public MapItem {
   protected:
     ImageContainer *imageContainer;
     ImageWrapper *imageWrapperInt;
-    QString originalFilename;
     QString filePathInZipDir;
 
   public:
@@ -41,7 +40,7 @@ class ImageItem : public MapItem {
     qreal width();
     qreal height();
     void setOriginalFilename(const QString &);
-    QString getOriginalFilename();
+    QString originalFilename();
     QString getUniqueFilename();
     bool saveImage(const QString &fn);
     QString saveToDir(const QString &tmpdir);

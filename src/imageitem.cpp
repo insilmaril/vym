@@ -55,7 +55,6 @@ void ImageItem::init()
     imageWrapperInt = nullptr;
     setType(Image);
     hideLinkUnselectedInt = true;
-    originalFilename = "no original name available";
     filePathInZipDir.clear();
 }
 
@@ -79,7 +78,7 @@ ImageWrapper* ImageItem::imageWrapper()
 void ImageItem::setFilePathInZipDir()
 {
     filePathInZipDir = model->zipDirPath() + "/images/" + 
-        "image-" + QString().number(itemID) + imageContainer->getExtension();
+        "image-" + QString().number(itemID) + imageContainer->extension();
 }
 
 bool ImageItem::load(const QString &fname)
@@ -87,9 +86,8 @@ bool ImageItem::load(const QString &fname)
     if (!imageContainer || !imageContainer->load(fname))
         return false;
 
-    setOriginalFilename(fname);
     setFilePathInZipDir();
-    setHeadingPlainText(originalFilename);
+    setHeadingPlainText(imageContainer->originalFilename());
     return true;
 }
 
@@ -189,21 +187,24 @@ qreal ImageItem::height()
 
 void ImageItem::setOriginalFilename(const QString &fn)
 {
-    originalFilename = fn;
+    if (!imageContainer) return;
 
-    // Set short name. Search from behind:
-    int i = originalFilename.lastIndexOf("/");
-    if (i >= 0)
-        originalFilename = originalFilename.remove(0, i + 1);
-    setHeadingPlainText(originalFilename);
+    imageContainer->setOriginalFilename(fn);
+    setHeadingPlainText(imageContainer->originalFilename());
 }
 
-QString ImageItem::getOriginalFilename() { return originalFilename; }
+QString ImageItem::originalFilename()
+{
+    if (!imageContainer)
+        return QString();
+    else
+        return imageContainer->originalFilename();
+}
 
 QString ImageItem::getUniqueFilename()
 {
     if (imageContainer)
-        return "image-" + getUuid().toString() + imageContainer->getExtension();
+        return "image-" + getUuid().toString() + imageContainer->extension();
     else
         return QString();
 }
@@ -228,7 +229,7 @@ QString ImageItem::saveToDir(const QString &tmpdir)
         return QString();
 
     QString url = "images/image-" + QString().number(itemID) +
-          imageContainer->getExtension();
+          imageContainer->extension();
 
     // And really save the image  (svgs will be copied from cache!)
     QString currentPath = tmpdir + "/" + url;
@@ -238,8 +239,8 @@ QString ImageItem::saveToDir(const QString &tmpdir)
 
     QString attributes;
 
-    if (!originalFilename.isEmpty())
-        attributes += attribute("originalName", originalFilename);
+    if (!imageContainer->originalFilename().isEmpty())
+        attributes += attribute("originalName", imageContainer->originalFilename());
 
     attributes += attribute("href", QString("file:") + url);
     attributes += attribute("scale", QString().setNum(imageContainer->scale()));
@@ -249,7 +250,7 @@ QString ImageItem::saveToDir(const QString &tmpdir)
 
     attributes += attribute("uuid", uuid.toString());
 
-    if (originalFilename == headingPlain())
+    if (imageContainer->originalFilename() == headingPlain())
         return singleElement("floatimage", attributes);
     else {
         QString s = beginElement("floatimage", attributes);

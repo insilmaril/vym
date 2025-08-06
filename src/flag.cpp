@@ -118,7 +118,7 @@ QString Flag::getDefinition(const QString &prefix)
 {
     if (type == Flag::UserFlag) {
         QString url = "flags/" + prefix + uuid.toString() + "-" + name +
-                      imageContainer->getExtension();
+                      imageContainer->extension();
         QStringList attributes;
         attributes << attribute("name", name);
         attributes << attribute("href", QString("file:%1").arg(url));
@@ -133,7 +133,7 @@ void Flag::saveDataToDir(const QString &dirPath)
 {
     if (imageContainer) {
         path = dirPath + "/" + uuid.toString() + "-" + name +
-               imageContainer->getExtension();
+               imageContainer->extension();
         imageContainer->save(path);
     }
 }
