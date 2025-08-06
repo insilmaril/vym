@@ -6340,7 +6340,7 @@ void Main::formatSelectLinkColor()
     }
 }
 
-void Main::formatSelectSelectionColor() // FIXME-2 no Pen/Brush support yet
+void Main::formatSelectSelectionColor() // FEATURE #157  no Pen/Brush support yet
 {
     VymModel *m = currentModel();
     if (m) {
