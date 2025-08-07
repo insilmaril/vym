@@ -13,7 +13,7 @@ priorities or reminds you after easily defined time spans.
 
 You can use the scripting capabilities for interesting presentations. 
 VYM can also retrieve data from the Jira issue tracking system and 
-talk to the Concluence documentation system.
+talk to the Confluence documentation system.
 
 VYM runs on Apple and Windows and of course most Linux platforms.
 
