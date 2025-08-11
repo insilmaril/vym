@@ -4670,7 +4670,7 @@ bool VymModel::relinkImage(ImageItem* image, TreeItem *dst_ti, int num_new) {
     return relinkImages(images, dst_ti, num_new);
 }
 
-bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new) // FIXME-2 Check relinking, if attributes are in dst_ti (*before) image rows
+bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)
 {
     // Selection is lost when removing rows from model
     QList <TreeItem*> selectedItems = getSelectedItems();
