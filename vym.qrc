@@ -41,11 +41,11 @@
     <file alias="flag-thumb-down.png">flags/flag-thumb-down.png</file>
     <file alias="flag-thumb-up.png">flags/flag-thumb-up.png</file>
     <file alias="flag-tmpUnscrolled-right.png">flags/flag-tmpUnscrolled-right.png</file>
-    <file alias="flag-url.svg">flags/system/applications-internet.svg</file>
-    <file alias="flag-urlnew.svg">flags/system/applications-internet-new.svg</file>
+    <file alias="flag-url.svg">flags/system/flag-url.svg</file>
+    <file alias="flag-urlnew.svg">flags/system/flag-urlnew.svg</file>
     <file alias="flag-vymlink.png">flags/flag-vymlink.png</file>
     <file alias="flag-vymlinknew.png">flags/flag-vymlinknew.png</file>
-    <file alias="flag-jira.svg">flags/system/jissue.svg</file>
+    <file alias="flag-jira.svg">flags/system/flag-jira.svg</file>
     <file alias="flag-wip.svg">flags/standard/edit-undo.svg</file>
 
     <file alias="freemind/attach.png">flags/freemind/attach.png</file>

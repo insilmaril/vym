@@ -14,6 +14,8 @@
 
 extern TaskModel *taskModel;
 
+extern FlagRowMaster *systemFlagsMaster;
+
 BranchItem::BranchItem(TreeItem *parent)
     : MapItem(parent)
 {
@@ -247,7 +249,7 @@ void BranchItem::updateTaskFlag()
 {
     systemFlags.deactivateGroup("system-tasks");
     if (task) {
-        QString s = "system-" + task->getIconString();
+        QString s = "system-" + task->iconString();
         systemFlags.activate(s);
         model->emitDataChanged(this);
     }
@@ -262,6 +264,14 @@ void BranchItem::setTask(Task *t)
 }
 
 Task *BranchItem::getTask() { return task; }
+
+Flag *BranchItem::taskFlag()
+{
+    if (!task)
+        return nullptr;
+
+    return systemFlagsMaster->findFlagByName("system-" + task->iconString());
+}
 
 void BranchItem::scroll()
 {

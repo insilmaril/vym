@@ -42,6 +42,7 @@ class BranchItem : public MapItem {
     void updateTaskFlag();
     void setTask(Task *t);
     Task *getTask();
+    Flag *taskFlag();
 
   private:
     Task *task;

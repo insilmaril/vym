@@ -24,8 +24,7 @@ class Task : public XMLObj {
     void setStatus(Status ts);
     Status getStatus();
     QString getStatusString();
-    QString
-    getIconString(); //! Used to create icons in task list and flags in mapview
+    QString iconString();   //! Used to create icons in task list and flags in mapview
     void setAwake(const QString &s);
     void setAwake(Awake a);
     Awake getAwake();

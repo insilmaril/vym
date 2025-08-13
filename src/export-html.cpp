@@ -19,6 +19,7 @@ extern QString vymHome;
 
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
+extern FlagRowMaster *systemFlagsMaster;
 
 ExportHTML::ExportHTML() : ExportBase() { init(); }
 
@@ -29,6 +30,8 @@ void ExportHTML::init()
     exportName = "HTML";
     extension = ".html";
     frameURLs = true;
+
+    flagWidthInt = " width=\"32\" ";   // FIXME-3 use CSS instead
 }
 
 QString ExportHTML::getBranchText(BranchItem *current)
@@ -55,14 +58,31 @@ QString ExportHTML::getBranchText(BranchItem *current)
 
         // Task flags
         QString taskFlags;
+        QString flagName;;
+        QString flagPath;
         if (dia.useTaskFlags) {
             Task *task = current->getTask();
             if (task) {
-                QString taskName = task->getIconString();
-                taskFlags +=
-                    QString("<img style=\"vertical-align: middle\" src=\"flags/flag-%1.png\" alt=\"%2\">")
-                        .arg(taskName)
-                        .arg(QObject::tr("Flag: %1", "Alt tag in HTML export").arg(taskName));
+                QString taskName = task->iconString();
+                Flag *f = current->taskFlag();
+                if (f) {
+                    flagName = f->getName();
+                    ImageContainer *ic = f->getImageContainer();
+                    if (!ic) {
+                        qWarning() << __func__ << "ic == nullptr for task";
+                        return "Error...";
+                    }
+
+                    flagPath = flagsDir.path() + "/" + ic->originalFilename();
+
+                    if (!activeSystemFlagNames.contains(flagName)) {
+                        activeSystemFlagNames << flagName;
+                        ic->save(flagPath);
+                    }
+                    taskFlags +=
+                        QString("<img style=\"vertical-align: middle\" %1 src=\"flags/%2\" alt=\"%3\">")
+                            .arg(flagWidthInt, basename(flagPath), taskName);
+                }
             }
         }
 
@@ -80,7 +100,8 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 if (f)
                     flags +=
                         QString(
-                            "<img style=\"vertical-align: middle\" width=\"32px\" alt=\"%1\" src=\"flags/%2\">")
+                            "<img style=\"vertical-align: middle\" %1 alt=\"%2\" src=\"flags/%3\">")
+                            .arg(flagWidthInt)
                             .arg(QObject::tr("Flag: %1", "Alt tag in HTML export").arg(f->getName()))
                             .arg(f->getImageContainer()->originalFilename());
             }
@@ -91,12 +112,30 @@ QString ExportHTML::getBranchText(BranchItem *current)
         if (dia.useNumbering)
             number = getSectionString(current) + " ";
 
-        // URL
+        // Url
         if (!url.isEmpty()) {
-            s += QString("<a href=\"%1\">%2<img style=\"vertical-align: middle\" src=\"flags/flag-url.png\" "
-                         "alt=\"%3\"></a>")
+            Flag *f = current->urlFlag();
+            if (f) {
+                flagName = f->getName();
+                ImageContainer *ic = f->getImageContainer();
+                if (!ic) {
+                    qWarning() << __func__ << "ic == nullptr for Url";
+                    return "Error...";
+                }
+
+                flagPath = flagsDir.path() + "/" + ic->originalFilename();
+
+                if (!activeSystemFlagNames.contains(flagName)) {
+                    activeSystemFlagNames << flagName;
+                    ic->save(flagPath);
+                }
+            }
+            s += QString("<a href=\"%1\">%2<img style=\"vertical-align: middle\" %3 src=\"flags/%4\" "
+                         "alt=\"%5\"></a>")
                      .arg(url)
                      .arg(number + taskFlags + heading + flags)
+                     .arg(flagWidthInt)
+                     .arg(basename(flagPath))
                      .arg(QObject::tr("Flag: url", "Alt tag in HTML export"));
 
             QRectF fbox = current->getBranchContainer()->getBBoxURLFlag();
@@ -109,6 +148,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                                 .arg(fbox.bottom() - offset.y())
                                 .arg(url)
                                 .arg(heading);
+
         }
         else
             s += number + taskFlags + heading + flags;
@@ -285,7 +325,7 @@ QString ExportHTML::createTOC()
     return toc;
 }
 
-void ExportHTML::doExport(bool useDialog) // FIXME-2 System flags not written. (URL, task, scrolled, ...)
+void ExportHTML::doExport(bool useDialog)
 {
     // Setup dialog and read settings
     dia.setMapName(model->getMapName());
@@ -398,7 +438,16 @@ void ExportHTML::doExport(bool useDialog) // FIXME-2 System flags not written. (
 
     // reset flags
     model->resetUsedFlags();
-
+    flagsDir.setPath(dia.getDir().absolutePath() + "/flags");
+    if (!flagsDir.exists()) {
+        if (!dia.getDir().mkdir("flags")) {
+            QMessageBox::critical(
+                0, QObject::tr("Critical"),
+                QObject::tr("Trying to create directory for flags:") + "\n\n" +
+                    QObject::tr("Could not create %1").arg(flagsDir.path()));
+            return;
+        }
+    }
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
 
@@ -420,17 +469,8 @@ void ExportHTML::doExport(bool useDialog) // FIXME-2 System flags not written. (
     ts << "</body></html>";
     file.close();
 
-    QString flagsBasePath = dia.getDir().absolutePath() + "/flags";
-    QDir d(flagsBasePath);
-    if (!d.exists()) {
-        if (!dia.getDir().mkdir("flags")) {
-            QMessageBox::critical(
-                0, QObject::tr("Critical"),
-                QObject::tr("Trying to create directory for flags:") + "\n\n" +
-                    QObject::tr("Could not create %1").arg(flagsBasePath));
-            return;
-        }
-    }
+
+    // Copy standard flags
     Flag *f;
     foreach (QUuid uid, activeFlags) {
         f = standardFlagsMaster->findFlagByUid(uid);
@@ -440,7 +480,7 @@ void ExportHTML::doExport(bool useDialog) // FIXME-2 System flags not written. (
         if (f) {
             ImageContainer *ic = f->getImageContainer();
             if (ic)
-                ic->save(flagsBasePath + "/" + ic->originalFilename());
+                ic->save(flagsDir.path() + "/" + ic->originalFilename());
         }
     }
 

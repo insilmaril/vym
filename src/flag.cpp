@@ -74,8 +74,6 @@ void Flag::setName(const QString &n)
 
 const QString Flag::getName() { return name; }
 
-const QString Flag::getPath() { return path; }
-
 void Flag::setVisible(bool b) { visible = b; }
 
 bool Flag::isVisible() { return visible; }

@@ -3446,7 +3446,7 @@ Flag *Main::setupFlag(const QString &path, Flag::FlagType type,
     }
 
     if (!flag)
-        return flag;
+        return nullptr;
 
     flag->setName(name);
     flag->setToolTip(tooltip);

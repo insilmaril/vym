@@ -32,7 +32,6 @@ class Flag : public XMLObj {
     bool load(const QString &);
     void setName(const QString &);
     const QString getName();
-    const QString getPath();
     void setVisible(bool b);
     bool isVisible();
     void setGroup(const QString &);

@@ -74,7 +74,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             Task *task = current->getTask();
             if (task)
             {
-                QString taskName = task->getIconString();
+                QString taskName = task->iconString();
                 taskFlags += QString("<img src=\"flags/flag-%1.png\"
         alt=\"%2\">") .arg(taskName) .arg(QObject::tr("Flag: %1","Alt tag in
         HTML export").arg(taskName));

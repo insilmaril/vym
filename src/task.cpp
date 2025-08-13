@@ -6,6 +6,8 @@
 #include "taskmodel.h"
 #include "vymmodel.h"
 
+extern QString flagsPath;
+
 Task::Task(TaskModel *tm)
 {
     //    qDebug()<<"Constr. Task";
@@ -82,7 +84,7 @@ QString Task::getStatusString()
     return "Undefined";
 }
 
-QString Task::getIconString()
+QString Task::iconString()
 {
     QString s;
     switch (status) {

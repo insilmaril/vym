@@ -111,6 +111,7 @@ class TreeItem : public XMLObj {
     bool hasUrl();
     void setUrlType(UrlType);
     UrlType urlType();
+    Flag *urlFlag();
 
   protected:
     QString vymLinkInt;

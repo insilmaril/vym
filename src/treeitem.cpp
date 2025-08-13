@@ -391,13 +391,16 @@ void TreeItem::setHeadingColor(QColor color) { headingInt.setColor(color); }
 
 QColor TreeItem::headingColor() { return headingInt.getColor(); }
 
-void TreeItem::setUrl(const QString &u)
+void TreeItem::setUrl(const QString &u) // FIXME-2 dupl with VM::setUrl?
 {
     urlInt = u;
-    if (!urlInt.isEmpty())
+    if (!urlInt.isEmpty()) {
         systemFlags.activate(QString("system-url"));
-    else
+        urlTypeInt = UrlType::GeneralUrl;
+    } else {
         systemFlags.deactivate(QString("system-url"));
+        urlTypeInt = UrlType::NoUrl;
+    }
 }
 
 QString TreeItem::url() { return urlInt; }
@@ -412,6 +415,20 @@ void TreeItem::setUrlType(UrlType ut)
 TreeItem::UrlType TreeItem::urlType()
 {
     return urlTypeInt;
+}
+
+Flag* TreeItem::urlFlag()
+{
+    if (!hasUrl())
+        return nullptr;
+
+    if (urlTypeInt == UrlType::GeneralUrl)
+        return systemFlagsMaster->findFlagByName("system-url");
+
+    if (urlTypeInt == UrlType::JiraUrl)
+        return systemFlagsMaster->findFlagByName("system-jira");
+
+    return nullptr;
 }
 
 void TreeItem::setVymLink(const QString &vl)

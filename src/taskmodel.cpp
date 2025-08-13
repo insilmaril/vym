@@ -133,7 +133,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
     }
     else if (role == Qt::DecorationRole && index.column() == 2) {
-        QString s = t->getIconString();
+        QString s = t->iconString();
         if (s == "task-new")
             return task_new_icon;
         else if (s == "task-new-morning")

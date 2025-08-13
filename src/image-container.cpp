@@ -134,7 +134,8 @@ void ImageContainer::select()
 
 bool ImageContainer::load(const QString &fn)
 {
-    //qDebug() << "IC::load " << fn;
+    QFile file (fn);
+    // qDebug() << "IC::load " << fn << file.fileName(); 
     if (imageType != ImageContainer::Undefined) {
         qWarning() << "ImageContainer::load (" << fn
                    << ") into existing image of type " << imageType;

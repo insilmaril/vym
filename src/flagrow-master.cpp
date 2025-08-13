@@ -73,7 +73,7 @@ Flag *FlagRowMaster::findFlagByUid(const QUuid &uid)
     return nullptr;
 }
 
-Flag *FlagRowMaster::findFlagByName(const QString &name)
+Flag *FlagRowMaster::findFlagByName(const QString &name)    // FIXME-3 called quite often. From taskEditor?
 {
     int i = 0;
     while (i <= flags.size() - 1) {
