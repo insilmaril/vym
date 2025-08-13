@@ -5603,17 +5603,6 @@ void VymModel::updateJiraFlag(TreeItem *ti)
         }
     }
 
-    // Update UrlType
-    if (ti->urlType() == TreeItem::JiraUrl) {
-        ti->activateSystemFlagByName("system-jira");
-        ti->deactivateSystemFlagByName("system-url");
-    } else {
-        ti->deactivateSystemFlagByName("system-jira");
-        if (ti->urlType() == TreeItem::GeneralUrl)
-            ti->activateSystemFlagByName("system-url");
-        else
-            ti->deactivateSystemFlagByName("system-url");
-    }
     emitDataChanged(ti);
 }
 
