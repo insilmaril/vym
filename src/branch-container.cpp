@@ -1413,7 +1413,7 @@ void BranchContainer::reposition()
         // on MovingState
         if (pbc) {
             if (pbc->hasFloatingBranchesLayout()) {
-                if (scenePos().x() > pbc->scenePos().x())   // FIXME-2 problematic for rotated elements...
+                if (scenePos().x() > pbc->scenePos().x())   // FIXME-3 Potentially problematic for rotated elements...
                                                             // but OTOH using relative coord
                                                             // often pos.x() == 0
                     orientation = RightOfParent;
