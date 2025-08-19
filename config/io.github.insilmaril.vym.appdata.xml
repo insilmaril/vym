@@ -26,7 +26,9 @@
     </categories>
     <url type="bugtracker">https://github.com/insilmaril/vym/issues</url>
     <url type="homepage">http://www.insilmaril.de/vym/</url>
-    <developer_name>vym</developer_name>
+    <developer id="io.github.insilmaril.vym">
+      <name>Uwe Drechsel</name>
+    </developer>
     <kudos>
         <kudo>HiDpiIcon</kudo>
         <kudo>HighContrast</kudo>
