@@ -489,6 +489,7 @@ class Main : public QMainWindow {
     QAction *actionFileExportLast;
     QAction *actionFileExportConfluence;
     QAction *actionUndo;
+    QAction *actionUndoVim;
     QAction *actionRedo;
     QAction *actionCopy;
     QAction *actionCut;

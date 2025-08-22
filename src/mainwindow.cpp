@@ -1831,6 +1831,18 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editUndo()));
     actionUndo = a;
 
+    a = new QAction(QPixmap(":/undo.png"), tr("&Undo", "Edit menu"), this);
+    a->setShortcut(Qt::Key_U);
+    ADD_SHORTCUT
+    a->setShortcutContext(Qt::WidgetShortcut);
+    a->setEnabled(false);
+    editMenu->addAction(a);
+    mapEditorActions.append(a);
+    restrictedMapActions.append(a);
+    switchboard.addSwitch("mapUndo", shortcutScope, a, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editUndo()));
+    actionUndoVim = a;
+
     a = new QAction(QPixmap(":/redo.png"), tr("&Redo", "Edit menu"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_Y);
     ADD_SHORTCUT
@@ -2183,8 +2195,8 @@ void Main::setupEditActions()
     tag = tr("References Context menu", "Shortcuts");
     a = new QAction(QPixmap(":/flag-url.svg"), tr("Open URL", "Edit menu"),
                     this);
-    a->setShortcut(Qt::CTRL | Qt::Key_U);
-    ADD_SHORTCUT
+    //a->setShortcut(Qt::CTRL | Qt::Key_U);
+    //ADD_SHORTCUT
     switchboard.addSwitch("mapOpenUrl", shortcutScope, a, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(openUrl()));
@@ -2226,7 +2238,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":/flag-urlnew.svg"),
                     tr("Edit URL...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_U);
+    a->setShortcut(Qt::SHIFT | Qt::Key_U);
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditURL", shortcutScope, a, tag);
@@ -2236,7 +2248,7 @@ void Main::setupEditActions()
     actionURLNew = a;
 
     a = new QAction(QPixmap(), tr("Edit local URL...", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_U);
+    a->setShortcut(Qt::CTRL | Qt::Key_U);
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapEditLocalURL", shortcutScope, a, tag);
@@ -2613,8 +2625,6 @@ void Main::setupSelectActions()
     actionListFiles.append(a);
 
     a = new QAction(tr("Find duplicate URLs", "Edit menu") + " (test)", this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_F);
-    ADD_SHORTCUT
     switchboard.addSwitch("mapFindDuplicates", shortcutScope, a, tag);
     if (settings.value("/mainwindow/showTestMenu", false).toBool())
         selectMenu->addAction(a);
@@ -4024,6 +4034,7 @@ void Main::setupToolbars()
                                      "Toolbar for redo/undo and clipboard"));
     clipboardToolbar->setObjectName("clipboard toolbar");
     clipboardToolbar->addAction(actionUndo);
+    clipboardToolbar->addAction(actionUndoVim);
     clipboardToolbar->addAction(actionRedo);
     clipboardToolbar->addAction(actionCopy);
     clipboardToolbar->addAction(actionCut);
@@ -7112,8 +7123,10 @@ void Main::updateActions()
         
 
         // Undo/Redo
-        if (!m->isUndoAvailable())
+        if (!m->isUndoAvailable()) {
             actionUndo->setEnabled(false);
+            actionUndoVim->setEnabled(false);
+        }
 
         if (!m->isRedoAvailable())
             actionRedo->setEnabled(false);
