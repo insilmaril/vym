@@ -7102,14 +7102,12 @@ void Main::updateActions()
         if (m->isSaving()) {
             actionFileSave->setEnabled(false);
             actionFileClose->setEnabled(false);
-            actionFileExitVym->setEnabled(false);
         } else {
             if (!m->hasChanged())
                 actionFileSave->setEnabled(false);
             else
                 actionFileSave->setEnabled(true);
             actionFileClose->setEnabled(true);
-            actionFileExitVym->setEnabled(true);
         }
         
 
