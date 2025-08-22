@@ -129,7 +129,7 @@ VymModel::~VymModel()
     fileChangedTimer->stop();
 
     if (zipAgent) {
-        mainWindow->statusMessage(tr("Waiting until map is completely saved and compressed..."));
+        mainWindow->statusMessage("Destr VymModel: Waiting until map is completely saved and compressed...");
         zipAgent->waitForFinished();
         
         // zipAgent might be set to nullptr already in VymModel::zipFinished
@@ -920,11 +920,20 @@ bool VymModel::isSaving()
 void VymModel::zipFinished()
 {
     // Cleanup
-    QString log = QString("Finished zipping %1 to %2").arg(zipAgent->zipDir().path(), zipAgent->zipName());
-    logInfo(log, __func__);
+    QString path = "unknown";
+    QString name = "unknown";
+    if (zipAgent) {
+        path = zipAgent->zipDir().path();
+        name = zipAgent->zipName();
 
-    zipAgent->deleteLater();
-    zipAgent = nullptr;
+        QString log = QString("Finished zipping %1 to %2").arg(path, name);
+        logInfo(log, __func__);
+
+        zipAgent->deleteLater();
+        zipAgent = nullptr;
+    } else
+        logWarning("zipAgent == nullptr", __func__);
+
     isSavingInt = false;
 
     mainWindow->statusMessage(tr("Saved %1").arg(filePath));
