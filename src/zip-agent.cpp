@@ -74,7 +74,7 @@ void ZipAgent::startZip()
     args << ".";
 #endif
     setArguments(args);
-    mainWindow->logInfo("Starting compressing " + zipDirInt.path() + " : " + zipToolPath + " " + args.join(" "));
+    mainWindow->logInfo("ZipAgent: Starting compressing " + zipDirInt.path() + " : " + zipToolPath + " " + args.join(" ") + QString("  Background=%1").arg(isBackgroundProcessInt));
 
     start();
 

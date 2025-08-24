@@ -120,7 +120,7 @@ VymModel::VymModel()
 
 VymModel::~VymModel()
 {
-    //qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
+    qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
 
     mapEditor = nullptr;
     repositionBlocked = true;
@@ -185,6 +185,7 @@ void VymModel::init()
     // No ZipAgent yet and not saving
     zipAgent = nullptr;
     isSavingInt = false;
+    isLoadingInt = false;
 
     // Use default author
     authorInt = settings
@@ -528,6 +529,9 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         return false;
     }
 
+    // No returns now befor end of function
+    isLoadingInt = true;
+
     QString xmlfile;
     if (fname.right(4) == ".xml" || fname.right(3) == ".mm") {
         xmlfile = fname;
@@ -737,6 +741,8 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     }
 
     qApp->processEvents(); // Update view (scene()->update() is not enough)
+
+    isLoadingInt = false;
     return noError;
 }
 
@@ -915,6 +921,16 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
 bool VymModel::isSaving()
 {
     return isSavingInt;
+}
+
+bool VymModel::isLoading()
+{
+    return isLoadingInt;
+}
+
+bool VymModel::isBusy()
+{
+    return isLoadingInt || isSavingInt;
 }
 
 void VymModel::zipFinished()

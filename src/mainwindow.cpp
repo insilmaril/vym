@@ -2911,7 +2911,7 @@ void Main::setupViewActions()
     actionCenterOn = a;
 
     a = new QAction(tr("Fit view to selection", "View action"), this);
-    a->setShortcut(Qt::Key_Period | Qt::SHIFT);
+    a->setShortcut(Qt::Key_Semicolon);
     ADD_SHORTCUT
     viewMenu->addAction(a);
     switchboard.addSwitch("mapCenterAndFitView", shortcutScope, a, tag);
@@ -5129,7 +5129,7 @@ void Main::fileExportLast()
 
 bool Main::fileCloseMap(int i)
 {
-
+    qDebug() << __func__ << "i=" << i << " currentInd=" << tabWidget->currentIndex();
     VymModel *m;
     VymView *vv;
     if (i < 0)
@@ -5139,11 +5139,12 @@ bool Main::fileCloseMap(int i)
     m = vv->getModel();
 
     if (m) {
-        if (m->isSaving()) {
-            //qDebug() << "MW::fileCloseMap ignoring request to close because of running zip process";
+        if (m->isBusy()) {
+            qDebug() << "MW::fileCloseMap ignoring request to close because of running processess (load/save)";
             return false;
         }
 
+        logInfo(QString("Starting to close map %1 in fileCloseMap").arg(i));   // FIXME-2
         if (m->hasChanged()) {
             QMessageBox mb(
                 QMessageBox::Warning,
@@ -5156,7 +5157,7 @@ bool Main::fileCloseMap(int i)
             switch (mb.exec()) {
                 case QMessageBox::Save:
                     // save and close
-                    fileSave(m, File::CompleteMap);
+                    fileSave(m, File::CompleteMap); // FIXME-0 might crash if continued then, because still saving asynchronously...?
                     break;
                 case QMessageBox::Discard:
                     // close  without saving
@@ -5169,6 +5170,7 @@ bool Main::fileCloseMap(int i)
 
         tabWidget->removeTab(i);
 
+        logInfo(QString("Starting to destroy map %1 in fileCloseMap").arg(i));   // FIXME-2
         // Destroy stuff, order is important
         noteEditor->clear();
         branchPropertyEditor->setModel(nullptr);
