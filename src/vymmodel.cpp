@@ -342,10 +342,12 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
             mapAttr += xml.attribute("comment", commentInt) + "\n";
 
         mapAttr += xml.attribute("branchCount", QString().number(branchCount()));
+        if (mapEditor) {
         mapAttr += xml.attribute("mapZoomFactor",
                      QString().setNum(mapEditor->zoomFactorTarget()));
         mapAttr += xml.attribute("mapRotation",
                      QString().setNum(mapEditor->rotationTarget()));
+        }
     }
     header += xml.beginElement("vymmap", mapAttr);
 
@@ -632,7 +634,8 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         bool saveStateBlockedOrg = saveStateBlocked;
         repositionBlocked = true;
         saveStateBlocked = true;
-        mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
+        if (mapEditor)
+            mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
 
         // We need to set the tmpDir in order  to load files with rel. path
         QString tmpdir;
@@ -670,7 +673,8 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         // Aftermath
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
-        mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+        if (mapEditor)
+            mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 
         if (noError) {
             if (parsedWell) {
@@ -4298,7 +4302,7 @@ BranchItem *VymModel::addMapCenter(bool interactive)
 
     BranchItem *newbi = addMapCenterAtPos(contextPos, interactive);
 
-    if (interactive)
+    if (interactive && mapEditor)
         mapEditor->editHeading(newbi);
 
     updateActions();
@@ -4447,7 +4451,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
            */
     }
 
-    if (interactive) {
+    if (interactive && mapEditor) {
         select(newbi);
         mapEditor->editHeading();
     }
@@ -4495,7 +4499,7 @@ BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    //
             emitDataChanged(newbi);
         }
 
-        if (interactive) {
+        if (interactive && mapEditor) {
             select(newbi);
             mapEditor->editHeading();
         }
@@ -4820,7 +4824,8 @@ void VymModel::deleteSelection(ulong selID)
 
     unselectAll();
 
-    mapEditor->stopContainerAnimations();  // FIXME-5 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
+    if (mapEditor)
+        mapEditor->stopContainerAnimations();  // FIXME-5 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
 
     foreach (ulong id, selectedIDs) {
         TreeItem *ti = findID(id);
@@ -5437,7 +5442,8 @@ void VymModel::colorBranch(QColor c, BranchItem *bi)
         emitDataChanged(selbi);
         taskEditor->showSelection();
     }
-    mapEditor->getScene()->update();
+    if (mapEditor)
+        mapEditor->getScene()->update();
 }
 
 void VymModel::colorSubtree(QColor c, BranchItem *bi)
@@ -5464,7 +5470,8 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
         }
     }
     taskEditor->showSelection();
-    mapEditor->getScene()->update();
+    if (mapEditor)
+        mapEditor->getScene()->update();
 }
 
 QColor VymModel::getCurrentHeadingColor()
@@ -5927,6 +5934,11 @@ void VymModel::setExportMode(bool b)
 
 QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return QPointF();
+    }
+
     QPointF offset; // set later, when getting image from MapEditor
 
     if (fname == "") {
@@ -5959,8 +5971,6 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 
     setExportMode(true);
 
-    mapEditor->minimizeView();  // Export minimal image
-
     QImage img(mapEditor->getImage(offset));
     if (!img.save(fname, format.toLocal8Bit())) {
         QMessageBox::critical(
@@ -5979,6 +5989,11 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 
 void VymModel::exportPDF(QString fname, bool askName)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return;
+    }
+    
     if (fname == "") {
         if (!askName) {
             qWarning("VymModel::exportPDF called without filename (and "
@@ -6511,12 +6526,22 @@ void VymModel::registerMapEditor(QWidget *e) { mapEditor = (MapEditor *)e; }
 
 void VymModel::setMapZoomFactor(const double &d)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return;
+    }
+
     zoomFactor = d;
     mapEditor->setZoomFactorTarget(d);
 }
 
 void VymModel::setMapRotation(const double &a)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return;
+    }
+
     if (a < 1)
         // Round to zero, otherwise selectionMode in MapEditor might be 
         // "Geometric" when it should be "Classic"
@@ -6532,6 +6557,11 @@ void VymModel::setMapAnimCurve(const QEasingCurve &c) { animCurve = c; }
 
 bool VymModel::centerOnID(const QString &id)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return false;
+    }
+
     TreeItem *ti = findUuid(QUuid(id));
     if (ti && (ti->hasTypeBranch() || ti->hasTypeImage())) {
         Container *c = ((MapItem*)ti)->getContainer();
@@ -6573,7 +6603,8 @@ void VymModel::reposition(bool force)
 
     repositionXLinks();
 
-    mapEditor->minimizeView();  // Optimize view when geometry changes in reposition()
+    if (mapEditor)
+        mapEditor->minimizeView();  // Optimize view when geometry changes in reposition()
 
     //qDebug() << "VM::reposition end";
     if (force)
@@ -7973,11 +8004,13 @@ SlideItem *VymModel::addSlide()     // FIXME-3 missing saveState
                 return nullptr;
             }
 
-            inScript.replace(
-                "CURRENT_ZOOM",
-                QString().setNum(getMapEditor()->zoomFactorTarget()));
-            inScript.replace("CURRENT_ANGLE",
-                             QString().setNum(getMapEditor()->rotationTarget()));
+            if (mapEditor) {
+                inScript.replace(
+                    "CURRENT_ZOOM",
+                    QString().setNum(mapEditor->zoomFactorTarget()));
+                inScript.replace("CURRENT_ANGLE",
+                                 QString().setNum(mapEditor->rotationTarget()));
+            }
             inScript.replace("CURRENT_ID",
                              "\"" + seli->getUuid().toString() + "\"");
 
