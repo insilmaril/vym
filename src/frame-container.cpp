@@ -232,7 +232,7 @@ void FrameContainer::setFrameType(const FrameType &t)
     // reposition() is called in vymmodel for all containers
 }
 
-void FrameContainer::setFrameType(const QString &t)
+void FrameContainer::setFrameType(const QString &t) // FIXME-2 pipe has wrong dimensions...
 {
     if (t == "Rectangle")
         setFrameType(Rectangle);

@@ -402,7 +402,7 @@ void TaskEditor::updateColumnLayout()
                           settings.value(s.arg(i) + "hidden", false).toBool());
 }
 
-void TaskEditor::selectionChanged(const QItemSelection &selected,
+void TaskEditor::selectionChanged(const QItemSelection &selected,   // FIXME-2 Different selection background colors depending on click in TE or ME
                                   const QItemSelection &)
 {
     // FIXME-3 what, if multiple selection in MapEditor?
