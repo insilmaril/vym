@@ -4034,7 +4034,6 @@ void Main::setupToolbars()
                                      "Toolbar for redo/undo and clipboard"));
     clipboardToolbar->setObjectName("clipboard toolbar");
     clipboardToolbar->addAction(actionUndo);
-    clipboardToolbar->addAction(actionUndoVim);
     clipboardToolbar->addAction(actionRedo);
     clipboardToolbar->addAction(actionCopy);
     clipboardToolbar->addAction(actionCut);
@@ -6973,7 +6972,7 @@ void Main::updateDockWidgetTitles(VymModel *model)
     }
 }
 
-void Main::updateActions()
+void Main::updateActions()  // FIXME-2 called twice when toggling a flag
 {
     // updateActions is also called when satellites are closed
     actionViewToggleNoteEditor->setChecked(
@@ -7125,13 +7124,22 @@ void Main::updateActions()
         
 
         // Undo/Redo
+        QWidget *w = clipboardToolbar->widgetForAction(actionUndo);
         if (!m->isUndoAvailable()) {
             actionUndo->setEnabled(false);
             actionUndoVim->setEnabled(false);
+            w->setToolTip(tr("Undo (%1)").arg(actionUndo->shortcut().toString()));
+        } else {
+            actionUndo->setToolTip(m->lastUndoComment());
+            w->setToolTip(tr("Undo: %1 (%2)").arg(m->lastUndoComment(), actionUndo->shortcut().toString()));
         }
 
-        if (!m->isRedoAvailable())
+        w = clipboardToolbar->widgetForAction(actionRedo);
+        if (!m->isRedoAvailable()) {
             actionRedo->setEnabled(false);
+            w->setToolTip(tr("Redo (%1)").arg(actionRedo->shortcut().toString()));
+        } else
+            w->setToolTip(tr("Redo: %1 (%2)").arg(m->lastRedoComment(), actionRedo->shortcut().toString()));
 
         // History window
         historyWindow->setWindowTitle(

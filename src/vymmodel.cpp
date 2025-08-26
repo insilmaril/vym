@@ -1566,9 +1566,34 @@ QString VymModel::lastRedoSelection()
 
 QString VymModel::lastRedoCommand()
 {
+    if (isRedoAvailable())
+        return undoSet.value(
+            QString("/history/step-%1/redoCommand").arg(curStep + 1));
+    else
+        return QString();
+}
+
+QString VymModel::lastRedoComment()
+{
+    if (isRedoAvailable())
+        return undoSet.value(QString("/history/step-%1/comment").arg(curStep + 1));
+    else
+        return QString();
+}
+
+QString VymModel::lastUndoCommand()
+{
     if (isUndoAvailable())
         return undoSet.value(
-            QString("/history/step-%1/redoCommand").arg(curStep));
+            QString("/history/step-%1/undoCommand").arg(curStep));
+    else
+        return QString();
+}
+
+QString VymModel::lastUndoComment()
+{
+    if (isUndoAvailable())
+        return undoSet.value(QString("/history/step-%1/comment").arg(curStep));
     else
         return QString();
 }
@@ -1586,7 +1611,7 @@ QVariant VymModel::repeatLastCommand()
     return mainWindow->runScript(command);
 }
 
-void VymModel::undo()
+void VymModel::undo()   // FIXME-2 use functions for lastUndoCommand/Comment ... and also in redo()
 {
     // Can we undo at all?
     if (undosAvail < 1)

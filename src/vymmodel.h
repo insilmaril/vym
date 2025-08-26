@@ -263,6 +263,9 @@ class VymModel : public TreeModel {
     bool isRedoAvailable(); //!< True, if redo is available
     QString lastRedoSelection();
     QString lastRedoCommand();
+    QString lastRedoComment();
+    QString lastUndoCommand();
+    QString lastUndoComment();
     QVariant repeatLastCommand(); //!< Repeat last command on current selection
 
     void undo();               //!< Undo last action
