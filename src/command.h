@@ -19,6 +19,7 @@ class Command {
         AttributePar,
         BoolPar,
         BranchPar,
+        BranchListPar,
         ColorPar,
         DoublePar,
         ImagePar,

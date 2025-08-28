@@ -800,6 +800,9 @@ void Main::setupAPI()
     c = new Command("selectedBranch", Command::AnySel, Command::BranchPar);
     modelCommands.append(c);
 
+    c = new Command("selectedBranches", Command::AnySel, Command::BranchListPar);
+    modelCommands.append(c);
+
     c = new Command("selectLatestAdded", Command::AnySel, Command::BoolPar);
     modelCommands.append(c);
 
