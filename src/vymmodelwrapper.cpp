@@ -541,6 +541,17 @@ BranchWrapper* VymModelWrapper::selectedBranch()
         return nullptr; // caught by QJSEngine
 }
 
+QList <BranchWrapper*> VymModelWrapper::selectedBranches()
+{
+    QList <BranchItem*> selbis = modelInt->getSelectedBranches();
+
+    QList <BranchWrapper*> rlist;
+    foreach (BranchItem *selbi, selbis)
+        rlist << selbi->branchWrapper();
+
+    return rlist;
+}
+
 XLinkWrapper* VymModelWrapper::selectedXLink()
 {
     XLinkItem *xli = modelInt->getSelectedXLinkItem();

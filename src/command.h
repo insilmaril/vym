@@ -19,6 +19,7 @@ class Command {
         AttributePar,
         BoolPar,
         BranchPar,
+        BranchListPar,
         ColorPar,
         DoublePar,
         ImagePar,
@@ -28,6 +29,7 @@ class Command {
         StringListPar,
         UndefinedPar,
         VoidPar,
+        VymModelPar,
         XLinkPar
     };
     enum SelectionType {

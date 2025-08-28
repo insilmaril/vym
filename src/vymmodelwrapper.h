@@ -69,6 +69,7 @@ class VymModelWrapper : public QObject {
     bool select(const QString &s);
     Q_INVOKABLE AttributeWrapper* selectedAttribute();
     Q_INVOKABLE BranchWrapper* selectedBranch();
+    QList <BranchWrapper*> selectedBranches();
     Q_INVOKABLE XLinkWrapper* selectedXLink();
     bool selectUids(QJSValueList args);
     bool selectLatestAdded();

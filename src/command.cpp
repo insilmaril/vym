@@ -77,6 +77,8 @@ QString Command::typeToString(const ParameterType &type)
             return "Bool";
         case BranchPar:
             return "Branch";
+        case BranchListPar:
+            return "BranchesList";
         case ColorPar:
             return "Color";
         case DoublePar:
@@ -87,6 +89,8 @@ QString Command::typeToString(const ParameterType &type)
             return "Int";
         case StringPar:
             return "String";
+        case StringListPar:
+            return "StringsList";
         case UndefinedPar:
             return "Undefined";
         case VoidPar:

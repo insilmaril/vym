@@ -43,8 +43,9 @@ function colorSubtreeWithQuickColor(n)
     vym.selectQuickColor(n);
     c = vym.currentColor();
 
-    b = map.selectedBranch();
-    b.colorSubtree (c);
+    branches = map.selectedBranches();
+    for (b of branches)
+        b.colorSubtree(c);
 }
 
 //! Macro F1: Color subtree red

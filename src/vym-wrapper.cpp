@@ -64,6 +64,17 @@ QObject *VymWrapper::currentMap()
     return mw;
 }
 
+QObject *VymWrapper::mapWithId(uint n)
+{
+    VymModel *m = mainWindow->getModel(n);
+    if (!m) {
+        mainWindow->abortScript(
+                QJSValue::ReferenceError,
+                QString("No model available with id=%1").arg(n));
+    }
+    return (QObject*)(m->getWrapper());
+}
+
 void VymWrapper::editHeading()
 {
     MapEditor *me = mainWindow->currentMapEditor();

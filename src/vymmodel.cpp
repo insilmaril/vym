@@ -1598,16 +1598,23 @@ QString VymModel::lastUndoComment()
         return QString();
 }
 
-QVariant VymModel::repeatLastCommand()
+QVariant VymModel::repeatLastCommand()  // FIXME-4 Adapt to other types than branch
 {
-    QString command = QString("vym.gotoMap(%1); m = vym.currentMap();").arg(modelIdInt);
+    QString command = QString("m = vym.mapWithId(%1);").arg(modelIdInt);
     QString redoCommand = undoSet.value(
        QString("/history/step-%1/redoCommand").arg(curStep));
-    if (isUndoAvailable() && !redoCommand.startsWith("model."))
+    if (!isUndoAvailable() || redoCommand.startsWith("model.") || !redoCommand.contains("findBranchById"))
         // Only repeat command, if not a set of commands
-        command += "m." + redoCommand + ";";
-    else
         return false;
+
+    QRegularExpression re("^(.*b\\.)");
+
+    // qDebug() << __func__ << " rc=" << redoCommand;   // FIXME-2 remove debug outout. Use Key_NumSign  (rename current use!)
+    command += " branches = m.selectedBranches(); for (b of branches) b." + redoCommand.replace( re, "");
+
+    // qDebug() << __func__ << " rc=" << redoCommand;
+    // qDebug() << __func__ << "  c=" << command;
+    // qDebug() << __func__ << " this=" << this;
     return mainWindow->runScript(command);
 }
 

@@ -546,7 +546,7 @@ void Main::setupAPI()
     c = new Command("currentColor", Command::AnySel);
     vymCommands.append(c);
 
-    c = new Command("currentMap", Command::AnySel);
+    c = new Command("currentMap", Command::AnySel, Command::VymModelPar);
     vymCommands.append(c);
 
     c = new Command("currentMapIndex", Command::AnySel);
@@ -564,6 +564,10 @@ void Main::setupAPI()
     vymCommands.append(c);
 
     c = new Command("mapCount", Command::AnySel);
+    vymCommands.append(c);
+
+    c = new Command("mapWithId", Command::AnySel, Command::VymModelPar);
+    c->addParameter(Command::IntPar, false, "unique id of map");
     vymCommands.append(c);
 
     c = new Command("print", Command::AnySel);
@@ -798,6 +802,9 @@ void Main::setupAPI()
     modelCommands.append(c);
 
     c = new Command("selectedBranch", Command::AnySel, Command::BranchPar);
+    modelCommands.append(c);
+
+    c = new Command("selectedBranches", Command::AnySel, Command::BranchListPar);
     modelCommands.append(c);
 
     c = new Command("selectLatestAdded", Command::AnySel, Command::BoolPar);
@@ -7587,8 +7594,8 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        //m->repeatLastCommand();
-        currentMapEditor()->testFunction2();
+        m->repeatLastCommand();
+        //currentMapEditor()->testFunction2();
     }
 }
 
