@@ -704,17 +704,23 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
 void MapEditor::setViewCenterTarget()
 {
     qDebug() << __func__;
-    MapItem *selti = (MapItem *)(model->getSelectedItem());
-    if (selti) {
+    QList <TreeItem*> seltis = model->getSelectedItems();
+    QPointF p;
+    int n = 0;
+    foreach (TreeItem *selti, seltis) {
         Container *c = nullptr;
         if (selti->hasTypeBranch()) 
             c = ((BranchItem*)selti)->getBranchContainer()->getHeadingContainer();
         else if (selti->hasTypeImage())
             c = ((ImageItem*)selti)->getImageContainer();
-        else
-            return;
-        setViewCenterTarget(c->mapToScene(c->rect().center()), 1, 0);
+        if (c) {
+            n++;
+            p = p + c->mapToScene(c->rect().center());
+        }
     }
+
+    if (n > 0)
+        setViewCenterTarget( p / n, 1, 0);
 }
 
 QPointF MapEditor::getViewCenterTarget() { return viewCenterTarget; }
