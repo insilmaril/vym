@@ -361,11 +361,14 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     if (!QDBusConnection::sessionBus().registerObject("/vym", this))
         qWarning("MainWindow: Couldn't register DBUS object!");
 #endif
+
+    backgroundZipProcesses = 0;
+    closeAfterLastZipProcess = false;
 }
 
 Main::~Main()
 {
-    // qDebug() << "Destr Mainwindow";
+    //qDebug() << "Destr Mainwindow begin";
 
     // Make sure there is no focus elsewhere, e.g. in BranchPropertyEditor
     // which could cause a crash.  (Qt bug?)
@@ -425,6 +428,8 @@ Main::~Main()
     delete standardFlagsMaster;
     delete userFlagsMaster;
     delete systemFlagsMaster;
+
+    //qDebug() << "Destr Mainwindow end";
 }
 
 void Main::loadCmdLine()
@@ -4389,6 +4394,18 @@ void Main::fileNewCopy()
     }
 }
 
+void Main::backgroundZipStarted()
+{
+    backgroundZipProcesses++;
+}
+
+void Main::backgroundZipFinished()
+{
+    backgroundZipProcesses--;
+    if (closeAfterLastZipProcess)
+        fileExitVYM();
+}
+
 bool Main::fileLoad(QString fn, const File::LoadMode &lmode,
                                const File::FileType &ftype)
 {
@@ -5135,7 +5152,7 @@ void Main::fileExportLast()
 
 bool Main::fileCloseMap(int i)
 {
-    qDebug() << __func__ << "i=" << i << " currentInd=" << tabWidget->currentIndex();
+    //qDebug() << __func__ << "i=" << i << " currentInd=" << tabWidget->currentIndex();
     VymModel *m;
     VymView *vv;
     if (i < 0)
@@ -5145,12 +5162,6 @@ bool Main::fileCloseMap(int i)
     m = vv->getModel();
 
     if (m) {
-        if (m->isBusy()) {
-            qDebug() << "MW::fileCloseMap ignoring request to close because of running processess (load/save)";
-            return false;
-        }
-
-        logInfo(QString("Starting to close map %1 in fileCloseMap").arg(i));   // FIXME-2
         if (m->hasChanged()) {
             QMessageBox mb(
                 QMessageBox::Warning,
@@ -5163,7 +5174,7 @@ bool Main::fileCloseMap(int i)
             switch (mb.exec()) {
                 case QMessageBox::Save:
                     // save and close
-                    fileSave(m, File::CompleteMap); // FIXME-0 might crash if continued then, because still saving asynchronously...?
+                    fileSave(m, File::CompleteMap);
                     break;
                 case QMessageBox::Discard:
                     // close  without saving
@@ -5176,7 +5187,6 @@ bool Main::fileCloseMap(int i)
 
         tabWidget->removeTab(i);
 
-        logInfo(QString("Starting to destroy map %1 in fileCloseMap").arg(i));   // FIXME-2
         // Destroy stuff, order is important
         noteEditor->clear();
         branchPropertyEditor->setModel(nullptr);
@@ -5198,6 +5208,8 @@ void Main::filePrint()
 
 bool Main::fileExitVYM()
 {
+    closeAfterLastZipProcess = true;
+
     // Only save session if there still are tabs open
     if (tabWidget->count() > 0)
         fileSaveSession();
@@ -5210,7 +5222,10 @@ bool Main::fileExitVYM()
         // Update widgets to show progress
         qApp->processEvents();
     }
-    qApp->quit();
+    if (backgroundZipProcesses > 0)
+        qDebug() << __func__ << " has still running bg zips...";
+    else
+        qApp->quit();
     return false;
 }
 

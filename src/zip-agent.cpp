@@ -15,12 +15,11 @@ ZipAgent::ZipAgent(QDir zipDir, QString zipName)   // FIXME-4 Does not support d
     zipNameInt = QDir::toNativeSeparators(zipName);
     zipDirInt = zipDir;
     isBackgroundProcessInt = true;
-
 }
 
 ZipAgent::~ZipAgent()
 {
-    //qDebug() << "Destr ZipAgent";
+    // qDebug() << "Destr ZipAgent";
 }
 
 bool ZipAgent::checkZipTool()
@@ -103,11 +102,17 @@ void ZipAgent::startZip()
                 }
             }
         }
-    }
+    } else {
+        connect (this, SIGNAL(backgroundZipStarted()), mainWindow, SLOT(backgroundZipStarted()));
+        connect (this, SIGNAL(backgroundZipFinished()), mainWindow, SLOT(backgroundZipFinished()));
+        emit backgroundZipStarted();
+    }    
+
 }
 
 void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    //qDebug() << __func__ << "starting.";
     mainWindow->logInfo(QString("ZA::zipProcessFinished  exitCode=%1 exitStatus=%2").arg(exitCode).arg(exitStatus), __func__);
 
 #if defined(Q_OS_WINDOWS)
@@ -166,6 +171,10 @@ void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
     }
 #endif
     emit zipFinished();
+    if (isBackgroundProcessInt)
+        emit backgroundZipFinished();
+
+    // qDebug() << __func__ << "done.";
 }
 
 void ZipAgent::startUnzip()

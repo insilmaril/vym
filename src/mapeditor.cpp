@@ -164,7 +164,7 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorRight()));
 
-    a = new QAction("Select first branch", this);   // FIXME-2 alternative "vim" shortcuts 0,1,..,$ to select branches
+    a = new QAction("Select first branch", this);
     a->setShortcut(Qt::Key_Home);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     addAction(a);

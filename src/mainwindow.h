@@ -117,7 +117,13 @@ class Main : public QMainWindow {
   private slots:
     void editorChanged();
 
+  private:
+    int backgroundZipProcesses;
+    bool closeAfterLastZipProcess;
+
   public slots:
+    void backgroundZipStarted();
+    void backgroundZipFinished();
     bool fileLoad(QString, const File::LoadMode &, const File::FileType &ftype);
     void fileLoad(const File::LoadMode &);
   private slots:

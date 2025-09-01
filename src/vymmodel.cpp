@@ -120,35 +120,14 @@ VymModel::VymModel()
 
 VymModel::~VymModel()
 {
-    qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
+    //qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
+    //logInfo("VymModel about to be destroyed", __func__);
 
     mapEditor = nullptr;
     repositionBlocked = true;
     autosaveTimer->stop();
     filePath.clear();
     fileChangedTimer->stop();
-
-    if (zipAgent) {
-        mainWindow->statusMessage("Destr VymModel: Waiting until map is completely saved and compressed...");
-        zipAgent->waitForFinished();
-        
-        // zipAgent might be set to nullptr already in VymModel::zipFinished
-        if (zipAgent) {
-            if (zipAgent->exitStatus() != QProcess::NormalExit) {
-                QMessageBox::critical(0, QObject::tr("Critical Error"),
-                                      QObject::tr("zip didn't exit normally"));
-            }
-            else {
-                if (zipAgent->exitCode() > 0) {
-                    QMessageBox::critical(
-                        0, QObject::tr("Critical Error"),
-                        QString("zip exit code:  %1").arg(zipAgent->exitCode()));
-                }
-            }
-            zipAgent->deleteLater();
-            zipAgent = nullptr;
-        }
-    }
 
     vymLock.releaseLock();
 
@@ -162,9 +141,10 @@ VymModel::~VymModel()
     delete (wrapper);
     delete mapDesignInt;
 
-    // qDebug() << "Destr VymModel end this=" << this;
+    // VymModel can be destroyed now, zipProcess for saving is handled in MainWindow
 
-    logInfo("VymModel destroyed", __func__);
+    //qDebug() << "Destr VymModel end this=" << this;
+    //logInfo("VymModel destroyed", __func__);
 }
 
 void VymModel::clear()
