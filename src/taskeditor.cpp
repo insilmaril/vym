@@ -188,7 +188,9 @@ TaskEditor::TaskEditor(QWidget *)
 
     view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
-    view->setStyleSheet("QTableView:focus {" + editorFocusStyle + "}");
+    QString focus =" border-color: #3daee9; border-style:outset; border-width:3px; ";
+    QString selected = "QTableView::item:selected {border-color: #00ff00; border-width: 3px; background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #CCCC0A, stop: 1 #96960A);}";
+    view->setStyleSheet("QTableView:focus {" + editorFocusStyle + "}" + selected);
 
     updateColumnLayout();
 }
@@ -402,7 +404,7 @@ void TaskEditor::updateColumnLayout()
                           settings.value(s.arg(i) + "hidden", false).toBool());
 }
 
-void TaskEditor::selectionChanged(const QItemSelection &selected,   // FIXME-2 Different selection background colors depending on click in TE or ME
+void TaskEditor::selectionChanged(const QItemSelection &selected,
                                   const QItemSelection &)
 {
     // FIXME-3 what, if multiple selection in MapEditor?
@@ -424,12 +426,6 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,   // FIXME-2 D
                 m->select(bi);
             if (m != mainWindow->currentModel())
                 mainWindow->gotoModel(m);
-            /* view->setStyleSheet( // FIXME-5 this resets column widths on Windows...
-                "QTableView {selection-background-color: " +
-                m->getSelectionBrushColor().name() +
-                "; selection-color:" + bi->headingColor().name() + "}" +
-                "QTableView:focus {" + editorFocusStyle + "}");
-            */
         }
     }
 }

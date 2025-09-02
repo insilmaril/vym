@@ -30,6 +30,8 @@ extern QColor vymForegroundColor;
 extern QColor vymBaseColor;
 extern QAction *actionViewToggleNoteEditor;
 
+extern QString editorFocusStyle;
+
 extern QString vymName;
 
 extern Switchboard switchboard;
@@ -69,6 +71,12 @@ TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with
 
     editorName = "Text editor";
     setEditorTitle("");
+
+    // FIXME-2 Set borders when in focus to editorFocusStyle
+    // Probably have to reimplement eventFilter and QEvent::FocusIn/Out
+    // since QTextEdit and QTreeView don't seem to understand :focus
+    //qDebug() << "Constr TE eFS=" << editorFocusStyle;
+    //editor->setStyleSheet("QTextEdit:focus {color: red; border-color: #3eaee9; border-width:3px; }");// + editorFocusStyle + "}");
 
     menuBar()->setNativeMenuBar(false);
 }

@@ -185,7 +185,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         if (role == Qt::ForegroundRole && bi)
             return bi->headingColor();
         if (role == Qt::BackgroundRole && bi) {
-            return bi->getBackgroundColor(bi);  // FIXME-2 Maybe return a brush with gradient for better readability?
+            return bi->getBackgroundColor(bi);
         }
     }
 

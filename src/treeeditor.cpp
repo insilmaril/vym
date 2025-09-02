@@ -72,7 +72,10 @@ void TreeEditor::init()
         addAction(a);
     }
 
-    setStyleSheet("QTreeView:focus {" + editorFocusStyle + "}");
+    // FIXME-2 Set borders when in focus to editorFocusStyle
+    // Probably have to reimplement eventFilter and QEvent::FocusIn/Out
+    // since QTextEdit and QTreeView don't seem to understand :focus
+    // setStyleSheet("QTreeView:focus {" + editorFocusStyle + "}");
 }
 
 TreeEditor::~TreeEditor()
