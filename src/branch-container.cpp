@@ -123,9 +123,9 @@ void BranchContainer::init()
     // Center of whole mainBranches should be the heading
     setCentralContainer(headingContainer);
 
-    // Elastic layout experiments FIXME-3
+    // Elastic layout experiments FIXME-2   
     v_anim = QPointF(0, 0);
-    v.setParentItem(this);
+    v.setParentItem(this);  // Animation vector for animated layout
     v.setPen(QPen(Qt::red));
     v.setVisible(false);
 

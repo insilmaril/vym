@@ -195,8 +195,6 @@ class MapEditor : public QGraphicsView {
     void cursorDownToggleSelection();
     void cursorLeft();
     void cursorRight();
-    void cursorFirst();
-    void cursorLast();
     void editHeading(BranchItem *selbi = nullptr);
     void editHeadingFinished();
 

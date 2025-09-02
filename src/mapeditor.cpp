@@ -164,18 +164,6 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorRight()));
 
-    a = new QAction("Select first branch", this);
-    a->setShortcut(Qt::Key_Home);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(cursorFirst()));
-
-    a = new QAction("Select last branch", this);
-    a->setShortcut(Qt::Key_End);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(cursorLast()));
-
     // Action to embed LineEdit for heading in Scene
     lineEdit = nullptr;
 
@@ -703,7 +691,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
 
 void MapEditor::setViewCenterTarget()
 {
-    qDebug() << __func__;
+    // qDebug() << __func__;
     QList <TreeItem*> seltis = model->getSelectedItems();
     QPointF p;
     int n = 0;
@@ -1558,10 +1546,6 @@ void MapEditor::cursorRight()
             model->select(ii);
     }
 }
-
-void MapEditor::cursorFirst() { model->selectFirstBranch(); }  // FIXME-3 adapt for images and container layouts
-
-void MapEditor::cursorLast() { model->selectLastBranch(); }  // FIXME-3 adapt for images and container layouts
 
 void MapEditor::editHeading(BranchItem *selbi)
 {

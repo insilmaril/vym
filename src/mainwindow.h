@@ -257,6 +257,8 @@ class Main : public QMainWindow {
     bool initTargetsMenu(VymModel *model, QMenu *menu);
     void editGoToTarget();
     void editMoveToTarget();
+    void editSelectFirstSibling();
+    void editSelectLastSibling();
     void editSelectPrevious();
     void editSelectNext();
     void editSelectNothing();
@@ -548,7 +550,7 @@ class Main : public QMainWindow {
     QAction *actionMapInfo;
     QAction *actionHeading;
     QAction *actionDelete;
-    QAction *actionDeleteAlt;
+    QAction *actionDeleteVim;
 
   public:
     QAction *actionAddMapCenter;
@@ -573,6 +575,10 @@ class Main : public QMainWindow {
     QAction *actionGoToTargetLinkedMap;
     QAction *actionGoToTarget;
     QAction *actionMoveToTarget;
+    QAction *actionSelectFirstSibling;
+    QAction *actionSelectFirstSiblingVim;
+    QAction *actionSelectLastSibling;
+    QAction *actionSelectLastSiblingVim;
     QAction *actionSelectPrevious;
     QAction *actionSelectNext;
     QAction *actionSelectNothing;

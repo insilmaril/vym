@@ -1832,7 +1832,7 @@ void Main::setupEditActions()
 
     QAction *a;
     a = new QAction(QPixmap(":/undo.png"), tr("&Undo", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Z);
+    a->setShortcut(Qt::CTRL | Qt::Key_Z);   // Undo
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
@@ -1844,7 +1844,7 @@ void Main::setupEditActions()
     actionUndo = a;
 
     a = new QAction(QPixmap(":/undo.png"), tr("&Undo", "Edit menu"), this);
-    a->setShortcut(Qt::Key_U);
+    a->setShortcut(Qt::Key_U);              // Alternative: VIM Undo
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
@@ -1856,7 +1856,7 @@ void Main::setupEditActions()
     actionUndoVim = a;
 
     a = new QAction(QPixmap(":/redo.png"), tr("&Redo", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Y);
+    a->setShortcut(Qt::CTRL | Qt::Key_Y);   // Redo
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WidgetShortcut);
     editMenu->addAction(a);
@@ -1868,7 +1868,7 @@ void Main::setupEditActions()
 
     editMenu->addSeparator();
     a = new QAction(QPixmap(QString(":/edit-copy-%1.svg").arg(iconTheme)), tr("&Copy", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_C);
+    a->setShortcut(Qt::CTRL | Qt::Key_C);   // Copy
     ADD_SHORTCUT
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
@@ -1932,7 +1932,7 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
     editMenu->addAction(a);
     actionListItems.append(a);
-    actionDeleteAlt = a;
+    actionDeleteVim = a;
 
     // Shortcut to add mapcenter
     a = new QAction(QPixmap(":/newmapcenter.png"),
@@ -2629,18 +2629,49 @@ void Main::setupSelectActions()
     actionFind = a;
 
     a = new QAction(QPixmap(QString(":/edit-find-%1.svg").arg(iconTheme)), tr("Find...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_Slash);
+    a->setShortcut(Qt::Key_Slash);          // Alternative: VIM Find
     ADD_SHORTCUT
     selectMenu->addAction(a);
     switchboard.addSwitch("mapFindAlt", shortcutScope, a, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenFindResultWidget()));
     actionListFiles.append(a);
 
-    a = new QAction(tr("Find duplicate URLs", "Edit menu") + " (test)", this);
-    switchboard.addSwitch("mapFindDuplicates", shortcutScope, a, tag);
-    if (settings.value("/mainwindow/showTestMenu", false).toBool())
-        selectMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editFindDuplicateURLs()));
+    a = new QAction("Select first branch in siblings", this);
+    a->setShortcut(Qt::Key_Home);           // Select first in siblings
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ADD_SHORTCUT
+    selectMenu->addAction(a);
+    switchboard.addSwitch("Select first branch in siblings", shortcutScope, a, tag);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editSelectFirstSibling()));
+
+    a = new QAction("Select first branch in siblings", this);
+    a->setShortcut(Qt::Key_0);              // Alternative: VIM Select first
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ADD_SHORTCUT
+    selectMenu->addAction(a);
+    switchboard.addSwitch("Select first branch in siblings", shortcutScope, a, tag);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editSelectFirstSibling()));
+
+    a = new QAction("Select last branch in siblings", this);
+    a->setShortcut(Qt::Key_End);            // Select last in siblings
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ADD_SHORTCUT
+    selectMenu->addAction(a);
+    switchboard.addSwitch("Select last branch in siblings", shortcutScope, a, tag);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editSelectLastSibling()));
+
+    a = new QAction("Select last branch in siblings", this);
+    a->setShortcut(Qt::Key_Dollar);         // Alternative: VIM Select last
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ADD_SHORTCUT
+    selectMenu->addAction(a);
+    switchboard.addSwitch("Select last branch in siblings", shortcutScope, a, tag);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editSelectLastSibling()));
+
     a = new QAction(QPixmap(":/flag-target.svg"),
                     tr("Toggle target...", "Edit menu"), this);
     a->setShortcut(Qt::SHIFT | Qt::Key_T);
@@ -2682,6 +2713,12 @@ void Main::setupSelectActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editGoToLinkedMap()));
     actionListBranches.append(a);
     actionGoToTargetLinkedMap = a;
+
+    a = new QAction(tr("Find duplicate URLs", "Edit menu") + " (test)", this);
+    switchboard.addSwitch("mapFindDuplicates", shortcutScope, a, tag);
+    if (settings.value("/mainwindow/showTestMenu", false).toBool())
+        selectMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editFindDuplicateURLs()));
 
     a = new QAction(QPixmap(QString(":/go-previous-%1.svg").arg(iconTheme)),
                     tr("Select previous", "Edit menu"), this);
@@ -6165,6 +6202,20 @@ void Main::editMoveToTarget()
             }
         }
     }
+}
+
+void Main::editSelectFirstSibling()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->selectFirstBranch();
+}
+
+void Main::editSelectLastSibling()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->selectLastBranch();
 }
 
 void Main::editSelectPrevious()
