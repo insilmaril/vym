@@ -55,35 +55,32 @@ QString Switchboard::getASCII()
     QString scope;
     foreach (scope, switchesMap.uniqueKeys()) {
         s += "Scope " + scope + ":\n";
-        QList<KeySwitch> values = switchesMap.values(scope);
-        for (int i = 0; i < values.size(); ++i) {
-            QString desc = values.at(i).actionInt->text();
-            QString sc = values.at(i).actionInt->shortcut().toString();
-            if (!sc.isEmpty()) {
-                desc = desc.remove('&');
-                desc = desc.remove("...");
-                desc += " " + values.at(i).tagInt;
-                s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
-            }
-        }
-        s += "\n";
-    }
 
-    /*
-    foreach (g, actionsMap.uniqueKeys())
-    {
-        s += g +"\n";
-        QList <QAction*> values=actionsMap.values(g);
-        for (int i=0;i<values.size();++i)
-        {
-            QString desc=values.at(i)->text();
-            QString   sc=values.at(i)->shortcut().toString();
-            desc=desc.remove('&');
-            desc=desc.remove("...");
-            s+= QString(" %1: %2\n").arg(sc,12).arg(desc);
+        QStringList tagsInScope;
+        foreach (auto ksw, switchesMap.values(scope)) {
+            if (!tagsInScope.contains(ksw.tagInt))
+                tagsInScope << ksw.tagInt;
         }
+
+        foreach (auto tag, tagsInScope) {
+            s += "  Group: " + tag + "\n";
+            foreach (auto ksw, switchesMap.values(scope)) {
+                if (ksw.tagInt == tag) {
+                    QString desc = ksw.actionInt->text();
+                    QString sc = ksw.actionInt->shortcut().toString();
+                    if (!sc.isEmpty()) {
+                        desc = desc.remove('&');
+                        desc = desc.remove("...");
+                        s += QString(" %1: %2\n").arg(sc, 16).arg(desc);
+                    }
+                }
+            }
+            if (tag != tagsInScope.last())
+                s += "\n";
+        }
+        if (scope != switchesMap.uniqueKeys().last())
+            s += "\n";
     }
-    */
     return s;
 }
 

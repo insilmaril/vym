@@ -30,8 +30,8 @@ class Switchboard {
     void printLaTeX();
 
   protected:
-    QMultiMap<QString, KeySwitch> switchesMap;
-    QMap<QString, QString> scopesMap;   // Hash with translated names of scopes
+    QMultiMap<QString, KeySwitch> switchesMap;  // Switches grouped by scope
+    QMap<QString, QString> scopesMap;           // Hash with translated names of scopes
 };
 
 #endif

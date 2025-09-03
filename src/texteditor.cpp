@@ -329,7 +329,7 @@ void TextEditor::setupFileActions()
     tb->setObjectName("noteEditorFileActions");
     QMenu *fileMenu = menuBar()->addMenu(tr("&Note", "Menubar"));
 
-    QString tag = tr("Texteditor", "Shortcuts");
+    QString tag = tr("File actions", "TextEditor shortcut groups");
     QAction *a;
     a = new QAction(QPixmap(QString(":/document-open-%1").arg(iconTheme)), tr("&Import..."), this);
     a->setShortcut(Qt::CTRL | Qt::Key_O);
@@ -380,7 +380,7 @@ void TextEditor::setupFileActions()
 
 void TextEditor::setupEditActions()
 {
-    QString tag = tr("Texteditor", "Shortcuts");
+    QString tag = tr("Edit actions", "TextEditor shortcut groups");
     QToolBar *editToolBar = addToolBar(tr("Edit Actions"));
     editToolBar->setObjectName("noteEditorEditActions");
     editToolBar->hide();
@@ -459,7 +459,7 @@ void TextEditor::setupEditActions()
 
 void TextEditor::setupFormatActions()
 {
-    QString tag = tr("Texteditor", "Shortcuts");
+    QString tag = tr("Format actions", "TextEditor shortcut groups");
     fontHintsToolBar =
         addToolBar(tr("Font hints", "toolbar in texteditor"));
     fontHintsToolBar->setObjectName("noteEditorFontToolBar");
