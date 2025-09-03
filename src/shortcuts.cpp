@@ -8,15 +8,15 @@
 /////////////////////////////////////////////////////////////////
 // KeySwitch
 /////////////////////////////////////////////////////////////////
-KeySwitch::KeySwitch(const QString &kIdentifier, const QString &kName,
-                     const QString &kGroup, const QString &kTag,
-                     const QKeySequence &kseq)
+KeySwitch::KeySwitch(const QString &identifier,
+                     const QString &scope,
+                     const QString &tag,
+                     QAction* action)
 {
-    identifier = kIdentifier;
-    name = kName;
-    group = kGroup;
-    tag = kTag;
-    keySequence = kseq;
+    identifierInt = identifier;
+    scopeInt = scope;
+    tagInt = tag;
+    actionInt = action;
 }
 
 /////////////////////////////////////////////////////////////////
@@ -24,23 +24,24 @@ KeySwitch::KeySwitch(const QString &kIdentifier, const QString &kName,
 /////////////////////////////////////////////////////////////////
 Switchboard::Switchboard() {}
 
-void Switchboard::addGroup(QString gIdentifier, QString gName)
+void Switchboard::addScope(QString scopeIdentifier, QString scopeName)
 {
-    if (groups.contains(gIdentifier)) {
-        qDebug() << "Warning switchboard: Shortcut group " << gIdentifier
+    if (scopesMap.contains(scopeIdentifier)) {
+        qDebug() << "Warning switchboard: Shortcut scope " << scopeIdentifier
                  << " already exists";
         return;
     }
-    groups.insert(gIdentifier, gName);
+    scopesMap.insert(scopeIdentifier, scopeName);
 }
 
-void Switchboard::addSwitch(QString identifier, QString scope, QAction *action,
-                            QString tag)
+void Switchboard::addSwitch(const QString &identifier,
+        const QString &scope,
+        const QString &tag,
+        QAction *action)
 {
-    if (!switches.contains(identifier)) {
-        KeySwitch ksw(identifier, action->text(), scope, tag,
-                      action->shortcut());
-        switches.insert(scope, ksw);
+    if (!switchesMap.contains(identifier)) {
+        KeySwitch ksw(identifier, scope, tag, action);
+        switchesMap.insert(scope, ksw);
     }
     else
         qDebug()
@@ -51,16 +52,17 @@ void Switchboard::addSwitch(QString identifier, QString scope, QAction *action,
 QString Switchboard::getASCII()
 {
     QString s;
-    QString g;
-    foreach (g, switches.uniqueKeys()) {
-        s += "Scope " + g + ":\n";
-        QList<KeySwitch> values = switches.values(g);
+    QString scope;
+    foreach (scope, switchesMap.uniqueKeys()) {
+        s += "Scope " + scope + ":\n";
+        QList<KeySwitch> values = switchesMap.values(scope);
         for (int i = 0; i < values.size(); ++i) {
-            QString desc = values.at(i).name;
-            QString sc = values.at(i).keySequence.toString();
+            QString desc = values.at(i).actionInt->text();
+            QString sc = values.at(i).actionInt->shortcut().toString();
             if (!sc.isEmpty()) {
                 desc = desc.remove('&');
                 desc = desc.remove("...");
+                desc += " " + values.at(i).tagInt;
                 s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
             }
         }
@@ -68,10 +70,10 @@ QString Switchboard::getASCII()
     }
 
     /*
-    foreach (g, actions.uniqueKeys())
+    foreach (g, actionsMap.uniqueKeys())
     {
         s += g +"\n";
-        QList <QAction*> values=actions.values(g);
+        QList <QAction*> values=actionsMap.values(g);
         for (int i=0;i<values.size();++i)
         {
             QString desc=values.at(i)->text();
@@ -89,10 +91,11 @@ void Switchboard::printASCII() { std::cout << qPrintable(getASCII()); }
 
 void Switchboard::printLaTeX()
 {
+    /*
     QString g;
-    foreach (g, actions.uniqueKeys()) {
+    foreach (g, actionsMap.uniqueKeys()) {
         std::cout << "Group: " << qPrintable(g) << "\\\\ \\hline" << std::endl;
-        QList<QAction *> values = actions.values(g);
+        QList<QAction *> values = actionsMap.values(g);
         for (int i = 0; i < values.size(); ++i)
             if (!values.at(i)->shortcut().toString().isEmpty()) {
                 QString desc = values.at(i)->text();
@@ -104,4 +107,5 @@ void Switchboard::printLaTeX()
             }
         std::cout << std::endl;
     }
+    */
 }

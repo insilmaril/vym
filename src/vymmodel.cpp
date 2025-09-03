@@ -1578,7 +1578,9 @@ QString VymModel::lastUndoComment()
         return QString();
 }
 
-QVariant VymModel::repeatLastCommand()  // FIXME-4 Adapt to other types than branch
+QVariant VymModel::repeatLastCommand()  // FIXME-2 introduce repeatCommandAvailable() and update action
+                                        // FIXME-2 Maybe introduce dedicated "redoCommand" data to allow working with sets of commands
+                                        // FIXME-4 Adapt to other types than branch
 {
     QString command = QString("m = vym.mapWithId(%1);").arg(modelIdInt);
     QString redoCommand = undoSet.value(
@@ -1587,14 +1589,14 @@ QVariant VymModel::repeatLastCommand()  // FIXME-4 Adapt to other types than bra
         // Only repeat command, if not a set of commands
         return false;
 
-    QRegularExpression re("^(.*b\\.)");
+    //QRegularExpression re("^(.*b_rep\\.)"); // FIXME-2 Only remove the definition of b_rep?    s/b_rep.*=.*;//g
+    QRegularExpression re("(.*b_rep\\..*=.*;)");
 
-    // qDebug() << __func__ << " rc=" << redoCommand;   // FIXME-2 remove debug outout. Use Key_NumSign  (rename current use!)
+    qDebug() << __func__ << " rc=" << redoCommand;   // FIXME-2 remove debug outout.
     command += " branches = m.selectedBranches(); for (b of branches) b." + redoCommand.replace( re, "");
 
-    // qDebug() << __func__ << " rc=" << redoCommand;
-    // qDebug() << __func__ << "  c=" << command;
-    // qDebug() << __func__ << " this=" << this;
+    qDebug() << __func__ << " rc=" << redoCommand;
+    qDebug() << __func__ << "  c=" << command;
     return mainWindow->runScript(command);
 }
 
@@ -1939,7 +1941,7 @@ QString VymModel::saveStateBranch(
         const QString &rc,
         const QString &comment)
 {
-    QString prefix = setBranchVar(bi) + "b.";
+    QString prefix = setBranchVar(bi,"b_rep") + "b_rep.";
     return saveState(prefix + uc, prefix + rc, comment);
 }
 
@@ -4668,15 +4670,15 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
             QString postNumString = QString::number(bi->num(), 10);
 
-            QString bv = setBranchVar(bi);
+            QString bv = setBranchVar(bi, "b_rep");
             if (pbi == rootItem)
                 uc = bv + " detach ()";
             else {
                 uc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(preParUidString);
-                uc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(preNumString);
+                uc += QString(" b_rep.relinkToBranchAt (dst, \"%1\");").arg(preNumString);
             }
             rc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(dst->getUuid().toString());
-            rc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(postNumString);
+            rc += QString(" b_rep.relinkToBranchAt (dst, \"%1\");").arg(postNumString);
 
             saveState(uc, rc,
                       QString("Relink %1 to %2")
@@ -5463,9 +5465,9 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *bi, selbis) {
-        QString bv = setBranchVar(bi);
-        QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
-        QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
+        QString bv = setBranchVar(bi, "b_rep");
+        QString uc = bv + "m.loadBranchReplace(\"UNDO_PATH\", b_rep);";
+        QString rc = bv + QString("b_rep.colorSubtree (\"%1\")").arg(c.name());
         QString com = QString("Set color of %1 and children to %2").arg(getObjectName(bi), c.name());
         logAction(rc, com, __func__);
 

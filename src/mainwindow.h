@@ -229,6 +229,7 @@ class Main : public QMainWindow {
     void editGrowSelectionSize();
     void editShrinkSelectionSize();
     void editResetSelectionSize();
+    void editRepeatLastCommand();
     void editAddMapCenter();
     void editAddBranch();
     void editAddBranchBefore();
@@ -583,6 +584,7 @@ class Main : public QMainWindow {
     QAction *actionSelectNext;
     QAction *actionSelectNothing;
     QAction *actionFind;
+    QAction *actionFindVim;
 
     QActionGroup *actionGroupQuickColors;
     QAction *actionFormatQuickColor;

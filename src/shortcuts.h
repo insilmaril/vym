@@ -8,32 +8,30 @@
 class KeySwitch {
   public:
     KeySwitch(
-        const QString &kIdentifier, //! Unique identifier (still unused)
-        const QString &kName,      //! text saved in related action (translated)
-        const QString &kGroup,     //! Scope
-        const QString &kTag,       //! Tag, used for listing related shortcuts
-        const QKeySequence &kseq); //! Keysequence from action
-    QString group;
-    QString name;
-    QString identifier;
-    QString tag;
+        const QString &identifier,  //! Unique identifier (still unused)
+        const QString &scope,       //! Scope
+        const QString &tag,         //! Tag, used for listing related shortcuts
+        QAction* action);     //! Action 
+    QString scopeInt;
+    QString nameInt;
+    QString identifierInt;
+    QString tagInt;
     QKeySequence keySequence;
+    QAction *actionInt;
 };
 
 class Switchboard {
   public:
     Switchboard();
-    void addGroup(QString gIdentifier, QString gName);
-    void addSwitch(QString identifier, QString scope, QAction *a, QString tag);
+    void addScope(QString gIdentifier, QString gName);
+    void addSwitch(const QString &identifier, const QString &scope, const QString &tag, QAction *a);
     QString getASCII();
     void printASCII();
     void printLaTeX();
 
   protected:
-    QMultiMap<QString, QAction *> actions;
-    QMultiMap<QString, KeySwitch> switches;
-    QMap<QString, QString> groups;
-    QStringList tags;
+    QMultiMap<QString, KeySwitch> switchesMap;
+    QMap<QString, QString> scopesMap;   // Hash with translated names of scopes
 };
 
 #endif
