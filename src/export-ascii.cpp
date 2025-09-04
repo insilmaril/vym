@@ -6,6 +6,7 @@
 
 #include "branchitem.h"
 #include "mainwindow.h"
+#include "misc.h"
 #include "task.h"
 #include "vymmodel.h"
 
@@ -156,14 +157,6 @@ void ExportASCII::doExport()
     args << listTasksString;
 
     completeExport(args);
-}
-
-QString ExportASCII::underline(const QString &text, const QString &line)
-{
-    QString r = text + "\n";
-    for (int j = 0; j < text.length(); j++)
-        r += line;
-    return r;
 }
 
 QString ExportASCII::ensureEmptyLines(QString &text, int n)

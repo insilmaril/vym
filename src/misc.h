@@ -42,6 +42,8 @@ QString pointToString(const QPointF &p);
 
 void centerDialog(QDialog *dia);
 
+QString underline(const QString &text, const QString &line);
+
 bool versionLowerThanVym(const QString &);
 bool versionLowerOrEqualThanVym(const QString &);
 bool versionLowerOrEqual(const QString &, const QString &);

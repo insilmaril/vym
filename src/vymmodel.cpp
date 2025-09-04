@@ -1457,6 +1457,18 @@ QString VymModel::getObjectName(TreeItem *ti)   // FIXME-3 compare with headingT
     return QString("%1 \"%2\"").arg(ti->getTypeName(), s);
 }
 
+bool VymModel::isRepeatCommandAvailable()
+{
+    QString redoCommand = undoSet.value(
+       QString("/history/step-%1/redoCommand").arg(curStep));
+    if (!isUndoAvailable() || redoCommand.startsWith("model.") || !redoCommand.contains("findBranchById"))
+        return false;
+
+    QRegularExpression re("(.*b_rep\\.)");
+    //qDebug() << __func__ << "rc=" << redoCommand << redoCommand.contains(re);
+    return redoCommand.contains(re);
+}
+
 void VymModel::redo()
 {
     // Can we undo at all?

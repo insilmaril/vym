@@ -259,6 +259,7 @@ class VymModel : public TreeModel {
     */
     QString getObjectName(TreeItem *);
 
+    bool isRepeatCommandAvailable(); //!< True, if redo is available and contains command to repeat last step
     void redo();            //!< Redo last action
     bool isRedoAvailable(); //!< True, if redo is available
     QString lastRedoSelection();

@@ -5,6 +5,8 @@
 
 #include "shortcuts.h"
 
+#include "misc.h"
+
 /////////////////////////////////////////////////////////////////
 // KeySwitch
 /////////////////////////////////////////////////////////////////
@@ -40,6 +42,12 @@ void Switchboard::addSwitch(const QString &identifier,
         QAction *action)
 {
     if (!switchesMap.contains(identifier)) {
+        if (!action->shortcut().toString().isEmpty()) {
+            // Add shortcut to tooltip
+            action->setToolTip(action->toolTip() + 
+                    QString(" (%1)").arg(action->shortcut().toString()));
+            //action->setShortcutVisibleInContextMenu(true);
+        }
         KeySwitch ksw(identifier, scope, tag, action);
         switchesMap.insert(scope, ksw);
     }
@@ -54,7 +62,7 @@ QString Switchboard::getASCII()
     QString s;
     QString scope;
     foreach (scope, switchesMap.uniqueKeys()) {
-        s += "Scope " + scope + ":\n";
+        s += underline(scope, "=");
 
         QStringList tagsInScope;
         foreach (auto ksw, switchesMap.values(scope)) {
@@ -63,15 +71,19 @@ QString Switchboard::getASCII()
         }
 
         foreach (auto tag, tagsInScope) {
-            s += "  Group: " + tag + "\n";
+            s += underline(tag, "-");
             foreach (auto ksw, switchesMap.values(scope)) {
                 if (ksw.tagInt == tag) {
                     QString desc = ksw.actionInt->text();
                     QString sc = ksw.actionInt->shortcut().toString();
                     if (!sc.isEmpty()) {
+#if defined(Q_OS_MACOS)
+                        sc.replace("Ctrl","Cmd");
+#endif
+                    
                         desc = desc.remove('&');
                         desc = desc.remove("...");
-                        s += QString(" %1: %2\n").arg(sc, 16).arg(desc);
+                        s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
                     }
                 }
             }

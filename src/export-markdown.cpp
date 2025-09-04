@@ -6,6 +6,7 @@
 
 #include "branchitem.h"
 #include "mainwindow.h"
+#include "misc.h"
 #include "task.h"
 #include "vymmodel.h"
 
@@ -162,10 +163,3 @@ void ExportMarkdown::doExport()
     completeExport(args);
 }
 
-QString ExportMarkdown::underline(const QString &text, const QString &line)
-{
-    QString r = text + "\n";
-    for (int j = 0; j < text.length(); j++)
-        r += line;
-    return r;
-}

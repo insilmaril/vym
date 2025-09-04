@@ -7,7 +7,6 @@ class ExportAO : public ExportBase {
   public:
     ExportAO();
     virtual void doExport();
-    virtual QString underline(const QString &text, const QString &line);
 };
 
 #endif

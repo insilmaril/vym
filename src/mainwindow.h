@@ -500,6 +500,7 @@ class Main : public QMainWindow {
     QAction *actionUndo;
     QAction *actionUndoVim;
     QAction *actionRedo;
+    QAction *actionRepeatCommand;
     QAction *actionCopy;
     QAction *actionCut;
     QAction *actionPaste;

@@ -247,6 +247,14 @@ bool versionLowerThanVym(const QString &v)
         return versionLowerOrEqualThanVym(v);
 }
 
+QString underline(const QString &text, const QString &line)
+{
+    QString r = text + "\n";
+    for (int j = 0; j < text.length(); j++)
+        r += line;
+    return r + "\n\n";
+}
+
 bool versionLowerOrEqualThanVym(const QString &v)
 {
     // returns true, if Version v <=  VYM_VERSION
