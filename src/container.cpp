@@ -45,7 +45,7 @@ void Container::init()
     // subcontainers usually may influence position
     // Only mapCenters will stay where they are
 
-    minimumWidth = 0;   // FIXME-3 currently unused, maybe for linkSpaceContainer
+    minimumWidth = 0;   // FIXME-3 currently unused, maybe for linkSpaceContainer or fixed dimensions
 
     horizontalDirection = LeftToRight;
     horizontalAlignmentInt = HorAlignedLeft;
