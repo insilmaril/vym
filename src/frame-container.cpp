@@ -256,22 +256,24 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
 
     qreal pad = framePaddingInt + (framePen.width() - 1) / 2; // "Inner" padding and pen width
 
+    qreal wp = framePen.width();
+
     switch (frameTypeInt) {
         case NoFrame:
             break;
 
         case Rectangle:
             rectFrame->setRect(
-                childRect.left() - pad,
-                childRect.top() - pad,
-                childRect.width() + pad * 2,
-                childRect.height() + pad * 2);
+                childRect.left() - pad - wp,
+                childRect.top() - pad - wp,
+                childRect.width() + pad * 2 + wp * 2,
+                childRect.height() + pad * 2 + wp * 2);
 
             r.setRect(
-                    childRect.left() - pad * 2,
-                    childRect.top() - pad * 2,
-                    childRect.width() + pad * 4,
-                    childRect.height() + pad * 4);
+                    childRect.left() - pad * 2 - wp,
+                    childRect.top() - pad * 2 - wp,
+                    childRect.width() + pad * 4 + wp * 2,
+                    childRect.height() + pad * 4 + wp * 2);
             break;
 
         case RoundedRectangle: {
@@ -383,7 +385,7 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             }
             break;
 
-        case Cloud: {
+        case Cloud: {   // FIXME-3 penWidth not considered? Compare other (working) types...
             QPointF tl = childRect.topLeft() + QPointF( - pad, - pad);
             QPointF tr = childRect.topRight() + QPointF(  pad, - pad);
             QPointF bl = childRect.bottomLeft() + QPointF( - pad, + pad);
@@ -449,10 +451,10 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             childContainers().first()->setPos(- br.center() + p);
 
             r.setRect(
-                    - (br.width() + pad) / 2,
-                    - (br.height() + pad) / 2,  // Vertically centered anyway later...
-                    br.width() + 2 * pad,
-                    br.height() + 2 * pad);
+                    - (br.width() + pad + wp) / 2,
+                    - (br.height() + pad + wp) / 2,  // Vertically centered anyway later...
+                    br.width() + 2 * pad + wp,
+                    br.height() + 2 * pad + wp);
             }
             break;
 

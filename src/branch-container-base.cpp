@@ -21,6 +21,7 @@ void BranchContainerBase::init()
 
     setBrush(Qt::NoBrush);
     setPen(QPen(Qt::NoPen));
+    // setPen(QPen(Qt::blue));  // Testing only
 
     horizontalDirection = Container::LeftToRight;
 }
