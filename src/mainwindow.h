@@ -243,9 +243,9 @@ class Main : public QMainWindow {
     void editDeleteSelection();
     void editLoadImage();
     void editSaveImage();
-    void popupFollowXLink();
-    void editFollowXLink(QAction *);
     void editEditXLink(QAction *);
+    void popupFollowReference();
+    void followReference(QAction *);
 
   private slots:
     bool initLinkedMapsMenu(VymModel *model, QMenu *menu);
@@ -586,6 +586,7 @@ class Main : public QMainWindow {
     QAction *actionSelectNothing;
     QAction *actionFind;
     QAction *actionFindVim;
+    QAction *actionFollowReference;
 
     QActionGroup *actionGroupQuickColors;
     QAction *actionFormatQuickColor;

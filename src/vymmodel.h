@@ -600,7 +600,6 @@ class VymModel : public TreeModel {
     void deleteVymLink();                // delete link to another map
     QString getVymLink();                // return path to map
     QStringList getVymLinks();           // return paths in subtree
-    void followXLink(int);
     void editXLink();
     void setXLinkColor(const QString &, XLink *xl = nullptr);
     void setXLinkStyle(const QString &, XLink *xl = nullptr);

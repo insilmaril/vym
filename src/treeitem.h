@@ -120,6 +120,7 @@ class TreeItem : public XMLObj {
     void setVymLink(const QString &s);  //! Set vymLink
     QString vymLink();                  //! Get vymLink
     bool hasVymLink();
+    bool hasReference();                //! True if vymLink, XLink, or Url are availalble
 
   protected:
     bool target;

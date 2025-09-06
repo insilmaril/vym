@@ -118,12 +118,12 @@ extern QString iconTheme;
 extern bool useActionLog;
 extern QString actionLogPath;
 
-QMenu *branchAddContextMenu;
+QMenu *branchAddContextMenu;    // FIXME-4 These menus should be within class...
 QMenu *branchContextMenu;
 QMenu *branchLinksContextMenu;
 QMenu *branchRemoveContextMenu;
 QMenu *branchXLinksContextMenuEdit;
-QMenu *branchXLinksContextMenuFollow;
+QMenu *branchXLinksContextMenuFollow;   // Can also have Urls and VymLinks since 2.9.592
 QMenu *canvasContextMenu;
 QMenu *floatimageContextMenu;
 QMenu *targetsContextMenu;
@@ -2558,6 +2558,15 @@ void Main::setupSelectActions()
     actionListFiles.append(a);
     actionFindVim = a;
 
+    a = new QAction(tr("Follow reference", "Context menu"), this);
+    a->setShortcut(Qt::Key_F);
+    addAction(a);
+    actionListBranches.append(a);
+    selectMenu->addAction(a);
+    switchboard.addSwitch("mapFollowXLink", shortcutScope, tag, a);
+    connect(a, SIGNAL(triggered()), this, SLOT(popupFollowReference()));
+    actionFollowReference = a;
+
     a = new QAction("Select first branch in siblings", this);
     a->setShortcut(Qt::Key_Home);           // Select first in siblings
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -3789,6 +3798,8 @@ void Main::setupContextMenus()
     branchAddContextMenu->addSeparator();
     branchAddContextMenu->addAction(actionImportAdd);
     branchAddContextMenu->addAction(actionImportReplace);
+    foreach (auto a, branchAddContextMenu->actions())
+        a->setShortcutVisibleInContextMenu(true);
 
     // Submenu "Remove"
     branchRemoveContextMenu =
@@ -3797,6 +3808,8 @@ void Main::setupContextMenus()
     branchRemoveContextMenu->addAction(actionDelete);
     branchRemoveContextMenu->addAction(actionDeleteKeepChildren);
     branchRemoveContextMenu->addAction(actionDeleteChildren);
+    foreach (auto a, branchRemoveContextMenu->actions())
+        a->setShortcutVisibleInContextMenu(true);
 
     branchContextMenu->addAction(actionSaveBranch);
     branchContextMenu->addAction(actionFileNewCopy);
@@ -3823,6 +3836,8 @@ void Main::setupContextMenus()
     taskContextMenu->addAction(actionTaskSleep7);
     taskContextMenu->addAction(actionTaskSleep14);
     taskContextMenu->addAction(actionTaskSleep28);
+    foreach (auto a, taskContextMenu->actions())
+        a->setShortcutVisibleInContextMenu(true);
 
     // Submenu for Links (URLs, vymLinks)
     branchLinksContextMenu = new QMenu(this);
@@ -3846,6 +3861,8 @@ void Main::setupContextMenus()
     branchLinksContextMenu->addAction(actionOpenMultipleVymLinks);
     branchLinksContextMenu->addAction(actionEditVymLink);
     branchLinksContextMenu->addAction(actionDeleteVymLink);
+    foreach (auto a, branchLinksContextMenu->actions())
+        a->setShortcutVisibleInContextMenu(true);
 
     // Context Menu for XLinks in a branch menu
     // This will be populated "on demand" in updateActions
@@ -3856,16 +3873,10 @@ void Main::setupContextMenus()
     connect(branchXLinksContextMenuEdit, SIGNAL(triggered(QAction *)), this,
             SLOT(editEditXLink(QAction *)));
     QAction *a;
-    a = new QAction(tr("Follow XLink", "Context menu"), this);
-    a->setShortcut(Qt::Key_F);
-    addAction(a);
-    switchboard.addSwitch("mapFollowXLink", shortcutScope, tag, a);
-    connect(a, SIGNAL(triggered()), this, SLOT(popupFollowXLink()));
-
     branchXLinksContextMenuFollow =
         branchContextMenu->addMenu(tr("Follow XLink", "Context menu name"));
     connect(branchXLinksContextMenuFollow, SIGNAL(triggered(QAction *)), this,
-            SLOT(editFollowXLink(QAction *)));
+            SLOT(followReference(QAction *)));
 
     branchContextMenu->addSeparator();
     branchContextMenu->addAction(actionViewTogglePropertyEditor);
@@ -3884,6 +3895,9 @@ void Main::setupContextMenus()
     floatimageContextMenu->addAction(actionGrowSelectionSize);
     floatimageContextMenu->addAction(actionShrinkSelectionSize);
     floatimageContextMenu->addAction(actionFormatHideLinkUnselected);
+
+    foreach (auto a, floatimageContextMenu->actions())
+        a->setShortcutVisibleInContextMenu(true);
 
     // Context menu for canvas
     canvasContextMenu = new QMenu(this);
@@ -3910,6 +3924,8 @@ void Main::setupContextMenus()
 
     canvasContextMenu->addSeparator();
     canvasContextMenu->addAction(actionMapProperties);
+    foreach (auto a, canvasContextMenu->actions())
+        a->setShortcutVisibleInContextMenu(true);
 
     // Menu for last opened files
     // Create actions
@@ -5983,17 +5999,34 @@ void Main::editEditXLink(QAction *a)
     }
 }
 
-void Main::popupFollowXLink()
+void Main::popupFollowReference()
 {
-    branchXLinksContextMenuFollow->exec(QCursor::pos());
+    if (branchXLinksContextMenuFollow->actions().count() == 1)
+        // If only one reference (XLink, Url, VymLink) is available,
+        // just follow it
+        followReference(branchXLinksContextMenuFollow->actions().at(0));
+    else
+        // Popup menu
+        branchXLinksContextMenuFollow->exec(QCursor::pos());
 }
 
-void Main::editFollowXLink(QAction *a)
+void Main::followReference(QAction *a)
 {
     VymModel *m = currentModel();
 
-    if (m)
-        m->followXLink(branchXLinksContextMenuFollow->actions().indexOf(a));
+    if (m) {
+        QString d = a->data().toString();
+        if (d.startsWith("XLink:"))
+            m->select(QUuid(d.section(':', 1)));
+        else if (d.startsWith("Url:"))
+            openUrl(d.section(':', 1));
+        else if (d.startsWith("VymLink:")) {
+            QStringList vymLinks;
+            vymLinks << d.section(':', 1);
+            openVymLinks(vymLinks);
+        } else
+            qWarning() << __func__ << "Unknown reference in d=" << d;
+    }
 }
 
 bool Main::initLinkedMapsMenu(VymModel *model, QMenu *menu)
@@ -7231,25 +7264,50 @@ void Main::updateActions()  // FIXME-2 called twice when toggling a flag
                 // Take care of xlinks
                 // FIXME-5 similar code in mapeditor mousePressEvent
                 bool b = false;
-                if (selbi && selbi->xlinkCount() > 0)
+                if (selbi && selbi->hasReference())
                     b = true;
 
                 branchXLinksContextMenuEdit->setEnabled(b);
                 branchXLinksContextMenuFollow->setEnabled(b);
                 branchXLinksContextMenuEdit->clear();
                 branchXLinksContextMenuFollow->clear();
+                actionFollowReference->setEnabled(b);
                 if (b) {
                     BranchItem *bi;
                     QString s;
+
+                    // Add XLinks
                     for (int i = 0; i < selbi->xlinkCount(); ++i) {
                         bi = selbi->getXLinkItemNum(i)->getPartnerBranch();
                         if (bi) {
+                            QString uid = (bi->getUuid()).toString();
                             s = bi->headingPlain();
                             if (s.length() > xLinkMenuWidth)
                                 s = s.left(xLinkMenuWidth) + "...";
                             branchXLinksContextMenuEdit->addAction(s);
-                            branchXLinksContextMenuFollow->addAction(s);
+                            branchXLinksContextMenuFollow->addAction(
+                                    tr("Branch", "Context menu to follow links") + ": " + s);
+                            branchXLinksContextMenuFollow->actions().last()->setData(
+                                    QString("XLink:%1").arg(uid));
                         }
+                    }
+
+                    // Add URL
+                    s = selbi->url();
+                    if (!s.isEmpty()) {
+                        branchXLinksContextMenuFollow->addAction(
+                                tr("Url", "Context menu to follow links") + ": " + s);
+                        branchXLinksContextMenuFollow->actions().last()->setData(
+                                QString("Url:%1").arg(s));
+                    }
+
+                    // Add VymLink
+                    s = selbi->vymLink();
+                    if (!s.isEmpty()) {
+                        branchXLinksContextMenuFollow->addAction(
+                                tr("Map", "Context menu to follow links") + ": " + s);
+                        branchXLinksContextMenuFollow->actions().last()->setData(
+                                QString("VymLink:%1").arg(s));
                     }
                 }
                 // Standard and user flags

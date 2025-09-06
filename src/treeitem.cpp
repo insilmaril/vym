@@ -468,6 +468,11 @@ QString TreeItem::vymLink() { return vymLinkInt; }
 
 bool TreeItem::hasVymLink() { return !vymLinkInt.isEmpty();}
 
+bool TreeItem::hasReference()
+{
+    return (xlinkCounter > 0) || hasUrl() || hasVymLink();
+}
+
 void TreeItem::toggleTarget()
 {
     systemFlags.toggle(QString("system-target"));

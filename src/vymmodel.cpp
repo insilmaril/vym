@@ -5825,16 +5825,6 @@ QStringList VymModel::getVymLinks()
     return links;
 }
 
-void VymModel::followXLink(int i)
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        selbi = selbi->getXLinkItemNum(i)->getPartnerBranch();
-        if (selbi)
-            select(selbi);
-    }
-}
-
 void VymModel::editXLink()
 {
     XLink *xlink = getSelectedXLink();
