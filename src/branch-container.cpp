@@ -865,7 +865,8 @@ void BranchContainer::updateUpLink()
     }
 
     // Create/delete bottomline, depends on frame and (List-)Layout
-    if (frameType(true) != FrameContainer::NoFrame ||
+    if (frameType(true)  != FrameContainer::NoFrame ||
+        frameType(false) != FrameContainer::NoFrame ||
         branchesContainerAndOrnamentsVerticalInt ||
         (pbc && pbc->branchesContainerLayoutInt == List)) {
         if (upLink->hasBottomLine())
