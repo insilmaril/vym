@@ -232,7 +232,7 @@ void FrameContainer::setFrameType(const FrameType &t)
     // reposition() is called in vymmodel for all containers
 }
 
-void FrameContainer::setFrameType(const QString &t) // FIXME-2 pipe has wrong dimensions...
+void FrameContainer::setFrameType(const QString &t)
 {
     if (t == "Rectangle")
         setFrameType(Rectangle);
@@ -330,7 +330,7 @@ void FrameContainer::updateGeometry(const QRectF &childRect)
             path.cubicTo(bl + QPointF( - h, 0), tl + QPointF( - h, 0), tl);
  
             pathFrame->setPath(path);
-            QRectF r = path.boundingRect();
+            r = path.boundingRect();
 
             // center of pathFrame might be outside of origin, due to cloud not completely symmetrical
             // Correct position of pathFrame and child
