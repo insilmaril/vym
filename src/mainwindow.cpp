@@ -1941,7 +1941,7 @@ void Main::setupEditActions()
     // Shortcut to add mapcenter
     a = new QAction(QPixmap(":/newmapcenter.png"),
                     tr("Add mapcenter", "Canvas context menu"), this);
-    a->setShortcut(Qt::Key_C);
+    a->setShortcut(Qt::Key_C);                  // Add MapCenter
     a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addSwitch("mapAddCenter", shortcutScope, tag, a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddMapCenter()));
@@ -2083,7 +2083,7 @@ void Main::setupEditActions()
     QString sortEditTag = tr("Sort and edit", "MainWindow shortcut groups");
     a = new QAction(QPixmap(QString(":/view-sort-ascending-name-%1.svg").arg(iconTheme)), tr("Sort children", "Edit menu"), this);
     a->setEnabled(true);
-    a->setShortcut(Qt::Key_O);
+    a->setShortcut(Qt::Key_O);                  // Order by...
     switchboard.addSwitch("mapSortBranches", shortcutScope, sortEditTag, a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSortChildren()));
     editMenu->addAction(a);
@@ -2559,7 +2559,7 @@ void Main::setupSelectActions()
     actionFindVim = a;
 
     a = new QAction(tr("Follow reference", "Context menu"), this);
-    a->setShortcut(Qt::Key_F);
+    a->setShortcut(Qt::Key_F);              // Follow reference
     addAction(a);
     actionListBranches.append(a);
     selectMenu->addAction(a);
@@ -2621,7 +2621,7 @@ void Main::setupSelectActions()
 
     a = new QAction(QPixmap(":/flag-target.svg"),
                     tr("Move to target...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_M);
+    a->setShortcut(Qt::Key_M);              // Move to target
     selectMenu->addAction(a);
     switchboard.addSwitch("mapMoveToTarget", shortcutScope, tag, a);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveToTarget()));
@@ -2696,7 +2696,7 @@ void Main::setupFormatActions()
 
     a = new QAction(QPixmap(":/formatcolorbranch.png"),
                     tr("Color &branch", "Edit menu"), this);
-    // a->setShortcut (Qt::CTRL | Qt::Key_B | Qt::SHIFT);
+    // a->setShortcut (Qt::CTRL | Qt::Key_B | Qt::SHIFT);   // Color branch
     formatMenu->addAction(a);
     switchboard.addSwitch("mapFormatColorBranch", shortcutScope, tag, a);
     connect(a, SIGNAL(triggered()), this, SLOT(formatColorBranch()));
@@ -2706,7 +2706,7 @@ void Main::setupFormatActions()
 
     a = new QAction(QPixmap(":/formatcolorsubtree.png"),
                     tr("Color sub&tree", "Edit menu"), this);
-    // a->setShortcut (Qt::CTRL | Qt::Key_B);	// Color subtree
+    // a->setShortcut (Qt::CTRL | Qt::Key_B);               // Color subtree
     formatMenu->addAction(a);
     switchboard.addSwitch("mapFormatColorSubtree", shortcutScope, tag, a);
     connect(a, SIGNAL(triggered()), this, SLOT(formatColorSubtree()));
@@ -2926,7 +2926,7 @@ void Main::setupViewActions()
     // a=noteEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/flag-note.svg"),
                     tr("Note editor", "View action"), this);
-    a->setShortcut(Qt::Key_N);
+    a->setShortcut(Qt::Key_N);          // Note editor
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
     windowsMenu->addAction(a);
@@ -2940,7 +2940,7 @@ void Main::setupViewActions()
                     tr("Heading editor", "View action"), this);
     a->setCheckable(true);
     a->setIcon(QPixmap(":/headingeditor.png"));
-    a->setShortcut(Qt::Key_E);
+    a->setShortcut(Qt::Key_E);      // Heading editor
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     windowsMenu->addAction(a);
@@ -3005,7 +3005,7 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHistory()));
     actionViewToggleHistoryWindow = a;
 
-    windowsMenu->addAction(actionViewTogglePropertyEditor);
+    windowsMenu->addAction(actionViewTogglePropertyEditor); // FIXME-2 here?   Add Key_B for Broberty Window... ;-) Use Key_P for Vim-Paste!
 
     viewMenu->addSeparator();
 
@@ -4129,7 +4129,7 @@ void Main::setupToolbars()
     else
         addToolBar (colorsToolbar);
 
-    // View transformations (shrink/grow/rotate)
+    // View transformations (shrink/grow/rotate)    // FIXME-2 add shortcut to rotate selected subtree/item   Fn-key maybe and macro?
     viewTransformationsToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
     viewTransformationsToolbar->setObjectName("viewTB");
     viewTransformationsToolbar->addAction(actionZoomIn);
