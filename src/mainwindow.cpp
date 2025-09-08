@@ -789,7 +789,7 @@ void Main::setupAPI()
     c->addParameter(Command::IntPar, false, "Index of slide to remove");
     modelCommands.append(c);
 
-    c = new Command("repeatLastCommand", Command::AnySel);
+    c = new Command("repeatLastAction", Command::AnySel);
     modelCommands.append(c);
 
     c = new Command("resetBranchIterator", Command::BranchSel, Command::BoolPar);
@@ -1865,10 +1865,10 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editRedo()));
     actionRedo = a;
 
-    a = new QAction(tr("Repeat last command", "Edit menu") + " (experimental)", this);
-    a->setShortcut(Qt::Key_Period);                     // Repeat last command
-    switchboard.addSwitch("repeatLastCommand", shortcutScope, tag, a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editRepeatLastCommand()));
+    a = new QAction(tr("Repeat last action", "Edit menu") + " (experimental)", this);
+    a->setShortcut(Qt::Key_Period);                     // Repeat last action
+    switchboard.addSwitch("repeatLastAction", shortcutScope, tag, a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editRepeatLastAction()));
     editMenu->addAction(a);
     //actionListBranches.append(a);
     actionRepeatCommand = a;
@@ -5868,11 +5868,11 @@ void Main::editResetSelectionSize()
         m->resetSelectionSize();
 }
 
-void Main::editRepeatLastCommand()
+void Main::editRepeatLastAction()
 {
     VymModel *m = currentModel();
     if (m)
-        m->repeatLastCommand();
+        m->repeatLastAction();
 }
 
 void Main::editAddMapCenter()
@@ -7677,7 +7677,7 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->repeatLastCommand();
+        m->repeatLastAction();
         //currentMapEditor()->testFunction2();
     }
 }

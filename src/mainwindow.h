@@ -229,7 +229,7 @@ class Main : public QMainWindow {
     void editGrowSelectionSize();
     void editShrinkSelectionSize();
     void editResetSelectionSize();
-    void editRepeatLastCommand();
+    void editRepeatLastAction();
     void editAddMapCenter();
     void editAddBranch();
     void editAddBranchBefore();
