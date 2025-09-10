@@ -4258,10 +4258,10 @@ BranchItem *VymModel::addMapCenter(bool interactive)
         // Start to build undo/redo scripts
         // These script will be finished later when setHeading() is called
         if (hasContextPos)
-            saveStateBeginScript(   // FIXME-2 addMC - script needed?
+            saveStateBeginScript(   // addMC
                     QString("Add new MapCenter at (%1)").arg(toS(contextPos)));
         else
-            saveStateBeginScript("Add new MapCenter");  // FIXME-2 addMC - script needed?
+            saveStateBeginScript("Add new MapCenter");  addMC
     }
 
     if (!hasContextPos) {
