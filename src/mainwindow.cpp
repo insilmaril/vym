@@ -4129,7 +4129,7 @@ void Main::setupToolbars()
     else
         addToolBar (colorsToolbar);
 
-    // View transformations (shrink/grow/rotate)    // FIXME-2 add shortcut to rotate selected subtree/item   Fn-key maybe and macro?
+    // View transformations (shrink/grow/rotate)    // FIXME-3 add shortcut to rotate selected subtree/item   Fn-key maybe and macro?
     viewTransformationsToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
     viewTransformationsToolbar->setObjectName("viewTB");
     viewTransformationsToolbar->addAction(actionZoomIn);
@@ -7197,7 +7197,7 @@ void Main::updateActions()  // FIXME-2 called twice when toggling a flag
         } else
             w->setToolTip(tr("Redo: %1 (%2)").arg(m->lastRedoComment(), actionRedo->shortcut().toString()));
 
-        actionRepeatCommand->setEnabled(m->isRepeatCommandAvailable());
+        actionRepeatCommand->setEnabled(m->isRepeatActionAvailable());
 
         // History window
         historyWindow->setWindowTitle(

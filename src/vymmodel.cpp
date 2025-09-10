@@ -1457,16 +1457,9 @@ QString VymModel::getObjectName(TreeItem *ti)   // FIXME-3 compare with headingT
     return QString("%1 \"%2\"").arg(ti->getTypeName(), s);
 }
 
-bool VymModel::isRepeatCommandAvailable()
+bool VymModel::isRepeatActionAvailable()
 {
-    QString redoCommand = undoSet.value(
-       QString("/history/step-%1/redoCommand").arg(curStep));
-    if (!isUndoAvailable() || redoCommand.startsWith("model.") || !redoCommand.contains("findBranchById"))
-        return false;
-
-    QRegularExpression re("(.*b_rep\\.)");
-    //qDebug() << __func__ << "rc=" << redoCommand << redoCommand.contains(re);
-    return redoCommand.contains(re);
+    return !repeatAction.isEmpty();
 }
 
 void VymModel::redo()
@@ -1590,25 +1583,15 @@ QString VymModel::lastUndoComment()
         return QString();
 }
 
-QVariant VymModel::repeatLastCommand()  // FIXME-2 introduce repeatCommandAvailable() and update action
-                                        // FIXME-2 Maybe introduce dedicated "redoCommand" data to allow working with sets of commands
-                                        // FIXME-4 Adapt to other types than branch
+QVariant VymModel::repeatLastAction() // FIXME-4 Adapt to other types than branch
 {
+    if (!isRepeatActionAvailable())
+        return QVariant();
+
     QString command = QString("m = vym.mapWithId(%1);").arg(modelIdInt);
-    QString redoCommand = undoSet.value(
-       QString("/history/step-%1/redoCommand").arg(curStep));
-    if (!isUndoAvailable() || redoCommand.startsWith("model.") || !redoCommand.contains("findBranchById"))
-        // Only repeat command, if not a set of commands
-        return false;
-
-    //QRegularExpression re("^(.*b_rep\\.)"); // FIXME-2 Only remove the definition of b_rep?    s/b_rep.*=.*;//g
-    QRegularExpression re("(.*b_rep\\..*=.*;)");
-
-    qDebug() << __func__ << " rc=" << redoCommand;   // FIXME-2 remove debug outout.
-    command += " branches = m.selectedBranches(); for (b of branches) b." + redoCommand.replace( re, "");
-
-    qDebug() << __func__ << " rc=" << redoCommand;
-    qDebug() << __func__ << "  c=" << command;
+    command += " branches = m.selectedBranches(); for (b of branches) {" + repeatAction + "}";
+    // qDebug() << __func__ << " ra=" << repeatAction;
+    // qDebug() << __func__ << "  c=" << command;
     return mainWindow->runScript(command);
 }
 
@@ -1813,36 +1796,6 @@ QString VymModel::saveState(
     else
         logInfo("saveState: " + comment + " " + redoCommand, __func__);
 
-    // Increase undo steps, but check for repeated actions
-    // like editing a vymNote - then do not increase but replace last command
-    //
-    bool repeatedCommand = false;
-
-    /* FIXME-3 Repeated command not supported yet in saveState
-    // Undo Scripts start with "model.select" - do not consider these for repeated actions
-    if (!undoCommand.startsWith("{")) {
-        if (curStep > 0 && redoSelection == lastRedoSelection()) {
-            int i = redoCommand.indexOf("(");
-            QString rcl = redoCommand.left(i-1);
-            if (i > 0 && rcl == lastRedoCommand().left(i-1)) {
-
-                // Current command is a repeated one. We only want to "squash" some of these
-                QRegularExpression re("<vymnote");
-                if (rcl.startsWith("model.parseVymText") && re.match(redoCommand).hasMatch()) {
-                    if (debug)
-                        qDebug() << "VM::saveState repeated command: " << redoCommand;
-
-                    // Do not increase undoCommand counter
-                    repeatedCommand = true;
-                    undoCommand = undoSet.value(
-                        QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
-                } else
-                    if (debug)
-                        qDebug() << "VM::saveState not repeated command: " << redoCommand;
-            }
-        }
-    }
-    */
     QString historyPath = getHistoryPath();
 
     // Create historyPath if not available and required
@@ -1897,14 +1850,12 @@ QString VymModel::saveState(
         return historyPath + "/";
     }
 
-    if (!repeatedCommand) {
-        if (undosAvail < stepsTotal)
-            undosAvail++;
+    if (undosAvail < stepsTotal)
+        undosAvail++;
 
-        curStep++;
-        if (curStep > stepsTotal)
-            curStep = 1;
-    }
+    curStep++;
+    if (curStep > stepsTotal)
+        curStep = 1;
 
     // We would have to save all actions in a tree, to keep track of
     // possible redos after an action. Possible, but we are too lazy: forget
@@ -1953,7 +1904,10 @@ QString VymModel::saveStateBranch(
         const QString &rc,
         const QString &comment)
 {
-    QString prefix = setBranchVar(bi,"b_rep") + "b_rep.";
+    QString prefix = setBranchVar(bi) + "b.";
+    repeatAction = "b." + rc;
+    repeatComment = comment;
+
     return saveState(prefix + uc, prefix + rc, comment);
 }
 
@@ -1976,7 +1930,8 @@ void VymModel::saveStateEndScript()
     if (debug)
         std::cout << "VM::saveStateEndScript" << endl 
             << "  buildingScript=" << buildingUndoScript << endl
-            << "  undoScript=" << undoScript.toStdString() << endl;
+            << "      undoScript=" << undoScript.toStdString() << endl
+            << "    repeatAction=" << repeatAction.toStdString() << endl;
 
     if (buildingUndoScript) {
         buildingUndoScript = false;
@@ -2699,7 +2654,7 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, Bran
 
         logAction(rc, comment, __func__);
 
-        saveStateBeginScript(comment);
+        saveStateBeginScript(comment);  // setFrameAD, calls setFrame* functions
 
         bc = selbi->getBranchContainer();
         bc->setFrameAutoDesign(useInnerFrame, b);
@@ -2743,7 +2698,7 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
             // Save also penWidth, colors, etc. to restore frame on undo
             saveCompleteFrame = true;
 
-            saveStateBeginScript("Set frame parameters");
+            saveStateBeginScript("Set frame parameters");   // setFrameType, calls setFrame* functions
             QString colorName = bc->framePenColor(useInnerFrame).name();
             saveStateBranch(selbi,
                     QString("setFramePenColor (%1, \"%2\");").arg(uif, colorName),
@@ -2963,7 +2918,7 @@ void VymModel::setRotationAutoDesign(const bool &b, BranchItem *bi)
 
             logAction(rc, comment, __func__);
 
-            saveStateBeginScript(comment);
+            saveStateBeginScript(comment); // setRotationsAD, calls setRotation* functions
             if (b) {
                 setRotationHeading(mapDesignInt->rotationHeading(selbi->depth()));
                 setRotationSubtree(mapDesignInt->rotationSubtree(selbi->depth()));
@@ -3051,7 +3006,7 @@ void VymModel::setScaleAutoDesign (const bool & b, BranchItem *bi)
 
             logAction(rc, c, __func__);
 
-            saveStateBeginScript(c);
+            saveStateBeginScript(c);    // setScaleAD, calls setScale* functions
             if (b) {
                 setScaleHeading(mapDesignInt->scaleHeading(selbi->depth()));
                 setScaleSubtree(mapDesignInt->scaleSubtree(selbi->depth()));
@@ -3597,7 +3552,7 @@ BranchItem *VymModel::addTimestamp()
                        .arg(today.day(), 2, 10, c);
         QString comment = "Add branch with current date as heading: " + s;
 
-        saveStateBeginScript(comment);
+        saveStateBeginScript(comment);  // addTimeStamp, calls setHeadingPlain and indirect setUrl
         BranchItem *newbi = addNewBranch(selbi);
         setHeadingPlainText(s, newbi);
         saveStateEndScript();
@@ -4303,10 +4258,10 @@ BranchItem *VymModel::addMapCenter(bool interactive)
         // Start to build undo/redo scripts
         // These script will be finished later when setHeading() is called
         if (hasContextPos)
-            saveStateBeginScript(
+            saveStateBeginScript(   // FIXME-2 addMC - script needed?
                     QString("Add new MapCenter at (%1)").arg(toS(contextPos)));
         else
-            saveStateBeginScript("Add new MapCenter");
+            saveStateBeginScript("Add new MapCenter");  // FIXME-2 addMC - script needed?
     }
 
     if (!hasContextPos) {
@@ -4445,7 +4400,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
             comment = QString("Add new branch below %1").arg(getObjectName(selbi));
 
         logAction("", comment, __func__);
-        saveStateBeginScript(comment);
+        saveStateBeginScript(comment);  // FIXME-2 addNewBranch - script needed?
     }
 
     BranchItem *newbi = addNewBranchInt(selbi, pos);
@@ -4497,7 +4452,7 @@ BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    //
             // saveStateEndScript will be called in VymModel::setHeading()
             comment = QString("Add new branch before %1").arg(getObjectName(selbi));
             logAction("", comment, __func__);
-            saveStateBeginScript(comment);
+            saveStateBeginScript(comment); // addNewBranchBefore (incl. relinking)
         }
 
         // add below selection
@@ -4562,7 +4517,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
     if (!saveStateBlocked)
         // When ordering branches, we already saveState there and not for 
         // each branch individually
-        saveStateBeginScript(
+        saveStateBeginScript(   // FIXME-2 relinkBranches, multiselection
             QString("Relink %1 objects to \"%2\"")
                 .arg(branches.count())
                 .arg(dst->headingPlain()));
@@ -4682,15 +4637,15 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
             QString postNumString = QString::number(bi->num(), 10);
 
-            QString bv = setBranchVar(bi, "b_rep");
+            QString bv = setBranchVar(bi);
             if (pbi == rootItem)
                 uc = bv + " detach ()";
             else {
                 uc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(preParUidString);
-                uc += QString(" b_rep.relinkToBranchAt (dst, \"%1\");").arg(preNumString);
+                uc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(preNumString);
             }
             rc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(dst->getUuid().toString());
-            rc += QString(" b_rep.relinkToBranchAt (dst, \"%1\");").arg(postNumString);
+            rc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(postNumString);
 
             saveState(uc, rc,
                       QString("Relink %1 to %2")
@@ -4756,7 +4711,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
     if (!saveStateBlocked)
         // When ordering branches, we already saveState there and not for 
         // each branch individually
-        saveStateBeginScript(
+        saveStateBeginScript(   // FIXME-2 relink images, multiselection
             QString("Relink %1 objects to \"%2\"")
                 .arg(images.count())
                 .arg(dst->headingPlain()));
@@ -5477,9 +5432,9 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *bi, selbis) {
-        QString bv = setBranchVar(bi, "b_rep");
-        QString uc = bv + "m.loadBranchReplace(\"UNDO_PATH\", b_rep);";
-        QString rc = bv + QString("b_rep.colorSubtree (\"%1\")").arg(c.name());
+        QString bv = setBranchVar(bi);
+        QString uc = bv + "m.loadBranchReplace(\"UNDO_PATH\", b);";
+        QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
         QString com = QString("Set color of %1 and children to %2").arg(getObjectName(bi), c.name());
         logAction(rc, com, __func__);
 
@@ -6905,7 +6860,7 @@ void VymModel::setBackgroundColor(QColor col)
 {
     QColor oldcol = mapDesignInt->backgroundColor();
 
-    saveStateBeginScript("Set background color");
+    saveStateBeginScript("Set background color");   // Save background image in script
 
     if (hasBackgroundImage())
         unsetBackgroundImage();
@@ -6934,7 +6889,7 @@ bool VymModel::loadBackgroundImage( const QString &imagePath)
 
         logAction(rc, comment, __func__);
 
-        saveStateBeginScript(comment);
+        saveStateBeginScript(comment);  // load BG img, save previous img if used
 
         bool saveOldImage = false;
 
@@ -7057,7 +7012,7 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         selItems = getSelectedItems();
 
     QString com = "Move items (non-interactive";
-    saveStateBeginScript("Move items (non-interactive)");
+    saveStateBeginScript("Move items (non-interactive)");   // FIXME-2 multiselection
     foreach (TreeItem *ti, selItems) {
         if (ti->hasTypeBranch() || ti->hasTypeImage())
         {

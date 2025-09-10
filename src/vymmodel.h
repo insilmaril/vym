@@ -259,7 +259,7 @@ class VymModel : public TreeModel {
     */
     QString getObjectName(TreeItem *);
 
-    bool isRepeatCommandAvailable(); //!< True, if redo is available and contains command to repeat last step
+    bool isRepeatActionAvailable(); //!< True, if redo is available and contains command to repeat last step
     void redo();            //!< Redo last action
     bool isRedoAvailable(); //!< True, if redo is available
     QString lastRedoSelection();
@@ -267,14 +267,14 @@ class VymModel : public TreeModel {
     QString lastRedoComment();
     QString lastUndoCommand();
     QString lastUndoComment();
-    QVariant repeatLastCommand(); //!< Repeat last command on current selection
+    QVariant repeatLastAction();    //!< Repeat last command on current selection
 
-    void undo();               //!< Undo last action
-    bool isUndoAvailable();    //!< True, if undo is available
-    void gotoHistoryStep(int); //!< Goto a specifig step in history
+    void undo();                    //!< Undo last action
+    bool isUndoAvailable();         //!< True, if undo is available
+    void gotoHistoryStep(int);      //!< Goto a specifig step in history
 
-    QString getHistoryPath(); //!< Path to directory containing the history
-    void resetHistory();      //!< Initialize history
+    QString getHistoryPath();       //!< Path to directory containing the history
+    void resetHistory();            //!< Initialize history
 
     QString setAttributeVar(AttributeItem*, QString varName ="b");  //!< Returns command to set AttributeItem in scripts for undo/redo
     QString setBranchVar(BranchItem*, QString varName ="b");  //!< Returns command to set BranchItem in scripts for undo/redo
@@ -313,6 +313,10 @@ class VymModel : public TreeModel {
     /*! Put several states into one Script for a single undo step */
     void saveStateBeginScript(const QString &comment);
     void saveStateEndScript();
+
+  private:
+    QString repeatAction;
+    QString repeatComment;
 
     ////////////////////////////////////////////
     // unsorted so far
