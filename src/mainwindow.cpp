@@ -2238,7 +2238,7 @@ void Main::setupEditActions()
     switchboard.addSwitch("mapSetJiraQuery", shortcutScope, tag, a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(setJiraQuery()));
-    actionGetJiraDataSubtree = a;
+    actionSetJiraQuery = a;
 
     a = new QAction(tr("Get page name and details from Confluence", "Edit menu"),
                     this);
@@ -3091,6 +3091,7 @@ void Main::setupConnectActions()
     connectMenu->addAction(actionGetConfluencePageDetails);
     connectMenu->addAction(actionGetConfluencePageDetailsRecursively);
     connectMenu->addAction(actionGetJiraDataSubtree);
+    connectMenu->addAction(actionSetJiraQuery);
 
     connectMenu->addSeparator();
 
@@ -8217,4 +8218,3 @@ void Main::toggleHideTmpMode()
     if (m)
         m->toggleHideTmpMode();
 }
-

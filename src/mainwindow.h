@@ -525,6 +525,7 @@ class Main : public QMainWindow {
     QAction *actionLocalURL;
     QAction *actionHeading2URL;
     QAction *actionGetJiraDataSubtree;
+    QAction *actionSetJiraQuery;
     QAction *actionGetConfluencePageDetails;
     QAction *actionGetConfluencePageDetailsRecursively;
     QAction *actionOpenVymLink;
