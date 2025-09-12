@@ -4261,7 +4261,7 @@ BranchItem *VymModel::addMapCenter(bool interactive)
             saveStateBeginScript(   // addMC
                     QString("Add new MapCenter at (%1)").arg(toS(contextPos)));
         else
-            saveStateBeginScript("Add new MapCenter");  addMC
+            saveStateBeginScript("Add new MapCenter");
     }
 
     if (!hasContextPos) {
@@ -4400,7 +4400,7 @@ BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
             comment = QString("Add new branch below %1").arg(getObjectName(selbi));
 
         logAction("", comment, __func__);
-        saveStateBeginScript(comment);  // FIXME-2 addNewBranch - script needed?
+        saveStateBeginScript(comment);  // addNewBranch: edit new heading if interactive
     }
 
     BranchItem *newbi = addNewBranchInt(selbi, pos);
@@ -4517,7 +4517,7 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
     if (!saveStateBlocked)
         // When ordering branches, we already saveState there and not for 
         // each branch individually
-        saveStateBeginScript(   // FIXME-2 relinkBranches, multiselection
+        saveStateBeginScript(   // relinkBranches: also save position if required
             QString("Relink %1 objects to \"%2\"")
                 .arg(branches.count())
                 .arg(dst->headingPlain()));
@@ -4564,8 +4564,10 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         if (dst == rootItem) {
             detaching = true;
             preDetachPos = bc->getHeadingContainer()->scenePos();
-        } else
-            detaching = false;
+        } else {
+            // Save position, so // that it can be used // for undo command // later
+            detaching = false; bc->setOriginalPos();
+        }
 
         BranchItem *branchpi = bi->parentBranch();
 
@@ -4711,7 +4713,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
     if (!saveStateBlocked)
         // When ordering branches, we already saveState there and not for 
         // each branch individually
-        saveStateBeginScript(   // FIXME-2 relink images, multiselection
+        saveStateBeginScript(   // FIXME-3 relink images: script used for multiselection
             QString("Relink %1 objects to \"%2\"")
                 .arg(images.count())
                 .arg(dst->headingPlain()));
@@ -4748,7 +4750,7 @@ bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num
         // - What about updating links of images (later)?
         // - What about updating design (later)?
         // - in ImageWrapper: num_new missing
-        // - does not save positions
+        // - does not save positions currently
 
         QString iv = setImageVar(ii);
         QString uc = setBranchVar(pi) + iv + "i.relinkToBranch(b);";
@@ -7012,26 +7014,24 @@ void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
         selItems = getSelectedItems();
 
     QString com = "Move items (non-interactive";
-    saveStateBeginScript("Move items (non-interactive)");   // FIXME-2 multiselection
+    QString uc, rc, itemVar;
     foreach (TreeItem *ti, selItems) {
         if (ti->hasTypeBranch() || ti->hasTypeImage())
         {
             Container *c = ((MapItem*)ti)->getContainer();
             QString pos_new_str = toS(pos_new);
 
-            QString uc, rc, itemVar;
             if (ti->hasTypeBranch())
                 itemVar = setBranchVar((BranchItem*)ti) + "b.";
             else 
                 itemVar = setImageVar((ImageItem*)ti) + "i.";
-            uc = QString("%1.setPos%2;").arg(itemVar, toS(c->getOriginalPos(), 5));
-            rc = QString("%1.setPos%2;").arg(itemVar, toS(c->pos(), 5));
-            logAction(rc, com, __func__);
-            saveState(uc, rc); 
+            uc += QString("%1.setPos%2;").arg(itemVar, toS(c->getOriginalPos(), 5));
+            rc += QString("%1.setPos%2;").arg(itemVar, toS(c->pos(), 5));
             c->setPos(pos_new);
         }
     }
-    saveStateEndScript();
+    logAction(rc, com, __func__);
+    saveState(uc, rc); 
     reposition();
 }
 
