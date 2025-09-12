@@ -1811,3 +1811,4 @@ if (tests.includes("tasks"))          { test_tasks(); }
 if (tests.includes("xlinks"))         { test_xlinks(); }
 
 summary();
+vym.exit();

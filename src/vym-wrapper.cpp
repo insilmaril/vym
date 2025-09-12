@@ -93,6 +93,11 @@ bool VymWrapper::directoryExists(const QString &directoryName)
     return d.exists();
 }
 
+void VymWrapper::exit()
+{
+    mainWindow->setExitAfterScript(true);
+}
+
 bool VymWrapper::fileCopy(const QString &srcPath, QString dstPath)
 {
     QFile file(srcPath);

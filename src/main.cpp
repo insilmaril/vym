@@ -647,8 +647,9 @@ int main(int argc, char *argv[])
     // Enable some last minute cleanup
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 
-    // For benchmarking we may want to quit instead of entering event loop
-    if (options.isActive("quit"))
+    // For benchmarking or if test script is done
+    // we may want to quit instead of entering event loop
+    if (options.isActive("quit") || m.exitAfterScript())
         m.fileExitVYM();
     else
         app.exec();

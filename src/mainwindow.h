@@ -168,6 +168,11 @@ class Main : public QMainWindow {
     bool fileCloseMap(int i = -1); // Optionally pass number of tab
     void filePrint();
 
+  public:
+    bool exitAfterScript();
+    void setExitAfterScript(bool b);
+  private:
+    bool exitAfterScriptInt;
   public slots:
     bool fileExitVYM();
     void editUndo();

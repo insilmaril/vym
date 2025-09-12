@@ -361,6 +361,9 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
         qWarning("MainWindow: Couldn't register DBUS object!");
 #endif
 
+    // Allows a (test-)script to make vym quit after script execution
+    exitAfterScriptInt = false;
+
     backgroundZipProcesses = 0;
     closeAfterLastZipProcess = false;
 }
@@ -557,6 +560,10 @@ void Main::setupAPI()
     vymCommands.append(c);
 
     c = new Command("editHeading", Command::BranchSel);
+    vymCommands.append(c);
+
+    c = new Command("exit", Command::AnySel);
+    c->setComment("Exit vym after script execution");
     vymCommands.append(c);
 
     c = new Command("gotoMap", Command::AnySel);
@@ -5202,6 +5209,16 @@ void Main::filePrint()
         currentMapEditor()->print();
 }
 
+bool Main::exitAfterScript()
+{
+    return exitAfterScriptInt;
+}
+
+void Main::setExitAfterScript(bool b)
+{
+    exitAfterScriptInt = b;
+}
+
 bool Main::fileExitVYM()
 {
     closeAfterLastZipProcess = true;
@@ -7578,6 +7595,9 @@ QVariant Main::runScript(const QString &script)
     vymWrapper->deleteLater();
     scriptEngine->deleteLater();
     scriptEngine = nullptr;
+
+    if (exitAfterScriptInt)
+        fileExitVYM();
 
     return scriptResult;
 }
