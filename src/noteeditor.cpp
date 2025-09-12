@@ -10,6 +10,8 @@ extern QString vymName;
 
 NoteEditor::NoteEditor(const QString &eName) : TextEditor(eName)
 {
+    editorName = eName;
+
     setWindowTitle("");
 
     menuBar()->show();

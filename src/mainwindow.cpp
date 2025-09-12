@@ -6946,9 +6946,9 @@ void Main::updateNoteEditor(TreeItem *ti)
             noteEditor->setNote(ti->getNote());
         else
             noteEditor->clear(); // Also sets empty state
-        return;
-    }
-    noteEditor->setInactive();
+    } else
+        noteEditor->setInactive();
+    noteEditor->setEditorTitle();
 }
 
 void Main::updateHeadingEditor(TreeItem *ti)
