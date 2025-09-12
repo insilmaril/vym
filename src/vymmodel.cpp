@@ -1595,7 +1595,7 @@ QVariant VymModel::repeatLastAction() // FIXME-4 Adapt to other types than branc
     return mainWindow->runScript(command);
 }
 
-void VymModel::undo()   // FIXME-2 use functions for lastUndoCommand/Comment ... and also in redo()
+void VymModel::undo()
 {
     // Can we undo at all?
     if (undosAvail < 1)
