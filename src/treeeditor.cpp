@@ -73,7 +73,7 @@ void TreeEditor::init()
         addAction(a);
     }
 
-    // FIXME-2 Set borders when in focus to editorFocusStyle
+    // FIXME-3 Set borders when in focus to editorFocusStyle
 }
 
 TreeEditor::~TreeEditor()
