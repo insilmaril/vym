@@ -434,9 +434,12 @@ int main(int argc, char *argv[])
             iconTheme = "dark";
         }
     }
+    qDebug() << "dark settings: " << settingsDarkTheme
+        << " systemDark=" << systemSeemsDark
+        << " useDark" << usingDarkTheme;
 
     QPalette palette;
-    if (usingDarkTheme && settingsDarkTheme == "always") {
+    if (usingDarkTheme) {
         qApp->setStyle(QStyleFactory::create("fusion"));
         //qApp->setStyle(QStyleFactory::create("Windows"));
         //qApp->setStyle(QStyleFactory::create("windowsvista"));
@@ -448,7 +451,6 @@ int main(int argc, char *argv[])
         palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
         palette.setColor(QPalette::ToolTipBase, QColor(53,53,53));
         palette.setColor(QPalette::ToolTipText, Qt::white);
-        // Unused: QPalette::PlaceHolderText
         palette.setColor(QPalette::Text, Qt::white);
         palette.setColor(QPalette::Button, QColor(53,53,53));
         palette.setColor(QPalette::ButtonText, Qt::white);
@@ -462,8 +464,27 @@ int main(int argc, char *argv[])
         qApp->setPalette(palette);
 
         vymBlueColor =QColor::fromString("#00aaff");
-    } else
+    } else {
+        if (systemSeemsDark) {
+            // FIXME-2 Fix - Forced bright theme, even if system seems dark
+            palette.setColor(QPalette::Window, QColor(200, 200, 200));
+            palette.setColor(QPalette::WindowText, Qt::black);
+            palette.setColor(QPalette::Base, QColor(255, 255, 255));
+            palette.setColor(QPalette::AlternateBase, QColor(253,53,53));
+            palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 255));
+            palette.setColor(QPalette::ToolTipText, Qt::white);
+            palette.setColor(QPalette::Text, Qt::black);
+            palette.setColor(QPalette::Button, QColor(53,253,53));
+            palette.setColor(QPalette::ButtonText, Qt::black);
+            palette.setColor(QPalette::BrightText, Qt::red);
+            palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
+            palette.setColor(QPalette::HighlightedText, Qt::black);
+
+            qApp->setPalette(palette);
+        }
+
         vymBlueColor =QColor::fromString("#0000ff");
+    }
 
     vymForegroundColor = palette.color(QPalette::WindowText);
     vymBaseColor = palette.color(QPalette::Base);
