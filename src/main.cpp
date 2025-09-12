@@ -138,9 +138,10 @@ int warningCount = 0;
 int criticalCount = 0;
 int fatalCount = 0;
 
-QString editorFocusStyle =
-    QString(" border-color: #3daee9; border-style:outset; border-width:3px; "
+QString editorFocusInStyle =
+    QString(" border-color: #3daee9; border-style:outset; border-width:1px; "
             "color:black;");
+QString editorFocusOutStyle = QString("border-width:0px;");
 
 void msgHandler(QtMsgType type, const QMessageLogContext &context,
                 const QString &msg)

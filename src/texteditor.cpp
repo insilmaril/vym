@@ -30,7 +30,8 @@ extern QColor vymForegroundColor;
 extern QColor vymBaseColor;
 extern QAction *actionViewToggleNoteEditor;
 
-extern QString editorFocusStyle;
+extern QString editorFocusInStyle;
+extern QString editorFocusOutStyle;
 
 extern QString vymName;
 
@@ -71,12 +72,6 @@ TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with
 
     editorName = "Text editor";
     setEditorTitle("");
-
-    // FIXME-2 Set borders when in focus to editorFocusStyle
-    // Probably have to reimplement eventFilter and QEvent::FocusIn/Out
-    // since QTextEdit and QTreeView don't seem to understand :focus
-    //qDebug() << "Constr TE eFS=" << editorFocusStyle;
-    //editor->setStyleSheet("QTextEdit:focus {color: red; border-color: #3eaee9; border-width:3px; }");// + editorFocusStyle + "}");
 
     menuBar()->setNativeMenuBar(false);
 }
@@ -725,6 +720,16 @@ void TextEditor::closeEvent(QCloseEvent *ce)
 bool TextEditor::eventFilter(QObject *obj, QEvent *ev)
 {
     if (obj == editor) {
+        // qDebug() << "TE::eventFilter   ev=" << ev;
+        if (ev->type() == QEvent::FocusIn) {
+            //editor->setFrameStyle(QFrame::Box);
+            editor->setStyleSheet("QTextEdit {" + editorFocusInStyle + "}");
+        }
+        if (ev->type() == QEvent::FocusOut) {
+            editor->setFrameStyle(QFrame::NoFrame);
+            editor->setStyleSheet("QTextEdit {" + editorFocusOutStyle + "}");
+
+        }
         if (ev->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(ev);
             if (keyEvent == QKeySequence::Paste) {

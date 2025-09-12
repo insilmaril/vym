@@ -10,7 +10,8 @@
 #include "vymmodel.h"
 
 extern Main *mainWindow;
-extern QString editorFocusStyle;
+extern QString editorFocusInStyle;
+extern QString editorFocusOutStyle;
 
 extern QMenu *branchContextMenu;
 extern QMenu *canvasContextMenu;
@@ -73,9 +74,6 @@ void TreeEditor::init()
     }
 
     // FIXME-2 Set borders when in focus to editorFocusStyle
-    // Probably have to reimplement eventFilter and QEvent::FocusIn/Out
-    // since QTextEdit and QTreeView don't seem to understand :focus
-    // setStyleSheet("QTreeView:focus {" + editorFocusStyle + "}");
 }
 
 TreeEditor::~TreeEditor()

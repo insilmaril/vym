@@ -212,6 +212,7 @@ class MapEditor : public QGraphicsView {
     void mouseReleaseEvent(QMouseEvent *);
     void mouseDoubleClickEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
+    void focusInEvent(QFocusEvent *);
     void focusOutEvent(QFocusEvent *);
     void resizeEvent(QResizeEvent *);
 

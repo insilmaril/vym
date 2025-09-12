@@ -37,7 +37,7 @@ extern Settings settings;
 
 extern QTextStream vout;
 
-extern QString editorFocusStyle;
+extern QString editorFocusInStyle;
 
 extern FlagRowMaster *systemFlagsMaster;
 
@@ -103,7 +103,7 @@ MapEditor::MapEditor(VymModel *vm)
 
     selectionMode = AutoSelection;
 
-    setStyleSheet("QGraphicsView:focus {" + editorFocusStyle + "}");
+    setStyleSheet("QGraphicsView:focus {" + editorFocusInStyle + "}");
 
     // Create bitmap cursors, platform dependant
     HandOpenCursor = QCursor(QPixmap(":/mode-move-view.png"), 1, 1);
@@ -2610,9 +2610,16 @@ void MapEditor::wheelEvent(QWheelEvent *e)
     }
 }
 
-void MapEditor::focusOutEvent(QFocusEvent *)
+void MapEditor::focusInEvent(QFocusEvent *e)
 {
-    // qDebug()<<"ME::focusOutEvent"<<e->reason();
+    //qDebug() << "ME::focusInEvent" << e->reason();
+    setFrameStyle(QFrame::Box);
+}
+
+void MapEditor::focusOutEvent(QFocusEvent *e)
+{
+    //qDebug() << "ME::focusOutEvent" << e->reason();
+    setFrameStyle(QFrame::NoFrame);
     if (editorState == EditingHeading)
         editHeadingFinished();
 }
