@@ -507,8 +507,10 @@ class Main : public QMainWindow {
     QAction *actionRedo;
     QAction *actionRepeatCommand;
     QAction *actionCopy;
+    QAction *actionCopyVim;
     QAction *actionCut;
     QAction *actionPaste;
+    QAction *actionPasteVim;
     QAction *actionMoveUp;
     QAction *actionMoveDown;
     QAction *actionMoveDownDiagonally;

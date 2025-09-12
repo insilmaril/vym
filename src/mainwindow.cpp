@@ -1893,6 +1893,17 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editCopy()));
     actionCopy = a;
 
+    a = new QAction(QPixmap(QString(":/edit-copy-%1.svg").arg(iconTheme)), tr("&Copy", "Edit menu"), this);
+    a->setShortcut(Qt::Key_Y);   // Copy Vim
+    a->setShortcutContext(Qt::WidgetShortcut);
+    a->setEnabled(false);
+    editMenu->addAction(a);
+    unrestrictedMapActions.append(a);
+    mapEditorActions.append(a);
+    switchboard.addSwitch("mapCopyVim", shortcutScope, tag, a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editCopy()));
+    actionCopyVim = a;
+
     a = new QAction(QPixmap(QString(":/edit-cut-%1.svg").arg(iconTheme)), tr("Cu&t", "Edit menu"), this);
     // Multi key shortcuts https://bugreports.qt.io/browse/QTBUG-39127
     a->setShortcut(Qt::CTRL | Qt::Key_X);
@@ -1919,6 +1930,18 @@ void Main::setupEditActions()
     switchboard.addSwitch("mapPaste", shortcutScope, tag, a);
     actionPaste = a;
 
+    a = new QAction(QPixmap(QString(":/edit-paste-%1.svg").arg(iconTheme)), tr("&Paste", "Edit menu"),
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editPaste()));
+    a->setShortcut(Qt::Key_P);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    a->setEnabled(false);
+    editMenu->addAction(a);
+    restrictedMapActions.append(a);
+    mapEditorActions.append(a);
+    switchboard.addSwitch("mapPasteVim", shortcutScope, tag, a);
+    actionPasteVim = a;
+
     // Shortcut to delete selection
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
 #if defined(Q_OS_MACOS)
@@ -1937,7 +1960,7 @@ void Main::setupEditActions()
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
     a->setShortcut(Qt::Key_D);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapDelete", shortcutScope, tag, a);
+    switchboard.addSwitch("mapDeleteVim", shortcutScope, tag, a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
     editMenu->addAction(a);
@@ -2532,7 +2555,7 @@ void Main::setupEditActions()
         tr("Item property window", "Dialog to edit properties of selected item") +
             QString("..."),
         this);
-    a->setShortcut(Qt::Key_P);
+    a->setShortcut(Qt::Key_B);          // "P"roperty Editor
     a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     addAction(a);
@@ -3012,7 +3035,7 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHistory()));
     actionViewToggleHistoryWindow = a;
 
-    windowsMenu->addAction(actionViewTogglePropertyEditor); // FIXME-2 here?   Add Key_B for Broberty Window... ;-) Use Key_P for Vim-Paste!
+    windowsMenu->addAction(actionViewTogglePropertyEditor);
 
     viewMenu->addSeparator();
 
@@ -7401,10 +7424,12 @@ void Main::updateActions()  // FIXME-2 called twice when toggling a flag
                 const QClipboard *clipboard = QApplication::clipboard();
                 const QMimeData *mimeData = clipboard->mimeData();
                 if (mimeData->formats().contains("application/x-vym") ||
-                    mimeData->hasImage())
-                    actionPaste->setEnabled(true);
-                else
+                    mimeData->hasImage()) {
+                    actionPasteVim->setEnabled(true);
+                } else {
                     actionPaste->setEnabled(false);
+                    actionPasteVim->setEnabled(false);
+                }
 
                 actionToggleTarget->setEnabled(true);
             } // end of BranchItem
