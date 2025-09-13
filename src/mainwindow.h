@@ -655,7 +655,6 @@ class Main : public QMainWindow {
 
     QAction *actionConnectGetConfluenceUser;
     QAction *actionSettingsAutoSelectNewBranch;
-    QAction *actionSettingsAutoSelectText;
     QAction *actionSettingsUseFlagGroups;
     QAction *actionSettingsUseHideExport;
     QAction *actionSettingsToggleAutosave;

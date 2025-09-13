@@ -412,8 +412,6 @@ Main::~Main()
             settings.setValue("/system/printerFileName",
                               printer->outputFileName());
         }
-        settings.setValue("/mapeditor/editmode/autoSelectText", 
-                          actionSettingsAutoSelectText->isChecked());
         settings.setValue("/mapeditor/editmode/useFlagGroups",
                           actionSettingsUseFlagGroups->isChecked());
         settings.setValue("/export/useHideExport",
@@ -3668,13 +3666,6 @@ void Main::setupSettingsActions()
             .toBool());
     settingsMenu->addAction(a);
     actionSettingsAutoSelectNewBranch = a;
-
-    a = new QAction(tr("Select existing heading", "Settings action"), this);
-    a->setCheckable(true);
-    a->setChecked(
-        settings.value("/mapeditor/editmode/autoSelectText", true).toBool());
-    settingsMenu->addAction(a);
-    actionSettingsAutoSelectText = a;   // FIXME-2 No longer used?!
 
     a = new QAction(tr("Exclusive flags", "Settings action"), this);
     a->setCheckable(true);
@@ -7069,7 +7060,6 @@ void Main::updateDockWidgetTitles(VymModel *model)
 
 void Main::updateActions()
 {
-    qDebug() << __func__;
     // updateActions is also called when satellites are closed
     actionViewToggleNoteEditor->setChecked(
         noteEditor->parentWidget()->isVisible());
