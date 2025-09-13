@@ -3608,8 +3608,6 @@ void VymModel::copy()
         saveState("", rc, comment);
 
     }
-
-    mainWindow->updateActions();
 }
 
 void VymModel::paste()
@@ -4286,7 +4284,6 @@ BranchItem *VymModel::addMapCenter(bool interactive)
     if (interactive && mapEditor)
         mapEditor->editHeading(newbi);
 
-    updateActions();
     emitShowSelection();
 
     emitUpdateLayout();

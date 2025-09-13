@@ -412,7 +412,7 @@ Main::~Main()
             settings.setValue("/system/printerFileName",
                               printer->outputFileName());
         }
-        settings.setValue("/mapeditor/editmode/autoSelectText",
+        settings.setValue("/mapeditor/editmode/autoSelectText", 
                           actionSettingsAutoSelectText->isChecked());
         settings.setValue("/mapeditor/editmode/useFlagGroups",
                           actionSettingsUseFlagGroups->isChecked());
@@ -3674,7 +3674,7 @@ void Main::setupSettingsActions()
     a->setChecked(
         settings.value("/mapeditor/editmode/autoSelectText", true).toBool());
     settingsMenu->addAction(a);
-    actionSettingsAutoSelectText = a;
+    actionSettingsAutoSelectText = a;   // FIXME-2 No longer used?!
 
     a = new QAction(tr("Exclusive flags", "Settings action"), this);
     a->setCheckable(true);
@@ -6444,7 +6444,6 @@ void Main::formatSelectLinkColor()
     if (m) {
         QColor col = QColorDialog::getColor(m->mapDesign()->defaultLinkColor(), this);
         m->setDefaultLinkColor(col);
-        updateActions();
     }
 }
 
@@ -7068,8 +7067,9 @@ void Main::updateDockWidgetTitles(VymModel *model)
     }
 }
 
-void Main::updateActions()  // FIXME-2 called twice when toggling a flag
+void Main::updateActions()
 {
+    qDebug() << __func__;
     // updateActions is also called when satellites are closed
     actionViewToggleNoteEditor->setChecked(
         noteEditor->parentWidget()->isVisible());
@@ -7699,7 +7699,6 @@ void Main::flagChanged()
     if (me && m && me->state() != MapEditor::EditingHeading) {
         m->toggleFlagByUid(QUuid(sender()->objectName()), nullptr,
                            actionSettingsUseFlagGroups->isChecked());
-        updateActions();
     }
 }
 
