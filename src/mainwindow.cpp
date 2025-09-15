@@ -3599,6 +3599,8 @@ void Main::setupSettingsActions()
     settingsMenu->addAction(a);
     actionSettingsJIRA = a;
 
+    settingsMenu->addSeparator();
+
     a = new QAction(tr("Set path for new maps", "Settings action") + "...",
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsDefaultMapPath()));
@@ -6273,8 +6275,7 @@ void Main::editFindDuplicateURLs() // FIXME-4 feature: use FindResultWidget for
         m->findDuplicateURLs();
 }
 
-void Main::updateQueries(
-    VymModel *) // FIXME-4 disabled for now to avoid selection in FRW
+void Main::updateQueries( VymModel *) // FIXME-4 disabled for now to avoid selection in FRW
 {
     return;
     /*
