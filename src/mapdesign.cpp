@@ -163,6 +163,9 @@ void MapDesign::init()
         innerFramePenColors << QColor(Qt::black);
         innerFrameBrushColors << QColor(Qt::white);
 
+        innerFramePenColors << QColor(Qt::black);
+        innerFrameBrushColors << QColor("#dadada");
+
         outerFramePenColors << QColor(Qt::black);
         outerFrameBrushColors << QColor(Qt::white);
     }
