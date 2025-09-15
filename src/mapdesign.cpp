@@ -22,6 +22,12 @@ template <typename T> T & ConfigList<T>::operator[](int i) {
 }
 
 template <typename T> T ConfigList<T>::tryAt(int i) {
+    if (qlist.isEmpty()) {
+        qWarning() << "Empty ConfigList in MapDesign!";
+        T t;
+        return t;
+    }
+
     if (i >= qlist.count())
         return qlist.last();
     else
