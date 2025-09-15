@@ -18,7 +18,6 @@ class FindWidget : public QWidget {
     QString getFindText();
 
   public slots:
-    void cancelPressed();
     void nextPressed();
     void findTextChanged(const QString &);
     void setFocus();

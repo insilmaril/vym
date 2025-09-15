@@ -30,6 +30,13 @@ VymView::VymView(VymModel *m)
     TreeDelegate *delegate = new TreeDelegate(this);
     treeEditor->setItemDelegate(delegate);
 
+    // Add Escape-keys to editors
+    QAction *a = new QAction("Cancel", treeEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in NoteEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    treeEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    treeEditor->addAction(a);
+
     DockEditor *de;
     de = new DockEditor(tr("Tree Editor", "Title of dockable editor widget"),
                         this, model);

@@ -11,6 +11,7 @@ class TreeItem;
 class VymModel;
 class QTreeView;
 class QPushButton;
+class FindResultTreeView;
 class FindWidget;
 
 class FindResultWidget : public QWidget {
@@ -29,6 +30,7 @@ class FindResultWidget : public QWidget {
     void nextButtonPressed(QString, bool);
     void updateSelection(QItemSelection, QItemSelection);
     void setStatus(FindWidget::Status st);
+    void searchFinished();
 
   signals:
     void hideFindResultWidget();
@@ -40,7 +42,7 @@ class FindResultWidget : public QWidget {
 
   private:
     FindResultModel *resultsModel;
-    QTreeView *view;
+    FindResultTreeView *view;
 };
 
 #endif

@@ -553,6 +553,7 @@ int main(int argc, char *argv[])
 
     // Initialize editors
     noteEditor = new NoteEditor(QObject::tr("Note Editor", "Name of editor shown as window title"));
+
     headingEditor = new HeadingEditor(QObject::tr("Heading Editor", "Name of editor shown as window title"));
     branchPropertyEditor = new BranchPropertyEditor();
 
@@ -560,13 +561,26 @@ int main(int argc, char *argv[])
     // overwritten during loading of maps
     lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
 
-
     // Logfiles (no GUI yet for settings)
     useActionLog = settings.value("/logfile/enabled", false).toBool();
     actionLogPath = settings.value("/logfile/path", QDir::homePath() + "/vym.log").toString();
 
-    // Create MainWindow
+    // Create MainWindow (after creating editors)
     Main m;
+
+    // Add Escape-keys to editors (after creating MainWindow)
+    QAction *a = new QAction("Cancel", noteEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in NoteEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    noteEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    noteEditor->addAction(a);
+
+    a = new QAction("Cancel", headingEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in NoteEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    headingEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    headingEditor->addAction(a);
+
 
     // Check for zip tools
     zipToolAvailable = ZipAgent::checkZipTool();

@@ -16,7 +16,7 @@ extern Main *mainWindow;
 extern bool usingDarkTheme;
 extern QString iconTheme;
 
-FindWidget::FindWidget(QWidget *)
+FindWidget::FindWidget(QWidget *)  // FIXME-2 Rename to FindControlsWidget
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QHBoxLayout *row2Layout = new QHBoxLayout;
@@ -25,7 +25,7 @@ FindWidget::FindWidget(QWidget *)
     label->setText(tr("Find:", "FindWidget"));
 
     // Create LineEdit (here QComboBox)
-    findcombo = new QComboBox;
+    findcombo = new QComboBox;  // FIXME-2 populate with latest queries or use QLineEdit
     findcombo->setMinimumWidth(250);
     findcombo->setEditable(true);
 
@@ -42,7 +42,7 @@ FindWidget::FindWidget(QWidget *)
 
     // QAction needed to only activate shortcut while FindWidget has focus
     QAction *a = new QAction(nextButton->text(), this);
-    a->setShortcut(Qt::Key_Return);
+    a->setShortcut(Qt::Key_Return);     // Find in FindWidget
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(a, SIGNAL(triggered()), this, SLOT(nextPressed()));
     addAction(a);
@@ -65,12 +65,6 @@ FindWidget::FindWidget(QWidget *)
 }
 
 QString FindWidget::getFindText() { return findcombo->currentText(); }
-
-void FindWidget::cancelPressed()
-{
-    hide();
-    emit hideFindWidget(); // Restore focus
-}
 
 void FindWidget::nextPressed()
 {

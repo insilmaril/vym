@@ -236,7 +236,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw = new QDockWidget();
     dw->setWidget(noteEditor);
     dw->setObjectName("NoteEditor");
-    dw->setWindowTitle(noteEditor->getEditorTitle());
     dw->hide();
     noteEditorDW = dw;
     addDockWidget(Qt::LeftDockWidgetArea, dw);
@@ -244,7 +243,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw = new QDockWidget();
     dw->setWidget(headingEditor);
     dw->setObjectName("HeadingEditor");
-    dw->setWindowTitle(headingEditor->getEditorTitle());
     dw->hide();
     headingEditorDW = dw;
     addDockWidget(Qt::BottomDockWidgetArea, dw);
@@ -301,15 +299,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     connect(scriptEditor, SIGNAL(runScript(QString)), this,
             SLOT(runScript(QString)));
-
-    // Switch back  to MapEditor using Esc  or end presentation mode
-    QAction *a = new QAction(this);
-    a->setShortcut(Qt::Key_Escape);
-    a->setShortcutContext(Qt::ApplicationShortcut);
-    a->setCheckable(false);
-    a->setEnabled(true);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(escapePressed()));
 
     // Create TaskEditor after setting up above actions, allow cloning
     taskEditor = new TaskEditor();

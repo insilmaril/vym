@@ -5,7 +5,9 @@
 
 #include "findresultitem.h"
 #include "findresultmodel.h"
+#include "findresulttreeview.h"
 #include "vymmodel.h"
+
 
 FindResultWidget::FindResultWidget(QWidget *)
 {
@@ -13,13 +15,19 @@ FindResultWidget::FindResultWidget(QWidget *)
     resultsModel = new FindResultModel;
 
     // Create TreeView
-    view = new QTreeView(this);
+    view = new FindResultTreeView();
     view->setModel(resultsModel);
 
     // Create FindWidget
     findWidget = new FindWidget(this);
     connect(findWidget, SIGNAL(nextButtonPressed(QString, bool)), this,
             SLOT(nextButtonPressed(QString, bool)));
+
+    QAction *a = new QAction("Cancel", findWidget);
+    a->setShortcut(Qt::Key_Escape);     // Escape in FindWidget
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    connect(a, SIGNAL(triggered()), this, SLOT(cancelPressed()));
+    addAction(a);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
@@ -33,6 +41,8 @@ FindResultWidget::FindResultWidget(QWidget *)
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
             SLOT(updateSelection(QItemSelection, QItemSelection)));
 
+    connect(view, SIGNAL(searchFinished()), this, SLOT(searchFinished()));
+
     connect(resultsModel, SIGNAL(layoutChanged()), view, SLOT(expandAll()));
 }
 
@@ -40,7 +50,6 @@ void FindResultWidget::addItem(TreeItem *ti)
 {
     if (ti) {
         QModelIndex index = view->selectionModel()->currentIndex();
-        // QAbstractItemModel *resultsModel = view->model();
 
         if (!resultsModel->insertRow(index.row() + 1, index.parent()))
             return;
@@ -84,10 +93,14 @@ void FindResultWidget::popup()
     findWidget->setFocus();
 }
 
-void FindResultWidget::cancelPressed() { emit hideFindResultWidget(); }
+void FindResultWidget::cancelPressed()
+{
+    parentWidget()->hide();
+}
 
 void FindResultWidget::nextButtonPressed(QString s, bool searchNotesFlag)
 {
+    view->setFocus();
     emit findPressed(s, searchNotesFlag);
 }
 
@@ -112,4 +125,23 @@ void FindResultWidget::updateSelection(QItemSelection newsel, QItemSelection)
 void FindResultWidget::setStatus(FindWidget::Status st)
 {
     findWidget->setStatus(st);
+}
+
+void FindResultWidget::searchFinished()
+{
+    QModelIndexList sl = view->selectionModel()->selectedIndexes();
+    if (!sl.isEmpty() && sl.first().isValid()) {
+        FindResultItem *fri =
+            static_cast<FindResultItem *>(sl.first().internalPointer());
+        if (fri->getOrgModel() && fri->getOriginalID() > 0) {
+            TreeItem *ti = fri->getOrgModel()->findID(fri->getOriginalID());
+            if (ti) {
+                fri->getOrgModel()->select(ti);
+                int i = fri->getOriginalIndex();
+                if (i >= 0)
+                    emit noteSelected(resultsModel->getSearchString(), i);
+                parentWidget()->hide();
+            }
+        }
+    }
 }
