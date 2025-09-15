@@ -145,26 +145,26 @@ void MapDesign::init()
         QPalette palette = qApp->palette();
         backgroundColorInt = QColor(palette.color(QPalette::Base));
 
+        headingColors << QColor(Qt::white);
+
         innerFramePenColors << QColor(Qt::white);
         innerFrameBrushColors << QColor(85, 85, 127);
 
         innerFramePenColors << QColor(Qt::blue);
         innerFrameBrushColors << QColor(25, 25, 127);
 
-        outerFramePenColors << QColor(Qt::green);
-        outerFramePenColors << QColor(Qt::red);
-        outerFramePenColors << QColor(Qt::green);
-        outerFramePenColors << QColor(Qt::red);
-        outerFrameBrushColors << QColor(85, 85, 127);
-        outerFrameBrushColors << QColor(25, 25, 117);
-        outerFrameBrushColors << QColor(85, 85, 127);
-        outerFrameBrushColors << QColor(25, 25, 117);
+        outerFramePenColors << QColor(Qt::blue);
+        outerFrameBrushColors << QColor(25, 25, 127);
     } else {
         backgroundColorInt = QColor(Qt::white);
+
+        headingColors << QColor(Qt::black);
+
         innerFramePenColors << QColor(Qt::black);
         innerFrameBrushColors << QColor(Qt::white);
-        outerFramePenColors << QColor(Qt::green);
-        outerFrameBrushColors << QColor(85, 85, 127);
+
+        outerFramePenColors << QColor(Qt::black);
+        outerFrameBrushColors << QColor(Qt::white);
     }
 
     // Font
@@ -208,9 +208,6 @@ void MapDesign::init()
     headingColorHints << MapDesign::SpecificColor;         // Specific for MapCenter
     headingColorHints << MapDesign::InheritedColor;        // Use color of parent
     headingColorUpdateWhenRelinking << false;
-
-    headingColors << QColor(Qt::white);
-    headingColors << QColor(Qt::green);
 
     // Frames
     innerFrameTypes << FrameContainer::RoundedRectangle;
