@@ -6252,7 +6252,6 @@ void Main::editOpenFindResultWidget()
         findResultWidget->parentWidget()->hide();
 }
 
-#include "findwidget.h" // FIXME-4 Integrated FRW and FW
 void Main::editFindNext(QString s, bool searchNotesFlag)
 {
     Qt::CaseSensitivity cs = Qt::CaseInsensitive;
@@ -6260,9 +6259,9 @@ void Main::editFindNext(QString s, bool searchNotesFlag)
     if (m) {
         if (m->findAll(findResultWidget->getResultModel(), s, cs,
                        searchNotesFlag))
-            findResultWidget->setStatus(FindWidget::Success);
+            findResultWidget->setStatus(FindControlsWidget::Success);
         else
-            findResultWidget->setStatus(FindWidget::Failed);
+            findResultWidget->setStatus(FindControlsWidget::Failed);
     }
 }
 

@@ -9,20 +9,20 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include "findwidget.h"
+#include "findcontrolswidget.h"
 #include "mainwindow.h"
 
 extern Main *mainWindow;
 extern bool usingDarkTheme;
 extern QString iconTheme;
 
-FindWidget::FindWidget(QWidget *)  // FIXME-2 Rename to FindControlsWidget
+FindControlsWidget::FindControlsWidget(QWidget *)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     QHBoxLayout *row2Layout = new QHBoxLayout;
 
     QLabel *label = new QLabel;
-    label->setText(tr("Find:", "FindWidget"));
+    label->setText(tr("Find:", "FindControlsWidget"));
 
     // Create LineEdit (here QComboBox)
     findcombo = new QComboBox;  // FIXME-2 populate with latest queries or use QLineEdit
@@ -40,9 +40,9 @@ FindWidget::FindWidget(QWidget *)  // FIXME-2 Rename to FindControlsWidget
     // nextButton->setText (tr("Find","Find widget"));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(nextPressed()));
 
-    // QAction needed to only activate shortcut while FindWidget has focus
+    // QAction needed to only activate shortcut while FindControlsWidget has focus
     QAction *a = new QAction(nextButton->text(), this);
-    a->setShortcut(Qt::Key_Return);     // Find in FindWidget
+    a->setShortcut(Qt::Key_Return);     // Find in FindControlsWidget
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(a, SIGNAL(triggered()), this, SLOT(nextPressed()));
     addAction(a);
@@ -64,23 +64,23 @@ FindWidget::FindWidget(QWidget *)  // FIXME-2 Rename to FindControlsWidget
     status = Undefined;
 }
 
-QString FindWidget::getFindText() { return findcombo->currentText(); }
+QString FindControlsWidget::getFindText() { return findcombo->currentText(); }
 
-void FindWidget::nextPressed()
+void FindControlsWidget::nextPressed()
 {
     emit nextButtonPressed(findcombo->currentText(),
                            filterNotesButton->isChecked());
 }
 
-void FindWidget::findTextChanged(const QString &) { setStatus(Undefined); }
+void FindControlsWidget::findTextChanged(const QString &) { setStatus(Undefined); }
 
-void FindWidget::setFocus()
+void FindControlsWidget::setFocus()
 {
     findcombo->lineEdit()->selectAll();
     findcombo->lineEdit()->setFocus();
 }
 
-void FindWidget::setStatus(Status st)
+void FindControlsWidget::setStatus(Status st)
 {
     if (st == status)
         return;

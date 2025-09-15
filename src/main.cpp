@@ -11,7 +11,6 @@
 #include "command.h"
 #include "debuginfo.h"
 #include "findresultwidget.h"
-#include "findwidget.h"
 #include "flagrow-master.h"
 #include "headingeditor.h"
 #include "macros.h"
@@ -59,7 +58,7 @@ BranchPropertyEditor *branchPropertyEditor;
 Main *mainWindow;
 ScriptEditor *scriptEditor;
 ScriptOutput *scriptOutput;
-FindWidget *findWidget;
+FindControlsWidget *findControlsWidget;
 FindResultWidget *findResultWidget;
 TaskEditor *taskEditor;
 

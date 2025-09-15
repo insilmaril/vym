@@ -4,7 +4,7 @@
 #include <QItemSelection>
 #include <QWidget>
 
-#include "findwidget.h"
+#include "findcontrolswidget.h"
 
 class FindResultModel;
 class TreeItem;
@@ -12,7 +12,7 @@ class VymModel;
 class QTreeView;
 class QPushButton;
 class FindResultTreeView;
-class FindWidget;
+class FindControlsWidget;
 
 class FindResultWidget : public QWidget {
     Q_OBJECT
@@ -29,7 +29,7 @@ class FindResultWidget : public QWidget {
     void cancelPressed();
     void nextButtonPressed(QString, bool);
     void updateSelection(QItemSelection, QItemSelection);
-    void setStatus(FindWidget::Status st);
+    void setStatus(FindControlsWidget::Status st);
     void searchFinished();
 
   signals:
@@ -38,7 +38,7 @@ class FindResultWidget : public QWidget {
     void findPressed(QString, bool);
 
   public:
-    FindWidget *findWidget;
+    FindControlsWidget *findControlsWidget;
 
   private:
     FindResultModel *resultsModel;

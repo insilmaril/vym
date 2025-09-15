@@ -18,13 +18,13 @@ FindResultWidget::FindResultWidget(QWidget *)
     view = new FindResultTreeView();
     view->setModel(resultsModel);
 
-    // Create FindWidget
-    findWidget = new FindWidget(this);
-    connect(findWidget, SIGNAL(nextButtonPressed(QString, bool)), this,
+    // Create FindControlsWidget
+    findControlsWidget = new FindControlsWidget(this);
+    connect(findControlsWidget, SIGNAL(nextButtonPressed(QString, bool)), this,
             SLOT(nextButtonPressed(QString, bool)));
 
-    QAction *a = new QAction("Cancel", findWidget);
-    a->setShortcut(Qt::Key_Escape);     // Escape in FindWidget
+    QAction *a = new QAction("Cancel", findControlsWidget);
+    a->setShortcut(Qt::Key_Escape);     // Escape in findControlsWidget
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(a, SIGNAL(triggered()), this, SLOT(cancelPressed()));
     addAction(a);
@@ -32,7 +32,7 @@ FindResultWidget::FindResultWidget(QWidget *)
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     mainLayout->addWidget(view);
-    mainLayout->addWidget(findWidget);
+    mainLayout->addWidget(findControlsWidget);
 
     setLayout(mainLayout);
 
@@ -82,7 +82,7 @@ void FindResultWidget::addItem(const QString &s)
     }
 }
 
-QString FindResultWidget::getFindText() { return findWidget->getFindText(); }
+QString FindResultWidget::getFindText() { return findControlsWidget->getFindText(); }
 
 FindResultModel *FindResultWidget::getResultModel() { return resultsModel; }
 
@@ -90,7 +90,7 @@ void FindResultWidget::popup()
 {
     show();
     parentWidget()->show();
-    findWidget->setFocus();
+    findControlsWidget->setFocus();
 }
 
 void FindResultWidget::cancelPressed()
@@ -122,9 +122,9 @@ void FindResultWidget::updateSelection(QItemSelection newsel, QItemSelection)
     }
 }
 
-void FindResultWidget::setStatus(FindWidget::Status st)
+void FindResultWidget::setStatus(FindControlsWidget::Status st)
 {
-    findWidget->setStatus(st);
+    findControlsWidget->setStatus(st);
 }
 
 void FindResultWidget::searchFinished()

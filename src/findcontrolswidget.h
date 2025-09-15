@@ -1,5 +1,5 @@
-#ifndef FINDWIDGET_H
-#define FINDWIDGET_H
+#ifndef FindControlsWidget_H
+#define FindControlsWidget_H
 
 #include <QWidget>
 
@@ -8,13 +8,13 @@ class QGroupBox;
 class QComboBox;
 class QPushButton;
 
-class FindWidget : public QWidget {
+class FindControlsWidget : public QWidget {
     Q_OBJECT
 
   public:
     enum Status { Undefined, Success, Failed };
 
-    FindWidget(QWidget *parent = nullptr);
+    FindControlsWidget(QWidget *parent = nullptr);
     QString getFindText();
 
   public slots:
@@ -27,7 +27,6 @@ class FindWidget : public QWidget {
     Status status;
 
   signals:
-    void hideFindWidget();
     void nextButtonPressed(QString, bool);
 
   private:
