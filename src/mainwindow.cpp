@@ -330,7 +330,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     progressDialog.setCancelButton(nullptr);
 
     // Load window settings
-    restoreState(settings.value("/mainwindow/state", 0).toByteArray());
+    restoreState(settings.value("/mainwindow/state").toByteArray());
     restoreGeometry(settings.value("/mainwindow/geometry").toByteArray());
 
     updateGeometry();
@@ -369,8 +369,8 @@ Main::~Main()
 
     if (!testmode) {
         settings.setValue("/mainwindow/geometry", saveGeometry());
-        settings.setValue("/mainwindow/state", saveState(0)); // FIXME-3 use saveState and saveGeometry
-                                                              // https://doc.qt.io/qt-6/qmainwindow.html#saveState
+        settings.setValue("/mainwindow/state", saveState()); // FIXME-3 use restoreDockWidget
+                                                             // https://doc.qt.io/qt-6/qmainwindow.html#saveState
 
         settings.setValue("/mainwindow/view/showTreeEditors",
                 actionViewToggleTreeEditor->isChecked());
@@ -1675,7 +1675,7 @@ void Main::setupFileActions()
                     tr("Repeat last export"), this);
     switchboard.addSwitch("fileExportLast", shortcutScope, tag, a);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportLast()));
-    cloneActionMapEditor(a, Qt::CTRL | Qt::Key_E);
+    cloneActionMapEditor(a, Qt::CTRL | Qt::Key_E);  // Export using last format // FIXME-2 needed?
     fileExportMenu->addAction(a);
     actionFileExportLast = a;
     actionListFiles.append(a);
@@ -2515,7 +2515,7 @@ void Main::setupEditActions()
     a = new QAction(tr("Add timestamp", "Edit menu"), this);
     a->setEnabled(false);
     actionListBranches.append(a);
-    a->setShortcut(Qt::Key_T);
+    a->setShortcut(Qt::Key_T);          // Add Timestamp
     a->setShortcutContext(Qt::WindowShortcut);
     addAction(a);
     switchboard.addSwitch("mapAddTimestamp", shortcutScope, tag, a);
@@ -2618,7 +2618,7 @@ void Main::setupSelectActions()
 
     a = new QAction(QPixmap(":/flag-target.svg"),
                     tr("Toggle target...", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_T);
+    a->setShortcut(Qt::SHIFT | Qt::Key_T);  // Toggle Target
     a->setCheckable(true);
     selectMenu->addAction(a);
     switchboard.addSwitch("mapToggleTarget", shortcutScope, tag, a);
@@ -2968,7 +2968,7 @@ void Main::setupViewActions()
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"),
                     tr("Tree editor", "View action"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_T);
+    a->setShortcut(Qt::CTRL | Qt::Key_T);   // Toggle TreeEditor
     a->setCheckable(true);
     windowsMenu->addAction(a);
     switchboard.addSwitch("mapToggleTreeEditor", shortcutScope, tag, a);
@@ -3718,7 +3718,7 @@ void Main::setupTestActions()
     QString tag = "Testing";
     QAction *a;
     a = new QAction("Test function 1", this);
-    a->setShortcut(Qt::ALT | Qt::Key_T);
+    a->setShortcut(Qt::ALT | Qt::Key_T);    // Test action
     testMenu->addAction(a);
     switchboard.addSwitch("mapTest1", shortcutScope, tag, a);
     connect(a, SIGNAL(triggered()), this, SLOT(testFunction1()));
