@@ -2888,6 +2888,13 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTreeEditors()));
     actionViewToggleTreeEditor = a;
 
+    a = new QAction(tr("Switch between Map editor and Tree edito", "View action"), this);
+    a->setCheckable(true);
+    windowsMenu->addAction(a);
+    switchboard.addAction(a, "switchTreeEditorAndMapEditor", Qt::Key_Tab, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(switchEditors()));
+    actionViewSwitchEditors = a;
+
     a = new QAction(QPixmap(":/taskeditor.png"),
                     tr("Task editor", "View action"), this);
     a->setCheckable(true);
@@ -6700,6 +6707,21 @@ void Main::windowToggleNoteEditor()
 void Main::windowToggleTreeEditors()
 {
     windowSetTreeEditorsVisibility(actionViewToggleTreeEditor->isChecked());
+}
+
+void Main::switchEditors()
+{
+    VymView *vv = currentView();
+    if (vv) {
+        MapEditor *me = vv->getMapEditor();
+        if (me) {
+            if (me->hasFocus()) {
+                windowSetTreeEditorsVisibility(true);
+                vv->setFocusTreeEditor();
+            } else
+                vv->setFocusMapEditor();
+        }
+    }
 }
 
 void Main::windowSetTreeEditorsVisibility(bool b)

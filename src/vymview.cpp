@@ -11,6 +11,8 @@
 extern Main *mainWindow;
 extern Settings settings;
 
+extern QString editorFocusInStyle;
+
 VymView::VymView(VymModel *m)
 {
     model = m;
@@ -125,12 +127,6 @@ void VymView::updateColors()
     // TreeEditor, HeadingEditor and MapEditor
 
     QString s;
-    // Selection
-    /*
-    treeEditor->setStyleSheet(
-        "selection-background-color: " + brush.color().name(QColor::HexArgb) + ";" +
-        "background-color: " + mapEditor->getScene()->backgroundBrush().color().name());
-        */
 
     MapDesign *mapDesign = model->mapDesign();
 
@@ -164,7 +160,7 @@ void VymView::updateColors()
     treeEditor->setPalette(palette);
 
     // s += "QTreeView::branch {color: red; background: palette(base);}";
-    treeEditor->setStyleSheet(s);
+    treeEditor->setStyleSheet("QTreeView{" + s + "} QTreeView:focus{" + editorFocusInStyle + "}");
 }
 
 void VymView::changeSelection(const QItemSelection &newsel,
@@ -307,3 +303,4 @@ void VymView::setSlideEditorVisibility(bool b)
 }
 
 void VymView::setFocusMapEditor() { mapEditor->setFocus(); }
+void VymView::setFocusTreeEditor() { treeEditor->setFocus(); }

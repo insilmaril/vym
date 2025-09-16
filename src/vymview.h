@@ -35,6 +35,7 @@ class VymView : public QMainWindow {
     void setTreeEditorVisibility(bool);
     void setSlideEditorVisibility(bool);
     void setFocusMapEditor();
+    void setFocusTreeEditor();
 
   private:
     VymModel *model;

@@ -10,8 +10,6 @@
 #include "vymmodel.h"
 
 extern Main *mainWindow;
-extern QString editorFocusInStyle;
-extern QString editorFocusOutStyle;
 
 extern QMenu *branchContextMenu;
 extern QMenu *canvasContextMenu;
@@ -72,8 +70,6 @@ void TreeEditor::init()
         connect(a, SIGNAL(triggered()), qa, SLOT(trigger()));
         addAction(a);
     }
-
-    // FIXME-3 Set borders when in focus to editorFocusStyle
 }
 
 TreeEditor::~TreeEditor()

@@ -337,6 +337,7 @@ class Main : public QMainWindow {
 
     void windowToggleNoteEditor();
     void windowToggleTreeEditors();
+    void switchEditors();
     void windowSetTreeEditorsVisibility(bool);
     void windowToggleTaskEditor();
     void windowToggleSlideEditors();
@@ -645,6 +646,7 @@ class Main : public QMainWindow {
     QAction *actionViewToggleSlideEditor;
 
   private:  
+    QAction *actionViewSwitchEditors;
     QAction *actionViewToggleScriptEditor;
     QAction *actionViewToggleScriptOutput;
     QAction *actionViewToggleHistoryWindow;
