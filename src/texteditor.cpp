@@ -32,6 +32,7 @@ extern QAction *actionViewToggleNoteEditor;
 
 extern QString editorFocusInStyle;
 extern QString editorFocusOutStyle;
+extern QString toolBarStyle;
 
 extern QString vymName;
 
@@ -321,6 +322,7 @@ void TextEditor::setFocus() { editor->setFocus(); }
 void TextEditor::setupFileActions()
 {
     QToolBar *tb = addToolBar(tr("Note Actions"));
+    tb->setStyleSheet(toolBarStyle);
     tb->setObjectName("noteEditorFileActions");
     QMenu *fileMenu = menuBar()->addMenu(tr("&Note", "Menubar"));
 
@@ -374,6 +376,7 @@ void TextEditor::setupEditActions()
 {
     QString tag = tr("Edit actions", "TextEditor shortcut groups");
     QToolBar *editToolBar = addToolBar(tr("Edit Actions"));
+    editToolBar->setStyleSheet(toolBarStyle);
     editToolBar->setObjectName("noteEditorEditActions");
     editToolBar->hide();
     QMenu *editMenu = menuBar()->addMenu(tr("Edi&t"));
@@ -448,6 +451,7 @@ void TextEditor::setupFormatActions()
     QString tag = tr("Format actions", "TextEditor shortcut groups");
     fontHintsToolBar =
         addToolBar(tr("Font hints", "toolbar in texteditor"));
+    fontHintsToolBar->setStyleSheet(toolBarStyle);
     fontHintsToolBar->setObjectName("noteEditorFontToolBar");
     QMenu *formatMenu = menuBar()->addMenu(tr("F&ormat"));
 
@@ -477,6 +481,7 @@ void TextEditor::setupFormatActions()
     addToolBarBreak();
 
     fontToolBar = addToolBar(tr("Fonts", "toolbar in texteditor"));
+    fontToolBar->setStyleSheet(toolBarStyle);
     fontToolBar->setObjectName("noteEditorFontToolBar");
 
     comboFont = new QComboBox;
@@ -503,6 +508,7 @@ void TextEditor::setupFormatActions()
     addToolBarBreak();
 
     formatToolBar = addToolBar(tr("Format", "toolbar in texteditor"));
+    formatToolBar->setStyleSheet(toolBarStyle);
     formatToolBar->setObjectName("noteEditorFormatToolBar");
 
     //QPixmap pix(16, 16);

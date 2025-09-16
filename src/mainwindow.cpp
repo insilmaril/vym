@@ -147,6 +147,8 @@ extern QDir vymInstallDir;
 
 extern QColor vymBlueColor;
 
+extern QString toolBarStyle;
+
 Main::Main(QWidget *parent) : QMainWindow(parent)
 {
     // qDebug() << "Constr. MainWindow";
@@ -3943,9 +3945,12 @@ void Main::setupMacros()
 
 void Main::setupToolbars()
 {
+    QList <QToolBar*> toolbars;
     // File actions
     fileToolbar =
         addToolBar(tr("File actions toolbar", "Toolbar for file actions"));
+    toolbars << fileToolbar;
+
     fileToolbar->setObjectName("fileTB");
     fileToolbar->addAction(actionFileNew);
     fileToolbar->addAction(actionFileOpen);
@@ -3956,6 +3961,7 @@ void Main::setupToolbars()
     // Undo/Redo and clipboard
     clipboardToolbar = addToolBar(tr("Undo and clipboard toolbar",
                                      "Toolbar for redo/undo and clipboard"));
+    toolbars << clipboardToolbar;
     clipboardToolbar->setObjectName("clipboard toolbar");
     clipboardToolbar->addAction(actionUndo);
     clipboardToolbar->addAction(actionRedo);
@@ -3965,6 +3971,7 @@ void Main::setupToolbars()
 
     // Basic edits
     editActionsToolbar = addToolBar(tr("Edit actions toolbar", "Toolbar name"));
+    toolbars << editActionsToolbar;
     editActionsToolbar->setObjectName("basic edit actions TB");
     editActionsToolbar->addAction(actionAddMapCenter);
     editActionsToolbar->addAction(actionAddBranch);
@@ -3985,6 +3992,7 @@ void Main::setupToolbars()
 
     // Selections
     selectionToolbar = addToolBar(tr("Selection toolbar", "Toolbar name"));
+    toolbars << selectionToolbar;
     selectionToolbar->setObjectName("toolbar for selecting items");
     selectionToolbar->addAction(actionFind);
     selectionToolbar->addAction(actionSelectPrevious);
@@ -3993,12 +4001,14 @@ void Main::setupToolbars()
     // URLs and vymLinks
     referencesToolbar = addToolBar(
         tr("URLs and vymLinks toolbar", "Toolbar for URLs and vymlinks"));
+    toolbars << referencesToolbar;
     referencesToolbar->setObjectName("URLs and vymlinks toolbar");
     referencesToolbar->addAction(actionURLNew);
     referencesToolbar->addAction(actionEditVymLink);
 
     // Format and colors
     colorsToolbar = new QToolBar(tr("Colors toolbar", "Colors toolbar name"));
+    toolbars << colorsToolbar;
     colorsToolbar->setObjectName("colorsTB");
 
     actionGroupQuickColors = new QActionGroup(this);
@@ -4047,6 +4057,7 @@ void Main::setupToolbars()
 
     // View transformations (shrink/grow/rotate)    // FIXME-3 add shortcut to rotate selected subtree/item   Fn-key maybe and macro?
     viewTransformationsToolbar = addToolBar(tr("View toolbar", "View Toolbar name"));
+    toolbars << viewTransformationsToolbar;
     viewTransformationsToolbar->setObjectName("viewTB");
     viewTransformationsToolbar->addAction(actionZoomIn);
     viewTransformationsToolbar->addAction(actionZoomOut);
@@ -4057,12 +4068,14 @@ void Main::setupToolbars()
 
     // Modified special view, e.g. presentation mode or temporary hiding of branches
     limitedViewToolbar = addToolBar(tr("Limited view toolbar", "View Toolbar name"));
+    toolbars << limitedViewToolbar ;
     limitedViewToolbar->setObjectName("limitedViewTB");
     limitedViewToolbar->addAction(actionTogglePresentationMode);
     limitedViewToolbar->addAction(actionToggleHideTmpMode);
 
     // Editors
     editorsToolbar = addToolBar(tr("Editors toolbar", "Editor Toolbar name"));
+    toolbars << editorsToolbar ;
     editorsToolbar->setObjectName("editorsTB");
     editorsToolbar->addAction(actionViewToggleNoteEditor);
     editorsToolbar->addAction(actionViewToggleHeadingEditor);
@@ -4075,6 +4088,7 @@ void Main::setupToolbars()
     // Modifier modes
     modModesToolbar =
         addToolBar(tr("Modifier modes toolbar", "Modifier Toolbar name"));
+    toolbars << modModesToolbar ;
     modModesToolbar->setObjectName("modesTB");
     modModesToolbar->addAction(actionModModePoint);
     modModesToolbar->addAction(actionModModeColor);
@@ -4086,28 +4100,25 @@ void Main::setupToolbars()
     addToolBarBreak();
     standardFlagsToolbar =
         addToolBar(tr("Standard Flags toolbar", "Standard Flag Toolbar"));
+    toolbars << standardFlagsToolbar ;
     standardFlagsToolbar->setObjectName("standardFlagTB");
     standardFlagsMaster->setToolBar(standardFlagsToolbar);
 
     userFlagsToolbar =
         addToolBar(tr("User Flags toolbar", "user Flags Toolbar"));
+    toolbars << userFlagsToolbar ;
     userFlagsToolbar->setObjectName("userFlagsTB");
+
     userFlagsMaster->setToolBar(userFlagsToolbar);
     userFlagsMaster->createConfigureAction();
 
-    // Add all toolbars to View menu
-    toolbarsMenu->addAction(fileToolbar->toggleViewAction());
-    toolbarsMenu->addAction(clipboardToolbar->toggleViewAction());
-    toolbarsMenu->addAction(editActionsToolbar->toggleViewAction());
-    toolbarsMenu->addAction(selectionToolbar->toggleViewAction());
-    toolbarsMenu->addAction(colorsToolbar->toggleViewAction());
-    toolbarsMenu->addAction(viewTransformationsToolbar->toggleViewAction());
-    toolbarsMenu->addAction(limitedViewToolbar->toggleViewAction());
-    toolbarsMenu->addAction(modModesToolbar->toggleViewAction());
-    toolbarsMenu->addAction(referencesToolbar->toggleViewAction());
-    toolbarsMenu->addAction(editorsToolbar->toggleViewAction());
-    toolbarsMenu->addAction(userFlagsToolbar->toggleViewAction());
-    toolbarsMenu->addAction(standardFlagsToolbar->toggleViewAction());
+    foreach (auto tb, toolbars) {
+        // Add View menu
+        toolbarsMenu->addAction(tb->toggleViewAction());
+
+        // Set backgrounds
+        tb->setStyleSheet(toolBarStyle);
+    }
 
     // Initialize toolbarStates for presentation mode
     toolbarStates[fileToolbar] = true;

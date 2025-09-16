@@ -29,7 +29,7 @@ void FindResultTreeView::init()
     connect(a, SIGNAL(triggered()), this, SLOT(startEdit()));
 
 
-    // FIXME-2 Set borders when in focus to editorFocusStyle
+    // FIXME-3 Set borders when in focus to editorFocusStyle
 }
 
 FindResultTreeView::~FindResultTreeView()

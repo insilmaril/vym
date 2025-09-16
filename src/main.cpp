@@ -137,10 +137,12 @@ int warningCount = 0;
 int criticalCount = 0;
 int fatalCount = 0;
 
+// Some styles used in various widgets
 QString editorFocusInStyle =
     QString(" border-color: #3daee9; border-style:outset; border-width:1px; "
             "color:black;");
 QString editorFocusOutStyle = QString("border-width:0px;");
+QString toolBarStyle;
 
 void msgHandler(QtMsgType type, const QMessageLogContext &context,
                 const QString &msg)
@@ -433,9 +435,11 @@ int main(int argc, char *argv[])
             iconTheme = "dark";
         }
     }
+    /*
     qDebug() << "dark settings: " << settingsDarkTheme
         << " systemDark=" << systemSeemsDark
         << " useDark" << usingDarkTheme;
+    */
 
     QPalette palette;
     if (usingDarkTheme) {
@@ -465,26 +469,47 @@ int main(int argc, char *argv[])
         vymBlueColor =QColor::fromString("#00aaff");
     } else {
         if (systemSeemsDark) {
-            // FIXME-2 Fix - Forced bright theme, even if system seems dark
-            palette.setColor(QPalette::Window, QColor(200, 200, 200));
-            palette.setColor(QPalette::WindowText, Qt::black);
-            palette.setColor(QPalette::Base, QColor(255, 255, 255));
-            palette.setColor(QPalette::AlternateBase, QColor(253,53,53));
-            palette.setColor(QPalette::ToolTipBase, QColor(255, 255, 255));
-            palette.setColor(QPalette::ToolTipText, Qt::white);
-            palette.setColor(QPalette::Text, Qt::black);
-            palette.setColor(QPalette::Button, QColor(53,253,53));
-            palette.setColor(QPalette::ButtonText, Qt::black);
-            palette.setColor(QPalette::BrightText, Qt::red);
-            palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
-            palette.setColor(QPalette::HighlightedText, Qt::black);
+            qApp->setStyle(QStyleFactory::create("macOS"));
+            palette.setColor(QPalette::Window, QColor("#ececec"));          // 10
+            palette.setColor(QPalette::WindowText, Qt::black);              //  0
+            palette.setColor(QPalette::Base, QColor("#ffffff"));            //  9
+            palette.setColor(QPalette::AlternateBase, QColor(253,53,53));   // 16
+            palette.setColor(QPalette::ToolTipBase, Qt::white);             // 18
+            palette.setColor(QPalette::ToolTipText, Qt::black);             // 19
+            palette.setColor(QPalette::Text, Qt::black);                    //  6
+            palette.setColor(QPalette::Button, QColor("#ececec"));          //  1
+            palette.setColor(QPalette::ButtonText, Qt::black);              //  8
+            palette.setColor(QPalette::BrightText, Qt::white);              //  7
 
+            /*
+            QPalette::Light	2	Lighter than Button color.
+            QPalette::Midlight	3	Between Button and Light.
+            QPalette::Dark	4	Darker than Button.
+            QPalette::Mid	5	Between Button and Dark.
+            QPalette::Shadow	11	A very dark color. By default, shadow color is Qt::black.
+            */
+            palette.setColor(QPalette::Light, QColor("#ffffff"));           //  2
+            palette.setColor(QPalette::Midlight, QColor("#f5f5f5"));        //  3
+            palette.setColor(QPalette::Dark, QColor("#bfbfbf"));            //  4
+            palette.setColor(QPalette::Mid, QColor("#a9a9a9"));             //  5
+            palette.setColor(QPalette::Shadow, Qt::black);                  // 11
+
+            // Roles of seleced items
+            palette.setColor(QPalette::Highlight, QColor("#a5cdff"));       // 12
+            palette.setColor(QPalette::HighlightedText, Qt::black);         // 13
+
+            // Links
+            /*
+            QPalette::Link	14
+            QPalette::LinkVisited	15
+             */
             qApp->setPalette(palette);
         }
 
         vymBlueColor =QColor::fromString("#0000ff");
     }
 
+    toolBarStyle = "background-color: " + palette.color(QPalette::Button).name() + "; border: None;";
     vymForegroundColor = palette.color(QPalette::WindowText);
     vymBaseColor = palette.color(QPalette::Base);
 
