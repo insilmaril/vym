@@ -177,7 +177,7 @@ class MapEditor : public QGraphicsView {
     TreeItem* getItemInDirection(TreeItem *ti, RadarDirection);
     TreeItem* getItemFromGeometry(TreeItem *ti, RadarDirection);
     TreeItem* getItemFromOrgChart(TreeItem *ti, RadarDirection);
-    TreeItem* getItemFromClassicMap(TreeItem *ti, RadarDirection);
+    TreeItem* getItemFromHirarchy(TreeItem *ti, RadarDirection);
 
     TreeItem* getItemDirectAbove(TreeItem *ti);
     TreeItem* getItemDirectBelow( TreeItem *ti);
@@ -268,7 +268,7 @@ class MapEditor : public QGraphicsView {
   public:
     enum SelectionMode {
         AutoSelection,
-        ClassicSelection,
+        HirarchicalSelection,   // legacy selection type (default)
         OrgChartSelection,
         GeometricSelection
     };

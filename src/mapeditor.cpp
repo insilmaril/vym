@@ -1170,18 +1170,18 @@ bool MapEditor::isContainerCloserInDirection(Container *c1, Container *c2, const
     return false;
 }
 
-TreeItem* MapEditor::getItemInDirection(TreeItem *ti, RadarDirection radarDir)
+TreeItem* MapEditor::getItemInDirection(TreeItem *ti, RadarDirection radarDir)  // FIXME-2 setting to enforce hirarchicyl mode... #161
 {
     SelectionMode selMode = currentSelectionMode(ti);
 
-    //qDebug() << "ME::getItemInDir  selMode=" << selMode;
+    // qDebug() << "ME::getItemInDir  selMode=" << selMode;
     if (selMode == GeometricSelection)
         return getItemFromGeometry(ti, radarDir);
 
     if (selMode == OrgChartSelection)
         return getItemFromOrgChart(ti, radarDir);
 
-    return getItemFromClassicMap(ti, radarDir);
+    return getItemFromHirarchy(ti, radarDir);
 }
 
 TreeItem* MapEditor::getItemFromGeometry(TreeItem *ti, RadarDirection radarDir) // FIXME-3 does not really work
@@ -1257,14 +1257,14 @@ TreeItem* MapEditor::getItemFromOrgChart(TreeItem *ti, RadarDirection radarDir)
     else if (radarDir == DownDirection)
         return bi->getLastSelectedBranch();
     else if (radarDir == LeftDirection)
-        return getItemFromClassicMap(ti, UpDirection);
+        return getItemFromHirarchy(ti, UpDirection);
     else if (radarDir == RightDirection)
-        return getItemFromClassicMap(ti, DownDirection);
+        return getItemFromHirarchy(ti, DownDirection);
 
     return nullptr;
 }
 
-TreeItem* MapEditor::getItemFromClassicMap(TreeItem *selti, RadarDirection radarDir)
+TreeItem* MapEditor::getItemFromHirarchy(TreeItem *selti, RadarDirection radarDir)
 {
     if (!selti)
         return nullptr;
@@ -2813,44 +2813,35 @@ MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
     // Selections should consider logical relations, e.g. siblings and parents
     // but also geometric. Return the most appropriate mode depending on 
     // rotation of view and layout of selected item.
-    if (!selti) {
-        // qDebug() << "ME::selectionMode: Classic";
-        return ClassicSelection;
-    }
 
-    if (rotationInt != 0) {
-        // qDebug() << "ME::selectionMode: Geometric";
-        return GeometricSelection;
-    }
+    SelectionMode sm = HirarchicalSelection;
+    if (selti) {
 
-    Container *c = nullptr;
-    if (selti->hasTypeBranch()) {
-        BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
-        if (bc->branchesContainerLayout() == Container::Horizontal) {
-            // qDebug() << "ME::selectionMode: OrgChart";
-            return OrgChartSelection;
-        }
-        if (bc->isFloating()) {
-            // qDebug() << "ME::selectionMode: Geometric";
-            return GeometricSelection;
-        }
-    } else if (selti->hasTypeImage()) {
-        // qDebug() << "ME::selectionMode: Geometric";
-        return GeometricSelection;
-    }
+        if (rotationInt != 0) {
+            // qDebug() << "ME::selectionMode: rotated";
+            sm = GeometricSelection;
+        } else {
+            if (selti->hasTypeBranch()) {
+                BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
+                if (bc->branchesContainerLayout() == Container::Horizontal) {
+                    // qDebug() << "ME::selectionMode: OrgChart";
+                    sm = OrgChartSelection;
+                } else if (bc->isFloating()) {
+                    // qDebug() << "ME::selectionMode: Geometric";
+                    sm =  GeometricSelection;
+                }
 
-    if (!c) {
-        // qDebug() << "ME::selectionMode: Classic";
-        return ClassicSelection;
-    }
+                // Missing: !Horizontal and !floating
+            } else if (selti->hasTypeImage()) {
+                // qDebug() << "ME::selectionMode: Geometric";
+                sm = GeometricSelection;
+            }
+        } // view not rotated
+    } // selti != nullptr
 
-    if (c->isFloating()) {
-        // qDebug() << "ME::selectionMode: Geometric";
-        return GeometricSelection;
-    }
-
-    qDebug() << "ME::selectionMode: Classic";
-    return ClassicSelection;
+    if (debug)
+        qDebug() << "ME::currentSelectionMode: " << sm;
+    return sm;
 }
 
 void MapEditor::updateData(const QModelIndex &sel)
