@@ -24,7 +24,8 @@ class Switchboard {
   public:
     Switchboard();
     void addScope(QString gIdentifier, QString gName);
-    void addSwitch(const QString &identifier, const QString &scope, const QString &tag, QAction *a);
+    void addAction(QAction *a, const QString &identifier, const QString &scope, const QString &tag);
+    void addAction(QAction *a, const QString &identifier, QKeySequence, const QString &scope, const QString &tag);
     QString getASCII();
     void printASCII();
     void printLaTeX();

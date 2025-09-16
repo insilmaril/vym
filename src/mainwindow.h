@@ -70,7 +70,7 @@ class Main : public QMainWindow {
     void setupAPI();
 
     /*! Helper method to clone actions later in MapEditor */
-    void cloneActionMapEditor(QAction *a, QKeySequence ks);
+    void cloneActionMapEditor(QAction *a);
 
     void setupFileActions();
     void setupEditActions();

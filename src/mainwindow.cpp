@@ -1550,12 +1550,12 @@ void Main::setupAPI()
 
 }
 
-void Main::cloneActionMapEditor(QAction *a, QKeySequence ks)
+void Main::cloneActionMapEditor(QAction *a) // FIXME-2 obsolete by mapEditorActions.append(...)  ?
 {
-    a->setShortcut(ks);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
 }
+
 
 // File Actions
 void Main::setupFileActions()
@@ -1566,31 +1566,31 @@ void Main::setupFileActions()
     QString tag = tr("File actions", "MainWindow shortcut groups");
     a = new QAction(QPixmap(QString(":/document-new-%1.svg").arg(iconTheme)), tr("&New map", "File menu"),
                     this);
-    switchboard.addSwitch("fileMapNew", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileMapNew", Qt::CTRL | Qt::Key_N, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
-    cloneActionMapEditor(a, Qt::CTRL | Qt::Key_N);
+    cloneActionMapEditor(a);
     fileMenu->addAction(a);
     actionFileNew = a;
 
     a = new QAction(QPixmap(":/filenewcopy.svg"),
                     tr("&Copy to new map", "File menu"), this);
-    switchboard.addSwitch("fileMapNewCopy", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileMapNewCopy", Qt::CTRL | Qt::SHIFT | Qt::Key_C, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNewCopy()));
-    cloneActionMapEditor(a, Qt::CTRL | Qt::SHIFT | Qt::Key_C);
+    cloneActionMapEditor(a);
     fileMenu->addAction(a);
     actionFileNewCopy = a;
 
     a = new QAction(QPixmap(QString(":/document-open-%1").arg(iconTheme)), tr("&Open...", "File menu"),
                     this);
-    switchboard.addSwitch("fileMapOpen", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileMapOpen", Qt::CTRL | Qt::Key_L, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileLoad()));
-    cloneActionMapEditor(a, Qt::CTRL | Qt::Key_L);
+    cloneActionMapEditor(a);
     fileMenu->addAction(a);
     actionFileOpen = a;
 
     a = new QAction(tr("&Restore last session", "Edit menu"), this);
     a->setShortcut(Qt::CTRL | Qt::Key_R);
-    switchboard.addSwitch("fileMapRestore", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileMapRestore", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileRestoreSession()));
     fileMenu->addAction(a);
     actionListFiles.append(a);
@@ -1606,8 +1606,8 @@ void Main::setupFileActions()
     actionClearRecent = a;
 
     a = new QAction(QPixmap(QString(":/document-save-%1.svg").arg(iconTheme)), tr("&Save...", "File menu"), this);
-    switchboard.addSwitch("fileMapSave", shortcutScope, tag, a);
-    cloneActionMapEditor(a, Qt::CTRL | Qt::Key_S);
+    switchboard.addAction(a, "fileMapSave", Qt::CTRL | Qt::Key_S, shortcutScope, tag);
+    cloneActionMapEditor(a);
     fileMenu->addAction(a);
     restrictedMapActions.append(a);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
@@ -1673,9 +1673,9 @@ void Main::setupFileActions()
     tag = tr("Exports", "MainWindow shortcut groups");
     a = new QAction(QPixmap(QString(":/document-export-%1.svg").arg(iconTheme)),
                     tr("Repeat last export"), this);
-    switchboard.addSwitch("fileExportLast", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileExportLast", Qt::CTRL | Qt::Key_E, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportLast()));
-    cloneActionMapEditor(a, Qt::CTRL | Qt::Key_E);  // Export using last format // FIXME-2 needed?
+    cloneActionMapEditor(a);
     fileExportMenu->addAction(a);
     actionFileExportLast = a;
     actionListFiles.append(a);
@@ -1773,7 +1773,7 @@ void Main::setupFileActions()
     fileMenu->addSeparator();
 
     a = new QAction(tr("Map properties"), this);
-    switchboard.addSwitch("editMapProperties", shortcutScope, tag, a);
+    switchboard.addAction(a, "editMapProperties", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMapProperties()));
     fileMenu->addAction(a);
     actionListFiles.append(a);
@@ -1783,8 +1783,7 @@ void Main::setupFileActions()
 
     a = new QAction(QPixmap(QString(":/document-print-%1.svg").arg(iconTheme)), tr("&Print") + QString("..."),
                     this);
-    a->setShortcut(Qt::CTRL | Qt::Key_P);
-    switchboard.addSwitch("fileMapPrint", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileMapPrint", Qt::CTRL | Qt::Key_P, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrint()));
     fileMenu->addAction(a);
     unrestrictedMapActions.append(a);
@@ -1792,29 +1791,26 @@ void Main::setupFileActions()
 
     a = new QAction(QPixmap(QString(":/document-close-%1.svg").arg(iconTheme)), tr("&Close Map", "File menu"),
                     this);
-    a->setShortcut(Qt::CTRL | Qt::Key_W);
-    switchboard.addSwitch("fileMapClose", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileMapClose", Qt::CTRL | Qt::Key_W, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileCloseMap()));
     fileMenu->addAction(a);
     actionFileClose = a;
 
     tag = tr("Exit", "MainWindow shortcut groups");
     a = new QAction(QPixmap(QString(":/application-exit-%1.svg").arg(iconTheme)), tr("E&xit", "File menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Q);
-    switchboard.addSwitch("fileExit", shortcutScope, tag, a);
+    switchboard.addAction(a, "fileExit", Qt::CTRL | Qt::Key_Q, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExitVYM()));
     fileMenu->addAction(a);
     actionFileExitVym = a;
 
     tag = tr("Miscellaneous", "MainWindow shortcut groups");
     a = new QAction("Toggle winter mode", this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Asterisk);
     a->setShortcutContext(Qt::WidgetShortcut);
 
     if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
         addAction(a);
         mapEditorActions.append(a);
-        switchboard.addSwitch("mapWinterMode", shortcutScope, tag, a);
+        switchboard.addAction(a, "mapWinterMode", Qt::CTRL | Qt::Key_Asterisk, shortcutScope, tag);
     }
     connect(a, SIGNAL(triggered()), this, SLOT(toggleWinter()));
     actionToggleWinter = a;
@@ -1828,40 +1824,36 @@ void Main::setupEditActions()
     QAction *a;
     QString tag = tr("Undo/Redo", "MainWindow shortcut groups");
     a = new QAction(QPixmap(":/undo.png"), tr("&Undo", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Z);   // Undo
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
     editMenu->addAction(a);
     mapEditorActions.append(a);
     restrictedMapActions.append(a);
-    switchboard.addSwitch("mapUndo", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapUndo",Qt::CTRL | Qt::Key_Z, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editUndo()));
     actionUndo = a;
 
     a = new QAction(QPixmap(":/undo.png"), tr("&Undo", "Edit menu"), this);
-    a->setShortcut(Qt::Key_U);              // Alternative: VIM Undo
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
     editMenu->addAction(a);
     mapEditorActions.append(a);
     restrictedMapActions.append(a);
-    switchboard.addSwitch("mapUndo", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapUndo", Qt::Key_U, shortcutScope, tag); // Vim Alternative
     connect(a, SIGNAL(triggered()), this, SLOT(editUndo()));
     actionUndoVim = a;
 
     a = new QAction(QPixmap(":/redo.png"), tr("&Redo", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Y);   // Redo
     a->setShortcutContext(Qt::WidgetShortcut);
     editMenu->addAction(a);
     restrictedMapActions.append(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapRedo", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapRedo", Qt::CTRL | Qt::Key_Y, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editRedo()));
     actionRedo = a;
 
     a = new QAction(tr("Repeat last action", "Edit menu") + " (experimental)", this);
-    a->setShortcut(Qt::Key_Period);                     // Repeat last action
-    switchboard.addSwitch("repeatLastAction", shortcutScope, tag, a);
+    switchboard.addAction(a, "repeatLastAction", Qt::Key_Period, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editRepeatLastAction()));
     editMenu->addAction(a);
     //actionListBranches.append(a);
@@ -1870,13 +1862,12 @@ void Main::setupEditActions()
     editMenu->addSeparator();
 
     a = new QAction(QPixmap(QString(":/edit-copy-%1.svg").arg(iconTheme)), tr("&Copy", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_C);   // Copy
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
     editMenu->addAction(a);
     unrestrictedMapActions.append(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapCopy", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCopy", Qt::CTRL | Qt::Key_C, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCopy()));
     actionCopy = a;
 
@@ -1887,20 +1878,19 @@ void Main::setupEditActions()
     editMenu->addAction(a);
     unrestrictedMapActions.append(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapCopyVim", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCopyVim", Qt::Key_Y, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCopy()));
     actionCopyVim = a;
 
     a = new QAction(QPixmap(QString(":/edit-cut-%1.svg").arg(iconTheme)), tr("Cu&t", "Edit menu"), this);
     // Multi key shortcuts https://bugreports.qt.io/browse/QTBUG-39127
-    a->setShortcut(Qt::CTRL | Qt::Key_X);
     a->setEnabled(false);
     a->setShortcutContext(Qt::WidgetShortcut);
     editMenu->addAction(a);
     restrictedMapActions.append(a);
     mapEditorActions.append(a);
     restrictedMapActions.append(a);
-    switchboard.addSwitch("mapCut", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCut", Qt::CTRL | Qt::Key_X, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCut()));
     addAction(a);
     actionCut = a;
@@ -1908,36 +1898,33 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(QString(":/edit-paste-%1.svg").arg(iconTheme)), tr("&Paste", "Edit menu"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(editPaste()));
-    a->setShortcut(Qt::CTRL | Qt::Key_V);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
     editMenu->addAction(a);
     restrictedMapActions.append(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapPaste", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapPaste", Qt::CTRL | Qt::Key_V, shortcutScope, tag);
     actionPaste = a;
 
     a = new QAction(QPixmap(QString(":/edit-paste-%1.svg").arg(iconTheme)), tr("&Paste", "Edit menu"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(editPaste()));
-    a->setShortcut(Qt::Key_P);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
     editMenu->addAction(a);
     restrictedMapActions.append(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapPasteVim", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapPasteVim", Qt::Key_P, shortcutScope, tag);
     actionPasteVim = a;
 
     // Shortcut to delete selection
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
+    a->setShortcutContext(Qt::WindowShortcut);  // FIXME-2 contexts really required? window is default anyway...   
 #if defined(Q_OS_MACOS)
-    a->setShortcut(Qt::Key_Backspace);
+    switchboard.addAction(a, "mapDelete", Qt::Key_Backspace, shortcutScope, tag);
 #else
-    a->setShortcut(Qt::Key_Delete);
+    switchboard.addAction(a, "mapDelete", Qt::Key_Delete, shortcutScope, tag);
 #endif
-    a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapDelete", shortcutScope, tag, a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
     editMenu->addAction(a);
@@ -1945,9 +1932,8 @@ void Main::setupEditActions()
     actionDelete = a;
 
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
-    a->setShortcut(Qt::Key_D);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapDeleteVim", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapDeleteVim", Qt::Key_D, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
     editMenu->addAction(a);
@@ -1958,9 +1944,8 @@ void Main::setupEditActions()
     // Shortcut to add mapcenter
     a = new QAction(QPixmap(":/newmapcenter.png"),
                     tr("Add mapcenter", "Canvas context menu"), this);
-    a->setShortcut(Qt::Key_C);                  // Add MapCenter
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapAddCenter", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapAddCenter", Qt::Key_C, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddMapCenter()));
     editMenu->addAction(a);
     actionListFiles.append(a);
@@ -1969,17 +1954,16 @@ void Main::setupEditActions()
     // Shortcut to add branch
     a = new QAction(QPixmap(":/newbranch.png"),
                     tr("Add branch as child", "Edit menu"), this);
-    switchboard.addSwitch("mapeditAddBranch", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapeditAddBranch", Qt::Key_A, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranch()));
-    cloneActionMapEditor(a, Qt::Key_A);
+    cloneActionMapEditor(a);
     taskEditorActions.append(a);
     actionListBranches.append(a);
     actionAddBranch = a;
 
     // Add branch by inserting it at selection
     a = new QAction(tr("Add branch (insert)", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::CTRL | Qt::Key_A);
-    switchboard.addSwitch("mapEditAddBranchBefore", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditAddBranchBefore", Qt::SHIFT | Qt::CTRL | Qt::Key_A, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBefore()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -1987,9 +1971,8 @@ void Main::setupEditActions()
 
     // Add branch above
     a = new QAction(tr("Add branch above", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_A);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapEditAddBranchAbove", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditAddBranchAbove", Qt::SHIFT | Qt::Key_A, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchAbove()));
     a->setEnabled(false);
@@ -1998,27 +1981,24 @@ void Main::setupEditActions()
     actionAddBranchAbove = a;
 
     a = new QAction(tr("Add branch above", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_Insert);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapEditAddBranchAboveAlt", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditAddBranchAboveAlt", Qt::SHIFT | Qt::Key_Insert, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchAbove()));
     actionListBranches.append(a);
 
     // Add branch below
     a = new QAction(tr("Add branch below", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Insert);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapEditAddBranchBelow", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditAddBranchBelow", Qt::CTRL | Qt::Key_Insert, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBelow()));
     a->setEnabled(false);
     actionListBranches.append(a);
 
     a = new QAction(tr("Add branch below", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_A);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapEditAddBranchBelowAlt", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditAddBranchBelowAlt", Qt::CTRL | Qt::Key_A, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBelow()));
     actionListBranches.append(a);
@@ -2028,7 +2008,6 @@ void Main::setupEditActions()
     tag = tr("Move", "MainWindow shortcut groups");
     a = new QAction(QPixmap(":/up.png"), tr("Move branch up", "Edit menu"),
                     this);
-    a->setShortcut(Qt::Key_PageUp);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
@@ -2036,13 +2015,12 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionListImages.append(a);
     editMenu->addAction(a);
-    switchboard.addSwitch("mapEditMoveBranchUp", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditMoveBranchUp", Qt::Key_PageUp, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveUp()));
     actionMoveUp = a;
 
     a = new QAction(QPixmap(":/down.png"), tr("Move branch down", "Edit menu"),
                     this);
-    a->setShortcut(Qt::Key_PageDown);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
@@ -2050,48 +2028,45 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionListImages.append(a);
     editMenu->addAction(a);
-    switchboard.addSwitch("mapEditMoveBranchDown", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditMoveBranchDown", Qt::Key_PageDown, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDown()));
     actionMoveDown = a;
 
     a = new QAction(QPixmap(":up-diagonal-right.png"), tr("Move branch diagonally up", "Edit menu"),
                     this);
-#if defined(Q_OS_MACOS)
-    a->setShortcut(Qt::SHIFT | Qt::Key_PageUp);
-#else
-    a->setShortcut(Qt::CTRL | Qt::Key_PageUp);
-#endif
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
     actionListBranches.append(a);
     editMenu->addAction(a);
-    switchboard.addSwitch("mapEditMoveBranchUpDiagonally", shortcutScope, tag, a);
+#if defined(Q_OS_MACOS)
+    switchboard.addAction(a, "mapEditMoveBranchUpDiagonally", Qt::SHIFT | Qt::Key_PageUp, shortcutScope, tag);
+#else
+    switchboard.addAction(a, "mapEditMoveBranchUpDiagonally", Qt::CTRL | Qt::Key_PageUp, shortcutScope, tag);
+#endif
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveUpDiagonally()));
     actionMoveUpDiagonally = a;
 
     a = new QAction(QPixmap(":down-diagonal-left.png"), tr("Move branch diagonally down", "Edit menu"),
                     this);
-#if defined(Q_OS_MACOS)
-    a->setShortcut(Qt::SHIFT | Qt::Key_PageDown);
-#else
-    a->setShortcut(Qt::CTRL | Qt::Key_PageDown);
-#endif 
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     taskEditorActions.append(a);
     restrictedMapActions.append(a);
     actionListBranches.append(a);
     editMenu->addAction(a);
-    switchboard.addSwitch("mapEditMoveBranchDownDiagonally", shortcutScope, tag, a);
+#if defined(Q_OS_MACOS)
+    switchboard.addAction(a, "mapEditMoveBranchDownDiagonally", Qt::SHIFT | Qt::Key_PageDown, shortcutScope, tag);
+#else
+    switchboard.addAction(a, "mapEditMoveBranchDownDiagonally", Qt::CTRL | Qt::Key_PageDown, shortcutScope, tag);
+#endif 
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveDownDiagonally()));
     actionMoveDownDiagonally = a;
 
     a = new QAction(QPixmap(), tr("&Detach", "Context menu"), this);
     a->setStatusTip(tr("Detach branch and use as mapcenter", "Context menu"));
-    a->setShortcut(Qt::Key_D | Qt::SHIFT);
-    switchboard.addSwitch("mapDetachBranch", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapDetachBranch", Qt::Key_D | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editDetach()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2100,8 +2075,7 @@ void Main::setupEditActions()
     QString sortEditTag = tr("Sort and edit", "MainWindow shortcut groups");
     a = new QAction(QPixmap(QString(":/view-sort-ascending-name-%1.svg").arg(iconTheme)), tr("Sort children", "Edit menu"), this);
     a->setEnabled(true);
-    a->setShortcut(Qt::Key_O);                  // Order by...
-    switchboard.addSwitch("mapSortBranches", shortcutScope, sortEditTag, a);
+    switchboard.addAction(a, "mapSortBranches", Qt::Key_O, shortcutScope, sortEditTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editSortChildren()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2109,8 +2083,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(QString(":/view-sort-descending-name-%1.svg").arg(iconTheme)), tr("Sort children backwards", "Edit menu"), this);
     a->setEnabled(true);
-    a->setShortcut(Qt::SHIFT | Qt::Key_O);
-    switchboard.addSwitch("mapSortBranchesReverse", shortcutScope, sortEditTag, a);
+    switchboard.addAction(a, "mapSortBranchesReverse", Qt::SHIFT | Qt::Key_O, shortcutScope, sortEditTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editSortBackChildren()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2118,8 +2091,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":/flag-scrolled-right.png"),
                     tr("Scroll branch", "Edit menu"), this);
-    a->setShortcut(Qt::Key_S);
-    switchboard.addSwitch("mapToggleScroll", shortcutScope, sortEditTag, a);
+    switchboard.addAction(a, "mapToggleScroll", Qt::Key_S, shortcutScope, sortEditTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editToggleScroll()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2135,8 +2107,7 @@ void Main::setupEditActions()
     actionListBranches.append(a);
 
     a = new QAction(tr("Grow selection", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Plus);
-    switchboard.addSwitch("mapGrowSelection", shortcutScope, sortEditTag, a);
+    switchboard.addAction(a, "mapGrowSelection", Qt::CTRL | Qt::Key_Plus, shortcutScope, sortEditTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editGrowSelectionSize()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2144,8 +2115,7 @@ void Main::setupEditActions()
     actionGrowSelectionSize = a;
 
     a = new QAction(tr("Shrink selection", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_Minus);
-    switchboard.addSwitch("mapShrinkSelection", shortcutScope, sortEditTag, a);
+    switchboard.addAction(a, "mapShrinkSelection", Qt::CTRL | Qt::Key_Minus, shortcutScope, sortEditTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editShrinkSelectionSize()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2153,8 +2123,7 @@ void Main::setupEditActions()
     actionShrinkSelectionSize = a;
 
     a = new QAction(tr("Reset selection size", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_0);
-    switchboard.addSwitch("mapResetSelectionSize", shortcutScope, sortEditTag, a);
+    switchboard.addAction(a, "mapResetSelectionSize", Qt::CTRL | Qt::Key_0, shortcutScope, sortEditTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editResetSelectionSize()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2166,22 +2135,21 @@ void Main::setupEditActions()
     tag = tr("URLs", "Shortcuts in references context menu");
     a = new QAction(QPixmap(":/flag-url.svg"), tr("Open URL", "Edit menu"),
                     this);
-    //a->setShortcut(Qt::CTRL | Qt::Key_U);
-    switchboard.addSwitch("mapOpenUrl", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapOpenUrl", shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(openUrl()));
     actionListBranches.append(a);
     actionOpenUrl = a;
 
     a = new QAction(tr("Open all visible URLs in subtree", "Edit menu"), this);
-    switchboard.addSwitch("mapOpenUrlsSubTree", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapOpenUrlsSubTree", shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVisUrls()));
     actionListBranches.append(a);
     actionOpenMultipleVisUrls = a;
 
     a = new QAction(tr("Open all URLs in subtree", "Edit menu"), this);
-    switchboard.addSwitch("mapOpenMultipleUrls", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapOpenMultipleUrls", shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleUrls()));
     actionListBranches.append(a);
@@ -2189,7 +2157,7 @@ void Main::setupEditActions()
 
     a = new QAction(tr("Open all URLs in subtree in private mode", "Edit menu"), this);
     if (settings.value("/mainwindow/showTestMenu", false).toBool()) {
-        switchboard.addSwitch("mapOpenMultipleUrls", shortcutScope, tag, a);
+        switchboard.addAction(a, "mapOpenMultipleUrls", shortcutScope, tag);
         addAction(a);
         connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleUrlsPrivate()));
         actionListBranches.append(a);
@@ -2197,9 +2165,8 @@ void Main::setupEditActions()
     actionOpenMultipleUrlsPrivate = a;
 
     a = new QAction(QPixmap(), tr("Extract URLs from note", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_N);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapUrlsFromNote", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapUrlsFromNote", Qt::SHIFT | Qt::Key_N, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editNote2URLs()));
     actionListBranches.append(a);
@@ -2207,28 +2174,24 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":/flag-urlnew.svg"),
                     tr("Edit URL...", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_U);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapEditURL", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditURL", Qt::SHIFT | Qt::Key_U, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editURL()));
     actionListBranches.append(a);
     actionURLNew = a;
 
     a = new QAction(QPixmap(), tr("Edit local URL...", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_U);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapEditLocalURL", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditLocalURL", Qt::CTRL | Qt::Key_U, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editLocalURL()));
     actionListBranches.append(a);
     actionLocalURL = a;
 
     a = new QAction(tr("Use heading for URL", "Edit menu"), this);
-    //a->setShortcut(Qt::ALT | Qt::Key_U);
-    a->setShortcutContext(Qt::ApplicationShortcut);
     a->setEnabled(false);
-    switchboard.addSwitch("mapHeading2URL", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapHeading2URL", shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editHeading2URL()));
     actionListBranches.append(a);
@@ -2239,9 +2202,8 @@ void Main::setupEditActions()
             QPixmap(":/flag-jira.svg"), 
             tr("Get data from Jira for subtree", "Edit menu"),
             this);
-    a->setShortcut(Qt::Key_J | Qt::SHIFT);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapUpdateSubTreeFromJira", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapUpdateSubTreeFromJira", Qt::Key_J | Qt::SHIFT, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
     actionGetJiraDataSubtree = a;
@@ -2250,18 +2212,15 @@ void Main::setupEditActions()
             QPixmap(":/flag-jira.svg"),
             tr("Set Jira query", "Edit menu"),
             this);
-    a->setShortcut(Qt::Key_J | Qt::CTRL);
     a->setShortcutContext(Qt::WindowShortcut);
-    switchboard.addSwitch("mapSetJiraQuery", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapSetJiraQuery", Qt::Key_J | Qt::CTRL, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(setJiraQuery()));
     actionGetJiraDataSubtree = a;
 
     a = new QAction(tr("Get page name and details from Confluence", "Edit menu"),
                     this);
-    //    a->setShortcut ( Qt::Key_J | Qt::CTRL);
-    //    a->setShortcutContext (Qt::WindowShortcut);
-    //    switchboard.addSwitch ("mapUpdateSubTreeFromJira", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapGetConfluencePageDetails", shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getConfluencePageDetails()));
     actionListBranches.append(a);
@@ -2269,9 +2228,7 @@ void Main::setupEditActions()
 
     a = new QAction(tr("Get page name and details from Confluence for child pages", "Edit menu"),
                     this);
-    //    a->setShortcut ( Qt::Key_J | Qt::CTRL);
-    //    a->setShortcutContext (Qt::WindowShortcut);
-    //    switchboard.addSwitch ("mapUpdateSubTreeFromJira", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapGetConfluencePagesDetails", shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getConfluencePageDetailsRecursively()));
     actionListBranches.append(a);
@@ -2280,9 +2237,8 @@ void Main::setupEditActions()
     tag = tr("vymlinks - linking maps", "Shortcuts for vymLinks in MainWindow");
     a = new QAction(QPixmap(":/flag-vymlink.png"),
                     tr("Open linked map", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_V);
     a->setEnabled(false);
-    switchboard.addSwitch("mapOpenVymLink", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapOpenVymLink", Qt::SHIFT | Qt::Key_V, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenVymLink()));
     actionListBranches.append(a);
@@ -2291,7 +2247,7 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(":/flag-vymlink.png"),
                     tr("Open linked map in background tab", "Edit menu"), this);
     a->setEnabled(false);
-    switchboard.addSwitch("mapOpenVymLink", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapOpenVymLink", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenVymLinkBackground()));
     actionListBranches.append(a);
     actionOpenVymLinkBackground = a;
@@ -2299,36 +2255,34 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(), tr("Open all vym links in subtree", "Edit menu"),
                     this);
     a->setEnabled(false);
-    switchboard.addSwitch("mapOpenMultipleVymLinks", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapOpenMultipleVymLinks", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenMultipleVymLinks()));
     actionListBranches.append(a);
     actionOpenMultipleVymLinks = a;
 
     a = new QAction(QPixmap(":/flag-vymlinknew.png"),
                     tr("Edit vym link...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_V);
     a->setShortcutContext(Qt::WindowShortcut);
     a->setEnabled(false);
-    switchboard.addSwitch("mapEditVymLink", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapEditVymLink", Qt::Key_V, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editVymLink()));
     actionListBranches.append(a);
     actionEditVymLink = a;
 
     a = new QAction(tr("Delete vym link", "Edit menu"), this);
     a->setEnabled(false);
-    switchboard.addSwitch("mapDeleteVymLink", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapDeleteVymLink", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteVymLink()));
     actionListBranches.append(a);
     actionDeleteVymLink = a;
 
     a = new QAction(QPixmap(":/flag-hideexport.png"),
                     tr("Hide in exports", "Edit menu"), this);
-    a->setShortcut(Qt::Key_H);
     a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     a->setEnabled(false);
     addAction(a);
-    switchboard.addSwitch("mapToggleHideExport", shortcutScope, sortEditTag, a);
+    switchboard.addAction(a, "mapToggleHideExport", Qt::Key_H, shortcutScope, sortEditTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editToggleHideExport()));
     actionListBranches.append(a);
     actionListImages.append(a);
@@ -2337,23 +2291,21 @@ void Main::setupEditActions()
     tag = tr("Tasks", "Shortcuts for tasks in MainWindow");
     a = new QAction(QPixmap(":/taskeditor.png"), tr("Toggle task", "Edit menu"),
                     this);
-    a->setShortcut(Qt::Key_W | Qt::SHIFT);
     a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     a->setEnabled(false);
     addAction(a);
-    switchboard.addSwitch("mapToggleTask", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleTask", Qt::Key_W | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editToggleTask()));
     actionListBranches.append(a);
     actionToggleTask = a;
 
     a = new QAction(QPixmap(), tr("Cycle task status", "Edit menu"), this);
-    a->setShortcut(Qt::Key_W);
     a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     addAction(a);
-    switchboard.addSwitch("mapCycleTaskStatus", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCycleTaskStatus", Qt::Key_W, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCycleTaskStatus()));
     actionListBranches.append(a);
     actionCycleTaskStatus = a;
@@ -2363,7 +2315,7 @@ void Main::setupEditActions()
     a->setCheckable(false);
     a->setEnabled(false);
     addAction(a);
-    switchboard.addSwitch("mapResetTaskDeltaPrio", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapResetTaskDeltaPrio", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskResetDeltaPrio()));
     actionListBranches.append(a);
     actionTaskResetDeltaPrio = a;
@@ -2374,7 +2326,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(0);
     addAction(a);
-    switchboard.addSwitch("mapResetSleep", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapResetSleep", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep0 = a;
@@ -2382,12 +2334,11 @@ void Main::setupEditActions()
     a = new QAction(QPixmap(),
                     tr("Sleep %1 days", "Task sleep").arg("n") + "...", this);
     a->setShortcutContext(Qt::WindowShortcut);
-    a->setShortcut(Qt::Key_Q | Qt::SHIFT);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(-1);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleepN", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleepN", Qt::Key_Q | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleepN = a;
@@ -2398,7 +2349,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(1);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep1", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep1", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep1 = a;
@@ -2409,7 +2360,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(2);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep2", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep2", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep2 = a;
@@ -2420,7 +2371,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(3);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep3", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep3", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep3 = a;
@@ -2431,7 +2382,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(4);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep4", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep4", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep4 = a;
@@ -2442,7 +2393,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(5);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep5", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep5", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep5 = a;
@@ -2453,7 +2404,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(7);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep7", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep7", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep7 = a;
@@ -2464,7 +2415,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(14);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep14", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep14", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep14 = a;
@@ -2475,7 +2426,7 @@ void Main::setupEditActions()
     a->setEnabled(false);
     a->setData(28);
     addAction(a);
-    switchboard.addSwitch("mapTaskSleep28", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTaskSleep28", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep28 = a;
@@ -2492,19 +2443,17 @@ void Main::setupEditActions()
     // Only remove branch, not its children
     a = new QAction(
         tr("Remove only branch and keep its children ", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_X);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteKeepChildren()));
     a->setEnabled(false);
     addAction(a);
-    switchboard.addSwitch("mapDeleteKeepChildren", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapDeleteKeepChildren", Qt::CTRL | Qt::SHIFT | Qt::Key_X, shortcutScope, tag);
     actionListBranches.append(a);
     actionDeleteKeepChildren = a;
 
     // Only remove children of a branch
     a = new QAction(tr("Remove children", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_X);
     addAction(a);
-    switchboard.addSwitch("mapDeleteChildren", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapDeleteChildren", Qt::SHIFT | Qt::Key_X, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteChildren()));
     a->setEnabled(false);
     addAction(a);
@@ -2515,10 +2464,9 @@ void Main::setupEditActions()
     a = new QAction(tr("Add timestamp", "Edit menu"), this);
     a->setEnabled(false);
     actionListBranches.append(a);
-    a->setShortcut(Qt::Key_T);          // Add Timestamp
     a->setShortcutContext(Qt::WindowShortcut);
     addAction(a);
-    switchboard.addSwitch("mapAddTimestamp", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapAddTimestamp", Qt::Key_T, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddTimestamp()));
     actionListBranches.append(a);
     actionAddTimestamp = a;
@@ -2531,9 +2479,8 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(QString(":/insert-image-%1.svg").arg(iconTheme)), tr("Add image", "Edit and context menus") + "...", this);
     a->setShortcutContext(Qt::WindowShortcut);
-    a->setShortcut(Qt::Key_I | Qt::SHIFT);
     addAction(a);
-    switchboard.addSwitch("mapLoadImage", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapLoadImage", Qt::Key_I | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editLoadImage()));
     actionListBranches.append(a);
     actionLoadImage = a;
@@ -2542,11 +2489,10 @@ void Main::setupEditActions()
         tr("Item property window", "Dialog to edit properties of selected item") +
             QString("..."),
         this);
-    a->setShortcut(Qt::Key_B);          // "P"roperty Editor
     a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     addAction(a);
-    switchboard.addSwitch("mapTogglePropertyEditor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTogglePropertyEditor", Qt::Key_B, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleProperty()));
     actionViewTogglePropertyEditor = a;
 }
@@ -2560,77 +2506,68 @@ void Main::setupSelectActions()
 
     tag = tr("Search functions", "Shortcuts");
     a = new QAction(QPixmap(QString(":/edit-find-%1.svg").arg(iconTheme)), tr("Find...", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_F);
     selectMenu->addAction(a);
-    switchboard.addSwitch("mapFind", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapFind", Qt::CTRL | Qt::Key_F, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenFindResultWidget()));
     actionListFiles.append(a);
     actionFind = a;
 
     a = new QAction(QPixmap(QString(":/edit-find-%1.svg").arg(iconTheme)), tr("Find...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_Slash);          // Alternative: VIM Find
     selectMenu->addAction(a);
-    switchboard.addSwitch("mapFindAlt", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapFindAlt", Qt::Key_Slash, shortcutScope, tag); // Alternative: VIM Find
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenFindResultWidget()));
     actionListFiles.append(a);
     actionFindVim = a;
 
     a = new QAction(tr("Follow reference", "Context menu"), this);
-    a->setShortcut(Qt::Key_F);              // Follow reference
     addAction(a);
     actionListBranches.append(a);
     selectMenu->addAction(a);
-    switchboard.addSwitch("mapFollowXLink", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapFollowXLink", Qt::Key_F, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(popupFollowReference()));
     actionFollowReference = a;
 
     a = new QAction("Select first branch in siblings", this);
-    a->setShortcut(Qt::Key_Home);           // Select first in siblings
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
-    switchboard.addSwitch("Select first branch in siblings", shortcutScope, tag, a);
+    switchboard.addAction(a, "Select first branch in siblings", Qt::Key_Home, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectFirstSibling()));
 
     a = new QAction("Select first branch in siblings", this);
-    a->setShortcut(Qt::Key_0);              // Alternative: VIM Select first
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
-    switchboard.addSwitch("Select first branch in siblings", shortcutScope, tag, a);
+    switchboard.addAction(a, "Select first branch in siblings", Qt::Key_0, shortcutScope, tag);              // Alternative: VIM Select first
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectFirstSibling()));
 
     a = new QAction("Select last branch in siblings", this);
-    a->setShortcut(Qt::Key_End);            // Select last in siblings
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
-    switchboard.addSwitch("Select last branch in siblings", shortcutScope, tag, a);
+    switchboard.addAction(a, "Select last branch in siblings", Qt::Key_End, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectLastSibling()));
 
     a = new QAction("Select last branch in siblings", this);
-    a->setShortcut(Qt::Key_Dollar);         // Alternative: VIM Select last
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
-    switchboard.addSwitch("Select last branch in siblings", shortcutScope, tag, a);
+    switchboard.addAction(a, "Select last branch in siblings", Qt::Key_Dollar, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectLastSibling()));
 
     a = new QAction(QPixmap(":/flag-target.svg"),
                     tr("Toggle target...", "Edit menu"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_T);  // Toggle Target
     a->setCheckable(true);
     selectMenu->addAction(a);
-    switchboard.addSwitch("mapToggleTarget", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleTarget", Qt::SHIFT | Qt::Key_T, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editToggleTarget()));
     actionListBranches.append(a);
     actionToggleTarget = a;
 
     a = new QAction(QPixmap(":/flag-target.svg"),
                     tr("Goto target...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_G);
     selectMenu->addAction(a);
-    switchboard.addSwitch("mapGotoTarget", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapGotoTarget", Qt::Key_G, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editGoToTarget()));
     actionListBranches.append(a);
     actionListImages.append(a);
@@ -2638,54 +2575,49 @@ void Main::setupSelectActions()
 
     a = new QAction(QPixmap(":/flag-target.svg"),
                     tr("Move to target...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_M);              // Move to target
     selectMenu->addAction(a);
-    switchboard.addSwitch("mapMoveToTarget", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapMoveToTarget", Qt::Key_M, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editMoveToTarget()));
     actionListBranches.append(a);
     actionMoveToTarget = a;
 
     a = new QAction(QPixmap(":/flag-vymlink.png"),
                     tr("Goto linked map...", "Edit menu"), this);
-    a->setShortcut(Qt::Key_G | Qt::SHIFT);
     selectMenu->addAction(a);
-    switchboard.addSwitch("gotoLinkedMap", shortcutScope, tag, a);
+    switchboard.addAction(a, "gotoLinkedMap", Qt::Key_G | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editGoToLinkedMap()));
     actionListBranches.append(a);
     actionGoToTargetLinkedMap = a;
 
     a = new QAction(tr("Find duplicate URLs", "Edit menu") + " (test)", this);
-    switchboard.addSwitch("mapFindDuplicates", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapFindDuplicates", shortcutScope, tag);
     if (settings.value("/mainwindow/showTestMenu", false).toBool())
         selectMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editFindDuplicateURLs()));
 
     a = new QAction(QPixmap(QString(":/go-previous-%1.svg").arg(iconTheme)),
                     tr("Select previous", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_O);
     a->setShortcutContext(Qt::WidgetShortcut);
     selectMenu->addAction(a);
     actionListFiles.append(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapSelectPrevious", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapSelectPrevious", Qt::CTRL | Qt::Key_O, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectPrevious()));
     actionSelectPrevious = a;
 
     a = new QAction(QPixmap(QString(":/go-next-%1.svg").arg(iconTheme)), tr("Select next", "Edit menu"),
                     this);
-    a->setShortcut(Qt::CTRL | Qt::Key_I);
     a->setShortcutContext(Qt::WidgetShortcut);
     selectMenu->addAction(a);
     actionListFiles.append(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapSelectNext", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapSelectNext", Qt::CTRL | Qt::Key_I, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectNext()));
     actionSelectNext = a;
 
     a = new QAction(tr("Unselect all", "Edit menu"), this);
-    // a->setShortcut (Qt::CTRL | Qt::Key_I );
     selectMenu->addAction(a);
-    switchboard.addSwitch("mapSelectNothing", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapSelectNothing", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectNothing()));
     actionListFiles.append(a);
     actionSelectNothing = a;
@@ -2703,9 +2635,8 @@ void Main::setupFormatActions()
 
     a = new QAction(QPixmap(":/formatcolorpicker.png"),
                     tr("Pic&k color", "Edit menu"), this);
-    // a->setShortcut (Qt::CTRL | Qt::Key_K );
     formatMenu->addAction(a);
-    switchboard.addSwitch("mapFormatColorPicker", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapFormatColorPicker", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(formatPickColor()));
     a->setEnabled(false);
     actionListBranches.append(a);
@@ -2713,9 +2644,8 @@ void Main::setupFormatActions()
 
     a = new QAction(QPixmap(":/formatcolorbranch.png"),
                     tr("Color &branch", "Edit menu"), this);
-    // a->setShortcut (Qt::CTRL | Qt::Key_B | Qt::SHIFT);   // Color branch
     formatMenu->addAction(a);
-    switchboard.addSwitch("mapFormatColorBranch", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapFormatColorBranch", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(formatColorBranch()));
     a->setEnabled(false);
     actionListBranches.append(a);
@@ -2723,9 +2653,8 @@ void Main::setupFormatActions()
 
     a = new QAction(QPixmap(":/formatcolorsubtree.png"),
                     tr("Color sub&tree", "Edit menu"), this);
-    // a->setShortcut (Qt::CTRL | Qt::Key_B);               // Color subtree
     formatMenu->addAction(a);
-    switchboard.addSwitch("mapFormatColorSubtree", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapFormatColorSubtree", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(formatColorSubtree()));
     a->setEnabled(false);
     actionListBranches.append(a);
@@ -2825,71 +2754,61 @@ void Main::setupViewActions()
     a = new QAction(QPixmap(QString(":/folder-cloud-%1.svg").arg(iconTheme)),
             tr("Toggle mode to temporary hide parts", "View action"),
             this);
-    a->setShortcut(Qt::Key_H | Qt::SHIFT);
     viewMenu->addAction(a);
-    viewMenu->addAction(a);
-    switchboard.addSwitch ("tmpHideMode", shortcutScope, tag, a);
+    switchboard.addAction (a, "tmpHideMode", Qt::Key_H | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHideTmpMode()));
     actionToggleHideTmpMode = a;
 
     a = new QAction(QPixmap(QString(":/zoom-in-%1.svg").arg(iconTheme)), tr("Zoom in", "View action"),
                     this);
-    a->setShortcut(Qt::Key_Plus);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapZoomIn", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapZoomIn", Qt::Key_Plus, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewZoomIn()));
     actionZoomIn = a;
 
     a = new QAction(QPixmap(QString(":/zoom-out-%1.svg").arg(iconTheme)), tr("Zoom out", "View action"), this);
-    a->setShortcut(Qt::Key_Minus);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapZoomOut", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapZoomOut", Qt::Key_Minus, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewZoomOut()));
     actionZoomOut = a;
 
     a = new QAction(QPixmap(QString(":/transform-rotate-ccw-%1.svg").arg(iconTheme)),
                     tr("Rotate counterclockwise", "View action"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_R);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapRotateCounterClockwise", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapRotateCounterClockwise", Qt::SHIFT | Qt::Key_R, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewRotateCounterClockwise()));
     actionRotateCounterClockwise = a;
 
     a = new QAction(QPixmap(QString(":/transform-rotate-cw-%1.svg").arg(iconTheme)),
                     tr("Rotate clockwise", "View action"), this);
-    a->setShortcut(Qt::Key_R);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapRotateClockwise", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapRotateClockwise", Qt::Key_R, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewRotateClockwise()));
     actionRotateClockwise = a;
 
     a = new QAction(QPixmap(QString(":/zoom-original-%1").arg(iconTheme)),
                     tr("reset Zoom", "View action"), this);
-    a->setShortcut(Qt::Key_Comma);
-    switchboard.addSwitch("mapZoomReset", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapZoomReset", Qt::Key_Comma, shortcutScope, tag);
     viewMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(viewZoomReset()));
     actionZoomReset = a;
 
     a = new QAction(QPixmap(QString(":/zoom-fit-best-%1.svg").arg(iconTheme)),
                     tr("Center on selection", "View action"), this);
-    a->setShortcut(Qt::Key_NumberSign);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapCenterOn", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCenterOn", Qt::Key_NumberSign, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenter()));
     actionCenterOn = a;
 
     a = new QAction(tr("Fit view to selection", "View action"), this);
-    a->setShortcut(Qt::Key_Semicolon);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapCenterAndFitView", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCenterAndFitView", Qt::Key_Semicolon, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenterScaled()));
     actionCenterOnScaled = a;
 
     a = new QAction( tr("Rotate view to selection", "View action"), this);
-    a->setShortcut(Qt::Key_NumberSign | Qt::SHIFT);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapCenterAndRotateView", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCenterAndRotateView", Qt::Key_NumberSign | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(viewCenterRotated()));
     actionCenterOnRotated = a;
 
@@ -2904,8 +2823,7 @@ void Main::setupViewActions()
     addAction(a);
 
     a = new QAction(tr("Expand one level", "Edit menu"), this);
-    a->setShortcut(Qt::Key_Greater);
-    switchboard.addSwitch("mapExpandOneLevel", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapExpandOneLevel", Qt::Key_Greater, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editExpandOneLevel()));
     a->setEnabled(false);
     a->setCheckable(false);
@@ -2914,8 +2832,7 @@ void Main::setupViewActions()
     actionExpandOneLevel = a;
 
     a = new QAction("TE: " + tr("Collapse one level", "Edit menu"), this);
-    a->setShortcut(Qt::Key_Less | Qt::CTRL);
-    switchboard.addSwitch("mapCollapseOneLevel", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCollapseOneLevel", Qt::Key_Less | Qt::CTRL, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCollapseOneLevel()));
     viewMenu->addAction(a);
     a->setEnabled(false);
@@ -2925,8 +2842,7 @@ void Main::setupViewActions()
     actionCollapseOneLevel = a;
 
     a = new QAction("TE: " + tr("Collapse unselected levels", "Edit menu"), this);
-    a->setShortcut(Qt::Key_Less);
-    switchboard.addSwitch("mapCollapseUnselectedLevels", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapCollapseUnselectedLevels", Qt::Key_Less, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCollapseUnselected()));
     viewMenu->addAction(a);
     a->setEnabled(false);
@@ -2943,12 +2859,11 @@ void Main::setupViewActions()
     // a=noteEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/flag-note.svg"),
                     tr("Note editor", "View action"), this);
-    a->setShortcut(Qt::Key_N);          // Note editor
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
     windowsMenu->addAction(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapToggleNoteEditor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleNoteEditor", Qt::Key_N, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleNoteEditor()));
     actionViewToggleNoteEditor = a;
 
@@ -2957,32 +2872,29 @@ void Main::setupViewActions()
                     tr("Heading editor", "View action"), this);
     a->setCheckable(true);
     a->setIcon(QPixmap(":/headingeditor.png"));
-    a->setShortcut(Qt::Key_E);      // Heading editor
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     windowsMenu->addAction(a);
-    switchboard.addSwitch("mapToggleHeadingEditor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleHeadingEditor", Qt::Key_E, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHeadingEditor()));
     actionViewToggleHeadingEditor = a;
 
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"),
                     tr("Tree editor", "View action"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_T);   // Toggle TreeEditor
     a->setCheckable(true);
     windowsMenu->addAction(a);
-    switchboard.addSwitch("mapToggleTreeEditor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleTreeEditor", Qt::CTRL | Qt::Key_T, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTreeEditors()));
     actionViewToggleTreeEditor = a;
 
     a = new QAction(QPixmap(":/taskeditor.png"),
                     tr("Task editor", "View action"), this);
     a->setCheckable(true);
-    a->setShortcut(Qt::Key_Q);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     windowsMenu->addAction(a);
-    switchboard.addSwitch("mapToggleTaskEditor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleTaskEditor", Qt::Key_Q, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTaskEditor()));
     actionViewToggleTaskEditor = a;
 
@@ -2990,35 +2902,32 @@ void Main::setupViewActions()
                     tr("Slide editor", "View action"), this);
     a->setCheckable(true);
     windowsMenu->addAction(a);
-    switchboard.addSwitch("mapToggleSlideEditor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleSlideEditor", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSlideEditors()));
     actionViewToggleSlideEditor = a;
 
     a = new QAction(QPixmap(":/scripteditor.png"),
                     tr("Script editor", "View action"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_S);
     a->setCheckable(true);
     windowsMenu->addAction(a);
-    switchboard.addSwitch("mapToggleScriptEditor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptEditor()));
     actionViewToggleScriptEditor = a;
 
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
-    a->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_S);
     a->setCheckable(true);
     windowsMenu->addAction(a);
-    switchboard.addSwitch("mapToggleScriptOutput", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptOutput()));
     actionViewToggleScriptOutput = a;
 
     a = new QAction(QPixmap(":/history.png"),
                     tr("History Window", "View action"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_H);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
     windowsMenu->addAction(a);
     mapEditorActions.append(a);
-    switchboard.addSwitch("mapToggleHistoryWindow", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapToggleHistoryWindow", Qt::CTRL | Qt::Key_H, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHistory()));
     actionViewToggleHistoryWindow = a;
 
@@ -3052,40 +2961,36 @@ void Main::setupViewActions()
             tr("Toggle Presentation mode", "View action") + " " +
             tr("(still experimental)"),
             this);
-    a->setShortcut(Qt::Key_Asterisk | Qt::SHIFT);
     viewMenu->addAction(a);
-    switchboard.addSwitch ("presentationMode", shortcutScope, tag, a);
+    switchboard.addAction (a, "presentationMode", Qt::Key_Asterisk | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(togglePresentationMode()));
     actionTogglePresentationMode = a;
 
     a = new QAction(tr("Next slide", "View action"), this);
     a->setStatusTip(a->text());
-    a->setShortcut(Qt::Key_Space);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapNextSlide", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapNextSlide", Qt::Key_Space, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(nextSlide()));
 
     a = new QAction(tr("Previous slide", "View action"), this); //FIXME-3 no shortcut yet
     a->setStatusTip(a->text());
     //a->setShortcut(Qt::Key_Backspace);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapPreviousSlide", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapPreviousSlide", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(previousSlide()));
 
     // Map navigation
     tag = tr("Navigation between maps", "Mainwindow view shortcut groups");
     a = new QAction(tr("Next Map", "View action"), this);
     a->setStatusTip(a->text());
-    a->setShortcut(Qt::SHIFT | Qt::Key_Right);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapPrevious", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapPrevious", Qt::SHIFT | Qt::Key_Right, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowNextEditor()));
 
     a = new QAction(tr("Previous Map", "View action"), this);
     a->setStatusTip(a->text());
-    a->setShortcut(Qt::SHIFT | Qt::Key_Left);
     viewMenu->addAction(a);
-    switchboard.addSwitch("mapNext", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapNext", Qt::SHIFT | Qt::Key_Left, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowPreviousEditor()));
 
 }
@@ -3099,9 +3004,8 @@ void Main::setupConnectActions()
     QAction *a;
 
     a = new QAction( tr("Get Confluence user data", "Connect action"), this);
-    a->setShortcut(Qt::SHIFT | Qt::Key_C);
     connectMenu->addAction(a);
-    switchboard.addSwitch ("confluenceUser", shortcutScope, tag, a);
+    switchboard.addAction(a, "confluenceUser", Qt::SHIFT | Qt::Key_C, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(getConfluenceUser()));
     actionConnectGetConfluenceUser = a;
 
@@ -3130,9 +3034,8 @@ void Main::setupModeActions()
         QIcon(":/mode-select.svg"),
         tr("Use modifier to select and reorder objects", "Mode modifier"),
         actionGroupModModes);
-    a->setShortcut(Qt::Key_J);
     addAction(a);
-    switchboard.addSwitch("mapModModePoint", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapModModePoint", Qt::Key_J, shortcutScope, tag);
     a->setCheckable(true);
     a->setChecked(true);
     actionListFiles.append(a);
@@ -3143,9 +3046,8 @@ void Main::setupModeActions()
         tr("Use modifier to pick color from another branch",
            "Mode modifier"),
         actionGroupModModes);
-    a->setShortcut(Qt::Key_K);
     addAction(a);
-    switchboard.addSwitch("mapModModeColor", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapModModeColor", Qt::Key_K, shortcutScope, tag);
     a->setCheckable(true);
     actionListFiles.append(a);
     actionModModeColor = a;
@@ -3153,9 +3055,8 @@ void Main::setupModeActions()
     a = new QAction(QPixmap(":/mode-xlink.png"),
                     tr("Use modifier to draw xLinks", "Mode modifier"),
                     actionGroupModModes);
-    a->setShortcut(Qt::Key_L);
     addAction(a);
-    switchboard.addSwitch("mapModModeXLink", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapModModeXLink", Qt::Key_L, shortcutScope, tag);
     a->setCheckable(true);
     actionListFiles.append(a);
     actionModModeXLink = a;
@@ -3164,9 +3065,8 @@ void Main::setupModeActions()
         QPixmap(":/mode-move-object.svg"),
         tr("Use modifier to move branches without linking", "Mode modifier"),
         actionGroupModModes);
-    a->setShortcut(Qt::Key_Odiaeresis);
     addAction(a);
-    switchboard.addSwitch("mapModModeMoveObject", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapModModeMoveObject", Qt::Key_Odiaeresis, shortcutScope, tag);
     a->setCheckable(true);
     actionListFiles.append(a);
     actionModModeMoveObject = a;
@@ -3175,9 +3075,8 @@ void Main::setupModeActions()
         QPixmap(":/mode-move-view.png"),
         tr("Use modifier to move view without selecting", "Mode modifier"),
         actionGroupModModes);
-    a->setShortcut(Qt::Key_Adiaeresis);
     addAction(a);
-    switchboard.addSwitch("mapModModeMoveView", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapModModeMoveView", Qt::Key_Adiaeresis, shortcutScope, tag);
     a->setCheckable(true);
     actionListFiles.append(a);
     actionModModeMoveView = a;
@@ -3720,13 +3619,11 @@ void Main::setupTestActions()
     QString tag = "Testing";
     QAction *a;
     a = new QAction("Test function 1", this);
-    a->setShortcut(Qt::ALT | Qt::Key_T);    // Test action
     testMenu->addAction(a);
-    switchboard.addSwitch("mapTest1", shortcutScope, tag, a);
+    switchboard.addAction(a, "mapTest1", Qt::ALT | Qt::Key_T, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(testFunction1()));
 
     a = new QAction("Test function 2", this);
-    // a->setShortcut (Qt::ALT | Qt::Key_T);
     testMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(testFunction2()));
 
@@ -4125,7 +4022,7 @@ void Main::setupToolbars()
         a->setCheckable(true);
         a->setData(n);
         //formatMenu->addAction(a);
-        // switchboard.addSwitch("mapFormatColor", shortcutScope, tag, a);
+        // switchboard.addAction(a, "mapFormatColor", shortcutScope, tag);
         connect(a, SIGNAL(triggered()), this, SLOT(quickColorPressed()));
         colorsToolbar->addAction(a);
         n++;

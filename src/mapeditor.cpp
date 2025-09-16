@@ -183,12 +183,16 @@ MapEditor::MapEditor(VymModel *vm)
     vPan = QPointF();
     connect(panningTimer, SIGNAL(timeout()), this, SLOT(panView()));
 
-    // Clone actions defined in MainWindow
-    foreach (QAction *qa, mainWindow->mapEditorActions) {
+    // Clone global actions defined in MainWindow   // FIXME-3 Problematic, if shortcuts could change later
+                                                    // Maybe control "duplicate" actions from switchboard
+                                                    // using scopes?
+                                                    // Use scope like "MapEditors" for TreeEditor,
+                                                    // MainWindow and MapEditor?
+    foreach (auto a_org, mainWindow->mapEditorActions) {
         a = new QAction(this);
-        a->setShortcut(qa->shortcut());
-        a->setShortcutContext(qa->shortcutContext());
-        connect(a, SIGNAL(triggered()), qa, SLOT(trigger()));
+        a->setShortcut(a_org->shortcut());
+        a->setShortcutContext(a_org->shortcutContext());
+        connect(a, SIGNAL(triggered()), a_org, SLOT(trigger()));
         addAction(a);
     }
 

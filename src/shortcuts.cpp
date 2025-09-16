@@ -36,26 +36,38 @@ void Switchboard::addScope(QString scopeIdentifier, QString scopeName)
     scopesMap.insert(scopeIdentifier, scopeName);
 }
 
-void Switchboard::addSwitch(const QString &identifier,
+void Switchboard::addAction(QAction *action,
+        const QString &identifier,
         const QString &scope,
-        const QString &tag,
-        QAction *action)
+        const QString &tag)
 {
+    addAction(action, identifier, QKeySequence(), scope, tag);
+}
+
+void Switchboard::addAction(QAction *action,
+        const QString &identifier,
+        QKeySequence ks,
+        const QString &scope,
+        const QString &tag)
+{
+    action->setShortcut(ks);
+    action->setShortcutVisibleInContextMenu(true); // FIXME-3 should obsolete setting in MainWindow::setupContextMenus()
+
     if (!switchesMap.contains(identifier)) {
         if (!action->shortcut().toString().isEmpty()) {
             // Add shortcut to tooltip
             action->setToolTip(action->toolTip() + 
                     QString(" (%1)").arg(action->shortcut().toString()));
-            //action->setShortcutVisibleInContextMenu(true);
         }
         KeySwitch ksw(identifier, scope, tag, action);
         switchesMap.insert(scope, ksw);
     }
     else
         qDebug()
-            << "Warning switchboard::addSwitch warning: Existing idenifier "
+            << "Warning switchboard::addAction warning: Existing idenifier "
             << identifier;
 }
+
 
 QString Switchboard::getASCII()
 {
