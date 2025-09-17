@@ -1633,7 +1633,7 @@ void MapEditor::editHeading(BranchItem *selbi)
     }
 }
 
-void MapEditor::editHeadingCanceled()   // FIXME-2 Undo adding branch, if required, don't change heading
+void MapEditor::editHeadingCanceled()
 {
     hideLineEdit();
     model->saveStateCancelScript();
