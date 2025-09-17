@@ -165,7 +165,15 @@ MapEditor::MapEditor(VymModel *vm)
     connect(a, SIGNAL(triggered()), this, SLOT(cursorRight()));
 
     // Action to embed LineEdit for heading in Scene
-    lineEdit = nullptr;
+    lineEdit = new QLineEdit;
+    lineEdit->setCursor(Qt::IBeamCursor);
+    editHeadingCancelAction = new QAction("editHeadingCancelAction", lineEdit);
+    editHeadingCancelAction->setShortcut(Qt::Key_Escape);
+    editHeadingCancelAction->setShortcutContext(Qt::ApplicationShortcut);
+    lineEdit->addAction(editHeadingCancelAction);
+    proxyWidget = mapScene->addWidget(lineEdit);
+    connect( editHeadingCancelAction, SIGNAL(triggered()), this, SLOT(editHeadingCanceled()));
+
 
     a = new QAction(tr("Edit heading", "MapEditor"), this);
     a->setShortcut(Qt::Key_Return); // Edit heading
@@ -1562,17 +1570,21 @@ void MapEditor::editHeading(BranchItem *selbi)
     if (selbi) {
         VymText heading = selbi->heading();
         if (heading.isRichText() || selbi->headingPlain().contains("\n")) {
+            // RichText heading is edited in its own editor, continue there
             mainWindow->windowShowHeadingEditor();
             ensureSelectionVisibleAnimated();
             return;
         }
         model->setSelectionBlocked(true);
 
-        lineEdit = new QLineEdit;
-        QGraphicsProxyWidget *proxyWidget = mapScene->addWidget(lineEdit);
         // FIXME-3-FT get total rotation XXX for BC in scene and do "proxyWidget->setRotation(XXX);
-        lineEdit->setCursor(Qt::IBeamCursor);
+
+        // Make sure lineEdit is above everything else, including selection box
+        mapScene->removeItem(proxyWidget);
+        mapScene->addItem(proxyWidget);
+
         lineEdit->setCursorPosition(1);
+        lineEdit->show();
         lineEdit->grabKeyboard();
 
 #if defined(Q_OS_WINDOWS)
@@ -1621,28 +1633,39 @@ void MapEditor::editHeading(BranchItem *selbi)
     }
 }
 
+void MapEditor::editHeadingCanceled()   // FIXME-2 Undo adding branch, if required, don't change heading
+{
+    hideLineEdit();
+    model->saveStateCancelScript();
+}
+
 void MapEditor::editHeadingFinished()
 {
     if (editorState != EditingHeading || !lineEdit ) {
         qWarning() << "ME::editHeadingFinished not editing heading!";
     } else {
-        lineEdit->clearFocus();
-        lineEdit->releaseKeyboard();
         QString s = lineEdit->text();
         s.replace(QRegularExpression("\\n"), " "); // Don't paste newline chars
         if (s.length() == 0)
             s = " "; // Don't allow empty lines, which would screw up drawing
         model->setHeadingPlainText(s);
-        delete (lineEdit);
-        lineEdit = nullptr;
-
-        // Maybe reselect previous branch
-        mainWindow->editHeadingFinished(model);
 
         // Autolayout to avoid overlapping branches with longer headings
         if (settings.value("/mainwindow/autoLayout/use", "true") == "true")
             autoLayout();
     }
+
+    hideLineEdit();
+}
+
+void MapEditor::hideLineEdit()
+{
+    lineEdit->clearFocus();
+    lineEdit->releaseKeyboard();
+    lineEdit->hide();
+
+    // Maybe reselect previous branch
+    mainWindow->editHeadingFinished(model);
 
     model->setSelectionBlocked(false);
     setState(Neutral);

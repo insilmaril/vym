@@ -1948,6 +1948,33 @@ void VymModel::saveStateEndScript()
     }
 }
 
+void VymModel::saveStateCancelScript()
+{
+    if (debug)
+        std::cout << "VM::saveStateCancelScript" << endl 
+            << "  buildingScript=" << buildingUndoScript << endl
+            << "      undoScript=" << undoScript.toStdString() << endl
+            << "    repeatAction=" << repeatAction.toStdString() << endl;
+
+    if (buildingUndoScript) {
+        buildingUndoScript = false;
+
+        logDebug("Canceling building saveStateScript: '" + undoScriptComment + "'", __func__);
+
+        // Drop whole Script, if empty
+        if (undoScript.isEmpty() && redoScript.isEmpty()) return;
+
+        // Prepare undo of actions so far
+        saveState(
+                QString("{%1}").arg(undoScript),
+                QString("{%1}").arg(redoScript),
+                undoScriptComment, nullptr);
+
+        // Undo
+        undo();
+    }
+}
+
 QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }
 
 TreeItem *VymModel::findBySelectString(QString s)

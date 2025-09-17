@@ -313,6 +313,7 @@ class VymModel : public TreeModel {
     /*! Put several states into one Script for a single undo step */
     void saveStateBeginScript(const QString &comment);
     void saveStateEndScript();
+    void saveStateCancelScript();
 
   private:
     QString repeatAction;

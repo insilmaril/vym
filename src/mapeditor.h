@@ -196,10 +196,14 @@ class MapEditor : public QGraphicsView {
     void cursorLeft();
     void cursorRight();
     void editHeading(BranchItem *selbi = nullptr);
+    void editHeadingCanceled();
     void editHeadingFinished();
 
   private:
+    void hideLineEdit();
     QLineEdit *lineEdit;
+    QAction *editHeadingCancelAction;
+    QGraphicsProxyWidget *proxyWidget;
 
   private:
     void contextMenuEvent(QContextMenuEvent *e);
