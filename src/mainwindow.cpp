@@ -1595,8 +1595,7 @@ void Main::setupFileActions()
     actionFileOpen = a;
 
     a = new QAction(tr("&Restore last session", "Edit menu"), this);
-    a->setShortcut(Qt::CTRL | Qt::Key_R);
-    switchboard.addAction(a, "fileMapRestore", shortcutScope, tag);
+    switchboard.addAction(a, "fileMapRestore", Qt::CTRL | Qt::Key_R, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(fileRestoreSession()));
     fileMenu->addAction(a);
     actionListFiles.append(a);
@@ -1878,7 +1877,6 @@ void Main::setupEditActions()
     actionCopy = a;
 
     a = new QAction(QPixmap(QString(":/edit-copy-%1.svg").arg(iconTheme)), tr("&Copy", "Edit menu"), this);
-    a->setShortcut(Qt::Key_Y);   // Copy Vim
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
     editMenu->addAction(a);
@@ -2987,7 +2985,6 @@ void Main::setupViewActions()
 
     a = new QAction(tr("Previous slide", "View action"), this); //FIXME-3 no shortcut yet
     a->setStatusTip(a->text());
-    //a->setShortcut(Qt::Key_Backspace);
     viewMenu->addAction(a);
     switchboard.addAction(a, "mapPreviousSlide", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(previousSlide()));
