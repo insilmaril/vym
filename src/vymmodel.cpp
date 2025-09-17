@@ -5459,7 +5459,7 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
 
     foreach (BranchItem *bi, selbis) {
         QString bv = setBranchVar(bi);
-        QString uc = bv + "m.loadBranchReplace(\"UNDO_PATH\", b);"; // FIXME-2 undo does not work. Test case missing
+        QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
         QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
         QString com = QString("Set color of %1 and children to %2").arg(getObjectName(bi), c.name());
         logAction(rc, com, __func__);

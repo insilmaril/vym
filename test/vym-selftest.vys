@@ -36,7 +36,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["layouts"];
+// tests = ["modify_branches"];
 
 
 var verbosity = 0;
@@ -1108,6 +1108,29 @@ function test_modify_branches()
   branch_0Ac = map.findBranchBySelection(branch_0Ac_string);
   expect("After undo of inverse sorting first child of \"Main A\" is \"" + ha + "\"", branch_0Aa.headingText(), ha);
   expect("After undo of inverse sorting last child of \"Main A\" is \"" + hc + "\"", branch_0Ac.headingText(), hc);
+  closeCurrentMap();
+
+  // Coloring
+  map = initMap(testMapDefault);
+
+  b = map.findBranchBySelection(main_A_string);
+  col = b.getHeadingColor();
+  b.colorBranch("#ff0000");
+  expect("colorBranch", b.getHeadingColor(), "#ff0000");
+  map.undo();
+  expect("Undo: colorBranch", b.getHeadingColor(), col);
+
+  b2 = map.findBranchBySelection(branch_0Aa_string);
+  col = b2.getHeadingColor();
+  b.colorSubtree("#00ff00");
+  expect("colorSubtree", b2.getHeadingColor(), "#00ff00");
+
+  map.undo();
+  b = map.findBranchBySelection(main_A_string);
+  b2 = map.findBranchBySelection(branch_0Aa_string);
+  expect("Undo: colorSubtree a) in tree", b2.getHeadingColor(), col);
+  expect("Undo: colorSubtree b) branch", b.getHeadingColor(), col);
+
   closeCurrentMap();
 }
 

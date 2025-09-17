@@ -46,6 +46,7 @@ class BranchWrapper : public QObject {
     int getFramePenWidth(const bool & useInnerFrame);
     QString getFrameType(const bool & useInnerFrame);
     QString getHeading();
+    QString getHeadingColor();
     QString getHeadingXML();
     QString getImagesLayout();
     void getJiraData(bool subtree);

@@ -306,6 +306,13 @@ QString BranchWrapper::getHeading()
     return r;
 }
 
+QString BranchWrapper::getHeadingColor()
+{
+    QString r = branchItemInt->headingColor().name();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 QString BranchWrapper::getHeadingXML()
 {
     QString r = branchItemInt->heading().saveToDir();

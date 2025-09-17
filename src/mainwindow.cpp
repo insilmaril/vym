@@ -1005,6 +1005,10 @@ void Main::setupAPI()
     c->addParameter(Command::BoolPar, false, "Use setting for heading if true, for subtree if false");
     branchCommands.append(c);
 
+    c = new Command("getHeadingColor", Command::BranchSel, Command::StringPar);
+    c->setComment("Get color of heading as text");
+    branchCommands.append(c);
+
     c = new Command("getHeadingXML", Command::BranchSel, Command::StringPar);
     c->setComment("Get heading of branch as XML");
     branchCommands.append(c);
