@@ -5900,7 +5900,7 @@ void Main::editDeleteSelection()
 {
     VymModel *m = currentModel();
     if (m)
-        m->deleteSelection();
+        m->cut();
 }
 
 void Main::editLoadImage()
