@@ -600,7 +600,7 @@ int main(int argc, char *argv[])
     noteEditor->addAction(a);
 
     a = new QAction("Cancel", headingEditor);
-    a->setShortcut(Qt::Key_Escape);     // Escape in NoteEditor
+    a->setShortcut(Qt::Key_Escape);     // Escape in HeadingEditor
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     headingEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
     headingEditor->addAction(a);

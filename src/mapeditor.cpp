@@ -169,10 +169,12 @@ MapEditor::MapEditor(VymModel *vm)
     lineEdit->setCursor(Qt::IBeamCursor);
     editHeadingCancelAction = new QAction("editHeadingCancelAction", lineEdit);
     editHeadingCancelAction->setShortcut(Qt::Key_Escape);
-    editHeadingCancelAction->setShortcutContext(Qt::ApplicationShortcut);
+    //editHeadingCancelAction->setShortcutContext(Qt::ApplicationShortcut);
     lineEdit->addAction(editHeadingCancelAction);
     proxyWidget = mapScene->addWidget(lineEdit);
     connect( editHeadingCancelAction, SIGNAL(triggered()), this, SLOT(editHeadingCanceled()));
+    lineEdit->show();
+    lineEdit->hide();
 
 
     a = new QAction(tr("Edit heading", "MapEditor"), this);
