@@ -1923,7 +1923,6 @@ void Main::setupEditActions()
 
     // Shortcut to delete selection
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);  // FIXME-2 contexts really required? window is default anyway...   
 #if defined(Q_OS_MACOS)
     switchboard.addAction(a, "mapDelete", Qt::Key_Backspace, shortcutScope, tag);
 #else
@@ -1936,7 +1935,6 @@ void Main::setupEditActions()
     actionDelete = a;
 
     a = new QAction(tr("Delete Selection", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapDeleteVim", Qt::Key_D, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
@@ -1948,7 +1946,6 @@ void Main::setupEditActions()
     // Shortcut to add mapcenter
     a = new QAction(QPixmap(":/newmapcenter.png"),
                     tr("Add mapcenter", "Canvas context menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapAddCenter", Qt::Key_C, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddMapCenter()));
     editMenu->addAction(a);
@@ -1975,7 +1972,6 @@ void Main::setupEditActions()
 
     // Add branch above
     a = new QAction(tr("Add branch above", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapEditAddBranchAbove", Qt::SHIFT | Qt::Key_A, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchAbove()));
@@ -1985,7 +1981,6 @@ void Main::setupEditActions()
     actionAddBranchAbove = a;
 
     a = new QAction(tr("Add branch above", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapEditAddBranchAboveAlt", Qt::SHIFT | Qt::Key_Insert, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchAbove()));
@@ -1993,7 +1988,6 @@ void Main::setupEditActions()
 
     // Add branch below
     a = new QAction(tr("Add branch below", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapEditAddBranchBelow", Qt::CTRL | Qt::Key_Insert, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBelow()));
@@ -2001,7 +1995,6 @@ void Main::setupEditActions()
     actionListBranches.append(a);
 
     a = new QAction(tr("Add branch below", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapEditAddBranchBelowAlt", Qt::CTRL | Qt::Key_A, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddBranchBelow()));
@@ -2169,7 +2162,6 @@ void Main::setupEditActions()
     actionOpenMultipleUrlsPrivate = a;
 
     a = new QAction(QPixmap(), tr("Extract URLs from note", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapUrlsFromNote", Qt::SHIFT | Qt::Key_N, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editNote2URLs()));
@@ -2178,7 +2170,6 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":/flag-urlnew.svg"),
                     tr("Edit URL...", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapEditURL", Qt::SHIFT | Qt::Key_U, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editURL()));
@@ -2186,7 +2177,6 @@ void Main::setupEditActions()
     actionURLNew = a;
 
     a = new QAction(QPixmap(), tr("Edit local URL...", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapEditLocalURL", Qt::CTRL | Qt::Key_U, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editLocalURL()));
@@ -2206,7 +2196,6 @@ void Main::setupEditActions()
             QPixmap(":/flag-jira.svg"), 
             tr("Get data from Jira for subtree", "Edit menu"),
             this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapUpdateSubTreeFromJira", Qt::Key_J | Qt::SHIFT, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(getJiraDataSubtree()));
@@ -2216,7 +2205,6 @@ void Main::setupEditActions()
             QPixmap(":/flag-jira.svg"),
             tr("Set Jira query", "Edit menu"),
             this);
-    a->setShortcutContext(Qt::WindowShortcut);
     switchboard.addAction(a, "mapSetJiraQuery", Qt::Key_J | Qt::CTRL, shortcutScope, tag);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(setJiraQuery()));
@@ -2266,7 +2254,6 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":/flag-vymlinknew.png"),
                     tr("Edit vym link...", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setEnabled(false);
     switchboard.addAction(a, "mapEditVymLink", Qt::Key_V, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editVymLink()));
@@ -2282,7 +2269,6 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":/flag-hideexport.png"),
                     tr("Hide in exports", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     a->setEnabled(false);
     addAction(a);
@@ -2295,7 +2281,6 @@ void Main::setupEditActions()
     tag = tr("Tasks", "Shortcuts for tasks in MainWindow");
     a = new QAction(QPixmap(":/taskeditor.png"), tr("Toggle task", "Edit menu"),
                     this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     a->setEnabled(false);
     addAction(a);
@@ -2305,7 +2290,6 @@ void Main::setupEditActions()
     actionToggleTask = a;
 
     a = new QAction(QPixmap(), tr("Cycle task status", "Edit menu"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     addAction(a);
@@ -2315,7 +2299,6 @@ void Main::setupEditActions()
     actionCycleTaskStatus = a;
 
     a = new QAction(QPixmap(), tr("Reset delta priority for visible tasks", "Reset delta"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     addAction(a);
@@ -2325,7 +2308,6 @@ void Main::setupEditActions()
     actionTaskResetDeltaPrio = a;
 
     a = new QAction(QPixmap(), tr("Reset sleep", "Task sleep"), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(0);
@@ -2337,7 +2319,6 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(),
                     tr("Sleep %1 days", "Task sleep").arg("n") + "...", this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(-1);
@@ -2348,7 +2329,6 @@ void Main::setupEditActions()
     actionTaskSleepN = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 day", "Task sleep").arg(1), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(1);
@@ -2359,7 +2339,6 @@ void Main::setupEditActions()
     actionTaskSleep1 = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 days", "Task sleep").arg(2), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(2);
@@ -2370,7 +2349,6 @@ void Main::setupEditActions()
     actionTaskSleep2 = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 days", "Task sleep").arg(3), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(3);
@@ -2381,7 +2359,6 @@ void Main::setupEditActions()
     actionTaskSleep3 = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 days", "Task sleep").arg(4), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(4);
@@ -2392,7 +2369,6 @@ void Main::setupEditActions()
     actionTaskSleep4 = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 days", "Task sleep").arg(5), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(5);
@@ -2403,7 +2379,6 @@ void Main::setupEditActions()
     actionTaskSleep5 = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 days", "Task sleep").arg(7), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(7);
@@ -2414,7 +2389,6 @@ void Main::setupEditActions()
     actionTaskSleep7 = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 weeks", "Task sleep").arg(2), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(14);
@@ -2425,7 +2399,6 @@ void Main::setupEditActions()
     actionTaskSleep14 = a;
 
     a = new QAction(QPixmap(), tr("Sleep %1 weeks", "Task sleep").arg(4), this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(false);
     a->setEnabled(false);
     a->setData(28);
@@ -2468,7 +2441,6 @@ void Main::setupEditActions()
     a = new QAction(tr("Add timestamp", "Edit menu"), this);
     a->setEnabled(false);
     actionListBranches.append(a);
-    a->setShortcutContext(Qt::WindowShortcut);
     addAction(a);
     switchboard.addAction(a, "mapAddTimestamp", Qt::Key_T, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editAddTimestamp()));
@@ -2482,7 +2454,6 @@ void Main::setupEditActions()
     actionMapInfo = a;
 
     a = new QAction(QPixmap(QString(":/insert-image-%1.svg").arg(iconTheme)), tr("Add image", "Edit and context menus") + "...", this);
-    a->setShortcutContext(Qt::WindowShortcut);
     addAction(a);
     switchboard.addAction(a, "mapLoadImage", Qt::Key_I | Qt::SHIFT, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editLoadImage()));
@@ -2493,7 +2464,6 @@ void Main::setupEditActions()
         tr("Item property window", "Dialog to edit properties of selected item") +
             QString("..."),
         this);
-    a->setShortcutContext(Qt::WindowShortcut);
     a->setCheckable(true);
     addAction(a);
     switchboard.addAction(a, "mapTogglePropertyEditor", Qt::Key_B, shortcutScope, tag);
