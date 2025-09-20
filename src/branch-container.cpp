@@ -976,14 +976,14 @@ void BranchContainer::setBranchesContainerAndOrnamentsVertical(bool b)
     branchesContainerAndOrnamentsVerticalInt = b;
 }
 
-QRectF BranchContainer::headingRect()
+QRectF BranchContainer::headingSceneRect()
 {
     // Returns scene coordinates of bounding rectanble
     return headingContainer->mapToScene(headingContainer->rect())
         .boundingRect();
 }
 
-QRectF BranchContainer::ornamentsRect()
+QRectF BranchContainer::ornamentsSceneRect()
 {
     // Returns scene coordinates of bounding rectanble
     return ornamentsContainer->mapToScene(headingContainer->rect())

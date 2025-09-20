@@ -696,7 +696,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         foreach (BranchItem *center, rootItem->getBranches()) {
             foreach (BranchItem *mainBranch, center->getBranches()) {
                 BranchContainer *bc = mainBranch->getBranchContainer();
-                QRectF rb = bc->ornamentsRect();
+                QRectF rb = bc->ornamentsSceneRect();
                 QPointF offset;
                 offset.setX(rb.width() / 2);
                 offset.setY(rb.height() / 2);

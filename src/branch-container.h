@@ -100,8 +100,8 @@ class BranchContainer : public BranchContainerBase, public LinkableContainer {
 
     void setBranchesContainerAndOrnamentsVertical(bool);
 
-    QRectF headingRect();    //! Return rectangle of HeadingContainer in absolute coordinates
-    QRectF ornamentsRect();  //! Return rectangle of ornamentsContainer in absolute coordinates
+    QRectF headingSceneRect();    //! Return rectangle of HeadingContainer in scene coordinates
+    QRectF ornamentsSceneRect();  //! Return rectangle of ornamentsContainer in scene coordinates
 
     void setColumnWidthAutoDesign(const bool &);
     bool columnWidthAutoDesign();

@@ -1579,7 +1579,7 @@ void MapEditor::editHeading(BranchItem *selbi)
         }
         model->setSelectionBlocked(true);
 
-        // FIXME-3-FT get total rotation XXX for BC in scene and do "proxyWidget->setRotation(XXX);
+        // FIXME-3-FT get total rotation a for BC in scene and do "proxyWidget->setRotation(a);
 
         // Make sure lineEdit is above everything else, including selection box
         mapScene->removeItem(proxyWidget);
@@ -1602,11 +1602,11 @@ void MapEditor::editHeading(BranchItem *selbi)
 
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->getOrientation() == BranchContainer::RightOfParent) {
-            tl = bc->headingRect().topLeft();
+            tl = bc->headingSceneRect().topLeft();
             br = tl + QPointF(w, h);
         }
         else {
-            br = bc->headingRect().bottomRight();
+            br = bc->headingSceneRect().bottomRight();
             tl = br - QPointF(w, h);
         }
         // Qt bug when using QProxyWdiget in scaled QGraphicsView
@@ -2236,7 +2236,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
             // When temporary linking e.g. to MapCenter, position on a circle
             // bigger than ornamensContainer
 
-            qreal radius = 100 + targetBranchContainer->ornamentsRect().width();
+            qreal radius = 100 + targetBranchContainer->ornamentsSceneRect().width();
 
             QPointF center_sp = targetBranchContainer->getHeadingContainer()->mapToScene(QPointF(0,0));
             qreal a = getAngle(p_event - center_sp);
