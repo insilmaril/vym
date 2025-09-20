@@ -6,8 +6,10 @@
 #include "findresultitem.h"
 #include "findresultmodel.h"
 #include "findresulttreeview.h"
+#include "mainwindow.h"
 #include "vymmodel.h"
 
+extern Main *mainWindow;
 
 FindResultWidget::FindResultWidget(QWidget *)
 {
@@ -95,7 +97,8 @@ void FindResultWidget::popup()
 
 void FindResultWidget::cancelPressed()
 {
-    parentWidget()->hide();
+    mainWindow->escapePressed();
+    // parentWidget()->hide();
 }
 
 void FindResultWidget::nextButtonPressed(QString s, bool searchNotesFlag)
