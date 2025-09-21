@@ -20,6 +20,7 @@ class FindControlsWidget : public QWidget {
   public slots:
     void nextPressed();
     void findTextChanged(const QString &);
+    void indexChanged(int);
     void setFocus();
     void setStatus(Status st);
 

@@ -25,15 +25,17 @@ FindControlsWidget::FindControlsWidget(QWidget *)
     label->setText(tr("Find:", "FindControlsWidget"));
 
     // Create LineEdit (here QComboBox)
-    findcombo = new QComboBox;  // FIXME-2 populate with latest queries or use QLineEdit
+    findcombo = new QComboBox;
     findcombo->setMinimumWidth(250);
+    findcombo->setMaxCount(10);
     findcombo->setEditable(true);
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     findcombo->setSizePolicy(sizePolicy);
-    connect(findcombo, SIGNAL(highlighted(int)), this, SLOT(nextPressed()));
     connect(findcombo, SIGNAL(editTextChanged(const QString &)), this,
             SLOT(findTextChanged(const QString &)));
+    connect(findcombo, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(indexChanged(int)));
 
     nextButton = new QPushButton;
     nextButton->setIcon(QPixmap(QString(":/edit-find-%1.svg").arg(iconTheme)));
@@ -68,11 +70,19 @@ QString FindControlsWidget::getFindText() { return findcombo->currentText(); }
 
 void FindControlsWidget::nextPressed()
 {
+    if (findcombo->count() < findcombo->maxCount())
+        findcombo->insertItem(0, findcombo->currentText());
     emit nextButtonPressed(findcombo->currentText(),
                            filterNotesButton->isChecked());
 }
 
 void FindControlsWidget::findTextChanged(const QString &) { setStatus(Undefined); }
+
+void FindControlsWidget::indexChanged(int i)
+{
+    emit nextButtonPressed(findcombo->currentText(),
+                           filterNotesButton->isChecked());
+}
 
 void FindControlsWidget::setFocus()
 {
