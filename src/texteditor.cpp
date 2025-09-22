@@ -61,6 +61,14 @@ TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with
     connect(editor, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this,
             SLOT(formatChanged(const QTextCharFormat &)));
 
+
+    QAction *a = new QAction("Close window", this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    //fileMenu->addAction(a);
+    editor->addAction(a);
+
     // Load settings
     init (eName);
     setWindowIcon(QPixmap(":/vym-editor.png"));
@@ -699,9 +707,7 @@ void TextEditor::textLoad()
 void TextEditor::closeEvent(QCloseEvent *ce)
 {
     ce->accept(); // TextEditor can be reopened with show()
-    hide();
-    emit windowClosed();
-    return;
+    closeWindow();
 }
 
 bool TextEditor::eventFilter(QObject *obj, QEvent *ev)
@@ -837,6 +843,13 @@ void TextEditor::clear()
     setState(emptyEditor);
 
     blockChangedSignal = blockChangedOrg;
+}
+
+void TextEditor::closeWindow()
+{
+    parentWidget()->hide();
+    emit windowClosed();
+    return;
 }
 
 void TextEditor::deleteAll()

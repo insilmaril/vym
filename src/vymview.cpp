@@ -44,7 +44,7 @@ VymView::VymView(VymModel *m)
                         this, model);
     de->setWidget(treeEditor);
     de->setAllowedAreas(Qt::AllDockWidgetAreas);
-    de->setVisible(mainWindow->actionViewToggleTreeEditor->isChecked());
+    de->setVisible(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
     addDockWidget(Qt::LeftDockWidgetArea, de);
     treeEditorDE = de;
 

@@ -21,6 +21,9 @@ class TreeEditor : public QTreeView {
     virtual void contextMenuEvent(QContextMenuEvent *e);
     virtual void closeEvent(QCloseEvent *event);
 
+  public slots:
+    void closeWindow();
+
   private slots:
     void cursorUp();
     void cursorDown();

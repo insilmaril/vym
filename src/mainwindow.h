@@ -335,8 +335,7 @@ class Main : public QMainWindow {
     bool settingsConfluence();
     bool settingsJIRA();
 
-    void windowToggleNoteEditor();
-    void windowToggleTreeEditors();
+    void windowShowNoteEditor();
     void switchEditors();
     void windowSetTreeEditorsVisibility(bool);
     void windowToggleTaskEditor();
@@ -347,7 +346,6 @@ class Main : public QMainWindow {
     void windowToggleHistory();
     void windowToggleProperty();
     void windowShowHeadingEditor();
-    void windowToggleHeadingEditor();
     void updateHistory(SimpleSettings &);
     void windowToggleAntiAlias();
     bool isAliased();
@@ -643,7 +641,6 @@ class Main : public QMainWindow {
     QAction *actionViewToggleTaskEditor;
   
   public: // Allow VymView class to check visibility  
-    QAction *actionViewToggleTreeEditor;
     QAction *actionViewToggleSlideEditor;
 
   private:  

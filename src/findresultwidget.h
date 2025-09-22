@@ -27,6 +27,7 @@ class FindResultWidget : public QWidget {
   public slots:
     void popup();
     void cancelPressed();
+    void closeWindow();
     void nextButtonPressed(QString, bool);
     void updateSelection(QItemSelection, QItemSelection);
     void setStatus(FindControlsWidget::Status st);

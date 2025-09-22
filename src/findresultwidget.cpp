@@ -26,9 +26,15 @@ FindResultWidget::FindResultWidget(QWidget *)
             SLOT(nextButtonPressed(QString, bool)));
 
     QAction *a = new QAction("Cancel", findControlsWidget);
-    a->setShortcut(Qt::Key_Escape);     // Escape in findControlsWidget
+    a->setShortcut(Qt::Key_Escape);             // Escape in findControlsWidget
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     connect(a, SIGNAL(triggered()), this, SLOT(cancelPressed()));
+    addAction(a);
+
+    a = new QAction("Close", findControlsWidget);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);       // Close window in findControlsWidget
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
     addAction(a);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -98,7 +104,11 @@ void FindResultWidget::popup()
 void FindResultWidget::cancelPressed()
 {
     mainWindow->escapePressed();
-    // parentWidget()->hide();
+}
+
+void FindResultWidget::closeWindow()
+{
+    parentWidget()->hide();
 }
 
 void FindResultWidget::nextButtonPressed(QString s, bool searchNotesFlag)

@@ -62,6 +62,12 @@ void TreeEditor::init()
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(startEdit()));
 
+    a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+
     // Clone actions defined in MainWindow  // FIXME-3 PageUp/Down not working in TreeEditor
     foreach (QAction *qa, mainWindow->mapEditorActions) {
         a = new QAction(this);
@@ -101,6 +107,12 @@ void TreeEditor::contextMenuEvent(QContextMenuEvent *e) {
 
 void TreeEditor::closeEvent(QCloseEvent *event)
 {
+    closeWindow();
+}
+
+void TreeEditor::closeWindow()
+{
+    // Close *all* TreeEditors in each VymView and update vym settings
     mainWindow->windowSetTreeEditorsVisibility(false);
 }
 

@@ -234,8 +234,6 @@ uint VymWrapper::currentMapID()
     return r;
 }
 
-void VymWrapper::toggleTreeEditor() { mainWindow->windowToggleTreeEditors(); }
-
 void VymWrapper::saveFile(
     const QString &filename,
     const QString &s) // FIXME-3 error handling missing (in vymmodel and here)

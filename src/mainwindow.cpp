@@ -337,7 +337,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     updateGeometry();
 
-    actionViewToggleTreeEditor->setChecked(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
+    windowSetTreeEditorsVisibility(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
     actionViewToggleSlideEditor->setChecked(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
 
     // After startup, schedule looking for updates AFTER
@@ -374,8 +374,6 @@ Main::~Main()
         settings.setValue("/mainwindow/state", saveState()); // FIXME-3 use restoreDockWidget
                                                              // https://doc.qt.io/qt-6/qmainwindow.html#saveState
 
-        settings.setValue("/mainwindow/view/showTreeEditors",
-                actionViewToggleTreeEditor->isChecked());
         settings.setValue("/mainwindow/view/showSlideEditors",
                 actionViewToggleSlideEditor->isChecked());
 
@@ -583,9 +581,6 @@ void Main::setupAPI()
 
     c = new Command("selectQuickColor", Command::AnySel);
     c->addParameter(Command::IntPar, false, "Index of quick color [0..6]");
-    vymCommands.append(c);
-
-    c = new Command("toggleTreeEditor", Command::AnySel);
     vymCommands.append(c);
 
     c = new Command("usesDarkTheme", Command::AnySel, Command::BoolPar);
@@ -2837,8 +2832,8 @@ void Main::setupViewActions()
     a->setCheckable(true);
     windowsMenu->addAction(a);
     mapEditorActions.append(a);
-    switchboard.addAction(a, "mapToggleNoteEditor", Qt::Key_N, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleNoteEditor()));
+    switchboard.addAction(a, "mapShowNoteEditor", Qt::Key_N, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(windowShowNoteEditor()));
     actionViewToggleNoteEditor = a;
 
     // a=headingEditorDW->toggleViewAction();
@@ -2849,20 +2844,13 @@ void Main::setupViewActions()
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     windowsMenu->addAction(a);
-    switchboard.addAction(a, "mapToggleHeadingEditor", Qt::Key_E, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHeadingEditor()));
+    switchboard.addAction(a, "mapShowHeadingEditor", Qt::Key_E, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(windowShowHeadingEditor()));
     actionViewToggleHeadingEditor = a;
 
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"),
-                    tr("Tree editor", "View action"), this);
-    a->setCheckable(true);
-    windowsMenu->addAction(a);
-    switchboard.addAction(a, "mapToggleTreeEditor", Qt::CTRL | Qt::Key_T, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTreeEditors()));
-    actionViewToggleTreeEditor = a;
-
-    a = new QAction(tr("Switch between Map editor and Tree edito", "View action"), this);
+	    tr("Switch between Map editor and Tree editor", "View action"), this);
     a->setCheckable(true);
     windowsMenu->addAction(a);
     switchboard.addAction(a, "switchTreeEditorAndMapEditor", Qt::Key_Tab, shortcutScope, tag);
@@ -4051,7 +4039,7 @@ void Main::setupToolbars()
     editorsToolbar->setObjectName("editorsTB");
     editorsToolbar->addAction(actionViewToggleNoteEditor);
     editorsToolbar->addAction(actionViewToggleHeadingEditor);
-    editorsToolbar->addAction(actionViewToggleTreeEditor);
+    editorsToolbar->addAction(actionViewSwitchEditors);
     editorsToolbar->addAction(actionViewToggleTaskEditor);
     editorsToolbar->addAction(actionViewToggleSlideEditor);
     editorsToolbar->addAction(actionViewToggleScriptEditor);
@@ -6133,12 +6121,7 @@ void Main::editSelectNothing()
 
 void Main::editOpenFindResultWidget()
 {
-    if (!findResultWidget->parentWidget()->isVisible()) {
-        //	findResultWidget->parentWidget()->show();
-        findResultWidget->popup();
-    }
-    else
-        findResultWidget->parentWidget()->hide();
+    findResultWidget->popup();
 }
 
 void Main::editFindNext(QString s, bool searchNotesFlag)
@@ -6677,19 +6660,11 @@ bool Main::settingsJIRA()
         return false;
 }
 
-void Main::windowToggleNoteEditor()
+void Main::windowShowNoteEditor()
 {
-    if (noteEditor->parentWidget()->isVisible())
-        noteEditor->parentWidget()->hide();
-    else {
+    if (!noteEditor->parentWidget()->isVisible())
         noteEditor->parentWidget()->show();
-        noteEditor->setFocus();
-    }
-}
-
-void Main::windowToggleTreeEditors()
-{
-    windowSetTreeEditorsVisibility(actionViewToggleTreeEditor->isChecked());
+    noteEditor->setFocus();
 }
 
 void Main::switchEditors()
@@ -6709,7 +6684,8 @@ void Main::switchEditors()
 
 void Main::windowSetTreeEditorsVisibility(bool b)
 {
-    actionViewToggleTreeEditor->setChecked(b);
+    // Close *all* TreeEditors in each VymView and update vym settings
+    settings.setValue("/mainwindow/view/showTreeEditors", b);
     for (int i = 0; i < tabWidget->count(); i++)
         ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
 }
@@ -6779,16 +6755,11 @@ void Main::windowToggleProperty()
     branchPropertyEditor->setModel(currentModel());
 }
 
-void Main::windowShowHeadingEditor() { headingEditorDW->show(); }
-
-void Main::windowToggleHeadingEditor()
+void Main::windowShowHeadingEditor()
 {
-    if (headingEditor->parentWidget()->isVisible())
-        headingEditor->parentWidget()->hide();
-    else {
+    if (!headingEditor->parentWidget()->isVisible())
         headingEditor->parentWidget()->show();
-        headingEditor->setFocus();
-    }
+    headingEditor->setFocus();
 }
 
 void Main::windowToggleAntiAlias()

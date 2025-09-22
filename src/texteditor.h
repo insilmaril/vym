@@ -55,6 +55,7 @@ class TextEditor : public QMainWindow {
     void setInactive(); // Nothing can be entered
     void editCopyAll();
     void clear();
+    void closeWindow();
 
   protected slots:
     void deleteAll();

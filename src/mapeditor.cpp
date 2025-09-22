@@ -1943,7 +1943,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
                         model->getUrl(),
                         e->modifiers() & Qt::AltModifier);
             } else if (sysFlagName == "system-note")
-                mainWindow->windowToggleNoteEditor();
+                mainWindow->windowShowNoteEditor();
             else if (sysFlagName == "hideInExport")
                 model->toggleHideExport();
             else if (sysFlagName.startsWith("system-task-"))

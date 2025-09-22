@@ -40,7 +40,6 @@ class VymWrapper : public QObject {
     void selectQuickColor(int n);
     void statusMessage(const QString &s);
     void saveFile(const QString &filename, const QString &s);
-    void toggleTreeEditor();
     bool usesDarkTheme();
     QString version();
     QString vymBaseDir();
