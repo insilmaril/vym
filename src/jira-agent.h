@@ -71,8 +71,9 @@ class JiraAgent : public QObject {
     QJsonObject jsobj;
 
     // Settings: Credentials to access JIRA
-    bool authUsingPATInt;
-    QString personalAccessTokenInt;
+    QString authMethodInt; // userpass | pat | cloud
+    QString patTokenInt;
+    QString apiTokenInt;
     QString userNameInt;
     QString passwordInt;
 

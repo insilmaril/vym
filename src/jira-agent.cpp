@@ -60,8 +60,9 @@ void JiraAgent::init()
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
     // Reset credentials, these are server specific beginning in 2.9.18
-    authUsingPATInt = true;
-    personalAccessTokenInt = QString();
+    authMethodInt.clear();
+    patTokenInt = QString();
+    apiTokenInt = QString();
     userNameInt = QString();
     passwordInt = QString();
     serverNameInt = QString();
@@ -77,30 +78,31 @@ bool JiraAgent::setJiraServer(int n)
 {
     bool foundServer = false;
 
-    bool usePAT = settings.value("authUsingPAT", true).toBool();
+    QString method = settings.value("method", "userpass").toString();
     QString url = settings.value("baseUrl", "").toString();
     if (!url.isEmpty()) {
         baseUrlInt = url;
         serverNameInt = settings.value("name","-").toString();
-        QString pat = settings.value("PAT", "").toString();
-        if (!pat.isEmpty()) {
-            authUsingPATInt = true;
-            personalAccessTokenInt = pat;
-            foundServer = true;
-        }
-
-        // Looking for username and password
-        QString user = settings.value("username", "").toString();
-        if (!user.isEmpty()) {
+        authMethodInt = method;
+        if (method == "userpass") {
+            userNameInt = settings.value("username", "").toString();
             QString pass = settings.value("password", "").toString();
-            if (!pass.isEmpty()) {
-                userNameInt = user;
+            if (!userNameInt.isEmpty() && !pass.isEmpty()) {
                 passwordInt = pass;
                 foundServer = true;
             }
+        } else if (method == "pat") {
+            patTokenInt = settings.value("PAT", "").toString();
+            if (!patTokenInt.isEmpty())
+                foundServer = true;
+        } else { // cloud
+            userNameInt = settings.value("email", "").toString();
+            apiTokenInt = settings.value("apiToken", "").toString();
+            if (!userNameInt.isEmpty() && !apiTokenInt.isEmpty())
+                foundServer = true;
         }
     }
-    qDebug() << __func__ << " n=" << n << "usePAT=" << authUsingPATInt << " userName=" << userNameInt;
+    qDebug() << __func__ << " n=" << n << " method=" << authMethodInt << " userName=" << userNameInt;
 
     return foundServer;
 }
@@ -195,26 +197,27 @@ bool JiraAgent::setQuery(const QString &s)  // FIXME-3 only works for first serv
                               // Search for project = PATTERN and use resulting server
 
     settings.beginGroup("/atlassian/jira/servers/1");
-    bool usePAT = settings.value("authUsingPAT", true).toBool();    // FIXME-3 should be done in setJiraServer
+    QString method = settings.value("method", "userpass").toString();
     QString url = settings.value("baseUrl", "").toString();
     if (!url.isEmpty()) {
         baseUrlInt = url;
-        //qDebug() << "JA::setQuery  url=" <<url;
-        QString pat = settings.value("PAT", "").toString();
-        if (!pat.isEmpty()) {
-            // Use PAT
-            personalAccessTokenInt = pat;
-            foundServer = true;
-        }
-
-        QString user = settings.value("username", "").toString();
-        if (!user.isEmpty()) {
+        authMethodInt = method;
+        if (method == "userpass") {
+            userNameInt = settings.value("username", "").toString();
             QString pass = settings.value("password", "").toString();
-            if (!pass.isEmpty()) {
-                userNameInt = user;
+            if (!userNameInt.isEmpty() && !pass.isEmpty()) {
                 passwordInt = pass;
                 foundServer = true;
             }
+        } else if (method == "pat") {
+            patTokenInt = settings.value("PAT", "").toString();
+            if (!patTokenInt.isEmpty())
+                foundServer = true;
+        } else { // cloud
+            userNameInt = settings.value("email", "").toString();
+            apiTokenInt = settings.value("apiToken", "").toString();
+            if (!userNameInt.isEmpty() && !apiTokenInt.isEmpty())
+                foundServer = true;
         }
     }
     settings.endGroup();
@@ -332,27 +335,24 @@ void JiraAgent::startGetTicketRequest()
 
     QNetworkRequest request = QNetworkRequest(u);
 
-    // Basic authentication in header
     QString headerData;
-
-    if (authUsingPATInt) {
-        //headerData = QString("Bearer %1").arg(personalAccessTokenInt);
-        QString concatenated = userNameInt + ":" + personalAccessTokenInt;
+    if (authMethodInt == "pat") {
+        headerData = QString("Bearer %1").arg(patTokenInt);
+    } else if (authMethodInt == "cloud") {
+        QString concatenated = userNameInt + ":" + apiTokenInt;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
-        // qDebug() << " - UN + PAT: " << concatenated;
-    } else {
+    } else { // userpass
         QString concatenated = userNameInt + ":" + passwordInt;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
-        // qDebug() << " - UN + PW: " << concatenated;
     }
 
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
     if (debug) {
         qDebug() << "JA::startGetTicketRequest: url = " + request.url().toString();
-        qDebug() << "                  authUsingPAT = " << authUsingPATInt;
+        qDebug() << "                  method = " << authMethodInt;
     }
 
     killTimer->start();
@@ -402,19 +402,17 @@ void JiraAgent::startQueryRequest()
 
     QNetworkRequest request = QNetworkRequest(u);
 
-    // Basic authentication in header
     QString headerData;
-    if (authUsingPATInt) {
-        //headerData = QString("Bearer %1").arg(personalAccessTokenInt);
-        QString concatenated = userNameInt + ":" + personalAccessTokenInt;
+    if (authMethodInt == "pat") {
+        headerData = QString("Bearer %1").arg(patTokenInt);
+    } else if (authMethodInt == "cloud") {
+        QString concatenated = userNameInt + ":" + apiTokenInt;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
-        // qDebug() << " - UN + PAT: " << concatenated;
-    } else {
+    } else { // userpass
         QString concatenated = userNameInt + ":" + passwordInt;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         headerData = "Basic " + data;
-        // qDebug() << " - UN + PW: " << concatenated;
     }
     request.setRawHeader("Authorization", headerData.toLocal8Bit());
 
