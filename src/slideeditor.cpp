@@ -58,11 +58,28 @@ SlideEditor::SlideEditor(VymModel *m)
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
             SLOT(updateSelection(QItemSelection, QItemSelection)));
 
+    QAction *a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+
+    a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::Key_Escape);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+
     //    connect (resultsModel, SIGNAL(layoutChanged() ), view, SLOT
     //    (expandAll() ));
 }
 
 void SlideEditor::closeEvent(QCloseEvent *event)
+{
+    closeWindow();
+}
+
+void SlideEditor::closeWindow()
 {
     mainWindow->windowSetSlideEditorsVisibility(false);
 }

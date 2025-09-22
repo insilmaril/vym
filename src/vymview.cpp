@@ -61,7 +61,7 @@ VymView::VymView(VymModel *m)
                         this, model);
     de->setWidget(slideEditor);
     de->setAllowedAreas(Qt::AllDockWidgetAreas);
-    de->setVisible(mainWindow->actionViewToggleSlideEditor->isChecked());
+    de->setVisible(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
     addDockWidget(Qt::RightDockWidgetArea, de);
     slideEditorDE = de;
     connect(slideEditorDE, SIGNAL(visibilityChanged(bool)), mainWindow,

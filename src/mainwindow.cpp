@@ -338,7 +338,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     updateGeometry();
 
     windowSetTreeEditorsVisibility(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
-    actionViewToggleSlideEditor->setChecked(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
+    windowSetSlideEditorsVisibility(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
 
     // After startup, schedule looking for updates AFTER
     // release notes have been downloaded
@@ -373,9 +373,6 @@ Main::~Main()
         settings.setValue("/mainwindow/geometry", saveGeometry());
         settings.setValue("/mainwindow/state", saveState()); // FIXME-3 use restoreDockWidget
                                                              // https://doc.qt.io/qt-6/qmainwindow.html#saveState
-
-        settings.setValue("/mainwindow/view/showSlideEditors",
-                actionViewToggleSlideEditor->isChecked());
 
         settings.setValue("/mainwindow/view/AntiAlias",
                           actionViewToggleAntiAlias->isChecked());
@@ -2834,7 +2831,7 @@ void Main::setupViewActions()
     mapEditorActions.append(a);
     switchboard.addAction(a, "mapShowNoteEditor", Qt::Key_N, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowShowNoteEditor()));
-    actionViewToggleNoteEditor = a;
+    actionViewToggleNoteEditor = a; // FIXME-2 rename action to show
 
     // a=headingEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/headingeditor.png"),
@@ -2846,7 +2843,7 @@ void Main::setupViewActions()
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapShowHeadingEditor", Qt::Key_E, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowShowHeadingEditor()));
-    actionViewToggleHeadingEditor = a;
+    actionViewToggleHeadingEditor = a;  // FIXME-2 rename action to show
 
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"),
@@ -2865,15 +2862,15 @@ void Main::setupViewActions()
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleTaskEditor", Qt::Key_Q, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTaskEditor()));
-    actionViewToggleTaskEditor = a;
+    actionViewToggleTaskEditor = a; // FIXME-2 rename action to show
 
     a = new QAction(QPixmap(":/slideeditor.png"),
                     tr("Slide editor", "View action"), this);
     a->setCheckable(true);
     windowsMenu->addAction(a);
-    switchboard.addAction(a, "mapToggleSlideEditor", shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSlideEditors()));
-    actionViewToggleSlideEditor = a;
+    switchboard.addAction(a, "mapShowSlideEditor", shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(windowShowSlideEditors()));
+    actionViewShowSlideEditors = a;
 
     a = new QAction(QPixmap(":/scripteditor.png"),
                     tr("Script editor", "View action"), this);
@@ -2881,14 +2878,14 @@ void Main::setupViewActions()
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptEditor()));
-    actionViewToggleScriptEditor = a;
+    actionViewToggleScriptEditor = a; // FIXME-2 show
 
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
     a->setCheckable(true);
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptOutput()));
-    actionViewToggleScriptOutput = a;
+    actionViewToggleScriptOutput = a; // FIXME-2 show
 
     a = new QAction(QPixmap(":/history.png"),
                     tr("History Window", "View action"), this);
@@ -4041,7 +4038,7 @@ void Main::setupToolbars()
     editorsToolbar->addAction(actionViewToggleHeadingEditor);
     editorsToolbar->addAction(actionViewSwitchEditors);
     editorsToolbar->addAction(actionViewToggleTaskEditor);
-    editorsToolbar->addAction(actionViewToggleSlideEditor);
+    editorsToolbar->addAction(actionViewShowSlideEditors);
     editorsToolbar->addAction(actionViewToggleScriptEditor);
     editorsToolbar->addAction(actionViewToggleHistoryWindow);
 
@@ -6702,14 +6699,14 @@ void Main::windowToggleTaskEditor()
     }
 }
 
-void Main::windowToggleSlideEditors()
+void Main::windowShowSlideEditors()
 {
-    windowSetSlideEditorsVisibility(actionViewToggleSlideEditor->isChecked());
+    windowSetSlideEditorsVisibility(true);
 }
 
 void Main::windowSetSlideEditorsVisibility(bool b)
 {
-    actionViewToggleSlideEditor->setChecked(b);
+    settings.setValue("/mainwindow/view/showSlideEditors", b);
     for (int i = 0; i < tabWidget->count(); i++)
         ((VymView*)tabWidget->widget(i))->setSlideEditorVisibility(b);
 }

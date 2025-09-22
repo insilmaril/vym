@@ -339,7 +339,7 @@ class Main : public QMainWindow {
     void switchEditors();
     void windowSetTreeEditorsVisibility(bool);
     void windowToggleTaskEditor();
-    void windowToggleSlideEditors();
+    void windowShowSlideEditors();
     void windowSetSlideEditorsVisibility(bool);
     void windowToggleScriptEditor();
     void windowToggleScriptOutput();
@@ -639,12 +639,8 @@ class Main : public QMainWindow {
     QAction *actionViewToggleNoteEditor;
     QAction *actionViewToggleHeadingEditor;
     QAction *actionViewToggleTaskEditor;
-  
-  public: // Allow VymView class to check visibility  
-    QAction *actionViewToggleSlideEditor;
-
-  private:  
     QAction *actionViewSwitchEditors;
+    QAction *actionViewShowSlideEditors;
     QAction *actionViewToggleScriptEditor;
     QAction *actionViewToggleScriptOutput;
     QAction *actionViewToggleHistoryWindow;
