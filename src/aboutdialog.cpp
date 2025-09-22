@@ -87,6 +87,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "</li>"
             "<li> Patches"
             "  <ul>"
+            "    <li>Loric Brevet: Enabling Jira Cloud and usability discussions</li>"
             "    <li>Bleyddyn: &quot;Clear&quot; button in &quot;Recent files&quot; menu and improving remembering last directory</li>"
             "    <li>Sven H&ouml;xter: Various patches to fix typos and especiall for Debian packaging</li>"
             "    <li>Edward Wang: adding close tab buttons</li>"
