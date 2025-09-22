@@ -38,6 +38,7 @@ set(QtLibraries
 # or uncomment here:
 # set(CMAKE_BUILD_TYPE Debug)
 
+# No longer needed with qt_standard_project_setup() below...
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -49,7 +50,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     find_package(DBus1)
 
     if(DBus1_FOUND)
-        message(STATUS "Deteced DBUS1 available, adding DBUS interfaces")
+        message(STATUS "Deteced Linux and DBUS1, adding DBUS interfaces")
 
         LIST(APPEND QtComponents DBus)
         LIST(APPEND QtLibraries Qt6::DBus)
@@ -74,6 +75,11 @@ if(WIN32)
 
     set(CMAKE_INSTALL_DATAROOTDIR ".")
  endif()
+
+
+# https://doc.qt.io/qt-6/qt-standard-project-setup.html
+find_package(Qt6 REQUIRED COMPONENTS Core)
+qt_standard_project_setup()
 
 include(GNUInstallDirs)
 
