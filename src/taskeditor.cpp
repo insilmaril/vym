@@ -188,7 +188,6 @@ TaskEditor::TaskEditor(QWidget *)
 
     view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
-    QString focus =" border-color: #3daee9; border-style:outset; border-width:3px; ";
     QString selected = "QTableView::item:selected {border-color: #00ff00; border-width: 3px; background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #CCCC0A, stop: 1 #96960A);}";
     view->setStyleSheet("QTableView:focus {" + editorFocusInStyle + "}" + selected);
 

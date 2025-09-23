@@ -7,6 +7,9 @@
 extern Settings settings;
 extern Main *mainWindow;
 
+extern QString editorFocusInStyle;
+extern QString editorFocusOutStyle;
+
 HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
 {
     ui.setupUi(this);
@@ -35,6 +38,18 @@ HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
     connect(ui.historyTable, SIGNAL(itemSelectionChanged()), this,
             SLOT(select()));
 
+    QAction *a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+
+    a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::Key_Escape);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+
     // Load Settings
 
     resize(
@@ -56,6 +71,8 @@ HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
         2,
         settings.value("/satellite/historywindow/geometry/columnWidth/2", 250)
             .toInt());
+
+    ui.historyTable->setStyleSheet("QTableView:focus {" + editorFocusInStyle + "}");
 }
 
 HistoryWindow::~HistoryWindow()
@@ -179,8 +196,12 @@ void HistoryWindow::setStepsTotal(int st)
 
 void HistoryWindow::closeEvent(QCloseEvent *ce)
 {
-    ce->accept();
-    hide();
+    closeWindow();
+}
+
+void HistoryWindow::closeWindow()
+{
+    parentWidget()->hide();
     emit windowClosed();
 }
 

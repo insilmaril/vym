@@ -20,6 +20,7 @@ class HistoryWindow : public QDialog {
     void closeEvent(QCloseEvent *);
 
   private slots:
+    void closeWindow();
     void undo();
     void redo();
     void select();
