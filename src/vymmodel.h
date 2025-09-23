@@ -259,7 +259,6 @@ class VymModel : public TreeModel {
     */
     QString getObjectName(TreeItem *);
 
-    bool isRepeatActionAvailable(); //!< True, if redo is available and contains command to repeat last step
     void redo();            //!< Redo last action
     bool isRedoAvailable(); //!< True, if redo is available
     QString lastRedoSelection();
@@ -267,7 +266,6 @@ class VymModel : public TreeModel {
     QString lastRedoComment();
     QString lastUndoCommand();
     QString lastUndoComment();
-    QVariant repeatLastAction();    //!< Repeat last command on current selection
 
     void undo();                    //!< Undo last action
     bool isUndoAvailable();         //!< True, if undo is available
@@ -314,10 +312,6 @@ class VymModel : public TreeModel {
     void saveStateBeginScript(const QString &comment);
     void saveStateEndScript();
     void saveStateCancelScript();
-
-  private:
-    QString repeatAction;
-    QString repeatComment;
 
     ////////////////////////////////////////////
     // unsorted so far

@@ -293,7 +293,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Connect NoteEditor, so that we can update flags if text changes
     connect(noteEditor, SIGNAL(textHasChanged(VymText)), this,
             SLOT(updateNoteText(VymText)));
-    connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
+    connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));   // FIXME-2 windowCLosed needed after all?
 
     // Connect heading editor
     connect(headingEditor, SIGNAL(textHasChanged(const VymText &)), this,
@@ -527,7 +527,11 @@ void Main::setupAPI()
     // Below are the commands for vym itself
     //
 
-    Command *c = new Command("clearConsole", Command::AnySel);
+    Command *c = new Command("callMacro", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "Include macros and run script");
+    vymCommands.append(c);
+
+    c = new Command("clearConsole", Command::AnySel);
     vymCommands.append(c);
 
     c = new Command("closeMapWithID", Command::AnySel);
@@ -847,14 +851,8 @@ void Main::setupAPI()
     c->addParameter(Command::DoublePar, false, "Rotation of view of map");
     modelCommands.append(c);
 
-    c = new Command("setTitle", Command::AnySel);
-    c->addParameter(Command::StringPar, false, "");
-    modelCommands.append(c);
-
-    c = new Command("setZoom", Command::AnySel);
-    c->addParameter(Command::DoublePar, false, "Zoomfactor of map");
-    modelCommands.append(c);
-
+    c = new Command("setSelectionBrushColor", Command::AnySel);
+    c->addParameter(Command::ColorPar, false, "Color of selection box background");
     modelCommands.append(c);
 
     c = new Command("setSelectionColor", Command::AnySel);
@@ -869,8 +867,14 @@ void Main::setupAPI()
     c->addParameter(Command::IntPar, false, "Selection box border width ");
     modelCommands.append(c);
 
-    c = new Command("setSelectionBrushColor", Command::AnySel);
-    c->addParameter(Command::ColorPar, false, "Color of selection box background");
+    c = new Command("setTitle", Command::AnySel);
+    c->addParameter(Command::StringPar, false, "");
+    modelCommands.append(c);
+
+    c = new Command("setZoom", Command::AnySel);
+    c->addParameter(Command::DoublePar, false, "Zoomfactor of map");
+    modelCommands.append(c);
+
     modelCommands.append(c);
 
     c = new Command("sleep", Command::AnySel);
@@ -5091,6 +5095,11 @@ bool Main::exitAfterScript()
     return exitAfterScriptInt;
 }
 
+void Main::setRepeatAction(const QString &script)
+{
+    repeatActionInt = script;
+}
+
 void Main::setExitAfterScript(bool b)
 {
     exitAfterScriptInt = b;
@@ -5764,9 +5773,7 @@ void Main::editResetSelectionSize()
 
 void Main::editRepeatLastAction()
 {
-    VymModel *m = currentModel();
-    if (m)
-        m->repeatLastAction();
+    runScriptWithMacros(repeatActionInt);
 }
 
 void Main::editAddMapCenter()
@@ -7086,7 +7093,7 @@ void Main::updateActions()
         } else
             w->setToolTip(tr("Redo: %1 (%2)").arg(m->lastRedoComment(), actionRedo->shortcut().toString()));
 
-        actionRepeatCommand->setEnabled(m->isRepeatActionAvailable());
+        actionRepeatCommand->setEnabled(!repeatActionInt.isEmpty());
 
         // History window
         historyWindow->setWindowTitle(
@@ -7435,7 +7442,6 @@ QVariant Main::runScript(const QString &script)
     QJSValue vwrapper = scriptEngine->newQObject(vymWrapper);
 
     scriptEngine->globalObject().setProperty("vym", vwrapper);
-
     QJSEngine *scriptEngineOrg = scriptEngine;
     QJSValue result = scriptEngine->evaluate(script);
 
@@ -7474,6 +7480,11 @@ QVariant Main::runScript(const QString &script)
         fileExitVYM();
 
     return scriptResult;
+}
+
+QVariant Main::runScriptWithMacros(const QString &script)
+{
+    return runScript(macros.get() + script);
 }
 
 void Main::abortScript(const QJSValue::ErrorType &err, const QString &msg)
@@ -7570,7 +7581,6 @@ void Main::testFunction2()
 {
     VymModel *m = currentModel();
     if (m) {
-        m->repeatLastAction();
         //currentMapEditor()->testFunction2();
     }
 }
@@ -7798,11 +7808,11 @@ void Main::callMacro()
         // Function keys start at "1", not "0"
         i++;
 
-        QString s = QString("macro_%1f%2();\n").arg(modifiers).arg(i);
+        QString macro = QString("macro_%1f%2();\n").arg(modifiers).arg(i);
 
-        s += macros.get();
 
-        runScript(s);
+        runScript(macros.get() + macro);
+        setRepeatAction(macro);
     }
 }
 

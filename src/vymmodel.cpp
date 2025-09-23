@@ -1457,11 +1457,6 @@ QString VymModel::getObjectName(TreeItem *ti)   // FIXME-3 compare with headingT
     return QString("%1 \"%2\"").arg(ti->getTypeName(), s);
 }
 
-bool VymModel::isRepeatActionAvailable()
-{
-    return !repeatAction.isEmpty();
-}
-
 void VymModel::redo()
 {
     // Can we undo at all?
@@ -1581,18 +1576,6 @@ QString VymModel::lastUndoComment()
         return undoSet.value(QString("/history/step-%1/comment").arg(curStep));
     else
         return QString();
-}
-
-QVariant VymModel::repeatLastAction() // FIXME-4 Adapt to other types than branch
-{
-    if (!isRepeatActionAvailable())
-        return QVariant();
-
-    QString command = QString("m = vym.mapWithId(%1);").arg(modelIdInt);
-    command += " branches = m.selectedBranches(); for (b of branches) {" + repeatAction + "}";
-    // qDebug() << __func__ << " ra=" << repeatAction;
-    // qDebug() << __func__ << "  c=" << command;
-    return mainWindow->runScript(command);
 }
 
 void VymModel::undo()
@@ -1905,8 +1888,10 @@ QString VymModel::saveStateBranch(
         const QString &comment)
 {
     QString prefix = setBranchVar(bi) + "b.";
-    repeatAction = "b." + rc;
-    repeatComment = comment;
+
+    QString repeatAction = QString("m = vym.currentMap();");
+    repeatAction += " branches = m.selectedBranches(); for (b of branches) {b." + rc + "}";
+    mainWindow->setRepeatAction(repeatAction);
 
     return saveState(prefix + uc, prefix + rc, comment);
 }
@@ -1930,8 +1915,7 @@ void VymModel::saveStateEndScript()
     if (debug)
         std::cout << "VM::saveStateEndScript" << endl 
             << "  buildingScript=" << buildingUndoScript << endl
-            << "      undoScript=" << undoScript.toStdString() << endl
-            << "    repeatAction=" << repeatAction.toStdString() << endl;
+            << "      undoScript=" << undoScript.toStdString() << endl;
 
     if (buildingUndoScript) {
         buildingUndoScript = false;
@@ -1953,8 +1937,7 @@ void VymModel::saveStateCancelScript()
     if (debug)
         std::cout << "VM::saveStateCancelScript" << endl 
             << "  buildingScript=" << buildingUndoScript << endl
-            << "      undoScript=" << undoScript.toStdString() << endl
-            << "    repeatAction=" << repeatAction.toStdString() << endl;
+            << "      undoScript=" << undoScript.toStdString() << endl;
 
     if (buildingUndoScript) {
         buildingUndoScript = false;

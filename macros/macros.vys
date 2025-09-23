@@ -113,11 +113,11 @@ function macro_f10()
     colorSubtreeWithQuickColor(9);
 }
 
-//! Macro F11: Repeat last command
+//! Macro F11:
 function macro_f11()
 {
     map = vym.currentMap();
-    map.repeatLastCommand();
+    // Unused
 }
 
 //! Macro F12: toggle high prio task
@@ -164,6 +164,7 @@ function macro_shift_f1()
     toggle_frame_branch ( map );
     b.setFrameBrushColor(true, "#ffb3b4");
     vym.statusMessage(status);
+
 }
 
 //! Macro Shift + F2: Frame background light green

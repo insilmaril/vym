@@ -9,6 +9,7 @@ class VymModelWrapper;
 ///////////////////////////////////////////////////////////////////////////
 class VymWrapper : public QObject {
     Q_OBJECT
+
   public:
     VymWrapper();
     ~VymWrapper();

@@ -481,11 +481,6 @@ void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
     modelInt->deleteXLink(xlw->xlink());
 }
 
-QVariant VymModelWrapper::repeatLastAction()
-{
-    return modelInt->repeatLastAction();
-}
-
 bool VymModelWrapper::saveSelection(const QString &filename)
 {
     QString filename_org = modelInt->getFilePath(); // Restore filename later

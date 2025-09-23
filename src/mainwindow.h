@@ -171,13 +171,20 @@ class Main : public QMainWindow {
   public:
     bool exitAfterScript();
     void setExitAfterScript(bool b);
+
   private:
     bool exitAfterScriptInt;
+    QString repeatActionInt;
+
+  public:
+    void setRepeatAction(const QString &script);
+
   public slots:
     bool fileExitVYM();
     void editUndo();
     void editRedo();
     void gotoHistoryStep(int);
+
   private slots:
     void editCopy();
     void editPaste();
@@ -368,6 +375,7 @@ class Main : public QMainWindow {
 
     void scriptPrint(const QString &, const QString &color = "");
     QVariant runScript(const QString &);
+    QVariant runScriptWithMacros(const QString &);
     void abortScript(const QJSValue::ErrorType &err, const QString &msg);
     void abortScript(const QString &msg);
     QVariant setScriptResult(const QVariant &r);
