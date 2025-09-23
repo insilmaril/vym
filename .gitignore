@@ -1,0 +1,16 @@
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Qt/CMake autogen and deploy
+vym_autogen/
+.qt/
+
+# Built binary
+vym
+
+# Qt translation artifacts
+translations/*.qm
