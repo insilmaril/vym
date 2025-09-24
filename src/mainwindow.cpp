@@ -1591,11 +1591,11 @@ void Main::setupFileActions()
     actionFileOpen = a;
 
     a = new QAction(tr("&Restore last session", "Edit menu"), this);
-    switchboard.addAction(a, "fileMapRestore", Qt::CTRL | Qt::Key_R, shortcutScope, tag);
+    switchboard.addAction(a, "fileMapRestore", Qt::CTRL | Qt::Key_S, shortcutScope, tag);   // FIXME-2 testing
     connect(a, SIGNAL(triggered()), this, SLOT(fileRestoreSession()));
     fileMenu->addAction(a);
-    actionListFiles.append(a);
-    actionCopy = a;
+    a->setEnabled(true);
+    actionFileRestoreSession = a;
 
     fileLastMapsMenu = fileMenu->addMenu(tr("Open Recent", "File menu"));
     fileMenu->addSeparator();
@@ -7069,8 +7069,11 @@ void Main::updateActions()
         } else {
             if (!m->hasChanged())
                 actionFileSave->setEnabled(false);
-            else
+            else {
                 actionFileSave->setEnabled(true);
+                actionFileRestoreSession->setEnabled(false);
+                // qDebug() << __func__ << "disabling restoreSession";
+            }
             actionFileClose->setEnabled(true);
         }
         
