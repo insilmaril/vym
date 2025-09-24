@@ -3657,7 +3657,7 @@ void Main::setupHelpActions()
 }
 
 // Context Menus
-void Main::setupContextMenus()
+void Main::setupContextMenus()  // FIXME-2 Use context menus add/remove also in Edit menu for better readability
 {
     // Context menu for goto/move targets  (populated on demand)
     targetsContextMenu = new QMenu(this);

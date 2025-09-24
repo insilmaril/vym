@@ -139,8 +139,7 @@ int fatalCount = 0;
 
 // Some styles used in various widgets
 QString editorFocusInStyle =
-    QString(" border-color: #3daee9; border-style:outset; border-width:1px; "
-            "color:black;");
+    QString(" border-color: #3daee9; border-style:outset; border-width:1px; ");// "color:black;");
 QString editorFocusOutStyle = QString("border-width:0px;");
 QString toolBarStyle;
 
@@ -509,7 +508,7 @@ int main(int argc, char *argv[])
         vymBlueColor =QColor::fromString("#0000ff");
     }
 
-    toolBarStyle = "background-color: " + palette.color(QPalette::Button).name() + "; border: None;";
+    //  toolBarStyle = "background-color: " + palette.color(QPalette::Button).name() + "; border: None;";   // FIXME-3  Checked buttons no longer visible, introduced for forced bright theme
     vymForegroundColor = palette.color(QPalette::WindowText);
     vymBaseColor = palette.color(QPalette::Base);
 
