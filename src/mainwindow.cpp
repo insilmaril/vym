@@ -1895,6 +1895,14 @@ void Main::setupEditActions()
     addAction(a);
     actionCut = a;
 
+    a = new QAction(QPixmap(QString(":/edit-cut-%1.svg").arg(iconTheme)), tr("Cu&t", "Edit menu"), this);
+    switchboard.addAction(a, "mapCutVim", Qt::Key_D, shortcutScope, tag);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
+    editMenu->addAction(a);
+    actionListItems.append(a);
+    actionDeleteVim = a;
+
     a = new QAction(QPixmap(QString(":/edit-paste-%1.svg").arg(iconTheme)), tr("&Paste", "Edit menu"),
                     this);
     connect(a, SIGNAL(triggered()), this, SLOT(editPaste()));
@@ -1929,14 +1937,6 @@ void Main::setupEditActions()
     editMenu->addAction(a);
     actionListItems.append(a);
     actionDelete = a;
-
-    a = new QAction(tr("Delete Selection", "Edit menu"), this);
-    switchboard.addAction(a, "mapDeleteVim", Qt::Key_D, shortcutScope, tag);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
-    editMenu->addAction(a);
-    actionListItems.append(a);
-    actionDeleteVim = a;
 
     tag = tr("Add", "MainWindow shortcut groups");
     // Shortcut to add mapcenter
@@ -2065,10 +2065,10 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionDetach = a;
 
-    QString sortEditTag = tr("Sort and edit", "MainWindow shortcut groups");
+    QString sortDisplayTag = tr("Sort and display", "MainWindow shortcut groups");
     a = new QAction(QPixmap(QString(":/view-sort-ascending-name-%1.svg").arg(iconTheme)), tr("Sort children", "Edit menu"), this);
     a->setEnabled(true);
-    switchboard.addAction(a, "mapSortBranches", Qt::Key_O, shortcutScope, sortEditTag);
+    switchboard.addAction(a, "mapSortBranches", Qt::Key_O, shortcutScope, sortDisplayTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editSortChildren()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2076,7 +2076,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(QString(":/view-sort-descending-name-%1.svg").arg(iconTheme)), tr("Sort children backwards", "Edit menu"), this);
     a->setEnabled(true);
-    switchboard.addAction(a, "mapSortBranchesReverse", Qt::SHIFT | Qt::Key_O, shortcutScope, sortEditTag);
+    switchboard.addAction(a, "mapSortBranchesReverse", Qt::SHIFT | Qt::Key_O, shortcutScope, sortDisplayTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editSortBackChildren()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2084,7 +2084,7 @@ void Main::setupEditActions()
 
     a = new QAction(QPixmap(":/flag-scrolled-right.png"),
                     tr("Scroll branch", "Edit menu"), this);
-    switchboard.addAction(a, "mapToggleScroll", Qt::Key_S, shortcutScope, sortEditTag);
+    switchboard.addAction(a, "mapToggleScroll", Qt::Key_S, shortcutScope, sortDisplayTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editToggleScroll()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2099,8 +2099,9 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editUnscrollSubtree()));
     actionListBranches.append(a);
 
+    QString geometryTag = tr("Geometry of items", "MainWindow shortcut groups");
     a = new QAction(tr("Grow selection", "Edit menu"), this);
-    switchboard.addAction(a, "mapGrowSelection", Qt::CTRL | Qt::Key_Plus, shortcutScope, sortEditTag);
+    switchboard.addAction(a, "mapGrowSelection", Qt::CTRL | Qt::Key_Plus, shortcutScope, geometryTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editGrowSelectionSize()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2108,7 +2109,7 @@ void Main::setupEditActions()
     actionGrowSelectionSize = a;
 
     a = new QAction(tr("Shrink selection", "Edit menu"), this);
-    switchboard.addAction(a, "mapShrinkSelection", Qt::CTRL | Qt::Key_Minus, shortcutScope, sortEditTag);
+    switchboard.addAction(a, "mapShrinkSelection", Qt::CTRL | Qt::Key_Minus, shortcutScope, geometryTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editShrinkSelectionSize()));
     editMenu->addAction(a);
     actionListBranches.append(a);
@@ -2116,8 +2117,24 @@ void Main::setupEditActions()
     actionShrinkSelectionSize = a;
 
     a = new QAction(tr("Reset selection size", "Edit menu"), this);
-    switchboard.addAction(a, "mapResetSelectionSize", Qt::CTRL | Qt::Key_0, shortcutScope, sortEditTag);
+    switchboard.addAction(a, "mapResetSelectionSize", Qt::CTRL | Qt::Key_0, shortcutScope, geometryTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editResetSelectionSize()));
+    editMenu->addAction(a);
+    actionListBranches.append(a);
+    actionListImages.append(a);
+    actionResetSelectionSize = a;
+
+    a = new QAction(tr("Rotate subtree clockwise", "Edit menu"), this);
+    switchboard.addAction(a, "mapRotateSubtreeCW", Qt::CTRL | Qt::Key_R, shortcutScope, geometryTag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editRotateSubtreeCW()));
+    editMenu->addAction(a);
+    actionListBranches.append(a);
+    actionListImages.append(a);
+    actionResetSelectionSize = a;
+
+    a = new QAction(tr("Rotate subtree counter-clockwise", "Edit menu"), this);
+    switchboard.addAction(a, "mapRotateSubtreeCCW", Qt::CTRL | Qt::SHIFT | Qt::Key_R, shortcutScope, geometryTag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editRotateSubtreeCCW()));
     editMenu->addAction(a);
     actionListBranches.append(a);
     actionListImages.append(a);
@@ -2268,7 +2285,7 @@ void Main::setupEditActions()
     a->setCheckable(true);
     a->setEnabled(false);
     addAction(a);
-    switchboard.addAction(a, "mapToggleHideExport", Qt::Key_H, shortcutScope, sortEditTag);
+    switchboard.addAction(a, "mapToggleHideExport", Qt::Key_H, shortcutScope, sortDisplayTag);
     connect(a, SIGNAL(triggered()), this, SLOT(editToggleHideExport()));
     actionListBranches.append(a);
     actionListImages.append(a);
@@ -2465,6 +2482,10 @@ void Main::setupEditActions()
     switchboard.addAction(a, "mapTogglePropertyEditor", Qt::Key_B, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleProperty()));
     actionViewTogglePropertyEditor = a;
+}
+
+void Main::setupEditMenu()
+{
 }
 
 // Select Actions
@@ -2835,7 +2856,7 @@ void Main::setupViewActions()
     mapEditorActions.append(a);
     switchboard.addAction(a, "mapShowNoteEditor", Qt::Key_N, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowShowNoteEditor()));
-    actionViewToggleNoteEditor = a; // FIXME-2 rename action to show
+    actionViewToggleNoteEditor = a; // FIXME-3 rename action to show
 
     // a=headingEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/headingeditor.png"),
@@ -2847,7 +2868,7 @@ void Main::setupViewActions()
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapShowHeadingEditor", Qt::Key_E, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowShowHeadingEditor()));
-    actionViewToggleHeadingEditor = a;  // FIXME-2 rename action to show
+    actionViewToggleHeadingEditor = a;  // FIXME-3 rename action to show
 
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"),
@@ -2866,7 +2887,7 @@ void Main::setupViewActions()
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleTaskEditor", Qt::Key_Q, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTaskEditor()));
-    actionViewToggleTaskEditor = a; // FIXME-2 rename action to show
+    actionViewToggleTaskEditor = a; // FIXME-3 rename action to show
 
     a = new QAction(QPixmap(":/slideeditor.png"),
                     tr("Slide editor", "View action"), this);
@@ -2882,14 +2903,14 @@ void Main::setupViewActions()
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptEditor()));
-    actionViewToggleScriptEditor = a; // FIXME-2 show
+    actionViewToggleScriptEditor = a; // FIXME-3 show
 
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
     a->setCheckable(true);
     windowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptOutput()));
-    actionViewToggleScriptOutput = a; // FIXME-2 show
+    actionViewToggleScriptOutput = a; // FIXME-3 show
 
     a = new QAction(QPixmap(":/history.png"),
                     tr("History Window", "View action"), this);
@@ -5769,6 +5790,20 @@ void Main::editResetSelectionSize()
     VymModel *m = currentModel();
     if (m)
         m->resetSelectionSize();
+}
+
+void Main::editRotateSubtreeCW()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->rotateSubtree(10);
+}
+
+void Main::editRotateSubtreeCCW()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->rotateSubtree(-10);
 }
 
 void Main::editRepeatLastAction()

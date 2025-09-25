@@ -74,6 +74,7 @@ class Main : public QMainWindow {
 
     void setupFileActions();
     void setupEditActions();
+    void setupEditMenu();
     void setupSelectActions();
     void setupFormatActions();
     void setupViewActions();
@@ -240,6 +241,8 @@ class Main : public QMainWindow {
     void editUnscrollSubtree();
     void editGrowSelectionSize();
     void editShrinkSelectionSize();
+    void editRotateSubtreeCW();
+    void editRotateSubtreeCCW();
     void editResetSelectionSize();
     void editRepeatLastAction();
     void editAddMapCenter();
@@ -587,6 +590,9 @@ class Main : public QMainWindow {
     QAction *actionGrowSelectionSize;
     QAction *actionShrinkSelectionSize;
     QAction *actionResetSelectionSize;
+
+    QAction *actionRotateSubtreeClockwise;
+    QAction *actionRotateSubtreeCounterClockwise;
 
     QAction *actionToggleTarget;
     QAction *actionGoToTargetLinkedMap;

@@ -3001,6 +3001,32 @@ void VymModel::setRotationSubtree (const int &i, BranchItem *bi)
     }
 }
 
+void VymModel::rotateSubtree(qreal a)
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        qreal a_old = bc->rotationSubtree();
+        qreal a_new = a_old + a;
+        QString uc = QString("setRotationSubtree(\"%1\");").arg(toS(a_old, 1));
+        QString rc = QString("setRotationSubtree(\"%1\");").arg(a_new);
+        QString comment = QString("Set rotation angle of subtree to %1").arg(a_new);
+
+        logAction(rc, comment, __func__);
+
+        saveStateBranch(selbi, uc, rc, comment);
+
+        bc->setRotationSubtree(a_new);
+        emitDataChanged(selbi);
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
 void VymModel::setScaleAutoDesign (const bool & b, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
