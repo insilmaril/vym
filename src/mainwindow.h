@@ -483,6 +483,26 @@ class Main : public QMainWindow {
 
     QMenu *toolbarsMenu;
     QMenu *windowsMenu;
+
+    QMenu *branchAddContextMenu;
+    QMenu *branchGeometryContextMenu;
+    QMenu *branchHierarchyContextMenu;
+    QMenu *branchLinksContextMenu;
+    QMenu *branchRemoveContextMenu;
+    QMenu *branchXLinksContextMenuEdit;
+    QMenu *branchXLinksContextMenuFollow;   // Can also have Urls and VymLinks since 2.9.592
+    QMenu *targetsContextMenu;
+    QMenu *fileLastMapsMenu;
+    QMenu *fileImportMenu;
+    QMenu *fileExportMenu;
+
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *selectMenu;
+    QMenu *formatMenu;
+    QMenu *viewMenu;
+    QMenu *connectMenu;
+
     QToolBar *fileToolbar;
     QToolBar *clipboardToolbar;
     QToolBar *editActionsToolbar;
@@ -529,6 +549,7 @@ class Main : public QMainWindow {
     QAction *actionSortChildren;
     QAction *actionSortBackChildren;
     QAction *actionToggleScroll;
+    QAction *actionUnscrollSubtree;
     QAction *actionExpandAll;
     QAction *actionExpandOneLevel;
     QAction *actionCollapseOneLevel;
@@ -570,7 +591,7 @@ class Main : public QMainWindow {
     QAction *actionMapInfo;
     QAction *actionHeading;
     QAction *actionDelete;
-    QAction *actionDeleteVim;
+    QAction *actionCutVim;
 
   public:
     QAction *actionAddMapCenter;
@@ -591,8 +612,8 @@ class Main : public QMainWindow {
     QAction *actionShrinkSelectionSize;
     QAction *actionResetSelectionSize;
 
-    QAction *actionRotateSubtreeClockwise;
-    QAction *actionRotateSubtreeCounterClockwise;
+    QAction *actionRotateSubtreeCW;
+    QAction *actionRotateSubtreeCCW;
 
     QAction *actionToggleTarget;
     QAction *actionGoToTargetLinkedMap;
