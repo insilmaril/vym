@@ -61,14 +61,6 @@ TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with
     connect(editor, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this,
             SLOT(formatChanged(const QTextCharFormat &)));
 
-
-    QAction *a = new QAction("Close window", this);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    a->setShortcut(Qt::CTRL | Qt::Key_D);
-    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
-    //fileMenu->addAction(a);
-    editor->addAction(a);
-
     // Load settings
     init (eName);
     setWindowIcon(QPixmap(":/vym-editor.png"));
@@ -378,6 +370,14 @@ void TextEditor::setupFileActions()
     tb->addAction(a);
     filledEditorActions << a;
     actionFileDeleteAll = a;
+
+    a = new QAction("Close window", this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    switchboard.addAction(a, "textCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    fileMenu->addAction(a);
+    editor->addAction(a);
+
 }
 
 void TextEditor::setupEditActions()
