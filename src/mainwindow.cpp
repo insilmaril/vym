@@ -321,7 +321,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setObjectName("TaskEditor");
     dw->hide();
     addDockWidget(Qt::TopDockWidgetArea, dw);
-    // FIXME-2 connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
     connect(taskEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     if (options.isActive("shortcutsLaTeX"))
