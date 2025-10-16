@@ -13,14 +13,13 @@ enum EditorState { inactiveEditor, emptyEditor, filledEditor };
 class TextEditor : public QMainWindow {
     Q_OBJECT
   public:
-    TextEditor(const QString eName = "undefinedEditorName");
+    TextEditor(const QString &id, const QString &scope);
     ~TextEditor();
 
-    void init(const QString &ename);
+    void init();
+    void setFocus();
     bool isEmpty();
-    void setEditorName(const QString &);
-    void setEditorTitle(const QString &t = "");
-    QString getEditorTitle();
+    void setTitle(const QString &t = "");
     void setFont(const QFont &);
     void setFontHint(const QString &);
     QString getFontHint();
@@ -36,7 +35,6 @@ class TextEditor : public QMainWindow {
     bool findText(const QString &, const QTextDocument::FindFlags &, int i);
     void setTextCursor(const QTextCursor &cursor);
     QTextCursor getTextCursor();
-    void setFocus();
 
   protected:
     void setupFileActions();
@@ -112,8 +110,7 @@ class TextEditor : public QMainWindow {
     QString shortcutScope; // used for settings and shortcut scopes
     QTextEdit *editor;
     QPoint lastPos;     // save last position of window
-    QString editorName; // Name of editor, e.g. note editor, heading editor, ...
-    QString editorTitle; // window title: Editor name + selected branch
+    QString editorId;   // Name of editor, e.g. NoteEditor or HeadingEditor
     QString filename;
     QString filenameHint;
 

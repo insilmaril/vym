@@ -44,10 +44,13 @@ extern bool debug;
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with drag & drop
+TextEditor::TextEditor(const QString &id, const QString &scope)   // FEATURE #137 insert images with drag & drop
                            // https://stackoverflow.com/questions/3254652/several-ways-of-placing-an-image-in-a-qtextedit
 {
-    //qDebug() << "TE::constr of " << eName;
+    //qDebug() << "TE::constr of " << id << scope;
+    editorId = id;
+    shortcutScope = scope;
+
     statusBar()->hide(); // Hide sizeGrip on default, which comes with statusBar
 
     editor = new QTextEdit(this);
@@ -62,7 +65,7 @@ TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with
             SLOT(formatChanged(const QTextCharFormat &)));
 
     // Load settings
-    init (eName);
+    init ();
     setWindowIcon(QPixmap(":/vym-editor.png"));
 
     // Various states
@@ -71,8 +74,7 @@ TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with
     blockTextUpdate = false;
     setInactive();
 
-    editorName = "Text editor";
-    setEditorTitle("");
+    setTitle("");
 
     menuBar()->setNativeMenuBar(false);
 }
@@ -80,7 +82,7 @@ TextEditor::TextEditor(const QString eName)   // FEATURE #137 insert images with
 TextEditor::~TextEditor()
 {
     // Save Settings
-    QString n = QString("/satellite/%1/").arg(shortcutScope);
+    QString n = QString("/satellite/%1/").arg(editorId);
     settings.setValue(n + "geometry/size", size());
     settings.setValue(n + "geometry/pos", pos());
     settings.setValue(n + "state", saveState(0));
@@ -99,11 +101,9 @@ TextEditor::~TextEditor()
     settings.setValue(n + "colors/richTextForeground", colorRichTextForeground.name());
 }
 
-void TextEditor::init(const QString &scope)
+void TextEditor::init()
 {
-    shortcutScope = scope;
-
-    QString n = QString("/satellite/%1/").arg(shortcutScope);
+    QString n = QString("/satellite/%1/").arg(editorId);
     colorRichTextEditorBackground = QColor::fromString(
         settings.value(n + "colors/richTextEditorBackground", vymBaseColor.name()).toString());
 
@@ -151,6 +151,8 @@ void TextEditor::init(const QString &scope)
     clear();
 }
 
+void TextEditor::setFocus() { editor->setFocus(); }
+
 bool TextEditor::isEmpty()
 {
     if (editor->toPlainText().length() > 0)
@@ -159,20 +161,16 @@ bool TextEditor::isEmpty()
         return true;
 }
 
-void TextEditor::setEditorTitle(const QString &s)
+void TextEditor::setTitle(const QString &s)
 {
-    editorTitle = (s.isEmpty()) ? editorName : editorName + ": " + s;
+    QString windowTitle = (s.isEmpty()) ? shortcutScope : shortcutScope + ": " + s;
 
     // Set title of parent dockWidget
     if (parentWidget())
-        parentWidget()->setWindowTitle(editorTitle);
+        parentWidget()->setWindowTitle(windowTitle);
 
-    setWindowTitle(editorTitle);
+    setWindowTitle(windowTitle);
 }
-
-QString TextEditor::getEditorTitle() { return editorTitle; }
-
-void TextEditor::setEditorName(const QString &s) { editorName = s; }
 
 void TextEditor::setFont(const QFont &font)
 {
@@ -317,8 +315,6 @@ void TextEditor::setTextCursor(const QTextCursor &cursor)
 
 QTextCursor TextEditor::getTextCursor() { return editor->textCursor(); }
 
-void TextEditor::setFocus() { editor->setFocus(); }
-
 void TextEditor::setupFileActions()
 {
     QToolBar *tb = addToolBar(tr("Note Actions"));
@@ -371,13 +367,12 @@ void TextEditor::setupFileActions()
     filledEditorActions << a;
     actionFileDeleteAll = a;
 
-    a = new QAction("Close window", this);
+    a = new QAction("Close window", editor);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addAction(a, "textCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
     fileMenu->addAction(a);
     editor->addAction(a);
-
 }
 
 void TextEditor::setupEditActions()
@@ -849,7 +844,6 @@ void TextEditor::closeWindow()
 {
     parentWidget()->hide();
     emit windowClosed();
-    return;
 }
 
 void TextEditor::deleteAll()

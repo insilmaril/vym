@@ -4,9 +4,9 @@
 extern Settings settings;
 extern QString vymName;
 
-HeadingEditor::HeadingEditor(const QString &eName) : TextEditor(eName)
+HeadingEditor::HeadingEditor(const QString &id, const QString &scope) : TextEditor(id, scope)
 {
-    editorName = eName;
+    // qDebug() << "Constr HE" << id << scope;
     setWindowTitle("");
 
     setUseMapBackgroundColor(true);

@@ -8,10 +8,8 @@
 extern Settings settings;
 extern QString vymName;
 
-NoteEditor::NoteEditor(const QString &eName) : TextEditor(eName)
+NoteEditor::NoteEditor(const QString &id, const QString &scope) : TextEditor(id, scope)
 {
-    editorName = eName;
-
     setWindowTitle("");
 
     menuBar()->show();

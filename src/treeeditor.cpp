@@ -113,7 +113,7 @@ void TreeEditor::closeEvent(QCloseEvent *event)
 void TreeEditor::closeWindow()
 {
     // Close *all* TreeEditors in each VymView and update vym settings
-    mainWindow->windowSetTreeEditorsVisibility(false);
+    mainWindow->setTreeEditorsVisibility(false);
 }
 
 void TreeEditor::cursorUp()

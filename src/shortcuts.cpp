@@ -28,12 +28,8 @@ Switchboard::Switchboard() {}
 
 void Switchboard::addScope(QString scopeIdentifier, QString scopeName)
 {
-    if (scopesMap.contains(scopeIdentifier)) {
-        qDebug() << "Warning switchboard: Shortcut scope " << scopeIdentifier
-                 << " already exists";
-        return;
-    }
-    scopesMap.insert(scopeIdentifier, scopeName);
+    if (!scopesMap.contains(scopeIdentifier))
+        scopesMap.insert(scopeIdentifier, scopeName);
 }
 
 void Switchboard::addAction(QAction *action,

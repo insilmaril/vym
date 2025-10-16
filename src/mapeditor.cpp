@@ -48,6 +48,8 @@ MapEditor::MapEditor(VymModel *vm)
     // qDebug() << "Constructor ME " << this;
 
     QString shortcutScope = tr("Map Editor", "Shortcut scope");
+    switchboard.addScope("MapEditor", tr("Map Editors", "Shortcut group"));
+
     mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
     //mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-4 Avoiding crashes...
@@ -1573,7 +1575,7 @@ void MapEditor::editHeading(BranchItem *selbi)
         VymText heading = selbi->heading();
         if (heading.isRichText() || selbi->headingPlain().contains("\n")) {
             // RichText heading is edited in its own editor, continue there
-            mainWindow->windowShowHeadingEditor();
+            mainWindow->focusHeadingEditor();
             ensureSelectionVisibleAnimated();
             return;
         }
@@ -1943,7 +1945,7 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
                         model->getUrl(),
                         e->modifiers() & Qt::AltModifier);
             } else if (sysFlagName == "system-note")
-                mainWindow->windowShowNoteEditor();
+                mainWindow->focusNoteEditor();
             else if (sysFlagName == "hideInExport")
                 model->toggleHideExport();
             else if (sysFlagName.startsWith("system-task-"))

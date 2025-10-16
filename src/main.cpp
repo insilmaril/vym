@@ -575,9 +575,9 @@ int main(int argc, char *argv[])
     userFlagsMaster->setPrefix("user/");
 
     // Initialize editors
-    noteEditor = new NoteEditor(QObject::tr("Note Editor", "Name of editor shown as window title"));
+    noteEditor = new NoteEditor("NoteEditor", QObject::tr("Note Editor", "Name of editor shown as window title"));
 
-    headingEditor = new HeadingEditor(QObject::tr("Heading Editor", "Name of editor shown as window title"));
+    headingEditor = new HeadingEditor("HeadingEditor", QObject::tr("Heading Editor", "Name of editor shown as window title"));
     branchPropertyEditor = new BranchPropertyEditor();
 
     // Initially read filenames of last session, before settings are 
@@ -604,6 +604,11 @@ int main(int argc, char *argv[])
     headingEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
     headingEditor->addAction(a);
 
+    a = new QAction("Cancel", taskEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in TaskEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    taskEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    taskEditor->addAction(a);
 
     // Check for zip tools
     zipToolAvailable = ZipAgent::checkZipTool();

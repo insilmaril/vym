@@ -148,6 +148,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     setWindowTitle(vymName + " - View Your Mind");
 
     shortcutScope = tr("Main window", "Shortcut scope");
+    switchboard.addScope("MainWindow", shortcutScope);
 
     // Sometimes we may need to remember old selections
     prevSelection = QUuid();
@@ -205,8 +206,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     layout->addWidget(tabWidget);
 
-    switchboard.addScope("MainWindow", tr("Main window", "Shortcut group"));
-    switchboard.addScope("MapEditor", tr("Map Editors", "Shortcut group"));
     switchboard.addScope("TextEditor", tr("Text Editors", "Shortcut group"));
 
     // Create main menus
@@ -218,8 +217,10 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     viewMenu = menuBar()->addMenu(tr("&View"));
     toolbarsMenu =
         viewMenu->addMenu(tr("Toolbars", "Toolbars overview in view menu"));
-    windowsMenu =
-        viewMenu->addMenu(tr("Windows", "Editor windows overview in view menu"));
+    toggleWindowsMenu =
+        viewMenu->addMenu(tr("Toggle window", "Toggle visibility of editor windows overview in view menu"));
+    focusWindowsMenu =
+        viewMenu->addMenu(tr("Focus window", "Toggle visibility of editor windows overview in view menu"));
 
     viewMenu->addSeparator();
 
@@ -303,11 +304,12 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Connect NoteEditor, so that we can update flags if text changes
     connect(noteEditor, SIGNAL(textHasChanged(VymText)), this,
             SLOT(updateNoteText(VymText)));
-    connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));   // FIXME-2 windowCLosed needed after all?
+    connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     // Connect heading editor
     connect(headingEditor, SIGNAL(textHasChanged(const VymText &)), this,
             SLOT(updateHeading(const VymText &)));
+    connect(headingEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     connect(scriptEditor, SIGNAL(runScript(QString)), this,
             SLOT(runScript(QString)));
@@ -319,7 +321,8 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setObjectName("TaskEditor");
     dw->hide();
     addDockWidget(Qt::TopDockWidgetArea, dw);
-    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
+    // FIXME-2 connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
+    connect(taskEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     if (options.isActive("shortcutsLaTeX"))
         switchboard.printLaTeX();
@@ -347,8 +350,8 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
     updateGeometry();
 
-    windowSetTreeEditorsVisibility(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
-    windowSetSlideEditorsVisibility(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
+    setTreeEditorsVisibility(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
+    setSlideEditorsVisibility(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
 
     // After startup, schedule looking for updates AFTER
     // release notes have been downloaded
@@ -2456,7 +2459,7 @@ void Main::setupEditActions()
     a->setCheckable(true);
     addAction(a);
     switchboard.addAction(a, "mapTogglePropertyEditor", Qt::Key_B, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleProperty()));
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleProperty()));
     actionViewTogglePropertyEditor = a;
 }
 
@@ -2838,82 +2841,98 @@ void Main::setupViewActions()
     // Editor and other windows
 
     tag = tr("Windows", "Mainwindow view shortcut groups");
-    // a=noteEditorDW->toggleViewAction();
+    a = new QAction(QPixmap(":/flag-note.svg"),
+                    tr("Focus note editor", "View action"), this);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    focusWindowsMenu->addAction(a);
+    mapEditorActions.append(a);
+    switchboard.addAction(a, "mapFocusNoteEditor", Qt::Key_N, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(focusNoteEditor()));
+    actionViewFocusNoteEditor = a;
+
     a = new QAction(QPixmap(":/flag-note.svg"),
                     tr("Note editor", "View action"), this);
-    a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
-    windowsMenu->addAction(a);
+    toggleWindowsMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleNoteEditor()));
+    actionViewToggleNoteEditor = a;
+                                    //
+    a = new QAction(QPixmap(":/headingeditor.png"),
+                    tr("Focus heading editor", "View action"), this);
+    a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
-    switchboard.addAction(a, "mapShowNoteEditor", Qt::Key_N, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowShowNoteEditor()));
-    actionViewToggleNoteEditor = a; // FIXME-3 rename action to show
+    focusWindowsMenu->addAction(a);
+    switchboard.addAction(a, "mapFocusHeadingEditor", Qt::Key_E, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(focusHeadingEditor()));
+    actionViewFocusHeadingEditor = a;
 
-    // a=headingEditorDW->toggleViewAction();
     a = new QAction(QPixmap(":/headingeditor.png"),
                     tr("Heading editor", "View action"), this);
     a->setCheckable(true);
-    a->setIcon(QPixmap(":/headingeditor.png"));
-    a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
-    windowsMenu->addAction(a);
-    switchboard.addAction(a, "mapShowHeadingEditor", Qt::Key_E, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowShowHeadingEditor()));
-    actionViewToggleHeadingEditor = a;  // FIXME-3 rename action to show
+    toggleWindowsMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleHeadingEditor()));
+    actionViewToggleHeadingEditor = a;
 
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"),
-	    tr("Switch between Map editor and Tree editor", "View action"), this);
+	    tr("Switch focus between Map editor and Tree editor", "View action"), this);
     a->setCheckable(true);
-    windowsMenu->addAction(a);
+    focusWindowsMenu->addAction(a);
     switchboard.addAction(a, "switchTreeEditorAndMapEditor", Qt::Key_Tab, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(switchEditors()));
     actionViewSwitchEditors = a;
 
     a = new QAction(QPixmap(":/taskeditor.png"),
-                    tr("Task editor", "View action"), this);
-    a->setCheckable(true);
+                    tr("Focus taskeditor", "View action"), this);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
-    windowsMenu->addAction(a);
-    switchboard.addAction(a, "mapToggleTaskEditor", Qt::Key_Q, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleTaskEditor()));
-    actionViewToggleTaskEditor = a; // FIXME-3 rename action to show
+    focusWindowsMenu->addAction(a);
+    switchboard.addAction(a, "mapFocusTaskEditor", Qt::Key_Q, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(focusTaskEditor()));
+    actionViewFocusTaskEditor = a;
+
+    a = new QAction(QPixmap(":/taskeditor.png"),
+                    tr("Task editor", "View action"), this);
+    a->setCheckable(true);
+    toggleWindowsMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleTaskEditor()));
+    actionViewToggleTaskEditor = a;
 
     a = new QAction(QPixmap(":/slideeditor.png"),
                     tr("Slide editor", "View action"), this);
     a->setCheckable(true);
-    windowsMenu->addAction(a);
+    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
     switchboard.addAction(a, "mapShowSlideEditor", shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowShowSlideEditors()));
+    connect(a, SIGNAL(triggered()), this, SLOT(showSlideEditors()));
     actionViewShowSlideEditors = a;
 
     a = new QAction(QPixmap(":/scripteditor.png"),
                     tr("Script editor", "View action"), this);
     a->setCheckable(true);
-    windowsMenu->addAction(a);
+    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
     switchboard.addAction(a, "mapToggleScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptEditor()));
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptEditor()));
     actionViewToggleScriptEditor = a; // FIXME-3 show
 
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
     a->setCheckable(true);
-    windowsMenu->addAction(a);
+    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
     switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleScriptOutput()));
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptOutput()));
     actionViewToggleScriptOutput = a; // FIXME-3 show
 
     a = new QAction(QPixmap(":/history.png"),
                     tr("History Window", "View action"), this);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
-    windowsMenu->addAction(a);
+    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
     mapEditorActions.append(a);
     switchboard.addAction(a, "mapToggleHistoryWindow", Qt::CTRL | Qt::Key_H, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleHistory()));
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleHistory()));
     actionViewToggleHistoryWindow = a;
 
-    windowsMenu->addAction(actionViewTogglePropertyEditor);
+    toggleWindowsMenu->addAction(actionViewTogglePropertyEditor); // FIXME-0 focus missing
 
     viewMenu->addSeparator();
 
@@ -2922,7 +2941,7 @@ void Main::setupViewActions()
     a->setCheckable(true);
     a->setChecked(settings.value("/mainwindow/view/AntiAlias", true).toBool());
     viewMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleAntiAlias()));
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleAntiAlias()));
     actionViewToggleAntiAlias = a;
 
     a = new QAction(tr("Smooth pixmap transformations", "View action"), this);
@@ -2932,7 +2951,7 @@ void Main::setupViewActions()
         settings.value("/mainwindow/view/SmoothPixmapTransformations", true)
             .toBool());
     viewMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowToggleSmoothPixmap()));
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleSmoothPixmap()));
     actionViewToggleSmoothPixmapTransform = a;
 
     viewMenu->addSeparator();
@@ -2966,13 +2985,13 @@ void Main::setupViewActions()
     a->setStatusTip(a->text());
     viewMenu->addAction(a);
     switchboard.addAction(a, "mapPrevious", Qt::SHIFT | Qt::Key_Right, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowNextEditor()));
+    connect(a, SIGNAL(triggered()), this, SLOT(nextEditor()));
 
     a = new QAction(tr("Previous Map", "View action"), this);
     a->setStatusTip(a->text());
     viewMenu->addAction(a);
     switchboard.addAction(a, "mapNext", Qt::SHIFT | Qt::Key_Left, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(windowPreviousEditor()));
+    connect(a, SIGNAL(triggered()), this, SLOT(previousEditor()));
 }
 
 // Connect Actions
@@ -6706,11 +6725,28 @@ bool Main::settingsJIRA()
         return false;
 }
 
-void Main::windowShowNoteEditor()
+void Main::focusMapEditor()
 {
-    if (!noteEditor->parentWidget()->isVisible())
-        noteEditor->parentWidget()->show();
+    VymView *vv = currentView();
+    if (vv) 
+        vv->setFocusMapEditor();
+}
+
+void Main::focusNoteEditor()
+{
+    noteEditor->parentWidget()->show();
     noteEditor->setFocus();
+    actionViewToggleNoteEditor->setChecked(true);
+}
+
+void Main::toggleNoteEditor()
+{
+    if (noteEditor->parentWidget()->isVisible()) {
+        noteEditor->parentWidget()->hide();
+        focusMapEditor();
+        actionViewToggleNoteEditor->setChecked(false);
+    } else
+        focusNoteEditor();
 }
 
 void Main::switchEditors()
@@ -6720,7 +6756,7 @@ void Main::switchEditors()
         MapEditor *me = vv->getMapEditor();
         if (me) {
             if (me->hasFocus()) {
-                windowSetTreeEditorsVisibility(true);
+                setTreeEditorsVisibility(true);
                 vv->setFocusTreeEditor();
             } else
                 vv->setFocusMapEditor();
@@ -6728,7 +6764,7 @@ void Main::switchEditors()
     }
 }
 
-void Main::windowSetTreeEditorsVisibility(bool b)
+void Main::setTreeEditorsVisibility(bool b)
 {
     // Close *all* TreeEditors in each VymView and update vym settings
     settings.setValue("/mainwindow/view/showTreeEditors", b);
@@ -6736,31 +6772,35 @@ void Main::windowSetTreeEditorsVisibility(bool b)
         ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
 }
 
-void Main::windowToggleTaskEditor()
+void Main::focusTaskEditor()
+{
+    taskEditor->parentWidget()->show();
+    actionViewToggleTaskEditor->setChecked(true);
+    taskEditor->setFocus();
+}
+
+void Main::toggleTaskEditor()
 {
     if (taskEditor->parentWidget()->isVisible()) {
         taskEditor->parentWidget()->hide();
         actionViewToggleTaskEditor->setChecked(false);
-    }
-    else {
-        taskEditor->parentWidget()->show();
-        actionViewToggleTaskEditor->setChecked(true);
-    }
+    } else
+        focusTaskEditor();
 }
 
-void Main::windowShowSlideEditors()
+void Main::showSlideEditors()
 {
-    windowSetSlideEditorsVisibility(true);
+    setSlideEditorsVisibility(true);
 }
 
-void Main::windowSetSlideEditorsVisibility(bool b)
+void Main::setSlideEditorsVisibility(bool b)
 {
     settings.setValue("/mainwindow/view/showSlideEditors", b);
     for (int i = 0; i < tabWidget->count(); i++)
         ((VymView*)tabWidget->widget(i))->setSlideEditorVisibility(b);
 }
 
-void Main::windowToggleScriptEditor()
+void Main::toggleScriptEditor()
 {
     if (scriptEditor->parentWidget()->isVisible()) {
         scriptEditor->parentWidget()->hide();
@@ -6772,7 +6812,7 @@ void Main::windowToggleScriptEditor()
     }
 }
 
-void Main::windowToggleScriptOutput()
+void Main::toggleScriptOutput()
 {
     if (scriptOutput->parentWidget()->isVisible()) {
         scriptOutput->parentWidget()->hide();
@@ -6784,7 +6824,7 @@ void Main::windowToggleScriptOutput()
     }
 }
 
-void Main::windowToggleHistory()
+void Main::toggleHistory()
 {
     if (historyWindow->parentWidget()->isVisible())
         historyWindow->parentWidget()->hide();
@@ -6792,7 +6832,7 @@ void Main::windowToggleHistory()
         historyWindow->parentWidget()->show();
 }
 
-void Main::windowToggleProperty()
+void Main::toggleProperty()
 {
     if (branchPropertyEditor->parentWidget()->isVisible())
         branchPropertyEditor->parentWidget()->hide();
@@ -6801,14 +6841,23 @@ void Main::windowToggleProperty()
     branchPropertyEditor->setModel(currentModel());
 }
 
-void Main::windowShowHeadingEditor()
+void Main::focusHeadingEditor()
 {
-    if (!headingEditor->parentWidget()->isVisible())
-        headingEditor->parentWidget()->show();
+    headingEditor->parentWidget()->show();
     headingEditor->setFocus();
+    actionViewToggleHeadingEditor->setChecked(true);
 }
 
-void Main::windowToggleAntiAlias()
+void Main::toggleHeadingEditor()
+{
+    if (headingEditor->parentWidget()->isVisible()) {
+        headingEditor->parentWidget()->hide();
+        actionViewToggleHeadingEditor->setChecked(false);
+    } else
+        focusHeadingEditor();
+}
+
+void Main::toggleAntiAlias()
 {
     bool b = actionViewToggleAntiAlias->isChecked();
     MapEditor *me;
@@ -6826,7 +6875,7 @@ bool Main::hasSmoothPixmapTransform()
     return actionViewToggleSmoothPixmapTransform->isChecked();
 }
 
-void Main::windowToggleSmoothPixmap()
+void Main::toggleSmoothPixmap()
 {
     bool b = actionViewToggleSmoothPixmapTransform->isChecked();
     MapEditor *me;
@@ -6869,7 +6918,7 @@ void Main::updateNoteEditor(TreeItem *ti)
             noteEditor->clear(); // Also sets empty state
     } else
         noteEditor->setInactive();
-    noteEditor->setEditorTitle();
+    noteEditor->setTitle();
 }
 
 void Main::updateHeadingEditor(TreeItem *ti)
@@ -6888,7 +6937,7 @@ void Main::updateHeadingEditor(TreeItem *ti)
         }
 
         headingEditor->setVymText(selti->heading());
-        headingEditor->setEditorTitle();
+        headingEditor->setTitle();
     }
 }
 
@@ -6962,7 +7011,7 @@ void Main::updateDockWidgetTitles(VymModel *model)
             noteEditor->setVymText(bi->getNote());
         }
 
-        noteEditor->setEditorTitle(s);
+        noteEditor->setTitle(s);
     }
 }
 
@@ -6971,6 +7020,8 @@ void Main::updateActions()
     // updateActions is also called when satellites are closed
     actionViewToggleNoteEditor->setChecked(
         noteEditor->parentWidget()->isVisible());
+    actionViewToggleHeadingEditor->setChecked(
+        headingEditor->parentWidget()->isVisible());
     actionViewToggleTaskEditor->setChecked(
         taskEditor->parentWidget()->isVisible());
     actionViewToggleHistoryWindow->setChecked(
@@ -7571,13 +7622,13 @@ bool Main::gotoWindow(const int &n)
     return false;
 }
 
-void Main::windowNextEditor()
+void Main::nextEditor()
 {
     if (tabWidget->currentIndex() < tabWidget->count())
         tabWidget->setCurrentIndex(tabWidget->currentIndex() + 1);
 }
 
-void Main::windowPreviousEditor()
+void Main::previousEditor()
 {
     if (tabWidget->currentIndex() > 0)
         tabWidget->setCurrentIndex(tabWidget->currentIndex() - 1);
@@ -8131,8 +8182,8 @@ void Main::escapePressed()
 {
     if (presentationMode)
         togglePresentationMode();
-    else
-        setFocusMapEditor();
+
+    setFocusMapEditor();
 }
 
 void Main::togglePresentationMode()

@@ -18,6 +18,7 @@ class TaskEditor : public QWidget {
   public:
     TaskEditor(QWidget *parent = nullptr);
     ~TaskEditor();
+    void setFocus();
     void setMapName(const QString &);
     bool isUsedFilterMap();
     void setFilterMap();
@@ -34,6 +35,12 @@ class TaskEditor : public QWidget {
     void clearSelection();
     void showSelection();
     void contextMenuEvent(QContextMenuEvent *e);
+
+  signals:
+    void windowClosed();
+
+  public slots:
+    void closeWindow();
 
   private slots:
     void cellClicked(QModelIndex);
@@ -52,6 +59,7 @@ class TaskEditor : public QWidget {
   private:
     QTableView *view;
     TaskFilterModel *filterActiveModel;
+    QString shortcutScope;
     QString currentMapName;
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterActive;

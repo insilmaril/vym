@@ -14,6 +14,7 @@
 
 #include "branchitem.h"
 #include "mainwindow.h"
+#include "shortcuts.h"
 #include "task.h"
 #include "taskfiltermodel.h"
 #include "taskmodel.h"
@@ -23,6 +24,8 @@ extern Main *mainWindow;
 extern Settings settings;
 extern QMenu *taskContextMenu;
 extern TaskModel *taskModel;
+
+extern Switchboard switchboard;
 
 extern QString editorFocusInStyle;
 
@@ -110,6 +113,16 @@ TaskEditor::TaskEditor(QWidget *)
     tb->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterFlags3()));
     actionToggleFilterFlags3 = a;
+
+    // Shortcuts
+    QString shortcutScope = tr("Task Editor", "Shortcut group");
+    switchboard.addScope("TaskEditor", shortcutScope);
+
+    a = new QAction("Close window", this);
+    //a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    switchboard.addAction(a, "taskEditorCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "");
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    addAction(a);
 
     // Clone actions defined in MainWindow
     foreach (QAction *qa, mainWindow->taskEditorActions) {
@@ -219,6 +232,11 @@ TaskEditor::~TaskEditor()
         settings.setValue(QString("/taskeditor/column/%1/hidden").arg(i),
                           view->isColumnHidden(i));
     }
+}
+
+void TaskEditor::setFocus()
+{
+    view->setFocus();
 }
 
 void TaskEditor::setMapName(const QString &n)
@@ -432,6 +450,12 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
 void TaskEditor::contextMenuEvent(QContextMenuEvent *e)
 {
     taskContextMenu->popup(e->globalPos());
+}
+
+void TaskEditor::closeWindow()
+{
+    parentWidget()->hide();
+    emit windowClosed();
 }
 
 void TaskEditor::toggleFilterMap() { setFilterMap(); }

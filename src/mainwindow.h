@@ -345,22 +345,26 @@ class Main : public QMainWindow {
     bool settingsConfluence();
     bool settingsJIRA();
 
-    void windowShowNoteEditor();
+    void focusMapEditor();
+    void focusNoteEditor();
+    void toggleNoteEditor();
     void switchEditors();
-    void windowSetTreeEditorsVisibility(bool);
-    void windowToggleTaskEditor();
-    void windowShowSlideEditors();
-    void windowSetSlideEditorsVisibility(bool);
-    void windowToggleScriptEditor();
-    void windowToggleScriptOutput();
-    void windowToggleHistory();
-    void windowToggleProperty();
-    void windowShowHeadingEditor();
+    void setTreeEditorsVisibility(bool);
+    void focusTaskEditor();
+    void toggleTaskEditor();
+    void showSlideEditors();
+    void setSlideEditorsVisibility(bool);
+    void toggleScriptEditor();
+    void toggleScriptOutput();
+    void toggleHistory();
+    void toggleProperty();
+    void focusHeadingEditor();
+    void toggleHeadingEditor();
     void updateHistory(SimpleSettings &);
-    void windowToggleAntiAlias();
+    void toggleAntiAlias();
     bool isAliased();
     bool hasSmoothPixmapTransform();
-    void windowToggleSmoothPixmap();
+    void toggleSmoothPixmap();
     void clearScriptOutput();
     void updateHeading(const VymText &vt);
     void updateNoteText(const VymText &vt);
@@ -392,8 +396,8 @@ class Main : public QMainWindow {
     bool gotoWindow(const int &n);
 
   private slots:
-    void windowNextEditor();
-    void windowPreviousEditor();
+    void nextEditor();
+    void previousEditor();
     void nextSlide();
     void previousSlide();
 
@@ -482,7 +486,8 @@ class Main : public QMainWindow {
     QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
-    QMenu *windowsMenu;
+    QMenu *toggleWindowsMenu;
+    QMenu *focusWindowsMenu;
 
     QMenu *branchAddContextMenu;
     QMenu *branchGeometryContextMenu;
@@ -671,15 +676,26 @@ class Main : public QMainWindow {
     QAction *actionFormatLinkStylePolyParabel;
     QAction *actionFormatHideLinkUnselected;
 
+    QAction *actionViewFocusNoteEditor;
     QAction *actionViewToggleNoteEditor;
+
+    QAction *actionViewFocusHeadingEditor;
     QAction *actionViewToggleHeadingEditor;
+
+    QAction *actionViewFocusTaskEditor;
     QAction *actionViewToggleTaskEditor;
+
     QAction *actionViewSwitchEditors;
     QAction *actionViewShowSlideEditors;
+
     QAction *actionViewToggleScriptEditor;
+
     QAction *actionViewToggleScriptOutput;
+
     QAction *actionViewToggleHistoryWindow;
+
     QAction *actionViewTogglePropertyEditor;
+
     QAction *actionViewToggleAntiAlias;
     QAction *actionViewToggleSmoothPixmapTransform;
     QAction *actionViewCenter;

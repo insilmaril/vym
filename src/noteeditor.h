@@ -8,7 +8,7 @@ class VymNote;
 class NoteEditor : public TextEditor {
     Q_OBJECT
   public:
-    NoteEditor(const QString &eName = "undefined");
+    NoteEditor(const QString &id, const QString &scope);
     ~NoteEditor();
 
     VymNote getNote();

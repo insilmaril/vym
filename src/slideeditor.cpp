@@ -33,7 +33,7 @@ SlideEditor::SlideEditor(VymModel *m)
     slideControl = new SlideControlWidget(this);
     connect(slideControl, SIGNAL(takeSnapshot()), this, SLOT(addSlide()));
     connect(slideControl, SIGNAL(editButtonPressed()), mainWindow,
-            SLOT(windowToggleScriptEditor()));
+            SLOT(toggleScriptEditor()));
     connect(slideControl, SIGNAL(deleteButtonPressed()), this,
             SLOT(deleteSlide()));
     connect(slideControl, SIGNAL(previousButtonPressed()), this,
@@ -81,7 +81,7 @@ void SlideEditor::closeEvent(QCloseEvent *event)
 
 void SlideEditor::closeWindow()
 {
-    mainWindow->windowSetSlideEditorsVisibility(false);
+    mainWindow->setSlideEditorsVisibility(false);
 }
 
 void SlideEditor::previousSlide()

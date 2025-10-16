@@ -6,7 +6,7 @@
 class HeadingEditor : public TextEditor {
     Q_OBJECT
   public:
-    HeadingEditor(const QString &eName = "undefined");
+    HeadingEditor(const QString &id, const QString &scope);
     ~HeadingEditor();
 };
 
