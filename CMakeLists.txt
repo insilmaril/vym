@@ -151,7 +151,10 @@ message(STATUS "  vymDemos: ${vymDemos}")
 message(STATUS " vymMacros: ${vymMacros}")
 message(STATUS "vymScripts: ${vymScripts}")
 
-ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
+# On Unix-like systems, place app data under a dedicated subdir
+# so runtime looks in .../share/vym for resources.
+set(VYM_SHARE_SUBDIR "vym")
+ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR}")
 
 add_executable(vym ${VymSources} vym.qrc ${qm_files})
 target_link_libraries(vym ${QtLibraries})
@@ -207,11 +210,11 @@ add_custom_target(make-translations-directory ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/translations)
 add_dependencies(vym make-translations-directory)
 
-install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR})
 install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR} FILES_MATCHING PATTERN "*.pdf")
 install(FILES doc/vym.1.gz DESTINATION ${CMAKE_INSTALL_MANDIR})
 install(FILES README.md LICENSE.txt DESTINATION ${CMAKE_INSTALL_DOCDIR})
-install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR})
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
