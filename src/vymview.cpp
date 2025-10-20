@@ -42,7 +42,7 @@ VymView::VymView(VymModel *m)
     DockEditor *de;
     de = new DockEditor(tr("Tree Editor", "Title of dockable editor widget"),
                         this, model);
-    de->setWidget(treeEditor);  // FIXME-0 update TE status in mainWindow
+    de->setWidget(treeEditor);
     de->setAllowedAreas(Qt::AllDockWidgetAreas);
     de->setVisible(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
     addDockWidget(Qt::LeftDockWidgetArea, de);
@@ -56,7 +56,7 @@ VymView::VymView(VymModel *m)
     setCentralWidget(mapEditor);
 
     // Create SlideEditor
-    slideEditor = new SlideEditor(model);   // FIXME-0 Esc key and Ctrl-D key missing
+    slideEditor = new SlideEditor(model);
 
     de = new DockEditor(tr("Slide Editor", "Title of dockable editor widget"),
                         this, model);

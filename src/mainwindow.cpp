@@ -524,7 +524,6 @@ void Main::removeProgressCounter()
 
 void Main::satelliteVisibilityChanged()
 {
-    qDebug() << "Main::satelliteVisChanged  " << sender();  // FIXME-2
     updateActions();
 }
 
@@ -2919,13 +2918,13 @@ void Main::setupViewActions()
     a = new QAction(QPixmap(":/slideeditor.png"),
                     tr("Slide editor", "View action"), this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
+    toggleWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapShowSlideEditor", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleSlideEditors()));
     actionViewToggleSlideEditors = a;
 
     a = new QAction(QPixmap(":/scripteditor.png"),
-                    tr("Focuscript editor", "View action"), this);
+                    tr("Focus script editor", "View action"), this);
     focusWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapFocusScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(focusScriptEditor()));
@@ -2940,7 +2939,7 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
+    toggleWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptOutput()));
     actionViewToggleScriptOutput = a; // FIXME-3 show
@@ -6859,7 +6858,9 @@ void Main::focusScriptOutput()
 {
     scriptOutput->parentWidget()->show();
     actionViewToggleScriptOutput->setChecked(true);
-    scriptOutput->setFocus();
+    // Currently ScriptEditor gets focus, when output is toggled
+    // scriptOutput->setFocus();
+    focusScriptEditor();
 }
 void Main::toggleScriptOutput()
 {

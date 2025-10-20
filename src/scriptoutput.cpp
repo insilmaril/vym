@@ -14,7 +14,7 @@ ScriptOutput::~ScriptOutput()
     delete editor;
 }
 
-void ScriptOutput::setFocus() { //FIXME-0 missing implementation
+void ScriptOutput::setFocus() { //FIXME-5 missing implementation
     qDebug() << "SO::setFOcus";
 }
 
