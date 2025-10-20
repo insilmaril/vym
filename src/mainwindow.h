@@ -60,6 +60,8 @@ class Main : public QMainWindow {
     void fileNew();
     void fileNewCopy();
 
+    void satelliteVisibilityChanged();
+
   protected:
     void closeEvent(QCloseEvent *);
 
@@ -348,13 +350,16 @@ class Main : public QMainWindow {
     void focusMapEditor();
     void focusNoteEditor();
     void toggleNoteEditor();
+    void toggleTreeEditors();
     void switchEditors();
     void setTreeEditorsVisibility(bool);
     void focusTaskEditor();
     void toggleTaskEditor();
-    void showSlideEditors();
+    void toggleSlideEditors();
     void setSlideEditorsVisibility(bool);
+    void focusScriptEditor();
     void toggleScriptEditor();
+    void focusScriptOutput();
     void toggleScriptOutput();
     void toggleHistory();
     void toggleProperty();
@@ -686,10 +691,13 @@ class Main : public QMainWindow {
     QAction *actionViewToggleTaskEditor;
 
     QAction *actionViewSwitchEditors;
-    QAction *actionViewShowSlideEditors;
+    QAction *actionViewToggleTreeEditors;
+    QAction *actionViewToggleSlideEditors;
 
+    QAction *actionViewFocusScriptEditor;
     QAction *actionViewToggleScriptEditor;
 
+    QAction *actionViewFocusScriptOutput;
     QAction *actionViewToggleScriptOutput;
 
     QAction *actionViewToggleHistoryWindow;

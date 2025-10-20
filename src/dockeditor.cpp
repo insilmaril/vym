@@ -29,9 +29,3 @@ void DockEditor::changeTopLevel(bool topLevel)
     else
         setWindowTitle(editorTitle);
 }
-
-void DockEditor::closeEvent(QCloseEvent *event)
-{
-    // Pass event on to overloaded editors (TreeEditor, SlideEditor)
-    ((DockEditor*)widget())->closeEvent(event);
-}

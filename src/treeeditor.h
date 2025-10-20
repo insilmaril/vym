@@ -19,7 +19,6 @@ class TreeEditor : public QTreeView {
 
   protected:
     virtual void contextMenuEvent(QContextMenuEvent *e);
-    virtual void closeEvent(QCloseEvent *event);
 
   public slots:
     void closeWindow();

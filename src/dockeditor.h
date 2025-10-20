@@ -17,9 +17,6 @@ class DockEditor : public QDockWidget {
   public slots:
     void changeTopLevel(bool topLevel);
 
-  protected:
-    void closeEvent(QCloseEvent *event);
-
   private:
     QString editorTitle;
     VymModel *model;

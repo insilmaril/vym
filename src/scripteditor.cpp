@@ -10,6 +10,7 @@
 
 #include "mainwindow.h"
 #include "options.h"
+#include "shortcuts.h"
 #include "settings.h"
 #include "slideitem.h"
 #include "slidemodel.h"
@@ -28,6 +29,8 @@ extern Main *mainWindow;
 extern Options options;
 extern Settings settings;
 extern QFont fixedFont;
+extern QString editorFocusInStyle;
+extern Switchboard switchboard;
 
 ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
 {
@@ -95,11 +98,39 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     highlighterSlide->addKeywords(list);
     highlighterFile->addKeywords(list);
 
+    codeEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
+    slideEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
+    macroEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
+
+    QString shortcutScope = tr("Script Editor", "Shortcut scope"); // FIXME-2 Use string from mainwindow line 276
+    switchboard.addScope("MainWindow", shortcutScope);
+
+    QAction *a = new QAction("Close window", this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    switchboard.addAction(a, "textCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "Misc"); // FIXME-2 translation?
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    //fileMenu->addAction(a);
+    addAction(a);
+
     // QAction *a = new QAction( tr( "Save","ScriptEditor" ), ui.editor);
     // a->setShortcut (Qt::CTRL | Qt::Key_S );
     // a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     // addAction (a);
     // connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
+}
+
+void ScriptEditor::setFocus() {
+    switch (ui.modeTabWidget->currentIndex()) {
+        case 0:
+            slideEditor->setFocus();
+            break;
+        case 1:
+            macroEditor->setFocus();
+            break;
+        case 2:
+            codeEditor->setFocus();
+            break;
+    }
 }
 
 QString ScriptEditor::getScriptFile() { return codeEditor->toPlainText(); }
@@ -130,6 +161,13 @@ void ScriptEditor::setSlideScript(uint model_id, uint slide_id,
     slideID = slide_id;
     mode = Slide;
     slideEditor->setPlainText(s);
+}
+
+void ScriptEditor::closeWindow()
+{
+    parentWidget()->hide();
+    mainWindow->updateActions();
+    qDebug() << "SE::closeWindow";
 }
 
 void ScriptEditor::runMacro() { emit runScript(macroEditor->toPlainText()); }

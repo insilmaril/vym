@@ -699,12 +699,6 @@ void TextEditor::textLoad()
     }
 }
 
-void TextEditor::closeEvent(QCloseEvent *ce)
-{
-    ce->accept(); // TextEditor can be reopened with show()
-    closeWindow();
-}
-
 bool TextEditor::eventFilter(QObject *obj, QEvent *ev)
 {
     if (obj == editor) {

@@ -79,6 +79,11 @@ void SlideEditor::closeEvent(QCloseEvent *event)
     closeWindow();
 }
 
+void SlideEditor::setFocus()
+{
+    view->setFocus();
+}
+
 void SlideEditor::closeWindow()
 {
     mainWindow->setSlideEditorsVisibility(false);

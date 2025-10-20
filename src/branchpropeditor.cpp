@@ -841,6 +841,7 @@ void BranchPropertyEditor::closeEvent(QCloseEvent *ce)
     ce->accept(); // can be reopened with show()
     hide();
     emit windowClosed();
+    qDebug() << "BPE::closeEv"; // FIXME-2
     return;
 }
 

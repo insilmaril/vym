@@ -252,6 +252,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     noteEditorDW = dw;
     addDockWidget(Qt::LeftDockWidgetArea, dw);
+    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     dw = new QDockWidget();
     dw->setWidget(headingEditor);
@@ -259,6 +260,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     headingEditorDW = dw;
     addDockWidget(Qt::BottomDockWidgetArea, dw);
+    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     findResultWidget = new FindResultWidget();
     dw = new QDockWidget(tr("Search results list", "FindResultWidget"));
@@ -278,6 +280,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setObjectName("ScriptEditor");
     dw->hide();
     addDockWidget(Qt::LeftDockWidgetArea, dw);
+    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     scriptOutput = new ScriptOutput(this);
     dw = new QDockWidget(tr("Script output window"));
@@ -285,6 +288,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setObjectName("ScriptOutput");
     dw->hide();
     addDockWidget(Qt::BottomDockWidgetArea, dw);
+    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     dw = new QDockWidget(tr("Property Editor", "PropertyEditor"));
     dw->setWidget(branchPropertyEditor);
@@ -292,6 +296,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->hide();
     addDockWidget(Qt::LeftDockWidgetArea, dw);
     branchPropertyEditorDW = dw;
+    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     historyWindow = new HistoryWindow();
     dw = new QDockWidget(tr("History window", "HistoryWidget"));
@@ -299,17 +304,17 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setObjectName("HistoryWidget");
     dw->hide();
     addDockWidget(Qt::RightDockWidgetArea, dw);
-    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(updateActions()));
+    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     // Connect NoteEditor, so that we can update flags if text changes
     connect(noteEditor, SIGNAL(textHasChanged(VymText)), this,
             SLOT(updateNoteText(VymText)));
-    connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
+    // FIXME-2 connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     // Connect heading editor
     connect(headingEditor, SIGNAL(textHasChanged(const VymText &)), this,
             SLOT(updateHeading(const VymText &)));
-    connect(headingEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
+    // FIXME-2 connect(headingEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     connect(scriptEditor, SIGNAL(runScript(QString)), this,
             SLOT(runScript(QString)));
@@ -321,7 +326,8 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setObjectName("TaskEditor");
     dw->hide();
     addDockWidget(Qt::TopDockWidgetArea, dw);
-    connect(taskEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
+    // FIXME-2 connect(taskEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
+    connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     if (options.isActive("shortcutsLaTeX"))
         switchboard.printLaTeX();
@@ -514,6 +520,12 @@ void Main::removeProgressCounter()
     progressCounterTotal = 0;
     progressDialog.reset();
     progressDialog.hide();
+}
+
+void Main::satelliteVisibilityChanged()
+{
+    qDebug() << "Main::satelliteVisChanged  " << sender();  // FIXME-2
+    updateActions();
 }
 
 void Main::closeEvent(QCloseEvent *event)
@@ -2875,8 +2887,14 @@ void Main::setupViewActions()
 
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"),
-	    tr("Switch focus between Map editor and Tree editor", "View action"), this);
+	    tr("Tree editor", "View action"), this);
     a->setCheckable(true);
+    toggleWindowsMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleTreeEditors()));
+    actionViewToggleTreeEditors = a;
+
+    a = new QAction(QPixmap(":/treeeditor.png"),
+	    tr("Switch focus between Map editor and Tree editor", "View action"), this);
     focusWindowsMenu->addAction(a);
     switchboard.addAction(a, "switchTreeEditorAndMapEditor", Qt::Key_Tab, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(switchEditors()));
@@ -2903,16 +2921,22 @@ void Main::setupViewActions()
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
     switchboard.addAction(a, "mapShowSlideEditor", shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(showSlideEditors()));
-    actionViewShowSlideEditors = a;
+    connect(a, SIGNAL(triggered()), this, SLOT(toggleSlideEditors()));
+    actionViewToggleSlideEditors = a;
+
+    a = new QAction(QPixmap(":/scripteditor.png"),
+                    tr("Focuscript editor", "View action"), this);
+    focusWindowsMenu->addAction(a);
+    switchboard.addAction(a, "mapFocusScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(focusScriptEditor()));
+    actionViewFocusScriptEditor = a;
 
     a = new QAction(QPixmap(":/scripteditor.png"),
                     tr("Script editor", "View action"), this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
-    switchboard.addAction(a, "mapToggleScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
+    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptEditor()));
-    actionViewToggleScriptEditor = a; // FIXME-3 show
+    actionViewToggleScriptEditor = a;
 
     a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
     a->setCheckable(true);
@@ -4086,9 +4110,9 @@ void Main::setupToolbars()
     editorsToolbar->setObjectName("editorsTB");
     editorsToolbar->addAction(actionViewToggleNoteEditor);
     editorsToolbar->addAction(actionViewToggleHeadingEditor);
-    editorsToolbar->addAction(actionViewSwitchEditors);
+    editorsToolbar->addAction(actionViewToggleTreeEditors);
     editorsToolbar->addAction(actionViewToggleTaskEditor);
-    editorsToolbar->addAction(actionViewShowSlideEditors);
+    editorsToolbar->addAction(actionViewToggleSlideEditors);
     editorsToolbar->addAction(actionViewToggleScriptEditor);
     editorsToolbar->addAction(actionViewToggleHistoryWindow);
 
@@ -6763,12 +6787,19 @@ void Main::switchEditors()
     }
 }
 
+void Main::toggleTreeEditors()
+{
+    bool b = !settings.value("/mainwindow/view/showTreeEditors", true).toBool();
+    setTreeEditorsVisibility(b);
+}
+
 void Main::setTreeEditorsVisibility(bool b)
 {
     // Close *all* TreeEditors in each VymView and update vym settings
     settings.setValue("/mainwindow/view/showTreeEditors", b);
     for (int i = 0; i < tabWidget->count(); i++)
         ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
+    updateActions();
 }
 
 void Main::focusTaskEditor()
@@ -6787,9 +6818,17 @@ void Main::toggleTaskEditor()
         focusTaskEditor();
 }
 
-void Main::showSlideEditors()
+void Main::toggleSlideEditors()
 {
-    setSlideEditorsVisibility(true);
+    bool b = !settings.value("/mainwindow/view/showSlideEditors", false).toBool();
+    setSlideEditorsVisibility(b);
+
+    if (b) {
+        VymView *vv = currentView();
+        if (vv)
+            vv->setFocusSlideEditor();
+    } else
+        setFocusMapEditor();
 }
 
 void Main::setSlideEditorsVisibility(bool b)
@@ -6797,6 +6836,14 @@ void Main::setSlideEditorsVisibility(bool b)
     settings.setValue("/mainwindow/view/showSlideEditors", b);
     for (int i = 0; i < tabWidget->count(); i++)
         ((VymView*)tabWidget->widget(i))->setSlideEditorVisibility(b);
+    updateActions();
+}
+
+void Main::focusScriptEditor()
+{
+    scriptEditor->parentWidget()->show();
+    actionViewToggleScriptEditor->setChecked(true);
+    scriptEditor->setFocus();
 }
 
 void Main::toggleScriptEditor()
@@ -6804,23 +6851,23 @@ void Main::toggleScriptEditor()
     if (scriptEditor->parentWidget()->isVisible()) {
         scriptEditor->parentWidget()->hide();
         actionViewToggleScriptEditor->setChecked(false);
-    }
-    else {
-        scriptEditor->parentWidget()->show();
-        actionViewToggleScriptEditor->setChecked(true);
-    }
+    } else
+        focusScriptEditor();
 }
 
+void Main::focusScriptOutput()
+{
+    scriptOutput->parentWidget()->show();
+    actionViewToggleScriptOutput->setChecked(true);
+    scriptOutput->setFocus();
+}
 void Main::toggleScriptOutput()
 {
     if (scriptOutput->parentWidget()->isVisible()) {
         scriptOutput->parentWidget()->hide();
         actionViewToggleScriptOutput->setChecked(false);
-    }
-    else {
-        scriptOutput->parentWidget()->show();
-        actionViewToggleScriptOutput->setChecked(true);
-    }
+    } else
+        focusScriptOutput();
 }
 
 void Main::toggleHistory()
@@ -7021,6 +7068,8 @@ void Main::updateActions()
         noteEditor->parentWidget()->isVisible());
     actionViewToggleHeadingEditor->setChecked(
         headingEditor->parentWidget()->isVisible());
+    actionViewToggleTreeEditors->setChecked(
+        settings.value("/mainwindow/view/showTreeEditors", true).toBool());
     actionViewToggleTaskEditor->setChecked(
         taskEditor->parentWidget()->isVisible());
     actionViewToggleHistoryWindow->setChecked(
@@ -7029,6 +7078,8 @@ void Main::updateActions()
         branchPropertyEditor->parentWidget()->isVisible());
     actionViewToggleScriptEditor->setChecked(
         scriptEditor->parentWidget()->isVisible());
+    actionViewToggleSlideEditors->setChecked(
+        settings.value("/mainwindow/view/showSlideEditors", true).toBool());
 
     if (JiraAgent::available())
         actionGetJiraDataSubtree->setEnabled(true);

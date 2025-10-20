@@ -32,10 +32,13 @@ class VymView : public QMainWindow {
     void collapseOneLevel();
     void collapseUnselected();
     void showSelection(bool scaled, bool rotated);
+    void treeEditorVisibilityChanged();
     void setTreeEditorVisibility(bool);
+    void slideEditorVisibilityChanged();
     void setSlideEditorVisibility(bool);
     void setFocusMapEditor();
     void setFocusTreeEditor();
+    void setFocusSlideEditor();
 
   private:
     VymModel *model;

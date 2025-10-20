@@ -41,7 +41,6 @@ class TextEditor : public QMainWindow {
     void setupEditActions();
     void setupFormatActions();
     void setupSettingsActions();
-    void closeEvent(QCloseEvent *);
     bool eventFilter(QObject *obj, QEvent *ev);
 
   public slots:

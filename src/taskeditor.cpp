@@ -119,10 +119,10 @@ TaskEditor::TaskEditor(QWidget *)
     switchboard.addScope("TaskEditor", shortcutScope);
 
     a = new QAction("Close window", this);
-    //a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addAction(a, "taskEditorCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "");
     connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
-    addAction(a);
+    view->addAction(a);
 
     // Clone actions defined in MainWindow
     foreach (QAction *qa, mainWindow->taskEditorActions) {

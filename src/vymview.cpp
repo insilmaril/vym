@@ -42,10 +42,11 @@ VymView::VymView(VymModel *m)
     DockEditor *de;
     de = new DockEditor(tr("Tree Editor", "Title of dockable editor widget"),
                         this, model);
-    de->setWidget(treeEditor);
+    de->setWidget(treeEditor);  // FIXME-0 update TE status in mainWindow
     de->setAllowedAreas(Qt::AllDockWidgetAreas);
     de->setVisible(settings.value("/mainwindow/view/showTreeEditors", true).toBool());
     addDockWidget(Qt::LeftDockWidgetArea, de);
+    connect(de, SIGNAL(visibilityChanged(bool)), this, SLOT(treeEditorVisibilityChanged()));
     treeEditorDE = de;
 
     // Create good old MapEditor
@@ -55,7 +56,7 @@ VymView::VymView(VymModel *m)
     setCentralWidget(mapEditor);
 
     // Create SlideEditor
-    slideEditor = new SlideEditor(model);
+    slideEditor = new SlideEditor(model);   // FIXME-0 Esc key and Ctrl-D key missing
 
     de = new DockEditor(tr("Slide Editor", "Title of dockable editor widget"),
                         this, model);
@@ -63,9 +64,8 @@ VymView::VymView(VymModel *m)
     de->setAllowedAreas(Qt::AllDockWidgetAreas);
     de->setVisible(settings.value("/mainwindow/view/showSlideEditors", false).toBool());
     addDockWidget(Qt::RightDockWidgetArea, de);
+    connect(de, SIGNAL(visibilityChanged(bool)), this, SLOT(slideEditorVisibilityChanged()));
     slideEditorDE = de;
-    connect(slideEditorDE, SIGNAL(visibilityChanged(bool)), mainWindow,
-            SLOT(updateActions()));
 
     // Connect selections
 
@@ -286,12 +286,22 @@ void VymView::showSelection(bool scaled, bool rotated)
     mapEditor->ensureSelectionVisibleAnimated(scaled, rotated);
 }
 
+void VymView::treeEditorVisibilityChanged()
+{
+    mainWindow->setTreeEditorsVisibility(treeEditorDE->isVisible());
+}
+
 void VymView::setTreeEditorVisibility(bool b)
 {
     if (b)
         treeEditorDE->show();
     else
         treeEditorDE->hide();
+}
+
+void VymView::slideEditorVisibilityChanged()
+{
+    mainWindow->setSlideEditorsVisibility(slideEditorDE->isVisible());
 }
 
 void VymView::setSlideEditorVisibility(bool b)
@@ -304,3 +314,4 @@ void VymView::setSlideEditorVisibility(bool b)
 
 void VymView::setFocusMapEditor() { mapEditor->setFocus(); }
 void VymView::setFocusTreeEditor() { treeEditor->setFocus(); }
+void VymView::setFocusSlideEditor() { slideEditor->setFocus(); }

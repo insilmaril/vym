@@ -14,6 +14,10 @@ ScriptOutput::~ScriptOutput()
     delete editor;
 }
 
+void ScriptOutput::setFocus() { //FIXME-0 missing implementation
+    qDebug() << "SO::setFOcus";
+}
+
 void ScriptOutput::clear() { editor->clear(); }
 
 void ScriptOutput::setText(const QString &text) { editor->setText(text); }
