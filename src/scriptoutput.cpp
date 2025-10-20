@@ -15,7 +15,8 @@ ScriptOutput::~ScriptOutput()
 }
 
 void ScriptOutput::setFocus() { //FIXME-5 missing implementation
-    qDebug() << "SO::setFOcus";
+    // qDebug() << "SO::setFOcus";
+    // Currently ScriptEditor gets focus, when output is toggled
 }
 
 void ScriptOutput::clear() { editor->clear(); }
