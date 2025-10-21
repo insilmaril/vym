@@ -24,6 +24,9 @@ class BranchPropertyEditor : public QDialog {
     BranchPropertyEditor(QWidget *parent = 0);
     ~BranchPropertyEditor();
 
+  public slots:
+    void closeWindow();
+
   public:
     void setItem(TreeItem *);
     void setModel(VymModel *);

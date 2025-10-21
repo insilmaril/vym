@@ -5,12 +5,14 @@
 #include "attributeitem.h"
 #include "branch-container.h"
 #include "branchitem.h"
+#include "mainwindow.h"
 #include "settings.h"
 #include "task.h"
 #include "vymmodel.h"
 
 extern Settings settings;
 extern QString vymName;
+extern Main *mainWindow;
 
 BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
     : QDialog(parent)
@@ -100,6 +102,13 @@ BranchPropertyEditor::BranchPropertyEditor(QWidget *parent)
                 break;
             }
     }
+
+    QAction *a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+
 }
 
 BranchPropertyEditor::~BranchPropertyEditor()
@@ -111,6 +120,12 @@ BranchPropertyEditor::~BranchPropertyEditor()
 
     attributeModel->clear();
     delete (attributeModel);
+}
+
+void BranchPropertyEditor::closeWindow()
+{
+    parentWidget()->hide();
+    mainWindow->satelliteVisibilityChanged();
 }
 
 void BranchPropertyEditor::setItem(TreeItem *ti)

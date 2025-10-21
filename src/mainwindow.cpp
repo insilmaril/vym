@@ -2945,7 +2945,7 @@ void Main::setupViewActions()
     actionViewToggleScriptOutput = a; // FIXME-3 show
 
     a = new QAction(QPixmap(":/history.png"),
-                    tr("History Window", "View action"), this);
+                    tr("History window", "View action"), this);
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
@@ -6883,8 +6883,10 @@ void Main::toggleProperty()
 {
     if (branchPropertyEditor->parentWidget()->isVisible())
         branchPropertyEditor->parentWidget()->hide();
-    else
+    else {
         branchPropertyEditor->parentWidget()->show();
+        branchPropertyEditor->setFocus();
+    }
     branchPropertyEditor->setModel(currentModel());
 }
 

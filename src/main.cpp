@@ -610,6 +610,12 @@ int main(int argc, char *argv[])
     taskEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
     taskEditor->addAction(a);
 
+    a = new QAction("Cancel", branchPropertyEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in BranchPropertyEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    branchPropertyEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    branchPropertyEditor->addAction(a);
+
     // Check for zip tools
     zipToolAvailable = ZipAgent::checkZipTool();
     unzipToolAvailable = ZipAgent::checkUnzipTool();
