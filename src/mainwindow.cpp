@@ -2462,13 +2462,15 @@ void Main::setupEditActions()
     actionListBranches.append(a);
     actionLoadImage = a;
 
-    a = new QAction(
-        tr("Item property window", "Dialog to edit properties of selected item") +
-            QString("..."),
-        this);
-    a->setCheckable(true);
+    QString n = tr("Item properties", "Dialog to edit properties of selected item");
+    a = new QAction(n, this) ;
     addAction(a);
-    switchboard.addAction(a, "mapTogglePropertyEditor", Qt::Key_B, shortcutScope, tag);
+    switchboard.addAction(a, "mapFocusPropertyEditor", Qt::Key_B, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(focusProperty()));
+    actionViewFocusPropertyEditor = a;
+
+    a = new QAction(n, this) ;
+    a->setCheckable(true);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleProperty()));
     actionViewTogglePropertyEditor = a;
 }
@@ -2851,8 +2853,8 @@ void Main::setupViewActions()
     // Editor and other windows
 
     tag = tr("Windows", "Mainwindow view shortcut groups");
-    a = new QAction(QPixmap(":/flag-note.svg"),
-                    tr("Focus note editor", "View action"), this);
+    QString n = tr("Note editor", "View action");
+    a = new QAction(QPixmap(":/flag-note.svg"), n, this);
     a->setShortcutContext(Qt::WidgetShortcut);
     focusWindowsMenu->addAction(a);
     mapEditorActions.append(a);
@@ -2860,15 +2862,14 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(focusNoteEditor()));
     actionViewFocusNoteEditor = a;
 
-    a = new QAction(QPixmap(":/flag-note.svg"),
-                    tr("Note editor", "View action"), this);
+    a = new QAction(QPixmap(":/flag-note.svg"), n, this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleNoteEditor()));
     actionViewToggleNoteEditor = a;
                                     //
-    a = new QAction(QPixmap(":/headingeditor.png"),
-                    tr("Focus heading editor", "View action"), this);
+    n = tr("Heading editor", "View action");
+    a = new QAction(QPixmap(":/headingeditor.png"), n, this);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     focusWindowsMenu->addAction(a);
@@ -2876,31 +2877,29 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(focusHeadingEditor()));
     actionViewFocusHeadingEditor = a;
 
-    a = new QAction(QPixmap(":/headingeditor.png"),
-                    tr("Heading editor", "View action"), this);
+    a = new QAction(QPixmap(":/headingeditor.png"), n, this);
     a->setCheckable(true);
     mapEditorActions.append(a);
     toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHeadingEditor()));
     actionViewToggleHeadingEditor = a;
 
+    n = tr("Tree editor", "View action");
     // Original icon is "category" from KDE
-    a = new QAction(QPixmap(":/treeeditor.png"),
-	    tr("Tree editor", "View action"), this);
+    a = new QAction(QPixmap(":/treeeditor.png"), n, this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleTreeEditors()));
     actionViewToggleTreeEditors = a;
 
-    a = new QAction(QPixmap(":/treeeditor.png"),
-	    tr("Switch focus between Map editor and Tree editor", "View action"), this);
+    a = new QAction(QPixmap(":/treeeditor.png"), n, this);
     focusWindowsMenu->addAction(a);
     switchboard.addAction(a, "switchTreeEditorAndMapEditor", Qt::Key_Tab, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(switchEditors()));
     actionViewSwitchEditors = a;
 
-    a = new QAction(QPixmap(":/taskeditor.png"),
-                    tr("Focus taskeditor", "View action"), this);
+    n = tr("Task editor", "View action");
+    a = new QAction(QPixmap(":/taskeditor.png"), n, this);
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
     focusWindowsMenu->addAction(a);
@@ -2908,36 +2907,34 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(focusTaskEditor()));
     actionViewFocusTaskEditor = a;
 
-    a = new QAction(QPixmap(":/taskeditor.png"),
-                    tr("Task editor", "View action"), this);
+    a = new QAction(QPixmap(":/taskeditor.png"), n, this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleTaskEditor()));
     actionViewToggleTaskEditor = a;
 
-    a = new QAction(QPixmap(":/slideeditor.png"),
-                    tr("Slide editor", "View action"), this);
+    n = tr("Slide editor", "View action");
+    a = new QAction(QPixmap(":/slideeditor.png"), n, this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapShowSlideEditor", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleSlideEditors()));
     actionViewToggleSlideEditors = a;
 
-    a = new QAction(QPixmap(":/scripteditor.png"),
-                    tr("Focus script editor", "View action"), this);
+    n = tr("Script editor", "View action");
+    a = new QAction(QPixmap(":/scripteditor.png"), n, this);
     focusWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapFocusScriptEditor", Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(focusScriptEditor()));
     actionViewFocusScriptEditor = a;
 
-    a = new QAction(QPixmap(":/scripteditor.png"),
-                    tr("Script editor", "View action"), this);
+    a = new QAction(QPixmap(":/scripteditor.png"), n, this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptEditor()));
     actionViewToggleScriptEditor = a;
 
-    a = new QAction(QPixmap(), tr("Script output window", "View action"), this);
+    a = new QAction(QPixmap(), tr("Script output", "View action"), this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
@@ -2954,7 +2951,8 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHistory()));
     actionViewToggleHistoryWindow = a;
 
-    toggleWindowsMenu->addAction(actionViewTogglePropertyEditor); // FIXME-0 focus missing
+    focusWindowsMenu->addAction(actionViewFocusPropertyEditor);
+    toggleWindowsMenu->addAction(actionViewTogglePropertyEditor);
 
     viewMenu->addSeparator();
 
@@ -6879,15 +6877,18 @@ void Main::toggleHistory()
         historyWindow->parentWidget()->show();
 }
 
+void Main::focusProperty()
+{
+    branchPropertyEditor->parentWidget()->show();
+    branchPropertyEditor->setFocus();
+    branchPropertyEditor->setModel(currentModel());
+}
 void Main::toggleProperty()
 {
     if (branchPropertyEditor->parentWidget()->isVisible())
         branchPropertyEditor->parentWidget()->hide();
-    else {
-        branchPropertyEditor->parentWidget()->show();
-        branchPropertyEditor->setFocus();
-    }
-    branchPropertyEditor->setModel(currentModel());
+    else
+        focusProperty();
 }
 
 void Main::focusHeadingEditor()

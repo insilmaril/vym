@@ -362,6 +362,7 @@ class Main : public QMainWindow {
     void focusScriptOutput();
     void toggleScriptOutput();
     void toggleHistory();
+    void focusProperty();
     void toggleProperty();
     void focusHeadingEditor();
     void toggleHeadingEditor();
@@ -702,6 +703,7 @@ class Main : public QMainWindow {
 
     QAction *actionViewToggleHistoryWindow;
 
+    QAction *actionViewFocusPropertyEditor;
     QAction *actionViewTogglePropertyEditor;
 
     QAction *actionViewToggleAntiAlias;
