@@ -2941,13 +2941,18 @@ void Main::setupViewActions()
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptOutput()));
     actionViewToggleScriptOutput = a; // FIXME-3 show
 
-    a = new QAction(QPixmap(":/history.png"),
-                    tr("History window", "View action"), this);
+    n = tr("History window", "View action");
+    a = new QAction(QPixmap(":/history.png"), n, this);
     a->setShortcutContext(Qt::WidgetShortcut);
+    focusWindowsMenu->addAction(a);
+    mapEditorActions.append(a);
+    switchboard.addAction(a, "mapToggleHistoryWindow", Qt::CTRL | Qt::Key_H, shortcutScope, tag);   // Not on MacOS
+    connect(a, SIGNAL(triggered()), this, SLOT(focusHistory()));
+    actionViewFocusHistoryWindow = a;
+
+    a = new QAction(QPixmap(":/history.png"), n, this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
-    mapEditorActions.append(a);
-    switchboard.addAction(a, "mapToggleHistoryWindow", Qt::CTRL | Qt::Key_H, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHistory()));
     actionViewToggleHistoryWindow = a;
 
@@ -6869,12 +6874,18 @@ void Main::toggleScriptOutput()
         focusScriptOutput();
 }
 
+void Main::focusHistory()
+{
+    historyWindow->parentWidget()->show();
+    historyWindow->setFocus();
+}
+
 void Main::toggleHistory()
 {
     if (historyWindow->parentWidget()->isVisible())
         historyWindow->parentWidget()->hide();
     else
-        historyWindow->parentWidget()->show();
+        focusHistory();
 }
 
 void Main::focusProperty()

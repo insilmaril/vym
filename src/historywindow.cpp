@@ -87,6 +87,11 @@ HistoryWindow::~HistoryWindow()
             ui.historyTable->columnWidth(i));
 }
 
+void HistoryWindow::setFocus()
+{
+    ui.historyTable->setFocus();
+}
+
 void HistoryWindow::clearRow(int row)
 {
     QTableWidgetItem *it;
