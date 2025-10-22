@@ -54,6 +54,11 @@ FindResultWidget::FindResultWidget(QWidget *)
     connect(resultsModel, SIGNAL(layoutChanged()), view, SLOT(expandAll()));
 }
 
+void FindResultWidget::setFocus()
+{
+    findControlsWidget->setFocus();
+}
+
 void FindResultWidget::addItem(TreeItem *ti)
 {
     if (ti) {
@@ -98,7 +103,7 @@ void FindResultWidget::popup()
 {
     show();
     parentWidget()->show();
-    findControlsWidget->setFocus();
+    view->setFocus();
 }
 
 void FindResultWidget::cancelPressed()

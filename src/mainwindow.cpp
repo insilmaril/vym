@@ -6212,6 +6212,7 @@ void Main::editSelectNothing()
 void Main::editOpenFindResultWidget()
 {
     findResultWidget->popup();
+    findResultWidget->setFocus();
 }
 
 void Main::editFindNext(QString s, bool searchNotesFlag)

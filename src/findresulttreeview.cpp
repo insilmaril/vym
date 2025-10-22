@@ -28,8 +28,7 @@ void FindResultTreeView::init()
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(startEdit()));
 
-
-    // FIXME-3 Set borders when in focus to editorFocusStyle
+    setStyleSheet("QTreeView:focus{" + editorFocusInStyle + "}");
 }
 
 FindResultTreeView::~FindResultTreeView()

@@ -15,6 +15,7 @@
 extern Main *mainWindow;
 extern bool usingDarkTheme;
 extern QString iconTheme;
+extern QString editorFocusInStyle;
 
 FindControlsWidget::FindControlsWidget(QWidget *)
 {
@@ -29,6 +30,7 @@ FindControlsWidget::FindControlsWidget(QWidget *)
     findcombo->setMinimumWidth(250);
     findcombo->setMaxCount(10);
     findcombo->setEditable(true);
+    findcombo->setStyleSheet("QComboBox:focus{" + editorFocusInStyle + "}");
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     findcombo->setSizePolicy(sizePolicy);
@@ -86,6 +88,7 @@ void FindControlsWidget::indexChanged(int i)
 
 void FindControlsWidget::setFocus()
 {
+    qDebug() << "FRW::setFocus";
     findcombo->lineEdit()->selectAll();
     findcombo->lineEdit()->setFocus();
 }
