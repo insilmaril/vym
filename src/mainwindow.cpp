@@ -1673,7 +1673,7 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
     fileImportMenu->addAction(a);
 
-    a = new QAction("IThoughts..." + tr("(still experimental"), this);
+    a = new QAction("IThoughts..." + tr("(still experimental)"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileImportIThoughts()));
     fileImportMenu->addAction(a);
 
