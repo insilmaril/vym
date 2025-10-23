@@ -309,12 +309,10 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     // Connect NoteEditor, so that we can update flags if text changes
     connect(noteEditor, SIGNAL(textHasChanged(VymText)), this,
             SLOT(updateNoteText(VymText)));
-    // FIXME-2 connect(noteEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     // Connect heading editor
     connect(headingEditor, SIGNAL(textHasChanged(const VymText &)), this,
             SLOT(updateHeading(const VymText &)));
-    // FIXME-2 connect(headingEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
 
     connect(scriptEditor, SIGNAL(runScript(QString)), this,
             SLOT(runScript(QString)));
@@ -326,7 +324,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     dw->setObjectName("TaskEditor");
     dw->hide();
     addDockWidget(Qt::TopDockWidgetArea, dw);
-    // FIXME-2 connect(taskEditor, SIGNAL(windowClosed()), this, SLOT(updateActions()));
     connect(dw, SIGNAL(visibilityChanged(bool)), this, SLOT(satelliteVisibilityChanged()));
 
     if (options.isActive("shortcutsLaTeX"))
@@ -1575,7 +1572,7 @@ void Main::setupAPI()
 
 }
 
-void Main::cloneActionMapEditor(QAction *a) // FIXME-2 obsolete by mapEditorActions.append(...)  ?
+void Main::cloneActionMapEditor(QAction *a) // Add action to mapEditorActions and set context
 {
     a->setShortcutContext(Qt::WidgetShortcut);
     mapEditorActions.append(a);
@@ -2954,7 +2951,7 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/history.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a); // FIXME-0 focus missing
+    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHistory()));
     actionViewToggleHistoryWindow = a;
 
@@ -3713,7 +3710,7 @@ void Main::setupHelpActions()
 }
 
 // Context Menus
-void Main::setupContextMenus()  // FIXME-2 Use context menus add/remove also in Edit menu for better readability
+void Main::setupContextMenus()
 {
     // Context menu for goto/move targets  (populated on demand)
     targetsContextMenu = new QMenu(this);
