@@ -88,7 +88,6 @@ void FindControlsWidget::indexChanged(int i)
 
 void FindControlsWidget::setFocus()
 {
-    qDebug() << "FRW::setFocus";
     findcombo->lineEdit()->selectAll();
     findcombo->lineEdit()->setFocus();
 }

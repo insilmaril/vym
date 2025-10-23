@@ -2893,7 +2893,9 @@ void Main::setupViewActions()
     actionViewToggleTreeEditors = a;
 
     a = new QAction(QPixmap(":/treeeditor.png"), n, this);
+    a->setShortcutContext(Qt::WidgetShortcut);
     focusWindowsMenu->addAction(a);
+    mapEditorActions.append(a);
     switchboard.addAction(a, "switchTreeEditorAndMapEditor", Qt::Key_Tab, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(switchEditors()));
     actionViewSwitchEditors = a;

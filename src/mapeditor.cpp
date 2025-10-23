@@ -47,9 +47,6 @@ MapEditor::MapEditor(VymModel *vm)
 {
     // qDebug() << "Constructor ME " << this;
 
-    QString shortcutScope = tr("Map Editor", "Shortcut scope");
-    switchboard.addScope("MapEditor", tr("Map Editors", "Shortcut group"));
-
     mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
     //mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-4 Avoiding crashes...
@@ -129,6 +126,9 @@ MapEditor::MapEditor(VymModel *vm)
 
     // Shortcuts and actions
     QAction *a;
+
+    QString shortcutScope = tr("Map Editor", "Shortcut scope");
+    switchboard.addScope("MapEditor", tr("Map Editors", "Shortcut group"));
 
     a = new QAction("Select upper branch", this);
     a->setShortcut(Qt::Key_Up);

@@ -19,6 +19,11 @@ class FindResultWidget : public QWidget {
 
   public:
     FindResultWidget(QWidget *parent = nullptr);
+
+  public slots:
+    void switchFocus();
+
+  public:
     void setFocus();
     FindResultModel *getResultModel();
     void addItem(TreeItem *ti);

@@ -37,6 +37,12 @@ FindResultWidget::FindResultWidget(QWidget *)
     connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
     addAction(a);
 
+    a = new QAction("Switch focus", this);
+    a->setShortcut(Qt::Key_Tab);                // Switch focus between QComboBox and QTreeView
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    connect(a, SIGNAL(triggered()), this, SLOT(switchFocus()));
+    addAction(a);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     mainLayout->addWidget(view);
@@ -52,6 +58,14 @@ FindResultWidget::FindResultWidget(QWidget *)
     connect(view, SIGNAL(searchFinished()), this, SLOT(searchFinished()));
 
     connect(resultsModel, SIGNAL(layoutChanged()), view, SLOT(expandAll()));
+}
+
+void FindResultWidget::switchFocus()
+{
+    if (view->hasFocus())
+        setFocus();
+    else
+        view->setFocus();
 }
 
 void FindResultWidget::setFocus()
