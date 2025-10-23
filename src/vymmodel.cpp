@@ -6570,9 +6570,16 @@ bool VymModel::centerOnID(const QString &id)
 
     TreeItem *ti = findUuid(QUuid(id));
     if (ti && (ti->hasTypeBranch() || ti->hasTypeImage())) {
-        Container *c = ((MapItem*)ti)->getContainer();
-        if (c && zoomFactor > 0 ) {
-            mapEditor->setViewCenterTarget(c->mapToScene(c->rect().center()), zoomFactor,
+        QPointF p_center;
+        if (ti->hasTypeBranch())
+            p_center = ((BranchItem*)ti)->getBranchContainer()->ornamentsSceneRect().center();
+        else {
+            Container *c;
+            c = ((MapItem*)ti)->getContainer();
+            p_center = c->mapToScene(c->rect().center());
+        }
+        if (zoomFactor > 0 ) {
+            mapEditor->setViewCenterTarget(p_center, zoomFactor,
                                            mapRotationInt, animDuration,
                                            animCurve);
             return true;
