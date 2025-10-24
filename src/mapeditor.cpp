@@ -1182,7 +1182,7 @@ bool MapEditor::isContainerCloserInDirection(Container *c1, Container *c2, const
     return false;
 }
 
-TreeItem* MapEditor::getItemInDirection(TreeItem *ti, RadarDirection radarDir)  // FIXME-2 setting to enforce hirarchical mode... #161
+TreeItem* MapEditor::getItemInDirection(TreeItem *ti, RadarDirection radarDir)  // FIXME-3 setting to enforce hirarchical mode... #161
 {
     SelectionMode selMode = currentSelectionMode(ti);
 

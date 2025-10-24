@@ -273,7 +273,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     connect(findResultWidget, SIGNAL(findPressed(QString, bool)), this,
             SLOT(editFindNext(QString, bool)));
 
-
     scriptEditor = new ScriptEditor(this);
     dw = new QDockWidget(tr("Script Editor", "ScriptEditor"));
     dw->setWidget(scriptEditor);

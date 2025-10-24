@@ -102,12 +102,12 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     slideEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
     macroEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
 
-    QString shortcutScope = tr("Script Editor", "Shortcut scope"); // FIXME-2 Use string from mainwindow line 276
+    QString shortcutScope = parentWidget()->windowTitle();
     switchboard.addScope("MainWindow", shortcutScope);
 
     QAction *a = new QAction("Close window", this);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    switchboard.addAction(a, "textCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "Misc"); // FIXME-2 translation?
+    switchboard.addAction(a, "textCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "Misc"); // FIXME-3 translation?
     connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
     //fileMenu->addAction(a);
     addAction(a);
