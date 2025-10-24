@@ -1127,7 +1127,8 @@ aber noch nicht gespeichert. Wollen Sie </translation>
     <message>
         <location line="-3299"/>
         <location line="+6"/>
-        <location line="+8"/>
+        <location line="+4"/>
+        <location line="+4"/>
         <location line="+5"/>
         <location line="+23"/>
         <location line="+8"/>
@@ -1769,12 +1770,11 @@ aber noch nicht gespeichert. Wollen Sie </translation>
         <translation>Importieren</translation>
     </message>
     <message>
-        <location line="+30"/>
         <source>(still experimental</source>
-        <translation>(noch experimentell)</translation>
+        <translation type="vanished">(noch experimentell)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+44"/>
         <source>Export</source>
         <comment>File menu</comment>
         <translation>Exportieren</translation>

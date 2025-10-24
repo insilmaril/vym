@@ -541,12 +541,12 @@ int main(int argc, char *argv[])
         bool ok;
         if (!localeName.isEmpty())
             // Use localeName to load specific language
-            ok = vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path());
+            ok = vymTranslator.load(QString("vym_%1.qm").arg(localeName), vymTranslationsDir.path());
         else {
             ok = vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm");
             if (!ok)
                 // No system locale found, go for English
-                ok = vymTranslator.load(QString("vym.en.qm"), vymTranslationsDir.path());
+                ok = vymTranslator.load(QString("vym_en.qm"), vymTranslationsDir.path());
         }
 
         if (!ok) {

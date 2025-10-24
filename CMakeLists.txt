@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (CMAKE_SYSTEM_NAME STREQUAL Linux)
-    message(STATUS "using UNIX in cmake")	# FIXME-0 still required?
+    message(STATUS "vym: using UNIX in cmake")	# FIXME-0 still required?
 endif()
 
 set(QtComponents
@@ -38,7 +38,7 @@ set(QtLibraries
 # or uncomment here:
 # set(CMAKE_BUILD_TYPE Debug)
 
-# No longer needed with qt_standard_project_setup() below...
+# Should no longer needed with qt_standard_project_setup() below...
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -50,7 +50,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     find_package(DBus1)
 
     if(DBus1_FOUND)
-        message(STATUS "Deteced Linux and DBUS1, adding DBUS interfaces")
+        message(STATUS "vym: Deteced Linux and DBUS1, adding DBUS interfaces")
 
         LIST(APPEND QtComponents DBus)
         LIST(APPEND QtLibraries Qt6::DBus)
@@ -64,14 +64,11 @@ if(WIN32)
     if( OPENSSL_FOUND )
         include_directories(${OPENSSL_INCLUDE_DIRS})
         link_directories(${OPENSSL_LIBRARIES})
-        message(STATUS "Using OpenSSL version: ${OPENSSL_VERSION}")
+        message(STATUS "vym: Using OpenSSL version: ${OPENSSL_VERSION}")
     else()
-        message(STATUS "No openSSL found?!")
+        message(STATUS "vym: No openSSL found?!")
         # Error; with REQUIRED, pkg_search_module() will throw an error by it's own
     endif()
-
-    #target_link_libraries(${YOUR_TARGET_HERE} ${OPENSSL_LIBRARIES})
-    #target_link_libraries(project_name /path/of/libssl.so /path/of/libcrypto.so)
 
     set(CMAKE_INSTALL_DATAROOTDIR ".")
  endif()
@@ -79,7 +76,9 @@ if(WIN32)
 
 # https://doc.qt.io/qt-6/qt-standard-project-setup.html
 find_package(Qt6 REQUIRED COMPONENTS Core)
-qt_standard_project_setup()
+qt_standard_project_setup( I18N_TRANSLATED_LANGUAGES
+    el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sv zh_CN zh_TW
+) # FIXME add missing translations
 
 include(GNUInstallDirs)
 
@@ -90,7 +89,7 @@ list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/forms")
 get_target_property(QtLibraryType Qt6::Widgets TYPE)
 
 if(QtLibraryType STREQUAL STATIC_LIBRARY)
-    message(STATUS "Static Qt linkage")
+    message(STATUS "vym: Static Qt linkage")
     list(APPEND QtLibraries Qt6::QSvgPlugin)
 endif()
 
@@ -116,46 +115,48 @@ if(DBus1_FOUND)
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
 endif()
 
-# Translations  (release)
+# Translations
+#
+# To update the translation files based on source code changes
+# add the targest update_translations and release_translations
+#
+# See also (for Qt 6):
+# https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
 
-    # To update the translation files based on source code changes
-    # first call manually
-    # lupdate-qt5 src/ -ts lang/*.ts
-    #
-    # Qt6 will have a dedicated macro:
-    # https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
-
-#file(GLOB ts_files ABSOLUTE ${CMAKE_BINARY_DIR} "lang/*.ts")
 file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
-message(STATUS "Creating ${CMAKE_BINARY_DIR}/translations")
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
+#message(STATUS "vym: Creating ${CMAKE_BINARY_DIR}/translations")
+#file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
-#set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_SOURCE_DIR}/translations)
 
-#QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
-#QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
-#QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR}/src)
+qt_add_translations(TARGETS vym
+    TS_FILE_DIR ${CMAKE_SOURCE_DIR}/lang    # TS_OUTPUT_DIRECTORY in Qt 6.9
+    RESOURCE_PREFIX ${CMAKE_BINARY_DIR}/translations
+    #QM_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/translations  # Only in Qt 6.9
+)
 
-QT6_add_translation(qm_files ${ts_files})
+#qt_add_lrelease(target TS_FILES ${ts_files} QM_FILES_OUTPUT_VARIABLE ${CMAKE_BINARY_DIR}/translations) 
+
 add_compile_definitions(CMAKE_SOURCE_DIR)
 
-message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
-message(STATUS "ts_files: ${ts_files}")
-message(STATUS "qm_files: ${qm_files}")
+message(STATUS "vym: CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+message(STATUS "vym: ts_files: ${ts_files}")
+message(STATUS "vym: qm_files: ${qm_files}")
 
 # Collection of files for later installation
 file(GLOB vymDemos RELATIVE ${CMAKE_SOURCE_DIR} "demos/*.*")
 file(GLOB vymMacros RELATIVE ${CMAKE_SOURCE_DIR} "macros/*.vys")
 file(GLOB vymScripts RELATIVE ${CMAKE_SOURCE_DIR} "demos/scripts/*.*")
-message(STATUS "  vymDemos: ${vymDemos}")
-message(STATUS " vymMacros: ${vymMacros}")
-message(STATUS "vymScripts: ${vymScripts}")
+message(STATUS "vym: vymDemos: ${vymDemos}")
+message(STATUS "vym: vymMacros: ${vymMacros}")
+message(STATUS "vym: vymScripts: ${vymScripts}")
 
 # On Unix-like systems, place app data under a dedicated subdir
 # so runtime looks in .../share/vym for resources.
 set(VYM_SHARE_SUBDIR "vym")
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR}")
 
+# FIXME qm_files needed?
+# FIXME better switch to qt_add_executable https://doc.qt.io/qt-6/cmake-get-started.html
 add_executable(vym ${VymSources} vym.qrc ${qm_files})
 target_link_libraries(vym ${QtLibraries})
 
@@ -167,7 +168,7 @@ else()
 endif()
 
 if(APPLE)
-    message(STATUS "Detected APPLE")
+    message(STATUS "vym: Detected APPLE")
 
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME})
 
