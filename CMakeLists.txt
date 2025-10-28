@@ -125,6 +125,7 @@ endif()
 
 file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
 #message(STATUS "vym: Creating ${CMAKE_BINARY_DIR}/translations")
+
 #file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
 
@@ -142,23 +143,24 @@ message(STATUS "vym: CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "vym: ts_files: ${ts_files}")
 message(STATUS "vym: qm_files: ${qm_files}")
 
-# Collection of files for later installation
-file(GLOB vymDemos RELATIVE ${CMAKE_SOURCE_DIR} "demos/*.*")
-file(GLOB vymMacros RELATIVE ${CMAKE_SOURCE_DIR} "macros/*.vys")
-file(GLOB vymScripts RELATIVE ${CMAKE_SOURCE_DIR} "demos/scripts/*.*")
-message(STATUS "vym: vymDemos: ${vymDemos}")
-message(STATUS "vym: vymMacros: ${vymMacros}")
-message(STATUS "vym: vymScripts: ${vymScripts}")
 
 # On Unix-like systems, place app data under a dedicated subdir
 # so runtime looks in .../share/vym for resources.
 set(VYM_SHARE_SUBDIR "vym")
 ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR}")
 
+
 # FIXME qm_files needed?
-# FIXME better switch to qt_add_executable https://doc.qt.io/qt-6/cmake-get-started.html
-add_executable(vym ${VymSources} vym.qrc ${qm_files})
-target_link_libraries(vym ${QtLibraries})
+#add_executable(vym ${VymSources} vym.qrc ${qm_files})
+qt_add_executable(vym MACOSX_BUNDLE ${VymSources} vym.qrc ${qm_files} ) # FIXME Icon missing?
+                                                                # FIXME Move add_executable to end?
+target_link_libraries(vym PRIVATE ${QtLibraries})
+
+#FIXME shoud translations/ really be in  CMAKE_BINARY_DIR? Or better e.g. in Contents?
+#
+add_custom_target(make-translations-directory ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/translations)
+add_dependencies(vym make-translations-directory)
 
 if(WIN32)
     set_target_properties(vym PROPERTIES WIN32_EXECUTABLE TRUE)
@@ -175,41 +177,57 @@ if(APPLE)
     # Prepare Info.plist
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "2.9.5xx" #"${PROJECT_VERSION}"   # FIXME Version missing^
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
         MACOSX_BUNDLE_GUI_IDENTIFIER "org.insilmaril.vym"
-        MACOSX_BUNDLE_ICON_FILE "vym.icns"
+        MACOSX_BUNDLE_ICON_FILE "icons/vym.icns"
         MACOSX_BUNDLE TRUE
     )
 
-    set(vymIconMac ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
-    target_sources(vym PRIVATE ${vymIconMac})
-    set_source_files_properties(${vymIconMac} PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources")
+    # Root paths to be copied to vym.app bundle (adjust if needed)
+    set(DIRLIST demos doc exports flags icons macros styles)
 
-    target_sources(vym PRIVATE ${vymDemos})
-    set_source_files_properties(${vymDemos} PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources/demos"
-    )
-    target_sources(vym PRIVATE ${vymScripts})
-    set_source_files_properties(${vymScripts} PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources/demos/scripts"
-    )
+    foreach(CURRENT_DIR ${DIRLIST})
+        set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/${CURRENT_DIR}")
+        set(RESOURCE_DIR "${CMAKE_BINARY_DIR}/vym.app/Contents/Resources/${CURRENT_DIR}")
 
-    target_sources(vym PRIVATE ${vymMacros})
-    set_source_files_properties(${vymMacros} PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources/macros"
-    )
-    #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    #    COMMAND codesign -f -s - "${CMAKE_CURRENT_SOURC_DIR}/${PROJECT_NAME}.app"
-    #    COMMENT "Signing the .app bundle"
-    #)
+        # --- 1. Add all subdirectories of SOURCE to the include path ---
 
+        # Get all subdirectories recursively
+        file(GLOB_RECURSE SOURCE_SUBDIRS LIST_DIRECTORIES true RELATIVE ${SOURCE_DIR} "${SOURCE_DIR}/*")
+
+        set(INCLUDE_DIRS "")
+        foreach(path ${SOURCE_SUBDIRS})
+            if(IS_DIRECTORY "${SOURCE_DIR}/${path}")
+                list(APPEND INCLUDE_DIRS "${SOURCE_DIR}/${path}")
+            endif()
+        endforeach()
+
+        # Add SOURCE itself too
+        list(APPEND INCLUDE_DIRS "${SOURCE_DIR}")
+
+        # Add them to your target
+        target_include_directories(vym PRIVATE ${INCLUDE_DIRS})
+
+        message(STATUS "CURRENT_DIR=${CURRENT_DIR}  includeDirs=${INCLUDE_DIRS}")
+
+        # --- 2. Copy SOURCE_DIR -> RESOURCE_DIR at build time ---
+
+        add_custom_command(
+            TARGET vym POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    "${SOURCE_DIR}"
+                    "${RESOURCE_DIR}"
+            COMMENT "Copying SOURCE directory ${SOURCE_DIR} to RESOURCE
+                    directory ${RESOURCE_DIR}..."
+        )
+    endforeach()
 endif()
 
-add_custom_target(make-translations-directory ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/translations)
-add_dependencies(vym make-translations-directory)
+message(STATUS "vym: CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
+message(STATUS "vym: CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
+message(STATUS "vym: CMAKE_INSTALL_DATAROOTDIR=${CMAKE_INSTALL_DATAROOTDIR}")
+
 
 install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR})
 install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR} FILES_MATCHING PATTERN "*.pdf")
@@ -219,7 +237,7 @@ install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations sc
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
-    # Disabling PR #109 for now:
+    # Disabling PR #109 for now:    # FIXME
     # file(CREATE_LINK ../apps/vym.png application-x-vym.png SYMBOLIC)
     # install(FILES ${CMAKE_BINARY_DIR}/application-x-vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/mimetypes)
     install(FILES config/vym.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/mime/packages)
