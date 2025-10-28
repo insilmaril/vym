@@ -2133,9 +2133,9 @@ void VymModel::test()
 
         // Forces pulling together
         BranchItem *bi = bc->getBranchItem();
+        /*
         double weight = (bi->branchCount() + 1) * 10;
 
-        /*
         for (int i = 0; i < bi->branchCount(); i++) {
             BranchItem *obi = bi->getBranchNum(i);
             BranchContainer *obc = obi->getBranchContainer();
@@ -2657,8 +2657,8 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, Bran
         QString uif = toS(useInnerFrame);
         QString b_undo = toS(!b);
         QString b_redo = toS(b);
-        QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif).arg(b_undo);
-        QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif).arg(b_redo);
+        QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_undo);
+        QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_redo);
 
         QString comment = QString("Set automatic design of frame to '%1'").arg(toS(b));
 
@@ -5042,6 +5042,8 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
         int n = ti->row();
         beginRemoveRows(parentIndex, n, n);
         bool r = removeRows(n, 1, parentIndex);  // Deletes object!
+        if (!r)
+            qWarning() << "removeRows failed in " << __func__;
         endRemoveRows();
 
         emit layoutChanged();
@@ -6416,7 +6418,6 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
     re.setPattern("exportMap\\((\".*)\\)");
     QRegularExpressionMatch match = re.match(command);
     if (match.hasMatch()) {
-        QString matched = match.captured(1); // matched == "23 def"
         command = QString("vym.currentMap().exportMap([%1]);").arg(match.captured(1));
         settings.setLocalValue(filePath, "/export/last/command", command);
         qDebug() << "Rewriting last export command to version " << vymVersion << " format: " << command;
