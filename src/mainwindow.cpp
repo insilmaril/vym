@@ -2944,7 +2944,11 @@ void Main::setupViewActions()
     a->setShortcutContext(Qt::WidgetShortcut);
     focusWindowsMenu->addAction(a);
     mapEditorActions.append(a);
-    switchboard.addAction(a, "mapToggleHistoryWindow", Qt::CTRL | Qt::Key_H, shortcutScope, tag);   // Not on MacOS
+#if defined(Q_OS_MACOS)
+    switchboard.addAction(a, "mapToggleHistoryWindow", Qt::SHIFT | Qt::CTRL | Qt::Key_H, shortcutScope, tag);   // Cmd-H not available on MacOS
+#else
+    switchboard.addAction(a, "mapToggleHistoryWindow", Qt::CTRL | Qt::Key_H, shortcutScope, tag);
+#endif
     connect(a, SIGNAL(triggered()), this, SLOT(focusHistory()));
     actionViewFocusHistoryWindow = a;
 
