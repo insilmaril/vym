@@ -8047,8 +8047,8 @@ SlideItem *VymModel::addSlide()     // FIXME-3 missing saveState
 void VymModel::deleteSlide(SlideItem *si)  // FIXME-3 missing saveState
 {
     if (si) {
-        QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         /*
+        QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
         int pos = si->row();
         saveStateold(File::PartOfMap, getSelectString(),    // FIXME deleteAddSlide
                   QString("addMapInsert (\"PATH\",%1)").arg(pos),
