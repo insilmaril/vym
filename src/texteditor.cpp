@@ -7,17 +7,18 @@
 #include <QComboBox>
 #include <QFileDialog>
 #include <QFontDialog>
+#include <QInputDialog>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPrintDialog>
 #include <QPushButton>
 #include <QPrinter>
 #include <QStatusBar>
-#include <QTextEdit>
 #include <QToolBar>
 
 #include "file.h"
 #include "mainwindow.h"
+#include "my-textedit.h"
 #include "settings.h"
 #include "shortcuts.h"
 
@@ -53,7 +54,7 @@ TextEditor::TextEditor(const QString &id, const QString &scope)   // FEATURE #13
 
     statusBar()->hide(); // Hide sizeGrip on default, which comes with statusBar
 
-    editor = new QTextEdit(this);
+    editor = new MyTextEdit(this);
     editor->setFocus();
     editor->setTabStopDistance(20); // unit is pixel, default would be 80
     editor->setAutoFillBackground(true);
@@ -440,6 +441,14 @@ void TextEditor::setupEditActions()
     filledEditorActions << a;
     actionEditPaste = a;
 
+    a = new QAction(QPixmap(QString(":/flag-url.svg")), tr("Insert URL", "TextEditor") + "...", this);
+    editMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(insertUrl()));
+    editMenu->addAction(a);
+    editToolBar->addAction(a);
+    filledEditorActions << a;
+    actionInsertUrl = a;
+
     a = new QAction(QPixmap(QString(":/insert-image-%1.svg").arg(iconTheme)), tr("Insert image", "TextEditor") + "...", this);
     editMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(insertImage()));
@@ -701,8 +710,8 @@ void TextEditor::textLoad()
 
 bool TextEditor::eventFilter(QObject *obj, QEvent *ev)
 {
+    //qDebug() << "TE::eventFilter  obj=" << obj << " ev=" << ev;
     if (obj == editor) {
-        // qDebug() << "TE::eventFilter   ev=" << ev;
         if (ev->type() == QEvent::FocusIn) {
             //editor->setFrameStyle(QFrame::Box);
             editor->setStyleSheet("QTextEdit {" + editorFocusInStyle + "}");
@@ -1296,7 +1305,24 @@ void TextEditor::selectRichTextBackgroundColor()
     setRichTextBackgroundColor(col);
 }
 
-void TextEditor::insertImage()
+void TextEditor::insertUrl()    // FIXME-0 WIP   // FIXME-2 state changed?P
+{
+    QInputDialog *dia = new QInputDialog(this);
+    dia->setLabelText(tr("Enter Url:"));
+    dia->setWindowTitle(vymName);
+    dia->setInputMode(QInputDialog::TextInput);
+    //    centerDialog(dia);
+    if (dia->exec()) {
+        //QTextDocument * textDocument = editor->document();
+        //textDocument->addResource( QTextDocument::ImageResource, Uri, QVariant (image));
+        QTextCursor cursor = editor->textCursor();
+        cursor.insertHtml("<a href=\"" + dia->textValue()+ "\">" + dia->textValue() + "</a> ");
+        // FIXME-2 alternatively use anchorHref
+        // https://doc.qt.io/archives/qt-5.15/qtextcharformat.html#setAnchorHref
+    }
+}
+
+void TextEditor::insertImage()  // FIXME-2 state changed?
 {
     QStringList imagePaths = openImageDialog(tr("Load image", "TextEditor"));
 

@@ -96,6 +96,7 @@ class TextEditor : public QMainWindow {
     void selectRichTextEditorBackgroundColor();
     void selectRichTextForegroundColor();
     void selectRichTextBackgroundColor();
+    void insertUrl();
     void insertImage();
 
   public:
@@ -148,6 +149,7 @@ class TextEditor : public QMainWindow {
         *actionFilePrint, *actionFileDeleteAll, *actionEditUndo,
         *actionEditRedo, *actionEditCopy, *actionEditCut, *actionEditPaste,
         *actionSelectAll,
+	*actionInsertUrl,
 	*actionInsertImage,
         *actionFormatUseFixedFont, *actionFormatRichText,
         *actionSettingsVarFont, *actionSettingsFixedFont,
