@@ -20,7 +20,7 @@ MyTextEdit::MyTextEdit(QWidget *parent)
 void MyTextEdit::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
-        qDebug() << "MyTextEdit" << __func__ << " anchor=" << anchorAt(e->pos());
+        qDebug() << "MyTextEdit" << __func__ << " anchor=" << anchorAt(e->pos());   // FIXME-2
     } else
         QTextEdit::mousePressEvent(e);
 }

@@ -218,10 +218,18 @@ if(APPLE)
             COMMAND ${CMAKE_COMMAND} -E copy_directory
                     "${SOURCE_DIR}"
                     "${RESOURCE_DIR}"
-            COMMENT "Copying SOURCE directory ${SOURCE_DIR} to RESOURCE
-                    directory ${RESOURCE_DIR}..."
+            COMMENT "Copying SOURCE directory ${SOURCE_DIR} to RESOURCE directory ${RESOURCE_DIR}..."
         )
     endforeach()
+
+    # Finally copy generated translations to bundle
+    add_custom_command(
+        TARGET vym POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_BINARY_DIR}/translations"
+                "${RESOURCE_DIR}"
+        COMMENT "Copying translations directory to RESOURCE directory ${RESOURCE_DIR}..."
+    )
 endif()
 
 message(STATUS "vym: CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
