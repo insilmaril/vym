@@ -825,6 +825,7 @@ class VymModel : public TreeModel {
   public:
     void setSelectionModel(QItemSelectionModel *); // Set common selectionModel
     QItemSelectionModel *getSelectionModel();
+    int selectedItemsCount();               //! Number of selected items
 
     void setSelectionBlocked(bool);
     bool isSelectionBlocked();

@@ -172,7 +172,10 @@ void VymView::changeSelection(const QItemSelection &newsel,
     mainWindow->changeSelection(model, newsel, desel);
     mainWindow->updateDockWidgetTitles(model);
 
-    showSelection(false, false);
+    if (model->selectedItemsCount() < 4)
+        // Only show all selected items for a few items 
+        // to avoid massive zooming out
+        showSelection(false, false);
 }
 
 void VymView::updateDockWidgetTitles()

@@ -7422,6 +7422,11 @@ void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 
 void VymModel::setSelectionModel(QItemSelectionModel *sm) { selModel = sm; }
 
+int VymModel::selectedItemsCount()
+{
+    return selModel->selectedIndexes().count();
+}
+
 QItemSelectionModel *VymModel::getSelectionModel() { return selModel; }
 
 void VymModel::setSelectionBlocked(bool b) { selectionBlocked = b; }
