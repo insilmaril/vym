@@ -1139,7 +1139,7 @@ void VymModel::importDir()
         fd.setAcceptMode(QFileDialog::AcceptOpen);
 
         if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
-            importDir(fd.selectedFiles().first());
+            importDir(fd.selectedFiles().constFirst());
             reposition();
         }
     }
@@ -4329,6 +4329,8 @@ BranchItem *VymModel::addMapCenter(bool interactive)
 BranchItem *VymModel::addMapCenterAtPos(QPointF absPos, bool interactive)
 // createMapCenter could then probably be merged with createBranch
 {
+    Q_UNUSED(interactive);
+
     // Create TreeItem
     QModelIndex parix = index(rootItem);
 
@@ -6901,8 +6903,6 @@ QColor VymModel::backgroundColor()
 
 void VymModel::setBackgroundColor(QColor col)
 {
-    QColor oldcol = mapDesignInt->backgroundColor();
-
     saveStateBeginScript("Set background color");   // Save background image in script
 
     if (hasBackgroundImage())
@@ -6999,8 +6999,6 @@ void VymModel::unsetBackgroundImage()
     if (mapDesignInt->hasBackgroundImage()) {
         if (!saveStateBlocked) {
             QString uc, rc, com;
-
-            bool saveOldImage = false;
 
             QString oldImagePath = "images/background-image-old.png";
 
