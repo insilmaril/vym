@@ -1,5 +1,6 @@
 #include <QMenu>
 #include <QMouseEvent>
+#include <QTextBlock>
 
 #include "mainwindow.h"
 
@@ -15,12 +16,30 @@ MyTextEdit::MyTextEdit(QWidget *parent)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(openUrlTriggered()));
     actionOpenUrl = a;
+    setRichTextMode(false);
 }
 
-void MyTextEdit::mousePressEvent(QMouseEvent *e)
+bool  MyTextEdit::richTextMode()
+{
+    return richTextModeInt;
+}
+
+void MyTextEdit::setRichTextMode(bool b)
+{
+    richTextModeInt = b;
+    actionOpenUrl->setEnabled(richTextModeInt);
+    if (richTextModeInt) {
+    } else {
+    }
+}
+
+void MyTextEdit::mousePressEvent(QMouseEvent *e) // FIXME-2 not implemented yet...  
 {
     if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
         qDebug() << "MyTextEdit" << __func__ << " anchor=" << anchorAt(e->pos());   // FIXME-2
+        QTextCursor c = cursorForPosition(e->pos());
+        qDebug() << c.block().text();
+
     } else
         QTextEdit::mousePressEvent(e);
 }
@@ -28,8 +47,11 @@ void MyTextEdit::mousePressEvent(QMouseEvent *e)
 void MyTextEdit::contextMenuEvent(QContextMenuEvent *e)
 {
     QMenu *menu = createStandardContextMenu();
-    menu->addSeparator();
-    menu->addAction(actionOpenUrl);
+
+    if (richTextModeInt) {
+        menu->addSeparator();
+        menu->addAction(actionOpenUrl); // FIXME-4 also add image actions
+    }
 
     lastContextMenuPos = e->pos();
     menu->exec(e->globalPos());

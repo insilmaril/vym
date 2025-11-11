@@ -5,14 +5,18 @@
 
 class MyTextEdit : public QTextEdit {
     Q_OBJECT
+
   public:
     MyTextEdit(QWidget *parent = nullptr);
+    bool richTextMode();
+    void setRichTextMode(bool b);
 
   protected:
     void mousePressEvent(QMouseEvent *);
     void contextMenuEvent(QContextMenuEvent *);
 
   private:
+    bool richTextModeInt;
     QAction *actionOpenUrl;
     QPoint lastContextMenuPos;
 

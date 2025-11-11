@@ -65,12 +65,12 @@ TextEditor::TextEditor(const QString &id, const QString &scope)   // FEATURE #13
     connect(editor, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this,
             SLOT(formatChanged(const QTextCharFormat &)));
 
-    // Load settings
-    init ();
     setWindowIcon(QPixmap(":/vym-editor.png"));
 
+    // Load settings
+    init ();
+
     // Various states
-    richTextMode = false;
     blockChangedSignal = false;
     blockTextUpdate = false;
     setInactive();
@@ -446,7 +446,7 @@ void TextEditor::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(insertUrl()));
     editMenu->addAction(a);
     editToolBar->addAction(a);
-    filledEditorActions << a;
+    filledEditorRichTextActions << a;
     actionInsertUrl = a;
 
     a = new QAction(QPixmap(QString(":/insert-image-%1.svg").arg(iconTheme)), tr("Insert image", "TextEditor") + "...", this);
@@ -454,7 +454,7 @@ void TextEditor::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(insertImage()));
     editMenu->addAction(a);
     editToolBar->addAction(a);
-    filledEditorActions << a;
+    filledEditorRichTextActions << a;
     actionInsertImage = a;
 }
 
@@ -761,11 +761,10 @@ void TextEditor::editorChanged()
 void TextEditor::setRichText(const QString &t)
 {
     blockChangedSignal = true;
-    richTextMode = true;
+    editor->setRichTextMode(true);
     editor->setReadOnly(false);
     editor->setHtml(t);
     actionFormatRichText->setChecked(true);
-    actionInsertImage->setEnabled(true);
 
     // Update state including colors
     updateState();
@@ -777,12 +776,11 @@ void TextEditor::setRichText(const QString &t)
 void TextEditor::setPlainText(const QString &t)
 {
     blockChangedSignal = true;
-    richTextMode = false;
+    editor->setRichTextMode(false);
     editor->setReadOnly(false);
 
     editor->setPlainText(t);
     actionFormatRichText->setChecked(false);
-    actionInsertImage->setEnabled(false);
 
     // Reset also text format
     QTextCharFormat textformat;
@@ -980,6 +978,11 @@ void TextEditor::toggleFonthint()
         setFont(fixedFontInt);
     }
     emit textHasChanged(getVymText());
+}
+
+bool TextEditor::richTextMode()
+{
+    return editor->richTextMode();
 }
 
 void TextEditor::setRichTextMode(bool b)
@@ -1212,10 +1215,13 @@ void TextEditor::updateActions()
 
     b = (state == filledEditor && actionFormatRichText->isChecked()) ? true : false;
     foreach (QAction* a, filledEditorRichTextActions)
+    {
         a->setEnabled(b);
+        // qDebug() << "Setting action " << a << " to " << b; // FIXME-2  Qt bug? still not greyed out...
+    }
 
     actionFormatRichText->setEnabled(true);
-    if (richTextMode) {
+    if (richTextMode()) {
         actionFormatUseFixedFont->setEnabled(false);    // FIXME-3 Maybe even hide it in RT mode
         fontToolBar->show();
         formatToolBar->show();
@@ -1316,9 +1322,13 @@ void TextEditor::insertUrl()    // FIXME-0 WIP   // FIXME-2 state changed?P
         //QTextDocument * textDocument = editor->document();
         //textDocument->addResource( QTextDocument::ImageResource, Uri, QVariant (image));
         QTextCursor cursor = editor->textCursor();
-        cursor.insertHtml("<a href=\"" + dia->textValue()+ "\">" + dia->textValue() + "</a> ");
-        // FIXME-2 alternatively use anchorHref
-        // https://doc.qt.io/archives/qt-5.15/qtextcharformat.html#setAnchorHref
+        //cursor.insertHtml("<a href=\"" + dia->textValue()+ "\">" + dia->textValue() + "</a> ");
+        QTextCharFormat fmt = cursor.charFormat();
+        fmt.setAnchor(true);
+        fmt.setAnchorHref(dia->textValue());
+        fmt.setToolTip("Hyperlink: " + dia->textValue());
+        fmt.setFontUnderline(true);
+        cursor.insertText("New hyperlink", fmt);
     }
 }
 

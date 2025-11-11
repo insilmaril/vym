@@ -2,7 +2,7 @@
 
 ScriptOutput::ScriptOutput(QWidget *parent) : QWidget(parent)
 {
-    editor = new QTextEdit(this);
+    editor = new QTextEdit(this);   // FIXME-2 better use QTextBrowser
     layout = new QVBoxLayout;
     layout->addWidget(editor);
     setLayout(layout);

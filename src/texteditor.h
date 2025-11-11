@@ -5,7 +5,8 @@
 #include <QString>
 #include <QtGui>
 #include "vymtext.h"
-class QTextEdit;
+
+class MyTextEdit;
 class QComboBox;
 
 enum EditorState { inactiveEditor, emptyEditor, filledEditor };
@@ -71,6 +72,7 @@ class TextEditor : public QMainWindow {
     void textPrint();
     void textEditUndo();
     void toggleFonthint();
+    bool richTextMode();
     void setRichTextMode(bool b);
     void toggleRichText();
     void setFixedFont();
@@ -108,7 +110,7 @@ class TextEditor : public QMainWindow {
 
   protected:
     QString shortcutScope; // used for settings and shortcut scopes
-    QTextEdit *editor;
+    MyTextEdit *editor;
     QPoint lastPos;     // save last position of window
     QString editorId;   // Name of editor, e.g. NoteEditor or HeadingEditor
     QString filename;
@@ -117,8 +119,6 @@ class TextEditor : public QMainWindow {
     EditorState state;
     bool blockChangedSignal;
     bool blockTextUpdate;       // Set *while* textHasChanged is still being emitted
-
-    bool richTextMode;
 
     QColor colorRichTextEditorBackground;
     QColor colorRichTextBackground;
