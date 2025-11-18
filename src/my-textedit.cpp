@@ -33,12 +33,17 @@ void MyTextEdit::setRichTextMode(bool b)
     }
 }
 
-void MyTextEdit::mousePressEvent(QMouseEvent *e) // FIXME-2 not implemented yet...  
+void MyTextEdit::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton && e->modifiers() & Qt::ControlModifier) {
-        qDebug() << "MyTextEdit" << __func__ << " anchor=" << anchorAt(e->pos());   // FIXME-2
-        QTextCursor c = cursorForPosition(e->pos());
-        qDebug() << c.block().text();
+        if (mainWindow) {
+            QString url = anchorAt(e->pos());
+            mainWindow->openUrl(url);
+
+            // Note used currently: text
+            // QTextCursor c = cursorForPosition(e->pos());
+            // QString text = c.block().text();
+        }
 
     } else
         QTextEdit::mousePressEvent(e);
@@ -61,7 +66,7 @@ void MyTextEdit::contextMenuEvent(QContextMenuEvent *e)
 void MyTextEdit::openUrlTriggered()
 {
     if (mainWindow)
-        // mainWindow is created AFTER editors, so in theory might still be nullptr
+        // mainWindow is created AFTER editors, so in theory mainWindow might still be nullptr
         mainWindow->openUrl(anchorAt(lastContextMenuPos));
 }
 

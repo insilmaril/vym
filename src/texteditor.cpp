@@ -7,7 +7,6 @@
 #include <QComboBox>
 #include <QFileDialog>
 #include <QFontDialog>
-#include <QInputDialog>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPrintDialog>
@@ -21,6 +20,7 @@
 #include "my-textedit.h"
 #include "settings.h"
 #include "shortcuts.h"
+#include "url-dialog.h"
 
 extern Main *mainWindow;
 extern Settings settings;
@@ -1311,28 +1311,23 @@ void TextEditor::selectRichTextBackgroundColor()
     setRichTextBackgroundColor(col);
 }
 
-void TextEditor::insertUrl()    // FIXME-0 WIP   // FIXME-2 state changed?P
+void TextEditor::insertUrl()
 {
-    QInputDialog *dia = new QInputDialog(this);
-    dia->setLabelText(tr("Enter Url:"));
-    dia->setWindowTitle(vymName);
-    dia->setInputMode(QInputDialog::TextInput);
-    //    centerDialog(dia);
-    if (dia->exec()) {
-        //QTextDocument * textDocument = editor->document();
-        //textDocument->addResource( QTextDocument::ImageResource, Uri, QVariant (image));
+    UrlDialog dia (this);
+    dia.setUrl("Foo");
+    if (dia.exec()) {
+        QString url = dia.url();
         QTextCursor cursor = editor->textCursor();
-        //cursor.insertHtml("<a href=\"" + dia->textValue()+ "\">" + dia->textValue() + "</a> ");
         QTextCharFormat fmt = cursor.charFormat();
         fmt.setAnchor(true);
-        fmt.setAnchorHref(dia->textValue());
-        fmt.setToolTip("Hyperlink: " + dia->textValue());
+        fmt.setAnchorHref(url);
+        fmt.setToolTip("Url: " + url);
         fmt.setFontUnderline(true);
-        cursor.insertText("New hyperlink", fmt);
+        cursor.insertText(dia.text(), fmt);
     }
 }
 
-void TextEditor::insertImage()  // FIXME-2 state changed?
+void TextEditor::insertImage()
 {
     QStringList imagePaths = openImageDialog(tr("Load image", "TextEditor"));
 

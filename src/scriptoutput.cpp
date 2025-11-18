@@ -2,7 +2,7 @@
 
 ScriptOutput::ScriptOutput(QWidget *parent) : QWidget(parent)
 {
-    editor = new QTextEdit(this);   // FIXME-2 better use QTextBrowser
+    editor = new QTextEdit(this);   // FIXME-4 use QTextBrowser and add button to clear browser
     layout = new QVBoxLayout;
     layout->addWidget(editor);
     setLayout(layout);
