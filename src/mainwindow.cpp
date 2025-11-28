@@ -2534,6 +2534,7 @@ void Main::setupSelectActions()
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
     switchboard.addAction(a, "Select first branch in siblings", Qt::Key_Home, shortcutScope, tag);
+    actionListBranches.append(a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectFirstSibling()));
 
@@ -2541,6 +2542,7 @@ void Main::setupSelectActions()
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
     switchboard.addAction(a, "Select first branch in siblings", Qt::Key_0, shortcutScope, tag);              // Alternative: VIM Select first
+    actionListBranches.append(a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectFirstSibling()));
 
@@ -2548,6 +2550,7 @@ void Main::setupSelectActions()
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
     switchboard.addAction(a, "Select last branch in siblings", Qt::Key_End, shortcutScope, tag);
+    actionListBranches.append(a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectLastSibling()));
 
@@ -2555,6 +2558,7 @@ void Main::setupSelectActions()
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     selectMenu->addAction(a);
     switchboard.addAction(a, "Select last branch in siblings", Qt::Key_Dollar, shortcutScope, tag);
+    actionListBranches.append(a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectLastSibling()));
 
@@ -7185,6 +7189,11 @@ void Main::updateActions()
             a->setEnabled(false);
         foreach (QAction *a, actionListItems)
             a->setEnabled(false);
+
+        // Ideally we would get targets from model first, but
+        // avoid iterating whole tree, so just enable
+        // bool b = m->getTargets().isEmpty();
+        actionGoToTarget->setEnabled(true);
 
         // Link style in context menu
         switch (m->mapDesign()->linkStyle(1)) { // FIXME-4 Currently global for map, all depths
