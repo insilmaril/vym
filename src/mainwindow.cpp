@@ -375,7 +375,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
 
 Main::~Main()
 {
-    qDebug() << "Destr Mainwindow begin   testmode=" << testmode;
+    // qDebug() << "Destr Mainwindow begin   testmode=" << testmode;
 
     // Make sure there is no focus elsewhere, e.g. in BranchPropertyEditor
     // which could cause a crash.  (Qt bug?)

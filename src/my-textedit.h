@@ -17,11 +17,18 @@ class MyTextEdit : public QTextEdit {
 
   private:
     bool richTextModeInt;
+  
+  private:  
     QAction *actionOpenUrl;
-    QPoint lastContextMenuPos;
+    QAction *actionEditUrl;
+    QPoint lastContextMenuPositionInt;
 
   private slots:  
     void openUrlTriggered();
+    void editUrlTriggered();
+
+  signals:  
+    void editUrlCursor(QTextCursor);
 };
 
 #endif

@@ -65,6 +65,9 @@ TextEditor::TextEditor(const QString &id, const QString &scope)   // FEATURE #13
     connect(editor, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this,
             SLOT(formatChanged(const QTextCharFormat &)));
 
+    connect(editor, SIGNAL(textChanged()), this, SLOT(editorChanged()));
+
+    connect(editor, SIGNAL(editUrlCursor(QTextCursor)), this, SLOT(insertOrEditUrl(QTextCursor)));
     setWindowIcon(QPixmap(":/vym-editor.png"));
 
     // Load settings
@@ -441,13 +444,13 @@ void TextEditor::setupEditActions()
     filledEditorActions << a;
     actionEditPaste = a;
 
-    a = new QAction(QPixmap(QString(":/flag-url.svg")), tr("Insert URL", "TextEditor") + "...", this);
+    a = new QAction(QPixmap(QString(":/flag-url.svg")), tr("Insert or edit URL", "TextEditor") + "...", this);
     editMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(insertUrl()));
+    connect(a, SIGNAL(triggered()), this, SLOT(insertOrEditUrl()));
     editMenu->addAction(a);
     editToolBar->addAction(a);
     filledEditorRichTextActions << a;
-    actionInsertUrl = a;
+    actionInsertOrEditUrl = a;
 
     a = new QAction(QPixmap(QString(":/insert-image-%1.svg").arg(iconTheme)), tr("Insert image", "TextEditor") + "...", this);
     editMenu->addAction(a);
@@ -1216,8 +1219,8 @@ void TextEditor::updateActions()
     b = (state == filledEditor && actionFormatRichText->isChecked()) ? true : false;
     foreach (QAction* a, filledEditorRichTextActions)
     {
-        a->setEnabled(b);
-        // qDebug() << "Setting action " << a << " to " << b; // FIXME-2  Qt bug? still not greyed out...
+        a->setEnabled(b); // FIXME-3  Only on Mac not greyed out when disabled. Qt bug? 
+        // qDebug() << "Setting action " << a << " to " << b;
     }
 
     actionFormatRichText->setEnabled(true);
@@ -1311,19 +1314,73 @@ void TextEditor::selectRichTextBackgroundColor()
     setRichTextBackgroundColor(col);
 }
 
-void TextEditor::insertUrl()
+void TextEditor::insertOrEditUrl()
 {
+    insertOrEditUrl(editor->textCursor());
+}
+
+void TextEditor::insertOrEditUrl(QTextCursor cursor)
+{
+    QTextCharFormat fmt = cursor.charFormat();
+    QString url;
+    QString text;
+    bool edit = false;
+    int anchorStart;
+    int anchorEnd;
+
+    if (fmt.isAnchor()) {
+        QString plainText = editor->toPlainText();
+        url = fmt.anchorHref();
+        edit = true;
+
+        // Find beginning of URL in block
+        int pos = cursor.position();
+        int pos_org = pos;
+        anchorStart = pos;
+        while (!cursor.atBlockStart() && pos == anchorStart) {
+            pos--;
+            cursor.setPosition(pos);
+            if (cursor.charFormat().isAnchor())
+                anchorStart = pos;
+        }
+
+        // Find end of URL in block
+        pos = pos_org;
+        anchorEnd = pos;
+        while (!cursor.atBlockEnd() && pos == anchorEnd) {
+            pos++;
+            cursor.setPosition(pos);
+            if (cursor.charFormat().isAnchor())
+                anchorEnd = pos;
+        }
+        text = plainText.slice(anchorStart - 1, anchorEnd - anchorStart + 1);
+    }
+
     UrlDialog dia (this);
-    dia.setUrl("Foo");
+    dia.setUrl(url);
+    dia.setText(text);
     if (dia.exec()) {
-        QString url = dia.url();
-        QTextCursor cursor = editor->textCursor();
-        QTextCharFormat fmt = cursor.charFormat();
-        fmt.setAnchor(true);
-        fmt.setAnchorHref(url);
-        fmt.setToolTip("Url: " + url);
-        fmt.setFontUnderline(true);
-        cursor.insertText(dia.text(), fmt);
+        url = dia.url();
+        fmt = cursor.charFormat();
+        if (!url.isEmpty()) {
+            fmt.setAnchor(true);
+            fmt.setAnchorHref(url);
+            fmt.setFontUnderline(true);
+        } else {
+            fmt.setAnchor(false);
+            fmt.setFontUnderline(false);
+        }
+
+        if (edit) {
+            cursor.setPosition(anchorStart - 1);
+            cursor.movePosition(
+                    QTextCursor::NextCharacter, 
+                    QTextCursor::KeepAnchor, 
+                    anchorEnd - anchorStart + 1);
+            cursor.removeSelectedText();
+            cursor.insertText(dia.text(), fmt);
+        } else
+            cursor.insertText(dia.text(), fmt);
     }
 }
 

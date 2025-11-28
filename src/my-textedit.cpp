@@ -16,6 +16,12 @@ MyTextEdit::MyTextEdit(QWidget *parent)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(openUrlTriggered()));
     actionOpenUrl = a;
+
+    a = new QAction(tr("Insert or edit URL", "TextEdit menu"), this);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(editUrlTriggered()));
+    actionEditUrl = a;
+
     setRichTextMode(false);
 }
 
@@ -28,9 +34,7 @@ void MyTextEdit::setRichTextMode(bool b)
 {
     richTextModeInt = b;
     actionOpenUrl->setEnabled(richTextModeInt);
-    if (richTextModeInt) {
-    } else {
-    }
+    actionEditUrl->setEnabled(richTextModeInt);
 }
 
 void MyTextEdit::mousePressEvent(QMouseEvent *e)
@@ -55,10 +59,11 @@ void MyTextEdit::contextMenuEvent(QContextMenuEvent *e)
 
     if (richTextModeInt) {
         menu->addSeparator();
-        menu->addAction(actionOpenUrl); // FIXME-4 also add image actions
+        menu->addAction(actionOpenUrl);
+        menu->addAction(actionEditUrl); // FIXME-4 also add image actions
     }
 
-    lastContextMenuPos = e->pos();
+    lastContextMenuPositionInt = e->pos();
     menu->exec(e->globalPos());
     delete menu;
 }
@@ -67,6 +72,11 @@ void MyTextEdit::openUrlTriggered()
 {
     if (mainWindow)
         // mainWindow is created AFTER editors, so in theory mainWindow might still be nullptr
-        mainWindow->openUrl(anchorAt(lastContextMenuPos));
+        mainWindow->openUrl(anchorAt(lastContextMenuPositionInt));
+}
+
+void MyTextEdit::editUrlTriggered()
+{
+    emit editUrlCursor(cursorForPosition(lastContextMenuPositionInt));
 }
 
