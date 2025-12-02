@@ -47,7 +47,7 @@ void HeadingContainer::setHeading(const VymText &vt)
 {
     headingInt = vt;
 
-    QGraphicsTextItem *t;
+    QGraphicsTextItem *t;   // FIXME-2 Consider using QGraphicsSimpleTextitem for plaintext
 
     QString s = vt.getText();
 
@@ -179,7 +179,7 @@ void HeadingContainer::setColor(const QColor &c)
     }
 }
 
-void HeadingContainer::setColumnWidth(const int &i)
+void HeadingContainer::setColumnWidth(const int &i) // FIXME-2 colWidth only used for plain text
 {
     columnWidthInt = i;
     setHeading(headingInt);
