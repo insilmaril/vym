@@ -58,6 +58,7 @@ void HeadingContainer::setHeading(const VymText &vt)
         t = new QGraphicsTextItem(this);
         t->setHtml(s);
         t->setDefaultTextColor(headingColorInt);
+        t->setTextWidth(columnWidthInt * 10);   // Assuming the average character has a width of approx.
         headingLines.append(t);
 
        // Translate line to move center to origin

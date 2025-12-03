@@ -752,7 +752,6 @@ void BranchPropertyEditor::columnWidthAutoChanged()
 
 void BranchPropertyEditor::columnWidthChanged(int i)
 {
-    qDebug() << __func__;
     if (model)
         model->setHeadingColumnWidth(i);
 
