@@ -284,14 +284,6 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         branchesContainer->addContainer(bc);
 }
 
-void BranchContainer::updateImagesContainer()
-{
-    if (imagesContainer && imagesContainer->childItems().count() == 0) {
-        delete imagesContainer;
-        imagesContainer = nullptr;
-    }
-}
-
 void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
@@ -607,6 +599,14 @@ void BranchContainer::updateChildrenStructure()
                     linkSpaceContainer->stackBefore(branchesContainer);
             }
         }
+    }
+}
+
+void BranchContainer::updateImagesContainer()
+{
+    if (imagesContainer && imagesContainer->childItems().count() == 0) {
+        delete imagesContainer;
+        imagesContainer = nullptr;
     }
 }
 

@@ -279,8 +279,8 @@ bool TreeModel::removeRows(int row, int count, const QModelIndex &parent)
 
     for (int i = row; i <= last; i++) {
         ti = pi->childItemByRow(row);
-        pi->removeChild(row); // does not delete object!
-        delete ti;
+        pi->removeChild(row);   // Does not delete object yet
+        delete ti;              // Deletes object
     }
     return true;
 }

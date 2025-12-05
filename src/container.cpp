@@ -22,6 +22,9 @@ Container::Container()
 Container::~Container()
 {
     //qdbg() << "Destr Container" << info() << this;
+
+    // The destructor of QGraphicsItem will implicitely remove the container from 
+    // parents set of children
 }
 
 void Container::copy(Container *other)

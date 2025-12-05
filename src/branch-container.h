@@ -48,7 +48,6 @@ class BranchContainer : public BranchContainerBase, public LinkableContainer {
     void addToBranchesContainer(BranchContainer *bc);
 
   private:
-    void updateImagesContainer();       //! Remove unused containers and add needed ones
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();
     void updateTransformations();       //! Update rotation and scaling
@@ -57,6 +56,7 @@ class BranchContainer : public BranchContainerBase, public LinkableContainer {
     void updateChildrenStructure();     //! Depending on layouts of children, rearrange structure
 
   private:
+    void updateImagesContainer();       //! Remove unused containers and add needed ones
     void updateImagesContainerParent(); //! Set parent depending on outerContainer
 
   public:

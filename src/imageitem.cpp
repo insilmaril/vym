@@ -26,7 +26,7 @@ ImageItem::ImageItem():MapItem(nullptr)
 
 ImageItem::~ImageItem()
 {
-    //qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer << "  fpInZipDir=" << filePathInZipDir;
+    // qDebug() << "Destr ImageItem " << this << "  ic=" << imageContainer << "  fpInZipDir=" << filePathInZipDir;
 
     if (imageContainer) {
         delete imageContainer;

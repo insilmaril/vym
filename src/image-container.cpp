@@ -24,7 +24,7 @@ ImageContainer::ImageContainer()
 
 ImageContainer::~ImageContainer()
 {
-    //qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
+    // qDebug() << "Destr ImageContainer  this=" << this << "  imageType = " << imageType ;
     if (imageItem) imageItem->unlinkImageContainer();
 }
 
