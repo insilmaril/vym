@@ -120,14 +120,20 @@ VymModel::VymModel()
 
 VymModel::~VymModel()
 {
-    //qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
-    //logInfo("VymModel about to be destroyed", __func__);
+    // qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
 
     mapEditor = nullptr;
     repositionBlocked = true;
+
     autosaveTimer->stop();
-    filePath.clear();
     fileChangedTimer->stop();
+    taskAlarmTimer->stop();
+
+    delete(autosaveTimer);
+    delete(fileChangedTimer);
+    delete(taskAlarmTimer);
+
+    filePath.clear();
 
     vymLock.releaseLock();
 

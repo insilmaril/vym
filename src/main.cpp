@@ -55,7 +55,7 @@ NoteEditor *noteEditor;
 BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow
-Main *mainWindow;
+Main *mainWindow = nullptr;
 ScriptEditor *scriptEditor;
 ScriptOutput *scriptOutput;
 FindControlsWidget *findControlsWidget;
@@ -589,7 +589,8 @@ int main(int argc, char *argv[])
     actionLogPath = settings.value("/logfile/path", QDir::homePath() + "/vym.log").toString();
 
     // Create MainWindow (after creating editors)
-    Main m;
+    // Main m;
+    mainWindow = new Main;
 
     // Add Escape-keys to editors (after creating MainWindow)
     QAction *a = new QAction("Cancel", noteEditor);
@@ -638,8 +639,8 @@ int main(int argc, char *argv[])
             QObject::tr("Couldn't find tar tool to unzip data. "));
 #endif
 
-    m.setWindowIcon(QPixmap(":/vym.png"));
-    m.fileNew();
+    mainWindow->setWindowIcon(QPixmap(":/vym.png"));
+    mainWindow->fileNew();
 
     if (debug)
         // Show debug info AFTER creating MainWindow
@@ -663,27 +664,27 @@ int main(int argc, char *argv[])
     }
 
     if (options.isActive("batch"))
-        m.hide();
+        mainWindow->hide();
     else {
         // Paint Mainwindow first time
         qApp->processEvents();
-        m.show();
+        mainWindow->show();
     }
 
     // Show release notes and afterwards updates
-    m.checkReleaseNotesAndUpdates();
+    mainWindow->checkReleaseNotesAndUpdates();
 
     if (options.isActive("shortcuts"))
         switchboard
             .printASCII(); // FIXME-5 global switchboard and exit after listing
 
-    m.loadCmdLine();
+    mainWindow->loadCmdLine();
 
-    //m.resize(1600, 900);    // only for screencasts
+    //mainWindow->resize(1600, 900);    // only for screencasts
 
     // Restore last session
     if (options.isActive("restore"))
-        m.fileRestoreSession();
+        mainWindow->fileRestoreSession();
 
     // Load script
     if (options.isActive("load")) {
@@ -711,7 +712,7 @@ int main(int argc, char *argv[])
                 QMessageBox::warning(0, error, msg);
             return 0;
         }
-        m.runScript(scriptEditor->getScriptFile());
+        mainWindow->runScript(scriptEditor->getScriptFile());
     }
 
     // Enable some last minute cleanup
@@ -719,13 +720,14 @@ int main(int argc, char *argv[])
 
     // For benchmarking or if test script is done
     // we may want to quit instead of entering event loop
-    if (options.isActive("quit") || m.exitAfterScript())
-        m.fileExitVYM();
+    if (options.isActive("quit") || mainWindow->exitAfterScript())
+        mainWindow->fileExitVYM();
     else
         app.exec();
 
     // Cleanup
     delete noteEditor;
+    delete mainWindow;
     removeDir(tmpVymDir);
 
     int s = warningCount + criticalCount + fatalCount;

@@ -383,6 +383,7 @@ Main::~Main()
 
     // Save Settings
 
+    //  FIXME-2 Save settings in destructor.  Maybe move to separate function and call more often
     if (!testmode) {
         settings.setValue("/mainwindow/geometry", saveGeometry());
         settings.setValue("/mainwindow/state", saveState()); // FIXME-3 use restoreDockWidget
@@ -429,7 +430,7 @@ Main::~Main()
     delete userFlagsMaster;
     delete systemFlagsMaster;
 
-    //qDebug() << "Destr Mainwindow end";
+    // qDebug() << "Destr Mainwindow end";
 }
 
 void Main::loadCmdLine()
@@ -5202,7 +5203,7 @@ bool Main::fileExitVYM()
     if (backgroundZipProcesses > 0)
         qDebug() << __func__ << " has still running bg zips...";
     else
-        qApp->quit();
+        qApp->exit(0);
     return false;
 }
 
