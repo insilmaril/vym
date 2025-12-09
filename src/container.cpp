@@ -7,6 +7,7 @@
 #include "tmp-parent-container.h"
 
 #include "branchitem.h"
+#include "log.h"
 #include "misc.h"
 
 #define qdbg() qDebug().nospace().noquote()
@@ -448,9 +449,16 @@ QPointF Container::alignTo(PointName ownPointName, Container* targetContainer, P
     return mapFromItem(targetContainer, targetContainer->pointByName(targetPointName)) - pointByName(ownPointName);
 }
 
+#include <QMessageBox>  // FIXME-2 debugging
 void Container::addContainer(Container *c, int z)
 {
     if (childContainers().contains(c)) return;
+
+    if (!c) {   // FIXME-2 debugging
+        logDebug("Container::addContainer  adding 0 to " + info() + " would crash");
+        QMessageBox::warning(0, "Warning", "Would have crashed now in ::addContainer");
+        return;
+    }
 
     c->setParentItem(this);
     if (z > 0)

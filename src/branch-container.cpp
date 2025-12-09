@@ -4,6 +4,7 @@
 #include "branch-container.h"
 
 #include "branchitem.h"
+#include "log.h"
 #include "flag-container.h"
 #include "flag.h"
 #include "flagrow-container.h"
@@ -364,6 +365,7 @@ void BranchContainer::updateTransformations()
 
 void BranchContainer::updateChildrenStructure()
 {
+    logDebug("BC::updateChildrenStructure of " + info());
     if (branchesContainerLayoutInt == List) {
         if (!listContainer) {
             // Create and setup a listContainer *below* the ornamentsContainer

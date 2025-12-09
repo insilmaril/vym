@@ -447,7 +447,7 @@ void Main::loadCmdLine()
     removeProgressCounter();
 }
 
-void Main::logInfo(const QString &comment, const QString &caller)
+void Main::logInfo(const QString &comment, const QString &caller)   // FIXME-2 Replace everywhere with log.cpp ...
 {
     if (!useActionLog) return;
 
@@ -5148,7 +5148,9 @@ bool Main::fileCloseMap(int i)
             }
         }
 
+        logInfo(__func__ + QString(" before removing tab %1 - %2").arg(i).arg(m->mapTitle()));  // FIXME-2 debugging
         tabWidget->removeTab(i);
+        logInfo(__func__ + QString(" after  removing tab %1 - %2").arg(i).arg(m->mapTitle()));  // FIXME-2 debugging
 
         // Destroy stuff, order is important
         noteEditor->clear();
@@ -6807,8 +6809,15 @@ void Main::setTreeEditorsVisibility(bool b)
 {
     // Close *all* TreeEditors in each VymView and update vym settings
     settings.setValue("/mainwindow/view/showTreeEditors", b);
-    for (int i = 0; i < tabWidget->count(); i++)
-        ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
+    for (int i = 0; i < tabWidget->count(); i++) {
+        logInfo(__func__ + QString(" Setting vis in vymview  %1 to %2").arg(i, b));  // FIXME-2 debugging
+        if (!((VymView*)tabWidget->widget(i))) {
+            logInfo("Main::setReeEditorsVisibility: Fatal. widget i is nullptr");  // FIXME-2 debugging
+            QMessageBox::warning(0, "Warning", "Would have crashed now in setTEVis");
+        }
+        else
+            ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
+    }
     updateActions();
 }
 
