@@ -7204,6 +7204,7 @@ void Main::updateActions()
         // avoid iterating whole tree, so just enable
         // bool b = m->getTargets().isEmpty();
         actionGoToTarget->setEnabled(true);
+        actionGoToTargetLinkedMap->setEnabled(true);
 
         // Link style in context menu
         switch (m->mapDesign()->linkStyle(1)) { // FIXME-4 Currently global for map, all depths
