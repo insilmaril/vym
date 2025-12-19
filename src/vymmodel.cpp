@@ -2085,8 +2085,75 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
     return nullptr;
 }
 
+void VymModel::updateDataClones(BranchItem *src)    // FIXME-3 Define in MapDesign, what is cloned
+{
+    qDebug() << __func__ << src;
+    if (!src) return;
+
+    QList <BranchItem*> branches;
+    if (src->hasClones)
+        for (int i = 0; i < src->xlinkCount(); i++) {
+            XLinkItem* xli = src->getXLinkItemNum(i);
+            qDebug() << __func__ << "has xli" << xli;
+            if (xli) {
+                XLink* xl = xli->getXLink();
+                branches << xl->getBeginBranch();
+            }
+        }
+
+    if (src->isClone)
+        for (int i = 0; i < src->xlinkCount(); i++) {
+            XLinkItem* xli = src->getXLinkItemNum(i);
+            qDebug() << __func__ << "has xli" << xli;
+            if (xli) {
+                XLink* xl = xli->getXLink();
+                branches << xl->getEndBranch();
+            }
+        }
+
+    foreach (BranchItem *bi, branches) {
+        bi->setHeading(src->heading());
+        bi->setHeadingColor(src->headingColor());
+        emitDataChanged(bi);
+    }
+
+    // Also update clone flag in src
+    emitDataChanged(src);
+}
+
 void VymModel::test()
 {
+    // Testing clones
+    BranchItem *selbi = getSelectedBranch();
+    if (!selbi)
+        return;
+
+    if (selbi->isClone)
+        // Don't clone clones
+        return;
+
+    // Create clone
+    BranchItem *newbi = addNewBranchInt(selbi); // FIXME-2 already calls reposition()
+
+    XLink *newXLink = new XLink(this);
+    newXLink->setBeginBranch(newbi);
+    newXLink->setEndBranch(selbi);
+    newXLink->createXLinkObj();
+
+    createXLink(newXLink);
+
+    newXLink->setStyleBegin("None");
+    newXLink->setStyleEnd("HeadFull");
+    newXLink->setRelation("system-isCloneOf");
+
+    newbi->isClone = true;
+    selbi->hasClones = true;
+
+    updateDataClones(selbi);
+
+    reposition();
+    return;
+
     // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch()) {
@@ -2316,10 +2383,12 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
         if (h_old == h_new)
             return;
 
+        BranchItem *selbi = nullptr;
         QString tiv;    // ti variable in script
-        if (selti->hasTypeBranch())
-            tiv = setBranchVar((BranchItem*)selti) + "b.";
-        else
+        if (selti->hasTypeBranch()) {
+            selbi = (BranchItem*)selti;
+            tiv = setBranchVar(selbi) + "b.";
+        } else
             tiv = setImageVar((ImageItem*)selti) + "i.";
 
         QString uc, rc;
@@ -2343,6 +2412,13 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
 
         selti->setHeading(vt);
         emitDataChanged(selti);
+
+        if (selbi && (selbi->hasClones || selbi->isClone)) {
+            qDebug() << __func__ << "has clones or is clone";
+            updateDataClones(selbi);
+        }
+
+
         emitUpdateQueries();
         mainWindow->updateHeadingEditor(selti);    // Update HeadingEditor with new heading (if required)
         reposition();
@@ -5466,6 +5542,12 @@ void VymModel::colorBranch(QColor c, BranchItem *bi)
         selbi->setHeadingColor(c); // color branch
         selbi->getBranchContainer()->updateUpLink();
         emitDataChanged(selbi);
+
+        if (selbi && (selbi->hasClones || selbi->isClone)) {
+            qDebug() << __func__ << "has clones or is clone";
+            updateDataClones(selbi);
+        }
+
         taskEditor->showSelection();
     }
     if (mapEditor)
@@ -5492,6 +5574,12 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
             cur->setHeadingColor(c); // color links, color children
             cur->getBranchContainer()->updateUpLink();
             emitDataChanged(cur);
+
+            if (cur && (cur->hasClones || cur->isClone)) {
+                qDebug() << __func__ << "has clones or is clone";
+                updateDataClones(cur);
+            }
+
             nextBranch(cur, prev, true, bi);
         }
     }

@@ -896,6 +896,10 @@ void VymReader::readXLink()
         if (!s.isEmpty())
             xl->setStyleEnd(s);
 
+        s = attributeToString("rel");
+        if (!s.isEmpty())
+            xl->setRelation(s);
+
         /* FIXME-4 better set control points via VymModel for saveState
          * (no longer include XLO then...)
         */

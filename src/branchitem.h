@@ -82,6 +82,10 @@ class BranchItem : public MapItem {
                                 //! a mapcenter
 
   public:
+    bool isClone = false;
+    bool hasClones = false;
+
+  public:
     TreeItem *findMapItem(
         QPointF p,
         QList <TreeItem*> excludedItems); //! search map for branches or images. Ignore

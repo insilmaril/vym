@@ -29,16 +29,20 @@ class XLink: public XMLObj {
     QUuid getUuid();
     VymModel *getModel();
     XLinkWrapper *xlinkWrapper();
+
     void setBeginBranch(BranchItem *);
     BranchItem *getBeginBranch();
+
     void setEndBranch(BranchItem *);
-    void setEndPoint(QPointF);
     BranchItem *getEndBranch();
+    void setEndPoint(QPointF);
+
     void setBeginXLinkItem(XLinkItem *);
     XLinkItem *beginXLinkItem();
     void setEndXLinkItem(XLinkItem *);
     XLinkItem *endXLinkItem();
     void unsetXLinkItem(XLinkItem *);
+
     void setPen(const QPen &p);
     QPen getPen();
     void setLinkType(const QString &s);
@@ -46,10 +50,16 @@ class XLink: public XMLObj {
     QString getStyleBeginString();
     void setStyleEnd(const QString &s);
     QString getStyleEndString();
+
+    void setRelation(const QString &);
+    QString relation();
+
+  public:  
     bool activate();
     XLinkState state();
     void updateXLink();
     QString saveToDir();
+
     XLinkObj *getXLinkObj();
     XLinkObj *createXLinkObj();
 
@@ -62,6 +72,8 @@ class XLink: public XMLObj {
 
     XLinkObj *xlo;
     VymModel *model;
+
+    QString relationInt;
 
     BranchItem *beginBranch;
     BranchItem *endBranch;

@@ -324,6 +324,7 @@ class VymModel : public TreeModel {
     TreeItem *findUuid(const QUuid &i); // find MapObj by unique ID
     BranchItem* findBranchByAttribute(const QString &key, const QString &value);
 
+    void updateDataClones(BranchItem *src);
     void test();
 
     ////////////////////////////////////////////
@@ -501,7 +502,7 @@ class VymModel : public TreeModel {
     */
 
   private:
-    BranchItem *addNewBranchInt(BranchItem *dst, int pos);
+    BranchItem *addNewBranchInt(BranchItem *dst, int pos = -2);
         // pos allows to add above/below
         // selection, or as child  at pos
   public:

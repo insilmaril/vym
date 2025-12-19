@@ -173,6 +173,28 @@ QString XLink::getStyleEndString()
         return QString();
 }
 
+void XLink::setRelation(const QString &r)
+{
+    relationInt = r;
+    if (relationInt == "system-isCloneOf") {
+        if (beginBranch && endBranch) {
+            beginBranch->isClone = true;
+            endBranch->hasClones = true;
+            model->updateDataClones(endBranch);
+            beginBranch->activateSystemFlagByName("system-clone");
+            endBranch->activateSystemFlagByName("system-clone");
+        } else {
+            beginBranch->deactivateSystemFlagByName("system-clone");
+            endBranch->deactivateSystemFlagByName("system-clone");
+        }
+    }
+}
+
+QString XLink::relation()
+{
+    return relationInt;
+}
+
 bool XLink::activate()
 {
     if (beginBranch && endBranch) {
@@ -229,6 +251,9 @@ QString XLink::saveToDir()
                 attrs << attribute("styleBegin", ArrowObj::styleToString(xlo->getStyleBegin()));
                 attrs << attribute("styleEnd", ArrowObj::styleToString(xlo->getStyleEnd()));
             }
+            if (!relationInt.isEmpty())
+                attrs << attribute("rel", relationInt);
+
             attrs << attribute("uuid", uuid.toString());
 
             s = singleElement("xlink", attrs.join(""));
