@@ -180,12 +180,16 @@ void XLink::setRelation(const QString &r)
         if (beginBranch && endBranch) {
             beginBranch->isClone = true;
             endBranch->hasClones = true;
-            model->updateDataClones(endBranch);
             beginBranch->activateSystemFlagByName("system-clone");
             endBranch->activateSystemFlagByName("system-clone");
+            model->updateDataClones(endBranch);
         } else {
             beginBranch->deactivateSystemFlagByName("system-clone");
             endBranch->deactivateSystemFlagByName("system-clone");
+
+            // Update flag (called in updateDataClones above)
+            model->emitDataChanged(beginBranch);
+            model->emitDataChanged(endBranch);
         }
     }
 }
