@@ -26,6 +26,9 @@ XLink::~XLink()
 {
     //std::cout << "Destr XLink" << this << std::endl << std::flush;
 
+    // Make sure no clone flags are left
+    setRelation("");
+
     delete (xlo);
 
     if (xlinkWrapperInt) {
@@ -183,14 +186,14 @@ void XLink::setRelation(const QString &r)
             beginBranch->activateSystemFlagByName("system-clone");
             endBranch->activateSystemFlagByName("system-clone");
             model->updateDataClones(endBranch);
-        } else {
+        }
+    } else {
             beginBranch->deactivateSystemFlagByName("system-clone");
             endBranch->deactivateSystemFlagByName("system-clone");
 
             // Update flag (called in updateDataClones above)
             model->emitDataChanged(beginBranch);
             model->emitDataChanged(endBranch);
-        }
     }
 }
 
