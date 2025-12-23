@@ -43,7 +43,7 @@ BranchItem::BranchItem(TreeItem *parent)
 
 BranchItem::~BranchItem()
 {
-    // std::cout << "Destr. BranchItem: this=" << this << "  " << headingPlain().toStdString() << "  branchContainer=" << branchContainer << std::endl;
+    // qDebug() << "Destr. BranchItem: this=" << this << "  " << headingPlain().toStdString() << "  branchContainer=" << branchContainer;
     if (task)
         taskModel->deleteTask(task);
 

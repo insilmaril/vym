@@ -36,6 +36,7 @@ TreeItem::~TreeItem()
         //qDebug() << "  In destr TI going to delete ti=" << ti << ti->headingPlain();
         delete ti;
     }
+    //qDebug() << "Destr TreeItem end: this=" << this;
 }
 
 void TreeItem::init()

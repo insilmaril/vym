@@ -3139,8 +3139,10 @@ void Main::setupFlagActions()
     // Tasks
 
     // Origin: https://uxwing.com/link-hyperlink-color-icon/
+    setupFlag(":/flag-clone-original.svg", Flag::SystemFlag, "system-clone-original",
+              "Clone (original)");
     setupFlag(":/flag-clone.svg", Flag::SystemFlag, "system-clone",
-              tr("Clone", "SystemFlag"));
+              "Clone");
 
     // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
     flag = setupFlag(":/flag-task-new.svg", Flag::SystemFlag, "system-task-new",

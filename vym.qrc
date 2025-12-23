@@ -32,6 +32,7 @@
     <file alias="flag-stopsign-arrow-up.png">flags/system/stopsign-arrow-up.png</file>
 
     <file alias="flag-clone.svg">flags/system/clone.svg</file>
+    <file alias="flag-clone-original.svg">flags/system/clone-original.svg</file>
     <file alias="flag-target.svg">flags/system/target.svg</file>
     <file alias="flag-task-finished.svg">flags/system/task-finished.svg</file>
     <file alias="flag-task-new-morning.svg">flags/system/task-new-morning.svg</file>

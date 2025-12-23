@@ -124,10 +124,15 @@ void XLink::unsetXLinkItem(XLinkItem *xli)
 {
     // If deleting XLink is triggered from destructor of XLinkItem,
     // VymModel will not try to delete XLinkItem a second time
+
+    //qDebug() << __func__ << "xli=" << xli;
+
     if (xli == beginXLinkItemInt) {
         beginXLinkItemInt = nullptr;
+        beginBranch = nullptr;
     } else if (xli == endXLinkItemInt) {
         endXLinkItemInt = nullptr;
+        endBranch = nullptr;
     }
     stateInt = deleteXLink;
 }
@@ -184,16 +189,20 @@ void XLink::setRelation(const QString &r)
             beginBranch->isClone = true;
             endBranch->hasClones = true;
             beginBranch->activateSystemFlagByName("system-clone");
-            endBranch->activateSystemFlagByName("system-clone");
+            endBranch->activateSystemFlagByName("system-clone-original");
             model->updateDataClones(endBranch);
         }
     } else {
+        //qDebug() << "XLink::setRelation beginB=" << beginBranch << "endB=" << endBranch;
+        //qDebug() << "                   beginXLI=" << beginXLinkItemInt << "endXLI=" << endXLinkItemInt;
+        if (beginBranch) {
             beginBranch->deactivateSystemFlagByName("system-clone");
-            endBranch->deactivateSystemFlagByName("system-clone");
-
-            // Update flag (called in updateDataClones above)
             model->emitDataChanged(beginBranch);
+        }
+        if (endBranch) {
+            endBranch->deactivateSystemFlagByName("system-clone-original");
             model->emitDataChanged(endBranch);
+        }
     }
 }
 
