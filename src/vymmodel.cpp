@@ -2085,40 +2085,27 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
     return nullptr;
 }
 
-void VymModel::updateDataClones(BranchItem *src)    // FIXME-3 Define in MapDesign, what is cloned
+void VymModel::updateDataClones(BranchItem *src)
 {
-    qDebug() << __func__ << src;
     if (!src) return;
 
     QList <BranchItem*> branches;
-    if (src->hasClones)
-        for (int i = 0; i < src->xlinkCount(); i++) {
-            XLinkItem* xli = src->getXLinkItemNum(i);
-            qDebug() << __func__ << "has xli" << xli;
-            if (xli) {
-                XLink* xl = xli->getXLink();
+    for (int i = 0; i < src->xlinkCount(); i++) {
+        XLinkItem* xli = src->getXLinkItemNum(i);
+        if (xli) {
+            XLink* xl = xli->getXLink();
+            if (xl->relation() == "system-isCloneOf")
                 branches << xl->getBeginBranch();
-            }
         }
-
-    if (src->isClone)
-        for (int i = 0; i < src->xlinkCount(); i++) {
-            XLinkItem* xli = src->getXLinkItemNum(i);
-            qDebug() << __func__ << "has xli" << xli;
-            if (xli) {
-                XLink* xl = xli->getXLink();
-                branches << xl->getEndBranch();
-            }
-        }
-
-    foreach (BranchItem *bi, branches) {
-        bi->setHeading(src->heading());
-        bi->setHeadingColor(src->headingColor());
-        emitDataChanged(bi);
     }
 
-    // Also update clone flag in src
-    emitDataChanged(src);
+    foreach (BranchItem *bi, branches) {
+        // FIXME-3 Missing mapdesign flags to decide what get's cloned
+        bi->setHeading(src->heading());
+        bi->setHeadingColor(src->headingColor());
+
+        emitDataChanged(bi);
+    }
 }
 
 void VymModel::test()
@@ -2376,54 +2363,63 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
     h_new = vt;
     QString s = vt.getTextASCII();
 
-    TreeItem *selti = getSelectedItem(ti);
+    QList <TreeItem*> seltis = getSelectedItems(ti);
+    foreach (auto selti, seltis) {
+        if (selti && selti->hasTypeBranchOrImage()) {
+            h_old = selti->heading();
+            if (h_old == h_new)
+                return;
 
-    if (selti && selti->hasTypeBranchOrImage()) {
-        h_old = selti->heading();
-        if (h_old == h_new)
-            return;
+            BranchItem *selbi = nullptr;
+            QString tiv;    // ti variable in script
+            if (selti->hasTypeBranch()) {
+                selbi = (BranchItem*)selti;
+                tiv = setBranchVar(selbi) + "b.";
+            } else
+                tiv = setImageVar((ImageItem*)selti) + "i.";
 
-        BranchItem *selbi = nullptr;
-        QString tiv;    // ti variable in script
-        if (selti->hasTypeBranch()) {
-            selbi = (BranchItem*)selti;
-            tiv = setBranchVar(selbi) + "b.";
+            if (selbi && selbi->isClone) {
+                // Update clone parent
+                BranchItem *orgBI = selbi->parentOfClone();
+                if (orgBI)
+                    setHeading(vt, orgBI);
+            } else {
+                // Update heading
+                QString uc, rc;
+                if (h_old.isRichText())
+                    uc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
+                else
+                    uc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
+                if (h_new.isRichText())
+                    rc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
+                else
+                    rc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
+
+                QString comment = QString("Set heading of %1 to \"%2\"").arg(getObjectName(selti), s);
+
+                logAction(rc, comment, __func__);
+
+                saveState( uc, rc, comment);
+
+                // After adding branches or MapCenters interactively we might want to end an undo script
+                saveStateEndScript();
+
+                selti->setHeading(vt);
+                emitDataChanged(selti);
+
+                // Update clones
+                if (selbi && selbi->hasClones)
+                    updateDataClones(selbi);
+
+            }
         } else
-            tiv = setImageVar((ImageItem*)selti) + "i.";
+            // selti is neither branch nor image
+            qWarning() << "VM::setHeading has no branch or image selected!";
+    } // Iterating seltis
 
-        QString uc, rc;
-        if (h_old.isRichText())
-            uc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
-        else
-            uc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
-        if (h_new.isRichText())
-            rc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
-        else
-            rc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
-
-        QString comment = QString("Set heading of %1 to \"%2\"").arg(getObjectName(selti), s);
-
-        logAction(rc, comment, __func__);
-
-        saveState( uc, rc, comment);
-
-        // After adding branches or MapCenters interactively we might want to end an undo script
-        saveStateEndScript();
-
-        selti->setHeading(vt);
-        emitDataChanged(selti);
-
-        if (selbi && (selbi->hasClones || selbi->isClone)) {
-            qDebug() << __func__ << "has clones or is clone";
-            updateDataClones(selbi);
-        }
-
-
-        emitUpdateQueries();
-        mainWindow->updateHeadingEditor(selti);    // Update HeadingEditor with new heading (if required)
-        reposition();
-    } else
-        qWarning() << "VM::setHeading has no branch or image selected!";
+    emitUpdateQueries();
+    mainWindow->updateHeadingEditor(seltis.first());    // Update HeadingEditor with new heading (if required)
+    reposition();
 }
 
 void VymModel::setHeadingPlainText(const QString &s, TreeItem *ti)
@@ -5046,7 +5042,6 @@ void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-3 does not work rea
     }
 
     emptyXLinksTrash();
-
 }
 
 void VymModel::deleteChildren(BranchItem *bi)
@@ -5532,24 +5527,27 @@ void VymModel::colorBranch(QColor c, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        QString uc = QString("colorBranch (\"%1\");")
-                      .arg(selbi->headingColor().name());
-        QString rc = QString("colorBranch (\"%1\");").arg(c.name());
-        QString com = QString("Set color of %1 to %2").arg(getObjectName(selbi), c.name());
+        if (selbi->isClone) 
+            colorBranch(c, selbi->parentOfClone());
+        else {
+            QString uc = QString("colorBranch (\"%1\");")
+                          .arg(selbi->headingColor().name());
+            QString rc = QString("colorBranch (\"%1\");").arg(c.name());
+            QString com = QString("Set color of %1 to %2").arg(getObjectName(selbi), c.name());
 
-        logAction(rc, com, __func__);
-        saveStateBranch(selbi, uc, rc, com);
-        selbi->setHeadingColor(c); // color branch
-        selbi->getBranchContainer()->updateUpLink();
-        emitDataChanged(selbi);
+            logAction(rc, com, __func__);
+            saveStateBranch(selbi, uc, rc, com);
+            selbi->setHeadingColor(c); // color branch
+            selbi->getBranchContainer()->updateUpLink();
+            emitDataChanged(selbi);
 
-        if (selbi && (selbi->hasClones || selbi->isClone)) {
-            qDebug() << __func__ << "has clones or is clone";
-            updateDataClones(selbi);
+            if (selbi->hasClones)
+                updateDataClones(selbi);
         }
-
-        taskEditor->showSelection();
     }
+
+    taskEditor->showSelection();
+
     if (mapEditor)
         mapEditor->getScene()->update();
 }
@@ -5558,29 +5556,35 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
-    foreach (BranchItem *bi, selbis) {
-        QString bv = setBranchVar(bi);
-        QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
-        QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
-        QString com = QString("Set color of %1 and children to %2").arg(getObjectName(bi), c.name());
-        logAction(rc, com, __func__);
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi->isClone) 
+            colorSubtree(c, selbi->parentOfClone());
+        else {
+            QString bv = setBranchVar(bi);
+            QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+            QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
+            QString com = QString("Set color of %1 and children to %2").arg(getObjectName(bi), c.name());
+            logAction(rc, com, __func__);
 
-        saveState(uc, rc, com, bi);
+            saveState(uc, rc, com, bi);
 
-        BranchItem *prev = nullptr;
-        BranchItem *cur = nullptr;
-        nextBranch(cur, prev, true, bi);
-        while (cur) {
-            cur->setHeadingColor(c); // color links, color children
-            cur->getBranchContainer()->updateUpLink();
-            emitDataChanged(cur);
-
-            if (cur && (cur->hasClones || cur->isClone)) {
-                qDebug() << __func__ << "has clones or is clone";
-                updateDataClones(cur);
-            }
-
+            BranchItem *prev = nullptr;
+            BranchItem *cur = nullptr;
             nextBranch(cur, prev, true, bi);
+            while (cur) {
+                if (cur->isClone)
+                    colorBranch(c, cur);
+                else {
+                    cur->setHeadingColor(c); // color links, color children
+                    cur->getBranchContainer()->updateUpLink();
+                    emitDataChanged(cur);
+
+                    if (cur->hasClones)
+                        updateDataClones(cur);
+                }
+
+                nextBranch(cur, prev, true, bi);
+            }
         }
     }
     taskEditor->showSelection();

@@ -191,6 +191,7 @@ void XLink::setRelation(const QString &r)
             beginBranch->activateSystemFlagByName("system-clone");
             endBranch->activateSystemFlagByName("system-clone-original");
             model->updateDataClones(endBranch);
+            model->emitDataChanged(endBranch);
         }
     } else {
         //qDebug() << "XLink::setRelation beginB=" << beginBranch << "endB=" << endBranch;

@@ -84,6 +84,7 @@ class BranchItem : public MapItem {
   public:
     bool isClone = false;
     bool hasClones = false;
+    BranchItem* parentOfClone();
 
   public:
     TreeItem *findMapItem(

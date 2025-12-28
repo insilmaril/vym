@@ -440,6 +440,23 @@ BranchItem *BranchItem::getLastSelectedBranchAlt()
     return getBranchNum(lastSelectedBranchNumAlt);
 }
 
+BranchItem *BranchItem::parentOfClone()
+{
+    if (!isClone)
+        return nullptr;
+
+    for (int i = 0; i < xlinkCount(); i++) {
+        XLinkItem* xli = getXLinkItemNum(i);
+        if (xli) {
+            XLink* xl = xli->getXLink();
+            if (xl->relation() == "system-isCloneOf") {
+                return xl->getEndBranch();
+            }
+        }
+    }
+    return nullptr;
+}
+
 TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 {
     // Search branches
