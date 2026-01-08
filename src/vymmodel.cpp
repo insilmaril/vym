@@ -2085,7 +2085,7 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
     return nullptr;
 }
 
-void VymModel::updateDataClones(BranchItem *src)
+void VymModel::updateDataClones(BranchItem *src) // FIXME-3 Missing mapdesign flags to decide what get's cloned
 {
     if (!src) return;
 
@@ -2100,9 +2100,15 @@ void VymModel::updateDataClones(BranchItem *src)
     }
 
     foreach (BranchItem *bi, branches) {
-        // FIXME-3 Missing mapdesign flags to decide what get's cloned
         bi->setHeading(src->heading());
         bi->setHeadingColor(src->headingColor());
+
+        QColor bg_src = src->getBackgroundColor(src);
+        if (bg_src != mapDesignInt->backgroundColor()) {
+            setFrameType(true, FrameContainer::Rectangle, bi);
+            setFrameBrushColor(true, bg_src, bi);
+        } else
+            setFrameType(true, FrameContainer::NoFrame, bi);
 
         emitDataChanged(bi);
     }
@@ -2821,6 +2827,10 @@ void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::Fra
             saveStateEndScript();
 
         emitDataChanged(selbi);
+
+        // Update clones
+        if (selbi && selbi->hasClones)
+            updateDataClones(selbi);
     }
 
     if (!selbis.isEmpty()) {
@@ -2880,6 +2890,10 @@ void VymModel::setFrameBrushColor(
             saveStateBranch(selbi, uc, rc, comment);
 
             bc->setFrameBrushColor(useInnerFrame, col);
+
+            if (selbi->hasClones) { // FIXME-2 What if selbi->isClone? Update parent?
+                updateDataClones(selbi);
+            }
         }
         emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
         branchPropertyEditor->updateControls();
