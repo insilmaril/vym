@@ -6819,8 +6819,8 @@ void Main::setTreeEditorsVisibility(bool b)
     for (int i = 0; i < tabWidget->count(); i++) {
         logInfo(__func__ + QString(" Setting vis in vymview  %1 to %2").arg(i, b));  // FIXME-2 debugging
         if (!((VymView*)tabWidget->widget(i))) {
-            logInfo("Main::setReeEditorsVisibility: Fatal. widget i is nullptr");  // FIXME-2 debugging
-            QMessageBox::warning(0, "Warning", "Would have crashed now in setTEVis");
+            logInfo("Main::setTreeEditorsVisibility: Fatal. widget i is nullptr");  // FIXME-2 debugging
+            QMessageBox::warning(0, "Warning", "Would have crashed now in setTEVis, please notify development team!");
         }
         else
             ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
