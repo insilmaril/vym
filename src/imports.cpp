@@ -76,7 +76,8 @@ bool ImportFirefoxBookmarks::transform()
         QJsonObject jsobj = jsdoc.object();
 
         QJsonArray jsarr = jsobj["children"].toArray();
-        foreach (const QJsonValue &value, jsarr) {
+        for (auto value : jsarr) {
+            // For modifications also forwarding references with "auto && v" could be used
             parseJson (value, ParseMode::countBookmarks);
         }
 
@@ -166,8 +167,8 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
     if (jsobj.contains("children") && jsobj["children"].isArray()) {
 
         QJsonArray jsarr = jsobj["children"].toArray();
-        foreach (const QJsonValue &val, jsarr) {
-            parseJson (val, mode, selbi);
+        for (auto value : jsarr) {
+            parseJson (value, mode, selbi);
         }
 
         if (selbi->depth() > 2) {
