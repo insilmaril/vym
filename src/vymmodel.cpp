@@ -3013,6 +3013,7 @@ void VymModel::rotateSubtree(qreal a)
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
+        setRotationAutoDesign(false, selbi);
         qreal a_old = bc->rotationSubtree();
         qreal a_new = a_old + a;
         QString uc = QString("setRotationSubtree(\"%1\");").arg(toS(a_old, 1));
