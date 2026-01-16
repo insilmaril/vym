@@ -4531,7 +4531,7 @@ bool Main::fileLoad(QString fn, const File::LoadMode &lmode,
             }
 
             editorChanged();
-            vm->emitShowSelection();
+            vm->emitShowSelection(false, false);
             statusBar()->showMessage(tr("Loaded %1").arg(fn));
         }
     }

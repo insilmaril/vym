@@ -279,6 +279,8 @@ void MapEditor::ensureAreaVisibleAnimated(
         bool rotated,
         qreal new_rotation)
 {
+    qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated << "new_rot=" << new_rotation;
+
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
     //
@@ -293,15 +295,15 @@ void MapEditor::ensureAreaVisibleAnimated(
     int ymargin = settings.value("/mapeditor/scrollToMarginY/", 50).toInt();
 
     // Do we need to zoom out to show area?
-    QRect areaViewCoord = mapFromScene(area).boundingRect();
+    QRect areaViewCoord = mapFromScene(area).boundingRect();    // FIXME-2 Does not consider yet the *target* rotation and zoom factor (#185)
 
     // Visible area within margins
     QRect visibleViewCoord = rect();
     visibleViewCoord -= QMargins(xmargin, ymargin, xmargin, ymargin);
 
     if (!rotated)
-        // Use current view rotation, if we do not plan to rotate
-        new_rotation = rotationInt;
+        // Use current view rotation target, if we do not plan to set new target
+        new_rotation = rotationTargetInt;
 
     // Calculate required width and height considering rotation of view
     qreal a = new_rotation / 180 * M_PI;
@@ -319,12 +321,12 @@ void MapEditor::ensureAreaVisibleAnimated(
     int animDuration = 2000;
     QEasingCurve easingCurve = QEasingCurve::OutQuint;
     
-    //qDebug() << __func__ << " zoom out: " << zoomOutRequired << " zoomFactor=" << zoomFactorInt << " zf=" << zf;
+    qDebug() << __func__ << " zoomOutReq: " << zoomOutRequired << " zoomFactor=" << zoomFactorInt << " zf=" << zf << " zft=" << zoomFactorTargetInt;
     //qDebug() << "z_xy=" << toS(QPointF(z_x, z_y));
     if (zoomOutRequired || scaled) {
         setViewCenterTarget(
                 area.center(), 
-                zf, 
+                zf,     // FIXME-2 Shouldn't this be zoomFactorTargetInt? Only used in Main::viewCenterScaled
                 new_rotation,
                 animDuration,
                 easingCurve);
@@ -351,7 +353,7 @@ void MapEditor::ensureAreaVisibleAnimated(
     if (abs(view_dx) > 5 || abs(view_dy) > 5 || rotated)
         setViewCenterTarget(
                 mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
-                zoomFactorInt,
+                zoomFactorTargetInt,
                 new_rotation,
                 animDuration,
                 easingCurve);
@@ -367,6 +369,8 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
     //
     // Similar to QGraphicsItem::ensureVisible, but with animation and (if necessary)
     // zooming
+
+    qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated;
 
     QList <TreeItem*> selis = model->getSelectedItems();
 
@@ -400,7 +404,7 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
         } else
             bbox = bbox.united(c_bbox);
     }
-    int new_rotation = round_int(rotationInt) % 360;
+    int new_rotation = round_int(rotationTargetInt) % 360;
 
     if (rotated && selis.count() == 1) {
         if (selis.first()->hasTypeBranch()) {
@@ -608,6 +612,7 @@ void MapEditor::setZoomFactorTarget(const qreal &zft)
         zoomAnimation.setStartValue(zoomFactorInt);
         zoomAnimation.setEndValue(zft);
         zoomAnimation.start();
+        qDebug() << __func__ << zft;
     }
     else
         setZoomFactor(zft);
@@ -668,6 +673,8 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
     rotationTargetInt = at;
 
     viewCenter = mapToScene(viewport()->geometry()).boundingRect().center();
+
+    //qDebug() << __func__ << "zft=" << zft << "rot=" << at;
 
     stopViewAnimations();
 

@@ -470,6 +470,8 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                                   BranchItem *insertBranch,
                                   int insertPos)
 {
+    qDebug() << "a) Loading " << fname;
+
     bool noError = true;
 
     // Get updated zoomFactor, before applying one read from file in the end
@@ -725,14 +727,19 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     if (lmode != File::NewMap)
         emitUpdateQueries();
 
+    qDebug() << "b) Loaded " << fname;
     if (mapEditor) {
         mapEditor->setZoomFactorTarget(zoomFactor);
         mapEditor->setRotationTarget(mapRotationInt);
     }
+    qDebug() << "c) Loaded " << fname;
 
     qApp->processEvents(); // Update view (scene()->update() is not enough)
 
     isLoadingInt = false;
+
+    qDebug() << "d) Loaded " << fname;
+
     return noError;
 }
 
@@ -4324,10 +4331,10 @@ BranchItem *VymModel::addMapCenter(bool interactive)
 
     BranchItem *newbi = addMapCenterAtPos(contextPos, interactive);
 
-    if (interactive && mapEditor)
+    if (interactive && mapEditor) {
         mapEditor->editHeading(newbi);
-
-    emitShowSelection();
+        emitShowSelection();
+    }
 
     emitUpdateLayout();
     return newbi;
@@ -7632,6 +7639,7 @@ void VymModel::appendSelectionToHistory() // FIXME-3 history unable to cope with
 
 void VymModel::emitShowSelection(bool scaled, bool rotated)
 {
+    //qDebug() << "VM::" <<  __func__ << "scaled=" << scaled << "rotated=" << rotated;
     if (!repositionBlocked)
         emit showSelection(scaled, rotated);
 }
