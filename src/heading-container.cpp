@@ -47,7 +47,7 @@ void HeadingContainer::setHeading(const VymText &vt)
 {
     headingInt = vt;
 
-    QGraphicsTextItem *t;   // FIXME-2 Consider using QGraphicsSimpleTextitem for plaintext
+    QGraphicsTextItem *t;   // FIXME-3 Consider using QGraphicsSimpleTextitem for plaintext (#184)
 
     QString s = vt.getText();
 
