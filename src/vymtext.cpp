@@ -27,7 +27,7 @@ VymText::VymText(const QString &s)
 bool VymText::operator==(const VymText &other)
 {
     if (text == other.text && fonthint == other.fonthint &&
-        textmode == other.textmode && filenamehint == other.filenamehint &&
+        textmode == other.textmode && fileNameInt == other.fileNameInt &&
         color == other.color)
         return true;
     else
@@ -40,7 +40,7 @@ void VymText::copy(const VymText &other)
 {
     text = other.text;
     fonthint = other.fonthint;
-    filenamehint = other.filenamehint;
+    fileNameInt = other.fileNameInt;
     textmode = other.textmode;
     color = other.color;
 }
@@ -49,7 +49,7 @@ void VymText::clear()
 {
     text = "";
     fonthint = "";
-    filenamehint = "";
+    fileNameInt = "";
     textmode = AutoText;
     color = Qt::black;
 }
@@ -215,9 +215,9 @@ QString VymText::getFontHint() const
     return fonthint;
 }
 
-void VymText::setFilenameHint(const QString &s) { filenamehint = s; }
+void VymText::setFileName(const QString &s) { fileNameInt = s; }
 
-QString VymText::getFilenameHint() const { return filenamehint; }
+QString VymText::fileName() const { return fileNameInt; }
 
 bool VymText::isEmpty() const
 {

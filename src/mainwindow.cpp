@@ -6990,10 +6990,13 @@ void Main::updateNoteText(const VymText &vt)
 void Main::updateNoteEditor(TreeItem *ti)
 {
     if (ti) {
-        if (!ti->hasEmptyNote())
-            noteEditor->setNote(ti->getNote());
-        else
-            noteEditor->clear(); // Also sets empty state
+        VymNote note = ti->getNote();
+        if (!note.isEmpty()) {
+            noteEditor->setNote(note);  // fileName is set implicitly from note
+        } else {
+            noteEditor->clear();        // Also sets empty state
+        }
+        noteEditor->setFileNameHint(ti->headingText());
     } else
         noteEditor->setInactive();
     noteEditor->setTitle();
