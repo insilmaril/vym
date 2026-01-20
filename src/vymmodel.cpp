@@ -2660,50 +2660,52 @@ void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi)
             setAttribute(bi, "Jira.query", query_new);
 }
 
-void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, BranchItem *bi)
+void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &newAutoDesign, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
 
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        QString uif = toS(useInnerFrame);
-        QString b_undo = toS(!b);
-        QString b_redo = toS(b);
-        QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_undo);
-        QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_redo);
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->frameAutoDesign(useInnerFrame) != newAutoDesign) {
+            QString uif = toS(useInnerFrame);
+            QString b_undo = toS(!newAutoDesign);
+            QString b_redo = toS(newAutoDesign);
+            QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_undo);
+            QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_redo);
 
-        QString comment = QString("Set automatic design of frame to '%1'").arg(toS(b));
+            QString comment = QString("Set automatic design of frame to '%1'").arg(toS(newAutoDesign));
 
-        logAction(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
-        saveStateBeginScript(comment);  // setFrameAD, calls setFrame* functions
+            saveStateBeginScript(comment);  // setFrameAD, calls setFrame* functions
 
-        bc = selbi->getBranchContainer();
-        bc->setFrameAutoDesign(useInnerFrame, b);
-        if (b) {
-            setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
-            setFramePenColor(useInnerFrame, mapDesignInt->framePenColor(useInnerFrame, selbi->depth()), selbi);
-            setFramePenWidth(useInnerFrame, mapDesignInt->framePenWidth(useInnerFrame, selbi->depth()), selbi);
-            setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
-	}
+            bc->setFrameAutoDesign(useInnerFrame, newAutoDesign);
+            if (newAutoDesign) {
+                setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
+                setFramePenColor(useInnerFrame, mapDesignInt->framePenColor(useInnerFrame, selbi->depth()), selbi);
+                setFramePenWidth(useInnerFrame, mapDesignInt->framePenWidth(useInnerFrame, selbi->depth()), selbi);
+                setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
+            }
 
-        emitDataChanged(selbi);
-        branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
+            branchPropertyEditor->updateControls();
 
-        saveStateBranch(selbi, uc, rc, comment);
-        saveStateEndScript();
+            saveStateBranch(selbi, uc, rc, comment);
+            saveStateEndScript();
+        }
     }
 }
 
 void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &t, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        bc = selbi->getBranchContainer();
+        BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) == t)
-            break;
+            continue;
+
+        setFrameAutoDesign(useInnerFrame, false, selbi);
 
         QString uif = toS(useInnerFrame);
 
@@ -2777,6 +2779,8 @@ void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, Br
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+            setFrameAutoDesign(useInnerFrame, false, selbi);
+
             QString uif = toS(useInnerFrame);
             QString colorNameOld = bc->framePenColor(useInnerFrame).name();
             QString uc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorNameOld);
@@ -2803,6 +2807,8 @@ void VymModel::setFrameBrushColor(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+            setFrameAutoDesign(useInnerFrame, false, selbi);
+
             QString uif = toS(useInnerFrame);
             QString colorNameOld = bc->framePenColor(useInnerFrame).name();
             QString uc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorNameOld);
@@ -2827,7 +2833,9 @@ void VymModel::setFramePadding(
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+        if (i != bc->framePadding(useInnerFrame)) {
+            setFrameAutoDesign(useInnerFrame, false, selbi);
+
             QString uif = toS(useInnerFrame);
             QString uc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(bc->framePadding(useInnerFrame));
             QString rc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(i);
@@ -2852,7 +2860,9 @@ void VymModel::setFramePenWidth(
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+        if (i != bc->framePenWidth(useInnerFrame)) {
+            setFrameAutoDesign(useInnerFrame, false, selbi);
+
             QString uif = toS(useInnerFrame);
             QString uc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(bc->framePenWidth(useInnerFrame));
             QString rc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
