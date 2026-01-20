@@ -179,7 +179,7 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
                 return t->getPriorityDelta();
             else if (index.column() == 8) {
                 BranchItem *bi = tasks.at(index.row())->getBranch();
-                return bi->headingPlainWithParents(showParentsLevel);
+                return bi->headingText();
             }
         }
         if (role == Qt::ForegroundRole && bi)
