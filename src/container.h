@@ -80,7 +80,7 @@ class Container : public QGraphicsRectItem {
     virtual void init();
 
     void setContainerType(const ContainerType &t);
-    ContainerType getContainerType();
+    ContainerType containerType();
 
     enum {Type = UserType + 1};
     int type() const override;
@@ -166,7 +166,7 @@ class Container : public QGraphicsRectItem {
     virtual void reposition();
 
   protected:
-    ContainerType containerType;
+    ContainerType containerTypeInt;
 
     bool overlay;
 

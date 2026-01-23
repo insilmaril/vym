@@ -30,7 +30,7 @@ Container::~Container()
 
 void Container::copy(Container *other)
 {
-    containerType = other->containerType;
+    containerTypeInt = other->containerTypeInt;
 
     originalPos = other->originalPos;
     name = other->name;
@@ -43,7 +43,7 @@ void Container::copy(Container *other)
 
 void Container::init()
 {
-    containerType = UndefinedType;
+    containerTypeInt = UndefinedType;
     layoutInt = Horizontal;
 
     // subcontainers usually may influence position
@@ -71,9 +71,9 @@ void Container::init()
     show();
 }
 
-Container::ContainerType Container::getContainerType()
+Container::ContainerType Container::containerType()
 {
-    return containerType;
+    return containerTypeInt;
 }
 
 int Container::type() const
@@ -83,7 +83,40 @@ int Container::type() const
 
 void Container::setContainerType(const Container::ContainerType &t)
 {
-    containerType = t;
+    containerTypeInt = t;
+    if ( t == OuterContainer) {
+        QColor c(Qt::blue);
+        setPen(c);
+        QGraphicsLineItem *line1 = new QGraphicsLineItem(this);
+        line1->setPen(c);
+        line1->setLine(0, -5, 0, 5);
+        QGraphicsLineItem *line2 = new QGraphicsLineItem(this);
+        line2->setPen(c);
+        line2->setLine(-5, 0, 5, 0);
+    }
+    if ( t == InnerContainer) {
+        QColor c(Qt::green);
+        setPen(c);
+        QGraphicsLineItem *line1 = new QGraphicsLineItem(this);
+        line1->setPen(c);
+        line1->setLine(0, -5, 0, 5);
+        QGraphicsLineItem *line2 = new QGraphicsLineItem(this);
+        line2->setPen(c);
+        line2->setLine(-5, 0, 5, 0);
+    }
+    if ( t == ImagesContainer) {
+        QColor c(Qt::red);
+        setPen(c);
+        QGraphicsLineItem *line1 = new QGraphicsLineItem(this);
+        line1->setPen(QColor(Qt::red));
+        line1->setLine(0, -5, 0, 5);
+        QGraphicsLineItem *line2 = new QGraphicsLineItem(this);
+        line2->setPen(c);
+        line2->setLine(-5, 0, 5, 0);
+    /*
+	qDebug() << "setCT imagesContainer for " << this << "l1=" << line1 << "l2="<< line2;
+    */
+    }
 }
 
 void Container::setName(const QString &n)   // FIXME-4 debugging only
@@ -94,7 +127,7 @@ void Container::setName(const QString &n)   // FIXME-4 debugging only
 QString Container::getName()    // FIXME-4 debugging only
 {
     QString t;
-    switch (containerType) {
+    switch (containerTypeInt) {
         case Branch:
             t = "Branch";
             break;
@@ -160,7 +193,7 @@ QString Container::info (const QString &prefix)
         + QString(" z: %1").arg(zPos)
         //+ QString(" a: %1").arg(qRound(rotation()))
         //+ QString(" scenePos: %1").arg(toS(scenePos(), 0))
-        //+ QString(" pos: %1").arg(toS(pos(), 0))
+        + QString(" pos: %1").arg(toS(pos(), 0))
         + QString(" rect: %1").arg(toS(rect(), 0))
         //+ QString(" sceneRect: %1").arg(toS(mapRectToScene(rect()), 0))
         //+ QString(" vis: %1").arg(isVisible());
@@ -582,7 +615,7 @@ void Container::reposition()
 
                 if (childContainers().count() > 4 ) {
                     qWarning() << "Container::reposition " << info();
-                    qWarning() << "Wrong number of children containers: " << childItems().count();
+                    qWarning() << "Too many children containers: " << childItems().count();
                     foreach (Container *c, childContainers())
                         qdbg() << "  " << c->info();
 
@@ -887,7 +920,7 @@ void Container::reposition()
 			    break;
                         default:
                             qWarning() << "Container::reposition vertically - undefined alignment:" << horizontalAlignmentInt << " in " << info();
-                            if (containerType == BranchesContainer)
+                            if (containerTypeInt == BranchesContainer)
                                 qWarning() << "  orient=" << ((BranchContainer*)this)->getOrientation();
 		    }
 

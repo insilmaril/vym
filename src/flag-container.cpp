@@ -17,7 +17,7 @@ FlagContainer::~FlagContainer()
 void FlagContainer::init()
 {
     avis = true;
-    containerType = FlagCont;
+    setContainerType(FlagCont);
     //setPen(QPen(Qt::green));
 }
 

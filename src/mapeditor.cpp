@@ -509,7 +509,7 @@ void MapEditor::animate()
     foreach (Container *c, animatedContainers) {
         c->animate();
 
-        if (c->getContainerType() == Container::Branch)
+        if (c->containerType() == Container::Branch)
             ((BranchContainer*)c)->updateUpLink();
 
         if (!c->isAnimated())

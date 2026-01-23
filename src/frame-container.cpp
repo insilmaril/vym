@@ -26,7 +26,7 @@ FrameContainer::~FrameContainer()
 
 void FrameContainer::init()
 {
-    containerType = Frame;
+    setContainerType(Frame);
     frameTypeInt = NoFrame;
     clear();
     framePen.setColor(Qt::black);

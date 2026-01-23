@@ -23,7 +23,7 @@ LinkContainer::~LinkContainer()
 
 void LinkContainer::init()
 {
-    containerType = Link;
+    setContainerType(Link);
 }
 
 void LinkContainer::addLink(LinkObj *lo)

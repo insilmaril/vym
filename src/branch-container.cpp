@@ -58,7 +58,7 @@ void BranchContainer::init()
     // BranchContainer defaults
     // partially overwriting MinimalBranchContainer
     // can be overwritten by MapDesign later
-    containerType = Container::Branch;
+    setContainerType(Container::Branch);
 
     setLayout(Container::Horizontal);
 
@@ -95,12 +95,12 @@ void BranchContainer::init()
     outerFrame = nullptr;
 
     ornamentsContainer = new Container;
-    ornamentsContainer->containerType = OrnamentsContainer;
+    ornamentsContainer->setContainerType(OrnamentsContainer);
 
     linkContainer = new LinkContainer;
 
     innerContainer = new Container;
-    innerContainer->containerType = InnerContainer;
+    innerContainer->setContainerType(InnerContainer);
 
     standardFlagRowContainer = nullptr;
     systemFlagRowContainer = nullptr;
@@ -267,7 +267,7 @@ void BranchContainer::addToBranchesContainer(BranchContainer *bc)
         // (It will be deleted later in updateChildrenStructure(), if there
         // are no children)
         branchesContainer = new Container();
-        branchesContainer->containerType = Container::BranchesContainer;
+        branchesContainer->setContainerType(Container::BranchesContainer);
         branchesContainer->zPos = Z_BRANCHES;
         branchesContainer->setLayout(branchesContainerLayoutInt);
         branchesContainer->setVerticalAlignment(
@@ -289,7 +289,7 @@ void BranchContainer::createOuterContainer()
 {
     if (!outerContainer) {
         outerContainer = new Container;
-        outerContainer->containerType = OuterContainer;
+        outerContainer->setContainerType(OuterContainer);
         outerContainer->setLayout(BoundingFloats);
         addContainer(outerContainer);
 
@@ -375,7 +375,7 @@ void BranchContainer::updateChildrenStructure()
             // listContainer has one linkSpaceContainer left of
             // branchesContainer
             listContainer = new Container;
-            listContainer->containerType = Container::ListContainer;
+            listContainer->setContainerType(Container::ListContainer);
             listContainer->setLayout(Horizontal);
             if (linkSpaceContainer)
                 listContainer->addContainer(linkSpaceContainer);
@@ -460,8 +460,7 @@ void BranchContainer::updateChildrenStructure()
                         Container::Vertical; // FIXME-3 get from MapDesign
                     if (!imagesAndBranchesContainer) {
                         imagesAndBranchesContainer = new Container;
-                        imagesAndBranchesContainer->containerType =
-                            Container::ImagesAndBranchesContainer;
+                        imagesAndBranchesContainer->setContainerType(Container::ImagesAndBranchesContainer);
                         innerContainer->addContainer(imagesAndBranchesContainer,
                                                      Z_IMAGE);
                         imagesAndBranchesContainer->addContainer(
@@ -626,7 +625,7 @@ void BranchContainer::createImagesContainer()
     // The destructor of ImageItem calls
     // updateChildrenStructure() in parentBranch()
     imagesContainer = new Container();
-    imagesContainer->containerType = ImagesContainer;
+    imagesContainer->setContainerType(ImagesContainer);
     imagesContainer->setLayout(imagesContainerLayoutInt);
 
     updateImagesContainerParent();
@@ -673,12 +672,12 @@ QPointF BranchContainer::getPositionHintNewChild(Container *c)
     bool useCircle = false;
     int n = 0;
     qreal radius;
-    if (c->containerType == Branch && hasFloatingBranchesLayout()) {
+    if (c->containerTypeInt == Branch && hasFloatingBranchesLayout()) {
         useCircle = true;
         radius = 190;
         n = branchCount();
     }
-    else if (c->containerType == Image && hasFloatingImagesLayout()) {
+    else if (c->containerTypeInt == Image && hasFloatingImagesLayout()) {
         useCircle = true;
         radius = 100;
         n = imageCount();
@@ -885,7 +884,7 @@ void BranchContainer::updateUpLink()
 
 void BranchContainer::setLayout(const Layout &l)
 {
-    if (containerType != Branch && containerType != TmpParent)
+    if (containerTypeInt != Branch && containerTypeInt != TmpParent)
         qWarning() << "BranchContainer::setLayout (...) called for non-branch: "
                    << info();
     Container::setLayout(l);

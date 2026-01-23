@@ -24,7 +24,7 @@ void TmpParentContainer::init()
     // setPen(QPen(Qt::green)); // Uncomment for testing
 
     // TmpParentContainer defaults, should be overridden from MapDesign later
-    containerType = Container::TmpParent;
+    setContainerType(Container::TmpParent);
 
     setLayout(Container::FloatingReservedSpace);
 
@@ -53,7 +53,6 @@ void TmpParentContainer::addToImagesContainer(Container *c)
 {
     if (!imagesContainer) {
         createImagesContainer();
-
         imagesContainer->setParentItem(this);   // Different for BranchItem!
     }
 
