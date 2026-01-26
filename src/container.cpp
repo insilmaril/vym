@@ -84,39 +84,12 @@ int Container::type() const
 void Container::setContainerType(const Container::ContainerType &t)
 {
     containerTypeInt = t;
-    if ( t == OuterContainer) {
-        QColor c(Qt::blue);
-        setPen(c);
-        QGraphicsLineItem *line1 = new QGraphicsLineItem(this);
-        line1->setPen(c);
-        line1->setLine(0, -5, 0, 5);
-        QGraphicsLineItem *line2 = new QGraphicsLineItem(this);
-        line2->setPen(c);
-        line2->setLine(-5, 0, 5, 0);
-    }
-    if ( t == InnerContainer) {
-        QColor c(Qt::green);
-        setPen(c);
-        QGraphicsLineItem *line1 = new QGraphicsLineItem(this);
-        line1->setPen(c);
-        line1->setLine(0, -5, 0, 5);
-        QGraphicsLineItem *line2 = new QGraphicsLineItem(this);
-        line2->setPen(c);
-        line2->setLine(-5, 0, 5, 0);
-    }
-    if ( t == ImagesContainer) {
-        QColor c(Qt::red);
-        setPen(c);
-        QGraphicsLineItem *line1 = new QGraphicsLineItem(this);
-        line1->setPen(QColor(Qt::red));
-        line1->setLine(0, -5, 0, 5);
-        QGraphicsLineItem *line2 = new QGraphicsLineItem(this);
-        line2->setPen(c);
-        line2->setLine(-5, 0, 5, 0);
-    /*
-	qDebug() << "setCT imagesContainer for " << this << "l1=" << line1 << "l2="<< line2;
-    */
-    }
+    if ( t == OuterContainer)
+        addDebugGraphics(Qt::blue);
+    else if ( t == InnerContainer)
+        addDebugGraphics(Qt::green);
+    else if ( t == ImagesContainer)
+        addDebugGraphics(Qt::red);
 }
 
 void Container::setName(const QString &n)   // FIXME-4 debugging only
@@ -241,6 +214,17 @@ QString Container::ind()
         i++;
     }
     return s;
+}
+
+void Container::addDebugGraphics(const QColor &col)
+{
+    setPen(col);
+    QGraphicsLineItem *line1 = new QGraphicsLineItem(this);
+    line1->setPen(col);
+    line1->setLine(0, -5, 0, 5);
+    QGraphicsLineItem *line2 = new QGraphicsLineItem(this);
+    line2->setPen(col);
+    line2->setLine(-5, 0, 5, 0);
 }
 
 QPointF Container::pointByName(PointName pn)
@@ -639,7 +623,7 @@ void Container::reposition()
 
                 setRect(bbox);
 
-                // qdbg() << ind() << " - BF finished for " << info();
+                qdbg() << ind() << " - BF finished for " << info() << "  t=" << toS(t);
             } // BoundingFloats layout
             break;
 

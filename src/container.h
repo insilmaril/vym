@@ -95,6 +95,8 @@ class Container : public QGraphicsRectItem {
     int containerDepth();
     QString ind();
 
+    void addDebugGraphics(const QColor &col);
+
     // Convenience coordinates
     QPointF pointByName(PointName pn);
     QPointF topLeft();
