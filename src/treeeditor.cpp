@@ -107,7 +107,6 @@ void TreeEditor::contextMenuEvent(QContextMenuEvent *e) {
 
 void TreeEditor::closeWindow()
 {
-    qDebug() << __func__;
     // Close *all* TreeEditors in each VymView and update vym settings
     mainWindow->setTreeEditorsVisibility(false);
 }
