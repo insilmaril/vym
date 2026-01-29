@@ -227,7 +227,7 @@ void VymWrapper::selectQuickColor(int n)
     mainWindow->selectQuickColor(n);
 }
 
-uint VymWrapper::currentMapID()
+uint VymWrapper::currentMapId()
 {
     uint r = mainWindow->currentMapId();
     mainWindow->setScriptResult(r);
