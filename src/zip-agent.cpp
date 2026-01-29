@@ -102,12 +102,7 @@ void ZipAgent::startZip()
                 }
             }
         }
-    } else {
-        connect (this, SIGNAL(backgroundZipStarted()), mainWindow, SLOT(backgroundZipStarted()));
-        connect (this, SIGNAL(backgroundZipFinished()), mainWindow, SLOT(backgroundZipFinished()));
-        emit backgroundZipStarted();
-    }    
-
+    }
 }
 
 void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)

@@ -88,6 +88,13 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
     // Load/save
     ////////////////////////////////////////////
+  public:
+    void closeAfterSaving();
+    bool readyToClose();
+
+  private:
+    bool closeAfterSavingInt = false;
+
   private:
     bool zipped;       // should map be zipped
     static int mapNum; // unique number for model used in save/undo

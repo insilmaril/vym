@@ -16,7 +16,7 @@ class VymWrapper : public QObject {
 
   public slots:
     void clearConsole();
-    bool closeMapWithID(uint n);
+    bool closeMapWithId(uint n);
     QString currentColor();
     Q_INVOKABLE QObject *currentMap();
     Q_INVOKABLE QObject *mapWithId(uint n);

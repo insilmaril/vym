@@ -154,7 +154,7 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
   */
 
   if (vym.loadMap(currentMapPath)) {
-    let id = vym.currentMapID();
+    let id = vym.currentMapId();
     if (verbosity > 0)
       vym.print("# Loaded " + currentMapPath + " (id: " + id + "  original: " + mapPath + ")");
     
@@ -171,13 +171,13 @@ function initMap(mapPath)  // FIXME not fully ported yet: files parameter missin
 
 function closeCurrentMap()
 {
-  id = vym.currentMapID();
+  id = vym.currentMapId();
   name = vym.currentMap().getFileName();
-  if(vym.closeMapWithID(id)) {
+  if(vym.closeMapWithId(id)) {
     if (verbosity > 0)
       vym.print("# Closed map \"" + name + "\" (id: #{id})");
   } else {
-    vym.print("# Failed to close map with id = #{id}. CurrentMapID = #{id}");
+    vym.print("# Failed to close map with id = #{id}. currentMapId = #{id}");
   }
 }
 

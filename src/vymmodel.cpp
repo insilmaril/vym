@@ -120,7 +120,7 @@ VymModel::VymModel()
 
 VymModel::~VymModel()
 {
-    // qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
+    //qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
 
     mapEditor = nullptr;
     repositionBlocked = true;
@@ -275,6 +275,16 @@ void VymModel::updateActions()
 {
     // Tell mainwindow to update states of actions
     mainWindow->updateActions();
+}
+
+void  VymModel::closeAfterSaving() {
+    closeAfterSavingInt = true;
+}
+
+bool  VymModel::readyToClose() {
+    // Check for background processes before closing map in mainWindow
+    // (Currently only zipAgent for saving)
+    return zipAgent ? false : true;
 }
 
 bool VymModel::setData(const QModelIndex &, const QVariant &value, int role)
@@ -951,10 +961,14 @@ void VymModel::zipFinished()
 
     mainWindow->statusMessage(tr("Saved %1").arg(filePath));
 
+    if (closeAfterSavingInt) {
+        mainWindow->closeModelWithId(modelIdInt);
+        return;
+    }
+
     fileChangedTime = QFileInfo(destPath).lastModified();
 
     updateActions();
-
 }
 
 ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)

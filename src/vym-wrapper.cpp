@@ -30,13 +30,13 @@ VymWrapper::~VymWrapper()
 
 void VymWrapper::clearConsole() { mainWindow->clearScriptOutput(); }
 
-bool VymWrapper::closeMapWithID(uint n)
+bool VymWrapper::closeMapWithId(uint id)
 {
-    bool r = mainWindow->closeModelWithId(n);
+    bool r = mainWindow->closeModelWithId(id);
     if (!r) {
         mainWindow->abortScript(
                 QJSValue::ReferenceError, 
-                QString("Map '%1' not available.").arg(n));
+                QString("Map '%1' not available.").arg(id));
         return false;
     }
     // Remove progress counter while testing
@@ -64,13 +64,13 @@ QObject *VymWrapper::currentMap()
     return mw;
 }
 
-QObject *VymWrapper::mapWithId(uint n)
+QObject *VymWrapper::mapWithId(uint id)
 {
-    VymModel *m = mainWindow->getModel(n);
+    VymModel *m = mainWindow->modelWithId(id);
     if (!m) {
         mainWindow->abortScript(
                 QJSValue::ReferenceError,
-                QString("No model available with id=%1").arg(n));
+                QString("No model available with id=%1").arg(id));
     }
     return (QObject*)(m->getWrapper());
 }

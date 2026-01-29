@@ -101,7 +101,7 @@ def init_map( mapPath, files = [])
   end
 
   if @vym.loadMap (@currentMapPath)
-    id = @vym.currentMapID
+    id = @vym.currentMapId
     puts "# Loaded #{mapPath} -> #{@currentMapPath} (id: #{id})".light_black
     return @vym.map (id)
   end
@@ -111,12 +111,12 @@ def init_map( mapPath, files = [])
 end
 
 def close_current_map
-  id = @vym.currentMapID
-  r = @vym.closeMapWithID(id)
+  id = @vym.currentMapId
+  r = @vym.closeMapWithId(id)
   if r
     puts "# Closed map (id: #{id})".light_black
   else
-    puts "# Failed to close map with id = #{id}. CurrentMapID = #{id}".red
+    puts "# Failed to close map with id = #{id}. currentMapId = #{id}".red
   end
 end
 

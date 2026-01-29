@@ -84,12 +84,14 @@ int Container::type() const
 void Container::setContainerType(const Container::ContainerType &t)
 {
     containerTypeInt = t;
+    /*
     if ( t == OuterContainer)
         addDebugGraphics(Qt::blue);
     else if ( t == InnerContainer)
         addDebugGraphics(Qt::green);
     else if ( t == ImagesContainer)
         addDebugGraphics(Qt::red);
+    */
 }
 
 void Container::setName(const QString &n)   // FIXME-4 debugging only

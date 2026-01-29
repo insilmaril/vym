@@ -110,10 +110,15 @@ class Main : public QMainWindow {
     VymModel *currentModel() const;
     uint currentMapId() const;
     int currentMapIndex() const;
-    VymModel *getModel(uint);
+    VymModel *modelWithId(uint);
     bool gotoModel(VymModel *m);
     bool gotoModelWithId(uint id);
+
+  public slots:
     bool closeModelWithId(uint id);
+    void closeSavedModels();
+
+  public:
     int modelCount();
     void updateTabName(VymModel *vm);
 
@@ -121,12 +126,9 @@ class Main : public QMainWindow {
     void editorChanged();
 
   private:
-    int backgroundZipProcesses;
-    bool closeAfterLastZipProcess;
+    bool exitAfterLastMapClosed;
 
   public slots:
-    void backgroundZipStarted();
-    void backgroundZipFinished();
     bool fileLoad(QString, const File::LoadMode &, const File::FileType &ftype);
     void fileLoad(const File::LoadMode &);
   private slots:
@@ -168,7 +170,9 @@ class Main : public QMainWindow {
     void fileExportTaskJuggler();
     void fileExportXML();
     void fileExportLast();
-    bool fileCloseMap(int i = -1); // Optionally pass number of tab
+    void fileCloseTab(int i);           // Index of tab
+    void fileCloseCurrentMap();         // Calls fileCloseModelWithId(-1);
+    void fileCloseMapWithId(uint i);    // id = -1 uses current model
     void filePrint();
 
   public:
@@ -183,7 +187,7 @@ class Main : public QMainWindow {
     void setRepeatAction(const QString &script);
 
   public slots:
-    bool fileExitVYM();
+    void fileExitVym();
     void editUndo();
     void editRedo();
     void gotoHistoryStep(int);
