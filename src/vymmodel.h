@@ -928,6 +928,7 @@ class VymModel : public TreeModel {
     SlideModel *slideModel;
     bool blockSlideSelection;
 
+  public:
     ////////////////////////////////////////////
     // Logfile related
     ////////////////////////////////////////////
