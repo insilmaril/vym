@@ -36,7 +36,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-// tests = ["modify_branches"];
+tests = ["saving"];
 
 
 var verbosity = 0;
@@ -1466,6 +1466,7 @@ function test_saving()
 
   mapName = "test-saveSelection.vyp";
   fn = testDir + "/" + mapName;
+  map.setSaveAsBackgroundProcess(false);
   ok = map.saveSelection(fn);
   expect("Saved selection successfully to '" + fn + "'", ok, true);
 

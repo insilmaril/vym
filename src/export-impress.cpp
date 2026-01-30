@@ -147,7 +147,7 @@ void ExportImpress::exportPresentation()
     // zip tmpdir to destination
     ZipAgent zipAgent(tmpDir, filePath);
     zipAgent.setBackgroundProcess(false);
-    zipAgent.startZip();
+    zipAgent.startZip();    // FIXME-2 CHeck return value, see saveMap()
     if(zipAgent.exitStatus() != QProcess::NormalExit ||
             zipAgent.exitCode() > 0) {
         QMessageBox::critical(

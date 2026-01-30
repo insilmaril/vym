@@ -729,6 +729,10 @@ void Main::setupAPI()
     c->setComment("Returns true, if map uses an image as background");
     modelCommands.append(c);
 
+    c = new Command("isBusy", Command::AnySel);
+    c->setComment("Returns true while map is saving or loading");
+    modelCommands.append(c);
+
     c = new Command("itemList", Command::AnySel, Command::BoolPar);
     c->addParameter(Command::BoolPar, true, "Flag to go deep levels first (currently unused)");
     c->setComment("Create new itemList to iterate over branches");
@@ -885,6 +889,11 @@ void Main::setupAPI()
 
     c = new Command("setTitle", Command::AnySel);
     c->addParameter(Command::StringPar, false, "");
+    modelCommands.append(c);
+
+    c = new Command("setSaveAsBackgroundProcess", Command::AnySel);
+    c->addParameter(Command::BoolPar, false, "Enable (default) or disable background saving");
+    c->setComment("Use background progress to save maps or selections");
     modelCommands.append(c);
 
     c = new Command("setZoom", Command::AnySel);
@@ -1636,6 +1645,13 @@ void Main::setupFileActions()
     a = new QAction(tr("Save as default map", "File menu"), this);
     fileMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAsDefault()));
+
+    a = new QAction(tr("Save selection", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editSaveSelection()));
+    a->setEnabled(false);
+    fileMenu->addAction(a);
+    actionListBranches.append(a);
+    actionSaveSelection = a;
 
     fileMenu->addSeparator();
 
@@ -2402,13 +2418,6 @@ void Main::setupEditActions()
     connect(a, SIGNAL(triggered()), this, SLOT(editTaskSleepN()));
     actionListBranches.append(a);
     actionTaskSleep28 = a;
-
-    // Save selection
-    a = new QAction(tr("Save selection", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editSaveBranch()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionSaveBranch = a;
 
     tag = tr("Removing parts of a map", "Shortcuts");
 
@@ -4253,7 +4262,7 @@ bool Main::closeModelWithId(uint id)
     for (int i = 0; i < tabWidget->count(); i++) {
         vm = view(i)->getModel();
         if (vm && vm->modelId() == id) {
-            if (vm->readyToClose()) {
+            if (!vm->isBusy()) {
                 VymView *vv = view(i);
                 tabWidget->removeTab(i);
 
@@ -4679,7 +4688,7 @@ void Main::fileSave(VymModel *m, const File::SaveMode &savemode)
         // We have  no filepath yet,
         // call fileSaveAs() now, this will call fileSave()
         // again.  First switch to editor
-        fileSaveAs(savemode);
+        fileSaveAs();
         return; // avoid saving twice...
     }
 
@@ -4690,164 +4699,116 @@ void Main::fileSave() { fileSave(currentModel(), File::CompleteMap); }
 
 void Main::fileSave(VymModel *m) { fileSave(m, File::CompleteMap); }
 
-void Main::fileSaveAs(const File::SaveMode &savemode)
+bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
+{
+    VymModel *m = currentModel();
+    if (!m) return false;
+
+    QString fileName_org = m->getFilePath(); // Restore fileName later
+
+    // Check for existing file
+    if (QFile(fileName).exists()) {
+        // Check if the existing file is writable
+        if (!QFileInfo(fileName).isWritable()) {
+            QMessageBox::critical(0, tr("Critical Error"),
+                                  tr("Couldn't save %1,\nbecause file "
+                                     "exists and cannot be changed.")
+                                      .arg(fileName));
+            return false;
+        }
+
+        // Ask if existing file can be overwritten
+        QMessageBox mb(
+            QMessageBox::Warning,
+            vymName,
+            tr("The file %1\nexists already. Do you want to").arg(fileName));
+        QPushButton *overwriteButton = mb.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
+        mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
+        mb.exec();
+        if (mb.clickedButton() != overwriteButton) return false;
+    }
+    else {
+        // New file, add extension to filename, if missing
+        // This is always .vym or .vyp, depending on saveMode
+        if (saveMode == File::CompleteMap) {
+            if (!fileName.contains(".vym") && !fileName.contains(".xml"))
+                fileName += ".vym";
+        }
+        else {
+            if (!fileName.contains(".vyp") && !fileName.contains(".xml"))
+                fileName += ".vyp";
+        }
+    }
+
+    m->setFilePath(fileName);
+
+    // Check for existing lockfile
+    QFile lockFile(fileName + ".lock");
+    if (lockFile.exists()) {
+        QMessageBox::critical(0, tr("Critical Error"),
+                              tr("Couldn't save %1,\nbecause of "
+                                 "existing lockfile:\n\n%2")
+                                  .arg(fileName, lockFile.fileName()));
+        m->setFilePath(fileName_org);
+        return false;
+    }
+
+    if (saveMode == File::CompleteMap && !m->changeLock(fileName)) {
+        QMessageBox::critical(0, tr("Critical Error"),
+                              tr("Saving the map failed:\nCouldn't rename map to %1").arg(fileName));
+        m->setFilePath(fileName_org);
+        return false; // FIXME-3 Check: If saved part of map and this error occurs?
+    }
+
+    fileSave(m, saveMode);
+
+    // Set name of tab
+    if (saveMode == File::CompleteMap)
+    {
+        addRecentMap(m->getFileName());
+        updateTabName(m);
+    } else if (saveMode == File::PartOfMap) {
+        m->setFilePath(fileName_org);
+    }
+
+    lastMapDir.setPath(m->getFileDir());
+    return true;
+}
+
+void Main::fileSaveAs()
 {
     VymModel *m = currentModel();
     if (!m) return;
 
-    QString filter;
-    if (savemode == File::CompleteMap)
-        filter = "VYM map (*.vym)";
-    else
-        filter = "VYM part of map (*vyp)";
+    QString filter = "VYM map (*.vym)";
     filter += ";;All (* *.*)";
 
     // Get destination path
-    QString fn = QFileDialog::getSaveFileName(
+    QString fileName = QFileDialog::getSaveFileName(
         this,
         tr("Save map as"),
         lastMapDir.path() + "/" + tr("Untitled", "Default name in FileSaveAs dialog") + ".vym",
         filter, nullptr, QFileDialog::DontConfirmOverwrite);
-    if (!fn.isEmpty()) {
-        // Check for existing file
-        if (QFile(fn).exists()) {
-            // Check if the existing file is writable
-            if (!QFileInfo(fn).isWritable()) {
-                QMessageBox::critical(0, tr("Critical Error"),
-                                      tr("Couldn't save %1,\nbecause file "
-                                         "exists and cannot be changed.")
-                                          .arg(fn));
-                return;
-            }
 
-            QMessageBox mb(
-                QMessageBox::Warning,
-                vymName,
-                tr("The file %1\nexists already. Do you want to").arg(fn));
-            QPushButton *overwriteButton = mb.addButton(tr("Overwrite"), QMessageBox::AcceptRole);
-            mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
-            mb.exec();
-            if (mb.clickedButton() != overwriteButton) return;
-        }
-        else {
-            // New file, add extension to filename, if missing
-            // This is always .vym or .vyp, depending on savemode
-            if (savemode == File::CompleteMap) {
-                if (!fn.contains(".vym") && !fn.contains(".xml"))
-                    fn += ".vym";
-            }
-            else {
-                if (!fn.contains(".vyp") && !fn.contains(".xml"))
-                    fn += ".vyp";
-            }
-        }
-
-        // Save original filepath, might want to restore after saving
-        QString fn_org = m->getFilePath();
-
-        // Check for existing lockfile
-        QFile lockFile(fn + ".lock");
-        if (lockFile.exists()) {
-            QMessageBox::critical(0, tr("Critical Error"),
-                                  tr("Couldn't save %1,\nbecause of "
-                                     "existing lockfile:\n\n%2")
-                                      .arg(fn, lockFile.fileName()));
-            return;
-        }
-
-        if (!m->renameMap(fn)) {
-            QMessageBox::critical(0, tr("Critical Error"),
-                                  tr("Saving the map failed:\nCouldn't rename map to %1").arg(fn));
-            return; // FIXME-3 Check: If saved part of map and this error occurs?
-        }
-
-        fileSave(m, savemode);
-
-        // Set name of tab
-        if (savemode == File::CompleteMap)
-        {
-            addRecentMap(m->getFileName());
-            updateTabName(m);
-        }
-        else { // Renaming map to original name, because we only saved the
-               // selected part of it
-            m->setFilePath(fn_org);
-            if (!m->renameMap(fn_org)) {
-                QMessageBox::critical(0, "Critical Error",
-                                      "Couldn't rename map back to " + fn_org);
-            }
-        }
-        lastMapDir.setPath(m->getFileDir());
-        return;
-    }
+    fileSaveAs(File::CompleteMap, fileName);
 }
-
-void Main::fileSaveAs() { fileSaveAs(File::CompleteMap); }
 
 void Main::fileSaveAsDefault()
 {
-    if (currentMapEditor()) {
-        QString fn = QFileDialog::getSaveFileName(
-            this, tr("Save map as new default map"), newMapPath(),
-            "VYM map (*.vym)", nullptr, QFileDialog::DontConfirmOverwrite);
+    VymModel *m = currentModel();
+    if (!m) return;
 
-        if (!fn.isEmpty()) {
+    QString filter = "VYM map (*.vym)";
+    filter += ";;All (* *.*)";
 
-            // Check for existing file
-            if (QFile(fn).exists()) {
-                // Check if the existing file is writable
-                if (!QFileInfo(fn).isWritable()) {
-                    QMessageBox::critical(
-                        0, tr("Warning"),
-                        tr("You have no permissions to write to ") + fn);
-                    return;
-                }
+    QString fileName = QFileDialog::getSaveFileName(
+        this, tr("Save map as new default map"), newMapPath(),
+        filter, nullptr, QFileDialog::DontConfirmOverwrite);
 
-                // Confirm overwrite of existing file
-                QMessageBox mb(
-                    QMessageBox::Warning,
-                    vymName,
-                    tr("The file %1\nexists already. Do you want to").arg(fn));
-                mb.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
-                mb.setDefaultButton(QMessageBox::Save);
-                switch (mb.exec()) {
-                    case QMessageBox::Save:
-                        // save
-                        break;
-                    case QMessageBox::Cancel:
-                        return;
-                }
-            }
-
-            // Save now as new default
-            VymModel *m = currentModel();
-
-            // Check for existing lockfile
-            QFile lockFile(fn + ".lock");
-            if (lockFile.exists()) {
-                QMessageBox::critical(
-                    0, tr("Critical Error"),
-                    tr("Couldn't save %1,\nbecause of existing lockfile:\n\n%2")
-                        .arg(fn, lockFile.fileName()));
-                return;
-            }
-
-            if (!m->renameMap(fn)) {
-                QMessageBox::critical(0, tr("Critical Error"),
-                                      tr("Couldn't save as default, failed to rename to\n%1").arg(fn));
-                return;
-            }
-            lastMapDir.setPath(m->getFileDir());
-
-            fileSave(m, File::CompleteMap);
-
-            // Set name of tab
-            updateTabName(m);
-
-            // Set new default path
-            settings.setValue("/system/defaultMap/auto", false);
-            settings.setValue("/system/defaultMap/path", fn);
-        }
+    if (fileSaveAs(File::CompleteMap, fileName)) {
+        // Set new default path
+        settings.setValue("/system/defaultMap/auto", false);    // Don't autoselect based on theme
+        settings.setValue("/system/defaultMap/path", fileName);
     }
 }
 
@@ -5947,7 +5908,19 @@ void Main::editImportAdd() { fileLoad(File::ImportAdd); }
 
 void Main::editImportReplace() { fileLoad(File::ImportReplace); }
 
-void Main::editSaveBranch() { fileSaveAs(File::PartOfMap); }
+void Main::editSaveSelection()
+{
+    VymModel *m = currentModel();
+    if (!m) return;
+
+    QString filter = "Part of VYM map (*.vyp)";
+
+    QString fileName = QFileDialog::getSaveFileName(
+        this, tr("Save part of map"), m->getFileDir() + "/" + m->getMapName() + ".vyp",
+        filter, nullptr, QFileDialog::DontConfirmOverwrite);
+
+    fileSaveAs(File::PartOfMap, fileName);
+}
 
 void Main::editDeleteKeepChildren()
 {

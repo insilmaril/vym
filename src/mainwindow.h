@@ -145,8 +145,8 @@ class Main : public QMainWindow {
   public slots:
     void fileSave(VymModel *); // autosave from MapEditor
   private slots:
+    bool fileSaveAs(const File::SaveMode &, QString fileName);
     void fileSaveAs();
-    void fileSaveAs(const File::SaveMode &);
     void fileSaveAsDefault();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
@@ -258,7 +258,7 @@ class Main : public QMainWindow {
     void editAddBranchBelow();
     void editImportAdd();
     void editImportReplace();
-    void editSaveBranch();
+    void editSaveSelection();
     void editDeleteKeepChildren();
     void editDeleteChildren();
     void editDeleteSelection();
@@ -621,7 +621,7 @@ class Main : public QMainWindow {
     QAction *actionDeleteChildren;
     QAction *actionImportAdd;
     QAction *actionImportReplace;
-    QAction *actionSaveBranch;
+    QAction *actionSaveSelection;
     QAction *actionLoadImage;
 
     QAction *actionGrowSelectionSize;

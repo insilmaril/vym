@@ -36,7 +36,7 @@ bool VymWrapper::closeMapWithId(uint id)
     if (!r) {
         mainWindow->abortScript(
                 QJSValue::ReferenceError, 
-                QString("Map '%1' not available.").arg(id));
+                QString("VmWrapper::closeMapWithId Map '%1' not available.").arg(id));
         return false;
     }
     // Remove progress counter while testing
@@ -148,7 +148,7 @@ void VymWrapper::gotoMap(uint n)
     if (!mainWindow->gotoModelWithId(n)) {
         mainWindow->abortScript(
                 QJSValue::ReferenceError, 
-                QString("Map '%1' not available.").arg(n));
+                QString("VymWrapper::gotoMap  Map '%1' not available.").arg(n));
         return;
     }
 }
