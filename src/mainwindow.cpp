@@ -4753,6 +4753,7 @@ bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
         return false;
     }
 
+    // Rename also current lockfile, if saving complete map
     if (saveMode == File::CompleteMap && !m->changeLock(fileName)) {
         QMessageBox::critical(0, tr("Critical Error"),
                               tr("Saving the map failed:\nCouldn't rename map to %1").arg(fileName));

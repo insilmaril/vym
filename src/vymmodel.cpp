@@ -967,7 +967,7 @@ void VymModel::zipFinished()
         zipAgent->deleteLater();
         zipAgent = nullptr;
 
-        qDebug() << "VM::" << __func__ << path << name;
+        // qDebug() << "VM::" << __func__ << path << name;
     } else
         logWarning("zipAgent == nullptr", __func__);
 
@@ -1324,12 +1324,12 @@ bool VymModel::tryVymLock()
     return true;
 }
 
-bool VymModel::changeLock(const QString &newPath)    // FIXME-0 Make sure no zip is running...
+bool VymModel::changeLock(const QString &newPath)
 {
     // New lock is required in fileSaveAs(CompleteMap)
 
     if (zipAgent)
-        qWarning() << __func__ << " has still running zipAgent";    // FIXME-0
+        qWarning() << __func__ << " has still running zipAgent";
 
     QString oldPath = filePath;
     if (vymLock.getState() == VymLock::LockedByMyself || vymLock.getState() == VymLock::Undefined) {
@@ -1346,7 +1346,7 @@ bool VymModel::changeLock(const QString &newPath)    // FIXME-0 Make sure no zip
         if (!vymLock.releaseLock())
             logWarning(QString("Failed to release lock for %1").arg(oldPath), __func__);
         vymLock = newLock;
-        // FIXME-0 No longer rename map here: setFilePath(newPath);
+
         if (readonly)
             setReadOnly(false);
         return true;
@@ -2697,7 +2697,7 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &newAuto
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->frameAutoDesign(useInnerFrame) != newAutoDesign) {
+        if (bc->frameAutoDesign(useInnerFrame) != newAutoDesign || newAutoDesign == true) {
             QString uif = toS(useInnerFrame);
             QString b_undo = toS(!newAutoDesign);
             QString b_redo = toS(newAutoDesign);
