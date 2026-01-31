@@ -5077,7 +5077,6 @@ void Main::fileExportLast()
 
 void Main::fileCloseTab(int i)
 {
-    qDebug() << __func__ << "i=" << i << " currentInd=" << tabWidget->currentIndex();
     if (i < tabWidget->count()) 
     {
         VymView *vv = view(i);
