@@ -84,12 +84,14 @@ int Container::type() const
 void Container::setContainerType(const Container::ContainerType &t)
 {
     containerTypeInt = t;
+    /*
     if ( t == OuterContainer)
         addDebugGraphics(Qt::blue);
     else if ( t == InnerContainer)
         addDebugGraphics(Qt::green);
     else if ( t == ImagesContainer)
         addDebugGraphics(Qt::red);
+    */
 }
 
 void Container::setName(const QString &n)   // FIXME-4 debugging only
@@ -466,14 +468,12 @@ QPointF Container::alignTo(PointName ownPointName, Container* targetContainer, P
     return mapFromItem(targetContainer, targetContainer->pointByName(targetPointName)) - pointByName(ownPointName);
 }
 
-#include <QMessageBox>  // FIXME-2 debugging
 void Container::addContainer(Container *c, int z)
 {
     if (childContainers().contains(c)) return;
 
-    if (!c) {   // FIXME-2 debugging
+    if (!c) {   // Should not happen...
         logDebug("Container::addContainer  adding 0 to " + info() + " would crash");
-        QMessageBox::warning(0, "Warning", "Would have crashed now in ::addContainer");
         return;
     }
 

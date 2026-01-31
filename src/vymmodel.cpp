@@ -277,6 +277,21 @@ void VymModel::updateActions()
     mainWindow->updateActions();
 }
 
+void  VymModel::closeAfterSaving() {
+    closeAfterSavingInt = true;
+}
+
+bool  VymModel::readyToClose() {
+    // Check for background processes before closing map in mainWindow
+    // (Currently only zipAgent for saving)
+    return zipAgent ? false : true;
+}
+
+void VymModel::setSaveAsBackgroundProcess(bool b)
+{
+    saveAsBackgroundProcessInt = b;
+}
+
 bool VymModel::setData(const QModelIndex &, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
@@ -727,7 +742,7 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     if (lmode != File::NewMap)
         emitUpdateQueries();
 
-    qDebug() << "b) Loaded " << fname;
+    qDebug() << "b) Loaded " << fname; // FIXME-2 Debug # 185
     if (mapEditor) {
         mapEditor->setZoomFactorTarget(zoomFactor);
         mapEditor->setRotationTarget(mapRotationInt);
@@ -809,7 +824,7 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
                 if (!f.rename(backupFileName)) {
                     QMessageBox::warning(
                         0, tr("Save Error"),
-                        tr("%1\ncould not be renamed before saving")
+                        tr("%1\ncould not be renamed as backup file before saving")
                             .arg(destPath));
                 }
             }
@@ -898,11 +913,18 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
             QString log = QString("Starting zipAgent to compress \"%1\" in zipDirInt = %2")
                 .arg(mapFileName, zipDirInt.path());
             logInfo(log, __func__);
-            zipAgent->startZip();
-        } else
+            zipAgent->setBackgroundProcess(saveAsBackgroundProcessInt);
+            bool r = zipAgent->startZip();
+            logInfo("Started zip to save map " + destPath + " Result: " + toS(r), __func__);  // FIXME-3 debugging
+            if (!saveAsBackgroundProcessInt && !r) {
+                qDebug() << "ok3  Result: " << r;
+                logInfo("Problems starting zip as foreground process", __func__);
+            }
+        } else {
             mainWindow->statusMessage(tr("Saved %1").arg(saveFilePath));
+            logInfo("Finishing saving unzipped map " + destPath, __func__);  // FIXME-3 debugging
+        }
 
-        logInfo("Finishing saving map " + destPath, __func__);  // FIXME-3 debugging
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
     }
@@ -944,6 +966,8 @@ void VymModel::zipFinished()
 
         zipAgent->deleteLater();
         zipAgent = nullptr;
+
+        // qDebug() << "VM::" << __func__ << path << name;
     } else
         logWarning("zipAgent == nullptr", __func__);
 
@@ -951,10 +975,15 @@ void VymModel::zipFinished()
 
     mainWindow->statusMessage(tr("Saved %1").arg(filePath));
 
+    if (closeAfterSavingInt) {
+        // Schedule for removal of tab in MainWindow
+        QTimer::singleShot(100, mainWindow, SLOT(closeSavedModels()));
+        return;
+    }
+
     fileChangedTime = QFileInfo(destPath).lastModified();
 
     updateActions();
-
 }
 
 ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
@@ -1295,12 +1324,13 @@ bool VymModel::tryVymLock()
     return true;
 }
 
-bool VymModel::renameMap(const QString &newPath)
-// map is renamed before fileSaveAs() or from VymModelWrapper::saveSelection()
-// Usually renamed back to original name again. Purpose here is to adapt the lockfile 
-// new name of map.
-// Internally the paths in ImageItems pointing to zipDirInt do not need to be adapted.
+bool VymModel::changeLock(const QString &newPath)
 {
+    // New lock is required in fileSaveAs(CompleteMap)
+
+    if (zipAgent)
+        qWarning() << __func__ << " has still running zipAgent";
+
     QString oldPath = filePath;
     if (vymLock.getState() == VymLock::LockedByMyself || vymLock.getState() == VymLock::Undefined) {
         // vymModel owns the lockfile, try to create new lock
@@ -1316,12 +1346,12 @@ bool VymModel::renameMap(const QString &newPath)
         if (!vymLock.releaseLock())
             logWarning(QString("Failed to release lock for %1").arg(oldPath), __func__);
         vymLock = newLock;
-        setFilePath(newPath);
+
         if (readonly)
             setReadOnly(false);
         return true;
     }
-    logWarning("Failed to rename map.", __func__);
+    logWarning("Failed to change lock file.", __func__);
     return false;
 }
 
@@ -2667,7 +2697,7 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &newAuto
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->frameAutoDesign(useInnerFrame) != newAutoDesign) {
+        if (bc->frameAutoDesign(useInnerFrame) != newAutoDesign || newAutoDesign == true) {
             QString uif = toS(useInnerFrame);
             QString b_undo = toS(!newAutoDesign);
             QString b_redo = toS(newAutoDesign);
@@ -2680,13 +2710,13 @@ void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &newAuto
 
             saveStateBeginScript(comment);  // setFrameAD, calls setFrame* functions
 
-            bc->setFrameAutoDesign(useInnerFrame, newAutoDesign);
             if (newAutoDesign) {
                 setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
                 setFramePenColor(useInnerFrame, mapDesignInt->framePenColor(useInnerFrame, selbi->depth()), selbi);
                 setFramePenWidth(useInnerFrame, mapDesignInt->framePenWidth(useInnerFrame, selbi->depth()), selbi);
                 setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
             }
+            bc->setFrameAutoDesign(useInnerFrame, newAutoDesign);
 
             emitDataChanged(selbi);
             branchPropertyEditor->updateControls();

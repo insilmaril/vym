@@ -1348,6 +1348,8 @@ void VymReader::readFrameAttr()
             // Set all frame parameters via model
             model->setFrameAutoDesign(useInnerFrame, true, lastBranch);
         else {
+            bc->setFrameAutoDesign(useInnerFrame, false);
+
             a = "frameType";
             s = attributeToString(a);
             if (s.isEmpty())
@@ -1356,8 +1358,6 @@ void VymReader::readFrameAttr()
             // Start with setting/creating frame. 
             // assuming that there is no "NoFrame" frame in the xml
             bc->setFrameType(useInnerFrame, s);
-
-            bc->setFrameAutoDesign(useInnerFrame, false);
 
             a = "penColor";
             s = attributeToString(a);

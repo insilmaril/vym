@@ -53,8 +53,9 @@ void ZipAgent::setBackgroundProcess(bool b)
     isBackgroundProcessInt = b;
 }
 
-void ZipAgent::startZip()
+bool ZipAgent::startZip()
 {
+    // Returns true on success
     connect(this, SIGNAL(finished(int, QProcess::ExitStatus)),
             this, SLOT(zipProcessFinished(int, QProcess::ExitStatus)));
 
@@ -86,6 +87,7 @@ void ZipAgent::startZip()
                             "The map could not be saved, please check if "
                             "backup file is available or export as XML file!\n\n")
                         + zipToolPath + args.join(" "));
+            return false;
         }
         else {
             // zip could be started
@@ -93,26 +95,23 @@ void ZipAgent::startZip()
             if (exitStatus() != QProcess::NormalExit) {
                 QMessageBox::critical(0, QObject::tr("Critical Error"),
                                       QObject::tr("zip didn't exit normally"));
+                return false;
             }
             else {
                 if (exitCode() > 0) {
                     QMessageBox::critical(
                         0, QObject::tr("Critical Error"),
                         QString("zip exit code:  %1").arg(exitCode()));
+                    return false;
                 }
             }
         }
-    } else {
-        connect (this, SIGNAL(backgroundZipStarted()), mainWindow, SLOT(backgroundZipStarted()));
-        connect (this, SIGNAL(backgroundZipFinished()), mainWindow, SLOT(backgroundZipFinished()));
-        emit backgroundZipStarted();
-    }    
-
+    }
+    return true;    // Success
 }
 
 void ZipAgent::zipProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    //qDebug() << __func__ << "starting.";
     mainWindow->logInfo(QString("ZA::zipProcessFinished  exitCode=%1 exitStatus=%2").arg(exitCode).arg(exitStatus), __func__);
 
 #if defined(Q_OS_WINDOWS)

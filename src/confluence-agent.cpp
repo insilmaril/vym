@@ -207,7 +207,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                 return;
             }
             if (jobStep == 3) {
-                model = mainWindow->getModel(modelID);
+                model = mainWindow->modelWithId(modelID);
                 if (model) {
                     BranchItem *bi = (BranchItem *)(model->findID(branchID));
 
@@ -264,7 +264,7 @@ void ConfluenceAgent::continueJob(int nextStep)
             }
 
             if (jobStep == 5) {
-                model = mainWindow->getModel(modelID);
+                model = mainWindow->modelWithId(modelID);
                 if (model) {
                     BranchItem *bi = (BranchItem *)(model->findID(branchID));
 
@@ -379,7 +379,7 @@ void ConfluenceAgent::continueJob(int nextStep)
             if (jobStep == 4) {
                 // qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
                 // cout << QJsonDocument(pageObj).toJson(QJsonDocument::Indented).toStdString();
-                model = mainWindow->getModel(modelID);
+                model = mainWindow->modelWithId(modelID);
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());
@@ -453,7 +453,7 @@ void ConfluenceAgent::continueJob(int nextStep)
                 mainWindow->statusMessage(
                     QString("Updated Confluence page %1").arg(pageURL));
 
-                model = mainWindow->getModel(modelID);
+                model = mainWindow->modelWithId(modelID);
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());

@@ -88,8 +88,17 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
     // Load/save
     ////////////////////////////////////////////
+  public:
+    void closeAfterSaving();
+    bool readyToClose();
+    void setSaveAsBackgroundProcess(bool);
+
+  private:
+    bool closeAfterSavingInt = false;
+
   private:
     bool zipped;       // should map be zipped
+    bool saveAsBackgroundProcessInt = true;
     static int mapNum; // unique number for model used in save/undo
     File::FileType fileType; // type of file, e.g. vym, freemind...
     QString fileName;  // short name of file (for tab)
@@ -207,7 +216,7 @@ class VymModel : public TreeModel {
 
   public:
     bool tryVymLock();
-    bool renameMap(const QString &newPath); //! Rename map and change lockfile
+    bool changeLock(const QString &newPath); //! Change lockfile to new path
     void setReadOnly(bool b);
     bool isReadOnly();
 
