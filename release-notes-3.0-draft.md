@@ -31,15 +31,15 @@ Uwe Drechsel - January 2026
 
 ## Version 2.9.601
 ### Bugfixes
-    Bugfix: Enable GoTo target when nothing is selected   (#175)
-    Bugfix: Packaging for MACOSX
+ * Bugfix: Enable GoTo target when nothing is selected   (#175)
+ * Bugfix: Packaging for MACOSX
 
 ### Features
  * Feature: Toggling frames of multiple selected branches (#177)
-    Feature: Open and edit Urls in TextEditors (#176)
-    Feature: Add and follow hyperlinks in TextEditors (#176)
-    Feature: Don't adapt view to show many selected items (#178)
-    Feature: On Macs open history window with Shift-Cmd-H
+ * Feature: Open and edit Urls in TextEditors (#176)
+ * Feature: Add and follow hyperlinks in TextEditors (#176)
+ * Feature: Don't adapt view to show many selected items (#178)
+ * Feature: On Macs open history window with Shift-Cmd-H
 
 ## Version 2.9.599
 ### Bugfixes
