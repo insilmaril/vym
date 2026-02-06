@@ -599,7 +599,7 @@ void Container::reposition()
 
                 if (childContainers().count() > 4 ) {
                     qWarning() << "Container::reposition " << info();
-                    qWarning() << "Too many children containers: " << childItems().count();
+                    qWarning() << "Too many children containers: " << childContainers().count();
                     foreach (Container *c, childContainers())
                         qdbg() << "  " << c->info();
 

@@ -605,7 +605,7 @@ void BranchContainer::updateChildrenStructure()
 
 void BranchContainer::updateImagesContainer()
 {
-    if (imagesContainer && imagesContainer->childItems().count() == 0) {
+    if (imagesContainer && imagesContainer->childContainers().count() == 0) {
         delete imagesContainer;
         imagesContainer = nullptr;
     }
