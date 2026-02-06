@@ -118,6 +118,7 @@ void BranchContainer::init()
     linkSpaceContainer = nullptr;
 
     outerContainer = nullptr;
+    outerInnerContainer = nullptr;
 
     addContainer(innerContainer);
 
@@ -291,7 +292,17 @@ void BranchContainer::createOuterContainer()
         outerContainer = new Container;
         outerContainer->setContainerType(OuterContainer);
         outerContainer->setLayout(BoundingFloats);
+        outerContainer->setCentralContainer(headingContainer);  // heading will be in origin
         addContainer(outerContainer);
+
+        /*
+        outerInnerContainer = new Container;
+        outerInnerContainer->setContainerType(OuterContainer);  // FIXME-0 new type?
+        outerInnerContainer->setLayout(Horizontal)              // Only child is OrnamentsContainer  // FIXME-0 ??;
+        outerInnerContainer->setCentralContainer(headingContainer);  // heading will be in origin
+        outerInnerContainer.>setZPos(20);   // FIXME-0 before OrnamentsCont...
+        innerContainer->addContainer(outerInnerContainer);
+        */
 
         // Children structure is updated in updateChildrenStructure(), which is
         // anyway calling this method
@@ -363,9 +374,9 @@ void BranchContainer::updateTransformations()
     }
 }
 
-void BranchContainer::updateChildrenStructure()
+void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches FloatingBounded
+                                                // Then also create OUterContainer and add BC
 {
-    logDebug("BC::updateChildrenStructure of " + info());
     if (branchesContainerLayoutInt == List) {
         if (!listContainer) {
             // Create and setup a listContainer *below* the ornamentsContainer
@@ -401,7 +412,7 @@ void BranchContainer::updateChildrenStructure()
         }
     }
 
-    // The structure of subcontainers within a BranchContainer
+    // The structure of subcontainers within a BranchContainer  // FIXME-0 Update comments to new concept of OuterContainer
     // depends on layouts of imagesContainer and branchesContainer:
     //
     // Usually both inagesContainer and branchesContainer are children of
@@ -459,7 +470,7 @@ void BranchContainer::updateChildrenStructure()
                     Container::Layout ibcl =
                         Container::Vertical; // FIXME-3 get from MapDesign
                     if (!imagesAndBranchesContainer) {
-                        imagesAndBranchesContainer = new Container;
+                        imagesAndBranchesContainer = new Container;     // FIXME-0   really needed?
                         imagesAndBranchesContainer->setContainerType(Container::ImagesAndBranchesContainer);
                         innerContainer->addContainer(imagesAndBranchesContainer,
                                                      Z_IMAGE);
@@ -494,27 +505,36 @@ void BranchContainer::updateChildrenStructure()
              imagesContainerLayoutInt != FloatingBounded) {
         // b) Only branches are FloatingBounded
         deleteOuterContainer();
-        innerContainer->setLayout(BoundingFloats);
+        // innerContainer->setLayout(BoundingFloats);   // FIXME-0
+        innerContainer->setLayout(Horizontal);
+	innerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
     }
     else if (branchesContainerLayoutInt == FloatingBounded &&
              imagesContainerLayoutInt == FloatingBounded) {
         // c) images and branches are FloatingBounded
         deleteOuterContainer();
-        innerContainer->setLayout(BoundingFloats);
+        // innerContainer->setLayout(BoundingFloats);   // FIXME-0
+        innerContainer->setLayout(Horizontal);
+	innerContainer->setCentralContainer(headingContainer);
     }
     else if (branchesContainerLayoutInt != FloatingBounded &&
              imagesContainerLayoutInt == FloatingBounded) {
         // d) Only images are FloatingBounded
+        // FIXME-0 deleteOuterContainer();
+	//innerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
         createOuterContainer();
+	outerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
+
         if (listContainer)
             innerContainer->setLayout(Vertical);
         else
             innerContainer->setLayout(Horizontal);
+
     }
     else {
         // e) remaining cases
         deleteOuterContainer();
-        innerContainer->setLayout(FloatingBounded);
+        innerContainer->setLayout(FloatingBounded); // FIXME-0 When does this happen?
     }
 
     updateTransformations();
@@ -527,7 +547,7 @@ void BranchContainer::updateChildrenStructure()
         else
             outerContainer->setParentItem(this);
         outerContainer->addContainer(innerContainer);
-        if (imagesContainer)
+        if (imagesContainer && imagesContainer->layoutInt == FloatingBounded)
             outerContainer->addContainer(imagesContainer);
     }
 
@@ -627,6 +647,7 @@ void BranchContainer::createImagesContainer()
     imagesContainer = new Container();
     imagesContainer->setContainerType(ImagesContainer);
     imagesContainer->setLayout(imagesContainerLayoutInt);
+    // FIXME-0 imagesContainer->setCentralContainer(headingContainer);
 
     updateImagesContainerParent();
 }
@@ -1450,7 +1471,7 @@ void BranchContainer::reposition()
         // innerContainer->setHorizontalDirection(LeftToRight);
 
         // FIXME-3 set in updateChildrenStructure:
-        // innerContainer->setLayout(BoundingFloats);
+        // innerContainer->setLayout(BoundingFloats);   // FIXME-0 needed?
     }
     else {
         // Branch or mainbranch
