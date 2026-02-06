@@ -612,7 +612,7 @@ void MapEditor::setZoomFactorTarget(const qreal &zft)
         zoomAnimation.setStartValue(zoomFactorInt);
         zoomAnimation.setEndValue(zft);
         zoomAnimation.start();
-        qDebug() << __func__ << zft;
+        qDebug() << __func__ << zft;    // FIXME-2 debug...
     }
     else
         setZoomFactor(zft);
