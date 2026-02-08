@@ -128,6 +128,9 @@ QString Container::getName()    // FIXME-4 debugging only
         case Image:
             t = "Image";
             break;
+        case ImagesAndBranchesContainer:
+            t = "ImagesAndBranchesContainer";
+            break;
         case ImagesContainer:
             t = "ImagesContainer";
             break;
@@ -159,7 +162,7 @@ QString Container::getName()    // FIXME-4 debugging only
             t = "Undefined";
             break;
         default:
-            t = "Unknown";
+            t = QString("Unknown (%1)").arg(containerTypeInt);
             break;
     }
     return QString("[%1]").arg(t);
