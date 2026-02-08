@@ -118,7 +118,6 @@ void BranchContainer::init()
     linkSpaceContainer = nullptr;
 
     outerContainer = nullptr;
-    outerInnerContainer = nullptr;
 
     addContainer(innerContainer);
 
@@ -504,18 +503,20 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches
     else if (branchesContainerLayoutInt == FloatingBounded &&
              imagesContainerLayoutInt != FloatingBounded) {
         // b) Only branches are FloatingBounded
-        deleteOuterContainer();
+        createOuterContainer();
+	outerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
         // innerContainer->setLayout(BoundingFloats);   // FIXME-0
         innerContainer->setLayout(Horizontal);
-	innerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
+	//innerContainer->setCentralContainer(headingContainer);  // FIXME-0 new. still needed?
     }
     else if (branchesContainerLayoutInt == FloatingBounded &&
              imagesContainerLayoutInt == FloatingBounded) {
         // c) images and branches are FloatingBounded
-        deleteOuterContainer();
+        createOuterContainer();
+	outerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
         // innerContainer->setLayout(BoundingFloats);   // FIXME-0
         innerContainer->setLayout(Horizontal);
-	innerContainer->setCentralContainer(headingContainer);
+	innerContainer->setCentralContainer(headingContainer);  // FIXME-0 needed?
     }
     else if (branchesContainerLayoutInt != FloatingBounded &&
              imagesContainerLayoutInt == FloatingBounded) {
@@ -547,8 +548,19 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches
         else
             outerContainer->setParentItem(this);
         outerContainer->addContainer(innerContainer);
-        if (imagesContainer && imagesContainer->layoutInt == FloatingBounded)
-            outerContainer->addContainer(imagesContainer);
+        if (imagesContainer) {
+            if (imagesContainer->layoutInt == FloatingBounded)
+                outerContainer->addContainer(imagesContainer);
+            else
+                innerContainer->addContainer(imagesContainer);
+        }
+
+        if (branchesContainer) {
+            if (branchesContainer->layoutInt == FloatingBounded)
+                outerContainer->addContainer(branchesContainer);
+            else
+                innerContainer->addContainer(branchesContainer);
+        }
     }
 
     // Structure for bullet point list layouts
