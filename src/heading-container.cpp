@@ -209,17 +209,7 @@ qreal HeadingContainer::getScrollOpacity() // FIXME-3 needed?
 
 void HeadingContainer::reposition()
 {
-    // qdbg() << ind() << "HC::reposition " + info();
-
-    // A headingContainer might have branches or images as childContainers, which have 
-    // a FloatingBounded layout. These children would not count to rectangle of heading itself,
-    // but rather be included in the BoundingFloats layout of outerContainer further up in the tree
-    //
     // My rectangle is defined above in setText()
-    //
-    // Prepare dimensions of floating bounded children for later
-    foreach (auto c, childContainers()) // FIXME-0 move to OrnamentsContainer
-        c->reposition();
     return;
 }
 
