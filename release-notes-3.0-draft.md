@@ -28,6 +28,58 @@ Thanks for using vym!
 
 Uwe Drechsel - January 2026
 
+## Version: 2.9.606
+### Bugfixes
+ * Bugfix: Relative positioning of images or branches (#181)
+
+## Version: 2.9.605
+### Bugfixes
+ * Bugfix: autoDesign frame settings when loading/saving maps
+ * Bugfix: save selection (#188)
+    - Added script command isBusy()
+    - Added script command setSaveAsBackgroundProcess()
+
+    Changed handling of zipping in background. Maps were renamed before zip
+    was finished. For testing added option to wait for finishing zip as
+    foreground process, otherwise tests would have failed.
+
+    Also re-added action to file menu to save selection.
+
+ * Bugfix: Make sure zip processes are finished when leaving vym (#187)
+
+    Under certain circumstances vym had still background processes when
+    accepting e.g. a close event from window manager.
+
+    Now MainWindow requests closing a map directly from the vym map. The map
+    itself triggers it's removal from MainWindow once the zipProcess is done.
+
+
+* Bugfix: Missing image in xml of map modifies branches (#187)
+* Bugfix: Missing image in xml of map modifies branches (#187)
+
+
+## Version: 2.9.604
+### Bugfixes
+* Bugfix: Editing in TaskEditor adds heading of parent branch to selected branch (#180)
+* Bugfix: Changes to frames via script are not saved (#179)
+
+   e.g. when using macros bound to function keys to change frames.
+
+   Now autoDesign is disabled when script functions change frames.
+
+* Bugfix: Exporting note might overwrite export of previous branch (#186)
+* Bugfix: Zoom and rotation after loading map (#182)
+* Bugfix: Rotation of subtree not save when changed with shortcut (#183)
+  - Disable autodesign option
+
+
+## Version: 2.9.603
+### Bugfixes
+ * Bugfix: QThreadStorage: entry 1 destroyed before end of thread when quitting via shortcut cut
+
+### Features
+ * Feature: Set heading width also for RichText headings
+
 
 ## Version 2.9.601
 ### Bugfixes
