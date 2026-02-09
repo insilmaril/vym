@@ -85,7 +85,7 @@ void Container::setContainerType(const Container::ContainerType &t)
 {
     containerTypeInt = t;
     /*
-    if ( t == ImagesAndBranchesContainer)
+    if ( t == Branch)
         addDebugGraphics(Qt::blue);
     else if ( t == InnerContainer)  // FIXME-0 Inner container of mainbranches seems to have wrong y-coord
                                     // Might be solved, once branchesContainer also gets into Outercontainer 
@@ -601,12 +601,9 @@ void Container::reposition()
             {
                 //qdbg() << ind() << " - BoundingFloats starting for " << info();
 
-                // BoundingFloats is special case:  // FIXME-0 update desc
-                // Only used for innerContainer or outerContainer
-                // First child container is ornamentsContainer (or innerContainer),
-                // next children are imagesContainer and/or branchesContainer
+                // BoundingFloats is special case: Only used for outerContainer
 
-                if (childContainers().count() > 4 ) {
+                if (childContainers().count() > 3 ) {
                     qWarning() << "Container::reposition " << info();
                     qWarning() << "Too many children containers: " << childContainers().count();
                     foreach (Container *c, childContainers())
@@ -614,15 +611,6 @@ void Container::reposition()
 
                     return;
                 }
-
-                /* FIXME-0 remove
-                if (centralContainer) {
-                    qdbg() << ind() << "   - Found centralContainer=" << centralContainer->info();
-                    qdbg() << ind() << "     - centralContainer children";
-                    foreach (auto c, centralContainer->childContainers())
-                        qdbg() << ind() << "        - c: " << c->info();
-                }
-                */
 
                 // Calc space required
                 QRectF c_bbox;  // bbox of container in my own coord
@@ -633,16 +621,6 @@ void Container::reposition()
                     bbox = bbox.united(c_bbox);
                 }
 
-                /* FIXME-0 Same as above now
-                // Now also add spaces for containers of centralContainer (==headingContainer)
-                if (centralContainer) {
-                    foreach (Container *c, centralContainer->childContainers()) {
-                        c_bbox = mapRectFromItem(centralContainer, c->rect());
-                        bbox = bbox.united(c_bbox);
-                    }
-                }
-                */
-
                 // Translate everything, so that center of rectangle is in origin
                 // Required, because vert/horiz layouts expect it so atm
                 QPointF t = bbox.center();
@@ -651,46 +629,6 @@ void Container::reposition()
                 bbox.translate(-t);
 
                 setRect(bbox);
-
-		QPointF v_translate;	// Translate children containers, if FloatingBounded is above/left
-		QPointF v_extend;	// Extend children containers, if FloatingBounded is below/right
-
-		if (centralContainer) {
-		    foreach (Container *c, centralContainer->childContainers()) {
-                        // c should have origin in origin of HeadingContainer
-                        //c->setPos(mapFromItem(centralContainer, QPointF()));// FIXME-0 Adapt children positions!
-                                                                            // should be unchanged...
-
-                        // Modify v_translate based on top left corner of containers so far
-                        QPointF tl = mapFromItem(c, c->topLeft());
-                        //qdbg() << ind() << "   tl=" << toS(tl) <<   "  w_total_2=" << w_total / 2;
-                        if (tl.x() < - bbox.left() && tl.x() < v_translate.x())
-                            v_translate.setX(tl.x());
-                        if (tl.y() < - bbox.top() && tl.y() < v_translate.y())
-                            v_translate.setY(tl.y());
-
-                        // FIXME-0  Modify v_extend based on bottom right corner of containers so far
-                        // Check if this also works LeftOfCenter (seems to work :-) )
-                        /*
-                        QPointF br = mapFromItem(c, c->bottomRight());
-                        qdbg() << ind() << "   br=" << toS(tl) <<   "  h_max_2=" << h_max / 2;
-                        if (br.x() > w_total / 2 && br.x() > v_extend.x())
-                            v_extend.setX(br.x() - w_total / 2);
-                        if (br.y() > h_max / 2 && br.y() > v_extend.y())
-                            v_extend.setY(br.y() - h_max / 2);
-                            */
-
-                        // qdbg() << ind() << "   v_t=" << toS(v_translate) << "    v_e=" << toS(v_extend);
-
-		    }
-
-		    // FIXME-0 Translate and extend children containers // FIXME-0 rect not set yet...
-		    /*
-		     foreach (Container *c, childContainers()) {
-			c->setPos(c->pos() - v_translate);
-		    }
-		    */
-		}
 
                 //qdbg() << ind() << " - BF finished for " << info(); // << "  t=" << toS(t);
             } // BoundingFloats layout
@@ -826,7 +764,6 @@ void Container::reposition()
 
                                 qWarning() << "Container::reposition horizontally - undefined vertical alignment:" << verticalAlignmentInt << " in " << info();
                         }
-                        qdbg() << ind() << "   offset=" << toS(offset);
 
 
                         // Post alignment
@@ -835,7 +772,7 @@ void Container::reposition()
                         } else
                             x_current -= c_bbox.width();
 
-                        qdbg() << ind() << "    HL Done positioning: " << c->info();
+                        // qdbg() << ind() << "    HL Done positioning: " << c->info();
                     }   // No overlay container
                 }   // Position children 
 
@@ -852,7 +789,7 @@ void Container::reposition()
 		    // - I am a MapCenter myself
                     if ((parentContainer() && parentContainer()->hasFloatingLayout()) || !parentContainer() ) {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-			// qdbg() << ind() << " * v_central=" << toS(v_central);
+			qdbg() << ind() << " * v_central=" << toS(v_central);
                         if (!v_central.isNull()) {
                             foreach (Container *c, childContainers()) {
                                 if (!c->overlay && c->layoutInt != FloatingBounded)
@@ -860,8 +797,8 @@ void Container::reposition()
                             }
                         }
 		    }
-                } else
-                    qdbg() << ind() << " * No central containe";
+                } //else
+                    //qdbg() << ind() << " * No central containe";
 
 		QPointF v_translate;	// Translate children containers, if FloatingBounded is above/left
 		QPointF v_extend;	// Extend children containers, if FloatingBounded is below/right
