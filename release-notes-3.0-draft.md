@@ -439,23 +439,34 @@ Version 2.9.533
     Bugfix: Ampersands in notes exported to libreoffice impress
     Fixed unzip on Windows
 
-Version 2.9.28
-    Feature: link app icon as a mimetype icon for the hicolor default theme (#109)
-        On Linux/Unix systems cmake already installs the vym.png application
-        icon (what is referenced via the .desktop file) and a mime type definition
-        for `application/x-vym`. What is missing is the icon to use on `.vym`
-        files which are associated with this mime type. Instead of installing
-        the icon a second time, a relativ symlink is created referencing the app
-        icon.
-    Fix: do not install manpage in doc dir (#107)
-    Bugfix: Open french documention if required
-    Fixed: Don't autosave while still saving
-    Spelling fix: remove duplicate word (#108)
-Version 2.9.532
-    Run zip process in foreground when exporting to libreoffice impress.
-    zip running as background process on Linux and Mac.
-        Windows not ported yet.
-    Spelling fixes (#105)
-    Desktop file improvements (#106)
-    Feature: Only write images once to zipDir to save time and disk space
+## Version 2.9.28
+### Features
+    Link app icon as a mimetype icon for the hicolor default theme (#109)
+
+    On Linux/Unix systems cmake already installs the vym.png application
+    icon (what is referenced via the .desktop file) and a mime type definition
+    for `application/x-vym`. What is missing is the icon to use on `.vym`
+    files which are associated with this mime type. Instead of installing
+    the icon a second time, a relativ symlink is created referencing the app
+    icon.
+
+### Bugfixes
+ *  Do not install manpage in doc dir (#107)
+ *  Open french documention if required
+ *  Don't autosave while still saving
+ *  Spelling fix: remove duplicate word (#108)
+
+## Version 2.9.532
+### Changes
+ * Run zip process in foreground when exporting to libreoffice impress.
+ * zip running as background process on Linux and Mac.
+
+   Windows not ported yet.
+
+### Features
+ * Only write images once to zipDir to save time and disk space
+
+### Bugfixes
+ * Spelling fixes (#105)
+ * Desktop file improvements (#106)
 
