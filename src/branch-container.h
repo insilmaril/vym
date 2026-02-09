@@ -50,6 +50,8 @@ class BranchContainer : public BranchContainerBase, public LinkableContainer {
   private:
     void createOuterContainer();        //! Used if only images have FloatingBounded layout
     void deleteOuterContainer();
+    void createImagesAndBranchesContainer();
+    void deleteImagesAndBranchesContainer();
     void updateTransformations();       //! Update rotation and scaling
 
   public:

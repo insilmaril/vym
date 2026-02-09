@@ -327,6 +327,28 @@ void BranchContainer::deleteOuterContainer()
     }
 }
 
+void BranchContainer::createImagesAndBranchesContainer()
+{
+    if (imagesAndBranchesContainer)
+        return;
+
+    imagesAndBranchesContainer = new Container;
+    imagesAndBranchesContainer->setContainerType(Container::ImagesAndBranchesContainer);
+    innerContainer->addContainer(imagesAndBranchesContainer,
+                                 Z_IMAGE);
+}
+
+void BranchContainer::deleteImagesAndBranchesContainer()
+{
+    if (!imagesAndBranchesContainer)
+        return;
+
+    updateImagesContainerParent();
+    updateBranchesContainerParent();
+    delete imagesAndBranchesContainer;
+    imagesAndBranchesContainer = nullptr;
+}
+
 void BranchContainer::updateTransformations()
 {
     MapDesign *md = nullptr;
@@ -475,11 +497,12 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches
                         imagesAndBranchesContainer->setContainerType(Container::ImagesAndBranchesContainer);
                         innerContainer->addContainer(imagesAndBranchesContainer,
                                                      Z_IMAGE);
-                        imagesAndBranchesContainer->addContainer(
-                            imagesContainer);
-                        imagesAndBranchesContainer->addContainer(
-                            branchesContainer);
                     }
+                    if (imagesContainer->parentContainer() != imagesAndBranchesContainer)
+                        imagesAndBranchesContainer->addContainer(imagesContainer);
+                    if (branchesContainer->parentContainer() != imagesAndBranchesContainer)
+                        imagesAndBranchesContainer->addContainer(branchesContainer);
+
                     imagesAndBranchesContainer->setLayout(ibcl);
                     if (imagesFirst) // FIXME-3 Check for imagesPosition
                                      // relative to branches, hardcoded for now
@@ -489,15 +512,8 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches
                 }
                 else {
                     // No imagesAndBranchesContainer required
-                    //
-                    // TODO Remove imagesAndBranchesCont, relink imagesCont and
-                    // branchesCont
-                    if (imagesAndBranchesContainer) {
-                        updateImagesContainerParent();
-                        updateBranchesContainerParent();
-                        delete imagesAndBranchesContainer;
-                        imagesAndBranchesContainer = nullptr;
-                    }
+                    if (imagesAndBranchesContainer)
+                        deleteImagesAndBranchesContainer();
                 }
             }
         }
@@ -507,6 +523,8 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches
         // b) Only branches are FloatingBounded
         createOuterContainer();
 	outerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
+        if (imagesAndBranchesContainer)
+            deleteImagesAndBranchesContainer();
         // innerContainer->setLayout(BoundingFloats);   // FIXME-0
         innerContainer->setLayout(Horizontal);
 	//innerContainer->setCentralContainer(headingContainer);  // FIXME-0 new. still needed?
@@ -516,6 +534,8 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches
         // c) images and branches are FloatingBounded
         createOuterContainer();
 	outerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
+        if (imagesAndBranchesContainer)
+            deleteImagesAndBranchesContainer();
         // innerContainer->setLayout(BoundingFloats);   // FIXME-0
         innerContainer->setLayout(Horizontal);
 	innerContainer->setCentralContainer(headingContainer);  // FIXME-0 needed?
@@ -527,6 +547,8 @@ void BranchContainer::updateChildrenStructure() // FIXME-0 Also fix for branches
 	//innerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
         createOuterContainer();
 	outerContainer->setCentralContainer(headingContainer);  // FIXME-0 new
+        if (imagesAndBranchesContainer)
+            deleteImagesAndBranchesContainer();
 
         if (listContainer)
             innerContainer->setLayout(Vertical);
