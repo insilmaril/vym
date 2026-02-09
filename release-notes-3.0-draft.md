@@ -80,10 +80,6 @@ Uwe Drechsel - January 2026
 
 
 ## Version 2.9.601
-### Bugfixes
- * Enable GoTo target when nothing is selected   (#175)
- * Packaging for MACOSX
-
 ### Features
  * Toggling frames of multiple selected branches (#177)
  * Open and edit Urls in TextEditors (#176)
@@ -91,16 +87,21 @@ Uwe Drechsel - January 2026
  * Don't adapt view to show many selected items (#178)
  * On Macs open history window with Shift-Cmd-H
 
-## Version 2.9.599
 ### Bugfixes
- * Center on selected item not subtree when selecting slide (#153)
- * Scroll to selected task in TaskEditor (#173)
- * Focus handling with satellite windows (#161, #165)
+ * Enable GoTo target when nothing is selected   (#175)
+ * Packaging for MACOSX
 
+
+## Version 2.9.599
 ### Features
  * Switch focus between Find-LineEdit and Find-Results with tab (#165)
  * AppStream / Metainfo Improvements (#169)
  * cmake: install resources under share/vym and set VYMBASEDIR (#167)
+
+### Bugfixes
+ * Center on selected item not subtree when selecting slide (#153)
+ * Scroll to selected task in TaskEditor (#173)
+ * Focus handling with satellite windows (#161, #165)
 
 ## Version 2.9.598
 ### Changes
