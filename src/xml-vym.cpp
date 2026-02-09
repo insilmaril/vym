@@ -423,10 +423,10 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             xml.name() == QLatin1String("note"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch")) {
-            if (lastBranch && lastBranch->depth() < 3 && false) {   // FIXME-2 Updates during load disabled for now. Too many selectionCHanges
+            if (lastBranch && branchesCounter % 100 == 0) {     // Update and process events once in a while
                 // Some graphical repainting during loading of map
                 lastBranch->updateVisuals();
-                model->select(lastBranch);
+                //model->select(lastBranch);
                 model->reposition(true);
             }
 
