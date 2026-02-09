@@ -319,6 +319,8 @@ void BranchContainer::deleteOuterContainer()
             addContainer(innerContainer);
         if (imagesContainer)
             innerContainer->addContainer(imagesContainer);
+        if (branchesContainer)
+            innerContainer->addContainer(branchesContainer);
 
         delete outerContainer;
         outerContainer = nullptr;
