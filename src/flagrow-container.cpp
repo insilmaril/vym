@@ -44,7 +44,7 @@ void FlagRowContainer::updateActiveFlagContainers(const QList<QUuid> activeFlagU
     }
 
     // Remove flags no longer active in TreeItem
-    foreach (QGraphicsItem *child, childItems()) {
+    foreach (QGraphicsItem *child, childContainers()) {
         FlagContainer* fc = (FlagContainer*) child;
         if (!activeFlagUids.contains(fc->getUuid())) {
             delete fc;
@@ -79,7 +79,7 @@ void FlagRowContainer::activateFlag(Flag *flag)
 
 FlagContainer *FlagRowContainer::findFlagContainerByUid(const QUuid &uid)
 {
-    foreach (QGraphicsItem *child, childItems()) {
+    foreach (QGraphicsItem *child, childContainers()) {
         FlagContainer* fc = (FlagContainer*) child;
         if (fc->getUuid() == uid)
             return fc;
@@ -92,7 +92,7 @@ QUuid FlagRowContainer::findFlagByPos(const QPointF &p)
     if (!boundingRect().contains(mapFromScene(p)))
         return QUuid();
 
-    foreach (QGraphicsItem *child, childItems()) {
+    foreach (QGraphicsItem *child, childContainers()) {
         FlagContainer* fc = (FlagContainer*) child;
         if (fc->boundingRect().contains(fc->mapFromScene(p)))
         return fc->getUuid();

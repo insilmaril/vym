@@ -209,7 +209,7 @@ qreal HeadingContainer::getScrollOpacity() // FIXME-3 needed?
 
 void HeadingContainer::reposition()
 {
-    // qdbg() << ind() << "HC::reposition " + info();
+    // My rectangle is defined above in setText()
     return;
 }
 

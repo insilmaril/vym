@@ -79,9 +79,8 @@ QList <BranchContainer*> BranchContainerBase::childBranches()
 
     if (!branchesContainer) return list;
 
-    foreach (QGraphicsItem *g_item, branchesContainer->childItems())
-        if (g_item->type() > UserType)
-            list << (BranchContainer*)g_item;
+    foreach (QGraphicsItem *g_item, branchesContainer->childContainers())
+        list << (BranchContainer*)g_item;
 
     return list;
 }
@@ -92,9 +91,8 @@ QList <ImageContainer*> BranchContainerBase::childImages()
 
     if (!imagesContainer) return list;
 
-    foreach (QGraphicsItem *g_item, imagesContainer->childItems())
-        if (g_item->type() > UserType)
-            list << (ImageContainer*)g_item;
+    foreach (QGraphicsItem *g_item, imagesContainer->childContainers())
+        list << (ImageContainer*)g_item;
 
     return list;
 }
