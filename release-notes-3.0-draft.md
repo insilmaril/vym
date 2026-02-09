@@ -28,11 +28,11 @@ Thanks for using vym!
 
 Uwe Drechsel - January 2026
 
-## Version: 2.9.606
+## Version 2.9.606
 ### Bugfixes
  * Bugfix: Relative positioning of images or branches (#181)
 
-## Version: 2.9.605
+## Version 2.9.605
 ### Bugfixes
  * Bugfix: autoDesign frame settings when loading/saving maps
  * Bugfix: save selection (#188)
@@ -53,12 +53,10 @@ Uwe Drechsel - January 2026
     Now MainWindow requests closing a map directly from the vym map. The map
     itself triggers it's removal from MainWindow once the zipProcess is done.
 
-
-* Bugfix: Missing image in xml of map modifies branches (#187)
-* Bugfix: Missing image in xml of map modifies branches (#187)
+ * Bugfix: Missing image in xml of map modifies branches (#187)
 
 
-## Version: 2.9.604
+## Version 2.9.604
 ### Bugfixes
 * Bugfix: Editing in TaskEditor adds heading of parent branch to selected branch (#180)
 * Bugfix: Changes to frames via script are not saved (#179)
@@ -73,113 +71,151 @@ Uwe Drechsel - January 2026
   - Disable autodesign option
 
 
-## Version: 2.9.603
+## Version 2.9.603
 ### Bugfixes
- * Bugfix: QThreadStorage: entry 1 destroyed before end of thread when quitting via shortcut cut
+ * QThreadStorage: entry 1 destroyed before end of thread when quitting via shortcut cut
 
 ### Features
- * Feature: Set heading width also for RichText headings
+ * Set heading width also for RichText headings
 
 
 ## Version 2.9.601
 ### Bugfixes
- * Bugfix: Enable GoTo target when nothing is selected   (#175)
- * Bugfix: Packaging for MACOSX
+ * Enable GoTo target when nothing is selected   (#175)
+ * Packaging for MACOSX
 
 ### Features
- * Feature: Toggling frames of multiple selected branches (#177)
- * Feature: Open and edit Urls in TextEditors (#176)
- * Feature: Add and follow hyperlinks in TextEditors (#176)
- * Feature: Don't adapt view to show many selected items (#178)
- * Feature: On Macs open history window with Shift-Cmd-H
+ * Toggling frames of multiple selected branches (#177)
+ * Open and edit Urls in TextEditors (#176)
+ * Add and follow hyperlinks in TextEditors (#176)
+ * Don't adapt view to show many selected items (#178)
+ * On Macs open history window with Shift-Cmd-H
 
 ## Version 2.9.599
 ### Bugfixes
-    Bugfix: Center on selected item not subtree when selecting slide (#153)
-    Bugfix: Scroll to selected task in TaskEditor (#173)
-    Fixed focus handling with satellite windows (#161, #165)
+ * Center on selected item not subtree when selecting slide (#153)
+ * Scroll to selected task in TaskEditor (#173)
+ * Focus handling with satellite windows (#161, #165)
 
 ### Features
-    Feature: Switch focus between Find-LineEdit and Find-Results with tab (#165)
-    AppStream / Metainfo Improvements (#169)
-    cmake: install resources under share/vym and set VYMBASEDIR (#167)
+ * Switch focus between Find-LineEdit and Find-Results with tab (#165)
+ * AppStream / Metainfo Improvements (#169)
+ * cmake: install resources under share/vym and set VYMBASEDIR (#167)
 
-Version: 2.9.598
-    Feature: Shortcuts to rotate subtree (Ctrl-R and Ctrl-Shift-R)
-    Feature: Support Jira Cloud (#160)
-    Feature: Remember last searches in FindResultWidget
-    Feature: "Delete" is now equivalent to "Cut"
-    Feature: Escape-key cancels editing heading of a branch (#16)
-    Bugfix: Background style in TextEditors (#168)
-    Bugfix: Undo colorSubtree
+## Version 2.9.598
+### Changes
+ * Use CTRL-S for "Restore session" until map was changed
 
-    Change: Use CTRL-S for "Restore session" until map was changed
-        Then CTRL-S will become "Save map". This frees up the shortcut to rotate
-        subtrees with CTRL-R
+    Then CTRL-S will become "Save map". This frees up the shortcut to rotate
+    subtrees with CTRL-R
 
-Version: 2.9.594
-    Bugfix: Forced bright theme when system uses dark theme
-    Feature: Switch focus between editors using Tab-key (#162)
+### Features
+ * Shortcuts to rotate subtree (Ctrl-R and Ctrl-Shift-R)
+ * Support Jira Cloud (#160)
+ * Remember last searches in FindResultWidget
+ * "Delete" is now equivalent to "Cut"
+ * Escape-key cancels editing heading of a branch (#16)
 
-Version: 2.9.593
-    Bugfix: Improved handling of default colors (#80)
-    Bugfix: Switch back to MapEditor using Esc-Key (#161)
-    Bugfix: Noteeditor has correct window name
-    Bugfix: Consider penWidth of frame
-    Bugfix: No bottomline for both inner/outer frame
-    Bugfix: Frametype Pipe had wrong dimensions
+### Bugfixes
+ * Background style in TextEditors (#168)
+ * Undo colorSubtree
 
-    Feature: Y-Key to yank (copy) in Vim style
-    Feature: Draw border around editor which has keyboard focus
-    Feature: Exit vym from script
-    Feature: Repeat last action for multiple actions
+Version 2.9.594
+### Features
+ * Switch focus between editors using Tab-key (#162)
 
-Version 2.9.592
-    Feature: Easy following of references: xLinks, Urls and vymLinks
-        If a branch has exactly one reference, Key-F will just "follow" this
-        reference. Popup menu is only used if multiple references require a
-        decision.
+### Bugfixes
+ * Bugfix: Forced bright theme when system uses dark theme
 
-Version: 2.9.591
-    Bugfix: Better selection color handling TaskEditor
-        Colors also no longer depend if selection was clicked in TE or in ME
-    Bugfix: Allow macros to work on all selected branches
-    Bugfix: Craah when closing map while loading
-    Feature: VIM-like shortcuts 0 and $ to select first/last sibling
+## Version 2.9.593
+### Features
+ * Y-Key to yank (copy) in Vim style
+ * Draw border around editor which has keyboard focus
+ * Exit vym from script
+ * Repeat last action for multiple actions
 
-Version 2.9.590
-    Bugfix: Avoid crash when zipAgent is no longer available and zipFinished called
-    Bugfix: Always enable fileExitVym action
-    Bugfix: HTML export correctly exports flags now
-    Feature: Use Key U for undo like in vim
-    Update Appstream Data (#158)
+### Bugfixes
+ * Improved handling of default colors (#80)
+ * Switch back to MapEditor using Esc-Key (#161)
+ * Noteeditor has correct window name
+ * Consider penWidth of frame
+ * No bottomline for both inner/outer frame
+ * Frametype Pipe had wrong dimensions
 
-Version 2.9.588
+## Version 2.9.592
+### Features
+ * Easy following of references: xLinks, Urls and vymLinks
+
+    If a branch has exactly one reference, Key-F will just "follow" this
+    reference. Popup menu is only used if multiple references require a
+    decision.
+
+## Version 2.9.591
+### Features
+ * VIM-like shortcuts 0 and $ to select first/last sibling
+
+### Bugfixes
+ * Better selection color handling TaskEditor
+
+      Colors also no longer depend if selection was clicked in TE or in ME
+
+ * Allow macros to work on all selected branches
+ * Craah when closing map while loading
+
+## Version 2.9.590
+### Features
+ * Use Key U for undo like in vim
+
+### Bugfixes
+ * Avoid crash when zipAgent is no longer available and zipFinished called
+ * Always enable fileExitVym action
+ * HTML export correctly exports flags now
+ * Update Appstream Data (#158)
+
+
+## Version 2.9.588
+### Features
     Feature: Improving HTML export with flags and dark theme css file
 
-Version 2.9.587
-    Bugfix: Undo/redo for setLinkStyle()
-    Bugfix: Remove upLink when detaching mainBranch
-    Change: Linkstyle now refers to current branch depth
+## Version 2.9.587
+### Changes
+ * Linkstyle now refers to current branch depth
 
-Version 2.9.586
-    Feature: New scripting commands to iterate over branches
-    Bugfix: Missing whitespaces in "Goto linked map menu"
-    Bugfix: Bigger circle for positioning when relinking to MapCenter
+### Bugfixes
+ * Undo/redo for setLinkStyle()
+ * Remove upLink when detaching mainBranch
 
-Version 2.9.585
-    Bugfix: Intermittent crash when dropping tasks in TaskEditor
+## Version 2.9.586
+### Features
+ * New scripting commands to iterate over branches
 
-Version 2.9.584
-    Fixed permissions for new directories (#151)
+### Bugfixes
+ * Missing whitespaces in "Goto linked map menu"
+ * Bigger circle for positioning when relinking to MapCenter
 
-Version 2.9.583
-    Bugfix: Store vym temporary files in user directory (#151)
-    Bugfix: Remove warnings by using new svg for "lifebelt" flag
-    Bugfix:  #146 signed bundle (#152)
-    Bugfix: Toggle subtree frames with function keys
-    Feature: Use shared renderer for svg flags (see #151)
-Version 2.9.582
+## Version 2.9.585
+### Bugfixes
+ * Intermittent crash when dropping tasks in TaskEditor
+
+## Version 2.9.584
+### Bugfixes
+ * Fixed permissions for new directories (#151)
+
+## Version 2.9.583
+### Features
+ *     Feature: Use shared renderer for svg flags (see #151)
+
+### Bugfixes
+ * Store vym temporary files in user directory (#151)
+ * Remove warnings by using new svg for "lifebelt" flag
+ * #146 signed bundle (#152)
+ * Toggle subtree frames with function keys
+
+
+
+
+===================
+##Version 2.9.582
     Bugfix: Building on Linux (#149)
 
 Version 2.9.581
