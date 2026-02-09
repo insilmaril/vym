@@ -717,7 +717,7 @@ void Container::reposition()
                 qreal h_max = 0;
                 qreal w_total = 0;
 
-                qdbg() << ind() << " * HL starting for " << info();
+                // qdbg() << ind() << " * HL starting for " << info();
                 foreach (Container *c, childContainers()) {
                     if (!c->overlay && c->layoutInt != FloatingBounded) {
                         QRectF c_bbox = mapRectFromItem(c, c->rect());
@@ -781,7 +781,7 @@ void Container::reposition()
 
 
                 if (centralContainer) { // FIXME-0 needed?   When?
-		    qdbg() << ind() << " * centralContainer = " << centralContainer->info();
+		    // qdbg() << ind() << " * centralContainer = " << centralContainer->info();
 		    // Now we might want to adjust positions of children, so
 		    // that centralContainer (==headingContainer) keeps its position
 		    // This may happen, if
@@ -789,7 +789,7 @@ void Container::reposition()
 		    // - I am a MapCenter myself
                     if ((parentContainer() && parentContainer()->hasFloatingLayout()) || !parentContainer() ) {
                         v_central = mapFromItem(centralContainer, centralContainer->rect().center());
-			qdbg() << ind() << " * v_central=" << toS(v_central);
+			// qdbg() << ind() << " * v_central=" << toS(v_central);
                         if (!v_central.isNull()) {
                             foreach (Container *c, childContainers()) {
                                 if (!c->overlay && c->layoutInt != FloatingBounded)
