@@ -199,9 +199,20 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         s += note.saveToDir();
 
     // Save frame
-    if (branchContainer->frameType(true) != FrameContainer::NoFrame ||
-        branchContainer->frameType(false) != FrameContainer::NoFrame)
+    if (
+            (branchContainer->frameType(true) != FrameContainer::NoFrame ||
+             branchContainer->frameType(false) != FrameContainer::NoFrame)
+       ) {
+            // Save if frame is used
         s += branchContainer->saveFrame();
+    } else {
+        if (
+            model->mapDesign()->frameType(true, depth()) != FrameContainer::NoFrame &&
+            branchContainer->frameType(true) == FrameContainer::NoFrame
+        )
+        // Save if no frame is used and MapDesign would use one
+        s += singleElement("frame", "autoDesign=\"false\" frameType=\"NoFrame\"");
+    }
 
     // save names of flag set
     s += standardFlags.saveState();
