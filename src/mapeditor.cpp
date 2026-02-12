@@ -279,7 +279,7 @@ void MapEditor::ensureAreaVisibleAnimated(
         bool rotated,
         qreal new_rotation)
 {
-    qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated << "new_rot=" << new_rotation;
+    // qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated << "new_rot=" << new_rotation << " area=" << toS(area);
 
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
@@ -321,7 +321,6 @@ void MapEditor::ensureAreaVisibleAnimated(
     int animDuration = 2000;
     QEasingCurve easingCurve = QEasingCurve::OutQuint;
     
-    qDebug() << __func__ << " zoomOutReq: " << zoomOutRequired << " zoomFactor=" << zoomFactorInt << " zf=" << zf << " zft=" << zoomFactorTargetInt;
     //qDebug() << "z_xy=" << toS(QPointF(z_x, z_y));
     if (zoomOutRequired || scaled) {
         setViewCenterTarget(
@@ -370,7 +369,7 @@ void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
     // Similar to QGraphicsItem::ensureVisible, but with animation and (if necessary)
     // zooming
 
-    qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated;
+    // qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated;
 
     QList <TreeItem*> selis = model->getSelectedItems();
 
@@ -612,7 +611,6 @@ void MapEditor::setZoomFactorTarget(const qreal &zft)
         zoomAnimation.setStartValue(zoomFactorInt);
         zoomAnimation.setEndValue(zft);
         zoomAnimation.start();
-        qDebug() << __func__ << zft;    // FIXME-2 debug...
     }
     else
         setZoomFactor(zft);
@@ -674,7 +672,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
 
     viewCenter = mapToScene(viewport()->geometry()).boundingRect().center();
 
-    //qDebug() << __func__ << "zft=" << zft << "rot=" << at;
+    // qDebug() << __func__ << " p=" << toS(p) << " zft=" << zft << "rot=" << at;
 
     stopViewAnimations();
 
@@ -712,7 +710,7 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
     }
 }
 
-void MapEditor::setViewCenterTarget()
+void MapEditor::setViewCenterSelection()
 {
     // qDebug() << __func__;
     QList <TreeItem*> seltis = model->getSelectedItems();
@@ -734,7 +732,10 @@ void MapEditor::setViewCenterTarget()
         setViewCenterTarget( p / n, 1, 0);
 }
 
-QPointF MapEditor::getViewCenterTarget() { return viewCenterTarget; }
+void MapEditor::setViewCenterTarget(QPointF p)
+{
+    setViewCenterTarget(p, zoomFactorTargetInt, rotationTargetInt);
+}
 
 void MapEditor::setViewCenter(const QPointF &vc) {
     // For wheel events // useTransFormationOrigin == true

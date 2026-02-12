@@ -1074,7 +1074,7 @@ void VymReader::readVymMapAttr()
     }
 
     qreal r;
-    a = "mapZoomFactor";
+    a = "viewZoomFactor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         r = s.toDouble(&ok);
@@ -1082,10 +1082,10 @@ void VymReader::readVymMapAttr()
             xml.raiseError("Could not parse attribute" + a);
             return;
         }
-        model->setMapZoomFactor(r);
+        model->setViewZoomFactor(r);
     }
 
-    a = "mapRotation";
+    a = "viewRotation";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         r = s.toDouble(&ok);
@@ -1093,7 +1093,27 @@ void VymReader::readVymMapAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
-        model->setMapRotation(r);
+        model->setViewRotation(r);
+    }
+
+    a = "viewCenterX";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        qreal x = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        a = "viewCenterY";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            qreal y = s.toDouble(&ok);
+            if (!ok) {
+                xml.raiseError("Could not parse attribute " + a);
+                return;
+            }
+            model->setViewCenterTarget(QPointF(x,y));
+        }
     }
 
     readMapDesignCompatibleAttributes();

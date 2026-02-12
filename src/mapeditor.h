@@ -128,9 +128,8 @@ class MapEditor : public QGraphicsView {
         const QPointF &p, const qreal &zft, const qreal &at,
         const int duration = 2000,
         const QEasingCurve &easingCurve = QEasingCurve::OutQuint);
-    void
-    setViewCenterTarget(); //! Convenience function, center on selected item
-    QPointF getViewCenterTarget();
+    void setViewCenterSelection();          //! Convenience function, center on selected item
+    void setViewCenterTarget(QPointF p);    //! Centers on target with previously set rotation/zoom targets
     void setViewCenter(const QPointF &p);
     QPointF getViewCenter();
     QPropertyAnimation viewCenterAnimation;

@@ -224,8 +224,8 @@ void VymModel::init()
     hideMode = TreeItem::HideNone;
 
     // Animation in MapEditor
-    zoomFactor = 1;
-    mapRotationInt = 0;
+    viewZoomFactorInt = 1;
+    viewRotationInt = 0;
     animDuration = 2000;
     animCurve = QEasingCurve::OutQuint;
 
@@ -344,10 +344,15 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
         mapAttr += xml.attribute("branchCount", QString().number(branchCount()));
         if (mapEditor) {
-        mapAttr += xml.attribute("mapZoomFactor",
-                     QString().setNum(mapEditor->zoomFactorTarget()));
-        mapAttr += xml.attribute("mapRotation",
-                     QString().setNum(mapEditor->rotationTarget()));
+            mapAttr += xml.attribute("viewZoomFactor",
+                         QString().setNum(mapEditor->zoomFactorTarget()));
+            mapAttr += xml.attribute("viewRotation",
+                         QString().setNum(mapEditor->rotationTarget()));
+            QPointF viewport_center = mapEditor->mapToScene(mapEditor->viewport()->geometry().center());
+            mapAttr += xml.attribute("viewCenterX",
+                         QString().setNum(viewport_center.x()));
+            mapAttr += xml.attribute("viewCenterY",
+                         QString().setNum(viewport_center.y()));
         }
     }
     header += xml.beginElement("vymmap", mapAttr);
@@ -485,14 +490,12 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
                                   BranchItem *insertBranch,
                                   int insertPos)
 {
-    qDebug() << "a) Loading " << fname;
-
     bool noError = true;
 
-    // Get updated zoomFactor, before applying one read from file in the end
+    // Get updated viewZoomFactor, before applying one read from file in the end
     if (mapEditor) {
-        zoomFactor = mapEditor->zoomFactorTarget();
-        mapRotationInt = mapEditor->rotationTarget();
+        viewZoomFactorInt = mapEditor->zoomFactorTarget();
+        viewRotationInt = mapEditor->rotationTarget();
     }
 
     BaseReader *reader;
@@ -742,18 +745,14 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
     if (lmode != File::NewMap)
         emitUpdateQueries();
 
-    qDebug() << "b) Loaded " << fname; // FIXME-2 Debug # 185
     if (mapEditor) {
-        mapEditor->setZoomFactorTarget(zoomFactor);
-        mapEditor->setRotationTarget(mapRotationInt);
+        mapEditor->setZoomFactorTarget(viewZoomFactorInt);
+        mapEditor->setRotationTarget(viewRotationInt);
     }
-    qDebug() << "c) Loaded " << fname;
 
     qApp->processEvents(); // Update view (scene()->update() is not enough)
 
     isLoadingInt = false;
-
-    qDebug() << "d) Loaded " << fname;
 
     return noError;
 }
@@ -1942,7 +1941,7 @@ QString VymModel::saveStateBranch(
 void VymModel::saveStateBeginScript(const QString &comment)
 {
     if (buildingUndoScript)
-        logWarning("Nested saveState scripts found", __func__);  // FIXME-3 e.g. for setFrameAutoDesign...
+        logWarning(QString("Nested saveState scripts found \"%1\"").arg(comment), __func__);  // FIXME-3 e.g. for setFrameAutoDesign...
     else {
         logDebug("Starting to build saveStateScript: '" + comment + "'", __func__);
 
@@ -6587,18 +6586,18 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
 
 void VymModel::registerMapEditor(QWidget *e) { mapEditor = (MapEditor *)e; }
 
-void VymModel::setMapZoomFactor(const double &d)
+void VymModel::setViewZoomFactor(const double &d)
 {
     if (!mapEditor) {
         qWarning() << __func__ << "mapEditor == nullptr";
         return;
     }
 
-    zoomFactor = d;
+    viewZoomFactorInt = d;
     mapEditor->setZoomFactorTarget(d);
 }
 
-void VymModel::setMapRotation(const double &a)
+void VymModel::setViewRotation(const double &a)
 {
     if (!mapEditor) {
         qWarning() << __func__ << "mapEditor == nullptr";
@@ -6608,15 +6607,15 @@ void VymModel::setMapRotation(const double &a)
     if (a < 1)
         // Round to zero, otherwise selectionMode in MapEditor might be 
         // "Geometric" when it should be "Classic"
-        mapRotationInt = 0;
+        viewRotationInt = 0;
     else
-        mapRotationInt = a;
-    mapEditor->setRotationTarget(mapRotationInt);
+        viewRotationInt = a;
+    mapEditor->setRotationTarget(viewRotationInt);
 }
 
-void VymModel::setMapAnimDuration(const int &d) { animDuration = d; }
+void VymModel::setViewAnimDuration(const int &d) { animDuration = d; }
 
-void VymModel::setMapAnimCurve(const QEasingCurve &c) { animCurve = c; }
+void VymModel::setViewAnimCurve(const QEasingCurve &c) { animCurve = c; }
 
 bool VymModel::centerOnID(const QString &id)
 {
@@ -6635,14 +6634,30 @@ bool VymModel::centerOnID(const QString &id)
             c = ((MapItem*)ti)->getContainer();
             p_center = c->mapToScene(c->rect().center());
         }
-        if (zoomFactor > 0 ) {
-            mapEditor->setViewCenterTarget(p_center, zoomFactor,
-                                           mapRotationInt, animDuration,
+        if (viewZoomFactorInt > 0 ) {
+            mapEditor->setViewCenterTarget(p_center, viewZoomFactorInt,
+                                           viewRotationInt, animDuration,
                                            animCurve);
             return true;
         }
     }
     return false;
+}
+
+void VymModel::setViewCenterTarget(const QPointF &p)
+{
+    viewCenterTargetInt = p;
+    hasViewCenterTargetInt = true;
+}
+
+QPointF VymModel::viewCenterTarget()
+{
+    return viewCenterTargetInt;
+}
+
+bool VymModel::hasViewCenterTarget()
+{
+    return hasViewCenterTargetInt;
 }
 
 void VymModel::setContextPos(QPointF p)
@@ -7679,7 +7694,7 @@ void VymModel::appendSelectionToHistory() // FIXME-3 history unable to cope with
 
 void VymModel::emitShowSelection(bool scaled, bool rotated)
 {
-    //qDebug() << "VM::" <<  __func__ << "scaled=" << scaled << "rotated=" << rotated;
+    qDebug() << "VM::" <<  __func__ << "scaled=" << scaled << "rotated=" << rotated;
     if (!repositionBlocked)
         emit showSelection(scaled, rotated);
 }

@@ -4540,7 +4540,12 @@ bool Main::fileLoad(QString fn, const File::LoadMode &lmode,
             }
 
             editorChanged();
-            vm->emitShowSelection(false, false);
+            if (vm->hasViewCenterTarget())
+                // Maps since version 2.9.606 save center of view
+                vm->getMapEditor()->setViewCenterTarget(vm->viewCenterTarget());
+            else
+                vm->emitShowSelection(false, false);
+
             statusBar()->showMessage(tr("Loaded %1").arg(fn));
         }
     }
@@ -6422,7 +6427,7 @@ void Main::viewZoomReset()
 {
     MapEditor *me = currentMapEditor();
     if (me)
-        me->setViewCenterTarget();
+        me->setViewCenterSelection();
 }
 
 void Main::viewZoomIn()

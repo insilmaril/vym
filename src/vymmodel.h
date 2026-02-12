@@ -696,15 +696,21 @@ class VymModel : public TreeModel {
   public:
     void registerMapEditor(QWidget *);
 
-    void setMapZoomFactor(const double &);
-    void setMapRotation(const double &);
-    void setMapAnimDuration(const int &d);
-    void setMapAnimCurve(const QEasingCurve &c);
+    void setViewZoomFactor(const double &);
+    void setViewRotation(const double &);
+    void setViewAnimDuration(const int &d);
+    void setViewAnimCurve(const QEasingCurve &c);
     bool centerOnID(const QString &id);
+    void setViewCenterTarget(const QPointF &p); // Save view center during load
+    QPointF viewCenterTarget();
+    bool hasViewCenterTarget();
 
   private:
-    double zoomFactor;
-    double mapRotationInt;
+    double viewZoomFactorInt;
+    double viewRotationInt;
+    QPointF viewCenterTargetInt;
+    bool hasViewCenterTargetInt = false;
+
     int animDuration;
     QEasingCurve animCurve;
 
