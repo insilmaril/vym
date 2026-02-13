@@ -95,7 +95,6 @@ ImageContainer *ImageItem::createImageContainer()
 {
     imageContainer = new ImageContainer();
     imageContainer->setImageItem(this);
-    qDebug() << __func__ << "ic=" << this << "  calling ic->setImageItem() now.";
 
     if (parentBranch()) {
         imageContainer->linkTo(parentBranch()->getBranchContainer());
