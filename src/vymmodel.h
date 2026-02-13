@@ -333,6 +333,10 @@ class VymModel : public TreeModel {
     TreeItem *findUuid(const QUuid &i); // find MapObj by unique ID
     BranchItem* findBranchByAttribute(const QString &key, const QString &value);
 
+  public slots:  
+    void oembedDownloadFinished();
+
+  public:  
     void test();
 
     ////////////////////////////////////////////

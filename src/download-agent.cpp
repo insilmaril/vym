@@ -44,6 +44,8 @@ DownloadAgent::DownloadAgent(const QUrl &u)
 
     userAgent =
         QString("vym %1 ( %2)").arg(vymVersion).arg(vymPlatform).toUtf8();
+
+    itemIdInt = QUuid();
 }
 
 DownloadAgent::~DownloadAgent()
@@ -53,6 +55,16 @@ DownloadAgent::~DownloadAgent()
 }
 
 QString DownloadAgent::getDestination() { return tmpFilePath; }
+
+void DownloadAgent::setItemId(const QUuid &id)
+{
+    itemIdInt = id;
+}
+
+QUuid DownloadAgent::itemId()
+{
+    return itemIdInt;
+}
 
 bool DownloadAgent::isSuccess() { return success; }
 

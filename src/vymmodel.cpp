@@ -2121,8 +2121,56 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
     return nullptr;
 }
 
+void VymModel::oembedDownloadFinished()
+{
+    DownloadAgent *agent = static_cast<DownloadAgent *>(sender());
+    if (agent->isSuccess()) {
+        QString page;
+        if (loadStringFromDisk(agent->getDestination(), page)) {
+            QJsonDocument jsdoc;
+            jsdoc = QJsonDocument::fromJson(page.toUtf8());
+            QString fullReplyFormatted = QString(jsdoc.toJson(QJsonDocument::Indented));
+            vout << fullReplyFormatted << Qt::endl;;
+
+            QJsonObject pageObj = jsdoc.object();
+            QString title = pageObj["title"].toString();
+            qDebug() << "Title: " << title << agent->itemId();
+            TreeItem *ti = findUuid(agent->itemId());
+            if (ti)
+                setHeadingPlainText("YT: " + title, ti);
+        }
+    }
+}
+
 void VymModel::test()
 {
+    // Get oembed info
+    // https://oembed.com/
+    /*
+    QString script;
+    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")
+                  .arg(bi->getUuid().toString());
+    script += QString("b.loadImage(\"$TMPFILE\");");
+    */
+
+    QList <BranchItem*>  selbis = getSelectedBranches();
+    foreach(auto selbi, selbis) {
+        QString url = selbi->url();
+        if (url.isEmpty() || !url.contains("youtube"))
+            continue;
+
+        url.replace(":", "%3A");
+        url.replace("?", "%3F");
+        url = "https://www.youtube.com/oembed?url=" + url + "&format=json";
+
+        DownloadAgent *agent = new DownloadAgent(url);
+        agent->setItemId(selbi->getUuid());
+        connect(agent, SIGNAL(downloadFinished()), this,
+                SLOT(oembedDownloadFinished()));
+        QTimer::singleShot(0, agent, SLOT(execute()));
+    }
+    return;
+
     // Print item structure
     foreach (TreeItem *ti, getSelectedItems()) {
         if (ti->hasTypeBranch()) {
@@ -7280,7 +7328,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
 
     // FIXME-4 delete tmp file of image download after running script
     QString script;
-    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")
+    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")  // FIXME-2 Really use currentMap() here? Better save ID of map...  Actually id is saved in agent...
                   .arg(bi->getUuid().toString());
     script += QString("b.loadImage(\"$TMPFILE\");");
 

@@ -10,6 +10,7 @@
 #include <QTemporaryFile>
 #include <QTimer>
 #include <QUrl>
+#include <QUuid>
 
 #include <stdio.h>
 
@@ -30,6 +31,8 @@ class DownloadAgent : public QObject {
     DownloadAgent(const QUrl &u);
     ~DownloadAgent();
     QString getDestination();
+    void setItemId(const QUuid &id);
+    QUuid itemId();
     void setFinishedAction(VymModel *m, const QString &script);
     QString getFinishedScript();
     uint getFinishedScriptModelID();
@@ -57,4 +60,5 @@ class DownloadAgent : public QObject {
 
     QString finishedScript;
     uint finishedScriptModelID;
+    QUuid itemIdInt;
 };
