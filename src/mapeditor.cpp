@@ -1027,31 +1027,6 @@ TreeItem *MapEditor::findMapItem(
         const QList <TreeItem*> &excludedItems,
         bool findNearCenter)
 {
-    // Search XLinks
-    XLink *xlink;
-    for (int i = 0; i < model->xlinkCount(); i++) {
-        xlink = model->getXLinkNum(i);
-        if (xlink) {
-            XLinkObj *xlo = xlink->getXLinkObj();
-            if (xlo) {
-                XLinkObj::SelectionType xlinkSelection = xlo->couldSelect(p);
-                if (xlinkSelection == XLinkObj::Path) {
-                    // Found path of XLink, now return the nearest XLinkItem of p
-                    qreal d0 = Geometry::distance(p, xlo->getBeginPos());
-                    qreal d1 = Geometry::distance(p, xlo->getEndPos());
-                    if (d0 < d1)
-                        return xlink->beginXLinkItem();
-                    else
-                        return xlink->endXLinkItem();
-                }
-                if (xlinkSelection == XLinkObj::C0)
-                    return xlink->beginXLinkItem();
-                if (xlinkSelection == XLinkObj::C1)
-                    return xlink->endXLinkItem();
-            }
-        }
-    }
-
     // Search branches (and their childs, e.g. images
     // Start with mapcenter, no images allowed at rootItem
     BranchItem *nearestFloatingCenter = nullptr;
@@ -1087,6 +1062,31 @@ TreeItem *MapEditor::findMapItem(
 
     if (nearestFloatingCenter && d < 80 && !excludedItems.contains(nearestFloatingCenter))
         return nearestFloatingCenter;
+
+    // Search XLinks
+    XLink *xlink;
+    for (int i = 0; i < model->xlinkCount(); i++) {
+        xlink = model->getXLinkNum(i);
+        if (xlink) {
+            XLinkObj *xlo = xlink->getXLinkObj();
+            if (xlo) {
+                XLinkObj::SelectionType xlinkSelection = xlo->couldSelect(p);
+                if (xlinkSelection == XLinkObj::Path) {
+                    // Found path of XLink, now return the nearest XLinkItem of p
+                    qreal d0 = Geometry::distance(p, xlo->getBeginPos());
+                    qreal d1 = Geometry::distance(p, xlo->getEndPos());
+                    if (d0 < d1)
+                        return xlink->beginXLinkItem();
+                    else
+                        return xlink->endXLinkItem();
+                }
+                if (xlinkSelection == XLinkObj::C0)
+                    return xlink->beginXLinkItem();
+                if (xlinkSelection == XLinkObj::C1)
+                    return xlink->endXLinkItem();
+            }
+        }
+    }
 
     return nullptr;
 }
