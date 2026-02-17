@@ -25,10 +25,9 @@ class TextEditor : public QMainWindow {
     void setFontHint(const QString &);
     QString getFontHint();
     QString getFontHintDefault();
-    void setFilename(const QString &);
-    QString getFilename();
-    void setFilenameHint(const QString &);
-    QString getFilenameHint();
+    void setFileName(const QString &);
+    QString fileName();
+    void setFileNameHint(const QString &);
     QString getText();
     VymText getVymText();
 
@@ -67,8 +66,6 @@ class TextEditor : public QMainWindow {
   private slots:
     void textLoad();
     void textExportAs();
-    void textExport();
-    void textExportText();
     void textPrint();
     void textEditUndo();
     void toggleFonthint();
@@ -114,8 +111,8 @@ class TextEditor : public QMainWindow {
     MyTextEdit *editor;
     QPoint lastPos;     // save last position of window
     QString editorId;   // Name of editor, e.g. NoteEditor or HeadingEditor
-    QString filename;
-    QString filenameHint;
+    QString fileNameInt;
+    QString fileNameHintInt;    // E.g. heading of branch for notes
 
     EditorState state;
     bool blockChangedSignal;

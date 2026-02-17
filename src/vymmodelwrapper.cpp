@@ -362,6 +362,13 @@ bool VymModelWrapper::hasBackgroundImage()
     return r;
 }
 
+bool VymModelWrapper::isBusy()
+{
+    bool r = modelInt->isBusy();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 bool VymModelWrapper::loadBackgroundImage(const QString &imagePath)
 {
     bool r =modelInt->loadBackgroundImage(imagePath);
@@ -481,26 +488,14 @@ void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
     modelInt->deleteXLink(xlw->xlink());
 }
 
-bool VymModelWrapper::saveSelection(const QString &filename)
+bool VymModelWrapper::saveSelection(const QString &fileName)
 {
-    QString filename_org = modelInt->getFilePath(); // Restore filename later
-    if (!modelInt->renameMap(filename)) {
-        QString s = tr("Saving the selection in map failed:\nCouldn't rename map to %1").arg(filename);
-        QMessageBox::critical(0,
-            tr("Critical Error"), s);
-        mainWindow->abortScript(QJSValue::GenericError, s);
-        return false;
-    }
+    QString fileName_org = modelInt->getFilePath(); // Restore fileName later
+    modelInt->setFilePath(fileName);
 
     bool r = modelInt->saveMap(File::PartOfMap);
 
-    if (!modelInt->renameMap(filename_org)) {
-        QString s = tr("Saving the selection in map failed:\nCouldn't rename map to %1").arg(filename);
-        QMessageBox::critical(0,
-            tr("Critical Error"), s);
-        mainWindow->abortScript(QJSValue::GenericError, s);
-        return false;
-    }
+    modelInt->setFilePath(fileName_org);
 
     return r;
 }
@@ -603,13 +598,13 @@ void VymModelWrapper::setAnimCurve(int n)
     else {
         QEasingCurve c;
         c.setType((QEasingCurve::Type)n);
-        modelInt->setMapAnimCurve(c);
+        modelInt->setViewAnimCurve(c);
     }
 }
 
 void VymModelWrapper::setAnimDuration(int n)
 {
-    modelInt->setMapAnimDuration(n);
+    modelInt->setViewAnimDuration(n);
 }
 
 void VymModelWrapper::setAuthor(const QString &s) { modelInt->setMapAuthor(s); }
@@ -659,11 +654,15 @@ void VymModelWrapper::setLinkStyle(const QString &style, int depth)
                 QString("Could not set linkstyle to %1 with d=%2").arg(style, depth));
 }
 
-void VymModelWrapper::setRotationView(float a) { modelInt->setMapRotation(a); }
+void VymModelWrapper::setRotationView(float a) { modelInt->setViewRotation(a); }
 
 void VymModelWrapper::setTitle(const QString &s) { modelInt->setMapTitle(s); }
 
-void VymModelWrapper::setZoom(float z) { modelInt->setMapZoomFactor(z); }
+void VymModelWrapper::setSaveAsBackgroundProcess(bool b){
+    modelInt->setSaveAsBackgroundProcess(b);
+}
+
+void VymModelWrapper::setZoom(float z) { modelInt->setViewZoomFactor(z); }
 
 void VymModelWrapper::setSelectionBrushColor(const QString &color)
 {

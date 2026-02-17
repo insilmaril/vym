@@ -19,7 +19,7 @@ class ZipAgent : public QProcess {
     static bool checkUnzipTool();
 
     void setBackgroundProcess(bool);
-    void startZip();
+    bool startZip();
     void startUnzip();
     QDir zipDir();
     QString zipName();

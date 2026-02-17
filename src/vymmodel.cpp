@@ -224,8 +224,8 @@ void VymModel::init()
     hideMode = TreeItem::HideNone;
 
     // Animation in MapEditor
-    zoomFactor = 1;
-    mapRotationInt = 0;
+    viewZoomFactorInt = 1;
+    viewRotationInt = 0;
     animDuration = 2000;
     animCurve = QEasingCurve::OutQuint;
 
@@ -275,6 +275,21 @@ void VymModel::updateActions()
 {
     // Tell mainwindow to update states of actions
     mainWindow->updateActions();
+}
+
+void  VymModel::closeAfterSaving() {
+    closeAfterSavingInt = true;
+}
+
+bool  VymModel::readyToClose() {
+    // Check for background processes before closing map in mainWindow
+    // (Currently only zipAgent for saving)
+    return zipAgent ? false : true;
+}
+
+void VymModel::setSaveAsBackgroundProcess(bool b)
+{
+    saveAsBackgroundProcessInt = b;
 }
 
 bool VymModel::setData(const QModelIndex &, const QVariant &value, int role)
@@ -329,10 +344,15 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
         mapAttr += xml.attribute("branchCount", QString().number(branchCount()));
         if (mapEditor) {
-        mapAttr += xml.attribute("mapZoomFactor",
-                     QString().setNum(mapEditor->zoomFactorTarget()));
-        mapAttr += xml.attribute("mapRotation",
-                     QString().setNum(mapEditor->rotationTarget()));
+            mapAttr += xml.attribute("viewZoomFactor",
+                         QString().setNum(mapEditor->zoomFactorTarget()));
+            mapAttr += xml.attribute("viewRotation",
+                         QString().setNum(mapEditor->rotationTarget()));
+            QPointF viewport_center = mapEditor->mapToScene(mapEditor->viewport()->geometry().center());
+            mapAttr += xml.attribute("viewCenterX",
+                         QString().setNum(viewport_center.x()));
+            mapAttr += xml.attribute("viewCenterY",
+                         QString().setNum(viewport_center.y()));
         }
     }
     header += xml.beginElement("vymmap", mapAttr);
@@ -472,10 +492,10 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
 {
     bool noError = true;
 
-    // Get updated zoomFactor, before applying one read from file in the end
+    // Get updated viewZoomFactor, before applying one read from file in the end
     if (mapEditor) {
-        zoomFactor = mapEditor->zoomFactorTarget();
-        mapRotationInt = mapEditor->rotationTarget();
+        viewZoomFactorInt = mapEditor->zoomFactorTarget();
+        viewRotationInt = mapEditor->rotationTarget();
     }
 
     BaseReader *reader;
@@ -726,13 +746,14 @@ bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
         emitUpdateQueries();
 
     if (mapEditor) {
-        mapEditor->setZoomFactorTarget(zoomFactor);
-        mapEditor->setRotationTarget(mapRotationInt);
+        mapEditor->setZoomFactorTarget(viewZoomFactorInt);
+        mapEditor->setRotationTarget(viewRotationInt);
     }
 
     qApp->processEvents(); // Update view (scene()->update() is not enough)
 
     isLoadingInt = false;
+
     return noError;
 }
 
@@ -802,7 +823,7 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
                 if (!f.rename(backupFileName)) {
                     QMessageBox::warning(
                         0, tr("Save Error"),
-                        tr("%1\ncould not be renamed before saving")
+                        tr("%1\ncould not be renamed as backup file before saving")
                             .arg(destPath));
                 }
             }
@@ -891,11 +912,18 @@ bool VymModel::saveMap(const File::SaveMode &savemode)
             QString log = QString("Starting zipAgent to compress \"%1\" in zipDirInt = %2")
                 .arg(mapFileName, zipDirInt.path());
             logInfo(log, __func__);
-            zipAgent->startZip();
-        } else
+            zipAgent->setBackgroundProcess(saveAsBackgroundProcessInt);
+            bool r = zipAgent->startZip();
+            logInfo("Started zip to save map " + destPath + " Result: " + toS(r), __func__);  // FIXME-3 debugging
+            if (!saveAsBackgroundProcessInt && !r) {
+                qDebug() << "ok3  Result: " << r;
+                logInfo("Problems starting zip as foreground process", __func__);
+            }
+        } else {
             mainWindow->statusMessage(tr("Saved %1").arg(saveFilePath));
+            logInfo("Finishing saving unzipped map " + destPath, __func__);  // FIXME-3 debugging
+        }
 
-        logInfo("Finishing saving map " + destPath, __func__);  // FIXME-3 debugging
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
     }
@@ -937,6 +965,8 @@ void VymModel::zipFinished()
 
         zipAgent->deleteLater();
         zipAgent = nullptr;
+
+        // qDebug() << "VM::" << __func__ << path << name;
     } else
         logWarning("zipAgent == nullptr", __func__);
 
@@ -944,10 +974,15 @@ void VymModel::zipFinished()
 
     mainWindow->statusMessage(tr("Saved %1").arg(filePath));
 
+    if (closeAfterSavingInt) {
+        // Schedule for removal of tab in MainWindow
+        QTimer::singleShot(100, mainWindow, SLOT(closeSavedModels()));
+        return;
+    }
+
     fileChangedTime = QFileInfo(destPath).lastModified();
 
     updateActions();
-
 }
 
 ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
@@ -1288,12 +1323,13 @@ bool VymModel::tryVymLock()
     return true;
 }
 
-bool VymModel::renameMap(const QString &newPath)
-// map is renamed before fileSaveAs() or from VymModelWrapper::saveSelection()
-// Usually renamed back to original name again. Purpose here is to adapt the lockfile 
-// new name of map.
-// Internally the paths in ImageItems pointing to zipDirInt do not need to be adapted.
+bool VymModel::changeLock(const QString &newPath)
 {
+    // New lock is required in fileSaveAs(CompleteMap)
+
+    if (zipAgent)
+        qWarning() << __func__ << " has still running zipAgent";
+
     QString oldPath = filePath;
     if (vymLock.getState() == VymLock::LockedByMyself || vymLock.getState() == VymLock::Undefined) {
         // vymModel owns the lockfile, try to create new lock
@@ -1309,12 +1345,12 @@ bool VymModel::renameMap(const QString &newPath)
         if (!vymLock.releaseLock())
             logWarning(QString("Failed to release lock for %1").arg(oldPath), __func__);
         vymLock = newLock;
-        setFilePath(newPath);
+
         if (readonly)
             setReadOnly(false);
         return true;
     }
-    logWarning("Failed to rename map.", __func__);
+    logWarning("Failed to change lock file.", __func__);
     return false;
 }
 
@@ -1905,7 +1941,7 @@ QString VymModel::saveStateBranch(
 void VymModel::saveStateBeginScript(const QString &comment)
 {
     if (buildingUndoScript)
-        logWarning("Nested saveState scripts found", __func__);  // FIXME-3 e.g. for setFrameAutoDesign...
+        logWarning(QString("Nested saveState scripts found \"%1\"").arg(comment), __func__);  // FIXME-3 e.g. for setFrameAutoDesign...
     else {
         logDebug("Starting to build saveStateScript: '" + comment + "'", __func__);
 
@@ -2085,6 +2121,27 @@ BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &v
     return nullptr;
 }
 
+void VymModel::oembedDownloadFinished()	// FIXME-2 move to downloads-finished methods
+{
+    DownloadAgent *agent = static_cast<DownloadAgent *>(sender());
+    if (agent->isSuccess()) {
+        QString page;
+        if (loadStringFromDisk(agent->getDestination(), page)) {
+            QJsonDocument jsdoc;
+            jsdoc = QJsonDocument::fromJson(page.toUtf8());
+            QString fullReplyFormatted = QString(jsdoc.toJson(QJsonDocument::Indented));
+            vout << fullReplyFormatted << Qt::endl;;
+
+            QJsonObject pageObj = jsdoc.object();
+            QString title = pageObj["title"].toString();
+            qDebug() << "Title: " << title << agent->itemId();
+            TreeItem *ti = findUuid(agent->itemId());
+            if (ti)
+                setHeadingPlainText("YT: " + title, ti);
+        }
+    }
+}
+
 void VymModel::updateDataClones(BranchItem *src) // FIXME-3 Missing mapdesign flags to decide what get's cloned
 {
     if (!src) return;
@@ -2135,6 +2192,10 @@ void VymModel::test()
 
     createXLink(newXLink);
 
+    QPen pen = newXLink->getPen();
+    pen.setStyle(Qt::DotLine);
+    newXLink->setPen(pen);
+
     newXLink->setStyleBegin("None");
     newXLink->setStyleEnd("HeadFull");
     newXLink->setRelation("system-isCloneOf");
@@ -2145,6 +2206,34 @@ void VymModel::test()
     updateDataClones(selbi);
 
     reposition();
+
+    return;
+
+    // Get oembed info
+    // https://oembed.com/
+    /*
+    QString script;
+    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")
+                  .arg(bi->getUuid().toString());
+    script += QString("b.loadImage(\"$TMPFILE\");");
+    */
+
+    QList <BranchItem*>  selbis = getSelectedBranches();
+    foreach(auto selbi, selbis) {
+        QString url = selbi->url();
+        if (url.isEmpty() || !url.contains("youtube"))
+            continue;
+
+        url.replace(":", "%3A");
+        url.replace("?", "%3F");
+        url = "https://www.youtube.com/oembed?url=" + url + "&format=json";
+
+        DownloadAgent *agent = new DownloadAgent(url);
+        agent->setItemId(selbi->getUuid());
+        connect(agent, SIGNAL(downloadFinished()), this,
+                SLOT(oembedDownloadFinished()));
+        QTimer::singleShot(0, agent, SLOT(execute()));
+    }
     return;
 
     // Print item structure
@@ -2729,50 +2818,50 @@ void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi)
             setAttribute(bi, "Jira.query", query_new);
 }
 
-void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &b, BranchItem *bi)
+void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &newAutoDesign, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
-
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        QString uif = toS(useInnerFrame);
-        QString b_undo = toS(!b);
-        QString b_redo = toS(b);
-        QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_undo);
-        QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_redo);
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->frameAutoDesign(useInnerFrame) != newAutoDesign || newAutoDesign == true) {
+            QString uif = toS(useInnerFrame);
+            QString b_undo = toS(!newAutoDesign);
+            QString b_redo = toS(newAutoDesign);
+            QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_undo);
+            QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_redo);
 
-        QString comment = QString("Set automatic design of frame to '%1'").arg(toS(b));
+            QString comment = QString("Set automatic design of frame to '%1'").arg(toS(newAutoDesign));
 
-        logAction(rc, comment, __func__);
+            logAction(rc, comment, __func__);
 
-        saveStateBeginScript(comment);  // setFrameAD, calls setFrame* functions
+            saveStateBeginScript(comment);  // setFrameAD, calls setFrame* functions
 
-        bc = selbi->getBranchContainer();
-        bc->setFrameAutoDesign(useInnerFrame, b);
-        if (b) {
-            setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
-            setFramePenColor(useInnerFrame, mapDesignInt->framePenColor(useInnerFrame, selbi->depth()), selbi);
-            setFramePenWidth(useInnerFrame, mapDesignInt->framePenWidth(useInnerFrame, selbi->depth()), selbi);
-            setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
-	}
+            if (newAutoDesign) {
+                setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
+                setFramePenColor(useInnerFrame, mapDesignInt->framePenColor(useInnerFrame, selbi->depth()), selbi);
+                setFramePenWidth(useInnerFrame, mapDesignInt->framePenWidth(useInnerFrame, selbi->depth()), selbi);
+                setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
+            }
+            bc->setFrameAutoDesign(useInnerFrame, newAutoDesign);
 
-        emitDataChanged(selbi);
-        branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
+            branchPropertyEditor->updateControls();
 
-        saveStateBranch(selbi, uc, rc, comment);
-        saveStateEndScript();
+            saveStateBranch(selbi, uc, rc, comment);
+            saveStateEndScript();
+        }
     }
 }
 
 void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &t, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
-    BranchContainer *bc;
     foreach (BranchItem *selbi, selbis) {
-        bc = selbi->getBranchContainer();
+        BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) == t)
-            break;
+            continue;
+
 
         QString uif = toS(useInnerFrame);
 
@@ -2876,6 +2965,7 @@ void VymModel::setFrameBrushColor(
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
         if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+
             QString uif = toS(useInnerFrame);
             QString colorNameOld = bc->framePenColor(useInnerFrame).name();
             QString uc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorNameOld);
@@ -2904,7 +2994,7 @@ void VymModel::setFramePadding(
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+        if (i != bc->framePadding(useInnerFrame)) {
             QString uif = toS(useInnerFrame);
             QString uc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(bc->framePadding(useInnerFrame));
             QString rc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(i);
@@ -2929,7 +3019,7 @@ void VymModel::setFramePenWidth(
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
-        if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+        if (i != bc->framePenWidth(useInnerFrame)) {
             QString uif = toS(useInnerFrame);
             QString uc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(bc->framePenWidth(useInnerFrame));
             QString rc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
@@ -3097,6 +3187,7 @@ void VymModel::rotateSubtree(qreal a)
 
     foreach (BranchItem *selbi, selbis) {
         BranchContainer *bc = selbi->getBranchContainer();
+        setRotationAutoDesign(false, selbi);
         qreal a_old = bc->rotationSubtree();
         qreal a_new = a_old + a;
         QString uc = QString("setRotationSubtree(\"%1\");").arg(toS(a_old, 1));
@@ -4407,10 +4498,10 @@ BranchItem *VymModel::addMapCenter(bool interactive)
 
     BranchItem *newbi = addMapCenterAtPos(contextPos, interactive);
 
-    if (interactive && mapEditor)
+    if (interactive && mapEditor) {
         mapEditor->editHeading(newbi);
-
-    emitShowSelection();
+        emitShowSelection();
+    }
 
     emitUpdateLayout();
     return newbi;
@@ -6645,18 +6736,18 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
 
 void VymModel::registerMapEditor(QWidget *e) { mapEditor = (MapEditor *)e; }
 
-void VymModel::setMapZoomFactor(const double &d)
+void VymModel::setViewZoomFactor(const double &d)
 {
     if (!mapEditor) {
         qWarning() << __func__ << "mapEditor == nullptr";
         return;
     }
 
-    zoomFactor = d;
+    viewZoomFactorInt = d;
     mapEditor->setZoomFactorTarget(d);
 }
 
-void VymModel::setMapRotation(const double &a)
+void VymModel::setViewRotation(const double &a)
 {
     if (!mapEditor) {
         qWarning() << __func__ << "mapEditor == nullptr";
@@ -6666,15 +6757,15 @@ void VymModel::setMapRotation(const double &a)
     if (a < 1)
         // Round to zero, otherwise selectionMode in MapEditor might be 
         // "Geometric" when it should be "Classic"
-        mapRotationInt = 0;
+        viewRotationInt = 0;
     else
-        mapRotationInt = a;
-    mapEditor->setRotationTarget(mapRotationInt);
+        viewRotationInt = a;
+    mapEditor->setRotationTarget(viewRotationInt);
 }
 
-void VymModel::setMapAnimDuration(const int &d) { animDuration = d; }
+void VymModel::setViewAnimDuration(const int &d) { animDuration = d; }
 
-void VymModel::setMapAnimCurve(const QEasingCurve &c) { animCurve = c; }
+void VymModel::setViewAnimCurve(const QEasingCurve &c) { animCurve = c; }
 
 bool VymModel::centerOnID(const QString &id)
 {
@@ -6693,14 +6784,30 @@ bool VymModel::centerOnID(const QString &id)
             c = ((MapItem*)ti)->getContainer();
             p_center = c->mapToScene(c->rect().center());
         }
-        if (zoomFactor > 0 ) {
-            mapEditor->setViewCenterTarget(p_center, zoomFactor,
-                                           mapRotationInt, animDuration,
+        if (viewZoomFactorInt > 0 ) {
+            mapEditor->setViewCenterTarget(p_center, viewZoomFactorInt,
+                                           viewRotationInt, animDuration,
                                            animCurve);
             return true;
         }
     }
     return false;
+}
+
+void VymModel::setViewCenterTarget(const QPointF &p)
+{
+    viewCenterTargetInt = p;
+    hasViewCenterTargetInt = true;
+}
+
+QPointF VymModel::viewCenterTarget()
+{
+    return viewCenterTargetInt;
+}
+
+bool VymModel::hasViewCenterTarget()
+{
+    return hasViewCenterTargetInt;
 }
 
 void VymModel::setContextPos(QPointF p)
@@ -7332,7 +7439,7 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
 
     // FIXME-4 delete tmp file of image download after running script
     QString script;
-    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")
+    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")  // FIXME-2 Really use currentMap() here? Better save ID of map...  Actually id is saved in agent...
                   .arg(bi->getUuid().toString());
     script += QString("b.loadImage(\"$TMPFILE\");");
 

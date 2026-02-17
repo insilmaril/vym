@@ -21,7 +21,7 @@ HeadingContainer::~HeadingContainer()
 
 void HeadingContainer::init()
 {
-    containerType = Container::Heading;
+    setContainerType(Container::Heading);
 
     headingInt.setText(" ");
     headingColorInt = QColor(Qt::black);
@@ -47,7 +47,7 @@ void HeadingContainer::setHeading(const VymText &vt)
 {
     headingInt = vt;
 
-    QGraphicsTextItem *t;   // FIXME-2 Consider using QGraphicsSimpleTextitem for plaintext
+    QGraphicsTextItem *t;   // FIXME-3 Consider using QGraphicsSimpleTextitem for plaintext (#184)
 
     QString s = vt.getText();
 
@@ -209,7 +209,7 @@ qreal HeadingContainer::getScrollOpacity() // FIXME-3 needed?
 
 void HeadingContainer::reposition()
 {
-    // qdbg() << ind() << "HC::reposition " + info();
+    // My rectangle is defined above in setText()
     return;
 }
 

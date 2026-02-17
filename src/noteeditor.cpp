@@ -27,7 +27,7 @@ VymNote NoteEditor::getNote()
     else
         note.setPlainText(getText());
     note.setFontHint(getFontHint());
-    note.setFilenameHint(getFilenameHint());
+    note.setFileName(fileName());
     return note;
 }
 
@@ -39,5 +39,5 @@ void NoteEditor::setNote(const VymNote &note)
         setPlainText(note.getText());
         setFontHint(note.getFontHint());
     }
-    setFilenameHint(note.getFilenameHint());
+    setFileName(note.fileName());
 }

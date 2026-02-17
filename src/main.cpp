@@ -721,7 +721,7 @@ int main(int argc, char *argv[])
     // For benchmarking or if test script is done
     // we may want to quit instead of entering event loop
     if (options.isActive("quit") || mainWindow->exitAfterScript())
-        mainWindow->fileExitVYM();
+        mainWindow->fileExitVym();
     else
         app.exec();
 

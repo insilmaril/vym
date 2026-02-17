@@ -137,7 +137,7 @@ QString ScriptEditor::getScriptFile() { return codeEditor->toPlainText(); }
 
 void ScriptEditor::saveSlide()
 {
-    VymModel *vm = mainWindow->getModel(vymModelID);
+    VymModel *vm = mainWindow->modelWithId(vymModelID);
     if (!vm) {
         QMessageBox::warning(
             0, tr("Warning"),

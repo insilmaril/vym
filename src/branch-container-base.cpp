@@ -46,7 +46,7 @@ int BranchContainerBase::branchCount()
     if (!branchesContainer)
         return 0;
     else
-        return branchesContainer->childItems().count();
+        return branchesContainer->childContainers().count();
 }
 
 void BranchContainerBase::addToBranchesContainer(BranchContainer *bc) {}
@@ -61,7 +61,7 @@ int BranchContainerBase::imageCount()
     if (!imagesContainer)
         return 0;
     else
-        return imagesContainer->childItems().count();
+        return imagesContainer->childContainers().count();
 }
 
 void BranchContainerBase::createImagesContainer() {}
@@ -79,7 +79,7 @@ QList <BranchContainer*> BranchContainerBase::childBranches()
 
     if (!branchesContainer) return list;
 
-    foreach (QGraphicsItem *g_item, branchesContainer->childItems())
+    foreach (QGraphicsItem *g_item, branchesContainer->childContainers())
         list << (BranchContainer*)g_item;
 
     return list;
@@ -91,7 +91,7 @@ QList <ImageContainer*> BranchContainerBase::childImages()
 
     if (!imagesContainer) return list;
 
-    foreach (QGraphicsItem *g_item, imagesContainer->childItems())
+    foreach (QGraphicsItem *g_item, imagesContainer->childContainers())
         list << (ImageContainer*)g_item;
 
     return list;

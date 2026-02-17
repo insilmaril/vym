@@ -10,6 +10,8 @@ function toggle_frame_branch(color, msg)
     branches = map.selectedBranches();
 
     for (b of branches) {
+        // Make sure changes are saved
+        b.setFrameAutoDesign(true, false);
         if (b.getFrameType(true) == "NoFrame" ) {
             b.setFrameType (true, "RoundedRectangle");
             b.setFrameBrushColor(true, color);
@@ -27,6 +29,8 @@ function toggle_frame_subtree(color, msg)
     branches = map.selectedBranches();
 
     for (b of branches) {
+        // Make sure changes are saved
+        b.setFrameAutoDesign(false, false);
         if (b.getFrameType(false) == "NoFrame" ) {
             b.setFrameType (false, "RoundedRectangle");
             b.setFrameBrushColor(false, color);

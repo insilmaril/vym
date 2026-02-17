@@ -132,7 +132,7 @@ void TextEditor::init()
 
     restoreState(settings.value(n + "state", 0).toByteArray());
 
-    filenameHint = "";
+    fileNameInt = "";
     fixedFontInt = fixedFont;
     varFontInt = varFont;
     QString s =
@@ -222,28 +222,17 @@ QString TextEditor::getFontHintDefault()
         return "var";
 }
 
-void TextEditor::setFilename(const QString &fn)
+void TextEditor::setFileName(const QString &fn)
 {
-    if (state == filledEditor) {
-        if (fn.isEmpty()) {
-            filename = "";
-            mainWindow->statusMessage(
-                tr("No filename available for this note.", "Statusbar message"));
-        }
-        else {
-            filename = fn;
-            mainWindow->statusMessage(
-                tr(QString("Current filename is %1").arg(filename).toUtf8(),
-                   "Statusbar message"));
-        }
-    }
+    fileNameInt = fn;
 }
 
-QString TextEditor::getFilename() { return filename; }
+QString TextEditor::fileName() { return fileNameInt; }
 
-void TextEditor::setFilenameHint(const QString &fnh) { filenameHint = fnh; }
-
-QString TextEditor::getFilenameHint() { return filenameHint; }
+void TextEditor::setFileNameHint(const QString &fnh)
+{
+    fileNameHintInt = fnh;
+}
 
 QString TextEditor::getText()
 {
@@ -340,20 +329,12 @@ void TextEditor::setupFileActions()
     a = new QAction(QPixmap(QString(":/document-export-%1").arg(iconTheme)), tr("&Export..."), this);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     switchboard.addAction(a, "textSave", Qt::CTRL | Qt::Key_S, shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(textExport()));
+    connect(a, SIGNAL(triggered()), this, SLOT(textExportAs()));
     tb->addAction(a);
     fileMenu->addAction(a);
     addAction(a);
     filledEditorActions << a;
     actionFileExport = a;
-
-    a = new QAction(tr("Export &As...(ASCII)"), this);
-    switchboard.addAction(a, "textExportAsASCII", shortcutScope, tag);
-    connect(a, SIGNAL(triggered()), this, SLOT(textExportText()));
-    fileMenu->addAction(a);
-    addAction(a);
-    filledEditorActions << a;
-    actionFileExportText = a;
 
     fileMenu->addSeparator();
     a = new QAction(QPixmap(QString(":/document-print-%1.svg").arg(iconTheme)), tr("&Print..."), this);
@@ -841,6 +822,8 @@ void TextEditor::clear()
     editor->clear();
     setState(emptyEditor);
 
+    fileNameInt.clear();
+
     blockChangedSignal = blockChangedOrg;
 }
 
@@ -857,11 +840,25 @@ void TextEditor::deleteAll()
 
 void TextEditor::textExportAs()
 {
-    QTextCharFormat f = editor->currentCharFormat();
+    QString text, postfix;
+    if (actionFormatRichText->isChecked()) {
+        text = editor->toHtml();
+        postfix = ".html";
+    } else {
+        text = editor->toPlainText();
+        postfix = ".txt";
+    }
+
+    QString fn;
+    if (fileNameInt.isEmpty())
+        fn = fileNameHintInt + postfix;
+    else
+        fn = fileNameInt;
 
     QString caption = tr("Export Note to single file");
-    QString fn = QFileDialog::getSaveFileName(
-        this, caption, QString(), "VYM Note (HTML) (*.html);;All files (*)",
+
+    fn = QFileDialog::getSaveFileName(
+        this, caption, fn, "VYM Note (HTML) (*.html);VYM Note (Text) (*.txt);All files (*)",
         0, QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty()) {
@@ -876,80 +873,21 @@ void TextEditor::textExportAs()
             mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
             mb.exec();
             if (mb.clickedButton() != overwriteButton) return;
+        }
 
-            // save
-            filename = fn;
-            textExport();
+        fileNameInt = fn;
+
+        QFile f(fileNameInt);
+        if (!f.open(QIODevice::WriteOnly)) {
+            mainWindow->statusMessage(QString("Could not write to %1").arg(fileNameInt));
             return;
         }
-        else {
-            filename = fn;
-            textExport();
-            return;
-        }
-    }
-    mainWindow->statusMessage(
-        tr("Couldn't export note ", "dialog 'save note as'") + fn);
-}
 
-void TextEditor::textExport()
-{
-    if (filename.isEmpty()) {
-        textExportAs();
-        return;
-    }
+        QTextStream t(&f);
+        t << text;
+        f.close();
 
-    QString text;
-    if (actionFormatRichText->isChecked())
-        text = editor->toHtml();
-    else
-        text = editor->toPlainText();
-
-    QFile f(filename);
-    if (!f.open(QIODevice::WriteOnly)) {
-        mainWindow->statusMessage(QString("Could not write to %1").arg(filename));
-        return;
-    }
-
-    QTextStream t(&f);
-    t << text;
-    f.close();
-
-    editor->document()->setModified(false);
-
-    mainWindow->statusMessage(QString("Note exported as %1").arg(filename));
-}
-
-void TextEditor::textExportText()
-{
-    QString fn, s;
-    if (!filenameHint.isEmpty()) {
-        if (!filenameHint.contains(".txt"))
-            s = filenameHint + ".txt";
-        else
-            s = filenameHint;
-    }
-    else
-        s = QString();
-    QString caption = tr("Export Note to single file (ASCII)");
-    fn = QFileDialog::getSaveFileName(
-        this, caption, s, "VYM Note (ASCII) (*.txt);;All files (*)");
-
-    if (!fn.isEmpty()) {
-        QFile file(fn);
-
-        // Already tested in QFileDialog, if we may overwrite in case file exists already
-
-        if (!file.open(QIODevice::WriteOnly))
-            mainWindow->statusMessage(
-                QString("Could not write to %1").arg(filename));
-        else {
-            QTextStream t(&file);
-            t << getVymText().getTextASCII();
-            file.close();
-
-            mainWindow->statusMessage(QString("Note exported as %1").arg(fn));
-        }
+        mainWindow->statusMessage(QString("Note exported as %1").arg(fileNameInt));
     }
 }
 

@@ -423,10 +423,10 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             xml.name() == QLatin1String("note"))
             readHeadingOrVymNote();
         else if (xml.name() == QLatin1String("branch")) {
-            if (lastBranch && lastBranch->depth() < 3) {
+            if (lastBranch && branchesCounter % 100 == 0) {     // Update and process events once in a while
                 // Some graphical repainting during loading of map
                 lastBranch->updateVisuals();
-                model->select(lastBranch);
+                //model->select(lastBranch);
                 model->reposition(true);
             }
 
@@ -762,72 +762,77 @@ void VymReader::readImage()
     Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("floatimage"));
 
     lastImage = model->createImage(lastBranch);
-    lastMI = lastImage;
 
+    QString orgName = attributeToString("originalName");
     QString s;
 
     s = attributeToString("href");
     if (!s.isEmpty()) {
         // Load Image
         if (!lastImage->load(parseHREF(s))) {
-            QMessageBox::warning(0, "Warning: ",
-                                 "Couldn't load image\n" +
-                                     parseHREF(s));
+            QString err = "Couldn't load image \"" + parseHREF(s) + "\" " +
+                          "originalName=\"" + orgName + "\" " +
+                          "to branch \"" + lastBranch->headingText() + "\"";
+            QMessageBox::critical(0, "Critical: ", err);
+            model->logInfo(err, "VymReader::readImage()");
             lastImage = nullptr;
-            return;
         }
     }
 
-    // Scale image
-    // scaleX and scaleY are no longer used since 2.7.509 and replaced by
-    // scaleFactor
-    float x = 1;
-    float y = 1;
-    bool okx, oky;
-    s = attributeToString("scaleX");
-    if (!s.isEmpty()) {
-        x = s.toFloat(&okx);
-        if (!okx) {
-            xml.raiseError("Couldn't read scaleX of image");
-            return;
+    if (lastImage) {
+        lastMI = lastImage;
+
+        if (!orgName.isEmpty())
+            lastImage->setOriginalFilename(orgName);
+
+        // Scale image
+        // scaleX and scaleY are no longer used since 2.7.509 and replaced by
+        // scaleFactor
+        float x = 1;
+        float y = 1;
+        bool okx, oky;
+        s = attributeToString("scaleX");
+        if (!s.isEmpty()) {
+            x = s.toFloat(&okx);
+            if (!okx) {
+                xml.raiseError("Couldn't read scaleX of image");
+                return;
+            }
         }
-    }
 
-    s = attributeToString("scaleY");
-    if (!s.isEmpty()) {
-        y = s.toFloat(&oky);
-        if (!oky) {
-            xml.raiseError("Couldn't read scaleY of image");
-            return;
+        s = attributeToString("scaleY");
+        if (!s.isEmpty()) {
+            y = s.toFloat(&oky);
+            if (!oky) {
+                xml.raiseError("Couldn't read scaleY of image");
+                return;
+            }
         }
-    }
 
-    s = attributeToString("scale");
-    if (!s.isEmpty()) {
-        x = s.toFloat(&okx);
-        if (!okx) {
-            xml.raiseError("Couldn't read scale of image");
-            return;
+        s = attributeToString("scale");
+        if (!s.isEmpty()) {
+            x = s.toFloat(&okx);
+            if (!okx) {
+                xml.raiseError("Couldn't read scale of image");
+                return;
+            }
         }
-    }
 
-    s = attributeToString("scaleFactor"); // Legacy: Used in version < 2.9.518
-    if (!s.isEmpty()) {
-        x = s.toFloat(&okx);
-        if (!okx) {
-            xml.raiseError("Couldn't read scaleFactor of image");
-            return;
+        s = attributeToString("scaleFactor"); // Legacy: Used in version < 2.9.518
+        if (!s.isEmpty()) {
+            x = s.toFloat(&okx);
+            if (!okx) {
+                xml.raiseError("Couldn't read scaleFactor of image");
+                return;
+            }
         }
-    }
 
-    if (x != 1)
-        lastImage->setScale(x);
+        if (x != 1)
+            lastImage->setScale(x);
 
-    readOrnamentsAttr();
+        readOrnamentsAttr();
 
-    s = attributeToString("originalName");
-    if (!s.isEmpty())
-        lastImage->setOriginalFilename(s);
+    }   // lastImage != nullptr
 
     while (xml.readNextStartElement()) {
         if (xml.name() == QLatin1String("heading"))
@@ -1073,7 +1078,7 @@ void VymReader::readVymMapAttr()
     }
 
     qreal r;
-    a = "mapZoomFactor";
+    a = "viewZoomFactor";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         r = s.toDouble(&ok);
@@ -1081,10 +1086,10 @@ void VymReader::readVymMapAttr()
             xml.raiseError("Could not parse attribute" + a);
             return;
         }
-        model->setMapZoomFactor(r);
+        model->setViewZoomFactor(r);
     }
 
-    a = "mapRotation";
+    a = "viewRotation";
     s = xml.attributes().value(a).toString();
     if (!s.isEmpty()) {
         r = s.toDouble(&ok);
@@ -1092,7 +1097,27 @@ void VymReader::readVymMapAttr()
             xml.raiseError("Could not parse attribute " + a);
             return;
         }
-        model->setMapRotation(r);
+        model->setViewRotation(r);
+    }
+
+    a = "viewCenterX";
+    s = xml.attributes().value(a).toString();
+    if (!s.isEmpty()) {
+        qreal x = s.toDouble(&ok);
+        if (!ok) {
+            xml.raiseError("Could not parse attribute " + a);
+            return;
+        }
+        a = "viewCenterY";
+        s = xml.attributes().value(a).toString();
+        if (!s.isEmpty()) {
+            qreal y = s.toDouble(&ok);
+            if (!ok) {
+                xml.raiseError("Could not parse attribute " + a);
+                return;
+            }
+            model->setViewCenterTarget(QPointF(x,y));
+        }
     }
 
     readMapDesignCompatibleAttributes();
@@ -1347,6 +1372,8 @@ void VymReader::readFrameAttr()
             // Set all frame parameters via model
             model->setFrameAutoDesign(useInnerFrame, true, lastBranch);
         else {
+            bc->setFrameAutoDesign(useInnerFrame, false);
+
             a = "frameType";
             s = attributeToString(a);
             if (s.isEmpty())
@@ -1355,8 +1382,6 @@ void VymReader::readFrameAttr()
             // Start with setting/creating frame. 
             // assuming that there is no "NoFrame" frame in the xml
             bc->setFrameType(useInnerFrame, s);
-
-            bc->setFrameAutoDesign(useInnerFrame, false);
 
             a = "penColor";
             s = attributeToString(a);

@@ -88,8 +88,17 @@ class VymModel : public TreeModel {
     ////////////////////////////////////////////
     // Load/save
     ////////////////////////////////////////////
+  public:
+    void closeAfterSaving();
+    bool readyToClose();
+    void setSaveAsBackgroundProcess(bool);
+
+  private:
+    bool closeAfterSavingInt = false;
+
   private:
     bool zipped;       // should map be zipped
+    bool saveAsBackgroundProcessInt = true;
     static int mapNum; // unique number for model used in save/undo
     File::FileType fileType; // type of file, e.g. vym, freemind...
     QString fileName;  // short name of file (for tab)
@@ -207,7 +216,7 @@ class VymModel : public TreeModel {
 
   public:
     bool tryVymLock();
-    bool renameMap(const QString &newPath); //! Rename map and change lockfile
+    bool changeLock(const QString &newPath); //! Change lockfile to new path
     void setReadOnly(bool b);
     bool isReadOnly();
 
@@ -324,6 +333,10 @@ class VymModel : public TreeModel {
     TreeItem *findUuid(const QUuid &i); // find MapObj by unique ID
     BranchItem* findBranchByAttribute(const QString &key, const QString &value);
 
+  public slots:  
+    void oembedDownloadFinished();
+
+  public:  
     void updateDataClones(BranchItem *src);
     void test();
 
@@ -688,15 +701,21 @@ class VymModel : public TreeModel {
   public:
     void registerMapEditor(QWidget *);
 
-    void setMapZoomFactor(const double &);
-    void setMapRotation(const double &);
-    void setMapAnimDuration(const int &d);
-    void setMapAnimCurve(const QEasingCurve &c);
+    void setViewZoomFactor(const double &);
+    void setViewRotation(const double &);
+    void setViewAnimDuration(const int &d);
+    void setViewAnimCurve(const QEasingCurve &c);
     bool centerOnID(const QString &id);
+    void setViewCenterTarget(const QPointF &p); // Save view center during load
+    QPointF viewCenterTarget();
+    bool hasViewCenterTarget();
 
   private:
-    double zoomFactor;
-    double mapRotationInt;
+    double viewZoomFactorInt;
+    double viewRotationInt;
+    QPointF viewCenterTargetInt;
+    bool hasViewCenterTargetInt = false;
+
     int animDuration;
     QEasingCurve animCurve;
 
@@ -929,6 +948,7 @@ class VymModel : public TreeModel {
     SlideModel *slideModel;
     bool blockSlideSelection;
 
+  public:
     ////////////////////////////////////////////
     // Logfile related
     ////////////////////////////////////////////

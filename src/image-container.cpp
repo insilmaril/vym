@@ -82,7 +82,7 @@ void ImageContainer::copy(ImageContainer *other)
 
 void ImageContainer::init()
 {
-    containerType = Image;
+    setContainerType(Image);
 
     originalFilenameInt = "";
 
@@ -274,8 +274,9 @@ void ImageContainer::linkTo(BranchContainer *pbc)
 void ImageContainer::updateUpLink()
 {
     /*
+    qDebug() << "IC::updateUpLink()  this=" << this << " ii=" <<  imageItem << "type=" << type();
     if (imageItem)
-        qDebug() << "IC::updateUpLink()  ii=" << imageItem->headingText()  << "  vis=" << isVisible() << " par_item=" << parentItem();
+        qDebug() << "IC::updateUpLink() ii=" << imageItem->headingText()  << "  vis=" << isVisible() << " par_item=" << parentItem();
     else
         qDebug() << "IC::updateUpLink() No ii.";
     */
@@ -317,12 +318,13 @@ void ImageContainer::updateUpLink()
 
     // Color of link (depends on current parent)
     BranchItem *pb = imageItem->parentBranch();
-    if (pb) {
+    if (imageItem && pb) {
         if (upLink->linkColorHint() == LinkObj::HeadingColor)
             upLink->setLinkColor(pb->headingColor());
         else
             upLink->setLinkColor(pb->mapDesign()->defaultLinkColor());
-    }
+    } else
+	return;
 
     // Finally update geometry
     upLink->updateLinkGeometry();

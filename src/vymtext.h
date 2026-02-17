@@ -31,8 +31,8 @@ class VymText : public XMLObj {
     bool isRichText() const;
     void setFontHint(const QString &);
     QString getFontHint() const;
-    void setFilenameHint(const QString &);
-    QString getFilenameHint() const;
+    void setFileName(const QString &);
+    QString fileName() const;
     bool isEmpty() const;
     void setColor(QColor color);
     QColor getColor();
@@ -42,7 +42,7 @@ class VymText : public XMLObj {
   protected:
     QString text;
     QString fonthint;
-    QString filenamehint;
+    QString fileNameInt;
     TextMode textmode;
     QColor color; // used for plaintext
 };

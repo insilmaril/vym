@@ -47,6 +47,7 @@ class VymModelWrapper : public QObject {
     QString getSelectionString();
     double getZoom();
     bool hasBackgroundImage();
+    bool isBusy();
     bool loadBackgroundImage(const QString &imagePath);
     bool loadBranchReplace(QString filename, BranchWrapper *bw);
     bool loadDataInsert(QString filename, int pos = -1, BranchWrapper *bw = nullptr);
@@ -82,11 +83,12 @@ class VymModelWrapper : public QObject {
     void setLinkStyle(const QString &style, int depth = -1);
     void setLinkColorHint(const QString &hint);
     void setRotationView(float a);
-    void setTitle(const QString &s);
-    void setZoom(float z);
     void setSelectionBrushColor(const QString &color);
     void setSelectionPenColor(const QString &color);
     void setSelectionPenWidth(const qreal &);
+    void setSaveAsBackgroundProcess(bool);
+    void setTitle(const QString &s);
+    void setZoom(float z);
     void sleep(int n);
     int slideCount();
     void undo();
