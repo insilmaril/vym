@@ -2094,7 +2094,7 @@ void VymModel::updateDataClones(BranchItem *src) // FIXME-3 Missing mapdesign fl
         XLinkItem* xli = src->getXLinkItemNum(i);
         if (xli) {
             XLink* xl = xli->getXLink();
-            if (xl->relation() == "system-isCloneOf")
+            if (xl->relation() == "system-isCloneOf" && xl->getBeginBranch())
                 branches << xl->getBeginBranch();
         }
     }
@@ -2384,11 +2384,9 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
             } else
                 tiv = setImageVar((ImageItem*)selti) + "i.";
 
-            if (selbi && selbi->isClone) {
-                // Update clone parent
-                BranchItem *orgBI = selbi->parentOfClone();
-                if (orgBI)
-                    setHeading(vt, orgBI);
+            BranchItem *pi = selbi->parentOfClone();
+            if (pi) {
+                setHeading(vt, pi);
             } else {
                 // Update heading
                 QString uc, rc;
@@ -5541,9 +5539,10 @@ void VymModel::colorBranch(QColor c, BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        if (selbi->isClone) 
-            colorBranch(c, selbi->parentOfClone());
-        else {
+        BranchItem *pi = selbi->parentOfClone();
+        if (pi) {
+            colorBranch(c, pi);
+        } else {
             QString uc = QString("colorBranch (\"%1\");")
                           .arg(selbi->headingColor().name());
             QString rc = QString("colorBranch (\"%1\");").arg(c.name());
@@ -5571,9 +5570,10 @@ void VymModel::colorSubtree(QColor c, BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
-        if (selbi->isClone) 
-            colorSubtree(c, selbi->parentOfClone());
-        else {
+        BranchItem *pi = selbi->parentOfClone();
+        if (pi) {
+            colorBranch(c, pi);
+        } else {
             QString bv = setBranchVar(bi);
             QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
             QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
