@@ -465,6 +465,7 @@ BranchItem *BranchItem::parentOfClone()
             }
         }
     }
+    isClone = false;
     return nullptr;
 }
 

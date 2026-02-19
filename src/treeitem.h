@@ -161,7 +161,7 @@ class TreeItem : public XMLObj {
     If master is not nullptr,, only one Flag from FlagRow master may
     be active simultanously, the others get deactivated.
     */
-    // virtual void toggleFlag(const QString &name, bool useGroups = true);
+    Flag *setFlagByUid(const QUuid &uid, bool useGroups = true);
     Flag *toggleFlagByUid(const QUuid &uid, bool useGroups = true);
     virtual void toggleSystemFlag(const QString &flag, FlagRow *master = nullptr);
     virtual bool hasActiveFlag(const QString &flag);

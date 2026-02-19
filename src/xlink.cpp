@@ -194,13 +194,13 @@ void XLink::setRelation(const QString &r)
             model->emitDataChanged(endBranch);
         }
     } else {
-        //qDebug() << "XLink::setRelation beginB=" << beginBranch << "endB=" << endBranch;
-        //qDebug() << "                   beginXLI=" << beginXLinkItemInt << "endXLI=" << endXLinkItemInt;
         if (beginBranch) {
+            beginBranch->isClone = false;
             beginBranch->deactivateSystemFlagByName("system-clone");
             model->emitDataChanged(beginBranch);
         }
         if (endBranch) {
+            endBranch->hasClones = false;
             endBranch->deactivateSystemFlagByName("system-clone-original");
             model->emitDataChanged(endBranch);
         }

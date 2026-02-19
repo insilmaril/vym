@@ -2156,18 +2156,28 @@ void VymModel::updateDataClones(BranchItem *src) // FIXME-3 Missing mapdesign fl
         }
     }
 
-    foreach (BranchItem *bi, branches) {
-        bi->setHeading(src->heading());
-        bi->setHeadingColor(src->headingColor());
+    // qDebug() << __func__ << " src=" << src << " branches:" << branches;
+    foreach (BranchItem *dst, branches) {
+        // Heading and color
+        dst->setHeading(src->heading());
+        dst->setHeadingColor(src->headingColor());
 
+        // Frames
         QColor bg_src = src->getBackgroundColor(src);
         if (bg_src != mapDesignInt->backgroundColor()) {
-            setFrameType(true, FrameContainer::Rectangle, bi);
-            setFrameBrushColor(true, bg_src, bi);
+            setFrameType(true, FrameContainer::Rectangle, dst);
+            setFrameBrushColor(true, bg_src, dst);
         } else
-            setFrameType(true, FrameContainer::NoFrame, bi);
+            setFrameType(true, FrameContainer::NoFrame, dst);
 
-        emitDataChanged(bi);
+        // Flags
+        QList <QUuid> srcFlags = src->activeFlagUids();
+
+        dst->deactivateAllStandardFlags();
+        foreach(auto id, srcFlags)
+            setFlagByUid(id, dst, false, false);
+
+        emitDataChanged(dst);
     }
 }
 
@@ -2199,11 +2209,6 @@ void VymModel::test()
     newXLink->setStyleBegin("None");
     newXLink->setStyleEnd("HeadFull");
     newXLink->setRelation("system-isCloneOf");
-
-    newbi->isClone = true;
-    selbi->hasClones = true;
-
-    updateDataClones(selbi);
 
     reposition();
 
@@ -5530,30 +5535,76 @@ void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
             toggleFlagByName(name, selbi);
 }
 
+void VymModel::setFlagByUid(const QUuid &uid, BranchItem *bi, bool useGroups, bool updateClones)
+{
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
+
+    foreach (BranchItem* selbi, selbis) {
+        BranchItem *pi = selbi->parentOfClone();
+        if (pi && updateClones) {
+            setFlagByUid(uid, pi, false);
+        } else {
+            // For undo save all currently set flags. (Independely of usage of flag groups)
+            QList <QUuid> oldFlags = selbi->activeFlagUids();
+            QStringList sl;
+            foreach (QUuid id, oldFlags)
+                sl << QString("\"%1\"").arg(id.toString());
+
+            QString uc = QString("setOnlyFlags([%1]);").arg(sl.join(","));
+
+            Flag *flag = selbi->setFlagByUid(uid, useGroups);
+            if (flag) {
+                QString fname = flag->getName();
+                QString rc = QString("toggleFlagByUid(\"%1\");").arg(uid.toString());
+                QString com = QString("Toggle flag %1 of %2").arg(fname, getObjectName(selbi));
+                logAction(rc, com, __func__);
+                saveStateBranch(selbi, uc, rc, com);
+
+                if (selbi->hasClones && updateClones)
+                    updateDataClones(selbi);
+
+                emitDataChanged(selbi);
+            } else
+                qWarning() << "VymModel::toggleFlag failed for flag with uid "
+                           << uid;
+        }
+    }
+    reposition();
+}
+
 void VymModel::toggleFlagByUid( const QUuid &uid, BranchItem *bi, bool useGroups)
 {
     QList <BranchItem*> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem* selbi, selbis) {
-        // For undo save all currently set flags. (Independely of usage of flag groups)
-        QList <QUuid> oldFlags = selbi->activeFlagUids();
-        QStringList sl;
-        foreach (QUuid id, oldFlags)
-            sl << QString("\"%1\"").arg(id.toString());
+        BranchItem *pi = selbi->parentOfClone();
+        if (pi) {
+            toggleFlagByUid(uid, pi, false);
+        } else {
+            // For undo save all currently set flags. (Independely of usage of flag groups)
+            QList <QUuid> oldFlags = selbi->activeFlagUids();
+            QStringList sl;
+            foreach (QUuid id, oldFlags)
+                sl << QString("\"%1\"").arg(id.toString());
 
-        QString uc = QString("setOnlyFlags([%1]);").arg(sl.join(","));
+            QString uc = QString("setOnlyFlags([%1]);").arg(sl.join(","));
 
-        Flag *flag = selbi->toggleFlagByUid(uid, useGroups);
-        if (flag) {
-            QString fname = flag->getName();
-            QString rc = QString("toggleFlagByUid(\"%1\");").arg(uid.toString());
-            QString com = QString("Toggle flag %1 of %2").arg(fname, getObjectName(selbi));
-            logAction(rc, com, __func__);
-            saveStateBranch(selbi, uc, rc, com);
-            emitDataChanged(selbi);
-        } else
-            qWarning() << "VymModel::toggleFlag failed for flag with uid "
-                       << uid;
+            Flag *flag = selbi->toggleFlagByUid(uid, useGroups);
+            if (flag) {
+                QString fname = flag->getName();
+                QString rc = QString("toggleFlagByUid(\"%1\");").arg(uid.toString());
+                QString com = QString("Toggle flag %1 of %2").arg(fname, getObjectName(selbi));
+                logAction(rc, com, __func__);
+                saveStateBranch(selbi, uc, rc, com);
+
+                if (selbi->hasClones)
+                    updateDataClones(selbi);
+
+                emitDataChanged(selbi);
+            } else
+                qWarning() << "VymModel::toggleFlag failed for flag with uid "
+                           << uid;
+        }
     }
     reposition();
 }

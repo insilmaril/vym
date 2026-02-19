@@ -749,7 +749,7 @@ void VymReader::readUserFlag()
     QString a = "uuid";
     QString s = xml.attributes().value(a).toString();
     if (!s.isEmpty())
-        lastBranch->toggleFlagByUid(QUuid(s));
+        lastBranch->setFlagByUid(QUuid(s));
 
     if (xml.readNextStartElement()) {
         raiseUnknownElementError();

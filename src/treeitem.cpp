@@ -546,6 +546,23 @@ Flag *TreeItem::findFlagByUid(const QUuid &uid)
     return f;
 }
 
+Flag *TreeItem::setFlagByUid(const QUuid &uid, bool useGroups)
+{
+    Flag *f = standardFlagsMaster->findFlagByUid(uid);
+    if (f) {
+        if (!standardFlags.isActive(uid))
+            standardFlags.toggle(uid, useGroups);
+    } else {
+        f = userFlagsMaster->findFlagByUid(uid);
+        if (f) {
+            if (!userFlags.isActive(uid))
+                userFlags.toggle(uid, useGroups);
+        } else
+            qWarning() << "TI::toggleFlag failed for flag " << uid;
+    }
+
+    return f;
+}
 Flag *TreeItem::toggleFlagByUid(const QUuid &uid, bool useGroups)
 {
     Flag *f = standardFlagsMaster->findFlagByUid(uid);
