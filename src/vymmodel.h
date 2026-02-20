@@ -210,6 +210,7 @@ class VymModel : public TreeModel {
     void importDir();
     bool addMapInsert(QString filepath, int pos = -1, BranchItem *bi = nullptr);
     bool addMapReplace(QString filepath, BranchItem *bi = nullptr);
+    bool replaceTree(QString filepath);
 
   private:
     bool removeVymLock();

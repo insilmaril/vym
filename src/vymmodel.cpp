@@ -1221,15 +1221,29 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
         return false;
     }
 
-    QString bv = setBranchVar(selbi);
-    QString pbv = setBranchVar(selbi->parentBranch(), "pb");
-    QString uc = pbv + QString("map.loadBranchReplace(\"UNDO_PATH\", pb);");
-    QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
-    QString comment = QString("Replace \"%1\" with \"%2\"").arg(selbi->headingText(), fpath);
+    BranchItem *pbi = selbi->parentBranch();
 
+    QString bv = setBranchVar(selbi);
+    QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
+
+    QString comment = QString("Replace \"%1\" with \"%2\"").arg(selbi->headingText(), fpath);
     logAction(rc, comment, __func__);
 
-    saveState(uc, rc, comment, selbi->parentBranch(), selbi);
+    if (pbi == rootItem) {
+        // About to replace a MapCenter, save complete map instead of "parent" branch
+        QString uc = QString("map.replaceTree(\"UNDO_PATH\");");
+        QString bv = setBranchVar(selbi);
+        QString rc = bv + QString("map.loadBranchReplace(\"%1\", b);").arg(fpath);
+        saveState(uc, rc, comment, rootItem, selbi);
+    } else {
+        // Replace selected branch
+        QString pbv = setBranchVar(pbi, "pb");
+        QString uc = pbv + QString("map.loadBranchReplace(\"UNDO_PATH\", pb);");
+        QString bv = setBranchVar(selbi);
+        QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
+        saveState(uc, rc, comment, pbi, selbi);
+    }
+
 
     if (loadMap(fpath, File::ImportReplace, File::VymMap, 0x0000, selbi))
         return true;
@@ -1238,6 +1252,30 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
     return false;
 }
 
+bool VymModel::replaceTree(QString fpath)
+{
+    /*
+    // Only saveState if a branch is inserted
+    // Other data like XLink is only used for undo/redo operations and currently
+    // does not need a saveState
+    QString bv = setBranchVar(selbi);
+    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
+    QString comment = QString("Add map %1 to \"%2\"").arg(fpath, selbi->headingText());
+
+    logAction(rc, comment, __func__);
+
+    saveState(uc, rc, comment, selbi);
+    */
+
+    clear();
+    if (loadMap(fpath, File::ImportAdd))
+        return true;
+    else {
+        logWarning("Failed: Replacing tree with " + fpath, __func__);
+        return false;
+    }
+}
 bool VymModel::removeVymLock()
 {
     if (vymLock.removeLockForced()) {
@@ -1807,14 +1845,17 @@ QString VymModel::saveState(
         return QString();
 
     /*
+    */
     if (debug) {
         qDebug() << "VM::saveState() for map " << mapName;
         qDebug() << "  comment: " << comment;
         qDebug() << "  Script:   " << buildingUndoScript;
         qDebug() << "  undoCom: " << undoCommand;
         qDebug() << "  redoCom: " << redoCommand;
+        qDebug() << " undoItem: " << saveUndoItem;
+        qDebug() << " redoItem: " << saveRedoItem;
+        qDebug() << " rootItem: " << rootItem;
     }
-    */
 
     if (buildingUndoScript)
         logInfo("// Building script: " + redoCommand + " " +  comment, __func__);    // FIXME-3 Use logDebug instead? Remove logging completely from saveState?
@@ -1836,8 +1877,14 @@ QString VymModel::saveState(
     // FIXME-5 saveState: userFlags are not written, but still in memory. Could
     //         lead to problem, if one day removed from userFlags toolbar AND memory
     if (saveUndoItem) {
+        bool completeTree = false;
+        if (saveUndoItem == rootItem) {
+            completeTree = true;
+            saveUndoItem = nullptr;
+        }
+
         QString dataXML = saveToDir(historyPath, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
-                            false, false, false, saveUndoItem);
+                            false, false, completeTree, saveUndoItem);
 
         QString xmlUndoPath = historyPath + "/undo.xml";
         undoCommand.replace("UNDO_PATH", xmlUndoPath);

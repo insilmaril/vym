@@ -160,32 +160,34 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     else
         elementName = "branch";
 
+    // qDebug() << "BI::saveToDir elName=" << elementName << "  bc=" << branchContainer;
+
     // Free positioning of children
-    if (!branchContainer->branchesContainerAutoLayout)
+    if (branchContainer && !branchContainer->branchesContainerAutoLayout)
         // Save the manually set layout for children branches
         attr += attribute("branchesLayout", branchContainer->layoutString(branchContainer->branchesContainerLayout()));
 
-    if (!branchContainer->imagesContainerAutoLayout)
+    if (branchContainer && !branchContainer->imagesContainerAutoLayout)
         // Save the manually set layout for children Images
         attr += attribute("imagesLayout", branchContainer->Container::layoutString(branchContainer->imagesContainerLayout()));
 
-    if (!branchContainer->rotationsAutoDesign()) {
+    if (branchContainer && !branchContainer->rotationsAutoDesign()) {
         attr += attribute("rotHeading", QString("%1").arg(branchContainer->rotationHeading()));
 
         attr += attribute("rotSubtree", QString("%1").arg(branchContainer->rotationSubtree()));
     }
 
-    if (!branchContainer->scaleAutoDesign()) {
+    if (branchContainer && !branchContainer->scaleAutoDesign()) {
         attr += attribute("scaleHeading", QString("%1").arg(branchContainer->scaleHeading()));
 
         attr += attribute("scaleSubtree", QString("%1").arg(branchContainer->scaleSubtree()));
     }
 
     // width of heading
-    if (!branchContainer->columnWidthAutoDesign())
+    if (branchContainer && !branchContainer->columnWidthAutoDesign())
         attr += attribute("colWidth", QString("%1").arg(branchContainer->getHeadingContainer()->columnWidth()));
 
-    if (parentItem == rootItem || branchContainer->isFloating())
+    if (parentItem == rootItem || (branchContainer && branchContainer->isFloating()))
         attr += getPosAttr();
 
     QString s = beginElement(elementName + " " + attr);
@@ -199,14 +201,14 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
         s += note.saveToDir();
 
     // Save frame
-    if (
+    if (branchContainer && 
             (branchContainer->frameType(true) != FrameContainer::NoFrame ||
              branchContainer->frameType(false) != FrameContainer::NoFrame)
        ) {
             // Save if frame is used
         s += branchContainer->saveFrame();
     } else {
-        if (
+        if (branchContainer && 
             model->mapDesign()->frameType(true, depth()) != FrameContainer::NoFrame &&
             branchContainer->frameType(true) == FrameContainer::NoFrame
         )

@@ -3743,6 +3743,7 @@ void Main::setupContextMenus()
     branchAddContextMenu->addAction(actionPaste);
     branchAddContextMenu->addAction(actionLoadImage);
     branchAddContextMenu->addAction(actionAddMapCenter);
+    branchAddContextMenu->addSeparator();
     branchAddContextMenu->addAction(actionAddBranch);
     branchAddContextMenu->addAction(actionAddBranchBefore);
     branchAddContextMenu->addAction(actionAddBranchAbove);

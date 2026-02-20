@@ -65,6 +65,7 @@ class VymModelWrapper : public QObject {
     void removeKeepChildren(BranchWrapper *bw);
     void removeSlide(int n);
     void removeXLink(XLinkWrapper *xlw);
+    bool replaceTree(QString filename);
     bool saveSelection(const QString &filename);
     bool select(const QString &s);
     Q_INVOKABLE AttributeWrapper* selectedAttribute();
