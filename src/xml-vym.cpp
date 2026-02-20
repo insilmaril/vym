@@ -172,7 +172,7 @@ void VymReader::readMapDesignElement()
     QString k = xml.attributes().value("key").toString();
     QString v = xml.attributes().value("val").toString();
     QString d = xml.attributes().value("d").toString();
-    if (!v.isEmpty()) {
+    if (!v.isEmpty() && (loadMode != File::ImportAdd && loadMode != File::ImportReplace)) {
         if (!model->mapDesign()->setElement(k, v, d)) {
             xml.raiseError(QString("MapDesign: Failed to set key %1 to %2").arg(k, v));
             return;
@@ -185,6 +185,9 @@ void VymReader::readMapDesignElement()
 
 void VymReader::readMapDesignCompatibleAttributes()
 {
+    if (loadMode == File::ImportAdd || loadMode == File::ImportReplace)
+        return;
+
     // Reads attributes which before 2.9.13 used to be
     // in <vymmap> and now are in <mapdesign>
 
