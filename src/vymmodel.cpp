@@ -1231,6 +1231,9 @@ bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
 
     if (pbi == rootItem) {
         // About to replace a MapCenter, save complete map instead of "parent" branch
+        //
+        // FIXME-4: addMapReplace() The path to the map is saved in history,
+        // the file might no longer be available when redo is performed
         QString uc = QString("map.replaceTree(\"UNDO_PATH\");");
         QString bv = setBranchVar(selbi);
         QString rc = bv + QString("map.loadBranchReplace(\"%1\", b);").arg(fpath);
