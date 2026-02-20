@@ -488,6 +488,16 @@ void VymModelWrapper::removeXLink(XLinkWrapper *xlw)
     modelInt->deleteXLink(xlw->xlink());
 }
 
+bool VymModelWrapper::replaceTree(QString fileName)
+{
+    if (QDir::isRelativePath(fileName))
+        fileName = QDir::currentPath() + "/" + fileName;
+
+    bool r = modelInt->replaceTree(fileName);
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 bool VymModelWrapper::saveSelection(const QString &fileName)
 {
     QString fileName_org = modelInt->getFilePath(); // Restore fileName later
