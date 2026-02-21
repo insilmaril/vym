@@ -8,17 +8,13 @@
 extern Settings settings;
 extern QString vymName;
 
-NoteEditor::NoteEditor(QString scope) : TextEditor()
+NoteEditor::NoteEditor(const QString &id, const QString &scope) : TextEditor(id, scope)
 {
-    editorName = tr("Note Editor", "Name of editor shown as window title");
     setWindowTitle("");
 
     menuBar()->show();
 
-    setUseColorMapBackground(false);
-
-    // Load Settings
-    init(scope);
+    setUseMapBackgroundColor(false);
 }
 
 NoteEditor::~NoteEditor() {}
@@ -31,7 +27,7 @@ VymNote NoteEditor::getNote()
     else
         note.setPlainText(getText());
     note.setFontHint(getFontHint());
-    note.setFilenameHint(getFilenameHint());
+    note.setFileName(fileName());
     return note;
 }
 
@@ -43,5 +39,5 @@ void NoteEditor::setNote(const VymNote &note)
         setPlainText(note.getText());
         setFontHint(note.getFontHint());
     }
-    setFilenameHint(note.getFilenameHint());
+    setFileName(note.fileName());
 }

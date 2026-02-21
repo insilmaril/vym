@@ -1,13 +1,13 @@
 #include "xmlobj.h"
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 
 // returns masked '<' '>' '&'  '"'
 QString quoteMeta(const QString &s)
 {
     QString r = s;
-    QRegExp rx("&(?!amp;)");
+    QRegularExpression rx("&(?!amp;)");
     r.replace(rx, "&amp;");
     rx.setPattern(">");
     r.replace(rx, "&gt;");
@@ -23,7 +23,7 @@ QString quoteMeta(const QString &s)
 QString unquoteMeta(const QString &s)
 {
     QString r = s;
-    QRegExp rx("&amp;)");
+    QRegularExpression rx("&amp;");
     r.replace(rx, "&");
     rx.setPattern("&gt;");
     r.replace(rx, ">");
@@ -40,7 +40,7 @@ QString quoteQuotes(const QString &s)
 {
     QString r = s;
 
-    QRegExp rx("\"");
+    QRegularExpression rx("\"");
     r.replace(rx, "\\\"");
 
     rx.setPattern("\n");
@@ -53,7 +53,7 @@ QString unquoteQuotes(const QString &s)
 {
     QString r = s;
 
-    QRegExp rx("\\\\\"");
+    QRegularExpression rx("\\\\\"");
     r.replace(rx, "\"");
 
     rx.setPattern("\\\\n");
@@ -95,7 +95,7 @@ QString XMLObj::singleElement(QString s, QString at)
 // returns <s at at at at ... />
 QString XMLObj::singleElement(QString s, QStringList attributes)
 {
-    return indent() + "<" + s + " " + attributes.join(" ") + " />";
+    return indent() + "<" + s + " " + attributes.join("") + " />";
 }
 
 // returns <s>
@@ -111,9 +111,9 @@ QString XMLObj::beginElement(QString s, QString at)
 QString XMLObj::endElement(QString s) { return indent() + "</" + s + ">"; }
 
 // returns  at="val"
-QString XMLObj::attribut(QString at, QString val) const
+QString XMLObj::attribute(QString at, QString val) const
 {
-    return " " + at + "=\"" + quoteMeta(val) + "\"";
+    return at + "=\"" + quoteMeta(val) + "\" ";
 }
 
 // returns <s> val </s>
@@ -140,9 +140,7 @@ void XMLObj::decIndent()
 QString XMLObj::indent()
 {
     QString s = "\n";
-    int i;
-    for (i = 0; i < curIndent * indentWidth; i++) {
+    for (int i = 0; i < curIndent * indentWidth; i++)
         s += " ";
-    }
     return s;
 }

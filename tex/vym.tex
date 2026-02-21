@@ -403,9 +403,8 @@ menu (see \ref{settings}), you can also use the \key{Del} key.}
 To select branches you can use the left button of your mouse or also the
 arrow keys. Depending on the {\em orientation} of a branch tap \key{\la}
 or \key{\ra} to move nearer to the mapcenter or deeper down into the
-branches. Within a set of branches, let's call them a {\em subtree}, you
-can use \key{PgUp} and \key{PgDn} to go up and down. You can also use
-\key{Home} and \key{End} to select the first and last branch.
+subtree  You can also use \key{Home} and \key{End} to select the first
+and last branch.
 
 You can also select branches in the {\em tree editor}. Once this editor
 is active, you can also use \key{\ua} and \key {\da}, which have a
@@ -733,7 +732,9 @@ After an URL was entered, a little globe will appear in the branch. By
 clicking on the globe in the toolbar or the context menu an external
 browser\footnote{
     The browser can be changed in the Settings Menu (see \ref{settings}).}
-will be launched.
+will be launched. You can also press \key{Ctrl} while clicking the
+globe, to open the URL in a new tab.
+
 For more information on working with bookmarks and webbrowsers see
 section \ref{bookmarks}.
 
@@ -752,7 +753,9 @@ A file dialog opens where you can choose the map.
 Clicking this flag beside the branch heading, in the toolbar or in the
 context menu of a branch will open the map in another tab (see
 \ref{tabs} for working with multiple maps). To delete an existing link,
-just right click the branch and select "Delete \vym link".
+just right click the branch and select "Delete \vym link" or
+alternatively press both \key{Shift}\key{Ctrl} while clicking the
+vymlink.
 
 \hint{Open a linked map in background by pressing \key{Ctrl} while
 clicking on the icon in the map}
@@ -1448,7 +1451,8 @@ To hide the link between a branch and its parent open the
 
 
 \subsection{XLinks} \label{xlinks}
-So far all the data in the \vym map has been treelike. Using xLinks you
+So far all the data in the \vym map has been treelike. Using xLinks
+("crosslinks") you
 can link one branch to any other, just like attaching a rope between two
 branches in a real tree. This is especially useful in complex maps,
 where you want to have crossreferences which can not be displayed on the
@@ -1484,12 +1488,12 @@ the control points:
 
 \subsubsection*{Follow a xLink}
 In a complex \vym map it sometimes comes in handy to be able to jump to
-the other end of a xLink. You can do this by opening the context menu of
-the branch and clicking on "Goto xLink" and selecting the xLink you
-want to follow. Even easier is to click on the lower right end of a
-branch -- a popup menu will show up with all xLinked branches. Click one
-of them to jump to it.
+the other end of a xLink. There are several ways to do so:
 
+If the current branch has exactly one outgoing xLink and no
+other reference (Url or vymLink), the linked branch will be
+selected. If multiple xLinks or other references are available,
+a popup menu will ask you to select the reference.
 
 \subsection{Adding and removing branches}
 The context menu of a branch shows some more ways to add and delete data
@@ -1506,30 +1510,11 @@ between {\em Add Map (Insert)} and {\em Add Map (Replace)}: The imported
 data will be added after the selected branch.
 
 \section{\vym on Mac OS X}
-%FIXME-3 Currently not yet supported on Mac OS X in 1.13.x
-
-%\subsection{Overview}
-%Sorry, currently (\vym 2.2.2) there is no Mac port available. Please
-%contact the author\footnote{
-%    Email Uwe Drechsel: \href{mailto:vym@insilmaril.de}{vym@insilmaril.de}} if
-%you are interested in a Mac version.
-
-%Basically there are two ways to run \vym on Macs:
-%\subsubsection*{Qt Mac Edition:}
-%    \vym here provides the well known Mac look and feel.  \vym is
-%    available as Mac OS X application package in contained in a disk
-%    image ({\tt vym.dmg}). It has been compiled and tested in
-%    Mac~OS~10.4.  This package includes  runtime libraries of Qt by
-%    Trolltech.
-    
-%\subsubsection*{X11 version} \vym can also be run using the Linux
-%version, but then menus and handling will also be those of the Linux
-%version e.g. The menu bar will look different. 
 
 \subsection {Contextmenu and special keys}
 Most Macs unfortunatly just have a single mouse button. In order to show
 the context menu which usually would be opened with the right mouse
-button, you can click while pressing the \key{kommand}-key.
+button, you can click while pressing the \key{command}-key.
 
 Especially on Laptops some of the keys usually used on PC keyboards seem
 to be missing. The Qt-Mac Edition of \vym has its own keyboard

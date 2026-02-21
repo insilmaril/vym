@@ -7,13 +7,13 @@
 #include "settings.h"
 
 extern Settings settings;
-extern QString iconPath; // FIXME-4 embed vym logo as ressource?
+extern QString iconPath;
 extern QString vymVersion;
 extern QString vymBuildDate;
 extern QString vymCodeName;
 extern QString vymCodeQuality;
 
-extern QColor vymBlue;
+extern QColor vymBlueColor;
 
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 {
@@ -29,7 +29,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
 
     credits->setHtml(
         QString(
-            "<style>a:link { color: " + vymBlue.name() + "; background-color: transparent;}</style>"
+            "<style>a:link { color: " + vymBlueColor.name() + "; background-color: transparent;}</style>"
             "<center><img src=\"" + iconPath + "vym-128x128.png\"></center>"
             "<h3><center>VYM - View Your Mind </h3>"
             "<p align=\"center\"> A tool to put the things you have got in your mind into a map.</p>"
@@ -73,6 +73,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "    <li>Croatian: Damir Brašnić </li>"
             "    <li>Czech: Vít Pelčák, Pavel Fric</li>"
             "    <li>French: Marc Sert, Philippe Caillaud and Claude </li>"
+            "    <li>German: Uwe Drechsel (with typo fixes by Herbert Reiter)</li>"
             "    <li>Greek: Yannis Kaskamanidis</li>"
             "    <li>Interlingua: Giovanni Sora</li>"
             "    <li>Italian: Albano Battistella, Giovanni Sora, Seyed Puria Nafisi Azizi </li>"
@@ -86,6 +87,8 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent)
             "</li>"
             "<li> Patches"
             "  <ul>"
+            "    <li>Loric Brevet: Enabling Jira Cloud and usability discussions</li>"
+            "    <li>Bleyddyn: &quot;Clear&quot; button in &quot;Recent files&quot; menu and improving remembering last directory</li>"
             "    <li>Sven H&ouml;xter: Various patches to fix typos and especiall for Debian packaging</li>"
             "    <li>Edward Wang: adding close tab buttons</li>"
             "    <li>p0llox (Pierre): various patches for Debian packaging</li>"

@@ -1,7 +1,10 @@
 #include "export-orgmode.h"
 
-#include "mainwindow.h"
 #include <QMessageBox>
+
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "vymmodel.h"
 
 extern Main *mainWindow;
 
@@ -25,19 +28,18 @@ void ExportOrgMode::doExport()
         return;
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
 
     // Main loop over all branches
     QString s;
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
-        if (!cur->hasHiddenExportParent()) {
+        if (!cur->hasHiddenParent()) {
             for (i = 0; i <= cur->depth(); i++)
                 ts << ("*");
-            ts << (" " + cur->getHeadingPlain() + "\n");
+            ts << (" " + cur->headingPlain() + "\n");
             // If necessary, write note
             if (!cur->isNoteEmpty()) {
                 ts << (cur->getNoteASCII(0, 80));

@@ -10,7 +10,7 @@ class SlideControlWidget : public QWidget {
     Q_OBJECT
 
   public:
-    SlideControlWidget(QWidget *parent = NULL);
+    SlideControlWidget(QWidget *parent = nullptr);
 
   public slots:
     void previousPressed();

@@ -12,7 +12,7 @@ EditXLinkDialog::EditXLinkDialog(QWidget *parent) : QDialog(parent)
     ui.setupUi(this);
 
     delink = false;
-    link = NULL;
+    xlink = nullptr;
 
     ui.lineStyleCombo->addItem(QIcon("://linestyle-solid.png"), "Solid line",
                                0);
@@ -32,43 +32,41 @@ EditXLinkDialog::EditXLinkDialog(QWidget *parent) : QDialog(parent)
             SLOT(beginStyleChanged(int)));
     connect(ui.checkBoxArrowEnd, SIGNAL(stateChanged(int)), this,
             SLOT(endStyleChanged(int)));
-    // FIXME-4 connect ( ui.setColorHeadingButton, SIGNAL (clicked( )), this,
-    // SLOT (setColorHeadingButtonPressed()));
     ui.setColorHeadingButton->hide();
 }
 
 void EditXLinkDialog::widthChanged(int w)
 {
-    link->getModel()->setXLinkWidth(w);
+    xlink->getModel()->setXLinkWidth(w);
 }
 
-void EditXLinkDialog::setLink(Link *l)
+void EditXLinkDialog::setLink(XLink *l)
 {
-    link = l;
-    QPen pen = link->getPen();
+    xlink = l;
+    QPen pen = xlink->getPen();
     colorChanged(pen.color());
     ui.widthBox->setValue(pen.width());
     switch (pen.style()) {
-    case Qt::DashLine:
-        ui.lineStyleCombo->setCurrentIndex(1);
-        break;
-    case Qt::DotLine:
-        ui.lineStyleCombo->setCurrentIndex(2);
-        break;
-    case Qt::DashDotLine:
-        ui.lineStyleCombo->setCurrentIndex(3);
-        break;
-    case Qt::DashDotDotLine:
-        ui.lineStyleCombo->setCurrentIndex(4);
-        break;
-    default:
-        ui.lineStyleCombo->setCurrentIndex(0);
+        case Qt::DashLine:
+            ui.lineStyleCombo->setCurrentIndex(1);
+            break;
+        case Qt::DotLine:
+            ui.lineStyleCombo->setCurrentIndex(2);
+            break;
+        case Qt::DashDotLine:
+            ui.lineStyleCombo->setCurrentIndex(3);
+            break;
+        case Qt::DashDotDotLine:
+            ui.lineStyleCombo->setCurrentIndex(4);
+            break;
+        default:
+            ui.lineStyleCombo->setCurrentIndex(0);
     }
-    if (link->getXLinkObj()->getStyleEnd())
+    if (xlink->getXLinkObj()->getStyleEnd())
         ui.checkBoxArrowEnd->setChecked(true);
     else
         ui.checkBoxArrowEnd->setChecked(false);
-    if (link->getXLinkObj()->getStyleBegin())
+    if (xlink->getXLinkObj()->getStyleBegin())
         ui.checkBoxArrowBegin->setChecked(true);
     else
         ui.checkBoxArrowBegin->setChecked(false);
@@ -76,12 +74,12 @@ void EditXLinkDialog::setLink(Link *l)
 
 void EditXLinkDialog::colorButtonPressed()
 {
-    if (link) {
-        QPen pen = link->getPen();
+    if (xlink) {
+        QPen pen = xlink->getPen();
         QColor col = QColorDialog::getColor(pen.color(), this);
         if (!col.isValid())
             return;
-        link->getModel()->setXLinkColor(col.name());
+        xlink->getModel()->setXLinkColor(col.name());
     }
 }
 
@@ -93,16 +91,9 @@ void EditXLinkDialog::colorChanged(QColor c)
     ui.colorButton->setIcon(pix);
 }
 
-void EditXLinkDialog::setColorHeadingButtonPressed() // FIXME-4 not implemented
-                                                     // yet
-{
-    if (link) {
-    }
-}
-
 void EditXLinkDialog::lineStyleChanged(int i)
 {
-    if (link) {
+    if (xlink) {
         QString style;
         switch (i) {
         case 0:
@@ -123,27 +114,27 @@ void EditXLinkDialog::lineStyleChanged(int i)
         default:
             style = "Qt::NoPen";
         }
-        link->getModel()->setXLinkStyle(style);
+        xlink->getModel()->setXLinkStyle(style);
     }
 }
 
 void EditXLinkDialog::beginStyleChanged(int state)
 {
-    if (link) {
+    if (xlink) {
         if (state)
-            link->getModel()->setXLinkStyleBegin("HeadFull");
+            xlink->getModel()->setXLinkStyleBegin("HeadFull");
         else
-            link->getModel()->setXLinkStyleBegin("None");
+            xlink->getModel()->setXLinkStyleBegin("None");
     }
 }
 
 void EditXLinkDialog::endStyleChanged(int state)
 {
-    if (link) {
+    if (xlink) {
         if (state)
-            link->getModel()->setXLinkStyleEnd("HeadFull");
+            xlink->getModel()->setXLinkStyleEnd("HeadFull");
         else
-            link->getModel()->setXLinkStyleEnd("None");
+            xlink->getModel()->setXLinkStyleEnd("None");
     }
 }
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
+
+<vymmap  version="2.9.506" author="Uwe (inventor of vym)" title="" comment="" date="2023-01-25" branchCount="4" backgroundColor="#ffffff" defaultFont="Noto Sans,16,-1,5,50,0,0,0,0,0,Regular" selectionColor="#ffffff00" linkStyle="StylePolyParabel" linkColor="#0000ff" defXLinkColor="#3232ff" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0">
+
+    <mapcenter posX="0" posY="0" uuid="{40b3036b-bac8-4b46-b008-bbf70f076842}">
+        <heading  textMode="plainText"  textColor="#000000"  text="MapCenter 0" />
+        <frame  frameType="RoundedRectangle" penColor="#ff000000" brushColor="#ffffffff" padding="0" penWidth="2" />
+        <branch posX="98.3503" posY="-78.3503" uuid="{86ea579a-426f-4a1e-a78c-8d69ed61a7fb}">
+            <heading  textMode="plainText"  textColor="#000000"  text="Main A" />
+            <branch uuid="{ce0c677a-0a93-4567-8022-faa97b0cd678}">
+                <heading  textMode="plainText"  textColor="#000000"  text="No task" />
+            </branch>
+            <branch uuid="{104b1d4e-ff88-4632-b697-dc72aac4272a}">
+                <heading  textMode="plainText"  textColor="#000000"  text="Sleeping task" />
+                <task  status="NotStarted" awake="Sleeping" date_creation="2023-01-25T12:02:21" date_modification="2023-01-25T12:02:55" date_sleep="3000-01-01T00:00:00" />
+            </branch>
+        </branch>
+    </mapcenter>
+    <select>mc:0,bo:0,bo:1</select>
+</vymmap>

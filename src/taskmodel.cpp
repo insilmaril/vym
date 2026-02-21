@@ -3,7 +3,6 @@
 #include <QDebug>
 
 #include "branchitem.h"
-#include "branchobj.h"
 #include "task.h"
 #include "vymmodel.h"
 
@@ -69,7 +68,7 @@ Task *TaskModel::getTask(const QModelIndex &ix) const
     if (ix.isValid())
         return tasks.at(ix.row());
     else
-        return NULL;
+        return nullptr;
 }
 
 Task *TaskModel::getTask(const int i) const
@@ -77,7 +76,7 @@ Task *TaskModel::getTask(const int i) const
     if (i >= 0 && i < count())
         return getTask(createIndex(i, 0));
     else
-        return NULL;
+        return nullptr;
 }
 
 int TaskModel::rowCount(const QModelIndex &parent) const
@@ -130,11 +129,11 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
         }
         else if (index.column() == 8) {
             BranchItem *bi = tasks.at(index.row())->getBranch();
-            return bi->getHeadingPlainWithParents(showParentsLevel);
+            return bi->headingPlainWithParents(showParentsLevel);
         }
     }
     else if (role == Qt::DecorationRole && index.column() == 2) {
-        QString s = t->getIconString();
+        QString s = t->iconString();
         if (s == "task-new")
             return task_new_icon;
         else if (s == "task-new-morning")
@@ -174,22 +173,19 @@ QVariant TaskModel::data(const QModelIndex &index, int role) const
     }
     else // role != Qt::DisplayRole
     {
-        if (role == Qt::EditRole && index.column() == 1) // DeltaPrio
-            return t->getPriorityDelta();
+        if (role == Qt::EditRole)
+        {
+            if (index.column() == 1) // DeltaPrio
+                return t->getPriorityDelta();
+            else if (index.column() == 8) {
+                BranchItem *bi = tasks.at(index.row())->getBranch();
+                return bi->headingText();
+            }
+        }
         if (role == Qt::ForegroundRole && bi)
-            return bi->getHeadingColor();
+            return bi->headingColor();
         if (role == Qt::BackgroundRole && bi) {
-            BranchItem *frameBI = bi->getFramedParentBranch(bi);
-            if (frameBI && index.column() != 5) {
-                BranchObj *bo = frameBI->getBranchObj();
-                if (bo)
-                    // Return frame background
-                    return bo->getFrameBrushColor();
-            }
-            else {
-                // Return map background
-                return bi->getModel()->getMapBackgroundColor();
-            }
+            return bi->getBackgroundColor(bi);
         }
     }
 
@@ -270,7 +266,7 @@ bool TaskModel::setData(const QModelIndex &index, const QVariant &value,
             VymModel *m = bi->getModel();
             m->setTaskPriorityDelta(value.toInt(), bi);
             recalcPriorities();
-            emit(dataChanged(index, index));
+            emit dataChanged(index, index);
             return true;
         }
         if (index.column() == 8) // set Heading
@@ -278,7 +274,7 @@ bool TaskModel::setData(const QModelIndex &index, const QVariant &value,
             BranchItem *bi = t->getBranch();
             VymModel *m = bi->getModel();
             m->setHeadingPlainText(value.toString(), bi);
-            emit(dataChanged(index, index));
+            emit dataChanged(index, index);
             return true;
         }
     }
@@ -295,7 +291,7 @@ void TaskModel::emitDataChanged(Task *t)
         while (col < columnCount(QModelIndex())) {
             ix = createIndex(row, col, t);
             if (ix.isValid())
-                emit(dataChanged(ix, ix));
+                emit dataChanged(ix, ix);
             col++;
         }
     }
@@ -306,8 +302,13 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsEnabled;
 
+    // Editable columns should match those in the setData method
+    if (index.column() == 1 || index.column() == 8)
+        return QAbstractTableModel::flags(index) | Qt::ItemIsDragEnabled |
+               Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
+
     return QAbstractTableModel::flags(index) | Qt::ItemIsDragEnabled |
-           Qt::ItemIsDropEnabled | Qt::ItemIsEditable;
+           Qt::ItemIsDropEnabled;
 }
 
 int TaskModel::count(VymModel *model) const
@@ -327,7 +328,7 @@ Task *TaskModel::createTask(BranchItem *bi)
         foreach (Task *t, tasks) {
             if (t->getBranch() == bi) {
                 qWarning() << "TaskModel::createTask Branch exists already!";
-                return NULL;
+                return nullptr;
             }
         }
         Task *task = new Task(this);
@@ -340,7 +341,7 @@ Task *TaskModel::createTask(BranchItem *bi)
         return task;
     }
     qWarning() << "TaskEditor::addItem - item exists";
-    return NULL;
+    return nullptr;
 }
 
 void TaskModel::deleteTask(Task *t)
@@ -364,7 +365,7 @@ bool TaskModel::updateAwake(bool force)
 
 void TaskModel::recalcPriorities()
 {
-    emit(layoutAboutToBeChanged());
+    emit layoutAboutToBeChanged();
     int minPrio = 1000000;
     foreach (Task *t, tasks) {
         int p = 0;
@@ -395,7 +396,7 @@ void TaskModel::recalcPriorities()
         }
 
         // Color (importance)
-        QColor c = bi->getHeadingColor();
+        QColor c = bi->headingColor();
 
         // light blueish green
         if (c == QColor("#00aa7f"))
@@ -442,7 +443,7 @@ void TaskModel::recalcPriorities()
         t->setPriority(1 - minPrio + t->getPriority());
     }
 
-    emit(layoutChanged());
+    emit layoutChanged();
 }
 
 void TaskModel::setShowParentsLevel(uint i)
@@ -476,7 +477,7 @@ QMimeData *TaskModel::mimeData(const QModelIndexList &indexes) const
         Task *task = getTask(indexes.first());
 
         // Field 0: Heading
-        QString text = task->getBranch()->getHeadingPlain();
+        QString text = task->getBranch()->headingPlain();
         stream << text;
 
         // Field 1: task row
@@ -492,8 +493,14 @@ bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 {
     Q_UNUSED(row);
 
+    //qDebug() << "TM::dropMimeData " << row << column << parent << data;
     if (action == Qt::IgnoreAction)
         return true;
+
+    if (!parent.isValid()) {
+        qWarning() << __func__ << " parent is invalid";
+        return false;
+    }
 
     if (!data->hasFormat("application/vnd.text.list"))
         return false;
@@ -516,8 +523,12 @@ bool TaskModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     Task *dst = getTask(parent);
     Task *src = getTask(newItems[1].toInt());
 
-    // qDebug() << "Dropping: " <<  src->getBranch()->getHeadingPlain() << " on
-    // " << dst->getBranch()->getHeadingPlain();
+    if (!dst || !src) {
+        qWarning() << __func__ << " invalid src or dst";
+        qDebug() << "dst=" << dst << "  src=" << src;
+        return false;
+    }
+    //qDebug() << "Dropping: " <<  src->getBranch()->headingPlain() << " on " << dst->getBranch()->headingPlain();
 
     int delta_p = dst->getPriority() - src->getPriority();
 

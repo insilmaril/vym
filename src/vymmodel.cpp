@@ -20,6 +20,7 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
+#include "branchpropeditor.h"
 #include "confluence-agent.h"
 #include "download-agent.h"
 #include "editxlinkdialog.h"
@@ -30,14 +31,21 @@
 #include "export-firefox.h"
 #include "export-html.h"
 #include "export-impress.h"
+#include "export-impress-filedialog.h"
 #include "export-latex.h"
 #include "export-markdown.h"
 #include "export-orgmode.h"
+#include "export-taskjuggler.h"
 #include "file.h"
 #include "findresultmodel.h"
+#include "heading-container.h"
+#include "image-container.h"
 #include "jira-agent.h"
+#include "linkobj.h"
 #include "lockedfiledialog.h"
 #include "mainwindow.h"
+#include "mapdesign.h"
+#include "mapeditor.h"
 #include "misc.h"
 #include "noteeditor.h"
 #include "options.h"
@@ -47,26 +55,30 @@
 #include "taskeditor.h"
 #include "taskmodel.h"
 #include "treeitem.h"
-#include "vymprocess.h"
+#include "vymmodelwrapper.h"
+#include "vymview.h"
 #include "warningdialog.h"
+#include "xlink.h"
 #include "xlinkitem.h"
 #include "xlinkobj.h"
-#include "xml-freemind.h"
+#include "xml-freeplane.h"
+#include "xml-ithoughts.h"
 #include "xml-vym.h"
 #include "xmlobj.h"
-
-#ifdef Q_OS_WINDOWS
-#include <windows.h>
-#endif
+#include "zip-agent.h"
 
 extern bool debug;
 extern bool testmode;
 extern bool restoreMode;
 extern QStringList ignoredLockedFiles;
 
+extern BranchPropertyEditor *branchPropertyEditor;
 extern Main *mainWindow;
 
 extern QDir tmpVymDir;
+
+extern bool useActionLog;
+extern QString actionLogPath;
 
 extern NoteEditor *noteEditor;
 extern TaskEditor *taskEditor;
@@ -76,8 +88,8 @@ extern FlagRowMaster *userFlagsMaster;
 
 extern Options options;
 
-extern QString clipboardDir;
-extern QString clipboardFile;
+extern QDir clipboardDir;
+extern QString clipboardFileName;
 
 extern ImageIO imageIO;
 
@@ -88,11 +100,13 @@ extern QString vymVersion;
 extern QDir vymBaseDir;
 
 extern QDir lastImageDir;
-extern QDir lastMapDir;
 extern QDir lastExportDir;
 
 extern Settings settings;
 extern QTextStream vout;
+
+extern bool usingDarkTheme;
+extern QColor vymBlueColor;
 
 uint VymModel::idLast = 0; // make instance
 
@@ -106,19 +120,37 @@ VymModel::VymModel()
 
 VymModel::~VymModel()
 {
-    // out << "Destr VymModel begin this="<<this<<"  "<<mapName<<flush;
+    // qDebug() << "Destr VymModel begin this=" << this << "  " << mapName << "zipAgent=" << zipAgent;
+
     mapEditor = nullptr;
     repositionBlocked = true;
+
     autosaveTimer->stop();
     fileChangedTimer->stop();
-    stopAllAnimation();
+    taskAlarmTimer->stop();
 
-    // qApp->processEvents();	// Update view (scene()->update() is not enough)
-    // qDebug() << "Destr VymModel end   this="<<this;
+    delete(autosaveTimer);
+    delete(fileChangedTimer);
+    delete(taskAlarmTimer);
+
+    filePath.clear();
 
     vymLock.releaseLock();
 
+    // Delete rootItem already now, while VymModel is still around
+    // ImageItems can ask VymModel for a path in their destructor then.
+    // Delete whole tree, XLinkItems will be queude for deletion in xlinksTrash
+    delete rootItem;
+
+    emptyXLinksTrash();
+
     delete (wrapper);
+    delete mapDesignInt;
+
+    // VymModel can be destroyed now, zipProcess for saving is handled in MainWindow
+
+    //qDebug() << "Destr VymModel end this=" << this;
+    //logInfo("VymModel destroyed", __func__);
 }
 
 void VymModel::clear()
@@ -126,31 +158,38 @@ void VymModel::clear()
     while (rootItem->childCount() > 0) {
         // qDebug()<<"VM::clear  ri="<<rootItem<<"
         // ri->count()="<<rootItem->childCount();
-        deleteItem(rootItem->getChildNum(0));
+        deleteItem(rootItem->childItemByRow(0));
     }
+    reposition();
 }
 
 void VymModel::init()
 {
     // No MapEditor yet
-    mapEditor = NULL;
+    mapEditor = nullptr;
+
+    // No ZipAgent yet and not saving
+    zipAgent = nullptr;
+    isSavingInt = false;
+    isLoadingInt = false;
 
     // Use default author
-    author =
-        settings
-            .value("/user/name", tr("unknown user",
-                                    "default name for map author in settings"))
-            .toString();
+    authorInt = settings
+            .value("/user/name",
+                    tr("unknown user", "default name for map author in settings")).toString();
+    // MapDesign
+    mapDesignInt = new MapDesign;
 
     // States and IDs
     idLast++;
-    modelID = idLast;
+    modelIdInt = idLast;
     mapChanged = false;
     mapDefault = true;
     mapUnsaved = false;
+    buildingUndoScript = false;
 
     // Selection history
-    selModel = NULL;
+    selModel = nullptr;
     selectionBlocked = false;
     resetSelectionHistory();
 
@@ -167,6 +206,7 @@ void VymModel::init()
     mapName = fileName;
     repositionBlocked = false;
     saveStateBlocked = false;
+    dataChangedBlocked = false;
 
     autosaveTimer = new QTimer(this);
     connect(autosaveTimer, SIGNAL(timeout()), this, SLOT(autosave()));
@@ -179,43 +219,19 @@ void VymModel::init()
     connect(taskAlarmTimer, SIGNAL(timeout()), this, SLOT(updateTasksAlarm()));
     taskAlarmTimer->start(3000);
 
-    // animations   // FIXME-4 switch to new animation system
-    animationUse =
-        settings.value("/animation/use", false)
-            .toBool(); // FIXME-4 add options to control _what_ is animated
-    animationTicks = settings.value("/animation/ticks", 20).toInt();
-    animationInterval = settings.value("/animation/interval", 5).toInt();
-    animObjList.clear();
-    animationTimer = new QTimer(this);
-    connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
-
-    // View - map
-    defaultFont.setPointSizeF(16);
-    defLinkColor = QColor(0, 0, 255);
-    linkcolorhint = LinkableMapObj::DefaultColor;
-    linkstyle = LinkableMapObj::PolyParabel;
-    defXLinkPen.setWidth(1);
-    defXLinkPen.setColor(QColor(50, 50, 255));
-    defXLinkPen.setStyle(Qt::DashLine);
-    defXLinkStyleBegin = "HeadFull";
-    defXLinkStyleEnd = "HeadFull";
-
     hasContextPos = false;
 
-    hidemode = TreeItem::HideNone;
+    hideMode = TreeItem::HideNone;
 
     // Animation in MapEditor
-    zoomFactor = 1;
-    rotationAngle = 0;
+    viewZoomFactorInt = 1;
+    viewRotationInt = 0;
     animDuration = 2000;
     animCurve = QEasingCurve::OutQuint;
 
     // Initialize presentation slides
     slideModel = new SlideModel(this);
     blockSlideSelection = false;
-
-    // Avoid recursions later
-    cleaningUpLinks = false;
 
     // Network
     netstate = Offline;
@@ -224,7 +240,7 @@ void VymModel::init()
     // Announce myself on DBUS
     new AdaptorModel(this); // Created and not deleted as documented in Qt
     if (!QDBusConnection::sessionBus().registerObject(
-            QString("/vymmodel_%1").arg(modelID), this))
+            QString("/vymmodel_%1").arg(modelIdInt), this))
         qWarning("VymModel: Couldn't register DBUS object!");
 #endif
 }
@@ -232,13 +248,22 @@ void VymModel::init()
 void VymModel::makeTmpDirectories()
 {
     // Create unique temporary directories
-    tmpMapDirPath = tmpVymDir.path() + QString("/model-%1").arg(modelID);
+    tmpMapDirPath = tmpVymDir.path() + QString("/model-%1").arg(modelIdInt);
     histPath = tmpMapDirPath + "/history";
     QDir d;
-    d.mkdir(tmpMapDirPath);
+    if (!d.mkdir(tmpMapDirPath))
+        qWarning() << "Couldn't create tmpMapDir=" << tmpMapDirPath;
+
+    QString s = tmpMapDirPath + "/zipDir";
+    if (!d.mkpath(s))
+        qWarning() << "Couldn't create zipDirInt=" << s;
+
+    zipDirInt.setPath(s);
 }
 
 QString VymModel::tmpDirPath() { return tmpMapDirPath; }
+
+QString VymModel::zipDirPath() { return zipDirInt.path(); }
 
 MapEditor *VymModel::getMapEditor() { return mapEditor; }
 
@@ -250,6 +275,21 @@ void VymModel::updateActions()
 {
     // Tell mainwindow to update states of actions
     mainWindow->updateActions();
+}
+
+void  VymModel::closeAfterSaving() {
+    closeAfterSavingInt = true;
+}
+
+bool  VymModel::readyToClose() {
+    // Check for background processes before closing map in mainWindow
+    // (Currently only zipAgent for saving)
+    return zipAgent ? false : true;
+}
+
+void VymModel::setSaveAsBackgroundProcess(bool b)
+{
+    saveAsBackgroundProcessInt = b;
 }
 
 bool VymModel::setData(const QModelIndex &, const QVariant &value, int role)
@@ -270,6 +310,9 @@ void VymModel::resetUsedFlags()
 
 QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
                             FlagRowMaster::WriteMode flagMode, const QPointF &offset,
+                            bool writeMapAttr,
+                            bool writeMapDesign,
+                            bool writeCompleteTree,
                             TreeItem *saveSel)
 {
     // tmpdir	    temporary directory to which data will be written
@@ -282,103 +325,83 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
     XMLObj xml;
 
     // Save Header
-    QString ls;
-    switch (linkstyle) {
-    case LinkableMapObj::Line:
-        ls = "StyleLine";
-        break;
-    case LinkableMapObj::Parabel:
-        ls = "StyleParabel";
-        break;
-    case LinkableMapObj::PolyLine:
-        ls = "StylePolyLine";
-        break;
-    default:
-        ls = "StylePolyParabel";
-        break;
-    }
-
     QString header =
         "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE vymmap>\n";
-    QString colhint = "";
-    if (linkcolorhint == LinkableMapObj::HeadingColor)
-        colhint = xml.attribut("linkColorHint", "HeadingColor");
 
-    QString mapAttr = xml.attribut("version", vymVersion);
-    if (!saveSel) {
-        QPen selPen = mapEditor->getSelectionPen();
-        QBrush selBrush = mapEditor->getSelectionBrush();
+    QString mapAttr = xml.attribute("version", vymVersion);
+    // Current map version after load still might be original one, change it now.
+    mapVersionInt = vymVersion;
 
-        mapAttr +=
-            xml.attribut("author", author) + xml.attribut("title", title) +
-            xml.attribut("comment", comment) + xml.attribut("date", getDate()) +
-            xml.attribut("branchCount", QString().number(branchCount())) +
-            xml.attribut(
-                "backgroundColor",
-                mapEditor->getScene()->backgroundBrush().color().name()) +
-            xml.attribut("defaultFont", defaultFont.toString()) +
-            xml.attribut("selectionColor",  // FIXME-2 Only for compatibility until 2.9.513
-                         selBrush.color().name(QColor::HexArgb)) +
-            xml.attribut("selectionPenColor", selPen.color().name(QColor::HexArgb)) +
-            xml.attribut("selectionPenWidth", 
-                         QString().setNum(selPen.width())) + 
-            xml.attribut("selectionBrushColor", selBrush.color().name(QColor::HexArgb)) +
-            xml.attribut("linkStyle", ls) +
-            xml.attribut("linkColor", defLinkColor.name()) +
-            xml.attribut("defXLinkColor", defXLinkPen.color().name()) +
-            xml.attribut("defXLinkWidth",
-                         QString().setNum(defXLinkPen.width(), 10)) +
-            xml.attribut("defXLinkPenStyle",
-                         penStyleToString(defXLinkPen.style())) +
-            xml.attribut("defXLinkStyleBegin", defXLinkStyleBegin) +
-            xml.attribut("defXLinkStyleEnd", defXLinkStyleEnd) +
-            xml.attribut("mapZoomFactor",
-                         QString().setNum(mapEditor->getZoomFactorTarget())) +
-            xml.attribut("mapRotationAngle",
-                         QString().setNum(mapEditor->getAngleTarget())) +
-            colhint;
+    if (writeMapAttr) {
+        mapAttr += xml.attribute("date", toS(QDate::currentDate())) + "\n";
+
+        if (!authorInt.isEmpty())
+            mapAttr += xml.attribute("author", authorInt) + "\n";
+        if (!titleInt.isEmpty())
+            mapAttr += xml.attribute("title", titleInt) + "\n";
+        if (!commentInt.isEmpty())
+            mapAttr += xml.attribute("comment", commentInt) + "\n";
+
+        mapAttr += xml.attribute("branchCount", QString().number(branchCount()));
+        if (mapEditor) {
+            mapAttr += xml.attribute("viewZoomFactor",
+                         QString().setNum(mapEditor->zoomFactorTarget()));
+            mapAttr += xml.attribute("viewRotation",
+                         QString().setNum(mapEditor->rotationTarget()));
+            QPointF viewport_center = mapEditor->mapToScene(mapEditor->viewport()->geometry().center());
+            mapAttr += xml.attribute("viewCenterX",
+                         QString().setNum(viewport_center.x()));
+            mapAttr += xml.attribute("viewCenterY",
+                         QString().setNum(viewport_center.y()));
+        }
     }
     header += xml.beginElement("vymmap", mapAttr);
+
+    QString design;
+
+    if (writeMapDesign)
+        design = mapDesignInt->saveToDir(tmpdir, prefix);
+
     xml.incIndent();
 
     // Find the used flags while traversing the tree
     resetUsedFlags();
 
     // Temporary list of links
-    QList<Link *> tmpLinks;
+    QList<XLink *> tmpXLinks;
 
     QString tree;
     // Build xml recursivly
-    if (!saveSel) {
+    if (writeCompleteTree) {
         // Save all mapcenters as complete map, if saveSel not set
-        tree += saveTreeToDir(tmpdir, prefix, offset, tmpLinks);
+        tree += saveTreeToDir(tmpdir, prefix, offset, tmpXLinks);
 
         // Save local settings
         tree += settings.getDataXML(destPath);
 
         // Save selection
-        if (getSelectedItem() && !saveSel)
+        if (getSelectedItems().count() > 0 && !saveSel)
             tree += xml.valueElement("select", getSelectString());
-    }
-    else {
-        switch (saveSel->getType()) {
-        case TreeItem::Branch:
-            // Save Subtree
-            tree += ((BranchItem *)saveSel)
-                        ->saveToDir(tmpdir, prefix, offset, tmpLinks);
-            break;
-        case TreeItem::MapCenter:
-            // Save Subtree
-            tree += ((BranchItem *)saveSel)
-                        ->saveToDir(tmpdir, prefix, offset, tmpLinks);
-            break;
-        case TreeItem::Image:
-            // Save Image
-            tree += ((ImageItem *)saveSel)->saveToDir(tmpdir, prefix);
-            break;
-        default:
-            // other types shouldn't be safed directly...
-            break;
+    } else
+    {
+        if (saveSel) {
+            switch (saveSel->getType()) {
+                case TreeItem::Branch:
+                case TreeItem::MapCenter:
+                    // Save Subtree
+                    tree += ((BranchItem *)saveSel)
+                                ->saveToDir(tmpdir, prefix, offset, tmpXLinks, exportBoundingBoxes);
+                    break;
+                case TreeItem::Image:
+                    tree += ((ImageItem *)saveSel)->saveToDir(tmpdir);
+                    break;
+                case TreeItem::XLinkItemType:
+                    tree += ((XLinkItem *)saveSel)->getXLink()->saveToDir();
+                    break;
+                default:
+                    // other types shouldn't be saved directly...
+                    break;
+            }
         }
     }
 
@@ -396,25 +419,30 @@ QString VymModel::saveToDir(const QString &tmpdir, const QString &prefix,
 
     QString footer;
     // Save XLinks
-    for (int i = 0; i < tmpLinks.count(); ++i)
-        footer += tmpLinks.at(i)->saveToDir();
+    for (int i = 0; i < tmpXLinks.count(); ++i)
+        footer += tmpXLinks.at(i)->saveToDir();
 
-    // Save slides
-    footer += slideModel->saveToDir();
+    if (writeCompleteTree)
+        // Save slides
+        footer += slideModel->saveToDir();
 
     xml.decIndent();
     footer += xml.endElement("vymmap");
 
-    return header + flags + tree + footer;
+    return header + design + flags + tree + footer;
 }
 
 QString VymModel::saveTreeToDir(const QString &tmpdir, const QString &prefix,
-                                const QPointF &offset, QList<Link *> &tmpLinks)
+                                const QPointF &offset, QList<XLink *> &tmpXLinks)
 {
     QString s;
     for (int i = 0; i < rootItem->branchCount(); i++)
-        s += rootItem->getBranchNum(i)->saveToDir(tmpdir, prefix, offset,
-                                                  tmpLinks);
+        s += rootItem->getBranchNum(i)->saveToDir(
+                tmpdir,
+                prefix,
+                offset,
+                tmpXLinks,
+                exportBoundingBoxes);
     return s;
 }
 
@@ -433,7 +461,7 @@ void VymModel::setFilePath(QString fpath, QString destname)
 
         // If fpath is not an absolute path, complete it
         filePath = QDir(fpath).absolutePath();
-        fileDir = filePath.left(1 + filePath.lastIndexOf("/"));
+        fileDir = filePath.left(filePath.lastIndexOf("/"));
 
         // Set short name, too. Search from behind:
         fileName = basename(fileName);
@@ -456,75 +484,41 @@ QString VymModel::getMapName() { return mapName; }
 
 QString VymModel::getDestPath() { return destPath; }
 
-bool VymModel::parseVymText(const QString &s)
+bool VymModel::loadMap(QString fname, const File::LoadMode &lmode,
+                                  const File::FileType &ftype,
+                                  const int &contentFilter,
+                                  BranchItem *insertBranch,
+                                  int insertPos)
 {
-    bool ok = false;
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        parseBaseHandler *handler = new parseVYMHandler;
+    bool noError = true;
 
-        bool saveStateBlockedOrg = saveStateBlocked;
-        repositionBlocked = true;
-        saveStateBlocked = true;
-        QXmlInputSource source;
-        source.setData(s);
-        QXmlSimpleReader reader;
-        reader.setContentHandler(handler);
-        reader.setErrorHandler(handler);
-
-        handler->setInputString(s);
-        handler->setModel(this);
-        handler->setLoadMode(ImportReplace, 0);
-
-        ok = reader.parse(source);
-        repositionBlocked = false;
-        saveStateBlocked = saveStateBlockedOrg;
-        if (ok) {
-            if (s.startsWith("<vymnote"))
-                emitNoteChanged(bi);
-            emitDataChanged(bi);
-            reposition(); // to generate bbox sizes
-        }
-        else {
-            QMessageBox::critical(0, tr("Critical Parse Error"),
-                                  tr(handler->errorProtocol().toUtf8()));
-            // returnCode=1;
-            // Still return "success": the map maybe at least
-            // partially read by the parser
-        }
-    }
-    return ok;
-}
-
-File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
-                                  const FileType &ftype,
-                                  const int &contentFilter, int pos)
-{
-    File::ErrorCode err = File::Success;
-
-    // Get updated zoomFactor, before applying one read from file in the end
+    // Get updated viewZoomFactor, before applying one read from file in the end
     if (mapEditor) {
-        zoomFactor = mapEditor->getZoomFactorTarget();
-        rotationAngle = mapEditor->getAngleTarget();
+        viewZoomFactorInt = mapEditor->zoomFactorTarget();
+        viewRotationInt = mapEditor->rotationTarget();
     }
 
-    parseBaseHandler *handler;
+    BaseReader *reader;
     fileType = ftype;
     switch (fileType) {
-    case VymMap:
-        handler = new parseVYMHandler;
-        ((parseVYMHandler *)handler)->setContentFilter(contentFilter);
-        break;
-    case FreemindMap:
-        handler = new parseFreemindHandler;
-        break;
-    default:
-        QMessageBox::critical(0, tr("Critical Parse Error"),
-                              "Unknown FileType in VymModel::load()");
-        return File::Aborted;
+        case File::VymMap:
+            reader = new VymReader(this);
+            // For imports we might want to ignore slides
+            reader->setContentFilter(contentFilter);// FIXME-4 Maybe ignore slides hardcoded, when parsing and remove contentFilter?
+            break;
+        case File::FreemindMap:
+            reader = new FreeplaneReader(this);
+            break;
+        case File::IThoughtsMap:
+            reader = new IThoughtsReader(this);
+            break;
+        default:
+            QMessageBox::critical(0, tr("Critical Parse Error"),
+                                  "Unknown FileType in VymModel::load()");
+            return false;
     }
 
-    if (lmode == NewMap) {
+    if (lmode == File::NewMap) {
         // Reset timestamp to check for later updates of file
         fileChangedTime = QFileInfo(destPath).lastModified();
 
@@ -533,67 +527,104 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
 
     bool zipped_org = zipped;
 
-    // Create temporary directory for packing
+    // Create temporary directory for unzip
     bool ok;
-    QString tmpZipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
+    QString tmpUnzipDir = makeTmpDir(ok, tmpDirPath(), "unzip");
     if (!ok) {
         QMessageBox::critical(
             0, tr("Critical Load Error"),
             tr("Couldn't create temporary directory before load\n"));
-        return File::Aborted;
+        return false;
     }
+
+    // No returns now befor end of function
+    isLoadingInt = true;
 
     QString xmlfile;
     if (fname.right(4) == ".xml" || fname.right(3) == ".mm") {
         xmlfile = fname;
         zipped = false;
 
-        if (lmode == NewMap || lmode == DefaultMap)
+        if (lmode == File::NewMap || lmode == File::DefaultMap)
             zipped_org = false;
-    }
-    else {
+    } else {
         // Try to unzip file
-        err = unzipDir(tmpZipDir, fname);
+        QFile file(fname);
+        if (file.size() > 2000000)
+            // Inform user that unzipping might take a while.
+            // Detailed estimation about number of branches required for progress bar 
+            // is within the zipfile and cannot be used yet.
+            mainWindow->statusMessage(tr("Uncompressing %1").arg(fname));
+
+        ZipAgent zipAgent(tmpUnzipDir, fname);
+        zipAgent.setBackgroundProcess(false);
+        zipAgent.startUnzip();
+        if (zipAgent.exitStatus() != QProcess::NormalExit)
+            noError = false;
+
+        if (file.size() > 2000000)
+            // Inform user that unzipping might take a while.
+            // Detailed estimation about number of branches required for progress bar 
+            // is within the zipfile and cannot be used yet.
+            mainWindow->statusMessage(tr("Loading %1").arg(fname), 0);
     }
 
     if (zipped) {
-        // Look for mapname.xml
-        xmlfile = fname.left(fname.lastIndexOf(".", -1, Qt::CaseSensitive));
-        xmlfile = xmlfile.section('/', -1);
-        QFile mfile(tmpZipDir + "/" + xmlfile + ".xml");
-        if (!mfile.exists()) {
-            // mapname.xml does not exist, well,
-            // maybe someone renamed the mapname.vym file...
-            // Try to find any .xml in the toplevel
-            // directory of the .vym file
-            QStringList filters;
-            filters << "*.xml";
-            QStringList flist = QDir(tmpZipDir).entryList(filters);
-            if (flist.count() == 1) {
-                // Only one entry, take this one
-                xmlfile = tmpZipDir + "/" + flist.first();
-            }
-            else {
-                for (QStringList::Iterator it = flist.begin();
-                     it != flist.end(); ++it)
-                    *it = tmpZipDir + "/" + *it;
-                // FIXME-4 Multiple entries, load all (but only the first one
-                // into this ME)
-                // mainWindow->fileLoadFromTmp (flist);
-                // returnCode = 1;	// Silently forget this attempt to load
-                qWarning("MainWindow::load (fn)  multimap found...");
-            }
+        QStringList filters;
+        filters << "*.xml";
+        QStringList xmlFileList = QDir(tmpUnzipDir).entryList(filters);
+        if (xmlFileList.count() == 1) {
+            // Only one xml file in zip archive, take this one
+            xmlfile = tmpUnzipDir + "/" + xmlFileList.first();
+        } else {
+            // Multiple xml files - which one to choose?
+            // Sometimes (at least on Windows) a zipped (!) $MAPNAME.xml also ends up in archive,
+            // which prevented subsequent loading
+            QString warning = QString("Found multiple .xml files in %1: %2").arg(fname, xmlFileList.join(", "));
+            logWarning(warning, __func__);
+            QMessageBox::warning (0, "Multiple xml files found", warning + "\n\nWill try to keep only map.xml");
 
-            if (flist.isEmpty()) {
+            // mainWindow->fileLoadFromTmp (xmlFileList);
+            // returnCode = 1;	// Silently forget this attempt to load
+            if (fileType == File::VymMap) {
+                // Default map name
+                QString xfile = "map.xml";
+                if (xmlFileList.contains(xfile))
+                    xmlfile = tmpUnzipDir + "/" + xfile;
+                else {
+                    // Try $MAPNAME.xml
+                    xfile = basename(fname);
+                    xfile = tmpUnzipDir + "/" + xfile.left(xfile.lastIndexOf(".", -1, Qt::CaseSensitive)) + ".xml";
+                    QFile mfile(xfile);
+                    if (!mfile.exists()) {
+                        // $MAPNAME.xml does not exist, well, ...
+                        QMessageBox::critical(
+                            0, tr("Critical Load Error"), "Multiple maps found, but no map.xml or " + xfile);
+                        noError = false;
+                    }
+                }
+            } else if (fileType == File::IThoughtsMap) {
+                if (!xmlFileList.contains("mapdata.xml")) {
+                    QMessageBox::critical(
+                        0, tr("Critical Load Error"),
+                        tr("Couldn't find %1 in map file.\n").arg("mapdata.xml"));
+                    noError = false;
+                }
+                else
+                    xmlfile = tmpUnzipDir + "/mapdata.xml";
+            } else {
                 QMessageBox::critical(
-                    0, tr("Critical Load Error"),
-                    tr("Couldn't find a map (*.xml) in .vym archive.\n"));
-                err = File::Aborted;
+                    0, tr("Critical Load Error"), "Multiple maps found in zip archive and no clue about file type");
+                noError = false;
             }
-        } // file doesn't exist
-        else
-            xmlfile = mfile.fileName();
-    }
+        }
+        if (xmlFileList.isEmpty()) {
+            QMessageBox::critical(
+                0, tr("Critical Load Error"),
+                tr("Couldn't find a map (*.xml) in .vym archive.\n"));
+            noError = false;
+        }
+    } // zipped
 
     QFile file(xmlfile);
 
@@ -602,101 +633,139 @@ File::ErrorCode VymModel::loadMap(QString fname, const LoadMode &lmode,
     if (!file.exists()) {
         QMessageBox::critical(
             0, tr("Critical Parse Error"),
-            tr(QString("Couldn't open map %1").arg(file.fileName()).toUtf8()));
-        err = File::Aborted;
+            tr(QString("Couldn't open map \"%1\"").arg(file.fileName()).toUtf8()));
+        noError = false;
     }
     else {
         bool saveStateBlockedOrg = saveStateBlocked;
         repositionBlocked = true;
         saveStateBlocked = true;
-        mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
-        QXmlInputSource source(&file);
-        QXmlSimpleReader reader;
-        reader.setContentHandler(handler);
-        reader.setErrorHandler(handler);
-        handler->setModel(this);
+        if (mapEditor)
+            mapEditor->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
 
         // We need to set the tmpDir in order  to load files with rel. path
         QString tmpdir;
         if (zipped)
-            tmpdir = tmpZipDir;
+            tmpdir = tmpUnzipDir;
         else
             tmpdir = fname.left(fname.lastIndexOf("/", -1));
-        handler->setTmpDir(tmpdir);
-        handler->setInputFile(file.fileName());
-        if (lmode == ImportReplace)
-            handler->setLoadMode(ImportReplace, pos);
-        else
-            handler->setLoadMode(lmode, pos);
 
-        // Here we actually parse the XML file
-        bool ok = reader.parse(source);
+        reader->setTmpDir(tmpdir);
+
+        reader->setLoadMode(lmode);
+
+        if (lmode == File::ImportReplace || lmode == File::ImportAdd) 
+            reader->setInsertBranch(insertBranch);
+
+        if (lmode == File::ImportAdd)
+            reader->setInsertPos(insertPos);
+
+        bool parsedWell = false;
+
+        // Open file
+        if (!file.open(QFile::ReadOnly | QFile::Text)) {
+            QMessageBox::critical(nullptr, "VymModel::loadMap",
+                    QString("Cannot read file %1:\n%2.")
+                    .arg(QDir::toNativeSeparators(fileName),
+                        file.errorString()));
+            noError = false;
+        } else {
+            // Here we actually parse the XML file
+            parsedWell = reader->read(&file);
+
+            file.close();
+        }
 
         // Aftermath
         repositionBlocked = false;
         saveStateBlocked = saveStateBlockedOrg;
-        mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
-        file.close();
-        if (ok) {
-            reposition(); // to generate bbox sizes
-            emitSelectionChanged();
+        if (mapEditor)
+            mapEditor->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 
-            if (lmode == NewMap) // no lockfile for default map!
-            {
-                mapDefault = false;
-                mapChanged = false;
-                mapUnsaved = false;
-                autosaveTimer->stop();
+        if (noError) {
+            if (parsedWell) {
+                reposition();
 
-                resetHistory();
-                resetSelectionHistory();
+                if (lmode == File::NewMap)  // no lockfile for default map!
+                {
+                    mapDefault = false;
+                    mapChanged = false;
+                    mapUnsaved = false;
+                    autosaveTimer->stop();
 
-                // Set treeEditor and slideEditor visibilty per map
-                vymView->readSettings();
+                    resetHistory();
+                    resetSelectionHistory();
 
-                if (!tryVymLock() && debug)
-                    qWarning() << "VM::loadMap  no lockfile created!";
+                    if (!tryVymLock() && debug)
+                        qWarning() << "VM::loadMap  no lockfile created!";
+                }
+
+                // Recalc priorities and sort
+                taskModel->recalcPriorities();
+
+                // Log
+                logInfo(QString("Map loaded successfully from \"%1\"").arg(fname), __func__);
+            } else {
+                QMessageBox::critical(0, tr("Critical Parse Error"),
+                                        reader->errorString());
+                // returnCode=1;
+                // Still return "success": the map maybe at least
+                // partially read by the parser
+
+                setReadOnly(true);
             }
-
-            // Recalc priorities and sort
-            taskModel->recalcPriorities();
-        }
-        else {
-            QMessageBox::critical(0, tr("Critical Parse Error"),
-                                  tr(handler->errorProtocol().toUtf8()));
-            // returnCode=1;
-            // Still return "success": the map maybe at least
-            // partially read by the parser
-        }
+        } // noError so far
     }
 
-    // Delete tmpZipDir
-    removeDir(QDir(tmpZipDir));
+    // If required, fix positions when importing from old versions
+    if (fileType == File::VymMap && versionLowerOrEqual(mapVersionInt, "2.9.500")) {
+        foreach (BranchItem *center, rootItem->getBranches()) {
+            foreach (BranchItem *mainBranch, center->getBranches()) {
+                BranchContainer *bc = mainBranch->getBranchContainer();
+                QRectF rb = bc->ornamentsSceneRect();
+                QPointF offset;
+                offset.setX(rb.width() / 2);
+                offset.setY(rb.height() / 2);
+                bc->setPos(bc->x() + offset.x(), bc->y() + offset.y());
+                logInfo("Adjusting legacy position of " + mainBranch->headingPlain() + "  offset: " + toS(offset), __func__);
+            }
+        }
+        reposition();
+    }
+
+    // Cleanup
+    removeDir(QDir(tmpUnzipDir));
+    delete reader;
 
     // Restore original zip state
     zipped = zipped_org;
 
     updateActions();
 
-    if (lmode != NewMap)
+    if (lmode != File::NewMap)
         emitUpdateQueries();
 
     if (mapEditor) {
-        mapEditor->setZoomFactorTarget(zoomFactor);
-        mapEditor->setAngleTarget(rotationAngle);
+        mapEditor->setZoomFactorTarget(viewZoomFactorInt);
+        mapEditor->setRotationTarget(viewRotationInt);
     }
 
     qApp->processEvents(); // Update view (scene()->update() is not enough)
-    return err;
+
+    isLoadingInt = false;
+
+    return noError;
 }
 
-File::ErrorCode VymModel::save(const SaveMode &savemode)
+bool VymModel::saveMap(const File::SaveMode &savemode)
 {
-    QString tmpZipDir;
+    // Block closing the map while saving, esp. while zipping
+    isSavingInt = true;
+
     QString mapFileName;
     QString saveFilePath;
 
-    File::ErrorCode err = File::Success;
+    bool noError = true;
 
     if (zipped)
         // save as .xml
@@ -708,34 +777,32 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
     // Look, if we should zip the data:
     if (!zipped)
     {
-        QMessageBox mb(vymName,
-                       tr("The map %1\ndid not use the compressed "
-                          "vym file format.\nWriting it uncompressed will also "
-                          "write images \n"
-                          "and flags and thus may overwrite files into the "
-                          "given directory\n\nDo you want to write the map")
-                           .arg(filePath),
-                       QMessageBox::Warning,
-                       QMessageBox::Yes | QMessageBox::Default, QMessageBox::No,
-                       QMessageBox::Cancel | QMessageBox::Escape);
-        mb.setButtonText(QMessageBox::Yes, tr("compressed (vym default)"));
-        mb.setButtonText(
-            QMessageBox::No,
-            tr("uncompressed, potentially overwrite existing data"));
-        mb.setButtonText(QMessageBox::Cancel, tr("Cancel"));
-        switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save compressed (default file format)
-                zipped = true;
-                break;
-            case QMessageBox::No:
-                // save uncompressed
-                zipped = false;
-                break;
-            case QMessageBox::Cancel:
-                // do nothing
-                return File::Aborted;
-                break;
+        QMessageBox mb(QMessageBox::Warning, vymName,
+           tr("The map %1\ndid not use the compressed "
+              "vym file format.\nWriting it uncompressed will also "
+              "write images \n"
+              "and flags and thus may overwrite files into the "
+              "given directory\n\nDo you want to write the map")
+               .arg(filePath));
+        QPushButton *compressedButton = mb.addButton(
+            tr("compressed (vym default)"),
+            QMessageBox::AcceptRole);
+        QPushButton *uncompressedButton = mb.addButton(
+            tr("uncompressed, potentially overwrite existing data"),
+            QMessageBox::NoRole);
+        mb.addButton(
+            tr("Cancel"),
+            QMessageBox::RejectRole);
+        mb.exec();
+        if (mb.clickedButton() == compressedButton)
+            // save compressed (default file format)
+            zipped = true;
+        else if (mb.clickedButton() == uncompressedButton)
+            zipped = false; // FIXME-5 Filename suffix still could be .xml instead of .vym
+        else  {
+            // do nothing
+            isSavingInt = false;
+            return false; 
         }
     }
 
@@ -756,7 +823,7 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
                 if (!f.rename(backupFileName)) {
                     QMessageBox::warning(
                         0, tr("Save Error"),
-                        tr("%1\ncould not be renamed before saving")
+                        tr("%1\ncould not be renamed as backup file before saving")
                             .arg(destPath));
                 }
             }
@@ -765,33 +832,38 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
 
     if (zipped) {
         // Create temporary directory for packing
-        bool ok;
-        tmpZipDir = makeTmpDir(ok, tmpDirPath(), "zip");
-        if (!ok) {
+        if (!zipDirInt.exists()) {
             QMessageBox::critical(
                 0, tr("Critical Save Error"),
-                tr("Couldn't create temporary directory before save\n"));
-            return File::Aborted;
+                tr("Couldn't access zipDir %1\n").arg(zipDirInt.path()));
+            isSavingInt = false;
+            return false;
         }
 
         saveFilePath = filePath;
-        setFilePath(tmpZipDir + "/" + mapName + ".xml", saveFilePath);
+        setFilePath(zipDirInt.path() + "/" + mapName + ".xml", saveFilePath);
     } // zipped
+
+    // Notification, that we start to save
+    mainWindow->statusMessage(tr("Saving  %1...").arg(saveFilePath));
 
     // Create mapName and fileDir
     makeSubDirs(fileDir);
 
-    QString saveFile;
-    if (savemode == CompleteMap || selModel->selection().isEmpty()) {
-        // Save complete map
+    // Real saving (not exporting) needs to save also temporary hidden parts
+    TreeItem::HideTmpMode hideModeOrg = hideMode;
+    setHideTmpMode(TreeItem::HideNone);
+
+    QString mapStringData;
+    if (savemode == File::CompleteMap || selModel->selection().isEmpty()) {
+        // Save complete map    // FIXME-3 prefix still needed? all treeItems from all models have unique number in filename already...
         if (zipped)
             // Use defined name for map within zipfile to avoid problems
             // with zip library and umlauts (see #98)
-            saveFile =
-                saveToDir(fileDir, "", FlagRowMaster::UsedFlags, QPointF(), NULL);
+            mapStringData =
+                saveToDir(fileDir, "", FlagRowMaster::UsedFlags, QPointF());
         else
-            saveFile = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
-                                 QPointF(), NULL);
+            mapStringData = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags, QPointF());
         mapChanged = false;
         mapUnsaved = false;
         autosaveTimer->stop();
@@ -801,30 +873,56 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
         if (selectionType() == TreeItem::Image)
             saveImage();
         else
-            saveFile = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
-                                 QPointF(), getSelectedBranch());
+            mapStringData = saveToDir(fileDir, mapName + "-", FlagRowMaster::UsedFlags,
+                                 QPointF(), false, false, false, getSelectedBranch());
         // FIXME-3 take care of multiselections when saving parts
     }
 
-    bool saved;
+    // Restore original mode
+    setHideTmpMode(hideModeOrg);
+
+    QString saveFileName;
     if (zipped)
         // Use defined map name "map.xml", if zipped. Introduce in 2.6.6
-        saved = saveStringToDisk(fileDir + "map.xml", saveFile);
+        saveFileName = fileDir + "/map.xml";
     else
         // Use regular mapName, when saved as XML
-        saved = saveStringToDisk(fileDir + mapFileName, saveFile);
-    if (!saved) {
-        err = File::Aborted;
+        saveFileName = fileDir + "/" + mapFileName;
+
+    if (!saveStringToDisk(saveFileName, mapStringData)) {
         qWarning("ME::saveStringToDisk failed!");
+        noError = false;
     }
 
-    if (zipped) {
-        // zip
-        if (err == File::Success)
-            err = zipDir(tmpZipDir, destPath);
+    if (!noError)
+        mainWindow->statusMessage(tr("Couldn't save ").arg(saveFilePath));
+    else {
+        if (useActionLog) {
+            QString log = QString("Wrote unzipped map \"%1\" into zipDirInt = %2")
+                .arg(mapFileName, zipDirInt.path());
+            logInfo(log, __func__);
+        }
 
-        // Delete tmpDir
-        removeDir(QDir(tmpZipDir));
+        if (zipped) {
+            // zip
+            mainWindow->statusMessage(tr("Compressing %1").arg(destPath), 0);
+
+            zipAgent = new ZipAgent(zipDirInt, destPath);
+            connect(zipAgent, SIGNAL(zipFinished()), this, SLOT(zipFinished()));
+            QString log = QString("Starting zipAgent to compress \"%1\" in zipDirInt = %2")
+                .arg(mapFileName, zipDirInt.path());
+            logInfo(log, __func__);
+            zipAgent->setBackgroundProcess(saveAsBackgroundProcessInt);
+            bool r = zipAgent->startZip();
+            logInfo("Started zip to save map " + destPath + " Result: " + toS(r), __func__);  // FIXME-3 debugging
+            if (!saveAsBackgroundProcessInt && !r) {
+                qDebug() << "ok3  Result: " << r;
+                logInfo("Problems starting zip as foreground process", __func__);
+            }
+        } else {
+            mainWindow->statusMessage(tr("Saved %1").arg(saveFilePath));
+            logInfo("Finishing saving unzipped map " + destPath, __func__);  // FIXME-3 debugging
+        }
 
         // Restore original filepath outside of tmp zip dir
         setFilePath(saveFilePath);
@@ -832,68 +930,115 @@ File::ErrorCode VymModel::save(const SaveMode &savemode)
 
     updateActions();
 
-    fileChangedTime = QFileInfo(destPath).lastModified();
-    return err;
+    if (!zipped)
+        isSavingInt = false;
+
+    return noError;
 }
 
-ImageItem* VymModel::loadImage(BranchItem *dst, const QString &fn)  // FIXME-2 better move filedialog to MainWindow
+bool VymModel::isSaving()
 {
-    if (!dst)
-        dst = getSelectedBranch();
-    if (dst) {
-        QString filter = QString(tr("Images") +
-                                 " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif "
-                                 "*.pnm *.svg *.svgz);;" +
-                                 tr("All", "Filedialog") + " (*.*)");
-        QStringList fns;
-        if (fn.isEmpty())
-            fns = QFileDialog::getOpenFileNames(
-                NULL, vymName + " - " + tr("Load image"), lastImageDir.path(),
-                filter);
-        else
-            fns.append(fn);
+    return isSavingInt;
+}
 
-        if (!fns.isEmpty()) {
+bool VymModel::isLoading()
+{
+    return isLoadingInt;
+}
+
+bool VymModel::isBusy()
+{
+    return isLoadingInt || isSavingInt;
+}
+
+void VymModel::zipFinished()
+{
+    // Cleanup
+    QString path = "unknown";
+    QString name = "unknown";
+    if (zipAgent) {
+        path = zipAgent->zipDir().path();
+        name = zipAgent->zipName();
+
+        QString log = QString("Finished zipping %1 to %2").arg(path, name);
+        logInfo(log, __func__);
+
+        zipAgent->deleteLater();
+        zipAgent = nullptr;
+
+        // qDebug() << "VM::" << __func__ << path << name;
+    } else
+        logWarning("zipAgent == nullptr", __func__);
+
+    isSavingInt = false;
+
+    mainWindow->statusMessage(tr("Saved %1").arg(filePath));
+
+    if (closeAfterSavingInt) {
+        // Schedule for removal of tab in MainWindow
+        QTimer::singleShot(100, mainWindow, SLOT(closeSavedModels()));
+        return;
+    }
+
+    fileChangedTime = QFileInfo(destPath).lastModified();
+
+    updateActions();
+}
+
+ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QStringList &imagePaths)
+{
+    if (!parentBranch)
+        parentBranch = getSelectedBranch();
+
+    if (parentBranch) {
+        if (!imagePaths.isEmpty()) {
+	    ImageItem *ii = nullptr;
+
             lastImageDir.setPath(
-                fns.first().left(fns.first().lastIndexOf("/")));
+                imagePaths.first().left(imagePaths.first().lastIndexOf("/")));
+
             QString s;
-            for (int j = 0; j < fns.count(); j++) {
-                s = fns.at(j);
-                ImageItem *ii = createImage(dst);
+            for (int j = 0; j < imagePaths.count(); j++) {
+                s = imagePaths.at(j);
+
+                ii = createImage(parentBranch);
+
+                QString bv = setBranchVar(parentBranch);
+                QString uc = setImageVar(ii) + "map.removeImage(i);";
+                QString rc = bv + "b.loadBranchInsert(\"REDO_PATH\", 0);";
+                QString comment = QString("Load image %1").arg(s);
+
+                logAction(rc, comment, __func__);
+
+
+
                 if (ii && ii->load(s)) {
-                    saveState((TreeItem *)ii, "remove()", dst,
-                              QString("loadImage (\"%1\")").arg(s),
-                              QString("Add image %1 to %2")
-                                  .arg(s)
-                                  .arg(getObjectName(dst)));
-                    // Find nice position for new image, take childPos // FIXME-1 position below last image
-                    FloatImageObj *fio = (FloatImageObj *)(ii->getMO());
-                    if (fio) {
-                        LinkableMapObj *parLMO = dst->getLMO();
+                    
+                    ImageContainer *ic = ii->getImageContainer();
+                    QPointF pos_new = parentBranch->getBranchContainer()->getPositionHintNewChild(ic);
+                    ic->setPos(pos_new);
 
-                        if (parLMO) {
-                            fio->move(parLMO->getChildRefPos());
-                            fio->setRelPos();
-                        }
-                    }
-
-                    // On default include image // FIXME-4 check, if we change
-                    // default settings...
-                    select(dst);
-                    setIncludeImagesHor(false);
-                    setIncludeImagesVer(true);
-
-                    reposition();
-                    return ii;
+                    saveState( uc, rc, comment, nullptr, ii);
                 }
                 else {
-                    qWarning() << "vymmodel: Failed to load " + s;
+                    logWarning("Failed: " + comment, __func__);
                     deleteItem(ii);
+                    return nullptr;
                 }
             }
+
+	    reposition();
+	    return ii;	// When pasting we need the last added image for scaling
         }
     }
     return nullptr;
+}
+
+ImageItem* VymModel::loadImage(BranchItem *parentBranch, const QString &imagePath)
+{
+    QStringList imagePaths;
+    imagePaths << imagePath;
+    return loadImage(parentBranch, imagePaths);
 }
 
 void VymModel::saveImage(ImageItem *ii, QString fn)
@@ -907,41 +1052,38 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
             tr("All", "Filedialog") + " (*.*)");
         if (fn.isEmpty())
             fn = QFileDialog::getSaveFileName(
-                NULL, vymName + " - " + tr("Save image"), lastImageDir.path(),
-                filter, NULL, QFileDialog::DontConfirmOverwrite);
+                nullptr, vymName + " - " + tr("Save image"), lastImageDir.path(),
+                filter, nullptr, QFileDialog::DontConfirmOverwrite);
 
         if (!fn.isEmpty()) {
             lastImageDir.setPath(fn.left(fn.lastIndexOf("/")));
             if (QFile(fn).exists()) {
-                QMessageBox mb(vymName,
-                               tr("The file %1 exists already.\n"
-                                  "Do you want to overwrite it?")
-                                   .arg(fn),
-                               QMessageBox::Warning,
-                               QMessageBox::Yes | QMessageBox::Default,
-                               QMessageBox::Cancel | QMessageBox::Escape,
-                               QMessageBox::NoButton);
-
-                mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-                mb.setButtonText(QMessageBox::No, tr("Cancel"));
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
-                    // save
-                    break;
-                case QMessageBox::Cancel:
-                    // do nothing
+                QMessageBox mb(
+                   QMessageBox::Warning,
+                   vymName,
+                   tr("The file %1 exists already.\n"
+                      "Do you want to overwrite it?")
+                       .arg(fn));
+                mb.addButton(
+                    tr("Overwrite"),
+                    QMessageBox::AcceptRole);
+                mb.addButton(
+                    tr("Cancel"),
+                    QMessageBox::RejectRole);
+                mb.exec();
+                if (mb.result() != QMessageBox::AcceptRole)
                     return;
-                    break;
-                }
             }
             if (!ii->saveImage(fn))
                 QMessageBox::critical(0, tr("Critical Error"),
                                       tr("Couldn't save %1").arg(fn));
+            else
+                mainWindow->statusMessage(tr("Saved %1").arg(fn));
         }
     }
 }
 
-void VymModel::importDirInt(BranchItem *dst, QDir d)
+void VymModel::importDirInt(QDir d, BranchItem *dst)
 {
     bool oldSaveState = saveStateBlocked;
     saveStateBlocked = true;
@@ -953,13 +1095,23 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
         QFileInfoList list = d.entryInfoList();
         QFileInfo fi;
 
+        QColor dirColor;
+        QColor fileColor;
+        if (usingDarkTheme) {
+            dirColor = QColor(0, 170, 255); // #00aaff
+            fileColor = QColor(255, 255, 255);
+        } else {
+            dirColor = QColor(0, 0, 255);
+            fileColor = QColor(0, 0, 0);
+        }
+
         // Traverse directories
         for (int i = 0; i < list.size(); ++i) {
             fi = list.at(i);
             if (fi.isDir() && fi.fileName() != "." && fi.fileName() != "..") {
                 bi = addNewBranchInt(dst, -2);
                 bi->setHeadingPlainText(fi.fileName());
-                bi->setHeadingColor(QColor("blue"));
+                bi->setHeadingColor(dirColor);
                 if (debug)
                     qDebug() << "Added subdir: " << fi.fileName();
                 if (!d.cd(fi.fileName()))
@@ -968,7 +1120,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
                         tr("Cannot find the directory %1").arg(fi.fileName()));
                 else {
                     // Recursively add subdirs
-                    importDirInt(bi, d);
+                    importDirInt(d, bi);
                     d.cdUp();
                 }
                 emitDataChanged(bi);
@@ -980,7 +1132,7 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
             if (fi.isFile()) {
                 bi = addNewBranchInt(dst, -2);
                 bi->setHeadingPlainText(fi.fileName());
-                bi->setHeadingColor(QColor("black"));
+                bi->setHeadingColor(fileColor);
                 if (fi.fileName().right(4) == ".vym")
                     bi->setVymLink(fi.filePath());
                 emitDataChanged(bi);
@@ -994,16 +1146,21 @@ void VymModel::importDirInt(BranchItem *dst, QDir d)
     saveStateBlocked = oldSaveState;
 }
 
-void VymModel::importDir(const QString &s)
+void VymModel::importDir(const QString &dirPath, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
-        saveStateChangingPart(
-            selbi, selbi, QString("importDir (\"%1\")").arg(s),
-            QString("Import directory structure from %1").arg(s));
+        QString bv = setBranchVar(selbi);
+        QString uc = bv + QString("map.loadMapReplace(\"UNDO_PATH\", b);");
+        QString rc = bv + QString("b.importDir(\"%1\");").arg(dirPath);
+        QString comment = QString("Import directory structure from \"%1\" to branch \"%2\"").arg(dirPath, selbi->headingText());
 
-        QDir d(s);
-        importDirInt(selbi, d);
+        logAction(rc, comment, __func__);
+
+        saveState(uc, rc, comment, selbi);
+
+        QDir d(dirPath);
+        importDirInt(d, selbi);
     }
 }
 
@@ -1016,20 +1173,112 @@ void VymModel::importDir()
         QFileDialog fd;
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
-        fd.setFileMode(QFileDialog::DirectoryOnly);
+        fd.setFileMode(QFileDialog::Directory);
         fd.setNameFilters(filters);
         fd.setWindowTitle(vymName + " - " +
                           tr("Choose directory structure to import"));
         fd.setAcceptMode(QFileDialog::AcceptOpen);
 
-        QString fn;
         if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
-            importDir(fd.selectedFiles().first());
+            importDir(fd.selectedFiles().constFirst());
             reposition();
         }
     }
 }
 
+bool VymModel::addMapInsert(QString fpath, int insertPos, BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi) {
+        logWarning("Failed: No branch provided");
+        return false;
+    }
+
+    // Only saveState if a branch is inserted
+    // Other data like XLink is only used for undo/redo operations and currently
+    // does not need a saveState
+    QString bv = setBranchVar(selbi);
+    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
+    QString comment = QString("Add map %1 to \"%2\"").arg(fpath, selbi->headingText());
+
+    logAction(rc, comment, __func__);
+
+    saveState(uc, rc, comment, selbi);
+
+    if (loadMap(fpath, File::ImportAdd, File::VymMap, 0x0000, selbi, insertPos))
+        return true;
+
+    logWarning("Failed: Loading from " + fpath, __func__);
+    return false;
+}
+
+bool VymModel::addMapReplace(QString fpath, BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi) {
+        logWarning("Failed: No branch provided");
+        return false;
+    }
+
+    BranchItem *pbi = selbi->parentBranch();
+
+    QString bv = setBranchVar(selbi);
+    QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
+
+    QString comment = QString("Replace \"%1\" with \"%2\"").arg(selbi->headingText(), fpath);
+    logAction(rc, comment, __func__);
+
+    if (pbi == rootItem) {
+        // About to replace a MapCenter, save complete map instead of "parent" branch
+        //
+        // FIXME-4: addMapReplace() The path to the map is saved in history,
+        // the file might no longer be available when redo is performed
+        QString uc = QString("map.replaceTree(\"UNDO_PATH\");");
+        QString bv = setBranchVar(selbi);
+        QString rc = bv + QString("map.loadBranchReplace(\"%1\", b);").arg(fpath);
+        saveState(uc, rc, comment, rootItem, selbi);
+    } else {
+        // Replace selected branch
+        QString pbv = setBranchVar(pbi, "pb");
+        QString uc = pbv + QString("map.loadBranchReplace(\"UNDO_PATH\", pb);");
+        QString bv = setBranchVar(selbi);
+        QString rc = bv + QString("map.loadBranchReplace(\"REDO_PATH\", b);");
+        saveState(uc, rc, comment, pbi, selbi);
+    }
+
+
+    if (loadMap(fpath, File::ImportReplace, File::VymMap, 0x0000, selbi))
+        return true;
+
+    logWarning("Failed: " + comment, __func__);
+    return false;
+}
+
+bool VymModel::replaceTree(QString fpath)
+{
+    /*
+    // Only saveState if a branch is inserted
+    // Other data like XLink is only used for undo/redo operations and currently
+    // does not need a saveState
+    QString bv = setBranchVar(selbi);
+    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.loadBranchInsert(\"%1\", %2);").arg(fpath).arg(insertPos);
+    QString comment = QString("Add map %1 to \"%2\"").arg(fpath, selbi->headingText());
+
+    logAction(rc, comment, __func__);
+
+    saveState(uc, rc, comment, selbi);
+    */
+
+    clear();
+    if (loadMap(fpath, File::ImportAdd))
+        return true;
+    else {
+        logWarning("Failed: Replacing tree with " + fpath, __func__);
+        return false;
+    }
+}
 bool VymModel::removeVymLock()
 {
     if (vymLock.removeLockForced()) {
@@ -1079,8 +1328,7 @@ bool VymModel::tryVymLock()
                            "Map is locked by \"%1\" on \"%2\"\n\n"
                            "Please only delete the lockfile, if you are sure "
                            "nobody else is currently working on this map."))
-                        .arg(a)
-                        .arg(h);
+                        .arg(a, h);
                 dia.setText(s);
                 dia.setWindowTitle(
                     tr("Warning: Map already opended", "VymModel"));
@@ -1116,8 +1364,13 @@ bool VymModel::tryVymLock()
     return true;
 }
 
-bool VymModel::renameMap(const QString &newPath)
+bool VymModel::changeLock(const QString &newPath)
 {
+    // New lock is required in fileSaveAs(CompleteMap)
+
+    if (zipAgent)
+        qWarning() << __func__ << " has still running zipAgent";
+
     QString oldPath = filePath;
     if (vymLock.getState() == VymLock::LockedByMyself || vymLock.getState() == VymLock::Undefined) {
         // vymModel owns the lockfile, try to create new lock
@@ -1125,20 +1378,20 @@ bool VymModel::renameMap(const QString &newPath)
         newLock = vymLock;
         newLock.setMapPath(newPath);    // Resets state for newLock to "Undefined"
         if (!newLock.tryLock()) {
-            qWarning() << QString("VymModel::renameMap  could not create lockfile for %1").arg(newPath);
+            logWarning(QString("Failed to create lock for %1").arg(newPath), __func__);
             return false;
         }
 
         // Change lockfiles now
         if (!vymLock.releaseLock())
-            qWarning() << "VymModel::renameMap failed to release lock for " << oldPath;
+            logWarning(QString("Failed to release lock for %1").arg(oldPath), __func__);
         vymLock = newLock;
-        setFilePath(newPath);
+
         if (readonly)
             setReadOnly(false);
         return true;
     }
-    qWarning() << "VymModel::renameMap failed to get lockfile. state=" << vymLock.getState();
+    logWarning("Failed to change lock file.", __func__);
     return false;
 }
 
@@ -1152,24 +1405,20 @@ bool VymModel::isReadOnly() { return readonly; }
 
 void VymModel::autosave()
 {
-    // Check if autosave is disabled due to testmode
+    // Check if autosave is disabled due to testmode or current zip process
     if (testmode)
-    {
-        qWarning()
-            << QString("VymModel::autosave disabled in testmode!  Current map: %1")
-                   .arg(filePath);
         return;
-    }
 
     // Check if autosave is disabled globally
     if (!mainWindow->useAutosave()) {
-        qWarning()
-            << QString("VymModel::autosave disabled globally!  Current map: %1")
-                   .arg(filePath);
+        // qWarning() << QString("VymModel::autosave disabled globally!  Current map: %1").arg(filePath);
         return;
     }
 
-    QDateTime now = QDateTime().currentDateTime();
+    if (zipAgent || isSavingInt) {
+        //qDebug() << "VymModel::autosave blocked by zipAgent or ongoing save";
+        return;
+    }
 
     // Disable autosave, while we have gone back in history
     int redosAvail = undoSet.numValue(QString("/history/redosAvail"));
@@ -1178,19 +1427,24 @@ void VymModel::autosave()
 
     // Also disable autosave for new map without filename
     if (filePath.isEmpty()) {
+        /*
         if (debug)
-            qWarning()
-                << "VymModel::autosave rejected due to missing filePath\n";
+            qWarning() << "VymModel::autosave rejected due to missing filePath\n";
+        */
         return;
     }
 
-    if (mapUnsaved && mapChanged && mainWindow->useAutosave() && !testmode) {
-        if (QFileInfo(filePath).lastModified() <= fileChangedTime)
+    if (mapUnsaved && mapChanged && !testmode) {
+        if (QFileInfo(filePath).lastModified() <= fileChangedTime) {
+            logInfo("Autosave starting", __func__);
+
+            // Call save via MainWindow to check for filename and readonly status
             mainWindow->fileSave(this);
-        else if (debug)
-            qDebug() << "  ME::autosave  rejected, file on disk is newer than "
+        } else if (debug)
+            qDebug() << "  VM::autosave  rejected, file on disk is newer than "
                         "last save.\n";
     }
+    logInfo("Autosave finished", __func__); // FIXME-3 remove after debugging
 }
 
 void VymModel::fileChanged()
@@ -1207,33 +1461,36 @@ void VymModel::fileChanged()
             // FIXME-5 We could check, if somebody else removed/replaced lockfile
             // (A unique vym ID would be needed)
 
+            if (isSavingInt)
+                return;
+
             QDateTime tmod = QFileInfo(filePath).lastModified();
             if (tmod > fileChangedTime) {
-                // FIXME-4 VM switch to current mapeditor and finish
+                // FIXME-5 VM switch to current mapeditor and finish
                 // lineedits...
                 QMessageBox mb(
+                    QMessageBox::Question,
                     vymName,
                     tr("The file of the map  on disk has changed:\n\n"
                        "   %1\n\nDo you want to reload that map with the new "
                        "file?")
-                        .arg(filePath),
-                    QMessageBox::Question, QMessageBox::Yes,
-                    QMessageBox::Cancel | QMessageBox::Default,
-                    QMessageBox::NoButton);
+                        .arg(filePath));
 
-                mb.setButtonText(QMessageBox::Yes, tr("Reload"));
-                mb.setButtonText(QMessageBox::No, tr("Ignore"));
-                switch (mb.exec()) {
-                case QMessageBox::Yes:
+                mb.addButton(
+                    tr("Reload"),
+                    QMessageBox::AcceptRole);
+                mb.addButton(
+                    tr("Ignore"),
+                    QMessageBox::RejectRole);
+                mb.exec();
+                if (mb.result() == QMessageBox::AcceptRole) {
                     // Reload map
                     mainWindow->initProgressCounter(1);
                     loadMap(filePath);
                     mainWindow->removeProgressCounter();
-                    break;
-                case QMessageBox::Cancel:
-                    fileChangedTime =
-                        tmod; // allow autosave to overwrite newer file!
-                }
+                } else
+                    // allow autosave to overwrite newer file!
+                    fileChangedTime = tmod;
             }
         }
     }
@@ -1271,23 +1528,16 @@ void VymModel::setChanged()
     updateActions();
 }
 
-QString VymModel::getObjectName(LinkableMapObj *lmo)
-{
-    if (!lmo || !lmo->getTreeItem())
-        return QString();
-    return getObjectName(lmo->getTreeItem());
-}
-
-QString VymModel::getObjectName(TreeItem *ti)
+QString VymModel::getObjectName(TreeItem *ti)   // FIXME-3 compare with headingText - still needed?
 {
     QString s;
     if (!ti)
-        return QString("Error: NULL has no name!");
-    s = ti->getHeadingPlain();
+        return QString("Error: nullptr has no name!");
+    s = ti->headingPlain();
     if (s == "")
         s = "unnamed";
 
-    return QString("%1 (%2)").arg(ti->getTypeName()).arg(s);
+    return QString("%1 \"%2\"").arg(ti->getTypeName(), s);
 }
 
 void VymModel::redo()
@@ -1308,25 +1558,17 @@ void VymModel::redo()
         curStep = 1;
     QString undoCommand =
         undoSet.value(QString("/history/step-%1/undoCommand").arg(curStep));
-    QString undoSelection =
-        undoSet.value(QString("/history/step-%1/undoSelection").arg(curStep));
     QString redoCommand =
         undoSet.value(QString("/history/step-%1/redoCommand").arg(curStep));
-    QString redoSelection =
-        undoSet.value(QString("/history/step-%1/redoSelection").arg(curStep));
     QString comment =
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
-    QString version = undoSet.value("/history/version");
 
     /* TODO Maybe check for version, if we save the history
-    if (!checkVersion(version))
+    if (!checkVersion(mapVersionInt))
     QMessageBox::warning(0,tr("Warning"),
         tr("Version %1 of saved undo/redo data\ndoes not match current vym
-    version %2.").arg(version).arg(vymVersion));
+    version %2.").arg(mapVersionInt).arg(vymVersion));
     */
-
-    // Find out current undo directory
-    QString bakMapDir(QString(tmpMapDirPath + "/undo-%1").arg(curStep));
 
     if (debug) {
         qDebug() << "VymModel::redo() begin\n";
@@ -1335,23 +1577,19 @@ void VymModel::redo()
         qDebug() << "       curStep=" << curStep;
         qDebug() << "    ---------------------------";
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoSel=" << redoSelection;
         qDebug() << "    undoCom:";
-        cout << qPrintable(undoCommand);
+        cout << qPrintable(undoCommand) << endl;
         qDebug() << "    redoCom=";
-        cout << qPrintable(redoCommand);
+        cout << qPrintable(redoCommand) << endl;
         qDebug() << "    ---------------------------";
     }
 
-    // select  object before redo
-    if (!redoSelection.isEmpty())
-        select(redoSelection);
-
     QString errMsg;
     QString redoScript =
-        QString("model = vym.currentMap(); model.%1").arg(redoCommand);
-    errMsg = QVariant(execute(redoScript)).toString();
+        QString("map = vym.currentMap();%1").arg(redoCommand);
+
+    errMsg = mainWindow->runScript(redoScript).toString();
+
     saveStateBlocked = saveStateBlockedOrg;
 
     undoSet.setValue("/history/undosAvail", QString::number(undosAvail));
@@ -1360,13 +1598,14 @@ void VymModel::redo()
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory(undoSet);
+
     updateActions();
 
     /* TODO remove testing
     qDebug() << "ME::redo() end\n";
-    qDebug() << "    undosAvail="<<undosAvail;
-    qDebug() << "    redosAvail="<<redosAvail;
-    qDebug() << "       curStep="<<curStep;
+    qDebug() << "    undosAvail=" << undosAvail;
+    qDebug() << "    redosAvail=" << redosAvail;
+    qDebug() << "       curStep=" << curStep;
     qDebug() << "    ---------------------------";
     */
 }
@@ -1390,24 +1629,36 @@ QString VymModel::lastRedoSelection()
 
 QString VymModel::lastRedoCommand()
 {
-    if (isUndoAvailable())
+    if (isRedoAvailable())
         return undoSet.value(
-            QString("/history/step-%1/redoCommand").arg(curStep));
+            QString("/history/step-%1/redoCommand").arg(curStep + 1));
     else
         return QString();
 }
 
-QVariant VymModel::repeatLastCommand()
+QString VymModel::lastRedoComment()
 {
-    QString command = "m = vym.currentMap();";
-    if (isUndoAvailable())
-        command += "m." +
-                   undoSet.value(
-                       QString("/history/step-%1/redoCommand").arg(curStep)) +
-                   ";";
+    if (isRedoAvailable())
+        return undoSet.value(QString("/history/step-%1/comment").arg(curStep + 1));
     else
-        return false;
-    return execute(command);
+        return QString();
+}
+
+QString VymModel::lastUndoCommand()
+{
+    if (isUndoAvailable())
+        return undoSet.value(
+            QString("/history/step-%1/undoCommand").arg(curStep));
+    else
+        return QString();
+}
+
+QString VymModel::lastUndoComment()
+{
+    if (isUndoAvailable())
+        return undoSet.value(QString("/history/step-%1/comment").arg(curStep));
+    else
+        return QString();
 }
 
 void VymModel::undo()
@@ -1423,31 +1674,17 @@ void VymModel::undo()
 
     QString undoCommand =
         undoSet.value(QString("/history/step-%1/undoCommand").arg(curStep));
-    QString undoSelection =
-        undoSet.value(QString("/history/step-%1/undoSelection").arg(curStep));
     QString redoCommand =
         undoSet.value(QString("/history/step-%1/redoCommand").arg(curStep));
-    QString redoSelection =
-        undoSet.value(QString("/history/step-%1/redoSelection").arg(curStep));
     QString comment =
         undoSet.value(QString("/history/step-%1/comment").arg(curStep));
-    QString version = undoSet.value("/history/version");
 
     /* TODO Maybe check for version, if we save the history
-    if (!checkVersion(version))
+    if (!checkVersion(mapVersionInt))
     QMessageBox::warning(0,tr("Warning"),
         tr("Version %1 of saved undo/redo data\ndoes not match current vym
-    version %2.").arg(version).arg(vymVersion));
+    version %2.").arg(mapVersionInt).arg(vymVersion));
     */
-
-    // Find out current undo directory
-    QString bakMapDir(QString(tmpMapDirPath + "/undo-%1").arg(curStep));
-
-    // select  object before undo
-    if (!undoSelection.isEmpty() && !select(undoSelection)) {
-        qWarning("VymModel::undo()  Could not select object for undo");
-        return;
-    }
 
     if (debug) {
         qDebug() << "VymModel::undo() begin\n";
@@ -1456,8 +1693,6 @@ void VymModel::undo()
         qDebug() << "       curStep=" << curStep;
         cout << "    ---------------------------" << endl;
         qDebug() << "    comment=" << comment;
-        qDebug() << "    undoSel=" << undoSelection;
-        qDebug() << "    redoSel=" << redoSelection;
         cout << "    undoCom:" << endl;
         cout << qPrintable(undoCommand) << endl;
         cout << "    redoCom:" << endl;
@@ -1465,15 +1700,11 @@ void VymModel::undo()
         cout << "    ---------------------------" << endl;
     }
 
-    // select  object before undo   // FIXME-2 double select, see above
-    if (!undoSelection.isEmpty())
-        select(undoSelection);
-
     // bool noErr;
     QString errMsg;
-    QString undoScript =
-        QString("model = vym.currentMap(); model.%1").arg(undoCommand);
-    errMsg = QVariant(execute(undoScript)).toString();
+    QString undoScript = QString("map = vym.currentMap();%1").arg(undoCommand);
+
+    errMsg = mainWindow->runScript(undoScript).toString();
 
     undosAvail--;
     curStep--;
@@ -1497,6 +1728,7 @@ void VymModel::undo()
     undoSet.writeSettings(histPath);
 
     mainWindow->updateHistory(undoSet);
+
     updateActions();
 }
 
@@ -1536,7 +1768,7 @@ void VymModel::gotoHistoryStep(int i)
 
 QString VymModel::getHistoryPath()
 {
-    QString histName(QString("history-%1").arg(curStep));
+    QString histName(QString("history-%1").arg(dataStep));
     return (tmpMapDirPath + "/" + histName);
 }
 
@@ -1545,76 +1777,164 @@ void VymModel::resetHistory()
     curStep = 0;
     redosAvail = 0;
     undosAvail = 0;
+    dataStep = 0;
 
     stepsTotal = settings.value("/history/stepsTotal", 100).toInt();
     undoSet.setValue("/history/stepsTotal", QString::number(stepsTotal));
     mainWindow->updateHistory(undoSet);
 }
 
-void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
-                         const QString &undoCom, const QString &redoSelection,
-                         const QString &redoCom, const QString &comment,
-                         TreeItem *saveSel, QString dataXML)
+QString VymModel::setAttributeVar(AttributeItem* ai, QString varName)
 {
-    sendData(redoCom); // FIXME-4 testing
+    // Default varName: "a"
+    QString r;
+    if (!ai)
+        qWarning() << "VM::setAttributeVar ai == nullptr";
+    else
 
+        r = QString("%1 = map.findAttributeById(\"%2\");").arg(varName, ai->getUuid().toString());
+
+    return r;
+}
+
+QString VymModel::setBranchVar(BranchItem* bi, QString varName)
+{
+    // Default varName: "b"
+    QString r;
+    if (!bi)
+        qWarning() << "VM::setBranchVar bi == nullptr";
+    else
+        r = QString("%1 = map.findBranchById(\"%2\");").arg(varName, bi->getUuid().toString());
+
+    return r;
+}
+
+QString VymModel::setImageVar(ImageItem* ii, QString varName)
+{
+    // Default varName: "i"
+    QString r;
+    if (!ii)
+        qWarning() << "VM::setImageVar ii == nullptr";
+    else
+        r = QString("%1 = map.findImageById(\"%2\");").arg(varName, ii->getUuid().toString());
+
+    return r;
+}
+
+QString VymModel::setXLinkVar(XLink* xl, QString varName)
+{
+    QString r;
+    if (!xl)
+        qWarning() << "VM::setXLinkVar xl == nullptr";
+    else
+        r = QString("%1 = map.findXLinkById(\"%2\");").arg(varName, xl->getUuid().toString());
+
+    return r;
+}
+
+QString VymModel::saveState(
+         QString undoCommand,
+         QString redoCommand,
+         const QString &comment,
+         TreeItem *saveUndoItem,
+         TreeItem *saveRedoItem,
+         bool createHistoryDir)
+{
     // Main saveState
 
+    // sendData(redoCom); // FIXME-5 testing network
+
     if (saveStateBlocked)
-        return;
+        return QString();
 
-    if (debug)
-        qDebug() << "VM::saveState() for map " << mapName;
-
-    QString undoCommand = undoCom;
-    QString redoCommand = redoCom;
-
-
-    // Increase undo steps, but check for repeated actions
-    // like editing a vymNote - then do not increase but replace last command
     /*
-    QRegExp re ("parseVymText.*\\(.*vymnote");
-    if (curStep > 0 && redoSelection == lastRedoSelection() &&
-        lastRedoCommand().contains(re)) {
-        undoCommand = undoSet.value(
-            QString("/history/step-%1/undoCommand").arg(curStep), undoCommand);
-    }
-    else {
     */
-        if (undosAvail < stepsTotal)
-            undosAvail++;
+    if (debug) {
+        qDebug() << "VM::saveState() for map " << mapName;
+        qDebug() << "  comment: " << comment;
+        qDebug() << "  Script:   " << buildingUndoScript;
+        qDebug() << "  undoCom: " << undoCommand;
+        qDebug() << "  redoCom: " << redoCommand;
+        qDebug() << " undoItem: " << saveUndoItem;
+        qDebug() << " redoItem: " << saveRedoItem;
+        qDebug() << " rootItem: " << rootItem;
+    }
 
-        curStep++;
-        if (curStep > stepsTotal)
-            curStep = 1;
-    //}
+    if (buildingUndoScript)
+        logInfo("// Building script: " + redoCommand + " " +  comment, __func__);    // FIXME-3 Use logDebug instead? Remove logging completely from saveState?
+    else
+        logInfo("saveState: " + comment + " " + redoCommand, __func__);
 
-    QString histDir = getHistoryPath();
-    QString bakMapPath = histDir + "/map.xml";
+    QString historyPath = getHistoryPath();
 
-    // Create histDir if not available
-    QDir d(histDir);
-    if (!d.exists())
-        makeSubDirs(histDir);
+    // Create historyPath if not available and required
+    if (saveUndoItem || saveRedoItem || createHistoryDir) {
+        dataStep++;
+        QDir d(historyPath);
+        if (!d.exists())
+            makeSubDirs(historyPath);   // FIXME-3 Only create subDirs on demand, e.g. when saving imageItem
+    }
 
     // Save depending on how much needs to be saved
-    QList<Link *> tmpLinks;
-    if (saveSel)
-        dataXML = saveToDir(histDir, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
-                            saveSel);
+    //
+    // FIXME-5 saveState: userFlags are not written, but still in memory. Could
+    //         lead to problem, if one day removed from userFlags toolbar AND memory
+    if (saveUndoItem) {
+        bool completeTree = false;
+        if (saveUndoItem == rootItem) {
+            completeTree = true;
+            saveUndoItem = nullptr;
+        }
 
-    if (savemode == PartOfMap) {
-        undoCommand.replace("PATH", bakMapPath);
-        redoCommand.replace("PATH", bakMapPath);
+        QString dataXML = saveToDir(historyPath, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+                            false, false, completeTree, saveUndoItem);
+
+        QString xmlUndoPath = historyPath + "/undo.xml";
+        undoCommand.replace("UNDO_PATH", xmlUndoPath);
+        saveStringToDisk(xmlUndoPath, dataXML);
+    }
+    if (saveRedoItem) {
+        QString dataXML = saveToDir(historyPath, mapName + "-", FlagRowMaster::NoFlags, QPointF(),
+                            false, false, false, saveRedoItem);
+
+        QString xmlRedoPath = historyPath + "/redo.xml";
+        redoCommand.replace("REDO_PATH", xmlRedoPath);
+        saveStringToDisk(xmlRedoPath, dataXML);
     }
 
-    if (!dataXML.isEmpty())
-        // Write XML Data to disk
-        saveStringToDisk(bakMapPath, dataXML);
+    undoCommand.replace("HISTORY_PATH", historyPath);
+    redoCommand.replace("HISTORY_PATH", historyPath);
+
+    if (debug) {
+        qDebug() << "  undoCommand: " << undoCommand;
+        qDebug() << "  redoCommand: " << redoCommand;
+        qDebug() << "      Comment: " << comment;
+    }
+
+    if (buildingUndoScript)
+    {
+        // Build string with all commands
+        undoScript = undoCommand + undoScript;
+        redoScript = redoScript + redoCommand;
+
+        if (debug) {
+            qDebug() << "VM::saveState  building scripts:";
+            qDebug() << "  undoScript = " << undoScript;
+            qDebug() << "  redoScript = " << redoScript;
+        }
+        return historyPath + "/";
+    }
+
+    if (undosAvail < stepsTotal)
+        undosAvail++;
+
+    curStep++;
+    if (curStep > stepsTotal)
+        curStep = 1;
 
     // We would have to save all actions in a tree, to keep track of
-    // possible redos after a action. Possible, but we are too lazy: forget
-    // about redos.
+    // possible redos after an action. Possible, but we are too lazy: forget
+    // about redos
     redosAvail = 0;
 
     // Write the current state to disk
@@ -1623,16 +1943,12 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
     undoSet.setValue("/history/curStep", QString::number(curStep));
     undoSet.setValue(QString("/history/step-%1/undoCommand").arg(curStep),
                      undoCommand);
-    undoSet.setValue(QString("/history/step-%1/undoSelection").arg(curStep),
-                     undoSelection);
     undoSet.setValue(QString("/history/step-%1/redoCommand").arg(curStep),
                      redoCommand);
-    undoSet.setValue(QString("/history/step-%1/redoSelection").arg(curStep),
-                     redoSelection);
     undoSet.setValue(QString("/history/step-%1/comment").arg(curStep), comment);
-    undoSet.setValue(QString("/history/version"), vymVersion);
     undoSet.writeSettings(histPath);
 
+    /*
     if (debug) {
         // qDebug() << "          into="<< histPath;
         qDebug() << "    stepsTotal=" << stepsTotal
@@ -1644,126 +1960,93 @@ void VymModel::saveState(const SaveMode &savemode, const QString &undoSelection,
         qDebug() << "    redoSel=" << redoSelection;
         if (saveSel)
             qDebug() << "    saveSel=" << qPrintable(getSelectString(saveSel));
-        cout << "    undoCom:" << endl;
-        cout << qPrintable(undoCommand) << endl;
-        cout << "    redoCom:" << endl;
-        cout << qPrintable(redoCommand) << endl;
-        cout << "    ---------------------------" << endl;
+        cout << "    undoCom:" <<  qPrintable(undoCommand) << "\n";
+        cout << "    redoCom:" <<  qPrintable(redoCommand) << "\n";
+        cout << "    ---------------------------\n";
     }
+    */
 
     mainWindow->updateHistory(undoSet);
 
     setChanged();
+
+    return historyPath + "/";
 }
 
-void VymModel::saveStateChangingPart(TreeItem *undoSel, TreeItem *redoSel,
-                                     const QString &rc, const QString &comment)
+QString VymModel::saveStateBranch(
+        BranchItem *bi,
+        const QString &uc,
+        const QString &rc,
+        const QString &comment)
 {
-    // save the selected part of the map, Undo will replace part of map
-    QString undoSelection = "";
-    if (undoSel)
-        undoSelection = getSelectString(undoSel);
-    else
-        qWarning("VymModel::saveStateChangingPart  no undoSel given!");
-    QString redoSelection = "";
-    if (redoSel)
-        redoSelection = getSelectString(undoSel);
-    else
-        qWarning("VymModel::saveStateChangingPart  no redoSel given!");
+    QString prefix = setBranchVar(bi) + "b.";
 
-    saveState(PartOfMap, undoSelection, "addMapReplace (\"PATH\")",
-              redoSelection, rc, comment, undoSel);
+    QString repeatAction = QString("m = vym.currentMap();");
+    repeatAction += " branches = m.selectedBranches(); for (b of branches) {b." + rc + "}";
+    mainWindow->setRepeatAction(repeatAction);
+
+    return saveState(prefix + uc, prefix + rc, comment);
 }
 
-void VymModel::saveStateRemovingPart(TreeItem *redoSel, const QString &comment)
+void VymModel::saveStateBeginScript(const QString &comment)
 {
-    if (!redoSel) {
-        qWarning("VymModel::saveStateRemovingPart  no redoSel given!");
-        return;
-    }
-    QString undoSelection;
-    QString redoSelection = getSelectString(redoSel);
-    if (redoSel->isBranchLikeType()) {
-        // save the selected branch of the map, Undo will insert part of map
-        if (redoSel->depth() > 0)
-            undoSelection = getSelectString(redoSel->parent());
-        saveState(PartOfMap, undoSelection,
-                  QString("addMapInsert (\"PATH\",%1,%2)")
-                      .arg(redoSel->num())
-                      .arg(SlideContent),
-                  redoSelection, "remove ()", comment, redoSel);
+    if (buildingUndoScript)
+        logWarning(QString("Nested saveState scripts found \"%1\"").arg(comment), __func__);  // FIXME-3 e.g. for setFrameAutoDesign...
+    else {
+        logDebug("Starting to build saveStateScript: '" + comment + "'", __func__);
+
+        buildingUndoScript = true;
+        undoScriptComment = comment;
+        undoScript.clear();
+        redoScript.clear();
     }
 }
 
-void VymModel::saveState(TreeItem *undoSel, const QString &uc,
-                         TreeItem *redoSel, const QString &rc,
-                         const QString &comment)
+void VymModel::saveStateEndScript()
 {
-    // "Normal" savestate: save commands, selections and comment
-    // so just save commands for undo and redo
-    // and use current selection, if empty parameter passed
+    if (debug)
+        std::cout << "VM::saveStateEndScript" << endl 
+            << "  buildingScript=" << buildingUndoScript << endl
+            << "      undoScript=" << undoScript.toStdString() << endl;
 
-    QString redoSelection = "";
-    if (redoSel)
-        redoSelection = getSelectString(redoSel);
-    QString undoSelection = "";
-    if (undoSel)
-        undoSelection = getSelectString(undoSel);
+    if (buildingUndoScript) {
+        buildingUndoScript = false;
 
-    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, NULL);
+        logDebug("Finished building saveStateScript: '" + undoScriptComment + "'", __func__);
+
+        // Drop whole Script, if empty
+        if (undoScript.isEmpty() && redoScript.isEmpty()) return;
+
+        saveState(
+                QString("{%1}").arg(undoScript),
+                QString("{%1}").arg(redoScript),
+                undoScriptComment, nullptr);
+    }
 }
 
-void VymModel::saveState(const QString &undoSel, const QString &uc,
-                         const QString &redoSel, const QString &rc,
-                         const QString &comment)
+void VymModel::saveStateCancelScript()
 {
-    // "Normal" savestate: save commands, selections and comment
-    // so just save commands for undo and redo
-    // and use current selection
-    saveState(UndoCommand, undoSel, uc, redoSel, rc, comment, NULL);
-}
+    if (debug)
+        std::cout << "VM::saveStateCancelScript" << endl 
+            << "  buildingScript=" << buildingUndoScript << endl
+            << "      undoScript=" << undoScript.toStdString() << endl;
 
-void VymModel::saveState(const QString &uc, const QString &rc,
-                         const QString &comment)
-{
-    // "Normal" savestate applied to model (no selection needed):
-    // save commands  and comment
-    saveState(UndoCommand, NULL, uc, NULL, rc, comment, NULL);
-}
+    if (buildingUndoScript) {
+        buildingUndoScript = false;
 
-void VymModel::saveStateMinimal(TreeItem *undoSel, const QString &uc,
-                                TreeItem *redoSel, const QString &rc,
-                                const QString &comment)
-{ //  Save a change in string and merge
-    //  minor sequential  changes  */
-    QString redoSelection = "";
-    if (redoSel)
-        redoSelection = getSelectString(redoSel);
-    QString undoSelection = "";
-    if (undoSel)
-        undoSelection = getSelectString(undoSel);
+        logDebug("Canceling building saveStateScript: '" + undoScriptComment + "'", __func__);
 
-    saveState(UndoCommand, undoSelection, uc, redoSelection, rc, comment, NULL);
-}
+        // Drop whole Script, if empty
+        if (undoScript.isEmpty() && redoScript.isEmpty()) return;
 
-void VymModel::saveStateBeforeLoad(LoadMode lmode, const QString &fname)
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        if (lmode == ImportAdd)
-            saveStateChangingPart(selbi, selbi,
-                                  QString("addMapInsert (\"%1\")").arg(fname),
-                                  QString("Add map %1 to %2")
-                                      .arg(fname)
-                                      .arg(getObjectName(selbi)));
-        if (lmode == ImportReplace) {
-            BranchItem *pi = (BranchItem *)(selbi->parent());
-            saveStateChangingPart(pi, pi,
-                                  QString("addMapReplace(%1)").arg(fname),
-                                  QString("Add map %1 to %2")
-                                      .arg(fname)
-                                      .arg(getObjectName(selbi)));
-        }
+        // Prepare undo of actions so far
+        saveState(
+                QString("{%1}").arg(undoScript),
+                QString("{%1}").arg(redoScript),
+                undoScriptComment, nullptr);
+
+        // Undo
+        undo();
     }
 }
 
@@ -1772,7 +2055,7 @@ QGraphicsScene *VymModel::getScene() { return mapEditor->getScene(); }
 TreeItem *VymModel::findBySelectString(QString s)
 {
     if (s.isEmpty())
-        return NULL;
+        return nullptr;
 
     // Old maps don't have multiple mapcenters and don't save full path
     if (s.left(2) != "mc")
@@ -1796,15 +2079,15 @@ TreeItem *VymModel::findBySelectString(QString s)
         else if (typ == "xl")
             ti = ti->getXLinkItemNum(n);
         if (!ti)
-            return NULL;
+            return nullptr;
     }
     return ti;
 }
 
 TreeItem *VymModel::findID(const uint &id)
 {
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
         if (id == cur->getID())
@@ -1823,15 +2106,22 @@ TreeItem *VymModel::findID(const uint &id)
                 return ii;
             j++;
         }
+        j = 0;
+        while (j < cur->attributeCount()) {
+            AttributeItem *ai = cur->getAttributeNum(j);
+            if (id == ai->getID())
+                return ai;
+            j++;
+        }
         nextBranch(cur, prev);
     }
-    return NULL;
+    return nullptr;
 }
 
 TreeItem *VymModel::findUuid(const QUuid &id)
 {
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
         if (id == cur->getUuid())
@@ -1852,56 +2142,234 @@ TreeItem *VymModel::findUuid(const QUuid &id)
         }
         nextBranch(cur, prev);
     }
-    return NULL;
+
+    // Special case: XLinks (not XLinkItems!) are no TreeItem, if Uuid matches,
+    // return one of the XLinkItems. Used in VymModelWrapper::findXLinkById
+    foreach (auto xl, xlinks)
+        if (xl->getUuid() == id)
+            return xl->beginXLinkItem();
+
+    // For restoring MapCenters we might want to add to rootItem
+    if (rootItem->getUuid() == id)
+        return rootItem;
+
+    return nullptr;
+}
+
+BranchItem* VymModel::findBranchByAttribute(const QString &key, const QString &value)
+{
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    nextBranch(cur, prev);
+    while (cur) {
+        AttributeItem *ai = cur->getAttributeByKey(key); 
+        if (ai && ai->value().toString() == value)
+            return cur;
+        nextBranch(cur, prev);
+    }
+
+    return nullptr;
+}
+
+void VymModel::test()
+{
+    // Print item structure
+    foreach (TreeItem *ti, getSelectedItems()) {
+        if (ti->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)ti)->getBranchContainer();
+            bc->printStructure();
+        }
+        if (ti->hasTypeImage())
+            ((ImageItem*)ti)->parentBranch()->getBranchContainer()->printStructure();
+    }
+    return;
+
+    // Do animation step. All BranchContainers
+    QList <BranchContainer*> bc_list;
+
+    qDebug() << "Calculating forces...";
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
+    nextBranch(cur, prev);
+    while (cur) {
+        //qDebug() << "Adding branch: " << cur->headingText();
+        BranchContainer *bc = cur->getBranchContainer();
+        bc->v_anim = QPointF(0,0);
+        bc_list << bc;
+        nextBranch(cur, prev);
+    }
+
+    foreach (BranchContainer *bc, bc_list) {
+        HeadingContainer *hc = bc->getHeadingContainer();
+        HeadingContainer *ohc;
+
+        // Forces pushing apart
+        /*
+        */
+        foreach (BranchContainer *obc, bc_list) {
+            if (bc != obc) {
+                
+                ohc = obc->getHeadingContainer();
+
+                QPointF vec = hc->mapFromItem(ohc, ohc->pos());
+                qreal dx = vec.x();
+                qreal dy = vec.y();
+                double l = 2.0 * (dx * dx + dy * dy);
+
+                if (l > 25) {
+                    bc->v_anim += QPointF(- (dx *150) / l, - (dy * 150) / l);
+                    qDebug() << "Push "<< hc->info() << " <- " << ohc->info() << " vec=" << toS(vec) << " l=" << l;
+                }
+            }
+        }
+
+        // Forces pulling together
+        BranchItem *bi = bc->getBranchItem();
+        /*
+        double weight = (bi->branchCount() + 1) * 10;
+
+        for (int i = 0; i < bi->branchCount(); i++) {
+            BranchItem *obi = bi->getBranchNum(i);
+            BranchContainer *obc = obi->getBranchContainer();
+            ohc = obc->getHeadingContainer();
+
+            // Parent pulled by child
+            QPointF vec = hc->mapFromItem(ohc, ohc->pos());
+            bc->v_anim += QPointF( vec.x() / weight, vec.y() / weight);
+            qDebug() << "  Child Pull  from " << obi->headingText() << " to " << bi->headingText() << toS(vec);
+
+            // Child pulled by parent
+            vec = ohc->mapFromItem(hc, ohc->pos());
+            obc->v_anim += QPointF( vec.x() / weight, vec.y() / weight);
+            qDebug() << "  Parent Pull from " << bi->headingText() << " to " << obi->headingText() << toS(vec);
+        }
+        */
+
+        // Move MapCenters towards center
+        if (bi->depth() == 0) {
+            QPointF vec = hc->mapToScene(QPointF(0,0));
+            qreal dx = vec.x();
+            qreal dy = vec.y();
+            double l = sqrt( dx * dx + dy * dy);
+            if (l > 5) {
+                bc->v_anim += QPointF(- (dx ) / l, - (dy ) / l);
+                qDebug() << "Moving to center: " << bc->info() << "l=" << l;
+            }
+        }
+
+        // Ignore too small vector
+        if (qAbs(bc->v_anim.x()) < 0.1 && qAbs(bc->v_anim.y()) < 0.1)
+            bc->v_anim = QPointF(0, 0);
+    }
+
+    foreach (BranchContainer *bc, bc_list) {
+        // Show vector
+        bc->v.setLine(0, 0, bc->v_anim.x() * 10, bc->v_anim.y() * 10);
+
+        // Now actually move items
+        bc->setPos( bc->pos() + bc->v_anim);
+    }
+
+    reposition();
+    return;
+
+
+    //mapEditor->testFunction1();
+    //return;
+
+    // Read bookmarks
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(nullptr, "QXmlStream Bookmarks",
+                QString("Cannot read file %1:\n%2.")
+                .arg(QDir::toNativeSeparators(fileName),
+                    file.errorString()));
+        return;
+    }
+
+    VymReader reader(this);
+    if (!reader.read(&file)) {
+        QMessageBox::warning(nullptr, QString("QXmlStream Bookmarks"),
+                QString("Parse error in file %1:\n\n%2")
+                .arg(QDir::toNativeSeparators(fileName),
+                    reader.errorString()));
+    } else {
+        mainWindow->statusMessage("File loaded");
+        reposition();
+    }
+
 }
 
 //////////////////////////////////////////////
 // Interface
 //////////////////////////////////////////////
-void VymModel::setVersion(const QString &s) { version = s; }
-
-QString VymModel::getVersion() { return version; }
-
-void VymModel::setTitle(const QString &s)
+    
+void VymModel::setMapTitle(const QString &s)
 {
-    saveState(QString("setMapTitle (\"%1\")").arg(title),
-              QString("setMapTitle (\"%1\")").arg(s),
-              QString("Set title of map to \"%1\"").arg(s));
-    title = s;
+    if (titleInt != s) {
+        QString uc = QString("map.setTitle (\"%1\");").arg(titleInt);
+        QString rc = QString("map.setTitle (\"%1\");").arg(s);
+        QString comment = QString("Set title of map to \"%1\"").arg(s);
+
+        logAction(rc, comment, __func__);
+
+        saveState(uc, rc, comment);
+        titleInt = s;
+    }
 }
 
-QString VymModel::getTitle() { return title; }
+QString VymModel::mapTitle() { return titleInt; }
 
-void VymModel::setAuthor(const QString &s)
+void VymModel::setMapAuthor(const QString &s)
 {
-    saveState(QString("setMapAuthor (\"%1\")").arg(author),
-              QString("setMapAuthor (\"%1\")").arg(s),
-              QString("Set author of map to \"%1\"").arg(s));
-    author = s;
+    if (authorInt != s) {
+        QString uc = QString("map.setAuthor (\"%1\");").arg(authorInt);
+        QString rc = QString("map.setAuthor (\"%1\");").arg(s);
+        QString comment = QString("Set author of map to \"%1\"").arg(s);
+
+        logAction(rc, comment, __func__);
+
+        saveState(uc, rc, comment);
+
+        authorInt = s;
+    }
 }
 
-QString VymModel::getAuthor() { return author; }
+QString VymModel::mapAuthor() { return authorInt; }
 
-void VymModel::setComment(const QString &s)
+void VymModel::setMapComment(const QString &s)
 {
-    saveState(QString("setMapComment (\"%1\")").arg(comment),
-              QString("setMapComment (\"%1\")").arg(s),
-              QString("Set comment of map"));
-    comment = s;
+    if (commentInt != s) {
+        QString uc = QString("map.setComment (\"%1\");").arg(commentInt);
+        QString rc = QString("map.setComment (\"%1\");").arg(s);
+        QString c = QString("Set comment of map to \"%1\"").arg(s);
+
+        logAction(rc, c, __func__);
+
+        saveState(uc, rc, c);
+
+        commentInt = s;
+    }
 }
 
-QString VymModel::getComment() { return comment; }
+QString VymModel::mapComment() { return commentInt; }
 
-QString VymModel::getDate()
+void VymModel::setMapVersion(const QString &s)
 {
-    return QDate::currentDate().toString("yyyy-MM-dd");
+    // Version stored in file
+    mapVersionInt = s;
+}
+
+QString VymModel::mapVersion()
+{
+    return mapVersionInt;
 }
 
 int VymModel::branchCount()
 {
     int c = 0;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
         c++;
@@ -1915,157 +2383,168 @@ int VymModel::centerCount() { return rootItem->branchCount(); }
 void VymModel::setSortFilter(const QString &s)
 {
     sortFilter = s;
-    emit(sortFilterChanged(sortFilter));
+    emit sortFilterChanged(sortFilter);
 }
 
 QString VymModel::getSortFilter() { return sortFilter; }
 
-void VymModel::setHeading(const VymText &vt, BranchItem *bi)
+void VymModel::setHeading(const VymText &vt, TreeItem *ti)
 {
     Heading h_old;
     Heading h_new;
     h_new = vt;
     QString s = vt.getTextASCII();
-    if (!bi)
-        bi = getSelectedBranch();
-    if (bi) {
-        h_old = bi->getHeading();
+
+    TreeItem *selti = getSelectedItem(ti);
+
+    if (selti && selti->hasTypeBranchOrImage()) {
+        h_old = selti->heading();
         if (h_old == h_new)
             return;
-        saveState(bi, "parseVymText (\"" + quoteQuotes(h_old.saveToDir()) + "\")", bi,
-                  "parseVymText (\"" + quoteQuotes(h_new.saveToDir()) + "\")",
-                  QString("Set heading of %1 to \"%2\"")
-                      .arg(getObjectName(bi))
-                      .arg(s));
-        bi->setHeading(vt);
-        emitDataChanged(bi);
+
+        QString tiv;    // ti variable in script
+        if (selti->hasTypeBranch())
+            tiv = setBranchVar((BranchItem*)selti) + "b.";
+        else
+            tiv = setImageVar((ImageItem*)selti) + "i.";
+
+        QString uc, rc;
+        if (h_old.isRichText())
+            uc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
+        else
+            uc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_old.getText()));
+        if (h_new.isRichText())
+            rc = QString("%1setHeadingRichText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
+        else
+            rc = QString("%1setHeadingText(\"%2\");").arg(tiv, quoteQuotes(h_new.getText()));
+
+        QString comment = QString("Set heading of %1 to \"%2\"").arg(getObjectName(selti), s);
+
+        logAction(rc, comment, __func__);
+
+        saveState( uc, rc, comment);
+
+        // After adding branches or MapCenters interactively we might want to end an undo script
+        saveStateEndScript();
+
+        selti->setHeading(vt);
+        emitDataChanged(selti);
         emitUpdateQueries();
-        mainWindow->updateHeadingEditor(bi);    // Update HeadingEditor with new heading
+        mainWindow->updateHeadingEditor(selti);    // Update HeadingEditor with new heading (if required)
         reposition();
-    }
+    } else
+        qWarning() << "VM::setHeading has no branch or image selected!";
 }
 
-void VymModel::setHeadingPlainText(const QString &s, BranchItem *bi)
+void VymModel::setHeadingPlainText(const QString &s, TreeItem *ti)
 {
-    if (!bi)
-        bi = getSelectedBranch();
-    if (bi) {
-        VymText vt = bi->getHeading();
+    TreeItem *selti = getSelectedItem(ti);
+    if (selti && selti->hasTypeBranchOrImage()) {
+        VymText vt = selti->heading();
         vt.setPlainText(s);
-        if (bi->getHeading() == vt)
+        if (selti->heading() == vt)
             return;
-        setHeading(vt, bi);
+        setHeading(vt, selti);
 
         // Set URL
-        if ((s.startsWith("http://") || s.startsWith("https://")) &&
-            bi->getURL().isEmpty())
-            setURL(s);
+        if (selti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)selti;
+
+            if ((s.startsWith("http://") || s.startsWith("https://")) && !bi->hasUrl())
+                    setUrl(s, true, bi);
+        }
     }
 }
 
-Heading VymModel::getHeading()
+QString VymModel::headingText(TreeItem *ti)
 {
-    TreeItem *selti = getSelectedItem();
-    if (selti)
-        return selti->getHeading();
-    qWarning() << "VymModel::getHeading Nothing selected.";
-    return Heading();
+    // Mainly used for debugging, also works with nullptr
+    if (ti)
+        return ti->headingPlain();
+    else
+        return QString("No treeItem available");
 }
 
 void VymModel::updateNoteText(const VymText &vt)
 {
-    bool editorStateChanged = false;
+    VymNote note_new(vt);
+    setNote(note_new, nullptr, true);
+}
 
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        VymNote note_old = selti->getNote();
-        VymNote note_new(vt);
+void VymModel::setNote(const VymNote &note_new, BranchItem *bi, bool senderIsNoteEditor)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    //qDebug() << "VM::setNote  selbi=" << selbi->headingText() << " n=" << note_new.getText();
+    if (selbi) {
+        VymNote note_old;
+        note_old = selbi->getNote();
+        if (note_old == note_new)
+            return;
+
+        bool editorStateChanged = false;
         if (note_new.getText() != note_old.getText()) {
             if ((note_new.isEmpty() && !note_old.isEmpty()) ||
                 (!note_new.isEmpty() && note_old.isEmpty()))
                 editorStateChanged = true;
-
-            VymNote vn;
-            vn.copy(vt);
-
-            saveState(selti, "parseVymText (\"" + quoteQuotes(note_old.saveToDir()) + "\")",
-                      selti, "parseVymText (\"" + quoteQuotes(note_new.saveToDir()) + "\")",
-                      QString("Set note of %1 to \"%2\"")
-                          .arg(getObjectName(selti))
-                          .arg(note_new.getTextASCII().left(20)));
-
-            selti->setNote(vn);
         }
 
-        // Update also flags after changes in NoteEditor
-        emitDataChanged(selti);
+        //qDebug() << "VM::setNote  selbi=" << selbi->headingText() << " n=" << note_new.getText();
+
+        // branch variable in script
+        QString bv = setBranchVar(selbi) + "b.";
+
+        QString uc, rc;
+        if (note_old.isRichText())
+            uc = QString("%1setNoteRichText(\"%2\");").arg(bv, quoteQuotes(note_old.getText()));
+        else
+            uc = QString("%1setNoteText(\"%2\");").arg(bv, quoteQuotes(note_old.getText()));
+        if (note_new.isRichText())
+            rc = QString("%1setNoteRichText(\"%2\");").arg(bv, quoteQuotes(note_new.getText()));
+        else
+            rc = QString("%1setNoteText(\"%2\");").arg(bv, quoteQuotes(note_new.getText()));
+
+        QString comment = QString("Set note of %1 to \"%2\"").arg(getObjectName(selbi), note_new.getTextASCII().left(40));
+
+        logAction(rc, comment, __func__);
+
+        saveState(uc, rc, comment);
+
+        selbi->setNote(note_new);
+        if (!senderIsNoteEditor)
+            emitNoteChanged(selbi);
+
+        emitDataChanged(selbi);
 
         // Only update flag, if state has changed
         if (editorStateChanged)
             reposition();
+
     }
 }
 
-void VymModel::setNote(const VymNote &vn)
+bool VymModel::loadNote(const QString &fn, BranchItem *bi)
 {
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        VymNote n_old;
-        VymNote n_new;
-        n_old = selti->getNote();
-        n_new = vn;
-        saveState(selti, "parseVymText (\"" + quoteQuotes(n_old.saveToDir()) + "\")", selti,
-                  "parseVymText (\"" + quoteQuotes(n_new.saveToDir()) + "\")",
-                  QString("Set note of %1 to \"%2\"")
-                      .arg(getObjectName(selti))
-                      .arg(n_new.getTextASCII().left(40)));
-        selti->setNote(n_new);
-        emitNoteChanged(selti);
-        emitDataChanged(selti);
-    }
-}
-
-VymNote VymModel::getNote()
-{
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        VymNote n = selti->getNote();
-        return n;
-    }
-    qWarning() << "VymModel::getNote Nothing selected.";
-    return VymNote();
-}
-
-bool VymModel::hasRichTextNote()
-{
-    TreeItem *selti = getSelectedItem();
-    if (selti) {
-        return selti->getNote().isRichText();
-    }
-    return false;
-}
-
-void VymModel::loadNote(const QString &fn)
-{
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
         QString n;
         if (!loadStringFromDisk(fn, n))
-            qWarning() << "VymModel::loadNote Couldn't load " << fn;
+            logWarning("Failed: Couldn't load '" + fn + "'", __func__);
         else {
             VymNote vn;
             vn.setAutoText(n);
-            setNote(vn);
+            setNote(vn, selbi);
             emitDataChanged(selbi);
             emitUpdateQueries();
             reposition();
+            return true;
         }
     }
     else
         qWarning("VymModel::loadNote no branch selected");
+    return false;
 }
 
-void VymModel::saveNote(const QString &fn)
+bool VymModel::saveNote(const QString &fn)
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi) {
@@ -2075,46 +2554,41 @@ void VymModel::saveNote(const QString &fn)
                        << fn;
         else {
             if (!saveStringToDisk(fn, n.saveToDir()))
-                qWarning() << "VymModel::saveNote Couldn't save " << fn;
+                logWarning("Failed: Couldn't save not to '" + fn + "'", __func__);
+            else
+                return true;
         }
     }
     else
         qWarning("VymModel::saveNote no branch selected");
+    return false;
 }
 
-void VymModel::findDuplicateURLs() // FIXME-3 needs GUI
+void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing
 {
-    // Generate map containing _all_ URLs and branches
-    QString u;
-    QMultiMap<QString, BranchItem *> map;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    // Generate multimap containing _all_ URLs and branches
+    QMultiMap<QString, BranchItem *> multimap;
+    QStringList urls;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        u = cur->getURL();
-        if (!u.isEmpty())
-            map.insert(u, cur);
+        QString u = cur->url();
+        if (!u.isEmpty()) {
+            multimap.insert(u, cur);
+            if (!urls.contains(u))
+                urls << u;
+        }
         nextBranch(cur, prev);
     }
 
     // Extract duplicate URLs
-    QMultiMap<QString, BranchItem *>::const_iterator i = map.constBegin();
-    QMultiMap<QString, BranchItem *>::const_iterator firstdup =
-        map.constEnd(); // invalid
-    while (i != map.constEnd()) {
-        if (i != map.constBegin() && i.key() == firstdup.key()) {
-            if (i - 1 == firstdup) {
-                qDebug() << firstdup.key();
-                qDebug() << " - " << firstdup.value() << " - "
-                         << firstdup.value()->getHeading().getText();
-            }
-            qDebug() << " - " << i.value() << " - "
-                     << i.value()->getHeading().getText();
+    foreach (auto u, urls) {
+        if (multimap.values(u).size() > -1) {
+            qDebug() << "URL: " << u;
+            foreach(auto *bi, multimap.values(u))
+                qDebug() << " - " << bi->headingPlain();
         }
-        else
-            firstdup = i;
-
-        ++i;
     }
 }
 
@@ -2127,14 +2601,14 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
                                // QTextDocument::FindFlag
     bool hit = false;
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
 
-    FindResultItem *lastParent = NULL;
+    FindResultItem *lastParent = nullptr;
     while (cur) {
-        lastParent = NULL;
-        if (cur->getHeading().getTextASCII().contains(s, cs)) {
+        lastParent = nullptr;
+        if (cur->heading().getTextASCII().contains(s, cs)) {
             lastParent = rmodel->addItem(cur);
             hit = true;
         }
@@ -2160,7 +2634,6 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
                     }
 
                     // save index of occurence
-                    QString e = n.mid(i - 15, 30);
                     n.replace('\n', ' ');
                     rmodel->addSubItem(
                         lastParent,
@@ -2178,300 +2651,796 @@ bool VymModel::findAll(FindResultModel *rmodel, QString s,
     return hit;
 }
 
-void VymModel::setURL(QString url, bool updateFromCloud, BranchItem *bi)
+void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
 {
     if (!bi) bi = getSelectedBranch();
-    if (bi->getURL() == url)
+    if (bi->url() == url)
         return;
 
     if (bi) {
-        QString oldurl = bi->getURL();
-        bi->setURL(url);
-        saveState(
-            bi, QString("setURL (\"%1\")").arg(oldurl), bi,
-            QString("setURL (\"%1\")").arg(url),
-            QString("set URL of %1 to %2").arg(getObjectName(bi)).arg(url));
+        QString oldurl = bi->url();
+        bi->setUrl(url);
+
+        QString uc = QString("setUrl(\"%1\");").arg(oldurl);
+        QString rc = QString("setUrl(\"%1\");").arg(url);
+
+        QString comment = QString("set URL of %1 to %2").arg(getObjectName(bi), url);
+
+        logAction(rc, comment, __func__);
+
+        saveStateBranch(bi, uc, rc, comment);
+
+        if (!url.isEmpty()) {
+            if (updateFromCloud) {    // FIXME-3 use oembed.com also for Youtube and other cloud providers
+                // Check for Jira
+                JiraAgent agent;
+                if (agent.setTicket(url)) {
+                    logInfo("Preparing to get data from Jira for URL: " + url, __func__);
+                    setAttribute(bi, "Jira.key", agent.key());
+
+                    // Initially set heading with ticket Id
+                    setHeading(agent.key(), bi);
+
+                    // Then try to update heading from Jira
+                    getJiraData(false, bi);
+                }
+
+                // Check for Confluence
+                if (bi->urlType() != TreeItem::JiraUrl)
+                    setConfluencePageDetails(false);
+            }
+        } else {
+            // url == ""
+            AttributeItem *ai = getAttributeByKey("Jira.issueUrl", bi);
+            if (ai)
+                deleteItem(ai);
+        }
+        updateJiraFlag(bi); // Implicitly calls setUrlType()
+
+
         emitDataChanged(bi);
         reposition();
-
-        if (updateFromCloud)    // FIXME-2 use oembed.com also for Youtube and other cloud providers
-            // Check for Confluence
-            setHeadingConfluencePageName();
     }
 }
 
-QString VymModel::getURL()
+QString VymModel::getUrl()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        return selti->getURL();
+        return selti->url();
     else
         return QString();
 }
 
-QStringList VymModel::getURLs(bool ignoreScrolled)
+QStringList VymModel::getUrls(bool ignoreScrolled)
 {
     QStringList urls;
     BranchItem *selbi = getSelectedBranch();
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
-        if (!cur->getURL().isEmpty() &&
+        if (cur->hasUrl() &&
             !(ignoreScrolled && cur->hasScrolledParent()))
-            urls.append(cur->getURL());
+            urls.append(cur->url());
         nextBranch(cur, prev, true, selbi);
     }
     return urls;
 }
 
-void VymModel::setFrameType(const FrameObj::FrameType &t)
+void VymModel::setJiraQuery(const QString &query_new, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            QString s = bo->getFrameTypeName();
-            bo->setFrameType(t);
-            saveState(
-                bi, QString("setFrameType (\"%1\")").arg(s), bi,
-                QString("setFrameType (\"%1\")").arg(bo->getFrameTypeName()),
-                QString("set type of frame to %1").arg(s));
-            reposition();
-            bo->updateLinkGeometry();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
+
+    foreach (BranchItem *bi, selbis)
+        if (query_new.isEmpty())
+            deleteAttribute(bi, "Jira.query");
+        else
+            setAttribute(bi, "Jira.query", query_new);
+}
+
+void VymModel::setFrameAutoDesign(const bool &useInnerFrame, const bool &newAutoDesign, BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->frameAutoDesign(useInnerFrame) != newAutoDesign || newAutoDesign == true) {
+            QString uif = toS(useInnerFrame);
+            QString b_undo = toS(!newAutoDesign);
+            QString b_redo = toS(newAutoDesign);
+            QString uc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_undo);
+            QString rc = QString("setFrameAutoDesign (%1, %2);").arg(uif, b_redo);
+
+            QString comment = QString("Set automatic design of frame to '%1'").arg(toS(newAutoDesign));
+
+            logAction(rc, comment, __func__);
+
+            saveStateBeginScript(comment);  // setFrameAD, calls setFrame* functions
+
+            if (newAutoDesign) {
+                setFrameType(useInnerFrame, mapDesignInt->frameType(useInnerFrame, selbi->depth()), selbi);
+                setFramePenColor(useInnerFrame, mapDesignInt->framePenColor(useInnerFrame, selbi->depth()), selbi);
+                setFramePenWidth(useInnerFrame, mapDesignInt->framePenWidth(useInnerFrame, selbi->depth()), selbi);
+                setFrameBrushColor(useInnerFrame, mapDesignInt->frameBrushColor(useInnerFrame, selbi->depth()), selbi);
+            }
+            bc->setFrameAutoDesign(useInnerFrame, newAutoDesign);
+
+            emitDataChanged(selbi);
+            branchPropertyEditor->updateControls();
+
+            saveStateBranch(selbi, uc, rc, comment);
+            saveStateEndScript();
         }
     }
 }
 
-void VymModel::setFrameType(const QString &s)
+void VymModel::setFrameType(const bool &useInnerFrame, const FrameContainer::FrameType &t, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(
-                bi,
-                QString("setFrameType (\"%1\")").arg(bo->getFrameTypeName()),
-                bi, QString("setFrameType (\"%1\")").arg(s),
-                QString("set type of frame to %1").arg(s));
-            bo->setFrameType(s);
-            reposition();
-            bo->updateLinkGeometry();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->frameType(useInnerFrame) == t)
+            continue;
+
+
+        QString uif = toS(useInnerFrame);
+
+        QString oldFrameTypeName = bc->frameTypeString(bc->frameType(useInnerFrame));
+        QString newFrameTypeName = FrameContainer::frameTypeString(t);
+        QString uc = QString("setFrameType(%1, \"%2\");").arg(uif, oldFrameTypeName);
+        QString rc = QString("setFrameType(%1, \"%2\");").arg(uif, newFrameTypeName);
+        QString comment = QString("Set type of frame to %1").arg(newFrameTypeName);
+
+        logAction(rc, comment, __func__);
+
+        bool saveCompleteFrame = false;
+
+        if (t == FrameContainer::NoFrame) {
+            // Save also penWidth, colors, etc. to restore frame on undo
+            saveCompleteFrame = true;
+
+            saveStateBeginScript("Set frame parameters");   // setFrameType, calls setFrame* functions
+            QString colorName = bc->framePenColor(useInnerFrame).name();
+            saveStateBranch(selbi,
+                    QString("setFramePenColor (%1, \"%2\");").arg(uif, colorName),
+                    "",
+                    QString("set pen color of frame to %1").arg(colorName));
+
+            colorName = bc->frameBrushColor(useInnerFrame).name();
+            saveStateBranch(bi,
+                    QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorName),
+                    "",
+                    QString("set background color of frame to %1").arg(colorName));
+
+            int i = bc->framePenWidth(useInnerFrame);
+            saveStateBranch(selbi,
+                    QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i),
+                    "",
+                    QString("set pen width of frame to %1").arg(i));
+
+            i = bc->framePadding(useInnerFrame);
+            saveStateBranch(selbi,
+                    QString("setFramePadding (%1, \"%2\");").arg(uif, i),
+                    "",
+                    QString("set padding of frame to %1").arg(i));
         }
+
+
+        bc->setFrameType(useInnerFrame, t);
+
+        saveStateBranch(selbi, uc, rc, comment);
+
+        if (saveCompleteFrame)
+            saveStateEndScript();
+
+        emitDataChanged(selbi);
     }
-}
 
-void VymModel::toggleFrameIncludeChildren()
-{
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        bool b = bi->getFrameIncludeChildren();
-        setFrameIncludeChildren(!b);
-    }
-}
-
-void VymModel::setFrameIncludeChildren(bool b)
-{
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
-
-        saveState(bi, QString("setFrameIncludeChildren(%1)").arg(u), bi,
-                  QString("setFrameIncludeChildren(%1)").arg(r),
-                  QString("Include children in %1").arg(getObjectName(bi)));
-        bi->setFrameIncludeChildren(b);
-        emitDataChanged(bi);
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
     }
+    reposition();
 }
 
-void VymModel::setFramePenColor(
-    const QColor &c) // FIXME-4 not saved if there is no LMO
+void VymModel::setFrameType(const bool &useInnerFrame, const QString &s, BranchItem *bi)
+{
+    setFrameType(useInnerFrame, FrameContainer::frameTypeFromString(s), bi);
+}
+
+void VymModel::setFramePenColor(const bool &useInnerFrame, const QColor &col, BranchItem *bi)
 
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(bi,
-                      QString("setFramePenColor (\"%1\")")
-                          .arg(bo->getFramePenColor().name()),
-                      bi, QString("setFramePenColor (\"%1\")").arg(c.name()),
-                      QString("set pen color of frame to %1").arg(c.name()));
-            bo->setFramePenColor(c);
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+            QString uif = toS(useInnerFrame);
+            QString colorNameOld = bc->framePenColor(useInnerFrame).name();
+            QString uc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorNameOld);
+            QString colorNameNew = col.name();
+            QString rc = QString("setFramePenColor (%1, \"%2\");").arg(uif, colorNameNew);
+            QString comment = QString("Set pen color of frame to %1").arg(colorNameNew);
+
+            logAction(rc, comment, __func__);
+
+            emitDataChanged(selbi);
+            branchPropertyEditor->updateControls();
+
+            saveStateBranch(selbi, uc, rc, comment);
+
+            bc->setFramePenColor(useInnerFrame, col);
         }
     }
 }
 
 void VymModel::setFrameBrushColor(
-    const QColor &c) // FIXME-4 not saved if there is no LMO
+    const bool &useInnerFrame, const QColor &col, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(bi,
-                      QString("setFrameBrushColor (\"%1\")")
-                          .arg(bo->getFrameBrushColor().name()),
-                      bi, QString("setFrameBrushColor (\"%1\")").arg(c.name()),
-                      QString("set brush color of frame to %1").arg(c.name()));
-            bo->setFrameBrushColor(c);
-            bi->setBackgroundColor(c); // FIXME-4 redundant with above
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->frameType(useInnerFrame) != FrameContainer::NoFrame)  {
+
+            QString uif = toS(useInnerFrame);
+            QString colorNameOld = bc->framePenColor(useInnerFrame).name();
+            QString uc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorNameOld);
+            QString colorNameNew = col.name();
+            QString rc = QString("setFrameBrushColor (%1, \"%2\");").arg(uif, colorNameNew);
+            QString comment = QString("Set background color of frame to %1").arg(colorNameNew);
+
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+
+            bc->setFrameBrushColor(useInnerFrame, col);
         }
-        emitDataChanged(bi);  // Notify HeadingEditor to eventually change BG color
+        emitDataChanged(selbi);  // Notify HeadingEditor to eventually change BG color
+        branchPropertyEditor->updateControls();
     }
 }
 
 void VymModel::setFramePadding(
-    const int &i)
+    const bool &useInnerFrame, const int &i, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(
-                bi,
-                QString("setFramePadding (\"%1\")").arg(bo->getFramePadding()),
-                bi, QString("setFramePadding (\"%1\")").arg(i),
-                QString("set brush color of frame to %1").arg(i));
-            bo->setFramePadding(i);
-            reposition();
-            bo->updateLinkGeometry();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (i != bc->framePadding(useInnerFrame)) {
+            QString uif = toS(useInnerFrame);
+            QString uc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(bc->framePadding(useInnerFrame));
+            QString rc = QString("setFramePadding (%1, \"%2\");").arg(uif).arg(i);
+            QString comment = QString("Set padding of frame to '%1").arg(i);
+
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+
+            bc->setFramePadding(useInnerFrame, i);
+            emitDataChanged(selbi);
         }
     }
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
 }
-
-void VymModel::setFrameBorderWidth(
-    const int &i)
+void VymModel::setFramePenWidth(
+    const bool &useInnerFrame, const int &i, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        BranchObj *bo = (BranchObj *)(bi->getLMO());
-        if (bo) {
-            saveState(bi,
-                      QString("setFrameBorderWidth (\"%1\")")
-                          .arg(bo->getFrameBorderWidth()),
-                      bi, QString("setFrameBorderWidth (\"%1\")").arg(i),
-                      QString("set border width of frame to %1").arg(i));
-            bo->setFrameBorderWidth(i);
-            reposition();
-            bo->updateLinkGeometry();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (i != bc->framePenWidth(useInnerFrame)) {
+            QString uif = toS(useInnerFrame);
+            QString uc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(bc->framePenWidth(useInnerFrame));
+            QString rc = QString("setFramePenWidth (%1, \"%2\");").arg(uif).arg(i);
+            QString comment = QString("Set pen width of frame to '%1").arg(i);
+
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+
+            bc->setFramePenWidth(useInnerFrame, i);
+            emitDataChanged(selbi);
         }
     }
-}
 
-void VymModel::setIncludeImagesVer(bool b)
-{
-    BranchItem *bi = getSelectedBranch();
-    if (bi && b != bi->getIncludeImagesVer()) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
-
-        saveState(
-            bi, QString("setIncludeImagesVertically (%1)").arg(u), bi,
-            QString("setIncludeImagesVertically (%1)").arg(r),
-            QString("Include images vertically in %1").arg(getObjectName(bi)));
-        bi->setIncludeImagesVer(b);
-        emitDataChanged(bi);
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
     }
 }
 
-void VymModel::setIncludeImagesHor(bool b)
+void VymModel::setHeadingColumnWidthAutoDesign(const bool &b, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi && b != bi->getIncludeImagesHor()) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        if (bc->columnWidthAutoDesign() != b) {
+            if (b)
+                bc->setColumnWidth(mapDesignInt->headingColumnWidth(selbi->depth()));
+	    QString v = b ? "Enable" : "Disable";
+	    QString uc = QString("setHeadingColumnWidthAutoDesign (%1);").arg(toS(!b));
+	    QString rc = QString("setHeadingColumnWidthAutoDesign (%1);").arg(toS(b));
+            QString comment = QString("%1 automatic heading width").arg(v);
 
-        saveState(bi, QString("setIncludeImagesHorizontally (%1)").arg(u), bi,
-                  QString("setIncludeImagesHorizontally (%1)").arg(r),
-                  QString("Include images horizontally in %1")
-                      .arg(getObjectName(bi)));
-        bi->setIncludeImagesHor(b);
-        emitDataChanged(bi);
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+            bc->setColumnWidthAutoDesign(b);
+            branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
+        }
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
     }
 }
 
-void VymModel::setChildrenLayout(
-    BranchItem::LayoutHint layoutHint) // FIXME-3 no savestate yet
+void VymModel::setHeadingColumnWidth (const int &i, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        /*
-        QString u= b ? "false" : "true";
-        QString r=!b ? "false" : "true";
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+	if (bc->columnWidth() != i) {
+	    QString uc = QString("setHeadingColumnWidth (%1);").arg(bc->columnWidth());
+	    QString rc = QString("setHeadingColumnWidth (%1);").arg(i);
+            QString comment = QString("Set heading column width to %1").arg(i);
 
-        saveState(
-            bi,
-            QString("setIncludeImagesHorizontally (%1)").arg(u),
-            bi,
-            QString("setIncludeImagesHorizontally (%1)").arg(r),
-            QString("Include images horizontally in %1").arg(getObjectName(bi))
-        );
-        */
-        bi->setChildrenLayout(layoutHint);
-        emitDataChanged(bi);
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+
+            bc->setColumnWidth(i);
+            emitDataChanged(selbi);
+        }
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
     }
 }
 
-void VymModel::setHideLinkUnselected(bool b)
+void VymModel::setRotationAutoDesign(const bool &b, BranchItem *bi)
 {
-    TreeItem *ti = getSelectedItem();
-    if (ti && (ti->getType() == TreeItem::Image || ti->isBranchLikeType())) {
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
-        saveState(
-            ti, QString("setHideLinkUnselected (%1)").arg(u), ti,
-            QString("setHideLinkUnselected (%1)").arg(r),
-            QString("Hide link of %1 if unselected").arg(getObjectName(ti)));
-        ((MapItem *)ti)->setHideLinkUnselected(b);
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->rotationsAutoDesign() != b) {
+            QString s = b ? "Enable" : "Disable";
+            QString uc = QString("setRotationAutoDesign(%1);").arg(toS(bc->rotationsAutoDesign()));
+            QString rc = QString("setRotationAutoDesign(%1);").arg(toS(b));
+            QString comment = QString("%1 automatic rotation heading and subtree").arg(s);
+
+            logAction(rc, comment, __func__);
+
+            saveStateBeginScript(comment); // setRotationsAD, calls setRotation* functions
+            if (b) {
+                setRotationHeading(mapDesignInt->rotationHeading(selbi->depth()));
+                setRotationSubtree(mapDesignInt->rotationSubtree(selbi->depth()));
+            }
+            saveStateBranch(selbi, uc, rc);
+
+            bc->setRotationsAutoDesign(b);
+            emitDataChanged(selbi);
+
+            saveStateEndScript();
+        }
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
     }
 }
 
-void VymModel::setHideExport(bool b, TreeItem *ti)
+void VymModel::setRotationHeading (const int &i, BranchItem* bi)
 {
-    if (!ti)
-        ti = getSelectedItem();
-    if (ti && (ti->getType() == TreeItem::Image || ti->isBranchLikeType()) &&
-        ti->hideInExport() != b) {
-        ti->setHideInExport(b);
-        QString u = b ? "false" : "true";
-        QString r = !b ? "false" : "true";
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
-        saveState(ti, QString("setHideExport (%1)").arg(u), ti,
-                  QString("setHideExport (%1)").arg(r),
-                  QString("Set HideExport flag of %1 to %2")
-                      .arg(getObjectName(ti))
-                      .arg(r));
-        emitDataChanged(ti);
-        emitSelectionChanged();
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+	if (bc->rotationHeading() != i) {
+
+            QString uc = QString("setRotationHeading(\"%1\");").arg(toS(bc->rotationHeading(), 1));
+            QString rc = QString("setRotationHeading(\"%1\");").arg(i);
+            QString comment = QString("Set rotation angle of heading and flags to %1").arg(i);
+
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+
+            bc->setRotationHeading(i);
+            emitDataChanged(selbi);
+        }
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
         reposition();
     }
+}
+
+void VymModel::setRotationSubtree (const int &i, BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+	if (bc->rotationSubtree() != i) {
+            QString uc = QString("setRotationSubtree(\"%1\");").arg(toS(bc->rotationSubtree(), 1));
+            QString rc = QString("setRotationSubtree(\"%1\");").arg(i);
+            QString comment = QString("Set rotation angle of subtree to %1").arg(i);
+
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+
+            bc->setRotationSubtree(i);
+            emitDataChanged(selbi);
+	}
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+void VymModel::rotateSubtree(qreal a)
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    foreach (BranchItem *selbi, selbis) {
+        BranchContainer *bc = selbi->getBranchContainer();
+        setRotationAutoDesign(false, selbi);
+        qreal a_old = bc->rotationSubtree();
+        qreal a_new = a_old + a;
+        QString uc = QString("setRotationSubtree(\"%1\");").arg(toS(a_old, 1));
+        QString rc = QString("setRotationSubtree(\"%1\");").arg(a_new);
+        QString comment = QString("Set rotation angle of subtree to %1").arg(a_new);
+
+        logAction(rc, comment, __func__);
+
+        saveStateBranch(selbi, uc, rc, comment);
+
+        bc->setRotationSubtree(a_new);
+        emitDataChanged(selbi);
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+void VymModel::setScaleAutoDesign (const bool & b, BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        if (bc->scaleAutoDesign() != b) {
+            QString s = b ? "Enable" : "Disable";
+            QString uc = QString("setScaleAutoDesign(%1);").arg(toS(bc->scaleAutoDesign()));
+            QString rc = QString("setScaleAutoDesign(%1);").arg(toS(b));
+            QString c = QString("%1 automatic scaling").arg(s);
+
+            logAction(rc, c, __func__);
+
+            saveStateBeginScript(c);    // setScaleAD, calls setScale* functions
+            if (b) {
+                setScaleHeading(mapDesignInt->scaleHeading(selbi->depth()));
+                setScaleSubtree(mapDesignInt->scaleSubtree(selbi->depth()));
+            }
+            saveStateBranch(selbi, uc, rc);
+            bc->setScaleAutoDesign(b);
+            emitDataChanged(selbi);
+
+            saveStateEndScript();
+        }
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+void VymModel::setScaleHeading (const qreal &f, const bool relative, BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        qreal f_old = bc->scaleHeading();
+        qreal f_new = relative ? f_old + f : f;
+
+	if (bc->scaleHeading() != f_new) {
+            QString uc = QString("setScaleHeading(%1);").arg(toS(f_old, 3));
+            QString rc = QString("setScaleHeading(%1);").arg(toS(f_new, 3));
+            QString c  = QString("Set heading scale factor to %1").arg(f_new);
+
+            logAction(rc, c, __func__);
+
+            saveStateBranch(selbi, uc, rc, c);
+
+            bc->setScaleHeading(f_new);
+            emitDataChanged(selbi);
+	}
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+qreal VymModel::getScaleHeading ()
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    if (selbis.isEmpty()) return 1;
+
+    return selbis.first()->getBranchContainer()->scaleHeading();
+}
+
+
+void VymModel::setScaleSubtree (const qreal &f_new, BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        bc = selbi->getBranchContainer();
+        qreal f_old = bc->scaleSubtree();
+
+	if (f_new != f_old) {
+            QString uc = QString("setScaleSubtree(%1);").arg(toS(f_old, 3));
+            QString rc = QString("setScaleSubtree(%1);").arg(toS(f_new,3));
+            QString c  = QString("Set subtree scale factor to %1").arg(toS(f_new, 3));
+            logAction(rc, c, __func__);
+            saveStateBranch(selbi, uc, rc, c);
+
+            bc->setScaleSubtree(f_new);
+            branchPropertyEditor->updateControls();
+            emitDataChanged(selbi);
+	}
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+qreal VymModel::getScaleSubtree ()
+{
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    if (selbis.isEmpty()) return 1;
+
+    return selbis.first()->getBranchContainer()->scaleSubtree();
+}
+
+void VymModel::setScaleImage(const qreal &f, const bool relative, ImageItem *ii)
+{
+    QList<ImageItem *> seliis = getSelectedImages(ii);
+
+    foreach (ImageItem *selii, seliis) {
+        qreal f_old = selii->scale();
+        qreal f_new = relative ? f_old + f : f;
+        if (selii->scale() != f_new) {
+            QString iv = setImageVar(selii);
+            QString uc = iv + QString("i.setScale(%1);").arg(toS(f_old, 3));
+            QString rc = iv + QString("i.setScale(%1);").arg(toS(f_new,3));
+            QString c  = QString("Set image scale factor to %1").arg(toS(f_new, 3));
+            logAction(rc, c, __func__);
+            saveState(uc, rc, c);
+
+            selii->setScale(f_new);
+            emitDataChanged(selii);
+        }
+    }
+
+    if (!seliis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+void VymModel::setScale(const qreal &f, const bool relative)
+{
+    // Grow/shring branches and/or images using shortcuts
+    setScaleAutoDesign(false);
+    setScaleHeading(f, relative);
+    setScaleImage(f, relative);
+}
+
+void VymModel::growSelectionSize()
+{
+    setScale(0.05, true);
+}
+
+void VymModel::shrinkSelectionSize()
+{
+    setScale(- 0.05, true);
+}
+
+void VymModel::resetSelectionSize()
+{
+    setScale(1, false);
+}
+
+void VymModel::setBranchesLayout(const QString &s, BranchItem *bi)
+{
+    // qDebug() << "VM::setBranchesLayout for " << headingText(bi) << s;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    BranchContainer *bc;
+    foreach (BranchItem *selbi, selbis) {
+        Container::Layout layout;
+        bc = selbi->getBranchContainer();
+
+        if (s == "Auto") {
+            // Set layout to "auto"
+            bc->branchesContainerAutoLayout = true;
+
+            // Get layout from mapDesign
+            layout = mapDesignInt->branchesContainerLayout(selbi->depth());
+        } else {
+            bc->branchesContainerAutoLayout = false;
+            layout = Container::layoutFromString(s);
+        }
+        if (bc->branchesContainerLayout() != layout  && layout != Container::UndefinedLayout) {
+            QString bv = setBranchVar(bi);
+            QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+            QString rc = bv + QString("b.setBranchesLayout (\"%1\")").arg(s);
+            QString com = QString("Set branches layout of %1 to %2").arg(getObjectName(bi), layout);
+            logAction(rc, com, __func__);
+
+            saveState(uc, rc, com, bi);
+
+            bc->setBranchesContainerLayout(layout);
+            emitDataChanged(selbi);
+        }
+    }
+
+    // Links might have been added or removed, Nested lists, etc...
+    foreach (BranchItem *selbi, selbis)
+        applyDesignRecursively(MapDesign::LayoutChanged, selbi);
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+
+        // Create and delete containers, update their structure
+        reposition();
+    }
+
+}
+
+void VymModel::setImagesLayout(const QString &s, BranchItem *bi)
+{
+    BranchContainer *bc;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        Container::Layout layout;
+        bc = selbi->getBranchContainer();
+        if (s == "Auto") {
+            bc->imagesContainerAutoLayout = true;
+            layout = mapDesignInt->imagesContainerLayout(selbi->depth());
+        } else {
+            bc->imagesContainerAutoLayout = false;
+            layout = Container::layoutFromString(s);
+        }
+
+        if (bc->imagesContainerLayout() != layout  && layout != Container::UndefinedLayout) {
+            QString bv = setBranchVar(selbi);
+            QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+            QString rc = bv + QString("b.setImagesLayout (\"%1\")").arg(s);
+            QString com = QString("Set images layout of %1 to %2").arg(getObjectName(selbi), s);
+            logAction(rc, com, __func__);
+
+            saveState(uc, rc, com, selbi);
+
+            bc->setImagesContainerLayout(layout);
+            emitDataChanged(selbi);
+        }
+    }
+
+    if (!selbis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+void VymModel::setHideLinkUnselected(bool b, TreeItem *ti)
+{
+    QList <TreeItem*> seltis = getSelectedItems(ti);
+
+    foreach (TreeItem *selti, seltis) {
+        if (selti->getType() == TreeItem::Image || selti->hasTypeBranch()) {
+            QString v = b ? "Hide" : "Show";
+            QString tiv;
+            if (selti->hasTypeBranch())
+                tiv = setBranchVar((BranchItem*)selti, "ti");
+            else if (selti->hasTypeImage())
+                tiv = setImageVar((ImageItem*)selti, "ti");
+            else {
+                qWarning() << "VymModel::setHideLinkUnselected  no branch or image";
+                return;
+            }
+            QString uc = tiv + QString("ti.setHideLinkUnselected(%1);").arg(toS(!b));
+            QString rc = tiv + QString("ti.setHideLinkUnselected(%1);").arg(toS(b));
+            QString comment = QString("%1 link if item %2 is not selected").arg(v, getObjectName(selti));
+
+            logAction(rc, comment, __func__);
+
+            saveState( uc, rc, comment);
+            ((MapItem *)selti)->setHideLinkUnselected(b);
+        }
+        emitDataChanged(selti);
+    }
+
+    if (!seltis.isEmpty()) {
+        branchPropertyEditor->updateControls();
+        reposition();
+    }
+}
+
+void VymModel::setHideExport(bool b, BranchItem *bi)
+{
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
+
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi->hideTemporary() != b) {
+            selbi->setHideTemporary(b);
+            QString u = toS(!b);
+            QString r = toS(b);
+            QString uc = QString("setHideExport (%1)").arg(u);
+            QString rc = QString("setHideExport (%1)").arg(r);
+
+            QString comment = "Set hide export of " + getObjectName(selbi) + " to " + r;
+
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, uc, comment);
+
+            emitDataChanged(selbi);
+        }
+    }
+
+    if (!selbis.isEmpty())
+        reposition();
 }
 
 void VymModel::toggleHideExport()
 {
-    QList<TreeItem *> selItems = getSelectedItems();
-    if (selItems.count() > 0) {
-        foreach (TreeItem *ti, selItems) {
-            bool b = !ti->hideInExport();
-            setHideExport(b, ti);
-        }
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+        bool b = !selbi->hideTemporary();
+        setHideExport(b, selbi);
     }
 }
 
-void VymModel::toggleTask()
+void VymModel::toggleTask(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        saveStateChangingPart(
-            selbi, selbi, QString("toggleTask()"),
-            QString("Toggle task of %1").arg(getObjectName(selbi)));
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (auto selbi, selbis) {
+        QString uc = "toggleTask();";
+        QString comment = QString("Toggle task of %1").arg(getObjectName(selbi));
+
+        logAction(uc, comment, __func__);
+
+        saveStateBranch( selbi, uc, uc, comment);
         Task *task = selbi->getTask();
         if (!task) {
             task = taskModel->createTask(selbi);
@@ -2481,111 +3450,121 @@ void VymModel::toggleTask()
             taskModel->deleteTask(task);
 
         emitDataChanged(selbi);
-        emitSelectionChanged();
         reposition();
     }
 }
 
-bool VymModel::cycleTaskStatus(bool reverse)
+bool VymModel::cycleTaskStatus(BranchItem *bi, bool reverse)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    bool repositionRequired = false;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            saveStateChangingPart(
-                selbi, selbi, QString("cycleTask()"),
-                QString("Toggle task of %1").arg(getObjectName(selbi)));
+            QString uc, rc;
+            if (!reverse) {
+                uc = "cycleTask(true);";
+                rc = "cycleTask();";
+            } else {
+                uc = "cycleTask();";
+                rc = "cycleTask(true);";
+            }
+            QString comment = QString("Cycle task of %1").arg(getObjectName(selbi));
+
+            logAction(rc, comment, __func__);
+
+            saveStateBranch(selbi, uc, rc, comment);
+
             task->cycleStatus(reverse);
             task->setDateModification();
 
-            // make sure task is still visible
+            // make sure task is still visible  // FIXME-3 for multi-selections?
             taskEditor->select(task);
             emitDataChanged(selbi);
-            reposition();
-            return true;
+            repositionRequired = true;
         }
+    }
+    if (repositionRequired) {
+        reposition();
+        return true;
     }
     return false;
 }
 
-bool VymModel::setTaskSleep(const QString &s)
+bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-4 (WIP) Rename "sleep" to "alarm" in code, commands, doc
 {
     bool ok = false;
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi && !s.isEmpty()) {
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (auto selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            QDateTime oldSleep = task->getSleep();
+            QDateTime oldAlarmTime = task->alarmTime();
 
             // Parse the string, which could be days, hours or one of several
             // time formats
 
             if (s == "0") {
+                // Reset sleep time and wake up task
                 ok = task->setSecsSleep(0);
             }
             else {
-                QRegExp re("^\\s*(\\d+)\\s*$");
-                re.setMinimal(false);
-                int pos = re.indexIn(s);
-                if (pos >= 0) {
-                    // Found only digit, considered as days
-                    ok = task->setDaysSleep(re.cap(1).toInt());
+                static QRegularExpression re;
+
+                // Only digits considered as days
+                re.setPattern("^\\s*(\\d+)\\s*$");
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
+                QRegularExpressionMatch match = re.match(s);
+                if (match.hasMatch()) {
+                    ok = task->setDaysSleep(match.captured(1).toInt());
                 }
                 else {
-                    QRegExp re("^\\s*(\\d+)\\s*h\\s*$");
-                    pos = re.indexIn(s);
-                    if (pos >= 0) {
-                        // Found digit followed by "h", considered as hours
-                        ok = task->setHoursSleep(re.cap(1).toInt());
+                    // Digit followed by "h", considered as hours
+                    re.setPattern("^\\s*(\\d+)\\s*h\\s*$");
+                    match = re.match(s);
+                    if (match.hasMatch()) {
+                        ok = task->setHoursSleep(match.captured(1).toInt());
                     }
                     else {
-                        QRegExp re("^\\s*(\\d+)\\s*w\\s*$");
-                        pos = re.indexIn(s);
-                        if (pos >= 0) {
-                            // Found digit followed by "w", considered as weeks
-                            ok = task->setDaysSleep(7 * re.cap(1).toInt());
+                        // Digits followed by "w", considered as weeks
+                        re.setPattern("^\\s*(\\d+)\\s*w\\s*$");
+                        match = re.match(s);
+                        if (match.hasMatch()) {
+                            ok = task->setDaysSleep(7 * match.captured(1).toInt());
                         }
                         else {
-                            QRegExp re("^\\s*(\\d+)\\s*s\\s*$");
-                            pos = re.indexIn(s);
-                            if (pos >= 0) {
-                                // Found digit followed by "s", considered as
-                                // seconds
-                                ok = task->setSecsSleep(re.cap(1).toInt());
+                            // Digits followed by "s", considered as seconds
+                            re.setPattern("^\\s*(\\d+)\\s*s\\s*$");
+                            match = re.match(s);
+                            if (match.hasMatch()) {
+                                ok = task->setSecsSleep(match.captured(1).toInt());
                             }
                             else {
-                                ok = task->setDateSleep(
-                                    s); // ISO date YYYY-MM-DDTHH:mm:ss
+                                // Try setting ISO date YYYY-MM-DDTHH:mm:ss
+                                ok = task->setDateSleep(s);
 
                                 if (!ok) {
-                                    QRegExp re("(\\d+)\\.(\\d+)\\.(\\d+)");
-                                    re.setMinimal(false);
-                                    int pos = re.indexIn(s);
-                                    QStringList list = re.capturedTexts();
-                                    QDateTime d;
-                                    if (pos >= 0) {
-                                        d = QDateTime(
-                                            QDate(list.at(3).toInt(),
-                                                  list.at(2).toInt(),
-                                                  list.at(1).toInt()).startOfDay());
-                                        // d = QDate(list.at(3).toInt(),
-                                        // list.at(2).toInt(),
-                                        // list.at(1).toInt()).startOfDay();
-                                        ok = task->setDateSleep(
-                                            d); // German format,
-                                                // e.g. 24.12.2012
+                                    // German format, e.g. "24.12.2012"
+                                    re.setPattern("(\\d+)\\.(\\d+)\\.(\\d+)");
+                                    re.setPatternOptions(QRegularExpression::NoPatternOption);
+                                    match = re.match(s);
+                                    if (match.hasMatch()) {
+                                        QDateTime d(
+                                            QDate(match.captured(3).toInt(),
+                                                  match.captured(2).toInt(),
+                                                  match.captured(1).toInt()).startOfDay());
+                                        ok = task->setDateSleep(d); 
                                     }
                                     else {
+                                        // Short German format, e.g. "24.12."
                                         re.setPattern("(\\d+)\\.(\\d+)\\.");
-                                        pos = re.indexIn(s);
-                                        list = re.capturedTexts();
-                                        if (pos >= 0) {
-                                            int month = list.at(2).toInt();
-                                            int day = list.at(1).toInt();
+                                        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
+                                        match = re.match(s);
+                                        if (match.hasMatch()) {
+                                            int month = match.captured(2).toInt();
+                                            int day = match.captured(1).toInt();
                                             int year =
                                                 QDate::currentDate().year();
-                                            d = QDateTime(
-                                                QDate(year, month, day).startOfDay());
+                                            QDateTime d(QDate(year, month, day).startOfDay());
                                             // d = QDate(year, month,
                                             // day).startOfDay();
                                             if (QDateTime::currentDateTime()
@@ -2596,22 +3575,19 @@ bool VymModel::setTaskSleep(const QString &s)
                                                 // d = QDate(year, month,
                                                 // day).startOfDay();
                                             }
-                                            ok = task->setDateSleep(
-                                                d); // Short German format,
-                                                    // e.g. 24.12.
+                                            ok = task->setDateSleep(d);
                                         }
                                         else {
+                                            // Time HH:MM
                                             re.setPattern("(\\d+)\\:(\\d+)");
-                                            pos = re.indexIn(s);
-                                            list = re.capturedTexts();
-                                            if (pos >= 0) {
-                                                int hour = list.at(1).toInt();
-                                                int min = list.at(2).toInt();
-                                                d = QDateTime(
+                                            match = re.match(s);
+                                            if (match.hasMatch()) {
+                                                int hour = match.captured(1).toInt();
+                                                int min = match.captured(2).toInt();
+                                                QDateTime d(
                                                     QDate::currentDate(),
                                                     QTime(hour, min));
-                                                ok = task->setDateSleep(
-                                                    d); // Time HH:MM
+                                                ok = task->setDateSleep(d);
                                             }
                                         }
                                     }
@@ -2623,57 +3599,59 @@ bool VymModel::setTaskSleep(const QString &s)
             }
 
             if (ok) {
-                QString oldSleepString;
-                if (oldSleep.isValid())
-                    oldSleepString = oldSleep.toString(Qt::ISODate);
+                QString oldAlarmTimeString;
+                if (oldAlarmTime.isValid())
+                    oldAlarmTimeString = oldAlarmTime.toString(Qt::ISODate);
                 else
-                    oldSleepString =
-                        "1970-01-26T00:00:00"; // Some date long ago
+                    oldAlarmTimeString = "1970-01-26T00:00:00"; // Some date long ago...
 
-                QString newSleepString = task->getSleep().toString(Qt::ISODate);
+                QString newAlarmTimeString = task->alarmTime().toString(Qt::ISODate);
                 task->setDateModification();
                 selbi->updateTaskFlag(); // If tasks changes awake mode, then
                                          // flag needs to change
-                saveState(
-                    selbi, QString("setTaskSleep (\"%1\")").arg(oldSleepString),
-                    selbi, QString("setTaskSleep (\"%1\")").arg(newSleepString),
-                    QString("setTaskSleep (\"%1\")").arg(newSleepString));
+                QString bv = setBranchVar(selbi);
+                QString uc = QString("setTaskSleep (\"%1\")").arg(oldAlarmTimeString);
+                QString rc = QString("setTaskSleep (\"%1\")").arg(newAlarmTimeString);
+                QString comment = "Set sleep time for task";
+
+                logAction(rc, comment, __func__);  // FIXME-3 Logging command should be done before actual change. 
+                                                    // Would require separate checks in task, if new alarmTime is valid
+
+                saveStateBranch(selbi, uc, rc, comment);
+
                 emitDataChanged(selbi);
                 reposition();
             }
 
         } // Found task
-    }     // Found branch
+        if (!ok)
+            return false;
+    }     // Looping over selected branches
     return ok;
 }
 
 void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
 {
-    QList<BranchItem *> selbis;
-    if (bi)
-        selbis << bi;
-    else
-        selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
         Task *task = selbi->getTask();
         if (task) {
-            saveState(selbi,
-                      QString("setTaskPriorityDelta (%1)")
-                          .arg(task->getPriorityDelta()),
-                      selbi,
-                      QString("setTaskPriorityDelta (%1)")
-                          .arg(pd),
-                      "Set delta for priority of task");
+            QString bv = setBranchVar(selbi);
+            QString uc = QString("setTaskPriorityDelta (%1)").arg(task->getPriorityDelta());
+            QString rc = QString("setTaskPriorityDelta (%1)").arg(pd);
+            QString comment = "Set delta for priority of task";
+            logAction(rc, comment, __func__);
+            saveStateBranch(selbi, uc, rc, comment);
             task->setPriorityDelta(pd);
             emitDataChanged(selbi);
         }
     }
 }
 
-int VymModel::getTaskPriorityDelta()
+int VymModel::getTaskPriorityDelta(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
         Task *task = selbi->getTask();
         if (task)
@@ -2693,17 +3671,23 @@ void VymModel::updateTasksAlarm(bool force)
 
 BranchItem *VymModel::addTimestamp()
 {
-    BranchItem *selbi = addNewBranch();
+    BranchItem *selbi = getSelectedBranch();
+
     if (selbi) {
         QDate today = QDate::currentDate();
         QChar c = '0';
-        selbi->setHeadingPlainText(QString("%1-%2-%3")
-                                       .arg(today.year(), 4, 10, c)
-                                       .arg(today.month(), 2, 10, c)
-                                       .arg(today.day(), 2, 10, c));
-        emitDataChanged(selbi);
-        reposition();
-        select(selbi);
+        QString s = QString("%1-%2-%3")
+                       .arg(today.year(), 4, 10, c)
+                       .arg(today.month(), 2, 10, c)
+                       .arg(today.day(), 2, 10, c);
+        QString comment = "Add branch with current date as heading: " + s;
+
+        saveStateBeginScript(comment);  // addTimeStamp, calls setHeadingPlain and indirect setUrl
+        BranchItem *newbi = addNewBranch(selbi);
+        setHeadingPlainText(s, newbi);
+        saveStateEndScript();
+
+        select(newbi);
     }
     return selbi;
 }
@@ -2715,30 +3699,44 @@ void VymModel::copy()
 
     QList<TreeItem *> itemList = getSelectedItems();
 
-    QStringList clipboardFiles;
+    QStringList clipboardFileNames;
 
     if (itemList.count() > 0) {
+
+        QStringList uids;
+
         uint i = 1;
         QString fn;
         foreach (TreeItem *ti, itemList) {
+            uids << QString("\"%1\"").arg(ti->getUuid().toString());
             fn = QString("%1/%2-%3.xml")
-                     .arg(clipboardDir)
-                     .arg(clipboardFile)
+                     .arg(clipboardDir.path())
+                     .arg(clipboardFileName)
                      .arg(i);
-            QString content = saveToDir(clipboardDir, clipboardFile,
-                                        FlagRowMaster::NoFlags, QPointF(), ti);
+            QString content = saveToDir(clipboardDir.path(), clipboardFileName,
+                                        FlagRowMaster::NoFlags, QPointF(), false, false, false,  ti);
 
             if (!saveStringToDisk(fn, content))
                 qWarning() << "ME::saveStringToDisk failed: " << fn;
             else {
                 i++;
-                clipboardFiles.append(fn);
+                clipboardFileNames.append(fn);
             }
         }
         QClipboard *clipboard = QApplication::clipboard();
         QMimeData *mimeData = new QMimeData;
-        mimeData->setData("application/x-vym", clipboardFiles.join(",").toLatin1());
+        mimeData->setData("application/x-vym", clipboardFileNames.join(",").toLatin1());
         clipboard->setMimeData(mimeData);
+
+        QString rc = QString("map.selectUids([%1]); map.copy();").arg(uids.join(","));
+        QString comment = QString("Copy %1 selected %2 to clipboard: [%3]")
+            .arg(itemList.count())
+            .arg(pluralize(QString("item"), itemList.count()))
+            .arg(uids.join(","));
+
+        logAction(rc, "Copy selection", __func__);
+        saveState("", rc, comment);
+
     }
 }
 
@@ -2747,34 +3745,57 @@ void VymModel::paste()
     if (readonly)
         return;
 
+    const QClipboard *clipboard = QApplication::clipboard();
+    const QMimeData *mimeData = clipboard->mimeData();
+
     BranchItem *selbi = getSelectedBranch();
+    ImageItem *selii = getSelectedImage();
+
+    // Special case: When image is selected and image is pasted, try to append 
+    // pasted image to current set of images in parent
+    if (!selbi && selii && mimeData->hasImage())
+        selbi = selii->parentBranch();
 
     if (selbi) {
-        const QClipboard *clipboard = QApplication::clipboard();
-        const QMimeData *mimeData = clipboard->mimeData();
-
         if (mimeData->formats().contains("application/x-vym")) {
-            QStringList clipboardFiles = QString(mimeData->data("application/x-vym")).split(",");
+            QStringList clipboardFileNames = QString(mimeData->data("application/x-vym")).split(",");
 
-            saveStateChangingPart(selbi, selbi, QString("paste ()"),
-                                  QString("Paste"));
+            QString bv = setBranchVar(selbi);
+            QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+            QString rc = bv + QString("b.select(); map.paste();");
+            QString comment = QString("Paste to branch \"%1\"").arg(selbi->headingText());
+
+            logAction(rc, comment, __func__);
+
+            saveState(uc, rc, comment, selbi, selbi);
 
             bool zippedOrg = zipped;
-            foreach(QString fn, clipboardFiles) {
-                if (File::Success != loadMap(fn, ImportAdd, VymMap, SlideContent))
-                    qWarning() << "VM::paste Loading clipboard failed: " << fn;
+            foreach(QString fn, clipboardFileNames) {
+                if (!loadMap(fn,
+                            File::ImportAdd,
+                            File::VymMap,
+                            VymReader::SlideContent,
+                            selbi,
+                            selbi->branchCount()))
+                    logWarning("Failed to load clipboard from " + fn, __func__);
             }
+            select(selbi);
             zipped = zippedOrg;
-            reposition();
         } else if (mimeData->hasImage()) {
+            //qDebug() << "VM::paste  mimeData->hasImage";
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
-            QString fn = clipboardDir + "/" + "image.png";
+            QString fn = clipboardDir.path() + "/" + "image.png";
             if (!image.save(fn))
-                qWarning() << "VM::paste  Could not save copy of image in system clipboard";
+                logWarning("Could not save copy of image in system clipboard " + fn, __func__);
             else {
                 ImageItem *ii = loadImage(selbi, fn);
-                if (ii)
-                    setScaleFactor(300.0 / image.width(), ii);    // FIXME-2 Better use user-defined fixed width
+                if (ii) {
+                    setScaleImage(300.0 / image.width(), false, ii);    // FIXME-3 Better use user-defined fixed width when pasting images
+
+                    if (selii)
+                        // In case we pasted onto an existing image, select the new one
+                        select(ii);
+                }
             }
         } else if (mimeData->hasHtml()) {
             //setText(mimeData->html());
@@ -2785,7 +3806,7 @@ void VymModel::paste()
             //setTextFormat(Qt::PlainText);
             qDebug() << "VM::paste found text...";
         } else {
-            qWarning() << "VM::paste Cannot paste data, mimeData->formats=" << mimeData->formats();
+            logWarning("Cannot paste data, mimeData->formats=" + mimeData->formats().join(","), __func__);
         }
     }
 }
@@ -2799,155 +3820,307 @@ void VymModel::cut()
     deleteSelection();
 }
 
-bool VymModel::moveUp(BranchItem *bi)
+bool VymModel::canMoveUp(TreeItem *ti)
 {
-    if (readonly)
-        return false;
+    if (ti) {
+        BranchItem *pbi;
+        if (ti->hasTypeBranch())
+            pbi = ((BranchItem*)ti)->parentBranch();
+        else if (ti->hasTypeImage())
+            pbi = ((ImageItem*)ti)->parentBranch();
+        else 
+            return false;
 
-    bool oldState = saveStateBlocked;
-    saveStateBlocked = true;
-    bool result = false;
-    if (bi && bi->canMoveUp())
-        result =
-            relinkBranch(bi, (BranchItem *)bi->parent(), bi->num() - 1, false);
-    saveStateBlocked = oldState;
-    return result;
+        if (pbi == rootItem)
+            return false;
+
+        return (pbi->num(ti) > 0);
+    }
+
+    return false;
 }
 
-void VymModel::moveUp()
+bool VymModel::canMoveDown(TreeItem *ti)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        QString oldsel = getSelectString(selbi);
-        if (moveUp(selbi)) {
-            saveState(getSelectString(selbi), "moveDown ()", oldsel,
-                      "moveUp ()",
-                      QString("Move up %1").arg(getObjectName(selbi)));
-            select(selbi);
+    if (ti) {
+        BranchItem *pbi;
+
+        if (ti->hasTypeBranch()) {
+            pbi = ((BranchItem*)ti)->parentBranch();
+            if (pbi == rootItem)
+                return false;
+            return (pbi->num(ti) < pbi->branchCount() - 1);
+        } else if (ti->hasTypeImage()) {
+            pbi = ((ImageItem*)ti)->parentBranch();
+            return (pbi->num(ti) < pbi->imageCount() - 1);
+        }
+    }
+
+    return false;
+}
+
+void VymModel::moveUp(TreeItem *ti)
+{
+    if (readonly) return;
+
+
+    QList<BranchItem *> selbis = getSelectedBranches(ti);
+
+    if (!selbis.isEmpty()){
+        foreach (BranchItem *selbi, sortBranchesByNum(selbis, false)) {
+            if (canMoveUp(selbi)) {
+                logAction("", "Starting to move branch up: " + headingText(selbi), __func__);
+                relinkBranch(selbi, selbi->parentBranch(), selbi->num() - 1);
+            }
+        }
+    }
+
+    QList<ImageItem *> seliis = getSelectedImages(ti);
+
+    if (!seliis.isEmpty()){
+        foreach (ImageItem *selii, sortImagesByNum(seliis, false)) {
+            if (canMoveUp(selii)) {
+                logAction("", "Starting to move image up: " + headingText(selii), __func__);
+                relinkImage(selii, selii->parentBranch(), selii->num() - 1);
+            }
         }
     }
 }
 
-bool VymModel::moveDown(BranchItem *bi)
+void VymModel::moveDown(TreeItem *ti)
 {
-    if (readonly)
-        return false;
+    if (readonly) return;
 
-    bool oldState = saveStateBlocked;
-    saveStateBlocked = true;
-    bool result = false;
-    if (bi && bi->canMoveDown())
-        result =
-            relinkBranch(bi, (BranchItem *)bi->parent(), bi->num() + 1, false);
-    saveStateBlocked = oldState;
-    return result;
-}
+    QList<BranchItem *> selbis = getSelectedBranches(ti);
+    if (!selbis.isEmpty()) {
+        foreach (BranchItem *selbi, sortBranchesByNum(selbis, true))
+            if (canMoveDown(selbi)) {
+                logAction("", "Starting to move branch down: " + headingText(selbi), __func__);
+                relinkBranch(selbi, selbi->parentBranch(), selbi->num() + 1);
+            }
+    }
 
-void VymModel::moveDown()
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        QString oldsel = getSelectString(selbi);
-        if (moveDown(selbi)) {
-            saveState(getSelectString(selbi), "moveUp ()", oldsel,
-                      "moveDown ()",
-                      QString("Move down %1").arg(getObjectName(selbi)));
-            select(selbi);
-        }
+    QList<ImageItem *> seliis = getSelectedImages(ti);
+    if (!seliis.isEmpty()) {
+        foreach (ImageItem *selii, sortImagesByNum(seliis, true))
+            if (canMoveDown(selii)) {
+                logAction("", "Starting to move image down: " + headingText(selii), __func__);
+                relinkImage(selii, selii->parentBranch(), selii->num() + 1);
+            }
     }
 }
 
 void VymModel::moveUpDiagonally()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        BranchItem *parent = selbi->parentBranch();
-        if (parent == rootItem) return;
+    if (readonly) return;   // FIXME-3 readonly needs be checked for every 
+                            // public function in model, which modifies data...
+
+    QList<BranchItem *> selbis = getSelectedBranches();
+
+    foreach (BranchItem *selbi, selbis) {
+        logAction("", "Starting to move up diagonally: " + headingText(selbi), __func__);
+        BranchItem *pbi = selbi->parentBranch();
+        if (pbi == rootItem) break;
 
         int n = selbi->num();
-        if (n == 0) return;
+        if (n == 0) break;
 
-        BranchItem *dst = parent->getBranchNum(n-1);
-        if (!dst) return;
+        BranchItem *dst = pbi->getBranchNum(n - 1);
+        if (!dst) break;
 
-        relinkBranch(selbi, dst, dst->branchCount() + 1, true);
-     }
+        relinkBranch(selbi, dst, dst->branchCount() + 1);
+    }
 }
 
 void VymModel::moveDownDiagonally()
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        BranchItem *parent = selbi->parentBranch();
-        if (parent == rootItem) return;
-        BranchItem *parentParent = parent->parentBranch();
-        int n = parent->num();
+    if (readonly) return;
 
-        relinkBranch(selbi, parentParent, n + 1, true);
-     }
-}
 
-void VymModel::detach()
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi && selbi->depth() > 0) {
-        // if no relPos have been set before, try to use current rel positions
-        if (selbi->getLMO())
-            for (int i = 0; i < selbi->branchCount(); ++i)
-                selbi->getBranchNum(i)->getBranchObj()->setRelPos();
+    QList<BranchItem *> selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+        logAction("", "Starting to move down diagonally: " + headingText(selbi), __func__);
+        BranchItem *pbi = selbi->parentBranch();
+        if (pbi == rootItem) break;
+        BranchItem *parentParent = pbi->parentBranch();
+        int n = pbi->num();
 
-        QString oldsel = getSelectString();
-        int n = selbi->num();
-        QPointF p;
-        BranchObj *bo = selbi->getBranchObj();
-        if (bo)
-            p = bo->getAbsPos();
-        QString parsel = getSelectString(selbi->parent());
-        if (relinkBranch(selbi, rootItem, -1, true))
-            saveState(getSelectString(selbi),
-                      QString("relinkTo (\"%1\",%2,%3,%4)")
-                          .arg(parsel)
-                          .arg(n)
-                          .arg(p.x())
-                          .arg(p.y()),
-                      oldsel, "detach ()",
-                      QString("Detach %1").arg(getObjectName(selbi)));
+        relinkBranch(selbi, parentParent, n + 1);
     }
 }
 
-void VymModel::sortChildren(bool inverse)
+void VymModel::detach(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        if (selbi->branchCount() > 1) {
-            if (!inverse)
-                saveStateChangingPart(
-                    selbi, selbi, "sortChildren ()",
-                    QString("Sort children of %1").arg(getObjectName(selbi)));
-            else
-                saveStateChangingPart(selbi, selbi, "sortChildren (false)",
-                                      QString("Inverse sort children of %1")
-                                          .arg(getObjectName(selbi)));
-
-            selbi->sortChildren(inverse);
-            select(selbi);
-            reposition();
+    QList<BranchItem *> selbis;
+    if (bi)
+        selbis << bi;
+    else
+        selbis = getSelectedBranches();
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi->depth() > 0) {
+            BranchContainer *bc = selbi->getBranchContainer();
+            if (bc)
+                bc->setOriginalPos();
+            relinkBranch(selbi, rootItem, -1);
+            bc->updateUpLink();
         }
     }
 }
 
-BranchItem *VymModel::createMapCenter()
+QList <BranchItem*> VymModel::sortBranchesByNum(QList <BranchItem*> unsortedList, bool inverse)
 {
-    BranchItem *newbi = addMapCenter(QPointF(0, 0));
-    return newbi;
+    // Shortcut
+    if (unsortedList.count() < 2)
+        return unsortedList;
+
+    // We use QMultiMap because unsortedList might have branches 
+    // with identical depths, but different parentBranches e.g.
+    // when moving up/down. Then parts of the list would be lost.
+    QMultiMap <int, BranchItem*> multimap;
+    foreach (BranchItem *bi, unsortedList)
+        multimap.insert(bi->num(), bi);
+
+    QList <BranchItem*> sortedList;
+
+    QMultiMapIterator<int, BranchItem*> i(multimap);
+    if (inverse) {
+            i.toBack();
+            while (i.hasPrevious()) {
+                i.previous();
+                sortedList << i.value();
+            }
+    } else while (i.hasNext()) {
+        i.next();
+        sortedList << i.value();
+    }
+
+    return sortedList;
 }
 
-BranchItem *VymModel::createBranch(BranchItem *dst)
+QList <BranchItem*> VymModel::sortBranchesByHeading(QList <BranchItem*> unsortedList, bool inverse) // FIXME-4 This funcion is currently never called
 {
-    if (dst)
-        return addNewBranchInt(dst, -2);
+    QMap <QString, BranchItem*> map;
+    foreach (BranchItem *bi, unsortedList)
+        map.insert(bi->headingPlain(), bi);
+
+    QList <BranchItem*> sortedList;
+
+    if (inverse)
+        for (auto i = map.cend(), begin = map.cbegin(); i != begin; --i)
+            sortedList << i.value();
     else
-        return NULL;
+        for (auto i = map.cbegin(), end = map.cend(); i != end; ++i)
+            sortedList << i.value();
+
+    return sortedList;
+}
+
+void VymModel::sortChildren(bool inverse, BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
+    if (selbis.isEmpty()) return;
+
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi) {
+            if (selbi->branchCount() > 1) {
+                QString bv = setBranchVar(selbi);
+                QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+                QString com;
+                QString rc;
+                if (!inverse) {
+                    rc = bv + QString("b.sortChildren(false);");
+                    com = QString("Sort children of \"%1\"").arg(getObjectName(selbi));
+                } else {
+                    bv = setBranchVar(selbi);
+                    uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+                    rc = bv + QString("b.sortChildren(false);");
+                    com = QString("Inverse sort children of \"%1\"").arg(getObjectName(selbi));
+                }
+                logAction(rc, com, __func__);
+                saveState(uc, rc, com, selbi);
+
+                QMultiMap <QString, BranchItem*> multimap;
+                for (int i = 0; i < selbi->branchCount(); i++)
+                    multimap.insert(selbi->getBranchNum(i)->headingPlain(), selbi->getBranchNum(i));
+
+                int n = 0;
+                QMultiMapIterator<QString, BranchItem*> i(multimap);
+                if (inverse) {
+                    i.toBack();
+                    while (i.hasPrevious()) {
+                        i.previous();
+                        if (i.value()->num() != n) {
+                            // Only relink if not already at this position
+                            // and don't saveState while relinking
+                            bool oldSaveStateBlocked = saveStateBlocked;
+                            saveStateBlocked = true;
+                            relinkBranch(i.value(), selbi, n);
+                            saveStateBlocked = oldSaveStateBlocked;
+                        }
+                        n++;
+                    }
+                } else while (i.hasNext())  {
+                    i.next();
+                    if (i.value()->num() != n) {
+                        // Only relink if not already at this position
+                        bool oldSaveStateBlocked = saveStateBlocked;
+                        saveStateBlocked = true;
+                        relinkBranch(i.value(), selbi, n);
+                        saveStateBlocked = oldSaveStateBlocked;
+                    }
+                    n++;
+                }
+            }
+        }
+    }
+}
+
+QList <ImageItem*> VymModel::sortImagesByNum(QList <ImageItem*> unsortedList, bool inverse)
+{   // for moving up/down *multiple* images in lists or grid...
+
+    if (unsortedList.count() < 2)
+        return unsortedList;
+
+    // We use QMultiMap because unsortedList might have branches 
+    // with identical depths, but different parentBranches e.g.
+    // when moving up/down. Then parts of the list would be lost.
+    QMultiMap <int, ImageItem*> multimap;
+    foreach (ImageItem *ii, unsortedList)
+        multimap.insert(ii->num(), ii);
+
+    QList <ImageItem*> sortedList;
+
+    QMultiMapIterator<int, ImageItem*> i(multimap);
+    if (inverse) {
+            i.toBack();
+            while (i.hasPrevious()) {
+                i.previous();
+                sortedList << i.value();
+            }
+    } else while (i.hasNext()) {
+        i.next();
+        sortedList << i.value();
+    }
+
+    return sortedList;
+}
+
+BranchItem *VymModel::createBranchWhileLoading(BranchItem *dst, int insertPos)
+{
+    BranchItem *newbi;
+    if (!dst || dst == rootItem)
+        newbi = addMapCenterAtPos(QPointF(0, 0));
+    else {
+        if (insertPos < 0)
+            newbi = addNewBranchInt(dst, -2);
+        else
+            newbi = addNewBranchInt(dst, insertPos);
+    }
+
+    // Set default design styles, e.g. font
+    applyDesign(MapDesign::LoadingMap, newbi);
+    return newbi;
 }
 
 ImageItem *VymModel::createImage(BranchItem *dst)
@@ -2957,10 +4130,8 @@ ImageItem *VymModel::createImage(BranchItem *dst)
         int n;
 
         ImageItem *newii = new ImageItem();
-        // newii->setHeading (QApplication::translate("Heading of new image in
-        // map", "new image"));
 
-        emit(layoutAboutToBeChanged());
+        emit layoutAboutToBeChanged();
 
         parix = index(dst);
         if (!parix.isValid())
@@ -2970,39 +4141,38 @@ ImageItem *VymModel::createImage(BranchItem *dst)
         dst->appendChild(newii);
         endInsertRows();
 
-        emit(layoutChanged());
+        emit layoutChanged();
 
-        // save scroll state. If scrolled, automatically select
-        // new branch in order to tmp unscroll parent...
-        newii->createMapObj();
-        latestAddedItem = newii;
+        dst->addToImagesContainer(newii->createImageContainer());
+
+        latestAddedItemUuid = newii->getUuid();
         reposition();
         return newii;
     }
-    return NULL;
+    return nullptr;
 }
 
-bool VymModel::createLink(Link *link)
+bool VymModel::createXLink(XLink *xlink)
 {
-    BranchItem *begin = link->getBeginBranch();
-    BranchItem *end = link->getEndBranch();
+    BranchItem *begin = xlink->getBeginBranch();
+    BranchItem *end = xlink->getEndBranch();
 
     if (!begin || !end) {
-        qWarning() << "VM::createXLinkNew part of XLink is NULL";
+        qWarning() << "VM::createXLinkNew part of XLink is nullptr";
         return false;
     }
 
     if (begin == end) {
         if (debug)
-            qDebug() << "VymModel::createLink begin==end, aborting";
+            qDebug() << "VymModel::createXLink begin==end, aborting";
         return false;
     }
 
     // check, if link already exists
-    foreach (Link *l, xlinks) {
+    foreach (XLink *l, xlinks) {
         if ((l->getBeginBranch() == begin && l->getEndBranch() == end) ||
             (l->getBeginBranch() == end && l->getEndBranch() == begin)) {
-            qWarning() << "VymModel::createLink link exists already, aborting";
+            qWarning() << "VymModel::createXLink link exists already, aborting";
             return false;
         }
     }
@@ -3011,10 +4181,10 @@ bool VymModel::createLink(Link *link)
     int n;
 
     XLinkItem *newli = new XLinkItem();
-    newli->setLink(link);
-    link->setBeginLinkItem(newli);
+    newli->setXLink(xlink);
+    xlink->setBeginXLinkItem(newli);
 
-    emit(layoutAboutToBeChanged());
+    emit layoutAboutToBeChanged();
 
     parix = index(begin);
     n = begin->getRowNumAppend(newli);
@@ -3023,8 +4193,8 @@ bool VymModel::createLink(Link *link)
     endInsertRows();
 
     newli = new XLinkItem();
-    newli->setLink(link);
-    link->setEndLinkItem(newli);
+    newli->setXLink(xlink);
+    xlink->setEndXLinkItem(newli);
 
     parix = index(end);
     n = end->getRowNumAppend(newli);
@@ -3032,181 +4202,263 @@ bool VymModel::createLink(Link *link)
     end->appendChild(newli);
     endInsertRows();
 
-    emit(layoutChanged());
+    emit layoutChanged();
 
-    xlinks.append(link);
-    link->activate();
+    xlinks.append(xlink);
+    xlink->activate();
 
-    latestAddedItem = newli;
+    latestAddedItemUuid = newli->getUuid();
 
-    if (!link->getMO()) {
-        link->createMapObj();
+    if (!xlink->getXLinkObj()) {
+        xlink->createXLinkObj();
         reposition();
     }
     else
-        link->updateLink();
+        xlink->updateXLink();
 
-    link->setStyleBegin(defXLinkStyleBegin);
-    link->setStyleEnd(defXLinkStyleEnd);
+    xlink->setStyleBegin(mapDesignInt->defXLinkStyleBegin());
+    xlink->setStyleEnd(mapDesignInt->defXLinkStyleEnd());
+
+    QString xv = setXLinkVar(xlink, "xl");
+    QString uc = xv + "map.removeXLink(xl);";
+    QString rc = QString("map.loadDataInsert(\"REDO_PATH\");");
+    QString com = QString("Add XLink from \"%1\" to \"%2\"")
+        .arg(getObjectName(begin), getObjectName(end));
+    saveState(uc, rc, com, nullptr, xlink->beginXLinkItem());
+
     return true;
 }
 
 QColor VymModel::getXLinkColor()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getPen().color();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getPen().color();
     else
         return QColor();
 }
 
 int VymModel::getXLinkWidth()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getPen().width();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getPen().width();
     else
         return -1;
 }
 
 Qt::PenStyle VymModel::getXLinkStyle()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getPen().style();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getPen().style();
     else
         return Qt::NoPen;
 }
 
 QString VymModel::getXLinkStyleBegin()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getStyleBeginString();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getStyleBeginString();
     else
         return QString();
 }
 
 QString VymModel::getXLinkStyleEnd()
 {
-    Link *l = getSelectedXLink();
-    if (l)
-        return l->getStyleEndString();
+    XLink *xl = getSelectedXLink();
+    if (xl)
+        return xl->getStyleEndString();
     else
         return QString();
 }
-
-AttributeItem *VymModel::setAttribute() // FIXME-3 Experimental, savestate missing
-
+AttributeItem *VymModel::setAttribute( // FIXME-3 saveState( missing. For bulk changes like Jira maybe save whole branch use Script...
+        BranchItem *dst,
+        const QString &key,
+        const QVariant &value,
+        bool removeIfEmpty)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        AttributeItem *ai = new AttributeItem();
-        ai->setAttributeType(AttributeItem::String);
-        ai->setKey("Foo Attrib");
-        ai->setValue(QString("Att val"));
+    if (!dst) return nullptr;
 
-        return setAttribute(selbi, ai);
+    bool keyFound = false;
+    AttributeItem *ai;
+
+    logAction("", "Set attribute " + key + " of " + headingText(dst) + " to '" + value.toString() + "'", __func__);
+
+    for (int i = 0; i < dst->attributeCount(); i++) {
+        // Check if there is already an attribute with same key
+        ai = dst->getAttributeNum(i);
+        if (ai->key() == key)
+        {
+            keyFound = true;
+            if (value.toString().isEmpty() && removeIfEmpty) {
+                // Remove attribute
+                deleteAttribute(dst, key);
+                ai = nullptr;
+            } else {
+                // Set new value (if required)
+                if (value != ai->value())
+                    ai->setValue(value);
+            }
+            break;
+        }
+    }
+    if (!keyFound) {
+        // Create new attribute
+        ai = new AttributeItem(key, value);
+
+        emit layoutAboutToBeChanged();
+
+        QModelIndex parix = index(dst);
+        int n = dst->getRowNumAppend(ai);
+        beginInsertRows(parix, n, n);
+        dst->appendChild(ai);
+        endInsertRows();
+        emit layoutChanged();
+
+        // Special case: Jira attributes
+        if (ai->key() == "Jira.issueUrl") {
+            dst->setUrlType(TreeItem::JiraUrl);
+            updateJiraFlag(dst);
+        }
+    }
+
+    emitDataChanged(dst);
+    reposition();
+
+    return ai;
+}
+
+void VymModel::deleteAttribute(BranchItem *dst, const QString &key)
+{
+    AttributeItem *ai;
+
+    for (int i = 0; i < dst->attributeCount(); i++) {
+        // Check if there is already an attribute with same key
+        ai = dst->getAttributeNum(i);
+        if (ai->key() == key)
+        {
+            logAction("", "Delete attribute '" + key + "' of " + headingText(dst), __func__);
+
+            // Key exists, delete attribute
+            deleteItem(ai);
+            break;
+        }
+    }
+}
+
+void VymModel::deleteAttributesKeyStartingWith(BranchItem *dst, const QString &key_start)
+{
+    AttributeItem *ai;
+
+    if (!dst) return;
+
+    logAction("", "Delete attribute starting with '" + key_start + "' of " + headingText(dst), __func__);
+    for (int i = 0; i < dst->attributeCount(); i++) {
+        // Check if there is already an attribute with same key
+        ai = dst->getAttributeNum(i);
+        if (ai->key().startsWith(key_start))
+        {
+            // Key exists, delete attribute
+            deleteItem(ai);
+            break;
+        }
+    }
+}
+
+AttributeItem *VymModel::getAttributeByKey(const QString &key, TreeItem *ti)
+{
+    TreeItem *selti = getSelectedItem(ti);
+    if (selti) {
+        for (int i = 0; i < selti->attributeCount(); i++) {
+            AttributeItem *ai = selti->getAttributeNum(i);
+            if (ai->key() == key)
+                return ai;
+        }
     }
     return nullptr;
 }
 
-AttributeItem *VymModel::setAttribute(BranchItem *dst, AttributeItem *ai_new)
+BranchItem *VymModel::addMapCenter(bool interactive)
 {
-    if (dst) {
-
-        // Check if there is already an attribute with same key
-        AttributeItem *ai;
-        for (int i = 0; i < dst->attributeCount(); i++) {
-            ai = dst->getAttributeNum(i);
-            if (ai->getKey() == ai_new->getKey()) 
-            {
-                // Key exists, overwrite value
-                ai->copy(ai_new);
-
-                // Delete original attribute, this is basically a move...
-                delete ai_new;
-                emitDataChanged(dst);
-                return ai;
-            }
-        }
-
-        // Create new attribute
-        emit(layoutAboutToBeChanged());
-
-        QModelIndex parix = index(dst);
-        int n = dst->getRowNumAppend(ai_new);
-        beginInsertRows(parix, n, n);
-        dst->appendChild(ai_new);
-        endInsertRows();
-
-        emit(layoutChanged());
-
-        emitDataChanged(dst);
-        return ai_new;  // FIXME-3 Check if ai is used or deleted - deep copy here?
+    if (interactive) {
+        // Start to build undo/redo scripts
+        // These script will be finished later when setHeading() is called
+        if (hasContextPos)
+            saveStateBeginScript(   // addMC
+                    QString("Add new MapCenter at (%1)").arg(toS(contextPos)));
+        else
+            saveStateBeginScript("Add new MapCenter");
     }
-    return NULL;
-}
 
-BranchItem *VymModel::addMapCenter(bool saveStateFlag)
-{
     if (!hasContextPos) {
         // E.g. when called via keypresss:
         // Place new MCO in middle of existing ones,
         // Useful for "brainstorming" mode...
         contextPos = QPointF();
         BranchItem *bi;
-        BranchObj *bo;
+        BranchContainer *bc;
         for (int i = 0; i < rootItem->branchCount(); ++i) {
             bi = rootItem->getBranchNum(i);
-            bo = (BranchObj *)bi->getLMO();
-            if (bo)
-                contextPos += bo->getAbsPos();
+            bc = bi->getBranchContainer();
+            if (bc)
+                contextPos += bc->pos();
         }
         if (rootItem->branchCount() > 1)
             contextPos *= 1 / (qreal)(rootItem->branchCount());
     }
 
-    BranchItem *bi = addMapCenter(contextPos);
-    updateActions();
-    emitShowSelection();
-    if (saveStateFlag)
-        saveState(bi, "remove()", NULL,
-                  QString("addMapCenter (%1,%2)")
-                      .arg(contextPos.x())
-                      .arg(contextPos.y()),
-                  QString("Adding MapCenter to (%1,%2)")
-                      .arg(contextPos.x())
-                      .arg(contextPos.y()));
+    BranchItem *newbi = addMapCenterAtPos(contextPos, interactive);
+
+    if (interactive && mapEditor) {
+        mapEditor->editHeading(newbi);
+        emitShowSelection();
+    }
+
     emitUpdateLayout();
-    return bi;
+    return newbi;
 }
 
-BranchItem *VymModel::addMapCenter(QPointF absPos)
+BranchItem *VymModel::addMapCenterAtPos(QPointF absPos, bool interactive)
 // createMapCenter could then probably be merged with createBranch
 {
+    Q_UNUSED(interactive);
 
     // Create TreeItem
     QModelIndex parix = index(rootItem);
 
     BranchItem *newbi = new BranchItem(rootItem);
-    newbi->setHeadingPlainText(tr("New map", "New map"));
     int n = rootItem->getRowNumAppend(newbi);
 
-    emit(layoutAboutToBeChanged());
+    emit layoutAboutToBeChanged();
     beginInsertRows(parix, n, n);
 
     rootItem->appendChild(newbi);
 
     endInsertRows();
-    emit(layoutChanged());
+    emit layoutChanged();
 
-    // Create MapObj
-    newbi->setPositionMode(MapItem::Absolute);
-    BranchObj *bo = newbi->createMapObj(mapEditor->getScene());
-    if (bo)
-        bo->move(absPos);
+    // Create BranchContainer
+    BranchContainer *bc = newbi->createBranchContainer(getScene());
+    if (bc) {
+        bc->setPos(absPos);
 
+        if (!saveStateBlocked) {
+            // Don't apply design while loading map
+            applyDesign(MapDesign::CreatedByUser, newbi);
+
+            QString uc, rc, com;
+            com = QString("Add new MapCenter at (%1)").arg(toS(absPos));
+            uc = setBranchVar(newbi) + "map.removeBranch(b);";
+            rc = setBranchVar(rootItem) + QString(" b.loadBranchInsert(\"REDO_PATH\", %1);").arg(newbi->num());
+            logAction( rc, com, __func__);
+            saveState( uc, rc, com, nullptr, newbi);
+
+        }
+    }
+
+    reposition();
     return newbi;
 }
 
@@ -3221,9 +4473,9 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     // Create TreeItem
     BranchItem *parbi = dst;
     int n;
-    BranchItem *newbi = new BranchItem();
+    BranchItem *newbi = new BranchItem;
 
-    emit(layoutAboutToBeChanged());
+    emit layoutAboutToBeChanged();
 
     if (pos == -2) {
         n = parbi->getRowNumAppend(newbi);
@@ -3233,8 +4485,9 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
     }
     else if (pos == -1 || pos == -3) {
         // insert below selection
-        parbi = (BranchItem *)dst->parent();
-        n = dst->childNumber() + (3 + pos) / 2; //-1 |-> 1;-3 |-> 0
+        parbi = dst->parentBranch();
+
+        n = dst->row() + (3 + pos) / 2; //-1 |-> 1;-3 |-> 0
         beginInsertRows(index(parbi), n, n);
         parbi->insertBranch(n, newbi);
         endInsertRows();
@@ -3245,276 +4498,469 @@ BranchItem *VymModel::addNewBranchInt(BranchItem *dst, int pos)
         parbi->insertBranch(pos, newbi);
         endInsertRows();
     }
-    emit(layoutChanged());
+    emit layoutChanged();
 
-    newbi->createMapObj(mapEditor->getScene());
+    // Create Container
+    newbi->createBranchContainer(getScene());
 
-    // Set color of heading to that of parent
-    newbi->setHeadingColor(parbi->getHeadingColor());
+    // Update parent item and stacking order of container to match order in model
+    newbi->updateContainerStackingOrder();
 
+    // Reposition now for correct position of e.g. LineEdit later and upLink
     reposition();
+
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos)
+BranchItem *VymModel::addNewBranch(BranchItem *bi, int pos, bool interactive)
 {
-    BranchItem *newbi = NULL;
-    if (!bi)
-        bi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi)
+        return nullptr;
 
-    if (bi) {
-        QString redosel = getSelectString(bi);
-        newbi = addNewBranchInt(bi, pos);
-        QString undosel = getSelectString(newbi);
+    QString comment;
+    if (interactive) {
+        // saveStateEndScript will be called in VymModel::setHeading()
+        if (pos == -2)
+            comment = QString("Add new branch to %1").arg(getObjectName(selbi));
+        else if (pos < -2)
+            comment = QString("Add new branch above %1").arg(getObjectName(selbi));
+        else
+            comment = QString("Add new branch below %1").arg(getObjectName(selbi));
 
-        if (newbi) {
-            saveState(undosel, "remove ()", redosel,
-                      QString("addBranch (%1)").arg(pos),
-                      QString("Add new branch to %1").arg(getObjectName(bi)));
-
-            latestAddedItem = newbi;
-            // In Network mode, the client needs to know where the new branch
-            // is, so we have to pass on this information via saveState.
-            // TODO: Get rid of this positioning workaround
-            /* FIXME-4  network problem:  QString ps=qpointfToString
-               (newbo->getAbsPos()); sendData ("selectLatestAdded ()"); sendData
-               (QString("move %1").arg(ps)); sendSelection();
-               */
-        }
+        logAction("", comment, __func__);
+        saveStateBeginScript(comment);  // addNewBranch: edit new heading if interactive
     }
+
+    BranchItem *newbi = addNewBranchInt(selbi, pos);
+
+    // Required to initialize styles
+    if (!saveStateBlocked)
+        // Don't apply design while loading map
+        applyDesign(MapDesign::CreatedByUser, newbi);
+
+    if (newbi) {
+        QString uc, rc;
+        BranchItem *pbi;
+        if (pos == -2)
+            pbi = selbi;
+        else
+            pbi = selbi->parentBranch();
+
+        uc = setBranchVar(newbi) + "map.removeBranch(b);";
+        rc = setBranchVar(pbi) + QString(" b.loadBranchInsert(\"REDO_PATH\", %1);").arg(newbi->num());
+        saveState( uc, rc, "", nullptr, newbi);
+
+        latestAddedItemUuid = newbi->getUuid();
+        // In Network mode, the client needs to know where the new branch
+        // is, so we have to pass on this information via saveState.
+        // TODO: Get rid of this positioning workaround
+        /* FIXME  network problem:  QString ps=toS
+           (newbo->getAbsPos()); sendData ("selectLatestAdded ()"); sendData
+           (QString("move %1").arg(ps)); sendSelection();
+           */
+    }
+
+    if (interactive && mapEditor) {
+        select(newbi);
+        mapEditor->editHeading();
+    }
+
     return newbi;
 }
 
-BranchItem *VymModel::addNewBranchBefore()
+BranchItem *VymModel::addNewBranchBefore(BranchItem *bi, bool interactive)    // FIXME-3 Use position of selbi for newbi, if floating
 {
-    BranchItem *newbi = NULL;
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi && selbi->getType() == TreeItem::Branch)
+    BranchItem *newbi = nullptr;
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi && selbi->depth() > 0)
     // We accept no MapCenter here, so we _have_ a parent
     {
+        QString comment;
+        if (interactive) {
+            // saveStateEndScript will be called in VymModel::setHeading()
+            comment = QString("Add new branch before %1").arg(getObjectName(selbi));
+            logAction("", comment, __func__);
+            saveStateBeginScript(comment); // addNewBranchBefore (incl. relinking)
+        }
+
         // add below selection
         newbi = addNewBranchInt(selbi, -1);
 
         if (newbi) {
-            saveState(
-                newbi, "remove ()", newbi, "addBranchBefore ()",
-                QString("Add branch before %1").arg(getObjectName(selbi)));
+            // Required to initialize styles
+            if (!saveStateBlocked)
+                // Don't apply design while loading map
+                applyDesign(MapDesign::CreatedByUser, newbi);
 
             // newbi->move2RelPos (p);
 
             // Move selection to new branch
-            relinkBranch(selbi, newbi, 0, true);
+            // relink() would create another saveStateScript, block saveState for now
+            bool saveStateBlockedOrg = saveStateBlocked;
+            saveStateBlocked = true;
+            relinkBranch(selbi, newbi, 0);
+            saveStateBlocked = saveStateBlockedOrg;
 
-            // Use color of child instead of parent
-            newbi->setHeadingColor(selbi->getHeadingColor());
+            QString uc = setBranchVar(newbi) + "map.removeKeepChildren(b);";
+            QString rc = setBranchVar(selbi) + "map.loadBranchReplace(\"REDO_PATH\",b);";
+            saveState(uc, rc, "", nullptr, newbi);
+
             emitDataChanged(newbi);
         }
+
+        if (interactive && mapEditor) {
+            select(newbi);
+            mapEditor->editHeading();
+        }
     }
+
     return newbi;
 }
 
-bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int pos,
-                            bool updateSelection, QPointF orgPos)
+bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst)
 {
-    if (branch && dst) {
-        // Check if we relink to ourselves
-        if (dst->isChildOf(branch))
-            return false;
+    if (!branch)
+        return false;
 
-        if (updateSelection)
-            unselectAll();
-
-        // Do we need to update frame type?
-        bool keepFrame = true;
-
-        // Save old position for savestate
-        QString preSelStr = getSelectString(branch);
-        QString preNum = QString::number(branch->num(), 10);
-        QString preParStr = getSelectString(branch->parent());
-
-        emit(layoutAboutToBeChanged());
-        BranchItem *branchpi = (BranchItem *)branch->parent();
-        // Remove at current position
-        int n = branch->childNum();
-
-        // If branch and dst have same parent, then pos needs to be adjusted 
-        // after removing branch
-        if (branchpi == dst && pos - 1 > n ) pos--;
-
-        beginRemoveRows(index(branchpi), n, n);
-        branchpi->removeChild(n);
-        endRemoveRows();
-
-        if (pos < 0 || pos > dst->branchCount())
-            pos = dst->branchCount();
-
-        // Append as last branch to dst
-        if (dst->branchCount() == 0)
-            n = 0;
-        else
-            n = dst->getFirstBranch()->childNumber();
-        
-        beginInsertRows(index(dst), n + pos, n + pos);
-        dst->insertBranch(pos, branch);
-        endInsertRows();
-
-        // Correct type if necessesary
-        if (branch->getType() == TreeItem::MapCenter && branch->depth() > 0) {
-            branch->setType(TreeItem::Branch);
-            keepFrame = false;
-        }
-
-        // reset parObj, fonts, frame, etc in related LMO or other view-objects
-        branch->updateStyles(keepFrame);
-
-        emitDataChanged(branch);
-        reposition(); // both for moveUp/Down and relinking
-
-        // Savestate
-        QString postSelStr = getSelectString(branch);
-        QString postNum = QString::number(branch->num(), 10);
-
-        QPointF savePos;
-        LinkableMapObj *lmosel = branch->getLMO();
-        if (lmosel)
-            savePos = lmosel->getAbsPos();
-
-        if (!saveStateBlocked) { // Don't build strings when moving up/down
-            QString undoCom =
-                "relinkTo (\"" + preParStr + "\"," + preNum + "," +
-                QString("%1,%2").arg(orgPos.x()).arg(orgPos.y()) + ")";
-
-            QString redoCom =
-                "relinkTo (\"" + getSelectString(dst) + "\"," + postNum + "," +
-                QString("%1,%2").arg(savePos.x()).arg(savePos.y()) + ")";
-
-            saveState(postSelStr, undoCom, preSelStr, redoCom,
-                      QString("Relink %1 to %2")
-                          .arg(getObjectName(branch))
-                          .arg(getObjectName(dst)));
-        }
-
-        // New parent might be invisible
-        branch->updateVisibility();
-
-        if (dst->isScrolled()) {
-            if (updateSelection)
-                select(dst);
-        }
-        else if (updateSelection)
-            select(branch);
-        return true;
-    }
-    return false;
+    QList <BranchItem*> branches = {branch};
+    return relinkBranches(branches, dst, num_dst);
 }
 
-bool VymModel::relinkImage(ImageItem *image, BranchItem *dst)
+bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst)   
 {
-    if (image && dst) {
-        emit(layoutAboutToBeChanged());
+    // qDebug() << "VM::relink " << branches.count() << " branches to " << headingText(dst) << "num_dst=" << num_dst;
 
-        BranchItem *pi = (BranchItem *)(image->parent());
-        QString oldParString = getSelectString(pi);
+    // Selection is lost when removing rows from model
+    QList <TreeItem*> selectedItems = getSelectedItems();
+
+    if (branches.isEmpty())
+        branches = getSelectedBranches();
+
+    if (!dst || branches.isEmpty())
+        return false;
+
+    if (num_dst < 0 || num_dst >= dst->branchCount())
+        num_dst = dst->branchCount();
+
+    if (!saveStateBlocked)
+        // When ordering branches, we already saveState there and not for 
+        // each branch individually
+        saveStateBeginScript(   // relinkBranches: also save position if required
+            QString("Relink %1 objects to \"%2\"")
+                .arg(branches.count())
+                .arg(dst->headingPlain()));
+
+    foreach (BranchItem *bi, branches) {
+        logAction("", QString("Relink %1 branches to %2").arg(branches.count()).arg(headingText(dst)), __func__);
+        // Check if we link to ourself
+        if (dst == bi) {
+            logWarning("Attempting to relink to myself: " + bi->headingPlain(), __func__);
+            return false;
+        }
+
+        // Check if we relink down to own children
+        if (dst->isChildOf(bi)) {
+            logWarning("Attempting to relink to my own children", __func__);
+            return false;
+        }
+
+        // Save old selection for savestate
+        QString preNumString = QString::number(bi->num(), 10);
+        QString preParUidString = bi->parent()->getUuid().toString();
+
+        // Remember original position for saveState
+        bool rememberPos = false;
+        BranchItem *pbi = bi->parentBranch();
+        if (pbi == rootItem)
+        {
+            // Remember position before MapCenter is relinked
+            rememberPos = true;
+        } else {
+            BranchContainer *pbc = pbi->getBranchContainer();
+            if (pbc->hasFloatingBranchesLayout())
+                // Remember position, if relinked branch is floating
+                rememberPos = true;
+        }
+
+        // Prepare BranchContainers
+        BranchContainer *bc = bi->getBranchContainer();
+        BranchContainer *dstBC = dst->getBranchContainer(); // might be nullptr for MC!
+
+        // Keep position when detaching
+        bool detaching;
+        QPointF preDetachPos;
+        if (dst == rootItem) {
+            detaching = true;
+            preDetachPos = bc->getHeadingContainer()->scenePos();
+        } else {
+            // Save position, so // that it can be used // for undo command // later
+            detaching = false; bc->setOriginalPos();
+        }
+
+        BranchItem *branchpi = bi->parentBranch();
+
         // Remove at current position
-        int n = image->childNum();
+        int removeRowNum = bi->row();
+        int dstRowNum = num_dst + dst->branchOffset();
+
+        QModelIndex pix = index(branchpi);
+        /* FIXME-4 remove debug stuff
+        std::cout << "  VM::relink removing " << bi << " " << bi->headingPlain().toStdString()
+                  << " at n=" << removeRowNum
+                  << " from " << branchpi << "  " << branchpi->headingPlain().toStdString()
+                  << " to " << dst << " " << dst->headingPlain().toStdString() << endl;
+        std::cout << "      persIxList: " << (this->persistentIndexList()).count() << endl;
+        std::cout << "         num_dst: " << num_dst << endl;
+        std::cout << "    removeRowNum: " << removeRowNum << endl;
+        std::cout << "       dstRowNum: " << dstRowNum << endl;
+        */
+
+        QModelIndex dix = index(dst);
+        if (branchpi == dst && dstRowNum > removeRowNum) {
+            // When moving down with same parent:
+            // Be careful to insert *before* destination index using beginMoveRows
+            // https://doc.qt.io/qt-6/qabstractitemmodel.html#moveRows
+            dstRowNum = dstRowNum + 1;
+            if (num_dst > bi->num() + 1)
+                // if not just moving down one level but further, adapt num_dst
+                num_dst--;
+        }
+
+        emit layoutAboutToBeChanged();
+        bool b = beginMoveRows(pix, removeRowNum, removeRowNum, dix, dstRowNum);
+        Q_ASSERT(b);
+        /*
+        std::cout << "beginMoveRows=" << toS(b).toStdString()
+                  << " removeRowNum=" << removeRowNum
+                  << "      num_dst=" << num_dst
+                  << "    dstRowNum=" << dstRowNum << endl;
+        */
+        branchpi->removeChild(removeRowNum);
+        dst->insertBranch(num_dst, bi);
+        endMoveRows();
+        emit layoutChanged();
+
+        // Update upLink of BranchContainer to *parent* BC of destination
+        bc->linkTo(dstBC);
+
+        // Update parent item and stacking order of container
+        bi->updateContainerStackingOrder();
+
+        // reset parObj, fonts, frame, etc in related branch-container or other view-objects
+        applyDesign(MapDesign::RelinkedByUser, bi);
+
+        // Keep position when detaching
+        if (detaching)
+            bc->setPos(preDetachPos);
+
+        // Savestate, but not if just moving up/down
+        if (!saveStateBlocked) {
+            QString uc, rc;
+
+            if (rememberPos) {
+                // For undo move back to original position in old floating layout
+                uc = QString("setPos %1;").arg(toS(bc->getOriginalPos()));
+                rc = "";
+
+                saveStateBranch( bi, uc, rc, QString("Move %1") .arg(headingText(bi)));
+            }
+
+            QString postNumString = QString::number(bi->num(), 10);
+
+            QString bv = setBranchVar(bi);
+            if (pbi == rootItem)
+                uc = bv + " detach ()";
+            else {
+                uc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(preParUidString);
+                uc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(preNumString);
+            }
+            rc = bv + QString(" dst = map.findBranchById(\"%1\");").arg(dst->getUuid().toString());
+            rc += QString(" b.relinkToBranchAt (dst, \"%1\");").arg(postNumString);
+
+            saveState(uc, rc,
+                      QString("Relink %1 to %2")
+                          .arg(getObjectName(bi), getObjectName(dst)));
+
+            if (dstBC && dstBC->hasFloatingBranchesLayout()) {
+                // Save current position for redo
+                saveStateBranch(bi, "", 
+                          QString("setPos %1;").arg(toS(bc->pos())),
+                          QString("Move %1")
+                              .arg(getObjectName(bi)));
+            }
+        } // saveState not blocked
+    }   // Iterating over selbis    
+
+    reposition();
+
+    if (!saveStateBlocked)
+        saveStateEndScript();
+
+    // Restore selection, which was lost when removing rows
+    select(selectedItems);
+
+    return true;
+}
+
+bool VymModel::relinkImage(ImageItem* image, TreeItem *dst_ti, int num_new) {
+    if (!image)
+        return false;
+
+    QList <ImageItem*> images = {image};
+    return relinkImages(images, dst_ti, num_new);
+}
+
+bool VymModel::relinkImages(QList <ImageItem*> images, TreeItem *dst_ti, int num_new)
+{
+    // Selection is lost when removing rows from model
+    QList <TreeItem*> selectedItems = getSelectedItems();
+
+    BranchItem *dst;
+
+    if (images.isEmpty())
+        images = getSelectedImages();
+
+    if (!dst_ti || images.isEmpty())
+        return false;
+
+    if (dst_ti->hasTypeImage()) {
+        // Allow dropping on images,
+        // append at this num in parentBranch then:
+        dst = ((ImageItem*)dst_ti)->parentBranch();
+        if (!dst || dst == rootItem)
+            return false;
+        num_new = dst_ti->num();
+    } else if (dst_ti->hasTypeBranch()) {
+        dst = (BranchItem*)dst_ti;
+    } else
+        return false;
+
+    if (num_new < 0 || num_new >= dst->imageCount())
+        num_new = dst->imageCount();
+
+    if (!saveStateBlocked)
+        // When ordering branches, we already saveState there and not for 
+        // each branch individually
+        saveStateBeginScript(   // FIXME-3 relink images: script used for multiselection
+            QString("Relink %1 objects to \"%2\"")
+                .arg(images.count())
+                .arg(dst->headingPlain()));
+
+    foreach(ImageItem *ii, images) {
+        logAction("", QString("Relink %1 images to %2").arg(images.count()).arg(headingText(dst)), __func__);
+        emit layoutAboutToBeChanged();
+
+        BranchItem *pi = (BranchItem *)(ii->parent());
+        // Remove at current position
+        int n = ii->row();
         beginRemoveRows(index(pi), n, n);
         pi->removeChild(n);
         endRemoveRows();
 
-        // Add at dst
+        // Insert again
+        int insertRowNum;
+        if (dst->imageCount() == 0)
+            // Append as last image to dst
+            insertRowNum = 0;
+        else
+            insertRowNum = dst->getFirstImage()->row() + num_new;
         QModelIndex dstix = index(dst);
-        n = dst->getRowNumAppend(image);
-        beginInsertRows(dstix, n, n);
-        dst->appendChild(image);
+        n = dst->getRowNumAppend(ii);
+
+        beginInsertRows(dstix, insertRowNum + num_new, insertRowNum + num_new);
+        dst->insertImage(num_new, ii);
         endInsertRows();
 
-        // Set new parent also for lmo
-        if (image->getLMO() && dst->getLMO())
-            image->getLMO()->setParObj(dst->getLMO());
+        emit layoutChanged();
 
-        emit(layoutChanged());
-        saveState(image, QString("relinkTo (\"%1\")").arg(oldParString), image,
-                  QString("relinkTo (\"%1\")").arg(getSelectString(dst)),
-                  QString("Relink floatimage to %1").arg(getObjectName(dst)));
-        return true;
+        ii->updateContainerStackingOrder();
+        // FIXME-3 relinkImages issues:
+        // - What about updating links of images (later)?
+        // - What about updating design (later)?
+        // - in ImageWrapper: num_new missing
+        // - does not save positions currently
+
+        QString iv = setImageVar(ii);
+        QString uc = setBranchVar(pi) + iv + "i.relinkToBranch(b);";
+        QString rc = setBranchVar(dst) + iv + "i.relinkToBranch(b);";
+        QString com = QString("Relink image to %1").arg(getObjectName(dst));
+
+        saveState(uc, rc, com);
     }
-    return false;
+
+    reposition();
+
+    if (!saveStateBlocked)
+        saveStateEndScript();
+
+    // Restore selection, which was lost when removing rows
+    select(selectedItems);
+
+    return true;
 }
 
-bool VymModel::relinkTo(const QString &dest, int num, QPointF pos)
+bool VymModel::relinkTo(const QString &dstString, int num)
 {
     TreeItem *selti = getSelectedItem();
     if (!selti)
         return false; // Nothing selected to relink
 
-    TreeItem *dst = findBySelectString(dest);
+    TreeItem *dst = findBySelectString(dstString);
+    if (!dst)
+        return false; // Could not find destination
 
-    if (selti->isBranchLikeType()) {
+    if (!dst->hasTypeBranch())
+        return false; // Relinking only allowed to branchLike destinations
+
+    if (selti->hasTypeBranch()) {
         BranchItem *selbi = (BranchItem *)selti;
-        if (!dst)
-            return false; // Could not find destination
 
-        if (dst->getType() == TreeItem::Branch) {
-            // Now try to relink to branch
-            if (relinkBranch(selbi, (BranchItem *)dst, num, true)) {
-                emitSelectionChanged();
-                return true;
-            }
-            else
-                return false; // Relinking failed
-        }
-        else if (dst->getType() == TreeItem::MapCenter) {
-            if (relinkBranch(selbi, (BranchItem *)dst, -1, true)) {
-                // Get coordinates of mainbranch
-                if (selbi->getLMO()) {
-                    ((BranchObj *)selbi->getLMO())->move(pos);
-                    ((BranchObj *)selbi->getLMO())->setRelPos();
-                }
-                reposition();
-                emitSelectionChanged();
-                return true;
-            }
-        }
-        return false; // Relinking failed
-    }
-    else if (selti->getType() == TreeItem::Image) {
-        if (dst->isBranchLikeType())
-            if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
-                return true;
+        if (relinkBranch(selbi, (BranchItem *)dst, num))
+            return true;
+
+    } else if (selti->hasTypeImage()) {
+        if (relinkImage(((ImageItem *)selti), (BranchItem *)dst))
+            return true;
     }
     return false; // Relinking failed
 }
 
-void VymModel::cleanupItems()
+void VymModel::deleteSelection(ulong selID)
 {
-    while (!deleteLaterIDs.isEmpty()) {
-        TreeItem *ti = findID(deleteLaterIDs.takeFirst());
-        if (ti)
-            deleteItem(ti);
-    }
-}
+    QList<ulong> selectedIDs;
+    if (selID > 0)
+        selectedIDs << selID;
+    else
+        selectedIDs = getSelectedIDs();
 
-void VymModel::deleteLater(uint id)
-{
-    if (!deleteLaterIDs.contains(id))
-        deleteLaterIDs.append(id);
-}
-
-void VymModel::deleteSelection()
-{
-    QList<uint> selectedIDs = getSelectedIDs();
     unselectAll();
-    QString fn;
 
-    foreach (uint id, selectedIDs) {
+    if (mapEditor)
+        mapEditor->stopContainerAnimations();  // FIXME-5 better tell ME about deleted items, so that ME can take care of race conditions, e.g. also deleting while moving objects
+
+    foreach (ulong id, selectedIDs) {
         TreeItem *ti = findID(id);
+        BranchItem *pbi;
         if (ti) {
-            if (ti->isBranchLikeType()) { // Delete branch
-                BranchItem *selbi = (BranchItem *)ti;
-                saveStateRemovingPart(
-                    selbi, QString("remove %1").arg(getObjectName(selbi)));
+            pbi = (BranchItem*)(ti->parent());
+            if (pbi && !pbi->hasTypeBranch())
+                pbi = nullptr;
 
-                BranchItem *pi = (BranchItem *)(deleteItem(selbi));
+            if (ti->hasTypeBranch()) { // Delete branch
+                BranchItem *bi = (BranchItem *)ti;
+                BranchItem *pbi = bi->parentBranch();
+                QString bv = setBranchVar(bi);
+                QString pbv = setBranchVar(pbi, "pb");
+                QString uc = pbv + QString("pb.loadBranchInsert(\"UNDO_PATH\", %1)").arg(bi->num());
+                QString rc = bv + "map.removeBranch(b);";
+                QString com = QString("Remove branch \"%1\"").arg(bi->headingText());
+
+                logAction(rc, com, __func__);
+
+                saveState(uc, rc, com, bi, nullptr);
+
+                BranchItem *pi = (BranchItem *)(deleteItem(bi));
                 if (pi) {
                     if (pi->isScrolled() && pi->branchCount() == 0)
                         pi->unScroll();
@@ -3523,101 +4969,156 @@ void VymModel::deleteSelection()
                 }
                 else
                     emitDataChanged(rootItem);
-                ti = NULL;
-            }
+                ti = nullptr;
+            } else if (ti->getType() == TreeItem::Image) {
+                QString iv = setImageVar((ImageItem*)ti);
+                QString bv = setBranchVar(pbi);
+                QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+                QString rc = iv + QString("map.removeImage(i);");
+                QString com = QString("Remove image \"%1\" from branch \"%2\"").arg(getObjectName(ti), getObjectName(pbi));
+
+                logAction(rc, com, __func__);
+
+                saveState(uc, rc, com, pbi);
+
+                deleteItem(ti);
+                emitDataChanged(pbi);
+                select(pbi);
+            } else if (ti->getType() == TreeItem::XLinkItemType) {
+                deleteXLink(((XLinkItem*)ti)->getXLink());
+            } else if (ti->getType() == AttributeItem::Attribute && pbi) {
+                AttributeItem *ai = (AttributeItem*)ti;
+                QString av = setAttributeVar((AttributeItem*)ti);
+                QString bv = setBranchVar(pbi);
+                QString uc = bv + QString("b.setAttribute(\"%1\",\"%2\");").arg(ai->key(), ai->value().toString());
+                QString rc = QString("map.removeImage(i);");
+                QString com = QString("Remove image \"%1\" from branch \"%2\"").arg(getObjectName(ti), getObjectName(pbi));
+
+                logAction(rc, com, __func__);
+
+                saveState(uc, rc, com, pbi);
+                deleteItem(ti);
+            } else
+                qWarning("VymmModel::deleteSelection()  unknown type?!");
+        } // ti found
+    } // Loop over selectedIDs
+
+    emptyXLinksTrash();
+
+    reposition();
+}
+
+void VymModel::deleteKeepChildren(BranchItem *bi)   // FIXME-3 does not work really with MapCenters. Floating positions also not saved for undo
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    unselectAll();
+
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi->depth() < 1) {
+            while (selbi->branchCount() > 0)
+                detach(selbi->getBranchNum(0));
+
+            deleteSelection(selbi->getID());
+        } else {
+            // Check if we have children at all to keep
+            if (selbi->branchCount() == 0)
+                deleteSelection(selbi->getID());
             else {
-                // Delete other item
-                TreeItem *pi = ti->parent();
-                if (pi) {
-                    if (ti->getType() == TreeItem::Image ||
-                        ti->getType() == TreeItem::Attribute ||
-                        ti->getType() == TreeItem::XLink) {
-                        saveStateChangingPart(
-                            pi, ti, "remove ()",
-                            QString("Remove %1").arg(getObjectName(ti)));
 
-                        deleteItem(ti);
-                        emitDataChanged(pi);
-                        select(pi);
-                        reposition();
-                    }
-                    else
-                        qWarning(
-                            "VymmModel::deleteSelection()  unknown type?!");
+                BranchItem *pi = (BranchItem *)(selbi->parent());
+
+                QString pbv = setBranchVar(pi, "pb");
+                QString bv = setBranchVar(selbi);
+                QString uc = pbv + "map.loadBranchReplace(\"UNDO_PATH\", pb);";
+                QString rc = bv + "map.removeKeepChildren(b);";
+                QString com = QString("Remove branch \"%1\" and keep children").arg(selbi->headingText());
+                logAction(rc, com, __func__);
+                saveState(uc, rc, com, pi);
+
+                bool oldSaveState = saveStateBlocked;
+                saveStateBlocked = true;
+
+                QString sel = getSelectString(selbi);
+                int num_dst = selbi->num();
+                BranchItem *bi = selbi->getFirstBranch();
+                while (bi) {
+                    relinkBranch(bi, pi, num_dst);
+                    bi = selbi->getFirstBranch();
+                    num_dst++;
                 }
+                saveStateBlocked = oldSaveState;
+
+                deleteItem(selbi);
+                reposition();
+
+                // Select the "new" branch  // FIXME-4 not really working with multiple selected branches...
+                select(sel);
             }
         }
     }
+
+    emptyXLinksTrash();
+
 }
 
-void VymModel::deleteKeepChildren(bool saveStateFlag)
-// deleteKeepChildren FIXME-3+ does not work yet for mapcenters
-// deleteKeepChildren FIXME-3+ children of scrolled branch stay invisible...
+void VymModel::deleteChildren(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    BranchItem *pi;
-    if (selbi) {
-        // Don't use this on mapcenter
-        if (selbi->depth() < 1)
-            return;
-
-        pi = (BranchItem *)(selbi->parent());
-        // Check if we have children at all to keep
-        if (selbi->branchCount() == 0) {
-            deleteSelection();
-            return;
-        }
-
-        QPointF p;
-        if (selbi->getLMO())
-            p = selbi->getLMO()->getRelPos();
-        if (saveStateFlag)
-            saveStateChangingPart(pi, pi, "removeKeepChildren ()",
-                                  QString("Remove %1 and keep its children")
-                                      .arg(getObjectName(selbi)));
-
-        QString sel = getSelectString(selbi);
-        unselectAll();
-        bool oldSaveState = saveStateBlocked;
-        saveStateBlocked = true;
-        int pos = selbi->num();
-        BranchItem *bi = selbi->getFirstBranch();
-        while (bi) {
-            relinkBranch(bi, pi, pos, true);
-            bi = selbi->getFirstBranch();
-            pos++;
-        }
-        deleteItem(selbi);
-        reposition();
-        emitDataChanged(pi);
-        select(sel);
-        BranchObj *bo = getSelectedBranchObj();
-        if (bo) {
-            bo->move2RelPos(p);
-            reposition();
-        }
-        saveStateBlocked = oldSaveState;
-    }
-}
-
-void VymModel::deleteChildren()
-
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        saveStateChangingPart(
-            selbi, selbi, "removeChildren ()",
-            QString("Remove children of branch %1").arg(getObjectName(selbi)));
-        emit(layoutAboutToBeChanged());
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        QString bv = setBranchVar(selbi);
+        QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+        QString rc = bv + "b.removeChildren();";
+        QString com = QString("Remove children of \"%1\"").arg(selbi->headingText());
+        logAction(rc, com, __func__);
+        saveState(uc, rc, com, selbi);
+        emit layoutAboutToBeChanged();
 
         QModelIndex ix = index(selbi);
-        int n = selbi->branchCount() - 1;
+        int n = selbi->childCount() - 1;
         beginRemoveRows(ix, 0, n);
         removeRows(0, n + 1, ix);
         endRemoveRows();
-        if (selbi->isScrolled())
-            unscrollBranch(selbi);
-        emit(layoutChanged());
+        if (selbi->isScrolled()) unscrollBranch(selbi);
+
+        updateJiraFlag(selbi);
+        emit layoutChanged();
+
+        emitDataChanged(selbi);
+        reposition();
+    }
+    emptyXLinksTrash();
+}
+
+void VymModel::deleteChildrenBranches(BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        if (selbi->branchCount() > 0) {
+            int n_first = selbi->getFirstBranch()->row();
+            int n_last  = selbi->getLastBranch()->row();
+
+            QString bv = setBranchVar(selbi);
+            QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+            QString rc = bv + "b.removeChildrenBranches();";
+            QString com = QString("Remove children branches of \"%1\"").arg(selbi->headingText());
+            logAction(rc, com, __func__);
+            saveState(uc, rc, com, selbi);
+
+            emit layoutAboutToBeChanged();
+
+            QModelIndex ix = index(selbi);
+            beginRemoveRows(ix, n_first, n_last);
+            if (!removeRows(n_first, n_last - n_first + 1, ix))
+                qWarning() << "VymModel::deleteChildBranches removeRows() failed";
+            endRemoveRows();
+            if (selbi->isScrolled()) unscrollBranch(selbi);
+
+            emit layoutChanged();
+        }
+    }
+
+    if (selbis.count() > 0)  {
+        emptyXLinksTrash();
         reposition();
     }
 }
@@ -3626,72 +5127,110 @@ TreeItem *VymModel::deleteItem(TreeItem *ti)
 {
     if (ti) {
         TreeItem *pi = ti->parent();
-        // qDebug()<<"VM::deleteItem  start ti="<<ti<<"  "<<ti->getHeading()<<"
-        // pi="<<pi<<"="<<pi->getHeading();
 
-        TreeItem::Type t = ti->getType();
+        bool wasAttribute = ti->hasTypeAttribute();
+        TreeItem *parentItem = ti->parent();
 
         QModelIndex parentIndex = index(pi);
 
-        emit(layoutAboutToBeChanged());
+        emit layoutAboutToBeChanged();
 
-        int n = ti->childNum();
+        int n = ti->row();
         beginRemoveRows(parentIndex, n, n);
-        removeRows(n, 1, parentIndex);
+        bool r = removeRows(n, 1, parentIndex);  // Deletes object!
+        if (!r)
+            qWarning() << "removeRows failed in " << __func__;
         endRemoveRows();
 
-        // Size of parent branch might change when deleting images
-        if (t == TreeItem::Image) {
-            BranchObj *bo = (BranchObj *)(((BranchItem *)pi)->getMO());
-            if (bo)
-                bo->calcBBoxSize();
-        }
+        emit layoutChanged();
 
-        reposition();
-
-        emit(layoutChanged());
         emitUpdateQueries();
-        if (!cleaningUpLinks)
-            cleanupItems();
 
-        // qDebug()<<"VM::deleteItem  end   ti="<<ti;
+        if (wasAttribute)
+            updateJiraFlag(parentItem);
+
+        emitDataChanged(parentItem);
+        // reposition() is triggered in calling functions!
+
         if (pi->depth() >= 0)
             return pi;
     }
-    return NULL;
+    return nullptr;
 }
 
-void VymModel::deleteLink(Link *l)
+void VymModel::deleteXLink(XLink *xlink)
 {
-    if (xlinks.removeOne(l))
-        delete (l);
+    //qDebug() << "VM::deleteXLink start";
+
+
+    QString xv = setXLinkVar(xlink);
+    QString uc = QString("map.loadDataInsert(\"UNDO_PATH\");");
+    QString rc = xv + QString("map.removeXLink(x);");
+
+    QString com = QString("Remove XLink");
+    
+    logAction(rc, com, __func__);
+
+    saveState(uc, rc, com, xlink->beginXLinkItem());
+
+    deleteXLinkInt(xlink);
 }
 
-void VymModel::clearItem(TreeItem *ti)
+void VymModel::deleteXLinkLater(XLink *xlink)
 {
-    if (ti) {
-        // Clear task (or other data in item itself)
-        ti->clear();
+    //qDebug() << "VM::deleteXLinkLater: " << xlink;
 
-        QModelIndex parentIndex = index(ti);
-        if (!parentIndex.isValid())
-            return;
-
-        int n = ti->childCount();
-        if (n == 0)
-            return;
-
-        emit(layoutAboutToBeChanged());
-
-        beginRemoveRows(parentIndex, 0, n - 1);
-        removeRows(0, n, parentIndex);
-        endRemoveRows();
-
-        reposition();
-
-        emit(layoutChanged());
+    if (!xlinksTrash.contains(xlink)) {
+        xlinksTrash << xlink;
+        xlinks.removeOne(xlink);
     }
-    return;
+}
+
+void VymModel::emptyXLinksTrash()
+{
+    //qDebug() << "*** VM::emptyXLinksTrash " << xlinksTrash;
+
+    foreach (XLink *xlink, xlinksTrash)
+        deleteXLinkInt(xlink);
+
+    xlinksTrash.clear();
+}
+
+void VymModel::deleteXLinkInt(XLink *xlink)
+{
+    //qDebug() << __func__ << xlink;
+
+    if (!xlink) {
+        qWarning() << __func__ << "No xlink ?!";
+        return;
+    }
+
+    // Remove XLinkItems from TreeModel
+    XLinkItem *xli;
+    xli = xlink->beginXLinkItem();
+    if (xli) {
+        //qDebug() << "  Deleting begin xli" << xli;
+        xli->setXLink(nullptr);
+        deleteItem(xli);
+    }
+    xli = xlink->endXLinkItem();
+    if (xli) {
+        //qDebug() << "  Deleting end xli" << xli;
+        xli->setXLink(nullptr);
+        deleteItem(xli);
+    }
+
+    // Remove from list of items and delete xlink itself, including XLinkObj
+    if (xlinks.removeOne(xlink)) {
+        //qDebug() << "  Removing xlink from xlinks";
+        delete (xlink);
+    }
+    if (xlinksTrash.removeOne(xlink)) {
+        //qDebug() << "  Removing xlink from xlinksTrash";
+        delete (xlink);
+    }
+
+    reposition();
 }
 
 bool VymModel::scrollBranch(BranchItem *bi)
@@ -3704,16 +5243,14 @@ bool VymModel::scrollBranch(BranchItem *bi)
         if (bi->depth() == 0)
             return false;
         if (bi->toggleScroll()) {
-            QString u, r;
-            r = "scroll";
-            u = "unscroll";
-            saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
-                      QString("%1 %2").arg(r).arg(getObjectName(bi)));
+            QString u, r, c;
+            r = setBranchVar(bi) + " b.scroll();";
+            u = setBranchVar(bi) + " b.unscroll();";
+            c = QString("Scroll %1").arg(getObjectName(bi));
+            logAction(r, c, __func__);
+            saveState(u, r, c);
             emitDataChanged(bi);
-            emitSelectionChanged();
             reposition();
-            mapEditor->getScene()
-                ->update(); // Needed for _quick_ update,  even in 1.13.x
             return true;
         }
     }
@@ -3726,26 +5263,25 @@ bool VymModel::unscrollBranch(BranchItem *bi)
         if (!bi->isScrolled())
             return false;
         if (bi->toggleScroll()) {
-            QString u, r;
-            u = "scroll";
-            r = "unscroll";
-            saveState(bi, QString("%1 ()").arg(u), bi, QString("%1 ()").arg(r),
-                      QString("%1 %2").arg(r).arg(getObjectName(bi)));
+            QString u, r, c;
+            u = setBranchVar(bi) + " b.scroll();";
+            r = setBranchVar(bi) + " b.unscroll();";
+            c = QString("Uncroll %1").arg(getObjectName(bi));
+            logAction(r, c, __func__);
+            saveState(u, r, c);
             emitDataChanged(bi);
-            emitSelectionChanged();
+
             reposition();
-            mapEditor->getScene()
-                ->update(); // Needed for _quick_ update,  even in 1.13.x
             return true;
         }
     }
     return false;
 }
 
-void VymModel::toggleScroll()
+void VymModel::toggleScroll(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
         if (selbi->isScrolled())
             unscrollBranch(selbi);
         else
@@ -3754,15 +5290,19 @@ void VymModel::toggleScroll()
     }
 }
 
-void VymModel::unscrollChildren()
+void VymModel::unscrollSubtree(BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        saveStateChangingPart(
-            selbi, selbi, QString("unscrollChildren ()"),
-            QString("unscroll all children of %1").arg(getObjectName(selbi)));
-        BranchItem *prev = NULL;
-        BranchItem *cur = NULL;
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        QString bv = setBranchVar(selbi);
+        QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+        QString rc = bv + QString("b.unscrollSubtree();");
+        QString comment = QString("Unscroll branch \"%1\" and all its scrolled children").arg(selbi->headingText());
+        logAction(rc, comment, __func__);
+        saveState(uc, rc, comment, selbi);
+
+        BranchItem *prev = nullptr;
+        BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, selbi);
         while (cur) {
             if (cur->isScrolled()) {
@@ -3771,70 +5311,29 @@ void VymModel::unscrollChildren()
             }
             nextBranch(cur, prev, true, selbi);
         }
-        updateActions();
-        reposition();
-        // Would this help??? emitSelectionChanged();
     }
+    updateActions();
+    reposition();
 }
 
-void VymModel::setScaleFactor(qreal f, ImageItem *selii)
+void VymModel::emitExpandAll() { emit expandAll(); }
+
+void VymModel::emitExpandOneLevel() { emit expandOneLevel(); }
+
+void VymModel::emitCollapseOneLevel() { emit collapseOneLevel(); }
+
+void VymModel::emitCollapseUnselected() { emit collapseUnselected(); }
+
+void VymModel::toggleTarget(BranchItem *bi)
 {
-    if (!selii)
-        selii = getSelectedImage();
-
-    if (selii) {
-        qreal f_old = selii->getScaleFactor();
-        selii->setScaleFactor(f);
-        saveState(selii, QString("setScaleFactor(%1)").arg(f_old), selii,
-                  QString("setScaleFactor(%1)").arg(f),
-                  QString("Scale %1").arg(getObjectName(selii)));
-        reposition();
-    }
-}
-
-void VymModel::growSelectionSize() // FIXME-3 Also for heading in BranchItem?
-{
-    ImageItem *selii = getSelectedImage();
-    if (selii) {
-        qreal f = 0.05;
-        qreal sx = selii->getScaleFactor();
-        setScaleFactor(sx + f);
-    }
-}
-
-void VymModel::shrinkSelectionSize()
-{
-    ImageItem *selii = getSelectedImage();
-    if (selii) {
-        qreal f = 0.05;
-        qreal sx = selii->getScaleFactor();
-        setScaleFactor(sx - f);
-    }
-}
-
-void VymModel::resetSelectionSize()
-{
-    ImageItem *selii = getSelectedImage();
-    if (selii)
-        setScaleFactor(1);
-}
-
-void VymModel::emitExpandAll() { emit(expandAll()); }
-
-void VymModel::emitExpandOneLevel() { emit(expandOneLevel()); }
-
-void VymModel::emitCollapseOneLevel() { emit(collapseOneLevel()); }
-
-void VymModel::emitCollapseUnselected() { emit(collapseUnselected()); }
-
-void VymModel::toggleTarget()
-{
-    foreach (TreeItem *ti, getSelectedItems()) {
-        if (ti->isBranchLikeType()) {
-            ((BranchItem*)ti)->toggleTarget();
-            saveState(ti, "toggleTarget()", ti, "toggleTarget()",
-                      "Toggle target");
-        }
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
+        selbi->toggleTarget();
+        QString uc = QString("toggleTarget(%1);").arg(toS(!selbi->isTarget()));
+        QString rc = QString("toggleTarget(%1);").arg(toS(selbi->isTarget()));
+        QString com = "Toggle target flag of branch";
+        logAction(rc, com, __func__);
+        saveStateBranch(selbi, uc, rc, com);
     }
     reposition();
 }
@@ -3845,23 +5344,26 @@ ItemList VymModel::getLinkedMaps()
 
     // rmodel->setSearchString (s);
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
 
     QString s;
 
     while (cur) {
-        if (cur->hasActiveSystemFlag("system-target") &&
-            !cur->getVymLink().isEmpty()) {
-            s = cur->getHeading().getTextASCII();
-            s.replace(QRegularExpression("\n+"), " ");
-            s.replace(QRegularExpression("\\s+"), " ");
-            s.replace(QRegularExpression("^\\s+"), "");
+        if (cur->hasActiveSystemFlag("system-target") && cur->hasVymLink()) {
+            s = cur->heading().getTextASCII();
+            static QRegularExpression re;
+            re.setPattern("\n+");
+            s.replace(re, " ");
+            re.setPattern("\\s+");
+            s.replace(re, " ");
+            re.setPattern("^\\s+");
+            s.replace(re, "");
 
             QStringList sl;
             sl << s;
-            sl << cur->getVymLink();
+            sl << cur->vymLink();
 
             targets[cur->getID()] = sl;
         }
@@ -3876,18 +5378,22 @@ ItemList VymModel::getTargets()
 
     // rmodel->setSearchString (s);
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
 
     QString s;
 
+    QRegularExpression re;
     while (cur) {
         if (cur->hasActiveSystemFlag("system-target")) {
-            s = cur->getHeading().getTextASCII();
-            s.replace(QRegularExpression("\n+"), " ");
-            s.replace(QRegularExpression("\\s+"), " ");
-            s.replace(QRegularExpression("^\\s+"), "");
+            s = cur->heading().getTextASCII();
+            re.setPattern("\n+");
+            s.replace(re, " ");
+            re.setPattern("\\s+");
+            s.replace(re, " ");
+            re.setPattern("^\\s+");
+            s.replace(re, "");
 
             QStringList sl;
             sl << s;
@@ -3920,82 +5426,113 @@ Flag* VymModel::findFlagByName(const QString &name)
     return nullptr;
 }
 
-void VymModel::setFlagByName(const QString &name, bool useGroups)
+void VymModel::setFlagByName(const QString &name, BranchItem *bi, bool useGroups)
 {
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi && !bi->hasActiveFlag(name)) {
-        toggleFlagByName(name, useGroups);
-    }
+    foreach (BranchItem* selbi, selbis)
+    if (!selbi->hasActiveFlag(name))
+        toggleFlagByName(name, selbi, useGroups);
 }
 
-void VymModel::unsetFlagByName(const QString &name)
+void VymModel::unsetFlagByName(const QString &name, BranchItem *bi)
 {
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi && bi->hasActiveFlag(name)) {
-        toggleFlagByName(name);
-    }
+    foreach (BranchItem* selbi, selbis)
+        if (selbi->hasActiveFlag(name))
+            toggleFlagByName(name, selbi);
 }
 
-void VymModel::toggleFlagByName(const QString &name, bool useGroups)
+void VymModel::toggleFlagByUid( const QUuid &uid, BranchItem *bi, bool useGroups)
 {
-    BranchItem *bi = getSelectedBranch();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (bi) {
-        Flag *f = findFlagByName(name);
+    foreach (BranchItem* selbi, selbis) {
+        // For undo save all currently set flags. (Independely of usage of flag groups)
+        QList <QUuid> oldFlags = selbi->activeFlagUids();
+        QStringList sl;
+        foreach (QUuid id, oldFlags)
+            sl << QString("\"%1\"").arg(id.toString());
 
-        if (!f) {
-            qWarning() << "VymModel::toggleFlagByName could not find flag named " << name;
-            return;
-        }
+        QString uc = QString("setOnlyFlags([%1]);").arg(sl.join(","));
 
-        toggleFlagByUid(f->getUuid(), useGroups);
+        Flag *flag = selbi->toggleFlagByUid(uid, useGroups);
+        if (flag) {
+            QString fname = flag->getName();
+            QString rc = QString("toggleFlagByUid(\"%1\");").arg(uid.toString());
+            QString com = QString("Toggle flag %1 of %2").arg(fname, getObjectName(selbi));
+            logAction(rc, com, __func__);
+            saveStateBranch(selbi, uc, rc, com);
+            emitDataChanged(selbi);
+        } else
+            qWarning() << "VymModel::toggleFlag failed for flag with uid "
+                       << uid;
     }
+    reposition();
 }
 
-void VymModel::toggleFlagByUid(
-    const QUuid &uid,
-    bool useGroups)
-    // FIXME-2  saveState not correct when toggling flags in groups
-    // (previous flags not saved!)
+void VymModel::toggleFlagByName(const QString &name, BranchItem *bi, bool useGroups)
 {
-    QStringList itemList = getSelectedUUIDs();
+    QList <BranchItem*> selbis = getSelectedBranches(bi);
 
-    if (itemList.count() > 0) {
-        QString fn;
-        TreeItem *ti;
-        BranchItem *bi;
-        Flag *f;
-        foreach (QString id, itemList) {
-            ti = findUuid(QUuid(id));
-            if (ti && ti->isBranchLikeType()) {
-                    bi = (BranchItem*)ti;
-                f = bi->toggleFlagByUid(uid, useGroups);
-
-                if (f) {
-                    QString u = "toggleFlagByUid";
-                    QString name = f->getName();
-                    saveState(bi, QString("%1 (\"%2\")").arg(u).arg(uid.toString()), bi,
-                              QString("%1 (\"%2\")").arg(u).arg(uid.toString()),
-                              QString("Toggling flag \"%1\" of %2")
-                                  .arg(name)
-                                  .arg(getObjectName(bi)));
-                    emitDataChanged(bi);
-                } else
-                    qWarning() << "VymModel::toggleFlag failed for flag with uid "
-                               << uid;
+    foreach (BranchItem* bi, selbis) {
+        Flag *flag = standardFlagsMaster->findFlagByName(name);
+        if (!flag) {
+            flag = userFlagsMaster->findFlagByName(name);
+            if (!flag) {
+                qWarning() << "VymModel::toggleFlag failed to find flag named "
+                           << name;
+                return;
             }
         }
-        reposition();
+
+        QUuid uid = flag->getUuid();
+
+        toggleFlagByUid(uid, bi, useGroups);
     }
 }
 
-
-void VymModel::clearFlags()
+void VymModel::setOnlyFlags(QList <QUuid> uids, BranchItem *bi)
 {
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
+    if (!bi) {
+        qWarning() << __func__ << "bi == nullptr";
+        return;
+    }
+
+    QList <QUuid> oldUids = bi->activeFlagUids();
+
+    QStringList sl_old;
+    QStringList sl_new;
+    foreach (QUuid id, oldUids)
+        sl_old << QString("\"%1\"").arg(id.toString());
+    foreach (QUuid id, uids)
+        sl_new << QString("\"%1\"").arg(id.toString());
+
+    QString uc = QString("setOnlyFlags([%1]);").arg(sl_old.join(","));
+    QString rc = QString("setOnlyFlags([%1]);").arg(sl_new.join(","));
+    QString com = QString("Set only flags %1").arg(getObjectName(bi));
+    logAction(rc, com, __func__);
+
+    foreach (QUuid uid, oldUids)
+        if (!uids.contains(uid))
+            // Unset flag
+            bi->toggleFlagByUid(uid);
+
+    foreach (QUuid uid, uids)
+        if (!oldUids.contains(uid))
+            // Set flag
+            bi->toggleFlagByUid(uid);
+
+    saveStateBranch(bi, uc, rc, com);
+    emitDataChanged(bi);
+    reposition();
+}
+
+void VymModel::clearFlags(BranchItem *bi)
+{
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+    foreach (BranchItem *selbi, selbis) {
         selbi->deactivateAllStandardFlags();
         reposition();
         emitDataChanged(selbi);
@@ -4003,56 +5540,59 @@ void VymModel::clearFlags()
     }
 }
 
-void VymModel::colorBranch(QColor c)
+void VymModel::colorBranch(QColor c, BranchItem *bi)
 {
-    QList<BranchItem *> selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        saveState(selbi,
-                  QString("colorBranch (\"%1\")")
-                      .arg(selbi->getHeadingColor().name()),
-                  selbi, QString("colorBranch (\"%1\")").arg(c.name()),
-                  QString("Set color of %1 to %2")
-                      .arg(getObjectName(selbi))
-                      .arg(c.name()));
+        QString uc = QString("colorBranch (\"%1\");")
+                      .arg(selbi->headingColor().name());
+        QString rc = QString("colorBranch (\"%1\");").arg(c.name());
+        QString com = QString("Set color of %1 to %2").arg(getObjectName(selbi), c.name());
+
+        logAction(rc, com, __func__);
+        saveStateBranch(selbi, uc, rc, com);
         selbi->setHeadingColor(c); // color branch
+        selbi->getBranchContainer()->updateUpLink();
         emitDataChanged(selbi);
         taskEditor->showSelection();
     }
-    mapEditor->getScene()->update();
+    if (mapEditor)
+        mapEditor->getScene()->update();
 }
 
-void VymModel::colorSubtree(QColor c, BranchItem *b)
+void VymModel::colorSubtree(QColor c, BranchItem *bi)
 {
-    QList<BranchItem *> selbis;
-    if (b)
-        selbis.append(b);
-    else
-        selbis = getSelectedBranches();
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *bi, selbis) {
-        saveStateChangingPart(bi, bi,
-                              QString("colorSubtree (\"%1\")").arg(c.name()),
-                              QString("Set color of %1 and children to %2")
-                                  .arg(getObjectName(bi))
-                                  .arg(c.name()));
-        BranchItem *prev = NULL;
-        BranchItem *cur = NULL;
+        QString bv = setBranchVar(bi);
+        QString uc = bv + "map.loadBranchReplace(\"UNDO_PATH\", b);";
+        QString rc = bv + QString("b.colorSubtree (\"%1\")").arg(c.name());
+        QString com = QString("Set color of %1 and children to %2").arg(getObjectName(bi), c.name());
+        logAction(rc, com, __func__);
+
+        saveState(uc, rc, com, bi);
+
+        BranchItem *prev = nullptr;
+        BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, bi);
         while (cur) {
             cur->setHeadingColor(c); // color links, color children
+            cur->getBranchContainer()->updateUpLink();
             emitDataChanged(cur);
             nextBranch(cur, prev, true, bi);
         }
     }
     taskEditor->showSelection();
-    mapEditor->getScene()->update();
+    if (mapEditor)
+        mapEditor->getScene()->update();
 }
 
 QColor VymModel::getCurrentHeadingColor()
 {
     BranchItem *selbi = getSelectedBranch();
     if (selbi)
-        return selbi->getHeadingColor();
+        return selbi->headingColor();
 
     QMessageBox::warning(
         0, "Warning",
@@ -4060,29 +5600,38 @@ QColor VymModel::getCurrentHeadingColor()
     return Qt::black;
 }
 
-void VymModel::note2URLs()
+void VymModel::note2URLs(BranchItem *bi) // FIXME-3 No saveState yet
 {
-    BranchItem *selbi = getSelectedBranch();
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
-        saveStateChangingPart(
+        /*
+        saveStateChangingPart(  // note2Urls
             selbi, selbi, QString("note2URLs()"),
             QString("Extract URLs from note of %1").arg(getObjectName(selbi)));
+        */
 
         QString n = selbi->getNoteASCII();
         if (n.isEmpty())
             return;
-        QRegExp re("(http.*)(\\s|\"|')");
-        re.setMinimal(true);
+        static QRegularExpression re;
+        re.setPattern("(http.*)(\\s|\"|')");
+        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
         BranchItem *bi;
         int pos = 0;
-        while ((pos = re.indexIn(n, pos)) != -1) {
-            bi = createBranch(selbi);
-            bi->setHeadingPlainText(re.cap(1));
-            bi->setURL(re.cap(1));
-            emitDataChanged(bi);
-            pos += re.matchedLength();
+        QRegularExpressionMatch match;
+        while (pos >= 0) {
+            match = re.match(n, pos);
+            if (match.hasMatch()) {
+                bi = addNewBranch(selbi);
+                bi->setHeadingPlainText(match.captured(1));
+                bi->setUrl(match.captured(1));
+                emitDataChanged(bi);
+                pos = match.capturedEnd();
+            } else
+                pos = -1;
         }
+        reposition();
     }
 }
 
@@ -4090,11 +5639,11 @@ void VymModel::editHeading2URL()
 {
     TreeItem *selti = getSelectedItem();
     if (selti)
-        setURL(selti->getHeadingPlain());
+        setUrl(selti->headingPlain());
 }
 
-void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
-                                         // if jiraClientAvail is set correctly
+void VymModel::getJiraData(bool subtree, BranchItem *bi)
+// getJiraData FIXME-3 check if jiraClientAvail is set correctly
 {
     if (!JiraAgent::available()) {
         WarningDialog dia;
@@ -4108,41 +5657,47 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
             return;
     }
 
-    BranchItem *selbi = getSelectedBranch();
-    QRegExp re("(\\w+[-|\\s]\\d+)");
+    BranchItem *selbi = getSelectedBranch(bi);
 
     if (selbi) {
-        QString url;
         BranchItem *prev = nullptr;
         BranchItem *cur = nullptr;
         nextBranch(cur, prev, true, selbi);
         while (cur) {
-            QString heading = cur->getHeadingPlain();
+            QString query = cur->attributeValue("Jira.query").toString();
 
-            if (re.indexIn(heading) >= 0) {
-                // Create agent
-                JiraAgent *agent = new JiraAgent;
-                agent->setJobType(JiraAgent::GetTicketInfo);
-                if (!agent->setBranch(cur)) {
-                    qWarning () << "Could not set branch in JiraAgent to " << cur->getHeadingPlain();
-                    delete agent;
-                    return;
+            bool startAgent = false;
+            JiraAgent *agent = new JiraAgent;
+            if (!agent->setBranch(cur))
+                qWarning () << "Could not set branch in JiraAgent to " << cur->headingPlain();
+            else {
+                if (!query.isEmpty() && agent->setQuery(query)) {
+                    // Branch has a query defined in attribute, try to use that
+                    agent->setJobType(JiraAgent::Query);
+                    connect(agent, &JiraAgent::jiraQueryReady, this, &VymModel::processJiraJqlQuery);
+                    startAgent = true;
+                } else {
+                    QString key = cur->attributeValue("Jira.key").toString();
+                    if (!key.isEmpty() && agent->setTicket(key)) {
+                        // Branch has issueKey, get info for ticket
+                        startAgent = true;
+                        connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
+                    } else {
+                        if (agent->setTicket(cur->headingPlain())) {
+                            connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::processJiraTicket);
+                            startAgent = true;
+                        } else {
+                            mainWindow->statusMessage(tr("Could not setup JiraAgent to retrieve data from Jira"));
+                        }
+                    }
                 }
-                if (!agent->setTicket(heading)) {
-                    mainWindow->statusMessage(tr("Could not find Jira ticket pattern in %1", "VymModel").arg(cur->getHeadingPlain()));
-                    delete agent;
-                    return;
-                }
+            } // Successfully set branch in agent
 
-                //setURL(agent->url(), false, cur);
-
-                connect(agent, &JiraAgent::jiraTicketReady, this, &VymModel::updateJiraData);
-
-                // Start contacting JIRA in background
+            if (startAgent) {
                 agent->startJob();
                 mainWindow->statusMessage(tr("Contacting Jira...", "VymModel"));
-            }
-
+            } else
+                delete agent;
 
             if (subtree)
                 nextBranch(cur, prev, true, selbi);
@@ -4152,137 +5707,193 @@ void VymModel::getJiraData(bool subtree) // FIXME-2 update error message, check
     }
 }
 
-void VymModel::updateJiraData(QJsonObject jsobj)
+void VymModel::initAttributesFromJiraIssue(BranchItem *bi, const JiraIssue &ji)
 {
-    QJsonDocument jsdoc = QJsonDocument (jsobj);
-    QString key = jsobj["key"].toString();
-    QJsonObject fields = jsobj["fields"].toObject();
-
-    QJsonObject assigneeObj = fields["assignee"].toObject();
-    QString assignee = assigneeObj["emailAddress"].toString();
-
-    QJsonObject reporterObj = fields["reporter"].toObject();
-    QString reporter  = reporterObj["emailAddress"].toString();
-
-    QJsonObject resolutionObj = fields["resolution"].toObject();
-    QString resolution  = resolutionObj["name"].toString();
-
-    QJsonObject statusObj = fields["status"].toObject();
-    QString status  = statusObj["name"].toString();
-
-    QString summary = fields["summary"].toString();
-
-    QJsonArray componentsArray = fields["components"].toArray();
-    QJsonObject compObj;
-    QString components;
-    for (int i = 0; i < componentsArray.size(); ++i) {
-        compObj = componentsArray[i].toObject();
-        components += compObj["name"].toString();
+    if (!bi) {
+        qWarning() << __FUNCTION__ << " called without BranchItem";
+        return;
     }
 
-    int branchID = jsobj["vymBranchId"].toInt();
+    setAttribute(bi, "Jira.assignee", ji.assignee());
+    setAttribute(bi, "Jira.components", ji.components());
+    //setAttribute(bi, "Jira.description", ji.description());
+    bi->setNote(VymText(ji.description()));
+    setAttribute(bi, "Jira.fixVersions", ji.fixVersions());
+    setAttribute(bi, "Jira.issuetype", ji.issueType());
+    setAttribute(bi, "Jira.issueUrl", ji.url());
+    setAttribute(bi, "Jira.key", ji.key());
+    setAttribute(bi, "Jira.parentKey", ji.parentKey());
+    setAttribute(bi, "Jira.status", ji.status());
+    setAttribute(bi, "Jira.reporter", ji.reporter());
+    setAttribute(bi, "Jira.resolution", ji.resolution());
+    setAttribute(bi, "Jira.issueLinks", ji.issueLinks());
+    setAttribute(bi, "Jira.subTasks", ji.subTasks());
+}
 
-    QStringList solvedStates;
-    solvedStates << "Verification Done";
-    solvedStates << "Resolved";
-    solvedStates << "Closed";
+void VymModel::updateJiraFlag(TreeItem *ti)
+{
+    if(!ti) return;
 
-    QString keyName = key;
-    BranchItem *bi = (BranchItem*)findID(branchID);
-    if (bi) {
-        if (solvedStates.contains(status))    {
-            keyName = "(" + keyName + ")";
-            colorSubtree (Qt::blue, bi);
+    AttributeItem *ai = getAttributeByKey("Jira.issueUrl", ti);
+    if (ai)
+        ti->setUrlType(TreeItem::JiraUrl);
+    else {
+        ai = getAttributeByKey("Jira.query");
+        if (ai)
+            ti->setUrlType(TreeItem::JiraUrl);  // FIXME-3 Dedicated flag for query missing
+        else {
+            if (ti->url().isEmpty())
+                ti->setUrlType(TreeItem::NoUrl);
+            else
+                ti->setUrlType(TreeItem::GeneralUrl);
         }
-
-        setHeadingPlainText(keyName + ": " + summary, bi);
-        setURL(jsobj["vymTicketUrl"].toString());
-
-        AttributeItem *ai;
-
-        ai = new AttributeItem("JIRA.assignee", assignee);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.reporter", reporter);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.resolution", resolution);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.status", status);
-        setAttribute(bi, ai);
-
-        ai = new AttributeItem("JIRA.components", components);
-        setAttribute(bi, ai);
     }
 
-    /* Pretty print JIRA ticket
-    vout << jsdoc.toJson(QJsonDocument::Indented) << endl;
-    vout << "       Key: " + key << endl;
-    vout << "      Desc: " + summary << endl;
-    vout << "  Assignee: " + assignee << endl;
-    vout << "Components: " + components << endl;
-    vout << "  Reporter: " + reporter << endl;
-    vout << "Resolution: " + resolution << endl;
-    vout << "    Status: " + status << endl;
-    */
-
-    mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
+    emitDataChanged(ti);
 }
 
 
-void VymModel::setHeadingConfluencePageName()   // FIXME-2 always asks for Confluence credentials when adding any URL
+void VymModel::processJiraTicket(QJsonObject jsobj)
 {
-    BranchItem *selbi = getSelectedBranch();
+    int branchID = jsobj["vymBranchId"].toInt();
+
+    repositionBlocked = true; // FIXME-4 block reposition during processing of Jira query?
+
+    BranchItem *bi = (BranchItem*)findID(branchID);
+    if (bi) {
+        JiraIssue ji;
+        ji.initFromJsonObject(jsobj);
+        initAttributesFromJiraIssue(bi, ji);
+
+        QString keyName = ji.key();
+        if (ji.isFinished())    {
+            keyName = "(" + keyName + ")";
+            colorSubtree (vymBlueColor, bi);
+        }
+
+        setHeadingPlainText(keyName + ": " + ji.summary(), bi);
+        setUrl(ji.url(), false, bi);
+        bi->setUrlType(TreeItem::JiraUrl);
+        updateJiraFlag(bi);
+
+        emitDataChanged(bi);
+
+        // Pretty print JIRA ticket
+        // ji.print();
+    }
+
+    repositionBlocked = false;
+
+    mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
+
+    // Update note
+    reselect();
+
+    reposition();
+}
+
+void VymModel::processJiraJqlQuery(QJsonObject jsobj)
+{
+    // Debugging only
+    //qDebug() << "VM::processJiraJqlQuery result...";
+
+    int branchId = jsobj.value("vymBranchId").toInt();
+    BranchItem *bi = (BranchItem*)findID(branchId);
+    if (!bi) {
+        mainWindow->statusMessage("VM::processJiraJqlQUery could not find branch with ID=" + jsobj.value("vymBranchId").toString());
+        return;
+    }
+    QJsonArray issues = jsobj["issues"].toArray();
+
+    QString bv = setBranchVar(bi);
+    QString uc = bv + QString("map.loadBranchReplace(\"UNDO_PATH\", b);");
+    QString rc = bv + QString("b.getJiraData(%1);").arg(toS(jsobj["doSubtree"].toBool()));
+    QString comment = QString("Process Jira Jql query on \"%1\"").arg(bi->headingText());
+    logAction(rc, comment, __func__);
+    saveState(uc, rc, comment, bi->parentBranch());
+
+
+    saveStateBlocked = true;
+    repositionBlocked = true;
+
+    for (int i = 0; i < issues.size(); ++i) {
+        QJsonObject issue = issues[i].toObject();
+        JiraIssue ji(issue);
+
+        BranchItem *bi2 = addNewBranchInt(bi, -2);
+        if (bi2) {
+            QString keyName = ji.key();
+            if (ji.isFinished())    {
+                keyName = "(" + keyName + ")";
+                colorSubtree (vymBlueColor, bi2);
+            }
+
+            setHeadingPlainText(keyName + ": " + ji.summary(), bi2);
+            setUrl(ji.url(), false, bi2);
+            initAttributesFromJiraIssue(bi2, ji);
+        }
+
+        // Pretty print JIRA ticket
+        // ji.print();
+    }
+
+    setAttribute(bi, "Jira.query", jsobj["vymJiraLastQuery"].toString());
+
+    saveStateBlocked = false;
+    repositionBlocked = false;
+
+    mainWindow->statusMessage(tr("Received Jira data.", "VymModel"));
+
+    reposition();
+}
+
+void VymModel::setConfluencePageDetails(bool recursive, BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
     if (selbi) {
-        QString url = selbi->getURL();
-        if (!url.isEmpty() && 
+        QString url = selbi->url();
+        if (!url.isEmpty() &&
                 settings.contains("/atlassian/confluence/url") &&
                 url.contains(settings.value("/atlassian/confluence/url").toString())) {
 
+            logInfo("Preparing to get info from Confluence", __func__);
+
             ConfluenceAgent *ca_setHeading = new ConfluenceAgent(selbi);
             ca_setHeading->setPageURL(url);
-            ca_setHeading->setJobType(ConfluenceAgent::CopyPagenameToHeading);
+            if (recursive)
+                ca_setHeading->setJobType(ConfluenceAgent::GetPageDetailsRecursively);
+            else
+                ca_setHeading->setJobType(ConfluenceAgent::GetPageDetails);
             ca_setHeading->startJob();
         }
     }
 }
 
-void VymModel::setVymLink(const QString &s)
+void VymModel::setVymLink(const QString &s, BranchItem *bi)
 {
-    if (s.isEmpty()) return;
-
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        saveState(
-            bi, "setVymLink (\"" + bi->getVymLink() + "\")", bi,
-            "setVymLink (\"" + s + "\")",
-            QString("Set vymlink of %1 to %2").arg(getObjectName(bi)).arg(s));
-        bi->setVymLink(s);
-        emitDataChanged(bi);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+        QString uc = QString("setVymLink(\"%1\");").arg(selbi->vymLink());
+        QString rc = QString("setVymLink(\"%1\");").arg(s);
+        QString com = QString("Set vymlink of %1 to %2").arg(getObjectName(selbi), s);
+        logAction(rc, com, __func__);
+        saveStateBranch(selbi, uc, rc, com);
+        selbi->setVymLink(s);
+        emitDataChanged(selbi);
         reposition();
     }
 }
 
 void VymModel::deleteVymLink()
 {
-    BranchItem *bi = getSelectedBranch();
-    if (bi) {
-        saveState(bi, "setVymLink (\"" + bi->getVymLink() + "\")", bi,
-                  "setVymLink (\"\")",
-                  QString("Unset vymlink of %1").arg(getObjectName(bi)));
-        bi->setVymLink("");
-        emitDataChanged(bi);
-        reposition();
-        updateActions();
-    }
+    setVymLink("");
 }
 
 QString VymModel::getVymLink()
 {
     BranchItem *bi = getSelectedBranch();
     if (bi)
-        return bi->getVymLink();
+        return bi->vymLink();
     else
         return "";
 }
@@ -4291,147 +5902,128 @@ QStringList VymModel::getVymLinks()
 {
     QStringList links;
     BranchItem *selbi = getSelectedBranch();
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev, true, selbi);
     while (cur) {
-        if (!cur->getVymLink().isEmpty())
-            links.append(cur->getVymLink());
+        if (cur->hasVymLink())
+            links.append(cur->vymLink());
         nextBranch(cur, prev, true, selbi);
     }
     return links;
 }
 
-void VymModel::followXLink(int i)
-{
-    BranchItem *selbi = getSelectedBranch();
-    if (selbi) {
-        selbi = selbi->getXLinkItemNum(i)->getPartnerBranch();
-        if (selbi)
-            select(selbi);
-    }
-}
-
 void VymModel::editXLink()
 {
-    Link *l = getSelectedXLink();
-    if (l) {
+    XLink *xlink = getSelectedXLink();
+    if (xlink) {
         EditXLinkDialog dia;
-        dia.setLink(l);
+        dia.setLink(xlink);
         if (dia.exec() == QDialog::Accepted) {
             if (dia.useSettingsGlobal()) {
-                setMapDefXLinkPen(l->getPen());
-                setMapDefXLinkStyleBegin(l->getStyleBeginString());
-                setMapDefXLinkStyleEnd(l->getStyleEndString());
+                setDefXLinkPen(xlink->getPen());
+                setDefXLinkStyleBegin(xlink->getStyleBeginString());
+                setDefXLinkStyleEnd(xlink->getStyleEndString());
             }
         }
     }
 }
 
-void VymModel::setXLinkColor(const QString &new_col)
+void VymModel::setXLinkColor(const QString &new_col, XLink *xl)
 {
-    Link *l = getSelectedXLink();
-    if (l) {
-        QPen pen = l->getPen();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QPen pen = xlink->getPen();
         QColor new_color = QColor(new_col);
         QColor old_color = pen.color();
         if (new_color == old_color)
             return;
+        QString xv = setXLinkVar(xlink, "xl");
+        QString uc = xv + QString("xl.setColor(\"%1\");").arg(old_color.name());
+        QString rc = xv + QString("xl.setColor(\"%1\");").arg(new_color.name());
+        QString com = QString("Set xlink color to \"%1\"").arg(new_color.name());
+        logAction(rc, com, __func__);
+        saveState(uc, rc, com);
+
         pen.setColor(new_color);
-        l->setPen(pen);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkColor(\"%1\")").arg(old_color.name()),
-                  l->getBeginLinkItem(),
-                  QString("setXLinkColor(\"%1\")").arg(new_color.name()),
-                  QString("set color of xlink to %1").arg(new_color.name()));
+        xlink->setPen(pen);
     }
 }
 
-void VymModel::setXLinkStyle(const QString &new_style)
+void VymModel::setXLinkStyle(const QString &new_style, XLink *xl)
 {
-    Link *l = getSelectedXLink();
-    if (l) {
-        QPen pen = l->getPen();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QPen pen = xlink->getPen();
         QString old_style = penStyleToString(pen.style());
         if (new_style == old_style)
             return;
+        QString xv = setXLinkVar(xlink, "xl");
+        QString uc = xv + QString("xl.setStyle(\"%1\");").arg(old_style);
+        QString rc = xv + QString("xl.setStyle(\"%1\");").arg(new_style);
+        QString com = QString("Set xlink style to \"%1\"").arg(new_style);
+        logAction(rc, com, __func__);
+        saveState(uc, rc, com);
+
         bool ok;
         pen.setStyle(penStyle(new_style, ok));
-        l->setPen(pen);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkStyle(\"%1\")").arg(old_style),
-                  l->getBeginLinkItem(),
-                  QString("setXLinkStyle(\"%1\")").arg(new_style),
-                  QString("set style of xlink to %1").arg(new_style));
+        xlink->setPen(pen);
     }
 }
 
-void VymModel::setXLinkStyleBegin(const QString &new_style)
+void VymModel::setXLinkStyleBegin(const QString &new_style, XLink *xl)
 {
-    Link *l = getSelectedXLink();
-    if (l) {
-        QString old_style = l->getStyleBeginString();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QString old_style = xlink->getStyleBeginString();
         if (new_style == old_style)
             return;
-        l->setStyleBegin(new_style);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkStyleBegin(\"%1\")").arg(old_style),
-                  l->getBeginLinkItem(),
-                  QString("setXLinkStyleBegin(\"%1\")").arg(new_style),
-                  "set style of xlink begin");
+        QString xv = setXLinkVar(xlink, "xl");
+        QString uc = xv + QString("xl.setStyleBegin(\"%1\");").arg(old_style);
+        QString rc = xv + QString("xl.setStyleBegin(\"%1\");").arg(new_style);
+        QString com = QString("Set xlink begin style to \"%1\"").arg(new_style);
+        logAction(rc, com, __func__);
+        saveState(uc, rc, com);
+        xlink->setStyleBegin(new_style);
     }
 }
 
-void VymModel::setXLinkStyleEnd(const QString &new_style)
+void VymModel::setXLinkStyleEnd(const QString &new_style, XLink *xl)
 {
-    Link *l = getSelectedXLink();
-    if (l) {
-        QString old_style = l->getStyleEndString();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QString old_style = xlink->getStyleEndString();
         if (new_style == old_style)
             return;
-        l->setStyleEnd(new_style);
-        saveState(l->getBeginLinkItem(),
-                  QString("setXLinkStyleEnd(\"%1\")").arg(old_style),
-                  l->getBeginLinkItem(),
-                  QString("setXLinkStyleEnd(\"%1\")").arg(new_style),
-                  "set style of xlink end");
+
+        QString xv = setXLinkVar(xlink, "xl");
+        QString uc = xv + QString("xl.setStyleEnd(\"%1\");").arg(old_style);
+        QString rc = xv + QString("xl.setStyleEnd(\"%1\");").arg(new_style);
+        QString com = QString("Set xlink end style to \"%1\"").arg(new_style);
+        logAction(rc, com, __func__);
+        saveState(uc, rc, com);
+        xlink->setStyleEnd(new_style);
     }
 }
 
-void VymModel::setXLinkWidth(int new_width)
+void VymModel::setXLinkWidth(int new_width, XLink *xl)
 {
-    Link *l = getSelectedXLink();
-    if (l) {
-        QPen pen = l->getPen();
+    XLink *xlink = getSelectedXLink(xl);
+    if (xlink) {
+        QPen pen = xlink->getPen();
         int old_width = pen.width();
         if (new_width == old_width)
             return;
+        QString xv = setXLinkVar(xlink, "xl");
+        QString uc = xv + QString("xl.setWidth(%1);").arg(old_width);
+        QString rc = xv + QString("xl.setWidth(%1);").arg(new_width);
+        QString com = QString("Add xlink width to \"%1\"").arg(new_width);
+        logAction(rc, com, __func__);
+        saveState(uc, rc, com);
+
         pen.setWidth(new_width);
-        l->setPen(pen);
-        saveState(
-            l->getBeginLinkItem(), QString("setXLinkWidth(%1)").arg(old_width),
-            l->getBeginLinkItem(), QString("setXLinkWidth(%1)").arg(new_width),
-            "set width of xlink");
+        xlink->setPen(pen);
     }
-}
-
-//////////////////////////////////////////////
-// Scripting
-//////////////////////////////////////////////
-
-QVariant VymModel::execute(
-    const QString &script) // FIXME-3 still required???
-                           // Called from these places:
-                           //
-                           // scripts/vym-ruby.rb  (and adaptormodel) used for
-                           // testing Main::callMacro Main::checkReleaseNotes
-                           // VymModel::undo
-                           // VymModel::redo
-                           // VymModel::exportLast
-                           // VymModel::updateSlideSelection
-{
-    // qDebug()<<"VM::execute called: "<<script;
-    return mainWindow->runScript(script);
 }
 
 void VymModel::setExportMode(bool b)
@@ -4446,6 +6038,11 @@ void VymModel::setExportMode(bool b)
 
 QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return QPointF();
+    }
+
     QPointF offset; // set later, when getting image from MapEditor
 
     if (fname == "") {
@@ -4478,13 +6075,11 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 
     setExportMode(true);
 
-    mapEditor->minimizeView();
-
     QImage img(mapEditor->getImage(offset));
     if (!img.save(fname, format.toLocal8Bit())) {
         QMessageBox::critical(
             0, tr("Critical Error"),
-            tr("Couldn't save QImage %1 in format %2").arg(fname).arg(format));
+            tr("Couldn't save QImage %1 in format %2").arg(fname, format));
         ex.setResult(ExportBase::Failed);
     } else
         ex.setResult(ExportBase::Success);
@@ -4498,6 +6093,11 @@ QPointF VymModel::exportImage(QString fname, bool askName, QString format)
 
 void VymModel::exportPDF(QString fname, bool askName)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return;
+    }
+    
     if (fname == "") {
         if (!askName) {
             qWarning("VymModel::exportPDF called without filename (and "
@@ -4530,8 +6130,8 @@ void VymModel::exportPDF(QString fname, bool askName)
     pdfPrinter.setOutputFormat(QPrinter::PdfFormat);
     pdfPrinter.setOutputFileName(fname);
     pdfPrinter.setPageSize(QPageSize(QPageSize::A3));
-
     QRectF bbox = mapEditor->getTotalBBox();
+
     if (bbox.width() > bbox.height())
         // recommend landscape
         pdfPrinter.setPageOrientation(QPageLayout::Landscape);
@@ -4546,6 +6146,7 @@ void VymModel::exportPDF(QString fname, bool askName)
 
     setExportMode(false);
 
+    ex.setResult(ExportBase::Success);
     ex.completeExport();
 }
 
@@ -4590,12 +6191,49 @@ QPointF VymModel::exportSVG(QString fname, bool askName)
     delete svgPainter;
 
     setExportMode(false);
+
+    ex.setResult(ExportBase::Success);
     ex.completeExport();
 
     return offset;
 }
 
-void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
+void VymModel::exportTaskJuggler(QString fname, bool askForName) // FIXME-3 not scriptable yet
+{
+    if (fname == "") {
+        if (!askForName) {
+            qWarning("VymModel::exportTaskJuggler called without filename (and "
+                     "askName==false)");
+            return;
+        }
+
+        fname = lastImageDir.absolutePath() + "/" + getMapName() + ".svg";
+    }
+
+    ExportTaskJuggler ex;
+    ex.setModel(this);
+    ex.setFilePath(fname);
+    ex.setWindowTitle(vymName + " - " + tr("Export to") + " Taskjuggler" +
+                          tr("(still experimental)"));
+    ex.addFilter("Taskjuggler (*.tjp)");
+
+    if (askForName) {
+        if (!ex.execDialog())
+            return;
+        fname = ex.getFilePath();
+        lastImageDir = QDir(fname);
+    }
+
+    setExportMode(true);
+
+    ex.doExport();
+
+    setExportMode(false);
+
+    ex.completeExport();
+}
+
+void VymModel::exportXML(QString fpath, bool useDialog)
 {
     ExportBase ex;
     ex.setName("XML");
@@ -4615,16 +6253,16 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
         fd.setAcceptMode(QFileDialog::AcceptSave);
         fd.selectFile(mapName + ".xml");
 
-        QString fn;
         if (fd.exec() != QDialog::Accepted || fd.selectedFiles().isEmpty())
             return;
 
         fpath = fd.selectedFiles().first();
-        dpath = fpath.left(fpath.lastIndexOf("/"));
 
-        if (!confirmDirectoryOverwrite(QDir(dpath)))
-            return;
     }
+    QString dpath = fpath.left(fpath.lastIndexOf("/"));
+    if (!confirmDirectoryOverwrite(QDir(dpath)))
+        return;
+
     ex.setFilePath(fpath);
 
     QString mname = basename(fpath);
@@ -4647,8 +6285,10 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
     mapUnsaved = munsaved;
 
     // write to directory   //FIXME-3 check totalBBox here...
+    exportBoundingBoxes = true;
     QString saveFile =
-        saveToDir(dpath, mname + "-", FlagRowMaster::AllFlags, offset, nullptr);
+        saveToDir(dpath, mname + "-", FlagRowMaster::AllFlags, offset);
+    exportBoundingBoxes = false;
 
     QFile file;
 
@@ -4663,9 +6303,11 @@ void VymModel::exportXML(QString fpath, QString dpath, bool useDialog)
 
     // Write it finally, and write in UTF8, no matter what
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << saveFile;
     file.close();
+
+
+    ex.setResult(ExportBase::Success);
 
     setExportMode(false);
 
@@ -4789,7 +6431,9 @@ void VymModel::exportHTML(const QString &fpath, const QString &dpath,
     if (!fpath.isEmpty())
         ex.setFilePath(fpath);
 
+    exportBoundingBoxes = true;
     ex.doExport(useDialog);
+    exportBoundingBoxes = false;
 }
 
 void VymModel::exportConfluence(bool createPage, const QString &pageURL,
@@ -4797,7 +6441,7 @@ void VymModel::exportConfluence(bool createPage, const QString &pageURL,
 {
     ExportConfluence ex(this);
     ex.setCreateNewPage(createPage);
-    ex.setURL(pageURL);
+    ex.setUrl(pageURL);
     ex.setPageName(pageName);
     ex.setLastCommand(
         settings.localValue(filePath, "/export/last/command", "").toString());
@@ -4805,15 +6449,44 @@ void VymModel::exportConfluence(bool createPage, const QString &pageURL,
     ex.doExport(useDialog);
 }
 
-void VymModel::exportImpress(const QString &fn, const QString &cf)
+void VymModel::exportImpress(QString fname, QString configFile, bool useDialog)
 {
-    ExportOO ex;
-    ex.setFilePath(fn);
+    if (fname == "")
+        fname = mapName + ".odp";
+
+    if (useDialog) {
+        ExportImpressFileDialog fd;
+        fd.setWindowTitle(vymName + " - " + tr("Export to") + " LibreOffice Impress");
+        fd.setDirectory(lastExportDir);
+        fd.setAcceptMode(QFileDialog::AcceptSave);
+        fd.setFileMode(QFileDialog::AnyFile);
+        if (fd.foundConfig()) {
+            if (fd.exec() == QDialog::Accepted) {
+                configFile = fd.selectedConfig();
+                if (!fd.selectedFiles().isEmpty()) {
+                    QString fname = fd.selectedFiles().first();
+                    if (!fname.contains(".odp"))
+                        fname += ".odp";
+                }
+            }
+        }
+        else {
+            QMessageBox::warning(
+                0, tr("Warning"),
+                tr("Couldn't find configuration for export to LibreOffice Impress\n"));
+            return;
+        }
+    }
+
+
+    ExportImpress ex;
+    ex.setFilePath(fname);
+
     ex.setModel(this);
     ex.setLastCommand(
         settings.localValue(filePath, "/export/last/command", "").toString());
 
-    if (ex.setConfigFile(cf)) {
+    if (ex.setConfigFile(configFile)) {
         QString lastCommand =
             settings.localValue(filePath, "/export/last/command", "")
                 .toString();
@@ -4827,6 +6500,8 @@ void VymModel::exportImpress(const QString &fn, const QString &cf)
                 .toString();
         if (lastCommand != command)
             setChanged();
+
+        //lastExportDir = fname.left(fname.findRev ("/"));
     }
 }
 
@@ -4835,6 +6510,14 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
 {
     command =
         settings.localValue(filePath, "/export/last/command", "").toString();
+    static QRegularExpression re;
+    re.setPattern("exportMap\\((\".*)\\)");
+    QRegularExpressionMatch match = re.match(command);
+    if (match.hasMatch()) {
+        command = QString("vym.currentMap().exportMap([%1]);").arg(match.captured(1));
+        settings.setLocalValue(filePath, "/export/last/command", command);
+        qDebug() << "Rewriting last export command to version " << vymVersion << " format: " << command;
+    }
 
     description = settings.localValue(filePath, "/export/last/description", "")
                       .toString();
@@ -4866,8 +6549,7 @@ void VymModel::exportLast()
     QString desc, command,
         dest; // FIXME-3 better integrate configFile into command
     if (exportLastAvailable(desc, command, dest)) {
-        //qDebug() << "VM::exportLast: " << command;
-        execute(command);
+        mainWindow->runScript(command);
     }
 }
 
@@ -4945,35 +6627,78 @@ void VymModel::exportMarkdown(const QString &fname, bool askName)
 
 void VymModel::registerMapEditor(QWidget *e) { mapEditor = (MapEditor *)e; }
 
-void VymModel::setMapZoomFactor(const double &d)
+void VymModel::setViewZoomFactor(const double &d)
 {
-    zoomFactor = d;
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return;
+    }
+
+    viewZoomFactorInt = d;
     mapEditor->setZoomFactorTarget(d);
 }
 
-void VymModel::setMapRotationAngle(const double &d)
+void VymModel::setViewRotation(const double &a)
 {
-    rotationAngle = d;
-    mapEditor->setAngleTarget(d);
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return;
+    }
+
+    if (a < 1)
+        // Round to zero, otherwise selectionMode in MapEditor might be 
+        // "Geometric" when it should be "Classic"
+        viewRotationInt = 0;
+    else
+        viewRotationInt = a;
+    mapEditor->setRotationTarget(viewRotationInt);
 }
 
-void VymModel::setMapAnimDuration(const int &d) { animDuration = d; }
+void VymModel::setViewAnimDuration(const int &d) { animDuration = d; }
 
-void VymModel::setMapAnimCurve(const QEasingCurve &c) { animCurve = c; }
+void VymModel::setViewAnimCurve(const QEasingCurve &c) { animCurve = c; }
 
 bool VymModel::centerOnID(const QString &id)
 {
+    if (!mapEditor) {
+        qWarning() << __func__ << "mapEditor == nullptr";
+        return false;
+    }
+
     TreeItem *ti = findUuid(QUuid(id));
-    if (ti) {
-        LinkableMapObj *lmo = ((MapItem *)ti)->getLMO();
-        if (zoomFactor > 0 && lmo) {
-            mapEditor->setViewCenterTarget(lmo->getBBox().center(), zoomFactor,
-                                           rotationAngle, animDuration,
+    if (ti && (ti->hasTypeBranch() || ti->hasTypeImage())) {
+        QPointF p_center;
+        if (ti->hasTypeBranch())
+            p_center = ((BranchItem*)ti)->getBranchContainer()->ornamentsSceneRect().center();
+        else {
+            Container *c;
+            c = ((MapItem*)ti)->getContainer();
+            p_center = c->mapToScene(c->rect().center());
+        }
+        if (viewZoomFactorInt > 0 ) {
+            mapEditor->setViewCenterTarget(p_center, viewZoomFactorInt,
+                                           viewRotationInt, animDuration,
                                            animCurve);
             return true;
         }
     }
     return false;
+}
+
+void VymModel::setViewCenterTarget(const QPointF &p)
+{
+    viewCenterTargetInt = p;
+    hasViewCenterTargetInt = true;
+}
+
+QPointF VymModel::viewCenterTarget()
+{
+    return viewCenterTargetInt;
+}
+
+bool VymModel::hasViewCenterTarget()
+{
+    return hasViewCenterTargetInt;
 }
 
 void VymModel::setContextPos(QPointF p)
@@ -4988,375 +6713,474 @@ void VymModel::unsetContextPos()
     hasContextPos = false;
 }
 
-void VymModel::reposition()
+void VymModel::reposition(bool force)
 {
-    if (repositionBlocked)
+    if (!force && repositionBlocked)
         return;
 
-    BranchObj *bo;
-    for (int i = 0; i < rootItem->branchCount(); i++) {
-        bo = rootItem->getBranchObjNum(i);
-        if (bo)
-            bo->reposition(); //  for positioning heading
-        else
-            qDebug() << "VM::reposition bo=0";
-    }
-    mapEditor->getTotalBBox();
+    //qDebug() << "VM::reposition start force=" << force;
 
-    // required to *reposition* the selection box. size is already correct:
-    emitSelectionChanged(); //FIXME-2 better only update selection geometry
+    // Reposition containers
+    BranchItem *bi;
+    for (int i = 0; i < rootItem->branchCount(); i++) {
+        bi = rootItem->getBranchNum(i);
+        bi->repositionContainers();
+    }
+
+    repositionXLinks();
+
+    if (mapEditor)
+        mapEditor->minimizeView();  // Optimize view when geometry changes in reposition()
+
+    //qDebug() << "VM::reposition end";
+    if (force)
+        qApp->processEvents();
 }
 
-bool VymModel::setMapLinkStyle(const QString &s)
+void VymModel::repositionXLinks()
 {
-    QString snow;
-    switch (linkstyle) {
-    case LinkableMapObj::Line:
-        snow = "StyleLine";
-        break;
-    case LinkableMapObj::Parabel:
-        snow = "StyleParabel";
-        break;
-    case LinkableMapObj::PolyLine:
-        snow = "StylePolyLine";
-        break;
-    case LinkableMapObj::PolyParabel:
-        snow = "StylePolyParabel";
-        break;
-    default:
-        return false;
-        break;
+    // Reposition xlinks
+    foreach (XLink *xlink, xlinks)
+        xlink->updateXLink();
+}
+
+MapDesign* VymModel::mapDesign()
+{
+    return mapDesignInt;
+}
+
+void VymModel::applyDesign(
+        MapDesign::UpdateMode updateMode,
+        BranchItem *bi)
+{
+    /*
+    qDebug() << "VM::applyDesign  mode="
+        << MapDesign::updateModeString(updateMode)
+        << " of " << headingText(bi);
+    */
+
+    QList<BranchItem *> selbis = getSelectedBranches(bi);
+
+    bool saveStateBlockedOrg = saveStateBlocked;
+    saveStateBlocked = true;
+
+    bool updateRequired;
+    foreach (BranchItem *selbi, selbis) {
+        dataChangedBlocked = true;
+        int depth = selbi->depth();
+        bool selbiChanged = false;
+        BranchContainer *bc = selbi->getBranchContainer();
+
+        // Color of heading
+        QColor col = mapDesignInt->headingColor(
+                        updateMode,
+                        selbi,
+                        updateRequired);
+
+        if (updateRequired)
+            colorBranch(col, selbi);
+
+        // Inner frame
+        if (updateMode == MapDesign::CreatedByUser ||
+                (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(true, depth))) {
+            bc->setFrameType(true, mapDesignInt->frameType(true, depth));
+            bc->setFrameBrushColor(true, mapDesignInt->frameBrushColor(true, depth));
+            bc->setFramePenColor(true, mapDesignInt->framePenColor(true, depth));
+            bc->setFramePenWidth(true, mapDesignInt->framePenWidth(true, depth));
+        }
+
+        // Outer frame
+        if (updateMode == MapDesign::CreatedByUser ||
+                (updateMode == MapDesign::RelinkedByUser && mapDesignInt->updateFrameWhenRelinking(false, depth))) {
+            bc->setFrameType(false, mapDesignInt->frameType(false, depth));
+            bc->setFrameBrushColor(false, mapDesignInt->frameBrushColor(false, depth));
+            bc->setFramePenColor(false, mapDesignInt->framePenColor(false, depth));
+            bc->setFramePenWidth(false, mapDesignInt->framePenWidth(false, depth));
+        }
+
+        // Column width and font
+        if (updateMode & MapDesign::CreatedByUser || updateMode & MapDesign::LoadingMap) {
+            HeadingContainer *hc = bc->getHeadingContainer();
+            hc->setColumnWidth(mapDesignInt->headingColumnWidth(depth));
+            hc->setFont(mapDesignInt->font());
+        }
+
+        // Layouts
+        if (bc->branchesContainerAutoLayout) {
+                bc->setBranchesContainerLayout(
+                        mapDesignInt->branchesContainerLayout(depth));
+                selbiChanged = true;
+                        mapDesignInt->branchesContainerLayout(depth);
+        }
+
+        if (bc->imagesContainerAutoLayout) {
+                bc->setImagesContainerLayout(
+                        mapDesignInt->imagesContainerLayout(depth));
+                selbiChanged = true;
+        }
+	bc->setBranchesContainerVerticalAlignment(
+		mapDesignInt->branchesContainerVerticalAlignment(depth));
+	bc->setBranchesContainerAndOrnamentsVertical(
+		mapDesignInt->branchesContainerAndOrnamentsVertical(depth));
+
+        // Links and bottomlines
+        bc->updateUpLink();
+
+        // Rotations
+        if (bc->rotationsAutoDesign()) {
+            qreal a = mapDesignInt->rotationHeading(depth);
+            if (a != bc->rotationHeading()) {
+                bc->setRotationHeading(a);
+                selbiChanged = true;
+            }
+            a = mapDesignInt->rotationSubtree(depth);
+            if (a != bc->rotationHeading()) {
+                bc->setRotationHeading(a);
+                selbiChanged = true;
+            }
+        }
+
+        if (bc->scaleAutoDesign()) {
+            qreal z = mapDesignInt->scaleHeading(depth);
+            if (z != bc->scaleHeading()) {
+                bc->setScaleHeading(z);
+                selbiChanged = true;
+            }
+            z = mapDesignInt->scaleSubtree(depth);
+            if (z != bc->scaleSubtree()) {
+                bc->setScaleSubtree(z);
+                selbiChanged = true;
+            }
+        }
+
+        dataChangedBlocked = false;
+        if (selbiChanged)
+            emitDataChanged(selbi);
     }
 
-    saveState(QString("setMapLinkStyle (\"%1\")").arg(s),
-              QString("setMapLinkStyle (\"%1\")").arg(snow),
-              QString("Set map link style (\"%1\")").arg(s));
+    saveStateBlocked = saveStateBlockedOrg;
+}
 
-    if (s == "StyleLine")
-        linkstyle = LinkableMapObj::Line;
-    else if (s == "StyleParabel")
-        linkstyle = LinkableMapObj::Parabel;
-    else if (s == "StylePolyLine")
-        linkstyle = LinkableMapObj::PolyLine;
-    else if (s == "StylePolyParabel")
-        linkstyle = LinkableMapObj::PolyParabel;
-    else
-        linkstyle = LinkableMapObj::UndefinedStyle;
+void VymModel::applyDesignRecursively(
+        MapDesign::UpdateMode updateMode,
+        BranchItem *bi)
+{
+    if (!bi) return;
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
-    BranchObj *bo;
-    nextBranch(cur, prev);
-    while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
-        bo->setLinkStyle(bo->getDefLinkStyle(
-            cur->parent())); // FIXME-4 better emit dataCHanged and leave the
-                             // changes to View
-        nextBranch(cur, prev);
+    for (int i = 0; i < bi->branchCount(); ++i)
+        applyDesign(updateMode, bi->getBranchNum(i));
+}
+
+void VymModel::setDefaultFont(const QFont &font)    // FIXME-3 no saveState, no updates of existing headings ("applyDesign")
+{
+    mapDesignInt->setFont(font);
+}
+
+bool VymModel::setLinkStyle(const QString &newStyleString, int depth)
+{
+    auto style = LinkObj::styleFromString(newStyleString);
+
+    if (depth >= 0) {
+        QString currentStyleString = LinkObj::styleString(mapDesignInt->linkStyle(depth));
+
+        QString uc = QString("map.setLinkStyle (\"%1\", %2);").arg(newStyleString, depth);
+        QString rc = QString("map.setLinkStyle (\"%1\", %2);").arg(currentStyleString, depth);
+        QString com = QString("Set map link style (\"%1\", %2)").arg(newStyleString, depth);
+        logAction(rc, com, __func__);
+        saveState(uc, rc, com);
+        mapDesignInt->setLinkStyle(style, depth);
+    } else {
+        // Default depth == -1 is used for legacy styles from version < 2.9.518
+        // or for using global setting from context menu
+        // Only apply the "thick" part on first level
+        QString com = QString("Set link styles for map to \"%1\"").arg(newStyleString);
+        QString currentStyleString0 = LinkObj::styleString(mapDesignInt->linkStyle(0));
+        QString currentStyleString1 = LinkObj::styleString(mapDesignInt->linkStyle(1));
+        QString currentStyleString2 = LinkObj::styleString(mapDesignInt->linkStyle(2));
+        QString uc0 = QString("map.setLinkStyle (\"%1\", 0);").arg(currentStyleString0);
+        QString uc1 = QString("map.setLinkStyle (\"%1\", 1);").arg(currentStyleString1);
+        QString uc2 = QString("map.setLinkStyle (\"%1\", 2);").arg(currentStyleString2);
+
+        QString rc0 = QString("map.setLinkStyle (\"StyleNoLink\", 0);");
+        mapDesignInt->setLinkStyle(LinkObj::NoLink, 0);
+
+        QString rc1 = QString("map.setLinkStyle (\"%1\", 1);").arg(newStyleString);
+        mapDesignInt->setLinkStyle(style, 1);
+
+        QString rc2;
+        if (style == LinkObj::PolyLine) {
+            rc2 = QString("map.setLinkStyle (\"StyleLine\", 2);");
+            mapDesignInt->setLinkStyle(LinkObj::Line, 2);
+        } else if (style == LinkObj::PolyParabel) {
+            rc2 = QString("map.setLinkStyle (\"StyleParabel\", 2);");
+            mapDesignInt->setLinkStyle(LinkObj::Parabel, 2);
+        }
+        saveState(uc0 + uc1 + uc2, rc0 + rc1 +  rc2, com);
     }
+
+
+    applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
     reposition();
+
     return true;
 }
 
-LinkableMapObj::Style VymModel::getMapLinkStyle() { return linkstyle; }
-
-uint VymModel::getModelID() { return modelID; }
+uint VymModel::modelId() { return modelIdInt; }
 
 void VymModel::setView(VymView *vv) { vymView = vv; }
 
-void VymModel::setMapDefLinkColor(QColor col)
+void VymModel::setDefaultLinkColor(const QColor &col)
 {
-    if (!col.isValid())
-        return;
-    saveState(
-        QString("setMapDefLinkColor (\"%1\")").arg(getMapDefLinkColor().name()),
-        QString("setMapDefLinkColor (\"%1\")").arg(col.name()),
-        QString("Set map link color to %1").arg(col.name()));
+    if (!col.isValid()) return;
 
-    defLinkColor = col;
+    QString uc = QString("map.setDefaultLinkColor (\"%1\");").arg(mapDesignInt->defaultLinkColor().name());
+    QString rc = QString("map.setDefaultLinkColor (\"%1\");").arg(col.name());
+    QString com = QString("Set map link color to %1").arg(col.name());
+    logAction(rc, com, __func__);
+    saveState(uc, rc, com);
+
+    mapDesignInt->setDefaultLinkColor(col);
 
     // Set color for "link arrows" in TreeEditor
-    vymView->setLinkColor(col);
+    vymView->updateColors();
 
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
-    BranchObj *bo;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
-        bo->setLinkColor();
-
-        for (int i = 0; i < cur->imageCount(); ++i)
-            cur->getImageNum(i)->getLMO()->setLinkColor();
+        BranchContainer *bc = cur->getBranchContainer();
+        bc->updateUpLink();
+        // for (int i = 0; i < cur->imageCount(); ++i)
+        // FIXME-4 setLinkColorHint: images currently use branch link color
 
         nextBranch(cur, prev);
     }
     updateActions();
 }
 
-void VymModel::setMapLinkColorHintInt()
+void VymModel::setLinkColorHint(const LinkObj::ColorHint &newHint)
 {
-    // called from setMapLinkColorHint(lch) or at end of parse
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
-    BranchObj *bo;
+    LinkObj::ColorHint oldHint = mapDesignInt->linkColorHint();
+
+    if (oldHint == newHint)
+        return;
+
+    mapDesignInt->setLinkColorHint(newHint);
+
+    QString oldHintName = LinkObj::linkColorHintName(oldHint);
+    QString newHintName = LinkObj::linkColorHintName(newHint);
+
+    QString uc = QString("map.setLinkColorHint (\"%1\");").arg(oldHintName);
+    QString rc = QString("map.setLinkColorHint (\"%1\");").arg(newHintName);
+    QString com = QString("Set link color hint to %1").arg(newHintName);
+    logAction(rc, com, __func__);
+    saveState(uc, rc, com);
+    
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     nextBranch(cur, prev);
     while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
-        bo->setLinkColor();
+        BranchContainer *bc = cur->getBranchContainer();
+        LinkObj *upLink = bc->getLink();
+        if (upLink)
+            upLink->setLinkColorHint(newHint);
 
-        for (int i = 0; i < cur->imageCount(); ++i)
-            cur->getImageNum(i)->getLMO()->setLinkColor();
-
+        // FIXME-4 setLinkColorHint: images currently use branch link color
+        for (int i = 0; i < cur->imageCount(); ++i) {
+            upLink = cur->getImageNum(i)->getImageContainer()->getLink();
+            if (upLink)
+                upLink->setLinkColorHint(newHint);
+        }
         nextBranch(cur, prev);
     }
+
+    applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
+    reposition();
 }
 
-void VymModel::setMapLinkColorHint(LinkableMapObj::ColorHint lch)
+void VymModel::toggleLinkColorHint()
 {
-    linkcolorhint = lch;
-    setMapLinkColorHintInt();
-}
-
-void VymModel::toggleMapLinkColorHint()
-{
-    if (linkcolorhint == LinkableMapObj::HeadingColor)
-        linkcolorhint = LinkableMapObj::DefaultColor;
+    if (mapDesignInt->linkColorHint() == LinkObj::HeadingColor)
+        setLinkColorHint(LinkObj::DefaultColor);
     else
-        linkcolorhint = LinkableMapObj::HeadingColor;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
-    BranchObj *bo;
-    nextBranch(cur, prev);
-    while (cur) {
-        bo = (BranchObj *)(cur->getLMO());
-        bo->setLinkColor();
-
-        for (int i = 0; i < cur->imageCount(); ++i)
-            cur->getImageNum(i)->getLMO()->setLinkColor();
-
-        nextBranch(cur, prev);
-    }
+        setLinkColorHint(LinkObj::HeadingColor);
 }
 
-void VymModel::
-    selectMapBackgroundImage() // FIXME-3 for using background image:
-                               // view.setCacheMode(QGraphicsView::CacheBackground);
-                               // Also this belongs into ME
+QColor VymModel::backgroundColor()
 {
-    QStringList filters;
-    filters << tr("Images") +
-                   " (*.png *.bmp *.xbm *.jpg *.png *.xpm *.gif *.pnm)";
-    QFileDialog fd;
-    fd.setFileMode(QFileDialog::ExistingFile);
-    fd.setWindowTitle(vymName + " - " + tr("Load background image"));
-    fd.setDirectory(lastImageDir);
-    fd.setAcceptMode(QFileDialog::AcceptOpen);
-
-    if (fd.exec() == QDialog::Accepted && !fd.selectedFiles().isEmpty()) {
-        // TODO selectMapBackgroundImg in QT4 use:  lastImageDir=fd.directory();
-        lastImageDir = QDir(fd.directory().path());
-        setMapBackgroundImage(fd.selectedFiles().first());
-    }
+    return mapDesignInt->backgroundColor();
 }
 
-void VymModel::setMapBackgroundImage(
-    const QString &fn) // FIXME-3 missing savestate, move to ME
+void VymModel::setBackgroundColor(QColor col)
 {
-    /*
-    QColor oldcol=mapEditor->getScene()->backgroundBrush().color();
-    saveState(
-    selection,
-    QString ("setMapBackgroundImage (%1)").arg(oldcol.name()),
-    selection,
-    QString ("setMapBackgroundImage (%1)").arg(col.name()),
-    QString("Set background color of map to %1").arg(col.name()));
-    */
-    QBrush brush;
-    brush.setTextureImage(QImage(fn));
-    mapEditor->getScene()->setBackgroundBrush(brush);
+    saveStateBeginScript("Set background color");   // Save background image in script
+
+    if (hasBackgroundImage())
+        unsetBackgroundImage();
+
+    QString uc = QString("map.setBackgroundColor(\"%1\");").arg(mapDesignInt->backgroundColor().name());
+    QString rc = QString("map.setBackgroundColor(\"%1\");").arg(col.name());
+    QString com = QString("Set background color of map to %1").arg(col.name());
+    logAction(rc, com, __func__);
+    saveState(uc, rc, com);
+
+    saveStateEndScript();
+
+    mapDesignInt->setBackgroundColor(col);  // Used for backroundRole in TreeModel::data()
+
+    vymView->updateColors();
 }
 
-void VymModel::selectMapBackgroundColor()
+bool VymModel::loadBackgroundImage( const QString &imagePath)
 {
-    QColor col = QColorDialog::getColor(
-        mapEditor->getScene()->backgroundBrush().color(), NULL);
-    if (!col.isValid())
-        return;
-    setMapBackgroundColor(col);
-}
+    // FIXME-4 maybe also use: view.setCacheMode(QGraphicsView::CacheBackground);
 
-void VymModel::setMapBackgroundColor(QColor col)
-{
-    QColor oldcol = mapEditor->getScene()->backgroundBrush().color();
-    saveState(QString("setMapBackgroundColor (\"%1\")").arg(oldcol.name()),
-              QString("setMapBackgroundColor (\"%1\")").arg(col.name()),
-              QString("Set background color of map to %1").arg(col.name()));
-    backgroundColor = col;  // Used for backroundRole in TreeModel::data()
-    vymView->setBackgroundColor(backgroundColor);
-}
+    if (!saveStateBlocked) {
+        QString uc, rc;
+        
+        QString comment = QString("Load background image: \"%1\"").arg(imagePath);
 
-QColor VymModel::getMapBackgroundColor() // FIXME-4 move to ME
-{
-    return mapEditor->getScene()->backgroundBrush().color();
-}
+        logAction(rc, comment, __func__);
 
-QFont VymModel::getMapDefaultFont() { return defaultFont; }
+        saveStateBeginScript(comment);  // load BG img, save previous img if used
 
-void VymModel::setMapDefaultFont(const QFont &f) { defaultFont = f; }
+        bool saveOldImage = false;
 
-LinkableMapObj::ColorHint VymModel::getMapLinkColorHint() // FIXME-4 move to ME
-{
-    return linkcolorhint;
-}
+        QString oldImagePath = "images/background-image-old.png";
+        QString newImagePath = "images/background-image-new.png";
 
-QColor VymModel::getMapDefLinkColor() // FIXME-4 move to ME
-{
-    return defLinkColor;
-}
+        if (hasBackgroundImage()) {
+            saveOldImage = true;
+            uc = QString("map.loadBackgroundImage(\"HISTORY_PATH/%1\");").arg(oldImagePath);
+        } else
+            uc = QString("map.unsetBackgroundImage();");
 
-void VymModel::setMapDefXLinkPen(const QPen &p) // FIXME-4 move to ME
-{
-    defXLinkPen = p;
-}
+        QFile newImage (imagePath);
+        if (!newImage.exists()) {
+            qWarning() << __FUNCTION__ << " Image to load as background does not exist: " << imagePath;
+            return false;
+        }
 
-QPen VymModel::getMapDefXLinkPen() // FIXME-4 move to ME
-{
-    return defXLinkPen;
-}
+        rc = QString("map.loadBackgroundImage(\"HISTORY_PATH/%1\");").arg(newImagePath);
 
-void VymModel::setMapDefXLinkStyleBegin(const QString &s)
-{
-    defXLinkStyleBegin = s;
-}
-
-QString VymModel::getMapDefXLinkStyleBegin() { return defXLinkStyleBegin; }
-
-void VymModel::setMapDefXLinkStyleEnd(const QString &s)
-{
-    defXLinkStyleEnd = s;
-}
-
-QString VymModel::getMapDefXLinkStyleEnd() { return defXLinkStyleEnd; }
-
-void VymModel::move(const double &x, const double &y)
-{
-    MapItem *seli = (MapItem *)getSelectedItem();
-    if (seli &&
-        (seli->isBranchLikeType() || seli->getType() == TreeItem::Image)) {
-        LinkableMapObj *lmo = seli->getLMO();
-        if (lmo) {
-            QPointF ap(lmo->getAbsPos());
-            QPointF to(x, y);
-            if (ap != to) {
-                QString ps = qpointFToString(ap);
-                QString s = getSelectString(seli);
-                saveState(
-                    s, "move " + ps, s, "move " + qpointFToString(to),
-                    QString("Move %1 to %2").arg(getObjectName(seli)).arg(ps));
-                lmo->move(x, y);
-                reposition();
-                emitSelectionChanged();
+        QString historyPath = saveState(uc, rc, comment, nullptr, nullptr, true);
+        if (saveOldImage) {
+            if (!mapDesignInt->saveBackgroundImage(historyPath + oldImagePath)) {
+                qWarning() << __FUNCTION__ << " Failed to save existing background image to: " << historyPath + oldImagePath;
+                return false;   // FIXME-4 For all aborts, drop last history step...
             }
         }
+
+        // Copy new image to historyPath and (if previously) used also old image
+        if (!newImage.copy(historyPath + newImagePath)) {
+            qWarning() << __FUNCTION__ << " failed to copy new background image to " << historyPath + newImagePath;
+            return false;
+        }
+        
+        setBackgroundImageName(basename(imagePath));
+
+        saveStateEndScript();
     }
+
+    if (mapDesignInt->loadBackgroundImage(imagePath)) {
+        vymView->updateColors();
+        return true;
+    }
+
+    qWarning() << __FUNCTION__ << " failed to load new background image from " << imagePath;
+
+    return false;
 }
 
-void VymModel::moveRel(const double &x, const double &y)
+void VymModel::setBackgroundImageName( const QString &newName)
 {
-    MapItem *seli = (MapItem *)getSelectedItem();
-    if (seli &&
-        (seli->isBranchLikeType() || seli->getType() == TreeItem::Image)) {
-        LinkableMapObj *lmo = seli->getLMO();
-        if (lmo) {
-            QPointF rp(lmo->getRelPos());
-            QPointF to(x, y);
-            if (rp != to) {
-                QString ps = qpointFToString(lmo->getRelPos());
-                QString s = getSelectString(seli);
-                saveState(s, "moveRel " + ps, s,
-                          "moveRel " + qpointFToString(to),
-                          QString("Move %1 to relative position %2")
-                              .arg(getObjectName(seli))
-                              .arg(ps));
-                ((OrnamentedObj *)lmo)->move2RelPos(x, y);
-                reposition();
-                lmo->updateLinkGeometry();
-                emitSelectionChanged();
+    QString oldName = mapDesignInt->backgroundImageName();
+
+    QString uc = QString("map.setBackgroundImageName(\"%1\");").arg(oldName);
+    QString rc = QString("map.setBackgroundImageName(\"%1\");").arg(newName);
+    QString com = QString("Set name of background image to \"%1\"").arg(newName);
+    logAction(rc, com, __func__);
+    saveState(uc, rc, com);
+    mapDesignInt->setBackgroundImageName(newName);
+}
+
+void VymModel::unsetBackgroundImage()
+{
+    if (mapDesignInt->hasBackgroundImage()) {
+        if (!saveStateBlocked) {
+            QString uc, rc, com;
+
+            QString oldImagePath = "images/background-image-old.png";
+
+            uc = QString("map.loadBackgroundImage(\"HISTORY_PATH/%1\");").arg(oldImagePath);
+            rc = QString("map.unsetBackgroundImage();");
+            com = QString("Unset background image");
+            logAction(rc, com, __func__);
+
+            QString historyPath = saveState(uc, rc, com, nullptr, nullptr, true);
+            if (!mapDesignInt->saveBackgroundImage(historyPath + oldImagePath)) {
+                logWarning(" Failed to save existing background image to: " + historyPath + oldImagePath, __func__);
+                return;   // FIXME-4 For all aborts, drop last history step...
             }
         }
+
+        mapDesignInt->unsetBackgroundImage();
+        vymView->updateColors();
     }
 }
 
-void VymModel::animate()
+bool VymModel::hasBackgroundImage()
 {
-    animationTimer->stop();
-    BranchObj *bo;
-    int i = 0;
-    while (i < animObjList.size()) {
-        bo = (BranchObj *)animObjList.at(i);
-        if (!bo->animate()) {
-            if (i >= 0) {
-                animObjList.removeAt(i);
-                i--;
-            }
-        }
-        bo->reposition();
-        i++;
-    }
-    emitSelectionChanged();
-
-    if (!animObjList.isEmpty())
-        animationTimer->start(animationInterval);
+    return mapDesignInt->hasBackgroundImage();
 }
 
-void VymModel::startAnimation(BranchObj *bo, const QPointF &v)
+QString VymModel::backgroundImageName()
 {
-    if (!bo)
-        return;
+    return mapDesignInt->backgroundImageName();
+}
 
-    if (bo->getUseRelPos())
-        startAnimation(bo, bo->getRelPos(), bo->getRelPos() + v);
+void VymModel::setDefXLinkPen(const QPen &p)
+{
+    mapDesignInt->setDefXLinkPen(p);
+}
+
+void VymModel::setDefXLinkStyleBegin(const QString &s)
+{
+    mapDesignInt->setDefXLinkStyleBegin(s);
+}
+
+void VymModel::setDefXLinkStyleEnd(const QString &s)
+{
+    mapDesignInt->setDefXLinkStyleEnd(s);
+}
+
+void VymModel::setPos(const QPointF &pos_new, TreeItem *selti)
+{
+    QList<TreeItem *> selItems;
+    if (selti)
+        selItems.append(selti);
     else
-        startAnimation(bo, bo->getAbsPos(), bo->getAbsPos() + v);
-}
+        selItems = getSelectedItems();
 
-void VymModel::startAnimation(BranchObj *bo, const QPointF &start,
-                              const QPointF &dest)
-{
-    if (start == dest)
-        return;
-    if (bo && bo->getTreeItem()->depth() >= 0) {
-        AnimPoint ap;
-        ap.setStart(start);
-        ap.setDest(dest);
-        ap.setTicks(animationTicks);
-        ap.setAnimated(true);
-        bo->setAnimation(ap);
-        if (!animObjList.contains(bo))
-            animObjList.append(bo);
-        animationTimer->setSingleShot(true);
-        animationTimer->start(animationInterval);
+    QString com = "Move items (non-interactive";
+    QString uc, rc, itemVar;
+    foreach (TreeItem *ti, selItems) {
+        if (ti->hasTypeBranch() || ti->hasTypeImage())
+        {
+            Container *c = ((MapItem*)ti)->getContainer();
+            QString pos_new_str = toS(pos_new);
+
+            if (ti->hasTypeBranch())
+                itemVar = setBranchVar((BranchItem*)ti) + "b.";
+            else 
+                itemVar = setImageVar((ImageItem*)ti) + "i.";
+            uc += QString("%1.setPos%2;").arg(itemVar, toS(c->getOriginalPos(), 5));
+            rc += QString("%1.setPos%2;").arg(itemVar, toS(c->pos(), 5));
+            c->setPos(pos_new);
+        }
     }
-}
-
-void VymModel::stopAnimation(MapObj *mo)
-{
-    int i = animObjList.indexOf(mo);
-    if (i >= 0)
-        animObjList.removeAt(i);
-}
-
-void VymModel::stopAllAnimation()
-{
-    BranchObj *bo;
-    int i = 0;
-    while (i < animObjList.size()) {
-        bo = (BranchObj *)animObjList.at(i);
-        bo->stopAnimation();
-        bo->requestReposition();
-        i++;
-    }
+    logAction(rc, com, __func__);
+    saveState(uc, rc); 
     reposition();
 }
 
@@ -5373,10 +7197,10 @@ void VymModel::newServer()
     sendCounter = 0;
     tcpServer = new QTcpServer(this);
     if (!tcpServer->listen(QHostAddress::Any, port)) {
-        QMessageBox::critical(NULL, "vym server",
+        QMessageBox::critical(nullptr, "vym server",
                               QString("Unable to start the server: %1.")
                                   .arg(tcpServer->errorString()));
-        // FIXME-3 needed? we are no widget any longer... close();
+        // FIXME needed? we are no widget any longer... close();
         return;
     }
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newClient()));
@@ -5445,7 +7269,7 @@ void VymModel::sendData(const QString &s)
     }
 }
 
-void VymModel::readData()
+void VymModel::readData()   // FIXME-5 not used currently
 {
     while (clientSocket->bytesAvailable() >= (int)sizeof(quint16)) {
         if (debug)
@@ -5466,7 +7290,7 @@ void VymModel::readData()
             qDebug() << "VymModel::readData  command=" << qPrintable(t);
         // bool noErr;
         // QString errMsg;
-        // parseAtom (t,noErr,errMsg);    //FIXME-4 needs rework using scripts
+        // parseAtom (t,noErr,errMsg);
     }
     return;
 }
@@ -5477,19 +7301,19 @@ void VymModel::displayNetworkError(QAbstractSocket::SocketError socketError)
     case QAbstractSocket::RemoteHostClosedError:
         break;
     case QAbstractSocket::HostNotFoundError:
-        QMessageBox::information(NULL, vymName + " Network client",
+        QMessageBox::information(nullptr, vymName + " Network client",
                                  "The host was not found. Please check the "
                                  "host name and port settings.");
         break;
     case QAbstractSocket::ConnectionRefusedError:
-        QMessageBox::information(NULL, vymName + " Network client",
+        QMessageBox::information(nullptr, vymName + " Network client",
                                  "The connection was refused by the peer. "
                                  "Make sure the fortune server is running, "
                                  "and check that the host name and port "
                                  "settings are correct.");
         break;
     default:
-        QMessageBox::information(NULL, vymName + " Network client",
+        QMessageBox::information(nullptr, vymName + " Network client",
                                  QString("The following error occurred: %1.")
                                      .arg(clientSocket->errorString()));
     }
@@ -5500,16 +7324,15 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     if (!bi)
         bi = getSelectedBranch();
     if (!bi) {
-        qWarning("VM::download bi==NULL");
+        qWarning("VM::download bi==nullptr");
         return;
     }
 
-    // FIXME-3 download img to tmpfile and delete after running script in
-    // mainWindow
+    // FIXME-4 delete tmp file of image download after running script
     QString script;
-    script += QString("m = vym.currentMap();m.selectID(\"%1\");")
+    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")
                   .arg(bi->getUuid().toString());
-    script += QString("m.loadImage(\"$TMPFILE\");");
+    script += QString("b.loadImage(\"$TMPFILE\");");
 
     DownloadAgent *agent = new DownloadAgent(url);
     agent->setFinishedAction(this, script);
@@ -5518,61 +7341,44 @@ void VymModel::downloadImage(const QUrl &url, BranchItem *bi)
     QTimer::singleShot(0, agent, SLOT(execute()));
 }
 
-void VymModel::selectMapSelectionColor()    // FIXME-2 move out of VymModel, consider Pen/Brush
-{
-    QColor col = QColorDialog::getColor(defLinkColor, NULL);
-    setSelectionPenColor(col);
-    setSelectionBrushColor(col);
-}
-
-void VymModel::emitSelectionChanged(const QItemSelection &newsel)
-{
-    emit(selectionChanged(newsel,
-                          newsel)); // needed e.g. to update geometry in editor
-    sendSelection();
-}
-
-void VymModel::emitSelectionChanged()
-{
-    QItemSelection newsel = selModel->selection();
-    emitSelectionChanged(newsel);
-}
-
 void VymModel::setSelectionPenColor(QColor col)
 {
     if (!col.isValid())
         return;
 
-    QPen selPen = mapEditor->getSelectionPen();
-    saveState(QString("setSelectionPenColor (\"%1\")")
-                  .arg(selPen.color().name()),
-              QString("setSelectionPenColor (\"%1\")").arg(col.name()),
-              QString("Set pen color of selection box to %1").arg(col.name()));
+    QPen selPen = mapDesignInt->selectionPen();
+    QString uc = QString("map.setSelectionPenColor (\"%1\");").arg(selPen.color().name());
+    QString rc = QString("map.setSelectionPenColor (\"%1\");").arg(col.name());
+    QString com = QString("Set pen color of selection box to %1").arg(col.name());
+    logAction(rc, com, __func__);
+    saveState(uc, rc, com);
 
     selPen.setColor(col);
-    mapEditor->setSelectionPen(selPen);
+    mapDesignInt->setSelectionPen(selPen);
+    vymView->updateColors();
 }
 
 QColor VymModel::getSelectionPenColor() {
-    return mapEditor->getSelectionPen().color();
+    return mapDesignInt->selectionPen().color();
 }
 
 void VymModel::setSelectionPenWidth(qreal w)
 {
-    QPen selPen = mapEditor->getSelectionPen();
+    QPen selPen = mapDesignInt->selectionPen();
     
-    saveState(QString("setSelectionPenWidth (\"%1\")")
-                  .arg(mapEditor->getSelectionPen().width()),
-              QString("setSelectionPenWidth (\"%1\")").arg(w),
-              QString("Set pen width of selection box to %1").arg(w));
+    QString uc = QString("map.setSelectionPenWidth (\"%1\");").arg(mapDesignInt->selectionPen().width());
+    QString rc = QString("map.setSelectionPenWidth (\"%1\");").arg(w);
+    QString com = QString("Set pen width of selection box to %1").arg(w);
+    logAction(rc, com, __func__);
+    saveState(uc, rc, com);
 
     selPen.setWidth(w);
-    mapEditor->setSelectionPen(selPen);
-    //vymView->setSelectionColor(col);
+    mapDesignInt->setSelectionPen(selPen);
+    vymView->updateColors();
 }
 
 qreal VymModel::getSelectionPenWidth() {
-    return mapEditor->getSelectionPen().width();
+    return mapDesignInt->selectionPen().width();
 }
 
 void VymModel::setSelectionBrushColor(QColor col)
@@ -5580,108 +7386,46 @@ void VymModel::setSelectionBrushColor(QColor col)
     if (!col.isValid())
         return;
 
-    QBrush selBrush = mapEditor->getSelectionBrush();
-    saveState(QString("setSelectionBrushColor (\"%1\")")
-                  .arg(selBrush.color().name()),
-              QString("setSelectionBrushColor (\"%1\")").arg(col.name()),
-              QString("Set Brush color of selection box to %1").arg(col.name()));
+    QBrush selBrush = mapDesignInt->selectionBrush();
+    QString uc = QString("map.setSelectionBrushColor (\"%1\");").arg(selBrush.color().name());
+    QString rc = QString("map.setSelectionBrushColor (\"%1\");").arg(col.name());
+    QString com = QString("Set Brush color of selection box to %1").arg(col.name());
+    logAction(rc, com, __func__);
+    saveState(uc, rc, com);
 
     selBrush.setColor(col);
-    vymView->setSelectionBrush(selBrush);
+    mapDesignInt->setSelectionBrush(selBrush);
+    vymView->updateColors();
 }
 
 QColor VymModel::getSelectionBrushColor() {
-    return mapEditor->getSelectionBrush().color();
-}
-
-bool VymModel::initIterator(const QString &iname, bool deepLevelsFirst)
-{
-    Q_UNUSED(deepLevelsFirst);
-
-    // Remove existing iterators first
-    selIterCur.remove(iname);
-    selIterPrev.remove(iname);
-    selIterStart.remove(iname);
-    selIterActive.remove(iname);
-
-    QList<BranchItem *> selbis;
-    selbis = getSelectedBranches();
-    if (selbis.count() == 1) {
-        BranchItem *prev = NULL;
-        BranchItem *cur = NULL;
-        nextBranch(cur, prev, false, selbis.first());
-        if (cur) {
-            selIterCur.insert(iname, cur->getUuid());
-            selIterPrev.insert(iname, prev->getUuid());
-            selIterStart.insert(iname, selbis.first()->getUuid());
-            selIterActive.insert(iname, false);
-            // qDebug() << "Created iterator " << iname;
-            return true;
-        }
-    }
-    return false;
-}
-
-bool VymModel::nextIterator(const QString &iname)
-{
-    if (selIterCur.keys().indexOf(iname) < 0) {
-        qWarning()
-            << QString("VM::nextIterator couldn't find %1 in hash of iterators")
-                   .arg(iname);
-        return false;
-    }
-
-    BranchItem *cur = (BranchItem *)(findUuid(selIterCur.value(iname)));
-    if (!cur) {
-        qWarning() << "VM::nextIterator couldn't find cur" << selIterCur;
-        return false;
-    }
-
-    qDebug() << "  " << iname << "selecting " << cur->getHeadingPlain();
-    select(cur);
-
-    if (!selIterActive.value(iname)) {
-        // Select for the first time
-        select(cur);
-        selIterActive[iname] = true;
-        return true;
-    }
-
-    BranchItem *prev = (BranchItem *)(findUuid(selIterPrev.value(iname)));
-    BranchItem *start = (BranchItem *)(findUuid(selIterStart.value(iname)));
-    if (!prev)
-        qWarning() << "VM::nextIterator couldn't find prev"
-                   << selIterPrev.value(iname);
-    if (!start)
-        qWarning() << "VM::nextIterator couldn't find start "
-                   << selIterStart.value(iname);
-
-    if (cur && prev && start) {
-        nextBranch(cur, prev, false, start);
-        if (cur) {
-            selIterCur[iname] = cur->getUuid();
-            selIterPrev[iname] = prev->getUuid();
-            select(cur);
-            return true;
-        }
-        else
-            return false;
-    }
-    return false;
+    return mapDesignInt->selectionBrush().color();
 }
 
 void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)
 {
-    hidemode = mode;
+    if (hideMode == mode)
+        return;
+
+    hideMode = mode;
     for (int i = 0; i < rootItem->branchCount(); i++)
-        rootItem->getBranchNum(i)->setHideTmp(mode);
+        rootItem->getBranchNum(i)->setHideMode(mode);
     reposition();
     if (mode == TreeItem::HideExport)
         unselectAll();
     else
         reselect();
 
+    reposition();
+
     qApp->processEvents();
+}
+
+void VymModel::toggleHideTmpMode() {
+    if (hideMode == TreeItem::HideNone)
+        setHideTmpMode(TreeItem::HideExport);
+    else
+        setHideTmpMode(TreeItem::HideNone);
 }
 
 //////////////////////////////////////////////
@@ -5690,59 +7434,106 @@ void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)
 
 void VymModel::updateSelection(QItemSelection newsel, QItemSelection dsel)
 {
+    // Set selection status in objects
+    // Temporary unscroll or rescroll as required
+
+    //qDebug() << "VM::updateSel  newsel=" << newsel << " dsel=" << dsel;
     QModelIndex ix;
     MapItem *mi;
     BranchItem *bi;
     bool do_reposition = false;
+    // Unselect objects (if not part of selection)
     foreach (ix, dsel.indexes()) {
         mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType())
-            do_reposition =
-                do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
-        if (mi->getType() == TreeItem::XLink) {
-            Link *li = ((XLinkItem *)mi)->getLink();
-            XLinkObj *xlo = li->getXLinkObj();
-            if (xlo)
-                xlo->setSelection(XLinkObj::Unselected);
 
-            do_reposition =
-                do_reposition || li->getBeginBranch()->resetTmpUnscroll();
-            do_reposition =
-                do_reposition || li->getEndBranch()->resetTmpUnscroll();
+        if (mi->hasTypeBranch() || mi->getType() == TreeItem::Image || mi->getType() == TreeItem::XLinkItemType) {
+            if (mi->hasTypeBranch()) {
+                BranchContainer *bc = ((BranchItem*)mi)->getBranchContainer();
+                bc->unselect();
+                bc->updateVisibility();
+                do_reposition =
+                    do_reposition || ((BranchItem *)mi)->resetTmpUnscroll();
+            }
+            if (mi->hasTypeImage()) {
+                ImageContainer *ic = ((ImageItem*)mi)->getImageContainer();
+                ic->unselect();
+                ic->updateVisibility();
+            }
+            if (mi->hasTypeXLink()) {
+                ((XLinkItem*)mi)->getXLinkObj()->unselect();
+                XLink *li = ((XLinkItem *)mi)->getXLink();
+
+                do_reposition =
+                    do_reposition || li->getBeginBranch()->resetTmpUnscroll();
+                do_reposition =
+                    do_reposition || li->getEndBranch()->resetTmpUnscroll();
+            }
         }
     }
 
     foreach (ix, newsel.indexes()) {
         mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType()) {
+        if (mi->hasTypeBranch()) {
             bi = (BranchItem *)mi;
+            BranchContainer *bc = bi->getBranchContainer();
+            bc->select();
+            bc->updateVisibility();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
             }
         }
-        if (mi->getType() == TreeItem::XLink) {
-            ((XLinkItem *)mi)->setSelection();
+        if (mi->hasTypeImage()) {
+            ImageContainer *ic = ((ImageItem*)mi)->getImageContainer();
+
+            // Make sure that images have correct upLinkPosSelf_sp
+            // (Could be off after loading and IF no sibling branches are following)
+            ic->updateUpLink();
+
+            ic->select();
+            ic->updateVisibility();
+        }
+
+        if (mi->getType() == TreeItem::XLinkItemType) {
+            XLinkItem *xli = (XLinkItem*)mi;
+            xli->setSelectionType();
+            xli->getXLinkObj()->select(
+                mapDesign()->selectionPen(),
+                mapDesign()->selectionBrush());
 
             // begin/end branches need to be tmp unscrolled
-            Link *li = ((XLinkItem *)mi)->getLink();
-            bi = li->getBeginBranch();
+            XLink *xl = ((XLinkItem *)mi)->getXLink();
+            bi = xl->getBeginBranch();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
             }
-            bi = li->getEndBranch();
+            bi = xl->getEndBranch();
             if (bi->hasScrolledParent()) {
                 bi->tmpUnscroll();
                 do_reposition = true;
             }
         }
     }
+
+    // Show count of multiple selected items
+    int selCount = selModel->selection().indexes().count();
+    if (selCount > 1)
+        mainWindow->statusMessage(
+            tr("%1 items selected","Status message when selecting multiple items").arg(selCount));
+    else
+        mainWindow->statusMessage("");
+
     if (do_reposition)
         reposition();
 }
 
 void VymModel::setSelectionModel(QItemSelectionModel *sm) { selModel = sm; }
+
+int VymModel::selectedItemsCount()
+{
+    return selModel->selectedIndexes().count();
+}
 
 QItemSelectionModel *VymModel::getSelectionModel() { return selModel; }
 
@@ -5750,46 +7541,61 @@ void VymModel::setSelectionBlocked(bool b) { selectionBlocked = b; }
 
 bool VymModel::isSelectionBlocked() { return selectionBlocked; }
 
-bool VymModel::select(const QString &s) // FIXME-2 Does not support multiple selections yet
+bool VymModel::select(const QString &s)
 {
     if (s.isEmpty())
         return false;
-    TreeItem *ti = findBySelectString(s);
-    if (ti)
-        return select(index(ti));
-    return false;
+
+    QStringList list = s.split(";");
+
+    unselectAll();
+    foreach (QString t, list) {
+        TreeItem *ti = findBySelectString(t);
+        if (ti)
+            selectToggle(ti);
+        else
+            return false;
+    }
+    return true;
 }
 
-bool VymModel::selectID(const QString &s)
+bool VymModel::selectUids(QStringList  uids)
 {
-    if (s.isEmpty())
+    if (uids.isEmpty())
         return false;
-    TreeItem *ti = findUuid(QUuid(s));
-    if (ti)
-        return select(index(ti));
-    return false;
-}
 
-bool VymModel::select(LinkableMapObj *lmo)
-{
-    QItemSelection oldsel = selModel->selection();
-
-    if (lmo)
-        return select(lmo->getTreeItem());
-    else
-        return false;
+    unselectAll();
+    foreach (auto uid, uids) {
+        TreeItem *ti = findUuid(QUuid(uid));
+        if (!ti)
+            return false;
+        selectToggle(ti);
+    }
+    return true;
 }
 
 bool VymModel::selectToggle(TreeItem *ti)
 {
     if (ti) {
         selModel->select(index(ti), QItemSelectionModel::Toggle);
-        // appendSelectionToHistory();	// FIXME-4 selection history not implemented yet
+        // appendSelectionToHistory();	// FIXME-3 selection history not implemented yet
         // for multiselections
         lastToggledUuid = ti->getUuid();
         return true;
     }
     return false;
+}
+
+bool VymModel::selectToggle(const uint &id)
+{
+    TreeItem *ti = findID(id);
+    return selectToggle(ti);
+}
+
+bool VymModel::selectToggle(const QUuid &uid)
+{
+    TreeItem *ti = findUuid(uid);
+    return selectToggle(ti);
 }
 
 bool VymModel::selectToggle(const QString &selectString)
@@ -5806,11 +7612,17 @@ bool VymModel::select(TreeItem *ti)
         return false;
 }
 
+bool VymModel::select(const QUuid &uuid)
+{
+    TreeItem *ti = findUuid(uuid);
+    return select(ti);
+}
+
 bool VymModel::select(const QModelIndex &index)
 {
     if (index.isValid()) {
         TreeItem *ti = getItem(index);
-        if (ti->isBranchLikeType()) {
+        if (ti->hasTypeBranch()) {
             if (((BranchItem *)ti)->tmpUnscroll())
                 reposition();
         }
@@ -5821,14 +7633,23 @@ bool VymModel::select(const QModelIndex &index)
     return false;
 }
 
-void VymModel::unselectAll() { unselect(selModel->selection()); }
-
-void VymModel::unselect(QItemSelection desel)
+void VymModel::select(QList <BranchItem*> selbis)
 {
-    if (!desel.isEmpty()) {
-        lastSelectString = getSelectString();
-        selModel->clearSelection();
-    }
+    unselectAll();
+    foreach (BranchItem* selbi, selbis)
+        selectToggle(selbi);
+}
+
+void VymModel::select(QList <TreeItem*> tis)
+{
+    unselectAll();
+    foreach (TreeItem* ti, tis)
+        selectToggle(ti);
+}
+
+void VymModel::unselectAll() {
+    lastSelectString = getSelectString();
+    selModel->clearSelection();
 }
 
 bool VymModel::reselect()
@@ -5897,13 +7718,13 @@ void VymModel::resetSelectionHistory()
     appendSelectionToHistory();
 }
 
-void VymModel::appendSelectionToHistory() // FIXME-4 history unable to cope with multiple
+void VymModel::appendSelectionToHistory() // FIXME-3 history unable to cope with multiple
                                           // selections
 {
     uint id = 0;
     TreeItem *ti = getSelectedItem();
     if (ti && !keepSelectionHistory) {
-        if (ti->isBranchLikeType())
+        if (ti->hasTypeBranch())
             ((BranchItem *)ti)->setLastSelectedBranch();
         id = ti->getID();
         selectionHistory.append(id);
@@ -5912,10 +7733,10 @@ void VymModel::appendSelectionToHistory() // FIXME-4 history unable to cope with
     }
 }
 
-void VymModel::emitShowSelection(bool scaled)
+void VymModel::emitShowSelection(bool scaled, bool rotated)
 {
     if (!repositionBlocked)
-        emit(showSelection(scaled));
+        emit showSelection(scaled, rotated);
 }
 
 TreeItem* VymModel::lastToggledItem()
@@ -5926,18 +7747,19 @@ TreeItem* VymModel::lastToggledItem()
 void VymModel::emitNoteChanged(TreeItem *ti)
 {
     QModelIndex ix = index(ti);
-    emit(noteChanged(ix));
+    emit noteChanged(ix);
     mainWindow->updateNoteEditor(ti);
 }
 
 void VymModel::emitDataChanged(TreeItem *ti)
 {
-    QModelIndex ix = index(ti);
-    emit(dataChanged(ix, ix));
-    emitSelectionChanged();
-    if (!repositionBlocked) {
+    //qDebug() << "VM::emitDataChanged ti=" << ti;
+    if (!dataChangedBlocked && ti) {
+        QModelIndex ix = index(ti);
+        emit dataChanged(ix, ix);
+
         // Update taskmodel and recalc priorities there
-        if (ti->isBranchLikeType() && ((BranchItem *)ti)->getTask()) {
+        if (ti->hasTypeBranch() && ((BranchItem *)ti)->getTask()) {
             taskModel->emitDataChanged(((BranchItem *)ti)->getTask());
             taskModel->recalcPriorities();
         }
@@ -5947,21 +7769,21 @@ void VymModel::emitDataChanged(TreeItem *ti)
 void VymModel::emitUpdateQueries()
 {
     // Used to tell MainWindow to update query results
-    if (repositionBlocked)
-        return;
-    emit(updateQueries(this));
+    if (repositionBlocked) return;
+
+    emit updateQueries(this);
 }
 void VymModel::emitUpdateLayout()
 {
     if (settings.value("/mainwindow/autoLayout/use", "true") == "true")
-        emit(updateLayout());
+        emit updateLayout();
 }
 
-bool VymModel::selectFirstBranch()
+bool VymModel::selectFirstBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        TreeItem *par = ti->parent();
+    BranchItem* selbi = getSelectedBranch(bi);
+    if (selbi) {
+        TreeItem *par = selbi->parent();
         if (par) {
             TreeItem *ti2 = par->getFirstBranch();
             if (ti2)
@@ -5971,38 +7793,38 @@ bool VymModel::selectFirstBranch()
     return false;
 }
 
-bool VymModel::selectFirstChildBranch()
+bool VymModel::selectFirstChildBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        BranchItem *bi = ti->getFirstBranch();
-        if (bi)
-            return select(bi);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+        BranchItem *bi2 = selbi->getFirstBranch();
+        if (bi2)
+            return select(bi2);
     }
     return false;
 }
 
-bool VymModel::selectLastBranch()
+bool VymModel::selectLastBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        TreeItem *par = ti->parent();
+    BranchItem* selbi = getSelectedBranch(bi);
+    if (selbi) {
+        TreeItem *par = selbi->parent();
         if (par) {
-            TreeItem *ti2 = par->getLastBranch();
-            if (ti2)
-                return select(ti2);
+            BranchItem *bi2 = par->getLastBranch();
+            if (bi2)
+                return select(bi2);
         }
     }
     return false;
 }
 
-bool VymModel::selectLastChildBranch()
+bool VymModel::selectLastChildBranch(BranchItem *bi)
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        BranchItem *bi = ti->getLastBranch();
-        if (bi)
-            return select(bi);
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi) {
+        BranchItem *bi2 = selbi->getLastBranch();
+        if (bi2)
+            return select(bi2);
     }
     return false;
 }
@@ -6018,28 +7840,18 @@ bool VymModel::selectLastSelectedBranch()
     return false;
 }
 
-bool VymModel::selectLastImage()
+bool VymModel::selectLatestAdded()
 {
-    TreeItem *ti = getSelectedBranch();
-    if (ti) {
-        TreeItem *par = ti->parent();
-        if (par) {
-            TreeItem *ti2 = par->getLastImage();
-            if (ti2)
-                return select(ti2);
-        }
-    }
-    return false;
+    TreeItem *ti = findUuid(latestAddedItemUuid);
+        return select(ti);
 }
 
-bool VymModel::selectLatestAdded() { return select(latestAddedItem); }
-
-bool VymModel::selectParent()
+bool VymModel::selectParent(TreeItem *ti)
 {
-    TreeItem *ti = getSelectedItem();
+    TreeItem *selti = getSelectedItem(ti);
     TreeItem *par;
-    if (ti) {
-        par = ti->parent();
+    if (selti) {
+        par = selti->parent();
         if (par)
             return select(par);
     }
@@ -6055,57 +7867,62 @@ TreeItem::Type VymModel::selectionType()
         return TreeItem::Undefined;
 }
 
-LinkableMapObj *VymModel::getSelectedLMO()
+BranchItem *VymModel::getSelectedBranch(BranchItem *bi)
 {
-    QModelIndexList list = selModel->selectedIndexes();
-    if (list.count() == 1) {
-        TreeItem *ti = getItem(list.first());
-        TreeItem::Type type = ti->getType();
-        if (type == TreeItem::Branch || type == TreeItem::MapCenter ||
-            type == TreeItem::Image)
-            return ((MapItem *)ti)->getLMO();
+    if (bi) return bi;
+
+    // Return selected branch,
+    // if several are selected, return last selected
+    QList<BranchItem *> bis = getSelectedBranches();
+    if (bis.count() == 0) return nullptr;
+
+    return bis.last();
+}
+
+QList<BranchItem *> VymModel::getSelectedBranches(TreeItem *ti)
+{
+    // Return list of selected branches.
+    // If ti != nullptr and is branch, return only this one
+    QList<BranchItem *> selbis;
+
+    if (ti && ti->hasTypeBranch()) {
+        selbis << (BranchItem*)ti;
+        return selbis;
     }
-    return NULL;
-}
 
-BranchObj *VymModel::getSelectedBranchObj() // convenience function
-{
-    TreeItem *ti = getSelectedBranch();
-    if (ti)
-        return (BranchObj *)(((MapItem *)ti)->getLMO());
-    else
-        return NULL;
-}
-
-BranchItem *VymModel::getSelectedBranch()
-{
-    TreeItem *ti = getSelectedItem();
-    if (ti) {
-        TreeItem::Type type = ti->getType();
-        if (type == TreeItem::Branch || type == TreeItem::MapCenter)
-            return (BranchItem *)ti;
-    }
-    return NULL;
-}
-
-QList<BranchItem *> VymModel::getSelectedBranches()
-{
-    QList<BranchItem *> bis;
     foreach (TreeItem *ti, getSelectedItems()) {
-        TreeItem::Type type = ti->getType();
-        if (type == TreeItem::Branch || type == TreeItem::MapCenter)
-            bis.append((BranchItem *)ti);
+        if (ti->hasTypeBranch())
+            selbis.append((BranchItem *)ti);
     }
-    return bis;
+    return selbis;
 }
 
 ImageItem *VymModel::getSelectedImage()
 {
-    TreeItem *ti = getSelectedItem();
-    if (ti && ti->getType() == TreeItem::Image)
-        return (ImageItem *)ti;
-    else
-        return NULL;
+    // Return selected image,
+    // if several are selected, return last selected
+    QList<ImageItem *> iis = getSelectedImages();
+    if (iis.count() == 0) return nullptr;
+
+    return iis.last();
+}
+
+QList<ImageItem *> VymModel::getSelectedImages(TreeItem *ti)
+{
+    // Return list of selected images.
+    // If ii != nullptr, return only this one
+    QList<ImageItem *> iis;
+
+    if (ti && ti->hasTypeImage()) {
+        iis << (ImageItem*)ti;
+        return iis;
+    }
+
+    foreach (TreeItem *ti, getSelectedItems()) {
+        if (ti->hasTypeImage())
+            iis.append((ImageItem *)ti);
+    }
+    return iis;
 }
 
 Task *VymModel::getSelectedTask()
@@ -6114,24 +7931,27 @@ Task *VymModel::getSelectedTask()
     if (selbi)
         return selbi->getTask();
     else
-        return NULL;
+        return nullptr;
 }
 
-Link *VymModel::getSelectedXLink()
+XLink *VymModel::getSelectedXLink(XLink *xl)
 {
+    if (xl)
+        return xl;
+
     XLinkItem *xli = getSelectedXLinkItem();
     if (xli)
-        return xli->getLink();
-    return NULL;
+        return xli->getXLink();
+    return nullptr;
 }
 
 XLinkItem *VymModel::getSelectedXLinkItem()
 {
     TreeItem *ti = getSelectedItem();
-    if (ti && ti->getType() == TreeItem::XLink)
+    if (ti && ti->getType() == TreeItem::XLinkItemType)
         return (XLinkItem *)ti;
     else
-        return NULL;
+        return nullptr;
 }
 
 AttributeItem *VymModel::getSelectedAttribute()
@@ -6140,29 +7960,66 @@ AttributeItem *VymModel::getSelectedAttribute()
     if (ti && ti->getType() == TreeItem::Attribute)
         return (AttributeItem *)ti;
     else
-        return NULL;
+        return nullptr;
 }
 
-TreeItem *VymModel::getSelectedItem()
+TreeItem *VymModel::getSelectedItem(TreeItem *ti)
 {
+    if (ti) return ti;
+
     if (!selModel)
-        return NULL;
+        return nullptr;
     QModelIndexList list = selModel->selectedIndexes();
     if (list.count() == 1)
         return getItem(list.first());
     else
-        return NULL;
+        return nullptr;
 }
 
-QList<TreeItem *> VymModel::getSelectedItems()
+QList<TreeItem *> VymModel::getSelectedItems(TreeItem *ti)
 {
-    QList<TreeItem *> l;
+    QList<TreeItem *> seltis;
+    if (ti) {
+        seltis << ti;
+        return seltis;
+    }
+
     if (!selModel)
-        return l;
+        return seltis;
+
     QModelIndexList list = selModel->selectedIndexes();
     foreach (QModelIndex ix, list)
-        l.append(getItem(ix));
-    return l;
+        seltis.append(getItem(ix));
+    return seltis;
+}
+
+QList<TreeItem *> VymModel::getSelectedItemsReduced()
+{
+    // Remove items, whose have parents already in list
+
+    QList<TreeItem *> list = getSelectedItems();
+
+    if (list.isEmpty()) return list;
+
+    // Bubble sort items by depth first
+    for (int n = list.size(); n > 1; n--)
+        for (int i = 0; i < n - 1; i++)
+            if (list.at(i)->depth() > list.at(i + 1)->depth() )
+                list.swapItemsAt(i, i + 1);
+
+    // Remove items, which have parents which have smaller depth
+    // (closer to center)
+    int i = list.size() - 1;
+    while (i > 0) {
+        for (int j = 0; j < i; j++)
+            if (list.at(i)->isChildOf(list.at(j))) {
+                list.removeAt(i);
+                break;
+            }
+        i--;
+    }
+
+    return list;
 }
 
 QModelIndex VymModel::getSelectedIndex()
@@ -6174,9 +8031,9 @@ QModelIndex VymModel::getSelectedIndex()
         return QModelIndex();
 }
 
-QList<uint> VymModel::getSelectedIDs()
+QList<ulong> VymModel::getSelectedIDs()
 {
-    QList<uint> uids;
+    QList<ulong> uids;
     foreach (TreeItem *ti, getSelectedItems())
         uids.append(ti->getID());
     return uids;
@@ -6197,15 +8054,12 @@ bool VymModel::isSelected(TreeItem *ti)
 
 QString VymModel::getSelectString()
 {
-    return getSelectString(getSelectedItem());
-}
+    QStringList list;
+    QList <TreeItem*> seltis = getSelectedItems();
+    foreach (TreeItem* selti, seltis)
+        list << getSelectString(selti);
 
-QString VymModel::getSelectString(
-    LinkableMapObj *lmo) // only for convenience. Used in MapEditor
-{
-    if (!lmo)
-        return QString();
-    return getSelectString(lmo->getTreeItem());
+    return list.join(";");
 }
 
 QString VymModel::getSelectString(TreeItem *ti)
@@ -6226,7 +8080,7 @@ QString VymModel::getSelectString(TreeItem *ti)
     case TreeItem::Attribute:
         s = "ai:";
         break;
-    case TreeItem::XLink:
+    case TreeItem::XLinkItemType:
         s = "xl:";
         break;
     default:
@@ -6250,63 +8104,72 @@ QString VymModel::getSelectString(const uint &i)
     return getSelectString(findID(i));
 }
 
-void VymModel::setLatestAddedItem(TreeItem *ti) { latestAddedItem = ti; }
-
-TreeItem *VymModel::getLatestAddedItem() { return latestAddedItem; }
-
 SlideModel *VymModel::getSlideModel() { return slideModel; }
 
 int VymModel::slideCount() { return slideModel->count(); }
 
-SlideItem *VymModel::addSlide()
+SlideItem *VymModel::addSlide()     // FIXME-3 missing saveState
 {
     SlideItem *si = slideModel->getSelectedItem();
     if (si)
-        si = slideModel->addSlide(NULL, si->childNumber() + 1);
+        si = slideModel->addSlide(nullptr, si->row() + 1);
     else
         si = slideModel->addSlide();
 
     TreeItem *seli = getSelectedItem();
 
-    if (si && seli) {
-        QString inScript;
-        if (!loadStringFromDisk(vymBaseDir.path() +
-                                    "/macros/slideeditor-snapshot.vys",
-                                inScript)) {
-            qWarning() << "VymModel::addSlide couldn't load template for "
-                          "taking snapshot";
-            return NULL;
+    if (si) {
+        if (seli) {
+            QString inScript;
+            if (!loadStringFromDisk(vymBaseDir.path() +
+                                        "/macros/slideeditor-snapshot.vys",
+                                    inScript)) {
+                qWarning() << "VymModel::addSlide couldn't load template for "
+                              "taking snapshot";
+                return nullptr;
+            }
+
+            if (mapEditor) {
+                inScript.replace(
+                    "CURRENT_ZOOM",
+                    QString().setNum(mapEditor->zoomFactorTarget()));
+                inScript.replace("CURRENT_ANGLE",
+                                 QString().setNum(mapEditor->rotationTarget()));
+            }
+            inScript.replace("CURRENT_ID",
+                             "\"" + seli->getUuid().toString() + "\"");
+
+            si->setInScript(inScript);
+            slideModel->setData(slideModel->index(si), seli->headingPlain());
         }
 
-        inScript.replace(
-            "CURRENT_ZOOM",
-            QString().setNum(getMapEditor()->getZoomFactorTarget()));
-        inScript.replace("CURRENT_ANGLE",
-                         QString().setNum(getMapEditor()->getAngleTarget()));
-        inScript.replace("CURRENT_ID",
-                         "\"" + seli->getUuid().toString() + "\"");
-
-        si->setInScript(inScript);
-        slideModel->setData(slideModel->index(si), seli->getHeadingPlain());
+        /*
+        QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
+        int pos = si->row();
+        saveStateold(File::PartOfMap, getSelectString(),    // FIXME addAddSlide
+                  QString("removeSlide (%1)").arg(pos), getSelectString(),
+                  QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", nullptr,
+                  s);
+          */
+        QString com = "Add slide";
+        logAction("", com, __func__);
     }
-    QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
-    int pos = si->childNumber();
-    saveState(PartOfMap, getSelectString(),
-              QString("removeSlide (%1)").arg(pos), getSelectString(),
-              QString("addMapInsert (\"PATH\",%1)").arg(pos), "Add slide", NULL,
-              s);
     return si;
 }
 
-void VymModel::deleteSlide(SlideItem *si)
+void VymModel::deleteSlide(SlideItem *si)  // FIXME-3 missing saveState
 {
     if (si) {
+        /*
         QString s = "<vymmap>" + si->saveToDir() + "</vymmap>";
-        int pos = si->childNumber();
-        saveState(PartOfMap, getSelectString(),
+        int pos = si->row();
+        saveStateold(File::PartOfMap, getSelectString(),    // FIXME deleteAddSlide
                   QString("addMapInsert (\"PATH\",%1)").arg(pos),
                   getSelectString(), QString("removeSlide (%1)").arg(pos),
-                  "Remove slide", NULL, s);
+                  "Remove slide", nullptr, s);
+                  */
+        QString com = "Delete slide";
+        logAction("", com, __func__);
         slideModel->deleteSlide(si);
     }
 }
@@ -6321,24 +8184,27 @@ void VymModel::relinkSlide(SlideItem *si, int pos)
 
 bool VymModel::moveSlideDown(int n)
 {
-    SlideItem *si = NULL;
+    SlideItem *si = nullptr;
     if (n < 0) // default if called without parameters
     {
         si = slideModel->getSelectedItem();
         if (si)
-            n = si->childNumber();
+            n = si->row();
         else
             return false;
     }
     else
         si = slideModel->getSlide(n);
     if (si && n >= 0 && n < slideModel->count() - 1) {
+        QString uc = QString("map.moveSlideUp (%1);").arg(n + 1);
+        QString rc = QString("map.moveSlideDown (%1);").arg(n);
+        QString com = QString("Move slide %1 down").arg(n);
+        logAction(rc, com, __func__);
+
         blockSlideSelection = true;
         slideModel->relinkSlide(si, si->parent(), n + 1);
         blockSlideSelection = false;
-        saveState(getSelectString(), QString("moveSlideUp (%1)").arg(n + 1),
-                  getSelectString(), QString("moveSlideDown (%1)").arg(n),
-                  QString("Move slide %1 down").arg(n));
+        saveState(uc, rc, com);
         return true;
     }
     else
@@ -6347,24 +8213,26 @@ bool VymModel::moveSlideDown(int n)
 
 bool VymModel::moveSlideUp(int n)
 {
-    SlideItem *si = NULL;
+    SlideItem *si = nullptr;
     if (n < 0) // default if called without parameters
     {
         si = slideModel->getSelectedItem();
         if (si)
-            n = si->childNumber();
+            n = si->row();
         else
             return false;
     }
     else
         si = slideModel->getSlide(n);
     if (si && n > 0 && n < slideModel->count()) {
+        QString uc = QString("map.moveSlideDown (%1);").arg(n + 1);
+        QString rc = QString("map.moveSlideUp (%1);").arg(n);
+        QString com = QString("Move slide %1 up").arg(n);
+        logAction(rc, com, __func__);
         blockSlideSelection = true;
         slideModel->relinkSlide(si, si->parent(), n - 1);
         blockSlideSelection = false;
-        saveState(getSelectString(), QString("moveSlideDown (%1)").arg(n - 1),
-                  getSelectString(), QString("moveSlideUp (%1)").arg(n),
-                  QString("Move slide %1 up").arg(n));
+        saveState(uc, rc, com);
         return true;
     }
     else
@@ -6381,9 +8249,81 @@ void VymModel::updateSlideSelection(QItemSelection newsel, QItemSelection)
         QString inScript = si->getInScript();
 
         // show inScript in ScriptEditor
-        scriptEditor->setSlideScript(modelID, si->getID(), inScript);
+        scriptEditor->setSlideScript(modelIdInt, si->getID(), inScript);
 
         // Execute inScript
-        execute(inScript);
+        mainWindow->runScript(inScript);
     }
+}
+
+void VymModel::logDebug(const QString &comment, const QString &caller)
+{
+    QString place = QString("\"%1\"").arg(fileName);
+    if (!caller.isEmpty()) place += "  Called by: " + caller + "()";
+
+    QString log = QString("\n// %1 [Debug] %2\n// MapID: %3 Map: %4").arg(
+            QDateTime::currentDateTime().toString(Qt::ISODateWithMs),
+            comment,
+            QString::number(modelIdInt),
+            place);
+
+    if (debug)
+        std::cout << log.toStdString() << std::endl << std::flush;
+
+    if (!useActionLog) return;
+
+    appendStringToFile(actionLogPath, log);
+}
+
+void VymModel::logInfo(const QString &comment, const QString &caller)
+{
+    if (!useActionLog) return;
+
+    QString log = QString("\n// %1 [Info VymModel::%2 \"%3\"] %4").arg(
+            QDateTime::currentDateTime().toString(Qt::ISODateWithMs),
+            caller,
+            fileName,
+            comment
+//            QString::number(modelIdInt)
+    );
+
+    // std::cout << log.toStdString() << std::endl << std::flush;
+
+    appendStringToFile(actionLogPath, log);
+}
+
+void VymModel::logWarning(const QString &comment, const QString &caller)
+{
+    if (!useActionLog) return;
+
+    QString log = QString("\n// %1 [Warning VymModel::%2 \"%3\"] %4").arg(
+            QDateTime::currentDateTime().toString(Qt::ISODateWithMs),
+            caller,
+            fileName,
+            comment
+//            QString::number(modelIdInt)
+    );
+
+    std::cout << log.toStdString() << std::endl << std::flush;
+
+    appendStringToFile(actionLogPath, log);
+}
+
+void VymModel::logAction(const QString &command, const QString &comment, const QString &caller)
+{
+    QString place = QString("\"%1\"").arg(fileName);
+    if (!caller.isEmpty()) place += "  Called by: " + caller + "()";
+
+    QString log = QString("\n// %1 [Action] %2\n// MapID: %3 Map: %4").arg(
+            QDateTime::currentDateTime().toString(Qt::ISODateWithMs),
+            comment,
+            QString::number(modelIdInt),
+            place);
+
+    if (debug)
+        std::cout << log.toStdString() << std::endl << std::flush;
+
+    if (!useActionLog) return;
+
+    appendStringToFile(actionLogPath, log + "\n" + command + "\n");
 }

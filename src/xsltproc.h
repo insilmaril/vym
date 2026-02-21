@@ -12,10 +12,10 @@ class XSLTProc {
     ~XSLTProc();
     void addStringParam(const QString &, const QString &);
     void setOutputFile(const QString &);
-    void setXSLFile(const QString &);
-    void setInputFile(const QString &);
+    bool setXSLFile(const QString &);
+    bool setInputFile(const QString &);
     void addOutput(const QString &);
-    void process();
+    bool process();
 
   private:
     QStringList stringParamKey;

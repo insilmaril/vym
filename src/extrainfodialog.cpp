@@ -29,6 +29,8 @@ QString ExtraInfoDialog::getAuthor() { return ui.authorLE->text(); }
 
 void ExtraInfoDialog::setStats(const QString &s) { ui.statsTE->setText(s); }
 
+void ExtraInfoDialog::setMapVersion(const QString &s) { ui.fileVersionLE->setText(s); }
+
 void ExtraInfoDialog::setReadOnly(bool b)
 {
     readOnly = b;

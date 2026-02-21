@@ -1,7 +1,14 @@
 #include "export-ascii.h"
 
-#include "mainwindow.h"
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
+
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "misc.h"
+#include "task.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;
@@ -31,8 +38,8 @@ void ExportASCII::doExport()
     QString curIndent;
     QString dashIndent;
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
 
     int lastDepth = 0;
 
@@ -42,9 +49,9 @@ void ExportASCII::doExport()
     while (cur) {
         if (cur->getType() == TreeItem::Branch ||
             cur->getType() == TreeItem::MapCenter) {
-            if (!cur->hasHiddenExportParent()) {
+            if (!cur->hasHiddenParent()) {
                 // qDebug() << "ExportASCII::
-                // "<<curIndent.toStdString()<<cur->getHeadingPlain().toStdString();
+                // "<<curIndent.toStdString()<<cur->headingPlain().toStdString();
 
                 // Insert newline after previous list
                 //if (cur->depth() < lastDepth)
@@ -61,7 +68,7 @@ void ExportASCII::doExport()
                     if (!out.isEmpty())
                         // Add extra line breaks for 2nd, 3rd, ... MapCenter
                         ensureEmptyLines(out, 2);
-                    out += underline(cur->getHeadingPlain(), QString("="));
+                    out += underline(cur->headingPlain(), QString("="));
 
                     // Empty line below "====" of MapCenters
                     ensureEmptyLines(out, 1);
@@ -70,7 +77,7 @@ void ExportASCII::doExport()
                 case 1:
                     ensureNewLine(out);
                     out += (underline(getSectionString(cur) +
-                        cur->getHeadingPlain(),
+                        cur->headingPlain(),
                         QString("-")));
                     // Empty line below "----" of MainBranches
                     ensureEmptyLines(out, 1);
@@ -78,12 +85,12 @@ void ExportASCII::doExport()
                     break;
                 case 2:
                     ensureNewLine(out);
-                    out += (curIndent + "* " + cur->getHeadingPlain());
+                    out += (curIndent + "* " + cur->headingPlain());
                     dashIndent = "  ";
                     break;
                 default:
                     ensureNewLine(out);
-                    out += (curIndent + "- " + cur->getHeadingPlain());
+                    out += (curIndent + "- " + cur->headingPlain());
                     dashIndent = "  ";
                     break;
                 }
@@ -92,19 +99,19 @@ void ExportASCII::doExport()
                 if (listTasks && cur->getTask()) {
                     tasks.append(QString("[%1]: %2")
                                      .arg(cur->getTask()->getStatusString())
-                                     .arg(cur->getHeadingPlain()));
+                                     .arg(cur->headingPlain()));
                 }
 
                 // If necessary, write URL
-                if (!cur->getURL().isEmpty()) {
+                if (cur->hasUrl()) {
                     ensureNewLine(out);
-                    out += (curIndent + dashIndent + cur->getURL()) + "\n";
+                    out += (curIndent + dashIndent + cur->url()) + "\n";
                 }
 
                 // If necessary, write vymlink
-                if (!cur->getVymLink().isEmpty()) {
+                if (!cur->vymLink().isEmpty()) {
                     ensureNewLine(out);
-                    out += (curIndent + dashIndent + cur->getVymLink()) +
+                    out += (curIndent + dashIndent + cur->vymLink()) +
                            " (vym mindmap)\n";
                 }
 
@@ -133,7 +140,6 @@ void ExportASCII::doExport()
     }
 
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 
@@ -153,28 +159,20 @@ void ExportASCII::doExport()
     completeExport(args);
 }
 
-QString ExportASCII::underline(const QString &text, const QString &line)
-{
-    QString r = text + "\n";
-    for (int j = 0; j < text.length(); j++)
-        r += line;
-    return r;
-}
-
 QString ExportASCII::ensureEmptyLines(QString &text, int n)
 {
     // Ensure at least n empty lines at the end of text
 
     // First count trailing line breaks
     int j = 0;
-    int i = text.count() - 1;
-    while (i > -1 && text.at(i) == "\n")  {
+    int i = text.length() - 1;
+    while (i > -1 && text.at(i) == QChar::LineFeed)  {
         i--;
         j++;
     }
 
     while (j < n + 1) {
-        text = text + "\n";
+        text = text + QChar::LineFeed;
         j++;
     }
 

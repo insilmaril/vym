@@ -1,6 +1,7 @@
 #include "flag.h"
 
 #include "file.h"
+#include "image-container.h"
 
 #include <QDebug>
 
@@ -15,7 +16,7 @@ Flag::Flag()
 
 Flag::Flag(const QString &fname)
 {
-    // qDebug() << "Const Flag (fname)" << fname;
+    //qDebug() << "Const Flag (fname)" << fname;
     init();
     if (!load(fname))
         qWarning() << "Flag::Flag  Failed to load " << fname;
@@ -24,19 +25,19 @@ Flag::Flag(const QString &fname)
 Flag::~Flag()
 {
     // qDebug() << "Destr Flag  this="<<this <<"  " << qPrintable(name) << "
-    // image=" << image;
-    if (image)
-        delete image;
+    // imageContainer=" << imageContainer;
+    if (imageContainer)
+        delete imageContainer;
 }
 
 void Flag::init()
 {
-    action = NULL;
+    action = nullptr;
     name = "undefined";
     visible = true;
     unsetGroup();
 
-    image = NULL;
+    imageContainer = nullptr;
 
     state = false;
     used = false;
@@ -47,14 +48,14 @@ void Flag::init()
 
 bool Flag::load(const QString &fn)
 {
-    if (!image)
-        image = new ImageObj();
+    if (!imageContainer)
+        imageContainer = new ImageContainer();
 
-    if (!image->load(fn))
+    if (!imageContainer->load(fn))
         return false;
 
     if (fn.contains("svg")) {
-        image->setWidth(32); // FIXME-3 scale svg of flags
+        imageContainer->setWidth(32);
     }
 
     path = fn;
@@ -73,8 +74,6 @@ void Flag::setName(const QString &n)
 
 const QString Flag::getName() { return name; }
 
-const QString Flag::getPath() { return path; }
-
 void Flag::setVisible(bool b) { visible = b; }
 
 bool Flag::isVisible() { return visible; }
@@ -89,12 +88,12 @@ void Flag::setToolTip(const QString &n) { tooltip = n; }
 
 const QString Flag::getToolTip() { return tooltip; }
 
-ImageObj *Flag::getImageObj()
+ImageContainer *Flag::getImageContainer()
 {
-    if (image)
-        return image;
+    if (imageContainer)
+        return imageContainer;
     else
-        return NULL;
+        return nullptr;
 }
 
 void Flag::setAction(QAction *a) { action = a; }
@@ -117,11 +116,11 @@ QString Flag::getDefinition(const QString &prefix)
 {
     if (type == Flag::UserFlag) {
         QString url = "flags/" + prefix + uuid.toString() + "-" + name +
-                      image->getExtension();
+                      imageContainer->extension();
         QStringList attributes;
-        attributes << attribut("name", name);
-        attributes << attribut("href", QString("file:%1").arg(url));
-        attributes << attribut("uuid", uuid.toString());
+        attributes << attribute("name", name);
+        attributes << attribute("href", QString("file:%1").arg(url));
+        attributes << attribute("uuid", uuid.toString());
         return singleElement("userflagdef", attributes);
     }
     else
@@ -130,18 +129,18 @@ QString Flag::getDefinition(const QString &prefix)
 
 void Flag::saveDataToDir(const QString &dirPath)
 {
-    if (image) {
+    if (imageContainer) {
         path = dirPath + "/" + uuid.toString() + "-" + name +
-               image->getExtension();
-        image->save(path);
+               imageContainer->extension();
+        imageContainer->save(path);
     }
 }
 
 QString Flag::saveState()
 {
     if (type == Flag::UserFlag)
-        return singleElement("userflag", attribut("name", name) +
-                                             attribut("uuid", uuid.toString()));
+        return singleElement("userflag", attribute("name", name) +
+                                             attribute("uuid", uuid.toString()));
     else
         return valueElement("standardflag", name);
 }

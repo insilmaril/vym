@@ -10,19 +10,27 @@
 
 #include "mainwindow.h"
 #include "options.h"
+#include "shortcuts.h"
 #include "settings.h"
 #include "slideitem.h"
 #include "slidemodel.h"
 #include "vymmodel.h"
 
 extern QString vymName;
+extern QList<Command *> branchCommands;
+extern QList<Command *> imageCommands;
+extern QList<Command *> itemListCommands;
 extern QList<Command *> modelCommands;
 extern QList<Command *> vymCommands;
-extern QDir lastMapDir;
+extern QList<Command *> xlinkCommands;
+extern QDir lastScriptDir;
 extern Macros macros;
 extern Main *mainWindow;
 extern Options options;
 extern Settings settings;
+extern QFont fixedFont;
+extern QString editorFocusInStyle;
+extern Switchboard switchboard;
 
 ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
 {
@@ -43,6 +51,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     connect(ui.fileRunButton, SIGNAL(clicked()), this, SLOT(runScript()));
     connect(ui.macroLoadButton, SIGNAL(clicked()), this, SLOT(reloadMacros()));
     connect(ui.macroSaveButton, SIGNAL(clicked()), this, SLOT(saveMacros()));
+    connect(ui.fileReloadButton, SIGNAL(clicked()), this, SLOT(reloadScript()));
     connect(ui.fileLoadButton, SIGNAL(clicked()), this, SLOT(loadScript()));
     connect(ui.fileSaveButton, SIGNAL(clicked()), this, SLOT(saveScript()));
     connect(ui.fileSaveAsButton, SIGNAL(clicked()), this, SLOT(saveScriptAs()));
@@ -50,21 +59,15 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     vymModelID = -1;
 
     // Initialize Editor
-    QFont font;
-    font.setFamily("Courier");
-    font.setFixedPitch(true);
-    font.setPointSize(12);
-    slideEditor->setFont(font);
-    macroEditor->setFont(font);
-    codeEditor->setFont(font);
+    slideEditor->setFont(fixedFont);
+    macroEditor->setFont(fixedFont);
+    codeEditor->setFont(fixedFont);
 
     // Define tab width
-    const int tabStop = 4; // 4 characters
-    QFontMetrics metrics(font);
-    int w = tabStop * metrics.width(' ');
-    codeEditor->setTabStopWidth(w);
-    slideEditor->setTabStopWidth(w);
-    macroEditor->setTabStopWidth(w);
+    const qreal d = 20; // unit is pixels
+    codeEditor->setTabStopDistance(d);
+    slideEditor->setTabStopDistance(d);
+    macroEditor->setTabStopDistance(d);
 
     ui.modeTabWidget->setTabText(0, tr("Slide", "Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(1, tr("Macro", "Mode in scriptEditor"));
@@ -79,26 +82,62 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     highlighterSlide = new Highlighter(slideEditor->document());
     highlighterFile = new Highlighter(codeEditor->document());
     QStringList list;
-    foreach (Command *c, modelCommands)
-        list.append(c->getName());
     foreach (Command *c, vymCommands)
-        list.append(c->getName());
+        list.append(QString("\\b%1\\b").arg(c->name()));
+    foreach (Command *c, modelCommands)
+        list.append(QString("\\b%1\\b").arg(c->name()));
+    foreach (Command *c, branchCommands)
+        list.append(QString("\\b%1\\b").arg(c->name()));
+    foreach (Command *c, imageCommands)
+        list.append(QString("\\b%1\\b").arg(c->name()));
+    foreach (Command *c, itemListCommands)
+        list.append(QString("\\b%1\\b").arg(c->name()));
+    foreach (Command *c, xlinkCommands)
+        list.append(QString("\\b%1\\b").arg(c->name()));
     highlighterMacro->addKeywords(list);
     highlighterSlide->addKeywords(list);
     highlighterFile->addKeywords(list);
 
+    codeEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
+    slideEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
+    macroEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
+
+    QString shortcutScope = parentWidget()->windowTitle();
+    switchboard.addScope("MainWindow", shortcutScope);
+
+    QAction *a = new QAction("Close window", this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    switchboard.addAction(a, "textCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "Misc"); // FIXME-3 translation?
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    //fileMenu->addAction(a);
+    addAction(a);
+
     // QAction *a = new QAction( tr( "Save","ScriptEditor" ), ui.editor);
-    // a->setShortcut (Qt::CTRL + Qt::Key_S );
+    // a->setShortcut (Qt::CTRL | Qt::Key_S );
     // a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     // addAction (a);
     // connect( a, SIGNAL( triggered() ), this, SLOT( saveSlide() ) );
+}
+
+void ScriptEditor::setFocus() {
+    switch (ui.modeTabWidget->currentIndex()) {
+        case 0:
+            slideEditor->setFocus();
+            break;
+        case 1:
+            macroEditor->setFocus();
+            break;
+        case 2:
+            codeEditor->setFocus();
+            break;
+    }
 }
 
 QString ScriptEditor::getScriptFile() { return codeEditor->toPlainText(); }
 
 void ScriptEditor::saveSlide()
 {
-    VymModel *vm = mainWindow->getModel(vymModelID);
+    VymModel *vm = mainWindow->modelWithId(vymModelID);
     if (!vm) {
         QMessageBox::warning(
             0, tr("Warning"),
@@ -122,6 +161,13 @@ void ScriptEditor::setSlideScript(uint model_id, uint slide_id,
     slideID = slide_id;
     mode = Slide;
     slideEditor->setPlainText(s);
+}
+
+void ScriptEditor::closeWindow()
+{
+    parentWidget()->hide();
+    mainWindow->updateActions();
+    qDebug() << "SE::closeWindow";
 }
 
 void ScriptEditor::runMacro() { emit runScript(macroEditor->toPlainText()); }
@@ -158,7 +204,7 @@ bool ScriptEditor::loadScript(QString fn)
         QString filter("VYM scripts (*.vys);;All (*)");
         fn = QFileDialog::getOpenFileName(this,
                                           vymName + " - " + tr("Load script"),
-                                          lastMapDir.path(), filter);
+                                          lastScriptDir.path(), filter);
     }
 
     if (!fn.isEmpty()) {
@@ -167,13 +213,35 @@ bool ScriptEditor::loadScript(QString fn)
         if (loadStringFromDisk(filename, s)) {
             codeEditor->setPlainText(s);
             ui.scriptPathLineEdit->setText(filename);
-            lastMapDir.setPath(filename.left(filename.lastIndexOf("/")));
+            lastScriptDir.setPath(filename.left(filename.lastIndexOf("/")));
             return true;
         }
         else {
             QString error(QObject::tr("Error"));
             QString msg(
                 QObject::tr("Couldn't read script from \"%1\"\n.").arg(fn));
+            QMessageBox::warning(0, error, msg);
+        }
+    }
+    return false;
+}
+
+bool ScriptEditor::reloadScript()
+{
+    if (filename.isEmpty())
+        return false;
+    else {
+        QString s;
+        if (loadStringFromDisk(filename, s)) {
+            codeEditor->setPlainText(s);
+            ui.scriptPathLineEdit->setText(filename);
+            lastScriptDir.setPath(filename.left(filename.lastIndexOf("/")));
+            return true;
+        }
+        else {
+            QString error(QObject::tr("Error"));
+            QString msg(
+                QObject::tr("Couldn't read script from \"%1\"\n.").arg(filename));
             QMessageBox::warning(0, error, msg);
         }
     }
@@ -201,35 +269,15 @@ void ScriptEditor::saveScriptAs()
     QString filter("VYM scripts (*.vys *.js);;All (*)");
     QString fn = QFileDialog::getSaveFileName(
         this, QString(vymName + " - " + tr("Save script")), QString(),
-        "VYM script (*js *.vys);;All files (*)", 0,
-        QFileDialog::DontConfirmOverwrite);
+        "VYM script (*js *.vys);;All files (*)");
 
     if (!fn.isEmpty()) {
         QFile file(fn);
-        if (file.exists()) {
-            QMessageBox mb(
-                vymName,
-                tr("The file %1\nexists already.\nDo you want to overwrite it?",
-                   "dialog 'save as'")
-                    .arg(fn),
-                QMessageBox::Warning, QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::Cancel | QMessageBox::Escape, Qt::NoButton);
-            mb.setButtonText(QMessageBox::Yes, tr("Overwrite"));
-            mb.setButtonText(QMessageBox::No, tr("Cancel"));
-            switch (mb.exec()) {
-            case QMessageBox::Yes:
-                // save
-                filename = fn;
-                ui.scriptPathLineEdit->setText(filename);
-                lastMapDir.setPath(filename.left(filename.lastIndexOf("/")));
-                saveScript();
-                return;
-            case QMessageBox::Cancel:
-                // do nothing
-                return;
-            }
-        }
+        // Already tested in QFileDialog, if we may overwrite in case file exists already
+
         filename = fn;
+        ui.scriptPathLineEdit->setText(filename);
+        lastScriptDir.setPath(filename.left(filename.lastIndexOf("/")));
         saveScript();
     }
 }

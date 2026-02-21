@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <QSslSocket>
 
-#include <iostream> // FIXME-2 for debugging...
+#include <iostream> // FIXME-5 for debugging...
 
 #include "branchitem.h"
 #include "confluence-user.h"
@@ -77,9 +77,13 @@ void ConfluenceAgent::init()
 
     QObject::connect(killTimer, SIGNAL(timeout()), this, SLOT(timeout()));
 
-    apiURL = baseURL + "/rest/api";
+    apiURL = "/rest/api";
     baseURL = settings.value("/atlassian/confluence/url", "baseURL").toString();
     
+    // If pages are created recursively, ordering might be wrong
+    // Save original inded before starting retrieval
+    originalPageIndexInt = -1;
+
     // Attachments
     attachmentsAgent = nullptr;
     currentUploadAttachmentIndex = -1;
@@ -120,7 +124,7 @@ void ConfluenceAgent::setBranch(BranchItem *bi)
     } else {
         branchID = bi->getID();
         VymModel *model = bi->getModel();
-        modelID = model->getModelID();
+        modelID = model->modelId();
     }
 }
 
@@ -132,6 +136,21 @@ void ConfluenceAgent::setModelID(uint id)
 void ConfluenceAgent::setPageURL(const QString &u)
 {
     pageURL = u;
+}
+
+void ConfluenceAgent::setPageID(const QString &id)
+{
+    pageID =id;
+}
+
+void ConfluenceAgent::setOriginalPageIndex(const int &i)
+{
+    originalPageIndexInt = i;
+}
+
+void ConfluenceAgent::setLabelName(const QString &labelName)
+{
+    labelNameInt = labelName;
 }
 
 void ConfluenceAgent::setNewPageName(const QString &t)
@@ -176,8 +195,10 @@ void ConfluenceAgent::continueJob(int nextStep)
     // qDebug() << "CA::contJob " << jobType << " Step: " << jobStep;
 
     switch(jobType) {
-        case CopyPagenameToHeading:
+        case GetPageDetails:
+        case GetPageDetailsRecursively:
             if (jobStep == 1) {
+                // Get pageID and spaceKey
                 startGetPageSourceRequest(pageURL);
                 return;
             }
@@ -186,21 +207,126 @@ void ConfluenceAgent::continueJob(int nextStep)
                 return;
             }
             if (jobStep == 3) {
-                model = mainWindow->getModel(modelID);
+                model = mainWindow->modelWithId(modelID);
                 if (model) {
                     BranchItem *bi = (BranchItem *)(model->findID(branchID));
 
                     if (bi) {
-                        QString h = spaceKey + ": " + pageObj["title"].toString();
-                        model->setHeading(h, bi);
+                        QString title = pageObj["title"].toString();
+                        QString h = spaceKey + ": " + title;
+                        model->setHeadingPlainText(h, bi);
+                        model->setAttribute( bi, "Confluence.title", title);
+
+                        // Set labels of page as attributes
+                        model->deleteAttributesKeyStartingWith(bi, "Confluence.");
+                        model->setAttribute( bi, "Confluence.pageID", pageID);
+                        model->setAttribute( bi, "Confluence.spaceKey", spaceKey);
+                        if (originalPageIndexInt > -1)
+                            model->setAttribute( bi, "Confluence.childIndex", originalPageIndexInt);
+
+                        QJsonObject metaDataObj = pageObj["metadata"].toObject();
+                        QJsonObject labelsObj = metaDataObj["labels"].toObject();
+                        QJsonArray resultsArr = labelsObj["results"].toArray();
+
+                        model->setAttribute( bi, "Confluence.labels.count", resultsArr.size());
+                        for (int i = 0; i < resultsArr.size(); ++i) {
+                            QJsonObject ro = resultsArr[i].toObject();
+                            model->setAttribute( bi, QString("Confluence.label-%1").arg(i), ro["name"].toString());
+                        }
+
+                        QJsonObject versionObj = pageObj["version"].toObject();
+                        QString timestamp = versionObj["when"].toString();
+                        QJsonObject byObj = versionObj["by"].toObject();
+                        QString author = byObj["displayName"].toString();
+                        //qDebug() << bi->headingText() << " changed at " << timestamp << " by " << author;
+                        model->setAttribute( bi, QString("Confluence.lastChanged"), timestamp);
+                        model->setAttribute( bi, QString("Confluence.lastAuthor"), author);
+
                     } else
                         qWarning() << "CA::continueJob couldn't find branch "
                                    << branchID;
-                } else
+                    if (jobType == GetPageDetails) {
+                        finishJob();
+                        return;
+                    }
+
+                    jobStep++;
+                } else {
                     qWarning() << "CA::continueJob couldn't find model " << modelID;
+                    finishJob();
+                    return;
+                }
+            }
+
+            if (jobStep == 4) {
+                startGetPageChildrenRequest();
+                return;
+            }
+
+            if (jobStep == 5) {
+                model = mainWindow->modelWithId(modelID);
+                if (model) {
+                    BranchItem *bi = (BranchItem *)(model->findID(branchID));
+
+                    if (bi) {
+                        QJsonObject pObj = pageObj["page"].toObject();
+                        QJsonArray resultsArr = pObj["results"].toArray();
+
+                        model->setAttribute( bi, "Confluence.children.count", resultsArr.size());
+                        for (int i = 0; i < resultsArr.size(); ++i) {
+                            QJsonObject ro = resultsArr[i].toObject();
+                            //qDebug() << "  n=" << ro["title"].toString() << ro["id"].toString();
+                            QString childTitle = ro["title"].toString();
+                            QString childId = ro["id"].toString();
+                            model->setAttribute( bi, QString("Confluence.child-%1.title").arg(i), childTitle);
+                            model->setAttribute( bi, QString("Confluence.child-%1.id").arg(i), childId);
+
+                            if (true) {
+                                // Recursively create branches for child pages
+                                // Warning: Branches might be created in a different order
+                                //          than pages.
+                                BranchItem *newbi = model->addNewBranch(bi);
+                                if (newbi) {
+                                    newbi->setHeadingPlainText(childTitle);
+                                    qDebug() << "  * newbi " << childTitle;
+                                    qDebug() << "          " << childId;
+                                    QString newUrl = "https://" + baseURL + "/pages/viewpage.action?pageId=" + childId;
+                                    // Set Url, but do not update from cloud in VymModel
+                                    model->setUrl(newUrl, false, newbi);
+
+                                    ConfluenceAgent *ca_setHeading = new ConfluenceAgent(newbi);
+                                    ca_setHeading->setPageURL(newUrl);
+                                    ca_setHeading->setJobType(ConfluenceAgent::GetPageDetailsRecursively);
+                                    ca_setHeading->setOriginalPageIndex(i);
+                                    ca_setHeading->startJob();
+                                }
+                            }
+                        }
+
+                    } else
+                        qWarning() << "CA::continueJob couldn't find branch "
+                                   << branchID;
+                } // model found
+            }
+
+            finishJob();
+            return;
+
+            unknownStepWarningFinishJob();
+            return;
+
+        case DeletePageLabel:
+            if (jobStep == 1) {
+                // FIXME-4 check if pageID is set
+                startDeleteLabelRequest();
+                return;
+            }
+
+            if (jobStep == 2) {
                 finishJob();
                 return;
             }
+
             unknownStepWarningFinishJob();
             return;
 
@@ -253,11 +379,11 @@ void ConfluenceAgent::continueJob(int nextStep)
             if (jobStep == 4) {
                 // qDebug() << "CA::finished  Created page with ID: " << pageObj["id"].toString();
                 // cout << QJsonDocument(pageObj).toJson(QJsonDocument::Indented).toStdString();
-                model = mainWindow->getModel(modelID);
+                model = mainWindow->modelWithId(modelID);
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                    QString command = QString("vym.currentMap().exportMap([\"ConfluenceUpdatePage\",\"%1\"])")
                         .arg(pageURL);
                     QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"")
                         .arg(pageObj["title"].toString()).arg(pageURL);
@@ -327,11 +453,11 @@ void ConfluenceAgent::continueJob(int nextStep)
                 mainWindow->statusMessage(
                     QString("Updated Confluence page %1").arg(pageURL));
 
-                model = mainWindow->getModel(modelID);
+                model = mainWindow->modelWithId(modelID);
                 if (model) {
                     pageURL = QString("https://%1/pages/viewpage.action?pageId=%2")
                         .arg(baseURL).arg(pageObj["id"].toString());
-                    QString command = QString("vym.currentMap().exportMap(\"ConfluenceUpdatePage\",\"%1\")")
+                    QString command = QString("vym.currentMap().exportMap([\"ConfluenceUpdatePage\",\"%1\"])")
                         .arg(pageURL);
                     QString dest = QString("Page title: \"%1\"\nUrl: \"%2\"").arg(pageObj["title"].toString())
                         .arg(pageURL);
@@ -364,14 +490,14 @@ void ConfluenceAgent::continueJob(int nextStep)
 
                     u = userObj["user"].toObject();
                     user.setTitle( userObj["title"].toString());
-                    user.setURL( "https://" + baseURL + "/"
+                    user.setUrl( "https://" + baseURL + "/"
                             + "display/~" + u["username"].toString());
                     user.setUserKey( u["userKey"].toString());
                     user.setUserName( u["username"].toString());
                     user.setDisplayName( u["displayName"].toString());
                     userList << user;
                 }
-                emit (foundUsers(userList));
+                emit foundUsers(userList);
                 finishJob();
                 return;
             }
@@ -383,7 +509,7 @@ void ConfluenceAgent::continueJob(int nextStep)
 
                 if (uploadAttachmentPaths.count() <= 0) {
                     qWarning() << "ConfluenceAgent: No attachments to upload!";
-                    emit(attachmentsFailure());
+                    emit attachmentsFailure();
                     finishJob();
                     return;
                 }
@@ -400,7 +526,7 @@ void ConfluenceAgent::continueJob(int nextStep)
 
                 if (currentUploadAttachmentIndex >= uploadAttachmentPaths.count()) {
                     // All uploaded, let's finish uploading
-                    emit(attachmentsSuccess());
+                    emit attachmentsSuccess();
                     finishJob();
                 } else {
                     currentAttachmentPath = uploadAttachmentPaths.at(currentUploadAttachmentIndex);
@@ -442,7 +568,7 @@ void ConfluenceAgent::unknownStepWarningFinishJob()
 void ConfluenceAgent::getUsers(const QString &usrQuery)
 {
     userQuery = usrQuery;
-    if (usrQuery.contains(QRegExp("\\W+"))) {
+    if (usrQuery.contains(QRegularExpression("\\W+"))) {
         qWarning() << "ConfluenceAgent::getUsers  Forbidden characters in " << usrQuery;
         return;
     }
@@ -502,12 +628,12 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
         return;
 
     // Find pageID
-    QRegExp rx("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
-    rx.setMinimal(true);
+    QRegularExpression re("\\sname=\"ajs-page-id\"\\scontent=\"(\\d*)\"");
+    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
-    if (rx.indexIn(fullReply, 0) != -1) {
-        pageID = rx.cap(1);
-    }
+    QRegularExpressionMatch match = re.match(fullReply);
+    if (match.hasMatch())
+        pageID = match.captured(1);
     else {
         qWarning()
             << "ConfluenceAgent::pageSourceReveived Couldn't find page ID";
@@ -516,11 +642,11 @@ void ConfluenceAgent::pageSourceReceived(QNetworkReply *reply)
     }
 
     // Find spaceKey 
-    rx.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
+    re.setPattern("meta\\s*id=\"confluence-space-key\"\\s* "
                   "name=\"confluence-space-key\"\\s*content=\"(.*)\"");
-    if (rx.indexIn(fullReply, 0) != -1) {
-        spaceKey = rx.cap(1);
-    }
+    match = re.match(fullReply);
+    if (match.hasMatch())
+        spaceKey = match.captured(1);
     else {
         qWarning() << "ConfluenceAgent::pageSourceReveived Couldn't find "
                       "space key in response";
@@ -570,7 +696,90 @@ void ConfluenceAgent::pageDetailsReceived(QNetworkReply *reply)
     jsdoc = QJsonDocument::fromJson(fullReply);
 
     pageObj = jsdoc.object();
-    // cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+
+    continueJob();
+}
+
+void ConfluenceAgent::startGetPageChildrenRequest()
+{
+    if (debug) qDebug() << "CA::startGetPageChildrenRequest" << pageID;
+
+    // Authentication in URL  (only SSL!)
+    QString url = "https://"
+        + baseURL + apiURL
+        + "/content/" + pageID + "/child?expand=page&limit=999";    // API v1
+        // + "/v2/pages/" + pageID + "/children"; //?expand=page";      // API v2
+
+    QNetworkRequest request = createRequest(url);
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::pageChildrenReceived);
+
+    killTimer->start();
+
+    networkManager->get(request);
+}
+
+void ConfluenceAgent::pageChildrenReceived(QNetworkReply *reply)
+{
+    if (debug) qDebug() << "CA::pageChildrenReceived";
+
+    killTimer->stop();
+    networkManager->disconnect();
+    reply->deleteLater();
+
+    QByteArray fullReply = reply->readAll();
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(fullReply);
+
+    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    pageObj = jsdoc.object();
+
+    if (!wasRequestSuccessful(reply, "receive page children", fullReply))
+        return;
+
+    continueJob();
+}
+
+void ConfluenceAgent::startDeleteLabelRequest()
+{
+    if (debug) qDebug() << "CA::startDeleteLabelRequest" << pageID;
+
+    // Authentication in URL  (only SSL!)
+    QString url = "https://"
+        + baseURL + apiURL
+        + "/content/" + pageID + "/label/" + labelNameInt;    // API v1
+
+    QNetworkRequest request = createRequest(url);
+
+    connect(networkManager, &QNetworkAccessManager::finished,
+        this, &ConfluenceAgent::deleteLabelResponseReceived);
+
+    killTimer->start();
+
+    networkManager->deleteResource(request);
+}
+
+void ConfluenceAgent::deleteLabelResponseReceived(QNetworkReply *reply)
+{
+    if (debug) qDebug() << "CA::deleteLabelResponseReceived";
+
+    killTimer->stop();
+    networkManager->disconnect();
+    reply->deleteLater();
+
+    QByteArray fullReply = reply->readAll();
+
+    QJsonDocument jsdoc;
+    jsdoc = QJsonDocument::fromJson(fullReply);
+
+    cout << jsdoc.toJson(QJsonDocument::Indented).toStdString();
+    pageObj = jsdoc.object();
+
+    if (!wasRequestSuccessful(reply, "received delete label response", fullReply))
+        return;
 
     continueJob();
 }
@@ -799,7 +1008,6 @@ void ConfluenceAgent::startCreateAttachmentRequest()
 
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
-
     QHttpPart imagePart;
     imagePart.setHeader(
             QNetworkRequest::ContentDispositionHeader,
@@ -817,7 +1025,7 @@ void ConfluenceAgent::startCreateAttachmentRequest()
         qWarning() << "Problem opening attachment: " << currentAttachmentPath;
         QMessageBox::warning(
             nullptr, tr("Warning"),
-            QString("Could not open attachment file \"%1\" in page with ID: %2").arg(currentAttachmentTitle).arg(pageID));
+            QString("Could not open attachment file \"%1\" in page with ID: %2").arg(currentAttachmentTitle, pageID));
         finishJob();
         return;
     }

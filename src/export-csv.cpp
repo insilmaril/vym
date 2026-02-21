@@ -1,7 +1,12 @@
-#include "mainwindow.h"
+#include "export-csv.h"
+
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
 
-#include "export-csv.h"
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;
@@ -27,17 +32,17 @@ void ExportCSV::doExport()
     QString out;
 
     // Write header
-    out += "\"Note\"\n";
+    // out += "\"Note\"\n";
 
     // Main loop over all branches
     QString s;
     QString curIndent("");
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
-        if (!cur->hasHiddenExportParent()) {
+        if (!cur->hasHiddenParent()) {
             // If necessary, write note
             if (!cur->isNoteEmpty()) {
                 s = cur->getNoteASCII(0, 0);
@@ -52,14 +57,13 @@ void ExportCSV::doExport()
                 curIndent += "\"\",";
 
             // Write heading
-            out += curIndent + "\"" + cur->getHeadingPlain() + "\"\n";
+            out += curIndent + "\"" + cur->headingPlain() + "\"\n";
         }
 
         model->nextBranch(cur, prev);
         curIndent = "";
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 

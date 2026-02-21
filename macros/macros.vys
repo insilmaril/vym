@@ -1,19 +1,68 @@
 // vim:syntax=javascript
 
+// Macros called when function keys are pressed
+
+
 //! Helper function to toggle frame
-function toggle_frame(map)
+function toggle_frame_branch(color, msg)
 {
-    if (map.getFrameType() == "NoFrame" ) {
-        map.setFrameType ("RoundedRectangle");
-    } else
-        map.setFrameType ("NoFrame");
+    map = vym.currentMap();
+    branches = map.selectedBranches();
+
+    for (b of branches) {
+        // Make sure changes are saved
+        b.setFrameAutoDesign(true, false);
+        if (b.getFrameType(true) == "NoFrame" ) {
+            b.setFrameType (true, "RoundedRectangle");
+            b.setFrameBrushColor(true, color);
+            vym.statusMessage(msg);
+        } else {
+            b.setFrameType (true, "NoFrame");
+            vym.statusMessage("No frame for branch");
+        }
+    }
 }
+
+function toggle_frame_subtree(color, msg)
+{
+    map = vym.currentMap();
+    branches = map.selectedBranches();
+
+    for (b of branches) {
+        // Make sure changes are saved
+        b.setFrameAutoDesign(false, false);
+        if (b.getFrameType(false) == "NoFrame" ) {
+            b.setFrameType (false, "RoundedRectangle");
+            b.setFrameBrushColor(false, color);
+            vym.statusMessage(msg);
+        } else {
+            b.setFrameType (false, "NoFrame");
+            vym.statusMessage("No frame for subtree");
+        }
+    }
+}
+
+
+function colorBranchWithQuickColor(n)
+{
+    map = vym.currentMap();
+    vym.selectQuickColor(n);
+    c = vym.currentColor();
+
+    branches = map.selectedBranches();
+    for (b of branches)
+        b.colorBranch(c);
+}
+
 function colorSubtreeWithQuickColor(n)
 {
     map = vym.currentMap();
     vym.selectQuickColor(n);
     c = vym.currentColor();
-    map.colorSubtree (c);
+
+    branches = map.selectedBranches();
+    for (b of branches)
+        b.colorSubtree(c);
 }
 
 //! Macro F1: Color subtree red
@@ -81,11 +130,11 @@ function macro_f10()
     colorSubtreeWithQuickColor(9);
 }
 
-//! Macro F11: Repeat last command
+//! Macro F11:
 function macro_f11()
 {
     map = vym.currentMap();
-    map.repeatLastCommand();
+    // Unused
 }
 
 //! Macro F12: toggle high prio task
@@ -96,21 +145,25 @@ function macro_f12()
 	// 1 - high prio task with arrows
 	// 2 - done task without arrows, but green hook
     map = vym.currentMap();
-    if (map.hasTask() ) {
+    b = map.selectedBranch();
+    if (b.hasTask() ) {
         // Switch to state 2 
-        map.toggleTask();
-        map.unsetFlagByName("2arrow-up");
-        map.unsetFlagByName("stopsign");
-        map.setFlagByName("hook-green");
-        map.colorBranch("#0000ff");
+        b.toggleTask();
+        b.unsetFlagByName("2arrow-up");
+        b.unsetFlagByName("stopsign");
+        b.setFlagByName("hook-green");
+        if (vym.usesDarkTheme())
+            colorBranchWithQuickColor(5);
+        else
+            colorBranchWithQuickColor(3);
     } else {
-        if (map.hasActiveFlag("hook-green")) {
+        if (b.hasActiveFlag("hook-green")) {
             // Switch to state 0
-            map.unsetFlagByName("hook-green");
+            b.unsetFlagByName("hook-green");
         } else {
             // Switch to state 1
-            map.setFlagByName("2arrow-up");
-            map.toggleTask();
+            b.setFlagByName("2arrow-up");
+            b.toggleTask();
         }
     }
 }
@@ -119,307 +172,214 @@ function macro_f12()
 //! Macro Shift + F1: Frame background light red
 function macro_shift_f1()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background light red";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#ffb3b4");
-    statusMessage(status);
+    toggle_frame_branch ( "#ffb3b4", "Branch frame background light red" );
 }
 
 //! Macro Shift + F2: Frame background light green
 function macro_shift_f2()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background light green";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#bdffd6");
-    statusMessage(status);
+    toggle_frame_branch ( "#bdffd6", "Branch frame background light green");
 }
 
 //! Macro Shift + F3: Frame background light yellow
 function macro_shift_f3()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background light yellow";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#efefb3");
-    statusMessage(status);
+    toggle_frame_branch ( "#efefb3", "Branch frame background light yellow");
 }
 
 //! Macro Shift + F4: Frame background light blue
 function macro_shift_f4()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background light blue";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#e2e6ff");
-    statusMessage(status);
+    toggle_frame_branch ( "#e2e6ff", "Branch frame background light blue");
 }
 
 //! Macro Shift + F5: Frame background light grey
 function macro_shift_f5()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background light grey";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#d6d6d6");
-    statusMessage(status);
+    toggle_frame_branch ( "#d6d6d6", "Branch frame background light grey");
 }
 
 //! Macro Shift + F6: Frame background purple
 function macro_shift_f6()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background purple";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#ffaaff");
-    statusMessage(status);
+    toggle_frame_branch ( "#ffaaff", "Branch frame background purple");
 }
 
 //! Macro Shift + F7: Frame background white
 function macro_shift_f7()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background white";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#ffffff");
-    statusMessage(status);
+    toggle_frame_branch ( "#ffffff", "Branch frame background white");
 }
 
 //! Macro Shift + F8: Frame background black
 function macro_shift_f8()
 {
-    map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background black";
-    }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#000000");
-    statusMessage(status);
+    toggle_frame_branch ( "#000000", "Branch frame background black");
 }
 
-//! Macro Shift + F9: Toggle frame to include children
+// Macro Shift + F9:
 function macro_shift_f9()
 {
-    map = vym.currentMap();
-    map.toggleFrameIncludeChildren();
 }
 
 //! Macro Shift + F10: 
-// Useful for timestamps created on last entry
 function macro_shift_f10()
-{   
+{
 }
 
-//! Macro Shift + F11: Replace "@..." by mutt aliases
+//! Macro Shift + F11:
 function macro_shift_f11()
 {
-	map     = vym.currentMap();
-	lines   = vym.loadFile("/home/uwe/.mutt/eb-aliases").split('\n');
-
-
-	if (map.getHeadingPlainText() == "parts") {
-		map.setHeadingPlainText("Participants");
-	}
-
-	map.initIterator("foobar");
-
-	while (map.nextIterator("foobar") ) {
-		heading = map.getHeadingPlainText();
-
-		// Search for "@alias" at beginning of heading
-		if (heading.search(/^@\w/) == 0) {
-			alias_map = heading.replace(/@/,"");
-
-			for(var i = 0;i < lines.length;i++){
-				if (lines[i].search(/^alias/) == 0) {
-					if (lines[i].search(alias_map) == 6) {
-						name = lines[i].replace(/^.+?\"/, "");
-						name = name.replace(/\".+/, "");
-
-						email = lines[i].replace(/^.+?</, "");
-						email = email.replace(/>.*/, "");
-
-						map.setHeadingPlainText(name);
-					}
-				}
-			}
-		} else {
-			print ("No alias found");
-        }
-	}
 }
 
 //! Macro Shift + F12:
 function macro_shift_f12()
 {
-    statusMessage("Macro F12 + Shift triggered");
 }
 
 
 // New /////////////////////////////////////
-//! Macro Ctrl + F1:
+//! Macro Ctrl + F1: Subtree background light red
 function macro_ctrl_f1()
 {
-    statusMessage("Macro F1 + Ctrl triggered");
+    toggle_frame_subtree ( "#ffb3b4", "Branch frame background light red");
 }
 
-//! Macro Ctrl + F2:
+//! Macro Ctrl + F2: Subtree background light green
+
 function macro_ctrl_f2()
 {
-    statusMessage("Macro F2 + Ctrl triggered");
+    toggle_frame_subtree ( "#bdffd6", "Branch frame background light green");
 }
 
-//! Macro Ctrl + F3:
+//! Macro Ctrl + F3: Subtree background light yellow
 function macro_ctrl_f3()
 {
-    statusMessage("Macro F3 + Ctrl triggered");
+    toggle_frame_subtree ( "#efefb3", "Branch frame background light yellow");
 }
 
-//! Macro Ctrl + F4:
+//! Macro Ctrl + F4: Subtree background light blue
 function macro_ctrl_f4()
 {
-    statusMessage("Macro F4 + Ctrl triggered");
+    toggle_frame_subtree ( "#e2e6ff", "Branch frame background light yellow");
 }
 
-//! Macro Ctrl + F5:
+//! Macro Ctrl + F5: Subtree  background light grey
 function macro_ctrl_f5()
 {
-    statusMessage("Macro F5 + Ctrl triggered");
+    toggle_frame_subtree ( "#d6d6d6", "Branch frame background light grey");
 }
 
-//! Macro Ctrl + F6:
+//! Macro Ctrl + F6: Subtree background purple
 function macro_ctrl_f6()
 {
-    statusMessage("Macro F6 + Ctrl triggered");
+    toggle_frame_subtree ( "#ffaaff", "Branch frame background light purple");
 }
 
-//! Macro Ctrl + F7:
+//! Macro Ctrl + F7: Subtree background white
 function macro_ctrl_f7()
 {
-    statusMessage("Macro F7 + Ctrl triggered");
+    toggle_frame_subtree ( "#ffffff", "Branch frame background light white");
 }
 
-//! Macro Ctrl + F8:
+//! Macro Ctrl + F8: Subtree background black
 function macro_ctrl_f8()
 {
-    statusMessage("Macro F8 + Ctrl triggered");
+    toggle_frame_subtree ( "#000000", "Branch frame background light black");
 }
 
 //! Macro Ctrl + F9:
 function macro_ctrl_f9()
 {
-    statusMessage("Macro F9 + Ctrl triggered");
+    vym.statusMessage("Macro F9 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F10: 
 function macro_ctrl_f10()
 {
-    statusMessage("Macro F10 + Ctrl triggered");
+    vym.statusMessage("Macro F10 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F11:
 function macro_ctrl_f11()
 {
-    statusMessage("Macro F11 + Ctrl triggered");
+    vym.statusMessage("Macro F11 + Ctrl triggered");
 }
 
 //! Macro Ctrl + F12:
 function macro_ctrl_f12()
 {
-    statusMessage("Macro F12 + Ctrl triggered");
+    vym.statusMessage("Macro F12 + Ctrl triggered");
 }
 
 //! Macro Ctrl + Shift + F1:
 function macro_ctrl_shift_f1()
 {
-    statusMessage("Macro F1 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F1 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F2:
 function macro_ctrl_shift_f2()
 {
-    statusMessage("Macro F2 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F2 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F3:
 function macro_ctrl_shift_f3()
 {
-    statusMessage("Macro F3 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F3 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F4:
 function macro_ctrl_shift_f4()
 {
-    statusMessage("Macro F4 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F4 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F5:
 function macro_ctrl_shift_f5()
 {
-    statusMessage("Macro F5 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F5 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F6:
 function macro_ctrl_shift_f6()
 {
-    statusMessage("Macro F6 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F6 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F7:
 function macro_ctrl_shift_f7()
 {
-    statusMessage("Macro F7 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F7 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F8:
 function macro_ctrl_shift_f8()
 {
-    statusMessage("Macro F8 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F8 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F9:
 function macro_ctrl_shift_f9()
 {
-    statusMessage("Macro F9 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F9 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F10: 
 function macro_ctrl_shift_f10()
 {
-    statusMessage("Macro F10 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F10 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F11:
 function macro_ctrl_shift_f11()
 {
-    statusMessage("Macro F11 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F11 + Ctrl + Shift triggered");
 }
 
 //! Macro Ctrl + Shift + F12:
 function macro_ctrl_shift_f12()
 {
-    statusMessage("Macro F12 + Ctrl + Shift triggered");
+    vym.statusMessage("Macro F12 + Ctrl + Shift triggered");
 }

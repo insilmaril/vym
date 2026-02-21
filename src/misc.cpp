@@ -1,12 +1,15 @@
 #include "misc.h"
 
+
 #include "geometry.h"
 
 #include <math.h>
 #include <stdlib.h>
 
+#include <QDate>
 #include <QDebug>
 #include <QDialog>
+#include <QRegularExpression>
 #include <QString>
 
 extern QString vymVersion;
@@ -19,8 +22,8 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
     if (r.isEmpty())
         return r;
 
-    QRegExp rx;
-    rx.setMinimal(true);
+    QRegularExpression rx;
+    rx.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     // Remove all <style...> ...</style>
     rx.setPattern("<style.*>.*</style>");
@@ -61,19 +64,30 @@ QString richTextToPlain(QString r, const QString &indent, const int &width)
     return r;
 }
 
-QString qpointToString(const QPoint &p)
+QString toS(const bool &b)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return b ? "true" : "false";
 }
 
-QString qpointFToString(const QPointF &p)
+QString toS(const qreal &r, int d)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("%1")
+        .arg(QString::number(r,'f', d));
 }
 
-QString qrectFToString(const QRectF &r, int d)
+QString toS(const QPoint &p)
+{
+    return QString("(%1, %2)").arg(p.x()).arg(p.y());
+}
+
+QString toS(const QPointF &p, int d)
+{
+    return QString("(%1, %2)")
+        .arg(QString::number(p.x(),'f', d))
+        .arg(QString::number(p.y(),'f', d));
+}
+
+QString toS(const QRectF &r, int d)
 {
     return QString("(%1, %2  %3x%4)")
         .arg(QString::number(r.x(),'f', d))
@@ -82,21 +96,34 @@ QString qrectFToString(const QRectF &r, int d)
         .arg(QString::number(r.height(),'f', d));
 }
 
-QString VectorToString(const Vector &p)
+QString toS(const Vector &p)
 {
-    return "(" + QString("%1").arg(p.x()) + "," + QString("%1").arg(p.y()) +
-           ")";
+    return QString("(%1, %2)").arg(p.x()).arg(p.y());
+}
+
+QString toS(const QDate &d)
+{
+    return d.toString("yyyy-MM-dd");
+}
+
+QString pluralize(const QString &s, qsizetype count)
+{
+    // Very primitive implementation of pluralize :-/
+    if (count > 1)
+        return s + "s";
+    else
+        return s;
 }
 
 ostream &operator<<(ostream &stream, QPoint const &p)
 {
-    stream << "(" << p.x() << "," << p.y() << ")";
+    stream << "(" << p.x() << ", " << p.y() << ")";
     return stream;
 }
 
 ostream &operator<<(ostream &stream, QPointF const &p)
 {
-    stream << "(" << p.x() << "," << p.y() << ")";
+    stream << "(" << p.x() << ", " << p.y() << ")";
     return stream;
 }
 
@@ -111,47 +138,6 @@ ostream &operator<<(ostream &stream, Vector const &p)
 {
     stream << "(" << p.x() << "," << p.y() << ")";
     return stream;
-}
-
-qreal getAngle(const QPointF &p)
-{
-    // Calculate angle of vector to x-axis
-    if (p.x() == 0) {
-        if (p.y() >= 0)
-            return M_PI_2;
-        else
-            return 3 * M_PI_2;
-    }
-    else {
-        if (p.x() > 0) {
-            if (p.y() < 0)
-                return (qreal)(-atan((qreal)(p.y()) / (qreal)(p.x())));
-            else
-                return (qreal)(2 * M_PI -
-                               atan((qreal)(p.y()) / (qreal)(p.x())));
-        }
-        else
-            return (qreal)(M_PI - atan((qreal)(p.y()) / (qreal)(p.x())));
-    }
-    /*
-    // Calculate angle of vector to y-axis
-    if (p.y()==0)
-    {
-    if (p.x()>=0)
-        return M_PI_2;
-    else
-        return 3* M_PI_2;
-    } else
-    {
-    if (p.y()>0)
-        return (qreal)(M_PI  - atan ( (qreal)(p.x()) / (qreal)(p.y()) ) );
-    else
-        if (p.x()<0)
-        return (qreal)( 2*M_PI - atan ( (qreal)(p.x()) / (qreal)(p.y()) ) );
-        else
-        return (qreal)( - atan ( (qreal)(p.x()) / (qreal)(p.y()) ) );
-    }
-    */
 }
 
 qreal min(qreal a, qreal b)
@@ -250,7 +236,7 @@ void centerDialog(QDialog *dia)
 // #include "version.h"
 
 // #include <QDebug>
-// #include <QRegExp>
+// #include <QRegularExpression>
 
 bool versionLowerThanVym(const QString &v)
 {
@@ -259,6 +245,14 @@ bool versionLowerThanVym(const QString &v)
         return false;
     else
         return versionLowerOrEqualThanVym(v);
+}
+
+QString underline(const QString &text, const QString &line)
+{
+    QString r = text + "\n";
+    for (int j = 0; j < text.length(); j++)
+        r += line;
+    return r + "\n\n";
 }
 
 bool versionLowerOrEqualThanVym(const QString &v)
@@ -278,30 +272,27 @@ bool versionLowerOrEqual(const QString &v, const QString &vstatic)
     int vs2 = 0;
     int vs3 = 0;
 
-    QRegExp rx("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
-    int pos = rx.indexIn(v);
-    if (pos > -1) {
-        v1 = rx.cap(1).toInt(&ok);
+    QRegularExpression re("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
+    QRegularExpressionMatch match = re.match(v); 
+    if (match.hasMatch()) {
+        v1 = match.captured(1).toInt(&ok);
         if (ok)
-            v2 = rx.cap(2).toInt(&ok);
+            v2 = match.captured(2).toInt(&ok);
         if (ok)
-            v3 = rx.cap(3).toInt(&ok);
+            v3 = match.captured(3).toInt(&ok);
     }
 
-    pos = rx.indexIn(vstatic);
-    if (ok && pos > -1) {
-        vs1 = rx.cap(1).toInt(&ok);
+    match = re.match(vstatic);
+    if (match.hasMatch()) {
+        vs1 = match.captured(1).toInt(&ok);
         if (ok)
-            vs2 = rx.cap(2).toInt(&ok);
+            vs2 = match.captured(2).toInt(&ok);
         if (ok)
-            vs3 = rx.cap(3).toInt(&ok);
+            vs3 = match.captured(3).toInt(&ok);
     }
 
     if (!ok) {
-        qWarning() << QString(
-                          "Warning: Checking version failed: v=%1  vstatic=%2")
-                          .arg(v)
-                          .arg(vstatic);
+        qWarning() << QString( "Warning: Checking version failed: v=%1  vstatic=%2").arg(v, vstatic);
         return false;
     }
 

@@ -2,34 +2,32 @@
 #define TEXTEDITOR_H
 
 #include <QMainWindow>
+#include <QString>
 #include <QtGui>
-
-class QTextEdit;
-class QComboBox;
-
 #include "vymtext.h"
+
+class MyTextEdit;
+class QComboBox;
 
 enum EditorState { inactiveEditor, emptyEditor, filledEditor };
 
 class TextEditor : public QMainWindow {
     Q_OBJECT
   public:
-    TextEditor();
+    TextEditor(const QString &id, const QString &scope);
     ~TextEditor();
 
-    void init(const QString &ename);
+    void init();
+    void setFocus();
     bool isEmpty();
-    void setEditorName(const QString &);
-    void setEditorTitle(const QString &t = "");
-    QString getEditorTitle();
+    void setTitle(const QString &t = "");
     void setFont(const QFont &);
     void setFontHint(const QString &);
     QString getFontHint();
     QString getFontHintDefault();
-    void setFilename(const QString &);
-    QString getFilename();
-    void setFilenameHint(const QString &);
-    QString getFilenameHint();
+    void setFileName(const QString &);
+    QString fileName();
+    void setFileNameHint(const QString &);
     QString getText();
     VymText getVymText();
 
@@ -37,14 +35,12 @@ class TextEditor : public QMainWindow {
     bool findText(const QString &, const QTextDocument::FindFlags &, int i);
     void setTextCursor(const QTextCursor &cursor);
     QTextCursor getTextCursor();
-    void setFocus();
 
   protected:
     void setupFileActions();
     void setupEditActions();
     void setupFormatActions();
     void setupSettingsActions();
-    void closeEvent(QCloseEvent *);
     bool eventFilter(QObject *obj, QEvent *ev);
 
   public slots:
@@ -56,6 +52,7 @@ class TextEditor : public QMainWindow {
     void setInactive(); // Nothing can be entered
     void editCopyAll();
     void clear();
+    void closeWindow();
 
   protected slots:
     void deleteAll();
@@ -68,12 +65,11 @@ class TextEditor : public QMainWindow {
 
   private slots:
     void textLoad();
-    void textSaveAs();
-    void textSave();
-    void textExportAsASCII();
+    void textExportAs();
     void textPrint();
     void textEditUndo();
     void toggleFonthint();
+    bool richTextMode();
     void setRichTextMode(bool b);
     void toggleRichText();
     void setFixedFont();
@@ -83,46 +79,53 @@ class TextEditor : public QMainWindow {
     void textItalic();
     void textFamily(const QString &f);
     void textSize(const QString &p);
-    void textColor();
+    void selectTextFGColor();
+    void selectTextBGColor();
     void textAlign(QAction *);
     void textVAlign();
     void fontChanged(const QFont &f);
-    void colorChanged(const QColor &c);
+    void colorFGChanged(const QColor &c);
+    void colorBGChanged(const QColor &c);
     void formatChanged(const QTextCharFormat &f);
     void alignmentChanged(int a);
     void verticalAlignmentChanged(QTextCharFormat::VerticalAlignment);
     void updateActions();
     void setState(EditorState);
     void updateState();
-    void selectColorRichTextDefaultBackground();
-    void selectColorRichTextDefaultForeground();
+    void selectRichTextEditorBackgroundColor();
+    void selectRichTextForegroundColor();
+    void selectRichTextBackgroundColor();
+    void insertOrEditUrl();
+    void insertOrEditUrl(QTextCursor);
+    void insertImage();
 
   public:
-    void setColorRichTextDefaultForeground(const QColor &);
-    void setColorRichTextDefaultBackground(const QColor &);
-    void setColorMapBackground(const QColor&);
-    void setUseColorMapBackground(bool);
+    void setRichTextEditorBackgroundColor(const QColor &);
+    void setRichTextForegroundColor(const QColor &);
+    void setRichTextBackgroundColor(const QColor &);
+    void setMapBackgroundColor(const QColor&);
+    void setUseMapBackgroundColor(bool);
 
   protected:
     QString shortcutScope; // used for settings and shortcut scopes
-    QTextEdit *e;
+    MyTextEdit *editor;
     QPoint lastPos;     // save last position of window
-    QString editorName; // Name of editor, e.g. note editor, heading editor, ...
-    QString editorTitle; // window title: Editor name + selected branch
-    QString filename;
-    QString filenameHint;
+    QString editorId;   // Name of editor, e.g. NoteEditor or HeadingEditor
+    QString fileNameInt;
+    QString fileNameHintInt;    // E.g. heading of branch for notes
 
     EditorState state;
     bool blockChangedSignal;
     bool blockTextUpdate;       // Set *while* textHasChanged is still being emitted
 
-    QColor colorRichTextDefaultBackground;
-    QColor colorRichTextDefaultForeground;
+    QColor colorRichTextEditorBackground;
+    QColor colorRichTextBackground;
+    QColor colorRichTextForeground;
     QColor colorMapBackground;
     bool useColorMapBackground;
 
-    QFont varFont;
-    QFont fixedFont;
+    QFont varFontInt;
+    QFont fixedFontInt;
     QComboBox *comboFont, *comboSize;
 
     QToolBar *editToolBar;
@@ -130,16 +133,34 @@ class TextEditor : public QMainWindow {
     QToolBar *fontHintsToolBar;
     QToolBar *formatToolBar;
 
-    QAction *actionFileLoad, *actionFileSave, *actionFileSaveAs,
+    // Filled editor only actions
+    QList <QAction*> filledEditorActions;
+
+    // Filled editor RichText actions
+    QList <QAction*> filledEditorRichTextActions;
+
+    // Empty editor actions
+    QList <QAction*> emptyEditorActions;
+
+    QAction *actionFileLoad,
+        *actionFileExport, *actionFileExportHtml, *actionFileExportText,
         *actionFilePrint, *actionFileDeleteAll, *actionEditUndo,
         *actionEditRedo, *actionEditCopy, *actionEditCut, *actionEditPaste,
+        *actionSelectAll,
+	*actionInsertOrEditUrl,
+	*actionInsertImage,
         *actionFormatUseFixedFont, *actionFormatRichText,
         *actionSettingsVarFont, *actionSettingsFixedFont,
-        *actionSettingsFonthintDefault, *actionEmptyEditorColor,
-        *actionFilledEditorColor, *actionInactiveEditorColor, *actionFontColor;
+        *actionSettingsFonthintDefault, *actionEmptyEditorBGColor,
+        *actionActiveEditorBGColor, *actionInactiveEditorBGColor,
+	*actionRichTextFGColor,
+	*actionRichTextBGColor;
 
-    QAction *actionTextBold, *actionTextUnderline, *actionTextItalic,
-        *actionTextColor, *actionAlignSubScript, *actionAlignSuperScript,
+    QAction
+        *actionTextFGColor,
+        *actionTextBGColor,
+	*actionTextBold, *actionTextUnderline, *actionTextItalic,
+	*actionAlignSubScript, *actionAlignSuperScript,
         *actionAlignLeft, *actionAlignCenter, *actionAlignRight,
         *actionAlignJustify;
 };

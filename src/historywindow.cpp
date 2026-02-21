@@ -1,8 +1,14 @@
 #include "historywindow.h"
+
+#include <QCloseEvent>
+
 #include "mainwindow.h"
 
 extern Settings settings;
 extern Main *mainWindow;
+
+extern QString editorFocusInStyle;
+extern QString editorFocusOutStyle;
 
 HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
 {
@@ -13,10 +19,10 @@ HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
 
     QTableWidgetItem *item;
 
-    item = new QTableWidgetItem(tr("Action", "Table with actions"));
+    item = new QTableWidgetItem(tr("Comment", "Table with actions"));
     ui.historyTable->setHorizontalHeaderItem(0, item);
 
-    item = new QTableWidgetItem(tr("Comment", "Table with actions"));
+    item = new QTableWidgetItem(tr("Action", "Table with actions"));
     ui.historyTable->setHorizontalHeaderItem(1, item);
 
     item = new QTableWidgetItem(tr("Undo action", "Table with actions"));
@@ -32,6 +38,18 @@ HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
     connect(ui.historyTable, SIGNAL(itemSelectionChanged()), this,
             SLOT(select()));
 
+    QAction *a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+
+    a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    a->setShortcut(Qt::Key_Escape);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+
     // Load Settings
 
     resize(
@@ -43,16 +61,18 @@ HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
 
     ui.historyTable->setColumnWidth(
         0,
-        settings.value("/satellite/historywindow/geometry/columnWidth/0", 250)
+        settings.value("/satellite/historywindow/geometry/columnWidth/0", 350)
             .toInt());
     ui.historyTable->setColumnWidth(
         1,
-        settings.value("/satellite/historywindow/geometry/columnWidth/1", 350)
+        settings.value("/satellite/historywindow/geometry/columnWidth/1", 250)
             .toInt());
     ui.historyTable->setColumnWidth(
         2,
         settings.value("/satellite/historywindow/geometry/columnWidth/2", 250)
             .toInt());
+
+    ui.historyTable->setStyleSheet("QTableView:focus {" + editorFocusInStyle + "}");
 }
 
 HistoryWindow::~HistoryWindow()
@@ -65,6 +85,11 @@ HistoryWindow::~HistoryWindow()
         settings.setValue(
             QString("/satellite/historywindow/geometry/columnWidth/%1").arg(i),
             ui.historyTable->columnWidth(i));
+}
+
+void HistoryWindow::setFocus()
+{
+    ui.historyTable->setFocus();
 }
 
 void HistoryWindow::clearRow(int row)
@@ -86,11 +111,11 @@ void HistoryWindow::updateRow(int row, int step, SimpleSettings &set)
     QTableWidgetItem *item;
 
     item = new QTableWidgetItem(
-        set.value(QString("/history/step-%1/redoCommand").arg(step)));
+        set.value(QString("/history/step-%1/comment").arg(step)));
     ui.historyTable->setItem(row, 0, item);
 
     item = new QTableWidgetItem(
-        set.value(QString("/history/step-%1/comment").arg(step)));
+        set.value(QString("/history/step-%1/redoCommand").arg(step)));
     ui.historyTable->setItem(row, 1, item);
 
     item = new QTableWidgetItem(
@@ -176,9 +201,13 @@ void HistoryWindow::setStepsTotal(int st)
 
 void HistoryWindow::closeEvent(QCloseEvent *ce)
 {
-    ce->accept();
-    hide();
-    emit(windowClosed());
+    closeWindow();
+}
+
+void HistoryWindow::closeWindow()
+{
+    parentWidget()->hide();
+    emit windowClosed();
 }
 
 void HistoryWindow::undo() { mainWindow->editUndo(); }

@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QFont>
 #include <QProcessEnvironment>
 #include <QSslSocket>
 #include <QString>
@@ -11,6 +12,7 @@
 #include "settings.h"
 
 extern bool usingDarkTheme;
+extern bool systemSeemsDark;
 extern QString vymVersion;
 
 extern QString vymVersion;
@@ -20,6 +22,8 @@ extern QString vymCodeName;
 extern QString vymBuildDate;
 
 extern Settings settings;
+extern QFont fixedFont;
+extern QFont varFont;
 
 extern QString localeName;
 
@@ -28,6 +32,10 @@ extern QDir tmpVymDir;          // All temp files go there, created in mainwindo
 extern QDir vymTranslationsDir;
 extern QTranslator vymTranslator;
 
+extern bool useActionLog;
+extern QString actionLogPath;
+
+extern QStringList lastSessionFiles;
 extern QString zipToolPath;
 
 QString debugInfo()
@@ -45,9 +53,14 @@ QString debugInfo()
     s += QString("  currentPath: %1\n").arg(QDir::currentPath());
     s += QString("   appDirPath: %1\n")
             .arg(QCoreApplication::applicationDirPath());
+    s += QString("       config: %1\n").arg(settings.fileName());
+    s += QString("use actionLog: %1\n").arg(useActionLog);
+    s += QString("actionLogPath: %1\n").arg(actionLogPath);
     s += QString("     Settings: %1\n\n").arg(settings.fileName());
-    s += QString("   Dark theme: %1\n").arg(usingDarkTheme);
+    s += QString("   Dark theme: %1   System seems dark: %2\n").arg(usingDarkTheme).arg(systemSeemsDark);
     s += QString("Avail. styles: %1\n\n").arg(QStyleFactory::keys().join(","));
+    s += QString(" Fixed font: %1\n").arg(fixedFont.toString());
+    s += QString("   Var font: %1\n").arg(varFont.toString());
     s += " SSL status: ";
     QSslSocket::supportsSsl() ? s += "supported\n" : s += "not supported\n";
     s += "     SSL Qt: " + QSslSocket::sslLibraryBuildVersionString() + "\n";
@@ -63,7 +76,7 @@ QString debugInfo()
     s += QString("            localeName: %1\n").arg(localeName);
     s += QString("                system: %1\n").arg(QLocale::system().name());
     s += QString("              language: %1\n").arg(QLocale::languageToString(QLocale::system().language()));
-    s += QString("               country: %1\n").arg(QLocale::countryToString(QLocale::system().country()));
+    s += QString("               country: %1\n").arg(QLocale::territoryToString(QLocale::system().territory()));
     s += QString("           uiLanguages: %1\n").arg(QLocale::system().uiLanguages().join(","));
     s += QString("                  LANG: %1\n")
         .arg(QProcessEnvironment::systemEnvironment().value("LANG", "not set."));
@@ -71,6 +84,8 @@ QString debugInfo()
     s += QString("Available translations: %1\n").arg(translations.count());
     foreach (QString qm_file, translations)
         s += QString("                        %1\n").arg(qm_file);
+
+    s += QString("      lastSessionFiles: %1\n").arg(lastSessionFiles.join(", "));
 
     return s;
 }

@@ -1,26 +1,31 @@
 #include "mapeditor.h"
 
+#include <QApplication>
 #include <QGraphicsProxyWidget>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QObject>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QScrollBar>
 
+#include "animpoint.h"
 #include "branchitem.h"
 #include "geometry.h"
+#include "heading-container.h"
+#include "image-container.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "shortcuts.h"
-#include "warningdialog.h"
 #include "winter.h"
+#include "xlink.h"
 #include "xlinkitem.h"
+#include "xlinkobj.h"
 
 extern Main *mainWindow;
-extern QString clipboardDir;
-extern QString clipboardFile;
 extern bool debug;
 extern QPrinter *printer;
+extern QDir tmpVymDir;
 
 extern QMenu *branchContextMenu;
 extern QMenu *canvasContextMenu;
@@ -32,7 +37,7 @@ extern Settings settings;
 
 extern QTextStream vout;
 
-extern QString editorFocusStyle;
+extern QString editorFocusInStyle;
 
 extern FlagRowMaster *systemFlagsMaster;
 
@@ -42,37 +47,88 @@ MapEditor::MapEditor(VymModel *vm)
 {
     // qDebug() << "Constructor ME " << this;
 
-    QString shortcutScope = tr("Map Editor", "Shortcut scope");
-    mapScene = new QGraphicsScene(NULL);
+    mapScene = new QGraphicsScene(nullptr);
     mapScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
-    mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-2 Avoiding crashes...
+    //mapScene->setItemIndexMethod(QGraphicsScene::NoIndex);  // FIXME-4 Avoiding crashes...
                                                             // Alternatively call removeFromIndex() in destructor
                                                             // or maybe also prepareGeometryChange()
 
-    zoomFactor = zoomFactorTarget = 1;
-    angle = angleTarget = 0;
+    // Origin for view transformations (rotation, scaling)
+    setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+    transformationOrigin = QPointF(0, 0);
+    useTransformationOrigin = false;
+    zoomDelta = 0.20;
+
+    if (debug) {
+        // Add cross in origin for debugging
+        QPointF p;
+        qreal size = 100;
+        QGraphicsRectItem *x_axis = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
+        QGraphicsRectItem *y_axis = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
+        x_axis->setBrush(Qt::NoBrush);
+        y_axis->setBrush(Qt::NoBrush);
+        x_axis->setPen(QColor(Qt::blue));
+        y_axis->setPen(QColor(Qt::blue));
+
+        mapScene->addItem(x_axis);
+        mapScene->addItem(y_axis);
+
+        // Add another cross
+        /*
+        p = QPointF(200,0);
+        size = 20;
+        QGraphicsRectItem *x_axis2 = new QGraphicsRectItem(p.x() - size, p.y(), size * 2, 1 );
+        QGraphicsRectItem *y_axis2 = new QGraphicsRectItem(p.x(), p.y() - size, 1, size * 2);
+        x_axis2->setBrush(Qt::NoBrush);
+        y_axis2->setBrush(Qt::NoBrush);
+        x_axis2->setPen(QColor(Qt::gray));
+        y_axis2->setPen(QColor(Qt::gray));
+
+        mapScene->addItem(x_axis2);
+        mapScene->addItem(y_axis2);
+        */
+    }
+
+    zoomFactorInt = zoomFactorTargetInt = 1;
+    rotationInt = rotationTargetInt = 0;
 
     model = vm;
     model->registerMapEditor(this);
 
     setScene(mapScene);
 
-    setStyleSheet("QGraphicsView:focus {" + editorFocusStyle + "}");
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    selectionMode = AutoSelection;
+
+    setStyleSheet("QGraphicsView:focus {" + editorFocusInStyle + "}");
 
     // Create bitmap cursors, platform dependant
     HandOpenCursor = QCursor(QPixmap(":/mode-move-view.png"), 1, 1);
     PickColorCursor = QCursor(QPixmap(":/cursorcolorpicker.png"), 5, 27);
     XLinkCursor = QCursor(QPixmap(":/cursorxlink.png"), 1, 7);
 
-    editingBO = NULL;
+    editingBO = nullptr;
 
     printFrame = true;
     printFooter = true;
 
     setAcceptDrops(true);
 
+    // Container used for temporary moving and relinking branches
+    tmpParentContainer = new TmpParentContainer ();
+    mapScene->addItem(tmpParentContainer);
+    tmpParentContainer->setName("tmpParentContainer");
+
+    // When moving objects, draw then on top of everything else
+    tmpParentContainer->setZValue(10000);
+
     // Shortcuts and actions
     QAction *a;
+
+    QString shortcutScope = tr("Map Editor", "Shortcut scope");
+    switchboard.addScope("MapEditor", tr("Map Editors", "Shortcut group"));
 
     a = new QAction("Select upper branch", this);
     a->setShortcut(Qt::Key_Up);
@@ -81,7 +137,7 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
 
     a = new QAction("Add upper branch to selection", this);
-    a->setShortcut(Qt::Key_Up + Qt::SHIFT);
+    a->setShortcut(Qt::Key_Up | Qt::SHIFT);
     a->setShortcutContext(Qt::WidgetShortcut);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorUpToggleSelection()));
@@ -93,7 +149,7 @@ MapEditor::MapEditor(VymModel *vm)
     connect(a, SIGNAL(triggered()), this, SLOT(cursorDown()));
 
     a = new QAction("Add lower branch to selection", this);
-    a->setShortcut(Qt::Key_Down + Qt::SHIFT);
+    a->setShortcut(Qt::Key_Down | Qt::SHIFT);
     a->setShortcutContext(Qt::WidgetShortcut);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorDownToggleSelection()));
@@ -104,26 +160,24 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorLeft()));
 
-    a = new QAction("Select child branch", this);
+    a = new QAction("Select child or parent branch", this);
     a->setShortcut(Qt::Key_Right);
     //  a->setShortcutContext (Qt::WidgetWithChildrenShortcut);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(cursorRight()));
 
-    a = new QAction("Select first branch", this);
-    a->setShortcut(Qt::Key_Home);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(cursorFirst()));
-
-    a = new QAction("Select last branch", this);
-    a->setShortcut(Qt::Key_End);
-    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(cursorLast()));
-
     // Action to embed LineEdit for heading in Scene
-    lineEdit = NULL;
+    lineEdit = new QLineEdit;
+    lineEdit->setCursor(Qt::IBeamCursor);
+    editHeadingCancelAction = new QAction("editHeadingCancelAction", lineEdit);
+    editHeadingCancelAction->setShortcut(Qt::Key_Escape);
+    //editHeadingCancelAction->setShortcutContext(Qt::ApplicationShortcut);
+    lineEdit->addAction(editHeadingCancelAction);
+    proxyWidget = mapScene->addWidget(lineEdit);
+    connect( editHeadingCancelAction, SIGNAL(triggered()), this, SLOT(editHeadingCanceled()));
+    lineEdit->show();
+    lineEdit->hide();
+
 
     a = new QAction(tr("Edit heading", "MapEditor"), this);
     a->setShortcut(Qt::Key_Return); // Edit heading
@@ -136,27 +190,36 @@ MapEditor::MapEditor(VymModel *vm)
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editHeading()));
 
-    // Selections
-    selectionPen = QPen(QColor(255,255,0), 1);
-    selectionBrush = QBrush(QColor(255,255,0));
-
     // Panning
     panningTimer = new QTimer(this);
     vPan = QPointF();
     connect(panningTimer, SIGNAL(timeout()), this, SLOT(panView()));
 
-    // Clone actions defined in MainWindow
-    foreach (QAction *qa, mainWindow->mapEditorActions) {
+    // Clone global actions defined in MainWindow   // FIXME-3 Problematic, if shortcuts could change later
+                                                    // Maybe control "duplicate" actions from switchboard
+                                                    // using scopes?
+                                                    // Use scope like "MapEditors" for TreeEditor,
+                                                    // MainWindow and MapEditor?
+    foreach (auto a_org, mainWindow->mapEditorActions) {
         a = new QAction(this);
-        a->setShortcut(qa->shortcut());
-        a->setShortcutContext(qa->shortcutContext());
-        connect(a, SIGNAL(triggered()), qa, SLOT(trigger()));
+        a->setShortcut(a_org->shortcut());
+        a->setShortcutContext(a_org->shortcutContext());
+        connect(a, SIGNAL(triggered()), a_org, SLOT(trigger()));
         addAction(a);
     }
 
     setState(Neutral);
 
-    winter = NULL;
+    winter = nullptr;
+
+    // animations
+    animationUse = settings.value("/animation/use", true) .toBool();
+    animationTicks = settings.value("/animation/snapback/ticks", 50).toInt();
+    animationInterval = settings.value("/animation/snapback/interval", 15).toInt();
+    animatedContainers.clear();
+    animationTimer = new QTimer(this);
+    connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
+
 }
 
 MapEditor::~MapEditor()
@@ -165,8 +228,11 @@ MapEditor::~MapEditor()
 
     if (winter) {
         delete winter;
-        winter = NULL;
+        winter = nullptr;
     }
+
+    stopViewAnimations();
+    stopContainerAnimations();
 }
 
 VymModel *MapEditor::getModel() { return model; }
@@ -194,7 +260,7 @@ void MapEditor::panView()
         QRectF r = QRectF(q, QPointF(q.x() + 1, q.y() + 1));
 
         // Expand view if necessary
-        setScrollBarPosTarget(r);   // FIXME-2   mapToScene first?   
+        setScrollBarPosTarget(r);
 
         // Stop possible other animations
         if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
@@ -204,14 +270,17 @@ void MapEditor::panView()
         horizontalScrollBar()->setValue(horizontalScrollBar()->value() +
                                         vPan.x());
         verticalScrollBar()->setValue(verticalScrollBar()->value() + vPan.y());
-
-        // Update currently moving object
-        moveObject();
     }
 }
 
-void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea) // FIXME-2 zooming in not working yet (fit to selection)
+void MapEditor::ensureAreaVisibleAnimated(
+        const QRectF &area, 
+        bool scaled,
+        bool rotated,
+        qreal new_rotation)
 {
+    // qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated << "new_rot=" << new_rotation << " area=" << toS(area);
+
     // Changes viewCenter to make sure that 
     // r is  within the margins of the viewport
     //
@@ -226,36 +295,42 @@ void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
     int ymargin = settings.value("/mapeditor/scrollToMarginY/", 50).toInt();
 
     // Do we need to zoom out to show area?
-    QRect areaViewCoord = mapFromScene(area).boundingRect();
+    QRect areaViewCoord = mapFromScene(area).boundingRect();    // FIXME-2 Does not consider yet the *target* rotation and zoom factor (#185)
 
     // Visible area within margins
     QRect visibleViewCoord = rect();
     visibleViewCoord -= QMargins(xmargin, ymargin, xmargin, ymargin);
 
+    if (!rotated)
+        // Use current view rotation target, if we do not plan to set new target
+        new_rotation = rotationTargetInt;
 
     // Calculate required width and height considering rotation of view
-    qreal a = angle / 180 * M_PI;
+    qreal a = new_rotation / 180 * M_PI;
     qreal area_w_viewCoord = abs(sin(a) * area.height()) + abs(cos(a) * area.width());
     qreal area_h_viewCoord = abs(sin(a) * area.width()) + abs(cos(a) * area.height());
-    qreal z_x = 1.0 * visibleViewCoord.width() / area_w_viewCoord;
-    qreal z_y = 1.0 * visibleViewCoord.height() / area_h_viewCoord;
+    qreal z_x = abs(1.0 * visibleViewCoord.width() / area_w_viewCoord);
+    qreal z_y = abs(1.0 * visibleViewCoord.height() / area_h_viewCoord);
 
     qreal zf = min (z_x, z_y);
 
     bool zoomOutRequired = 
         (visibleViewCoord.width() < areaViewCoord.width() ||
          visibleViewCoord.height() < areaViewCoord.height());
-    bool zoomInRequired = 
-        (visibleViewCoord.width() > areaViewCoord.width() &&
-         visibleViewCoord.height() > areaViewCoord.height());
 
-    //qDebug() << " zoom out: " << zoomOutRequired;
-    //qDebug() << " zoom  in: " << zoomInRequired << " zoomFactor=" << zoomFactor << " zf=" << zf;
-    if (zoomOutRequired || maximizeArea) {
-        setViewCenterTarget(area.center(), zf, angle);
+    int animDuration = 2000;
+    QEasingCurve easingCurve = QEasingCurve::OutQuint;
+    
+    //qDebug() << "z_xy=" << toS(QPointF(z_x, z_y));
+    if (zoomOutRequired || scaled) {
+        setViewCenterTarget(
+                area.center(), 
+                zf,     // FIXME-2 Shouldn't this be zoomFactorTargetInt? Only used in Main::viewCenterScaled
+                new_rotation,
+                animDuration,
+                easingCurve);
         return;
     }
-
 
     // After zooming bbox would fit into margins of viewport
     long view_dx = 0;
@@ -274,16 +349,16 @@ void MapEditor::ensureAreaVisibleAnimated(const QRectF &area, bool maximizeArea)
         // move down
         view_dy = areaViewCoord.y() + areaViewCoord.height() - viewport()->height() + ymargin;
 
-    if (abs(view_dx) > 5 || abs(view_dy) > 5)
+    if (abs(view_dx) > 5 || abs(view_dy) > 5 || rotated)
         setViewCenterTarget(
                 mapToScene(viewport()->geometry().center() + QPoint (view_dx, view_dy)),
-                zoomFactor,
-                angle,
-                2000,
-                QEasingCurve::OutQuint);
+                zoomFactorTargetInt,
+                new_rotation,
+                animDuration,
+                easingCurve);
 }
 
-void MapEditor::ensureSelectionVisibleAnimated(bool maximizeArea)
+void MapEditor::ensureSelectionVisibleAnimated(bool scaled, bool rotated)
 {
     // Changes viewCenter to make sure that bounding box of all currently
     // selected items is  within the margins of the viewport
@@ -293,6 +368,8 @@ void MapEditor::ensureSelectionVisibleAnimated(bool maximizeArea)
     //
     // Similar to QGraphicsItem::ensureVisible, but with animation and (if necessary)
     // zooming
+
+    // qDebug() << __func__ << "scaled=" << scaled << "rotated=" <<rotated;
 
     QList <TreeItem*> selis = model->getSelectedItems();
 
@@ -304,34 +381,46 @@ void MapEditor::ensureSelectionVisibleAnimated(bool maximizeArea)
     bool firstIteration = true;
 
     foreach (TreeItem *ti, selis) {
-        LinkableMapObj *lmo = nullptr;
-        if (ti->getType() == TreeItem::Image || ti->isBranchLikeType())
-            lmo = ((MapItem *)ti)->getLMO();
-        if (lmo) {
-            if (firstIteration) {
-                bbox = lmo->getBBox();
-                firstIteration = false;
-            } else
-                bbox = bbox.united(lmo->getBBox());
+        Container *c = nullptr;
+        QRectF c_bbox;
+        if (ti->hasTypeAttribute())
+            ti = ti->parent();
+        if (ti->hasTypeBranch()) {
+            c = ((BranchItem*)ti)->getBranchContainer()->getHeadingContainer();
+            c_bbox = c->mapToScene(c->rect()).boundingRect();
+        } else if (ti->getType() == TreeItem::Image) {
+            c = ((ImageItem*)ti)->getImageContainer();
+            c_bbox = c->mapToScene(c->rect()).boundingRect();
+        } else if (ti->hasTypeXLink()) {
+            XLinkObj *xlo = ((XLinkItem*)ti)->getXLinkObj();
+            if (xlo)
+                c_bbox = xlo->boundingRect();
+        }
+
+        if (firstIteration) {
+            bbox = c_bbox;
+            firstIteration = false;
+        } else
+            bbox = bbox.united(c_bbox);
+    }
+    int new_rotation = round_int(rotationTargetInt) % 360;
+
+    if (rotated && selis.count() == 1) {
+        if (selis.first()->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)selis.first())->getBranchContainer();
+
+            // Avoid rotations > 360
+            setRotation(new_rotation);
+
+            qreal rotScene = bc->rotationHeadingInScene();
+            int d_rotation = new_rotation + round_int(rotScene) % 360;
+            if (d_rotation > 180)
+                d_rotation = d_rotation - 360;
+            new_rotation = new_rotation - d_rotation;
         }
     }
 
-    ensureAreaVisibleAnimated(bbox, maximizeArea);
-}
-
-void MapEditor::scrollTo(const QModelIndex &index)
-{
-    if (index.isValid()) {
-        LinkableMapObj *lmo = NULL;
-        TreeItem *ti = static_cast<TreeItem *>(index.internalPointer());
-        if (ti->getType() == TreeItem::Image || ti->isBranchLikeType())
-            lmo = ((MapItem *)ti)->getLMO();
-        if (lmo) {
-            QRectF r = lmo->getBBox();
-            setScrollBarPosTarget(r);
-            animateScrollBars();
-        }
-    }
+    ensureAreaVisibleAnimated(bbox, scaled, rotated, new_rotation);
 }
 
 void MapEditor::setScrollBarPosTarget(QRectF rect)
@@ -346,7 +435,9 @@ void MapEditor::setScrollBarPosTarget(QRectF rect)
     // Prepare scrolling
     qreal width = viewport()->width();
     qreal height = viewport()->height();
-    QRectF viewRect = transform().scale(zoomFactorTarget, zoomFactorTarget).mapRect(rect);
+    QRectF viewRect = transform().
+        scale(zoomFactorTargetInt, zoomFactorTargetInt).
+        mapRect(rect);
 
     qreal left = horizontalScrollBar()->value();
     qreal right = left + width;
@@ -392,6 +483,7 @@ QPointF MapEditor::getScrollBarPos()
 
 void MapEditor::animateScrollBars()
 {
+    qDebug() << "ME::animateScrollBars";
     if (scrollBarPosAnimation.state() == QAbstractAnimation::Running)
         scrollBarPosAnimation.stop();
 
@@ -410,18 +502,113 @@ void MapEditor::animateScrollBars()
         setScrollBarPos(scrollBarPosTarget);
 }
 
+void MapEditor::animate()
+{
+    animationTimer->stop();
+    foreach (Container *c, animatedContainers) {
+        c->animate();
+
+        if (c->containerType() == Container::Branch)
+            ((BranchContainer*)c)->updateUpLink();
+
+        if (!c->isAnimated())
+            animatedContainers.removeAll(c);
+    }
+
+    if (!animatedContainers.isEmpty())
+        animationTimer->start(animationInterval);
+
+    model->repositionXLinks();
+}
+
+void MapEditor::startAnimation(Container *c, const QPointF &v)  // FIXME-3 only used in ME::autoLayout
+{
+    if (!c) return;
+
+    startAnimation(c, c->pos(), c->pos() + v);
+}
+
+void MapEditor::startAnimation(Container *c, const QPointF &start,
+                              const QPointF &dest)
+{
+    if (start == dest) return;
+
+    if (c) {
+        c->setPos(start);
+        AnimPoint ap;
+        ap.setStart(start);
+        ap.setDest(dest);
+        ap.setTicks(animationTicks);
+        ap.setAnimated(true);
+        c->setAnimation(ap);
+        if (!animatedContainers.contains(c))
+            animatedContainers.append(c);
+        animationTimer->setSingleShot(true);
+        animationTimer->start(animationInterval);
+    }
+}
+
+void MapEditor::stopContainerAnimation(Container *c)
+{
+    int i = animatedContainers.indexOf(c);
+    if (i >= 0)
+        animatedContainers.removeAt(i);
+}
+
+void MapEditor::stopContainerAnimations()
+{
+    animationTimer->stop();
+
+    Container *c;
+    while (!animatedContainers.isEmpty()) {
+        c = animatedContainers.takeFirst();
+        c->stopAnimation();
+    }
+}
+
+void MapEditor::stopViewAnimations()
+{
+    if (viewCenterAnimation.state() == QAbstractAnimation::Running)
+        viewCenterAnimation.stop();
+    if (rotationAnimation.state() == QAbstractAnimation::Running)
+        rotationAnimation.stop();
+    if (zoomAnimation.state() == QAbstractAnimation::Running)
+            zoomAnimation.stop();
+}
+
+void MapEditor::zoomIn()
+{
+    qreal f_zf = 1 + zoomDelta;   // view transformation grows
+
+    useTransformationOrigin = false;
+    setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+}
+
+void MapEditor::zoomOut()
+{
+    qreal f_zf = 1 - zoomDelta;   // view transformation grows
+
+    useTransformationOrigin = false;
+    setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+}
+
 void MapEditor::setZoomFactorTarget(const qreal &zft)
 {
-    zoomFactorTarget = zft;
+    // qDebug() << __func__ << "zft=" << zft << " zf=" << zoomFactorInt;
+    if (zoomFactorTargetInt == zft)
+        return;
+
+    zoomFactorTargetInt = zft;
     if (zoomAnimation.state() == QAbstractAnimation::Running)
         zoomAnimation.stop();
+
     if (settings.value("/animation/use/", true).toBool()) {
         zoomAnimation.setTargetObject(this);
-        zoomAnimation.setPropertyName("zoomFactor");
+        zoomAnimation.setPropertyName("zoomFactorInt");
         zoomAnimation.setDuration(
             settings.value("/animation/duration/zoom", 2000).toInt());
         zoomAnimation.setEasingCurve(QEasingCurve::OutQuint);
-        zoomAnimation.setStartValue(zoomFactor);
+        zoomAnimation.setStartValue(zoomFactorInt);
         zoomAnimation.setEndValue(zft);
         zoomAnimation.start();
     }
@@ -429,63 +616,65 @@ void MapEditor::setZoomFactorTarget(const qreal &zft)
         setZoomFactor(zft);
 }
 
-qreal MapEditor::getZoomFactorTarget() { return zoomFactorTarget; }
+qreal MapEditor::zoomFactorTarget() {
+    return zoomFactorTargetInt;
+}
 
 void MapEditor::setZoomFactor(const qreal &zf)
 {
-    zoomFactor = zf;
+    //qDebug() << __func__ << "zf=" << zf;
+    zoomFactorInt = zf;
     updateMatrix();
 }
 
-qreal MapEditor::getZoomFactor() { return zoomFactor; }
+qreal MapEditor::zoomFactor() {
+    return zoomFactorInt;
+}
 
-void MapEditor::setAngleTarget(const qreal &at)
+void MapEditor::setRotationTarget(const qreal &at)
 {
-    angleTarget = at;
+    rotationTargetInt = at;
     if (rotationAnimation.state() == QAbstractAnimation::Running)
         rotationAnimation.stop();
     if (settings.value("/animation/use/", true).toBool()) {
         rotationAnimation.setTargetObject(this);
-        rotationAnimation.setPropertyName("angle");
+        rotationAnimation.setPropertyName("rotationInt");
         rotationAnimation.setDuration(
             settings.value("/animation/duration/rotation", 2000).toInt());
         rotationAnimation.setEasingCurve(QEasingCurve::OutQuint);
-        rotationAnimation.setStartValue(angle);
+        rotationAnimation.setStartValue(rotationInt);
         rotationAnimation.setEndValue(at);
         rotationAnimation.start();
     }
     else
-        setAngle(angleTarget);
+        setRotation(rotationTargetInt);
 }
 
-qreal MapEditor::getAngleTarget() { return angleTarget; }
+qreal MapEditor::rotationTarget() { return rotationTargetInt; }
 
-void MapEditor::setAngle(const qreal &a)
+void MapEditor::setRotation(const qreal &a)
 {
-    angle = a;
+    rotationInt = a;
     updateMatrix();
     if (winter)
         winter->updateView();
 }
 
-qreal MapEditor::getAngle() { return angle; }
+qreal MapEditor::rotation() { return rotationInt; }
 
 void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
                                     const qreal &at, const int duration,
                                     const QEasingCurve &easingCurve)
 {
     viewCenterTarget = p;
-    zoomFactorTarget = zft;
-    angleTarget = at;
+    zoomFactorTargetInt = zft;
+    rotationTargetInt = at;
 
     viewCenter = mapToScene(viewport()->geometry()).boundingRect().center();
 
-    if (viewCenterAnimation.state() == QAbstractAnimation::Running)
-        viewCenterAnimation.stop();
-    if (rotationAnimation.state() == QAbstractAnimation::Running)
-        rotationAnimation.stop();
-    if (zoomAnimation.state() == QAbstractAnimation::Running)
-        zoomAnimation.stop();
+    // qDebug() << __func__ << " p=" << toS(p) << " zft=" << zft << "rot=" << at;
+
+    stopViewAnimations();
 
     if (settings.value("/animation/use/", true).toBool()) {
         viewCenterAnimation.setTargetObject(this);
@@ -498,62 +687,89 @@ void MapEditor::setViewCenterTarget(const QPointF &p, const qreal &zft,
         viewCenterAnimation.start();
 
         rotationAnimation.setTargetObject(this);
-        rotationAnimation.setPropertyName("angle");
+        rotationAnimation.setPropertyName("rotationInt");
         rotationAnimation.setDuration(
             settings.value("/animation/duration/rotation", duration).toInt());
         rotationAnimation.setEasingCurve(easingCurve);
-        rotationAnimation.setStartValue(angle);
-        rotationAnimation.setEndValue(angleTarget);
+        rotationAnimation.setStartValue(rotationInt);
+        rotationAnimation.setEndValue(rotationTargetInt);
         rotationAnimation.start();
 
         zoomAnimation.setTargetObject(this);
-        zoomAnimation.setPropertyName("zoomFactor");
+        zoomAnimation.setPropertyName("zoomFactorInt");
         zoomAnimation.setDuration(
             settings.value("/animation/duration/zoom", duration).toInt());
         zoomAnimation.setEasingCurve(easingCurve);
-        zoomAnimation.setStartValue(zoomFactor);
-        zoomAnimation.setEndValue(zoomFactorTarget);
+        zoomAnimation.setStartValue(zoomFactorInt);
+        zoomAnimation.setEndValue(zoomFactorTargetInt);
         zoomAnimation.start();
-    }
-    else {
-        setAngle(angleTarget);
+    } else {
+        setRotation(rotationTargetInt);
         setZoomFactor(zft);
         setViewCenter(viewCenterTarget);
     }
 }
 
-void MapEditor::setViewCenterTarget()
+void MapEditor::setViewCenterSelection()
 {
-    MapItem *selti = (MapItem *)(model->getSelectedItem());
-    if (selti) {
-        LinkableMapObj *lmo = selti->getLMO();
-        if (lmo)
-            setViewCenterTarget(lmo->getBBox().center(), 1, 0);
+    // qDebug() << __func__;
+    QList <TreeItem*> seltis = model->getSelectedItems();
+    QPointF p;
+    int n = 0;
+    foreach (TreeItem *selti, seltis) {
+        Container *c = nullptr;
+        if (selti->hasTypeBranch()) 
+            c = ((BranchItem*)selti)->getBranchContainer()->getHeadingContainer();
+        else if (selti->hasTypeImage())
+            c = ((ImageItem*)selti)->getImageContainer();
+        if (c) {
+            n++;
+            p = p + c->mapToScene(c->rect().center());
+        }
     }
+
+    if (n > 0)
+        setViewCenterTarget( p / n, 1, 0);
 }
 
-QPointF MapEditor::getViewCenterTarget() { return viewCenterTarget; }
+void MapEditor::setViewCenterTarget(QPointF p)
+{
+    setViewCenterTarget(p, zoomFactorTargetInt, rotationTargetInt);
+}
 
-void MapEditor::setViewCenter(const QPointF &vc) { centerOn(vc); }
+void MapEditor::setViewCenter(const QPointF &vc) {
+    // For wheel events // useTransFormationOrigin == true
+    // and thus we will need vp_center in updateMatrix() later
+    vp_center = vc; 
+    centerOn(vc);
+}
 
 QPointF MapEditor::getViewCenter() { return viewCenter; }
 
 void MapEditor::updateMatrix()
 {
-    QTransform t_zoom;
-    t_zoom.scale(zoomFactor, zoomFactor);
-    QTransform t_rot;
-    t_rot.rotate(angle);
-    setTransform(t_zoom * t_rot);
+    if (useTransformationOrigin) {
+        //qDebug() << " vp_center=" << toS(vp_center);
+        centerOn(transformationOrigin);
+    }
+
+    QTransform t;
+    t.rotate(rotationInt);
+    t.scale(zoomFactorInt, zoomFactorInt);
+    setTransform(t);
+
+    if (useTransformationOrigin)
+        centerOn(vp_center);
 }
 
 void MapEditor::minimizeView() {
-    // If we only would set scene rectangle to existing items, then 
-    // view fould "jump", when Qt automatically tries to center. 
+    // If we only would set scene rectangle to existing items, then
+    // view would "jump", when Qt automatically tries to center.
     // Better consider the currently visible viewport (with slight offset)
     QRectF r = mapToScene(viewport()->geometry()).boundingRect();
     r.translate(-2,-3);
     setSceneRect(scene()->itemsBoundingRect().united(r));
+    // Used to be called also from VymModel::reposition()
 }
 
 void MapEditor::print()
@@ -586,7 +802,7 @@ void MapEditor::print()
         model->unselectAll();
 
         QRectF mapRect = totalBBox;
-        QGraphicsRectItem *frame = NULL;
+        QGraphicsRectItem *frame = nullptr;
 
         if (printFrame) {
             // Print frame around map
@@ -594,7 +810,6 @@ void MapEditor::print()
                             totalBBox.width() + 20, totalBBox.height() + 20);
             frame = mapScene->addRect(mapRect, QPen(Qt::black),
                                       QBrush(Qt::NoBrush));
-            frame->setZValue(0);
             frame->show();
         }
 
@@ -639,28 +854,34 @@ void MapEditor::print()
     }
 }
 
-QRectF MapEditor::getTotalBBox()    // FIXME-2 really needed? Overlaps with scene and VM...
+QRectF MapEditor::getTotalBBox()    // return (minimal) size of view before printing or creating pdfs
 {
-    minimizeView();
+    minimizeView();     // Before returning size of view, minimize view
     return sceneRect();
 }
 
 QImage MapEditor::getImage(QPointF &offset)
 {
-    QRectF mapRect = getTotalBBox(); // minimized sceneRect
+    QRectF sceneRect = scene()->itemsBoundingRect();
 
-    int d = 10; // border
-    offset = QPointF(mapRect.x() - d / 2, mapRect.y() - d / 2);
-    QImage pix(mapRect.width() + d, mapRect.height() + d, QImage::Format_RGB32);
+    int d = 0; // border around sceneRect
 
+    QRect imageRect;
+    imageRect.setWidth(sceneRect.width() + 2 * d - 2);
+    imageRect.setHeight(sceneRect.height() + 2 * d);
+
+    offset = QPointF(sceneRect.left() - d, sceneRect.top() - d);
+    QImage pix(imageRect.width(), imageRect.height(), QImage::Format_ARGB32);
+
+    //qDebug() << "ME::getImage   offset="<< offset << " imageRect=" << toS(imageRect,0) << " sceneRect=" << toS(sceneRect,0);
     QPainter pp(&pix);
     pp.setRenderHints(renderHints());
     mapScene->render(&pp,
                      // Destination:
-                     QRectF(0, 0, mapRect.width() + d, mapRect.height() + d),
+                     QRectF(0, 0, imageRect.width(), imageRect.height()),
                      // Source in scene:
-                     QRectF(mapRect.x() - d / 2, mapRect.y() - d / 2,
-                            mapRect.width() + d, mapRect.height() + d));
+                     QRectF(sceneRect.x() - d, sceneRect.y() - d,
+                            sceneRect.width() + 2 * d, sceneRect.height() + 2 * d ));
     return pix;
 }
 
@@ -674,21 +895,22 @@ void MapEditor::setSmoothPixmap(bool b)
     setRenderHint(QPainter::SmoothPixmapTransform, b);
 }
 
-void MapEditor::autoLayout()
+void MapEditor::autoLayout()    // FIXME-3 not ported yet to containers. Review use case ("brainstorming")
 {
+    /*
     // Create list with all bounding polygons
     QList<LinkableMapObj *> mapobjects;
     QList<ConvexPolygon> polys;
     ConvexPolygon p;
     QList<Vector> vectors;
     QList<Vector> orgpos;
-    QStringList headings; // FIXME-3 testing only
+    QStringList headings; // FIXME testing only
     Vector v;
     BranchItem *bi;
     BranchItem *bi2;
     BranchObj *bo;
 
-    // Outer loop: Iterate until we no more changes in orientation
+    // Outer loop: Iterate until we have no more changes in orientation
     bool orientationChanged = true;
     while (orientationChanged) {
         BranchItem *ri = model->getRootItem();
@@ -702,7 +924,7 @@ void MapEditor::autoLayout()
                 polys.append(p);
                 vectors.append(QPointF(0, 0));
                 orgpos.append(p.at(0));
-                headings.append(bi->getHeadingPlain());
+                headings.append(bi->headingPlain());
             }
             for (int j = 0; j < bi->branchCount(); ++j) {
                 bi2 = bi->getBranchNum(j);
@@ -714,7 +936,7 @@ void MapEditor::autoLayout()
                     polys.append(p);
                     vectors.append(QPointF(0, 0));
                     orgpos.append(p.at(0));
-                    headings.append(bi2->getHeadingPlain());
+                    headings.append(bi2->headingPlain());
                 }
             }
         }
@@ -747,7 +969,7 @@ void MapEditor::autoLayout()
                         vectors[j] = v * 10000 / polys.at(j).weight();
                         vectors[i] = v * 10000 / polys.at(i).weight();
                         vectors[i].invert();
-                        // FIXME-3 outer loop, "i" get's changed several
+                        // FIXME outer loop, "i" get's changed several
                         // times...
                         // Better not move away from centroid of 2 colliding
                         // polys, but from centroid of _all_
@@ -776,13 +998,13 @@ void MapEditor::autoLayout()
                              << headings[i];
                 // mapobjects[i]->moveBy(v.x(),v.y() );
                 // mapobjects[i]->setRelPos();
-                model->startAnimation((BranchObj *)mapobjects[i], v);
+                startAnimation((BranchObj *)mapobjects[i], v);
                 if (debug)
                     qDebug() << i << " Weight: " << polys.at(i).weight() << " "
                              << v << " " << headings.at(i);
             }
         }
-        /*
+        / *
         model->reposition();
         orientationChanged=false;
         for (int i=0;i<polys.size();i++)
@@ -791,74 +1013,146 @@ void MapEditor::autoLayout()
             orientationChanged=true;
             break;
             }
-        */
+        * /
 
         break;
 
         // orientationChanged=false;
     } // loop if orientation has changed
-
-    model->emitSelectionChanged();
+    */
 }
 
-TreeItem *MapEditor::findMapItem(QPointF p, TreeItem *exclude)
+TreeItem *MapEditor::findMapItem(
+        QPointF p,
+        const QList <TreeItem*> &excludedItems,
+        bool findNearCenter)
 {
+    // Search branches (and their childs, e.g. images
+    // Start with mapcenter, no images allowed at rootItem
+    BranchItem *nearestFloatingCenter = nullptr;
+    qreal d = 0;
+    int i = 0;
+    BranchItem *bi = model->getRootItem()->getFirstBranch();
+    TreeItem *found = nullptr;
+    while (bi) {
+        found = bi->findMapItem(p, excludedItems);
+        if (found)
+            return found;
+
+        if (findNearCenter) {
+            // Try to find nearest MapCenter   // FIXME-3 or branch with floating layout.
+                                               // Currently only MapCenters are searched
+            Container *hc = bi->getBranchContainer()->getHeadingContainer();
+            QPointF q = hc->mapToScene(hc->center());
+            if (!nearestFloatingCenter) {
+                nearestFloatingCenter = bi;
+                d = Geometry::distance(p, q);
+            } else {
+                qreal d2 = Geometry::distance(p, q);
+                if (d2 < d) {
+                    d = d2;
+                    nearestFloatingCenter = bi;
+                }
+            }
+        }
+
+        i++;
+        bi = model->getRootItem()->getBranchNum(i);
+    }
+
+    if (nearestFloatingCenter && d < 80 && !excludedItems.contains(nearestFloatingCenter))
+        return nearestFloatingCenter;
+
     // Search XLinks
-    Link *link;
+    XLink *xlink;
     for (int i = 0; i < model->xlinkCount(); i++) {
-        link = model->getXLinkNum(i);
-        if (link) {
-            XLinkObj *xlo = link->getXLinkObj();
-            if (xlo && xlo->isInClickBox(p)) {
-                // Found XLink, now return the nearest XLinkItem of p
-                qreal d0 = Geometry::distance(p, xlo->getBeginPos());
-                qreal d1 = Geometry::distance(p, xlo->getEndPos());
-                if (d0 > d1)
-                    return link->getBeginLinkItem();
-                else
-                    return link->getEndLinkItem();
+        xlink = model->getXLinkNum(i);
+        if (xlink) {
+            XLinkObj *xlo = xlink->getXLinkObj();
+            if (xlo) {
+                XLinkObj::SelectionType xlinkSelection = xlo->couldSelect(p);
+                if (xlinkSelection == XLinkObj::Path) {
+                    // Found path of XLink, now return the nearest XLinkItem of p
+                    qreal d0 = Geometry::distance(p, xlo->getBeginPos());
+                    qreal d1 = Geometry::distance(p, xlo->getEndPos());
+                    if (d0 < d1)
+                        return xlink->beginXLinkItem();
+                    else
+                        return xlink->endXLinkItem();
+                }
+                if (xlinkSelection == XLinkObj::C0)
+                    return xlink->beginXLinkItem();
+                if (xlinkSelection == XLinkObj::C1)
+                    return xlink->endXLinkItem();
             }
         }
     }
 
-    // Search branches (and their childs, e.g. images
-    // Start with mapcenter, no images allowed at rootItem
-    int i = 0;
-    BranchItem *bi = model->getRootItem()->getFirstBranch();
-    TreeItem *found = NULL;
-    while (bi) {
-        found = bi->findMapItem(p, exclude);
-        if (found)
-            return found;
-        i++;
-        bi = model->getRootItem()->getBranchNum(i);
-    }
-    return NULL;
+    return nullptr;
 }
 
-void MapEditor::testFunction1() {}
+BranchItem *MapEditor::findMapBranchItem(
+        QPointF p,
+        const QList <TreeItem*> &excludedItems,
+        bool findNearCenter)
+{
+    TreeItem *ti = findMapItem(p, excludedItems, findNearCenter);
+    if (ti && ti->hasTypeBranch())
+        return (BranchItem*)ti;
+    else
+        return nullptr;
+}
 
-void MapEditor::testFunction2() { autoLayout(); }
+void MapEditor::testFunction1()
+{
+    //autoLayout();
+    qDebug() << "ME::test";
+    qDebug() << "  hor_scrollbar=" << horizontalScrollBar()->value();
+    qDebug() << "  ver_scrollbar=" << verticalScrollBar()->value();
+    qDebug() << "           rect=" << toS(rect());
+    qDebug() << "      sceneRect=" << toS(sceneRect());
+    qDebug() << "             tf=" << zoomFactorInt;
+    qDebug() << "       pageStep=" << horizontalScrollBar()->pageStep();
+}
+
+void MapEditor::testFunction2()
+{
+    TreeItem *selti = model->getSelectedItem();
+    if (selti)
+    {
+        if (selti->hasTypeBranch()) {
+            BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
+            bc->setScrollOpacity(bc->getScrollOpacity() * 0.9);   // FIXME-3 animation test
+        } else if (selti->hasTypeImage()) {
+            ImageContainer *ic = ((ImageItem*)selti)->getImageContainer();
+            qDebug() << ic->info() << ic;
+        } else
+            qDebug() << "Unknown type";
+    } else
+        qWarning() << "Nothing selected";
+}
 
 void MapEditor::toggleWinter()
 {
     if (winter) {
         delete winter;
-        winter = NULL;
+        winter = nullptr;
     }
     else {
         winter = new Winter(this);
         QList<QRectF> obstacles;
-        BranchObj *bo;
-        BranchItem *cur = NULL;
-        BranchItem *prev = NULL;
+        BranchContainer *bc;
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
         model->nextBranch(cur, prev);
         while (cur) {
-            if (!cur->hasHiddenExportParent()) {
+            if (!cur->hasHiddenParent()) { // FIXME-3 avoid recursive calls here in winter
                 // Branches
-                bo = (BranchObj *)(cur->getLMO());
-                if (bo && bo->isVisibleObj())
-                    obstacles.append(bo->getBBox());
+                bc = cur->getBranchContainer();
+                if (bc->isVisible()) {
+                    HeadingContainer *hc = bc->getHeadingContainer();
+                    obstacles.append(hc->mapRectToScene(hc->boundingRect()));
+                }
             }
             model->nextBranch(cur, prev);
         }
@@ -866,239 +1160,337 @@ void MapEditor::toggleWinter()
     }
 }
 
-BranchItem *MapEditor::getBranchDirectAbove(BranchItem *bi)
+bool MapEditor::isContainerCloserInDirection(Container *c1, Container *c2, const qreal &d_min, const QPoint &v, RadarDirection radarDir)
 {
-    if (bi) {
-        int i = bi->num();
-        if (i > 0)
-            return bi->parent()->getBranchNum(i - 1);
+    qreal d = c1->distance(c2);
+
+    switch(radarDir) {
+        case UpDirection:
+            if (v.y() < 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+
+        case DownDirection:
+            if (v.y() > 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+
+        case LeftDirection:
+            if (v.x() < 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+
+        case RightDirection:
+            if (v.x() > 0 &&  (d_min < 0 || d < d_min))
+                return true;
+            break;
+        default:
+            qWarning() << "MapEditor::isContainerCloserInDirection undefined radar";
     }
-    return NULL;
+    return false;
 }
 
-BranchItem *MapEditor::getBranchAbove(BranchItem *selbi)
+TreeItem* MapEditor::getItemInDirection(TreeItem *ti, RadarDirection radarDir)  // FIXME-3 setting to enforce hirarchical mode... #161
 {
-    if (selbi) {
-        int dz = selbi->depth(); // original depth
-        bool invert = false;
-        if (selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
-            invert = true;
+    SelectionMode selMode = currentSelectionMode(ti);
 
-        BranchItem *bi;
+    // qDebug() << "ME::getItemInDir  selMode=" << selMode;
+    if (selMode == GeometricSelection)
+        return getItemFromGeometry(ti, radarDir);
 
-        // Look for branch with same parent but directly above
-        if (dz == 1 && invert)
-            bi = getBranchDirectBelow(selbi);
-        else
-            bi = getBranchDirectAbove(selbi);
+    if (selMode == OrgChartSelection)
+        return getItemFromOrgChart(ti, radarDir);
 
-        if (bi)
+    return getItemFromHirarchy(ti, radarDir);
+}
+
+TreeItem* MapEditor::getItemFromGeometry(TreeItem *ti, RadarDirection radarDir) // FIXME-3 does not really work
+{
+    TreeItem *nearestItem = nullptr;
+    if (ti) {
+        // Calculate reference points: Nearest corners of selected towards radarDir
+        QPoint rp_view;
+        Container *c = nullptr;
+        if (ti->hasTypeBranch())
+            c = ((BranchItem*)ti)->getBranchContainer()->getHeadingContainer();
+        else if (ti->hasTypeImage())
+            c = ((ImageItem*)ti)->getImageContainer();
+
+        if (!c) {
+            qWarning() << __func__ << "No container found";
+            return nullptr;
+        }
+
+        rp_view = mapFromScene(c->mapToScene(c->center()));
+
+        qreal d_min = -1;
+        qreal d;
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
+        model->nextBranch(cur, prev);
+        while (cur) {
+            // Interate over all branches in map
+            BranchContainer *bc;
+            bc = cur->getBranchContainer();
+            if (bc && bc->isVisible()) {
+                HeadingContainer *hc = bc->getHeadingContainer();
+
+                QPointF p_scene = hc->mapToScene(hc->center());
+                QPoint v = mapFromScene(p_scene) - rp_view; // Direction between centers
+                d = c->distance(hc);
+                if (cur != ti && isContainerCloserInDirection(c, hc, d_min, v, radarDir)) {
+                    d_min = d;
+                    nearestItem = cur;
+                }
+
+                // Iterate over images
+                for (int i = 0; i < cur->imageCount(); i++) {
+                    ImageItem *ii = cur->getImageNum(i);
+                    ImageContainer *ic = ii->getImageContainer();
+                    p_scene = ic->mapToScene(ic->center());
+                    v = mapFromScene(p_scene) - rp_view;
+                    d = c->distance(ic);
+                    if (ii != ti && isContainerCloserInDirection(c, ic, d_min, v, radarDir)) {
+                        d_min = d;
+                        nearestItem = ii;
+                    }
+                }
+            }
+            model->nextBranch(cur, prev);
+        }
+    }
+
+    return nearestItem;
+}
+
+TreeItem* MapEditor::getItemFromOrgChart(TreeItem *ti, RadarDirection radarDir)
+{
+    BranchItem *bi = nullptr;
+    if (ti->hasTypeBranch())
+        bi = (BranchItem*)ti;
+
+    if (!bi)
+        return nullptr;
+
+    if (radarDir == UpDirection)
+        return bi->parentBranch();
+    else if (radarDir == DownDirection)
+        return bi->getLastSelectedBranch();
+    else if (radarDir == LeftDirection)
+        return getItemFromHirarchy(ti, UpDirection);
+    else if (radarDir == RightDirection)
+        return getItemFromHirarchy(ti, DownDirection);
+
+    return nullptr;
+}
+
+TreeItem* MapEditor::getItemFromHirarchy(TreeItem *selti, RadarDirection radarDir)
+{
+    if (!selti)
+        return nullptr;
+
+    BranchItem * bi = nullptr;
+    if (selti->hasTypeBranch())
+        bi = (BranchItem*)selti;
+
+    int d = selti->depth(); // original depth
+
+    if (radarDir == UpDirection) {
+        TreeItem *ti = getItemDirectAbove(selti);
+
+        if (ti)
             // direct predecessor
-            return bi;
+            return ti;
 
         // Go towards center and look for predecessor
-        while (selbi->depth() > 0) {
-            selbi = (BranchItem *)(selbi->parent());
-            if (selbi->depth() == 1 && invert)
-                bi = getBranchDirectBelow(selbi);
-            else
-                bi = getBranchDirectAbove(selbi);
-            if (bi) {
+        while (selti->depth() > 0) {
+            selti = selti->parent();
+            ti = getItemDirectAbove(selti);
+
+            if (ti) {
                 // turn
-                selbi = bi;
-                while (selbi->depth() < dz) {
+                selti = ti;
+                while (selti->depth() < d) {
                     // try to get back to original depth dz
-                    bi = selbi->getLastBranch();
-                    if (!bi) {
-                        return selbi;
-                    }
-                    selbi = bi;
+                    ti = selti->getLastItem();
+                    if (!ti)
+                        return selti;
+
+                    selti = ti;
                 }
-                return selbi;
+                return selti;
             }
         }
-    }
-    return NULL;
-}
 
-BranchItem *MapEditor::getBranchDirectBelow(BranchItem *bi)
-{
-    if (bi) {
-        int i = bi->num();
-        if (i + 1 < bi->parent()->branchCount())
-            return bi->parent()->getBranchNum(i + 1);
-    }
-    return NULL;
-}
+    } else if (radarDir == DownDirection) {
+        TreeItem *ti = getItemDirectBelow(selti);
 
-BranchItem *MapEditor::getBranchBelow(BranchItem *selbi)
-{
-    if (selbi) {
-        BranchItem *bi;
-        int dz = selbi->depth(); // original depth
-        bool invert = false;
-        if (selbi->getLMO()->getOrientation() == LinkableMapObj::LeftOfCenter)
-            invert = true;
+        if (ti) return ti;
 
-        // Look for branch with same parent but directly below
-        if (dz == 1 && invert)
-            bi = getBranchDirectAbove(selbi);
-        else
-            bi = getBranchDirectBelow(selbi);
-        if (bi)
-            // direct successor
-            return bi;
+        // Go towards center and look for siblings
+        while (selti->depth() > 0) {
+            selti = selti->parent();
+            ti = getItemDirectBelow(selti);
 
-        // Go towards center and look for neighbour
-        while (selbi->depth() > 0) {
-            selbi = (BranchItem *)(selbi->parent());
-            if (selbi->depth() == 1 && invert)
-                bi = getBranchDirectAbove(selbi);
-            else
-                bi = getBranchDirectBelow(selbi);
-            if (bi) {
+            if (ti) {
                 // turn
-                selbi = bi;
-                while (selbi->depth() < dz) {
-                    // try to get back to original depth dz
-                    bi = selbi->getFirstBranch();
-                    if (!bi) {
-                        return selbi;
+                selti = ti;
+                while (selti->depth() < d) {
+                    // try to get back to original depth d
+                    ti = selti->getFirstItem();
+                    if (!ti)
+                        return selti;
+
+                    selti = ti;
+                }
+                return selti;
+            }
+        }
+
+    } else if (radarDir == LeftDirection) {
+        if (bi) {
+            // Branch selected
+            if (d == 0) {
+                // Special case: use alternative selection index
+                BranchItem *newbi = bi->getLastSelectedBranchAlt();
+                if (!newbi) {
+                    BranchContainer *bc;
+                    // Try to find a mainbranch left of center
+                    for (int i = 0; i < bi->branchCount(); i++) {
+                        newbi = bi->getBranchNum(i);
+                        bc = newbi->getBranchContainer();
+                        if (bc && bc->getOrientation() == BranchContainer::LeftOfParent)
+                            break;
                     }
-                    selbi = bi;
                 }
-                return selbi;
+                return newbi;
+            }
+            if (bi->getBranchContainer()->getOrientation() ==
+                BranchContainer::RightOfParent)
+                // right of center
+                return bi->parentBranch();
+            else {
+                // left of center
+                TreeItem *ri = bi->getLastSelectedBranch();
+                if (ri)
+                    // Return last selected branch
+                    return ri;
+                else
+                    // Look for image
+                    return getItemFromGeometry(bi, LeftDirection);
+            }
+        }
+    } else if (radarDir == RightDirection) {
+        if (bi) {
+            // Branch selected
+            if (d == 0) {
+                // Special case: use alternative selection index
+                BranchItem *newbi = bi->getLastSelectedBranch();
+                if (!newbi) {
+                    BranchContainer *bc;
+                    // Try to find a mainbranch right of center
+                    for (int i = 0; i < bi->branchCount(); i++) {
+                        newbi = bi->getBranchNum(i);
+                        bc = newbi->getBranchContainer();
+                        if (bc && bc->getOrientation() == BranchContainer::RightOfParent)
+                            break;
+                    }
+                }
+                return newbi;
+            }
+            if (bi->getBranchContainer()->getOrientation() == BranchContainer::LeftOfParent)
+                // left of center
+                return bi->parentBranch();
+            else {
+                // right of center
+                TreeItem *ri = bi->getLastSelectedBranch();
+                if (ri)
+                    // Return last selected branch
+                    return ri;
+                else
+                    // Look for image
+                    return getItemFromGeometry(bi, RightDirection);
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
-BranchItem *MapEditor::getLeftBranch(TreeItem *ti)
+TreeItem *MapEditor::getItemDirectAbove(TreeItem *ti)
 {
-    if (!ti)
-        return NULL;
-
-    if (ti->isBranchLikeType()) {
-        BranchItem *bi = (BranchItem *)ti;
-        if (bi->depth() == 0) {
-            // Special case: use alternative selection index
-            BranchItem *newbi = bi->getLastSelectedBranchAlt();
-            if (!newbi) {
-                BranchObj *bo;
-                // Try to find a mainbranch left of center
-                for (int i = 0; i < bi->branchCount(); i++) {
-                    newbi = bi->getBranchNum(i);
-                    bo = newbi->getBranchObj();
-                    if (bo &&
-                        bo->getOrientation() == LinkableMapObj::LeftOfCenter)
-                        break;
-                }
-            }
-            return newbi;
+    if (ti) {
+        if (ti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)ti;
+          
+            int i = bi->num();
+            if (i > 0)
+                return bi->parent()->getBranchNum(i - 1);
+        } else if (ti->hasTypeImage()) {
+            ImageItem *ii = (ImageItem*)ti;
+          
+            int i = ii->num();
+            if (i > 0)
+                return ii->parent()->getImageNum(i - 1);
         }
-        if (bi->getBranchObj()->getOrientation() ==
-            LinkableMapObj::RightOfCenter)
-            // right of center
-            return (BranchItem *)(bi->parent());
-        else
-            // left of center
-            if (bi->getType() == TreeItem::Branch)
-            return bi->getLastSelectedBranch();
     }
-
-    if (ti->parent() && ti->parent()->isBranchLikeType())
-        return (BranchItem *)(ti->parent());
-    return NULL;
+    return nullptr;
 }
 
-BranchItem *MapEditor::getRightBranch(TreeItem *ti)
+TreeItem *MapEditor::getItemDirectBelow(TreeItem *ti)
 {
-    if (!ti)
-        return NULL;
-
-    if (ti->isBranchLikeType()) {
-        BranchItem *bi = (BranchItem *)ti;
-        if (bi->depth() == 0) {
-            // Special case: use alternative selection index
-            BranchItem *newbi = bi->getLastSelectedBranch();
-            if (!newbi) {
-                BranchObj *bo;
-                // Try to find a mainbranch right of center
-                for (int i = 0; i < bi->branchCount(); i++) {
-                    newbi = bi->getBranchNum(i);
-                    bo = newbi->getBranchObj();
-                    if (bo &&
-                        bo->getOrientation() == LinkableMapObj::RightOfCenter)
-                        qDebug()
-                            << "BI found right: " << newbi->getHeadingPlain();
-                }
-            }
-            return newbi;
+    if (ti) {
+        if (ti->hasTypeBranch()) {
+            BranchItem *bi = (BranchItem*)ti;
+            int i = bi->num();
+            if (i + 1 < bi->parent()->branchCount())
+                return bi->parent()->getBranchNum(i + 1);
+        } else if (ti->hasTypeImage()) {
+            ImageItem *ii = (ImageItem*)ti;
+            int i = ii->num();
+            if (i + 1 < ii->parent()->imageCount())
+                return ii->parent()->getImageNum(i + 1);
         }
-        if (bi->getBranchObj()->getOrientation() ==
-            LinkableMapObj::LeftOfCenter)
-            // left of center
-            return (BranchItem *)(bi->parent());
-        else
-            // right of center
-            if (bi->getType() == TreeItem::Branch)
-            return (BranchItem *)bi->getLastSelectedBranch();
     }
-
-    if (ti->parent() && ti->parent()->isBranchLikeType())
-        return (BranchItem *)(ti->parent());
-
-    return NULL;
+    return nullptr;
 }
 
 void MapEditor::cursorUp()
 {
-    if (state == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
-    if (selbi) {
-        // Exactly one branch is currently selected
-        bi = getBranchAbove(selbi);
-        if (bi) {
-            model->select(bi);
-        } 
-    } else {
-        // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
-            bi = getBranchAbove( (BranchItem*)ti);
-            if (bi) 
-                model->select(bi);
-        }
+    TreeItem *selti = model->getSelectedItem();
+    if (selti) {
+        selti = getItemInDirection(selti, UpDirection);
+        if (selti)
+            model->select(selti);
     }
 }
 
 void MapEditor::cursorUpToggleSelection()
 {
-    if (state == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
+    QList <TreeItem*> seltis = model->getSelectedItems();
+    TreeItem *ti;
 
-    if (selbi) {
-        // Exactly one branch is currently selected
-        bi = getBranchAbove(selbi);
-        if (bi) model->selectToggle(bi);
+    if (seltis.size() == 0)
+        return;
+    else if (seltis.size() == 1) {
+        ti = getItemInDirection(seltis.first(), UpDirection);
+        if (ti) model->selectToggle(ti);
     } else {
         // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
+        TreeItem *last_ti = model->lastToggledItem();
+        if (last_ti && (last_ti->hasTypeBranch() || last_ti->hasTypeImage())) {
             if (lastToggleDirection == toggleUp)
-                bi = getBranchAbove( (BranchItem*)ti);
+                ti = getItemInDirection(last_ti, UpDirection);
             else
-                bi = (BranchItem*)ti;
+                ti = last_ti;
 
-            if (bi) 
-                model->selectToggle(bi);
+            if (ti)
+                model->selectToggle(ti);
         }
     }
     lastToggleDirection = toggleUp;
@@ -1106,53 +1498,40 @@ void MapEditor::cursorUpToggleSelection()
 
 void MapEditor::cursorDown()
 {
-    if (state == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
-    if (selbi) {
-        // Exactly one branch is currently selected
-        bi = getBranchBelow(selbi);
-        if (bi) {
-            model->select(bi);
-        } 
-    } else {
-        // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
-            bi = getBranchBelow( (BranchItem*)ti);
-
-            if (bi) 
-                model->select(bi);
-        }
+    TreeItem *selti = model->getSelectedItem();
+    if (selti) {
+        selti = getItemInDirection(selti, DownDirection);
+        if (selti)
+            model->select(selti);
     }
 }
 
 void MapEditor::cursorDownToggleSelection()
 {
-    if (state == MapEditor::EditingHeading)
+    if (editorState == MapEditor::EditingHeading)
         return;
 
-    BranchItem *selbi = model->getSelectedBranch();
-    BranchItem *bi;
-    if (selbi) {
-        // Exactly one branch is currently selected
-        bi = getBranchBelow(selbi);
-        if (bi) {
-            model->selectToggle(bi);
-        } 
+    TreeItem *selti = model->getSelectedItem();
+    TreeItem *ti;
+    if (selti) {
+        ti = getItemInDirection(selti, DownDirection);
+        if (ti) {
+            model->selectToggle(ti);
+        }
     } else {
         // Nothing selected or already multiple selections
-        TreeItem *ti = model->lastToggledItem();
-        if (ti && ti->isBranchLikeType()) {
+        TreeItem *last_ti = model->lastToggledItem();
+        if (last_ti && (last_ti->hasTypeBranch() || last_ti->hasTypeImage())) {
             if (lastToggleDirection == toggleDown)
-                bi = getBranchBelow( (BranchItem*)ti);
+                ti = getItemInDirection(last_ti, DownDirection);
             else
-                bi = (BranchItem*)ti;
+                ti = last_ti;
 
-            if (bi) 
-                model->selectToggle(bi);
+            if (ti)
+                model->selectToggle(ti);
         }
     }
     lastToggleDirection = toggleDown;
@@ -1160,67 +1539,65 @@ void MapEditor::cursorDownToggleSelection()
 
 void MapEditor::cursorLeft()
 {
-    TreeItem *ti = model->getSelectedItem();
-    if (!ti) {
-        ti = model->lastToggledItem();
-        if (!ti) return;
+    TreeItem *selti = model->getSelectedItem();
+    if (!selti) {
+        // If multiple items are selected, select the next to last toggled one
+        selti = model->lastToggledItem();
+        if (!selti) return;
     }
 
-    BranchItem *bi = getLeftBranch(ti);
-    if (bi)
-        model->select(bi);
-    else {
-        ImageItem *ii = ti->getFirstImage();
-        if (ii)
-            model->select(ii);
-    }
+    TreeItem *ti = getItemInDirection(selti, LeftDirection);
+    if (ti)
+        model->select(ti);
 }
 
 void MapEditor::cursorRight()
 {
-    TreeItem *ti = model->getSelectedItem();
-    if (!ti) {
-        ti = model->lastToggledItem();
-        if (!ti) return;
+    TreeItem *selti = model->getSelectedItem();
+
+    if (!selti) {
+        // If multiple items are selected, select the next to last toggled one
+        selti = model->lastToggledItem();
+        if (!selti) return;
     }
 
-    BranchItem *bi = getRightBranch(ti);
-    if (bi)
-        model->select(bi);
+    TreeItem *ti = getItemInDirection(selti, RightDirection);
+    if (ti)
+        model->select(ti);
     else {
-        ImageItem *ii = ti->getFirstImage();
+        ImageItem *ii = selti->getFirstImage();
         if (ii)
             model->select(ii);
     }
 }
 
-void MapEditor::cursorFirst() { model->selectFirstBranch(); }
-
-void MapEditor::cursorLast() { model->selectLastBranch(); }
-
-void MapEditor::editHeading()
+void MapEditor::editHeading(BranchItem *selbi)
 {
-    if (state == EditingHeading) {
+    if (editorState == EditingHeading) {
         editHeadingFinished();
         return;
     }
 
-    BranchObj *bo = model->getSelectedBranchObj();
-    BranchItem *bi = model->getSelectedBranch();
-    if (bo && bi) {
-        VymText heading = bi->getHeading();
-        if (heading.isRichText() || bi->getHeadingPlain().contains("\n")) {
-            mainWindow->windowShowHeadingEditor();
+    if (!selbi) selbi = model->getSelectedBranch();
+    if (selbi) {
+        VymText heading = selbi->heading();
+        if (heading.isRichText() || selbi->headingPlain().contains("\n")) {
+            // RichText heading is edited in its own editor, continue there
+            mainWindow->focusHeadingEditor();
             ensureSelectionVisibleAnimated();
             return;
         }
         model->setSelectionBlocked(true);
 
-        lineEdit = new QLineEdit;
-        QGraphicsProxyWidget *pw = mapScene->addWidget(lineEdit);
-        pw->setZValue(Z_LINEEDIT);
-        lineEdit->setCursor(Qt::IBeamCursor);
+        // FIXME-3-FT get total rotation a for BC in scene and do "proxyWidget->setRotation(a);
+
+        // Make sure lineEdit is above everything else, including selection box
+        mapScene->removeItem(proxyWidget);
+        mapScene->addItem(proxyWidget);
+
         lineEdit->setCursorPosition(1);
+        lineEdit->show();
+        lineEdit->grabKeyboard();
 
 #if defined(Q_OS_WINDOWS)
         QFont font = lineEdit->font();
@@ -1232,19 +1609,24 @@ void MapEditor::editHeading()
         QPointF br;
         qreal w = 230;
         qreal h = 30;
-        if (bo->getOrientation() != LinkableMapObj::LeftOfCenter) {
-            tl = bo->getOrnamentsBBox().topLeft();
+
+        BranchContainer *bc = selbi->getBranchContainer();
+        if (bc->getOrientation() == BranchContainer::RightOfParent) {
+            tl = bc->headingSceneRect().topLeft();
             br = tl + QPointF(w, h);
         }
         else {
-            br = bo->getOrnamentsBBox().bottomRight();
+            br = bc->headingSceneRect().bottomRight();
             tl = br - QPointF(w, h);
         }
+        // Qt bug when using QProxyWdiget in scaled QGraphicsView
+        // https://bugreports.qt.io/browse/QTBUG-48681
+        // Still present in Qt 6.5
         QRectF r(tl, br);
         lineEdit->setGeometry(r.toRect());
-        pw->setGeometry(r.toRect());
+        proxyWidget->setGeometry(r.toRect());
 
-        minimizeView();
+        minimizeView(); // LineEdit might exceed current view size, enlarge view if required
 
         // Set focus to MapEditor first
         // To avoid problems with Cursor up/down
@@ -1263,29 +1645,39 @@ void MapEditor::editHeading()
     }
 }
 
+void MapEditor::editHeadingCanceled()
+{
+    hideLineEdit();
+    model->saveStateCancelScript();
+}
+
 void MapEditor::editHeadingFinished()
 {
-    if (state != EditingHeading || !lineEdit ) {
+    if (editorState != EditingHeading || !lineEdit ) {
         qWarning() << "ME::editHeadingFinished not editing heading!";
     } else {
-        lineEdit->clearFocus();
         QString s = lineEdit->text();
-        s.replace(QRegExp("\\n"), " "); // Don't paste newline chars
+        s.replace(QRegularExpression("\\n"), " "); // Don't paste newline chars
         if (s.length() == 0)
             s = " "; // Don't allow empty lines, which would screw up drawing
         model->setHeadingPlainText(s);
-        delete (lineEdit);
-        lineEdit = nullptr;
-
-        // FIXME-2 ensureAreaVisible like in starting editing?
-
-        // Maybe reselect previous branch
-        mainWindow->editHeadingFinished(model);
 
         // Autolayout to avoid overlapping branches with longer headings
         if (settings.value("/mainwindow/autoLayout/use", "true") == "true")
             autoLayout();
     }
+
+    hideLineEdit();
+}
+
+void MapEditor::hideLineEdit()
+{
+    lineEdit->clearFocus();
+    lineEdit->releaseKeyboard();
+    lineEdit->hide();
+
+    // Maybe reselect previous branch
+    mainWindow->editHeadingFinished(model);
 
     model->setSelectionBlocked(false);
     setState(Neutral);
@@ -1297,20 +1689,17 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
     // mouseEvent, we don't need to close here.
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *ti = findMapItem(p, NULL);
+    TreeItem *ti = findMapItem(p);
 
-    if (ti) { // MapObj was found
+    if (ti) {
         model->select(ti);
 
-        LinkableMapObj *lmo = NULL;
         BranchItem *selbi = model->getSelectedBranch();
-        if (ti)
-            lmo = ((MapItem *)ti)->getLMO();
 
         // Context Menu
-        if (lmo && selbi) {
+        if (selbi) {
             QString sysFlagName;
-            QUuid uid = ((BranchObj *)lmo)->findSystemFlagUidByPos(p);
+            QUuid uid = selbi->getBranchContainer()->findFlagByPos(p);
             if (!uid.isNull()) {
                 Flag *flag = systemFlagsMaster->findFlagByUid(uid);
                 if (flag)
@@ -1335,7 +1724,7 @@ void MapEditor::contextMenuEvent(QContextMenuEvent *e)
             }
         }
     }
-    else { // No MapObj found, we are on the Canvas itself
+    else { // No object or container found, we are on the Canvas itself
         // Context Menu on scene
 
         // Open context menu synchronously to position new mapcenter
@@ -1352,49 +1741,27 @@ void MapEditor::keyPressEvent(QKeyEvent *e)
         // Ignore PageUP/Down to avoid scrolling with keys
         return;
 
-    if (e->modifiers() & Qt::ShiftModifier) {
-        switch (mainWindow->getModMode()) {
-        case Main::ModModePoint:
-            setCursor(Qt::ArrowCursor);
-            break;
-        case Main::ModModeColor:
-            setCursor(PickColorCursor);
-            break;
-        case Main::ModModeXLink:
-            setCursor(XLinkCursor);
-            break;
-        case Main::ModModeMoveObject:
-            setCursor(Qt::PointingHandCursor);
-            break;
-        case Main::ModModeMoveView:
-            setCursor(QPixmap(":/mode-move-view.png"));
-            break;
-        default:
-            setCursor(Qt::ArrowCursor);
-            break;
-        }
-    }
+    if (e->modifiers() & Qt::ShiftModifier)
+        updateCursor();
     QGraphicsView::keyPressEvent(e);
 }
 
 void MapEditor::keyReleaseEvent(QKeyEvent *e)
 {
-    if (!(e->modifiers() & Qt::ControlModifier))
+    if (!(e->modifiers() & Qt::ShiftModifier))
         setCursor(Qt::ArrowCursor);
 }
 
-void MapEditor::startMovingView(QMouseEvent *e)
+void MapEditor::startPanningView(QMouseEvent *e)
 {
-    setState(MovingView);
-    movingObj = NULL; // move Content not Obj
-    movingObj_offset = e->globalPos();
-    movingCont_start =
-        QPointF(horizontalScrollBar()->value(), verticalScrollBar()->value());
-    movingVec = QPointF(0, 0);
-    setCursor(HandOpenCursor);
+    setState(PanningView);
+    panning_initialPointerPos = e->globalPosition().toPoint();
+    panning_initialScrollBarValues =                  // Used for scrollbars when moving view
+        QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
+    setCursor(Qt::ClosedHandCursor);
 }
 
-void MapEditor::mousePressEvent(QMouseEvent *e)
+void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if multiple tree items are found to select the "right" one
 {
     // Ignore right clicks
     if (e->button() == Qt::RightButton) {
@@ -1404,18 +1771,16 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }
 
     // Check if we need to reset zoomFactor for middle button + Ctrl
-    if (e->button() == Qt::MidButton && e->modifiers() & Qt::ControlModifier) {
+    if (e->button() == Qt::MiddleButton && e->modifiers() & Qt::ControlModifier) {
         setZoomFactorTarget(1);
-        setAngleTarget(0);
+        setRotationTarget(0);
         return;
     }
 
-    QPointF p = mapToScene(e->pos());
-    TreeItem *ti_found = findMapItem(p, NULL);
-    LinkableMapObj *lmo_found = NULL;
-    if (ti_found)
-        lmo_found = ((MapItem *)ti_found)->getLMO();
+    // Initial position of pointer in scene coordinates. See also e->globalPos (!)
+    movingObj_initialScenePos = mapToScene(e->pos());
 
+    TreeItem *ti_found = findMapItem(movingObj_initialScenePos);
 
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
@@ -1425,196 +1790,183 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
     }
 
     // Stop editing in LineEdit
-    if (state == EditingHeading) editHeadingFinished();
-
-    QString sysFlagName;
-    QUuid uid;
-    if (lmo_found) {
-        uid = ((BranchObj *)lmo_found)->findSystemFlagUidByPos(p);
-        if (!uid.isNull()) {
-            Flag *flag = systemFlagsMaster->findFlagByUid(uid);
-            if (flag)
-                sysFlagName = flag->getName();
-        }
-    }
+    if (editorState == EditingHeading) editHeadingFinished();
 
     /*
     qDebug() << "ME::mouse pressed\n";
-    qDebug() << "  lmo_found=" << lmo_found;
     qDebug() << "   ti_found=" << ti_found;
-    //if (ti_found) qDebug() << "   ti_found="<<ti_found->getHeading();
-    qDebug() << " flag=" << sysFlagName;
     */
+    //if (ti_found) qDebug() << "   ti_found="<<ti_found->heading();
 
-    // Check modifier key (before selecting object!)
-    if (ti_found && (e->modifiers() & Qt::ShiftModifier)) {
-        if (mainWindow->getModMode() == Main::ModModeColor) {
-            setState(PickingColor);
-            mainWindow->setCurrentColor(ti_found->getHeadingColor());
-            if (e->modifiers() & Qt::ControlModifier)
-                model->colorBranch(ti_found->getHeadingColor());
-            else
-                model->colorSubtree(ti_found->getHeadingColor());
-            return;
-        }
-
-        if (mainWindow->getModMode() == Main::ModModeMoveView) {
-            startMovingView(e);
-            return;
-        }
-    }
-
-    // Check vymlink  modifier (before selecting object!)
-    if (ti_found && sysFlagName == "system-vymLink") {
-        model->select(ti_found);
-        if (e->modifiers() & Qt::ControlModifier) {
-            if (e->modifiers() & Qt::ShiftModifier)
-                model->deleteVymLink();
-            else
-                mainWindow->editOpenVymLink(true);
-        } else
-            mainWindow->editOpenVymLink(false);
+    // If Modifier mode "view" is set, all other clicks can be ignored,
+    // nothing will be selected
+    if ((e->modifiers() & Qt::ShiftModifier) &&
+            mainWindow->getModMode() == Main::ModModeMoveView) {
+        startPanningView(e);
         return;
     }
 
-    // Select the clicked object, if not moving without linking
-    if (ti_found && (e->modifiers() & Qt::ShiftModifier)) {
-        if (mainWindow->getModMode() == Main::ModModePoint) {
-            model->selectToggle(ti_found);
-            lastToggleDirection = toggleUndefined;
+    BranchItem *selbi = model->getSelectedBranch();
+    BranchContainer *selbc = nullptr;
+    if (selbi) {
+        selbc = selbi->getBranchContainer();
+
+        // XLink modifier, create new XLink
+        if (mainWindow->getModMode() == Main::ModModeXLink &&
+            (e->modifiers() & Qt::ShiftModifier)) {
+            setState(CreatingXLink);
+            tmpXLink = new XLink(model);
+            tmpXLink->setBeginBranch(selbi);
+            tmpXLink->createXLinkObj();
+            tmpXLink->setStyleBegin("None");
+            tmpXLink->setStyleEnd("None");
+            tmpXLink->setEndPoint(movingObj_initialScenePos);
+            tmpXLink->updateXLink();
+            return;
         }
     }
-    else
-        model->select(ti_found);
+
+    QString sysFlagName;
+
+    if (ti_found) {
+        // Check modifier key (before selecting object!)
+        if (e->modifiers() & Qt::ShiftModifier) {
+            if (mainWindow->getModMode() == Main::ModModeColor) {
+                setState(PickingColor);
+                mainWindow->setCurrentColor(ti_found->headingColor());
+                if (e->modifiers() & Qt::ControlModifier)
+                    model->colorBranch(ti_found->headingColor());
+                else
+                    model->colorSubtree(ti_found->headingColor());
+                return;
+            }
+
+        }
+
+        // Check for flags on MousePress
+        if (selbc) {
+            QUuid uid = selbc->findFlagByPos(movingObj_initialScenePos);
+            if (!uid.isNull()) {
+                Flag *flag = systemFlagsMaster->findFlagByUid(uid);
+                if (flag)
+                    sysFlagName = flag->getName();
+            }
+        }
+
+        // Check vymlink  modifier (before selecting object!)
+        if (sysFlagName == "system-vymLink") {
+            model->select(ti_found);
+            if (e->modifiers() & Qt::ControlModifier) {
+                if (e->modifiers() & Qt::ShiftModifier)
+                    model->deleteVymLink();
+                else
+                    mainWindow->editOpenVymLink(true);
+            } else
+                mainWindow->editOpenVymLink(false);
+            return;
+        }
+
+        // Select the clicked object, if not moving without linking
+        if (e->modifiers() & Qt::ShiftModifier) {
+            if (mainWindow->getModMode() == Main::ModModePoint) {
+                lastToggleDirection = toggleUndefined;
+
+                model->selectToggle(ti_found);
+            }
+        } else {
+            if (model->getSelectedItems().count() < 2 || !model->getSelectedItems().contains(ti_found))
+                // Only add ti_found, if we don't have multi-selection yet, which we
+                // want to move around. In that case we would ignore the "pressed" event
+                model->select(ti_found);
+        }
+        movingItems = model->getSelectedItemsReduced();
+
+        // Make sure currently clicked item is first in list
+        int i = movingItems.indexOf(ti_found);
+        if (i > 0)
+            movingItems.move(i, 0);
+
+        // Left Button	    Move Branches
+        if (e->button() == Qt::LeftButton) {
+            // No system flag clicked, take care of moving modes or simply
+            // start moving
+            if (ti_found->hasTypeBranch())
+            {
+                BranchContainer *bc = ((BranchItem*)ti_found)->getBranchContainer();
+                movingObj_initialContainerOffset = movingObj_initialScenePos - bc->getHeadingContainer()->mapToScene(QPointF(0,0));
+            }
+
+            if (mainWindow->getModMode() == Main::ModModeMoveObject &&
+                    e->modifiers() & Qt::ShiftModifier) {
+                setState(MovingObjectWithoutLinking);
+            }
+            else
+                setState(MovingObject);
+
+            // Set initial position and size of tmpParentContainer
+            // Required when ONLY moving images.
+            tmpParentContainer->setPos(movingObj_initialScenePos - movingObj_initialContainerOffset);
+            if (movingItems.count() > 0) {
+                qreal w = 0;
+                qreal h = 0;
+                BranchContainer *bc_first = nullptr;
+                foreach (TreeItem *ti, movingItems) {
+                    if (ti->hasTypeBranch()) {
+                        BranchContainer* bc = ((BranchItem*)ti)->getBranchContainer();
+                        if (!bc_first)
+                            bc_first = bc;
+                        w = max(w, bc->rect().width());
+                        h += bc->rect().height();
+                    }
+                }
+                if (bc_first) tmpParentContainer->setRect(bc_first->rect().left(), bc_first->rect().top(), w, h);
+            }
+        }
+        else
+            // Middle Button - Toggle Scroll
+            //
+            // (On Mac OS X this won't work, but we still have
+            // a button in the toolbar)
+            if (e->button() == Qt::MiddleButton)
+                model->toggleScroll();
+    } else {
+        // No ti_found, we are on the scene itself
+        // Left Button	    move Pos of sceneView
+        if (e->button() == Qt::LeftButton ||
+            e->button() == Qt::MiddleButton) {
+            startPanningView(e);
+            return;
+        }
+    }
 
     e->accept();
 
     // Take care of  remaining system flags _or_ modifier modes
-    if (lmo_found) {
+    if (selbc) {
         if (!sysFlagName.isEmpty()) {
             // systemFlag clicked
-            if (sysFlagName.contains("system-url")) {
-                if (e->modifiers() & Qt::ControlModifier)
-                    mainWindow->editOpenURLTab();
-                else
-                    mainWindow->editOpenURL();
-            }
-            else if (sysFlagName == "system-note")
-                mainWindow->windowToggleNoteEditor();
+            if (sysFlagName.contains("system-url") ||
+                sysFlagName.contains("system-jira") ) {
+
+                // Open in private mode if ALT is pressed
+                mainWindow->openUrl(
+                        model->getUrl(),
+                        e->modifiers() & Qt::AltModifier);
+            } else if (sysFlagName == "system-note")
+                mainWindow->focusNoteEditor();
             else if (sysFlagName == "hideInExport")
                 model->toggleHideExport();
             else if (sysFlagName.startsWith("system-task-"))
                 model->cycleTaskStatus();
             return;
         }
-        else {
-            // Take care of xLink: Open context menu with targets
-            // if clicked near to begin of xlink
-            if (ti_found->xlinkCount() > 0 &&
-                ti_found->getType() != TreeItem::MapCenter &&
-                lmo_found->getBBox().width() > 30) {
-                if ((lmo_found->getOrientation() !=
-                         LinkableMapObj::RightOfCenter &&
-                     p.x() < lmo_found->getBBox().left() + 10) ||
-                    (lmo_found->getOrientation() !=
-                         LinkableMapObj::LeftOfCenter &&
-                     p.x() > lmo_found->getBBox().right() - 10)) {
-                    // FIXME-4 similar code in mainwindow::updateActions
-                    QMenu menu;
-                    QList<QAction *> alist;
-                    QList<BranchItem *> blist;
-                    for (int i = 0; i < ti_found->xlinkCount(); i++) {
-                        XLinkItem *xli = ti_found->getXLinkItemNum(i);
-                        BranchItem *bit = xli->getPartnerBranch();
-                        if (bit)
-                            alist.append(
-                                new QAction(ti_found->getXLinkItemNum(i)
-                                                ->getPartnerBranch()
-                                                ->getHeadingPlain(),
-                                            &menu));
-                    }
-                    menu.addActions(alist);
-                    QAction *ra = menu.exec(e->globalPos());
-                    if (ra)
-                        model->select(blist.at(alist.indexOf(ra)));
-                    while (!alist.isEmpty()) {
-                        QAction *a = alist.takeFirst();
-                        delete a;
-                    }
-                    return;
-                }
-            }
-        }
-    }
-
-    // XLink modifier, create new XLink
-    BranchItem *selbi = model->getSelectedBranch();
-    if (selbi && mainWindow->getModMode() == Main::ModModeXLink &&
-        (e->modifiers() & Qt::ShiftModifier)) {
-        setState(DrawingLink);
-        tmpLink = new Link(model);
-        tmpLink->setBeginBranch(selbi);
-        tmpLink->createMapObj();
-        tmpLink->setStyleBegin("None");
-        tmpLink->setStyleEnd("None");
-        tmpLink->setEndPoint(mapToScene(e->pos()));
-        tmpLink->updateLink();
-        return;
-    }
-
-    // Start moving around
-    if (lmo_found) {
-        // Left Button	    Move Branches
-        if (e->button() == Qt::LeftButton) {
-            // No system flag clicked, take care of moving modes or simply
-            // moving
-            movingObj_offset.setX(p.x() - lmo_found->x());
-            movingObj_offset.setY(p.y() - lmo_found->y());
-            movingObj_orgPos.setX(lmo_found->x());
-            movingObj_orgPos.setY(lmo_found->y());
-            if (ti_found->depth() > 0) {
-                lmo_found->setRelPos();
-                movingObj_orgRelPos = lmo_found->getRelPos();
-            }
-
-            if (mainWindow->getModMode() == Main::ModModeMoveObject &&
-                e->modifiers() & Qt::ShiftModifier) {
-                setState(MovingObjectWithoutLinking);
-            }
-            else
-                setState(MovingObject);
-
-            movingObj = model->getSelectedLMO();
-        }
-        else
-            // Middle Button    Toggle Scroll
-            // (On Mac OS X this won't work, but we still have
-            // a button in the toolbar)
-            if (e->button() == Qt::MidButton)
-            model->toggleScroll();
-    }
-    else { // No lmo found, check XLinks
+    }   // system flags or modModes
+    else { // No selbc found, check XLinks
         if (ti_found) {
-            if (ti_found->getType() == TreeItem::XLink) {
-                XLinkObj *xlo = (XLinkObj *)((MapItem *)ti_found)->getMO();
-                if (xlo) {
-                    setState(DrawingXLink);
-                    int i = xlo->ctrlPointInClickBox(p);
-                    if (i >= 0)
-                        xlo->setSelection(i);
-                    movingObj_offset.setX(p.x() - xlo->x());
-                    movingObj_offset.setY(p.y() - xlo->y());
-                    movingObj_orgPos.setX(xlo->x());
-                    movingObj_orgPos.setY(xlo->y());
-                }
-            }
-        }
-        else { // No MapObj found, we are on the scene itself
-            // Left Button	    move Pos of sceneView
-            if (e->button() == Qt::LeftButton ||
-                e->button() == Qt::MiddleButton) {
-                startMovingView(e);
-                return;
+            if (ti_found->getType() == TreeItem::XLinkItemType) {
+                XLinkObj *xlo = ((XLinkItem *)ti_found)->getXLink()->getXLinkObj();
+                if (xlo)
+                    setState(EditingXLink);
             }
         }
     }
@@ -1622,12 +1974,13 @@ void MapEditor::mousePressEvent(QMouseEvent *e)
 
 void MapEditor::mouseMoveEvent(QMouseEvent *e)
 {
+    QPointF p_event = mapToScene(e->pos());
+
     // Show mouse position for debugging in statusBar
     if (debug && e->modifiers() & Qt::ControlModifier)
         mainWindow->statusMessage(
-            QString("ME::mousePressEvent  Scene: %1  widget: %2")
-                .arg(qpointFToString(mapToScene(e->pos())))
-                .arg(qpointFToString(e->pos())));
+            QString("ME::mouseMoveEvent  Scene: %1 - Viewport: %2")
+                .arg(toS(p_event, 0),  toS(e->pos())));
 
     // Allow selecting text in QLineEdit if necessary
     if (model->isSelectionBlocked()) {
@@ -1636,203 +1989,397 @@ void MapEditor::mouseMoveEvent(QMouseEvent *e)
         return;
     }
 
-    // Move sceneView
-    if (state == MovingView &&
-        (e->buttons() == Qt::LeftButton || e->buttons() == Qt::MiddleButton)) {
-        QPointF p = e->globalPos();
-        movingVec.setX(-p.x() + movingObj_offset.x());
-        movingVec.setY(-p.y() + movingObj_offset.y());
+    // Pan view
+    if (editorState == PanningView) {
+        QPointF pg = e->globalPosition();
+        QPoint v_pan;
+        v_pan.setX(-pg.x() + panning_initialPointerPos.x());
+        v_pan.setY(-pg.y() + panning_initialPointerPos.y());
         horizontalScrollBar()->setSliderPosition(
-            (int)(movingCont_start.x() + movingVec.x()));
+            (int)(panning_initialScrollBarValues.x() + v_pan.x()));
         verticalScrollBar()->setSliderPosition(
-            (int)(movingCont_start.y() + movingVec.y()));
+            (int)(panning_initialScrollBarValues.y() + v_pan.y()));
+
         // Avoid flickering
         scrollBarPosAnimation.stop();
         viewCenterAnimation.stop();
-        rotationAnimation.stop();
+        // rotationAnimation.stop();
         // zoomAnimation.stop();
 
         return;
     }
 
-    TreeItem *seli = model->getSelectedItem();
-
-    MapObj *mosel = NULL;
-    if (seli)
-        mosel = ((MapItem *)seli)->getMO();
-
-    // If not already happened during mousepress, we might need to switch state
+    // After clicking object shift might have been pressed, adjust state then
     if (mainWindow->getModMode() == Main::ModModeMoveObject &&
-        e->modifiers() & Qt::ShiftModifier && e->buttons() == Qt::LeftButton) {
-        state = MovingObjectWithoutLinking;
+            e->modifiers() & Qt::ShiftModifier && editorState == MovingObject) {
+        setState(MovingObjectWithoutLinking);
     }
 
-    // Move the selected MapObj
-    if (mosel &&
-        (state == MovingObject || state == MovingObjectWithoutLinking ||
-         state == DrawingXLink)) {
+    // Move the selected items
+    if (movingItems.count() > 0  &&
+        (editorState == MovingObject ||
+         editorState == MovingObjectTmpLinked ||
+         editorState == MovingObjectWithoutLinking ||
+         editorState == EditingXLink)) {
+
+        if (!(e->buttons() & Qt::LeftButton)) {
+            // Sometimes at least within a VM there might be a
+            // release event lost, while still the mousePress event is processed
+            //
+            // So moving without a pressed left button is considered a "release"
+            mouseReleaseEvent(e);
+            return;
+        }
+
         int margin = 50;
 
         // Check if we have to scroll
+        QPointF p = e->position();
         vPan.setX(0);
         vPan.setY(0);
-        if (e->y() >= 0 && e->y() <= margin)
-            vPan.setY(e->y() - margin);
-        else if (e->y() <= height() && e->y() > height() - margin)
-            vPan.setY(e->y() - height() + margin);
-        if (e->x() >= 0 && e->x() <= margin)
-            vPan.setX(e->x() - margin);
-        else if (e->x() <= width() && e->x() > width() - margin)
-            vPan.setX(e->x() - width() + margin);
+        if (p.y() >= 0 && p.y() <= margin)
+            vPan.setY(p.y() - margin);
+        else if (p.y() <= height() && p.y() > height() - margin)
+            vPan.setY(p.y() - height() + margin);
+        if (p.x() >= 0 && p.x() <= margin)
+            vPan.setX(p.x() - margin);
+        else if (p.x() <= width() && p.x() > width() - margin)
+            vPan.setX(p.x() - width() + margin);
 
-        pointerPos = e->pos();
-        pointerMod = e->modifiers();
-        moveObject();
+        moveObject(e, p_event);
     } // selection && moving_obj
 
     // Draw a link from one branch to another
-    if (state == DrawingLink) {
-        tmpLink->setEndPoint(mapToScene(e->pos()));
-        tmpLink->updateLink();
+    if (editorState == CreatingXLink) {
+        tmpXLink->setEndPoint(p_event);
+        tmpXLink->updateXLink();
     }
 }
 
-void MapEditor::moveObject()
+void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
 {
+    bool repositionRequired = false;
+    bool updateUpLinksRequired = false;
+
+    // If necessary pan the view using animation
     if (!panningTimer->isActive())
         panningTimer->start(50);
 
-    QPointF p = mapToScene(pointerPos);
-    TreeItem *seli = model->getSelectedItem();
-    LinkableMapObj *lmosel = NULL;
-    if (seli)
-        lmosel = ((MapItem *)seli)->getLMO();
-
-    objectMoved = true;
-
     // reset cursor if we are moving and don't copy
 
-    // Check if we could link
-    TreeItem *ti_found = findMapItem(p, seli);
-    BranchItem *bi_dst = NULL;
-    LinkableMapObj *lmo_dst = NULL;
-    if (ti_found && ti_found != seli && ti_found->isBranchLikeType()) {
-        bi_dst = (BranchItem *)ti_found;
-        lmo_dst = bi_dst->getLMO();
-    }
-    else
-        bi_dst = NULL;
+    // Check if we could link (temporary). Consider also "near" mapCenters.
+    TreeItem *targetItem = findMapItem(p_event, movingItems, true);
 
-    if (lmosel) {
-        if (seli->getType() == TreeItem::Image) {
-            FloatImageObj *fio = (FloatImageObj *)lmosel;
-            fio->moveCenter(p.x() - movingObj_offset.x(),
-                            p.y() - movingObj_offset.y());
-            fio->setRelPos();
-            fio->updateLinkGeometry(); // no need for reposition, if we update
-                                       // link here
-            model->emitSelectionChanged(); // position has changed
-
-            // Relink float to new mapcenter or branch, if shift is pressed
-            // Only relink, if selection really has a new parent
-            if (pointerMod == Qt::ShiftModifier && bi_dst &&
-                bi_dst != seli->parent()) {
-                // Also save the move which was done so far
-                QString pold = qpointFToString(movingObj_orgRelPos);
-                QString pnow = qpointFToString(fio->getRelPos());
-                model->saveState(seli, "moveRel " + pold, seli,
-                                 "moveRel " + pnow,
-                                 QString("Move %1 to relative position %2")
-                                     .arg(model->getObjectName(lmosel))
-                                     .arg(pnow));
-                model->reposition();
-
-                model->relinkImage((ImageItem *)seli, bi_dst);
-                model->select(seli);
+    // Check, if targetItem is a child of one of the moving items
+    if (targetItem) {
+        foreach (TreeItem *ti, movingItems) {
+            if (targetItem->isChildOf(ti)) {
+                // qWarning() << "ME::moveObject " << targetItem->headingPlain() << "is child of " << ti->headingPlain();
+                targetItem = nullptr;
+                break;
             }
         }
-        else if (seli->isBranchLikeType()) { // selection != a FloatObj
-            if (seli->depth() == 0) {
-                // Move mapcenter
-                lmosel->move(p - movingObj_offset);
-                if (pointerMod == Qt::ControlModifier) {
-                    // Move only mapcenter, leave its children where they are
-                    QPointF v;
-                    v = lmosel->getAbsPos();
-                    for (int i = 0; i < seli->branchCount(); ++i) {
-                        seli->getBranchObjNum(i)->setRelPos();
-                        seli->getBranchObjNum(i)->setOrientation();
+    }
+
+    // Add selected branches and images temporary to tmpParentContainer,
+    // if they are not there yet:
+    BranchContainer *bc_first = nullptr;
+    BranchContainer *bc_prev  = nullptr;
+    if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
+        BranchContainer *bc;
+        foreach (TreeItem *ti, movingItems)
+        {
+            // The item structure in VymModel remaines untouched so far,
+            // only containers will be reparented temporarily!
+            if (ti->hasTypeBranch()) {
+                BranchItem *bi = (BranchItem*)ti;
+                bc = bi->getBranchContainer();
+
+                if (!bc_first) {
+                    bc_first = bc;
+
+                    // Initially set orientation of tmpParentContainer to first BranchContainer
+                    if (bc->getOrientation() == BranchContainerBase::UndefinedOrientation) {
+                        // Orientation undefined for MapCenters, assume RightOfParent
+                        tmpParentContainer->setOrientation(BranchContainerBase::RightOfParent);
+                    } else
+                        tmpParentContainer->setOrientation(bc->getOrientation());
+                }
+
+                if (tmpParentContainer->branchCount() == 0 || 
+                    bc->parentItem() != tmpParentContainer->getBranchesContainer()) {
+
+                    // Save position of children branches in case we only want to
+                    // move this branch and keep children unchanged using CTRL modifier
+                    if (bc->hasFloatingBranchesLayout()) {
+                        foreach(BranchContainer *bc2, bc->childBranches())
+                            bc2->setOriginalScenePos();
+                    }
+
+                    bc->setOriginalPos();
+                    bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
+                    tmpParentContainer->addToBranchesContainer(bc);
+
+                }
+
+                if (bc_first && bc_first != bc) {
+                    QPointF p;
+                    // Animate other items to position horizontally centered below first one
+                    if (bc_first->getOriginalOrientation() == BranchContainer::RightOfParent) {
+                        p = tmpParentContainer->mapFromItem(bc,
+                                bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft));
+                    } else if (bc_first->getOriginalOrientation() == BranchContainer::LeftOfParent)
+                        p = tmpParentContainer->mapFromItem(bc,
+                                bc->alignTo(Container::TopRight, bc_prev, Container::BottomRight));
+                    else
+                        p = tmpParentContainer->mapFromItem(bc,
+                                bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
+
+                    startAnimation ( bc, bc->pos(), p);
+                }
+                bc_prev = bc;
+            } else if (ti->hasTypeImage()) {
+                ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
+                if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
+                    ic->setOriginalPos();
+                    tmpParentContainer->addToImagesContainer(ic);
+                }
+        }
+            else if (ti->getType() == TreeItem::XLinkItemType) {
+                // Move XLink control point
+                XLinkObj *xlo = ((XLinkItem *)ti)->getXLinkObj();
+                if (xlo) {
+                    xlo->setSelectedCtrlPoint(p_event); // FIXME-3 Missing savestate
+                    model->setChanged();
+                }
+            }
+            else
+                qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
+        }
+    } // add to tmpParentContainer
+
+    if (tmpParentContainer->childBranches().count() > 0)
+        // If ME::moveObject is called AFTER tPC has been filled previously, 
+        // bc_first still might be unset here
+        bc_first = tmpParentContainer->childBranches().first();
+
+    BranchContainer *targetBranchContainer = nullptr;
+
+    // Check if we are moving a branch and could relink. Position tmpParentContainer
+    if (targetItem && targetItem->hasTypeBranch() && bc_first &&
+                !(mainWindow->getModMode() == Main::ModModeMoveObject &&
+                    (e->modifiers() & Qt::ShiftModifier))) {
+        setState(MovingObjectTmpLinked);
+
+        targetBranchContainer = ((BranchItem*)targetItem)->getBranchContainer();
+
+        Container *targetRefContainer = targetBranchContainer->getHeadingContainer();
+        Container *movingRefContainer = bc_first->getHeadingContainer();
+        Container::PointName targetRefPointName;
+        Container::PointName movingRefPointName;
+        QPointF linkOffset;                     // Distance for temporary link
+
+        BranchContainer *tbc = targetBranchContainer->parentBranchContainer();
+        if (e->modifiers() & Qt::ShiftModifier && tbc) {
+            qreal dy = targetBranchContainer->rect().height() / 2;
+            targetBranchContainer = targetBranchContainer->parentBranchContainer();
+
+            if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
+                // Shift modifier: Link right above
+                targetRefPointName = Container::BottomRight;
+                movingRefPointName = Container::BottomLeft;
+                linkOffset = QPointF(model->mapDesign()->linkWidth(), - dy);
+            } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
+                    // Shift modifier: Link left above
+                    targetRefPointName = Container::TopLeft;
+                    movingRefPointName = Container::BottomRight;
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), dy);
+            }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
+        } else if (e->modifiers() & Qt::ControlModifier && tbc) {
+            qreal dy = targetBranchContainer->rect().height() / 2;
+            targetBranchContainer = targetBranchContainer->parentBranchContainer();
+            if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
+                // Control modifier: Link right below
+                targetRefPointName = Container::TopRight;
+                movingRefPointName = Container::TopLeft;
+                linkOffset = QPointF(model->mapDesign()->linkWidth(), dy);
+            } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
+                    // Control modifier: Link left below
+                    targetRefPointName = Container::TopLeft;
+                    movingRefPointName = Container::TopRight;
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), dy);
+            }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
+        } else {
+            // No modifier used, temporary link to target itself
+            targetRefContainer = targetBranchContainer->getBranchesContainer();
+            movingRefContainer = tmpParentContainer;
+            if (targetBranchContainer->getOrientation() == BranchContainer::RightOfParent) {
+                if (targetBranchContainer->branchCount() == 0) {
+                    // vertically centered besides target
+                    targetRefPointName = Container::RightCenter;
+                    movingRefPointName = Container::LeftCenter;
+                    linkOffset = QPointF(model->mapDesign()->linkWidth(), 0);
+                } else {
+                    // Below target
+                    targetRefPointName = Container::BottomLeft;
+                    movingRefPointName = Container::TopLeft;
+                }
+            } else if (targetBranchContainer->getOrientation() == BranchContainer::LeftOfParent) {
+                if (targetBranchContainer->branchCount() == 0) {
+                    // vertically centered besides target
+                    targetRefPointName = Container::LeftCenter;
+                    movingRefPointName = Container::RightCenter;
+                    linkOffset = QPointF(- model->mapDesign()->linkWidth(), 0);
+                } else {
+                    // Below target
+                    targetRefPointName = Container::BottomRight;
+                    movingRefPointName = Container::TopRight;
+                }
+            }   // else:  Undefined orientation is handled with hasFloatingLayout() below!
+        }
+
+        if (!targetRefContainer)
+            targetRefContainer = ((BranchItem*)targetItem)->getBranchContainer();
+
+        // Align tmpParentContainer
+        if (targetBranchContainer->hasFloatingBranchesLayout()) {
+            // When temporary linking e.g. to MapCenter, position on a circle
+            // bigger than ornamensContainer
+
+            qreal radius = 100 + targetBranchContainer->ornamentsSceneRect().width();
+
+            QPointF center_sp = targetBranchContainer->getHeadingContainer()->mapToScene(QPointF(0,0));
+            qreal a = getAngle(p_event - center_sp);
+            QPointF p_hint = center_sp + QPointF (radius * cos(a), - radius * sin(a));
+
+            tmpParentContainer->setPos(p_hint);
+        } else
+            // Temporary link to branchContainers of targetRefContainer. Use position calculated above
+            tmpParentContainer->setPos(
+                                        linkOffset + movingRefContainer->mapToScene(
+                                                        movingRefContainer->alignTo(
+                                                            movingRefPointName, targetRefContainer, targetRefPointName)));
+
+        // Set states of MapEditor and tPC
+        if (tmpParentContainer->movingState() != BranchContainerBase::TemporaryLinked) {
+            // Link tmpParentContainer temporarily to targetBranchContainer
+
+            tmpParentContainer->setMovingState(SelectableContainer::TemporaryLinked, targetBranchContainer);
+            setState(MovingObjectTmpLinked);
+        }
+
+        repositionRequired = true;
+
+    } // tmp linking to target
+    else {
+        // Move without temporary relinking to a target
+        //
+        // Update state of MapEditor
+        if (mainWindow->getModMode() == Main::ModModeMoveObject &&
+                e->modifiers() & Qt::ShiftModifier)
+            setState(MovingObjectWithoutLinking);
+        else
+            setState(MovingObject);
+
+        if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
+            tmpParentContainer->setMovingState(SelectableContainer::Moving);
+
+        updateUpLinksRequired = true;
+    }
+
+    // Update states of children branch containers (for updating links later)
+    foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
+        if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
+            bc->setMovingState(SelectableContainer::TemporaryLinked, targetBranchContainer);
+        else
+            bc->setMovingState(SelectableContainer::Moving);
+    }
+    foreach (ImageContainer *ic, tmpParentContainer->childImages()) {
+        if (tmpParentContainer->movingState() == BranchContainerBase::TemporaryLinked)
+            ic->setMovingState(SelectableContainer::TemporaryLinked, targetBranchContainer);
+        else
+            ic->setMovingState(SelectableContainer::Moving);
+    }
+
+    // Set orientation
+    BranchContainer::Orientation newOrientation;
+    Container *tpc_bc = tmpParentContainer->getBranchesContainer();
+    if (targetBranchContainer && tpc_bc && !tpc_bc->childItems().contains(targetBranchContainer)) {
+        // tmpParentContainer has children and these do NOT contain targetBranchContainer
+
+        if (targetBranchContainer->hasFloatingBranchesLayout()) {
+            if (p_event.x() > targetBranchContainer->getHeadingContainer()->mapToScene(QPointF(0,0)).x())
+                newOrientation = BranchContainer::RightOfParent;
+            else
+                newOrientation = BranchContainer::LeftOfParent;
+        } else {
+            // Relinking to other branch
+            newOrientation = targetBranchContainer->getOrientation();
+        }
+    } else {
+        // No target branch
+
+        if (bc_first) {
+            // Set new orientation for branches (not mapCenters): Consider pointer pos relative to first moving branch
+            if (p_event.x() > bc_first->getOriginalParentPos().x() && !(e->modifiers() & Qt::ControlModifier))
+                newOrientation = BranchContainer::RightOfParent;
+            else
+                newOrientation = BranchContainer::LeftOfParent;
+        } else
+            // No target and no branch moving. No orientation change.
+            newOrientation = tmpParentContainer->getOrientation();
+    }
+
+    // Reposition if required
+    if (newOrientation != tmpParentContainer->getOrientation()) {
+        // tPC has BoundingFloats layout, still children need orientation
+        tmpParentContainer->setOrientation(newOrientation);
+        repositionRequired = true;
+    }
+
+    if (repositionRequired) {
+        if (bc_first && targetBranchContainer && targetBranchContainer->hasFloatingBranchesLayout()) {
+            foreach(BranchContainer *bc, tmpParentContainer->childBranches())
+                bc->setOrientation(newOrientation);
+        }
+        tmpParentContainer->reposition();
+    }
+
+    if (!targetBranchContainer) {
+        // Above tPC was positioned only if there is a target, so now tPC->setPos() is required if there is no target
+        // Since orientation might have changed and position depends on orientation, only do this now
+        if (bc_first) {
+            QPointF hc_center = tmpParentContainer->mapFromItem(bc_first->getHeadingContainer(), bc_first->getHeadingContainer()->pos());
+            tmpParentContainer->setPos(p_event - hc_center - movingObj_initialContainerOffset);
+
+            // When moving with Ctrl  modifier, don't children branches (in scene)
+            if (e->modifiers() & Qt::ControlModifier) {
+                foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
+                    if (bc->hasFloatingBranchesLayout()) {
+                        foreach(BranchContainer *bc2, bc->childBranches()) {
+                            QPointF q = bc->getHeadingContainer()->sceneTransform().inverted().map(bc2->getOriginalPos());
+                            bc2->setPos(q);
+                            bc2->updateUpLink();
+                        }
                     }
                 }
             }
-            else {
-                if (seli->depth() == 1) {
-                    // Move mainbranch
-                    if (!lmosel->hasParObjTmp())
-                        lmosel->move(p - movingObj_offset);
-                    lmosel->setRelPos();
-                }
-                else {
-                    // d>1, move ordinary branch
-                    if (lmosel->getOrientation() ==
-                        LinkableMapObj::LeftOfCenter)
-                        // Add width of bbox here, otherwise alignRelTo will
-                        // cause jumping around
-                        lmosel->move(p.x() - movingObj_offset.x(),
-                                     p.y() - movingObj_offset.y() +
-                                         lmosel->getTopPad());
-                    else
-                        lmosel->move(p.x() - movingObj_offset.x(),
-                                     p.y() - movingObj_offset.y() -
-                                         lmosel->getTopPad());
-                    BranchItem *selbi = ((BranchItem *)seli);
-                    if (selbi->parentBranch()->getChildrenLayout() ==
-                        BranchItem::FreePositioning)
-                        lmosel->setRelPos();
-                }
 
-            } // depth>0
+        } else
+            // No branches, only image
+            tmpParentContainer->setPos(p_event - movingObj_initialContainerOffset);
 
-            // Maybe we can relink temporary?
-            if (bi_dst && state != MovingObjectWithoutLinking) {
-                if (pointerMod == Qt::ControlModifier) {
-                    // Special case: CTRL to link below dst
-                    lmosel->setParObjTmp(lmo_dst, p, +1);
-                }
-                else if (pointerMod == Qt::ShiftModifier)
-                    lmosel->setParObjTmp(lmo_dst, p, -1);
-                else
-                    lmosel->setParObjTmp(lmo_dst, p, 0);
-            }
-            else
-                lmosel->unsetParObjTmp();
-
-            // reposition subbranch
-            lmosel->reposition();
-
-            QItemSelection sel = model->getSelectionModel()->selection();
-            updateSelection(sel, sel); // position has changed
-
-            // In winter mode shake snow from heading
-            if (winter)
-                model->emitDataChanged(seli);
-        } // Moving branchLikeType
-    }     // End of lmosel != NULL
-    else if (seli && seli->getType() == TreeItem::XLink) {
-        // Move XLink control point
-        MapObj *mosel = ((MapItem *)seli)->getMO();
-        if (mosel) {
-            mosel->move(p - movingObj_offset); // FIXME-3 Missing savestate
-            model->setChanged();
-            model->emitSelectionChanged();
-        }
     }
-    else
-        qWarning("ME::moveObject  Huh? I'm confused.");
 
-    scene()->update();
+    if (updateUpLinksRequired) {
+        foreach(BranchContainer *bc, tmpParentContainer->childBranches())
+            bc->updateUpLink();
 
-    return;
+        foreach(ImageContainer *ic, tmpParentContainer->childImages())
+            ic->updateUpLink();
+    }
+
+    model->repositionXLinks();
 }
 
 void MapEditor::mouseReleaseEvent(QMouseEvent *e)
@@ -1845,23 +2392,18 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     QPointF p = mapToScene(e->pos());
-    TreeItem *seli = model->getSelectedItem();
 
-    TreeItem *dsti = NULL;
-    if (seli)
-        dsti = findMapItem(p, seli);
-    LinkableMapObj *dst = NULL;
-    BranchItem *selbi = model->getSelectedBranch();
-    if (dsti && dsti->isBranchLikeType())
-        dst = ((MapItem *)dsti)->getLMO();
-    else
-        dsti = NULL;
+    BranchItem *destinationBranch;
+
+    destinationBranch = findMapBranchItem(p, movingItems, true);
+
+    bool repositionNeeded = false;
 
     // Have we been picking color?
-    if (state == PickingColor) {
+    if (editorState == PickingColor) {
         setCursor(Qt::ArrowCursor);
         // Check if we are over another branch
-        if (dst) {
+        if (destinationBranch) {
             if (e->modifiers() & Qt::ShiftModifier)
                 model->colorBranch(mainWindow->getCurrentColor());
             else
@@ -1872,173 +2414,172 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
     }
 
     // Have we been drawing a link?
-    if (state == DrawingLink) {
+    if (editorState == CreatingXLink) {
         setState(Neutral);
+
         // Check if we are over another branch
-        if (dsti) {
-            tmpLink->setEndBranch(((BranchItem *)dsti));
-            tmpLink->activate();
-            tmpLink->updateLink();
-            if (model->createLink(tmpLink)) {
-                model->saveState(
-                    tmpLink->getBeginLinkItem(), "remove ()", seli,
-                    QString("addXLink (\"%1\",\"%2\",%3,\"%4\",\"%5\")")
-                        .arg(model->getSelectString(tmpLink->getBeginBranch()))
-                        .arg(model->getSelectString(tmpLink->getEndBranch()))
-                        .arg(tmpLink->getPen().width())
-                        .arg(tmpLink->getPen().color().name())
-                        .arg(penStyleToString(tmpLink->getPen().style())),
-                    QString("Adding Link from %1 to %2")
-                        .arg(model->getObjectName(seli))
-                        .arg(model->getObjectName(dsti)));
-                return;
-            }
+        if (destinationBranch) {
+            tmpXLink->setEndBranch(destinationBranch);
+            tmpXLink->activate();
+            tmpXLink->updateXLink();
+            if (model->createXLink(tmpXLink)) return;
         }
-        delete (tmpLink);
-        tmpLink = NULL;
+        delete (tmpXLink);
+        tmpXLink = nullptr;
         return;
     }
 
     // Have we been moving something?
-    if (seli && state == MovingObject) {
+    if (editorState == MovingObject || editorState == MovingObjectTmpLinked) {
         panningTimer->stop();
-        if (seli->getType() == TreeItem::Image) {
-            FloatImageObj *fio = (FloatImageObj *)(((MapItem *)seli)->getLMO());
-            if (fio) {
-                // Moved Image, we need to reposition
-                QString pold = qpointFToString(movingObj_orgRelPos);
-                QString pnow = qpointFToString(fio->getRelPos());
-                model->saveState(seli, "moveRel " + pold, seli,
-                                 "moveRel " + pnow,
-                                 QString("Move %1 to relative position %2")
-                                     .arg(model->getObjectName(seli))
-                                     .arg(pnow));
 
-                model->emitDataChanged(
-                    seli->parent()); // Parent of image has changed
-                model->reposition();
+        // Check if we have a destination and should relink
+        if (destinationBranch && editorState != MovingObjectWithoutLinking) {
+            // Restore list of selected items later
+
+            // Prepare relinking
+            BranchItem *dst_branch = destinationBranch;
+            int dst_num = -1;
+
+            if (e->modifiers() & Qt::ShiftModifier && destinationBranch->parent()) {
+                // Link above dst
+                dst_branch = destinationBranch->parentBranch();
+                dst_num = destinationBranch->num();
+            } else if (e->modifiers() & Qt::ControlModifier && destinationBranch->parent()) {
+                // Link below dst
+                dst_branch = destinationBranch->parentBranch();
+                dst_num = destinationBranch->num() +  1;
             }
-        }
 
-        if (selbi && selbi->depth() == 0) {
-            if (movingObj_orgPos != selbi->getBranchObj()->getAbsPos()) {
-                QString pold = qpointFToString(movingObj_orgPos);
-                QString pnow =
-                    qpointFToString(selbi->getBranchObj()->getAbsPos());
-
-                model->saveState(selbi, "move " + pold, selbi, "move " + pnow,
-                                 QString("Move mapcenter %1 to position %2")
-                                     .arg(model->getObjectName(selbi))
-                                     .arg(pnow));
+            // Tell VymModel to relink
+            QList <BranchItem*> movingBranches;
+            foreach(BranchContainer *bc, tmpParentContainer->childBranches()) {
+                bc->setMovingState(SelectableContainer::NotMoving);
+                movingBranches << bc->getBranchItem();
             }
-        }
 
-        if (seli->isBranchLikeType()) //(seli->getType() == TreeItem::Branch )
-        {                             // A branch was moved
-            LinkableMapObj *lmosel = NULL;
-            lmosel = ((MapItem *)seli)->getLMO();
 
-            // save the position in case we link to mapcenter
-            QPointF savePos = QPointF(lmosel->getAbsPos());
+            if (!movingBranches.isEmpty())
+                model->relinkBranches(
+                        movingBranches,
+                        dst_branch,
+                        dst_num);
+            // If dst is scrolled, select it
+            if (dst_branch->isScrolled())
+                model->select(dst_branch);
 
-            // Reset the temporary drawn link to the original one
-            lmosel->unsetParObjTmp();
+            // Loop over images // FIXME-3 refactor in VM similar to relinkBranches
+            foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
+                ImageItem *ii = ic->getImageItem();
+                model->relinkImage(ii, destinationBranch);
+            }
 
-            // For Redo we may need to save original selection
-            QString preSelStr = model->getSelectString(seli);
-
-            if (dsti && objectMoved && state != MovingObjectWithoutLinking) {
-                // We have a destination, relink to that
-                BranchObj *selbo = model->getSelectedBranchObj();
-
-                QString preParStr = model->getSelectString(seli->parent());
-                QString preNum = QString::number(seli->num(), 10);
-                QString preDstParStr;
-
-                if (e->modifiers() & Qt::ShiftModifier &&
-                    dsti->parent()) { // Link above dst
-                    preDstParStr = model->getSelectString(dsti->parent());
-                    model->relinkBranch((BranchItem *)seli,
-                                        (BranchItem *)dsti->parent(),
-                                        ((BranchItem *)dsti)->num(), true);
-                }
-                else if (e->modifiers() & Qt::ControlModifier &&
-                         dsti->parent()) {
-                    // Link below dst
-                    preDstParStr = model->getSelectString(dsti->parent());
-                    model->relinkBranch((BranchItem *)seli,
-                                        (BranchItem *)dsti->parent(),
-                                        ((BranchItem *)dsti)->num() + 1, true);
-                }
-                else { // Append to dst
-                    preDstParStr = model->getSelectString(dsti);
-                    model->relinkBranch((BranchItem *)seli, (BranchItem *)dsti,
-                                        -1, true, movingObj_orgPos);
-                    if (dsti->depth() == 0)
-                        selbo->move(savePos);
+            if (!tmpParentContainer->childImages().isEmpty()) {
+                foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
+                    ImageItem *ii = ic->getImageItem();
+                    model->selectToggle(ii);
                 }
             }
-            else {
-                // No destination, undo  temporary move
+        } else {
+            // Branches moved, but not relinked
 
-                if (seli->depth() == 1) {
-                    // The select string might be different _after_ moving
-                    // around. Therefor reposition and then use string of old
-                    // selection, too
-                    model->reposition();
+            QList <BranchContainer*> childBranches = tmpParentContainer->childBranches();
+            QList <QPointF> animationCurrentPositions;   // After reposition start animations
+            QList <BranchContainer*> animationContainers;
 
-                    QPointF rp(lmosel->getRelPos());
-                    if (rp != movingObj_orgRelPos) {
-                        QString ps = qpointFToString(rp);
-                        model->saveState(
-                            model->getSelectString(lmosel),
-                            "moveRel " + qpointFToString(movingObj_orgRelPos),
-                            preSelStr, "moveRel " + ps,
-                            QString("Move %1 to relative position %2")
-                                .arg(model->getObjectName(lmosel))
-                                .arg(ps));
+            if (!childBranches.isEmpty()) {
+                repositionNeeded = true;
+
+                // We begin a saveStateScript. If nothing is really moved, this
+                // Script will be discarded later
+                model->saveStateBeginScript(
+                    QString("Move %1 branch(es)").arg(childBranches.count())
+                );
+
+                // Empty the tmpParentContainer, which is used for moving
+                // Updating the stacking order also resets the original parents
+                foreach(BranchContainer *bc, childBranches) {
+                    BranchItem *bi = bc->getBranchItem();
+
+                    bc->setMovingState(SelectableContainer::NotMoving);
+
+                    if (bc->isAnimated()) 
+                        bc->stopAnimation();
+
+                    // Relink container to original parent container
+                    // and keep (!) current absolute position
+                    bi->updateContainerStackingOrder();
+
+                    // Floating layout e.g. MapCenter
+                    if (bc->isFloating())
+                    {
+                        if (bi->depth() == 0)
+                            // MapCenter
+                            bc->setPos(bc->getHeadingContainer()->mapToScene(QPointF(0, 0)));
+                        // Save position change
+                        QString uc, rc;
+                        uc = QString("setPos%1;").arg(toS(bc->getOriginalPos(), 5));
+                        rc = QString("setPos%1;").arg(toS(bc->pos(), 5)),
+                        model->saveStateBranch(bi, uc, rc, QString("Move branch to %1").arg(toS(bc->pos())));
+                    } else {
+			if (!(e->modifiers() & Qt::ControlModifier)) {
+			    // only animate snappack if not Ctrl-moving e.g. MC
+			    animationContainers << bc;
+			    animationCurrentPositions << bc->pos();
+			}
                     }
-                }
+                } // children of tmpParentContainer
+                model->saveStateEndScript();
+            }   // Empty tmpParenContainer
 
-                if (selbi->parentBranch()->getChildrenLayout() ==
-                    BranchItem::FreePositioning) {
-                    lmosel->setRelPos();
-                    model->reposition();
-                }
-                else {
-
-                    // Draw the original link, before selection was moved around
-                    if (settings.value("/animation/use", true).toBool() &&
-                        seli->depth() > 1
-                        //		    && distance
-                        //(lmosel->getRelPos(),movingObj_orgRelPos)<3
-                    ) {
-                        lmosel->setRelPos(); // calc relPos first for starting
-                                             // point
-
-                        model->startAnimation((BranchObj *)lmosel,
-                                              lmosel->getRelPos(),
-                                              movingObj_orgRelPos);
-                    }
-                    else
-                        model->reposition();
+            if (animationUse && animationContainers.count() > 0) {
+                int i = 0;
+                foreach(BranchContainer *bc, animationContainers) {
+                    startAnimation(bc, animationCurrentPositions.at(i), bc->getOriginalPos());
+                    i++;
                 }
             }
+        } // Branches moved, but not relinked
+
+        // Let's see if we moved images with tmpParentContainer
+        if (tmpParentContainer->childImages().count() > 0 ) {
+            repositionNeeded = true;
         }
+
+        foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
+            ImageItem *ii = ic->getImageItem();
+            BranchItem *pi = ii->parentBranch();
+
+            // Update parent of moved container to original imageContainer
+            // in parent branch
+            pi->addToImagesContainer(ic);
+
+            QString pold = toS(ic->getOriginalPos(), 5);
+            QString pnew = toS(ic->pos(), 5);
+            QString com = QString("Move image to %1").arg(pnew);
+            QString iv = model->setImageVar(ii);
+            QString uc = iv + QString("i.setPos%1;").arg(pold);
+            QString rc = iv + QString("i.setPos%1;").arg(pnew);
+            model->saveState(uc, rc, com);
+        } // Image moved, but not relinked
+
         // Finally resize scene, if needed
         scene()->update();
-        movingObj = NULL;
-        objectMoved = false;
         vPan = QPoint();
-    }
-    else
-        // maybe we moved View: set old cursor
-        setCursor(Qt::ArrowCursor);
+    } // MovingObject or MovingObjecttmpXLinked
 
-    if (state != EditingHeading)
+    if (editorState != EditingHeading) {
         setState(Neutral); // Continue editing after double click!
+    }
 
+    // Restore cursor
+    updateCursor();
+
+    movingItems.clear();
     QGraphicsView::mouseReleaseEvent(e);
+
+    if (repositionNeeded)
+        model->reposition();
 }
 
 void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
@@ -2052,22 +2593,19 @@ void MapEditor::mouseDoubleClickEvent(QMouseEvent *e)
 
     if (e->button() == Qt::LeftButton) {
         QPointF p = mapToScene(e->pos());
-        TreeItem *ti = findMapItem(p, NULL);
-        LinkableMapObj *lmo;
+        TreeItem *ti = findMapItem(p);
         if (ti) {
-            if (state == EditingHeading)
+            if (editorState == EditingHeading)
                 editHeadingFinished();
             model->select(ti);
             BranchItem *selbi = model->getSelectedBranch();
             if (selbi) {
-                lmo = ((MapItem *)ti)->getLMO();
-                if (lmo) {
-                    QUuid uid = ((BranchObj *)lmo)->findSystemFlagUidByPos(p);
+                BranchContainer *bc = selbi->getBranchContainer();
+                QUuid uid = bc->findFlagByPos(p);
 
-                    // Don't edit heading when double clicking system flag:
-                    if (!uid.isNull())
-                        return;
-                }
+                // Don't edit heading when double clicking flag:
+                if (!uid.isNull())
+                    return;
             }
             e->accept();
             editHeading();
@@ -2079,24 +2617,49 @@ void MapEditor::wheelEvent(QWheelEvent *e)
 {
     if (e->modifiers() & Qt::ControlModifier &&
         e->angleDelta().y() != 0) {
-        QPointF p = mapToScene(e->position().toPoint());
-        if (e->angleDelta().y() > 0)
-            // setZoomFactorTarget (zoomFactorTarget*1.15);
-            setViewCenterTarget(p, zoomFactorTarget * 1.15, angleTarget);
-        else
-            // setZoomFactorTarget (zoomFactorTarget*0.85);
-            setViewCenterTarget(p, zoomFactorTarget * 0.85, angleTarget);
+
+        qreal f_vp;
+        qreal f_zf;
+        if (e->angleDelta().y() > 0) {
+            // Zoom in
+	    f_vp = 1 - zoomDelta;           // vector to center of viewport shrinks
+	    f_zf = 1 + zoomDelta + 0.046;   // view transformation grows
+        } else {
+            // Zoom out
+	    f_vp = 1 + zoomDelta;
+	    f_zf = 1 - zoomDelta + 0.046;
+        }
+
+        if (rotationAnimation.state() == QAbstractAnimation::Running)
+            rotationAnimation.stop();
+
+        transformationOrigin = mapToScene(e->position().toPoint());
+        vp_center = mapToScene(viewport()->rect().center());
+
+        // Calculate center of scaled viewport with p as transformation origin
+        vp_center = (vp_center - transformationOrigin) * f_vp + transformationOrigin;
+
+        useTransformationOrigin = true;
+        //setZoomFactorTarget(zoomFactorTargetInt * f_zf);
+        setViewCenterTarget(vp_center, zoomFactorTargetInt * f_zf, rotationTargetInt);
     }
     else {
-        scrollBarPosAnimation.stop();
+        stopViewAnimations();
         QGraphicsView::wheelEvent(e);
     }
 }
 
-void MapEditor::focusOutEvent(QFocusEvent *)
+void MapEditor::focusInEvent(QFocusEvent *e)
 {
-    // qDebug()<<"ME::focusOutEvent"<<e->reason();
-    if (state == EditingHeading)
+    //qDebug() << "ME::focusInEvent" << e->reason();
+    setFrameStyle(QFrame::Box);
+}
+
+void MapEditor::focusOutEvent(QFocusEvent *e)
+{
+    //qDebug() << "ME::focusOutEvent" << e->reason();
+    setFrameStyle(QFrame::NoFrame);
+    if (editorState == EditingHeading)
         editHeadingFinished();
 }
 
@@ -2130,14 +2693,26 @@ void MapEditor::dropEvent(QDropEvent *event)
                 qDebug() << "       enc:" << url.toEncoded();
                 qDebug() << "     valid:" << url.isValid();
             }
-            qDebug() << "============== mimeData ===================";
+            qDebug() << "-------------- mimeData -------------------";
             qDebug() << "has-img : " << event->mimeData()->hasImage();
             qDebug() << "has-urls: " << event->mimeData()->hasUrls();
             qDebug() << "    text: " << event->mimeData()->text();
-            qDebug() << "===========================================";
+            qDebug() << "-------------------------------------------";
         }
 
-        if (event->mimeData()->hasUrls()) {
+        if (event->mimeData()->hasImage()) {
+            QImage image = qvariant_cast<QImage>(event->mimeData()->imageData());
+            QTemporaryFile tmpFile(tmpVymDir.path() + "/pasted-image-XXXXXX");
+            tmpFile.setAutoRemove( false); // tmpFile is within tmpDir, removed automatically later
+            if (!tmpFile.open())
+                QMessageBox::warning(0, tr("Warning"),
+                                     "Couldn't open tmpFile " + tmpFile.fileName());
+            else {
+                image.save(tmpFile.fileName(), "PNG", 100);
+                model->loadImage(selbi, tmpFile.fileName());
+            }
+
+        } else if (event->mimeData()->hasUrls()) {
             // Try text representation first, which works on windows, but in
             // Linux only for https, not local images
             QString url = event->mimeData()->text();
@@ -2145,13 +2720,13 @@ void MapEditor::dropEvent(QDropEvent *event)
                 QByteArray ba =
                     event->mimeData()->urls().first().path().toLatin1();
                 QByteArray ba2;
-                for (int i = 0; i < ba.count(); i++)
+                for (int i = 0; i < ba.size(); i++)
                     if (ba.at(i) != 0)
                         ba2.append(ba.at(i));
                 url = ba2;
             }
 
-            BranchItem *bi = NULL;
+            BranchItem *bi = nullptr;
             // Workaround to avoid adding empty branches
             if (!url.isEmpty()) {
                 if (url.startsWith("file://"))
@@ -2179,7 +2754,7 @@ void MapEditor::dropEvent(QDropEvent *event)
                         if (url.endsWith(".vym", Qt::CaseInsensitive))
                             model->setVymLink(url);
                         else {
-                            model->setURL(url);
+                            model->setUrl(url);
 
                             // Shorten long URLs for heading
                             int i = url.indexOf("?");
@@ -2198,154 +2773,133 @@ void MapEditor::dropEvent(QDropEvent *event)
     event->acceptProposedAction();
 }
 
+void MapEditor::updateCursor()
+{
+    if (qApp->queryKeyboardModifiers() & Qt::ShiftModifier) {
+        switch (mainWindow->getModMode()) {
+            case Main::ModModePoint:
+                setCursor(Qt::ArrowCursor);
+                break;
+            case Main::ModModeColor:
+                setCursor(PickColorCursor);
+                break;
+            case Main::ModModeXLink:
+                setCursor(XLinkCursor);
+                break;
+            case Main::ModModeMoveObject:
+                setCursor(Qt::PointingHandCursor);
+                break;
+            case Main::ModModeMoveView:
+                setCursor(Qt::OpenHandCursor);
+                break;
+            default:
+                setCursor(Qt::ArrowCursor);
+                break;
+        }
+    } else {
+        setCursor(Qt::ArrowCursor);
+    }
+}
+
 void MapEditor::setState(EditorState s)
 {
-    if (state != Neutral && s != Neutral)
-        qWarning() << "MapEditor::setState  switching directly from " << state
-                   << " to " << s;
-    state = s;
-    /* if (debug)
-    {
+    editorState = s;
+    /* if (debug) {
         QString s;
-        switch (state)
-        {
-        case Neutral:
-            s = "Neutral";
-            break;
-        case EditingHeading:
-            s = "EditingHeading";
-            break;
-        case EditingLink:
-            s = "EditingLink";
-            break;
-        case MovingObject:
-            s = "MovingObject";
-            break;
-        case MovingObjectWithoutLinking:
-            s = "MovingObjectWithoutLinking";
-            break;
-        case MovingView:
-            s = "MovingView";
-            break;
-        case PickingColor:
-            s = "PickingColor";
-            break;
-        case DrawingLink:
-            s = "DrawingLink";
-            break;
+        switch (state) {
+            case Neutral:
+                s = "Neutral";
+                break;
+            case EditingHeading:
+                s = "EditingHeading";
+                break;
+            case EditingLink:
+                s = "EditingLink";
+                break;
+            case MovingObject:
+                s = "MovingObject";
+                break;
+            case MovingObjectWithoutLinking:
+                s = "MovingObjectWithoutLinking";
+                break;
+            case MovingView:
+                s = "MovingView";
+                break;
+            case PickingColor:
+                s = "PickingColor";
+                break;
+            case CreatingXLink:
+                s = "CreatingXLink";
+                break;
+            default:
+                s = "Unknown editor state";
+                break;
         }
         qDebug() << "MapEditor: State " << s << " of " << model->getMapName();
     }
     */
 }
 
-MapEditor::EditorState MapEditor::getState() { return state; }
+MapEditor::EditorState MapEditor::state() { return editorState; }
 
-void MapEditor::updateSelection(QItemSelection nsel, QItemSelection dsel)
+
+MapEditor::SelectionMode MapEditor::currentSelectionMode(TreeItem *selti)
 {
-    Q_UNUSED(nsel);
+    // Selections should consider logical relations, e.g. siblings and parents
+    // but also geometric. Return the most appropriate mode depending on 
+    // rotation of view and layout of selected item.
 
-    QList<MapItem *> itemsSelected;
-    QList<MapItem *> itemsDeselected;
+    SelectionMode sm = HirarchicalSelection;
+    if (selti) {
 
-    QItemSelection sel = model->getSelectionModel()->selection();
+        if (rotationInt != 0) {
+            // qDebug() << "ME::selectionMode: rotated";
+            sm = GeometricSelection;
+        } else {
+            if (selti->hasTypeBranch()) {
+                BranchContainer *bc = ((BranchItem*)selti)->getBranchContainer();
+                if (bc->branchesContainerLayout() == Container::Horizontal) {
+                    // qDebug() << "ME::selectionMode: OrgChart";
+                    sm = OrgChartSelection;
+                } else if (bc->isFloating()) {
+                    // qDebug() << "ME::selectionMode: Geometric";
+                    sm =  GeometricSelection;
+                }
 
-    LinkableMapObj *lmo;
+                // Missing: !Horizontal and !floating
+            } else if (selti->hasTypeImage()) {
+                // qDebug() << "ME::selectionMode: Geometric";
+                sm = GeometricSelection;
+            }
+        } // view not rotated
+    } // selti != nullptr
 
-    // Add new selected objects
-    if (sel.indexes().count() > 1)
-        mainWindow->statusMessage(
-            tr("%1 items selected").arg(sel.indexes().count()));
-
-    foreach (QModelIndex ix, sel.indexes()) {
-        MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType() || mi->getType() == TreeItem::Image ||
-            mi->getType() == TreeItem::XLink)
-            if (!itemsSelected.contains(mi))
-                itemsSelected.append(mi);
-        lmo = mi->getLMO();
-        if (lmo)
-            mi->getLMO()->updateVisibility();
-    }
-
-    // Delete objects meanwhile removed from selection
-    foreach (QModelIndex ix, dsel.indexes()) {
-        MapItem *mi = static_cast<MapItem *>(ix.internalPointer());
-        if (mi->isBranchLikeType() || mi->getType() == TreeItem::Image ||
-            mi->getType() == TreeItem::XLink)
-            if (!itemsDeselected.contains(mi))
-                itemsDeselected.append(mi);
-        lmo = mi->getLMO(); // FIXME-2 xlink does return nullptr
-        if (lmo)
-            mi->getLMO()->updateVisibility();
-    }
-
-    // Trim list of selection paths
-    while (itemsSelected.count() < selPathList.count())
-        delete selPathList.takeFirst();
-
-    // Reduce polygons
-    while (itemsSelected.count() < selPathList.count())
-        delete selPathList.takeFirst();
-
-    // Add additonal polygons
-    QGraphicsPathItem *sp;
-    while (itemsSelected.count() > selPathList.count()) {
-        sp = mapScene->addPath(QPainterPath());
-        sp->show();
-        selPathList.append(sp);
-    }
-
-    // Reposition polygons
-    for (int i = 0; i < itemsSelected.count(); ++i) {
-        MapObj *mo = itemsSelected.at(i)->getMO();
-        sp = selPathList.at(i);
-        sp->setPath(mo->getSelectionPath());
-        sp->setPen(selectionPen);
-        sp->setBrush(selectionBrush);
-        sp->setParentItem(mo);
-        sp->setZValue(dZ_SELBOX);
-
-        // Reposition also LineEdit for heading during animation
-        if (lineEdit)
-            lineEdit->move(mo->getAbsPos().toPoint());
-    }
-
-    scene()->update();
+    if (debug)
+        qDebug() << "ME::currentSelectionMode: " << sm;
+    return sm;
 }
 
 void MapEditor::updateData(const QModelIndex &sel)
 {
     TreeItem *ti = static_cast<TreeItem *>(sel.internalPointer());
 
-    /* testing
-        qDebug() << "ME::updateData";
-        if (!ti)
-        {
-        qDebug() << "  ti=NULL";
-        return;
-        }
-        qDebug() << "  ti="<<ti;
-        qDebug() << "  h="<<ti->getHeadingPlain();
-    */
-
-    if (ti && ti->isBranchLikeType()) {
-        BranchObj *bo = (BranchObj *)(((MapItem *)ti)->getLMO());
-        bo->updateVisuals();
-    }
+    if (ti && ti->hasTypeBranch())
+        ((BranchItem*)ti)->updateVisuals();
 
     if (winter) {
         QList<QRectF> obstacles;
-        BranchObj *bo;
-        BranchItem *cur = NULL;
-        BranchItem *prev = NULL;
+        BranchContainer *bc;
+        BranchItem *cur = nullptr;
+        BranchItem *prev = nullptr;
         model->nextBranch(cur, prev);
         while (cur) {
-            if (!cur->hasHiddenExportParent()) {
+            if (!cur->hasHiddenParent()) { // FIXME-4 avoid recursive calls here in winter
                 // Branches
-                bo = (BranchObj *)(cur->getLMO());
-                if (bo && bo->isVisibleObj())
-                    obstacles.append(bo->getBBox());
+                bc = cur->getBranchContainer();
+                if (bc && bc->isVisible()) {
+                    HeadingContainer *hc = bc->getHeadingContainer();
+                    obstacles.append(hc->mapRectToScene(hc->boundingRect()));
+                }
             }
             model->nextBranch(cur, prev);
         }
@@ -2357,21 +2911,3 @@ void MapEditor::togglePresentationMode()
 {
     mainWindow->togglePresentationMode();
 }
-
-void MapEditor::setSelectionPen(const QPen &p)
-{
-    selectionPen = p;
-    QItemSelection sel = model->getSelectionModel()->selection();
-    updateSelection(sel, sel);
-}
-
-QPen MapEditor::getSelectionPen() { return selectionPen; }
-
-void MapEditor::setSelectionBrush(const QBrush &b)
-{
-    selectionBrush = b;
-    QItemSelection sel = model->getSelectionModel()->selection();
-    updateSelection(sel, sel);
-}
-
-QBrush MapEditor::getSelectionBrush() { return selectionBrush; }

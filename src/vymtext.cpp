@@ -2,7 +2,7 @@
 #include "misc.h"
 
 #include <QDebug>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QTextDocument>
 
 /////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ VymText::VymText(const QString &s)
 bool VymText::operator==(const VymText &other)
 {
     if (text == other.text && fonthint == other.fonthint &&
-        textmode == other.textmode && filenamehint == other.filenamehint &&
+        textmode == other.textmode && fileNameInt == other.fileNameInt &&
         color == other.color)
         return true;
     else
@@ -40,7 +40,7 @@ void VymText::copy(const VymText &other)
 {
     text = other.text;
     fonthint = other.fonthint;
-    filenamehint = other.filenamehint;
+    fileNameInt = other.fileNameInt;
     textmode = other.textmode;
     color = other.color;
 }
@@ -49,7 +49,7 @@ void VymText::clear()
 {
     text = "";
     fonthint = "";
-    filenamehint = "";
+    fileNameInt = "";
     textmode = AutoText;
     color = Qt::black;
 }
@@ -93,9 +93,11 @@ void VymText::setAutoText(const QString &s)
         setPlainText(s);
 }
 
-QString VymText::getText() const { return text; }
+QString VymText::getText() const {
+    return text;
+}
 
-QString VymText::getTextASCII() const { return getTextASCII("", 0); } // FIXME-2 use setting, see TreeItem::setHeading
+QString VymText::getTextASCII() const { return getTextASCII("", 0); }
 
 QString VymText::getTextASCII(QString indent, const int &width) const
 {
@@ -103,8 +105,8 @@ QString VymText::getTextASCII(QString indent, const int &width) const
         return text;
 
     QString s;
-    QRegExp rx;
-    rx.setMinimal(true);
+    QRegularExpression rx;
+    rx.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     if (isRichText())
         s = text;
@@ -213,9 +215,9 @@ QString VymText::getFontHint() const
     return fonthint;
 }
 
-void VymText::setFilenameHint(const QString &s) { filenamehint = s; }
+void VymText::setFileName(const QString &s) { fileNameInt = s; }
 
-QString VymText::getFilenameHint() const { return filenamehint; }
+QString VymText::fileName() const { return fileNameInt; }
 
 bool VymText::isEmpty() const
 {
@@ -236,14 +238,14 @@ QStringList VymText::getAttributes() const
 {
     QStringList ret;
     if (textmode == RichText)
-        ret << attribut("textMode", "richText");
+        ret << attribute("textMode", "richText");
     else {
-        ret << attribut("textMode", "plainText");
+        ret << attribute("textMode", "plainText");
         if (!fonthint.isEmpty())
-            ret << attribut("fonthint", fonthint);
+            ret << attribute("fonthint", fonthint);
     }
-    ret << attribut("textColor", color.name());
-    ret << attribut("text", quoteQuotes(text));
+    ret << attribute("textColor", color.name());
+    ret << attribute("text", quoteQuotes(getText()));
     return ret;
 }
 

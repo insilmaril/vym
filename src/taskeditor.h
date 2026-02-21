@@ -1,23 +1,24 @@
 #ifndef TASKEDITOR_H
 #define TASKEDITOR_H
 
-#include <QTableView>
 #include <QWidget>
 
-#include "taskfiltermodel.h"
+class QItemSelection;
+class QSortFilterProxyModel;
 
 class BranchItem;
 class QTableView;
 class Task;
+class TaskFilterModel;
 class TaskModel;
-class QSortFilterProxyModel;
 
 class TaskEditor : public QWidget {
     Q_OBJECT
 
   public:
-    TaskEditor(QWidget *parent = NULL);
+    TaskEditor(QWidget *parent = nullptr);
     ~TaskEditor();
+    void setFocus();
     void setMapName(const QString &);
     bool isUsedFilterMap();
     void setFilterMap();
@@ -30,11 +31,16 @@ class TaskEditor : public QWidget {
     void setFilterFlags3();
     void updateFilters();
     bool taskVisible(Task*);
-    void resetDeltaPrio();
     bool select(Task *task);
     void clearSelection();
     void showSelection();
     void contextMenuEvent(QContextMenuEvent *e);
+
+  signals:
+    void windowClosed();
+
+  public slots:
+    void closeWindow();
 
   private slots:
     void cellClicked(QModelIndex);
@@ -53,6 +59,7 @@ class TaskEditor : public QWidget {
   private:
     QTableView *view;
     TaskFilterModel *filterActiveModel;
+    QString shortcutScope;
     QString currentMapName;
     QAction *actionToggleFilterMap;
     QAction *actionToggleFilterActive;

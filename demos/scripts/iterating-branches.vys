@@ -1,10 +1,39 @@
 vym.clearConsole();
-m1 = vym.currentMap();
+map = vym.currentMap();
 
-m1.initIterator("foobar");
-print ("Starting with branch: " + m1.getHeadingPlainText() );
+il = map.itemList();
+il.setModeBranches();
 
-while (m1.nextIterator("foobar") )
+vym.print("Iterate over complete map (" + il.count() + " items)");
+while (b = il.nextBranch() )
 {
-    print ("Selected branch: " + m1.getHeadingPlainText() );
+    vym.print (" - Current branch: " + b.headingText() );
+}
+
+il.setModeBranches(true);
+vym.print("Iterate over complete map, deep levels first (" + il.count() + " items)");
+while (b = il.nextBranch() )
+{
+    vym.print (" - Current branch: " + b.headingText() );
+}
+
+il.setModeSelectedSubtrees();
+vym.print("Iterate over selected subtrees (" + il.count() + " items)");
+while (b = il.nextBranch() )
+{
+    vym.print (" - Current branch: " + b.headingText() );
+}
+
+il.setModeSelectedSubtrees(true);
+vym.print("Iterate over selected subtrees, deep levels first (" + il.count() + " items)");
+while (b = il.nextBranch() )
+{
+    vym.print (" - Current branch: " + b.headingText() );
+}
+
+il.setModeSelectedBranches();
+vym.print("Iterate over selected branches without subtrees (" + il.count() + " items)");
+while (b = il.nextBranch() )
+{
+    vym.print (" - Current branch: " + b.headingText() );
 }

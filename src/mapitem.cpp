@@ -1,11 +1,11 @@
 #include "mapitem.h"
 
-#include "linkablemapobj.h"
-#include "ornamentedobj.h"
+#include "branch-container.h"
+#include "branchitem.h"
+#include "image-container.h"
+#include "imageitem.h"
 
 #include <QDebug>
-
-extern FlagRowMaster *systemFlagsMaster;
 
 MapItem::MapItem(TreeItem *parent)
     : TreeItem(parent)
@@ -16,156 +16,57 @@ MapItem::MapItem(TreeItem *parent)
 
 void MapItem::init()
 {
-    mo = NULL;
-    posMode = Unused;
-    hideLinkUnselected = false;
+    hideLinkUnselectedInt = false;
 }
 
-void MapItem::appendChild(TreeItem *item)
+Container* MapItem::getContainer()
 {
-    TreeItem::appendChild(item);
+    if (hasTypeBranch())
+        return ((BranchItem*)this)->getBranchContainer();
+    else if (hasTypeImage())
+        return ((ImageItem*)this)->getImageContainer();
 
-    // FIXME-4 maybe access parent in MapObjs directly via treeItem
-    // and remove this here...
+    return nullptr;
+}
 
-    // If lmo exists, also set parObj there
-    LinkableMapObj *lmo = getLMO();
-    if (lmo) {
-        LinkableMapObj *itemLMO = ((MapItem *)item)->getLMO();
-        if (itemLMO)
-            itemLMO->setParObj(lmo);
+void MapItem::setPos(const QPointF &p)
+{
+    if (hasTypeBranch()) {
+        ((BranchItem*)this)->getBranchContainer()->setPos(p);
+        return;
     }
+
+    if (hasTypeImage())
+        ((ImageItem*)this)->getImageContainer()->setPos(p);
 }
-
-void MapItem::setRelPos(const QPointF &p)
-{
-    posMode = Relative;
-    pos = p;
-    LinkableMapObj *lmo = getLMO();
-    if (lmo) {
-        ((OrnamentedObj *)lmo)->setUseRelPos(true);
-        ((OrnamentedObj *)lmo)->move2RelPos(p);
-    }
-}
-
-void MapItem::setAbsPos(const QPointF &p)
-{
-    posMode = Absolute;
-    pos = p;
-    if (mo)
-        mo->move(p);
-}
-
-void MapItem::setPositionMode(PositionMode mode) { posMode = mode; }
-
-MapItem::PositionMode MapItem::getPositionMode() { return posMode; }
 
 void MapItem::setHideLinkUnselected(bool b)
 {
-    hideLinkUnselected = b;
-    LinkableMapObj *lmo = getLMO();
-    if (lmo) {
-        // lmo->setHideLinkUnselected();
-        lmo->setVisibility(lmo->isVisibleObj());
-        lmo->updateLinkGeometry();
+    hideLinkUnselectedInt = b;
+    if (hasTypeBranch()) {
+        ((BranchItem*)this)->getBranchContainer()->updateVisibility();
+        return;
     }
 }
 
-bool MapItem::getHideLinkUnselected() { return hideLinkUnselected; }
+bool MapItem::hideLinkUnselected() { return hideLinkUnselectedInt; }
 
-QString MapItem::getMapAttr()
+QString MapItem::getPosAttr()
 {
     QString s;
-    LinkableMapObj *lmo = getLMO();
+    QPointF pos = getContainer()->pos();
 
-    if (parentItem == rootItem)
-        posMode = Absolute;
-    else {
-        if (type == TreeItem::Image || depth() == 1 || (lmo && lmo->getUseRelPos()))
-            posMode = Relative; // FiXME-2 shouldn't this be replaced by relPos?
-        else
-            posMode = Unused;
-    }
-
-    switch (posMode) {
-        case Relative:
-            if (lmo)
-                pos = lmo->getRelPos();
-            s = attribut("relPosX", QString().setNum(pos.x())) +
-                attribut("relPosY", QString().setNum(pos.y()));
-            break;
-        case Absolute:
-            if (mo)
-                pos = mo->getAbsPos();
-            s = attribut("absPosX", QString().setNum(pos.x())) +
-                attribut("absPosY", QString().setNum(pos.y()));
-            break;
-        default:
-            break;
-    }
-    if (hideLinkUnselected)
-        s += attribut("hideLink", "true");
-
-    // Rotation angle
-    MapObj *mo = getMO();
-    if (mo)
-        angle = mo->getRotation();
-    if (angle != 0)
-        s += attribut("rotation", QString().setNum(angle));
-
+    s = attribute("posX", QString().setNum(pos.x())) +
+        attribute("posY", QString().setNum(pos.y()));
     return s;
 }
 
-QRectF MapItem::getBBoxURLFlag()
+QString MapItem::getLinkableAttr()
 {
-    QString s = "system-url";
-    QStringList list = systemFlags.activeFlagNames().filter(s);
-    if (list.count() > 1) {
-        qWarning() << "MapItem::getBBoxURLFlag found more than one system-url*";
-        return QRectF();
-    }
+    QString s;
 
-    Flag *f = systemFlagsMaster->findFlagByName(s);
-    if (f) {
-        QUuid u = f->getUuid();
-        LinkableMapObj *lmo = getLMO();
-        if (lmo)
-            return ((OrnamentedObj *)lmo)->getBBoxSystemFlagByUid(u);
-    }
-    return QRectF();
-}
+    if (hideLinkUnselectedInt)
+        s += attribute("hideLink", "true");
 
-void MapItem::setRotation(const qreal &a)
-{
-    angle = a;
-    MapObj *mo = getMO();
-    if (mo)
-        mo->setRotation(a);
-}
-
-MapObj *MapItem::getMO() { return mo; }
-
-LinkableMapObj *MapItem::getLMO()
-{
-    if (isBranchLikeType() || type == Image)
-        return (LinkableMapObj *)mo;
-    else
-        return NULL;
-}
-
-void MapItem::initLMO()
-{
-    LinkableMapObj *lmo = getLMO();
-    if (!lmo)
-        return;
-    switch (posMode) {
-    case Relative:
-        lmo->setRelPos(pos);
-        break;
-    case Absolute:
-        lmo->move(pos);
-        break;
-    default:
-        break;
-    }
+    return s;
 }

@@ -4,20 +4,27 @@
 #include <QItemSelection>
 #include <QWidget>
 
-#include "findwidget.h"
+#include "findcontrolswidget.h"
 
 class FindResultModel;
 class TreeItem;
 class VymModel;
 class QTreeView;
 class QPushButton;
-class FindWidget;
+class FindResultTreeView;
+class FindControlsWidget;
 
 class FindResultWidget : public QWidget {
     Q_OBJECT
 
   public:
-    FindResultWidget(QWidget *parent = NULL);
+    FindResultWidget(QWidget *parent = nullptr);
+
+  public slots:
+    void switchFocus();
+
+  public:
+    void setFocus();
     FindResultModel *getResultModel();
     void addItem(TreeItem *ti);
     void addItem(const QString &s);
@@ -26,9 +33,11 @@ class FindResultWidget : public QWidget {
   public slots:
     void popup();
     void cancelPressed();
+    void closeWindow();
     void nextButtonPressed(QString, bool);
     void updateSelection(QItemSelection, QItemSelection);
-    void setStatus(FindWidget::Status st);
+    void setStatus(FindControlsWidget::Status st);
+    void searchFinished();
 
   signals:
     void hideFindResultWidget();
@@ -36,11 +45,11 @@ class FindResultWidget : public QWidget {
     void findPressed(QString, bool);
 
   public:
-    FindWidget *findWidget;
+    FindControlsWidget *findControlsWidget;
 
   private:
     FindResultModel *resultsModel;
-    QTreeView *view;
+    FindResultTreeView *view;
 };
 
 #endif

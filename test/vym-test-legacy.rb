@@ -101,7 +101,7 @@ def init_map( mapPath, files = [])
   end
 
   if @vym.loadMap (@currentMapPath)
-    id = @vym.currentMapID
+    id = @vym.currentMapId
     puts "# Loaded #{mapPath} -> #{@currentMapPath} (id: #{id})".light_black
     return @vym.map (id)
   end
@@ -111,12 +111,12 @@ def init_map( mapPath, files = [])
 end
 
 def close_current_map
-  id = @vym.currentMapID
-  r = @vym.closeMapWithID(id)
+  id = @vym.currentMapId
+  r = @vym.closeMapWithId(id)
   if r
     puts "# Closed map (id: #{id})".light_black
   else
-    puts "# Failed to close map with id = #{id}. CurrentMapID = #{id}".red
+    puts "# Failed to close map with id = #{id}. currentMapId = #{id}".red
   end
 end
 
@@ -295,7 +295,7 @@ def test_copy_paste
 
   map.copy
   map.paste
-  map.selectLatestAdded     #FIXME-2 not set for ImportAdd, which is used by paste
+  map.selectLatestAdded     #FIXME-5 not set for ImportAdd, which is used by paste
   s = map.getSelectionString
   expect "Normal paste of branch, check heading of #{s}", map.getHeadingPlainText, "Main A"
 
@@ -513,8 +513,8 @@ def test_export
   map.exportMap("Last")
   expect "exportLast: XML file exists", File.exists?(filepath), true
 
-  #OpenOffice Impress //FIXME-2
-  #Taskjuggler //FIXME-3
+  #OpenOffice Impress //FIXME-5
+  #Taskjuggler //FIXME-5
 
   close_current_map
 end
@@ -683,7 +683,7 @@ def test_moving_parts
   #map = init_map( vym )
   map.select @main_A
   err = map.relinkTo @branch_0Aa,0,0,0
-  #FIXME-2 disabled, error not supported atm expect_error "RelinkTo myself fails.", err
+  #FIXME-5 disabled, error not supported atm expect_error "RelinkTo myself fails.", err
 
   #map = init_map( vym )
   map.select @branch_0Aa
@@ -808,7 +808,7 @@ def test_notes
   map.setNotePlainText("")
   expect "setNotePlainText(\"\") deletes note", map.hasNote, false
 
-  # Compatibility with version < 2.5.0  # FIXME-2 missing
+  # Compatibility with version < 2.5.0  # FIXME-5 missing
 
   close_current_map
 end
@@ -929,7 +929,7 @@ def test_user_flags
   flagName = "userflag-vym"
   expect "Has active flag '#{flagName}'", map.hasActiveFlag(flagName), true
 
-  # FIXME-2 cont here
+  # FIXME-5 cont here
   close_current_map
 end
 
@@ -1174,7 +1174,7 @@ def test_load_legacy_maps
     map.getNotePlainText,
     "RichText note in characters"
 
-  # FIXME-2 implement and add test: xlinks in subitems of branches (pre 1.13.2)
+  # TODO implement and add test: xlinks in subitems of branches (pre 1.13.2)
   close_current_map
 end
 
@@ -1292,7 +1292,6 @@ begin
   #test_export
   #test_extrainfo
   #test_frames
-  ##test_headings  # FIXME-2 no tests available
   #test_history
   test_load_legacy_maps
   #test_modify_branches

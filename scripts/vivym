@@ -43,14 +43,19 @@ for MAP in $*; do
     cp $DIR/$BASE.xml $BAK
 
     # Edit
-    $EDITOR $DIR/$BASE.xml
+    if [ -z "$EDITOR" ] ; then
+        echo "\$EDITOR is not set"
+    else
+        $EDITOR $DIR/$BASE.xml
+    fi
 
     # Compare
     if cmp $DIR/$BASE.xml $DIR/$BASE.xml.bak  &> /dev/null ; then 
 	echo "Map not changed." 
     else  
 	# Missing: Zip again
-	#rm $BAK
+        echo Removing Backup: $BAK
+	rm $BAK
 	cd $DIR
 	zip -r $MAP .
 

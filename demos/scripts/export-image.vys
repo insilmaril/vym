@@ -1,16 +1,18 @@
 vym.clearConsole();
 map = vym.currentMap();
-map.exportMap("Image","export-test.png","PNG");	// Last parameter is optional
+map.exportMap(["Image","export-test.png","PNG"]);
 
 
-// Parameters
-
-0: Export type
-1: Filname
-2: Image format (optional) for "Image"
+// exportMap Parameters
+// 0: Export type
+// 1: Filname
+// 2: Image format (optional) for "Image"
 
 // Export types
-["Last", "AO", "ASCII", "CSV", "HTML", "Image", "Impress", "LaTeX", "Markdown", "OrgMode", "PDF", "SVG", "XML"]
-
+// ["Last", "AO", "ASCII", "CSV", "HTML", "Image", "Impress", "LaTeX", "Markdown", "OrgMode", "PDF", "SVG", "XML"]
+//
+// More details in the code:
+// https://github.com/insilmaril/vym/blob/aa5c4544627637344c58f5d8c7319c3b6d3dbd0c/src/vymmodelwrapper.cpp#L241
+//
 // Image formats
-["PNG", "GIF", "JPG", "JPEG", "PNG", "PBM", "PGM", "PPM", "TIFF", "XBM", "]XPM"
+// ["PNG", "GIF", "JPG", "JPEG", "PNG", "PBM", "PGM", "PPM", "TIFF", "XBM", "XPM"]

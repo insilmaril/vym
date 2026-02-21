@@ -148,7 +148,7 @@ void ExportHTMLDialog::dirChanged()
 void ExportHTMLDialog::browseDirectoryPressed()
 {
     QFileDialog fd(this);
-    fd.setFileMode(QFileDialog::DirectoryOnly);
+    fd.setFileMode(QFileDialog::Directory);
     fd.setWindowTitle(tr("VYM - Export HTML to directory"));
     fd.setModal(true);
     fd.setDirectory(QDir::current());
@@ -348,5 +348,3 @@ void ExportHTMLDialog::setMapName(const QString &s) { mapname = s; }
 QDir ExportHTMLDialog::getDir() { return dir; }
 
 bool ExportHTMLDialog::warnings() { return showWarnings; }
-
-bool ExportHTMLDialog::hasChanged() { return settingsChanged; } // FIXME-2 never used

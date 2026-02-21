@@ -21,7 +21,7 @@ class Option {
     Type getType();
     void setArg(const QString &);
     QString getArg();
-    void setActive();
+    void setActive(bool b = true);
     bool isActive();
 
   private:
@@ -46,7 +46,8 @@ class Options {
     QString getHelpText();
     QString getProgramName();
     QStringList getFileList();
-    bool isOn(const QString &);
+    bool isActive(const QString &);
+    void setActive(const QString &, bool b);
     QString getArg(const QString &);
 
   private:

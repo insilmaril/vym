@@ -1,175 +1,103 @@
-#ifndef VYMMODELWRAPPER_H
-#define VYMMODELWRAPPER_H
+#ifndef VYMMODEL_WRAPPER_H
+#define VYMMODEL_WRAPPER_H
 
-#include "scripting.h"
 #include <QColor>
 #include <QObject>
-#include <QScriptContext>
-#include <QScriptValue>
-#include <QScriptable>
+#include <QJSValue>
 #include <QVariant>
 
 class BranchItem;
+class AttributeWrapper;
+class BranchWrapper;
+class ImageWrapper;
+class ItemListWrapper;
 class VymModel;
+class XLinkWrapper;
 
-class VymModelWrapper : public VymScriptContext {
+class VymModelWrapper : public QObject {
     Q_OBJECT
   public:
-    VymModelWrapper(VymModel *m);
-    /*
-    QString setResult( QString r );
-    bool setResult( bool r );
-    int setResult( int r );
-    */
-
-  private:
-    BranchItem *getSelectedBranch();
-    QVariant getParameter(bool &ok, const QString &key,
-                          const QStringList &parameters);
+    Q_INVOKABLE VymModelWrapper(VymModel *m);
+    ~VymModelWrapper();
 
   public slots:
-    void addBranch();
-    void addBranchBefore();
-    void addMapCenter(qreal x, qreal y);
-    void addMapInsert(QString filename, int pos, int contentFilter);
-    void addMapInsert(const QString &filename, int pos);
-    void addMapInsert(const QString &filename);
-    void addMapReplace(QString filename);
+    void addMapCenterAtPos(qreal x, qreal y);
     void addSlide();
-    void addXLink(const QString &begin, const QString &end, int width,
-                  const QString &color, const QString &penstyle);
-    int branchCount();
     int centerCount();
     void centerOnID(const QString &id); // tested: ok
-    void clearFlags();
-    void colorBranch(const QString &color);
-    void colorSubtree(const QString &color);
     void copy();
     void cut();
-    void cycleTask();
-    int depth();
-    bool exportMap();
-    int getBranchIndex();
+    bool exportMap(QJSValueList args);
+    Q_INVOKABLE BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
+    Q_INVOKABLE AttributeWrapper* findAttributeById(const QString &);
+    Q_INVOKABLE BranchWrapper* findBranchById(const QString &);
+    Q_INVOKABLE BranchWrapper* findBranchBySelection(const QString &);
+    Q_INVOKABLE ImageWrapper* findImageById(const QString &);
+    Q_INVOKABLE ImageWrapper* findImageBySelection(const QString &);
+    Q_INVOKABLE XLinkWrapper* findXLinkById(const QString &);
+    QString getBackgroundColor();
+    QString getBackgroundImageName();
     QString getDestPath();
     QString getFileDir();
     QString getFileName();
-    QString getFrameType();
-    QString getHeadingPlainText();
-    QString getHeadingXML();
-    QString getMapAuthor();
-    QString getMapComment();
-    QString getMapTitle();
-    QString getNotePlainText();
-    QString getNoteXML();
+    QString getAuthor();
+    QString getComment();
+    QString getTitle();
+    QString getLinkColorHint();
     QString getSelectionString();
-    int getTaskPriorityDelta();
-    QString getTaskSleep();
-    int getTaskSleepDays();
-    QString getURL();
-    QString getVymLink();
-    QString getXLinkColor();
-    int getXLinkWidth();
-    QString getXLinkPenStyle();
-    QString getXLinkStyleBegin();
-    QString getXLinkStyleEnd();
-    bool hasActiveFlag(const QString &flag);
-    bool hasNote();
-    bool hasRichTextNote();
-    bool hasTask();
-    void importDir(const QString &path);
-    bool initIterator(const QString &iname, bool deepLevelsFirst = false);
-    bool isScrolled();
-    void loadImage(const QString &filename);
-    void loadNote(const QString &filename);
-    void move(qreal x, qreal y);
-    void moveRel(qreal x, qreal y);
-    void moveDown();
-    void moveUp();
+    double getZoom();
+    bool hasBackgroundImage();
+    bool isBusy();
+    bool loadBackgroundImage(const QString &imagePath);
+    bool loadBranchReplace(QString filename, BranchWrapper *bw);
+    bool loadDataInsert(QString filename, int pos = -1, BranchWrapper *bw = nullptr);
     void moveSlideDown(int n);
     void moveSlideDown();
     void moveSlideUp(int n);
     void moveSlideUp();
-    bool nextIterator(const QString &iname);
-    void nop();
-    void note2URLs();
-    bool parseVymText(const QString &text);
+    Q_INVOKABLE ItemListWrapper* itemList();
     void paste();
     void redo();
-    bool relinkTo(const QString &parent, int num, qreal x, qreal y);
-    bool relinkTo(const QString &parent, int num);
-    bool relinkTo(const QString &parent);
     void remove();
-    void removeChildren();
-    void removeKeepChildren();
+    void removeAttribute(AttributeWrapper *aw);
+    void removeBranch(BranchWrapper *bw);
+    void removeImage(ImageWrapper *iw);
+    void removeKeepChildren(BranchWrapper *bw);
     void removeSlide(int n);
-    QVariant repeatLastCommand();
-    void saveImage(const QString &filename);
-    void saveNote(const QString &filename);
-    void scroll();
+    void removeXLink(XLinkWrapper *xlw);
+    bool replaceTree(QString filename);
+    bool saveSelection(const QString &filename);
     bool select(const QString &s);
-    bool selectID(const QString &s);
-    bool selectFirstBranch();
-    bool selectFirstChildBranch();
-    bool selectLastBranch();
-    bool selectLastChildBranch();
-    bool selectLastImage();
-    bool selectParent();
+    Q_INVOKABLE AttributeWrapper* selectedAttribute();
+    Q_INVOKABLE BranchWrapper* selectedBranch();
+    QList <BranchWrapper*> selectedBranches();
+    Q_INVOKABLE XLinkWrapper* selectedXLink();
+    bool selectUids(QJSValueList args);
     bool selectLatestAdded();
-    bool selectToggle(const QString &selectString);
-    void setFlagByName(const QString &s);
-    void setHeadingConfluencePageName();
-    void setHeadingPlainText(const QString &s);
-    void setHideExport(bool b);
-    void setHideLinkUnselected(bool b);
-    void setIncludeImagesHorizontally(bool b);
-    void setIncludeImagesVertically(bool b);
-    void setMapAnimCurve(int n);
-    void setMapAnimDuration(int n);
-    void setMapAuthor(const QString &s);
-    void setMapBackgroundColor(const QString &color);
-    void setMapComment(const QString &s);
-    void setMapDefLinkColor(const QString &color);
-    void setMapLinkStyle(const QString &style);
-    void setMapRotation(float a); // tested: ok
-    void setMapTitle(const QString &s);
-    void setMapZoom(float z); // tested: ok
-    void setNotePlainText(const QString &s);
-    void setFrameBorderWidth(int border);
-    void setFrameBrushColor(const QString &color);
-    void setFrameIncludeChildren(bool b);
-    void setFramePadding(int padding);
-    void setFramePenColor(const QString &color);
-    void setFrameType(const QString &type);
-    void setScaleFactor(qreal f);
+    void setDefaultLinkColor(const QString &color); // FIXME-3-4 maybe also rename other setMap* methods?
+    void setAnimCurve(int n);
+    void setAnimDuration(int n);
+    void setAuthor(const QString &s);
+    void setBackgroundColor(const QString &color);
+    void setBackgroundImageName(const QString &name);
+    void setComment(const QString &s);
+    void setLinkStyle(const QString &style, int depth = -1);
+    void setLinkColorHint(const QString &hint);
+    void setRotationView(float a);
     void setSelectionBrushColor(const QString &color);
     void setSelectionPenColor(const QString &color);
     void setSelectionPenWidth(const qreal &);
-    void setTaskPriorityDelta(const int &n);
-    bool setTaskSleep(const QString &s);
-    void setURL(const QString &s);
-    void setVymLink(const QString &s);
-    void setXLinkColor(const QString &color);
-    void setXLinkStyle(const QString &style);
-    void setXLinkStyleBegin(const QString &style);
-    void setXLinkStyleEnd(const QString &style);
-    void setXLinkWidth(int w);
+    void setSaveAsBackgroundProcess(bool);
+    void setTitle(const QString &s);
+    void setZoom(float z);
     void sleep(int n);
-    void sortChildren(bool b);
-    void sortChildren();
-    void toggleFlagByUid(const QString &s);
-    void toggleFlagByName(const QString &s);
-    void toggleFrameIncludeChildren();
-    void toggleScroll();
-    void toggleTarget();
-    void toggleTask();
+    int slideCount();
     void undo();
-    bool unscroll();
-    void unscrollChildren();
     void unselectAll();
-    void unsetFlagByName(const QString &s);
+    void unsetBackgroundImage();
 
   private:
-    VymModel *model;
+    VymModel *modelInt;
 };
 
 #endif

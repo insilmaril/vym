@@ -4,12 +4,13 @@
 #include <QPolygonF>
 
 namespace Geometry {
+
 qreal distance(const QPointF &p, const QPointF &q);
 };
 
-QRectF addBBox(QRectF r1, QRectF r2);
-QSize addBBoxSize(QSize s1, QSize s2);
-bool isInBox(const QPointF &p, const QRectF &box);
+qreal getAngle(const QPointF &);
+
+int nearestPoint(QList <QPointF> &points, const QPointF &rp);
 
 class Vector : public QPointF {
   public:

@@ -13,17 +13,26 @@ class JiraAgent : public QObject {
     Q_OBJECT
 
   public:
-    enum JobType {Undefined, GetTicketInfo};
+    enum JobType {Undefined, GetTicketInfo, Query};
 
     static bool available();
 
     JiraAgent();
     ~JiraAgent();
 
+  private:  
     void init();
+    bool setJiraServer(int n);
+
+  public:
     void setJobType(JobType jt);
+    JiraAgent::JobType jobType();
     bool setBranch(BranchItem *bi);
     bool setTicket(const QString &id);
+    void setDoSubtree(bool b);
+    QString key();
+    bool setQuery(const QString &s);
+    QString query();
     QString serverName();
     QString url();
 
@@ -36,12 +45,15 @@ class JiraAgent : public QObject {
 
   signals:
     void jiraTicketReady(QJsonObject);
+    void jiraQueryReady(QJsonObject);
 
   private:
     void startGetTicketRequest();
+    void startQueryRequest();
 
   private slots:
     void ticketReceived(QNetworkReply *reply);
+    void queryFinished(QNetworkReply *reply);
     void timeout();
 #ifndef QT_NO_SSL
     void sslErrors(QNetworkReply *, const QList<QSslError> &errors);
@@ -50,7 +62,7 @@ class JiraAgent : public QObject {
   private:
     // Job related 
     QTimer *killTimer;
-    JobType jobType;
+    JobType jobTypeInt;
     int jobStep;
     bool abortJob;  // Flag to abort during initialization of job
 
@@ -59,8 +71,9 @@ class JiraAgent : public QObject {
     QJsonObject jsobj;
 
     // Settings: Credentials to access JIRA
-    bool authUsingPATInt;
-    QString personalAccessTokenInt;
+    QString authMethodInt; // userpass | pat | cloud
+    QString patTokenInt;
+    QString apiTokenInt;
     QString userNameInt;
     QString passwordInt;
 
@@ -69,10 +82,14 @@ class JiraAgent : public QObject {
     QString serverNameInt;
     QString apiUrl;
     QString ticketUrl;
-    QString ticketID;
+    QString keyInt;
+    QString queryInt;
 
     // Backreferences to take action in calling model
-    int branchID;
-    int modelID;
+    int branchId;
+    int modelId;
+
+    // For redoCommand remember need for recursion
+    bool doSubtreeInt;
 };
 #endif

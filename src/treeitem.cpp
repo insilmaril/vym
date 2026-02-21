@@ -3,14 +3,11 @@
 
 #include "attributeitem.h"
 #include "branchitem.h"
-#include "branchobj.h"
 #include "misc.h"
 #include "treeitem.h"
 #include "vymmodel.h"
+#include "xlink.h"
 #include "xlinkitem.h"
-#include "xlinkobj.h"
-
-using namespace std;
 
 extern ulong itemLastID;
 extern FlagRowMaster *standardFlagsMaster;
@@ -32,49 +29,50 @@ TreeItem::TreeItem(TreeItem *parent)
 
 TreeItem::~TreeItem()
 {
-    // qDebug()<<"Destr TreeItem this="<<this<<"
-    // childcount="<<childItems.count();
+    //qDebug() << "Destr TreeItem begin: this=" << this << headingPlain();
     TreeItem *ti;
     while (!childItems.isEmpty()) {
         ti = childItems.takeFirst();
+        //qDebug() << "  In destr TI going to delete ti=" << ti << ti->headingPlain();
         delete ti;
     }
 }
 
 void TreeItem::init()
 {
-    model = NULL;
+    model = nullptr;
 
     // Assign ID
     itemLastID++;
     itemID = itemLastID;
     uuid = QUuid::createUuid();
 
-    branchOffset = 0;
+    branchOffsetInt = 0;
     branchCounter = 0;
 
-    imageOffset = 0;
+    imageOffsetInt = 0;
     imageCounter = 0;
 
     attributeCounter = 0;
-    attributeOffset = 0;
+    attributeOffsetInt = 0;    // FIXME-4 will always be 0, never incremented
 
     xlinkCounter = 0;
-    xlinkOffset = 0;
+    xlinkOffsetInt = 0;
 
     target = false;
 
-    heading.clear();
-    heading.setText(" ");
+    headingInt.clear();
+    headingInt.setText(" ");
     note.setText("");
 
     hidden = false;
-    hideExport = false;
+    hideTemporaryInt = false;
 
     itemData.clear();
     itemData << "";
 
-    backgroundColor = Qt::transparent;
+    urlInt = QString();
+    urlTypeInt = NoUrl;
 
     standardFlags.setMasterRow(standardFlagsMaster);
     userFlags.setMasterRow(userFlagsMaster);
@@ -83,23 +81,25 @@ void TreeItem::init()
 
 void TreeItem::setModel(VymModel *m) { model = m; }
 
-VymModel *TreeItem::getModel() { return model; }
+VymModel* TreeItem::getModel() { return model; }
+
+MapDesign* TreeItem::mapDesign() { return model->mapDesign(); }
 
 int TreeItem::getRowNumAppend(TreeItem *item)
 {
     switch (item->type) {
-    case Attribute:
-        return attributeOffset + attributeCounter;
-    case XLink:
-        return xlinkOffset + xlinkCounter;
-    case Image:
-        return imageOffset + imageCounter;
-    case MapCenter:
-        return branchOffset + branchCounter;
-    case Branch:
-        return branchOffset + branchCounter;
-    default:
-        return -1;
+        case Attribute:
+            return attributeOffsetInt + attributeCounter;
+        case XLinkItemType:
+            return xlinkOffsetInt + xlinkCounter;
+        case Image:
+            return imageOffsetInt + imageCounter;
+        case MapCenter:
+            return branchOffsetInt + branchCounter;
+        case Branch:
+            return branchOffsetInt + branchCounter;
+        default:
+            return -1;
     }
 }
 
@@ -113,25 +113,25 @@ void TreeItem::appendChild(TreeItem *item)
         // attribute are on top of list
         childItems.insert(attributeCounter, item);
         attributeCounter++;
-        xlinkOffset++;
-        imageOffset++;
-        branchOffset++;
+        xlinkOffsetInt++;
+        imageOffsetInt++;
+        branchOffsetInt++;
     }
 
-    if (item->type == XLink) {
-        childItems.insert(xlinkCounter + xlinkOffset, item);
+    if (item->type == XLinkItemType) {
+        childItems.insert(xlinkCounter + xlinkOffsetInt, item);
         xlinkCounter++;
-        imageOffset++;
-        branchOffset++;
+        imageOffsetInt++;
+        branchOffsetInt++;
     }
 
     if (item->type == Image) {
-        childItems.insert(imageCounter + imageOffset, item);
+        childItems.insert(imageCounter + imageOffsetInt, item);
         imageCounter++;
-        branchOffset++;
+        branchOffsetInt++;
     }
 
-    if (item->isBranchLikeType()) {
+    if (item->hasTypeBranch()) {
         // branches are on bottom of list
         childItems.append(item);
         branchCounter++;
@@ -149,24 +149,28 @@ void TreeItem::removeChild(int row)
     if (row < 0 || row > childItems.size() - 1)
         qWarning("TreeItem::removeChild tried to remove non existing item?!");
     else {
-        if (childItems.at(row)->type == Attribute) {
-            attributeCounter--;
-            xlinkOffset--;
-            imageOffset--;
-            branchOffset--;
-        }
-        if (childItems.at(row)->type == XLink) {
-            xlinkCounter--;
-            imageOffset--;
-            branchOffset--;
-        }
-        if (childItems.at(row)->type == Image) {
-            imageCounter--;
-            branchOffset--;
-        }
-        if (childItems.at(row)->isBranchLikeType())
+        bool ok = true;
+        if (childItems.at(row)->hasTypeBranch())
             branchCounter--;
+        else if (childItems.at(row)->type == Attribute) {
+            attributeCounter--;
+            xlinkOffsetInt--;
+            imageOffsetInt--;
+            branchOffsetInt--;
+        } else if (childItems.at(row)->type == XLinkItemType) {
+            xlinkCounter--;
+            imageOffsetInt--;
+            branchOffsetInt--;
+        } else if (childItems.at(row)->type == Image) {
+            imageCounter--;
+            branchOffsetInt--;
+        } else
+            ok = false;
 
+        if (!ok) {
+            qWarning() << __FUNCTION__ << " unknown type";
+            return;
+        }
         childItems.removeAt(row);
     }
 }
@@ -175,17 +179,11 @@ TreeItem *TreeItem::child(int row) { return childItems.value(row); }
 
 int TreeItem::childCount() const { return childItems.count(); }
 
-int TreeItem::childNumber() const
-{
-    if (parentItem)
-        return parentItem->childItems.indexOf(const_cast<TreeItem *>(this));
-
-    return 0;
-}
-
 int TreeItem::columnCount() const { return 1; }
 
 int TreeItem::branchCount() const { return branchCounter; }
+
+int TreeItem::branchOffset() const { return branchOffsetInt; }
 
 int TreeItem::imageCount() const { return imageCounter; }
 
@@ -198,17 +196,17 @@ int TreeItem::row() const
     if (parentItem)
         return parentItem->childItems.indexOf(const_cast<TreeItem *>(this));
 
-    qDebug() << "TI::row() pI=NULL this=" << this << "  ***************";
-    return 0;
+    qDebug() << "TI::row() pI=nullptr this=" << this << "  ***************";
+    return -1;
 }
 
 int TreeItem::depth()
 {
-    // Rootitem d=-1
-    // MapCenter d=0
+    // Rootitem  d = -1
+    // MapCenter d =  0
     int d = -2;
     TreeItem *ti = this;
-    while (ti != NULL) {
+    while (ti != nullptr) {
         ti = ti->parent();
         d++;
     }
@@ -217,7 +215,7 @@ int TreeItem::depth()
 
 TreeItem *TreeItem::parent()
 {
-    // qDebug() << "TI::parent of "<<getHeadingStd()<<"  is "<<parentItem;
+    // qDebug() << "TI::parent of " << headingStd() << "  is " << parentItem;
     return parentItem;
 }
 
@@ -231,8 +229,6 @@ bool TreeItem::isChildOf(TreeItem *ti)
         return false;
     return parentItem->isChildOf(ti);
 }
-
-int TreeItem::childNum() { return parentItem->childItems.indexOf(this); }
 
 int TreeItem::num()
 {
@@ -248,18 +244,12 @@ int TreeItem::num(TreeItem *item)
     if (!childItems.contains(item))
         return -1;
     switch (item->getType()) {
-    case MapCenter:
-        return childItems.indexOf(item) - branchOffset;
-    case Branch:
-        return childItems.indexOf(item) - branchOffset;
-    case Image:
-        return childItems.indexOf(item) - imageOffset;
-    case Attribute:
-        return childItems.indexOf(item) - attributeOffset;
-    case XLink:
-        return childItems.indexOf(item) - xlinkOffset;
-    default:
-        return -1;
+        case MapCenter: return childItems.indexOf(item) - branchOffsetInt;
+        case Branch: return childItems.indexOf(item) - branchOffsetInt;
+        case Image: return childItems.indexOf(item) - imageOffsetInt;
+        case Attribute: return childItems.indexOf(item) - attributeOffsetInt;
+        case XLinkItemType: return childItems.indexOf(item) - xlinkOffsetInt;
+        default: return -1;
     }
 }
 void TreeItem::setType(const Type t)
@@ -274,9 +264,41 @@ TreeItem::Type TreeItem::getType()
     return type;
 }
 
-bool TreeItem::isBranchLikeType() const
+bool TreeItem::hasTypeAttribute() const
+{
+    if (type == Attribute)
+        return true;
+    else
+        return false;
+}
+
+bool TreeItem::hasTypeBranch() const
 {
     if (type == Branch || type == MapCenter)
+        return true;
+    else
+        return false;
+}
+
+bool TreeItem::hasTypeImage() const
+{
+    if (type == Image)
+        return true;
+    else
+        return false;
+}
+
+bool TreeItem::hasTypeBranchOrImage() const
+{
+    if (type == Image || type == Branch || type == MapCenter)
+        return true;
+    else
+        return false;
+}
+
+bool TreeItem::hasTypeXLink() const
+{
+    if (type == XLinkItemType)
         return true;
     else
         return false;
@@ -295,7 +317,7 @@ QString TreeItem::getTypeName()
             return QString("Image");
         case Attribute:
             return QString("Attribute");
-        case XLink:
+        case XLinkItemType:
             return QString("XLink");
         default:
             return QString("TreeItem::getTypeName no typename defined?!");
@@ -306,8 +328,8 @@ QVariant TreeItem::data(int column) const { return itemData.value(column); }
 
 void TreeItem::setHeading(const VymText &vt)
 {
-    heading = vt;
-    itemData[0] = getHeadingPlain().replace("\n"," "); // used in TreeEditor
+    headingInt = vt;
+    itemData[0] = headingPlain().replace("\n"," "); // used in TreeEditor
 }
 
 void TreeItem::setHeadingPlainText(const QString &s)
@@ -316,37 +338,47 @@ void TreeItem::setHeadingPlainText(const QString &s)
 
     vt.setPlainText(s);
 
-    if (!heading.isRichText())
+    if (!headingInt.isRichText())
         // Keep current color
-        vt.setColor(heading.getColor());
+        vt.setColor(headingInt.getColor());
     setHeading(vt);
 }
 
-Heading TreeItem::getHeading() const { return heading; }
+Heading TreeItem::heading() const { return headingInt; }
 
-QString TreeItem::getHeadingText() { return heading.getText(); }
-
-std::string TreeItem::getHeadingStd() const
+QString TreeItem::headingText(bool indented)
 {
-    return getHeadingPlain().toStdString();
+    if (!indented)
+        return headingInt.getText();
+    else {
+        QString ds;
+        for (int i = 0; i < depth(); i++)
+            ds += "  ";
+        return ds + headingPlain();
+    }
 }
 
-QString TreeItem::getHeadingPlain() const
+std::string TreeItem::headingStd() const
+{
+    return headingPlain().toStdString();
+}
+
+QString TreeItem::headingPlain() const
 {
     // strip beginning and tailing WS
-    return heading.getTextASCII().trimmed();
+    return headingInt.getTextASCII().trimmed();
 }
 
-QString TreeItem::getHeadingPlainWithParents(uint numberOfParents = 0)
+QString TreeItem::headingPlainWithParents(uint numberOfParents = 0)
 {
-    QString s = getHeadingPlain();
+    QString s = headingPlain();
     if (numberOfParents > 0) {
         TreeItem *ti = this;
         int l = numberOfParents;
         while (l > 0 && ti->depth() > 0) {
             ti = ti->parent();
             if (ti)
-                s = ti->getHeadingPlain() + " -> " + s;
+                s = ti->headingPlain() + " -> " + s;
             else
                 l = 0;
             l--;
@@ -355,30 +387,56 @@ QString TreeItem::getHeadingPlainWithParents(uint numberOfParents = 0)
     return s;
 }
 
-QString TreeItem::getHeadingDepth() // Indent by depth for debugging
+void TreeItem::setHeadingColor(QColor color) { headingInt.setColor(color); }
+
+QColor TreeItem::headingColor() { return headingInt.getColor(); }
+
+void TreeItem::setUrl(const QString &u)
 {
-    QString ds;
-    for (int i = 0; i < depth(); i++)
-        ds += "  ";
-    return ds + getHeadingPlain();
-}
-
-void TreeItem::setHeadingColor(QColor color) { heading.setColor(color); }
-
-QColor TreeItem::getHeadingColor() { return heading.getColor(); }
-
-void TreeItem::setBackgroundColor(QColor color) { backgroundColor = color; }
-
-void TreeItem::setURL(const QString &u)
-{
-    url = u;
-    if (!url.isEmpty())
-        systemFlags.activate(QString("system-url"));
+    urlInt = u;
+    if (!urlInt.isEmpty())
+        setUrlType(UrlType::GeneralUrl);
     else
-        systemFlags.deactivate(QString("system-url"));
+        setUrlType(UrlType::NoUrl);
 }
 
-QString TreeItem::getURL() { return url; }
+QString TreeItem::url() { return urlInt; }
+
+bool TreeItem::hasUrl() { return !urlInt.isEmpty();}
+
+void TreeItem::setUrlType(UrlType ut)
+{
+    urlTypeInt = ut;
+    if (urlTypeInt == TreeItem::JiraUrl) {
+        systemFlags.activate("system-jira");
+        systemFlags.deactivate("system-url");
+    } else {
+        systemFlags.deactivate("system-jira");
+        if (urlTypeInt == TreeItem::GeneralUrl)
+            systemFlags.activate("system-url");
+        else
+            systemFlags.deactivate("system-url");
+    }
+}
+
+TreeItem::UrlType TreeItem::urlType()
+{
+    return urlTypeInt;
+}
+
+Flag* TreeItem::urlFlag()
+{
+    if (!hasUrl())
+        return nullptr;
+
+    if (urlTypeInt == UrlType::GeneralUrl)
+        return systemFlagsMaster->findFlagByName("system-url");
+
+    if (urlTypeInt == UrlType::JiraUrl)
+        return systemFlagsMaster->findFlagByName("system-jira");
+
+    return nullptr;
+}
 
 void TreeItem::setVymLink(const QString &vl)
 {
@@ -389,24 +447,31 @@ void TreeItem::setVymLink(const QString &vl)
 
         QDir d(vl);
         if (d.isAbsolute())
-            vymLink = vl;
+            vymLinkInt = vl;
         else {
             // If we have relative, use path of
             // current map to build absolute path
             // based on path of current map and relative
             // path to linked map
             QString p = dirname(model->getDestPath());
-            vymLink = convertToAbs(p, vl);
+            vymLinkInt = convertToAbs(p, vl);
         }
         systemFlags.activate(QString("system-vymLink"));
     }
     else {
-        vymLink.clear();
+        vymLinkInt.clear();
         systemFlags.deactivate(QString("system-vymLink"));
     }
 }
 
-QString TreeItem::getVymLink() { return vymLink; }
+QString TreeItem::vymLink() { return vymLinkInt; }
+
+bool TreeItem::hasVymLink() { return !vymLinkInt.isEmpty();}
+
+bool TreeItem::hasReference()
+{
+    return (xlinkCounter > 0) || hasUrl() || hasVymLink();
+}
 
 void TreeItem::toggleTarget()
 {
@@ -483,18 +548,14 @@ Flag *TreeItem::findFlagByUid(const QUuid &uid)
 Flag *TreeItem::toggleFlagByUid(const QUuid &uid, bool useGroups)
 {
     Flag *f = standardFlagsMaster->findFlagByUid(uid);
-    if (f) {
+    if (f)
         standardFlags.toggle(uid, useGroups);
-    }
     else {
         f = userFlagsMaster->findFlagByUid(uid);
-        if (f) {
+        if (f)
             userFlags.toggle(uid, useGroups);
-        }
-        else {
+        else
             qWarning() << "TI::toggleFlag failed for flag " << uid;
-            return nullptr;
-        }
     }
 
     return f;
@@ -508,12 +569,25 @@ void TreeItem::toggleSystemFlag(const QString &name, FlagRow *master)
 
 bool TreeItem::hasActiveFlag(const QString &name)
 {
-    return standardFlags.isActive(name);
+    if (standardFlags.hasFlag(name))
+        return standardFlags.isActive(name);
+    else
+        return userFlags.isActive(name);
 }
 
 bool TreeItem::hasActiveSystemFlag(const QString &name)
 {
     return systemFlags.isActive(name);
+}
+
+void TreeItem::activateSystemFlagByName(const QString &name)
+{
+    systemFlags.activate(name);
+}
+
+void TreeItem::deactivateSystemFlagByName(const QString &name)
+{
+    systemFlags.deactivate(name);
 }
 
 QList<QUuid> TreeItem::activeFlagUids()
@@ -526,56 +600,18 @@ QList<QUuid> TreeItem::activeSystemFlagUids()
     return systemFlags.activeFlagUids();
 }
 
-bool TreeItem::canMoveDown()
-{
-    switch (type) {
-    case Undefined:
-        return false;
-    case MapCenter:
-    case Branch:
-        if (!parentItem)
-            return false;
-        if (parentItem->num(this) < parentItem->branchCount() - 1)
-            return true;
-        else
-            return false;
-        break;
-    case Image:
-        return false;
-    default:
-        return false;
-    }
-}
-
-bool TreeItem::canMoveUp()
-{
-    switch (type) {
-    case MapCenter:
-    case Branch:
-        if (!parentItem)
-            return false;
-        if (parentItem->num(this) > 0)
-            return true;
-        else
-            return false;
-        break;
-    default:
-        return false;
-    }
-}
-
 ulong TreeItem::getID() { return itemID; }
 
 void TreeItem::setUuid(const QString &id) { uuid = QUuid(id); }
 
 QUuid TreeItem::getUuid() { return uuid; }
 
-TreeItem *TreeItem::getChildNum(const int &n)
+TreeItem *TreeItem::childItemByRow(const int &n)
 {
     if (n >= 0 && n < childItems.count())
         return childItems.at(n);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getFirstBranch()
@@ -583,7 +619,7 @@ BranchItem *TreeItem::getFirstBranch()
     if (branchCounter > 0)
         return getBranchNum(0);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getLastBranch()
@@ -591,7 +627,7 @@ BranchItem *TreeItem::getLastBranch()
     if (branchCounter > 0)
         return getBranchNum(branchCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 ImageItem *TreeItem::getFirstImage()
@@ -599,7 +635,7 @@ ImageItem *TreeItem::getFirstImage()
     if (imageCounter > 0)
         return getImageNum(imageCounter - 1);
     else
-        return NULL;
+        return nullptr;
 }
 
 ImageItem *TreeItem::getLastImage()
@@ -607,83 +643,100 @@ ImageItem *TreeItem::getLastImage()
     if (imageCounter > 0)
         return getImageNum(imageCounter - 1);
     else
-        return NULL;
+        return nullptr;
+}
+
+TreeItem *TreeItem::getFirstItem()
+{
+    if (hasTypeBranch())
+        return getFirstBranch();
+
+    if (hasTypeImage())
+        return getFirstImage();
+
+    return nullptr;
+}
+
+TreeItem *TreeItem::getLastItem()
+{
+    if (hasTypeBranch())
+        return getLastBranch();
+
+    if (hasTypeImage())
+        return getLastImage();
+
+    return nullptr;
 }
 
 BranchItem *TreeItem::getNextBranch(BranchItem *currentBranch)
 {
     if (!currentBranch)
-        return NULL;
+        return nullptr;
     int n = num(currentBranch) + 1;
     if (n < branchCounter)
-        return getBranchNum(branchOffset + n);
+        return getBranchNum(branchOffsetInt + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 BranchItem *TreeItem::getBranchNum(const int &n)
 {
     if (n >= 0 && n < branchCounter)
-        return (BranchItem *)getChildNum(branchOffset + n);
+        return (BranchItem *)childItemByRow(branchOffsetInt + n);
     else
-        return NULL;
+        return nullptr;
 }
 
-BranchObj *TreeItem::getBranchObjNum(const int &n)
+QList <BranchItem*> TreeItem::getBranches()
 {
-    if (n >= 0 && n < branchCounter) {
-        BranchItem *bi = getBranchNum(n);
-        if (bi) {
-            BranchObj *bo = (BranchObj *)(bi->getLMO());
-            if (bo)
-                return bo;
-            else
-                qDebug() << "TI::getBONum bo=NULL";
-        }
-    }
-    return NULL;
+    QList <BranchItem*> branches;
+    for (int i = 0; i < branchCounter; i++)
+        branches << getBranchNum(i);
+    return branches;
 }
 
-ImageItem *TreeItem::getImageNum(const int &n)
+ImageItem* TreeItem::getImageNum(const int &n)
 {
     if (n >= 0 && n < imageCounter)
-        return (ImageItem *)getChildNum(imageOffset + n);
+        return (ImageItem *)childItemByRow(imageOffsetInt + n);
     else
-        return NULL;
+        return nullptr;
 }
 
-FloatImageObj *TreeItem::getImageObjNum(const int &n)
-{
-    if (imageCounter > 0)
-        return (FloatImageObj *)(getImageNum(n)->getLMO());
-    else
-        return NULL;
-}
-
-AttributeItem *TreeItem::getAttributeNum(const int &n)
+AttributeItem* TreeItem::getAttributeNum(const int &n)
 {
     if (n >= 0 && n < attributeCounter)
-        return (AttributeItem *)getChildNum(attributeOffset + n);
+        return (AttributeItem *)childItemByRow(attributeOffsetInt + n);
     else
-        return NULL;
+        return nullptr;
 }
 
-AttributeItem *TreeItem::getAttributeByKey(const QString &k)
+AttributeItem* TreeItem::getAttributeByKey(const QString &k)
 {
     AttributeItem *ai;
     for (int i = 0; i < attributeCount(); i++) {
         ai = getAttributeNum(i);
-        if (ai->getKey() == k) return ai;
+        if (ai->key() == k) return ai;
     }
     return nullptr;
 }
 
-XLinkItem *TreeItem::getXLinkItemNum(const int &n)
+QVariant TreeItem::attributeValue(const QString &k)
+{
+    AttributeItem *ai;
+    for (int i = 0; i < attributeCount(); i++) {
+        ai = getAttributeNum(i);
+        if (ai->key() == k) return ai->value();
+    }
+    return QVariant();
+}
+
+XLinkItem* TreeItem::getXLinkItemNum(const int &n)
 {
     if (n >= 0 && n < xlinkCounter)
-        return (XLinkItem *)getChildNum(xlinkOffset + n);
+        return (XLinkItem *)childItemByRow(xlinkOffsetInt + n);
     else
-        return NULL;
+        return nullptr;
 }
 
 XLinkObj *TreeItem::getXLinkObjNum(const int &n)
@@ -691,56 +744,56 @@ XLinkObj *TreeItem::getXLinkObjNum(const int &n)
     if (xlinkCounter > 0) {
         XLinkItem *xli = getXLinkItemNum(n);
         if (xli) {
-            Link *l = xli->getLink();
+            XLink *l = xli->getXLink();
             if (l)
                 return l->getXLinkObj();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
-void TreeItem::setHideTmp(HideTmpMode mode)
+void TreeItem::setHideMode(HideTmpMode mode) 
 {
-    if (type == Image || type == Branch || type == MapCenter)
-    //	((ImageItem*)this)->updateVisibility();
-    {
-        // LinkableMapObj* lmo=((MapItem*)this)->getLMO();
+    // Note: Overloaded in BranchItem
+    // Will updateVisibility() of BranchContainer there
 
+    if (type == Image || type == Branch || type == MapCenter)
+    {
         if (mode == HideExport &&
-            (hideExport ||
-             hasHiddenExportParent())) // FIXME-4  try to avoid calling
+            (hideTemporaryInt ||
+             hasHiddenParent())) // FIXME-4  try to avoid calling
                                        // hasScrolledParent repeatedly
 
-            // Hide stuff according to hideExport flag and parents
+            // Hide stuff according to hideTemporaryInt flag and parents
             hidden = true;
         else
             // Do not hide, but still take care of scrolled status
             hidden = false;
-        updateVisibility();
+
         // And take care of my children
         for (int i = 0; i < branchCount(); ++i)
-            getBranchNum(i)->setHideTmp(mode);
+            getBranchNum(i)->setHideMode(mode);
     }
 }
 
-bool TreeItem::hasHiddenExportParent()
+bool TreeItem::hasHiddenParent()
 {
     // Calls parents recursivly to
     // find out, if we or parents are temp. hidden
 
-    if (hidden || hideExport)
+    if (hidden || hideTemporaryInt)
         return true;
 
     if (parentItem)
-        return parentItem->hasHiddenExportParent();
+        return parentItem->hasHiddenParent();
     else
         return false;
 }
 
-void TreeItem::setHideInExport(bool b)
+void TreeItem::setHideTemporary(bool b)
 {
     if (type == MapCenter || type == Branch || type == Image) {
-        hideExport = b;
+        hideTemporaryInt = b;
         if (b)
             systemFlags.activate(QString("system-hideInExport"));
         else
@@ -748,26 +801,21 @@ void TreeItem::setHideInExport(bool b)
     }
 }
 
-bool TreeItem::hideInExport() { return hideExport; }
-
-void TreeItem::updateVisibility()
-{
-    // overloaded in derived objects
-}
+bool TreeItem::hideTemporary() { return hideTemporaryInt; }
 
 bool TreeItem::isHidden() { return hidden; }
 
 QString TreeItem::getGeneralAttr()
 {
     QString s;
-    if (hideExport)
-        s += attribut("hideInExport", "true");
-    if (!url.isEmpty())
-        s += attribut("url", url);
-    if (!vymLink.isEmpty())
-        s += attribut("vymLink", convertToRel(model->getDestPath(), vymLink));
+    if (hideTemporaryInt)
+        s += attribute("hideInExport", "true");
+    if (!urlInt.isEmpty())
+        s += attribute("url", urlInt);
+    if (hasVymLink())
+        s += attribute("vymLink", convertToRel(model->getDestPath(), vymLinkInt));
 
     if (target)
-        s += attribut("localTarget", "true");
+        s += attribute("localTarget", "true");
     return s;
 }

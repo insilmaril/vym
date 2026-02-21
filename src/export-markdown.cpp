@@ -1,7 +1,14 @@
 #include "export-markdown.h"
 
-#include "mainwindow.h"
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
+
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "misc.h"
+#include "task.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;
@@ -31,8 +38,8 @@ void ExportMarkdown::doExport()
     QString curIndent;
     QString dashIndent;
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
 
     QString curHeading;
 
@@ -53,13 +60,13 @@ void ExportMarkdown::doExport()
             for (i = 1; i < cur->depth() - 1; i++)
                 curIndent += indentPerDepth;
 
-            curHeading = cur->getHeadingText();
+            curHeading = cur->headingText();
 
             // If necessary, write heading as URL
-            if (!cur->getURL().isEmpty())
-                curHeading = "[" + curHeading + "](" + cur->getURL() + ")";
+            if (cur->hasUrl())
+                curHeading = "[" + curHeading + "](" + cur->url() + ")";
 
-            if (!cur->hasHiddenExportParent()) {
+            if (!cur->hasHiddenParent()) {
                 // qDebug() << "ExportMarkdown::
                 // "<<curIndent.toStdString()<<cur->curHeading.toStdString();
 
@@ -111,8 +118,8 @@ void ExportMarkdown::doExport()
                 }
 
                 // If necessary, write vymlink
-                if (!cur->getVymLink().isEmpty())
-                    out += (curIndent + dashIndent + cur->getVymLink()) +
+                if (cur->hasVymLink())
+                    out += (curIndent + dashIndent + cur->vymLink()) +
                            " (vym mindmap)\n";
 
                 // If necessary, write note
@@ -137,7 +144,6 @@ void ExportMarkdown::doExport()
         }
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 
@@ -157,10 +163,3 @@ void ExportMarkdown::doExport()
     completeExport(args);
 }
 
-QString ExportMarkdown::underline(const QString &text, const QString &line)
-{
-    QString r = text + "\n";
-    for (int j = 0; j < text.length(); j++)
-        r += line;
-    return r;
-}

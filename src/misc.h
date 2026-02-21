@@ -5,6 +5,7 @@
 #include <iostream>
 using namespace std;
 
+class QDate;
 class QString;
 class QPoint;
 class QPointF;
@@ -14,17 +15,21 @@ class QDialog;
 
 /////////////////////////////////////////////////////////////////////////////
 QString richTextToPlain(QString r);
-QString qpointToString(const QPoint &p);
-QString qpointFToString(const QPointF &p);
-QString qrectFToString(const QRectF &r, int d = 1);
-QString VectorToString(const Vector &p);
+QString toS(const bool &);
+QString toS(const qreal &r, int d = 1);
+QString toS(const QPoint &p);
+QString toS(const QPointF &p, int d = 1);
+QString toS(const QRectF &r, int d = 1);
+QString toS(const Vector &p);
+QString toS(const QDate &d);
+
+QString pluralize(const QString &, qsizetype count);
 
 extern ostream &operator<<(ostream &stream, QPoint const &p);
 extern ostream &operator<<(ostream &stream, QPointF const &p);
 extern ostream &operator<<(ostream &stream, QRectF const &r);
 extern ostream &operator<<(ostream &stream, Vector const &p);
 
-qreal getAngle(const QPointF &);
 qreal min(qreal, qreal);
 qreal max(qreal, qreal);
 qreal roof(qreal x);
@@ -36,6 +41,8 @@ QPointF point(const QString &s, bool &ok);
 QString pointToString(const QPointF &p);
 
 void centerDialog(QDialog *dia);
+
+QString underline(const QString &text, const QString &line);
 
 bool versionLowerThanVym(const QString &);
 bool versionLowerOrEqualThanVym(const QString &);

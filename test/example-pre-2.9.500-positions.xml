@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
+<vymmap  version="2.4.0" author="Uwe Drechsel" title="VYM - View Your Mind" 
+  date="2015-04-24" branchCount="6" backgroundColor="#ffffff" defaultFont="Sans Serif,16,-1,0,50,0,0,0,0,0" selectionColor="#ffff00" linkStyle="StylePolyParabel" linkColor="#0000ff" defXLinkColor="#0211e6" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1" mapRotationAngle="0" linkColorHint="HeadingColor">
+    <mapcenter absPosX="366.709" absPosY="201.524" hideLink="false" uuid="{27bcd406-6fd4-455a-9323-c4cecc5c2498}">
+        <heading  textColor="#000000">View Your Mind</heading>
+        <frame  frameType="Cloud" penColor="#000000" brushColor="#ffffff" padding="5" borderWidth="3" />
+        <branch relPosX="165" relPosY="-28" hideLink="false" incImgV="true" incImgH="true" uuid="{d91a5a92-151b-45ac-bb07-7292f27ad43d}">
+            <heading  textColor="#ff5500">Examples</heading>
+            <frame  frameType="RoundedRectangle" penColor="#ff8000" brushColor="#ececec" padding="5" borderWidth="1" includeChildren="true" />
+            <standardflag>lamp</standardflag>
+            <branch hideLink="false" uuid="{b001fe07-3734-48d6-a992-582250fb9bb8}">
+                <heading  textColor="#ff5500">RichText in Noteeditor</heading>
+            </branch>
+        </branch>
+        <branch relPosX="-841" relPosY="402" hideLink="true" uuid="{6d8bffc6-3234-4229-9a39-a2a5e1e527ba}">
+            <heading  textColor="#000000">.</heading>
+        </branch>
+        <branch relPosX="574" relPosY="265" hideLink="true" uuid="{2131fabe-1bc9-4ca5-9f0c-3c00bd1eccc3}">
+            <heading  textColor="#000000">.</heading>
+        </branch>
+    </mapcenter>
+</vymmap>

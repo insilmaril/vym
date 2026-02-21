@@ -11,7 +11,7 @@ FindResultItem::FindResultItem(const QVector<QVariant> &data,
     itemData = data;
     orgID = -1;
     orgIndex = -1;
-    orgModel = NULL;
+    orgModel = nullptr;
     if (data.isEmpty())
         itemData.append(QVariant("empty"));
 }
@@ -24,15 +24,6 @@ FindResultItem *FindResultItem::child(int number)
 }
 
 int FindResultItem::childCount() const { return childItems.count(); }
-
-int FindResultItem::childNumber() const
-{
-    if (parentItem)
-        return parentItem->childItems.indexOf(
-            const_cast<FindResultItem *>(this));
-
-    return 0;
-}
 
 int FindResultItem::columnCount() const { return itemData.count(); }
 
@@ -47,7 +38,7 @@ int FindResultItem::row() const
         return parentItem->childItems.indexOf(
             const_cast<FindResultItem *>(this));
 
-    return 0;
+    return -1;
 }
 
 bool FindResultItem::insertChildren(int position, int count, int columns)

@@ -1,14 +1,11 @@
 #ifndef IMAGEITEM_H
 #define IMAGEITEM_H
 
-#include <QGraphicsSvgItem>
-#include <QList>
-#include <QPixmap>
-#include <QVariant>
-
-#include "floatimageobj.h"
-//#include "treeitem.h"
 #include "mapitem.h"
+
+class ImageContainer;
+class ImageWrapper;
+class QGraphicsScene;
 
 bool isImage(const QString &fname);
 
@@ -20,27 +17,33 @@ class ImageItem : public MapItem {
 
   protected:
     void init();
-    void clear();
 
   public:
+    BranchItem* parentBranch();
+    void setParentBranch(BranchItem *);
+    ImageWrapper* imageWrapper();
+    void setFilePathInZipDir();
     virtual bool load(const QString &fname);
-    virtual FloatImageObj *
-    createMapObj(); //! Create classic object in GraphicsView
+    ImageContainer* createImageContainer();
+    ImageContainer* getImageContainer();
+    void updateContainerStackingOrder();
+    void unlinkImageContainer();
+
   protected:
-    QString originalFilename;
-    int zValue;
+    ImageContainer *imageContainer;
+    ImageWrapper *imageWrapperInt;
+    QString filePathInZipDir;
 
   public:
-    void setScaleFactor(qreal);
-    qreal getScaleFactor();
+    void setScale(qreal);
+    qreal scale();
     qreal width();
     qreal height();
-    void setZValue(int z);
     void setOriginalFilename(const QString &);
-    QString getOriginalFilename();
+    QString originalFilename();
     QString getUniqueFilename();
     bool saveImage(const QString &fn);
-    QString saveToDir(const QString &, const QString &);
+    QString saveToDir(const QString &tmpdir);
 };
 
 #endif

@@ -1,23 +1,27 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QItemSelection>
+#include <QJSValue>
 #include <QMainWindow>
-#include <QPrinter>
 #include <QProgressDialog>
-#include <QScriptContext>
-#include <QScriptEngine>
-#include <QScriptValue>
 #include <QTextStream>
 
-#include "branchpropeditor.h"
-#include "extrainfodialog.h"
 #include "file.h"
 #include "flag.h"
-#include "historywindow.h"
-#include "mapeditor.h"
-#include "scripting.h"
-#include "texteditor.h"
-#include "vymview.h"
+
+#include "settings.h"
+
+class QPrinter;
+class QJSEngine;
+
+class HistoryWindow;
+class MapEditor;
+class TreeItem;
+class VymText;
+class VymModel;
+class VymView;
+class VymWrapper;
 
 class Main : public QMainWindow {
     Q_OBJECT
@@ -45,7 +49,8 @@ class Main : public QMainWindow {
     int progressCounterTotal;
 
   public:
-    void statusMessage(const QString &);
+    void logInfo(const QString &comment, const QString &caller = "");
+    void statusMessage(const QString &, int timeout = 10000);
     void setProgressMaximum(int max);
     void addProgressValue(float v);
     void initProgressCounter(uint n = 1);
@@ -54,6 +59,8 @@ class Main : public QMainWindow {
   public slots:
     void fileNew();
     void fileNewCopy();
+
+    void satelliteVisibilityChanged();
 
   protected:
     void closeEvent(QCloseEvent *);
@@ -65,10 +72,11 @@ class Main : public QMainWindow {
     void setupAPI();
 
     /*! Helper method to clone actions later in MapEditor */
-    void cloneActionMapEditor(QAction *a, QKeySequence ks);
+    void cloneActionMapEditor(QAction *a);
 
     void setupFileActions();
     void setupEditActions();
+    void setupEditMenu();
     void setupSelectActions();
     void setupFormatActions();
     void setupViewActions();
@@ -100,21 +108,29 @@ class Main : public QMainWindow {
   public:
     MapEditor *currentMapEditor() const;
     VymModel *currentModel() const;
-    uint currentMapID() const;
+    uint currentMapId() const;
     int currentMapIndex() const;
-    VymModel *getModel(uint);
-    void gotoModel(VymModel *m);
-    void gotoModelWithID(uint id);
-    bool closeModelWithID(uint id);
+    VymModel *modelWithId(uint);
+    bool gotoModel(VymModel *m);
+    bool gotoModelWithId(uint id);
+
+  public slots:
+    bool closeModelWithId(uint id);
+    void closeSavedModels();
+
+  public:
     int modelCount();
     void updateTabName(VymModel *vm);
 
   private slots:
     void editorChanged();
 
+  private:
+    bool exitAfterLastMapClosed;
+
   public slots:
-    File::ErrorCode fileLoad(QString, const LoadMode &, const FileType &ftype);
-    void fileLoad(const LoadMode &);
+    bool fileLoad(QString, const File::LoadMode &, const File::FileType &ftype);
+    void fileLoad(const File::LoadMode &);
   private slots:
     void fileLoad();
     void fileSaveSession();
@@ -122,17 +138,19 @@ class Main : public QMainWindow {
     void fileRestoreSession();
   private slots:
     void fileLoadRecent();
+    void fileClearRecent();
     void addRecentMap(const QString &);
-    void fileSave(VymModel *, const SaveMode &);
+    void fileSave(VymModel *, const File::SaveMode &);
     void fileSave();
   public slots:
     void fileSave(VymModel *); // autosave from MapEditor
   private slots:
+    bool fileSaveAs(const File::SaveMode &, QString fileName);
     void fileSaveAs();
-    void fileSaveAs(const SaveMode &);
     void fileSaveAsDefault();
     void fileImportFirefoxBookmarks();
     void fileImportFreemind();
+    void fileImportIThoughts();
     void fileImportMM();
     void fileImportDir();
     void fileExportAO();
@@ -149,17 +167,31 @@ class Main : public QMainWindow {
     void fileExportOrgMode();
     void fileExportPDF();
     void fileExportSVG();
-    void fileExportTaskjuggler();
+    void fileExportTaskJuggler();
     void fileExportXML();
     void fileExportLast();
-    bool fileCloseMap(int i = -1); // Optionally pass number of tab
+    void fileCloseTab(int i);           // Index of tab
+    void fileCloseCurrentMap();         // Calls fileCloseModelWithId(-1);
+    void fileCloseMapWithId(uint i);    // id = -1 uses current model
     void filePrint();
-    bool fileExitVYM();
+
+  public:
+    bool exitAfterScript();
+    void setExitAfterScript(bool b);
+
+  private:
+    bool exitAfterScriptInt;
+    QString repeatActionInt;
+
+  public:
+    void setRepeatAction(const QString &script);
 
   public slots:
+    void fileExitVym();
     void editUndo();
     void editRedo();
     void gotoHistoryStep(int);
+
   private slots:
     void editCopy();
     void editPaste();
@@ -167,20 +199,21 @@ class Main : public QMainWindow {
 
   public slots:
     void updateQueries(VymModel *);
-    bool openURL(const QString &url);
-    void openTabs(QStringList);
-    void editOpenURL();
-    void editOpenURLTab();
+    bool openUrl(const QString &url = "", bool privateMode = false);
+    void openTabs(QStringList, bool privateMode = false);
 
   private slots:
-    void editOpenMultipleVisURLTabs(bool ignoreScrolled = true);
-    void editOpenMultipleURLTabs();
+    void editOpenMultipleVisUrls(bool ignoreScrolled = true, bool privateMode = false);
+    void editOpenMultipleUrls();
+    void editOpenMultipleUrlsPrivate();
     void editNote2URLs();
     void editURL();
     void editLocalURL();
     void editHeading2URL();
+    void setJiraQuery();
     void getJiraDataSubtree();
-    void setHeadingConfluencePageName();
+    void getConfluencePageDetails();
+    void getConfluencePageDetailsRecursively();
     void getConfluenceUser();
     void openVymLinks(const QStringList &, bool background = false);
     void editVymLink();
@@ -211,27 +244,29 @@ class Main : public QMainWindow {
     void editExpandOneLevel();
     void editCollapseOneLevel();
     void editCollapseUnselected();
-    void editUnscrollChildren();
+    void editUnscrollSubtree();
     void editGrowSelectionSize();
     void editShrinkSelectionSize();
+    void editRotateSubtreeCW();
+    void editRotateSubtreeCCW();
     void editResetSelectionSize();
-    void editAddAttribute();
+    void editRepeatLastAction();
     void editAddMapCenter();
-    void editNewBranch();
-    void editNewBranchBefore();
-    void editNewBranchAbove();
-    void editNewBranchBelow();
+    void editAddBranch();
+    void editAddBranchBefore();
+    void editAddBranchAbove();
+    void editAddBranchBelow();
     void editImportAdd();
     void editImportReplace();
-    void editSaveBranch();
+    void editSaveSelection();
     void editDeleteKeepChildren();
     void editDeleteChildren();
     void editDeleteSelection();
     void editLoadImage();
     void editSaveImage();
-    void popupFollowXLink();
-    void editFollowXLink(QAction *);
     void editEditXLink(QAction *);
+    void popupFollowReference();
+    void followReference(QAction *);
 
   private slots:
     bool initLinkedMapsMenu(VymModel *model, QMenu *menu);
@@ -244,6 +279,8 @@ class Main : public QMainWindow {
     bool initTargetsMenu(VymModel *model, QMenu *menu);
     void editGoToTarget();
     void editMoveToTarget();
+    void editSelectFirstSibling();
+    void editSelectLastSibling();
     void editSelectPrevious();
     void editSelectNext();
     void editSelectNothing();
@@ -267,8 +304,7 @@ class Main : public QMainWindow {
     void formatLinkStyleParabel();
     void formatLinkStylePolyLine();
     void formatLinkStylePolyParabel();
-    void formatSelectBackColor();
-    void formatSelectBackImage();
+    void formatBackground();
     void formatSelectLinkColor();
     void formatSelectSelectionColor();
     void formatSelectFont();
@@ -283,14 +319,15 @@ class Main : public QMainWindow {
     void viewRotateClockwise();
     void viewCenter();
     void viewCenterScaled();
+    void viewCenterRotated();
 
   public slots:
     void networkStartServer();
     void networkConnect();
     void downloadFinished();
-    bool settingsPDF();
-    bool settingsURL();
-    void settingsZipTool();
+    void settingsPDF();
+    void settingsURL();
+    void settingsActionLog();
     void settingsMacroPath();
     void settingsUndoLevels();
     void settingsDefaultMapPath();
@@ -314,26 +351,36 @@ class Main : public QMainWindow {
     bool settingsConfluence();
     bool settingsJIRA();
 
-    void windowToggleNoteEditor();
-    void windowToggleTreeEditor();
-    void windowToggleTaskEditor();
-    void windowToggleSlideEditor();
-    void windowToggleScriptEditor();
-    void windowToggleScriptOutput();
-    void windowToggleHistory();
-    void windowToggleProperty();
-    void windowShowHeadingEditor();
-    void windowToggleHeadingEditor();
+    void focusMapEditor();
+    void focusNoteEditor();
+    void toggleNoteEditor();
+    void toggleTreeEditors();
+    void switchEditors();
+    void setTreeEditorsVisibility(bool);
+    void focusTaskEditor();
+    void toggleTaskEditor();
+    void toggleSlideEditors();
+    void setSlideEditorsVisibility(bool);
+    void focusScriptEditor();
+    void toggleScriptEditor();
+    void focusScriptOutput();
+    void toggleScriptOutput();
+    void focusHistory();
+    void toggleHistory();
+    void focusProperty();
+    void toggleProperty();
+    void focusHeadingEditor();
+    void toggleHeadingEditor();
     void updateHistory(SimpleSettings &);
-    void windowToggleAntiAlias();
+    void toggleAntiAlias();
     bool isAliased();
     bool hasSmoothPixmapTransform();
-    void windowToggleSmoothPixmap();
+    void toggleSmoothPixmap();
     void clearScriptOutput();
     void updateHeading(const VymText &vt);
     void updateNoteText(const VymText &vt);
     void updateNoteEditor(TreeItem *ti);
-    void updateHeadingEditor(BranchItem *bi = nullptr);
+    void updateHeadingEditor(TreeItem *ti = nullptr);
     void selectInNoteEditor(QString s, int i);
     void setFocusMapEditor();
     void changeSelection(VymModel *model, const QItemSelection &newSel,
@@ -343,13 +390,25 @@ class Main : public QMainWindow {
     void updateActions();
     ModMode getModMode();
     bool autoSelectNewBranch();
+
+    void scriptPrint(const QString &, const QString &color = "");
     QVariant runScript(const QString &);
+    QVariant runScriptWithMacros(const QString &);
+    void abortScript(const QJSValue::ErrorType &err, const QString &msg);
+    void abortScript(const QString &msg);
+    QVariant setScriptResult(const QVariant &r);
+
+  private:
+    QJSEngine *scriptEngine;
+    QVariant scriptResult;
+
+  public slots:
     QObject *getCurrentModelWrapper();
     bool gotoWindow(const int &n);
 
   private slots:
-    void windowNextEditor();
-    void windowPreviousEditor();
+    void nextEditor();
+    void previousEditor();
     void nextSlide();
     void previousSlide();
 
@@ -365,11 +424,13 @@ class Main : public QMainWindow {
     void helpDemo();
     void helpShortcuts();
     void helpMacros();
+  public:
+    QString scriptingCommands();
+  private slots:
     void helpScriptingCommands();
     void helpDebugInfo();
     void helpAbout();
     void helpAboutQT();
-
     void callMacro();
     void downloadReleaseNotesFinished();
 
@@ -389,17 +450,15 @@ class Main : public QMainWindow {
     void checkUpdates();
     void escapePressed();
     void togglePresentationMode();
+    void toggleHideTmpMode();
 
   private:
     QString shortcutScope; //! For listing shortcuts
     QTabWidget *tabWidget;
-    qint64 *browserPID;
 
     QStringList imageTypes;
 
-    QScriptEngine scriptEngine;
-
-    QString prevSelection;
+    QUuid prevSelection;
 
     HistoryWindow *historyWindow;
 
@@ -422,6 +481,7 @@ class Main : public QMainWindow {
     QList<QAction *> actionListFiles; //! File related actions, e.g. load, save,
                                       //! restore session
     QList<QAction *> actionListBranches;
+    QList<QAction *> actionListImages;
     QList<QAction *> actionListItems;
 
     int xLinkMenuWidth;
@@ -429,6 +489,7 @@ class Main : public QMainWindow {
     QMenu *recentFilesMenu;
     enum { MaxRecentFiles = 20 };
     QAction *recentFileActions[MaxRecentFiles];
+    QAction *actionRecentFilesClear;
 
     QAction *macroActions[48];
     QStringList macro;
@@ -436,13 +497,36 @@ class Main : public QMainWindow {
     QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
+    QMenu *toggleWindowsMenu;
+    QMenu *focusWindowsMenu;
+
+    QMenu *branchAddContextMenu;
+    QMenu *branchGeometryContextMenu;
+    QMenu *branchHierarchyContextMenu;
+    QMenu *branchLinksContextMenu;
+    QMenu *branchRemoveContextMenu;
+    QMenu *branchXLinksContextMenuEdit;
+    QMenu *branchXLinksContextMenuFollow;   // Can also have Urls and VymLinks since 2.9.592
+    QMenu *targetsContextMenu;
+    QMenu *fileLastMapsMenu;
+    QMenu *fileImportMenu;
+    QMenu *fileExportMenu;
+
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *selectMenu;
+    QMenu *formatMenu;
+    QMenu *viewMenu;
+    QMenu *connectMenu;
+
     QToolBar *fileToolbar;
     QToolBar *clipboardToolbar;
     QToolBar *editActionsToolbar;
     QToolBar *selectionToolbar;
     QToolBar *editorsToolbar;
     QToolBar *colorsToolbar;
-    QToolBar *zoomToolbar;
+    QToolBar *viewTransformationsToolbar;
+    QToolBar *limitedViewToolbar;
     QToolBar *modModesToolbar;
     QToolBar *referencesToolbar;
     QToolBar *standardFlagsToolbar;
@@ -455,17 +539,24 @@ class Main : public QMainWindow {
     QAction *actionFileNew;
     QAction *actionFileNewCopy;
     QAction *actionFileOpen;
+    QAction *actionFileClose;
     QAction *actionFileRestoreSession;
     QAction *actionFileSave;
     QAction *actionFilePrint;
+    QAction *actionFileExitVym;
+    QAction *actionClearRecent;
     QAction *actionMapProperties;
     QAction *actionFileExportLast;
     QAction *actionFileExportConfluence;
     QAction *actionUndo;
+    QAction *actionUndoVim;
     QAction *actionRedo;
+    QAction *actionRepeatCommand;
     QAction *actionCopy;
+    QAction *actionCopyVim;
     QAction *actionCut;
     QAction *actionPaste;
+    QAction *actionPasteVim;
     QAction *actionMoveUp;
     QAction *actionMoveDown;
     QAction *actionMoveDownDiagonally;
@@ -474,20 +565,23 @@ class Main : public QMainWindow {
     QAction *actionSortChildren;
     QAction *actionSortBackChildren;
     QAction *actionToggleScroll;
+    QAction *actionUnscrollSubtree;
     QAction *actionExpandAll;
     QAction *actionExpandOneLevel;
     QAction *actionCollapseOneLevel;
     QAction *actionCollapseUnselected;
-    QAction *actionOpenURL;
-    QAction *actionOpenURLTab;
-    QAction *actionOpenMultipleVisURLTabs;
-    QAction *actionOpenMultipleURLTabs;
+    QAction *actionOpenUrl;
+    QAction *actionOpenMultipleVisUrls;
+    QAction *actionOpenMultipleUrls;
+    QAction *actionOpenMultipleUrlsPrivate;
     QAction *actionGetURLsFromNote;
     QAction *actionURLNew;
     QAction *actionLocalURL;
     QAction *actionHeading2URL;
     QAction *actionGetJiraDataSubtree;
-    QAction *actionGetConfluencePageName;
+    QAction *actionSetJiraQuery;
+    QAction *actionGetConfluencePageDetails;
+    QAction *actionGetConfluencePageDetailsRecursively;
     QAction *actionOpenVymLink;
     QAction *actionOpenVymLinkBackground;
     QAction *actionOpenMultipleVymLinks;
@@ -496,6 +590,7 @@ class Main : public QMainWindow {
     QAction *actionAddTimestamp;
     QAction *actionToggleTask;
     QAction *actionTogglePresentationMode;
+    QAction *actionToggleHideTmpMode;
     QAction *actionCycleTaskStatus;
     QAction *actionTaskResetDeltaPrio;
     QAction *actionTaskSleep0;
@@ -512,8 +607,7 @@ class Main : public QMainWindow {
     QAction *actionMapInfo;
     QAction *actionHeading;
     QAction *actionDelete;
-    QAction *actionDeleteAlt;
-    QAction *actionAddAttribute;
+    QAction *actionCutVim;
 
   public:
     QAction *actionAddMapCenter;
@@ -527,21 +621,30 @@ class Main : public QMainWindow {
     QAction *actionDeleteChildren;
     QAction *actionImportAdd;
     QAction *actionImportReplace;
-    QAction *actionSaveBranch;
+    QAction *actionSaveSelection;
     QAction *actionLoadImage;
 
     QAction *actionGrowSelectionSize;
     QAction *actionShrinkSelectionSize;
     QAction *actionResetSelectionSize;
 
+    QAction *actionRotateSubtreeCW;
+    QAction *actionRotateSubtreeCCW;
+
     QAction *actionToggleTarget;
     QAction *actionGoToTargetLinkedMap;
     QAction *actionGoToTarget;
     QAction *actionMoveToTarget;
+    QAction *actionSelectFirstSibling;
+    QAction *actionSelectFirstSiblingVim;
+    QAction *actionSelectLastSibling;
+    QAction *actionSelectLastSiblingVim;
     QAction *actionSelectPrevious;
     QAction *actionSelectNext;
     QAction *actionSelectNothing;
     QAction *actionFind;
+    QAction *actionFindVim;
+    QAction *actionFollowReference;
 
     QActionGroup *actionGroupQuickColors;
     QAction *actionFormatQuickColor;
@@ -549,8 +652,7 @@ class Main : public QMainWindow {
     QAction *actionFormatColorBranch;
     QAction *actionFormatColorSubtree;
     QAction *actionFormatLinkColorHint;
-    QAction *actionFormatBackColor;
-    QAction *actionFormatBackImage;
+    QAction *actionFormatBackground;
     QAction *actionFormatLinkColor;
     QAction *actionFormatSelectionColor;
     QAction *actionFormatFont;
@@ -561,7 +663,8 @@ class Main : public QMainWindow {
     QAction *actionRotateCounterClockwise;
     QAction *actionRotateClockwise;
     QAction *actionCenterOn;
-    QAction *actionFitToSelection;
+    QAction *actionCenterOnScaled;
+    QAction *actionCenterOnRotated;
 
     QActionGroup *actionGroupModModes;
     QAction *actionModModePoint;
@@ -584,22 +687,37 @@ class Main : public QMainWindow {
     QAction *actionFormatLinkStylePolyParabel;
     QAction *actionFormatHideLinkUnselected;
 
+    QAction *actionViewFocusNoteEditor;
     QAction *actionViewToggleNoteEditor;
+
+    QAction *actionViewFocusHeadingEditor;
     QAction *actionViewToggleHeadingEditor;
-    QAction *actionViewToggleTreeEditor;
+
+    QAction *actionViewFocusTaskEditor;
     QAction *actionViewToggleTaskEditor;
-    QAction *actionViewToggleSlideEditor;
+
+    QAction *actionViewSwitchEditors;
+    QAction *actionViewToggleTreeEditors;
+    QAction *actionViewToggleSlideEditors;
+
+    QAction *actionViewFocusScriptEditor;
     QAction *actionViewToggleScriptEditor;
+
+    QAction *actionViewFocusScriptOutput;
     QAction *actionViewToggleScriptOutput;
+
+    QAction *actionViewFocusHistoryWindow;
     QAction *actionViewToggleHistoryWindow;
+
+    QAction *actionViewFocusPropertyEditor;
     QAction *actionViewTogglePropertyEditor;
+
     QAction *actionViewToggleAntiAlias;
     QAction *actionViewToggleSmoothPixmapTransform;
     QAction *actionViewCenter;
 
     QAction *actionConnectGetConfluenceUser;
     QAction *actionSettingsAutoSelectNewBranch;
-    QAction *actionSettingsAutoSelectText;
     QAction *actionSettingsUseFlagGroups;
     QAction *actionSettingsUseHideExport;
     QAction *actionSettingsToggleAutosave;

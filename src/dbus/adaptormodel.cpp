@@ -37,20 +37,15 @@ QDBusVariant AdaptorModel::branchCount()
         return QDBusVariant(-1);
 }
 
-QDBusVariant AdaptorModel::execute(const QString &s)
-{
-    return QDBusVariant(model->execute(s));
-}
-
 QDBusVariant AdaptorModel::errorLevel()
 {
-    return QDBusVariant(); // model->parser.errorLevel() );     // FIXME-4
+    return QDBusVariant(); // model->parser.errorLevel() );     // FIXME
                            // really still needed? parser no longer used.
 }
 
 QDBusVariant AdaptorModel::errorDescription()
 {
-    return QDBusVariant(); // model->parser.errorDescription() );// FIXME-4
+    return QDBusVariant(); // model->parser.errorDescription() );// FIXME
                            // really still needed? parser no longer used.
 }
 
@@ -59,7 +54,7 @@ QDBusVariant AdaptorModel::listCommands()
     QStringList list;
 
     foreach (Command *command, modelCommands)
-        list << command->getName();
+        list << command->name();
 
     return QDBusVariant(list.join(","));
 }

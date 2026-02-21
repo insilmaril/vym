@@ -4,15 +4,12 @@
 extern Settings settings;
 extern QString vymName;
 
-HeadingEditor::HeadingEditor(QString scope) : TextEditor()
+HeadingEditor::HeadingEditor(const QString &id, const QString &scope) : TextEditor(id, scope)
 {
-    editorName = tr("Heading Editor", "Name of editor shown as window title");
+    // qDebug() << "Constr HE" << id << scope;
     setWindowTitle("");
 
-    setUseColorMapBackground(true);
-
-    // Load Settings
-    init(scope);
+    setUseMapBackgroundColor(true);
 }
 
 HeadingEditor::~HeadingEditor() {}

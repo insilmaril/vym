@@ -5,7 +5,11 @@
 
 #include "findresultitem.h"
 #include "findresultmodel.h"
+#include "findresulttreeview.h"
+#include "mainwindow.h"
 #include "vymmodel.h"
+
+extern Main *mainWindow;
 
 FindResultWidget::FindResultWidget(QWidget *)
 {
@@ -13,18 +17,36 @@ FindResultWidget::FindResultWidget(QWidget *)
     resultsModel = new FindResultModel;
 
     // Create TreeView
-    view = new QTreeView(this);
+    view = new FindResultTreeView();
     view->setModel(resultsModel);
 
-    // Create FindWidget
-    findWidget = new FindWidget(this);
-    connect(findWidget, SIGNAL(nextButtonPressed(QString, bool)), this,
+    // Create FindControlsWidget
+    findControlsWidget = new FindControlsWidget(this);
+    connect(findControlsWidget, SIGNAL(nextButtonPressed(QString, bool)), this,
             SLOT(nextButtonPressed(QString, bool)));
+
+    QAction *a = new QAction("Cancel", findControlsWidget);
+    a->setShortcut(Qt::Key_Escape);             // Escape in findControlsWidget
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    connect(a, SIGNAL(triggered()), this, SLOT(cancelPressed()));
+    addAction(a);
+
+    a = new QAction("Close", findControlsWidget);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);       // Close window in findControlsWidget
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    addAction(a);
+
+    a = new QAction("Switch focus", this);
+    a->setShortcut(Qt::Key_Tab);                // Switch focus between QComboBox and QTreeView
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    connect(a, SIGNAL(triggered()), this, SLOT(switchFocus()));
+    addAction(a);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
     mainLayout->addWidget(view);
-    mainLayout->addWidget(findWidget);
+    mainLayout->addWidget(findControlsWidget);
 
     setLayout(mainLayout);
 
@@ -33,14 +55,28 @@ FindResultWidget::FindResultWidget(QWidget *)
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
             SLOT(updateSelection(QItemSelection, QItemSelection)));
 
+    connect(view, SIGNAL(searchFinished()), this, SLOT(searchFinished()));
+
     connect(resultsModel, SIGNAL(layoutChanged()), view, SLOT(expandAll()));
+}
+
+void FindResultWidget::switchFocus()
+{
+    if (view->hasFocus())
+        setFocus();
+    else
+        view->setFocus();
+}
+
+void FindResultWidget::setFocus()
+{
+    findControlsWidget->setFocus();
 }
 
 void FindResultWidget::addItem(TreeItem *ti)
 {
     if (ti) {
         QModelIndex index = view->selectionModel()->currentIndex();
-        // QAbstractItemModel *resultsModel = view->model();
 
         if (!resultsModel->insertRow(index.row() + 1, index.parent()))
             return;
@@ -49,7 +85,7 @@ void FindResultWidget::addItem(TreeItem *ti)
              ++column) {
             QModelIndex child =
                 resultsModel->index(index.row() + 1, column, index.parent());
-            resultsModel->setData(child, QVariant(ti->getHeadingPlain()),
+            resultsModel->setData(child, QVariant(ti->headingPlain()),
                                   Qt::EditRole);
             resultsModel->getItem(child)->setOriginal(ti);
         }
@@ -73,7 +109,7 @@ void FindResultWidget::addItem(const QString &s)
     }
 }
 
-QString FindResultWidget::getFindText() { return findWidget->getFindText(); }
+QString FindResultWidget::getFindText() { return findControlsWidget->getFindText(); }
 
 FindResultModel *FindResultWidget::getResultModel() { return resultsModel; }
 
@@ -81,14 +117,23 @@ void FindResultWidget::popup()
 {
     show();
     parentWidget()->show();
-    findWidget->setFocus();
+    view->setFocus();
 }
 
-void FindResultWidget::cancelPressed() { emit(hideFindResultWidget()); }
+void FindResultWidget::cancelPressed()
+{
+    mainWindow->escapePressed();
+}
+
+void FindResultWidget::closeWindow()
+{
+    parentWidget()->hide();
+}
 
 void FindResultWidget::nextButtonPressed(QString s, bool searchNotesFlag)
 {
-    emit(findPressed(s, searchNotesFlag));
+    view->setFocus();
+    emit findPressed(s, searchNotesFlag);
 }
 
 void FindResultWidget::updateSelection(QItemSelection newsel, QItemSelection)
@@ -103,13 +148,32 @@ void FindResultWidget::updateSelection(QItemSelection newsel, QItemSelection)
                 fri->getOrgModel()->select(ti);
                 int i = fri->getOriginalIndex();
                 if (i >= 0)
-                    emit(noteSelected(resultsModel->getSearchString(), i));
+                    emit noteSelected(resultsModel->getSearchString(), i);
             }
         }
     }
 }
 
-void FindResultWidget::setStatus(FindWidget::Status st)
+void FindResultWidget::setStatus(FindControlsWidget::Status st)
 {
-    findWidget->setStatus(st);
+    findControlsWidget->setStatus(st);
+}
+
+void FindResultWidget::searchFinished()
+{
+    QModelIndexList sl = view->selectionModel()->selectedIndexes();
+    if (!sl.isEmpty() && sl.first().isValid()) {
+        FindResultItem *fri =
+            static_cast<FindResultItem *>(sl.first().internalPointer());
+        if (fri->getOrgModel() && fri->getOriginalID() > 0) {
+            TreeItem *ti = fri->getOrgModel()->findID(fri->getOriginalID());
+            if (ti) {
+                fri->getOrgModel()->select(ti);
+                int i = fri->getOriginalIndex();
+                if (i >= 0)
+                    emit noteSelected(resultsModel->getSearchString(), i);
+                parentWidget()->hide();
+            }
+        }
+    }
 }

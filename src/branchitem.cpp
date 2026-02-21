@@ -1,7 +1,11 @@
 #include "branchitem.h"
 
 #include "attributeitem.h"
-#include "branchobj.h"
+#include "branch-container.h"
+#include "branch-wrapper.h"
+#include "frame-container.h"
+#include "heading-container.h"
+#include "image-container.h"
 #include "task.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
@@ -10,7 +14,7 @@
 
 extern TaskModel *taskModel;
 
-//#include <QDir>
+extern FlagRowMaster *systemFlagsMaster;
 
 BranchItem::BranchItem(TreeItem *parent)
     : MapItem(parent)
@@ -27,31 +31,37 @@ BranchItem::BranchItem(TreeItem *parent)
     scrolled = false;
     tmpUnscrolled = false;
 
-    includeImagesVer = false;
-    includeImagesHor = false;
-    includeChildren = false;
-    childrenLayout = BranchItem::AutoPositioning;
-
     lastSelectedBranchNum = 0;
     lastSelectedBranchNumAlt = 0;
 
-    task = NULL;
+    task = nullptr;
+
+    branchWrapperInt = nullptr;
+
+    branchContainer = nullptr;
 }
 
 BranchItem::~BranchItem()
 {
-    // qDebug()<< "Destr. BranchItem  this="<<this<<"  "<<getHeading();
-    if (mo) {
-        delete mo;
-        mo = NULL;
-    }
-    clear();
-}
-
-void BranchItem::clear()
-{
+    // std::cout << "Destr. BranchItem: this=" << this << "  " << headingPlain().toStdString() << "  branchContainer=" << branchContainer << std::endl;
     if (task)
         taskModel->deleteTask(task);
+
+    if (branchContainer) {
+        // This deletes only the first container here.
+        // All other containers deeper down in tree will unlink themselves 
+        // by calling BranchItem::unlinkBranchContainer, which will set 
+        // the branchContainer == nullptr;
+        //
+        // QGraphicsItems such as BranchContainer will delete all their children 
+        // themselves
+        delete branchContainer;
+    }
+
+    if (branchWrapperInt) {
+        delete branchWrapperInt;
+        branchWrapperInt = nullptr;
+    }
 }
 
 void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
@@ -60,7 +70,19 @@ void BranchItem::copy(BranchItem *other) // TODO lacks most of data...
     tmpUnscrolled = other->tmpUnscrolled;
 }
 
-BranchItem *BranchItem::parentBranch() { return (BranchItem *)parentItem; }
+BranchItem *BranchItem::parentBranch()
+{
+    // For MapCenters this will return rootItem
+    return (BranchItem *)parentItem;
+}
+
+BranchWrapper *BranchItem::branchWrapper()
+{
+    if (!branchWrapperInt)
+        branchWrapperInt = new BranchWrapper(this);
+
+    return branchWrapperInt;
+}
 
 void BranchItem::insertBranch(int pos, BranchItem *branch)
 {
@@ -68,55 +90,69 @@ void BranchItem::insertBranch(int pos, BranchItem *branch)
         pos = 0;
     if (pos > branchCounter)
         pos = branchCounter;
-    childItems.insert(pos + branchOffset, branch);
+    childItems.insert(pos + branchOffsetInt, branch);
     branch->parentItem = this;
     branch->rootItem = rootItem;
     branch->setModel(model);
-    if (parentItem == rootItem)
-        setType(MapCenter);
+    if (this == rootItem)
+        branch->setType(MapCenter);
     else
-        setType(Branch);
+        branch->setType(Branch);
 
     if (branchCounter == 0)
-        branchOffset = childItems.count() - 1;
+        branchOffsetInt = childItems.count() - 1;
     branchCounter++;
 }
 
+void BranchItem::insertImage(int pos, ImageItem *image)
+{
+    if (pos < 0)
+        pos = 0;
+    if (pos > imageCounter)
+        pos = imageCounter;
+    childItems.insert(pos + imageOffsetInt, image);
+
+    // Set parentItem, rootItem and model
+    image->setParentBranch(this);
+
+    imageCounter++;
+    branchOffsetInt++;
+}
+
 QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
-                              const QPointF &offset, QList<Link *> &tmpLinks)
+                              const QPointF &offset, QList<XLink *> &tmpXLinks, const bool &exportBoundingBoxes)
 {
     // Cloudy stuff can be hidden during exports
     if (hidden)
         return QString();
 
-    // Save uuid
-    QString idAttr = attribut("uuid", uuid.toString());
+    QString attr;
 
-    QString s, a;
+    // Save uuid
+    attr += attribute("uuid", uuid.toString());
+
+    // vymLink, Url, hideExport, localTarget
+    attr += getGeneralAttr();
+
+    // Linkable attributes
+    attr += getLinkableAttr();
 
     // Update of note is usually done while unselecting a branch
 
-    QString scrolledAttr;
     if (scrolled)
-        scrolledAttr = attribut("scrolled", "yes");
-    else
-        scrolledAttr = "";
+        attr += attribute("scrolled", "yes");
 
-    // save area, if not scrolled   // not needed if HTML is rewritten...
-    // also we could check if _any_ of parents is scrolled
-    QString areaAttr;
-    if (mo && parentItem->isBranchLikeType() &&
+    // save area, if not scrolled
+    // FIXME-5 we could check if _any_ of parents is scrolled
+    if (exportBoundingBoxes && branchContainer && parentItem->hasTypeBranch() &&
         !((BranchItem *)parentItem)->isScrolled()) {
-        qreal x = mo->getAbsPos().x();
-        qreal y = mo->getAbsPos().y();
-        areaAttr =
-            attribut("x1", QString().setNum(x - offset.x())) +
-            attribut("y1", QString().setNum(y - offset.y())) +
-            attribut("x2", QString().setNum(x + mo->width() - offset.x())) +
-            attribut("y2", QString().setNum(y + mo->height() - offset.y()));
+        QRectF r_bc = branchContainer->mapToScene(branchContainer->rect()).boundingRect();
+        attr +=
+            attribute("x1", QString().setNum(r_bc.topLeft().x() - offset.x())) +
+            attribute("y1", QString().setNum(r_bc.topLeft().y() - offset.y())) +
+            attribute("x2", QString().setNum(r_bc.bottomRight().x() - offset.x())) +
+            attribute("y2", QString().setNum(r_bc.bottomRight().y() - offset.y()));
     }
-    else
-        areaAttr = "";
 
     QString elementName;
     if (parentItem == rootItem)
@@ -124,43 +160,69 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     else
         elementName = "branch";
 
+    // qDebug() << "BI::saveToDir elName=" << elementName << "  bc=" << branchContainer;
+
     // Free positioning of children
-    QString layoutAttr;
-    if (childrenLayout == BranchItem::FreePositioning)
-        layoutAttr += attribut("childrenFreePos", "true");
+    if (branchContainer && !branchContainer->branchesContainerAutoLayout)
+        // Save the manually set layout for children branches
+        attr += attribute("branchesLayout", branchContainer->layoutString(branchContainer->branchesContainerLayout()));
 
-    // Save rotation
-    QString rotAttr;
-    if (mo && mo->getRotation() != 0)
-        rotAttr = attribut("rotation", QString().setNum(mo->getRotation()));
+    if (branchContainer && !branchContainer->imagesContainerAutoLayout)
+        // Save the manually set layout for children Images
+        attr += attribute("imagesLayout", branchContainer->Container::layoutString(branchContainer->imagesContainerLayout()));
 
-    s = beginElement(elementName + getMapAttr() + getGeneralAttr() +
-                     scrolledAttr + getIncludeImageAttr() + rotAttr +
-                     layoutAttr + idAttr);
+    if (branchContainer && !branchContainer->rotationsAutoDesign()) {
+        attr += attribute("rotHeading", QString("%1").arg(branchContainer->rotationHeading()));
+
+        attr += attribute("rotSubtree", QString("%1").arg(branchContainer->rotationSubtree()));
+    }
+
+    if (branchContainer && !branchContainer->scaleAutoDesign()) {
+        attr += attribute("scaleHeading", QString("%1").arg(branchContainer->scaleHeading()));
+
+        attr += attribute("scaleSubtree", QString("%1").arg(branchContainer->scaleSubtree()));
+    }
+
+    // width of heading
+    if (branchContainer && !branchContainer->columnWidthAutoDesign())
+        attr += attribute("colWidth", QString("%1").arg(branchContainer->getHeadingContainer()->columnWidth()));
+
+    if (parentItem == rootItem || (branchContainer && branchContainer->isFloating()))
+        attr += getPosAttr();
+
+    QString s = beginElement(elementName + " " + attr);
     incIndent();
 
     // save heading
-    s += heading.saveToDir();
+    s += headingInt.saveToDir();
 
     // save note
     if (!note.isEmpty())
         s += note.saveToDir();
 
-    // Save frame  // not saved if there is no MO
-    if (mo) {
-        // Avoid saving NoFrame for objects other than MapCenter
-        if (depth() == 0 || ((OrnamentedObj *)mo)->getFrame()->getFrameType() !=
-                                FrameObj::NoFrame)
-            s += ((OrnamentedObj *)mo)->getFrame()->saveToDir();
+    // Save frame
+    if (branchContainer && 
+            (branchContainer->frameType(true) != FrameContainer::NoFrame ||
+             branchContainer->frameType(false) != FrameContainer::NoFrame)
+       ) {
+            // Save if frame is used
+        s += branchContainer->saveFrame();
+    } else {
+        if (branchContainer && 
+            model->mapDesign()->frameType(true, depth()) != FrameContainer::NoFrame &&
+            branchContainer->frameType(true) == FrameContainer::NoFrame
+        )
+        // Save if no frame is used and MapDesign would use one
+        s += singleElement("frame", "autoDesign=\"false\" frameType=\"NoFrame\"");
     }
 
-    // save names of flags set
+    // save names of flag set
     s += standardFlags.saveState();
     s += userFlags.saveState();
 
     // Save Images
     for (int i = 0; i < imageCount(); ++i)
-        s += getImageNum(i)->saveToDir(tmpdir, prefix);
+        s += getImageNum(i)->saveToDir(tmpdir);
 
     // save attributes
     for (int i = 0; i < attributeCount(); ++i)
@@ -174,45 +236,33 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     int i = 0;
     TreeItem *ti = getBranchNum(i);
     while (ti) {
-        s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpLinks);
+        s += getBranchNum(i)->saveToDir(tmpdir, prefix, offset, tmpXLinks, exportBoundingBoxes);
         i++;
         ti = getBranchNum(i);
     }
 
     // Mark Links for save
     for (int i = 0; i < xlinkCount(); ++i) {
-        Link *l = getXLinkItemNum(i)->getLink();
-        if (l && !tmpLinks.contains(l))
-            tmpLinks.append(l);
+        XLink *xl = getXLinkItemNum(i)->getXLink();
+        if (xl && !tmpXLinks.contains(xl))
+            tmpXLinks.append(xl);
     }
     decIndent();
     s += endElement(elementName);
     return s;
 }
 
-void BranchItem::updateVisibility()
-{
-    // Needed to hide relinked branch, if parent is scrolled
-    if (mo) {
-        if (hasScrolledParent(this) || hidden)
-            mo->setVisibility(false);
-        else
-            mo->setVisibility(true);
-    }
-}
-
 void BranchItem::setHeadingColor(QColor color)
 {
     TreeItem::setHeadingColor(color);
-    if (mo)
-        ((BranchObj *)mo)->setColor(color);
+    branchContainer->setColor(color);
 }
 
 void BranchItem::updateTaskFlag()
 {
     systemFlags.deactivateGroup("system-tasks");
     if (task) {
-        QString s = "system-" + task->getIconString();
+        QString s = "system-" + task->iconString();
         systemFlags.activate(s);
         model->emitDataChanged(this);
     }
@@ -227,6 +277,14 @@ void BranchItem::setTask(Task *t)
 }
 
 Task *BranchItem::getTask() { return task; }
+
+Flag *BranchItem::taskFlag()
+{
+    if (!task)
+        return nullptr;
+
+    return systemFlagsMaster->findFlagByName("system-" + task->iconString());
+}
 
 void BranchItem::scroll()
 {
@@ -249,27 +307,17 @@ bool BranchItem::toggleScroll()
     if (depth() == 0)
         return false;
 
-    BranchObj *bo;
     if (scrolled) {
         scrolled = false;
         systemFlags.deactivate(QString("system-scrolledright"));
-        if (branchCounter > 0)
-            for (int i = 0; i < branchCounter; ++i) {
-                bo = (BranchObj *)(getBranchNum(i)->getMO());
-                if (bo)
-                    bo->setVisibility(true); // Recursively!
-            }
     }
     else {
         scrolled = true;
         systemFlags.activate(QString("system-scrolledright"));
-        if (branchCounter > 0)
-            for (int i = 0; i < branchCounter; ++i) {
-                bo = (BranchObj *)(getBranchNum(i)->getMO());
-                if (bo)
-                    bo->setVisibility(false); // Recursively!
-            }
     }
+
+    branchContainer->updateChildrenStructure();     // needed to insert linkSpaceContainer
+    branchContainer->updateVisibility();
     return true;
 }
 
@@ -303,7 +351,7 @@ bool BranchItem::tmpUnscroll(BranchItem *start)
 
     // Unscroll parent (recursivly)
     BranchItem *pi = (BranchItem *)parentItem;
-    if (pi && pi->isBranchLikeType())
+    if (pi && pi->hasTypeBranch())
         result = pi->tmpUnscroll(start);
 
     // Unscroll myself
@@ -323,7 +371,7 @@ bool BranchItem::resetTmpUnscroll()
 
     // Unscroll parent (recursivly)
     BranchItem *pi = (BranchItem *)parentItem;
-    if (pi && pi->isBranchLikeType())
+    if (pi && pi->hasTypeBranch())
         result = pi->resetTmpUnscroll();
 
     // Unscroll myself
@@ -337,98 +385,21 @@ bool BranchItem::resetTmpUnscroll()
     return result;
 }
 
-void BranchItem::sortChildren(
-    bool inverse) // FIXME-4 optimize by not using moveUp/Down
+void BranchItem::setBranchesLayout(const QString &s)
 {
-    int childCount = branchCounter;
-    int curChildIndex;
-    bool madeChanges = false;
-    do {
-        madeChanges = false;
-        for (curChildIndex = 1; curChildIndex < childCount; curChildIndex++) {
-            BranchItem *curChild = getBranchNum(curChildIndex);
-            BranchItem *prevChild = getBranchNum(curChildIndex - 1);
-            if (inverse) {
-                if (prevChild->getHeadingPlain().compare(
-                        curChild->getHeadingPlain(), Qt::CaseInsensitive) < 0) {
-                    model->moveUp(curChild);
-                    madeChanges = true;
-                }
-            }
-            else if (prevChild->getHeadingPlain().compare(
-                         curChild->getHeadingPlain(), Qt::CaseInsensitive) >
-                     0) {
-                model->moveUp(curChild);
-                madeChanges = true;
-            }
-        }
-    } while (madeChanges);
+    branchContainer->setBranchesContainerLayout(Container::layoutFromString(s));
 }
 
-void BranchItem::setChildrenLayout(BranchItem::LayoutHint layoutHint)
+void BranchItem::setImagesLayout(const QString &s)
 {
-    childrenLayout = layoutHint;
-}
-
-BranchItem::LayoutHint BranchItem::getChildrenLayout()
-{
-    return childrenLayout;
-}
-
-void BranchItem::setIncludeImagesVer(bool b) { includeImagesVer = b; }
-
-bool BranchItem::getIncludeImagesVer() { return includeImagesVer; }
-
-void BranchItem::setIncludeImagesHor(bool b) { includeImagesHor = b; }
-
-bool BranchItem::getIncludeImagesHor() { return includeImagesHor; }
-
-QString BranchItem::getIncludeImageAttr()
-{
-    QString a;
-    if (includeImagesVer)
-        a = attribut("incImgV", "true");
-    if (includeImagesHor)
-        a += attribut("incImgH", "true");
-    return a;
-}
-
-BranchItem *BranchItem::getFramedParentBranch(BranchItem *start)
-{
-    BranchObj *bo = getBranchObj();
-    if (bo && bo->getFrameType() != FrameObj::NoFrame) {
-        if (bo->getFrame()->getFrameIncludeChildren())
-            return this;
-        if (this == start)
-            return this;
-    }
-    BranchItem *bi = (BranchItem *)parentItem;
-    if (bi && bi != rootItem)
-        return bi->getFramedParentBranch(start);
-    else
-        return NULL;
-}
-
-void BranchItem::setFrameIncludeChildren(bool b)
-{
-    includeChildren = b; // FIXME-4 ugly: same information stored in FrameObj
-    BranchObj *bo = getBranchObj();
-    if (bo)
-        bo->getFrame()->setFrameIncludeChildren(b);
-}
-
-bool BranchItem::getFrameIncludeChildren()
-{
-    BranchObj *bo = getBranchObj();
-    if (bo)
-        return bo->getFrame()->getFrameIncludeChildren();
-    else
-        return includeChildren;
+    branchContainer->setImagesContainerLayout(Container::layoutFromString(s));
 }
 
 QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)
 {
-    /*
+    if (!branchContainer)
+        return QColor();
+
     // Determine background color in taskEditor, first try inner frame
     if (checkInnerFrame && branchContainer->frameType(true) != FrameContainer::NoFrame)
             return branchContainer->frameBrushColor(true);
@@ -442,13 +413,8 @@ QColor BranchItem::getBackgroundColor(BranchItem *start, bool checkInnerFrame)
         // Recursively try parents and check for frames there
         return pb->getBackgroundColor(start, false);
     else
-    */
-    BranchItem *bi = getFramedParentBranch(start);
-    if (bi)
-        return bi->getBranchObj()->getFrameBrushColor();
-
         // No frame found
-        return model->getMapBackgroundColor();
+        return model->mapDesign()->backgroundColor();
 }
 
 void BranchItem::setLastSelectedBranch()
@@ -459,12 +425,14 @@ void BranchItem::setLastSelectedBranch()
             // Hack to save an additional lastSelected for mapcenters in
             // MapEditor depending on orientation this allows to go both left
             // and right from there
-            if (mo && ((BranchObj *)mo)->getOrientation() ==
-                          LinkableMapObj::LeftOfCenter) {
+
+            if (branchContainer->getOrientation() ==
+                          BranchContainer::LeftOfParent) {
                 ((BranchItem *)parentItem)->lastSelectedBranchNumAlt =
                     parentItem->num(this);
                 return;
             }
+
         ((BranchItem *)parentItem)->lastSelectedBranchNum =
             parentItem->num(this);
     }
@@ -485,90 +453,148 @@ BranchItem *BranchItem::getLastSelectedBranchAlt()
     return getBranchNum(lastSelectedBranchNumAlt);
 }
 
-TreeItem *BranchItem::findMapItem(QPointF p, TreeItem *excludeTI)
+TreeItem *BranchItem::findMapItem(QPointF p, QList <TreeItem*> excludedItems)
 {
     // Search branches
-    TreeItem *ti;
-    for (int i = 0; i < branchCount(); ++i) {
-        ti = getBranchNum(i)->findMapItem(p, excludeTI);
-        if (ti != NULL)
-            return ti;
+    if (!isScrolled()) {
+        TreeItem *ti;
+        for (int i = 0; i < branchCounter; ++i) {
+            ti = getBranchNum(i)->findMapItem(p, excludedItems);
+            if (ti != nullptr)
+                return ti;
+        }
     }
 
     // Search images
     ImageItem *ii;
+    ImageContainer *ic;
     for (int i = 0; i < imageCount(); ++i) {
         ii = getImageNum(i);
-        MapObj *mo = ii->getMO();
-        if (mo && mo->isInClickBox(p) && (ii != excludeTI) &&
-            this != excludeTI && mo->isVisibleObj())
-            return ii;
+        ic = ii->getImageContainer();
+        if (!excludedItems.contains(ii) && ic->isVisible() && ic->mapToScene(ic->rect()).containsPoint(p, Qt::OddEvenFill)) return ii;
     }
 
-    // Search myself
-    if (getBranchObj()->isInClickBox(p) && (this != excludeTI) &&
-        getBranchObj()->isVisibleObj())
+    // Search my container
+    if (branchContainer->isVisible() && branchContainer->isInClickBox(p) && !excludedItems.contains(this) ) //   &&
+        //getBranchObj()->isVisibleObj())
         return this;
 
-    // Search attributes
-    AttributeItem *ai;
-    for (int i = 0; i < attributeCount(); ++i) {
-        ai = getAttributeNum(i);
-        MapObj *mo = ai->getMO();
-        if (mo && mo->isInClickBox(p) && (ai != excludeTI) &&
-            this != excludeTI && mo->isVisibleObj())
-            return ai;
-    }
-    return NULL;
+    return nullptr;
 }
 
-void BranchItem::updateStyles(const bool &keepFrame)
+void BranchItem::setHideMode(HideTmpMode mode)
 {
-    // Update styles when relinking branches
-    if (mo) {
-        BranchObj *bo = getBranchObj();
-        if (parentItem != rootItem)
-            bo->setParObj((LinkableMapObj *)(((MapItem *)parentItem)->getMO()));
-        else
-            bo->setParObj(NULL);
-        bo->setDefAttr(BranchObj::MovedBranch, keepFrame);
-    }
+    TreeItem::setHideMode(mode);
+    branchContainer->updateVisibility();
 }
 
-BranchObj *BranchItem::getBranchObj() { return (BranchObj *)mo; }
-
-BranchObj *BranchItem::createMapObj(QGraphicsScene *scene)
+void BranchItem::updateVisuals()
 {
-    BranchObj *newbo;
+    branchContainer->updateVisuals();
+}
 
-    if (parentItem == rootItem) {
-        newbo = new BranchObj(NULL, this);
-        mo = newbo;
-        scene->addItem(newbo);
+BranchContainer *BranchItem::createBranchContainer(QGraphicsScene *scene)
+{
+    branchContainer = new BranchContainer(scene, this);
+
+    if (parentBranch() != rootItem) {
+        // For floating branches get a position hint
+        parentBranch()->addToBranchesContainer(branchContainer);
+        BranchContainer *pbc = branchContainer->parentBranchContainer();
+        if (pbc->hasFloatingBranchesLayout())
+            branchContainer->setPos(pbc->getPositionHintNewChild(branchContainer));
+
+        // Link to parent branch visually by
+        // adding my upLink to parents linkContainer
+        branchContainer->linkTo(parentBranch()->getBranchContainer());
     }
-    else {
-        newbo = new BranchObj(((MapItem *)parentItem)->getMO(), this);
-        mo = newbo;
-        // Set visibility depending on parents
-        if (parentItem != rootItem &&
-            (((BranchItem *)parentItem)->scrolled ||
-             !((MapItem *)parentItem)->getLMO()->isVisibleObj()))
-            newbo->setVisibility(false);
-        if (depth() == 1) {
-            qreal r = 190;
-            qreal a =
-                -M_PI_4 + M_PI_2 * (num()) + (M_PI_4 / 2) * (num() / 4 % 4);
-            QPointF p(r * cos(a), r * sin(a));
-            newbo->setRelPos(p);
+
+    return branchContainer;
+}
+
+BranchContainer* BranchItem::getBranchContainer()
+{
+    if (this == rootItem && branchContainer)
+        qWarning() << __func__ << "rootItem should not have BranchCOntainer";
+    return branchContainer;
+}
+
+void BranchItem::unlinkBranchContainer()
+{
+    //qDebug() << "BI::unlinkBC in " << this << headingPlain();
+
+    // Called from destructor of containers to 
+    // avoid double deletion 
+    branchContainer = nullptr;
+}
+
+Container* BranchItem::getBranchesContainer()
+{
+    return branchContainer->getBranchesContainer();
+}
+
+Container* BranchItem::getImagesContainer()
+{
+    return branchContainer->getImagesContainer();
+}
+
+void BranchItem::updateContainerStackingOrder()
+{
+    // After relinking branches (also moving up/down), the order of the 
+    // BranchContainers does not match the order of BranchItems any longer and
+    // needs to be adjusted. Or the BranchContainer has (temporarily) been linked to 
+    // a completely different parent.
+    //
+    // It seems the QGraphicsItem::stackBefore only works, if an item is moved up. 
+    // For moving below (or into another subtree), we have to reparent first  :-(
+
+    // For simplicity we always reparent. The absolute position will not be changed here
+
+    int n = num();
+
+    QPointF sp = branchContainer->scenePos();
+
+    branchContainer->setParentItem(nullptr);
+
+    if (parentBranch() == rootItem) {
+        // I am a MapCenter
+        branchContainer->setPos(sp);
+        return;
+    }
+
+    parentBranch()->addToBranchesContainer(branchContainer);
+
+    while (n < parentBranch()->branchCount() - 1) {
+        // Insert container of this branch above others
+
+        // The next sibling container might currently still be temporarily 
+        // linked to tmpParentContainer, in that case it is not a sibling and 
+        // cannot be inserted using QGraphicsItem::stackBefore
+        //
+        // We try the next sibling then, if this fails, just append at the end.
+        if ( (parentBranch()->getBranchNum(n + 1))->getContainer()->parentItem() != parentBranch()->getBranchesContainer() )
+            n++;
+        else {
+            branchContainer->stackBefore( (parentBranch()->getBranchNum(n + 1))->getContainer() );
+            break;
         }
     }
-    newbo->setDefAttr(BranchObj::NewBranch);
-    initLMO();
 
-    if (!getHeading().isEmpty()) {
-        newbo->updateVisuals();
-        newbo->setColor(heading.getColor());
-    }
+    branchContainer->setPos(branchContainer->parentItem()->sceneTransform().inverted().map(sp));
+}
 
-    return newbo;
+void BranchItem::addToBranchesContainer(BranchContainer *bc)
+{
+    branchContainer->addToBranchesContainer(bc);
+}
+
+void BranchItem::addToImagesContainer(ImageContainer *ic)
+{
+    // Keep scene position while relinking image container
+    branchContainer->addToImagesContainer(ic);
+}
+
+void BranchItem::repositionContainers()
+{
+    branchContainer->reposition();
 }

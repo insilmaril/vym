@@ -1,5 +1,21 @@
-VYM - View Your Mind (c) 2004-2025 by Uwe Drechsel
+VYM - View Your Mind (c) 2004-2026 by Uwe Drechsel
 ==================================================
+
+About
+-----
+
+VYM is a mind mapping application. You can use it to visualize your 
+thoughts in tree-like structures. It is also useful for time management, 
+self-organization and sorting through new ideas and complex contexts.
+
+VYM includes a powerful personal task manager, which allows to adjust
+priorities or reminds you after easily defined time spans.
+
+You can use the scripting capabilities for interesting presentations. 
+VYM can also retrieve data from the Jira issue tracking system and 
+talk to the Confluence documentation system.
+
+VYM runs on Apple and Windows and of course most Linux platforms.
 
 Documentation
 -------------
@@ -35,10 +51,11 @@ site:
 
 https://sourceforge.net/projects/vym/
 
-The latest development drops can be found in the Files/Development folder there.
+The latest development drops for all platforms can be found there in the
+folder Files->Development.
 
-The latest binaries for Linux, Debian and Ubuntu are built and available in the authors
-Open Build Service project:
+The latest binaries for Linux, Debian and Ubuntu are built and available
+in the authors Open Build Service project:
 
 https://software.opensuse.org/download.html?project=home%3Ainsilmaril&package=vym
 
@@ -72,7 +89,8 @@ Installation
 * Compiling
 
     Compiling vym from scratch is pretty easy, if you have the
-    development packages of the Qt5 toolkit installed.
+    development packages of the Qt6 toolkit installed. (Check also the
+    homepage above for details):
 
     On the command line you can
 
@@ -80,10 +98,17 @@ Installation
       make
       make install
 
-    or using Qt Creator:
+    or using Qt Creator (recommended on Mac and Windows):
 
     In "File" do "Open file or project" and select the
     "CMakeLists.txt". This will setup the project.
+
+    
+    For testing you probably need to tell vym where to find various
+    files like macros, demos, etc. On the commandline you can do this
+    with the "-l" option. Using Qt Creator you can add a variable
+    VYMHOME to the execution environment pointing to your path to vym
+    sources.
 
 
 Questions and feedback
@@ -96,4 +121,3 @@ Bugs and feature requests will be taken care of in
 Please direct support questions to the mailinglist first:
 
   vym-forum@lists.sourceforge.net
-

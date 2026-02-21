@@ -1,6 +1,11 @@
 #include "dockeditor.h"
 
+#include "mainwindow.h"
 #include "vymmodel.h"
+
+#include <QCloseEvent>
+
+extern Main *mainWindow;
 
 DockEditor::DockEditor() { init(); }
 DockEditor::DockEditor(QString title, QWidget *p, VymModel *m)

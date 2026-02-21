@@ -119,7 +119,7 @@ QModelIndex FindResultModel::parent(const QModelIndex &index) const
     if (parentItem == rootItem)
         return QModelIndex();
 
-    return createIndex(parentItem->childNumber(), 0, parentItem);
+    return createIndex(parentItem->row(), 0, parentItem);
 }
 
 bool FindResultModel::removeColumns(int position, int columns,
@@ -199,16 +199,16 @@ FindResultItem *FindResultModel::getItem(const QModelIndex &index) const
 
 FindResultItem *FindResultModel::addItem(TreeItem *ti)
 {
-    FindResultItem *ni = NULL;
+    FindResultItem *ni = nullptr;
     if (ti) {
         QModelIndex parix(index(rootItem));
 
-        emit(layoutAboutToBeChanged());
+        emit layoutAboutToBeChanged();
 
         int n = rowCount(parix);
         beginInsertRows(parix, n, n);
         if (rootItem->insertChildren(n, 1, 0)) {
-            QString h = ti->getHeadingPlainWithParents(showParentsLevel);
+            QString h = ti->headingPlainWithParents(showParentsLevel);
             QModelIndex ix = index(n, 0, QModelIndex());
             setData(ix, QVariant(h), Qt::EditRole);
             ni = getItem(ix);
@@ -216,7 +216,7 @@ FindResultItem *FindResultModel::addItem(TreeItem *ti)
         }
         endInsertRows();
 
-        emit(layoutChanged());
+        emit layoutChanged();
     }
     return ni;
 }
@@ -225,11 +225,11 @@ FindResultItem *FindResultModel::addSubItem(FindResultItem *parent,
                                             const QString &s, TreeItem *pi,
                                             int i)
 {
-    FindResultItem *ni = NULL;
+    FindResultItem *ni = nullptr;
     if (pi && parent) {
         QModelIndex parix(index(parent));
 
-        emit(layoutAboutToBeChanged());
+        emit layoutAboutToBeChanged();
 
         int n = rowCount(parix);
         beginInsertRows(parix, n, n);
@@ -243,7 +243,7 @@ FindResultItem *FindResultModel::addSubItem(FindResultItem *parent,
             ni->setOriginalIndex(i);
         }
         endInsertRows();
-        emit(layoutChanged());
+        emit layoutChanged();
     }
     return ni;
 }

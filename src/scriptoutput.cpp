@@ -2,7 +2,7 @@
 
 ScriptOutput::ScriptOutput(QWidget *parent) : QWidget(parent)
 {
-    editor = new QTextEdit(this);
+    editor = new QTextEdit(this);   // FIXME-4 use QTextBrowser and add button to clear browser
     layout = new QVBoxLayout;
     layout->addWidget(editor);
     setLayout(layout);
@@ -12,6 +12,11 @@ ScriptOutput::~ScriptOutput()
 {
     delete layout;
     delete editor;
+}
+
+void ScriptOutput::setFocus() { //FIXME-5 missing implementation
+    // qDebug() << "SO::setFOcus";
+    // Currently ScriptEditor gets focus, when output is toggled
 }
 
 void ScriptOutput::clear() { editor->clear(); }

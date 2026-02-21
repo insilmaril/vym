@@ -3,11 +3,11 @@
 #include "attributeitem.h"
 #include "branchitem.h"
 #include "file.h"
-#include "linkablemapobj.h"
 #include "mainwindow.h"
 #include "misc.h"
 #include "vymmodel.h"
 #include "xsltproc.h"
+#include "zip-agent.h"
 
 #include <QMessageBox>
 
@@ -16,7 +16,7 @@ extern QDir vymBaseDir;
 
 ImportBase::ImportBase()
 {
-    model = NULL;
+    model = nullptr;
     init();
 }
 
@@ -32,7 +32,7 @@ ImportBase::~ImportBase()
     removeDir(tmpDir);
 }
 
-void ImportBase::init() 
+void ImportBase::init()
 {
     bool ok;
     tmpDir.setPath(makeTmpDir(ok, "vym-import"));
@@ -64,7 +64,7 @@ bool ImportFirefoxBookmarks::transform()
     progressDialog.setAutoReset(false);
     progressDialog.setAutoClose(false);
     progressDialog.setMinimumWidth(600);
-    progressDialog.setCancelButton(NULL);
+    progressDialog.setCancelButton(nullptr);
     progressDialog.setWindowTitle(QObject::tr("Import Firefox bookmarks","Import dialog"));
     progressDialog.setLabelText(
         QObject::tr("Loading bookmarks:", "Progress dialog while importing bookmarks"));
@@ -76,7 +76,8 @@ bool ImportFirefoxBookmarks::transform()
         QJsonObject jsobj = jsdoc.object();
 
         QJsonArray jsarr = jsobj["children"].toArray();
-        foreach (const QJsonValue &value, jsarr) {
+        for (auto value : jsarr) {
+            // For modifications also forwarding references with "auto && v" could be used
             parseJson (value, ParseMode::countBookmarks);
         }
 
@@ -98,6 +99,11 @@ bool ImportFirefoxBookmarks::transform()
 
     return false;
 }
+
+//FIXME-4 Check importing Firefox bookmarks. Switch from JSON to HTML?
+//        Or include lz4 to decompress FF json bookmarks?
+//        https://unix.stackexchange.com/questions/326897/how-to-decompress-jsonlz4-files-firefox-bookmark-backups-using-the-command-lin
+//        HTML is not valid XML :-(
 
 bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchItem *selbi)
 {
@@ -123,55 +129,51 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
         if (jsobj.contains("uri") && jsobj["uri"].isString()) {
             currentBookmarks++;
             progressDialog.setValue(currentBookmarks);
-            selbi->setURL(jsobj["uri"].toString());
+            selbi->setUrl(jsobj["uri"].toString());
         }
-
-        AttributeItem *ai;
 
         foreach (QString key, jsobj.keys())
         {
+            QVariant v;
             if (key != "children") {
-                ai = new AttributeItem();
-                ai->setKey(key);
                 // Integer types: dateAdded, id, index, lastModified, typeCode
                 // Special: postData
                 if (key == "dateAdded" || key == "lastModified") {
                     qlonglong l = jsobj[key].toVariant().toLongLong();
                     QDateTime dt;
                     dt.setMSecsSinceEpoch(l / 1000);
-                    ai->setValue(dt);
-                    ai->setAttributeType(AttributeItem::DateTime);
+                    v = dt;
                 } else if (key == "id" || key == "index" || 
                         key == "lastModified" || key == "typeCode" ) {
-                    ai->setValue(jsobj[key].toInt());
+                    v = jsobj[key].toInt();
                 } else if (key == "postData") 
-                    ai->setValue(QString("null"));
-                else if (jsobj[key].isString()) 
-                    ai->setValue(jsobj[key].toString());
+                    v = QString("null");
+                else if (jsobj[key].isString())     // FIXME-5 type checks no longer needed qith QVariant
+                    v = jsobj[key].toString();
                 else {
                 // Ignore only the "postdata: null" field for now
                     qWarning() << "Firefox import, unknown key type: " << jsobj[key].type();
                     qDebug() << "                Firefox bookmark: " << key << jsobj[key].toString();
-                    ai->setValue(QString("unknown type."));
+                    v =QString("unknown type.");
                 }
 
-                model->setAttribute(selbi, ai); // FIXME-3 deep copy?
+                model->setAttribute(selbi, key, v);
             }
         }
 
-        model->emitDataChanged(selbi); // FIXME-2 required, but can reposition in between be blocked?
+        model->emitDataChanged(selbi); // FIXME-5 required, but can reposition in between be blocked?
     } // build bookmakrs
 
     if (jsobj.contains("children") && jsobj["children"].isArray()) {
 
         QJsonArray jsarr = jsobj["children"].toArray();
-        foreach (const QJsonValue &val, jsarr) {
-            parseJson (val, mode, selbi);
+        for (auto value : jsarr) {
+            parseJson (value, mode, selbi);
         }
 
         if (selbi->depth() > 2) {
             selbi->scroll();
-            model->emitDataChanged(selbi); // FIXME-2 required, but can reposition in between be blocked?
+            model->emitDataChanged(selbi); // FIXME-5 required, but can reposition in between be blocked?
         }
     } 
 
@@ -182,8 +184,10 @@ bool ImportFirefoxBookmarks::parseJson(QJsonValue jsval, ParseMode mode, BranchI
 bool ImportMM::transform()
 {
     // try to unzip
-    if (File::Success == unzipDir(tmpDir, inputFile)) {
-
+    ZipAgent zipAgent(tmpDir, inputFile);
+    zipAgent.setBackgroundProcess(false);
+    zipAgent.startUnzip();
+    if (zipAgent.exitStatus() == QProcess::NormalExit) {
         // Set short name, too. Search from behind:
         transformedFile = inputFile;
         int i = transformedFile.lastIndexOf("/");

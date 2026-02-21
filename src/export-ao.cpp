@@ -1,7 +1,14 @@
+#include "export-ao.h"
+
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
 
-#include "export-ao.h"
+#include "branchitem.h"
 #include "mainwindow.h"
+#include "misc.h"
+#include "task.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;
@@ -43,8 +50,8 @@ void ExportAO::doExport()
     QString dashIndent;
 
     int i;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
 
     model->nextBranch(cur, prev);
     while (cur) {
@@ -59,8 +66,8 @@ void ExportAO::doExport()
             // Make indentstring
             curIndent = indent(cur->depth() - 4, true);
 
-            if (!cur->hasHiddenExportParent()) {
-                col = cur->getHeadingColor();
+            if (!cur->hasHiddenParent()) {
+                col = cur->headingColor();
                 if (col == QColor(255, 0, 0))
                     colString = "[R] ";
                 else if (col == QColor(217, 81, 0))
@@ -82,12 +89,12 @@ void ExportAO::doExport()
                     break; // Mainbranch "Archive" (Ignored)
                 case 2:    // Title: "Current week number..."
                     out += "\n";
-                    out += underline(cur->getHeadingPlain(), QString("="));
+                    out += underline(cur->headingPlain(), QString("="));
                     out += "\n";
                     break;
                 case 3: // Headings: "Achievement", "Bonus", "Objective", ...
                     out += "\n";
-                    out += underline(cur->getHeadingPlain(), "-");
+                    out += underline(cur->headingPlain(), "-");
                     out += "\n";
                     break;
                 default: // depth 4 and higher are the items we need to know
@@ -118,7 +125,7 @@ void ExportAO::doExport()
                     line += colString;
                     line += curIndent;
                     if (cur->depth() > 3)
-                        line += cur->getHeadingPlain();
+                        line += cur->headingPlain();
 
                     // Pad line width before status
                     i = 80 - line.length() - statusString.length() - 1;
@@ -129,9 +136,9 @@ void ExportAO::doExport()
                     out += line;
 
                     // If necessary, write URL
-                    if (!cur->getURL().isEmpty())
+                    if (!cur->url().isEmpty())
                         out += noColString + indent(cur->depth() - 4, false) +
-                               cur->getURL() + "\n";
+                               cur->url() + "\n";
 
                     // If necessary, write note
                     if (!cur->isNoteEmpty()) {
@@ -148,7 +155,6 @@ void ExportAO::doExport()
     }
 
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 
@@ -162,10 +168,3 @@ void ExportAO::doExport()
     completeExport();
 }
 
-QString ExportAO::underline(const QString &text, const QString &line)
-{
-    QString r = text + "\n";
-    for (int j = 0; j < text.length(); j++)
-        r += line;
-    return r;
-}

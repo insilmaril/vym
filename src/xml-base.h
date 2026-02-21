@@ -1,50 +1,75 @@
 #ifndef XML_BASE
 #define XML_BASE
 
-//#include <QString>
-#include <QXmlAttributes>
+#include <QXmlStreamReader>
 
 #include "file.h"
 
+#include "vymtext.h"
+
+
 class VymModel;
+class BranchItem;
+class ImageItem;
+class MapItem;
+class SlideItem;
+class Task;
 
 /*! \brief Base class for parsing maps from XML documents */
 
-class parseBaseHandler : public QXmlDefaultHandler {
+class BaseReader {
   public:
-    parseBaseHandler();
-    ~parseBaseHandler();
-    QString errorProtocol();
-    QString parseHREF(QString);
-    virtual bool startElement(const QString &, const QString &,
-                              const QString &eName,
-                              const QXmlAttributes &atts) = 0;
-    virtual bool endElement(const QString &, const QString &,
-                            const QString &) = 0;
-    virtual bool characters(const QString &) = 0;
+  enum Content {
+      TreeContent = 0x0001,   // currently unused
+      SlideContent = 0x0002,
+      XLinkContent = 0x0004   // currently unused
+  };
 
-    virtual QString errorString() = 0;
-    bool fatalError(const QXmlParseException &);
+    BaseReader(VymModel *vm);
+    virtual ~BaseReader();
+    void setContentFilter(const int &);
+
+    virtual bool read(QIODevice *device) = 0;
+
+    QString errorString() const;
+
+    QString parseHREF(QString href);
     void setModel(VymModel *);
     void setTmpDir(QString);
-    void setInputFile(const QString &);
     void setInputString(const QString &);
-    void setLoadMode(const LoadMode &, int p = -1);
-    bool readHtmlAttr(const QXmlAttributes &);
+    void setLoadMode(const File::LoadMode &);
+    void setInsertBranch(BranchItem *ib = nullptr);
+    void setInsertPos(int p = -1);
+    void raiseUnknownElementError();
+
+    QString attributeToString(const QString &a);
 
   protected:
-    QString errorProt;
+    void readHtml();
 
-    LoadMode loadMode;
+    VymModel *model;
+
+    QXmlStreamReader xml;
+
+    File::LoadMode loadMode;
     int insertPos;
 
-    bool isVymPart;
-    int branchDepth;
-    VymModel *model;
     QString tmpDir;
-    QString inputFile;
     QString inputString;
     QString htmldata;
     QString version;
+
+    VymText vymtext;
+
+    BranchItem *lastBranch;
+    BranchItem *insertBranch;
+    Task *lastTask;
+    MapItem *lastMI;
+
+    ImageItem *lastImage;
+    SlideItem *lastSlide;
+
+    int contentFilter;
 };
+
 #endif

@@ -4,12 +4,12 @@
 #include <QPen>
 
 #include "arrowobj.h"
-#include "linkablemapobj.h"
+#include "branch-container.h"
 #include "mapobj.h"
-#include "xlink.h"
 
 class BranchObj;
 class BranchItem;
+class XLink;
 
 /*! \brief xlinks are used to draw arbitrary connections between branches
  * (BranchObj) in the map. */
@@ -17,8 +17,9 @@ class BranchItem;
 /////////////////////////////////////////////////////////////////////////////
 class XLinkObj : public MapObj {
   public:
-    enum CurrentSelection { Unselected, Path, C0, C1 };
-    XLinkObj(QGraphicsItem *, Link *l);
+    enum SelectionType { Empty, Path, C0, C1 };
+    XLinkObj(XLink*);
+    XLinkObj(QGraphicsItem *, XLink *l);
     virtual ~XLinkObj();
     virtual void init();
     virtual QPointF getAbsPos();
@@ -30,25 +31,23 @@ class XLinkObj : public MapObj {
     ArrowObj::OrnamentStyle getStyleEnd();
     QPointF getBeginPos();
     QPointF getEndPos();
-    virtual void move(QPointF p);
     virtual void setEnd(QPointF);
-    void setSelection(int cp);
-    void setSelection(CurrentSelection s);
-    void updateXLink();
-    void positionBBox();
-    void calcBBoxSize();
+    void setSelectionType(SelectionType s);
+    void updateGeometry();
+    void updateVisibility();
     void setVisibility(bool);
-    void setVisibility();
     void initC0();
     void setC0(const QPointF &p);
     QPointF getC0();
     void initC1();
     void setC1(const QPointF &p);
     QPointF getC1();
-    bool isInClickBox(const QPointF &p);
-    int ctrlPointInClickBox(const QPointF &p);
-    QPainterPath getClickPath();
-    QPainterPath getSelectionPath();
+    void setSelectedCtrlPoint(const QPointF &);
+    QRectF boundingRect();
+
+    SelectionType couldSelect(const QPointF &);
+    void select(const QPen &pen, const QBrush &brush);
+    void unselect();
 
   private:
     enum StateVis { Hidden, OnlyBegin, OnlyEnd, Full, FullShowControls };
@@ -59,22 +58,25 @@ class XLinkObj : public MapObj {
     static int d_control;
     QPainterPath clickPath;
     QGraphicsPolygonItem *poly; // Arrowhead, when one end is not visible
-    ArrowObj *pointerBegin;     // Arrowhead
-    ArrowObj *pointerEnd;       // Arrowhead
+    ArrowObj *beginArrow;     // Arrowhead
+    ArrowObj *endArrow;       // Arrowhead
     QGraphicsPathItem *path;
 
     QPointF beginPos;
     QPointF endPos;
-    QPointF c0, c1; // Controlpoints for Bezier path
-    LinkableMapObj::Orientation beginOrient;
-    LinkableMapObj::Orientation endOrient;
-    QGraphicsEllipseItem *ctrl_p0;
-    QGraphicsEllipseItem *ctrl_p1;
+    BranchContainer::Orientation beginOrient;
+    BranchContainer::Orientation endOrient;
 
-    CurrentSelection curSelection;
+    // Controlpoints for Bezier path
+    QPointF c0, c1;
+    QGraphicsEllipseItem *c0_ellipse;
+    QGraphicsEllipseItem *c1_ellipse;
+    QGraphicsEllipseItem *selection_ellipse;
+
+    SelectionType selectionTypeInt;
 
     BranchItem *visBranch; // the "visible" part of a partially scrolled li
-    Link *link;
+    XLink *xlink;
 };
 
 #endif

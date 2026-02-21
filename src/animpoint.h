@@ -29,7 +29,7 @@ class AnimPoint : public QPointF {
     QPointF startPos;
     QPointF destPos;
     QPointF vector;
-    qreal n;
+    uint n;
     uint animTicks;
     bool animated;
 };

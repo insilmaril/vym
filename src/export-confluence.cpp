@@ -3,9 +3,10 @@
 #include <QMessageBox>
 
 #include "attributeitem.h"
-#include "branchobj.h"
+#include "branchitem.h"
 #include "mainwindow.h"
 #include "settings.h"
+#include "vymmodel.h"
 #include "warningdialog.h"
 #include "xmlobj.h"
 
@@ -35,20 +36,15 @@ void ExportConfluence::init()
 
 void ExportConfluence::setCreateNewPage(bool b) {createNewPage = b; }
 
-void ExportConfluence::setURL(const QString &u) { url = u; }
+void ExportConfluence::setUrl(const QString &u) { url = u; }
 
 void ExportConfluence::setPageName(const QString &t) { pageName = t;}
 
 QString ExportConfluence::getBranchText(BranchItem *current)
 {
-    if (current) {
-        QRectF hr;
-        LinkableMapObj *lmo = current->getLMO();
-        if (lmo) {
-            hr = ((BranchObj *)lmo)->getBBoxHeading();
-        }
+    if (current && !current->hasHiddenParent()) {
         QString id = model->getSelectString(current);
-        QString heading = quoteMeta(current->getHeadingPlain());
+        QString heading = quoteMeta(current->headingPlain());
 
         // Numbering
         QString number;
@@ -58,7 +54,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         heading = heading.replace("\\n", " ");
 
         if (dia.useTextColor()) {
-            QColor c = current->getHeadingColor();
+            QColor c = current->headingColor();
             QString cs = QString("rgb(%1,%2,%3);")
                              .arg(c.red())
                              .arg(c.green())
@@ -78,7 +74,7 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             Task *task = current->getTask();
             if (task)
             {
-                QString taskName = task->getIconString();
+                QString taskName = task->iconString();
                 taskFlags += QString("<img src=\"flags/flag-%1.png\"
         alt=\"%2\">") .arg(taskName) .arg(QObject::tr("Flag: %1","Alt tag in
         HTML export").arg(taskName));
@@ -103,23 +99,18 @@ QString ExportConfluence::getBranchText(BranchItem *current)
         //     <ac:link>
         //<ri:user ri:userkey="55df23264acf166a014b54c57792009b"/>
         //</ac:link> </span>
-        
+
         // For URLs check, if there is already a Confluence user in an attribute
         QString url;
         AttributeItem *ai = current->getAttributeByKey("ConfluenceUser.userKey");
         if (ai) {
-            url = ai->getKey();
-            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->getValue().toString());
+            url = ai->key();
+            s += QString(" <ac:link> <ri:user ri:userkey=\"%1\"/></ac:link>").arg(ai->value().toString());
         } else {
-            url = current->getURL();
+            url = current->url();
 
             if (!url.isEmpty()) {
-                if (url.contains(settings.value("/atlassian/confluence/url",
-                       "---undefined---").toString()) && url.contains("&")) {
-
-                    // Fix ampersands in URL to Confluence itself
-                    url = quoteMeta(url);
-                } 
+                url = quoteMeta(url);
 
                 s += QString("<a href=\"%1\">%2</a>")
                          .arg(url)
@@ -157,8 +148,8 @@ QString ExportConfluence::getBranchText(BranchItem *current)
             QString n;
             if (note.isRichText()) {
                 n = note.getText();
-                QRegExp re("<p.*>");
-                re.setMinimal(true);
+                QRegularExpression re("<p.*>");
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                 re.setPattern("</?html>");
                 n.replace(re, "");
 
@@ -244,7 +235,7 @@ QString ExportConfluence::buildList(BranchItem *current)
     }
 
     while (bi) {
-        if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
+        if (bi && !bi->hasHiddenParent() && !bi->isHidden()) {
             r += ind + sectionBegin;
             if ( bi && bi->isScrolled())
             {
@@ -259,11 +250,11 @@ QString ExportConfluence::buildList(BranchItem *current)
                 expandEnd   = "";
             }
 
-            if (!bi->hasHiddenExportParent() && !bi->isHidden() ) {
+            if (!bi->hasHiddenParent() && !bi->isHidden() ) {
                 visChilds++;
                 r += ind;
                 r += itemBegin;
-                    
+
                 // Check if first mapcenter is already usded for pageName
                 if ( !(bi == model->getRootItem()->getFirstBranch() && dia.mapCenterToPageName()))  
                     r += getBranchText(bi);
@@ -304,11 +295,11 @@ QString ExportConfluence::createTOC()
     toc += "\n";
     toc += "</td></tr>\n";
     toc += "<tr><td>\n";
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
-        if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent()) {
+        if (!cur->hasHiddenParent() && !cur->hasScrolledParent()) {
             if (dia.useNumbering())
                 number = getSectionString(cur);
             toc +=
@@ -316,7 +307,7 @@ QString ExportConfluence::createTOC()
             toc += QString("<a href=\"#%1\"> %2 %3</a><br />\n")
                        .arg(model->getSelectString(cur))
                        .arg(number)
-                       .arg(quoteMeta(cur->getHeadingPlain()));
+                       .arg(quoteMeta(cur->headingPlain()));
             toc += "</div>";
         }
         model->nextBranch(cur, prev);
@@ -336,11 +327,11 @@ void ExportConfluence::doExport(bool useDialog)
     // Setup dialog and read settings
     dia.setMapName(model->getMapName());
     dia.setFilePath(model->getFilePath());
-    dia.setURL(url);
+    dia.setUrl(url);
     dia.setPageName(pageName);
     BranchItem *bi = (BranchItem*)(model->findBySelectString("mc0"));
     if (bi)
-        dia.setPageNameHint(bi->getHeadingPlain());
+        dia.setPageNameHint(bi->headingPlain());
 
     dia.readSettings();
 
@@ -363,7 +354,6 @@ void ExportConfluence::doExport(bool useDialog)
         return;
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
 
     // Hide stuff during export
     model->setExportMode(true);
@@ -377,7 +367,7 @@ void ExportConfluence::doExport(bool useDialog)
     agent->setPageURL(url);
     agent->setNewPageName(pageName);
     agent->setUploadPagePath(filePath);
-    agent->setModelID(model->getModelID());
+    agent->setModelID(model->modelId());
 
     // Include image of map
     QString mapImageFilePath = tmpDir.path() + "/mapImage.png";
@@ -420,7 +410,7 @@ void ExportConfluence::doExport(bool useDialog)
     // exportName migtht be changed by agent AFTER successfull export and sent to vymModel!
     exportName = (createNewPage) ? "ConfluenceNewPage" : "ConfluenceUpdatePage";
     args <<  url;
-    if (!pageName.isEmpty()) 
+    if (!pageName.isEmpty())
         args <<  pageName;
 
     result = ExportBase::Ongoing;

@@ -12,13 +12,16 @@ class TreeEditor : public QTreeView {
     Q_OBJECT
 
   public:
-    TreeEditor(VymModel *m = NULL);
+    TreeEditor(VymModel *m = nullptr);
     ~TreeEditor();
     void init();
     QModelIndex getSelectedIndex();
 
   protected:
     virtual void contextMenuEvent(QContextMenuEvent *e);
+
+  public slots:
+    void closeWindow();
 
   private slots:
     void cursorUp();

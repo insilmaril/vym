@@ -1,0 +1,35 @@
+vym.clearConsole();
+map = vym.currentMap();
+
+il = map.itemList();
+il.setModeSelectedSubtrees();
+
+label = "deletion_candidate";
+
+dc_count = 0;
+total_count = 0;
+
+while (b = il.nextBranch())
+{
+  total_count++;
+
+  vym.print ("Current page: " + b.getHeading() );
+  if (b.hasAttributeWithKey("Confluence.labels.count")) {
+    n = b.attributeAsInt("Confluence.labels.count");
+    for (i = 0; i < n; i++) {
+      key = "Confluence.label-" + i;
+      if (b.hasAttributeWithKey(key)) {
+        if (b.attributeAsString(key) == label) {
+          // Actions done in map:
+          b.colorBranch("#FF0000");
+          b.setFlagByName("exclamationmark");
+
+          vym.print("  -> Found label " + label);
+          dc_count++;
+        }
+      }
+    }
+  }
+}
+
+vym.print(dc_count + " deletion_candidate labels found in " + total_count + " pages");

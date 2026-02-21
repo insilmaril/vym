@@ -6,11 +6,11 @@
 #include <QDebug>
 #include <QItemSelectionModel>
 
-SlideModel::SlideModel(VymModel *vm) : QAbstractItemModel(NULL)
+SlideModel::SlideModel(VymModel *vm) : QAbstractItemModel(nullptr)
 {
     QVector<QVariant> rootData;
     rootData << "Slide";
-    rootItem = new SlideItem(rootData, NULL, this);
+    rootItem = new SlideItem(rootData, nullptr, this);
     vymModel = vm;
 }
 
@@ -45,7 +45,7 @@ QVariant SlideModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags SlideModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return QFlag(0);
 
     return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
@@ -118,7 +118,7 @@ QModelIndex SlideModel::parent(const QModelIndex &index) const
     if (parentItem == rootItem)
         return QModelIndex();
 
-    return createIndex(parentItem->childNumber(), 0, parentItem);
+    return createIndex(parentItem->row(), 0, parentItem);
 }
 
 bool SlideModel::removeColumns(int position, int columns,
@@ -188,11 +188,11 @@ bool SlideModel::setHeaderData(int section, Qt::Orientation orientation,
 
 SlideItem *SlideModel::addSlide(SlideItem *dst, int n)
 {
-    SlideItem *si = NULL;
+    SlideItem *si = nullptr;
     if (!dst)
         dst = rootItem;
 
-    emit(layoutAboutToBeChanged());
+    emit layoutAboutToBeChanged();
 
     QModelIndex parix = index(dst);
     if (n < 0)
@@ -203,7 +203,7 @@ SlideItem *SlideModel::addSlide(SlideItem *dst, int n)
         si = getItem(ix);
     }
     endInsertRows();
-    emit(layoutChanged());
+    emit layoutChanged();
 
     return si;
 }
@@ -213,7 +213,7 @@ void SlideModel::deleteSlide(SlideItem *si)
     QModelIndex ix = index(si);
     if (ix.isValid()) {
         QModelIndex px = ix.parent();
-        int n = si->childNumber();
+        int n = si->row();
         removeRows(n, 1, px);
     }
 }
@@ -221,11 +221,11 @@ void SlideModel::deleteSlide(SlideItem *si)
 bool SlideModel::relinkSlide(SlideItem *si, SlideItem *dst, int pos)
 {
     if (si && dst) {
-        emit(layoutAboutToBeChanged());
+        emit layoutAboutToBeChanged();
         SlideItem *pi = si->parent();
 
         // Remove at current position
-        int n = si->childNumber();
+        int n = si->row();
 
         beginRemoveRows(index(pi), n, n);
         pi->removeItem(n);
@@ -239,7 +239,7 @@ bool SlideModel::relinkSlide(SlideItem *si, SlideItem *dst, int pos)
         dst->insertItem(pos, si);
         endInsertRows();
 
-        emit(layoutChanged());
+        emit layoutChanged();
 
         selModel->select(index(si), QItemSelectionModel::ClearAndSelect);
 
@@ -261,7 +261,7 @@ SlideItem *SlideModel::getItem(const QModelIndex &index) const
 SlideItem *SlideModel::getSlide(int n)
 {
     if (n >= count() || n < 0)
-        return NULL;
+        return nullptr;
     return getItem(index(n, 0, QModelIndex()));
 }
 
@@ -270,7 +270,7 @@ SlideItem *SlideModel::findSlideID(uint n)
     for (int i = 0; i < rootItem->childCount(); i++)
         if (rootItem->child(i)->getID() == n)
             return rootItem->child(i);
-    return NULL;
+    return nullptr;
 }
 
 QString SlideModel::saveToDir()
@@ -310,5 +310,5 @@ SlideItem *SlideModel::getSelectedItem()
     QModelIndex ix = getSelectedIndex();
     if (ix.isValid())
         return getItem(ix);
-    return NULL;
+    return nullptr;
 }

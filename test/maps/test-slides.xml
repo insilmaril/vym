@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE vymmap>
+
+<vymmap  version="2.9.0" author="Uwe (inventor of vym)" title="" comment="" date="2023-03-31" branchCount="3" backgroundColor="#1b1e20" defaultFont="Noto Sans,16,-1,5,50,0,0,0,0,0,Regular" selectionColor="#96960a" linkStyle="StylePolyParabel" linkColor="#00aaff" defXLinkColor="#3232ff" defXLinkWidth="1" defXLinkPenStyle="Qt::DashLine" defXLinkStyleBegin="HeadFull" defXLinkStyleEnd="HeadFull" mapZoomFactor="1.63358" mapRotationAngle="70">
+
+    <mapcenter absPosX="37" absPosY="-83" uuid="{40b3036b-bac8-4b46-b008-bbf70f076842}">
+        <heading  textMode="plainText"  textColor="#ffffff"  text="Slides tests" />
+        <frame  frameType="RoundedRectangle" penColor="#ffffff" brushColor="#55557f" padding="0" borderWidth="2" />
+        <branch relPosX="134.35" relPosY="-134.35" uuid="{9c1ed682-4859-4156-9e1d-e9e9da5da671}">
+            <heading  textMode="plainText"  textColor="#ffffff"  text="Main A" />
+        </branch>
+        <branch relPosX="134.35" relPosY="134.35" uuid="{6c656dee-fa56-4cbc-8139-3af32d1de474}">
+            <heading  textMode="plainText"  textColor="#ffffff"  text="Main B" />
+        </branch>
+    </mapcenter>
+    <select>mc:0,bo:1</select>
+    <slide  name="Mapcenter" zoom="-1" rotation="1" duration="2000" curve="14" mapitem="" inScript="// Template for taking snapshots in slideeditor\n\nmap = vym.currentMap();\nmap.setMapZoom(1);\nmap.setMapRotation(0);\nmap.centerOnID(&quot;{40b3036b-bac8-4b46-b008-bbf70f076842}&quot;);\n" />
+    <slide  name="Main A - zoomed in" zoom="-1" rotation="1" duration="2000" curve="14" mapitem="" inScript="// Template for taking snapshots in slideeditor\n\nmap = vym.currentMap();\nmap.setMapZoom(2.66002);\nmap.setMapRotation(0);\nmap.centerOnID(&quot;{9c1ed682-4859-4156-9e1d-e9e9da5da671}&quot;);\n" />
+    <slide  name="Main B- zoomed out and rotated" zoom="-1" rotation="1" duration="2000" curve="14" mapitem="" inScript="// Template for taking snapshots in slideeditor\n\nmap = vym.currentMap();\nmap.setMapZoom(1.63358);\nmap.setMapRotation(70);\nmap.centerOnID(&quot;{6c656dee-fa56-4cbc-8139-3af32d1de474}&quot;);\n" />
+</vymmap>

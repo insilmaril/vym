@@ -9,6 +9,7 @@ class ScriptOutput : public QWidget {
   public:
     ScriptOutput(QWidget *parent);
     ~ScriptOutput();
+    void setFocus();
     void clear();
     void setText(const QString &text);
     QString text();

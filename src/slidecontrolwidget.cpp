@@ -10,6 +10,7 @@
 #include "slidecontrolwidget.h"
 
 extern Main *mainWindow;
+extern QString iconTheme;
 
 SlideControlWidget::SlideControlWidget(QWidget *)
 {
@@ -35,7 +36,7 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     snapshotButton = new QPushButton;
     // snapshotButton->setIcon (QPixmap ( ":/sliderecord.png" ));
     // Original: /usr/share/icons/oxygen/32x32/devices/camera-photo.png
-    snapshotButton->setIcon(QPixmap(":/slide-camera.png"));
+    snapshotButton->setIcon(QPixmap(QString(":/camera-photo-%1.svg").arg(iconTheme)));
     connect(snapshotButton, SIGNAL(clicked()), this, SLOT(snapshotPressed()));
 
     editButton = new QPushButton;
@@ -43,7 +44,7 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     connect(editButton, SIGNAL(clicked()), this, SLOT(editPressed()));
 
     deleteButton = new QPushButton;
-    deleteButton->setIcon(QPixmap(":/edittrash.png"));
+    deleteButton->setIcon(QPixmap(QString(":/edit-delete-%1.svg").arg(iconTheme)));
     connect(deleteButton, SIGNAL(clicked()), this, SLOT(deletePressed()));
 
     row2Layout->addWidget(previousButton);
@@ -59,16 +60,16 @@ SlideControlWidget::SlideControlWidget(QWidget *)
     setLayout(mainLayout);
 }
 
-void SlideControlWidget::snapshotPressed() { emit(takeSnapshot()); }
+void SlideControlWidget::snapshotPressed() { emit takeSnapshot(); }
 
-void SlideControlWidget::editPressed() { emit(editButtonPressed()); }
+void SlideControlWidget::editPressed() { emit editButtonPressed(); }
 
-void SlideControlWidget::deletePressed() { emit(deleteButtonPressed()); }
+void SlideControlWidget::deletePressed() { emit deleteButtonPressed(); }
 
-void SlideControlWidget::previousPressed() { emit(previousButtonPressed()); }
+void SlideControlWidget::previousPressed() { emit previousButtonPressed(); }
 
-void SlideControlWidget::nextPressed() { emit(nextButtonPressed()); }
+void SlideControlWidget::nextPressed() { emit nextButtonPressed(); }
 
-void SlideControlWidget::upPressed() { emit(upButtonPressed()); }
+void SlideControlWidget::upPressed() { emit upButtonPressed(); }
 
-void SlideControlWidget::downPressed() { emit(downButtonPressed()); }
+void SlideControlWidget::downPressed() { emit downButtonPressed(); }

@@ -1,14 +1,15 @@
 #include "treeeditor.h"
 
 #include <QAction>
+#include <QContextMenuEvent>
+#include <QHeaderView>
 #include <QMenu>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "mainwindow.h"
 #include "vymmodel.h"
 
 extern Main *mainWindow;
-extern QString editorFocusStyle;
 
 extern QMenu *branchContextMenu;
 extern QMenu *canvasContextMenu;
@@ -61,7 +62,13 @@ void TreeEditor::init()
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(startEdit()));
 
-    // Clone actions defined in MainWindow
+    a = new QAction(this);
+    a->setShortcutContext(Qt::WidgetShortcut);
+    a->setShortcut(Qt::CTRL | Qt::Key_D);
+    addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+
+    // Clone actions defined in MainWindow  // FIXME-3 PageUp/Down not working in TreeEditor
     foreach (QAction *qa, mainWindow->mapEditorActions) {
         a = new QAction(this);
         a->setShortcut(qa->shortcut());
@@ -69,8 +76,6 @@ void TreeEditor::init()
         connect(a, SIGNAL(triggered()), qa, SLOT(trigger()));
         addAction(a);
     }
-
-    setStyleSheet("QTreeView:focus {" + editorFocusStyle + "}");
 }
 
 TreeEditor::~TreeEditor()
@@ -98,6 +103,12 @@ void TreeEditor::contextMenuEvent(QContextMenuEvent *e) {
         canvasContextMenu->exec(e->globalPos());
 
     e->accept();
+}
+
+void TreeEditor::closeWindow()
+{
+    // Close *all* TreeEditors in each VymView and update vym settings
+    mainWindow->setTreeEditorsVisibility(false);
 }
 
 void TreeEditor::cursorUp()

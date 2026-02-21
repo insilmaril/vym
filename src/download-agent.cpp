@@ -60,7 +60,7 @@ QString DownloadAgent::getResultMessage() { return resultMessage; }
 
 void DownloadAgent::setFinishedAction(VymModel *m, const QString &script)
 {
-    finishedScriptModelID = m->getModelID();
+    finishedScriptModelID = m->modelId();
     finishedScript = script;
 }
 
@@ -152,7 +152,7 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
     if (reply->error()) {
         success = false;
         resultMessage = reply->errorString();
-        emit(downloadFinished());
+        emit downloadFinished();
     }
     else {
         success = true;
@@ -198,7 +198,7 @@ void DownloadAgent::requestFinished(QNetworkReply *reply)
         }
         if (debug)
             qDebug() << "DownloadAgent:  resultMessage  = " << resultMessage;
-        emit(downloadFinished());
+        emit downloadFinished();
     }
 
     currentDownloads.removeAll(reply);

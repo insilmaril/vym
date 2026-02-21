@@ -1,95 +1,49 @@
-#ifndef XML_H
-#define XML_H
+#ifndef XML_VYM_H
+#define XML_VYM_H
 
 #include "xml-base.h"
 
-#include "vymnote.h"
-
-class BranchItem;
-class ImageItem;
-class MapItem;
 class SlideItem;
 class Task;
 
 /*! \brief Parsing VYM maps from XML documents */
 
-enum Content {
-    TreeContent = 0x0001,
-    SlideContent = 0x0002,
-    XLinkContent = 0x0004
-};
-
-class parseVYMHandler : public parseBaseHandler {
+class VymReader : public BaseReader {
   public:
-    parseVYMHandler();
-    void setContentFilter(const int &);
+    VymReader (VymModel*);
+    virtual bool read(QIODevice *device);
 
   private:
-    int contentFilter;
+    void readVymMap();
+    void readMapDesign();
+    void readMapDesignElement();
+    void readMapDesignCompatibleAttributes();
+    void readSelection();
+    void readSetting();
+    void readAttribute();
+    void readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertPosBranch);
+    void readHeadingOrVymNote();
+    void readFrame();
+    void readLegacyXLink();
+    void readStandardFlag();
+    void readUserFlagDef();
+    void readUserFlag();
+    void readImage();
+    void readXLink();
+    void readSlide();
+    void readTask();
 
-  public:
-    bool startDocument();
-    bool startElement(const QString &, const QString &, const QString &eName,
-                      const QXmlAttributes &atts);
-    bool endElement(const QString &, const QString &, const QString &);
-    bool characters(const QString &);
-    QString errorString();
-    bool readMapAttr(const QXmlAttributes &);
-    bool readMapDesignCompatibleAttr(const QXmlAttributes &);
-    bool readBranchAttr(const QXmlAttributes &);
-    bool readFrameAttr(const QXmlAttributes &);
-    bool readOOAttr(const QXmlAttributes &);
-    bool readNoteAttr(const QXmlAttributes &);
-    bool readImageAttr(const QXmlAttributes &);
-    bool readXLinkAttr(const QXmlAttributes &);
-    bool readLinkNewAttr(const QXmlAttributes &);
-    bool readSettingAttr(const QXmlAttributes &);
-    bool readSlideAttr(const QXmlAttributes &);
-    bool readTaskAttr(const QXmlAttributes &);
-    bool readUserFlagDefAttr(const QXmlAttributes &);
-    bool readUserFlagAttr(const QXmlAttributes &);
-
-  private:
-    enum State {
-        StateInit,
-        StateMap,
-        StateMapDesign,  // Introduced 2.9.514
-        StateMD,         // Introduced 2.9.514
-        StateMapSelect,
-        StateMapSetting,
-        StateMapSlide,
-        StateMapCenter,
-        StateBranch,
-        StateBranchXLink, // Obsolete
-        StateVymNote,
-        StateHtmlNote, // Obsolete >= 1.13.6
-        StateHtml,
-        StateFrame,
-        StateStandardFlag, // New in 2.7.509
-        StateUserFlagDef,  // New in 2.7.509
-        StateUserFlag,
-        StateNote, // Obsolete >= 1.4.6
-        StateImage,
-        StateHeading,
-        StateLink,
-        StateAttribute,
-        StateTask
-    };
+    void readVymMapAttr();
+    void readBranchAttr();
+    void readOrnamentsAttr();
+    void readFrameAttr();
 
     int branchesCounter;
     int branchesTotal;
 
-    State state;
-    QList<State> stateStack;
     VymText vymtext;
-
-    BranchItem *lastBranch;
-    ImageItem *lastImage;
-    MapItem *lastMI;
-    SlideItem *lastSlide;
-    Task *lastTask;
-    QString lastSetting;
 
     bool useProgress;
 };
+
 #endif

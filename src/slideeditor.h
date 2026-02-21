@@ -15,7 +15,12 @@ class SlideEditor : public QWidget {
   public:
     SlideEditor(VymModel *);
 
+  protected:
+    virtual void closeEvent(QCloseEvent *event);
+
   public slots:
+    void setFocus();
+    void closeWindow();  
     void previousSlide();
     void nextSlide();
     void addSlide();

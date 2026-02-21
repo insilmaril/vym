@@ -23,7 +23,6 @@ class FindResultItem {
     FindResultItem *parent();
     bool removeChildren(int position, int count);
     bool removeColumns(int position, int columns);
-    int childNumber() const;
     bool setData(int column, const QVariant &value);
     void setOriginal(TreeItem *ti);
     int getOriginalID();

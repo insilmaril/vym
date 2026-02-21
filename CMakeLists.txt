@@ -1,32 +1,44 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
-project(ViewYourMind-release)
+project(vym LANGUAGES CXX)
 
-find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+# See also https://doc.qt.io/qt-6.5/cmake-get-started.html
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (CMAKE_SYSTEM_NAME STREQUAL Linux)
+    message(STATUS "vym: using UNIX in cmake")	# FIXME-0 still required?
+endif()
 
 set(QtComponents
     LinguistTools
     Network
     PrintSupport
-    Script
+    Qml
     Svg
+    SvgWidgets
     Widgets
     Xml
 )
 
 set(QtLibraries
-    Qt5::Network
-    Qt5::PrintSupport
-    Qt5::Script
-    Qt5::Svg
-    Qt5::Widgets
-    Qt5::Xml
+    Qt6::Network
+    Qt6::PrintSupport
+    Qt6::Qml
+    Qt6::Svg
+    Qt6::SvgWidgets
+    Qt6::Widgets
+    Qt6::Xml
 )
 
-# Switch on Debug mode with one of below:
+# Switch on Debug mode  on command line with
 # cmake -DCMAKE_BUILD_TYPE=Debug .
+#
+# or uncomment here:
 # set(CMAKE_BUILD_TYPE Debug)
 
+# Should no longer needed with qt_standard_project_setup() below...
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -34,12 +46,14 @@ set(CMAKE_AUTORCC ON)
 # On Linux DBUS is used for IPC with vym
 # On openSUSE install it using:  zypper install dbus-1-devel
 
-if (UNIX)
+if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     find_package(DBus1)
 
     if(DBus1_FOUND)
+        message(STATUS "vym: Deteced Linux and DBUS1, adding DBUS interfaces")
+
         LIST(APPEND QtComponents DBus)
-        LIST(APPEND QtLibraries Qt5::DBus)
+        LIST(APPEND QtLibraries Qt6::DBus)
     endif()
 endif()
 
@@ -50,31 +64,33 @@ if(WIN32)
     if( OPENSSL_FOUND )
         include_directories(${OPENSSL_INCLUDE_DIRS})
         link_directories(${OPENSSL_LIBRARIES})
-        message(STATUS "Using OpenSSL version: ${OPENSSL_VERSION}")
+        message(STATUS "vym: Using OpenSSL version: ${OPENSSL_VERSION}")
     else()
-        message(STATUS "No openSSL found?!")
+        message(STATUS "vym: No openSSL found?!")
         # Error; with REQUIRED, pkg_search_module() will throw an error by it's own
     endif()
-
-    #target_link_libraries(${YOUR_TARGET_HERE} ${OPENSSL_LIBRARIES})
-    #target_link_libraries(project_name /path/of/libssl.so /path/of/libcrypto.so)
 
     set(CMAKE_INSTALL_DATAROOTDIR ".")
  endif()
 
+
+# https://doc.qt.io/qt-6/qt-standard-project-setup.html
+find_package(Qt6 REQUIRED COMPONENTS Core)
+qt_standard_project_setup( I18N_TRANSLATED_LANGUAGES
+    el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sv zh_CN zh_TW
+) # FIXME add missing translations
+
 include(GNUInstallDirs)
 
-find_package(Qt5 COMPONENTS ${QtComponents} REQUIRED)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
+
 list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/forms")
 
-get_target_property(QtLibraryType Qt5::Widgets TYPE)
+get_target_property(QtLibraryType Qt6::Widgets TYPE)
 
 if(QtLibraryType STREQUAL STATIC_LIBRARY)
-    message(STATUS "Static Qt linkage")
-    list(APPEND QtLibraries Qt5::QSvgPlugin)
+    message(STATUS "vym: Static Qt linkage")
+    list(APPEND QtLibraries Qt6::QSvgPlugin)
 endif()
 
 include_directories(
@@ -92,45 +108,59 @@ if(WIN32)
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
 endif()
 
-
-# Add DBUS interfaces, if DBUS is available on platform
+# Add DBUS interfaces to sources, if DBUS is available on platform
 if(DBus1_FOUND)
     list(APPEND VymSources src/dbus/adaptormodel.cpp src/dbus/adaptorvym.cpp)
     include_directories(${CMAKE_SOURCE_DIR}/src/dbus ${CMAKE_SOURCE_DIR}/src)
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
 endif()
 
-# Translations  (release)
+# Translations
+#
+# To update the translation files based on source code changes
+# add the targest update_translations and release_translations
+#
+# See also (for Qt 6):
+# https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
 
-    # To update the translation files based on source code changes 
-    # first call manually 
-    # lupdate-qt5 src/ -ts lang/*.ts
-    #
-    # Qt6 will have a dedicated macro:
-    # https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
-
-#file(GLOB ts_files ABSOLUTE ${CMAKE_BINARY_DIR} "lang/*.ts")
 file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
-message(STATUS "Creating ${CMAKE_BINARY_DIR}/translations")
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
+#message(STATUS "vym: Creating ${CMAKE_BINARY_DIR}/translations")
+
+#file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
 set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
-#set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_SOURCE_DIR}/translations)
 
-#QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR} ${ts_files})
-#QT5_create_translation(qm_files ${CMAKE_BINARY_DIR} ${ts_files})
-#QT5_create_translation(qm_files ${CMAKE_SOURCE_DIR}/src)
+qt_add_translations(TARGETS vym
+    TS_FILE_DIR ${CMAKE_SOURCE_DIR}/lang    # TS_OUTPUT_DIRECTORY in Qt 6.9
+    RESOURCE_PREFIX ${CMAKE_BINARY_DIR}/translations
+    #QM_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/translations  # Only in Qt 6.9
+)
 
-QT5_add_translation(qm_files ${ts_files})
+#qt_add_lrelease(target TS_FILES ${ts_files} QM_FILES_OUTPUT_VARIABLE ${CMAKE_BINARY_DIR}/translations) 
+
 add_compile_definitions(CMAKE_SOURCE_DIR)
 
-message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
-message(STATUS "ts_files: ${ts_files}")
-message(STATUS "qm_files: ${qm_files}")
+message(STATUS "vym: CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+message(STATUS "vym: ts_files: ${ts_files}")
+message(STATUS "vym: qm_files: ${qm_files}")
 
-ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}")
 
-add_executable(vym ${VymSources} vym.qrc ${qm_files})
-target_link_libraries(vym ${QtLibraries})
+# On Unix-like systems, place app data under a dedicated subdir
+# so runtime looks in .../share/vym for resources.
+set(VYM_SHARE_SUBDIR "vym")
+ADD_COMPILE_DEFINITIONS(VYMBASEDIR="${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR}")
+
+
+# FIXME qm_files needed?
+#add_executable(vym ${VymSources} vym.qrc ${qm_files})
+qt_add_executable(vym MACOSX_BUNDLE ${VymSources} vym.qrc ${qm_files} ) # FIXME Icon missing?
+                                                                # FIXME Move add_executable to end?
+target_link_libraries(vym PRIVATE ${QtLibraries})
+
+#FIXME shoud translations/ really be in  CMAKE_BINARY_DIR? Or better e.g. in Contents?
+#
+add_custom_target(make-translations-directory ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/translations)
+add_dependencies(vym make-translations-directory)
 
 if(WIN32)
     set_target_properties(vym PROPERTIES WIN32_EXECUTABLE TRUE)
@@ -140,35 +170,84 @@ else()
 endif()
 
 if(APPLE)
-    message(STATUS "Detected APPLE")
-    set_target_properties(vym PROPERTIES MACOSX_BUNDLE TRUE )
+    message(STATUS "vym: Detected APPLE")
 
-    # Add property to Info.plist
-    set(MACOSX_BUNDLE_ICON_FILE vym.icns)
+    set(MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME})
 
-    # tell CMake where to find and install the file itself
-    set(APP_ICON_MACOSX ${CMAKE_CURRENT_SOURCE_DIR}/icons/vym.icns)
-    set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
-           MACOSX_PACKAGE_LOCATION "Resources")
+    # Prepare Info.plist
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "2.9.5xx" #"${PROJECT_VERSION}"   # FIXME Version missing^
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.insilmaril.vym"
+        MACOSX_BUNDLE_ICON_FILE "icons/vym.icns"
+        MACOSX_BUNDLE TRUE
+    )
 
-#FIXME-0    add_executable(vym MACOSX_BUNDLE main.cpp ${APP_ICON_MACOSX})
-target_sources(vym PUBLIC ${APP_ICON_MACOSX})
+    # Root paths to be copied to vym.app bundle (adjust if needed)
+    set(DIRLIST demos doc exports flags icons macros styles)
+
+    foreach(CURRENT_DIR ${DIRLIST})
+        set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/${CURRENT_DIR}")
+        set(RESOURCE_DIR "${CMAKE_BINARY_DIR}/vym.app/Contents/Resources/${CURRENT_DIR}")
+
+        # --- 1. Add all subdirectories of SOURCE to the include path ---
+
+        # Get all subdirectories recursively
+        file(GLOB_RECURSE SOURCE_SUBDIRS LIST_DIRECTORIES true RELATIVE ${SOURCE_DIR} "${SOURCE_DIR}/*")
+
+        set(INCLUDE_DIRS "")
+        foreach(path ${SOURCE_SUBDIRS})
+            if(IS_DIRECTORY "${SOURCE_DIR}/${path}")
+                list(APPEND INCLUDE_DIRS "${SOURCE_DIR}/${path}")
+            endif()
+        endforeach()
+
+        # Add SOURCE itself too
+        list(APPEND INCLUDE_DIRS "${SOURCE_DIR}")
+
+        # Add them to your target
+        target_include_directories(vym PRIVATE ${INCLUDE_DIRS})
+
+        message(STATUS "CURRENT_DIR=${CURRENT_DIR}  includeDirs=${INCLUDE_DIRS}")
+
+        # --- 2. Copy SOURCE_DIR -> RESOURCE_DIR at build time ---
+
+        add_custom_command(
+            TARGET vym POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    "${SOURCE_DIR}"
+                    "${RESOURCE_DIR}"
+            COMMENT "Copying SOURCE directory ${SOURCE_DIR} to RESOURCE directory ${RESOURCE_DIR}..."
+        )
+    endforeach()
+
+    # Finally copy generated translations to bundle
+    add_custom_command(
+        TARGET vym POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_BINARY_DIR}/translations"
+                "${RESOURCE_DIR}"
+        COMMENT "Copying translations directory to RESOURCE directory ${RESOURCE_DIR}..."
+    )
 endif()
 
-add_custom_target(make-translations-directory ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/translations)
-add_dependencies(vym make-translations-directory)
+message(STATUS "vym: CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
+message(STATUS "vym: CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
+message(STATUS "vym: CMAKE_INSTALL_DATAROOTDIR=${CMAKE_INSTALL_DATAROOTDIR}")
 
-install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+
+install(DIRECTORY demos DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR})
 install(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_DOCDIR} FILES_MATCHING PATTERN "*.pdf")
 install(FILES doc/vym.1.gz DESTINATION ${CMAKE_INSTALL_MANDIR})
 install(FILES README.md LICENSE.txt DESTINATION ${CMAKE_INSTALL_DOCDIR})
-install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
+install(DIRECTORY exports flags icons macros ${CMAKE_BINARY_DIR}/translations scripts styles DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${VYM_SHARE_SUBDIR})
 
 if(UNIX)
     install(FILES icons/vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
-    file(CREATE_LINK ../apps/vym.png application-x-vym.png SYMBOLIC)
-    install(FILES ${CMAKE_BINARY_DIR}/application-x-vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/mimetypes)
+    # Disabling PR #109 for now:    # FIXME
+    # file(CREATE_LINK ../apps/vym.png application-x-vym.png SYMBOLIC)
+    # install(FILES ${CMAKE_BINARY_DIR}/application-x-vym.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/mimetypes)
     install(FILES config/vym.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/mime/packages)
     install(FILES config/vym.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 endif()

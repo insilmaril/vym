@@ -16,18 +16,12 @@ class VymView : public QMainWindow {
     Q_OBJECT
   public:
     VymView(VymModel *model);
-    ~VymView();
-    void readSettings();
     VymModel *getModel();
     MapEditor *getMapEditor();
-    bool treeEditorIsVisible();
-    bool slideEditorIsVisible();
     void initFocus();
     void nextSlide();
     void previousSlide();
-    void setSelectionBrush(const QBrush &);
-    void setBackgroundColor(const QColor &);
-    void setLinkColor(const QColor &);
+    void updateColors();
 
   public slots:
     void changeSelection(const QItemSelection &newSel,
@@ -37,10 +31,14 @@ class VymView : public QMainWindow {
     void expandOneLevel();
     void collapseOneLevel();
     void collapseUnselected();
-    void showSelection(bool scaled);
-    void toggleTreeEditor();
-    void toggleSlideEditor();
+    void showSelection(bool scaled, bool rotated);
+    void treeEditorVisibilityChanged();
+    void setTreeEditorVisibility(bool);
+    void slideEditorVisibilityChanged();
+    void setSlideEditorVisibility(bool);
     void setFocusMapEditor();
+    void setFocusTreeEditor();
+    void setFocusSlideEditor();
 
   private:
     VymModel *model;

@@ -1,8 +1,9 @@
 #ifndef XMLOBJ_H
 #define XMLOBJ_H
 
-class QString;
-class QStringList;
+#include <QString>
+#include <QStringList>
+
 
 QString quoteMeta(const QString &);
 QString unquoteMeta(const QString &);
@@ -20,7 +21,7 @@ class XMLObj {
     QString beginElement(QString, QString);          // name,attr
     QString beginElement(QString);                   // name
     QString endElement(QString);                     // name
-    QString attribut(QString, QString) const;        // name, val
+    QString attribute(QString, QString) const;        // name, val
     QString valueElement(QString, QString);          // name, val
     QString valueElement(QString, QString, QString); // name, val, attr
     void incIndent();

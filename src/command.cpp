@@ -1,118 +1,132 @@
 #include "command.h"
 
 #include <QDebug>
-Command::Command(const QString &n, SelectionType st, ParameterType retType)
+Command::Command(const QString &n, SelectionType st, ParameterType retType) // FIXME-3 selectionType no longer needed with wrappers
 {
-    name = n;
-    selectionType = st;
-    returnType = retType;
+    nameInt = n;
+    selectionTypeInt = st;
+    returnTypeInt = retType;
 }
 
-QString Command::getName() { return name; }
+QString Command::name() { return nameInt; }
 
-QString Command::getDescription()
+QString Command::description()
 {
     QString s;
-    s = QString("Command: \"%1\"\n").arg(name);
-    s += QString("  SelectionType: %1\n").arg(getSelectionTypeName());
-    s += QString("    Return type: %1\n").arg(typeToString(returnType));
-    s += QString("     Parameters: %1\n").arg(parCount());
-    // s+=QString(" Parameters: %1\n").arg(parCount() );
-    for (int i = 0; i < parCount(); i++) {
-        s += QString("    Parameter %1:\n").arg(i + 1);
-        s += QString("        Comment: %1\n").arg(getParComment(i));
-        s += QString("           Type: %1\n").arg(typeToString(getParType(i)));
-        s += QString("       Optional: ");
-        isParOptional(i) ? s += "yes\n" : s += "No\n";
+    s  = QString("        Command: \"%1\"\n").arg(nameInt);
+    s += QString("         Object: %1\n").arg(objectTypeName());
+    s += QString("        Comment: %1\n").arg(commentInt);
+    if (objectTypeInt == MapObject)
+        s += QString("  SelectionType: %1\n").arg(selectionTypeName());
+    s += QString("    Return type: %1\n").arg(typeToString(returnTypeInt));
+    s += QString("     Parameters: %1\n").arg(parameterCount());
+    // s+=QString(" Parameters: %1\n").arg(parameterCount() );
+    for (int i = 0; i < parameterCount(); i++) {
+        s += QString("       Parameter #%1:\n").arg(i + 1);
+        s += QString("             Comment: %1\n").arg(parameterComment(i));
+        s += QString("                Type: %1\n").arg(typeToString(parameterType(i)));
+        s += QString("            Optional: ");
+        isParameterOptional(i) ? s += "yes\n" : s += "No\n";
     }
     return s;
 }
 
-QString Command::getDescriptionLaTeX()
+QString Command::descriptionLaTeX()
 {
     QString s;
-    s = QString("\\item %1\\\\\n").arg(name);
+    s = QString("\\item %1\\\\\n").arg(nameInt);
     s += "\\begin{tabular}{rl}\n";
-    s += QString("  SelectionType: & %1\\\\\n").arg(getSelectionTypeName());
-    s += QString("    Return Type: & %1\\\\\n").arg(typeToString(returnType));
+    s += QString("        Comment: & %1\\\\\n").arg(commentInt);
+    s += QString("  SelectionType: & %1\\\\\n").arg(selectionTypeName());
+    s += QString("    Return Type: & %1\\\\\n").arg(typeToString(returnTypeInt));
 
-    s += QString("     Parameters: & %1\\\\\n").arg(parCount());
-    for (int i = 0; i < parCount(); i++) {
+    s += QString("     Parameters: & %1\\\\\n").arg(parameterCount());
+    for (int i = 0; i < parameterCount(); i++) {
         s += QString("   Parameter: &  %1:\\\\\n").arg(i + 1);
-        s += QString("        Comment: & %1\\\\\n").arg(getParComment(i));
-        s += QString("           Type: & %1\\\\\n").arg(typeToString(getParType(i)));
+        s += QString("        Comment: & %1\\\\\n").arg(parameterComment(i));
+        s += QString("           Type: & %1\\\\\n").arg(typeToString(parameterType(i)));
         s += QString("       Optional: &  ");
-        isParOptional(i) ? s += "yes\\\\\n" : s += "No\\\\\n";
+        isParameterOptional(i) ? s += "yes\\\\\n" : s += "No\\\\\n";
     }
     s += "\\end{tabular}\n";
     return s;
 }
 
-void Command::addPar(ParameterType t, bool opt, const QString &c)
+void Command::addParameter(ParameterType t, bool opt, const QString &c)
 {
     parTypes.append(t);
     parOpts.append(opt);
     parComments.append(c);
 }
 
-int Command::parCount() { return parTypes.count(); }
+int Command::parameterCount() { return parTypes.count(); }
 
-Command::ParameterType Command::getParType(int n)
+Command::ParameterType Command::parameterType(int n)
 {
     if (n >= 0 && n < parTypes.count()) {
         return parTypes.at(n);
     }
-    qDebug() << "Command::getParType n out of range";
-    return Undefined;
+    qDebug() << "Command::parameterType n out of range";
+    return UndefinedPar;
 }
 
 QString Command::typeToString(const ParameterType &type)
 {
     switch (type) {
-    case String:
-        return "String";
-    case Int:
-        return "Int";
-    case Double:
-        return "Double";
-    case Color:
-        return "Color";
-    case Bool:
-        return "Bool";
-    case Void:
-        return "Void";
-    case Undefined:
-        return "Undefined";
-    default:
-        return "not defined in class Command.";
+        case BoolPar:
+            return "Bool";
+        case BranchPar:
+            return "Branch";
+        case BranchListPar:
+            return "BranchesList";
+        case ColorPar:
+            return "Color";
+        case DoublePar:
+            return "Double";
+        case ImagePar:
+            return "Image";
+        case IntPar:
+            return "Int";
+        case StringPar:
+            return "String";
+        case StringListPar:
+            return "StringsList";
+        case UndefinedPar:
+            return "Undefined";
+        case VoidPar:
+            return "Void";
+        case XLinkPar:
+            return "XLink";
+        default:
+            return "not defined in class Command.";
     }
 }
 
-Command::SelectionType Command::getSelectionType() { return selectionType; }
+Command::SelectionType Command::selectionType() { return selectionTypeInt; }
 
-QString Command::getSelectionTypeName()
+QString Command::selectionTypeName()
 {
-    switch (getSelectionType()) {
-    case Any:
+    switch (selectionType()) {
+    case AnySel:
         return "Any";
-    case TreeItem:
+    case TreeItemSel:
         return "TreeItem";
-    case Branch:
+    case BranchSel:
         return "Branch";
-    case BranchLike:
+    case BranchLikeSel:
         return "BranchLike";
-    case Image:
+    case ImageSel:
         return "Image";
-    case BranchOrImage:
+    case BranchOrImageSel:
         return "BranchOrImage";
-    case XLink:
+    case XLinkSel:
         return "XLink";
     default:
         return "Undefined";
     }
 }
 
-bool Command::isParOptional(int n)
+bool Command::isParameterOptional(int n)
 {
     if (n >= 0 && n < parTypes.count()) {
         return parOpts.at(n);
@@ -121,11 +135,48 @@ bool Command::isParOptional(int n)
     return false;
 }
 
-QString Command::getParComment(int n)
+QString Command::parameterComment(int n)
 {
     if (n >= 0 && n < parTypes.count()) {
         return parComments.at(n);
     }
-    qDebug() << "Command::getParComment n out of range";
+    qDebug() << "Command::parameterComment n out of range";
     return QString();
+}
+
+void  Command::setObjectType(const ObjectType &ot) {
+    objectTypeInt = ot;
+}
+
+QString  Command::objectTypeName() {
+    switch (objectTypeInt) {
+    case VymObject:
+        return "Vym program";
+    case MapObject:
+        return "Vym map";
+    case BranchObject:
+        return "Branch in a map";
+    case ImageObject:
+        return "Image in a map";
+    default:
+        return "Undefined";
+    }
+}
+
+void Command::setComment(const QString &s) {
+    commentInt = s;
+}
+
+QString Command::comment()
+{
+    return commentInt;
+}
+void Command::setReturnType(const ParameterType &type)
+{
+    returnTypeInt = type;
+}
+
+Command::ParameterType Command::returnType()
+{
+    return returnTypeInt;
 }

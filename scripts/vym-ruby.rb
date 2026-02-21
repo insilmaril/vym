@@ -1,7 +1,7 @@
 require 'dbus'
 require 'pp'
 
-$debug = false
+$debug = true
 
 class Vym
   def initialize (name)
@@ -24,7 +24,7 @@ class Vym
           # No parameters
           com = "vym.#{c}();"
           puts " * Calling vym: \"#{com}\":" if $debug
-          ret = @main.execute( com )
+          ret = @main.runScript( com )
         else
           # with parameters
           p = "";
@@ -37,13 +37,14 @@ class Vym
             end
           end
           com = "vym.#{c} (#{a.join(',')});"
-          puts " ** Calling vym: \"#{com}\":" if $debug
-          ret = @main.execute( com )
+          puts " * Calling vym: \"#{com}\":" if $debug
+          ret = @main.runScript( com )
         end
 
-        #FIXME-2  err = m.errorLevel[0]
+        #FIXME  err = m.errorLevel[0]
         if $debug
           puts "     Returned: #{ret[0]}" if ret[0] != ""
+          pp ret
           # puts "        Error: #{err}" if err > 0
         end
         ret[0]
@@ -60,7 +61,6 @@ class Vym
   end
 
   def map (n)
-    #puts "def map:  @service.object(\"/vymmodel_#{n}\")"
     map = @service.object("/vymmodel_#{n}")
     map.introspect
     map.default_iface = "org.insilmaril.vym.model.adaptor"
@@ -87,7 +87,6 @@ class VymMap
 
     # Getting commands for model via DBUS
     #if mapCount() > 0
-      # m = model(1)
       s = @map.listCommands
       puts "VymMap::initialize Retrieving commands via dbus..." if $debug
       @model_commands = s[0].split ","
@@ -98,7 +97,7 @@ class VymMap
             # No parameters
             com = "vym.currentMap().#{c}();"
             puts " * Calling model: \"#{com}\":" if $debug
-            ret = @map.execute( com )
+            ret = @main.runScript( com )
           else
             # Build string with parameters
             p = "";
@@ -113,11 +112,11 @@ class VymMap
             # com = "vym.clearConsole(); print( vym.currentMap().#{c} (#{a.join(',')}));"
             com = " vym.currentMap().#{c} (#{a.join(',')});"
             puts " ** Calling model: \"#{com}\":" if $debug
-            ret = @map.execute( com )
+            ret = @main.runScript( com )
             puts "Done calling" if $debug
           end
 
-          #FIXME-2 err = m.errorLevel[0]
+          #FIXME err = m.errorLevel[0]
           if $debug
             puts "     Returned: #{ret[0]}" if ret[0] != ""
             #puts "        Error: #{err}" if err > 0

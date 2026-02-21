@@ -50,7 +50,7 @@ class SlideModel : public QAbstractItemModel, XMLObj {
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex());
 
-    SlideItem *addSlide(SlideItem *dst = NULL, int n = -1);
+    SlideItem *addSlide(SlideItem *dst = nullptr, int n = -1);
     void deleteSlide(SlideItem *si);
     bool relinkSlide(SlideItem *si, SlideItem *dst, int pos);
 

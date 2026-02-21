@@ -3,7 +3,9 @@
 #include "export-firefox.h"
 
 #include "attributeitem.h"
+#include "branchitem.h"
 #include "mainwindow.h"
+#include "vymmodel.h"
 
 extern QString vymName;
 extern Main *mainWindow;
@@ -32,29 +34,27 @@ QJsonObject ExportFirefox::buildList(BranchItem *bi)
     AttributeItem *ai;
     for (int i = 0; i < bi->attributeCount(); i++) {
         ai =bi->getAttributeNum(i);
-        key = ai->getKey();
+        key = ai->key();
 
         // Rewrite some values, which maybe have been modified in map
         if (key == "index")
             ai->setValue(bi->num());
-        else if (key == "uri" && !bi->getURL().isEmpty())
-            ai->setValue(bi->getURL());
-        else if (key == "title" && !bi->getHeadingPlain().isEmpty())
-            ai->setValue(bi->getHeadingPlain());
+        else if (key == "uri" && bi->hasUrl())
+            ai->setValue(bi->url());
+        else if (key == "title" && !bi->headingPlain().isEmpty())
+            ai->setValue(bi->headingPlain());
 
         // Export values
         if (key == "postData")
             jsobj[key] = QJsonValue::Null; 
-        else if (ai->getAttributeType() == AttributeItem::DateTime) 
-            jsobj[key] = QJsonValue(ai->getValue().toDateTime().toMSecsSinceEpoch() * 1000);
-        else if (ai->getAttributeType() == AttributeItem::String)
-            jsobj[key] = ai->getValue().toString();
-        else if (ai->getAttributeType() == AttributeItem::Integer) 
-        {
-            jsobj[key] = QJsonValue(ai->getValue().toInt());
-        }
+        else if (strcmp(ai->value().typeName(), "QDateTime") == 0)
+            jsobj[key] = QJsonValue(ai->value().toDateTime().toMSecsSinceEpoch() * 1000);
+        else if (strcmp(ai->value().typeName(), "QString") == 0)
+            jsobj[key] = ai->value().toString();
+        else if (strcmp(ai->value().typeName(), "Integer") == 0)
+            jsobj[key] = QJsonValue(ai->value().toInt());
         else
-            qWarning() << "ExportFirefox  Unknown attribute type in " << bi->getHeadingPlain() << "Key: " << key;
+            qWarning() << "ExportFirefox  Unknown attribute type in " << bi->headingPlain() << "Key: " << key;
     }
 
     return jsobj;

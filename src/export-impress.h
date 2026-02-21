@@ -3,10 +3,10 @@
 
 #include "export-base.h"
 
-class ExportOO : public ExportBase {
+class ExportImpress : public ExportBase {
   public:
-    ExportOO();
-    ~ExportOO();
+    ExportImpress();
+    ~ExportImpress();
     void exportPresentation();
     bool setConfigFile(const QString &);
 

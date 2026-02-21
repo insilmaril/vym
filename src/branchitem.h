@@ -2,32 +2,34 @@
 #define BRANCHITEM_H
 
 #include "mapitem.h"
-#include "task.h"
 
 #include <QList>
 
 class QString;
 class QGraphicsScene;
-class BranchObj;
-class Link;
-class XLinkItem;
+
+class BranchContainer;
+class BranchWrapper;
+class HeadingContainer;
+class ImageContainer;
+class Task;
+class XLink;
 
 class BranchItem : public MapItem {
   public:
-    enum LayoutHint { AutoPositioning, FreePositioning };
-
     BranchItem(TreeItem *parent = nullptr);
     virtual ~BranchItem();
-    virtual void clear();
     virtual void copy(BranchItem *item);
     virtual BranchItem *parentBranch();
 
+    BranchWrapper *branchWrapper();
+
     virtual void insertBranch(int pos, BranchItem *branch);
+    virtual void insertImage (int pos, ImageItem *image);
 
     virtual QString saveToDir(const QString &tmpdir, const QString &prefix,
-                              const QPointF &offset, QList<Link *> &tmpLinks);
-
-    virtual void updateVisibility();
+                              const QPointF &offset, QList<XLink *> &tmpXLinks,
+                              const bool &exportBoundingBoxes);
 
     virtual void setHeadingColor(
         QColor color); //! Overloaded from TreeItem to update QGraphicsView
@@ -40,9 +42,11 @@ class BranchItem : public MapItem {
     void updateTaskFlag();
     void setTask(Task *t);
     Task *getTask();
+    Flag *taskFlag();
 
   private:
     Task *task;
+    BranchWrapper *branchWrapperInt;
 
   public:
     virtual void scroll();
@@ -50,32 +54,16 @@ class BranchItem : public MapItem {
     virtual bool toggleScroll(); // scroll or unscroll
     virtual bool isScrolled();   // returns scroll state
     virtual bool hasScrolledParent(
-        BranchItem *start = NULL); // true, if any of the parents is scrolled
+        BranchItem *start = nullptr); // true, if any of the parents is scrolled
     virtual bool tmpUnscroll(
-        BranchItem *start = NULL);   // unscroll scrolled parents temporary e.g.
+        BranchItem *start = nullptr);   // unscroll scrolled parents temporary e.g.
                                      // during "find" process
     virtual bool resetTmpUnscroll(); // scroll all tmp scrolled parents again
                                      // e.g. when unselecting
-    virtual void sortChildren(bool inverse = false); //! Sort children
-    virtual void setChildrenLayout(BranchItem::LayoutHint layoutHint);
-    virtual BranchItem::LayoutHint getChildrenLayout();
-
-  protected:
-    bool includeImagesVer;     //! include floatimages in bbox vertically
-    bool includeImagesHor;     //! include floatimages in bbox horizontally
-    bool includeChildren;      //! include children in frame
-    LayoutHint childrenLayout; //! should children be positioned freely?
 
   public:
-    void setIncludeImagesVer(bool);
-    bool getIncludeImagesVer();
-    void setIncludeImagesHor(bool);
-    bool getIncludeImagesHor();
-    QString getIncludeImageAttr();
-    BranchItem *getFramedParentBranch(BranchItem *start);
-    void setFrameIncludeChildren(bool);
-    bool getFrameIncludeChildren();
-
+    void setBranchesLayout(const QString &);
+    void setImagesLayout(const QString &);
     QColor getBackgroundColor(BranchItem *start, bool checkInnerFrame = true);
 
   protected:
@@ -96,15 +84,29 @@ class BranchItem : public MapItem {
   public:
     TreeItem *findMapItem(
         QPointF p,
-        TreeItem *excludeTI); //! search map for branches or images. Ignore
-                              //! excludeTI, where search is started
+        QList <TreeItem*> excludedItems); //! search map for branches or images. Ignore
+                              //! excludeItems, where search is started or which are selected
 
-    virtual void
-    updateStyles(const bool &keepFrame =
-                     false); //! update related fonts, parObjects, links, ...
-    virtual BranchObj *getBranchObj();
-    virtual BranchObj *createMapObj(
+
+    void setHideMode(HideTmpMode mode); 
+    void updateVisuals();
+
+    BranchContainer *createBranchContainer(
         QGraphicsScene *scene); //! Create classic object in GraphicsView
+
+    BranchContainer* getBranchContainer();
+    void unlinkBranchContainer();
+    Container* getBranchesContainer();
+    Container* getImagesContainer();
+
+  private:
+    BranchContainer *branchContainer;
+
+  public:
+    void updateContainerStackingOrder();
+    void addToBranchesContainer(BranchContainer*);
+    void addToImagesContainer(ImageContainer*);
+    void repositionContainers();
 };
 
 #endif

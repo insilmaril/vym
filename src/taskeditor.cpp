@@ -2,17 +2,21 @@
 
 #include <QAbstractTableModel>
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QDebug>
 #include <QHeaderView>
 #include <QMenu>
 #include <QSortFilterProxyModel>
+#include <QTableView>
 #include <QTextEdit>
 #include <QToolBar>
 #include <QVBoxLayout>
 
 #include "branchitem.h"
 #include "mainwindow.h"
+#include "shortcuts.h"
 #include "task.h"
+#include "taskfiltermodel.h"
 #include "taskmodel.h"
 #include "vymmodel.h"
 
@@ -21,7 +25,9 @@ extern Settings settings;
 extern QMenu *taskContextMenu;
 extern TaskModel *taskModel;
 
-extern QString editorFocusStyle;
+extern Switchboard switchboard;
+
+extern QString editorFocusInStyle;
 
 TaskEditor::TaskEditor(QWidget *)
 {
@@ -108,6 +114,16 @@ TaskEditor::TaskEditor(QWidget *)
     connect(a, SIGNAL(triggered()), this, SLOT(toggleFilterFlags3()));
     actionToggleFilterFlags3 = a;
 
+    // Shortcuts
+    QString shortcutScope = tr("Task Editor", "Shortcut group");
+    switchboard.addScope("TaskEditor", shortcutScope);
+
+    a = new QAction("Close window", this);
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    switchboard.addAction(a, "taskEditorCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "");
+    connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
+    view->addAction(a);
+
     // Clone actions defined in MainWindow
     foreach (QAction *qa, mainWindow->taskEditorActions) {
         a = new QAction(this);
@@ -141,7 +157,8 @@ TaskEditor::TaskEditor(QWidget *)
     view->setDragEnabled(true);
     view->setAcceptDrops(true);
     view->setDropIndicatorShown(true);
-    view->setAutoScroll(false);
+    view->setAutoScroll(false); // Autopscroll while dragging tasks
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     blockExternalSelect = false;
 
@@ -182,7 +199,10 @@ TaskEditor::TaskEditor(QWidget *)
             SIGNAL(customContextMenuRequested(QPoint)),
             SLOT(headerContextMenu()));
 
-    view->setStyleSheet("QTableView:focus {" + editorFocusStyle + "}");
+    view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+
+    QString selected = "QTableView::item:selected {border-color: #00ff00; border-width: 3px; background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #CCCC0A, stop: 1 #96960A);}";
+    view->setStyleSheet("QTableView:focus {" + editorFocusInStyle + "}" + selected);
 
     updateColumnLayout();
 }
@@ -212,6 +232,11 @@ TaskEditor::~TaskEditor()
         settings.setValue(QString("/taskeditor/column/%1/hidden").arg(i),
                           view->isColumnHidden(i));
     }
+}
+
+void TaskEditor::setFocus()
+{
+    view->setFocus();
 }
 
 void TaskEditor::setMapName(const QString &n)
@@ -293,8 +318,7 @@ void TaskEditor::showSelection()
     QModelIndexList list = view->selectionModel()->selectedIndexes();
     if (list.count() > 0)
         // Usually whole row is selected, so just go for first cell
-        view->scrollTo(taskModel->index(taskModel->getTask(list.first())),
-                       QAbstractItemView::EnsureVisible);
+        view->scrollTo(list.first(), QAbstractItemView::EnsureVisible);
 }
 
 bool TaskEditor::select(Task *task)
@@ -339,7 +363,6 @@ void TaskEditor::headerContextMenu()
 void TaskEditor::updateColumnLayout()
 {
     // Update column widths and visibility
-
     QString s = "/taskeditor/column/%1/";
 
     // Priority
@@ -406,9 +429,11 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
         // Avoid segfault on quit, when selected is empty
         return;
 
-    QItemSelection sel0 = filterActiveModel->mapSelectionToSource(selected);
-    QModelIndex ix = sel0.indexes().first();
-    Task *t = taskModel->getTask(ix);
+    QItemSelection selMapped = filterActiveModel->mapSelectionToSource(selected);
+    QModelIndex ixMapped = selMapped.indexes().first();
+    Task *t = taskModel->getTask(ixMapped);
+
+    // If ixMapped is invalid, returned t will be nullptr
     if (t) {
         BranchItem *bi = t->getBranch();
         if (bi) {
@@ -417,19 +442,21 @@ void TaskEditor::selectionChanged(const QItemSelection &selected,
                 m->select(bi);
             if (m != mainWindow->currentModel())
                 mainWindow->gotoModel(m);
-            view->setStyleSheet(
-                "QTableView {selection-background-color: " +
-                m->getSelectionBrushColor().name() +
-                "; selection-color:" + bi->getHeadingColor().name() + "}" +
-                "QTableView:focus {" + editorFocusStyle + "}");
-            view->scrollTo(selected.indexes().first());
         }
+
+        showSelection();
     }
 }
 
 void TaskEditor::contextMenuEvent(QContextMenuEvent *e)
 {
     taskContextMenu->popup(e->globalPos());
+}
+
+void TaskEditor::closeWindow()
+{
+    parentWidget()->hide();
+    emit windowClosed();
 }
 
 void TaskEditor::toggleFilterMap() { setFilterMap(); }

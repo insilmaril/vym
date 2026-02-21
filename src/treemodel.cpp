@@ -1,55 +1,54 @@
 #include <QtGui>
 
-#include "attributeitem.h"
 #include "branchitem.h"
-#include "branchobj.h"
-#include "imageitem.h"
 #include "treeitem.h"
 #include "treemodel.h"
 #include "xlinkitem.h"
 
 TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
-    // qDebug()<<"Constr TreeModel  this=" << this;
+    // qDebug() << "Constr TreeModel  this=" << this;
     QList<QVariant> rootData;
     rootData << "Heading";
     // rootData << "Type";
     rootItem = new BranchItem();
+    rootItem->setHeadingPlainText("rootItem");
 }
 
 TreeModel::~TreeModel()
 {
     // qDebug()<<"Destr TreeModel  this="<<this;
-    delete rootItem;
+
+    // rootItem is deleted in VymModel
+    // treeItems still might want to ask VymModel about paths
 }
 
-QVariant TreeModel::data(const QModelIndex &index, int role) const
+QVariant TreeModel::data(const QModelIndex &index, int role) const  // FIXME-3 no foreground color for imageItem and attr. item (use color of parentBranch)
 {
     if (!index.isValid())
         return QVariant();
 
     TreeItem *item = getItem(index);
     BranchItem *bi = nullptr;
-    if (item->isBranchLikeType())
+    if (item->hasTypeBranch())
         bi = (BranchItem*)item;
 
     if (role == Qt::EditRole || role == Qt::DisplayRole)
         return item->data(index.column());
 
-    if (role == Qt::ForegroundRole)
-        return item->getHeadingColor();
+    if (role == Qt::ForegroundRole) {
+        if (bi)
+            return bi->headingColor();
+        else
+            return qApp->palette().color(QPalette::Text);
+    }
 
     if (role == Qt::BackgroundRole) {
-        if (bi) {
-            BranchItem *frameBI = bi->getFramedParentBranch(bi);
-            if (frameBI && index.column() != 5) {
-                BranchObj *bo = frameBI->getBranchObj();
-                if (bo)
-                    return bo->getFrameBrushColor();
-            }
-            else
-                return backgroundColor;
-        }
+        if (bi)
+            return bi->getBackgroundColor(bi);
+        else
+            // Selected XLink does not have a branchItem
+            return qApp->palette().color(QPalette::Window); // FIXME-3 Better return map background, just like in BranchItem
     }
 
     return QVariant();
@@ -76,8 +75,9 @@ QModelIndex TreeModel::index(TreeItem *ti)
 {
     if (!ti->parent())
         return QModelIndex();
-    else
+    else {
         return createIndex(ti->row(), 0, ti);
+    }
 }
 
 QModelIndex TreeModel::index(int row, int column,
@@ -112,7 +112,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     TreeItem *parentItem = ti->parent();
     if (parentItem == rootItem)
         return QModelIndex();
-    return createIndex(parentItem->childNumber(), 0, parentItem);
+    return createIndex(parentItem->row(), 0, parentItem);
 }
 
 int TreeModel::rowCount(const QModelIndex &parent) const
@@ -142,16 +142,14 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
 {
     if (deepLevelsFirst) {
         // Walk through map beginning at current with previous==0
-        // Start at root, if current==NULL
+        // Start at root, if current==nullptr
         if (!current) {
             if (start) {
                 current = start;
                 previous = current->parentBranch();
-            }
-            else {
+            } else {
                 previous = (BranchItem *)rootItem;
                 current = previous->getFirstBranch();
-                return;
             }
         }
 
@@ -160,7 +158,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
         if (current == previous) {
             // Had leaf before, go up again.
             if (start && start == current) {
-                current = NULL;
+                current = nullptr;
                 return;
             }
             current = current->parentBranch();
@@ -186,6 +184,9 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
         else {
             // Coming from below, try to go down again to siblings
 
+            int n_prev = previous->num();
+            if (n_prev < 0)
+                qWarning() << __func__ << " deep levels first: index previous branch < 0";  // FIXME-3 Debugging  
             BranchItem *sibling = current->getBranchNum(previous->num() + 1);
             if (sibling) {
                 // Found sibling of previous, go there
@@ -196,7 +197,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
             else {
                 // and go further up
                 if (current == rootItem)
-                    current = NULL;
+                    current = nullptr;
                 previous = current;
                 return;
             }
@@ -204,7 +205,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
     }
     else {
         // Walk through map beginning at current with previous==0
-        // Start at root, if current==NULL
+        // Start at root, if current==nullptr
         if (!current) {
             if (start) {
                 current = start;
@@ -235,10 +236,13 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
         }
         else {
             if (start && previous == start) {
-                current = NULL;
+                current = nullptr;
                 return;
             }
 
+            int n_prev = previous->num();
+            if (n_prev < 0)
+                qWarning() << __func__ << " deep levels last: index previous branch < 0";   // FIXME-3 Debugging
             BranchItem *sibling = current->getBranchNum(previous->num() + 1);
             if (sibling) {
                 // Found sibling of previous, go there
@@ -251,7 +255,7 @@ void TreeModel::nextBranch(BranchItem *&current, BranchItem *&previous,
                 previous = current;
                 current = current->parentBranch();
                 if (!current) {
-                    current = NULL;
+                    current = nullptr;
                     return;
                 }
                 else {
@@ -274,9 +278,9 @@ bool TreeModel::removeRows(int row, int count, const QModelIndex &parent)
     TreeItem *ti;
 
     for (int i = row; i <= last; i++) {
-        ti = pi->getChildNum(row);
-        pi->removeChild(row); // does not delete object!
-        delete ti;
+        ti = pi->childItemByRow(row);
+        pi->removeChild(row);   // Does not delete object yet
+        delete ti;              // Deletes object
     }
     return true;
 }
@@ -285,20 +289,19 @@ TreeItem *TreeModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
         TreeItem *item = static_cast<TreeItem *>(index.internalPointer());
-        if (item)
-            return item;
+        return item;
     }
-    return NULL;
+    return nullptr;
 }
 
 BranchItem *TreeModel::getRootItem() { return rootItem; }
 
 int TreeModel::xlinkCount() { return xlinks.count(); }
 
-Link *TreeModel::getXLinkNum(const int &n)
+XLink *TreeModel::getXLinkNum(const int &n)
 {
     if (n >= 0 && n < xlinks.count())
         return xlinks.at(n);
     else
-        return NULL;
+        return nullptr;
 }

@@ -1,11 +1,13 @@
-#include <QDebug>
-
 #include "xlinkobj.h"
 
+#include <QDebug>
+#include <QGraphicsScene>
+
 #include "branchitem.h"
-#include "branchobj.h"
+#include "geometry.h"
 #include "math.h" // atan
 #include "misc.h" // max
+#include "xlink.h"
 
 /////////////////////////////////////////////////////////////////
 // XLinkObj
@@ -16,71 +18,85 @@ int XLinkObj::clickBorder = 8;
 int XLinkObj::pointRadius = 10;
 int XLinkObj::d_control = 300;
 
-XLinkObj::XLinkObj(QGraphicsItem *parent, Link *l) : MapObj(parent)
+XLinkObj::XLinkObj(XLink *xl)
 {
-    // qDebug()<< "Const XLinkObj (parent,Link)";
-    link = l;
+    //qDebug()<< "Const XLinkObj (XLink)";
+    xlink = xl;
+    init();
+}
+
+XLinkObj::XLinkObj(QGraphicsItem *parent, XLink *xl) : MapObj(parent)
+{
+    //qDebug()<< "Const XLinkObj (XLink, parent)";
+    xlink = xl;
     init();
 }
 
 XLinkObj::~XLinkObj()
 {
-    // qDebug() << "Destr XLinkObj";
+    //qDebug() << "Destr XLinkObj";
     delete (poly);
     delete (path);
-    delete (ctrl_p0);
-    delete (ctrl_p1);
-    delete (pointerEnd);
-    delete (pointerBegin);
+
+    // If ctrl point is selected, then deleting ctrl point will
+    // also delete selection_ellipse
+    delete (c0_ellipse);
+    delete (c1_ellipse);
+
+    delete (endArrow);
+    delete (beginArrow);
 }
 
 void XLinkObj::init()
 {
-    visBranch = NULL;
+    visBranch = nullptr;
 
     stateVis = Hidden;
 
-    QPen pen = link->getPen();
+    QPen pen = xlink->getPen();
 
-    path = scene()->addPath(QPainterPath(), pen, Qt::NoBrush);
-    path->setZValue(dZ_XLINK);
+    QGraphicsScene *scene = xlink->getBeginBranch()->getBranchContainer()->scene();
+    scene->addItem(this);
 
-    pointerBegin = new ArrowObj(this);
-    pointerBegin->setPen(pen);
-    pointerBegin->setUseFixedLength(true);
-    pointerBegin->setFixedLength(0);
+    path = scene->addPath(QPainterPath(), pen, Qt::NoBrush);
 
-    pointerEnd = new ArrowObj(this);
-    pointerEnd->setPen(pen);
-    pointerEnd->setUseFixedLength(true);
-    pointerEnd->setFixedLength(0);
+    beginArrow = new ArrowObj(this);
+    beginArrow->setPen(pen);
+    beginArrow->setUseFixedLength(true);
+    beginArrow->setFixedLength(0);
+
+    endArrow = new ArrowObj(this);
+    endArrow->setPen(pen);
+    endArrow->setUseFixedLength(true);
+    endArrow->setFixedLength(0);
 
     pen.setStyle(Qt::SolidLine);
-    poly = scene()->addPolygon(QPolygonF(), pen, pen.color());
-    poly->setZValue(dZ_XLINK);
+    poly = scene->addPolygon(QPolygonF(), pen, pen.color());
 
     // Control points for bezier path
     // (We have at least a begin branch, consider its orientation)
     initC0();
     initC1();
 
-    ctrl_p0 = scene()->addEllipse(c0.x(), c0.y(), clickBorder * 2,
+    c0_ellipse = scene->addEllipse(0, 0, clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
-    ctrl_p1 = scene()->addEllipse(c1.x(), c1.y(), clickBorder * 2,
+    c1_ellipse = scene->addEllipse(0, 0, clickBorder * 2,
                                   clickBorder * 2, pen, pen.color());
 
-    beginOrient = endOrient = LinkableMapObj::UndefinedOrientation;
+    selection_ellipse = nullptr;
+
+    beginOrient = endOrient = BranchContainer::UndefinedOrientation;
     pen.setWidth(1);
     pen.setStyle(Qt::DashLine);
 
-    curSelection = Unselected;
+    selectionTypeInt = Empty;
 
     setVisibility(true);
 }
 
 QPointF XLinkObj::getAbsPos()
 {
-    switch (curSelection) {
+    switch (selectionTypeInt) {
     case C0:
         return c0;
         break;
@@ -93,104 +109,85 @@ QPointF XLinkObj::getAbsPos()
     }
 }
 
-void XLinkObj::setStyleBegin(const QString &s) { pointerBegin->setStyleEnd(s); }
+void XLinkObj::setStyleBegin(const QString &s) { beginArrow->setStyleEnd(s); }
 
 void XLinkObj::setStyleBegin(ArrowObj::OrnamentStyle os)
 {
-    pointerBegin->setStyleEnd(os);
+    beginArrow->setStyleEnd(os);
 }
 
 ArrowObj::OrnamentStyle XLinkObj::getStyleBegin()
 {
-    return pointerBegin->getStyleEnd();
+    return beginArrow->getStyleEnd();
 }
 
-void XLinkObj::setStyleEnd(const QString &s) { pointerEnd->setStyleEnd(s); }
+void XLinkObj::setStyleEnd(const QString &s) { endArrow->setStyleEnd(s); }
 
 void XLinkObj::setStyleEnd(ArrowObj::OrnamentStyle os)
 {
-    pointerEnd->setStyleEnd(os);
+    endArrow->setStyleEnd(os);
 }
 
 ArrowObj::OrnamentStyle XLinkObj::getStyleEnd()
 {
-    return pointerEnd->getStyleEnd();
+    return endArrow->getStyleEnd();
 }
 
 QPointF XLinkObj::getBeginPos() { return beginPos; }
 
 QPointF XLinkObj::getEndPos() { return endPos; }
 
-void XLinkObj::move(QPointF p)
-{
-    switch (curSelection) {
-    case C0:
-        c0 = p;
-        break;
-    case C1:
-        c1 = p;
-        break;
-    default:
-        break;
-    }
-    updateXLink();
-}
 
 void XLinkObj::setEnd(QPointF p) { endPos = p; }
 
-void XLinkObj::setSelection(CurrentSelection s)
+void XLinkObj::setSelectionType(SelectionType s)
 {
-    curSelection = s;
-    setVisibility();
+    selectionTypeInt = s;
+    updateVisibility();
 }
 
-void XLinkObj::setSelection(int cp)
-{
-    if (cp == 0)
-        setSelection(C0);
-    else if (cp == 1)
-        setSelection(C1);
-    else
-        qWarning() << "XLO::setSelection cp=" << cp;
-}
-
-void XLinkObj::updateXLink()
+void XLinkObj::updateGeometry()
 {
     QPointF a, b;
     QPolygonF pa;
 
-    BranchObj *beginBO = NULL;
-    BranchObj *endBO = NULL;
-    BranchItem *bi = link->getBeginBranch();
+    //qDebug() << "XLO::updateGeometry";
+    BranchContainer *beginBC = nullptr;
+    BranchContainer *endBC = nullptr;
+    BranchItem *bi = xlink->getBeginBranch();
     if (bi)
-        beginBO = (BranchObj *)(bi->getLMO());
-    bi = link->getEndBranch();
+        beginBC = bi->getBranchContainer();
+    bi = xlink->getEndBranch();
     if (bi)
-        endBO = (BranchObj *)(bi->getLMO());
+        endBC = bi->getBranchContainer();
 
-    if (beginBO) {
-        if (beginOrient != LinkableMapObj::UndefinedOrientation &&
-            beginOrient != beginBO->getOrientation())
+    /* FIXME-3 check orientation to position xlink ctrl point
+    if (beginBC && endBC)
+        qDebug() << "XLO::updateGeo   beginOrient=" << beginBC->getOrientation() << "  endOrient=" << endBC->getOrientation();
+    */
+    if (beginBC) {
+        if (beginOrient != BranchContainer::UndefinedOrientation &&
+            beginOrient != beginBC->getOrientation())
             c0.setX(-c0.x());
-        beginOrient = beginBO->getOrientation();
+        beginOrient = beginBC->getOrientation();
     }
-    if (endBO) {
-        if (endOrient != LinkableMapObj::UndefinedOrientation &&
-            endOrient != endBO->getOrientation())
+    if (endBC) {
+        if (endOrient != BranchContainer::UndefinedOrientation &&
+            endOrient != endBC->getOrientation())
             c1.setX(-c1.x());
-        endOrient = endBO->getOrientation();
+        endOrient = endBC->getOrientation();
     }
 
     if (visBranch) {
         // Only one of the linked branches is visible
-        // Draw arrowhead   //FIXME-3 missing shaft of arrow
-        BranchObj *bo = (BranchObj *)(visBranch->getLMO());
-        if (!bo)
+        // Draw arrowhead   //FIXME-5 missing shaft of arrow
+        BranchContainer *bc = visBranch->getBranchContainer();
+        if (!bc)
             return;
 
-        a = b = bo->getChildRefPos();
+        a = b = bc->downLinkPos();
 
-        if (bo->getOrientation() == LinkableMapObj::RightOfCenter) {
+        if (bc->getOrientation() == BranchContainer::RightOfParent) {
             b.setX(b.x() + 2 * arrowSize);
             pa.clear();
             pa << a << b << QPointF(b.x(), b.y() - arrowSize)
@@ -212,17 +209,17 @@ void XLinkObj::updateXLink()
 
         // If a link is just drawn in the editor,
         // we have already a beginBranch
-        if (beginBO)
-            beginPos = beginBO->getChildRefPos();
-        if (endBO)
-            endPos = endBO->getChildRefPos();
+        if (beginBC)
+            beginPos = beginBC->downLinkPos();
+        if (endBC)
+            endPos = endBC->downLinkPos();
 
-        if (beginBO && endBO) {
-            pointerBegin->move(beginPos + c0);
-            pointerBegin->setEndPoint(beginPos);
+        if (beginBC && endBC) {
+            beginArrow->setPos(beginPos);
+            beginArrow->setEndPoint(beginPos + c0);
 
-            pointerEnd->move(endPos + c1);
-            pointerEnd->setEndPoint(endPos);
+            endArrow->setPos(endPos);
+            endArrow->setEndPoint(endPos + c1);
         }
     }
 
@@ -237,121 +234,67 @@ void XLinkObj::updateXLink()
     // needed for intersection check:
     clickPath.cubicTo(endPos + c1, beginPos + c0, beginPos);
 
-    QPen pen = link->getPen();
+    QPen pen = xlink->getPen();
     path->setPen(pen);
     poly->setBrush(pen.color());
 
-    pointerBegin->setPen(pen);
-    pointerEnd->setPen(pen);
+    beginArrow->setPen(pen);
+    endArrow->setPen(pen);
 
     pen.setStyle(Qt::SolidLine);
 
-    ctrl_p0->setRect(beginPos.x() + c0.x() - pointRadius / 2,
-                     beginPos.y() + c0.y() - pointRadius / 2, pointRadius,
-                     pointRadius);
-    ctrl_p0->setPen(pen);
-    ctrl_p0->setBrush(pen.color());
+    c0_ellipse->setPos(beginPos + c0);
+    c0_ellipse->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
+    c0_ellipse->setPen(pen);
+    c0_ellipse->setBrush(pen.color());
 
-    ctrl_p1->setRect(endPos.x() + c1.x() - pointRadius / 2,
-                     endPos.y() + c1.y() - pointRadius / 2, pointRadius,
-                     pointRadius);
-    ctrl_p1->setPen(pen);
-    ctrl_p1->setBrush(pen.color());
+    c1_ellipse->setPos(endPos + c1);
+    c1_ellipse->setRect(- pointRadius / 2, - pointRadius / 2, pointRadius, pointRadius);
+    c1_ellipse->setPen(pen);
+    c1_ellipse->setBrush(pen.color());
 
-    BranchItem *bi_begin = link->getBeginBranch();
-    BranchItem *bi_end = link->getEndBranch();
-    if (bi_begin && bi_end && link->getState() == Link::activeXLink)
-        // Note: with MapObj being a GraphicsItem now, maybe better reparent the
-        // xlinkobj line->setZValue (dZ_DEPTH *
-        // max(bi_begin->depth(),bi_end->depth()) + dZ_XLINK);
-        path->setZValue(dZ_XLINK);
-    else
-        path->setZValue(dZ_XLINK);
+    BranchItem *bi_begin = xlink->getBeginBranch();
+    BranchItem *bi_end = xlink->getEndBranch();
 
-    setVisibility();
+    // called often during drawing, but needed during reposition
+    // caused by toggling scroll state
+    updateVisibility();
 }
 
-void XLinkObj::positionBBox() {}
-
-void XLinkObj::calcBBoxSize() {}
-
-void XLinkObj::setVisibility(bool b)
+void XLinkObj::updateVisibility()
 {
-    if (stateVis == FullShowControls) {
-        ctrl_p0->show();
-        ctrl_p1->show();
-        pointerBegin->setUseFixedLength(false);
-        pointerEnd->setUseFixedLength(false);
-    }
-    else {
-        ctrl_p0->hide();
-        ctrl_p1->hide();
-        pointerBegin->setUseFixedLength(true);
-        pointerBegin->setFixedLength(0);
-        pointerEnd->setUseFixedLength(true);
-        pointerEnd->setFixedLength(0);
-    }
-
-    MapObj::setVisibility(b);
-    if (b) {
-        if (stateVis == OnlyBegin) {
-            path->hide();
-            poly->show();
-            pointerBegin->hide();
-            pointerEnd->hide();
-        }
-        else if (stateVis == OnlyEnd) {
-            path->hide();
-            poly->show();
-            pointerBegin->hide();
-            pointerEnd->hide();
-        }
-        else {
-            path->show();
-            poly->hide();
-            pointerBegin->show();
-            pointerEnd->show();
-        }
-    }
-    else {
-        poly->hide();
-        path->hide();
-        pointerBegin->hide();
-        pointerEnd->hide();
-    }
-}
-
-void XLinkObj::setVisibility()
-{
-    BranchItem *beginBI = link->getBeginBranch();
-    BranchObj *beginBO = NULL;
+    BranchContainer *beginBC = nullptr;
+    BranchItem *beginBI = xlink->getBeginBranch();
     if (beginBI)
-        beginBO = (BranchObj *)(beginBI->getLMO());
+        beginBC = beginBI->getBranchContainer();
 
-    BranchObj *endBO = NULL;
-    BranchItem *endBI = link->getEndBranch();
+    BranchItem *endBI = xlink->getEndBranch();
+    BranchContainer *endBC = nullptr;
     if (endBI)
-        endBO = (BranchObj *)(endBI->getLMO());
-    if (beginBO && endBO) {
-        if (beginBO->isVisibleObj() &&
-            endBO->isVisibleObj()) { // Both ends are visible
-            visBranch = NULL;
-            if (curSelection != Unselected)
+        endBC = endBI->getBranchContainer();
+
+    //qDebug() << "XLO::updateVis() beginBI="<<beginBI << "endBI=" << endBI;
+
+    if (beginBC && endBC) {
+        if (beginBC->isVisible() &&
+            endBC->isVisible()) { // Both ends are visible
+            visBranch = nullptr;
+            if (selectionTypeInt != Empty)
                 stateVis = FullShowControls;
             else
                 stateVis = Full;
             setVisibility(true);
         }
         else {
-            if (!beginBO->isVisibleObj() &&
-                !endBO->isVisibleObj()) { // None of the ends is visible
-                visBranch = NULL;
+            if (!beginBC->isVisible() &&
+                !endBC->isVisible()) { // None of the ends is visible
+                visBranch = nullptr;
                 stateVis = Hidden;
                 setVisibility(false);
             }
             else { // Just one end is visible, draw a symbol that shows
                 // that there is a link to a scrolled branch
-                if (beginBO->isVisibleObj()) {
+                if (beginBC->isVisible()) {
                     stateVis = OnlyBegin;
                     visBranch = beginBI;
                 }
@@ -365,17 +308,63 @@ void XLinkObj::setVisibility()
     }
 }
 
+void XLinkObj::setVisibility(bool b)
+{
+    //qDebug() << "XLO::setVis(b)  b=" << b << "stateVis=" << stateVis;
+    if (stateVis == FullShowControls) {
+        c0_ellipse->show();
+        c1_ellipse->show();
+        beginArrow->setUseFixedLength(false);
+        endArrow->setUseFixedLength(false);
+    }
+    else {
+        c0_ellipse->hide();
+        c1_ellipse->hide();
+        beginArrow->setUseFixedLength(true);
+        beginArrow->setFixedLength(0);
+        endArrow->setUseFixedLength(true);
+        endArrow->setFixedLength(0);
+    }
+
+    if (b) {
+        if (stateVis == OnlyBegin) {
+            path->hide();
+            poly->show();
+            beginArrow->hide();
+            endArrow->hide();
+        }
+        else if (stateVis == OnlyEnd) {
+            path->hide();
+            poly->show();
+            beginArrow->hide();
+            endArrow->hide();
+        }
+        else {
+            path->show();
+            poly->hide();
+            beginArrow->show();
+            endArrow->show();
+        }
+    }
+    else {
+        poly->hide();
+        path->hide();
+        beginArrow->hide();
+        endArrow->hide();
+    }
+}
+
 void XLinkObj::initC0()
 {
-    if (!link)
+    if (!xlink)
         return;
-    BranchItem *beginBranch = link->getBeginBranch();
+    BranchItem *beginBranch = xlink->getBeginBranch();
     if (!beginBranch)
         return;
-    BranchObj *bo = beginBranch->getBranchObj();
-    if (!bo)
+    BranchContainer *bc = beginBranch->getBranchContainer();
+    if (!bc)
         return;
-    if (bo->getOrientation() == LinkableMapObj::RightOfCenter)
+    if (bc->getOrientation() == BranchContainer::RightOfParent)
         c0 = QPointF(d_control, 0);
     else
         c0 = QPointF(-d_control, 0);
@@ -383,15 +372,15 @@ void XLinkObj::initC0()
 
 void XLinkObj::initC1()
 {
-    if (!link)
+    if (!xlink)
         return;
-    BranchItem *endBranch = link->getEndBranch();
+    BranchItem *endBranch = xlink->getEndBranch();
     if (!endBranch)
         return;
-    BranchObj *bo = endBranch->getBranchObj();
-    if (!bo)
+    BranchContainer *bc =endBranch->getBranchContainer();
+    if (!bc)
         return;
-    if (bo->getOrientation() == LinkableMapObj::RightOfCenter)
+    if (bc->getOrientation() == BranchContainer::RightOfParent)
         c1 = QPointF(d_control, 0);
     else
         c1 = QPointF(-d_control, 0);
@@ -401,91 +390,105 @@ void XLinkObj::setC0(const QPointF &p) { c0 = p; }
 
 QPointF XLinkObj::getC0() { return c0; }
 
-void XLinkObj::setC1(const QPointF &p) { c1 = p; }
+void XLinkObj::setC1(const QPointF &p)
+{
+    c1 = p;
+}
 
 QPointF XLinkObj::getC1() { return c1; }
 
-int XLinkObj::ctrlPointInClickBox(const QPointF &p)
+void XLinkObj::setSelectedCtrlPoint(const QPointF &p)
 {
-    CurrentSelection oldSel = curSelection;
-    int ret = -1;
-
-    QRectF r(p.x() - clickBorder, p.y() - clickBorder, clickBorder * 2,
-             clickBorder * 2);
-
-    if (curSelection == C0 || curSelection == C1) {
-        // If Cx selected, check both ctrl points
-        curSelection = C0;
-        if (getClickPath().intersects(r))
-            ret = 0;
-        curSelection = C1;
-        if (getClickPath().intersects(r))
-            ret = 1;
-    }
-    curSelection = oldSel;
-    return ret;
+    switch (selectionTypeInt) {
+        case C0:
+            c0 = p - beginPos;
+            break;
+        case C1:
+            c1 = p - endPos;
+            break;
+        default:
+            break; }
+    updateGeometry();
 }
 
-bool XLinkObj::isInClickBox(const QPointF &p)
+QRectF XLinkObj::boundingRect() {
+    // Return bounding box in scene coordinates of selected ctrl point
+    switch (selectionTypeInt) {
+        case C0:
+            [[fallthrough]]; // intentional fallthrough
+        case C1:
+            return selection_ellipse->mapToScene(selection_ellipse->boundingRect()).boundingRect();
+        default:
+            return QRectF();
+    }
+}
+
+XLinkObj::SelectionType XLinkObj::couldSelect(const QPointF &p)
 {
-    // Return, if not visible at all...
-    if (stateVis == Hidden)
-        return false;
-
-    CurrentSelection oldSel = curSelection;
-    bool b = false;
-
-    QRectF r(p.x() - clickBorder, p.y() - clickBorder, clickBorder * 2,
-             clickBorder * 2);
-
+    QPointF v;
+    qreal d;
+    qreal d_max = 10;
     switch (stateVis) {
-    case FullShowControls:
-        // If Cx selected, check both ctrl points
-        if (ctrlPointInClickBox(p) > -1)
-            b = true;
+        case FullShowControls:
+            v = c0_ellipse->pos() - p;
+            d = Geometry::distance(c0_ellipse->pos(), p);
+            if (d < d_max) {
+                setSelectionType(C0);
+                return C0;
+            }
 
-        // Enable selecting the path, when a ctrl point is already selected
-        if (!b && curSelection != Unselected && clickPath.intersects(r))
-            b = true;
-        break;
-    case OnlyBegin:
-    case OnlyEnd:
-        // not selected, only partially visible
-        if (poly->boundingRect().contains(p))
-            b = true;
-        break;
-    default:
-        // not selected, but path is fully visible
-        curSelection = Path;
-        if (getClickPath().intersects(r))
-            b = true;
-        break;
+            v = c1_ellipse->pos() - p;
+            d = Geometry::distance(c1_ellipse->pos(), p);
+            if (d < d_max) {
+                setSelectionType(C1);
+                return C1;
+            }
+            break;
+        case OnlyBegin:
+        case OnlyEnd:
+            // not selected, only partially visible
+            /*
+            if (poly->boundingRect().contains(p))
+                b = true;
+            */
+            break;
+        default:
+            // not selected, but path is fully visible
+            QRectF r(p.x() - clickBorder,
+                    p.y() - clickBorder,
+                    clickBorder * 2,
+                    clickBorder * 2);
+            if (clickPath.intersects(r))
+                return Path;
     }
-    curSelection = oldSel;
-    return b;
+    return XLinkObj::Empty;
 }
 
-QPainterPath
-XLinkObj::getClickPath() // also needs mirroring if oriented left. Create method
-                         // to generate the coordinates
+void XLinkObj::select(const QPen &pen, const QBrush &brush)
 {
-    QPainterPath p;
-    switch (curSelection) {
-    case C0:
-        p.addEllipse(beginPos + c0, 15, 15);
-        return p;
-        break;
-    case C1:
-        p.addEllipse(endPos + c1, 15, 15);
-        return p;
-        break;
-    default:
-        return clickPath;
-        break;
+    if (!selection_ellipse) {
+        QGraphicsScene *scene = xlink->getBeginBranch()->getBranchContainer()->scene();
+        qreal r = clickBorder * 2.5;
+        selection_ellipse = scene->addEllipse(-r / 2 , -r / 2, r, r, pen, brush);
+        selection_ellipse->setFlag(QGraphicsItem::ItemStacksBehindParent);
+    }
+
+    switch (selectionTypeInt) {
+        case C0:
+            selection_ellipse->setParentItem(c0_ellipse);
+            break;
+        case C1:
+            selection_ellipse->setParentItem(c1_ellipse);
+            break;
+        default:
+            break;
     }
 }
 
-QPainterPath XLinkObj::getSelectionPath()
+void XLinkObj::unselect()
 {
-    return getClickPath();
+    delete selection_ellipse;
+    selection_ellipse = nullptr;
+    setSelectionType(Empty);
 }
+

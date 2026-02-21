@@ -20,7 +20,9 @@ class ConfluenceAgent : public QObject {
   public:
     enum JobType {
         Undefined,
-        CopyPagenameToHeading,
+        GetPageDetails,
+        GetPageDetailsRecursively,
+        DeletePageLabel,
         CreatePage,
         UpdatePage,
         UploadAttachments,
@@ -37,6 +39,17 @@ class ConfluenceAgent : public QObject {
     void setBranch(BranchItem *bi);
     void setModelID(uint id);
     void setPageURL(const QString &u);
+    void setPageID(const QString &id);
+
+  private:
+    int originalPageIndexInt;
+  public:
+    void setOriginalPageIndex(const int &i);
+
+  private:
+    QString labelNameInt;
+  public:
+    void setLabelName(const QString &labelName);
     void setNewPageName(const QString &t);
     void setUploadPagePath(const QString &fp);
     void addUploadAttachmentPath(const QString &fp);
@@ -61,10 +74,15 @@ class ConfluenceAgent : public QObject {
   private: void startGetPageDetailsRequest();
   private slots: void pageDetailsReceived(QNetworkReply *reply);
 
+  private: void startGetPageChildrenRequest();
+  private slots: void pageChildrenReceived(QNetworkReply *reply);
+
+  private: void startDeleteLabelRequest();
+  private slots: void deleteLabelResponseReceived(QNetworkReply *reply);
+
   private: void startCreatePageRequest();
   private: void startUpdatePageRequest();
   private slots: void pageUploaded(QNetworkReply *reply);
-
 
   private: void startGetUserInfoRequest();
   private slots: void userInfoReceived(QNetworkReply *reply);
@@ -131,7 +149,7 @@ class ConfluenceAgent : public QObject {
     QString uploadPagePath;
     QString userQuery;
 
-    // Page details received from Confluence
+    // Page details received from Confluence or set as parameter
     QString pageID;
     QString spaceKey;
 

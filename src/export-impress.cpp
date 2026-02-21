@@ -1,12 +1,16 @@
 #include <QMessageBox>
 
 #include "export-impress.h"
+
+#include "branchitem.h"
 #include "mainwindow.h"
+#include "vymmodel.h"
+#include "zip-agent.h"
 
 extern QString vymName;
 extern Main *mainWindow;
 
-ExportOO::ExportOO()
+ExportImpress::ExportImpress()
 {
     exportName = "Impress";
     filter = "LibreOffice Impress (*.odp);;All (* *.*)";
@@ -15,9 +19,9 @@ ExportOO::ExportOO()
     useSections = false;
 }
 
-ExportOO::~ExportOO() {}
+ExportImpress::~ExportImpress() {}
 
-QString ExportOO::buildList(TreeItem *current)
+QString ExportImpress::buildList(TreeItem *current)
 {
     QString r;
 
@@ -27,12 +31,17 @@ QString ExportOO::buildList(TreeItem *current)
         // Start list
         r += "<text:list text:style-name=\"vym-list\">\n";
         while (bi) {
-            if (!bi->hasHiddenExportParent()) {
+            if (!bi->hasHiddenParent()) {
                 r += "<text:list-item><text:p >";
-                r += quoteMeta(bi->getHeadingPlain());
+                r += quoteMeta(bi->headingPlain());
                 // If necessary, write note
-                if (!bi->isNoteEmpty())
-                    r += "<text:line-break/>" + bi->getNoteASCII();
+                if (!bi->isNoteEmpty()) {
+                    QString n = bi->getNoteASCII();
+                    n.replace("&", "&amp;");
+                    n.replace("<", "&lt;");
+                    n.replace(">", "&gt;");
+                    r += "<text:line-break/>" + n;
+                }
                 r += "</text:p>";
                 r += buildList(bi); // recursivly add deeper branches
                 r += "</text:list-item>\n";
@@ -45,7 +54,7 @@ QString ExportOO::buildList(TreeItem *current)
     return r;
 }
 
-void ExportOO::exportPresentation()
+void ExportImpress::exportPresentation()
 {
     QString allPages;
 
@@ -60,8 +69,8 @@ void ExportOO::exportPresentation()
     // Insert new content
     // FIXME add extra title in mapinfo for vym 1.13.x
     content.replace("<!-- INSERT TITLE -->",
-                    quoteMeta(firstMCO->getHeadingPlain()));
-    content.replace("<!-- INSERT AUTHOR -->", quoteMeta(model->getAuthor()));
+                    quoteMeta(firstMCO->headingPlain()));
+    content.replace("<!-- INSERT AUTHOR -->", quoteMeta(model->mapAuthor()));
 
     QString onePage;
     QString list;
@@ -80,12 +89,12 @@ void ExportOO::exportPresentation()
         sectionBI = firstMCO->getFirstBranch();
 
     // Walk sections
-    while (sectionBI && !sectionBI->hasHiddenExportParent()) {
+    while (sectionBI && !sectionBI->hasHiddenParent()) {
         if (useSections) {
             // Add page with section title
             onePage = sectionTemplate;
             onePage.replace("<!-- INSERT PAGE HEADING -->",
-                            quoteMeta(sectionBI->getHeadingPlain()));
+                            quoteMeta(sectionBI->headingPlain()));
             allPages += onePage;
             pagesBI = sectionBI->getFirstBranch();
         }
@@ -97,11 +106,11 @@ void ExportOO::exportPresentation()
         }
 
         j = 0;
-        while (pagesBI && !pagesBI->hasHiddenExportParent()) {
+        while (pagesBI && !pagesBI->hasHiddenParent()) {
             // Add page with list of items
             onePage = pageTemplate;
             onePage.replace("<!-- INSERT PAGE HEADING -->",
-                            quoteMeta(pagesBI->getHeadingPlain()));
+                            quoteMeta(pagesBI->headingPlain()));
             list = buildList(pagesBI);
             onePage.replace("<!-- INSERT LIST -->", list);
             allPages += onePage;
@@ -110,7 +119,7 @@ void ExportOO::exportPresentation()
                 pagesBI = ((BranchItem *)pagesBI->parent())->getBranchNum(j);
             }
             else
-                pagesBI = NULL; // We are already iterating over the sectionBIs
+                pagesBI = nullptr; // We are already iterating over the sectionBIs
         }
         i++;
         if (mapcenters > 1)
@@ -132,12 +141,20 @@ void ExportOO::exportPresentation()
     }
 
     QTextStream t(&f);
-    t.setCodec("UTF-8");
     t << content;
     f.close();
 
     // zip tmpdir to destination
-    zipDir(tmpDir, filePath);
+    ZipAgent zipAgent(tmpDir, filePath);
+    zipAgent.setBackgroundProcess(false);
+    zipAgent.startZip();    // FIXME-2 CHeck return value, see saveMap()
+    if(zipAgent.exitStatus() != QProcess::NormalExit ||
+            zipAgent.exitCode() > 0) {
+        QMessageBox::critical(
+            0, QObject::tr("Critical Export Error"),
+            QObject::tr("Could not compress file %1").arg(filePath));
+    }
+
 
     displayedDestination = filePath;
 
@@ -149,7 +166,7 @@ void ExportOO::exportPresentation()
     completeExport(args);
 }
 
-bool ExportOO::setConfigFile(const QString &cf)
+bool ExportImpress::setConfigFile(const QString &cf)
 {
     configFile = cf;
     int i = cf.lastIndexOf("/");

@@ -2,8 +2,14 @@
 
 #include <QMessageBox>
 
-#include "branchobj.h"
+#include "branch-container.h"
+#include "branchitem.h"
+#include "heading-container.h"
+#include "image-container.h"
 #include "mainwindow.h"
+#include "misc.h"
+#include "task.h"
+#include "vymmodel.h"
 #include "warningdialog.h"
 
 extern QString flagsPath;
@@ -13,6 +19,7 @@ extern QString vymHome;
 
 extern FlagRowMaster *standardFlagsMaster;
 extern FlagRowMaster *userFlagsMaster;
+extern FlagRowMaster *systemFlagsMaster;
 
 ExportHTML::ExportHTML() : ExportBase() { init(); }
 
@@ -23,6 +30,8 @@ void ExportHTML::init()
     exportName = "HTML";
     extension = ".html";
     frameURLs = true;
+
+    flagWidthInt = " width=\"32\" ";   // FIXME-3 use CSS instead
 }
 
 QString ExportHTML::getBranchText(BranchItem *current)
@@ -30,34 +39,50 @@ QString ExportHTML::getBranchText(BranchItem *current)
     if (current) {
         bool vis = false;
         QRectF hr;
-        LinkableMapObj *lmo = current->getLMO();
-        if (lmo) {
-            hr = ((BranchObj *)lmo)->getBBoxHeading();
-            vis = lmo->isVisibleObj();
-        }
+        BranchContainer *bc = current->getBranchContainer();
+        HeadingContainer *hc = bc->getHeadingContainer();
+        hr = hc->mapRectToScene(hc->rect());
+        vis = hc->isVisible();
+
         QString col;
         QString id = model->getSelectString(current);
         if (dia.useTextColor)
             col = QString("style='color:%1'")
-                      .arg(current->getHeadingColor().name());
-        QString s = QString("<span class='vym-branch-%1' %2 id='%3'>")
+                      .arg(current->headingColor().name());
+        QString s = QString("<div class='vym-branch-%1' %2 id='%3'>")
                         .arg(current->depth())
                         .arg(col)
                         .arg(id);
-        QString url = current->getURL();
-        QString heading = quoteMeta(current->getHeadingPlain());
+        QString url = current->url();
+        QString heading = quoteMeta(current->headingPlain());
 
         // Task flags
         QString taskFlags;
+        QString flagName;;
+        QString flagPath;
         if (dia.useTaskFlags) {
             Task *task = current->getTask();
             if (task) {
-                QString taskName = task->getIconString();
-                taskFlags +=
-                    QString("<img src=\"flags/flag-%1.png\" alt=\"%2\">")
-                        .arg(taskName)
-                        .arg(QObject::tr("Flag: %1", "Alt tag in HTML export")
-                                 .arg(taskName));
+                QString taskName = task->iconString();
+                Flag *f = current->taskFlag();
+                if (f) {
+                    flagName = f->getName();
+                    ImageContainer *ic = f->getImageContainer();
+                    if (!ic) {
+                        qWarning() << __func__ << "ic == nullptr for task";
+                        return "Error...";
+                    }
+
+                    flagPath = flagsDir.path() + "/" + ic->originalFilename();
+
+                    if (!activeSystemFlagNames.contains(flagName)) {
+                        activeSystemFlagNames << flagName;
+                        ic->save(flagPath);
+                    }
+                    taskFlags +=
+                        QString("<img style=\"vertical-align: middle\" %1 src=\"flags/%2\" alt=\"%3\">")
+                            .arg(flagWidthInt, basename(flagPath), taskName);
+                }
             }
         }
 
@@ -75,12 +100,10 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 if (f)
                     flags +=
                         QString(
-                            "<img width=\"32px\" alt=\"%1\" src=\"flags/%2\">")
-                            .arg(QObject::tr("Flag: %1",
-                                             "Alt tag in HTML export")
-                                     .arg(f->getName()))
-                            .arg(uid.toString() +
-                                 f->getImageObj()->getExtension());
+                            "<img style=\"vertical-align: middle\" %1 alt=\"%2\" src=\"flags/%3\">")
+                            .arg(flagWidthInt)
+                            .arg(QObject::tr("Flag: %1", "Alt tag in HTML export").arg(f->getName()))
+                            .arg(f->getImageContainer()->originalFilename());
             }
         }
 
@@ -89,15 +112,33 @@ QString ExportHTML::getBranchText(BranchItem *current)
         if (dia.useNumbering)
             number = getSectionString(current) + " ";
 
-        // URL
+        // Url
         if (!url.isEmpty()) {
-            s += QString("<a href=\"%1\">%2<img src=\"flags/flag-url.png\" "
-                         "alt=\"%3\"></a>")
+            Flag *f = current->urlFlag();
+            if (f) {
+                flagName = f->getName();
+                ImageContainer *ic = f->getImageContainer();
+                if (!ic) {
+                    qWarning() << __func__ << "ic == nullptr for Url";
+                    return "Error...";
+                }
+
+                flagPath = flagsDir.path() + "/" + ic->originalFilename();
+
+                if (!activeSystemFlagNames.contains(flagName)) {
+                    activeSystemFlagNames << flagName;
+                    ic->save(flagPath);
+                }
+            }
+            s += QString("<a href=\"%1\">%2<img style=\"vertical-align: middle\" %3 src=\"flags/%4\" "
+                         "alt=\"%5\"></a>")
                      .arg(url)
                      .arg(number + taskFlags + heading + flags)
+                     .arg(flagWidthInt)
+                     .arg(basename(flagPath))
                      .arg(QObject::tr("Flag: url", "Alt tag in HTML export"));
 
-            QRectF fbox = current->getBBoxURLFlag();
+            QRectF fbox = current->getBranchContainer()->getBBoxURLFlag();
             if (vis)
                 imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' "
                                     "href='%5' alt='External link: %6'>\n")
@@ -107,14 +148,16 @@ QString ExportHTML::getBranchText(BranchItem *current)
                                 .arg(fbox.bottom() - offset.y())
                                 .arg(url)
                                 .arg(heading);
+
         }
         else
             s += number + taskFlags + heading + flags;
 
-        s += "</span>";
+        s += "</div>";
 
         // Create imagemap
-        if (vis && dia.includeMapImage)
+        if (vis && dia.includeMapImage) // FIXME-3 maybe use polygons instead of QRectF for shapes
+                                        // shape = "poly" coords="x1,y1,x2,y2,..."
             imageMap += QString("  <area shape='rect' coords='%1,%2,%3,%4' "
                                 "href='#%5' alt='%6'>\n")
                             .arg(hr.left() - offset.x())
@@ -136,7 +179,7 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 s += "</br><img src=\"" + imageName;
                 s += "\" alt=\"" +
                      QObject::tr("Image: %1", "Alt tag in HTML export")
-                         .arg(image->getOriginalFilename());
+                         .arg(image->originalFilename());
                 s += "\"></br>";
             }
         }
@@ -147,8 +190,8 @@ QString ExportHTML::getBranchText(BranchItem *current)
             QString n;
             if (note.isRichText()) {
                 n = note.getText();
-                QRegExp re("<p.*>");
-                re.setMinimal(true);
+                QRegularExpression re("<p.*>");
+                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
                 if (current->getNote().getFontHint() == "fixed")
                     n.replace(re, "<p class=\"vym-fixed-note-paragraph\">");
                 else
@@ -228,10 +271,10 @@ QString ExportHTML::buildList(BranchItem *current)
         break;
     }
 
-    if (bi && !bi->hasHiddenExportParent() && !bi->isHidden()) {
+    if (bi && !bi->hasHiddenParent() && !bi->isHidden()) {
         r += ind + sectionBegin;
         while (bi) {
-            if (!bi->hasHiddenExportParent() && !bi->isHidden()) {
+            if (!bi->hasHiddenParent() && !bi->isHidden()) {
                 visChilds++;
                 r += ind + itemBegin;
                 r += getBranchText(bi);
@@ -260,11 +303,11 @@ QString ExportHTML::createTOC()
     toc += "\n";
     toc += "</td></tr>\n";
     toc += "<tr><td>\n";
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
-        if (!cur->hasHiddenExportParent() && !cur->hasScrolledParent()) {
+        if (!cur->hasHiddenParent() && !cur->hasScrolledParent()) {
             if (dia.useNumbering)
                 number = getSectionString(cur);
             toc +=
@@ -272,7 +315,7 @@ QString ExportHTML::createTOC()
             toc += QString("<a href=\"#%1\"> %2 %3</a></br>\n")
                        .arg(model->getSelectString(cur))
                        .arg(number)
-                       .arg(quoteMeta(cur->getHeadingPlain()));
+                       .arg(quoteMeta(cur->headingPlain()));
             toc += "</div>";
         }
         model->nextBranch(cur, prev);
@@ -300,7 +343,7 @@ void ExportHTML::doExport(bool useDialog)
 
     // Check, if warnings should be used before overwriting
     // the output directory
-    if (dia.getDir().exists() && dia.getDir().count() > 0) {
+    if (dia.getDir().exists() && dia.getDir().entryList(QDir::NoDot | QDir::NoDotDot).count() > 0) {
         WarningDialog warn;
         warn.showCancelButton(true);
         warn.setText(QString("The directory %1 is not empty.\n"
@@ -354,7 +397,6 @@ void ExportHTML::doExport(bool useDialog)
         return;
     }
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
 
     // Hide stuff during export
     model->setExportMode(true);
@@ -365,13 +407,13 @@ void ExportHTML::doExport(bool useDialog)
           "charset=UTF-8\"> ";
     ts << "\n<meta name=\"generator=\" content=\" vym - view your mind - " +
               vymVersion + " - " + vymHome + "\">";
-    ts << "\n<meta name=\"author\" content=\"" + quoteMeta(model->getAuthor()) +
+    ts << "\n<meta name=\"author\" content=\"" + quoteMeta(model->mapAuthor()) +
               "\"> ";
     ts << "\n<meta name=\"description\" content=\"" +
-              quoteMeta(model->getComment()) + "\"> ";
+              quoteMeta(model->mapComment()) + "\"> ";
     ts << "\n<link rel='stylesheet' id='css.stylesheet' href='"
        << basename(cssDst) << "' />\n";
-    QString title = model->getTitle();
+    QString title = model->mapTitle();
     if (title.isEmpty())
         title = model->getMapName();
     ts << "\n<head><title>" + quoteMeta(title) + "</title></head>";
@@ -396,7 +438,16 @@ void ExportHTML::doExport(bool useDialog)
 
     // reset flags
     model->resetUsedFlags();
-
+    flagsDir.setPath(dia.getDir().absolutePath() + "/flags");
+    if (!flagsDir.exists()) {
+        if (!dia.getDir().mkdir("flags")) {
+            QMessageBox::critical(
+                0, QObject::tr("Critical"),
+                QObject::tr("Trying to create directory for flags:") + "\n\n" +
+                    QObject::tr("Could not create %1").arg(flagsDir.path()));
+            return;
+        }
+    }
     // Main loop over all mapcenters
     ts << buildList(model->getRootItem()) << "\n";
 
@@ -410,7 +461,7 @@ void ExportHTML::doExport(bool useDialog)
         <td class=\"vym-footerL\">" +
               filePath + "</td> \n\
             <td class=\"vym-footerC\">" +
-              model->getDate() + "</td> \n\
+              toS(QDate::currentDate()) + "</td> \n\
             <td class=\"vym-footerR\"> <a href='" +
               vymHome + "'>vym " + vymVersion + "</a></td> \n\
             </tr> \n \
@@ -418,17 +469,8 @@ void ExportHTML::doExport(bool useDialog)
     ts << "</body></html>";
     file.close();
 
-    QString flagsBasePath = dia.getDir().absolutePath() + "/flags";
-    QDir d(flagsBasePath);
-    if (!d.exists()) {
-        if (!dia.getDir().mkdir("flags")) {
-            QMessageBox::critical(
-                0, QObject::tr("Critical"),
-                QObject::tr("Trying to create directory for flags:") + "\n\n" +
-                    QObject::tr("Could not create %1").arg(flagsBasePath));
-            return;
-        }
-    }
+
+    // Copy standard flags
     Flag *f;
     foreach (QUuid uid, activeFlags) {
         f = standardFlagsMaster->findFlagByUid(uid);
@@ -436,10 +478,9 @@ void ExportHTML::doExport(bool useDialog)
             f = userFlagsMaster->findFlagByUid(uid);
 
         if (f) {
-            ImageObj *io = f->getImageObj();
-            if (io)
-                io->save(flagsBasePath + "/" + uid.toString() +
-                         io->getExtension());
+            ImageContainer *ic = f->getImageContainer();
+            if (ic)
+                ic->save(flagsDir.path() + "/" + ic->originalFilename());
         }
     }
 

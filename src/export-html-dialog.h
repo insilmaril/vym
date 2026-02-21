@@ -18,7 +18,6 @@ class ExportHTMLDialog : public QDialog {
 
     virtual QDir getDir();
     virtual bool warnings();
-    virtual bool hasChanged();
 
   public slots:
     virtual void readSettings();

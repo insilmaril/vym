@@ -1,6 +1,8 @@
 #include <QDebug>
 
 #include "flagrow.h"
+
+#include "flagrow-master.h"
 #include "mainwindow.h"
 
 extern bool debug;
@@ -12,7 +14,7 @@ extern Main *mainWindow;
 FlagRow::FlagRow()
 {
     //qDebug()<< "Const FlagRow ()";
-    masterRow = NULL;
+    masterRow = nullptr;
 }
 
 FlagRow::~FlagRow()
@@ -27,10 +29,8 @@ const QList<QUuid> FlagRow::activeFlagUids() { return activeUids; }
 bool FlagRow::isActive(const QString &name)
 {
     Flag *f = masterRow->findFlagByName(name);
-    if (!f) {
-        qWarning() << "FlagRow::isActive couldn't find flag named " << name;
+    if (!f)
         return false;
-    }
 
     return isActive(f->getUuid());
 }
@@ -42,6 +42,15 @@ bool FlagRow::isActive(const QUuid &uid)
         if (i == uid)
             return true;
     return false;
+}
+
+bool FlagRow::hasFlag(const QString &name)
+{
+    Flag *f = masterRow->findFlagByName(name);
+    if (f)
+        return true;
+    else
+        return false;
 }
 
 bool FlagRow::toggle(const QString &name, bool useGroups)
@@ -158,6 +167,7 @@ bool FlagRow::activate(const QUuid &uid)
 bool FlagRow::deactivate(const QString &name)
 {
     Flag *flag = masterRow->findFlagByName(name);
+    // qDebug() << "FlagRow::deactivate " << name << "  uuid=" << flag;
     return deactivate(flag->getUuid());
 }
 

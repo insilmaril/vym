@@ -5,6 +5,7 @@
 #include <QString>
 
 extern Settings settings;
+extern QFont fixedFont;
 
 ShowTextDialog::ShowTextDialog(QWidget *parent) : QDialog(parent)
 {
@@ -23,14 +24,5 @@ void ShowTextDialog::useFixedFont(bool useFixedFont)
 {
     QFont font;
     if (useFixedFont)
-        font.fromString(settings
-                            .value("/satellite/noteeditor/fonts/fixedFont",
-                                   "Courier,10,-1,5,48,0,0,0,1,0")
-                            .toString());
-    else
-        font.fromString(settings
-                            .value("/satellite/noteeditor/fonts/varFont",
-                                   "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0")
-                            .toString());
-    ui.textBrowser->setFont(font);
+        ui.textBrowser->setFont(fixedFont);
 }

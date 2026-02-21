@@ -6,6 +6,8 @@
 #include <QRectF>
 #include <QTimer>
 
+#define Z_SNOW 2000
+
 class QGraphicsView;
 class QGraphicsScene;
 
@@ -54,7 +56,6 @@ class Winter : public QObject {
     SnowFlake::SnowType type;
     int maxFalling;
     int maxUnfreeze;
-    // QGraphicsRectItem *test;
 
     QRectF viewRect;
 };

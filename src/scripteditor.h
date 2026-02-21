@@ -20,10 +20,12 @@ class ScriptEditor : public QWidget {
 
   public:
     ScriptEditor(QWidget *parent = 0);
+    void setFocus();
     QString getScriptFile();
     void setSlideScript(uint vymModelID, uint slideID, const QString &);
 
   public slots:
+    void closeWindow();
     void runMacro();
     void runSlide();
     void runScript();
@@ -31,6 +33,7 @@ class ScriptEditor : public QWidget {
     void reloadMacros();
     void saveMacros();
     bool loadScript(QString fn = "");
+    bool reloadScript();
     void saveScript();
     void saveScriptAs();
 

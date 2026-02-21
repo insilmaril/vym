@@ -7,7 +7,7 @@
 
 class BranchItem;
 class TreeItem;
-class Link;
+class XLink;
 class LinkableMapObj;
 
 class TreeModel : public QAbstractItemModel {
@@ -29,7 +29,7 @@ class TreeModel : public QAbstractItemModel {
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
     void nextBranch(BranchItem *&current, BranchItem *&previous,
-                    bool deepLevelsFirst = false, BranchItem *start = NULL);
+                    bool deepLevelsFirst = false, BranchItem *start = nullptr);
 
     bool removeRows(int row, int count,
                     const QModelIndex &parent = QModelIndex());
@@ -38,16 +38,12 @@ class TreeModel : public QAbstractItemModel {
     BranchItem *getRootItem();
 
     virtual int xlinkCount();
-    virtual Link *getXLinkNum(const int &n);
+    virtual XLink *getXLinkNum(const int &n);
 
   protected:
     BranchItem *rootItem;
 
-    QList<Link *> xlinks;
-    QList<uint> deleteLaterIDs;
-
-    QColor backgroundColor; // Set in VymModel to optimize backgroundRole
-    QColor selectionColor;  // Set in VymModel to optimize highlightedText palette
+    QList<XLink *> xlinks;
 };
 
 #endif

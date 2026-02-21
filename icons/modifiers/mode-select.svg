@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="32"
    height="32"
    id="svg10643"
    sodipodi:version="0.32"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    sodipodi:docname="mode-select.svg"
    inkscape:output_extension="org.inkscape.output.svgz.inkscape"
    inkscape:export-filename="/home/pinheiro/pics/oxygen-icons/scalable/actions/small/32x32/pointer.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   version="1.0">
+   version="1.0"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs10645">
     <inkscape:perspective
@@ -693,10 +693,10 @@
        spreadMethod="reflect" />
     <filter
        id="filter3387"
-       height="1.249912"
-       y="-0.12495601"
-       width="1.2041403"
-       x="-0.10207015"
+       height="1.189411"
+       y="-0.094705512"
+       width="1.1727593"
+       x="-0.086379671"
        inkscape:collect="always">
       <feGaussianBlur
          id="feGaussianBlur3389"
@@ -873,7 +873,11 @@
     </linearGradient>
     <filter
        id="filter3191"
-       inkscape:collect="always">
+       inkscape:collect="always"
+       x="-0.0184"
+       y="-0.018399997"
+       width="1.0368"
+       height="1.0368">
       <feGaussianBlur
          id="feGaussianBlur3193"
          stdDeviation="0.2025"
@@ -918,14 +922,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.313708"
-     inkscape:cx="24.505486"
-     inkscape:cy="14.348687"
+     inkscape:cx="24.571962"
+     inkscape:cy="14.407301"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      inkscape:window-width="1920"
-     inkscape:window-height="1006"
+     inkscape:window-height="1007"
      inkscape:window-x="0"
      inkscape:window-y="0"
      showguides="true"
@@ -937,7 +941,10 @@
      inkscape:snap-nodes="false"
      inkscape:snap-global="false"
      inkscape:window-maximized="1"
-     inkscape:document-rotation="0">
+     inkscape:document-rotation="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid3664"
@@ -1024,7 +1031,8 @@
        inkscape:connector-curvature="0" />
     <g
        id="g4655"
-       transform="matrix(0.28164268,0,0,0.28164268,-20.45438,90.409607)">
+       transform="matrix(0.28164268,0,0,0.28164268,-20.45438,90.409607)"
+       style="display:none">
       <path
          inkscape:connector-curvature="0"
          style="fill:url(#linearGradient4794);fill-opacity:1;stroke:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.0878;stroke-opacity:1"

@@ -1,7 +1,13 @@
 #include "export-latex.h"
 
-#include "mainwindow.h"
+#include <QClipboard>
+#include <QGuiApplication>
 #include <QMessageBox>
+#include <QRegularExpression>
+
+#include "branchitem.h"
+#include "mainwindow.h"
+#include "vymmodel.h"
 
 extern Main *mainWindow;
 extern Settings settings;
@@ -29,12 +35,12 @@ QString ExportLaTeX::escapeLaTeX(const QString &s)
 {
     QString r = s;
 
-    QRegExp rx;
-    rx.setMinimal(true);
+    QRegularExpression re;
+    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
 
     foreach (QString p, esc.keys()) {
-        rx.setPattern(p);
-        r.replace(rx, esc[p]);
+        re.setPattern(p);
+        r.replace(re, esc[p]);
     }
     return r;
 }
@@ -75,13 +81,13 @@ void ExportLaTeX::doExport()
 
     // Main loop over all branches
     QString s;
-    BranchItem *cur = NULL;
-    BranchItem *prev = NULL;
+    BranchItem *cur = nullptr;
+    BranchItem *prev = nullptr;
     model->nextBranch(cur, prev);
     while (cur) {
-        if (!cur->hasHiddenExportParent()) {
+        if (!cur->hasHiddenParent()) {
             int d = cur->depth();
-            s = escapeLaTeX(cur->getHeadingPlain());
+            s = escapeLaTeX(cur->headingPlain());
             if (sectionNames.at(d).isEmpty() || d >= sectionNames.count())
                 out += s + "\n";
             else {
@@ -99,7 +105,6 @@ void ExportLaTeX::doExport()
     }
 
     QTextStream ts(&file);
-    ts.setCodec("UTF-8");
     ts << out;
     file.close();
 

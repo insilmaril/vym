@@ -1,6 +1,7 @@
 #include "jira-settings-dialog.h"
 
 #include <QDebug>
+#include <QSignalBlocker>
 
 #include "settings.h"
 
@@ -13,7 +14,7 @@ JiraSettingsDialog::JiraSettingsDialog(QWidget *parent) : QDialog(parent)
     QDialog::setWindowTitle("VYM - " +
                             tr("Jira settings", "Jira settings dialog title"));
 
-    ui.tableWidget->setColumnCount(5);
+    ui.tableWidget->setColumnCount(4);
 
         settings.beginGroup("/atlassian/jira");
         QTableWidgetItem *newItem;
@@ -23,7 +24,6 @@ JiraSettingsDialog::JiraSettingsDialog(QWidget *parent) : QDialog(parent)
         headers << "URL";
         headers << "Pattern";
         headers << "Method";
-        headers << "User";
         ui.tableWidget->setHorizontalHeaderLabels(headers);
 
         int size = settings.beginReadArray("servers");
@@ -41,14 +41,14 @@ JiraSettingsDialog::JiraSettingsDialog(QWidget *parent) : QDialog(parent)
                 newItem = new QTableWidgetItem(settings.value("pattern").toString());
                 ui.tableWidget->setItem(0, 2, newItem);
 
-                if (settings.value("authUsingPAT").toString() == "true")
+                QString method = settings.value("method", "userpass").toString();
+                if (method == "userpass")
+                    newItem = new QTableWidgetItem("Username/Password");
+                else if (method == "pat")
                     newItem = new QTableWidgetItem("PAT");
                 else
-                    newItem = new QTableWidgetItem("Username/Password");
+                    newItem = new QTableWidgetItem("Cloud");
                 ui.tableWidget->setItem(0, 3, newItem);
-
-                newItem = new QTableWidgetItem(settings.value("username","-").toString());
-                ui.tableWidget->setItem(0, 4, newItem);
             }
         }
         settings.endArray();
@@ -71,7 +71,11 @@ JiraSettingsDialog::JiraSettingsDialog(QWidget *parent) : QDialog(parent)
             this, SLOT(fieldsChanged()));
     connect(ui.PATLineEdit, SIGNAL(editingFinished()), 
             this, SLOT(fieldsChanged()));
-    connect(ui.usePATCheckBox, SIGNAL(clicked()), 
+    connect(ui.apiTokenLineEdit, SIGNAL(editingFinished()), 
+            this, SLOT(fieldsChanged()));
+    connect(ui.authMethodComboBox, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(updateAuthenticationFields()));
+    connect(ui.authMethodComboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(fieldsChanged()));
     connect(ui.tableWidget, SIGNAL(cellChanged(int, int)),
             this, SLOT(fieldsChanged()));
@@ -91,29 +95,35 @@ void JiraSettingsDialog::deleteServer()
 
 void JiraSettingsDialog::updateAuthenticationFields()
 {
-    QModelIndexList ixl = ui.tableWidget->selectionModel()->selectedIndexes();
-
-    int row;
-    if (ixl.isEmpty() || ixl.count() > 1)
-        row = -1;
-    else
-        row = ixl.first().row();
+    int rowCount = ui.tableWidget->rowCount();
+    int row = -1;
+    if (ui.tableWidget->selectionModel()) {
+        QModelIndexList sel = ui.tableWidget->selectionModel()->selectedIndexes();
+        if (!sel.isEmpty()) row = sel.first().row();
+    }
 
     if (row < 0) {
-        // No server selected, disable fields
         ui.selectedServerLineEdit->setText("");
-        ui.usePATCheckBox->setEnabled(false);
+        ui.authMethodComboBox->setEnabled(false);
+        ui.authMethodComboBox->hide();
+        ui.authMethodLabel->hide();
         ui.PATLineEdit->setEnabled(false);
-        ui.PATLabel->setEnabled(false);
-        ui.userLabel->setEnabled(false);
+        ui.PATLineEdit->hide();
+        ui.PATLabel->hide();
+        ui.apiTokenLineEdit->setEnabled(false);
+        ui.apiTokenLineEdit->hide();
+        ui.apiTokenLabel->hide();
         ui.userLineEdit->setEnabled(false);
-        ui.passwordLabel->setEnabled(false);
+        ui.userLineEdit->hide();
+        ui.userLabel->hide();
         ui.passwordLineEdit->setEnabled(false);
+        ui.passwordLineEdit->hide();
+        ui.passwordLabel->hide();
 
-        // Empty unused fields
         ui.userLineEdit->setText("");
         ui.passwordLineEdit->setText("");
         ui.PATLineEdit->setText("");
+        ui.apiTokenLineEdit->setText("");
 
     } else {
         // Index of selected server in settings
@@ -125,57 +135,75 @@ void JiraSettingsDialog::updateAuthenticationFields()
             ui.selectedServerLineEdit->setText( ui.tableWidget->item(row, 0)->text());
         else
             ui.selectedServerLineEdit->setText("");
-        ui.usePATCheckBox->setEnabled(true);
-        ui.usePATCheckBox->setChecked(
-            settings.value(selectedServer + "authUsingPAT", true).toBool());
+        // Block signal emissions while updating widgets to avoid re-entrancy
+        QSignalBlocker blockCombo(ui.authMethodComboBox);
+        QSignalBlocker blockUser(ui.userLineEdit);
+        QSignalBlocker blockPass(ui.passwordLineEdit);
+        QSignalBlocker blockPat(ui.PATLineEdit);
+
+        ui.authMethodComboBox->setEnabled(true);
+        ui.authMethodComboBox->show();
+        ui.authMethodLabel->show();
         ui.PATLineEdit->setEnabled(true);
         ui.PATLabel->setEnabled(true);
+        ui.apiTokenLineEdit->setEnabled(true);
+        ui.apiTokenLabel->setEnabled(true);
         ui.userLabel->setEnabled(true);
         ui.userLineEdit->setEnabled(true);
         ui.passwordLabel->setEnabled(true);
         ui.passwordLineEdit->setEnabled(true);
 
-        // Show and prefill fields depending on usage of PAT
-        if (ui.usePATCheckBox->isChecked()) {
+        int methodIdx = ui.authMethodComboBox->currentIndex();
+        if (methodIdx == 2) { // cloud
+            ui.apiTokenLineEdit->show();
+            ui.apiTokenLineEdit->setText(
+                settings.value(selectedServer + "apiToken","").toString());
+            ui.apiTokenLabel->show();
+            ui.PATLineEdit->hide();
+            ui.PATLabel->hide();
+            ui.userLabel->show();
+            ui.userLabel->setText(tr("Email:"));
+            ui.userLineEdit->show();
+            ui.userLineEdit->setText(
+                settings.value(QString("/atlassian/jira/servers/%1/email").arg(n_server), "").toString());
+            ui.passwordLabel->hide();
+            ui.passwordLineEdit->hide();
+        } else if (methodIdx == 1) { // PAT
             ui.PATLineEdit->show();
             ui.PATLineEdit->setText(
                 settings.value(selectedServer + "PAT","").toString());
-                settings.value(selectedServer + "PAT","").toString();
             ui.PATLabel->show();
+            ui.apiTokenLineEdit->hide();
+            ui.apiTokenLabel->hide();
             ui.userLabel->hide();
             ui.userLineEdit->hide();
             ui.passwordLabel->hide();
             ui.passwordLineEdit->hide();
-        } else {
+        } else { // user/pass
             ui.PATLineEdit->hide();
             ui.PATLabel->hide();
+            ui.apiTokenLineEdit->hide();
+            ui.apiTokenLabel->hide();
             ui.userLabel->show();
+            ui.userLabel->setText(tr("Username:"));
             ui.userLineEdit->show();
             ui.userLineEdit->setText(
-                settings.value(QString("/atlassian/jira/servers/%1/username").arg(n_server), "-").toString());
+                settings.value(QString("/atlassian/jira/servers/%1/username").arg(n_server), "").toString());
             ui.passwordLabel->show();
             ui.passwordLineEdit->show();
             ui.passwordLineEdit->setText(
                 settings.value(QString("/atlassian/jira/servers/%1/password").arg(n_server), "").toString());
         }
     }
-
-    // Update layout
-    adjustSize();
 }
 
 
 void JiraSettingsDialog::fieldsChanged()
 {
     int rowCount = ui.tableWidget->rowCount();
-
     if (rowCount < 1) return;
-
-    QModelIndexList ixl = ui.tableWidget->selectionModel()->selectedIndexes();
-
-    if (ixl.isEmpty() || ixl.count() > 1) return;
-
-    int row = ixl.first().row();
+    int row = ui.tableWidget->currentRow();
+    if (row < 0 || row >= rowCount) return;
     int n_server = rowCount - 1 - row;
 
     if (n_server < 0) return;
@@ -196,24 +224,63 @@ void JiraSettingsDialog::fieldsChanged()
         settings.setValue("pattern", ui.tableWidget->item(row, 2)->text());
     else
         settings.setValue("pattern", "");
-    settings.setValue("authUsingPAT", ui.usePATCheckBox->isChecked());
-    if (ui.usePATCheckBox->isChecked()) {
-        // Don't save password if PAT is used
-        settings.remove("password");
-        settings.setValue("PAT", ui.PATLineEdit->text());
-    } else {
+
+    int methodIdx = ui.authMethodComboBox->currentIndex();
+    QString method = (methodIdx == 0) ? "userpass" : (methodIdx == 1) ? "pat" : "cloud";
+    settings.setValue("method", method);
+    if (method == "userpass") {
         settings.setValue("username", ui.userLineEdit->text());
         settings.setValue("password", ui.passwordLineEdit->text());
-        settings.remove("PAT");
+    } else if (method == "pat") {
+        settings.setValue("PAT", ui.PATLineEdit->text());
+    } else { // cloud
+        settings.setValue("email", ui.userLineEdit->text());
+        settings.setValue("apiToken", ui.apiTokenLineEdit->text());
     }
     settings.setValue("servers/size", rowCount);
 
     settings.endArray();
     settings.endGroup();
+
+    // Reflect method in table overview without re-triggering cellChanged
+    {
+        QSignalBlocker blockTable(ui.tableWidget);
+        QString methodText = (method == "userpass") ? "Username/Password" : (method == "pat") ? "PAT" : "Cloud";
+        QTableWidgetItem *methodItem = new QTableWidgetItem(methodText);
+        ui.tableWidget->setItem(row, 3, methodItem);
+    }
 }
 
 void JiraSettingsDialog::selectionChanged(const QItemSelection &selected, const QItemSelection &)
 {
+    Q_UNUSED(selected);
+
+    // If nothing selected, just refresh to the hidden state
+    if (!ui.tableWidget->selectionModel() ||
+        ui.tableWidget->selectionModel()->selectedIndexes().isEmpty()) {
+        updateAuthenticationFields();
+        return;
+    }
+
+    int row = ui.tableWidget->selectionModel()->selectedIndexes().first().row();
+    int rowCount = ui.tableWidget->rowCount();
+    if (row < 0 || row >= rowCount) {
+        updateAuthenticationFields();
+        return;
+    }
+
+    int n_server = rowCount - row; // absolute numbering used in settings path
+    QString selectedServer = QString("/atlassian/jira/servers/%1/").arg(n_server);
+
+    // Load and set method for selected server without triggering save yet
+    QString method = settings.value(selectedServer + "method", "userpass").toString();
+    int methodIndex = 0; // 0=userpass,1=pat,2=cloud
+    if (method == "pat") methodIndex = 1;
+    else if (method == "cloud") methodIndex = 2;
+    {
+        QSignalBlocker blockCombo(ui.authMethodComboBox);
+        ui.authMethodComboBox->setCurrentIndex(methodIndex);
+    }
+
     updateAuthenticationFields();
 }
-

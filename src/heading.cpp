@@ -2,7 +2,7 @@
 #include "misc.h"
 
 #include <QDebug>
-#include <QRegExp>
+#include <QRegularExpression>
 
 /////////////////////////////////////////////////////////////////
 // Heading

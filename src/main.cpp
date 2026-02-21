@@ -1,17 +1,17 @@
+#include <cstdlib>
+#include <iostream>
+
 #include <QApplication>
+#include <QFontDatabase>
+#include <QJSEngine>
 #include <QMessageBox>
 #include <QStyleFactory>
 
-#include <cstdlib>
-#include <iostream>
-using namespace std;
-
+#include "branchpropeditor.h"
 #include "command.h"
 #include "debuginfo.h"
 #include "findresultwidget.h"
-#include "findwidget.h"
-#include "flagrow.h"
-#include "flagrowobj.h"
+#include "flagrow-master.h"
 #include "headingeditor.h"
 #include "macros.h"
 #include "mainwindow.h"
@@ -25,6 +25,7 @@ using namespace std;
 #include "taskmodel.h"
 #include "version.h"
 #include "warningdialog.h"
+#include "zip-agent.h"
 
 #if defined(VYM_DBUS)
 #include <QtDBus/QDBusConnection>
@@ -49,17 +50,17 @@ QString jiraPassword;
 QString confluencePassword;
 
 TaskModel *taskModel;
-TaskEditor *taskEditor;
-ScriptEditor *scriptEditor;
-ScriptOutput *scriptOutput;
 HeadingEditor *headingEditor;
-NoteEditor *noteEditor; // used in Constr. of LinkableMapObj
+NoteEditor *noteEditor;
 BranchPropertyEditor *branchPropertyEditor;
 
 // initialized in mainwindow
-Main *mainWindow;
-FindWidget *findWidget;
+Main *mainWindow = nullptr;
+ScriptEditor *scriptEditor;
+ScriptOutput *scriptOutput;
+FindControlsWidget *findControlsWidget;
 FindResultWidget *findResultWidget;
+TaskEditor *taskEditor;
 
 FlagRowMaster *systemFlagsMaster;
 FlagRowMaster *standardFlagsMaster;
@@ -67,15 +68,19 @@ FlagRowMaster *userFlagsMaster;
 
 Macros macros;
 
-ulong itemLastID = 0;  // Unique ID for all items in all models
-ulong imageLastID = 0; // Unique ID for caching images, also flags not in tree
+ulong itemLastID = 0;       // Unique ID for all items in all models
+ulong imageLastID = 0;      // Unique ID for caching images, also flags not in tree
 
-QDir tmpVymDir;          // All temp files go there, created in mainwindow
-QDir cacheDir;            // tmp dir with cached svg files in tmpVymDir
-QString clipboardDir;    // Clipboard used in all mapEditors
-QString clipboardFile;   // Clipboard used in all mapEditors
+QDir tmpVymDir;             // All temp files go there, created in mainwindow
+QDir cacheDir;              // tmp dir with cached svg files in tmpVymDir
+QDir clipboardDir;          // Clipboard used in all mapEditors
+QString clipboardFileName;  // Clipboard used in all mapEditors
 
 QDir vymBaseDir;            // Containing all styles, scripts, images, ...
+QDir vymUserDir;            // User directory with temporary files
+
+bool useActionLog;          // Write logfile. No GUI yet to enable, only for debugging
+QString actionLogPath;      // Path to logfile
 
 QDir vymTranslationsDir;    // Translation files (*.qm)
 QTranslator vymTranslator;
@@ -83,6 +88,8 @@ QTranslator vymTranslator;
 QDir lastImageDir;
 QDir lastMapDir;
 QDir lastExportDir;
+QDir lastScriptDir;
+
 #if defined(Q_OS_WINDOWS)
 QDir vymInstallDir;
 #endif
@@ -98,62 +105,77 @@ QStringList lastSessionFiles;   //! Will be overwritten in setting after load, s
 
 Switchboard switchboard;
 
-Settings settings("InSilmaril", "vym"); // Organization, Application name
+Settings settings("InSilmaril", QString(__VYM_NAME).toLower()); // Organization, Application name
+QFont fixedFont;
+QFont varFont;
 
 bool zipToolAvailable = false;
 bool unzipToolAvailable = false;
-QString zipToolPath;   // Platform dependant zip tool
-QString unzipToolPath; // For windows same as zipToolPath
+QString zipToolPath;	// Platform dependant zip tool
+QString unzipToolPath;  // Platform dependant unzip tool
 
+QList<Command *> branchCommands;
+QList<Command *> imageCommands;
+QList<Command *> itemListCommands;
 QList<Command *> modelCommands;
 QList<Command *> vymCommands;
+QList<Command *> xlinkCommands;
 
 Options options;
 ImageIO imageIO;
 
-int statusbarTime = 10000;
+bool usingDarkTheme;    // Influences some color schemes
+bool systemSeemsDark;   // Text brighter than background?
+QString iconTheme;      // "bright" or "dark" depending on usingDarkTheme
 
-bool usingDarkTheme;
-QColor vymBlue;
+// Some colors used more often and depending on dark mode
+QColor vymBlueColor;
+QColor vymForegroundColor;
+QColor vymBaseColor;
 
 int warningCount = 0;
 int criticalCount = 0;
 int fatalCount = 0;
 
-QString editorFocusStyle =
-    QString(" border-color: #3daee9; border-style:outset; border-width:3px; "
-            "color:black;");
-
-#include <QScriptEngine>
-QScriptValue scriptPrint(QScriptContext *ctx, QScriptEngine *eng);
+// Some styles used in various widgets
+QString editorFocusInStyle =
+    QString(" border-color: #3daee9; border-style:outset; border-width:1px; ");// "color:black;");
+QString editorFocusOutStyle = QString("border-width:0px;");
+QString toolBarStyle;
 
 void msgHandler(QtMsgType type, const QMessageLogContext &context,
                 const QString &msg)
 {
-    QByteArray localMsg = msg.toLocal8Bit();
+    QByteArray localMsg;
+    /*
+    if (msg.startsWith("\"") && msg.endsWith("\"")) {
+        QString s = msg;
+        localMsg = s.remove(s.length() - 1, 1).remove(0,1).toLocal8Bit();
+    } else
+    */
+        localMsg = msg.toLocal8Bit();
+
     switch (type) {
-    case QtDebugMsg:
-        fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file,
-                context.line, context.function);
-        break;
-    case QtWarningMsg:
-        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
-        warningCount++;
-        break;
-    case QtCriticalMsg:
-        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
-        criticalCount++;
-        break;
-    case QtFatalMsg:
-        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
-        fatalCount++;
-        break;
-    default:
-        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(),
-                context.file, context.line, context.function);
+        case QtDebugMsg:
+            fprintf(stderr, "%s\n", localMsg.constData());
+            break;
+        case QtWarningMsg:
+            fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(),
+                    context.file, context.line, context.function);
+            warningCount++;
+            break;
+        case QtCriticalMsg:
+            fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(),
+                    context.file, context.line, context.function);
+            criticalCount++;
+            break;
+        case QtFatalMsg:
+            fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(),
+                    context.file, context.line, context.function);
+            fatalCount++;
+            break;
+        default:
+            fprintf(stderr, "Info: %s\n", localMsg.constData());
     }
 }
 
@@ -169,11 +191,15 @@ int main(int argc, char *argv[])
     vymCodeQuality = __VYM_CODE_QUALITY;
     vymHome = __VYM_HOME;
 
+    // Fonts
+    fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+        //    Linux: "Courier,12,-1,5,48,0,0,0,1,0"
+        //    Mac  :  "Menlo"
+    varFont = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+        //    Linux:  "DejaVu Sans Mono,12,-1,0,50,0,0,0,0,0"
+                                                    //
     // Install our own handler for messages
     qInstallMessageHandler(msgHandler);
-
-    // Testing for now
-    vout.setCodec("UTF-8");
 
     // Reading and initializing options commandline options
     options.add("batch", Option::Switch, "b", "batch");
@@ -190,6 +216,7 @@ int main(int argc, char *argv[])
     options.add("recover", Option::Switch, "recover", "recover");
     options.add("restore", Option::Switch, "r", "restore");
     options.add("shortcuts", Option::Switch, "s", "shortcuts");
+//    options.add("shortcutsLaTeX", Option::Switch, "sl", "shortcutsLaTeX") // FIXME-3 not really used?
     options.add("testmode", Option::Switch, "t", "testmode");
     options.add("version", Option::Switch, "v", "version");
     options.setHelpText(
@@ -202,7 +229,7 @@ int main(int argc, char *argv[])
         "Usage: vym [OPTION]... [FILE]... \n"
         "Open FILEs with vym\n\n"
         "-b           batch         batch mode: hide windows\n"
-        "-c           commands	    List all available commands\n"
+        "-c           commands      List all available commands\n"
         "-cl          commandslatex List commands in LaTeX format\n"
         "-d           debug         Show debugging output\n"
         "-h           help          Show this help text\n"
@@ -222,11 +249,11 @@ int main(int argc, char *argv[])
         "-v           version       Show vym version\n");
 
     if (options.parse()) {
-        cout << endl << qPrintable(options.getHelpText()) << endl;
+        std::cout << std::endl << qPrintable(options.getHelpText()) << std::endl;
         return 1;
     }
 
-    if (options.isOn("version")) {
+    if (options.isActive("version")) {
         QString s = QString("VYM - View Your Mind (c) 2004-%1").arg(QDate::currentDate().year());
         s += " Uwe Drechsel\n";
         s += "   Version: " + vymVersion;
@@ -235,16 +262,16 @@ int main(int argc, char *argv[])
         s += "\n";
         s += "   Quality: " + vymCodeQuality + "\n";
         s += "Build date: " + vymBuildDate + "\n";
-        cout << s.toStdString();
+        std::cout << s.toStdString();
 
         return 0;
     }
 
     taskModel = new TaskModel();
 
-    debug = options.isOn("debug");
+    debug = options.isActive("debug");
 
-    testmode = options.isOn("testmode");
+    testmode = options.isActive("testmode");
 
     QString pidString = QString::number(QCoreApplication::applicationPid());
 
@@ -259,7 +286,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    if (options.isOn("name"))
+    if (options.isActive("name"))
         vymInstanceName = options.getArg("name");
     else
         vymInstanceName = pidString;
@@ -271,44 +298,98 @@ int main(int argc, char *argv[])
 
     // Use /usr/share/vym or /usr/local/share/vym or . ?
     // First try options
-    if (options.isOn("local")) {
+    if (options.isActive("local")) {
         vymBaseDir.setPath(vymBaseDir.currentPath());
-    }
-    else
+    } else
         // then look for environment variable
         if (getenv("VYMHOME") != 0) {
-        vymBaseDir.setPath(getenv("VYMHOME"));
-    }
-    else
-    // ok, let's find my way on my own
-    {
-#if defined(Q_OS_MACX)
-        // Executable is in vym.app/Contents/MacOS, so go up first:
-        vymBaseDir = QCoreApplication::applicationDirPath();
-        vymBaseDir.cdUp();
-        vymBaseDir.cd("Resources");
+            vymBaseDir.setPath(getenv("VYMHOME"));
+        } else {
+            // ok, let's find vymBaseDir on my own
+
+#if defined(Q_OS_MACOS)
+            // Executable is in vym.app/Contents/MacOS, so go up first:
+            vymBaseDir.setPath(QCoreApplication::applicationDirPath());
+            vymBaseDir.cdUp();
+            vymBaseDir.cd("Resources");
 #elif defined(Q_OS_WINDOWS)
-        vymBaseDir.setPath(QCoreApplication::applicationDirPath());
+            vymBaseDir.setPath(QCoreApplication::applicationDirPath());
 #else
-        vymBaseDir.setPath(VYMBASEDIR);
+            vymBaseDir.setPath(VYMBASEDIR);
 #endif
+        }
+
+    // Temporary directories
+
+    // vymUserDir has temporary files (later maybe more data)
+    // in users home to avoid deleting still
+    // required files by system (see #151)
+
+    vymUserDir.setPath(QDir::homePath() + "/.vym");
+
+    bool ok;
+    if (!vymUserDir.exists()) {
+        ok = QDir::home().mkdir(
+                basename(vymUserDir.path()),
+                QFileDevice::ReadOwner| QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+        if (!ok) {
+            QString msg = "Failed to create vymUserDir=" + vymUserDir.path();
+            qWarning() << msg;
+            QMessageBox::warning(0, "Critical Error", msg);
+            exit (1);
+        }
     }
+
+    tmpVymDir.setPath(makeTmpDir(ok, "vym-tmp"));
+    if (!ok) {
+        QString msg = "Failed to create temporary directory tmpVymDir=" + tmpVymDir.path();
+        qWarning() << msg;
+        QMessageBox::warning(0, "Critical Error", msg);
+        exit(1);
+    }
+    if (debug)
+        qDebug() << "tmpVymDirPath = " << tmpVymDir.path();
+
+    // Create directory for clipboard
+    clipboardDir.setPath(tmpVymDir.path() + "/clipboard");
+    clipboardFileName = "clipboard";
+    if (!clipboardDir.mkpath(clipboardDir.path())) {
+        QString msg = "Failed to create clipboardDir=" + clipboardDir.path();
+        qWarning() << msg;
+        QMessageBox::warning(0, "Critical Error", msg);
+        exit(1);
+    }
+
+    makeSubDirs(clipboardDir.path());
+
+    // Create directory for cached files, e.g. svg images
+    cacheDir.setPath(tmpVymDir.path() + "/cache");
+    if (!tmpVymDir.mkpath(cacheDir.path())) {
+        QString msg = "Failed to create cache directory cacheDir=" + cacheDir.path();
+        qWarning() << msg;
+        QMessageBox::warning(0, "Critical Error", msg);
+        exit(1);
+    }
+
+
 
     // Platform specific settings
     vymPlatform = QSysInfo::prettyProductName();
 
 #if defined(Q_OS_WINDOWS)
-    // Only Windows 10 has tar. Older windows versions not supported.
+    // Only Windows 10 has tar for zip and unzip.
+    // Older windows versions not supported.
     zipToolPath = "tar";
+    unzipToolPath = "tar";
 #else
-    zipToolPath = "/usr/bin/zip";
+    zipToolPath = "/usr/bin/zip";       // FIXME-4 no longer installed per default in openSUSE 15.6
     unzipToolPath = "/usr/bin/unzip";
 #endif
     iconPath = vymBaseDir.path() + "/icons/";
     flagsPath = vymBaseDir.path() + "/flags/";
 
     // When running locally, use local macros. Otherwise settings are used
-    if (options.isOn("local"))
+    if (options.isActive("local"))
         macros.setPath(vymBaseDir.path() + "/macros/macros.vys");
     else
         macros.setPath(
@@ -318,45 +399,59 @@ int main(int argc, char *argv[])
 
     // Some directories
     QDir useDir;
-    if (options.isOn("local"))
+    if (options.isActive("local"))
         useDir = QDir().current();
     else
-        useDir = QDir().home();
+        if (getenv("VYMHOME") != 0)
+            useDir = vymBaseDir;
+        else
+            useDir = QDir().home();
+
     lastImageDir = useDir;
     lastMapDir = useDir;
     lastExportDir = useDir;
+    lastScriptDir = useDir;
 
-    if (options.isOn("help")) {
-        cout << qPrintable(options.getHelpText()) << endl;
+    if (options.isActive("help")) {
+        std::cout << qPrintable(options.getHelpText()) << std::endl;
         return 0;
     }
 
     // Initialize translations
-    if (options.isOn("locale"))
+    if (options.isActive("locale"))
         localeName = options.getArg("locale");
 
     // Use dark theme depending on system appearance and preferences
     int text_hsv_value = app.palette().color(QPalette::WindowText).value();
     int bg_hsv_value = app.palette().color(QPalette::Base).value();
-    bool systemSeemsDark = (text_hsv_value > bg_hsv_value);
+    systemSeemsDark = (text_hsv_value > bg_hsv_value);
     QString settingsDarkTheme = settings.value("/system/darkTheme", "system").toString();
     usingDarkTheme = false;
+    iconTheme = "bright";
     if (settingsDarkTheme != "never") {
-        if (settingsDarkTheme == "always" || (settingsDarkTheme == "system" && systemSeemsDark))
+        if (settingsDarkTheme == "always" || (settingsDarkTheme == "system" && systemSeemsDark)) {
             usingDarkTheme = true;
+            iconTheme = "dark";
+        }
     }
+    /*
+    qDebug() << "dark settings: " << settingsDarkTheme
+        << " systemDark=" << systemSeemsDark
+        << " useDark" << usingDarkTheme;
+    */
 
-#if defined(Q_OS_WINDOWS)
+    QPalette palette;
     if (usingDarkTheme) {
         qApp->setStyle(QStyleFactory::create("fusion"));
+        //qApp->setStyle(QStyleFactory::create("Windows"));
+        //qApp->setStyle(QStyleFactory::create("windowsvista"));
 
         // On Windows, there is no dark palette predefined, let's do that on our own
-        QPalette palette;
         palette.setColor(QPalette::Window, QColor(53,53,53));
         palette.setColor(QPalette::WindowText, Qt::white);
         palette.setColor(QPalette::Base, QColor(27, 30, 32));
         palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
-        palette.setColor(QPalette::ToolTipBase, Qt::white);
+        palette.setColor(QPalette::ToolTipBase, QColor(53,53,53));
         palette.setColor(QPalette::ToolTipText, Qt::white);
         palette.setColor(QPalette::Text, Qt::white);
         palette.setColor(QPalette::Button, QColor(53,53,53));
@@ -364,9 +459,58 @@ int main(int argc, char *argv[])
         palette.setColor(QPalette::BrightText, Qt::red);
         palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
         palette.setColor(QPalette::HighlightedText, Qt::black);
+
+        // FIXME-3 palette experiments on Windows
+        //palette.setColor(QPalette::Light, Qt::green);
+        //palette.setColor(QPalette::Midlight, Qt::red);
         qApp->setPalette(palette);
+
+        vymBlueColor =QColor::fromString("#00aaff");
+    } else {
+        if (systemSeemsDark) {
+            qApp->setStyle(QStyleFactory::create("macOS"));
+            palette.setColor(QPalette::Window, QColor("#ececec"));          // 10
+            palette.setColor(QPalette::WindowText, Qt::black);              //  0
+            palette.setColor(QPalette::Base, QColor("#ffffff"));            //  9
+            palette.setColor(QPalette::AlternateBase, QColor(253,53,53));   // 16
+            palette.setColor(QPalette::ToolTipBase, Qt::white);             // 18
+            palette.setColor(QPalette::ToolTipText, Qt::black);             // 19
+            palette.setColor(QPalette::Text, Qt::black);                    //  6
+            palette.setColor(QPalette::Button, QColor("#ececec"));          //  1
+            palette.setColor(QPalette::ButtonText, Qt::black);              //  8
+            palette.setColor(QPalette::BrightText, Qt::white);              //  7
+
+            /*
+            QPalette::Light	2	Lighter than Button color.
+            QPalette::Midlight	3	Between Button and Light.
+            QPalette::Dark	4	Darker than Button.
+            QPalette::Mid	5	Between Button and Dark.
+            QPalette::Shadow	11	A very dark color. By default, shadow color is Qt::black.
+            */
+            palette.setColor(QPalette::Light, QColor("#ffffff"));           //  2
+            palette.setColor(QPalette::Midlight, QColor("#f5f5f5"));        //  3
+            palette.setColor(QPalette::Dark, QColor("#bfbfbf"));            //  4
+            palette.setColor(QPalette::Mid, QColor("#a9a9a9"));             //  5
+            palette.setColor(QPalette::Shadow, Qt::black);                  // 11
+
+            // Roles of seleced items
+            palette.setColor(QPalette::Highlight, QColor("#a5cdff"));       // 12
+            palette.setColor(QPalette::HighlightedText, Qt::black);         // 13
+
+            // Links
+            /*
+            QPalette::Link	14
+            QPalette::LinkVisited	15
+             */
+            qApp->setPalette(palette);
+        }
+
+        vymBlueColor =QColor::fromString("#0000ff");
     }
-#endif
+
+    //  toolBarStyle = "background-color: " + palette.color(QPalette::Button).name() + "; border: None;";   // FIXME-3  Checked buttons no longer visible, introduced for forced bright theme
+    vymForegroundColor = palette.color(QPalette::WindowText);
+    vymBaseColor = palette.color(QPalette::Base);
 
     // Prepare and check translations
     vymTranslationsDir = QDir(vymBaseDir.path() + "/translations");
@@ -397,9 +541,13 @@ int main(int argc, char *argv[])
         bool ok;
         if (!localeName.isEmpty())
             // Use localeName to load specific language
-            ok = vymTranslator.load(QString("vym.%1.qm").arg(localeName), vymTranslationsDir.path());
-        else
+            ok = vymTranslator.load(QString("vym_%1.qm").arg(localeName), vymTranslationsDir.path());
+        else {
             ok = vymTranslator.load(QLocale(), "vym", ".", vymTranslationsDir.path(), ".qm");
+            if (!ok)
+                // No system locale found, go for English
+                ok = vymTranslator.load(QString("vym_en.qm"), vymTranslationsDir.path());
+        }
 
         if (!ok) {
             WarningDialog warn;
@@ -427,98 +575,124 @@ int main(int argc, char *argv[])
     userFlagsMaster->setPrefix("user/");
 
     // Initialize editors
-    noteEditor = new NoteEditor("noteeditor");
-    noteEditor->setWindowIcon(QPixmap(":/vym-editor.png"));
-    headingEditor = new HeadingEditor("headingeditor");
+    noteEditor = new NoteEditor("NoteEditor", QObject::tr("Note Editor", "Name of editor shown as window title"));
+
+    headingEditor = new HeadingEditor("HeadingEditor", QObject::tr("Heading Editor", "Name of editor shown as window title"));
     branchPropertyEditor = new BranchPropertyEditor();
 
     // Initially read filenames of last session, before settings are 
     // overwritten during loading of maps
     lastSessionFiles = settings.value("/mainwindow/sessionFileList", QStringList()).toStringList();
 
+    // Logfiles (no GUI yet for settings)
+    useActionLog = settings.value("/logfile/enabled", false).toBool();
+    actionLogPath = settings.value("/logfile/path", QDir::homePath() + "/vym.log").toString();
 
-    Main m;
+    // Create MainWindow (after creating editors)
+    // Main m;
+    mainWindow = new Main;
+
+    // Add Escape-keys to editors (after creating MainWindow)
+    QAction *a = new QAction("Cancel", noteEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in NoteEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    noteEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    noteEditor->addAction(a);
+
+    a = new QAction("Cancel", headingEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in HeadingEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    headingEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    headingEditor->addAction(a);
+
+    a = new QAction("Cancel", taskEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in TaskEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    taskEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    taskEditor->addAction(a);
+
+    a = new QAction("Cancel", branchPropertyEditor);
+    a->setShortcut(Qt::Key_Escape);     // Escape in BranchPropertyEditor
+    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    branchPropertyEditor->connect(a, SIGNAL(triggered()), mainWindow, SLOT(escapePressed()));
+    branchPropertyEditor->addAction(a);
 
     // Check for zip tools
-    checkZipTool();
-    checkUnzipTool();
+    zipToolAvailable = ZipAgent::checkZipTool();
+    unzipToolAvailable = ZipAgent::checkUnzipTool();
 
 #if defined(Q_OS_WINDOWS)
     if (!zipToolAvailable || QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10) {
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't find tool to unzip data,"
+            QObject::tr("Couldn't find tool to zip/unzip data,"
                         "or your Windows version is older than Windows 10."));
-        m.settingsZipTool();
     }
 #else
-    if (!zipToolAvailable || !unzipToolAvailable) {
+    if (!zipToolAvailable)
         QMessageBox::critical(
             0, QObject::tr("Critical Error"),
-            QObject::tr("Couldn't find tool to zip/unzip data. "
-                        "Please install on your platform and set"
-                        "path in Settings menu:\n ",
-                        "zip tool missing on Linux/Mac platform"));
-        m.settingsZipTool();
-    }
+            QObject::tr("Couldn't find tar tool to zip data. "));
+    if (!unzipToolAvailable)
+        QMessageBox::critical(
+            0, QObject::tr("Critical Error"),
+            QObject::tr("Couldn't find tar tool to unzip data. "));
 #endif
 
-    m.setWindowIcon(QPixmap(":/vym.png"));
-    m.fileNew();
+    mainWindow->setWindowIcon(QPixmap(":/vym.png"));
+    mainWindow->fileNew();
 
     if (debug)
         // Show debug info AFTER creating MainWindow
-        cout << debugInfo().toStdString() << endl;
+        std::cout << debugInfo().toStdString() << std::endl;
 
-    if (options.isOn("commands")) {
-        cout << "Available commands in map:\n";
-        cout << "=========================:\n";
-        foreach (Command *c, modelCommands)
-            cout << c->getDescription().toStdString() << endl;
-
-        cout << "Available commands in vym:\n";
-        cout << "=========================:\n";
-        foreach (Command *c, vymCommands)
-            cout << c->getDescription().toStdString() << endl;
+    if (options.isActive("commands")) {
+        std::cout << mainWindow->scriptingCommands().toStdString() << std::endl;
         return 0;
     }
 
-    if (options.isOn("commandslatex")) {
-        foreach (Command *c, modelCommands)
-            cout << c->getDescriptionLaTeX().toStdString() << endl;
+    if (options.isActive("commandslatex")) {
         foreach (Command *c, vymCommands)
-            cout << c->getDescriptionLaTeX().toStdString() << endl;
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
+        foreach (Command *c, modelCommands)
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
+        foreach (Command *c, branchCommands)
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
+        foreach (Command *c, imageCommands)
+            std::cout << c->descriptionLaTeX().toStdString() << std::endl;
         return 0;
     }
 
-    if (options.isOn("batch"))
-        m.hide();
+    if (options.isActive("batch"))
+        mainWindow->hide();
     else {
         // Paint Mainwindow first time
         qApp->processEvents();
-        m.show();
+        mainWindow->show();
     }
 
     // Show release notes and afterwards updates
-    m.checkReleaseNotesAndUpdates();
+    mainWindow->checkReleaseNotesAndUpdates();
 
-    if (options.isOn("shortcuts"))
+    if (options.isActive("shortcuts"))
         switchboard
-            .printASCII(); // FIXME-3 global switchboard and exit after listing
+            .printASCII(); // FIXME-5 global switchboard and exit after listing
 
-    m.loadCmdLine();
+    mainWindow->loadCmdLine();
+
+    //mainWindow->resize(1600, 900);    // only for screencasts
 
     // Restore last session
-    if (options.isOn("restore"))
-        m.fileRestoreSession();
+    if (options.isActive("restore"))
+        mainWindow->fileRestoreSession();
 
     // Load script
-    if (options.isOn("load")) {
+    if (options.isActive("load")) {
         QString fn = options.getArg("load");
         if (!scriptEditor->loadScript(fn)) {
             QString error(QObject::tr("Error"));
             QString msg(QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
-            if (options.isOn("batch"))
+            if (options.isActive("batch"))
                 qWarning() << error + ": " + msg;
             else
                 QMessageBox::warning(0, error, msg);
@@ -527,32 +701,34 @@ int main(int argc, char *argv[])
     }
 
     // Run script
-    if (options.isOn("run")) {
-        QString script;
+    if (options.isActive("run")) {
         QString fn = options.getArg("run");
         if (!scriptEditor->loadScript(fn)) {
             QString error(QObject::tr("Error"));
             QString msg(QObject::tr("Couldn't open \"%1\"\n.").arg(fn));
-            if (options.isOn("batch"))
+            if (options.isActive("batch"))
                 qWarning() << error + ": " + msg;
             else
                 QMessageBox::warning(0, error, msg);
             return 0;
         }
-        m.runScript(scriptEditor->getScriptFile());
+        mainWindow->runScript(scriptEditor->getScriptFile());
     }
-
-    // For benchmarking we may want to quit instead of entering event loop
-    if (options.isOn("quit"))
-        return 0;
 
     // Enable some last minute cleanup
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 
-    app.exec();
+    // For benchmarking or if test script is done
+    // we may want to quit instead of entering event loop
+    if (options.isActive("quit") || mainWindow->exitAfterScript())
+        mainWindow->fileExitVym();
+    else
+        app.exec();
 
     // Cleanup
     delete noteEditor;
+    delete mainWindow;
+    removeDir(tmpVymDir);
 
     int s = warningCount + criticalCount + fatalCount;
     if (s > 0)

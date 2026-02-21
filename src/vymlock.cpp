@@ -78,7 +78,6 @@ bool VymLock::tryLock()
 
     if (!s.isEmpty()) {
         QTextStream out(&lockFile);
-        out.setCodec("UTF-8");
         out << s;
     }
 

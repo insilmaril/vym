@@ -3,6 +3,8 @@
 
 #include <QDockWidget>
 
+class QCloseEvent;
+
 class VymModel;
 
 class DockEditor : public QDockWidget {

@@ -3,8 +3,6 @@
 #include <QApplication>
 #include <iostream>
 
-using namespace std;
-
 Option::Option()
 {
     name = "";
@@ -39,7 +37,7 @@ QString Option::getLong() { return lName; }
 Option::Type Option::getType() { return type; }
 void Option::setArg(const QString &s) { sarg = s; }
 QString Option::getArg() { return sarg; }
-void Option::setActive() { active = true; }
+void Option::setActive(bool b) { active = b; }
 bool Option::isActive() { return active; }
 
 ///////////////////////////////////////////////////////////////
@@ -106,7 +104,16 @@ QString Options::getProgramName() { return progname; }
 
 QStringList Options::getFileList() { return filelist; }
 
-bool Options::isOn(const QString &s)
+void Options::setActive(const QString &s, bool b)
+{
+    for (int i = 0; i < optlist.size(); ++i)
+        if (optlist[i].getName() == s) {
+            optlist[i].setActive(b);
+        }
+    // FIXME-3 Create boolean option and set active (not used atm)
+}
+
+bool Options::isActive(const QString &s)
 {
     for (int i = 0; i < optlist.size(); ++i)
         if (optlist[i].getName() == s && optlist[i].isActive())

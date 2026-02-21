@@ -4,6 +4,8 @@
 #include "export-base.h"
 #include "export-html-dialog.h"
 
+class BranchItem;
+
 class ExportHTML : public ExportBase {
   public:
     ExportHTML();
@@ -19,13 +21,18 @@ class ExportHTML : public ExportBase {
     QString cssSrc;
     QString cssDst;
 
+    QString flagWidthInt;
+
     bool frameURLs;
 
     QPointF offset;
 
     QSet<QUuid> activeFlags;
+    QStringList activeSystemFlagNames;
 
     ExportHTMLDialog dia;
+
+    QDir flagsDir;
 };
 
 #endif

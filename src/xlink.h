@@ -1,8 +1,9 @@
-#ifndef LINK_H
-#define LINK_H
+#ifndef XLINK_H
+#define XLINK_H
 
 #include <QColor>
 #include <QPen>
+#include <QUuid>
 
 #include "xmlobj.h"
 
@@ -11,31 +12,33 @@ class QGraphicsScene;
 class QString;
 
 class BranchItem;
-class MapObj;
-class LinkableMapObj;
 class VymModel;
 class XLinkItem;
 class XLinkObj;
+class XLinkWrapper;
 
-class Link : public XMLObj {
+class XLink: public XMLObj {
   public:
     enum XLinkState { undefinedXLink, initXLink, activeXLink, deleteXLink };
     enum LinkType { Linear, Bezier };
 
-    Link(VymModel *m);
-    virtual ~Link();
-    virtual void init();
+    XLink(VymModel *m);
+    virtual ~XLink();
+    void init();
+    void setUuid(const QString &id);
+    QUuid getUuid();
     VymModel *getModel();
+    XLinkWrapper *xlinkWrapper();
     void setBeginBranch(BranchItem *);
     BranchItem *getBeginBranch();
     void setEndBranch(BranchItem *);
     void setEndPoint(QPointF);
     BranchItem *getEndBranch();
-    void setBeginLinkItem(XLinkItem *);
-    XLinkItem *getBeginLinkItem();
-    void setEndLinkItem(XLinkItem *);
-    XLinkItem *getEndLinkItem();
-    XLinkItem *getOtherEnd(XLinkItem *);
+    void setBeginXLinkItem(XLinkItem *);
+    XLinkItem *beginXLinkItem();
+    void setEndXLinkItem(XLinkItem *);
+    XLinkItem *endXLinkItem();
+    void unsetXLinkItem(XLinkItem *);
     void setPen(const QPen &p);
     QPen getPen();
     void setLinkType(const QString &s);
@@ -44,17 +47,16 @@ class Link : public XMLObj {
     void setStyleEnd(const QString &s);
     QString getStyleEndString();
     bool activate();
-    void deactivate();
-    XLinkState getState();
-    void removeXLinkItem(XLinkItem *xli);
-    void updateLink();
+    XLinkState state();
+    void updateXLink();
     QString saveToDir();
     XLinkObj *getXLinkObj();
-    XLinkObj *createMapObj();
-    MapObj *getMO();
+    XLinkObj *createXLinkObj();
 
   private:
-    XLinkState xLinkState; // init during drawing or active
+    QUuid uuid;
+
+    XLinkState stateInt; // init during drawing or active
     LinkType type;
     QPen pen;
 
@@ -63,8 +65,10 @@ class Link : public XMLObj {
 
     BranchItem *beginBranch;
     BranchItem *endBranch;
-    XLinkItem *beginLinkItem;
-    XLinkItem *endLinkItem;
+    XLinkItem *beginXLinkItemInt;
+    XLinkItem *endXLinkItemInt;
+
+    XLinkWrapper *xlinkWrapperInt;
 };
 
 #endif
