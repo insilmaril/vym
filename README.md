@@ -103,6 +103,13 @@ Installation
     In "File" do "Open file or project" and select the
     "CMakeLists.txt". This will setup the project.
 
+    Additionally you problably will have to select a Qt version, for
+    example, if in the "General Messages" output Qt creator and cmake
+    complain about missing Qt6:
+
+    In "Project" tab (left in Qt Creator) don't use an "Imported Kit"
+    but a Qt 6.9 (or higher) version.
+
     
     For testing you probably need to tell vym where to find various
     files like macros, demos, etc. On the commandline you can do this
