@@ -1964,6 +1964,14 @@ void Main::setupEditActions()
     actionListFiles.append(a);
     actionAddMapCenter = a;
 
+    // Shortcut to add xlinked clone
+    a = new QAction(QPixmap(":/newmapcenter.png"),
+                    tr("Add XLinked Clone", "Canvas context menu"), this);
+    switchboard.addAction(a, "addClone", Qt::SHIFT | Qt::Key_C, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(editAddClone()));
+    actionListFiles.append(a);
+    actionAddClone = a;
+
     // Shortcut to add branch
     a = new QAction(QPixmap(":/newbranch.png"),
                     tr("Add branch as child", "Edit menu"), this);
@@ -3040,7 +3048,6 @@ void Main::setupConnectActions()
 
     a = new QAction( tr("Get Confluence user data", "Connect action"), this);
     connectMenu->addAction(a);
-    switchboard.addAction(a, "confluenceUser", Qt::SHIFT | Qt::Key_C, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(getConfluenceUser()));
     actionConnectGetConfluenceUser = a;
 
@@ -3743,6 +3750,7 @@ void Main::setupContextMenus()
     branchAddContextMenu->addAction(actionPaste);
     branchAddContextMenu->addAction(actionLoadImage);
     branchAddContextMenu->addAction(actionAddMapCenter);
+    branchAddContextMenu->addAction(actionAddClone);
     branchAddContextMenu->addSeparator();
     branchAddContextMenu->addAction(actionAddBranch);
     branchAddContextMenu->addAction(actionAddBranchBefore);
@@ -5861,6 +5869,13 @@ void Main::editAddMapCenter()
         // Set interactive=true to edit new heading
         m->select(m->addMapCenter(true));
     }
+}
+
+void Main::editAddClone()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->select(m->createXLinkedClone());
 }
 
 void Main::editAddBranch()

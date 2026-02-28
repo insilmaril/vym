@@ -485,6 +485,7 @@ class VymModel : public TreeModel {
 
   public:
     bool createXLink(XLink *l); //!< Create XLink, will create MO automatically if needed
+    BranchItem* createXLinkedClone(BranchItem *bi = nullptr);
     QColor getXLinkColor();
     int getXLinkWidth();
     Qt::PenStyle getXLinkStyle();

@@ -2230,45 +2230,8 @@ void VymModel::updateDataClones(BranchItem *src) // FIXME-3 Missing mapdesign fl
 
 void VymModel::test()
 {
-    // Testing clones
-    BranchItem *selbi = getSelectedBranch();
-    if (!selbi)
-        return;
-
-    if (selbi->isClone)
-        // Don't clone clones
-        return;
-
-    // Create clone
-    BranchItem *newbi = addNewBranchInt(selbi); // FIXME-2 already calls reposition()
-
-    XLink *newXLink = new XLink(this);
-    newXLink->setBeginBranch(newbi);
-    newXLink->setEndBranch(selbi);
-    newXLink->createXLinkObj();
-
-    createXLink(newXLink);
-
-    QPen pen = newXLink->getPen();
-    pen.setStyle(Qt::DotLine);
-    newXLink->setPen(pen);
-
-    newXLink->setStyleBegin("None");
-    newXLink->setStyleEnd("HeadFull");
-    newXLink->setRelation("system-isCloneOf");
-
-    reposition();
-
-    return;
-
     // Get oembed info
     // https://oembed.com/
-    /*
-    QString script;
-    script += QString("m = vym.currentMap();b = m.findBranchBySelection(\"%1\");")
-                  .arg(bi->getUuid().toString());
-    script += QString("b.loadImage(\"$TMPFILE\");");
-    */
 
     QList <BranchItem*>  selbis = getSelectedBranches();
     foreach(auto selbi, selbis) {
@@ -2803,23 +2766,37 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
 
         if (!url.isEmpty()) {
             if (updateFromCloud) {    // FIXME-3 use oembed.com also for Youtube and other cloud providers
-                // Check for Jira
-                JiraAgent agent;
-                if (agent.setTicket(url)) {
-                    logInfo("Preparing to get data from Jira for URL: " + url, __func__);
-                    setAttribute(bi, "Jira.key", agent.key());
+                if (url.contains("youtube")) {  // FIXME-2 CHeck Urls for shorts and playlists
 
-                    // Initially set heading with ticket Id
-                    setHeading(agent.key(), bi);
+                    url.replace(":", "%3A");
+                    url.replace("?", "%3F");
+                    url = "https://www.youtube.com/oembed?url=" + url + "&format=json";
 
-                    // Then try to update heading from Jira
-                    getJiraData(false, bi);
+                    DownloadAgent *agent = new DownloadAgent(url);
+                    agent->setItemId(bi->getUuid());
+                    connect(agent, SIGNAL(downloadFinished()), this,
+                            SLOT(oembedDownloadFinished()));
+                    QTimer::singleShot(0, agent, SLOT(execute()));
+                } else {
+
+                    // Check for Jira
+                    JiraAgent agent;
+                    if (agent.setTicket(url)) {
+                        logInfo("Preparing to get data from Jira for URL: " + url, __func__);
+                        setAttribute(bi, "Jira.key", agent.key());
+
+                        // Initially set heading with ticket Id
+                        setHeading(agent.key(), bi);
+
+                        // Then try to update heading from Jira
+                        getJiraData(false, bi);
+                    }
+
+                    // Check for Confluence
+                    if (bi->urlType() != TreeItem::JiraUrl)
+                        setConfluencePageDetails(false);
                 }
-
-                // Check for Confluence
-                if (bi->urlType() != TreeItem::JiraUrl)
-                    setConfluencePageDetails(false);
-            }
+            }   // update from cloud
         } else {
             // url == ""
             AttributeItem *ai = getAttributeByKey("Jira.issueUrl", bi);
@@ -2827,7 +2804,6 @@ void VymModel::setUrl(QString url, bool updateFromCloud, BranchItem *bi)
                 deleteItem(ai);
         }
         updateJiraFlag(bi); // Implicitly calls setUrlType()
-
 
         emitDataChanged(bi);
         reposition();
@@ -4366,6 +4342,42 @@ bool VymModel::createXLink(XLink *xlink)
     saveState(uc, rc, com, nullptr, xlink->beginXLinkItem());
 
     return true;
+}
+
+BranchItem* VymModel::createXLinkedClone(BranchItem *bi)   // FIXME-2 saveState missing
+{
+    qDebug() << __func__;
+    // Testing clones
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi)
+        return nullptr;
+
+    if (selbi->isClone)
+        // Don't clone clones
+        return nullptr;
+
+    // Create clone
+    BranchItem *newbi = addNewBranchInt(selbi); // FIXME-2 already calls reposition()
+
+    XLink *newXLink = new XLink(this);
+    newXLink->setBeginBranch(newbi);
+    newXLink->setEndBranch(selbi);
+    newXLink->createXLinkObj();
+
+    createXLink(newXLink);
+
+    QPen pen = newXLink->getPen();
+    pen.setStyle(Qt::DotLine);
+    newXLink->setPen(pen);
+
+    newXLink->setStyleBegin("None");
+    newXLink->setStyleEnd("HeadFull");
+    newXLink->setRelation("system-isCloneOf");
+
+    reposition();
+
+    return newbi;
+
 }
 
 QColor VymModel::getXLinkColor()

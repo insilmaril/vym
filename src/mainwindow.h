@@ -252,6 +252,7 @@ class Main : public QMainWindow {
     void editResetSelectionSize();
     void editRepeatLastAction();
     void editAddMapCenter();
+    void editAddClone();
     void editAddBranch();
     void editAddBranchBefore();
     void editAddBranchAbove();
@@ -611,6 +612,7 @@ class Main : public QMainWindow {
 
   public:
     QAction *actionAddMapCenter;
+    QAction *actionAddClone;
 
   private:
     QAction *actionAddBranch;
