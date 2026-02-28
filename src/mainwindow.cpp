@@ -6798,12 +6798,7 @@ void Main::setTreeEditorsVisibility(bool b)
     // Close *all* TreeEditors in each VymView and update vym settings
     settings.setValue("/mainwindow/view/showTreeEditors", b);
     for (int i = 0; i < tabWidget->count(); i++) {
-        logInfo(__func__ + QString(" Setting vis in vymview  %1 to %2").arg(i, b));  // FIXME-2 debugging
-        if (!((VymView*)tabWidget->widget(i))) {
-            logInfo("Main::setTreeEditorsVisibility: Fatal. widget i is nullptr");  // FIXME-2 debugging
-            QMessageBox::warning(0, "Warning", "Would have crashed now in setTEVis, please notify development team!");
-        }
-        else
+        if (((VymView*)tabWidget->widget(i)))
             ((VymView*)tabWidget->widget(i))->setTreeEditorVisibility(b);
     }
     updateActions();
