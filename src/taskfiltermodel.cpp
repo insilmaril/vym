@@ -67,6 +67,10 @@ bool TaskFilterModel::taskVisible(Task* task) const
         (bi->hasActiveFlag("arrow-up") ||
          bi->hasActiveFlag("2arrow-up")))
         return false;
+
+    // Don't show tasks of clones
+    if (bi->isClone)
+        return false;
     return true;
 }
 

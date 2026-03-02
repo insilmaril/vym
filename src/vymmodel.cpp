@@ -2224,7 +2224,21 @@ void VymModel::updateDataClones(BranchItem *src) // FIXME-3 Missing mapdesign fl
         foreach(auto id, srcFlags)
             setFlagByUid(id, dst, false, false);
 
+	// Tasks
+	Task *task_src = src->getTask();
+	Task *task_dst = dst->getTask();
+	if (task_src) {
+	    if (!task_dst)
+		task_dst = taskModel->createTask(dst);
+	    task_dst->copy(task_src);
+	    dst->updateTaskFlag();
+	} else {
+	    if (task_dst)
+		taskModel->deleteTask(task_dst);
+	}
+
         emitDataChanged(dst);
+	reposition();
     }
 }
 
@@ -3007,7 +3021,8 @@ void VymModel::setFrameBrushColor(
 
             bc->setFrameBrushColor(useInnerFrame, col);
 
-            if (selbi->hasClones) { // FIXME-2 What if selbi->isClone? Update parent?
+            if (selbi->hasClones) { // if selbi->isClone then bg-color is used for frames of clones
+				    // Parents of clones are not updated.
                 updateDataClones(selbi);
             }
         }
@@ -3550,22 +3565,30 @@ void VymModel::toggleTask(BranchItem *bi)
 {
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (auto selbi, selbis) {
-        QString uc = "toggleTask();";
-        QString comment = QString("Toggle task of %1").arg(getObjectName(selbi));
+        BranchItem *pi = selbi->parentOfClone();
+        if (pi) {
+	    toggleTask(pi);
+	} else {
+	    QString uc = "toggleTask();";
+	    QString comment = QString("Toggle task of %1").arg(getObjectName(selbi));
 
-        logAction(uc, comment, __func__);
+	    logAction(uc, comment, __func__);
 
-        saveStateBranch( selbi, uc, uc, comment);
-        Task *task = selbi->getTask();
-        if (!task) {
-            task = taskModel->createTask(selbi);
-            taskEditor->select(task);
-        }
-        else
-            taskModel->deleteTask(task);
+	    saveStateBranch( selbi, uc, uc, comment);
+	    Task *task = selbi->getTask();
+	    if (!task) {
+		task = taskModel->createTask(selbi);
+		taskEditor->select(task);
+	    }
+	    else
+		taskModel->deleteTask(task);
 
-        emitDataChanged(selbi);
-        reposition();
+	    if (selbi->hasClones)
+		updateDataClones(selbi);
+
+	    emitDataChanged(selbi);
+	    reposition();
+	}
     }
 }
 
@@ -3574,30 +3597,38 @@ bool VymModel::cycleTaskStatus(BranchItem *bi, bool reverse)
     bool repositionRequired = false;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (BranchItem *selbi, selbis) {
-        Task *task = selbi->getTask();
-        if (task) {
-            QString uc, rc;
-            if (!reverse) {
-                uc = "cycleTask(true);";
-                rc = "cycleTask();";
-            } else {
-                uc = "cycleTask();";
-                rc = "cycleTask(true);";
-            }
-            QString comment = QString("Cycle task of %1").arg(getObjectName(selbi));
+	BranchItem *pi = selbi->parentOfClone();
+	if (pi) 
+	    cycleTaskStatus(pi, reverse);
+	else {
+	    Task *task = selbi->getTask();
+	    if (task) {
+		QString uc, rc;
+		if (!reverse) {
+		    uc = "cycleTask(true);";
+		    rc = "cycleTask();";
+		} else {
+		    uc = "cycleTask();";
+		    rc = "cycleTask(true);";
+		}
+		QString comment = QString("Cycle task of %1").arg(getObjectName(selbi));
 
-            logAction(rc, comment, __func__);
+		logAction(rc, comment, __func__);
 
-            saveStateBranch(selbi, uc, rc, comment);
+		saveStateBranch(selbi, uc, rc, comment);
 
-            task->cycleStatus(reverse);
-            task->setDateModification();
+		task->cycleStatus(reverse);
+		task->setDateModification();
 
-            // make sure task is still visible  // FIXME-3 for multi-selections?
-            taskEditor->select(task);
-            emitDataChanged(selbi);
-            repositionRequired = true;
-        }
+		// make sure task is still visible  // FIXME-3 for multi-selections?
+		taskEditor->select(task);
+		emitDataChanged(selbi);
+		repositionRequired = true;
+
+		if (selbi->hasClones)
+		    updateDataClones(selbi);
+	    }
+	}
     }
     if (repositionRequired) {
         reposition();
@@ -3611,137 +3642,147 @@ bool VymModel::setTaskSleep(const QString &s, BranchItem *bi) // FIXME-4 (WIP) R
     bool ok = false;
     QList<BranchItem *> selbis = getSelectedBranches(bi);
     foreach (auto selbi, selbis) {
-        Task *task = selbi->getTask();
-        if (task) {
-            QDateTime oldAlarmTime = task->alarmTime();
+        BranchItem *pi = selbi->parentOfClone();
+        if (pi) {
+	    ok = setTaskSleep(s, pi);
+	} else {
+	    Task *task = selbi->getTask();
+	    if (task) {
+		QDateTime oldAlarmTime = task->alarmTime();
 
-            // Parse the string, which could be days, hours or one of several
-            // time formats
+		// Parse the string, which could be days, hours or one of several
+		// time formats
 
-            if (s == "0") {
-                // Reset sleep time and wake up task
-                ok = task->setSecsSleep(0);
-            }
-            else {
-                static QRegularExpression re;
+		if (s == "0") {
+		    // Reset sleep time and wake up task
+		    ok = task->setSecsSleep(0);
+		}
+		else {
+		    static QRegularExpression re;
 
-                // Only digits considered as days
-                re.setPattern("^\\s*(\\d+)\\s*$");
-                re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
-                QRegularExpressionMatch match = re.match(s);
-                if (match.hasMatch()) {
-                    ok = task->setDaysSleep(match.captured(1).toInt());
-                }
-                else {
-                    // Digit followed by "h", considered as hours
-                    re.setPattern("^\\s*(\\d+)\\s*h\\s*$");
-                    match = re.match(s);
-                    if (match.hasMatch()) {
-                        ok = task->setHoursSleep(match.captured(1).toInt());
-                    }
-                    else {
-                        // Digits followed by "w", considered as weeks
-                        re.setPattern("^\\s*(\\d+)\\s*w\\s*$");
-                        match = re.match(s);
-                        if (match.hasMatch()) {
-                            ok = task->setDaysSleep(7 * match.captured(1).toInt());
-                        }
-                        else {
-                            // Digits followed by "s", considered as seconds
-                            re.setPattern("^\\s*(\\d+)\\s*s\\s*$");
-                            match = re.match(s);
-                            if (match.hasMatch()) {
-                                ok = task->setSecsSleep(match.captured(1).toInt());
-                            }
-                            else {
-                                // Try setting ISO date YYYY-MM-DDTHH:mm:ss
-                                ok = task->setDateSleep(s);
+		    // Only digits considered as days
+		    re.setPattern("^\\s*(\\d+)\\s*$");
+		    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
+		    QRegularExpressionMatch match = re.match(s);
+		    if (match.hasMatch()) {
+			ok = task->setDaysSleep(match.captured(1).toInt());
+		    }
+		    else {
+			// Digit followed by "h", considered as hours
+			re.setPattern("^\\s*(\\d+)\\s*h\\s*$");
+			match = re.match(s);
+			if (match.hasMatch()) {
+			    ok = task->setHoursSleep(match.captured(1).toInt());
+			}
+			else {
+			    // Digits followed by "w", considered as weeks
+			    re.setPattern("^\\s*(\\d+)\\s*w\\s*$");
+			    match = re.match(s);
+			    if (match.hasMatch()) {
+				ok = task->setDaysSleep(7 * match.captured(1).toInt());
+			    }
+			    else {
+				// Digits followed by "s", considered as seconds
+				re.setPattern("^\\s*(\\d+)\\s*s\\s*$");
+				match = re.match(s);
+				if (match.hasMatch()) {
+				    ok = task->setSecsSleep(match.captured(1).toInt());
+				}
+				else {
+				    // Try setting ISO date YYYY-MM-DDTHH:mm:ss
+				    ok = task->setDateSleep(s);
 
-                                if (!ok) {
-                                    // German format, e.g. "24.12.2012"
-                                    re.setPattern("(\\d+)\\.(\\d+)\\.(\\d+)");
-                                    re.setPatternOptions(QRegularExpression::NoPatternOption);
-                                    match = re.match(s);
-                                    if (match.hasMatch()) {
-                                        QDateTime d(
-                                            QDate(match.captured(3).toInt(),
-                                                  match.captured(2).toInt(),
-                                                  match.captured(1).toInt()).startOfDay());
-                                        ok = task->setDateSleep(d); 
-                                    }
-                                    else {
-                                        // Short German format, e.g. "24.12."
-                                        re.setPattern("(\\d+)\\.(\\d+)\\.");
-                                        re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
-                                        match = re.match(s);
-                                        if (match.hasMatch()) {
-                                            int month = match.captured(2).toInt();
-                                            int day = match.captured(1).toInt();
-                                            int year =
-                                                QDate::currentDate().year();
-                                            QDateTime d(QDate(year, month, day).startOfDay());
-                                            // d = QDate(year, month,
-                                            // day).startOfDay();
-                                            if (QDateTime::currentDateTime()
-                                                    .daysTo(d) < 0) {
-                                                year++;
-                                                d = QDateTime(
-                                                    QDate(year, month, day).startOfDay());
-                                                // d = QDate(year, month,
-                                                // day).startOfDay();
-                                            }
-                                            ok = task->setDateSleep(d);
-                                        }
-                                        else {
-                                            // Time HH:MM
-                                            re.setPattern("(\\d+)\\:(\\d+)");
-                                            match = re.match(s);
-                                            if (match.hasMatch()) {
-                                                int hour = match.captured(1).toInt();
-                                                int min = match.captured(2).toInt();
-                                                QDateTime d(
-                                                    QDate::currentDate(),
-                                                    QTime(hour, min));
-                                                ok = task->setDateSleep(d);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+				    if (!ok) {
+					// German format, e.g. "24.12.2012"
+					re.setPattern("(\\d+)\\.(\\d+)\\.(\\d+)");
+					re.setPatternOptions(QRegularExpression::NoPatternOption);
+					match = re.match(s);
+					if (match.hasMatch()) {
+					    QDateTime d(
+						QDate(match.captured(3).toInt(),
+						      match.captured(2).toInt(),
+						      match.captured(1).toInt()).startOfDay());
+					    ok = task->setDateSleep(d); 
+					}
+					else {
+					    // Short German format, e.g. "24.12."
+					    re.setPattern("(\\d+)\\.(\\d+)\\.");
+					    re.setPatternOptions(QRegularExpression::InvertedGreedinessOption);
+					    match = re.match(s);
+					    if (match.hasMatch()) {
+						int month = match.captured(2).toInt();
+						int day = match.captured(1).toInt();
+						int year =
+						    QDate::currentDate().year();
+						QDateTime d(QDate(year, month, day).startOfDay());
+						// d = QDate(year, month,
+						// day).startOfDay();
+						if (QDateTime::currentDateTime()
+							.daysTo(d) < 0) {
+						    year++;
+						    d = QDateTime(
+							QDate(year, month, day).startOfDay());
+						    // d = QDate(year, month,
+						    // day).startOfDay();
+						}
+						ok = task->setDateSleep(d);
+					    }
+					    else {
+						// Time HH:MM
+						re.setPattern("(\\d+)\\:(\\d+)");
+						match = re.match(s);
+						if (match.hasMatch()) {
+						    int hour = match.captured(1).toInt();
+						    int min = match.captured(2).toInt();
+						    QDateTime d(
+							QDate::currentDate(),
+							QTime(hour, min));
+						    ok = task->setDateSleep(d);
+						}
+					    }
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
 
-            if (ok) {
-                QString oldAlarmTimeString;
-                if (oldAlarmTime.isValid())
-                    oldAlarmTimeString = oldAlarmTime.toString(Qt::ISODate);
-                else
-                    oldAlarmTimeString = "1970-01-26T00:00:00"; // Some date long ago...
+		if (ok) {
+		    QString oldAlarmTimeString;
+		    if (oldAlarmTime.isValid())
+			oldAlarmTimeString = oldAlarmTime.toString(Qt::ISODate);
+		    else
+			oldAlarmTimeString = "1970-01-26T00:00:00"; // Some date long ago...
 
-                QString newAlarmTimeString = task->alarmTime().toString(Qt::ISODate);
-                task->setDateModification();
-                selbi->updateTaskFlag(); // If tasks changes awake mode, then
-                                         // flag needs to change
-                QString bv = setBranchVar(selbi);
-                QString uc = QString("setTaskSleep (\"%1\")").arg(oldAlarmTimeString);
-                QString rc = QString("setTaskSleep (\"%1\")").arg(newAlarmTimeString);
-                QString comment = "Set sleep time for task";
+		    QString newAlarmTimeString = task->alarmTime().toString(Qt::ISODate);
+		    task->setDateModification();
+		    selbi->updateTaskFlag(); // If tasks changes awake mode, then
+					     // flag needs to change
+		    QString bv = setBranchVar(selbi);
+		    QString uc = QString("setTaskSleep (\"%1\")").arg(oldAlarmTimeString);
+		    QString rc = QString("setTaskSleep (\"%1\")").arg(newAlarmTimeString);
+		    QString comment = "Set sleep time for task";
 
-                logAction(rc, comment, __func__);  // FIXME-3 Logging command should be done before actual change. 
-                                                    // Would require separate checks in task, if new alarmTime is valid
+		    logAction(rc, comment, __func__);  // FIXME-3 Logging command should be done before actual change. 
+							// Would require separate checks in task, if new alarmTime is valid
 
-                saveStateBranch(selbi, uc, rc, comment);
+		    saveStateBranch(selbi, uc, rc, comment);
 
-                emitDataChanged(selbi);
-                reposition();
-            }
+		    emitDataChanged(selbi);
+		    reposition();
+		}
 
-        } // Found task
-        if (!ok)
-            return false;
-    }     // Looping over selected branches
+	    } // Found task
+
+	    if (!ok)
+		return false;
+
+	    if (selbi->hasClones)
+		updateDataClones(selbi);
+
+	} // Not a cloned branch 
+    } // Looping over selected branches
     return ok;
 }
 
@@ -3750,17 +3791,25 @@ void VymModel::setTaskPriorityDelta(const int &pd, BranchItem *bi)
     QList<BranchItem *> selbis = getSelectedBranches(bi);
 
     foreach (BranchItem *selbi, selbis) {
-        Task *task = selbi->getTask();
-        if (task) {
-            QString bv = setBranchVar(selbi);
-            QString uc = QString("setTaskPriorityDelta (%1)").arg(task->getPriorityDelta());
-            QString rc = QString("setTaskPriorityDelta (%1)").arg(pd);
-            QString comment = "Set delta for priority of task";
-            logAction(rc, comment, __func__);
-            saveStateBranch(selbi, uc, rc, comment);
-            task->setPriorityDelta(pd);
-            emitDataChanged(selbi);
-        }
+        BranchItem *pi = selbi->parentOfClone();
+        if (pi) {
+	    setTaskPriorityDelta(pd, pi);
+	} else {
+	    Task *task = selbi->getTask();
+	    if (task) {
+		QString bv = setBranchVar(selbi);
+		QString uc = QString("setTaskPriorityDelta (%1)").arg(task->getPriorityDelta());
+		QString rc = QString("setTaskPriorityDelta (%1)").arg(pd);
+		QString comment = "Set delta for priority of task";
+		logAction(rc, comment, __func__);
+		saveStateBranch(selbi, uc, rc, comment);
+		task->setPriorityDelta(pd);
+		emitDataChanged(selbi);
+
+		if (selbi->hasClones)
+		    updateDataClones(selbi);
+	    }
+	}
     }
 }
 
@@ -4344,9 +4393,8 @@ bool VymModel::createXLink(XLink *xlink)
     return true;
 }
 
-BranchItem* VymModel::createXLinkedClone(BranchItem *bi)   // FIXME-2 saveState missing
+BranchItem* VymModel::createXLinkedClone(BranchItem *bi)   // FIXME-2 saveState and command missing
 {
-    qDebug() << __func__;
     // Testing clones
     BranchItem *selbi = getSelectedBranch(bi);
     if (!selbi)
@@ -4357,7 +4405,7 @@ BranchItem* VymModel::createXLinkedClone(BranchItem *bi)   // FIXME-2 saveState 
         return nullptr;
 
     // Create clone
-    BranchItem *newbi = addNewBranchInt(selbi); // FIXME-2 already calls reposition()
+    BranchItem *newbi = addNewBranchInt(selbi);
 
     XLink *newXLink = new XLink(this);
     newXLink->setBeginBranch(newbi);

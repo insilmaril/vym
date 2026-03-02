@@ -27,6 +27,18 @@ Task::~Task()
         branch->setTask(nullptr);
 }
 
+void Task::copy(Task *other)
+{
+    status = other->status;
+    awake = other->awake;
+    prio = other->prio;
+    prio_delta = other->prio_delta;
+
+    creationTimeInt = other->creationTimeInt;
+    modificationTimeInt = other->modificationTimeInt;
+    alarmInt = other->alarmInt;
+}
+
 void Task::setModel(TaskModel *tm) { model = tm; }
 
 void Task::cycleStatus(bool reverse)

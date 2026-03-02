@@ -18,6 +18,7 @@ class Task : public XMLObj {
 
     Task(TaskModel *tm);
     ~Task();
+    void copy (Task *other);
     void setModel(TaskModel *tm);
     void cycleStatus(bool reverse = false);
     void setStatus(const QString &s);
