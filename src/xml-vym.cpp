@@ -428,7 +428,7 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
         else if (xml.name() == QLatin1String("branch")) {
             if (lastBranch && branchesCounter % 100 == 0) {     // Update and process events once in a while
                 // Some graphical repainting during loading of map
-                lastBranch->updateVisuals();
+                lastBranch->updateVisuals();    // FIXME-2 do this when finishing heading to avoid "empty bubbles" of center and main branches
                 //model->select(lastBranch);
                 model->reposition(true);
             }
