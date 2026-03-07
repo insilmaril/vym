@@ -464,13 +464,14 @@ Version 5.9.537
 ## Version 2.9.536
 ### Changes
  * Reworked saveState and handling of notes and headings
-        - Continues to work on new saveState function, which no longer uses
-          undo/redo selection, but uses uses script commands on specific
-          branches/images, which are found using Uuid.
-        - Removed parseVymText to to set notes and headings
-        - Introduced a number of new commands for branches and images
-        - Introduced ImageWrapper to allow applying commands on images
-        - Introduced command to check availability of dark theme
+
+   - Continues to work on new saveState function, which no longer uses
+     undo/redo selection, but uses uses script commands on specific
+     branches/images, which are found using Uuid.
+   - Removed parseVymText to to set notes and headings
+   - Introduced a number of new commands for branches and images
+   - Introduced ImageWrapper to allow applying commands on images
+   - Introduced command to check availability of dark theme
 
 
 ## Version 2.9.535
