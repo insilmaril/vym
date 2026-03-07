@@ -2,24 +2,32 @@ Release notes VYM - View Your Mind
 ==================================
 
 
-The lists below shows main changes in the current version of vym on
+The lists below shows main changes in the current 3.0.0 version of vym on
 develop branch and the last official release 2.9.27.
 
 vym has been rewritten in large parts:
  * New layout engine
    - Supports rotation and scaling of elements
    - Supports frames around subtrees
+
  * Introducing MapDesign
-   - The design of a map can be saved within the map, e.g. default maps
-   - MapDesign defines how elements look depending on depth, e.g. which
-     frames are used and also the color palettes.
+   - Mapdesign defines how a map looks visually, e.g. colors, frames,
+     links
+   - The design can be saved within the map, e.g. with the default map,
+     which is loaded initially
+   - MapDesign defines how elements look depending on depth, e.g.
+     MapCenters and first level MainBranches may have frames, other
+     branches not.
+
  * New scripting engine
-   - Internally the engine was migrated from QScriptEngine to QJSEngine
-   - Scripts can be nested now to improve undo/redo handling
+   - Internally the engine was migrated from (no longer supported)
+     QScriptEngine to QJSEngine
+   - Scripts can be nested now to improve undo/redo handling and
+     automated tests
    - Various commands have been renamed
    - Abstraction of vym, VymModel, and elements like Branch, Image etc.
-     has been implemented in classes available in scripting
-     (See the related wrapper classes in C++)
+     has been implemented in classes available in scripting (See the
+     related wrapper classes in C++ source code for details)
 
 Feel free to report any bugs or feature requests on
 [https://github.com/insilmaril/vym/issues](https://github.com/insilmaril/vym/issues)
@@ -453,8 +461,9 @@ Version 5.9.537
     Use new mode file sync (-FS) when zipping directories on Linux and Mac.
         Seems also to work similar on Windows 11 using tar.
 
-Version 2.9.536
-    Reworked saveState and handling of notes and headings
+## Version 2.9.536
+### Changes
+ * Reworked saveState and handling of notes and headings
         - Continues to work on new saveState function, which no longer uses
           undo/redo selection, but uses uses script commands on specific
           branches/images, which are found using Uuid.
@@ -464,28 +473,31 @@ Version 2.9.536
         - Introduced command to check availability of dark theme
 
 
-Version 2.9.535
-    Bugfix: Heading color is lost when note is available (#113)
+## Version 2.9.535
+### Bugfixes
+ * Heading color is lost when note is available (#113)
 
-Version 2.9.534
-    Change: XLinks now use UUID instead of selectionID (#112)
-        This allows processing XLinks also in XSL transformations. See
+## Version 2.9.534
+### Changes
+ * XLinks now use UUID instead of selectionID (#112)
 
-Version 2.9.533
+   This allows processing XLinks also in XSL transformations. See
 
-    Bugfix: Ampersands in notes exported to libreoffice impress
-    Fixed unzip on Windows
+## Version 2.9.533
+### Bugfixes
+ * Bugfix: Ampersands in notes exported to libreoffice impress
+ * Fixed unzip on Windows
 
 ## Version 2.9.28
 ### Features
-    Link app icon as a mimetype icon for the hicolor default theme (#109)
+ * Link app icon as a mimetype icon for the hicolor default theme (#109)
 
-    On Linux/Unix systems cmake already installs the vym.png application
-    icon (what is referenced via the .desktop file) and a mime type definition
-    for `application/x-vym`. What is missing is the icon to use on `.vym`
-    files which are associated with this mime type. Instead of installing
-    the icon a second time, a relativ symlink is created referencing the app
-    icon.
+ * On Linux/Unix systems cmake already installs the vym.png application
+   icon (what is referenced via the .desktop file) and a mime type definition
+   for `application/x-vym`. What is missing is the icon to use on `.vym`
+   files which are associated with this mime type. Instead of installing
+   the icon a second time, a relativ symlink is created referencing the app
+   icon.
 
 ### Bugfixes
  *  Do not install manpage in doc dir (#107)
