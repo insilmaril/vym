@@ -290,6 +290,7 @@ Version 2.9.594
  * New dialog for logfile settings
  * Toggle temporary hide mode
  * Temporary hide parts of map
+
    "Clouded" branches are not exported and can be temporary hidden.
    This commit also fixes, that clouded parts are still saved, even while
    invisible.
@@ -363,7 +364,7 @@ Version 2.9.594
 ## Version 2.9.550
 ### Features
  * undo/redo modifying attributes
- *     Ported tests for legacy maps
+ * Ported tests for legacy maps
 
 ### Bugfixes
  * undo/redo of setHideLinkUnselected() and setHideExport()
@@ -408,39 +409,41 @@ Version 2.9.594
    Conflicts with shortcut to restore session
 
 ### Bugfixes
- * Crash when using bright theme #120
- * Added icon to Bleyddyns patch to clear recent files #95
+ * Crash when using bright theme (#120)
+ * Added icon to Bleyddyns patch to clear recent files (#95)
  * Clear recent menu item (#119)
-        * Added a menu item to clear the recent map menu.
-        * Changed menu item name to just 'Clear'. For Issue #95.
+   - Added a menu item to clear the recent map menu.
+   - Changed menu item name to just 'Clear'. For Issue (#95)
 
-## Version 2.9-545
+## Version 2.9.545
 ### Features
  * New frame type "Pipe"
  * Changing frame colors updates map instantly
  * While loading update MapEditor #118
  * Use system services to open local and remote Urls
-        By default system specific apps will be used to open pdfs, webpages,
-        spreadsheets, ...
+
+   By default system specific apps will be used to open pdfs, webpages,
+   spreadsheets, ...
 
 ### Bugfixes
- *     Finalized fix for #98 (hopefully)
-        - Set lastMapDir also for Main::fileSaveAs()
- *     Update lastMapDir in more places. Fix for #98. (#117)
+ * Finalized fix for (#98)
+   - Set lastMapDir also for Main::fileSaveAs()
+ * Update lastMapDir in more places. Fix for #98. (#117)
 
 ## Version 2.9.544
 ### Features
  * Improved selection of items in map with keyboard
-        Introduced selection modes based layout and geometry, e.g. navigating in
-        grids and orgcharts works now as expected. Also jumping from a branch to
-        nearest image.
+
+   Introduced selection modes based layout and geometry, e.g. navigating in
+   grids and orgcharts works now as expected. Also jumping from a branch to
+   nearest image.
  * Select nearest branch below current one
  * Set Jira ticket ID in heading
 
 ## Version 2.9.543
 ### Bugfixes
- *     Fixed XLink related scripting
- *     Fixed restoring window geometry on Windows
+ * Fixed XLink related scripting
+ * Fixed restoring window geometry on Windows
 
 ## Version 2.9.542
 ### Bugfixes
