@@ -2,8 +2,8 @@ Release notes VYM - View Your Mind
 ==================================
 
 
-The lists below shows main changes in the current 3.0.0 version of vym on
-develop branch and the last official release 2.9.27.
+The lists below shows main changes between the current 3.0.x version of vym and
+the previous official release 2.9.27.
 
 vym has been rewritten in large parts:
  * New layout engine
@@ -35,6 +35,9 @@ Feel free to report any bugs or feature requests on
 Thanks for using vym!
 
 Uwe Drechsel - January 2026
+
+
+
 
 ## Version 2.9.606
 ### Bugfixes
