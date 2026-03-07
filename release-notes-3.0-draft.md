@@ -41,12 +41,12 @@ Uwe Drechsel - January 2026
 
 ## Version 2.9.606
 ### Bugfixes
- * Relative positioning of images or branches (#181)
+ * [#181](https://github.com/insilmaril/vym/issues/181)  Relative positioning of images or branches
 
 ## Version 2.9.605
 ### Bugfixes
  * autoDesign frame settings when loading/saving maps
- * save selection (#188)
+ * [#188](https://github.com/insilmaril/vym/issues/188)  save selection
     - Added script command isBusy()
     - Added script command setSaveAsBackgroundProcess()
 
@@ -56,7 +56,7 @@ Uwe Drechsel - January 2026
 
     Also re-added action to file menu to save selection.
 
- * Make sure zip processes are finished when leaving vym (#187)
+ * [#187](https://github.com/insilmaril/vym/issues/187)  Make sure zip processes are finished when leaving vym
 
     Under certain circumstances vym had still background processes when
     accepting e.g. a close event from window manager.
@@ -64,21 +64,21 @@ Uwe Drechsel - January 2026
     Now MainWindow requests closing a map directly from the vym map. The map
     itself triggers it's removal from MainWindow once the zipProcess is done.
 
- * Missing image in xml of map modifies branches (#187)
+ * [#187](https://github.com/insilmaril/vym/issues/187)  Missing image in xml of map modifies branches
 
 
 ## Version 2.9.604
 ### Bugfixes
-* in TaskEditor adds heading of parent branch to selected branch (#180)
-* Changes to frames via script are not saved (#179)
+* [#180](https://github.com/insilmaril/vym/issues/180)  in TaskEditor adds heading of parent branch to selected branch
+* [#179](https://github.com/insilmaril/vym/issues/179)  Changes to frames via script are not saved 
 
    e.g. when using macros bound to function keys to change frames.
 
    Now autoDesign is disabled when script functions change frames.
 
-* Exporting note might overwrite export of previous branch (#186)
-* Zoom and rotation after loading map (#182)
-* Rotation of subtree not save when changed with shortcut (#183)
+* [#186](https://github.com/insilmaril/vym/issues/186)  Exporting note might overwrite export of previous branch
+* [#182](https://github.com/insilmaril/vym/issues/182)  Zoom and rotation after loading map
+* [#183](https://github.com/insilmaril/vym/issues/183)  Rotation of subtree not save when changed with shortcut
   - Disable autodesign option
 
 
@@ -91,27 +91,27 @@ Uwe Drechsel - January 2026
 
 ## Version 2.9.601
 ### Features
- * Toggling frames of multiple selected branches (#177)
- * Open and edit Urls in TextEditors (#176)
- * Add and follow hyperlinks in TextEditors (#176)
- * Don't adapt view to show many selected items (#178)
+ * [#177](https://github.com/insilmaril/vym/issues/177)  Toggling frames of multiple selected branches
+ * [#176](https://github.com/insilmaril/vym/issues/176)  Open and edit Urls in TextEditors
+ * [#176](https://github.com/insilmaril/vym/issues/176)  Add and follow hyperlinks in TextEditors
+ * [#178](https://github.com/insilmaril/vym/issues/178)  Don't adapt view to show many selected items
  * On Macs open history window with Shift-Cmd-H
 
 ### Bugfixes
- * Enable GoTo target when nothing is selected   (#175)
+ * [#175](https://github.com/insilmaril/vym/issues/175)  Enable GoTo target when nothing is selected
  * Packaging for MACOSX
 
 
 ## Version 2.9.599
 ### Features
- * Switch focus between Find-LineEdit and Find-Results with tab (#165)
- * AppStream / Metainfo Improvements (#169)
- * cmake: install resources under share/vym and set VYMBASEDIR (#167)
+ * [#165](https://github.com/insilmaril/vym/issues/165)  Switch focus between Find-LineEdit and Find-Results with tab
+ * [#169](https://github.com/insilmaril/vym/issues/169)  AppStream / Metainfo Improvements
+ * [#167](https://github.com/insilmaril/vym/issues/167)  cmake: install resources under share/vym and set VYMBASEDIR
 
 ### Bugfixes
- * Center on selected item not subtree when selecting slide (#153)
- * Scroll to selected task in TaskEditor (#173)
- * Focus handling with satellite windows (#161, #165)
+ * [#153](https://github.com/insilmaril/vym/issues/153)  Center on selected item not subtree when selecting slide
+ * [#173](https://github.com/insilmaril/vym/issues/173)  Scroll to selected task in TaskEditor
+ * [#161](https://github.com/insilmaril/vym/issues/161) , [#165](https://github.com/insilmaril/vym/issues/165)  Focus handling with satellite windows 
 
 ## Version 2.9.598
 ### Changes
@@ -122,18 +122,18 @@ Uwe Drechsel - January 2026
 
 ### Features
  * Shortcuts to rotate subtree (Ctrl-R and Ctrl-Shift-R)
- * Support Jira Cloud (#160)
+ * [#160](https://github.com/insilmaril/vym/issues/160)  Support Jira Cloud
  * Remember last searches in FindResultWidget
  * "Delete" is now equivalent to "Cut"
- * Escape-key cancels editing heading of a branch (#16)
+ * [#16](https://github.com/insilmaril/vym/issues/16)  Escape-key cancels editing heading of a branch
 
 ### Bugfixes
- * Background style in TextEditors (#168)
+ * [#168](https://github.com/insilmaril/vym/issues/168)  Background style in TextEditors
  * Undo colorSubtree
 
 Version 2.9.594
 ### Features
- * Switch focus between editors using Tab-key (#162)
+ * [#162](https://github.com/insilmaril/vym/issues/162)  Switch focus between editors using Tab-key
 
 ### Bugfixes
  * Bugfix: Forced bright theme when system uses dark theme
@@ -146,8 +146,8 @@ Version 2.9.594
  * Repeat last action for multiple actions
 
 ### Bugfixes
- * Improved handling of default colors (#80)
- * Switch back to MapEditor using Esc-Key (#161)
+ * [#80](https://github.com/insilmaril/vym/issues/80)  Improved handling of default colors
+ * [#161](https://github.com/insilmaril/vym/issues/161)  Switch back to MapEditor using Esc-Key
  * Noteeditor has correct window name
  * Consider penWidth of frame
  * No bottomline for both inner/outer frame
@@ -181,7 +181,7 @@ Version 2.9.594
  * Avoid crash when zipAgent is no longer available and zipFinished called
  * Always enable fileExitVym action
  * HTML export correctly exports flags now
- * Update Appstream Data (#158)
+ * [#158](https://github.com/insilmaril/vym/issues/158)  Update Appstream Data
 
 
 ## Version 2.9.588
@@ -210,27 +210,27 @@ Version 2.9.594
 
 ## Version 2.9.584
 ### Bugfixes
- * Fixed permissions for new directories (#151)
+ * [#151](https://github.com/insilmaril/vym/issues/151)  Fixed permissions for new directories
 
 ## Version 2.9.583
 ### Features
- * Use shared renderer for svg flags (see #151)
+ * [#151](https://github.com/insilmaril/vym/issues/151)  Use shared renderer for svg flags
 
 ### Bugfixes
- * Store vym temporary files in user directory (#151)
+ * [#151](https://github.com/insilmaril/vym/issues/151)  Store vym temporary files in user directory
  * Remove warnings by using new svg for "lifebelt" flag
- * #146 signed bundle (#152)
+ * [#152](https://github.com/insilmaril/vym/issues/152)  signed bundle
  * Toggle subtree frames with function keys
 
 
 ## Version 2.9.582
 ### Bugfixes
- * Building on Linux (#149)
+ * [#149](https://github.com/insilmaril/vym/issues/149)  Building on Linux
 
 ## Version 2.9.581
 ### Bugfixes
  * Menu entry to open visible Urls in subtree
- * Removed warnings related to old Q\_OS\_MACX macro (#148)
+ * [#148](https://github.com/insilmaril/vym/issues/148)  Removed warnings related to old Q\_OS\_MACX macro
 
 ## Version 2.9.580
 ### Features
@@ -244,7 +244,7 @@ Version 2.9.594
 
 ## Version 2.9.578
 ### Bugfixes
- * Default settings TextEditors (see also #147)
+ * [#147](https://github.com/insilmaril/vym/issues/147)  Default settings TextEditors
 
 ## Version 2.9.577
 ### Features
@@ -265,11 +265,11 @@ Version 2.9.594
 
 ## Version 2.9.564
 ### Bugfixes
- * No longer ignore "Accept" in downloads dialog (#136)
+ * [#136](https://github.com/insilmaril/vym/issues/136)  No longer ignore "Accept" in downloads dialog ([#136](https://github.com/insilmaril/vym/issues/136) )
 
 ## Version 2.9.563
 ### Bugfixes
- * Don't use STREQUAL on Max (#135)
+ * [#135](https://github.com/insilmaril/vym/issues/135)  Don't use STREQUAL on Max
  * Minor improvements CMakeLists.txt
 
 ## Version 2.9.562
@@ -283,7 +283,7 @@ Version 2.9.594
 
 ### Bugfixes
  * Crashes when running scripts
- * Add io.github.insilmaril.vym.appdata.xml (#123)
+ * [#123](https://github.com/insilmaril/vym/issues/123)  Add io.github.insilmaril.vym.appdata.xml
  * Remove shortkey conflict for Key\Plus
  * Bugfix: Don't add command from last saveState script, if no script is used
 
@@ -310,7 +310,7 @@ Version 2.9.594
  * New icons in MainWindow for more modern look
    - based on KDE breeze
    - prepared for theming (bright, dark, classic)
- * Insert images in NoteEditor (#35)
+ * [#35](https://github.com/insilmaril/vym/issues/35)  Insert images in NoteEditor
  * New icons for NoteEditor and HeadingEditor
  * New icon to edit fill color in TextEditors
 
@@ -333,7 +333,7 @@ Version 2.9.594
    Add attributes for
     - Author
     - Timestamp
- * Update about dialog to reflect current reality. (#130)
+ * [#130](https://github.com/insilmaril/vym/issues/130)  Update about dialog to reflect current reality.
  * Get labels from Confluence and modify them
    - Recursively get page tree of a given page
    - Update attributes with metadata from Confluence
@@ -358,7 +358,7 @@ Version 2.9.594
  * Alignment of imagesContainer relative to branchesContainer
 
 ### Bugfixes
- * LibreOffice Impress export improved (#95)
+ * [#95](https://github.com/insilmaril/vym/issues/95)  LibreOffice Impress export improved
  * Redo adding xlink
  * Toggling flags in groups (incl. undo/redo)
  * Ported tests for flags
@@ -387,7 +387,7 @@ Version 2.9.594
  * Only one undo/redo step for adding MapCenters
 
 ### Bugfixes
- * #126 write flags and userflags in XML export (#126)
+ * [#126](https://github.com/insilmaril/vym/issues/126)  write flags and userflags in XML export
  * deleting XLinkItem left XLink dangling around
 
 ## Version 2.9.547
@@ -405,33 +405,33 @@ Version 2.9.594
         
    Queries are not really supported yet.
 
- * Improved editing of cells in the TaskEditor. For Issue #12. (#121)
+ * [#121](https://github.com/insilmaril/vym/issues/121)  Improved editing of cells in the TaskEditor.
 
 ### Changes
  * Disabled shortcut to switch to RichText Ctrl-R in TextEditor
    Conflicts with shortcut to restore session
 
 ### Bugfixes
- * Crash when using bright theme (#120)
- * Added icon to Bleyddyns patch to clear recent files (#95)
- * Clear recent menu item (#119)
+ * [#120](https://github.com/insilmaril/vym/issues/120)  Crash when using bright theme 
+ * Added icon to Bleyddyns patch to clear recent files ([#95](https://github.com/insilmaril/vym/issues/95) )
+ * [#119](https://github.com/insilmaril/vym/issues/119)  Clear recent menu item
    - Added a menu item to clear the recent map menu.
-   - Changed menu item name to just 'Clear'. For Issue (#95)
+   - Changed menu item name to just 'Clear'. For Issue ([#95](https://github.com/insilmaril/vym/issues/95) )
 
 ## Version 2.9.545
 ### Features
  * New frame type "Pipe"
  * Changing frame colors updates map instantly
- * While loading update MapEditor #118
+ * [#118](https://github.com/insilmaril/vym/issues/118)  While loading update MapEditor
  * Use system services to open local and remote Urls
 
    By default system specific apps will be used to open pdfs, webpages,
    spreadsheets, ...
 
 ### Bugfixes
- * Finalized fix for (#98)
+ * Finalized fix for ([#98](https://github.com/insilmaril/vym/issues/98) )
    - Set lastMapDir also for Main::fileSaveAs()
- * Update lastMapDir in more places. Fix for #98. (#117)
+ * [#117](https://github.com/insilmaril/vym/issues/117)  Update lastMapDir in more places. Fix for [#98](https://github.com/insilmaril/vym/issues/98) .
 
 ## Version 2.9.544
 ### Features
@@ -464,7 +464,7 @@ Version 2.9.594
 
 ## Version 2.9.538
 ### Features
- * Update Russian translations vym.ru.ts (#115)
+ * [#115](https://github.com/insilmaril/vym/issues/115)  Update Russian translations vym.ru.ts
 
 ### Bugfixes
  * Fixed segfault when exiting vym after running selftests
@@ -502,11 +502,11 @@ Version 2.9.594
 
 ## Version 2.9.535
 ### Bugfixes
- * Heading color is lost when note is available (#113)
+ * [#113](https://github.com/insilmaril/vym/issues/113)  Heading color is lost when note is available
 
 ## Version 2.9.534
 ### Changes
- * XLinks now use UUID instead of selectionID (#112)
+ * [#112](https://github.com/insilmaril/vym/issues/112)  XLinks now use UUID instead of selectionID
 
    This allows processing XLinks also in XSL transformations. See
 
@@ -517,7 +517,7 @@ Version 2.9.594
 
 ## Version 2.9.28
 ### Features
- * Link app icon as a mimetype icon for the hicolor default theme (#109)
+ * [#109](https://github.com/insilmaril/vym/issues/109)  Link app icon as a mimetype icon for the hicolor default theme
 
  * On Linux/Unix systems cmake already installs the vym.png application
    icon (what is referenced via the .desktop file) and a mime type definition
@@ -527,10 +527,10 @@ Version 2.9.594
    icon.
 
 ### Bugfixes
- *  Do not install manpage in doc dir (#107)
- *  Open french documention if required
- *  Don't autosave while still saving
- *  Spelling fix: remove duplicate word (#108)
+ * [#107](https://github.com/insilmaril/vym/issues/107)  Do not install manpage in doc dir 
+ * Open french documention if required
+ * Don't autosave while still saving
+ * [#108](https://github.com/insilmaril/vym/issues/108)  Spelling fix: remove duplicate word
 
 ## Version 2.9.532
 ### Changes
@@ -543,6 +543,6 @@ Version 2.9.594
  * Only write images once to zipDir to save time and disk space
 
 ### Bugfixes
- * Spelling fixes (#105)
- * Desktop file improvements (#106)
+ * [#105](https://github.com/insilmaril/vym/issues/105)  Spelling fixes
+ * [#106](https://github.com/insilmaril/vym/issues/106)  Desktop file improvements
 
