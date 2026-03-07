@@ -38,12 +38,12 @@ Uwe Drechsel - January 2026
 
 ## Version 2.9.606
 ### Bugfixes
- * Bugfix: Relative positioning of images or branches (#181)
+ * Relative positioning of images or branches (#181)
 
 ## Version 2.9.605
 ### Bugfixes
- * Bugfix: autoDesign frame settings when loading/saving maps
- * Bugfix: save selection (#188)
+ * autoDesign frame settings when loading/saving maps
+ * save selection (#188)
     - Added script command isBusy()
     - Added script command setSaveAsBackgroundProcess()
 
@@ -53,7 +53,7 @@ Uwe Drechsel - January 2026
 
     Also re-added action to file menu to save selection.
 
- * Bugfix: Make sure zip processes are finished when leaving vym (#187)
+ * Make sure zip processes are finished when leaving vym (#187)
 
     Under certain circumstances vym had still background processes when
     accepting e.g. a close event from window manager.
@@ -61,31 +61,30 @@ Uwe Drechsel - January 2026
     Now MainWindow requests closing a map directly from the vym map. The map
     itself triggers it's removal from MainWindow once the zipProcess is done.
 
- * Bugfix: Missing image in xml of map modifies branches (#187)
+ * Missing image in xml of map modifies branches (#187)
 
 
 ## Version 2.9.604
 ### Bugfixes
-* Bugfix: Editing in TaskEditor adds heading of parent branch to selected branch (#180)
-* Bugfix: Changes to frames via script are not saved (#179)
+* in TaskEditor adds heading of parent branch to selected branch (#180)
+* Changes to frames via script are not saved (#179)
 
    e.g. when using macros bound to function keys to change frames.
 
    Now autoDesign is disabled when script functions change frames.
 
-* Bugfix: Exporting note might overwrite export of previous branch (#186)
-* Bugfix: Zoom and rotation after loading map (#182)
-* Bugfix: Rotation of subtree not save when changed with shortcut (#183)
+* Exporting note might overwrite export of previous branch (#186)
+* Zoom and rotation after loading map (#182)
+* Rotation of subtree not save when changed with shortcut (#183)
   - Disable autodesign option
 
 
 ## Version 2.9.603
-### Bugfixes
- * QThreadStorage: entry 1 destroyed before end of thread when quitting via shortcut cut
-
 ### Features
  * Set heading width also for RichText headings
 
+### Bugfixes
+ * QThreadStorage: entry 1 destroyed before end of thread when quitting via shortcut cut
 
 ## Version 2.9.601
 ### Features
@@ -184,7 +183,7 @@ Version 2.9.594
 
 ## Version 2.9.588
 ### Features
-    Feature: Improving HTML export with flags and dark theme css file
+ * Improving HTML export with flags and dark theme css file
 
 ## Version 2.9.587
 ### Changes
@@ -212,7 +211,7 @@ Version 2.9.594
 
 ## Version 2.9.583
 ### Features
- *     Feature: Use shared renderer for svg flags (see #151)
+ * Use shared renderer for svg flags (see #151)
 
 ### Bugfixes
  * Store vym temporary files in user directory (#151)
@@ -221,9 +220,6 @@ Version 2.9.594
  * Toggle subtree frames with function keys
 
 
-
-
-===================
 ## Version 2.9.582
 ### Bugfixes
  * Building on Linux (#149)
