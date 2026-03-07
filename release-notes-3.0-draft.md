@@ -38,6 +38,17 @@ Uwe Drechsel - January 2026
 
 
 
+## Version 2.9.608
+ * When importing maps, don't read mapdesign.
+ * [#191](https://github.com/insilmaril/vym/issues/191)  AddMapReplace crashes for MapCenter 
+
+### Changes
+ * When clicking on the map, find branches before XLinks
+
+## Version 2.9.607
+### Bugfixes
+ * Branches without frames
+ * [#185](https://github.com/insilmaril/vym/issues/185)  After loading a zoomed map is not centered correctly
 
 ## Version 2.9.606
 ### Bugfixes
