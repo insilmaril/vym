@@ -6,9 +6,11 @@ The lists below shows main changes between the current 3.0.x version of vym and
 the previous official release 2.9.27.
 
 vym has been rewritten in large parts:
+
  * New layout engine
    - Supports rotation and scaling of elements
    - Supports frames around subtrees
+   - Transparency for frame colors
 
  * Introducing MapDesign
    - Mapdesign defines how a map looks visually, e.g. colors, frames,
@@ -18,6 +20,42 @@ vym has been rewritten in large parts:
    - MapDesign defines how elements look depending on depth, e.g.
      MapCenters and first level MainBranches may have frames, other
      branches not.
+
+ * More personalization options
+   - Mapdesign above allows to save personal preferences for designs in
+     default maps or easily share them
+   - Theming has improved
+     - Dark mode support
+     - New icons and additional icons for dark mode
+     - Even selection box can be styled (so far only be modifying
+       mapdesign in xml file, e.g. using vivym script)
+
+ * Improved text handling in NoteEditor and HeadingEditor
+
+ * Keyboard shortcuts
+   - Unified shortcuts for satellite editors
+     - One key to open a specific editor, e.g. N for NoteEditor, B for Properties
+     - One key to close each editor: Ctrl-D
+   - More shortcuts inspired by vim editor without Ctrl/Cmd key:
+     - D to delete
+     - Y to yank/copy
+     - 0/$ to go to first/last branch
+     - Repeat last action with .
+   - Move a branch up/down "diagonally" by making it a sibling or a
+     child
+   - Zoom view easily with + and - (without Ctrl)  
+   - Resize items easily with Ctlr-+/-
+   - Center view on item and reset zoom factor with ,
+   - Center view and zoom in to item with Shift-,
+   - Move view to make item visible with #
+
+
+ * Speedup and optimizations
+   - The layout is calculated only once when data related to graphics
+     change (internally: less calls to reposition() function)
+   - When maps are saved, vym still zips the XML-data, but the
+     compression is done as background process, while vym already is
+     responsive to user input again.
 
  * New scripting engine
    - Internally the engine was migrated from (no longer supported)
