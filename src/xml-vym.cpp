@@ -455,7 +455,7 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
     if (lastBranch->isScrolled() && lastBranch->branchCount() == 0)
         lastBranch->unScroll();
 
-    lastBranch->updateVisuals();
+    lastBranch->updateVisuals();    // FIXME-2 Really for every branch? compare readHeading..() below...
 
     lastBranch = lastBranch->parentBranch();
     lastBranch->setLastSelectedBranch(0);
