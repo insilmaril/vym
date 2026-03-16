@@ -31,6 +31,12 @@ vym has been rewritten in large parts:
        mapdesign in xml file, e.g. using vivym script)
 
  * Improved text handling in NoteEditor and HeadingEditor
+     - Improved color handling
+        - New shortcuts to color text (Ctrl-T) and "mark" background (Ctrl-M)
+        - Color buttons in toolbar no longer update to current cursor color,
+          but remember previously selected colors
+     - [#176](https://github.com/insilmaril/vym/issues/176)  Add and follow hyperlinks in TextEditors
+     - [#168](https://github.com/insilmaril/vym/issues/168)  Background style in TextEditors
 
  * Keyboard shortcuts
    - Unified shortcuts for satellite editors
@@ -48,6 +54,7 @@ vym has been rewritten in large parts:
    - Center view on item and reset zoom factor with ,
    - Center view and zoom in to item with Shift-,
    - Move view to make item visible with #
+   - Heading editor and note editor: color text (Ctrl-T) and "mark" background (Ctrl-M)
 
 
  * Speedup and optimizations
@@ -72,11 +79,18 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - January 2026
+Uwe Drechsel - March 2026
 
 
+## Version 2.9.609
+### Features
+ * Feature: Improved color handling in text editors
+    - New shortcuts to color text (Ctrl-T) and "mark" background (Ctrl-M)
+    - Color buttons in toolbar no longer update to current cursor color,
+      but remember previously selected colors
 
 ## Version 2.9.608
+### Bugfixes
  * When importing maps, don't read mapdesign.
  * [#191](https://github.com/insilmaril/vym/issues/191)  AddMapReplace crashes for MapCenter 
 
