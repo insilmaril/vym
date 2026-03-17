@@ -865,7 +865,7 @@ void TextEditor::deleteAll()
     editor->clear();
 }
 
-void TextEditor::textExportAs()
+void TextEditor::textExportAs() // FIXME-2 when exporting to HTML save background-color e.g. by inserting into text
 {
     QString text, postfix;
     if (actionFormatRichText->isChecked()) {
