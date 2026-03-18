@@ -31,6 +31,9 @@ vym has been rewritten in large parts:
        mapdesign in xml file, e.g. using vivym script)
 
  * Improved text handling in NoteEditor and HeadingEditor
+     - RichText in headings of branches
+        - Copy & paste information including bulletpoints and even
+          images into the heading of a branch
      - Improved color handling
         - New shortcuts to color text (Ctrl-T) and "mark" background (Ctrl-M)
         - Color buttons in toolbar no longer update to current cursor color,
