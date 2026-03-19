@@ -84,7 +84,8 @@ Thanks for using vym!
 
 Uwe Drechsel - March 2026
 
-## Version 2.9.next
+
+## Version 2.9.610
 ### Bugfixes
  * [#195](https://github.com/insilmaril/vym/issues/195) Save background color when exporting RichText in TextEditor
 
