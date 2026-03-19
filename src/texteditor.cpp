@@ -14,6 +14,7 @@
 #include <QPrinter>
 #include <QStatusBar>
 #include <QToolBar>
+#include <QToolButton>
 
 #include "file.h"
 #include "mainwindow.h"
@@ -108,21 +109,6 @@ TextEditor::~TextEditor()
 void TextEditor::init()
 {
     QString n = QString("/satellite/%1/").arg(editorId);
-    colorRichTextEditorBackground = QColor::fromString(
-        settings.value(n + "colors/richTextEditorBackground", vymBaseColor.name()).toString());
-
-    colorRichTextForeground = QColor::fromString(
-        settings.value(n + "colors/richTextForeground", vymForegroundColor.name()).toString());
-
-    colorRichTextBackground = QColor::fromString(
-        settings.value(n + "colors/richTextBackground", vymBaseColor.name()).toString());
-
-    /*
-    qDebug() << "TE::init" << scope;
-    qDebug() << "  TEBG=" << colorRichTextEditorBackground.name() << vymBaseColor.name(); 
-    qDebug() << "  RTFG=" << colorRichTextForeground.name() << vymForegroundColor.name();
-    qDebug() << "  RTBG=" << colorRichTextBackground.name();
-    */
 
     // Toolbars
     setupFileActions();
@@ -131,6 +117,24 @@ void TextEditor::init()
     setupSettingsActions();
 
     restoreState(settings.value(n + "state", 0).toByteArray());
+
+    colorRichTextEditorBackground = QColor::fromString(
+        settings.value(n + "colors/richTextEditorBackground", vymBaseColor.name()).toString());
+
+    colorRichTextForeground = QColor::fromString(
+        settings.value(n + "colors/richTextForeground", vymForegroundColor.name()).toString());
+    colorFGChanged(colorRichTextForeground);
+
+    colorRichTextBackground = QColor::fromString(
+        settings.value(n + "colors/richTextBackground", vymBaseColor.name()).toString());
+    colorBGChanged(colorRichTextBackground);
+
+    /*
+    qDebug() << "TE::init" << scope;
+    qDebug() << "  TEBG=" << colorRichTextEditorBackground.name() << vymBaseColor.name(); 
+    qDebug() << "  RTFG=" << colorRichTextForeground.name() << vymForegroundColor.name();
+    qDebug() << "  RTBG=" << colorRichTextBackground.name();
+    */
 
     fileNameInt = "";
     fixedFontInt = fixedFont;
@@ -507,24 +511,47 @@ void TextEditor::setupFormatActions()
     formatToolBar->setStyleSheet(toolBarStyle);
     formatToolBar->setObjectName("noteEditorFormatToolBar");
 
-    //QPixmap pix(16, 16);
-    //pix.fill(editor->textColor());
-    //a = new QAction(pix, tr("&Text Color..."), this);
-    a = new QAction(tr("&Text Color..."), this);
+    a = new QAction(tr("&Color text using foreground color"), this);
+    switchboard.addAction(a, "Color text with foreground color", Qt::CTRL | Qt::Key_T, shortcutScope, tag);
     formatMenu->addAction(a);
     formatToolBar->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(useTextFGColor()));
+    filledEditorRichTextActions << a;
+    actionUseTextFGColor = a;
+
+    a = new QAction(tr("&Select text foreground color..."), this);
+    formatMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(selectTextFGColor()));
     filledEditorRichTextActions << a;
-    actionTextFGColor = a;
+    actionSelectTextFGColor = a;
 
-    //pix.fill(editor->textBackgroundColor());
-    //a = new QAction(pix, tr("&Text background color..."), this);
-    a = new QAction(tr("&Text background color..."), this);
+    QToolButton *tb = new QToolButton;
+    tb->setArrowType(Qt::DownArrow);
+    tb->setDefaultAction(actionSelectTextFGColor);
+    formatToolBar->addWidget(tb);
+    tb->setFixedSize(22,44);
+
+    a = new QAction(tr("&Mark text using background color..."), this);
+    switchboard.addAction(a, "Mark text using background color", Qt::CTRL | Qt::Key_M, shortcutScope, tag);
     formatMenu->addAction(a);
     formatToolBar->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(useTextBGColor()));
+    filledEditorRichTextActions << a;
+    actionUseTextBGColor = a;
+
+    a = new QAction(tr("&Select text background color..."), this);
+    formatMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(selectTextBGColor()));
     filledEditorRichTextActions << a;
-    actionTextBGColor = a;
+    actionSelectTextBGColor = a;
+
+    tb = new QToolButton;
+    tb->setArrowType(Qt::DownArrow);
+    tb->setDefaultAction(actionSelectTextBGColor);
+    formatToolBar->addWidget(tb);
+    tb->setFixedSize(22,44);
+
+    formatMenu->addSeparator();
 
     a = new QAction(QPixmap(QString(":/format-text-bold-%1.svg").arg(iconTheme)), tr("&Bold"), this);
 //    a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -844,6 +871,8 @@ void TextEditor::textExportAs()
     if (actionFormatRichText->isChecked()) {
         text = editor->toHtml();
         postfix = ".html";
+        QString bgcol = colorRichTextBackground.name();
+        text.replace("<body style=\"","<body style=\"background-color:" + bgcol + "; ");
     } else {
         text = editor->toPlainText();
         postfix = ".txt";
@@ -994,6 +1023,11 @@ void TextEditor::textFamily(const QString &f) { editor->setFontFamily(f); }
 
 void TextEditor::textSize(const QString &p) { editor->setFontPointSize(p.toInt()); }
 
+void TextEditor::useTextFGColor()
+{
+    editor->setTextColor( colorRichTextForeground);
+}
+
 void TextEditor::selectTextFGColor()
 {
     QColor col = QColorDialog::getColor(
@@ -1004,6 +1038,13 @@ void TextEditor::selectTextFGColor()
     if (!col.isValid())
         return;
     editor->setTextColor(col);
+    colorFGChanged(col);
+    colorRichTextForeground = col;
+}
+
+void TextEditor::useTextBGColor()
+{
+    editor->setTextBackgroundColor(colorRichTextBackground);
 }
 
 void TextEditor::selectTextBGColor()
@@ -1015,6 +1056,9 @@ void TextEditor::selectTextBGColor()
             QColorDialog::ShowAlphaChannel);
     if (!col.isValid())
         return;
+
+    colorRichTextBackground = col;
+    colorBGChanged(col);
     editor->setTextBackgroundColor(col);
 }
 
@@ -1063,7 +1107,7 @@ void TextEditor::fontChanged(const QFont &f)
     actionTextUnderline->setChecked(f.underline());
 }
 
-void TextEditor::colorFGChanged(const QColor &c)
+void TextEditor::colorFGChanged(const QColor &c)    // FIXME-0 see also setRichTextForegroundColor
 {
     QImage image(":color-text.svg");
     QPainter painter;
@@ -1072,7 +1116,7 @@ void TextEditor::colorFGChanged(const QColor &c)
     painter.drawRect(0,110,128,128);
     painter.end();
 
-    actionTextFGColor->setIcon(QPixmap::fromImage(image));
+    actionUseTextFGColor->setIcon(QPixmap::fromImage(image));
 }
 
 void TextEditor::colorBGChanged(const QColor &c)
@@ -1084,7 +1128,7 @@ void TextEditor::colorBGChanged(const QColor &c)
     painter.drawRect(0,110,128,128);
     painter.end();
 
-    actionTextBGColor->setIcon(QPixmap::fromImage(image));
+    actionUseTextBGColor->setIcon(QPixmap::fromImage(image));
 }
 
 void TextEditor::formatChanged(const QTextCharFormat &f)
@@ -1093,8 +1137,8 @@ void TextEditor::formatChanged(const QTextCharFormat &f)
     if (!actionFormatRichText->isChecked())
         return;
     fontChanged(f.font());
-    colorFGChanged(f.foreground().color());
-    colorBGChanged(f.background().color());
+    // colorFGChanged(f.foreground().color()); // FIXME-0
+    // colorBGChanged(f.background().color()); // FIXME-0
     alignmentChanged(editor->alignment());
     verticalAlignmentChanged(f.verticalAlignment());
 }

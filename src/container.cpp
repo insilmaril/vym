@@ -473,12 +473,12 @@ QPointF Container::alignTo(PointName ownPointName, Container* targetContainer, P
     return mapFromItem(targetContainer, targetContainer->pointByName(targetPointName)) - pointByName(ownPointName);
 }
 
-#include <QMessageBox>  // FIXME-2 debugging
+#include <QMessageBox>  // FIXME-3 debugging
 void Container::addContainer(Container *c, int z)
 {
     if (childContainers().contains(c)) return;
 
-    if (!c) {   // FIXME-2 debugging
+    if (!c) {   // FIXME-3 debugging. Still occured in 2.9.608, very rare
         logDebug("Container::addContainer  adding 0 to " + info() + " would crash");
         QMessageBox::warning(0, "Warning", "Would have crashed now in ::addContainer");
         return;

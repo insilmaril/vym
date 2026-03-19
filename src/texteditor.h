@@ -79,7 +79,9 @@ class TextEditor : public QMainWindow {
     void textItalic();
     void textFamily(const QString &f);
     void textSize(const QString &p);
+    void useTextFGColor();
     void selectTextFGColor();
+    void useTextBGColor();
     void selectTextBGColor();
     void textAlign(QAction *);
     void textVAlign();
@@ -157,8 +159,10 @@ class TextEditor : public QMainWindow {
 	*actionRichTextBGColor;
 
     QAction
-        *actionTextFGColor,
-        *actionTextBGColor,
+        *actionUseTextFGColor,
+        *actionSelectTextFGColor,
+        *actionUseTextBGColor,
+        *actionSelectTextBGColor,
 	*actionTextBold, *actionTextUnderline, *actionTextItalic,
 	*actionAlignSubScript, *actionAlignSuperScript,
         *actionAlignLeft, *actionAlignCenter, *actionAlignRight,
