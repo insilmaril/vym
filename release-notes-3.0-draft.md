@@ -84,10 +84,13 @@ Thanks for using vym!
 
 Uwe Drechsel - March 2026
 
+## Version 2.9.next
+### Bugfixes
+ * [#195](https://github.com/insilmaril/vym/issues/195) Save background color when exporting RichText in TextEditor
 
 ## Version 2.9.609
 ### Features
- * Feature: Improved color handling in text editors
+ * Improved color handling in text editors
     - New shortcuts to color text (Ctrl-T) and "mark" background (Ctrl-M)
     - Color buttons in toolbar no longer update to current cursor color,
       but remember previously selected colors
@@ -95,7 +98,7 @@ Uwe Drechsel - March 2026
 ## Version 2.9.608
 ### Bugfixes
  * When importing maps, don't read mapdesign.
- * [#191](https://github.com/insilmaril/vym/issues/191)  AddMapReplace crashes for MapCenter 
+ * [#191](https://github.com/insilmaril/vym/issues/191) AddMapReplace crashes for MapCenter 
 
 ### Changes
  * When clicking on the map, find branches before XLinks

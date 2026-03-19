@@ -865,12 +865,14 @@ void TextEditor::deleteAll()
     editor->clear();
 }
 
-void TextEditor::textExportAs() // FIXME-2 (195) Save background-color when exporting to HTML
+void TextEditor::textExportAs()
 {
     QString text, postfix;
     if (actionFormatRichText->isChecked()) {
         text = editor->toHtml();
         postfix = ".html";
+        QString bgcol = colorRichTextBackground.name();
+        text.replace("<body style=\"","<body style=\"background-color:" + bgcol + "; ");
     } else {
         text = editor->toPlainText();
         postfix = ".txt";
