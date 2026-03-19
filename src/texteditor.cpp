@@ -871,6 +871,8 @@ void TextEditor::textExportAs()
     if (actionFormatRichText->isChecked()) {
         text = editor->toHtml();
         postfix = ".html";
+        QString bgcol = colorRichTextBackground.name();
+        text.replace("<body style=\"","<body style=\"background-color:" + bgcol + "; ");
     } else {
         text = editor->toPlainText();
         postfix = ".txt";

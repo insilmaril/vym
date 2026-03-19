@@ -147,18 +147,26 @@ void ExportImpress::exportPresentation()
     // zip tmpdir to destination
     ZipAgent zipAgent(tmpDir, filePath);
     zipAgent.setBackgroundProcess(false);
-    zipAgent.startZip();    // FIXME-2 CHeck return value, see saveMap()
-    if(zipAgent.exitStatus() != QProcess::NormalExit ||
-            zipAgent.exitCode() > 0) {
+    if (!zipAgent.startZip()) {
         QMessageBox::critical(
             0, QObject::tr("Critical Export Error"),
-            QObject::tr("Could not compress file %1").arg(filePath));
+            QObject::tr("Could not start compressing file %1").arg(filePath));
+        result = ExportBase::Failed;
+        return;
+    } else {
+        if(zipAgent.exitStatus() != QProcess::NormalExit ||
+                zipAgent.exitCode() > 0) {
+            QMessageBox::critical(
+                0, QObject::tr("Critical Export Error"),
+                QObject::tr("Could not compress file %1").arg(filePath));
+            result = ExportBase::Failed;
+            return;
+        }
     }
 
+    result = ExportBase::Success;
 
     displayedDestination = filePath;
-
-    result = ExportBase::Success;
 
     QStringList args;
     args << filePath;

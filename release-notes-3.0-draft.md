@@ -31,6 +31,9 @@ vym has been rewritten in large parts:
        mapdesign in xml file, e.g. using vivym script)
 
  * Improved text handling in NoteEditor and HeadingEditor
+     - RichText in headings of branches
+        - Copy & paste information including bulletpoints and even
+          images into the heading of a branch
      - Improved color handling
         - New shortcuts to color text (Ctrl-T) and "mark" background (Ctrl-M)
         - Color buttons in toolbar no longer update to current cursor color,
@@ -82,9 +85,19 @@ Thanks for using vym!
 Uwe Drechsel - March 2026
 
 
+<<<<<<< HEAD
 ## Version 2.9.609
 ### Features
  * Feature: Improved color handling in text editors
+=======
+## Version 2.9.610
+### Bugfixes
+ * [#195](https://github.com/insilmaril/vym/issues/195) Save background color when exporting RichText in TextEditor
+
+## Version 2.9.609
+### Features
+ * Improved color handling in text editors
+>>>>>>> develop
     - New shortcuts to color text (Ctrl-T) and "mark" background (Ctrl-M)
     - Color buttons in toolbar no longer update to current cursor color,
       but remember previously selected colors
@@ -92,7 +105,7 @@ Uwe Drechsel - March 2026
 ## Version 2.9.608
 ### Bugfixes
  * When importing maps, don't read mapdesign.
- * [#191](https://github.com/insilmaril/vym/issues/191)  AddMapReplace crashes for MapCenter 
+ * [#191](https://github.com/insilmaril/vym/issues/191) AddMapReplace crashes for MapCenter 
 
 ### Changes
  * When clicking on the map, find branches before XLinks

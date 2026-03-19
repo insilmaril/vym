@@ -597,7 +597,7 @@ void VymReader::readHeadingOrVymNote()
 
         lastMI->setHeading(vymtext);
 
-        if (lastBranch && branchesCounter % 100 == 0) {     // Update and process events once in a while
+        if (lastBranch && (lastBranch->depth() < 3 || branchesCounter % 100 == 0)) {     // Update and process events once in a while
             // Some graphical repainting during loading of map
             lastBranch->updateVisuals();
             //model->select(lastBranch);
