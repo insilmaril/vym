@@ -893,6 +893,9 @@ void TextEditor::textExportAs()
         0, QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty()) {
+
+// Macs check for replacing existing file in native dialog
+#ifndef Q_OS_MACOS
         QFile file(fn);
         if (file.exists()) {
             QMessageBox mb(
@@ -905,6 +908,7 @@ void TextEditor::textExportAs()
             mb.exec();
             if (mb.clickedButton() != overwriteButton) return;
         }
+#endif
 
         fileNameInt = fn;
 
