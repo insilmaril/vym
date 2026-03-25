@@ -871,7 +871,9 @@ void TextEditor::textExportAs()
     if (actionFormatRichText->isChecked()) {
         text = editor->toHtml();
         postfix = ".html";
-        QString bgcol = colorRichTextBackground.name();
+        QString fgcol = colorRichTextForeground.name();
+        QString bgcol = colorRichTextEditorBackground.name();
+        text.replace("white-space: pre-wrap;", "white-space: pre-wrap; color:" + fgcol + ";");
         text.replace("<body style=\"","<body style=\"background-color:" + bgcol + "; ");
     } else {
         text = editor->toPlainText();
@@ -1219,7 +1221,7 @@ void TextEditor::updateActions()
 
 void TextEditor::setState(EditorState s)
 {
-    // qDebug() << "TE::setState" << s << editorName;
+    // qDebug() << "TE::setState" << s;
     QPalette p = qApp->palette();
     QColor baseColor;
     state = s;
@@ -1246,7 +1248,10 @@ void TextEditor::setState(EditorState s)
             baseColor = Qt::black;
             editor->setReadOnly(true);
     }
+
+    // Just setting base color sometimes seems not enough...
     p.setColor(QPalette::Base, baseColor);
+    p.setColor(QPalette::Window, baseColor);
     editor->setPalette(p);
 
     updateActions();
@@ -1274,6 +1279,9 @@ void TextEditor::selectRichTextEditorBackgroundColor()
     QPixmap pix(16, 16);
     pix.fill(colorRichTextEditorBackground);
     actionActiveEditorBGColor->setIcon(pix);
+
+    // Update color
+    setState(state);
 }
 
 void TextEditor::selectRichTextForegroundColor()
