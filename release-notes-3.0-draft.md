@@ -48,7 +48,10 @@ vym has been rewritten in large parts:
    - More shortcuts inspired by vim editor without Ctrl/Cmd key:
      - D to delete
      - Y to yank/copy
-     - 0/$ to go to first/last branch
+     - P to paste
+     - 0/$ to go to first/last branch in current subtree
+     - U Undo
+     - / Find
      - Repeat last action with .
    - Move a branch up/down "diagonally" by making it a sibling or a
      child
@@ -89,6 +92,8 @@ Uwe Drechsel - April 2026
 ### Features
  * [#197](https://github.com/insilmaril/vym/issues/197) Improved function key handling
    - Add shortcuts to color only branch, not whole subtree
+ * [#194](https://github.com/insilmaril/vym/issues/194) Group keyboard shortcuts
+
 ### Bugfixes
  * Remove double overwrite confirmation on Mac for exporting notes
 

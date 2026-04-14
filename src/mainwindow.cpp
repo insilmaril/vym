@@ -1865,8 +1865,9 @@ void Main::setupEditActions()
     a->setShortcutContext(Qt::WidgetShortcut);
     a->setEnabled(false);
     mapEditorActions.append(a);
+    vimActions.append(a);
     restrictedMapActions.append(a);
-    switchboard.addAction(a, "mapUndo", Qt::Key_U, shortcutScope, tag); // Vim Alternative
+    switchboard.addAction(a, "mapUndoVimAlt", Qt::Key_U, shortcutScope, tag); // Vim Alternative
     connect(a, SIGNAL(triggered()), this, SLOT(editUndo()));
     actionUndoVim = a;
 
@@ -1879,7 +1880,7 @@ void Main::setupEditActions()
     actionRedo = a;
 
     a = new QAction(tr("Repeat last action", "Edit menu") + " (experimental)", this);
-    switchboard.addAction(a, "repeatLastAction", Qt::Key_Period, shortcutScope, tag);
+    switchboard.addAction(a, "repeatLastActionVim", Qt::Key_Period, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editRepeatLastAction()));
     //actionListBranches.append(a);
     actionRepeatCommand = a;
@@ -1900,7 +1901,8 @@ void Main::setupEditActions()
     a->setEnabled(false);
     unrestrictedMapActions.append(a);
     mapEditorActions.append(a);
-    switchboard.addAction(a, "mapCopyVim", Qt::Key_Y, shortcutScope, tag);
+    vimActions.append(a);
+    switchboard.addAction(a, "mapCopyVimAlt", Qt::Key_Y, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(editCopy()));
     actionCopyVim = a;
 
@@ -1917,8 +1919,9 @@ void Main::setupEditActions()
     actionCut = a;
 
     a = new QAction(QPixmap(QString(":/edit-cut-%1.svg").arg(iconTheme)), tr("Cu&t", "Edit menu"), this);
-    switchboard.addAction(a, "mapCutVim", Qt::Key_D, shortcutScope, tag);
+    switchboard.addAction(a, "mapCutVimAlt", Qt::Key_D, shortcutScope, tag);
     addAction(a);
+    vimActions.append(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editDeleteSelection()));
     actionListItems.append(a);
     actionCutVim = a;
@@ -1940,7 +1943,8 @@ void Main::setupEditActions()
     a->setEnabled(false);
     restrictedMapActions.append(a);
     mapEditorActions.append(a);
-    switchboard.addAction(a, "mapPasteVim", Qt::Key_P, shortcutScope, tag);
+    vimActions.append(a);
+    switchboard.addAction(a, "mapPasteVimAlt", Qt::Key_P, shortcutScope, tag);
     actionPasteVim = a;
 
     // Shortcut to delete selection
@@ -2523,7 +2527,8 @@ void Main::setupSelectActions()
 
     a = new QAction(QPixmap(QString(":/edit-find-%1.svg").arg(iconTheme)), tr("Find...", "Edit menu"), this);
     selectMenu->addAction(a);
-    switchboard.addAction(a, "mapFindAlt", Qt::Key_Slash, shortcutScope, tag); // Alternative: VIM Find
+    vimActions.append(a);
+    switchboard.addAction(a, "mapFindVimAlt", Qt::Key_Slash, shortcutScope, tag); // Alternative: VIM Find
     connect(a, SIGNAL(triggered()), this, SLOT(editOpenFindResultWidget()));
     actionListFiles.append(a);
     actionFindVim = a;
@@ -2546,8 +2551,9 @@ void Main::setupSelectActions()
 
     a = new QAction("Select first branch in siblings", this);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    vimActions.append(a);
     selectMenu->addAction(a);
-    switchboard.addAction(a, "Select first branch in siblings", Qt::Key_0, shortcutScope, tag);              // Alternative: VIM Select first
+    switchboard.addAction(a, "selectFirstSiblingVim", Qt::Key_0, shortcutScope, tag);              // Alternative: VIM Select first
     actionListBranches.append(a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectFirstSibling()));
@@ -2562,8 +2568,9 @@ void Main::setupSelectActions()
 
     a = new QAction("Select last branch in siblings", this);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    vimActions.append(a);
     selectMenu->addAction(a);
-    switchboard.addAction(a, "Select last branch in siblings", Qt::Key_Dollar, shortcutScope, tag);
+    switchboard.addAction(a, "selectLastSiblingVim", Qt::Key_Dollar, shortcutScope, tag);
     actionListBranches.append(a);
     addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(editSelectLastSibling()));
