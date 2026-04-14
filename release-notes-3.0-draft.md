@@ -88,7 +88,7 @@ Thanks for using vym!
 Uwe Drechsel - April 2026
 
 
-## Version 2.9.next
+## Version 2.9.12
 ### Features
  * [#197](https://github.com/insilmaril/vym/issues/197) Improved function key handling
    - Add shortcuts to color only branch, not whole subtree
@@ -97,6 +97,7 @@ Uwe Drechsel - April 2026
 ### Bugfixes
  * [#196](https://github.com/insilmaril/vym/issues/196) Xlink control points not accessible when "behind" heading
  * Remove double overwrite confirmation on Mac for exporting notes
+ * Load translations on Mac
 
 ## Version 2.9.610
 ### Bugfixes
