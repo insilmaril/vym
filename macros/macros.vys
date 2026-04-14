@@ -2,13 +2,12 @@
 
 // Macros called when function keys are pressed
 
+//! Helper function to toggle frame background color of a single branch
 
-//! Helper function to toggle frame
 function toggle_frame_branch(color, msg)
 {
     map = vym.currentMap();
     branches = map.selectedBranches();
-
     for (b of branches) {
         // Make sure changes are saved
         b.setFrameAutoDesign(true, false);
@@ -23,11 +22,12 @@ function toggle_frame_branch(color, msg)
     }
 }
 
+//! Helper function to toggle frame background color of a whole subtree
+
 function toggle_frame_subtree(color, msg)
 {
     map = vym.currentMap();
     branches = map.selectedBranches();
-
     for (b of branches) {
         // Make sure changes are saved
         b.setFrameAutoDesign(false, false);
@@ -42,28 +42,31 @@ function toggle_frame_subtree(color, msg)
     }
 }
 
+//! Helper function to color only the selected branch using a quick color slot
 
 function colorBranchWithQuickColor(n)
 {
     map = vym.currentMap();
     vym.selectQuickColor(n);
     c = vym.currentColor();
-
     branches = map.selectedBranches();
     for (b of branches)
         b.colorBranch(c);
 }
+
+//! Helper function to color the whole subtree using a quick color slot
 
 function colorSubtreeWithQuickColor(n)
 {
     map = vym.currentMap();
     vym.selectQuickColor(n);
     c = vym.currentColor();
-
     branches = map.selectedBranches();
     for (b of branches)
         b.colorSubtree(c);
 }
+
+// ─── Plain function keys: color the whole subtree ────────────────────────────
 
 //! Macro F1: Color subtree red
 function macro_f1()
@@ -75,7 +78,6 @@ function macro_f1()
 function macro_f2()
 {
     colorSubtreeWithQuickColor(1);
-
     // Or if you prefer to edit the heading of a branch using "F2"-key,
     // you can use below instead of above:
     // vym.editHeading();
@@ -86,7 +88,6 @@ function macro_f3()
 {
     colorSubtreeWithQuickColor(2);
 }
-
 
 //! Macro F4: Color subtree purple
 function macro_f4()
@@ -100,7 +101,7 @@ function macro_f5()
     colorSubtreeWithQuickColor(4);
 }
 
-//! Macro F6: Color subtree blue
+//! Macro F6: Color subtree cyan
 function macro_f6()
 {
     colorSubtreeWithQuickColor(5);
@@ -124,30 +125,30 @@ function macro_f9()
     colorSubtreeWithQuickColor(8);
 }
 
-//! Macro F10: Color subtree light white
+//! Macro F10: Color subtree white
 function macro_f10()
 {
     colorSubtreeWithQuickColor(9);
 }
 
-//! Macro F11:
+//! Macro F11: (unused)
 function macro_f11()
 {
     map = vym.currentMap();
     // Unused
 }
 
-//! Macro F12: toggle high prio task
+//! Macro F12: Toggle high-priority task state
 function macro_f12()
 {
-	// Assuming 3 states, which are cycled:
-	// 0 - nothing set
-	// 1 - high prio task with arrows
-	// 2 - done task without arrows, but green hook
+    // Assuming 3 states, which are cycled:
+    // 0 - nothing set
+    // 1 - high prio task with arrows
+    // 2 - done task without arrows, but green hook
     map = vym.currentMap();
     b = map.selectedBranch();
     if (b.hasTask() ) {
-        // Switch to state 2 
+        // Switch to state 2
         b.toggleTask();
         b.unsetFlagByName("2arrow-up");
         b.unsetFlagByName("stopsign");
@@ -168,218 +169,214 @@ function macro_f12()
     }
 }
 
+// ─── Shift + function keys: color only the selected branch ───────────────────
 
-//! Macro Shift + F1: Frame background light red
+//! Macro Shift+F1: Color branch red
 function macro_shift_f1()
 {
-    toggle_frame_branch ( "#ffb3b4", "Branch frame background light red" );
+    colorBranchWithQuickColor(0);
 }
 
-//! Macro Shift + F2: Frame background light green
+//! Macro Shift+F2: Color branch orange
 function macro_shift_f2()
 {
-    toggle_frame_branch ( "#bdffd6", "Branch frame background light green");
+    colorBranchWithQuickColor(1);
 }
 
-//! Macro Shift + F3: Frame background light yellow
+//! Macro Shift+F3: Color branch green
 function macro_shift_f3()
 {
-    toggle_frame_branch ( "#efefb3", "Branch frame background light yellow");
+    colorBranchWithQuickColor(2);
 }
 
-//! Macro Shift + F4: Frame background light blue
+//! Macro Shift+F4: Color branch purple
 function macro_shift_f4()
 {
-    toggle_frame_branch ( "#e2e6ff", "Branch frame background light blue");
+    colorBranchWithQuickColor(3);
 }
 
-//! Macro Shift + F5: Frame background light grey
+//! Macro Shift+F5: Color branch blue
 function macro_shift_f5()
 {
-    toggle_frame_branch ( "#d6d6d6", "Branch frame background light grey");
+    colorBranchWithQuickColor(4);
 }
 
-//! Macro Shift + F6: Frame background purple
+//! Macro Shift+F6: Color branch cyan
 function macro_shift_f6()
 {
-    toggle_frame_branch ( "#ffaaff", "Branch frame background purple");
+    colorBranchWithQuickColor(5);
 }
 
-//! Macro Shift + F7: Frame background white
+//! Macro Shift+F7: Color branch black
 function macro_shift_f7()
 {
-    toggle_frame_branch ( "#ffffff", "Branch frame background white");
+    colorBranchWithQuickColor(6);
 }
 
-//! Macro Shift + F8: Frame background black
+//! Macro Shift+F8: Color branch dark gray
 function macro_shift_f8()
 {
-    toggle_frame_branch ( "#000000", "Branch frame background black");
+    colorBranchWithQuickColor(7);
 }
 
-// Macro Shift + F9:
+//! Macro Shift+F9: Color branch light gray
 function macro_shift_f9()
 {
+    colorBranchWithQuickColor(8);
 }
 
-//! Macro Shift + F10: 
+//! Macro Shift+F10: Color branch white
 function macro_shift_f10()
 {
+    colorBranchWithQuickColor(9);
 }
 
-//! Macro Shift + F11:
+//! Macro Shift+F11: (unused)
 function macro_shift_f11()
 {
 }
 
-//! Macro Shift + F12:
+//! Macro Shift+F12: (unused)
 function macro_shift_f12()
 {
 }
 
+// ─── Ctrl + function keys: toggle frame background color of the branch ───────
 
-// New /////////////////////////////////////
-//! Macro Ctrl + F1: Subtree background light red
+//! Macro Ctrl+F1: Toggle branch frame background light red
 function macro_ctrl_f1()
 {
-    toggle_frame_subtree ( "#ffb3b4", "Branch frame background light red");
+    toggle_frame_branch ( "#ffb3b4", "Branch frame background light red" );
 }
 
-//! Macro Ctrl + F2: Subtree background light green
-
+//! Macro Ctrl+F2: Toggle branch frame background light green
 function macro_ctrl_f2()
 {
-    toggle_frame_subtree ( "#bdffd6", "Branch frame background light green");
+    toggle_frame_branch ( "#bdffd6", "Branch frame background light green" );
 }
 
-//! Macro Ctrl + F3: Subtree background light yellow
+//! Macro Ctrl+F3: Toggle branch frame background light yellow
 function macro_ctrl_f3()
 {
-    toggle_frame_subtree ( "#efefb3", "Branch frame background light yellow");
+    toggle_frame_branch ( "#efefb3", "Branch frame background light yellow" );
 }
 
-//! Macro Ctrl + F4: Subtree background light blue
+//! Macro Ctrl+F4: Toggle branch frame background light blue
 function macro_ctrl_f4()
 {
-    toggle_frame_subtree ( "#e2e6ff", "Branch frame background light yellow");
+    toggle_frame_branch ( "#e2e6ff", "Branch frame background light blue" );
 }
 
-//! Macro Ctrl + F5: Subtree  background light grey
+//! Macro Ctrl+F5: Toggle branch frame background light grey
 function macro_ctrl_f5()
 {
-    toggle_frame_subtree ( "#d6d6d6", "Branch frame background light grey");
+    toggle_frame_branch ( "#d6d6d6", "Branch frame background light grey" );
 }
 
-//! Macro Ctrl + F6: Subtree background purple
+//! Macro Ctrl+F6: Toggle branch frame background purple
 function macro_ctrl_f6()
 {
-    toggle_frame_subtree ( "#ffaaff", "Branch frame background light purple");
+    toggle_frame_branch ( "#ffaaff", "Branch frame background purple" );
 }
 
-//! Macro Ctrl + F7: Subtree background white
+//! Macro Ctrl+F7: Toggle branch frame background white
 function macro_ctrl_f7()
 {
-    toggle_frame_subtree ( "#ffffff", "Branch frame background light white");
+    toggle_frame_branch ( "#ffffff", "Branch frame background white" );
 }
 
-//! Macro Ctrl + F8: Subtree background black
+//! Macro Ctrl+F8: Toggle branch frame background black
 function macro_ctrl_f8()
 {
-    toggle_frame_subtree ( "#000000", "Branch frame background light black");
+    toggle_frame_branch ( "#000000", "Branch frame background black" );
 }
 
-//! Macro Ctrl + F9:
+//! Macro Ctrl+F9: (unused)
 function macro_ctrl_f9()
 {
-    vym.statusMessage("Macro F9 + Ctrl triggered");
 }
 
-//! Macro Ctrl + F10: 
+//! Macro Ctrl+F10: (unused)
 function macro_ctrl_f10()
 {
-    vym.statusMessage("Macro F10 + Ctrl triggered");
 }
 
-//! Macro Ctrl + F11:
+//! Macro Ctrl+F11: (unused)
 function macro_ctrl_f11()
 {
-    vym.statusMessage("Macro F11 + Ctrl triggered");
 }
 
-//! Macro Ctrl + F12:
+//! Macro Ctrl+F12: (unused)
 function macro_ctrl_f12()
 {
-    vym.statusMessage("Macro F12 + Ctrl triggered");
 }
 
-//! Macro Ctrl + Shift + F1:
+// ─── Ctrl+Shift + function keys: toggle frame background color of subtree ────
+
+//! Macro Ctrl+Shift+F1: Toggle subtree frame background light red
 function macro_ctrl_shift_f1()
 {
-    vym.statusMessage("Macro F1 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#ffb3b4", "Subtree frame background light red" );
 }
 
-//! Macro Ctrl + Shift + F2:
+//! Macro Ctrl+Shift+F2: Toggle subtree frame background light green
 function macro_ctrl_shift_f2()
 {
-    vym.statusMessage("Macro F2 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#bdffd6", "Subtree frame background light green" );
 }
 
-//! Macro Ctrl + Shift + F3:
+//! Macro Ctrl+Shift+F3: Toggle subtree frame background light yellow
 function macro_ctrl_shift_f3()
 {
-    vym.statusMessage("Macro F3 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#efefb3", "Subtree frame background light yellow" );
 }
 
-//! Macro Ctrl + Shift + F4:
+//! Macro Ctrl+Shift+F4: Toggle subtree frame background light blue
 function macro_ctrl_shift_f4()
 {
-    vym.statusMessage("Macro F4 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#e2e6ff", "Subtree frame background light blue" );
 }
 
-//! Macro Ctrl + Shift + F5:
+//! Macro Ctrl+Shift+F5: Toggle subtree frame background light grey
 function macro_ctrl_shift_f5()
 {
-    vym.statusMessage("Macro F5 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#d6d6d6", "Subtree frame background light grey" );
 }
 
-//! Macro Ctrl + Shift + F6:
+//! Macro Ctrl+Shift+F6: Toggle subtree frame background purple
 function macro_ctrl_shift_f6()
 {
-    vym.statusMessage("Macro F6 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#ffaaff", "Subtree frame background purple" );
 }
 
-//! Macro Ctrl + Shift + F7:
+//! Macro Ctrl+Shift+F7: Toggle subtree frame background white
 function macro_ctrl_shift_f7()
 {
-    vym.statusMessage("Macro F7 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#ffffff", "Subtree frame background white" );
 }
 
-//! Macro Ctrl + Shift + F8:
+//! Macro Ctrl+Shift+F8: Toggle subtree frame background black
 function macro_ctrl_shift_f8()
 {
-    vym.statusMessage("Macro F8 + Ctrl + Shift triggered");
+    toggle_frame_subtree ( "#000000", "Subtree frame background black" );
 }
 
-//! Macro Ctrl + Shift + F9:
+//! Macro Ctrl+Shift+F9: (unused)
 function macro_ctrl_shift_f9()
 {
-    vym.statusMessage("Macro F9 + Ctrl + Shift triggered");
 }
 
-//! Macro Ctrl + Shift + F10: 
+//! Macro Ctrl+Shift+F10: (unused)
 function macro_ctrl_shift_f10()
 {
-    vym.statusMessage("Macro F10 + Ctrl + Shift triggered");
 }
 
-//! Macro Ctrl + Shift + F11:
+//! Macro Ctrl+Shift+F11: (unused)
 function macro_ctrl_shift_f11()
 {
-    vym.statusMessage("Macro F11 + Ctrl + Shift triggered");
 }
 
-//! Macro Ctrl + Shift + F12:
+//! Macro Ctrl+Shift+F12: (unused)
 function macro_ctrl_shift_f12()
 {
-    vym.statusMessage("Macro F12 + Ctrl + Shift triggered");
 }

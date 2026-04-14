@@ -82,8 +82,15 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - March 2026
+Uwe Drechsel - April 2026
 
+
+## Version 2.9.next
+### Features
+ * [#197](https://github.com/insilmaril/vym/issues/197) Improved function key handling
+   - Add shortcuts to color only branch, not whole subtree
+### Bugfixes
+ * Remove double overwrite confirmation on Mac for exporting notes
 
 ## Version 2.9.610
 ### Bugfixes
