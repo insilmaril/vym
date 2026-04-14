@@ -95,6 +95,7 @@ Uwe Drechsel - April 2026
  * [#194](https://github.com/insilmaril/vym/issues/194) Group keyboard shortcuts
 
 ### Bugfixes
+ * [#196](https://github.com/insilmaril/vym/issues/196) Xlink control points not accessible when "behind" heading
  * Remove double overwrite confirmation on Mac for exporting notes
 
 ## Version 2.9.610
