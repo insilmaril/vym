@@ -120,7 +120,7 @@ TaskEditor::TaskEditor(QWidget *)
 
     a = new QAction("Close window", this);
     a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    switchboard.addAction(a, "taskEditorCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "");
+    switchboard.addAction(a, "taskEditorCloseWindow", Qt::CTRL | Qt::Key_D, shortcutScope, "Misc");
     connect(a, SIGNAL(triggered()), this, SLOT(closeWindow()));
     view->addAction(a);
 

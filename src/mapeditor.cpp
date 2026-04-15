@@ -1027,6 +1027,22 @@ TreeItem *MapEditor::findMapItem(
         const QList <TreeItem*> &excludedItems,
         bool findNearCenter)
 {
+    // If already a xlink is selected, try to find control points first
+    TreeItem *seli = model->getSelectedItem();
+    if (seli && seli->hasTypeXLink()) {
+        XLinkItem* xli = (XLinkItem*)seli;
+        XLinkObj* xlo = xli->getXLinkObj();
+        XLink* xl = xli->getXLink();
+        if (xlo && xl) {
+            XLinkObj::SelectionType xlinkSelection = xlo->couldSelect(p);
+            if (xlinkSelection == XLinkObj::C0)
+                return xl->beginXLinkItem();
+            if (xlinkSelection == XLinkObj::C1)
+                return xl->endXLinkItem();
+        }
+    }
+
+
     // Search branches (and their childs, e.g. images
     // Start with mapcenter, no images allowed at rootItem
     BranchItem *nearestFloatingCenter = nullptr;

@@ -26,6 +26,23 @@ KeySwitch::KeySwitch(const QString &identifier,
 /////////////////////////////////////////////////////////////////
 Switchboard::Switchboard() {}
 
+QList <KeySwitch> Switchboard::valuesReversed(const QString &scope)
+{
+    QList<KeySwitch> list;
+    if (!scope.isEmpty())
+        list = switchesMap.values(scope);
+    else
+        list = switchesMap.values();
+    QList<KeySwitch> rlist;
+
+    QListIterator<KeySwitch> it(list);
+    it.toBack();
+    while (it.hasPrevious()) {
+        rlist << it.previous();
+    }
+    return rlist;
+}
+
 void Switchboard::addScope(QString scopeIdentifier, QString scopeName)
 {
     if (!scopesMap.contains(scopeIdentifier))
@@ -80,10 +97,13 @@ QString Switchboard::getASCII()
 
         foreach (auto tag, tagsInScope) {
             s += underline(tag, "-");
-            foreach (auto ksw, switchesMap.values(scope)) {
+            foreach (auto ksw, valuesReversed(scope)) {
                 if (ksw.tagInt == tag) {
                     QString desc = ksw.actionInt->text();
                     QString sc = ksw.actionInt->shortcut().toString();
+                    QString alt;
+                    if (ksw.identifierInt.contains("VimAlt"))
+                        alt = QObject::tr("(Vim alternative shortcut)","Shortcut help dialog");
                     if (!sc.isEmpty()) {
 #if defined(Q_OS_MACOS)
                         sc.replace("Ctrl","Cmd");
@@ -91,16 +111,28 @@ QString Switchboard::getASCII()
                     
                         desc = desc.remove('&');
                         desc = desc.remove("...");
-                        s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
+                        s += QString(" %1: %2 %3\n").arg(sc, 12).arg(desc).arg(alt);
                     }
                 }
             }
             if (tag != tagsInScope.last())
                 s += "\n";
         }
-        if (scope != switchesMap.uniqueKeys().last())
-            s += "\n";
+        s += "\n";
     }
+
+    // Finally list vim inspired shortcuts
+    s += underline("VIM-like shortcuts", "=");
+    foreach (auto ksw, valuesReversed()) {
+        QString sc = ksw.actionInt->shortcut().toString();
+        if (!sc.isEmpty() && ksw.identifierInt.contains("Vim")) {
+            QString desc = ksw.actionInt->text();
+            desc = desc.remove('&');
+            desc = desc.remove("...");
+            s += QString(" %1: %2\n").arg(sc, 12).arg(desc);
+        }
+    }
+
     return s;
 }
 

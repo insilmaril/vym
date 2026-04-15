@@ -102,7 +102,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     slideEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
     macroEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
 
-    QString shortcutScope = parentWidget()->windowTitle();
+    QString shortcutScope = tr("Script editor", "Shortcut scope");
     switchboard.addScope("MainWindow", shortcutScope);
 
     QAction *a = new QAction("Close window", this);

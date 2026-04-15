@@ -469,9 +469,11 @@ class Main : public QMainWindow {
 
   public:
     QList<QAction *>
-        mapEditorActions; //! allows mapEditor to clone actions and shortcuts
+        mapEditorActions;   //! allows mapEditor to clone actions and shortcuts
     QList<QAction *>
-        taskEditorActions; //! allows taskEditor to clone actions and shortcuts
+        taskEditorActions;  //! allows taskEditor to clone actions and shortcuts
+    QList<QAction *>
+        vimActions;         //! Actions with vim inspired shortcuts
   private:
     QList<QAction *>
         restrictedMapActions; //! Actions reqire map and write access
