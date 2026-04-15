@@ -48,7 +48,10 @@ vym has been rewritten in large parts:
    - More shortcuts inspired by vim editor without Ctrl/Cmd key:
      - D to delete
      - Y to yank/copy
-     - 0/$ to go to first/last branch
+     - P to paste
+     - 0/$ to go to first/last branch in current subtree
+     - U Undo
+     - / Find
      - Repeat last action with .
    - Move a branch up/down "diagonally" by making it a sibling or a
      child
@@ -82,14 +85,19 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - March 2026
+Uwe Drechsel - April 2026
 
 
-<<<<<<< HEAD
-## Version 2.9.609
+## Version 2.9.12
 ### Features
- * Feature: Improved color handling in text editors
-=======
+ * [#197](https://github.com/insilmaril/vym/issues/197) Improved function key handling
+   - Add shortcuts to color only branch, not whole subtree
+ * [#194](https://github.com/insilmaril/vym/issues/194) Group keyboard shortcuts
+
+### Bugfixes
+ * [#196](https://github.com/insilmaril/vym/issues/196) Xlink control points not accessible when "behind" heading
+ * Load translations on Mac
+
 ## Version 2.9.610
 ### Bugfixes
  * [#195](https://github.com/insilmaril/vym/issues/195) Save background color when exporting RichText in TextEditor
@@ -97,10 +105,12 @@ Uwe Drechsel - March 2026
 ## Version 2.9.609
 ### Features
  * Improved color handling in text editors
->>>>>>> develop
     - New shortcuts to color text (Ctrl-T) and "mark" background (Ctrl-M)
     - Color buttons in toolbar no longer update to current cursor color,
       but remember previously selected colors
+
+### Bugfixes
+ * Remove double overwrite confirmation on Mac for exporting notes
 
 ## Version 2.9.608
 ### Bugfixes

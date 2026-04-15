@@ -23,6 +23,7 @@ class KeySwitch {
 class Switchboard {
   public:
     Switchboard();
+    QList <KeySwitch> valuesReversed(const QString &scope = "");
     void addScope(QString gIdentifier, QString gName);
     void addAction(QAction *a, const QString &identifier, const QString &scope, const QString &tag);
     void addAction(QAction *a, const QString &identifier, QKeySequence, const QString &scope, const QString &tag);
