@@ -546,7 +546,6 @@ int main(int argc, char *argv[])
         else {
             QString s = QLocale::system().name();
             lname = s.left(s.indexOf("_"));
-            qDebug() << "lname=" << lname;
         }
 
         ok = vymTranslator.load(QString("vym_%1.qm").arg(lname), vymTranslationsDir.path());
