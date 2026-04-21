@@ -8023,6 +8023,7 @@ void Main::downloadReleaseNotesFinished()
         QString page;
         if (agent->isSuccess()) {
             if (loadStringFromDisk(agent->getDestination(), page)) {
+                page.replace("<!-- VYMVERSION -->", " (" + vymVersion + ")");
                 ShowTextDialog dia(this);
                 dia.setText(page);
                 dia.exec();
@@ -8195,6 +8196,7 @@ void Main::downloadUpdatesFinished(bool userTriggered)
         dia.setWindowTitle(vymName + " - " + tr("Update information"));
         QString page;
         if (loadStringFromDisk(agent->getDestination(), page)) {
+            page.replace("<!-- VYMVERSION -->", " (" + vymVersion + ")");
             if (page.contains("vymisuptodate")) {
                 statusMessage(tr("vym is up to date.", "MainWindow"));
                 if (userTriggered) {
