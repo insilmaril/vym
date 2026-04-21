@@ -84,9 +84,9 @@ include_directories(
 # Source files
 file(GLOB VymSources RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 
-if(WIN32)
+if(WIN32) # FIXME still needed?
     list(APPEND VymSources
-        src/mkdtemp.cpp
+        #src/mkdtemp.cpp
         vym.rc
     )
     ADD_COMPILE_DEFINITIONS(_USE_MATH_DEFINES)
