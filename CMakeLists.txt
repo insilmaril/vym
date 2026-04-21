@@ -57,22 +57,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     endif()
 endif()
 
-if(WIN32)
-    set(OPENSSL_ROOT_DIR "C:/OpenSSL-Win64")
-    find_package(OpenSSL)
-
-    if( OPENSSL_FOUND )
-        include_directories(${OPENSSL_INCLUDE_DIRS})
-        link_directories(${OPENSSL_LIBRARIES})
-        message(STATUS "vym: Using OpenSSL version: ${OPENSSL_VERSION}")
-    else()
-        message(STATUS "vym: No openSSL found?!")
-        # Error; with REQUIRED, pkg_search_module() will throw an error by it's own
-    endif()
-
-    set(CMAKE_INSTALL_DATAROOTDIR ".")
- endif()
-
 
 # https://doc.qt.io/qt-6/qt-standard-project-setup.html
 find_package(Qt6 REQUIRED COMPONENTS Core)
