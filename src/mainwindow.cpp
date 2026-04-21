@@ -4614,7 +4614,7 @@ void Main::fileSaveSession()
         flist.append(view(i)->getModel()->getFilePath());
 
     settings.setValue("/mainwindow/sessionFileList", flist);
-    //logInfo("Current session list: " + flist.join(","), __func__);
+    // qDebug() << __func__ << "Current session list: " + flist.join(",");
 
     // Also called by event loop regulary, but apparently not often enough
     settings.sync();
@@ -5098,6 +5098,7 @@ void Main::fileCloseTab(int i)
             if (vm) 
                 fileCloseMapWithId(vm->modelId());
         }
+        fileSaveSession();
     }
 }
 
