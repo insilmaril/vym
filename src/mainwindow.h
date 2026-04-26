@@ -431,6 +431,8 @@ class Main : public QMainWindow {
     void helpDebugInfo();
     void helpAbout();
     void helpAboutQT();
+    void helpVymDevelopment();
+    void helpVymDevelopmentFinished();
     void callMacro();
     void downloadReleaseNotesFinished();
 

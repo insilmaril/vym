@@ -3720,6 +3720,11 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(helpDebugInfo()));
 
+    helpMenu->addSeparator();
+    a = new QAction(tr("Help VYM development", "Help action"), this);
+    helpMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(helpVymDevelopment()));
+
     a = new QAction(tr("About QT", "Help action"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(helpAboutQT()));
     helpMenu->addAction(a);
@@ -7948,6 +7953,39 @@ void Main::helpDebugInfo()
     dia.setText(debugInfo());
     dia.setMinimumWidth(900);
     dia.exec();
+}
+
+void Main::helpVymDevelopment()
+{
+    DownloadAgent *agent =
+        new DownloadAgent(QUrl("https://www.insilmaril.de/vym/helpVymDevelopment.html"));
+    connect(agent, SIGNAL(downloadFinished()), this,
+            SLOT(helpVymDevelopmentFinished()));
+    QTimer::singleShot(0, agent, SLOT(execute()));
+}
+
+void Main::helpVymDevelopmentFinished()
+{
+    DownloadAgent *agent = static_cast<DownloadAgent *>(sender());
+
+    if (agent->isSuccess()) {
+        QString page;
+        if (loadStringFromDisk(agent->getDestination(), page)) {
+            ShowTextDialog dia(this);
+            dia.setText(page);
+            dia.exec();
+        }
+    }
+    else {
+        statusMessage("Downloading VYM development page failed.");
+	logInfo("Failed to download page: " + agent->getResultMessage(), __func__);
+        if (debug) {
+            qDebug() << "Main::helpVymDevelopmentFinished ";
+            qDebug() << "  result: failed";
+            qDebug() << "     msg: " << agent->getResultMessage();
+        }
+    }
+    agent->deleteLater();
 }
 
 void Main::helpAbout()
