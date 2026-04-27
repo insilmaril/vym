@@ -223,9 +223,10 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 if (current->getNote().getFontHint() == "fixed")
                     n = "<pre>" + n + "</pre>";
             }
-            s += "\n<table class=\"vym-note\"><tr><td "
-                 "class=\"vym-note-flag\">\n<td>\n" +
-                 n + "\n</td></tr></table>\n";
+            s += "\n<button class=\"vym-note-button\">&#9654; Note</button>\n"
+                 "<div class=\"vym-note-collapsible\"><div class=\"vym-note\">\n" +
+                 n +
+                 "\n</div></div>\n";
         }
         return s;
     }
@@ -483,6 +484,23 @@ void ExportHTML::doExport(bool useDialog)
               vymHome + "'>vym " + vymVersion + "</a></td> \n\
             </tr> \n \
             </table>\n";
+    ts << "<script>\n"
+          "(function() {\n"
+          "  var btns = document.querySelectorAll('.vym-note-button');\n"
+          "  for (var i = 0; i < btns.length; i++) {\n"
+          "    btns[i].addEventListener('click', function() {\n"
+          "      var content = this.nextElementSibling;\n"
+          "      if (content.style.maxHeight) {\n"
+          "        content.style.maxHeight = null;\n"
+          "        this.innerHTML = '&#9654; Note';\n"
+          "      } else {\n"
+          "        content.style.maxHeight = content.scrollHeight + 'px';\n"
+          "        this.innerHTML = '&#9660; Note';\n"
+          "      }\n"
+          "    });\n"
+          "  }\n"
+          "})();\n"
+          "</script>\n";
     ts << "</body></html>";
     file.close();
 
