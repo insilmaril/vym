@@ -476,12 +476,10 @@ void ExportHTML::doExport(bool useDialog)
     ts << "<hr/>\n";
     ts << "<table class=\"vym-footer\">   \n\
         <tr> \n\
-        <td class=\"vym-footerL\">" +
-              filePath + "</td> \n\
-            <td class=\"vym-footerC\">" +
-              toS(QDate::currentDate()) + "</td> \n\
-            <td class=\"vym-footerR\"> <a href='" +
-              vymHome + "'>vym " + vymVersion + "</a></td> \n\
+        <td class=\"vym-footerL\"></td> \n\
+            <td class=\"vym-footerC\">"
+              "<a href='" + vymHome + "'>vym " + vymVersion + "</a>  - " + toS(QDate::currentDate()) + "</td> \n\
+            <td class=\"vym-footerR\"></td> \n\
             </tr> \n \
             </table>\n";
     ts << "<script>\n"
