@@ -371,16 +371,26 @@ void ExportHTML::doExport(bool useDialog)
                 QObject::tr("Could not find stylesheet %1").arg(cssSrc));
             return;
         }
-        QFile src(cssSrc);
+        QString cssContent;
+        if (!loadStringFromDisk(cssSrc, cssContent)) {
+            QMessageBox::critical(
+                0, QObject::tr("Error", "ExportHTML"),
+                QObject::tr("Could not read \n%1", "ExportHTML")
+                    .arg(cssSrc));
+            return;
+        }
+
+        // Replace mapBackgroundColor placeholder with actual map background color
+        cssContent.replace("$MapBackgroundColor", model->backgroundColor().name());
+
         QFile dst(cssDst);
         if (dst.exists())
             dst.remove();
 
-        if (!src.copy(cssDst)) {
+        if (!saveStringToDisk(cssDst, cssContent)) {
             QMessageBox::critical(
                 0, QObject::tr("Error", "ExportHTML"),
-                QObject::tr("Could not copy\n%1 to\n%2", "ExportHTML")
-                    .arg(cssSrc)
+                QObject::tr("Could not write to \n%1", "ExportHTML")
                     .arg(cssDst));
             return;
         }
@@ -422,6 +432,11 @@ void ExportHTML::doExport(bool useDialog)
     // Include image
     // (be careful: this resets Export mode, so call before exporting branches)
     if (dia.includeMapImage) {
+        // Workaround to preserve mapChanged status,
+        // which otherwise might become true because of 
+        // implicit image export
+        setBlockMapChangedDuringExport(true);
+
         QString mapName = getMapName();
         ts << "<center><img src=\"" << mapName << ".png\"";
         ts << "alt=\""
@@ -430,6 +445,8 @@ void ExportHTML::doExport(bool useDialog)
         ts << " usemap='#imagemap'></center>\n";
         offset =
             model->exportImage(dirPath + "/" + mapName + ".png", false, "PNG");
+
+        setBlockMapChangedDuringExport(false);
     }
 
     // Include table of contents

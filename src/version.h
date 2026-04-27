@@ -2,7 +2,7 @@
 #define VERSION_H
 
 #define __VYM_VERSION "2.9.612"
-#define __VYM_BUILD_DATE "2026-04-21"
+#define __VYM_BUILD_DATE "2026-04-27"
 
 
 #define __VYM_NAME "VYMng"     // FIXME "next generation" in in window title

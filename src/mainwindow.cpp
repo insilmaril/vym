@@ -1655,50 +1655,6 @@ void Main::setupFileActions()
 
     fileMenu->addSeparator();
 
-    fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
-
-    // Import at selection (adding to selection)
-    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportAdd = a;
-    fileImportMenu->addAction(a);
-
-    // Import at selection (replacing selection)
-    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportReplace = a;
-    fileImportMenu->addAction(a);
-    fileImportMenu->addSeparator();
-
-    a = new QAction( tr("Firefox Bookmarks", "Import filters") +
-                        tr("(still experimental)"),
-                    this);
-    connect(a, SIGNAL(triggered()), this,
-            SLOT(fileImportFirefoxBookmarks()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction("Freemind..." + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction("IThoughts..." + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportIThoughts()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction("Mind Manager..." + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportMM()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction(tr("Import Dir...", "Import Filters") + " " +
-                        tr("(still experimental)"),
-                    this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportDir()));
-    fileImportMenu->addAction(a);
-
     fileExportMenu = fileMenu->addMenu(tr("Export", "File menu"));
 
     tag = tr("Exports", "MainWindow shortcut groups");
@@ -1800,6 +1756,50 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportLaTeX()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
+
+    fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
+
+    // Import at selection (adding to selection)
+    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportAdd = a;
+    fileImportMenu->addAction(a);
+
+    // Import at selection (replacing selection)
+    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportReplace = a;
+    fileImportMenu->addAction(a);
+    fileImportMenu->addSeparator();
+
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") +
+                        tr("(still experimental)"),
+                    this);
+    connect(a, SIGNAL(triggered()), this,
+            SLOT(fileImportFirefoxBookmarks()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction("Freemind..." + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction("IThoughts..." + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportIThoughts()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction("Mind Manager..." + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportMM()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction(tr("Import Dir...", "Import Filters") + " " +
+                        tr("(still experimental)"),
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportDir()));
+    fileImportMenu->addAction(a);
 
     fileMenu->addSeparator();
 

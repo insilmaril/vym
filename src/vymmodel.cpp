@@ -6786,7 +6786,7 @@ bool VymModel::exportLastAvailable(QString &description, QString &command,
     if (match.hasMatch()) {
         command = QString("vym.currentMap().exportMap([%1]);").arg(match.captured(1));
         settings.setLocalValue(filePath, "/export/last/command", command);
-        qDebug() << "Rewriting last export command to version " << vymVersion << " format: " << command;
+        //qDebug() << "Rewriting last export command to version " << vymVersion << " format: " << command;
     }
 
     description = settings.localValue(filePath, "/export/last/description", "")

@@ -38,6 +38,7 @@ ExportBase::~ExportBase()
 
 void ExportBase::init()
 {
+    blockMapChangedDuringExport = false;
     indentPerDepth = "  ";
     exportName = "unnamed";
     lastCommand = "";
@@ -45,6 +46,11 @@ void ExportBase::init()
     result = Undefined;
     defaultDirPath = lastExportDir.absolutePath();
     dirPath = defaultDirPath;
+}
+
+void ExportBase::setBlockMapChangedDuringExport(bool b)
+{
+    blockMapChangedDuringExport = b;
 }
 
 void ExportBase::setupTmpDir()
@@ -166,7 +172,7 @@ void ExportBase::completeExport(QStringList args)
     model->setExportLastDescription(exportName);
 
     // Trigger saving of export command if it has changed
-    if (model && (lastCommand != command))
+    if (model && !blockMapChangedDuringExport && (lastCommand != command))
         model->setChanged();
 
     switch (result) {
