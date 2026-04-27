@@ -87,6 +87,9 @@ Thanks for using vym!
 
 Uwe Drechsel - April 2026
 
+## Version 2.9.13
+### Features
+ * Feature: Notes in Html export are collapsible
 
 ## Version 2.9.12
 ### Features
