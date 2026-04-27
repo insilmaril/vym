@@ -8,7 +8,7 @@ body {
     font-family:arial,
     sans-serif; 
     align:center;  
-    background-color:#ffffff; 
+    background-color:$MapBackgroundColor;
 }
 
 a, a:visited, a:link, a:active { 
