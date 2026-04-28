@@ -176,16 +176,6 @@ QString LinkObj::styleString(int style)
     }
 }
 
-void LinkObj::setLinkColorHint(ColorHint hint)
-{
-    colorHint = hint;
-}
-
-LinkObj::ColorHint LinkObj::linkColorHint()
-{
-    return colorHint;
-}
-
 LinkObj::ColorHint LinkObj::linkColorHint(const QString &s)
 {
     if (s == "HeadingColor")

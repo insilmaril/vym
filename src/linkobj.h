@@ -55,8 +55,6 @@ class LinkObj : public MapObj {
     static Style styleFromString(const QString &);
     static QString styleString(int);
 
-    void setLinkColorHint(ColorHint);
-    ColorHint linkColorHint();
     static ColorHint linkColorHint(const QString &);
     static QString linkColorHintName(ColorHint);
 
@@ -84,7 +82,7 @@ class LinkObj : public MapObj {
     int thickness_start; // for StylePoly*
     Style style;         // Current style
     QColor linkcolor;    // Link color
-    ColorHint colorHint;
+
     QPen pen;
     QGraphicsLineItem *l;               // line style
     QGraphicsPolygonItem *p;            // poly styles
