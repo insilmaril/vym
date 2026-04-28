@@ -91,6 +91,9 @@ Uwe Drechsel - April 2026
 ### Features
  * Feature: Notes in Html export are collapsible
 
+### Bugfixes
+ * [#204](https://github.com/insilmaril/vym/issues/204) Crash after image/branch manipulation
+
 ## Version 2.9.12
 ### Features
  * [#197](https://github.com/insilmaril/vym/issues/197) Improved function key handling
