@@ -2486,6 +2486,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
 
             // Loop over images // FIXME-3 refactor in VM similar to relinkBranches
             foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
+                ic->setMovingState(SelectableContainer::NotMoving);
                 ImageItem *ii = ic->getImageItem();
                 model->relinkImage(ii, destinationBranch);
             }
@@ -2563,6 +2564,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
         }
 
         foreach(ImageContainer *ic, tmpParentContainer->childImages()) {
+            ic->setMovingState(SelectableContainer::NotMoving);
             ImageItem *ii = ic->getImageItem();
             BranchItem *pi = ii->parentBranch();
 
