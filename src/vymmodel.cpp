@@ -7246,24 +7246,6 @@ void VymModel::setLinkColorHint(const LinkObj::ColorHint &newHint)
     logAction(rc, com, __func__);
     saveState(uc, rc, com);
     
-    BranchItem *cur = nullptr;
-    BranchItem *prev = nullptr;
-    nextBranch(cur, prev);
-    while (cur) {
-        BranchContainer *bc = cur->getBranchContainer();
-        LinkObj *upLink = bc->getLink();
-        if (upLink)
-            upLink->setLinkColorHint(newHint);
-
-        // FIXME-4 setLinkColorHint: images currently use branch link color
-        for (int i = 0; i < cur->imageCount(); ++i) {
-            upLink = cur->getImageNum(i)->getImageContainer()->getLink();
-            if (upLink)
-                upLink->setLinkColorHint(newHint);
-        }
-        nextBranch(cur, prev);
-    }
-
     applyDesignRecursively(MapDesign::LinkStyleChanged, rootItem);
     reposition();
 }
