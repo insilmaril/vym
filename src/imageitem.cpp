@@ -33,8 +33,9 @@ ImageItem::~ImageItem()
         imageContainer = nullptr;
 
         // Remove images container, if no longer required
-        if (parentBranch())
-            parentBranch()->getBranchContainer()->updateChildrenStructure();
+        BranchItem *pb = parentBranch();
+        if (pb && pb->getBranchContainer())
+            pb->getBranchContainer()->updateChildrenStructure();
     }
 
     if (!filePathInZipDir.isEmpty() && QFile(filePathInZipDir).exists()) {

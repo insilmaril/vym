@@ -87,6 +87,12 @@ Thanks for using vym!
 
 Uwe Drechsel - April 2026
 
+## Version 2.9.13
+### Features
+ * Feature: Notes in Html export are collapsible
+
+### Bugfixes
+ * [#204](https://github.com/insilmaril/vym/issues/204) Crash after image/branch manipulation
 
 ## Version 2.9.12
 ### Features

@@ -1655,50 +1655,6 @@ void Main::setupFileActions()
 
     fileMenu->addSeparator();
 
-    fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
-
-    // Import at selection (adding to selection)
-    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportAdd = a;
-    fileImportMenu->addAction(a);
-
-    // Import at selection (replacing selection)
-    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
-    a->setEnabled(false);
-    actionListBranches.append(a);
-    actionImportReplace = a;
-    fileImportMenu->addAction(a);
-    fileImportMenu->addSeparator();
-
-    a = new QAction( tr("Firefox Bookmarks", "Import filters") +
-                        tr("(still experimental)"),
-                    this);
-    connect(a, SIGNAL(triggered()), this,
-            SLOT(fileImportFirefoxBookmarks()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction("Freemind..." + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction("IThoughts..." + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportIThoughts()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction("Mind Manager..." + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportMM()));
-    fileImportMenu->addAction(a);
-
-    a = new QAction(tr("Import Dir...", "Import Filters") + " " +
-                        tr("(still experimental)"),
-                    this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileImportDir()));
-    fileImportMenu->addAction(a);
-
     fileExportMenu = fileMenu->addMenu(tr("Export", "File menu"));
 
     tag = tr("Exports", "MainWindow shortcut groups");
@@ -1800,6 +1756,50 @@ void Main::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportLaTeX()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
+
+    fileImportMenu = fileMenu->addMenu(tr("Import", "File menu"));
+
+    // Import at selection (adding to selection)
+    a = new QAction(tr("Add map (insert)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportAdd()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportAdd = a;
+    fileImportMenu->addAction(a);
+
+    // Import at selection (replacing selection)
+    a = new QAction(tr("Add map (replace)", "Edit menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(editImportReplace()));
+    a->setEnabled(false);
+    actionListBranches.append(a);
+    actionImportReplace = a;
+    fileImportMenu->addAction(a);
+    fileImportMenu->addSeparator();
+
+    a = new QAction( tr("Firefox Bookmarks", "Import filters") +
+                        tr("(still experimental)"),
+                    this);
+    connect(a, SIGNAL(triggered()), this,
+            SLOT(fileImportFirefoxBookmarks()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction("Freemind..." + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportFreemind()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction("IThoughts..." + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportIThoughts()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction("Mind Manager..." + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportMM()));
+    fileImportMenu->addAction(a);
+
+    a = new QAction(tr("Import Dir...", "Import Filters") + " " +
+                        tr("(still experimental)"),
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileImportDir()));
+    fileImportMenu->addAction(a);
 
     fileMenu->addSeparator();
 
@@ -3720,6 +3720,11 @@ void Main::setupHelpActions()
     helpMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(helpDebugInfo()));
 
+    helpMenu->addSeparator();
+    a = new QAction(tr("Help VYM development", "Help action"), this);
+    helpMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(helpVymDevelopment()));
+
     a = new QAction(tr("About QT", "Help action"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(helpAboutQT()));
     helpMenu->addAction(a);
@@ -4614,7 +4619,7 @@ void Main::fileSaveSession()
         flist.append(view(i)->getModel()->getFilePath());
 
     settings.setValue("/mainwindow/sessionFileList", flist);
-    //logInfo("Current session list: " + flist.join(","), __func__);
+    // qDebug() << __func__ << "Current session list: " + flist.join(",");
 
     // Also called by event loop regulary, but apparently not often enough
     settings.sync();
@@ -5098,6 +5103,7 @@ void Main::fileCloseTab(int i)
             if (vm) 
                 fileCloseMapWithId(vm->modelId());
         }
+        fileSaveSession();
     }
 }
 
@@ -7949,6 +7955,39 @@ void Main::helpDebugInfo()
     dia.exec();
 }
 
+void Main::helpVymDevelopment()
+{
+    DownloadAgent *agent =
+        new DownloadAgent(QUrl("https://www.insilmaril.de/vym/helpVymDevelopment.html"));
+    connect(agent, SIGNAL(downloadFinished()), this,
+            SLOT(helpVymDevelopmentFinished()));
+    QTimer::singleShot(0, agent, SLOT(execute()));
+}
+
+void Main::helpVymDevelopmentFinished()
+{
+    DownloadAgent *agent = static_cast<DownloadAgent *>(sender());
+
+    if (agent->isSuccess()) {
+        QString page;
+        if (loadStringFromDisk(agent->getDestination(), page)) {
+            ShowTextDialog dia(this);
+            dia.setText(page);
+            dia.exec();
+        }
+    }
+    else {
+        statusMessage("Downloading VYM development page failed.");
+	logInfo("Failed to download page: " + agent->getResultMessage(), __func__);
+        if (debug) {
+            qDebug() << "Main::helpVymDevelopmentFinished ";
+            qDebug() << "  result: failed";
+            qDebug() << "     msg: " << agent->getResultMessage();
+        }
+    }
+    agent->deleteLater();
+}
+
 void Main::helpAbout()
 {
     AboutDialog ad;
@@ -8001,6 +8040,7 @@ void Main::downloadReleaseNotesFinished()
         QString page;
         if (agent->isSuccess()) {
             if (loadStringFromDisk(agent->getDestination(), page)) {
+                page.replace("<!-- VYMVERSION -->", " (" + vymVersion + ")");
                 ShowTextDialog dia(this);
                 dia.setText(page);
                 dia.exec();
@@ -8173,6 +8213,7 @@ void Main::downloadUpdatesFinished(bool userTriggered)
         dia.setWindowTitle(vymName + " - " + tr("Update information"));
         QString page;
         if (loadStringFromDisk(agent->getDestination(), page)) {
+            page.replace("<!-- VYMVERSION -->", " (" + vymVersion + ")");
             if (page.contains("vymisuptodate")) {
                 statusMessage(tr("vym is up to date.", "MainWindow"));
                 if (userTriggered) {

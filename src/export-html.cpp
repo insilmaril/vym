@@ -223,9 +223,10 @@ QString ExportHTML::getBranchText(BranchItem *current)
                 if (current->getNote().getFontHint() == "fixed")
                     n = "<pre>" + n + "</pre>";
             }
-            s += "\n<table class=\"vym-note\"><tr><td "
-                 "class=\"vym-note-flag\">\n<td>\n" +
-                 n + "\n</td></tr></table>\n";
+            s += "\n<button class=\"vym-note-button\">&#9654; Note</button>\n"
+                 "<div class=\"vym-note-collapsible\"><div class=\"vym-note\">\n" +
+                 n +
+                 "\n</div></div>\n";
         }
         return s;
     }
@@ -371,16 +372,26 @@ void ExportHTML::doExport(bool useDialog)
                 QObject::tr("Could not find stylesheet %1").arg(cssSrc));
             return;
         }
-        QFile src(cssSrc);
+        QString cssContent;
+        if (!loadStringFromDisk(cssSrc, cssContent)) {
+            QMessageBox::critical(
+                0, QObject::tr("Error", "ExportHTML"),
+                QObject::tr("Could not read \n%1", "ExportHTML")
+                    .arg(cssSrc));
+            return;
+        }
+
+        // Replace mapBackgroundColor placeholder with actual map background color
+        cssContent.replace("$MapBackgroundColor", model->backgroundColor().name());
+
         QFile dst(cssDst);
         if (dst.exists())
             dst.remove();
 
-        if (!src.copy(cssDst)) {
+        if (!saveStringToDisk(cssDst, cssContent)) {
             QMessageBox::critical(
                 0, QObject::tr("Error", "ExportHTML"),
-                QObject::tr("Could not copy\n%1 to\n%2", "ExportHTML")
-                    .arg(cssSrc)
+                QObject::tr("Could not write to \n%1", "ExportHTML")
                     .arg(cssDst));
             return;
         }
@@ -422,6 +433,11 @@ void ExportHTML::doExport(bool useDialog)
     // Include image
     // (be careful: this resets Export mode, so call before exporting branches)
     if (dia.includeMapImage) {
+        // Workaround to preserve mapChanged status,
+        // which otherwise might become true because of 
+        // implicit image export
+        setBlockMapChangedDuringExport(true);
+
         QString mapName = getMapName();
         ts << "<center><img src=\"" << mapName << ".png\"";
         ts << "alt=\""
@@ -430,6 +446,8 @@ void ExportHTML::doExport(bool useDialog)
         ts << " usemap='#imagemap'></center>\n";
         offset =
             model->exportImage(dirPath + "/" + mapName + ".png", false, "PNG");
+
+        setBlockMapChangedDuringExport(false);
     }
 
     // Include table of contents
@@ -458,14 +476,29 @@ void ExportHTML::doExport(bool useDialog)
     ts << "<hr/>\n";
     ts << "<table class=\"vym-footer\">   \n\
         <tr> \n\
-        <td class=\"vym-footerL\">" +
-              filePath + "</td> \n\
-            <td class=\"vym-footerC\">" +
-              toS(QDate::currentDate()) + "</td> \n\
-            <td class=\"vym-footerR\"> <a href='" +
-              vymHome + "'>vym " + vymVersion + "</a></td> \n\
+        <td class=\"vym-footerL\"></td> \n\
+            <td class=\"vym-footerC\">"
+              "<a href='" + vymHome + "'>vym " + vymVersion + "</a>  - " + toS(QDate::currentDate()) + "</td> \n\
+            <td class=\"vym-footerR\"></td> \n\
             </tr> \n \
             </table>\n";
+    ts << "<script>\n"
+          "(function() {\n"
+          "  var btns = document.querySelectorAll('.vym-note-button');\n"
+          "  for (var i = 0; i < btns.length; i++) {\n"
+          "    btns[i].addEventListener('click', function() {\n"
+          "      var content = this.nextElementSibling;\n"
+          "      if (content.style.maxHeight) {\n"
+          "        content.style.maxHeight = null;\n"
+          "        this.innerHTML = '&#9654; Note';\n"
+          "      } else {\n"
+          "        content.style.maxHeight = content.scrollHeight + 'px';\n"
+          "        this.innerHTML = '&#9660; Note';\n"
+          "      }\n"
+          "    });\n"
+          "  }\n"
+          "})();\n"
+          "</script>\n";
     ts << "</body></html>";
     file.close();
 

@@ -14,3 +14,6 @@ vym
 
 # Qt translation artifacts
 translations/*.qm
+
+# Temporary files
+tmp/

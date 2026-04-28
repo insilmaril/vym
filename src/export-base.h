@@ -21,6 +21,7 @@ class ExportBase {
     ExportBase(VymModel *m);
     virtual ~ExportBase();
     virtual void init();
+    virtual void setBlockMapChangedDuringExport(bool b);
     virtual void setupTmpDir();
     virtual void setDirPath(const QString &);
     virtual QString getDirPath();
@@ -43,6 +44,7 @@ class ExportBase {
 
   protected:
     VymModel *model;
+    bool blockMapChangedDuringExport;   // block changing map in chained exports
     QString exportName;
     QString lastCommand;
     virtual QString getSectionString(TreeItem *);

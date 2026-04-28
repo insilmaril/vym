@@ -319,7 +319,7 @@ void ImageContainer::updateUpLink()
     // Color of link (depends on current parent)
     BranchItem *pb = imageItem->parentBranch();
     if (imageItem && pb) {
-        if (upLink->linkColorHint() == LinkObj::HeadingColor)
+        if (pb->mapDesign()->linkColorHint() == LinkObj::HeadingColor)
             upLink->setLinkColor(pb->headingColor());
         else
             upLink->setLinkColor(pb->mapDesign()->defaultLinkColor());

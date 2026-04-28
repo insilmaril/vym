@@ -8,7 +8,7 @@ body {
     font-family:arial,
     sans-serif; 
     align:center;  
-    background-color:#ffffff; 
+    background-color:$MapBackgroundColor;
 }
 
 a, a:visited, a:link, a:active { 
@@ -125,28 +125,44 @@ a:hover {
     font-size: small;
     font-weight: normal;
 }
-.vym-note { 
-    width:80%; 
-    border: solid 1px black; 
-    border-radius: 0.6em 0.6em 0.6em 0.6em;
+.vym-note {
+    width: 100%;
+    border: solid 1px black;
+    border-radius: 0.6em;
     border-color: #000000;
-    background-color: #eeeeee; 
+    background-color: #eeeeee;
     font-size: small;
     font-weight: normal;
-    overflow: auto;
     padding: 0em 1em;
 }
 
-.vym-note-flag {
-    vertical-align:top;
-    width:30px;
-    height:30px;
-    background-image: url("flags/flag-note.png");
-    background-repeat: no-repeat;
-    background-position: left top;
+.vym-note-button {
+    background-color: #8888cc;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0.3em 0.8em;
+    width: 80%;
+    border: none;
+    border-radius: 0.4em;
+    text-align: left;
+    font-size: small;
+    font-weight: bold;
+    margin-top: 0.4em;
+    display: block;
 }
 
-.vym-note-paragraph { 
+.vym-note-button:hover {
+    background-color: #6666aa;
+}
+
+.vym-note-collapsible {
+    width: 80%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.vym-note-paragraph {
     margin-top: 0px;
     margin-bottom: 1em;
 }
