@@ -2505,7 +2505,11 @@ void VymModel::setHeading(const VymText &vt, TreeItem *ti)
             } else
                 tiv = setImageVar((ImageItem*)selti) + "i.";
 
-            BranchItem *pi = selbi->parentOfClone();
+            BranchItem *pi = nullptr;
+	    if (selbi)
+		// parentOfClone is not available for images
+		pi = selbi->parentOfClone();
+
             if (pi) {
                 setHeading(vt, pi);
             } else {

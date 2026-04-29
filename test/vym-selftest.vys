@@ -36,7 +36,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-//tests = ["saving"];
+// tests = ["modify_images","xlinks"];
 
 
 var verbosity = 0;
