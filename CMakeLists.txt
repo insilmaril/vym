@@ -60,9 +60,16 @@ endif()
 
 # https://doc.qt.io/qt-6/qt-standard-project-setup.html
 find_package(Qt6 REQUIRED COMPONENTS Core)
-qt_standard_project_setup( I18N_TRANSLATED_LANGUAGES
-    el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sv zh_CN zh_TW
-) # FIXME add missing translations
+
+if(Qt6_VERSION VERSION_GREATER_EQUAL 6.7)
+    qt_standard_project_setup( I18N_TRANSLATED_LANGUAGES
+        el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sv zh_CN zh_TW
+    ) # FIXME add missing translations
+else()
+    # Fallback to manual qt_add_translations calls
+    qt_standard_project_setup()
+endif()
+
 
 include(GNUInstallDirs)
 
