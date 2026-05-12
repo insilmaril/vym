@@ -445,7 +445,7 @@ class Main : public QMainWindow {
 
   public slots:
     void checkReleaseNotes();
-    bool downloadsEnabled(bool userTriggered = false);
+    bool vymDownloadsEnabled(bool userTriggered = false);
     void downloadUpdatesFinished(bool userTriggered = false);
     void downloadUpdatesFinishedInt();
     void downloadUpdates(bool userTriggered);
