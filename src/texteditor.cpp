@@ -1347,7 +1347,11 @@ void TextEditor::insertOrEditUrl(QTextCursor cursor)
             if (cursor.charFormat().isAnchor())
                 anchorEnd = pos;
         }
+#if defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
         text = plainText.slice(anchorStart - 1, anchorEnd - anchorStart + 1);
+#else
+        text = plainText.sliced(anchorStart - 1, anchorEnd - anchorStart + 1);
+#endif
     }
 
     UrlDialog dia (this);
