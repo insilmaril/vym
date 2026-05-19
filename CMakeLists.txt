@@ -60,13 +60,48 @@ endif()
 
 # https://doc.qt.io/qt-6/qt-standard-project-setup.html
 find_package(Qt6 REQUIRED COMPONENTS Core)
-qt_standard_project_setup( I18N_TRANSLATED_LANGUAGES
-    el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sv zh_CN zh_TW
-) # FIXME add missing translations
+find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
+
+
+# Translations
+#
+# To update the translation files based on source code changes
+# add the targest update_translations and release_translations
+#
+# See also (for Qt 6):
+# https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
+# https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-translations.html
+
+file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
+
+message(STATUS "vym: Creating ${CMAKE_BINARY_DIR}/translations")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
+
+set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
+
+
+#qt_add_lrelease(target TS_FILES ${ts_files} QM_FILES_OUTPUT_VARIABLE ${CMAKE_BINARY_DIR}/translations) 
+
+message(STATUS "vym: Found Qt version: ${Qt6_VERSION}")
+
+if(Qt6_VERSION VERSION_GREATER_EQUAL 6.7)
+    qt_standard_project_setup( I18N_TRANSLATED_LANGUAGES
+        el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sv zh_CN zh_TW
+    ) # FIXME add missing translations
+
+    qt_add_translations( vym
+        TS_FILE_DIR ${CMAKE_SOURCE_DIR}/lang    # TS_OUTPUT_DIRECTORY in Qt 6.9
+        RESOURCE_PREFIX ${CMAKE_BINARY_DIR}/translations
+        #QM_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/translations  # Only in Qt 6.9
+    )
+    # qm files will be created
+    # - for APPLE in # ${CMAKE_BINARY_DIR}/translations
+else()
+    # Fallback without translations for the time being
+    qt_standard_project_setup()
+endif()
 
 include(GNUInstallDirs)
-
-find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
 
 list(APPEND CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/forms")
 
@@ -99,31 +134,9 @@ if(DBus1_FOUND)
     ADD_COMPILE_DEFINITIONS(VYM_DBUS)
 endif()
 
-# Translations
-#
-# To update the translation files based on source code changes
-# add the targest update_translations and release_translations
-#
-# See also (for Qt 6):
-# https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
-
-file(GLOB ts_files RELATIVE ${CMAKE_SOURCE_DIR} "lang/*.ts")
-#message(STATUS "vym: Creating ${CMAKE_BINARY_DIR}/translations")
-
-#file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/translations")
-set_source_files_properties(${ts_files} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/translations)
-
-qt_add_translations(TARGETS vym
-    TS_FILE_DIR ${CMAKE_SOURCE_DIR}/lang    # TS_OUTPUT_DIRECTORY in Qt 6.9
-    RESOURCE_PREFIX ${CMAKE_BINARY_DIR}/translations
-    #QM_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/translations  # Only in Qt 6.9
-)
-
-#qt_add_lrelease(target TS_FILES ${ts_files} QM_FILES_OUTPUT_VARIABLE ${CMAKE_BINARY_DIR}/translations) 
 
 add_compile_definitions(CMAKE_SOURCE_DIR)
 
-message(STATUS "vym: CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "vym: ts_files: ${ts_files}")
 message(STATUS "vym: qm_files: ${qm_files}")
 
@@ -154,7 +167,7 @@ else()
 endif()
 
 if(APPLE)
-    message(STATUS "vym: Detected APPLE")
+    message(STATUS "vym: Detected APPLE, preparing bundle:")
 
     set(MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME})
 
@@ -168,12 +181,14 @@ if(APPLE)
         MACOSX_BUNDLE TRUE
     )
 
-    # Root paths to be copied to vym.app bundle (adjust if needed)
+    # Root paths from sources to be copied to vym.app bundle (adjust if needed)
     set(DIRLIST demos doc exports flags icons macros styles)
 
+    # Copy above directories from sources to bundle
+    set(RESOURCE_DIR "${CMAKE_BINARY_DIR}/vym.app/Contents/Resources")
     foreach(CURRENT_DIR ${DIRLIST})
         set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/${CURRENT_DIR}")
-        set(RESOURCE_DIR "${CMAKE_BINARY_DIR}/vym.app/Contents/Resources/${CURRENT_DIR}")
+        set(TARGET_DIR "${RESOURCE_DIR}/${CURRENT_DIR}")
 
         # --- 1. Add all subdirectories of SOURCE to the include path ---
 
@@ -195,24 +210,29 @@ if(APPLE)
 
         message(STATUS "CURRENT_DIR=${CURRENT_DIR}  includeDirs=${INCLUDE_DIRS}")
 
-        # --- 2. Copy SOURCE_DIR -> RESOURCE_DIR at build time ---
+        # --- 2. Copy SOURCE_DIR -> TARGET_DIR at build time ---
 
         add_custom_command(
             TARGET vym POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
                     "${SOURCE_DIR}"
-                    "${RESOURCE_DIR}"
-            COMMENT "Copying SOURCE directory ${SOURCE_DIR} to RESOURCE directory ${RESOURCE_DIR}..."
+                    "${TARGET_DIR}"
+            COMMENT "Copying SOURCE directory ${SOURCE_DIR} to TARGET directory ${TARGET_DIR}..."
+        )
+        add_custom_command(
+            TARGET vym POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --blue "vym: Copying SOURCE directory ${SOURCE_DIR} to TARGET directory ${TARGET_DIR}..."
         )
     endforeach()
 
     # Finally copy generated translations to bundle
+    set(SOURCE_DIR "${CMAKE_BINARY_DIR}/translations")
+    set(TARGET_DIR "${RESOURCE_DIR}/translations")
     add_custom_command(
         TARGET vym POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${CMAKE_BINARY_DIR}/translations"
-                "${RESOURCE_DIR}"
-        COMMENT "Copying translations directory to RESOURCE directory ${RESOURCE_DIR}..."
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${SOURCE_DIR}" "${TARGET_DIR}"
+        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --blue "vym: Copying ${SOURCE_DIR} to ${TARGET_DIR}..."
+        COMMENT "Copying translations directory to TARGET directory ${TARGET_DIR}..."
     )
 endif()
 

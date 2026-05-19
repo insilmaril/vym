@@ -3155,15 +3155,13 @@ void Main::setupFlagActions()
 
     // Create System Flags
 
-    // Tasks
-
-    // Origin: https://uxwing.com/link-hyperlink-color-icon/
+    // Clones  (Origin: https://uxwing.com/link-hyperlink-color-icon/ )
     setupFlag(":/flag-clone-original.svg", Flag::SystemFlag, "system-clone-original",
               "Clone (original)");
     setupFlag(":/flag-clone.svg", Flag::SystemFlag, "system-clone",
               "Clone");
 
-    // Origin: ./share/icons/oxygen/48x48/status/task-reject.png
+    // Tasks (Origin: ./share/icons/oxygen/48x48/status/task-reject.png )
     flag = setupFlag(":/flag-task-new.svg", Flag::SystemFlag, "system-task-new",
                      tr("Note", "SystemFlag"));
     flag->setGroup("system-tasks");
@@ -6741,7 +6739,7 @@ void Main::settingsToggleAnimation()
                       actionSettingsUseAnimation->isChecked());
 }
 
-void Main::settingsToggleDownloads() { downloadsEnabled(true); }
+void Main::settingsToggleDownloads() { vymDownloadsEnabled(true); }
 
 bool Main::settingsConfluence()
 {
@@ -8122,7 +8120,7 @@ void Main::checkReleaseNotes ()
     else
         userTriggered = false;
 
-    if (downloadsEnabled()) {
+    if (vymDownloadsEnabled()) {
         if (userTriggered ||
             versionLowerThanVym(
                 settings.value("/downloads/releaseNotes/shownVersion", "0.0.1")
@@ -8140,26 +8138,23 @@ void Main::checkReleaseNotes ()
             QMessageBox::warning(
                 0, tr("Warning"),
                 tr("Please allow vym to download release notes!"));
-            if (downloadsEnabled(userTriggered))
+            if (vymDownloadsEnabled(userTriggered))
                 checkUpdates();
         }
     }
 }
 
-bool Main::downloadsEnabled(bool userTriggered)
+bool Main::vymDownloadsEnabled(bool userTriggered)
 {
     bool result;
-    if (!userTriggered &&
-        settings.value("/downloads/enabled", false).toBool()) {
+    if (!userTriggered && settings.value("/downloads/enabled", false).toBool()) {
+        // Download triggered by timer (updates) AND previously allowed
         result = true;
     }
     else {
-        QDate lastAsked =
-            settings.value("/downloads/permissionLastAsked", QDate(1970, 1, 1))
-                .toDate();
+        // Download triggered by user, or first run without permission asked before
         if (userTriggered ||
-            !settings.contains("/downloads/permissionLastAsked") ||
-            lastAsked.daysTo(QDate::currentDate()) > 7) {
+            !settings.contains("/downloads/permissionLastAsked") ) {
             QString infotext;
             infotext =
                 tr("<html>"
@@ -8297,7 +8292,7 @@ void Main::checkUpdates()
     else
         userTriggered = false;
 
-    if (downloadsEnabled()) {
+    if (vymDownloadsEnabled()) {
         // Too much time passed since last update check?
         QDate lastChecked =
             settings.value("/downloads/updates/lastChecked", QDate(1970, 1, 1))
@@ -8316,7 +8311,7 @@ void Main::checkUpdates()
             // Notification: vym could not check for updates
             QMessageBox::warning(0, tr("Warning"),
                                  tr("Please allow vym to check for updates!"));
-            if (downloadsEnabled(userTriggered))
+            if (vymDownloadsEnabled(userTriggered))
                 checkUpdates();
         }
     }
