@@ -5546,7 +5546,6 @@ void Main::editVymLink()
             fd.setAcceptMode(QFileDialog::AcceptOpen);
             if (!bi->vymLink().isEmpty())
                 fd.selectFile(bi->vymLink());
-            fd.show();
 
             if (fd.exec() == QDialog::Accepted &&
                 !fd.selectedFiles().isEmpty()) {
