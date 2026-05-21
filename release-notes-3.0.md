@@ -2,7 +2,7 @@ Release notes VYM - View Your Mind
 ==================================
 
 
-The lists below shows main changes between the current 3.0.x version of vym and
+The lists below shows main changes between the current 3.0 version of vym and
 the previous official release 2.9.27.
 
 vym has been rewritten in large parts:
@@ -85,7 +85,23 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - April 2026
+Uwe Drechsel - May 2026
+
+## Version 2.9.16
+### Features
+ * Script stats.vys to analyze sizes of subtrees
+
+### Bugfixes
+ * [#206](https://github.com/insilmaril/vym/issues/206) Two dialogs when creating new vymLink
+ * Fix building with Qt 6.6
+
+## Version 2.9.14
+### Bugfixes
+ * [#189](https://github.com/insilmaril/vym/issues/189) Updated demo maps
+
+### Changes
+ * Only ask once to allow vym to download release notes and check for
+   updates
 
 ## Version 2.9.13
 ### Features

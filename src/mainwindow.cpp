@@ -217,8 +217,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     viewMenu = menuBar()->addMenu(tr("&View"));
     toolbarsMenu =
         viewMenu->addMenu(tr("Toolbars", "Toolbars overview in view menu"));
-    toggleWindowsMenu =
-        viewMenu->addMenu(tr("Toggle window", "Toggle visibility of editor windows overview in view menu"));
     focusWindowsMenu =
         viewMenu->addMenu(tr("Focus window", "Toggle visibility of editor windows overview in view menu"));
 
@@ -930,16 +928,16 @@ void Main::setupAPI()
     //
 
     c = new Command("addBranch", Command::BranchSel);
-    c->setComment("Add branch as child branch to current branch");
+    c->setComment("Add branch as child branch to current branch and return it");
     branchCommands.append(c);
 
     c = new Command("addBranchAt", Command::BranchSel);
-    c->setComment("Add branch at position to current branch");
+    c->setComment("Add branch at position to current branch and return it");
     c->addParameter(Command::IntPar, true, "Index of new branch");
     branchCommands.append(c);
 
     c = new Command("addBranchBefore", Command::BranchSel);
-    c->setComment("Add branch as parent before current branch");
+    c->setComment("Add branch as parent before current branch and return it");
     branchCommands.append(c);
 
     c = new Command("attributeAsInt", Command::BranchSel, Command::IntPar);
@@ -950,6 +948,11 @@ void Main::setupAPI()
     c = new Command("attributeAsString", Command::BranchSel, Command::StringPar);
     c->setComment("Get string value of attribute with given key");
     c->addParameter(Command::StringPar, false, "Key of string attribute");
+    branchCommands.append(c);
+
+    c = new Command("branchAt", Command::BranchSel);
+    c->setComment("Return child branch at given index");
+    c->addParameter(Command::IntPar, false, "Index of child branch");
     branchCommands.append(c);
 
     c = new Command("branchCount", Command::BranchSel, Command::IntPar);
@@ -1540,6 +1543,10 @@ void Main::setupAPI()
     c = new Command("count");
     c->setComment("Return number of items in list");
     c->setReturnType(Command::IntPar);
+    itemListCommands.append(c);
+
+    c = new Command("reset");
+    c->setComment("Reset the current item position to the beginning of the list");
     itemListCommands.append(c);
 
     c = new Command("setModeBranches");
@@ -2885,7 +2892,6 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/flag-note.svg"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleNoteEditor()));
     actionViewToggleNoteEditor = a;
                                     //
@@ -2901,7 +2907,6 @@ void Main::setupViewActions()
     a = new QAction(QPixmap(":/headingeditor.png"), n, this);
     a->setCheckable(true);
     mapEditorActions.append(a);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHeadingEditor()));
     actionViewToggleHeadingEditor = a;
 
@@ -2909,7 +2914,6 @@ void Main::setupViewActions()
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleTreeEditors()));
     actionViewToggleTreeEditors = a;
 
@@ -2932,14 +2936,12 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/taskeditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleTaskEditor()));
     actionViewToggleTaskEditor = a;
 
     n = tr("Slide editor", "View action");
     a = new QAction(QPixmap(":/slideeditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapShowSlideEditor", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleSlideEditors()));
     actionViewToggleSlideEditors = a;
@@ -2953,16 +2955,19 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/scripteditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptEditor()));
     actionViewToggleScriptEditor = a;
 
     a = new QAction(QPixmap(), tr("Script output", "View action"), this);
+    focusWindowsMenu->addAction(a);
+    switchboard.addAction(a, "mapFocusScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(focusScriptOutput()));
+    actionViewFocusScriptOutput = a;
+
+    a = new QAction(QPixmap(), tr("Script output", "View action"), this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
-    switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptOutput()));
-    actionViewToggleScriptOutput = a; // FIXME-3 show
+    actionViewToggleScriptOutput = a;
 
     n = tr("History window", "View action");
     a = new QAction(QPixmap(":/history.png"), n, this);
@@ -2979,12 +2984,10 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/history.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHistory()));
     actionViewToggleHistoryWindow = a;
 
     focusWindowsMenu->addAction(actionViewFocusPropertyEditor);
-    toggleWindowsMenu->addAction(actionViewTogglePropertyEditor);
 
     viewMenu->addSeparator();
 
@@ -5225,9 +5228,9 @@ void Main::editRedo()
         m->redo();
 }
 
-void Main::gotoHistoryStep(int i)
+void Main::gotoHistoryStep(uint modelId, int i)
 {
-    VymModel *m = currentModel();
+    VymModel *m = modelWithId(modelId);
     if (m)
         m->gotoHistoryStep(i);
 }
@@ -5559,7 +5562,6 @@ void Main::editVymLink()
             fd.setAcceptMode(QFileDialog::AcceptOpen);
             if (!bi->vymLink().isEmpty())
                 fd.selectFile(bi->vymLink());
-            fd.show();
 
             if (fd.exec() == QDialog::Accepted &&
                 !fd.selectedFiles().isEmpty()) {
@@ -6894,8 +6896,6 @@ void Main::focusScriptOutput()
 {
     scriptOutput->parentWidget()->show();
     actionViewToggleScriptOutput->setChecked(true);
-    // Currently ScriptEditor gets focus, when output is toggled
-    // scriptOutput->setFocus();
     focusScriptEditor();
 }
 void Main::toggleScriptOutput()
@@ -6983,9 +6983,12 @@ void Main::toggleSmoothPixmap()
 
 void Main::clearScriptOutput() { scriptOutput->clear(); }
 
-void Main::updateHistory(SimpleSettings &undoSet)
+void Main::updateHistory(VymModel *model, SimpleSettings &undoSet)
 {
-    historyWindow->update(undoSet);
+    if (model) {
+        // qDebug() << __func__ << " model=" << model << model->getFileName();
+        historyWindow->update(model->modelId(), undoSet);
+    }
 }
 
 void Main::updateHeading(const VymText &vt)

@@ -172,6 +172,16 @@ QString BranchWrapper::attributeAsString(const QString &key)
     return r;
 }
 
+BranchWrapper* BranchWrapper::branchAt(int pos)
+{
+    BranchItem* bi = branchItemInt->getBranchNum(pos);
+    if (!bi) {
+        mainWindow->abortScript(QJSValue::GenericError,"Couldn't find branch at position " + QString::number(pos));
+        return nullptr;
+    } else
+        return bi->branchWrapper();
+}
+
 int BranchWrapper::branchCount()
 {
     int r = branchItemInt->branchCount();

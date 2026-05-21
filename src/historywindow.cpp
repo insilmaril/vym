@@ -12,6 +12,8 @@ extern QString editorFocusOutStyle;
 
 HistoryWindow::HistoryWindow(QWidget *parent) : QDialog(parent)
 {
+    modelIdInt = 0;
+
     ui.setupUi(this);
     ui.historyTable->setRowCount(
         settings.value("/history/stepsTotal", 75).toInt());
@@ -123,8 +125,11 @@ void HistoryWindow::updateRow(int row, int step, SimpleSettings &set)
     ui.historyTable->setItem(row, 2, item);
 }
 
-void HistoryWindow::update(SimpleSettings &set)
+void HistoryWindow::update(uint model, SimpleSettings &set)
 {
+    // Remember model id
+    modelIdInt = model;
+
     int undosAvail = set.numValue("/history/undosAvail", 0);
     int redosAvail = set.numValue("/history/redosAvail", 0);
     int stepsTotal = set.numValue("/history/stepsTotal", 1000);
@@ -133,6 +138,12 @@ void HistoryWindow::update(SimpleSettings &set)
     int s = curStep;
     int r = undosAvail - 1;
     QTableWidgetItem *item;
+
+    /*
+    qDebug() << "HistoryWindow::update: undosAvail=" << undosAvail
+             << "redosAvail=" << redosAvail << "stepsTotal=" << stepsTotal
+             << "curStep=" << curStep;
+    */
 
     // Update number of rows
     ui.historyTable->setRowCount(undosAvail + redosAvail + 1);
@@ -214,8 +225,12 @@ void HistoryWindow::undo() { mainWindow->editUndo(); }
 
 void HistoryWindow::redo() { mainWindow->editRedo(); }
 
-void HistoryWindow::select()
+void HistoryWindow::select()    // FIXME-2 Better save current vymModel in HistoryWIndow and undo/redo directly without MainWindow.
 {
-    mainWindow->gotoHistoryStep(
-        ui.historyTable->row(ui.historyTable->selectedItems().first()));
+    QList <QTableWidgetItem*> selis = ui.historyTable->selectedItems();
+    if (selis.size() < 1) {
+        qDebug() << "HistoryWindow::select() no selection";
+        return;
+    }
+    mainWindow->gotoHistoryStep(modelIdInt, ui.historyTable->row(selis.first()));
 }
