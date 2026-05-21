@@ -1,0 +1,104 @@
+// VYM script to identify the size of subtrees in a big map
+//
+// The script will set two attributes for each branch:
+//  - stats_sum_subtree: the number of branches in the subtree of the branch
+//    (including itself) 
+//  - stats_percent_total: the percentage of branches in the
+//    subtree compared to the total number of branches in the map
+//
+// For leaf branches no attributes will be set, as they have no subtree. If you
+// want to set the percentage for leaf branches as well, set the variable
+// setAttributesForLeafBranches to true.
+//
+// The script will first clean up old data by removing the attributes if they
+// already exist. Then it will calculate the stats and set the attributes for
+// each branch.
+//
+// You can then use the TreeEditor to see the subtree sizes in the new attributes
+// 
+// Note: The script assumes that the map is not modified while it is running,
+// as it relies on the order of branches in the item list. If you modify the
+// map while the script is running, the results may be incorrect.
+
+function cleanupOldData() {
+    vym.print("Cleaning up old data, if available (" + il.count() + " items)");
+    counted = 0;
+    while (b = il.nextBranch() ) {
+        counted++;
+
+        vym.print (" - [" + (counted / sum_total * 100).toFixed(2) + "%]  Current branch: " + b.headingText());
+        a = ["stats_sum_subtree", "stats_percent_total"];
+        for (let s of a) {
+            if (b.hasAttributeWithKey(s)) {
+                vym.print ("   - Removing old attribute: " + s);
+                b.deleteAttribute(s);
+            }
+        }
+    }
+}
+
+function calculateStatsAndSetAttributes() {
+    vym.print("Setting attributes for " + sum_total + " branches");
+    last_depth = -1;
+    last_parent = null;
+    counted = 0;
+    percent_single_branch = (1 / sum_total).toFixed(1) + "%";
+
+    il.reset();
+    while (b = il.nextBranch() )
+    {
+        counted++;
+        vym.print (" - [" + (counted / sum_total * 100).toFixed(2) + "%]  Current branch: " + b.headingText());
+
+        // Determine type of movement
+        if (last_depth < 0) {
+            // vym.print ("   - First item");
+            last_depth = b.depth();
+            if (setAttributesForLeafBranches)
+                b.setAttribute("stats_percent_total", percent_single_branch);
+        } else if (b.parentBranch() == last_parent) {
+            // vym.print ("   - Same parent");
+            if (setAttributesForLeafBranches)
+                b.setAttribute("stats_percent_total", percent_single_branch);
+        } else if (b.depth() < last_depth) {
+            // vym.print ("   - Moved up");
+            n = 0;
+            for (i = 0; i < b.branchCount(); i++) {
+                c = b.branchAt(i);
+                if (!c) {
+                    vym.print ("     - No child at index " + i);
+                    continue;
+                }
+                // vym.print ("     - c " + c.headingText()); 
+                if (c.hasAttributeWithKey("stats_sum_subtree")) {
+                    n += c.attributeAsInt("stats_sum_subtree");
+                }
+            }
+            b.setAttribute("stats_sum_subtree", n + b.branchCount());
+            b.setAttribute("stats_percent_total", ((n + b.branchCount() + 1) / sum_total * 100).toFixed(1) + "%");
+        } else {
+            // vym.print ("   - Moved down");
+            if (setAttributesForLeafBranches)
+                b.setAttribute("stats_percent_total", percent_single_branch);
+        }
+
+        last_parent = b.parentBranch();
+
+        last_depth = b.depth();
+    }
+}
+
+vym.clearConsole();
+map = vym.currentMap();
+
+il = map.itemList();
+il.setModeBranches(true);
+
+setAttributesForLeafBranches = false;
+
+sum_total = il.count();
+
+cleanupOldData();
+
+calculateStatsAndSetAttributes();
+

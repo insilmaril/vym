@@ -29,6 +29,7 @@ class BranchWrapper : public QObject {
                   const QString &color, const QString &penstyle);
     int attributeAsInt(const QString &key);
     QString attributeAsString(const QString &key);
+    Q_INVOKABLE BranchWrapper* branchAt(int n);
     int branchCount();
     void clearFlags();
     void colorBranch(const QString &color);

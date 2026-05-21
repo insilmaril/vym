@@ -930,16 +930,16 @@ void Main::setupAPI()
     //
 
     c = new Command("addBranch", Command::BranchSel);
-    c->setComment("Add branch as child branch to current branch");
+    c->setComment("Add branch as child branch to current branch and return it");
     branchCommands.append(c);
 
     c = new Command("addBranchAt", Command::BranchSel);
-    c->setComment("Add branch at position to current branch");
+    c->setComment("Add branch at position to current branch and return it");
     c->addParameter(Command::IntPar, true, "Index of new branch");
     branchCommands.append(c);
 
     c = new Command("addBranchBefore", Command::BranchSel);
-    c->setComment("Add branch as parent before current branch");
+    c->setComment("Add branch as parent before current branch and return it");
     branchCommands.append(c);
 
     c = new Command("attributeAsInt", Command::BranchSel, Command::IntPar);
@@ -950,6 +950,11 @@ void Main::setupAPI()
     c = new Command("attributeAsString", Command::BranchSel, Command::StringPar);
     c->setComment("Get string value of attribute with given key");
     c->addParameter(Command::StringPar, false, "Key of string attribute");
+    branchCommands.append(c);
+
+    c = new Command("branchAt", Command::BranchSel);
+    c->setComment("Return child branch at given index");
+    c->addParameter(Command::IntPar, false, "Index of child branch");
     branchCommands.append(c);
 
     c = new Command("branchCount", Command::BranchSel, Command::IntPar);
@@ -1540,6 +1545,10 @@ void Main::setupAPI()
     c = new Command("count");
     c->setComment("Return number of items in list");
     c->setReturnType(Command::IntPar);
+    itemListCommands.append(c);
+
+    c = new Command("reset");
+    c->setComment("Reset the current item position to the beginning of the list");
     itemListCommands.append(c);
 
     c = new Command("setModeBranches");
