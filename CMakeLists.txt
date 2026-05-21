@@ -219,10 +219,6 @@ if(APPLE)
                     "${TARGET_DIR}"
             COMMENT "Copying SOURCE directory ${SOURCE_DIR} to TARGET directory ${TARGET_DIR}..."
         )
-        add_custom_command(
-            TARGET vym POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --blue "vym: Copying SOURCE directory ${SOURCE_DIR} to TARGET directory ${TARGET_DIR}..."
-        )
     endforeach()
 
     # Finally copy generated translations to bundle
@@ -231,7 +227,7 @@ if(APPLE)
     add_custom_command(
         TARGET vym POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${SOURCE_DIR}" "${TARGET_DIR}"
-        COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --blue "vym: Copying ${SOURCE_DIR} to ${TARGET_DIR}..."
+        # COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --blue "vym: Copying ${SOURCE_DIR} to ${TARGET_DIR}..."
         COMMENT "Copying translations directory to TARGET directory ${TARGET_DIR}..."
     )
 endif()
