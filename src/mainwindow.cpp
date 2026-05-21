@@ -217,7 +217,6 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     viewMenu = menuBar()->addMenu(tr("&View"));
     toolbarsMenu =
         viewMenu->addMenu(tr("Toolbars", "Toolbars overview in view menu"));
-    toggleWindowsMenu = new QMenu(tr("Toggle windows", "Toggle visibility of editor windows overview in view menu")); // FIXME-2 No longer used, can be removed
     focusWindowsMenu =
         viewMenu->addMenu(tr("Focus window", "Toggle visibility of editor windows overview in view menu"));
 
@@ -2885,7 +2884,6 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/flag-note.svg"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleNoteEditor()));
     actionViewToggleNoteEditor = a;
                                     //
@@ -2901,7 +2899,6 @@ void Main::setupViewActions()
     a = new QAction(QPixmap(":/headingeditor.png"), n, this);
     a->setCheckable(true);
     mapEditorActions.append(a);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHeadingEditor()));
     actionViewToggleHeadingEditor = a;
 
@@ -2909,7 +2906,6 @@ void Main::setupViewActions()
     // Original icon is "category" from KDE
     a = new QAction(QPixmap(":/treeeditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleTreeEditors()));
     actionViewToggleTreeEditors = a;
 
@@ -2932,14 +2928,12 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/taskeditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleTaskEditor()));
     actionViewToggleTaskEditor = a;
 
     n = tr("Slide editor", "View action");
     a = new QAction(QPixmap(":/slideeditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     switchboard.addAction(a, "mapShowSlideEditor", shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleSlideEditors()));
     actionViewToggleSlideEditors = a;
@@ -2953,7 +2947,6 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/scripteditor.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptEditor()));
     actionViewToggleScriptEditor = a;
 
@@ -2965,7 +2958,6 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(), tr("Script output", "View action"), this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptOutput()));
     actionViewToggleScriptOutput = a;
 
@@ -2984,12 +2976,10 @@ void Main::setupViewActions()
 
     a = new QAction(QPixmap(":/history.png"), n, this);
     a->setCheckable(true);
-    toggleWindowsMenu->addAction(a);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleHistory()));
     actionViewToggleHistoryWindow = a;
 
     focusWindowsMenu->addAction(actionViewFocusPropertyEditor);
-    toggleWindowsMenu->addAction(actionViewTogglePropertyEditor);
 
     viewMenu->addSeparator();
 

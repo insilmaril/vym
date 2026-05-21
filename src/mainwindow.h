@@ -501,7 +501,6 @@ class Main : public QMainWindow {
     QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
-    QMenu *toggleWindowsMenu;
     QMenu *focusWindowsMenu;
 
     QMenu *branchAddContextMenu;
