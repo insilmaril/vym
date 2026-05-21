@@ -217,8 +217,7 @@ Main::Main(QWidget *parent) : QMainWindow(parent)
     viewMenu = menuBar()->addMenu(tr("&View"));
     toolbarsMenu =
         viewMenu->addMenu(tr("Toolbars", "Toolbars overview in view menu"));
-    toggleWindowsMenu =
-        viewMenu->addMenu(tr("Toggle window", "Toggle visibility of editor windows overview in view menu"));
+    toggleWindowsMenu = new QMenu(tr("Toggle windows", "Toggle visibility of editor windows overview in view menu")); // FIXME-2 No longer used, can be removed
     focusWindowsMenu =
         viewMenu->addMenu(tr("Focus window", "Toggle visibility of editor windows overview in view menu"));
 
@@ -2959,11 +2958,16 @@ void Main::setupViewActions()
     actionViewToggleScriptEditor = a;
 
     a = new QAction(QPixmap(), tr("Script output", "View action"), this);
+    focusWindowsMenu->addAction(a);
+    switchboard.addAction(a, "mapFocusScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
+    connect(a, SIGNAL(triggered()), this, SLOT(focusScriptOutput()));
+    actionViewFocusScriptOutput = a;
+
+    a = new QAction(QPixmap(), tr("Script output", "View action"), this);
     a->setCheckable(true);
     toggleWindowsMenu->addAction(a);
-    switchboard.addAction(a, "mapToggleScriptOutput", Qt::CTRL | Qt::SHIFT | Qt::Key_S, shortcutScope, tag);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleScriptOutput()));
-    actionViewToggleScriptOutput = a; // FIXME-3 show
+    actionViewToggleScriptOutput = a;
 
     n = tr("History window", "View action");
     a = new QAction(QPixmap(":/history.png"), n, this);
@@ -6882,8 +6886,6 @@ void Main::focusScriptOutput()
 {
     scriptOutput->parentWidget()->show();
     actionViewToggleScriptOutput->setChecked(true);
-    // Currently ScriptEditor gets focus, when output is toggled
-    // scriptOutput->setFocus();
     focusScriptEditor();
 }
 void Main::toggleScriptOutput()
