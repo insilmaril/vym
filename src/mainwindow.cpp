@@ -5221,9 +5221,9 @@ void Main::editRedo()
         m->redo();
 }
 
-void Main::gotoHistoryStep(int i)
+void Main::gotoHistoryStep(uint modelId, int i)
 {
-    VymModel *m = currentModel();
+    VymModel *m = modelWithId(modelId);
     if (m)
         m->gotoHistoryStep(i);
 }
@@ -6971,9 +6971,12 @@ void Main::toggleSmoothPixmap()
 
 void Main::clearScriptOutput() { scriptOutput->clear(); }
 
-void Main::updateHistory(SimpleSettings &undoSet)
+void Main::updateHistory(VymModel *model, SimpleSettings &undoSet)
 {
-    historyWindow->update(undoSet);
+    if (model) {
+        // qDebug() << __func__ << " model=" << model << model->getFileName();
+        historyWindow->update(model->modelId(), undoSet);
+    }
 }
 
 void Main::updateHeading(const VymText &vt)
