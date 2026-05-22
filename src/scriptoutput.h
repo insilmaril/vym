@@ -15,6 +15,9 @@ class ScriptOutput : public QWidget {
     QString text();
     void append(const QString &text);
 
+  public slots:
+    void closeWindow();
+
   private:
     QTextEdit *editor;
     QVBoxLayout *layout;
