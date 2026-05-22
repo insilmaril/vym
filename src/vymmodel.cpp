@@ -7612,6 +7612,7 @@ void VymModel::setSelectionPenColor(QColor col)
     selPen.setColor(col);
     mapDesignInt->setSelectionPen(selPen);
     vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 QColor VymModel::getSelectionPenColor() {
@@ -7631,6 +7632,7 @@ void VymModel::setSelectionPenWidth(qreal w)
     selPen.setWidth(w);
     mapDesignInt->setSelectionPen(selPen);
     vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 qreal VymModel::getSelectionPenWidth() {
@@ -7652,6 +7654,7 @@ void VymModel::setSelectionBrushColor(QColor col)
     selBrush.setColor(col);
     mapDesignInt->setSelectionBrush(selBrush);
     vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 QColor VymModel::getSelectionBrushColor() {
