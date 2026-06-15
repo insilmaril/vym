@@ -92,6 +92,7 @@ Uwe Drechsel - May 2026
  * Script stats.vys to analyze sizes of subtrees
 
 ### Bugfixes
+ * [#207](https://github.com/insilmaril/vym/issues/207) Cmd-D not working to close Script output window
  * [#206](https://github.com/insilmaril/vym/issues/206) Two dialogs when creating new vymLink
  * Fix building with Qt 6.6
 
