@@ -1597,7 +1597,7 @@ void VymModel::redo()
     undoSet.setValue("/history/curStep", QString::number(curStep));
     undoSet.writeSettings(histPath);
 
-    mainWindow->updateHistory(undoSet);
+    mainWindow->updateHistory(this, undoSet);
 
     updateActions();
 
@@ -1727,7 +1727,7 @@ void VymModel::undo()
     undoSet.setValue("/history/curStep", QString::number(curStep));
     undoSet.writeSettings(histPath);
 
-    mainWindow->updateHistory(undoSet);
+    mainWindow->updateHistory(this, undoSet);
 
     updateActions();
 }
@@ -1781,7 +1781,7 @@ void VymModel::resetHistory()
 
     stepsTotal = settings.value("/history/stepsTotal", 100).toInt();
     undoSet.setValue("/history/stepsTotal", QString::number(stepsTotal));
-    mainWindow->updateHistory(undoSet);
+    mainWindow->updateHistory(this, undoSet);
 }
 
 QString VymModel::setAttributeVar(AttributeItem* ai, QString varName)
@@ -1966,7 +1966,7 @@ QString VymModel::saveState(
     }
     */
 
-    mainWindow->updateHistory(undoSet);
+    mainWindow->updateHistory(this, undoSet);
 
     setChanged();
 
@@ -7338,6 +7338,7 @@ void VymModel::setSelectionPenColor(QColor col)
     selPen.setColor(col);
     mapDesignInt->setSelectionPen(selPen);
     vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 QColor VymModel::getSelectionPenColor() {
@@ -7357,6 +7358,7 @@ void VymModel::setSelectionPenWidth(qreal w)
     selPen.setWidth(w);
     mapDesignInt->setSelectionPen(selPen);
     vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 qreal VymModel::getSelectionPenWidth() {
@@ -7378,6 +7380,7 @@ void VymModel::setSelectionBrushColor(QColor col)
     selBrush.setColor(col);
     mapDesignInt->setSelectionBrush(selBrush);
     vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 QColor VymModel::getSelectionBrushColor() {

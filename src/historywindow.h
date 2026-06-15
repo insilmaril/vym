@@ -14,7 +14,7 @@ class HistoryWindow : public QDialog {
     HistoryWindow(QWidget *parent = 0);
     ~HistoryWindow();
     void setFocus();
-    void update(SimpleSettings &);
+    void update(uint modelId, SimpleSettings &);
     void setStepsTotal(int);
 
   protected:
@@ -30,9 +30,11 @@ class HistoryWindow : public QDialog {
     void windowClosed();
 
   private:
+    Ui::HistoryWindow ui;
+
+    uint modelIdInt;
     void clearRow(int);
     void updateRow(int, int, SimpleSettings &);
-    Ui::HistoryWindow ui;
 };
 
 #endif

@@ -190,7 +190,7 @@ class Main : public QMainWindow {
     void fileExitVym();
     void editUndo();
     void editRedo();
-    void gotoHistoryStep(int);
+    void gotoHistoryStep(uint modelId, int step);
 
   private slots:
     void editCopy();
@@ -371,7 +371,7 @@ class Main : public QMainWindow {
     void toggleProperty();
     void focusHeadingEditor();
     void toggleHeadingEditor();
-    void updateHistory(SimpleSettings &);
+    void updateHistory(VymModel*, SimpleSettings &);
     void toggleAntiAlias();
     bool isAliased();
     bool hasSmoothPixmapTransform();
@@ -445,7 +445,7 @@ class Main : public QMainWindow {
 
   public slots:
     void checkReleaseNotes();
-    bool downloadsEnabled(bool userTriggered = false);
+    bool vymDownloadsEnabled(bool userTriggered = false);
     void downloadUpdatesFinished(bool userTriggered = false);
     void downloadUpdatesFinishedInt();
     void downloadUpdates(bool userTriggered);
@@ -501,7 +501,6 @@ class Main : public QMainWindow {
     QList <QColor> quickColors;
 
     QMenu *toolbarsMenu;
-    QMenu *toggleWindowsMenu;
     QMenu *focusWindowsMenu;
 
     QMenu *branchAddContextMenu;

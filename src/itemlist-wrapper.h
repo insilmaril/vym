@@ -18,6 +18,7 @@ public:
     void init();
 
 public slots:
+    void reset();
     Q_INVOKABLE void setModeBranches(bool deepLevelsFirst = false);
     Q_INVOKABLE void setModeSelectedBranches();
     Q_INVOKABLE void setModeSelectedSubtrees(bool deepLevelsFirst = false);

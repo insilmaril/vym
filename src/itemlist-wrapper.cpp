@@ -26,8 +26,13 @@ void ItemListWrapper::init()
 {
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     itemList.clear();
-    currentIndex = -1;
     deepLevelsFirstInt = false;
+    reset();
+}
+
+void ItemListWrapper::reset()
+{
+    currentIndex = -1;
 }
 
 void ItemListWrapper::setModeBranches(bool deepLevelsFirst)
