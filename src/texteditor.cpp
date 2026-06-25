@@ -865,7 +865,7 @@ void TextEditor::deleteAll()
     editor->clear();
 }
 
-void TextEditor::textExportAs() // FIXME-2 Heading colors missing
+void TextEditor::textExportAs() // FIXME-2 Heading colors missing, BG color span missing
 {
     QString text, postfix;
     if (actionFormatRichText->isChecked()) {
