@@ -73,6 +73,8 @@ Command::ParameterType Command::parameterType(int n)
 QString Command::typeToString(const ParameterType &type)
 {
     switch (type) {
+        case ArrayPar:
+            return "Array";
         case BoolPar:
             return "Bool";
         case BranchPar:

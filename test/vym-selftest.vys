@@ -11,6 +11,7 @@ all_tests = [
   "adding_maps",
   "copy_paste",
   "delete_parts",
+  "execute",
   "export",         // FIXME WIP
   "extrainfo",
   "frames",
@@ -36,7 +37,7 @@ not_yet_ported_tests = [
 ];
 
 tests = all_tests;
-// tests = ["modify_images","xlinks"];
+//tests = ["execute"];
 
 
 var verbosity = 0;
@@ -568,6 +569,35 @@ function test_delete_parts()
   expect("Undo remove mapCenter: number of centers increased", map.centerCount(), n);
   expect("Undo remove mapCenter: x position is unchanged", center_1.getPosX(), x);
   expect("Undo remove mapCenter: y position is unchanged", center_1.getPosY(), y);
+
+  closeCurrentMap();
+}
+
+function test_execute()
+{
+  heading("Execute external command:");
+  let map = initMap(testMapDefault);
+
+  // Foreground execution with arguments: echo should return its argument
+  let r = map.execute("echo", false, ["hello"]);
+  expect("execute returns exitCode 0", r.exitCode, 0);
+  vym.print("execute output: " + r.output);
+  expectInclude("execute output contains argument", r.output, "hello");
+
+  // Foreground execution without arguments (args is optional)
+  r = map.execute("true", false);
+  expect("execute of 'true' returns exitCode 0", r.exitCode, 0);
+
+  // Non-zero exit code is reported back
+  r = map.execute("false", false);
+  expectNot("execute of 'false' returns non-zero exitCode", r.exitCode, 0);
+
+  // Background execution is not implemented yet: returns an error result
+  r = map.execute("echo", true, ["background"]);
+  expectNot("background execute is not implemented yet (non-zero exitCode)",
+            r.exitCode, 0);
+  expectInclude("background execute reports not implemented", r.output,
+                "not implemented");
 
   closeCurrentMap();
 }
@@ -1814,6 +1844,7 @@ if (tests.includes("adding_maps"))    { test_adding_maps(); }
 if (tests.includes("attributes"))     { test_attributes(); }
 if (tests.includes("copy_paste"))     { test_copy_paste(); }
 if (tests.includes("delete_parts"))   { test_delete_parts(); }
+if (tests.includes("execute"))        { test_execute(); }
 if (tests.includes("export"))         { test_export(); }
 if (tests.includes("extrainfo"))      { test_extrainfo(); }
 if (tests.includes("frames"))         { test_frames(); }

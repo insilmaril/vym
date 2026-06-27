@@ -348,6 +348,7 @@ class Main : public QMainWindow {
     void settingsToggleAutoLayout();
     void settingsToggleWriteBackupFile();
     void settingsToggleAnimation();
+    void settingsToggleExecuteCommand();
     void settingsToggleDownloads();
     bool settingsConfluence();
     bool settingsJIRA();
@@ -732,6 +733,7 @@ class Main : public QMainWindow {
     QAction *actionSettingsShowParentsLevelFindResults;
     QAction *actionSettingsToggleAutoLayout;
     QAction *actionSettingsWriteBackupFile;
+    QAction *actionSettingsToggleExecuteCommand;
     QAction *actionSettingsToggleDownloads;
     QAction *actionSettingsUseAnimation;
     QAction *actionSettingsJIRA;

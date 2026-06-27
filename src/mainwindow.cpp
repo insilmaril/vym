@@ -638,6 +638,16 @@ void Main::setupAPI()
     c = new Command("cut", Command::BranchOrImageSel);
     modelCommands.append(c);
 
+    c = new Command("execute", Command::AnySel, Command::ArrayPar);
+    c->addParameter(Command::StringPar, false, "Command to execute");
+    c->addParameter(Command::BoolPar, true,
+                    "Run command in background (not implemented yet)");
+    c->addParameter(Command::StringListPar, true, "List of arguments");
+    c->setComment("Execute an external command. Returns an object with "
+                  "'exitCode' and 'output'. Must be enabled in Settings menu. "
+                  "Background execution is not implemented yet.");
+    modelCommands.append(c);
+
     c = new Command("deleteAttribute", Command::BranchSel, Command::IntPar);
     c->setComment("Delete attribute with given key");
     c->addParameter(Command::StringPar, false, "Key of attribute to delete");
@@ -3603,6 +3613,17 @@ void Main::setupSettingsActions()
     a = new QAction(tr("Logfile settings", "Settings action") + "...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(settingsActionLog()));
     settingsMenu->addAction(a);
+
+    a = new QAction(
+        tr("Allow scripts to execute external commands", "Settings action"),
+        this);
+    a->setCheckable(true);
+    a->setChecked(
+        settings.value("/scripting/executeCommandEnabled", false).toBool());
+    connect(a, SIGNAL(triggered()), this,
+            SLOT(settingsToggleExecuteCommand()));
+    settingsMenu->addAction(a);
+    actionSettingsToggleExecuteCommand = a;
 
     settingsMenu->addSeparator();
 
@@ -6739,6 +6760,31 @@ void Main::settingsToggleAnimation()
 {
     settings.setValue("/animation/use",
                       actionSettingsUseAnimation->isChecked());
+}
+
+void Main::settingsToggleExecuteCommand()
+{
+    bool enable = actionSettingsToggleExecuteCommand->isChecked();
+
+    if (enable) {
+        // Warn the user about the security implications before enabling
+        QMessageBox::StandardButton b = QMessageBox::warning(
+            this, tr("Warning"),
+            tr("Allowing scripts to execute external commands is a security "
+               "risk: a malicious map or script could run arbitrary commands "
+               "on your system with your privileges.\n\n"
+               "Only enable this if you trust the maps and scripts you open.\n\n"
+               "Do you really want to enable command execution from scripts?"),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+        if (b != QMessageBox::Yes) {
+            // User declined: revert the menu entry
+            actionSettingsToggleExecuteCommand->setChecked(false);
+            return;
+        }
+    }
+
+    settings.setValue("/scripting/executeCommandEnabled", enable);
 }
 
 void Main::settingsToggleDownloads() { vymDownloadsEnabled(true); }

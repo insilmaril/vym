@@ -1747,6 +1747,32 @@ used is in the automated \vym testing:
 test/vym-test.rb
 \end{verbatim}
 
+\subsection{Executing external commands} \label{executecommand}
+A script can run an external command on the system using the {\tt
+execute} command of a map:
+\begin{code}
+map = vym.currentMap();
+r = map.execute("ls", false, ["-l", "/tmp"]);
+vym.print("Exit code: " + r.exitCode);
+vym.print("Output: "    + r.output);
+\end{code}
+The parameters are the command to run, a boolean flag whether to run it
+in the background, and an optional list of arguments. The command
+returns an object with the fields {\tt exitCode} (the exit code of the
+command) and {\tt output} (the combined standard output and standard
+error).
+
+The background flag is {\bf not implemented yet}: passing {\tt true} does
+not run the command, but returns a result with a non-zero {\tt exitCode}
+and an {\tt output} explaining that background execution is not
+implemented yet.
+
+\hint{Executing external commands is a security risk: a malicious map or
+script could run arbitrary commands with your privileges. For this
+reason the feature is {\bf disabled by default}. It can be enabled in
+the {\em Settings} menu via {\em Allow scripts to execute external
+commands}. Only enable it for maps and scripts you trust.}
+
 \subsection{Available commands}
 Start vym with the "command"\ option to get a listing of available
 commands:

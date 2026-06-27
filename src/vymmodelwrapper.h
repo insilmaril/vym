@@ -27,6 +27,8 @@ class VymModelWrapper : public QObject {
     void centerOnID(const QString &id); // tested: ok
     void copy();
     void cut();
+    QVariant execute(const QString &command, bool background = false,
+                     const QStringList &args = QStringList());
     bool exportMap(QJSValueList args);
     Q_INVOKABLE BranchWrapper* findBranchByAttribute(const QString &key, const QString &value);
     Q_INVOKABLE AttributeWrapper* findAttributeById(const QString &);

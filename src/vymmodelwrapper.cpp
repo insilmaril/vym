@@ -8,12 +8,14 @@
 #include "branchitem.h"
 #include "branch-container.h"
 #include "branch-wrapper.h"
+#include "command-agent.h"
 #include "imageitem.h"
 #include "image-wrapper.h"
 #include "itemlist-wrapper.h"
 #include "mainwindow.h"
 #include "mapeditor.h"
 #include "misc.h"
+#include "settings.h"
 #include "vym-wrapper.h"
 #include "scripting-xlink-wrapper.h"
 #include "vymmodel.h"
@@ -21,6 +23,8 @@
 #include "xlinkitem.h"
 
 extern Main *mainWindow;
+extern Settings settings;
+extern bool testmode;
 
 ///////////////////////////////////////////////////////////////////////////
 VymModelWrapper::VymModelWrapper(VymModel *m)
@@ -63,6 +67,59 @@ void VymModelWrapper::centerOnID(const QString &id)
 void VymModelWrapper::copy() { modelInt->copy(); }
 
 void VymModelWrapper::cut() { modelInt->cut(); }
+
+QVariant VymModelWrapper::execute(const QString &command, bool background,
+                                  const QStringList &args)
+{
+    QVariantMap result;
+    result["exitCode"] = -1;
+    result["output"] = QString();
+
+    // Executing external commands is a security risk and therefore
+    // disabled by default. It can be enabled in the settings menu.
+    // In testmode it is always allowed, so the self-test can run.
+    if (!testmode &&
+        !settings.value("/scripting/executeCommandEnabled", false).toBool()) {
+        mainWindow->abortScript(
+            QJSValue::GenericError,
+            "Executing external commands from scripts is disabled. "
+            "It can be enabled in the Settings menu.");
+        mainWindow->setScriptResult(result);
+        return result;
+    }
+
+    if (command.isEmpty()) {
+        mainWindow->abortScript(QJSValue::GenericError,
+                                "No command given to execute");
+        mainWindow->setScriptResult(result);
+        return result;
+    }
+
+    if (background) {
+        // NOT IMPLEMENTED YET: Background execution is not wired up to the
+        // script engine yet (no callback / message queue for asynchronous
+        // results). The infrastructure in CommandAgent::runInBackground() is
+        // already prepared, but for now we refuse to run in the background
+        // instead of silently behaving differently than documented.
+        result["exitCode"] = -1;
+        result["output"] =
+            QString("Background execution of commands is not implemented yet.");
+        mainWindow->statusMessage(result["output"].toString());
+        mainWindow->setScriptResult(result);
+        return result;
+    }
+
+    // Run synchronously and return the result to the script
+    CommandAgent agent;
+    agent.setCommand(command);
+    agent.setArguments(args);
+    agent.runSynchronously();
+
+    result["exitCode"] = agent.exitCode();
+    result["output"] = agent.output();
+    mainWindow->setScriptResult(result);
+    return result;
+}
 
 bool VymModelWrapper::exportMap(QJSValueList args)
 {
