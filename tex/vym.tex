@@ -1653,19 +1653,18 @@ several maps at once.
 
 \section{Scripts} \label{scripts}   
 \subsection{Overview}
-Beginning with version 2.7.0 \vym is fully scriptable, though the
-scripting support is still considered a {\em technical preview}. Some
-parts still might change and improve in later versions.
+\vym is fully scriptable. Beginning with version 3.0.0 the scripting
+engine is based on QJSEngine, which is a JavaScript engine.
 Scripts are internally used for
 \begin{itemize}
     \item Undo and Redo
     \item Macros on function keys
     \item Slideshow
 \end{itemize}
-In addition to the internal scriptengine, which is using QScript, 
-you can also  use external ruby scripts, which communicate with \vym via
-DBUS. Please note that the latter is currently only possible on Linux.
-See also the examples in \ref{examplescripts}.
+Older versions of \vym in addition to QJSEngine used the Ruby scripting
+engine. This is still available in \vym, the commands are on Linux
+accessible via DBUS. The Ruby engine is not available on Windows and
+MacOS.
 
 The scripts within \vym are edited using the {\em script editor}:
 \begin{center} \label{scripteditor}
@@ -1681,18 +1680,32 @@ installation directory and the subfolder {\tt demos/scripts/} and the
 macros in the macro tab of the script editor.
 \subsubsection{Macro to create a rounded rectangle frame}
 \begin{code}
-// Macro Shift + F1: Frame background light red
-function macro_shift_f1()
+//! Helper function to toggle frame background color of a whole subtree
+
+function toggle_frame_subtree(color, msg)
 {
     map = vym.currentMap();
-    status = "Background off";
-    if (map.getFrameType() == "NoFrame") {
-        status = "Background light red";
+    branches = map.selectedBranches();
+    for (b of branches) {
+        // Make sure changes are saved
+        b.setFrameAutoDesign(false, false);
+        if (b.getFrameType(false) == "NoFrame" ) {
+            b.setFrameType (false, "RoundedRectangle");
+            b.setFrameBrushColor(false, color);
+            vym.statusMessage(msg);
+        } else {
+            b.setFrameType (false, "NoFrame");
+            vym.statusMessage("No frame for subtree");
+        }
     }
-    toggle_frame ( map );
-    map.setFrameBrushColor("#ffb3b4");
-    statusMessage(status);
 }
+
+//! Macro Ctrl+Shift+F1: Toggle subtree frame background light red
+function macro_ctrl_shift_f1()
+{
+    toggle_frame_subtree ( "#ffb3b4", "Subtree frame background light red" );
+}
+
 \end{code}
 
 \subsubsection{Batch script to export all maps as images}
@@ -1703,7 +1716,7 @@ with
 \$ vym --quit --run export-image.vys *.vym
 \end{code}
 
-\subsubsection{Full scripting using ruby and DBUS} \label{dbus}
+\subsubsection{Full scripting using ruby and DBUS (deprecated)} \label{dbus}
 Nearly every action in \vym can be controlled via DBUS (on Linux
 machines). You can have several \vym instances running at the same time,
 e.g. for production and development. Before controlling one, you need to
