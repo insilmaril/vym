@@ -1,7 +1,7 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define __VYM_VERSION "2.9.617"
+#define __VYM_VERSION "3.0.0"
 #define __VYM_BUILD_DATE "2026-06-04"
 
 
@@ -12,6 +12,6 @@
 //#define __VYM_CODE_QUALITY "*Experimental*"
 //#define __VYM_CODE_QUALITY "*Beta*"
 
-#define __VYM_CODENAME "Beta release of upcoming 3.0.0"
+#define __VYM_CODENAME "Save the climate"
 
 #endif
