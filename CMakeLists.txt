@@ -86,7 +86,7 @@ if (GIT_FOUND)
         GIT_COMMIT_HASH="${GIT_COMMIT_HASH}")
 
     configure_file(${CMAKE_SOURCE_DIR}/src/git.h.in ${CMAKE_SOURCE_DIR}/src/git.h)
-else    
+else()
     add_compile_definitions(
         GIT_BRANCH="n.a."
         GIT_COMMIT_HASH="n.a.")
