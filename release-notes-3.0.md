@@ -87,7 +87,11 @@ Thanks for using vym!
 
 Uwe Drechsel - July 2026
 
-## Version 2.9.16
+## Version 2.9.617
+### Bugfixes
+ * [#210](https://github.com/insilmaril/vym/issues/207) BranchPropertyEditor not updated when changing maps
+
+## Version 2.9.616
 ### Features
  * Script stats.vys to analyze sizes of subtrees
 
@@ -96,7 +100,7 @@ Uwe Drechsel - July 2026
  * [#206](https://github.com/insilmaril/vym/issues/206) Two dialogs when creating new vymLink
  * Fix building with Qt 6.6
 
-## Version 2.9.14
+## Version 2.9.614
 ### Bugfixes
  * [#189](https://github.com/insilmaril/vym/issues/189) Updated demo maps
 
@@ -104,14 +108,14 @@ Uwe Drechsel - July 2026
  * Only ask once to allow vym to download release notes and check for
    updates
 
-## Version 2.9.13
+## Version 2.9.613
 ### Features
  * Feature: Notes in Html export are collapsible
 
 ### Bugfixes
  * [#204](https://github.com/insilmaril/vym/issues/204) Crash after image/branch manipulation
 
-## Version 2.9.12
+## Version 2.9.612
 ### Features
  * [#197](https://github.com/insilmaril/vym/issues/197) Improved function key handling
    - Add shortcuts to color only branch, not whole subtree

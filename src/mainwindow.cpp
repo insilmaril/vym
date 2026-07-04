@@ -4377,6 +4377,11 @@ void Main::editorChanged()
         updateDockWidgetTitles(vm);
     }
 
+    // Update BranchPropertyEditor to reflect the map of the current tab.
+    // Selection does not change when switching tabs, so changeSelection()
+    // is not triggered and the editor would still show the previous map.
+    branchPropertyEditor->setModel(vm);
+
     // Update actions to in menus and toolbars according to editor
     updateActions();
 }
@@ -8042,6 +8047,8 @@ void Main::helpVymDevelopmentFinished()
         if (loadStringFromDisk(agent->getDestination(), page)) {
             ShowTextDialog dia(this);
             dia.setText(page);
+            dia.setMinimumWidth(900);
+            dia.setMinimumHeight(600);
             dia.exec();
         }
     }
