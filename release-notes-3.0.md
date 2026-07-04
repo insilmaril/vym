@@ -89,7 +89,7 @@ Uwe Drechsel - July 2026
 
 ## Version 2.9.617
 ### Bugfixes
- * [#210](https://github.com/insilmaril/vym/issues/207) BranchPropertyEditor not updated when changing maps
+ * [#210](https://github.com/insilmaril/vym/issues/210) BranchPropertyEditor not updated when changing maps
 
 ## Version 2.9.616
 ### Features
