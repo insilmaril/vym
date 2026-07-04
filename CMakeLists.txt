@@ -62,6 +62,30 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
 
+find_package (Git)
+if (GIT_FOUND)
+      message("git found: ${GIT_EXECUTABLE} in version ${GIT_VERSION_STRING}")
+
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} -C ${CMAKE_SOURCE_DIR} branch --show-current
+        RESULT_VARIABLE RESULT
+        OUTPUT_VARIABLE GIT_BRANCH)
+
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} -C ${CMAKE_SOURCE_DIR} rev-parse --short HEAD
+        RESULT_VARIABLE RESULT
+        OUTPUT_VARIABLE GIT_COMMIT_HASH)
+
+    message(STATUS "vym: git branch: ${OUTPUT} - commit hash: ${GIT_COMMIT_HASH}")
+
+    add_compile_definitions(
+        GIT_BRANCH="${GIT_BRANCH}"
+        GIT_COMMIT_HASH="${GIT_COMMIT_HASH}")
+
+    #file(READ header.h FILE_CONTENT)
+    #string(REPLACE "old text" "new text" FILE_CONTENTS "${FILE_CONTENTS}")
+    #file(WRITE header.h ${"FILE_CONTENTS}""
+endif (GIT_FOUND)
 
 # Translations
 #
@@ -208,7 +232,7 @@ if(APPLE)
         # Add them to your target
         target_include_directories(vym PRIVATE ${INCLUDE_DIRS})
 
-        message(STATUS "CURRENT_DIR=${CURRENT_DIR}  includeDirs=${INCLUDE_DIRS}")
+        # message(STATUS "CURRENT_DIR=${CURRENT_DIR}  includeDirs=${INCLUDE_DIRS}")
 
         # --- 2. Copy SOURCE_DIR -> TARGET_DIR at build time ---
 
