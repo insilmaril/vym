@@ -76,15 +76,16 @@ if (GIT_FOUND)
         RESULT_VARIABLE RESULT
         OUTPUT_VARIABLE GIT_COMMIT_HASH)
 
-    message(STATUS "vym: git branch: ${OUTPUT} - commit hash: ${GIT_COMMIT_HASH}")
+    string (STRIP ${GIT_BRANCH} GIT_BRANCH)
+    string (STRIP ${GIT_COMMIT_HASH} GIT_COMMIT_HASH)
+
+    message(STATUS "vym: git branch: ${OUTPUT} - commit: ${GIT_COMMIT_HASH}")
 
     add_compile_definitions(
         GIT_BRANCH="${GIT_BRANCH}"
         GIT_COMMIT_HASH="${GIT_COMMIT_HASH}")
 
-    #file(READ header.h FILE_CONTENT)
-    #string(REPLACE "old text" "new text" FILE_CONTENTS "${FILE_CONTENTS}")
-    #file(WRITE header.h ${"FILE_CONTENTS}""
+    configure_file(${CMAKE_SOURCE_DIR}/src/git.h.in ${CMAKE_SOURCE_DIR}/src/git.h)
 endif (GIT_FOUND)
 
 # Translations
