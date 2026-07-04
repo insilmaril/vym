@@ -47,8 +47,7 @@ QString debugInfo()
             .arg(vymBuildDate)
             .arg(vymCodeName)
             .arg(vymCodeQuality);
-    s += QString("      git foo: %1 branch - commit %2\n").arg(GIT_FOO_BRANCH, GIT_FOO_COMMIT_HASH);
-    s += QString("          git: %1 branch - commit %2\n").arg(GIT_BRANCH, GIT_COMMIT_HASH);
+    s += QString("          git: \"%1\" branch - commit %2\n").arg(GIT_BRANCH, GIT_COMMIT_HASH);
     s += QString("     Platform: %1\n").arg(vymPlatform);
     s += QString("    tmpVymDir: %1\n").arg(tmpVymDir.path());
     s += QString("  zipToolPath: %1\n").arg(zipToolPath);
