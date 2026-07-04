@@ -87,6 +87,10 @@ Thanks for using vym!
 
 Uwe Drechsel - July 2026
 
+## Version 2.9.617
+### Bugfixes
+ * [#210](https://github.com/insilmaril/vym/issues/207) BranchPropertyEditor not updated when changing maps
+
 ## Version 2.9.616
 ### Features
  * Script stats.vys to analyze sizes of subtrees
