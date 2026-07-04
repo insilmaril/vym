@@ -85,7 +85,7 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - May 2026
+Uwe Drechsel - July 2026
 
 ## Version 2.9.16
 ### Features
