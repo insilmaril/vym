@@ -1,4 +1,5 @@
 #include "debuginfo.h"
+#include "git.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -41,11 +42,12 @@ extern QString zipToolPath;
 QString debugInfo()
 {
     QString s;
-    s =  QString("vym version: %1 - %2 - %3 %4\n")
+    s =  QString("vym version: %1 - %2 - \"%3\" Quality: %4\n")
             .arg(vymVersion)
             .arg(vymBuildDate)
-            .arg(vymCodeQuality)
-            .arg(vymCodeName);
+            .arg(vymCodeName)
+            .arg(vymCodeQuality);
+    s += QString("          git: \"%1\" branch - commit %2\n").arg(GIT_BRANCH, GIT_COMMIT_HASH);
     s += QString("     Platform: %1\n").arg(vymPlatform);
     s += QString("    tmpVymDir: %1\n").arg(tmpVymDir.path());
     s += QString("  zipToolPath: %1\n").arg(zipToolPath);
