@@ -12,6 +12,6 @@
 //#define __VYM_CODE_QUALITY "*Experimental*"
 //#define __VYM_CODE_QUALITY "*Beta*"
 
-#define __VYM_CODENAME "Save the climate"
+#define __VYM_CODENAME "Save the climate day"
 
 #endif
