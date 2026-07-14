@@ -101,8 +101,8 @@ if (GIT_FOUND)
         configure_file(${CMAKE_SOURCE_DIR}/src/git.h.in ${CMAKE_SOURCE_DIR}/src/git.h)
     else()
         message(STATUS "vym: no git repo found in ${CMAKE_SOURCE_DIR}")
-    endif (GIT_REPO_FOUND)
-endif (GIT_FOUND)
+    endif ()
+endif ()
 
 # Translations
 #
