@@ -51,6 +51,7 @@ class VymModelWrapper : public QObject {
     bool loadBackgroundImage(const QString &imagePath);
     bool loadBranchReplace(QString filename, BranchWrapper *bw);
     bool loadDataInsert(QString filename, int pos = -1, BranchWrapper *bw = nullptr);
+    bool moveSelectionToTarget(BranchWrapper *dst);
     void moveSlideDown(int n);
     void moveSlideDown();
     void moveSlideUp(int n);

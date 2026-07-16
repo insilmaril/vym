@@ -4741,6 +4741,9 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         endMoveRows();
         emit layoutChanged();
 
+        // Insert further branches after this one to keep their original order
+        num_dst = bi->num() + 1;
+
         // Update upLink of BranchContainer to *parent* BC of destination
         bc->linkTo(dstBC);
 
@@ -4799,6 +4802,48 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
     // Restore selection, which was lost when removing rows
     select(selectedItems);
+
+    return true;
+}
+
+bool VymModel::moveSelectionToTarget(BranchItem *dst)
+{
+    if (!dst)
+        return false;
+
+    QList <BranchItem*> branches = getSelectedBranches();
+    if (branches.isEmpty())
+        return false;
+
+    // Find branch, which will be selected after moving. Makes it easier
+    // to quickly resort using the MoveTo function.
+    // Look for nearest sibling of first selection, which is not moved itself
+    BranchItem *nextSelection = nullptr;
+    BranchItem *pi = branches.first()->parentBranch();
+    if (pi && pi != rootItem) {
+        int n = branches.first()->num();
+        for (int i = n + 1; i < pi->branchCount() && !nextSelection; i++)
+            if (!branches.contains(pi->getBranchNum(i)))
+                nextSelection = pi->getBranchNum(i);
+
+        for (int i = n - 1; i >= 0 && !nextSelection; i--)
+            if (!branches.contains(pi->getBranchNum(i)))
+                nextSelection = pi->getBranchNum(i);
+
+        if (!nextSelection)
+            nextSelection = pi;
+    }
+
+    if (!relinkBranches(branches, dst, -1))
+        return false;
+
+    if (nextSelection)
+        select(nextSelection);
+
+    QString repeatAction = QString("m = vym.currentMap();");
+    repeatAction += QString(" dst = m.findBranchById(\"%1\");").arg(dst->getUuid().toString());
+    repeatAction += " m.moveSelectionToTarget(dst);";
+    mainWindow->setRepeatAction(repeatAction);
 
     return true;
 }

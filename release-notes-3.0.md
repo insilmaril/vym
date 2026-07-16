@@ -87,6 +87,10 @@ Thanks for using vym!
 
 Uwe Drechsel - July 2026
 
+## Unreleased
+### Bugfixes
+ * [#217](https://github.com/insilmaril/vym/issues/217) Moving selected branches to a target can be repeated using "."-key
+
 ## Version 2.9.617
 ### Bugfixes
  * [#210](https://github.com/insilmaril/vym/issues/210) BranchPropertyEditor not updated when changing maps

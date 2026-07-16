@@ -540,6 +540,15 @@ class VymModel : public TreeModel {
 
     bool relinkTo(const QString &dest, int num);
 
+    /*! \brief Move selected branches to target dst
+
+        Relinks all selected branches to dst and afterwards selects a
+        branch near the original position, which makes it easier to
+        quickly resort several branches. The action can be repeated
+        with the "."-key.
+    */
+    bool moveSelectionToTarget(BranchItem *dst);
+
   public:
     void deleteSelection(ulong selID = 0); //!< Delete selection
     void deleteKeepChildren(BranchItem *bi = nullptr); //!< remove branch, but keep children

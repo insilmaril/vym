@@ -747,6 +747,11 @@ void Main::setupAPI()
     c->setComment("Replace branch with data from given path");
     modelCommands.append(c);
 
+    c = new Command("moveSelectionToTarget", Command::BranchSel, Command::BoolPar);
+    c->setComment("Move selected branches to target branch");
+    c->addParameter(Command::BranchPar, false, "Target branch");
+    modelCommands.append(c);
+
     c = new Command("moveSlideDown", Command::AnySel);
     modelCommands.append(c);
 
@@ -6159,41 +6164,9 @@ void Main::editMoveToTarget()
         QAction *a = targetsContextMenu->exec(QCursor::pos());
         if (a) {
             TreeItem *dsti = model->findID(a->data().toUInt());
-            /*
-            BranchItem *selbi = model->getSelectedBranch();
-            if (!selbi)
-                return;
-            */
 
-            QList<TreeItem *> itemList = model->getSelectedItems();
-            if (itemList.count() < 1) return;
-
-            if (dsti && dsti->hasTypeBranch() ) {
-                BranchItem *selbi;
-                BranchItem *pi;
-                foreach (TreeItem *ti, itemList) {
-                    if (ti->hasTypeBranch() )
-                    {
-                        selbi = (BranchItem*)ti;
-                        pi = selbi->parentBranch();
-                        
-                        // If branch below exists, select that one
-                        // Makes it easier to quickly resort using the MoveTo function
-                        BranchItem *below = pi->getBranchNum(selbi->num() + 1);
-                        if (below)
-                            model->select(below);
-                        else {
-                            BranchItem *above = pi->getBranchNum(selbi->num() - 1);
-                            if (above)
-                                model->select(above);
-                            else if (pi)
-                                model->select(pi);
-                        }
-
-                        model->relinkBranch(selbi, (BranchItem *)dsti, -1);
-                    }
-                }
-            }
+            if (dsti && dsti->hasTypeBranch())
+                model->moveSelectionToTarget((BranchItem *)dsti);
         }
     }
 }
