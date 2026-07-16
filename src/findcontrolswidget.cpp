@@ -70,6 +70,8 @@ FindControlsWidget::FindControlsWidget(QWidget *)
 
 QString FindControlsWidget::getFindText() { return findcombo->currentText(); }
 
+bool FindControlsWidget::getSearchNotes() { return filterNotesButton->isChecked(); }
+
 void FindControlsWidget::nextPressed()
 {
     if (findcombo->count() < findcombo->maxCount())

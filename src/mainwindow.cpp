@@ -4341,6 +4341,13 @@ void Main::editorChanged()
         updateQueries(vm);
         taskEditor->setMapName(vm->getMapName());
         updateDockWidgetTitles(vm);
+
+        // Re-run search in the newly selected map, so the FindResultWidget
+        // reflects the current map instead of the previous one (issue #216)
+        if (findResultWidget->isVisible() &&
+            !findResultWidget->getFindText().isEmpty())
+            editFindNext(findResultWidget->getFindText(),
+                         findResultWidget->getSearchNotes());
     }
 
     // Update BranchPropertyEditor to reflect the map of the current tab.
