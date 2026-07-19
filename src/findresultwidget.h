@@ -29,6 +29,7 @@ class FindResultWidget : public QWidget {
     void addItem(TreeItem *ti);
     void addItem(const QString &s);
     QString getFindText();
+    bool getSearchNotes();
 
   public slots:
     void popup();
