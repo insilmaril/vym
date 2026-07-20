@@ -8,6 +8,7 @@
 #include <QStyleFactory>
 
 #include "branchpropeditor.h"
+#include "buildinfo.h"
 #include "command.h"
 #include "debuginfo.h"
 #include "findresultwidget.h"
