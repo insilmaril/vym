@@ -62,6 +62,13 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
 
+# Build date
+string(TIMESTAMP BUILD_DATE_IN "%Y-%m-%d")
+add_compile_definitions(BUILD_DATE_IN="${BUILD_DATE_IN}")
+configure_file(
+    ${CMAKE_SOURCE_DIR}/src/buildinfo.h.in
+    ${CMAKE_SOURCE_DIR}/src/buildinfo.h)
+
 # Check if git is installed AND if we are inside a git repo, to get the
 # current branch and commit hash
 #
@@ -69,12 +76,13 @@ find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
 #
 find_package (Git)
 if (GIT_FOUND)
-    message("vym: found git ${GIT_EXECUTABLE} with version ${GIT_VERSION_STRING}")
+    message(STATUS "vym: found git ${GIT_EXECUTABLE} with version ${GIT_VERSION_STRING}")
 
     execute_process(
         COMMAND ${GIT_EXECUTABLE} -C ${CMAKE_SOURCE_DIR} rev-parse --is-inside-work-tree
         RESULT_VARIABLE RESULT
         OUTPUT_VARIABLE GIT_REPO_FOUND)
+    string (STRIP ${GIT_REPO_FOUND} GIT_REPO_FOUND)
 
     if (GIT_REPO_FOUND STREQUAL "true")
         message(STATUS "vym: git repo found in ${CMAKE_SOURCE_DIR}")
@@ -92,7 +100,7 @@ if (GIT_FOUND)
         string (STRIP ${GIT_BRANCH} GIT_BRANCH)
         string (STRIP ${GIT_COMMIT_HASH} GIT_COMMIT_HASH)
 
-        message(STATUS "vym: git branch: ${OUTPUT} - commit: ${GIT_COMMIT_HASH}")
+        message(STATUS "vym: git branch: \"${GIT_BRANCH}\" - commit ${GIT_COMMIT_HASH}")
 
         add_compile_definitions(
             GIT_BRANCH="${GIT_BRANCH}"
@@ -101,6 +109,7 @@ if (GIT_FOUND)
         configure_file(${CMAKE_SOURCE_DIR}/src/git.h.in ${CMAKE_SOURCE_DIR}/src/git.h)
     else()
         message(STATUS "vym: no git repo found in ${CMAKE_SOURCE_DIR}")
+        message(STATUS "vym: GIT_REPO_FOUND=${GIT_REPO_FOUND}")
     endif ()
 endif ()
 

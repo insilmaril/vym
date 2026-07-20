@@ -1,2 +1,2 @@
-#define GIT_BRANCH "release"
-#define GIT_COMMIT_HASH "7dc77271"
+#define GIT_BRANCH "develop"
+#define GIT_COMMIT_HASH "76fb8b53"

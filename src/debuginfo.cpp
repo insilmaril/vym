@@ -1,5 +1,5 @@
 #include "debuginfo.h"
-#include "git.h"
+
 
 #include <QCoreApplication>
 #include <QDir>
@@ -10,6 +10,7 @@
 #include <QStyleFactory>
 #include <QTranslator>
 
+#include "buildinfo.h"
 #include "settings.h"
 
 extern bool usingDarkTheme;
