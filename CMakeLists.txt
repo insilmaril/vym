@@ -68,7 +68,6 @@ add_compile_definitions(BUILD_DATE_IN="${BUILD_DATE_IN}")
 configure_file(
     ${CMAKE_SOURCE_DIR}/src/buildinfo.h.in
     ${CMAKE_SOURCE_DIR}/src/buildinfo.h)
-message(STATUS "vym: Build date: ${BUILD_DATE_IN}")
 
 # Check if git is installed AND if we are inside a git repo, to get the
 # current branch and commit hash
@@ -77,7 +76,7 @@ message(STATUS "vym: Build date: ${BUILD_DATE_IN}")
 #
 find_package (Git)
 if (GIT_FOUND)
-    message("vym: found git ${GIT_EXECUTABLE} with version ${GIT_VERSION_STRING}")
+    message(STATUS "vym: found git ${GIT_EXECUTABLE} with version ${GIT_VERSION_STRING}")
 
     execute_process(
         COMMAND ${GIT_EXECUTABLE} -C ${CMAKE_SOURCE_DIR} rev-parse --is-inside-work-tree
@@ -101,7 +100,7 @@ if (GIT_FOUND)
         string (STRIP ${GIT_BRANCH} GIT_BRANCH)
         string (STRIP ${GIT_COMMIT_HASH} GIT_COMMIT_HASH)
 
-        message(STATUS "vym: git branch: ${OUTPUT} - commit: ${GIT_COMMIT_HASH}")
+        message(STATUS "vym: git branch: \"${GIT_BRANCH}\" - commit ${GIT_COMMIT_HASH}")
 
         add_compile_definitions(
             GIT_BRANCH="${GIT_BRANCH}"
