@@ -7034,10 +7034,10 @@ void VymModel::unsetContextPos()
 
 void VymModel::reposition(bool force)
 {
+    //qDebug() << "VM::reposition start force=" << force << "  repositionBlocked=" << repositionBlocked;
+
     if (!force && repositionBlocked)
         return;
-
-    //qDebug() << "VM::reposition start force=" << force;
 
     // Reposition containers
     BranchItem *bi;
