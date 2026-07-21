@@ -1,0 +1,1 @@
+#define __VYM_BUILD_DATE "${BUILD_DATE_IN}"

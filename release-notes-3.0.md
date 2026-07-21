@@ -87,7 +87,7 @@ Thanks for using vym!
 
 Uwe Drechsel - July 2026
 
-## Unreleased
+## Version 3.0.1
 ### Bugfixes
  * Fixed wrong x/y positions of branches while moving multiple selected branches with the mouse; they are now animated into their stacked positions (if animations are enabled)
  * [#217](https://github.com/insilmaril/vym/issues/217) Moving selected branches to a target can be repeated using "."-key
