@@ -13,6 +13,7 @@
 #include "debuginfo.h"
 #include "findresultwidget.h"
 #include "flagrow-master.h"
+#include "git.h"
 #include "headingeditor.h"
 #include "macros.h"
 #include "mainwindow.h"
