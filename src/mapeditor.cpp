@@ -2100,7 +2100,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // Add selected branches and images temporary to tmpParentContainer,
     // if they are not there yet:
     BranchContainer *bc_first = nullptr;
-    BranchContainer *bc_prev  = nullptr;
+    bool branchesAttached = false;  // True if branches were just added to tmpParentContainer
     if (movingItems.count() > 0 && (tmpParentContainer->childrenCount() == 0)) {
         BranchContainer *bc;
         foreach (TreeItem *ti, movingItems)
@@ -2135,25 +2135,17 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                     bc->setOriginalPos();
                     bc->setOriginalOrientation();   // Also sets originalParentBranchContainer
                     tmpParentContainer->addToBranchesContainer(bc);
+                    branchesAttached = true;
 
                 }
 
-                if (bc_first && bc_first != bc) {
-                    QPointF p;
-                    // Animate other items to position horizontally centered below first one
-                    if (bc_first->getOriginalOrientation() == BranchContainer::RightOfParent) {
-                        p = tmpParentContainer->mapFromItem(bc,
-                                bc->alignTo(Container::TopLeft, bc_prev, Container::BottomLeft));
-                    } else if (bc_first->getOriginalOrientation() == BranchContainer::LeftOfParent)
-                        p = tmpParentContainer->mapFromItem(bc,
-                                bc->alignTo(Container::TopRight, bc_prev, Container::BottomRight));
-                    else
-                        p = tmpParentContainer->mapFromItem(bc,
-                                bc->alignTo(Container::TopCenter, bc_prev, Container::BottomCenter));
-
-                    startAnimation ( bc, bc->pos(), p);
-                }
-                bc_prev = bc;
+                // Stacking the branches vertically and aligning them left/right
+                // according to orientation is done by tmpParentContainer->reposition()
+                // below (FloatingReservedSpace layout). Animating them into position
+                // must happen *after* reposition() has calculated the final positions:
+                // an active animation makes Container::setPos() ignore the coordinates
+                // calculated during reposition, so animating with positions guessed
+                // here would leave the moved branches at wrong x/y positions.
             } else if (ti->hasTypeImage()) {
                 ImageContainer *ic = ((ImageItem*)ti)->getImageContainer();
                 if (ic->parentItem() != tmpParentContainer->getImagesContainer()) {
@@ -2173,6 +2165,29 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
                 qWarning("ME::moveObject  Huh? I'm confused. No BC, IC or XLink moved");
         }
     } // add to tmpParentContainer
+
+    // If branches have just been attached, remember their current (scattered)
+    // positions, so they can be animated into the stacked positions calculated
+    // by reposition() below - but only if animations are enabled globally.
+    QList <BranchContainer*> animationContainers;
+    QList <QPointF> animationStartPositions;
+    if (branchesAttached && animationUse) {
+        foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
+            animationContainers << bc;
+            animationStartPositions << bc->pos();
+        }
+    }
+
+    tmpParentContainer->reposition(); // Reposition children of tmpParentContainer, if necessary
+
+    // Now that final positions are known, animate the branches into place
+    if (!animationContainers.isEmpty()) {
+        int i = 0;
+        foreach (BranchContainer *bc, animationContainers) {
+            startAnimation(bc, animationStartPositions.at(i), bc->pos());
+            i++;
+        }
+    }
 
     if (tmpParentContainer->childBranches().count() > 0)
         // If ME::moveObject is called AFTER tPC has been filled previously, 
