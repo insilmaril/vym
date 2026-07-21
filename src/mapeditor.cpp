@@ -213,9 +213,6 @@ MapEditor::MapEditor(VymModel *vm)
     winter = nullptr;
 
     // animations
-    animationUse = settings.value("/animation/use", true) .toBool();
-    animationTicks = settings.value("/animation/snapback/ticks", 50).toInt();
-    animationInterval = settings.value("/animation/snapback/interval", 15).toInt();
     animatedContainers.clear();
     animationTimer = new QTimer(this);
     connect(animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
@@ -516,7 +513,7 @@ void MapEditor::animate()
     }
 
     if (!animatedContainers.isEmpty())
-        animationTimer->start(animationInterval);
+        animationTimer->start(settings.value("/animation/snapback/interval", 15).toInt());
 
     model->repositionXLinks();
 }
@@ -538,7 +535,7 @@ void MapEditor::startAnimation(Container *c, const QPointF &start,
         AnimPoint ap;
         ap.setStart(start);
         ap.setDest(dest);
-        ap.setTicks(animationTicks);
+        ap.setTicks(settings.value("/animation/snapback/ticks", 50).toInt());
         ap.setAnimated(true);
         c->setAnimation(ap);
         if (!animatedContainers.contains(c))
@@ -2171,7 +2168,7 @@ void MapEditor::moveObject(QMouseEvent *e, const QPointF &p_event)
     // by reposition() below - but only if animations are enabled globally.
     QList <BranchContainer*> animationContainers;
     QList <QPointF> animationStartPositions;
-    if (branchesAttached && animationUse) {
+    if (branchesAttached && settings.value("/animation/use", true).toBool()) {
         foreach (BranchContainer *bc, tmpParentContainer->childBranches()) {
             animationContainers << bc;
             animationStartPositions << bc->pos();
@@ -2564,7 +2561,7 @@ void MapEditor::mouseReleaseEvent(QMouseEvent *e)
                 model->saveStateEndScript();
             }   // Empty tmpParenContainer
 
-            if (animationUse && animationContainers.count() > 0) {
+            if (settings.value("/animation/use", true) .toBool() && animationContainers.count() > 0) {
                 int i = 0;
                 foreach(BranchContainer *bc, animationContainers) {
                     startAnimation(bc, animationCurrentPositions.at(i), bc->getOriginalPos());
