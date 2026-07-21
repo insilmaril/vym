@@ -87,6 +87,10 @@ Thanks for using vym!
 
 Uwe Drechsel - July 2026
 
+## Unreleased
+### Bugfixes
+ * Bugfix: MapEditor animation settings not only considered when map is created
+
 ## Version 3.0.1
 ### Bugfixes
  * Fixed wrong x/y positions of branches while moving multiple selected branches with the mouse; they are now animated into their stacked positions (if animations are enabled)
