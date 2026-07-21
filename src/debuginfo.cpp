@@ -11,6 +11,7 @@
 #include <QTranslator>
 
 #include "buildinfo.h"
+#include "git.h"
 #include "settings.h"
 
 extern bool usingDarkTheme;
