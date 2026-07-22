@@ -116,6 +116,9 @@ bool ExportBase::execDialog()
                                      QFileDialog::DontConfirmOverwrite);
 
     if (!fn.isEmpty()) {
+
+// Macs check for replacing existing file in native dialog
+#ifndef Q_OS_MACOS
         if (QFile(fn).exists()) {
             WarningDialog dia;
             dia.showCancelButton(true);
@@ -131,6 +134,7 @@ bool ExportBase::execDialog()
                 return false;
             }
         }
+#endif
         dirPath = fn.left(fn.lastIndexOf("/"));
         filePath = fn;
         return true;

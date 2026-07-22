@@ -4759,6 +4759,8 @@ bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
             return false;
         }
 
+// Macs check for replacing existing file in native dialog
+#ifndef Q_OS_MACOS
         // Ask if existing file can be overwritten
         QMessageBox mb(
             QMessageBox::Warning,
@@ -4768,6 +4770,7 @@ bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
         mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
         mb.exec();
         if (mb.clickedButton() != overwriteButton) return false;
+#endif
     }
     else {
         // New file, add extension to filename, if missing

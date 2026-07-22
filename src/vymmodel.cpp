@@ -1057,6 +1057,9 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
 
         if (!fn.isEmpty()) {
             lastImageDir.setPath(fn.left(fn.lastIndexOf("/")));
+
+// Macs check for replacing existing file in native dialog
+#ifndef Q_OS_MACOS
             if (QFile(fn).exists()) {
                 QMessageBox mb(
                    QMessageBox::Warning,
@@ -1064,16 +1067,17 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
                    tr("The file %1 exists already.\n"
                       "Do you want to overwrite it?")
                        .arg(fn));
-                mb.addButton(
+                QPushButton *overwriteButton = mb.addButton(
                     tr("Overwrite"),
                     QMessageBox::AcceptRole);
                 mb.addButton(
                     tr("Cancel"),
                     QMessageBox::RejectRole);
                 mb.exec();
-                if (mb.result() != QMessageBox::AcceptRole)
+                if (mb.clickedButton() != overwriteButton)
                     return;
             }
+#endif
             if (!ii->saveImage(fn))
                 QMessageBox::critical(0, tr("Critical Error"),
                                       tr("Couldn't save %1").arg(fn));
