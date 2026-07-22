@@ -5295,6 +5295,10 @@ bool VymModel::scrollBranch(BranchItem *bi)
             logAction(r, c, __func__);
             saveState(u, r, c);
             emitDataChanged(bi);
+
+            if (mapEditor)
+                mapEditor->stopContainerAnimations();
+
             reposition();
             return true;
         }
@@ -5315,6 +5319,9 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             logAction(r, c, __func__);
             saveState(u, r, c);
             emitDataChanged(bi);
+
+            if (mapEditor)
+                mapEditor->stopContainerAnimations();
 
             reposition();
             return true;
@@ -5358,6 +5365,10 @@ void VymModel::unscrollSubtree(BranchItem *bi)
         }
     }
     updateActions();
+
+    if (mapEditor)
+        mapEditor->stopContainerAnimations();
+
     reposition();
 }
 

@@ -89,6 +89,7 @@ Uwe Drechsel - July 2026
 
 ## Unreleased
 ### Bugfixes
+ * [#218](https://github.com/insilmaril/vym/issues/218) Scroll/unscroll of a branch while it is animated no longer breaks its positioning
  * Bugfix: MapEditor animation settings not only considered when map is created
 
 ## Version 3.0.1
