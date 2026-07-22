@@ -4512,6 +4512,10 @@ bool Main::fileLoad(QString fn, const File::LoadMode &lmode,
                     vm = currentMapEditor()->getModel();
                     vm->setFilePath(fn);
                     updateTabName(vm);
+                    // Notify satellite editors about the new map, e.g. so the
+                    // TaskEditor's "current map only" filter uses the new map
+                    // name instead of the previous (default) one. (See #174)
+                    editorChanged();
                     statusBar()->showMessage("Created " + fn);
                     return true;
                 }
