@@ -4525,6 +4525,10 @@ bool Main::fileLoad(QString fn, const File::LoadMode &lmode,
                     vm = currentMapEditor()->getModel();
                     vm->setFilePath(fn);
                     updateTabName(vm);
+                    // Notify satellite editors about the new map, e.g. so the
+                    // TaskEditor's "current map only" filter uses the new map
+                    // name instead of the previous (default) one. (See #174)
+                    editorChanged();
                     statusBar()->showMessage("Created " + fn);
                     return true;
                 }
@@ -4768,6 +4772,8 @@ bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
             return false;
         }
 
+// Macs check for replacing existing file in native dialog
+#ifndef Q_OS_MACOS
         // Ask if existing file can be overwritten
         QMessageBox mb(
             QMessageBox::Warning,
@@ -4777,6 +4783,7 @@ bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
         mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
         mb.exec();
         if (mb.clickedButton() != overwriteButton) return false;
+#endif
     }
     else {
         // New file, add extension to filename, if missing
