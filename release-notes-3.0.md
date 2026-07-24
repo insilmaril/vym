@@ -95,6 +95,8 @@ Uwe Drechsel - July 2026
  * Bugfix: MapEditor animation settings not only considered when map is created
  * Fixed floating branches (e.g. mainbranches) jumping to a wrong position when dragged and released without relinking; they now stay where they are dropped
  * Fixed the first (or a single) dragged branch briefly animating to a wrong position inside the temporary move container
+ * Fixed downlink to children starting at the branch center (as for a MapCenter) while a mainbranch is being dragged; the original downlink position is now kept
+ * Fixed orientation of floating children flipping and flickering while their parent branch is being dragged; the orientation is now kept stable during the drag
 
 ## Version 3.0.1
 ### Bugfixes

@@ -739,8 +739,10 @@ QPointF BranchContainer::downLinkPos(const Orientation &orientationChild)
             ornamentsContainer->bottomCenter());
 
     if (frameType(true) != FrameContainer::NoFrame) {
-        if (!parentBranchContainer())
+        if (!parentBranchContainer() && movingStateInt != Moving)
             // Framed MapCenter: Use center of frame    // FIXME-3 downLinkPos should depend on layout, not depth
+            // While moving, parentBranchContainer() also returns nullptr, but a
+            // moved branch must keep its edge downLinkPos, not the center.
             return ornamentsContainer->mapToScene(ornamentsContainer->center());
         else {
             // Framed branch: Use left or right edge
@@ -1441,7 +1443,13 @@ void BranchContainer::reposition()
         // on MovingState
         if (pbc) {
             if (pbc->hasFloatingBranchesLayout()) {
-                if (scenePos().x() > pbc->scenePos().x())   // FIXME-3 Potentially problematic for rotated elements...
+                if (pbc->movingState() == Moving) {
+                    // While the parent is being dragged its container origin
+                    // (used as reference below) is not stable, so recomputing
+                    // the orientation would make the children flip and flicker.
+                    // Keep the orientation the child had before the drag.
+                }
+                else if (scenePos().x() > pbc->scenePos().x())   // FIXME-3 Potentially problematic for rotated elements...
                                                             // but OTOH using relative coord
                                                             // often pos.x() == 0
                     orientation = RightOfParent;
