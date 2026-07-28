@@ -93,6 +93,7 @@ Uwe Drechsel - July 2026
  * [#157](https://github.com/insilmaril/vym/issues/157) New dialog to set the parameters of the selection box: border width, border color and background color. Both colors can be set including their opacity
 
 ### Bugfixes
+ * Selecting the map background color no longer creates an undo step for every color touched while the color dialog is open, but only one for the finally accepted color. Cancelling now also restores an existing background image, which previously was removed by the preview
  * [#150](https://github.com/insilmaril/vym/issues/150) No more redundant overwrite confirmation on macOS when saving a map, saving an image or exporting; the manual confirmation is kept on Windows and Linux
  * [#174](https://github.com/insilmaril/vym/issues/174) Tasks now visible in a new map created from a command-line filename (TaskEditor map filter was left stale)
  * [#218](https://github.com/insilmaril/vym/issues/218) Scroll/unscroll of a branch while it is animated no longer breaks its positioning

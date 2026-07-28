@@ -7342,6 +7342,11 @@ void VymModel::setBackgroundColor(QColor col)
 
     saveStateEndScript();
 
+    previewBackgroundColor(col);
+}
+
+void VymModel::previewBackgroundColor(const QColor &col)
+{
     mapDesignInt->setBackgroundColor(col);  // Used for backroundRole in TreeModel::data()
 
     vymView->updateColors();

@@ -789,6 +789,12 @@ class VymModel : public TreeModel {
 
     QColor backgroundColor();
     void setBackgroundColor(QColor);
+
+    //! Set background color without saving state for undo and without
+    //! unsetting an existing background image. Used for live preview,
+    //! e.g. while a color is selected in BackgroundDialog
+    void previewBackgroundColor(const QColor &);
+
     bool loadBackgroundImage(const QString &);
     void setBackgroundImageName(const QString &);
     void unsetBackgroundImage();
