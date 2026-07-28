@@ -7662,17 +7662,16 @@ void VymModel::setSelectionPenColor(QColor col)
     if (!col.isValid())
         return;
 
+    // Use HexArgb, so that also the opacity is restored by undo/redo
     QPen selPen = mapDesignInt->selectionPen();
-    QString uc = QString("map.setSelectionPenColor (\"%1\");").arg(selPen.color().name());
-    QString rc = QString("map.setSelectionPenColor (\"%1\");").arg(col.name());
-    QString com = QString("Set pen color of selection box to %1").arg(col.name());
+    QString uc = QString("map.setSelectionPenColor (\"%1\");").arg(selPen.color().name(QColor::HexArgb));
+    QString rc = QString("map.setSelectionPenColor (\"%1\");").arg(col.name(QColor::HexArgb));
+    QString com = QString("Set pen color of selection box to %1").arg(col.name(QColor::HexArgb));
     logAction(rc, com, __func__);
     saveState(uc, rc, com);
 
     selPen.setColor(col);
-    mapDesignInt->setSelectionPen(selPen);
-    vymView->updateColors();
-    updateSelection(selModel->selection(), QItemSelection());
+    previewSelectionPen(selPen);
 }
 
 QColor VymModel::getSelectionPenColor() {
@@ -7690,9 +7689,7 @@ void VymModel::setSelectionPenWidth(qreal w)
     saveState(uc, rc, com);
 
     selPen.setWidth(w);
-    mapDesignInt->setSelectionPen(selPen);
-    vymView->updateColors();
-    updateSelection(selModel->selection(), QItemSelection());
+    previewSelectionPen(selPen);
 }
 
 qreal VymModel::getSelectionPenWidth() {
@@ -7704,21 +7701,38 @@ void VymModel::setSelectionBrushColor(QColor col)
     if (!col.isValid())
         return;
 
+    // Use HexArgb, so that also the opacity is restored by undo/redo
     QBrush selBrush = mapDesignInt->selectionBrush();
-    QString uc = QString("map.setSelectionBrushColor (\"%1\");").arg(selBrush.color().name());
-    QString rc = QString("map.setSelectionBrushColor (\"%1\");").arg(col.name());
-    QString com = QString("Set Brush color of selection box to %1").arg(col.name());
+    QString uc = QString("map.setSelectionBrushColor (\"%1\");").arg(selBrush.color().name(QColor::HexArgb));
+    QString rc = QString("map.setSelectionBrushColor (\"%1\");").arg(col.name(QColor::HexArgb));
+    QString com = QString("Set Brush color of selection box to %1").arg(col.name(QColor::HexArgb));
     logAction(rc, com, __func__);
     saveState(uc, rc, com);
 
     selBrush.setColor(col);
-    mapDesignInt->setSelectionBrush(selBrush);
-    vymView->updateColors();
-    updateSelection(selModel->selection(), QItemSelection());
+    previewSelectionBrush(selBrush);
 }
 
 QColor VymModel::getSelectionBrushColor() {
     return mapDesignInt->selectionBrush().color();
+}
+
+void VymModel::previewSelectionPen(const QPen &pen)
+{
+    mapDesignInt->setSelectionPen(pen);
+    updateSelectionBox();
+}
+
+void VymModel::previewSelectionBrush(const QBrush &brush)
+{
+    mapDesignInt->setSelectionBrush(brush);
+    updateSelectionBox();
+}
+
+void VymModel::updateSelectionBox()
+{
+    vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)

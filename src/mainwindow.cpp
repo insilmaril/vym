@@ -53,6 +53,7 @@
 #include "scripteditor.h"
 #include "vym-wrapper.h"
 #include "scriptoutput.h"
+#include "selection-dialog.h"
 #include "settings.h"
 #include "shortcuts.h"
 #include "showtextdialog.h"
@@ -2763,10 +2764,10 @@ void Main::setupFormatActions()
     connect(a, SIGNAL(triggered()), this, SLOT(formatSelectLinkColor()));
     actionFormatLinkColor = a;
 
-    a = new QAction(pix, tr("Set &Selection Color") + "...", this);
+    a = new QAction(pix, tr("Set &Selection box") + "...", this);
     formatMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectSelectionColor()));
-    actionFormatSelectionColor = a;
+    connect(a, SIGNAL(triggered()), this, SLOT(formatSelection()));
+    actionFormatSelection = a;
 
     a = new QAction(pix, tr("Set &Background color and image") + "...", this);
     formatMenu->addAction(a);
@@ -3916,7 +3917,7 @@ void Main::setupContextMenus()
     canvasContextMenu->addSeparator();
 
     canvasContextMenu->addAction(actionFormatLinkColor);
-    canvasContextMenu->addAction(actionFormatSelectionColor);
+    canvasContextMenu->addAction(actionFormatSelection);
     canvasContextMenu->addAction(actionFormatBackground);
 
     canvasContextMenu->addSeparator();
@@ -6412,17 +6413,12 @@ void Main::formatSelectLinkColor()
     }
 }
 
-void Main::formatSelectSelectionColor() // FEATURE #157  no Pen/Brush support yet
+void Main::formatSelection()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(
-                m->getSelectionBrushColor(),
-                this,
-                tr("Color of selection box","Mainwindow"),
-                QColorDialog::ShowAlphaChannel);
-        m->setSelectionPenColor(col);
-        m->setSelectionBrushColor(col);
+        SelectionDialog dia(m);
+        dia.exec();
     }
 }
 
@@ -7243,7 +7239,7 @@ void Main::updateActions()
         pix.fill(m->mapDesign()->backgroundColor());
         actionFormatBackground->setIcon(pix);
         pix.fill(m->getSelectionBrushColor());
-        actionFormatSelectionColor->setIcon(pix);
+        actionFormatSelection->setIcon(pix);
         pix.fill(m->mapDesign()->defaultLinkColor());
         actionFormatLinkColor->setIcon(pix);
 

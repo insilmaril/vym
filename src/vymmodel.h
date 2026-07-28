@@ -939,6 +939,17 @@ class VymModel : public TreeModel {
     void setSelectionBrushColor(QColor);
     QColor getSelectionBrushColor();
 
+    //! Set pen and brush of selection box without saving state for undo.
+    //! Used for live preview, e.g. while a color is selected in SelectionDialog
+    void previewSelectionPen(const QPen &);
+    void previewSelectionBrush(const QBrush &);
+
+  private:
+    //! Redraw selection box after its pen or brush has changed
+    void updateSelectionBox();
+
+  public:
+
     ////////////////////////////////////////////
     // Slide related
     ////////////////////////////////////////////

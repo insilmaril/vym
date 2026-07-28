@@ -90,6 +90,7 @@ Uwe Drechsel - July 2026
 ## Unreleased
 ### Features
  * [#219](https://github.com/insilmaril/vym/issues/219) New action in the Format menu of the TextEditors to remove the background colors of the selected text, e.g. to clean up text pasted from web pages
+ * [#157](https://github.com/insilmaril/vym/issues/157) New dialog to set the parameters of the selection box: border width, border color and background color. Both colors can be set including their opacity
 
 ### Bugfixes
  * [#150](https://github.com/insilmaril/vym/issues/150) No more redundant overwrite confirmation on macOS when saving a map, saving an image or exporting; the manual confirmation is kept on Windows and Linux

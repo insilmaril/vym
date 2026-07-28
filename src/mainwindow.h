@@ -307,7 +307,7 @@ class Main : public QMainWindow {
     void formatLinkStylePolyParabel();
     void formatBackground();
     void formatSelectLinkColor();
-    void formatSelectSelectionColor();
+    void formatSelection();
     void formatSelectFont();
     void formatToggleLinkColorHint();
     void formatHideLinkUnselected();
@@ -659,7 +659,7 @@ class Main : public QMainWindow {
     QAction *actionFormatLinkColorHint;
     QAction *actionFormatBackground;
     QAction *actionFormatLinkColor;
-    QAction *actionFormatSelectionColor;
+    QAction *actionFormatSelection;
     QAction *actionFormatFont;
 
     QAction *actionZoomIn;
