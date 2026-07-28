@@ -88,6 +88,9 @@ Thanks for using vym!
 Uwe Drechsel - July 2026
 
 ## Unreleased
+### Features
+ * [#219](https://github.com/insilmaril/vym/issues/219) New action in the Format menu of the TextEditors to remove the background colors of the selected text, e.g. to clean up text pasted from web pages
+
 ### Bugfixes
  * [#150](https://github.com/insilmaril/vym/issues/150) No more redundant overwrite confirmation on macOS when saving a map, saving an image or exporting; the manual confirmation is kept on Windows and Linux
  * [#174](https://github.com/insilmaril/vym/issues/174) Tasks now visible in a new map created from a command-line filename (TaskEditor map filter was left stale)
