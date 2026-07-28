@@ -68,6 +68,7 @@ add_compile_definitions(BUILD_DATE_IN="${BUILD_DATE_IN}")
 configure_file(
     ${CMAKE_SOURCE_DIR}/src/buildinfo.h.in
     ${CMAKE_SOURCE_DIR}/src/buildinfo.h)
+message(STATUS "vym: Build date: ${BUILD_DATE_IN}")
 
 # Check if git is installed AND if we are inside a git repo, to get the
 # current branch and commit hash
