@@ -233,11 +233,6 @@ void centerDialog(QDialog *dia)
               0.5 * QPoint(dia->rect().width(), dia->rect().height()));
 }
 
-// #include "version.h"
-
-// #include <QDebug>
-// #include <QRegularExpression>
-
 bool versionLowerThanVym(const QString &v)
 {
     // returns true, if Version v <  VYM_VERSION

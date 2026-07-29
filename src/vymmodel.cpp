@@ -1057,6 +1057,9 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
 
         if (!fn.isEmpty()) {
             lastImageDir.setPath(fn.left(fn.lastIndexOf("/")));
+
+// Macs check for replacing existing file in native dialog
+#ifndef Q_OS_MACOS
             if (QFile(fn).exists()) {
                 QMessageBox mb(
                    QMessageBox::Warning,
@@ -1064,16 +1067,17 @@ void VymModel::saveImage(ImageItem *ii, QString fn)
                    tr("The file %1 exists already.\n"
                       "Do you want to overwrite it?")
                        .arg(fn));
-                mb.addButton(
+                QPushButton *overwriteButton = mb.addButton(
                     tr("Overwrite"),
                     QMessageBox::AcceptRole);
                 mb.addButton(
                     tr("Cancel"),
                     QMessageBox::RejectRole);
                 mb.exec();
-                if (mb.result() != QMessageBox::AcceptRole)
+                if (mb.clickedButton() != overwriteButton)
                     return;
             }
+#endif
             if (!ii->saveImage(fn))
                 QMessageBox::critical(0, tr("Critical Error"),
                                       tr("Couldn't save %1").arg(fn));
@@ -4947,6 +4951,9 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
         endMoveRows();
         emit layoutChanged();
 
+        // Insert further branches after this one to keep their original order
+        num_dst = bi->num() + 1;
+
         // Update upLink of BranchContainer to *parent* BC of destination
         bc->linkTo(dstBC);
 
@@ -5005,6 +5012,48 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
 
     // Restore selection, which was lost when removing rows
     select(selectedItems);
+
+    return true;
+}
+
+bool VymModel::moveSelectionToTarget(BranchItem *dst)
+{
+    if (!dst)
+        return false;
+
+    QList <BranchItem*> branches = getSelectedBranches();
+    if (branches.isEmpty())
+        return false;
+
+    // Find branch, which will be selected after moving. Makes it easier
+    // to quickly resort using the MoveTo function.
+    // Look for nearest sibling of first selection, which is not moved itself
+    BranchItem *nextSelection = nullptr;
+    BranchItem *pi = branches.first()->parentBranch();
+    if (pi && pi != rootItem) {
+        int n = branches.first()->num();
+        for (int i = n + 1; i < pi->branchCount() && !nextSelection; i++)
+            if (!branches.contains(pi->getBranchNum(i)))
+                nextSelection = pi->getBranchNum(i);
+
+        for (int i = n - 1; i >= 0 && !nextSelection; i--)
+            if (!branches.contains(pi->getBranchNum(i)))
+                nextSelection = pi->getBranchNum(i);
+
+        if (!nextSelection)
+            nextSelection = pi;
+    }
+
+    if (!relinkBranches(branches, dst, -1))
+        return false;
+
+    if (nextSelection)
+        select(nextSelection);
+
+    QString repeatAction = QString("m = vym.currentMap();");
+    repeatAction += QString(" dst = m.findBranchById(\"%1\");").arg(dst->getUuid().toString());
+    repeatAction += " m.moveSelectionToTarget(dst);";
+    mainWindow->setRepeatAction(repeatAction);
 
     return true;
 }
@@ -5455,6 +5504,10 @@ bool VymModel::scrollBranch(BranchItem *bi)
             logAction(r, c, __func__);
             saveState(u, r, c);
             emitDataChanged(bi);
+
+            if (mapEditor)
+                mapEditor->stopContainerAnimations();
+
             reposition();
             return true;
         }
@@ -5475,6 +5528,9 @@ bool VymModel::unscrollBranch(BranchItem *bi)
             logAction(r, c, __func__);
             saveState(u, r, c);
             emitDataChanged(bi);
+
+            if (mapEditor)
+                mapEditor->stopContainerAnimations();
 
             reposition();
             return true;
@@ -5518,6 +5574,10 @@ void VymModel::unscrollSubtree(BranchItem *bi)
         }
     }
     updateActions();
+
+    if (mapEditor)
+        mapEditor->stopContainerAnimations();
+
     reposition();
 }
 
@@ -6989,10 +7049,10 @@ void VymModel::unsetContextPos()
 
 void VymModel::reposition(bool force)
 {
+    //qDebug() << "VM::reposition start force=" << force << "  repositionBlocked=" << repositionBlocked;
+
     if (!force && repositionBlocked)
         return;
-
-    //qDebug() << "VM::reposition start force=" << force;
 
     // Reposition containers
     BranchItem *bi;
@@ -7282,6 +7342,11 @@ void VymModel::setBackgroundColor(QColor col)
 
     saveStateEndScript();
 
+    previewBackgroundColor(col);
+}
+
+void VymModel::previewBackgroundColor(const QColor &col)
+{
     mapDesignInt->setBackgroundColor(col);  // Used for backroundRole in TreeModel::data()
 
     vymView->updateColors();
@@ -7602,17 +7667,16 @@ void VymModel::setSelectionPenColor(QColor col)
     if (!col.isValid())
         return;
 
+    // Use HexArgb, so that also the opacity is restored by undo/redo
     QPen selPen = mapDesignInt->selectionPen();
-    QString uc = QString("map.setSelectionPenColor (\"%1\");").arg(selPen.color().name());
-    QString rc = QString("map.setSelectionPenColor (\"%1\");").arg(col.name());
-    QString com = QString("Set pen color of selection box to %1").arg(col.name());
+    QString uc = QString("map.setSelectionPenColor (\"%1\");").arg(selPen.color().name(QColor::HexArgb));
+    QString rc = QString("map.setSelectionPenColor (\"%1\");").arg(col.name(QColor::HexArgb));
+    QString com = QString("Set pen color of selection box to %1").arg(col.name(QColor::HexArgb));
     logAction(rc, com, __func__);
     saveState(uc, rc, com);
 
     selPen.setColor(col);
-    mapDesignInt->setSelectionPen(selPen);
-    vymView->updateColors();
-    updateSelection(selModel->selection(), QItemSelection());
+    previewSelectionPen(selPen);
 }
 
 QColor VymModel::getSelectionPenColor() {
@@ -7630,9 +7694,7 @@ void VymModel::setSelectionPenWidth(qreal w)
     saveState(uc, rc, com);
 
     selPen.setWidth(w);
-    mapDesignInt->setSelectionPen(selPen);
-    vymView->updateColors();
-    updateSelection(selModel->selection(), QItemSelection());
+    previewSelectionPen(selPen);
 }
 
 qreal VymModel::getSelectionPenWidth() {
@@ -7644,21 +7706,38 @@ void VymModel::setSelectionBrushColor(QColor col)
     if (!col.isValid())
         return;
 
+    // Use HexArgb, so that also the opacity is restored by undo/redo
     QBrush selBrush = mapDesignInt->selectionBrush();
-    QString uc = QString("map.setSelectionBrushColor (\"%1\");").arg(selBrush.color().name());
-    QString rc = QString("map.setSelectionBrushColor (\"%1\");").arg(col.name());
-    QString com = QString("Set Brush color of selection box to %1").arg(col.name());
+    QString uc = QString("map.setSelectionBrushColor (\"%1\");").arg(selBrush.color().name(QColor::HexArgb));
+    QString rc = QString("map.setSelectionBrushColor (\"%1\");").arg(col.name(QColor::HexArgb));
+    QString com = QString("Set Brush color of selection box to %1").arg(col.name(QColor::HexArgb));
     logAction(rc, com, __func__);
     saveState(uc, rc, com);
 
     selBrush.setColor(col);
-    mapDesignInt->setSelectionBrush(selBrush);
-    vymView->updateColors();
-    updateSelection(selModel->selection(), QItemSelection());
+    previewSelectionBrush(selBrush);
 }
 
 QColor VymModel::getSelectionBrushColor() {
     return mapDesignInt->selectionBrush().color();
+}
+
+void VymModel::previewSelectionPen(const QPen &pen)
+{
+    mapDesignInt->setSelectionPen(pen);
+    updateSelectionBox();
+}
+
+void VymModel::previewSelectionBrush(const QBrush &brush)
+{
+    mapDesignInt->setSelectionBrush(brush);
+    updateSelectionBox();
+}
+
+void VymModel::updateSelectionBox()
+{
+    vymView->updateColors();
+    updateSelection(selModel->selection(), QItemSelection());
 }
 
 void VymModel::setHideTmpMode(TreeItem::HideTmpMode mode)

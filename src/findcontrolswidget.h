@@ -16,6 +16,7 @@ class FindControlsWidget : public QWidget {
 
     FindControlsWidget(QWidget *parent = nullptr);
     QString getFindText();
+    bool getSearchNotes();
 
   public slots:
     void nextPressed();

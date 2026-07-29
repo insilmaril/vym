@@ -13,6 +13,7 @@
 #include <QPushButton>
 #include <QPrinter>
 #include <QStatusBar>
+#include <QTextTable>
 #include <QToolBar>
 #include <QToolButton>
 
@@ -551,6 +552,13 @@ void TextEditor::setupFormatActions()
     formatToolBar->addWidget(tb);
     tb->setFixedSize(22,44);
 
+    a = new QAction(tr("&Remove background colors of selected text"), this);
+    switchboard.addAction(a, "textRemoveBackgroundColors", shortcutScope, tag);
+    formatMenu->addAction(a);
+    connect(a, SIGNAL(triggered()), this, SLOT(removeBackgroundColors()));
+    filledEditorRichTextActions << a;
+    actionRemoveBackgroundColors = a;
+
     formatMenu->addSeparator();
 
     a = new QAction(QPixmap(QString(":/format-text-bold-%1.svg").arg(iconTheme)), tr("&Bold"), this);
@@ -1066,6 +1074,93 @@ void TextEditor::selectTextBGColor()
     colorRichTextBackground = col;
     colorBGChanged(col);
     editor->setTextBackgroundColor(col);
+}
+
+void TextEditor::removeBackgroundColors()
+{
+    // Text pasted from web pages often contains lots of background colors,
+    // which may render the text unreadable in the editor and in the map.
+    // Only the current selection is cleaned up here.
+    int selStart = editor->textCursor().selectionStart();
+    int selEnd = editor->textCursor().selectionEnd();
+
+    if (selStart == selEnd)
+        return;
+
+    QTextDocument *doc = editor->document();
+
+    // Use an own cursor for the modifications, so that the selection
+    // of the editor itself is not changed
+    QTextCursor cursor(doc);
+    cursor.beginEditBlock();
+
+    for (QTextBlock block = doc->findBlock(selStart);
+         block.isValid() && block.position() < selEnd; block = block.next()) {
+        // Background of paragraph itself. It can only be removed as a whole,
+        // so do this only for paragraphs completely inside the selection
+        QTextBlockFormat blockFormat = block.blockFormat();
+        if (blockFormat.hasProperty(QTextFormat::BackgroundBrush) &&
+            block.position() >= selStart &&
+            block.position() + block.length() - 1 <= selEnd) {
+            blockFormat.clearBackground();
+            cursor.setPosition(block.position());
+            cursor.setBlockFormat(blockFormat);
+        }
+
+        // Backgrounds of text fragments within paragraph
+        for (QTextBlock::iterator it = block.begin(); !it.atEnd(); ++it) {
+            QTextFragment fragment = it.fragment();
+            if (!fragment.isValid())
+                continue;
+
+            // Consider only the selected part of the fragment
+            int start = qMax(fragment.position(), selStart);
+            int end = qMin(fragment.position() + fragment.length(), selEnd);
+            if (start >= end)
+                continue;
+
+            QTextCharFormat charFormat = fragment.charFormat();
+            if (!charFormat.hasProperty(QTextFormat::BackgroundBrush))
+                continue;
+
+            charFormat.clearBackground();
+            cursor.setPosition(start);
+            cursor.setPosition(end, QTextCursor::KeepAnchor);
+            cursor.setCharFormat(charFormat);
+        }
+    }
+
+    // Backgrounds of table cells
+    QList<QTextFrame *> frames;
+    frames << doc->rootFrame();
+    while (!frames.isEmpty()) {
+        QTextFrame *frame = frames.takeFirst();
+        frames << frame->childFrames();
+
+        QTextTable *table = qobject_cast<QTextTable *>(frame);
+        if (!table)
+            continue;
+
+        for (int row = 0; row < table->rows(); row++)
+            for (int col = 0; col < table->columns(); col++) {
+                QTextTableCell cell = table->cellAt(row, col);
+
+                // As for paragraphs above: Only consider cells which are
+                // completely inside the selection
+                if (cell.firstPosition() < selStart ||
+                    cell.lastPosition() > selEnd)
+                    continue;
+
+                QTextCharFormat cellFormat = cell.format();
+                if (!cellFormat.hasProperty(QTextFormat::BackgroundBrush))
+                    continue;
+
+                cellFormat.clearBackground();
+                cell.setFormat(cellFormat);
+            }
+    }
+
+    cursor.endEditBlock();
 }
 
 void TextEditor::textAlign(QAction *a)

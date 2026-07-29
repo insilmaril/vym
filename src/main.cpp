@@ -8,10 +8,12 @@
 #include <QStyleFactory>
 
 #include "branchpropeditor.h"
+#include "buildinfo.h"
 #include "command.h"
 #include "debuginfo.h"
 #include "findresultwidget.h"
 #include "flagrow-master.h"
+#include "git.h"
 #include "headingeditor.h"
 #include "macros.h"
 #include "mainwindow.h"
@@ -261,6 +263,7 @@ int main(int argc, char *argv[])
             s += QString(" - \"%1\"").arg(vymCodeName);
         s += "\n";
         s += "   Quality: " + vymCodeQuality + "\n";
+        s += QString("       git: branch \"%1\" - commit %2\n").arg(GIT_BRANCH, GIT_COMMIT_HASH);
         s += "Build date: " + vymBuildDate + "\n";
         std::cout << s.toStdString();
 

@@ -30,6 +30,9 @@ void TmpParentContainer::init()
 
     branchesContainer = new Container ();
     branchesContainer->setContainerType(Container::BranchesContainer);
+    // Stack moved branches vertically. The horizontal (left/right) alignment
+    // is set depending on orientation in TmpParentContainer::reposition().
+    branchesContainer->setLayout(Container::Vertical);
     branchesContainer->setParentItem(this); // Different for BranchItem!
 }
 

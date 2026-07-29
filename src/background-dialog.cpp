@@ -42,7 +42,7 @@ int BackgroundDialog::exec()
 
 void BackgroundDialog::selectBackgroundColor()
 {
-    QColor orgCol = model->getMapEditor()->getScene()->backgroundBrush().color();
+    QColor orgCol = model->mapDesign()->backgroundColor();
 
     QColorDialog colorDialog(orgCol);
     colorDialog.setOption(QColorDialog::ShowAlphaChannel);
@@ -52,10 +52,16 @@ void BackgroundDialog::selectBackgroundColor()
 
     connect(&colorDialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(colorChanged(QColor)));
 
-    if (colorDialog.exec() != QDialog::Accepted) {
-        model->setBackgroundColor(orgCol);
+    int result = colorDialog.exec();
+
+    // Undo the preview in any case: Either the original settings are restored,
+    // or the selected color is set below, which then also can be undone
+    model->previewBackgroundColor(orgCol);
+
+    if (result != QDialog::Accepted)
         return;
-    }
+
+    model->setBackgroundColor(colorDialog.selectedColor());
 
     // Update local and maybe also global color button
     updateBackgroundColorButton();
@@ -81,7 +87,9 @@ void BackgroundDialog::selectBackgroundImage()
 
 void BackgroundDialog::colorChanged(QColor col)
 {
-    model->setBackgroundColor(col);
+    // Live preview only, the accepted color is saved for undo in
+    // selectBackgroundColor()
+    model->previewBackgroundColor(col);
 }
 
 void BackgroundDialog::updateBackgroundColorButton()

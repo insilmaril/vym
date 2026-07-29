@@ -62,6 +62,57 @@ endif()
 find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
 
+# Build date
+string(TIMESTAMP BUILD_DATE_IN "%Y-%m-%d")
+add_compile_definitions(BUILD_DATE_IN="${BUILD_DATE_IN}")
+configure_file(
+    ${CMAKE_SOURCE_DIR}/src/buildinfo.h.in
+    ${CMAKE_SOURCE_DIR}/src/buildinfo.h)
+message(STATUS "vym: Build date: ${BUILD_DATE_IN}")
+
+# Check if git is installed AND if we are inside a git repo, to get the
+# current branch and commit hash
+#
+# If not, fall back to use the default values in src/git.h.in
+#
+find_package (Git)
+if (GIT_FOUND)
+    message(STATUS "vym: found git ${GIT_EXECUTABLE} with version ${GIT_VERSION_STRING}")
+
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} -C ${CMAKE_SOURCE_DIR} rev-parse --is-inside-work-tree
+        RESULT_VARIABLE RESULT
+        OUTPUT_VARIABLE GIT_REPO_FOUND)
+    string (STRIP ${GIT_REPO_FOUND} GIT_REPO_FOUND)
+
+    if (GIT_REPO_FOUND STREQUAL "true")
+        message(STATUS "vym: git repo found in ${CMAKE_SOURCE_DIR}")
+
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} -C ${CMAKE_SOURCE_DIR} branch --show-current
+            RESULT_VARIABLE RESULT
+            OUTPUT_VARIABLE GIT_BRANCH)
+
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} -C ${CMAKE_SOURCE_DIR} rev-parse --short HEAD
+            RESULT_VARIABLE RESULT
+            OUTPUT_VARIABLE GIT_COMMIT_HASH)
+
+        string (STRIP ${GIT_BRANCH} GIT_BRANCH)
+        string (STRIP ${GIT_COMMIT_HASH} GIT_COMMIT_HASH)
+
+        message(STATUS "vym: git branch: \"${GIT_BRANCH}\" - commit ${GIT_COMMIT_HASH}")
+
+        add_compile_definitions(
+            GIT_BRANCH="${GIT_BRANCH}"
+            GIT_COMMIT_HASH="${GIT_COMMIT_HASH}")
+
+        configure_file(${CMAKE_SOURCE_DIR}/src/git.h.in ${CMAKE_SOURCE_DIR}/src/git.h)
+    else()
+        message(STATUS "vym: no git repo found in ${CMAKE_SOURCE_DIR}")
+        message(STATUS "vym: GIT_REPO_FOUND=${GIT_REPO_FOUND}")
+    endif ()
+endif ()
 
 # Translations
 #
@@ -208,7 +259,7 @@ if(APPLE)
         # Add them to your target
         target_include_directories(vym PRIVATE ${INCLUDE_DIRS})
 
-        message(STATUS "CURRENT_DIR=${CURRENT_DIR}  includeDirs=${INCLUDE_DIRS}")
+        # message(STATUS "CURRENT_DIR=${CURRENT_DIR}  includeDirs=${INCLUDE_DIRS}")
 
         # --- 2. Copy SOURCE_DIR -> TARGET_DIR at build time ---
 

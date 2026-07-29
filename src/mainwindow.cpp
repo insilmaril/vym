@@ -53,6 +53,7 @@
 #include "scripteditor.h"
 #include "vym-wrapper.h"
 #include "scriptoutput.h"
+#include "selection-dialog.h"
 #include "settings.h"
 #include "shortcuts.h"
 #include "showtextdialog.h"
@@ -755,6 +756,11 @@ void Main::setupAPI()
     c->addParameter(Command::StringPar, false, "Filename of map to load");
     c->addParameter(Command::BranchPar, false, "Branch to be replaced by map");
     c->setComment("Replace branch with data from given path");
+    modelCommands.append(c);
+
+    c = new Command("moveSelectionToTarget", Command::BranchSel, Command::BoolPar);
+    c->setComment("Move selected branches to target branch");
+    c->addParameter(Command::BranchPar, false, "Target branch");
     modelCommands.append(c);
 
     c = new Command("moveSlideDown", Command::AnySel);
@@ -2768,10 +2774,10 @@ void Main::setupFormatActions()
     connect(a, SIGNAL(triggered()), this, SLOT(formatSelectLinkColor()));
     actionFormatLinkColor = a;
 
-    a = new QAction(pix, tr("Set &Selection Color") + "...", this);
+    a = new QAction(pix, tr("Set &Selection box") + "...", this);
     formatMenu->addAction(a);
-    connect(a, SIGNAL(triggered()), this, SLOT(formatSelectSelectionColor()));
-    actionFormatSelectionColor = a;
+    connect(a, SIGNAL(triggered()), this, SLOT(formatSelection()));
+    actionFormatSelection = a;
 
     a = new QAction(pix, tr("Set &Background color and image") + "...", this);
     formatMenu->addAction(a);
@@ -3932,7 +3938,7 @@ void Main::setupContextMenus()
     canvasContextMenu->addSeparator();
 
     canvasContextMenu->addAction(actionFormatLinkColor);
-    canvasContextMenu->addAction(actionFormatSelectionColor);
+    canvasContextMenu->addAction(actionFormatSelection);
     canvasContextMenu->addAction(actionFormatBackground);
 
     canvasContextMenu->addSeparator();
@@ -4375,6 +4381,13 @@ void Main::editorChanged()
         updateQueries(vm);
         taskEditor->setMapName(vm->getMapName());
         updateDockWidgetTitles(vm);
+
+        // Re-run search in the newly selected map, so the FindResultWidget
+        // reflects the current map instead of the previous one (issue #216)
+        if (findResultWidget->isVisible() &&
+            !findResultWidget->getFindText().isEmpty())
+            editFindNext(findResultWidget->getFindText(),
+                         findResultWidget->getSearchNotes());
     }
 
     // Update BranchPropertyEditor to reflect the map of the current tab.
@@ -4534,6 +4547,10 @@ bool Main::fileLoad(QString fn, const File::LoadMode &lmode,
                     vm = currentMapEditor()->getModel();
                     vm->setFilePath(fn);
                     updateTabName(vm);
+                    // Notify satellite editors about the new map, e.g. so the
+                    // TaskEditor's "current map only" filter uses the new map
+                    // name instead of the previous (default) one. (See #174)
+                    editorChanged();
                     statusBar()->showMessage("Created " + fn);
                     return true;
                 }
@@ -4777,6 +4794,8 @@ bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
             return false;
         }
 
+// Macs check for replacing existing file in native dialog
+#ifndef Q_OS_MACOS
         // Ask if existing file can be overwritten
         QMessageBox mb(
             QMessageBox::Warning,
@@ -4786,6 +4805,7 @@ bool Main::fileSaveAs(const File::SaveMode &saveMode, QString fileName)
         mb.addButton(tr("Cancel"), QMessageBox::RejectRole);
         mb.exec();
         if (mb.clickedButton() != overwriteButton) return false;
+#endif
     }
     else {
         // New file, add extension to filename, if missing
@@ -6193,41 +6213,9 @@ void Main::editMoveToTarget()
         QAction *a = targetsContextMenu->exec(QCursor::pos());
         if (a) {
             TreeItem *dsti = model->findID(a->data().toUInt());
-            /*
-            BranchItem *selbi = model->getSelectedBranch();
-            if (!selbi)
-                return;
-            */
 
-            QList<TreeItem *> itemList = model->getSelectedItems();
-            if (itemList.count() < 1) return;
-
-            if (dsti && dsti->hasTypeBranch() ) {
-                BranchItem *selbi;
-                BranchItem *pi;
-                foreach (TreeItem *ti, itemList) {
-                    if (ti->hasTypeBranch() )
-                    {
-                        selbi = (BranchItem*)ti;
-                        pi = selbi->parentBranch();
-                        
-                        // If branch below exists, select that one
-                        // Makes it easier to quickly resort using the MoveTo function
-                        BranchItem *below = pi->getBranchNum(selbi->num() + 1);
-                        if (below)
-                            model->select(below);
-                        else {
-                            BranchItem *above = pi->getBranchNum(selbi->num() - 1);
-                            if (above)
-                                model->select(above);
-                            else if (pi)
-                                model->select(pi);
-                        }
-
-                        model->relinkBranch(selbi, (BranchItem *)dsti, -1);
-                    }
-                }
-            }
+            if (dsti && dsti->hasTypeBranch())
+                model->moveSelectionToTarget((BranchItem *)dsti);
         }
     }
 }
@@ -6446,17 +6434,12 @@ void Main::formatSelectLinkColor()
     }
 }
 
-void Main::formatSelectSelectionColor() // FEATURE #157  no Pen/Brush support yet
+void Main::formatSelection()
 {
     VymModel *m = currentModel();
     if (m) {
-        QColor col = QColorDialog::getColor(
-                m->getSelectionBrushColor(),
-                this,
-                tr("Color of selection box","Mainwindow"),
-                QColorDialog::ShowAlphaChannel);
-        m->setSelectionPenColor(col);
-        m->setSelectionBrushColor(col);
+        SelectionDialog dia(m);
+        dia.exec();
     }
 }
 
@@ -7302,7 +7285,7 @@ void Main::updateActions()
         pix.fill(m->mapDesign()->backgroundColor());
         actionFormatBackground->setIcon(pix);
         pix.fill(m->getSelectionBrushColor());
-        actionFormatSelectionColor->setIcon(pix);
+        actionFormatSelection->setIcon(pix);
         pix.fill(m->mapDesign()->defaultLinkColor());
         actionFormatLinkColor->setIcon(pix);
 

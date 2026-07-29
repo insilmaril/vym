@@ -111,6 +111,11 @@ void FindResultWidget::addItem(const QString &s)
 
 QString FindResultWidget::getFindText() { return findControlsWidget->getFindText(); }
 
+bool FindResultWidget::getSearchNotes()
+{
+    return findControlsWidget->getSearchNotes();
+}
+
 FindResultModel *FindResultWidget::getResultModel() { return resultsModel; }
 
 void FindResultWidget::popup()

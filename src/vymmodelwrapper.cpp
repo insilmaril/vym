@@ -462,6 +462,17 @@ ItemListWrapper* VymModelWrapper::itemList()
     return new ItemListWrapper(modelInt);
 }
 
+bool VymModelWrapper::moveSelectionToTarget(BranchWrapper *dst)
+{
+    if (!dst) {
+        mainWindow->abortScript(
+                QJSValue::GenericError,
+                "VymModelWrapper::moveSelectionToTarget(dst) dst is invalid");
+        return false;
+    }
+    return modelInt->moveSelectionToTarget(dst->branchItem());
+}
+
 void VymModelWrapper::moveSlideDown(int n)
 {
     if (!modelInt->moveSlideDown(n))

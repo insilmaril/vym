@@ -87,9 +87,31 @@ Thanks for using vym!
 
 Uwe Drechsel - July 2026
 
+## Unreleased
+### Features
+ * [#219](https://github.com/insilmaril/vym/issues/219) New action in the Format menu of the TextEditors to remove the background colors of the selected text, e.g. to clean up text pasted from web pages
+ * [#157](https://github.com/insilmaril/vym/issues/157) New dialog to set the parameters of the selection box: border width, border color and background color. Both colors can be set including their opacity
+
+### Bugfixes
+ * Selecting the map background color no longer creates an undo step for every color touched while the color dialog is open, but only one for the finally accepted color. Cancelling now also restores an existing background image, which previously was removed by the preview
+ * [#150](https://github.com/insilmaril/vym/issues/150) No more redundant overwrite confirmation on macOS when saving a map, saving an image or exporting; the manual confirmation is kept on Windows and Linux
+ * [#174](https://github.com/insilmaril/vym/issues/174) Tasks now visible in a new map created from a command-line filename (TaskEditor map filter was left stale)
+ * [#218](https://github.com/insilmaril/vym/issues/218) Scroll/unscroll of a branch while it is animated no longer breaks its positioning
+ * Bugfix: MapEditor animation settings not only considered when map is created
+ * Fixed floating branches (e.g. mainbranches) jumping to a wrong position when dragged and released without relinking; they now stay where they are dropped
+ * Fixed the first (or a single) dragged branch briefly animating to a wrong position inside the temporary move container
+ * Fixed downlink to children starting at the branch center (as for a MapCenter) while a mainbranch is being dragged; the original downlink position is now kept
+ * Fixed orientation of floating children flipping and flickering while their parent branch is being dragged; the orientation is now kept stable during the drag
+
+## Version 3.0.1
+### Bugfixes
+ * Fixed wrong x/y positions of branches while moving multiple selected branches with the mouse; they are now animated into their stacked positions (if animations are enabled)
+ * [#217](https://github.com/insilmaril/vym/issues/217) Moving selected branches to a target can be repeated using "."-key
+ * [#216](https://github.com/insilmaril/vym/issues/216) Find results don't refresh when switching to another map
+
 ## Version 2.9.617
 ### Bugfixes
- * [#210](https://github.com/insilmaril/vym/issues/207) BranchPropertyEditor not updated when changing maps
+ * [#210](https://github.com/insilmaril/vym/issues/210) BranchPropertyEditor not updated when changing maps
 
 ## Version 2.9.616
 ### Features

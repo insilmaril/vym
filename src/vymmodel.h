@@ -546,6 +546,15 @@ class VymModel : public TreeModel {
 
     bool relinkTo(const QString &dest, int num);
 
+    /*! \brief Move selected branches to target dst
+
+        Relinks all selected branches to dst and afterwards selects a
+        branch near the original position, which makes it easier to
+        quickly resort several branches. The action can be repeated
+        with the "."-key.
+    */
+    bool moveSelectionToTarget(BranchItem *dst);
+
   public:
     void deleteSelection(ulong selID = 0); //!< Delete selection
     void deleteKeepChildren(BranchItem *bi = nullptr); //!< remove branch, but keep children
@@ -780,6 +789,12 @@ class VymModel : public TreeModel {
 
     QColor backgroundColor();
     void setBackgroundColor(QColor);
+
+    //! Set background color without saving state for undo and without
+    //! unsetting an existing background image. Used for live preview,
+    //! e.g. while a color is selected in BackgroundDialog
+    void previewBackgroundColor(const QColor &);
+
     bool loadBackgroundImage(const QString &);
     void setBackgroundImageName(const QString &);
     void unsetBackgroundImage();
@@ -929,6 +944,17 @@ class VymModel : public TreeModel {
     qreal getSelectionPenWidth();
     void setSelectionBrushColor(QColor);
     QColor getSelectionBrushColor();
+
+    //! Set pen and brush of selection box without saving state for undo.
+    //! Used for live preview, e.g. while a color is selected in SelectionDialog
+    void previewSelectionPen(const QPen &);
+    void previewSelectionBrush(const QBrush &);
+
+  private:
+    //! Redraw selection box after its pen or brush has changed
+    void updateSelectionBox();
+
+  public:
 
     ////////////////////////////////////////////
     // Slide related

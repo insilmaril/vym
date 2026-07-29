@@ -83,6 +83,7 @@ class TextEditor : public QMainWindow {
     void selectTextFGColor();
     void useTextBGColor();
     void selectTextBGColor();
+    void removeBackgroundColors();
     void textAlign(QAction *);
     void textVAlign();
     void fontChanged(const QFont &f);
@@ -151,6 +152,7 @@ class TextEditor : public QMainWindow {
         *actionSelectAll,
 	*actionInsertOrEditUrl,
 	*actionInsertImage,
+	*actionRemoveBackgroundColors,
         *actionFormatUseFixedFont, *actionFormatRichText,
         *actionSettingsVarFont, *actionSettingsFixedFont,
         *actionSettingsFonthintDefault, *actionEmptyEditorBGColor,

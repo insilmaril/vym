@@ -2689,7 +2689,7 @@ da die Lockdatei nicht angelegt werden konnte:
         <location filename="../src/mainwindow.cpp" line="4112"/>
         <source>View toolbar</source>
         <comment>View Toolbar name</comment>
-        <translation>Werkzeugleiste ANsicht</translation>
+        <translation>Werkzeugleiste Ansicht</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="4819"/>
