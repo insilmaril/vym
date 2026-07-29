@@ -1256,53 +1256,44 @@ function test_moving_parts()
 
   map.undo();
   map.select(center_0_string);
-  center_0 = map.selectedBranch();  
+  center_0 = map.selectedBranch();
   expect("Undo RelinkTo pos 1: branchCount of center", center_0.branchCount(), 2);
 
-  closeCurrentMap();
-}
+  // Move to target
+  main_A = map.findBranchBySelection(main_A_string);
+  main_B = map.findBranchBySelection(main_B_string);
 
-function test_moving_parts()
-{
-  heading("Moving parts");
-  let map = initMap(testMapDefault);
+  n_A = main_A.branchCount();
+  n_B = main_B.branchCount();
 
-  map.select(branch_0Aa_string);
-  branch_0Aa  = map.selectedBranch();
-  branch_0Aa.moveDown();
-  expect("Moving down", branch_0Aa.getNum(), 1);
-  map.undo();
-  expect("Undo Moving down", branch_0Aa.getNum(), 0);
+  // After moving, the sibling following the moved branch is selected,
+  // so that the view stays at the original position
+  branch_0Aa = map.findBranchBySelection(branch_0Aa_string);
+  branch_0Ab = map.findBranchBySelection(branch_0Ab_string);
+  uid_0Ab = branch_0Ab.getUid();
 
-  map.select(branch_0Ab_string);
-  branch_0Ab  = map.selectedBranch();
-  branch_0Ab.moveUp();
-  expect("Moving up", branch_0Ab.getNum(), 0);
-  map.undo();
-  expect("Undo moving up", branch_0Ab.getNum(), 1);
-
-  map.select(main_B_string);
-  main_B = map.selectedBranch();
-  n = main_B.branchCount();
-  branch_0Aa.relinkToBranch(main_B);
-  expect("RelinkTo " + main_B.headingText() + ": branchCount increased there",  main_B.branchCount(), n + 1);
+  branch_0Aa.select();
+  ok = map.moveSelectionToTarget(main_B);
+  expect("moveSelectionToTarget succeeded", ok, true);
+  expect("Move to target: moved branch left original parent", main_A.branchCount(), n_A - 1);
+  expect("Move to target: moved branch arrived at target", main_B.branchCount(), n_B + 1);
+  expect("Move to target: next sibling of moved branch is selected", map.selectedBranch().getUid(), uid_0Ab);
 
   map.undo();
-  expect("Undo: RelinkTo " + main_B.headingText() + ": branchCount decreased there", main_B.branchCount(), n);
+  expect("Undo move to target: branchCount of original parent", main_A.branchCount(), n_A);
+  expect("Undo move to target: branchCount of target", main_B.branchCount(), n_B);
 
-  // map.select(main_A_string);
-  // main_A = map.selectedBranch();
-  // err = map.relinkBranchTo(branch_0Aa,0,0,0);
-  //FIXME-5 disabled, error not supported atm expect_error "RelinkTo myself fails.", err);
+  // Without a sibling left the parent of the moved branch is selected
+  uid_A = main_A.getUid();
+  while (main_A.branchCount() > 1) {
+    map.findBranchBySelection(main_A_string + ",bo:1").select();
+    map.moveSelectionToTarget(main_B);
+  }
 
-  n = branch_0Aa.branchCount();
-  main_B.relinkToBranchAt(branch_0Aa, 1);
-  expect("RelinkTo moves '" + main_B.headingText() + "' to '" + branch_0Aa.headingText() + "', pos 1: branchCount increased there",  branch_0Aa.branchCount(), n + 1);
-
-  map.undo();
-  map.select(center_0_string);
-  center_0 = map.selectedBranch();  
-  expect("Undo RelinkTo pos 1: branchCount of center", center_0.branchCount(), 2);
+  map.findBranchBySelection(main_A_string + ",bo:0").select();
+  map.moveSelectionToTarget(main_B);
+  expect("Move to target: original parent has no branches left", main_A.branchCount(), 0);
+  expect("Move to target: parent of moved branch is selected", map.selectedBranch().getUid(), uid_A);
 
   closeCurrentMap();
 }

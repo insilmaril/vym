@@ -543,9 +543,15 @@ class VymModel : public TreeModel {
         here, as for example moveUp or moving in MapEditor have
         different needs to call saveState
         Returns true if relinking was successful.
+
+        If selectAfter is given, this item is selected after relinking instead
+        of the relinked branches. This avoids selecting the moved branches,
+        which would scroll the view to the destination and temporary unscroll
+        a scrolled destination.
     */
     bool relinkBranch(BranchItem *branch, BranchItem *dst, int num_new = -1);
-    bool relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_new = -1);
+    bool relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_new = -1,
+                        TreeItem *selectAfter = nullptr);
     bool relinkImage(ImageItem *image, TreeItem *dst, int num_new = -1);
     bool relinkImages(QList <ImageItem*> images, TreeItem *dst, int num_new = -1);
 

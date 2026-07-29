@@ -5,6 +5,8 @@ Release notes VYM - View Your Mind
 The lists below shows main changes between the current 3.1 version of vym and
 the previous official release 3.0
 
+Main new features in 3.1
+------------------------
  * Clone branches
     - The clone inherits most of the properties of the original branch,
       including flags and background color, but no notes or scripts.
@@ -37,16 +39,39 @@ Feel free to report any bugs or feature requests on
 
 Thanks for using vym!
 
-Uwe Drechsel - May 2026
+Uwe Drechsel - July 2026
 
 ## Version 3.0.502
 ### Features
- * [#220](https://github.com/insilmaril/vym/issues/220) Clicking a system flag of a branch which is not selected yet no longer just selects the branch, but also triggers the related action, e.g. opening an URL or running a script. Clicking the flag of a scrolled branch now unscrolls it
- * [#214](https://github.com/insilmaril/vym/issues/214) Scripts can be embedded into a branch, similar to a note. A new system flag marks branches with a script: clicking the flag runs the script, Shift-clicking opens it in the new "Branch" tab of the script editor. There the script can be edited, run and deleted; all changes are part of the undo history. New scripting commands: `setScript`, `getScript`, `hasScript` and `runScript`
- * [#219](https://github.com/insilmaril/vym/issues/219) New action in the Format menu of the TextEditors to remove the background colors of the selected text, e.g. to clean up text pasted from web pages
- * [#157](https://github.com/insilmaril/vym/issues/157) New dialog to set the parameters of the selection box: border width, border color and background color. Both colors can be set including their opacity
+ * [#220](https://github.com/insilmaril/vym/issues/220) Clicking a
+   system flag of a branch which is not selected yet no longer just
+   selects the branch, but also triggers the related action, e.g.
+   opening an URL or running a script. Clicking the flag of a scrolled
+   branch now unscrolls it
+ * [#214](https://github.com/insilmaril/vym/issues/214) Scripts can be
+   embedded into a branch, similar to a note. A new system flag marks
+   branches with a script: clicking the flag runs the script,
+   Shift-clicking opens it in the new "Branch" tab of the script editor.
+   There the script can be edited, run and deleted; all changes are part
+   of the undo history. New scripting commands: `setScript`,
+   `getScript`, `hasScript` and `runScript`
+ * [#219](https://github.com/insilmaril/vym/issues/219) New action in
+   the Format menu of the TextEditors to remove the background colors of
+   the selected text, e.g. to clean up text pasted from web pages
+ * [#157](https://github.com/insilmaril/vym/issues/157) New dialog to
+   set the parameters of the selection box: border width, border color
+   and background color. Both colors can be set including their opacity
 
 ### Bugfixes
- * Clicking the system flag "Hide object in exported maps" toggles the setting again, the flag name was compared without its "system-" prefix before
- * Selecting the map background color no longer creates an undo step for every color touched while the color dialog is open, but only one for the finally accepted color. Cancelling now also restores an existing background image, which previously was removed by the preview
+ * When moving branches to a target, the view no longer scrolls to the
+   destination and back, but stays at the branch which is selected
+   afterwards near the original position. A scrolled destination is no
+   longer temporary unscrolled while moving
+ * Clicking the system flag "Hide object in exported maps" toggles the
+   setting again, the flag name was compared without its "system-"
+   prefix before
+ * Selecting the map background color no longer creates an undo step for
+   every color touched while the color dialog is open, but only one for
+   the finally accepted color. Cancelling now also restores an existing
+   background image, which previously was removed by the preview
 

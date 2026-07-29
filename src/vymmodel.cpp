@@ -4896,7 +4896,8 @@ bool VymModel::relinkBranch(BranchItem *branch, BranchItem *dst, int num_dst)
     return relinkBranches(branches, dst, num_dst);
 }
 
-bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst)   
+bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int num_dst,
+                              TreeItem *selectAfter)
 {
     // qDebug() << "VM::relink " << branches.count() << " branches to " << headingText(dst) << "num_dst=" << num_dst;
 
@@ -5069,8 +5070,12 @@ bool VymModel::relinkBranches(QList <BranchItem*> branches, BranchItem *dst, int
     if (!saveStateBlocked)
         saveStateEndScript();
 
-    // Restore selection, which was lost when removing rows
-    select(selectedItems);
+    // Restore selection, which was lost when removing rows,
+    // or select what the caller asked for
+    if (selectAfter)
+        select(selectAfter);
+    else
+        select(selectedItems);
 
     return true;
 }
@@ -5103,11 +5108,11 @@ bool VymModel::moveSelectionToTarget(BranchItem *dst)
             nextSelection = pi;
     }
 
-    if (!relinkBranches(branches, dst, -1))
+    // Select nextSelection already while relinking. Selecting the moved
+    // branches would scroll the view to the destination and temporary
+    // unscroll it, if it is scrolled
+    if (!relinkBranches(branches, dst, -1, nextSelection))
         return false;
-
-    if (nextSelection)
-        select(nextSelection);
 
     QString repeatAction = QString("m = vym.currentMap();");
     repeatAction += QString(" dst = m.findBranchById(\"%1\");").arg(dst->getUuid().toString());
