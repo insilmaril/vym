@@ -1856,9 +1856,14 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
 
         }
 
-        // Check for flags on MousePress
-        if (selbc) {
-            QUuid uid = selbc->findFlagByPos(movingObj_initialScenePos);
+        // Check for flags on MousePress. Note that the flags of the clicked
+        // branch are used, not those of the branch selected so far
+        BranchContainer *bc_found = nullptr;
+        if (ti_found->hasTypeBranch())
+            bc_found = ((BranchItem *)ti_found)->getBranchContainer();
+
+        if (bc_found) {
+            QUuid uid = bc_found->findFlagByPos(movingObj_initialScenePos);
             if (!uid.isNull()) {
                 Flag *flag = systemFlagsMaster->findFlagByUid(uid);
                 if (flag)
@@ -1866,26 +1871,43 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
             }
         }
 
-        // Check vymlink  modifier (before selecting object!)
-        if (sysFlagName == "system-vymLink") {
+        // A system flag was clicked: Select the branch and trigger the
+        // related action immediately, even if the branch was not selected
+        // before
+        if (!sysFlagName.isEmpty()) {
             model->select(ti_found);
-            if (e->modifiers() & Qt::ControlModifier) {
-                if (e->modifiers() & Qt::ShiftModifier)
-                    model->deleteVymLink();
-                else
-                    mainWindow->editOpenVymLink(true);
-            } else
-                mainWindow->editOpenVymLink(false);
-            return;
-        }
 
-        // Check script flag (before selecting object!)
-        if (sysFlagName == "system-script") {
-            model->select(ti_found);
-            if (e->modifiers() & Qt::ShiftModifier)
-                mainWindow->editBranchScript();
-            else
-                mainWindow->runBranchScript();
+            if (sysFlagName == "system-vymLink") {
+                if (e->modifiers() & Qt::ControlModifier) {
+                    if (e->modifiers() & Qt::ShiftModifier)
+                        model->deleteVymLink();
+                    else
+                        mainWindow->editOpenVymLink(true);
+                } else
+                    mainWindow->editOpenVymLink(false);
+            }
+            else if (sysFlagName == "system-script") {
+                if (e->modifiers() & Qt::ShiftModifier)
+                    mainWindow->editBranchScript();
+                else
+                    mainWindow->runBranchScript();
+            }
+            else if (sysFlagName.contains("system-url") ||
+                     sysFlagName.contains("system-jira"))
+                // Open in private mode if ALT is pressed
+                mainWindow->openUrl(model->getUrl(),
+                                    e->modifiers() & Qt::AltModifier);
+            else if (sysFlagName == "system-note")
+                mainWindow->focusNoteEditor();
+            else if (sysFlagName == "system-hideInExport")
+                model->toggleHideExport();
+            else if (sysFlagName.startsWith("system-task-"))
+                model->cycleTaskStatus();
+            else if (sysFlagName == "system-scrolledright" ||
+                     sysFlagName == "system-tmpUnscrolledRight")
+                model->toggleScroll();
+
+            e->accept();
             return;
         }
 
@@ -1964,33 +1986,12 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
 
     e->accept();
 
-    // Take care of  remaining system flags _or_ modifier modes
-    if (selbc) {
-        if (!sysFlagName.isEmpty()) {
-            // systemFlag clicked
-            if (sysFlagName.contains("system-url") ||
-                sysFlagName.contains("system-jira") ) {
-
-                // Open in private mode if ALT is pressed
-                mainWindow->openUrl(
-                        model->getUrl(),
-                        e->modifiers() & Qt::AltModifier);
-            } else if (sysFlagName == "system-note")
-                mainWindow->focusNoteEditor();
-            else if (sysFlagName == "hideInExport")
-                model->toggleHideExport();
-            else if (sysFlagName.startsWith("system-task-"))
-                model->cycleTaskStatus();
-            return;
-        }
-    }   // system flags or modModes
-    else { // No selbc found, check XLinks
-        if (ti_found) {
-            if (ti_found->getType() == TreeItem::XLinkItemType) {
-                XLinkObj *xlo = ((XLinkItem *)ti_found)->getXLink()->getXLinkObj();
-                if (xlo)
-                    setState(EditingXLink);
-            }
+    // No system flag was clicked, check XLinks
+    if (!selbc && ti_found) {
+        if (ti_found->getType() == TreeItem::XLinkItemType) {
+            XLinkObj *xlo = ((XLinkItem *)ti_found)->getXLink()->getXLinkObj();
+            if (xlo)
+                setState(EditingXLink);
         }
     }
 }
