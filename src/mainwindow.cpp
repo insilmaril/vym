@@ -1110,6 +1110,10 @@ void Main::setupAPI()
     c->setComment("Return status of task");
     branchCommands.append(c);
 
+    c = new Command("getScript", Command::BranchSel, Command::StringPar);
+    c->setComment("Return script embedded in branch");
+    branchCommands.append(c);
+
     c = new Command("getUrl", Command::BranchSel, Command::StringPar);
     c->setComment("Return  url of branch");
     branchCommands.append(c);
@@ -1130,6 +1134,10 @@ void Main::setupAPI()
 
     c = new Command("hasNote", Command::BranchSel, Command::BoolPar);
     c->setComment("Check if branch has a note");
+    branchCommands.append(c);
+
+    c = new Command("hasScript", Command::BranchSel, Command::BoolPar);
+    c->setComment("Check if branch has an embedded script");
     branchCommands.append(c);
 
     c = new Command("hasRichTextHeading", Command::BranchSel, Command::BoolPar);
@@ -1201,6 +1209,10 @@ void Main::setupAPI()
 
     c = new Command("removeChildrenBranches", Command::BranchSel);
     c->setComment("Remove all children branches of branch");
+    branchCommands.append(c);
+
+    c = new Command("runScript", Command::BranchSel);
+    c->setComment("Run script embedded in branch");
     branchCommands.append(c);
 
     c = new Command("saveNote", Command::BranchSel);
@@ -1351,6 +1363,11 @@ void Main::setupAPI()
 
     c = new Command("setRotationSubtree", Command::BranchSel);
     c->addParameter(Command::IntPar, false, "Rotation angle of heading and subtree");
+    branchCommands.append(c);
+
+    c = new Command("setScript", Command::BranchSel);
+    c->addParameter(Command::StringPar, false, "Script to embed in branch");
+    c->setComment("Set script embedded in branch. An empty script removes it");
     branchCommands.append(c);
 
     c = new Command("setScaleAutoDesign", Command::BranchSel);
@@ -3214,6 +3231,9 @@ void Main::setupFlagActions()
     setupFlag(":/flag-note.svg", Flag::SystemFlag, "system-note",
               tr("Note", "SystemFlag"));
 
+    setupFlag(":/script-run.svg", Flag::SystemFlag, "system-script",
+              tr("Script: Click to run, Shift-Click to edit", "SystemFlag"));
+
     setupFlag(":/flag-url.svg", Flag::SystemFlag, "system-url",
               tr("URL", "SystemFlag"));
 
@@ -4390,10 +4410,12 @@ void Main::editorChanged()
                          findResultWidget->getSearchNotes());
     }
 
-    // Update BranchPropertyEditor to reflect the map of the current tab.
-    // Selection does not change when switching tabs, so changeSelection()
-    // is not triggered and the editor would still show the previous map.
+    // Update BranchPropertyEditor and ScriptEditor to reflect the map of the
+    // current tab. Selection does not change when switching tabs, so
+    // changeSelection() is not triggered and the editors would still show the
+    // previous map.
     branchPropertyEditor->setModel(vm);
+    scriptEditor->updateBranchScript(vm);
 
     // Update actions to in menus and toolbars according to editor
     updateActions();
@@ -6926,6 +6948,20 @@ void Main::toggleScriptEditor()
         focusScriptEditor();
 }
 
+void Main::editBranchScript()
+{
+    scriptEditor->parentWidget()->show();
+    actionViewToggleScriptEditor->setChecked(true);
+    scriptEditor->setFocusBranchScript();
+}
+
+void Main::runBranchScript()
+{
+    VymModel *m = currentModel();
+    if (m)
+        m->runScript();
+}
+
 void Main::focusScriptOutput()
 {
     scriptOutput->parentWidget()->show();
@@ -7055,6 +7091,11 @@ void Main::updateNoteEditor(TreeItem *ti)
     noteEditor->setTitle();
 }
 
+void Main::updateScriptEditor(BranchItem *bi)
+{
+    scriptEditor->reloadBranchScript(bi);
+}
+
 void Main::updateHeadingEditor(TreeItem *ti)
 {
     VymModel *m = currentModel();
@@ -7098,6 +7139,9 @@ void Main::changeSelection(VymModel *model, const QItemSelection &,
 
     if (model && model == currentModel()) {
         BranchItem *selbi = model->getSelectedBranch();
+
+        // Update script editor, it takes care of multiple selected branches
+        scriptEditor->updateBranchScript(model);
 
         // Update satellites
         if (!selbi || model->getSelectedBranches().size() != 1) {

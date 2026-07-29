@@ -425,6 +425,8 @@ void VymReader::readBranchOrMapCenter(File::LoadMode loadModeBranch, int insertP
             xml.name() == QLatin1String("htmlnote") ||
             xml.name() == QLatin1String("note"))
             readHeadingOrVymNote();
+        else if (xml.name() == QLatin1String("script"))
+            readScript();
         else if (xml.name() == QLatin1String("branch")) {
             // Going deeper we regard incoming data as "new", no inserts/replacements
             readBranchOrMapCenter(File::NewMap, -1);
@@ -621,6 +623,20 @@ void VymReader::readHeadingOrVymNote()
 
     if (xml.readNextStartElement())
         raiseUnknownElementError();
+}
+
+void VymReader::readScript()
+{
+    Q_ASSERT(xml.isStartElement() && xml.name() == QLatin1String("script"));
+
+    if (!lastBranch) {
+        xml.raiseError("No branch available to set <script>.");
+        return;
+    }
+
+    // Script is saved as (CDATA) text of the element, this preserves
+    // newlines and backslashes
+    lastBranch->setScript(xml.readElementText());
 }
 
 void VymReader::readFrame()

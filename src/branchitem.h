@@ -44,6 +44,18 @@ class BranchItem : public MapItem {
     Task *getTask();
     Flag *taskFlag();
 
+  protected:
+    QString scriptInt;
+
+  public:
+    /*! \brief Set script embedded in branch
+
+    Returns true, if the system flag has changed and a reposition is required
+    */
+    bool setScript(const QString &s);
+    QString getScript() const;
+    bool hasScript() const;
+
   private:
     Task *task;
     BranchWrapper *branchWrapperInt;

@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 
+#include "branchitem.h"
 #include "command.h"
 #include "file.h"
 #include "macros.h"
@@ -45,6 +46,16 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     slideEditor = new CodeEditor(this);
     ui.slideVerticalLayout->insertWidget(0, slideEditor);
 
+    branchEditor = new CodeEditor(this);
+    ui.branchVerticalLayout->insertWidget(0, branchEditor);
+    branchEditor->installEventFilter(this);
+
+    connect(branchEditor, SIGNAL(textChanged()), this,
+            SLOT(branchScriptChanged()));
+    connect(ui.branchRunButton, SIGNAL(clicked()), this, SLOT(runBranchScript()));
+    connect(ui.branchDeleteButton, SIGNAL(clicked()), this,
+            SLOT(deleteBranchScript()));
+
     connect(ui.slideSaveButton, SIGNAL(clicked()), this, SLOT(saveSlide()));
     connect(ui.slideRunButton, SIGNAL(clicked()), this, SLOT(runSlide()));
     connect(ui.macroRunButton, SIGNAL(clicked()), this, SLOT(runMacro()));
@@ -58,7 +69,12 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
 
     vymModelID = -1;
 
+    branchModelID = 0;
+    branchScriptModified = false;
+    blockBranchScriptSignal = false;
+
     // Initialize Editor
+    branchEditor->setFont(fixedFont);
     slideEditor->setFont(fixedFont);
     macroEditor->setFont(fixedFont);
     codeEditor->setFont(fixedFont);
@@ -68,16 +84,21 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     codeEditor->setTabStopDistance(d);
     slideEditor->setTabStopDistance(d);
     macroEditor->setTabStopDistance(d);
+    branchEditor->setTabStopDistance(d);
 
     ui.modeTabWidget->setTabText(0, tr("Slide", "Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(1, tr("Macro", "Mode in scriptEditor"));
     ui.modeTabWidget->setTabText(2, tr("Script", "Mode in scriptEditor"));
+    ui.modeTabWidget->setTabText(3, tr("Branch", "Mode in scriptEditor"));
+
+    updateBranchScript(nullptr);
 
     ui.scriptPathLineEdit->setText(
         tr("No script selected", "scriptname in scriptEditor"));
 
     reloadMacros();
 
+    highlighterBranch = new Highlighter(branchEditor->document());
     highlighterMacro = new Highlighter(macroEditor->document());
     highlighterSlide = new Highlighter(slideEditor->document());
     highlighterFile = new Highlighter(codeEditor->document());
@@ -94,6 +115,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
         list.append(QString("\\b%1\\b").arg(c->name()));
     foreach (Command *c, xlinkCommands)
         list.append(QString("\\b%1\\b").arg(c->name()));
+    highlighterBranch->addKeywords(list);
     highlighterMacro->addKeywords(list);
     highlighterSlide->addKeywords(list);
     highlighterFile->addKeywords(list);
@@ -101,6 +123,7 @@ ScriptEditor::ScriptEditor(QWidget *parent) : QWidget(parent)
     codeEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
     slideEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
     macroEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
+    branchEditor->setStyleSheet("QPlainTextEdit {" + editorFocusInStyle + "}");
 
     QString shortcutScope = tr("Script editor", "Shortcut scope");
     switchboard.addScope("MainWindow", shortcutScope);
@@ -130,7 +153,163 @@ void ScriptEditor::setFocus() {
         case 2:
             codeEditor->setFocus();
             break;
+        case 3:
+            branchEditor->setFocus();
+            break;
     }
+}
+
+void ScriptEditor::setFocusBranchScript()
+{
+    ui.modeTabWidget->setCurrentIndex(3);
+    branchEditor->setFocus();
+}
+
+bool ScriptEditor::eventFilter(QObject *obj, QEvent *ev)
+{
+    // Save modified script of branch, when editor looses focus, e.g. because
+    // another branch is going to be selected in the map
+    if (obj == branchEditor && ev->type() == QEvent::FocusOut)
+        saveBranchScript();
+
+    return QWidget::eventFilter(obj, ev);
+}
+
+BranchItem *ScriptEditor::branchScriptItem()
+{
+    if (branchUuid.isNull())
+        return nullptr;
+
+    VymModel *vm = mainWindow->modelWithId(branchModelID);
+    if (!vm)
+        // Map has been closed meanwhile
+        return nullptr;
+
+    TreeItem *ti = vm->findUuid(branchUuid);
+    if (ti && ti->hasTypeBranch())
+        return (BranchItem *)ti;
+
+    // Branch has been deleted meanwhile
+    return nullptr;
+}
+
+void ScriptEditor::branchScriptChanged()
+{
+    if (blockBranchScriptSignal)
+        return;
+
+    branchScriptModified = true;
+
+    BranchItem *bi = branchScriptItem();
+    if (!bi)
+        return;
+
+    // Update the branch immediately, so that the flag in the map appears or
+    // disappears while editing. The state for the history is only saved later
+    // in saveBranchScript(), which avoids an undo step for every keypress.
+    if (bi->setScript(branchEditor->toPlainText())) {
+        // Flag has changed
+        bi->getModel()->emitDataChanged(bi);
+        bi->getModel()->reposition();
+    }
+}
+
+void ScriptEditor::saveBranchScript()
+{
+    if (!branchScriptModified)
+        return;
+
+    branchScriptModified = false;
+
+    BranchItem *bi = branchScriptItem();
+    if (!bi)
+        return;
+
+    // The branch already contains the modified script (see
+    // branchScriptChanged), restore the original one, so that setScript can
+    // save both states in the history
+    QString script = branchEditor->toPlainText();
+    bi->setScript(branchScriptOriginal);
+    bi->getModel()->setScript(script, bi);
+
+    branchScriptOriginal = script;
+}
+
+void ScriptEditor::updateBranchScript(VymModel *vm)
+{
+    // Save pending changes of previously shown branch first
+    saveBranchScript();
+
+    BranchItem *bi = nullptr;
+    if (vm && vm->getSelectedBranches().count() == 1)
+        bi = vm->getSelectedBranch();
+
+    blockBranchScriptSignal = true;
+    if (bi) {
+        branchModelID = vm->modelId();
+        branchUuid = bi->getUuid();
+        branchScriptOriginal = bi->getScript();
+        branchEditor->setPlainText(branchScriptOriginal);
+        ui.branchHeadingLineEdit->setText(bi->headingPlain());
+    }
+    else {
+        branchModelID = 0;
+        branchUuid = QUuid();
+        branchScriptOriginal.clear();
+        branchEditor->clear();
+        ui.branchHeadingLineEdit->setText(
+            tr("No branch selected", "scriptEditor"));
+    }
+    blockBranchScriptSignal = false;
+
+    branchScriptModified = false;
+
+    branchEditor->setEnabled(bi != nullptr);
+    ui.branchRunButton->setEnabled(bi != nullptr);
+    ui.branchDeleteButton->setEnabled(bi != nullptr);
+}
+
+void ScriptEditor::reloadBranchScript(BranchItem *bi)
+{
+    if (!bi || bi != branchScriptItem())
+        // Branch is not shown in branch tab
+        return;
+
+    if (branchEditor->toPlainText() == bi->getScript())
+        // Nothing to do, e.g. we have saved the script ourselves.
+        // Don't touch the editor, this would also reset the cursor position
+        return;
+
+    blockBranchScriptSignal = true;
+    branchScriptOriginal = bi->getScript();
+    branchEditor->setPlainText(branchScriptOriginal);
+    blockBranchScriptSignal = false;
+
+    branchScriptModified = false;
+}
+
+void ScriptEditor::runBranchScript()
+{
+    saveBranchScript();
+
+    emit runScript(branchEditor->toPlainText());
+}
+
+void ScriptEditor::deleteBranchScript()
+{
+    // Save pending modifications first, so that they can be undone separately
+    saveBranchScript();
+
+    BranchItem *bi = branchScriptItem();
+    if (!bi)
+        return;
+
+    blockBranchScriptSignal = true;
+    branchEditor->clear();
+    blockBranchScriptSignal = false;
+
+    branchScriptOriginal.clear();
+    bi->getModel()->setScript(QString(), bi);
 }
 
 QString ScriptEditor::getScriptFile() { return codeEditor->toPlainText(); }

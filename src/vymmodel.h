@@ -377,6 +377,11 @@ class VymModel : public TreeModel {
     bool loadNote(const QString &fn, BranchItem *bi = nullptr);   //!< Load note from file
     bool saveNote(const QString &fn);   //!< Save note to file
 
+    void setScript(const QString &s,    //!< Set script embedded in branch
+                         BranchItem *bi = nullptr);
+    QString getScript(BranchItem *bi = nullptr);    //!< Get script embedded in branch
+    void runScript(BranchItem *bi = nullptr);       //!< Run script embedded in branch
+
   private:
     BranchItem *findCurrent;  // next object in find process
     BranchItem *findPrevious; // next object in find process

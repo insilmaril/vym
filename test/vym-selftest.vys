@@ -25,6 +25,7 @@ all_tests = [
   "notes",
   "references",
   "saving",
+  "scripts",
   "scrolling",
   "standard_flags",
   "user_flags",
@@ -1516,6 +1517,72 @@ function test_saving()
   closeCurrentMap();
 }
 
+function test_scripts()
+{
+  heading("Scripts embedded in branches:");
+  map = initMap(testMapDefault);
+
+  b = map.findBranchBySelection(main_A_string);
+  expect("Branch has no script initially", b.hasScript(), false);
+
+  // Use a script containing quotes, a newline and a backslash sequence,
+  // all of them need to survive setting, saving and undo/redo
+  script = 'vym.print("Hello");\nlet s = "a\\nb";';
+
+  b.setScript(script);
+  expect("setScript: branch has script", b.hasScript(), true);
+  expect("setScript: script unchanged", b.getScript(), script);
+
+  // Reselect
+  map.select(center_0_string);
+  b.select();
+  expect("After reselect: script unchanged", b.getScript(), script);
+
+  // Undo & redo
+  map.undo();
+  b = map.findBranchBySelection(main_A_string);
+  expect("Undo setScript: script removed", b.hasScript(), false);
+
+  map.redo();
+  b = map.findBranchBySelection(main_A_string);
+  expect("Redo setScript: script restored", b.getScript(), script);
+
+  // Copy & paste
+  b.select();
+  map.copy();
+  map.paste();
+  b = map.findBranchBySelection(main_A_string);
+  b.selectLastChildBranch();
+  b_pasted = map.selectedBranch();
+  expect("After copy/paste: script unchanged", b_pasted.getScript(), script);
+
+  // Save & load
+  mapName = "test-script.vyp";
+  fn = testDir + "/" + mapName;
+  b = map.findBranchBySelection(main_A_string);
+  b.select();
+  map.setSaveAsBackgroundProcess(false);
+  ok = map.saveSelection(fn);
+  expect("Saved selection with script to '" + fn + "'", ok, true);
+
+  closeCurrentMap();
+
+  map = initMap(testDir + "/" + mapName);
+  b = map.findBranchBySelection(center_0_string);
+  expect("After loading '" + mapName + "': branch still has script", b.hasScript(), true);
+  expect("After loading '" + mapName + "': script unchanged", b.getScript(), script);
+
+  // Delete script
+  b.setScript("");
+  expect("setScript(\"\") deletes script", b.hasScript(), false);
+
+  map.undo();
+  b = map.findBranchBySelection(center_0_string);
+  expect("Undo deleting of script restores script", b.getScript(), script);
+
+  closeCurrentMap();
+}
+
 function test_scrolling()
 {
   heading("Scrolling and unscrolling:");
@@ -1858,6 +1925,7 @@ if (tests.includes("moving_parts"))   { test_moving_parts(); }
 if (tests.includes("notes"))          { test_notes(); }
 if (tests.includes("references"))     { test_references(); }
 if (tests.includes("saving"))         { test_saving(); }
+if (tests.includes("scripts"))        { test_scripts(); }
 if (tests.includes("scrolling"))      { test_scrolling(); }
 if (tests.includes("slides"))         { test_slides(); }
 if (tests.includes("standard_flags")) { test_standard_flags(); }

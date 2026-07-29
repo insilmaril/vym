@@ -62,6 +62,23 @@ QString unquoteQuotes(const QString &s)
     return r;
 }
 
+/*! Escape a string, so that it can be used as a literal in a JavaScript
+    string, e.g. when building undo/redo commands. Unlike quoteQuotes above
+    also backslashes are escaped, which is required e.g. for scripts,
+    where "\n" might be part of the original text.
+*/
+QString quoteJS(const QString &s)
+{
+    QString r = s;
+
+    r.replace("\\", "\\\\");
+    r.replace("\"", "\\\"");
+    r.replace("\n", "\\n");
+    r.replace("\r", "\\r");
+
+    return r;
+}
+
 QString getCDATA(const QString &s)
 {
     // Check, if we need to use CDATA after all

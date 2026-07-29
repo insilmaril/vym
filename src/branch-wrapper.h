@@ -53,6 +53,7 @@ class BranchWrapper : public QObject {
     void getJiraData(bool subtree);
     QString getNoteText();
     QString getNoteXML();
+    QString getScript();
     int getNum();
     qreal getPosX();
     qreal getPosY();
@@ -71,6 +72,7 @@ class BranchWrapper : public QObject {
     bool hasActiveFlag(const QString &flag);
     bool hasAttributeWithKey(const QString &key);
     bool hasNote();
+    bool hasScript();
     bool hasRichTextHeading();
     bool hasRichTextNote();
     bool hasTask();
@@ -89,6 +91,7 @@ class BranchWrapper : public QObject {
     bool relinkToBranchAt(BranchWrapper*, int pos);
     void removeChildren();
     void removeChildrenBranches();
+    void runScript();
     bool saveNote(const QString &filename);
     void scroll();
     void select();
@@ -121,6 +124,7 @@ class BranchWrapper : public QObject {
     void setOnlyFlags(QJSValueList args);
     void setPos(qreal x, qreal y);
     void setRotationAutoDesign(const bool b);
+    void setScript(const QString &);
     void setRotationHeading(const int &i);
     void setRotationSubtree(const int &i);
     void setScaleAutoDesign(const bool b);

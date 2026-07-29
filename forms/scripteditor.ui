@@ -296,6 +296,69 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="branchTab">
+      <attribute name="title">
+       <string notr="true">Branch tab</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QVBoxLayout" name="branchVerticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="branchButtonLayout">
+           <item>
+            <widget class="QPushButton" name="branchRunButton">
+             <property name="text">
+              <string>Run</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../vym.qrc">
+               <normaloff>:/script-run.svg</normaloff>:/script-run.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>369</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="branchDeleteButton">
+             <property name="text">
+              <string>Delete</string>
+             </property>
+             <property name="icon">
+              <iconset theme="edit-delete">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="branchHeadingLineEdit">
+         <property name="text">
+          <string notr="true"/>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

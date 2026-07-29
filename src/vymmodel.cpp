@@ -2683,6 +2683,65 @@ bool VymModel::saveNote(const QString &fn)
     return false;
 }
 
+void VymModel::setScript(const QString &s, BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi)
+        return;
+
+    QString script_old = selbi->getScript();
+    if (script_old == s)
+        return;
+
+    QString uc = QString("setScript(\"%1\");").arg(quoteJS(script_old));
+    QString rc = QString("setScript(\"%1\");").arg(quoteJS(s));
+    QString comment;
+    if (s.isEmpty())
+        comment = QString("Remove script from %1").arg(getObjectName(selbi));
+    else
+        comment = QString("Set script of %1 to \"%2\"")
+                      .arg(getObjectName(selbi), s.left(40));
+
+    logAction(rc, comment, __func__);
+
+    saveStateBranch(selbi, uc, rc, comment);
+
+    // Flag needs to be updated, if script was added or removed
+    bool flagChanged = selbi->setScript(s);
+
+    // Script might be shown in ScriptEditor, e.g. after undo/redo
+    mainWindow->updateScriptEditor(selbi);
+
+    emitDataChanged(selbi);
+
+    if (flagChanged)
+        reposition();
+}
+
+QString VymModel::getScript(BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (selbi)
+        return selbi->getScript();
+
+    return QString();
+}
+
+void VymModel::runScript(BranchItem *bi)
+{
+    BranchItem *selbi = getSelectedBranch(bi);
+    if (!selbi)
+        return;
+
+    if (!selbi->hasScript()) {
+        logWarning(QString("No script found in %1").arg(getObjectName(selbi)),
+                   __func__);
+        return;
+    }
+
+    mainWindow->runScript(selbi->getScript());
+}
+
 void VymModel::findDuplicateURLs() // FIXME-3 Feature needs GUI for viewing
 {
     // Generate multimap containing _all_ URLs and branches

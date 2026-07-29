@@ -200,6 +200,10 @@ QString BranchItem::saveToDir(const QString &tmpdir, const QString &prefix,
     if (!note.isEmpty())
         s += note.saveToDir();
 
+    // save embedded script
+    if (!scriptInt.isEmpty())
+        s += valueElement("script", getCDATA(scriptInt));
+
     // Save frame
     if (branchContainer && 
             (branchContainer->frameType(true) != FrameContainer::NoFrame ||
@@ -277,6 +281,25 @@ void BranchItem::setTask(Task *t)
 }
 
 Task *BranchItem::getTask() { return task; }
+
+bool BranchItem::setScript(const QString &s)
+{
+    scriptInt = s;
+
+    if (scriptInt.isEmpty()) {
+        if (systemFlags.isActive(QString("system-script")))
+            return systemFlags.deactivate(QString("system-script"));
+    }
+    else {
+        if (!systemFlags.isActive(QString("system-script")))
+            return systemFlags.activate(QString("system-script"));
+    }
+    return false; // No need to update flag and reposition later
+}
+
+QString BranchItem::getScript() const { return scriptInt; }
+
+bool BranchItem::hasScript() const { return !scriptInt.isEmpty(); }
 
 Flag *BranchItem::taskFlag()
 {

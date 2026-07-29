@@ -89,6 +89,7 @@ Uwe Drechsel - July 2026
 
 ## Unreleased
 ### Features
+ * [#214](https://github.com/insilmaril/vym/issues/214) Scripts can be embedded into a branch, similar to a note. A new system flag marks branches with a script: clicking the flag runs the script, Shift-clicking opens it in the new "Branch" tab of the script editor. There the script can be edited, run and deleted; all changes are part of the undo history. New scripting commands: `setScript`, `getScript`, `hasScript` and `runScript`
  * [#219](https://github.com/insilmaril/vym/issues/219) New action in the Format menu of the TextEditors to remove the background colors of the selected text, e.g. to clean up text pasted from web pages
  * [#157](https://github.com/insilmaril/vym/issues/157) New dialog to set the parameters of the selection box: border width, border color and background color. Both colors can be set including their opacity
 

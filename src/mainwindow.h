@@ -15,6 +15,7 @@
 class QPrinter;
 class QJSEngine;
 
+class BranchItem;
 class HistoryWindow;
 class MapEditor;
 class TreeItem;
@@ -365,6 +366,8 @@ class Main : public QMainWindow {
     void setSlideEditorsVisibility(bool);
     void focusScriptEditor();
     void toggleScriptEditor();
+    void editBranchScript();    //! Edit script embedded in selected branch
+    void runBranchScript();     //! Run script embedded in selected branch
     void focusScriptOutput();
     void toggleScriptOutput();
     void focusHistory();
@@ -382,6 +385,7 @@ class Main : public QMainWindow {
     void updateHeading(const VymText &vt);
     void updateNoteText(const VymText &vt);
     void updateNoteEditor(TreeItem *ti);
+    void updateScriptEditor(BranchItem *bi);
     void updateHeadingEditor(TreeItem *ti = nullptr);
     void selectInNoteEditor(QString s, int i);
     void setFocusMapEditor();

@@ -9,6 +9,7 @@ QString quoteMeta(const QString &);
 QString unquoteMeta(const QString &);
 QString quoteQuotes(const QString &);
 QString unquoteQuotes(const QString &);
+QString quoteJS(const QString &);
 QString getCDATA(const QString &s);
 
 /////////////////////////////////////////////////////////////////////////////

@@ -1879,6 +1879,16 @@ void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if
             return;
         }
 
+        // Check script flag (before selecting object!)
+        if (sysFlagName == "system-script") {
+            model->select(ti_found);
+            if (e->modifiers() & Qt::ShiftModifier)
+                mainWindow->editBranchScript();
+            else
+                mainWindow->runBranchScript();
+            return;
+        }
+
         // Select the clicked object, if not moving without linking
         if (e->modifiers() & Qt::ShiftModifier) {
             if (mainWindow->getModMode() == Main::ModModePoint) {

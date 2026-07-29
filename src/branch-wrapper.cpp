@@ -356,6 +356,13 @@ QString BranchWrapper::getNoteXML()
     return r;
 }
 
+QString BranchWrapper::getScript()
+{
+    QString r = branchItemInt->getScript();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 int BranchWrapper::getNum()
 {
     int r = branchItemInt->num();
@@ -503,6 +510,13 @@ bool BranchWrapper::hasNote()
     return r;
 }
 
+bool BranchWrapper::hasScript()
+{
+    bool r = branchItemInt->hasScript();
+    mainWindow->setScriptResult(r);
+    return r;
+}
+
 bool BranchWrapper::hasRichTextHeading()
 {
     bool r = branchItemInt->heading().isRichText();
@@ -625,6 +639,11 @@ void BranchWrapper::removeChildren()
 void BranchWrapper::removeChildrenBranches()
 {
     model()->deleteChildrenBranches(branchItemInt);
+}
+
+void BranchWrapper::runScript()
+{
+    model()->runScript(branchItemInt);
 }
 
 bool BranchWrapper::saveNote(const QString &filename)
@@ -835,6 +854,11 @@ void BranchWrapper::setPos(qreal x, qreal y)
 void BranchWrapper::setRotationAutoDesign(const bool b)
 {
     model()->setRotationAutoDesign(b, branchItemInt);
+}
+
+void BranchWrapper::setScript(const QString &s)
+{
+    model()->setScript(s, branchItemInt);
 }
 
 void BranchWrapper::setRotationHeading(const int &i)
