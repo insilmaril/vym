@@ -15,8 +15,16 @@ class ShowTextDialog : public QDialog {
     void setText(const QString &);
     void useFixedFont(bool);
 
+  private slots:
+    void filterText();
+    void clearFilter();
+
   private:
+    void showText();
+
     Ui::ShowTextDialog ui;
+    QString originalText;  // Unfiltered text, as it was set by caller
+    bool originalIsHtml;
 };
 
 #endif // SHOWTEXTDIALOG_H

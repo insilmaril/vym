@@ -43,6 +43,11 @@ Uwe Drechsel - July 2026
 
 ## Version 3.0.502
 ### Features
+ * [#221](https://github.com/insilmaril/vym/issues/221) The dialog
+   showing texts like the keyboard shortcuts or the available scripting
+   commands can be searched now: Entering text and pressing "Search" or
+   Return shows only the lines containing the text, "Clear" shows the
+   full text again
  * [#222](https://github.com/insilmaril/vym/issues/222) The exports in
    the File menu are sorted alphabetically now. The text based exports
    are collected in a new submenu "Text", where "Text (ASCII)" is called
