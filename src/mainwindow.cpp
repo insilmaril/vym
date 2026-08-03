@@ -1707,10 +1707,10 @@ void Main::setupFileActions()
     actionFileExportLast = a;
     actionListFiles.append(a);
 
-    a = new QAction(tr("Webpage (HTML)...", "File export menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportHTML()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
+    fileExportMenu->addSeparator();
+
+    // Exports are sorted alphabetically, text based exports and exports for
+    // project planning are collected in their own submenus
 
     a = new QAction(tr("Confluence (HTML)...", "File export menu") + " " + " " +
                         tr("(still experimental)"),
@@ -1720,35 +1720,16 @@ void Main::setupFileActions()
     actionListFiles.append(a);
     actionFileExportConfluence = a;
 
-    a = new QAction( tr("Firefox Bookmarks", "File export menu") + 
+    a = new QAction(tr("CSV...") + " " + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportCSV()));
+    fileExportMenu->addAction(a);
+    actionListFiles.append(a);
+
+    a = new QAction( tr("Firefox Bookmarks", "File export menu") +
                         tr("(still experimental)"),
                     this);
     connect(a, SIGNAL(triggered()), this,
             SLOT(fileExportFirefoxBookmarks()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction(tr("Text (ASCII)...", "File export menu"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCII()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction(tr("Text (Markdown)...", "File export menu") + " " +
-                        tr("(still experimental)"),
-                    this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportMarkdown()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction(tr("Text with tasks", "File export menu") + " " +
-                        tr("(still experimental)"),
-                    this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCIITasks()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction(tr("Text (A&O report)...", "Export format"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportAO()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
 
@@ -1757,9 +1738,28 @@ void Main::setupFileActions()
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
 
+    a = new QAction("LibreOffice Impress...", this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportImpress()));
+    fileExportMenu->addAction(a);
+    actionListFiles.append(a);
+
     a = new QAction(tr("PDF%1", "File export menu").arg("..."), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportPDF()));
     fileExportMenu->addAction(a);
+    actionListFiles.append(a);
+
+    // Submenu with exports for project planning
+    fileExportProjectsMenu =
+        fileExportMenu->addMenu(tr("Projects", "File export menu"));
+
+    a = new QAction("OrgMode... " + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportOrgMode()));
+    fileExportProjectsMenu->addAction(a);
+    actionListFiles.append(a);
+
+    a = new QAction("Taskjuggler... " + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportTaskJuggler()));
+    fileExportProjectsMenu->addAction(a);
     actionListFiles.append(a);
 
     a = new QAction(tr("SVG%1", "File export menu").arg("..."), this);
@@ -1767,33 +1767,46 @@ void Main::setupFileActions()
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
 
-    a = new QAction("LibreOffice Impress...", this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportImpress()));
+    // Submenu with text based exports
+    fileExportTextMenu =
+        fileExportMenu->addMenu(tr("Text", "File export menu"));
+
+    a = new QAction(tr("A&O report...", "Export format"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportAO()));
+    fileExportTextMenu->addAction(a);
+    actionListFiles.append(a);
+
+    a = new QAction("LaTeX... " + tr("(still experimental)"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportLaTeX()));
+    fileExportTextMenu->addAction(a);
+    actionListFiles.append(a);
+
+    a = new QAction(tr("Markdown...", "File export menu") + " " +
+                        tr("(still experimental)"),
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportMarkdown()));
+    fileExportTextMenu->addAction(a);
+    actionListFiles.append(a);
+
+    a = new QAction(tr("Plaintext...", "File export menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCII()));
+    fileExportTextMenu->addAction(a);
+    actionListFiles.append(a);
+
+    a = new QAction(tr("Plaintext with tasks", "File export menu") + " " +
+                        tr("(still experimental)"),
+                    this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportASCIITasks()));
+    fileExportTextMenu->addAction(a);
+    actionListFiles.append(a);
+
+    a = new QAction(tr("Webpage (HTML)...", "File export menu"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileExportHTML()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
 
     a = new QAction("XML...", this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileExportXML()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction(tr("CSV...") + " " + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportCSV()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction("Taskjuggler... " + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportTaskJuggler()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction("OrgMode... " + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportOrgMode()));
-    fileExportMenu->addAction(a);
-    actionListFiles.append(a);
-
-    a = new QAction("LaTeX... " + tr("(still experimental)"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileExportLaTeX()));
     fileExportMenu->addAction(a);
     actionListFiles.append(a);
 

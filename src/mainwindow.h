@@ -520,6 +520,8 @@ class Main : public QMainWindow {
     QMenu *fileLastMapsMenu;
     QMenu *fileImportMenu;
     QMenu *fileExportMenu;
+    QMenu *fileExportProjectsMenu;
+    QMenu *fileExportTextMenu;
 
     QMenu *fileMenu;
     QMenu *editMenu;

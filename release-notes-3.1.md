@@ -43,6 +43,12 @@ Uwe Drechsel - July 2026
 
 ## Version 3.0.502
 ### Features
+ * [#222](https://github.com/insilmaril/vym/issues/222) The exports in
+   the File menu are sorted alphabetically now. The text based exports
+   are collected in a new submenu "Text", where "Text (ASCII)" is called
+   "Plaintext" and "Text with tasks" is called "Plaintext with tasks"
+   now. The exports for project planning, OrgMode and Taskjuggler, are
+   collected in a new submenu "Projects"
  * [#220](https://github.com/insilmaril/vym/issues/220) Clicking a
    system flag of a branch which is not selected yet no longer just
    selects the branch, but also triggers the related action, e.g.
