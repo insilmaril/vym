@@ -19,6 +19,9 @@ void ExportOrgMode::doExport()
     // Exports a map to an org-mode file.
     // This file needs to be read
     // by EMACS into an org mode buffer
+    //
+    // Details of the org-mode format can be found at:
+    // https://orgmode.org/worg/org-syntax.html
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly)) {
         QMessageBox::critical(
