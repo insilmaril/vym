@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>400</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,13 +53,6 @@
       <widget class="QLineEdit" name="findLineEdit">
        <property name="placeholderText">
         <string>Show only lines containing...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="findButton">
-       <property name="text">
-        <string>Search</string>
        </property>
       </widget>
      </item>

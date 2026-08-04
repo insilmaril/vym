@@ -4,6 +4,7 @@
 #include <QFont>
 #include <QString>
 #include <QStringList>
+#include <QStyle>
 #include <QTextDocument>
 
 extern Settings settings;
@@ -17,8 +18,13 @@ ShowTextDialog::ShowTextDialog(QWidget *parent) : QDialog(parent)
 
     originalIsHtml = false;
 
-    connect(ui.findButton, SIGNAL(clicked()), this, SLOT(filterText()));
-    connect(ui.findLineEdit, SIGNAL(returnPressed()), this, SLOT(filterText()));
+    ui.clearButton->setIcon(style()->standardIcon(QStyle::SP_DialogResetButton));
+
+    // Searching is optional and hidden by default
+    setUseSearch(false);
+
+    connect(ui.findLineEdit, SIGNAL(textChanged(const QString &)), this,
+            SLOT(filterText()));
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 }
 
@@ -90,4 +96,16 @@ void ShowTextDialog::useFixedFont(bool useFixedFont)
     QFont font;
     if (useFixedFont)
         ui.textBrowser->setFont(fixedFont);
+}
+
+void ShowTextDialog::setUseSearch(bool useSearch)
+{
+    ui.findLineEdit->setVisible(useSearch);
+    ui.clearButton->setVisible(useSearch);
+
+    // Without the search field there would be no way to reset a filter
+    if (!useSearch)
+        ui.findLineEdit->clear();
+
+    useSearchInt = useSearch;
 }
