@@ -644,7 +644,7 @@ void Main::setupAPI()
     c->addParameter(Command::BoolPar, true,
                     "Run command in background (not implemented yet)");
     c->addParameter(Command::StringListPar, true, "List of arguments");
-    c->setComment("Execute an external command. Returns an object with "
+    c->setComment("Execute a system command. Returns an object with "
                   "'exitCode' and 'output'. Must be enabled in Settings menu. "
                   "Background execution is not implemented yet.");
     modelCommands.append(c);
@@ -3654,7 +3654,7 @@ void Main::setupSettingsActions()
     settingsMenu->addAction(a);
 
     a = new QAction(
-        tr("Allow scripts to execute external commands", "Settings action"),
+        tr("Allow scripts to execute system commands", "Settings action"),
         this);
     a->setCheckable(true);
     a->setChecked(
@@ -6793,7 +6793,7 @@ void Main::settingsToggleExecuteCommand()
         // Warn the user about the security implications before enabling
         QMessageBox::StandardButton b = QMessageBox::warning(
             this, tr("Warning"),
-            tr("Allowing scripts to execute external commands is a security "
+            tr("Allowing scripts to execute system commands is a security "
                "risk: a malicious map or script could run arbitrary commands "
                "on your system with your privileges.\n\n"
                "Only enable this if you trust the maps and scripts you open.\n\n"

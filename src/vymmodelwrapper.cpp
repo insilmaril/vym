@@ -75,14 +75,14 @@ QVariant VymModelWrapper::execute(const QString &command, bool background,
     result["exitCode"] = -1;
     result["output"] = QString();
 
-    // Executing external commands is a security risk and therefore
+    // Executing system commands is a security risk and therefore
     // disabled by default. It can be enabled in the settings menu.
     // In testmode it is always allowed, so the self-test can run.
     if (!testmode &&
         !settings.value("/scripting/executeCommandEnabled", false).toBool()) {
         mainWindow->abortScript(
             QJSValue::GenericError,
-            "Executing external commands from scripts is disabled. "
+            "Executing system commands from scripts is disabled. "
             "It can be enabled in the Settings menu.");
         mainWindow->setScriptResult(result);
         return result;
