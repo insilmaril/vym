@@ -33,7 +33,7 @@ Documentation
 
     Can either be downloaded directly in vym via
     "Help - Download and show release notes" or can be accessed in
-    https://github.com/insilmaril/vym/blob/release/release-notes-2.9.md
+    https://github.com/insilmaril/vym/blob/release/release-notes-3.0.md
 
 * Screencasts
 
