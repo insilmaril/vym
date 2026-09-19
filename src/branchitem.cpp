@@ -488,6 +488,13 @@ void BranchItem::setHideMode(HideTmpMode mode)
     branchContainer->updateVisibility();
 }
 
+void BranchItem::setFocusMode(BranchItem *focusBi)
+{
+    TreeItem::setFocusMode(focusBi);
+    if (branchContainer)
+        branchContainer->updateVisibility();
+}
+
 void BranchItem::updateVisuals()
 {
     branchContainer->updateVisuals();

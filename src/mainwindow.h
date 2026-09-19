@@ -240,6 +240,7 @@ class Main : public QMainWindow {
     void editSortChildren();
     void editSortBackChildren();
     void editToggleScroll();
+    void editToggleFocus();
     void editExpandAll();
     void editExpandOneLevel();
     void editCollapseOneLevel();
@@ -568,6 +569,7 @@ class Main : public QMainWindow {
     QAction *actionSortChildren;
     QAction *actionSortBackChildren;
     QAction *actionToggleScroll;
+    QAction *actionToggleFocus;
     QAction *actionUnscrollSubtree;
     QAction *actionExpandAll;
     QAction *actionExpandOneLevel;

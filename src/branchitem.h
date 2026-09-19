@@ -89,6 +89,7 @@ class BranchItem : public MapItem {
 
 
     void setHideMode(HideTmpMode mode); 
+    void setFocusMode(BranchItem *focusBi);
     void updateVisuals();
 
     BranchContainer *createBranchContainer(
