@@ -1335,7 +1335,7 @@ bool VymModel::tryVymLock()
                         .arg(a, h);
                 dia.setText(s);
                 dia.setWindowTitle(
-                    tr("Warning: Map already opended", "VymModel"));
+                    tr("Warning: Map already open", "VymModel"));
                 if (dia.execDialog() == LockedFileDialog::DeleteLockfile) {
                     if (!removeVymLock()) {
                         // Could not remove existing lockfile, give up
