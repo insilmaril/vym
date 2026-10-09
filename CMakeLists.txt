@@ -116,7 +116,7 @@ endif ()
 # Translations
 #
 # To update the translation files based on source code changes
-# add the targest update_translations and release_translations
+# add the targets update_translations and release_translations
 #
 # See also (for Qt 6):
 # https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-lrelease.html
@@ -136,7 +136,7 @@ message(STATUS "vym: Found Qt version: ${Qt6_VERSION}")
 
 if(Qt6_VERSION VERSION_GREATER_EQUAL 6.7)
     qt_standard_project_setup( I18N_TRANSLATED_LANGUAGES
-        el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sv zh_CN zh_TW
+        el cs_CZ de en es fr hr_HR ia it ja pt_BR ru sl sv zh_CN zh_TW
     ) # FIXME add missing translations
 
     qt_add_translations( vym
