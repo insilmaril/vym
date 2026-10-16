@@ -1612,12 +1612,6 @@ void MapEditor::editHeading(BranchItem *selbi)
         lineEdit->show();
         lineEdit->grabKeyboard();
 
-#if defined(Q_OS_WINDOWS)
-        QFont font = lineEdit->font();
-        font.setPointSize(font.pointSize() + 4);
-        lineEdit->setFont(font);
-#endif
-
         QPointF tl;
         QPointF br;
         qreal w = 230;

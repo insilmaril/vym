@@ -91,6 +91,7 @@ Uwe Drechsel - July 2026
 ### Features
 
 ### Bugfixes
+ * [#230](https://github.com/insilmaril/vym/issues/230) Input text box keeps growing with every new entry
  * [#150](https://github.com/insilmaril/vym/issues/150) No more redundant overwrite confirmation on macOS when saving a map, saving an image or exporting; the manual confirmation is kept on Windows and Linux
  * [#174](https://github.com/insilmaril/vym/issues/174) Tasks now visible in a new map created from a command-line filename (TaskEditor map filter was left stale)
  * [#218](https://github.com/insilmaril/vym/issues/218) Scroll/unscroll of a branch while it is animated no longer breaks its positioning
