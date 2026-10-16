@@ -210,6 +210,11 @@ MapEditor::MapEditor(VymModel *vm)
 
     setState(Neutral);
 
+    // Watch all events of the application: while a heading is edited clicks
+    // outside of the map (e.g. in a dock window or a toolbar) have to set the
+    // text, too. See eventFilter() below.
+    qApp->installEventFilter(this);
+
     winter = nullptr;
 
     // animations
@@ -222,6 +227,8 @@ MapEditor::MapEditor(VymModel *vm)
 MapEditor::~MapEditor()
 {
     // qDebug ()<<"Destr MapEditor this="<<this;
+
+    qApp->removeEventFilter(this);
 
     if (winter) {
         delete winter;
@@ -1658,6 +1665,44 @@ void MapEditor::editHeading(BranchItem *selbi)
     }
 }
 
+void MapEditor::finishHeadingByClick()
+{
+    if (editorState != EditingHeading)
+        return;
+
+    editHeadingFinished();
+}
+
+bool MapEditor::eventFilter(QObject *obj, QEvent *e)
+{
+    switch (e->type()) {
+        case QEvent::MouseButtonPress: {
+            if (editorState == EditingHeading) {
+                QWidget *w = qobject_cast<QWidget *>(obj);
+                // Clicks into the lineEdit are used to move the cursor or to
+                // select text. Clicks into the map itself are handled in
+                // mousePressEvent(), which knows where the lineEdit is drawn.
+                if (w && w != this && w != viewport() &&
+                        !(lineEdit && (w == lineEdit || lineEdit->isAncestorOf(w))))
+                    finishHeadingByClick();
+            }
+            break;
+        }
+
+        case QEvent::ApplicationDeactivate:
+        case QEvent::WindowDeactivate:
+            // Clicking another application or the desktop is also "clicking away"
+            if (editorState == EditingHeading)
+                editHeadingFinished();
+            break;
+
+        default:
+            break;
+    }
+
+    return QGraphicsView::eventFilter(obj, e);
+}
+
 void MapEditor::editHeadingCanceled()
 {
     hideLineEdit();
@@ -1776,6 +1821,14 @@ void MapEditor::startPanningView(QMouseEvent *e)
 
 void MapEditor::mousePressEvent(QMouseEvent *e) // FIXME-3  Drop down dialog, if multiple tree items are found to select the "right" one
 {
+    // Clicking anywhere outside of the lineEdit while editing a heading
+    // sets the text. Clicks into the lineEdit itself (to place the cursor
+    // or to select text) keep the editing going.
+    // The click is still handled normally below, so e.g. clicking another
+    // branch sets the text and selects that branch in one go.
+    if (editorState == EditingHeading && !proxyWidget->sceneBoundingRect().contains(mapToScene(e->pos())))
+        finishHeadingByClick();
+
     // Ignore right clicks
     if (e->button() == Qt::RightButton) {
         e->ignore();
