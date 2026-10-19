@@ -63,7 +63,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 COMPONENTS ${QtComponents} REQUIRED)
 
 # Build date
-string(TIMESTAMP BUILD_DATE_IN "%Y-%m-%d")
+string(TIMESTAMP BUILD_DATE_IN "%Y-%m-%d" UTC)
 add_compile_definitions(BUILD_DATE_IN="${BUILD_DATE_IN}")
 configure_file(
     ${CMAKE_SOURCE_DIR}/src/buildinfo.h.in
