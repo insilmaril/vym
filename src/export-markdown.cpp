@@ -51,14 +51,6 @@ void ExportMarkdown::doExport()
     while (cur) {
         if (cur->getType() == TreeItem::Branch ||
             cur->getType() == TreeItem::MapCenter) {
-            // Insert newline after previous list
-            if (cur->depth() < lastDepth)
-                out += "\n";
-
-            // Make indentstring
-            curIndent = "";
-            for (i = 1; i < cur->depth() - 1; i++)
-                curIndent += indentPerDepth;
 
             curHeading = cur->headingText();
 
@@ -67,8 +59,12 @@ void ExportMarkdown::doExport()
                 curHeading = "[" + curHeading + "](" + cur->url() + ")";
 
             if (!cur->hasHiddenParent()) {
-                // qDebug() << "ExportMarkdown::
-                // "<<curIndent.toStdString()<<cur->curHeading.toStdString();
+                if (0) {
+                    for (curIndent = "", i = 1; i < cur->depth() - 1;
+                         i++, curIndent += indentPerDepth);
+                    qDebug() << "ExportMarkdown:: "<<curIndent.toStdString()
+                             <<curHeading.toStdString();
+                }
 
                 dashIndent = "";
                 switch (cur->depth()) {
@@ -104,9 +100,12 @@ void ExportMarkdown::doExport()
                     break;
                 default:
                     out += "\n";
-                    out += (curIndent + "- " + curHeading);
+                    for (i = 1; i < cur->depth() - 5; i++)
+                        dashIndent += "  ";
+                    out += (dashIndent + "- " + curHeading);
                     out += "\n";
-                    dashIndent = "  ";
+                    // indent for note/content under this dash
+                    dashIndent += "  ";
                     break;
                 }
 
@@ -118,17 +117,17 @@ void ExportMarkdown::doExport()
                 }
 
                 // If necessary, write vymlink
-                if (cur->hasVymLink())
-                    out += (curIndent + dashIndent + cur->vymLink()) +
-                           " (vym mindmap)\n";
+                if (cur->hasVymLink()) {
+                    out += "\n";
+                    out += (dashIndent + "[vym mindmap](" + cur->vymLink() + ")");
+                    out += "\n";
+                }
 
                 // If necessary, write note
                 if (!cur->isNoteEmpty()) {
-                    // curIndent +="  | ";
-                    // Only indent for bullet points
-                    if (cur->depth() > 2)
-                        curIndent += "  ";
-                    out += '\n' + cur->getNoteASCII(curIndent, 80);
+                    out += "\n";
+                    out += cur->getNoteASCII(dashIndent, 80);
+                    out += "\n";
                 }
                 lastDepth = cur->depth();
             }
