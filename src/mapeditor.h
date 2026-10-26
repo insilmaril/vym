@@ -200,6 +200,7 @@ class MapEditor : public QGraphicsView {
 
   private:
     void hideLineEdit();
+    void finishHeadingByClick();    //!< Set heading text, because user clicked outside of lineEdit
     QLineEdit *lineEdit;
     QAction *editHeadingCancelAction;
     QGraphicsProxyWidget *proxyWidget;
@@ -218,6 +219,8 @@ class MapEditor : public QGraphicsView {
     void focusInEvent(QFocusEvent *);
     void focusOutEvent(QFocusEvent *);
     void resizeEvent(QResizeEvent *);
+
+    bool eventFilter(QObject *obj, QEvent *ev) override;
 
     void dragEnterEvent(QDragEnterEvent *);
     void dragMoveEvent(QDragMoveEvent *);
