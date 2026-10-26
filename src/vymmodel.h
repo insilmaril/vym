@@ -572,6 +572,29 @@ class VymModel : public TreeModel {
     bool unscrollBranch(BranchItem *);
     void toggleScroll(BranchItem *bi = nullptr);
     void unscrollSubtree(BranchItem *bi = nullptr);
+
+    /*! \brief Hide all branches, which are not part of the subtree of \a bi
+
+        Focus mode is a temporary view mode, it does not change the data of
+        the map. Set \a bi to nullptr to leave focus mode and show all
+        branches again. */
+    void setFocusBranch(BranchItem *bi = nullptr);
+
+    /*! \brief Enter focus mode for the selected branch, leave it again or move
+        the focus to the selected branch, depending on the current state. */
+    void toggleFocus(BranchItem *bi = nullptr);
+
+    /*! Return branch focused in focus mode, or nullptr, if focus mode is off */
+    BranchItem *getFocusBranch();
+
+  private:
+    BranchItem *focusBranchInt; //!< Branch focused in focus mode
+
+    /*! Leave focus mode, if \a ti is the focused branch or contains it.
+        Called before deleting items to avoid a dangling pointer. */
+    void checkFocusOnDelete(TreeItem *ti);
+
+  public:
     void emitExpandAll();
     void emitExpandOneLevel();
     void emitCollapseOneLevel();

@@ -211,12 +211,20 @@ class TreeItem : public XMLObj {
   protected:
     bool hideTemporaryInt;  //! Hide this item e.g. during export if set
     bool hidden;            //! Currently hidden if true
+    bool focusHiddenInt;    //! Hidden, because another branch is focused
   public:
     virtual void setHideMode(HideTmpMode);
     virtual bool hasHiddenParent();
     virtual void setHideTemporary(bool); // set export of object (and children)
     virtual bool hideTemporary();
     virtual bool isHidden();
+
+    /*! Hide this item and its children, if they are neither the focused
+        branch \a focusBi nor one of its ancestors or children.
+        Set \a focusBi to nullptr to end focus mode and show everything again.
+        Overloaded in BranchItem, which also updates its BranchContainer */
+    virtual void setFocusMode(BranchItem *focusBi);
+    virtual bool isFocusHidden(); //!< Hidden, because another branch is focused
 
     virtual QString getGeneralAttr();
 

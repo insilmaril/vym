@@ -194,8 +194,8 @@ void BranchContainer::setOriginalScenePos()
 void BranchContainer::updateVisibility()
 {
     if (branchItem) {
-        // Check own visibility for hidden export mode
-        if (branchItem->isHidden()) {
+        // Check own visibility for hidden export mode and focus mode
+        if (branchItem->isHidden() || branchItem->isFocusHidden()) {
             // Hide myself (and potential child branches or images) completely
             setVisible(false);
             upLink->setVisible(false);

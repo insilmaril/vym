@@ -67,6 +67,7 @@ void TreeItem::init()
 
     hidden = false;
     hideTemporaryInt = false;
+    focusHiddenInt = false;
 
     itemData.clear();
     itemData << "";
@@ -804,6 +805,27 @@ void TreeItem::setHideTemporary(bool b)
 bool TreeItem::hideTemporary() { return hideTemporaryInt; }
 
 bool TreeItem::isHidden() { return hidden; }
+
+void TreeItem::setFocusMode(BranchItem *focusBi)
+{
+    // Note: Overloaded in BranchItem
+    // Will updateVisibility() of BranchContainer there
+
+    // In focus mode only the focused branch, its ancestors and its children
+    // are shown: All other branches, which are no parents or children of the
+    // focused branch, are hidden
+    focusHiddenInt = focusBi &&
+        this != focusBi &&
+        !focusBi->isChildOf(this) &&
+        !isChildOf(focusBi);
+
+    // And take care of my children
+    for (int i = 0; i < branchCount(); ++i)
+        getBranchNum(i)->setFocusMode(focusBi);
+}
+
+bool TreeItem::isFocusHidden() { return focusHiddenInt; }
+
 
 QString TreeItem::getGeneralAttr()
 {
